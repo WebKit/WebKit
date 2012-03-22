@@ -5,14 +5,14 @@ Running: testSetUp
 
 Running: testSetResourceContentMinor
 History length: 0
-
-Running: testSetResourceContentMajor
 Item <tip>:
 body {
   margin: 10px;
   padding: 10px;
 }
 
+
+Running: testSetResourceContentMajor
 History length: 1
 Item 0:
 body {

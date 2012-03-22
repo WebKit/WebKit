@@ -268,17 +268,11 @@ WebInspector.CSSStyleModel.prototype = {
             return;
 
         var majorChange = this._pendingCommandsMajorState[this._pendingCommandsMajorState.length - 1];
-        
+
         if (!majorChange || !styleSheetId || !this.hasEventListeners(WebInspector.CSSStyleModel.Events.StyleSheetChanged))
             return;
 
-        function callback(error, content)
-        {
-            if (!error)
-                this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.StyleSheetChanged, { styleSheetId: styleSheetId, content: content, majorChange: majorChange });
-        }
-
-        CSSAgent.getStyleSheetText(styleSheetId, callback.bind(this));
+        this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.StyleSheetChanged, { styleSheetId: styleSheetId, majorChange: majorChange });
     },
 
     setStyleSheetText: function(styleSheetId, newText, majorChange, userCallback)
@@ -496,7 +490,7 @@ WebInspector.CSSStyleDeclaration.prototype = {
                 return;
 
             if (error) {
-                console.error(JSON.stringify(error));
+                console.error(error);
                 userCallback(null);
             } else {
                 userCallback(WebInspector.CSSStyleDeclaration.parsePayload(payload));
@@ -811,6 +805,9 @@ WebInspector.CSSStyleModelResourceBinding = function(cssModel)
 WebInspector.CSSStyleModelResourceBinding.prototype = {
     setContent: function(resource, content, majorChange, userCallback)
     {
+        if (majorChange && resource.type === WebInspector.Resource.Type.Stylesheet)
+            resource.addRevision(content);
+
         if (this._urlToStyleSheetId[resource.url]) {
             this._innerSetContent(resource.url, content, majorChange, userCallback, null);
             return;
@@ -843,7 +840,15 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
                 userCallback("No stylesheet found: " + url);
             return;
         }
-        this._cssModel.setStyleSheetText(styleSheetId, content, majorChange, userCallback);
+
+        this._isSettingContent = true;
+        function callbackWrapper(error)
+        {
+            if (userCallback)
+                userCallback(error);
+            delete this._isSettingContent;
+        }
+        this._cssModel.setStyleSheetText(styleSheetId, content, majorChange, callbackWrapper.bind(this));
     },
 
     _loadStyleSheetHeaders: function(callback)
@@ -867,7 +872,22 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
 
     _styleSheetChanged: function(event)
     {
-        var styleSheetId = event.data.styleSheetId;
+        if (this._isSettingContent)
+            return;
+
+        if (!event.data.majorChange)
+            return;
+
+        function callback(error, content)
+        {
+            if (!error)
+                this._innerStyleSheetChanged(event.data.styleSheetId, content);
+        }
+        CSSAgent.getStyleSheetText(event.data.styleSheetId, callback.bind(this));
+    },
+
+    _innerStyleSheetChanged: function(styleSheetId, content)
+    {
         function setContent()
         {
             var url = this._styleSheetIdToURL[styleSheetId];
@@ -875,12 +895,8 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
                 return;
 
             var resource = WebInspector.resourceForURL(url);
-            if (!resource || resource.type !== WebInspector.Resource.Type.Stylesheet)
-                return;
-
-            var majorChange = event.data.majorChange;
-            if (majorChange)
-                resource.addRevision(event.data.content);
+            if (resource && resource.type === WebInspector.Resource.Type.Stylesheet)
+                resource.addRevision(content);
         }
 
         if (!this._styleSheetIdToURL[styleSheetId]) {

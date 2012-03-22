@@ -61,6 +61,15 @@ InspectorTest.runAfterResourcesAreFinished = function(resourceURLs, callback)
 
 InspectorTest.showResource = function(resourceURL, callback)
 {
+    var reported = false;
+    function callbackWrapper(sourceFrame)
+    {
+        if (reported)
+            return;
+        callback(sourceFrame);
+        reported = true;
+    }
+
     function showResourceCallback()
     {
         WebInspector.resourceTreeModel.forAllResources(visit);
@@ -70,9 +79,9 @@ InspectorTest.showResource = function(resourceURL, callback)
                 WebInspector.panels.resources.showResource(resource, 1);
                 var sourceFrame = WebInspector.panels.resources._resourceViewForResource(resource);
                 if (sourceFrame.loaded)
-                    callback(sourceFrame);
+                    callbackWrapper(sourceFrame);
                 else
-                    sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, callback.bind(null, sourceFrame));
+                    sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, callbackWrapper.bind(null, sourceFrame));
                 return true;
             }
         }
