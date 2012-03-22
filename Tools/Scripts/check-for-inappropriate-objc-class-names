@@ -38,6 +38,9 @@ sub touch($);
 
 my @allowedPrefixes = @ARGV;
 
+# Xcode will automatically link ObjC binaries against libarclite in some cases, which defines a class called __ARCLite__.
+push(@allowedPrefixes, "__ARCLite");
+
 die "No allowed prefixes passed on the command line" if !@allowedPrefixes;
 
 my $arch = $ENV{'CURRENT_ARCH'};
