@@ -243,6 +243,10 @@ http/tests/xmlhttprequest/workers/abort-exception-assert.html
 # https://bugs.webkit.org/show_bug.cgi?id=81637
 fast/dom/Window/timer-resume-on-navigation-back.html
 
+# fast/events/drag-link.html is failing in Mac WebKit2
+# https://bugs.webkit.org/show_bug.cgi?id=81833
+fast/events/drag-link.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
