@@ -36,6 +36,7 @@
 #include "RenderPart.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGResource.h"
+#include "RenderSVGResourceContainer.h"
 #include "RenderView.h"
 #include "SVGLength.h"
 #include "SVGRenderingContext.h"
