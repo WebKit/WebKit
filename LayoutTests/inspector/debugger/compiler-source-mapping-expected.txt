@@ -1,9 +1,0 @@
-Tests ClosureCompilerSourceMapping.
-
-
-Running: testSimpleMapping
-
-Running: testNoMappingEntry
-
-Running: testEmptyLine
-
