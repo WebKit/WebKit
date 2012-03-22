@@ -199,6 +199,8 @@ sub ShouldSkipType
 
     return 1 if $typeInfo->signature->type =~ /Constructor$/;
     
+    return 1 if $codeGenerator->GetArrayType($typeInfo->signature->type);
+    
     # FIXME: This is typically used to add script execution state arguments to the method.
     # These functions will not compile with the C++ bindings as is, so disable them
     # to restore compilation until a proper implementation can be developed.
