@@ -1,3 +1,24 @@
+2012-03-22  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Add make to the jhbuild moduleset
+        https://bugs.webkit.org/show_bug.cgi?id=81769
+
+        Reviewed by Martin Robinson.
+
+        Mostly based on a patch by Carlos Garcia Campos <cgarcia@igalia.com>.
+        Add GNU make with custom patches to fix several issues:
+
+        - make-3.82-arg-list-length.patch: Patch by Ralf Wildenhues to
+          fix the argument list limit of GNU make when running make
+          distcheck.
+        - make-3.82-parallel-build.patch: Patch by Kamil Mierzejewski
+          and Jeremy Devenport to fix parallel build issues present in
+          GNU make 3.82
+
+        * gtk/jhbuild.modules: Added make with patches.
+        * gtk/patches/make-3.82-arg-list-length.patch: Added.
+        * gtk/patches/make-3.82-parallel-build.patch: Added.
+
 2012-03-22  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed. Adding Source/WTF to the build and updating
