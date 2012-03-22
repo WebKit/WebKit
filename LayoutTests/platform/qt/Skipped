@@ -2410,6 +2410,10 @@ fast/css/relative-positioned-block-with-inline-ancestor.html
 fast/repaint/transform-rotate-and-remove.html
 compositing/overflow/ancestor-overflow.html
 
+#[Qt]fast/text/international/bdi-dir-default-to-auto.html fails
+#https://bugs.webkit.org/show_bug.cgi?id=81899
+fast/text/international/bdi-dir-default-to-auto.html
+
 # ============================================================================= #
 # Qt 4.7 related bugs
 # ============================================================================= #
