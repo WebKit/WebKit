@@ -28,7 +28,9 @@
 
 #include "GraphicsLayer.h"
 #include "LayerChromium.h"
+#include "TranslateTransformOperation.h"
 #include "cc/CCLayerAnimationController.h"
+#include "cc/CCLayerImpl.h"
 
 using namespace WebCore;
 
@@ -51,6 +53,24 @@ void addOpacityTransition(Target& target, double duration, float startOpacity, f
     IntSize boxSize;
 
     target.addAnimation(values, boxSize, animation.get(), 0, 0, 0);
+}
+
+template <class Target>
+void addAnimatedTransform(Target& target, double duration, int deltaX, int deltaY)
+{
+    static int id = 0;
+    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
+
+    TransformOperations operations;
+    operations.operations().append(TranslateTransformOperation::create(Length(deltaX, WebCore::Fixed), Length(deltaY, WebCore::Fixed), TransformOperation::TRANSLATE_X));
+    values.insert(new TransformAnimationValue(0, &operations));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+
+    IntSize boxSize;
+
+    target.addAnimation(values, boxSize, animation.get(), ++id, 0, 0);
 }
 
 } // namespace
@@ -131,6 +151,21 @@ void addOpacityTransitionToController(WebCore::CCLayerAnimationController& contr
 void addOpacityTransitionToLayer(WebCore::LayerChromium& layer, double duration, float startOpacity, float endOpacity, bool useTimingFunction)
 {
     addOpacityTransition(layer, duration, startOpacity, endOpacity, useTimingFunction);
+}
+
+void addOpacityTransitionToLayer(WebCore::CCLayerImpl& layer, double duration, float startOpacity, float endOpacity, bool useTimingFunction)
+{
+    addOpacityTransition(*layer.layerAnimationController(), duration, startOpacity, endOpacity, useTimingFunction);
+}
+
+void addAnimatedTransformToLayer(WebCore::LayerChromium& layer, double duration, int deltaX, int deltaY)
+{
+    addAnimatedTransform(layer, duration, deltaX, deltaY);
+}
+
+void addAnimatedTransformToLayer(WebCore::CCLayerImpl& layer, double duration, int deltaX, int deltaY)
+{
+    addAnimatedTransform(*layer.layerAnimationController(), duration, deltaX, deltaY);
 }
 
 } // namespace WebKitTests

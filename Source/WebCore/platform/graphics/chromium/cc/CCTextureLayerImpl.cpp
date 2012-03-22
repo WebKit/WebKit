@@ -90,7 +90,7 @@ void CCTextureLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
     }
 }
 
-void CCTextureLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
+void CCTextureLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     IntRect quadRect(IntPoint(), bounds());
     quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_textureId, m_hasAlpha, m_premultipliedAlpha, m_uvRect, m_flipped, m_ioSurfaceSize, m_ioSurfaceTextureId));

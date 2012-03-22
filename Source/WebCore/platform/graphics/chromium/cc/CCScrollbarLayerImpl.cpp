@@ -79,7 +79,7 @@ void CCScrollbarLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
     }
 }
 
-void CCScrollbarLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
+void CCScrollbarLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     if (!m_texture->isReserved())
         return;

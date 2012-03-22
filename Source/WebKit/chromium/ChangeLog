@@ -1,3 +1,43 @@
+2012-03-22  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Early out in a new prepareToDraw() step if checkerboarding an accelerated animation in order to skip the frame
+        https://bugs.webkit.org/show_bug.cgi?id=81437
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCAnimationTestCommon.cpp:
+        (WebCore):
+        (WebCore::addAnimatedTransform):
+        (WebKitTests::addOpacityTransitionToLayer):
+        (WebKitTests):
+        (WebKitTests::addAnimatedTransformToLayer):
+        * tests/CCAnimationTestCommon.h:
+        (WebCore):
+        (WebKitTests):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::TEST_F):
+        (DidDrawCheckLayer):
+        (WebKitTests::DidDrawCheckLayer::DidDrawCheckLayer):
+        (MissingTextureAnimatingLayer):
+        (WebKitTests::MissingTextureAnimatingLayer::create):
+        (WebKitTests::MissingTextureAnimatingLayer::MissingTextureAnimatingLayer):
+        (WebKitTests):
+        (WebKitTests::BlendStateCheckLayer::appendQuads):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TestHooks::prepareToDrawOnCCThread):
+        (WTF::MockLayerTreeHostImpl::prepareToDraw):
+        (MockLayerTreeHostImpl):
+        (WTF::MockLayerTreeHostImpl::drawLayers):
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore::appendQuads):
+        * tests/CCSolidColorLayerImplTest.cpp:
+        (CCLayerTestCommon::TEST):
+        * tests/CCTiledLayerImplTest.cpp:
+        (CCLayerTestCommon::TEST):
+        (CCLayerTestCommon::getQuads):
+        * tests/MockCCQuadCuller.h:
+        (WebCore::MockCCQuadCuller::append):
+
 2012-03-22  W. James MacLean  <wjmaclean@chromium.org>
 
         Rename touchpad fling curve, add curve parameters to constructor.
