@@ -23,6 +23,7 @@
 #define CSSStyleSelector_h
 
 #include "CSSRule.h"
+#include "CSSValueList.h"
 #include "LinkHash.h"
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
