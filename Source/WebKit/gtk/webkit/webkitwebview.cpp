@@ -118,6 +118,10 @@
 #include "DeviceOrientationClientGtk.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include "UserMediaClientGtk.h"
+#endif
+
 /**
  * SECTION:webkitwebview
  * @short_description: The central class of the WebKitGTK+ API
@@ -3518,6 +3522,10 @@ static void webkit_web_view_init(WebKitWebView* webView)
 #if ENABLE(DEVICE_ORIENTATION)
     WebCore::provideDeviceMotionTo(priv->corePage, new DeviceMotionClientGtk);
     WebCore::provideDeviceOrientationTo(priv->corePage, new DeviceOrientationClientGtk);
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    WebCore::provideUserMediaTo(priv->corePage, new UserMediaClientGtk);
 #endif
 
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {

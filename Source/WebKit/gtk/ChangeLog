@@ -1,3 +1,24 @@
+2012-03-22  Mao Yujie  <yujie.mao@intel.com>
+
+        [GTK] Add MediaStream feature to avoid MediaStream test failure
+        https://bugs.webkit.org/show_bug.cgi?id=81727
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/UserMediaClientGtk.cpp: Added.
+        (WebKit):
+        (WebKit::UserMediaClientGtk::UserMediaClientGtk):
+        (WebKit::UserMediaClientGtk::~UserMediaClientGtk):
+        (WebKit::UserMediaClientGtk::pageDestroyed):
+        (WebKit::UserMediaClientGtk::requestUserMedia):
+        (WebKit::UserMediaClientGtk::cancelUserMediaRequest):
+        * WebCoreSupport/UserMediaClientGtk.h: Added.
+        (WebKit):
+        (UserMediaClientGtk):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+
 2012-03-22  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] icon database requests not dispatched until new data arrives

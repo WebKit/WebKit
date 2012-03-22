@@ -211,6 +211,8 @@ webkitgtk_sources += \
 	Source/WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp \
 	Source/WebKit/gtk/WebCoreSupport/InspectorClientGtk.h \
 	Source/WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/UserMediaClientGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/UserMediaClientGtk.h \
 	Source/WebKit/gtk/webkit/webkitapplicationcache.cpp \
 	Source/WebKit/gtk/webkit/webkitdownload.cpp \
 	Source/WebKit/gtk/webkit/webkitdownloadprivate.h \
