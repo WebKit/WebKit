@@ -1,3 +1,16 @@
+2012-03-22  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] The background appears to have one extra pixel from the contents
+        https://bugs.webkit.org/show_bug.cgi?id=81830
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The clip-polygon from the scenegraph uses floats, not integers.
+        This could cause 1-offset clipping problems in some cases.
+
+        * UIProcess/qt/QtWebPageSGNode.cpp:
+        (WebKit::ContentsSGNode::clipRect):
+
 2012-03-21  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt][WK2] Add QML API for handling database quotas

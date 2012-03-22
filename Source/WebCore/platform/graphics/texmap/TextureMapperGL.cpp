@@ -160,7 +160,7 @@ struct TextureMapperGLData {
 
             GLint viewport[4];
             GL_CMD(glGetIntegerv(GL_VIEWPORT, viewport))
-            GL_CMD(glScissor(rect.x(), viewport[3] - rect.maxY() + 1, rect.width() - 1, rect.height() - 1))
+            GL_CMD(glScissor(rect.x(), viewport[3] - rect.maxY(), rect.width(), rect.height()))
         }
 
         void applyCurrentClip()

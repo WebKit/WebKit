@@ -81,7 +81,7 @@ private:
                 QPolygonF polygon;
 
                 for (int i = 0; i < geometry->vertexCount(); i++)
-                    polygon.append(clipMatrix.map(QPoint(geometryPoints[i].x, geometryPoints[i].y)));
+                    polygon.append(clipMatrix.map(QPointF(geometryPoints[i].x, geometryPoints[i].y)));
                 currentClip = polygon.boundingRect();
             }
 
