@@ -108,6 +108,8 @@ public:
     void animationWillBeRemoved(AnimationBase*);
 
     PassRefPtr<WebKitAnimationList> animationsForRenderer(RenderObject*) const;
+
+    void updateAnimationTimerForRenderer(RenderObject*);
     
 private:
     void animationTimerFired(Timer<AnimationControllerPrivate>*);
