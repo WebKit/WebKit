@@ -45,6 +45,7 @@ namespace WebCore {
 
 class CSSBorderImageSliceValue;
 class CSSPrimitiveValue;
+class CSSPropertyLonghand;
 class CSSValuePool;
 class CSSProperty;
 class CSSRule;
@@ -87,7 +88,7 @@ public:
     bool hasProperties() const { return !m_parsedProperties.isEmpty(); }
 
     bool parseValue(int propId, bool important);
-    bool parseShorthand(int propId, const int* properties, int numProperties, bool important);
+    bool parseShorthand(int, const CSSPropertyLonghand&, bool);
     bool parse4Values(int propId, const int* properties, bool important);
     bool parseContent(int propId, bool important);
     bool parseQuotes(int propId, bool important);

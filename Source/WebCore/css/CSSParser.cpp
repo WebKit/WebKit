@@ -48,6 +48,7 @@
 #include "CSSPageRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
+#include "CSSPropertyLonghand.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertySourceData.h"
 #include "CSSReflectValue.h"
@@ -2012,12 +2013,8 @@ bool CSSParser::parseValue(int propId, bool important)
             m_valueList->next();
         }
         break;
-    case CSSPropertyWebkitMarquee: {
-        const int properties[5] = { CSSPropertyWebkitMarqueeDirection, CSSPropertyWebkitMarqueeIncrement,
-                                    CSSPropertyWebkitMarqueeRepetition,
-                                    CSSPropertyWebkitMarqueeStyle, CSSPropertyWebkitMarqueeSpeed };
-        return parseShorthand(propId, properties, 5, important);
-    }
+    case CSSPropertyWebkitMarquee:
+        return parseShorthand(propId, webkitMarqueeLonghand(), important);
     case CSSPropertyWebkitMarqueeIncrement:
         if (id == CSSValueSmall || id == CSSValueLarge || id == CSSValueMedium)
             validPrimitive = true;
@@ -2137,19 +2134,17 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 #endif
     case CSSPropertyWebkitMarginCollapse: {
-        const int properties[2] = { CSSPropertyWebkitMarginBeforeCollapse,
-            CSSPropertyWebkitMarginAfterCollapse };
         if (num == 1) {
             ShorthandScope scope(this, CSSPropertyWebkitMarginCollapse);
-            if (!parseValue(properties[0], important))
+            if (!parseValue(webkitMarginCollapseLonghand().properties()[0], important))
                 return false;
             CSSValue* value = m_parsedProperties.last().value();
-            addProperty(properties[1], value, important);
+            addProperty(webkitMarginCollapseLonghand().properties()[1], value, important);
             return true;
         }
         else if (num == 2) {
             ShorthandScope scope(this, CSSPropertyWebkitMarginCollapse);
-            if (!parseValue(properties[0], important) || !parseValue(properties[1], important))
+            if (!parseValue(webkitMarginCollapseLonghand().properties()[0], important) || !parseValue(webkitMarginCollapseLonghand().properties()[1], important))
                 return false;
             return true;
         }
@@ -2283,9 +2278,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBorder:
         // [ 'border-width' || 'border-style' || <color> ] | inherit
     {
-        const int properties[3] = { CSSPropertyBorderWidth, CSSPropertyBorderStyle,
-                                    CSSPropertyBorderColor };
-        if (parseShorthand(propId, properties, 3, important)) {
+        const int properties[3] = { CSSPropertyBorderWidth, CSSPropertyBorderStyle, CSSPropertyBorderColor };
+        if (parseShorthand(propId, CSSPropertyLonghand(properties, 3), important)) {
             // The CSS3 Borders and Backgrounds specification says that border also resets border-image. It's as
             // though a value of none was specified for the image.
             addProperty(CSSPropertyBorderImage, cssValuePool()->createImplicitInitialValue(), important);
@@ -2295,103 +2289,44 @@ bool CSSParser::parseValue(int propId, bool important)
     }
     case CSSPropertyBorderTop:
         // [ 'border-top-width' || 'border-style' || <color> ] | inherit
-    {
-        const int properties[3] = { CSSPropertyBorderTopWidth, CSSPropertyBorderTopStyle,
-                                    CSSPropertyBorderTopColor};
-        return parseShorthand(propId, properties, 3, important);
-    }
+        return parseShorthand(propId, borderTopLonghand(), important);
     case CSSPropertyBorderRight:
         // [ 'border-right-width' || 'border-style' || <color> ] | inherit
-    {
-        const int properties[3] = { CSSPropertyBorderRightWidth, CSSPropertyBorderRightStyle,
-                                    CSSPropertyBorderRightColor };
-        return parseShorthand(propId, properties, 3, important);
-    }
+        return parseShorthand(propId, borderRightLonghand(), important);
     case CSSPropertyBorderBottom:
         // [ 'border-bottom-width' || 'border-style' || <color> ] | inherit
-    {
-        const int properties[3] = { CSSPropertyBorderBottomWidth, CSSPropertyBorderBottomStyle,
-                                    CSSPropertyBorderBottomColor };
-        return parseShorthand(propId, properties, 3, important);
-    }
+        return parseShorthand(propId, borderBottomLonghand(), important);
     case CSSPropertyBorderLeft:
         // [ 'border-left-width' || 'border-style' || <color> ] | inherit
-    {
-        const int properties[3] = { CSSPropertyBorderLeftWidth, CSSPropertyBorderLeftStyle,
-                                    CSSPropertyBorderLeftColor };
-        return parseShorthand(propId, properties, 3, important);
-    }
+        return parseShorthand(propId, borderLeftLonghand(), important);
     case CSSPropertyWebkitBorderStart:
-    {
-        const int properties[3] = { CSSPropertyWebkitBorderStartWidth, CSSPropertyWebkitBorderStartStyle,
-            CSSPropertyWebkitBorderStartColor };
-        return parseShorthand(propId, properties, 3, important);
-    }
+        return parseShorthand(propId, webkitBorderStartLonghand(), important);
     case CSSPropertyWebkitBorderEnd:
-    {
-        const int properties[3] = { CSSPropertyWebkitBorderEndWidth, CSSPropertyWebkitBorderEndStyle,
-            CSSPropertyWebkitBorderEndColor };
-        return parseShorthand(propId, properties, 3, important);
-    }
+        return parseShorthand(propId, webkitBorderEndLonghand(), important);
     case CSSPropertyWebkitBorderBefore:
-    {
-        const int properties[3] = { CSSPropertyWebkitBorderBeforeWidth, CSSPropertyWebkitBorderBeforeStyle,
-            CSSPropertyWebkitBorderBeforeColor };
-        return parseShorthand(propId, properties, 3, important);
-    }
+        return parseShorthand(propId, webkitBorderBeforeLonghand(), important);
     case CSSPropertyWebkitBorderAfter:
-    {
-        const int properties[3] = { CSSPropertyWebkitBorderAfterWidth, CSSPropertyWebkitBorderAfterStyle,
-            CSSPropertyWebkitBorderAfterColor };
-        return parseShorthand(propId, properties, 3, important);
-    }
+        return parseShorthand(propId, webkitBorderAfterLonghand(), important);
     case CSSPropertyOutline:
         // [ 'outline-color' || 'outline-style' || 'outline-width' ] | inherit
-    {
-        const int properties[3] = { CSSPropertyOutlineWidth, CSSPropertyOutlineStyle,
-                                    CSSPropertyOutlineColor };
-        return parseShorthand(propId, properties, 3, important);
-    }
+        return parseShorthand(propId, outlineLonghand(), important);
     case CSSPropertyBorderColor:
         // <color>{1,4} | inherit
-    {
-        const int properties[4] = { CSSPropertyBorderTopColor, CSSPropertyBorderRightColor,
-                                    CSSPropertyBorderBottomColor, CSSPropertyBorderLeftColor };
-        return parse4Values(propId, properties, important);
-    }
+        return parse4Values(propId, borderColorLonghand().properties(), important);
     case CSSPropertyBorderWidth:
         // <border-width>{1,4} | inherit
-    {
-        const int properties[4] = { CSSPropertyBorderTopWidth, CSSPropertyBorderRightWidth,
-                                    CSSPropertyBorderBottomWidth, CSSPropertyBorderLeftWidth };
-        return parse4Values(propId, properties, important);
-    }
+        return parse4Values(propId, borderWidthLonghand().properties(), important);
     case CSSPropertyBorderStyle:
         // <border-style>{1,4} | inherit
-    {
-        const int properties[4] = { CSSPropertyBorderTopStyle, CSSPropertyBorderRightStyle,
-                                    CSSPropertyBorderBottomStyle, CSSPropertyBorderLeftStyle };
-        return parse4Values(propId, properties, important);
-    }
+        return parse4Values(propId, borderStyleLonghand().properties(), important);
     case CSSPropertyMargin:
         // <margin-width>{1,4} | inherit
-    {
-        const int properties[4] = { CSSPropertyMarginTop, CSSPropertyMarginRight,
-                                    CSSPropertyMarginBottom, CSSPropertyMarginLeft };
-        return parse4Values(propId, properties, important);
-    }
+        return parse4Values(propId, marginLonghand().properties(), important);
     case CSSPropertyPadding:
         // <padding-width>{1,4} | inherit
-    {
-        const int properties[4] = { CSSPropertyPaddingTop, CSSPropertyPaddingRight,
-                                    CSSPropertyPaddingBottom, CSSPropertyPaddingLeft };
-        return parse4Values(propId, properties, important);
-    }
+        return parse4Values(propId, paddingLonghand().properties(), important);
     case CSSPropertyWebkitFlexFlow:
-    {
-        const int properties[] = { CSSPropertyWebkitFlexDirection, CSSPropertyWebkitFlexWrap };
-        return parseShorthand(propId, properties, 2, important);
-    }
+        return parseShorthand(propId, webkitFlexFlowLonghand(), important);
     case CSSPropertyFont:
         // [ [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]?
         // 'font-family' ] | caption | icon | menu | message-box | small-caption | status-bar | inherit
@@ -2401,24 +2336,13 @@ bool CSSParser::parseValue(int propId, bool important)
             return parseFont(important);
         break;
     case CSSPropertyListStyle:
-    {
-        const int properties[3] = { CSSPropertyListStyleType, CSSPropertyListStylePosition,
-                                    CSSPropertyListStyleImage };
-        return parseShorthand(propId, properties, 3, important);
-    }
-    case CSSPropertyWebkitColumns: {
-        const int properties[2] = { CSSPropertyWebkitColumnWidth, CSSPropertyWebkitColumnCount };
-        return parseShorthand(propId, properties, 2, important);
-    }
-    case CSSPropertyWebkitColumnRule: {
-        const int properties[3] = { CSSPropertyWebkitColumnRuleWidth, CSSPropertyWebkitColumnRuleStyle,
-                                    CSSPropertyWebkitColumnRuleColor };
-        return parseShorthand(propId, properties, 3, important);
-    }
-    case CSSPropertyWebkitTextStroke: {
-        const int properties[2] = { CSSPropertyWebkitTextStrokeWidth, CSSPropertyWebkitTextStrokeColor };
-        return parseShorthand(propId, properties, 2, important);
-    }
+        return parseShorthand(propId, listStyleLonghand(), important);
+    case CSSPropertyWebkitColumns:
+        return parseShorthand(propId, webkitColumnsLonghand(), important);
+    case CSSPropertyWebkitColumnRule:
+        return parseShorthand(propId, webkitColumnRuleLonghand(), important);
+    case CSSPropertyWebkitTextStroke:
+        return parseShorthand(propId, webkitTextStrokeLonghand(), important);
     case CSSPropertyWebkitAnimation:
         return parseAnimationShorthand(important);
     case CSSPropertyWebkitTransition:
@@ -2433,10 +2357,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyTextUnderline:
         return false;
     // CSS Text Layout Module Level 3: Vertical writing support
-    case CSSPropertyWebkitTextEmphasis: {
-        const int properties[] = { CSSPropertyWebkitTextEmphasisStyle, CSSPropertyWebkitTextEmphasisColor };
-        return parseShorthand(propId, properties, WTF_ARRAY_LENGTH(properties), important);
-    }
+    case CSSPropertyWebkitTextEmphasis:
+        return parseShorthand(propId, webkitTextEmphasisLonghand(), important);
 
     case CSSPropertyWebkitTextEmphasisStyle:
         return parseTextEmphasisStyle(important);
@@ -2478,10 +2400,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitWrapPadding:
         validPrimitive = (!id && validUnit(value, FLength | FNonNeg, m_strict));
         break;
-    case CSSPropertyWebkitWrap: {
-        const int properties[] = { CSSPropertyWebkitWrapFlow, CSSPropertyWebkitWrapMargin, CSSPropertyWebkitWrapPadding };
-        return parseShorthand(propId, properties, WTF_ARRAY_LENGTH(properties), important);
-    }
+    case CSSPropertyWebkitWrap:
+        return parseShorthand(propId, webkitWrapLonghand(), important);
     case CSSPropertyBorderBottomStyle:
     case CSSPropertyBorderCollapse:
     case CSSPropertyBorderLeftStyle:
@@ -2766,22 +2686,14 @@ void CSSParser::addAnimationValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> r
 
 bool CSSParser::parseAnimationShorthand(bool important)
 {
-    const int properties[] = {  CSSPropertyWebkitAnimationName,
-                                CSSPropertyWebkitAnimationDuration,
-                                CSSPropertyWebkitAnimationTimingFunction,
-                                CSSPropertyWebkitAnimationDelay,
-                                CSSPropertyWebkitAnimationIterationCount,
-                                CSSPropertyWebkitAnimationDirection,
-                                CSSPropertyWebkitAnimationFillMode };
-    const int numProperties = WTF_ARRAY_LENGTH(properties);
-
+    const unsigned numProperties = webkitAnimationLonghand().length();
     ShorthandScope scope(this, CSSPropertyWebkitAnimation);
 
-    bool parsedProperty[numProperties] = { false }; // compiler will repeat false as necessary
-    RefPtr<CSSValue> values[numProperties];
+    bool parsedProperty[] = { false, false, false, false, false, false, false };
+    RefPtr<CSSValue> values[7];
 
-    int i;
-    int initialParsedPropertyIndex = 0;
+    unsigned i;
+    unsigned initialParsedPropertyIndex = 0;
     while (m_valueList->current()) {
         CSSParserValue* val = m_valueList->current();
         if (val->unit == CSSParserValue::Operator && val->iValue == ',') {
@@ -2801,7 +2713,7 @@ bool CSSParser::parseAnimationShorthand(bool important)
         for (i = initialParsedPropertyIndex; !found && i < numProperties; ++i) {
             if (!parsedProperty[i]) {
                 RefPtr<CSSValue> val;
-                if (parseAnimationProperty(properties[i], val)) {
+                if (parseAnimationProperty(webkitAnimationLonghand().properties()[i], val)) {
                     parsedProperty[i] = found = true;
                     initialParsedPropertyIndex = 1;
                     addAnimationValue(values[i], val.release());
@@ -2823,25 +2735,21 @@ bool CSSParser::parseAnimationShorthand(bool important)
 
     // Now add all of the properties we found.
     for (i = 0; i < numProperties; i++)
-        addProperty(properties[i], values[i].release(), important);
+        addProperty(webkitAnimationLonghand().properties()[i], values[i].release(), important);
 
     return true;
 }
 
 bool CSSParser::parseTransitionShorthand(bool important)
 {
-    const int properties[] = { CSSPropertyWebkitTransitionProperty,
-                               CSSPropertyWebkitTransitionDuration,
-                               CSSPropertyWebkitTransitionTimingFunction,
-                               CSSPropertyWebkitTransitionDelay };
-    const int numProperties = WTF_ARRAY_LENGTH(properties);
+    const unsigned numProperties = webkitTransitionLonghand().length();
 
     ShorthandScope scope(this, CSSPropertyWebkitTransition);
 
-    bool parsedProperty[numProperties] = { false }; // compiler will repeat false as necessary
-    RefPtr<CSSValue> values[numProperties];
+    bool parsedProperty[] = { false, false, false, false };
+    RefPtr<CSSValue> values[4];
 
-    int i;
+    unsigned i;
     while (m_valueList->current()) {
         CSSParserValue* val = m_valueList->current();
         if (val->unit == CSSParserValue::Operator && val->iValue == ',') {
@@ -2860,7 +2768,7 @@ bool CSSParser::parseTransitionShorthand(bool important)
         for (i = 0; !found && i < numProperties; ++i) {
             if (!parsedProperty[i]) {
                 RefPtr<CSSValue> val;
-                if (parseAnimationProperty(properties[i], val)) {
+                if (parseAnimationProperty(webkitTransitionLonghand().properties()[i], val)) {
                     parsedProperty[i] = found = true;
                     addAnimationValue(values[i], val.release());
                 }
@@ -2881,12 +2789,12 @@ bool CSSParser::parseTransitionShorthand(bool important)
 
     // Now add all of the properties we found.
     for (i = 0; i < numProperties; i++)
-        addProperty(properties[i], values[i].release(), important);
+        addProperty(webkitTransitionLonghand().properties()[i], values[i].release(), important);
 
     return true;
 }
 
-bool CSSParser::parseShorthand(int propId, const int *properties, int numProperties, bool important)
+bool CSSParser::parseShorthand(int propId, const CSSPropertyLonghand& longhand, bool important)
 {
     // We try to match as many properties as possible
     // We set up an array of booleans to mark which property has been found,
@@ -2894,13 +2802,13 @@ bool CSSParser::parseShorthand(int propId, const int *properties, int numPropert
     ShorthandScope scope(this, propId);
 
     bool found = false;
-    int propertiesParsed = 0;
+    unsigned propertiesParsed = 0;
     bool fnd[6]= { false, false, false, false, false, false }; // 6 is enough size.
 
     while (m_valueList->current()) {
         found = false;
-        for (int propIndex = 0; !found && propIndex < numProperties; ++propIndex) {
-            if (!fnd[propIndex] && parseValue(properties[propIndex], important)) {
+        for (unsigned propIndex = 0; !found && propIndex < longhand.length(); ++propIndex) {
+            if (!fnd[propIndex] && parseValue(longhand.properties()[propIndex], important)) {
                     fnd[propIndex] = found = true;
                     propertiesParsed++;
             }
@@ -2912,14 +2820,14 @@ bool CSSParser::parseShorthand(int propId, const int *properties, int numPropert
             return false;
     }
 
-    if (propertiesParsed == numProperties)
+    if (propertiesParsed == longhand.length())
         return true;
 
     // Fill in any remaining properties with the initial value.
     ImplicitScope implicitScope(this, PropertyImplicit);
-    for (int i = 0; i < numProperties; ++i) {
+    for (unsigned i = 0; i < longhand.length(); ++i) {
         if (!fnd[i])
-            addProperty(properties[i], cssValuePool()->createImplicitInitialValue(), important);
+            addProperty(longhand.properties()[i], cssValuePool()->createImplicitInitialValue(), important);
     }
 
     return true;
