@@ -28,7 +28,7 @@
 #include "WebCompositorInputHandlerImpl.h"
 
 #include "PlatformGestureCurveTarget.h"
-#include "TouchFlingPlatformGestureCurve.h"
+#include "TouchpadFlingPlatformGestureCurve.h"
 #include "TraceEvent.h"
 #include "WebCompositorImpl.h"
 #include "WebCompositorInputHandlerClient.h"
@@ -259,7 +259,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     switch (scrollStatus) {
     case CCInputHandlerClient::ScrollStarted: {
         TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::started");
-        OwnPtr<PlatformGestureCurve> flingCurve = TouchFlingPlatformGestureCurve::create(FloatPoint(-gestureEvent.deltaX, -gestureEvent.deltaY));
+        OwnPtr<PlatformGestureCurve> flingCurve = TouchpadFlingPlatformGestureCurve::create(FloatPoint(-gestureEvent.deltaX, -gestureEvent.deltaY));
         m_wheelFlingAnimation = CCActiveGestureAnimation::create(PlatformGestureToCCGestureAdapter::create(flingCurve.release()), this);
         m_wheelFlingPoint = IntPoint(gestureEvent.x, gestureEvent.y);
         m_inputHandlerClient->scheduleAnimation();

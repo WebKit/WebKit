@@ -22,11 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TouchFlingPlatformGestureCurve_h
-#define TouchFlingPlatformGestureCurve_h
+#ifndef TouchpadFlingPlatformGestureCurve_h
+#define TouchpadFlingPlatformGestureCurve_h
 
 #include "FloatPoint.h"
 #include "PlatformGestureCurve.h"
+#include "UnitBezier.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -38,19 +39,21 @@ class PlatformGestureCurveTarget;
 // fling scroll. Starts with a flat velocity profile based on 'velocity', which
 // tails off to zero. Time is scaled to that duration of the fling is proportional
 // the initial velocity.
-class TouchFlingPlatformGestureCurve : public PlatformGestureCurve {
+class TouchpadFlingPlatformGestureCurve : public PlatformGestureCurve {
 public:
     static PassOwnPtr<PlatformGestureCurve> create(const FloatPoint& velocity);
-    virtual ~TouchFlingPlatformGestureCurve();
+    static PassOwnPtr<PlatformGestureCurve> create(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2);
+    virtual ~TouchpadFlingPlatformGestureCurve();
 
     virtual bool apply(double monotonicTime, PlatformGestureCurveTarget*);
 
 private:
-    explicit TouchFlingPlatformGestureCurve(const FloatPoint& velocity);
+    explicit TouchpadFlingPlatformGestureCurve(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2);
 
     FloatPoint m_velocity;
     float m_timeScaleFactor;
     IntPoint m_cumulativeScroll;
+    UnitBezier m_flingBezier;
 };
 
 } // namespace WebCore

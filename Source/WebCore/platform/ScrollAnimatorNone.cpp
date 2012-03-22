@@ -41,7 +41,7 @@
 #include "PlatformGestureEvent.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
-#include "TouchFlingPlatformGestureCurve.h"
+#include "TouchpadFlingPlatformGestureCurve.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 #include <wtf/PassOwnPtr.h>
@@ -396,7 +396,7 @@ void ScrollAnimatorNone::fireUpAnAnimation(FloatPoint fp)
 {
     if (m_gestureAnimation)
         m_gestureAnimation.clear();
-    m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::create(fp), this);
+    m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchpadFlingPlatformGestureCurve::create(fp), this);
     startNextTimer();
 }
 

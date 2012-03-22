@@ -110,7 +110,7 @@
 #include "SpeechRecognitionClient.h"
 #include "TextIterator.h"
 #include "Timer.h"
-#include "TouchFlingPlatformGestureCurve.h"
+#include "TouchpadFlingPlatformGestureCurve.h"
 #include "TraceEvent.h"
 #include "TypingCommand.h"
 #include "UserGestureIndicator.h"
@@ -634,7 +634,7 @@ bool WebViewImpl::gestureEvent(const WebGestureEvent& event)
         m_lastWheelGlobalPosition = WebPoint(event.globalX, event.globalY);
         m_flingModifier = event.modifiers;
         // FIXME: Make the curve parametrizable from the browser.
-        m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::create(FloatPoint(event.deltaX, event.deltaY)), this);
+        m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchpadFlingPlatformGestureCurve::create(FloatPoint(event.deltaX, event.deltaY)), this);
         scheduleAnimation();
         return true;
     }

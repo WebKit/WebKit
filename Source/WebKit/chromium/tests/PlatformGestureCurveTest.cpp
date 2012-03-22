@@ -29,7 +29,7 @@
 
 #include "ActivePlatformGestureAnimation.h"
 #include "PlatformGestureCurveTarget.h"
-#include "TouchFlingPlatformGestureCurve.h"
+#include "TouchpadFlingPlatformGestureCurve.h"
 #include "WheelFlingPlatformGestureCurve.h"
 #include "cc/CCActiveGestureAnimation.h"
 #include "cc/CCGestureCurve.h"
@@ -100,9 +100,9 @@ TEST(PlatformGestureCurve, flingCurve)
 TEST(PlatformGestureCurve, flingCurveTouch)
 {
     double initialVelocity = 1000;
-    const double touchFlingCurveAreaFactor = 1; // Depends on parameterization in TouchFlingPlatformGestureCurve.
+    const double touchFlingCurveAreaFactor = 1; // Depends on parameterization in TouchpadFlingPlatformGestureCurve.
     MockPlatformGestureCurveTarget target;
-    OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::create(FloatPoint(initialVelocity, 0)), &target);
+    OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(TouchpadFlingPlatformGestureCurve::create(FloatPoint(initialVelocity, 0)), &target);
 
     // Note: the expectations below are dependent on the value of sigma hard-coded in the Rayleigh
     //       curve. If sigma changes, these test expectations will also change.

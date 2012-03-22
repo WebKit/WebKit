@@ -24,47 +24,50 @@
 
 #include "config.h"
 
-#include "TouchFlingPlatformGestureCurve.h"
+#include "TouchpadFlingPlatformGestureCurve.h"
 
 #include "PlatformGestureCurveTarget.h"
-#include "UnitBezier.h"
 #include <math.h>
 
 namespace WebCore {
 
 using namespace std;
 
-PassOwnPtr<PlatformGestureCurve> TouchFlingPlatformGestureCurve::create(const FloatPoint& velocity)
+PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity)
 {
-    return adoptPtr(new TouchFlingPlatformGestureCurve(velocity));
+    return create(velocity, 3, FloatPoint(0.3333, 0.6666), FloatPoint(0.6666, 1));
 }
 
-TouchFlingPlatformGestureCurve::TouchFlingPlatformGestureCurve(const FloatPoint& velocity)
+PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2)
+{
+    return adoptPtr(new TouchpadFlingPlatformGestureCurve(velocity, unitTimeScaleLog10, bezierP1, bezierP2));
+}
+
+TouchpadFlingPlatformGestureCurve::TouchpadFlingPlatformGestureCurve(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2)
     : m_velocity(velocity)
-    , m_timeScaleFactor(3 / log10(max(10.f, max(fabs(velocity.x()), fabs(velocity.y())))))
+    , m_timeScaleFactor(unitTimeScaleLog10 / log10(max(10.f, max(fabs(velocity.x()), fabs(velocity.y())))))
+    , m_flingBezier(bezierP1.x(), bezierP1.y(), bezierP2.x(), bezierP2.y())
 {
     ASSERT(velocity != FloatPoint::zero());
 }
 
-TouchFlingPlatformGestureCurve::~TouchFlingPlatformGestureCurve()
+TouchpadFlingPlatformGestureCurve::~TouchpadFlingPlatformGestureCurve()
 {
 }
 
-bool TouchFlingPlatformGestureCurve::apply(double time, PlatformGestureCurveTarget* target)
+bool TouchpadFlingPlatformGestureCurve::apply(double time, PlatformGestureCurveTarget* target)
 {
     // Use 2-D Bezier curve with a "stretched-italic-s" curve.
     // We scale time logarithmically as this (subjectively) feels better.
     time *= m_timeScaleFactor;
-
-    static UnitBezier flingBezier(0.3333, 0.6666, 0.6666, 1);
 
     float displacement;
     if (time < 0)
         displacement = 0;
     else if (time < 1) {
         // Below, s is the curve parameter for the 2-D Bezier curve (time(s), displacement(s)).
-        double s = flingBezier.solveCurveX(time, 1.e-3);
-        displacement = flingBezier.sampleCurveY(s);
+        double s = m_flingBezier.solveCurveX(time, 1.e-3);
+        displacement = m_flingBezier.sampleCurveY(s);
     } else
         displacement = 1;
 
