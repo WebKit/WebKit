@@ -40,6 +40,10 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int8array.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-uint8clampedarray.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int16array.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/security/xss-DENIED-iframe-src-alias.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : css3/flexbox/multiline-pack.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/dfg-float32array.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/misc/dns-prefetch-control.html = PASS
 // BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
 // See BUGCR104797
 
@@ -4242,3 +4246,4 @@ BUGWK81815 SNOWLEOPARD DEBUG : fast/writing-mode/japanese-ruby-vertical-lr.html 
 BUGWK81816 SNOWLEOPARD DEBUG : fast/dom/DOMImplementation/createDocumentType-err.html = PASS TIMEOUT
 BUGWK81857 SNOWLEOPARD DEBUG : fast/frames/valid.html = PASS TIMEOUT
 BUGWK81857 SNOWLEOPARD DEBUG : fast/frames/calculate-order.html = PASS TIMEOUT
+BUGWK81931 SNOWLEOPARD DEBUG : fast/images/destroyed-image-load-event.html = PASS TIMEOUT
