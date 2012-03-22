@@ -1,3 +1,20 @@
+2012-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Allow to run any jhbuild command with jhbuild-wrapper script
+        https://bugs.webkit.org/show_bug.cgi?id=81888
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/update-webkit-libs-jhbuild:
+        (runJhbuild): Helper function to run jhbuild with a given command.
+        Instead of running jhbuild directly, use the jhbuild-wrapper, so
+        that we don't need to run it first to check whether jhbuild is
+        installed or not.
+        * efl/run-with-jhbuild: Call jhbuild-wrapper with run command.
+        * gtk/run-with-jhbuild: Ditto.
+        * jhbuild/jhbuild-wrapper: Allow to execute any jhbuild command,
+        not only run.
+
 2012-03-22  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, test-webkitpy fix after r111661.

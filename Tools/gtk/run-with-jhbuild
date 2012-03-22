@@ -22,6 +22,6 @@ import subprocess
 import sys
 
 jhbuild_wrapper = common.top_level_path('Tools', 'jhbuild', 'jhbuild-wrapper')
-process = subprocess.Popen([jhbuild_wrapper, '--gtk'] + sys.argv[1:])
+process = subprocess.Popen([jhbuild_wrapper, '--gtk', 'run'] + sys.argv[1:])
 process.wait()
 sys.exit(process.returncode)
