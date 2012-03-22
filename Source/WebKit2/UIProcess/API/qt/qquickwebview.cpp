@@ -399,14 +399,14 @@ void QQuickWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef,
 
 }
 
-quint64 QQuickWebViewPrivate::exceededDatabaseQuota(const QString& databaseName, const QString& displayName, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage)
+quint64 QQuickWebViewPrivate::exceededDatabaseQuota(const QString& databaseName, const QString& displayName, WKSecurityOriginRef securityOrigin, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage)
 {
     if (!databaseQuotaDialog)
         return 0;
 
     Q_Q(QQuickWebView);
     QtDialogRunner dialogRunner;
-    if (!dialogRunner.initForDatabaseQuotaDialog(databaseQuotaDialog, q, databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage))
+    if (!dialogRunner.initForDatabaseQuotaDialog(databaseQuotaDialog, q, databaseName, displayName, securityOrigin, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage))
         return 0;
 
     execDialogRunner(dialogRunner);

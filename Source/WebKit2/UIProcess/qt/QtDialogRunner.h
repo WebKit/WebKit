@@ -21,6 +21,7 @@
 #ifndef QtDialogRunner_h
 #define QtDialogRunner_h
 
+#include "WKSecurityOrigin.h"
 #include <QtCore/QEventLoop>
 #include <QtCore/QStringList>
 #include <wtf/OwnPtr.h>
@@ -43,7 +44,7 @@ public:
     bool initForCertificateVerification(QDeclarativeComponent*, QQuickItem*, const QString& hostname);
     bool initForProxyAuthentication(QDeclarativeComponent*, QQuickItem*, const QString& hostname, uint16_t port, const QString& prefilledUsername);
     bool initForFilePicker(QDeclarativeComponent*, QQuickItem*, const QStringList& selectedFiles);
-    bool initForDatabaseQuotaDialog(QDeclarativeComponent*, QQuickItem*, const QString& databaseName, const QString& displayName, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage);
+    bool initForDatabaseQuotaDialog(QDeclarativeComponent*, QQuickItem*, const QString& databaseName, const QString& displayName, WKSecurityOriginRef, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage);
 
     QQuickItem* dialog() const { return m_dialog.get(); }
 

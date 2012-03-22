@@ -20,6 +20,9 @@
 
 #include "config.h"
 #include "QtDialogRunner.h"
+#include "WKRetainPtr.h"
+#include "WKStringQt.h"
+#include "qwebpermissionrequest_p.h"
 
 #include <QtDeclarative/QDeclarativeComponent>
 #include <QtDeclarative/QDeclarativeContext>
@@ -190,9 +193,10 @@ class DatabaseQuotaDialogContextObject : public QObject {
     Q_PROPERTY(quint64 currentOriginUsage READ currentOriginUsage CONSTANT)
     Q_PROPERTY(quint64 currentDatabaseUsage READ currentDatabaseUsage CONSTANT)
     Q_PROPERTY(quint64 expectedUsage READ expectedUsage CONSTANT)
+    Q_PROPERTY(QtWebSecurityOrigin* origin READ securityOrigin CONSTANT)
 
 public:
-    DatabaseQuotaDialogContextObject(const QString& databaseName, const QString& displayName, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage)
+    DatabaseQuotaDialogContextObject(const QString& databaseName, const QString& displayName, WKSecurityOriginRef securityOrigin, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage)
         : QObject()
         , m_databaseName(databaseName)
         , m_displayName(displayName)
@@ -201,6 +205,12 @@ public:
         , m_currentDatabaseUsage(currentDatabaseUsage)
         , m_expectedUsage(expectedUsage)
     {
+        WKRetainPtr<WKStringRef> scheme = adoptWK(WKSecurityOriginCopyProtocol(securityOrigin));
+        WKRetainPtr<WKStringRef> host = adoptWK(WKSecurityOriginCopyHost(securityOrigin));
+
+        m_securityOrigin.setScheme(WKStringCopyQString(scheme.get()));
+        m_securityOrigin.setHost(WKStringCopyQString(host.get()));
+        m_securityOrigin.setPort(static_cast<int>(WKSecurityOriginGetPort(securityOrigin)));
     }
 
     QString databaseName() const { return m_databaseName; }
@@ -209,6 +219,7 @@ public:
     quint64 currentOriginUsage() const { return m_currentOriginUsage; }
     quint64 currentDatabaseUsage() const { return m_currentDatabaseUsage; }
     quint64 expectedUsage() const { return m_expectedUsage; }
+    QtWebSecurityOrigin* securityOrigin() { return &m_securityOrigin; }
 
 public slots:
     void accept(quint64 size) { emit accepted(size); }
@@ -225,6 +236,7 @@ private:
     quint64 m_currentOriginUsage;
     quint64 m_currentDatabaseUsage;
     quint64 m_expectedUsage;
+    QtWebSecurityOrigin m_securityOrigin;
 };
 
 bool QtDialogRunner::initForAlert(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& message)
@@ -313,9 +325,9 @@ bool QtDialogRunner::initForFilePicker(QDeclarativeComponent* component, QQuickI
     return true;
 }
 
-bool QtDialogRunner::initForDatabaseQuotaDialog(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& databaseName, const QString& displayName, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage)
+bool QtDialogRunner::initForDatabaseQuotaDialog(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& databaseName, const QString& displayName, WKSecurityOriginRef securityOrigin, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage)
 {
-    DatabaseQuotaDialogContextObject* contextObject = new DatabaseQuotaDialogContextObject(databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
+    DatabaseQuotaDialogContextObject* contextObject = new DatabaseQuotaDialogContextObject(databaseName, displayName, securityOrigin, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
     if (!createDialog(component, dialogParent, contextObject))
         return false;
 

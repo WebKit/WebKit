@@ -96,7 +96,7 @@ public:
     void _q_onIconChangedForPageURL(const QUrl& pageURL, const QUrl& iconURLString);
 
     void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, QtWebPageUIClient::FileChooserType);
-    quint64 exceededDatabaseQuota(const QString& databaseName, const QString& displayName, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage);
+    quint64 exceededDatabaseQuota(const QString& databaseName, const QString& displayName, WKSecurityOriginRef securityOrigin, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage);
     void runJavaScriptAlert(const QString&);
     bool runJavaScriptConfirm(const QString&);
     QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);

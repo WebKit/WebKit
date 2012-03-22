@@ -1,3 +1,25 @@
+2012-03-22  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt][WK2] Pass Origin information to the DatabaseQuotaDialogContextObject
+        https://bugs.webkit.org/show_bug.cgi?id=81910
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::exceededDatabaseQuota):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/qt/QtDialogRunner.cpp:
+        (DatabaseQuotaDialogContextObject):
+        (DatabaseQuotaDialogContextObject::DatabaseQuotaDialogContextObject):
+        (DatabaseQuotaDialogContextObject::securityOrigin):
+        (QtDialogRunner::initForDatabaseQuotaDialog):
+        * UIProcess/qt/QtDialogRunner.h:
+        (QtDialogRunner):
+        * UIProcess/qt/QtWebPageUIClient.cpp:
+        (QtWebPageUIClient::exceededDatabaseQuota):
+        * UIProcess/qt/QtWebPageUIClient.h:
+
 2012-03-22  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Don't resume the suspended page if the user is continuously flicking.

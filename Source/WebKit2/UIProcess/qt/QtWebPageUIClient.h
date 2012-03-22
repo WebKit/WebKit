@@ -41,7 +41,7 @@ public:
     QtWebPageUIClient(WKPageRef, QQuickWebView*);
 
 private:
-    quint64 exceededDatabaseQuota(const QString& databaseName, const QString& displayName, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage);
+    quint64 exceededDatabaseQuota(const QString& databaseName, const QString& displayName, WKSecurityOriginRef, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage);
     void runJavaScriptAlert(const QString& message);
     bool runJavaScriptConfirm(const QString& message);
     QString runJavaScriptPrompt(const QString& message, const QString& defaultValue, bool& ok);
