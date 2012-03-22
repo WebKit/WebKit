@@ -73,9 +73,9 @@ WebInspector.ResourceScriptMapping.prototype = {
     {
         var result = [];
         for (var i = 0; i < this._rawSourceCodes.length; ++i) {
-            var uiSourceCodeList = this._rawSourceCodes[i].uiSourceCodeList();
-            for (var j = 0; j < uiSourceCodeList.length; ++j)
-                result.push(uiSourceCodeList[j]);
+            var uiSourceCode = this._rawSourceCodes[i].uiSourceCode();
+            if (uiSourceCode)
+                result.push(uiSourceCode);
         }
         return result;
     },
@@ -107,36 +107,38 @@ WebInspector.ResourceScriptMapping.prototype = {
         if (isInlineScript)
             this._rawSourceCodeForDocumentURL[script.sourceURL] = rawSourceCode;
 
-        if (rawSourceCode.uiSourceCodeList().length)
-            this._uiSourceCodeListChanged(rawSourceCode, [], rawSourceCode.uiSourceCodeList());
-        rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
+        if (rawSourceCode.uiSourceCode())
+            this._uiSourceCodeChanged(rawSourceCode, null, rawSourceCode.uiSourceCode());
+        rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeChanged, this._handleUISourceCodeChanged, this);
     },
 
     /**
      * @param {WebInspector.Event} event
      */
-    _handleUISourceCodeListChanged: function(event)
+    _handleUISourceCodeChanged: function(event)
     {
         var rawSourceCode = /** @type {WebInspector.RawSourceCode} */ event.target;
-        var oldUISourceCodeList = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["oldUISourceCodeList"];
-        this._uiSourceCodeListChanged(rawSourceCode, oldUISourceCodeList, rawSourceCode.uiSourceCodeList());
+        var oldUISourceCode = /** @type {WebInspector.UISourceCode} */ event.data.oldUISourceCode;
+        this._uiSourceCodeChanged(rawSourceCode, oldUISourceCode, rawSourceCode.uiSourceCode());
     },
 
     /**
      * @param {WebInspector.RawSourceCode} rawSourceCode
-     * @param {Array.<WebInspector.UISourceCode>} removedItems
-     * @param {Array.<WebInspector.UISourceCode>} addedItems
+     * @param {WebInspector.UISourceCode} removedItem
+     * @param {WebInspector.UISourceCode} addedItem
      */
-    _uiSourceCodeListChanged: function(rawSourceCode, removedItems, addedItems)
+    _uiSourceCodeChanged: function(rawSourceCode, removedItem, addedItem)
     {
-        for (var i = 0; i < removedItems.length; ++i)
-            this._rawSourceCodeForUISourceCode.remove(removedItems[i]);
-        for (var i = 0; i < addedItems.length; ++i)
-            this._rawSourceCodeForUISourceCode.put(addedItems[i], rawSourceCode);
+        if (removedItem)
+            this._rawSourceCodeForUISourceCode.remove(removedItem);
+        if (addedItem)
+            this._rawSourceCodeForUISourceCode.put(addedItem, rawSourceCode);
 
         var scriptIds = [];
         for (var i = 0; i < rawSourceCode._scripts.length; ++i)
             scriptIds.push(rawSourceCode._scripts[i].scriptId);
+        var removedItems = removedItem ? [removedItem] : [];
+        var addedItems = addedItem ? [addedItem] : [];
         var data = { removedItems: removedItems, addedItems: addedItems, scriptIds: scriptIds };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
     },
@@ -177,7 +179,7 @@ WebInspector.ResourceScriptMapping.prototype = {
     {
         for (var i = 0; i < this._rawSourceCodes.length; ++i) {
             var rawSourceCode = this._rawSourceCodes[i];
-            this._uiSourceCodeListChanged(rawSourceCode, rawSourceCode.uiSourceCodeList(), []);
+            this._uiSourceCodeChanged(rawSourceCode, rawSourceCode.uiSourceCode(), null);
             rawSourceCode.removeAllListeners();
         }
         this._rawSourceCodes = [];
