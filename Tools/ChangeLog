@@ -1,3 +1,32 @@
+2012-03-22  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: crash while stopping layout test helper on apple mac lion
+        https://bugs.webkit.org/show_bug.cgi?id=81949
+
+        Reviewed by Eric Seidel.
+
+        stop_helper() didn't work right if the helper process wasn't
+        still running or didn't respond properly to being shut down. Fix
+        this and add some tests. Also add code to MockExecutive() to be
+        able to mock executive.popen() properly.
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockProcess.__init__):
+        (MockProcess.wait):
+        (MockExecutive.__init__):
+        (MockExecutive.popen):
+        * Scripts/webkitpy/common/system/systemhost_mock.py:
+        (MockSystemHost.__init__):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.start_helper):
+        (MacPort.stop_helper):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (test_get_crash_log):
+        (test_helper_starts):
+        (test_helper_fails_to_start):
+        (test_helper_fails_to_stop):
+        (test_helper_fails_to_stop.bad_waiter):
+
 2012-03-22  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Add make to the jhbuild moduleset

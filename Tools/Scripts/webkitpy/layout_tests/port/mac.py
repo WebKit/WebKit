@@ -186,7 +186,7 @@ class MacPort(ApplePort):
         if helper_path:
             _log.debug("Starting layout helper %s" % helper_path)
             # Note: Not thread safe: http://bugs.python.org/issue2320
-            self._helper = subprocess.Popen([helper_path],
+            self._helper = self._executive.popen([helper_path],
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=None)
             is_ready = self._helper.stdout.readline()
             if not is_ready.startswith('ready'):
@@ -195,6 +195,11 @@ class MacPort(ApplePort):
     def stop_helper(self):
         if self._helper:
             _log.debug("Stopping LayoutTestHelper")
-            self._helper.stdin.write("x\n")
-            self._helper.stdin.close()
-            self._helper.wait()
+            try:
+                self._helper.stdin.write("x\n")
+                self._helper.stdin.close()
+                self._helper.wait()
+            except IOError, e:
+                _log.debug("IOError raised while stopping helper: %s" % str(e))
+                pass
+            self._helper = None

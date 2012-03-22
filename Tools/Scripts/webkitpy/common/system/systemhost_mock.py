@@ -35,8 +35,8 @@ from webkitpy.common.system.workspace_mock import MockWorkspace
 
 
 class MockSystemHost(object):
-    def __init__(self, log_executive=False, executive_throws_when_run=None, os_name=None, os_version=None):
-        self.executive = MockExecutive(should_log=log_executive, should_throw_when_run=executive_throws_when_run)
+    def __init__(self, log_executive=False, executive_throws_when_run=None, os_name=None, os_version=None, executive=None):
+        self.executive = executive or MockExecutive(should_log=log_executive, should_throw_when_run=executive_throws_when_run)
         self.filesystem = MockFileSystem()
         self.user = MockUser()
         self.platform = MockPlatformInfo()

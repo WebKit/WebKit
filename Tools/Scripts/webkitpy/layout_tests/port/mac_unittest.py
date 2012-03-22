@@ -31,7 +31,7 @@ from webkitpy.layout_tests.port import port_testcase
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.executive_mock import MockExecutive, MockProcess
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 
@@ -192,3 +192,31 @@ java/
     def test_get_crash_log(self):
         # Mac crash logs are tested elsewhere
         pass
+
+    def test_helper_starts(self):
+        host = MockSystemHost(MockExecutive())
+        port = self.make_port(host)
+        host.executive._proc = MockProcess('ready\n')
+        port.start_helper()
+        port.stop_helper()
+
+        # make sure trying to stop the helper twice is safe.
+        port.stop_helper()
+
+    def test_helper_fails_to_start(self):
+        host = MockSystemHost(MockExecutive())
+        port = self.make_port(host)
+        port.start_helper()
+        port.stop_helper()
+
+    def test_helper_fails_to_stop(self):
+        host = MockSystemHost(MockExecutive())
+        host.executive._proc = MockProcess()
+
+        def bad_waiter():
+            raise IOError('failed to wait')
+        host.executive._proc.wait = bad_waiter
+
+        port = self.make_port(host)
+        port.start_helper()
+        port.stop_helper()
