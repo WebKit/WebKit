@@ -1721,6 +1721,8 @@ END
         push(@implContent, "    ExceptionCode ec = 0;\n");
     }
 
+    # FIXME: Currently [Constructor(...)] does not yet support [Optional] arguments.
+    # It just supports [Optional=DefaultIsUndefined] or [Optional=DefaultIsNullString].
     my ($parameterCheckString, $paramIndex, %replacements) = GenerateParametersCheck($function, $implClassName);
     push(@implContent, $parameterCheckString);
 

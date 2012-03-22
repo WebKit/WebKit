@@ -3581,9 +3581,9 @@ END
                 push(@$outputArray, "    ExceptionCode ec = 0;\n");
             }
 
-            # For now, we do not support SVG constructors.
-            # We do not also support a constructor [Optional] argument without CallWithDefaultValue
-            # nor CallWithNullValue.
+            # FIXME: For now, we do not support SVG constructors.
+            # FIXME: Currently [Constructor(...)] does not yet support [Optional] arguments.
+            # It just supports [Optional=DefaultIsUndefined] or [Optional=DefaultIsNullString].
             my $numParameters = @{$function->parameters};
             my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $dataNode, $numParameters, $interfaceName, "constructorCallback", undef, undef, undef);
 

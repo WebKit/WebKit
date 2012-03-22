@@ -32,11 +32,6 @@
 #include <runtime/Error.h>
 #include <wtf/GetPtr.h>
 
-#if ENABLE(Condition1) || ENABLE(Condition2)
-#include ".h"
-#include "JS.h"
-#endif
-
 using namespace JSC;
 
 namespace WebCore {
@@ -99,14 +94,6 @@ EncodedJSValue JSC_HOST_CALL JSTestSerializedScriptValueInterfaceConstructor::co
     RefPtr<SerializedScriptValue> data(SerializedScriptValue::create(exec, MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
-    size_t argsCount = exec->argumentCount();
-    if (argsCount <= 2) {
-
-        JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->constructorCallback(hello, data)));
-        return JSValue::encode(result);
-    }
-
     Array* transferList(toArray(MAYBE_MISSING_PARAMETER(exec, 2, DefaultIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
