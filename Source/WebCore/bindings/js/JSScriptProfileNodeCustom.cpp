@@ -26,13 +26,13 @@
 
 #include "config.h"
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+
 #include "JSScriptProfileNode.h"
 
 using namespace JSC;
 
 namespace WebCore {
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 JSValue JSScriptProfileNode::callUID(ExecState*) const
 {
@@ -40,6 +40,6 @@ JSValue JSScriptProfileNode::callUID(ExecState*) const
     return result;
 }
 
-#endif
-
 } // namespace WebCore
+
+#endif
