@@ -265,7 +265,6 @@ fast/events/drag-link.html
 editing/execCommand/copy-without-selection.html
 editing/pasteboard/copy-two-pasteboard-types-both-work.html
 editing/pasteboard/pasting-empty-html-falls-back-to-text.html
-fast/events/suspend-timers.html
 fast/forms/interactive-validation-attach-assertion.html
 fast/forms/range/slider-delete-while-dragging-thumb.html
 fast/frames/flattening/frameset-flattening-advanced.html
@@ -279,6 +278,16 @@ http/tests/security/credentials-in-referer.html
 http/tests/workers/terminate-during-sync-operation.html
 storage/hash-change-with-xhr.html
 svg/W3C-SVG-1.1/fonts-elem-04-b.svg
+
+# All additional tests that failed on the Lion WebKit2 Debug bot in r111739
+fast/forms/validation-message-in-relative-body.html
+http/tests/appcache/cyrillic-uri.html
+http/tests/appcache/interrupted-update.html
+http/tests/cookies/simple-cookies-expired.html
+http/tests/inspector/inspect-element.html
+inspector/elements/edit-dom-actions.html
+storage/open-database-creation-callback-isolated-world.html
+storage/statement-error-callback-isolated-world.html
 
 ### END OF (3) Unclassified failures
 ########################################
