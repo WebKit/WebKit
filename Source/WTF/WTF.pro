@@ -10,7 +10,7 @@ include(WTF.pri)
 
 CONFIG += staticlib
 
-VPATH += $$PWD/../JavaScriptCore/wtf
+VPATH += $$PWD/wtf
 
 HEADERS += \
     Alignment.h \
@@ -102,7 +102,7 @@ HEADERS += \
     PassOwnPtr.h \
     PassRefPtr.h \
     PassTraits.h \
-    ../../WTF/wtf/Platform.h \
+    Platform.h \
     PossiblyNull.h \
     qt/UtilsQt.h \
     RandomNumber.h \

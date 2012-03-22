@@ -1,3 +1,3275 @@
+2012-03-22  Eric Seidel  <eric@webkit.org>
+
+        Actually move WTF files to their new home
+        https://bugs.webkit.org/show_bug.cgi?id=81844
+
+        Unreviewed.  The 5MB file move is not very reviewable,
+        but various port representatives have OK'd changes to the
+        individual build systems.
+
+        * Configurations/WTF.xcconfig:
+        * GNUmakefile.list.am:
+        * Stub.cpp: Removed.
+        * Stub.h: Removed.
+        * WTF.gypi:
+        * WTF.pri:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.vcproj/copy-files.cmd:
+        * WTF.xcodeproj/project.pbxproj:
+        * config.h:
+        * wtf/ASCIICType.h: Renamed from Source/JavaScriptCore/wtf/ASCIICType.h.
+        (WTF):
+        (WTF::isASCII):
+        (WTF::isASCIIAlpha):
+        (WTF::isASCIIDigit):
+        (WTF::isASCIIAlphanumeric):
+        (WTF::isASCIIHexDigit):
+        (WTF::isASCIILower):
+        (WTF::isASCIIOctalDigit):
+        (WTF::isASCIIPrintable):
+        (WTF::isASCIISpace):
+        (WTF::isASCIIUpper):
+        (WTF::toASCIILower):
+        (WTF::toASCIILowerUnchecked):
+        (WTF::toASCIIUpper):
+        (WTF::toASCIIHexValue):
+        (WTF::lowerNibbleToASCIIHexDigit):
+        (WTF::upperNibbleToASCIIHexDigit):
+        (WTF::isASCIIAlphaCaselessEqual):
+        * wtf/AVLTree.h: Renamed from Source/JavaScriptCore/wtf/AVLTree.h.
+        (WTF):
+        (AVLTreeDefaultBSet):
+        (WTF::AVLTreeDefaultBSet::operator[]):
+        (WTF::AVLTreeDefaultBSet::set):
+        (WTF::AVLTreeDefaultBSet::reset):
+        (AVLTree):
+        (WTF::AVLTree::abstractor):
+        (WTF::AVLTree::purge):
+        (WTF::AVLTree::is_empty):
+        (WTF::AVLTree::AVLTree):
+        (Iterator):
+        (WTF::AVLTree::Iterator::Iterator):
+        (WTF::AVLTree::Iterator::start_iter):
+        (WTF::AVLTree::Iterator::start_iter_least):
+        (WTF::AVLTree::Iterator::start_iter_greatest):
+        (WTF::AVLTree::Iterator::operator*):
+        (WTF::AVLTree::Iterator::operator++):
+        (WTF::AVLTree::Iterator::operator--):
+        (WTF::AVLTree::Iterator::cmp_k_n):
+        (WTF::AVLTree::Iterator::cmp_n_n):
+        (WTF::AVLTree::Iterator::get_lt):
+        (WTF::AVLTree::Iterator::get_gt):
+        (WTF::AVLTree::Iterator::null):
+        (WTF::AVLTree::build):
+        (abs_plus_root):
+        (WTF::AVLTree::get_lt):
+        (WTF::AVLTree::set_lt):
+        (WTF::AVLTree::get_gt):
+        (WTF::AVLTree::set_gt):
+        (WTF::AVLTree::get_bf):
+        (WTF::AVLTree::set_bf):
+        (WTF::AVLTree::cmp_k_n):
+        (WTF::AVLTree::cmp_n_n):
+        (WTF::AVLTree::null):
+        (WTF::AVLTree::balance):
+        (WTF::::insert):
+        (WTF::::search):
+        (WTF::::search_least):
+        (WTF::::search_greatest):
+        (WTF::::remove):
+        (WTF::::subst):
+        * wtf/Alignment.h: Renamed from Source/JavaScriptCore/wtf/Alignment.h.
+        (WTF):
+        (WTF::swap):
+        * wtf/AlwaysInline.h: Renamed from Source/JavaScriptCore/wtf/AlwaysInline.h.
+        * wtf/ArrayBuffer.cpp: Renamed from Source/JavaScriptCore/wtf/ArrayBuffer.cpp.
+        (WTF):
+        (WTF::ArrayBuffer::transfer):
+        (WTF::ArrayBuffer::addView):
+        (WTF::ArrayBuffer::removeView):
+        * wtf/ArrayBuffer.h: Renamed from Source/JavaScriptCore/wtf/ArrayBuffer.h.
+        (WTF):
+        (ArrayBufferContents):
+        (WTF::ArrayBufferContents::ArrayBufferContents):
+        (WTF::ArrayBufferContents::data):
+        (WTF::ArrayBufferContents::sizeInBytes):
+        (WTF::ArrayBufferContents::transfer):
+        (ArrayBuffer):
+        (WTF::ArrayBuffer::isNeutered):
+        (WTF::ArrayBuffer::~ArrayBuffer):
+        (WTF::ArrayBuffer::clampValue):
+        (WTF::ArrayBuffer::create):
+        (WTF::ArrayBuffer::ArrayBuffer):
+        (WTF::ArrayBuffer::data):
+        (WTF::ArrayBuffer::byteLength):
+        (WTF::ArrayBuffer::slice):
+        (WTF::ArrayBuffer::sliceImpl):
+        (WTF::ArrayBuffer::clampIndex):
+        (WTF::ArrayBufferContents::tryAllocate):
+        (WTF::ArrayBufferContents::~ArrayBufferContents):
+        * wtf/ArrayBufferView.cpp: Renamed from Source/JavaScriptCore/wtf/ArrayBufferView.cpp.
+        (WTF):
+        (WTF::ArrayBufferView::ArrayBufferView):
+        (WTF::ArrayBufferView::~ArrayBufferView):
+        (WTF::ArrayBufferView::neuter):
+        * wtf/ArrayBufferView.h: Renamed from Source/JavaScriptCore/wtf/ArrayBufferView.h.
+        (WTF):
+        (WTF::ArrayBufferView::setImpl):
+        (WTF::ArrayBufferView::setRangeImpl):
+        (WTF::ArrayBufferView::zeroRangeImpl):
+        (WTF::ArrayBufferView::calculateOffsetAndLength):
+        * wtf/Assertions.cpp: Renamed from Source/JavaScriptCore/wtf/Assertions.cpp.
+        * wtf/Assertions.h: Renamed from Source/JavaScriptCore/wtf/Assertions.h.
+        (assertUnused):
+        (assertWithMessageUnused):
+        * wtf/Atomics.h: Renamed from Source/JavaScriptCore/wtf/Atomics.h.
+        (WTF):
+        (WTF::atomicIncrement):
+        (WTF::atomicDecrement):
+        (WTF::weakCompareAndSwap):
+        (WTF::weakCompareAndSwapUIntPtr):
+        * wtf/BitVector.cpp: Renamed from Source/JavaScriptCore/wtf/BitVector.cpp.
+        (WTF):
+        (WTF::BitVector::setSlow):
+        (WTF::BitVector::resize):
+        (WTF::BitVector::clearAll):
+        (WTF::BitVector::OutOfLineBits::create):
+        (WTF::BitVector::OutOfLineBits::destroy):
+        (WTF::BitVector::resizeOutOfLine):
+        (WTF::BitVector::dump):
+        * wtf/BitVector.h: Renamed from Source/JavaScriptCore/wtf/BitVector.h.
+        (WTF):
+        (BitVector):
+        (WTF::BitVector::BitVector):
+        (WTF::BitVector::~BitVector):
+        (WTF::BitVector::operator=):
+        (WTF::BitVector::size):
+        (WTF::BitVector::ensureSize):
+        (WTF::BitVector::quickGet):
+        (WTF::BitVector::quickSet):
+        (WTF::BitVector::quickClear):
+        (WTF::BitVector::get):
+        (WTF::BitVector::set):
+        (WTF::BitVector::clear):
+        (WTF::BitVector::bitsInPointer):
+        (WTF::BitVector::maxInlineBits):
+        (WTF::BitVector::byteCount):
+        (WTF::BitVector::makeInlineBits):
+        (OutOfLineBits):
+        (WTF::BitVector::OutOfLineBits::numBits):
+        (WTF::BitVector::OutOfLineBits::numWords):
+        (WTF::BitVector::OutOfLineBits::bits):
+        (WTF::BitVector::OutOfLineBits::OutOfLineBits):
+        (WTF::BitVector::isInline):
+        (WTF::BitVector::outOfLineBits):
+        (WTF::BitVector::bits):
+        * wtf/Bitmap.h: Renamed from Source/JavaScriptCore/wtf/Bitmap.h.
+        (WTF):
+        (Bitmap):
+        (WTF::::Bitmap):
+        (WTF::::get):
+        (WTF::::set):
+        (WTF::::testAndSet):
+        (WTF::::testAndClear):
+        (WTF::::concurrentTestAndSet):
+        (WTF::::concurrentTestAndClear):
+        (WTF::::clear):
+        (WTF::::clearAll):
+        (WTF::::nextPossiblyUnset):
+        (WTF::::findRunOfZeros):
+        (WTF::::count):
+        (WTF::::isEmpty):
+        (WTF::::isFull):
+        * wtf/BlockStack.h: Renamed from Source/JavaScriptCore/wtf/BlockStack.h.
+        (WTF):
+        (BlockStack):
+        (WTF::::BlockStack):
+        (WTF::::~BlockStack):
+        (WTF::::blocks):
+        (WTF::::grow):
+        (WTF::::shrink):
+        * wtf/BloomFilter.h: Renamed from Source/JavaScriptCore/wtf/BloomFilter.h.
+        (WTF):
+        (BloomFilter):
+        (WTF::BloomFilter::maximumCount):
+        (WTF::BloomFilter::BloomFilter):
+        (WTF::BloomFilter::mayContain):
+        (WTF::BloomFilter::add):
+        (WTF::BloomFilter::remove):
+        (WTF::BloomFilter::firstSlot):
+        (WTF::BloomFilter::secondSlot):
+        (WTF::::add):
+        (WTF::::remove):
+        (WTF::::clear):
+        (WTF::::likelyEmpty):
+        (WTF::::isClear):
+        * wtf/BoundsCheckedPointer.h: Renamed from Source/JavaScriptCore/wtf/BoundsCheckedPointer.h.
+        (WTF):
+        (BoundsCheckedPointer):
+        (WTF::BoundsCheckedPointer::BoundsCheckedPointer):
+        (WTF::BoundsCheckedPointer::operator=):
+        (WTF::BoundsCheckedPointer::operator+=):
+        (WTF::BoundsCheckedPointer::operator-=):
+        (WTF::BoundsCheckedPointer::operator+):
+        (WTF::BoundsCheckedPointer::operator-):
+        (WTF::BoundsCheckedPointer::operator++):
+        (WTF::BoundsCheckedPointer::operator--):
+        (WTF::BoundsCheckedPointer::operator<):
+        (WTF::BoundsCheckedPointer::operator<=):
+        (WTF::BoundsCheckedPointer::operator>):
+        (WTF::BoundsCheckedPointer::operator>=):
+        (WTF::BoundsCheckedPointer::operator==):
+        (WTF::BoundsCheckedPointer::operator!=):
+        (WTF::BoundsCheckedPointer::operator!):
+        (WTF::BoundsCheckedPointer::get):
+        (WTF::BoundsCheckedPointer::operator*):
+        (WTF::BoundsCheckedPointer::operator[]):
+        (WTF::BoundsCheckedPointer::strcat):
+        (WTF::BoundsCheckedPointer::validate):
+        * wtf/BumpPointerAllocator.h: Renamed from Source/JavaScriptCore/wtf/BumpPointerAllocator.h.
+        (WTF):
+        (BumpPointerPool):
+        (WTF::BumpPointerPool::ensureCapacity):
+        (WTF::BumpPointerPool::alloc):
+        (WTF::BumpPointerPool::dealloc):
+        (WTF::BumpPointerPool::operator new):
+        (WTF::BumpPointerPool::BumpPointerPool):
+        (WTF::BumpPointerPool::create):
+        (WTF::BumpPointerPool::shrink):
+        (WTF::BumpPointerPool::destroy):
+        (WTF::BumpPointerPool::ensureCapacityCrossPool):
+        (WTF::BumpPointerPool::deallocCrossPool):
+        (BumpPointerAllocator):
+        (WTF::BumpPointerAllocator::BumpPointerAllocator):
+        (WTF::BumpPointerAllocator::~BumpPointerAllocator):
+        (WTF::BumpPointerAllocator::startAllocator):
+        (WTF::BumpPointerAllocator::stopAllocator):
+        * wtf/ByteArray.cpp: Renamed from Source/JavaScriptCore/wtf/ByteArray.cpp.
+        (WTF):
+        (WTF::ByteArray::create):
+        * wtf/ByteArray.h: Renamed from Source/JavaScriptCore/wtf/ByteArray.h.
+        (ByteArray):
+        (WTF::ByteArray::length):
+        (WTF::ByteArray::set):
+        (WTF::ByteArray::get):
+        (WTF::ByteArray::data):
+        (WTF::ByteArray::clear):
+        (WTF::ByteArray::deref):
+        (WTF::ByteArray::offsetOfSize):
+        (WTF::ByteArray::offsetOfData):
+        (WTF::ByteArray::ByteArray):
+        * wtf/CMakeLists.txt: Renamed from Source/JavaScriptCore/wtf/CMakeLists.txt.
+        * wtf/CONTRIBUTORS.pthreads-win32: Renamed from Source/JavaScriptCore/wtf/CONTRIBUTORS.pthreads-win32.
+        * wtf/CheckedArithmetic.h: Renamed from Source/JavaScriptCore/wtf/CheckedArithmetic.h.
+        (WTF):
+        (CrashOnOverflow):
+        (WTF::CrashOnOverflow::overflowed):
+        (WTF::CrashOnOverflow::clearOverflow):
+        (WTF::CrashOnOverflow::hasOverflowed):
+        (RecordOverflow):
+        (WTF::RecordOverflow::RecordOverflow):
+        (WTF::RecordOverflow::overflowed):
+        (WTF::RecordOverflow::clearOverflow):
+        (WTF::RecordOverflow::hasOverflowed):
+        (WTF::isInBounds):
+        (RemoveChecked):
+        (WTF::safeAdd):
+        (WTF::safeSub):
+        (WTF::safeMultiply):
+        (WTF::safeEquals):
+        (WTF::workAroundClangBug):
+        (Checked):
+        (WTF::Checked::Checked):
+        (WTF::Checked::operator=):
+        (WTF::Checked::operator++):
+        (WTF::Checked::operator--):
+        (WTF::Checked::operator!):
+        (WTF::Checked::operator UnspecifiedBoolType*):
+        (WTF::Checked::unsafeGet):
+        (WTF::Checked::operator+=):
+        (WTF::Checked::operator-=):
+        (WTF::Checked::operator*=):
+        (WTF::Checked::operator==):
+        (WTF::Checked::operator!=):
+        (WTF::operator+):
+        (WTF::operator-):
+        (WTF::operator*):
+        * wtf/CheckedBoolean.h: Renamed from Source/JavaScriptCore/wtf/CheckedBoolean.h.
+        (CheckedBoolean):
+        (CheckedBoolean::CheckedBoolean):
+        (CheckedBoolean::~CheckedBoolean):
+        (CheckedBoolean::operator bool):
+        * wtf/Compiler.h: Renamed from Source/JavaScriptCore/wtf/Compiler.h.
+        * wtf/Complex.h: Renamed from Source/JavaScriptCore/wtf/Complex.h.
+        (WTF):
+        (WTF::complexFromMagnitudePhase):
+        * wtf/CryptographicallyRandomNumber.cpp: Renamed from Source/JavaScriptCore/wtf/CryptographicallyRandomNumber.cpp.
+        (WTF::cryptographicallyRandomNumber):
+        (WTF):
+        (WTF::cryptographicallyRandomValues):
+        * wtf/CryptographicallyRandomNumber.h: Renamed from Source/JavaScriptCore/wtf/CryptographicallyRandomNumber.h.
+        (WTF):
+        * wtf/CurrentTime.cpp: Renamed from Source/JavaScriptCore/wtf/CurrentTime.cpp.
+        (WTF):
+        (WTF::highResUpTime):
+        (WTF::lowResUTCTime):
+        (WTF::qpcAvailable):
+        (WTF::currentTime):
+        (WTF::currentSystemTime):
+        (WTF::monotonicallyIncreasingTime):
+        * wtf/CurrentTime.h: Renamed from Source/JavaScriptCore/wtf/CurrentTime.h.
+        (WTF):
+        (WTF::currentTimeMS):
+        (WTF::getLocalTime):
+        * wtf/DataLog.cpp: Renamed from Source/JavaScriptCore/wtf/DataLog.cpp.
+        (WTF):
+        (WTF::initializeLogFileOnce):
+        (WTF::initializeLogFile):
+        (WTF::dataFile):
+        (WTF::dataLogV):
+        (WTF::dataLog):
+        * wtf/DataLog.h: Renamed from Source/JavaScriptCore/wtf/DataLog.h.
+        (WTF):
+        * wtf/DateMath.cpp: Renamed from Source/JavaScriptCore/wtf/DateMath.cpp.
+        (WTF):
+        (WTF::isLeapYear):
+        (WTF::daysInYear):
+        (WTF::daysFrom1970ToYear):
+        (WTF::msToDays):
+        (WTF::twoDigitStringFromNumber):
+        (WTF::msToYear):
+        (WTF::dayInYear):
+        (WTF::msToMilliseconds):
+        (WTF::msToMinutes):
+        (WTF::msToHours):
+        (WTF::monthFromDayInYear):
+        (WTF::checkMonth):
+        (WTF::dayInMonthFromDayInYear):
+        (WTF::monthToDayInYear):
+        (WTF::dateToDaysFrom1970):
+        (WTF::maximumYearForDST):
+        (WTF::minimumYearForDST):
+        (WTF::equivalentYearForDST):
+        (WTF::calculateUTCOffset):
+        (WTF::calculateDSTOffsetSimple):
+        (WTF::calculateDSTOffset):
+        (WTF::initializeDates):
+        (WTF::ymdhmsToSeconds):
+        (KnownZone):
+        (WTF::skipSpacesAndComments):
+        (WTF::findMonth):
+        (WTF::parseLong):
+        (WTF::parseES5DatePortion):
+        (WTF::parseES5TimePortion):
+        (WTF::parseES5DateFromNullTerminatedCharacters):
+        (WTF::parseDateFromNullTerminatedCharacters):
+        (WTF::timeClip):
+        (WTF::makeRFC2822DateString):
+        * wtf/DateMath.h: Renamed from Source/JavaScriptCore/wtf/DateMath.h.
+        (WTF):
+        (WTF::jsCurrentTime):
+        * wtf/DecimalNumber.cpp: Renamed from Source/JavaScriptCore/wtf/DecimalNumber.cpp.
+        (WTF):
+        (WTF::DecimalNumber::bufferLengthForStringDecimal):
+        (WTF::DecimalNumber::bufferLengthForStringExponential):
+        (WTF::DecimalNumber::toStringDecimal):
+        (WTF::DecimalNumber::toStringExponential):
+        * wtf/DecimalNumber.h: Renamed from Source/JavaScriptCore/wtf/DecimalNumber.h.
+        (WTF):
+        (DecimalNumber):
+        (WTF::DecimalNumber::DecimalNumber):
+        (WTF::DecimalNumber::sign):
+        (WTF::DecimalNumber::exponent):
+        (WTF::DecimalNumber::significand):
+        (WTF::DecimalNumber::precision):
+        * wtf/Decoder.h: Renamed from Source/JavaScriptCore/wtf/Decoder.h.
+        (WTF):
+        (Decoder):
+        (WTF::Decoder::Decoder):
+        (WTF::Decoder::~Decoder):
+        * wtf/Deque.h: Renamed from Source/JavaScriptCore/wtf/Deque.h.
+        (WTF):
+        (Deque):
+        (WTF::Deque::size):
+        (WTF::Deque::isEmpty):
+        (WTF::Deque::begin):
+        (WTF::Deque::end):
+        (WTF::Deque::rbegin):
+        (WTF::Deque::rend):
+        (WTF::Deque::first):
+        (WTF::Deque::last):
+        (DequeIteratorBase):
+        (WTF::DequeIteratorBase::assign):
+        (DequeIterator):
+        (WTF::DequeIterator::DequeIterator):
+        (WTF::DequeIterator::operator=):
+        (WTF::DequeIterator::operator*):
+        (WTF::DequeIterator::operator->):
+        (WTF::DequeIterator::operator==):
+        (WTF::DequeIterator::operator!=):
+        (WTF::DequeIterator::operator++):
+        (WTF::DequeIterator::operator--):
+        (DequeConstIterator):
+        (WTF::DequeConstIterator::DequeConstIterator):
+        (WTF::DequeConstIterator::operator=):
+        (WTF::DequeConstIterator::operator*):
+        (WTF::DequeConstIterator::operator->):
+        (WTF::DequeConstIterator::operator==):
+        (WTF::DequeConstIterator::operator!=):
+        (WTF::DequeConstIterator::operator++):
+        (WTF::DequeConstIterator::operator--):
+        (DequeReverseIterator):
+        (WTF::DequeReverseIterator::DequeReverseIterator):
+        (WTF::DequeReverseIterator::operator=):
+        (WTF::DequeReverseIterator::operator*):
+        (WTF::DequeReverseIterator::operator->):
+        (WTF::DequeReverseIterator::operator==):
+        (WTF::DequeReverseIterator::operator!=):
+        (WTF::DequeReverseIterator::operator++):
+        (WTF::DequeReverseIterator::operator--):
+        (DequeConstReverseIterator):
+        (WTF::DequeConstReverseIterator::DequeConstReverseIterator):
+        (WTF::DequeConstReverseIterator::operator=):
+        (WTF::DequeConstReverseIterator::operator*):
+        (WTF::DequeConstReverseIterator::operator->):
+        (WTF::DequeConstReverseIterator::operator==):
+        (WTF::DequeConstReverseIterator::operator!=):
+        (WTF::DequeConstReverseIterator::operator++):
+        (WTF::DequeConstReverseIterator::operator--):
+        (WTF::::checkValidity):
+        (WTF::::checkIndexValidity):
+        (WTF::::invalidateIterators):
+        (WTF::::Deque):
+        (WTF::deleteAllValues):
+        (WTF::=):
+        (WTF::::destroyAll):
+        (WTF::::~Deque):
+        (WTF::::swap):
+        (WTF::::clear):
+        (WTF::::findIf):
+        (WTF::::expandCapacityIfNeeded):
+        (WTF::::expandCapacity):
+        (WTF::::takeFirst):
+        (WTF::::append):
+        (WTF::::prepend):
+        (WTF::::removeFirst):
+        (WTF::::remove):
+        (WTF::::addToIteratorsList):
+        (WTF::::removeFromIteratorsList):
+        (WTF::::DequeIteratorBase):
+        (WTF::::~DequeIteratorBase):
+        (WTF::::isEqual):
+        (WTF::::increment):
+        (WTF::::decrement):
+        (WTF::::after):
+        (WTF::::before):
+        * wtf/DisallowCType.h: Renamed from Source/JavaScriptCore/wtf/DisallowCType.h.
+        * wtf/DoublyLinkedList.h: Renamed from Source/JavaScriptCore/wtf/DoublyLinkedList.h.
+        (WTF):
+        (DoublyLinkedListNode):
+        (WTF::::DoublyLinkedListNode):
+        (WTF::::setPrev):
+        (WTF::::setNext):
+        (WTF::::prev):
+        (WTF::::next):
+        (DoublyLinkedList):
+        (WTF::::DoublyLinkedList):
+        (WTF::::isEmpty):
+        (WTF::::size):
+        (WTF::::clear):
+        (WTF::::head):
+        (WTF::::tail):
+        (WTF::::push):
+        (WTF::::append):
+        (WTF::::remove):
+        (WTF::::removeHead):
+        * wtf/DynamicAnnotations.cpp: Renamed from Source/JavaScriptCore/wtf/DynamicAnnotations.cpp.
+        (WTFAnnotateBenignRaceSized):
+        (WTFAnnotateHappensBefore):
+        (WTFAnnotateHappensAfter):
+        * wtf/DynamicAnnotations.h: Renamed from Source/JavaScriptCore/wtf/DynamicAnnotations.h.
+        * wtf/Encoder.h: Renamed from Source/JavaScriptCore/wtf/Encoder.h.
+        (WTF):
+        (Encoder):
+        (WTF::Encoder::Encoder):
+        (WTF::Encoder::~Encoder):
+        * wtf/ExportMacros.h: Renamed from Source/JavaScriptCore/wtf/ExportMacros.h.
+        * wtf/FastAllocBase.h: Renamed from Source/JavaScriptCore/wtf/FastAllocBase.h.
+        (WTF):
+        (WTF::fastNew):
+        (Internal):
+        (WTF::Internal::NewArrayImpl::fastNewArray):
+        (WTF::fastNewArray):
+        (WTF::fastDelete):
+        (WTF::fastDeleteSkippingDestructor):
+        (WTF::Internal::DeleteArrayImpl::fastDeleteArray):
+        (WTF::fastDeleteArray):
+        (WTF::fastNonNullDelete):
+        (WTF::Internal::NonNullDeleteArrayImpl::fastNonNullDeleteArray):
+        (WTF::fastNonNullDeleteArray):
+        * wtf/FastMalloc.cpp: Renamed from Source/JavaScriptCore/wtf/FastMalloc.cpp.
+        (WTF):
+        (WTF::isForbidden):
+        (WTF::fastMallocForbid):
+        (WTF::fastMallocAllow):
+        (WTF::initializeIsForbiddenKey):
+        (Internal):
+        (WTF::Internal::fastMallocMatchFailed):
+        (WTF::fastZeroedMalloc):
+        (WTF::fastStrDup):
+        (WTF::tryFastZeroedMalloc):
+        (WTF::tryFastMalloc):
+        (WTF::fastMalloc):
+        (WTF::tryFastCalloc):
+        (WTF::fastCalloc):
+        (WTF::fastFree):
+        (WTF::tryFastRealloc):
+        (WTF::fastRealloc):
+        (WTF::releaseFastMallocFreeMemory):
+        (WTF::fastMallocStatistics):
+        (WTF::fastMallocSize):
+        (FastMallocZone):
+        (WTF::FastMallocZone::goodSize):
+        (WTF::FastMallocZone::check):
+        (WTF::FastMallocZone::print):
+        (WTF::FastMallocZone::log):
+        (WTF::FastMallocZone::forceLock):
+        (WTF::FastMallocZone::forceUnlock):
+        (WTF::FastMallocZone::statistics):
+        (WTF::FastMallocZone::zoneValloc):
+        (WTF::FastMallocZone::zoneDestroy):
+        (WTF::KernelSupportsTLS):
+        (WTF::CheckIfKernelSupportsTLS):
+        (WTF::ClassIndex):
+        (TCEntry):
+        (WTF::LgFloor):
+        (WTF::SLL_Next):
+        (WTF::SLL_SetNext):
+        (WTF::SLL_Push):
+        (WTF::SLL_Pop):
+        (WTF::SLL_PopRange):
+        (WTF::SLL_PushRange):
+        (WTF::SLL_Size):
+        (WTF::SizeClass):
+        (WTF::ByteSizeForClass):
+        (WTF::NumMoveSize):
+        (WTF::InitSizeClasses):
+        (WTF::MetaDataAlloc):
+        (PageHeapAllocator):
+        (WTF::PageHeapAllocator::Init):
+        (WTF::PageHeapAllocator::New):
+        (WTF::PageHeapAllocator::Delete):
+        (WTF::PageHeapAllocator::inuse):
+        (WTF::PageHeapAllocator::recordAdministrativeRegions):
+        (WTF::pages):
+        (WTF::AllocationSize):
+        (Span):
+        (WTF::Event):
+        (WTF::NewSpan):
+        (WTF::DeleteSpan):
+        (WTF::DLL_Init):
+        (WTF::DLL_Remove):
+        (WTF::DLL_IsEmpty):
+        (WTF::DLL_Length):
+        (WTF::DLL_Print):
+        (WTF::DLL_Prepend):
+        (StackTrace):
+        (MapSelector):
+        (TCMalloc_PageHeap):
+        (WTF::TCMalloc_PageHeap::GetDescriptor):
+        (WTF::TCMalloc_PageHeap::GetDescriptorEnsureSafe):
+        (WTF::TCMalloc_PageHeap::SystemBytes):
+        (WTF::TCMalloc_PageHeap::FreeBytes):
+        (WTF::TCMalloc_PageHeap::GetSizeClassIfCached):
+        (WTF::TCMalloc_PageHeap::CacheSizeClass):
+        (SpanList):
+        (WTF::TCMalloc_PageHeap::RecordSpan):
+        (WTF::TCMalloc_PageHeap::init):
+        (WTF::TCMalloc_PageHeap::initializeScavenger):
+        (WTF::TCMalloc_PageHeap::isScavengerSuspended):
+        (WTF::TCMalloc_PageHeap::scheduleScavenger):
+        (WTF::TCMalloc_PageHeap::rescheduleScavenger):
+        (WTF::TCMalloc_PageHeap::suspendScavenger):
+        (WTF::TCMalloc_PageHeap::scavengerTimerFired):
+        (WTF::TCMalloc_PageHeap::runScavengerThread):
+        (WTF::TCMalloc_PageHeap::signalScavenger):
+        (WTF::TCMalloc_PageHeap::scavenge):
+        (WTF::TCMalloc_PageHeap::shouldScavenge):
+        (WTF::TCMalloc_PageHeap::New):
+        (WTF::TCMalloc_PageHeap::AllocLarge):
+        (WTF::TCMalloc_PageHeap::Split):
+        (WTF::TCMalloc_PageHeap::Carve):
+        (WTF::mergeDecommittedStates):
+        (WTF::TCMalloc_PageHeap::Delete):
+        (WTF::TCMalloc_PageHeap::IncrementalScavenge):
+        (WTF::TCMalloc_PageHeap::RegisterSizeClass):
+        (WTF::TCMalloc_PageHeap::ReturnedBytes):
+        (WTF::PagesToMB):
+        (WTF::TCMalloc_PageHeap::Dump):
+        (WTF::TCMalloc_PageHeap::GrowHeap):
+        (WTF::TCMalloc_PageHeap::Check):
+        (WTF::TCMalloc_PageHeap::CheckList):
+        (WTF::TCMalloc_PageHeap::ReleaseFreeList):
+        (WTF::TCMalloc_PageHeap::ReleaseFreePages):
+        (TCMalloc_ThreadCache_FreeList):
+        (WTF::TCMalloc_ThreadCache_FreeList::Init):
+        (WTF::TCMalloc_ThreadCache_FreeList::length):
+        (WTF::TCMalloc_ThreadCache_FreeList::empty):
+        (WTF::TCMalloc_ThreadCache_FreeList::lowwatermark):
+        (WTF::TCMalloc_ThreadCache_FreeList::clear_lowwatermark):
+        (WTF::TCMalloc_ThreadCache_FreeList::Push):
+        (WTF::TCMalloc_ThreadCache_FreeList::PushRange):
+        (WTF::TCMalloc_ThreadCache_FreeList::PopRange):
+        (WTF::TCMalloc_ThreadCache_FreeList::Pop):
+        (WTF::TCMalloc_ThreadCache_FreeList::enumerateFreeObjects):
+        (TCMalloc_ThreadCache):
+        (WTF::TCMalloc_ThreadCache::freelist_length):
+        (WTF::TCMalloc_ThreadCache::Size):
+        (WTF::TCMalloc_ThreadCache::enumerateFreeObjects):
+        (TCMalloc_Central_FreeList):
+        (WTF::TCMalloc_Central_FreeList::length):
+        (WTF::TCMalloc_Central_FreeList::tc_length):
+        (WTF::TCMalloc_Central_FreeList::enumerateFreeObjects):
+        (TCMalloc_Central_FreeListPadded):
+        (WTF::getPageHeap):
+        (WTF::TCMalloc_PageHeap::periodicScavenge):
+        (WTF::TCMalloc_PageHeap::scavengerThread):
+        (WTF::setThreadHeap):
+        (WTF::TCMalloc_Central_FreeList::Init):
+        (WTF::TCMalloc_Central_FreeList::ReleaseListToSpans):
+        (WTF::TCMalloc_Central_FreeList::ReleaseToSpans):
+        (WTF::TCMalloc_Central_FreeList::EvictRandomSizeClass):
+        (WTF::TCMalloc_Central_FreeList::MakeCacheSpace):
+        (WTF::TCMalloc_Central_FreeList::ShrinkCache):
+        (WTF::TCMalloc_Central_FreeList::InsertRange):
+        (WTF::TCMalloc_Central_FreeList::RemoveRange):
+        (WTF::TCMalloc_Central_FreeList::FetchFromSpansSafe):
+        (WTF::TCMalloc_Central_FreeList::FetchFromSpans):
+        (WTF::TCMalloc_Central_FreeList::Populate):
+        (WTF::TCMalloc_ThreadCache::SampleAllocation):
+        (WTF::TCMalloc_ThreadCache::Init):
+        (WTF::TCMalloc_ThreadCache::Cleanup):
+        (WTF::TCMalloc_ThreadCache::Allocate):
+        (WTF::TCMalloc_ThreadCache::Deallocate):
+        (WTF::TCMalloc_ThreadCache::FetchFromCentralCache):
+        (WTF::TCMalloc_ThreadCache::ReleaseToCentralCache):
+        (WTF::TCMalloc_ThreadCache::Scavenge):
+        (WTF::TCMalloc_ThreadCache::PickNextSample):
+        (WTF::TCMalloc_ThreadCache::InitModule):
+        (WTF::TCMalloc_ThreadCache::NewHeap):
+        (WTF::TCMalloc_ThreadCache::GetThreadHeap):
+        (WTF::TCMalloc_ThreadCache::GetCache):
+        (WTF::TCMalloc_ThreadCache::GetCacheIfPresent):
+        (WTF::TCMalloc_ThreadCache::InitTSD):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        * wtf/FastMalloc.h: Renamed from Source/JavaScriptCore/wtf/FastMalloc.h.
+        (WTF):
+        (WTF::TryMallocReturnValue::TryMallocReturnValue):
+        (WTF::TryMallocReturnValue::~TryMallocReturnValue):
+        (TryMallocReturnValue):
+        (WTF::TryMallocReturnValue::operator PossiblyNull<T>):
+        (WTF::TryMallocReturnValue::getValue):
+        (FastMallocStatistics):
+        (ValidationHeader):
+        (Internal):
+        (WTF::Internal::fastMallocValidationHeader):
+        (WTF::Internal::fastMallocValidationSuffix):
+        (WTF::Internal::fastMallocMatchValidationType):
+        (WTF::Internal::setFastMallocMatchValidationType):
+        (WTF::fastMallocMatchValidateMalloc):
+        (WTF::fastMallocMatchValidateFree):
+        (WTF::fastMallocValidate):
+        (throw):
+        * wtf/FixedArray.h: Renamed from Source/JavaScriptCore/wtf/FixedArray.h.
+        (WTF):
+        (FixedArray):
+        (WTF::FixedArray::operator[]):
+        (WTF::FixedArray::data):
+        (WTF::FixedArray::size):
+        * wtf/Float32Array.h: Renamed from Source/JavaScriptCore/wtf/Float32Array.h.
+        (WTF):
+        (Float32Array):
+        (WTF::Float32Array::set):
+        (WTF::Float32Array::item):
+        (WTF::Float32Array::isFloatArray):
+        (WTF::Float32Array::create):
+        (WTF::Float32Array::Float32Array):
+        (WTF::Float32Array::subarray):
+        * wtf/Float64Array.h: Renamed from Source/JavaScriptCore/wtf/Float64Array.h.
+        (WTF):
+        (Float64Array):
+        (WTF::Float64Array::set):
+        (WTF::Float64Array::item):
+        (WTF::Float64Array::isDoubleArray):
+        (WTF::Float64Array::create):
+        (WTF::Float64Array::Float64Array):
+        (WTF::Float64Array::subarray):
+        * wtf/Forward.h: Renamed from Source/JavaScriptCore/wtf/Forward.h.
+        (WTF):
+        * wtf/Functional.h: Renamed from Source/JavaScriptCore/wtf/Functional.h.
+        (WTF):
+        (HasRefAndDeref):
+        (NoType):
+        (BaseMixin):
+        (WTF::R):
+        (WTF::C::):
+        (WTF::RefAndDeref::ref):
+        (WTF::RefAndDeref::deref):
+        (ParamStorageTraits):
+        (WTF::ParamStorageTraits::wrap):
+        (WTF::ParamStorageTraits::unwrap):
+        (FunctionImplBase):
+        (WTF::FunctionImplBase::~FunctionImplBase):
+        (FunctionBase):
+        (WTF::FunctionBase::isNull):
+        (WTF::FunctionBase::FunctionBase):
+        (WTF::FunctionBase::impl):
+        (WTF::bind):
+        * wtf/GetPtr.h: Renamed from Source/JavaScriptCore/wtf/GetPtr.h.
+        (WTF):
+        (WTF::getPtr):
+        * wtf/HashCountedSet.h: Renamed from Source/JavaScriptCore/wtf/HashCountedSet.h.
+        (WTF):
+        (HashCountedSet):
+        (WTF::HashCountedSet::HashCountedSet):
+        (WTF::::size):
+        (WTF::::capacity):
+        (WTF::::isEmpty):
+        (WTF::::begin):
+        (WTF::::end):
+        (WTF::::find):
+        (WTF::::contains):
+        (WTF::::count):
+        (WTF::::add):
+        (WTF::::remove):
+        (WTF::::removeAll):
+        (WTF::::clear):
+        (WTF::copyToVector):
+        * wtf/HashFunctions.h: Renamed from Source/JavaScriptCore/wtf/HashFunctions.h.
+        (WTF):
+        (WTF::intHash):
+        (WTF::IntHash::hash):
+        (WTF::IntHash::equal):
+        (IntHash):
+        (WTF::FloatHash::hash):
+        (WTF::FloatHash::equal):
+        (FloatHash):
+        (WTF::PtrHash::hash):
+        (WTF::PtrHash::equal):
+        (PtrHash):
+        (WTF::PairHash::hash):
+        (WTF::PairHash::equal):
+        (PairHash):
+        * wtf/HashIterators.h: Renamed from Source/JavaScriptCore/wtf/HashIterators.h.
+        (WTF):
+        (HashTableConstKeysIterator):
+        (WTF::HashTableConstKeysIterator::HashTableConstKeysIterator):
+        (WTF::HashTableConstKeysIterator::get):
+        (WTF::HashTableConstKeysIterator::operator*):
+        (WTF::HashTableConstKeysIterator::operator->):
+        (WTF::HashTableConstKeysIterator::operator++):
+        (HashTableConstValuesIterator):
+        (WTF::HashTableConstValuesIterator::HashTableConstValuesIterator):
+        (WTF::HashTableConstValuesIterator::get):
+        (WTF::HashTableConstValuesIterator::operator*):
+        (WTF::HashTableConstValuesIterator::operator->):
+        (WTF::HashTableConstValuesIterator::operator++):
+        (HashTableKeysIterator):
+        (WTF::HashTableKeysIterator::HashTableKeysIterator):
+        (WTF::HashTableKeysIterator::get):
+        (WTF::HashTableKeysIterator::operator*):
+        (WTF::HashTableKeysIterator::operator->):
+        (WTF::HashTableKeysIterator::operator++):
+        (WTF::HashTableKeysIterator::operator HashTableConstKeysIterator<HashTableType, KeyType, MappedType>):
+        (HashTableValuesIterator):
+        (WTF::HashTableValuesIterator::HashTableValuesIterator):
+        (WTF::HashTableValuesIterator::get):
+        (WTF::HashTableValuesIterator::operator*):
+        (WTF::HashTableValuesIterator::operator->):
+        (WTF::HashTableValuesIterator::operator++):
+        (WTF::HashTableValuesIterator::operator HashTableConstValuesIterator<HashTableType, KeyType, MappedType>):
+        (WTF::operator==):
+        (WTF::operator!=):
+        * wtf/HashMap.h: Renamed from Source/JavaScriptCore/wtf/HashMap.h.
+        (WTF):
+        (ReferenceTypeMaker):
+        (HashMap):
+        (WTF::HashMap::keys):
+        (WTF::HashMap::values):
+        (HashMapKeysProxy):
+        (WTF::HashMap::HashMapKeysProxy::begin):
+        (WTF::HashMap::HashMapKeysProxy::end):
+        (HashMapValuesProxy):
+        (WTF::HashMap::HashMapValuesProxy::begin):
+        (WTF::HashMap::HashMapValuesProxy::end):
+        (WTF::PairFirstExtractor::extract):
+        (WTF::HashMapTranslator::hash):
+        (WTF::HashMapTranslator::equal):
+        (WTF::HashMapTranslator::translate):
+        (WTF::HashMapTranslatorAdapter::hash):
+        (WTF::HashMapTranslatorAdapter::equal):
+        (WTF::HashMapTranslatorAdapter::translate):
+        (WTF::::swap):
+        (WTF::::size):
+        (WTF::::capacity):
+        (WTF::::isEmpty):
+        (WTF::::begin):
+        (WTF::::end):
+        (WTF::::find):
+        (WTF::::contains):
+        (WTF::::inlineAdd):
+        (WTF::::set):
+        (WTF::::add):
+        (WTF::::get):
+        (WTF::::remove):
+        (WTF::::clear):
+        (WTF::::take):
+        (WTF::::checkConsistency):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::deleteAllPairSeconds):
+        (WTF::deleteAllValues):
+        (WTF::deleteAllPairFirsts):
+        (WTF::deleteAllKeys):
+        (WTF::copyKeysToVector):
+        (WTF::copyValuesToVector):
+        * wtf/HashSet.h: Renamed from Source/JavaScriptCore/wtf/HashSet.h.
+        (WTF):
+        (HashSet):
+        (WTF::IdentityExtractor::extract):
+        (WTF::HashSetTranslatorAdapter::hash):
+        (WTF::HashSetTranslatorAdapter::equal):
+        (WTF::HashSetTranslatorAdapter::translate):
+        (WTF::::swap):
+        (WTF::::size):
+        (WTF::::capacity):
+        (WTF::::isEmpty):
+        (WTF::::begin):
+        (WTF::::end):
+        (WTF::::find):
+        (WTF::::contains):
+        (WTF::::add):
+        (WTF::::remove):
+        (WTF::::clear):
+        (WTF::deleteAllValues):
+        (WTF::fastDeleteAllValues):
+        (WTF::copyToVector):
+        * wtf/HashTable.cpp: Renamed from Source/JavaScriptCore/wtf/HashTable.cpp.
+        (WTF):
+        (WTF::hashTableStatsMutex):
+        (WTF::HashTableStats::~HashTableStats):
+        (WTF::HashTableStats::recordCollisionAtCount):
+        * wtf/HashTable.h: Renamed from Source/JavaScriptCore/wtf/HashTable.h.
+        (WTF):
+        (HashTableStats):
+        (WTF::addIterator):
+        (WTF::removeIterator):
+        (HashTableConstIterator):
+        (WTF::HashTableConstIterator::skipEmptyBuckets):
+        (WTF::HashTableConstIterator::HashTableConstIterator):
+        (WTF::HashTableConstIterator::~HashTableConstIterator):
+        (WTF::HashTableConstIterator::operator=):
+        (WTF::HashTableConstIterator::get):
+        (WTF::HashTableConstIterator::operator*):
+        (WTF::HashTableConstIterator::operator->):
+        (WTF::HashTableConstIterator::operator++):
+        (WTF::HashTableConstIterator::operator==):
+        (WTF::HashTableConstIterator::operator!=):
+        (WTF::HashTableConstIterator::checkValidity):
+        (HashTableIterator):
+        (WTF::HashTableIterator::HashTableIterator):
+        (WTF::HashTableIterator::get):
+        (WTF::HashTableIterator::operator*):
+        (WTF::HashTableIterator::operator->):
+        (WTF::HashTableIterator::operator++):
+        (WTF::HashTableIterator::operator==):
+        (WTF::HashTableIterator::operator!=):
+        (WTF::HashTableIterator::operator const_iterator):
+        (WTF::hashTableSwap):
+        (IdentityHashTranslator):
+        (WTF::IdentityHashTranslator::hash):
+        (WTF::IdentityHashTranslator::equal):
+        (WTF::IdentityHashTranslator::translate):
+        (HashTable):
+        (WTF::HashTable::~HashTable):
+        (WTF::HashTable::begin):
+        (WTF::HashTable::end):
+        (WTF::HashTable::size):
+        (WTF::HashTable::capacity):
+        (WTF::HashTable::isEmpty):
+        (WTF::HashTable::add):
+        (WTF::HashTable::find):
+        (WTF::HashTable::contains):
+        (WTF::HashTable::isEmptyBucket):
+        (WTF::HashTable::isDeletedBucket):
+        (WTF::HashTable::isEmptyOrDeletedBucket):
+        (WTF::HashTable::lookup):
+        (WTF::HashTable::checkTableConsistency):
+        (WTF::HashTable::internalCheckTableConsistency):
+        (WTF::HashTable::internalCheckTableConsistencyExceptSize):
+        (WTF::HashTable::lookupForWriting):
+        (WTF::HashTable::shouldExpand):
+        (WTF::HashTable::mustRehashInPlace):
+        (WTF::HashTable::shouldShrink):
+        (WTF::HashTable::shrink):
+        (WTF::HashTable::deleteBucket):
+        (WTF::HashTable::makeLookupResult):
+        (WTF::HashTable::makeIterator):
+        (WTF::HashTable::makeConstIterator):
+        (WTF::HashTable::makeKnownGoodIterator):
+        (WTF::HashTable::makeKnownGoodConstIterator):
+        (WTF::HashTable::checkTableConsistencyExceptSize):
+        (WTF::HashTable::invalidateIterators):
+        (WTF::::HashTable):
+        (WTF::doubleHash):
+        (WTF::::checkKey):
+        (WTF::::lookup):
+        (WTF::::lookupForWriting):
+        (WTF::::fullLookupForWriting):
+        (WTF::::initializeBucket):
+        (WTF::::add):
+        (WTF::::addPassingHashCode):
+        (WTF::::reinsert):
+        (WTF::::find):
+        (WTF::::contains):
+        (WTF::::removeAndInvalidateWithoutEntryConsistencyCheck):
+        (WTF::::removeAndInvalidate):
+        (WTF::::remove):
+        (WTF::::removeWithoutEntryConsistencyCheck):
+        (WTF::::allocateTable):
+        (WTF::::deallocateTable):
+        (WTF::::expand):
+        (WTF::::rehash):
+        (WTF::::clear):
+        (WTF::::swap):
+        (WTF::=):
+        (WTF::::checkTableConsistency):
+        (WTF::::checkTableConsistencyExceptSize):
+        (WTF::::invalidateIterators):
+        (WTF::HashTableConstIteratorAdapter::HashTableConstIteratorAdapter):
+        (HashTableConstIteratorAdapter):
+        (WTF::HashTableConstIteratorAdapter::get):
+        (WTF::HashTableConstIteratorAdapter::operator*):
+        (WTF::HashTableConstIteratorAdapter::operator->):
+        (WTF::HashTableConstIteratorAdapter::operator++):
+        (WTF::HashTableIteratorAdapter::HashTableIteratorAdapter):
+        (HashTableIteratorAdapter):
+        (WTF::HashTableIteratorAdapter::get):
+        (WTF::HashTableIteratorAdapter::operator*):
+        (WTF::HashTableIteratorAdapter::operator->):
+        (WTF::HashTableIteratorAdapter::operator++):
+        (WTF::HashTableIteratorAdapter::operator HashTableConstIteratorAdapter<HashTableType, ValueType>):
+        (WTF::operator==):
+        (WTF::operator!=):
+        * wtf/HashTraits.h: Renamed from Source/JavaScriptCore/wtf/HashTraits.h.
+        (WTF):
+        (GenericHashTraits):
+        (WTF::GenericHashTraits::emptyValue):
+        (WTF::GenericHashTraits::store):
+        (WTF::GenericHashTraits::passOut):
+        (WTF::GenericHashTraits::peek):
+        (FloatHashTraits):
+        (WTF::FloatHashTraits::emptyValue):
+        (WTF::FloatHashTraits::constructDeletedValue):
+        (WTF::FloatHashTraits::isDeletedValue):
+        (UnsignedWithZeroKeyHashTraits):
+        (WTF::UnsignedWithZeroKeyHashTraits::emptyValue):
+        (WTF::UnsignedWithZeroKeyHashTraits::constructDeletedValue):
+        (WTF::UnsignedWithZeroKeyHashTraits::isDeletedValue):
+        (SimpleClassHashTraits):
+        (WTF::SimpleClassHashTraits::constructDeletedValue):
+        (WTF::SimpleClassHashTraits::isDeletedValue):
+        (PairHashTraits):
+        (WTF::PairHashTraits::emptyValue):
+        (WTF::PairHashTraits::constructDeletedValue):
+        (WTF::PairHashTraits::isDeletedValue):
+        * wtf/HexNumber.h: Renamed from Source/JavaScriptCore/wtf/HexNumber.h.
+        (WTF):
+        (Internal):
+        (WTF::Internal::hexDigitsForMode):
+        (WTF::appendByteAsHex):
+        (WTF::placeByteAsHexCompressIfPossible):
+        (WTF::placeByteAsHex):
+        (WTF::appendUnsignedAsHex):
+        (WTF::appendUnsignedAsHexFixedSize):
+        * wtf/InlineASM.h: Renamed from Source/JavaScriptCore/wtf/InlineASM.h.
+        * wtf/Int16Array.h: Renamed from Source/JavaScriptCore/wtf/Int16Array.h.
+        (WTF):
+        (Int16Array):
+        (WTF::Int16Array::set):
+        (WTF::Int16Array::isShortArray):
+        (WTF::Int16Array::create):
+        (WTF::Int16Array::Int16Array):
+        (WTF::Int16Array::subarray):
+        * wtf/Int32Array.h: Renamed from Source/JavaScriptCore/wtf/Int32Array.h.
+        (WTF):
+        (Int32Array):
+        (WTF::Int32Array::set):
+        (WTF::Int32Array::isIntArray):
+        (WTF::Int32Array::create):
+        (WTF::Int32Array::Int32Array):
+        (WTF::Int32Array::subarray):
+        * wtf/Int8Array.h: Renamed from Source/JavaScriptCore/wtf/Int8Array.h.
+        (WTF):
+        (Int8Array):
+        (WTF::Int8Array::set):
+        (WTF::Int8Array::isByteArray):
+        (WTF::Int8Array::create):
+        (WTF::Int8Array::Int8Array):
+        (WTF::Int8Array::subarray):
+        * wtf/IntegralTypedArrayBase.h: Renamed from Source/JavaScriptCore/wtf/IntegralTypedArrayBase.h.
+        (WTF):
+        (IntegralTypedArrayBase):
+        (WTF::IntegralTypedArrayBase::set):
+        (WTF::IntegralTypedArrayBase::item):
+        (WTF::IntegralTypedArrayBase::IntegralTypedArrayBase):
+        * wtf/ListHashSet.h: Renamed from Source/JavaScriptCore/wtf/ListHashSet.h.
+        (WTF):
+        (ListHashSet):
+        (ListHashSetNodeAllocator):
+        (WTF::ListHashSetNodeAllocator::ListHashSetNodeAllocator):
+        (WTF::ListHashSetNodeAllocator::allocate):
+        (WTF::ListHashSetNodeAllocator::deallocate):
+        (WTF::ListHashSetNodeAllocator::pool):
+        (WTF::ListHashSetNodeAllocator::pastPool):
+        (WTF::ListHashSetNodeAllocator::inPool):
+        (ListHashSetNode):
+        (WTF::ListHashSetNode::ListHashSetNode):
+        (WTF::ListHashSetNode::operator new):
+        (WTF::ListHashSetNode::destroy):
+        (WTF::ListHashSetNodeHashFunctions::hash):
+        (WTF::ListHashSetNodeHashFunctions::equal):
+        (ListHashSetNodeHashFunctions):
+        (ListHashSetIterator):
+        (WTF::ListHashSetIterator::ListHashSetIterator):
+        (WTF::ListHashSetIterator::get):
+        (WTF::ListHashSetIterator::operator*):
+        (WTF::ListHashSetIterator::operator->):
+        (WTF::ListHashSetIterator::operator++):
+        (WTF::ListHashSetIterator::operator--):
+        (WTF::ListHashSetIterator::operator==):
+        (WTF::ListHashSetIterator::operator!=):
+        (WTF::ListHashSetIterator::operator const_iterator):
+        (WTF::ListHashSetIterator::node):
+        (ListHashSetConstIterator):
+        (WTF::ListHashSetConstIterator::ListHashSetConstIterator):
+        (WTF::ListHashSetConstIterator::get):
+        (WTF::ListHashSetConstIterator::operator*):
+        (WTF::ListHashSetConstIterator::operator->):
+        (WTF::ListHashSetConstIterator::operator++):
+        (WTF::ListHashSetConstIterator::operator--):
+        (WTF::ListHashSetConstIterator::operator==):
+        (WTF::ListHashSetConstIterator::operator!=):
+        (WTF::ListHashSetConstIterator::node):
+        (ListHashSetReverseIterator):
+        (WTF::ListHashSetReverseIterator::ListHashSetReverseIterator):
+        (WTF::ListHashSetReverseIterator::get):
+        (WTF::ListHashSetReverseIterator::operator*):
+        (WTF::ListHashSetReverseIterator::operator->):
+        (WTF::ListHashSetReverseIterator::operator++):
+        (WTF::ListHashSetReverseIterator::operator--):
+        (WTF::ListHashSetReverseIterator::operator==):
+        (WTF::ListHashSetReverseIterator::operator!=):
+        (WTF::ListHashSetReverseIterator::operator const_reverse_iterator):
+        (WTF::ListHashSetReverseIterator::node):
+        (ListHashSetConstReverseIterator):
+        (WTF::ListHashSetConstReverseIterator::ListHashSetConstReverseIterator):
+        (WTF::ListHashSetConstReverseIterator::get):
+        (WTF::ListHashSetConstReverseIterator::operator*):
+        (WTF::ListHashSetConstReverseIterator::operator->):
+        (WTF::ListHashSetConstReverseIterator::operator++):
+        (WTF::ListHashSetConstReverseIterator::operator--):
+        (WTF::ListHashSetConstReverseIterator::operator==):
+        (WTF::ListHashSetConstReverseIterator::operator!=):
+        (WTF::ListHashSetConstReverseIterator::node):
+        (WTF::ListHashSetTranslator::hash):
+        (WTF::ListHashSetTranslator::equal):
+        (WTF::ListHashSetTranslator::translate):
+        (WTF::::ListHashSet):
+        (WTF::=):
+        (WTF::::swap):
+        (WTF::::~ListHashSet):
+        (WTF::::size):
+        (WTF::::capacity):
+        (WTF::::isEmpty):
+        (WTF::::begin):
+        (WTF::::end):
+        (WTF::::rbegin):
+        (WTF::::rend):
+        (WTF::::first):
+        (WTF::::last):
+        (WTF::::removeLast):
+        (WTF::::find):
+        (WTF::ListHashSetTranslatorAdapter::hash):
+        (WTF::ListHashSetTranslatorAdapter::equal):
+        (WTF::::contains):
+        (WTF::::add):
+        (WTF::::insertBefore):
+        (WTF::::remove):
+        (WTF::::clear):
+        (WTF::::unlinkAndDelete):
+        (WTF::::appendNode):
+        (WTF::::insertNodeBefore):
+        (WTF::::deleteAllNodes):
+        (WTF::::makeReverseIterator):
+        (WTF::::makeConstReverseIterator):
+        (WTF::::makeIterator):
+        (WTF::::makeConstIterator):
+        (WTF::deleteAllValues):
+        * wtf/ListRefPtr.h: Renamed from Source/JavaScriptCore/wtf/ListRefPtr.h.
+        (WTF):
+        (ListRefPtr):
+        (WTF::ListRefPtr::ListRefPtr):
+        (WTF::ListRefPtr::~ListRefPtr):
+        (WTF::ListRefPtr::operator=):
+        (WTF::getPtr):
+        * wtf/Locker.h: Renamed from Source/JavaScriptCore/wtf/Locker.h.
+        (WTF):
+        (Locker):
+        (WTF::Locker::Locker):
+        (WTF::Locker::~Locker):
+        * wtf/MD5.cpp: Renamed from Source/JavaScriptCore/wtf/MD5.cpp.
+        (WTF):
+        (WTF::testMD5):
+        (WTF::expectMD5):
+        (WTF::reverseBytes):
+        (WTF::MD5Transform):
+        (WTF::MD5::MD5):
+        (WTF::MD5::addBytes):
+        (WTF::MD5::checksum):
+        * wtf/MD5.h: Renamed from Source/JavaScriptCore/wtf/MD5.h.
+        (WTF):
+        (MD5):
+        (WTF::MD5::addBytes):
+        * wtf/MainThread.cpp: Renamed from Source/JavaScriptCore/wtf/MainThread.cpp.
+        (WTF):
+        (FunctionWithContext):
+        (WTF::FunctionWithContext::FunctionWithContext):
+        (WTF::FunctionWithContext::operator == ):
+        (FunctionWithContextFinder):
+        (WTF::FunctionWithContextFinder::FunctionWithContextFinder):
+        (WTF::FunctionWithContextFinder::operator()):
+        (WTF::mainThreadFunctionQueueMutex):
+        (WTF::functionQueue):
+        (WTF::initializeMainThread):
+        (WTF::initializeMainThreadOnce):
+        (WTF::initializeMainThreadToProcessMainThreadOnce):
+        (WTF::initializeMainThreadToProcessMainThread):
+        (WTF::dispatchFunctionsFromMainThread):
+        (WTF::callOnMainThread):
+        (WTF::callOnMainThreadAndWait):
+        (WTF::cancelCallOnMainThread):
+        (WTF::callFunctionObject):
+        (WTF::setMainThreadCallbacksPaused):
+        (WTF::isMainThread):
+        (WTF::initializeGCThreads):
+        (WTF::registerGCThread):
+        (WTF::isMainThreadOrGCThread):
+        * wtf/MainThread.h: Renamed from Source/JavaScriptCore/wtf/MainThread.h.
+        (WTF):
+        (WTF::isMainThreadOrGCThread):
+        * wtf/MallocZoneSupport.h: Renamed from Source/JavaScriptCore/wtf/MallocZoneSupport.h.
+        (WTF):
+        (RemoteMemoryReader):
+        (WTF::RemoteMemoryReader::RemoteMemoryReader):
+        (WTF::RemoteMemoryReader::operator()):
+        (WTF::RemoteMemoryReader::nextEntryInLinkedList):
+        * wtf/MathExtras.h: Renamed from Source/JavaScriptCore/wtf/MathExtras.h.
+        (wtf_ceil):
+        (isfinite):
+        (isinf):
+        (signbit):
+        (round):
+        (roundf):
+        (llround):
+        (llroundf):
+        (lround):
+        (lroundf):
+        (trunc):
+        (abs):
+        (isnan):
+        (nextafter):
+        (nextafterf):
+        (copysign):
+        (log2):
+        (log2f):
+        (wtf_atan2):
+        (wtf_fmod):
+        (wtf_pow):
+        (deg2rad):
+        (rad2deg):
+        (deg2grad):
+        (grad2deg):
+        (turn2deg):
+        (deg2turn):
+        (rad2grad):
+        (grad2rad):
+        (defaultMinimumForClamp):
+        (defaultMaximumForClamp):
+        (clampTo):
+        (clampToInteger):
+        (clampToFloat):
+        (clampToPositiveInteger):
+        (isWithinIntRange):
+        (decomposeDouble):
+        (doubleToInteger):
+        * wtf/MessageQueue.h: Renamed from Source/JavaScriptCore/wtf/MessageQueue.h.
+        (WTF):
+        (MessageQueue):
+        (WTF::MessageQueue::MessageQueue):
+        (WTF::MessageQueue::infiniteTime):
+        (WTF::MessageQueue::alwaysTruePredicate):
+        (WTF::::~MessageQueue):
+        (WTF::::append):
+        (WTF::::appendAndCheckEmpty):
+        (WTF::::prepend):
+        (WTF::::waitForMessage):
+        (WTF::::waitForMessageFilteredWithTimeout):
+        (WTF::::tryGetMessage):
+        (WTF::::tryGetMessageIgnoringKilled):
+        (WTF::::removeIf):
+        (WTF::::isEmpty):
+        (WTF::::kill):
+        (WTF::::killed):
+        * wtf/MetaAllocator.cpp: Renamed from Source/JavaScriptCore/wtf/MetaAllocator.cpp.
+        (WTF):
+        (WTF::MetaAllocator::~MetaAllocator):
+        (WTF::MetaAllocatorTracker::notify):
+        (WTF::MetaAllocatorTracker::release):
+        (WTF::MetaAllocator::release):
+        (WTF::MetaAllocatorHandle::MetaAllocatorHandle):
+        (WTF::MetaAllocatorHandle::~MetaAllocatorHandle):
+        (WTF::MetaAllocatorHandle::shrink):
+        (WTF::MetaAllocator::MetaAllocator):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        (WTF::MetaAllocator::findAndRemoveFreeSpace):
+        (WTF::MetaAllocator::addFreeSpaceFromReleasedHandle):
+        (WTF::MetaAllocator::addFreshFreeSpace):
+        (WTF::MetaAllocator::debugFreeSpaceSize):
+        (WTF::MetaAllocator::addFreeSpace):
+        (WTF::MetaAllocator::incrementPageOccupancy):
+        (WTF::MetaAllocator::decrementPageOccupancy):
+        (WTF::MetaAllocator::roundUp):
+        (WTF::MetaAllocator::allocFreeSpaceNode):
+        (WTF::MetaAllocator::freeFreeSpaceNode):
+        (WTF::MetaAllocator::dumpProfile):
+        * wtf/MetaAllocator.h: Renamed from Source/JavaScriptCore/wtf/MetaAllocator.h.
+        (WTF):
+        (MetaAllocatorTracker):
+        (WTF::MetaAllocatorTracker::find):
+        (MetaAllocator):
+        (WTF::MetaAllocator::trackAllocations):
+        (WTF::MetaAllocator::bytesAllocated):
+        (WTF::MetaAllocator::bytesReserved):
+        (WTF::MetaAllocator::bytesCommitted):
+        (Statistics):
+        (WTF::MetaAllocator::dumpProfile):
+        (FreeSpaceNode):
+        (WTF::MetaAllocator::FreeSpaceNode::FreeSpaceNode):
+        (WTF::MetaAllocator::FreeSpaceNode::key):
+        * wtf/MetaAllocatorHandle.h: Renamed from Source/JavaScriptCore/wtf/MetaAllocatorHandle.h.
+        (WTF):
+        (MetaAllocatorHandle):
+        (WTF::MetaAllocatorHandle::start):
+        (WTF::MetaAllocatorHandle::end):
+        (WTF::MetaAllocatorHandle::sizeInBytes):
+        (WTF::MetaAllocatorHandle::isManaged):
+        (WTF::MetaAllocatorHandle::allocator):
+        (WTF::MetaAllocatorHandle::ownerUID):
+        (WTF::MetaAllocatorHandle::key):
+        * wtf/NonCopyingSort.h: Renamed from Source/JavaScriptCore/wtf/NonCopyingSort.h.
+        (WTF):
+        (WTF::siftDown):
+        (WTF::heapify):
+        (WTF::heapSort):
+        (WTF::nonCopyingSort):
+        * wtf/Noncopyable.h: Renamed from Source/JavaScriptCore/wtf/Noncopyable.h.
+        * wtf/NotFound.h: Renamed from Source/JavaScriptCore/wtf/NotFound.h.
+        (WTF):
+        * wtf/NullPtr.cpp: Renamed from Source/JavaScriptCore/wtf/NullPtr.cpp.
+        * wtf/NullPtr.h: Renamed from Source/JavaScriptCore/wtf/NullPtr.h.
+        * wtf/NumberOfCores.cpp: Renamed from Source/JavaScriptCore/wtf/NumberOfCores.cpp.
+        (WTF):
+        (WTF::numberOfProcessorCores):
+        * wtf/NumberOfCores.h: Renamed from Source/JavaScriptCore/wtf/NumberOfCores.h.
+        (WTF):
+        * wtf/OSAllocator.h: Renamed from Source/JavaScriptCore/wtf/OSAllocator.h.
+        (WTF):
+        (OSAllocator):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::OSAllocator::decommitAndRelease):
+        (WTF::OSAllocator::reallocateCommitted):
+        * wtf/OSAllocatorPosix.cpp: Renamed from Source/JavaScriptCore/wtf/OSAllocatorPosix.cpp.
+        (WTF):
+        (WTF::OSAllocator::reserveUncommitted):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::OSAllocator::commit):
+        (WTF::OSAllocator::decommit):
+        (WTF::OSAllocator::releaseDecommitted):
+        * wtf/OSAllocatorWin.cpp: Renamed from Source/JavaScriptCore/wtf/OSAllocatorWin.cpp.
+        (WTF):
+        (WTF::protection):
+        (WTF::OSAllocator::reserveUncommitted):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::OSAllocator::commit):
+        (WTF::OSAllocator::decommit):
+        (WTF::OSAllocator::releaseDecommitted):
+        * wtf/OSRandomSource.cpp: Renamed from Source/JavaScriptCore/wtf/OSRandomSource.cpp.
+        (WTF):
+        (WTF::cryptographicallyRandomValuesFromOS):
+        * wtf/OSRandomSource.h: Renamed from Source/JavaScriptCore/wtf/OSRandomSource.h.
+        (WTF):
+        * wtf/OwnArrayPtr.h: Renamed from Source/JavaScriptCore/wtf/OwnArrayPtr.h.
+        (WTF):
+        (OwnArrayPtr):
+        (WTF::OwnArrayPtr::OwnArrayPtr):
+        (WTF::OwnArrayPtr::~OwnArrayPtr):
+        (WTF::OwnArrayPtr::get):
+        (WTF::OwnArrayPtr::operator*):
+        (WTF::OwnArrayPtr::operator->):
+        (WTF::OwnArrayPtr::operator[]):
+        (WTF::OwnArrayPtr::operator!):
+        (WTF::OwnArrayPtr::operator UnspecifiedBoolType):
+        (WTF::OwnArrayPtr::operator=):
+        (WTF::OwnArrayPtr::swap):
+        (WTF::::OwnArrayPtr):
+        (WTF::::clear):
+        (WTF::::release):
+        (WTF::::leakPtr):
+        (WTF::=):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::getPtr):
+        * wtf/OwnPtr.h: Renamed from Source/JavaScriptCore/wtf/OwnPtr.h.
+        (WTF):
+        (OwnPtr):
+        (WTF::OwnPtr::OwnPtr):
+        (WTF::OwnPtr::~OwnPtr):
+        (WTF::OwnPtr::get):
+        (WTF::OwnPtr::operator*):
+        (WTF::OwnPtr::operator->):
+        (WTF::OwnPtr::operator!):
+        (WTF::OwnPtr::operator UnspecifiedBoolType):
+        (WTF::OwnPtr::operator=):
+        (WTF::OwnPtr::swap):
+        (WTF::OwnPtr::operator==):
+        (WTF::OwnPtr::operator!=):
+        (WTF::::OwnPtr):
+        (WTF::::clear):
+        (WTF::::release):
+        (WTF::::leakPtr):
+        (WTF::=):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::getPtr):
+        * wtf/OwnPtrCommon.h: Renamed from Source/JavaScriptCore/wtf/OwnPtrCommon.h.
+        (WTF):
+        (WTF::deleteOwnedPtr):
+        * wtf/PackedIntVector.h: Renamed from Source/JavaScriptCore/wtf/PackedIntVector.h.
+        (WTF):
+        (PackedIntVector):
+        (WTF::PackedIntVector::PackedIntVector):
+        (WTF::PackedIntVector::operator=):
+        (WTF::PackedIntVector::size):
+        (WTF::PackedIntVector::ensureSize):
+        (WTF::PackedIntVector::resize):
+        (WTF::PackedIntVector::clearAll):
+        (WTF::PackedIntVector::get):
+        (WTF::PackedIntVector::set):
+        (WTF::PackedIntVector::mask):
+        * wtf/PageAllocation.h: Renamed from Source/JavaScriptCore/wtf/PageAllocation.h.
+        (WTF):
+        (PageAllocation):
+        (WTF::PageAllocation::PageAllocation):
+        (WTF::PageAllocation::operator bool):
+        (WTF::PageAllocation::allocate):
+        (WTF::PageAllocation::deallocate):
+        * wtf/PageAllocationAligned.cpp: Renamed from Source/JavaScriptCore/wtf/PageAllocationAligned.cpp.
+        (WTF):
+        (WTF::PageAllocationAligned::allocate):
+        (WTF::PageAllocationAligned::deallocate):
+        * wtf/PageAllocationAligned.h: Renamed from Source/JavaScriptCore/wtf/PageAllocationAligned.h.
+        (WTF):
+        (PageAllocationAligned):
+        (WTF::PageAllocationAligned::PageAllocationAligned):
+        * wtf/PageBlock.cpp: Renamed from Source/JavaScriptCore/wtf/PageBlock.cpp.
+        (WTF):
+        (WTF::systemPageSize):
+        (WTF::pageSize):
+        (WTF::pageMask):
+        * wtf/PageBlock.h: Renamed from Source/JavaScriptCore/wtf/PageBlock.h.
+        (WTF):
+        (WTF::isPageAligned):
+        (WTF::isPowerOfTwo):
+        (PageBlock):
+        (WTF::PageBlock::base):
+        (WTF::PageBlock::size):
+        (WTF::PageBlock::operator bool):
+        (WTF::PageBlock::contains):
+        (WTF::PageBlock::PageBlock):
+        * wtf/PageReservation.h: Renamed from Source/JavaScriptCore/wtf/PageReservation.h.
+        (WTF):
+        (PageReservation):
+        (WTF::PageReservation::PageReservation):
+        (WTF::PageReservation::operator bool):
+        (WTF::PageReservation::commit):
+        (WTF::PageReservation::decommit):
+        (WTF::PageReservation::committed):
+        (WTF::PageReservation::reserve):
+        (WTF::PageReservation::reserveWithGuardPages):
+        (WTF::PageReservation::deallocate):
+        * wtf/ParallelJobs.h: Renamed from Source/JavaScriptCore/wtf/ParallelJobs.h.
+        (WTF):
+        (ParallelJobs):
+        (WTF::ParallelJobs::ParallelJobs):
+        (WTF::ParallelJobs::numberOfJobs):
+        (WTF::ParallelJobs::parameter):
+        (WTF::ParallelJobs::execute):
+        * wtf/ParallelJobsGeneric.cpp: Renamed from Source/JavaScriptCore/wtf/ParallelJobsGeneric.cpp.
+        (WTF):
+        (WTF::ParallelEnvironment::ParallelEnvironment):
+        (WTF::ParallelEnvironment::execute):
+        (WTF::ParallelEnvironment::ThreadPrivate::tryLockFor):
+        (WTF::ParallelEnvironment::ThreadPrivate::execute):
+        (WTF::ParallelEnvironment::ThreadPrivate::waitForFinish):
+        (WTF::ParallelEnvironment::ThreadPrivate::workerThread):
+        * wtf/ParallelJobsGeneric.h: Renamed from Source/JavaScriptCore/wtf/ParallelJobsGeneric.h.
+        (WTF):
+        (ParallelEnvironment):
+        (WTF::ParallelEnvironment::numberOfJobs):
+        (ThreadPrivate):
+        (WTF::ParallelEnvironment::ThreadPrivate::ThreadPrivate):
+        (WTF::ParallelEnvironment::ThreadPrivate::create):
+        * wtf/ParallelJobsLibdispatch.h: Renamed from Source/JavaScriptCore/wtf/ParallelJobsLibdispatch.h.
+        (WTF):
+        (ParallelEnvironment):
+        (WTF::ParallelEnvironment::ParallelEnvironment):
+        (WTF::ParallelEnvironment::numberOfJobs):
+        (WTF::ParallelEnvironment::execute):
+        * wtf/ParallelJobsOpenMP.h: Renamed from Source/JavaScriptCore/wtf/ParallelJobsOpenMP.h.
+        (WTF):
+        (ParallelEnvironment):
+        (WTF::ParallelEnvironment::ParallelEnvironment):
+        (WTF::ParallelEnvironment::numberOfJobs):
+        (WTF::ParallelEnvironment::execute):
+        * wtf/PassOwnArrayPtr.h: Renamed from Source/JavaScriptCore/wtf/PassOwnArrayPtr.h.
+        (WTF):
+        (PassOwnArrayPtr):
+        (WTF::PassOwnArrayPtr::PassOwnArrayPtr):
+        (WTF::PassOwnArrayPtr::~PassOwnArrayPtr):
+        (WTF::PassOwnArrayPtr::get):
+        (WTF::PassOwnArrayPtr::operator*):
+        (WTF::PassOwnArrayPtr::operator->):
+        (WTF::PassOwnArrayPtr::operator!):
+        (WTF::PassOwnArrayPtr::operator UnspecifiedBoolType):
+        (WTF::PassOwnArrayPtr::operator=):
+        (WTF::::leakPtr):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::adoptArrayPtr):
+        (WTF::deleteOwnedArrayPtr):
+        (WTF::static_pointer_cast):
+        (WTF::const_pointer_cast):
+        (WTF::getPtr):
+        * wtf/PassOwnPtr.h: Renamed from Source/JavaScriptCore/wtf/PassOwnPtr.h.
+        (WTF):
+        (PassOwnPtr):
+        (WTF::PassOwnPtr::PassOwnPtr):
+        (WTF::PassOwnPtr::~PassOwnPtr):
+        (WTF::PassOwnPtr::get):
+        (WTF::PassOwnPtr::operator*):
+        (WTF::PassOwnPtr::operator->):
+        (WTF::PassOwnPtr::operator!):
+        (WTF::PassOwnPtr::operator UnspecifiedBoolType):
+        (WTF::PassOwnPtr::operator=):
+        (WTF::PassOwnPtr::operator==):
+        (WTF::PassOwnPtr::operator!=):
+        (WTF::::leakPtr):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::adoptPtr):
+        (WTF::static_pointer_cast):
+        (WTF::const_pointer_cast):
+        (WTF::getPtr):
+        * wtf/PassRefPtr.h: Renamed from Source/JavaScriptCore/wtf/PassRefPtr.h.
+        (WTF):
+        (WTF::adopted):
+        (WTF::refIfNotNull):
+        (WTF::derefIfNotNull):
+        (PassRefPtr):
+        (WTF::PassRefPtr::PassRefPtr):
+        (WTF::PassRefPtr::~PassRefPtr):
+        (WTF::PassRefPtr::get):
+        (WTF::PassRefPtr::operator*):
+        (WTF::PassRefPtr::operator->):
+        (WTF::PassRefPtr::operator!):
+        (WTF::PassRefPtr::operator UnspecifiedBoolType):
+        (WTF::PassRefPtr::operator=):
+        (NonNullPassRefPtr):
+        (WTF::NonNullPassRefPtr::NonNullPassRefPtr):
+        (WTF::NonNullPassRefPtr::~NonNullPassRefPtr):
+        (WTF::NonNullPassRefPtr::get):
+        (WTF::NonNullPassRefPtr::operator*):
+        (WTF::NonNullPassRefPtr::operator->):
+        (WTF::NonNullPassRefPtr::operator=):
+        (WTF::::PassRefPtr):
+        (WTF::::leakRef):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::adoptRef):
+        (WTF::static_pointer_cast):
+        (WTF::const_pointer_cast):
+        (WTF::getPtr):
+        * wtf/PassTraits.h: Renamed from Source/JavaScriptCore/wtf/PassTraits.h.
+        (WTF):
+        (PassTraits):
+        (WTF::PassTraits::transfer):
+        * wtf/PlatformBlackBerry.cmake: Renamed from Source/JavaScriptCore/wtf/PlatformBlackBerry.cmake.
+        * wtf/PlatformEfl.cmake: Renamed from Source/JavaScriptCore/wtf/PlatformEfl.cmake.
+        * wtf/PlatformWinCE.cmake: Renamed from Source/JavaScriptCore/wtf/PlatformWinCE.cmake.
+        * wtf/PossiblyNull.h: Renamed from Source/JavaScriptCore/wtf/PossiblyNull.h.
+        (WTF):
+        (WTF::PossiblyNull::PossiblyNull):
+        (WTF::PossiblyNull::~PossiblyNull):
+        (PossiblyNull):
+        (WTF::::getValue):
+        * wtf/RandomNumber.cpp: Renamed from Source/JavaScriptCore/wtf/RandomNumber.cpp.
+        (WTF):
+        (WTF::randomNumber):
+        * wtf/RandomNumber.h: Renamed from Source/JavaScriptCore/wtf/RandomNumber.h.
+        (WTF):
+        * wtf/RandomNumberSeed.h: Renamed from Source/JavaScriptCore/wtf/RandomNumberSeed.h.
+        (WTF):
+        (WTF::initializeRandomNumberGenerator):
+        * wtf/RedBlackTree.h: Renamed from Source/JavaScriptCore/wtf/RedBlackTree.h.
+        (WTF):
+        (RedBlackTree):
+        (Node):
+        (WTF::RedBlackTree::Node::successor):
+        (WTF::RedBlackTree::Node::predecessor):
+        (WTF::RedBlackTree::Node::reset):
+        (WTF::RedBlackTree::Node::parent):
+        (WTF::RedBlackTree::Node::setParent):
+        (WTF::RedBlackTree::Node::left):
+        (WTF::RedBlackTree::Node::setLeft):
+        (WTF::RedBlackTree::Node::right):
+        (WTF::RedBlackTree::Node::setRight):
+        (WTF::RedBlackTree::Node::color):
+        (WTF::RedBlackTree::Node::setColor):
+        (WTF::RedBlackTree::RedBlackTree):
+        (WTF::RedBlackTree::insert):
+        (WTF::RedBlackTree::remove):
+        (WTF::RedBlackTree::findExact):
+        (WTF::RedBlackTree::findLeastGreaterThanOrEqual):
+        (WTF::RedBlackTree::findGreatestLessThanOrEqual):
+        (WTF::RedBlackTree::first):
+        (WTF::RedBlackTree::last):
+        (WTF::RedBlackTree::size):
+        (WTF::RedBlackTree::isEmpty):
+        (WTF::RedBlackTree::treeMinimum):
+        (WTF::RedBlackTree::treeMaximum):
+        (WTF::RedBlackTree::treeInsert):
+        (WTF::RedBlackTree::leftRotate):
+        (WTF::RedBlackTree::rightRotate):
+        (WTF::RedBlackTree::removeFixup):
+        * wtf/RefCounted.h: Renamed from Source/JavaScriptCore/wtf/RefCounted.h.
+        (WTF):
+        (RefCountedBase):
+        (WTF::RefCountedBase::ref):
+        (WTF::RefCountedBase::hasOneRef):
+        (WTF::RefCountedBase::refCount):
+        (WTF::RefCountedBase::turnOffVerifier):
+        (WTF::RefCountedBase::relaxAdoptionRequirement):
+        (WTF::RefCountedBase::addressOfCount):
+        (WTF::RefCountedBase::RefCountedBase):
+        (WTF::RefCountedBase::~RefCountedBase):
+        (WTF::RefCountedBase::derefBase):
+        (WTF::RefCountedBase::deletionHasBegun):
+        (WTF::adopted):
+        (RefCounted):
+        (WTF::RefCounted::deref):
+        (WTF::RefCounted::RefCounted):
+        (WTF::RefCounted::~RefCounted):
+        (RefCountedCustomAllocated):
+        (WTF::RefCountedCustomAllocated::deref):
+        (WTF::RefCountedCustomAllocated::~RefCountedCustomAllocated):
+        (WTF::RefCountedBase::setMutexForVerifier):
+        (WTF::RefCountedBase::setDispatchQueueForVerifier):
+        * wtf/RefCountedArray.h: Renamed from Source/JavaScriptCore/wtf/RefCountedArray.h.
+        (WTF):
+        (RefCountedArray):
+        (WTF::RefCountedArray::RefCountedArray):
+        (WTF::RefCountedArray::operator=):
+        (WTF::RefCountedArray::~RefCountedArray):
+        (WTF::RefCountedArray::size):
+        (WTF::RefCountedArray::data):
+        (WTF::RefCountedArray::begin):
+        (WTF::RefCountedArray::end):
+        (WTF::RefCountedArray::at):
+        (WTF::RefCountedArray::operator[]):
+        (Header):
+        (WTF::RefCountedArray::Header::size):
+        (WTF::RefCountedArray::Header::payload):
+        (WTF::RefCountedArray::Header::fromPayload):
+        * wtf/RefCountedLeakCounter.cpp: Renamed from Source/JavaScriptCore/wtf/RefCountedLeakCounter.cpp.
+        (WTF):
+        (WTF::RefCountedLeakCounter::suppressMessages):
+        (WTF::RefCountedLeakCounter::cancelMessageSuppression):
+        (WTF::RefCountedLeakCounter::RefCountedLeakCounter):
+        (WTF::RefCountedLeakCounter::~RefCountedLeakCounter):
+        (WTF::RefCountedLeakCounter::increment):
+        (WTF::RefCountedLeakCounter::decrement):
+        * wtf/RefCountedLeakCounter.h: Renamed from Source/JavaScriptCore/wtf/RefCountedLeakCounter.h.
+        (WTF):
+        (RefCountedLeakCounter):
+        * wtf/RefPtr.h: Renamed from Source/JavaScriptCore/wtf/RefPtr.h.
+        (WTF):
+        (RefPtr):
+        (WTF::RefPtr::RefPtr):
+        (WTF::RefPtr::isHashTableDeletedValue):
+        (WTF::RefPtr::~RefPtr):
+        (WTF::RefPtr::get):
+        (WTF::RefPtr::release):
+        (WTF::RefPtr::operator*):
+        (WTF::RefPtr::operator->):
+        (WTF::RefPtr::operator!):
+        (WTF::RefPtr::operator UnspecifiedBoolType):
+        (WTF::RefPtr::operator=):
+        (WTF::RefPtr::hashTableDeletedValue):
+        (WTF::::RefPtr):
+        (WTF::::clear):
+        (WTF::=):
+        (WTF::::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::static_pointer_cast):
+        (WTF::const_pointer_cast):
+        (WTF::getPtr):
+        * wtf/RefPtrHashMap.h: Renamed from Source/JavaScriptCore/wtf/RefPtrHashMap.h.
+        (WTF):
+        (WTF::::swap):
+        (WTF::::size):
+        (WTF::::capacity):
+        (WTF::::isEmpty):
+        (WTF::::begin):
+        (WTF::::end):
+        (WTF::::find):
+        (WTF::::contains):
+        (WTF::::inlineAdd):
+        (WTF::::set):
+        (WTF::::add):
+        (WTF::::get):
+        (WTF::::inlineGet):
+        (WTF::::remove):
+        (WTF::::clear):
+        (WTF::::take):
+        * wtf/RetainPtr.h: Renamed from Source/JavaScriptCore/wtf/RetainPtr.h.
+        (WTF):
+        (WTF::adoptNSReference):
+        (RetainPtr):
+        (WTF::RetainPtr::RetainPtr):
+        (WTF::RetainPtr::isHashTableDeletedValue):
+        (WTF::RetainPtr::~RetainPtr):
+        (WTF::RetainPtr::get):
+        (WTF::RetainPtr::operator->):
+        (WTF::RetainPtr::operator!):
+        (WTF::RetainPtr::operator UnspecifiedBoolType):
+        (WTF::RetainPtr::operator=):
+        (WTF::RetainPtr::hashTableDeletedValue):
+        (WTF::::RetainPtr):
+        (WTF::::clear):
+        (WTF::::leakRef):
+        (WTF::=):
+        (WTF::::adoptCF):
+        (WTF::::adoptNS):
+        (WTF::::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::adoptCF):
+        (WTF::adoptNS):
+        (WTF::retainPtr):
+        * wtf/SHA1.cpp: Renamed from Source/JavaScriptCore/wtf/SHA1.cpp.
+        (WTF):
+        (WTF::testSHA1):
+        (WTF::expectSHA1):
+        (WTF::f):
+        (WTF::k):
+        (WTF::rotateLeft):
+        (WTF::SHA1::SHA1):
+        (WTF::SHA1::addBytes):
+        (WTF::SHA1::computeHash):
+        (WTF::SHA1::finalize):
+        (WTF::SHA1::processBlock):
+        (WTF::SHA1::reset):
+        * wtf/SHA1.h: Renamed from Source/JavaScriptCore/wtf/SHA1.h.
+        (WTF):
+        (SHA1):
+        (WTF::SHA1::addBytes):
+        * wtf/SegmentedVector.h: Renamed from Source/JavaScriptCore/wtf/SegmentedVector.h.
+        (WTF):
+        (SegmentedVectorIterator):
+        (WTF::SegmentedVectorIterator::~SegmentedVectorIterator):
+        (WTF::SegmentedVectorIterator::operator*):
+        (WTF::SegmentedVectorIterator::operator->):
+        (WTF::SegmentedVectorIterator::operator++):
+        (WTF::SegmentedVectorIterator::operator==):
+        (WTF::SegmentedVectorIterator::operator!=):
+        (WTF::SegmentedVectorIterator::operator=):
+        (WTF::SegmentedVectorIterator::SegmentedVectorIterator):
+        (SegmentedVector):
+        (WTF::SegmentedVector::SegmentedVector):
+        (WTF::SegmentedVector::~SegmentedVector):
+        (WTF::SegmentedVector::size):
+        (WTF::SegmentedVector::isEmpty):
+        (WTF::SegmentedVector::at):
+        (WTF::SegmentedVector::operator[]):
+        (WTF::SegmentedVector::last):
+        (WTF::SegmentedVector::append):
+        (WTF::SegmentedVector::alloc):
+        (WTF::SegmentedVector::removeLast):
+        (WTF::SegmentedVector::grow):
+        (WTF::SegmentedVector::clear):
+        (WTF::SegmentedVector::begin):
+        (WTF::SegmentedVector::end):
+        (WTF::SegmentedVector::deleteAllSegments):
+        (WTF::SegmentedVector::segmentExistsFor):
+        (WTF::SegmentedVector::segmentFor):
+        (WTF::SegmentedVector::subscriptFor):
+        (WTF::SegmentedVector::ensureSegmentsFor):
+        (WTF::SegmentedVector::ensureSegment):
+        * wtf/SentinelLinkedList.h: Renamed from Source/JavaScriptCore/wtf/SentinelLinkedList.h.
+        (WTF):
+        (BasicRawSentinelNode):
+        (WTF::BasicRawSentinelNode::BasicRawSentinelNode):
+        (WTF::BasicRawSentinelNode::setPrev):
+        (WTF::BasicRawSentinelNode::setNext):
+        (WTF::BasicRawSentinelNode::prev):
+        (WTF::BasicRawSentinelNode::next):
+        (WTF::BasicRawSentinelNode::isOnList):
+        (SentinelLinkedList):
+        (WTF::SentinelLinkedList::isEmpty):
+        (WTF::::remove):
+        (WTF::::SentinelLinkedList):
+        (WTF::::begin):
+        (WTF::::end):
+        (WTF::::push):
+        * wtf/SimpleStats.h: Renamed from Source/JavaScriptCore/wtf/SimpleStats.h.
+        (WTF):
+        (SimpleStats):
+        (WTF::SimpleStats::SimpleStats):
+        (WTF::SimpleStats::add):
+        (WTF::SimpleStats::operator!):
+        (WTF::SimpleStats::count):
+        (WTF::SimpleStats::sum):
+        (WTF::SimpleStats::sumOfSquares):
+        (WTF::SimpleStats::mean):
+        (WTF::SimpleStats::variance):
+        (WTF::SimpleStats::standardDeviation):
+        * wtf/SinglyLinkedList.h: Renamed from Source/JavaScriptCore/wtf/SinglyLinkedList.h.
+        (WTF):
+        (SinglyLinkedList):
+        (WTF::::SinglyLinkedList):
+        (WTF::::isEmpty):
+        (WTF::::push):
+        (WTF::::pop):
+        * wtf/SizeLimits.cpp: Renamed from Source/JavaScriptCore/wtf/SizeLimits.cpp.
+        (WTF):
+        (SameSizeAsRefCounted):
+        * wtf/Spectrum.h: Renamed from Source/JavaScriptCore/wtf/Spectrum.h.
+        (WTF):
+        (Spectrum):
+        (WTF::Spectrum::Spectrum):
+        (WTF::Spectrum::add):
+        (WTF::Spectrum::get):
+        (WTF::Spectrum::begin):
+        (WTF::Spectrum::end):
+        (WTF::Spectrum::KeyAndCount::KeyAndCount):
+        (KeyAndCount):
+        (WTF::Spectrum::KeyAndCount::operator<):
+        (WTF::Spectrum::buildList):
+        * wtf/StackBounds.cpp: Renamed from Source/JavaScriptCore/wtf/StackBounds.cpp.
+        (WTF):
+        (WTF::estimateStackBound):
+        (WTF::StackBounds::initialize):
+        (WTF::detectGrowingDownward):
+        (WTF::isPageWritable):
+        (WTF::getLowerStackBound):
+        (WTF::getUpperStackBound):
+        * wtf/StackBounds.h: Renamed from Source/JavaScriptCore/wtf/StackBounds.h.
+        (WTF):
+        (StackBounds):
+        (WTF::StackBounds::StackBounds):
+        (WTF::StackBounds::currentThreadStackBounds):
+        (WTF::StackBounds::origin):
+        (WTF::StackBounds::current):
+        (WTF::StackBounds::recursionLimit):
+        (WTF::StackBounds::recursionCheck):
+        (WTF::StackBounds::isGrowingDownward):
+        (WTF::StackBounds::checkConsistency):
+        * wtf/StaticConstructors.h: Renamed from Source/JavaScriptCore/wtf/StaticConstructors.h.
+        * wtf/StdLibExtras.h: Renamed from Source/JavaScriptCore/wtf/StdLibExtras.h.
+        (isPointerTypeAlignmentOkay):
+        (reinterpret_cast_ptr):
+        (WTF):
+        (WTF::isPointerAligned):
+        (WTF::is8ByteAligned):
+        (WTF::bitwise_cast):
+        (WTF::safeCast):
+        (WTF::bitCount):
+        (WTF::roundUpToMultipleOf):
+        (WTF::binarySearch):
+        (WTF::binarySearchWithFunctor):
+        (WTF::genericBinarySearch):
+        (operator new):
+        * wtf/StringExtras.cpp: Renamed from Source/JavaScriptCore/wtf/StringExtras.cpp.
+        (strcasecmp):
+        (strncasecmp):
+        * wtf/StringExtras.h: Renamed from Source/JavaScriptCore/wtf/StringExtras.h.
+        (snprintf):
+        (wtf_vsnprintf):
+        (strnicmp):
+        (stricmp):
+        (strdup):
+        (strncasecmp):
+        (strcasecmp):
+        (strnstr):
+        * wtf/StringHasher.h: Renamed from Source/JavaScriptCore/wtf/StringHasher.h.
+        (WTF):
+        (StringHasher):
+        (WTF::StringHasher::StringHasher):
+        (WTF::StringHasher::addCharacters):
+        (WTF::StringHasher::addCharacter):
+        (WTF::StringHasher::hash):
+        (WTF::StringHasher::computeHash):
+        (WTF::StringHasher::hashMemory):
+        (WTF::StringHasher::defaultConverter):
+        (WTF::StringHasher::addCharactersToHash):
+        * wtf/TCPackedCache.h: Renamed from Source/JavaScriptCore/wtf/TCPackedCache.h.
+        (PackedCache):
+        (PackedCache::PackedCache):
+        (PackedCache::Put):
+        (PackedCache::Has):
+        (PackedCache::GetOrDefault):
+        (PackedCache::Clear):
+        (PackedCache::EntryToValue):
+        (PackedCache::EntryToUpper):
+        (PackedCache::KeyToUpper):
+        (PackedCache::UpperToPartialKey):
+        (PackedCache::Hash):
+        (PackedCache::KeyMatch):
+        * wtf/TCPageMap.h: Renamed from Source/JavaScriptCore/wtf/TCPageMap.h.
+        (TCMalloc_PageMap1):
+        (TCMalloc_PageMap1::init):
+        (TCMalloc_PageMap1::Ensure):
+        (TCMalloc_PageMap1::PreallocateMoreMemory):
+        (TCMalloc_PageMap1::get):
+        (TCMalloc_PageMap1::set):
+        (TCMalloc_PageMap2):
+        (Leaf):
+        (TCMalloc_PageMap2::init):
+        (TCMalloc_PageMap2::get):
+        (TCMalloc_PageMap2::set):
+        (TCMalloc_PageMap2::Ensure):
+        (TCMalloc_PageMap2::PreallocateMoreMemory):
+        (TCMalloc_PageMap2::visitValues):
+        (TCMalloc_PageMap2::visitAllocations):
+        (TCMalloc_PageMap3):
+        (Node):
+        (TCMalloc_PageMap3::NewNode):
+        (TCMalloc_PageMap3::init):
+        (TCMalloc_PageMap3::get):
+        (TCMalloc_PageMap3::set):
+        (TCMalloc_PageMap3::Ensure):
+        (TCMalloc_PageMap3::PreallocateMoreMemory):
+        (TCMalloc_PageMap3::visitValues):
+        (TCMalloc_PageMap3::visitAllocations):
+        * wtf/TCSpinLock.h: Renamed from Source/JavaScriptCore/wtf/TCSpinLock.h.
+        (TCMalloc_SpinLock):
+        (TCMalloc_SpinLock::Lock):
+        (TCMalloc_SpinLock::Unlock):
+        (TCMalloc_SpinLock::IsHeld):
+        (TCMalloc_SpinLock::Init):
+        (TCMalloc_SpinLock::Finalize):
+        (TCMalloc_SlowLock):
+        (TCMalloc_SpinLockHolder):
+        (TCMalloc_SpinLockHolder::TCMalloc_SpinLockHolder):
+        (TCMalloc_SpinLockHolder::~TCMalloc_SpinLockHolder):
+        * wtf/TCSystemAlloc.cpp: Renamed from Source/JavaScriptCore/wtf/TCSystemAlloc.cpp.
+        (TrySbrk):
+        (TryMmap):
+        (TryVirtualAlloc):
+        (TryDevMem):
+        (TCMalloc_SystemAlloc):
+        (TCMalloc_SystemRelease):
+        (TCMalloc_SystemCommit):
+        * wtf/TCSystemAlloc.h: Renamed from Source/JavaScriptCore/wtf/TCSystemAlloc.h.
+        (TCMalloc_SystemRelease):
+        (TCMalloc_SystemCommit):
+        * wtf/TemporaryChange.h: Renamed from Source/JavaScriptCore/wtf/TemporaryChange.h.
+        (WTF):
+        (TemporaryChange):
+        (WTF::TemporaryChange::TemporaryChange):
+        (WTF::TemporaryChange::~TemporaryChange):
+        * wtf/ThreadFunctionInvocation.h: Renamed from Source/JavaScriptCore/wtf/ThreadFunctionInvocation.h.
+        (WTF):
+        (WTF::ThreadFunctionInvocation::ThreadFunctionInvocation):
+        (ThreadFunctionInvocation):
+        * wtf/ThreadIdentifierDataPthreads.cpp: Renamed from Source/JavaScriptCore/wtf/ThreadIdentifierDataPthreads.cpp.
+        (WTF):
+        (WTF::ThreadIdentifierData::~ThreadIdentifierData):
+        (WTF::ThreadIdentifierData::initializeOnce):
+        (WTF::ThreadIdentifierData::identifier):
+        (WTF::ThreadIdentifierData::initialize):
+        (WTF::ThreadIdentifierData::destruct):
+        * wtf/ThreadIdentifierDataPthreads.h: Renamed from Source/JavaScriptCore/wtf/ThreadIdentifierDataPthreads.h.
+        (WTF):
+        (ThreadIdentifierData):
+        (WTF::ThreadIdentifierData::ThreadIdentifierData):
+        * wtf/ThreadRestrictionVerifier.h: Renamed from Source/JavaScriptCore/wtf/ThreadRestrictionVerifier.h.
+        (WTF):
+        (ThreadRestrictionVerifier):
+        (WTF::ThreadRestrictionVerifier::ThreadRestrictionVerifier):
+        (WTF::ThreadRestrictionVerifier::~ThreadRestrictionVerifier):
+        (WTF::ThreadRestrictionVerifier::setMutexMode):
+        (WTF::ThreadRestrictionVerifier::setDispatchQueueMode):
+        (WTF::ThreadRestrictionVerifier::turnOffVerification):
+        (WTF::ThreadRestrictionVerifier::setShared):
+        (WTF::ThreadRestrictionVerifier::isSafeToUse):
+        * wtf/ThreadSafeRefCounted.h: Renamed from Source/JavaScriptCore/wtf/ThreadSafeRefCounted.h.
+        (WTF):
+        (ThreadSafeRefCountedBase):
+        (WTF::ThreadSafeRefCountedBase::ThreadSafeRefCountedBase):
+        (WTF::ThreadSafeRefCountedBase::ref):
+        (WTF::ThreadSafeRefCountedBase::hasOneRef):
+        (WTF::ThreadSafeRefCountedBase::refCount):
+        (WTF::ThreadSafeRefCountedBase::derefBase):
+        (ThreadSafeRefCounted):
+        (WTF::ThreadSafeRefCounted::deref):
+        (WTF::ThreadSafeRefCounted::ThreadSafeRefCounted):
+        * wtf/ThreadSpecific.h: Renamed from Source/JavaScriptCore/wtf/ThreadSpecific.h.
+        (WTF):
+        (ThreadSpecific):
+        (Data):
+        (WTF::ThreadSpecific::Data::Data):
+        (WTF::::ThreadSpecific):
+        (WTF::::get):
+        (WTF::::set):
+        (WTF::::~ThreadSpecific):
+        (WTF::::destroy):
+        (WTF::::isSet):
+        (WTF::T):
+        (WTF::::operator):
+        * wtf/ThreadSpecificWin.cpp: Renamed from Source/JavaScriptCore/wtf/ThreadSpecificWin.cpp.
+        (WTF):
+        (WTF::tlsKeyCount):
+        (WTF::tlsKeys):
+        (WTF::ThreadSpecificThreadExit):
+        * wtf/Threading.cpp: Renamed from Source/JavaScriptCore/wtf/Threading.cpp.
+        (WTF):
+        (NewThreadContext):
+        (WTF::NewThreadContext::NewThreadContext):
+        (WTF::threadEntryPoint):
+        (WTF::createThread):
+        (WTF::ThreadFunctionWithReturnValueInvocation::ThreadFunctionWithReturnValueInvocation):
+        (ThreadFunctionWithReturnValueInvocation):
+        (WTF::compatEntryPoint):
+        (WTF::waitForThreadCompletion):
+        * wtf/Threading.h: Renamed from Source/JavaScriptCore/wtf/Threading.h.
+        (WTF):
+        * wtf/ThreadingNone.cpp: Renamed from Source/JavaScriptCore/wtf/ThreadingNone.cpp.
+        * wtf/ThreadingPrimitives.h: Renamed from Source/JavaScriptCore/wtf/ThreadingPrimitives.h.
+        (WTF):
+        (PlatformMutex):
+        (PlatformCondition):
+        (Mutex):
+        (WTF::Mutex::impl):
+        (ReadWriteLock):
+        (ThreadCondition):
+        * wtf/ThreadingPthreads.cpp: Renamed from Source/JavaScriptCore/wtf/ThreadingPthreads.cpp.
+        (WTF):
+        (WTF::threadMapMutex):
+        (WTF::initializeThreading):
+        (WTF::lockAtomicallyInitializedStaticMutex):
+        (WTF::unlockAtomicallyInitializedStaticMutex):
+        (WTF::threadMap):
+        (WTF::identifierByPthreadHandle):
+        (WTF::establishIdentifierForPthreadHandle):
+        (WTF::pthreadHandleForIdentifier):
+        (WTF::clearPthreadHandleForIdentifier):
+        (WTF::wtfThreadEntryPoint):
+        (WTF::createThreadInternal):
+        (WTF::initializeCurrentThreadInternal):
+        (WTF::waitForThreadCompletion):
+        (WTF::detachThread):
+        (WTF::yield):
+        (WTF::currentThread):
+        (WTF::Mutex::Mutex):
+        (WTF::Mutex::~Mutex):
+        (WTF::Mutex::lock):
+        (WTF::Mutex::tryLock):
+        (WTF::Mutex::unlock):
+        (WTF::ReadWriteLock::ReadWriteLock):
+        (WTF::ReadWriteLock::~ReadWriteLock):
+        (WTF::ReadWriteLock::readLock):
+        (WTF::ReadWriteLock::tryReadLock):
+        (WTF::ReadWriteLock::writeLock):
+        (WTF::ReadWriteLock::tryWriteLock):
+        (WTF::ReadWriteLock::unlock):
+        (WTF::ThreadCondition::ThreadCondition):
+        (WTF::ThreadCondition::~ThreadCondition):
+        (WTF::ThreadCondition::wait):
+        (WTF::ThreadCondition::timedWait):
+        (WTF::ThreadCondition::signal):
+        (WTF::ThreadCondition::broadcast):
+        * wtf/ThreadingWin.cpp: Renamed from Source/JavaScriptCore/wtf/ThreadingWin.cpp.
+        (WTF):
+        (tagTHREADNAME_INFO):
+        (WTF::initializeCurrentThreadInternal):
+        (WTF::lockAtomicallyInitializedStaticMutex):
+        (WTF::unlockAtomicallyInitializedStaticMutex):
+        (WTF::threadMapMutex):
+        (WTF::initializeThreading):
+        (WTF::threadMap):
+        (WTF::storeThreadHandleByIdentifier):
+        (WTF::threadHandleForIdentifier):
+        (WTF::clearThreadHandleForIdentifier):
+        (WTF::wtfThreadEntryPoint):
+        (WTF::createThreadInternal):
+        (WTF::waitForThreadCompletion):
+        (WTF::detachThread):
+        (WTF::yield):
+        (WTF::currentThread):
+        (WTF::Mutex::Mutex):
+        (WTF::Mutex::~Mutex):
+        (WTF::Mutex::lock):
+        (WTF::Mutex::tryLock):
+        (WTF::Mutex::unlock):
+        (WTF::PlatformCondition::timedWait):
+        (WTF::PlatformCondition::signal):
+        (WTF::ThreadCondition::ThreadCondition):
+        (WTF::ThreadCondition::~ThreadCondition):
+        (WTF::ThreadCondition::wait):
+        (WTF::ThreadCondition::timedWait):
+        (WTF::ThreadCondition::signal):
+        (WTF::ThreadCondition::broadcast):
+        (WTF::absoluteTimeToWaitTimeoutInterval):
+        * wtf/TypeTraits.cpp: Renamed from Source/JavaScriptCore/wtf/TypeTraits.cpp.
+        (WTF):
+        * wtf/TypeTraits.h: Renamed from Source/JavaScriptCore/wtf/TypeTraits.h.
+        (WTF):
+        (IsConvertibleToInteger):
+        (IsArray):
+        (IsSameType):
+        (IsSubclass):
+        (NoType):
+        (IsSubclassOfTemplate):
+        (RemoveTemplate):
+        (RemoveConst):
+        (RemoveVolatile):
+        (RemoveConstVolatile):
+        (RemovePointer):
+        (RemoveReference):
+        (RemoveExtent):
+        (DecayArray):
+        (IntegralConstant):
+        * wtf/TypedArrayBase.h: Renamed from Source/JavaScriptCore/wtf/TypedArrayBase.h.
+        (WTF):
+        (TypedArrayBase):
+        (WTF::TypedArrayBase::data):
+        (WTF::TypedArrayBase::set):
+        (WTF::TypedArrayBase::setRange):
+        (WTF::TypedArrayBase::zeroRange):
+        (WTF::TypedArrayBase::length):
+        (WTF::TypedArrayBase::byteLength):
+        (WTF::TypedArrayBase::TypedArrayBase):
+        (WTF::TypedArrayBase::create):
+        (WTF::TypedArrayBase::subarrayImpl):
+        (WTF::TypedArrayBase::neuter):
+        * wtf/Uint16Array.h: Renamed from Source/JavaScriptCore/wtf/Uint16Array.h.
+        (WTF):
+        (Uint16Array):
+        (WTF::Uint16Array::set):
+        (WTF::Uint16Array::isUnsignedShortArray):
+        (WTF::Uint16Array::create):
+        (WTF::Uint16Array::Uint16Array):
+        (WTF::Uint16Array::subarray):
+        * wtf/Uint32Array.h: Renamed from Source/JavaScriptCore/wtf/Uint32Array.h.
+        (WTF):
+        (Uint32Array):
+        (WTF::Uint32Array::set):
+        (WTF::Uint32Array::isUnsignedIntArray):
+        (WTF::Uint32Array::create):
+        (WTF::Uint32Array::Uint32Array):
+        (WTF::Uint32Array::subarray):
+        * wtf/Uint8Array.h: Renamed from Source/JavaScriptCore/wtf/Uint8Array.h.
+        (WTF):
+        (Uint8Array):
+        (WTF::Uint8Array::set):
+        (WTF::Uint8Array::isUnsignedByteArray):
+        (WTF::Uint8Array::create):
+        (WTF::Uint8Array::Uint8Array):
+        (WTF::Uint8Array::subarray):
+        * wtf/Uint8ClampedArray.h: Renamed from Source/JavaScriptCore/wtf/Uint8ClampedArray.h.
+        (WTF):
+        (Uint8ClampedArray):
+        (WTF::Uint8ClampedArray::set):
+        (WTF::Uint8ClampedArray::isUnsignedByteClampedArray):
+        (WTF::Uint8ClampedArray::create):
+        (WTF::Uint8ClampedArray::Uint8ClampedArray):
+        (WTF::Uint8ClampedArray::subarray):
+        * wtf/UnionFind.h: Renamed from Source/JavaScriptCore/wtf/UnionFind.h.
+        (WTF):
+        (UnionFind):
+        (WTF::UnionFind::UnionFind):
+        (WTF::UnionFind::find):
+        (WTF::UnionFind::unify):
+        * wtf/UnusedParam.h: Renamed from Source/JavaScriptCore/wtf/UnusedParam.h.
+        (unusedParam):
+        * wtf/VMTags.h: Renamed from Source/JavaScriptCore/wtf/VMTags.h.
+        * wtf/ValueCheck.h: Renamed from Source/JavaScriptCore/wtf/ValueCheck.h.
+        (WTF):
+        (ValueCheck):
+        (WTF::ValueCheck::checkConsistency):
+        * wtf/Vector.h: Renamed from Source/JavaScriptCore/wtf/Vector.h.
+        (WTF):
+        (WTF::VectorTypeOperations::destruct):
+        (VectorTypeOperations):
+        (WTF::VectorTypeOperations::initialize):
+        (WTF::VectorTypeOperations::move):
+        (WTF::VectorTypeOperations::moveOverlapping):
+        (WTF::VectorTypeOperations::uninitializedCopy):
+        (WTF::VectorTypeOperations::uninitializedFill):
+        (WTF::VectorTypeOperations::compare):
+        (VectorBufferBase):
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (WTF::VectorBufferBase::deallocateBuffer):
+        (WTF::VectorBufferBase::buffer):
+        (WTF::VectorBufferBase::bufferSlot):
+        (WTF::VectorBufferBase::capacity):
+        (WTF::VectorBufferBase::releaseBuffer):
+        (WTF::VectorBufferBase::VectorBufferBase):
+        (WTF::VectorBufferBase::~VectorBufferBase):
+        (VectorBuffer):
+        (WTF::VectorBuffer::VectorBuffer):
+        (WTF::VectorBuffer::~VectorBuffer):
+        (WTF::VectorBuffer::allocateBuffer):
+        (WTF::VectorBuffer::tryAllocateBuffer):
+        (WTF::VectorBuffer::deallocateBuffer):
+        (WTF::VectorBuffer::swap):
+        (WTF::VectorBuffer::restoreInlineBufferIfNeeded):
+        (WTF::VectorBuffer::releaseBuffer):
+        (WTF::VectorBuffer::inlineBuffer):
+        (Vector):
+        (WTF::Vector::Vector):
+        (WTF::Vector::~Vector):
+        (WTF::Vector::size):
+        (WTF::Vector::capacity):
+        (WTF::Vector::isEmpty):
+        (WTF::Vector::at):
+        (WTF::Vector::operator[]):
+        (WTF::Vector::data):
+        (WTF::Vector::dataSlot):
+        (WTF::Vector::begin):
+        (WTF::Vector::end):
+        (WTF::Vector::rbegin):
+        (WTF::Vector::rend):
+        (WTF::Vector::reversed):
+        (WTF::Vector::first):
+        (WTF::Vector::last):
+        (WTF::Vector::shrinkToFit):
+        (WTF::Vector::clear):
+        (WTF::Vector::removeLast):
+        (WTF::Vector::fill):
+        (WTF::Vector::swap):
+        (VectorReverseProxy):
+        (WTF::Vector::VectorReverseProxy::begin):
+        (WTF::Vector::VectorReverseProxy::end):
+        (WTF::operator<<):
+        (WTF::operator>>):
+        (WTF::::Vector):
+        (WTF::=):
+        (WTF::typelessPointersAreEqual):
+        (WTF::::contains):
+        (WTF::::find):
+        (WTF::::reverseFind):
+        (WTF::::fill):
+        (WTF::::appendRange):
+        (WTF::::expandCapacity):
+        (WTF::::tryExpandCapacity):
+        (WTF::::resize):
+        (WTF::::shrink):
+        (WTF::::grow):
+        (WTF::::reserveCapacity):
+        (WTF::::tryReserveCapacity):
+        (WTF::::reserveInitialCapacity):
+        (WTF::::shrinkCapacity):
+        (WTF::::append):
+        (WTF::::tryAppend):
+        (WTF::::appendSlowCase):
+        (WTF::::uncheckedAppend):
+        (WTF::::insert):
+        (WTF::::prepend):
+        (WTF::::remove):
+        (WTF::::reverse):
+        (WTF::::releaseBuffer):
+        (WTF::::checkConsistency):
+        (WTF::deleteAllValues):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        * wtf/VectorTraits.h: Renamed from Source/JavaScriptCore/wtf/VectorTraits.h.
+        (WTF):
+        (SimpleClassVectorTraits):
+        * wtf/WTFThreadData.cpp: Renamed from Source/JavaScriptCore/wtf/WTFThreadData.cpp.
+        (WTF):
+        (WTF::WTFThreadData::WTFThreadData):
+        (WTF::WTFThreadData::~WTFThreadData):
+        (JSC):
+        (JSC::IdentifierTable::~IdentifierTable):
+        (JSC::IdentifierTable::add):
+        * wtf/WTFThreadData.h: Renamed from Source/JavaScriptCore/wtf/WTFThreadData.h.
+        (JSC):
+        (IdentifierTable):
+        (JSC::IdentifierTable::remove):
+        (JSC::IdentifierTable::literalTable):
+        (WTF):
+        (WTFThreadData):
+        (WTF::WTFThreadData::atomicStringTable):
+        (WTF::WTFThreadData::currentIdentifierTable):
+        (WTF::WTFThreadData::setCurrentIdentifierTable):
+        (WTF::WTFThreadData::resetCurrentIdentifierTable):
+        (WTF::WTFThreadData::stack):
+        (WTF::wtfThreadData):
+        * wtf/blackberry/MainThreadBlackBerry.cpp: Renamed from Source/JavaScriptCore/wtf/blackberry/MainThreadBlackBerry.cpp.
+        (WTF):
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/chromium/ChromiumThreading.h: Renamed from Source/JavaScriptCore/wtf/chromium/ChromiumThreading.h.
+        (WTF):
+        (ChromiumThreading):
+        * wtf/chromium/MainThreadChromium.cpp: Renamed from Source/JavaScriptCore/wtf/chromium/MainThreadChromium.cpp.
+        (WTF):
+        (WTF::initializeMainThread):
+        (WTF::callOnMainThread):
+        (WTF::callOnMainThreadAndWait):
+        (WTF::setMainThreadCallbacksPaused):
+        (WTF::isMainThread):
+        * wtf/dtoa.cpp: Renamed from Source/JavaScriptCore/wtf/dtoa.cpp.
+        (WTF):
+        (WTF::storeInc):
+        (WTF::BigInt::BigInt):
+        (BigInt):
+        (WTF::BigInt::clear):
+        (WTF::BigInt::size):
+        (WTF::BigInt::resize):
+        (WTF::BigInt::words):
+        (WTF::BigInt::append):
+        (WTF::multadd):
+        (WTF::hi0bits):
+        (WTF::lo0bits):
+        (WTF::i2b):
+        (WTF::mult):
+        (P5Node):
+        (WTF::P5Node::P5Node):
+        (WTF::pow5mult):
+        (WTF::lshift):
+        (WTF::cmp):
+        (WTF::diff):
+        (WTF::d2b):
+        (WTF::strtod):
+        (WTF::quorem):
+        (WTF::dtoa):
+        * wtf/dtoa.h: Renamed from Source/JavaScriptCore/wtf/dtoa.h.
+        (WTF):
+        * wtf/dtoa/COPYING: Renamed from Source/JavaScriptCore/wtf/dtoa/COPYING.
+        * wtf/dtoa/LICENSE: Renamed from Source/JavaScriptCore/wtf/dtoa/LICENSE.
+        * wtf/dtoa/README: Renamed from Source/JavaScriptCore/wtf/dtoa/README.
+        * wtf/dtoa/bignum-dtoa.cc: Renamed from Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.cc.
+        * wtf/dtoa/bignum-dtoa.h: Renamed from Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.h.
+        (WTF):
+        (double_conversion):
+        * wtf/dtoa/bignum.cc: Renamed from Source/JavaScriptCore/wtf/dtoa/bignum.cc.
+        * wtf/dtoa/bignum.h: Renamed from Source/JavaScriptCore/wtf/dtoa/bignum.h.
+        (WTF):
+        (double_conversion):
+        (Bignum):
+        (WTF::double_conversion::Bignum::Times10):
+        (WTF::double_conversion::Bignum::Equal):
+        (WTF::double_conversion::Bignum::LessEqual):
+        (WTF::double_conversion::Bignum::Less):
+        (WTF::double_conversion::Bignum::PlusEqual):
+        (WTF::double_conversion::Bignum::PlusLessEqual):
+        (WTF::double_conversion::Bignum::PlusLess):
+        (WTF::double_conversion::Bignum::EnsureCapacity):
+        (WTF::double_conversion::Bignum::BigitLength):
+        * wtf/dtoa/cached-powers.cc: Renamed from Source/JavaScriptCore/wtf/dtoa/cached-powers.cc.
+        * wtf/dtoa/cached-powers.h: Renamed from Source/JavaScriptCore/wtf/dtoa/cached-powers.h.
+        (WTF):
+        (double_conversion):
+        (PowersOfTenCache):
+        * wtf/dtoa/diy-fp.cc: Renamed from Source/JavaScriptCore/wtf/dtoa/diy-fp.cc.
+        * wtf/dtoa/diy-fp.h: Renamed from Source/JavaScriptCore/wtf/dtoa/diy-fp.h.
+        (WTF):
+        (double_conversion):
+        (DiyFp):
+        (WTF::double_conversion::DiyFp::DiyFp):
+        (WTF::double_conversion::DiyFp::Subtract):
+        (WTF::double_conversion::DiyFp::Minus):
+        (WTF::double_conversion::DiyFp::Times):
+        (WTF::double_conversion::DiyFp::Normalize):
+        (WTF::double_conversion::DiyFp::f):
+        (WTF::double_conversion::DiyFp::e):
+        (WTF::double_conversion::DiyFp::set_f):
+        (WTF::double_conversion::DiyFp::set_e):
+        * wtf/dtoa/double-conversion.cc: Renamed from Source/JavaScriptCore/wtf/dtoa/double-conversion.cc.
+        * wtf/dtoa/double-conversion.h: Renamed from Source/JavaScriptCore/wtf/dtoa/double-conversion.h.
+        (WTF):
+        (double_conversion):
+        (DoubleToStringConverter):
+        (WTF::double_conversion::DoubleToStringConverter::DoubleToStringConverter):
+        (StringToDoubleConverter):
+        (WTF::double_conversion::StringToDoubleConverter::StringToDoubleConverter):
+        * wtf/dtoa/double.h: Renamed from Source/JavaScriptCore/wtf/dtoa/double.h.
+        (WTF):
+        (double_conversion):
+        (WTF::double_conversion::double_to_uint64):
+        (WTF::double_conversion::uint64_to_double):
+        (Double):
+        (WTF::double_conversion::Double::Double):
+        (WTF::double_conversion::Double::AsDiyFp):
+        (WTF::double_conversion::Double::AsNormalizedDiyFp):
+        (WTF::double_conversion::Double::AsUint64):
+        (WTF::double_conversion::Double::NextDouble):
+        (WTF::double_conversion::Double::Exponent):
+        (WTF::double_conversion::Double::Significand):
+        (WTF::double_conversion::Double::IsDenormal):
+        (WTF::double_conversion::Double::IsSpecial):
+        (WTF::double_conversion::Double::IsNan):
+        (WTF::double_conversion::Double::IsInfinite):
+        (WTF::double_conversion::Double::Sign):
+        (WTF::double_conversion::Double::UpperBoundary):
+        (WTF::double_conversion::Double::NormalizedBoundaries):
+        (WTF::double_conversion::Double::value):
+        (WTF::double_conversion::Double::SignificandSizeForOrderOfMagnitude):
+        (WTF::double_conversion::Double::Infinity):
+        (WTF::double_conversion::Double::NaN):
+        (WTF::double_conversion::Double::DiyFpToUint64):
+        * wtf/dtoa/fast-dtoa.cc: Renamed from Source/JavaScriptCore/wtf/dtoa/fast-dtoa.cc.
+        * wtf/dtoa/fast-dtoa.h: Renamed from Source/JavaScriptCore/wtf/dtoa/fast-dtoa.h.
+        (WTF):
+        (double_conversion):
+        * wtf/dtoa/fixed-dtoa.cc: Renamed from Source/JavaScriptCore/wtf/dtoa/fixed-dtoa.cc.
+        * wtf/dtoa/fixed-dtoa.h: Renamed from Source/JavaScriptCore/wtf/dtoa/fixed-dtoa.h.
+        (WTF):
+        (double_conversion):
+        * wtf/dtoa/strtod.cc: Renamed from Source/JavaScriptCore/wtf/dtoa/strtod.cc.
+        * wtf/dtoa/strtod.h: Renamed from Source/JavaScriptCore/wtf/dtoa/strtod.h.
+        (WTF):
+        (double_conversion):
+        * wtf/dtoa/utils.h: Renamed from Source/JavaScriptCore/wtf/dtoa/utils.h.
+        (WTF):
+        (double_conversion):
+        (WTF::double_conversion::Max):
+        (WTF::double_conversion::Min):
+        (WTF::double_conversion::StrLength):
+        (Vector):
+        (WTF::double_conversion::Vector::Vector):
+        (WTF::double_conversion::Vector::SubVector):
+        (WTF::double_conversion::Vector::length):
+        (WTF::double_conversion::Vector::is_empty):
+        (WTF::double_conversion::Vector::start):
+        (WTF::double_conversion::Vector::operator[]):
+        (WTF::double_conversion::Vector::first):
+        (WTF::double_conversion::Vector::last):
+        (StringBuilder):
+        (WTF::double_conversion::StringBuilder::StringBuilder):
+        (WTF::double_conversion::StringBuilder::~StringBuilder):
+        (WTF::double_conversion::StringBuilder::size):
+        (WTF::double_conversion::StringBuilder::position):
+        (WTF::double_conversion::StringBuilder::SetPosition):
+        (WTF::double_conversion::StringBuilder::Reset):
+        (WTF::double_conversion::StringBuilder::AddCharacter):
+        (WTF::double_conversion::StringBuilder::AddString):
+        (WTF::double_conversion::StringBuilder::AddSubstring):
+        (WTF::double_conversion::StringBuilder::AddPadding):
+        (WTF::double_conversion::StringBuilder::Finalize):
+        (WTF::double_conversion::StringBuilder::is_finalized):
+        (WTF::double_conversion::BitCast):
+        * wtf/efl/MainThreadEfl.cpp: Renamed from Source/JavaScriptCore/wtf/efl/MainThreadEfl.cpp.
+        (WTF):
+        (WTF::pipeObject):
+        (WTF::monitorDispatchFunctions):
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/efl/OwnPtrEfl.cpp: Renamed from Source/JavaScriptCore/wtf/efl/OwnPtrEfl.cpp.
+        (WTF):
+        (WTF::deleteOwnedPtr):
+        * wtf/gobject/GOwnPtr.cpp: Renamed from Source/JavaScriptCore/wtf/gobject/GOwnPtr.cpp.
+        (WTF):
+        (WTF::GError):
+        (WTF::GList):
+        (WTF::GSList):
+        (WTF::GPatternSpec):
+        (WTF::GDir):
+        (WTF::GTimer):
+        (WTF::GKeyFile):
+        * wtf/gobject/GOwnPtr.h: Renamed from Source/JavaScriptCore/wtf/gobject/GOwnPtr.h.
+        (WTF):
+        (GOwnPtr):
+        (WTF::GOwnPtr::GOwnPtr):
+        (WTF::GOwnPtr::~GOwnPtr):
+        (WTF::GOwnPtr::get):
+        (WTF::GOwnPtr::release):
+        (WTF::GOwnPtr::outPtr):
+        (WTF::GOwnPtr::set):
+        (WTF::GOwnPtr::clear):
+        (WTF::GOwnPtr::operator*):
+        (WTF::GOwnPtr::operator->):
+        (WTF::GOwnPtr::operator!):
+        (WTF::GOwnPtr::operator UnspecifiedBoolType):
+        (WTF::GOwnPtr::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::getPtr):
+        (WTF::freeOwnedGPtr):
+        * wtf/gobject/GRefPtr.cpp: Renamed from Source/JavaScriptCore/wtf/gobject/GRefPtr.cpp.
+        (WTF):
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+        (_GVariant):
+        * wtf/gobject/GRefPtr.h: Renamed from Source/JavaScriptCore/wtf/gobject/GRefPtr.h.
+        (WTF):
+        (GRefPtr):
+        (WTF::GRefPtr::GRefPtr):
+        (WTF::GRefPtr::~GRefPtr):
+        (WTF::GRefPtr::clear):
+        (WTF::GRefPtr::isHashTableDeletedValue):
+        (WTF::GRefPtr::get):
+        (WTF::GRefPtr::operator*):
+        (WTF::GRefPtr::operator->):
+        (WTF::GRefPtr::operator!):
+        (WTF::GRefPtr::operator UnspecifiedBoolType):
+        (WTF::GRefPtr::hashTableDeletedValue):
+        (WTF::=):
+        (WTF::::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::static_pointer_cast):
+        (WTF::const_pointer_cast):
+        (WTF::getPtr):
+        (WTF::adoptGRef):
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+        * wtf/gobject/GTypedefs.h: Renamed from Source/JavaScriptCore/wtf/gobject/GTypedefs.h.
+        * wtf/gobject/GlibUtilities.cpp: Renamed from Source/JavaScriptCore/wtf/gobject/GlibUtilities.cpp.
+        (getCurrentExecutablePath):
+        * wtf/gobject/GlibUtilities.h: Renamed from Source/JavaScriptCore/wtf/gobject/GlibUtilities.h.
+        * wtf/gtk/MainThreadGtk.cpp: Renamed from Source/JavaScriptCore/wtf/gtk/MainThreadGtk.cpp.
+        (WTF):
+        (WTF::initializeMainThreadPlatform):
+        (WTF::timeoutFired):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/mac/MainThreadMac.mm: Renamed from Source/JavaScriptCore/wtf/mac/MainThreadMac.mm.
+        (-[JSWTFMainThreadCaller call]):
+        (WTF):
+        (WTF::initializeMainThreadPlatform):
+        (WTF::initializeMainThreadToProcessMainThreadPlatform):
+        (WTF::timerFired):
+        (WTF::postTimer):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        (WTF::isMainThread):
+        * wtf/qt/MainThreadQt.cpp: Renamed from Source/JavaScriptCore/wtf/qt/MainThreadQt.cpp.
+        (WTF):
+        (MainThreadInvoker):
+        (WTF::MainThreadInvoker::MainThreadInvoker):
+        (WTF::MainThreadInvoker::event):
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/qt/StringQt.cpp: Renamed from Source/JavaScriptCore/wtf/qt/StringQt.cpp.
+        (WTF):
+        (WTF::String::String):
+        (WTF::String::operator QString):
+        (WTF::operator<<):
+        (WTF::operator>>):
+        * wtf/qt/UtilsQt.h: Renamed from Source/JavaScriptCore/wtf/qt/UtilsQt.h.
+        (escapeHtml):
+        * wtf/qt/compat/QGuiApplication: Renamed from Source/JavaScriptCore/wtf/qt/compat/QGuiApplication.
+        * wtf/qt/compat/qguiapplication.h: Renamed from Source/JavaScriptCore/wtf/qt/compat/qguiapplication.h.
+        (QGuiApplication):
+        (QGuiApplication::styleHints):
+        * wtf/text/ASCIIFastPath.h: Renamed from Source/JavaScriptCore/wtf/text/ASCIIFastPath.h.
+        (WTF):
+        (WTF::isAlignedToMachineWord):
+        (WTF::alignToMachineWord):
+        (WTF::isAllASCII):
+        (WTF::charactersAreAllASCII):
+        * wtf/text/AtomicString.cpp: Renamed from Source/JavaScriptCore/wtf/text/AtomicString.cpp.
+        (WTF):
+        (AtomicStringTable):
+        (WTF::AtomicStringTable::create):
+        (WTF::AtomicStringTable::table):
+        (WTF::AtomicStringTable::destroy):
+        (WTF::stringTable):
+        (WTF::addToStringTable):
+        (WTF::CStringTranslator::hash):
+        (CStringTranslator):
+        (WTF::CStringTranslator::equal):
+        (WTF::CStringTranslator::translate):
+        (WTF::AtomicString::add):
+        (UCharBuffer):
+        (WTF::UCharBufferTranslator::hash):
+        (UCharBufferTranslator):
+        (WTF::UCharBufferTranslator::equal):
+        (WTF::UCharBufferTranslator::translate):
+        (HashAndCharacters):
+        (WTF::HashAndCharactersTranslator::hash):
+        (HashAndCharactersTranslator):
+        (WTF::HashAndCharactersTranslator::equal):
+        (WTF::HashAndCharactersTranslator::translate):
+        (HashAndUTF8Characters):
+        (WTF::HashAndUTF8CharactersTranslator::hash):
+        (HashAndUTF8CharactersTranslator):
+        (WTF::HashAndUTF8CharactersTranslator::equal):
+        (WTF::HashAndUTF8CharactersTranslator::translate):
+        (SubstringLocation):
+        (WTF::SubstringTranslator::hash):
+        (SubstringTranslator):
+        (WTF::SubstringTranslator::equal):
+        (WTF::SubstringTranslator::translate):
+        (WTF::AtomicString::addSlowCase):
+        (WTF::AtomicString::find):
+        (WTF::AtomicString::remove):
+        (WTF::AtomicString::lower):
+        (WTF::AtomicString::fromUTF8Internal):
+        (WTF::AtomicString::show):
+        * wtf/text/AtomicString.h: Renamed from Source/JavaScriptCore/wtf/text/AtomicString.h.
+        (WTF):
+        (AtomicString):
+        (WTF::AtomicString::AtomicString):
+        (WTF::AtomicString::isHashTableDeletedValue):
+        (WTF::AtomicString::operator const String&):
+        (WTF::AtomicString::string):
+        (WTF::AtomicString::impl):
+        (WTF::AtomicString::characters):
+        (WTF::AtomicString::length):
+        (WTF::AtomicString::operator[]):
+        (WTF::AtomicString::contains):
+        (WTF::AtomicString::find):
+        (WTF::AtomicString::startsWith):
+        (WTF::AtomicString::endsWith):
+        (WTF::AtomicString::upper):
+        (WTF::AtomicString::toInt):
+        (WTF::AtomicString::toDouble):
+        (WTF::AtomicString::toFloat):
+        (WTF::AtomicString::percentage):
+        (WTF::AtomicString::isNull):
+        (WTF::AtomicString::isEmpty):
+        (WTF::AtomicString::createCFString):
+        (WTF::AtomicString::operator NSString*):
+        (WTF::AtomicString::operator QString):
+        (WTF::AtomicString::add):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::equalIgnoringCase):
+        (WTF::AtomicString::fromUTF8):
+        * wtf/text/AtomicStringHash.h: Renamed from Source/JavaScriptCore/wtf/text/AtomicStringHash.h.
+        (WTF):
+        (WTF::AtomicStringHash::hash):
+        (AtomicStringHash):
+        (WTF::AtomicStringHash::equal):
+        * wtf/text/AtomicStringImpl.h: Renamed from Source/JavaScriptCore/wtf/text/AtomicStringImpl.h.
+        (WTF):
+        (AtomicStringImpl):
+        (WTF::AtomicStringImpl::AtomicStringImpl):
+        * wtf/text/CString.cpp: Renamed from Source/JavaScriptCore/wtf/text/CString.cpp.
+        (WTF):
+        (WTF::CString::CString):
+        (WTF::CString::init):
+        (WTF::CString::mutableData):
+        (WTF::CString::newUninitialized):
+        (WTF::CString::copyBufferIfNeeded):
+        (WTF::operator==):
+        * wtf/text/CString.h: Renamed from Source/JavaScriptCore/wtf/text/CString.h.
+        (WTF):
+        (CStringBuffer):
+        (WTF::CStringBuffer::data):
+        (WTF::CStringBuffer::length):
+        (WTF::CStringBuffer::create):
+        (WTF::CStringBuffer::CStringBuffer):
+        (WTF::CStringBuffer::mutableData):
+        (CString):
+        (WTF::CString::CString):
+        (WTF::CString::data):
+        (WTF::CString::length):
+        (WTF::CString::isNull):
+        (WTF::CString::buffer):
+        (WTF::operator!=):
+        * wtf/text/StringBuffer.h: Renamed from Source/JavaScriptCore/wtf/text/StringBuffer.h.
+        (WTF):
+        (StringBuffer):
+        (WTF::StringBuffer::StringBuffer):
+        (WTF::StringBuffer::~StringBuffer):
+        (WTF::StringBuffer::shrink):
+        (WTF::StringBuffer::resize):
+        (WTF::StringBuffer::length):
+        (WTF::StringBuffer::characters):
+        (WTF::StringBuffer::operator[]):
+        (WTF::StringBuffer::release):
+        * wtf/text/StringBuilder.cpp: Renamed from Source/JavaScriptCore/wtf/text/StringBuilder.cpp.
+        (WTF):
+        (WTF::StringBuilder::reifyString):
+        (WTF::StringBuilder::resize):
+        (WTF::StringBuilder::allocateBuffer):
+        (WTF::StringBuilder::allocateBufferUpConvert):
+        (WTF::LChar):
+        (WTF::UChar):
+        (WTF::StringBuilder::reserveCapacity):
+        (WTF::StringBuilder::appendUninitialized):
+        (WTF::StringBuilder::appendUninitializedSlow):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::canShrink):
+        (WTF::StringBuilder::shrinkToFit):
+        * wtf/text/StringBuilder.h: Renamed from Source/JavaScriptCore/wtf/text/StringBuilder.h.
+        (WTF):
+        (StringBuilder):
+        (WTF::StringBuilder::StringBuilder):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::toString):
+        (WTF::StringBuilder::toStringPreserveCapacity):
+        (WTF::StringBuilder::toAtomicString):
+        (WTF::StringBuilder::length):
+        (WTF::StringBuilder::isEmpty):
+        (WTF::StringBuilder::capacity):
+        (WTF::StringBuilder::operator[]):
+        (WTF::StringBuilder::characters8):
+        (WTF::StringBuilder::characters16):
+        (WTF::StringBuilder::characters):
+        (WTF::StringBuilder::is8Bit):
+        (WTF::StringBuilder::clear):
+        (WTF::StringBuilder::swap):
+        (WTF::LChar):
+        (WTF::UChar):
+        (WTF::equal):
+        (WTF::operator==):
+        (WTF::operator!=):
+        * wtf/text/StringConcatenate.h: Renamed from Source/JavaScriptCore/wtf/text/StringConcatenate.h.
+        (WTF):
+        (WTF::sumWithOverflow):
+        (WTF::tryMakeString):
+        (WTF::makeString):
+        * wtf/text/StringHash.h: Renamed from Source/JavaScriptCore/wtf/text/StringHash.h.
+        (WTF):
+        (WTF::StringHash::hash):
+        (WTF::StringHash::equal):
+        (StringHash):
+        (CaseFoldingHash):
+        (WTF::CaseFoldingHash::foldCase):
+        (WTF::CaseFoldingHash::hash):
+        (WTF::CaseFoldingHash::equal):
+        (WTF::AlreadyHashed::hash):
+        (AlreadyHashed):
+        (WTF::AlreadyHashed::avoidDeletedValue):
+        * wtf/text/StringImpl.cpp: Renamed from Source/JavaScriptCore/wtf/text/StringImpl.cpp.
+        (WTF):
+        (WTF::StringImpl::~StringImpl):
+        (WTF::StringImpl::createUninitialized):
+        (WTF::StringImpl::reallocate):
+        (WTF::StringImpl::create):
+        (WTF::StringImpl::getData16SlowCase):
+        (WTF::StringImpl::upconvertCharacters):
+        (WTF::StringImpl::containsOnlyWhitespace):
+        (WTF::StringImpl::substring):
+        (WTF::StringImpl::characterStartingAt):
+        (WTF::StringImpl::lower):
+        (WTF::StringImpl::upper):
+        (WTF::StringImpl::fill):
+        (WTF::StringImpl::foldCase):
+        (WTF::StringImpl::stripMatchedCharacters):
+        (UCharPredicate):
+        (WTF::UCharPredicate::UCharPredicate):
+        (WTF::UCharPredicate::operator()):
+        (SpaceOrNewlinePredicate):
+        (WTF::SpaceOrNewlinePredicate::operator()):
+        (WTF::StringImpl::stripWhiteSpace):
+        (WTF::StringImpl::removeCharacters):
+        (WTF::StringImpl::simplifyMatchedCharactersToSpace):
+        (WTF::StringImpl::simplifyWhiteSpace):
+        (WTF::StringImpl::toIntStrict):
+        (WTF::StringImpl::toUIntStrict):
+        (WTF::StringImpl::toInt64Strict):
+        (WTF::StringImpl::toUInt64Strict):
+        (WTF::StringImpl::toIntPtrStrict):
+        (WTF::StringImpl::toInt):
+        (WTF::StringImpl::toUInt):
+        (WTF::StringImpl::toInt64):
+        (WTF::StringImpl::toUInt64):
+        (WTF::StringImpl::toIntPtr):
+        (WTF::StringImpl::toDouble):
+        (WTF::StringImpl::toFloat):
+        (WTF::equalIgnoringCase):
+        (WTF::StringImpl::find):
+        (WTF::StringImpl::findIgnoringCase):
+        (WTF::findInner):
+        (WTF::StringImpl::reverseFind):
+        (WTF::reverseFindInner):
+        (WTF::StringImpl::reverseFindIgnoringCase):
+        (WTF::StringImpl::endsWith):
+        (WTF::StringImpl::replace):
+        (WTF::equal):
+        (WTF::equalIgnoringNullity):
+        (WTF::StringImpl::defaultWritingDirection):
+        (WTF::StringImpl::adopt):
+        (WTF::StringImpl::createWithTerminatingNullCharacter):
+        * wtf/text/StringImpl.h: Renamed from Source/JavaScriptCore/wtf/text/StringImpl.h.
+        (JSC):
+        (WTF):
+        (StringImpl):
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::create):
+        (WTF::StringImpl::create8):
+        (WTF::StringImpl::tryCreateUninitialized):
+        (WTF::StringImpl::flagsOffset):
+        (WTF::StringImpl::flagIs8Bit):
+        (WTF::StringImpl::dataOffset):
+        (WTF::StringImpl::adopt):
+        (WTF::StringImpl::length):
+        (WTF::StringImpl::is8Bit):
+        (WTF::StringImpl::characters8):
+        (WTF::StringImpl::characters16):
+        (WTF::StringImpl::characters):
+        (WTF::StringImpl::cost):
+        (WTF::StringImpl::has16BitShadow):
+        (WTF::StringImpl::isIdentifier):
+        (WTF::StringImpl::setIsIdentifier):
+        (WTF::StringImpl::hasTerminatingNullCharacter):
+        (WTF::StringImpl::isAtomic):
+        (WTF::StringImpl::setIsAtomic):
+        (WTF::StringImpl::setHash):
+        (WTF::StringImpl::rawHash):
+        (WTF::StringImpl::hasHash):
+        (WTF::StringImpl::existingHash):
+        (WTF::StringImpl::hash):
+        (WTF::StringImpl::hasOneRef):
+        (WTF::StringImpl::ref):
+        (WTF::StringImpl::deref):
+        (WTF::StringImpl::copyChars):
+        (WTF::StringImpl::operator[]):
+        (WTF::StringImpl::find):
+        (WTF::StringImpl::findIgnoringCase):
+        (WTF::StringImpl::startsWith):
+        (WTF::StringImpl::bufferOwnership):
+        (WTF::StringImpl::isStatic):
+        (WTF::LChar):
+        (WTF::UChar):
+        (WTF::equal):
+        (WTF::equalIgnoringCase):
+        (WTF::equalIgnoringNullity):
+        (WTF::codePointCompare):
+        (WTF::codePointCompare8):
+        (WTF::codePointCompare16):
+        (WTF::codePointCompare8To16):
+        (WTF::isSpaceOrNewline):
+        (WTF::StringImpl::isolatedCopy):
+        * wtf/text/StringOperators.h: Renamed from Source/JavaScriptCore/wtf/text/StringOperators.h.
+        (WTF):
+        (StringAppend):
+        (WTF::StringAppend::StringAppend):
+        (WTF::StringAppend::operator String):
+        (WTF::StringAppend::operator AtomicString):
+        (WTF::StringAppend::is8Bit):
+        (WTF::StringAppend::writeTo):
+        (WTF::StringAppend::length):
+        (WTF::operator+):
+        * wtf/text/StringStatics.cpp: Renamed from Source/JavaScriptCore/wtf/text/StringStatics.cpp.
+        (WTF):
+        (WTF::StringImpl::empty):
+        (WTF::StringImpl::hashSlowCase):
+        (WTF::AtomicString::init):
+        * wtf/text/TextPosition.h: Renamed from Source/JavaScriptCore/wtf/text/TextPosition.h.
+        (WTF):
+        (OrdinalNumber):
+        (WTF::OrdinalNumber::fromZeroBasedInt):
+        (WTF::OrdinalNumber::fromOneBasedInt):
+        (WTF::OrdinalNumber::OrdinalNumber):
+        (WTF::OrdinalNumber::zeroBasedInt):
+        (WTF::OrdinalNumber::oneBasedInt):
+        (WTF::OrdinalNumber::operator==):
+        (WTF::OrdinalNumber::operator!=):
+        (WTF::OrdinalNumber::first):
+        (WTF::OrdinalNumber::beforeFirst):
+        (TextPosition):
+        (WTF::TextPosition::TextPosition):
+        (WTF::TextPosition::operator==):
+        (WTF::TextPosition::operator!=):
+        (WTF::TextPosition::minimumPosition):
+        (WTF::TextPosition::belowRangePosition):
+        * wtf/text/WTFString.cpp: Renamed from Source/JavaScriptCore/wtf/text/WTFString.cpp.
+        (WTF):
+        (WTF::String::String):
+        (WTF::String::append):
+        (WTF::codePointCompare):
+        (WTF::String::insert):
+        (WTF::String::characterStartingAt):
+        (WTF::String::truncate):
+        (WTF::String::remove):
+        (WTF::String::substring):
+        (WTF::String::substringSharingImpl):
+        (WTF::String::lower):
+        (WTF::String::upper):
+        (WTF::String::stripWhiteSpace):
+        (WTF::String::simplifyWhiteSpace):
+        (WTF::String::removeCharacters):
+        (WTF::String::foldCase):
+        (WTF::String::percentage):
+        (WTF::String::charactersWithNullTermination):
+        (WTF::String::format):
+        (WTF::String::number):
+        (WTF::String::toIntStrict):
+        (WTF::String::toUIntStrict):
+        (WTF::String::toInt64Strict):
+        (WTF::String::toUInt64Strict):
+        (WTF::String::toIntPtrStrict):
+        (WTF::String::toInt):
+        (WTF::String::toUInt):
+        (WTF::String::toInt64):
+        (WTF::String::toUInt64):
+        (WTF::String::toIntPtr):
+        (WTF::String::toDouble):
+        (WTF::String::toFloat):
+        (WTF::String::isolatedCopy):
+        (WTF::String::split):
+        (WTF::String::ascii):
+        (WTF::String::latin1):
+        (WTF::putUTF8Triple):
+        (WTF::String::utf8):
+        (WTF::String::fromUTF8):
+        (WTF::String::fromUTF8WithLatin1Fallback):
+        (WTF::isCharacterAllowedInBase):
+        (WTF::toIntegralType):
+        (WTF::lengthOfCharactersAsInteger):
+        (WTF::charactersToIntStrict):
+        (WTF::charactersToUIntStrict):
+        (WTF::charactersToInt64Strict):
+        (WTF::charactersToUInt64Strict):
+        (WTF::charactersToIntPtrStrict):
+        (WTF::charactersToInt):
+        (WTF::charactersToUInt):
+        (WTF::charactersToInt64):
+        (WTF::charactersToUInt64):
+        (WTF::charactersToIntPtr):
+        (WTF::toDoubleType):
+        (WTF::charactersToDouble):
+        (WTF::charactersToFloat):
+        (WTF::charactersToFloatIgnoringJunk):
+        (WTF::emptyString):
+        (String::show):
+        (string):
+        (asciiDebug):
+        * wtf/text/WTFString.h: Renamed from Source/JavaScriptCore/wtf/text/WTFString.h.
+        (WebKit):
+        (WTF):
+        (String):
+        (WTF::String::String):
+        (WTF::String::~String):
+        (WTF::String::swap):
+        (WTF::String::adopt):
+        (WTF::String::isNull):
+        (WTF::String::isEmpty):
+        (WTF::String::impl):
+        (WTF::String::length):
+        (WTF::String::characters):
+        (WTF::String::characters8):
+        (WTF::String::characters16):
+        (WTF::String::is8Bit):
+        (WTF::String::operator[]):
+        (WTF::String::find):
+        (WTF::String::reverseFind):
+        (WTF::String::findIgnoringCase):
+        (WTF::String::reverseFindIgnoringCase):
+        (WTF::String::contains):
+        (WTF::String::startsWith):
+        (WTF::String::endsWith):
+        (WTF::String::append):
+        (WTF::String::replace):
+        (WTF::String::makeLower):
+        (WTF::String::makeUpper):
+        (WTF::String::fill):
+        (WTF::String::left):
+        (WTF::String::right):
+        (WTF::String::createUninitialized):
+        (WTF::String::operator NSString*):
+        (WTF::String::fromUTF8):
+        (WTF::String::fromUTF8WithLatin1Fallback):
+        (WTF::String::defaultWritingDirection):
+        (WTF::String::containsOnlyWhitespace):
+        (WTF::String::isHashTableDeletedValue):
+        (WTF::operator+=):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::equalIgnoringCase):
+        (WTF::equalPossiblyIgnoringCase):
+        (WTF::equalIgnoringNullity):
+        (WTF::operator!):
+        (WTF::swap):
+        (WTF::LChar):
+        (WTF::UChar):
+        (WTF::String::containsOnlyLatin1):
+        (WTF::nsStringNilIfEmpty):
+        (WTF::String::containsOnlyASCII):
+        (WTF::codePointCompareLessThan):
+        (WTF::find):
+        (WTF::reverseFind):
+        (WTF::append):
+        (WTF::appendNumber):
+        (WTF::isAllSpecialCharacters):
+        (WTF::String::isAllSpecialCharacters):
+        * wtf/threads/BinarySemaphore.cpp: Renamed from Source/JavaScriptCore/wtf/threads/BinarySemaphore.cpp.
+        (WTF):
+        (WTF::BinarySemaphore::BinarySemaphore):
+        (WTF::BinarySemaphore::~BinarySemaphore):
+        (WTF::BinarySemaphore::signal):
+        (WTF::BinarySemaphore::wait):
+        * wtf/threads/BinarySemaphore.h: Renamed from Source/JavaScriptCore/wtf/threads/BinarySemaphore.h.
+        (WTF):
+        (BinarySemaphore):
+        (WTF::BinarySemaphore::event):
+        * wtf/threads/win/BinarySemaphoreWin.cpp: Renamed from Source/JavaScriptCore/wtf/threads/win/BinarySemaphoreWin.cpp.
+        (WTF):
+        (WTF::BinarySemaphore::BinarySemaphore):
+        (WTF::BinarySemaphore::~BinarySemaphore):
+        (WTF::BinarySemaphore::signal):
+        (WTF::BinarySemaphore::wait):
+        * wtf/unicode/CharacterNames.h: Renamed from Source/JavaScriptCore/wtf/unicode/CharacterNames.h.
+        (Unicode):
+        * wtf/unicode/Collator.h: Renamed from Source/JavaScriptCore/wtf/unicode/Collator.h.
+        (WTF):
+        (Collator):
+        * wtf/unicode/CollatorDefault.cpp: Renamed from Source/JavaScriptCore/wtf/unicode/CollatorDefault.cpp.
+        (WTF):
+        (WTF::Collator::Collator):
+        (WTF::Collator::~Collator):
+        (WTF::Collator::setOrderLowerFirst):
+        (WTF::Collator::userDefault):
+        (WTF::Collator::collate):
+        * wtf/unicode/ScriptCodesFromICU.h: Renamed from Source/JavaScriptCore/wtf/unicode/ScriptCodesFromICU.h.
+        * wtf/unicode/UTF8.cpp: Renamed from Source/JavaScriptCore/wtf/unicode/UTF8.cpp.
+        (Unicode):
+        (WTF::Unicode::inlineUTF8SequenceLengthNonASCII):
+        (WTF::Unicode::inlineUTF8SequenceLength):
+        (WTF::Unicode::UTF8SequenceLength):
+        (WTF::Unicode::decodeUTF8Sequence):
+        (WTF::Unicode::convertLatin1ToUTF8):
+        (WTF::Unicode::convertUTF16ToUTF8):
+        (WTF::Unicode::isLegalUTF8):
+        (WTF::Unicode::readUTF8Sequence):
+        (WTF::Unicode::convertUTF8ToUTF16):
+        (WTF::Unicode::calculateStringHashAndLengthFromUTF8):
+        (WTF::Unicode::equalUTF16WithUTF8):
+        * wtf/unicode/UTF8.h: Renamed from Source/JavaScriptCore/wtf/unicode/UTF8.h.
+        (Unicode):
+        * wtf/unicode/Unicode.h: Renamed from Source/JavaScriptCore/wtf/unicode/Unicode.h.
+        * wtf/unicode/UnicodeMacrosFromICU.h: Renamed from Source/JavaScriptCore/wtf/unicode/UnicodeMacrosFromICU.h.
+        * wtf/unicode/glib/UnicodeGLib.cpp: Renamed from Source/JavaScriptCore/wtf/unicode/glib/UnicodeGLib.cpp.
+        (Unicode):
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::getUTF16LengthFromUTF8):
+        (WTF::Unicode::convertCase):
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::direction):
+        (WTF::Unicode::umemcasecmp):
+        * wtf/unicode/glib/UnicodeGLib.h: Renamed from Source/JavaScriptCore/wtf/unicode/glib/UnicodeGLib.h.
+        (Unicode):
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::toTitleCase):
+        (WTF::Unicode::isArabicChar):
+        (WTF::Unicode::isAlphanumeric):
+        (WTF::Unicode::isFormatChar):
+        (WTF::Unicode::isSeparatorSpace):
+        (WTF::Unicode::isPrintableChar):
+        (WTF::Unicode::isDigit):
+        (WTF::Unicode::isPunct):
+        (WTF::Unicode::hasLineBreakingPropertyComplexContext):
+        (WTF::Unicode::hasLineBreakingPropertyComplexContextOrIdeographic):
+        (WTF::Unicode::mirroredChar):
+        (WTF::Unicode::category):
+        (WTF::Unicode::isLower):
+        (WTF::Unicode::digitValue):
+        (WTF::Unicode::combiningClass):
+        (WTF::Unicode::decompositionType):
+        * wtf/unicode/icu/CollatorICU.cpp: Renamed from Source/JavaScriptCore/wtf/unicode/icu/CollatorICU.cpp.
+        (WTF):
+        (WTF::cachedCollatorMutex):
+        (WTF::Collator::Collator):
+        (WTF::Collator::userDefault):
+        (WTF::Collator::~Collator):
+        (WTF::Collator::setOrderLowerFirst):
+        (WTF::Collator::collate):
+        (WTF::Collator::createCollator):
+        (WTF::Collator::releaseCollator):
+        * wtf/unicode/icu/UnicodeIcu.h: Renamed from Source/JavaScriptCore/wtf/unicode/icu/UnicodeIcu.h.
+        (Unicode):
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::toTitleCase):
+        (WTF::Unicode::isArabicChar):
+        (WTF::Unicode::isAlphanumeric):
+        (WTF::Unicode::isSeparatorSpace):
+        (WTF::Unicode::isPrintableChar):
+        (WTF::Unicode::isPunct):
+        (WTF::Unicode::hasLineBreakingPropertyComplexContext):
+        (WTF::Unicode::hasLineBreakingPropertyComplexContextOrIdeographic):
+        (WTF::Unicode::mirroredChar):
+        (WTF::Unicode::category):
+        (WTF::Unicode::direction):
+        (WTF::Unicode::isLower):
+        (WTF::Unicode::combiningClass):
+        (WTF::Unicode::decompositionType):
+        (WTF::Unicode::umemcasecmp):
+        * wtf/unicode/qt4/UnicodeQt4.h: Renamed from Source/JavaScriptCore/wtf/unicode/qt4/UnicodeQt4.h.
+        (Properties):
+        (QUnicodeTables):
+        (Unicode):
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::toTitleCase):
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::isArabicChar):
+        (WTF::Unicode::isPrintableChar):
+        (WTF::Unicode::isSeparatorSpace):
+        (WTF::Unicode::isPunct):
+        (WTF::Unicode::isLower):
+        (WTF::Unicode::hasLineBreakingPropertyComplexContext):
+        (WTF::Unicode::mirroredChar):
+        (WTF::Unicode::combiningClass):
+        (WTF::Unicode::decompositionType):
+        (WTF::Unicode::umemcasecmp):
+        (WTF::Unicode::direction):
+        (WTF::Unicode::category):
+        * wtf/unicode/wince/UnicodeWinCE.cpp: Renamed from Source/JavaScriptCore/wtf/unicode/wince/UnicodeWinCE.cpp.
+        (Unicode):
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::isPrintableChar):
+        (WTF::Unicode::isSpace):
+        (WTF::Unicode::isLetter):
+        (WTF::Unicode::isUpper):
+        (WTF::Unicode::isLower):
+        (WTF::Unicode::isDigit):
+        (WTF::Unicode::isPunct):
+        (WTF::Unicode::isAlphanumeric):
+        (WTF::Unicode::toTitleCase):
+        (WTF::Unicode::direction):
+        (WTF::Unicode::category):
+        (WTF::Unicode::decompositionType):
+        (WTF::Unicode::combiningClass):
+        (WTF::Unicode::mirroredChar):
+        (WTF::Unicode::digitValue):
+        * wtf/unicode/wince/UnicodeWinCE.h: Renamed from Source/JavaScriptCore/wtf/unicode/wince/UnicodeWinCE.h.
+        (Unicode):
+        (WTF::Unicode::isSeparatorSpace):
+        (WTF::Unicode::isHighSurrogate):
+        (WTF::Unicode::isLowSurrogate):
+        (WTF::Unicode::isArabicChar):
+        (WTF::Unicode::hasLineBreakingPropertyComplexContext):
+        (WTF::Unicode::umemcasecmp):
+        (WTF::Unicode::surrogateToUcs4):
+        * wtf/url/api/ParsedURL.cpp: Renamed from Source/JavaScriptCore/wtf/url/api/ParsedURL.cpp.
+        (WTF):
+        (WTF::ParsedURL::ParsedURL):
+        (WTF::ParsedURL::isolatedCopy):
+        (WTF::ParsedURL::scheme):
+        (WTF::ParsedURL::username):
+        (WTF::ParsedURL::password):
+        (WTF::ParsedURL::host):
+        (WTF::ParsedURL::port):
+        (WTF::ParsedURL::path):
+        (WTF::ParsedURL::query):
+        (WTF::ParsedURL::fragment):
+        (WTF::ParsedURL::baseAsString):
+        (WTF::ParsedURL::segment):
+        * wtf/url/api/ParsedURL.h: Renamed from Source/JavaScriptCore/wtf/url/api/ParsedURL.h.
+        (WTF):
+        (ParsedURL):
+        (WTF::ParsedURL::ParsedURL):
+        (WTF::ParsedURL::isValid):
+        (WTF::ParsedURL::spec):
+        * wtf/url/api/URLString.h: Renamed from Source/JavaScriptCore/wtf/url/api/URLString.h.
+        (WTF):
+        (URLString):
+        (WTF::URLString::URLString):
+        (WTF::URLString::string):
+        * wtf/url/src/RawURLBuffer.h: Renamed from Source/JavaScriptCore/wtf/url/src/RawURLBuffer.h.
+        (WTF):
+        (RawURLBuffer):
+        (WTF::RawURLBuffer::RawURLBuffer):
+        (WTF::RawURLBuffer::~RawURLBuffer):
+        (WTF::RawURLBuffer::resize):
+        * wtf/url/src/URLBuffer.h: Renamed from Source/JavaScriptCore/wtf/url/src/URLBuffer.h.
+        (WTF):
+        (URLBuffer):
+        (WTF::URLBuffer::URLBuffer):
+        (WTF::URLBuffer::~URLBuffer):
+        (WTF::URLBuffer::at):
+        (WTF::URLBuffer::set):
+        (WTF::URLBuffer::capacity):
+        (WTF::URLBuffer::length):
+        (WTF::URLBuffer::data):
+        (WTF::URLBuffer::setLength):
+        (WTF::URLBuffer::append):
+        (WTF::URLBuffer::grow):
+        * wtf/url/src/URLCharacterTypes.cpp: Renamed from Source/JavaScriptCore/wtf/url/src/URLCharacterTypes.cpp.
+        (WTF):
+        * wtf/url/src/URLCharacterTypes.h: Renamed from Source/JavaScriptCore/wtf/url/src/URLCharacterTypes.h.
+        (WTF):
+        (URLCharacterTypes):
+        (WTF::URLCharacterTypes::isQueryChar):
+        (WTF::URLCharacterTypes::isIPv4Char):
+        (WTF::URLCharacterTypes::isHexChar):
+        (WTF::URLCharacterTypes::isCharOfType):
+        * wtf/url/src/URLComponent.h: Renamed from Source/JavaScriptCore/wtf/url/src/URLComponent.h.
+        (WTF):
+        (URLComponent):
+        (WTF::URLComponent::URLComponent):
+        (WTF::URLComponent::fromRange):
+        (WTF::URLComponent::isValid):
+        (WTF::URLComponent::isNonEmpty):
+        (WTF::URLComponent::isEmptyOrInvalid):
+        (WTF::URLComponent::reset):
+        (WTF::URLComponent::operator==):
+        (WTF::URLComponent::begin):
+        (WTF::URLComponent::setBegin):
+        (WTF::URLComponent::length):
+        (WTF::URLComponent::setLength):
+        (WTF::URLComponent::end):
+        * wtf/url/src/URLEscape.cpp: Renamed from Source/JavaScriptCore/wtf/url/src/URLEscape.cpp.
+        (WTF):
+        * wtf/url/src/URLEscape.h: Renamed from Source/JavaScriptCore/wtf/url/src/URLEscape.h.
+        (WTF):
+        (WTF::appendURLEscapedCharacter):
+        * wtf/url/src/URLParser.h: Renamed from Source/JavaScriptCore/wtf/url/src/URLParser.h.
+        (WTF):
+        (URLParser):
+        (WTF::URLParser::isPossibleAuthorityTerminator):
+        (WTF::URLParser::parseAuthority):
+        (WTF::URLParser::extractScheme):
+        (WTF::URLParser::parseAfterScheme):
+        (WTF::URLParser::parseStandardURL):
+        (WTF::URLParser::parsePath):
+        (WTF::URLParser::parsePathURL):
+        (WTF::URLParser::parseMailtoURL):
+        (WTF::URLParser::parsePort):
+        (WTF::URLParser::extractFileName):
+        (WTF::URLParser::extractQueryKeyValue):
+        (WTF::URLParser::isURLSlash):
+        (WTF::URLParser::shouldTrimFromURL):
+        (WTF::URLParser::trimURL):
+        (WTF::URLParser::consecutiveSlashes):
+        (WTF::URLParser::isPortDigit):
+        (WTF::URLParser::nextAuthorityTerminator):
+        (WTF::URLParser::parseUserInfo):
+        (WTF::URLParser::parseServerInfo):
+        * wtf/url/src/URLQueryCanonicalizer.h: Renamed from Source/JavaScriptCore/wtf/url/src/URLQueryCanonicalizer.h.
+        (WTF):
+        (URLQueryCanonicalizer):
+        (WTF::URLQueryCanonicalizer::canonicalize):
+        (WTF::URLQueryCanonicalizer::isAllASCII):
+        (WTF::URLQueryCanonicalizer::isRaw8Bit):
+        (WTF::URLQueryCanonicalizer::appendRaw8BitQueryString):
+        (WTF::URLQueryCanonicalizer::convertToQueryEncoding):
+        * wtf/url/src/URLSegments.cpp: Renamed from Source/JavaScriptCore/wtf/url/src/URLSegments.cpp.
+        (WTF):
+        (WTF::URLSegments::length):
+        (WTF::URLSegments::charactersBefore):
+        * wtf/url/src/URLSegments.h: Renamed from Source/JavaScriptCore/wtf/url/src/URLSegments.h.
+        (WTF):
+        (URLSegments):
+        (WTF::URLSegments::URLSegments):
+        * wtf/win/MainThreadWin.cpp: Renamed from Source/JavaScriptCore/wtf/win/MainThreadWin.cpp.
+        (WTF):
+        (WTF::ThreadingWindowWndProc):
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/win/OwnPtrWin.cpp: Renamed from Source/JavaScriptCore/wtf/win/OwnPtrWin.cpp.
+        (WTF):
+        (WTF::deleteOwnedPtr):
+        * wtf/wince/FastMallocWinCE.h: Renamed from Source/JavaScriptCore/wtf/wince/FastMallocWinCE.h.
+        (operator new):
+        (operator delete):
+        (operator new[]):
+        (operator delete[]):
+        (throw):
+        (WTF):
+        (Internal):
+        (WTF::Internal::fastMallocMatchValidationType):
+        (WTF::Internal::fastMallocMatchValidationValue):
+        (WTF::Internal::setFastMallocMatchValidationType):
+        (WTF::fastMallocMatchValidateMalloc):
+        (WTF::fastMallocMatchValidateFree):
+        * wtf/wince/MemoryManager.cpp: Renamed from Source/JavaScriptCore/wtf/wince/MemoryManager.cpp.
+        (WTF):
+        (WTF::memoryManager):
+        (WTF::MemoryManager::MemoryManager):
+        (WTF::MemoryManager::~MemoryManager):
+        (WTF::MemoryManager::createCompatibleBitmap):
+        (WTF::MemoryManager::createDIBSection):
+        (WTF::MemoryManager::m_malloc):
+        (WTF::MemoryManager::m_calloc):
+        (WTF::MemoryManager::m_realloc):
+        (WTF::MemoryManager::m_free):
+        (WTF::MemoryManager::resizeMemory):
+        (WTF::MemoryManager::allocate64kBlock):
+        (WTF::MemoryManager::free64kBlock):
+        (WTF::MemoryManager::onIdle):
+        (WTF::MemoryManager::virtualAlloc):
+        (WTF::MemoryManager::virtualFree):
+        (WTF::fastMalloc):
+        (WTF::fastCalloc):
+        (WTF::fastFree):
+        (WTF::fastRealloc):
+        (WTF::fastMallocForbid):
+        (WTF::fastMallocAllow):
+        (WTF::fastZeroedMalloc):
+        (WTF::tryFastMalloc):
+        (WTF::tryFastZeroedMalloc):
+        (WTF::tryFastCalloc):
+        (WTF::tryFastRealloc):
+        (WTF::fastStrDup):
+        * wtf/wince/MemoryManager.h: Renamed from Source/JavaScriptCore/wtf/wince/MemoryManager.h.
+        (WTF):
+        (MemoryManager):
+        (WTF::MemoryManager::allocationCanFail):
+        (WTF::MemoryManager::setAllocationCanFail):
+        (MemoryAllocationCanFail):
+        (WTF::MemoryAllocationCanFail::MemoryAllocationCanFail):
+        (WTF::MemoryAllocationCanFail::~MemoryAllocationCanFail):
+        (MemoryAllocationCannotFail):
+        (WTF::MemoryAllocationCannotFail::MemoryAllocationCannotFail):
+        (WTF::MemoryAllocationCannotFail::~MemoryAllocationCannotFail):
+        * wtf/wx/MainThreadWx.cpp: Renamed from Source/JavaScriptCore/wtf/wx/MainThreadWx.cpp.
+        (wxCallAfter):
+        (wxCallAfter::wxCallAfter):
+        (wxCallAfter::OnCallback):
+        (WTF):
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/wx/StringWx.cpp: Renamed from Source/JavaScriptCore/wtf/wx/StringWx.cpp.
+        (WTF):
+        (WTF::String::String):
+        (WTF::String::operator wxString):
+
 2012-03-22  Hyowon Kim  <hw1008.kim@samsung.com>
 
         [EFL] Add PageClientEfl to WebCoreSupport.

@@ -1,3 +1,19 @@
+2012-03-22  Eric Seidel  <eric@webkit.org>
+
+        Actually move WTF files to their new home
+        https://bugs.webkit.org/show_bug.cgi?id=81844
+
+        Unreviewed.  The details of the port-specific changes
+        have been seen by contributors from those ports, but
+        the whole 5MB change isn't very reviewable as-is.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * JSCTypedArrayStubs.h:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+
 2012-03-22  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed. Adding Source/WTF to the build.

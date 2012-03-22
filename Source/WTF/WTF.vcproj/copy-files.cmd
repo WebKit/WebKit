@@ -16,22 +16,20 @@ for %%d in (
     wtf\unicode\icu
 ) do (
     mkdir "%PrivateHeadersDirectory%\%%d" 2>NUL
-    xcopy /y /d ..\..\JavaScriptCore\%%d\*.h "%PrivateHeadersDirectory%\%%d" >NUL
+    xcopy /y /d ..\%%d\*.h "%PrivateHeadersDirectory%\%%d" >NUL
 )
 
-echo Copying wtf/Platform.h ...
-xcopy /y /d ..\wtf\Platform.h "%PrivateHeadersDirectory%\wtf" >NUL
-
+# FIXME: Why is WTF copying over create_hash_table?
 echo Copying other files...
 for %%f in (
-    create_hash_table
+    ..\JavaScriptCore\create_hash_table
     wtf\text\AtomicString.cpp
     wtf\text\StringBuilder.cpp
     wtf\text\StringImpl.cpp
     wtf\text\WTFString.cpp
 ) do (
-    echo F | xcopy /y /d ..\..\JavaScriptCore\%%f "%PrivateHeadersDirectory%\%%f" >NUL
-    echo F | xcopy /y /d ..\..\JavaScriptCore\%%f "%PGOPrivateHeadersDirectory%\%%f" >NUL
+    echo F | xcopy /y /d ..\%%f "%PrivateHeadersDirectory%\%%f" >NUL
+    echo F | xcopy /y /d ..\%%f "%PGOPrivateHeadersDirectory%\%%f" >NUL
 )
 
 goto :EOF

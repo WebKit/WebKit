@@ -69,7 +69,7 @@ SET(WTF_HEADERS
     ParallelJobsGeneric.h
     ParallelJobsLibdispatch.h
     ParallelJobsOpenMP.h
-    ${WTF_DIR}/wtf/Platform.h
+    Platform.h
     PossiblyNull.h
     RandomNumber.h
     RandomNumberSeed.h
@@ -185,11 +185,10 @@ SET(WTF_SOURCES
 )
 
 SET(WTF_INCLUDE_DIRECTORIES
-    "${JAVASCRIPTCORE_DIR}"
-    "${JAVASCRIPTCORE_DIR}/wtf"
-    "${JAVASCRIPTCORE_DIR}/wtf/unicode"
-    "${JAVASCRIPTCORE_DIR}/wtf/dtoa"
-    "${JavaScriptCore_INCLUDE_DIRECTORIES}"
+    "${WTF_DIR}"
+    "${WTF_DIR}/wtf"
+    "${WTF_DIR}/wtf/unicode"
+    "${WTF_DIR}/wtf/dtoa"
     "${THIRDPARTY_DIR}"
 )
 

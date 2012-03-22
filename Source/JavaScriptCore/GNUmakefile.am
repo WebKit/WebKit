@@ -62,12 +62,6 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/Source/JavaScriptCore/profiler \
 	-I$(srcdir)/Source/JavaScriptCore/runtime \
 	-I$(srcdir)/Source/JavaScriptCore/tools \
-	-I$(srcdir)/Source/JavaScriptCore/wtf \
-	-I$(srcdir)/Source/JavaScriptCore/wtf \
-	-I$(srcdir)/Source/JavaScriptCore/wtf/gobject \
-	-I$(srcdir)/Source/JavaScriptCore/wtf/gtk \
-	-I$(srcdir)/Source/JavaScriptCore/wtf/text \
-	-I$(srcdir)/Source/JavaScriptCore/wtf/unicode \
 	-I$(srcdir)/Source/JavaScriptCore/yarr \
 	-I$(top_builddir)/DerivedSources/JavaScriptCore
 

@@ -33,7 +33,7 @@
 #include "JSFunction.h"
 #include "JSLock.h"
 #include "JSString.h"
-#include "MainThread.h"
+#include <wtf/MainThread.h>
 #include "SamplingTool.h"
 #include <math.h>
 #include <stdio.h>

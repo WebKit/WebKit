@@ -26,16 +26,9 @@
 #ifndef JSCTypedArrayStubs_h
 #define JSCTypedArrayStubs_h
 
-#include "Float32Array.h"
-#include "Float64Array.h"
-#include "Int16Array.h"
-#include "Int32Array.h"
-#include "Int8Array.h"
 #include "JSObject.h"
 #include "ObjectPrototype.h"
-#include "Uint16Array.h"
-#include "Uint32Array.h"
-#include "Uint8Array.h"
+#include <wtf/Forward.h>
 
 namespace JSC {
 
