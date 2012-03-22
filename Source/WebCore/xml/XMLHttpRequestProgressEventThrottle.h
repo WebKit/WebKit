@@ -49,7 +49,8 @@ public:
     virtual ~XMLHttpRequestProgressEventThrottle();
 
     void dispatchProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
-    void dispatchEvent(PassRefPtr<Event>, ProgressEventAction = DoNotFlushProgressEvent);
+    void dispatchReadyStateChangeEvent(PassRefPtr<Event>, ProgressEventAction = DoNotFlushProgressEvent);
+    void dispatchEvent(PassRefPtr<Event>);
     void dispatchEventAndLoadEnd(PassRefPtr<Event>);
 
     void suspend();

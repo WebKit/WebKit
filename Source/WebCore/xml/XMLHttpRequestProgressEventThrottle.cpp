@@ -69,14 +69,19 @@ void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(bool lengthCompu
     m_total = total;
 }
 
-void XMLHttpRequestProgressEventThrottle::dispatchEvent(PassRefPtr<Event> event, ProgressEventAction progressEventAction)
+void XMLHttpRequestProgressEventThrottle::dispatchReadyStateChangeEvent(PassRefPtr<Event> event, ProgressEventAction progressEventAction)
+{
+    if (progressEventAction == FlushProgressEvent)
+        flushProgressEvent();
+
+    dispatchEvent(event);
+}
+
+void XMLHttpRequestProgressEventThrottle::dispatchEvent(PassRefPtr<Event> event)
 {
     ASSERT(!suspended());
     // We should not have any pending events from a previous resume.
     ASSERT(!m_pausedEvent);
-
-    if (progressEventAction == FlushProgressEvent)
-        flushProgressEvent();
 
     m_target->dispatchEvent(event);
 }
@@ -101,7 +106,7 @@ void XMLHttpRequestProgressEventThrottle::flushProgressEvent()
     // We stop the timer as this is called when no more events are supposed to occur.
     stop();
 
-    m_target->dispatchEvent(event);
+    dispatchEvent(event);
 }
 
 void XMLHttpRequestProgressEventThrottle::dispatchPausedEvent()
@@ -110,7 +115,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchPausedEvent()
     if (!m_pausedEvent)
         return;
 
-    m_target->dispatchEvent(m_pausedEvent);
+    dispatchEvent(m_pausedEvent);
     m_pausedEvent = 0;
 }
 
@@ -125,7 +130,7 @@ void XMLHttpRequestProgressEventThrottle::fired()
         return;
     }
 
-    m_target->dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, m_lengthComputable, m_loaded, m_total));
+    dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, m_lengthComputable, m_loaded, m_total));
     m_total = 0;
     m_loaded = 0;
 }
