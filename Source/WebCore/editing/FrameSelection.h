@@ -59,8 +59,8 @@ protected:
     void invalidateCaretRect(Node*, bool caretRectChanged = false);
     void clearCaretRect();
     bool updateCaretRect(Document*, const VisiblePosition& caretPosition);
-    LayoutRect absoluteBoundsForLocalRect(Node*, const LayoutRect&) const;
-    LayoutRect caretRepaintRect(Node*) const;
+    IntRect absoluteBoundsForLocalRect(Node*, const LayoutRect&) const;
+    IntRect caretRepaintRect(Node*) const;
     bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
     void paintCaret(Node*, GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
     RenderObject* caretRenderer(Node*) const;
@@ -180,7 +180,7 @@ public:
     LayoutRect localCaretRect();
 
     // Bounds of (possibly transformed) caret in absolute coords
-    LayoutRect absoluteCaretBounds();
+    IntRect absoluteCaretBounds();
     void setCaretRectNeedsUpdate() { CaretBase::setCaretRectNeedsUpdate(); }
 
     void willBeModified(EAlteration, SelectionDirection);
@@ -295,8 +295,10 @@ private:
     RefPtr<EditingStyle> m_typingStyle;
 
     Timer<FrameSelection> m_caretBlinkTimer;
-    LayoutRect m_absCaretBounds; // absolute bounding rect for the caret
-    LayoutRect m_absoluteCaretRepaintBounds;
+    // The painted bounds of the caret in absolute coordinates
+    IntRect m_absCaretBounds;
+    // Similar to above, but inflated to ensure proper repaint (see https://bugs.webkit.org/show_bug.cgi?id=19086)
+    IntRect m_absoluteCaretRepaintBounds;
     bool m_absCaretBoundsDirty : 1;
     bool m_caretPaint : 1;
     bool m_isCaretBlinkingSuspended : 1;

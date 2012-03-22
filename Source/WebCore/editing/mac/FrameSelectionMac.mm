@@ -63,8 +63,8 @@ void FrameSelection::notifyAccessibilityForSelectionChange()
     if (!frameView)
         return;
 
-    LayoutRect selectionRect = absoluteCaretBounds();
-    LayoutRect viewRect = renderView->viewRect();
+    IntRect selectionRect = absoluteCaretBounds();
+    IntRect viewRect = pixelSnappedIntRect(renderView->viewRect());
 
     selectionRect = frameView->contentsToScreen(selectionRect);
     viewRect = frameView->contentsToScreen(viewRect);

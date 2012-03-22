@@ -987,9 +987,9 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
 }
 
 // FIXME: Maybe baseline would be better?
-static bool absoluteCaretY(const VisiblePosition &c, LayoutUnit &y)
+static bool absoluteCaretY(const VisiblePosition &c, int &y)
 {
-    LayoutRect rect = c.absoluteCaretBounds();
+    IntRect rect = c.absoluteCaretBounds();
     if (rect.isEmpty())
         return false;
     y = rect.y() + rect.height() / 2;
@@ -1028,12 +1028,12 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
         break;
     }
 
-    LayoutUnit startY;
+    int startY;
     if (!absoluteCaretY(pos, startY))
         return false;
     if (direction == DirectionUp)
         startY = -startY;
-    LayoutUnit lastY = startY;
+    int lastY = startY;
 
     VisiblePosition result;
     VisiblePosition next;
@@ -1045,12 +1045,12 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
 
         if (next.isNull() || next == p)
             break;
-        LayoutUnit nextY;
+        int nextY;
         if (!absoluteCaretY(next, nextY))
             break;
         if (direction == DirectionUp)
             nextY = -nextY;
-        if (nextY - startY > static_cast<LayoutUnit>(verticalDistance))
+        if (nextY - startY > static_cast<int>(verticalDistance))
             break;
         if (nextY >= lastY) {
             lastY = nextY;
@@ -1247,11 +1247,11 @@ LayoutRect FrameSelection::localCaretRect()
     return localCaretRectWithoutUpdate();
 }
 
-LayoutRect CaretBase::absoluteBoundsForLocalRect(Node* node, const LayoutRect& rect) const
+IntRect CaretBase::absoluteBoundsForLocalRect(Node* node, const LayoutRect& rect) const
 {
     RenderObject* caretPainter = caretRenderer(node);
     if (!caretPainter)
-        return LayoutRect();
+        return IntRect();
     
     LayoutRect localRect(rect);
     if (caretPainter->isBox())
@@ -1259,7 +1259,7 @@ LayoutRect CaretBase::absoluteBoundsForLocalRect(Node* node, const LayoutRect& r
     return caretPainter->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 
-LayoutRect FrameSelection::absoluteCaretBounds()
+IntRect FrameSelection::absoluteCaretBounds()
 {
     recomputeCaretRect();
     return m_absCaretBounds;
@@ -1275,7 +1275,7 @@ static LayoutRect repaintRectForCaret(LayoutRect caret)
     return caret;
 }
 
-LayoutRect CaretBase::caretRepaintRect(Node* node) const
+IntRect CaretBase::caretRepaintRect(Node* node) const
 {
     return absoluteBoundsForLocalRect(node, repaintRectForCaret(localCaretRectWithoutUpdate()));
 }
@@ -1297,7 +1297,7 @@ bool FrameSelection::recomputeCaretRect()
     if (oldRect == newRect && !m_absCaretBoundsDirty)
         return false;
 
-    LayoutRect oldAbsCaretBounds = m_absCaretBounds;
+    IntRect oldAbsCaretBounds = m_absCaretBounds;
     // FIXME: Rename m_caretRect to m_localCaretRect.
     m_absCaretBounds = absoluteBoundsForLocalRect(m_selection.start().deprecatedNode(), localCaretRectWithoutUpdate());
     m_absCaretBoundsDirty = false;
@@ -1306,7 +1306,7 @@ bool FrameSelection::recomputeCaretRect()
         return false;
 
 #if ENABLE(TEXT_CARET)
-    LayoutRect oldAbsoluteCaretRepaintBounds = m_absoluteCaretRepaintBounds;
+    IntRect oldAbsoluteCaretRepaintBounds = m_absoluteCaretRepaintBounds;
 #endif
 
     // We believe that we need to inflate the local rect before transforming it to obtain the repaint bounds.
