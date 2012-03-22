@@ -1,5 +1,13 @@
 2012-03-22  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, test-webkitpy fix after r111661.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_crash_log):
+        (MainTest.test_web_process_crash_log):
+
+2012-03-22  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, test-webkitpy fix after r111642.
 
         * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:

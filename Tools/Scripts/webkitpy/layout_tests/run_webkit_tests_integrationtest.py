@@ -584,6 +584,9 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
     def test_crash_log(self):
         # FIXME: Need to rewrite these tests to not be mac-specific, or move them elsewhere.
+        # Currently CrashLog uploading only works on Darwin.
+        if sys.platform != "darwin":
+            return
         mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 12345)
         host = MockHost()
         host.filesystem.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash', mock_crash_report)
@@ -594,13 +597,13 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
             record_results=True,
             host=host)
         expected_crash_log = mock_crash_report
-        # Currently CrashLog uploading only works on Darwin.
-        if sys.platform != "darwin":
-            expected_crash_log = ""
         self.assertEquals(host.filesystem.read_text_file('/tmp/layout-test-results/failures/unexpected/crash-with-stderr-crash-log.txt'), expected_crash_log)
 
     def test_web_process_crash_log(self):
         # FIXME: Need to rewrite these tests to not be mac-specific, or move them elsewhere.
+        # Currently CrashLog uploading only works on Darwin.
+        if sys.platform != "darwin":
+            return
         mock_crash_report = make_mock_crash_report_darwin('WebProcess', 12345)
         host = MockHost()
         host.filesystem.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/WebProcess_2011-06-13-150719_quadzen.crash', mock_crash_report)
