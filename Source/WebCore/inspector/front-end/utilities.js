@@ -458,8 +458,15 @@ String.prototype.asParsedURL = function()
     // 4 - ?path
     // 5 - ?fragment
     var match = this.match(/^([^:]+):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i);
-    if (!match)
+    if (!match) {
+        if (this == "about:blank") {
+            return { scheme: "about",
+                     host: "blank",
+                     path: "/",
+                     lastPathComponent: ""};
+        }
         return null;
+    }
     var result = {};
     result.scheme = match[1].toLowerCase();
     result.host = match[2];
