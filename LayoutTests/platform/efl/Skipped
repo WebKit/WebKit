@@ -2738,3 +2738,9 @@ perf/nested-combined-selectors.html
 # This test requires flac codec
 media/media-can-play-flac-audio.html
 
+# The rectangle colors should not match
+fast/css/color-correction-on-background-image.html
+fast/css/color-correction-on-backgrounds.html
+fast/css/color-correction-on-box-shadow.html
+fast/css/color-correction-on-text-shadow.html
+fast/css/color-correction-untagged-images.html
