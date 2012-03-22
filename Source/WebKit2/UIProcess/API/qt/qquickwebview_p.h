@@ -248,6 +248,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QDeclarativeComponent* certificateVerificationDialog READ certificateVerificationDialog WRITE setCertificateVerificationDialog NOTIFY certificateVerificationDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* itemSelector READ itemSelector WRITE setItemSelector NOTIFY itemSelectorChanged)
     Q_PROPERTY(QDeclarativeComponent* filePicker READ filePicker WRITE setFilePicker NOTIFY filePickerChanged)
+    Q_PROPERTY(QDeclarativeComponent* databaseQuotaDialog READ databaseQuotaDialog WRITE setDatabaseQuotaDialog NOTIFY databaseQuotaDialogChanged)
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_PROPERTY(QWebViewportInfo* viewportInfo READ viewportInfo CONSTANT FINAL)
     Q_PROPERTY(QDeclarativeListProperty<QQuickUrlSchemeDelegate> urlSchemeDelegates READ schemeDelegates)
@@ -278,6 +279,8 @@ public:
     void setProxyAuthenticationDialog(QDeclarativeComponent*);
     QDeclarativeComponent* filePicker() const;
     void setFilePicker(QDeclarativeComponent*);
+    QDeclarativeComponent* databaseQuotaDialog() const;
+    void setDatabaseQuotaDialog(QDeclarativeComponent*);
     QString userAgent() const;
     void setUserAgent(const QString& userAgent);
 
@@ -333,6 +336,7 @@ Q_SIGNALS:
     void certificateVerificationDialogChanged();
     void itemSelectorChanged();
     void filePickerChanged();
+    void databaseQuotaDialogChanged();
     void downloadRequested(QWebDownloadItem* downloadItem);
     void permissionRequested(QWebPermissionRequest* permission);
     void messageReceived(const QVariantMap& message);

@@ -41,6 +41,7 @@ public:
     QtWebPageUIClient(WKPageRef, QQuickWebView*);
 
 private:
+    quint64 exceededDatabaseQuota(const QString& databaseName, const QString& displayName, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage);
     void runJavaScriptAlert(const QString& message);
     bool runJavaScriptConfirm(const QString& message);
     QString runJavaScriptPrompt(const QString& message, const QString& defaultValue, bool& ok);
@@ -54,6 +55,7 @@ private:
     static WKStringRef runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo);
     static void runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef, WKOpenPanelResultListenerRef, const void* clientInfo);
     static void mouseDidMoveOverElement(WKPageRef, WKHitTestResultRef, WKEventModifiers, WKTypeRef userData, const void* clientInfo);
+    static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef databaseName, WKStringRef displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void *clientInfo);
     static void policyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKGeolocationPermissionRequestRef, const void*);
 
     QQuickWebView* m_webView;

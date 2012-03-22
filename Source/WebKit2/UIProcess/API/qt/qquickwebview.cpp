@@ -399,6 +399,21 @@ void QQuickWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef,
 
 }
 
+quint64 QQuickWebViewPrivate::exceededDatabaseQuota(const QString& databaseName, const QString& displayName, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage)
+{
+    if (!databaseQuotaDialog)
+        return 0;
+
+    Q_Q(QQuickWebView);
+    QtDialogRunner dialogRunner;
+    if (!dialogRunner.initForDatabaseQuotaDialog(databaseQuotaDialog, q, databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage))
+        return 0;
+
+    execDialogRunner(dialogRunner);
+
+    return dialogRunner.wasAccepted() ? dialogRunner.databaseQuota() : 0;
+}
+
 void QQuickWebViewPrivate::setViewInAttachedProperties(QObject* object)
 {
     Q_Q(QQuickWebView);
@@ -904,6 +919,21 @@ void QQuickWebViewExperimental::setFilePicker(QDeclarativeComponent* filePicker)
         return;
     d->filePicker = filePicker;
     emit filePickerChanged();
+}
+
+QDeclarativeComponent* QQuickWebViewExperimental::databaseQuotaDialog() const
+{
+    Q_D(const QQuickWebView);
+    return d->databaseQuotaDialog;
+}
+
+void QQuickWebViewExperimental::setDatabaseQuotaDialog(QDeclarativeComponent* databaseQuotaDialog)
+{
+    Q_D(QQuickWebView);
+    if (d->databaseQuotaDialog == databaseQuotaDialog)
+        return;
+    d->databaseQuotaDialog = databaseQuotaDialog;
+    emit databaseQuotaDialogChanged();
 }
 
 QString QQuickWebViewExperimental::userAgent() const

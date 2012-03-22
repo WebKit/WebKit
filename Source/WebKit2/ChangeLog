@@ -1,3 +1,44 @@
+2012-03-21  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt][WK2] Add QML API for handling database quotas
+        https://bugs.webkit.org/show_bug.cgi?id=81827
+
+        Reviewed by Simon Hausmann.
+
+        Patch by Pierre Rossi and Alexander Færøy.
+
+        This patch adds a QML API for handling database quotas.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::exceededDatabaseQuota):
+        (QQuickWebViewExperimental::databaseQuotaDialog):
+        (QQuickWebViewExperimental::setDatabaseQuotaDialog):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/qt/QtDialogRunner.cpp:
+        (DatabaseQuotaDialogContextObject):
+        (DatabaseQuotaDialogContextObject::DatabaseQuotaDialogContextObject):
+        (DatabaseQuotaDialogContextObject::databaseName):
+        (DatabaseQuotaDialogContextObject::displayName):
+        (DatabaseQuotaDialogContextObject::currentQuota):
+        (DatabaseQuotaDialogContextObject::currentOriginUsage):
+        (DatabaseQuotaDialogContextObject::currentDatabaseUsage):
+        (DatabaseQuotaDialogContextObject::expectedUsage):
+        (DatabaseQuotaDialogContextObject::accept):
+        (DatabaseQuotaDialogContextObject::reject):
+        (QtDialogRunner::initForDatabaseQuotaDialog):
+        * UIProcess/qt/QtDialogRunner.h:
+        (QtDialogRunner):
+        (QtDialogRunner::databaseQuota):
+        (QtDialogRunner::onDatabaseQuotaAccepted):
+        * UIProcess/qt/QtWebPageUIClient.cpp:
+        (QtWebPageUIClient::QtWebPageUIClient):
+        (QtWebPageUIClient::exceededDatabaseQuota):
+        * UIProcess/qt/QtWebPageUIClient.h:
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformDefaultDatabaseDirectory):
+
 2012-03-21  Tim Horton  <timothy_horton@apple.com>
 
         Make use of CG rounded-rect primitives

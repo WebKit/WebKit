@@ -182,6 +182,51 @@ private:
     QStringList m_fileList;
 };
 
+class DatabaseQuotaDialogContextObject : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QString databaseName READ databaseName CONSTANT)
+    Q_PROPERTY(QString displayName READ displayName CONSTANT)
+    Q_PROPERTY(quint64 currentQuota READ currentQuota CONSTANT)
+    Q_PROPERTY(quint64 currentOriginUsage READ currentOriginUsage CONSTANT)
+    Q_PROPERTY(quint64 currentDatabaseUsage READ currentDatabaseUsage CONSTANT)
+    Q_PROPERTY(quint64 expectedUsage READ expectedUsage CONSTANT)
+
+public:
+    DatabaseQuotaDialogContextObject(const QString& databaseName, const QString& displayName, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage)
+        : QObject()
+        , m_databaseName(databaseName)
+        , m_displayName(displayName)
+        , m_currentQuota(currentQuota)
+        , m_currentOriginUsage(currentOriginUsage)
+        , m_currentDatabaseUsage(currentDatabaseUsage)
+        , m_expectedUsage(expectedUsage)
+    {
+    }
+
+    QString databaseName() const { return m_databaseName; }
+    QString displayName() const { return m_displayName; }
+    quint64 currentQuota() const { return m_currentQuota; }
+    quint64 currentOriginUsage() const { return m_currentOriginUsage; }
+    quint64 currentDatabaseUsage() const { return m_currentDatabaseUsage; }
+    quint64 expectedUsage() const { return m_expectedUsage; }
+
+public slots:
+    void accept(quint64 size) { emit accepted(size); }
+    void reject() { emit rejected(); }
+
+signals:
+    void accepted(quint64 size);
+    void rejected();
+
+private:
+    QString m_databaseName;
+    QString m_displayName;
+    quint64 m_currentQuota;
+    quint64 m_currentOriginUsage;
+    quint64 m_currentDatabaseUsage;
+    quint64 m_expectedUsage;
+};
+
 bool QtDialogRunner::initForAlert(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& message)
 {
     DialogContextObject* contextObject = new DialogContextObject(message);
@@ -263,6 +308,19 @@ bool QtDialogRunner::initForFilePicker(QDeclarativeComponent* component, QQuickI
 
     connect(contextObject, SIGNAL(fileSelected(QStringList)), SLOT(onFileSelected(QStringList)));
     connect(contextObject, SIGNAL(fileSelected(QStringList)), SLOT(quit()));
+    connect(contextObject, SIGNAL(rejected()), SLOT(quit()));
+
+    return true;
+}
+
+bool QtDialogRunner::initForDatabaseQuotaDialog(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& databaseName, const QString& displayName, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage)
+{
+    DatabaseQuotaDialogContextObject* contextObject = new DatabaseQuotaDialogContextObject(databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
+    if (!createDialog(component, dialogParent, contextObject))
+        return false;
+
+    connect(contextObject, SIGNAL(accepted(quint64)), SLOT(onDatabaseQuotaAccepted(quint64)));
+    connect(contextObject, SIGNAL(accepted(quint64)), SLOT(quit()));
     connect(contextObject, SIGNAL(rejected()), SLOT(quit()));
 
     return true;
