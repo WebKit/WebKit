@@ -3116,9 +3116,11 @@ IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
     int deviceHeight = Platform::Graphics::Screen::primaryScreen()->height();
     FloatSize currentPPI = Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(-1);
     int deviceDPI = int(roundf((currentPPI.width() + currentPPI.height()) / 2));
-    if (m_viewportArguments.targetDensityDpi == ViewportArguments::ValueAuto) {
-        // Auto means 160dpi if we leave it alone. This looks terrible for pages wanting 1:1.
-        // FIXME: This is insufficient for devices with high dpi, as they will render content unreadably small.
+    if (m_viewportArguments.targetDensityDpi == ViewportArguments::ValueAuto
+        && !Platform::DeviceInfo::instance()->isMobile()) {
+        // If the content provider hasn't specified a target dpi and we have a large
+        // screen we assume the content is fine and set the targetDensityDpi to our dpi.
+        // On smaller screen mobile devices we skip this and use WebCore dpi scaling.
         m_viewportArguments.targetDensityDpi = deviceDPI;
     }
 

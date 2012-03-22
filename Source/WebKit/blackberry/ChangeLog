@@ -1,3 +1,17 @@
+2012-03-22  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] DeviceDPI Scaling is broken on mobile.
+        https://bugs.webkit.org/show_bug.cgi?id=81966
+
+        Fix our viewport argument handling to only override the
+        targetDensityDpi on tablet devices. Allow WebCore to use
+        dpi scaling for smaller screen mobile devices.
+
+        Reviewed by Rob Buis.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+
 2012-03-22  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Add pattern matching for hexadecimal type input fields
