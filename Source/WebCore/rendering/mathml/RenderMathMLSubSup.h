@@ -32,6 +32,7 @@
 
 namespace WebCore {
     
+// Render a base with a subscript and/or a superscript.
 class RenderMathMLSubSup : public RenderMathMLBlock {
 public:
     RenderMathMLSubSup(Element*);

@@ -32,11 +32,14 @@
 
 namespace WebCore {
     
+// Render base^(1/index), using radical notation.
 class RenderMathMLRoot : public RenderMathMLBlock {
 public:
     RenderMathMLRoot(Element*);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
+    
     virtual void paint(PaintInfo&, const LayoutPoint&);
+    
 protected:
     virtual void layout();
 

@@ -38,31 +38,31 @@ namespace WebCore {
     
 using namespace MathMLNames;
 
-// Left margin of the radical (px)
-const int gRadicalLeftMargin = 3;
-// Bottom padding of the radical (px)
-const int gRadicalBasePad = 3;
-// Threshold above which the radical shape is modified to look nice with big bases (%)
-const float gThresholdBaseHeight = 1.5f;
-// Radical width (%)
-const float gRadicalWidth = 0.75f;
-// Horizontal position of the bottom point of the radical (%)
-const float gRadicalBottomPointXPos= 0.5f;
-// Horizontal position of the top left point of the radical (%)
-const float gRadicalTopLeftPointXPos = 0.8f;
-// Vertical position of the top left point of the radical (%)
-const float gRadicalTopLeftPointYPos = 0.625f; 
-// Vertical shift of the left end point of the radical (%)
-const float gRadicalLeftEndYShift = 0.05f;
-// Root padding around the base (%)
-const float gRootPadding = 0.2f;
-// Additional bottom root padding (%)
-const float gRootBottomPadding = 0.2f;
-    
-// Radical line thickness (%)
-const float gRadicalLineThickness = 0.02f;
-// Radical thick line thickness (%)
-const float gRadicalThickLineThickness = 0.1f;
+// Extra space on the left for the radical sign (px)
+const int gRadicalLeftExtra = 3;
+// Lower the radical sign's bottom point (px)
+const int gRadicalBottomPointLower = 3;
+// Threshold above which the radical shape is modified to look nice with big bases (em)
+const float gThresholdBaseHeightEms = 1.5f;
+// Front width (em)
+const float gFrontWidthEms = 0.75f;
+// Horizontal position of the bottom point of the radical (* frontWidth)
+const float gRadicalBottomPointXFront = 0.5f;
+// Horizontal position of the top left point of the radical "dip" (* frontWidth)
+const float gRadicalDipLeftPointXFront = 0.8f;
+// Vertical position of the top left point of the radical "dip" (* baseHeight)
+const float gRadicalDipLeftPointYPos = 0.625f; 
+// Vertical shift of the left end point of the radical (em)
+const float gRadicalLeftEndYShiftEms = 0.05f;
+// Root padding around the base (em) (mroot padding-top/left from mathml.css)
+const float gRootPaddingEms = 0.2f;
+// Additional bottom root padding if baseHeight > threshold (em)
+const float gBigRootBottomPaddingEms = 0.2f;
+
+// Radical line thickness (em)
+const float gRadicalLineThicknessEms = 0.02f;
+// Radical thick line thickness (em)
+const float gRadicalThickLineThicknessEms = 0.1f;
     
 RenderMathMLRoot::RenderMathMLRoot(Element* element)
     : RenderMathMLBlock(element)
@@ -79,7 +79,7 @@ void RenderMathMLRoot::addChild(RenderObject* child, RenderObject* )
         // FIXME: the wrapping does not seem to be needed anymore.
         // this is the base, so wrap it so we can pad it
         RenderBlock* baseWrapper = createAlmostAnonymousBlock(INLINE_BLOCK);
-        baseWrapper->style()->setPaddingLeft(Length(5 * gRadicalWidth, Percent));
+        baseWrapper->style()->setPaddingLeft(Length(5 * gFrontWidthEms, Percent));
         RenderBlock::addChild(baseWrapper);
         baseWrapper->addChild(child);
     } else {
@@ -94,19 +94,19 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     
     if (info.context->paintingDisabled())
         return;
-
+    
     if (!firstChild() || !lastChild())
         return;
-
+    
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location());
     
-    RenderBoxModelObject* indexBox = toRenderBoxModelObject(lastChild());
+    RenderBoxModelObject* baseWrapper = toRenderBoxModelObject(lastChild());
     
-    int maxHeight = indexBox->pixelSnappedOffsetHeight();
+    int baseHeight = baseWrapper->pixelSnappedOffsetHeight();
     // default to the font size in pixels if we're empty
-    if (!maxHeight)
-        maxHeight = style()->fontSize();
-    int width = indexBox->pixelSnappedOffsetWidth();
+    if (!baseHeight)
+        baseHeight = style()->fontSize();
+    int overbarWidth = baseWrapper->pixelSnappedOffsetWidth();
     
     int indexWidth = 0;
     RenderObject* current = firstChild();
@@ -118,32 +118,32 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
         current = current->nextSibling();
     }
     
-    int frontWidth = static_cast<int>(style()->fontSize() * gRadicalWidth);
-    int topStartShift = 0;
+    int frontWidth = static_cast<int>(style()->fontSize() * gFrontWidthEms);
+    int overbarLeftPointShift = 0;
     // Base height above which the shape of the root changes
-    int thresholdHeight = static_cast<int>(gThresholdBaseHeight * style()->fontSize());
+    int thresholdHeight = static_cast<int>(gThresholdBaseHeightEms * style()->fontSize());
     
-    if (maxHeight > thresholdHeight && thresholdHeight) {
-        float shift = (maxHeight - thresholdHeight) / static_cast<float>(thresholdHeight);
+    if (baseHeight > thresholdHeight && thresholdHeight) {
+        float shift = (baseHeight - thresholdHeight) / static_cast<float>(thresholdHeight);
         if (shift > 1.)
             shift = 1.0f;
-        topStartShift = static_cast<int>(gRadicalBottomPointXPos * frontWidth * shift);
+        overbarLeftPointShift = static_cast<int>(gRadicalBottomPointXFront * frontWidth * shift);
     }
     
-    width += topStartShift;
+    overbarWidth += overbarLeftPointShift;
     
-    int rootPad = static_cast<int>(gRootPadding * style()->fontSize());
-    int start = adjustedPaintOffset.x() + indexWidth + gRadicalLeftMargin + style()->paddingLeft().value() - rootPad;
+    int rootPad = static_cast<int>(gRootPaddingEms * style()->fontSize());
+    int startX = adjustedPaintOffset.x() + indexWidth + gRadicalLeftExtra + style()->paddingLeft().value() - rootPad;
     adjustedPaintOffset.setY(adjustedPaintOffset.y() + style()->paddingTop().value() - rootPad);
     
-    FloatPoint topStart(start - topStartShift, adjustedPaintOffset.y());
-    FloatPoint bottomLeft(start - gRadicalBottomPointXPos * frontWidth , adjustedPaintOffset.y() + maxHeight + gRadicalBasePad);
-    FloatPoint topLeft(start - gRadicalTopLeftPointXPos * frontWidth , adjustedPaintOffset.y() + gRadicalTopLeftPointYPos * maxHeight);
-    FloatPoint leftEnd(start - frontWidth , topLeft.y() + gRadicalLeftEndYShift * style()->fontSize());
+    FloatPoint overbarLeftPoint(startX - overbarLeftPointShift, adjustedPaintOffset.y());
+    FloatPoint bottomPoint(startX - gRadicalBottomPointXFront * frontWidth, adjustedPaintOffset.y() + baseHeight + gRadicalBottomPointLower);
+    FloatPoint dipLeftPoint(startX - gRadicalDipLeftPointXFront * frontWidth, adjustedPaintOffset.y() + gRadicalDipLeftPointYPos * baseHeight);
+    FloatPoint leftEnd(startX - frontWidth, dipLeftPoint.y() + gRadicalLeftEndYShiftEms * style()->fontSize());
     
     GraphicsContextStateSaver stateSaver(*info.context);
     
-    info.context->setStrokeThickness(gRadicalLineThickness * style()->fontSize());
+    info.context->setStrokeThickness(gRadicalLineThicknessEms * style()->fontSize());
     info.context->setStrokeStyle(SolidStroke);
     info.context->setStrokeColor(style()->visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
     info.context->setLineJoin(MiterJoin);
@@ -151,13 +151,13 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     
     Path root;
     
-    root.moveTo(FloatPoint(topStart.x() + width, adjustedPaintOffset.y()));
+    root.moveTo(FloatPoint(overbarLeftPoint.x() + overbarWidth, adjustedPaintOffset.y()));
     // draw top
-    root.addLineTo(topStart);
+    root.addLineTo(overbarLeftPoint);
     // draw from top left corner to bottom point of radical
-    root.addLineTo(bottomLeft);
-    // draw from bottom point to top of left part of radical base "pocket"
-    root.addLineTo(topLeft);
+    root.addLineTo(bottomPoint);
+    // draw from bottom point to top of left part of radical base "dip"
+    root.addLineTo(dipLeftPoint);
     // draw to end
     root.addLineTo(leftEnd);
     
@@ -168,21 +168,21 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     // Build a mask to draw the thick part of the root.
     Path mask;
     
-    mask.moveTo(topStart);
-    mask.addLineTo(bottomLeft);
-    mask.addLineTo(topLeft);
-    mask.addLineTo(FloatPoint(2 * topLeft.x() - leftEnd.x(), 2 * topLeft.y() - leftEnd.y()));
+    mask.moveTo(overbarLeftPoint);
+    mask.addLineTo(bottomPoint);
+    mask.addLineTo(dipLeftPoint);
+    mask.addLineTo(FloatPoint(2 * dipLeftPoint.x() - leftEnd.x(), 2 * dipLeftPoint.y() - leftEnd.y()));
     
     info.context->clip(mask);
     
     // Draw the thick part of the root.
-    info.context->setStrokeThickness(gRadicalThickLineThickness * style()->fontSize());
+    info.context->setStrokeThickness(gRadicalThickLineThicknessEms * style()->fontSize());
     info.context->setLineCap(SquareCap);
     
     Path line;
-    line.moveTo(bottomLeft);
-    line.addLineTo(topLeft);
-
+    line.moveTo(bottomPoint);
+    line.addLineTo(dipLeftPoint);
+    
     info.context->strokePath(line);
 }
 
@@ -193,27 +193,27 @@ void RenderMathMLRoot::layout()
     if (!firstChild() || !lastChild())
         return;
 
-    int maxHeight = toRenderBoxModelObject(lastChild())->pixelSnappedOffsetHeight();
+    int baseHeight = toRenderBoxModelObject(lastChild())->pixelSnappedOffsetHeight();
+    if (!baseHeight)
+        baseHeight = style()->fontSize();
     
-    RenderObject* current = lastChild()->firstChild();
-    if (current)
-        current->style()->setVerticalAlign(BASELINE);
-    
-    if (!maxHeight)
-        maxHeight = style()->fontSize();
+    RenderObject* base = lastChild()->firstChild();
+    if (base)
+        base->style()->setVerticalAlign(BASELINE); // FIXME: Can this style be modified?
     
     // Base height above which the shape of the root changes
-    int thresholdHeight = static_cast<int>(gThresholdBaseHeight * style()->fontSize());
-    int topStartShift = 0;
+    int thresholdHeight = static_cast<int>(gThresholdBaseHeightEms * style()->fontSize());
+    int overbarLeftPointShift = 0;
     
-    if (maxHeight > thresholdHeight && thresholdHeight) {
-        float shift = (maxHeight - thresholdHeight) / static_cast<float>(thresholdHeight);
+    // FIXME: Can style() and indexBox->style() be modified (4 times below)?
+    if (baseHeight > thresholdHeight && thresholdHeight) {
+        float shift = (baseHeight - thresholdHeight) / static_cast<float>(thresholdHeight);
         if (shift > 1.)
             shift = 1.0f;
-        int frontWidth = static_cast<int>(style()->fontSize() * gRadicalWidth);
-        topStartShift = static_cast<int>(gRadicalBottomPointXPos * frontWidth * shift);
+        int frontWidth = static_cast<int>(style()->fontSize() * gFrontWidthEms);
+        overbarLeftPointShift = static_cast<int>(gRadicalBottomPointXFront * frontWidth * shift);
         
-        style()->setPaddingBottom(Length(static_cast<int>(gRootBottomPadding * style()->fontSize()), Fixed));
+        style()->setPaddingBottom(Length(static_cast<int>(gBigRootBottomPaddingEms * style()->fontSize()), Fixed));
     }
     
     // Positioning of the index
@@ -224,20 +224,20 @@ void RenderMathMLRoot::layout()
     if (!indexBox)
         return;
     
-    int indexShift = indexBox->pixelSnappedOffsetWidth() + topStartShift;
-    int radicalHeight = static_cast<int>((1 - gRadicalTopLeftPointYPos) * maxHeight);
-    int rootMarginTop = radicalHeight + style()->paddingBottom().value() + indexBox->pixelSnappedOffsetHeight()
-        - (maxHeight + static_cast<int>(gRootPadding * style()->fontSize()));
+    int shiftForIndex = indexBox->pixelSnappedOffsetWidth() + overbarLeftPointShift;
+    int partDipHeight = static_cast<int>((1 - gRadicalDipLeftPointYPos) * baseHeight);
+    int rootExtraTop = partDipHeight + style()->paddingBottom().value() + indexBox->pixelSnappedOffsetHeight()
+        - (baseHeight + static_cast<int>(gRootPaddingEms * style()->fontSize()));
     
-    style()->setPaddingLeft(Length(indexShift, Fixed));
-    if (rootMarginTop > 0)
-        style()->setPaddingTop(Length(rootMarginTop + static_cast<int>(gRootPadding * style()->fontSize()), Fixed));
+    style()->setPaddingLeft(Length(shiftForIndex, Fixed));
+    if (rootExtraTop > 0)
+        style()->setPaddingTop(Length(rootExtraTop + static_cast<int>(gRootPaddingEms * style()->fontSize()), Fixed));
     
     setNeedsLayout(true);
-    setPreferredLogicalWidthsDirty(true, false);
+    setPreferredLogicalWidthsDirty(true, false); // FIXME: Can this really be right?
     RenderBlock::layout();
 
-    indexBox->style()->setBottom(Length(radicalHeight + style()->paddingBottom().value(), Fixed));
+    indexBox->style()->setBottom(Length(partDipHeight + style()->paddingBottom().value(), Fixed));
 
     // Now that we've potentially changed its position, we need layout the index again.
     indexBox->setNeedsLayout(true);

@@ -32,10 +32,13 @@
 
 namespace WebCore {
     
+// Render sqrt(base), using radical notation.
 class RenderMathMLSquareRoot : public RenderMathMLBlock {
 public:
     RenderMathMLSquareRoot(Element*);
+    
     virtual void paint(PaintInfo&, const LayoutPoint&);
+    
 protected:
     virtual void layout();
 
