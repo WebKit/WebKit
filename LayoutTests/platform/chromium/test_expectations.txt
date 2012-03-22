@@ -4231,6 +4231,10 @@ BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-w
 // Timing out on SNOWLEOPARD DEBUG since at least r111525
 BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/input-type-change3.html = PASS TIMEOUT
 BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/textarea-align.html = PASS TIMEOUT
+BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/select-empty-option-height.html = PASS TIMEOUT
+BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/interactive-validation-remove-node-in-handler.html = PASS TIMEOUT
 BUGWK81814 SNOWLEOPARD DEBUG : fast/parser/fragment-parser.html = PASS TIMEOUT
 BUGWK81815 SNOWLEOPARD DEBUG : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS TIMEOUT
 BUGWK81816 SNOWLEOPARD DEBUG : fast/dom/DOMImplementation/createDocumentType-err.html = PASS TIMEOUT
+BUGWK81857 SNOWLEOPARD DEBUG : fast/frames/valid.html = PASS TIMEOUT
+BUGWK81857 SNOWLEOPARD DEBUG : fast/frames/calculate-order.html = PASS TIMEOUT
