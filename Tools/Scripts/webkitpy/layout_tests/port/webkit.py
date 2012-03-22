@@ -497,6 +497,7 @@ class WebKitDriver(Driver):
             self._crashed_process_name = self._server_process.name()
             self._crashed_pid = self._server_process.pid()
             return True
+        return False
 
     def _check_for_driver_crash(self, error_line):
         if error_line == "#CRASHED\n":
@@ -507,11 +508,13 @@ class WebKitDriver(Driver):
         elif error_line.startswith("#CRASHED - WebProcess"):
             # WebKitTestRunner uses this to report that the WebProcess subprocess crashed.
             pid = None
-            m = re.match('pid (\d+)', error_line)
+            m = re.search('pid (\d+)', error_line)
             if m:
                 pid = int(m.group(1))
             self._crashed_process_name = 'WebProcess'
             self._crashed_pid = pid
+            # FIXME: delete this after we're sure this code is working :)
+            _log.debug('WebProcess crash, pid = %s, error_line = %s' % (str(pid), error_line))
             return True
         return self.has_crashed()
 

@@ -296,3 +296,48 @@ class WebKitDriverTest(unittest.TestCase):
         port = TestWebKitPort()
         driver = WebKitDriver(port, 0, pixel_tests=True, no_timeout=True)
         self.assertEquals(driver.cmd_line(True, []), ['MOCK output of child process/DumpRenderTree', '--no-timeout', '--pixel-tests', '-'])
+
+    def test_check_for_driver_crash(self):
+        port = TestWebKitPort()
+        driver = WebKitDriver(port, 0, pixel_tests=True)
+
+        class FakeServerProcess(object):
+            def __init__(self, crashed):
+                self.crashed = crashed
+
+            def pid(self):
+                return 1234
+
+            def name(self):
+                return 'FakeServerProcess'
+
+            def has_crashed(self):
+                return self.crashed
+
+        def assert_crash(driver, error_line, crashed, name, pid):
+            self.assertEquals(driver._check_for_driver_crash(error_line), crashed)
+            self.assertEquals(driver._crashed_process_name, name)
+            self.assertEquals(driver._crashed_pid, pid)
+
+        driver._server_process = FakeServerProcess(False)
+        assert_crash(driver, '', False, None, None)
+
+        driver._crashed_process_name = None
+        driver._crashed_pid = None
+        driver._server_process = FakeServerProcess(False)
+        assert_crash(driver, '#CRASHED\n', True, 'FakeServerProcess', 1234)
+
+        driver._crashed_process_name = None
+        driver._crashed_pid = None
+        driver._server_process = FakeServerProcess(False)
+        assert_crash(driver, '#CRASHED - WebProcess\n', True, 'WebProcess', None)
+
+        driver._crashed_process_name = None
+        driver._crashed_pid = None
+        driver._server_process = FakeServerProcess(False)
+        assert_crash(driver, '#CRASHED - WebProcess (pid 8675)\n', True, 'WebProcess', 8675)
+
+        driver._crashed_process_name = None
+        driver._crashed_pid = None
+        driver._server_process = FakeServerProcess(True)
+        assert_crash(driver, '', True, 'FakeServerProcess', 1234)

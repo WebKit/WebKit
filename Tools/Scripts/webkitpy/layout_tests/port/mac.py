@@ -166,6 +166,8 @@ class MacPort(ApplePort):
         crash_log = ''
         crash_logs = CrashLogs(self._filesystem)
         now = time.time()
+        # FIXME: delete this after we're sure this code is working ...
+        _log.debug('looking for crash log for %s:%s' % (name, str(pid)))
         deadline = now + 5 * int(self.get_option('child_processes'))
         while not crash_log and now <= deadline:
             crash_log = crash_logs.find_newest_log(name, pid, include_errors=True)

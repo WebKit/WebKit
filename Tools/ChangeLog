@@ -1,3 +1,29 @@
+2012-03-22  Dirk Pranke  <dpranke@chromium.org>
+
+        new-run-webkit-tests blames the wrong test for crashing
+        https://bugs.webkit.org/show_bug.cgi?id=81951
+
+        Reviewed by Adam Barth.
+
+        NRWT wasn't extracting the WebProcess pid correct; should've
+        used re.search instead of re.match :(. Add more tests!
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.has_crashed):
+        (WebKitDriver._check_for_driver_crash):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitDriverTest.test_no_timeout):
+        (WebKitDriverTest):
+        (WebKitDriverTest.test_check_for_driver_crash):
+        (WebKitDriverTest.test_check_for_driver_crash.FakeServerProcess):
+        (WebKitDriverTest.test_check_for_driver_crash.FakeServerProcess.__init__):
+        (WebKitDriverTest.test_check_for_driver_crash.FakeServerProcess.pid):
+        (WebKitDriverTest.test_check_for_driver_crash.FakeServerProcess.name):
+        (WebKitDriverTest.test_check_for_driver_crash.FakeServerProcess.has_crashed):
+        (WebKitDriverTest.test_check_for_driver_crash.assert_crash):
+
 2012-03-22  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Implement LayoutTestController::markerTextForListItem()
