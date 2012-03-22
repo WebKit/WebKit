@@ -1,3 +1,12 @@
+2012-03-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Add full platforms to Qt buildslaves
+        https://bugs.webkit.org/show_bug.cgi?id=81877
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-03-21  Johnny Ding  <jnd@chromium.org>
 
         Customize layout test timeout value for different ports.

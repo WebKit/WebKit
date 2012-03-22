@@ -37,16 +37,16 @@
                     { "name": "gtk-linux-slave-2", "platform": "gtk"},
                     { "name": "gtk-linux-slave-3", "platform": "gtk"},
 
-                    { "name": "szeged-linux-1", "platform": "qt"},
-                    { "name": "szeged-linux-2", "platform": "qt"},
-                    { "name": "szeged-linux-3", "platform": "qt"},
-                    { "name": "szeged-linux-4", "platform": "qt"},
-                    { "name": "szeged-linux-5", "platform": "qt"},
+                    { "name": "szeged-linux-1", "platform": "qt-4.8"},
+                    { "name": "szeged-linux-2", "platform": "qt-4.8"},
+                    { "name": "szeged-linux-3", "platform": "qt-5.0-wk1"},
+                    { "name": "szeged-linux-4", "platform": "qt-arm"},
+                    { "name": "szeged-linux-5", "platform": "qt-5.0-wk2"},
 
-                    { "name": "szeged-windows-1", "platform": "qt"},
-                    { "name": "szeged-windows-2", "platform": "qt"},
+                    { "name": "szeged-windows-1", "platform": "qt-win"},
+                    { "name": "szeged-windows-2", "platform": "qt-win"},
 
-                    { "name": "indt-snowleopard", "platform": "qt"},
+                    { "name": "indt-snowleopard", "platform": "qt-mac"},
 
                     { "name": "google-windows-1", "platform": "chromium-win" },
                     { "name": "google-windows-2", "platform": "chromium-win" },
@@ -176,42 +176,42 @@
                     },
                     {
                       "name": "Qt Linux Release", "type": "BuildAndTest", "builddir": "qt-linux-release",
-                      "platform": "qt", "configuration": "release", "architectures": ["i386"],
+                      "platform": "qt-4.8", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["szeged-linux-1"]
                     },
                     {
                       "name": "Qt Linux Release minimal", "type": "Build", "builddir": "qt-linux-release-minimal",
-                      "platform": "qt", "configuration": "release", "architectures": ["i386"],
+                      "platform": "qt-4.8", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["szeged-linux-2"]
                     },
                     {
                       "name": "Qt Linux 64-bit Release (Perf)", "type": "BuildAndPerfTest", "builddir": "qt-linux-64-release-perf-tests",
-                      "platform": "qt", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "qt-5.0-wk1", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["szeged-linux-3"]
                     },
                     {
                       "name": "Qt Linux 64-bit Release (WebKit2 Perf)", "type": "BuildAndPerfTestWebKit2", "builddir": "qt-linux-64-release-wk2-perf-tests",
-                      "platform": "qt", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "qt-5.0-wk2", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["szeged-linux-5"]
                     },
                     {
                       "name": "Qt Linux ARMv7 Release", "type": "Build", "builddir": "qt-linux-armv7-release",
-                      "platform": "qt", "configuration": "release", "architectures": ["armv7"],
+                      "platform": "qt-arm", "configuration": "release", "architectures": ["armv7"],
                       "slavenames": ["szeged-linux-4"]
                     },
                     {
                       "name": "Qt Windows 32-bit Release", "type": "Build", "builddir": "qt-windows-32bit-release",
-                      "platform": "qt", "configuration": "release", "architectures": ["i386"],
+                      "platform": "qt-win", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["szeged-windows-1"]
                     },
                     {
                       "name": "Qt Windows 32-bit Debug", "type": "Build", "builddir": "qt-windows-32bit-debug",
-                      "platform": "qt", "configuration": "debug", "architectures": ["i386"],
+                      "platform": "qt-win", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["szeged-windows-2"]
                     },
                     {
                       "name": "Qt SnowLeopard Release", "type": "Build", "builddir": "qt-snowleopard-release",
-                      "platform": "qt", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "qt-mac", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["indt-snowleopard"]
                     },
                     {
