@@ -676,6 +676,7 @@ private:
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int, int);
+    void updateCompositingLayersAfterScroll();
 
     IntSize scrollbarOffset(const Scrollbar*) const;
     
