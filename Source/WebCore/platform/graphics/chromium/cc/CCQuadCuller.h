@@ -38,8 +38,7 @@ public:
     // done to estimate over draw statistics.
     CCQuadCuller(CCQuadList&, CCLayerImpl*, CCOcclusionTrackerImpl*);
 
-    // Returns true if the quad is added to the list, and false if the quad is entirely culled.
-    virtual bool append(PassOwnPtr<CCDrawQuad> passDrawQuad);
+    virtual void append(PassOwnPtr<CCDrawQuad> passDrawQuad);
 
 private:
     CCQuadList& m_quadList;

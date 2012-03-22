@@ -52,8 +52,7 @@ TEST(CCSolidColorLayerImplTest, verifyTilingCompleteAndNoOverlap)
     layer->setBounds(layerSize);
 
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
-    bool usedCheckerboard = false;
-    layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+    layer->appendQuads(quadCuller, sharedQuadState.get());
 
     verifyQuadsExactlyCoverRect(quadCuller.quadList(), visibleLayerRect);
 }
@@ -74,8 +73,7 @@ TEST(CCSolidColorLayerImplTest, verifyCorrectBackgroundColorInQuad)
     layer->setBackgroundColor(testColor);
 
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
-    bool usedCheckerboard = false;
-    layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+    layer->appendQuads(quadCuller, sharedQuadState.get());
 
     ASSERT_EQ(quadCuller.quadList().size(), 1U);
     EXPECT_EQ(quadCuller.quadList()[0]->toSolidColorDrawQuad()->color(), testColor);

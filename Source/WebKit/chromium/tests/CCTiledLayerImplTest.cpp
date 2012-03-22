@@ -72,8 +72,7 @@ TEST(CCTiledLayerImplTest, emptyQuadList)
         OwnPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
         MockCCQuadCuller quadCuller;
         OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
-        bool usedCheckerboard = false;
-        layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+        layer->appendQuads(quadCuller, sharedQuadState.get());
         const unsigned numTiles = numTilesX * numTilesY;
         EXPECT_EQ(quadCuller.quadList().size(), numTiles);
     }
@@ -85,8 +84,7 @@ TEST(CCTiledLayerImplTest, emptyQuadList)
 
         MockCCQuadCuller quadCuller;
         OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
-        bool usedCheckerboard = false;
-        layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+        layer->appendQuads(quadCuller, sharedQuadState.get());
         EXPECT_EQ(quadCuller.quadList().size(), 0u);
     }
 
@@ -99,8 +97,7 @@ TEST(CCTiledLayerImplTest, emptyQuadList)
 
         MockCCQuadCuller quadCuller;
         OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
-        bool usedCheckerboard = false;
-        layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+        layer->appendQuads(quadCuller, sharedQuadState.get());
         EXPECT_EQ(quadCuller.quadList().size(), 0u);
     }
 
@@ -111,8 +108,7 @@ TEST(CCTiledLayerImplTest, emptyQuadList)
 
         MockCCQuadCuller quadCuller;
         OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
-        bool usedCheckerboard = false;
-        layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+        layer->appendQuads(quadCuller, sharedQuadState.get());
         EXPECT_EQ(quadCuller.quadList().size(), 0u);
     }
 }
@@ -132,10 +128,8 @@ TEST(CCTiledLayerImplTest, checkerboarding)
     // No checkerboarding
     {
         MockCCQuadCuller quadCuller;
-        bool usedCheckerboard = false;
-        layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+        layer->appendQuads(quadCuller, sharedQuadState.get());
         EXPECT_EQ(quadCuller.quadList().size(), 4u);
-        EXPECT_FALSE(usedCheckerboard);
 
         for (size_t i = 0; i < quadCuller.quadList().size(); ++i)
             EXPECT_EQ(quadCuller.quadList()[i]->material(), CCDrawQuad::TiledContent);
@@ -148,9 +142,7 @@ TEST(CCTiledLayerImplTest, checkerboarding)
     // All checkerboarding
     {
         MockCCQuadCuller quadCuller;
-        bool usedCheckerboard = false;
-        layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
-        EXPECT_TRUE(usedCheckerboard);
+        layer->appendQuads(quadCuller, sharedQuadState.get());
         EXPECT_EQ(quadCuller.quadList().size(), 4u);
         for (size_t i = 0; i < quadCuller.quadList().size(); ++i)
             EXPECT_EQ(quadCuller.quadList()[i]->material(), CCDrawQuad::SolidColor);
@@ -165,8 +157,7 @@ static PassOwnPtr<CCSharedQuadState> getQuads(CCQuadList& quads, IntSize tileSiz
 
     MockCCQuadCuller quadCuller(quads);
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
-    bool usedCheckerboard = false;
-    layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+    layer->appendQuads(quadCuller, sharedQuadState.get());
     return sharedQuadState.release(); // The shared data must be owned as long as the quad list exists.
 }
 
@@ -284,8 +275,7 @@ TEST(CCTiledLayerImplTest, backgroundCoversViewport)
         OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
 
         MockCCQuadCuller quadCuller;
-        bool usedCheckerboard = false;
-        layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+        layer->appendQuads(quadCuller, sharedQuadState.get());
         EXPECT_EQ(quadCuller.quadList().size(), numTiles);
 
         for (size_t i = 0; i < quadCuller.quadList().size(); ++i)
@@ -300,8 +290,7 @@ TEST(CCTiledLayerImplTest, backgroundCoversViewport)
 
         OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
         MockCCQuadCuller quadCuller;
-        bool usedCheckerboard = false;
-        layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+        layer->appendQuads(quadCuller, sharedQuadState.get());
 
         for (size_t i = 0; i < quadCuller.quadList().size(); ++i)
             EXPECT_EQ(quadCuller.quadList()[i]->material(), CCDrawQuad::SolidColor);
@@ -317,8 +306,7 @@ TEST(CCTiledLayerImplTest, backgroundCoversViewport)
 
         OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
         MockCCQuadCuller quadCuller;
-        bool usedCheckerboard = false;
-        layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+        layer->appendQuads(quadCuller, sharedQuadState.get());
 
         unsigned numContentTiles = 0, numGutterTiles = 0;
         for (size_t i = 0; i < quadCuller.quadList().size(); ++i) {

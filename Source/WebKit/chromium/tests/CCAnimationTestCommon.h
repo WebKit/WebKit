@@ -31,7 +31,6 @@
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
-class CCLayerImpl;
 class LayerChromium;
 }
 
@@ -99,10 +98,6 @@ private:
 void addOpacityTransitionToController(WebCore::CCLayerAnimationController&, double duration, float startOpacity, float endOpacity, bool useTimingFunction);
 
 void addOpacityTransitionToLayer(WebCore::LayerChromium&, double duration, float startOpacity, float endOpacity, bool useTimingFunction);
-void addOpacityTransitionToLayer(WebCore::CCLayerImpl&, double duration, float startOpacity, float endOpacity, bool useTimingFunction);
-
-void addAnimatedTransformToLayer(WebCore::LayerChromium&, double duration, int deltaX, int deltaY);
-void addAnimatedTransformToLayer(WebCore::CCLayerImpl&, double duration, int deltaX, int deltaY);
 
 } // namespace WebKitTests
 

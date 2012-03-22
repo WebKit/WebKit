@@ -57,7 +57,7 @@ TransformationMatrix CCSolidColorLayerImpl::quadTransform() const
     return solidColorTransform;
 }
 
-void CCSolidColorLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+void CCSolidColorLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
 {
     // We create a series of smaller quads instead of just one large one so that the
     // culler can reduce the total pixels drawn.

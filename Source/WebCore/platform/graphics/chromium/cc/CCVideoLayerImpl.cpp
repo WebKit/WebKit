@@ -154,7 +154,7 @@ void CCVideoLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
     }
 }
 
-void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
 {
     if (!m_frame)
         return;

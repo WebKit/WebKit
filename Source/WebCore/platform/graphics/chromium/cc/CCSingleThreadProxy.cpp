@@ -298,9 +298,7 @@ bool CCSingleThreadProxy::doComposite()
       double wallClockTime = currentTime();
 
       m_layerTreeHostImpl->animate(monotonicTime, wallClockTime);
-      CCLayerTreeHostImpl::FrameData frame;
-      m_layerTreeHostImpl->prepareToDraw(frame);
-      m_layerTreeHostImpl->drawLayers(frame);
+      m_layerTreeHostImpl->drawLayers();
     }
 
     if (m_layerTreeHostImpl->isContextLost()) {

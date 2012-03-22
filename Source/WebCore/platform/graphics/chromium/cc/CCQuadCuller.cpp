@@ -47,7 +47,7 @@ CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCLayerImpl* layer, CCOcclusion
 {
 }
 
-bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
+void CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
 {
     OwnPtr<CCDrawQuad> drawQuad(passDrawQuad);
     IntRect culledRect = m_occlusionTracker->unoccludedContentRect(m_layer, drawQuad->quadRect());
@@ -61,7 +61,6 @@ bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
     // Release the quad after we're done using it.
     if (keepQuad)
         m_quadList.append(drawQuad.release());
-    return keepQuad;
 }
 
 } // namespace WebCore

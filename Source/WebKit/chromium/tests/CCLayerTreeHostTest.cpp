@@ -63,7 +63,6 @@ class TestHooks : public CCLayerAnimationDelegate {
 public:
     virtual void beginCommitOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*) { }
-    virtual void prepareToDrawOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void animateLayers(CCLayerTreeHostImpl*, double monotonicTime) { }
     virtual void applyScrollAndScale(const IntSize&, float) { }
@@ -96,16 +95,9 @@ public:
         m_testHooks->commitCompleteOnCCThread(this);
     }
 
-    virtual bool prepareToDraw(FrameData& frame)
+    virtual void drawLayers()
     {
-        bool result = CCLayerTreeHostImpl::prepareToDraw(frame);
-        m_testHooks->prepareToDrawOnCCThread(this);
-        return result;
-    }
-
-    virtual void drawLayers(const FrameData& frame)
-    {
-        CCLayerTreeHostImpl::drawLayers(frame);
+        CCLayerTreeHostImpl::drawLayers();
         m_testHooks->drawLayersOnCCThread(this);
     }
 

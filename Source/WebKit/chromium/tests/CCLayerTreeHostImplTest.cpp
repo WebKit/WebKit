@@ -26,7 +26,6 @@
 
 #include "cc/CCLayerTreeHostImpl.h"
 
-#include "CCAnimationTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerRendererChromium.h"
@@ -37,7 +36,6 @@
 
 using namespace WebCore;
 using namespace WebKit;
-using namespace WebKitTests;
 
 namespace {
 
@@ -252,9 +250,7 @@ TEST_F(CCLayerTreeHostImplTest, nonFastScrollableRegionWithOffset)
     root->setNonFastScrollableRegion(IntRect(0, 0, 50, 50));
     root->setPosition(FloatPoint(-25, 0));
     m_hostImpl->setRootLayer(root.release());
-    CCLayerTreeHostImpl::FrameData frame;
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame); // Update draw transforms so we can correctly map points into layer space.
+    m_hostImpl->drawLayers(); // Update draw transforms so we can correctly map points into layer space.
 
     // This point would fall into the non-fast scrollable region except that we've moved the layer down by 25 pixels.
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(40, 10), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
@@ -394,7 +390,7 @@ TEST_F(CCLayerTreeHostImplTest, pageScaleAnimation)
     }
 }
 
-class DidDrawCheckLayer : public CCTiledLayerImpl {
+class DidDrawCheckLayer : public CCLayerImpl {
 public:
     static PassOwnPtr<DidDrawCheckLayer> create(int id) { return adoptPtr(new DidDrawCheckLayer(id)); }
 
@@ -411,9 +407,9 @@ public:
     bool didDrawCalled() const { return m_didDrawCalled; }
     bool willDrawCalled() const { return m_willDrawCalled; }
 
-protected:
+private:
     explicit DidDrawCheckLayer(int id)
-        : CCTiledLayerImpl(id)
+        : CCLayerImpl(id)
         , m_didDrawCalled(false)
         , m_willDrawCalled(false)
     {
@@ -422,7 +418,6 @@ protected:
         setDrawsContent(true);
     }
 
-private:
     bool m_didDrawCalled;
     bool m_willDrawCalled;
 };
@@ -437,13 +432,10 @@ TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
     DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
 
-    CCLayerTreeHostImpl::FrameData frame;
-
     EXPECT_FALSE(root->willDrawCalled());
     EXPECT_FALSE(root->didDrawCalled());
 
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
 
     EXPECT_FALSE(root->willDrawCalled());
     EXPECT_FALSE(root->didDrawCalled());
@@ -456,8 +448,7 @@ TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
     EXPECT_FALSE(root->willDrawCalled());
     EXPECT_FALSE(root->didDrawCalled());
 
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
 
     EXPECT_TRUE(root->willDrawCalled());
     EXPECT_TRUE(root->didDrawCalled());
@@ -486,9 +477,7 @@ TEST_F(CCLayerTreeHostImplTest, didDrawCalledOnAllLayers)
     EXPECT_FALSE(layer1->didDrawCalled());
     EXPECT_FALSE(layer2->didDrawCalled());
 
-    CCLayerTreeHostImpl::FrameData frame;
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
 
     EXPECT_TRUE(root->didDrawCalled());
     EXPECT_TRUE(layer1->didDrawCalled());
@@ -496,68 +485,6 @@ TEST_F(CCLayerTreeHostImplTest, didDrawCalledOnAllLayers)
 
     EXPECT_NE(root->renderSurface(), layer1->renderSurface());
     EXPECT_TRUE(!!layer1->renderSurface());
-}
-
-class MissingTextureAnimatingLayer : public DidDrawCheckLayer {
-public:
-    static PassOwnPtr<MissingTextureAnimatingLayer> create(int id, bool tileMissing, bool skipsDraw, bool animating) { return adoptPtr(new MissingTextureAnimatingLayer(id, tileMissing, skipsDraw, animating)); }
-
-private:
-    explicit MissingTextureAnimatingLayer(int id, bool tileMissing, bool skipsDraw, bool animating)
-        : DidDrawCheckLayer(id)
-    {
-        OwnPtr<CCLayerTilingData> tilingData = CCLayerTilingData::create(IntSize(10, 10), CCLayerTilingData::NoBorderTexels);
-        tilingData->setBounds(bounds());
-        setTilingData(*tilingData.get());
-        setSkipsDraw(skipsDraw);
-        if (!tileMissing)
-            pushTileProperties(0, 0, 1, IntRect());
-        if (animating)
-            addAnimatedTransformToLayer(*this, 10, 3, 0);
-    }
-};
-
-TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
-{
-    m_hostImpl->initializeLayerRenderer(createContext());
-    m_hostImpl->setViewportSize(IntSize(10, 10));
-
-    // When the texture is not missing, we draw as usual.
-    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
-    DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
-    root->addChild(MissingTextureAnimatingLayer::create(1, false, false, true));
-    DidDrawCheckLayer* layer = static_cast<MissingTextureAnimatingLayer*>(root->children()[0].get());
-
-    CCLayerTreeHostImpl::FrameData frame;
-
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
-
-    // When a texture is missing and we're not animating, we draw as usual with checkerboarding.
-    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
-    root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
-    root->addChild(MissingTextureAnimatingLayer::create(1, true, false, false));
-    layer = static_cast<MissingTextureAnimatingLayer*>(root->children()[0].get());
-
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
-
-    // When a texture is missing and we're animating, we don't draw anything.
-    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
-    root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
-    root->addChild(MissingTextureAnimatingLayer::create(1, true, false, true));
-    layer = static_cast<MissingTextureAnimatingLayer*>(root->children()[0].get());
-
-    EXPECT_FALSE(m_hostImpl->prepareToDraw(frame));
-
-    // When the layer skips draw and we're animating, we still draw the frame.
-    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
-    root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
-    root->addChild(MissingTextureAnimatingLayer::create(1, false, true, true));
-    layer = static_cast<MissingTextureAnimatingLayer*>(root->children()[0].get());
-
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
 }
 
 class BlendStateTrackerContext: public FakeWebGraphicsContext3D {
@@ -586,7 +513,7 @@ class BlendStateCheckLayer : public CCLayerImpl {
 public:
     static PassOwnPtr<BlendStateCheckLayer> create(int id) { return adoptPtr(new BlendStateCheckLayer(id)); }
 
-    virtual void appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+    virtual void appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
     {
         m_quadsAppended = true;
 
@@ -657,30 +584,25 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     root->addChild(BlendStateCheckLayer::create(1));
     BlendStateCheckLayer* layer1 = static_cast<BlendStateCheckLayer*>(root->children()[0].get());
 
-    CCLayerTreeHostImpl::FrameData frame;
-
     // Opaque layer, drawn without blending.
     layer1->setOpaque(true);
     layer1->setOpaqueContents(true);
     layer1->setExpectation(false, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
 
     // Layer with translucent content, but opaque content, so drawn without blending.
     layer1->setOpaque(false);
     layer1->setOpaqueContents(true);
     layer1->setExpectation(false, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
 
     // Layer with translucent content and painting, so drawn with blending.
     layer1->setOpaque(false);
     layer1->setOpaqueContents(false);
     layer1->setExpectation(true, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
 
     // Layer with translucent opacity, drawn with blending.
@@ -688,8 +610,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setOpaqueContents(true);
     layer1->setOpacity(0.5);
     layer1->setExpectation(true, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
 
     // Layer with translucent opacity and painting, drawn with blending.
@@ -697,8 +618,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setOpaqueContents(false);
     layer1->setOpacity(0.5);
     layer1->setExpectation(true, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
 
     layer1->addChild(BlendStateCheckLayer::create(2));
@@ -713,8 +633,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer2->setOpaqueContents(true);
     layer2->setOpacity(1);
     layer2->setExpectation(false, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
     EXPECT_TRUE(layer2->quadsAppended());
 
@@ -724,8 +643,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setOpaqueContents(false);
     layer1->setExpectation(true, false);
     layer2->setExpectation(false, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
     EXPECT_TRUE(layer2->quadsAppended());
 
@@ -735,8 +653,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setOpaqueContents(true);
     layer1->setExpectation(false, false);
     layer2->setExpectation(false, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
     EXPECT_TRUE(layer2->quadsAppended());
 
@@ -750,8 +667,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setOpacity(0.5);
     layer1->setExpectation(false, true);
     layer2->setExpectation(false, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
     EXPECT_TRUE(layer2->quadsAppended());
 
@@ -765,8 +681,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer2->setOpaqueContents(true);
     layer2->setOpacity(0.5);
     layer2->setExpectation(true, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
     EXPECT_TRUE(layer2->quadsAppended());
 
@@ -778,8 +693,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer2->setOpaqueContents(false);
     layer2->setOpacity(1);
     layer2->setExpectation(true, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
     EXPECT_TRUE(layer2->quadsAppended());
 
@@ -791,8 +705,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer2->setOpaqueContents(true);
     layer2->setOpacity(1);
     layer2->setExpectation(false, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
     EXPECT_TRUE(layer2->quadsAppended());
 
@@ -803,8 +716,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setOpaqueContents(false);
     layer1->setOpaqueContentRect(IntRect(5, 5, 2, 5));
     layer1->setExpectation(true, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
 
     // Layer with partially opaque contents partially culled, drawn with blending.
@@ -814,8 +726,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setOpaqueContents(false);
     layer1->setOpaqueContentRect(IntRect(5, 5, 2, 5));
     layer1->setExpectation(true, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
 
     // Layer with partially opaque contents culled, drawn with blending.
@@ -825,8 +736,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setOpaqueContents(false);
     layer1->setOpaqueContentRect(IntRect(5, 5, 2, 5));
     layer1->setExpectation(true, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
 
     // Layer with partially opaque contents and translucent contents culled, drawn without blending.
@@ -836,8 +746,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setOpaqueContents(false);
     layer1->setOpaqueContentRect(IntRect(5, 5, 2, 5));
     layer1->setExpectation(false, false);
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
 
 }
@@ -879,9 +788,7 @@ TEST_F(CCLayerTreeHostImplTest, reshapeNotCalledUntilDraw)
     m_hostImpl->setRootLayer(adoptPtr(root));
     EXPECT_FALSE(reshapeTracker->reshapeCalled());
 
-    CCLayerTreeHostImpl::FrameData frame;
-    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-    m_hostImpl->drawLayers(frame);
+    m_hostImpl->drawLayers();
     EXPECT_TRUE(reshapeTracker->reshapeCalled());
 }
 
@@ -933,11 +840,8 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     root->addChild(adoptPtr(child));
     layerTreeHostImpl->setRootLayer(adoptPtr(root));
 
-    CCLayerTreeHostImpl::FrameData frame;
-
     // First frame, the entire screen should get swapped.
-    EXPECT_TRUE(layerTreeHostImpl->prepareToDraw(frame));
-    layerTreeHostImpl->drawLayers(frame);
+    layerTreeHostImpl->drawLayers();
     layerTreeHostImpl->swapBuffers();
     IntRect actualSwapRect = partialSwapTracker->partialSwapRect();
     IntRect expectedSwapRect = IntRect(IntPoint::zero(), IntSize(500, 500));
@@ -951,8 +855,7 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     // expected damage rect: IntRect(IntPoint::zero(), IntSize(26, 28));
     // expected swap rect: vertically flipped, with origin at bottom left corner.
     child->setPosition(FloatPoint(0, 0));
-    EXPECT_TRUE(layerTreeHostImpl->prepareToDraw(frame));
-    layerTreeHostImpl->drawLayers(frame);
+    layerTreeHostImpl->drawLayers();
     layerTreeHostImpl->swapBuffers();
     actualSwapRect = partialSwapTracker->partialSwapRect();
     expectedSwapRect = IntRect(IntPoint(0, 500-28), IntSize(26, 28));
@@ -966,8 +869,7 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     // expected swap rect: flipped damage rect, but also clamped to viewport
     layerTreeHostImpl->setViewportSize(IntSize(10, 10));
     root->setOpacity(0.7); // this will damage everything
-    EXPECT_TRUE(layerTreeHostImpl->prepareToDraw(frame));
-    layerTreeHostImpl->drawLayers(frame);
+    layerTreeHostImpl->drawLayers();
     layerTreeHostImpl->swapBuffers();
     actualSwapRect = partialSwapTracker->partialSwapRect();
     expectedSwapRect = IntRect(IntPoint::zero(), IntSize(10, 10));
@@ -998,24 +900,19 @@ TEST_F(CCLayerTreeHostImplTest, visibilityChangeResetsDamage)
     root->setDrawsContent(true);
     layerTreeHostImpl->setRootLayer(adoptPtr(root));
 
-    CCLayerTreeHostImpl::FrameData frame;
-
     // First frame: ignore.
-    EXPECT_TRUE(layerTreeHostImpl->prepareToDraw(frame));
-    layerTreeHostImpl->drawLayers(frame);
+    layerTreeHostImpl->drawLayers();
     layerTreeHostImpl->swapBuffers();
 
     // Second frame: nothing has changed --- so we souldn't push anything with partial swap.
-    EXPECT_TRUE(layerTreeHostImpl->prepareToDraw(frame));
-    layerTreeHostImpl->drawLayers(frame);
+    layerTreeHostImpl->drawLayers();
     layerTreeHostImpl->swapBuffers();
     EXPECT_TRUE(partialSwapTracker->partialSwapRect().isEmpty());
 
     // Third frame: visibility change --- so we should push a full frame with partial swap.
     layerTreeHostImpl->setVisible(false);
     layerTreeHostImpl->setVisible(true);
-    EXPECT_TRUE(layerTreeHostImpl->prepareToDraw(frame));
-    layerTreeHostImpl->drawLayers(frame);
+    layerTreeHostImpl->drawLayers();
     layerTreeHostImpl->swapBuffers();
     IntRect actualSwapRect = partialSwapTracker->partialSwapRect();
     IntRect expectedSwapRect = IntRect(IntPoint::zero(), IntSize(500, 500));
