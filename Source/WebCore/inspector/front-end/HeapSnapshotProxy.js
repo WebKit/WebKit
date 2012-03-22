@@ -190,7 +190,7 @@ WebInspector.HeapSnapshotWorker.prototype = {
         var data = event.data;
         if (event.data.error) {
             if (event.data.errorMethodName)
-                WebInspector.log(WebInspector.UIString("An error happend when a call for method '%s' was requested", event.data.errorMethodName));
+                WebInspector.log(WebInspector.UIString("An error happened when a call for method '%s' was requested", event.data.errorMethodName));
             WebInspector.log(event.data.errorCallStack);
             delete this._callbacks[data.callId];
             return;
