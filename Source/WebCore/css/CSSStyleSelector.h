@@ -404,6 +404,7 @@ private:
     bool canShareStyleWithControl(StyledElement*) const;
 
     void applyProperty(int id, CSSValue*);
+
 #if ENABLE(SVG)
     void applySVGProperty(int id, CSSValue*);
 #endif
