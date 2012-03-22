@@ -236,7 +236,8 @@ WebInspector.TextViewer.prototype = {
         }
     },
 
-    _syncLineHeight: function(gutterRow) {
+    _syncLineHeight: function(gutterRow)
+    {
         if (this._lineHeightSynced)
             return;
         if (gutterRow && gutterRow.offsetHeight) {
@@ -639,6 +640,7 @@ WebInspector.TextEditorGutterPanel = function(textModel, syncDecorationsForLineL
 
     this.freeCachedElements();
     this._buildChunks();
+    this._decorations = {};
 }
 
 WebInspector.TextEditorGutterPanel.prototype = {
@@ -674,11 +676,34 @@ WebInspector.TextEditorGutterPanel.prototype = {
                 var lastChunk = this._textChunks[this._textChunks.length - 1];
                 totalLines = lastChunk.startLine + lastChunk.linesCount;
             }
+
             for (var i = totalLines; i < this._textModel.linesCount; i += this._defaultChunkSize) {
                 var chunk = this._createNewChunk(i, i + this._defaultChunkSize);
                 this._textChunks.push(chunk);
                 this._container.appendChild(chunk.element);
             }
+
+            // Shift decorations if necessary
+            for (var lineNumber in this._decorations) {
+                lineNumber = parseInt(lineNumber, 10);
+
+                // Do not move decorations before the start position.
+                if (lineNumber < oldRange.startLine)
+                    continue;
+
+                var lineDecorationsCopy = this._decorations[lineNumber].slice();
+                for (var i = 0; i < lineDecorationsCopy.length; ++i) {
+                    var decoration = lineDecorationsCopy[i];
+                    this.removeDecoration(lineNumber, decoration);
+
+                    // Do not restore the decorations before the end position.
+                    if (lineNumber < oldRange.endLine)
+                        continue;
+
+                    this.addDecoration(lineNumber + linesDiff, decoration);
+                }
+            }
+
             this._repaintAll();
         } else {
             // Decorations may have been removed, so we may have to sync those lines.
@@ -700,6 +725,28 @@ WebInspector.TextEditorGutterPanel.prototype = {
             this._container.style.setProperty("padding-bottom", (this.element.offsetHeight - clientHeight) + "px");
         else
             this._container.style.removeProperty("padding-bottom");
+    },
+
+    addDecoration: function(lineNumber, decoration)
+    {
+        WebInspector.TextEditorChunkedPanel.prototype.addDecoration.call(this, lineNumber, decoration);
+        var decorations = this._decorations[lineNumber];
+        if (!decorations) {
+            decorations = [];
+            this._decorations[lineNumber] = decorations;
+        }
+        decorations.push(decoration);
+    },
+
+    removeDecoration: function(lineNumber, decoration)
+    {
+        WebInspector.TextEditorChunkedPanel.prototype.removeDecoration.call(this, lineNumber, decoration);
+        var decorations = this._decorations[lineNumber];
+        if (decorations) {
+            decorations.remove(decoration);
+            if (!decorations.length)
+                delete this._decorations[lineNumber];
+        }
     }
 }
 
