@@ -1,3 +1,10 @@
+2012-03-21  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build.
+
+        * wtf/MetaAllocator.h:
+        (MetaAllocator): Export the destructor.
+
 2012-03-21  Eric Seidel  <eric@webkit.org>
 
         Fix remaining WTF includes in JavaScriptCore in preparation for moving WTF headers out of JavaScriptCore

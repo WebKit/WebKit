@@ -1,3 +1,13 @@
+2012-03-21  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build.
+
+        Ensure that our test tools don't try and use RTTI unnecessarily.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+
 2012-03-21  Adam Barth  <abarth@webkit.org>
 
         WebKit should have some scripts to smooth interactions with GitHub

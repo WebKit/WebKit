@@ -65,7 +65,7 @@ class MetaAllocator {
 public:
     WTF_EXPORT_PRIVATE MetaAllocator(size_t allocationGranule);
     
-    virtual ~MetaAllocator();
+    WTF_EXPORT_PRIVATE virtual ~MetaAllocator();
     
     WTF_EXPORT_PRIVATE PassRefPtr<MetaAllocatorHandle> allocate(size_t sizeInBytes, void* ownerUID);
 
