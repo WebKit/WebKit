@@ -40,19 +40,6 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8ScriptProfileNode::childrenAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    INC_STATS("DOM.ScriptProfileNode.childrenAccessorGetter");
-    ScriptProfileNode* imp = V8ScriptProfileNode::toNative(info.Holder());
-    const ProfileNodesList& children = imp->children();
-    v8::Handle<v8::Array> result = v8::Array::New(children.size());
-    int index = 0;
-    ProfileNodesList::const_iterator end = children.end();
-    for (ProfileNodesList::const_iterator iter = children.begin(); iter != end; ++iter)
-        result->Set(v8::Integer::New(index++), toV8(iter->get()));
-    return result;
-}
-
 v8::Handle<v8::Value> V8ScriptProfileNode::callUIDAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.ScriptProfileNode.callUIDAccessorGetter");
