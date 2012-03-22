@@ -44,7 +44,7 @@ public:
     ~CCDamageTracker();
 
     void forceFullDamageNextUpdate() { m_forceFullDamageNextUpdate = true; }
-    void updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, CCLayerImpl* targetSurfaceMaskLayer);
+    void updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, bool targetSurfacePropertyChangedOnlyFromDescendant, const IntRect& targetSurfaceContentRect, CCLayerImpl* targetSurfaceMaskLayer);
     const FloatRect& currentDamageRect() { return m_currentDamageRect; }
 
 private:

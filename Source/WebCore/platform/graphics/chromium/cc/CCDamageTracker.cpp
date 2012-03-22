@@ -56,7 +56,7 @@ CCDamageTracker::~CCDamageTracker()
 {
 }
 
-void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, CCLayerImpl* targetSurfaceMaskLayer)
+void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, bool targetSurfacePropertyChangedOnlyFromDescendant, const IntRect& targetSurfaceContentRect, CCLayerImpl* targetSurfaceMaskLayer)
 {
     //
     // This function computes the "damage rect" of a target surface, and updates the state
@@ -71,20 +71,20 @@ void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& laye
     //
     // The basic algorithm for computing the damage region is as follows:
     //
-    //       // 1. compute damage caused by changes in active/new layers
+    //   1. compute damage caused by changes in active/new layers
     //       for each layer in the layerList:
     //           if the layer is actually a renderSurface:
     //               add the surface's damage to our target surface.
     //           else
     //               add the layer's damage to the target surface.
     //
-    //       // 2. compute damage caused by the target surface's mask, if it exists.
+    //   2. compute damage caused by the target surface's mask, if it exists.
     //
-    //       // 3. compute damage caused by old layers/surfaces that no longer exist
+    //   3. compute damage caused by old layers/surfaces that no longer exist
     //       for each leftover layer:
     //           add the old layer/surface bounds to the target surface damage.
     //
-    //       // 4. combine all partial damage rects to get the full damage rect.
+    //   4. combine all partial damage rects to get the full damage rect.
     //
     // Additional important points:
     //
@@ -128,16 +128,11 @@ void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& laye
     FloatRect damageFromSurfaceMask = trackDamageFromSurfaceMask(targetSurfaceMaskLayer);
     FloatRect damageFromLeftoverRects = trackDamageFromLeftoverRects();
 
-    // If the target surface already knows its entire region is damaged, we can return early.
-    // FIXME: this should go away, or will be cleaner, after refactoring into RenderPass/RenderSchedule.
-    CCLayerImpl* layer = layerList[0];
-    CCRenderSurface* targetSurface = layer->targetRenderSurface();
-
-    if (m_forceFullDamageNextUpdate || targetSurface->surfacePropertyChangedOnlyFromDescendant()) {
-        m_currentDamageRect = FloatRect(targetSurface->contentRect());
+    if (m_forceFullDamageNextUpdate || targetSurfacePropertyChangedOnlyFromDescendant) {
+        m_currentDamageRect = targetSurfaceContentRect;
         m_forceFullDamageNextUpdate = false;
     } else {
-        // FIXME: can we need to clamp this damage to the surface's content rect? (affects performance, but not correctness)
+        // FIXME: can we clamp this damage to the surface's content rect? (affects performance, but not correctness)
         m_currentDamageRect = damageFromActiveLayers;
         m_currentDamageRect.uniteIfNonZero(damageFromSurfaceMask);
         m_currentDamageRect.uniteIfNonZero(damageFromLeftoverRects);

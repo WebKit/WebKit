@@ -70,7 +70,7 @@ void emulateDrawingOneFrame(CCLayerImpl* root)
     // Iterate back-to-front, so that damage correctly propagates from descendant surfaces to ancestors.
     for (int i = renderSurfaceLayerList.size() - 1; i >= 0; --i) {
         CCRenderSurface* targetSurface = renderSurfaceLayerList[i]->renderSurface();
-        targetSurface->damageTracker()->updateDamageTrackingState(targetSurface->layerList(), targetSurface->owningLayerId(), renderSurfaceLayerList[i]->maskLayer());
+        targetSurface->damageTracker()->updateDamageTrackingState(targetSurface->layerList(), targetSurface->owningLayerId(), targetSurface->surfacePropertyChangedOnlyFromDescendant(), targetSurface->contentRect(), renderSurfaceLayerList[i]->maskLayer());
     }
 
     root->resetAllChangeTrackingForSubtree();
@@ -767,7 +767,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMask)
     EXPECT_FLOAT_RECT_EQ(FloatRect(194, 200, 6, 8), childDamageRect);
 }
 
-TEST_F(CCDamageTrackerTest, verifyDamageWhenReset)
+TEST_F(CCDamageTrackerTest, verifyDamageWhenForcedFullDamage)
 {
     OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
     CCLayerImpl* child = root->children()[0].get();
@@ -788,6 +788,23 @@ TEST_F(CCDamageTrackerTest, verifyDamageWhenReset)
     emulateDrawingOneFrame(root.get());
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
     EXPECT_FLOAT_RECT_EQ(FloatRect(0, 0, 500, 500), rootDamageRect);
+}
+
+TEST_F(CCDamageTrackerTest, verifyDamageForEmptyLayerList)
+{
+    // Though it should never happen, its a good idea to verify that the damage tracker
+    // does not crash when it receives an empty layerList.
+
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    root->createRenderSurface();
+
+    ASSERT_TRUE(root->renderSurface() == root->targetRenderSurface());
+    CCRenderSurface* targetSurface = root->renderSurface();
+    targetSurface->clearLayerList();
+    targetSurface->damageTracker()->updateDamageTrackingState(targetSurface->layerList(), targetSurface->owningLayerId(), false, IntRect(), 0);
+
+    FloatRect damageRect = targetSurface->damageTracker()->currentDamageRect();
+    EXPECT_TRUE(damageRect.isEmpty());
 }
 
 } // namespace

@@ -1,3 +1,16 @@
+2012-03-22  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Make CCDamageTracker robust to empty layer lists
+        https://bugs.webkit.org/show_bug.cgi?id=81831
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::emulateDrawingOneFrame): modified args passed to damage tracker on update.
+
+        (WebKitTests::TEST_F): Added another unit test.
+        (WebKitTests):
+
 2012-03-22  Bernhard Bauer  <bauerb@google.com>
 
         [chromium] Plug-in failing to load shouldn't say "Missing Plug-in"
