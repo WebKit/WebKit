@@ -314,6 +314,17 @@ Rectangle {
         experimental.authenticationDialog: AuthenticationDialog { }
         experimental.proxyAuthenticationDialog: ProxyAuthenticationDialog { }
         experimental.filePicker: FilePicker { }
+        experimental.databaseQuotaDialog: Item {
+            Timer {
+                interval: 1
+                running: true
+                onTriggered: {
+                    var size = model.expectedUsage / 1024 / 1024
+                    console.log("Creating database '" + model.displayName + "' of size " + size.toFixed(2) + " MB for " + model.origin.scheme + "://" + model.origin.host + ":" + model.origin.port)
+                    model.accept(model.expectedUsage)
+                }
+            }
+        }
 
         ScrollIndicator {
             flickableItem: webView.experimental.flickable
