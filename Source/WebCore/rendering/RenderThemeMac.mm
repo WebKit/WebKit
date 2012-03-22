@@ -23,6 +23,7 @@
 #import "BitmapImage.h"
 #import "ColorMac.h"
 #import "CSSStyleSelector.h"
+#import "CSSValueList.h"
 #import "CSSValueKeywords.h"
 #import "Document.h"
 #import "Element.h"
