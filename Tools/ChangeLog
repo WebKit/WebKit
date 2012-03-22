@@ -1,3 +1,18 @@
+2012-03-21  Adam Barth  <abarth@webkit.org>
+
+        WebKit should have some scripts to smooth interactions with GitHub
+        https://bugs.webkit.org/show_bug.cgi?id=81842
+
+        Reviewed by Eric Seidel.
+
+        These scripts support the workflow in
+        https://trac.webkit.org/wiki/UsingGitHub by automating the
+        configuration and syncing operations needed for a GitHub fork of WebKit
+        to track the main WebKit repository.
+
+        * Scripts/configure-github-as-upstream: Added.
+        * Scripts/sync-master-with-upstream: Added.
+
 2012-03-21  Dirk Pranke  <dpranke@chromium.org>
 
         WTR - log the pid of a crashing WebProcess
