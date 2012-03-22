@@ -215,6 +215,8 @@ editing/selection/button-right-click.html
 editing/selection/context-menu-on-text.html
 editing/selection/context-menu-text-selection.html
 editing/selection/empty-cell-right-click.html
+editing/selection/extend-after-mouse-selection.html
+editing/selection/shift-click.html
 editing/spelling/context-menu-suggestions.html
 editing/spelling/spellcheck-input-search-crash.html
 fast/events/context-no-deselect.html
@@ -723,22 +725,7 @@ media/video-volume-slider.html
 # EFL's LayoutTestController does not implement authenticateSession
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 
-# EFL's LayoutTestController does not implement setEditingBehavior
-editing/execCommand/query-command-state.html
-editing/execCommand/query-text-alignment.html
-editing/execCommand/toggle-compound-styles.html
-editing/selection/5195166-1.html
-editing/selection/5354455-1.html
-editing/selection/click-in-margins-inside-editable-div.html
-editing/selection/click-in-padding-with-multiple-line-boxes.html
-editing/selection/context-menu-text-selection.html
-editing/selection/extend-after-mouse-selection.html
-editing/selection/extend-selection-after-double-click.html
-editing/selection/rtl-move-selection-right-left.html
-editing/selection/shift-click.html
-editing/style/iframe-onload-crash-mac.html
-editing/style/iframe-onload-crash-unix.html
-editing/style/iframe-onload-crash-win.html
+# Set unicode backspace value in EFL's createKeyMap
 fast/events/backspace-navigates-back.html
 
 # EFL's LayoutTestController does not implement abortModal

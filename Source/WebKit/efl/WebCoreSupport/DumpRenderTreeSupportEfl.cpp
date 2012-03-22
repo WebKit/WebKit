@@ -413,3 +413,25 @@ void DumpRenderTreeSupportEfl::deliverAllMutationsIfNecessary()
     WebCore::WebKitMutationObserver::deliverAllMutations();
 #endif
 }
+
+void DumpRenderTreeSupportEfl::setEditingBehavior(Evas_Object* ewkView, const char* editingBehavior)
+{
+    WebCore::EditingBehaviorType coreEditingBehavior;
+
+    if (!strcmp(editingBehavior, "win"))
+        coreEditingBehavior = WebCore::EditingWindowsBehavior;
+    else if (!strcmp(editingBehavior, "mac"))
+        coreEditingBehavior = WebCore::EditingMacBehavior;
+    else if (!strcmp(editingBehavior, "unix"))
+        coreEditingBehavior = WebCore::EditingUnixBehavior;
+    else {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    WebCore::Page* corePage = EWKPrivate::corePage(ewkView);
+    if (!corePage)
+        return;
+
+    corePage->settings()->setEditingBehaviorType(coreEditingBehavior);
+}

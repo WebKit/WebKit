@@ -1,3 +1,18 @@
+2012-03-22  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Implement LayoutTestController::setEditingBehavior
+        https://bugs.webkit.org/show_bug.cgi?id=81124
+
+        Add missing implementation setEditingBehavior to EFL's 
+        DumpRenderTreeSupport. This setting controls various editing
+        behaviors that differ between platforms.
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::setEditingBehavior):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2012-03-22  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Change returned view mode in case of NULL of ewkView.

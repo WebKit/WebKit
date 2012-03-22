@@ -1,3 +1,17 @@
+2012-03-22  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Implement LayoutTestController::setEditingBehavior
+        https://bugs.webkit.org/show_bug.cgi?id=81124
+
+        Adding missing implementation setEditingBehavior to EFL's
+        LayoutTestController. This implementation allows us to
+        unskip some tests from the skip list.
+
+        Reviewed by Martin Robinson.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setEditingBehavior): Implemented.
+
 2012-03-22  Carlos Garcia Campos  <cgarcia@bb-webkit-rel-64.local.igalia.com>
 
         [GTK] Use the angle-bracket form to include wtf headers
