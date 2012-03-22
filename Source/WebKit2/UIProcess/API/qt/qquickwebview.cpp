@@ -688,7 +688,7 @@ QtViewportInteractionEngine::Constraints QQuickWebViewFlickablePrivate::computeV
     WebPreferences* wkPrefs = webPageProxy->pageGroup()->preferences();
 
     // FIXME: Remove later; Hardcode a value for now to make sure the DPI adjustment is being tested.
-    wkPrefs->setDeviceDPI(240);
+    wkPrefs->setDeviceDPI(160);
 
     wkPrefs->setDeviceWidth(availableSize.width());
     wkPrefs->setDeviceHeight(availableSize.height());

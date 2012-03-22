@@ -1,3 +1,15 @@
+2012-03-22  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        Revert back the device DPI to 160.
+
+        This corresponds to a device pixel ratio of 1, which
+        is nicer on the eye in many cases.
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::computeViewportConstraints):
+
 2012-03-22  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt][WK2] Remember to initialize databaseQuotaDialog
