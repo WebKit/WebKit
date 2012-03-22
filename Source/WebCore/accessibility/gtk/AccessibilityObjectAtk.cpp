@@ -20,9 +20,9 @@
 
 #include "config.h"
 #include "AccessibilityObject.h"
+
 #include "RenderObject.h"
 #include "RenderText.h"
-
 #include <glib-object.h>
 
 #if HAVE(ACCESSIBILITY)
