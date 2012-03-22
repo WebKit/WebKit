@@ -694,7 +694,7 @@ struct Node {
     
     bool shouldSpeculateNumber()
     {
-        return isNumberPrediction(prediction()) || prediction() == PredictNone;
+        return isNumberPrediction(prediction());
     }
     
     bool shouldNotSpeculateInteger()

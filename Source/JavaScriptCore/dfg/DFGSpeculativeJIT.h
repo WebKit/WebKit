@@ -730,9 +730,6 @@ private:
     bool isKnownNotInteger(NodeIndex);
     bool isKnownNotNumber(NodeIndex);
 
-    bool isKnownBoolean(NodeIndex);
-    bool isKnownNotBoolean(NodeIndex);
-
     bool isKnownNotCell(NodeIndex);
     
     // Checks/accessors for constant values.

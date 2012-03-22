@@ -1560,16 +1560,6 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse, const ClassInf
 
 void SpeculativeJIT::compileLogicalNot(Node& node)
 {
-    if (isKnownBoolean(node.child1().index())) {
-        SpeculateBooleanOperand value(this, node.child1());
-        GPRTemporary result(this, value);
-        
-        m_jit.move(value.gpr(), result.gpr());
-        m_jit.xorPtr(TrustedImm32(true), result.gpr());
-        
-        jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
-        return;
-    }
     if (at(node.child1()).shouldSpeculateFinalObjectOrOther()) {
         compileObjectOrOtherLogicalNot(node.child1(), &JSFinalObject::s_info, !isFinalObjectOrOtherPrediction(m_state.forNode(node.child1()).m_type));
         return;
@@ -1599,7 +1589,18 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
     }
     
     PredictedType prediction = m_jit.getPrediction(node.child1());
-    if (isBooleanPrediction(prediction) || !prediction) {
+    if (isBooleanPrediction(prediction)) {
+        if (isBooleanPrediction(m_state.forNode(node.child1()).m_type)) {
+            SpeculateBooleanOperand value(this, node.child1());
+            GPRTemporary result(this, value);
+            
+            m_jit.move(value.gpr(), result.gpr());
+            m_jit.xorPtr(TrustedImm32(true), result.gpr());
+            
+            jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
+            return;
+        }
+        
         JSValueOperand value(this, node.child1());
         GPRTemporary result(this); // FIXME: We could reuse, but on speculation fail would need recovery to restore tag (akin to add).
         
@@ -1667,21 +1668,7 @@ void SpeculativeJIT::emitBranch(Node& node)
     BlockIndex taken = node.takenBlockIndex();
     BlockIndex notTaken = node.notTakenBlockIndex();
     
-    if (isKnownBoolean(node.child1().index())) {
-        MacroAssembler::ResultCondition condition = MacroAssembler::NonZero;
-        
-        if (taken == (m_block + 1)) {
-            condition = MacroAssembler::Zero;
-            BlockIndex tmp = taken;
-            taken = notTaken;
-            notTaken = tmp;
-        }
-        
-        branchTest32(condition, valueGPR, TrustedImm32(true), taken);
-        jump(notTaken);
-        
-        noResult(m_compileIndex);
-    } else if (at(node.child1()).shouldSpeculateFinalObjectOrOther()) {
+    if (at(node.child1()).shouldSpeculateFinalObjectOrOther()) {
         emitObjectOrOtherBranch(node.child1(), taken, notTaken, &JSFinalObject::s_info, !isFinalObjectOrOtherPrediction(m_state.forNode(node.child1()).m_type));
     } else if (at(node.child1()).shouldSpeculateArrayOrOther()) {
         emitObjectOrOtherBranch(node.child1(), taken, notTaken, &JSArray::s_info, !isArrayOrOtherPrediction(m_state.forNode(node.child1()).m_type));
@@ -1708,18 +1695,32 @@ void SpeculativeJIT::emitBranch(Node& node)
         
         noResult(m_compileIndex);
     } else {
-        GPRTemporary result(this);
-        GPRReg resultGPR = result.gpr();
-        
         bool predictBoolean = isBooleanPrediction(m_jit.getPrediction(node.child1()));
     
         if (predictBoolean) {
-            branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImmPtr(JSValue::encode(jsBoolean(false))), notTaken);
-            branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImmPtr(JSValue::encode(jsBoolean(true))), taken);
-
-            speculationCheck(BadType, JSValueRegs(valueGPR), node.child1(), m_jit.jump());
+            if (isBooleanPrediction(m_state.forNode(node.child1()).m_type)) {
+                MacroAssembler::ResultCondition condition = MacroAssembler::NonZero;
+                
+                if (taken == (m_block + 1)) {
+                    condition = MacroAssembler::Zero;
+                    BlockIndex tmp = taken;
+                    taken = notTaken;
+                    notTaken = tmp;
+                }
+                
+                branchTest32(condition, valueGPR, TrustedImm32(true), taken);
+                jump(notTaken);
+            } else {
+                branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImmPtr(JSValue::encode(jsBoolean(false))), notTaken);
+                branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImmPtr(JSValue::encode(jsBoolean(true))), taken);
+                
+                speculationCheck(BadType, JSValueRegs(valueGPR), node.child1(), m_jit.jump());
+            }
             value.use();
         } else {
+            GPRTemporary result(this);
+            GPRReg resultGPR = result.gpr();
+        
             branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImmPtr(JSValue::encode(jsNumber(0))), notTaken);
             branchPtr(MacroAssembler::AboveOrEqual, valueGPR, GPRInfo::tagTypeNumberRegister, taken);
     
@@ -2754,8 +2755,6 @@ void SpeculativeJIT::compile(Node& node)
         
         // FIXME: Add string speculation here.
         
-        bool wasPrimitive = isKnownNumeric(node.child1().index()) || isKnownBoolean(node.child1().index());
-        
         JSValueOperand op1(this, node.child1());
         GPRTemporary result(this, op1);
         
@@ -2764,7 +2763,7 @@ void SpeculativeJIT::compile(Node& node)
         
         op1.use();
         
-        if (wasPrimitive)
+        if (!(m_state.forNode(node.child1()).m_type & ~(PredictNumber | PredictBoolean)))
             m_jit.move(op1GPR, resultGPR);
         else {
             MacroAssembler::JumpList alreadyPrimitive;

@@ -395,7 +395,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case LogicalNot: {
         Node& child = m_graph[node.child1()];
-        if (isBooleanPrediction(child.prediction()) || !child.prediction())
+        if (isBooleanPrediction(child.prediction()))
             forNode(node.child1()).filter(PredictBoolean);
         else if (child.shouldSpeculateFinalObjectOrOther())
             forNode(node.child1()).filter(PredictFinalObject | PredictOther);
@@ -644,7 +644,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         // propagation, and to take it one step further, where a variable's value
         // is specialized on each direction of a branch. For now, we don't do this.
         Node& child = m_graph[node.child1()];
-        if (isBooleanPrediction(child.prediction()) || !child.prediction())
+        if (child.shouldSpeculateBoolean())
             forNode(node.child1()).filter(PredictBoolean);
         else if (child.shouldSpeculateFinalObjectOrOther())
             forNode(node.child1()).filter(PredictFinalObject | PredictOther);

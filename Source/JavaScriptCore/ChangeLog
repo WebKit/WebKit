@@ -1,3 +1,36 @@
+2012-03-21  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG speculation on booleans should be rationalized
+        https://bugs.webkit.org/show_bug.cgi?id=81840
+
+        Reviewed by Gavin Barraclough.
+        
+        This removes isKnownBoolean() and replaces it with AbstractState-based
+        optimization, and cleans up the control flow in code gen methods for
+        Branch and LogicalNot. Also fixes a goof in Node::shouldSpeculateNumber,
+        and removes isKnownNotBoolean() since that method appeared to be a
+        helper used solely by 32_64's speculateBooleanOperation().
+        
+        This is performance-neutral.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateNumber):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (DFG):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-03-21  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.

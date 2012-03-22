@@ -1285,14 +1285,14 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
 #if DFG_ENABLE(DEBUG_VERBOSE)
      dataLog("SpecBool@%d   ", nodeIndex);
 #endif
-    if (isKnownNotBoolean(nodeIndex)) {
+    Node& node = m_jit.graph()[nodeIndex];
+    VirtualRegister virtualRegister = node.virtualRegister();
+    GenerationInfo& info = m_generationInfo[virtualRegister];
+    if ((node.hasConstant() && !valueOfJSConstant(nodeIndex).isBoolean())
+        || !(info.isJSBoolean() || info.isUnknownJS())) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode);
         return allocate();
     }
-
-    Node& node = at(nodeIndex);
-    VirtualRegister virtualRegister = node.virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
@@ -1478,7 +1478,7 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse, const ClassInf
 
 void SpeculativeJIT::compileLogicalNot(Node& node)
 {
-    if (isKnownBoolean(node.child1().index()) || isBooleanPrediction(m_jit.getPrediction(node.child1().index()))) {
+    if (at(node.child1()).shouldSpeculateBoolean()) {
         SpeculateBooleanOperand value(this, node.child1());
         GPRTemporary result(this, value);
         m_jit.xor32(TrustedImm32(1), value.gpr(), result.gpr());
@@ -1567,7 +1567,7 @@ void SpeculativeJIT::emitBranch(Node& node)
     BlockIndex taken = node.takenBlockIndex();
     BlockIndex notTaken = node.notTakenBlockIndex();
 
-    if (isKnownBoolean(node.child1().index())) {
+    if (at(node.child1()).shouldSpeculateBoolean()) {
         SpeculateBooleanOperand value(this, node.child1());
         MacroAssembler::ResultCondition condition = MacroAssembler::NonZero;
 
@@ -2729,8 +2729,6 @@ void SpeculativeJIT::compile(Node& node)
         
         // FIXME: Add string speculation here.
         
-        bool wasPrimitive = isKnownNumeric(node.child1().index()) || isKnownBoolean(node.child1().index());
-        
         JSValueOperand op1(this, node.child1());
         GPRTemporary resultTag(this, op1);
         GPRTemporary resultPayload(this, op1, false);
@@ -2742,7 +2740,7 @@ void SpeculativeJIT::compile(Node& node)
         
         op1.use();
         
-        if (wasPrimitive) {
+        if (!(m_state.forNode(node.child1()).m_type & ~(PredictNumber | PredictBoolean))) {
             m_jit.move(op1TagGPR, resultTagGPR);
             m_jit.move(op1PayloadGPR, resultPayloadGPR);
         } else {
