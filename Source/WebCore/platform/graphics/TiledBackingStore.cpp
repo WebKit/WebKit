@@ -166,9 +166,14 @@ void TiledBackingStore::paint(GraphicsContext* context, const IntRect& rect)
     context->restore();
 }
 
+IntRect TiledBackingStore::visibleContentsRect() const
+{
+    return intersection(m_client->tiledBackingStoreVisibleRect(), m_client->tiledBackingStoreContentsRect());
+}
+
 IntRect TiledBackingStore::visibleRect() const
 {
-    return mapFromContents(intersection(m_client->tiledBackingStoreVisibleRect(), m_client->tiledBackingStoreContentsRect()));
+    return mapFromContents(visibleContentsRect());
 }
 
 void TiledBackingStore::setContentsScale(float scale)
@@ -227,7 +232,7 @@ float TiledBackingStore::coverageRatio(const WebCore::IntRect& contentsRect) con
 
 bool TiledBackingStore::visibleAreaIsCovered() const
 {
-    return coverageRatio(m_client->tiledBackingStoreVisibleRect()) == 1.0f;
+    return coverageRatio(visibleContentsRect()) == 1.0f;
 }
 
 void TiledBackingStore::createTiles()

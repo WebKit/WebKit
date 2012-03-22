@@ -530,14 +530,6 @@ compositing/visibility/visibility-simple-video-layer.html
 compositing/geometry/ancestor-overflow-change.html
 compositing/geometry/tall-page-composited.html
 
-# REGRESSION(r111560): compositing/geometry/preserve-3d-switching.html timeout.
-# https://bugs.webkit.org/show_bug.cgi?id=81519
-compositing/geometry/preserve-3d-switching.html
-# REGRESSION(r111560): The following tests are crashing.
-# https://bugs.webkit.org/show_bug.cgi?id=81519
-compositing/geometry/layer-due-to-layer-children.html
-compositing/geometry/repaint-foreground-layer.html
-
 # Boxes are not showing the correct perspective.
 transforms/3d/general/perspective-units.html
 
