@@ -5327,6 +5327,7 @@
             'html/HTMLAreaElement.h',
             'html/HTMLAudioElement.cpp',
             'html/HTMLAudioElement.h',
+            'html/HTMLBDIElement.h',
             'html/HTMLBRElement.cpp',
             'html/HTMLBRElement.h',
             'html/HTMLBaseElement.cpp',

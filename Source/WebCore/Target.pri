@@ -1848,6 +1848,7 @@ HEADERS += \
     html/HTMLBaseElement.h \
     html/HTMLBaseFontElement.h \
     html/HTMLBodyElement.h \
+    html/HTMLBDIElement.h \
     html/HTMLBRElement.h \
     html/HTMLButtonElement.h \
     html/HTMLCanvasElement.h \

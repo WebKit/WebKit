@@ -57674,6 +57674,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLBDIElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLBodyElement.cpp"
 				>
 				<FileConfiguration

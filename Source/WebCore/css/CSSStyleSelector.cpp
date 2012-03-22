@@ -1273,6 +1273,11 @@ static inline bool attributeStylesEqual(StylePropertySet* a, StylePropertySet* b
     return true;
 }
 
+inline bool elementHasDirectionAuto(Element* element)
+{
+    return element->isHTMLElement() && toHTMLElement(element)->hasDirectionAuto();
+}
+
 bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
 {
     RenderStyle* style = element->renderStyle();
@@ -1367,7 +1372,7 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
         return false;
 #endif
 
-    if (equalIgnoringCase(element->fastGetAttribute(dirAttr), "auto") || equalIgnoringCase(m_element->fastGetAttribute(dirAttr), "auto"))
+    if (elementHasDirectionAuto(element) || elementHasDirectionAuto(m_element))
         return false;
 
     if (element->hasClass() && m_element->getAttribute(classAttr) != element->getAttribute(classAttr))
