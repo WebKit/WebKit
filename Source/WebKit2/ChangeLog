@@ -1,3 +1,15 @@
+2012-03-22  Dave Michael  <dmichael@chromium.org>
+
+        HTMLPluginElement is not destroyed on reload or navigation if getNPObject is called
+        https://bugs.webkit.org/show_bug.cgi?id=80428
+
+        Reviewed by Eric Seidel.
+
+        Test: plugins/netscape-dom-access-and-reload.html
+
+        * win/WebKit2.def: Export a symbol for InspectorCounters::counterValue
+        * win/WebKit2CFLite.def: Export a symbol for InspectorCounters::counterValue
+
 2012-03-22  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Revert back the device DPI to 160.

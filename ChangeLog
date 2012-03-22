@@ -1,3 +1,14 @@
+2012-03-22  Dave Michael  <dmichael@chromium.org>
+
+        HTMLPluginElement is not destroyed on reload or navigation if getNPObject is called
+        https://bugs.webkit.org/show_bug.cgi?id=80428
+
+        Reviewed by Eric Seidel.
+
+        Test: plugins/netscape-dom-access-and-reload.html
+
+        * Source/autotools/symbols.filter: Export a symbol for InspectorCounters::counterValue.
+
 2012-03-22  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed. Adding Source/WTF to the build and updating
