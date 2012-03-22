@@ -52,6 +52,7 @@ from webkitpy.layout_tests.port.driver import DriverInput
 class ChromiumDriverTest(unittest.TestCase):
     def setUp(self):
         mock_port = Mock()  # FIXME: This should use a tighter mock.
+        mock_port.default_test_timeout_ms = lambda: 1000
         self.driver = chromium.ChromiumDriver(mock_port, worker_number=0, pixel_tests=True)
 
     def test_test_shell_command(self):
@@ -143,6 +144,7 @@ class ChromiumDriverTest(unittest.TestCase):
 
         # get_option is used to get the timeout (ms) for a process before we kill it.
         mock_port.get_option = lambda name: 60 * 1000
+        mock_port.default_test_timeout_ms = lambda: 1000
         driver1 = MockDriver()
         driver1._start(False, [])
         driver2 = MockDriver()
