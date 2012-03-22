@@ -1592,7 +1592,7 @@ void Element::blur()
 {
     cancelFocusAppearanceUpdate();
     Document* doc = document();
-    if (doc->focusedNode() == this) {
+    if (treeScope()->focusedNode() == this) {
         if (doc->frame())
             doc->frame()->page()->focusController()->setFocusedNode(0, doc->frame());
         else

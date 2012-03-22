@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/shadow-dom.js"></script>
+</head>
+<body>
+<div id="console">
+</div>
+<script>
+description("This tests the blur() on on shadow host should work when a shadow host contains a focused element in its shadow DOM subtrees property (bug 81102)");
+
+if (!window.internals)
+    debug('This test runs on DRT only');
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+document.body.appendChild(
+    createDOM('div', {'id':'shadowHostA'},
+        createShadowRoot(
+            createDOM('p', {'id':'childInTreeOne', 'tabindex':'1'}),
+            createDOM('div', {'id':'shadowHostB'},
+                createShadowRoot(
+                    createDOM('p', {'id':'childInTreeTwo', 'tabindex':'2'}))))));
+
+document.body.appendChild(
+    createDOM('div', {'id':'shadowHostC'},
+        createShadowRoot(
+            createDOM('p', {'id':'childInTreeThree', 'tabindex':'3'})))
+);
+
+getNodeInShadowTreeStack('shadowHostA').onblur = function() { debug("shadowHostA onblur called!"); }
+getNodeInShadowTreeStack('shadowHostA/shadowHostB').onblur = function() { debug("shadowHostB onblur called!"); }
+
+// childInTreeOne foucsed - shadowHostA blurred
+evalAndLog("getNodeInShadowTreeStack('shadowHostA/childInTreeOne').focus()");
+shouldBeEqualToString("document.activeElement.id", "shadowHostA");
+evalAndLog("getNodeInShadowTreeStack('shadowHostA').blur();");
+shouldBe("document.activeElement", "document.body");
+shouldBe("getNodeInShadowTreeStack('shadowHostA/').activeElement", "null");
+shouldBe("getNodeInShadowTreeStack('shadowHostA/shadowHostB/').activeElement", "null");
+shouldBe("getNodeInShadowTreeStack('shadowHostC/').activeElement", "null");
+
+// childInTreeTwo foucsed - shadowHostB blurred
+evalAndLog("getNodeInShadowTreeStack('shadowHostA/shadowHostB/childInTreeTwo').focus()");
+shouldBeEqualToString("document.activeElement.id", "shadowHostA");
+evalAndLog("getNodeInShadowTreeStack('shadowHostA/shadowHostB').blur();");
+shouldBe("document.activeElement", "document.body");
+shouldBe("getNodeInShadowTreeStack('shadowHostA/').activeElement", "null");
+shouldBe("getNodeInShadowTreeStack('shadowHostA/shadowHostB/').activeElement", "null");
+shouldBe("getNodeInShadowTreeStack('shadowHostC/').activeElement", "null");
+
+// childInTreeTwo foucsed - shadowHostA blurred
+evalAndLog("getNodeInShadowTreeStack('shadowHostA/shadowHostB/childInTreeTwo').focus()");
+shouldBeEqualToString("document.activeElement.id", "shadowHostA");
+evalAndLog("getNodeInShadowTreeStack('shadowHostA').blur();");
+shouldBe("document.activeElement", "document.body");
+shouldBe("getNodeInShadowTreeStack('shadowHostA/').activeElement", "null");
+shouldBe("getNodeInShadowTreeStack('shadowHostA/shadowHostB/').activeElement", "null");
+shouldBe("getNodeInShadowTreeStack('shadowHostC/').activeElement", "null");
+
+// childInTreeThree foucsed - shadowHostA blurred
+evalAndLog("getNodeInShadowTreeStack('shadowHostC/childInTreeThree').focus()");
+shouldBeEqualToString("document.activeElement.id", "shadowHostC");
+evalAndLog("getNodeInShadowTreeStack('shadowHostA').blur();");
+shouldBeEqualToString("document.activeElement.id", "shadowHostC");
+shouldBe("getNodeInShadowTreeStack('shadowHostA/').activeElement", "null");
+shouldBe("getNodeInShadowTreeStack('shadowHostA/shadowHostB/').activeElement", "null");
+shouldBeEqualToString("getNodeInShadowTreeStack('shadowHostC/').activeElement.id", "childInTreeThree");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

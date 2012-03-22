@@ -164,14 +164,14 @@ static Node* focusedFrameOwnerElement(Frame* focusedFrame, Frame* currentFrame)
     return 0;
 }
 
-Element* TreeScope::activeElement()
+Node* TreeScope::focusedNode()
 {
     Document* document = rootNode()->document();
     Node* node = document->focusedNode();
     if (!node && document->page())
         node = focusedFrameOwnerElement(document->page()->focusController()->focusedFrame(), document->frame());
     if (!node)
-        return this == document ? document->body() : 0;
+        return 0;
 
     TreeScope* treeScope = node->treeScope();
 
@@ -181,9 +181,8 @@ Element* TreeScope::activeElement()
     }
     if (this != treeScope)
         return 0;
-    if (node->isElementNode())
-        return toElement(node);
-    return 0;
+
+    return node;
 }
 
 } // namespace WebCore

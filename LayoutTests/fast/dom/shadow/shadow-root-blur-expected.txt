@@ -1,0 +1,43 @@
+This tests the blur() on on shadow host should work when a shadow host contains a focused element in its shadow DOM subtrees property (bug 81102)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+getNodeInShadowTreeStack('shadowHostA/childInTreeOne').focus()
+PASS document.activeElement.id is "shadowHostA"
+getNodeInShadowTreeStack('shadowHostA').blur();
+shadowHostA onblur called!
+PASS document.activeElement is document.body
+PASS getNodeInShadowTreeStack('shadowHostA/').activeElement is null
+PASS getNodeInShadowTreeStack('shadowHostA/shadowHostB/').activeElement is null
+PASS getNodeInShadowTreeStack('shadowHostC/').activeElement is null
+getNodeInShadowTreeStack('shadowHostA/shadowHostB/childInTreeTwo').focus()
+PASS document.activeElement.id is "shadowHostA"
+getNodeInShadowTreeStack('shadowHostA/shadowHostB').blur();
+shadowHostA onblur called!
+shadowHostB onblur called!
+PASS document.activeElement is document.body
+PASS getNodeInShadowTreeStack('shadowHostA/').activeElement is null
+PASS getNodeInShadowTreeStack('shadowHostA/shadowHostB/').activeElement is null
+PASS getNodeInShadowTreeStack('shadowHostC/').activeElement is null
+getNodeInShadowTreeStack('shadowHostA/shadowHostB/childInTreeTwo').focus()
+PASS document.activeElement.id is "shadowHostA"
+getNodeInShadowTreeStack('shadowHostA').blur();
+shadowHostA onblur called!
+shadowHostB onblur called!
+PASS document.activeElement is document.body
+PASS getNodeInShadowTreeStack('shadowHostA/').activeElement is null
+PASS getNodeInShadowTreeStack('shadowHostA/shadowHostB/').activeElement is null
+PASS getNodeInShadowTreeStack('shadowHostC/').activeElement is null
+getNodeInShadowTreeStack('shadowHostC/childInTreeThree').focus()
+PASS document.activeElement.id is "shadowHostC"
+getNodeInShadowTreeStack('shadowHostA').blur();
+PASS document.activeElement.id is "shadowHostC"
+PASS getNodeInShadowTreeStack('shadowHostA/').activeElement is null
+PASS getNodeInShadowTreeStack('shadowHostA/shadowHostB/').activeElement is null
+PASS getNodeInShadowTreeStack('shadowHostC/').activeElement.id is "childInTreeThree"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

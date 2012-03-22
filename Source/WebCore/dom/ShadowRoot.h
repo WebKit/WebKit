@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "Element.h"
 #include "ExceptionCode.h"
 #include "TreeScope.h"
 #include <wtf/DoublyLinkedList.h>
@@ -122,8 +123,8 @@ inline bool ShadowRoot::isUsedForRendering() const
 
 inline Element* ShadowRoot::activeElement() const
 {
-    if (document()->isHTMLDocument())
-        return treeScope()->activeElement();
+    if (Node* node = treeScope()->focusedNode())
+        return node->isElementNode() ? toElement(node) : 0;
     return 0;
 }
 

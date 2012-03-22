@@ -138,7 +138,9 @@ void HTMLDocument::setDesignMode(const String& value)
 
 Element* HTMLDocument::activeElement()
 {
-    return treeScope()->activeElement();
+    if (Node* node = treeScope()->focusedNode())
+        return node->isElementNode() ? toElement(node) : body();
+    return body();
 }
 
 bool HTMLDocument::hasFocus()
