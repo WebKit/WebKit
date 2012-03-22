@@ -62,6 +62,7 @@ private:
     typedef WTF::Vector<RenderBox*> OrderedFlexItemList;
 
     struct LineContext;
+    struct Violation;
 
     bool hasOrthogonalFlow(RenderBox* child) const;
     bool isColumnFlow() const;
@@ -109,9 +110,13 @@ private:
 
     void computeMainAxisPreferredSizes(bool relayoutChildren, FlexOrderHashSet&);
     LayoutUnit lineBreakLength();
+    LayoutUnit adjustChildSizeForMinAndMax(RenderBox*, LayoutUnit childSize, LayoutUnit flexboxAvailableContentExtent);
     bool computeNextFlexLine(FlexOrderIterator&, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalPositiveFlexibility, float& totalNegativeFlexibility, LayoutUnit& minMaxAppliedMainAxisExtent);
     LayoutUnit computeAvailableFreeSpace(LayoutUnit preferredMainAxisExtent);
+
     bool resolveFlexibleLengths(FlexSign, const OrderedFlexItemList&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
+    void freezeViolations(const WTF::Vector<Violation>&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&);
+
     void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);
     void prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset);
     void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, WTF::Vector<LineContext>& lineContexts);

@@ -75,5 +75,31 @@ if (window.layoutTestController)
   <div data-expected-width="100" style="width: -webkit-flex(1 0 50%); max-width: 100px"></div>
 </div>
 
+<div class="flexbox" style="width: 200px">
+  <div data-expected-width="150" style="width: -webkit-flex(1); min-width: 150px"></div>
+  <div data-expected-width="50" style="width: -webkit-flex(1); max-width: 90px"></div>
+</div>
+
+<div class="flexbox" style="width: 200px">
+  <div data-expected-width="150" style="width: -webkit-flex(1); min-width: 120px"></div>
+  <div data-expected-width="50" style="width: -webkit-flex(1); max-width: 50px"></div>
+</div>
+
+<div class="flexbox" style="width: 200px">
+  <div data-expected-width="100" style="width: -webkit-flex(1); min-width: 100px"></div>
+  <div data-expected-width="100" style="width: -webkit-flex(3);"></div>
+</div>
+
+<div class="flexbox" style="width: 200px">
+  <div data-expected-width="150" style="width: -webkit-flex(1 50px); min-width: 100px"></div>
+  <div data-expected-width="50" style="width: -webkit-flex(1 100px); max-width: 50px"></div>
+</div>
+
+<div class="flexbox">
+  <div data-expected-width="80" style="width: -webkit-flex(1)"></div>
+  <div data-expected-width="160" style="width: -webkit-flex(2)"></div>
+  <div data-expected-width="360" style="width: -webkit-flex(1); min-width: 360px"></div>
+</div>
+
 </body>
 </html>
