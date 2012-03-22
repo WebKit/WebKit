@@ -61,15 +61,22 @@ common_libpaths = []
 common_frameworks = []
 
 ports = [
+    'BlackBerry',
     'Chromium',
+    'Efl',
     'Gtk',
     'Mac',
     'None',
     'Qt',
     'Safari',
     'Win',
-    'Wince',
+    'WinCE',
     'wx',
+]
+
+uses = [
+    'CF',
+    'CFNet',
 ]
 
 port_uses = {
@@ -126,6 +133,7 @@ webcore_dirs_common = [
     'Source/WebCore/loader/archive',
     'Source/WebCore/loader/cache',
     'Source/WebCore/loader/icon',
+    'Source/WebCore/Modules/filesystem',
     'Source/WebCore/Modules/geolocation',
     'Source/WebCore/Modules/indexeddb',
     'Source/WebCore/Modules/webdatabase',

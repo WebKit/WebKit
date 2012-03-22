@@ -208,7 +208,6 @@ def build(bld):
 
     import TaskGen
 
-    # FIXME: Does this need to be Source/JavaScriptCore?
     bld.add_subdirs('Source/JavaScriptCore')
 
     if sys.platform.startswith('darwin'):
@@ -216,16 +215,24 @@ def build(bld):
         TaskGen.task_gen.mappings['.m'] = TaskGen.task_gen.mappings['.cxx']
 
     features = [Options.options.port.lower()]
-    exclude_patterns = ['*AllInOne.cpp', '*CFNet.cpp', '*Chromium*.cpp', 
-            '*Efl.cpp', '*Gtk.cpp', '*Mac.cpp', '*None.cpp', '*Qt.cpp', '*Safari.cpp',
-            'test*bindings.*', '*WinCE.cpp', "WebDOMCanvas*.cpp", "WebDOMSVG*.cpp"]
+    thisport = Options.options.port
+    
+    exclude_patterns = ['*AllInOne.cpp', '*None.cpp',]
+
+    # exclude the filename patterns for all other ports.
+    for port in ports:
+        if not port == thisport:
+            exclude = "*%s.cpp" % port
+            if port == 'Chromium':
+                exclude = "*Chromium*.cpp"
+            exclude_patterns.append(exclude)
+            
     if Options.options.port == 'wx':
         features.append('curl')
-        exclude_patterns.append('*Win.cpp')
+        exclude_patterns.extend(['*CFNet.cpp', 'test*bindings.*', "WebDOMCanvas*.cpp", "WebDOMSVG*.cpp"])
         
     if sys.platform.startswith('darwin'):
         features.append('cf')
-        
     else:
         exclude_patterns.append('*CF.cpp')
 
@@ -259,7 +266,7 @@ def build(bld):
 
     webcore = bld.new_task_gen(
         features = 'cc cxx cshlib',
-        includes = ' '.join(wk_includes),
+        includes = 'Source/WTF ' + ' '.join(wk_includes),
         source = ' '.join(flattenSources(webcore_sources.values())),
         cxxflags = cxxflags,
         defines = ['WXMAKINGDLL_WEBKIT', 'BUILDING_WebCore'],

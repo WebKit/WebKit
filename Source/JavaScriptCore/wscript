@@ -56,7 +56,7 @@ def build(bld):
     # 1. A simple program
     jscore = bld.new_task_gen(
         features = 'cc cxx cshlib',
-        includes = '. .. assembler DerivedSources ForwardingHeaders ' + ' '.join(includes),
+        includes = '. .. assembler ../WTF ../WTF/wtf ' + ' '.join(includes),
         source = sources,
         defines = ['BUILDING_JavaScriptCore'],
         target = 'jscore',
@@ -68,7 +68,7 @@ def build(bld):
     
     obj = bld.new_task_gen(
         features = 'cxx cprogram',
-        includes = '. .. assembler DerivedSources ForwardingHeaders ' + ' '.join(includes),
+        includes = '. .. assembler ../WTF ' + ' '.join(includes),
         source = 'jsc.cpp',
         target = 'jsc',
         uselib = 'WX ICU ' + get_config(),

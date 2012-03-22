@@ -1,3 +1,11 @@
+2012-03-22  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed. Adding Source/WTF to the build and updating
+        waf port list.
+
+        * DumpRenderTree/wscript:
+        * waf/build/settings.py:
+
 2012-03-22  Dirk Pranke  <dpranke@chromium.org>
 
         Re-land fix for r81603 yet again (!) with latest build fix.
