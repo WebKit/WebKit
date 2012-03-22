@@ -1,3 +1,9 @@
+2012-03-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Fixed the GTK+ WTF/JavaScriptCore build after r111778.
+
+        * GNUmakefile.list.am: Removed an extra trailing backslash.
+
 2012-03-22  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.

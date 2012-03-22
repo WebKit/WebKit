@@ -1,3 +1,11 @@
+2012-03-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Fixed the GTK+ WTF/JavaScriptCore build after r111778.
+
+        * GNUmakefile.am: Remove some extra trailing backslashes and a few uncessary
+          variables.
+        * GNUmakefile.list.am: Ditto.
+
 2012-03-22  Dan Bernstein  <mitz@apple.com>
 
         Fixed the JavaScriptCore debug build after r111778.

@@ -1,3 +1,9 @@
+2012-03-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Fixed the GTK+ WTF/JavaScriptCore build after r111778.
+
+        * GNUmakefile.am: Remove a couple unnecessary gnumake variables.
+
 2012-03-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         Actually move WTF files to their new home

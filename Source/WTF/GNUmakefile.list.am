@@ -216,7 +216,7 @@ wtf_sources += \
     Source/WTF/wtf/unicode/CollatorDefault.cpp \
     Source/WTF/wtf/unicode/UTF8.cpp \
     Source/WTF/wtf/unicode/UTF8.h \
-    Source/WTF/wtf/unicode/Unicode.h \
+    Source/WTF/wtf/unicode/Unicode.h
 
 if TARGET_WIN32
 wtf_sources += \
