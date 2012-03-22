@@ -2239,7 +2239,8 @@ EAPI Eina_Bool ewk_view_mode_set(Evas_Object *o, Ewk_View_Mode view_mode);
  *
  * @param o view object to get the view mode
  *
- * @return enum value of @a Ewk_View_Mode that indicates current view mode
+ * @return enum value of @a Ewk_View_Mode that indicates current view mode on success or
+ *         EWK_VIEW_MODE_INVALID otherwise
  *
  * @see ewk_view_mode_set()
  */

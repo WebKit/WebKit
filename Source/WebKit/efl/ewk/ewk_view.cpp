@@ -3793,8 +3793,8 @@ Eina_Bool ewk_view_mode_set(Evas_Object* ewkView, Ewk_View_Mode viewMode)
 
 Ewk_View_Mode ewk_view_mode_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EWK_VIEW_MODE_WINDOWED);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EWK_VIEW_MODE_WINDOWED);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EWK_VIEW_MODE_INVALID);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EWK_VIEW_MODE_INVALID);
 
     return static_cast<Ewk_View_Mode>(priv->page->viewMode());
 }
