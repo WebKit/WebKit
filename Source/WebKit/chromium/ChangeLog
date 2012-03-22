@@ -1,3 +1,16 @@
+2012-03-22  Bernhard Bauer  <bauerb@google.com>
+
+        [chromium] Plug-in failing to load shouldn't say "Missing Plug-in"
+        https://bugs.webkit.org/show_bug.cgi?id=81907
+
+        Reviewed by Adam Barth.
+
+        Adding a MissingPluginText value to WebLocalizedString which can be used to override the "Missing Plug-in" message.
+
+        * public/platform/WebLocalizedString.h:
+        * src/LocalizedStrings.cpp:
+        (WebCore::missingPluginText):
+
 2012-03-22  Adrienne Walker  <enne@google.com>
 
         [chromium] Fix scrollbar layers holding onto invalid textures after lost context
