@@ -97,6 +97,11 @@ Move left by one word
 " opq rst "[8, 5, 1], "abc def hij "[8, 4, 0]
 Test 19, LTR:
 Move right by one word
+"abc def this"[0, 4, 8], "end opq rst "[4, 8, 11]
+Move left by one word
+"end opq rst "[11, 8, 4], "abc def this"[8, 4, 0]
+Test 20, LTR:
+Move right by one word
 <DIV>[0]
 Move left by one word
 <DIV>[0]

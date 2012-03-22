@@ -71,6 +71,8 @@ where child_node_index is optional, default is the first child of the anchor nod
 <!-- Test with image -- non-inline-text-box -->
 <div id="d_1" dir=ltr class="test_move_by_word" contenteditable title="[d_1, 0, 1][d_1, 4, 1][d_1, 8, 1][d_1, 1, 3][d_1, 5, 3][d_1, 8, 3]|[d_1, 8, 3][d_1, 5, 3][d_1, 1, 3][d_1, 8, 1][d_1, 4, 1][d_1, 0, 1]">abc def hij <img src=../../accessibility/resources/cake.png> opq rst </div>
 
+<div id="d_2" dir=ltr class="test_move_by_word" contenteditable title="[d_2, 0, 1][d_2, 4, 1][d_2, 8, 1][d_2, 4, 5][d_2, 8, 5][d_2, 11, 5]|[d_2, 11, 5][d_2, 8, 5][d_2, 4, 5][d_2, 8, 1][d_2, 4, 1][d_2, 0, 1]">abc def this<span>is</span><span>one</span><span>word</span>end opq rst </div>
+
 <!-- empty div -->
 <div dir=ltr class="test_move_by_word" title="0|0" contenteditable></div>
 
