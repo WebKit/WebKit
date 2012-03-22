@@ -44,6 +44,9 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/security/xss-DENIED-iframe-src-al
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : css3/flexbox/multiline-pack.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/dfg-float32array.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/misc/dns-prefetch-control.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : svg/dom/baseVal-animVal-crash.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/shadow/tree-scope-crash.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/loader/javascript-url-iframe-crash.html = PASS
 // BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
 // See BUGCR104797
 
@@ -4240,6 +4243,7 @@ BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-w
 BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/input-type-change3.html = PASS TIMEOUT
 BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/textarea-align.html = PASS TIMEOUT
 BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/select-empty-option-height.html = PASS TIMEOUT
+BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/input-type-change.html = PASS TIMEOUT
 BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/interactive-validation-remove-node-in-handler.html = PASS TIMEOUT
 BUGWK81814 SNOWLEOPARD DEBUG : fast/parser/fragment-parser.html = PASS TIMEOUT
 BUGWK81815 SNOWLEOPARD DEBUG : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS TIMEOUT
