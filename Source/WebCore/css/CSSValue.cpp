@@ -38,6 +38,7 @@
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
 #include "CSSImageGeneratorValue.h"
+#include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
@@ -149,6 +150,10 @@ String CSSValue::cssText() const
         return static_cast<const CSSFlexValue*>(this)->customCssText();
     case CalculationClass:
         return static_cast<const CSSCalcValue*>(this)->customCssText();
+#if ENABLE(CSS_IMAGE_SET)
+    case ImageSetClass:
+        return static_cast<const CSSImageSetValue*>(this)->customCssText();
+#endif
 #if ENABLE(CSS_FILTERS)
     case WebKitCSSFilterClass:
         return static_cast<const WebKitCSSFilterValue*>(this)->customCssText();
@@ -249,6 +254,11 @@ void CSSValue::destroy()
     case CalculationClass:
         delete static_cast<CSSCalcValue*>(this);
         return;
+#if ENABLE(CSS_IMAGE_SET)
+    case ImageSetClass:
+        delete static_cast<CSSImageSetValue*>(this);
+        return;
+#endif
 #if ENABLE(CSS_FILTERS)
     case WebKitCSSFilterClass:
         delete static_cast<WebKitCSSFilterValue*>(this);

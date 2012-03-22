@@ -576,6 +576,10 @@ css3/filters/effect-saturate-hw.html
 css3/filters/effect-sepia-hw.html
 css3/filters/custom
 
+# CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
+fast/css/image-set-parsing.html
+fast/css/image-set-parsing-invalid.html
+
 # Should be moved to platform/mac <rdar://5621425>
 http/tests/misc/willCacheResponse-delegate-callback.html
 

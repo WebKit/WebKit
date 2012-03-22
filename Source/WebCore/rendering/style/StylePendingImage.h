@@ -27,6 +27,9 @@
 #define StylePendingImage_h
 
 #include "CSSImageGeneratorValue.h"
+#if ENABLE(CSS_IMAGE_SET)
+#include "CSSImageSetValue.h"
+#endif
 #include "CSSImageValue.h"
 #include "Image.h"
 #include "StyleImage.h"
@@ -46,6 +49,9 @@ public:
     virtual PassRefPtr<CSSValue> cssValue() const { return m_value; }
     CSSImageValue* cssImageValue() const { return m_value->isImageValue() ? static_cast<CSSImageValue*>(m_value) : 0; }
     CSSImageGeneratorValue* cssImageGeneratorValue() const { return m_value->isImageGeneratorValue() ? static_cast<CSSImageGeneratorValue*>(m_value) : 0; }
+#if ENABLE(CSS_IMAGE_SET)
+    CSSImageSetValue* cssImageSetValue() const { return m_value->isImageSetValue() ? static_cast<CSSImageSetValue*>(m_value) : 0; }
+#endif
     
     virtual IntSize imageSize(const RenderObject*, float /*multiplier*/) const { return IntSize(); }
     virtual bool imageHasRelativeWidth() const { return false; }

@@ -36,6 +36,9 @@
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
+#if ENABLE(CSS_IMAGE_SET)
+#include "CSSImageSetValue.h"
+#endif
 #include "CSSImageValue.h"
 #include "CSSImportRule.h"
 #include "CSSInheritedValue.h"
@@ -1674,6 +1677,14 @@ bool CSSParser::parseValue(int propId, bool important)
             else
                 return false;
         }
+#if ENABLE(CSS_IMAGE_SET)
+        else if (value->unit == CSSParserValue::Function && equalIgnoringCase(value->function->name, "-webkit-image-set(")) {
+            parsedValue = parseImageSet(m_valueList.get());
+            if (!parsedValue)
+                return false;
+            m_valueList->next();
+        }
+#endif
         break;
 
     case CSSPropertyWebkitTextStrokeWidth:
@@ -3120,6 +3131,12 @@ bool CSSParser::parseContent(int propId, bool important)
                 parsedValue = parseCounterContent(args, true);
                 if (!parsedValue)
                     return false;
+#if ENABLE(CSS_IMAGE_SET)
+            } else if (equalIgnoringCase(val->function->name, "-webkit-image-set(")) {
+                parsedValue = parseImageSet(m_valueList.get());
+                if (!parsedValue)
+                    return false;
+#endif
             } else if (isGeneratedImageValue(val)) {
                 if (!parseGeneratedImage(m_valueList.get(), parsedValue))
                     return false;
@@ -3210,6 +3227,14 @@ bool CSSParser::parseFillImage(CSSParserValueList* valueList, RefPtr<CSSValue>& 
 
     if (isGeneratedImageValue(valueList->current()))
         return parseGeneratedImage(valueList, value);
+    
+#if ENABLE(CSS_IMAGE_SET)
+    if (valueList->current()->unit == CSSParserValue::Function && equalIgnoringCase(valueList->current()->function->name, "-webkit-image-set(")) {
+        value = parseImageSet(m_valueList.get());
+        if (value)
+            return true;
+    }
+#endif
 
     return false;
 }
@@ -5735,6 +5760,14 @@ bool CSSParser::parseBorderImage(int propId, RefPtr<CSSValue>& result, bool impo
                     context.commitImage(value);
                 else
                     return false;
+#if ENABLE(CSS_IMAGE_SET)
+            } else if (val->unit == CSSParserValue::Function && equalIgnoringCase(val->function->name, "-webkit-image-set(")) {
+                RefPtr<CSSValue> value = parseImageSet(m_valueList.get());
+                if (value)
+                    context.commitImage(value);
+                else
+                    return false;
+#endif
             } else if (val->id == CSSValueNone)
                 context.commitImage(cssValuePool()->createIdentifierValue(CSSValueNone));
         }
@@ -6768,6 +6801,57 @@ bool CSSParser::parseCanvas(CSSParserValueList* valueList, RefPtr<CSSValue>& can
     canvas = CSSCanvasValue::create(value->string);
     return true;
 }
+
+#if ENABLE(CSS_IMAGE_SET)
+PassRefPtr<CSSValue> CSSParser::parseImageSet(CSSParserValueList* valueList)
+{
+    CSSParserValue* function = valueList->current();
+
+    if (function->unit != CSSParserValue::Function)
+        return 0;
+
+    CSSParserValueList* functionArgs = valueList->current()->function->args.get();
+    if (!functionArgs || !functionArgs->size() || !functionArgs->current())
+        return 0;
+
+    RefPtr<CSSImageSetValue> imageSet = CSSImageSetValue::create();
+
+    while (CSSParserValue* arg = functionArgs->current()) { 
+        if (arg->unit != CSSPrimitiveValue::CSS_URI)
+            return 0;
+
+        RefPtr<CSSImageValue> image = CSSImageValue::create(m_styleSheet->completeURL(arg->string));
+        imageSet->append(image);
+    
+        arg = functionArgs->next();
+        if (!arg || arg->unit != CSSPrimitiveValue::CSS_DIMENSION)
+            return 0;
+
+        double imageScaleFactor = 0;
+        const String& string = arg->string;
+        const UChar* current = string.characters();
+        const UChar* end = current + string.length();
+        parseDouble(current, end, 'x', imageScaleFactor);
+        if (imageScaleFactor <= 0)
+            return 0;
+        imageSet->append(cssValuePool()->createValue(imageScaleFactor, CSSPrimitiveValue::CSS_NUMBER));
+
+        // If there are no more arguments, we're done.
+        arg = functionArgs->next();
+        if (!arg)
+            break;
+
+        // If there are more arguments, they should be after a comma.
+        if (arg->unit != CSSParserValue::Operator || arg->iValue != ',')
+            return 0;
+
+        // Skip the comma and move on to the next argument.
+        arg = functionArgs->next();
+    }
+
+    return imageSet;
+}
+#endif
 
 class TransformOperationInfo {
 public:

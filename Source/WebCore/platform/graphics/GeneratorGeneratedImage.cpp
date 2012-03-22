@@ -74,9 +74,9 @@ void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const Fl
     imageBuffer->drawPattern(destContext, adjustedSrcRect, adjustedPatternCTM, phase, styleColorSpace, compositeOp, destRect);
 }
 
-void GeneratedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+void GeneratedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio, float scaleFactor)
 {
-    Image::computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
+    Image::computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio, scaleFactor);
     intrinsicRatio = FloatSize();
 }
 

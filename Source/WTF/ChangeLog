@@ -1,3 +1,16 @@
+2012-03-21  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=80322
+        Implement image-set
+
+        Reviewed by Dean Jackson.
+
+        For the time being, image-set is opt-in since the implementation is 
+        incomplete. 
+
+        Add an ENABLE flag for image-set.
+        * wtf/Platform.h:
+
 2012-03-21  Jessie Berlin  <jberlin@apple.com>
 
         Fix the Windows build after r111504.

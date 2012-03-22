@@ -140,6 +140,11 @@
 #include "WebKitCSSShaderValue.h"
 #endif
 
+#if ENABLE(CSS_IMAGE_SET)
+#include "CSSImageSetValue.h"
+#include "StyleCachedImageSet.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -3039,6 +3044,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (item->isImageGeneratorValue()) {
                 m_style->setContent(StyleGeneratedImage::create(static_cast<CSSImageGeneratorValue*>(item)), didSet);
                 didSet = true;
+#if ENABLE(CSS_IMAGE_SET)
+            } else if (item->isImageSetValue()) {
+                m_style->setContent(setOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageSetValue*>(item)), didSet);
+                didSet = true;
+#endif
             }
 
             if (item->isImageValue()) {
@@ -4124,6 +4134,11 @@ PassRefPtr<StyleImage> CSSStyleSelector::styleImage(CSSPropertyID property, CSSV
     if (value->isImageGeneratorValue())
         return generatedOrPendingFromValue(property, static_cast<CSSImageGeneratorValue*>(value));
 
+#if ENABLE(CSS_IMAGE_SET)
+    if (value->isImageSetValue())
+        return setOrPendingFromValue(property, static_cast<CSSImageSetValue*>(value));
+#endif
+
     return 0;
 }
 
@@ -4143,6 +4158,16 @@ PassRefPtr<StyleImage> CSSStyleSelector::generatedOrPendingFromValue(CSSProperty
     }
     return StyleGeneratedImage::create(value);
 }
+
+#if ENABLE(CSS_IMAGE_SET)
+PassRefPtr<StyleImage> CSSStyleSelector::setOrPendingFromValue(CSSPropertyID property, CSSImageSetValue* value)
+{
+    RefPtr<StyleImage> image = value->cachedOrPendingImageSet();
+    if (image && image->isPendingImage())
+        m_pendingImageProperties.add(property);
+    return image.release();
+}
+#endif
 
 void CSSStyleSelector::mapFillImage(CSSPropertyID property, FillLayer* layer, CSSValue* value)
 {
@@ -4496,7 +4521,11 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
     for (unsigned i = 0 ; i < borderImage->length() ; ++i) {
         CSSValue* current = borderImage->item(i);
 
-        if (current->isImageValue() || current->isImageGeneratorValue())
+        if (current->isImageValue() || current->isImageGeneratorValue()
+#if ENABLE(CSS_IMAGE_SET)
+            || current->isImageSetValue()
+#endif
+            )
             image.setImage(styleImage(imageProperty, current));
         else if (current->isBorderImageSliceValue())
             mapNinePieceImageSlice(current, image);
@@ -5609,6 +5638,13 @@ PassRefPtr<StyleImage> CSSStyleSelector::loadPendingImage(StylePendingImage* pen
         imageGeneratorValue->loadSubimages(cachedResourceLoader);
         return StyleGeneratedImage::create(imageGeneratorValue);
     }
+
+#if ENABLE(CSS_IMAGE_SET)
+    if (pendingImage->cssImageSetValue()) {
+        CSSImageSetValue* imageSetValue = pendingImage->cssImageSetValue();
+        return imageSetValue->cachedImageSet(cachedResourceLoader);
+    }
+#endif
 
     return 0;
 }

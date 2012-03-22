@@ -537,7 +537,11 @@ public:
     {
         FillLayer* currChild = (selector->style()->*accessLayersFunction)();
         FillLayer* prevChild = 0;
-        if (value->isValueList()) {
+        if (value->isValueList()
+#if ENABLE(CSS_IMAGE_SET)
+        && !value->isImageSetValue()
+#endif
+        ) {
             /* Walk each value and put it into a layer, creating new layers as needed. */
             CSSValueList* valueList = static_cast<CSSValueList*>(value);
             for (unsigned int i = 0; i < valueList->length(); i++) {

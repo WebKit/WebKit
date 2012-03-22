@@ -292,7 +292,7 @@ bool SVGImage::hasRelativeHeight() const
     return rootElement->intrinsicHeight().isPercent();
 }
 
-void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio, float)
 {
     if (!m_page)
         return;

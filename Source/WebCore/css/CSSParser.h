@@ -195,6 +195,10 @@ public:
 
     bool parseCrossfade(CSSParserValueList*, RefPtr<CSSValue>&);
 
+#if ENABLE(CSS_IMAGE_SET)
+    PassRefPtr<CSSValue> parseImageSet(CSSParserValueList*);
+#endif
+
 #if ENABLE(CSS_FILTERS)
     PassRefPtr<CSSValueList> parseFilter();
     PassRefPtr<WebKitCSSFilterValue> parseBuiltinFilterArguments(CSSParserValueList*, WebKitCSSFilterValue::FilterOperationType);

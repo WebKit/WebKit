@@ -1066,6 +1066,10 @@
 #define WTF_USE_ACCELERATED_COMPOSITING 1
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(IOS)
+#define ENABLE_CSS_IMAGE_SET 1
+#endif
+
 /* Compositing on the UI-process in WebKit2 */
 #if PLATFORM(QT)
 #define WTF_USE_UI_SIDE_COMPOSITING 1
