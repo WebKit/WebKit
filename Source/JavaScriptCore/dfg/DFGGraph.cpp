@@ -176,8 +176,8 @@ void Graph::dump(NodeIndex nodeIndex)
         hasPrinted = !!node.child1();
     }
 
-    if (node.arithNodeFlags()) {
-        dataLog("%s%s", hasPrinted ? ", " : "", arithNodeFlagsAsString(node.arithNodeFlags()));
+    if (node.flags()) {
+        dataLog("%s%s", hasPrinted ? ", " : "", nodeFlagsAsString(node.flags()));
         hasPrinted = true;
     }
     if (node.hasVarNumber()) {

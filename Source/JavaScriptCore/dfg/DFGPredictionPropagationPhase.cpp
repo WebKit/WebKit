@@ -124,10 +124,10 @@ private:
         NodeFlags flags = node.flags();
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   %s @%u: %s ", Graph::opName(op), m_compileIndex, arithNodeFlagsAsString(flags));
+        dataLog("   %s @%u: %s ", Graph::opName(op), m_compileIndex, nodeFlagsAsString(flags));
 #endif
         
-        flags &= EdgedAsMask;
+        flags &= NodeBackPropMask;
         
         bool changed = false;
         
@@ -151,14 +151,14 @@ private:
         case SetLocal: {
             VariableAccessData* variableAccessData = node.variableAccessData();
             changed |= variableAccessData->predict(m_graph[node.child1()].prediction());
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(variableAccessData->flags());
+            changed |= m_graph[node.child1()].mergeFlags(variableAccessData->flags());
             break;
         }
             
         case Flush: {
             // Make sure that the analysis knows that flushed locals escape.
             VariableAccessData* variableAccessData = node.variableAccessData();
-            variableAccessData->mergeFlags(EdgedAsNumber | NodeNeedsNegZero);
+            variableAccessData->mergeFlags(NodeUsedAsNumber | NodeNeedsNegZero);
             break;
         }
             
@@ -221,7 +221,7 @@ private:
             else
                 changed |= mergePrediction(PredictNumber);
             
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child1()].mergeFlags(flags);
             break;
         }
 
@@ -245,8 +245,8 @@ private:
             if (isNotNegZero(node.child1().index()) || isNotNegZero(node.child2().index()))
                 flags &= ~NodeNeedsNegZero;
             
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
-            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child1()].mergeFlags(flags);
+            changed |= m_graph[node.child2()].mergeFlags(flags);
             break;
         }
             
@@ -264,8 +264,8 @@ private:
             if (isNotNegZero(node.child1().index()) || isNotNegZero(node.child2().index()))
                 flags &= ~NodeNeedsNegZero;
             
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
-            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child1()].mergeFlags(flags);
+            changed |= m_graph[node.child2()].mergeFlags(flags);
             break;
         }
             
@@ -283,8 +283,8 @@ private:
             if (isNotZero(node.child1().index()) || isNotZero(node.child2().index()))
                 flags &= ~NodeNeedsNegZero;
             
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
-            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child1()].mergeFlags(flags);
+            changed |= m_graph[node.child2()].mergeFlags(flags);
             break;
         }
             
@@ -296,7 +296,7 @@ private:
                     changed |= mergePrediction(PredictDouble);
             }
 
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child1()].mergeFlags(flags);
             break;
             
         case ArithMin:
@@ -311,9 +311,9 @@ private:
                     changed |= mergePrediction(PredictDouble);
             }
 
-            flags |= EdgedAsNumber;
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
-            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            flags |= NodeUsedAsNumber;
+            changed |= m_graph[node.child1()].mergeFlags(flags);
+            changed |= m_graph[node.child2()].mergeFlags(flags);
             break;
         }
             
@@ -334,9 +334,9 @@ private:
             // can change the outcome. So, ArithMul always checks for overflow
             // no matter what, and always forces its inputs to check as well.
             
-            flags |= EdgedAsNumber | NodeNeedsNegZero;
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
-            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+            changed |= m_graph[node.child1()].mergeFlags(flags);
+            changed |= m_graph[node.child2()].mergeFlags(flags);
             break;
         }
             
@@ -356,7 +356,7 @@ private:
             }
 
             flags &= ~NodeNeedsNegZero;
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child1()].mergeFlags(flags);
             break;
         }
             
@@ -410,8 +410,8 @@ private:
             else if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());
 
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags | EdgedAsNumber | NodeNeedsNegZero);
-            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags | EdgedAsNumber);
+            changed |= m_graph[node.child1()].mergeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
+            changed |= m_graph[node.child2()].mergeFlags(flags | NodeUsedAsNumber);
             break;
         }
             
@@ -527,7 +527,7 @@ private:
                 } else
                     changed |= mergePrediction(child);
             }
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child1()].mergeFlags(flags);
             break;
         }
             
@@ -562,9 +562,9 @@ private:
         }
         
         case PutByVal:
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags | EdgedAsNumber | NodeNeedsNegZero);
-            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags | EdgedAsNumber);
-            changed |= m_graph[node.child3()].mergeArithNodeFlags(flags | EdgedAsNumber | NodeNeedsNegZero);
+            changed |= m_graph[node.child1()].mergeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
+            changed |= m_graph[node.child2()].mergeFlags(flags | NodeUsedAsNumber);
+            changed |= m_graph[node.child3()].mergeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
             break;
 
 #ifndef NDEBUG
@@ -617,20 +617,20 @@ private:
     bool mergeDefaultArithFlags(Node& node, NodeFlags flags)
     {
         bool changed = false;
-        flags |= EdgedAsNumber | NodeNeedsNegZero;
+        flags |= NodeUsedAsNumber | NodeNeedsNegZero;
         if (node.flags() & NodeHasVarArgs) {
             for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
-                changed |= m_graph[m_graph.m_varArgChildren[childIdx]].mergeArithNodeFlags(flags);
+                changed |= m_graph[m_graph.m_varArgChildren[childIdx]].mergeFlags(flags);
         } else {
             if (!node.child1())
                 return changed;
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child1()].mergeFlags(flags);
             if (!node.child2())
                 return changed;
-            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child2()].mergeFlags(flags);
             if (!node.child3())
                 return changed;
-            changed |= m_graph[node.child3()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child3()].mergeFlags(flags);
         }
         return changed;
     }

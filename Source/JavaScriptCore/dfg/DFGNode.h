@@ -317,28 +317,10 @@ struct Node {
     // to know if it can speculate on negative zero.
     NodeFlags arithNodeFlags()
     {
-        NodeFlags result = m_flags & NodeArithMask;
-        if (op() == ArithMul)
+        NodeFlags result = m_flags;
+        if (op() == ArithMul || op() == ArithDiv || op() == ArithMod)
             return result;
         return result & ~NodeNeedsNegZero;
-    }
-    
-    void setArithNodeFlag(NodeFlags newFlags)
-    {
-        ASSERT(!(newFlags & ~NodeArithMask));
-        
-        m_flags &= ~NodeArithMask;
-        m_flags |= newFlags;
-    }
-    
-    bool mergeArithNodeFlags(NodeFlags newFlags)
-    {
-        ASSERT(!(newFlags & ~NodeArithMask));
-        newFlags = m_flags | newFlags;
-        if (newFlags == m_flags)
-            return false;
-        m_flags = newFlags;
-        return true;
     }
     
     bool hasConstantBuffer()

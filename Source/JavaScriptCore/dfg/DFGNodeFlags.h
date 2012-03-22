@@ -36,30 +36,29 @@ namespace JSC { namespace DFG {
 
 // Entries in the NodeType enum (below) are composed of an id, a result type (possibly none)
 // and some additional informative flags (must generate, is constant, etc).
-#define NodeResultMask       0xF
-#define NodeResultJS         0x1
-#define NodeResultNumber     0x2
-#define NodeResultInt32      0x3
-#define NodeResultBoolean    0x4
-#define NodeResultStorage    0x5
-#define NodeMustGenerate    0x10 // set on nodes that have side effects, and may not trivially be removed by DCE.
-#define NodeHasVarArgs      0x20
-#define NodeClobbersWorld   0x40
-#define NodeMightClobber    0x80
-#define NodeArithMask      0xF00
-#define EdgeBottom      0x000
-#define EdgedAsNumber   0x100
-#define NodeNeedsNegZero   0x200
-#define EdgedAsMask     0x300
-#define NodeMayOverflow    0x400
-#define NodeMayNegZero     0x800
-#define NodeBehaviorMask   0xc00
+#define NodeResultMask             0xF
+#define NodeResultJS               0x1
+#define NodeResultNumber           0x2
+#define NodeResultInt32            0x3
+#define NodeResultBoolean          0x4
+#define NodeResultStorage          0x5
+#define NodeMustGenerate          0x10 // set on nodes that have side effects, and may not trivially be removed by DCE.
+#define NodeHasVarArgs            0x20
+#define NodeClobbersWorld         0x40
+#define NodeMightClobber          0x80
+#define NodeBackPropMask         0x300
+#define NodeUseBottom            0x000
+#define NodeUsedAsNumber         0x100
+#define NodeNeedsNegZero         0x200
+#define NodeBehaviorMask         0xC00
+#define NodeMayOverflow          0x400
+#define NodeMayNegZero           0x800
 
 typedef uint16_t NodeFlags;
 
 static inline bool nodeUsedAsNumber(NodeFlags flags)
 {
-    return !!(flags & EdgedAsNumber);
+    return !!(flags & NodeUsedAsNumber);
 }
 
 static inline bool nodeCanTruncateInteger(NodeFlags flags)
@@ -88,7 +87,7 @@ static inline bool nodeCanSpeculateInteger(NodeFlags flags)
     return true;
 }
 
-const char* arithNodeFlagsAsString(NodeFlags);
+const char* nodeFlagsAsString(NodeFlags);
 
 } } // namespace JSC::DFG
 

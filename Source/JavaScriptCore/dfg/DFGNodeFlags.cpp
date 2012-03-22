@@ -32,20 +32,72 @@
 
 namespace JSC { namespace DFG {
 
-const char* arithNodeFlagsAsString(NodeFlags flags)
+const char* nodeFlagsAsString(NodeFlags flags)
 {
-    flags &= NodeArithMask;
-    
     if (!flags)
         return "<empty>";
 
-    static const int size = 64;
+    static const int size = 128;
     static char description[size];
     BoundsCheckedPointer<char> ptr(description, size);
     
     bool hasPrinted = false;
     
-    if (flags & EdgedAsNumber) {
+    if (flags & NodeResultMask) {
+        switch (flags & NodeResultMask) {
+        case NodeResultJS:
+            ptr.strcat("ResultJS");
+            break;
+        case NodeResultNumber:
+            ptr.strcat("ResultNumber");
+            break;
+        case NodeResultInt32:
+            ptr.strcat("ResultInt32");
+            break;
+        case NodeResultBoolean:
+            ptr.strcat("ResultBoolean");
+            break;
+        case NodeResultStorage:
+            ptr.strcat("ResultStorage");
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        hasPrinted = true;
+    }
+    
+    if (flags & NodeMustGenerate) {
+        if (hasPrinted)
+            ptr.strcat("|");
+        ptr.strcat("MustGenerate");
+        hasPrinted = true;
+    }
+    
+    if (flags & NodeHasVarArgs) {
+        if (hasPrinted)
+            ptr.strcat("|");
+        ptr.strcat("HasVarArgs");
+        hasPrinted = true;
+    }
+    
+    if (flags & NodeClobbersWorld) {
+        if (hasPrinted)
+            ptr.strcat("|");
+        ptr.strcat("ClobbersWorld");
+        hasPrinted = true;
+    }
+    
+    if (flags & NodeMightClobber) {
+        if (hasPrinted)
+            ptr.strcat("|");
+        ptr.strcat("MightClobber");
+        hasPrinted = true;
+    }
+    
+    if (flags & NodeUsedAsNumber) {
+        if (hasPrinted)
+            ptr.strcat("|");
         ptr.strcat("UsedAsNum");
         hasPrinted = true;
     }

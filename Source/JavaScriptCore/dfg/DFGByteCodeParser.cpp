@@ -709,7 +709,7 @@ private:
         case ArithNegate:
         case ValueAdd:
         case ArithMod: // for ArithMode "MayOverflow" means we tried to divide by zero, or we saw double.
-            m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow);
+            m_graph[nodeIndex].mergeFlags(NodeMayOverflow);
             break;
             
         case ArithMul:
@@ -718,13 +718,13 @@ private:
 #if DFG_ENABLE(DEBUG_VERBOSE)
                 dataLog("Making ArithMul @%u take deepest slow case.\n", nodeIndex);
 #endif
-                m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow | NodeMayNegZero);
+                m_graph[nodeIndex].mergeFlags(NodeMayOverflow | NodeMayNegZero);
             } else if (m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
                        || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero)) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
                 dataLog("Making ArithMul @%u take faster slow case.\n", nodeIndex);
 #endif
-                m_graph[nodeIndex].mergeArithNodeFlags(NodeMayNegZero);
+                m_graph[nodeIndex].mergeFlags(NodeMayNegZero);
             }
             break;
             
@@ -757,7 +757,7 @@ private:
         
         // FIXME: It might be possible to make this more granular. The DFG certainly can
         // distinguish between negative zero and overflow in its exit profiles.
-        m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow | NodeMayNegZero);
+        m_graph[nodeIndex].mergeFlags(NodeMayOverflow | NodeMayNegZero);
         
         return nodeIndex;
     }
@@ -1297,7 +1297,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
 
         NodeIndex nodeIndex = addToGraph(ArithAbs, get(registerOffset + argumentToOperand(1)));
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
-            m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow);
+            m_graph[nodeIndex].mergeFlags(NodeMayOverflow);
         set(resultOperand, nodeIndex);
         return true;
     }
