@@ -28,7 +28,7 @@
 #include "GraphicsContext.h"
 #include "Pattern.h"
 #include "RenderTreeAsText.h"
-#include "SVGImageBufferTools.h"
+#include "SVGRenderingContext.h"
 #include "TextStream.h"
 
 namespace WebCore {
@@ -67,7 +67,7 @@ void FETile::platformApplySoftware()
     }
 
     OwnPtr<ImageBuffer> tileImage;
-    if (!SVGImageBufferTools::createImageBufferForPattern(tileRect, tileRect, tileImage, ColorSpaceDeviceRGB, filter()->renderingMode()))
+    if (!SVGRenderingContext::createImageBufferForPattern(tileRect, tileRect, tileImage, ColorSpaceDeviceRGB, filter()->renderingMode()))
         return;
 
     GraphicsContext* tileImageContext = tileImage->context();

@@ -2517,7 +2517,6 @@ HEADERS += \
     rendering/svg/RenderSVGTextPath.h \
     rendering/svg/RenderSVGTransformableContainer.h \
     rendering/svg/RenderSVGViewportContainer.h \
-    rendering/svg/SVGImageBufferTools.h \
     rendering/svg/SVGInlineFlowBox.h \
     rendering/svg/SVGInlineTextBox.h \
     rendering/svg/SVGMarkerData.h \
@@ -3462,7 +3461,6 @@ contains(DEFINES, ENABLE_SVG=1) {
               rendering/svg/RenderSVGTextPath.cpp \
               rendering/svg/RenderSVGTransformableContainer.cpp \
               rendering/svg/RenderSVGViewportContainer.cpp \
-              rendering/svg/SVGImageBufferTools.cpp \
               rendering/svg/SVGInlineFlowBox.cpp \
               rendering/svg/SVGInlineTextBox.cpp \
               rendering/svg/SVGMarkerLayoutInfo.cpp \

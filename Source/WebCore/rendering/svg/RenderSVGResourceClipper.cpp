@@ -39,9 +39,9 @@
 #include "RenderStyle.h"
 #include "SVGClipPathElement.h"
 #include "SVGElement.h"
-#include "SVGImageBufferTools.h"
 #include "SVGNames.h"
 #include "SVGRenderSupport.h"
+#include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGStyledElement.h"
@@ -169,10 +169,10 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderObject* object, cons
     }
 
     AffineTransform absoluteTransform;
-    SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(object, absoluteTransform);
+    SVGRenderingContext::calculateTransformationToOutermostSVGCoordinateSystem(object, absoluteTransform);
 
     if (shouldCreateClipData && !repaintRect.isEmpty()) {
-        if (!SVGImageBufferTools::createImageBuffer(repaintRect, absoluteTransform, clipperData->clipMaskImage, ColorSpaceDeviceRGB, Unaccelerated))
+        if (!SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, clipperData->clipMaskImage, ColorSpaceDeviceRGB, Unaccelerated))
             return false;
 
         GraphicsContext* maskContext = clipperData->clipMaskImage->context();
@@ -202,7 +202,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderObject* object, cons
     if (!clipperData->clipMaskImage)
         return false;
 
-    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, repaintRect, clipperData->clipMaskImage, missingClipperData);
+    SVGRenderingContext::clipToImageBuffer(context, absoluteTransform, repaintRect, clipperData->clipMaskImage, missingClipperData);
     return true;
 }
 
@@ -264,7 +264,7 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
         // In the case of a <use> element, we obtained its renderere above, to retrieve its clipRule.
         // We have to pass the <use> renderer itself to renderSubtreeToImageBuffer() to apply it's x/y/transform/etc. values when rendering.
         // So if isUseElement is true, refetch the childNode->renderer(), as renderer got overriden above.
-        SVGImageBufferTools::renderSubtreeToImageBuffer(clipperData->clipMaskImage.get(), isUseElement ? childNode->renderer() : renderer, maskContentTransformation);
+        SVGRenderingContext::renderSubtreeToImageBuffer(clipperData->clipMaskImage.get(), isUseElement ? childNode->renderer() : renderer, maskContentTransformation);
     }
 
     frame()->view()->setPaintBehavior(oldBehavior);

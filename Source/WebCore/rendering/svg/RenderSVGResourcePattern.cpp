@@ -27,8 +27,8 @@
 #include "GraphicsContext.h"
 #include "PatternAttributes.h"
 #include "RenderSVGRoot.h"
-#include "SVGImageBufferTools.h"
 #include "SVGRenderSupport.h"
+#include "SVGRenderingContext.h"
 
 namespace WebCore {
 
@@ -99,10 +99,10 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
             return false;
 
         AffineTransform absoluteTransformIgnoringRotation;
-        SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(object, absoluteTransformIgnoringRotation);
+        SVGRenderingContext::calculateTransformationToOutermostSVGCoordinateSystem(object, absoluteTransformIgnoringRotation);
 
         // Ignore 2D rotation, as it doesn't affect the size of the tile.
-        SVGImageBufferTools::clear2DRotation(absoluteTransformIgnoringRotation);
+        SVGRenderingContext::clear2DRotation(absoluteTransformIgnoringRotation);
         FloatRect absoluteTileBoundaries = absoluteTransformIgnoringRotation.mapRect(tileBoundaries);
         FloatRect clampedAbsoluteTileBoundaries;
 
@@ -232,11 +232,11 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternA
                                                                   const AffineTransform& tileImageTransform,
                                                                   FloatRect& clampedAbsoluteTileBoundaries) const
 {
-    clampedAbsoluteTileBoundaries = SVGImageBufferTools::clampedAbsoluteTargetRect(absoluteTileBoundaries);
+    clampedAbsoluteTileBoundaries = SVGRenderingContext::clampedAbsoluteTargetRect(absoluteTileBoundaries);
 
     OwnPtr<ImageBuffer> tileImage;
 
-    if (!SVGImageBufferTools::createImageBufferForPattern(absoluteTileBoundaries, clampedAbsoluteTileBoundaries, tileImage, ColorSpaceDeviceRGB, Unaccelerated))
+    if (!SVGRenderingContext::createImageBufferForPattern(absoluteTileBoundaries, clampedAbsoluteTileBoundaries, tileImage, ColorSpaceDeviceRGB, Unaccelerated))
         return nullptr;
 
     GraphicsContext* tileImageContext = tileImage->context();
@@ -260,7 +260,7 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternA
             continue;
         if (node->renderer()->needsLayout())
             return nullptr;
-        SVGImageBufferTools::renderSubtreeToImageBuffer(tileImage.get(), node->renderer(), contentTransformation);
+        SVGRenderingContext::renderSubtreeToImageBuffer(tileImage.get(), node->renderer(), contentTransformation);
     }
 
     return tileImage.release();

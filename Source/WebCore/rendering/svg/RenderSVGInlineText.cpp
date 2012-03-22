@@ -34,8 +34,8 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "Settings.h"
-#include "SVGImageBufferTools.h"
 #include "SVGInlineTextBox.h"
+#include "SVGRenderingContext.h"
 #include "SVGRootInlineBox.h"
 #include "VisiblePosition.h"
 
@@ -258,7 +258,7 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(RenderObject* renderer, c
 
     // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
     AffineTransform ctm;
-    SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(renderer, ctm);
+    SVGRenderingContext::calculateTransformationToOutermostSVGCoordinateSystem(renderer, ctm);
     scalingFactor = narrowPrecisionToFloat(sqrt((pow(ctm.xScale(), 2) + pow(ctm.yScale(), 2)) / 2));
     if (scalingFactor == 1 || !scalingFactor || style->fontDescription().textRenderingMode() == GeometricPrecision) {
         scalingFactor = 1;

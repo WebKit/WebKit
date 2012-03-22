@@ -76,6 +76,23 @@ public:
     void prepareToRenderSVGContent(RenderObject*, PaintInfo&, NeedsGraphicsContextSave = DontSaveGraphicsContext);
     bool isRenderingPrepared() const { return m_renderingFlags & RenderingPrepared; }
 
+    static bool createImageBuffer(const FloatRect& paintRect, const AffineTransform& absoluteTransform, OwnPtr<ImageBuffer>&, ColorSpace, RenderingMode);
+    // Patterns need a different float-to-integer coordinate mapping.
+    static bool createImageBufferForPattern(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>&, ColorSpace, RenderingMode);
+
+    static void renderSubtreeToImageBuffer(ImageBuffer*, RenderObject*, const AffineTransform&);
+    static void clipToImageBuffer(GraphicsContext*, const AffineTransform& absoluteTransform, const FloatRect& targetRect, OwnPtr<ImageBuffer>&, bool safeToClear);
+
+    static void calculateTransformationToOutermostSVGCoordinateSystem(const RenderObject*, AffineTransform& absoluteTransform);
+    static IntSize clampedAbsoluteSize(const IntSize&);
+    static FloatRect clampedAbsoluteTargetRect(const FloatRect& absoluteTargetRect);
+    static void clear2DRotation(AffineTransform&);
+
+    static IntRect calculateImageBufferRect(const FloatRect& targetRect, const AffineTransform& absoluteTransform)
+    {
+        return enclosingIntRect(absoluteTransform.mapRect(targetRect));
+    }
+
 private:
     // To properly revert partially successful initializtions in the destructor, we record all successful steps.
     enum RenderingFlags {

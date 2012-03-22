@@ -1728,7 +1728,6 @@ IF (ENABLE_SVG)
         rendering/svg/RenderSVGTextPath.cpp
         rendering/svg/RenderSVGTransformableContainer.cpp
         rendering/svg/RenderSVGViewportContainer.cpp
-        rendering/svg/SVGImageBufferTools.cpp
         rendering/svg/SVGInlineFlowBox.cpp
         rendering/svg/SVGInlineTextBox.cpp
         rendering/svg/SVGMarkerLayoutInfo.cpp

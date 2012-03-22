@@ -3958,8 +3958,6 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/RenderSVGTransformableContainer.h \
 	Source/WebCore/rendering/svg/RenderSVGViewportContainer.cpp \
 	Source/WebCore/rendering/svg/RenderSVGViewportContainer.h \
-	Source/WebCore/rendering/svg/SVGImageBufferTools.cpp \
-	Source/WebCore/rendering/svg/SVGImageBufferTools.h \
 	Source/WebCore/rendering/svg/SVGInlineFlowBox.cpp \
 	Source/WebCore/rendering/svg/SVGInlineFlowBox.h \
 	Source/WebCore/rendering/svg/SVGInlineTextBox.cpp \

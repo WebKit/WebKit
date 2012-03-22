@@ -31,8 +31,8 @@
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
 #include "SVGFilter.h"
-#include "SVGImageBufferTools.h"
 #include "SVGPreserveAspectRatio.h"
+#include "SVGRenderingContext.h"
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 #include "TextStream.h"
@@ -135,7 +135,7 @@ void FEImage::platformApplySoftware()
         }
 
         AffineTransform contentTransformation;
-        SVGImageBufferTools::renderSubtreeToImageBuffer(resultImage, renderer, contentTransformation);
+        SVGRenderingContext::renderSubtreeToImageBuffer(resultImage, renderer, contentTransformation);
         return;
     }
 
