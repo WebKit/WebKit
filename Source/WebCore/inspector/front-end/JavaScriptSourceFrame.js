@@ -48,6 +48,7 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, model, uiSourceCode)
             this._getPopoverAnchor.bind(this), this._resolveObjectForPopover.bind(this), this._onHidePopover.bind(this), true);
 
     this.textViewer.element.addEventListener("mousedown", this._onMouseDown.bind(this), true);
+    this.textViewer.element.addEventListener("keydown", this._onKeyDown.bind(this), true);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._onContentChanged, this);
     this.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._onTextViewerContentLoaded, this);
 }
@@ -68,7 +69,12 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     // SourceFrame overrides
     requestContent: function(callback)
     {
-        this._uiSourceCode.requestContent(callback);
+        function mycallback(mimeType, content)
+        {
+            this._originalContent = content;
+            callback(mimeType, content);
+        }
+        this._uiSourceCode.requestContent(mycallback.bind(this));
     },
 
     canEditSource: function()
@@ -83,23 +89,14 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     editContent: function(newContent, callback)
     {
+        this._editingContent = true;
         this._model.setScriptSource(this._uiSourceCode, newContent, callback);
     },
 
     _onContentChanged: function()
     {
-        if (!this.textViewer.readOnly)
-            return;
-        this.requestContent(this.setContent.bind(this));
-    },
-
-    setReadOnly: function(readOnly)
-    {
-        if (this._popoverHelper && !readOnly)
-            this._popoverHelper.hidePopover();
-        WebInspector.SourceFrame.prototype.setReadOnly.call(this, readOnly);
-        if (readOnly)
-            this._scriptsPanel.setScriptSourceIsBeingEdited(this._uiSourceCode, false);
+        if (this._editingContent)
+            this.requestContent(this.setContent.bind(this));
     },
 
     populateLineGutterContextMenu: function(contextMenu, lineNumber)
@@ -186,6 +183,8 @@ WebInspector.JavaScriptSourceFrame.prototype = {
                 this.addBreakpoint(newLineNumber, breakpoint.resolved, breakpoint.conditional, breakpoint.enabled);
             }
         }
+
+        this._scriptsPanel.setScriptSourceIsDirty(this._uiSourceCode, this.textModel.copyRange() !== this._originalContent);
     },
 
     beforeTextChanged: function()
@@ -195,48 +194,18 @@ WebInspector.JavaScriptSourceFrame.prototype = {
                 executionLineNumber: this._executionLineNumber,
                 breakpoints: this._breakpoints
             }
-            this._scriptsPanel.setScriptSourceIsBeingEdited(this._uiSourceCode, true);
         }
         WebInspector.SourceFrame.prototype.beforeTextChanged.call(this);
     },
 
-    cancelEditing: function()
+    didEditContent: function(error, content)
     {
-        if (WebInspector.experimentsSettings.sourceFrameAlwaysEditable.isEnabled())
-            return false;
-
-        WebInspector.SourceFrame.prototype.cancelEditing.call(this);
-
-        if (!this._javaScriptSourceFrameState)
-            return true;
-
-        if (typeof this._javaScriptSourceFrameState.executionLineNumber === "number") {
-            this.clearExecutionLine();
-            this.setExecutionLine(this._javaScriptSourceFrameState.executionLineNumber);
-        }
-
-        var oldBreakpoints = this._breakpoints;
-        this._breakpoints = {};
-        for (var lineNumber in oldBreakpoints)
-            this.removeBreakpoint(Number(lineNumber));
-
-        var newBreakpoints = this._javaScriptSourceFrameState.breakpoints;
-        for (var lineNumber in newBreakpoints) {
-            lineNumber = Number(lineNumber);
-            var breakpoint = newBreakpoints[lineNumber];
-            this.addBreakpoint(lineNumber, breakpoint.resolved, breakpoint.conditional, breakpoint.enabled);
-        }
-
-        delete this._javaScriptSourceFrameState;
-        return true;
-    },
-
-    didEditContent: function(error)
-    {
-        WebInspector.SourceFrame.prototype.didEditContent.call(this, error);
+        delete this._editingContent;
+        WebInspector.SourceFrame.prototype.didEditContent.call(this, error, content);
         if (error)
             return;
 
+        this._originalContent = content;
         var newBreakpoints = {};
         for (var lineNumber in this._breakpoints) {
             newBreakpoints[lineNumber] = this._breakpoints[lineNumber];
@@ -250,7 +219,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             var breakpoint = newBreakpoints[lineNumber];
             this._setBreakpoint(Number(lineNumber), breakpoint.condition, breakpoint.enabled);
         }
-        this._scriptsPanel.setScriptSourceIsBeingEdited(this._uiSourceCode, false);
+        this._scriptsPanel.setScriptSourceIsDirty(this._uiSourceCode, false);
         delete this._javaScriptSourceFrameState;
     },
 
@@ -490,7 +459,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         if (lineNumber === oldRange.startLine) {
             var whiteSpacesRegex = /^[\s\xA0]*$/;
             for (var i = 0; lineNumber + i <= newRange.endLine; ++i) {
-                if (!whiteSpacesRegex.test(this._textModel.line(lineNumber + i))) {
+                if (!whiteSpacesRegex.test(this.textModel.line(lineNumber + i))) {
                     shiftOffset = i;
                     break;
                 }

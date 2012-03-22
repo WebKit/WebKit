@@ -68,7 +68,6 @@ WebInspector.TextViewer = function(textModel, platform, url, delegate)
     }
     this._gutterPanel.element.addEventListener("mousewheel", forwardWheelEvent.bind(this), false);
 
-    this.element.addEventListener("dblclick", this._doubleClick.bind(this), true);
     this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
 
@@ -247,19 +246,6 @@ WebInspector.TextViewer.prototype = {
         }
     },
 
-    _doubleClick: function(event)
-    {
-        if (!this.readOnly)
-            return;
-
-        var lineRow = event.target.enclosingNodeOrSelfWithClass("webkit-line-content");
-        if (!lineRow)
-            return;  // Do not trigger editing from line numbers.
-
-        this._delegate.doubleClick(lineRow.lineNumber);
-        window.getSelection().collapseToStart();
-    },
-
     _registerShortcuts: function()
     {
         var keys = WebInspector.KeyboardShortcut.Keys;
@@ -267,10 +253,7 @@ WebInspector.TextViewer.prototype = {
 
         this._shortcuts = {};
         var commitEditing = this._commitEditing.bind(this);
-        var cancelEditing = this._cancelEditing.bind(this);
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey("s", modifiers.CtrlOrMeta)] = commitEditing;
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Enter.code, modifiers.CtrlOrMeta)] = commitEditing;
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Esc.code)] = cancelEditing;
 
         var handleEnterKey = this._mainPanel.handleEnterKey.bind(this._mainPanel);
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Enter.code, WebInspector.KeyboardShortcut.Modifiers.None)] = handleEnterKey;
@@ -323,14 +306,6 @@ WebInspector.TextViewer.prototype = {
         return true;
     },
 
-    _cancelEditing: function()
-    {
-        if (this.readOnly)
-            return false;
-
-        return this._delegate.cancelEditing();
-    },
-
     wasShown: function()
     {
         if (!this.readOnly)
@@ -354,15 +329,11 @@ WebInspector.TextViewerDelegate = function()
 }
 
 WebInspector.TextViewerDelegate.prototype = {
-    doubleClick: function(lineNumber) { },
-
     beforeTextChanged: function() { },
 
     afterTextChanged: function(oldRange, newRange) { },
 
     commitEditing: function() { },
-
-    cancelEditing: function() { },
 
     populateLineGutterContextMenu: function(contextMenu, lineNumber) { },
 
@@ -1197,11 +1168,9 @@ WebInspector.TextEditorMainPanel.prototype = {
         } else
             newRange = this._setText(range, lineBreak + indent);
 
-        newRange = newRange.collapseToEnd();
-
         this._exitTextChangeMode(range, newRange);
         this.endUpdates();
-        this._restoreSelection(newRange, true);
+        this._restoreSelection(newRange.collapseToEnd(), true);
 
         return true;
     },

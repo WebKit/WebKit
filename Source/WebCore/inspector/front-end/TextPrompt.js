@@ -161,8 +161,6 @@ WebInspector.TextPrompt.prototype = {
 
     _startEditing: function(blurListener)
     {
-        if (!WebInspector.markBeingEdited(this._element, true))
-            return;
         this._isEditing = true;
         this._element.addStyleClass("editing");
         if (blurListener) {
@@ -182,7 +180,6 @@ WebInspector.TextPrompt.prototype = {
             this._element.removeEventListener("blur", this._blurListener, false);
         this._element.removeStyleClass("editing");
         delete this._isEditing;
-        WebInspector.markBeingEdited(this._element, false);
     },
 
     _removeSuggestionAids: function()

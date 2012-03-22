@@ -84,6 +84,7 @@ WebInspector.ResourceSourceFrame = function(resource)
 {
     this._resource = resource;
     WebInspector.SourceFrame.call(this, resource.url);
+    this._resource.addEventListener(WebInspector.Resource.Events.RevisionAdded, this._contentChanged, this);
 }
 
 //This is a map from resource.type to mime types
@@ -118,6 +119,11 @@ WebInspector.ResourceSourceFrame.prototype = {
     suggestedFileName: function()
     {
         return this.resource.displayName;
+    },
+
+    _contentChanged: function(event)
+    {
+        this.setContent(WebInspector.ResourceSourceFrame.mimeTypeForResource[this._resource], this._resource.content);
     }
 }
 
@@ -135,27 +141,21 @@ WebInspector.EditableResourceSourceFrame = function(resource)
 WebInspector.EditableResourceSourceFrame.prototype = {
     canEditSource: function()
     {
-        return this.resource.isEditable() && !this._commitEditingInProgress;
+        //FIXME: make live edit stop using resource content binding.
+        return this._resource.isEditable() && this._resource.type === WebInspector.Resource.Type.Stylesheet;
     },
 
     editContent: function(newText, callback)
     {
         this._clearIncrementalUpdateTimer();
         var majorChange = true;
-        this.resource.setContent(newText, majorChange, callback);
-    },
-
-    cancelEditing: function()
-    {
-        if (WebInspector.experimentsSettings.sourceFrameAlwaysEditable.isEnabled())
-            return false;
-
-        this._clearIncrementalUpdateTimer();
-        const majorChange = false;
-        if (this._viewerState)
-            this.resource.setContent(this._viewerState.textModelContent, majorChange);
-        WebInspector.SourceFrame.prototype.cancelEditing.call(this);
-        return true;
+        this._settingContent = true;
+        function callbackWrapper(text)
+        {
+            callback(text);
+            delete this._settingContent;
+        }
+        this.resource.setContent(newText, majorChange, callbackWrapper.bind(this));
     },
 
     afterTextChanged: function(oldRange, newRange)
@@ -175,6 +175,12 @@ WebInspector.EditableResourceSourceFrame.prototype = {
             clearTimeout(this._incrementalUpdateTimer);
         delete this._incrementalUpdateTimer;
     },
+
+    _contentChanged: function(event)
+    {
+        if (!this._settingContent)
+            WebInspector.ResourceSourceFrame.prototype._contentChanged.call(this, event);
+    }
 }
 
 WebInspector.EditableResourceSourceFrame.prototype.__proto__ = WebInspector.ResourceSourceFrame.prototype;

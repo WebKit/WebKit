@@ -284,12 +284,12 @@ WebInspector.ScriptsPanel.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {boolean} inEditMode
+     * @param {boolean} isDirty
      */
-    setScriptSourceIsBeingEdited: function(uiSourceCode, inEditMode)
+    setScriptSourceIsDirty: function(uiSourceCode, isDirty)
     {
-        this._fileSelector.setScriptSourceIsDirty(uiSourceCode, inEditMode);
-        this._editorContainer.setFileIsDirty(uiSourceCode, inEditMode);
+        this._fileSelector.setScriptSourceIsDirty(uiSourceCode, isDirty);
+        this._editorContainer.setFileIsDirty(uiSourceCode, isDirty);
     },
 
     _consoleMessagesCleared: function()

@@ -513,6 +513,9 @@ WebInspector.ResourcesPanel.prototype = {
 
     _innerShowView: function(view)
     {
+        if (this.visibleView === view)
+            return;
+
         if (this.visibleView)
             this.visibleView.detach();
 
@@ -1381,13 +1384,8 @@ WebInspector.FrameResourceTreeElement.prototype = {
     _appendRevision: function(revision)
     {
         this.insertChild(new WebInspector.ResourceRevisionTreeElement(this._storagePanel, revision), 0);
-        var oldView = this._sourceView;
-        if (oldView) {
-            // This is needed when resource content was changed from scripts panel.
-            var newView = this._recreateSourceView();
-            if (oldView === this._storagePanel.visibleView)
-                this._storagePanel._showResourceView(this._resource);
-        }
+        if (this._sourceView === this._storagePanel.visibleView)
+            this._storagePanel._showResourceView(this._resource);
     },
 
     sourceView: function()
