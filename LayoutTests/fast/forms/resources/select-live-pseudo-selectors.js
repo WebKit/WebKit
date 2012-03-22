@@ -6,17 +6,18 @@ document.body.appendChild(form);
 var nonForm = document.createElement('div');
 document.body.appendChild(nonForm);
 
-function simulateClick(element) {
-    var rect = element.getBoundingClientRect();
-    var x = rect.left + rect.width / 2;
-    var y = rect.top + rect.height / 2;
+function mouseDownOnSelect(selId, index, modifier) {
+    var sl = document.getElementById(selId);
+    var itemHeight = Math.floor(sl.offsetHeight / sl.size);
+    var border = 1;
+    var y = border + index * itemHeight;
 
-    if (!window.eventSender) {
-        return;
+    sl.focus();
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(sl.offsetLeft + border, sl.offsetTop + y - window.pageYOffset);
+        eventSender.mouseDown(0, [modifier]);
+        eventSender.mouseUp(0, [modifier]);
     }
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
 }
 
 function makeInvalid() {
@@ -50,6 +51,8 @@ function removeOption(option, select) {
 }
 
 function backgroundOf(el) {
+    if (typeof(el) == 'string')
+        el = document.getElementById(el);
     return document.defaultView.getComputedStyle(el, null).getPropertyValue('background-color');
 }
 
@@ -58,6 +61,7 @@ var invalidColor = 'rgb(255, 0, 0)';
 var normalColor = 'rgb(255, 255, 255)';
 var disabledColor = 'rgb(0, 0, 0)';
 var readOnlyColor = 'rgb(0, 255, 0)'
+var transparentColor = 'rgba(0, 0, 0, 0)';
 var validColor = 'rgb(0, 0, 255)';
 
 // --------------------------------
@@ -102,7 +106,7 @@ shouldBe(elBackground, 'invalidColor');
 // --------------------------------
 
 debug('Change the values of select elements without explicit initializing values by clicking:');
-form.innerHTML = '<select id="select-multiple" multiple required>' +
+form.innerHTML = '<select id="select-multiple" multiple required size="4">' +
 '  <option id="multiple-empty">empty</option>' +
 '  <option id="multiple-another">another</option>' +
 '</select>' +
@@ -110,14 +114,12 @@ form.innerHTML = '<select id="select-multiple" multiple required>' +
 '  <option id="size4-empty">empty</option>' +
 '  <option id="size4-another">another</option>' +
 '</select>';
-var selectMultiple = document.getElementById("multiple-empty");
-selectMultiple.focus();
-simulateClick(selectMultiple);
-var selectSize4 = document.getElementById("size4-empty");
-selectSize4.focus();
-simulateClick(selectSize4);
-shouldBe('backgroundOf(selectMultiple)', 'validColor');
-shouldBe('backgroundOf(selectSize4)', 'validColor');
+mouseDownOnSelect('select-multiple', 0);
+mouseDownOnSelect('select-size4', 0);
+shouldBe('backgroundOf("select-multiple")', 'validColor');
+shouldBe('backgroundOf("multiple-empty")', 'transparentColor');
+shouldBe('backgroundOf("select-size4")', 'validColor');
+shouldBe('backgroundOf("size4-empty")', 'transparentColor');
 
 debug('Change the value with a placeholder label option:');
 el = makeInvalid();

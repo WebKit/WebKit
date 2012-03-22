@@ -92,7 +92,7 @@ nolayer interfaceName=HTMLElement
 object constructorNeedsFormElement, constructorNeedsCreatedByParser
 ol interfaceName=HTMLOListElement
 optgroup interfaceName=HTMLOptGroupElement
-option constructorNeedsFormElement
+option
 output constructorNeedsFormElement
 shadow interfaceName=HTMLShadowElement, conditional=SHADOW_DOM, runtimeConditional=shadowDOM
 p interfaceName=HTMLParagraphElement

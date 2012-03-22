@@ -65,6 +65,7 @@
 #include "HTMLElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptionElement.h"
 #include "HTMLProgressElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTextAreaElement.h"
@@ -1353,6 +1354,9 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
             return false;
     }
 #endif
+
+    if (element->hasTagName(optionTag))
+        return false;
 
     bool isControl = element->isFormControlElement();
 
