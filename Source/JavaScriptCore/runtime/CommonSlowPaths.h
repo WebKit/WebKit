@@ -44,7 +44,7 @@ namespace CommonSlowPaths {
 
 ALWAYS_INLINE ExecState* arityCheckFor(ExecState* exec, RegisterFile* registerFile, CodeSpecializationKind kind)
 {
-    JSFunction* callee = asFunction(exec->callee());
+    JSFunction* callee = jsCast<JSFunction*>(exec->callee());
     ASSERT(!callee->isHostFunction());
     CodeBlock* newCodeBlock = &callee->jsExecutable()->generatedBytecodeFor(kind);
     int argumentCountIncludingThis = exec->argumentCountIncludingThis();

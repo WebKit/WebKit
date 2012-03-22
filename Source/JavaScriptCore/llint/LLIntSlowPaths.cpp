@@ -189,7 +189,7 @@ LLINT_SLOW_PATH_DECL(trace_prologue)
 
 static void traceFunctionPrologue(ExecState* exec, const char* comment, CodeSpecializationKind kind)
 {
-    JSFunction* callee = asFunction(exec->callee());
+    JSFunction* callee = jsCast<JSFunction*>(exec->callee());
     FunctionExecutable* executable = callee->jsExecutable();
     CodeBlock* codeBlock = &executable->generatedBytecodeFor(kind);
     dataLog("%p / %p: in %s of function %p, executable %p; numVars = %u, numParameters = %u, numCalleeRegisters = %u, caller = %p.\n",
@@ -316,22 +316,22 @@ LLINT_SLOW_PATH_DECL(entry_osr)
 
 LLINT_SLOW_PATH_DECL(entry_osr_function_for_call)
 {
-    return entryOSR(exec, pc, &asFunction(exec->callee())->jsExecutable()->generatedBytecodeFor(CodeForCall), "entry_osr_function_for_call", Prologue);
+    return entryOSR(exec, pc, &jsCast<JSFunction*>(exec->callee())->jsExecutable()->generatedBytecodeFor(CodeForCall), "entry_osr_function_for_call", Prologue);
 }
 
 LLINT_SLOW_PATH_DECL(entry_osr_function_for_construct)
 {
-    return entryOSR(exec, pc, &asFunction(exec->callee())->jsExecutable()->generatedBytecodeFor(CodeForConstruct), "entry_osr_function_for_construct", Prologue);
+    return entryOSR(exec, pc, &jsCast<JSFunction*>(exec->callee())->jsExecutable()->generatedBytecodeFor(CodeForConstruct), "entry_osr_function_for_construct", Prologue);
 }
 
 LLINT_SLOW_PATH_DECL(entry_osr_function_for_call_arityCheck)
 {
-    return entryOSR(exec, pc, &asFunction(exec->callee())->jsExecutable()->generatedBytecodeFor(CodeForCall), "entry_osr_function_for_call_arityCheck", ArityCheck);
+    return entryOSR(exec, pc, &jsCast<JSFunction*>(exec->callee())->jsExecutable()->generatedBytecodeFor(CodeForCall), "entry_osr_function_for_call_arityCheck", ArityCheck);
 }
 
 LLINT_SLOW_PATH_DECL(entry_osr_function_for_construct_arityCheck)
 {
-    return entryOSR(exec, pc, &asFunction(exec->callee())->jsExecutable()->generatedBytecodeFor(CodeForConstruct), "entry_osr_function_for_construct_arityCheck", ArityCheck);
+    return entryOSR(exec, pc, &jsCast<JSFunction*>(exec->callee())->jsExecutable()->generatedBytecodeFor(CodeForConstruct), "entry_osr_function_for_construct_arityCheck", ArityCheck);
 }
 
 LLINT_SLOW_PATH_DECL(loop_osr)
@@ -452,7 +452,7 @@ LLINT_SLOW_PATH_DECL(slow_path_create_arguments)
 LLINT_SLOW_PATH_DECL(slow_path_create_this)
 {
     LLINT_BEGIN();
-    JSFunction* constructor = asFunction(exec->callee());
+    JSFunction* constructor = jsCast<JSFunction*>(exec->callee());
     
 #if !ASSERT_DISABLED
     ConstructData constructData;
@@ -1310,7 +1310,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     if (!calleeAsFunctionCell)
         return handleHostCall(execCallee, pc, calleeAsValue, kind);
     
-    JSFunction* callee = asFunction(calleeAsFunctionCell);
+    JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
     ScopeChainNode* scope = callee->scopeUnchecked();
     JSGlobalData& globalData = *scope->globalData;
     execCallee->setScopeChain(scope);

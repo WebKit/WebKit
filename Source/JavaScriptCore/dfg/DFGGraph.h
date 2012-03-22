@@ -242,7 +242,7 @@ public:
     {
         JSCell* function = getJSFunction(valueOfJSConstant(nodeIndex));
         ASSERT(function);
-        return asFunction(function);
+        return jsCast<JSFunction*>(function);
     }
 
     static const char *opName(NodeType);

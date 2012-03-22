@@ -788,7 +788,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncFilter(ExecState* exec)
     unsigned filterIndex = 0;
     unsigned k = 0;
     if (callType == CallTypeJS && isJSArray(thisObj)) {
-        JSFunction* f = asFunction(function);
+        JSFunction* f = jsCast<JSFunction*>(function);
         JSArray* array = asArray(thisObj);
         CachedCall cachedCall(exec, f, 3);
         for (; k < length && !exec->hadException(); ++k) {
@@ -846,7 +846,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncMap(ExecState* exec)
     JSArray* resultArray = constructEmptyArray(exec, length);
     unsigned k = 0;
     if (callType == CallTypeJS && isJSArray(thisObj)) {
-        JSFunction* f = asFunction(function);
+        JSFunction* f = jsCast<JSFunction*>(function);
         JSArray* array = asArray(thisObj);
         CachedCall cachedCall(exec, f, 3);
         for (; k < length && !exec->hadException(); ++k) {
@@ -909,7 +909,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncEvery(ExecState* exec)
 
     unsigned k = 0;
     if (callType == CallTypeJS && isJSArray(thisObj)) {
-        JSFunction* f = asFunction(function);
+        JSFunction* f = jsCast<JSFunction*>(function);
         JSArray* array = asArray(thisObj);
         CachedCall cachedCall(exec, f, 3);
         for (; k < length && !exec->hadException(); ++k) {
@@ -965,7 +965,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncForEach(ExecState* exec)
 
     unsigned k = 0;
     if (callType == CallTypeJS && isJSArray(thisObj)) {
-        JSFunction* f = asFunction(function);
+        JSFunction* f = jsCast<JSFunction*>(function);
         JSArray* array = asArray(thisObj);
         CachedCall cachedCall(exec, f, 3);
         for (; k < length && !exec->hadException(); ++k) {
@@ -1017,7 +1017,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSome(ExecState* exec)
 
     unsigned k = 0;
     if (callType == CallTypeJS && isJSArray(thisObj)) {
-        JSFunction* f = asFunction(function);
+        JSFunction* f = jsCast<JSFunction*>(function);
         JSArray* array = asArray(thisObj);
         CachedCall cachedCall(exec, f, 3);
         for (; k < length && !exec->hadException(); ++k) {
@@ -1096,7 +1096,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState* exec)
     }
 
     if (callType == CallTypeJS && array) {
-        CachedCall cachedCall(exec, asFunction(function), 4);
+        CachedCall cachedCall(exec, jsCast<JSFunction*>(function), 4);
         for (; i < length && !exec->hadException(); ++i) {
             cachedCall.setThis(jsUndefined());
             cachedCall.setArgument(0, rv);
@@ -1173,7 +1173,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState* exec)
     }
     
     if (callType == CallTypeJS && array) {
-        CachedCall cachedCall(exec, asFunction(function), 4);
+        CachedCall cachedCall(exec, jsCast<JSFunction*>(function), 4);
         for (; i < length && !exec->hadException(); ++i) {
             unsigned idx = length - i - 1;
             cachedCall.setThis(jsUndefined());

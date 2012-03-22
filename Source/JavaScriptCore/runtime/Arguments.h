@@ -158,7 +158,7 @@ namespace JSC {
         Base::finishCreation(callFrame->globalData());
         ASSERT(inherits(&s_info));
 
-        JSFunction* callee = asFunction(callFrame->callee());
+        JSFunction* callee = jsCast<JSFunction*>(callFrame->callee());
         d->numArguments = callFrame->argumentCount();
         d->registers = reinterpret_cast<WriteBarrier<Unknown>*>(callFrame->registers());
         d->callee.set(callFrame->globalData(), this, callee);

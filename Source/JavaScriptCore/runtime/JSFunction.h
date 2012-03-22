@@ -24,6 +24,7 @@
 #ifndef JSFunction_h
 #define JSFunction_h
 
+#include "InternalFunction.h"
 #include "JSObject.h"
 
 namespace JSC {
@@ -153,12 +154,9 @@ namespace JSC {
         WriteBarrier<ScopeChainNode> m_scopeChain;
     };
 
-    JSFunction* asFunction(JSValue);
-
-    inline JSFunction* asFunction(JSValue value)
+    inline bool JSValue::isFunction() const
     {
-        ASSERT(asObject(value)->inherits(&JSFunction::s_info));
-        return static_cast<JSFunction*>(asObject(value));
+        return isCell() && (asCell()->inherits(&JSFunction::s_info) || asCell()->inherits(&InternalFunction::s_info));
     }
 
 } // namespace JSC

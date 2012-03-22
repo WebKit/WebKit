@@ -81,7 +81,7 @@ inline void Recompiler::operator()(JSCell* cell)
 {
     if (!cell->inherits(&JSFunction::s_info))
         return;
-    JSFunction* function = asFunction(cell);
+    JSFunction* function = jsCast<JSFunction*>(cell);
     if (!function->executable() || function->executable()->isHostFunction())
         return;
     function->jsExecutable()->discardCode();
@@ -478,7 +478,7 @@ void JSGlobalData::releaseExecutableMemory()
             if (cell->inherits(&ScriptExecutable::s_info))
                 executable = static_cast<ScriptExecutable*>(*ptr);
             else if (cell->inherits(&JSFunction::s_info)) {
-                JSFunction* function = asFunction(*ptr);
+                JSFunction* function = jsCast<JSFunction*>(*ptr);
                 if (function->isHostFunction())
                     continue;
                 executable = function->jsExecutable();

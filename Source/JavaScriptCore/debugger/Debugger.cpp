@@ -67,7 +67,7 @@ inline void Recompiler::operator()(JSCell* cell)
     if (!cell->inherits(&JSFunction::s_info))
         return;
 
-    JSFunction* function = asFunction(cell);
+    JSFunction* function = jsCast<JSFunction*>(cell);
     if (function->executable()->isHostFunction())
         return;
 

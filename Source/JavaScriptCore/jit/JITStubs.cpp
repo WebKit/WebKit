@@ -1281,7 +1281,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_this)
     STUB_INIT_STACK_FRAME(stackFrame);
     CallFrame* callFrame = stackFrame.callFrame;
 
-    JSFunction* constructor = asFunction(callFrame->callee());
+    JSFunction* constructor = jsCast<JSFunction*>(callFrame->callee());
 #if !ASSERT_DISABLED
     ConstructData constructData;
     ASSERT(constructor->methodTable()->getConstructData(constructor, constructData) == ConstructTypeJS);
@@ -2149,7 +2149,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_func)
 
 inline void* jitCompileFor(CallFrame* callFrame, CodeSpecializationKind kind)
 {
-    JSFunction* function = asFunction(callFrame->callee());
+    JSFunction* function = jsCast<JSFunction*>(callFrame->callee());
     ASSERT(!function->isHostFunction());
     FunctionExecutable* executable = function->jsExecutable();
     ScopeChainNode* callDataScopeChain = function->scope();
@@ -2183,7 +2183,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_jitCompile)
 
 #if !ASSERT_DISABLED
     ConstructData constructData;
-    ASSERT(asFunction(stackFrame.callFrame->callee())->methodTable()->getConstructData(stackFrame.callFrame->callee(), constructData) == ConstructTypeJS);
+    ASSERT(jsCast<JSFunction*>(stackFrame.callFrame->callee())->methodTable()->getConstructData(stackFrame.callFrame->callee(), constructData) == ConstructTypeJS);
 #endif
 
     CallFrame* callFrame = stackFrame.callFrame;    
@@ -2222,7 +2222,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
 
 inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
 {
-    JSFunction* callee = asFunction(callFrame->callee());
+    JSFunction* callee = jsCast<JSFunction*>(callFrame->callee());
     ExecutableBase* executable = callee->executable();
 
     MacroAssemblerCodePtr codePtr;

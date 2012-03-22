@@ -162,7 +162,7 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
     JSValue value = exec->argument(0);
     if (!value.asCell()->inherits(&JSFunction::s_info))
         return jsUndefined();
-    JSFunction* function = asFunction(value);
+    JSFunction* function = jsCast<JSFunction*>(value);
 
     const SourceCode* sourceCode = function->sourceCode();
     if (!sourceCode)

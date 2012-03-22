@@ -567,7 +567,7 @@ namespace JSC {
         {
             ASSERT(exec->callee());
             ASSERT(exec->callee()->inherits(&JSFunction::s_info));
-            ASSERT(asFunction(exec->callee())->jsExecutable() == this);
+            ASSERT(jsCast<JSFunction*>(exec->callee())->jsExecutable() == this);
 
             if (kind == CodeForCall)
                 return compileForCall(exec, scopeChainNode);
@@ -579,7 +579,7 @@ namespace JSC {
         {
             ASSERT(exec->callee());
             ASSERT(exec->callee()->inherits(&JSFunction::s_info));
-            ASSERT(asFunction(exec->callee())->jsExecutable() == this);
+            ASSERT(jsCast<JSFunction*>(exec->callee())->jsExecutable() == this);
             
             if (kind == CodeForCall)
                 return compileOptimizedForCall(exec, scopeChainNode);

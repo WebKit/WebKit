@@ -1,3 +1,66 @@
+2012-03-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Add JSValue::isFunction
+        https://bugs.webkit.org/show_bug.cgi?id=81935
+
+        Reviewed by Geoff Garen.
+
+        This would be useful in the WebCore bindings code.
+        Also, remove asFunction, replace with jsCast<JSFunction*>.
+
+        * API/JSContextRef.cpp:
+        * debugger/Debugger.cpp:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::functionName):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::valueOfFunctionConstant):
+        * dfg/DFGOperations.cpp:
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::isInlineCallFrameSlow):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::jitCompileFor):
+        (JSC::lazyLinkFor):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::traceFunctionPrologue):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setUpCall):
+        * runtime/Arguments.h:
+        (JSC::Arguments::finishCreation):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::compileFor):
+        (JSC::FunctionExecutable::compileOptimizedFor):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sort):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::lengthGetter):
+        * runtime/JSFunction.h:
+        (JSC):
+        (JSC::asJSFunction):
+        (JSC::JSValue::isFunction):
+        * runtime/JSGlobalData.cpp:
+        (WTF::Recompiler::operator()):
+        (JSC::JSGlobalData::releaseExecutableMemory):
+        * runtime/JSValue.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+
 2012-03-21  Filip Pizlo  <fpizlo@apple.com>
 
         DFG speculation on booleans should be rationalized

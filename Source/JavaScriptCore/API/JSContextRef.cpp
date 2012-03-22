@@ -210,7 +210,7 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
         exec->interpreter()->retrieveLastCaller(callFrame, signedLineNumber, sourceID, urlString, function);
 
         if (function)
-            functionName = asFunction(function)->name(exec);
+            functionName = jsCast<JSFunction*>(function)->name(exec);
         else {
             // Caller is unknown, but if frame is empty we should still add the frame, because
             // something called us, and gave us arguments.

@@ -4443,7 +4443,7 @@ skip_id_custom_self:
 
         if (isHostFunction(funcVal, globalFuncEval)) {
             CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + registerOffset);
-            newCallFrame->init(0, vPC + OPCODE_LENGTH(op_call_eval), callFrame->scopeChain(), callFrame, argCount, asFunction(funcVal));
+            newCallFrame->init(0, vPC + OPCODE_LENGTH(op_call_eval), callFrame->scopeChain(), callFrame, argCount, jsCast<JSFunction*>(funcVal));
 
             JSValue result = eval(newCallFrame);
             if ((exceptionValue = globalData->exception))
@@ -4496,7 +4496,7 @@ skip_id_custom_self:
                 goto vm_throw;
             }
 
-            callFrame->init(newCodeBlock, vPC + OPCODE_LENGTH(op_call), callDataScopeChain, previousCallFrame, argCount, asFunction(v));
+            callFrame->init(newCodeBlock, vPC + OPCODE_LENGTH(op_call), callDataScopeChain, previousCallFrame, argCount, jsCast<JSFunction*>(v));
             codeBlock = newCodeBlock;
             ASSERT(codeBlock == callFrame->codeBlock());
             *topCallFrameSlot = callFrame;
@@ -4574,7 +4574,7 @@ skip_id_custom_self:
                 goto vm_throw;
             }
 
-            newCallFrame->init(newCodeBlock, vPC + OPCODE_LENGTH(op_call_varargs), callDataScopeChain, callFrame, argCount, asFunction(v));
+            newCallFrame->init(newCodeBlock, vPC + OPCODE_LENGTH(op_call_varargs), callDataScopeChain, callFrame, argCount, jsCast<JSFunction*>(v));
             codeBlock = newCodeBlock;
             callFrame = newCallFrame;
             ASSERT(codeBlock == callFrame->codeBlock());
@@ -4785,7 +4785,7 @@ skip_id_custom_self:
         int thisRegister = vPC[1].u.operand;
         int protoRegister = vPC[2].u.operand;
 
-        JSFunction* constructor = asFunction(callFrame->callee());
+        JSFunction* constructor = jsCast<JSFunction*>(callFrame->callee());
 #if !ASSERT_DISABLED
         ConstructData constructData;
         ASSERT(constructor->methodTable()->getConstructData(constructor, constructData) == ConstructTypeJS);
@@ -4895,7 +4895,7 @@ skip_id_custom_self:
                 goto vm_throw;
             }
 
-            callFrame->init(newCodeBlock, vPC + OPCODE_LENGTH(op_construct), callDataScopeChain, previousCallFrame, argCount, asFunction(v));
+            callFrame->init(newCodeBlock, vPC + OPCODE_LENGTH(op_construct), callDataScopeChain, previousCallFrame, argCount, jsCast<JSFunction*>(v));
             codeBlock = newCodeBlock;
             *topCallFrameSlot = callFrame;
             vPC = newCodeBlock->instructions().begin();

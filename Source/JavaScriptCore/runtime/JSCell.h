@@ -355,10 +355,23 @@ namespace JSC {
         return static_cast<To>(from);
     }
 
+    template<typename To>
+    inline To jsCast(JSValue from)
+    {
+        ASSERT(from.isCell() && from.asCell()->inherits(&WTF::RemovePointer<To>::Type::s_info));
+        return static_cast<To>(from.asCell());
+    }
+
     template<typename To, typename From>
     inline To jsDynamicCast(From* from)
     {
         return from->inherits(&WTF::RemovePointer<To>::Type::s_info) ? static_cast<To>(from) : 0;
+    }
+
+    template<typename To>
+    inline To jsDynamicCast(JSValue from)
+    {
+        return from.isCell() && from.asCell()->inherits(&WTF::RemovePointer<To>::Type::s_info) ? static_cast<To>(from.asCell()) : 0;
     }
 
 } // namespace JSC

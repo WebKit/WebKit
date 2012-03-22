@@ -173,6 +173,7 @@ namespace JSC {
 
         // Querying the type.
         bool isEmpty() const;
+        bool isFunction() const;
         bool isUndefined() const;
         bool isNull() const;
         bool isUndefinedOrNull() const;

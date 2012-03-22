@@ -479,7 +479,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
     if (global && callType == CallTypeJS) {
         // regExp->numSubpatterns() + 1 for pattern args, + 2 for match start and string
         int argCount = regExp->numSubpatterns() + 1 + 2;
-        JSFunction* func = asFunction(replaceValue);
+        JSFunction* func = jsCast<JSFunction*>(replaceValue);
         CachedCall cachedCall(exec, func, argCount);
         if (exec->hadException())
             return JSValue::encode(jsNull());

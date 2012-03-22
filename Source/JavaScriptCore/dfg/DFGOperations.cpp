@@ -245,7 +245,7 @@ JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSCell* prototype)
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
 
-    return createThis(exec, prototype, asFunction(exec->callee()));
+    return createThis(exec, prototype, jsCast<JSFunction*>(exec->callee()));
 }
 
 JSCell* DFG_OPERATION operationCreateThisInlined(ExecState* exec, JSCell* prototype, JSCell* constructor)
@@ -835,7 +835,7 @@ inline void* linkFor(ExecState* execCallee, ReturnAddressPtr returnAddress, Code
     if (!calleeAsFunctionCell)
         return handleHostCall(execCallee, calleeAsValue, kind);
 
-    JSFunction* callee = asFunction(calleeAsFunctionCell);
+    JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
     execCallee->setScopeChain(callee->scopeUnchecked());
     ExecutableBase* executable = callee->executable();
 
@@ -887,7 +887,7 @@ inline void* virtualFor(ExecState* execCallee, CodeSpecializationKind kind)
     if (UNLIKELY(!calleeAsFunctionCell))
         return handleHostCall(execCallee, calleeAsValue, kind);
     
-    JSFunction* function = asFunction(calleeAsFunctionCell);
+    JSFunction* function = jsCast<JSFunction*>(calleeAsFunctionCell);
     execCallee->setScopeChain(function->scopeUnchecked());
     ExecutableBase* executable = function->executable();
     if (UNLIKELY(!executable->hasJITCodeFor(kind))) {
