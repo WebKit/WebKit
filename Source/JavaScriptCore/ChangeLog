@@ -1,3 +1,11 @@
+2012-03-22  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build.
+
+        * Configurations/JavaScriptCore.xcconfig: Tell the linker to pull in all members from static libraries
+        rather than only those that contain symbols that JavaScriptCore itself uses.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Remove some bogus settings that crept in to the Xcode project.
+
 2012-03-22  Filip Pizlo  <fpizlo@apple.com>
 
         DFG NodeFlags has some duplicate code and naming issues

@@ -3182,10 +3182,6 @@
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Release\"",
-				);
 			};
 			name = Debug;
 		};
@@ -3194,10 +3190,6 @@
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Release\"",
-				);
 			};
 			name = Release;
 		};
@@ -3206,10 +3198,6 @@
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
 				BUILD_VARIANTS = normal;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Release\"",
-				);
 			};
 			name = Production;
 		};
@@ -3371,10 +3359,6 @@
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Release\"",
-				);
 			};
 			name = Profiling;
 		};
