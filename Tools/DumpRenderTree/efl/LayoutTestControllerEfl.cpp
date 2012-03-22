@@ -263,9 +263,22 @@ void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef node
     DumpRenderTreeSupportEfl::setValueForUser(context, nodeObject, value);
 }
 
-void LayoutTestController::setViewModeMediaFeature(JSStringRef)
+void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)
 {
-    notImplemented();
+    Evas_Object* view = browser->mainView();
+    if (!view)
+        return;
+
+    if (equals(mode, "windowed"))
+        ewk_view_mode_set(view, EWK_VIEW_MODE_WINDOWED);
+    else if (equals(mode, "floating"))
+        ewk_view_mode_set(view, EWK_VIEW_MODE_FLOATING);
+    else if (equals(mode, "fullscreen"))
+        ewk_view_mode_set(view, EWK_VIEW_MODE_FULLSCREEN);
+    else if (equals(mode, "maximized"))
+        ewk_view_mode_set(view, EWK_VIEW_MODE_MAXIMIZED);
+    else if (equals(mode, "minimized"))
+        ewk_view_mode_set(view, EWK_VIEW_MODE_MINIMIZED);
 }
 
 void LayoutTestController::setWindowIsKey(bool)

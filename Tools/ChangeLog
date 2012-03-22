@@ -1,3 +1,17 @@
+2012-03-22  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Enable view mode media feature layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=81205
+
+        Adding missing implementation setViewModeMediaFeature to EFL's 
+        LayoutTestController so that we can unskip view mode 
+        media feature layout tests.
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setViewModeMediaFeature): Implemented.
+
 2012-03-22  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: crash while stopping layout test helper on apple mac lion

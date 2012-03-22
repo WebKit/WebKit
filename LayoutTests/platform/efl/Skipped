@@ -429,15 +429,6 @@ svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
 svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/svg-disallowed-in-dashboard-object.html
 
-# EFL's LayoutTestController does not implement setViewModeMediaFeature
-fast/media/media-query-list-02.html
-fast/media/media-query-list-03.html
-fast/media/media-query-list-04.html
-fast/media/media-query-list-05.html
-fast/media/media-query-list-06.html
-fast/media/media-query-list-07.html
-fast/media/view-mode-media-feature.html
-
 # EFL's LayoutTestController does not implement enableAutoResizeMode
 fast/autoresize
 
