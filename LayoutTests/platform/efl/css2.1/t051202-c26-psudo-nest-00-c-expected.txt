@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x465
-  RenderBlock {HTML} at (0,0) size 800x465
-    RenderBody {BODY} at (8,16) size 784x441 [color=#0000FF]
-      RenderBlock {P} at (0,0) size 784x242
+layer at (0,0) size 800x455
+  RenderBlock {HTML} at (0,0) size 800x455
+    RenderBody {BODY} at (8,16) size 784x431 [color=#0000FF]
+      RenderBlock {P} at (0,0) size 784x238
         RenderInline (generated) at (0,0) size 88x161 [color=#00FFFF]
           RenderText {#text} at (0,2) size 88x161
             text run at (0,2) width 88: "T"
@@ -23,31 +23,31 @@ layer at (0,0) size 800x465
           text run at (242,166) width 133: " than the normal text "
           text run at (375,166) width 380: "(300% bigger than the rest of first line of this paragraph) and"
         RenderInline {STRONG} at (0,0) size 34x19
-          RenderText {#text} at (0,185) size 34x19
-            text run at (0,185) width 34: "aqua"
-        RenderText {#text} at (34,185) size 109x19
-          text run at (34,185) width 109: ", while the entire "
+          RenderText {#text} at (0,184) size 34x19
+            text run at (0,184) width 34: "aqua"
+        RenderText {#text} at (34,184) size 109x19
+          text run at (34,184) width 109: ", while the entire "
         RenderInline {STRONG} at (0,0) size 55x19
-          RenderText {#text} at (143,185) size 55x19
-            text run at (143,185) width 55: "first line"
-        RenderText {#text} at (198,185) size 69x19
-          text run at (198,185) width 4: " "
-          text run at (202,185) width 65: "should be "
+          RenderText {#text} at (143,184) size 55x19
+            text run at (143,184) width 55: "first line"
+        RenderText {#text} at (198,184) size 69x19
+          text run at (198,184) width 4: " "
+          text run at (202,184) width 65: "should be "
         RenderInline {STRONG} at (0,0) size 87x19
-          RenderText {#text} at (267,185) size 87x19
-            text run at (267,185) width 87: "300% bigger"
-        RenderText {#text} at (354,185) size 110x19
-          text run at (354,185) width 110: " than normal and "
+          RenderText {#text} at (267,184) size 87x19
+            text run at (267,184) width 87: "300% bigger"
+        RenderText {#text} at (354,184) size 110x19
+          text run at (354,184) width 110: " than normal and "
         RenderInline {STRONG} at (0,0) size 24x19
-          RenderText {#text} at (464,185) size 24x19
-            text run at (464,185) width 24: "teal"
-        RenderText {#text} at (488,185) size 779x57
-          text run at (488,185) width 274: ". If this precise combination does not occur,"
-          text run at (0,204) width 410: "then the user agent has failed this test. Remember that in order to "
-          text run at (410,204) width 369: "ensure a complete test, the paragraph must be displayed on"
-          text run at (0,223) width 36: "more "
-          text run at (36,223) width 146: "than one line. (TEST1)"
-      RenderBlock {P} at (0,258) size 784x75
+          RenderText {#text} at (464,184) size 24x19
+            text run at (464,184) width 24: "teal"
+        RenderText {#text} at (488,184) size 779x55
+          text run at (488,184) width 274: ". If this precise combination does not occur,"
+          text run at (0,202) width 410: "then the user agent has failed this test. Remember that in order to "
+          text run at (410,202) width 369: "ensure a complete test, the paragraph must be displayed on"
+          text run at (0,220) width 36: "more "
+          text run at (36,220) width 146: "than one line. (TEST1)"
+      RenderBlock {P} at (0,254) size 784x73
         RenderInline (generated) at (0,0) size 33x36 [color=#00FFFF]
           RenderText {#text} at (0,0) size 33x36
             text run at (0,0) width 33: "\"T"
@@ -80,11 +80,11 @@ layer at (0,0) size 800x465
           RenderText {#text} at (549,37) size 159x19
             text run at (549,37) width 135: "small-caps font and "
             text run at (684,37) width 24: "teal"
-        RenderText {#text} at (708,37) size 724x38
+        RenderText {#text} at (708,37) size 724x37
           text run at (708,37) width 4: "."
-          text run at (0,56) width 315: "Remember that in order to ensure a complete test, "
-          text run at (315,56) width 409: "the paragraph must be displayed on more than one line. (TEST2)"
-      RenderBlock {P} at (0,349) size 784x57
+          text run at (0,55) width 315: "Remember that in order to ensure a complete test, "
+          text run at (315,55) width 409: "the paragraph must be displayed on more than one line. (TEST2)"
+      RenderBlock {P} at (0,343) size 784x54
         RenderInline (generated) at (0,0) size 10x19 [color=#00FFFF]
           RenderText {#text} at (0,0) size 10x19
             text run at (0,0) width 10: "T"
@@ -109,14 +109,14 @@ layer at (0,0) size 800x465
         RenderInline {STRONG} at (0,0) size 24x19
           RenderText {#text} at (662,0) size 24x19
             text run at (662,0) width 24: "teal"
-        RenderText {#text} at (686,0) size 778x57
+        RenderText {#text} at (686,0) size 778x55
           text run at (686,0) width 22: ". If "
           text run at (708,0) width 70: "this precise"
-          text run at (0,19) width 329: "combination does not occur, then the user agent has "
-          text run at (329,19) width 409: "failed this test. Remember that in order to ensure a complete test, "
-          text run at (738,19) width 19: "the"
-          text run at (0,38) width 386: "paragraph must be displayed on more than one line. (TEST3)"
-      RenderBlock {DIV} at (0,422) size 784x19
+          text run at (0,18) width 329: "combination does not occur, then the user agent has "
+          text run at (329,18) width 409: "failed this test. Remember that in order to ensure a complete test, "
+          text run at (738,18) width 19: "the"
+          text run at (0,36) width 386: "paragraph must be displayed on more than one line. (TEST3)"
+      RenderBlock {DIV} at (0,413) size 784x18
         RenderText {#text} at (0,0) size 168x19
           text run at (0,0) width 168: "You should see the words "
         RenderInline {STRONG} at (0,0) size 68x19
