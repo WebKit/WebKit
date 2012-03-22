@@ -435,3 +435,13 @@ void DumpRenderTreeSupportEfl::setEditingBehavior(Evas_Object* ewkView, const ch
 
     corePage->settings()->setEditingBehaviorType(coreEditingBehavior);
 }
+
+String DumpRenderTreeSupportEfl::markerTextForListItem(JSContextRef context, JSValueRef nodeObject)
+{
+    JSC::ExecState* exec = toJS(context);
+    WebCore::Element* element = WebCore::toElement(toJS(exec, nodeObject));
+    if (!element)
+        return String();
+
+    return WebCore::markerTextForListItem(element);
+}

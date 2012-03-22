@@ -1,5 +1,19 @@
 2012-03-22  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
+        [EFL] [DRT] Implement LayoutTestController::markerTextForListItem()
+        https://bugs.webkit.org/show_bug.cgi?id=81512
+
+        Adding missing implementation markerTextForListItem to EFL's
+        LayoutTestController so that we can unskip related tests from
+        the skip list.
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::markerTextForListItem): Implemented.
+
+2012-03-22  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
         [EFL] Enable view mode media feature layout tests
         https://bugs.webkit.org/show_bug.cgi?id=81205
 

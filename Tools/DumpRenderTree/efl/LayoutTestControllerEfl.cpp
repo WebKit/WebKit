@@ -718,10 +718,14 @@ void LayoutTestController::setWebViewEditable(bool)
     ewk_frame_editable_set(browser->mainFrame(), EINA_TRUE);
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRef, JSValueRef) const
+JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
 {
-    notImplemented();
-    return 0;
+    String markerTextChar = DumpRenderTreeSupportEfl::markerTextForListItem(context, nodeObject);
+    if (markerTextChar.isEmpty())
+        return 0;
+
+    JSRetainPtr<JSStringRef> markerText(Adopt, JSStringCreateWithUTF8CString(markerTextChar.utf8().data()));
+    return markerText;
 }
 
 void LayoutTestController::authenticateSession(JSStringRef, JSStringRef, JSStringRef)

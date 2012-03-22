@@ -684,27 +684,6 @@ http/tests/globalhistory/history-delegate-basic-visited-links.html
 # EFL's LayoutTestController does not implement callShouldCloseOnWebView
 fast/events/onbeforeunload-focused-iframe.html
 
-# EFL's LayoutTestController does not implement markerTextForListItem
-fast/lists/alpha-boundary-values.html
-fast/lists/alpha-list-wrap.html
-fast/lists/decimal-leading-zero.html
-fast/lists/li-values.html
-fast/lists/list-style-type-dynamic-change.html
-fast/lists/ol-nested-items-dynamic-insert.html
-fast/lists/ol-nested-items-dynamic-remove.html
-fast/lists/ol-nested-items.html
-fast/lists/ol-nested-list-dynamic-insert.html
-fast/lists/ol-nested-list-dynamic-remove.html
-fast/lists/ol-nested-list.html
-fast/lists/positioned-count-crash.html
-fast/lists/w3-css3-list-styles-alphabetic.html
-fast/lists/w3-css3-list-styles-fallback-style.html
-fast/lists/w3-css3-list-styles-numeric.html
-fast/lists/w3-css3-list-styles-symbolic.html
-fast/lists/w3-css3-lower-armenian.html
-fast/lists/w3-css3-upper-armenian.html
-fast/lists/w3-list-styles.html
-
 # EFL's LayoutTestController does not implement shadowPseudoId
 fullscreen/video-controls-override.html
 media/audio-delete-while-step-button-clicked.html
