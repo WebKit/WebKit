@@ -138,6 +138,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._heapGraph.hide();
         this._setVerticalOverview(this._currentMode === WebInspector.TimelineOverviewPane.Mode.EventsVertical);
         this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
+        this._updateCategoryStrips(this._presentationModel.rootRecord().children);
         this.dispatchEventToListeners(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._currentMode);
     },
 
@@ -184,14 +185,6 @@ WebInspector.TimelineOverviewPane.prototype = {
     update: function(showShortEvents)
     {
         this._showShortEvents = showShortEvents;
-        // Clear summary bars.
-        var timelines = {};
-        for (var category in this._presentationModel.categories) {
-            timelines[category] = [];
-            this._categoryGraphs[category].clearChunks();
-        }
-
-        // Create sparse arrays with 101 cells each to fill with chunks for a given category.
         this._overviewCalculator.reset();
 
         function updateBoundaries(record)
@@ -203,6 +196,26 @@ WebInspector.TimelineOverviewPane.prototype = {
         var records = this._presentationModel.rootRecord().children;
         WebInspector.TimelinePanel.forAllRecords(records, updateBoundaries.bind(this));
 
+        if (this._heapGraph.visible) {
+            this._heapGraph.setSize(this._overviewGrid.element.offsetWidth, 60);
+            this._heapGraph.update(records);
+        } else if (this._verticalOverview)
+            this._verticalOverview.update(records);
+        else
+            this._updateCategoryStrips(records);
+        this._overviewGrid.updateDividers(true, this._overviewCalculator);
+    },
+
+    _updateCategoryStrips: function(records)
+    {
+        // Clear summary bars.
+        var timelines = {};
+        for (var category in this._presentationModel.categories) {
+            timelines[category] = [];
+            this._categoryGraphs[category].clearChunks();
+        }
+
+        // Create sparse arrays with 101 cells each to fill with chunks for a given category.
         function markPercentagesForRecord(record)
         {
             if (!(this._showShortEvents || record.isLong()))
@@ -238,12 +251,6 @@ WebInspector.TimelineOverviewPane.prototype = {
             }
         }
 
-        this._heapGraph.setSize(this._overviewGrid.element.offsetWidth, 60);
-        if (this._heapGraph.visible)
-            this._heapGraph.update(records);
-        if (this._verticalOverview)
-            this._verticalOverview.update(records);
-        this._overviewGrid.updateDividers(true, this._overviewCalculator);
     },
 
     updateEventDividers: function(records, dividerConstructor)
