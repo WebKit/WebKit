@@ -25,12 +25,14 @@
 #include "config.h"
 
 #include "cc/CCLayerTreeHostImpl.h"
+#include "cc/CCQuadCuller.h"
 
 #include "CCAnimationTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerRendererChromium.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCScrollbarLayerImpl.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCTileDrawQuad.h"
 #include <gtest/gtest.h>
@@ -1082,6 +1084,29 @@ TEST_F(CCLayerTreeHostImplTest, finishAllRenderingAfterContextLost)
     // The context initialization will fail, but we should still be able to call finishAllRendering() without any ill effects.
     m_hostImpl->initializeLayerRenderer(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3DMakeCurrentFails), GraphicsContext3D::RenderDirectlyToHostWindow));
     m_hostImpl->finishAllRendering();
+}
+
+TEST_F(CCLayerTreeHostImplTest, scrollbarLayerLostContext)
+{
+    m_hostImpl->initializeLayerRenderer(createContext());
+    m_hostImpl->setViewportSize(IntSize(10, 10));
+
+    m_hostImpl->setRootLayer(CCScrollbarLayerImpl::create(0));
+    CCScrollbarLayerImpl* scrollbar = static_cast<CCScrollbarLayerImpl*>(m_hostImpl->rootLayer());
+    scrollbar->setBounds(IntSize(1, 1));
+    scrollbar->setContentBounds(IntSize(1, 1));
+    scrollbar->setDrawsContent(true);
+
+    for (int i = 0; i < 2; ++i) {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
+        ASSERT(frame.renderPasses.size() == 1);
+        CCRenderPass* renderPass = frame.renderPasses[0].get();
+        // Scrollbar layer should always generate quads, even after lost context
+        EXPECT_GT(renderPass->quadList().size(), 0u);
+
+        m_hostImpl->initializeLayerRenderer(createContext());
+    }
 }
 
 } // namespace

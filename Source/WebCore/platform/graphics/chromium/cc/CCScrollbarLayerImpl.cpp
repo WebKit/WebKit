@@ -58,6 +58,10 @@ void CCScrollbarLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
     if (!m_texture)
         m_texture = ManagedTexture::create(layerRenderer->renderSurfaceTextureManager());
 
+    // The context could have been lost since the last frame and the old texture
+    // manager may no longer be valid.
+    m_texture->setTextureManager(layerRenderer->renderSurfaceTextureManager());
+
     IntSize textureSize = contentBounds();
     if (!m_texture->reserve(textureSize, GraphicsContext3D::RGBA))
         return;
