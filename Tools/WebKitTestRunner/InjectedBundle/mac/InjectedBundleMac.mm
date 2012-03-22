@@ -37,6 +37,7 @@ void InjectedBundle::platformInitialize(WKTypeRef)
         [NSNumber numberWithBool:NO],     @"AppleScrollAnimationEnabled",
         [NSNumber numberWithBool:NO],     @"NSOverlayScrollersEnabled",
         @"Always",                        @"AppleShowScrollBars",
+        [NSArray arrayWithObject:@"en"],  @"AppleLanguages",
         nil];
 
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];    
