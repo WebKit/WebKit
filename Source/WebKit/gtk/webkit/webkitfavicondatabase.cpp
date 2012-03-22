@@ -521,8 +521,10 @@ void webkit_favicon_database_get_favicon_pixbuf(WebKitFaviconDatabase* database,
     GRefPtr<GSimpleAsyncResult> result = adoptGRef(g_simple_async_result_new(G_OBJECT(database), callback, userData,
                                                                              reinterpret_cast<gpointer>(webkit_favicon_database_get_favicon_pixbuf)));
 
-    // If we don't have an icon for the given URI return ASAP.
-    if (database->priv->importFinished && iconDatabase().synchronousIconURLForPageURL(String::fromUTF8(pageURI)).isEmpty()) {
+    // If we don't have an icon for the given URI or the database is not opened then return ASAP. We have to check that
+    // because if the database is not opened it will skip (and not notify about) every single icon load request
+    if ((database->priv->importFinished && iconDatabase().synchronousIconURLForPageURL(String::fromUTF8(pageURI)).isEmpty())
+        || !iconDatabase().isOpen()) {
         g_simple_async_result_set_op_res_gpointer(result.get(), 0, 0);
         g_simple_async_result_complete_in_idle(result.get());
         return;
@@ -536,11 +538,11 @@ void webkit_favicon_database_get_favicon_pixbuf(WebKitFaviconDatabase* database,
     ASSERT(icons);
     icons->append(adoptPtr(request));
 
+    // We ask for the icon directly. If we don't get the icon data now,
+    // we'll be notified later (even if the database is still importing icons).
     GdkPixbuf* pixbuf = getIconPixbufSynchronously(database, pageURL, IntSize(width, height));
-    if (!pixbuf && !database->priv->importFinished) {
-        // Initial import is ongoing, the icon data will be available later.
+    if (!pixbuf)
         return;
-    }
 
     request->asyncResultCompleteInIdle(pixbuf);
 

@@ -1,3 +1,18 @@
+2012-03-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] icon database requests not dispatched until new data arrives
+        https://bugs.webkit.org/show_bug.cgi?id=81665
+
+        Reviewed by Martin Robinson.
+
+        Wait for the import to finish before reporting that the favicon
+        cache does not have a pixbuf for an URL.
+
+        Changes already covered by the favicon database unit tests.
+
+        * webkit/webkitfavicondatabase.cpp:
+        (webkit_favicon_database_get_favicon_pixbuf):
+
 2012-03-22  Carlos Garcia Campos  <cgarcia@bb-webkit-rel-64.local.igalia.com>
 
         [GTK] Use the angle-bracket form to include wtf headers
