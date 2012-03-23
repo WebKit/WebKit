@@ -51,7 +51,9 @@ PassRefPtr<NotificationCenter> NotificationCenter::create(ScriptExecutionContext
 
 NotificationCenter::NotificationCenter(ScriptExecutionContext* context, NotificationClient* client)
     : ActiveDOMObject(context, this)
-    , m_client(client) { }
+    , m_client(client)
+{
+}
 
 int NotificationCenter::checkPermission()
 {
@@ -90,10 +92,8 @@ void NotificationCenter::requestPermission(PassRefPtr<VoidCallback> callback)
     m_client->requestPermission(scriptExecutionContext(), callback);
 }
 
-void NotificationCenter::disconnectFrame()
+void NotificationCenter::stop()
 {
-    // Can be 0 if iframe was transferred into another page. In this case
-    // this method is invoked more then once.
     if (!m_client)
         return;
     m_client->cancelRequestsForPermission(scriptExecutionContext());

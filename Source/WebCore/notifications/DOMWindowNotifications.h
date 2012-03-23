@@ -46,17 +46,16 @@ public:
     static DOMWindowNotifications* from(DOMWindow*);
 
     virtual void disconnectFrame() OVERRIDE;
-    // FIXME: Support reconnectFrame().
-    virtual void willDetachPage() OVERRIDE;
+    virtual void reconnectFrame(Frame*) OVERRIDE;
 
 private:
     explicit DOMWindowNotifications(DOMWindow*);
 
     NotificationCenter* webkitNotifications();
-    void reset();
 
     DOMWindow* m_window;
     RefPtr<NotificationCenter> m_notificationCenter;
+    RefPtr<NotificationCenter> m_suspendedNotificationCenter;
 };
 
 } // namespace WebCore

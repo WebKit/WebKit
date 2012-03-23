@@ -80,7 +80,7 @@ public:
     int checkPermission();
     void requestPermission(PassRefPtr<VoidCallback>);
 
-    void disconnectFrame();
+    virtual void stop() OVERRIDE;
 
 private:
     NotificationCenter(ScriptExecutionContext*, NotificationClient*);

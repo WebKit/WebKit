@@ -65,14 +65,14 @@ NotificationCenter* DOMWindowNotifications::webkitNotifications(DOMWindow* windo
 
 void DOMWindowNotifications::disconnectFrame()
 {
-    reset();
+    m_suspendedNotificationCenter = m_notificationCenter.release();
     DOMWindowProperty::disconnectFrame();
 }
 
-void DOMWindowNotifications::willDetachPage()
+void DOMWindowNotifications::reconnectFrame(Frame* frame)
 {
-    reset();
-    DOMWindowProperty::willDetachPage();
+    DOMWindowProperty::reconnectFrame(frame);
+    m_notificationCenter = m_suspendedNotificationCenter.release();
 }
 
 NotificationCenter* DOMWindowNotifications::webkitNotifications()
@@ -96,14 +96,6 @@ NotificationCenter* DOMWindowNotifications::webkitNotifications()
         m_notificationCenter = NotificationCenter::create(document, provider);    
 
     return m_notificationCenter.get();
-}
-
-void DOMWindowNotifications::reset()
-{
-    if (!m_notificationCenter)
-        return;
-    m_notificationCenter->disconnectFrame();
-    m_notificationCenter = 0;
 }
 
 } // namespace WebCore
