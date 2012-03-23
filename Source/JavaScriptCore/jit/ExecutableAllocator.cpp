@@ -196,16 +196,21 @@ bool ExecutableAllocator::underMemoryPressure()
 
 double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
 {
+    double result;
 #ifdef EXECUTABLE_MEMORY_LIMIT
     size_t bytesAllocated = DemandExecutableAllocator::bytesAllocatedByAllAllocators() + addedMemoryUsage;
     if (bytesAllocated >= EXECUTABLE_MEMORY_LIMIT)
         bytesAllocated = EXECUTABLE_MEMORY_LIMIT;
-    return static_cast<double>(EXECUTABLE_MEMORY_LIMIT) /
+    result = static_cast<double>(EXECUTABLE_MEMORY_LIMIT) /
         (EXECUTABLE_MEMORY_LIMIT - bytesAllocated);
 #else
     UNUSED_PARAM(addedMemoryUsage);
-    return 1.0;
+    result = 1.0;
 #endif
+    if (result < 1.0)
+        result = 1.0;
+    return result;
+
 }
 
 PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
