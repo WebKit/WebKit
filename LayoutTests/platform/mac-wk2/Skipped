@@ -255,6 +255,7 @@ fast/events/suspend-timers.html
 # appcache tests often fail on the Mac WebKit2 bot
 # https://bugs.webkit.org/show_bug.cgi?id=82061 rdar://problem/11108649
 http/tests/appcache
+http/tests/inspector/appcache
 
 ### END OF (1) Classified failures with bug reports
 ########################################
