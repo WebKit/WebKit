@@ -28,6 +28,7 @@
 
 #include "CCAnimationTestCommon.h"
 #include "LayerChromium.h"
+#include "Region.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCProxy.h"
@@ -126,6 +127,8 @@ void expectTreesAreIdentical(LayerChromium* layer, CCLayerImpl* ccLayer)
 
     EXPECT_EQ(layer->id(), ccLayer->id());
 
+    EXPECT_EQ(layer->nonFastScrollableRegion(), ccLayer->nonFastScrollableRegion());
+
     ASSERT_EQ(!!layer->maskLayer(), !!ccLayer->maskLayer());
     if (layer->maskLayer())
         expectTreesAreIdentical(layer->maskLayer(), ccLayer->maskLayer());
@@ -192,6 +195,29 @@ TEST(TreeSynchronizerTest, syncSimpleTreeReusingLayers)
 
     ASSERT_EQ(1u, ccLayerDestructionList.size());
     EXPECT_EQ(secondCCLayerId, ccLayerDestructionList[0]);
+}
+
+TEST(TreeSynchronizerTest, syncSimpleTreeWithNonFastScrollableRegionAndFreshLayer)
+{
+    DebugScopedSetImplThread impl;
+    Vector<int> ccLayerDestructionList;
+    Region testRegion(IntRect(0, 0, 1, 1));
+
+    RefPtr<LayerChromium> layerTreeRoot = MockLayerChromium::create(&ccLayerDestructionList);
+    layerTreeRoot->addChild(MockLayerChromium::create(&ccLayerDestructionList));
+    layerTreeRoot->addChild(MockLayerChromium::create(&ccLayerDestructionList));
+
+    // Create non-empty nonFastScrollableRegion in one of the children.
+    layerTreeRoot->children()[0]->setNonFastScrollableRegion(testRegion);
+
+    OwnPtr<CCLayerImpl> ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), nullptr);
+    expectTreesAreIdentical(layerTreeRoot.get(), ccLayerTreeRoot.get());
+
+    ccLayerTreeRoot->removeAllChildren(); // Force these to be re-created on next sync.
+
+    // Synchronize again. After the sync the trees should be equivalent and we should have re-created one CCLayerImpl that has a non-empty nonFastScrollableRegion.
+    ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), ccLayerTreeRoot.release());
+    expectTreesAreIdentical(layerTreeRoot.get(), ccLayerTreeRoot.get());
 }
 
 TEST(TreeSynchronizerTest, syncSimpleTreeAndProperties)

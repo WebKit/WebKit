@@ -1,3 +1,15 @@
+2012-03-22  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Force update of nonFastScrollableRegion if target CCLayerImpl has been freshly created.
+        https://bugs.webkit.org/show_bug.cgi?id=81968
+
+        Reviewed by Adrienne Walker.
+
+        * tests/TreeSynchronizerTest.cpp:
+        (WebKitTests::expectTreesAreIdentical):
+        (WebKitTests::TEST):
+        (WebKitTests):
+
 2012-03-22  Michal Mocny  <mmocny@google.com>
 
         [chromium] LayerRendererChromium should use GpuMemoryAllocationChanged callback to explicitly manage framebuffer.

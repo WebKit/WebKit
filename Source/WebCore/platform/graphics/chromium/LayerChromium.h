@@ -142,7 +142,9 @@ public:
     void setScrollable(bool);
     void setShouldScrollOnMainThread(bool);
     void setHaveWheelEventHandlers(bool);
+    const Region& nonFastScrollableRegion() { return m_nonFastScrollableRegion; }
     void setNonFastScrollableRegion(const Region&);
+    void setNonFastScrollableRegionChanged() { m_nonFastScrollableRegionChanged = true; }
 
     IntSize scrollDelta() const { return IntSize(); }
 
