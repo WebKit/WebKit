@@ -314,6 +314,8 @@ JSC::JSValue jsTestObjMutablePoint(JSC::ExecState*, JSC::JSValue, const JSC::Ide
 void setJSTestObjMutablePoint(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjImmutablePoint(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjImmutablePoint(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestObjStrawberry(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestObjStrawberry(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjStrictFloat(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjStrictFloat(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjDescription(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);

@@ -514,6 +514,9 @@ sub AttributeNameForGetterAndSetter
     my ($generator, $attribute) = @_;
 
     my $attributeName = $attribute->signature->name;
+    if ($attribute->signature->extendedAttributes->{"ImplementedAs"}) {
+        $attributeName = $attribute->signature->extendedAttributes->{"ImplementedAs"};
+    }
     my $attributeType = $generator->StripModule($attribute->signature->type);
 
     # Avoid clash with C++ keyword.

@@ -163,6 +163,8 @@ enum {
 - (void)setMutablePoint:(DOMSVGPoint *)newMutablePoint;
 - (DOMSVGPoint *)immutablePoint;
 - (void)setImmutablePoint:(DOMSVGPoint *)newImmutablePoint;
+- (int)strawberry;
+- (void)setStrawberry:(int)newStrawberry;
 - (float)strictFloat;
 - (void)setStrictFloat:(float)newStrictFloat;
 - (int)descriptionName;

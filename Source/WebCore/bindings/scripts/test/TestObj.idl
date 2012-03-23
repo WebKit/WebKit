@@ -216,6 +216,7 @@ module test {
         [Immutable] SVGPoint immutablePointFunction();
 
         [ImplementedAs=banana] void orange();
+        attribute [ImplementedAs=blueberry] int strawberry;
 
         attribute [StrictTypeChecking] float strictFloat;
         [StrictTypeChecking] bool strictFunction(in DOMString str, in float a, in int b)

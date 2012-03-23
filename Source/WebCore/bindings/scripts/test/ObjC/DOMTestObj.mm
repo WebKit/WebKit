@@ -677,6 +677,18 @@
     IMPL->setImmutablePoint(core(newImmutablePoint));
 }
 
+- (int)strawberry
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->blueberry();
+}
+
+- (void)setStrawberry:(int)newStrawberry
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setBlueberry(newStrawberry);
+}
+
 - (float)strictFloat
 {
     WebCore::JSMainThreadNullState state;

@@ -135,6 +135,8 @@ public:
     void setMutablePoint(const WebDOMSVGPoint&);
     WebDOMSVGPoint immutablePoint() const;
     void setImmutablePoint(const WebDOMSVGPoint&);
+    int strawberry() const;
+    void setStrawberry(int);
     float strictFloat() const;
     void setStrictFloat(float);
     int description() const;

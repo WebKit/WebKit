@@ -1275,6 +1275,27 @@ WEBKIT_API void
 webkit_dom_test_obj_set_immutable_point(WebKitDOMTestObj* self, WebKitDOMSVGPoint* value);
 
 /**
+ * webkit_dom_test_obj_get_strawberry:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gint
+webkit_dom_test_obj_get_strawberry(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_strawberry:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #gint
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_strawberry(WebKitDOMTestObj* self, gint value);
+
+/**
  * webkit_dom_test_obj_get_strict_float:
  * @self: A #WebKitDOMTestObj
  *

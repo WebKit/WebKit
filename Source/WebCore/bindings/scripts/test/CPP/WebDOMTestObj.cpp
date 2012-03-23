@@ -583,6 +583,22 @@ void WebDOMTestObj::setImmutablePoint(const WebDOMSVGPoint& newImmutablePoint)
     impl()->setImmutablePoint(toWebCore(newImmutablePoint));
 }
 
+int WebDOMTestObj::strawberry() const
+{
+    if (!impl())
+        return 0;
+
+    return impl()->blueberry();
+}
+
+void WebDOMTestObj::setStrawberry(int newStrawberry)
+{
+    if (!impl())
+        return;
+
+    impl()->setBlueberry(newStrawberry);
+}
+
 float WebDOMTestObj::strictFloat() const
 {
     if (!impl())

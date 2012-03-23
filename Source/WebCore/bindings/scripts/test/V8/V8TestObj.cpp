@@ -941,6 +941,22 @@ static void immutablePointAttrSetter(v8::Local<v8::String> name, v8::Local<v8::V
     return;
 }
 
+static v8::Handle<v8::Value> strawberryAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.strawberry._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Integer::New(imp->blueberry());
+}
+
+static void strawberryAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.strawberry._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    int v = V8int::HasInstance(value) ? V8int::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    imp->setBlueberry(v);
+    return;
+}
+
 static v8::Handle<v8::Value> strictFloatAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.strictFloat._get");
@@ -1889,6 +1905,8 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"mutablePoint", TestObjInternal::mutablePointAttrGetter, TestObjInternal::mutablePointAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'immutablePoint' (Type: 'attribute' ExtAttr: 'Immutable')
     {"immutablePoint", TestObjInternal::immutablePointAttrGetter, TestObjInternal::immutablePointAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'strawberry' (Type: 'attribute' ExtAttr: 'ImplementedAs')
+    {"strawberry", TestObjInternal::strawberryAttrGetter, TestObjInternal::strawberryAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'strictFloat' (Type: 'attribute' ExtAttr: 'StrictTypeChecking')
     {"strictFloat", TestObjInternal::strictFloatAttrGetter, TestObjInternal::strictFloatAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'description' (Type: 'readonly attribute' ExtAttr: '')

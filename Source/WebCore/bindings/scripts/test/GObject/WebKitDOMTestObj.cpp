@@ -1469,6 +1469,25 @@ webkit_dom_test_obj_set_immutable_point(WebKitDOMTestObj* self, WebKitDOMSVGPoin
     item->setImmutablePoint(converted_value);
 }
 
+gint
+webkit_dom_test_obj_get_strawberry(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    gint res = item->blueberry();
+    return res;
+}
+
+void
+webkit_dom_test_obj_set_strawberry(WebKitDOMTestObj* self, gint value)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    item->setBlueberry(value);
+}
+
 gfloat
 webkit_dom_test_obj_get_strict_float(WebKitDOMTestObj* self)
 {
@@ -1590,6 +1609,7 @@ enum {
     PROP_CONTENT_DOCUMENT,
     PROP_MUTABLE_POINT,
     PROP_IMMUTABLE_POINT,
+    PROP_STRAWBERRY,
     PROP_STRICT_FLOAT,
     PROP_DESCRIPTION,
     PROP_ID,
@@ -1981,6 +2001,11 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GVa
         g_value_set_object(value, WebKit::kit(ptr.get()));
         break;
     }
+    case PROP_STRAWBERRY:
+    {
+        g_value_set_int(value, coreSelf->blueberry());
+        break;
+    }
     case PROP_STRICT_FLOAT:
     {
         g_value_set_float(value, coreSelf->strictFloat());
@@ -2331,6 +2356,15 @@ G_MAXLONG, /* max */
                                                            "test_obj_immutable-point", /* short description */
                                                            "read-write  WebKitDOMSVGPoint* TestObj.immutable-point", /* longer - could do with some extra doc stuff here */
                                                            WEBKIT_TYPE_DOM_SVG_POINT, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_STRAWBERRY,
+                                    g_param_spec_int("strawberry", /* name */
+                                                           "test_obj_strawberry", /* short description */
+                                                           "read-write  gint TestObj.strawberry", /* longer - could do with some extra doc stuff here */
+                                                           G_MININT, /* min */
+G_MAXINT, /* max */
+0, /* default */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,
                                     PROP_STRICT_FLOAT,
