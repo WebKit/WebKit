@@ -31,7 +31,7 @@
 // changes in its ouput.
 module test {
     interface [
-        Constructor,
+        Constructor(in [Callback] TestCallback testCallback),
         InterfaceName=TestObject
     ] TestObj {
         // Attributes

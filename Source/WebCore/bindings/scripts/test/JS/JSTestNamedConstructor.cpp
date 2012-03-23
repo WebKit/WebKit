@@ -89,7 +89,7 @@ void JSTestNamedConstructorNamedConstructor::finishCreation(ExecState* exec, JSD
 
 EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::constructJSTestNamedConstructor(ExecState* exec)
 {
-    JSTestNamedConstructorNamedConstructor* jsConstructor = static_cast<JSTestNamedConstructorNamedConstructor*>(exec->callee());
+    JSTestNamedConstructorNamedConstructor* castedThis = static_cast<JSTestNamedConstructorNamedConstructor*>(exec->callee());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
@@ -102,12 +102,12 @@ EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::constructJS
     const String& str3(ustringToString(MAYBE_MISSING_PARAMETER(exec, 2, DefaultIsNullString).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 2, DefaultIsNullString).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    RefPtr<TestNamedConstructor> object = TestNamedConstructor::createForJSConstructor(jsConstructor->document(), str1, str2, str3, ec);
+    RefPtr<TestNamedConstructor> object = TestNamedConstructor::createForJSConstructor(castedThis->document(), str1, str2, str3, ec);
     if (ec) {
         setDOMException(exec, ec);
         return JSValue::encode(JSValue());
     }
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), object.get())));
+    return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 }
 
 ConstructType JSTestNamedConstructorNamedConstructor::getConstructData(JSCell*, ConstructData& constructData)

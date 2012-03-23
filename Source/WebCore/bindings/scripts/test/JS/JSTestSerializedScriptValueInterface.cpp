@@ -85,7 +85,7 @@ bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertyDescriptor(J
 
 EncodedJSValue JSC_HOST_CALL JSTestSerializedScriptValueInterfaceConstructor::constructJSTestSerializedScriptValueInterface(ExecState* exec)
 {
-    JSTestSerializedScriptValueInterfaceConstructor* jsConstructor = static_cast<JSTestSerializedScriptValueInterfaceConstructor*>(exec->callee());
+    JSTestSerializedScriptValueInterfaceConstructor* castedThis = static_cast<JSTestSerializedScriptValueInterfaceConstructor*>(exec->callee());
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     const String& hello(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).toString(exec)->value(exec)));
@@ -98,7 +98,7 @@ EncodedJSValue JSC_HOST_CALL JSTestSerializedScriptValueInterfaceConstructor::co
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     RefPtr<TestSerializedScriptValueInterface> object = TestSerializedScriptValueInterface::create(hello, data, transferList);
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), object.get())));
+    return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 }
 
 ConstructType JSTestSerializedScriptValueInterfaceConstructor::getConstructData(JSCell*, ConstructData& constructData)

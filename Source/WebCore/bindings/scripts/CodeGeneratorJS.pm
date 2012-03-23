@@ -3569,7 +3569,7 @@ END
             push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
             push(@$outputArray, "{\n");
 
-            push(@$outputArray, "    ${constructorClassName}* jsConstructor = static_cast<${constructorClassName}*>(exec->callee());\n");
+            push(@$outputArray, "    ${constructorClassName}* castedThis = static_cast<${constructorClassName}*>(exec->callee());\n");
 
             my $function = $dataNode->constructor;
             my @constructorArgList;
@@ -3591,12 +3591,12 @@ END
 
             if ($codeGenerator->ExtendedAttributeContains($dataNode->extendedAttributes->{"CallWith"}, "ScriptExecutionContext")) {
                 push(@constructorArgList, "context");
-                push(@$outputArray, "    ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();\n");
+                push(@$outputArray, "    ScriptExecutionContext* context = castedThis->scriptExecutionContext();\n");
                 push(@$outputArray, "    if (!context)\n");
                 push(@$outputArray, "        return throwVMError(exec, createReferenceError(exec, \"${interfaceName} constructor associated document is unavailable\"));\n");
             }
             if ($generatingNamedConstructor) {
-                push(@constructorArgList, "jsConstructor->document()");
+                push(@constructorArgList, "castedThis->document()");
             }
 
             my $index = 0;
@@ -3623,7 +3623,7 @@ END
                 push(@$outputArray, "    }\n");
             }
 
-            push(@$outputArray, "    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), object.get())));\n");
+            push(@$outputArray, "    return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));\n");
             push(@$outputArray, "}\n\n");
         }
 

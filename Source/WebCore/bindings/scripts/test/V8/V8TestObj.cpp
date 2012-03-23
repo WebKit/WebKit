@@ -1991,8 +1991,13 @@ v8::Handle<v8::Value> V8TestObj::constructorCallback(const v8::Arguments& args)
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    if (args.Length() <= 0 || !args[0]->IsFunction())
+        return throwError(TYPE_MISMATCH_ERR);
+    RefPtr<TestCallback> testCallback = V8TestCallback::create(args[0], getScriptExecutionContext());
 
-    RefPtr<TestObj> impl = TestObj::create();
+    RefPtr<TestObj> impl = TestObj::create(testCallback);
     v8::Handle<v8::Object> wrapper = args.Holder();
 
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());

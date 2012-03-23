@@ -122,7 +122,7 @@ bool JSTestInterfaceConstructor::getOwnPropertyDescriptor(JSObject* object, Exec
 
 EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterface(ExecState* exec)
 {
-    JSTestInterfaceConstructor* jsConstructor = static_cast<JSTestInterfaceConstructor*>(exec->callee());
+    JSTestInterfaceConstructor* castedThis = static_cast<JSTestInterfaceConstructor*>(exec->callee());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
@@ -132,7 +132,7 @@ EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterfac
     const String& str2(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
+    ScriptExecutionContext* context = castedThis->scriptExecutionContext();
     if (!context)
         return throwVMError(exec, createReferenceError(exec, "TestInterface constructor associated document is unavailable"));
     RefPtr<TestInterface> object = TestInterface::create(context, str1, str2, ec);
@@ -140,7 +140,7 @@ EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterfac
         setDOMException(exec, ec);
         return JSValue::encode(JSValue());
     }
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), object.get())));
+    return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 }
 
 ConstructType JSTestInterfaceConstructor::getConstructData(JSCell*, ConstructData& constructData)

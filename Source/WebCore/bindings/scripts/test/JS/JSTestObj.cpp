@@ -205,7 +205,7 @@ void JSTestObjConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* gl
     Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestObjPrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
+    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestObjConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -220,9 +220,16 @@ bool JSTestObjConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState*
 
 EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::constructJSTestObj(ExecState* exec)
 {
-    JSTestObjConstructor* jsConstructor = static_cast<JSTestObjConstructor*>(exec->callee());
-    RefPtr<TestObj> object = TestObj::create();
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), object.get())));
+    JSTestObjConstructor* castedThis = static_cast<JSTestObjConstructor*>(exec->callee());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+    if (exec->argumentCount() <= 0 || !exec->argument(0).isFunction()) {
+        setDOMException(exec, TYPE_MISMATCH_ERR);
+        return JSValue::encode(jsUndefined());
+    }
+    RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(exec->argument(0)), castedThis->globalObject());
+    RefPtr<TestObj> object = TestObj::create(testCallback);
+    return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 }
 
 ConstructType JSTestObjConstructor::getConstructData(JSCell*, ConstructData& constructData)
