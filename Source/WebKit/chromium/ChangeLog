@@ -1,3 +1,9 @@
+2012-03-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium DEPS roll r127913:r128426.
+
+        * DEPS:
+
 2012-03-22  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Target surface should be damaged for a new layers even when layer had no changes
