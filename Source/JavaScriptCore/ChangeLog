@@ -1,3 +1,18 @@
+2012-03-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        BitVector::resizeOutOfLine doesn't memset when converting an inline buffer
+        https://bugs.webkit.org/show_bug.cgi?id=82012
+
+        Reviewed by Filip Pizlo.
+
+        Initialize out-of-line buffers while extending an inline buffer. Also export symbols to be used in WebCore.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::resizeOutOfLine):
+        * wtf/BitVector.h:
+        (BitVector):
+        (OutOfLineBits):
+
 2012-03-22  Michael Saboff  <msaboff@apple.com>
 
         ExecutableAllocator::memoryPressureMultiplier() might can return NaN

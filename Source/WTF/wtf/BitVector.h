@@ -104,9 +104,9 @@ public:
     }
     
     // Like ensureSize(), but supports reducing the size of the bitvector.
-    void resize(size_t numBits);
+    WTF_EXPORT_PRIVATE void resize(size_t numBits);
     
-    void clearAll();
+    WTF_EXPORT_PRIVATE void clearAll();
 
     bool quickGet(size_t bit) const
     {
@@ -193,9 +193,9 @@ private:
         uintptr_t* bits() { return bitwise_cast<uintptr_t*>(this + 1); }
         const uintptr_t* bits() const { return bitwise_cast<const uintptr_t*>(this + 1); }
         
-        static OutOfLineBits* create(size_t numBits);
+        static WTF_EXPORT_PRIVATE OutOfLineBits* create(size_t numBits);
         
-        static void destroy(OutOfLineBits*);
+        static WTF_EXPORT_PRIVATE void destroy(OutOfLineBits*);
 
     private:
         OutOfLineBits(size_t numBits)
@@ -211,8 +211,8 @@ private:
     const OutOfLineBits* outOfLineBits() const { return bitwise_cast<const OutOfLineBits*>(m_bitsOrPointer << 1); }
     OutOfLineBits* outOfLineBits() { return bitwise_cast<OutOfLineBits*>(m_bitsOrPointer << 1); }
     
-    void resizeOutOfLine(size_t numBits);
-    void setSlow(const BitVector& other);
+    WTF_EXPORT_PRIVATE void resizeOutOfLine(size_t numBits);
+    WTF_EXPORT_PRIVATE void setSlow(const BitVector& other);
     
     uintptr_t* bits()
     {

@@ -89,13 +89,14 @@ void BitVector::resizeOutOfLine(size_t numBits)
 {
     ASSERT(numBits > maxInlineBits());
     OutOfLineBits* newOutOfLineBits = OutOfLineBits::create(numBits);
+    size_t newNumWords = newOutOfLineBits->numWords();
     if (isInline()) {
         // Make sure that all of the bits are zero in case we do a no-op resize.
         *newOutOfLineBits->bits() = m_bitsOrPointer & ~(static_cast<uintptr_t>(1) << maxInlineBits());
+        memset(newOutOfLineBits->bits() + 1, 0, (newNumWords - 1) * sizeof(void*));
     } else {
         if (numBits > size()) {
             size_t oldNumWords = outOfLineBits()->numWords();
-            size_t newNumWords = newOutOfLineBits->numWords();
             memcpy(newOutOfLineBits->bits(), outOfLineBits()->bits(), oldNumWords * sizeof(void*));
             memset(newOutOfLineBits->bits() + oldNumWords, 0, (newNumWords - oldNumWords) * sizeof(void*));
         } else
