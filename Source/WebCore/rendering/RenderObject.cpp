@@ -2839,6 +2839,9 @@ CursorDirective RenderObject::getCursor(const LayoutPoint&, Cursor&) const
 
 bool RenderObject::canUpdateSelectionOnRootLineBoxes()
 {
+    if (needsLayout())
+        return false;
+
     RenderBlock* containingBlock = this->containingBlock();
     return containingBlock ? !containingBlock->needsLayout() : true;
 }

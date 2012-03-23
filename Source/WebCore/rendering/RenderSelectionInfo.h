@@ -62,7 +62,7 @@ class RenderSelectionInfo : public RenderSelectionInfoBase {
 public:
     RenderSelectionInfo(RenderObject* o, bool clipToVisibleContent)
         : RenderSelectionInfoBase(o)
-        , m_rect(o->needsLayout() ? LayoutRect() : o->selectionRectForRepaint(m_repaintContainer, clipToVisibleContent))
+        , m_rect(o->canUpdateSelectionOnRootLineBoxes() ? o->selectionRectForRepaint(m_repaintContainer, clipToVisibleContent) : LayoutRect())
     {
     }
     
@@ -83,7 +83,7 @@ class RenderBlockSelectionInfo : public RenderSelectionInfoBase {
 public:
     RenderBlockSelectionInfo(RenderBlock* b)
         : RenderSelectionInfoBase(b)
-        , m_rects(b->needsLayout() ? GapRects() : block()->selectionGapRectsForRepaint(m_repaintContainer))
+        , m_rects(b->canUpdateSelectionOnRootLineBoxes() ? block()->selectionGapRectsForRepaint(m_repaintContainer) : GapRects())
     { 
     }
 
