@@ -27,7 +27,8 @@ module audio {
         Conditional=WEB_AUDIO,
         JSGenerateToJSObject
     ] RealtimeAnalyserNode : AudioNode {
-        attribute unsigned long fftSize;
+        attribute unsigned long fftSize
+            setter raises(DOMException);
         readonly attribute unsigned long frequencyBinCount;
 
         // minDecibels / maxDecibels represent the range to scale the FFT analysis data for conversion to unsigned byte values.

@@ -18,21 +18,32 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 
-var doTest = function(fftSize) {
+var doTest = function(fftSize, illegal) {
     var c = new webkitAudioContext(1, 1000, 44100);
     var a = c.createAnalyser();
-    a.fftSize = fftSize;
+    try {
+        a.fftSize = fftSize;
+        if (illegal)
+           testFailed("No exception thrown for illegal fftSize " + fftSize + ".");
+        else
+           testPassed("Successfully set legal fftSize " +  fftSize + ".");
+    } catch(e) {
+        testPassed("Exception thrown for illegal fftSize " + fftSize + ".");
+    }
     // This arbitrary size does not affect the correctness of the test.
     var arr = new Float32Array(100);
     a.getFloatFrequencyData(arr);
 }
 
-doTest(-1);
-doTest(0);
-doTest(1);
+doTest(-1, true);
+doTest(0, true);
+doTest(1, true);
 for (var i = 2; i <= 0x20000; i *= 2) {
-    doTest(i);
-    doTest(i + 1);
+	if (i >= 128 && i <= 2048)
+        doTest(i, false);
+    else
+        doTest(i, true);
+    doTest(i + 1, true);
 }
 
 if (window.layoutTestController)

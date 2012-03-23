@@ -44,7 +44,7 @@ public:
     void reset();
 
     size_t fftSize() const { return m_fftSize; }
-    void setFftSize(size_t size);
+    bool setFftSize(size_t);
 
     unsigned frequencyBinCount() const { return m_fftSize / 2; }
 

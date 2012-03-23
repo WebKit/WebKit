@@ -78,7 +78,7 @@ void RealtimeAnalyser::reset()
     m_magnitudeBuffer.zero();
 }
 
-void RealtimeAnalyser::setFftSize(size_t size)
+bool RealtimeAnalyser::setFftSize(size_t size)
 {
     ASSERT(isMainThread());
 
@@ -86,10 +86,8 @@ void RealtimeAnalyser::setFftSize(size_t size)
     unsigned log2size = static_cast<unsigned>(log2(size));
     bool isPOT(1UL << log2size == size);
 
-    if (!isPOT || size > MaxFFTSize || size < MinFFTSize) {
-        // FIXME: It would be good to also set an exception.
-        return;
-    }
+    if (!isPOT || size > MaxFFTSize || size < MinFFTSize)
+        return false;
 
     if (m_fftSize != size) {
         m_analysisFrame = adoptPtr(new FFTFrame(size));
@@ -97,6 +95,8 @@ void RealtimeAnalyser::setFftSize(size_t size)
         m_magnitudeBuffer.allocate(size / 2);
         m_fftSize = size;
     }
+
+    return true;
 }
 
 void RealtimeAnalyser::writeInput(AudioBus* bus, size_t framesToProcess)

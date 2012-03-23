@@ -30,6 +30,7 @@
 
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "ExceptionCode.h"
 
 namespace WebCore {
 
@@ -81,6 +82,12 @@ void RealtimeAnalyserNode::pullInputs(size_t framesToProcess)
 void RealtimeAnalyserNode::reset()
 {
     m_analyser.reset();
+}
+
+void RealtimeAnalyserNode::setFftSize(unsigned int size, ExceptionCode& ec)
+{
+    if (!m_analyser.setFftSize(size))
+        ec = NOT_SUPPORTED_ERR;
 }
 
 } // namespace WebCore

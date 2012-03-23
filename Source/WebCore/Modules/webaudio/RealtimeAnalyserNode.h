@@ -47,7 +47,7 @@ public:
 
     // Javascript bindings
     unsigned int fftSize() const { return m_analyser.fftSize(); }
-    void setFftSize(unsigned int size) { m_analyser.setFftSize(size); }
+    void setFftSize(unsigned int size, ExceptionCode&);
 
     unsigned frequencyBinCount() const { return m_analyser.frequencyBinCount(); }
 
