@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: Refused to execute a JavaScript script. Source code of script found within request.
+
+

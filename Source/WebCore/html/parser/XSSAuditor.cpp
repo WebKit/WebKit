@@ -516,17 +516,23 @@ String XSSAuditor::decodedSnippetForAttribute(const HTMLToken& token, const HTML
     String decodedSnippet = fullyDecodeString(m_parser->sourceForToken(token).substring(start, end - start), m_parser->document()->decoder());
     decodedSnippet.truncate(kMaximumFragmentLengthTarget);
     if (treatment == SrcLikeAttribute) {
-        int slashCount;
-        size_t currentLength;
-        // Characters following the first ?, #, or third slash may come from 
-        // the page itself and can be merely ignored by an attacker's server
-        // when a remote script or script-like resource is requested.
-        for (slashCount = 0, currentLength = 0; currentLength < decodedSnippet.length(); ++currentLength) {
-            if (decodedSnippet[currentLength] == '?' || decodedSnippet[currentLength] == '#'
-                || ((decodedSnippet[currentLength] == '/' || decodedSnippet[currentLength] == '\\') && ++slashCount > 2)) {
+        int slashCount = 0;
+        bool commaSeen = false;
+        // In HTTP URLs, characters following the first ?, #, or third slash may come from 
+        // the page itself and can be merely ignored by an attacker's server when a remote
+        // script or script-like resource is requested. In DATA URLS, the payload starts at
+        // the first comma, and the the first /* or // may introduce a comment. Characters
+        // following this may come from the page itself and may be ignored when the script is
+        // executed. For simplicity, we don't differentiate based on URL scheme, and stop at
+        // the first # or ?, the third slash, or the first slash once a comma is seen.
+        for (size_t currentLength = 0; currentLength < decodedSnippet.length(); ++currentLength) {
+            UChar currentChar = decodedSnippet[currentLength];
+            if (currentChar == '?' || currentChar == '#' || ((currentChar == '/' || currentChar == '\\') && (commaSeen || ++slashCount > 2))) {
                 decodedSnippet.truncate(currentLength);
                 break;
             }
+            if (currentChar == ',')
+                commaSeen = true;
         }
     }
     return decodedSnippet;
