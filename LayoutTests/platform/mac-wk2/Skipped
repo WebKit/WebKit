@@ -295,6 +295,11 @@ inspector/elements/edit-dom-actions.html
 storage/open-database-creation-callback-isolated-world.html
 storage/statement-error-callback-isolated-world.html
 
+# All tests that failed more than once on the Lion WebKit2 Debug bot between r111808 and r111849
+http/tests/cookies/simple-cookies-max-age.html
+fast/events/drag-selects-image.html
+fast/workers/worker-cloneport.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
