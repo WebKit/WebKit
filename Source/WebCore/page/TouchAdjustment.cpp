@@ -119,10 +119,6 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
     unsigned length = intersectedNodes.length();
     for (unsigned i = 0; i < length; ++i) {
         Node* const node = intersectedNodes.item(i);
-        if (responderMap.contains(node))
-            // Skip nodes that are direct ancestors of other candidates. They would hit-test
-            // against the same absolute quads.
-            continue;
         Vector<Node*> visitedNodes;
         Node* respondingNode = 0;
         for (Node* visitedNode = node; visitedNode; visitedNode = visitedNode->parentOrHostNode()) {
@@ -189,7 +185,6 @@ float distanceSquaredToTargetCenterLine(const IntPoint& touchHotspot, const IntR
 bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, const IntPoint& touchHotspot, const IntRect& touchArea, SubtargetGeometryList& subtargets, DistanceFunction distanceFunction)
 {
     targetNode = 0;
-
     float bestDistanceMetric = INFINITY;
     SubtargetGeometryList::const_iterator it = subtargets.begin();
     const SubtargetGeometryList::const_iterator end = subtargets.end();
@@ -200,6 +195,10 @@ bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, 
             targetPoint = roundedIntPoint(it->quad().center());
             targetNode = node;
             bestDistanceMetric = distanceMetric;
+        } else if (distanceMetric == bestDistanceMetric) {
+            // Try to always return the inner-most element.
+            if (node->isDescendantOf(targetNode))
+                targetNode = node;
         }
     }
 

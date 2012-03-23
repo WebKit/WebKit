@@ -1,0 +1,57 @@
+<html>
+<head>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <style>
+        #div1 { position: absolute; left: 50px; top: 50px; width: 200px; height: 50px;}
+        #div2 { position: absolute; left: 50px; top: 100px; width: 200px; height: 50px;}
+    </style>
+</head>
+<body onload="runTests()">
+
+<div id=div1 onclick=doSomething>
+Some text.
+</div>
+
+<div id=div2>
+Some text. <a id=a1 href="#1">A link</a>
+</div>
+
+<p id='description'></p>
+<div id='console'></div>
+
+<script>
+    function doSomething() {
+        // Do something!
+    }
+
+    function testRoundTouch(x, y, radius)
+    {
+        var x = x - radius;
+        var y = y - radius;
+        var width = radius * 2;
+        var height = radius * 2;
+        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
+        if (adjustedNode.nodeType == 3) // TEXT node
+            adjustedNode = adjustedNode.parentNode;
+        return adjustedNode;
+    }
+    function testDirectTouches()
+    {
+        adjustedNode = testRoundTouch(200, 90, 200);
+        shouldBeEqualToString('adjustedNode.id', 'div1');
+
+    }
+    function runTests()
+    {
+        if (window.layoutTestController && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+            description('Test touch-adjustment on a block where we also touch the inner text and outside link.');
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            testDirectTouches();
+            isSuccessfullyParsed();
+            layoutTestController.notifyDone();
+        }
+    }
+</script>
+</body>
+</html>
