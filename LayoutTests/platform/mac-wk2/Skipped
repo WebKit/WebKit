@@ -320,6 +320,14 @@ css3/filters/custom/effect-custom-combined-missing.html
 fast/workers/empty-worker-nocrash.html
 svg/custom/font-face-name-without-name-attr.svg
 
+# All additional tests that crashed more than once on the Lion WebKit2 bots between r111885 and r111892
+fast/dom/Window/anonymous-slot-with-changes.html
+fast/repaint/scroll-in-clipped-layer.html
+fast/workers/shared-worker-constructor.html
+http/tests/canvas/philip/tests/security.drawImage.image.html
+platform/mac/accessibility/attributed-string-includes-highlighting.html
+svg/foreignObject/repaint-rect-coordinates.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
