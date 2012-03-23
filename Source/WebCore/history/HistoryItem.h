@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +43,10 @@ typedef struct objc_object* id;
 #include <QVariant>
 #include <QByteArray>
 #include <QDataStream>
+#endif
+
+#if PLATFORM(BLACKBERRY)
+#include "HistoryItemViewState.h"
 #endif
 
 namespace WebCore {
@@ -199,6 +204,10 @@ public:
     QDataStream& saveState(QDataStream& out, int version) const;
 #endif
 
+#if PLATFORM(BLACKBERRY)
+    HistoryItemViewState& viewState() { return m_viewState; }
+#endif
+
 #ifndef NDEBUG
     int showTree() const;
     int showTreeWithIndent(unsigned indentLevel) const;
@@ -289,6 +298,9 @@ private:
     QVariant m_userData;
 #endif
 
+#if PLATFORM(BLACKBERRY)
+    HistoryItemViewState m_viewState;
+#endif
 }; //class HistoryItem
 
 } //namespace WebCore
