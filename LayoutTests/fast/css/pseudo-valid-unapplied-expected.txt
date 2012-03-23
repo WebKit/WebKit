@@ -15,6 +15,7 @@ PASS getBackgroundColor('button-button') is normalColor
 PASS getBackgroundColor('button-reset') is normalColor
 PASS getBackgroundColor('progress') is normalColor
 PASS getBackgroundColor('meter') is normalColor
+PASS getBackgroundColor('option') is normalColor
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -11,6 +11,8 @@
  button { background: lime; }
  progress { background: lime; }
  meter { background: lime; }
+ option { background: lime; }
+ select { background: lime; }
 </style>
 </head>
 <body>
@@ -28,6 +30,7 @@
 <button name="button-reset" type="reset">Lorem ipsum</button>
 <progress id="progress" value=50 max=100>50</progress>
 <meter id="meter" value=50 max=100>50</meter>
+<select id="select" required><option id="option" value="1">One</option></select>
 </form>
 <div id="console"></div>
 <script>
@@ -52,6 +55,7 @@ var names = [
     "button-reset",
     "progress",
     "meter",
+    "option",
 ];
 
 var normalColor = "rgb(0, 255, 0)";
