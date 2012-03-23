@@ -231,11 +231,13 @@ void QtViewportInteractionEngine::scaleAnimationStateChanged(QAbstractAnimation:
 {
     switch (newState) {
     case QAbstractAnimation::Running:
+        m_flickProvider->cancelFlick();
         if (!m_scaleUpdateDeferrer)
             m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
         break;
     case QAbstractAnimation::Stopped:
         m_scaleUpdateDeferrer.clear();
+        m_flickProvider->contentItem()->parentItem()->setProperty("interactive", true);
         break;
     default:
         break;
@@ -534,6 +536,9 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
 
     m_hadUserInteraction = true;
 
+    m_flickProvider->cancelFlick();
+    m_flickProvider->contentItem()->parentItem()->setProperty("interactive", false);
+
     m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
 
     m_lastPinchCenterInViewportCoordinates = pinchCenterInViewportCoordinates;
@@ -574,8 +579,12 @@ void QtViewportInteractionEngine::pinchGestureEnded()
 
     m_pinchStartScale = -1;
     // Clear the update deferrer now if we're in our final position and there won't be any animation to clear it later.
+    if (ensureContentWithinViewportBoundary()) {
     if (ensureContentWithinViewportBoundary())
         m_scaleUpdateDeferrer.clear();
+        m_flickProvider->cancelFlick();
+        m_flickProvider->contentItem()->parentItem()->setProperty("interactive", true);
+    }
 }
 
 void QtViewportInteractionEngine::itemSizeChanged()

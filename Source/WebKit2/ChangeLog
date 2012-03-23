@@ -1,3 +1,20 @@
+2012-03-23  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Disable the flickable when pinching.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Set the interactivity of the internal flickable to false
+        when pinching so that it does not react to mouse events
+        which might break pinch zoom.
+        This is a temporal workaround and needed until the event
+        propagation in QtQuick is fixed.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::scaleAnimationStateChanged):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::QtViewportInteractionEngine::pinchGestureEnded):
+
 2012-03-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r111754): plugins/reloadplugins-and-pages.html fails on all platforms
