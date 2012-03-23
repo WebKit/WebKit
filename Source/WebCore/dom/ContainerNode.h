@@ -227,6 +227,15 @@ inline Node* Node::lastChild() const
     return toContainerNode(this)->lastChild();
 }
 
+typedef Vector<RefPtr<Node>, 11> NodeVector;
+
+inline void getChildNodes(Node* node, NodeVector& nodes)
+{
+    ASSERT(!nodes.size());
+    for (Node* child = node->firstChild(); child; child = child->nextSibling())
+        nodes.append(child);
+}
+
 } // namespace WebCore
 
 #endif // ContainerNode_h

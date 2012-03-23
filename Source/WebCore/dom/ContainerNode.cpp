@@ -55,17 +55,10 @@ typedef pair<RefPtr<Node>, unsigned> CallbackParameters;
 typedef pair<NodeCallback, CallbackParameters> CallbackInfo;
 typedef Vector<CallbackInfo> NodeCallbackQueue;
 
-typedef Vector<RefPtr<Node>, 11> NodeVector;
 static NodeCallbackQueue* s_postAttachCallbackQueue;
 
 static size_t s_attachDepth;
 static bool s_shouldReEnableMemoryCacheCallsAfterAttach;
-
-static inline void collectNodes(Node* node, NodeVector& nodes)
-{
-    for (Node* child = node->firstChild(); child; child = child->nextSibling())
-        nodes.append(child);
-}
 
 static void collectTargetNodes(Node* node, NodeVector& nodes)
 {
@@ -73,7 +66,7 @@ static void collectTargetNodes(Node* node, NodeVector& nodes)
         nodes.append(node);
         return;
     }
-    collectNodes(node, nodes);
+    getChildNodes(node, nodes);
 }
 
 void ContainerNode::removeAllChildren()
@@ -84,7 +77,7 @@ void ContainerNode::removeAllChildren()
 void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 {
     NodeVector children;
-    collectNodes(oldParent, children);
+    getChildNodes(oldParent, children);
     oldParent->removeAllChildren();
 
     for (unsigned i = 0; i < children.size(); ++i) {
@@ -353,7 +346,7 @@ void ContainerNode::willRemove()
     RefPtr<Node> protect(this);
 
     NodeVector children;
-    collectNodes(this, children);
+    getChildNodes(this, children);
     for (size_t i = 0; i < children.size(); ++i) {
         if (children[i]->parentNode() != this) // Check for child being removed from subtree while removing.
             continue;
@@ -378,7 +371,7 @@ static void willRemoveChildren(ContainerNode* container)
     container->document()->nodeChildrenWillBeRemoved(container);
 
     NodeVector children;
-    collectNodes(container, children);
+    getChildNodes(container, children);
 
 #if ENABLE(MUTATION_OBSERVERS)
     ChildListMutationScope mutation(container);
@@ -757,7 +750,7 @@ void ContainerNode::insertedIntoDocument()
     insertedIntoTree(false);
 
     NodeVector children;
-    collectNodes(this, children);
+    getChildNodes(this, children);
     for (size_t i = 0; i < children.size(); ++i) {
         // If we have been removed from the document during this loop, then
         // we don't want to tell the rest of our children that they've been
@@ -778,7 +771,7 @@ void ContainerNode::removedFromDocument()
     removedFromTree(false);
 
     NodeVector children;
-    collectNodes(this, children);
+    getChildNodes(this, children);
     for (size_t i = 0; i < children.size(); ++i) {
         // If we have been added to the document during this loop, then we
         // don't want to tell the rest of our children that they've been

@@ -528,9 +528,8 @@ private:
     // Loading state.
     enum LoadState { WaitingForSource, LoadingFromSrcAttr, LoadingFromSourceElement };
     LoadState m_loadState;
-    HTMLSourceElement* m_currentSourceNode;
-    Node* m_nextChildNodeToConsider;
-    Node* sourceChildEndOfListValue() { return static_cast<Node*>(this); }
+    RefPtr<HTMLSourceElement> m_currentSourceNode;
+    RefPtr<Node> m_nextChildNodeToConsider;
 
     OwnPtr<MediaPlayer> m_player;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

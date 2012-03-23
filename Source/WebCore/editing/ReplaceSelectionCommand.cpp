@@ -60,8 +60,6 @@
 
 namespace WebCore {
 
-typedef Vector<RefPtr<Node> > NodeVector;
-
 using namespace HTMLNames;
 
 enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
