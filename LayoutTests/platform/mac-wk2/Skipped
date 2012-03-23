@@ -194,6 +194,7 @@ editing/selection/select-across-readonly-input-2.html
 editing/selection/select-across-readonly-input-3.html
 editing/selection/select-across-readonly-input-4.html
 editing/selection/select-across-readonly-input-5.html
+fast/events/drag-selects-image.html
 fast/events/remove-target-with-shadow-in-drag.html
 
 # WKTR needs an implementation of setAsynchronousSpellCheckingEnabled.
