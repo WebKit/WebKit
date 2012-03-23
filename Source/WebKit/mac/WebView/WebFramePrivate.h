@@ -136,8 +136,6 @@ typedef enum {
 
 - (NSString*)_layerTreeAsText;
 
-- (BOOL)hasGrammarMarker:(int)from length:(int)length;
-
 // The top of the accessibility tree.
 - (id)accessibilityRoot;
 

@@ -1,3 +1,17 @@
+2012-03-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Convert hasGrammarMarker to use Internals interface
+        https://bugs.webkit.org/show_bug.cgi?id=82004
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove hasGrammarMarker support, since it can support in the cross-port way
+        through the Internals interface.
+
+        * WebKit.order:
+        * WebView/WebFrame.mm:
+        * WebView/WebFramePrivate.h:
+
 2012-03-22  Benjamin Poulain  <bpoulain@apple.com>
 
         Build fix for WebHistory is busted after changing time zone

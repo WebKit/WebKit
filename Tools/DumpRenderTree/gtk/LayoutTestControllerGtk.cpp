@@ -976,11 +976,6 @@ void LayoutTestController::abortModal()
 {
 }
 
-bool LayoutTestController::hasGrammarMarker(int from, int length)
-{
-    return false;
-}
-
 void LayoutTestController::dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);

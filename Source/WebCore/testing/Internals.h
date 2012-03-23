@@ -138,6 +138,7 @@ public:
     void emitInspectorDidCancelFrame();
 
     bool hasSpellingMarker(Document*, int from, int length, ExceptionCode&);
+    bool hasGrammarMarker(Document*, int from, int length, ExceptionCode&);
 
     static const char* internalsId;
 

@@ -743,12 +743,6 @@ void LayoutTestController::abortModal()
     notImplemented();
 }
 
-bool LayoutTestController::hasGrammarMarker(int, int)
-{
-    notImplemented();
-    return false;
-}
-
 void LayoutTestController::dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
 {
     DumpRenderTreeSupportEfl::dumpConfigurationForViewport(browser->mainView(),

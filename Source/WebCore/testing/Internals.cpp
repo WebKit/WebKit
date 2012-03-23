@@ -783,4 +783,12 @@ unsigned Internals::numberOfLiveDocuments() const
 }
 #endif // ENABLE(INSPECTOR)
 
+bool Internals::hasGrammarMarker(Document* document, int from, int length, ExceptionCode&)
+{
+    if (!document || !document->frame())
+        return 0;
+
+    return document->frame()->editor()->selectionStartHasMarkerFor(DocumentMarker::Grammar, from, length);
+}
+
 }

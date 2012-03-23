@@ -328,8 +328,6 @@ public:
 
     void abortModal();
 
-    bool hasGrammarMarker(int from, int length);
-
     void dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight);
 
     static void setSerializeHTTPLoads(bool serialize);

@@ -550,12 +550,6 @@ void LayoutTestController::abortModal()
 {
 }
 
-bool LayoutTestController::hasGrammarMarker(int, int)
-{
-    // FIXME: Implement
-    return false;
-}
-
 void LayoutTestController::dumpConfigurationForViewport(int /*deviceDPI*/, int /*deviceWidth*/, int /*deviceHeight*/, int /*availableWidth*/, int /*availableHeight*/)
 {
     // FIXME: Implement

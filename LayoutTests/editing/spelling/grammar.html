@@ -24,7 +24,7 @@ function editingTest() {
     document.execCommand("InsertText", false, "I have a issue.");
 
     if (window.layoutTestController) {
-        if (layoutTestController.hasGrammarMarker(7, 1))
+        if (internals.hasGrammarMarker(document, 7, 1))
             log("PASS");
         else
             log("FAIL");

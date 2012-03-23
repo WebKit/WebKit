@@ -114,6 +114,7 @@ module window {
         void emitInspectorDidCancelFrame();
 
         boolean hasSpellingMarker(in Document document, in long from, in long length) raises (DOMException);
+        boolean hasGrammarMarker(in Document document, in long from, in long length) raises (DOMException);
 
         readonly attribute InternalSettings settings;
 

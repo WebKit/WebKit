@@ -792,14 +792,6 @@ int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
     return DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page());
 }
 
-bool LayoutTestController::hasGrammarMarker(int from, int length)
-{
-    if (!mainFrame)
-        return false;
-
-    return mainFrame->editor()->selectionStartHasMarkerFor(WebCore::DocumentMarker::Grammar, from, length);
-}
-
 void LayoutTestController::dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
 {
     if (!mainFrame)

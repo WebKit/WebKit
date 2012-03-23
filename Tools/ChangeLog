@@ -1,3 +1,24 @@
+2012-03-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Convert hasGrammarMarker to use Internals interface
+        https://bugs.webkit.org/show_bug.cgi?id=82004
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove hasGrammarMarker functions, because it is able to work in the
+        cross-port way through the Internals interface.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp:
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+
 2012-03-22  Adam Barth  <abarth@webkit.org>
 
         sync-master-with-upstream creates non-linear git history
