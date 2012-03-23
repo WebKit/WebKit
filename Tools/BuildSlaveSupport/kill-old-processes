@@ -63,6 +63,7 @@ def main():
         "i686-apple-darwin10-gcc-4.2.1"
         "jsc",
         "make",
+        "pboard", # FIXME: https://bugs.webkit.org/show_bug.cgi?id=81012
         "per5.12",
         "perl",
         "Problem Reporter",
