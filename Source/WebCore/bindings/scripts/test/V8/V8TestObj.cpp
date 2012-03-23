@@ -1404,7 +1404,7 @@ static v8::Handle<v8::Value> methodWithCallbackArgCallback(const v8::Arguments& 
     if (args.Length() < 1)
         return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    if (args.Length() <= 0 || !args[0]->IsObject())
+    if (args.Length() <= 0 || !args[0]->IsFunction())
         return throwError(TYPE_MISMATCH_ERR);
     RefPtr<TestCallback> callback = V8TestCallback::create(args[0], getScriptExecutionContext());
     imp->methodWithCallbackArg(callback);
@@ -1418,7 +1418,7 @@ static v8::Handle<v8::Value> methodWithNonCallbackArgAndCallbackArgCallback(cons
         return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, nonCallback, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    if (args.Length() <= 1 || !args[1]->IsObject())
+    if (args.Length() <= 1 || !args[1]->IsFunction())
         return throwError(TYPE_MISMATCH_ERR);
     RefPtr<TestCallback> callback = V8TestCallback::create(args[1], getScriptExecutionContext());
     imp->methodWithNonCallbackArgAndCallbackArg(nonCallback, callback);
@@ -1431,7 +1431,7 @@ static v8::Handle<v8::Value> methodWithCallbackAndOptionalArgCallback(const v8::
     TestObj* imp = V8TestObj::toNative(args.Holder());
     RefPtr<TestCallback> callback;
     if (args.Length() > 0 && !args[0]->IsNull() && !args[0]->IsUndefined()) {
-        if (!args[0]->IsObject())
+        if (!args[0]->IsFunction())
             return throwError(TYPE_MISMATCH_ERR);
         callback = V8TestCallback::create(args[0], getScriptExecutionContext());
     }
@@ -1530,7 +1530,7 @@ static v8::Handle<v8::Value> overloadedMethod5Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    if (args.Length() <= 0 || !args[0]->IsObject())
+    if (args.Length() <= 0 || !args[0]->IsFunction())
         return throwError(TYPE_MISMATCH_ERR);
     RefPtr<TestCallback> callback = V8TestCallback::create(args[0], getScriptExecutionContext());
     imp->overloadedMethod(callback);
@@ -1570,7 +1570,7 @@ static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
         return overloadedMethod3Callback(args);
     if (args.Length() == 1)
         return overloadedMethod4Callback(args);
-    if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsObject())))
+    if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsFunction())))
         return overloadedMethod5Callback(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || V8DOMStringList::HasInstance(args[0]))))
         return overloadedMethod6Callback(args);

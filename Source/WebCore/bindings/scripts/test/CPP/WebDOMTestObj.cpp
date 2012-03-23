@@ -41,7 +41,6 @@
 #include "WebDOMd.h"
 #include "WebDOMe.h"
 #include "WebDOMsequence.h"
-#include "WebDOMsequence<ScriptProfile>.h"
 #include "WebExceptionHandler.h"
 #include "WebNativeEventListener.h"
 #include "a.h"
@@ -51,7 +50,6 @@
 #include "d.h"
 #include "e.h"
 #include "sequence.h"
-#include "sequence<ScriptProfile>.h"
 #include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -235,22 +233,6 @@ void WebDOMTestObj::setTestObjAttr(const WebDOMTestObj& newTestObjAttr)
         return;
 
     impl()->setTestObjAttr(toWebCore(newTestObjAttr));
-}
-
-WebDOMsequence<ScriptProfile> WebDOMTestObj::sequenceAttr() const
-{
-    if (!impl())
-        return WebDOMsequence<ScriptProfile>();
-
-    return toWebKit(WTF::getPtr(impl()->sequenceAttr()));
-}
-
-void WebDOMTestObj::setSequenceAttr(const WebDOMsequence<ScriptProfile>& newSequenceAttr)
-{
-    if (!impl())
-        return;
-
-    impl()->setSequenceAttr(toWebCore(newSequenceAttr));
 }
 
 WebDOMTestObj WebDOMTestObj::XMLObjAttr() const
@@ -703,14 +685,6 @@ void WebDOMTestObj::methodWithSequenceArg(const WebDOMsequence& )
         return;
 
     impl()->methodWithSequenceArg(toWebCore());
-}
-
-WebDOMsequence<ScriptProfile> WebDOMTestObj::methodReturningSequence(int intArg)
-{
-    if (!impl())
-        return WebDOMsequence<ScriptProfile>();
-
-    return toWebKit(WTF::getPtr(impl()->methodReturningSequence(intArg)));
 }
 
 WebDOMTestObj WebDOMTestObj::methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg)
