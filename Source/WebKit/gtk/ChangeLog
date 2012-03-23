@@ -1,3 +1,9 @@
+2012-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r111707.
+
+        * WebCoreSupport/UserMediaClientGtk.h:
+
 2012-03-22  Mao Yujie  <yujie.mao@intel.com>
 
         [GTK] Add MediaStream feature to avoid MediaStream test failure

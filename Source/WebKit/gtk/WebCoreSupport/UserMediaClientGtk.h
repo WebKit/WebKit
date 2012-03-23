@@ -20,6 +20,8 @@
 #ifndef UserMediaClientGtk_h
 #define UserMediaClientGtk_h
 
+#if ENABLE(MEDIA_STREAM)
+
 #include "UserMediaClient.h"
 
 namespace WebKit {
@@ -35,5 +37,7 @@ public:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(MEDIA_STREAM)
 
 #endif // UserMediaClientGtk_h
