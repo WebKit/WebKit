@@ -117,6 +117,12 @@
     return IMPL->callbackWithStringList(core(listParam));
 }
 
+- (BOOL)callbackWithBoolean:(BOOL)boolParam
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->callbackWithBoolean(boolParam);
+}
+
 @end
 
 WebCore::TestCallback* core(DOMTestCallback *wrapper)

@@ -135,6 +135,16 @@ webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, 
     return res;
 }
 
+gboolean
+webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboolean bool_param)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestCallback * item = WebKit::core(self);
+    gboolean res = item->callbackWithBoolean(bool_param);
+    return res;
+}
+
 
 G_DEFINE_TYPE(WebKitDOMTestCallback, webkit_dom_test_callback, WEBKIT_TYPE_DOM_OBJECT)
 

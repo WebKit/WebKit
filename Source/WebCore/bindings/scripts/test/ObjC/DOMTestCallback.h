@@ -43,6 +43,7 @@
 - (int)callbackWithNonBoolReturnType:(DOMClass3 *)class3Param;
 - (int)customCallback:(DOMClass5 *)class5Param class6Param:(DOMClass6 *)class6Param;
 - (BOOL)callbackWithStringList:(DOMDOMStringList *)listParam;
+- (BOOL)callbackWithBoolean:(BOOL)boolParam;
 @end
 
 #endif

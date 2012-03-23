@@ -128,6 +128,24 @@ bool JSTestCallback::callbackWithStringList(DOMStringList* listParam)
     return !raisedException;
 }
 
+bool JSTestCallback::callbackWithBoolean(bool boolParam)
+{
+    if (!canInvokeCallback())
+        return true;
+
+    RefPtr<JSTestCallback> protect(this);
+
+    JSLock lock(SilenceAssertionsOnly);
+
+    ExecState* exec = m_data->globalObject()->globalExec();
+    MarkedArgumentBuffer args;
+    args.append(jsBoolean(boolParam));
+
+    bool raisedException = false;
+    m_data->invokeCallback(args, &raisedException);
+    return !raisedException;
+}
+
 }
 
 #endif // ENABLE(SQL_DATABASE)

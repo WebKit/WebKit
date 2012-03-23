@@ -2715,6 +2715,8 @@ sub GenerateCallbackImplementation
                 my $paramName = $param->name;
                 if ($param->type eq "DOMString") {
                     push(@implContent, "    args.append(jsString(exec, ${paramName}));\n");
+                } elsif ($param->type eq "boolean") {
+                    push(@implContent, "    args.append(jsBoolean(${paramName}));\n");
                 } else {
                     push(@implContent, "    args.append(toJS(exec, m_data->globalObject(), ${paramName}));\n");
                 }

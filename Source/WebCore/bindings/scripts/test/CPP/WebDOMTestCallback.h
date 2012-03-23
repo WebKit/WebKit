@@ -50,6 +50,7 @@ public:
     bool callbackWithClass2Param(const WebDOMClass2& class2Param, const WebDOMString& strArg);
     int callbackWithNonBoolReturnType(const WebDOMClass3& class3Param);
     bool callbackWithStringList(const WebDOMDOMStringList& listParam);
+    bool callbackWithBoolean(bool boolParam);
 
     WebCore::TestCallback* impl() const;
 

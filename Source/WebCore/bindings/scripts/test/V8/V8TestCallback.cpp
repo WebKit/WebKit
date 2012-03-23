@@ -163,6 +163,34 @@ bool V8TestCallback::callbackWithStringList(RefPtr<DOMStringList> listParam)
     return !invokeCallback(m_callback, 1, argv, callbackReturnValue, scriptExecutionContext());
 }
 
+bool V8TestCallback::callbackWithBoolean(bool boolParam)
+{
+    if (!canInvokeCallback())
+        return true;
+
+    v8::HandleScope handleScope;
+
+    v8::Handle<v8::Context> v8Context = toV8Context(scriptExecutionContext(), m_worldContext);
+    if (v8Context.IsEmpty())
+        return true;
+
+    v8::Context::Scope scope(v8Context);
+
+    v8::Handle<v8::Value> boolParamHandle = v8Boolean(boolParam);
+    if (boolParamHandle.IsEmpty()) {
+        if (!isScriptControllerTerminating())
+            CRASH();
+        return true;
+    }
+
+    v8::Handle<v8::Value> argv[] = {
+        boolParamHandle
+    };
+
+    bool callbackReturnValue = false;
+    return !invokeCallback(m_callback, 1, argv, callbackReturnValue, scriptExecutionContext());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SQL_DATABASE)

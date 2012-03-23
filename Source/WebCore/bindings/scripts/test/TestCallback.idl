@@ -39,5 +39,6 @@ module test {
       long callbackWithNonBoolReturnType(in Class3 class3Param);
       [Custom] long customCallback(in Class5 class5Param, in Class6 class6Param);
       boolean callbackWithStringList(in DOMStringList listParam);
+      boolean callbackWithBoolean(in boolean boolParam);
     };
 }

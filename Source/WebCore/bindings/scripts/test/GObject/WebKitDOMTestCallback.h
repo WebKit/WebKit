@@ -101,6 +101,17 @@ webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallbac
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, WebKitDOMDOMStringList* list_param);
 
+/**
+ * webkit_dom_test_callback_callback_with_boolean:
+ * @self: A #WebKitDOMTestCallback
+ * @bool_param: A #gboolean
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gboolean
+webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboolean bool_param);
+
 G_END_DECLS
 
 #endif /* WebKitDOMTestCallback_h */

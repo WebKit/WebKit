@@ -125,6 +125,14 @@ bool WebDOMTestCallback::callbackWithStringList(const WebDOMDOMStringList& listP
     return impl()->callbackWithStringList(toWebCore(listParam));
 }
 
+bool WebDOMTestCallback::callbackWithBoolean(bool boolParam)
+{
+    if (!impl())
+        return false;
+
+    return impl()->callbackWithBoolean(boolParam);
+}
+
 WebCore::TestCallback* toWebCore(const WebDOMTestCallback& wrapper)
 {
     return wrapper.impl();
