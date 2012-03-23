@@ -146,6 +146,11 @@ public:
 
     void setBatteryStatus(Document*, const String& eventType, bool charging, double chargingTime, double dischargingTime, double level, ExceptionCode&);
 
+#if ENABLE(INSPECTOR)
+    unsigned numberOfLiveNodes() const;
+    unsigned numberOfLiveDocuments() const;
+#endif
+
 private:
     explicit Internals(Document*);
     DocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);

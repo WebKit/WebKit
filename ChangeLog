@@ -1,3 +1,14 @@
+2012-03-23  Dave Michael  <dmichael@chromium.org>
+
+        Relanding(r111754): HTMLPluginElement is not destroyed on reload or navigation if getNPObject is called
+        https://bugs.webkit.org/show_bug.cgi?id=80428
+
+Reviewed by Eric Seidel and Ryosuke Niwa.
+
+        Test: plugins/netscape-dom-access-and-reload.html
+
+        * Source/autotools/symbols.filter: Export a symbol for InspectorCounters::counterValue.
+
 2012-03-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r111754): plugins/reloadplugins-and-pages.html fails on all platforms

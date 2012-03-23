@@ -57,7 +57,6 @@ protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document*);
 
     virtual void detach();
-    virtual void removedFromDocument();
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 
