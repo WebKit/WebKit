@@ -475,6 +475,9 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
     if (dirtyLayerRect.isEmpty())
         return;
 
+    if (occlusion)
+        occlusion->overdrawMetrics().didPaint(m_paintRect);
+
     // Due to borders, when the paint rect is extended to tile boundaries, it
     // may end up overlapping more tiles than the original content rect. Record
     // the original tiles so we don't upload more tiles than necessary.

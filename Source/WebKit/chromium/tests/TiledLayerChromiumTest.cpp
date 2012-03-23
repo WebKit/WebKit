@@ -1125,6 +1125,7 @@ TEST(TiledLayerChromiumTest, opaqueContentsRegion)
     opaqueContents = layer->opaqueContentsRegion();
     EXPECT_TRUE(opaqueContents.isEmpty());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 20000, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
@@ -1138,6 +1139,7 @@ TEST(TiledLayerChromiumTest, opaqueContentsRegion)
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 20000 * 2, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 17100, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000 + 20000 - 17100, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
@@ -1149,6 +1151,7 @@ TEST(TiledLayerChromiumTest, opaqueContentsRegion)
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 20000 * 2, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 17100, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000 + 20000 - 17100, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
@@ -1162,6 +1165,7 @@ TEST(TiledLayerChromiumTest, opaqueContentsRegion)
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 20000 * 2 + 1, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 17100, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000 + 20000 - 17100 + 1, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
@@ -1175,8 +1179,57 @@ TEST(TiledLayerChromiumTest, opaqueContentsRegion)
     EXPECT_EQ_RECT(intersection(IntRect(10, 100, 90, 100), visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 20000 * 2 + 1  + 1, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 17100, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000 + 20000 - 17100 + 1 + 1, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
+}
+
+TEST(TiledLayerChromiumTest, pixelsPaintedMetrics)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    TestCCOcclusionTracker occluded;
+
+    // The tile size is 100x100, so this invalidates and then paints two tiles in various ways.
+
+    IntRect opaquePaintRect;
+    Region opaqueContents;
+
+    IntRect contentBounds = IntRect(0, 0, 100, 300);
+    IntRect visibleBounds = IntRect(0, 0, 100, 300);
+
+    layer->setBounds(contentBounds.size());
+    layer->setDrawTransform(TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setVisibleLayerRect(visibleBounds);
+    layer->setDrawOpacity(1);
+
+    // Invalidates and paints the whole layer.
+    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
+    layer->invalidateRect(contentBounds);
+    layer->prepareToUpdate(contentBounds, &occluded);
+    opaqueContents = layer->opaqueContentsRegion();
+    EXPECT_TRUE(opaqueContents.isEmpty());
+
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 30000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 30000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
+
+    // Invalidates an area on the top and bottom tile, which will cause us to paint the tile in the middle,
+    // even though it is not dirty and will not be uploaded.
+    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
+    layer->invalidateRect(IntRect(0, 0, 1, 1));
+    layer->invalidateRect(IntRect(50, 200, 10, 10));
+    layer->prepareToUpdate(contentBounds, &occluded);
+    opaqueContents = layer->opaqueContentsRegion();
+    EXPECT_TRUE(opaqueContents.isEmpty());
+
+    // The middle tile was painted even though not invalidated.
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 30000 + 60 * 210, 1);
+    // The pixels uploaded will not include the non-invalidated tile in the middle.
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 30000 + 1 + 100, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
 }
 

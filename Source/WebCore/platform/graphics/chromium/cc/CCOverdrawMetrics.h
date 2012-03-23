@@ -38,7 +38,12 @@ class CCOverdrawMetrics {
 public:
     static PassOwnPtr<CCOverdrawMetrics> create(bool recordMetricsForFrame) { return adoptPtr(new CCOverdrawMetrics(recordMetricsForFrame)); }
 
+    // Record pixels painted by WebKit into the texture updater, but does not mean the pixels were rasterized in main memory.
+    void didPaint(const IntRect& paintedRect);
+
+    // Record pixels that were not uploaded/drawn to screen.
     void didCull(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect);
+    // Record pixels that were uploaded/drawn to screen.
     void didDraw(const TransformationMatrix& transformToTarget, const IntRect& afterCullRect, const IntRect& opaqueRect);
 
     void recordMetrics(const CCLayerTreeHost*) const;
@@ -48,6 +53,7 @@ public:
     float pixelsDrawnOpaque() const { return m_pixelsDrawnOpaque; }
     float pixelsDrawnTranslucent() const { return m_pixelsDrawnTranslucent; }
     float pixelsCulled() const { return m_pixelsCulled; }
+    float pixelsPainted() const { return m_pixelsPainted; }
 
 private:
     explicit CCOverdrawMetrics(bool recordMetricsForFrame);
@@ -69,6 +75,8 @@ private:
     float m_pixelsDrawnTranslucent;
     // Count of pixels not drawn as they are occluded by somthing opaque.
     float m_pixelsCulled;
+    // Count of pixels that were painted due to invalidation.
+    float m_pixelsPainted;
 };
 
 } // namespace WebCore

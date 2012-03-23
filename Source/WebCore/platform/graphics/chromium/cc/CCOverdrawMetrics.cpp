@@ -42,6 +42,7 @@ CCOverdrawMetrics::CCOverdrawMetrics(bool recordMetricsForFrame)
     , m_pixelsDrawnOpaque(0)
     , m_pixelsDrawnTranslucent(0)
     , m_pixelsCulled(0)
+    , m_pixelsPainted(0)
 {
 }
 
@@ -57,6 +58,14 @@ static inline float quadArea(const FloatQuad& quad)
                        wedgeProduct(quad.p2(), quad.p3()) +
                        wedgeProduct(quad.p3(), quad.p4()) +
                        wedgeProduct(quad.p4(), quad.p1())));
+}
+
+void CCOverdrawMetrics::didPaint(const IntRect& paintedRect)
+{
+    if (!m_recordMetricsForFrame)
+        return;
+
+    m_pixelsPainted += static_cast<float>(paintedRect.width()) * paintedRect.height();
 }
 
 void CCOverdrawMetrics::didCull(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect)
@@ -100,9 +109,11 @@ void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const Lay
     const char* histogramOpaqueName = 0;
     const char* histogramTranslucentName = 0;
     const char* histogramCulledName = 0;
+    const char* histogramPaintedName = 0;
     const char* cullCounterName = 0;
     const char* opaqueCounterName = 0;
     const char* translucentCounterName = 0;
+    const char *paintedCounterName = 0;
     switch (metricsType) {
     case DRAWING:
         histogramOpaqueName = "Renderer4.drawPixelCountOpaque";
@@ -116,9 +127,11 @@ void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const Lay
         histogramOpaqueName = "Renderer4.uploadPixelCountOpaque";
         histogramTranslucentName = "Renderer4.uploadPixelCountTranslucent";
         histogramCulledName = "Renderer4.uploadPixelCountCulled";
+        histogramPaintedName = "Renderer4.pixelCountPainted";
         cullCounterName = "UploadPixelsCulled";
         opaqueCounterName = "PixelsUploadedOpaque";
         translucentCounterName = "PixelsUploadedTranslucent";
+        paintedCounterName = "PixelsPainted";
         break;
     }
     ASSERT(histogramOpaqueName);
@@ -127,9 +140,15 @@ void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const Lay
     PlatformSupport::histogramCustomCounts(histogramOpaqueName, static_cast<int>(normalization * m_pixelsDrawnOpaque), 100, 1000000, 50);
     PlatformSupport::histogramCustomCounts(histogramTranslucentName, static_cast<int>(normalization * m_pixelsDrawnTranslucent), 100, 1000000, 50);
     PlatformSupport::histogramCustomCounts(histogramCulledName, static_cast<int>(normalization * m_pixelsCulled), 100, 1000000, 50);
+    if (paintedCounterName)
+        PlatformSupport::histogramCustomCounts(histogramPaintedName, static_cast<int>(normalization * m_pixelsPainted), 100, 1000000, 50);
 
     TRACE_COUNTER_ID1("webkit", cullCounterName, layerTreeHost, m_pixelsCulled);
     TRACE_EVENT2("webkit", "CCOverdrawMetrics", opaqueCounterName, m_pixelsDrawnOpaque, translucentCounterName, m_pixelsDrawnTranslucent);
+    if (paintedCounterName) {
+        // This must be in a different scope than the TRACE_EVENT2 above.
+        TRACE_EVENT1("webkit", "CCOverdrawPaintMetrics", paintedCounterName, m_pixelsPainted);
+    }
 }
 
 } // namespace WebCore
