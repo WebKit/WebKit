@@ -585,6 +585,14 @@ WebSocketChannel::ParseFrameResult WebSocketChannel::parseFrame(WebSocketFrame& 
             payloadLength64 <<= 8;
             payloadLength64 |= static_cast<unsigned char>(*p++);
         }
+        if (extendedPayloadLengthSize == 2 && payloadLength64 <= maxPayloadLengthWithoutExtendedLengthField) {
+            fail("The minimal number of bytes MUST be used to encode the length");
+            return FrameError;
+        }
+        if (extendedPayloadLengthSize == 8 && payloadLength64 <= 0xFFFF) {
+            fail("The minimal number of bytes MUST be used to encode the length");
+            return FrameError;
+        }
     }
 
     // FIXME: UINT64_C(0x7FFFFFFFFFFFFFFF) should be used but it did not compile on Qt bots.
