@@ -180,7 +180,7 @@ TEST_F(CCDamageTrackerTest, sanityCheckTestTreeWithOneSurface)
 
     OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
 
-    EXPECT_EQ(static_cast<size_t>(2), root->renderSurface()->layerList().size());
+    EXPECT_EQ(2u, root->renderSurface()->layerList().size());
     EXPECT_EQ(1, root->renderSurface()->layerList()[0]->id());
     EXPECT_EQ(2, root->renderSurface()->layerList()[1]->id());
 
@@ -202,8 +202,8 @@ TEST_F(CCDamageTrackerTest, sanityCheckTestTreeWithTwoSurfaces)
 
     ASSERT_TRUE(child1->renderSurface());
     EXPECT_FALSE(child2->renderSurface());
-    EXPECT_EQ(static_cast<size_t>(3), root->renderSurface()->layerList().size());
-    EXPECT_EQ(static_cast<size_t>(2), child1->renderSurface()->layerList().size());
+    EXPECT_EQ(3u, root->renderSurface()->layerList().size());
+    EXPECT_EQ(2u, child1->renderSurface()->layerList().size());
 
     // The render surface for child1 only has a contentRect that encloses grandChild1 and grandChild2, because child1 does not draw content.
     EXPECT_FLOAT_RECT_EQ(FloatRect(190, 190, 16, 18), childDamageRect);
@@ -254,7 +254,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForPropertyChanges)
 
     // Sanity check - we should not have accidentally created a separate render surface for the translucent layer.
     ASSERT_FALSE(child->renderSurface());
-    ASSERT_EQ(static_cast<size_t>(2), root->renderSurface()->layerList().size());
+    ASSERT_EQ(2u, root->renderSurface()->layerList().size());
 
     // Damage should be the entire child layer in targetSurface space.
     FloatRect expectedRect = FloatRect(100, 100, 30, 30);
@@ -334,7 +334,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForAddingAndRemovingLayer)
     emulateDrawingOneFrame(root.get());
 
     // Sanity check - all 3 layers should be on the same render surface; render surfaces are tested elsewhere.
-    ASSERT_EQ(static_cast<size_t>(3), root->renderSurface()->layerList().size());
+    ASSERT_EQ(3u, root->renderSurface()->layerList().size());
 
     FloatRect rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
     EXPECT_FLOAT_RECT_EQ(FloatRect(400, 380, 6, 8), rootDamageRect);
@@ -351,6 +351,36 @@ TEST_F(CCDamageTrackerTest, verifyDamageForAddingAndRemovingLayer)
     emulateDrawingOneFrame(root.get());
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
     EXPECT_FLOAT_RECT_EQ(FloatRect(100, 100, 30, 30), rootDamageRect);
+}
+
+TEST_F(CCDamageTrackerTest, verifyDamageForNewUnchangedLayer)
+{
+    // If child2 is added to the layer tree, but it doesn't have any explicit damage of
+    // its own, it should still indeed damage the target surface.
+
+    OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
+
+    {
+        OwnPtr<CCLayerImpl> child2 = CCLayerImpl::create(3);
+        child2->setPosition(FloatPoint(400, 380));
+        child2->setAnchorPoint(FloatPoint::zero());
+        child2->setBounds(IntSize(6, 8));
+        child2->setDrawsContent(true);
+        child2->resetAllChangeTrackingForSubtree();
+        // Sanity check the initial conditions of the test, if these asserts trigger, it
+        // means the test no longer actually covers the intended scenario.
+        ASSERT_FALSE(child2->layerPropertyChanged());
+        ASSERT_TRUE(child2->updateRect().isEmpty());
+        root->addChild(child2.release());
+    }
+
+    emulateDrawingOneFrame(root.get());
+
+    // Sanity check - all 3 layers should be on the same render surface; render surfaces are tested elsewhere.
+    ASSERT_EQ(3u, root->renderSurface()->layerList().size());
+
+    FloatRect rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    EXPECT_FLOAT_RECT_EQ(FloatRect(400, 380, 6, 8), rootDamageRect);
 }
 
 TEST_F(CCDamageTrackerTest, verifyDamageForMultipleLayers)
@@ -485,7 +515,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForAddingAndRemovingRenderSurfaces)
 
     // Sanity check that there is only one surface now.
     ASSERT_FALSE(child1->renderSurface());
-    ASSERT_EQ(static_cast<size_t>(4), root->renderSurface()->layerList().size());
+    ASSERT_EQ(4u, root->renderSurface()->layerList().size());
 
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
     EXPECT_FLOAT_RECT_EQ(FloatRect(290, 290, 16, 18), rootDamageRect);
@@ -503,8 +533,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForAddingAndRemovingRenderSurfaces)
 
     // Sanity check that there is a new surface now.
     ASSERT_TRUE(child1->renderSurface());
-    EXPECT_EQ(static_cast<size_t>(3), root->renderSurface()->layerList().size());
-    EXPECT_EQ(static_cast<size_t>(2), child1->renderSurface()->layerList().size());
+    EXPECT_EQ(3u, root->renderSurface()->layerList().size());
+    EXPECT_EQ(2u, child1->renderSurface()->layerList().size());
 
     childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();

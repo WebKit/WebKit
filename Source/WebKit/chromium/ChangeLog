@@ -1,3 +1,14 @@
+2012-03-22  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Target surface should be damaged for a new layers even when layer had no changes
+        https://bugs.webkit.org/show_bug.cgi?id=81879
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::TEST_F):
+        (WebKitTests):
+
 2012-03-22  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, fix LayerRendererChromiumTest debug unit test errors

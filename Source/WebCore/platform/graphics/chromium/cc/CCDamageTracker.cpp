@@ -142,9 +142,10 @@ void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& laye
     swap(m_currentRectHistory, m_nextRectHistory);
 }
 
-FloatRect CCDamageTracker::removeRectFromCurrentFrame(int layerID)
+FloatRect CCDamageTracker::removeRectFromCurrentFrame(int layerID, bool& layerIsNew)
 {
-    // This function exists mainly for readability of the code.
+    layerIsNew = !m_currentRectHistory->contains(layerID);
+
     // take() will remove the entry from the map, or if not found, return a default (empty) rect.
     return m_currentRectHistory->take(layerID);
 }
@@ -221,13 +222,14 @@ void CCDamageTracker::extendDamageForLayer(CCLayerImpl* layer, FloatRect& target
     TransformationMatrix originTransform = layer->drawTransform();
     originTransform.translate(-0.5 * layer->bounds().width(), -0.5 * layer->bounds().height());
 
-    FloatRect oldLayerRect = removeRectFromCurrentFrame(layer->id());
+    bool layerIsNew = false;
+    FloatRect oldLayerRect = removeRectFromCurrentFrame(layer->id(), layerIsNew);
 
     FloatRect layerRectInTargetSpace = originTransform.mapRect(FloatRect(FloatPoint::zero(), layer->bounds()));
     saveRectForNextFrame(layer->id(), layerRectInTargetSpace);
 
-    if (layer->layerPropertyChanged()) {
-        // If a layer has changed, then its entire layer rect affects the target surface.
+    if (layerIsNew || layer->layerPropertyChanged()) {
+        // If a layer is new or has changed, then its entire layer rect affects the target surface.
         targetDamageRect.uniteIfNonZero(layerRectInTargetSpace);
 
         // The layer's old region is now exposed on the target surface, too.
@@ -257,13 +259,14 @@ void CCDamageTracker::extendDamageForRenderSurface(CCLayerImpl* layer, FloatRect
 
     CCRenderSurface* renderSurface = layer->renderSurface();
 
-    FloatRect oldSurfaceRect = removeRectFromCurrentFrame(layer->id());
+    bool surfaceIsNew = false;
+    FloatRect oldSurfaceRect = removeRectFromCurrentFrame(layer->id(), surfaceIsNew);
 
     FloatRect surfaceRectInTargetSpace = renderSurface->drawableContentRect(); // already includes replica if it exists.
     saveRectForNextFrame(layer->id(), surfaceRectInTargetSpace);
 
     FloatRect damageRectInLocalSpace;
-    if (renderSurface->surfacePropertyChanged()) {
+    if (surfaceIsNew || renderSurface->surfacePropertyChanged()) {
         // The entire surface contributes damage.
         damageRectInLocalSpace = renderSurface->contentRect();
 
@@ -290,7 +293,8 @@ void CCDamageTracker::extendDamageForRenderSurface(CCLayerImpl* layer, FloatRect
     if (layer->replicaLayer() && layer->replicaLayer()->maskLayer()) {
         CCLayerImpl* replicaMaskLayer = layer->replicaLayer()->maskLayer();
 
-        removeRectFromCurrentFrame(replicaMaskLayer->id());
+        bool replicaIsNew = false;
+        removeRectFromCurrentFrame(replicaMaskLayer->id(), replicaIsNew);
 
         // Compute the replica's "originTransform" that maps from the replica's origin space to the target surface origin space.
         TransformationMatrix replicaOriginTransform = layer->renderSurface()->originTransform();
@@ -302,7 +306,7 @@ void CCDamageTracker::extendDamageForRenderSurface(CCLayerImpl* layer, FloatRect
         saveRectForNextFrame(replicaMaskLayer->id(), replicaMaskLayerRect);
 
         // In the current implementation, a change in the replica mask damages the entire replica region.
-        if (replicaMaskLayer->layerPropertyChanged() || !replicaMaskLayer->updateRect().isEmpty())
+        if (replicaIsNew || replicaMaskLayer->layerPropertyChanged() || !replicaMaskLayer->updateRect().isEmpty())
             targetDamageRect.uniteIfNonZero(replicaMaskLayerRect);
     }
 }

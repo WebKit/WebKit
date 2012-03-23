@@ -54,7 +54,7 @@ private:
     FloatRect trackDamageFromSurfaceMask(CCLayerImpl* targetSurfaceMaskLayer);
     FloatRect trackDamageFromLeftoverRects();
 
-    FloatRect removeRectFromCurrentFrame(int layerID);
+    FloatRect removeRectFromCurrentFrame(int layerID, bool& layerIsNew);
     void saveRectForNextFrame(int layerID, const FloatRect& targetSpaceRect);
 
     // These helper functions are used only in trackDamageFromActiveLayers().
