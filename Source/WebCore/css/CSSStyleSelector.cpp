@@ -1160,6 +1160,8 @@ Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned& visitedNodeC
         return 0;
 #endif
     StyledElement* p = static_cast<StyledElement*>(parent);
+    if (p->inlineStyle())
+        return 0;
 #if ENABLE(SVG)
     if (p->isSVGElement() && static_cast<SVGElement*>(p)->animatedSMILStyleProperties())
         return 0;
@@ -1251,7 +1253,8 @@ bool CSSStyleSelector::canShareStyleWithControl(StyledElement* element) const
     return true;
 }
 
-static inline bool stylesEqual(const StylePropertySet* a, const StylePropertySet* b)
+// This function makes some assumptions that only make sense for attribute styles (we only compare CSSProperty::id() and CSSProperty::value().)
+static inline bool attributeStylesEqual(StylePropertySet* a, StylePropertySet* b)
 {
     if (a == b)
         return true;
@@ -1265,16 +1268,9 @@ static inline bool stylesEqual(const StylePropertySet* a, const StylePropertySet
             const CSSProperty& bProperty = b->propertyAt(j);
             if (aProperty.id() != bProperty.id())
                 continue;
-
-            // We don't check the short-hand property because long-hand vs short-hand is handled by checking the property set's count above.
-            if (aProperty.isImportant() != bProperty.isImportant()
-                || aProperty.isInherited() != bProperty.isInherited() || aProperty.isImplicit() != bProperty.isImplicit())
-                return false;
-
             // We could get a few more hits by comparing cssText() here, but that gets expensive quickly.
             if (aProperty.value() != bProperty.value())
                 return false;
-
             break;
         }
         if (j == propertyCount)
@@ -1300,15 +1296,14 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element->hasClass() != m_element->hasClass())
         return false;
+    if (element->inlineStyle())
+        return false;
 #if ENABLE(SVG)
     if (element->isSVGElement() && static_cast<SVGElement*>(element)->animatedSMILStyleProperties())
         return false;
 #endif
     if (!!element->attributeStyle() != !!m_styledElement->attributeStyle())
         return false;
-    if (!!element->inlineStyle() != !!m_styledElement->inlineStyle())
-        return false;
-
     StylePropertySet* additionalAttributeStyleA = element->additionalAttributeStyle();
     StylePropertySet* additionalAttributeStyleB = m_styledElement->additionalAttributeStyle();
     if (!additionalAttributeStyleA != !additionalAttributeStyleB)
@@ -1392,13 +1387,10 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
     if (element->hasClass() && m_element->getAttribute(classAttr) != element->getAttribute(classAttr))
         return false;
 
-    if (element->attributeStyle() && !stylesEqual(element->attributeStyle(), m_styledElement->attributeStyle()))
+    if (element->attributeStyle() && !attributeStylesEqual(element->attributeStyle(), m_styledElement->attributeStyle()))
         return false;
 
-    if (additionalAttributeStyleA && !stylesEqual(additionalAttributeStyleA, additionalAttributeStyleB))
-        return false;
-
-    if (element->inlineStyle() && !stylesEqual(element->inlineStyle(), m_styledElement->inlineStyle()))
+    if (additionalAttributeStyleA && !attributeStylesEqual(additionalAttributeStyleA, additionalAttributeStyleB))
         return false;
 
     if (element->isLink() && m_elementLinkState != style->insideLink())
@@ -1432,7 +1424,9 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
 {
     if (!m_styledElement || !m_parentStyle)
         return 0;
-
+    // If the element has inline style it is probably unique.
+    if (m_styledElement->inlineStyle())
+        return 0;
 #if ENABLE(SVG)
     if (m_styledElement->isSVGElement() && static_cast<SVGElement*>(m_styledElement)->animatedSMILStyleProperties())
         return 0;
