@@ -1070,6 +1070,12 @@
 #define ENABLE_CSS_IMAGE_SET 1
 #endif
 
+#if !defined(ENABLE_CSS_SHADERS)
+#if PLATFORM(MAC) || PLATFORM(IOS)
+#define ENABLE_CSS_SHADERS 0
+#endif
+#endif
+
 /* Compositing on the UI-process in WebKit2 */
 #if PLATFORM(QT)
 #define WTF_USE_UI_SIDE_COMPOSITING 1

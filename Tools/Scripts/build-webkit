@@ -177,7 +177,7 @@ my @features = (
       define => "ENABLE_CSS_GRID_LAYOUT", default => 0, value => \$cssGridLayoutSupport },
 
     { option => "css-shaders", desc => "Toggle CSS Shaders (within CSS Filters) support",
-      define => "ENABLE_CSS_SHADERS", default => isAppleWebKit(), value => \$cssShadersSupport },
+      define => "ENABLE_CSS_SHADERS", default => 0, value => \$cssShadersSupport },
 
     { option => "coverage", desc => "Toggle code coverage support",
       define => "", default => 0, value => \$coverageSupport },

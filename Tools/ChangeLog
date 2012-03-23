@@ -1,3 +1,15 @@
+2012-03-23  Dean Jackson  <dino@apple.com>
+
+        Disable CSS_SHADERS in Apple builds
+        https://bugs.webkit.org/show_bug.cgi?id=81996
+
+        Reviewed by Simon Fraser.
+
+        Default enableCSSShaders to be 0 on all builds that use
+        this script. Use the flag to turn it back on.
+
+        * Scripts/build-webkit:
+
 2012-03-23  Tony Chang  <tony@chromium.org>
 
         [chromium] rename newwtf target back to wtf

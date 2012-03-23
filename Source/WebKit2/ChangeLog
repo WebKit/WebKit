@@ -1,3 +1,14 @@
+2012-03-23  Dean Jackson  <dino@apple.com>
+
+        Disable CSS_SHADERS in Apple builds
+        https://bugs.webkit.org/show_bug.cgi?id=81996
+
+        Reviewed by Simon Fraser.
+
+        Remove ENABLE_CSS_SHADERS from FeatureDefines. It's now in Platform.h.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-03-23  Dave Michael  <dmichael@chromium.org>
 
         Relanding(r111754): HTMLPluginElement is not destroyed on reload or navigation if getNPObject is called
