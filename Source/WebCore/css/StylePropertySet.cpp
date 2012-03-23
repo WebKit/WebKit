@@ -647,7 +647,7 @@ void StylePropertySet::addParsedProperty(const CSSProperty& property)
 
 String StylePropertySet::asText() const
 {
-    String result = "";
+    StringBuilder result;
 
     const CSSProperty* positionXProp = 0;
     const CSSProperty* positionYProp = 0;
@@ -657,16 +657,22 @@ String StylePropertySet::asText() const
     unsigned size = m_properties.size();
     for (unsigned n = 0; n < size; ++n) {
         const CSSProperty& prop = m_properties[n];
-        if (prop.id() == CSSPropertyBackgroundPositionX)
+        switch (prop.id()) {
+        case CSSPropertyBackgroundPositionX:
             positionXProp = &prop;
-        else if (prop.id() == CSSPropertyBackgroundPositionY)
+            break;
+        case CSSPropertyBackgroundPositionY:
             positionYProp = &prop;
-        else if (prop.id() == CSSPropertyBackgroundRepeatX)
+            break;
+        case CSSPropertyBackgroundRepeatX:
             repeatXProp = &prop;
-        else if (prop.id() == CSSPropertyBackgroundRepeatY)
+            break;
+        case CSSPropertyBackgroundRepeatY:
             repeatYProp = &prop;
-        else
-            result += prop.cssText();
+            break;
+        default:
+            result.append(prop.cssText());
+        }
     }
 
     // FIXME: This is a not-so-nice way to turn x/y positions into single background-position in output.
@@ -676,35 +682,47 @@ String StylePropertySet::asText() const
     if (positionXProp && positionYProp && positionXProp->isImportant() == positionYProp->isImportant()) {
         String positionValue;
         const int properties[2] = { CSSPropertyBackgroundPositionX, CSSPropertyBackgroundPositionY };
+        result.append("background-position: ");
         if (positionXProp->value()->isValueList() || positionYProp->value()->isValueList())
-            positionValue = getLayeredShorthandValue(properties);
-        else
-            positionValue = positionXProp->value()->cssText() + " " + positionYProp->value()->cssText();
-        result += "background-position: " + positionValue + (positionXProp->isImportant() ? " !important" : "") + "; ";
+            result.append(getLayeredShorthandValue(properties));
+        else {
+            result.append(positionXProp->value()->cssText());
+            result.append(" ");
+            result.append(positionYProp->value()->cssText());
+        }
+        if (positionXProp->isImportant())
+            result.append(" !important");
+        result.append("; ");
     } else {
         if (positionXProp)
-            result += positionXProp->cssText();
+            result.append(positionXProp->cssText());
         if (positionYProp)
-            result += positionYProp->cssText();
+            result.append(positionYProp->cssText());
     }
 
     // FIXME: We need to do the same for background-repeat.
     if (repeatXProp && repeatYProp && repeatXProp->isImportant() == repeatYProp->isImportant()) {
         String repeatValue;
         const int repeatProperties[2] = { CSSPropertyBackgroundRepeatX, CSSPropertyBackgroundRepeatY };
+        result.append("background-repeat: ");
         if (repeatXProp->value()->isValueList() || repeatYProp->value()->isValueList())
-            repeatValue = getLayeredShorthandValue(repeatProperties);
-        else
-            repeatValue = repeatXProp->value()->cssText() + " " + repeatYProp->value()->cssText();
-        result += "background-repeat: " + repeatValue + (repeatXProp->isImportant() ? " !important" : "") + "; ";
+            result.append(getLayeredShorthandValue(repeatProperties));
+        else {
+            result.append(repeatXProp->value()->cssText());
+            result.append(" ");
+            result.append(repeatYProp->value()->cssText());
+        }
+        if (repeatXProp->isImportant())
+            result.append(" !important");
+        result.append("; ");
     } else {
         if (repeatXProp)
-            result += repeatXProp->cssText();
+            result.append(repeatXProp->cssText());
         if (repeatYProp)
-            result += repeatYProp->cssText();
+            result.append(repeatYProp->cssText());
     }
 
-    return result;
+    return result.toString();
 }
 
 void StylePropertySet::merge(const StylePropertySet* other, bool argOverridesOnConflict)
