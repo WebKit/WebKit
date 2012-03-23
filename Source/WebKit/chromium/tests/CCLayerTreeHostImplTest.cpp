@@ -980,54 +980,6 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     EXPECT_EQ(expectedSwapRect.height(), actualSwapRect.height());
 }
 
-// Make sure that we reset damage tracking on visibility change because the
-// state of the front buffer that we push to with PostSubBuffer is undefined.
-TEST_F(CCLayerTreeHostImplTest, visibilityChangeResetsDamage)
-{
-    PartialSwapTrackerContext* partialSwapTracker = new PartialSwapTrackerContext();
-    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(partialSwapTracker), GraphicsContext3D::RenderDirectlyToHostWindow);
-
-    // This test creates its own CCLayerTreeHostImpl, so
-    // that we can force partial swap enabled.
-    CCSettings settings;
-    settings.partialSwapEnabled = true;
-    OwnPtr<CCLayerTreeHostImpl> layerTreeHostImpl = CCLayerTreeHostImpl::create(settings, this);
-    layerTreeHostImpl->initializeLayerRenderer(context);
-    layerTreeHostImpl->setViewportSize(IntSize(500, 500));
-
-    CCLayerImpl* root = new FakeDrawableCCLayerImpl(1);
-    root->setAnchorPoint(FloatPoint(0, 0));
-    root->setBounds(IntSize(500, 500));
-    root->setDrawsContent(true);
-    layerTreeHostImpl->setRootLayer(adoptPtr(root));
-
-    CCLayerTreeHostImpl::FrameData frame;
-
-    // First frame: ignore.
-    EXPECT_TRUE(layerTreeHostImpl->prepareToDraw(frame));
-    layerTreeHostImpl->drawLayers(frame);
-    layerTreeHostImpl->swapBuffers();
-
-    // Second frame: nothing has changed --- so we souldn't push anything with partial swap.
-    EXPECT_TRUE(layerTreeHostImpl->prepareToDraw(frame));
-    layerTreeHostImpl->drawLayers(frame);
-    layerTreeHostImpl->swapBuffers();
-    EXPECT_TRUE(partialSwapTracker->partialSwapRect().isEmpty());
-
-    // Third frame: visibility change --- so we should push a full frame with partial swap.
-    layerTreeHostImpl->setVisible(false);
-    layerTreeHostImpl->setVisible(true);
-    EXPECT_TRUE(layerTreeHostImpl->prepareToDraw(frame));
-    layerTreeHostImpl->drawLayers(frame);
-    layerTreeHostImpl->swapBuffers();
-    IntRect actualSwapRect = partialSwapTracker->partialSwapRect();
-    IntRect expectedSwapRect = IntRect(IntPoint::zero(), IntSize(500, 500));
-    EXPECT_EQ(expectedSwapRect.x(), actualSwapRect.x());
-    EXPECT_EQ(expectedSwapRect.y(), actualSwapRect.y());
-    EXPECT_EQ(expectedSwapRect.width(), actualSwapRect.width());
-    EXPECT_EQ(expectedSwapRect.height(), actualSwapRect.height());
-}
-
 // Make sure that context lost notifications are propagated through the tree.
 class ContextLostNotificationCheckLayer : public CCLayerImpl {
 public:

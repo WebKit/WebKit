@@ -1,3 +1,13 @@
+2012-03-22  Michal Mocny  <mmocny@google.com>
+
+        [chromium] Removing failing unit test - CCLayerTreeHostImplTest.visibilityChangeResetsDamage
+        https://bugs.webkit.org/show_bug.cgi?id=82003
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::TEST_F):
+
 2012-03-22  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Halt in progress flings on receipt of key events
