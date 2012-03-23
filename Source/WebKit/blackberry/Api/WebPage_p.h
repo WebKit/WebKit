@@ -176,7 +176,7 @@ public:
     virtual double currentZoomFactor() const;
     virtual int showAlertDialog(WebPageClient::AlertType atype);
     virtual bool isActive() const;
-    virtual WebCore::Credential authenticationChallenge(const WebCore::KURL&, const WebCore::ProtectionSpace&);
+    virtual bool authenticationChallenge(const WebCore::KURL&, const WebCore::ProtectionSpace&, WebCore::Credential&);
     virtual SaveCredentialType notifyShouldSaveCredential(bool);
 
     // Called from within WebKit via ChromeClientBlackBerry.

@@ -1,3 +1,23 @@
+2012-03-22  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] http authenticate dialog popup only once no matter authentication pass or fail
+        https://bugs.webkit.org/show_bug.cgi?id=80135
+
+        Reviewed by Rob Buis.
+
+        Modified the interface function authenticationChallenge() in
+        class WebPagePrivate by returning a bool to indicate if user
+        pressed Ok button or not, and moved the Credential from return
+        value to the reference parameter.
+        Also updated the corresponding interface functions in class
+        WebPageClient.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::authenticationChallenge):
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-03-22  Mike Lattanzio  <mlattanzio@rim.com>
 
         [BlackBerry] DeviceDPI Scaling is broken on mobile.

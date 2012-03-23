@@ -749,9 +749,6 @@ bool NetworkJob::handleAuthHeader(const ProtectionSpaceServerType space, const S
     if (!m_handle)
         return false;
 
-    if (!m_handle->getInternal()->m_currentWebChallenge.isNull())
-        return false;
-
     if (header.isEmpty())
         return false;
 
@@ -873,13 +870,14 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
             m_handle->getInternal()->m_user = "";
             m_handle->getInternal()->m_pass = "";
         } else {
-            Credential inputCredential = m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace);
-            username = inputCredential.user();
-            password = inputCredential.password();
+            Credential inputCredential;
+            bool isConfirmed = false;
+            do {
+                isConfirmed = m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace, inputCredential);
+                username = inputCredential.user();
+                password = inputCredential.password();
+            } while (isConfirmed && username.isEmpty() && password.isEmpty());
         }
-
-        if (username.isEmpty() && password.isEmpty())
-            return false;
 
         credential = Credential(username, password, CredentialPersistenceForSession);
 
