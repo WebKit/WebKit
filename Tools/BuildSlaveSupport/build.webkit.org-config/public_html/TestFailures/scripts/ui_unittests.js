@@ -119,17 +119,57 @@ test("time", 6, function() {
     equal(time.date().getTime(), tenMinutesAgo.getTime());
 });
 
-test("MessageBox", 1, function() {
-    var messageBox = new ui.MessageBox('The Title', 'First message');
-    messageBox.addMessage('Second Message');
-    equal(messageBox.outerHTML,
-        '<div class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 130px; height: auto; " scrolltop="0" scrollleft="0">' +
-            '<div>' +
-                '<div class="message">First message</div>' +
+test("StatusArea", 3, function() {
+    var statusArea = new ui.StatusArea();
+    var id = statusArea.newId();
+    statusArea.addMessage(id, 'First Message');
+    statusArea.addMessage(id, 'Second Message');
+    equal(statusArea.outerHTML,
+        '<div class="status processing" style="visibility: visible; ">' +
+            '<ul class="actions"><li><button class="action">Close</button></li></ul>' +
+            '<div class="process-text">Processing...</div>' +
+            '<div id="status-content-1" class="status-content">' +
+                '<div class="message">First Message</div>' +
                 '<div class="message">Second Message</div>' +
             '</div>' +
         '</div>');
-    messageBox.close();
+
+    var secondStatusArea = new ui.StatusArea();
+    var secondId = secondStatusArea.newId();
+    secondStatusArea.addMessage(secondId, 'First Message second id');
+
+    equal(statusArea.outerHTML,
+        '<div class="status processing" style="visibility: visible; ">' +
+            '<ul class="actions"><li><button class="action">Close</button></li></ul>' +
+            '<div class="process-text">Processing...</div>' +
+            '<div id="status-content-1" class="status-content">' +
+                '<div class="message">First Message</div>' +
+                '<div class="message">Second Message</div>' +
+            '</div>' +
+            '<div id="status-content-2" class="status-content">' +
+                '<div class="message">First Message second id</div>' +
+            '</div>' +
+        '</div>');
+
+    statusArea.addFinalMessage(id, 'Final Message 1');
+    statusArea.addFinalMessage(secondId, 'Final Message 2');
+
+    equal(statusArea.outerHTML,
+        '<div class="status" style="visibility: visible; ">' +
+            '<ul class="actions"><li><button class="action">Close</button></li></ul>' +
+            '<div class="process-text">Processing...</div>' +
+            '<div id="status-content-1" class="status-content">' +
+                '<div class="message">First Message</div>' +
+                '<div class="message">Second Message</div>' +
+                '<div class="message">Final Message 1</div>' +
+            '</div>' +
+            '<div id="status-content-2" class="status-content">' +
+                '<div class="message">First Message second id</div>' +
+                '<div class="message">Final Message 2</div>' +
+            '</div>' +
+        '</div>');
+
+    statusArea.close();
 });
 
 })();

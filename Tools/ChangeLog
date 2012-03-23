@@ -1,3 +1,30 @@
+2012-03-22  Ojan Vafai  <ojan@chromium.org>
+
+        Move garden-o-matic progress feedback from non-modal dialogs to a status console anchored to the bottom of the page
+        https://bugs.webkit.org/show_bug.cgi?id=81983
+
+        Reviewed by Adam Barth.
+
+        The dialogs get in the way if you are doing multiple rebaselines. Also,
+        a number of people didn't realize that you could do multiple rebaselines
+        in parallel. A non-modal dialog is just confusing.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        If we're only rebaselining 1 test, show the test name in the initial message. Otherwise,
+        show the number of tests being rebaselined.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        Turn MessageBox into StatusArea. StatusArea is a singleton and messages in the StatusArea are grouped
+        by ID. That way, the results of each UI action (e.g. clicking rebaseline) are grouped together
+        into a single area.
+
+        Once addFinalMessage has been called for all IDs, we show the close button. Clicking close
+        also serves to clear all teh content in the StatusArea. 
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/results.css:
+
 2012-03-22  Tony Chang  <tony@chromium.org>
 
         Unreviewed, fix chromium build after wtf move.

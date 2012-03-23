@@ -89,3 +89,47 @@
 .ui-state-active .non-link-title, .ui-state-active .non-link-title:link, .ui-state-active .non-link-title:visited {
     display: none;
 }
+
+/*** status console ***/
+.status {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background-color: white;
+    border-top: 1px solid gray;
+    -webkit-box-shadow: 0px -2px 10px gray;
+    overflow: auto;
+    white-space: nowrap;
+    padding: 4px;
+}
+
+.status .actions, .status .process-text {
+    position: fixed;
+    bottom: 0;
+    right: 20px;
+    margin: 4px;
+}
+
+.processing .actions {
+    display: none;
+}
+
+.processing .process-text {
+    display: block;
+}
+
+.process-text {
+    display: none;
+}
+
+.status-content {
+    border-bottom: 1px dashed;
+    margin-bottom: 1em;
+}
+
+.status-content:last-child {
+    border-bottom: 0;
+    margin-bottom: 0;
+}

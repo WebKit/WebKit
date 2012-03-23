@@ -115,6 +115,7 @@ base.flattenArray = function(arrayOfArrays)
 
 base.values = function(dictionary)
 {
+    // FIXME: Replace this with Object.values(dictionary)?
     var result = [];
 
     for (var key in dictionary) {
@@ -382,7 +383,9 @@ base.extends = function(base, prototype)
         var element = typeof base == 'string' ? document.createElement(base) : base.call(this);
         extended.prototype.__proto__ = element.__proto__;
         element.__proto__ = extended.prototype;
-        element.init && element.init.apply(element, arguments);
+        var singleton = element.init && element.init.apply(element, arguments);
+        if (singleton)
+            return singleton;
         return element;
     }
 

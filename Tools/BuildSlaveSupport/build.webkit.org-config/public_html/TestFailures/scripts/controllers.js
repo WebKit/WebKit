@@ -32,26 +32,36 @@ var kCheckoutUnavailableMessage = 'Failed! Garden-o-matic needs a local server t
 // FIXME: Where should this function go?
 function rebaselineWithStatusUpdates(failureInfoList)
 {
-    var statusView = new ui.MessageBox('Rebaseline', 'Performing rebaseline...');
+    var statusView = new ui.StatusArea('Rebaseline');
+    var id = statusView.newId();
+
+    var testNames = base.uniquifyArray(failureInfoList.map(function(failureInfo) { return failureInfo.testName; }));
+    var testName = testNames.length == 1 ? testNames[0] : testNames.length + ' tests';
+    statusView.addMessage(id, 'Performing rebaseline of ' + testName + '...');
 
     checkout.rebaseline(failureInfoList, function() {
-        statusView.addFinalMessage('Rebaseline done! Please land with "webkit-patch land-cowboy".');
+        statusView.addFinalMessage(id, 'Rebaseline done! Please land with "webkit-patch land-cowboy".');
     }, function(failureInfo) {
-        statusView.addMessage(failureInfo.testName + ' on ' + ui.displayNameForBuilder(failureInfo.builderName));
+        statusView.addMessage(id, failureInfo.testName + ' on ' + ui.displayNameForBuilder(failureInfo.builderName));
     }, function() {
-        statusView.addFinalMessage(kCheckoutUnavailableMessage);
+        statusView.addFinalMessage(id, kCheckoutUnavailableMessage);
     });
 }
 
 // FIXME: Where should this function go?
 function updateExpectationsWithStatusUpdates(failureInfoList)
 {
-    var statusView = new ui.MessageBox('Expectations Update', 'Updating expectations...');
+    var statusView = new ui.StatusArea('Expectations Update');
+    var id = statusView.newId();
+
+    var testNames = base.uniquifyArray(failureInfoList.map(function(failureInfo) { return failureInfo.testName; }));
+    var testName = testNames.length == 1 ? testNames[0] : testNames.length + ' tests';
+    statusView.addMessage(id, 'Updating expectations of ' + testName + '...');
 
     checkout.updateExpectations(failureInfoList, function() {
-        statusView.addFinalMessage('Expectations update done! Please land with "webkit-patch land-cowboy".');
+        statusView.addFinalMessage(id, 'Expectations update done! Please land with "webkit-patch land-cowboy".');
     }, function() {
-        statusView.addFinalMessage(kCheckoutUnavailableMessage);
+        statusView.addFinalMessage(id, kCheckoutUnavailableMessage);
     });
 }
 
