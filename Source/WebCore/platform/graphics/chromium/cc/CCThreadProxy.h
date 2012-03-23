@@ -81,7 +81,8 @@ public:
     virtual bool canDraw();
     virtual bool hasMoreResourceUpdates() const;
     virtual void scheduledActionBeginFrame();
-    virtual void scheduledActionDrawAndSwap();
+    virtual bool scheduledActionDrawAndSwapIfPossible();
+    virtual void scheduledActionDrawAndSwapForced();
     virtual void scheduledActionUpdateMoreResources();
     virtual void scheduledActionCommit();
     virtual void scheduledActionBeginContextRecreation();
@@ -125,6 +126,7 @@ private:
     void layerTreeHostClosedOnImplThread(CCCompletionEvent*);
     void setFullRootLayerDamageOnImplThread();
     void recreateContextOnImplThread(CCCompletionEvent*, GraphicsContext3D*, bool* recreateSucceeded, LayerRendererCapabilities*);
+    bool scheduledActionDrawAndSwapInternal(bool forcedDraw);
 
     // Accessed on main thread only.
     bool m_animateRequested;

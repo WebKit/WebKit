@@ -544,13 +544,14 @@ TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
     EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
 
-    // When a texture is missing and we're animating, we don't draw anything.
+    // When a texture is missing and we're animating, we don't want to draw anything.
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
     root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
     root->addChild(MissingTextureAnimatingLayer::create(1, true, false, true));
     layer = static_cast<MissingTextureAnimatingLayer*>(root->children()[0].get());
 
     EXPECT_FALSE(m_hostImpl->prepareToDraw(frame));
+    m_hostImpl->drawLayers(frame);
 
     // When the layer skips draw and we're animating, we still draw the frame.
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));

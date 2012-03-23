@@ -69,7 +69,8 @@ public:
         ACTION_BEGIN_FRAME,
         ACTION_BEGIN_UPDATE_MORE_RESOURCES,
         ACTION_COMMIT,
-        ACTION_DRAW,
+        ACTION_DRAW_IF_POSSIBLE,
+        ACTION_DRAW_FORCED,
         ACTION_BEGIN_CONTEXT_RECREATION
     };
     Action nextAction() const;
@@ -94,6 +95,9 @@ public:
     // As setNeedsRedraw(), but ensures the draw will definitely happen even if
     // we are not visible.
     void setNeedsForcedRedraw();
+
+    // Indicates whether ACTION_DRAW_IF_POSSIBLE drew to the screen or not.
+    void didDrawIfPossibleCompleted(bool success);
 
     // Indicates that a new commit flow needs to be performed, either to pull
     // updates from the main thread to the impl, or to push deltas from the impl
@@ -122,6 +126,7 @@ public:
     void didRecreateContext();
 
 protected:
+    bool shouldDrawForced() const;
     bool shouldDraw() const;
     bool hasDrawnThisFrame() const;
 
@@ -137,6 +142,7 @@ protected:
     bool m_insideVSync;
     bool m_visible;
     bool m_canDraw;
+    bool m_drawIfPossibleFailed;
     ContextState m_contextState;
 };
 

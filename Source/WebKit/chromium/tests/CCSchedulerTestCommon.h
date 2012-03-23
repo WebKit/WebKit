@@ -26,6 +26,7 @@
 #define CCSchedulerTestCommon_h
 
 #include "cc/CCDelayBasedTimeSource.h"
+#include "cc/CCFrameRateController.h"
 #include "cc/CCThread.h"
 #include <gtest/gtest.h>
 #include <wtf/OwnPtr.h>
@@ -121,6 +122,13 @@ protected:
         , m_monotonicallyIncreasingTime(0) { }
 
     double m_monotonicallyIncreasingTime;
+};
+
+class FakeCCFrameRateController : public WebCore::CCFrameRateController {
+public:
+    FakeCCFrameRateController(PassRefPtr<WebCore::CCTimeSource> timer) : WebCore::CCFrameRateController(timer) { }
+
+    int numFramesPending() const { return m_numFramesPending; }
 };
 
 }

@@ -45,25 +45,44 @@ public:
         m_actions.clear();
         m_hasMoreResourceUpdates = false;
         m_canDraw = true;
+        m_drawSuccess = true;
+        m_numDraws = 0;
     }
 
     void setHasMoreResourceUpdates(bool b) { m_hasMoreResourceUpdates = b; }
     void setCanDraw(bool b) { m_canDraw = b; }
 
+    int numDraws() const { return m_numDraws; }
     int numActions() const { return static_cast<int>(m_actions.size()); }
     const char* action(int i) const { return m_actions[i]; }
 
     virtual bool canDraw() { return m_canDraw; }
     virtual bool hasMoreResourceUpdates() const { return m_hasMoreResourceUpdates; }
     virtual void scheduledActionBeginFrame() { m_actions.push_back("scheduledActionBeginFrame"); }
-    virtual void scheduledActionDrawAndSwap() { m_actions.push_back("scheduledActionDrawAndSwap"); }
+    virtual bool scheduledActionDrawAndSwapIfPossible()
+    {
+        m_actions.push_back("scheduledActionDrawAndSwapIfPossible");
+        m_numDraws++;
+        return m_drawSuccess;
+    }
+
+    virtual void scheduledActionDrawAndSwapForced()
+    {
+        m_actions.push_back("scheduledActionDrawAndSwapForced");
+        m_numDraws++;
+    }
+
     virtual void scheduledActionUpdateMoreResources() { m_actions.push_back("scheduledActionUpdateMoreResources"); }
     virtual void scheduledActionCommit() { m_actions.push_back("scheduledActionCommit"); }
     virtual void scheduledActionBeginContextRecreation() { m_actions.push_back("scheduledActionBeginContextRecreation"); }
 
+    void setDrawSuccess(bool drawSuccess) { m_drawSuccess = drawSuccess; }
+
 protected:
     bool m_hasMoreResourceUpdates;
     bool m_canDraw;
+    bool m_drawSuccess;
+    int m_numDraws;
     std::vector<const char*> m_actions;
 };
 
@@ -94,7 +113,7 @@ TEST(CCSchedulerTest, RequestCommit)
     // Tick should draw.
     timeSource->tick();
     EXPECT_EQ(1, client.numActions());
-    EXPECT_STREQ("scheduledActionDrawAndSwap", client.action(0));
+    EXPECT_STREQ("scheduledActionDrawAndSwapIfPossible", client.action(0));
     EXPECT_FALSE(timeSource->active());
     client.reset();
 
@@ -131,38 +150,33 @@ TEST(CCSchedulerTest, RequestCommitAfterBeginFrame)
     timeSource->tick();
     EXPECT_FALSE(timeSource->active());
     EXPECT_EQ(2, client.numActions());
-    EXPECT_STREQ("scheduledActionDrawAndSwap", client.action(0));
+    EXPECT_STREQ("scheduledActionDrawAndSwapIfPossible", client.action(0));
     EXPECT_STREQ("scheduledActionBeginFrame", client.action(1));
     client.reset();
 }
 
-class SchedulerClientThatSetNeedsDrawInsideDraw : public CCSchedulerClient {
+class SchedulerClientThatSetNeedsDrawInsideDraw : public FakeCCSchedulerClient {
 public:
     SchedulerClientThatSetNeedsDrawInsideDraw()
-        : m_numDraws(0)
-        , m_scheduler(0) { }
+        : m_scheduler(0) { }
 
     void setScheduler(CCScheduler* scheduler) { m_scheduler = scheduler; }
 
-    int numDraws() const { return m_numDraws; }
-
-    virtual bool hasMoreResourceUpdates() const { return false; }
-    virtual bool canDraw() { return true; }
     virtual void scheduledActionBeginFrame() { }
-    virtual void scheduledActionDrawAndSwap()
+    virtual bool scheduledActionDrawAndSwapIfPossible()
     {
         // Only setNeedsRedraw the first time this is called
         if (!m_numDraws)
             m_scheduler->setNeedsRedraw();
-        m_numDraws++;
+        return FakeCCSchedulerClient::scheduledActionDrawAndSwapIfPossible();
     }
 
+    virtual void scheduledActionDrawAndSwapForced() { }
     virtual void scheduledActionUpdateMoreResources() { }
     virtual void scheduledActionCommit() { }
     virtual void scheduledActionBeginContextRecreation() { }
 
 protected:
-    int m_numDraws;
     CCScheduler* m_scheduler;
 };
 
@@ -194,33 +208,68 @@ TEST(CCSchedulerTest, RequestRedrawInsideDraw)
     EXPECT_FALSE(timeSource->active());
 }
 
-class SchedulerClientThatSetNeedsCommitInsideDraw : public CCSchedulerClient {
+// Test that requesting redraw inside a failed draw doesn't lose the request.
+TEST(CCSchedulerTest, RequestRedrawInsideFailedDraw)
+{
+    SchedulerClientThatSetNeedsDrawInsideDraw client;
+    RefPtr<FakeCCTimeSource> timeSource = adoptRef(new FakeCCTimeSource());
+    OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, adoptPtr(new CCFrameRateController(timeSource)));
+    client.setScheduler(scheduler.get());
+    scheduler->setVisible(true);
+    client.setDrawSuccess(false);
+
+    scheduler->setNeedsRedraw();
+    EXPECT_TRUE(scheduler->redrawPending());
+    EXPECT_TRUE(timeSource->active());
+    EXPECT_EQ(0, client.numDraws());
+
+    // Fail the draw.
+    timeSource->tick();
+    EXPECT_EQ(1, client.numDraws());
+
+    // We have a commit pending and the draw failed, and we didn't lose the redraw request.
+    EXPECT_TRUE(scheduler->commitPending());
+    EXPECT_TRUE(scheduler->redrawPending());
+    EXPECT_TRUE(timeSource->active());
+
+    // Fail the draw again.
+    timeSource->tick();
+    EXPECT_EQ(2, client.numDraws());
+    EXPECT_TRUE(scheduler->commitPending());
+    EXPECT_TRUE(scheduler->redrawPending());
+    EXPECT_TRUE(timeSource->active());
+
+    // Draw successfully.
+    client.setDrawSuccess(true);
+    timeSource->tick();
+    EXPECT_EQ(3, client.numDraws());
+    EXPECT_TRUE(scheduler->commitPending());
+    EXPECT_FALSE(scheduler->redrawPending());
+    EXPECT_FALSE(timeSource->active());
+}
+
+class SchedulerClientThatSetNeedsCommitInsideDraw : public FakeCCSchedulerClient {
 public:
     SchedulerClientThatSetNeedsCommitInsideDraw()
-        : m_numDraws(0)
-        , m_scheduler(0) { }
+        : m_scheduler(0) { }
 
     void setScheduler(CCScheduler* scheduler) { m_scheduler = scheduler; }
 
-    int numDraws() const { return m_numDraws; }
-
-    virtual bool hasMoreResourceUpdates() const { return false; }
-    virtual bool canDraw() { return true; }
     virtual void scheduledActionBeginFrame() { }
-    virtual void scheduledActionDrawAndSwap()
+    virtual bool scheduledActionDrawAndSwapIfPossible()
     {
         // Only setNeedsCommit the first time this is called
         if (!m_numDraws)
             m_scheduler->setNeedsCommit();
-        m_numDraws++;
+        return FakeCCSchedulerClient::scheduledActionDrawAndSwapIfPossible();
     }
 
+    virtual void scheduledActionDrawAndSwapForced() { }
     virtual void scheduledActionUpdateMoreResources() { }
     virtual void scheduledActionCommit() { }
     virtual void scheduledActionBeginContextRecreation() { }
 
 protected:
-    int m_numDraws;
     CCScheduler* m_scheduler;
 };
 
@@ -249,6 +298,92 @@ TEST(CCSchedulerTest, RequestCommitInsideDraw)
     EXPECT_EQ(2, client.numDraws());
     EXPECT_FALSE(timeSource->active());
     EXPECT_FALSE(scheduler->redrawPending());
+}
+
+// Tests that when a draw fails then the pending commit should not be dropped.
+TEST(CCSchedulerTest, RequestCommitInsideFailedDraw)
+{
+    SchedulerClientThatSetNeedsDrawInsideDraw client;
+    RefPtr<FakeCCTimeSource> timeSource = adoptRef(new FakeCCTimeSource());
+    OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, adoptPtr(new CCFrameRateController(timeSource)));
+    client.setScheduler(scheduler.get());
+    scheduler->setVisible(true);
+    client.setDrawSuccess(false);
+
+    scheduler->setNeedsRedraw();
+    EXPECT_TRUE(scheduler->redrawPending());
+    EXPECT_TRUE(timeSource->active());
+    EXPECT_EQ(0, client.numDraws());
+
+    // Fail the draw.
+    timeSource->tick();
+    EXPECT_EQ(1, client.numDraws());
+
+    // We have a commit pending and the draw failed, and we didn't lose the commit request.
+    EXPECT_TRUE(scheduler->commitPending());
+    EXPECT_TRUE(scheduler->redrawPending());
+    EXPECT_TRUE(timeSource->active());
+
+    // Fail the draw again.
+    timeSource->tick();
+    EXPECT_EQ(2, client.numDraws());
+    EXPECT_TRUE(scheduler->commitPending());
+    EXPECT_TRUE(scheduler->redrawPending());
+    EXPECT_TRUE(timeSource->active());
+
+    // Draw successfully.
+    client.setDrawSuccess(true);
+    timeSource->tick();
+    EXPECT_EQ(3, client.numDraws());
+    EXPECT_TRUE(scheduler->commitPending());
+    EXPECT_FALSE(scheduler->redrawPending());
+    EXPECT_FALSE(timeSource->active());
+}
+
+TEST(CCSchedulerTest, NoBeginFrameWhenDrawFails)
+{
+    RefPtr<FakeCCTimeSource> timeSource = adoptRef(new FakeCCTimeSource());
+    SchedulerClientThatSetNeedsCommitInsideDraw client;
+    OwnPtr<FakeCCFrameRateController> controller = adoptPtr(new FakeCCFrameRateController(timeSource));
+    FakeCCFrameRateController* controllerPtr = controller.get();
+    OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, controller.release());
+    client.setScheduler(scheduler.get());
+    scheduler->setVisible(true);
+
+    EXPECT_EQ(0, controllerPtr->numFramesPending());
+
+    scheduler->setNeedsRedraw();
+    EXPECT_TRUE(scheduler->redrawPending());
+    EXPECT_TRUE(timeSource->active());
+    EXPECT_EQ(0, client.numDraws());
+
+    // Draw successfully, this starts a new frame.
+    timeSource->tick();
+    EXPECT_EQ(1, client.numDraws());
+    EXPECT_EQ(1, controllerPtr->numFramesPending());
+    scheduler->didSwapBuffersComplete();
+    EXPECT_EQ(0, controllerPtr->numFramesPending());
+
+    scheduler->setNeedsRedraw();
+    EXPECT_TRUE(scheduler->redrawPending());
+    EXPECT_TRUE(timeSource->active());
+
+    // Draw successfully, this starts another frame.
+    timeSource->tick();
+    EXPECT_EQ(2, client.numDraws());
+    EXPECT_EQ(1, controllerPtr->numFramesPending());
+    scheduler->didSwapBuffersComplete();
+    EXPECT_EQ(0, controllerPtr->numFramesPending());
+
+    scheduler->setNeedsRedraw();
+    EXPECT_TRUE(scheduler->redrawPending());
+    EXPECT_TRUE(timeSource->active());
+
+    // Fail to draw, this should not start a frame.
+    client.setDrawSuccess(false);
+    timeSource->tick();
+    EXPECT_EQ(3, client.numDraws());
+    EXPECT_EQ(0, controllerPtr->numFramesPending());
 }
 
 }

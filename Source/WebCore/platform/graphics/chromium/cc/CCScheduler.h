@@ -41,7 +41,8 @@ public:
     virtual bool hasMoreResourceUpdates() const = 0;
 
     virtual void scheduledActionBeginFrame() = 0;
-    virtual void scheduledActionDrawAndSwap() = 0;
+    virtual bool scheduledActionDrawAndSwapIfPossible() = 0;
+    virtual void scheduledActionDrawAndSwapForced() = 0;
     virtual void scheduledActionUpdateMoreResources() = 0;
     virtual void scheduledActionCommit() = 0;
     virtual void scheduledActionBeginContextRecreation() = 0;

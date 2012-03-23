@@ -544,12 +544,13 @@ void CCThreadProxy::scheduledActionBeginContextRecreation()
     m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::beginContextRecreation));
 }
 
-void CCThreadProxy::scheduledActionDrawAndSwap()
+bool CCThreadProxy::scheduledActionDrawAndSwapInternal(bool forcedDraw)
 {
     TRACE_EVENT("CCThreadProxy::scheduledActionDrawAndSwap", this, 0);
     ASSERT(isImplThread());
+    ASSERT(m_layerTreeHostImpl);
     if (!m_layerTreeHostImpl)
-        return;
+        return false;
 
     // FIXME: compute the frame display time more intelligently
     double monotonicTime = monotonicallyIncreasingTime();
@@ -558,21 +559,25 @@ void CCThreadProxy::scheduledActionDrawAndSwap()
     m_inputHandlerOnImplThread->animate(monotonicTime);
     m_layerTreeHostImpl->animate(monotonicTime, wallClockTime);
     CCLayerTreeHostImpl::FrameData frame;
-    m_layerTreeHostImpl->prepareToDraw(frame);
-    m_layerTreeHostImpl->drawLayers(frame);
+    bool drawFrame = m_layerTreeHostImpl->prepareToDraw(frame) || forcedDraw;
+    if (drawFrame)
+        m_layerTreeHostImpl->drawLayers(frame);
 
     // Check for a pending compositeAndReadback.
     if (m_readbackRequestOnImplThread) {
+        ASSERT(drawFrame); // This should be a forcedDraw
         m_layerTreeHostImpl->readback(m_readbackRequestOnImplThread->pixels, m_readbackRequestOnImplThread->rect);
         m_readbackRequestOnImplThread->success = !m_layerTreeHostImpl->isContextLost();
         m_readbackRequestOnImplThread->completion.signal();
         m_readbackRequestOnImplThread = 0;
     }
 
-    m_layerTreeHostImpl->swapBuffers();
+    if (drawFrame)
+        m_layerTreeHostImpl->swapBuffers();
 
     // Process any finish request
     if (m_finishAllRenderingCompletionEventOnImplThread) {
+        ASSERT(drawFrame); // This should be a forcedDraw
         m_layerTreeHostImpl->finishAllRendering();
         m_finishAllRenderingCompletionEventOnImplThread->signal();
         m_finishAllRenderingCompletionEventOnImplThread = 0;
@@ -583,6 +588,19 @@ void CCThreadProxy::scheduledActionDrawAndSwap()
         m_nextFrameIsNewlyCommittedFrameOnImplThread = false;
         m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::didCommitAndDrawFrame));
     }
+
+    ASSERT(drawFrame || (!drawFrame && !forcedDraw));
+    return drawFrame;
+}
+
+bool CCThreadProxy::scheduledActionDrawAndSwapIfPossible()
+{
+    return scheduledActionDrawAndSwapInternal(false);
+}
+
+void CCThreadProxy::scheduledActionDrawAndSwapForced()
+{
+    scheduledActionDrawAndSwapInternal(true);
 }
 
 void CCThreadProxy::didCommitAndDrawFrame()

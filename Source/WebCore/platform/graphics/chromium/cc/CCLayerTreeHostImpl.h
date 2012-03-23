@@ -88,6 +88,7 @@ public:
     virtual void beginCommit();
     virtual void commitComplete();
     virtual void animate(double monotonicTime, double wallClockTime);
+    // Returns false if problems occured preparing the frame, and we should try to avoid displaying the frame.
     virtual bool prepareToDraw(FrameData&);
     virtual void drawLayers(const FrameData&);
 

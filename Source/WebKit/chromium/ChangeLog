@@ -1,3 +1,38 @@
+2012-03-22  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Skip frames when checkerboarding an animation
+        https://bugs.webkit.org/show_bug.cgi?id=81716
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::TEST_F):
+        * tests/CCSchedulerStateMachineTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+        * tests/CCSchedulerTest.cpp:
+        (WebKitTests::FakeCCSchedulerClient::reset):
+        (WebKitTests::FakeCCSchedulerClient::numDraws):
+        (WebKitTests::FakeCCSchedulerClient::scheduledActionDrawAndSwapIfPossible):
+        (FakeCCSchedulerClient):
+        (WebKitTests::FakeCCSchedulerClient::scheduledActionDrawAndSwapForced):
+        (WebKitTests::FakeCCSchedulerClient::setDrawSuccess):
+        (WebKitTests::TEST):
+        (WebKitTests::SchedulerClientThatSetNeedsDrawInsideDraw::SchedulerClientThatSetNeedsDrawInsideDraw):
+        (WebKitTests::SchedulerClientThatSetNeedsDrawInsideDraw::scheduledActionDrawAndSwapIfPossible):
+        (WebKitTests::SchedulerClientThatSetNeedsDrawInsideDraw::scheduledActionDrawAndSwapForced):
+        (SchedulerClientThatSetNeedsDrawInsideDraw):
+        (WebKitTests):
+        (WebKitTests::SchedulerClientThatSetNeedsCommitInsideDraw::SchedulerClientThatSetNeedsCommitInsideDraw):
+        (WebKitTests::SchedulerClientThatSetNeedsCommitInsideDraw::scheduledActionDrawAndSwapIfPossible):
+        (WebKitTests::SchedulerClientThatSetNeedsCommitInsideDraw::scheduledActionDrawAndSwapForced):
+        (SchedulerClientThatSetNeedsCommitInsideDraw):
+        * tests/CCSchedulerTestCommon.h:
+        (FakeCCFrameRateController):
+        (WebKitTests::FakeCCFrameRateController::FakeCCFrameRateController):
+        (WebKitTests::FakeCCFrameRateController::numFramesPending):
+        (WebKitTests):
+
 2012-03-22  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Force update of nonFastScrollableRegion if target CCLayerImpl has been freshly created.

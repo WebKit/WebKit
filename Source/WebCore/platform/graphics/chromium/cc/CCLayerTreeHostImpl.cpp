@@ -275,7 +275,9 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
     // Add quads to the Render passes in FrontToBack order to allow for testing occlusion and performing culling during the tree walk.
     typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
 
-    // If we are unable to draw an animation on some layer, then we abort the entire frame.
+    // Typically when we are missing a texture and use a checkerboard quad, we still draw the frame. However when the layer being
+    // checkerboarded is moving due to an impl-animation, we drop the frame to avoid flashing due to the texture suddenly appearing
+    // in the future.
     bool drawFrame = true;
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
@@ -306,10 +308,8 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         pass->appendQuadsForLayer(*it, &occlusionTracker, usedCheckerboard);
         if (usedCheckerboard) {
             bool layerHasAnimatingTransform = it->screenSpaceTransformIsAnimating() || it->drawTransformIsAnimating();
-            if (layerHasAnimatingTransform) {
+            if (layerHasAnimatingTransform)
                 drawFrame = false;
-                break;
-            }
         }
 
         occlusionTracker.markOccludedBehindLayer(*it);
@@ -367,11 +367,8 @@ bool CCLayerTreeHostImpl::prepareToDraw(FrameData& frame)
     if (!rootLayer())
         return false;
 
-    if (!calculateRenderPasses(frame.renderPasses, frame.renderSurfaceLayerList)) {
-        frame.renderPasses.clear();
-        frame.renderSurfaceLayerList.clear();
+    if (!calculateRenderPasses(frame.renderPasses, frame.renderSurfaceLayerList))
         return false;
-    }
 
     // If we return true, then we expect drawLayers() to be called before this function is called again.
     return true;
