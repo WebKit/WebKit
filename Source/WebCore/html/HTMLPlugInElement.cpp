@@ -78,6 +78,11 @@ void HTMLPlugInElement::detach()
         m_isCapturingMouseEvents = false;
     }
 
+    HTMLFrameOwnerElement::detach();
+}
+
+void HTMLPlugInElement::removedFromDocument()
+{
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (m_NPObject) {
         _NPN_ReleaseObject(m_NPObject);
@@ -85,7 +90,7 @@ void HTMLPlugInElement::detach()
     }
 #endif
 
-    HTMLFrameOwnerElement::detach();
+    HTMLFrameOwnerElement::removedFromDocument();
 }
 
 PassScriptInstance HTMLPlugInElement::getInstance()

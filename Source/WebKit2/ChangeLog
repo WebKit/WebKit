@@ -1,3 +1,11 @@
+2012-03-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r111754): plugins/reloadplugins-and-pages.html fails on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=82035
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-03-22  Anders Carlsson  <andersca@apple.com>
 
         Remove the Flash NPRuntime short-circuit hacks

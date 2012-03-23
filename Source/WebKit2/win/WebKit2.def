@@ -115,7 +115,6 @@ EXPORTS
         ??1ThreadCondition@WTF@@QAE@XZ
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
-        ?counterValue@InspectorCounters@WebCore@@SAHW4CounterType@12@@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
         ?createThread@WTF@@YAIP6AXPAX@Z0PBD@Z
         ?currentThread@WTF@@YAIXZ

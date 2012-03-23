@@ -42,7 +42,6 @@
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
 #include "InspectorController.h"
-#include "InspectorCounters.h"
 #include "InspectorInstrumentation.h"
 #include "InternalSettings.h"
 #include "IntRect.h"
@@ -770,18 +769,6 @@ bool Internals::hasSpellingMarker(Document* document, int from, int length, Exce
 
     return document->frame()->editor()->selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
 }
-
-#if ENABLE(INSPECTOR)
-unsigned Internals::numberOfLiveNodes() const
-{
-    return InspectorCounters::counterValue(InspectorCounters::NodeCounter);
-}
-
-unsigned Internals::numberOfLiveDocuments() const
-{
-    return InspectorCounters::counterValue(InspectorCounters::DocumentCounter);
-}
-#endif // ENABLE(INSPECTOR)
 
 bool Internals::hasGrammarMarker(Document* document, int from, int length, ExceptionCode&)
 {

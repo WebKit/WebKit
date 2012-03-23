@@ -120,10 +120,7 @@ module window {
 
 #if defined(ENABLE_BATTERY_STATUS) && ENABLE_BATTERY_STATUS
         void setBatteryStatus(in Document document, in DOMString eventType, in boolean charging, in double chargingTime, in double dischargingTime, in double level) raises (DOMException);
-#endif 
-
-        [Conditional=INSPECTOR] unsigned long numberOfLiveNodes();
-        [Conditional=INSPECTOR] unsigned long numberOfLiveDocuments();
+#endif
     };
 }
 
