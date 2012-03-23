@@ -1494,8 +1494,10 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
             }
             break;
         case AnimationStateEnding:
-            ASSERT(input == AnimationStateInputEndTimerFired || input == AnimationStateInputPlayStatePaused);
-
+#if !LOG_DISABLED
+            if (input != AnimationStateInputEndTimerFired && input != AnimationStateInputPlayStatePaused)
+                LOG_ERROR("State is AnimationStateEnding, but input is not AnimationStateInputEndTimerFired or AnimationStateInputPlayStatePaused. It is %d.", input);
+#endif
             if (input == AnimationStateInputEndTimerFired) {
 
                 ASSERT(param >= 0);
