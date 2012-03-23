@@ -569,6 +569,10 @@ WebSocketChannel::ParseFrameResult WebSocketChannel::parseFrame(WebSocketFrame& 
     unsigned char opCode = firstByte & opCodeMask;
 
     bool masked = secondByte & maskBit;
+    if (masked) {
+        fail("A server must not mask any frames that it sends to the client.");
+        return FrameError;
+    }
     uint64_t payloadLength64 = secondByte & payloadLengthMask;
     if (payloadLength64 > maxPayloadLengthWithoutExtendedLengthField) {
         int extendedPayloadLengthSize;
@@ -601,22 +605,14 @@ WebSocketChannel::ParseFrameResult WebSocketChannel::parseFrame(WebSocketFrame& 
 #else
     static const uint64_t maxPayloadLength = 0x7FFFFFFFFFFFFFFFull;
 #endif
-    size_t maskingKeyLength = masked ? maskingKeyWidthInBytes : 0;
-    if (payloadLength64 > maxPayloadLength || payloadLength64 + maskingKeyLength > numeric_limits<size_t>::max()) {
+    if (payloadLength64 > maxPayloadLength || payloadLength64 > numeric_limits<size_t>::max()) {
         fail("WebSocket frame length too large: " + String::number(payloadLength64) + " bytes");
         return FrameError;
     }
     size_t payloadLength = static_cast<size_t>(payloadLength64);
 
-    if (static_cast<size_t>(bufferEnd - p) < maskingKeyLength + payloadLength)
+    if (static_cast<size_t>(bufferEnd - p) < payloadLength)
         return FrameIncomplete;
-
-    if (masked) {
-        const char* maskingKey = p;
-        char* payload = const_cast<char*>(p + maskingKeyWidthInBytes);
-        for (size_t i = 0; i < payloadLength; ++i)
-            payload[i] ^= maskingKey[i % maskingKeyWidthInBytes]; // Unmask the payload.
-    }
 
     frame.opCode = static_cast<WebSocketFrame::OpCode>(opCode);
     frame.final = final;
@@ -624,9 +620,9 @@ WebSocketChannel::ParseFrameResult WebSocketChannel::parseFrame(WebSocketFrame& 
     frame.reserved2 = reserved2;
     frame.reserved3 = reserved3;
     frame.masked = masked;
-    frame.payload = p + maskingKeyLength;
+    frame.payload = p;
     frame.payloadLength = payloadLength;
-    frameEnd = p + maskingKeyLength + payloadLength;
+    frameEnd = p + payloadLength;
     return FrameOK;
 }
 

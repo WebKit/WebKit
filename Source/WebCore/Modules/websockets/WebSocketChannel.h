@@ -138,7 +138,7 @@ private:
         FrameError
     };
 
-    ParseFrameResult parseFrame(WebSocketFrame&, const char*& frameEnd); // May modify part of m_buffer to unmask the frame.
+    ParseFrameResult parseFrame(WebSocketFrame&, const char*& frameEnd);
 
     bool processFrame();
     bool processFrameHixie76();
