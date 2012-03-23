@@ -113,11 +113,6 @@ function runTest(methodName, method)
         frag.insertBefore(missing, frag.firstChild);
     }, expectNodes("BUP"));
 
-    testFragment(method, "Removing next item should not abort iteration", function(evt, frag)
-    {
-        frag.removeChild(frag.firstChild);
-    }, expectNodes("BUP"));
-
     var extra = document.body.appendChild(document.createElement("em"));
     testFragment(method, "Appending an element at the end of the fragment should not affect the result", function(evt, frag)
     {
@@ -128,11 +123,6 @@ function runTest(methodName, method)
     {
         stash.insertBefore(frag.lastChild, stash.firstChild);
     }, expectException(8), true);
-
-    testFragment(method, "Moving next item to become previous sibling of the re-parentee should not result in stack exhaustion", function(evt, frag, stash)
-    {
-        document.body.insertBefore(frag.firstChild, stash);
-    }, expectNodes("BUP"));
     printLog(methodName);
 }
 function runTests()

@@ -69,6 +69,18 @@ static void collectTargetNodes(Node* node, NodeVector& nodes)
     getChildNodes(node, nodes);
 }
 
+static void collectChildrenAndRemoveFromOldParent(Node* node, NodeVector& nodes, ExceptionCode& ec)
+{
+    if (node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {
+        nodes.append(node);
+        if (ContainerNode* oldParent = node->parentNode())
+            oldParent->removeChild(node, ec);
+        return;
+    }
+    getChildNodes(node, nodes);
+    toContainerNode(node)->removeChildren();
+}
+
 void ContainerNode::removeAllChildren()
 {
     removeAllChildrenInContainer<Node, ContainerNode>(this);
@@ -127,13 +139,14 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         return false;
     }
 
-    NodeVector targets;
-    collectTargetNodes(newChild.get(), targets);
-    if (targets.isEmpty())
+    if (refChild->previousSibling() == newChild || refChild == newChild) // nothing to do
         return true;
 
-    // Now actually add the child(ren)
-    if (refChild->previousSibling() == newChild || refChild == newChild) // nothing to do
+    NodeVector targets;
+    collectChildrenAndRemoveFromOldParent(newChild.get(), targets, ec);
+    if (ec)
+        return false;
+    if (targets.isEmpty())
         return true;
 
 #if ENABLE(MUTATION_OBSERVERS)
@@ -144,12 +157,6 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
     RefPtr<Node> refChildPreviousSibling = refChild->previousSibling();
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         Node* child = it->get();
-
-        // If child is already present in the tree, first remove it from the old location.
-        if (ContainerNode* oldParent = child->parentNode())
-            oldParent->removeChild(child, ec);
-        if (ec)
-            return false;
 
         // Due to arbitrary code running in response to a DOM mutation event it's
         // possible that "next" is no longer a child of "this".
@@ -252,7 +259,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
 
     if (oldChild == newChild) // nothing to do
         return true;
-    
+
     // Make sure replacing the old child with the new is ok
     checkReplaceChild(newChild.get(), oldChild, ec);
     if (ec)
@@ -277,22 +284,17 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     if (ec)
         return false;
 
+    if (next && (next->previousSibling() == newChild || next == newChild)) // nothing to do
+        return true;
+
     NodeVector targets;
-    collectTargetNodes(newChild.get(), targets);
+    collectChildrenAndRemoveFromOldParent(newChild.get(), targets, ec);
+    if (ec)
+        return false;
 
     // Add the new child(ren)
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         Node* child = it->get();
-
-        // If the new child is already in the right place, we're done.
-        if (next && (next == child || next == child->previousSibling()))
-            break;
-
-        // Remove child from its old position.
-        if (ContainerNode* oldParent = child->parentNode())
-            oldParent->removeChild(child, ec);
-        if (ec)
-            return false;
 
         // Due to arbitrary code running in response to a DOM mutation event it's
         // possible that "next" is no longer a child of "this".
@@ -302,9 +304,6 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
             break;
         if (child->parentNode())
             break;
-
-        ASSERT(!child->nextSibling());
-        ASSERT(!child->previousSibling());
 
 #if ENABLE(INSPECTOR)
         InspectorInstrumentation::willInsertDOMNode(document(), child, this);
@@ -580,7 +579,10 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
         return newChild;
 
     NodeVector targets;
-    collectTargetNodes(newChild.get(), targets);
+    collectChildrenAndRemoveFromOldParent(newChild.get(), targets, ec);
+    if (ec)
+        return false;
+
     if (targets.isEmpty())
         return true;
 
@@ -592,18 +594,12 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
     RefPtr<Node> prev = lastChild();
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         Node* child = it->get();
-        // If child is already present in the tree, first remove it
-        if (ContainerNode* oldParent = child->parentNode()) {
-            oldParent->removeChild(child, ec);
-            if (ec)
-                return false;
 
-            // If the child has a parent again, just stop what we're doing, because
-            // that means someone is doing something with DOM mutation -- can't re-parent
-            // a child that already has a parent.
-            if (child->parentNode())
-                break;
-        }
+        // If the child has a parent again, just stop what we're doing, because
+        // that means someone is doing something with DOM mutation -- can't re-parent
+        // a child that already has a parent.
+        if (child->parentNode())
+            break;
 
 #if ENABLE(INSPECTOR)
         InspectorInstrumentation::willInsertDOMNode(document(), child, this);
