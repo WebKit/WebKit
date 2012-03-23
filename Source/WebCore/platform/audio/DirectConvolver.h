@@ -31,6 +31,10 @@
 
 #include "AudioArray.h"
 
+#if USE(WEBAUDIO_IPP)
+#include <ipps.h>
+#endif // USE(WEBAUDIO_IPP)
+
 namespace WebCore {
 
 class DirectConvolver {
@@ -44,7 +48,10 @@ public:
 private:
     size_t m_inputBlockSize;
 
-    AudioFloatArray m_inputBuffer;
+#if USE(WEBAUDIO_IPP)
+    AudioFloatArray m_overlayBuffer;
+#endif // USE(WEBAUDIO_IPP)
+    AudioFloatArray m_buffer;
 };
 
 } // namespace WebCore
