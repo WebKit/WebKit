@@ -1,3 +1,13 @@
+2012-03-22  Eric Seidel  <eric@webkit.org>
+
+        Make svn-apply re-write JavaScriptCore/wtf to WTF/wtf
+        https://bugs.webkit.org/show_bug.cgi?id=81984
+
+        Reviewed by Adam Barth.
+
+        * Scripts/VCSUtils.pm:
+        (adjustPathForRecentRenamings):
+
 2012-03-22  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         [CMake] Fix build-jsc after r111778 and r111797.

@@ -439,6 +439,7 @@ sub adjustPathForRecentRenamings($)
     my ($fullPath) = @_; 
  
     $fullPath =~ s|WebCore/webaudio|WebCore/Modules/webaudio|g;
+    $fullPath =~ s|JavaScriptCore/wtf|WTF/wtf|g;
 
     return $fullPath; 
 } 
