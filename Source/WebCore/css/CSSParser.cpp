@@ -2278,8 +2278,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBorder:
         // [ 'border-width' || 'border-style' || <color> ] | inherit
     {
-        const int properties[3] = { CSSPropertyBorderWidth, CSSPropertyBorderStyle, CSSPropertyBorderColor };
-        if (parseShorthand(propId, CSSPropertyLonghand(properties, 3), important)) {
+        if (parseShorthand(propId, borderAbridgedLonghand(), important)) {
             // The CSS3 Borders and Backgrounds specification says that border also resets border-image. It's as
             // though a value of none was specified for the image.
             addProperty(CSSPropertyBorderImage, cssValuePool()->createImplicitInitialValue(), important);
@@ -2803,13 +2802,13 @@ bool CSSParser::parseShorthand(int propId, const CSSPropertyLonghand& longhand, 
 
     bool found = false;
     unsigned propertiesParsed = 0;
-    bool fnd[6]= { false, false, false, false, false, false }; // 6 is enough size.
+    bool propertyFound[6]= { false, false, false, false, false, false }; // 6 is enough size.
 
     while (m_valueList->current()) {
         found = false;
         for (unsigned propIndex = 0; !found && propIndex < longhand.length(); ++propIndex) {
-            if (!fnd[propIndex] && parseValue(longhand.properties()[propIndex], important)) {
-                    fnd[propIndex] = found = true;
+            if (!propertyFound[propIndex] && parseValue(longhand.properties()[propIndex], important)) {
+                    propertyFound[propIndex] = found = true;
                     propertiesParsed++;
             }
         }
@@ -2825,8 +2824,16 @@ bool CSSParser::parseShorthand(int propId, const CSSPropertyLonghand& longhand, 
 
     // Fill in any remaining properties with the initial value.
     ImplicitScope implicitScope(this, PropertyImplicit);
+    const CSSPropertyLonghand* const* const longhandsForInitialization = longhand.longhandsForInitialization();
     for (unsigned i = 0; i < longhand.length(); ++i) {
-        if (!fnd[i])
+        if (propertyFound[i])
+            continue;
+
+        if (longhandsForInitialization) {
+            const CSSPropertyLonghand& initLonghand = *(longhandsForInitialization[i]);
+            for (unsigned propIndex = 0; propIndex < initLonghand.length(); ++propIndex)
+                addProperty(initLonghand.properties()[propIndex], cssValuePool()->createImplicitInitialValue(), important);
+        } else
             addProperty(longhand.properties()[i], cssValuePool()->createImplicitInitialValue(), important);
     }
 

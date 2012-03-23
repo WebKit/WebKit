@@ -71,6 +71,19 @@ const CSSPropertyLonghand& borderLonghand()
     return borderLonghand;
 }
 
+const CSSPropertyLonghand& borderAbridgedLonghand()
+{
+    static const int borderAbridgedProperties[] = { CSSPropertyBorderWidth, CSSPropertyBorderStyle, CSSPropertyBorderColor };
+    static const CSSPropertyLonghand* propertiesForInitialization[] = {
+        &borderWidthLonghand(),
+        &borderStyleLonghand(),
+        &borderColorLonghand(),
+    };
+    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderAbridgedLonghand,
+        (borderAbridgedProperties, propertiesForInitialization, WTF_ARRAY_LENGTH(borderAbridgedProperties)));
+    return borderAbridgedLonghand;
+}
+
 const CSSPropertyLonghand& borderBottomLonghand()
 {
     static const int borderBottomProperties[] = { CSSPropertyBorderBottomWidth, CSSPropertyBorderBottomStyle, CSSPropertyBorderBottomColor };

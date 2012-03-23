@@ -27,21 +27,32 @@ class CSSPropertyLonghand {
 public:
     CSSPropertyLonghand()
         : m_properties(0)
+        , m_longhandsForInitialization(0)
         , m_length(0)
     {
     }
 
-    CSSPropertyLonghand(const int* firstProperty, unsigned numProperties)
-        : m_properties(firstProperty)
+    CSSPropertyLonghand(const int* properties, unsigned numProperties)
+        : m_properties(properties)
+        , m_longhandsForInitialization(0)
+        , m_length(numProperties)
+    {
+    }
+
+    CSSPropertyLonghand(const int* properties, const CSSPropertyLonghand** longhandsForInitialization, unsigned numProperties)
+        : m_properties(properties)
+        , m_longhandsForInitialization(longhandsForInitialization)
         , m_length(numProperties)
     {
     }
 
     const int* properties() const { return m_properties; }
+    const CSSPropertyLonghand** longhandsForInitialization() const { return m_longhandsForInitialization; }
     unsigned length() const { return m_length; }
 
 private:
     const int* m_properties;
+    const CSSPropertyLonghand** m_longhandsForInitialization;
     unsigned m_length;
 };
 
@@ -49,6 +60,7 @@ const CSSPropertyLonghand& backgroundLonghand();
 const CSSPropertyLonghand& backgroundPositionLonghand();
 const CSSPropertyLonghand& backgroundRepeatLonghand();
 const CSSPropertyLonghand& borderLonghand();
+const CSSPropertyLonghand& borderAbridgedLonghand();
 const CSSPropertyLonghand& borderBottomLonghand();
 const CSSPropertyLonghand& borderColorLonghand();
 const CSSPropertyLonghand& borderImageLonghand();
