@@ -300,6 +300,10 @@ http/tests/cookies/simple-cookies-max-age.html
 fast/events/drag-selects-image.html
 fast/workers/worker-cloneport.html
 
+# All additional tests that failed more than once on the Lion WebKit2 Release bot between r111814 and r111865
+css3/selectors3/xml/css3-modsel-d3.xml
+fast/canvas/webgl/texture-color-profile.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
