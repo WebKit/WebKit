@@ -1,3 +1,17 @@
+2012-03-23  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL][DRT] Implement LayoutTestController's methods related with editing.
+        https://bugs.webkit.org/show_bug.cgi?id=80136
+
+        Reviewed by Ryosuke Niwa.
+
+        Implements EFL's LayoutTestController methods e.i. setSmartInsertDeleteEnabled,
+        setSelectTrailingWhitespaceEnabled.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setSmartInsertDeleteEnabled):
+        (LayoutTestController::setSelectTrailingWhitespaceEnabled):
+
 2012-03-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert hasGrammarMarker to use Internals interface

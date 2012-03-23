@@ -286,9 +286,9 @@ void LayoutTestController::setWindowIsKey(bool)
     notImplemented();
 }
 
-void LayoutTestController::setSmartInsertDeleteEnabled(bool)
+void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
 {
-    notImplemented();
+    DumpRenderTreeSupportEfl::setSmartInsertDeleteEnabled(browser->mainView(), flag);
 }
 
 static Eina_Bool waitToDumpWatchdogFired(void*)
@@ -446,9 +446,9 @@ void LayoutTestController::setJavaScriptProfilingEnabled(bool)
     notImplemented();
 }
 
-void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool)
+void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
 {
-    notImplemented();
+    DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled(browser->mainView(), flag);
 }
 
 void LayoutTestController::setPopupBlockingEnabled(bool flag)

@@ -61,7 +61,8 @@ svg/W3C-SVG-1.1-SE
 svg/zoom/page/relative-sized-document-scrollbars.svg
 svg/zoom/page/zoom-zoom-coords.xhtml
 
-# EFL's EventSender needs to emit double clicks
+# EFL's EventSender needs to emit double clicks (e.g. to select text)
+editing/selection/doubleclick-inline-first-last-contenteditable.html
 fast/events/dblclick-addEventListener.html
 fast/forms/password-doubleclick-selection.html
 
@@ -441,13 +442,6 @@ fast/events/blur-focus-window-should-blur-focus-element.html
 fast/events/show-modal-dialog-onblur-onfocus.html
 plugins/netscape-plugin-setwindow-size-2.html
 
-# EFL's LayoutTestController does not implement setSmartInsertDeleteEnabled
-editing/deleting/smart-editing-disabled.html
-editing/selection/doubleclick-beside-cr-span.html
-editing/selection/doubleclick-whitespace-crash.html
-editing/selection/doubleclick-whitespace-img-crash.html
-editing/selection/doubleclick-whitespace.html
-
 # EFL's LayoutTestController does not implement setJavaScriptCanAccessClipboard
 editing/execCommand/clipboard-access.html
 
@@ -472,13 +466,6 @@ http/tests/misc/favicon-loads-with-images-disabled.html
 
 # EFL's LayoutTestController does not implement setJavaScriptProfilingEnabled
 fast/profiler
-
-# EFL's LayoutTestController does not implement setSelectTrailingWhitespaceEnabled
-editing/selection/doubleclick-beside-cr-span.html
-editing/selection/doubleclick-inline-first-last-contenteditable.html
-editing/selection/doubleclick-whitespace-crash.html
-editing/selection/doubleclick-whitespace-img-crash.html
-editing/selection/doubleclick-whitespace.html
 
 # EFL's LayoutTestController does not implement elementDoesAutoCompleteForElementWithId
 security/set-form-autocomplete-attribute.html
@@ -699,7 +686,7 @@ http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 fast/events/show-modal-dialog-onblur-onfocus.html
 fast/harness/show-modal-dialog.html
 
-# EFL's LayoutTestController does not implement hasSpellingMarker
+# Missing TextCheckerClient implementation (Efl's port does not support spell checking, Gtk port uses Enchant library https://bugs.webkit.org/show_bug.cgi?id=61787)
 editing/spelling/design-mode-spellcheck-off.html
 editing/spelling/spellcheck-attribute.html
 editing/spelling/spellcheck-paste.html

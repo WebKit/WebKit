@@ -26,6 +26,7 @@
 
 #include <AnimationController.h>
 #include <DocumentLoader.h>
+#include <EditorClientEfl.h>
 #include <Eina.h>
 #include <Evas.h>
 #include <FindOptions.h>
@@ -320,6 +321,32 @@ bool DumpRenderTreeSupportEfl::findString(const Evas_Object* ewkView, const char
         return false;
 
     return page->findString(String::fromUTF8(text), options);
+}
+
+void DumpRenderTreeSupportEfl::setSmartInsertDeleteEnabled(Evas_Object* ewkView, bool enabled)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page)
+        return;
+
+    WebCore::EditorClientEfl* editorClient = static_cast<WebCore::EditorClientEfl*>(page->editorClient());
+    if (!editorClient)
+        return;
+
+    editorClient->setSmartInsertDeleteEnabled(enabled);
+}
+
+void DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled(Evas_Object* ewkView, bool enabled)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page)
+        return;
+
+    WebCore::EditorClientEfl* editorClient = static_cast<WebCore::EditorClientEfl*>(page->editorClient());
+    if (!editorClient)
+        return;
+
+    editorClient->setSelectTrailingWhitespaceEnabled(enabled);
 }
 
 void DumpRenderTreeSupportEfl::garbageCollectorCollect()

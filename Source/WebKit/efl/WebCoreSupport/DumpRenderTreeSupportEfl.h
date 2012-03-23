@@ -66,6 +66,8 @@ public:
     static void setAutofilled(JSContextRef, JSValueRef nodeObject, bool autofilled);
 
     static bool findString(const Evas_Object* ewkView, const char* text, WebCore::FindOptions);
+    static void setSmartInsertDeleteEnabled(Evas_Object* ewkView, bool enabled);
+    static void setSelectTrailingWhitespaceEnabled(Evas_Object* ewkView, bool enabled);
 
     static void garbageCollectorCollect();
     static void garbageCollectorCollectOnAlternateThread(bool waitUntilDone);

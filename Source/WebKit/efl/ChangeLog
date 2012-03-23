@@ -1,3 +1,26 @@
+2012-03-23  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL][DRT] Implement LayoutTestController's methods related with editing.
+        https://bugs.webkit.org/show_bug.cgi?id=80136
+
+        Reviewed by Ryosuke Niwa.
+
+        Implements DumpRenderTreeSupportEfl's and EditorClientEfl's methods related with editing.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::setSmartInsertDeleteEnabled): New function.
+        (DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled): New function.
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::setSmartInsertDeleteEnabled): New function.
+        (WebCore):
+        (WebCore::EditorClientEfl::smartInsertDeleteEnabled): Add implementation.
+        (WebCore::EditorClientEfl::setSelectTrailingWhitespaceEnabled): New function.
+        (WebCore::EditorClientEfl::isSelectTrailingWhitespaceEnabled): Add implementation.
+        (WebCore::EditorClientEfl::EditorClientEfl):
+        * WebCoreSupport/EditorClientEfl.h:
+        (EditorClientEfl):
+
 2012-03-22  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Implement LayoutTestController::markerTextForListItem()

@@ -60,7 +60,9 @@ public:
     virtual bool shouldDeleteRange(Range*);
     virtual bool shouldShowDeleteInterface(HTMLElement*);
     virtual bool smartInsertDeleteEnabled();
+    void setSmartInsertDeleteEnabled(bool);
     virtual bool isSelectTrailingWhitespaceEnabled();
+    void setSelectTrailingWhitespaceEnabled(bool);
     virtual bool isContinuousSpellCheckingEnabled();
     virtual void toggleContinuousSpellChecking();
     virtual bool isGrammarCheckingEnabled();
@@ -125,6 +127,8 @@ public:
 
 private:
     Evas_Object *m_view;
+    bool m_selectTrailingWhitespaceEnabled;
+    bool m_smartInsertDeleteEnabled;
 };
 }
 
