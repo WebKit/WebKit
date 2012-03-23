@@ -28,6 +28,7 @@
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
+#include "cc/CCSingleThreadProxy.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -78,6 +79,7 @@ public:
 
 private:
     int m_setFullRootLayerDamageCount;
+    DebugScopedSetImplThread m_implThread;
 };
 
 class FakeLayerRendererChromium : public LayerRendererChromium {

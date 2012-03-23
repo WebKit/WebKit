@@ -1,3 +1,11 @@
+2012-03-22  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, fix LayerRendererChromiumTest debug unit test errors
+        https://bugs.webkit.org/show_bug.cgi?id=81823
+
+        * tests/LayerRendererChromiumTest.cpp:
+        (FakeLayerRendererChromiumClient):
+
 2012-03-22  Michal Mocny  <mmocny@google.com>
 
         [chromium] Removing failing unit test - CCLayerTreeHostImplTest.visibilityChangeResetsDamage
