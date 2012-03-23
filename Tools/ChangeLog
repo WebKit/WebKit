@@ -1,3 +1,24 @@
+2012-03-23  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] libgcrypt and p11-kit should not be in jhbuild modules
+        https://bugs.webkit.org/show_bug.cgi?id=82073
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitdirs.pm:
+        (jhbuildConfigurationChanged): new function that isolates the
+        jhbuild configuration change checking from the autogen logic.
+        (mustReRunAutogen): code for the new function lived here.
+        (buildAutotoolsProject): now calls jhbuildConfigurationChanged
+        itself, and cleans up the jhbuild root if configuration has
+        changed; it also forces autogen to be run in that case, to
+        make sure the new libraries are used.
+        * gtk/jhbuild.modules: removed libgcrypt and p11-kit.
+        * jhbuild/jhbuild-wrapper:
+        (ensure_jhbuild): this might be run inside a jhbuild environment,
+        in which case aclocal fails when trying to use the now deleted
+        aclocal directory in the jhbuild prefix, so work around that.
+
 2012-03-23  Ojan Vafai  <ojan@chromium.org>
 
         garden-o-matic scrolls to the top of the page when you click an accordion item

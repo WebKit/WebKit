@@ -1827,6 +1827,29 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
     }
 }
 
+sub jhbuildConfigurationChanged()
+{
+    foreach my $file (qw(jhbuildrc.md5sum jhbuild.modules.md5sum)) {
+        if (! -e $file) {
+            return 1;
+        }
+
+        # Get the md5 sum of the file we're testing.
+        $file =~ m/(.+)\.md5sum/;
+        my $actualFile = join('/', $sourceDir, 'Tools', 'gtk', $1);
+        my $currentSum = getMD5HashForFile($actualFile);
+
+        # Get our previous record.
+        open(PREVIOUS_MD5, $file);
+        chomp(my $previousSum = <PREVIOUS_MD5>);
+        close(PREVIOUS_MD5);
+
+        if ($previousSum ne $currentSum) {
+            return 1;
+        }
+    }
+}
+
 sub mustReRunAutogen($@)
 {
     my ($sourceDir, $filename, @currentArguments) = @_;
@@ -1848,27 +1871,6 @@ sub mustReRunAutogen($@)
         print "Previous autogen arguments were: $previousArguments\n\n";
         print "New autogen arguments are: $joinedCurrentArguments\n";
         return 1;
-    }
-
-    # Now check jhbuild configuration for changes.
-    foreach my $file (qw(jhbuildrc.md5sum jhbuild.modules.md5sum)) {
-        if (! -e $file) {
-            return 1;
-        }
-
-        # Get the md5 sum of the file we're testing.
-        $file =~ m/(.+)\.md5sum/;
-        my $actualFile = join('/', $sourceDir, 'Tools', 'gtk', $1);
-        my $currentSum = getMD5HashForFile($actualFile);
-
-        # Get our previous record.
-        open(PREVIOUS_MD5, $file);
-        chomp(my $previousSum = <PREVIOUS_MD5>);
-        close(PREVIOUS_MD5);
-
-        if ($previousSum ne $currentSum) {
-            return 1;
-        }
     }
 
     return 0;
@@ -1895,11 +1897,6 @@ sub buildAutotoolsProject($@)
 
     if ($clean) {
         return 0;
-    }
-
-    # We might need to update jhbuild dependencies.
-    if (checkForArgumentAndRemoveFromArrayRef("--update-gtk", \@buildParams)) {
-        system("perl", "$sourceDir/Tools/Scripts/update-webkitgtk-libs") == 0 or die $!;
     }
 
     my @buildArgs = ();
@@ -1937,6 +1934,34 @@ sub buildAutotoolsProject($@)
         push @buildArgs, "--enable-debug";
     } else {
         push @buildArgs, "--disable-debug";
+    }
+
+    # We might need to update jhbuild dependencies.
+    my $needUpdate = 0;
+    if (jhbuildConfigurationChanged()) {
+        # If the configuration changed, dependencies may have been removed.
+        # Since we lack a granular way of uninstalling those we wipe out the
+        # jhbuild root and start from scratch.
+        if (system("rm -rf $baseProductDir/Dependencies/Root") ne 0) {
+            die "Cleaning jhbuild root failed!";
+        }
+
+        if (system("perl $sourceDir/Tools/jhbuild/jhbuild-wrapper --gtk clean") ne 0) {
+            die "Cleaning jhbuild modules failed!";
+        }
+
+        $needUpdate = 1;
+    }
+
+    if (checkForArgumentAndRemoveFromArrayRef("--update-gtk", \@buildArgs)) {
+        $needUpdate = 1;
+    }
+
+    if ($needUpdate) {
+        # Force autogen to run, to catch the possibly updated libraries.
+        system("rm -f previous-autogen-arguments.txt");
+
+        system("perl", "$sourceDir/Tools/Scripts/update-webkitgtk-libs") == 0 or die $!;
     }
 
     # If GNUmakefile exists, don't run autogen.sh unless its arguments
