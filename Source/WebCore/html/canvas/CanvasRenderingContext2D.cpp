@@ -161,11 +161,6 @@ void CanvasRenderingContext2D::reset()
     m_stateStack.resize(1);
     m_stateStack.first() = State();
     m_path.clear();
-#if USE(ACCELERATED_COMPOSITING)
-    RenderBox* renderBox = canvas()->renderBox();
-    if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
-        renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
-#endif
 }
 
 CanvasRenderingContext2D::State::State()
