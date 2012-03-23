@@ -25,10 +25,14 @@
 
 #include "webkitgeolocationpolicydecision.h"
 
+#if ENABLE(GEOLOCATION)
+
 extern "C" {
 
 WebKitGeolocationPolicyDecision* webkit_geolocation_policy_decision_new(WebKitWebFrame*, WebCore::Geolocation*);
 
 }
+
+#endif // ENABLE(GEOLOCATION)
 
 #endif

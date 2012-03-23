@@ -1,5 +1,26 @@
 2012-03-23  Zan Dobersek  <zandobersek@gmail.com>
 
+        [Gtk] Webkit fails to build with --disable-geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=81451
+
+        Reviewed by Benjamin Poulain.
+
+        Wrap uses of WebCore::Geolocation in WebKitGeolocationPolicyDecision
+        and WebKitWebView in ifdefs, removing compilation errors when compiling
+        with geolocation support disabled. Affected public API methods are then
+        stubs, throwing a warning that feature was not enabled at compile-time.
+
+        * webkit/webkitgeolocationpolicydecision.cpp:
+        (_WebKitGeolocationPolicyDecisionPrivate):
+        (webkit_geolocation_policy_decision_new):
+        (webkit_geolocation_policy_allow):
+        (webkit_geolocation_policy_deny):
+        * webkit/webkitgeolocationpolicydecisionprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+
+2012-03-23  Zan Dobersek  <zandobersek@gmail.com>
+
         [GObject bindings] Supplemental interfaces are not disabled with the "Conditional" attribute
         https://bugs.webkit.org/show_bug.cgi?id=80030
 

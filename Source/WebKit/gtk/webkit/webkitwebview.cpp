@@ -3586,7 +3586,9 @@ static void webkit_web_view_init(WebKitWebView* webView)
 #endif
 
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {
+#if ENABLE(GEOLOCATION)
         static_cast<GeolocationClientMock*>(pageClients.geolocationClient)->setController(priv->corePage->geolocationController());
+#endif
         // Set some testing-specific settings
         priv->corePage->settings()->setInteractiveFormValidationEnabled(true);
         priv->corePage->settings()->setValidationMessageTimerMagnification(-1);

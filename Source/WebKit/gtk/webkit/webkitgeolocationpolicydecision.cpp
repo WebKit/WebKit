@@ -22,8 +22,7 @@
 
 #include "Geolocation.h"
 #include "webkitgeolocationpolicydecisionprivate.h"
-
-using namespace WebCore;
+#include "webkitglobalsprivate.h"
 
 /**
  * SECTION:webkitgeolocationpolicydecision
@@ -39,7 +38,9 @@ G_DEFINE_TYPE(WebKitGeolocationPolicyDecision, webkit_geolocation_policy_decisio
 
 struct _WebKitGeolocationPolicyDecisionPrivate {
     WebKitWebFrame* frame;
-    Geolocation* geolocation;
+#if ENABLE(GEOLOCATION)
+    WebCore::Geolocation* geolocation;
+#endif
 };
 
 static void webkit_geolocation_policy_decision_class_init(WebKitGeolocationPolicyDecisionClass* decisionClass)
@@ -52,7 +53,8 @@ static void webkit_geolocation_policy_decision_init(WebKitGeolocationPolicyDecis
     decision->priv = G_TYPE_INSTANCE_GET_PRIVATE(decision, WEBKIT_TYPE_GEOLOCATION_POLICY_DECISION, WebKitGeolocationPolicyDecisionPrivate);
 }
 
-WebKitGeolocationPolicyDecision* webkit_geolocation_policy_decision_new(WebKitWebFrame* frame, Geolocation* geolocation)
+#if ENABLE(GEOLOCATION)
+WebKitGeolocationPolicyDecision* webkit_geolocation_policy_decision_new(WebKitWebFrame* frame, WebCore::Geolocation* geolocation)
 {
     g_return_val_if_fail(frame, NULL);
     WebKitGeolocationPolicyDecision* decision = WEBKIT_GEOLOCATION_POLICY_DECISION(g_object_new(WEBKIT_TYPE_GEOLOCATION_POLICY_DECISION, NULL));
@@ -62,6 +64,7 @@ WebKitGeolocationPolicyDecision* webkit_geolocation_policy_decision_new(WebKitWe
     priv->geolocation = geolocation;
     return decision;
 }
+#endif
 
 /**
  * webkit_geolocation_policy_allow
@@ -73,10 +76,14 @@ WebKitGeolocationPolicyDecision* webkit_geolocation_policy_decision_new(WebKitWe
  */
 void webkit_geolocation_policy_allow(WebKitGeolocationPolicyDecision* decision)
 {
+#if ENABLE(GEOLOCATION)
     g_return_if_fail(WEBKIT_IS_GEOLOCATION_POLICY_DECISION(decision));
 
     WebKitGeolocationPolicyDecisionPrivate* priv = decision->priv;
     priv->geolocation->setIsAllowed(TRUE);
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Geolocation")
+#endif
 }
 
 /**
@@ -89,9 +96,13 @@ void webkit_geolocation_policy_allow(WebKitGeolocationPolicyDecision* decision)
  */
 void webkit_geolocation_policy_deny(WebKitGeolocationPolicyDecision* decision)
 {
+#if ENABLE(GEOLOCATION)
     g_return_if_fail(WEBKIT_IS_GEOLOCATION_POLICY_DECISION(decision));
 
     WebKitGeolocationPolicyDecisionPrivate* priv = decision->priv;
     priv->geolocation->setIsAllowed(FALSE);
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Geolocation")
+#endif
 }
 
