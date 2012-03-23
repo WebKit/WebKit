@@ -67,7 +67,8 @@ if (isQt()) {
     my $result = buildQMakeProjects(\@projects, 0, @ARGV);
     exit exitStatus($result);
 } elsif (cmakeBasedPortName()) {
-    buildCMakeProjectOrExit(0, cmakeBasedPortName(), undef, undef, ("-DONLY_BUILD_JAVASCRIPTCORE=1", cmakeBasedPortArguments())); # This call never returns.
+    buildCMakeProjectOrExit(0, cmakeBasedPortName(), undef, undef, ("-DONLY_BUILD_JAVASCRIPTCORE=1", cmakeBasedPortArguments())); # This call only returns if nothing wrong happened
+    exit exitStatus(0);
 }
 
 sub buildMyProject

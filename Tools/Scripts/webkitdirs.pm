@@ -2042,6 +2042,7 @@ sub buildCMakeProjectOrExit($$$$@)
     exit($returnCode) if $returnCode;
     $returnCode = exitStatus(buildCMakeGeneratedProject($makeArgs));
     exit($returnCode) if $returnCode;
+    return 0;
 }
 
 sub cmakeBasedPortArguments()
