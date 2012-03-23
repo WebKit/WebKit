@@ -1,3 +1,9 @@
+2012-03-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r111778.
+
+        * WinCELauncher/CMakeLists.txt:
+
 2012-03-23  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed buildfix for the Chromium Android builder.
