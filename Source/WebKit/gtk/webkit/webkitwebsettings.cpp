@@ -754,6 +754,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
      * right-clicks that are handled by the page itself.
      *
      * Since: 1.1.18
+     *
+     * Deprecated: 1.10: Use #WebKitWebView::context-menu signal instead.
      */
     g_object_class_install_property(gobject_class,
                                     PROP_ENABLE_DEFAULT_CONTEXT_MENU,

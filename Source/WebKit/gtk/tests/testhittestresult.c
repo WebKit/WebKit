@@ -83,6 +83,7 @@ load_status_cb(WebKitWebView* webView,
         guint context;
         GdkEvent* event = gdk_event_new(GDK_BUTTON_PRESS);
         WebKitDOMNode* node;
+        gint x, y;
 
         /* Close enough to 0,0 */
         event->button.x = 5;
@@ -98,6 +99,11 @@ load_status_cb(WebKitWebView* webView,
         g_object_get(result, "inner-node", &node, NULL);
         g_assert(node);
         g_assert(WEBKIT_DOM_IS_NODE(node));
+
+        g_object_get(result, "x", &x, "y", &y, NULL);
+        g_assert_cmpint(x, ==, 5);
+        g_assert_cmpint(y, ==, 5);
+
         /* We can only test these node types at the moment. In the
          * input case there seems to be an extra layer with a DIV on
          * top of the input, which gets assigned to the inner-node.

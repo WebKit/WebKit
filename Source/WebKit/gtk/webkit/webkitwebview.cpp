@@ -219,6 +219,7 @@ enum {
     RESOURCE_LOAD_FAILED,
     ENTERING_FULLSCREEN,
     LEAVING_FULLSCREEN,
+    CONTEXT_MENU,
 
     LAST_SIGNAL
 };
@@ -323,23 +324,36 @@ static void contextMenuConnectActivate(GtkMenuItem* item, ContextMenuController*
     g_signal_connect(item, "activate", G_CALLBACK(contextMenuItemActivated), controller);
 }
 
-static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webView, const PlatformMouseEvent& event)
+static MouseEventWithHitTestResults prepareMouseEventForFrame(Frame* frame, const PlatformMouseEvent& event)
+{
+    HitTestRequest request(HitTestRequest::Active);
+    IntPoint point = frame->view()->windowToContents(event.position());
+    return frame->document()->prepareMouseEvent(request, point, event);
+}
+
+// Check enable-default-context-menu setting for compatibility.
+static bool defaultContextMenuEnabled(WebKitWebView* webView)
+{
+    gboolean enableDefaultContextMenu;
+    g_object_get(webkit_web_view_get_settings(webView), "enable-default-context-menu", &enableDefaultContextMenu, NULL);
+    return enableDefaultContextMenu;
+}
+
+static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webView, const PlatformMouseEvent& event, bool triggeredWithKeyboard)
 {
     Page* page = core(webView);
     page->contextMenuController()->clearContextMenu();
     Frame* focusedFrame;
     Frame* mainFrame = page->mainFrame();
     gboolean mousePressEventResult = FALSE;
+    GRefPtr<WebKitHitTestResult> hitTestResult;
 
     if (!mainFrame->view())
         return FALSE;
 
     mainFrame->view()->setCursor(pointerCursor());
     if (page->frameCount()) {
-        HitTestRequest request(HitTestRequest::Active);
-        IntPoint point = mainFrame->view()->windowToContents(event.position());
-        MouseEventWithHitTestResults mev = mainFrame->document()->prepareMouseEvent(request, point, event);
-
+        MouseEventWithHitTestResults mev = prepareMouseEventForFrame(mainFrame, event);
         Frame* targetFrame = EventHandler::subframeForHitTestResult(mev);
         if (!targetFrame)
             targetFrame = mainFrame;
@@ -349,12 +363,13 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
             page->focusController()->setFocusedFrame(targetFrame);
             focusedFrame = targetFrame;
         }
+        if (focusedFrame == mainFrame)
+            hitTestResult = adoptGRef(kit(mev.hitTestResult()));
     } else
         focusedFrame = mainFrame;
 
     if (focusedFrame->view() && focusedFrame->eventHandler()->handleMousePressEvent(event))
         mousePressEventResult = TRUE;
-
 
     bool handledEvent = focusedFrame->eventHandler()->sendContextMenuEvent(event);
     if (!handledEvent)
@@ -368,37 +383,42 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     if (!coreMenu)
         return mousePressEventResult;
 
-    // If we reach here, it's because WebCore is going to show the
-    // default context menu. We check our setting to figure out
-    // whether we want it or not.
-    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
-    gboolean enableDefaultContextMenu;
-    g_object_get(settings, "enable-default-context-menu", &enableDefaultContextMenu, NULL);
-
-    if (!enableDefaultContextMenu)
-        return FALSE;
-
-    GtkMenu* menu = GTK_MENU(coreMenu->platformDescription());
-    if (!menu)
-        return FALSE;
+    GtkMenu* defaultMenu = coreMenu->platformDescription();
+    ASSERT(defaultMenu);
 
     // We connect the "activate" signal here rather than in ContextMenuGtk to avoid
     // a layering violation. ContextMenuGtk should not know about the ContextMenuController.
-    gtk_container_foreach(GTK_CONTAINER(menu), (GtkCallback)contextMenuConnectActivate, controller);
+    gtk_container_foreach(GTK_CONTAINER(defaultMenu), reinterpret_cast<GtkCallback>(contextMenuConnectActivate), controller);
 
-    g_signal_emit(webView, webkit_web_view_signals[POPULATE_POPUP], 0, menu);
+    if (!hitTestResult) {
+        MouseEventWithHitTestResults mev = prepareMouseEventForFrame(focusedFrame, event);
+        hitTestResult = adoptGRef(kit(mev.hitTestResult()));
+    }
+
+    gboolean handled;
+    g_signal_emit(webView, webkit_web_view_signals[CONTEXT_MENU], 0, defaultMenu, hitTestResult.get(), triggeredWithKeyboard, &handled);
+    if (handled)
+        return TRUE;
+
+    // Return now if default context menu is disabled by enable-default-context-menu setting.
+    // Check enable-default-context-menu setting for compatibility.
+    if (!defaultContextMenuEnabled(webView))
+        return FALSE;
+
+    // Emit populate-popup signal for compatibility.
+    g_signal_emit(webView, webkit_web_view_signals[POPULATE_POPUP], 0, defaultMenu);
 
     // If the context menu is now empty, don't show it.
-    GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
+    GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(defaultMenu)));
     if (!items)
         return FALSE;
 
     WebKitWebViewPrivate* priv = webView->priv;
-    priv->currentMenu = menu;
+    priv->currentMenu = defaultMenu;
     priv->lastPopupXPosition = event.globalPosition().x();
     priv->lastPopupYPosition = event.globalPosition().y();
 
-    gtk_menu_popup(menu, 0, 0, &PopupMenuPositionFunc, webView, event.button() + 1, gtk_get_current_event_time());
+    gtk_menu_popup(defaultMenu, 0, 0, &PopupMenuPositionFunc, webView, event.button() + 1, gtk_get_current_event_time());
     return TRUE;
 }
 
@@ -439,7 +459,7 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
 
     IntPoint globalPoint(convertWidgetPointToScreenPoint(widget, location));
     PlatformMouseEvent event(location, globalPoint, RightButton, PlatformEvent::MousePressed, 0, false, false, false, false, gtk_get_current_event_time());
-    return webkit_web_view_forward_context_menu_event(WEBKIT_WEB_VIEW(widget), event);
+    return webkit_web_view_forward_context_menu_event(WEBKIT_WEB_VIEW(widget), event, true);
 }
 
 static void setHorizontalAdjustment(WebKitWebView* webView, GtkAdjustment* adjustment)
@@ -740,7 +760,7 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
     platformEvent.setClickCount(count);
 
     if (event->button == 3)
-        return webkit_web_view_forward_context_menu_event(webView, PlatformMouseEvent(event));
+        return webkit_web_view_forward_context_menu_event(webView, PlatformMouseEvent(event), false);
 
     Frame* frame = core(webView)->mainFrame();
     if (!frame->view())
@@ -2105,6 +2125,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * When a context menu is about to be displayed this signal is emitted.
      *
      * Add menu items to #menu to extend the context menu.
+     *
+     * Deprecated: 1.10: Use #WebKitWebView::context-menu signal instead.
      */
     webkit_web_view_signals[POPULATE_POPUP] = g_signal_new("populate-popup",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -2824,6 +2846,41 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_TYPE_WEB_FRAME,
             WEBKIT_TYPE_WEB_RESOURCE,
             G_TYPE_POINTER);
+
+    /**
+     * WebKitWebView::context-menu:
+     * @web_view: the object which received the signal
+     * @default_menu: the default context menu
+     * @hit_test_result: a #WebKitHitTestResult with the context of the current position.
+     * @keyboard_mode: %TRUE if the context menu was triggered using the keyboard
+     *
+     * Emmited when a context menu is about to be displayed to give the application
+     * a chance to create and handle its own context menu. If you only want to add custom
+     * options to the default context menu you can simply modify the given @default_menu.
+     *
+     * When @keyboard_mode is %TRUE the coordinates of the given @hit_test_result should be
+     * used to position the popup menu. When the context menu has been triggered by a
+     * mouse event you could either use the @hit_test_result coordinates or pass %NULL
+     * to the #GtkMenuPositionFunc parameter of gtk_menu_popup() function.
+     * Note that coordinates of @hit_test_result are relative to @web_view window.
+     *
+     * If your application will create and display its own popup menu, %TRUE should be returned.
+     * Note that when the context menu is handled by the application, the #WebKitWebSettings:enable-default-context-menu
+     * setting will be ignored and the #WebKitWebView::populate-popup signal won't be emitted.
+     * If you don't want any context menu to be shown, you can simply connect to this signal
+     * and return %TRUE without doing anything else.
+     *
+     * Since: 1.10
+     */
+    webkit_web_view_signals[CONTEXT_MENU] = g_signal_new("context-menu",
+            G_TYPE_FROM_CLASS(webViewClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            webkit_marshal_BOOLEAN__OBJECT_OBJECT_BOOLEAN,
+            G_TYPE_BOOLEAN, 3,
+            GTK_TYPE_WIDGET,
+            WEBKIT_TYPE_HIT_TEST_RESULT,
+            G_TYPE_BOOLEAN);
 
     /*
      * implementations of virtual methods

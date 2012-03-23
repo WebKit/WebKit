@@ -21,6 +21,8 @@
 #include "config.h"
 #include "webkithittestresult.h"
 
+#include "Frame.h"
+#include "FrameView.h"
 #include "HitTestResult.h"
 #include "KURL.h"
 #include "WebKitDOMBinding.h"
@@ -49,6 +51,7 @@ struct _WebKitHitTestResultPrivate {
     char* imageURI;
     char* mediaURI;
     GRefPtr<WebKitDOMNode> innerNode;
+    WebCore::IntPoint position;
 };
 
 enum {
@@ -58,7 +61,9 @@ enum {
     PROP_LINK_URI,
     PROP_IMAGE_URI,
     PROP_MEDIA_URI,
-    PROP_INNER_NODE
+    PROP_INNER_NODE,
+    PROP_X,
+    PROP_Y
 };
 
 static void webkit_hit_test_result_finalize(GObject* object)
@@ -101,6 +106,12 @@ static void webkit_hit_test_result_get_property(GObject* object, guint propertyI
     case PROP_INNER_NODE:
         g_value_set_object(value, priv->innerNode.get());
         break;
+    case PROP_X:
+        g_value_set_int(value, priv->position.x());
+        break;
+    case PROP_Y:
+        g_value_set_int(value, priv->position.y());
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyID, pspec);
     }
@@ -129,6 +140,12 @@ static void webkit_hit_test_result_set_property(GObject* object, guint propertyI
         break;
     case PROP_INNER_NODE:
         priv->innerNode = static_cast<WebKitDOMNode*>(g_value_get_object(value));
+        break;
+    case PROP_X:
+        priv->position.setX(g_value_get_int(value));
+        break;
+    case PROP_Y:
+        priv->position.setY(g_value_get_int(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyID, pspec);
@@ -225,6 +242,34 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* webHitTe
                                                         WEBKIT_TYPE_DOM_NODE,
                                                         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
+    /**
+     * WebKitHitTestResult:x:
+     *
+     * The x coordintate of the event relative to the view's window.
+     *
+     * Since: 1.10
+     */
+    g_object_class_install_property(objectClass, PROP_X,
+                                    g_param_spec_int("x",
+                                                     _("X coordinate"),
+                                                     _("The x coordintate of the event relative to the view's window."),
+                                                     G_MININT, G_MAXINT, 0,
+                                                     static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitHitTestResult:y:
+     *
+     * The x coordintate of the event relative to the view's window.
+     *
+     * Since: 1.10
+     */
+    g_object_class_install_property(objectClass, PROP_Y,
+                                    g_param_spec_int("y",
+                                                     _("Y coordinate"),
+                                                     _("The y coordintate of the event relative to the view's window."),
+                                                     G_MININT, G_MAXINT, 0,
+                                                     static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
     g_type_class_add_private(webHitTestResultClass, sizeof(WebKitHitTestResultPrivate));
 }
 
@@ -243,6 +288,8 @@ WebKitHitTestResult* kit(const WebCore::HitTestResult& result)
     GOwnPtr<char> imageURI(0);
     GOwnPtr<char> mediaURI(0);
     WebKitDOMNode* node = 0;
+    WebCore::Frame* targetFrame;
+    WebCore::IntPoint point;
 
     if (!result.absoluteLinkURL().isEmpty()) {
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK;
@@ -268,12 +315,21 @@ WebKitHitTestResult* kit(const WebCore::HitTestResult& result)
     if (result.innerNonSharedNode())
         node = kit(result.innerNonSharedNode());
 
+    targetFrame = result.targetFrame();
+    if (targetFrame && targetFrame->view()) {
+        // Convert document coords to widget coords.
+        point = targetFrame->view()->contentsToWindow(result.point());
+    } else
+        point = result.point();
+
     return WEBKIT_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_HIT_TEST_RESULT,
                                                "link-uri", linkURI.get(),
                                                "image-uri", imageURI.get(),
                                                "media-uri", mediaURI.get(),
                                                "context", context,
                                                "inner-node", node,
+                                               "x", point.x(),
+                                               "y", point.y(),
                                                NULL));
 }
 
