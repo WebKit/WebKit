@@ -335,6 +335,8 @@
 		8604F505143CE1C200B295F5 /* JSGlobalThis.h in Headers */ = {isa = PBXBuildFile; fileRef = 8604F503143CE1C100B295F5 /* JSGlobalThis.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		860BD801148EA6F200112B2F /* Intrinsic.h in Headers */ = {isa = PBXBuildFile; fileRef = 86BF642A148DB2B5004DE36A /* Intrinsic.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		863B23E00FC6118900703AA4 /* MacroAssemblerCodeRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8642C510151C06A90046D4EF /* RegExpCachedResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86F75EFB151C062F007C9BA3 /* RegExpCachedResult.cpp */; };
+		8642C512151C083D0046D4EF /* RegExpMatchesArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86F75EFD151C062F007C9BA3 /* RegExpMatchesArray.cpp */; };
 		865A30F1135007E100CDB49E /* JSValueInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 865A30F0135007E100CDB49E /* JSValueInlineMethods.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		865F408810E7D56300947361 /* APIShims.h in Headers */ = {isa = PBXBuildFile; fileRef = 865F408710E7D56300947361 /* APIShims.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		866739D213BFDE710023D87C /* BigInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 866739D013BFDE710023D87C /* BigInteger.h */; };
@@ -1033,6 +1035,9 @@
 		86EC9DC31328DF82002B2AD7 /* DFGSpeculativeJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSpeculativeJIT.h; path = dfg/DFGSpeculativeJIT.h; sourceTree = "<group>"; };
 		86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNode.h; path = dfg/DFGNode.h; sourceTree = "<group>"; };
 		86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGScoreBoard.h; path = dfg/DFGScoreBoard.h; sourceTree = "<group>"; };
+		86F75EFB151C062F007C9BA3 /* RegExpCachedResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpCachedResult.cpp; sourceTree = "<group>"; };
+		86F75EFC151C062F007C9BA3 /* RegExpCachedResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpCachedResult.h; sourceTree = "<group>"; };
+		86F75EFD151C062F007C9BA3 /* RegExpMatchesArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpMatchesArray.cpp; sourceTree = "<group>"; };
 		86FA9E8F142BBB2D001773B7 /* JSBoundFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBoundFunction.cpp; sourceTree = "<group>"; };
 		86FA9E90142BBB2E001773B7 /* JSBoundFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBoundFunction.h; sourceTree = "<group>"; };
 		90213E3B123A40C200D422F3 /* MemoryStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryStatistics.cpp; sourceTree = "<group>"; };
@@ -1872,9 +1877,12 @@
 				F692A87E0255597D01FF60F7 /* RegExp.h */,
 				A1712B3A11C7B212007A5315 /* RegExpCache.cpp */,
 				A1712B3E11C7B228007A5315 /* RegExpCache.h */,
+				86F75EFB151C062F007C9BA3 /* RegExpCachedResult.cpp */,
+				86F75EFC151C062F007C9BA3 /* RegExpCachedResult.h */,
 				BCD202BD0E1706A7002C7E82 /* RegExpConstructor.cpp */,
 				BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */,
 				A1712B4011C7B235007A5315 /* RegExpKey.h */,
+				86F75EFD151C062F007C9BA3 /* RegExpMatchesArray.cpp */,
 				93CEDDFB0EA91EE600258EBE /* RegExpMatchesArray.h */,
 				F692A87B0255597D01FF60F7 /* RegExpObject.cpp */,
 				F692A87C0255597D01FF60F7 /* RegExpObject.h */,
@@ -3040,6 +3048,8 @@
 				0F56A1D515001CF4002992B1 /* ExecutionCounter.cpp in Sources */,
 				0A4337BB1506218800991C95 /* DFGRedundantPhiEliminationPhase.cpp in Sources */,
 				0FA581BA150E952C00B9A2D9 /* DFGNodeFlags.cpp in Sources */,
+				8642C510151C06A90046D4EF /* RegExpCachedResult.cpp in Sources */,
+				8642C512151C083D0046D4EF /* RegExpMatchesArray.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -524,7 +524,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/RegExp.cpp \
 	Source/JavaScriptCore/runtime/RegExp.h \
 	Source/JavaScriptCore/runtime/RegExpKey.h \
+	Source/JavaScriptCore/runtime/RegExpMatchesArray.cpp \
 	Source/JavaScriptCore/runtime/RegExpMatchesArray.h \
+	Source/JavaScriptCore/runtime/RegExpCachedResult.cpp \
+	Source/JavaScriptCore/runtime/RegExpCachedResult.h \
 	Source/JavaScriptCore/runtime/RegExpObject.cpp \
 	Source/JavaScriptCore/runtime/RegExpObject.h \
 	Source/JavaScriptCore/runtime/RegExpPrototype.cpp \

@@ -1090,7 +1090,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\RegExpCachedResult.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\RegExpCachedResult.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\RegExpKey.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\RegExpMatchesArray.cpp"
 				>
 			</File>
 			<File

@@ -1,3 +1,83 @@
+2012-03-23  Gavin Barraclough  <barraclough@apple.com>
+
+        RexExp constructor last match properties should not rely on previous ovector
+        https://bugs.webkit.org/show_bug.cgi?id=82077
+
+        Reviewed by Oliver Hunt.
+
+        This change simplifies matching, and will enable subpattern results to be fully lazily generated in the future.
+
+        This patch changes the scheme used to lazily generate the last match properties of the RegExp object.
+        Instead of relying on the results in the ovector, we can instead lazily generate the subpatters using
+        a RegExpMatchesArray. To do so we just need to store the input, the regexp matched, and the match
+        location (the MatchResult). When the match is accessed or the input is set, we reify results. We use
+        a special value of setting the saved result to MatchResult::failed() to indicated that we're in a
+        reified state. This means that next time a match is performed, the store of the result will
+        automatically blow away the reified value.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            - Added new files.
+        * runtime/RegExp.cpp:
+        (JSC::RegExpFunctionalTestCollector::outputOneTest):
+            - changed 'subPattern' -> 'subpattern' (there was a mix in JSC, 'subpattern' was more common).
+        * runtime/RegExpCachedResult.cpp: Added.
+        (JSC::RegExpCachedResult::visitChildren):
+        (JSC::RegExpCachedResult::lastResult):
+        (JSC::RegExpCachedResult::setInput):
+            - New methods, mark GC objects, lazily create the matches array, and record a user provided input (via assignment to RegExp.inupt).
+        * runtime/RegExpCachedResult.h: Added.
+        (RegExpCachedResult):
+            - Added new class.
+        (JSC::RegExpCachedResult::RegExpCachedResult):
+        (JSC::RegExpCachedResult::record):
+        (JSC::RegExpCachedResult::input):
+            - Initialize the object, record the result of a RegExp match, access the stored input property.
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor):
+            - Initialize m_result/m_multiline properties.
+        (JSC::RegExpConstructor::visitChildren):
+            - Make sure the cached results (or lazy source for them) are marked.
+        (JSC::RegExpConstructor::getBackref):
+        (JSC::RegExpConstructor::getLastParen):
+        (JSC::RegExpConstructor::getLeftContext):
+        (JSC::RegExpConstructor::getRightContext):
+            - Moved from RegExpConstructor, moved to RegExpCachedResult, and using new caching scheme.
+        (JSC::regExpConstructorInput):
+        (JSC::setRegExpConstructorInput):
+            - Changed to use RegExpCachedResult.
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::create):
+        (RegExpConstructor):
+        (JSC::RegExpConstructor::setMultiline):
+        (JSC::RegExpConstructor::multiline):
+            - Move multiline property onto the constructor object; it is not affected by the last match.
+        (JSC::RegExpConstructor::setInput):
+        (JSC::RegExpConstructor::input):
+            - These defer to RegExpCachedResult.
+        (JSC::RegExpConstructor::performMatch):
+        * runtime/RegExpMatchesArray.cpp: Added.
+        (JSC::RegExpMatchesArray::visitChildren):
+            - Eeeep! added missing visitChildren!
+        (JSC::RegExpMatchesArray::finishCreation):
+        (JSC::RegExpMatchesArray::reifyAllProperties):
+        (JSC::RegExpMatchesArray::reifyMatchProperty):
+            - Moved from RegExpConstructor.cpp.
+        (JSC::RegExpMatchesArray::leftContext):
+        (JSC::RegExpMatchesArray::rightContext):
+            - Since the match start/
+        * runtime/RegExpMatchesArray.h:
+        (RegExpMatchesArray):
+            - Declare new methods & structure flags.
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::match):
+            - performMatch now requires the JSString input, to cache.
+        * runtime/StringPrototype.cpp:
+        (JSC::removeUsingRegExpSearch):
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+            - performMatch now requires the JSString input, to cache.
+
 2012-03-23  Tony Chang  <tony@chromium.org>
 
         [chromium] rename newwtf target back to wtf

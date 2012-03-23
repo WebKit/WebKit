@@ -21,6 +21,8 @@
 #define RegExpMatchesArray_h
 
 #include "JSArray.h"
+#include "JSGlobalObject.h"
+#include "RegExpObject.h"
 
 namespace JSC {
 
@@ -49,6 +51,9 @@ namespace JSC {
             return array;
         }
 
+        JSString* leftContext(ExecState*);
+        JSString* rightContext(ExecState*);
+
         static const ClassInfo s_info;
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
@@ -56,8 +61,12 @@ namespace JSC {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
+        static void visitChildren(JSCell*, SlotVisitor&);
+
     protected:
         void finishCreation(JSGlobalData&);
+
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
 
     private:
         ALWAYS_INLINE void reifyAllPropertiesIfNecessary(ExecState* exec)

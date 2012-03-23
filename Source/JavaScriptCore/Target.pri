@@ -204,6 +204,8 @@ SOURCES += \
     runtime/PropertyNameArray.cpp \
     runtime/PropertySlot.cpp \
     runtime/RegExpConstructor.cpp \
+    runtime/RegExpCachedResult.cpp \
+    runtime/RegExpMatchesArray.cpp \
     runtime/RegExp.cpp \
     runtime/RegExpObject.cpp \
     runtime/RegExpPrototype.cpp \

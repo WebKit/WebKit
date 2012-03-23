@@ -292,7 +292,7 @@ MatchResult RegExpObject::match(ExecState* exec, JSString* string)
     UString input = string->value(exec);
     JSGlobalData& globalData = exec->globalData();
     if (!regExp->global())
-        return regExpConstructor->performMatch(globalData, regExp, input, 0);
+        return regExpConstructor->performMatch(globalData, regExp, string, input, 0);
 
     JSValue jsLastIndex = getLastIndex();
     unsigned lastIndex;
@@ -311,7 +311,7 @@ MatchResult RegExpObject::match(ExecState* exec, JSString* string)
         lastIndex = static_cast<unsigned>(doubleLastIndex);
     }
 
-    MatchResult result = regExpConstructor->performMatch(globalData, regExp, input, lastIndex);
+    MatchResult result = regExpConstructor->performMatch(globalData, regExp, string, input, lastIndex);
     setLastIndex(exec, result.end);
     return result;
 }

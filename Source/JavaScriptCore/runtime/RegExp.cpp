@@ -131,11 +131,11 @@ void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, UString s, int
     outputEscapedUString(s);
     fprintf(m_file, "\", %d, %d, (", startOffset, result);
     for (unsigned i = 0; i <= regExp->numSubpatterns(); i++) {
-        int subPatternBegin = ovector[i * 2];
-        int subPatternEnd = ovector[i * 2 + 1];
-        if (subPatternBegin == -1)
-            subPatternEnd = -1;
-        fprintf(m_file, "%d, %d", subPatternBegin, subPatternEnd);
+        int subpatternBegin = ovector[i * 2];
+        int subpatternEnd = ovector[i * 2 + 1];
+        if (subpatternBegin == -1)
+            subpatternEnd = -1;
+        fprintf(m_file, "%d, %d", subpatternBegin, subpatternEnd);
         if (i < regExp->numSubpatterns())
             fputs(", ", m_file);
     }

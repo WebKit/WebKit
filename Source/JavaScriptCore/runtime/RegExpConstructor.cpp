@@ -22,21 +22,9 @@
 #include "config.h"
 #include "RegExpConstructor.h"
 
-#include "ArrayPrototype.h"
 #include "Error.h"
-#include "ExceptionHelpers.h"
-#include "JSArray.h"
-#include "JSFunction.h"
-#include "JSString.h"
-#include "Lookup.h"
-#include "ObjectPrototype.h"
 #include "RegExpMatchesArray.h"
-#include "RegExpObject.h"
 #include "RegExpPrototype.h"
-#include "RegExp.h"
-#include "RegExpCache.h"
-#include "UStringConcatenate.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 
@@ -69,8 +57,6 @@ ASSERT_CLASS_FITS_IN_CELL(RegExpConstructor);
 
 const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::regExpConstructorTable, CREATE_METHOD_TABLE(RegExpConstructor) };
 
-const ClassInfo RegExpMatchesArray::s_info = {"Array", &JSArray::s_info, 0, 0, CREATE_METHOD_TABLE(RegExpMatchesArray)};
-
 /* Source for RegExpConstructor.lut.h
 @begin regExpConstructorTable
     input           regExpConstructorInput          None
@@ -97,8 +83,10 @@ const ClassInfo RegExpMatchesArray::s_info = {"Array", &JSArray::s_info, 0, 0, C
 @end
 */
 
-RegExpConstructor::RegExpConstructor(JSGlobalObject* globalObject, Structure* structure)
+RegExpConstructor::RegExpConstructor(JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
     : InternalFunction(globalObject, structure)
+    , m_cachedResult(globalObject->globalData(), this, regExpPrototype->regExp())
+    , m_multiline(false)
 {
 }
 
@@ -119,83 +107,51 @@ void RegExpConstructor::destroy(JSCell* cell)
     jsCast<RegExpConstructor*>(cell)->RegExpConstructor::~RegExpConstructor();
 }
 
-void RegExpMatchesArray::finishCreation(JSGlobalData& globalData)
+void RegExpConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    Base::finishCreation(globalData, m_regExp->numSubpatterns() + 1);
+    RegExpConstructor* thisObject = jsCast<RegExpConstructor*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+
+    Base::visitChildren(thisObject, visitor);
+    thisObject->m_cachedResult.visitChildren(visitor);
 }
 
-void RegExpMatchesArray::reifyAllProperties(ExecState* exec)
+JSValue RegExpConstructor::getBackref(ExecState* exec, unsigned i)
 {
-    ASSERT(m_state != ReifiedAll);
-    ASSERT(m_result);
- 
-    reifyMatchPropertyIfNecessary(exec);
+    RegExpMatchesArray* array = m_cachedResult.lastResult(exec, this);
 
-    if (unsigned numSubpatterns = m_regExp->numSubpatterns()) {
-        Vector<int, 32> subPatternResults;
-        int position = m_regExp->match(exec->globalData(), m_input->value(exec), m_result.start, &subPatternResults);
-        ASSERT_UNUSED(position, position >= 0 && static_cast<size_t>(position) == m_result.start);
-        ASSERT(m_result.start == static_cast<size_t>(subPatternResults[0]));
-        ASSERT(m_result.end == static_cast<size_t>(subPatternResults[1]));
-
-        for (unsigned i = 1; i <= numSubpatterns; ++i) {
-            int start = subPatternResults[2 * i];
-            if (start >= 0)
-                putDirectIndex(exec, i, jsSubstring(exec, m_input.get(), start, subPatternResults[2 * i + 1] - start), false);
-            else
-                putDirectIndex(exec, i, jsUndefined(), false);
-        }
-    }
-
-    PutPropertySlot slot;
-    JSArray::put(this, exec, exec->propertyNames().index, jsNumber(m_result.start), slot);
-    JSArray::put(this, exec, exec->propertyNames().input, m_input.get(), slot);
-
-    m_state = ReifiedAll;
-}
-
-void RegExpMatchesArray::reifyMatchProperty(ExecState* exec)
-{
-    ASSERT(m_state == ReifiedNone);
-    ASSERT(m_result);
-    putDirectIndex(exec, 0, jsSubstring(exec, m_input.get(), m_result.start, m_result.end - m_result.start), false);
-    m_state = ReifiedMatch;
-}
-
-JSValue RegExpConstructor::getBackref(ExecState* exec, unsigned i) const
-{
-    if (!d.lastOvector().isEmpty() && i <= d.lastNumSubPatterns) {
-        int start = d.lastOvector()[2 * i];
-        if (start >= 0)
-            return jsSubstring(exec, d.lastInput, start, d.lastOvector()[2 * i + 1] - start);
+    if (i < array->length()) {
+        JSValue result = JSValue(array).get(exec, i);
+        ASSERT(result.isString() || result.isUndefined());
+        if (!result.isUndefined())
+            return result;
     }
     return jsEmptyString(exec);
 }
 
-JSValue RegExpConstructor::getLastParen(ExecState* exec) const
+JSValue RegExpConstructor::getLastParen(ExecState* exec)
 {
-    unsigned i = d.lastNumSubPatterns;
-    if (i > 0) {
-        ASSERT(!d.lastOvector().isEmpty());
-        int start = d.lastOvector()[2 * i];
-        if (start >= 0)
-            return jsSubstring(exec, d.lastInput, start, d.lastOvector()[2 * i + 1] - start);
+    RegExpMatchesArray* array = m_cachedResult.lastResult(exec, this);
+    unsigned length = array->length();
+    if (length > 1) {
+        JSValue result = JSValue(array).get(exec, length - 1);
+        ASSERT(result.isString() || result.isUndefined());
+        if (!result.isUndefined())
+            return result;
     }
     return jsEmptyString(exec);
 }
 
-JSValue RegExpConstructor::getLeftContext(ExecState* exec) const
+JSValue RegExpConstructor::getLeftContext(ExecState* exec)
 {
-    if (!d.lastOvector().isEmpty())
-        return jsSubstring(exec, d.lastInput, 0, d.lastOvector()[0]);
-    return jsEmptyString(exec);
+    return m_cachedResult.lastResult(exec, this)->leftContext(exec);
 }
 
-JSValue RegExpConstructor::getRightContext(ExecState* exec) const
+JSValue RegExpConstructor::getRightContext(ExecState* exec)
 {
-    if (!d.lastOvector().isEmpty())
-        return jsSubstring(exec, d.lastInput, d.lastOvector()[1], d.lastInput.length() - d.lastOvector()[1]);
-    return jsEmptyString(exec);
+    return m_cachedResult.lastResult(exec, this)->rightContext(exec);
 }
     
 bool RegExpConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -253,9 +209,9 @@ JSValue regExpConstructorDollar9(ExecState* exec, JSValue slotBase, const Identi
     return asRegExpConstructor(slotBase)->getBackref(exec, 9);
 }
 
-JSValue regExpConstructorInput(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue regExpConstructorInput(ExecState*, JSValue slotBase, const Identifier&)
 {
-    return jsString(exec, asRegExpConstructor(slotBase)->input());
+    return asRegExpConstructor(slotBase)->input();
 }
 
 JSValue regExpConstructorMultiline(ExecState*, JSValue slotBase, const Identifier&)
@@ -290,7 +246,7 @@ void RegExpConstructor::put(JSCell* cell, ExecState* exec, const Identifier& pro
 
 void setRegExpConstructorInput(ExecState* exec, JSObject* baseObject, JSValue value)
 {
-    asRegExpConstructor(baseObject)->setInput(value.toString(exec)->value(exec));
+    asRegExpConstructor(baseObject)->setInput(exec, value.toString(exec));
 }
 
 void setRegExpConstructorMultiline(ExecState* exec, JSObject* baseObject, JSValue value)
@@ -357,28 +313,6 @@ CallType RegExpConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callRegExpConstructor;
     return CallTypeHost;
-}
-
-void RegExpConstructor::setInput(const UString& input)
-{
-    d.input = input;
-}
-
-const UString& RegExpConstructor::input() const
-{
-    // Can detect a distinct initial state that is invisible to JavaScript, by checking for null
-    // state (since jsString turns null strings to empty strings).
-    return d.input;
-}
-
-void RegExpConstructor::setMultiline(bool multiline)
-{
-    d.multiline = multiline;
-}
-
-bool RegExpConstructor::multiline() const
-{
-    return d.multiline;
 }
 
 } // namespace JSC

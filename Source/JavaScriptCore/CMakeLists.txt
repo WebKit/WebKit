@@ -199,6 +199,8 @@ SET(JavaScriptCore_SOURCES
     runtime/RegExp.cpp
     runtime/RegExpCache.cpp
     runtime/RegExpConstructor.cpp
+    runtime/RegExpCachedResult.cpp
+    runtime/RegExpMatchesArray.cpp
     runtime/RegExpObject.cpp
     runtime/RegExpPrototype.cpp
     runtime/ScopeChain.cpp
