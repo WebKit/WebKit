@@ -98,7 +98,14 @@ static void scrollbarLayerDidChange(Scrollbar* scrollbar, LayerChromium* scrollL
     if (!scrollbarGraphicsLayer->contentsOpaque())
         scrollbarGraphicsLayer->setContentsOpaque(isOpaqueRootScrollbar);
 
-    if (scrollbar->isCustomScrollbar() || !CCProxy::hasImplThread()) {
+    // Only certain platforms support the way that scrollbars are currently
+    // being painted on the impl thread. For example, Cocoa is not threadsafe.
+    bool platformSupported = false;
+#if OS(LINUX)
+    platformSupported = true;
+#endif
+
+    if (scrollbar->isCustomScrollbar() || !CCProxy::hasImplThread() || !platformSupported) {
         scrollbarGraphicsLayer->setContentsToMedia(0);
         scrollbarGraphicsLayer->setDrawsContent(true);
         return;
