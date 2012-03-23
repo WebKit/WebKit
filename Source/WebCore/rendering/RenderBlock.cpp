@@ -927,12 +927,19 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
             // Someone may have put a <p> inside a <q>, causing a split.  When this happens, the :after content
             // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that our :after
             // content gets properly destroyed.
+            bool isFirstChild = (beforeChild == firstChild());
             bool isLastChild = (beforeChild == lastChild());
             if (document()->usesBeforeAfterRules())
                 children()->updateBeforeAfterContent(this, AFTER);
-            if (isLastChild && beforeChild != lastChild())
-                beforeChild = 0; // We destroyed the last child, so now we need to update our insertion
-                                 // point to be 0.  It's just a straight append now.
+            if (isLastChild && beforeChild != lastChild()) {
+                // We destroyed the last child, so now we need to update our insertion
+                // point to be 0. It's just a straight append now.
+                beforeChild = 0;
+            } else if (isFirstChild && beforeChild != firstChild()) {
+                // If beforeChild was the last anonymous block that collapsed,
+                // then we need to update its value.
+                beforeChild = firstChild();
+            }
 
             splitFlow(beforeChild, newBox, newChild, oldContinuation);
             return;
