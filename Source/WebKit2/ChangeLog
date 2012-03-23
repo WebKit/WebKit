@@ -1,3 +1,10 @@
+2012-03-23  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build fix.
+
+        * win/WebKit2CFLite.def: Add missing export symbols so that other
+        tools can link properly.
+
 2012-03-23  Dean Jackson  <dino@apple.com>
 
         Disable CSS_SHADERS in Apple builds
