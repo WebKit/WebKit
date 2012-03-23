@@ -31,11 +31,14 @@
 #ifndef WebMediaStreamCenter_h
 #define WebMediaStreamCenter_h
 
-namespace WebKit {
+#include "WebString.h"
 
+namespace WebKit {
+class WebICECandidateDescriptor;
 class WebMediaStreamComponent;
 class WebMediaStreamDescriptor;
 class WebMediaStreamSourcesRequest;
+class WebSessionDescriptionDescriptor;
 
 class WebMediaStreamCenter {
 public:
@@ -46,6 +49,10 @@ public:
     virtual void didDisableMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) = 0;
     virtual void didStopLocalMediaStream(const WebMediaStreamDescriptor&) = 0;
     virtual void didConstructMediaStream(const WebMediaStreamDescriptor&) = 0;
+
+    // FIXME: Make pure virtual after implementation.
+    virtual WebString constructSDP(const WebICECandidateDescriptor&) { return WebString(); }
+    virtual WebString constructSDP(const WebSessionDescriptionDescriptor&) { return WebString(); }
 };
 
 } // namespace WebKit

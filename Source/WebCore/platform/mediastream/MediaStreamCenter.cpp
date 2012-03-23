@@ -58,16 +58,6 @@ void MediaStreamCenter::endLocalMediaStream(MediaStreamDescriptor* streamDescrip
         streamDescriptor->setEnded();
 }
 
-String MediaStreamCenter::constructSDP(IceCandidateDescriptor*)
-{
-    return "";
-}
-
-String MediaStreamCenter::constructSDP(SessionDescriptionDescriptor*)
-{
-    return "";
-}
-
 #if !PLATFORM(CHROMIUM)
 
 // Empty implementations for ports that build with MEDIA_STREAM enabled by default, but haven't yet implemented MediaStreamCenter.
@@ -96,6 +86,16 @@ void MediaStreamCenter::didStopLocalMediaStream(MediaStreamDescriptor*)
 
 void MediaStreamCenter::didConstructMediaStream(MediaStreamDescriptor*)
 {
+}
+
+String MediaStreamCenter::constructSDP(IceCandidateDescriptor*)
+{
+    return "";
+}
+
+String MediaStreamCenter::constructSDP(SessionDescriptionDescriptor*)
+{
+    return "";
 }
 
 #endif // !PLATFORM(CHROMIUM)

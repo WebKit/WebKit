@@ -36,6 +36,7 @@
 #include "platform/WebMediaStreamCenterClient.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 class WebMediaStreamCenter;
@@ -43,10 +44,12 @@ class WebMediaStreamCenter;
 
 namespace WebCore {
 
+class IceCandidateDescriptor;
 class MediaStreamCenter;
 class MediaStreamComponent;
 class MediaStreamDescriptor;
 class MediaStreamSourcesQueryClient;
+class SessionDescriptionDescriptor;
 
 class MediaStreamCenterInternal : public WebKit::WebMediaStreamCenterClient {
 public:
@@ -57,6 +60,8 @@ public:
     void didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*);
     void didStopLocalMediaStream(MediaStreamDescriptor*);
     void didConstructMediaStream(MediaStreamDescriptor*);
+    String constructSDP(IceCandidateDescriptor*);
+    String constructSDP(SessionDescriptionDescriptor*);
 
     // From WebKit::WebMediaStreamCenterClient.
     virtual void stopLocalMediaStream(const WebKit::WebMediaStreamDescriptor&);

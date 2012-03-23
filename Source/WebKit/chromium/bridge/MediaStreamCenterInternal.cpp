@@ -34,15 +34,19 @@
 
 #include "MediaStreamCenterInternal.h"
 
+#include "IceCandidateDescriptor.h"
 #include "MediaStreamCenter.h"
 #include "MediaStreamComponent.h"
 #include "MediaStreamSource.h"
+#include "SessionDescriptionDescriptor.h"
 #include "WebKit.h"
+#include "platform/WebICECandidateDescriptor.h"
 #include "platform/WebKitPlatformSupport.h"
 #include "platform/WebMediaStreamCenter.h"
 #include "platform/WebMediaStreamComponent.h"
 #include "platform/WebMediaStreamDescriptor.h"
 #include "platform/WebMediaStreamSourcesRequest.h"
+#include "platform/WebSessionDescriptionDescriptor.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -84,6 +88,16 @@ void MediaStreamCenterInternal::didConstructMediaStream(MediaStreamDescriptor* s
 {
     if (m_private)
         m_private->didConstructMediaStream(stream);
+}
+
+String MediaStreamCenterInternal::constructSDP(IceCandidateDescriptor* iceCandidate)
+{
+    return m_private ? m_private->constructSDP(WebKit::WebICECandidateDescriptor(iceCandidate)) : "";
+}
+
+String MediaStreamCenterInternal::constructSDP(SessionDescriptionDescriptor* sessionDescription)
+{
+    return m_private ? m_private->constructSDP(WebKit::WebSessionDescriptionDescriptor(sessionDescription)) : "";
 }
 
 void MediaStreamCenterInternal::stopLocalMediaStream(const WebKit::WebMediaStreamDescriptor& stream)

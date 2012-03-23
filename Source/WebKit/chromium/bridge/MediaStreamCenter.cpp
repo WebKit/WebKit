@@ -69,6 +69,16 @@ void MediaStreamCenter::didConstructMediaStream(MediaStreamDescriptor* stream)
     m_private->didConstructMediaStream(stream);
 }
 
+String MediaStreamCenter::constructSDP(IceCandidateDescriptor* iceCandidate)
+{
+    return m_private->constructSDP(iceCandidate);
+}
+
+String MediaStreamCenter::constructSDP(SessionDescriptionDescriptor* sessionDescription)
+{
+    return m_private->constructSDP(sessionDescription);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
