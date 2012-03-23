@@ -1,3 +1,10 @@
+2012-03-23  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, move a comment closer to where it matters and
+        make it more specific.
+
+        * WTF.gyp/WTF.gyp:
+
 2012-03-23  Steve Falkenburg  <sfalken@apple.com>
 
         Update Apple Windows build files for WTF move

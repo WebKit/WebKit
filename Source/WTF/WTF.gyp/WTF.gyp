@@ -100,7 +100,7 @@
       'type': 'static_library',
       'include_dirs': [
         '../',
-        '../../JavaScriptCore', # FIXME: This is too broad, but matches the rules when wtf lived in JavaScriptCore.
+        '../../JavaScriptCore',
         '../wtf',
         '../wtf/unicode',
       ],
@@ -137,6 +137,7 @@
       'direct_dependent_settings': {
         'include_dirs': [
           '../',
+          # FIXME: This is too broad, but is needed for runtime/JSExportMacros.h and yarr.
           '../../JavaScriptCore',
         ],
         # Some warnings occur in JSC headers, so they must also be disabled
