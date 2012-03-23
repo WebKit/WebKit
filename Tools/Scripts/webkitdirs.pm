@@ -1924,6 +1924,8 @@ sub buildAutotoolsProject($@)
     # WebKit is the default target, so we don't need to specify anything.
     if ($project eq "JavaScriptCore") {
         $makeArgs .= " jsc";
+    } elsif ($project eq "WTF") {
+        $makeArgs .= " libWTF.la";
     }
 
     $prefix = $ENV{"WebKitInstallationPrefix"} if !defined($prefix);
@@ -2284,8 +2286,8 @@ sub buildGtkProject
 {
     my ($project, $clean, @buildArgs) = @_;
 
-    if ($project ne "WebKit" and $project ne "JavaScriptCore") {
-        die "Unsupported project: $project. Supported projects: WebKit, JavaScriptCore\n";
+    if ($project ne "WebKit" and $project ne "JavaScriptCore" and $project ne "WTF") {
+        die "Unsupported project: $project. Supported projects: WebKit, JavaScriptCore, WTF\n";
     }
 
     return buildAutotoolsProject($project, $clean, @buildArgs);

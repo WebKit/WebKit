@@ -1,3 +1,14 @@
+2012-03-22  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix. Add knowledge of the WTF project to
+        the autotools build system scripts so that build-jsc works
+        correctly for GTK+.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject): handle the WTF project, build the
+        libWTF.la target.
+        (buildGtkProject): add WTF to the list of supported projects.
+
 2012-03-22  Eric Seidel  <eric@webkit.org>
 
         Make svn-apply re-write JavaScriptCore/wtf to WTF/wtf
