@@ -3717,6 +3717,7 @@
             'platform/graphics/filters/arm/FELightingNEON.h',
             'platform/graphics/filters/skia/FEColorMatrixSkia.cpp',
             'platform/graphics/filters/skia/FEGaussianBlurSkia.cpp',
+            'platform/graphics/filters/skia/FEMorphologySkia.cpp',
             'platform/graphics/freetype/FontCacheFreeType.cpp',
             'platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp',
             'platform/graphics/freetype/FontPlatformData.h',

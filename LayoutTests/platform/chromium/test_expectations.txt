@@ -1224,6 +1224,9 @@ BUGWK81796 SNOWLEOPARD DEBUG : svg/custom/fill-opacity-update.svg = CRASH
 // Updated test, needs a rebaseline
 BUGWK81219 : svg/filters/feColorMatrix-invalid-animation.svg = TEXT
 
+// Needs a rebaseline after https://bugs.webkit.org/show_bug.cgi?id=82085
+BUGWK82085 : svg/filters/filterRes.svg = IMAGE
+
 // Changed test, needs a rebaseline
 BUGWK34714 : svg/text/select-textLength-spacing-squeeze-2.svg = IMAGE IMAGE+TEXT
 
@@ -3741,7 +3744,6 @@ BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/masking-path-01-b.svg = IMAGE
 BUGWK73643 WIN MAC : svg/clip-path/clipper-placement-issue.svg = IMAGE
 BUGWK73643 WIN MAC : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE IMAGE+TEXT
 BUGWK73643 WIN MAC : svg/filters/feDropShadow.svg = IMAGE
-BUGWK73643 WIN MAC : svg/filters/filterRes.svg = IMAGE
 BUGWK73643 SLOW DEBUG WIN MAC : svg/filters/big-sized-filter.svg = IMAGE
 BUGWK73643 SLOW DEBUG LINUX : svg/filters/big-sized-filter.svg = PASS
 BUGWK73643 RELEASE WIN MAC : svg/filters/big-sized-filter.svg = IMAGE
