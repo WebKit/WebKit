@@ -296,6 +296,7 @@ Never found HTMLTableColElement
 Never found HTMLTableElement
 Never found HTMLTableRowElement
 Never found HTMLTableSectionElement
+Never found IceCandidate
 Never found Image
 Never found ImageData
 Never found MediaController
@@ -306,6 +307,7 @@ Never found Node
 Never found NodeFilter
 Never found Notation
 Never found Option
+Never found PeerConnection00
 Never found ProcessingInstruction
 Never found Range
 Never found SVGAElement
@@ -446,6 +448,7 @@ Never found SVGUseElement
 Never found SVGVKernElement
 Never found SVGViewElement
 Never found Selection
+Never found SessionDescription
 Never found SharedWorker
 Never found StyleSheet
 Never found TextMetrics
