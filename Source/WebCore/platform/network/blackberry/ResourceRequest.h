@@ -57,6 +57,7 @@ public:
         , m_mustHandleInternally(false)
         , m_isRequestedByPlugin(false)
         , m_forceDownload(false)
+        , m_targetType(TargetIsUnspecified)
     {
     }
 
@@ -66,6 +67,7 @@ public:
         , m_mustHandleInternally(false)
         , m_isRequestedByPlugin(false)
         , m_forceDownload(false)
+        , m_targetType(TargetIsUnspecified)
     {
     }
 
@@ -75,6 +77,7 @@ public:
         , m_mustHandleInternally(false)
         , m_isRequestedByPlugin(false)
         , m_forceDownload(false)
+        , m_targetType(TargetIsUnspecified)
     {
         setHTTPReferrer(referrer);
     }
@@ -85,6 +88,7 @@ public:
         , m_mustHandleInternally(false)
         , m_isRequestedByPlugin(false)
         , m_forceDownload(false)
+        , m_targetType(TargetIsUnspecified)
     {
     }
 
@@ -117,8 +121,6 @@ public:
     // What this request is for.
     TargetType targetType() const { return m_targetType; }
     void setTargetType(TargetType type) { m_targetType = type; }
-
-    static TargetType targetTypeFromMimeType(const String& mimeType);
 
 private:
     friend class ResourceRequestBase;

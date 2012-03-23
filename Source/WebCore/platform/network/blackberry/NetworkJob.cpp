@@ -109,7 +109,6 @@ NetworkJob::NetworkJob()
     , m_dataReceived(false)
     , m_responseSent(false)
     , m_callingClient(false)
-    , m_isXHR(false)
     , m_needsRetryAsFTPDirectory(false)
     , m_isOverrideContentType(false)
     , m_extendedStatusCode(0)
@@ -169,8 +168,6 @@ bool NetworkJob::initialize(int playerId,
     if (!wrappedStream)
         return false;
     setWrappedStream(wrappedStream);
-
-    m_isXHR = request.getTargetType() == BlackBerry::Platform::NetworkRequest::TargetIsXMLHTTPRequest;
 
     return true;
 }
@@ -310,7 +307,11 @@ void NetworkJob::handleNotifyHeaderReceived(const String& key, const String& val
         m_contentDisposition = value;
 
     if (lowerKey == "set-cookie") {
-        if (m_frame && m_frame->loader() && m_frame->loader()->client()
+        // FIXME: If a tab is closed, sometimes network data will come in after the frame has been detached from its page but before it is deleted.
+        // If this happens, m_frame->page() will return 0, and m_frame->loader()->client() will be in a bad state and calling into it will crash.
+        // For now we check for this explicitly by checking m_frame->page(). But we should find out why the network job hasn't been cancelled when the frame was detached.
+        // See RIM PR 134207
+        if (m_frame && m_frame->page() && m_frame->loader() && m_frame->loader()->client()
             && static_cast<FrameLoaderClientBlackBerry*>(m_frame->loader()->client())->cookiesEnabled())
             handleSetCookieHeader(value);
     }
@@ -401,7 +402,7 @@ void NetworkJob::handleNotifyDataReceived(const char* buf, size_t len)
         // is on a file system if it has a MIME mappable file extension.
         // The file extension is likely to be correct.
         if (m_isFile) {
-            String urlFilename = m_response.url().lastPathComponent();
+            WTF::String urlFilename = m_response.url().lastPathComponent();
             size_t pos = urlFilename.reverseFind('.');
             if (pos != WTF::notFound) {
                 String extension = urlFilename.substring(pos + 1);
@@ -659,8 +660,8 @@ void NetworkJob::sendResponseIfNeeded()
         m_response.setSuggestedFilename(suggestedFilename);
     }
 
-    // Make sure local files aren't cached, since this just duplicates them.
-    if (m_isFile || m_isData || m_isAbout)
+    // Don't cache resources for "about:"
+    if (m_isAbout)
         m_response.setHTTPHeaderField("Cache-Control", "no-cache");
 
     if (isClientAvailable()) {
@@ -941,7 +942,7 @@ void NetworkJob::handleAbout()
     String result;
 
     bool handled = false;
-    if (aboutWhat.isEmpty() || equalIgnoringCase(aboutWhat, "blank")) {
+    if (equalIgnoringCase(aboutWhat, "blank")) {
         handled = true;
     } else if (equalIgnoringCase(aboutWhat, "credits")) {
         result.append(String("<html><head><title>Open Source Credits</title> <style> .about {padding:14px;} </style> <meta name=\"viewport\" content=\"width=device-width, user-scalable=no\"></head><body>"));
@@ -1012,10 +1013,9 @@ void NetworkJob::handleAbout()
         handled = true;
 #endif
     }
-
     if (handled) {
         CString resultString = result.utf8();
-        notifyStatusReceived(404, 0);
+        notifyStatusReceived(BlackBerry::Platform::FilterStream::StatusSuccess, 0);
         notifyStringHeaderReceived("Content-Length", String::number(resultString.length()));
         notifyStringHeaderReceived("Content-Type", "text/html");
         notifyDataReceivedPlain(resultString.data(), resultString.length());

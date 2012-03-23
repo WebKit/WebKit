@@ -145,7 +145,7 @@ private:
 
     bool isError(int statusCode)
     {
-        return statusCode < 0 || (!m_isXHR && (400 <= statusCode && statusCode < 600));
+        return statusCode < 0 || (400 <= statusCode && statusCode < 600);
     }
 
 private:
@@ -174,7 +174,6 @@ private:
     bool m_dataReceived;
     bool m_responseSent;
     bool m_callingClient;
-    bool m_isXHR; // FIXME - After 7.0, remove this. Only the Qt port reports HTTP error statuses as didFails, so we probably shouldn't.
     bool m_needsRetryAsFTPDirectory;
     bool m_isOverrideContentType;
 

@@ -28,6 +28,10 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 
+#include <BlackBerryPlatformClient.h>
+#include <BlackBerryPlatformLog.h>
+#include <BuildInformation.h>
+#include <network/FilterStream.h>
 #include <network/NetworkRequest.h>
 
 namespace WebCore {
@@ -108,7 +112,7 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
 
         if (authType != BlackBerry::Platform::NetworkRequest::AuthNone)
             platformRequest.setCredentials(username.utf8().data(), password.utf8().data(), authType);
-    } else if (url.protocolIsInHTTPFamily()) {
+    } else if (url.protocolInHTTPFamily()) {
         // For URLs that match the paths of those previously challenged for HTTP Basic authentication,
         // try and reuse the credential preemptively, as allowed by RFC 2617.
         Credential credential = CredentialStorage::get(url);
