@@ -354,6 +354,7 @@ editing/pasteboard/data-transfer-items-drag-drop-file.html
 editing/pasteboard/data-transfer-items-drag-drop-string.html
 fast/events/clipboard-dataTransferItemList.html
 fast/events/drag-dataTransferItemList.html
+fast/events/drag-dataTransferItemList-file-handling.html
 
 # Replacement text for misspelling is not given from NSSpellChecker.
 # https://bugs.webkit.org/show_bug.cgi?id=77934

@@ -72,8 +72,6 @@ WebVector<WebDragData::Item> WebDragData::items() const
     Vector<Item> itemList;
     for (size_t i = 0; i < m_private->items()->length(); ++i) {
         DataTransferItemChromium* originalItem = m_private->items()->item(i).get();
-        // We don't handle filenames here, since they are never used for dragging out.
-        ASSERT(!originalItem->isFilename());
         WebDragData::Item item;
         if (originalItem->kind() == DataTransferItem::kindString) {
             item.storageType = Item::StorageTypeString;
@@ -83,10 +81,16 @@ WebVector<WebDragData::Item> WebDragData::items() const
             if (originalItem->sharedBuffer()) {
                 item.storageType = Item::StorageTypeBinaryData;
                 item.binaryData = originalItem->sharedBuffer();
+            } else if (originalItem->isFilename()) {
+                item.storageType = Item::StorageTypeFilename;
+                RefPtr<WebCore::Blob> blob = originalItem->getAsFile();
+                if (blob->isFile()) {
+                    File* file = static_cast<File*>(blob.get());
+                    item.filenameData = file->path();
+                } else
+                    ASSERT_NOT_REACHED();
             } else
-                // FIXME: Currently we only handle image dragouts using the default drag handling.
-                // If we want to plumb DataTransferItemList::add(File), we'll need to add logic.
-                continue;
+                ASSERT_NOT_REACHED();
         } else
             ASSERT_NOT_REACHED();
         item.title = originalItem->title();

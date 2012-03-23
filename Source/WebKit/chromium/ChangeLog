@@ -1,3 +1,17 @@
+2012-03-23  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Support file drag out using DataTransferItemList::add(File)
+        https://bugs.webkit.org/show_bug.cgi?id=81261
+
+        Reviewed by Tony Chang.
+
+        Original patch by Varun Jain <varunjain@chromium.org>.
+        I've updated the original patch to add some asserts for conditions we shouldn't encounter as
+        well as removing some redundant null checks.
+
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::items):
+
 2012-03-23  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Record painted pixel counts for measuring effectiveness of per-tile painting

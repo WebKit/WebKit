@@ -459,6 +459,7 @@ editing/pasteboard/data-transfer-items-drag-drop-file.html
 editing/pasteboard/data-transfer-items-drag-drop-string.html
 fast/events/clipboard-dataTransferItemList.html
 fast/events/drag-dataTransferItemList.html
+fast/events/drag-dataTransferItemList-file-handling.html
 
 # PasteBoard::plainText() does not support file names.
 editing/pasteboard/drag-files-to-editable-element.html

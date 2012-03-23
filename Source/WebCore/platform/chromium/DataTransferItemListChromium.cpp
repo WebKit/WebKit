@@ -106,19 +106,6 @@ void DataTransferItemListChromium::add(PassRefPtr<File> file, ScriptExecutionCon
         return;
 
     m_itemList.append(DataTransferItemChromium::createFromFile(file));
-
-    // FIXME: Allow multiple files to be dragged out at once if more than one file is added to the storage.
-    KURL urlForDownload = BlobURL::createPublicURL(context->securityOrigin());
-    ThreadableBlobRegistry::registerBlobURL(urlForDownload, file->url());
-
-    StringBuilder downloadUrl;
-    downloadUrl.append(file->type());
-    downloadUrl.append(":");
-    downloadUrl.append(encodeWithURLEscapeSequences(file->name()));
-    downloadUrl.append(":");
-    downloadUrl.append(urlForDownload.string());
-
-    internalAddStringItem(DataTransferItemChromium::createFromString(mimeTypeDownloadURL, downloadUrl.toString()));
 }
 
 // FIXME: Make sure item is released correctly in case of failure.
