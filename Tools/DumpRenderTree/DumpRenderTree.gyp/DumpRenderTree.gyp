@@ -67,7 +67,9 @@
             ],
             'conditions': [
                 ['OS=="android"', {
-                    'toolsets': ['host'],
+                    # FIXME: Re-enable building ImageDiff after the dependencies
+                    # for host have been fixed, as this broke per the WTF move.
+                    'type': 'none',
                 }],
             ],
         },
@@ -229,7 +231,9 @@
                 }],
                 ['OS=="android"', {
                     'dependencies': [
-                        'ImageDiff#host',
+                        # FIXME: Re-enable building ImageDiff on Android.
+                        # https://bugs.webkit.org/show_bug.cgi?id=82039
+                        #'ImageDiff#host',
                     ],
                     'sources/': [
                         ['include', 'chromium/TestShellLinux\\.cpp$'],
