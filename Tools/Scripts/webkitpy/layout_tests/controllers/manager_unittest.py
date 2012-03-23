@@ -218,9 +218,7 @@ class ManagerTest(unittest.TestCase):
         manager = LockCheckingManager(port, options, printer)
         manager.collect_tests(args)
         manager.parse_expectations()
-        result_summary = manager.set_up_run()
-        num_unexpected_results = manager.run(result_summary)
-        manager.clean_up_run()
+        num_unexpected_results = manager.run()
         printer.cleanup()
         tester.assertEquals(num_unexpected_results, 0)
 

@@ -1,3 +1,24 @@
+2012-03-23  Dirk Pranke  <dpranke@chromium.org>
+
+        LayoutTestHelper could get torn down earlier (mostly to reset color profile)
+        https://bugs.webkit.org/show_bug.cgi?id=80567
+
+        Reviewed by Ryosuke Niwa.
+
+        Move clean_up_run to occur right after we finish testing and
+        before we start processing the results. Also makes set_up_run()
+        and clean_up_run() private since there's no real need for
+        callers to be aware of them.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._set_up_run):
+        (Manager.run):
+        (Manager._clean_up_run):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_http_locking):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+
 2012-03-23  Dean Jackson  <dino@apple.com>
 
         Disable CSS_SHADERS in Apple builds

@@ -836,7 +836,7 @@ class Manager(object):
     def needs_servers(self):
         return any(self._test_requires_lock(test_name) for test_name in self._test_files) and self._options.http
 
-    def set_up_run(self):
+    def _set_up_run(self):
         """Configures the system to be ready to run tests.
 
         Returns a ResultSummary object if we should continue to run tests,
@@ -870,7 +870,7 @@ class Manager(object):
 
         return result_summary
 
-    def run(self, result_summary):
+    def run(self):
         """Run all our tests on all our test files.
 
         For each test file, we run each test type. If there are any failures,
@@ -885,6 +885,11 @@ class Manager(object):
         # collect_tests() must have been called first to initialize us.
         # If we didn't find any files to test, we've errored out already in
         # prepare_lists_and_print_output().
+
+        result_summary = self._set_up_run()
+        if not result_summary:
+            return -1
+
         assert(len(self._test_files))
 
         start_time = time.time()
@@ -907,11 +912,10 @@ class Manager(object):
 
         end_time = time.time()
 
+        self._clean_up_run()
+
         self._print_timing_statistics(end_time - start_time, thread_timings, test_timings, individual_test_timings, result_summary)
         self._print_result_summary(result_summary)
-
-        sys.stdout.flush()
-        sys.stderr.flush()
 
         self._printer.print_one_line_summary(result_summary.total, result_summary.expected, result_summary.unexpected)
 
@@ -958,9 +962,8 @@ class Manager(object):
             self._port.release_http_lock()
             self._has_http_lock = False
 
-    def clean_up_run(self):
+    def _clean_up_run(self):
         """Restores the system after we're done running tests."""
-
         _log.debug("flushing stdout")
         sys.stdout.flush()
         _log.debug("flushing stderr")

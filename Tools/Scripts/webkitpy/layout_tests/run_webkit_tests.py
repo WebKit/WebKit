@@ -121,11 +121,8 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
         printer.print_update("Parsing expectations ...")
         manager.parse_expectations()
 
-        result_summary = manager.set_up_run()
-        if result_summary:
-            unexpected_result_count = manager.run(result_summary)
-            manager.clean_up_run()
-            _log.debug("Testing completed, Exit status: %d" % unexpected_result_count)
+        unexpected_result_count = manager.run()
+        _log.debug("Testing completed, Exit status: %d" % unexpected_result_count)
     finally:
         printer.cleanup()
 
