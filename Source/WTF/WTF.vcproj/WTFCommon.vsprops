@@ -7,7 +7,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="../../JavaScriptCore/;../../JavaScriptCore/wtf/;../../JavaScriptCore/wtf/threads;../../JavaScriptCore/wtf/unicode/;&quot;$(ConfigurationBuildDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(ConfigurationBuildDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
+		AdditionalIncludeDirectories="../;../wtf/;../wtf/threads/;../wtf/unicode/;&quot;$(ConfigurationBuildDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(ConfigurationBuildDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
 		PreprocessorDefinitions="__STD_C"
 		ProgramDataBaseFileName="$(OutDir)\$(TargetName).vc80.pdb"
 		ForcedIncludeFiles="ICUVersion.h"

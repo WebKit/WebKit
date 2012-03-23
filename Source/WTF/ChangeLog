@@ -33,6 +33,15 @@
         Actually move WTF files to their new home
         https://bugs.webkit.org/show_bug.cgi?id=81844
 
+        Unreviewed attempt to fix AppleWin.
+
+        * WTF.vcproj/WTFCommon.vsprops:
+
+2012-03-22  Eric Seidel  <eric@webkit.org>
+
+        Actually move WTF files to their new home
+        https://bugs.webkit.org/show_bug.cgi?id=81844
+
         Unreviewed.  The 5MB file move is not very reviewable,
         but various port representatives have OK'd changes to the
         individual build systems.
