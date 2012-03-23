@@ -79,7 +79,7 @@ test('new webkitDeprecatedPeerConnection("TURNS NONE",emptyFunction)',false);
 test('new webkitDeprecatedPeerConnection("STUN NONE",emptyFunction)', false);
 test('new webkitDeprecatedPeerConnection("STUNS NONE",emptyFunction)', false);
 test('new webkitDeprecatedPeerConnection("TURN NONE",undefined)',  true);
-test('new webkitDeprecatedPeerConnection("TURNS NONE",{})', false);
+test('new webkitDeprecatedPeerConnection("TURNS NONE",{})', true);
 test('new webkitDeprecatedPeerConnection("STUN NONE",42)',  true);
 test('new webkitDeprecatedPeerConnection("STUNS NONE",Infinity)', true);
 test('new webkitDeprecatedPeerConnection("STUNS NONE",-Infinity)', true);

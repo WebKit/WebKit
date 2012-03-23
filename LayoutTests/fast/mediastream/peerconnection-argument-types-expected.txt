@@ -45,7 +45,7 @@ PASS new webkitDeprecatedPeerConnection("TURNS NONE",emptyFunction) did not thro
 PASS new webkitDeprecatedPeerConnection("STUN NONE",emptyFunction) did not throw exception.
 PASS new webkitDeprecatedPeerConnection("STUNS NONE",emptyFunction) did not throw exception.
 PASS new webkitDeprecatedPeerConnection("TURN NONE",undefined) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS new webkitDeprecatedPeerConnection("TURNS NONE",{}) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("TURNS NONE",{}) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS new webkitDeprecatedPeerConnection("STUN NONE",42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS new webkitDeprecatedPeerConnection("STUNS NONE",Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS new webkitDeprecatedPeerConnection("STUNS NONE",-Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.

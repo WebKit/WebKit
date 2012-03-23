@@ -62,8 +62,8 @@ test('navigator.webkitGetUserMedia(emptyFunction, emptyFunction)', true, notSupp
 test('navigator.webkitGetUserMedia("video", "video")', true, typeMismatchError);
 test('navigator.webkitGetUserMedia("video", undefined)', true, typeMismatchError);
 test('navigator.webkitGetUserMedia("video", null)', true, typeMismatchError);
-test('navigator.webkitGetUserMedia("video", {})', false);
-test('navigator.webkitGetUserMedia("video", objectThrowingException)', false);
+test('navigator.webkitGetUserMedia("video", {})', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", objectThrowingException)', true, typeMismatchError);
 test('navigator.webkitGetUserMedia("video", true)', true, typeMismatchError);
 test('navigator.webkitGetUserMedia("video", 42)', true, typeMismatchError);
 test('navigator.webkitGetUserMedia("video", Infinity)', true, typeMismatchError);
@@ -78,8 +78,8 @@ test('navigator.webkitGetUserMedia("audio, video user", emptyFunction, undefined
 test('navigator.webkitGetUserMedia("audio, video environment", emptyFunction, undefined)', false);
 test('navigator.webkitGetUserMedia("video", emptyFunction, "video")', true, typeMismatchError);
 test('navigator.webkitGetUserMedia("video", emptyFunction, null)', false );
-test('navigator.webkitGetUserMedia("video", emptyFunction, {})', false);
-test('navigator.webkitGetUserMedia("video", emptyFunction, objectThrowingException)', false);
+test('navigator.webkitGetUserMedia("video", emptyFunction, {})', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", emptyFunction, objectThrowingException)', true, typeMismatchError);
 test('navigator.webkitGetUserMedia("video", emptyFunction, true)', true, typeMismatchError);
 test('navigator.webkitGetUserMedia("video", emptyFunction, 42)', true, typeMismatchError);
 test('navigator.webkitGetUserMedia("video", emptyFunction, Infinity)', true, typeMismatchError);
