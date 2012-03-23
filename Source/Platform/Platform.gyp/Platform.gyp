@@ -38,7 +38,7 @@
             'target_name': 'webkit_platform',
             'type': 'static_library',
             'dependencies': [
-                '../../WTF/WTF.gyp/WTF.gyp:newwtf',
+                '../../WTF/WTF.gyp/WTF.gyp:wtf',
             ],
             'include_dirs': [
                 '../chromium',

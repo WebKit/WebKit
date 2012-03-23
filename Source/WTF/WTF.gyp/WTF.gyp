@@ -96,7 +96,7 @@
       }
     },
     {
-      'target_name': 'newwtf',
+      'target_name': 'wtf',
       'type': 'static_library',
       'include_dirs': [
         '../',

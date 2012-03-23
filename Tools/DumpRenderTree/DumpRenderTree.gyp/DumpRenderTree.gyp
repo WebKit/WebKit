@@ -56,7 +56,7 @@
             'type': 'executable',
             'dependencies': [
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support_gfx',
-                '<(source_dir)/WTF/WTF.gyp/WTF.gyp:newwtf',
+                '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',
             ],
             'include_dirs': [
                 '<(source_dir)/JavaScriptCore',
@@ -80,7 +80,7 @@
             'dependencies': [
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:inspector_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
-                '<(source_dir)/WTF/WTF.gyp/WTF.gyp:newwtf',
+                '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',
                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
@@ -257,7 +257,7 @@
                         '<(source_dir)/WebKit/chromium/public',
                     ],
                     'dependencies': [
-                        '<(source_dir)/WTF/WTF.gyp/WTF.gyp:newwtf',
+                        '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',
                     ],
                 }],
                 ['inside_chromium_build==0', {

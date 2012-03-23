@@ -60,7 +60,7 @@
       'target_name': 'yarr',
       'type': 'static_library',
       'dependencies': [
-        '../../WTF/WTF.gyp/WTF.gyp:newwtf',
+        '../../WTF/WTF.gyp/WTF.gyp:wtf',
       ],
       'variables': { 'optimize': 'max' },
       'actions': [
@@ -95,7 +95,7 @@
         ['exclude', '../yarr/YarrJIT\\.(h|cpp)$'],
       ],
       'export_dependent_settings': [
-        '../../WTF/WTF.gyp/WTF.gyp:newwtf',
+        '../../WTF/WTF.gyp/WTF.gyp:wtf',
       ],
     },
   ], # targets
