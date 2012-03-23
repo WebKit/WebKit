@@ -593,7 +593,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
     IntPoint adjustedScrollPosition = IntPoint(desiredOffset);
 
-    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator()) {
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator()) {
         if (!scrollAnimator->isRubberBandInProgress())
             adjustedScrollPosition = adjustScrollPositionWithinRange(adjustedScrollPosition);
     }

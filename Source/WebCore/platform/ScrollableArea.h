@@ -96,7 +96,7 @@ public:
     ScrollAnimator* scrollAnimator() const;
 
     // This getter will return null if the ScrollAnimator hasn't been created yet.
-    ScrollAnimator* getExistingScrollAnimator() const { return m_scrollAnimator.get(); }
+    ScrollAnimator* existingScrollAnimator() const { return m_scrollAnimator.get(); }
 
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
     bool scrollOriginChanged() const { return m_scrollOriginChanged; }

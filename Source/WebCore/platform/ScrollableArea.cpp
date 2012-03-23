@@ -185,7 +185,7 @@ void ScrollableArea::willStartLiveResize()
     if (m_inLiveResize)
         return;
     m_inLiveResize = true;
-    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->willStartLiveResize();
 }
 
@@ -194,31 +194,31 @@ void ScrollableArea::willEndLiveResize()
     if (!m_inLiveResize)
         return;
     m_inLiveResize = false;
-    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->willEndLiveResize();
 }    
 
 void ScrollableArea::contentAreaWillPaint() const
 {
-    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->contentAreaWillPaint();
 }
 
 void ScrollableArea::mouseEnteredContentArea() const
 {
-    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->mouseEnteredContentArea();
 }
 
 void ScrollableArea::mouseExitedContentArea() const
 {
-    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->mouseEnteredContentArea();
 }
 
 void ScrollableArea::mouseMovedInContentArea() const
 {
-    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->mouseMovedInContentArea();
 }
 
@@ -234,13 +234,13 @@ void ScrollableArea::mouseExitedScrollbar(Scrollbar* scrollbar) const
 
 void ScrollableArea::contentAreaDidShow() const
 {
-    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->contentAreaDidShow();
 }
 
 void ScrollableArea::contentAreaDidHide() const
 {
-    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->contentAreaDidHide();
 }
 
@@ -272,7 +272,7 @@ void ScrollableArea::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 
 void ScrollableArea::contentsResized()
 {
-    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->contentsResized();
 }
 
@@ -357,7 +357,7 @@ bool ScrollableArea::hasLayerForScrollCorner() const
 
 void ScrollableArea::serviceScrollAnimations()
 {
-    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->serviceScrollAnimations();
 }
 

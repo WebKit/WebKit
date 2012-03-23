@@ -2379,7 +2379,7 @@ bool EventHandler::handleGestureTapDown()
     FrameView* view = m_frame->view();
     if (!view)
         return false;
-    if (ScrollAnimator* scrollAnimator = view->getExistingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = view->existingScrollAnimator())
         scrollAnimator->cancelAnimations();
     const FrameView::ScrollableAreaSet* areas = view->scrollableAreas();
     if (!areas)

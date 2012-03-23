@@ -1826,7 +1826,7 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
         return;
 
     if (FrameView* view = m_frame->view()) {
-        if (ScrollAnimator* scrollAnimator = view->getExistingScrollAnimator())
+        if (ScrollAnimator* scrollAnimator = view->existingScrollAnimator())
             scrollAnimator->cancelAnimations();
     }
 
