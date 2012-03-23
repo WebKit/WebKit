@@ -155,20 +155,19 @@ ActiveDOMObject* V8TestNamedConstructor::toActiveDOMObject(v8::Handle<v8::Object
     return toNative(object);
 }      
 
-v8::Handle<v8::Object> V8TestNamedConstructor::wrapSlow(TestNamedConstructor* impl)
+v8::Handle<v8::Object> V8TestNamedConstructor::wrapSlow(PassRefPtr<TestNamedConstructor> impl)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;
-    wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl);
+    wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 
-    impl->ref();
     v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
 
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
-    getActiveDOMObjectMap().set(impl, wrapperHandle);
+    getActiveDOMObjectMap().set(impl.leakRef(), wrapperHandle);
     return wrapper;
 }
 

@@ -422,9 +422,10 @@ END
 END
     }
 
+    my $wrapSlowArgumentType = GetPassRefPtrType($nativeType);
     push(@headerContent, <<END);
 private:
-    static v8::Handle<v8::Object> wrapSlow(${nativeType}*);
+    static v8::Handle<v8::Object> wrapSlow(${wrapSlowArgumentType});
 };
 
 END
@@ -3108,10 +3109,11 @@ sub GenerateToV8Converters
     my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
     my $forceNewObjectInput = IsDOMNodeType($interfaceName) ? ", bool forceNewObject" : "";
     my $forceNewObjectCall = IsDOMNodeType($interfaceName) ? ", forceNewObject" : "";
+    my $wrapSlowArgumentType = GetPassRefPtrType($nativeType);
 
     push(@implContent, <<END);
 
-v8::Handle<v8::Object> ${className}::wrapSlow(${nativeType}* impl)
+v8::Handle<v8::Object> ${className}::wrapSlow(${wrapSlowArgumentType} impl)
 {
     v8::Handle<v8::Object> wrapper;
 END
@@ -3134,7 +3136,7 @@ END
         push(@implContent, <<END);
     if (proxy && proxy->windowShell()->context().IsEmpty() && proxy->windowShell()->initContextIfNeeded()) {
         // initContextIfNeeded may have created a wrapper for the object, retry from the start.
-        return ${className}::wrap(impl);
+        return ${className}::wrap(impl.get());
     }
 END
     }
@@ -3166,7 +3168,7 @@ END
     }
 
     push(@implContent, <<END);
-    wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl);
+    wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl.get());
 END
     if (IsNodeSubType($dataNode) || IsVisibleAcrossOrigins($dataNode)) {
         push(@implContent, <<END);
@@ -3179,10 +3181,7 @@ END
     push(@implContent, <<END);
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
-END
-    push(@implContent, "\n    impl->ref();\n") if IsRefPtrType($interfaceName);
 
-    push(@implContent, <<END);
     v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
 
     if (!hasDependentLifetime)
@@ -3192,12 +3191,9 @@ END
         push(@implContent, <<END);
     wrapperHandle.SetWrapperClassId(v8DOMSubtreeClassId);
 END
-    }    
+    }
     push(@implContent, <<END);
-    ${domMapFunction}.set(impl, wrapperHandle);
-END
-
-    push(@implContent, <<END);
+    ${domMapFunction}.set(impl.leakRef(), wrapperHandle);
     return wrapper;
 }
 END
@@ -3927,6 +3923,14 @@ sub GetRuntimeEnableFunctionName
 
     # Otherwise return a function named RuntimeEnabledFeatures::{methodName}Enabled().
     return "RuntimeEnabledFeatures::" . $codeGenerator->WK_lcfirst($signature->name) . "Enabled";
+}
+
+sub GetPassRefPtrType
+{
+    my $className = shift;
+
+    my $angleBracketSpace = $className =~ />$/ ? " " : "";
+    return "PassRefPtr<${className}${angleBracketSpace}>";
 }
 
 sub DebugPrint

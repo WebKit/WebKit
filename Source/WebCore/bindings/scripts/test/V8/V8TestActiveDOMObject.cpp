@@ -158,7 +158,7 @@ bool V8TestActiveDOMObject::HasInstance(v8::Handle<v8::Value> value)
 }
 
 
-v8::Handle<v8::Object> V8TestActiveDOMObject::wrapSlow(TestActiveDOMObject* impl)
+v8::Handle<v8::Object> V8TestActiveDOMObject::wrapSlow(PassRefPtr<TestActiveDOMObject> impl)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;
@@ -175,19 +175,18 @@ v8::Handle<v8::Object> V8TestActiveDOMObject::wrapSlow(TestActiveDOMObject* impl
     // Enter the node's context and create the wrapper in that context.
     if (!context.IsEmpty())
         context->Enter();
-    wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl);
+    wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl.get());
     // Exit the node's context if it was entered.
     if (!context.IsEmpty())
         context->Exit();
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 
-    impl->ref();
     v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
 
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
-    getDOMObjectMap().set(impl, wrapperHandle);
+    getDOMObjectMap().set(impl.leakRef(), wrapperHandle);
     return wrapper;
 }
 

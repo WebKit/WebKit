@@ -45,7 +45,7 @@ public:
     static WrapperTypeInfo info;
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(TestMediaQueryListListener*);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestMediaQueryListListener>);
 };
 
 v8::Handle<v8::Object> V8TestMediaQueryListListener::wrap(TestMediaQueryListListener* impl)

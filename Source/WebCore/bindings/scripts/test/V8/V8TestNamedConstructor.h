@@ -52,7 +52,7 @@ public:
     static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(TestNamedConstructor*);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestNamedConstructor>);
 };
 
 v8::Handle<v8::Object> V8TestNamedConstructor::wrap(TestNamedConstructor* impl)

@@ -47,7 +47,7 @@ public:
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(Float64Array*);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<Float64Array>);
 };
 
 v8::Handle<v8::Object> V8Float64Array::wrap(Float64Array* impl)

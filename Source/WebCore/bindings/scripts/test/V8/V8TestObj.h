@@ -51,7 +51,7 @@ public:
     static void customAttrAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value>, const v8::AccessorInfo&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(TestObj*);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestObj>);
 };
 
 v8::Handle<v8::Object> V8TestObj::wrap(TestObj* impl)

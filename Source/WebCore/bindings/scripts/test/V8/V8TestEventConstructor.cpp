@@ -145,20 +145,19 @@ bool V8TestEventConstructor::HasInstance(v8::Handle<v8::Value> value)
 }
 
 
-v8::Handle<v8::Object> V8TestEventConstructor::wrapSlow(TestEventConstructor* impl)
+v8::Handle<v8::Object> V8TestEventConstructor::wrapSlow(PassRefPtr<TestEventConstructor> impl)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;
-    wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl);
+    wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 
-    impl->ref();
     v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
 
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
-    getDOMObjectMap().set(impl, wrapperHandle);
+    getDOMObjectMap().set(impl.leakRef(), wrapperHandle);
     return wrapper;
 }
 
