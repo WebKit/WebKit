@@ -256,12 +256,6 @@ Page* Geolocation::page() const
 
 void Geolocation::stop()
 {
-    // FIXME: We should ideally allow existing Geolocation activities to continue
-    // when the Geolocation's iframe is reparented. (Assuming we continue to
-    // support reparenting iframes.)
-    // See https://bugs.webkit.org/show_bug.cgi?id=55577
-    // and https://bugs.webkit.org/show_bug.cgi?id=52877
-
     Page* page = this->page();
     if (page && m_allowGeolocation == InProgress)
         page->geolocationController()->cancelPermissionRequest(this);
