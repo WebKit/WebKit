@@ -1,3 +1,18 @@
+2012-03-22  Adam Barth  <abarth@webkit.org>
+
+        sync-master-with-upstream creates non-linear git history
+        https://bugs.webkit.org/show_bug.cgi?id=82006
+
+        Reviewed by Julien Chaffraix.
+
+        Previously this script would create a merge commit at the HEAD of
+        origin/master, causing your fork of WebKit to diverge from upstream.
+        The new version of this script pushes directly from upstream to origin
+        (without round-tripping through any local branches), avoiding this
+        problem.
+
+        * Scripts/sync-master-with-upstream:
+
 2012-03-22  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix. Add knowledge of the WTF project to
