@@ -61,26 +61,36 @@ chdirWebKit();
 my @options = XcodeOptions();
 my @coverageSupportOptions = ($coverageSupport) ? XcodeCoverageSupportOptions() : ();
 
-chdir "Source/JavaScriptCore" or die "Can't find JavaScriptCore directory to build from";
-my $result;
-if (isAppleMacWebKit()) {
-    $result = system "sh", "-c", 'xcodebuild -project JavaScriptCore.xcodeproj "$@" | grep -v setenv && exit ${PIPESTATUS[0]}', "xcodebuild",  @options, @ARGV, @coverageSupportOptions;
-} elsif (isAppleWinWebKit()) {
-    $result = buildVisualStudioProject("JavaScriptCore.vcproj/JavaScriptCore.sln");
-} elsif (isGtk()) {
-    checkForArgumentAndRemoveFromARGV("--gtk");
-    $result = buildGtkProject("JavaScriptCore", 0, @ARGV);
-} elsif (isQt()) {
-    # Remove duplicated --qt options to avoid passing them to qmake
+if (isQt()) {
     checkForArgumentAndRemoveFromARGV("--qt");
     my @projects = ("WTF", "JavaScriptCore");
-    $result = buildQMakeProjects(\@projects, 0, @ARGV);
-} elsif (isWx()) {
-    # Builds everything in one-shot. No need to build anything here.
-    $result = 0;
+    my $result = buildQMakeProjects(\@projects, 0, @ARGV);
+    exit exitStatus($result);
 } elsif (cmakeBasedPortName()) {
     buildCMakeProjectOrExit(0, cmakeBasedPortName(), undef, undef, ("-DONLY_BUILD_JAVASCRIPTCORE=1", cmakeBasedPortArguments())); # This call never returns.
-} else {
-    die "Building not defined for this platform!\n";
 }
-exit exitStatus($result);
+
+sub buildMyProject
+{
+    my ($projectDirectory, $projectName) = @_;
+    my $result;
+    chdir $projectDirectory or die "Can't find $projectName directory to build from";
+    if (isAppleMacWebKit()) {
+        $result = system "sh", "-c", ('xcodebuild -project ' . $projectName . '.xcodeproj "$@" | grep -v setenv && exit ${PIPESTATUS[0]}'), "xcodebuild",  @options, @ARGV, @coverageSupportOptions;
+    } elsif (isAppleWinWebKit()) {
+        $result = buildVisualStudioProject("$projectName.vcproj/$projectName.sln");
+    } elsif (isGtk()) {
+        checkForArgumentAndRemoveFromARGV("--gtk");
+        $result = buildGtkProject($projectName, 0, @ARGV);
+    } elsif (isWx()) {
+        # Builds everything in one-shot. No need to build anything here.
+        $result = 0;
+    } else {
+        die "Building not defined for this platform!\n";
+    }
+    exit exitStatus($result) if exitStatus($result);
+    chdirWebKit();
+}
+
+buildMyProject("Source/WTF", "WTF");
+buildMyProject("Source/JavaScriptCore", "JavaScriptCore");
