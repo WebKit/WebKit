@@ -328,6 +328,20 @@ http/tests/canvas/philip/tests/security.drawImage.image.html
 platform/mac/accessibility/attributed-string-includes-highlighting.html
 svg/foreignObject/repaint-rect-coordinates.html
 
+# All additional tests that crashed more than once on the Lion WebKit2 bots between r111867 and r111906
+animations/3d/change-transform-in-end-event.html
+canvas/philip/tests/2d.canvas.readonly.html
+compositing/overflow/overflow-scaled-descendant-overlapping.html
+compositing/sibling-positioning.html
+compositing/video/video-with-invalid-source.html
+fast/events/onunload-not-on-body.html
+http/tests/cache/cancel-during-revalidation-succeeded.html
+http/tests/media/media-document.html
+http/tests/media/video-error-abort.html
+platform/mac/accessibility/attributed-string-includes-misspelled-with-selection.html
+svg/transforms/change-transform-origin-css.xhtml
+
+
 ### END OF (3) Unclassified failures
 ########################################
 
