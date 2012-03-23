@@ -6,10 +6,6 @@
 BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
 BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT
 
-// Need rebaselining.
-BUGWK37244: tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
-BUGWK37244: tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
-
 // Those tests need a text baseline after lazily allocating layers.
 // The change should only be layer removal.
 BUGWK75568 : animations/combo-transform-translate+scale.html = TEXT

@@ -1570,10 +1570,6 @@ fast/workers/worker-crash-with-invalid-location.html
 # https://bugs.webkit.org/show_bug.cgi?id=78819
 fast/workers/shared-worker-load-error.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=78900
-tables/mozilla/bugs/bug27038-1.html
-tables/mozilla/bugs/bug27038-2.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=79203
 fast/dom/MediaStream/argument-types.html
 fast/mediastream/peerconnection-Attributes.html

@@ -202,10 +202,6 @@ BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE
 BUGWK74874 : fast/table/027.html = TEXT
 BUGWK74874 : fast/table/027-vertical.html = TEXT
 
-// Need rebaselining.
-BUGWK37244: tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
-BUGWK37244: tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
-
 // Need rebaselining. Only TEXT is suppressed because that is all the buildbots check, however
 // images need to be rebaselined too.
 BUGWK69210: fast/encoding/utf-16-big-endian.html = TEXT

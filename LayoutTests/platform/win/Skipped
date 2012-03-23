@@ -1657,10 +1657,6 @@ fast/dom/HTMLTableElement/colSpan.html
 fast/dom/HTMLTableElement/createCaption.html
 fast/repaint/table-section-repaint.html
 
-// Need rebaselining after bug 37244.
-tables/mozilla/bugs/bug27038-1.html
-tables/mozilla/bugs/bug27038-2.html
-
 // Need rebaselining after bug 69210.
 fast/encoding/utf-16-big-endian.html
 fast/encoding/utf-16-little-endian.html

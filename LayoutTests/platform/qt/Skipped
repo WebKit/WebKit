@@ -2079,6 +2079,8 @@ fast/table/027.html
 fast/table/027-vertical.html
 tables/mozilla/bugs/bug14929.html
 tables/mozilla/bugs/bug2947.html
+tables/mozilla/bugs/bug27038-1.html
+tables/mozilla/bugs/bug27038-2.html
 
 # Needs a rebaseline, caused by https://bugs.webkit.org/show_bug.cgi?id=43022
 tables/mozilla_expected_failures/bugs/bug85016.html
