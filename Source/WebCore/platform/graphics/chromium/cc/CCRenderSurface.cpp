@@ -268,6 +268,11 @@ int CCRenderSurface::owningLayerId() const
     return m_owningLayer ? m_owningLayer->id() : 0;
 }
 
+bool CCRenderSurface::hasReplica()
+{
+    return m_owningLayer->replicaLayer();
+}
+
 void CCRenderSurface::setClipRect(const IntRect& clipRect)
 {
     if (m_clipRect == clipRect)
@@ -309,6 +314,12 @@ PassOwnPtr<CCSharedQuadState> CCRenderSurface::createSharedQuadState() const
 {
     bool isOpaque = false;
     return CCSharedQuadState::create(originTransform(), drawTransform(), contentRect(), clipRect(), drawOpacity(), isOpaque);
+}
+
+PassOwnPtr<CCSharedQuadState> CCRenderSurface::createReplicaSharedQuadState() const
+{
+    bool isOpaque = false;
+    return CCSharedQuadState::create(replicaOriginTransform(), replicaDrawTransform(), contentRect(), clipRect(), drawOpacity(), isOpaque);
 }
 
 }

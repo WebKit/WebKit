@@ -42,6 +42,12 @@ namespace WebCore {
 
 static const int debugTileBorderWidth = 1;
 static const int debugTileBorderAlpha = 100;
+static const int debugTileBorderColorRed = 80;
+static const int debugTileBorderColorGreen = 200;
+static const int debugTileBorderColorBlue = 200;
+static const int debugTileBorderMissingTileColorRed = 255;
+static const int debugTileBorderMissingTileColorGreen = 0;
+static const int debugTileBorderMissingTileColorBlue = 0;
 
 class ManagedTexture;
 
@@ -137,6 +143,23 @@ void CCTiledLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
 
     int left, top, right, bottom;
     m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
+
+    if (hasDebugBorders()) {
+        for (int j = top; j <= bottom; ++j) {
+            for (int i = left; i <= right; ++i) {
+                DrawableTile* tile = tileAt(i, j);
+                IntRect tileRect = m_tiler->tileBounds(i, j);
+                Color borderColor;
+
+                if (!tile || !tile->textureId())
+                    borderColor = Color(debugTileBorderMissingTileColorRed, debugTileBorderMissingTileColorGreen, debugTileBorderMissingTileColorBlue, debugTileBorderAlpha);
+                else
+                    borderColor = Color(debugTileBorderColorRed, debugTileBorderColorGreen, debugTileBorderColorBlue, debugTileBorderAlpha);
+                quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, tileRect, borderColor, debugTileBorderWidth));
+            }
+        }
+    }
+
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             DrawableTile* tile = tileAt(i, j);
@@ -173,11 +196,6 @@ void CCTiledLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
 
             const GC3Dint textureFilter = m_tiler->hasBorderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
             quadList.append(CCTileDrawQuad::create(sharedQuadState, tileRect, tileOpaqueRect, tile->textureId(), textureOffset, textureSize, textureFilter, contentsSwizzled(), leftEdgeAA, topEdgeAA, rightEdgeAA, bottomEdgeAA));
-
-            if (hasDebugBorders()) {
-                Color color(debugBorderColor().red(), debugBorderColor().green(), debugBorderColor().blue(), debugTileBorderAlpha);
-                quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, tileRect, color, debugTileBorderWidth));
-            }
         }
     }
 }

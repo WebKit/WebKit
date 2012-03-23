@@ -126,6 +126,8 @@ public:
 
     int owningLayerId() const;
 
+    bool hasReplica();
+
     void resetPropertyChangedFlag() { m_surfacePropertyChanged = false; }
     bool surfacePropertyChanged() const;
     bool surfacePropertyChangedOnlyFromDescendant() const;
@@ -133,6 +135,7 @@ public:
     CCDamageTracker* damageTracker() const { return m_damageTracker.get(); }
 
     PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
+    PassOwnPtr<CCSharedQuadState> createReplicaSharedQuadState() const;
 
 private:
     void drawLayer(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix&, const SkBitmap& filterBitmap);
