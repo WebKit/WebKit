@@ -48,6 +48,7 @@ PassRefPtr<SessionDescription> SessionDescription::create(const String& sdp)
 
 PassRefPtr<SessionDescription> SessionDescription::create(PassRefPtr<SessionDescriptionDescriptor> descriptor)
 {
+    ASSERT(!!descriptor);
     return adoptRef(new SessionDescription(descriptor));
 }
 

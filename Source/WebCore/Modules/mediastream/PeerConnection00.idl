@@ -1,0 +1,112 @@
+/*
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer
+ *    in the documentation and/or other materials provided with the
+ *    distribution.
+ * 3. Neither the name of Google Inc. nor the names of its contributors
+ *    may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+module p2p {
+
+    interface [
+        Conditional=MEDIA_STREAM,
+        ActiveDOMObject,
+        Constructor(in DOMString serverConfiguration, in [Callback] IceCallback iceCallback),
+        CallWith=ScriptExecutionContext,
+        EventTarget
+    ] PeerConnection00 {
+        // FIXME: Make mediaHints an object
+        SessionDescription createOffer(in [Optional] DOMString mediaHints);
+
+        // FIXME: Make mediaHints an object
+        SessionDescription createAnswer(in DOMString offer, in [Optional] DOMString mediaHints);
+
+        // Actions, for setLocalDescription/setRemoteDescription.
+        const unsigned short SDP_OFFER = 0x100;
+        const unsigned short SDP_PRANSWER = 0x200;
+        const unsigned short SDP_ANSWER = 0x300;
+
+        void setLocalDescription(in unsigned short action, in SessionDescription desc)
+            raises(DOMException);
+
+        void setRemoteDescription(in unsigned short action, in SessionDescription desc)
+            raises(DOMException);
+
+        readonly attribute SessionDescription localDescription;
+
+        readonly attribute SessionDescription remoteDescription;
+
+        const unsigned short NEW = 0;
+        const unsigned short NEGOTIATING = 1;
+        const unsigned short ACTIVE = 2;
+        const unsigned short CLOSED = 3;
+        readonly attribute unsigned short readyState;
+
+        // FIXME: Make iceOptions an object
+        void startIce(in [Optional] DOMString iceOptions)
+            raises(DOMException);
+
+        void processIceMessage(in IceCandidate candidate)
+            raises(DOMException);
+
+        const unsigned short ICE_GATHERING = 0x100;
+        const unsigned short ICE_WAITING = 0x200;
+        const unsigned short ICE_CHECKING = 0x300;
+        const unsigned short ICE_CONNECTED = 0x400;
+        const unsigned short ICE_COMPLETED = 0x500;
+        const unsigned short ICE_FAILED = 0x600;
+        const unsigned short ICE_CLOSED = 0x700;
+        readonly attribute unsigned short iceState;
+
+        // FIXME: Make mediaStreamHints an object
+        [StrictTypeChecking] void addStream(in MediaStream stream, in [Optional] DOMString mediaStreamHints)
+            raises(DOMException);
+        [StrictTypeChecking] void removeStream(in MediaStream stream)
+            raises(DOMException);
+
+        readonly attribute MediaStreamList localStreams;
+        readonly attribute MediaStreamList remoteStreams;
+
+        void close()
+            raises(DOMException);
+
+        attribute EventListener onconnecting;
+        attribute EventListener onopen;
+        attribute EventListener onstatechange;
+        attribute EventListener onaddstream;
+        attribute EventListener onremovestream;
+
+        // EventTarget interface
+        void addEventListener(in DOMString type,
+                              in EventListener listener,
+                              in [Optional] boolean useCapture);
+        void removeEventListener(in DOMString type,
+                                 in EventListener listener,
+                                 in [Optional] boolean useCapture);
+        boolean dispatchEvent(in Event event)
+            raises(EventException);
+    };
+
+}

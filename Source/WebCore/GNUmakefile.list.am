@@ -344,6 +344,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLUListElement.h \
 	DerivedSources/WebCore/JSHTMLVideoElement.cpp \
 	DerivedSources/WebCore/JSHTMLVideoElement.h \
+	DerivedSources/WebCore/JSIceCallback.cpp \
+	DerivedSources/WebCore/JSIceCallback.h \
 	DerivedSources/WebCore/JSIceCandidate.cpp \
 	DerivedSources/WebCore/JSIceCandidate.h \
 	DerivedSources/WebCore/JSImageData.cpp \
@@ -436,6 +438,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSOverflowEvent.h \
 	DerivedSources/WebCore/JSPageTransitionEvent.cpp \
 	DerivedSources/WebCore/JSPageTransitionEvent.h \
+	DerivedSources/WebCore/JSPeerConnection00.cpp \
+	DerivedSources/WebCore/JSPeerConnection00.h \
 	DerivedSources/WebCore/JSPerformance.cpp \
 	DerivedSources/WebCore/JSPerformance.h \
 	DerivedSources/WebCore/JSPerformanceNavigation.cpp \
@@ -664,6 +668,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/geolocation/PositionErrorCallback.idl \
 	$(WebCore)/Modules/mediastream/DeprecatedPeerConnection.idl \
 	$(WebCore)/Modules/mediastream/DOMWindowMediaStream.idl \
+	$(WebCore)/Modules/mediastream/IceCallback.idl \
 	$(WebCore)/Modules/mediastream/IceCandidate.idl \
 	$(WebCore)/Modules/mediastream/LocalMediaStream.idl \
 	$(WebCore)/Modules/mediastream/MediaStream.idl \
@@ -675,6 +680,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaError.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaErrorCallback.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaSuccessCallback.idl \
+	$(WebCore)/Modules/mediastream/PeerConnection00.idl \
 	$(WebCore)/Modules/mediastream/SessionDescription.idl \
 	$(WebCore)/Modules/mediastream/SignalingCallback.idl \
 	$(WebCore)/Modules/webaudio/AudioContext.idl \
@@ -1097,6 +1103,7 @@ webcore_sources += \
 	Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.h \
 	Source/WebCore/Modules/mediastream/DeprecatedPeerConnection.cpp \
 	Source/WebCore/Modules/mediastream/DeprecatedPeerConnection.h \
+	Source/WebCore/Modules/mediastream/IceCallback.h \
 	Source/WebCore/Modules/mediastream/IceCandidate.cpp \
 	Source/WebCore/Modules/mediastream/IceCandidate.h \
 	Source/WebCore/Modules/mediastream/LocalMediaStream.cpp \
@@ -1118,6 +1125,8 @@ webcore_sources += \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaError.h \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaErrorCallback.h \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaSuccessCallback.h \
+	Source/WebCore/Modules/mediastream/PeerConnection00.cpp \
+	Source/WebCore/Modules/mediastream/PeerConnection00.h \
 	Source/WebCore/Modules/mediastream/SessionDescription.cpp \
 	Source/WebCore/Modules/mediastream/SessionDescription.h \
 	Source/WebCore/Modules/mediastream/SignalingCallback.h \
