@@ -1,3 +1,11 @@
+2012-03-22  Jessie Berlin  <jberlin@apple.com>
+
+        Windows build fix after r111778.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        Don't include and try to build files owned by WTF.
+        Also, let VS have its way with the vcproj in terms of file ordering.
+
 2012-03-22  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         [CMake] Unreviewed build fix after r111778.
