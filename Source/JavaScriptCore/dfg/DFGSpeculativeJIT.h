@@ -123,7 +123,10 @@ private:
     
     NodeIndex m_nodeIndex;
 };
-    
+
+
+enum GeneratedOperandType { GeneratedOperandTypeUnknown, GeneratedOperandInteger, GeneratedOperandDouble, GeneratedOperandJSValue};
+
 // === SpeculativeJIT ===
 //
 // The SpeculativeJIT is used to generate a fast, but potentially
@@ -361,6 +364,7 @@ public:
     FPRReg fillSpeculateDouble(NodeIndex);
     GPRReg fillSpeculateCell(NodeIndex);
     GPRReg fillSpeculateBoolean(NodeIndex);
+    GeneratedOperandType checkGeneratedTypeForToInt32(NodeIndex);
 
 private:
     void compile(Node&);

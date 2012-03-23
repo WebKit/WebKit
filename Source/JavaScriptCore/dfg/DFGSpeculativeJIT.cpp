@@ -1463,6 +1463,59 @@ void SpeculativeJIT::compileGetByValOnString(Node& node)
     cellResult(scratchReg, m_compileIndex);
 }
 
+GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(NodeIndex nodeIndex)
+{
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    dataLog("checkGeneratedTypeForToInt32@%d   ", nodeIndex);
+#endif
+    Node& node = at(nodeIndex);
+    VirtualRegister virtualRegister = node.virtualRegister();
+    GenerationInfo& info = m_generationInfo[virtualRegister];
+
+    if (info.registerFormat() == DataFormatNone) {
+        if (node.hasConstant()) {
+            if (isInt32Constant(nodeIndex))
+                return GeneratedOperandInteger;
+
+            if (isNumberConstant(nodeIndex))
+                return GeneratedOperandDouble;
+
+            terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode);
+            return GeneratedOperandTypeUnknown;
+        }
+
+        if (info.spillFormat() == DataFormatDouble)
+            return GeneratedOperandDouble;
+    }
+
+    switch (info.registerFormat()) {
+    case DataFormatBoolean: // This type never occurs.
+    case DataFormatStorage:
+        ASSERT_NOT_REACHED();
+
+    case DataFormatCell:
+        terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode);
+        return GeneratedOperandTypeUnknown;
+
+    case DataFormatNone:
+    case DataFormatJSCell:
+    case DataFormatJS:
+    case DataFormatJSBoolean:
+        return GeneratedOperandJSValue;
+
+    case DataFormatJSInteger:
+    case DataFormatInteger:
+        return GeneratedOperandInteger;
+
+    case DataFormatJSDouble:
+    case DataFormatDouble:
+        return GeneratedOperandDouble;
+    }
+
+    ASSERT_NOT_REACHED();
+    return GeneratedOperandTypeUnknown;
+}
+
 void SpeculativeJIT::compileValueToInt32(Node& node)
 {
     if (at(node.child1()).shouldSpeculateInteger()) {
@@ -1474,19 +1527,100 @@ void SpeculativeJIT::compileValueToInt32(Node& node)
     }
     
     if (at(node.child1()).shouldSpeculateNumber()) {
-        SpeculateDoubleOperand op1(this, node.child1());
-        GPRTemporary result(this);
-        FPRReg fpr = op1.fpr();
-        GPRReg gpr = result.gpr();
-        JITCompiler::Jump truncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateSuccessful);
-        
-        silentSpillAllRegisters(gpr);
-        callOperation(toInt32, gpr, fpr);
-        silentFillAllRegisters(gpr);
-        
-        truncatedToInteger.link(&m_jit);
-        integerResult(gpr, m_compileIndex);
-        return;
+        switch (checkGeneratedTypeForToInt32(node.child1().index())) {
+        case GeneratedOperandInteger: {
+            SpeculateIntegerOperand op1(this, node.child1());
+            GPRTemporary result(this, op1);
+            m_jit.move(op1.gpr(), result.gpr());
+            integerResult(result.gpr(), m_compileIndex, op1.format());
+            return;
+        }
+        case GeneratedOperandDouble: {
+            GPRTemporary result(this);
+            SpeculateDoubleOperand op1(this, node.child1());
+            FPRReg fpr = op1.fpr();
+            GPRReg gpr = result.gpr();
+            JITCompiler::Jump truncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateSuccessful);
+
+            silentSpillAllRegisters(gpr);
+            callOperation(toInt32, gpr, fpr);
+            silentFillAllRegisters(gpr);
+
+            truncatedToInteger.link(&m_jit);
+            integerResult(gpr, m_compileIndex);
+            return;
+        }
+        case GeneratedOperandJSValue: {
+            GPRTemporary result(this);
+#if USE(JSVALUE64)
+            JSValueOperand op1(this, node.child1());
+
+            GPRReg gpr = op1.gpr();
+            GPRReg resultGpr = result.gpr();
+            FPRTemporary tempFpr(this);
+            FPRReg fpr = tempFpr.fpr();
+
+            JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, gpr, GPRInfo::tagTypeNumberRegister);
+
+            speculationCheck(BadType, JSValueRegs(gpr), node.child1().index(), m_jit.branchTestPtr(MacroAssembler::Zero, gpr, GPRInfo::tagTypeNumberRegister));
+
+            // First, if we get here we have a double encoded as a JSValue
+            m_jit.move(gpr, resultGpr);
+            unboxDouble(resultGpr, fpr);
+
+            silentSpillAllRegisters(resultGpr);
+            callOperation(toInt32, resultGpr, fpr);
+            silentFillAllRegisters(resultGpr);
+
+            JITCompiler::Jump converted = m_jit.jump();
+
+            isInteger.link(&m_jit);
+            m_jit.zeroExtend32ToPtr(gpr, resultGpr);
+
+            converted.link(&m_jit);
+#else
+            Node& childNode = at(node.child1().index());
+            VirtualRegister virtualRegister = childNode.virtualRegister();
+            GenerationInfo& info = m_generationInfo[virtualRegister];
+
+            JSValueOperand op1(this, node.child1());
+
+            GPRReg payloadGPR = op1.payloadGPR();
+            GPRReg resultGpr = result.gpr();
+
+            if (info.registerFormat() == DataFormatJSInteger)
+                m_jit.move(payloadGPR, resultGpr);
+            else {
+                GPRReg tagGPR = op1.tagGPR();
+                FPRTemporary tempFpr(this);
+                FPRReg fpr = tempFpr.fpr();
+                FPRTemporary scratch(this);
+
+                JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, tagGPR, TrustedImm32(JSValue::Int32Tag));
+
+                speculationCheck(BadType, JSValueRegs(tagGPR, payloadGPR), node.child1().index(), m_jit.branch32(MacroAssembler::AboveOrEqual, tagGPR, TrustedImm32(JSValue::LowestTag)));
+
+                unboxDouble(tagGPR, payloadGPR, fpr, scratch.fpr());
+
+                silentSpillAllRegisters(resultGpr);
+                callOperation(toInt32, resultGpr, fpr);
+                silentFillAllRegisters(resultGpr);
+
+                JITCompiler::Jump converted = m_jit.jump();
+
+                isInteger.link(&m_jit);
+                m_jit.move(payloadGPR, resultGpr);
+
+                converted.link(&m_jit);
+            }
+#endif
+            integerResult(resultGpr, m_compileIndex);
+            return;
+        }
+        case GeneratedOperandTypeUnknown:
+            ASSERT_NOT_REACHED();
+            break;
+        }
     }
     
     if (at(node.child1()).shouldSpeculateBoolean()) {
