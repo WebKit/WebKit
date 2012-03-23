@@ -45,6 +45,7 @@
 #include "DOMTimer.h"
 #include "DOMTokenList.h"
 #include "DOMURL.h"
+#include "DOMWindowNotifications.h"
 #include "Database.h"
 #include "DatabaseCallback.h"
 #include "DeviceMotionController.h"
@@ -72,8 +73,6 @@
 #include "MediaQueryMatcher.h"
 #include "MessageEvent.h"
 #include "Navigator.h"
-#include "NotificationCenter.h"
-#include "NotificationController.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
@@ -418,9 +417,6 @@ DOMWindow::~DOMWindow()
         ASSERT(!m_sessionStorage);
         ASSERT(!m_localStorage);
         ASSERT(!m_applicationCache);
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-        ASSERT(!m_notifications);
-#endif
 #if ENABLE(BLOB)
         ASSERT(!m_domURL);
 #endif
@@ -785,34 +781,9 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
 }
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-NotificationCenter* DOMWindow::webkitNotifications() const
-{
-    if (!isCurrentlyDisplayedInFrame())
-        return 0;
-    if (m_notifications)
-        return m_notifications.get();
-
-    Document* document = this->document();
-    if (!document)
-        return 0;
-    
-    Page* page = document->page();
-    if (!page)
-        return 0;
-
-    NotificationClient* provider = NotificationController::clientFrom(page);
-    if (provider) 
-        m_notifications = NotificationCenter::create(document, provider);    
-      
-    return m_notifications.get();
-}
-
 void DOMWindow::resetNotifications()
 {
-    if (!m_notifications)
-        return;
-    m_notifications->disconnectFrame();
-    m_notifications = 0;
+    DOMWindowNotifications::reset(this);
 }
 #endif
 

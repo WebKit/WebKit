@@ -3507,6 +3507,8 @@
 		97AABD2D14FA09D5007457AE /* WorkerThreadableWebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */; };
 		97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37569E0013AF172C00CDBA8E /* SharedBufferChunkReader.cpp */; };
 		97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 37569E0213AF172C00CDBA8E /* SharedBufferChunkReader.h */; };
+		97B38E27151C4271004622E9 /* DOMWindowNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B38E24151C4264004622E9 /* DOMWindowNotifications.h */; };
+		97B38E28151C4273004622E9 /* DOMWindowNotifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97B38E23151C4264004622E9 /* DOMWindowNotifications.cpp */; };
 		97BC69DA1505F076001B74AC /* AbstractDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69D61505F076001B74AC /* AbstractDatabase.cpp */; };
 		97BC69DB1505F076001B74AC /* AbstractDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69D71505F076001B74AC /* AbstractDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97BC69DC1505F076001B74AC /* ChangeVersionWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69D81505F076001B74AC /* ChangeVersionWrapper.cpp */; };
@@ -10472,6 +10474,9 @@
 		97AABD1014FA09D5007457AE /* WebSocketHandshakeResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketHandshakeResponse.h; path = Modules/websockets/WebSocketHandshakeResponse.h; sourceTree = "<group>"; };
 		97AABD1114FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerThreadableWebSocketChannel.cpp; path = Modules/websockets/WorkerThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
 		97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerThreadableWebSocketChannel.h; path = Modules/websockets/WorkerThreadableWebSocketChannel.h; sourceTree = "<group>"; };
+		97B38E23151C4264004622E9 /* DOMWindowNotifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DOMWindowNotifications.cpp; path = notifications/DOMWindowNotifications.cpp; sourceTree = "<group>"; };
+		97B38E24151C4264004622E9 /* DOMWindowNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMWindowNotifications.h; path = notifications/DOMWindowNotifications.h; sourceTree = "<group>"; };
+		97B38E25151C4264004622E9 /* DOMWindowNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DOMWindowNotifications.idl; path = notifications/DOMWindowNotifications.idl; sourceTree = "<group>"; };
 		97BC69D61505F076001B74AC /* AbstractDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AbstractDatabase.cpp; path = Modules/webdatabase/AbstractDatabase.cpp; sourceTree = "<group>"; };
 		97BC69D71505F076001B74AC /* AbstractDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AbstractDatabase.h; path = Modules/webdatabase/AbstractDatabase.h; sourceTree = "<group>"; };
 		97BC69D81505F076001B74AC /* ChangeVersionWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ChangeVersionWrapper.cpp; path = Modules/webdatabase/ChangeVersionWrapper.cpp; sourceTree = "<group>"; };
@@ -14418,6 +14423,9 @@
 		333F703D0FB49C16008E12A6 /* notifications */ = {
 			isa = PBXGroup;
 			children = (
+				97B38E23151C4264004622E9 /* DOMWindowNotifications.cpp */,
+				97B38E24151C4264004622E9 /* DOMWindowNotifications.h */,
+				97B38E25151C4264004622E9 /* DOMWindowNotifications.idl */,
 				33503CC61017A1B1003B47E1 /* Notification.cpp */,
 				333F704F0FB49CA2008E12A6 /* Notification.h */,
 				333F704E0FB49CA2008E12A6 /* Notification.idl */,
@@ -22449,6 +22457,7 @@
 				85989DD10ACC8BBD00A0BC51 /* DOMWheelEventInternal.h in Headers */,
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
 				9712A5AE15004EDA0048AF10 /* DOMWindowIndexedDatabase.h in Headers */,
+				97B38E27151C4271004622E9 /* DOMWindowNotifications.h in Headers */,
 				97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */,
 				97BC6A351505F081001B74AC /* DOMWindowSQLDatabase.h in Headers */,
 				F35AE5AC14925F5B004D5776 /* DOMWrapperVisitor.h in Headers */,
@@ -25600,6 +25609,7 @@
 				85C7F5E80AAFBAFB004014DD /* DOMWheelEvent.mm in Sources */,
 				1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */,
 				9712A5AD15004EDA0048AF10 /* DOMWindowIndexedDatabase.cpp in Sources */,
+				97B38E28151C4273004622E9 /* DOMWindowNotifications.cpp in Sources */,
 				97D2AD0314B823A60093DF32 /* DOMWindowProperty.cpp in Sources */,
 				97BC6A341505F081001B74AC /* DOMWindowSQLDatabase.cpp in Sources */,
 				BC53DA481143134D000D817E /* DOMWrapperWorld.cpp in Sources */,

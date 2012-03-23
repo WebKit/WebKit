@@ -1625,12 +1625,14 @@ ENDIF ()
 
 IF (ENABLE_NOTIFICATIONS)
     LIST(APPEND WebCore_SOURCES
+        notifications/DOMWindowNotifications.cpp
         notifications/NotificationCenter.cpp
         notifications/NotificationController.cpp
         notifications/Notification.cpp
     )
 
     LIST(APPEND WebCore_IDL_FILES
+        notifications/DOMWindowNotifications.idl
         notifications/Notification.idl
         notifications/NotificationCenter.idl
     )
