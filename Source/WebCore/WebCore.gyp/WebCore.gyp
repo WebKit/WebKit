@@ -1034,7 +1034,6 @@
         'injected_script_source',
         'debugger_script_source',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '../../WTF/WTF.gyp/WTF.gyp:newwtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
@@ -1154,7 +1153,6 @@
         'webcore_bindings_sources',
         '../../ThirdParty/glu/glu.gyp:libtess',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '../../WTF/WTF.gyp/WTF.gyp:newwtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
@@ -1173,7 +1171,6 @@
       ],
       'export_dependent_settings': [
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '../../WTF/WTF.gyp/WTF.gyp:newwtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
@@ -1917,7 +1914,6 @@
         'webcore_rendering',
         # Exported.
         'webcore_bindings',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '../../WTF/WTF.gyp/WTF.gyp:newwtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
@@ -1926,7 +1922,6 @@
       ],
       'export_dependent_settings': [
         'webcore_bindings',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '../../WTF/WTF.gyp/WTF.gyp:newwtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',

@@ -78,7 +78,6 @@
             'dependencies': [
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:inspector_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
-                '<(source_dir)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                 '<(source_dir)/WTF/WTF.gyp/WTF.gyp:newwtf',
                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
@@ -254,7 +253,6 @@
                         '<(source_dir)/WebKit/chromium/public',
                     ],
                     'dependencies': [
-                        '<(source_dir)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
                         '<(source_dir)/WTF/WTF.gyp/WTF.gyp:newwtf',
                     ],
                 }],

@@ -38,7 +38,6 @@
             'target_name': 'webkit_platform',
             'type': 'static_library',
             'dependencies': [
-                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
                 '../../WTF/WTF.gyp/WTF.gyp:newwtf',
             ],
             'include_dirs': [
