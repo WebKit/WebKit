@@ -690,6 +690,10 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
         || (event.type == WebInputEvent::KeyDown)
         || (event.type == WebInputEvent::KeyUp));
 
+    // Halt an in-progress fling on a key event.
+    if (m_gestureAnimation)
+        m_gestureAnimation.clear();
+
     // Please refer to the comments explaining the m_suppressNextKeypressEvent
     // member.
     // The m_suppressNextKeypressEvent is set if the KeyDown is handled by

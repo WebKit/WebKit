@@ -248,6 +248,8 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     } else if (event.type == WebInputEvent::GestureFlingCancel) {
         if (cancelCurrentFling())
             return DidHandle;
+    } else if (WebInputEvent::isKeyboardEventType(event.type)) {
+         cancelCurrentFling();
     }
 
     return DidNotHandle;
