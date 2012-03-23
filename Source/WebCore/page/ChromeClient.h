@@ -53,6 +53,7 @@ namespace WebCore {
     class Frame;
     class Geolocation;
     class GraphicsLayer;
+    class HTMLInputElement;
     class HitTestResult;
     class IntRect;
     class NavigationAction;
@@ -307,6 +308,13 @@ namespace WebCore {
         virtual PagePopup* openPagePopup(PagePopupClient*, const IntRect& originBoundsInRootView) = 0;
         virtual void closePagePopup(PagePopup*) = 0;
 #endif
+        // This function is called whenever a text field <input> is
+        // created. The implementation should return true if it wants
+        // to do something in addTextFieldDecorationsTo().
+        // The argument is always non-0.
+        virtual bool willAddTextFieldDecorationsTo(HTMLInputElement*) { return false; }
+        // The argument is always non-0.
+        virtual void addTextFieldDecorationsTo(HTMLInputElement*) { }
 
         virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
         

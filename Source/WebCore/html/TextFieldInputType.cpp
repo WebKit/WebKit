@@ -33,6 +33,8 @@
 #include "TextFieldInputType.h"
 
 #include "BeforeTextInsertedEvent.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
@@ -220,8 +222,10 @@ void TextFieldInputType::createShadowSubtree()
 
     Document* document = element()->document();
     RefPtr<RenderTheme> theme = document->page() ? document->page()->theme() : RenderTheme::defaultTheme();
+    ChromeClient* chromeClient = document->page() ? document->page()->chrome()->client() : 0;
     bool shouldHaveSpinButton = theme->shouldHaveSpinButton(element());
-    bool createsContainer = shouldHaveSpinButton || needsContainer();
+    bool shouldAddDecorations = chromeClient && chromeClient->willAddTextFieldDecorationsTo(element());
+    bool createsContainer = shouldHaveSpinButton || needsContainer() || shouldAddDecorations;
 
     ExceptionCode ec = 0;
     m_innerText = TextControlInnerTextElement::create(document);
@@ -251,6 +255,9 @@ void TextFieldInputType::createShadowSubtree()
         m_innerSpinButton = SpinButtonElement::create(document);
         m_container->appendChild(m_innerSpinButton, ec);
     }
+
+    if (shouldAddDecorations)
+        chromeClient->addTextFieldDecorationsTo(element());
 }
 
 HTMLElement* TextFieldInputType::containerElement() const

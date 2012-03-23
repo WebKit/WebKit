@@ -5684,6 +5684,8 @@
             'html/shadow/SliderThumbElement.h',
             'html/shadow/TextControlInnerElements.cpp',
             'html/shadow/TextControlInnerElements.h',
+            'html/shadow/TextFieldDecorationElement.cpp',
+            'html/shadow/TextFieldDecorationElement.h',
             'html/track/LoadableTextTrack.cpp',
             'html/track/LoadableTextTrack.h',
             'html/track/TextTrack.cpp',
