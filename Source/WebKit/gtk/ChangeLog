@@ -1,5 +1,17 @@
 2012-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Rename a variable name in API documentation.
+
+        Rename keyboard_mode to triggered_with_keyboard in
+        WebKitWebView::context-menu signal documentation as suggested by
+        Martin and Gustavo. I forgot to make this change before landing
+        previous patch.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+
+2012-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add a signal to allow applications to handle its own context menu
         https://bugs.webkit.org/show_bug.cgi?id=49904
 

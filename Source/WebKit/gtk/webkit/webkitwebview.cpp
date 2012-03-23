@@ -2852,13 +2852,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @web_view: the object which received the signal
      * @default_menu: the default context menu
      * @hit_test_result: a #WebKitHitTestResult with the context of the current position.
-     * @keyboard_mode: %TRUE if the context menu was triggered using the keyboard
+     * @triggered_with_keyboard: %TRUE if the context menu was triggered using the keyboard
      *
      * Emmited when a context menu is about to be displayed to give the application
      * a chance to create and handle its own context menu. If you only want to add custom
      * options to the default context menu you can simply modify the given @default_menu.
      *
-     * When @keyboard_mode is %TRUE the coordinates of the given @hit_test_result should be
+     * When @triggered_with_keyboard is %TRUE the coordinates of the given @hit_test_result should be
      * used to position the popup menu. When the context menu has been triggered by a
      * mouse event you could either use the @hit_test_result coordinates or pass %NULL
      * to the #GtkMenuPositionFunc parameter of gtk_menu_popup() function.
