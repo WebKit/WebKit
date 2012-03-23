@@ -14,7 +14,6 @@ fast/dom/Orientation/create-event-orientationchange.html
 fast/dom/prototype-inheritance-2.html
 fast/dom/Window/Plug-ins.html
 fast/dom/Window/window-properties-device-orientation.html
-fast/dom/Window/window-properties.html
 fast/dom/Window/window-property-descriptors.html
 fast/forms/HTMLOptionElement_label06.html
 fast/forms/HTMLOptionElement_label07.html
@@ -22,7 +21,6 @@ fast/forms/menulist-separator-painting.html
 fast/forms/select-background-none.html
 fast/forms/select-baseline.html
 fast/forms/selectlist-minsize.html
-fast/frames/iframe-reparenting-plugins.html
 fast/frames/sandboxed-iframe-about-blank.html
 fast/frames/sandboxed-iframe-navigation-allowed.html
 fast/images/object-image.html
@@ -33,17 +31,12 @@ fast/replaced/three-selects-break.html
 http/tests/inspector/network/network-content-replacement-embed.html
 http/tests/inspector/network/network-embed.html
 http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
-http/tests/security/mixedContent/insecure-plugin-in-iframe.html
 http/tests/xmlhttprequest/upload-onprogress-event.html
 http/tests/xmlhttprequest/upload-progress-events.html
 
 # timeout
 fast/events/bogus-dropEffect-effectAllowed.html
 fast/forms/textfield-drag-into-disabled.html
-
-# [Qt] fast/multicol/flipped-blocks-hit-test.html fails with Qt5
-# https://bugs.webkit.org/show_bug.cgi?id=71118
-fast/multicol/flipped-blocks-hit-test.html
 
 # nrwt pixel test crash
 # https://bugs.webkit.org/show_bug.cgi?id=71688
@@ -54,19 +47,6 @@ editing/pasteboard/data-transfer-items-image-png.html
 http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html
 http/tests/security/contentSecurityPolicy/object-src-none-allowed.html
 http/tests/security/contentSecurityPolicy/object-src-none-blocked.html
-http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html
-
-# [Qt] Test fonts are not used with Qt5
-# https://bugs.webkit.org/show_bug.cgi?id=72513
-fast/multicol/pagination-h-vertical-lr.html
-fast/multicol/pagination-v-horizontal-tb.html
-fast/multicol/pagination-v-vertical-rl.html
-fast/text/justify-padding-distribution.html
-fast/css-generated-content/nested-tables-with-before-after-content-crash.html
-
-# [Qt] editing/selection/click-in-margins-inside-editable-div.html fails with Qt5
-# https://bugs.webkit.org/show_bug.cgi?id=73418
-editing/selection/click-in-margins-inside-editable-div.html
 
 # [Qt] fast/events/clear-edit-drag-state.html fails with timeout with Qt5-WK1
 # https://bugs.webkit.org/show_bug.cgi?id=76897
