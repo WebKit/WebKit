@@ -168,7 +168,7 @@ ui.results.ResultsDetails = base.extends('div', {
 // jQuery's builtin accordion overrides mousedown, which means you can't select the header text
 // or click on the link to the flakiness dashboard.
 $('.ui-accordion-header').live('click', function() {
-    $(this).trigger('customaccordianclick');
+    $(this).trigger('customaccordionclick');
 })
 
 ui.results.TestSelector = base.extends('div', {
@@ -199,10 +199,22 @@ ui.results.TestSelector = base.extends('div', {
         $(this).accordion({
             collapsible: true,
             autoHeight: false,
-            event: 'customaccordianclick',
+            event: 'customaccordionclick',
         });
         $(this).accordion('activate', false);
-
+        $(this).bind('accordionchange', function(event, ui) {
+            // jQuery accordion has a bug where it scrolls to the top of the page if you click on
+            // any item. Scroll offscreen content into view. This isn't pretty after the animation,
+            // but it's better than having to manually scroll all the time.
+            var header = $('.ui-state-active.ui-accordion-header')[0];
+            var results = $('.ui-accordion-content-active')[0];
+            // Since the results load async, we need to guess what the height will be.
+            var estimatedResultsHeight = 1000;
+            if (header.offsetTop < document.body.scrollTop || results.offsetTop + estimatedResultsHeight > document.body.scrollTop + document.documentElement.clientHeight) {
+                var offsetFromWindowTop = header.offsetHeight;
+                document.body.scrollTop = header.offsetTop - offsetFromWindowTop;
+            }
+        });
     },
     nextResult: function()
     {
