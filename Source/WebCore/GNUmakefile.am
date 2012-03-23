@@ -789,7 +789,6 @@ IDL_PATH := \
     $(WebCore)/bindings/js \
     $(WebCore)/css \
     $(WebCore)/dom \
-    $(WebCore)/dom/testing \
     $(WebCore)/fileapi \
     $(WebCore)/html \
     $(WebCore)/html/canvas \
@@ -803,7 +802,6 @@ IDL_PATH := \
     $(WebCore)/storage \
     $(WebCore)/svg \
     $(WebCore)/testing \
-    $(WebCore)/websockets \
     $(WebCore)/workers \
     $(WebCore)/xml
 
