@@ -92,7 +92,12 @@ public:
     virtual void setScrollbarOverlayStyle(ScrollbarOverlayStyle);
     ScrollbarOverlayStyle scrollbarOverlayStyle() const { return static_cast<ScrollbarOverlayStyle>(m_scrollbarOverlayStyle); }
 
+    // This getter will create a ScrollAnimator if it doesn't already exist.
     ScrollAnimator* scrollAnimator() const;
+
+    // This getter will return null if the ScrollAnimator hasn't been created yet.
+    ScrollAnimator* getExistingScrollAnimator() const { return m_scrollAnimator.get(); }
+
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
     bool scrollOriginChanged() const { return m_scrollOriginChanged; }
 

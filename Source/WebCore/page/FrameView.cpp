@@ -2644,7 +2644,8 @@ void FrameView::setAnimatorsAreActive()
     if (!page)
         return;
 
-    scrollAnimator()->setIsActive();
+    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+        scrollAnimator->setIsActive();
 
     if (!m_scrollableAreas)
         return;

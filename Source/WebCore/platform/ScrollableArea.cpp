@@ -185,7 +185,8 @@ void ScrollableArea::willStartLiveResize()
     if (m_inLiveResize)
         return;
     m_inLiveResize = true;
-    scrollAnimator()->willStartLiveResize();
+    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+        scrollAnimator->willStartLiveResize();
 }
 
 void ScrollableArea::willEndLiveResize()
@@ -193,27 +194,32 @@ void ScrollableArea::willEndLiveResize()
     if (!m_inLiveResize)
         return;
     m_inLiveResize = false;
-    scrollAnimator()->willEndLiveResize();
+    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+        scrollAnimator->willEndLiveResize();
 }    
 
 void ScrollableArea::contentAreaWillPaint() const
 {
-    scrollAnimator()->contentAreaWillPaint();
+    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+        scrollAnimator->contentAreaWillPaint();
 }
 
 void ScrollableArea::mouseEnteredContentArea() const
 {
-    scrollAnimator()->mouseEnteredContentArea();
+    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+        scrollAnimator->mouseEnteredContentArea();
 }
 
 void ScrollableArea::mouseExitedContentArea() const
 {
-    scrollAnimator()->mouseEnteredContentArea();
+    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+        scrollAnimator->mouseEnteredContentArea();
 }
 
 void ScrollableArea::mouseMovedInContentArea() const
 {
-    scrollAnimator()->mouseMovedInContentArea();
+    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+        scrollAnimator->mouseMovedInContentArea();
 }
 
 void ScrollableArea::mouseEnteredScrollbar(Scrollbar* scrollbar) const
@@ -228,12 +234,14 @@ void ScrollableArea::mouseExitedScrollbar(Scrollbar* scrollbar) const
 
 void ScrollableArea::contentAreaDidShow() const
 {
-    scrollAnimator()->contentAreaDidShow();
+    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+        scrollAnimator->contentAreaDidShow();
 }
 
 void ScrollableArea::contentAreaDidHide() const
 {
-    scrollAnimator()->contentAreaDidHide();
+    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+        scrollAnimator->contentAreaDidHide();
 }
 
 void ScrollableArea::didAddVerticalScrollbar(Scrollbar* scrollbar)
@@ -257,14 +265,15 @@ void ScrollableArea::didAddHorizontalScrollbar(Scrollbar* scrollbar)
     setScrollbarOverlayStyle(scrollbarOverlayStyle());
 }
 
-void ScrollableArea::contentsResized()
-{
-    scrollAnimator()->contentsResized();
-}
-
 void ScrollableArea::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
     scrollAnimator()->willRemoveHorizontalScrollbar(scrollbar);
+}
+
+void ScrollableArea::contentsResized()
+{
+    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+        scrollAnimator->contentsResized();
 }
 
 bool ScrollableArea::hasOverlayScrollbars() const
@@ -348,7 +357,8 @@ bool ScrollableArea::hasLayerForScrollCorner() const
 
 void ScrollableArea::serviceScrollAnimations()
 {
-    scrollAnimator()->serviceScrollAnimations();
+    if (ScrollAnimator* scrollAnimator = getExistingScrollAnimator())
+        scrollAnimator->serviceScrollAnimations();
 }
 
 } // namespace WebCore

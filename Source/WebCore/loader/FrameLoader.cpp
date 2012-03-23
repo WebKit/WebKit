@@ -1825,8 +1825,10 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
     if (m_state != FrameStateProvisional)
         return;
 
-    if (m_frame->view())
-        m_frame->view()->scrollAnimator()->cancelAnimations();
+    if (FrameView* view = m_frame->view()) {
+        if (ScrollAnimator* scrollAnimator = view->getExistingScrollAnimator())
+            scrollAnimator->cancelAnimations();
+    }
 
     m_client->setCopiesOnScroll();
     history()->updateForCommit();
