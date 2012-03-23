@@ -1,3 +1,22 @@
+2012-03-23  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix scrollbarLayerLostContext flaky test crash on 10.6
+        https://bugs.webkit.org/show_bug.cgi?id=82062
+
+        Reviewed by James Robinson.
+
+        Override the paint function so that it becomes a no-op. Painting
+        scrollbars on the impl thread is not yet supported on platforms other
+        than Linux or ChromeOS.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (ScrollbarLayerFakePaint):
+        (WebKitTests::ScrollbarLayerFakePaint::create):
+        (WebKitTests::ScrollbarLayerFakePaint::paint):
+        (WebKitTests::ScrollbarLayerFakePaint::ScrollbarLayerFakePaint):
+        (WebKitTests):
+        (WebKitTests::TEST_F):
+
 2012-03-23  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API (JSEP): Extending WebMediaStreamCenter

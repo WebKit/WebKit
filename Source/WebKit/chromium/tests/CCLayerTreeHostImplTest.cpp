@@ -1035,13 +1035,23 @@ TEST_F(CCLayerTreeHostImplTest, finishAllRenderingAfterContextLost)
     m_hostImpl->finishAllRendering();
 }
 
+class ScrollbarLayerFakePaint : public CCScrollbarLayerImpl {
+public:
+    static PassOwnPtr<ScrollbarLayerFakePaint> create(int id) { return adoptPtr(new ScrollbarLayerFakePaint(id)); }
+
+    virtual void paint(GraphicsContext*) { }
+
+private:
+    ScrollbarLayerFakePaint(int id) : CCScrollbarLayerImpl(id) { }
+};
+
 TEST_F(CCLayerTreeHostImplTest, scrollbarLayerLostContext)
 {
     m_hostImpl->initializeLayerRenderer(createContext());
     m_hostImpl->setViewportSize(IntSize(10, 10));
 
-    m_hostImpl->setRootLayer(CCScrollbarLayerImpl::create(0));
-    CCScrollbarLayerImpl* scrollbar = static_cast<CCScrollbarLayerImpl*>(m_hostImpl->rootLayer());
+    m_hostImpl->setRootLayer(ScrollbarLayerFakePaint::create(0));
+    ScrollbarLayerFakePaint* scrollbar = static_cast<ScrollbarLayerFakePaint*>(m_hostImpl->rootLayer());
     scrollbar->setBounds(IntSize(1, 1));
     scrollbar->setContentBounds(IntSize(1, 1));
     scrollbar->setDrawsContent(true);

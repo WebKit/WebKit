@@ -66,9 +66,9 @@ public:
 protected:
     explicit CCScrollbarLayerImpl(int id);
 
-private:
-    void paint(GraphicsContext*);
+    virtual void paint(GraphicsContext*);
 
+private:
     CCLayerImpl* m_scrollLayer;
     OwnPtr<ManagedTexture> m_texture;
 
