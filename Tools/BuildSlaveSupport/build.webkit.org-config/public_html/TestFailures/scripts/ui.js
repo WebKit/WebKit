@@ -187,6 +187,7 @@ ui.StatusArea = base.extends('div',  {
             this.appendChild(content);
         }
 
+        content.appendChild(element);
         if (element.offsetTop < this.scrollTop || element.offsetTop + element.offsetHeight > this.scrollTop + this.offsetHeight)
             this.scrollTop = element.offsetTop;
     },

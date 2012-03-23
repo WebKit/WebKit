@@ -113,18 +113,6 @@ base.flattenArray = function(arrayOfArrays)
     });
 };
 
-base.values = function(dictionary)
-{
-    // FIXME: Replace this with Object.values(dictionary)?
-    var result = [];
-
-    for (var key in dictionary) {
-        result.push(dictionary[key]);
-    }
-
-    return result;
-};
-
 base.filterDictionary = function(dictionary, predicate)
 {
     var result = {};

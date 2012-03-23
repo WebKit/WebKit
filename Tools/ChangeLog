@@ -1,5 +1,15 @@
 2012-03-22  Ojan Vafai  <ojan@chromium.org>
 
+        Fix accidental missing line in r111793.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base_unittests.js:
+        Remove base.values. It was unused and duplicates the builtin Object.values.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        Accidentally deleted this line before committing r111793.
+
+2012-03-22  Ojan Vafai  <ojan@chromium.org>
+
         Move garden-o-matic progress feedback from non-modal dialogs to a status console anchored to the bottom of the page
         https://bugs.webkit.org/show_bug.cgi?id=81983
 
