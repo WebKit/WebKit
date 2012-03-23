@@ -92,6 +92,11 @@
               'WTF_USE_PTHREADS=1',
             ],
           }],
+          ['OS=="android"', {
+            # Android builds ImageDiff for host, which has a dependency on newwtf
+            # so needs to be able to build this target for host as well.
+            'toolsets': ['host', 'target'],
+          }],
         ],
       }
     },
