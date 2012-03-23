@@ -988,6 +988,9 @@ void FrameLoaderClientBlackBerry::saveViewStateToItem(HistoryItem* item)
         viewState.isZoomToFitScale = m_webPagePrivate->currentScale() == m_webPagePrivate->zoomToFitScale();
         viewState.scale = m_webPagePrivate->currentScale();
         viewState.shouldReflowBlock = m_webPagePrivate->m_shouldReflowBlock;
+        viewState.minimumScale = m_webPagePrivate->m_minimumScale;
+        viewState.maximumScale = m_webPagePrivate->m_maximumScale;
+        viewState.isUserScalable = m_webPagePrivate->m_userScalable;
     }
 }
 
@@ -1022,6 +1025,10 @@ void FrameLoaderClientBlackBerry::restoreViewState()
     m_webPagePrivate->m_didRestoreFromPageCache = false;
     HistoryItemViewState& viewState = currentItem->viewState();
 
+    // Restore the meta first.
+    m_webPagePrivate->m_minimumScale = viewState.minimumScale;
+    m_webPagePrivate->m_maximumScale = viewState.maximumScale;
+    m_webPagePrivate->m_userScalable = viewState.isUserScalable;
     // Also, try to keep the users zoom if any.
     double scale = viewState.scale;
     bool shouldReflowBlock = viewState.shouldReflowBlock;

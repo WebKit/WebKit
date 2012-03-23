@@ -1,3 +1,16 @@
+2012-03-22  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Need to store the meta info of a page in the ViewState of the history
+        https://bugs.webkit.org/show_bug.cgi?id=82000
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by George Staikos.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::saveViewStateToItem):
+        (WebCore::FrameLoaderClientBlackBerry::restoreViewState):
+
 2012-03-22  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] add interface clearCredentials() and clearNeverRememberSites()
