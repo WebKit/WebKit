@@ -153,6 +153,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_compositedLayerCount(0)
     , m_showDebugBorders(false)
     , m_showRepaintCounter(false)
+    , m_acceleratedDrawingEnabled(false)
     , m_compositingConsultsOverlap(true)
     , m_compositingDependsOnGeometry(false)
     , m_compositingNeedsUpdate(false)
@@ -191,6 +192,7 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
     bool showDebugBorders = false;
     bool showRepaintCounter = false;
     bool forceCompositingMode = false;
+    bool acceleratedDrawingEnabled = false;
 
     if (Settings* settings = m_renderView->document()->settings()) {
         hasAcceleratedCompositing = settings->acceleratedCompositingEnabled();
@@ -213,8 +215,9 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
 
         if (forceCompositingMode && m_renderView->document()->ownerElement())
             forceCompositingMode = settings->acceleratedCompositingForScrollableFramesEnabled() && requiresCompositingForScrollableFrame();
-    }
 
+        acceleratedDrawingEnabled = settings->acceleratedDrawingEnabled();
+    }
 
     if (hasAcceleratedCompositing != m_hasAcceleratedCompositing || showDebugBorders != m_showDebugBorders || showRepaintCounter != m_showRepaintCounter || forceCompositingMode != m_forceCompositingMode)
         setCompositingLayersNeedRebuild();
@@ -223,6 +226,7 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
     m_showDebugBorders = showDebugBorders;
     m_showRepaintCounter = showRepaintCounter;
     m_forceCompositingMode = forceCompositingMode;
+    m_acceleratedDrawingEnabled = acceleratedDrawingEnabled;
 }
 
 bool RenderLayerCompositor::canRender3DTransforms() const
@@ -424,16 +428,6 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
             if (layer->parent())
                 layer->computeRepaintRects();
 
-#if PLATFORM(MAC) && USE(CA)
-            Settings* settings = m_renderView->document()->settings();
-            if (settings && settings->acceleratedDrawingEnabled())
-                layer->backing()->graphicsLayer()->setAcceleratesDrawing(true);
-            else if (layer->renderer()->isCanvas()) {
-                HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(layer->renderer()->node());
-                if (canvas->shouldAccelerate(canvas->size()))
-                    layer->backing()->graphicsLayer()->setAcceleratesDrawing(true);
-            }
-#endif
             layerChanged = true;
         }
     } else {
