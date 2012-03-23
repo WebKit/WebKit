@@ -39,6 +39,7 @@ class TestErrorHandler(object):
 
     def __call__(self, line_number, category, confidence, message):
         self.handler(self, line_number, category, confidence, message)
+        return True
 
 
 class XcodeProjectFileCheckerTest(unittest.TestCase):

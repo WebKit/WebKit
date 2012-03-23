@@ -138,12 +138,12 @@ class DefaultStyleErrorHandler(object):
 
         """
         if not self.should_line_be_checked(line_number):
-            return
+            return False
 
         if not self._configuration.is_reportable(category=category,
                                                  confidence_in_error=confidence,
                                                  file_path=self._file_path):
-            return
+            return False
 
         category_total = self._add_reportable_error(category)
 
@@ -151,14 +151,14 @@ class DefaultStyleErrorHandler(object):
 
         if (max_reports is not None) and (category_total > max_reports):
             # Then suppress displaying the error.
-            return
+            return False
 
         self._configuration.write_style_error(category=category,
                                               confidence_in_error=confidence,
                                               file_path=self._file_path,
                                               line_number=line_number,
                                               message=message)
-
         if category_total == max_reports:
             self._configuration.stderr_write("Suppressing further [%s] reports "
                                              "for this file.\n" % category)
+        return True

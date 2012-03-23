@@ -2776,8 +2776,11 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
          if previous_match:
             previous_header_type = include_state.header_types[previous_line_number]
             if previous_header_type == _OTHER_HEADER and previous_line.strip() > line.strip():
-                error(line_number, 'build/include_order', 4,
-                      'Alphabetical sorting problem.')
+                # This type of error is potentially a problem with this line or the previous one,
+                # so if the error is filtered for one line, report it for the next. This is so that
+                # we properly handle patches, for which only modified lines produce errors.
+                if not error(line_number - 1, 'build/include_order', 4, 'Alphabetical sorting problem.'):
+                    error(line_number, 'build/include_order', 4, 'Alphabetical sorting problem.')
 
     if error_message:
         if file_extension == 'h':

@@ -1,3 +1,48 @@
+2012-03-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [check-webkit-style] Alphabetical sorting errors in headers are reported for the line after the first out of order header
+        https://bugs.webkit.org/show_bug.cgi?id=81986
+
+        Reviewed by David Levin.
+
+        Track whether or not errors are filtered in error handlers. If an
+        alphabetical sorting error is reported for a header and filtered, try
+        reporting it for the other potential source of the error. This ensures
+        that the style bot can still find new sorting errors in both potential
+        situations:
+
+            #include <foo.h> <-- 1. edited line
+            #include <baz.h> <-- 2. edited line
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_include_line): Potentially report the error for both lines,
+        if the first error is filtered.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Implement a new style of
+        test that allows only reporting errors for certain lines. This verifies that
+        when one line of an ordering error is filtered, the error is reported on the
+        other line.
+        (ErrorCollector.__init__):
+        (ErrorCollector.__call__):
+        (CppStyleTestBase.perform_lint):
+        (CppStyleTestBase.perform_language_rules_check):
+        (CppStyleTestBase.assert_language_rules_check):
+        (OrderOfIncludesTest.test_check_alphabetical_include_order_errors_reported_for_both_lines):
+        Added a new test that verifies that when one line of the two lines of an ordering
+        error occur, the error is reported on the other line.
+        * Scripts/webkitpy/style/checkers/jsonchecker_unittest.py:
+        (MockErrorHandler.__call__): Report True because the error is handled.
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (ErrorCollector.__call__): Ditto.
+        * Scripts/webkitpy/style/checkers/watchlist_unittest.py:
+        (MockErrorHandler.__call__): Ditto.
+        * Scripts/webkitpy/style/checkers/xcodeproj_unittest.py:
+        (TestErrorHandler.__call__): Ditto.
+        * Scripts/webkitpy/style/checkers/xml_unittest.py:
+        (MockErrorHandler.__call__): Ditto.
+        * Scripts/webkitpy/style/error_handlers.py:
+        (DefaultStyleErrorHandler.__call__): Report True if the error is handled
+        and False if it is filtered.
+
 2012-03-23  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r111778.

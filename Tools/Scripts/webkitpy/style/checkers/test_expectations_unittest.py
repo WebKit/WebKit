@@ -47,6 +47,7 @@ class ErrorCollector(object):
 
     def __call__(self, lineno, category, confidence, message):
         self._errors.append('%s  [%s] [%d]' % (message, category, confidence))
+        return True
 
     def get_errors(self):
         return ''.join(self._errors)

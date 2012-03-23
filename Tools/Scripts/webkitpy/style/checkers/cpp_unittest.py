@@ -53,22 +53,28 @@ class ErrorCollector:
     # This is a list including all categories seen in any unit test.
     _seen_style_categories = {}
 
-    def __init__(self, assert_fn, filter=None):
+    def __init__(self, assert_fn, filter=None, lines_to_check=None):
         """assert_fn: a function to call when we notice a problem.
            filter: filters the errors that we are concerned about."""
         self._assert_fn = assert_fn
         self._errors = []
+        self._lines_to_check = lines_to_check
         if not filter:
             filter = FilterConfiguration()
         self._filter = filter
 
-    def __call__(self, unused_linenum, category, confidence, message):
+    def __call__(self, line_number, category, confidence, message):
         self._assert_fn(category in self._all_style_categories,
                         'Message "%s" has category "%s",'
                         ' which is not in STYLE_CATEGORIES' % (message, category))
+
+        if self._lines_to_check and not line_number in self._lines_to_check:
+            return False
+
         if self._filter.should_check(category, ""):
             self._seen_style_categories[category] = 1
             self._errors.append('%s  [%s] [%d]' % (message, category, confidence))
+        return True
 
     def results(self):
         if len(self._errors) < 2:
@@ -246,8 +252,8 @@ class CppStyleTestBase(unittest.TestCase):
         return cpp_style.process_file_data(filename, file_extension, lines,
                                            error, self.min_confidence, unit_test_config)
 
-    def perform_lint(self, code, filename, basic_error_rules, unit_test_config={}):
-        error_collector = ErrorCollector(self.assert_, FilterConfiguration(basic_error_rules))
+    def perform_lint(self, code, filename, basic_error_rules, unit_test_config={}, lines_to_check=None):
+        error_collector = ErrorCollector(self.assert_, FilterConfiguration(basic_error_rules), lines_to_check)
         lines = code.split('\n')
         extension = filename.split('.')[1]
         self.process_file_data(filename, extension, lines, error_collector, unit_test_config)
@@ -272,13 +278,13 @@ class CppStyleTestBase(unittest.TestCase):
         return self.perform_lint(code, 'test.' + file_extension, basic_error_rules)
 
     # Only keep some errors related to includes, namespaces and rtti.
-    def perform_language_rules_check(self, filename, code):
+    def perform_language_rules_check(self, filename, code, lines_to_check=None):
         basic_error_rules = ('-',
                              '+build/include',
                              '+build/include_order',
                              '+build/namespaces',
                              '+runtime/rtti')
-        return self.perform_lint(code, filename, basic_error_rules)
+        return self.perform_lint(code, filename, basic_error_rules, lines_to_check=lines_to_check)
 
     # Only keep function length errors.
     def perform_function_lengths_check(self, code):
@@ -327,9 +333,9 @@ class CppStyleTestBase(unittest.TestCase):
         if not re.search(expected_message_re, message):
             self.fail('Message was:\n' + message + 'Expected match to "' + expected_message_re + '"')
 
-    def assert_language_rules_check(self, file_name, code, expected_message):
+    def assert_language_rules_check(self, file_name, code, expected_message, lines_to_check=None):
         self.assertEquals(expected_message,
-                          self.perform_language_rules_check(file_name, code))
+                          self.perform_language_rules_check(file_name, code, lines_to_check))
 
     def assert_include_what_you_use(self, code, expected_message):
         self.assertEquals(expected_message,
@@ -2567,6 +2573,30 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include "bar.h"\n'
                                          '#include <assert.h>\n',
                                          '')
+
+    def test_check_alphabetical_include_order_errors_reported_for_both_lines(self):
+        # If one of the two lines of out of order headers are filtered, the error should be
+        # reported on the other line.
+        self.assert_language_rules_check('foo.h',
+                                         '#include "a.h"\n'
+                                         '#include "c.h"\n'
+                                         '#include "b.h"\n',
+                                         'Alphabetical sorting problem.  [build/include_order] [4]',
+                                         lines_to_check=[2])
+
+        self.assert_language_rules_check('foo.h',
+                                         '#include "a.h"\n'
+                                         '#include "c.h"\n'
+                                         '#include "b.h"\n',
+                                         'Alphabetical sorting problem.  [build/include_order] [4]',
+                                         lines_to_check=[3])
+
+        # If no lines are filtered, the error should be reported only once.
+        self.assert_language_rules_check('foo.h',
+                                         '#include "a.h"\n'
+                                         '#include "c.h"\n'
+                                         '#include "b.h"\n',
+                                         'Alphabetical sorting problem.  [build/include_order] [4]')
 
     def test_check_line_break_after_own_header(self):
         self.assert_language_rules_check('foo.cpp',

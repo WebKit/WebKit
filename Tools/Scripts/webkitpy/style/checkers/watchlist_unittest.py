@@ -49,6 +49,7 @@ class MockErrorHandler(object):
 
     def __call__(self, line_number, category, confidence, message):
         self._handle_style_error(self, line_number, category, confidence, message)
+        return True
 
 
 class WatchListTest(unittest.TestCase):
