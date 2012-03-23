@@ -90,6 +90,7 @@ private:
 - (BOOL)removeItem:(WebHistoryItem *)entry;
 - (BOOL)removeItems:(NSArray *)entries;
 - (BOOL)removeAllItems;
+- (void)rebuildHistoryByDayIfNeeded:(WebHistory *)webHistory;
 
 - (NSArray *)orderedLastVisitedDays;
 - (NSArray *)orderedItemsLastVisitedOnDay:(NSCalendarDate *)calendarDate;
@@ -123,32 +124,6 @@ private:
             @"1000", @"WebKitHistoryItemLimit",
             @"7", @"WebKitHistoryAgeInDaysLimit",
             nil]];    
-}
-
-- (void)rebuildHistoryByDayIfNeeded:(WebHistory *)webHistory
-{
-    // We clear all the values to present a consistent state when sending the notifications.
-    // We keep a reference to the entries for rebuilding the history after the notification.
-    Vector <RetainPtr<NSMutableArray> > entryArrays;
-    copyValuesToVector(*_entriesByDate, entryArrays);
-    _entriesByDate->clear();
-
-    NSMutableDictionary *entriesByURL = _entriesByURL;
-    _entriesByURL = nil;
-
-    [_orderedLastVisitedDays release];
-    _orderedLastVisitedDays = nil;
-
-    NSArray *allEntries = [entriesByURL allValues];
-    [webHistory _sendNotification:WebHistoryAllItemsRemovedNotification entries:allEntries];
-
-    // Next, we rebuild the history, restore the states, and notify the clients.
-    _entriesByURL = entriesByURL;
-    for (size_t dayIndex = 0; dayIndex < entryArrays.size(); ++dayIndex) {
-        for (WebHistoryItem *entry in (entryArrays[dayIndex]).get())
-            [self addItemToDateCaches:entry];
-    }
-    [webHistory _sendNotification:WebHistoryItemsAddedNotification entries:allEntries];
 }
 
 - (id)init
@@ -371,6 +346,32 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     [_entriesByURL setObject:entry forKey:URLString];
     
     return YES;
+}
+
+- (void)rebuildHistoryByDayIfNeeded:(WebHistory *)webHistory
+{
+    // We clear all the values to present a consistent state when sending the notifications.
+    // We keep a reference to the entries for rebuilding the history after the notification.
+    Vector <RetainPtr<NSMutableArray> > entryArrays;
+    copyValuesToVector(*_entriesByDate, entryArrays);
+    _entriesByDate->clear();
+    
+    NSMutableDictionary *entriesByURL = _entriesByURL;
+    _entriesByURL = nil;
+    
+    [_orderedLastVisitedDays release];
+    _orderedLastVisitedDays = nil;
+    
+    NSArray *allEntries = [entriesByURL allValues];
+    [webHistory _sendNotification:WebHistoryAllItemsRemovedNotification entries:allEntries];
+    
+    // Next, we rebuild the history, restore the states, and notify the clients.
+    _entriesByURL = entriesByURL;
+    for (size_t dayIndex = 0; dayIndex < entryArrays.size(); ++dayIndex) {
+        for (WebHistoryItem *entry in (entryArrays[dayIndex]).get())
+            [self addItemToDateCaches:entry];
+    }
+    [webHistory _sendNotification:WebHistoryItemsAddedNotification entries:allEntries];
 }
 
 - (BOOL)removeItem:(WebHistoryItem *)entry
