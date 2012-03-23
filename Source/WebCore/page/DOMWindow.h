@@ -355,10 +355,6 @@ namespace WebCore {
         Storage* sessionStorage(ExceptionCode&) const;
         Storage* localStorage(ExceptionCode&) const;
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-        void resetNotifications();
-#endif
-
 #if ENABLE(QUOTA)
         StorageInfo* webkitStorageInfo() const;
 #endif

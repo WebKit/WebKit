@@ -37,7 +37,9 @@
 
 namespace WebCore {
 
-DOMWindowNotifications::DOMWindowNotifications()
+DOMWindowNotifications::DOMWindowNotifications(DOMWindow* window)
+    : DOMWindowProperty(window->frame())
+    , m_window(window)
 {
 }
 
@@ -47,25 +49,41 @@ DOMWindowNotifications::~DOMWindowNotifications()
 
 DOMWindowNotifications* DOMWindowNotifications::from(DOMWindow* window)
 {
-    DOMWindowNotifications* supplement = static_cast<DOMWindowNotifications*>(Supplement<DOMWindow>::from(window, supplementName()));
+    DEFINE_STATIC_LOCAL(AtomicString, supplementName, ("DOMWindowNotifications"));
+    DOMWindowNotifications* supplement = static_cast<DOMWindowNotifications*>(Supplement<DOMWindow>::from(window, supplementName));
     if (!supplement) {
-        supplement = new DOMWindowNotifications();
-        Supplement<DOMWindow>::provideTo(window, supplementName(), adoptPtr(supplement));
+        supplement = new DOMWindowNotifications(window);
+        Supplement<DOMWindow>::provideTo(window, supplementName, adoptPtr(supplement));
     }
     return supplement;
 }
 
 NotificationCenter* DOMWindowNotifications::webkitNotifications(DOMWindow* window)
 {
-    if (!window->isCurrentlyDisplayedInFrame())
+    return DOMWindowNotifications::from(window)->webkitNotifications();
+}
+
+void DOMWindowNotifications::disconnectFrame()
+{
+    reset();
+    DOMWindowProperty::disconnectFrame();
+}
+
+void DOMWindowNotifications::willDetachPage()
+{
+    reset();
+    DOMWindowProperty::willDetachPage();
+}
+
+NotificationCenter* DOMWindowNotifications::webkitNotifications()
+{
+    if (!m_window->isCurrentlyDisplayedInFrame())
         return 0;
 
-    DOMWindowNotifications* supplement = DOMWindowNotifications::from(window);
+    if (m_notificationCenter)
+        return m_notificationCenter.get();
 
-    if (supplement->m_notificationCenter)
-        return supplement->m_notificationCenter.get();
-
-    Document* document = window->document();
+    Document* document = m_window->document();
     if (!document)
         return 0;
     
@@ -75,26 +93,17 @@ NotificationCenter* DOMWindowNotifications::webkitNotifications(DOMWindow* windo
 
     NotificationClient* provider = NotificationController::clientFrom(page);
     if (provider) 
-        supplement->m_notificationCenter = NotificationCenter::create(document, provider);    
+        m_notificationCenter = NotificationCenter::create(document, provider);    
 
-    return supplement->m_notificationCenter.get();
+    return m_notificationCenter.get();
 }
 
-void DOMWindowNotifications::reset(DOMWindow* window)
+void DOMWindowNotifications::reset()
 {
-    DOMWindowNotifications* supplement = static_cast<DOMWindowNotifications*>(Supplement<DOMWindow>::from(window, supplementName()));
-    if (!supplement)
+    if (!m_notificationCenter)
         return;
-    if (!supplement->m_notificationCenter)
-        return;
-    supplement->m_notificationCenter->disconnectFrame();
-    supplement->m_notificationCenter = 0;
-}
-
-const AtomicString& DOMWindowNotifications::supplementName()
-{
-    DEFINE_STATIC_LOCAL(AtomicString, supplementName, ("DOMWindowNotifications"));
-    return supplementName;
+    m_notificationCenter->disconnectFrame();
+    m_notificationCenter = 0;
 }
 
 } // namespace WebCore

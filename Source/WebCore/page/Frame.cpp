@@ -687,11 +687,6 @@ void Frame::willDetachPage()
     if (Frame* parent = tree()->parent())
         parent->loader()->checkLoadComplete();
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    if (m_domWindow)
-        m_domWindow->resetNotifications();
-#endif
-
     HashSet<FrameDestructionObserver*>::iterator stop = m_destructionObservers.end();
     for (HashSet<FrameDestructionObserver*>::iterator it = m_destructionObservers.begin(); it != stop; ++it)
         (*it)->willDetachPage();

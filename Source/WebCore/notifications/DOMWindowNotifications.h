@@ -38,20 +38,24 @@ namespace WebCore {
 class DOMWindow;
 class NotificationCenter;
 
-class DOMWindowNotifications : public Supplement<DOMWindow> {
+class DOMWindowNotifications : public Supplement<DOMWindow>, public DOMWindowProperty {
 public:
     virtual ~DOMWindowNotifications();
 
     static NotificationCenter* webkitNotifications(DOMWindow*);
     static DOMWindowNotifications* from(DOMWindow*);
 
-    static void reset(DOMWindow*);
+    virtual void disconnectFrame() OVERRIDE;
+    // FIXME: Support reconnectFrame().
+    virtual void willDetachPage() OVERRIDE;
 
 private:
-    DOMWindowNotifications();
+    explicit DOMWindowNotifications(DOMWindow*);
 
-    static const AtomicString& supplementName();
+    NotificationCenter* webkitNotifications();
+    void reset();
 
+    DOMWindow* m_window;
     RefPtr<NotificationCenter> m_notificationCenter;
 };
 
