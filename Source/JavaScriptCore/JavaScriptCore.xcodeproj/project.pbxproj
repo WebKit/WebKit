@@ -322,10 +322,6 @@
 		651122FD14046A4C002B101D /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		651122FE14046A4C002B101D /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
 		6511230714046B0A002B101D /* testRegExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651122E5140469BA002B101D /* testRegExp.cpp */; };
-		651E7B14151D0F640014C5C2 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 651E7B13151D0F640014C5C2 /* libWTF.a */; };
-		651E7B15151D0FD60014C5C2 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 651E7B13151D0F640014C5C2 /* libWTF.a */; };
-		651E7B16151D0FD70014C5C2 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 651E7B13151D0F640014C5C2 /* libWTF.a */; };
-		651E7B17151D0FD80014C5C2 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 651E7B13151D0F640014C5C2 /* libWTF.a */; };
 		65303D641447B9E100D3F904 /* ParserTokens.h in Headers */ = {isa = PBXBuildFile; fileRef = 65303D631447B9E100D3F904 /* ParserTokens.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		655EB29B10CE2581001A990E /* NodesCodegen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 655EB29A10CE2581001A990E /* NodesCodegen.cpp */; };
 		7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4EE7080EBB7963005934AA /* StructureChain.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -480,6 +476,7 @@
 		A7F993600FD7325100A0B2D0 /* JSONObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */; };
 		A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */; };
 		A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A8A4748E151A8306004123FF /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A4748D151A8306004123FF /* libWTF.a */; };
 		BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9050E1839DB000F9297 /* ErrorConstructor.h */; };
 		BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9070E1839DB000F9297 /* ErrorPrototype.h */; };
 		BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */; };
@@ -943,7 +940,6 @@
 		6507D2970E871E4A00D7D896 /* JSTypeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypeInfo.h; sourceTree = "<group>"; };
 		651122E5140469BA002B101D /* testRegExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testRegExp.cpp; sourceTree = "<group>"; };
 		6511230514046A4C002B101D /* testRegExp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testRegExp; sourceTree = BUILT_PRODUCTS_DIR; };
-		651E7B13151D0F640014C5C2 /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libWTF.a; path = ../../WebKitBuild/Debug/libWTF.a; sourceTree = "<group>"; };
 		65303D631447B9E100D3F904 /* ParserTokens.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserTokens.h; sourceTree = "<group>"; };
 		65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyNameArray.cpp; sourceTree = "<group>"; };
 		65400C100A69BAF200509887 /* PropertyNameArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PropertyNameArray.h; sourceTree = "<group>"; };
@@ -1319,7 +1315,6 @@
 			files = (
 				143A97E60A4A06E200456B66 /* CoreFoundation.framework in Frameworks */,
 				14BD59C50A3E8F9F00BAF59C /* JavaScriptCore.framework in Frameworks */,
-				651E7B15151D0FD60014C5C2 /* libWTF.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1329,7 +1324,6 @@
 			files = (
 				651122FD14046A4C002B101D /* JavaScriptCore.framework in Frameworks */,
 				651122FE14046A4C002B101D /* libedit.dylib in Frameworks */,
-				651E7B16151D0FD70014C5C2 /* libWTF.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1341,7 +1335,7 @@
 				A731B25A130093880040A7FA /* Foundation.framework in Frameworks */,
 				932F5BD70822A1C700736975 /* libicucore.dylib in Frameworks */,
 				932F5BD60822A1C700736975 /* libobjc.dylib in Frameworks */,
-				651E7B17151D0FD80014C5C2 /* libWTF.a in Frameworks */,
+				A8A4748E151A8306004123FF /* libWTF.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1351,7 +1345,6 @@
 			files = (
 				932F5BEA0822A1C700736975 /* JavaScriptCore.framework in Frameworks */,
 				5D5D8AD10E0D0EBE00F9C692 /* libedit.dylib in Frameworks */,
-				651E7B14151D0F640014C5C2 /* libWTF.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1376,7 +1369,6 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
-				651E7B13151D0F640014C5C2 /* libWTF.a */,
 				8604F4F2143A6C4400B295F5 /* ChangeLog */,
 				A718F8211178EB4B002465A7 /* create_regex_tables */,
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
@@ -3200,10 +3192,6 @@
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Debug;
 		};
@@ -3212,10 +3200,6 @@
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Release;
 		};
@@ -3224,10 +3208,6 @@
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
 				BUILD_VARIANTS = normal;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Production;
 		};
@@ -3235,10 +3215,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Debug;
 		};
@@ -3246,10 +3222,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Release;
 		};
@@ -3257,10 +3229,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Production;
 		};
@@ -3315,11 +3283,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Release\"",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Debug;
 		};
@@ -3327,11 +3290,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Release\"",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Release;
 		};
@@ -3339,11 +3297,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Release\"",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Production;
 		};
@@ -3351,10 +3304,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Debug;
 		};
@@ -3362,10 +3311,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Release;
 		};
@@ -3373,10 +3318,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Profiling;
 		};
@@ -3384,10 +3325,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Production;
 		};
@@ -3432,10 +3369,6 @@
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Profiling;
 		};
@@ -3458,11 +3391,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Release\"",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Profiling;
 		};
@@ -3470,10 +3398,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
-				);
 			};
 			name = Profiling;
 		};
