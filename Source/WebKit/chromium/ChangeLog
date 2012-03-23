@@ -1,3 +1,13 @@
+2012-03-23  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Remove unused variables from unittest.
+        https://bugs.webkit.org/show_bug.cgi?id=82054
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::TEST_F):
+
 2012-03-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium DEPS roll r127913:r128426.

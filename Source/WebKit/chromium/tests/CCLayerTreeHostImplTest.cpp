@@ -528,7 +528,6 @@ TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
     DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
     root->addChild(MissingTextureAnimatingLayer::create(1, false, false, true));
-    DidDrawCheckLayer* layer = static_cast<MissingTextureAnimatingLayer*>(root->children()[0].get());
 
     CCLayerTreeHostImpl::FrameData frame;
 
@@ -539,7 +538,6 @@ TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
     root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
     root->addChild(MissingTextureAnimatingLayer::create(1, true, false, false));
-    layer = static_cast<MissingTextureAnimatingLayer*>(root->children()[0].get());
 
     EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
@@ -548,7 +546,6 @@ TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
     root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
     root->addChild(MissingTextureAnimatingLayer::create(1, true, false, true));
-    layer = static_cast<MissingTextureAnimatingLayer*>(root->children()[0].get());
 
     EXPECT_FALSE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
@@ -557,7 +554,6 @@ TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
     root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
     root->addChild(MissingTextureAnimatingLayer::create(1, false, true, true));
-    layer = static_cast<MissingTextureAnimatingLayer*>(root->children()[0].get());
 
     EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
