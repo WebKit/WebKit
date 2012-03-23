@@ -1,0 +1,51 @@
+<html>
+<head>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <style>
+        #myframe { position: absolute; left: 200px; top: 100px; width: 400px; height: 300px;}
+    </style>
+</head>
+<body onload="runTests()">
+
+<iframe id=myframe src="resources/inner-frame.html"></iframe>
+
+<p id='description'></p>
+<div id='console'></div>
+
+<script>
+    function testRoundTouch(x, y, radius)
+    {
+        var x = x - radius;
+        var y = y - radius;
+        var width = radius * 2;
+        var height = radius * 2;
+        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
+        if (adjustedNode.nodeType == 3) // TEXT node
+            adjustedNode = adjustedNode.parentNode;
+        return adjustedNode;
+    }
+    function testDirectTouches()
+    {
+        debug('Test fat direct touches.');
+
+        adjustedNode = testRoundTouch(260, 200, 200);
+        shouldBeEqualToString('adjustedNode.id', 'a1');
+
+        adjustedNode = testRoundTouch(340, 200, 200);
+        shouldBeEqualToString('adjustedNode.id', 'a2');
+
+    }
+    function runTests()
+    {
+        if (window.layoutTestController && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+            description('Test touch-adjustment on links in an iframe. Making sure we iframe position is correctly adjusted for.');
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            testDirectTouches();
+            isSuccessfullyParsed();
+            layoutTestController.notifyDone();
+        }
+    }
+</script>
+</body>
+</html>

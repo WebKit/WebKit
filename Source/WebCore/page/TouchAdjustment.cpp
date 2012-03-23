@@ -24,6 +24,7 @@
 #include "ContainerNode.h"
 #include "FloatPoint.h"
 #include "FloatQuad.h"
+#include "FrameView.h"
 #include "HTMLLabelElement.h"
 #include "HTMLNames.h"
 #include "IntPoint.h"
@@ -174,6 +175,10 @@ float distanceSquaredToTargetCenterLine(const IntPoint& touchHotspot, const IntR
     // and gives the same result in all untransformed cases, and in transformed cases still
     // gives a better distance-function than the distance to the center-point.
     IntRect rect = subtarget.boundingBox();
+    ASSERT(subtarget.node()->document());
+    ASSERT(subtarget.node()->document()->view());
+    // Convert from frame coordinates to window coordinates.
+    rect = subtarget.node()->document()->view()->contentsToWindow(rect);
 
     return rect.distanceSquaredFromCenterLineToPoint(touchHotspot);
 }
