@@ -1240,6 +1240,9 @@ WebInspector.StylePropertiesSection.prototype = {
 
     _handleEmptySpaceClick: function(event)
     {
+        if (!this.editable)
+            return;
+
         if (this._checkWillCancelEditing())
             return;
 
@@ -2025,6 +2028,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
         event.consume();
 
         if (event.target === this.listItemElement) {
+            if (!this.section.editable) 
+                return;
+
             if (this.section._checkWillCancelEditing())
                 return;
             this.section.addNewBlankProperty(this.property.index + 1).startEditing();
