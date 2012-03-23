@@ -29,4 +29,5 @@ libWTF_la_CFLAGS = \
 libWTF_la_CPPFLAGS = \
 	$(global_cppflags) \
 	-I$(srcdir)/Source \
-	-I$(srcdir)/Source/WTF
+	-I$(srcdir)/Source/WTF \
+	-I$(srcdir)/Source/WTF/wtf
