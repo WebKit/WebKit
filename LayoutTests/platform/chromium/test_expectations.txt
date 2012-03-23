@@ -4279,6 +4279,9 @@ BUGWK78412 MAC WIN : fast/table/cell-pref-width-invalidation.html = TEXT
 BUGWK37244 : tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
 BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
 
+// New test, flaky since added in r110965.
+BUGWK82097 : editing/selection/move-by-word-visually-crash-test-5.html = PASS TIMEOUT
+
 // Temporary: generate platform specific IETestCenter results, then
 // remove when bots produce reference.
 BUGWK81936 : ietestcenter/css3/text/textshadow-001.htm = FAIL MISSING
