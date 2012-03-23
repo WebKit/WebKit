@@ -1267,15 +1267,6 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
     parameters.values = paramValues;
     parameters.mimeType = mimeType;
     parameters.loadManually = loadManually;
-    parameters.documentURL = m_frame->coreFrame()->document()->url().string();
-
-    Frame* mainFrame = webPage->mainWebFrame()->coreFrame();
-    if (m_frame->coreFrame() == mainFrame)
-        parameters.toplevelDocumentURL = parameters.documentURL;
-    else if (m_frame->coreFrame()->document()->securityOrigin()->canAccess(mainFrame->document()->securityOrigin())) {
-        // We only want to set the toplevel document URL if the plug-in has access to it.
-        parameters.toplevelDocumentURL = mainFrame->document()->url().string();
-    }
 
 #if PLUGIN_ARCHITECTURE(X11)
     // FIXME: This should really be X11-specific plug-in quirks.

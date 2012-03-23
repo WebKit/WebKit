@@ -101,8 +101,6 @@ public:
     NPObject* windowScriptNPObject();
     NPObject* pluginElementNPObject();
 
-    bool tryToShortCircuitInvoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, bool& returnValue, NPVariant& result);
-
     void cancelStreamLoad(NetscapePluginStream*);
     void removePluginStream(NetscapePluginStream*);
 

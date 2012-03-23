@@ -1,3 +1,45 @@
+2012-03-22  Anders Carlsson  <andersca@apple.com>
+
+        Remove the Flash NPRuntime short-circuit hacks
+        https://bugs.webkit.org/show_bug.cgi?id=81997
+        <rdar://problem/10409289>
+
+        Reviewed by Sam Weinig.
+
+        This code was added to help speed up Flash plug-in instantiation by reducing the number of
+        synchronous API calls from the plug-in process to the web process during instantiation.
+        However, there was no real indication that this actually improved performance.
+
+        Furthermore, it seems to have introduced crashers when misbehaving plug-ins would make NPRuntime calls
+        after a plug-in had been destroyed. Since Flash is now 64-bit like the rest of WebKit launch time has
+        improved since we don't have to bring in all of the 32-bit system frameworks, so the time has come to
+        rip out this egregious hack.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::evaluate):
+        * PluginProcess/PluginControllerProxy.h:
+        (PluginControllerProxy):
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        * Shared/Plugins/PluginQuirks.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_Invoke):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (NetscapePlugin):
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Parameters::encode):
+        (WebKit::Plugin::Parameters::decode):
+        * WebProcess/Plugins/Plugin.h:
+        (Parameters):
+        * WebProcess/Plugins/PluginController.h:
+        (PluginController):
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/Plugins/PluginView.h:
+        (PluginView):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+
 2012-03-22  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         [CMake] Unreviewed build fix after r111778.

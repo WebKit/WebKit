@@ -1063,12 +1063,6 @@ bool PluginView::evaluate(NPObject* npObject, const String& scriptString, NPVari
     return m_npRuntimeObjectMap.evaluate(npObject, scriptString, result);
 }
 
-bool PluginView::tryToShortCircuitInvoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, bool& returnValue, NPVariant& result)
-{
-    // Never try to short-circuit invoke in the web process.
-    return false;
-}
-
 void PluginView::setStatusbarText(const String& statusbarText)
 {
     if (!frame())

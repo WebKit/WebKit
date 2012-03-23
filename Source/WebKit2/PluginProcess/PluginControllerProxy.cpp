@@ -269,9 +269,6 @@ NPObject* PluginControllerProxy::pluginElementNPObject()
 
 bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result, bool allowPopups)
 {
-    if (tryToShortCircuitEvaluate(npObject, scriptString, result))
-        return true;
-
     PluginDestructionProtector protector(this);
 
     NPVariant npObjectAsNPVariant;
@@ -291,58 +288,6 @@ bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptStr
 
     *result = m_connection->npRemoteObjectMap()->npVariantDataToNPVariant(resultData, m_plugin.get());
     return true;
-}
-
-bool PluginControllerProxy::tryToShortCircuitInvoke(NPObject* npObject, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, bool& returnValue, NPVariant& result)
-{
-    // Only try to short circuit evaluate for plug-ins that have the quirk specified.
-#if PLUGIN_ARCHITECTURE(MAC)
-    if (!PluginProcess::shared().netscapePluginModule()->pluginQuirks().contains(PluginQuirks::CanShortCircuitSomeNPRuntimeCallsDuringInitialization))
-        return false;
-#else
-    return false;
-#endif
-
-    // And only when we're in initialize.
-    if (!inInitialize())
-        return false;
-    
-    // And only when the NPObject is the window NPObject.
-    if (npObject != m_windowNPObject)
-        return false;
-
-    // And only when we don't have any arguments.
-    if (argumentCount)
-        return false;
-
-    IdentifierRep* methodNameRep = static_cast<IdentifierRep*>(methodName);
-    if (!methodNameRep->isString())
-        return false;
-
-    if (!strcmp(methodNameRep->string(), "__flash_getWindowLocation")) {
-        result.type = NPVariantType_String;
-        result.value.stringValue = createNPString(m_pluginCreationParameters->parameters.documentURL.utf8()); 
-        returnValue = true;
-        return true;
-    }
-    
-    if (!strcmp(methodNameRep->string(), "__flash_getTopLocation")) {
-        if (m_pluginCreationParameters->parameters.toplevelDocumentURL.isNull()) {
-            // If the toplevel document is URL it means that the frame that the plug-in is in doesn't have access to the toplevel document.
-            // In this case, just pass the string "[object]" to Flash.
-            result.type = NPVariantType_String;
-            result.value.stringValue = createNPString("[object]");
-            returnValue = true;
-            return true;
-        }
-
-        result.type = NPVariantType_String;
-        result.value.stringValue = createNPString(m_pluginCreationParameters->parameters.toplevelDocumentURL.utf8()); 
-        returnValue = true;
-        return true;
-    }
-
-    return false;
 }
 
 void PluginControllerProxy::setStatusbarText(const String& statusbarText)
@@ -596,33 +541,6 @@ void PluginControllerProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEn
 void PluginControllerProxy::getFormValue(bool& returnValue, String& formValue)
 {
     returnValue = m_plugin->getFormValue(formValue);
-}
-
-bool PluginControllerProxy::tryToShortCircuitEvaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
-{
-    // Only try to short circuit evaluate for plug-ins that have the quirk specified.
-#if PLUGIN_ARCHITECTURE(MAC)
-    if (!PluginProcess::shared().netscapePluginModule()->pluginQuirks().contains(PluginQuirks::CanShortCircuitSomeNPRuntimeCallsDuringInitialization))
-        return false;
-#else
-    return false;
-#endif
-
-    // And only when we're in initialize.
-    if (!inInitialize())
-        return false;
-
-    // And only when the NPObject is the window NPObject.
-    if (npObject != m_windowNPObject)
-        return false;
-
-    // Now, check for the right strings.
-    if (scriptString != "function __flash_getWindowLocation() { return window.location; }"
-        && scriptString != "function __flash_getTopLocation() { return top.location; }")
-        return false;
-
-    VOID_TO_NPVARIANT(*result);
-    return true;
 }
 
 } // namespace WebKit

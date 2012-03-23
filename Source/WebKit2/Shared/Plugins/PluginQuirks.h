@@ -48,12 +48,6 @@ public:
         // transparent.
         MakeTransparentIfBackgroundAttributeExists,
 
-        // Whether we can short circuit some NPRuntime calls during plug-in initialization.
-        // The Flash plug-in uses NPRuntime to figure out the URL of the frame it is in, as well
-        // as the URL of the main frame. Since we know the exact NPRuntime calls the plug-in makes,
-        // we can return the right values without having to do sync IPC back into the web process.
-        CanShortCircuitSomeNPRuntimeCallsDuringInitialization,
-
         // Whether calling NPP_GetValue with NPPVpluginCoreAnimationLayer returns a retained Core Animation
         // layer or not. According to the NPAPI specifications, plug-in shouldn't return a retained layer but
         // WebKit1 expects a retained plug-in layer. We use this for Flash to avoid leaking OpenGL layers.
