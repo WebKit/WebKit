@@ -530,6 +530,9 @@ webkit_application_cache_set_maximum_size
 WebKitCacheModel
 webkit_get_cache_model
 webkit_set_cache_model
+<SUBSECTION ContextMenuItem>
+WebKitContextMenuAction
+webkit_context_menu_item_get_action
 <SUBSECTION Private>
 WEBKITGTK_API_VERSION
 </SECTION>

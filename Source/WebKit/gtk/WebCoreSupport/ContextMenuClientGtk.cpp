@@ -59,16 +59,14 @@ static GtkWidget* inputMethodsMenuItem (WebKitWebView* webView)
             return 0;
     }
 
-    GtkWidget* menuitem = gtk_image_menu_item_new_with_mnemonic(
-        _("Input _Methods"));
-
     WebKitWebViewPrivate* priv = webView->priv;
-    GtkWidget* imContextMenu = gtk_menu_new();
-    gtk_im_multicontext_append_menuitems(GTK_IM_MULTICONTEXT(priv->imContext.get()), GTK_MENU_SHELL(imContextMenu));
+    ContextMenu imContextMenu;
+    gtk_im_multicontext_append_menuitems(GTK_IM_MULTICONTEXT(priv->imContext.get()), GTK_MENU_SHELL(imContextMenu.platformDescription()));
 
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), imContextMenu);
+    ContextMenuItem menuItem(ActionType, ContextMenuItemTagInputMethods, contextMenuItemTagInputMethods(), &imContextMenu);
+    imContextMenu.releasePlatformDescription();
 
-    return menuitem;
+    return GTK_WIDGET(menuItem.releasePlatformDescription());
 }
 
 static int getUnicodeMenuItemPosition(GtkMenu* menu)

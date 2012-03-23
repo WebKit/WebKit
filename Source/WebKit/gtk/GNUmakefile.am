@@ -435,6 +435,7 @@ webkit_tests_ldflags = \
 
 noinst_PROGRAMS += \
 	Programs/unittests/testapplicationcache \
+	Programs/unittests/testcontextmenu \
 	Programs/unittests/testdomdocument \
 	Programs/unittests/testdomdomwindow \
 	Programs/unittests/testdomnode \
@@ -467,6 +468,11 @@ Programs_unittests_testapplicationcache_SOURCES = Source/WebKit/gtk/tests/testap
 Programs_unittests_testapplicationcache_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testapplicationcache_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testapplicationcache_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testcontextmenu_SOURCES = Source/WebKit/gtk/tests/testcontextmenu.c
+Programs_unittests_testcontextmenu_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testcontextmenu_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testcontextmenu_LDFLAGS = $(webkit_tests_ldflags)
 
 Programs_unittests_testdomdocument_SOURCES = Source/WebKit/gtk/tests/testdomdocument.c
 Programs_unittests_testdomdocument_CFLAGS = $(webkit_tests_cflags)

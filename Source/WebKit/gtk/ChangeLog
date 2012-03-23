@@ -1,5 +1,43 @@
 2012-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add a way to expose well known names for items in the default context menu
+        https://bugs.webkit.org/show_bug.cgi?id=67660
+
+        Reviewed by Martin Robinson.
+
+        Add WebKitContextMenuAction enum containing all possible context
+        menu item actions.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        (WebKit::inputMethodsMenuItem): Use WebCore context menu classes
+        to create the context menu and its items to make sure all items
+        have a GtkAction associated.
+        (WebKit::insertControlCharacter):
+        (WebKit::unicodeMenuItem): Ditto.
+        * tests/testcontextmenu.c: Added.
+        (testInfoNew):
+        (testInfoDestroy):
+        (contextMenuFixtureSetup):
+        (contextMenuFixtureTeardown):
+        (checkAction):
+        (checkActionWithSubmenu):
+        (checkSeparator):
+        (contextMenuCallback):
+        (pushEvent):
+        (loadStatusCallback):
+        (mapEventCallback):
+        (testContextMenu):
+        (contextMenuCustomItemCallback):
+        (testContextMenuCustomItem):
+        (main):
+        * webkit/webkitglobals.cpp:
+        (webkit_context_menu_item_get_action): Return the
+        WebKitContextMenuAction for the given context menu item.
+        * webkit/webkitglobals.h:
+
+2012-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Rename a variable name in API documentation.
 
         Rename keyboard_mode to triggered_with_keyboard in
