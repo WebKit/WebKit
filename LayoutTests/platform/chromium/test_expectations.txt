@@ -2573,9 +2573,6 @@ BUGCR60651 WIN : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-object-get-c
 BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 BUGCR60651 : platform/chromium/virtual/gpu/fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 
-// nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
-BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
-
 // Flaky since r68438:r68445 or before that.
 BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 
