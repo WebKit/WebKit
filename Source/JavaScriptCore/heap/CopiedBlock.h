@@ -55,15 +55,29 @@ public:
 #endif
     }
 
-    char* payload()
-    {
-        return reinterpret_cast<char*>(this) + ((sizeof(CopiedBlock) + 7) & ~7);
-    }
+    char* payload();
+    size_t size();
+    size_t capacity();
 
 private:
     void* m_offset;
     uintptr_t m_isPinned;
 };
+
+inline char* CopiedBlock::payload()
+{
+    return reinterpret_cast<char*>(this) + ((sizeof(CopiedBlock) + 7) & ~7);
+}
+
+inline size_t CopiedBlock::size()
+{
+    return static_cast<size_t>(static_cast<char*>(m_offset) - payload());
+}
+
+inline size_t CopiedBlock::capacity()
+{
+    return m_allocation.size();
+}
 
 } // namespace JSC
 

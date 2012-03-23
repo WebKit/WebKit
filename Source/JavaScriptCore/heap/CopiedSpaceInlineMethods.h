@@ -56,7 +56,7 @@ inline void CopiedSpace::startedCopying()
     m_toSpaceFilter.reset();
     m_allocator.startedCopying();
 
-    m_totalMemoryUtilized = 0;
+    m_waterMark = 0;
 
     ASSERT(!m_inCopyingPhase);
     ASSERT(!m_numberOfLoanedBlocks);
@@ -118,18 +118,13 @@ inline CheckedBoolean CopiedSpace::allocateNewBlock(CopiedBlock** outBlock)
         return false;
     }
 
-    {
-        MutexLocker locker(m_memoryStatsLock);
-        m_totalMemoryAllocated += HeapBlock::s_blockSize;
-    }
-
     *outBlock = new (NotNull, allocation.base()) CopiedBlock(allocation);
     return true;
 }
 
 inline bool CopiedSpace::fitsInBlock(CopiedBlock* block, size_t bytes)
 {
-    return static_cast<char*>(block->m_offset) + bytes < reinterpret_cast<char*>(block) + HeapBlock::s_blockSize && static_cast<char*>(block->m_offset) + bytes > block->m_offset;
+    return static_cast<char*>(block->m_offset) + bytes < reinterpret_cast<char*>(block) + block->capacity() && static_cast<char*>(block->m_offset) + bytes > block->m_offset;
 }
 
 inline CheckedBoolean CopiedSpace::tryAllocate(size_t bytes, void** outPtr)
@@ -146,14 +141,13 @@ inline CheckedBoolean CopiedSpace::tryAllocate(size_t bytes, void** outPtr)
 
 inline void* CopiedSpace::allocateFromBlock(CopiedBlock* block, size_t bytes)
 {
-    ASSERT(!isOversize(bytes));
     ASSERT(fitsInBlock(block, bytes));
     ASSERT(is8ByteAligned(block->m_offset));
     
     void* ptr = block->m_offset;
-    ASSERT(block->m_offset >= block->payload() && block->m_offset < reinterpret_cast<char*>(block) + HeapBlock::s_blockSize);
+    ASSERT(block->m_offset >= block->payload() && block->m_offset < reinterpret_cast<char*>(block) + block->capacity());
     block->m_offset = static_cast<void*>((static_cast<char*>(ptr) + bytes));
-    ASSERT(block->m_offset >= block->payload() && block->m_offset < reinterpret_cast<char*>(block) + HeapBlock::s_blockSize);
+    ASSERT(block->m_offset >= block->payload() && block->m_offset < reinterpret_cast<char*>(block) + block->capacity());
 
     ASSERT(is8ByteAligned(ptr));
     return ptr;

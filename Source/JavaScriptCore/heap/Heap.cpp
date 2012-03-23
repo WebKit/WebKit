@@ -732,12 +732,12 @@ size_t Heap::objectCount()
 
 size_t Heap::size()
 {
-    return m_objectSpace.forEachBlock<Size>();
+    return m_objectSpace.forEachBlock<Size>() + m_storageSpace.size();
 }
 
 size_t Heap::capacity()
 {
-    return m_objectSpace.forEachBlock<Capacity>();
+    return m_objectSpace.forEachBlock<Capacity>() + m_storageSpace.capacity();
 }
 
 size_t Heap::protectedGlobalObjectCount()
@@ -832,7 +832,7 @@ void Heap::collect(SweepToggle sweepToggle)
     // water mark to be proportional to the current size of the heap. The exact
     // proportion is a bit arbitrary. A 2X multiplier gives a 1:1 (heap size :
     // new bytes allocated) proportion, and seems to work well in benchmarks.
-    size_t newSize = size() + m_storageSpace.totalMemoryUtilized();
+    size_t newSize = size();
     size_t proportionalBytes = 2 * newSize;
     if (fullGC) {
         m_lastFullGCSize = newSize;

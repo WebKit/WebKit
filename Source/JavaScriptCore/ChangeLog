@@ -1,3 +1,68 @@
+2012-03-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Simplify memory usage tracking in CopiedSpace
+        https://bugs.webkit.org/show_bug.cgi?id=80705
+
+        Reviewed by Filip Pizlo.
+
+        * heap/CopiedAllocator.h:
+        (CopiedAllocator): Rename currentUtilization to currentSize.
+        (JSC::CopiedAllocator::currentCapacity):
+        * heap/CopiedBlock.h:
+        (CopiedBlock):
+        (JSC::CopiedBlock::payload): Move the implementation of payload() out of the class
+        declaration.
+        (JSC):
+        (JSC::CopiedBlock::size): Add new function to calculate the block's size.
+        (JSC::CopiedBlock::capacity): Ditto for capacity.
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::CopiedSpace): Remove old bogus memory stats fields and add a new
+        field for the water mark.
+        (JSC::CopiedSpace::init):
+        (JSC::CopiedSpace::tryAllocateSlowCase): When we fail to allocate from the current 
+        block, we need to update our current water mark with the size of the block.
+        (JSC::CopiedSpace::tryAllocateOversize): When we allocate a new oversize block, we 
+        need to update our current water mark with the size of the used portion of the block.
+        (JSC::CopiedSpace::tryReallocate): We don't need to update the water mark when 
+        reallocating because it will either get accounted for when we fill up the block later 
+        in the case of being able to reallocate in the current block or it will get picked up 
+        immediately because we'll have to get a new block.
+        (JSC::CopiedSpace::tryReallocateOversize): We do, however, need to update in when 
+        realloc-ing an oversize block because we deallocate the old block and allocate a brand 
+        new one.
+        (JSC::CopiedSpace::doneFillingBlock): Update the water mark as blocks are returned to 
+        the CopiedSpace by the SlotVisitors.
+        (JSC::CopiedSpace::doneCopying): Add in any pinned blocks to the water mark.
+        (JSC::CopiedSpace::getFreshBlock): We use the Heap's new function to tell us whether or 
+        not we should collect now instead of doing the calculation ourself.
+        (JSC::CopiedSpace::destroy):
+        (JSC):
+        (JSC::CopiedSpace::size): Manually calculate the size of the CopiedSpace, similar to how 
+        MarkedSpace does.
+        (JSC::CopiedSpace::capacity): Ditto for capacity.
+        * heap/CopiedSpace.h:
+        (JSC::CopiedSpace::waterMark):
+        (CopiedSpace):
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::startedCopying): Reset water mark to 0 when we start copying during a 
+        collection.
+        (JSC::CopiedSpace::allocateNewBlock):
+        (JSC::CopiedSpace::fitsInBlock):
+        (JSC::CopiedSpace::allocateFromBlock):
+        * heap/Heap.cpp:
+        (JSC::Heap::size): Incorporate size of CopiedSpace into the total size of the Heap.
+        (JSC::Heap::capacity): Ditto for capacity.
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        (Heap):
+        (JSC::Heap::shouldCollect): New function for other sub-parts of the Heap to use to 
+        determine whether they should initiate a collection or continue to allocate new blocks.
+        (JSC):
+        (JSC::Heap::waterMark): Now is the sum of the water marks of the two sub-parts of the
+        Heap (MarkedSpace and CopiedSpace).
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateSlowCase): Changed to use the Heap's new shouldCollect() function.
+
 2012-03-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         BitVector::resizeOutOfLine doesn't memset when converting an inline buffer

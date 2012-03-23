@@ -156,6 +156,7 @@ namespace JSC {
         size_t waterMark();
         size_t highWaterMark();
         void setHighWaterMark(size_t);
+        bool shouldCollect();
 
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
@@ -241,6 +242,15 @@ namespace JSC {
         double m_lastGCLength;
     };
 
+    inline bool Heap::shouldCollect()
+    {
+#if ENABLE(GGC)
+        return m_objectSpace.nurseryWaterMark() >= m_minBytesPerCycle && m_isSafeToCollect;
+#else
+        return waterMark() >= highWaterMark() && m_isSafeToCollect;
+#endif
+    }
+
     bool Heap::isBusy()
     {
         return m_operationInProgress != NoOperation;
@@ -275,7 +285,7 @@ namespace JSC {
 
     inline size_t Heap::waterMark()
     {
-        return m_objectSpace.waterMark() + m_storageSpace.totalMemoryUtilized();
+        return m_objectSpace.waterMark() + m_storageSpace.waterMark();
     }
 
     inline size_t Heap::highWaterMark()
