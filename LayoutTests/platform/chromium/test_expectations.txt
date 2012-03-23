@@ -103,9 +103,12 @@ BUGCR89468 : css3/selectors3/xhtml/css3-modsel-d1b.xml = FAIL
 BUGCR89468 : css3/selectors3/xhtml/css3-modsel-d2.xml = FAIL
 BUGCR89468 : css3/selectors3/xhtml/css3-modsel-d3.xml = FAIL
 BUGCR89468 : css3/selectors3/xhtml/css3-modsel-d4.xml = FAIL
-
-// CSS Selectors3 test suite. Needs an intial triage pass.
-BUGCR89468 : css3/selectors3/xml = PASS FAIL
+BUGCR89468 : css3/selectors3/xml/css3-modsel-15c.xml = FAIL
+BUGCR89468 : css3/selectors3/xml/css3-modsel-d1.xml = FAIL
+BUGCR89468 : css3/selectors3/xml/css3-modsel-d1b.xml = FAIL
+BUGCR89468 : css3/selectors3/xml/css3-modsel-d2.xml = FAIL
+BUGCR89468 : css3/selectors3/xml/css3-modsel-d3.xml = FAIL
+BUGCR89468 : css3/selectors3/xml/css3-modsel-d4.xml = FAIL
 
 // Tests for MediaSource API. Feature is not yet functional.
 BUGWK64731 SKIP : http/tests/media/media-source/ = TIMEOUT
