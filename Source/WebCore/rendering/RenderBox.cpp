@@ -2274,7 +2274,8 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) cons
     switch (logicalWidth.type()) {
         case Fixed:
             return computeContentBoxLogicalWidth(logicalWidth.value());
-        case Percent: {
+        case Percent: 
+        case Calculated: {
             // FIXME: containingBlockLogicalWidthForContent() is wrong if the replaced element's block-flow is perpendicular to the
             // containing block's block-flow.
             // https://bugs.webkit.org/show_bug.cgi?id=46496
@@ -2306,6 +2307,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
         case Fixed:
             return computeContentBoxLogicalHeight(logicalHeight.value());
         case Percent:
+        case Calculated:
         {
             RenderObject* cb = isPositioned() ? container() : containingBlock();
             while (cb->isAnonymous()) {
