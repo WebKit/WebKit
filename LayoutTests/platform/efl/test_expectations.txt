@@ -154,3 +154,17 @@ BUGWK75568 : fast/table/text-field-baseline.html = TEXT
 BUGWK75568 : tables/mozilla/bugs/bug1188.html = TEXT
 
 BUGWK80531 : fast/forms/textfield-overflow.html = IMAGE+TEXT
+
+// Temporary: generate platform specific IETestCenter results, then
+// remove when bots produce reference.
+BUGWK81936 : ietestcenter/css3/text/textshadow-001.htm = FAIL MISSING
+BUGWK81936 : ietestcenter/css3/text/textshadow-002.htm = FAIL MISSING
+BUGWK81936 : ietestcenter/css3/text/textshadow-003.htm = FAIL MISSING
+BUGWK81936 : ietestcenter/css3/text/textshadow-004.htm = FAIL MISSING
+BUGWK81936 : ietestcenter/css3/text/textshadow-005.htm = FAIL MISSING
+BUGWK81936 : ietestcenter/css3/text/textshadow-006.htm = FAIL MISSING
+BUGWK81936 : ietestcenter/css3/text/textshadow-007.htm = FAIL MISSING
+BUGWK81936 : ietestcenter/css3/text/textshadow-008.htm = FAIL MISSING
+BUGWK81936 : ietestcenter/css3/text/textshadow-009.htm = FAIL MISSING
+BUGWK81936 : ietestcenter/css3/text/textshadow-010.htm = FAIL MISSING
+
