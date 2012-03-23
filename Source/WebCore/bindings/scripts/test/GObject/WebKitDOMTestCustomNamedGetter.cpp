@@ -36,7 +36,7 @@
 #include "webkitmarshal.h"
 
 namespace WebKit {
-    
+
 WebKitDOMTestCustomNamedGetter* kit(WebCore::TestCustomNamedGetter* obj)
 {
     g_return_val_if_fail(obj, 0);
@@ -46,24 +46,6 @@ WebKitDOMTestCustomNamedGetter* kit(WebCore::TestCustomNamedGetter* obj)
 
     return static_cast<WebKitDOMTestCustomNamedGetter*>(DOMObjectCache::put(obj, WebKit::wrapTestCustomNamedGetter(obj)));
 }
-    
-} // namespace WebKit //
-
-void
-webkit_dom_test_custom_named_getter_another_function(WebKitDOMTestCustomNamedGetter* self, const gchar* str)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestCustomNamedGetter * item = WebKit::core(self);
-    g_return_if_fail(str);
-    WTF::String converted_str = WTF::String::fromUTF8(str);
-    item->anotherFunction(converted_str);
-}
-
-
-G_DEFINE_TYPE(WebKitDOMTestCustomNamedGetter, webkit_dom_test_custom_named_getter, WEBKIT_TYPE_DOM_OBJECT)
-
-namespace WebKit {
 
 WebCore::TestCustomNamedGetter* core(WebKitDOMTestCustomNamedGetter* request)
 {
@@ -75,14 +57,31 @@ WebCore::TestCustomNamedGetter* core(WebKitDOMTestCustomNamedGetter* request)
     return coreObject;
 }
 
+WebKitDOMTestCustomNamedGetter* wrapTestCustomNamedGetter(WebCore::TestCustomNamedGetter* coreObject)
+{
+    g_return_val_if_fail(coreObject, 0);
+
+    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+     * in a C-allocated GObject structure.  See the finalize() code for the
+     * matching deref().
+     */
+    coreObject->ref();
+
+    return  WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(g_object_new(WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER,
+                                               "core-object", coreObject, NULL));
+}
+
 } // namespace WebKit
+
+G_DEFINE_TYPE(WebKitDOMTestCustomNamedGetter, webkit_dom_test_custom_named_getter, WEBKIT_TYPE_DOM_OBJECT)
+
 enum {
     PROP_0,
 };
 
-
 static void webkit_dom_test_custom_named_getter_finalize(GObject* object)
 {
+
     WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
     
     if (dom_object->coreObject) {
@@ -93,6 +92,7 @@ static void webkit_dom_test_custom_named_getter_finalize(GObject* object)
 
         dom_object->coreObject = NULL;
     }
+
 
     G_OBJECT_CLASS(webkit_dom_test_custom_named_getter_parent_class)->finalize(object);
 }
@@ -142,18 +142,14 @@ static void webkit_dom_test_custom_named_getter_init(WebKitDOMTestCustomNamedGet
 {
 }
 
-namespace WebKit {
-WebKitDOMTestCustomNamedGetter* wrapTestCustomNamedGetter(WebCore::TestCustomNamedGetter* coreObject)
+void
+webkit_dom_test_custom_named_getter_another_function(WebKitDOMTestCustomNamedGetter* self, const gchar* str)
 {
-    g_return_val_if_fail(coreObject, 0);
-
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
-    coreObject->ref();
-
-    return  WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(g_object_new(WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER,
-                                               "core-object", coreObject, NULL));
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestCustomNamedGetter * item = WebKit::core(self);
+    g_return_if_fail(str);
+    WTF::String converted_str = WTF::String::fromUTF8(str);
+    item->anotherFunction(converted_str);
 }
-} // namespace WebKit
+

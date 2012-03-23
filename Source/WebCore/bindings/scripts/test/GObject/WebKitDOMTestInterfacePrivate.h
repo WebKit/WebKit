@@ -24,6 +24,9 @@
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
 #include "TestInterface.h"
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+
 namespace WebKit {
     WebKitDOMTestInterface *
     wrapTestInterface(WebCore::TestInterface *coreObject);
@@ -35,5 +38,7 @@ namespace WebKit {
     kit(WebCore::TestInterface* node);
 
 } // namespace WebKit
+
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 
 #endif /* WEB_KIT_DOM_TEST_INTERFACE_PRIVATE_H */

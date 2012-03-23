@@ -21,8 +21,6 @@
 #include <glib-object.h>
 #include "config.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 #include "DOMObjectCache.h"
@@ -45,8 +43,10 @@
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
 
+#if ENABLE(SQL_DATABASE)
+
 namespace WebKit {
-    
+
 WebKitDOMTestCallback* kit(WebCore::TestCallback* obj)
 {
     g_return_val_if_fail(obj, 0);
@@ -56,99 +56,6 @@ WebKitDOMTestCallback* kit(WebCore::TestCallback* obj)
 
     return static_cast<WebKitDOMTestCallback*>(DOMObjectCache::put(obj, WebKit::wrapTestCallback(obj)));
 }
-    
-} // namespace WebKit //
-
-gboolean
-webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* self)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestCallback * item = WebKit::core(self);
-    gboolean res = item->callbackWithNoParam();
-    return res;
-}
-
-gboolean
-webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, WebKitDOMClass1* class1param)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestCallback * item = WebKit::core(self);
-    g_return_val_if_fail(class1param, 0);
-    WebCore::Class1 * converted_class1param = NULL;
-    if (class1param != NULL) {
-        converted_class1param = WebKit::core(class1param);
-        g_return_val_if_fail(converted_class1param, 0);
-    }
-    gboolean res = item->callbackWithClass1Param(converted_class1param);
-    return res;
-}
-
-gboolean
-webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, WebKitDOMClass2* class2param, const gchar* str_arg)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestCallback * item = WebKit::core(self);
-    g_return_val_if_fail(class2param, 0);
-    g_return_val_if_fail(str_arg, 0);
-    WebCore::Class2 * converted_class2param = NULL;
-    if (class2param != NULL) {
-        converted_class2param = WebKit::core(class2param);
-        g_return_val_if_fail(converted_class2param, 0);
-    }
-    WTF::String converted_str_arg = WTF::String::fromUTF8(str_arg);
-    gboolean res = item->callbackWithClass2Param(converted_class2param, converted_str_arg);
-    return res;
-}
-
-glong
-webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, WebKitDOMClass3* class3param)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestCallback * item = WebKit::core(self);
-    g_return_val_if_fail(class3param, 0);
-    WebCore::Class3 * converted_class3param = NULL;
-    if (class3param != NULL) {
-        converted_class3param = WebKit::core(class3param);
-        g_return_val_if_fail(converted_class3param, 0);
-    }
-    glong res = item->callbackWithNonBoolReturnType(converted_class3param);
-    return res;
-}
-
-gboolean
-webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, WebKitDOMDOMStringList* list_param)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestCallback * item = WebKit::core(self);
-    g_return_val_if_fail(list_param, 0);
-    WebCore::DOMStringList * converted_list_param = NULL;
-    if (list_param != NULL) {
-        converted_list_param = WebKit::core(list_param);
-        g_return_val_if_fail(converted_list_param, 0);
-    }
-    gboolean res = item->callbackWithStringList(converted_list_param);
-    return res;
-}
-
-gboolean
-webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboolean bool_param)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestCallback * item = WebKit::core(self);
-    gboolean res = item->callbackWithBoolean(bool_param);
-    return res;
-}
-
-
-G_DEFINE_TYPE(WebKitDOMTestCallback, webkit_dom_test_callback, WEBKIT_TYPE_DOM_OBJECT)
-
-namespace WebKit {
 
 WebCore::TestCallback* core(WebKitDOMTestCallback* request)
 {
@@ -160,14 +67,33 @@ WebCore::TestCallback* core(WebKitDOMTestCallback* request)
     return coreObject;
 }
 
+WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback* coreObject)
+{
+    g_return_val_if_fail(coreObject, 0);
+
+    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+     * in a C-allocated GObject structure.  See the finalize() code for the
+     * matching deref().
+     */
+    coreObject->ref();
+
+    return  WEBKIT_DOM_TEST_CALLBACK(g_object_new(WEBKIT_TYPE_DOM_TEST_CALLBACK,
+                                               "core-object", coreObject, NULL));
+}
+
 } // namespace WebKit
+
+#endif // ENABLE(SQL_DATABASE)
+
+G_DEFINE_TYPE(WebKitDOMTestCallback, webkit_dom_test_callback, WEBKIT_TYPE_DOM_OBJECT)
+
 enum {
     PROP_0,
 };
 
-
 static void webkit_dom_test_callback_finalize(GObject* object)
 {
+#if ENABLE(SQL_DATABASE)
     WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
     
     if (dom_object->coreObject) {
@@ -178,6 +104,7 @@ static void webkit_dom_test_callback_finalize(GObject* object)
 
         dom_object->coreObject = NULL;
     }
+#endif // ENABLE(SQL_DATABASE)
 
     G_OBJECT_CLASS(webkit_dom_test_callback_parent_class)->finalize(object);
 }
@@ -227,19 +154,119 @@ static void webkit_dom_test_callback_init(WebKitDOMTestCallback* request)
 {
 }
 
-namespace WebKit {
-WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback* coreObject)
+gboolean
+webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* self)
 {
-    g_return_val_if_fail(coreObject, 0);
-
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
-    coreObject->ref();
-
-    return  WEBKIT_DOM_TEST_CALLBACK(g_object_new(WEBKIT_TYPE_DOM_TEST_CALLBACK,
-                                               "core-object", coreObject, NULL));
-}
-} // namespace WebKit
+#if ENABLE(SQL_DATABASE)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestCallback * item = WebKit::core(self);
+    gboolean res = item->callbackWithNoParam();
+    return res;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    return static_cast<gboolean>(0);
 #endif /* ENABLE(SQL_DATABASE) */
+}
+
+gboolean
+webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, WebKitDOMClass1* class1param)
+{
+#if ENABLE(SQL_DATABASE)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestCallback * item = WebKit::core(self);
+    g_return_val_if_fail(class1param, 0);
+    WebCore::Class1 * converted_class1param = NULL;
+    if (class1param != NULL) {
+        converted_class1param = WebKit::core(class1param);
+        g_return_val_if_fail(converted_class1param, 0);
+    }
+    gboolean res = item->callbackWithClass1Param(converted_class1param);
+    return res;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    return static_cast<gboolean>(0);
+#endif /* ENABLE(SQL_DATABASE) */
+}
+
+gboolean
+webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, WebKitDOMClass2* class2param, const gchar* str_arg)
+{
+#if ENABLE(SQL_DATABASE)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestCallback * item = WebKit::core(self);
+    g_return_val_if_fail(class2param, 0);
+    g_return_val_if_fail(str_arg, 0);
+    WebCore::Class2 * converted_class2param = NULL;
+    if (class2param != NULL) {
+        converted_class2param = WebKit::core(class2param);
+        g_return_val_if_fail(converted_class2param, 0);
+    }
+    WTF::String converted_str_arg = WTF::String::fromUTF8(str_arg);
+    gboolean res = item->callbackWithClass2Param(converted_class2param, converted_str_arg);
+    return res;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    return static_cast<gboolean>(0);
+#endif /* ENABLE(SQL_DATABASE) */
+}
+
+glong
+webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, WebKitDOMClass3* class3param)
+{
+#if ENABLE(SQL_DATABASE)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestCallback * item = WebKit::core(self);
+    g_return_val_if_fail(class3param, 0);
+    WebCore::Class3 * converted_class3param = NULL;
+    if (class3param != NULL) {
+        converted_class3param = WebKit::core(class3param);
+        g_return_val_if_fail(converted_class3param, 0);
+    }
+    glong res = item->callbackWithNonBoolReturnType(converted_class3param);
+    return res;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    return static_cast<glong>(0);
+#endif /* ENABLE(SQL_DATABASE) */
+}
+
+gboolean
+webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, WebKitDOMDOMStringList* list_param)
+{
+#if ENABLE(SQL_DATABASE)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestCallback * item = WebKit::core(self);
+    g_return_val_if_fail(list_param, 0);
+    WebCore::DOMStringList * converted_list_param = NULL;
+    if (list_param != NULL) {
+        converted_list_param = WebKit::core(list_param);
+        g_return_val_if_fail(converted_list_param, 0);
+    }
+    gboolean res = item->callbackWithStringList(converted_list_param);
+    return res;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    return static_cast<gboolean>(0);
+#endif /* ENABLE(SQL_DATABASE) */
+}
+
+gboolean
+webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboolean bool_param)
+{
+#if ENABLE(SQL_DATABASE)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestCallback * item = WebKit::core(self);
+    gboolean res = item->callbackWithBoolean(bool_param);
+    return res;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    return static_cast<gboolean>(0);
+#endif /* ENABLE(SQL_DATABASE) */
+}
+

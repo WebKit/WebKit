@@ -36,7 +36,7 @@
 #include "webkitmarshal.h"
 
 namespace WebKit {
-    
+
 WebKitDOMTestEventConstructor* kit(WebCore::TestEventConstructor* obj)
 {
     g_return_val_if_fail(obj, 0);
@@ -46,33 +46,6 @@ WebKitDOMTestEventConstructor* kit(WebCore::TestEventConstructor* obj)
 
     return static_cast<WebKitDOMTestEventConstructor*>(DOMObjectCache::put(obj, WebKit::wrapTestEventConstructor(obj)));
 }
-    
-} // namespace WebKit //
-
-gchar*
-webkit_dom_test_event_constructor_get_attr1(WebKitDOMTestEventConstructor* self)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestEventConstructor * item = WebKit::core(self);
-    gchar* res = convertToUTF8String(item->attr1());
-    return res;
-}
-
-gchar*
-webkit_dom_test_event_constructor_get_attr2(WebKitDOMTestEventConstructor* self)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestEventConstructor * item = WebKit::core(self);
-    gchar* res = convertToUTF8String(item->attr2());
-    return res;
-}
-
-
-G_DEFINE_TYPE(WebKitDOMTestEventConstructor, webkit_dom_test_event_constructor, WEBKIT_TYPE_DOM_OBJECT)
-
-namespace WebKit {
 
 WebCore::TestEventConstructor* core(WebKitDOMTestEventConstructor* request)
 {
@@ -84,16 +57,33 @@ WebCore::TestEventConstructor* core(WebKitDOMTestEventConstructor* request)
     return coreObject;
 }
 
+WebKitDOMTestEventConstructor* wrapTestEventConstructor(WebCore::TestEventConstructor* coreObject)
+{
+    g_return_val_if_fail(coreObject, 0);
+
+    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+     * in a C-allocated GObject structure.  See the finalize() code for the
+     * matching deref().
+     */
+    coreObject->ref();
+
+    return  WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR,
+                                               "core-object", coreObject, NULL));
+}
+
 } // namespace WebKit
+
+G_DEFINE_TYPE(WebKitDOMTestEventConstructor, webkit_dom_test_event_constructor, WEBKIT_TYPE_DOM_OBJECT)
+
 enum {
     PROP_0,
     PROP_ATTR1,
     PROP_ATTR2,
 };
 
-
 static void webkit_dom_test_event_constructor_finalize(GObject* object)
 {
+
     WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
     
     if (dom_object->coreObject) {
@@ -104,6 +94,7 @@ static void webkit_dom_test_event_constructor_finalize(GObject* object)
 
         dom_object->coreObject = NULL;
     }
+
 
     G_OBJECT_CLASS(webkit_dom_test_event_constructor_parent_class)->finalize(object);
 }
@@ -179,18 +170,23 @@ static void webkit_dom_test_event_constructor_init(WebKitDOMTestEventConstructor
 {
 }
 
-namespace WebKit {
-WebKitDOMTestEventConstructor* wrapTestEventConstructor(WebCore::TestEventConstructor* coreObject)
+gchar*
+webkit_dom_test_event_constructor_get_attr1(WebKitDOMTestEventConstructor* self)
 {
-    g_return_val_if_fail(coreObject, 0);
-
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
-    coreObject->ref();
-
-    return  WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR,
-                                               "core-object", coreObject, NULL));
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestEventConstructor * item = WebKit::core(self);
+    gchar* res = convertToUTF8String(item->attr1());
+    return res;
 }
-} // namespace WebKit
+
+gchar*
+webkit_dom_test_event_constructor_get_attr2(WebKitDOMTestEventConstructor* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestEventConstructor * item = WebKit::core(self);
+    gchar* res = convertToUTF8String(item->attr2());
+    return res;
+}
+

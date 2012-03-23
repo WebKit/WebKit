@@ -24,6 +24,8 @@
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
 #include "TestObj.h"
+
+
 namespace WebKit {
     WebKitDOMTestObj *
     wrapTestObj(WebCore::TestObj *coreObject);

@@ -64,7 +64,7 @@
 #include "webkitmarshal.h"
 
 namespace WebKit {
-    
+
 WebKitDOMTestObj* kit(WebCore::TestObj* obj)
 {
     g_return_val_if_fail(obj, 0);
@@ -74,8 +74,881 @@ WebKitDOMTestObj* kit(WebCore::TestObj* obj)
 
     return static_cast<WebKitDOMTestObj*>(DOMObjectCache::put(obj, WebKit::wrapTestObj(obj)));
 }
+
+WebCore::TestObj* core(WebKitDOMTestObj* request)
+{
+    g_return_val_if_fail(request, 0);
+
+    WebCore::TestObj* coreObject = static_cast<WebCore::TestObj*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    g_return_val_if_fail(coreObject, 0);
+
+    return coreObject;
+}
+
+WebKitDOMTestObj* wrapTestObj(WebCore::TestObj* coreObject)
+{
+    g_return_val_if_fail(coreObject, 0);
+
+    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+     * in a C-allocated GObject structure.  See the finalize() code for the
+     * matching deref().
+     */
+    coreObject->ref();
+
+    return  WEBKIT_DOM_TEST_OBJ(g_object_new(WEBKIT_TYPE_DOM_TEST_OBJ,
+                                               "core-object", coreObject, NULL));
+}
+
+} // namespace WebKit
+
+G_DEFINE_TYPE(WebKitDOMTestObj, webkit_dom_test_obj, WEBKIT_TYPE_DOM_OBJECT)
+
+enum {
+    PROP_0,
+    PROP_READ_ONLY_INT_ATTR,
+    PROP_READ_ONLY_STRING_ATTR,
+    PROP_READ_ONLY_TEST_OBJ_ATTR,
+    PROP_SHORT_ATTR,
+    PROP_UNSIGNED_SHORT_ATTR,
+    PROP_INT_ATTR,
+    PROP_LONG_LONG_ATTR,
+    PROP_UNSIGNED_LONG_LONG_ATTR,
+    PROP_STRING_ATTR,
+    PROP_TEST_OBJ_ATTR,
+    PROP_XML_OBJ_ATTR,
+    PROP_CREATE,
+    PROP_REFLECTED_STRING_ATTR,
+    PROP_REFLECTED_INTEGRAL_ATTR,
+    PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR,
+    PROP_REFLECTED_BOOLEAN_ATTR,
+    PROP_REFLECTED_URL_ATTR,
+    PROP_REFLECTED_STRING_ATTR,
+    PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR,
+    PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR,
+    PROP_REFLECTED_CUSTOM_URL_ATTR,
+    PROP_ATTR_WITH_GETTER_EXCEPTION,
+    PROP_ATTR_WITH_SETTER_EXCEPTION,
+    PROP_STRING_ATTR_WITH_GETTER_EXCEPTION,
+    PROP_STRING_ATTR_WITH_SETTER_EXCEPTION,
+    PROP_WITH_SCRIPT_STATE_ATTRIBUTE,
+    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE,
+    PROP_WITH_SCRIPT_STATE_ATTRIBUTE_RAISES,
+    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE_RAISES,
+    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE,
+    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE_RAISES,
+    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_WITH_SPACES_ATTRIBUTE,
+    PROP_WITH_SCRIPT_ARGUMENTS_AND_CALL_STACK_ATTRIBUTE,
+#if ENABLE(Condition1)
+    PROP_CONDITIONAL_ATTR1,
+#endif /* ENABLE(Condition1) */
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    PROP_CONDITIONAL_ATTR2,
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    PROP_CONDITIONAL_ATTR3,
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    PROP_CONTENT_DOCUMENT,
+    PROP_MUTABLE_POINT,
+    PROP_IMMUTABLE_POINT,
+    PROP_STRAWBERRY,
+    PROP_STRICT_FLOAT,
+    PROP_DESCRIPTION,
+    PROP_ID,
+    PROP_HASH,
+};
+
+static void webkit_dom_test_obj_finalize(GObject* object)
+{
+
+    WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
     
-} // namespace WebKit //
+    if (dom_object->coreObject) {
+        WebCore::TestObj* coreObject = static_cast<WebCore::TestObj *>(dom_object->coreObject);
+
+        WebKit::DOMObjectCache::forget(coreObject);
+        coreObject->deref();
+
+        dom_object->coreObject = NULL;
+    }
+
+
+    G_OBJECT_CLASS(webkit_dom_test_obj_parent_class)->finalize(object);
+}
+
+static void webkit_dom_test_obj_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
+{
+    WebCore::JSMainThreadNullState state;
+    WebKitDOMTestObj* self = WEBKIT_DOM_TEST_OBJ(object);
+    WebCore::TestObj* coreSelf = WebKit::core(self);
+    switch (prop_id) {
+    case PROP_UNSIGNED_SHORT_ATTR:
+    {
+        coreSelf->setUnsignedShortAttr((g_value_get_uint(value)));
+        break;
+    }
+    case PROP_INT_ATTR:
+    {
+        coreSelf->setIntAttr((g_value_get_long(value)));
+        break;
+    }
+    case PROP_UNSIGNED_LONG_LONG_ATTR:
+    {
+        coreSelf->setUnsignedLongLongAttr((g_value_get_uint64(value)));
+        break;
+    }
+    case PROP_STRING_ATTR:
+    {
+        coreSelf->setStringAttr(WTF::String::fromUTF8(g_value_get_string(value)));
+        break;
+    }
+    case PROP_CREATE:
+    {
+        coreSelf->setCreate((g_value_get_boolean(value)));
+        break;
+    }
+    case PROP_REFLECTED_STRING_ATTR:
+    {
+        coreSelf->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
+        break;
+    }
+    case PROP_REFLECTED_INTEGRAL_ATTR:
+    {
+        coreSelf->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, (g_value_get_long(value)));
+        break;
+    }
+    case PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR:
+    {
+        coreSelf->setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, (g_value_get_ulong(value)));
+        break;
+    }
+    case PROP_REFLECTED_BOOLEAN_ATTR:
+    {
+        coreSelf->setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, (g_value_get_boolean(value)));
+        break;
+    }
+    case PROP_REFLECTED_URL_ATTR:
+    {
+        coreSelf->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
+        break;
+    }
+    case PROP_REFLECTED_STRING_ATTR:
+    {
+        coreSelf->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
+        break;
+    }
+    case PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR:
+    {
+        coreSelf->setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, (g_value_get_long(value)));
+        break;
+    }
+    case PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR:
+    {
+        coreSelf->setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, (g_value_get_boolean(value)));
+        break;
+    }
+    case PROP_REFLECTED_CUSTOM_URL_ATTR:
+    {
+        coreSelf->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
+        break;
+    }
+    case PROP_ATTR_WITH_GETTER_EXCEPTION:
+    {
+        WebCore::ExceptionCode ec = 0;
+        coreSelf->setAttrWithGetterException((g_value_get_long(value)), ec);
+        break;
+    }
+    case PROP_ATTR_WITH_SETTER_EXCEPTION:
+    {
+        WebCore::ExceptionCode ec = 0;
+        coreSelf->setAttrWithSetterException((g_value_get_long(value)), ec);
+        break;
+    }
+    case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION:
+    {
+        WebCore::ExceptionCode ec = 0;
+        coreSelf->setStringAttrWithGetterException(WTF::String::fromUTF8(g_value_get_string(value)), ec);
+        break;
+    }
+    case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION:
+    {
+        WebCore::ExceptionCode ec = 0;
+        coreSelf->setStringAttrWithSetterException(WTF::String::fromUTF8(g_value_get_string(value)), ec);
+        break;
+    }
+    case PROP_WITH_SCRIPT_STATE_ATTRIBUTE:
+    {
+        coreSelf->setWithScriptStateAttribute((g_value_get_long(value)));
+        break;
+    }
+#if ENABLE(Condition1)
+    case PROP_CONDITIONAL_ATTR1:
+    {
+        coreSelf->setConditionalAttr1((g_value_get_long(value)));
+        break;
+    }
+#endif /* ENABLE(Condition1) */
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    case PROP_CONDITIONAL_ATTR2:
+    {
+        coreSelf->setConditionalAttr2((g_value_get_long(value)));
+        break;
+    }
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    case PROP_CONDITIONAL_ATTR3:
+    {
+        coreSelf->setConditionalAttr3((g_value_get_long(value)));
+        break;
+    }
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    case PROP_STRICT_FLOAT:
+    {
+        coreSelf->setStrictFloat((g_value_get_float(value)));
+        break;
+    }
+    case PROP_ID:
+    {
+        coreSelf->setId((g_value_get_long(value)));
+        break;
+    }
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+
+static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
+{
+    WebCore::JSMainThreadNullState state;
+    WebKitDOMTestObj* self = WEBKIT_DOM_TEST_OBJ(object);
+    WebCore::TestObj* coreSelf = WebKit::core(self);
+    switch (prop_id) {
+    case PROP_READ_ONLY_INT_ATTR:
+    {
+        g_value_set_long(value, coreSelf->readOnlyIntAttr());
+        break;
+    }
+    case PROP_READ_ONLY_STRING_ATTR:
+    {
+        g_value_take_string(value, convertToUTF8String(coreSelf->readOnlyStringAttr()));
+        break;
+    }
+    case PROP_READ_ONLY_TEST_OBJ_ATTR:
+    {
+        RefPtr<WebCore::TestObj> ptr = coreSelf->readOnlyTestObjAttr();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_SHORT_ATTR:
+    {
+        g_value_set_int(value, coreSelf->shortAttr());
+        break;
+    }
+    case PROP_UNSIGNED_SHORT_ATTR:
+    {
+        g_value_set_uint(value, coreSelf->unsignedShortAttr());
+        break;
+    }
+    case PROP_INT_ATTR:
+    {
+        g_value_set_long(value, coreSelf->intAttr());
+        break;
+    }
+    case PROP_LONG_LONG_ATTR:
+    {
+        g_value_set_int64(value, coreSelf->longLongAttr());
+        break;
+    }
+    case PROP_UNSIGNED_LONG_LONG_ATTR:
+    {
+        g_value_set_uint64(value, coreSelf->unsignedLongLongAttr());
+        break;
+    }
+    case PROP_STRING_ATTR:
+    {
+        g_value_take_string(value, convertToUTF8String(coreSelf->stringAttr()));
+        break;
+    }
+    case PROP_TEST_OBJ_ATTR:
+    {
+        RefPtr<WebCore::TestObj> ptr = coreSelf->testObjAttr();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_XML_OBJ_ATTR:
+    {
+        RefPtr<WebCore::TestObj> ptr = coreSelf->xmlObjAttr();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_CREATE:
+    {
+        g_value_set_boolean(value, coreSelf->isCreate());
+        break;
+    }
+    case PROP_REFLECTED_STRING_ATTR:
+    {
+        g_value_take_string(value, convertToUTF8String(coreSelf->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr)));
+        break;
+    }
+    case PROP_REFLECTED_INTEGRAL_ATTR:
+    {
+        g_value_set_long(value, coreSelf->getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
+        break;
+    }
+    case PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR:
+    {
+        g_value_set_ulong(value, coreSelf->getUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr));
+        break;
+    }
+    case PROP_REFLECTED_BOOLEAN_ATTR:
+    {
+        g_value_set_boolean(value, coreSelf->hasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr));
+        break;
+    }
+    case PROP_REFLECTED_URL_ATTR:
+    {
+        g_value_take_string(value, convertToUTF8String(coreSelf->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr)));
+        break;
+    }
+    case PROP_REFLECTED_STRING_ATTR:
+    {
+        g_value_take_string(value, convertToUTF8String(coreSelf->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr)));
+        break;
+    }
+    case PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR:
+    {
+        g_value_set_long(value, coreSelf->getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
+        break;
+    }
+    case PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR:
+    {
+        g_value_set_boolean(value, coreSelf->hasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr));
+        break;
+    }
+    case PROP_REFLECTED_CUSTOM_URL_ATTR:
+    {
+        g_value_take_string(value, convertToUTF8String(coreSelf->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr)));
+        break;
+    }
+    case PROP_ATTR_WITH_GETTER_EXCEPTION:
+    {
+        WebCore::ExceptionCode ec = 0;
+        g_value_set_long(value, coreSelf->attrWithGetterException(ec));
+        break;
+    }
+    case PROP_ATTR_WITH_SETTER_EXCEPTION:
+    {
+        g_value_set_long(value, coreSelf->attrWithSetterException());
+        break;
+    }
+    case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION:
+    {
+        WebCore::ExceptionCode ec = 0;
+        g_value_take_string(value, convertToUTF8String(coreSelf->stringAttrWithGetterException(ec)));
+        break;
+    }
+    case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION:
+    {
+        g_value_take_string(value, convertToUTF8String(coreSelf->stringAttrWithSetterException()));
+        break;
+    }
+    case PROP_WITH_SCRIPT_STATE_ATTRIBUTE:
+    {
+        g_value_set_long(value, coreSelf->withScriptStateAttribute());
+        break;
+    }
+    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE:
+    {
+        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAttribute();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_WITH_SCRIPT_STATE_ATTRIBUTE_RAISES:
+    {
+        WebCore::ExceptionCode ec = 0;
+        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptStateAttributeRaises(ec);
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE_RAISES:
+    {
+        WebCore::ExceptionCode ec = 0;
+        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAttributeRaises(ec);
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE:
+    {
+        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAndScriptStateAttribute();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE_RAISES:
+    {
+        WebCore::ExceptionCode ec = 0;
+        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAndScriptStateAttributeRaises(ec);
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_WITH_SPACES_ATTRIBUTE:
+    {
+        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAndScriptStateWithSpacesAttribute();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_WITH_SCRIPT_ARGUMENTS_AND_CALL_STACK_ATTRIBUTE:
+    {
+        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptArgumentsAndCallStackAttribute();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+#if ENABLE(Condition1)
+    case PROP_CONDITIONAL_ATTR1:
+    {
+        g_value_set_long(value, coreSelf->conditionalAttr1());
+        break;
+    }
+#endif /* ENABLE(Condition1) */
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    case PROP_CONDITIONAL_ATTR2:
+    {
+        g_value_set_long(value, coreSelf->conditionalAttr2());
+        break;
+    }
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    case PROP_CONDITIONAL_ATTR3:
+    {
+        g_value_set_long(value, coreSelf->conditionalAttr3());
+        break;
+    }
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    case PROP_CONTENT_DOCUMENT:
+    {
+        RefPtr<WebCore::Document> ptr = coreSelf->contentDocument();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_MUTABLE_POINT:
+    {
+        RefPtr<WebCore::SVGPoint> ptr = coreSelf->mutablePoint();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_IMMUTABLE_POINT:
+    {
+        RefPtr<WebCore::SVGPoint> ptr = coreSelf->immutablePoint();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_STRAWBERRY:
+    {
+        g_value_set_int(value, coreSelf->blueberry());
+        break;
+    }
+    case PROP_STRICT_FLOAT:
+    {
+        g_value_set_float(value, coreSelf->strictFloat());
+        break;
+    }
+    case PROP_DESCRIPTION:
+    {
+        g_value_set_long(value, coreSelf->description());
+        break;
+    }
+    case PROP_ID:
+    {
+        g_value_set_long(value, coreSelf->id());
+        break;
+    }
+    case PROP_HASH:
+    {
+        g_value_take_string(value, convertToUTF8String(coreSelf->hash()));
+        break;
+    }
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+
+static void webkit_dom_test_obj_constructed(GObject* object)
+{
+
+    if (G_OBJECT_CLASS(webkit_dom_test_obj_parent_class)->constructed)
+        G_OBJECT_CLASS(webkit_dom_test_obj_parent_class)->constructed(object);
+}
+
+static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
+{
+    GObjectClass *gobjectClass = G_OBJECT_CLASS(requestClass);
+    gobjectClass->finalize = webkit_dom_test_obj_finalize;
+    gobjectClass->set_property = webkit_dom_test_obj_set_property;
+    gobjectClass->get_property = webkit_dom_test_obj_get_property;
+    gobjectClass->constructed = webkit_dom_test_obj_constructed;
+
+    g_object_class_install_property(gobjectClass,
+                                    PROP_READ_ONLY_INT_ATTR,
+                                    g_param_spec_long("read-only-int-attr", /* name */
+                                                           "test_obj_read-only-int-attr", /* short description */
+                                                           "read-only  glong TestObj.read-only-int-attr", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_READ_ONLY_STRING_ATTR,
+                                    g_param_spec_string("read-only-string-attr", /* name */
+                                                           "test_obj_read-only-string-attr", /* short description */
+                                                           "read-only  gchar* TestObj.read-only-string-attr", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_READ_ONLY_TEST_OBJ_ATTR,
+                                    g_param_spec_object("read-only-test-obj-attr", /* name */
+                                                           "test_obj_read-only-test-obj-attr", /* short description */
+                                                           "read-only  WebKitDOMTestObj* TestObj.read-only-test-obj-attr", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
+                                                           WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_SHORT_ATTR,
+                                    g_param_spec_int("short-attr", /* name */
+                                                           "test_obj_short-attr", /* short description */
+                                                           "read-write  gshort TestObj.short-attr", /* longer - could do with some extra doc stuff here */
+                                                           G_MININT, /* min */
+G_MAXINT, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_UNSIGNED_SHORT_ATTR,
+                                    g_param_spec_uint("unsigned-short-attr", /* name */
+                                                           "test_obj_unsigned-short-attr", /* short description */
+                                                           "read-write  gushort TestObj.unsigned-short-attr", /* longer - could do with some extra doc stuff here */
+                                                           0, /* min */
+G_MAXUINT, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_INT_ATTR,
+                                    g_param_spec_long("int-attr", /* name */
+                                                           "test_obj_int-attr", /* short description */
+                                                           "read-write  glong TestObj.int-attr", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_LONG_LONG_ATTR,
+                                    g_param_spec_int64("long-long-attr", /* name */
+                                                           "test_obj_long-long-attr", /* short description */
+                                                           "read-write  gint64 TestObj.long-long-attr", /* longer - could do with some extra doc stuff here */
+                                                           G_MININT64, /* min */
+G_MAXINT64, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_UNSIGNED_LONG_LONG_ATTR,
+                                    g_param_spec_uint64("unsigned-long-long-attr", /* name */
+                                                           "test_obj_unsigned-long-long-attr", /* short description */
+                                                           "read-write  guint64 TestObj.unsigned-long-long-attr", /* longer - could do with some extra doc stuff here */
+                                                           0, /* min */
+G_MAXUINT64, /* min */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_STRING_ATTR,
+                                    g_param_spec_string("string-attr", /* name */
+                                                           "test_obj_string-attr", /* short description */
+                                                           "read-write  gchar* TestObj.string-attr", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_TEST_OBJ_ATTR,
+                                    g_param_spec_object("test-obj-attr", /* name */
+                                                           "test_obj_test-obj-attr", /* short description */
+                                                           "read-write  WebKitDOMTestObj* TestObj.test-obj-attr", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_XML_OBJ_ATTR,
+                                    g_param_spec_object("xml-obj-attr", /* name */
+                                                           "test_obj_xml-obj-attr", /* short description */
+                                                           "read-write  WebKitDOMTestObj* TestObj.xml-obj-attr", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_CREATE,
+                                    g_param_spec_boolean("create", /* name */
+                                                           "test_obj_create", /* short description */
+                                                           "read-write  gboolean TestObj.create", /* longer - could do with some extra doc stuff here */
+                                                           FALSE, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_REFLECTED_STRING_ATTR,
+                                    g_param_spec_string("reflected-string-attr", /* name */
+                                                           "test_obj_reflected-string-attr", /* short description */
+                                                           "read-write  gchar* TestObj.reflected-string-attr", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_REFLECTED_INTEGRAL_ATTR,
+                                    g_param_spec_long("reflected-integral-attr", /* name */
+                                                           "test_obj_reflected-integral-attr", /* short description */
+                                                           "read-write  glong TestObj.reflected-integral-attr", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR,
+                                    g_param_spec_ulong("reflected-unsigned-integral-attr", /* name */
+                                                           "test_obj_reflected-unsigned-integral-attr", /* short description */
+                                                           "read-write  gulong TestObj.reflected-unsigned-integral-attr", /* longer - could do with some extra doc stuff here */
+                                                           0, /* min */
+G_MAXULONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_REFLECTED_BOOLEAN_ATTR,
+                                    g_param_spec_boolean("reflected-boolean-attr", /* name */
+                                                           "test_obj_reflected-boolean-attr", /* short description */
+                                                           "read-write  gboolean TestObj.reflected-boolean-attr", /* longer - could do with some extra doc stuff here */
+                                                           FALSE, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_REFLECTED_URL_ATTR,
+                                    g_param_spec_string("reflected-url-attr", /* name */
+                                                           "test_obj_reflected-url-attr", /* short description */
+                                                           "read-write  gchar* TestObj.reflected-url-attr", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_REFLECTED_STRING_ATTR,
+                                    g_param_spec_string("reflected-string-attr", /* name */
+                                                           "test_obj_reflected-string-attr", /* short description */
+                                                           "read-write  gchar* TestObj.reflected-string-attr", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR,
+                                    g_param_spec_long("reflected-custom-integral-attr", /* name */
+                                                           "test_obj_reflected-custom-integral-attr", /* short description */
+                                                           "read-write  glong TestObj.reflected-custom-integral-attr", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR,
+                                    g_param_spec_boolean("reflected-custom-boolean-attr", /* name */
+                                                           "test_obj_reflected-custom-boolean-attr", /* short description */
+                                                           "read-write  gboolean TestObj.reflected-custom-boolean-attr", /* longer - could do with some extra doc stuff here */
+                                                           FALSE, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_REFLECTED_CUSTOM_URL_ATTR,
+                                    g_param_spec_string("reflected-custom-url-attr", /* name */
+                                                           "test_obj_reflected-custom-url-attr", /* short description */
+                                                           "read-write  gchar* TestObj.reflected-custom-url-attr", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_ATTR_WITH_GETTER_EXCEPTION,
+                                    g_param_spec_long("attr-with-getter-exception", /* name */
+                                                           "test_obj_attr-with-getter-exception", /* short description */
+                                                           "read-write  glong TestObj.attr-with-getter-exception", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_ATTR_WITH_SETTER_EXCEPTION,
+                                    g_param_spec_long("attr-with-setter-exception", /* name */
+                                                           "test_obj_attr-with-setter-exception", /* short description */
+                                                           "read-write  glong TestObj.attr-with-setter-exception", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_STRING_ATTR_WITH_GETTER_EXCEPTION,
+                                    g_param_spec_string("string-attr-with-getter-exception", /* name */
+                                                           "test_obj_string-attr-with-getter-exception", /* short description */
+                                                           "read-write  gchar* TestObj.string-attr-with-getter-exception", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_STRING_ATTR_WITH_SETTER_EXCEPTION,
+                                    g_param_spec_string("string-attr-with-setter-exception", /* name */
+                                                           "test_obj_string-attr-with-setter-exception", /* short description */
+                                                           "read-write  gchar* TestObj.string-attr-with-setter-exception", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_WITH_SCRIPT_STATE_ATTRIBUTE,
+                                    g_param_spec_long("with-script-state-attribute", /* name */
+                                                           "test_obj_with-script-state-attribute", /* short description */
+                                                           "read-write  glong TestObj.with-script-state-attribute", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE,
+                                    g_param_spec_object("with-script-execution-context-attribute", /* name */
+                                                           "test_obj_with-script-execution-context-attribute", /* short description */
+                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-execution-context-attribute", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_WITH_SCRIPT_STATE_ATTRIBUTE_RAISES,
+                                    g_param_spec_object("with-script-state-attribute-raises", /* name */
+                                                           "test_obj_with-script-state-attribute-raises", /* short description */
+                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-state-attribute-raises", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE_RAISES,
+                                    g_param_spec_object("with-script-execution-context-attribute-raises", /* name */
+                                                           "test_obj_with-script-execution-context-attribute-raises", /* short description */
+                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-execution-context-attribute-raises", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE,
+                                    g_param_spec_object("with-script-execution-context-and-script-state-attribute", /* name */
+                                                           "test_obj_with-script-execution-context-and-script-state-attribute", /* short description */
+                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-execution-context-and-script-state-attribute", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE_RAISES,
+                                    g_param_spec_object("with-script-execution-context-and-script-state-attribute-raises", /* name */
+                                                           "test_obj_with-script-execution-context-and-script-state-attribute-raises", /* short description */
+                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-execution-context-and-script-state-attribute-raises", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_WITH_SPACES_ATTRIBUTE,
+                                    g_param_spec_object("with-script-execution-context-and-script-state-with-spaces-attribute", /* name */
+                                                           "test_obj_with-script-execution-context-and-script-state-with-spaces-attribute", /* short description */
+                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-execution-context-and-script-state-with-spaces-attribute", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_WITH_SCRIPT_ARGUMENTS_AND_CALL_STACK_ATTRIBUTE,
+                                    g_param_spec_object("with-script-arguments-and-call-stack-attribute", /* name */
+                                                           "test_obj_with-script-arguments-and-call-stack-attribute", /* short description */
+                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-arguments-and-call-stack-attribute", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+#if ENABLE(Condition1)
+    g_object_class_install_property(gobjectClass,
+                                    PROP_CONDITIONAL_ATTR1,
+                                    g_param_spec_long("conditional-attr1", /* name */
+                                                           "test_obj_conditional-attr1", /* short description */
+                                                           "read-write  glong TestObj.conditional-attr1", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+#endif /* ENABLE(Condition1) */
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    g_object_class_install_property(gobjectClass,
+                                    PROP_CONDITIONAL_ATTR2,
+                                    g_param_spec_long("conditional-attr2", /* name */
+                                                           "test_obj_conditional-attr2", /* short description */
+                                                           "read-write  glong TestObj.conditional-attr2", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    g_object_class_install_property(gobjectClass,
+                                    PROP_CONDITIONAL_ATTR3,
+                                    g_param_spec_long("conditional-attr3", /* name */
+                                                           "test_obj_conditional-attr3", /* short description */
+                                                           "read-write  glong TestObj.conditional-attr3", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    g_object_class_install_property(gobjectClass,
+                                    PROP_CONTENT_DOCUMENT,
+                                    g_param_spec_object("content-document", /* name */
+                                                           "test_obj_content-document", /* short description */
+                                                           "read-only  WebKitDOMDocument* TestObj.content-document", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_DOCUMENT, /* gobject type */
+                                                           WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_MUTABLE_POINT,
+                                    g_param_spec_object("mutable-point", /* name */
+                                                           "test_obj_mutable-point", /* short description */
+                                                           "read-write  WebKitDOMSVGPoint* TestObj.mutable-point", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_SVG_POINT, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_IMMUTABLE_POINT,
+                                    g_param_spec_object("immutable-point", /* name */
+                                                           "test_obj_immutable-point", /* short description */
+                                                           "read-write  WebKitDOMSVGPoint* TestObj.immutable-point", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_SVG_POINT, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_STRAWBERRY,
+                                    g_param_spec_int("strawberry", /* name */
+                                                           "test_obj_strawberry", /* short description */
+                                                           "read-write  gint TestObj.strawberry", /* longer - could do with some extra doc stuff here */
+                                                           G_MININT, /* min */
+G_MAXINT, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_STRICT_FLOAT,
+                                    g_param_spec_float("strict-float", /* name */
+                                                           "test_obj_strict-float", /* short description */
+                                                           "read-write  gfloat TestObj.strict-float", /* longer - could do with some extra doc stuff here */
+                                                           -G_MAXFLOAT, /* min */
+G_MAXFLOAT, /* max */
+0.0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_DESCRIPTION,
+                                    g_param_spec_long("description", /* name */
+                                                           "test_obj_description", /* short description */
+                                                           "read-only  glong TestObj.description", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_ID,
+                                    g_param_spec_long("id", /* name */
+                                                           "test_obj_id", /* short description */
+                                                           "read-write  glong TestObj.id", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_HASH,
+                                    g_param_spec_string("hash", /* name */
+                                                           "test_obj_hash", /* short description */
+                                                           "read-only  gchar* TestObj.hash", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READABLE));
+
+
+}
+
+static void webkit_dom_test_obj_init(WebKitDOMTestObj* request)
+{
+}
 
 void
 webkit_dom_test_obj_void_method(WebKitDOMTestObj* self)
@@ -430,6 +1303,7 @@ webkit_dom_test_obj_conditional_method1(WebKitDOMTestObj* self)
     gchar* res = convertToUTF8String(item->conditionalMethod1());
     return res;
 #else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     return NULL;
 #endif /* ENABLE(Condition1) */
 }
@@ -442,6 +1316,13 @@ webkit_dom_test_obj_conditional_method2(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj * item = WebKit::core(self);
     item->conditionalMethod2();
+#else
+#if !ENABLE(Condition1)
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+#endif
+#if !ENABLE(Condition2)
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif
 #endif /* ENABLE(Condition1) && ENABLE(Condition2) */
 }
 
@@ -453,6 +1334,9 @@ webkit_dom_test_obj_conditional_method3(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj * item = WebKit::core(self);
     item->conditionalMethod3();
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 }
 
@@ -483,6 +1367,8 @@ webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, glong arg)
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj * item = WebKit::core(self);
     item->overloadedMethod1(arg);
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
 #endif /* ENABLE(Condition1) */
 }
 
@@ -496,6 +1382,8 @@ webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, const gchar* type
     g_return_if_fail(type);
     WTF::String converted_type = WTF::String::fromUTF8(type);
     item->overloadedMethod1(converted_type);
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
 #endif /* ENABLE(Condition1) */
 }
 
@@ -1341,6 +2229,7 @@ webkit_dom_test_obj_get_conditional_attr1(WebKitDOMTestObj* self)
     glong res = item->conditionalAttr1();
     return res;
 #else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     return static_cast<glong>(0);
 #endif /* ENABLE(Condition1) */
 }
@@ -1353,6 +2242,8 @@ webkit_dom_test_obj_set_conditional_attr1(WebKitDOMTestObj* self, glong value)
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj * item = WebKit::core(self);
     item->setConditionalAttr1(value);
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
 #endif /* ENABLE(Condition1) */
 }
 
@@ -1366,6 +2257,12 @@ webkit_dom_test_obj_get_conditional_attr2(WebKitDOMTestObj* self)
     glong res = item->conditionalAttr2();
     return res;
 #else
+#if !ENABLE(Condition1)
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+#endif
+#if !ENABLE(Condition2)
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif
     return static_cast<glong>(0);
 #endif /* ENABLE(Condition1) && ENABLE(Condition2) */
 }
@@ -1378,6 +2275,13 @@ webkit_dom_test_obj_set_conditional_attr2(WebKitDOMTestObj* self, glong value)
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj * item = WebKit::core(self);
     item->setConditionalAttr2(value);
+#else
+#if !ENABLE(Condition1)
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+#endif
+#if !ENABLE(Condition2)
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif
 #endif /* ENABLE(Condition1) && ENABLE(Condition2) */
 }
 
@@ -1391,6 +2295,8 @@ webkit_dom_test_obj_get_conditional_attr3(WebKitDOMTestObj* self)
     glong res = item->conditionalAttr3();
     return res;
 #else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
     return static_cast<glong>(0);
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 }
@@ -1403,6 +2309,9 @@ webkit_dom_test_obj_set_conditional_attr3(WebKitDOMTestObj* self, glong value)
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj * item = WebKit::core(self);
     item->setConditionalAttr3(value);
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 }
 
@@ -1546,880 +2455,3 @@ webkit_dom_test_obj_get_hash(WebKitDOMTestObj* self)
     return res;
 }
 
-
-G_DEFINE_TYPE(WebKitDOMTestObj, webkit_dom_test_obj, WEBKIT_TYPE_DOM_OBJECT)
-
-namespace WebKit {
-
-WebCore::TestObj* core(WebKitDOMTestObj* request)
-{
-    g_return_val_if_fail(request, 0);
-
-    WebCore::TestObj* coreObject = static_cast<WebCore::TestObj*>(WEBKIT_DOM_OBJECT(request)->coreObject);
-    g_return_val_if_fail(coreObject, 0);
-
-    return coreObject;
-}
-
-} // namespace WebKit
-enum {
-    PROP_0,
-    PROP_READ_ONLY_INT_ATTR,
-    PROP_READ_ONLY_STRING_ATTR,
-    PROP_READ_ONLY_TEST_OBJ_ATTR,
-    PROP_SHORT_ATTR,
-    PROP_UNSIGNED_SHORT_ATTR,
-    PROP_INT_ATTR,
-    PROP_LONG_LONG_ATTR,
-    PROP_UNSIGNED_LONG_LONG_ATTR,
-    PROP_STRING_ATTR,
-    PROP_TEST_OBJ_ATTR,
-    PROP_XML_OBJ_ATTR,
-    PROP_CREATE,
-    PROP_REFLECTED_STRING_ATTR,
-    PROP_REFLECTED_INTEGRAL_ATTR,
-    PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR,
-    PROP_REFLECTED_BOOLEAN_ATTR,
-    PROP_REFLECTED_URL_ATTR,
-    PROP_REFLECTED_STRING_ATTR,
-    PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR,
-    PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR,
-    PROP_REFLECTED_CUSTOM_URL_ATTR,
-    PROP_ATTR_WITH_GETTER_EXCEPTION,
-    PROP_ATTR_WITH_SETTER_EXCEPTION,
-    PROP_STRING_ATTR_WITH_GETTER_EXCEPTION,
-    PROP_STRING_ATTR_WITH_SETTER_EXCEPTION,
-    PROP_WITH_SCRIPT_STATE_ATTRIBUTE,
-    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE,
-    PROP_WITH_SCRIPT_STATE_ATTRIBUTE_RAISES,
-    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE_RAISES,
-    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE,
-    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE_RAISES,
-    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_WITH_SPACES_ATTRIBUTE,
-    PROP_WITH_SCRIPT_ARGUMENTS_AND_CALL_STACK_ATTRIBUTE,
-#if ENABLE(Condition1)
-    PROP_CONDITIONAL_ATTR1,
-#endif /* ENABLE(Condition1) */
-#if ENABLE(Condition1) && ENABLE(Condition2)
-    PROP_CONDITIONAL_ATTR2,
-#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
-#if ENABLE(Condition1) || ENABLE(Condition2)
-    PROP_CONDITIONAL_ATTR3,
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
-    PROP_CONTENT_DOCUMENT,
-    PROP_MUTABLE_POINT,
-    PROP_IMMUTABLE_POINT,
-    PROP_STRAWBERRY,
-    PROP_STRICT_FLOAT,
-    PROP_DESCRIPTION,
-    PROP_ID,
-    PROP_HASH,
-};
-
-
-static void webkit_dom_test_obj_finalize(GObject* object)
-{
-    WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
-    
-    if (dom_object->coreObject) {
-        WebCore::TestObj* coreObject = static_cast<WebCore::TestObj *>(dom_object->coreObject);
-
-        WebKit::DOMObjectCache::forget(coreObject);
-        coreObject->deref();
-
-        dom_object->coreObject = NULL;
-    }
-
-    G_OBJECT_CLASS(webkit_dom_test_obj_parent_class)->finalize(object);
-}
-
-static void webkit_dom_test_obj_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-    WebKitDOMTestObj* self = WEBKIT_DOM_TEST_OBJ(object);
-    WebCore::TestObj* coreSelf = WebKit::core(self);
-    switch (prop_id) {
-    case PROP_UNSIGNED_SHORT_ATTR:
-    {
-        coreSelf->setUnsignedShortAttr((g_value_get_uint(value)));
-        break;
-    }
-    case PROP_INT_ATTR:
-    {
-        coreSelf->setIntAttr((g_value_get_long(value)));
-        break;
-    }
-    case PROP_UNSIGNED_LONG_LONG_ATTR:
-    {
-        coreSelf->setUnsignedLongLongAttr((g_value_get_uint64(value)));
-        break;
-    }
-    case PROP_STRING_ATTR:
-    {
-        coreSelf->setStringAttr(WTF::String::fromUTF8(g_value_get_string(value)));
-        break;
-    }
-    case PROP_CREATE:
-    {
-        coreSelf->setCreate((g_value_get_boolean(value)));
-        break;
-    }
-    case PROP_REFLECTED_STRING_ATTR:
-    {
-        coreSelf->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
-        break;
-    }
-    case PROP_REFLECTED_INTEGRAL_ATTR:
-    {
-        coreSelf->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, (g_value_get_long(value)));
-        break;
-    }
-    case PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR:
-    {
-        coreSelf->setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, (g_value_get_ulong(value)));
-        break;
-    }
-    case PROP_REFLECTED_BOOLEAN_ATTR:
-    {
-        coreSelf->setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, (g_value_get_boolean(value)));
-        break;
-    }
-    case PROP_REFLECTED_URL_ATTR:
-    {
-        coreSelf->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
-        break;
-    }
-    case PROP_REFLECTED_STRING_ATTR:
-    {
-        coreSelf->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
-        break;
-    }
-    case PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR:
-    {
-        coreSelf->setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, (g_value_get_long(value)));
-        break;
-    }
-    case PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR:
-    {
-        coreSelf->setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, (g_value_get_boolean(value)));
-        break;
-    }
-    case PROP_REFLECTED_CUSTOM_URL_ATTR:
-    {
-        coreSelf->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
-        break;
-    }
-    case PROP_ATTR_WITH_GETTER_EXCEPTION:
-    {
-        WebCore::ExceptionCode ec = 0;
-        coreSelf->setAttrWithGetterException((g_value_get_long(value)), ec);
-        break;
-    }
-    case PROP_ATTR_WITH_SETTER_EXCEPTION:
-    {
-        WebCore::ExceptionCode ec = 0;
-        coreSelf->setAttrWithSetterException((g_value_get_long(value)), ec);
-        break;
-    }
-    case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION:
-    {
-        WebCore::ExceptionCode ec = 0;
-        coreSelf->setStringAttrWithGetterException(WTF::String::fromUTF8(g_value_get_string(value)), ec);
-        break;
-    }
-    case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION:
-    {
-        WebCore::ExceptionCode ec = 0;
-        coreSelf->setStringAttrWithSetterException(WTF::String::fromUTF8(g_value_get_string(value)), ec);
-        break;
-    }
-    case PROP_WITH_SCRIPT_STATE_ATTRIBUTE:
-    {
-        coreSelf->setWithScriptStateAttribute((g_value_get_long(value)));
-        break;
-    }
-#if ENABLE(Condition1)
-    case PROP_CONDITIONAL_ATTR1:
-    {
-        coreSelf->setConditionalAttr1((g_value_get_long(value)));
-        break;
-    }
-#endif /* ENABLE(Condition1) */
-#if ENABLE(Condition1) && ENABLE(Condition2)
-    case PROP_CONDITIONAL_ATTR2:
-    {
-        coreSelf->setConditionalAttr2((g_value_get_long(value)));
-        break;
-    }
-#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
-#if ENABLE(Condition1) || ENABLE(Condition2)
-    case PROP_CONDITIONAL_ATTR3:
-    {
-        coreSelf->setConditionalAttr3((g_value_get_long(value)));
-        break;
-    }
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
-    case PROP_STRICT_FLOAT:
-    {
-        coreSelf->setStrictFloat((g_value_get_float(value)));
-        break;
-    }
-    case PROP_ID:
-    {
-        coreSelf->setId((g_value_get_long(value)));
-        break;
-    }
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-        break;
-    }
-}
-
-
-static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-    WebKitDOMTestObj* self = WEBKIT_DOM_TEST_OBJ(object);
-    WebCore::TestObj* coreSelf = WebKit::core(self);
-    switch (prop_id) {
-    case PROP_READ_ONLY_INT_ATTR:
-    {
-        g_value_set_long(value, coreSelf->readOnlyIntAttr());
-        break;
-    }
-    case PROP_READ_ONLY_STRING_ATTR:
-    {
-        g_value_take_string(value, convertToUTF8String(coreSelf->readOnlyStringAttr()));
-        break;
-    }
-    case PROP_READ_ONLY_TEST_OBJ_ATTR:
-    {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->readOnlyTestObjAttr();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-    case PROP_SHORT_ATTR:
-    {
-        g_value_set_int(value, coreSelf->shortAttr());
-        break;
-    }
-    case PROP_UNSIGNED_SHORT_ATTR:
-    {
-        g_value_set_uint(value, coreSelf->unsignedShortAttr());
-        break;
-    }
-    case PROP_INT_ATTR:
-    {
-        g_value_set_long(value, coreSelf->intAttr());
-        break;
-    }
-    case PROP_LONG_LONG_ATTR:
-    {
-        g_value_set_int64(value, coreSelf->longLongAttr());
-        break;
-    }
-    case PROP_UNSIGNED_LONG_LONG_ATTR:
-    {
-        g_value_set_uint64(value, coreSelf->unsignedLongLongAttr());
-        break;
-    }
-    case PROP_STRING_ATTR:
-    {
-        g_value_take_string(value, convertToUTF8String(coreSelf->stringAttr()));
-        break;
-    }
-    case PROP_TEST_OBJ_ATTR:
-    {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->testObjAttr();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-    case PROP_XML_OBJ_ATTR:
-    {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->xmlObjAttr();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-    case PROP_CREATE:
-    {
-        g_value_set_boolean(value, coreSelf->isCreate());
-        break;
-    }
-    case PROP_REFLECTED_STRING_ATTR:
-    {
-        g_value_take_string(value, convertToUTF8String(coreSelf->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr)));
-        break;
-    }
-    case PROP_REFLECTED_INTEGRAL_ATTR:
-    {
-        g_value_set_long(value, coreSelf->getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
-        break;
-    }
-    case PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR:
-    {
-        g_value_set_ulong(value, coreSelf->getUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr));
-        break;
-    }
-    case PROP_REFLECTED_BOOLEAN_ATTR:
-    {
-        g_value_set_boolean(value, coreSelf->hasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr));
-        break;
-    }
-    case PROP_REFLECTED_URL_ATTR:
-    {
-        g_value_take_string(value, convertToUTF8String(coreSelf->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr)));
-        break;
-    }
-    case PROP_REFLECTED_STRING_ATTR:
-    {
-        g_value_take_string(value, convertToUTF8String(coreSelf->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr)));
-        break;
-    }
-    case PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR:
-    {
-        g_value_set_long(value, coreSelf->getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
-        break;
-    }
-    case PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR:
-    {
-        g_value_set_boolean(value, coreSelf->hasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr));
-        break;
-    }
-    case PROP_REFLECTED_CUSTOM_URL_ATTR:
-    {
-        g_value_take_string(value, convertToUTF8String(coreSelf->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr)));
-        break;
-    }
-    case PROP_ATTR_WITH_GETTER_EXCEPTION:
-    {
-        WebCore::ExceptionCode ec = 0;
-        g_value_set_long(value, coreSelf->attrWithGetterException(ec));
-        break;
-    }
-    case PROP_ATTR_WITH_SETTER_EXCEPTION:
-    {
-        g_value_set_long(value, coreSelf->attrWithSetterException());
-        break;
-    }
-    case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION:
-    {
-        WebCore::ExceptionCode ec = 0;
-        g_value_take_string(value, convertToUTF8String(coreSelf->stringAttrWithGetterException(ec)));
-        break;
-    }
-    case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION:
-    {
-        g_value_take_string(value, convertToUTF8String(coreSelf->stringAttrWithSetterException()));
-        break;
-    }
-    case PROP_WITH_SCRIPT_STATE_ATTRIBUTE:
-    {
-        g_value_set_long(value, coreSelf->withScriptStateAttribute());
-        break;
-    }
-    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE:
-    {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAttribute();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-    case PROP_WITH_SCRIPT_STATE_ATTRIBUTE_RAISES:
-    {
-        WebCore::ExceptionCode ec = 0;
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptStateAttributeRaises(ec);
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE_RAISES:
-    {
-        WebCore::ExceptionCode ec = 0;
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAttributeRaises(ec);
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE:
-    {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAndScriptStateAttribute();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE_RAISES:
-    {
-        WebCore::ExceptionCode ec = 0;
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAndScriptStateAttributeRaises(ec);
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_WITH_SPACES_ATTRIBUTE:
-    {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAndScriptStateWithSpacesAttribute();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-    case PROP_WITH_SCRIPT_ARGUMENTS_AND_CALL_STACK_ATTRIBUTE:
-    {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptArgumentsAndCallStackAttribute();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-#if ENABLE(Condition1)
-    case PROP_CONDITIONAL_ATTR1:
-    {
-        g_value_set_long(value, coreSelf->conditionalAttr1());
-        break;
-    }
-#endif /* ENABLE(Condition1) */
-#if ENABLE(Condition1) && ENABLE(Condition2)
-    case PROP_CONDITIONAL_ATTR2:
-    {
-        g_value_set_long(value, coreSelf->conditionalAttr2());
-        break;
-    }
-#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
-#if ENABLE(Condition1) || ENABLE(Condition2)
-    case PROP_CONDITIONAL_ATTR3:
-    {
-        g_value_set_long(value, coreSelf->conditionalAttr3());
-        break;
-    }
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
-    case PROP_CONTENT_DOCUMENT:
-    {
-        RefPtr<WebCore::Document> ptr = coreSelf->contentDocument();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-    case PROP_MUTABLE_POINT:
-    {
-        RefPtr<WebCore::SVGPoint> ptr = coreSelf->mutablePoint();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-    case PROP_IMMUTABLE_POINT:
-    {
-        RefPtr<WebCore::SVGPoint> ptr = coreSelf->immutablePoint();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-        break;
-    }
-    case PROP_STRAWBERRY:
-    {
-        g_value_set_int(value, coreSelf->blueberry());
-        break;
-    }
-    case PROP_STRICT_FLOAT:
-    {
-        g_value_set_float(value, coreSelf->strictFloat());
-        break;
-    }
-    case PROP_DESCRIPTION:
-    {
-        g_value_set_long(value, coreSelf->description());
-        break;
-    }
-    case PROP_ID:
-    {
-        g_value_set_long(value, coreSelf->id());
-        break;
-    }
-    case PROP_HASH:
-    {
-        g_value_take_string(value, convertToUTF8String(coreSelf->hash()));
-        break;
-    }
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-        break;
-    }
-}
-
-
-static void webkit_dom_test_obj_constructed(GObject* object)
-{
-
-    if (G_OBJECT_CLASS(webkit_dom_test_obj_parent_class)->constructed)
-        G_OBJECT_CLASS(webkit_dom_test_obj_parent_class)->constructed(object);
-}
-
-static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
-{
-    GObjectClass *gobjectClass = G_OBJECT_CLASS(requestClass);
-    gobjectClass->finalize = webkit_dom_test_obj_finalize;
-    gobjectClass->set_property = webkit_dom_test_obj_set_property;
-    gobjectClass->get_property = webkit_dom_test_obj_get_property;
-    gobjectClass->constructed = webkit_dom_test_obj_constructed;
-
-    g_object_class_install_property(gobjectClass,
-                                    PROP_READ_ONLY_INT_ATTR,
-                                    g_param_spec_long("read-only-int-attr", /* name */
-                                                           "test_obj_read-only-int-attr", /* short description */
-                                                           "read-only  glong TestObj.read-only-int-attr", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READABLE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_READ_ONLY_STRING_ATTR,
-                                    g_param_spec_string("read-only-string-attr", /* name */
-                                                           "test_obj_read-only-string-attr", /* short description */
-                                                           "read-only  gchar* TestObj.read-only-string-attr", /* longer - could do with some extra doc stuff here */
-                                                           "", /* default */
-                                                           WEBKIT_PARAM_READABLE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_READ_ONLY_TEST_OBJ_ATTR,
-                                    g_param_spec_object("read-only-test-obj-attr", /* name */
-                                                           "test_obj_read-only-test-obj-attr", /* short description */
-                                                           "read-only  WebKitDOMTestObj* TestObj.read-only-test-obj-attr", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
-                                                           WEBKIT_PARAM_READABLE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_SHORT_ATTR,
-                                    g_param_spec_int("short-attr", /* name */
-                                                           "test_obj_short-attr", /* short description */
-                                                           "read-write  gshort TestObj.short-attr", /* longer - could do with some extra doc stuff here */
-                                                           G_MININT, /* min */
-G_MAXINT, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_UNSIGNED_SHORT_ATTR,
-                                    g_param_spec_uint("unsigned-short-attr", /* name */
-                                                           "test_obj_unsigned-short-attr", /* short description */
-                                                           "read-write  gushort TestObj.unsigned-short-attr", /* longer - could do with some extra doc stuff here */
-                                                           0, /* min */
-G_MAXUINT, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_INT_ATTR,
-                                    g_param_spec_long("int-attr", /* name */
-                                                           "test_obj_int-attr", /* short description */
-                                                           "read-write  glong TestObj.int-attr", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_LONG_LONG_ATTR,
-                                    g_param_spec_int64("long-long-attr", /* name */
-                                                           "test_obj_long-long-attr", /* short description */
-                                                           "read-write  gint64 TestObj.long-long-attr", /* longer - could do with some extra doc stuff here */
-                                                           G_MININT64, /* min */
-G_MAXINT64, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_UNSIGNED_LONG_LONG_ATTR,
-                                    g_param_spec_uint64("unsigned-long-long-attr", /* name */
-                                                           "test_obj_unsigned-long-long-attr", /* short description */
-                                                           "read-write  guint64 TestObj.unsigned-long-long-attr", /* longer - could do with some extra doc stuff here */
-                                                           0, /* min */
-G_MAXUINT64, /* min */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_STRING_ATTR,
-                                    g_param_spec_string("string-attr", /* name */
-                                                           "test_obj_string-attr", /* short description */
-                                                           "read-write  gchar* TestObj.string-attr", /* longer - could do with some extra doc stuff here */
-                                                           "", /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_TEST_OBJ_ATTR,
-                                    g_param_spec_object("test-obj-attr", /* name */
-                                                           "test_obj_test-obj-attr", /* short description */
-                                                           "read-write  WebKitDOMTestObj* TestObj.test-obj-attr", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_XML_OBJ_ATTR,
-                                    g_param_spec_object("xml-obj-attr", /* name */
-                                                           "test_obj_xml-obj-attr", /* short description */
-                                                           "read-write  WebKitDOMTestObj* TestObj.xml-obj-attr", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_CREATE,
-                                    g_param_spec_boolean("create", /* name */
-                                                           "test_obj_create", /* short description */
-                                                           "read-write  gboolean TestObj.create", /* longer - could do with some extra doc stuff here */
-                                                           FALSE, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_REFLECTED_STRING_ATTR,
-                                    g_param_spec_string("reflected-string-attr", /* name */
-                                                           "test_obj_reflected-string-attr", /* short description */
-                                                           "read-write  gchar* TestObj.reflected-string-attr", /* longer - could do with some extra doc stuff here */
-                                                           "", /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_REFLECTED_INTEGRAL_ATTR,
-                                    g_param_spec_long("reflected-integral-attr", /* name */
-                                                           "test_obj_reflected-integral-attr", /* short description */
-                                                           "read-write  glong TestObj.reflected-integral-attr", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR,
-                                    g_param_spec_ulong("reflected-unsigned-integral-attr", /* name */
-                                                           "test_obj_reflected-unsigned-integral-attr", /* short description */
-                                                           "read-write  gulong TestObj.reflected-unsigned-integral-attr", /* longer - could do with some extra doc stuff here */
-                                                           0, /* min */
-G_MAXULONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_REFLECTED_BOOLEAN_ATTR,
-                                    g_param_spec_boolean("reflected-boolean-attr", /* name */
-                                                           "test_obj_reflected-boolean-attr", /* short description */
-                                                           "read-write  gboolean TestObj.reflected-boolean-attr", /* longer - could do with some extra doc stuff here */
-                                                           FALSE, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_REFLECTED_URL_ATTR,
-                                    g_param_spec_string("reflected-url-attr", /* name */
-                                                           "test_obj_reflected-url-attr", /* short description */
-                                                           "read-write  gchar* TestObj.reflected-url-attr", /* longer - could do with some extra doc stuff here */
-                                                           "", /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_REFLECTED_STRING_ATTR,
-                                    g_param_spec_string("reflected-string-attr", /* name */
-                                                           "test_obj_reflected-string-attr", /* short description */
-                                                           "read-write  gchar* TestObj.reflected-string-attr", /* longer - could do with some extra doc stuff here */
-                                                           "", /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR,
-                                    g_param_spec_long("reflected-custom-integral-attr", /* name */
-                                                           "test_obj_reflected-custom-integral-attr", /* short description */
-                                                           "read-write  glong TestObj.reflected-custom-integral-attr", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR,
-                                    g_param_spec_boolean("reflected-custom-boolean-attr", /* name */
-                                                           "test_obj_reflected-custom-boolean-attr", /* short description */
-                                                           "read-write  gboolean TestObj.reflected-custom-boolean-attr", /* longer - could do with some extra doc stuff here */
-                                                           FALSE, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_REFLECTED_CUSTOM_URL_ATTR,
-                                    g_param_spec_string("reflected-custom-url-attr", /* name */
-                                                           "test_obj_reflected-custom-url-attr", /* short description */
-                                                           "read-write  gchar* TestObj.reflected-custom-url-attr", /* longer - could do with some extra doc stuff here */
-                                                           "", /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_ATTR_WITH_GETTER_EXCEPTION,
-                                    g_param_spec_long("attr-with-getter-exception", /* name */
-                                                           "test_obj_attr-with-getter-exception", /* short description */
-                                                           "read-write  glong TestObj.attr-with-getter-exception", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_ATTR_WITH_SETTER_EXCEPTION,
-                                    g_param_spec_long("attr-with-setter-exception", /* name */
-                                                           "test_obj_attr-with-setter-exception", /* short description */
-                                                           "read-write  glong TestObj.attr-with-setter-exception", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_STRING_ATTR_WITH_GETTER_EXCEPTION,
-                                    g_param_spec_string("string-attr-with-getter-exception", /* name */
-                                                           "test_obj_string-attr-with-getter-exception", /* short description */
-                                                           "read-write  gchar* TestObj.string-attr-with-getter-exception", /* longer - could do with some extra doc stuff here */
-                                                           "", /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_STRING_ATTR_WITH_SETTER_EXCEPTION,
-                                    g_param_spec_string("string-attr-with-setter-exception", /* name */
-                                                           "test_obj_string-attr-with-setter-exception", /* short description */
-                                                           "read-write  gchar* TestObj.string-attr-with-setter-exception", /* longer - could do with some extra doc stuff here */
-                                                           "", /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_WITH_SCRIPT_STATE_ATTRIBUTE,
-                                    g_param_spec_long("with-script-state-attribute", /* name */
-                                                           "test_obj_with-script-state-attribute", /* short description */
-                                                           "read-write  glong TestObj.with-script-state-attribute", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE,
-                                    g_param_spec_object("with-script-execution-context-attribute", /* name */
-                                                           "test_obj_with-script-execution-context-attribute", /* short description */
-                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-execution-context-attribute", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_WITH_SCRIPT_STATE_ATTRIBUTE_RAISES,
-                                    g_param_spec_object("with-script-state-attribute-raises", /* name */
-                                                           "test_obj_with-script-state-attribute-raises", /* short description */
-                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-state-attribute-raises", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE_RAISES,
-                                    g_param_spec_object("with-script-execution-context-attribute-raises", /* name */
-                                                           "test_obj_with-script-execution-context-attribute-raises", /* short description */
-                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-execution-context-attribute-raises", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE,
-                                    g_param_spec_object("with-script-execution-context-and-script-state-attribute", /* name */
-                                                           "test_obj_with-script-execution-context-and-script-state-attribute", /* short description */
-                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-execution-context-and-script-state-attribute", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE_RAISES,
-                                    g_param_spec_object("with-script-execution-context-and-script-state-attribute-raises", /* name */
-                                                           "test_obj_with-script-execution-context-and-script-state-attribute-raises", /* short description */
-                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-execution-context-and-script-state-attribute-raises", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_WITH_SPACES_ATTRIBUTE,
-                                    g_param_spec_object("with-script-execution-context-and-script-state-with-spaces-attribute", /* name */
-                                                           "test_obj_with-script-execution-context-and-script-state-with-spaces-attribute", /* short description */
-                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-execution-context-and-script-state-with-spaces-attribute", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_WITH_SCRIPT_ARGUMENTS_AND_CALL_STACK_ATTRIBUTE,
-                                    g_param_spec_object("with-script-arguments-and-call-stack-attribute", /* name */
-                                                           "test_obj_with-script-arguments-and-call-stack-attribute", /* short description */
-                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-arguments-and-call-stack-attribute", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
-                                                           WEBKIT_PARAM_READWRITE));
-#if ENABLE(Condition1)
-    g_object_class_install_property(gobjectClass,
-                                    PROP_CONDITIONAL_ATTR1,
-                                    g_param_spec_long("conditional-attr1", /* name */
-                                                           "test_obj_conditional-attr1", /* short description */
-                                                           "read-write  glong TestObj.conditional-attr1", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-#endif /* ENABLE(Condition1) */
-#if ENABLE(Condition1) && ENABLE(Condition2)
-    g_object_class_install_property(gobjectClass,
-                                    PROP_CONDITIONAL_ATTR2,
-                                    g_param_spec_long("conditional-attr2", /* name */
-                                                           "test_obj_conditional-attr2", /* short description */
-                                                           "read-write  glong TestObj.conditional-attr2", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
-#if ENABLE(Condition1) || ENABLE(Condition2)
-    g_object_class_install_property(gobjectClass,
-                                    PROP_CONDITIONAL_ATTR3,
-                                    g_param_spec_long("conditional-attr3", /* name */
-                                                           "test_obj_conditional-attr3", /* short description */
-                                                           "read-write  glong TestObj.conditional-attr3", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
-    g_object_class_install_property(gobjectClass,
-                                    PROP_CONTENT_DOCUMENT,
-                                    g_param_spec_object("content-document", /* name */
-                                                           "test_obj_content-document", /* short description */
-                                                           "read-only  WebKitDOMDocument* TestObj.content-document", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_DOCUMENT, /* gobject type */
-                                                           WEBKIT_PARAM_READABLE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_MUTABLE_POINT,
-                                    g_param_spec_object("mutable-point", /* name */
-                                                           "test_obj_mutable-point", /* short description */
-                                                           "read-write  WebKitDOMSVGPoint* TestObj.mutable-point", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_SVG_POINT, /* gobject type */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_IMMUTABLE_POINT,
-                                    g_param_spec_object("immutable-point", /* name */
-                                                           "test_obj_immutable-point", /* short description */
-                                                           "read-write  WebKitDOMSVGPoint* TestObj.immutable-point", /* longer - could do with some extra doc stuff here */
-                                                           WEBKIT_TYPE_DOM_SVG_POINT, /* gobject type */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_STRAWBERRY,
-                                    g_param_spec_int("strawberry", /* name */
-                                                           "test_obj_strawberry", /* short description */
-                                                           "read-write  gint TestObj.strawberry", /* longer - could do with some extra doc stuff here */
-                                                           G_MININT, /* min */
-G_MAXINT, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_STRICT_FLOAT,
-                                    g_param_spec_float("strict-float", /* name */
-                                                           "test_obj_strict-float", /* short description */
-                                                           "read-write  gfloat TestObj.strict-float", /* longer - could do with some extra doc stuff here */
-                                                           -G_MAXFLOAT, /* min */
-G_MAXFLOAT, /* max */
-0.0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_DESCRIPTION,
-                                    g_param_spec_long("description", /* name */
-                                                           "test_obj_description", /* short description */
-                                                           "read-only  glong TestObj.description", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READABLE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_ID,
-                                    g_param_spec_long("id", /* name */
-                                                           "test_obj_id", /* short description */
-                                                           "read-write  glong TestObj.id", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
-0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_HASH,
-                                    g_param_spec_string("hash", /* name */
-                                                           "test_obj_hash", /* short description */
-                                                           "read-only  gchar* TestObj.hash", /* longer - could do with some extra doc stuff here */
-                                                           "", /* default */
-                                                           WEBKIT_PARAM_READABLE));
-
-
-}
-
-static void webkit_dom_test_obj_init(WebKitDOMTestObj* request)
-{
-}
-
-namespace WebKit {
-WebKitDOMTestObj* wrapTestObj(WebCore::TestObj* coreObject)
-{
-    g_return_val_if_fail(coreObject, 0);
-
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
-    coreObject->ref();
-
-    return  WEBKIT_DOM_TEST_OBJ(g_object_new(WEBKIT_TYPE_DOM_TEST_OBJ,
-                                               "core-object", coreObject, NULL));
-}
-} // namespace WebKit
