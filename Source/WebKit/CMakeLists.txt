@@ -1,5 +1,4 @@
 SET(WebKit_INCLUDE_DIRECTORIES
-    "${WTF_DIR}"
     "${WEBKIT_DIR}"
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/webdatabase"
@@ -51,8 +50,9 @@ SET(WebKit_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/parser"
     "${JAVASCRIPTCORE_DIR}/profiler"
     "${JAVASCRIPTCORE_DIR}/runtime"
-    "${JAVASCRIPTCORE_DIR}/wtf"
-    "${JAVASCRIPTCORE_DIR}/wtf/unicode"
+    "${WTF_DIR}"
+    "${WTF_DIR}/wtf"
+    "${WTF_DIR}/wtf/unicode"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
     "${CMAKE_BINARY_DIR}"
 )

@@ -29,7 +29,7 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <JavaScriptCore/runtime/UString.h>
-#include <JavaScriptCore/wtf/text/CString.h>
+#include <wtf/text/CString.h>
 
 bool LoadItem::invoke() const
 {

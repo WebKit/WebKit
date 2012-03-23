@@ -1,3 +1,9 @@
+2012-03-22  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        [CMake] Unreviewed build fix after r111778.
+
+        * Source/CMakeLists.txt: Build WTF/.
+
 2012-03-22  Martin Robinson  <mrobinson@igalia.com>
 
         Fixed the GTK+ WTF/JavaScriptCore build after r111778.

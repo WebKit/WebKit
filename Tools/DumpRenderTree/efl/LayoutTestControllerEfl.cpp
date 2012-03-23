@@ -49,10 +49,10 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
-#include <JavaScriptCore/wtf/text/WTFString.h>
 #include <KURL.h>
 #include <editing/FindOptions.h>
 #include <stdio.h>
+#include <wtf/text/WTFString.h>
 
 LayoutTestController::~LayoutTestController()
 {

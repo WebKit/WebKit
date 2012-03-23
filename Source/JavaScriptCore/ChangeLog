@@ -1,3 +1,10 @@
+2012-03-22  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        [CMake] Unreviewed build fix after r111778.
+
+        * CMakeLists.txt: Move ${WTF_DIR} after ${JAVASCRIPTCORE_DIR} in
+        the include paths so that the right config.h is used.
+
 2012-03-22  Tony Chang  <tony@chromium.org>
 
         Unreviewed, fix chromium build after wtf move.

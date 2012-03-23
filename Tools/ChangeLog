@@ -1,3 +1,16 @@
+2012-03-22  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        [CMake] Unreviewed build fix after r111778.
+
+        * DumpRenderTree/efl/CMakeLists.txt: Replace
+        ${JAVASCRIPTCORE_DIR}/wtf with ${WTF_DIR}/wtf in the include
+        paths.
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp: Use the right
+        wtf include.
+        * DumpRenderTree/efl/WorkQueueItemEfl.cpp: Ditto.
+        * WinCELauncher/CMakeLists.txt: Replace ${JAVASCRIPTCORE_DIR}/wtf
+        with ${WTF_DIR}/wtf in the include paths.
+
 2012-03-22  Filip Pizlo  <fpizlo@apple.com>
 
         Tools/Scripts/build-jsc doesn't work after WTF move

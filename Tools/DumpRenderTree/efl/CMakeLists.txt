@@ -41,7 +41,6 @@ SET(DumpRenderTree_LIBRARIES
 )
 
 SET(DumpRenderTree_INCLUDE_DIRECTORIES
-    ${WTF_DIR}
     "${WEBKIT_DIR}/efl/ewk"
     ${WEBKIT_DIR}/efl
     ${WEBCORE_DIR}
@@ -80,12 +79,13 @@ SET(DumpRenderTree_INCLUDE_DIRECTORIES
     ${JAVASCRIPTCORE_DIR}/llint
     ${JAVASCRIPTCORE_DIR}/runtime
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
-    ${JAVASCRIPTCORE_DIR}/wtf
-    ${JAVASCRIPTCORE_DIR}/wtf/gobject
-    ${JAVASCRIPTCORE_DIR}/wtf/efl
     ${TOOLS_DIR}/DumpRenderTree
     ${TOOLS_DIR}/DumpRenderTree/cairo
     ${TOOLS_DIR}/DumpRenderTree/efl
+    ${WTF_DIR}
+    ${WTF_DIR}/wtf
+    ${WTF_DIR}/wtf/efl
+    ${WTF_DIR}/wtf/gobject
     ${CMAKE_SOURCE_DIR}/Source
     ${CMAKE_BINARY_DIR}
     ${DERIVED_SOURCES_WEBCORE_DIR}

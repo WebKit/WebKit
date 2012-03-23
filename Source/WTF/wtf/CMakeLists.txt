@@ -190,6 +190,7 @@ SET(WTF_INCLUDE_DIRECTORIES
     "${WTF_DIR}/wtf/unicode"
     "${WTF_DIR}/wtf/dtoa"
     "${THIRDPARTY_DIR}"
+    "${CMAKE_BINARY_DIR}"
 )
 
 IF (ENABLE_FAST_MALLOC)

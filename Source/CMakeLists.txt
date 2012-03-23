@@ -1,6 +1,8 @@
 # -----------------------------------------------------------------------------
 # Add module directories
 # -----------------------------------------------------------------------------
+ADD_SUBDIRECTORY(WTF)
+
 ADD_SUBDIRECTORY(JavaScriptCore)
 
 IF (ENABLE_WEBCORE)
