@@ -1,3 +1,12 @@
+2012-03-23  Steve Falkenburg  <sfalken@apple.com>
+
+        Update Apple Windows build files for WTF move
+        https://bugs.webkit.org/show_bug.cgi?id=82069
+
+        Reviewed by Jessie Berlin.
+
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln: Removed WTF and WTFGenerated.
+
 2012-03-23  Dean Jackson  <dino@apple.com>
 
         Disable CSS_SHADERS in Apple builds
