@@ -92,6 +92,16 @@ void CredentialManager::saveCredentialIfConfirmed(PageClientBlackBerry* pageClie
     }
 }
 
+void CredentialManager::clearCredentials()
+{
+    CredentialBackingStore::instance()->clearLogins();
+}
+
+void CredentialManager::clearNeverRememberSites()
+{
+    CredentialBackingStore::instance()->clearNeverRemember();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)

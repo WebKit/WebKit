@@ -1,5 +1,32 @@
 2012-03-22  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
+        [BlackBerry] add interface clearCredentials() and clearNeverRememberSites()
+        https://bugs.webkit.org/show_bug.cgi?id=81887
+
+        Reviewed by Rob Buis.
+
+        Added two interface functions clearCredentials() and
+        clearNeverRememberSites() into class WebPage, which
+        should be used by UI to clear the stored credential
+        information and never remember sites.
+        Also implemented the corresponding functions in class
+        CredentialManager to call CredentialBackingStore
+        to perform the actual clear table work.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::clearCredentials):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::clearNeverRememberSites):
+        * Api/WebPage.h:
+        * WebCoreSupport/CredentialManager.cpp:
+        (WebCore::CredentialManager::clearCredentials):
+        (WebCore):
+        (WebCore::CredentialManager::clearNeverRememberSites):
+        * WebCoreSupport/CredentialManager.h:
+        (CredentialManager):
+
+2012-03-22  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
         [BlackBerry] http authenticate dialog popup only once no matter authentication pass or fail
         https://bugs.webkit.org/show_bug.cgi?id=80135
 

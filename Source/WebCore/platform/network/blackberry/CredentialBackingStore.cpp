@@ -404,7 +404,7 @@ bool CredentialBackingStore::clearLogins()
     ASSERT(m_database.isOpen());
     ASSERT(m_database.tableExists("logins"));
 
-    HANDLE_SQL_EXEC_FAILURE(!m_database.executeCommand("DELETE * FROM logins"),
+    HANDLE_SQL_EXEC_FAILURE(!m_database.executeCommand("DELETE FROM logins"),
         false, "Failed to clear table logins");
 
     return true;
@@ -415,7 +415,7 @@ bool CredentialBackingStore::clearNeverRemember()
     ASSERT(m_database.isOpen());
     ASSERT(m_database.tableExists("never_remember"));
 
-    HANDLE_SQL_EXEC_FAILURE(!m_database.executeCommand("DELETE * FROM never_remember"),
+    HANDLE_SQL_EXEC_FAILURE(!m_database.executeCommand("DELETE FROM never_remember"),
         false, "Failed to clear table never_remember");
 
     return true;

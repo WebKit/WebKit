@@ -4874,6 +4874,20 @@ void WebPage::clearLocalStorage()
     clearDatabase(d->m_page->groupName());
 }
 
+void WebPage::clearCredentials()
+{
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+    credentialManager().clearCredentials();
+#endif
+}
+
+void WebPage::clearNeverRememberSites()
+{
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+    credentialManager().clearNeverRememberSites();
+#endif
+}
+
 void WebPage::clearCache()
 {
     clearMemoryCaches();

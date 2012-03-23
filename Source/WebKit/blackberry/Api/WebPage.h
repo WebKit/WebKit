@@ -191,6 +191,8 @@ public:
     void clearCookies();
     void clearCache();
     void clearLocalStorage();
+    void clearCredentials();
+    void clearNeverRememberSites();
 
     void runLayoutTests();
 

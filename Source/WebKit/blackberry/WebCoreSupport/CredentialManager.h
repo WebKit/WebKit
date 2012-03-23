@@ -42,6 +42,8 @@ public:
     void autofillAuthenticationChallenge(const ProtectionSpace&, BlackBerry::WebKit::WebString& username, BlackBerry::WebKit::WebString& password);
     void autofillPasswordForms(PassRefPtr<HTMLCollection> docForms);
     void saveCredentialIfConfirmed(PageClientBlackBerry*, const CredentialTransformData&);
+    void clearCredentials();
+    void clearNeverRememberSites();
 
  private:
     friend CredentialManager& credentialManager();
