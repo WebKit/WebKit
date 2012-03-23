@@ -1,3 +1,28 @@
+2012-03-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        WebHistory is busted after changing time zone
+        https://bugs.webkit.org/show_bug.cgi?id=81849
+
+        Reviewed by Brady Eidson.
+
+        The date used for choosing the bucket of a new entry is computed
+        with the system TimeZone.
+
+        When the Time Zone change, or the daylight saving time change, all the dates
+        in _entriesByDate are offset from the new entries.
+
+        This patch solves the issue by re-distributing the WebHistoryItems if the time zone
+        changes.
+        The clients of WebHistory are notified of this change through the regular Notifications.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate rebuildHistoryByDayIfNeeded:]):
+        (-[WebHistoryPrivate init]):
+        (-[WebHistory timeZoneChanged:]):
+        (-[WebHistory init]):
+        (-[WebHistory dealloc]):
+        (-[WebHistory finalize]):
+
 2012-03-21  Tim Horton  <timothy_horton@apple.com>
 
         Make use of CG rounded-rect primitives

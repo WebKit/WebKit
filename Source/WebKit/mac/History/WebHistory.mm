@@ -68,6 +68,10 @@ private:
     Vector<int> m_dateKeys;
 };
 
+@interface WebHistory ()
+- (void)_sendNotification:(NSString *)name entries:(NSArray *)entries;
+@end
+
 @interface WebHistoryPrivate : NSObject {
 @private
     NSMutableDictionary *_entriesByURL;
@@ -119,6 +123,32 @@ private:
             @"1000", @"WebKitHistoryItemLimit",
             @"7", @"WebKitHistoryAgeInDaysLimit",
             nil]];    
+}
+
+- (void)rebuildHistoryByDayIfNeeded:(WebHistory *)webHistory
+{
+    // We clear all the values to present a consistent state when sending the notifications.
+    // We keep a reference to the entries for rebuilding the history after the notification.
+    Vector <RetainPtr<NSMutableArray> > entryArrays;
+    copyValuesToVector(*_entriesByDate, entryArrays);
+    _entriesByDate->clear();
+
+    NSMutableDictionary *entriesByURL = _entriesByURL;
+    _entriesByURL = nil;
+
+    [_orderedLastVisitedDays release];
+    _orderedLastVisitedDays = nil;
+
+    NSArray *allEntries = [entriesByURL allValues];
+    [webHistory _sendNotification:WebHistoryAllItemsRemovedNotification entries:allEntries];
+
+    // Next, we rebuild the history, restore the states, and notify the clients.
+    _entriesByURL = entriesByURL;
+    for (size_t dayIndex = 0; dayIndex < entryArrays.size(); ++dayIndex) {
+        for (WebHistoryItem *entry in (entryArrays[dayIndex]).get())
+            [self addItemToDateCaches:entry];
+    }
+    [webHistory _sendNotification:WebHistoryItemsAddedNotification entries:allEntries];
 }
 
 - (id)init
@@ -662,19 +692,39 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     PageGroup::removeAllVisitedLinks();
 }
 
+- (void)timeZoneChanged:(NSNotification *)notification
+{
+    [_historyPrivate rebuildHistoryByDayIfNeeded:self];
+}
+
 - (id)init
 {
     self = [super init];
     if (!self)
         return nil;
     _historyPrivate = [[WebHistoryPrivate alloc] init];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(timeZoneChanged:)
+                                                 name:NSSystemTimeZoneDidChangeNotification
+                                               object:nil];
     return self;
 }
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSSystemTimeZoneDidChangeNotification
+                                                  object:nil];
     [_historyPrivate release];
     [super dealloc];
+}
+
+- (void)finalize
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSSystemTimeZoneDidChangeNotification
+                                                  object:nil];
+    [super finalize];
 }
 
 // MARK: MODIFYING CONTENTS
