@@ -172,11 +172,6 @@ WK_EXPORT bool WKPreferencesGetWebAudioEnabled(WKPreferencesRef preferencesRef);
 // Defaults to false
 WK_EXPORT void WKPreferencesSetSuppressesIncrementalRendering(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetSuppressesIncrementalRendering(WKPreferencesRef preferencesRef);
-    
-// Defaults to false
-// These functions are deprecated. See <rdar://problem/10929617> Remove WKPreferences[Get|Set]SuppressIncrementalRendering from WKPreferences.h.
-WK_EXPORT void WKPreferencesSetSuppressIncrementalRendering(WKPreferencesRef preferencesRef, bool enabled);
-WK_EXPORT bool WKPreferencesGetSuppressIncrementalRendering(WKPreferencesRef preferencesRef);
 
 // Defaults to true
 WK_EXPORT void WKPreferencesSetBackspaceKeyNavigationEnabled(WKPreferencesRef preferencesRef, bool enabled);
