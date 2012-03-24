@@ -580,6 +580,14 @@ InlineBox* RootInlineBox::closestLeafChildForLogicalLeftPosition(int leftPositio
 {
     InlineBox* firstLeaf = firstLeafChild();
     InlineBox* lastLeaf = lastLeafChild();
+
+    if (firstLeaf != lastLeaf) {
+        if (firstLeaf->isLineBreak())
+            firstLeaf = firstLeaf->nextLeafChildIgnoringLineBreak();
+        else if (lastLeaf->isLineBreak())
+            lastLeaf = lastLeaf->prevLeafChildIgnoringLineBreak();
+    }
+
     if (firstLeaf == lastLeaf && (!onlyEditableLeaves || isEditableLeaf(firstLeaf)))
         return firstLeaf;
 
@@ -595,7 +603,7 @@ InlineBox* RootInlineBox::closestLeafChildForLogicalLeftPosition(int leftPositio
         return lastLeaf;
 
     InlineBox* closestLeaf = 0;
-    for (InlineBox* leaf = firstLeaf; leaf; leaf = leaf->nextLeafChild()) {
+    for (InlineBox* leaf = firstLeaf; leaf; leaf = leaf->nextLeafChildIgnoringLineBreak()) {
         if (!leaf->renderer()->isListMarker() && (!onlyEditableLeaves || isEditableLeaf(leaf))) {
             closestLeaf = leaf;
             if (leftPosition < leaf->logicalRight())

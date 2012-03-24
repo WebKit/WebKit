@@ -100,14 +100,14 @@ RenderedPosition::RenderedPosition(const Position& position, EAffinity affinity)
 InlineBox* RenderedPosition::prevLeafChild() const
 {
     if (m_prevLeafChild == uncachedInlineBox())
-        m_prevLeafChild = m_inlineBox->prevLeafChild();
+        m_prevLeafChild = m_inlineBox->prevLeafChildIgnoringLineBreak();
     return m_prevLeafChild;
 }
 
 InlineBox* RenderedPosition::nextLeafChild() const
 {
     if (m_nextLeafChild == uncachedInlineBox())
-        m_nextLeafChild = m_inlineBox->nextLeafChild();
+        m_nextLeafChild = m_inlineBox->nextLeafChildIgnoringLineBreak();
     return m_nextLeafChild;
 }
 

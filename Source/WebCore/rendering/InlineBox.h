@@ -200,7 +200,13 @@ public:
     
     InlineBox* nextLeafChild() const;
     InlineBox* prevLeafChild() const;
-        
+
+    // Helper functions for editing and hit-testing code.
+    // FIXME: These two functions should be moved to RenderedPosition once the code to convert between
+    // Position and inline box, offset pair is moved to RenderedPosition.
+    InlineBox* nextLeafChildIgnoringLineBreak() const;
+    InlineBox* prevLeafChildIgnoringLineBreak() const;
+
     RenderObject* renderer() const { return m_renderer; }
 
     InlineFlowBox* parent() const

@@ -4606,12 +4606,17 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoin
     if (closestBox) {
         if (moveCaretToBoundary && pointInLogicalContents.y() < firstRootBoxWithChildren->selectionTop()
             && pointInLogicalContents.y() < firstRootBoxWithChildren->logicalTop()) {
+            InlineBox* box = firstRootBoxWithChildren->firstLeafChild();
+            if (box->isLineBreak()) {
+                if (InlineBox* newBox = box->nextLeafChildIgnoringLineBreak())
+                    box = newBox;
+            }
             // y coordinate is above first root line box, so return the start of the first
-            return VisiblePosition(positionForBox(firstRootBoxWithChildren->firstLeafChild(), true), DOWNSTREAM);
+            return VisiblePosition(positionForBox(box, true), DOWNSTREAM);
         }
 
         // pass the box a top position that is inside it
-        LayoutPoint point(pointInLogicalContents.x(), closestBox->logicalTop());
+        LayoutPoint point(pointInLogicalContents.x(), max(closestBox->root()->lineTop(), closestBox->root()->selectionTop()));
         if (!isHorizontalWritingMode())
             point = point.transposedPoint();
         if (closestBox->renderer()->isReplaced())

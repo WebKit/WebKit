@@ -299,7 +299,23 @@ InlineBox* InlineBox::prevLeafChild() const
         leaf = parent()->prevLeafChild();
     return leaf;
 }
-    
+
+InlineBox* InlineBox::nextLeafChildIgnoringLineBreak() const
+{
+    InlineBox* leaf = nextLeafChild();
+    if (leaf && leaf->isLineBreak())
+        return 0;
+    return leaf;
+}
+
+InlineBox* InlineBox::prevLeafChildIgnoringLineBreak() const
+{
+    InlineBox* leaf = prevLeafChild();
+    if (leaf && leaf->isLineBreak())
+        return 0;
+    return leaf;
+}
+
 RenderObject::SelectionState InlineBox::selectionState()
 {
     return renderer()->selectionState();
