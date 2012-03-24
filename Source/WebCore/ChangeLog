@@ -1,3 +1,29 @@
+2012-03-23  Adam Klein  <adamk@chromium.org>
+
+        REGRESSION(r103452): 100% CPU usage and 5s pause after clicking on a link in Yahoo Mail
+        https://bugs.webkit.org/show_bug.cgi?id=81141
+
+        Reviewed by Ojan Vafai.
+
+        Revert the behavior change from r103452: don't fire DOMSubtreeModified
+        events when an attribute value merely changes. Still fire that event
+        when an attribute is added or removed from an element.
+
+        Though this contradicts the DOM3 spec, it matches legacy WebKit behavior,
+        and given that Mutation Events are deprecated, it seems unwise to make
+        any additions to WebKit's implementation of them.
+
+        Test: fast/dom/subtree-modified-attributes.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::didAddAttribute): Renamed from didModifyAttribute.
+        (WebCore::Element::didModifyAttribute): Remove the call to dispatchSubtreeModifiedEvent.
+        (WebCore):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::addAttribute): Call didAddAttribute instead of didModifyAttribute.
+
 2012-03-23  Daniel Bates  <dbates@webkit.org>
 
         REGRESSION(r99369): File input button doesn't highlight when pressed
