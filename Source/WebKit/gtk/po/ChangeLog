@@ -1,3 +1,12 @@
+2012-03-24  Kjartan Maraas  <kmaraas@gnome.org>
+
+        Updated Norwegian bokmål translation for webkitgtk
+        https://bugs.webkit.org/show_bug.cgi?id=73891
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * nb.po:
+
 2012-03-24  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed, rolling out r90755.
