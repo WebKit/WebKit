@@ -29,6 +29,7 @@
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
 #include <QGuiApplication>
+#include <QQuickCanvas>
 #include <WebCore/Cursor.h>
 #include <WebCore/DragData.h>
 #include <WebCore/FloatRect.h>
@@ -255,8 +256,9 @@ WebCore::IntSize QtPageClient::viewSize()
 
 bool QtPageClient::isViewWindowActive()
 {
-    // FIXME: The scene graph does not have the concept of being active or not when this was written.
-    return true;
+    if (!m_webView || !m_webView->canvas())
+        return false;
+    return m_webView->canvas()->isActive();
 }
 
 bool QtPageClient::isViewFocused()
