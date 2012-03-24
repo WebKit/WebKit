@@ -3040,19 +3040,20 @@ void Document::styleSelectorChanged(StyleSelectorUpdateFlag updateFlag)
 #endif
 
     bool stylesheetChangeRequiresStyleRecalc = updateActiveStylesheets(updateFlag);
-    if (!stylesheetChangeRequiresStyleRecalc)
-        return;
 
     if (updateFlag == DeferRecalcStyle) {
         scheduleForcedStyleRecalc();
         return;
     }
-    
+
     if (didLayoutWithPendingStylesheets() && m_pendingStylesheets <= 0) {
         m_pendingSheetLayout = IgnoreLayoutWithPendingSheets;
         if (renderer())
             renderer()->repaint();
     }
+
+    if (!stylesheetChangeRequiresStyleRecalc)
+        return;
 
     // This recalcStyle initiates a new recalc cycle. We need to bracket it to
     // make sure animations get the correct update time

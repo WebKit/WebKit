@@ -1,3 +1,18 @@
+2012-03-23  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r104060): Page contents not painted if inserting a new stylesheet and temporary body node
+        https://bugs.webkit.org/show_bug.cgi?id=76590
+
+        Reviewed by Maciej Stachowiak.
+
+        Test: fast/css/pending-stylesheet-repaint.html
+        
+        If there has been a style recalc with a pending stylesheet, the forced repaint will need to be triggered even
+        if the stylesheet doesn't affect the rendering. Otherwise we may end up never painting at all.
+
+        * dom/Document.cpp:
+        (WebCore::Document::styleSelectorChanged):
+
 2012-03-23  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(90089): Input type='search' text shakes up and down when the style is changed.
