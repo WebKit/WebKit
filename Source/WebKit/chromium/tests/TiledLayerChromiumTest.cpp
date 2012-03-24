@@ -69,7 +69,7 @@ private:
 
 class FakeTextureAllocator : public TextureAllocator {
 public:
-    virtual unsigned createTexture(const IntSize&, GC3Denum) { return 0; }
+    virtual unsigned createTexture(const IntSize&, GC3Denum) { return 1; }
     virtual void deleteTexture(unsigned, const IntSize&, GC3Denum) { }
 };
 
@@ -86,7 +86,12 @@ public:
         }
         virtual ~Texture() { }
 
-        virtual void updateRect(GraphicsContext3D*, TextureAllocator*, const IntRect&, const IntRect&) { m_layer->updateRect(); }
+        virtual void updateRect(GraphicsContext3D*, TextureAllocator* allocator, const IntRect&, const IntRect&)
+        {
+            if (allocator)
+                texture()->allocate(allocator);
+            m_layer->updateRect();
+        }
         virtual void prepareRect(const IntRect&) { m_layer->prepareRect(); }
 
     private:
@@ -144,10 +149,8 @@ public:
         : CCTiledLayerImpl(id) { }
     virtual ~FakeCCTiledLayerImpl() { }
 
-    bool hasTileAt(int i, int j)
-    {
-        return CCTiledLayerImpl::hasTileAt(i, j);
-    }
+    using CCTiledLayerImpl::hasTileAt;
+    using CCTiledLayerImpl::hasTextureIdForTileAt;
 };
 
 class FakeTiledLayerChromium : public TiledLayerChromium {
@@ -432,6 +435,88 @@ TEST(TiledLayerChromiumTest, pushIdlePaintTiles)
                 EXPECT_FALSE(layerImpl->hasTileAt(i, j));
         }
     }
+}
+
+TEST(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(1024*1024, 1024*1024, 1024);
+    DebugScopedSetImplThread implThread;
+    RefPtr<FakeTiledLayerChromium> layer1 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl1(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    RefPtr<FakeTiledLayerChromium> layer2 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl2(adoptPtr(new FakeCCTiledLayerImpl(0)));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    // For this test we have two layers. layer1 exhausts most texture memory, leaving room for 2 more tiles from
+    // layer2, but not all three tiles. First we paint layer1, and one tile from layer2. Then when we idle paint
+    // layer2, we will fail on the third tile of layer2, and this should not leave the second tile in a bad state.
+
+    // This requires 4*30000 bytes of memory.
+    IntRect layer2Rect(0, 0, 100, 300);
+    layer2->setBounds(layer2Rect.size());
+    layer2->setVisibleLayerRect(layer2Rect);
+    layer2->invalidateRect(layer2Rect);
+
+    // This uses 960000 bytes, leaving 88576 bytes of memory left, which is enough for 2 tiles only in the other layer.
+    IntRect layerRect(IntPoint::zero(), IntSize(100, 2400));
+    layer1->setBounds(layerRect.size());
+    layer1->setVisibleLayerRect(layerRect);
+    layer1->invalidateRect(layerRect);
+    layer1->prepareToUpdate(layerRect, 0);
+
+    // Paint a single tile in layer2 so that it will idle paint.
+    layer2->prepareToUpdate(IntRect(0, 0, 100, 100), 0);
+
+    // We should need idle-painting for both remaining tiles in layer2.
+    EXPECT_TRUE(layer2->needsIdlePaint(layer2Rect));
+
+    // Commit the frame over to impl.
+    layer1->updateCompositorResources(0, updater);
+    layer2->updateCompositorResources(0, updater);
+    updater.update(0, 5000);
+    layer1->pushPropertiesTo(layerImpl1.get());
+    layer2->pushPropertiesTo(layerImpl2.get());
+
+    // Now idle paint layer2. We are going to run out of memory though!
+    layer2->prepareToUpdate(IntRect(0, 0, 100, 100), 0);
+    layer2->prepareToUpdateIdle(layer2Rect, 0);
+
+    // Oh well, commit the frame and push.
+    layer1->updateCompositorResources(0, updater);
+    layer2->updateCompositorResources(0, updater);
+    updater.update(0, 5000);
+    layer1->pushPropertiesTo(layerImpl1.get());
+    layer2->pushPropertiesTo(layerImpl2.get());
+
+    // Sanity check, we should have textures for the big layer.
+    EXPECT_TRUE(layerImpl1->hasTextureIdForTileAt(0, 0));
+
+    // We should only have the first tile from layer2 since it failed to idle update.
+    EXPECT_TRUE(layerImpl2->hasTileAt(0, 0));
+    EXPECT_TRUE(layerImpl2->hasTextureIdForTileAt(0, 0));
+    EXPECT_FALSE(layerImpl2->hasTileAt(0, 1));
+    EXPECT_FALSE(layerImpl2->hasTileAt(0, 2));
+
+    // Now if layer2 becomes fully visible, we should be able to paint it and push valid textures.
+    textureManager->unprotectAllTextures();
+
+    layer2->prepareToUpdate(layer2Rect, 0);
+    layer1->prepareToUpdate(IntRect(), 0);
+
+    layer1->updateCompositorResources(0, updater);
+    layer2->updateCompositorResources(0, updater);
+    updater.update(0, 5000);
+    layer1->pushPropertiesTo(layerImpl1.get());
+    layer2->pushPropertiesTo(layerImpl2.get());
+
+    EXPECT_TRUE(layerImpl2->hasTileAt(0, 0));
+    EXPECT_TRUE(layerImpl2->hasTileAt(0, 1));
+    EXPECT_TRUE(layerImpl2->hasTileAt(0, 2));
+    EXPECT_TRUE(layerImpl2->hasTextureIdForTileAt(0, 0));
+    EXPECT_TRUE(layerImpl2->hasTextureIdForTileAt(0, 1));
+    EXPECT_TRUE(layerImpl2->hasTextureIdForTileAt(0, 2));
 }
 
 TEST(TiledLayerChromiumTest, pushIdlePaintedOccludedTiles)

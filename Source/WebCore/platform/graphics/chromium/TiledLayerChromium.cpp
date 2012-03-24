@@ -467,7 +467,16 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             }
 
             dirtyLayerRect.unite(tile->m_dirtyRect);
-            tile->copyAndClearDirty();
+        }
+    }
+
+    // For tiles that were not culled, we are going to update the area currently marked as dirty. So
+    // clear that dirty area and mark it for update instead.
+    for (int j = top; j <= bottom; ++j) {
+        for (int i = left; i <= right; ++i) {
+            UpdatableTile* tile = tileAt(i, j);
+            if (tile->m_updated)
+                tile->copyAndClearDirty();
         }
     }
 

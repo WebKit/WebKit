@@ -1,3 +1,18 @@
+2012-03-23  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] When prepainting fails, tiles dirty rects may be cleared
+        https://bugs.webkit.org/show_bug.cgi?id=82107
+
+        Reviewed by Adrienne Walker.
+
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeTextureAllocator::createTexture):
+        (WTF::FakeLayerTextureUpdater::Texture::updateRect):
+        (FakeCCTiledLayerImpl):
+        (WTF::FakeCCTiledLayerImpl::hasTextureIdForTileAt):
+        (WTF::TEST):
+        (WTF):
+
 2012-03-23  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] CCLayerTreeHostImpl::scrollBegin() should return ScrollFailed for CCInputHandlerClient::Gesture type when wheel handlers found.

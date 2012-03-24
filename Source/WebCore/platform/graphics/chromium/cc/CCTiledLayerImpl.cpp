@@ -101,6 +101,11 @@ bool CCTiledLayerImpl::hasTileAt(int i, int j) const
     return m_tiler->tileAt(i, j);
 }
 
+bool CCTiledLayerImpl::hasTextureIdForTileAt(int i, int j) const
+{
+    return hasTileAt(i, j) && tileAt(i, j)->textureId();
+}
+
 DrawableTile* CCTiledLayerImpl::tileAt(int i, int j) const
 {
     return static_cast<DrawableTile*>(m_tiler->tileAt(i, j));

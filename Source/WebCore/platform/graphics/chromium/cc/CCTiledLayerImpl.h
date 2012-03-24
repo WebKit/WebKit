@@ -75,6 +75,7 @@ protected:
     explicit CCTiledLayerImpl(int id);
     // Exposed for testing.
     bool hasTileAt(int, int) const;
+    bool hasTextureIdForTileAt(int, int) const;
 
     virtual TransformationMatrix quadTransform() const;
 
