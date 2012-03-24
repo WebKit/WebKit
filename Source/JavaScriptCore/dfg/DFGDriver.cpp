@@ -31,6 +31,7 @@
 #include "DFGByteCodeParser.h"
 #include "DFGCFAPhase.h"
 #include "DFGCSEPhase.h"
+#include "DFGFixupPhase.h"
 #include "DFGJITCompiler.h"
 #include "DFGPredictionPropagationPhase.h"
 #include "DFGRedundantPhiEliminationPhase.h"
@@ -60,6 +61,7 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
 
     performRedundantPhiElimination(dfg);
     performPredictionPropagation(dfg);
+    performFixup(dfg);
     performCSE(dfg);
     performVirtualRegisterAllocation(dfg);
     performCFA(dfg);

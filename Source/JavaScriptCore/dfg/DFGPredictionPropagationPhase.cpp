@@ -75,8 +75,6 @@ public:
             doRoundOfDoubleVoting();
             propagateBackward();
         } while (m_changed);
-        
-        fixup();
     }
     
 private:
@@ -771,109 +769,6 @@ private:
                 continue;
             m_changed |= variableAccessData->tallyVotesForShouldUseDoubleFormat();
         }
-    }
-    
-    void fixupNode(Node& node)
-    {
-        if (!node.shouldGenerate())
-            return;
-        
-        NodeType op = node.op();
-
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   %s @%u: ", Graph::opName(op), m_compileIndex);
-#endif
-        
-        switch (op) {
-        case GetById: {
-            if (!isInt32Prediction(m_graph[m_compileIndex].prediction()))
-                break;
-            if (codeBlock()->identifier(node.identifierNumber()) != globalData().propertyNames->length)
-                break;
-            bool isArray = isArrayPrediction(m_graph[node.child1()].prediction());
-            bool isString = isStringPrediction(m_graph[node.child1()].prediction());
-            bool isByteArray = m_graph[node.child1()].shouldSpeculateByteArray();
-            bool isInt8Array = m_graph[node.child1()].shouldSpeculateInt8Array();
-            bool isInt16Array = m_graph[node.child1()].shouldSpeculateInt16Array();
-            bool isInt32Array = m_graph[node.child1()].shouldSpeculateInt32Array();
-            bool isUint8Array = m_graph[node.child1()].shouldSpeculateUint8Array();
-            bool isUint8ClampedArray = m_graph[node.child1()].shouldSpeculateUint8ClampedArray();
-            bool isUint16Array = m_graph[node.child1()].shouldSpeculateUint16Array();
-            bool isUint32Array = m_graph[node.child1()].shouldSpeculateUint32Array();
-            bool isFloat32Array = m_graph[node.child1()].shouldSpeculateFloat32Array();
-            bool isFloat64Array = m_graph[node.child1()].shouldSpeculateFloat64Array();
-            if (!isArray && !isString && !isByteArray && !isInt8Array && !isInt16Array && !isInt32Array && !isUint8Array && !isUint8ClampedArray && !isUint16Array && !isUint32Array && !isFloat32Array && !isFloat64Array)
-                break;
-            
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("  @%u -> %s", m_compileIndex, isArray ? "GetArrayLength" : "GetStringLength");
-#endif
-            if (isArray)
-                node.setOp(GetArrayLength);
-            else if (isString)
-                node.setOp(GetStringLength);
-            else if (isByteArray)
-                node.setOp(GetByteArrayLength);
-            else if (isInt8Array)
-                node.setOp(GetInt8ArrayLength);
-            else if (isInt16Array)
-                node.setOp(GetInt16ArrayLength);
-            else if (isInt32Array)
-                node.setOp(GetInt32ArrayLength);
-            else if (isUint8Array)
-                node.setOp(GetUint8ArrayLength);
-            else if (isUint8ClampedArray)
-                node.setOp(GetUint8ClampedArrayLength);
-            else if (isUint16Array)
-                node.setOp(GetUint16ArrayLength);
-            else if (isUint32Array)
-                node.setOp(GetUint32ArrayLength);
-            else if (isFloat32Array)
-                node.setOp(GetFloat32ArrayLength);
-            else if (isFloat64Array)
-                node.setOp(GetFloat64ArrayLength);
-            else
-                ASSERT_NOT_REACHED();
-            // No longer MustGenerate
-            ASSERT(node.flags() & NodeMustGenerate);
-            node.clearFlags(NodeMustGenerate);
-            m_graph.deref(m_compileIndex);
-            break;
-        }
-        case GetIndexedPropertyStorage: {
-            PredictedType basePrediction = m_graph[node.child2()].prediction();
-            if (!(basePrediction & PredictInt32) && basePrediction) {
-                node.setOpAndDefaultFlags(Nop);
-                m_graph.clearAndDerefChild1(node);
-                m_graph.clearAndDerefChild2(node);
-                m_graph.clearAndDerefChild3(node);
-                node.setRefCount(0);
-            }
-            break;
-        }
-        case GetByVal:
-        case StringCharAt:
-        case StringCharCodeAt: {
-            if (!!node.child3() && m_graph[node.child3()].op() == Nop)
-                node.children.child3() = Edge();
-            break;
-        }
-        default:
-            break;
-        }
-
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("\n");
-#endif
-    }
-    
-    void fixup()
-    {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("Performing Fixup\n");
-#endif
-        for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex)
-            fixupNode(m_graph[m_compileIndex]);
     }
     
     NodeIndex m_compileIndex;

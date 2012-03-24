@@ -698,10 +698,6 @@ private:
             && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
             return nodeIndex;
         
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Making %s @%u safe at bc#%u because slow-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op()), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
-#endif
-        
         switch (m_graph[nodeIndex].op()) {
         case UInt32ToNumber:
         case ArithAdd:
@@ -993,10 +989,6 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     NodeIndex callTarget = get(currentInstruction[1].u.operand);
     enum { ConstantFunction, LinkedFunction, UnknownFunction } callType;
             
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("Slow case count for call at @%zu bc#%u: %u/%u; exit profile: %d.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_profiledBlock->executionEntryCount(), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
-#endif
-    
     CallLinkStatus callLinkStatus = CallLinkStatus::computeFor(
         m_inlineStackTop->m_profiledBlock, m_currentIndex);
     
@@ -1879,10 +1871,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             GetByIdStatus getByIdStatus = GetByIdStatus::computeFor(
                 m_inlineStackTop->m_profiledBlock, m_currentIndex, identifier);
             
-#if DFG_ENABLE(DEBUG_VERBOSE)
-            dataLog("Slow case count for GetById @%zu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
-#endif
-            
             if (getByIdStatus.isSimpleDirect()
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
                 ASSERT(getByIdStatus.structureSet().size());
@@ -1921,10 +1909,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             bool hasExitSite = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache);
             
-#if DFG_ENABLE(DEBUG_VERBOSE)
-            dataLog("Slow case count for PutById @%zu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
-#endif            
-
             if (!hasExitSite && putByIdStatus.isSimpleReplace()) {
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(putByIdStatus.oldStructure())), base);
                 addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), base, addToGraph(GetPropertyStorage, base), value);

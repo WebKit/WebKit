@@ -1,3 +1,39 @@
+2012-03-23  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG Fixup should be able to short-circuit trivial ValueToInt32's
+        https://bugs.webkit.org/show_bug.cgi?id=82030
+
+        Reviewed by Michael Saboff.
+        
+        Takes the fixup() method of the prediction propagation phase and makes it
+        into its own phase. Adds the ability to short-circuit trivial ValueToInt32
+        nodes, and mark pure ValueToInt32's as such.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCommon.h:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGFixupPhase.cpp: Added.
+        (DFG):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::FixupPhase):
+        (JSC::DFG::FixupPhase::run):
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixIntEdge):
+        (JSC::DFG::performFixup):
+        * dfg/DFGFixupPhase.h: Added.
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::run):
+        (PredictionPropagationPhase):
+
 2012-03-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         tryReallocate could break the zero-ed memory invariant of CopiedBlocks

@@ -92,6 +92,7 @@ SOURCES += \
     dfg/DFGCorrectableJumpPoint.cpp \
     dfg/DFGCSEPhase.cpp \
     dfg/DFGDriver.cpp \
+    dfg/DFGFixupPhase.cpp \
     dfg/DFGGraph.cpp \
     dfg/DFGJITCompiler.cpp \
     dfg/DFGNodeFlags.cpp \

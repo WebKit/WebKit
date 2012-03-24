@@ -161,6 +161,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGDriver.cpp \
 	Source/JavaScriptCore/dfg/DFGDriver.h \
 	Source/JavaScriptCore/dfg/DFGFPRInfo.h \
+	Source/JavaScriptCore/dfg/DFGFixupPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGFixupPhase.h \
 	Source/JavaScriptCore/dfg/DFGGenerationInfo.h \
 	Source/JavaScriptCore/dfg/DFGGPRInfo.h \
 	Source/JavaScriptCore/dfg/DFGGraph.cpp \
