@@ -561,7 +561,7 @@ void webkit_download_cancel(WebKitDownload* download)
  * Convenience method to retrieve the URI from the
  * #WebKitNetworkRequest which is being downloaded.
  *
- * Returns: the uri
+ * Returns: the URI
  *
  * Since: 1.1.2
  */

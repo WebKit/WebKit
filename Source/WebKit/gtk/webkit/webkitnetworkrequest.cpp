@@ -210,7 +210,7 @@ void webkit_network_request_set_uri(WebKitNetworkRequest* request, const gchar* 
  * webkit_network_request_get_uri:
  * @request: a #WebKitNetworkRequest
  *
- * Returns: the uri of the #WebKitNetworkRequest
+ * Returns: the URI of the #WebKitNetworkRequest
  *
  * Since: 1.0.0
  */

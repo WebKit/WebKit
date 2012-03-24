@@ -1,3 +1,20 @@
+2012-03-24  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Replace occurrences of "uri" in the documentation with "URI"
+        https://bugs.webkit.org/show_bug.cgi?id=82025
+
+        Reviewed by Gustavo Noronha Silva.
+
+        In documentation "uri" should really be written as "URI" so
+        we should fix all existing strings.
+
+        * webkit/webkitdownload.cpp: Replace "uri" with "URI."
+        * webkit/webkitnetworkrequest.cpp: Ditto.
+        * webkit/webkitnetworkresponse.cpp: Ditto.
+        * webkit/webkitwebhistoryitem.cpp: Ditto.
+        * webkit/webkitwebresource.cpp: Ditto.
+        (webkit_web_resource_class_init):
+
 2012-03-23  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Webkit fails to build with --disable-geolocation
