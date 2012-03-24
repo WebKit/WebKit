@@ -1,3 +1,24 @@
+2012-03-23  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        REGRESSION(r106232): The resize handler is always called after loading.
+        https://bugs.webkit.org/show_bug.cgi?id=80242
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Ensure resize-events are not emitted when layout-size changes due to added
+        scrollbars. For fixed layout, scrollbars are never subtracted or added, so
+        we can compare fixedLayoutSize directly. For normal layout, use the full
+        visible rect size which is the same as layout size plus scrollbars.
+
+        Test: fast/events/resize-events.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::performPostLayoutTasks):
+        * page/FrameView.h:
+        (FrameView):
+
 2012-03-23  Adam Klein  <adamk@chromium.org>
 
         REGRESSION(r103452): 100% CPU usage and 5s pause after clicking on a link in Yahoo Mail
