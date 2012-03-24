@@ -619,7 +619,7 @@ CCInputHandlerClient::ScrollStatus CCLayerTreeHostImpl::scrollBegin(const IntPoi
         return ScrollFailed;
     }
 
-    if (type == CCInputHandlerClient::Wheel && m_scrollLayerImpl->haveWheelEventHandlers()) {
+    if ((type == CCInputHandlerClient::Wheel || type == CCInputHandlerClient::Gesture) && m_scrollLayerImpl->haveWheelEventHandlers()) {
         TRACE_EVENT("scrollBegin Failed wheelEventHandlers", this, 0);
         return ScrollFailed;
     }

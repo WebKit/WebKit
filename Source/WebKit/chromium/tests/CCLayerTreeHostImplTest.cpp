@@ -203,11 +203,9 @@ TEST_F(CCLayerTreeHostImplTest, wheelEventHandlers)
     CCLayerImpl* root = m_hostImpl->rootLayer();
 
     root->setHaveWheelEventHandlers(true);
-    // With registered event handlers, wheel scrolls have to go to the main thread.
+    // With registered event handlers, wheel and gesture scrolls have to go to the main thread.
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollFailed);
-
-    // But gesture scrolls can still be handled.
-    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Gesture), CCInputHandlerClient::ScrollStarted);
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Gesture), CCInputHandlerClient::ScrollFailed);
 }
 
 TEST_F(CCLayerTreeHostImplTest, shouldScrollOnMainThread)
