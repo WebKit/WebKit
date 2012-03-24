@@ -1,3 +1,18 @@
+2012-03-23  Adele Peterson  <adele@apple.com>
+
+        REGRESSION(r96566): Cursor is I-beam upon dragging an attachment in mail
+        https://bugs.webkit.org/show_bug.cgi?id=80458
+        <rdar://problem/10873195>
+
+        Reviewed by Dan Bernstein.
+
+        No tests because we currently don't have any test machinery for cursors.
+
+        Make sure the shortcut to always use an iBeam cursor during selection isn't used during dragging.
+        Before r96566, we handled plugin cursors as a special case before calling into selectCursor, so we never hit this code path.
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::selectCursor):
+
 2012-03-23  Maciej Stachowiak  <mjs@apple.com>
 
         REGRESSION(r97353): Crash when accessing location or history properties inside a navigated window
