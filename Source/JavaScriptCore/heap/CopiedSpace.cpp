@@ -100,9 +100,11 @@ CheckedBoolean CopiedSpace::tryReallocate(void** ptr, size_t oldSize, size_t new
         return tryReallocateOversize(ptr, oldSize, newSize);
 
     if (m_allocator.wasLastAllocation(oldPtr, oldSize)) {
-        m_allocator.resetLastAllocation(oldPtr);
-        if (m_allocator.fitsInCurrentBlock(newSize))
-            return m_allocator.allocate(newSize);
+        size_t delta = newSize - oldSize;
+        if (m_allocator.fitsInCurrentBlock(delta)) {
+            (void)m_allocator.allocate(delta);
+            return true;
+        }
     }
 
     void* result = 0;

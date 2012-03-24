@@ -1,3 +1,17 @@
+2012-03-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        tryReallocate could break the zero-ed memory invariant of CopiedBlocks
+        https://bugs.webkit.org/show_bug.cgi?id=82087
+
+        Reviewed by Filip Pizlo.
+
+        Removing this optimization turned out to be ~1% regression on kraken, so I simply 
+        undid the modification to the current block if we fail.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::tryReallocate): Undid the reset in the CopiedAllocator if we fail 
+        to reallocate from the current block.
+
 2012-03-23  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] No need for platform-specific ENABLE_BLOB values
