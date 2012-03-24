@@ -1,5 +1,40 @@
 2012-03-23  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        REGRESSION(58212): html foreignObjects with positions other than static not hidden correctly when parent has display:none
+        https://bugs.webkit.org/show_bug.cgi?id=41386
+
+        Reviewed by Zoltan Herczeg.
+
+        r58212 gave SVGGElements a renderer, regardless if "display: none" was set or not, for various reasons (see change set).
+        The <g> renderer for such cases is a RenderSVGHiddenContainer. We make sure in SVG that such subtrees are never used
+        for painting & hittesting - they only exist for the purpose of SVG DOM (query getCTM, etc..) and to create renderers
+        for child resources, like <g display="none"><linearGradient>.
+
+        This concept still works fine for: <g display="none"><foreignObject><body>Foobar</body></foreignObject></g>, as
+        RenderSVGForeignObject::paint is never called thus we never paint the subtree of the <fO>. If the <body> elements
+        contains "position: relative" a new layer is created for the <body>. When the document paints we have two seperated
+        layers, and the <body> layer doesn't know that it's actually inside a "SVG hidden subtree", and gets painted, where it
+        shouldn't. HTML doesn't have this problems, as a display: none object, never creates a renderer.
+
+        The fix is to disallow layer creation in hidden SVG subtrees, to mimic what would happen if we'd follow HTML rules
+        to not create renderers for display: none objects. This avoids any indirections - as no layers are created anymore.
+
+        Tests: svg/foreignObject/fO-display-none-with-relative-pos-content.svg
+               svg/foreignObject/fO-display-none.svg
+               svg/foreignObject/fO-parent-display-changes.svg
+               svg/foreignObject/fO-parent-display-none-with-relative-pos-content.svg
+               svg/foreignObject/fO-parent-display-none.svg
+               svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content.svg
+               svg/foreignObject/fO-parent-of-parent-display-none.svg
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::styleDidChange): Only create layers, if its allowed -- layerCreationAllowedForSubtree() will always return true for HTML, and only false for layers inside a hidden SVG subtree.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild): Only create layers, if its allowed.
+        * rendering/RenderObject.h: Add inline layerCreationAllowedForSubtree() helper, that craws the tree to find a RenderSVGHiddenContainer ancestor, if not present, return true.
+
+2012-03-23  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         REGRESSION: unbalanced transparency layers for clipPath
         https://bugs.webkit.org/show_bug.cgi?id=78074
 

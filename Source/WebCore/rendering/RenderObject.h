@@ -862,6 +862,8 @@ public:
     RenderObject* rendererForRootBackground();
 
 protected:
+    inline bool layerCreationAllowedForSubtree() const;
+
     // Overrides should call the superclass at the end
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     // Overrides should call the superclass at the start
@@ -1111,6 +1113,20 @@ inline bool RenderObject::preservesNewline() const
 #endif
         
     return style()->preserveNewline();
+}
+
+inline bool RenderObject::layerCreationAllowedForSubtree() const
+{
+#if ENABLE(SVG)
+    RenderObject* parentRenderer = parent();
+    while (parentRenderer) {
+        if (parentRenderer->isSVGHiddenContainer())
+            return false;
+        parentRenderer = parentRenderer->parent();
+    }
+#endif
+
+    return true;
 }
 
 inline void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)

@@ -362,7 +362,7 @@ void RenderBoxModelObject::styleDidChange(StyleDifference diff, const RenderStyl
     updateBoxModelInfoFromStyle();
     
     if (requiresLayer()) {
-        if (!layer()) {
+        if (!layer() && layerCreationAllowedForSubtree()) {
             if (s_wasFloating && isFloating())
                 setChildNeedsLayout(true);
             m_layer = new (renderArena()) RenderLayer(this);
