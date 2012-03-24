@@ -72,7 +72,6 @@ private:
 
     MutationObserverOptions m_options;
     HashSet<AtomicString> m_attributeFilter;
-    OwnPtr<HashSet<AtomicString> > m_caseInsensitiveAttributeFilter;
 };
 
 } // namespace WebCore

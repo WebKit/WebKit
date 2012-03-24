@@ -451,7 +451,7 @@ function testAttributeFilter() {
     var observer;
 
     function start() {
-        debug('Testing that attributeFilter works as expected and ignores case with HTML elements.');
+        debug('Testing that attributeFilter works as expected and observes case with HTML elements.');
 
         mutations = null;
         observer = new WebKitMutationObserver(function(m) {
@@ -469,18 +469,15 @@ function testAttributeFilter() {
     }
 
     function finish() {
-        debug('...only foo, bar & boom should be received.');
+        debug('...only foo and bar should be received.');
 
-        shouldBe('mutations.length', '3');
+        shouldBe('mutations.length', '2');
         shouldBe('mutations[0].type', '"attributes"');
         shouldBe('mutations[0].attributeName', '"foo"');
         shouldBe('mutations[0].attributeNamespace', 'null');
         shouldBe('mutations[1].type', '"attributes"');
         shouldBe('mutations[1].attributeName', '"bar"');
         shouldBe('mutations[1].attributeNamespace', 'null');
-        shouldBe('mutations[2].type', '"attributes"');
-        shouldBe('mutations[2].attributeName', '"boom"');
-        shouldBe('mutations[2].attributeNamespace', 'null');
         observer.disconnect();
         debug('');
         runNextTest();
