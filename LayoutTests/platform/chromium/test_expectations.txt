@@ -50,7 +50,9 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/loader/javascript-url-iframe-crash.html
 // BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
 // See BUGCR104797
 
-BUGWK77184 DEBUG SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
+// V8 roll to 3.9.24.1. Remember to remove WIN LINUX from the line below upon fixing.
+BUGCR119915 MAC : fast/js/dfg-double-vote-fuzz.html = TEXT
+BUGWK77184 DEBUG WIN LINUX SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
 BUGWK77069 DEBUG SLOW : fast/js/dfg-uint32array-overflow-values.html = PASS
 BUGWK74787 DEBUG SLOW : fast/js/dfg-poison-fuzz.html = PASS
 BUGWK77365 DEBUG SLOW : fast/js/dfg-int32array-overflow-values.html = PASS
