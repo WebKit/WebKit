@@ -2874,6 +2874,7 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement* source)
     // the media element's resource selection algorithm.
     if (networkState() == HTMLMediaElement::NETWORK_EMPTY) {
         scheduleLoad(MediaResource);
+        m_nextChildNodeToConsider = source;
         return;
     }
 
