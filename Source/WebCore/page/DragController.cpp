@@ -424,6 +424,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     ASSERT(dragData);
     ASSERT(!m_isHandlingDrag);
 
+    RefPtr<HTMLInputElement> fileInput = m_fileInputElementUnderMouse;
     if (m_fileInputElementUnderMouse) {
         m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
         m_fileInputElementUnderMouse = 0;
@@ -456,16 +457,11 @@ bool DragController::concludeEditDrag(DragData* dragData)
         return true;
     }
 
-    if (!m_page->dragController()->canProcessDrag(dragData)) {
-        m_page->dragCaretController()->clear();
-        return false;
-    }
-
-    if (HTMLInputElement* fileInput = asFileInput(element)) {
+    if (dragData->containsFiles() && fileInput) {
+        // fileInput should be the element we hit tested for, unless it was made
+        // display:none in a drop event handler.
+        ASSERT(fileInput == element || !fileInput->renderer());
         if (fileInput->disabled())
-            return false;
-
-        if (!dragData->containsFiles())
             return false;
 
         Vector<String> filenames;
@@ -475,6 +471,11 @@ bool DragController::concludeEditDrag(DragData* dragData)
 
         fileInput->receiveDroppedFiles(filenames);
         return true;
+    }
+
+    if (!m_page->dragController()->canProcessDrag(dragData)) {
+        m_page->dragCaretController()->clear();
+        return false;
     }
 
     VisibleSelection dragCaret = m_page->dragCaretController()->caretPosition();

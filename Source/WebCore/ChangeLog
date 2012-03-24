@@ -1,3 +1,32 @@
+2012-03-23  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r105396): Dragging an iWork document into icloud.com opens it in the Mac app instead of uploading it to icloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=79443
+
+        Reviewed by Ryosuke Niwa.
+
+        icloud.com registers a drop event handler that sets display:none on the
+        file input element receiving the drop. After dispatching the drop event,
+        DragController hit tests the position under the mouse to see if it is a
+        file input element in need of receiving files. Since the file input
+        element has lost its renderer, it cannot be found by hit testing, so
+        the dropped file is never attached to the file input element, no change
+        event fires, and no upload commences. We want these things to happen
+        even if the element is no longer visible.
+
+        Since we already keep track of the file input element under the mouse
+        via m_fileInputElementUnderMouse, this additional hit test is
+        unnecessary. Use m_fileInputElementUnderMouse in concludeEditDrag()
+        when dropping files.
+
+        Test: fast/events/file-input-hidden-in-ondrop.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag): Use
+        m_fileInputElementUnderMouse instead of the element returned by hit
+        testing. Assert that m_fileInputElementUnderMouse equals the hit tested
+        element unless m_fileInputElementUnderMouse doesn't have a renderer.
+
 2012-03-23  Mikkel Kruse Johnsen  <mikkel@linet.dk>
 
         WebKitGtk+ fails to build on win32 against GTK3
