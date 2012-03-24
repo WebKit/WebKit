@@ -135,7 +135,6 @@ size_t LoadableTextTrack::trackElementIndex()
 {
     ASSERT(m_trackElement);
     ASSERT(m_trackElement->parentNode());
-    ASSERT(m_trackElement->inDocument());
 
     size_t index = 0;
     for (Node* node = m_trackElement->parentNode()->firstChild(); node; node = node->nextSibling()) {
