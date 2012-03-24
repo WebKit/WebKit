@@ -1,3 +1,14 @@
+2012-03-23  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Incorrect replica originTransform used in CCDamageTracker
+        https://bugs.webkit.org/show_bug.cgi?id=82118
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::TEST_F):
+        (WebKitTests):
+
 2012-03-23  Dana Jansens  <danakj@chromium.org>
 
         [chromium] When prepainting fails, tiles dirty rects may be cleared

@@ -797,6 +797,56 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMask)
     EXPECT_FLOAT_RECT_EQ(FloatRect(194, 200, 6, 8), childDamageRect);
 }
 
+TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMaskWithAnchor)
+{
+    OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithTwoSurfaces();
+    CCLayerImpl* child1 = root->children()[0].get();
+    CCLayerImpl* grandChild1 = child1->children()[0].get();
+
+    // Verify that the correct replicaOriginTransform is used for the replicaMask; the
+    // incorrect old code did not actually correctly account for the anchor for the
+    // replica.
+    //
+    // Create a reflection about the left edge, but the anchor point is shifted all the
+    // way to the right. this case the reflection should be directly on top (but
+    // horizontally flipped) of grandChild1.
+
+    grandChild1->setAnchorPoint(FloatPoint(1.0, 0.0)); // This is the anchor being tested.
+
+    {
+        OwnPtr<CCLayerImpl> grandChild1Replica = CCLayerImpl::create(6);
+        grandChild1Replica->setPosition(FloatPoint::zero());
+        grandChild1Replica->setAnchorPoint(FloatPoint::zero()); // note, this is not the anchor being tested.
+        TransformationMatrix reflection;
+        reflection.scale3d(-1.0, 1.0, 1.0);
+        grandChild1Replica->setTransform(reflection);
+        grandChild1->setReplicaLayer(grandChild1Replica.release());
+    }
+    CCLayerImpl* grandChild1Replica = grandChild1->replicaLayer();
+
+    // Set up the mask layer on the replica layer
+    {
+        OwnPtr<CCLayerImpl> replicaMaskLayer = CCLayerImpl::create(7);
+        replicaMaskLayer->setPosition(FloatPoint::zero());
+        replicaMaskLayer->setAnchorPoint(FloatPoint::zero()); // note, this is not the anchor being tested.
+        replicaMaskLayer->setBounds(grandChild1->bounds());
+        grandChild1Replica->setMaskLayer(replicaMaskLayer.release());
+    }
+    CCLayerImpl* replicaMaskLayer = grandChild1Replica->maskLayer();
+
+    emulateDrawingOneFrame(root.get());
+
+    // Sanity check that the appropriate render surfaces were created
+    ASSERT_TRUE(grandChild1->renderSurface());
+
+    // A property change on the replicaMask should damage the reflected region on the target surface.
+    replicaMaskLayer->setOpacity(0.6);
+    emulateDrawingOneFrame(root.get());
+
+    FloatRect childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();
+    EXPECT_FLOAT_RECT_EQ(FloatRect(194, 200, 6, 8), childDamageRect);
+}
+
 TEST_F(CCDamageTrackerTest, verifyDamageWhenForcedFullDamage)
 {
     OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();

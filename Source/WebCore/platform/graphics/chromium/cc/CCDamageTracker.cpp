@@ -297,11 +297,7 @@ void CCDamageTracker::extendDamageForRenderSurface(CCLayerImpl* layer, FloatRect
         removeRectFromCurrentFrame(replicaMaskLayer->id(), replicaIsNew);
 
         // Compute the replica's "originTransform" that maps from the replica's origin space to the target surface origin space.
-        TransformationMatrix replicaOriginTransform = layer->renderSurface()->originTransform();
-        replicaOriginTransform.translate(layer->replicaLayer()->position().x(), layer->replicaLayer()->position().y());
-        replicaOriginTransform.multiply(layer->replicaLayer()->transform());
-        replicaOriginTransform.translate(-layer->replicaLayer()->position().x(), -layer->replicaLayer()->position().y());
-
+        const TransformationMatrix& replicaOriginTransform = renderSurface->replicaOriginTransform();
         FloatRect replicaMaskLayerRect = replicaOriginTransform.mapRect(FloatRect(FloatPoint::zero(), FloatSize(replicaMaskLayer->bounds().width(), replicaMaskLayer->bounds().height())));
         saveRectForNextFrame(replicaMaskLayer->id(), replicaMaskLayerRect);
 
