@@ -1,3 +1,71 @@
+2012-03-24  Dirk Pranke  <dpranke@chromium.org>
+
+        clean up NRWT logging/metering, be less verbose
+        https://bugs.webkit.org/show_bug.cgi?id=73846
+
+        Reviewed by Ojan Vafai.
+
+        This patch totally rewrites the metered_stream module and
+        changes the way it and the printing module now interact with the
+        logging subsystem.
+
+        The printing module becomes a dumb layout_tests-specific wrapper around
+        the metered stream. All of the intelligence of how and when to
+        actually write (or erase) lines and how things interact with
+        logging moves into the metered stream.
+
+        As of now, anything written to the metered stream *bypasses the
+        logging system*. If a logger is passed to the meter constructor,
+        the metered stream will also attach a log handler so that all
+        messages fed to the logger will also be written to the metered
+        stream. This detangles the logic that used to exist where
+        sometimes the meter would write to the logger and sometimes the
+        logger would write to the meter.
+
+        All of this makes the logic generic and reusable for
+        test-webkitpy (coming in another patch). It also helps clarify
+        what the mysterious "configure_logging" parameter to the printer
+        constructor used to do (that parameter itself is gone now, and
+        by default the printer and metered_stream will not ever touch
+        the logging system; this makes a bunch of tests less fragile).
+
+        All of the above should produce no user-visible changes.
+
+        However, to also fix the bug in question, we change the message
+        format in --verbose mode to %H:%M:%S.%frac %pid %message,
+        eliminating the date, file:lineno, and level parameters. I am
+        making this change at the same time because it would be
+        difficult to write things consistently between the logs and the
+        metered stream if we were still logging the file:lineno.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+          Remove the configure_logging parameter
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+          Use metered stream to configure the logging (we don't need a printer)
+          and be careful about when and how we manipulate the log level
+          and handlers on the root logger.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+          Pass in the root logger so that log messages are formatted
+          properly, and set the log level outside of any routines called
+          by unit tests so as to not interfere.
+        * Scripts/webkitpy/layout_tests/views/manager_worker_broker.py:
+          remove a duplicate log message.
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+          complete rewrite :).
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+          complete rewrite :).
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+          move the logging configuration into metered_stream, and also
+          move the "when should I log progress messages" into metered stream.
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+          remove tests that are no longer necessary.
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+          remove the configure_logging parameter.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+          update the test; since the printer no longer writes to the log,
+          we need to check what is written to the regular_output instead.
+          (test_run_test_pause_before_testing):
+
 2012-03-24  Gustavo Noronha Silva  <gns@gnome.org>
 
         Add myself and Martin Robinson to:

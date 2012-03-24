@@ -274,7 +274,6 @@ class AbstractWorker(BrokerClient):
         """Callback for the worker to start executing. Typically does any
         remaining initialization and then calls broker_connection.run_message_loop()."""
         exception_msg = ""
-        _log.debug("%s starting" % self._name)
 
         try:
             self._worker_connection.run_message_loop()

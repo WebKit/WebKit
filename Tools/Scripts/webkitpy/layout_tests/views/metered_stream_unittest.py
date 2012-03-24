@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2010, 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,55 +27,116 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+import re
 import StringIO
 import unittest
 
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 
 
-class TestMeteredStream(unittest.TestCase):
-    def test_regular(self):
-        a = StringIO.StringIO()
-        m = MeteredStream(a)
-        self.assertFalse(a.getvalue())
+class RegularTest(unittest.TestCase):
+    verbose = False
+    isatty = False
 
-        # basic test
-        m.write("foo")
-        exp = ['foo']
-        self.assertEquals(a.buflist, exp)
+    def setUp(self):
+        self.stream = StringIO.StringIO()
+        self.buflist = self.stream.buflist
+        self.stream.isatty = lambda: self.isatty
 
-        # now check that a second write() does not overwrite the first.
-        m.write("bar")
-        exp.append('bar')
-        self.assertEquals(a.buflist, exp)
+        # configure a logger to test that log calls do normally get included.
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.propagate = False
 
-        m.update("batter")
-        exp.append('batter')
-        self.assertEquals(a.buflist, exp)
+        # add a dummy time counter for a default behavior.
+        self.times = range(10)
 
-        # The next update() should overwrite the laste update() but not the
-        # other text. Note that the cursor is effectively positioned at the
-        # end of 'foo', even though we had to erase three more characters.
-        m.update("foo")
-        exp.append('\b\b\b\b\b\b      \b\b\b\b\b\b')
-        exp.append('foo')
-        self.assertEquals(a.buflist, exp)
+        self.meter = MeteredStream(self.stream, self.verbose, self.logger, self.time_fn, 8675)
 
-        # now check that a write() does overwrite the update
-        m.write("foo")
-        exp.append('\b\b\b   \b\b\b')
-        exp.append('foo')
-        self.assertEquals(a.buflist, exp)
+    def tearDown(self):
+        if self.meter:
+            self.meter.cleanup()
+            self.meter = None
 
-        # Now test that we only back up to the most recent newline.
+    def time_fn(self):
+        return self.times.pop(0)
 
-        # Note also that we do not back up to erase the most recent write(),
-        # i.e., write()s do not get erased.
-        a = StringIO.StringIO()
-        m = MeteredStream(a)
-        m.update("foo\nbar")
-        m.update("baz")
-        self.assertEquals(a.buflist, ['foo\nbar', '\b\b\b   \b\b\b', 'baz'])
+    def test_logging_not_included(self):
+        # This tests that if we don't hand a logger to the MeteredStream,
+        # nothing is logged.
+        logging_stream = StringIO.StringIO()
+        handler = logging.StreamHandler(logging_stream)
+        root_logger = logging.getLogger()
+        orig_level = root_logger.level
+        root_logger.addHandler(handler)
+        root_logger.setLevel(logging.DEBUG)
+        try:
+            self.meter = MeteredStream(self.stream, self.verbose, None, self.time_fn, 8675)
+            self.meter.write_throttled_update('foo')
+            self.meter.write_update('bar')
+            self.meter.write('baz')
+            self.assertEquals(logging_stream.buflist, [])
+        finally:
+            root_logger.removeHandler(handler)
+            root_logger.setLevel(orig_level)
+
+    def _basic(self, times):
+        self.times = times
+        self.meter.write_update('foo')
+        self.meter.write_update('bar')
+        self.meter.write_throttled_update('baz')
+        self.meter.write_throttled_update('baz 2')
+        self.meter.writeln('done')
+        self.assertEquals(self.times, [])
+        return self.buflist
+
+    def test_basic(self):
+        buflist = self._basic([0, 1, 2, 13, 14])
+        self.assertEquals(buflist, ['foo\n', 'bar\n', 'baz 2\n', 'done\n'])
+
+    def _log_after_update(self):
+        self.meter.write_update('foo')
+        self.logger.info('bar')
+        return self.buflist
+
+    def test_log_after_update(self):
+        buflist = self._log_after_update()
+        self.assertEquals(buflist, ['foo\n', 'bar\n'])
+
+
+class TtyTest(RegularTest):
+    verbose = False
+    isatty = True
+
+    def test_basic(self):
+        buflist = self._basic([0, 1, 1.05, 1.1, 2])
+        self.assertEquals(buflist, ['foo',
+                                     MeteredStream._erasure('foo'), 'bar',
+                                     MeteredStream._erasure('bar'), 'baz 2',
+                                     MeteredStream._erasure('baz 2'), 'done\n'])
+
+    def test_log_after_update(self):
+        buflist = self._log_after_update()
+        self.assertEquals(buflist, ['foo',
+                                     MeteredStream._erasure('foo'), 'bar\n'])
+
+
+class VerboseTest(RegularTest):
+    isatty = False
+    verbose = True
+
+    def test_basic(self):
+        buflist = self._basic([0, 1, 2.1, 13, 14.1234])
+        self.assertEquals(buflist, ['16:00:00.000 8675 foo\n', '16:00:01.000 8675 bar\n', '16:00:13.000 8675 baz 2\n', '16:00:14.123 8675 done\n'])
+
+    def test_log_after_update(self):
+        buflist = self._log_after_update()
+        self.assertEquals(buflist[0], '16:00:00.000 8675 foo\n')
+
+        # The second argument should have a real timestamp and pid, so we just check the format.
+        self.assertEquals(len(buflist), 2)
+        self.assertTrue(re.match('\d\d:\d\d:\d\d.\d\d\d \d+ bar\n', buflist[1]))
 
 
 if __name__ == '__main__':

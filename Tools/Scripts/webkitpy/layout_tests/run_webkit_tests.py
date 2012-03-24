@@ -85,7 +85,7 @@ def lint(port, options, expectations_class):
 def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdout):
     warnings = _set_up_derived_options(port, options)
 
-    printer = printing.Printer(port, options, regular_output, buildbot_output, configure_logging=True)
+    printer = printing.Printer(port, options, regular_output, buildbot_output, logger=logging.getLogger())
 
     for warning in warnings:
         _log.warning(warning)
@@ -479,6 +479,7 @@ def main():
         host = Host()
     host._initialize_scm()
     port = host.port_factory.get(options.platform, options)
+    logging.getLogger().setLevel(logging.DEBUG if options.verbose else logging.INFO)
     return run(port, options, args)
 
 
