@@ -50,7 +50,7 @@ Node* StaticNodeList::itemWithName(const AtomicString& elementId) const
     size_t length = m_nodes.size();
     for (size_t i = 0; i < length; ++i) {
         Node* node = m_nodes[i].get();
-        if (static_cast<Element*>(node)->getIdAttribute() == elementId)
+        if (node->isElementNode() && toElement(node)->getIdAttribute() == elementId)
             return node;
     }
 

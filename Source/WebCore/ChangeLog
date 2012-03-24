@@ -1,3 +1,17 @@
+2012-03-23  Abhishek Arya  <inferno@chromium.org>
+
+        Regression(r107477): Crash in StaticNodeList::itemWithName.
+        https://bugs.webkit.org/show_bug.cgi?id=79532
+
+        Reviewed by Andreas Kling.
+
+        Make sure that node is an element node before checking its id attribute.
+
+        Test: fast/mutation/mutation-callback-non-element-crash.html
+
+        * dom/StaticNodeList.cpp:
+        (WebCore::StaticNodeList::itemWithName):
+
 2012-03-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r99076): WebKit pastes the trailing newline into a single-line text field

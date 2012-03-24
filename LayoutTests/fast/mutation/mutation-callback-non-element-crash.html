@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function mutationCallback(mutations, observer) {
+    mutations[0].addedNodes[-1];
+}
+
+var mutationObserver = new WebKitMutationObserver(mutationCallback);
+mutationObserver.observe(document.body, {childList: true});
+document.body.appendChild(document.createTextNode("PASS. WebKit didn't crash"));
+</script>
+</body>
+</html>
