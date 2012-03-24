@@ -1,3 +1,24 @@
+2012-03-23  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        REGRESSION: unbalanced transparency layers for clipPath
+        https://bugs.webkit.org/show_bug.cgi?id=78074
+
+        Reviewed by Zoltan Herczeg.
+
+        If we're rendering to a mask image buffer, all children are rendered with opacity=1, regardless what their RenderStyles specify.
+        SVGRenderSupport::finishRenderSVGContent() did not take this into account and always called endTransparencyLayer(). Fix that
+        by checking if we're rendering to a mask image buffer, if so don't call endTransparencyLayer().
+
+        Add new reftest covering both the visual & logical correctness (no assertion).
+
+        Tests: svg/clip-path/opacity-assertion-expected.svg
+               svg/clip-path/opacity-assertion.svg
+
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::isRenderingMaskImage): Extraced as sharable helper function.
+        (WebCore::SVGRenderSupport::prepareToRenderSVGContent): Factor out isRenderingMaskImage() function.
+        (WebCore::SVGRenderSupport::finishRenderSVGContent): Only call endTransparencyLayer(), if we actually called beginTL() first. 
+
 2012-03-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Assertion failure in TextIterator::handleTextBox
