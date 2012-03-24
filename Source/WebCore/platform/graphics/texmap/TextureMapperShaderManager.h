@@ -107,7 +107,6 @@ public:
         if (shaderType == Invalid)
             return program;
 
-        TextureMapperShaderProgramMap::iterator it = m_textureMapperShaderProgramMap.find(shaderType);
         switch (shaderType) {
         case Simple:
             program = TextureMapperShaderProgramSimple::create();
