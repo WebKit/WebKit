@@ -1,3 +1,14 @@
+2012-03-24  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed, rolling out r90755.
+        http://trac.webkit.org/changeset/90755
+        https://bugs.webkit.org/show_bug.cgi?id=44410
+
+        This is actually less up-to-date then the one we committed
+        before
+
+        * id.po:
+
 2012-03-24  Sandeep Shedmake <sshedmak@redhat.com>
 
         [l10n] [mr] WebKitGTK+ Marathi Translations
