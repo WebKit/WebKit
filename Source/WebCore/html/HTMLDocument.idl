@@ -45,10 +45,8 @@ module html {
         void captureEvents();
         void releaseEvents();
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         readonly attribute long width;
         readonly attribute long height;
-#endif
                  attribute [TreatNullAs=NullString] DOMString dir;
                  attribute [TreatNullAs=NullString] DOMString designMode;
         readonly attribute DOMString compatMode;
