@@ -1,3 +1,12 @@
+2012-03-24  Christian Kirbach  <Christian.Kirbach@googlemail.com>
+
+        Updated German translation
+        https://bugs.webkit.org/show_bug.cgi?id=77834
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * de.po:
+
 2012-03-24  Kjartan Maraas  <kmaraas@gnome.org>
 
         Updated Norwegian bokmål translation for webkitgtk
