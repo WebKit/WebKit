@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-typedef void* ShaderType;
-
 class BitmapTexture;
 class TextureMapperShaderManager;
 
@@ -44,13 +42,6 @@ public:
     GLuint vertexAttrib() { return m_vertexAttrib; }
 
     virtual ~TextureMapperShaderProgram();
-
-    template<class T>
-    static ShaderType shaderType()
-    {
-        static int type = 0;
-        return &type;
-    }
 
     virtual void prepare(float opacity, const BitmapTexture*) { }
     GLint matrixVariable() const { return m_matrixVariable; }
@@ -101,24 +92,36 @@ private:
 
 class TextureMapperShaderManager {
 public:
+    enum ShaderType {
+        Invalid = 0, // HashMaps do not like 0 as a key.
+        Simple,
+        OpacityAndMask
+    };
+
     TextureMapperShaderManager();
     virtual ~TextureMapperShaderManager();
 
-    template<class T>
-    PassRefPtr<T> getShaderProgram()
+    PassRefPtr<TextureMapperShaderProgram> getShaderProgram(ShaderType shaderType)
     {
-        ShaderType shaderType = TextureMapperShaderProgram::shaderType<T>();
-        TextureMapperShaderProgramMap::iterator it = m_textureMapperShaderProgramMap.find(shaderType);
-        if (it != m_textureMapperShaderProgramMap.end())
-            return static_cast<T*>(it->second.get());
+        RefPtr<TextureMapperShaderProgram> program;
+        if (shaderType == Invalid)
+            return program;
 
-        RefPtr<T> t = T::create();
-        m_textureMapperShaderProgramMap.add(shaderType, t);
-        return t;
+        TextureMapperShaderProgramMap::iterator it = m_textureMapperShaderProgramMap.find(shaderType);
+        switch (shaderType) {
+        case Simple:
+            program = TextureMapperShaderProgramSimple::create();
+            break;
+        case OpacityAndMask:
+            program = TextureMapperShaderProgramOpacityAndMask::create();
+            break;
+        }
+        m_textureMapperShaderProgramMap.add(shaderType, program);
+        return program;
     }
 
 private:
-    typedef HashMap<ShaderType, RefPtr<TextureMapperShaderProgram> > TextureMapperShaderProgramMap;
+    typedef HashMap<ShaderType, RefPtr<TextureMapperShaderProgram>, DefaultHash<int>::Hash, HashTraits<int> > TextureMapperShaderProgramMap;
     TextureMapperShaderProgramMap m_textureMapperShaderProgramMap;
 };
 

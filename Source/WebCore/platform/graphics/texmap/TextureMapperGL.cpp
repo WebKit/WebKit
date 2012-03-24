@@ -319,9 +319,9 @@ void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const IntSize& 
 {
     RefPtr<TextureMapperShaderProgram> shaderInfo;
     if (maskTexture)
-        shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram<TextureMapperShaderProgramOpacityAndMask>();
+        shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::OpacityAndMask);
     else
-        shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram<TextureMapperShaderProgramSimple>();
+        shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::Simple);
 
     GL_CMD(glUseProgram(shaderInfo->id()))
     GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()))
@@ -624,7 +624,7 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
     data().initializeStencil();
 
-    RefPtr<TextureMapperShaderProgramSimple> shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram<TextureMapperShaderProgramSimple>();
+    RefPtr<TextureMapperShaderProgram> shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::Simple);
 
     GL_CMD(glUseProgram(shaderInfo->id()))
     GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()))
