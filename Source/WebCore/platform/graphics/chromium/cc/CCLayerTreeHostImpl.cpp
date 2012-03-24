@@ -379,6 +379,9 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     TRACE_EVENT("CCLayerTreeHostImpl::drawLayers", this, 0);
     ASSERT(m_layerRenderer);
 
+    if (!rootLayer())
+        return;
+
     m_layerRenderer->beginDrawingFrame();
     for (size_t i = 0; i < frame.renderPasses.size(); ++i)
         m_layerRenderer->drawRenderPass(frame.renderPasses[i].get());

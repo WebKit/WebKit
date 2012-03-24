@@ -404,6 +404,7 @@ void LayerRendererChromium::clearRenderSurface(CCRenderSurface* renderSurface, C
 
 void LayerRendererChromium::beginDrawingFrame()
 {
+    ASSERT(rootLayer());
     m_defaultRenderSurface = rootLayer()->renderSurface();
 
     // FIXME: use the frame begin time from the overall compositor scheduler.
