@@ -328,7 +328,6 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_geolocationClient(0)
     , m_inRegionScrollStartingNode(0)
 #if USE(ACCELERATED_COMPOSITING)
-    , m_isAcceleratedCompositingActive(false)
     , m_rootLayerCommitTimer(adoptPtr(new Timer<WebPagePrivate>(this, &WebPagePrivate::rootLayerCommitTimerFired)))
     , m_needsOneShotDrawingSynchronization(false)
     , m_needsCommit(false)
@@ -5194,7 +5193,7 @@ void WebPagePrivate::drawLayersOnCommit()
         return; // blitVisibleContents() includes drawSubLayers() in this case.
     }
 
-    if (!drawSubLayers())
+    if (!m_backingStore->d->drawSubLayers())
         return;
 
     // If we use the compositing surface, we need to re-blit the
@@ -5211,29 +5210,6 @@ void WebPagePrivate::drawLayersOnCommit()
         return;
 
     m_backingStore->d->blitVisibleContents();
-}
-
-bool WebPagePrivate::drawSubLayers(const IntRect& dstRect, const FloatRect& contents)
-{
-    ASSERT(Platform::userInterfaceThreadMessageClient()->isCurrentThread());
-    if (!Platform::userInterfaceThreadMessageClient()->isCurrentThread())
-        return false;
-
-    if (m_compositor) {
-        m_compositor->setBackingStoreUsesOpenGL(m_backingStore->d->isOpenGLCompositing());
-        return m_compositor->drawLayers(dstRect, contents);
-    }
-
-    return false;
-}
-
-bool WebPagePrivate::drawSubLayers()
-{
-    ASSERT(Platform::userInterfaceThreadMessageClient()->isCurrentThread());
-    if (!Platform::userInterfaceThreadMessageClient()->isCurrentThread())
-        return false;
-
-    return m_backingStore->d->drawSubLayers();
 }
 
 void WebPagePrivate::scheduleRootLayerCommit()
@@ -5268,6 +5244,24 @@ LayerRenderingResults WebPagePrivate::lastCompositingResults() const
     if (m_compositor)
         return m_compositor->lastCompositingResults();
     return LayerRenderingResults();
+}
+
+void WebPagePrivate::setCompositor(PassRefPtr<WebPageCompositorPrivate> compositor)
+{
+    using namespace BlackBerry::Platform;
+
+    // The m_compositor member has to be modified during a sync call for thread
+    // safe access to m_compositor and its refcount.
+    if (!userInterfaceThreadMessageClient()->isCurrentThread()) {
+        userInterfaceThreadMessageClient()->dispatchSyncMessage(createMethodCallMessage(&WebPagePrivate::setCompositor, this, compositor));
+        return;
+    }
+
+    m_compositor = compositor;
+
+    // The previous compositor, if any, has now released it's OpenGL resources,
+    // so we can safely free the owned context, if any.
+    m_ownedContext.clear();
 }
 
 void WebPagePrivate::commitRootLayer(const IntRect& layoutRectForCompositing,
@@ -5369,28 +5363,6 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
         drawLayersOnCommit();
 }
 
-void WebPagePrivate::setIsAcceleratedCompositingActive(bool active)
-{
-    // Backing store can be null here because it happens during teardown.
-    if (m_isAcceleratedCompositingActive == active || !m_backingStore)
-        return;
-
-    m_isAcceleratedCompositingActive = active;
-
-    if (!active) {
-        m_compositor.clear();
-        resetCompositingSurface();
-        return;
-    }
-
-    if (!m_compositor) {
-        m_compositor = adoptPtr(new WebPageCompositorPrivate(this));
-        m_isAcceleratedCompositingActive = m_compositor->hardwareCompositing();
-        if (!m_isAcceleratedCompositingActive)
-            m_compositor.clear();
-    }
-}
-
 void WebPagePrivate::resetCompositingSurface()
 {
     if (!Platform::userInterfaceThreadMessageClient()->isCurrentThread()) {
@@ -5449,12 +5421,13 @@ void WebPagePrivate::setRootLayerCompositingThread(LayerCompositingThread* layer
          // the process of destruction of WebPage where we have already
          // called syncDestroyCompositorOnCompositingThread() to destroy
          // the compositor.
-         setIsAcceleratedCompositingActive(false);
+         destroyCompositor();
+         resetCompositingSurface();
          return;
     }
 
     if (!m_compositor)
-        setIsAcceleratedCompositingActive(true);
+        createCompositor();
 
     // Don't ASSERT(m_compositor) here because setIsAcceleratedCompositingActive(true)
     // may not turn accelerated compositing on since m_backingStore is 0.
@@ -5462,9 +5435,30 @@ void WebPagePrivate::setRootLayerCompositingThread(LayerCompositingThread* layer
         m_compositor->setRootLayer(layer);
 }
 
+bool WebPagePrivate::createCompositor()
+{
+    m_ownedContext = GLES2Context::create(this);
+    m_compositor = WebPageCompositorPrivate::create(this, 0);
+    m_compositor->setContext(m_ownedContext.get());
+
+    if (!m_compositor->hardwareCompositing()) {
+        destroyCompositor();
+        return false;
+    }
+
+    return true;
+}
+
 void WebPagePrivate::destroyCompositor()
 {
-     m_compositor.clear();
+    // We shouldn't release the compositor unless we created and own the
+    // context. If the compositor was created from the WebPageCompositor API,
+    // keep it around and reuse it later.
+    if (!m_ownedContext)
+        return;
+
+    m_compositor.clear();
+    m_ownedContext.clear();
 }
 
 void WebPagePrivate::syncDestroyCompositorOnCompositingThread()

@@ -21,12 +21,13 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "GLES2Context.h"
 #include "LayerCompositingThread.h"
 #include "LayerRenderer.h"
 
+#include <BlackBerryPlatformGLES2Context.h>
 #include <BlackBerryPlatformTimer.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -36,22 +37,32 @@ class LayerWebKitThread;
 namespace BlackBerry {
 namespace WebKit {
 
+class WebPageCompositorClient;
 class WebPagePrivate;
 
-// This class may only be used on the compositing thread.
-class WebPageCompositorPrivate {
+// This class may only be used on the compositing thread. So it does not need to be threadsaferefcounted.
+class WebPageCompositorPrivate : public RefCounted<WebPageCompositorPrivate> {
 public:
-    WebPageCompositorPrivate(WebPagePrivate*);
+    static PassRefPtr<WebPageCompositorPrivate> create(WebPagePrivate* page, WebPageCompositorClient* client)
+    {
+        return adoptRef(new WebPageCompositorPrivate(page, client));
+    }
+
     ~WebPageCompositorPrivate();
 
     bool hardwareCompositing() const;
 
-    void setRootLayer(WebCore::LayerCompositingThread*);
+    Platform::Graphics::GLES2Context* context() const { return m_context; }
+    void setContext(Platform::Graphics::GLES2Context*);
 
-    void setBackingStoreUsesOpenGL(bool);
+    void setRootLayer(WebCore::LayerCompositingThread*);
 
     void commit(WebCore::LayerWebKitThread* rootLayerProxy);
 
+    // This is mapped from the public API, thus takes transformed contents
+    void render(const WebCore::IntRect& dstRect, const WebCore::IntRect& transformedContents);
+
+    // Render everything but the root layer
     bool drawLayers(const WebCore::IntRect& dstRect, const WebCore::FloatRect& contents);
 
     WebCore::IntRect layoutRectForCompositing() const { return m_layoutRectForCompositing; }
@@ -63,22 +74,31 @@ public:
     WebCore::LayerRenderingResults lastCompositingResults() const { return m_lastCompositingResults; }
     void setLastCompositingResults(const WebCore::LayerRenderingResults& results) { m_lastCompositingResults = results; }
 
+    double animationFrameTimestamp() const { return m_pendingAnimationFrame; }
+
     void releaseLayerResources();
+
+    WebPagePrivate* page() const { return m_webPage; }
+    WebPageCompositorClient* client() const { return m_client; }
+    void compositorDestroyed();
+
+protected:
+    WebPageCompositorPrivate(WebPagePrivate*, WebPageCompositorClient*);
 
 private:
     void animationTimerFired();
 
+    WebPageCompositorClient* m_client;
     WebPagePrivate* m_webPage;
-    // Please maintain this order since m_layerRenderer depends on m_context in initialization list.
-    OwnPtr<GLES2Context> m_context;
+    Platform::Graphics::GLES2Context* m_context;
     OwnPtr<WebCore::LayerRenderer> m_layerRenderer;
     RefPtr<WebCore::LayerCompositingThread> m_rootLayer;
     WebCore::IntRect m_layoutRectForCompositing;
     WebCore::IntSize m_contentsSizeForCompositing;
     WebCore::LayerRenderingResults m_lastCompositingResults;
-    bool m_backingStoreUsesOpenGL;
     BlackBerry::Platform::Timer<WebPageCompositorPrivate> m_animationTimer;
     BlackBerry::Platform::TimerClient* m_timerClient;
+    double m_pendingAnimationFrame;
 };
 
 } // namespace WebKit

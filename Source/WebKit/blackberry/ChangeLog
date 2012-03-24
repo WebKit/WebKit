@@ -1,3 +1,73 @@
+2012-03-23  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Add WebPageCompositor class to BlackBerry WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=81121
+        RIM PR: 136687
+
+        Reviewed by Rob Buis.
+
+        The idea is for the API client to use a WebPageCompositor object to
+        render the WebPage when there's no screen window available.
+
+        The WebPageCompositorPrivate becomes reference counted in order to be
+        kept alive either because it's used for accelerated compositing layers
+        or used for the WebPageCompositor API. It can still work standalone.
+
+        Clean up some code - no need to keep track of a separate boolean
+        WebPagePrivate::m_isAcceleratedCompositingActive when the state of
+        m_compositor can tell you.
+
+        Also remove duplicated code from WebPagePrivate - go directly to the
+        compositor object instead, if you need to draw the AC layers.
+
+        Reviewed internally by Robin Cao and the hasBlitJobs/blitOnIdle change
+        by Filip Spacek.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStore::hasBlitJobs):
+        (BlackBerry::WebKit::BackingStore::blitOnIdle):
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+        (BlackBerry::WebKit::BackingStorePrivate::drawSubLayers):
+        (BlackBerry::WebKit::BackingStorePrivate::drawAndBlendLayersForDirectRendering):
+        (BlackBerry::WebKit::BackingStorePrivate::surfaceSize):
+        (BlackBerry::WebKit::BackingStorePrivate::buffer):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::drawLayersOnCommit):
+        (BlackBerry::WebKit::WebPagePrivate::setCompositor):
+        (BlackBerry::WebKit::WebPagePrivate::setRootLayerCompositingThread):
+        (BlackBerry::WebKit::WebPagePrivate::createCompositor):
+        (BlackBerry::WebKit::WebPagePrivate::destroyCompositor):
+        * Api/WebPage.h:
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::WebPageCompositorPrivate):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setContext):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::hardwareCompositing):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setRootLayer):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::render):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::drawLayers):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::animationTimerFired):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::compositorDestroyed):
+        (BlackBerry::WebKit::WebPageCompositor::WebPageCompositor):
+        (BlackBerry::WebKit::WebPageCompositor::~WebPageCompositor):
+        (BlackBerry::WebKit::WebPageCompositor::client):
+        (BlackBerry::WebKit::WebPageCompositor::prepareFrame):
+        (BlackBerry::WebKit::WebPageCompositor::render):
+        (BlackBerry::WebKit::WebPageCompositor::cleanup):
+        (BlackBerry::WebKit::WebPageCompositor::contextLost):
+        * Api/WebPageCompositor.h: Added.
+        * Api/WebPageCompositorClient.h: Added.
+        * Api/WebPageCompositor_p.h:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::create):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::context):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::animationFrameTimestamp):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::page):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::client):
+        * Api/WebPage_p.h:
+        (BlackBerry::WebKit::WebPagePrivate::client):
+        (BlackBerry::WebKit::WebPagePrivate::isAcceleratedCompositingActive):
+        (BlackBerry::WebKit::WebPagePrivate::compositor):
+
 2012-03-22  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Need to store the meta info of a page in the ViewState of the history

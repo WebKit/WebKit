@@ -62,6 +62,7 @@ class BackingStoreClient;
 class BackingStorePrivate;
 class RenderQueue;
 class WebPageClient;
+class WebPageCompositor;
 class WebPageGroupLoadDeferrer;
 class WebPagePrivate;
 class WebSettings;
@@ -335,6 +336,7 @@ private:
     friend class WebKit::BackingStoreClient;
     friend class WebKit::BackingStorePrivate;
     friend class WebKit::RenderQueue;
+    friend class WebKit::WebPageCompositor;
     friend class WebKit::WebPageGroupLoadDeferrer;
     friend class WebKit::WebPagePrivate;
     friend class WebCore::ChromeClientBlackBerry;

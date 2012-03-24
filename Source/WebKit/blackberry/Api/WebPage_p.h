@@ -21,6 +21,7 @@
 
 #include "ChromeClient.h"
 #if USE(ACCELERATED_COMPOSITING)
+#include "GLES2Context.h"
 #include "LayerRenderer.h"
 #endif
 #include "PageClientBlackBerry.h"
@@ -81,6 +82,8 @@ public:
     virtual ~WebPagePrivate();
 
     static WebCore::Page* core(const WebPage*);
+
+    WebPageClient* client() const { return m_client; }
 
     void init(const WebString& pageGroupName);
     bool handleMouseEvent(WebCore::PlatformMouseEvent&);
@@ -368,14 +371,14 @@ public:
     // Thread safe.
     void resetCompositingSurface();
     void drawLayersOnCommit(); // Including backing store blit.
-    bool drawSubLayers(const WebCore::IntRect& dstRect, const WebCore::FloatRect& contents);
-    bool drawSubLayers(); // Draw them at last known position.
 
     // Compositing thread.
     void setRootLayerCompositingThread(WebCore::LayerCompositingThread*);
     void commitRootLayer(const WebCore::IntRect&, const WebCore::IntSize&);
-    void setIsAcceleratedCompositingActive(bool);
-    bool isAcceleratedCompositingActive() const { return m_isAcceleratedCompositingActive; }
+    bool isAcceleratedCompositingActive() const { return m_compositor; }
+    WebPageCompositorPrivate* compositor() const { return m_compositor.get(); }
+    void setCompositor(PassRefPtr<WebPageCompositorPrivate>);
+    bool createCompositor();
     void destroyCompositor();
     void syncDestroyCompositorOnCompositingThread();
     void destroyLayerResources();
@@ -502,7 +505,12 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     bool m_isAcceleratedCompositingActive;
     OwnPtr<FrameLayers> m_frameLayers; // WebKit thread only.
-    OwnPtr<WebPageCompositorPrivate> m_compositor; // Compositing thread only.
+
+    // Compositing thread only, used only when the WebKit layer created the context.
+    // If the API client created the context, this will be null.
+    OwnPtr<GLES2Context> m_ownedContext;
+
+    RefPtr<WebPageCompositorPrivate> m_compositor; // Compositing thread only.
     OwnPtr<WebCore::Timer<WebPagePrivate> > m_rootLayerCommitTimer;
     bool m_needsOneShotDrawingSynchronization;
     bool m_needsCommit;

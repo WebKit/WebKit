@@ -32,6 +32,8 @@
 #include "SurfacePool.h"
 #include "WebPage.h"
 #include "WebPageClient.h"
+#include "WebPageCompositorClient.h"
+#include "WebPageCompositor_p.h"
 #include "WebPage_p.h"
 #include "WebSettings.h"
 
@@ -1240,6 +1242,16 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
     }
 
     if (m_defersBlit && !force) {
+#if USE(ACCELERATED_COMPOSITING)
+        // If there's a WebPageCompositorClient, let it schedule the blit.
+        if (WebPageCompositorPrivate* compositor = m_webPage->d->compositor()) {
+            if (WebPageCompositorClient* client = compositor->client()) {
+                client->invalidate(compositor->animationFrameTimestamp());
+                return;
+            }
+        }
+#endif
+
         m_hasBlitJobs = true;
         return;
     }
@@ -1445,7 +1457,8 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
     if (blittingDirectlyToCompositingWindow) {
         WebCore::FloatRect contentsRect = m_webPage->d->mapFromTransformedFloatRect(
             WebCore::FloatRect(WebCore::IntRect(contents)));
-        m_webPage->d->drawSubLayers(dstRect, contentsRect);
+        if (WebPageCompositorPrivate* compositor = m_webPage->d->compositor())
+            compositor->drawLayers(dstRect, contentsRect);
     } else if (compositingSurface)
         blendCompositingSurface(dstRect);
 
@@ -2519,6 +2532,9 @@ bool BackingStorePrivate::drawSubLayers()
     if (m_suspendBackingStoreUpdates && !isOpenGLCompositing())
         return false;
 
+    if (!m_webPage->d->compositor())
+        return false;
+
     Platform::IntRect dst = m_webPage->client()->userInterfaceBlittedDestinationRect();
     if (dst.isEmpty())
         return false;
@@ -2526,7 +2542,7 @@ bool BackingStorePrivate::drawSubLayers()
     Platform::IntRect src = m_webPage->client()->userInterfaceBlittedVisibleContentsRect();
     WebCore::FloatRect contentsRect = m_webPage->d->mapFromTransformedFloatRect(
         WebCore::FloatRect(WebCore::IntRect(src)));
-    return m_webPage->d->drawSubLayers(dst, contentsRect);
+    return m_webPage->d->compositor()->drawLayers(dst, contentsRect);
 }
 
 bool BackingStorePrivate::drawLayersOnCommitIfNeeded()
@@ -2557,7 +2573,8 @@ void BackingStorePrivate::drawAndBlendLayersForDirectRendering(const Platform::I
 
     // Check if rendering caused a commit and we need to redraw the layers.
     m_needsDrawLayersOnCommit = false;
-    m_webPage->d->drawSubLayers(dstRect, untransformedContentsRect);
+    if (WebPageCompositorPrivate* compositor = m_webPage->d->compositor())
+        compositor->drawLayers(dstRect, untransformedContentsRect);
 
 #if ENABLE_COMPOSITING_SURFACE
     // See above comment about sync calling, visibleContentsRect() is safe here.
@@ -2680,6 +2697,13 @@ void BackingStore::setDefersBlit(bool b)
 
 bool BackingStore::hasBlitJobs() const
 {
+#if USE(ACCELERATED_COMPOSITING)
+    // If there's a WebPageCompositorClient, let it schedule the blit.
+    WebPageCompositorPrivate* compositor = d->m_webPage->d->compositor();
+    if (compositor && compositor->client())
+        return false;
+#endif
+
     // Normally, this would be called from the compositing thread,
     // and the flag is set on the compositing thread, so no need for
     // synchronization.
@@ -2688,6 +2712,13 @@ bool BackingStore::hasBlitJobs() const
 
 void BackingStore::blitOnIdle()
 {
+#if USE(ACCELERATED_COMPOSITING)
+    // If there's a WebPageCompositorClient, let it schedule the blit.
+    WebPageCompositorPrivate* compositor = d->m_webPage->d->compositor();
+    if (compositor && compositor->client())
+        return;
+#endif
+
     d->blitVisibleContents(true /*force*/);
 }
 
@@ -2696,6 +2727,11 @@ Platform::IntSize BackingStorePrivate::surfaceSize() const
     if (Window* window = m_webPage->client()->window())
         return window->surfaceSize();
 
+#if USE(ACCELERATED_COMPOSITING)
+    if (WebPageCompositorPrivate* compositor = m_webPage->d->compositor())
+        return compositor->context()->surfaceSize();
+#endif
+
     return Platform::IntSize();
 }
 
@@ -2703,6 +2739,11 @@ Platform::Graphics::Buffer* BackingStorePrivate::buffer() const
 {
     if (Window* window = m_webPage->client()->window())
         return window->buffer();
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (WebPageCompositorPrivate* compositor = m_webPage->d->compositor())
+        return compositor->context()->buffer();
+#endif
 
     return 0;
 }
