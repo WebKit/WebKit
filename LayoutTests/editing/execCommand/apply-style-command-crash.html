@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+onload = function() {
+    x.innerHTML += '';
+}
+
+setTimeout(function() {
+    document.designMode = 'on';
+    document.execCommand('selectall');
+    document.execCommand('bold');
+    document.body.offsetTop;
+    document.body.innerHTML = "PASS. WebKit didn't crash";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}, 0)
+</script>
+</head>
+<body>
+<div id="x">
+<iframe src="data:"></iframe>
+<div>
+<input></input>
+</div>
+</ul>
+</body>
+</html>
+
