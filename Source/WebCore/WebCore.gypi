@@ -860,6 +860,7 @@
             'Modules/websockets/CloseEvent.idl',
             'Modules/websockets/DOMWindowWebSocket.idl',
             'Modules/websockets/WebSocket.idl',
+            'Modules/websockets/WorkerContextWebSocket.idl',
             'css/CSSCharsetRule.idl',
             'css/CSSFontFaceRule.idl',
             'css/CSSImportRule.idl',

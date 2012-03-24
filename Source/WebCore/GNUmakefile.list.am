@@ -5636,7 +5636,8 @@ webcore_built_sources += \
 dom_binding_idls += \
 	$(WebCore)/Modules/websockets/CloseEvent.idl \
 	$(WebCore)/Modules/websockets/DOMWindowWebSocket.idl \
-	$(WebCore)/Modules/websockets/WebSocket.idl
+	$(WebCore)/Modules/websockets/WebSocket.idl \
+	$(WebCore)/Modules/websockets/WorkerContextWebSocket.idl
 endif  # END ENABLE_WEB_SOCKETS
 
 # ---

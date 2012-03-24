@@ -150,6 +150,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/DOMWindowWebSocket.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
+    $(WebCore)/Modules/websockets/WorkerContextWebSocket.idl \
     $(WebCore)/css/CSSCharsetRule.idl \
     $(WebCore)/css/CSSFontFaceRule.idl \
     $(WebCore)/css/CSSImportRule.idl \

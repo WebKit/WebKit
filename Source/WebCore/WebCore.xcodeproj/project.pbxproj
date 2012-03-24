@@ -10993,6 +10993,7 @@
 		A8748BDF12CBF2DC001FBA41 /* HashTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashTools.h; sourceTree = "<group>"; };
 		A883DF250F3D045D00F19BF6 /* VisibleSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibleSelection.cpp; sourceTree = "<group>"; };
 		A883DF260F3D045D00F19BF6 /* VisibleSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleSelection.h; sourceTree = "<group>"; };
+		A886CDC214FBBAA300D279F4 /* WorkerContextWebSocket.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WorkerContextWebSocket.idl; path = Modules/websockets/WorkerContextWebSocket.idl; sourceTree = "<group>"; };
 		A88DD4860B4629A300C02990 /* PathTraversalState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathTraversalState.h; sourceTree = "<group>"; };
 		A88DD4880B4629B000C02990 /* PathTraversalState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PathTraversalState.cpp; sourceTree = "<group>"; };
 		A89943260B42338700D7C802 /* BitmapImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitmapImage.h; sourceTree = "<group>"; };
@@ -17381,6 +17382,7 @@
 				97AABD0E14FA09D5007457AE /* WebSocketHandshakeRequest.h */,
 				97AABD0F14FA09D5007457AE /* WebSocketHandshakeResponse.cpp */,
 				97AABD1014FA09D5007457AE /* WebSocketHandshakeResponse.h */,
+				A886CDC214FBBAA300D279F4 /* WorkerContextWebSocket.idl */,
 				97AABD1114FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp */,
 				97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */,
 			);
