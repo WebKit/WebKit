@@ -2027,9 +2027,6 @@ void Element::didModifyAttribute(Attribute* attr)
     }
 }
 
-void Element::didModifyAttribute(Attribute* attr)
-{
-
 void Element::didRemoveAttribute(Attribute* attr)
 {
     if (attr->isNull())
