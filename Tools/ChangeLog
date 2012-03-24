@@ -1,3 +1,15 @@
+2012-03-24  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Add myself and Martin Robinson to:
+          * GStreamerGraphics
+          * GtkWebKit2PublicAPI
+          * SoupNetwork
+        and to the newly created WebKitGTKTranslations.
+
+        Rubber-stamped by Martin Robinson.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-03-24  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Implement PageClient::isViewWindowActive()
