@@ -1,0 +1,3 @@
+Accessing properties of a navigated window shouldn't crash
+
+

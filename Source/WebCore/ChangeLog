@@ -1,3 +1,22 @@
+2012-03-23  Maciej Stachowiak  <mjs@apple.com>
+
+        REGRESSION(r97353): Crash when accessing location or history properties inside a navigated window
+        https://bugs.webkit.org/show_bug.cgi?id=80133
+        <rdar://problem/10432233>
+        
+        Reviewed by Antti Koivisto.
+
+        Test: fast/dom/Window/navigated-window-properties.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore): Remove custom getters for window.location and window.history; they
+        were unnecessary and did the wrong thing when DOMWindow returned null values 
+        for these.
+        * page/DOMWindow.idl: ditto
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException): Remove assert about null values and update comment,
+        since this is now an expected state for navigated inner windows.
+
 2012-03-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r74971): Can't select a line of RTL text on Facebook

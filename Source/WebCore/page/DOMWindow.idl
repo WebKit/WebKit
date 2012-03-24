@@ -44,7 +44,7 @@ module window {
     ] DOMWindow {
         // DOM Level 0
         attribute [Replaceable] Screen screen;
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter, JSCustomGetter] History history;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter] History history;
         attribute [Replaceable] BarInfo locationbar;
         attribute [Replaceable] BarInfo menubar;
         attribute [Replaceable] BarInfo personalbar;
@@ -55,7 +55,7 @@ module window {
         attribute [Replaceable] Navigator clientInformation;
         readonly attribute Crypto crypto;
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-        attribute [DoNotCheckDomainSecurity, JSCustom, V8CustomSetter, V8Unforgeable] Location location;
+        attribute [DoNotCheckDomainSecurity, CustomSetter, V8CustomSetter, V8Unforgeable] Location location;
 #endif
         attribute [Replaceable, CustomGetter, V8CustomSetter] Event event;
 

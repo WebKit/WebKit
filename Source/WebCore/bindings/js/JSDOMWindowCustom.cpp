@@ -404,30 +404,6 @@ bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec,
 
 // Custom Attributes
 
-JSValue JSDOMWindow::history(ExecState* exec) const
-{
-    History* history = impl()->history();
-    if (JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), history))
-        return wrapper;
-
-    JSDOMWindow* window = const_cast<JSDOMWindow*>(this);
-    JSHistory* jsHistory = JSHistory::create(getDOMStructure<JSHistory>(exec, window), window, history);
-    cacheWrapper(currentWorld(exec), history, jsHistory);
-    return jsHistory;
-}
-
-JSValue JSDOMWindow::location(ExecState* exec) const
-{
-    Location* location = impl()->location();
-    if (JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), location))
-        return wrapper;
-
-    JSDOMWindow* window = const_cast<JSDOMWindow*>(this);
-    JSLocation* jsLocation = JSLocation::create(getDOMStructure<JSLocation>(exec, window), window, location);
-    cacheWrapper(currentWorld(exec), location, jsLocation);
-    return jsLocation;
-}
-
 void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
 {
 #if ENABLE(DASHBOARD_SUPPORT)
