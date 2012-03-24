@@ -126,14 +126,16 @@ Markup.useHTML5libOutputFormat = function()
 
 Markup.get = function(node)
 {
+    var markup = Markup._getShadowHostIfPossible(node, 0);
+    if (markup)
+        return markup.substring(1);
+
     if (!node.firstChild)
         return '| ';
 
     // Don't print any markup for the root node.
-    var markup = '';
-    for (var i = 0, len = node.childNodes.length; i < len; i++) {
+    for (var i = 0, len = node.childNodes.length; i < len; i++)
         markup += Markup._get(node.childNodes[i], 0);
-    }
     return markup.substring(1);
 }
 
@@ -228,17 +230,23 @@ Markup._get = function(node, depth)
         str += Markup._get(node.childNodes[i], depth + 1);
     }
 
-    if (!Markup._useHTML5libOutputFormat && node.nodeType == Node.ELEMENT_NODE && window.internals) {
-        var root = window.internals.shadowRoot(node);
-        if (root)
-            str += Markup._get(root, depth + 1);
-    }
+    str += Markup._getShadowHostIfPossible(node, depth);
     
     var selection = Markup._getSelectionMarker(node, i);
     if (selection)
         str += Markup._indent(depth + 1) + selection;
 
     return str;
+}
+
+Markup._getShadowHostIfPossible = function (node, depth)
+{
+    if (!Markup._useHTML5libOutputFormat && node.nodeType == Node.ELEMENT_NODE && window.internals) {
+        var root = window.internals.shadowRoot(node);
+        if (root)
+            return Markup._get(root, depth + 1);
+    }
+    return '';
 }
 
 Markup._namespace = function(node)

@@ -292,6 +292,9 @@ void ReplacementFragment::removeUnrenderedNodes(Node* holder)
 
 void ReplacementFragment::removeInterchangeNodes(Node* container)
 {
+    m_hasInterchangeNewlineAtStart = false;
+    m_hasInterchangeNewlineAtEnd = false;
+
     // Interchange newlines at the "start" of the incoming fragment must be
     // either the first node in the fragment or the first leaf in the fragment.
     Node* node = container->firstChild();

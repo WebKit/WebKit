@@ -1,3 +1,20 @@
+2012-03-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r99076): WebKit pastes the trailing newline into a single-line text field
+        https://bugs.webkit.org/show_bug.cgi?id=79305
+
+        Reviewed by Tony Chang.
+
+        The bug was caused by ReplacementFragment::m_hasInterchangeNewlineAtEnd not reset even when
+        text field's beforeTextInserted event handler removed interchange new lines at the end.
+        Because the event handler is responsible for trimming new lines, we need to recompute the values
+        for m_hasInterchangeNewlineAt* after the event dispatch.
+
+        Test: editing/input/paste-text-ending-with-interchange-newline.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+
 2012-03-23  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r104060): Web font is not loaded if specified by link element dynamically inserted
