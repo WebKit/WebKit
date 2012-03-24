@@ -1,5 +1,29 @@
 2012-03-23  Kent Tamura  <tkent@chromium.org>
 
+        REGRESSION(90089): Input type='search' text shakes up and down when the style is changed.
+        https://bugs.webkit.org/show_bug.cgi?id=79445
+
+        Reviewed by Dimitri Glazkov.
+
+        If the inner text height of a search field is smaller than the
+        content box height of the <input>, the height of the container
+        element should be same as the content box height.
+
+        When the element style is changed, the RenderStyle height of the
+        container element is cleared, but the renderer height of the
+        container element remains. We had a bug that layout() didn't set
+        the RenderStyle height in a case that the renderer height was the
+        desired height. It shrunk the renderer height as the result of
+        layout for children.
+
+        Tests: fast/forms/search/search-shaking-text.html
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        Always set the RenderStyle height explicitly.
+
+2012-03-23  Kent Tamura  <tkent@chromium.org>
+
         REGRESSION(r106388): Form state is restored to a wrong document.
         https://bugs.webkit.org/show_bug.cgi?id=79206
 

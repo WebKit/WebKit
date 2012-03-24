@@ -4194,6 +4194,8 @@ BUGWK41386 : svg/foreignObject/fO-parent-display-changes.svg = IMAGE+TEXT
 // Started failing http://trac.webkit.org/log/?verbose=on&rev=107837&stop_rev=107836
 BUGWK78755 : compositing/culling/scrolled-within-boxshadow.html = IMAGE
 
+BUGWK79445 LINUX WIN : fast/repaint/search-field-cancel.html = FAIL
+
 // Need rebaselining.
 BUGWK69210 MAC : fast/encoding/utf-16-big-endian.html = IMAGE+TEXT
 BUGWK69210 MAC : fast/encoding/utf-16-little-endian.html = IMAGE+TEXT

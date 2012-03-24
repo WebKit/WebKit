@@ -250,7 +250,8 @@ void RenderTextControlSingleLine::layout()
         } else if (containerRenderer->height() < contentHeight()) {
             containerRenderer->style()->setHeight(Length(contentHeight(), Fixed));
             relayoutChildren = true;
-        }
+        } else
+            containerRenderer->style()->setHeight(Length(containerHeight, Fixed));
     }
 
     RenderBlock::layoutBlock(relayoutChildren);
