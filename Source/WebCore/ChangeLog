@@ -1,3 +1,38 @@
+2012-03-23  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r104060): Web font is not loaded if specified by link element dynamically inserted
+        https://bugs.webkit.org/show_bug.cgi?id=79186
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/css/font-face-insert-link.html
+        
+        If a dynamically inserted stylesheet contains @font-face rules, we may fail to update the rendering.
+        
+        Before r104060 the style selector was destroyed on every style change, and the font selector along with it.
+        This is no longer the case and we can't rely on comparing font selector pointers when comparing Fonts
+        for equality. This patch adds version number to the font selector and checks it in Font::operator==.
+        The version number is incremented when new font-face rules are added to the font selector.
+        
+        FontFallbackList is an object shared between Fonts so the extra field shouldn't matter much in terms
+        of memory.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSFontSelector.h:
+        (CSSFontSelector):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::operator==):
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontFallbackList::FontFallbackList):
+        (WebCore::FontFallbackList::invalidate):
+        * platform/graphics/FontFallbackList.h:
+        (FontFallbackList):
+        (WebCore::FontFallbackList::fontSelectorVersion):
+        * platform/graphics/FontSelector.h:
+        (FontSelector):
+
 2012-03-23  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         REGRESSION(58212): html foreignObjects with positions other than static not hidden correctly when parent has display:none

@@ -51,6 +51,8 @@ public:
     bool loadingCustomFonts() const { return m_loadingCustomFonts; }
 
     FontSelector* fontSelector() const { return m_fontSelector.get(); }
+    // FIXME: It should be possible to combine fontSelectorVersion and generation.
+    unsigned fontSelectorVersion() const { return m_fontSelectorVersion; }
     unsigned generation() const { return m_generation; }
 
     struct GlyphPagesHashTraits : HashTraits<int> {
@@ -87,6 +89,7 @@ private:
     mutable GlyphPageTreeNode* m_pageZero;
     mutable const SimpleFontData* m_cachedPrimarySimpleFontData;
     RefPtr<FontSelector> m_fontSelector;
+    unsigned m_fontSelectorVersion;
     mutable int m_familyIndex;
     unsigned short m_generation;
     mutable unsigned m_pitch : 3; // Pitch
