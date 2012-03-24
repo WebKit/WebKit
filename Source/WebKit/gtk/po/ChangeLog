@@ -1,3 +1,12 @@
+2012-03-24  Sandeep Shedmake <sshedmak@redhat.com>
+
+        [l10n] [mr] WebKitGTK+ Marathi Translations
+        https://bugs.webkit.org/show_bug.cgi?id=82014
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * mr.po: Added.
+
 2012-03-24  Chris Leonard  <cjl@laptop.org>
 
         Updated en_GB translation of WebKitGTK+
