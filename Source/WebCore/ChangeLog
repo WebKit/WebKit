@@ -1,3 +1,13 @@
+2012-03-23  Mikkel Kruse Johnsen  <mikkel@linet.dk>
+
+        WebKitGtk+ fails to build on win32 against GTK3
+        https://bugs.webkit.org/show_bug.cgi?id=63919
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * plugins/gtk/PluginViewGtk.cpp: Don't use gtk_socket_new with GTK3 on Win32
+        (WebCore::PluginView::platformStart):
+
 2012-03-23  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10923294> REGRESSION (r100847): Entries are clipped out in Day One
