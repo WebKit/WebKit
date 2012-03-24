@@ -52,6 +52,7 @@ const int buttonShadowHeight = 2;
 
 RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
     : RenderBlock(input)
+    , m_canReceiveDroppedFiles(input->canReceiveDroppedFiles())
 {
 }
 
@@ -72,8 +73,12 @@ void RenderFileUploadControl::updateFromElement()
         // updateFromElement() eventually.
         if (button->disabled() != newDisabled)
             button->setDisabled(newDisabled);
-        
-        button->setActive(input->canReceiveDroppedFiles());
+
+        bool newCanReceiveDroppedFilesState = input->canReceiveDroppedFiles();
+        if (m_canReceiveDroppedFiles != newCanReceiveDroppedFilesState) {
+            m_canReceiveDroppedFiles = newCanReceiveDroppedFilesState;
+            button->setActive(newCanReceiveDroppedFilesState);
+        }
     }
 
     // This only supports clearing out the files, but that's OK because for

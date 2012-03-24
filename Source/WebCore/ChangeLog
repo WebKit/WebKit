@@ -1,3 +1,27 @@
+2012-03-23  Daniel Bates  <dbates@webkit.org>
+
+        REGRESSION(r99369): File input button doesn't highlight when pressed
+        https://bugs.webkit.org/show_bug.cgi?id=79385
+
+        Reviewed by Kent Tamura.
+
+        Fixes an issue where the file input button doesn't highlight on mouse press.
+
+        Currently we always override the active state of the button with whether
+        a dragged file is being hovered over the file input control (i.e. can the control
+        receive a dropped file; HTMLInputElement::canReceiveDroppedFiles()).
+        Instead, we should only override the active state of the button when the state
+        changes for whether we can receive dropped files (e.g. during a drag) so that
+        we honor the active state of the button when it is pressed.
+
+        Test: fast/forms/file/file-input-pressed-state.html
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl):
+        (WebCore::RenderFileUploadControl::updateFromElement):
+        * rendering/RenderFileUploadControl.h:
+        (RenderFileUploadControl):
+
 2012-03-23  Shawn Singh  <shawnsingh@chromium.org>
 
         REGRESSION (r93614): scrolling div does not repaint
