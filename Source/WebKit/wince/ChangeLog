@@ -1,3 +1,17 @@
+2012-03-23  Adam Barth  <abarth@webkit.org>
+
+        Remove support for "magic" iframe
+        https://bugs.webkit.org/show_bug.cgi?id=81590
+
+        Reviewed by Eric Seidel.
+
+        Remove FrameLoaderClient methods that no longer exist.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+        (FrameLoaderClientWinCE):
+
 2012-02-15  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix after r107606.

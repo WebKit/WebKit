@@ -699,63 +699,6 @@ void Frame::disconnectOwnerElement()
     m_ownerElement = 0;
 }
 
-// The frame is moved in DOM, potentially to another page.
-void Frame::transferChildFrameToNewDocument()
-{
-    ASSERT(m_ownerElement);
-    Frame* newParent = m_ownerElement->document()->frame();
-    ASSERT(newParent);
-    bool didTransfer = false;
-
-    // Switch page.
-    Page* newPage = newParent->page();
-    Page* oldPage = m_page;
-    if (m_page != newPage) {
-        if (m_page) {
-            if (m_page->focusController()->focusedFrame() == this)
-                m_page->focusController()->setFocusedFrame(0);
-
-             m_page->decrementFrameCount();
-        }
-
-        // FIXME: We should ideally allow existing Geolocation activities to continue
-        // when the Geolocation's iframe is reparented.
-        // See https://bugs.webkit.org/show_bug.cgi?id=55577
-        // and https://bugs.webkit.org/show_bug.cgi?id=52877
-        if (m_domWindow) {
-            m_domWindow->resetGeolocation();
-#if ENABLE(NOTIFICATIONS)
-            m_domWindow->resetNotifications();
-#endif
-        }
-
-        m_page = newPage;
-
-        if (newPage)
-            newPage->incrementFrameCount();
-
-        didTransfer = true;
-    }
-
-    // Update the frame tree.
-    didTransfer = newParent->tree()->transferChild(this) || didTransfer;
-
-    // Avoid unnecessary calls to client and frame subtree if the frame ended
-    // up on the same page and under the same parent frame.
-    if (didTransfer) {
-        // Let external clients update themselves.
-        loader()->client()->didTransferChildFrameToNewDocument(oldPage);
-
-        // Update resource tracking now that frame could be in a different page.
-        if (oldPage != newPage)
-            loader()->transferLoadingResourcesFromPage(oldPage);
-
-        // Do the same for all the children.
-        for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-            child->transferChildFrameToNewDocument();
-    }
-}
-
 String Frame::documentTypeString() const
 {
     if (DocumentType* doctype = document()->doctype())

@@ -1,3 +1,16 @@
+2012-03-19  Adam Barth  <abarth@webkit.org>
+
+        Remove support for "magic" iframe
+        https://bugs.webkit.org/show_bug.cgi?id=81590
+
+        Reviewed by Eric Seidel.
+
+        Remove FrameLoaderClient methods that no longer exist.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2012-03-23  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION(r107168?): Assertion failures under pageContainsAnyHorizontalScrollbars causing multiple "crashes" on the Lion Intel Debug WebKit2 testers

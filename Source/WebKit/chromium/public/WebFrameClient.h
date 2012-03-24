@@ -284,10 +284,6 @@ public:
     // A reflected XSS was encountered in the page and suppressed.
     virtual void didDetectXSS(WebFrame*, const WebURL&, bool didBlockEntirePage) { }
 
-    // This frame adopted the resource that is being loaded. This happens when
-    // an iframe, that is loading a subresource, is transferred between windows.
-    virtual void didAdoptURLLoader(WebURLLoader*) { }
-
     // Script notifications ------------------------------------------------
 
     // Script in the page tried to allocate too much memory.

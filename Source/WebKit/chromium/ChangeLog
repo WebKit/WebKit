@@ -1,3 +1,19 @@
+2012-03-23  Adam Barth  <abarth@webkit.org>
+
+        Remove support for "magic" iframe
+        https://bugs.webkit.org/show_bug.cgi?id=81590
+
+        Reviewed by Eric Seidel.
+
+        Remove FrameLoaderClient methods that no longer exist.
+
+        * public/WebFrameClient.h:
+        (WebFrameClient):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit):
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+
 2012-02-18  raman Tenneti  <rtenneti@chromium.org>
 
         Track the NPN protocol version negotiated with the server

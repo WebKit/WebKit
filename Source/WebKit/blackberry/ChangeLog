@@ -1,3 +1,18 @@
+2012-03-23  Adam Barth  <abarth@webkit.org>
+
+        Remove support for "magic" iframe
+        https://bugs.webkit.org/show_bug.cgi?id=81590
+
+        Reviewed by Eric Seidel.
+
+        Remove FrameLoaderClient methods that no longer exist.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+        (WebCore::FrameLoaderClientBlackBerry::didDetectXSS):
+
 2012-02-16  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Implemented a way to defer client navigation change client notifications

@@ -532,35 +532,6 @@ PassRefPtr<Frame> FrameLoaderClient::createFrame(const KURL& url, const String& 
     return childFrame.release();
 }
 
-void FrameLoaderClient::didTransferChildFrameToNewDocument(WebCore::Page*)
-{
-    ASSERT(m_frame);
-
-    // Update the frame's webview to the new parent's webview.
-    Frame* coreFrame = core(m_frame);
-    WebKitWebView* webView = getViewFromFrame(m_frame);
-
-    Frame* parentCoreFrame = coreFrame->tree()->parent();
-    WebKitWebFrame* parentKitFrame = kit(parentCoreFrame);
-    WebKitWebView* parentWebView = getViewFromFrame(parentKitFrame);
-    if (webView != parentWebView)
-        m_frame->priv->webView = parentWebView;
-
-    ASSERT(core(getViewFromFrame(m_frame)) == coreFrame->page());
-}
-
-void FrameLoaderClient::transferLoadingResourceFromPage(WebCore::ResourceLoader* loader, const WebCore::ResourceRequest& request, WebCore::Page* oldPage)
-{
-    ASSERT(oldPage != core(m_frame)->page());
-
-    GOwnPtr<gchar> identifierString(toString(loader->identifier()));
-    ASSERT(!webkit_web_view_get_resource(getViewFromFrame(m_frame), identifierString.get()));
-
-    assignIdentifierToInitialRequest(loader->identifier(), loader->documentLoader(), request);
-
-    webkit_web_view_remove_resource(kit(oldPage), identifierString.get());
-}
-
 void FrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
     ASSERT(!m_pluginView);

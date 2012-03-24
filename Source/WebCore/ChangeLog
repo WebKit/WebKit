@@ -1,3 +1,56 @@
+2012-03-23  Adam Barth  <abarth@webkit.org>
+
+        Remove support for "magic" iframe
+        https://bugs.webkit.org/show_bug.cgi?id=81590
+
+        Reviewed by Eric Seidel.
+
+        This patch removes support for "magic" iframe, which previously allowed
+        an iframe to be transfered from one document to another without
+        reloading the iframe.  The idea behind this feature was to let sites
+        create "pop out" windows that could outlive their parents by
+        transfering state to these windows via these magic iframes.
+
+        Unforuntately, this feature was never implemented by other browsers and
+        has been the source of a series of security vulnerabilities.  Although
+        we have fixed each vulnerability as it has been discovered, the feature
+        is still a complex corner case that isn't widely exercised on the web.
+        For that reason, it's likely to have more vulnerabilities in the
+        future.
+
+        I'm not aware of any web sites that use this feature anymore.  There
+        were a handful of them, but we appear to have been successful in
+        evangalizing them to move away from "magic" iframe.
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore):
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase):
+        (WebCore::HTMLFrameElementBase::insertedIntoDocument):
+        * html/HTMLFrameElementBase.h:
+        (HTMLFrameElementBase):
+        * loader/DocumentLoader.cpp:
+        (WebCore):
+        * loader/DocumentLoader.h:
+        (DocumentLoader):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::createFrame):
+        * loader/FrameLoader.cpp:
+        (WebCore):
+        * loader/FrameLoader.h:
+        (FrameLoader):
+        * loader/FrameLoaderClient.h:
+        (FrameLoaderClient):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore):
+        * loader/ResourceLoadNotifier.h:
+        (ResourceLoadNotifier):
+        * page/Frame.cpp:
+        (WebCore):
+        * page/Frame.h:
+        (Frame):
+
 2012-03-23  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         REGRESSION(r106232): The resize handler is always called after loading.

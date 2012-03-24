@@ -1366,28 +1366,6 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     return frameData.frame.release();
 }
 
-void FrameLoaderClientQt::didTransferChildFrameToNewDocument(Page*)
-{
-    ASSERT(m_frame->ownerElement());
-
-    if (!m_webFrame)
-        return;
-
-    Frame* parentFrame = m_webFrame->d->frame->tree()->parent();
-    ASSERT(parentFrame);
-
-    if (QWebFrame* parent = QWebFramePrivate::kit(parentFrame)) {
-        m_webFrame->d->setPage(parent->page());
-
-        if (m_webFrame->parent() != qobject_cast<QObject*>(parent))
-            m_webFrame->setParent(parent);
-    }
-}
-
-void FrameLoaderClientQt::transferLoadingResourceFromPage(ResourceLoader*, const ResourceRequest&, Page*)
-{
-}
-
 ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const String& mimeTypeIn, bool shouldPreferPlugInsForImages)
 {
     // qDebug()<<" ++++++++++++++++ url is "<<url.string()<<", mime = "<<mimeTypeIn;

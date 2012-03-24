@@ -1,3 +1,17 @@
+2012-03-23  Adam Barth  <abarth@webkit.org>
+
+        Remove support for "magic" iframe
+        https://bugs.webkit.org/show_bug.cgi?id=81590
+
+        Reviewed by Eric Seidel.
+
+        Remove FrameLoaderClient methods that no longer exist.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        (FrameLoaderClientEfl):
+
 2012-02-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Unreviewed, adapt to the changes introduced in r107973.

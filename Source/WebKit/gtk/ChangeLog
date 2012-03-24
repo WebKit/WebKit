@@ -1,3 +1,17 @@
+2012-03-23  Adam Barth  <abarth@webkit.org>
+
+        Remove support for "magic" iframe
+        https://bugs.webkit.org/show_bug.cgi?id=81590
+
+        Reviewed by Eric Seidel.
+
+        Remove FrameLoaderClient methods that no longer exist.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+        (FrameLoaderClient):
+
 2012-03-19  Martin Robinson  <mrobinson@igalia.com>
 
         Update the NEWS and version for the WebKitGTK+ 1.7.92 release.

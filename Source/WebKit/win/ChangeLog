@@ -1,3 +1,16 @@
+2012-03-23  Adam Barth  <abarth@webkit.org>
+
+        Remove support for "magic" iframe
+        https://bugs.webkit.org/show_bug.cgi?id=81590
+
+        Reviewed by Eric Seidel.
+
+        Remove FrameLoaderClient methods that no longer exist.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient):
+
 2012-02-17  Kalev Lember  <kalevlember@gmail.com>
 
         Remove unused parameters from WTF threading API

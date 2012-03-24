@@ -1,3 +1,17 @@
+2012-03-23  Adam Barth  <abarth@webkit.org>
+
+        Remove support for "magic" iframe
+        https://bugs.webkit.org/show_bug.cgi?id=81590
+
+        Reviewed by Eric Seidel.
+
+        Remove FrameLoaderClient methods that no longer exist.
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore):
+        * WebKitSupport/FrameLoaderClientWx.h:
+        (FrameLoaderClientWx):
+
 2012-02-15  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Notify ChromeClient when touch-event handlers are installed/removed.
