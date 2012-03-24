@@ -1,3 +1,20 @@
+2012-03-23  Oliver Hunt  <oliver@apple.com>
+
+        REGRESSION (r108112): AWS Management Console at amazon.com fails to initialize
+        https://bugs.webkit.org/show_bug.cgi?id=79693
+
+        Reviewed by Filip Pizlo.
+
+        Alas we can't provide the stack trace as an array, as despite everyone wanting
+        an array, everyone arbitrarily creates the array by calling split on the stack
+        trace.  To create the array we would have provided them in the first place.
+
+        This changes the exception's stack property to a \n separated string.  To get the
+        old array just do <exception>.stack.split("\n").
+
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+
 2012-03-05  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add GMainLoop and GMainContext to be handled by GRefPtr
