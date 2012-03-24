@@ -452,8 +452,8 @@ namespace JSC {
         static const int sequenceGetByIdHotPathInstructionSpace = 36;
         static const int sequenceGetByIdHotPathConstantSpace = 4;
         // sequenceGetByIdSlowCase
-        static const int sequenceGetByIdSlowCaseInstructionSpace = 56;
-        static const int sequenceGetByIdSlowCaseConstantSpace = 3;
+        static const int sequenceGetByIdSlowCaseInstructionSpace = 64;
+        static const int sequenceGetByIdSlowCaseConstantSpace = 4;
         // sequencePutById
         static const int sequencePutByIdInstructionSpace = 36;
         static const int sequencePutByIdConstantSpace = 4;

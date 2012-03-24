@@ -1,3 +1,16 @@
+2012-03-24  Yong Li  <yoli@rim.com>
+
+        Increase getByIdSlowCase ConstantSpace/InstructionSpace for CPU(ARM_TRADITIONAL)
+        https://bugs.webkit.org/show_bug.cgi?id=81521
+
+        Increase sequenceGetByIdSlowCaseConstantSpace and sequenceGetByIdSlowCaseInstructionSpace
+        for CPU(ARM_TRADITIONAL) to fit actual need.
+
+        Reviewed by Oliver Hunt.
+
+        * jit/JIT.h:
+        (JIT):
+
 2012-03-23  Filip Pizlo  <fpizlo@apple.com>
 
         DFG Fixup should be able to short-circuit trivial ValueToInt32's
