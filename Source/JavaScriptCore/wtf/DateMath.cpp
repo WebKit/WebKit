@@ -935,6 +935,14 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
             }
         }
     }
+    
+    // The year may be after the time but before the time zone.
+    if (isASCIIDigit(*dateString) && year == -1) {
+        if (!parseLong(dateString, &newPosStr, 10, &year))
+            return std::numeric_limits<double>::quiet_NaN();
+        dateString = newPosStr;
+        skipSpacesAndComments(dateString);
+    }
 
     // Don't fail if the time zone is missing. 
     // Some websites omit the time zone (4275206).
@@ -987,9 +995,8 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
         if (!parseLong(dateString, &newPosStr, 10, &year))
             return std::numeric_limits<double>::quiet_NaN();
         dateString = newPosStr;
+        skipSpacesAndComments(dateString);
     }
-
-    skipSpacesAndComments(dateString);
 
     // Trailing garbage
     if (*dateString)
