@@ -480,6 +480,11 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setSublayerTransform(m_sublayerTransform);
     if (!transformIsAnimating())
         layer->setTransform(m_transform);
+
+    // If the main thread commits multiple times before the impl thread actually draws, then damage tracking
+    // will become incorrect if we simply clobber the updateRect here. The CCLayerImpl's updateRect needs to
+    // accumulate (i.e. union) any update changes that have occurred on the main thread.
+    m_updateRect.uniteIfNonZero(layer->updateRect());
     layer->setUpdateRect(m_updateRect);
 
     layer->setScrollDelta(layer->scrollDelta() - layer->sentScrollDelta());

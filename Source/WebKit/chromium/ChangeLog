@@ -1,3 +1,12 @@
+2012-03-23  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Fix race bug that clobbers CCLayerImpl updateRect
+        https://bugs.webkit.org/show_bug.cgi?id=82109
+
+        Reviewed by Dirk Pranke.
+
+        * tests/LayerChromiumTest.cpp:
+
 2012-03-23  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Support file drag out using DataTransferItemList::add(File)

@@ -26,13 +26,14 @@
 
 #include "LayerChromium.h"
 
-#include "cc/CCLayerTreeHost.h"
 #include "CCLayerTreeTestCommon.h"
 #include "FakeCCLayerTreeHostClient.h"
 #include "LayerPainterChromium.h"
 #include "NonCompositedContentHost.h"
 #include "WebCompositor.h"
+#include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHost.h"
+#include "cc/CCSingleThreadProxy.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -528,6 +529,29 @@ TEST_F(LayerChromiumTest, checkPropertyChangeCausesCorrectBehavior)
     // Test properties that should call setNeedsDisplay and setNeedsCommit
     EXECUTE_AND_VERIFY_SET_NEEDS_COMMIT_BEHAVIOR(1, testLayer->setBounds(IntSize(5, 10)));
     EXPECT_TRUE(testLayer->needsDisplay());
+}
+
+TEST_F(LayerChromiumTest, verifyPushPropertiesAccumulatesUpdateRect)
+{
+    DebugScopedSetImplThread setImplThread;
+
+    RefPtr<LayerChromium> testLayer = LayerChromium::create();
+    OwnPtr<CCLayerImpl> implLayer = CCLayerImpl::create(1);
+
+    testLayer->setNeedsDisplayRect(FloatRect(FloatPoint::zero(), FloatSize(5, 5)));
+    testLayer->pushPropertiesTo(implLayer.get());
+    EXPECT_FLOAT_RECT_EQ(FloatRect(FloatPoint::zero(), FloatSize(5, 5)), implLayer->updateRect());
+
+    // The CCLayerImpl's updateRect should be accumulated here, since we did not do anything to clear it.
+    testLayer->setNeedsDisplayRect(FloatRect(FloatPoint(10, 10), FloatSize(5, 5)));
+    testLayer->pushPropertiesTo(implLayer.get());
+    EXPECT_FLOAT_RECT_EQ(FloatRect(FloatPoint::zero(), FloatSize(15, 15)), implLayer->updateRect());
+
+    // If we do clear the CCLayerImpl side, then the next updateRect should be fresh without accumulation.
+    implLayer->resetAllChangeTrackingForSubtree();
+    testLayer->setNeedsDisplayRect(FloatRect(FloatPoint(10, 10), FloatSize(5, 5)));
+    testLayer->pushPropertiesTo(implLayer.get());
+    EXPECT_FLOAT_RECT_EQ(FloatRect(FloatPoint(10, 10), FloatSize(5, 5)), implLayer->updateRect());
 }
 
 class LayerChromiumWithContentScaling : public LayerChromium {
