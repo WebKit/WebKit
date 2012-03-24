@@ -48,7 +48,6 @@ namespace WebCore {
 
     class Blob;
     class DOMURL;
-    class NotificationCenter;
     class ScheduledAction;
     class WorkerInspectorController;
     class WorkerLocation;
@@ -104,10 +103,6 @@ namespace WebCore {
 
         // ScriptExecutionContext
         virtual WorkerEventQueue* eventQueue() const;
-
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-        NotificationCenter* webkitNotifications() const;
-#endif
 
         virtual bool isContextThread() const;
         virtual bool isJSExecutionForbidden() const;
@@ -172,9 +167,6 @@ namespace WebCore {
         OwnPtr<WorkerScriptController> m_script;
         WorkerThread* m_thread;
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-        mutable RefPtr<NotificationCenter> m_notifications;
-#endif
 #if ENABLE(BLOB)
         mutable RefPtr<DOMURL> m_domURL;
 #endif

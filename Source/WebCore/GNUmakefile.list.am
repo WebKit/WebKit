@@ -2851,6 +2851,8 @@ webcore_sources += \
 	Source/WebCore/notifications/NotificationController.h \
 	Source/WebCore/notifications/Notification.cpp \
 	Source/WebCore/notifications/Notification.h \
+	Source/WebCore/notifications/WorkerContextNotifications.cpp \
+	Source/WebCore/notifications/WorkerContextNotifications.h \
 	Source/WebCore/page/animation/AnimationBase.cpp \
 	Source/WebCore/page/animation/AnimationBase.h \
 	Source/WebCore/page/animation/AnimationController.cpp \

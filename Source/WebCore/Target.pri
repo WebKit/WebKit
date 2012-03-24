@@ -984,6 +984,7 @@ SOURCES += \
     notifications/Notification.cpp \
     notifications/NotificationCenter.cpp \
     notifications/NotificationController.cpp \
+    notifications/WorkerContextNotifications.cpp \
     page/animation/AnimationBase.cpp \
     page/animation/AnimationController.cpp \
     page/animation/CompositeAnimation.cpp \
@@ -2086,6 +2087,7 @@ HEADERS += \
     notifications/NotificationCenter.h \
     notifications/NotificationClient.h \
     notifications/NotificationController.h \
+    notifications/WorkerContextNotifications.h \
     page/animation/AnimationBase.h \
     page/animation/AnimationController.h \
     page/animation/CompositeAnimation.h \

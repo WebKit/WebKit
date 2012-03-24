@@ -387,6 +387,7 @@ BINDING_IDLS = \
     $(WebCore)/notifications/DOMWindowNotifications.idl \
     $(WebCore)/notifications/Notification.idl \
     $(WebCore)/notifications/NotificationCenter.idl \
+    $(WebCore)/notifications/WorkerContextNotifications.idl \
     $(WebCore)/page/AbstractView.idl \
     $(WebCore)/page/BarInfo.idl \
     $(WebCore)/page/Console.idl \

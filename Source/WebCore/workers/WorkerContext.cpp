@@ -104,9 +104,6 @@ WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThr
 WorkerContext::~WorkerContext()
 {
     ASSERT(currentThread() == thread()->threadID());
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    m_notifications.clear();
-#endif
 
     // Make sure we have no observers.
     notifyObserversOfStop();
@@ -293,15 +290,6 @@ void WorkerContext::addMessageToWorkerConsole(MessageSource source, MessageType 
     else
         InspectorInstrumentation::addMessageToConsole(this, source, type, level, message, sourceURL, lineNumber);
 }
-
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-NotificationCenter* WorkerContext::webkitNotifications() const
-{
-    if (!m_notifications)
-        m_notifications = NotificationCenter::create(scriptExecutionContext(), m_thread->getNotificationClient());
-    return m_notifications.get();
-}
-#endif
 
 bool WorkerContext::isContextThread() const
 {

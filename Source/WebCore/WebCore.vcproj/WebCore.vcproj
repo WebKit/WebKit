@@ -53949,6 +53949,14 @@
 				RelativePath="..\notifications\NotificationClient.h"
 				>
 			</File>
+			<File
+				RelativePath="..\notifications\WorkerContextNotifications.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\notifications\WorkerContextNotifications.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="editing"

@@ -3582,6 +3582,8 @@
 		97E4A12614F4C5D400870E43 /* NavigatorRegisterProtocolHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9730BE1514EF286B00DF06B9 /* NavigatorRegisterProtocolHandler.h */; };
 		97E4A12714F4C5D700870E43 /* NavigatorRegisterProtocolHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9730BE1414EF286B00DF06B9 /* NavigatorRegisterProtocolHandler.cpp */; };
 		97EF7DFE107E55B700D7C49C /* ScriptControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */; };
+		97F8E665151D4A4B00D2D181 /* WorkerContextNotifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97F8E661151D4A3F00D2D181 /* WorkerContextNotifications.cpp */; };
+		97F8E666151D4A4E00D2D181 /* WorkerContextNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F8E662151D4A3F00D2D181 /* WorkerContextNotifications.h */; };
 		984264F112D5280A000D88A4 /* LinkLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 984264EF12D5280A000D88A4 /* LinkLoaderClient.h */; };
 		985BB96D13A94058007A0B69 /* LinkRelAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 985BB96B13A94058007A0B69 /* LinkRelAttribute.cpp */; };
 		985BB96E13A94058007A0B69 /* LinkRelAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 985BB96C13A94058007A0B69 /* LinkRelAttribute.h */; };
@@ -10565,6 +10567,9 @@
 		97E4028D13A696ED00913D67 /* IconController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconController.cpp; sourceTree = "<group>"; };
 		97E4028E13A696ED00913D67 /* IconController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconController.h; sourceTree = "<group>"; };
 		97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptControllerBase.cpp; sourceTree = "<group>"; };
+		97F8E661151D4A3F00D2D181 /* WorkerContextNotifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerContextNotifications.cpp; path = notifications/WorkerContextNotifications.cpp; sourceTree = "<group>"; };
+		97F8E662151D4A3F00D2D181 /* WorkerContextNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerContextNotifications.h; path = notifications/WorkerContextNotifications.h; sourceTree = "<group>"; };
+		97F8E663151D4A3F00D2D181 /* WorkerContextNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WorkerContextNotifications.idl; path = notifications/WorkerContextNotifications.idl; sourceTree = "<group>"; };
 		984264EF12D5280A000D88A4 /* LinkLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkLoaderClient.h; sourceTree = "<group>"; };
 		985BB96B13A94058007A0B69 /* LinkRelAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkRelAttribute.cpp; sourceTree = "<group>"; };
 		985BB96C13A94058007A0B69 /* LinkRelAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkRelAttribute.h; sourceTree = "<group>"; };
@@ -14436,6 +14441,9 @@
 				33503C9910179A74003B47E1 /* NotificationClient.h */,
 				3128CA67147331520074C72A /* NotificationController.cpp */,
 				3128CA6A147331630074C72A /* NotificationController.h */,
+				97F8E661151D4A3F00D2D181 /* WorkerContextNotifications.cpp */,
+				97F8E662151D4A3F00D2D181 /* WorkerContextNotifications.h */,
+				97F8E663151D4A3F00D2D181 /* WorkerContextNotifications.idl */,
 			);
 			name = notifications;
 			sourceTree = "<group>";
@@ -24575,6 +24583,7 @@
 				F3820897147D35F90010BC06 /* WorkerConsoleAgent.h in Headers */,
 				2E4346490F546A8200B0F1BA /* WorkerContext.h in Headers */,
 				9712A612150090CE0048AF10 /* WorkerContextIndexedDatabase.h in Headers */,
+				97F8E666151D4A4E00D2D181 /* WorkerContextNotifications.h in Headers */,
 				2E43464B0F546A8200B0F1BA /* WorkerContextProxy.h in Headers */,
 				97BC6A601505F081001B74AC /* WorkerContextSQLDatabase.h in Headers */,
 				F34742E11343631F00531BC2 /* WorkerDebuggerAgent.h in Headers */,
@@ -27570,6 +27579,7 @@
 				F3820896147D35F90010BC06 /* WorkerConsoleAgent.cpp in Sources */,
 				2E4346480F546A8200B0F1BA /* WorkerContext.cpp in Sources */,
 				9712A611150090CE0048AF10 /* WorkerContextIndexedDatabase.cpp in Sources */,
+				97F8E665151D4A4B00D2D181 /* WorkerContextNotifications.cpp in Sources */,
 				97BC6A5F1505F081001B74AC /* WorkerContextSQLDatabase.cpp in Sources */,
 				F34742E01343631F00531BC2 /* WorkerDebuggerAgent.cpp in Sources */,
 				A3E2643014748991005A8588 /* WorkerEventQueue.cpp in Sources */,

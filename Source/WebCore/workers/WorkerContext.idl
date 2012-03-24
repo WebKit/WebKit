@@ -70,11 +70,6 @@ module threads {
         boolean dispatchEvent(in Event evt)
             raises(EventException);
 
-#if (defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS) || (defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS)
-        // Notification interface
-        readonly attribute [V8EnabledAtRuntime] NotificationCenter webkitNotifications;
-#endif
-
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
         // Constructors
         attribute MessageEventConstructor MessageEvent;
