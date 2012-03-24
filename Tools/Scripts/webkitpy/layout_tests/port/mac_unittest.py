@@ -172,7 +172,7 @@ java/
         port = self.make_port()
         # Delay setting a should_log executive to avoid logging from MacPort.__init__.
         port._executive = MockExecutive(should_log=True)
-        expected_stderr = "MOCK run_command: ['Tools/Scripts/run-safari', '--release', '--no-saved-state', '-NSOpen', 'test.html'], cwd=/mock-checkout\n"
+        expected_stderr = "MOCK popen: ['Tools/Scripts/run-safari', '--release', '--no-saved-state', '-NSOpen', 'test.html'], cwd=/mock-checkout\n"
         OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_stderr=expected_stderr)
 
     def test_operating_system(self):
@@ -196,9 +196,12 @@ java/
     def test_helper_starts(self):
         host = MockSystemHost(MockExecutive())
         port = self.make_port(host)
+        oc = OutputCapture()
+        oc.capture_output()
         host.executive._proc = MockProcess('ready\n')
         port.start_helper()
         port.stop_helper()
+        oc.restore_output()
 
         # make sure trying to stop the helper twice is safe.
         port.stop_helper()
@@ -206,8 +209,11 @@ java/
     def test_helper_fails_to_start(self):
         host = MockSystemHost(MockExecutive())
         port = self.make_port(host)
+        oc = OutputCapture()
+        oc.capture_output()
         port.start_helper()
         port.stop_helper()
+        oc.restore_output()
 
     def test_helper_fails_to_stop(self):
         host = MockSystemHost(MockExecutive())
@@ -218,5 +224,8 @@ java/
         host.executive._proc.wait = bad_waiter
 
         port = self.make_port(host)
+        oc = OutputCapture()
+        oc.capture_output()
         port.start_helper()
         port.stop_helper()
+        oc.restore_output()

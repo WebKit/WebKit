@@ -139,7 +139,10 @@ class MacPort(ApplePort):
         return self._build_path('WebCore.framework/Versions/A/WebCore')
 
     def show_results_html_file(self, results_filename):
-        self._run_script('run-safari', ['--no-saved-state', '-NSOpen', results_filename])
+        # We don't use self._run_script() because we don't want to wait for the script
+        # to exit and we want the output to show up on stdout in case there are errors
+        # launching the browser.
+        self._executive.popen([self._config.script_path('run-safari')] + self._arguments_for_configuration() + ['--no-saved-state', '-NSOpen', results_filename], cwd=self._config.webkit_base_dir())
 
     # FIXME: The next two routines turn off the http locking in order
     # to work around failures on the bots caused when the slave restarts.

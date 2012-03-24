@@ -1,3 +1,24 @@
+2012-03-23  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: don't wait for safari to exit before exiting after showing the results file
+        https://bugs.webkit.org/show_bug.cgi?id=81845
+
+        Reviewed by Ryosuke Niwa.
+
+        Prior to this change, if you ran new-run-webkit-tests and
+        displayed the HTML results file at the end, we would block
+        waiting for the user to quit the browser. There doesn't seem to
+        be a need for that, and the Chromium ports don't do this.
+
+        Also, update the mac tests to capture the output and be quiet :).
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+          Make popen() testable, implement should_log for it.
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.show_results_html_file):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+          Silence some of the tests via outputcapture.
+
 2012-03-23  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] libgcrypt and p11-kit should not be in jhbuild modules

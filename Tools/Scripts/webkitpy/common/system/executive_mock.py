@@ -95,8 +95,15 @@ class MockExecutive(object):
     def cpu_count(self):
         return 2
 
-    def popen(self, *args, **kwargs):
-        # FIXME: Implement logging when self._should_log is set.
+    def popen(self, args, cwd=None, env=None, **kwargs):
+        if self._should_log:
+            cwd_string = ""
+            if cwd:
+                cwd_string = ", cwd=%s" % cwd
+            env_string = ""
+            if env:
+                env_string = ", env=%s" % env
+            log("MOCK popen: %s%s%s" % (args, cwd_string, env_string))
         if not self._proc:
             self._proc = MockProcess()
         return self._proc
