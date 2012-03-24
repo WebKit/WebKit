@@ -391,10 +391,10 @@ void RenderTable::layout()
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isTableSection())
             // FIXME: Distribute the extra logical height between all table sections instead of giving it all to the first one.
-            toRenderTableSection(child)->layoutRows(child == topSection() ? max<LayoutUnit>(0, computedLogicalHeight - totalSectionLogicalHeight) : 0);
+            toRenderTableSection(child)->layoutRows(child == m_firstBody ? max<LayoutUnit>(0, computedLogicalHeight - totalSectionLogicalHeight) : 0);
     }
 
-    if (!topSection() && computedLogicalHeight > totalSectionLogicalHeight && !document()->inQuirksMode()) {
+    if (!m_firstBody && computedLogicalHeight > totalSectionLogicalHeight && !document()->inQuirksMode()) {
         // Completely empty tables (with no sections or anything) should at least honor specified height
         // in strict mode.
         setLogicalHeight(logicalHeight() + computedLogicalHeight);

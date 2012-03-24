@@ -1,3 +1,23 @@
+2012-03-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION(107971): Google Voice contact list is broken in WebKit due to badly allocating the extra height
+        https://bugs.webkit.org/show_bug.cgi?id=81826
+
+        Reviewed by Tony Chang.
+
+        Covered by tables/mozilla/bugs/bug27038-{1|2}.html.
+
+        This partly reverts r107971: the extra logical height distribution change was not needed
+        to fix the bug (it is needed by the test though). We revert to giving all the extra height
+        to the first tbody and not the first section.
+
+        This is broken but unfortunately some websites are relying on that. Getting a real
+        distribution algorithm is covered by bug 81824. However this is super tricky to get
+        right and I did not want to add more compatibility risks until I have something solid.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::distributeExtraLogicalHeight):
+
 2012-03-23  Konrad Piascik  <kpiascik@rim.com>
 
         (r110063) m_mouseDownMayStartDrag is used without being behind the ENABLE(DRAG_SUPPORT) macro
