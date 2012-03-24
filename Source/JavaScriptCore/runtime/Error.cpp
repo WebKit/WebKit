@@ -35,7 +35,8 @@
 #include "JSString.h"
 #include "NativeErrorConstructor.h"
 #include "SourceCode.h"
-#include "StringBuilder.h"
+
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 

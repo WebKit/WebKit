@@ -1,3 +1,9 @@
+2012-03-23  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Unreviewed. Build fix for linux-bot (qt) after r109021.
+
+        * runtime/Error.cpp:
+
 2012-03-23  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION (r108112): AWS Management Console at amazon.com fails to initialize
