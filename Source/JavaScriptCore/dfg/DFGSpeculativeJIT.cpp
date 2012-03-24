@@ -1749,7 +1749,7 @@ void SpeculativeJIT::compilePutByValForByteArray(GPRReg base, GPRReg property, N
         m_jit.move(Imm32(clampedValue), scratchReg);
         value.adopt(scratch);
         valueGPR = scratchReg;
-    } else if (!at(valueUse).shouldNotSpeculateInteger()) {
+    } else if (at(valueUse).shouldSpeculateInteger()) {
         SpeculateIntegerOperand valueOp(this, valueUse);
         GPRTemporary scratch(this);
         GPRReg scratchReg = scratch.gpr();
@@ -1912,7 +1912,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor&
         m_jit.move(Imm32(static_cast<int>(d)), scratchReg);
         value.adopt(scratch);
         valueGPR = scratchReg;
-    } else if (!at(valueUse).shouldNotSpeculateInteger()) {
+    } else if (at(valueUse).shouldSpeculateInteger()) {
         SpeculateIntegerOperand valueOp(this, valueUse);
         GPRTemporary scratch(this);
         GPRReg scratchReg = scratch.gpr();

@@ -1,3 +1,18 @@
+2012-03-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::Node::shouldNotSpeculateInteger() should be eliminated
+        https://bugs.webkit.org/show_bug.cgi?id=82123
+
+        Reviewed by Geoff Garen.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGNode.h:
+        (Node):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForByteArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+
 2012-03-24  Yong Li  <yoli@rim.com>
 
         Increase getByIdSlowCase ConstantSpace/InstructionSpace for CPU(ARM_TRADITIONAL)

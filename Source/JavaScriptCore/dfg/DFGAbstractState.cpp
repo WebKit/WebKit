@@ -352,7 +352,8 @@ bool AbstractState::execute(unsigned indexInBlock)
     case ArithMul:
     case ArithDiv:
     case ArithMin:
-    case ArithMax: {
+    case ArithMax:
+    case ArithMod: {
         if (Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child2()]) && node.canSpeculateInteger()) {
             forNode(node.child1()).filter(PredictInt32);
             forNode(node.child2()).filter(PredictInt32);
@@ -362,19 +363,6 @@ bool AbstractState::execute(unsigned indexInBlock)
         forNode(node.child1()).filter(PredictNumber);
         forNode(node.child2()).filter(PredictNumber);
         forNode(nodeIndex).set(PredictDouble);
-        break;
-    }
-            
-    case ArithMod: {
-        if (m_graph[node.child1()].shouldNotSpeculateInteger() || m_graph[node.child2()].shouldNotSpeculateInteger() || !node.canSpeculateInteger()) {
-            forNode(node.child1()).filter(PredictNumber);
-            forNode(node.child2()).filter(PredictNumber);
-            forNode(nodeIndex).set(PredictDouble);
-            break;
-        }
-        forNode(node.child1()).filter(PredictInt32);
-        forNode(node.child2()).filter(PredictInt32);
-        forNode(nodeIndex).set(PredictInt32);
         break;
     }
             
@@ -555,50 +543,74 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (m_graph[node.child1()].shouldSpeculateByteArray()) {
             forNode(node.child1()).filter(PredictByteArray);
             forNode(node.child2()).filter(PredictInt32);
-            forNode(node.child3()).filter(PredictNumber);
+            if (m_graph[node.child3()].shouldSpeculateInteger())
+                forNode(node.child3()).filter(PredictInt32);
+            else
+                forNode(node.child3()).filter(PredictNumber);
             break;
         }
         
         if (m_graph[node.child1()].shouldSpeculateInt8Array()) {
             forNode(node.child1()).filter(PredictInt8Array);
             forNode(node.child2()).filter(PredictInt32);
-            forNode(node.child3()).filter(PredictNumber);
+            if (m_graph[node.child3()].shouldSpeculateInteger())
+                forNode(node.child3()).filter(PredictInt32);
+            else
+                forNode(node.child3()).filter(PredictNumber);
             break;
         }
         if (m_graph[node.child1()].shouldSpeculateInt16Array()) {
             forNode(node.child1()).filter(PredictInt16Array);
             forNode(node.child2()).filter(PredictInt32);
-            forNode(node.child3()).filter(PredictNumber);
+            if (m_graph[node.child3()].shouldSpeculateInteger())
+                forNode(node.child3()).filter(PredictInt32);
+            else
+                forNode(node.child3()).filter(PredictNumber);
             break;
         }
         if (m_graph[node.child1()].shouldSpeculateInt32Array()) {
             forNode(node.child1()).filter(PredictInt32Array);
             forNode(node.child2()).filter(PredictInt32);
-            forNode(node.child3()).filter(PredictNumber);
+            if (m_graph[node.child3()].shouldSpeculateInteger())
+                forNode(node.child3()).filter(PredictInt32);
+            else
+                forNode(node.child3()).filter(PredictNumber);
             break;
         }
         if (m_graph[node.child1()].shouldSpeculateUint8Array()) {
             forNode(node.child1()).filter(PredictUint8Array);
             forNode(node.child2()).filter(PredictInt32);
-            forNode(node.child3()).filter(PredictNumber);
+            if (m_graph[node.child3()].shouldSpeculateInteger())
+                forNode(node.child3()).filter(PredictInt32);
+            else
+                forNode(node.child3()).filter(PredictNumber);
             break;
         }
         if (m_graph[node.child1()].shouldSpeculateUint8ClampedArray()) {
             forNode(node.child1()).filter(PredictUint8ClampedArray);
             forNode(node.child2()).filter(PredictInt32);
-            forNode(node.child3()).filter(PredictNumber);
+            if (m_graph[node.child3()].shouldSpeculateInteger())
+                forNode(node.child3()).filter(PredictInt32);
+            else
+                forNode(node.child3()).filter(PredictNumber);
             break;
         }
         if (m_graph[node.child1()].shouldSpeculateUint16Array()) {
             forNode(node.child1()).filter(PredictUint16Array);
             forNode(node.child2()).filter(PredictInt32);
-            forNode(node.child3()).filter(PredictNumber);
+            if (m_graph[node.child3()].shouldSpeculateInteger())
+                forNode(node.child3()).filter(PredictInt32);
+            else
+                forNode(node.child3()).filter(PredictNumber);
             break;
         }
         if (m_graph[node.child1()].shouldSpeculateUint32Array()) {
             forNode(node.child1()).filter(PredictUint32Array);
             forNode(node.child2()).filter(PredictInt32);
-            forNode(node.child3()).filter(PredictNumber);
+            if (m_graph[node.child3()].shouldSpeculateInteger())
+                forNode(node.child3()).filter(PredictInt32);
+            else
+                forNode(node.child3()).filter(PredictNumber);
             break;
         }
         if (m_graph[node.child1()].shouldSpeculateFloat32Array()) {

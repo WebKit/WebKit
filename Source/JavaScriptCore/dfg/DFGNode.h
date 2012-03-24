@@ -679,11 +679,6 @@ struct Node {
         return isNumberPrediction(prediction());
     }
     
-    bool shouldNotSpeculateInteger()
-    {
-        return !!(prediction() & PredictDouble);
-    }
-    
     bool shouldSpeculateBoolean()
     {
         return isBooleanPrediction(prediction());
