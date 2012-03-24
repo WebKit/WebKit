@@ -1,3 +1,12 @@
+2012-03-24  Fran Dieguez  <frandieguez@gnome.org>
+
+        Add Galician translations for webkitgtk
+        https://bugs.webkit.org/show_bug.cgi?id=67591
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gl.po:
+
 2012-03-24  Matej Urbančič  <mateju@svn.gnome.org>
 
         Slovenian translation update
