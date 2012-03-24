@@ -1,3 +1,18 @@
+2012-03-23  Shawn Singh  <shawnsingh@chromium.org>
+
+        REGRESSION (r93614): scrolling div does not repaint
+        https://bugs.webkit.org/show_bug.cgi?id=80641
+
+        Reviewed by Simon Fraser.
+
+        Test: compositing/repaint/newly-composited-repaint-rect.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking): When a layer
+        becomes newly composited and creates its backing, the repaintRect
+        may become invalid. This patch recomputes repaintRects in this
+        case.
+
 2012-03-23  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r105396): Dragging an iWork document into icloud.com opens it in the Mac app instead of uploading it to icloud.com
