@@ -68,6 +68,7 @@ void WebPageCompositorPrivate::setContext(Platform::Graphics::GLES2Context* cont
     }
 
     m_layerRenderer = LayerRenderer::create(m_context);
+    m_layerRenderer->setRootLayer(m_rootLayer.get());
 }
 
 bool WebPageCompositorPrivate::hardwareCompositing() const
@@ -79,7 +80,6 @@ void WebPageCompositorPrivate::setRootLayer(LayerCompositingThread* rootLayer)
 {
     m_rootLayer = rootLayer;
 
-    ASSERT(m_layerRenderer);
     if (m_layerRenderer)
         m_layerRenderer->setRootLayer(m_rootLayer.get());
 }

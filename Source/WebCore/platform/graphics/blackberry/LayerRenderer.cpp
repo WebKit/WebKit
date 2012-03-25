@@ -270,6 +270,11 @@ void LayerRenderer::drawLayers(const FloatRect& visibleRect, const IntRect& layo
     // Okay, we're going to do some drawing.
     makeContextCurrent();
 
+    // Get rid of any bound buffer that might affect the interpretation of our
+    // glVertexAttribPointer calls.
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
     glEnableVertexAttribArray(m_positionLocation);
     glEnableVertexAttribArray(m_texCoordLocation);
     glActiveTexture(GL_TEXTURE0);

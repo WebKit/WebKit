@@ -1,3 +1,21 @@
+2012-03-25  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Accelerated compositing layers fail to render when using WebPageCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=82104
+        RIM PR: 145963
+
+        Reviewed by Rob Buis.
+
+        The root layer may be set before we have a layer renderer, because the
+        latter is not created until we get an OpenGL context from the embedder.
+
+        Fixed by setting the root layer on the layer renderer when it's created
+        instead of assuming a certain order of events.
+
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setContext):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setRootLayer):
+
 2012-03-23  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Add WebPageCompositor class to BlackBerry WebKit API
