@@ -1,3 +1,38 @@
+2012-03-23  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG double voting may be overzealous in the case of variables that end up
+        being used as integers
+        https://bugs.webkit.org/show_bug.cgi?id=82008
+
+        Reviewed by Oliver Hunt.
+        
+        Cleaned up propagation, making the intent more explicit in most places.
+        Back-propagate NodeUsedAsInt for cases where a node was used in a context
+        that is known to strongly prefer integers.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dumpCodeOrigin):
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::nodeFlagsAsString):
+        * dfg/DFGNodeFlags.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::run):
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (PredictionPropagationPhase):
+        (JSC::DFG::PredictionPropagationPhase::mergeDefaultFlags):
+        (JSC::DFG::PredictionPropagationPhase::vote):
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        (JSC::DFG::PredictionPropagationPhase::fixupNode):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormatAccordingToVote):
+
 2012-03-24  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::Node::shouldNotSpeculateInteger() should be eliminated

@@ -104,8 +104,32 @@ public:
     
     bool shouldUseDoubleFormatAccordingToVote()
     {
+        // We don't support this facility for arguments, yet.
         // FIXME: make this work for arguments.
-        return !operandIsArgument(operand()) && ((isNumberPrediction(prediction()) && doubleVoteRatio() >= Options::doubleVoteRatioForDoubleFormat) || isDoublePrediction(prediction()));
+        if (operandIsArgument(operand()))
+            return false;
+        
+        // If the variable is not a number prediction, then this doesn't
+        // make any sense.
+        if (!isNumberPrediction(prediction()))
+            return false;
+        
+        // If the variable is predicted to hold only doubles, then it's a
+        // no-brainer: it should be formatted as a double.
+        if (isDoublePrediction(prediction()))
+            return true;
+        
+        // If the variable is known to be used as an integer, then be safe -
+        // don't force it to be a double.
+        if (flags() & NodeUsedAsInt)
+            return false;
+        
+        // If the variable has been voted to become a double, then make it a
+        // double.
+        if (doubleVoteRatio() >= Options::doubleVoteRatioForDoubleFormat)
+            return true;
+        
+        return false;
     }
     
     bool shouldUseDoubleFormat()

@@ -123,6 +123,13 @@ const char* nodeFlagsAsString(NodeFlags flags)
         hasPrinted = true;
     }
     
+    if (flags & NodeUsedAsInt) {
+        if (hasPrinted)
+            ptr.strcat("|");
+        ptr.strcat("UsedAsInt");
+        hasPrinted = true;
+    }
+    
     *ptr++ = 0;
     
     return description;

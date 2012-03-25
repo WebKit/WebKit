@@ -143,7 +143,7 @@ public:
 
     // Dump the code origin of the given node as a diff from the code origin of the
     // preceding node.
-    void dumpCodeOrigin(NodeIndex);
+    void dumpCodeOrigin(NodeIndex, NodeIndex);
 
     BlockIndex blockIndexForBytecodeOffset(Vector<BlockIndex>& blocks, unsigned bytecodeBegin);
 

@@ -84,13 +84,13 @@ static void printWhiteSpace(unsigned amount)
         dataLog(" ");
 }
 
-void Graph::dumpCodeOrigin(NodeIndex nodeIndex)
+void Graph::dumpCodeOrigin(NodeIndex prevNodeIndex, NodeIndex nodeIndex)
 {
-    if (!nodeIndex)
+    if (prevNodeIndex == NoNode)
         return;
     
     Node& currentNode = at(nodeIndex);
-    Node& previousNode = at(nodeIndex - 1);
+    Node& previousNode = at(prevNodeIndex);
     if (previousNode.codeOrigin.inlineCallFrame == currentNode.codeOrigin.inlineCallFrame)
         return;
     
@@ -131,7 +131,6 @@ void Graph::dump(NodeIndex nodeIndex)
         --refCount;
     }
     
-    dumpCodeOrigin(nodeIndex);
     printWhiteSpace((node.codeOrigin.inlineDepth() - 1) * 2);
 
     // Example/explanation of dataflow dump output
@@ -263,6 +262,7 @@ void Graph::dump(NodeIndex nodeIndex)
 
 void Graph::dump()
 {
+    NodeIndex lastNodeIndex = NoNode;
     for (size_t b = 0; b < m_blocks.size(); ++b) {
         BasicBlock* block = m_blocks[b].get();
         dataLog("Block #%u (bc#%u): %s%s\n", (int)b, block->bytecodeBegin, block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "");
@@ -281,8 +281,11 @@ void Graph::dump()
         dataLog("  var links: ");
         dumpOperands(block->variablesAtHead, WTF::dataFile());
         dataLog("\n");
-        for (size_t i = 0; i < block->size(); ++i)
+        for (size_t i = 0; i < block->size(); ++i) {
+            dumpCodeOrigin(lastNodeIndex, block->at(i));
             dump(block->at(i));
+            lastNodeIndex = block->at(i);
+        }
         dataLog("  vars after: ");
         if (block->cfaHasVisited)
             dumpOperands(block->valuesAtTail, WTF::dataFile());
