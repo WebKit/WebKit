@@ -1662,9 +1662,6 @@ void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BlockIndex taken, Blo
 
 void SpeculativeJIT::emitBranch(Node& node)
 {
-    JSValueOperand value(this, node.child1());
-    GPRReg valueGPR = value.gpr();
-    
     BlockIndex taken = node.takenBlockIndex();
     BlockIndex notTaken = node.notTakenBlockIndex();
     
@@ -1695,6 +1692,9 @@ void SpeculativeJIT::emitBranch(Node& node)
         
         noResult(m_compileIndex);
     } else {
+        JSValueOperand value(this, node.child1());
+        GPRReg valueGPR = value.gpr();
+        
         bool predictBoolean = isBooleanPrediction(m_jit.getPrediction(node.child1()));
     
         if (predictBoolean) {
