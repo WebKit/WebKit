@@ -87,26 +87,31 @@ void XMLErrors::appendErrorMessage(const String& typeString, TextPosition positi
     m_errorMessages.append(message);
 }
 
-static inline RefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const String& errorMessages)
+static inline PassRefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const String& errorMessages)
 {
-    RefPtr<Element> reportElement = doc->createElement(QualifiedName(nullAtom, "parsererror", xhtmlNamespaceURI), false);
-    reportElement->setAttribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
+    RefPtr<Element> reportElement = doc->createElement(QualifiedName(nullAtom, "parsererror", xhtmlNamespaceURI), true);
 
-    ExceptionCode ec = 0;
-    RefPtr<Element> h3 = doc->createElement(h3Tag, false);
-    reportElement->appendChild(h3.get(), ec);
-    h3->appendChild(doc->createTextNode("This page contains the following errors:"), ec);
+    OwnPtr<AttributeVector> reportAttributes = AttributeVector::create();
+    reportAttributes->append(Attribute::create(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"));
+    reportElement->parserSetAttributes(reportAttributes.release(), FragmentScriptingNotAllowed);
 
-    RefPtr<Element> fixed = doc->createElement(divTag, false);
-    reportElement->appendChild(fixed.get(), ec);
-    fixed->setAttribute(styleAttr, "font-family:monospace;font-size:12px");
-    fixed->appendChild(doc->createTextNode(errorMessages), ec);
+    RefPtr<Element> h3 = doc->createElement(h3Tag, true);
+    reportElement->parserAddChild(h3.get());
+    h3->parserAddChild(doc->createTextNode("This page contains the following errors:"));
 
-    h3 = doc->createElement(h3Tag, false);
-    reportElement->appendChild(h3.get(), ec);
-    h3->appendChild(doc->createTextNode("Below is a rendering of the page up to the first error."), ec);
+    RefPtr<Element> fixed = doc->createElement(divTag, true);
+    OwnPtr<AttributeVector> fixedAttributes = AttributeVector::create();
+    fixedAttributes->append(Attribute::create(styleAttr, "font-family:monospace;font-size:12px"));
+    fixed->parserSetAttributes(fixedAttributes.release(), FragmentScriptingNotAllowed);
+    reportElement->parserAddChild(fixed.get());
 
-    return reportElement;
+    fixed->parserAddChild(doc->createTextNode(errorMessages));
+
+    h3 = doc->createElement(h3Tag, true);
+    reportElement->parserAddChild(h3.get());
+    h3->parserAddChild(doc->createTextNode("Below is a rendering of the page up to the first error."));
+
+    return reportElement.release();
 }
 
 void XMLErrors::insertErrorMessageBlock()
@@ -116,36 +121,62 @@ void XMLErrors::insertErrorMessageBlock()
     // where the errors are located)
 
     // Create elements for display
-    ExceptionCode ec = 0;
     RefPtr<Element> documentElement = m_document->documentElement();
     if (!documentElement) {
-        RefPtr<Element> rootElement = m_document->createElement(htmlTag, false);
-        m_document->appendChild(rootElement, ec);
-        RefPtr<Element> body = m_document->createElement(bodyTag, false);
-        rootElement->appendChild(body, ec);
+        RefPtr<Element> rootElement = m_document->createElement(htmlTag, true);
+        RefPtr<Element> body = m_document->createElement(bodyTag, true);
+        rootElement->parserAddChild(body);
+        m_document->parserAddChild(rootElement);
+        if (m_document->attached() && !rootElement->attached())
+            rootElement->attach();
         documentElement = body.get();
     }
 #if ENABLE(SVG)
     else if (documentElement->namespaceURI() == SVGNames::svgNamespaceURI) {
-        RefPtr<Element> rootElement = m_document->createElement(htmlTag, false);
-        RefPtr<Element> body = m_document->createElement(bodyTag, false);
-        rootElement->appendChild(body, ec);
-        body->appendChild(documentElement, ec);
-        m_document->appendChild(rootElement.get(), ec);
+        RefPtr<Element> rootElement = m_document->createElement(htmlTag, true);
+        RefPtr<Element> body = m_document->createElement(bodyTag, true);
+        rootElement->parserAddChild(body);
+
+        documentElement->parentNode()->parserRemoveChild(documentElement.get());
+        if (documentElement->attached())
+            documentElement->detach();
+
+        body->parserAddChild(documentElement);
+        m_document->parserAddChild(rootElement.get());
+
+        if (m_document->attached()) {
+            // rootElement shouldn't be attached right now, but in some cases might be.
+            // See https://bugs.webkit.org/show_bug.cgi?id=81985
+            rootElement->reattach();
+        }
+
         documentElement = body.get();
     }
 #endif
+
     String errorMessages = m_errorMessages.toString();
     RefPtr<Element> reportElement = createXHTMLParserErrorHeader(m_document, errorMessages);
-    documentElement->insertBefore(reportElement, documentElement->firstChild(), ec);
+
 #if ENABLE(XSLT)
     if (m_document->transformSourceDocument()) {
-        RefPtr<Element> paragraph = m_document->createElement(pTag, false);
-        paragraph->setAttribute(styleAttr, "white-space: normal");
-        paragraph->appendChild(m_document->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), ec);
-        reportElement->appendChild(paragraph.release(), ec);
+        OwnPtr<AttributeVector> attributes = AttributeVector::create();
+        attributes->append(Attribute::create(styleAttr, "white-space: normal"));
+        RefPtr<Element> paragraph = m_document->createElement(pTag, true);
+        paragraph->parserSetAttributes(attributes.release(), FragmentScriptingNotAllowed);
+        paragraph->parserAddChild(m_document->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."));
+        reportElement->parserAddChild(paragraph.release());
     }
 #endif
+
+    Node* firstChild = documentElement->firstChild();
+    if (firstChild)
+        documentElement->parserInsertBefore(reportElement, documentElement->firstChild());
+    else
+        documentElement->parserAddChild(reportElement);
+
+    if (documentElement->attached() && !reportElement->attached())
+        reportElement->attach();
+
     m_document->updateStyleIfNeeded();
 }
 
