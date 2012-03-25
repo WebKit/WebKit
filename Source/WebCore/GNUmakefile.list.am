@@ -1139,8 +1139,8 @@ webcore_sources += \
 	Source/WebCore/Modules/webdatabase/AbstractDatabase.h \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.cpp \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.h \
-	Source/WebCore/Modules/webdatabase/DOMWindowSQLDatabase.cpp \
-	Source/WebCore/Modules/webdatabase/DOMWindowSQLDatabase.h \
+	Source/WebCore/Modules/webdatabase/DOMWindowWebDatabase.cpp \
+	Source/WebCore/Modules/webdatabase/DOMWindowWebDatabase.h \
 	Source/WebCore/Modules/webdatabase/Database.cpp \
 	Source/WebCore/Modules/webdatabase/Database.h \
 	Source/WebCore/Modules/webdatabase/DatabaseAuthorizer.cpp \
@@ -1187,8 +1187,8 @@ webcore_sources += \
 	Source/WebCore/Modules/webdatabase/SQLTransactionSyncCallback.h \
 	Source/WebCore/Modules/webdatabase/SQLTransactionSync.cpp \
 	Source/WebCore/Modules/webdatabase/SQLTransactionSync.h \
-	Source/WebCore/Modules/webdatabase/WorkerContextSQLDatabase.cpp \
-	Source/WebCore/Modules/webdatabase/WorkerContextSQLDatabase.h \
+	Source/WebCore/Modules/webdatabase/WorkerContextWebDatabase.cpp \
+	Source/WebCore/Modules/webdatabase/WorkerContextWebDatabase.h \
 	Source/WebCore/Modules/websockets/CloseEvent.h \
 	Source/WebCore/Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp \
 	Source/WebCore/Modules/websockets/ThreadableWebSocketChannelClientWrapper.h \
@@ -4779,7 +4779,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSQLTransactionSyncCallback.h
 
 dom_binding_idls += \
-	$(WebCore)/Modules/webdatabase/DOMWindowSQLDatabase.idl \
+	$(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
 	$(WebCore)/Modules/webdatabase/Database.idl \
 	$(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
 	$(WebCore)/Modules/webdatabase/DatabaseSync.idl \
@@ -4794,7 +4794,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
 	$(WebCore)/Modules/webdatabase/SQLTransactionSync.idl \
 	$(WebCore)/Modules/webdatabase/SQLTransactionSyncCallback.idl \
-	$(WebCore)/Modules/webdatabase/WorkerContextSQLDatabase.idl
+	$(WebCore)/Modules/webdatabase/WorkerContextWebDatabase.idl
 endif # END ENABLE_SQL_DATABASE
 
 # ----

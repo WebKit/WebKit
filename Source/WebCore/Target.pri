@@ -39,12 +39,12 @@ SOURCES += \
     Modules/geolocation/NavigatorGeolocation.cpp \
     \
     Modules/webdatabase/AbstractDatabase.cpp \
-    Modules/webdatabase/DOMWindowSQLDatabase.cpp \
+    Modules/webdatabase/DOMWindowWebDatabase.cpp \
     Modules/webdatabase/Database.cpp \
     Modules/webdatabase/DatabaseAuthorizer.cpp \
     Modules/webdatabase/DatabaseContext.cpp \
     Modules/webdatabase/DatabaseSync.cpp \
-    Modules/webdatabase/WorkerContextSQLDatabase.cpp \
+    Modules/webdatabase/WorkerContextWebDatabase.cpp \
     \
     accessibility/AccessibilityImageMapLink.cpp \
     accessibility/AccessibilityMediaControls.cpp \
@@ -1541,7 +1541,7 @@ HEADERS += \
     \
     Modules/webdatabase/AbstractDatabase.h \
     Modules/webdatabase/ChangeVersionWrapper.h \
-    Modules/webdatabase/DOMWindowSQLDatabase.h \
+    Modules/webdatabase/DOMWindowWebDatabase.h \
     Modules/webdatabase/DatabaseAuthorizer.h \
     Modules/webdatabase/Database.h \
     Modules/webdatabase/DatabaseCallback.h \
@@ -1561,7 +1561,7 @@ HEADERS += \
     Modules/webdatabase/SQLTransactionCoordinator.h \
     Modules/webdatabase/SQLTransactionSync.h \
     Modules/webdatabase/SQLTransactionSyncCallback.h \
-    Modules/webdatabase/WorkerContextSQLDatabase.h \
+    Modules/webdatabase/WorkerContextWebDatabase.h \
     \
     css/CSSAspectRatioValue.h \
     css/CSSBorderImageSliceValue.h \

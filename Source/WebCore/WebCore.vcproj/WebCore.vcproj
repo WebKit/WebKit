@@ -24613,11 +24613,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Modules\webdatabase\DOMWindowSQLDatabase.cpp"
+					RelativePath="..\Modules\webdatabase\DOMWindowWebDatabase.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\Modules\webdatabase\DOMWindowSQLDatabase.h"
+					RelativePath="..\Modules\webdatabase\DOMWindowWebDatabase.h"
 					>
 				</File>
 				<File
@@ -24737,11 +24737,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Modules\webdatabase\WorkerContextSQLDatabase.cpp"
+					RelativePath="..\Modules\webdatabase\WorkerContextWebDatabase.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\Modules\webdatabase\WorkerContextSQLDatabase.h"
+					RelativePath="..\Modules\webdatabase\WorkerContextWebDatabase.h"
 					>
 				</File>
 			</Filter>

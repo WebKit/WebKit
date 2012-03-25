@@ -150,7 +150,7 @@ IDL_BINDINGS += \
     $$PWD/Modules/webaudio/JavaScriptAudioNode.idl \
     $$PWD/Modules/webaudio/LowPass2FilterNode.idl \
     $$PWD/Modules/webaudio/RealtimeAnalyserNode.idl \
-    $$PWD/Modules/webdatabase/DOMWindowSQLDatabase.idl \
+    $$PWD/Modules/webdatabase/DOMWindowWebDatabase.idl \
     $$PWD/Modules/webdatabase/Database.idl \
     $$PWD/Modules/webdatabase/DatabaseCallback.idl \
     $$PWD/Modules/webdatabase/DatabaseSync.idl \
@@ -165,7 +165,7 @@ IDL_BINDINGS += \
     $$PWD/Modules/webdatabase/SQLTransactionErrorCallback.idl \
     $$PWD/Modules/webdatabase/SQLTransactionSync.idl \
     $$PWD/Modules/webdatabase/SQLTransactionSyncCallback.idl \
-    $$PWD/Modules/webdatabase/WorkerContextSQLDatabase.idl \
+    $$PWD/Modules/webdatabase/WorkerContextWebDatabase.idl \
     $$PWD/Modules/websockets/CloseEvent.idl \
     $$PWD/Modules/websockets/DOMWindowWebSocket.idl \
     $$PWD/Modules/websockets/WebSocket.idl \

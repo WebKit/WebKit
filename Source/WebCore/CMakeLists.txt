@@ -1478,7 +1478,7 @@ IF (ENABLE_SQL_DATABASE)
     LIST(APPEND WebCore_SOURCES
         Modules/webdatabase/AbstractDatabase.cpp
         Modules/webdatabase/ChangeVersionWrapper.cpp
-        Modules/webdatabase/DOMWindowSQLDatabase.cpp
+        Modules/webdatabase/DOMWindowWebDatabase.cpp
         Modules/webdatabase/Database.cpp
         Modules/webdatabase/DatabaseAuthorizer.cpp
         Modules/webdatabase/DatabaseContext.cpp
@@ -1500,7 +1500,7 @@ IF (ENABLE_SQL_DATABASE)
     )
 
     LIST(APPEND WebCore_IDL_FILES
-        Modules/webdatabase/DOMWindowSQLDatabase.idl
+        Modules/webdatabase/DOMWindowWebDatabase.idl
         Modules/webdatabase/Database.idl
         Modules/webdatabase/DatabaseCallback.idl
         Modules/webdatabase/DatabaseSync.idl
@@ -1520,11 +1520,11 @@ ENDIF ()
 
 IF (ENABLE_SQL_DATABASE AND ENABLE_WORKERS)
     LIST(APPEND WebCore_SOURCES
-        Modules/webdatabase/WorkerContextSQLDatabase.cpp
+        Modules/webdatabase/WorkerContextWebDatabase.cpp
     )
 
     LIST(APPEND WebCore_IDL_FILES
-        Modules/webdatabase/WorkerContextSQLDatabase.idl
+        Modules/webdatabase/WorkerContextWebDatabase.idl
     )
 ENDIF ()
 
