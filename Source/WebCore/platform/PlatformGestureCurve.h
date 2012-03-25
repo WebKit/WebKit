@@ -37,6 +37,9 @@ class PlatformGestureCurve {
 public:
     virtual ~PlatformGestureCurve() { }
 
+    // Returns a name of the curve for use in debugging.
+    virtual const char* debugName() const = 0;
+
     // Returns false if curve has finished and can no longer be applied.
     virtual bool apply(double time, PlatformGestureCurveTarget*) = 0;
 };

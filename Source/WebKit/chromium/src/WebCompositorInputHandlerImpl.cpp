@@ -55,6 +55,11 @@ public:
         return adoptPtr(new PlatformGestureToCCGestureAdapter(platformCurve));
     }
 
+    virtual const char* debugName() const
+    {
+        return m_curve->debugName();
+    }
+
     virtual bool apply(double time, CCGestureCurveTarget* target)
     {
         ASSERT(target);

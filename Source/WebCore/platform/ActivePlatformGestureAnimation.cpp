@@ -30,6 +30,10 @@
 #include "PlatformGestureCurve.h"
 #include "PlatformGestureCurveTarget.h"
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 namespace WebCore {
 
 PassOwnPtr<ActivePlatformGestureAnimation> ActivePlatformGestureAnimation::create(PassOwnPtr<PlatformGestureCurve> curve, PlatformGestureCurveTarget* target)
@@ -39,6 +43,9 @@ PassOwnPtr<ActivePlatformGestureAnimation> ActivePlatformGestureAnimation::creat
 
 ActivePlatformGestureAnimation::~ActivePlatformGestureAnimation()
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT_FINISH0("input", "GestureAnimation", this);
+#endif
 }
 
 ActivePlatformGestureAnimation::ActivePlatformGestureAnimation(PassOwnPtr<PlatformGestureCurve> curve, PlatformGestureCurveTarget* target)
@@ -47,6 +54,9 @@ ActivePlatformGestureAnimation::ActivePlatformGestureAnimation(PassOwnPtr<Platfo
     , m_curve(curve)
     , m_target(target)
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT_START1("input", "GestureAnimation", this, "curve", curve->debugName());
+#endif
 }
 
 bool ActivePlatformGestureAnimation::animate(double time)

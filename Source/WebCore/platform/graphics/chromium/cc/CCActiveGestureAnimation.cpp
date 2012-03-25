@@ -26,6 +26,7 @@
 
 #include "cc/CCActiveGestureAnimation.h"
 
+#include "TraceEvent.h"
 #include "cc/CCGestureCurve.h"
 
 namespace WebCore {
@@ -41,10 +42,12 @@ CCActiveGestureAnimation::CCActiveGestureAnimation(PassOwnPtr<CCGestureCurve> cu
     , m_gestureCurve(curve)
     , m_gestureCurveTarget(target)
 {
+    TRACE_EVENT_START1("input", "GestureAnimation", this, "curve", curve->debugName());
 }
 
 CCActiveGestureAnimation::~CCActiveGestureAnimation()
 {
+    TRACE_EVENT_FINISH0("input", "GestureAnimation", this);
 }
 
 bool CCActiveGestureAnimation::animate(double monotonicTime)

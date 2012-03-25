@@ -41,6 +41,8 @@ class CCGestureCurve {
 public:
     virtual ~CCGestureCurve() { }
 
+    virtual const char* debugName() const = 0;
+
     virtual bool apply(double monotonicTime, CCGestureCurveTarget*) = 0;
 };
 

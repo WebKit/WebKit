@@ -45,6 +45,7 @@ public:
     static PassOwnPtr<PlatformGestureCurve> create(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2);
     virtual ~TouchpadFlingPlatformGestureCurve();
 
+    virtual const char* debugName() const { return "TouchpadFling"; }
     virtual bool apply(double monotonicTime, PlatformGestureCurveTarget*);
 
 private:

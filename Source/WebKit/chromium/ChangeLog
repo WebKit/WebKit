@@ -1,3 +1,14 @@
+2012-03-24  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Instrument gesture animations with async traces
+        https://bugs.webkit.org/show_bug.cgi?id=82076
+
+        Reviewed by Adrienne Walker.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebCore::PlatformGestureToCCGestureAdapter::debugName):
+        (PlatformGestureToCCGestureAdapter):
+
 2012-03-23  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Incorrect replica originTransform used in CCDamageTracker
