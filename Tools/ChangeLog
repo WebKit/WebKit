@@ -1,3 +1,61 @@
+2012-03-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r112014.
+        http://trac.webkit.org/changeset/112014
+        https://bugs.webkit.org/show_bug.cgi?id=82138
+
+        Broke SnowLeopard, Chromium and GTK+ bots (Requested by kov on
+        #webkit).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_http_locking):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (AbstractWorker.run):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.__init__):
+        (Worker.safe_init):
+        (Worker.run):
+        (Worker.cleanup):
+        * Scripts/webkitpy/layout_tests/controllers/worker_unittest.py:
+        (WorkerTest.test_default_platform_in_worker):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+        (main):
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream):
+        (MeteredStream.is):
+        (MeteredStream.__init__):
+        (MeteredStream.write):
+        (MeteredStream.update):
+        (MeteredStream._overwrite):
+        (MeteredStream._reset):
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+        (TestMeteredStream):
+        (TestMeteredStream.test_regular):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (_configure_logging):
+        (_restore_logging):
+        (Printer.__init__):
+        (Printer.cleanup):
+        (Printer.print_progress):
+        (Printer.print_update):
+        (Printer._write):
+        (Printer):
+        (Printer._update):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (TestUtilityFunctions.assertEmpty):
+        (TestUtilityFunctions):
+        (TestUtilityFunctions.assertNotEmpty):
+        (TestUtilityFunctions.assertWritten):
+        (TestUtilityFunctions.test_configure_logging):
+        (Testprinter.get_printer):
+        (Testprinter.test_print_progress):
+        (Testprinter.test_print_progress.mock_time):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.__init__):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_test_pause_before_testing):
+
 2012-03-24  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed. Fix the build after WTF move.

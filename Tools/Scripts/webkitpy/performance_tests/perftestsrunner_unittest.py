@@ -182,8 +182,7 @@ max 1120
                 TestDriverWithStartCount.start_count += 1
 
         buildbot_output = StringIO.StringIO()
-        regular_output = StringIO.StringIO()
-        runner = self.create_runner(buildbot_output, args=["--pause-before-testing"], regular_output=regular_output, driver_class=TestDriverWithStartCount)
+        runner = self.create_runner(buildbot_output, args=["--pause-before-testing"], driver_class=TestDriverWithStartCount)
 
         dirname = runner._base_path + '/inspector/'
         tests = [dirname + 'pass.html']
@@ -194,9 +193,9 @@ max 1120
             unexpected_result_count = runner._run_tests_set(tests, runner._port)
             self.assertEqual(TestDriverWithStartCount.start_count, 1)
         finally:
-            _, stderr, _ = output.restore_output()
+            _, stderr, logs = output.restore_output()
             self.assertEqual(stderr, "Ready to run test?\n")
-            self.assertTrue("Running inspector/pass.html (1 of 1)" in regular_output.getvalue())
+            self.assertTrue("Running inspector/pass.html (1 of 1)" in logs)
 
     def test_run_test_set_for_parser_tests(self):
         buildbot_output = StringIO.StringIO()

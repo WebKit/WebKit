@@ -46,7 +46,8 @@ class WorkerTest(unittest.TestCase):
         # if we didn't specify a port with the --platform flag.
         worker_connection = FakeConnection()
         worker = Worker(worker_connection, WorkerArguments(1, '/tmp', MockOptions(platform=None, print_options=None, verbose=False, batch_size=0)))
-        worker._set_up_host_and_port()
+        worker._done = True
+        worker.run()
         self.assertNotEquals(worker._port, None)
 
 
