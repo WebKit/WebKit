@@ -34,7 +34,7 @@ PASS: document.body.style.myCustomProperty should be 1 and is.
 PASS: document.body.style.getPropertyCSSValue('color').myCustomProperty should be 1 and is.
 PASS: document.styleSheets.myCustomProperty should be 1 and is.
 PASS: document.styleSheets[0].myCustomProperty should be 1 and is.
-PASS: document.styleSheets[0].cssRules.myCustomProperty should be undefined and is.
+PASS: document.styleSheets[0].cssRules.myCustomProperty should be 1 and is.
 PASS: document.styleSheets[0].cssRules[0].myCustomProperty should be 1 and is.
 PASS: new XPathEvaluator().myCustomProperty should be undefined and is.
 PASS: new XPathEvaluator().evaluate('/', document, null, 0, null).myCustomProperty should be undefined and is.
@@ -70,7 +70,7 @@ PASS: document.body.style.myCustomProperty should be 1 and is.
 PASS: document.body.style.getPropertyCSSValue('color').myCustomProperty should be 1 and is.
 PASS: document.styleSheets.myCustomProperty should be 1 and is.
 PASS: document.styleSheets[0].myCustomProperty should be 1 and is.
-PASS: document.styleSheets[0].cssRules.myCustomProperty should be undefined and is.
+PASS: document.styleSheets[0].cssRules.myCustomProperty should be 1 and is.
 PASS: document.styleSheets[0].cssRules[0].myCustomProperty should be 1 and is.
 PASS: new XPathEvaluator().myCustomProperty should be undefined and is.
 PASS: new XPathEvaluator().evaluate('/', document, null, 0, null).myCustomProperty should be undefined and is.
