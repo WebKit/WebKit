@@ -307,17 +307,6 @@ sub AddIncludesForType
     $implIncludes{"WebDOM$type.h"} = 1;
 }
 
-sub GenerateConditionalString
-{
-    my $node = shift;
-    my $conditional = $node->extendedAttributes->{"Conditional"};
-    if ($conditional) {
-        return $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
-    } else {
-        return "";
-    }
-}
-
 sub GetNamespaceForClass
 {
     my $type = shift;
@@ -351,7 +340,7 @@ sub GenerateHeader
     push(@headerContentHeader, "\n#ifndef $className" . "_h");
     push(@headerContentHeader, "\n#define $className" . "_h\n\n");
 
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
     push(@headerContentHeader, "#if ${conditionalString}\n\n") if $conditionalString;
 
     # - INCLUDES -
@@ -428,7 +417,7 @@ sub GenerateHeader
         foreach my $attribute (@{$dataNode->attributes}) {
             next if ShouldSkipType($attribute);
 
-            my $attributeConditionalString = GenerateConditionalString($attribute->signature);
+            my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             my $attributeName = $attribute->signature->name;
             my $attributeType = GetCPPType($attribute->signature->type, 0);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
@@ -496,7 +485,7 @@ sub GenerateHeader
                 AddForwardDeclarationsForType($type, 1);
             }
 
-            my $conditionalString = GenerateConditionalString($function->signature);
+            my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
             push(@headerFunctions, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerFunctions, "    ");
             push(@headerFunctions, $functionDeclaration);
@@ -603,7 +592,7 @@ sub GenerateImplementation
 
     # - INCLUDES -
     push(@implContentHeader, "\n#include \"config.h\"\n");
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
     push(@implContentHeader, "\n#if ${conditionalString}\n\n") if $conditionalString;
     push(@implContentHeader, "#include \"$className.h\"\n\n");
 
@@ -720,7 +709,7 @@ sub GenerateImplementation
             }
 
             my $getterContent = "${getterContentHead}${functionName}(" . join(", ", @arguments) . ")${getterContentTail}";
-            my $attributeConditionalString = GenerateConditionalString($attribute->signature);
+            my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
 
             push(@implContent, $getterSig);
@@ -889,7 +878,7 @@ sub GenerateImplementation
                 }
             }
 
-            my $conditionalString = GenerateConditionalString($function->signature);
+            my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
             push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
 
             push(@implContent, "$functionSig\n");

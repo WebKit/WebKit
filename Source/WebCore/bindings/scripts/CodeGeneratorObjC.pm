@@ -269,23 +269,6 @@ sub ReadPublicInterfaces
     $interfaceAvailabilityVersion = "WEBKIT_VERSION_LATEST" if $newPublicClass;
 }
 
-sub GenerateConditionalString
-{
-    my $node = shift;
-    my $conditional = $node->extendedAttributes->{"Conditional"};
-    if ($conditional) {
-        if ($conditional =~ /&/) {
-            return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-        } elsif ($conditional =~ /\|/) {
-            return "ENABLE(" . join(") || ENABLE(", split(/\|/, $conditional)) . ")";
-        } else {
-            return "ENABLE(" . $conditional . ")";
-        }
-    } else {
-        return "";
-    }
-}
-
 # Params: 'domClass' struct
 sub GenerateInterface
 {
@@ -825,7 +808,7 @@ sub GenerateHeader
                 push(@headerAttributes, $property) if $public;
                 push(@privateHeaderAttributes, $property) unless $public;
             } else {
-                my $attributeConditionalString = GenerateConditionalString($attribute->signature);
+                my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
                 if ($attributeConditionalString) {
                     push(@headerAttributes, "#if ${attributeConditionalString}\n") if $public;
                     push(@privateHeaderAttributes, "#if ${attributeConditionalString}\n") unless $public;
@@ -920,7 +903,7 @@ sub GenerateHeader
                 AddForwardDeclarationsForType($type, $public) unless $public and $needsDeprecatedVersion;
             }
 
-            my $functionConditionalString = GenerateConditionalString($function->signature);
+            my $functionConditionalString = $codeGenerator->GenerateConditionalString($function->signature);
             if ($functionConditionalString) {
                 push(@headerFunctions, "#if ${functionConditionalString}\n") if $public;
                 push(@privateHeaderFunctions, "#if ${functionConditionalString}\n") unless $public;
@@ -1093,7 +1076,7 @@ sub GenerateImplementation
     # - INCLUDES -
     push(@implContentHeader, "\n#import \"config.h\"\n");
 
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
     push(@implContentHeader, "\n#if ${conditionalString}\n\n") if $conditionalString;
 
     push(@implContentHeader, "#import \"DOMInternal.h\"\n\n");
@@ -1363,7 +1346,7 @@ sub GenerateImplementation
                 $getterContent = $getterContentHead . $getterContentTail;
             }
 
-            my $attributeConditionalString = GenerateConditionalString($attribute->signature);
+            my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
             push(@implContent, $getterSig);
             push(@implContent, "{\n");
@@ -1692,7 +1675,7 @@ sub GenerateImplementation
                 }
             }
 
-            my $conditionalString = GenerateConditionalString($function->signature);
+            my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
             push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
 
             push(@implContent, "$functionSig\n");

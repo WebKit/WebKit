@@ -342,23 +342,6 @@ sub GetWriteableProperties {
     return @result;
 }
 
-sub GenerateConditionalString
-{
-    my $node = shift;
-    my $conditional = $node->extendedAttributes->{"Conditional"};
-    if ($conditional) {
-        if ($conditional =~ /&/) {
-            return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-        } elsif ($conditional =~ /\|/) {
-            return "ENABLE(" . join(") || ENABLE(", split(/\|/, $conditional)) . ")";
-        } else {
-            return "ENABLE(" . $conditional . ")";
-        }
-    } else {
-        return "";
-    }
-}
-
 sub GenerateConditionalWarning
 {
     my $node = shift;
@@ -390,7 +373,7 @@ sub GenerateProperty {
     my $interfaceName = shift;
     my @writeableProperties = @{shift @_};
 
-    my $conditionalString = GenerateConditionalString($attribute->signature);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
     my $camelPropName = $attribute->signature->name;
     my $setPropNameFunction = $codeGenerator->WK_ucfirst($camelPropName);
     my $getPropNameFunction = $codeGenerator->WK_lcfirst($camelPropName);
@@ -529,7 +512,7 @@ sub GenerateProperties {
 
     my $conditionGuardStart = "";
     my $conditionGuardEnd = "";
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
     if ($conditionalString) {
         $conditionGuardStart = "#if ${conditionalString}";
         $conditionGuardEnd = "#endif // ${conditionalString}";
@@ -793,8 +776,8 @@ sub GenerateFunction {
     my $returnType = GetGlibTypeName($functionSigType);
     my $returnValueIsGDOMType = IsGDOMClassType($functionSigType);
 
-    my $conditionalString = GenerateConditionalString($function->signature);
-    my $parentConditionalString = GenerateConditionalString($parentNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
+    my $parentConditionalString = $codeGenerator->GenerateConditionalString($parentNode);
     my @conditionalWarn = GenerateConditionalWarning($function->signature);
     my @parentConditionalWarn = GenerateConditionalWarning($parentNode);
 
@@ -1362,7 +1345,7 @@ sub WriteData {
     my $parentClassName = GetParentClassName($dataNode);
 
     # Add the guard if the 'Conditional' extended attribute exists
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
 
     open(PRIVHEADER, ">$filename") or die "Couldn't open file $filename for writing";
 

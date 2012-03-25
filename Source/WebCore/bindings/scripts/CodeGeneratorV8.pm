@@ -181,17 +181,6 @@ sub AddIncludesForType
     }
 }
 
-sub GenerateConditionalString
-{
-    my $node = shift;
-    my $conditional = $node->extendedAttributes->{"Conditional"};
-    if ($conditional) {
-        return $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
-    } else {
-        return "";
-    }
-}
-
 sub GetSVGPropertyTypes
 {
     my $implType = shift;
@@ -365,7 +354,7 @@ END
         my $attrExt = $function->signature->extendedAttributes;
 
         if (($attrExt->{"Custom"} || $attrExt->{"V8Custom"}) && !$attrExt->{"ImplementedBy"} && $function->{overloadIndex} == 1) {
-            my $conditionalString = GenerateConditionalString($function->signature);
+            my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerContent, <<END);
     static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments&);
@@ -387,7 +376,7 @@ END
     foreach my $attribute (@{$dataNode->attributes}) {
         my $name = $attribute->signature->name;
         my $attrExt = $attribute->signature->extendedAttributes;
-        my $conditionalString = GenerateConditionalString($attribute->signature);
+        my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
         if (($attrExt->{"V8CustomGetter"} || $attrExt->{"CustomGetter"} ||
              $attrExt->{"V8Custom"} || $attrExt->{"Custom"}) &&
             !$attrExt->{"ImplementedBy"}) {
@@ -499,7 +488,7 @@ END
     push(@headerContent, "\n}\n\n");
     push(@headerContent, "#endif // $className" . "_h\n");
 
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
 }
 
@@ -786,7 +775,7 @@ sub GenerateNormalAttrGetter
     my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($implClassName);
 
     # Getter
-    my $conditionalString = GenerateConditionalString($attribute->signature);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
     push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
 
     push(@implContentDecls, <<END);
@@ -1027,7 +1016,7 @@ sub GenerateNormalAttrSetter
     my $attrName = $attribute->signature->name;
     my $attrExt = $attribute->signature->extendedAttributes;
 
-    my $conditionalString = GenerateConditionalString($attribute->signature);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
     push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
 
     push(@implContentDecls, "static void ${attrName}AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)\n{\n");
@@ -1328,7 +1317,7 @@ sub GenerateOverloadedFunctionCallback
     # declaration in the IDL.
 
     my $name = $function->signature->name;
-    my $conditionalString = GenerateConditionalString($function->signature);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
@@ -1374,7 +1363,7 @@ sub GenerateFunctionCallback
         return;
     }
 
-    my $conditionalString = GenerateConditionalString($function->signature);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
@@ -1997,7 +1986,7 @@ sub GenerateBatchedAttributeData
     my $attributes = shift;
 
     foreach my $attribute (@$attributes) {
-        my $conditionalString = GenerateConditionalString($attribute->signature);
+        my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
         GenerateSingleBatchedAttribute($interfaceName, $attribute, ",", "");
         push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
@@ -2491,7 +2480,7 @@ sub GenerateImplementation
         }
         my $name = $function->signature->name;
         my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
-        my $conditionalString = GenerateConditionalString($function->signature);
+        my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
         push(@implContent, <<END);
     {"$name", $callback},
@@ -2638,7 +2627,7 @@ END
     # Setup the enable-at-runtime attrs if we have them
     foreach my $runtime_attr (@enabledAtRuntime) {
         my $enable_function = GetRuntimeEnableFunctionName($runtime_attr->signature);
-        my $conditionalString = GenerateConditionalString($runtime_attr->signature);
+        my $conditionalString = $codeGenerator->GenerateConditionalString($runtime_attr->signature);
         push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
         push(@implContent, "    if (${enable_function}()) {\n");
         push(@implContent, "        static const BatchedAttribute attrData =\\\n");
@@ -2653,7 +2642,7 @@ END
     # Setup the enable-at-runtime constants if we have them
     foreach my $runtime_const (@constantsEnabledAtRuntime) {
         my $enable_function = GetRuntimeEnableFunctionName($runtime_const);
-        my $conditionalString = GenerateConditionalString($runtime_const);
+        my $conditionalString = $codeGenerator->GenerateConditionalString($runtime_const);
         my $name = $runtime_const->name;
         my $value = $runtime_const->value;
         push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
@@ -2756,7 +2745,7 @@ END
             next;
         }
 
-        my $conditionalString = GenerateConditionalString($function->signature);
+        my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
 
         push(@implContent, <<END);
@@ -2892,7 +2881,7 @@ END
 } // namespace WebCore
 END
 
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
     
     # We've already added the header for this file in implFixedHeader, so remove
@@ -2904,7 +2893,7 @@ sub GenerateHeaderContentHeader
 {
     my $dataNode = shift;
     my $className = "V8" . $dataNode->name;
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
 
     my @headerContentHeader = split("\r", $headerTemplate);
 
@@ -2918,7 +2907,7 @@ sub GenerateImplementationContentHeader
 {
     my $dataNode = shift;
     my $className = "V8" . $dataNode->name;
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
 
     my @implContentHeader = split("\r", $headerTemplate);
 
@@ -3001,7 +2990,7 @@ END
     push(@headerContent, "}\n\n");
     push(@headerContent, "#endif // $className" . "_h\n\n");
 
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
     push(@headerContent, "#endif // ${conditionalString}\n") if $conditionalString;
 }
 
@@ -3095,7 +3084,7 @@ END
 
     push(@implContent, "\n} // namespace WebCore\n\n");
 
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
     push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
 }
 

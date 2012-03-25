@@ -604,6 +604,19 @@ sub ShouldCheckEnums
     return not $dataNode->extendedAttributes->{"DoNotCheckConstants"};
 }
 
+sub GenerateConditionalString
+{
+    my $generator = shift;
+    my $node = shift;
+
+    my $conditional = $node->extendedAttributes->{"Conditional"};
+    if ($conditional) {
+        return $generator->GenerateConditionalStringFromAttributeValue($conditional);
+    } else {
+        return "";
+    }
+}
+
 sub GenerateConditionalStringFromAttributeValue
 {
     my $generator = shift;
