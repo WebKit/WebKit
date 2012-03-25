@@ -31,6 +31,10 @@ ByteArrayTestData::ByteArrayTestData(QObject* parent)
     Q_ASSERT(m_latin1Data != m_utf8Data);
 }
 
+ByteArrayTestData::~ByteArrayTestData()
+{
+}
+
 QVariant ByteArrayTestData::latin1Data() const
 {
     return QVariant(m_latin1Data);

@@ -1,3 +1,11 @@
+2012-03-25  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        Unreviewed build fix for QtWebKit on Mac OS X.
+
+        * UIProcess/API/qt/tests/bytearraytestdata.cpp:
+        (ByteArrayTestData::~ByteArrayTestData):
+        * UIProcess/API/qt/tests/bytearraytestdata.h:
+
 2012-03-24  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Implement PageClient::isViewWindowActive()
