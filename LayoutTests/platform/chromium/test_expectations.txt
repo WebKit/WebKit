@@ -1298,6 +1298,9 @@ BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-40-t.svg = TEXT
 BUGWK75968 MAC : svg/text/text-text-05-t.svg = TEXT
 
 
+// Updated tests need Win & Mac rebaselining after landing 76282
+BUGWK76282 WIN MAC : svg/zoom/page/zoom-foreignObject.svg = IMAGE+TEXT IMAGE TEXT PASS
+BUGWK76282 WIN MAC : svg/zoom/text/zoom-foreignObject.svg = IMAGE+TEXT IMAGE TEXT PASS
 
 
 // Windows and Mac need rebaselining after 53378 patch.
