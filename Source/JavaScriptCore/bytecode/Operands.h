@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOperands_h
-#define DFGOperands_h
-
-#include <wtf/Platform.h>
-
-#if ENABLE(DFG_JIT)
+#ifndef Operands_h
+#define Operands_h
 
 #include "CallFrame.h"
 #include <wtf/Vector.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
 // argument 0 is 'this'.
 inline bool operandIsArgument(int operand) { return operand < 0; }
@@ -157,9 +153,7 @@ void dumpOperands(Operands<T, Traits>& operands, FILE* out)
     }
 }
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#endif // ENABLE(DFG_JIT)
-
-#endif // DFGOperands_h
+#endif // Operands_h
 

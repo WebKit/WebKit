@@ -30,7 +30,7 @@
 
 #include "DFGAbstractValue.h"
 #include "DFGNode.h"
-#include "DFGOperands.h"
+#include "Operands.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 

@@ -36,9 +36,9 @@
 #include "DFGCommon.h"
 #include "DFGNodeFlags.h"
 #include "DFGNodeType.h"
-#include "DFGOperands.h"
 #include "DFGVariableAccessData.h"
 #include "JSValue.h"
+#include "Operands.h"
 #include "PredictedType.h"
 #include "ValueProfile.h"
 

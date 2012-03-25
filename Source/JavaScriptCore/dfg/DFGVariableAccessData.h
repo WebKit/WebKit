@@ -27,7 +27,7 @@
 #define DFGVariableAccessData_h
 
 #include "DFGNodeFlags.h"
-#include "DFGOperands.h"
+#include "Operands.h"
 #include "PredictedType.h"
 #include "VirtualRegister.h"
 #include <wtf/Platform.h>

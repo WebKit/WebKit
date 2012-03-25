@@ -117,6 +117,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/MethodOfGettingAValueProfile.h \
 	Source/JavaScriptCore/bytecode/Opcode.cpp \
 	Source/JavaScriptCore/bytecode/Opcode.h \
+	Source/JavaScriptCore/bytecode/Operands.h \
 	Source/JavaScriptCore/bytecode/PolymorphicPutByIdList.cpp \
 	Source/JavaScriptCore/bytecode/PolymorphicPutByIdList.h \
 	Source/JavaScriptCore/bytecode/PredictedType.cpp \
@@ -175,7 +176,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGAdjacencyList.h \
 	Source/JavaScriptCore/dfg/DFGNodeType.h \
 	Source/JavaScriptCore/dfg/DFGEdge.h \
-	Source/JavaScriptCore/dfg/DFGOperands.h \
 	Source/JavaScriptCore/dfg/DFGOperations.cpp \
 	Source/JavaScriptCore/dfg/DFGOperations.h \
 	Source/JavaScriptCore/dfg/DFGOSREntry.cpp \

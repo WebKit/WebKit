@@ -27,7 +27,7 @@
 #define DFGOSREntry_h
 
 #include "DFGAbstractValue.h"
-#include "DFGOperands.h"
+#include "Operands.h"
 #include <wtf/BitVector.h>
 
 namespace JSC {

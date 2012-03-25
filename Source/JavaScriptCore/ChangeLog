@@ -1,3 +1,20 @@
+2012-03-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFGOperands should be moved out of the DFG and into bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=82151
+
+        Reviewed by Dan Bernstein.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Operands.h: Copied from Source/JavaScriptCore/dfg/DFGOperands.h.
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGOSREntry.h:
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOperands.h: Removed.
+        * dfg/DFGVariableAccessData.h:
+
 2012-03-24  Filip Pizlo  <fpizlo@apple.com>
 
         DFG 64-bit Branch implementation should not be creating a JSValueOperand that
