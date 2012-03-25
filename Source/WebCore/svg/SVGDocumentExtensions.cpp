@@ -52,6 +52,7 @@ SVGDocumentExtensions::~SVGDocumentExtensions()
 {
     deleteAllValues(m_animatedElements);
     deleteAllValues(m_pendingResources);
+    deleteAllValues(m_pendingResourcesForRemoval);
 }
 
 void SVGDocumentExtensions::addTimeContainer(SVGSVGElement* element)
@@ -262,27 +263,47 @@ void SVGDocumentExtensions::removeElementFromPendingResources(SVGStyledElement* 
 {
     ASSERT(element);
 
-    if (m_pendingResources.isEmpty() || !element->hasPendingResources())
-        return;
+    // Remove the element from pending resources.
+    if (!m_pendingResources.isEmpty() && element->hasPendingResources()) {
+        Vector<AtomicString> toBeRemoved;
+        HashMap<AtomicString, SVGPendingElements*>::iterator end = m_pendingResources.end();
+        for (HashMap<AtomicString, SVGPendingElements*>::iterator it = m_pendingResources.begin(); it != end; ++it) {
+            SVGPendingElements* elements = it->second;
+            ASSERT(elements);
+            ASSERT(!elements->isEmpty());
 
-    Vector<AtomicString> toBeRemoved;
-    HashMap<AtomicString, SVGPendingElements*>::iterator end = m_pendingResources.end();
-    for (HashMap<AtomicString, SVGPendingElements*>::iterator it = m_pendingResources.begin(); it != end; ++it) {
-        SVGPendingElements* elements = it->second;
-        ASSERT(elements);
-        ASSERT(!elements->isEmpty());
+            elements->remove(element);
+            if (elements->isEmpty())
+                toBeRemoved.append(it->first);
+        }
 
-        elements->remove(element);
-        if (elements->isEmpty())
-            toBeRemoved.append(it->first);
+        element->clearHasPendingResourcesIfPossible();
+
+        // We use the removePendingResource function here because it deals with set lifetime correctly.
+        Vector<AtomicString>::iterator vectorEnd = toBeRemoved.end();
+        for (Vector<AtomicString>::iterator it = toBeRemoved.begin(); it != vectorEnd; ++it)
+            removePendingResource(*it);
     }
 
-    element->clearHasPendingResourcesIfPossible();
+    // Remove the element from pending resources that were scheduled for removal.
+    if (!m_pendingResourcesForRemoval.isEmpty()) {
+        Vector<AtomicString> toBeRemoved;
+        HashMap<AtomicString, SVGPendingElements*>::iterator end = m_pendingResourcesForRemoval.end();
+        for (HashMap<AtomicString, SVGPendingElements*>::iterator it = m_pendingResourcesForRemoval.begin(); it != end; ++it) {
+            SVGPendingElements* elements = it->second;
+            ASSERT(elements);
+            ASSERT(!elements->isEmpty());
 
-    // We use the removePendingResource function here because it deals with set lifetime correctly.
-    Vector<AtomicString>::iterator vectorEnd = toBeRemoved.end();
-    for (Vector<AtomicString>::iterator it = toBeRemoved.begin(); it != vectorEnd; ++it)
-        removePendingResource(*it);
+            elements->remove(element);
+            if (elements->isEmpty())
+                toBeRemoved.append(it->first);
+        }
+
+        // We use the removePendingResourceForRemoval function here because it deals with set lifetime correctly.
+        Vector<AtomicString>::iterator vectorEnd = toBeRemoved.end();
+        for (Vector<AtomicString>::iterator it = toBeRemoved.begin(); it != vectorEnd; ++it)
+            removePendingResourceForRemoval(*it);
+    }
 }
 
 PassOwnPtr<SVGDocumentExtensions::SVGPendingElements> SVGDocumentExtensions::removePendingResource(const AtomicString& id)
@@ -291,17 +312,42 @@ PassOwnPtr<SVGDocumentExtensions::SVGPendingElements> SVGDocumentExtensions::rem
     return adoptPtr(m_pendingResources.take(id));
 }
 
-void SVGDocumentExtensions::removePendingResourceForElement(const AtomicString& id, SVGStyledElement* element)
+PassOwnPtr<SVGDocumentExtensions::SVGPendingElements> SVGDocumentExtensions::removePendingResourceForRemoval(const AtomicString& id)
 {
-    ASSERT(element);
-    ASSERT(m_pendingResources.contains(id));
+    ASSERT(m_pendingResourcesForRemoval.contains(id));
+    return adoptPtr(m_pendingResourcesForRemoval.take(id));
+}
 
-    SVGPendingElements* elements = m_pendingResources.get(id);
-    elements->remove(element);
-    if (elements->isEmpty())
-        removePendingResource(id);
+void SVGDocumentExtensions::markPendingResourcesForRemoval(const AtomicString& id)
+{
+    if (id.isEmpty())
+        return;
 
-    element->clearHasPendingResourcesIfPossible();
+    ASSERT(!m_pendingResourcesForRemoval.contains(id));
+
+    SVGPendingElements* existing = m_pendingResources.take(id);
+    if (existing && !existing->isEmpty())
+        m_pendingResourcesForRemoval.add(id, existing);
+}
+
+SVGStyledElement* SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval(const AtomicString& id)
+{
+    if (id.isEmpty())
+        return 0;
+
+    SVGPendingElements* resourceSet = m_pendingResourcesForRemoval.get(id);
+    if (!resourceSet || resourceSet->isEmpty())
+        return 0;
+
+    SVGPendingElements::iterator firstElement = resourceSet->begin();
+    SVGStyledElement* element = *firstElement;
+
+    resourceSet->remove(firstElement);
+
+    if (resourceSet->isEmpty())
+        removePendingResourceForRemoval(id);
+
+    return element;
 }
 
 HashSet<SVGElement*>* SVGDocumentExtensions::setOfElementsReferencingTarget(SVGElement* referencedElement) const

@@ -375,14 +375,16 @@ void SVGStyledElement::buildPendingResourcesIfNeeded()
     if (!extensions->hasPendingResource(resourceId))
         return;
 
-    OwnPtr<SVGDocumentExtensions::SVGPendingElements> clients(extensions->removePendingResource(resourceId));
-    ASSERT(!clients->isEmpty());
+    // Mark pending resources as pending for removal.
+    extensions->markPendingResourcesForRemoval(resourceId);
 
-    const SVGDocumentExtensions::SVGPendingElements::const_iterator end = clients->end();
-    for (SVGDocumentExtensions::SVGPendingElements::const_iterator it = clients->begin(); it != end; ++it) {
-        ASSERT((*it)->hasPendingResources());
-        (*it)->buildPendingResource();
-        (*it)->clearHasPendingResourcesIfPossible();
+    // Rebuild pending resources for each client of a pending resource that is being removed.
+    while (SVGStyledElement* clientElement = extensions->removeElementFromPendingResourcesForRemoval(resourceId)) {
+        ASSERT(clientElement->hasPendingResources());
+        if (clientElement->hasPendingResources()) {
+            clientElement->buildPendingResource();
+            clientElement->clearHasPendingResourcesIfPossible();
+        }
     }
 }
 

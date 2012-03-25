@@ -77,7 +77,8 @@ private:
     HashSet<SVGSVGElement*> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
     HashMap<SVGElement*, HashSet<SVGSMILElement*>* > m_animatedElements;
     HashMap<AtomicString, RenderSVGResourceContainer*> m_resources;
-    HashMap<AtomicString, SVGPendingElements*> m_pendingResources;
+    HashMap<AtomicString, SVGPendingElements*> m_pendingResources; // Resources that are pending.
+    HashMap<AtomicString, SVGPendingElements*> m_pendingResourcesForRemoval; // Resources that are pending and scheduled for removal.
     HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*> > > m_elementDependencies;
     OwnPtr<SVGResourcesCache> m_resourcesCache;
 
@@ -91,7 +92,13 @@ public:
     bool isElementPendingResource(SVGStyledElement*, const AtomicString& id) const;
     void removeElementFromPendingResources(SVGStyledElement*);
     PassOwnPtr<SVGPendingElements> removePendingResource(const AtomicString& id);
-    void removePendingResourceForElement(const AtomicString& id, SVGStyledElement*);
+
+    // The following two functions are used for scheduling a pending resource to be removed.
+    void markPendingResourcesForRemoval(const AtomicString&);
+    SVGStyledElement* removeElementFromPendingResourcesForRemoval(const AtomicString&);
+
+private:
+    PassOwnPtr<SVGPendingElements> removePendingResourceForRemoval(const AtomicString&);
 };
 
 }
