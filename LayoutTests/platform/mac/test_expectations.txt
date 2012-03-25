@@ -210,10 +210,6 @@ BUGWK69210: fast/inline/continuation-outlines-with-layers-2.html = TEXT
 BUGWK69210: fast/inline/continuation-outlines-with-layers.html = TEXT
 BUGWK69210: fast/repaint/transform-absolute-in-positioned-container.html = TEXT
 
-// Need rebaselining after 76282
-BUGWK76282 : svg/zoom/page/zoom-foreignObject.svg = IMAGE+TEXT IMAGE TEXT PASS
-BUGWK76282 : svg/zoom/text/zoom-foreignObject.svg = IMAGE+TEXT IMAGE TEXT PASS
-
 // Those tests need a text baseline after lazily allocating layers.
 // The change should only be layer removal.
 BUGWK75568 : animations/combo-transform-translate+scale.html = TEXT
