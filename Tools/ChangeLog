@@ -1,3 +1,14 @@
+2012-03-24  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed. Fix the build after WTF move.
+
+        * waf/build/build_utils.py:
+        (get_excludes):
+        (get_excludes_in_dirs):
+        * waf/build/settings.py:
+        (get_port_excludes):
+        (common_configure):
+
 2012-03-24  Dirk Pranke  <dpranke@chromium.org>
 
         clean up NRWT logging/metering, be less verbose

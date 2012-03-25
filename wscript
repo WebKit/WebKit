@@ -116,8 +116,9 @@ def build(bld):
         webcore_dirs.extend(['Source/WebKit/wx', 'Source/WebKit/wx/WebKitSupport'])
     
     wk_includes = ['.',
+                    os.path.join(wk_root, 'Source', 'WTF'),
+                    os.path.join(wk_root, 'Source', 'WTF', 'wtf'),
                     os.path.join(wk_root, 'Source', 'JavaScriptCore'),
-                    os.path.join(wk_root, 'Source', 'JavaScriptCore', 'wtf', 'text'),
                     os.path.join(wk_root, 'Source', 'WebCore'),
                     os.path.join(wk_root, 'Source', 'WebCore', 'DerivedSources'),
                     os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'image-decoders'),
@@ -219,25 +220,22 @@ def build(bld):
     
     exclude_patterns = ['*AllInOne.cpp', '*None.cpp',]
 
+    if sys.platform.startswith('darwin'):
+        features.append('cf')
+
     # exclude the filename patterns for all other ports.
-    for port in ports:
-        if not port == thisport:
-            exclude = "*%s.cpp" % port
-            if port == 'Chromium':
-                exclude = "*Chromium*.cpp"
-            exclude_patterns.append(exclude)
+    exclude_patterns.extend(get_port_excludes(Options.options.port))
             
     if Options.options.port == 'wx':
         features.append('curl')
         exclude_patterns.extend(['*CFNet.cpp', 'test*bindings.*', "WebDOMCanvas*.cpp", "WebDOMSVG*.cpp"])
         
-    if sys.platform.startswith('darwin'):
-        features.append('cf')
-    else:
-        exclude_patterns.append('*CF.cpp')
-
     full_dirs = get_dirs_for_features(wk_root, features=features, dirs=webcore_dirs)
 
+    # make sure we don't use the CF networking engine
+    if Options.options.port == 'wx' and sys.platform.startswith('darwin'):
+        full_dirs.remove('Source/WebCore/platform/network/cf')
+        
     jscore_dir = os.path.join(wk_root, 'Source', 'JavaScriptCore')
     for item in os.listdir(jscore_dir):
         fullpath = os.path.join(jscore_dir, item)
@@ -246,8 +244,6 @@ def build(bld):
 
     wk_includes.append('Source')
     wk_includes.append(os.path.join(jscore_dir, 'collector', 'handles'))
-    wk_includes.append(os.path.join(jscore_dir, 'wtf', 'unicode'))
-    wk_includes.append(os.path.join(jscore_dir, 'wtf', 'unicode', 'icu'))
     wk_includes += common_includes + full_dirs
     if sys.platform.startswith('darwin'):
         wk_includes.append(os.path.join(webcore_dir, 'icu'))
@@ -266,7 +262,7 @@ def build(bld):
 
     webcore = bld.new_task_gen(
         features = 'cc cxx cshlib',
-        includes = 'Source/WTF ' + ' '.join(wk_includes),
+        includes = ' '.join(wk_includes),
         source = ' '.join(flattenSources(webcore_sources.values())),
         cxxflags = cxxflags,
         defines = ['WXMAKINGDLL_WEBKIT', 'BUILDING_WebCore'],

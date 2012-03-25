@@ -1,3 +1,9 @@
+2012-03-24  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed. Fix the build after WTF move.
+
+        * wscript:
+
 2012-03-23  Dave Michael  <dmichael@chromium.org>
 
         Relanding(r111754): HTMLPluginElement is not destroyed on reload or navigation if getNPObject is called

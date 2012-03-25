@@ -77,6 +77,8 @@ ports = [
 uses = [
     'CF',
     'CFNet',
+    'CURL',
+    'WXGC',
 ]
 
 port_uses = {
@@ -98,11 +100,11 @@ jscore_dirs = [
     'profiler',
     'runtime',
     'tools',
-    'wtf',
-    'wtf/dtoa',
-    'wtf/text',
-    'wtf/unicode',
-    'wtf/unicode/icu',
+    '../WTF/wtf',
+    '../WTF/wtf/dtoa',
+    '../WTF/wtf/text',
+    '../WTF/wtf/unicode',
+    '../WTF/wtf/unicode/icu',
     'yarr',
 ]
 
@@ -191,6 +193,26 @@ if building_on_win32:
 
 build_port = default_port
 
+def get_port_excludes(thisport):
+    """
+    This function creates a list of file patterns to exclude
+    based on what port you are using and what USES it has defined.
+    """
+    exclude_patterns = []
+    global ports
+    for port in ports:
+        if not port == thisport:
+            exclude = "*%s.cpp" % port
+            if port == 'Chromium':
+                exclude = "*Chromium*.cpp"
+            exclude_patterns.append(exclude)
+    
+    global uses
+    for use in uses:
+        if thisport not in port_uses or not use in port_uses[thisport]:
+            exclude_patterns.append("*%s.cpp" % use)
+            
+    return exclude_patterns
 
 def get_config():
     waf_configname = config.upper().strip()
@@ -345,7 +367,9 @@ def common_configure(conf):
 
     if sys.platform.startswith('darwin'):
         conf.env['LIB_ICU'] = ['icucore']
-
+        global port_uses
+        port_uses[build_port].append('CF')
+        
         conf.env.append_value('CPPPATH', wklibs_dir)
         conf.env.append_value('LIBPATH', wklibs_dir)
 
