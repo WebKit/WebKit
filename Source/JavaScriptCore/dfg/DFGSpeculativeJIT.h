@@ -1732,6 +1732,7 @@ private:
     void compileGetByValOnString(Node&);
     void compileValueToInt32(Node&);
     void compileUInt32ToNumber(Node&);
+    void compileInt32ToDouble(Node&);
     void compileGetByValOnByteArray(Node&);
     void compilePutByValForByteArray(GPRReg base, GPRReg property, Node&);
     void compileAdd(Node&);
@@ -1984,6 +1985,7 @@ public:
 #endif
     {
         ASSERT(m_jit);
+        ASSERT(use.useKind() != DoubleUse);
         if (jit->isFilled(m_index))
             gpr();
     }
@@ -2033,6 +2035,15 @@ public:
         , m_fprOrInvalid(InvalidFPRReg)
     {
         ASSERT(m_jit);
+        
+        // This is counter-intuitive but correct. DoubleOperand is intended to
+        // be used only when you're a node that is happy to accept an untyped
+        // value, but will special-case for doubles (using DoubleOperand) if the
+        // value happened to already be represented as a double. The implication
+        // is that you will not try to force the value to become a double if it
+        // is not one already.
+        ASSERT(use.useKind() != DoubleUse);
+        
         if (jit->isFilledDouble(m_index))
             fpr();
     }
@@ -2078,6 +2089,7 @@ public:
 #endif
     {
         ASSERT(m_jit);
+        ASSERT(use.useKind() != DoubleUse);
 #if USE(JSVALUE64)
         if (jit->isFilled(m_index))
             gpr();
@@ -2188,6 +2200,7 @@ public:
         , m_gprOrInvalid(InvalidGPRReg)
     {
         ASSERT(m_jit);
+        ASSERT(use.useKind() != DoubleUse);
         if (jit->isFilled(m_index))
             gpr();
     }
@@ -2360,6 +2373,7 @@ public:
 #endif
     {
         ASSERT(m_jit);
+        ASSERT(use.useKind() != DoubleUse);
         if (jit->isFilled(m_index))
             gpr();
     }
@@ -2404,6 +2418,7 @@ public:
         , m_gprOrInvalid(InvalidGPRReg)
     {
         ASSERT(m_jit);
+        ASSERT(use.useKind() != DoubleUse);
         if (jit->isFilled(m_index))
             gpr();
     }
@@ -2445,6 +2460,7 @@ public:
         , m_fprOrInvalid(InvalidFPRReg)
     {
         ASSERT(m_jit);
+        ASSERT(use.useKind() == DoubleUse);
         if (jit->isFilled(m_index))
             fpr();
     }
@@ -2481,6 +2497,7 @@ public:
         , m_gprOrInvalid(InvalidGPRReg)
     {
         ASSERT(m_jit);
+        ASSERT(use.useKind() != DoubleUse);
         if (jit->isFilled(m_index))
             gpr();
     }
@@ -2522,6 +2539,7 @@ public:
         , m_gprOrInvalid(InvalidGPRReg)
     {
         ASSERT(m_jit);
+        ASSERT(use.useKind() != DoubleUse);
         if (jit->isFilled(m_index))
             gpr();
     }

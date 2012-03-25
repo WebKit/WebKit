@@ -75,6 +75,9 @@ namespace JSC { namespace DFG {
     macro(ValueToInt32, NodeResultInt32 | NodeMustGenerate) \
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
     macro(UInt32ToNumber, NodeResultNumber) \
+    /* Used to cast known integers to doubles, so as to separate the double form */\
+    /* of the value from the integer form. */\
+    macro(Int32ToDouble, NodeResultNumber) \
     \
     /* Nodes for arithmetic operations. */\
     macro(ArithAdd, NodeResultNumber) \

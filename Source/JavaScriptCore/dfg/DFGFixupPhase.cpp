@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGGraph.h"
+#include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 
 namespace JSC { namespace DFG {
@@ -42,11 +43,20 @@ public:
     
     void run()
     {
-        for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex)
-            fixupNode(m_graph[m_compileIndex]);
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex)
+            fixupBlock(m_graph.m_blocks[blockIndex].get());
     }
 
 private:
+    void fixupBlock(BasicBlock* block)
+    {
+        for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
+            m_compileIndex = block->at(m_indexInBlock);
+            fixupNode(m_graph[m_compileIndex]);
+        }
+        m_insertionSet.execute(*block);
+    }
+    
     void fixupNode(Node& node)
     {
         if (!node.shouldGenerate())
@@ -152,11 +162,130 @@ private:
             break;
         }
             
+        case CompareEq:
+        case CompareLess:
+        case CompareLessEq:
+        case CompareGreater:
+        case CompareGreaterEq:
+        case CompareStrictEq: {
+            if (Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child2()]))
+                break;
+            if (!Node::shouldSpeculateNumber(m_graph[node.child1()], m_graph[node.child2()]))
+                break;
+            fixDoubleEdge(0);
+            fixDoubleEdge(1);
+            break;
+        }
+            
+        case LogicalNot: {
+            if (m_graph[node.child1()].shouldSpeculateInteger())
+                break;
+            if (!m_graph[node.child1()].shouldSpeculateNumber())
+                break;
+            fixDoubleEdge(0);
+            break;
+        }
+            
+        case Branch: {
+            if (m_graph[node.child1()].shouldSpeculateInteger())
+                break;
+            if (!m_graph[node.child1()].shouldSpeculateNumber())
+                break;
+            fixDoubleEdge(0);
+            break;
+        }
+            
+        case SetLocal: {
+            if (m_graph.isCaptured(node.local()))
+                break;
+            if (!node.variableAccessData()->shouldUseDoubleFormat())
+                break;
+            fixDoubleEdge(0);
+            break;
+        }
+            
+        case ArithAdd:
+        case ValueAdd: {
+            if (m_graph.addShouldSpeculateInteger(node))
+                break;
+            if (!Node::shouldSpeculateNumber(m_graph[node.child1()], m_graph[node.child2()]))
+                break;
+            fixDoubleEdge(0);
+            fixDoubleEdge(1);
+            break;
+        }
+            
+        case ArithSub: {
+            if (m_graph.addShouldSpeculateInteger(node)
+                && node.canSpeculateInteger())
+                break;
+            fixDoubleEdge(0);
+            fixDoubleEdge(1);
+            break;
+        }
+            
+        case ArithNegate: {
+            if (m_graph.negateShouldSpeculateInteger(node))
+                break;
+            fixDoubleEdge(0);
+            break;
+        }
+            
+        case ArithMin:
+        case ArithMax:
+        case ArithMul:
+        case ArithDiv:
+        case ArithMod: {
+            if (Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child2()])
+                && node.canSpeculateInteger())
+                break;
+            fixDoubleEdge(0);
+            fixDoubleEdge(1);
+            break;
+        }
+            
+        case ArithAbs: {
+            if (m_graph[node.child1()].shouldSpeculateInteger()
+                && node.canSpeculateInteger())
+                break;
+            fixDoubleEdge(0);
+            break;
+        }
+            
+        case ArithSqrt: {
+            fixDoubleEdge(0);
+            break;
+        }
+            
+        case PutByVal: {
+            if (!m_graph[node.child1()].prediction() || !m_graph[node.child2()].prediction())
+                break;
+            if (!m_graph[node.child2()].shouldSpeculateInteger())
+                break;
+            if (isActionableIntMutableArrayPrediction(m_graph[node.child1()].prediction())) {
+                if (m_graph[node.child3()].isConstant())
+                    break;
+                if (m_graph[node.child3()].shouldSpeculateInteger())
+                    break;
+                fixDoubleEdge(2);
+                break;
+            }
+            if (isActionableFloatMutableArrayPrediction(m_graph[node.child1()].prediction())) {
+                fixDoubleEdge(2);
+                break;
+            }
+            break;
+        }
+            
         default:
             break;
         }
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        if (!(node.flags() & NodeHasVarArgs)) {
+            dataLog("new children: ");
+            node.dumpChildren(WTF::dataFile());
+        }
         dataLog("\n");
 #endif
     }
@@ -179,7 +308,39 @@ private:
         edge = newEdge;
     }
     
+    void fixDoubleEdge(unsigned childIndex)
+    {
+        Node& source = m_graph[m_compileIndex];
+        Edge& edge = source.children.child(childIndex);
+        
+        if (!m_graph[edge].shouldSpeculateInteger()) {
+            edge.setUseKind(DoubleUse);
+            return;
+        }
+        
+        NodeIndex resultIndex = (NodeIndex)m_graph.size();
+        
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        dataLog("(replacing @%u->@%u with @%u->@%u) ",
+                m_compileIndex, edge.index(), m_compileIndex, resultIndex);
+#endif
+        
+        // Fix the edge up here because it's a reference that will be clobbered by
+        // the append() below.
+        NodeIndex oldIndex = edge.index();
+        edge = Edge(resultIndex, DoubleUse);
+
+        m_graph.append(Node(Int32ToDouble, source.codeOrigin, oldIndex));
+        m_insertionSet.append(m_indexInBlock, resultIndex);
+        
+        Node& int32ToDouble = m_graph[resultIndex];
+        int32ToDouble.predict(PredictDouble);
+        int32ToDouble.ref();
+    }
+    
+    unsigned m_indexInBlock;
     NodeIndex m_compileIndex;
+    InsertionSet<NodeIndex> m_insertionSet;
 };
     
 void performFixup(Graph& graph)

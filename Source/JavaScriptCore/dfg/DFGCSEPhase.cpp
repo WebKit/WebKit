@@ -587,6 +587,7 @@ private:
         case GetStringLength:
         case StringCharAt:
         case StringCharCodeAt:
+        case Int32ToDouble:
             setReplacement(pureCSE(node));
             break;
             

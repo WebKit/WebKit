@@ -163,15 +163,30 @@ void Graph::dump(NodeIndex nodeIndex)
                 dataLog(", ");
             else
                 hasPrinted = true;
-            dataLog("@%u%s", m_varArgChildren[childIdx].index(), predictionToAbbreviatedString(at(childIdx).prediction()));
+            dataLog("%s@%u%s",
+                    useKindToString(m_varArgChildren[childIdx].useKind()),
+                    m_varArgChildren[childIdx].index(),
+                    predictionToAbbreviatedString(at(childIdx).prediction()));
         }
     } else {
-        if (!!node.child1())
-            dataLog("@%u%s", node.child1().index(), predictionToAbbreviatedString(at(node.child1()).prediction()));
-        if (!!node.child2())
-            dataLog(", @%u%s", node.child2().index(), predictionToAbbreviatedString(at(node.child2()).prediction()));
-        if (!!node.child3())
-            dataLog(", @%u%s", node.child3().index(), predictionToAbbreviatedString(at(node.child3()).prediction()));
+        if (!!node.child1()) {
+            dataLog("%s@%u%s",
+                    useKindToString(node.child1().useKind()),
+                    node.child1().index(),
+                    predictionToAbbreviatedString(at(node.child1()).prediction()));
+        }
+        if (!!node.child2()) {
+            dataLog(", %s@%u%s",
+                    useKindToString(node.child2().useKind()),
+                    node.child2().index(),
+                    predictionToAbbreviatedString(at(node.child2()).prediction()));
+        }
+        if (!!node.child3()) {
+            dataLog(", %s@%u%s",
+                    useKindToString(node.child3().useKind()),
+                    node.child3().index(),
+                    predictionToAbbreviatedString(at(node.child3()).prediction()));
+        }
         hasPrinted = !!node.child1();
     }
 

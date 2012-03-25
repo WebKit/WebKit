@@ -1284,6 +1284,10 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
             // Try to see if there is an alternate node that would contain the value we want.
             // There are four possibilities:
             //
+            // Int32ToDouble: We can use this in place of the original node, but
+            //    we'd rather not; so we use it only if it is the only remaining
+            //    live version.
+            //
             // ValueToInt32: If the only remaining live version of the value is
             //    ValueToInt32, then we can use it.
             //
@@ -1306,6 +1310,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
             }
         
             if (!found) {
+                NodeIndex int32ToDoubleIndex = NoNode;
                 NodeIndex valueToInt32Index = NoNode;
                 NodeIndex uint32ToNumberIndex = NoNode;
             
@@ -1319,6 +1324,9 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
                     if (node.child1Unchecked() != valueSource.nodeIndex())
                         continue;
                     switch (node.op()) {
+                    case Int32ToDouble:
+                        int32ToDoubleIndex = info.nodeIndex();
+                        break;
                     case ValueToInt32:
                         valueToInt32Index = info.nodeIndex();
                         break;
@@ -1331,7 +1339,9 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
                 }
             
                 NodeIndex nodeIndexToUse;
-                if (valueToInt32Index != NoNode)
+                if (int32ToDoubleIndex != NoNode)
+                    nodeIndexToUse = int32ToDoubleIndex;
+                else if (valueToInt32Index != NoNode)
                     nodeIndexToUse = valueToInt32Index;
                 else if (uint32ToNumberIndex != NoNode)
                     nodeIndexToUse = uint32ToNumberIndex;
@@ -1537,7 +1547,7 @@ void SpeculativeJIT::compileValueToInt32(Node& node)
         }
         case GeneratedOperandDouble: {
             GPRTemporary result(this);
-            SpeculateDoubleOperand op1(this, node.child1());
+            DoubleOperand op1(this, node.child1());
             FPRReg fpr = op1.fpr();
             GPRReg gpr = result.gpr();
             JITCompiler::Jump truncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateSuccessful);
@@ -1672,6 +1682,82 @@ void SpeculativeJIT::compileUInt32ToNumber(Node& node)
 
     m_jit.move(op1.gpr(), result.gpr());
     integerResult(result.gpr(), m_compileIndex, op1.format());
+}
+
+void SpeculativeJIT::compileInt32ToDouble(Node& node)
+{
+#if USE(JSVALUE64)
+    // On JSVALUE64 we have a way of loading double constants in a more direct manner
+    // than a int->double conversion. On 32_64, unfortunately, we currently don't have
+    // any such mechanism - though we could have it, if we just provisioned some memory
+    // in CodeBlock for the double form of integer constants.
+    if (at(node.child1()).hasConstant()) {
+        ASSERT(isInt32Constant(node.child1().index()));
+        FPRTemporary result(this);
+        GPRTemporary temp(this);
+        m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfNumberConstant(node.child1().index())))), temp.gpr());
+        m_jit.movePtrToDouble(temp.gpr(), result.fpr());
+        doubleResult(result.fpr(), m_compileIndex);
+        return;
+    }
+#endif
+    
+    if (isInt32Prediction(m_state.forNode(node.child1()).m_type)) {
+        SpeculateIntegerOperand op1(this, node.child1());
+        FPRTemporary result(this);
+        m_jit.convertInt32ToDouble(op1.gpr(), result.fpr());
+        doubleResult(result.fpr(), m_compileIndex);
+        return;
+    }
+    
+    JSValueOperand op1(this, node.child1());
+    FPRTemporary result(this);
+    
+#if USE(JSVALUE64)
+    GPRTemporary temp(this);
+
+    GPRReg op1GPR = op1.gpr();
+    GPRReg tempGPR = temp.gpr();
+    FPRReg resultFPR = result.fpr();
+    
+    JITCompiler::Jump isInteger = m_jit.branchPtr(
+        MacroAssembler::AboveOrEqual, op1GPR, GPRInfo::tagTypeNumberRegister);
+    
+    speculationCheck(
+        BadType, JSValueRegs(op1GPR), node.child1(),
+        m_jit.branchTestPtr(MacroAssembler::Zero, op1GPR, GPRInfo::tagTypeNumberRegister));
+    
+    m_jit.move(op1GPR, tempGPR);
+    unboxDouble(tempGPR, resultFPR);
+    JITCompiler::Jump done = m_jit.jump();
+    
+    isInteger.link(&m_jit);
+    m_jit.convertInt32ToDouble(op1GPR, resultFPR);
+    done.link(&m_jit);
+#else
+    FPRTemporary temp(this);
+    
+    GPRReg op1TagGPR = op1.tagGPR();
+    GPRReg op1PayloadGPR = op1.payloadGPR();
+    FPRReg tempFPR = temp.fpr();
+    FPRReg resultFPR = result.fpr();
+    
+    JITCompiler::Jump isInteger = m_jit.branch32(
+        MacroAssembler::Equal, op1TagGPR, TrustedImm32(JSValue::Int32Tag));
+    
+    speculationCheck(
+        BadType, JSValueRegs(op1TagGPR, op1PayloadGPR), node.child1(),
+        m_jit.branch32(MacroAssembler::AboveOrEqual, op1TagGPR, TrustedImm32(JSValue::LowestTag)));
+    
+    unboxDouble(op1TagGPR, op1PayloadGPR, resultFPR, tempFPR);
+    JITCompiler::Jump done = m_jit.jump();
+    
+    isInteger.link(&m_jit);
+    m_jit.convertInt32ToDouble(op1PayloadGPR, resultFPR);
+    done.link(&m_jit);
+#endif
+    
+    doubleResult(resultFPR, m_compileIndex);
 }
 
 static double clampDoubleToByte(double d)

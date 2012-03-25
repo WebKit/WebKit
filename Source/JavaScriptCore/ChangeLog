@@ -1,5 +1,93 @@
 2012-03-25  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG int-to-double conversion should be revealed to CSE
+        https://bugs.webkit.org/show_bug.cgi?id=82135
+
+        Reviewed by Oliver Hunt.
+        
+        This introduces the notion of an Int32ToDouble node, which is injected
+        into the graph anytime we know that we have a double use of a node that
+        was predicted integer. The Int32ToDouble simplifies double speculation
+        on integers by skipping the path that would unbox doubles, if we know
+        that the value is already proven to be an integer. It allows integer to
+        double conversions to be subjected to common subexpression elimination
+        (CSE) by allowing the CSE phase to see where these conversions are
+        occurring. Finally, it allows us to see when a constant is being used
+        as both a double and an integer. This is a bit odd, since it means that
+        sometimes a double use of a constant will not refer directly to the
+        constant. This should not cause problems, for now, but it may require
+        some canonizalization in the future if we want to support strength
+        reductions of double operations based on constants.
+        
+        To allow injection of nodes into the graph, this change introduces the
+        DFG::InsertionSet, which is a way of lazily inserting elements into a
+        list. This allows the FixupPhase to remain O(N) despite performing
+        multiple injections in a single basic block. Without the InsertionSet,
+        each injection would require performing an insertion into a vector,
+        which is O(N), leading to O(N^2) performance overall. With the
+        InsertionSet, each injection simply records what insertion would have
+        been performed, and all insertions are performed at once (via
+        InsertionSet::execute) after processing of a basic block is completed.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/PredictedType.h:
+        (JSC::isActionableIntMutableArrayPrediction):
+        (JSC):
+        (JSC::isActionableFloatMutableArrayPrediction):
+        (JSC::isActionableTypedMutableArrayPrediction):
+        (JSC::isActionableMutableArrayPrediction):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::useKindToString):
+        (DFG):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::run):
+        (JSC::DFG::FixupPhase::fixupBlock):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixDoubleEdge):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGInsertionSet.h: Added.
+        (DFG):
+        (Insertion):
+        (JSC::DFG::Insertion::Insertion):
+        (JSC::DFG::Insertion::index):
+        (JSC::DFG::Insertion::element):
+        (InsertionSet):
+        (JSC::DFG::InsertionSet::InsertionSet):
+        (JSC::DFG::InsertionSet::append):
+        (JSC::DFG::InsertionSet::execute):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble):
+        (DFG):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::IntegerOperand::IntegerOperand):
+        (JSC::DFG::DoubleOperand::DoubleOperand):
+        (JSC::DFG::JSValueOperand::JSValueOperand):
+        (JSC::DFG::StorageOperand::StorageOperand):
+        (JSC::DFG::SpeculateIntegerOperand::SpeculateIntegerOperand):
+        (JSC::DFG::SpeculateStrictInt32Operand::SpeculateStrictInt32Operand):
+        (JSC::DFG::SpeculateDoubleOperand::SpeculateDoubleOperand):
+        (JSC::DFG::SpeculateCellOperand::SpeculateCellOperand):
+        (JSC::DFG::SpeculateBooleanOperand::SpeculateBooleanOperand):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2012-03-25  Filip Pizlo  <fpizlo@apple.com>
+
         DFGOperands should be moved out of the DFG and into bytecode
         https://bugs.webkit.org/show_bug.cgi?id=82151
 

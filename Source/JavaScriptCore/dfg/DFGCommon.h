@@ -97,8 +97,22 @@ struct NodeIndexTraits {
 
 enum UseKind {
     UntypedUse,
+    DoubleUse,
     LastUseKind // Must always be the last entry in the enum, as it is used to denote the number of enum elements.
 };
+
+inline const char* useKindToString(UseKind useKind)
+{
+    switch (useKind) {
+    case UntypedUse:
+        return "";
+    case DoubleUse:
+        return "d";
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
 
 } } // namespace JSC::DFG
 

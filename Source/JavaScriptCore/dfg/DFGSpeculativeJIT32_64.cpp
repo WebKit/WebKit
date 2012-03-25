@@ -1878,6 +1878,11 @@ void SpeculativeJIT::compile(Node& node)
         compileValueToInt32(node);
         break;
     }
+        
+    case Int32ToDouble: {
+        compileInt32ToDouble(node);
+        break;
+    }
 
     case ValueAdd:
     case ArithAdd:
