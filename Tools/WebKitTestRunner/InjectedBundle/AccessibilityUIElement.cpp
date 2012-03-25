@@ -173,6 +173,10 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousTextMarker(A
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextTextMarker(AccessibilityTextMarker*) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange*) { return 0; }
 bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*) { return false; }
+int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker*) { return -1; }
+bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker*) { return false; }
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(int) { return 0; }
+
 #endif
 
 } // namespace WTR

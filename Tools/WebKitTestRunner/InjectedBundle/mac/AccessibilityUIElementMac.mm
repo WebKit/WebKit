@@ -1403,6 +1403,37 @@ bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute
     
     return false;
 }
+    
+int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker* marker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSNumber* indexNumber = [m_element accessibilityAttributeValue:@"AXIndexForTextMarker" forParameter:(id)marker->platformTextMarker()];
+    return [indexNumber intValue];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return -1;
+}
+
+bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker* textMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSNumber* validNumber = [m_element accessibilityAttributeValue:@"AXTextMarkerIsValid" forParameter:(id)textMarker->platformTextMarker()];
+    return [validNumber boolValue];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return false;
+}
+
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(int textIndex)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarker = [m_element accessibilityAttributeValue:@"AXTextMarkerForIndex" forParameter:[NSNumber numberWithInteger:textIndex]];
+    return AccessibilityTextMarker::create(textMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;                                                                          
+}
+
 
 } // namespace WTR
 

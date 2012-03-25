@@ -155,7 +155,10 @@ module WTR {
         DOMString stringForTextMarkerRange(in AccessibilityTextMarkerRange range);
         int textMarkerRangeLength(in AccessibilityTextMarkerRange range);
         boolean attributedStringForTextMarkerRangeContainsAttribute(in DOMString attr, in AccessibilityTextMarkerRange range);
-        
+        int indexForTextMarker(in AccessibilityTextMarker marker);
+        boolean isTextMarkerValid(in AccessibilityTextMarker marker);
+        AccessibilityTextMarker textMarkerForIndex(in int textIndex);
+
         // Notification support.
         boolean addNotificationListener(in object callbackFunction);
         boolean removeNotificationListener();

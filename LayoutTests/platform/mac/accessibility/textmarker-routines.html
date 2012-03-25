@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<body id="body" tabindex="0">
+
+<div tabindex="0" id="text1">text</div>
+
+text
+
+<div tabindex="0" id="text2">text</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This verifies usage of isTextMarkerValid, indexForTextMarker and textMarkerForIndex.");
+
+    if (window.accessibilityController) {
+        document.getElementById("text1").focus();
+        var item1 = accessibilityController.focusedElement;
+        var markerRange = item1.textMarkerRangeForElement(item1);
+        var firstTextMarker = item1.startTextMarkerForTextMarkerRange(markerRange);
+
+        shouldBeTrue("item1.isTextMarkerValid(firstTextMarker)");
+        shouldBe("item1.indexForTextMarker(firstTextMarker)", "0");
+        shouldBeTrue("item1.textMarkerForIndex(0).isEqual(firstTextMarker)");       
+
+        document.getElementById("body").removeChild(document.getElementById("text1"));
+
+        shouldBeFalse("item1.isTextMarkerValid(firstTextMarker)");
+
+        document.getElementById("text2").focus();
+        var item2 = accessibilityController.focusedElement;
+        markerRange = item2.textMarkerRangeForElement(item2);
+        var secondTextMarker = item2.startTextMarkerForTextMarkerRange(markerRange);
+
+        shouldBeTrue("item2.isTextMarkerValid(secondTextMarker)");
+        shouldBe("item2.indexForTextMarker(secondTextMarker)", "5");
+        shouldBeTrue("item2.textMarkerForIndex(item2.indexForTextMarker(secondTextMarker)).isEqual(secondTextMarker)");       
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

@@ -1,3 +1,38 @@
+2012-03-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support solution to handle invalid ax text marker
+        https://bugs.webkit.org/show_bug.cgi?id=82023
+
+        Reviewed by Oliver Hunt.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (indexForTextMarkerCallback):
+        (isTextMarkerValidCallback):
+        (textMarkerForIndexCallback):
+        (AccessibilityUIElement::indexForTextMarker):
+        (AccessibilityUIElement::isTextMarkerValid):
+        (AccessibilityUIElement::textMarkerForIndex):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::indexForTextMarker):
+        (AccessibilityUIElement::textMarkerForIndex):
+        (AccessibilityUIElement::isTextMarkerValid):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::indexForTextMarker):
+        (WTR::AccessibilityUIElement::isTextMarkerValid):
+        (WTR::AccessibilityUIElement::textMarkerForIndex):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR):
+        (WTR::AccessibilityUIElement::indexForTextMarker):
+        (WTR::AccessibilityUIElement::isTextMarkerValid):
+        (WTR::AccessibilityUIElement::textMarkerForIndex):
+
 2012-03-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r112014.
