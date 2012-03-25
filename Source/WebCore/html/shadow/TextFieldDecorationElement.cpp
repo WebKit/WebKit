@@ -33,6 +33,7 @@
 
 #include "Event.h"
 #include "HTMLInputElement.h"
+#include "NodeRenderStyle.h"
 #include "RenderImage.h"
 
 namespace WebCore {
