@@ -242,7 +242,9 @@ void MediaControlPanelElement::makeOpaque()
 
     m_opaque = true;
 
-    show();
+    // FIXME(BUG 79347): The display:none property should be toggled below only
+    // when display logic is introduced.
+    // show();
 }
 
 void MediaControlPanelElement::makeTransparent()
@@ -256,7 +258,9 @@ void MediaControlPanelElement::makeTransparent()
 
     m_opaque = false;
 
-    startTimer();
+    // FIXME(BUG 79347): The display:none property should be toggled below
+    // (through the timer start) when display logic is introduced.
+    // startTimer();
 }
 
 void MediaControlPanelElement::defaultEventHandler(Event* event)
