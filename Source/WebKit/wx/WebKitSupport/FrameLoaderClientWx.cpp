@@ -58,6 +58,9 @@
 #include <wtf/RefPtr.h>
 
 #include <stdio.h>
+#if OS(UNIX)
+#include <sys/utsname.h>
+#endif
 
 #include "FrameNetworkingContextWx.h"
 #include "WebFrame.h"
