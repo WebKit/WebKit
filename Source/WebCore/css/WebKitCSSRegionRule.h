@@ -44,7 +44,7 @@ class CSSRuleList;
 
 class WebKitCSSRegionRule: public CSSRule {
 public:
-    static PassRefPtr<WebKitCSSRegionRule> create(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, PassRefPtr<CSSRuleList> rules)
+    static PassRefPtr<WebKitCSSRegionRule> create(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<CSSRule> >& rules)
     {
         return adoptRef(new WebKitCSSRegionRule(parent, selectors, rules));
     }
@@ -53,13 +53,19 @@ public:
 
     String cssText() const;
     const CSSSelectorList& selectorList() const { return m_selectorList; }
-    CSSRuleList* cssRules() const { return m_ruleList.get(); }
+    CSSRuleList* cssRules();
+
+    // Not part of the CSSOM.
+    unsigned ruleCount() const { return m_childRules.size(); }
+    CSSRule* ruleAt(unsigned index) { return m_childRules[index].get(); }
 
 private:
-    WebKitCSSRegionRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, PassRefPtr<CSSRuleList> rules);
+    WebKitCSSRegionRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<CSSRule> >&);
 
     CSSSelectorList m_selectorList;
-    RefPtr<CSSRuleList> m_ruleList;
+    Vector<RefPtr<CSSRule> > m_childRules;
+    
+    OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 
 }

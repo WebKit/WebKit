@@ -24,19 +24,22 @@
 #include "CSSMediaRule.h"
 
 #include "CSSParser.h"
+#include "CSSRuleList.h"
 #include "ExceptionCode.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSMediaRule::CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaList> media, PassRefPtr<CSSRuleList> rules)
+CSSMediaRule::CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaList> media, Vector<RefPtr<CSSRule> >& adoptRules)
     : CSSRule(parent, CSSRule::MEDIA_RULE)
     , m_lstMedia(media)
-    , m_lstCSSRules(rules)
 {
+    m_childRules.swap(adoptRules);
+
     m_lstMedia->setParentStyleSheet(parent);
-    int length = m_lstCSSRules->length();
-    for (int i = 0; i < length; i++)
-        m_lstCSSRules->item(i)->setParentRule(this);
+    unsigned size = m_childRules.size();
+    for (unsigned i = 0; i < size; i++)
+        m_childRules[i]->setParentRule(this);
 }
 
 CSSMediaRule::~CSSMediaRule()
@@ -44,9 +47,9 @@ CSSMediaRule::~CSSMediaRule()
     if (m_lstMedia)
         m_lstMedia->setParentStyleSheet(0);
 
-    int length = m_lstCSSRules->length();
-    for (int i = 0; i < length; i++)
-        m_lstCSSRules->item(i)->setParentRule(0);
+    unsigned size = m_childRules.size();
+    for (unsigned i = 0; i < size; i++)
+        m_childRules[i]->setParentRule(0);
 }
 
 unsigned CSSMediaRule::append(CSSRule* rule)
@@ -55,12 +58,13 @@ unsigned CSSMediaRule::append(CSSRule* rule)
         return 0;
 
     rule->setParentRule(this);
-    return m_lstCSSRules->insertRule(rule, m_lstCSSRules->length());
+    m_childRules.append(rule);
+    return m_childRules.size() - 1;
 }
 
 unsigned CSSMediaRule::insertRule(const String& rule, unsigned index, ExceptionCode& ec)
 {
-    if (index > m_lstCSSRules->length()) {
+    if (index > m_childRules.size()) {
         // INDEX_SIZE_ERR: Raised if the specified index is not a valid insertion point.
         ec = INDEX_SIZE_ERR;
         return 0;
@@ -87,25 +91,25 @@ unsigned CSSMediaRule::insertRule(const String& rule, unsigned index, ExceptionC
     }
 
     newRule->setParentRule(this);
-    unsigned returnedIndex = m_lstCSSRules->insertRule(newRule.get(), index);
+    m_childRules.insert(index, newRule.get());
 
     if (CSSStyleSheet* styleSheet = parentStyleSheet())
         styleSheet->styleSheetChanged();
 
-    return returnedIndex;
+    return index;
 }
 
 void CSSMediaRule::deleteRule(unsigned index, ExceptionCode& ec)
 {
-    if (index >= m_lstCSSRules->length()) {
+    if (index >= m_childRules.size()) {
         // INDEX_SIZE_ERR: Raised if the specified index does not correspond to a
         // rule in the media rule list.
         ec = INDEX_SIZE_ERR;
         return;
     }
 
-    m_lstCSSRules->item(index)->setParentRule(0);
-    m_lstCSSRules->deleteRule(index);
+    m_childRules[index]->setParentRule(0);
+    m_childRules.remove(index);
 
     if (CSSStyleSheet* styleSheet = parentStyleSheet())
         styleSheet->styleSheetChanged();
@@ -113,18 +117,29 @@ void CSSMediaRule::deleteRule(unsigned index, ExceptionCode& ec)
 
 String CSSMediaRule::cssText() const
 {
-    String result = "@media ";
+    StringBuilder result;
+    result.append("@media ");
     if (m_lstMedia) {
-        result += m_lstMedia->mediaText();
-        result += " ";
+        result.append(m_lstMedia->mediaText());
+        result.append(" ");
     }
-    result += "{ \n";
+    result.append("{ \n");
+    
+    for (unsigned i = 0; i < m_childRules.size(); ++i) {
+        result.append("  ");
+        result.append(m_childRules[i]->cssText());
+        result.append("\n");
+    }
 
-    if (m_lstCSSRules)
-        result += m_lstCSSRules->rulesText();
+    result.append("}");
+    return result.toString();
+}
 
-    result += "}";
-    return result;
+CSSRuleList* CSSMediaRule::cssRules()
+{
+    if (!m_ruleListCSSOMWrapper)
+        m_ruleListCSSOMWrapper = adoptPtr(new LiveCSSRuleList<CSSMediaRule>(this));
+    return m_ruleListCSSOMWrapper.get();
 }
 
 } // namespace WebCore

@@ -31,21 +31,19 @@
 #include "StylePropertySet.h"
 #include "StyleSheet.h"
 #include "WebKitCSSKeyframeRule.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 WebKitCSSKeyframesRule::WebKitCSSKeyframesRule(CSSStyleSheet* parent)
     : CSSRule(parent, CSSRule::WEBKIT_KEYFRAMES_RULE)
-    , m_lstCSSRules(CSSRuleList::create())
 {
 }
 
 WebKitCSSKeyframesRule::~WebKitCSSKeyframesRule()
 {
-    for (unsigned i = 0; i < length(); ++i) {
-        WebKitCSSKeyframeRule* rule = item(i);
-        rule->setParentRule(0);
-    }
+    for (unsigned i = 0; i < m_childRules.size(); ++i)
+        m_childRules[i]->setParentRule(0);
 }
 
 void WebKitCSSKeyframesRule::setName(const String& name)
@@ -58,26 +56,12 @@ void WebKitCSSKeyframesRule::setName(const String& name)
         styleSheet->styleSheetChanged();
 }
 
-WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::item(unsigned index)
-{
-    CSSRule* rule = m_lstCSSRules->item(index);
-    ASSERT(rule->isKeyframeRule());
-    return static_cast<WebKitCSSKeyframeRule*>(rule);
-}
-
-const WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::item(unsigned index) const
-{
-    const CSSRule* rule = m_lstCSSRules->item(index);
-    ASSERT(rule->isKeyframeRule());
-    return static_cast<const WebKitCSSKeyframeRule*>(rule);
-}
-
 void WebKitCSSKeyframesRule::append(WebKitCSSKeyframeRule* rule)
 {
     if (!rule)
         return;
 
-    m_lstCSSRules->append(rule);
+    m_childRules.append(rule);
     rule->setParentRule(this);
 }
 
@@ -97,13 +81,13 @@ void WebKitCSSKeyframesRule::deleteRule(const String& s)
 
     WebKitCSSKeyframeRule* rule = item(i);
     rule->setParentRule(0);
-    m_lstCSSRules->deleteRule(i);
+    m_childRules.remove(i);
 }
 
 WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::findRule(const String& s)
 {
     int i = findRuleIndex(s);
-    return (i >= 0) ? item(i) : 0;
+    return (i >= 0) ? m_childRules[i].get() : 0;
 }
 
 int WebKitCSSKeyframesRule::findRuleIndex(const String& key) const
@@ -116,8 +100,8 @@ int WebKitCSSKeyframesRule::findRuleIndex(const String& key) const
     else
         percentageString = key;
 
-    for (unsigned i = 0; i < length(); ++i) {
-        if (item(i)->keyText() == percentageString)
+    for (unsigned i = 0; i < m_childRules.size(); ++i) {
+        if (m_childRules[i]->keyText() == percentageString)
             return i;
     }
 
@@ -126,15 +110,26 @@ int WebKitCSSKeyframesRule::findRuleIndex(const String& key) const
 
 String WebKitCSSKeyframesRule::cssText() const
 {
-    String result = "@-webkit-keyframes ";
-    result += m_name;
-    result += " { \n";
+    StringBuilder result;
+    result.append("@-webkit-keyframes ");
+    result.append(m_name);
+    result.append(" { \n");
 
-    if (m_lstCSSRules)
-        result += m_lstCSSRules->rulesText();
+    for (unsigned i = 0; i < m_childRules.size(); ++i) {
+        result.append("  ");
+        result.append(m_childRules[i]->cssText());
+        result.append("\n");
+    }
 
-    result += "}";
-    return result;
+    result.append("}");
+    return result.toString();
+}
+    
+CSSRuleList* WebKitCSSKeyframesRule::cssRules()
+{
+    if (!m_ruleListCSSOMWrapper)
+        m_ruleListCSSOMWrapper = adoptPtr(new LiveCSSRuleList<WebKitCSSKeyframesRule>(this));
+    return m_ruleListCSSOMWrapper.get();
 }
 
 } // namespace WebCore

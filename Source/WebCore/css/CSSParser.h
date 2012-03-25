@@ -49,7 +49,6 @@ class CSSPropertyLonghand;
 class CSSValuePool;
 class CSSProperty;
 class CSSRule;
-class CSSRuleList;
 class CSSSelectorList;
 class CSSStyleSheet;
 class CSSValue;
@@ -248,12 +247,14 @@ public:
     CSSRule* createImportRule(const CSSParserString&, MediaList*);
     WebKitCSSKeyframeRule* createKeyframeRule(CSSParserValueList*);
     WebKitCSSKeyframesRule* createKeyframesRule();
-    CSSRule* createMediaRule(MediaList*, CSSRuleList*);
-    CSSRuleList* createRuleList();
+
+    typedef Vector<RefPtr<CSSRule> > RuleList;
+    CSSRule* createMediaRule(MediaList*, RuleList*);
+    RuleList* createRuleList();
     CSSRule* createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selectors);
     CSSRule* createFontFaceRule();
     CSSRule* createPageRule(PassOwnPtr<CSSParserSelector> pageSelector);
-    CSSRule* createRegionRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, CSSRuleList* rules);
+    CSSRule* createRegionRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, RuleList* rules);
     CSSRule* createMarginAtRule(CSSSelector::MarginBoxType marginBox);
     void startDeclarationsForMarginBox();
     void endDeclarationsForMarginBox();
@@ -399,7 +400,7 @@ private:
 
     Vector<RefPtr<CSSRule> > m_parsedRules;
     Vector<RefPtr<MediaList> > m_parsedMediaLists;
-    Vector<RefPtr<CSSRuleList> > m_parsedRuleLists;
+    Vector<OwnPtr<RuleList> > m_parsedRuleLists;
     HashSet<CSSParserSelector*> m_floatingSelectors;
     HashSet<Vector<OwnPtr<CSSParserSelector> >*> m_floatingSelectorVectors;
     HashSet<CSSParserValueList*> m_floatingValueLists;

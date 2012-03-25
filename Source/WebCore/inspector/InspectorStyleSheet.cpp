@@ -153,7 +153,7 @@ static PassRefPtr<CSSRuleList> asCSSRuleList(CSSStyleSheet* styleSheet)
     if (!styleSheet)
         return 0;
 
-    return CSSRuleList::create(styleSheet);
+    return styleSheet->cssRules();
 }
 
 static PassRefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
@@ -769,9 +769,8 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
     m_pageStyleSheet->addRule(selector, "", ec);
     if (ec)
         return 0;
-    RefPtr<CSSRuleList> rules = CSSRuleList::create(m_pageStyleSheet.get());
-    ASSERT(rules->length());
-    CSSStyleRule* rule = InspectorCSSAgent::asCSSStyleRule(rules->item(rules->length() - 1));
+    ASSERT(m_pageStyleSheet->length());
+    CSSStyleRule* rule = InspectorCSSAgent::asCSSStyleRule(m_pageStyleSheet->item(m_pageStyleSheet->length() - 1));
     ASSERT(rule);
 
     if (styleSheetText.length())
@@ -836,7 +835,7 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForStyleSheet()
 
     RefPtr<InspectorObject> result = InspectorObject::create();
     result->setString("styleSheetId", id());
-    RefPtr<CSSRuleList> cssRuleList = CSSRuleList::create(styleSheet);
+    RefPtr<CSSRuleList> cssRuleList = styleSheet->cssRules();
     RefPtr<InspectorArray> cssRules = buildArrayForRuleList(cssRuleList.get());
     result->setArray("rules", cssRules.release());
 

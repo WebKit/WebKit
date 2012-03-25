@@ -28,7 +28,6 @@
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
-#include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "CSSStyleSheet.h"
@@ -69,7 +68,7 @@ using namespace HTMLNames;
     CSSParserString string;
 
     CSSRule* rule;
-    CSSRuleList* ruleList;
+    Vector<RefPtr<CSSRule> >* ruleList;
     CSSParserSelector* selector;
     Vector<OwnPtr<CSSParserSelector> >* selectorList;
     CSSSelector::MarginBoxType marginBox;

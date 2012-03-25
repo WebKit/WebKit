@@ -1,7 +1,7 @@
 /**
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2002, 2005, 2006, 2012 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,6 @@
 
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -32,80 +31,24 @@ CSSRuleList::CSSRuleList()
 {
 }
 
-CSSRuleList::CSSRuleList(CSSStyleSheet* styleSheet, bool omitCharsetRules)
-    : m_styleSheet(styleSheet)
-{
-    if (styleSheet && omitCharsetRules) {
-        m_styleSheet = 0;
-        for (unsigned i = 0; i < styleSheet->length(); ++i) {
-            CSSRule* rule = styleSheet->item(i);
-            if (!rule->isCharsetRule())
-                append(static_cast<CSSRule*>(rule));
-        }
-    }
-}
-
 CSSRuleList::~CSSRuleList()
 {
 }
 
-unsigned CSSRuleList::length() const
-{
-    return m_styleSheet ? m_styleSheet->length() : m_lstCSSRules.size();
+StaticCSSRuleList::StaticCSSRuleList() 
+    : m_refCount(1)
+{ 
 }
 
-CSSRule* CSSRuleList::item(unsigned index) const
+StaticCSSRuleList::~StaticCSSRuleList()
 {
-    if (m_styleSheet)
-        return m_styleSheet->item(index);
-
-    if (index < m_lstCSSRules.size())
-        return m_lstCSSRules[index].get();
-    return 0;
 }
 
-void CSSRuleList::deleteRule(unsigned index)
-{
-    ASSERT(!m_styleSheet);
-
-    if (index >= m_lstCSSRules.size())
-        return;
-
-    m_lstCSSRules.remove(index);
-}
-
-void CSSRuleList::append(CSSRule* rule)
-{
-    ASSERT(!m_styleSheet);
-
-    if (!rule)
-        return;
-
-    m_lstCSSRules.append(rule);
-}
-
-unsigned CSSRuleList::insertRule(CSSRule* rule, unsigned index)
-{
-    ASSERT(!m_styleSheet);
-
-    if (!rule || index > m_lstCSSRules.size())
-        return 0;
-
-    m_lstCSSRules.insert(index, rule);
-    return index;
-}
-
-String CSSRuleList::rulesText() const
-{
-    StringBuilder result;
-
-    for (unsigned index = 0; index < length(); ++index) {
-        result.append("  ");
-        result.append(item(index)->cssText());
-        result.append("\n");
-    }
-
-    return result.toString();
+void StaticCSSRuleList::deref()
+{ 
+    ASSERT(m_refCount);
+    if (!--m_refCount)
+        delete this;
 }
 
 } // namespace WebCore

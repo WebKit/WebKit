@@ -858,9 +858,9 @@ void CSSStyleSelector::sortAndTransferMatchedRules(MatchResult& result)
 
     if (m_checker.isCollectingRulesOnly()) {
         if (!m_ruleList)
-            m_ruleList = CSSRuleList::create();
+            m_ruleList = StaticCSSRuleList::create();
         for (unsigned i = 0; i < m_matchedRules.size(); ++i)
-            m_ruleList->append(m_matchedRules[i]->rule()->ensureCSSStyleRule());
+            m_ruleList->rules().append(m_matchedRules[i]->rule()->ensureCSSStyleRule());
         return;
     }
 
@@ -1698,15 +1698,15 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
     if (it == m_keyframesRuleMap.end())
         return;
 
-    const WebKitCSSKeyframesRule* rule = it->second.get();
+    const WebKitCSSKeyframesRule* keyframesRule = it->second.get();
 
     // Construct and populate the style for each keyframe
-    for (unsigned i = 0; i < rule->length(); ++i) {
+    for (unsigned i = 0; i < keyframesRule->ruleCount(); ++i) {
         // Apply the declaration to the style. This is a simplified version of the logic in styleForElement
         initElement(e);
         initForStyleResolve(e);
 
-        const WebKitCSSKeyframeRule* keyframeRule = rule->item(i);
+        const WebKitCSSKeyframeRule* keyframeRule = keyframesRule->ruleAt(i);
 
         KeyframeValue keyframe(0, 0);
         keyframe.setStyle(styleForKeyframe(elementStyle, keyframeRule, keyframe));
@@ -2422,7 +2422,7 @@ void RuleSet::addPageRule(CSSPageRule* rule)
     m_pageRules.append(rule);
 }
 
-void RuleSet::addRegionRule(WebKitCSSRegionRule* rule)
+void RuleSet::addRegionRule(WebKitCSSRegionRule* regionRule)
 {
     RuleSet* regionRuleSet = new RuleSet;
     // The region rule set should take into account the position inside the parent rule set.
@@ -2431,15 +2431,14 @@ void RuleSet::addRegionRule(WebKitCSSRegionRule* rule)
     regionRuleSet->m_ruleCount = m_ruleCount;
 
     // Collect the region rules into a rule set
-    CSSRuleList* regionStylingRules = rule->cssRules();
-    unsigned rulesSize = regionStylingRules->length();
+    unsigned rulesSize = regionRule->ruleCount();
     for (unsigned i = 0; i < rulesSize; ++i) {
-        CSSRule* regionStylingRule = regionStylingRules->item(i);
+        CSSRule* regionStylingRule = regionRule->ruleAt(i);
         if (regionStylingRule->isStyleRule())
             regionRuleSet->addStyleRule(static_cast<CSSStyleRule*>(regionStylingRule)->styleRule(), true, true);
     }
 
-    m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(rule->selectorList().first(), regionRuleSet));
+    m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(regionRule->selectorList().first(), regionRuleSet));
 }
 
 void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector, const ContainerNode* scope)
@@ -2465,31 +2464,30 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
                 addRulesFromSheet(import->styleSheet(), medium, styleSelector, scope);
         }
         else if (rule->isMediaRule()) {
-            CSSMediaRule* r = static_cast<CSSMediaRule*>(rule);
-            CSSRuleList* rules = r->cssRules();
+            CSSMediaRule* mediaRule = static_cast<CSSMediaRule*>(rule);
 
-            if ((!r->media() || medium.eval(r->media(), styleSelector)) && rules) {
+            if ((!mediaRule->media() || medium.eval(mediaRule->media(), styleSelector)) && mediaRule->ruleCount()) {
                 // Traverse child elements of the @media rule.
-                for (unsigned j = 0; j < rules->length(); j++) {
-                    CSSRule *childItem = rules->item(j);
-                    if (childItem->isStyleRule())
-                        addStyleRule(static_cast<CSSStyleRule*>(childItem)->styleRule(), !scope);
-                    else if (childItem->isPageRule())
-                        addPageRule(static_cast<CSSPageRule*>(childItem));
-                    else if (childItem->isFontFaceRule() && styleSelector) {
+                for (unsigned j = 0; j < mediaRule->ruleCount(); j++) {
+                    CSSRule* childRule = mediaRule->ruleAt(j);
+                    if (childRule->isStyleRule())
+                        addStyleRule(static_cast<CSSStyleRule*>(childRule)->styleRule(), !scope);
+                    else if (childRule->isPageRule())
+                        addPageRule(static_cast<CSSPageRule*>(childRule));
+                    else if (childRule->isFontFaceRule() && styleSelector) {
                         // Add this font face to our set.
                         // FIXME(BUG 72461): We don't add @font-face rules of scoped style sheets for the moment.
                         if (scope)
                             continue;
-                        const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(childItem);
+                        const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(childRule);
                         styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
                         styleSelector->invalidateMatchedPropertiesCache();
-                    } else if (childItem->isKeyframesRule() && styleSelector) {
+                    } else if (childRule->isKeyframesRule() && styleSelector) {
                         // Add this keyframe rule to our set.
                         // FIXME(BUG 72462): We don't add @keyframe rules of scoped style sheets for the moment.
                         if (scope)
                             continue;
-                        styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(childItem));
+                        styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(childRule));
                     }
                 }   // for rules
             }   // if rules

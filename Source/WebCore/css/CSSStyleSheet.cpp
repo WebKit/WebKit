@@ -40,6 +40,22 @@
 
 namespace WebCore {
 
+class StyleSheetCSSRuleList : public CSSRuleList {
+public:
+    StyleSheetCSSRuleList(CSSStyleSheet* sheet) : m_styleSheet(sheet) { }
+    
+private:
+    virtual void ref() { m_styleSheet->ref(); }
+    virtual void deref() { m_styleSheet->deref(); }
+    
+    virtual unsigned length() const { return m_styleSheet->length(); }
+    virtual CSSRule* item(unsigned index) const { return m_styleSheet->item(index); }
+    
+    virtual CSSStyleSheet* styleSheet() const { return m_styleSheet; }
+    
+    CSSStyleSheet* m_styleSheet;
+};
+
 #if !ASSERT_DISABLED
 static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
 {
@@ -102,6 +118,22 @@ void CSSStyleSheet::remove(unsigned index)
 {
     m_children.remove(index);
 }
+    
+PassRefPtr<CSSRuleList> CSSStyleSheet::rules()
+{
+    KURL url = finalURL();
+    Document* document = findDocument();
+    if (!url.isEmpty() && document && !document->securityOrigin()->canRequest(url))
+        return 0;
+    // IE behavior.
+    RefPtr<StaticCSSRuleList> nonCharsetRules = StaticCSSRuleList::create();
+    for (unsigned i = 0; i < m_children.size(); ++i) {
+        if (m_children[i]->isCharsetRule())
+            continue;
+        nonCharsetRules->rules().append(m_children[i]);
+    }
+    return nonCharsetRules.release();
+}
 
 unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, ExceptionCode& ec)
 {
@@ -159,13 +191,15 @@ int CSSStyleSheet::addRule(const String& selector, const String& style, Exceptio
     return addRule(selector, style, m_children.size(), ec);
 }
 
-PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules(bool omitCharsetRules)
+PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules()
 {
     KURL url = finalURL();
     Document* document = findDocument();
     if (!url.isEmpty() && document && !document->securityOrigin()->canRequest(url))
         return 0;
-    return CSSRuleList::create(this, omitCharsetRules);
+    if (!m_ruleListCSSOMWrapper)
+        m_ruleListCSSOMWrapper = adoptPtr(new StyleSheetCSSRuleList(this));
+    return m_ruleListCSSOMWrapper.get();
 }
 
 void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)

@@ -52,7 +52,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertySourceData.h"
 #include "CSSReflectValue.h"
-#include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
@@ -9011,21 +9010,21 @@ CSSRule* CSSParser::createImportRule(const CSSParserString& url, MediaList* medi
     return result;
 }
 
-CSSRule* CSSParser::createMediaRule(MediaList* media, CSSRuleList* rules)
+CSSRule* CSSParser::createMediaRule(MediaList* media, RuleList* rules)
 {
     if (!media || !rules || !m_styleSheet)
         return 0;
     m_allowImportRules = m_allowNamespaceDeclarations = false;
-    RefPtr<CSSMediaRule> rule = CSSMediaRule::create(m_styleSheet, media, rules);
+    RefPtr<CSSMediaRule> rule = CSSMediaRule::create(m_styleSheet, media, *rules);
     CSSMediaRule* result = rule.get();
     m_parsedRules.append(rule.release());
     return result;
 }
 
-CSSRuleList* CSSParser::createRuleList()
+CSSParser::RuleList* CSSParser::createRuleList()
 {
-    RefPtr<CSSRuleList> list = CSSRuleList::create();
-    CSSRuleList* listPtr = list.get();
+    OwnPtr<RuleList> list = adoptPtr(new RuleList);
+    RuleList* listPtr = list.get();
 
     m_parsedRuleLists.append(list.release());
     return listPtr;
@@ -9173,14 +9172,14 @@ void CSSParser::setReusableRegionSelectorVector(Vector<OwnPtr<CSSParserSelector>
         m_reusableRegionSelectorVector.swap(*selectors);
 }
 
-CSSRule* CSSParser::createRegionRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, CSSRuleList* rules)
+CSSRule* CSSParser::createRegionRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, RuleList* rules)
 {
     if (!cssRegionsEnabled() || !regionSelector || !rules)
         return 0;
 
     m_allowImportRules = m_allowNamespaceDeclarations = false;
 
-    RefPtr<WebKitCSSRegionRule> regionRule = WebKitCSSRegionRule::create(m_styleSheet, regionSelector, rules);
+    RefPtr<WebKitCSSRegionRule> regionRule = WebKitCSSRegionRule::create(m_styleSheet, regionSelector, *rules);
 
     WebKitCSSRegionRule* result = regionRule.get();
     m_parsedRules.append(regionRule.release());

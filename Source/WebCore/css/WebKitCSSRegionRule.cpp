@@ -36,39 +36,50 @@
 #include "CSSRuleList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-WebKitCSSRegionRule::WebKitCSSRegionRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, PassRefPtr<CSSRuleList> rules)
+WebKitCSSRegionRule::WebKitCSSRegionRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<CSSRule> >& rules)
     : CSSRule(parent, CSSRule::WEBKIT_REGION_RULE)
-    , m_ruleList(rules)
 {
-    for (unsigned index = 0; index < m_ruleList->length(); ++index)
-        m_ruleList->item(index)->setParentRule(this);
-
     m_selectorList.adoptSelectorVector(*selectors);
+    m_childRules.swap(rules);
+    
+    for (unsigned i = 0; i < m_childRules.size(); ++i)
+        m_childRules[i]->setParentRule(this);
 }
 
 WebKitCSSRegionRule::~WebKitCSSRegionRule()
 {
-    for (unsigned index = 0; index < m_ruleList->length(); ++index)
-        m_ruleList->item(index)->setParentRule(0);
+    for (unsigned i = 0; i < m_childRules.size(); ++i)
+        m_childRules[i]->setParentRule(0);
 }
 
 String WebKitCSSRegionRule::cssText() const
 {
-    String result = "@-webkit-region ";
+    StringBuilder result;
+    result.append("@-webkit-region ");
 
     // First add the selectors.
-    result += m_selectorList.selectorsText();
+    result.append(m_selectorList.selectorsText());
 
     // Then add the rules.
-    result += " { \n";
+    result.append(" { \n");
 
-    if (m_ruleList)
-        result += m_ruleList->rulesText();
+    for (unsigned i = 0; i < m_childRules.size(); ++i) {
+        result.append("  ");
+        result.append(m_childRules[i]->cssText());
+        result.append("\n");
+    }
+    result.append("}");
+    return result.toString();
+}
 
-    result += "}";
-    return result;
+CSSRuleList* WebKitCSSRegionRule::cssRules()
+{
+    if (!m_ruleListCSSOMWrapper)
+        m_ruleListCSSOMWrapper = adoptPtr(new LiveCSSRuleList<WebKitCSSRegionRule>(this));
+    return m_ruleListCSSOMWrapper.get();
 }
 
 } // namespace WebCore

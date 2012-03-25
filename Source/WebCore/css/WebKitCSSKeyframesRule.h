@@ -62,7 +62,7 @@ public:
         m_name = AtomicString(name);
     }
 
-    CSSRuleList* cssRules() { return m_lstCSSRules.get(); }
+    CSSRuleList* cssRules();
 
     void insertRule(const String& rule);
     void deleteRule(const String& key);
@@ -71,18 +71,24 @@ public:
     String cssText() const;
 
     // Not part of the CSSOM.
-    unsigned length() const { return m_lstCSSRules->length(); }
-    WebKitCSSKeyframeRule* item(unsigned index);
-    const WebKitCSSKeyframeRule* item(unsigned index) const;
+    unsigned ruleCount() const { return m_childRules.size(); }
+    WebKitCSSKeyframeRule* ruleAt(unsigned index) const { return m_childRules[index].get(); }
+
     void append(WebKitCSSKeyframeRule*);
+    
+    // For IndexedGetter.
+    unsigned length() const { return ruleCount(); }
+    WebKitCSSKeyframeRule* item(unsigned index) const { return index < ruleCount() ? ruleAt(index) : 0; }
 
 private:
     WebKitCSSKeyframesRule(CSSStyleSheet* parent);
 
     int findRuleIndex(const String& key) const;
 
-    RefPtr<CSSRuleList> m_lstCSSRules;
+    Vector<RefPtr<WebKitCSSKeyframeRule> > m_childRules;
     AtomicString m_name;
+    
+    OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 
 } // namespace WebCore

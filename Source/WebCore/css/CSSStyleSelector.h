@@ -42,12 +42,12 @@ class CSSFontSelector;
 class CSSPageRule;
 class CSSPrimitiveValue;
 class CSSProperty;
+class CSSRuleList;
 class CSSFontFace;
 class CSSFontFaceRule;
 class CSSImageGeneratorValue;
 class CSSImageSetValue;
 class CSSImageValue;
-class CSSRuleList;
 class CSSSelector;
 class CSSStyleApplyProperty;
 class CSSStyleSheet;
@@ -68,6 +68,7 @@ class RenderRegion;
 class RuleData;
 class RuleSet;
 class Settings;
+class StaticCSSRuleList;
 class StyleImage;
 class StylePendingImage;
 class StylePropertySet;
@@ -436,7 +437,7 @@ private:
     // merge sorting.
     Vector<const RuleData*, 32> m_matchedRules;
 
-    RefPtr<CSSRuleList> m_ruleList;
+    RefPtr<StaticCSSRuleList> m_ruleList;
 
     HashSet<int> m_pendingImageProperties; // Hash of CSSPropertyIDs
 
