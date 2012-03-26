@@ -266,7 +266,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
     FlexOrderHashSet flexOrderValues;
     computeMainAxisPreferredSizes(relayoutChildren, flexOrderValues);
     FlexOrderIterator flexIterator(this, flexOrderValues);
-    layoutFlexItems(relayoutChildren, flexIterator, lineContexts);
+    layoutFlexItems(flexIterator, lineContexts);
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
     computeLogicalHeight();
@@ -610,7 +610,7 @@ LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMain
     return heightResult - preferredMainAxisExtent;
 }
 
-void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren, FlexOrderIterator& iterator, WTF::Vector<LineContext>& lineContexts)
+void RenderFlexibleBox::layoutFlexItems(FlexOrderIterator& iterator, WTF::Vector<LineContext>& lineContexts)
 {
     OrderedFlexItemList orderedChildren;
     LayoutUnit preferredMainAxisExtent;

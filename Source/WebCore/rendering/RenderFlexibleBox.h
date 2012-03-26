@@ -100,7 +100,7 @@ private:
     LayoutUnit mainAxisScrollbarExtentForChild(RenderBox* child) const;
     LayoutUnit preferredMainAxisContentExtentForChild(RenderBox* child) const;
 
-    void layoutFlexItems(bool relayoutChildren, FlexOrderIterator&, WTF::Vector<LineContext>&);
+    void layoutFlexItems(FlexOrderIterator&, WTF::Vector<LineContext>&);
     void repositionLogicalHeightDependentFlexItems(FlexOrderIterator&, WTF::Vector<LineContext>&, LayoutUnit& oldClientAfterEdge);
 
     float positiveFlexForChild(RenderBox* child) const;
