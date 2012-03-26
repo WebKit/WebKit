@@ -181,6 +181,13 @@ LIST(APPEND WebCore_SOURCES
     platform/network/blackberry/CredentialStorageBlackBerry.cpp
 )
 
+# File System support
+IF (ENABLE_FILE_SYSTEM)
+    LIST(APPEND WebCore_SOURCES
+        platform/blackberry/AsyncFileSystemBlackBerry.cpp
+    )
+ENDIF ()
+
 # Touch sources
 LIST(APPEND WebCore_SOURCES
     dom/Touch.cpp

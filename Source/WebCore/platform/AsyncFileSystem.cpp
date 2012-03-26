@@ -45,7 +45,7 @@ const size_t AsyncFileSystem::persistentPathPrefixLength = sizeof(AsyncFileSyste
 const char AsyncFileSystem::temporaryPathPrefix[] = "temporary";
 const size_t AsyncFileSystem::temporaryPathPrefixLength = sizeof(AsyncFileSystem::temporaryPathPrefix) - 1;
 
-#if !PLATFORM(CHROMIUM) && !PLATFORM(GTK)
+#if !PLATFORM(CHROMIUM) && !PLATFORM(GTK) && !PLATFORM(BLACKBERRY)
 bool AsyncFileSystem::isAvailable()
 {
     notImplemented();
