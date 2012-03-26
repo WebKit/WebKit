@@ -186,7 +186,7 @@ public:
     virtual int scrollWidth();
     virtual int scrollHeight();
 
-    LayoutRect boundsInRootViewSpace();
+    IntRect boundsInRootViewSpace();
 
     PassRefPtr<ClientRectList> getClientRects();
     PassRefPtr<ClientRect> getBoundingClientRect();

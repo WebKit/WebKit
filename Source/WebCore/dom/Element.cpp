@@ -475,13 +475,13 @@ int Element::scrollHeight()
     return 0;
 }
 
-LayoutRect Element::boundsInRootViewSpace()
+IntRect Element::boundsInRootViewSpace()
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
     FrameView* view = document()->view();
     if (!view)
-        return LayoutRect();
+        return IntRect();
 
     Vector<FloatQuad> quads;
 #if ENABLE(SVG)
@@ -500,9 +500,9 @@ LayoutRect Element::boundsInRootViewSpace()
     }
 
     if (quads.isEmpty())
-        return LayoutRect();
+        return IntRect();
 
-    LayoutRect result = quads[0].enclosingBoundingBox();
+    IntRect result = quads[0].enclosingBoundingBox();
     for (size_t i = 1; i < quads.size(); ++i)
         result.unite(quads[i].enclosingBoundingBox());
 
