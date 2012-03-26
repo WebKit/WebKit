@@ -228,6 +228,10 @@ bool ScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView, con
         return false;
 
 #if ENABLE(THREADED_SCROLLING)
+    // Update the main frame scroll position locally before asking the scrolling thread to scroll,
+    // since FrameView expects scroll position updates to happen synchronously.
+    updateMainFrameScrollPosition(scrollPosition);
+
     ScrollingThread::dispatch(bind(&ScrollingTree::setMainFrameScrollPosition, m_scrollingTree.get(), scrollPosition));
     return true;
 #else
