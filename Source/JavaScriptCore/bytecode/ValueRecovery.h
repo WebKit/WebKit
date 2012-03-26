@@ -192,6 +192,8 @@ public:
     
     ValueRecoveryTechnique technique() const { return m_technique; }
     
+    bool isConstant() const { return m_technique == Constant; }
+    
     bool isInRegisters() const
     {
         switch (m_technique) {
@@ -202,6 +204,20 @@ public:
         case InPair:
 #endif
         case InFPR:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    bool isAlreadyInRegisterFile() const
+    {
+        switch (technique()) {
+        case AlreadyInRegisterFile:
+        case AlreadyInRegisterFileAsUnboxedInt32:
+        case AlreadyInRegisterFileAsUnboxedCell:
+        case AlreadyInRegisterFileAsUnboxedBoolean:
+        case AlreadyInRegisterFileAsUnboxedDouble:
             return true;
         default:
             return false;

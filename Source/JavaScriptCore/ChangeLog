@@ -1,3 +1,21 @@
+2012-03-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should assert that argument value recoveries can only be
+        AlreadyInRegisterFile or Constant
+        https://bugs.webkit.org/show_bug.cgi?id=82249
+
+        Reviewed by Michael Saboff.
+        
+        Made the assertions that the DFG makes for argument value recoveries match
+        what Arguments expects.
+
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::isConstant):
+        (ValueRecovery):
+        (JSC::ValueRecovery::isAlreadyInRegisterFile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-03-26  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the Windows build.

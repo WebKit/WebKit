@@ -954,10 +954,12 @@ void SpeculativeJIT::compile(BasicBlock& block)
                 int argumentCountIncludingThis = inlineCallFrame->arguments.size();
                 for (int i = 0; i < argumentCountIncludingThis; ++i) {
                     ValueRecovery recovery = computeValueRecoveryFor(m_variables[inlineCallFrame->stackOffset + CallFrame::argumentOffsetIncludingThis(i)]);
-                    // The recovery cannot point to registers, since the call frame reification isn't
-                    // as smart as OSR, so it can't handle that. The exception is the this argument,
-                    // which we don't really need to be able to recover.
-                    ASSERT(!i || !recovery.isInRegisters());
+                    // The recovery should refer either to something that has already been
+                    // stored into the register file at the right place, or to a constant,
+                    // since the Arguments code isn't smart enough to handle anything else.
+                    // The exception is the this argument, which we don't really need to be
+                    // able to recover.
+                    ASSERT(!i || (recovery.isAlreadyInRegisterFile() || recovery.isConstant()));
                     inlineCallFrame->arguments[i] = recovery;
                 }
                 break;
