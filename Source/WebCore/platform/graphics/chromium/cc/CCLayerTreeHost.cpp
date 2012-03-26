@@ -579,7 +579,7 @@ void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTe
     CCLayerIteratorType end = CCLayerIteratorType::end(&m_updateList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&m_updateList); it != end; ++it) {
         if (it.representsTargetRenderSurface()) {
-            ASSERT(it->renderSurface()->drawOpacity() || it->drawOpacityIsAnimating());
+            ASSERT(it->renderSurface()->drawOpacity() || it->renderSurface()->drawOpacityIsAnimating());
             if (it->maskLayer())
                 it->maskLayer()->updateCompositorResources(context, updater);
 
