@@ -153,6 +153,8 @@ bool HTMLPlugInImageElement::willRecalcStyle(StyleChange)
 
 void HTMLPlugInImageElement::attach()
 {
+    suspendPostAttachCallbacks();
+
     bool isImage = isImageType();
     
     if (!isImage)
@@ -165,6 +167,8 @@ void HTMLPlugInImageElement::attach()
             m_imageLoader = adoptPtr(new HTMLImageLoader(this));
         m_imageLoader->updateFromElement();
     }
+
+    resumePostAttachCallbacks();
 }
     
 void HTMLPlugInImageElement::detach()
