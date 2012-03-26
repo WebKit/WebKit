@@ -1623,3 +1623,6 @@ fast/inline/continuation-outlines-with-layers.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=81089
 inspector/debugger/snippets-model.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82020
+plugins/netscape-dom-access-and-reload.html
