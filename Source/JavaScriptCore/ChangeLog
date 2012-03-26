@@ -1,3 +1,11 @@
+2012-03-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r112039.
+
+        * interpreter/Register.h:
+        (Register): Removed inline keyword from decleration since
+                    there is an ALWAYS_INLINE at the definition anyway.
+
 2012-03-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

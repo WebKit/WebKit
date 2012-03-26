@@ -86,7 +86,7 @@ namespace JSC {
             return r;
         }
 
-        static inline Register withCallee(JSObject* callee);
+        static Register withCallee(JSObject* callee);
 
     private:
         union {
