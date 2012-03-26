@@ -108,7 +108,7 @@ SkBitmap LayerWebKitThread::paintContents(const IntRect& contentsRect, double sc
     if (drawsContent()) { // Layer contents must be drawn into a canvas.
         IntRect untransformedContentsRect = contentsRect;
 
-        canvas = adoptPtr(new InstrumentedPlatformCanvas(contentsRect.width(), contentsRect.height(), false, 0));
+        canvas = adoptPtr(new InstrumentedPlatformCanvas(contentsRect.width(), contentsRect.height()));
         PlatformContextSkia skiaContext(canvas.get());
 
         GraphicsContext graphicsContext(&skiaContext);
@@ -191,7 +191,7 @@ void LayerWebKitThread::setDrawable(bool isDrawable)
 
     m_isDrawable = isDrawable;
 
-    setNeedsTexture(m_isDrawable && (drawsContent() || contents() || pluginView() || mediaPlayer() || canvas()));
+    setNeedsTexture(m_isDrawable && (drawsContent() || contents() || pluginView() || mediaPlayer() || m_texID));
     setNeedsCommit();
 }
 

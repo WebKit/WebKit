@@ -54,7 +54,7 @@ class MediaPlayer;
 
 class LayerData {
 public:
-    enum LayerType { Layer, TransformLayer, WebGLLayer };
+    enum LayerType { Layer, TransformLayer, WebGLLayer, CanvasLayer };
     enum FilterType { Linear, Nearest, Trilinear, Lanczos };
     enum LayerProgramShader { LayerProgramShaderRGBA = 0,
                               LayerProgramShaderBGRA,
@@ -74,9 +74,6 @@ public:
         , m_mediaPlayer(0)
 #endif
         , m_texID(0)
-        , m_texWidth(0)
-        , m_texHeight(0)
-        , m_canvas(0)
         , m_frontBufferLock(0)
         , m_suspendTime(0)
         , m_doubleSided(true)
@@ -130,7 +127,7 @@ public:
     unsigned getTextureID() const { return m_texID; }
     void setTextureID(unsigned int value) { m_texID = value; }
 
-    bool needsTexture() const { return m_layerType == WebGLLayer ? true : m_needsTexture; }
+    bool needsTexture() const { return m_layerType == WebGLLayer || m_layerType == CanvasLayer || m_needsTexture; }
 
     LayerProgramShader layerProgramShader() const { return m_layerProgramShader; }
 
@@ -146,8 +143,6 @@ public:
 #if ENABLE(VIDEO)
     MediaPlayer* mediaPlayer() const { return m_mediaPlayer; }
 #endif
-
-    HTMLCanvasElement* canvas() const { return m_canvas; }
 
     void replicate(LayerData *to) const { *to = *this; }
 
@@ -193,10 +188,6 @@ protected:
     IntRect m_holePunchRect;
 
     unsigned m_texID;
-    unsigned m_texWidth;
-    unsigned m_texHeight;
-
-    HTMLCanvasElement* m_canvas;
 
     pthread_mutex_t* m_frontBufferLock;
 

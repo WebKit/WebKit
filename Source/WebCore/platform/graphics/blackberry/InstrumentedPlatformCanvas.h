@@ -34,14 +34,14 @@
 
 namespace WebCore {
 
-class InstrumentedPlatformCanvas : public skia::PlatformCanvas {
+class InstrumentedPlatformCanvas : public SkCanvas {
 public:
-    InstrumentedPlatformCanvas(int width, int height, bool is_opaque, SkDeviceFactory* factory)
-        : skia::PlatformCanvas(width, height, is_opaque, factory)
-        , m_size(width, height)
+    InstrumentedPlatformCanvas(int width, int height)
+        : m_size(width, height)
         , m_isSolidColor(true)
         , m_solidColor(0, 0, 0, 0)
     {
+        setDevice(new SkDevice(SkBitmap::kARGB_8888_Config, width, height))->unref();
     }
 
     virtual ~InstrumentedPlatformCanvas() { }
@@ -53,76 +53,76 @@ public:
     virtual int save(SaveFlags flags)
     {
         WRAPCANVAS_LOG_ENTRY("");
-        return skia::PlatformCanvas::save(flags);
+        return SkCanvas::save(flags);
     }
 
     virtual int saveLayer(const SkRect* bounds, const SkPaint* paint, SaveFlags flags)
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        return skia::PlatformCanvas::saveLayer(bounds, paint, flags);
+        return SkCanvas::saveLayer(bounds, paint, flags);
     }
 
     virtual void restore()
     {
         WRAPCANVAS_LOG_ENTRY("");
-        skia::PlatformCanvas::restore();
+        SkCanvas::restore();
     }
 
     virtual bool translate(SkScalar dx, SkScalar dy)
     {
         WRAPCANVAS_LOG_ENTRY("");
-        return skia::PlatformCanvas::translate(dx, dy);
+        return SkCanvas::translate(dx, dy);
     }
 
     virtual bool scale(SkScalar sx, SkScalar sy)
     {
         WRAPCANVAS_LOG_ENTRY("");
-        return skia::PlatformCanvas::scale(sx, sy);
+        return SkCanvas::scale(sx, sy);
     }
 
     virtual bool rotate(SkScalar degrees)
     {
         WRAPCANVAS_LOG_ENTRY("");
-        return skia::PlatformCanvas::rotate(degrees);
+        return SkCanvas::rotate(degrees);
     }
 
     virtual bool skew(SkScalar sx, SkScalar sy)
     {
         WRAPCANVAS_LOG_ENTRY("");
-        return skia::PlatformCanvas::skew(sx, sy);
+        return SkCanvas::skew(sx, sy);
     }
 
     virtual bool concat(const SkMatrix& matrix)
     {
         WRAPCANVAS_LOG_ENTRY("");
-        return skia::PlatformCanvas::concat(matrix);
+        return SkCanvas::concat(matrix);
     }
 
     virtual void setMatrix(const SkMatrix& matrix)
     {
         WRAPCANVAS_LOG_ENTRY("");
-        skia::PlatformCanvas::setMatrix(matrix);
+        SkCanvas::setMatrix(matrix);
     }
 
     virtual bool clipRect(const SkRect& rect, SkRegion::Op op)
     {
         WRAPCANVAS_LOG_ENTRY("");
-        return skia::PlatformCanvas::clipRect(rect, op);
+        return SkCanvas::clipRect(rect, op);
     }
 
     virtual bool clipPath(const SkPath& path, SkRegion::Op op) 
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        return skia::PlatformCanvas::clipPath(path, op);
+        return SkCanvas::clipPath(path, op);
     }
 
     virtual bool clipRegion(const SkRegion& region, SkRegion::Op op)
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        return skia::PlatformCanvas::clipRegion(region, op);
+        return SkCanvas::clipRegion(region, op);
     }
 
     virtual void clear(SkColor color)
@@ -130,14 +130,14 @@ public:
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = true;
         m_solidColor = Color(color);
-        skia::PlatformCanvas::clear(color);
+        SkCanvas::clear(color);
     }
 
     virtual void drawPaint(const SkPaint& paint)
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawPaint(paint);
+        SkCanvas::drawPaint(paint);
     }
 
     virtual void drawPoints(PointMode mode, size_t count, const SkPoint pts[],
@@ -145,7 +145,7 @@ public:
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawPoints(mode, count, pts, paint);
+        SkCanvas::drawPoints(mode, count, pts, paint);
     }
 
     virtual void drawRect(const SkRect& rect, const SkPaint& paint)
@@ -165,14 +165,14 @@ public:
                  m_isSolidColor = false;
         } else
             m_isSolidColor = false;
-        skia::PlatformCanvas::drawRect(rect, paint);
+        SkCanvas::drawRect(rect, paint);
     }
 
     virtual void drawPath(const SkPath& path, const SkPaint& paint)
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawPath(path, paint);
+        SkCanvas::drawPath(path, paint);
     }
 
     virtual void drawBitmap(const SkBitmap& bitmap, SkScalar left,
@@ -180,7 +180,7 @@ public:
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawBitmap(bitmap, left, top, paint);
+        SkCanvas::drawBitmap(bitmap, left, top, paint);
     }
 
     virtual void drawBitmapRect(const SkBitmap& bitmap, const SkIRect* src,
@@ -188,7 +188,7 @@ public:
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawBitmapRect(bitmap, src, dst, paint);
+        SkCanvas::drawBitmapRect(bitmap, src, dst, paint);
     }
 
     virtual void drawBitmapMatrix(const SkBitmap& bitmap,
@@ -196,7 +196,7 @@ public:
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawBitmapMatrix(bitmap, matrix, paint);
+        SkCanvas::drawBitmapMatrix(bitmap, matrix, paint);
     }
 
     virtual void drawSprite(const SkBitmap& bitmap, int left, int top,
@@ -204,7 +204,7 @@ public:
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawSprite(bitmap, left, top, paint);
+        SkCanvas::drawSprite(bitmap, left, top, paint);
     }
 
     virtual void drawText(const void* text, size_t byteLength, SkScalar x,
@@ -212,7 +212,7 @@ public:
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawText(text, byteLength, x, y, paint);
+        SkCanvas::drawText(text, byteLength, x, y, paint);
     }
 
     virtual void drawPosText(const void* text, size_t byteLength,
@@ -220,7 +220,7 @@ public:
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawPosText(text, byteLength, pos, paint);
+        SkCanvas::drawPosText(text, byteLength, pos, paint);
     }
 
     virtual void drawPosTextH(const void* text, size_t byteLength,
@@ -228,7 +228,7 @@ public:
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawPosTextH(text, byteLength, xpos, constY, paint);
+        SkCanvas::drawPosTextH(text, byteLength, xpos, constY, paint);
     }
 
     virtual void drawTextOnPath(const void* text, size_t byteLength,
@@ -236,14 +236,14 @@ public:
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawTextOnPath(text, byteLength, path, matrix, paint);
+        SkCanvas::drawTextOnPath(text, byteLength, path, matrix, paint);
     }
 
     virtual void drawPicture(SkPicture& picture)
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawPicture(picture);
+        SkCanvas::drawPicture(picture);
     }
 
     virtual void drawVertices(VertexMode mode, int vertexCount,
@@ -253,14 +253,14 @@ public:
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawVertices(mode, vertexCount, vertices, texs, colors, xfermode, indices, indexCount, paint);
+        SkCanvas::drawVertices(mode, vertexCount, vertices, texs, colors, xfermode, indices, indexCount, paint);
     }
 
     virtual void drawData(const void* data, size_t size)
     {
         WRAPCANVAS_LOG_ENTRY("");
         m_isSolidColor = false;
-        skia::PlatformCanvas::drawData(data, size);
+        SkCanvas::drawData(data, size);
     }
 
 private:

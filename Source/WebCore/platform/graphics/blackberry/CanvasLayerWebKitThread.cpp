@@ -19,36 +19,31 @@
 #include "config.h"
 #include "CanvasLayerWebKitThread.h"
 
-#if USE(ACCELERATED_COMPOSITING) && ENABLE(SKIA_GPU_CANVAS)
+#if USE(ACCELERATED_COMPOSITING) && ENABLE(ACCELERATED_2D_CANVAS)
 
-#include "HTMLCanvasElement.h"
-#include "PlatformContextSkia.h"
-
-#include <BlackBerryPlatformGraphics.h>
+#include "SharedGraphicsContext3D.h"
 #include <GLES2/gl2.h>
-#include <GrGLTexture.h>
 #include <SkGpuDevice.h>
 
 namespace WebCore {
 
-CanvasLayerWebKitThread::CanvasLayerWebKitThread(HTMLCanvasElement* canvas)
-    : LayerWebKitThread(Layer, 0)
+CanvasLayerWebKitThread::CanvasLayerWebKitThread(SkGpuDevice* device)
+    : LayerWebKitThread(CanvasLayer, 0)
 {
-    setCanvas(canvas);
+    setDevice(device);
 }
 
 CanvasLayerWebKitThread::~CanvasLayerWebKitThread()
 {
     if (m_texID) {
-        BlackBerry::Platform::Graphics::makeSharedResourceContextCurrent(BlackBerry::Platform::Graphics::GLES2);
+        SharedGraphicsContext3D::get()->makeContextCurrent();
         glDeleteTextures(1, &m_texID);
     }
 }
 
-void CanvasLayerWebKitThread::setCanvas(HTMLCanvasElement* canvas)
+void CanvasLayerWebKitThread::setDevice(SkGpuDevice* device)
 {
-    m_canvas = canvas;
-    setNeedsTexture(isDrawable() && canvas);
+    m_device = device;
     setLayerProgramShader(LayerProgramShaderRGBA);
     setNeedsDisplay();
 }
@@ -61,21 +56,11 @@ void CanvasLayerWebKitThread::setNeedsDisplay()
 
 void CanvasLayerWebKitThread::updateTextureContentsIfNeeded()
 {
-    if (!m_needsDisplay)
+    if (!m_needsDisplay || !m_device)
         return;
 
     m_needsDisplay = false;
-
-    if (!m_canvas || !m_canvas->drawingContext())
-        return;
-
-    SkGpuDevice* gpuDevice = static_cast<SkGpuDevice*>(m_canvas->drawingContext()->platformContext()->canvas()->getDevice());
-    gpuDevice->makeRenderTargetCurrent();
-    // We know this is a GrGLTexture
-    if (GrGLTexture* deviceTexture = (GrGLTexture*)gpuDevice->accessTexture()) {
-        m_texWidth = deviceTexture->allocWidth();
-        m_texHeight = deviceTexture->allocHeight();
-    }
+    m_device->makeRenderTargetCurrent();
 
     GLint previousTexture;
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture);
@@ -87,18 +72,18 @@ void CanvasLayerWebKitThread::updateTextureContentsIfNeeded()
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_canvas->width(), m_canvas->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_device->width(), m_device->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
         createFrontBufferLock();
     }
 
     pthread_mutex_lock(m_frontBufferLock);
     glBindTexture(GL_TEXTURE_2D, m_texID);
-    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, m_texWidth, m_texHeight, 0);
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, m_device->width(), m_device->height(), 0);
     glBindTexture(GL_TEXTURE_2D, previousTexture);
     pthread_mutex_unlock(m_frontBufferLock);
 }
 
 }
 
-#endif // USE(ACCELERATED_COMPOSITING) && ENABLE(SKIA_GPU_CANVAS)
+#endif // USE(ACCELERATED_COMPOSITING) && ENABLE(ACCELERATED_2D_CANVAS)

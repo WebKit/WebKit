@@ -187,15 +187,16 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imag
 
     canvasBitmap.setConfig(SkBitmap::kARGB_8888_Config, canvasWidth, canvasHeight);
     canvasBitmap.allocPixels(0, 0);
-    bool rc = canvasBitmap.copyPixelsFrom(static_cast<void*>(const_cast<unsigned char*>(tempPixels)), imageWidth * imageHeight * 4);
+    canvasBitmap.lockPixels();
+    memcpy(canvasBitmap.getPixels(), tempPixels, imageWidth * imageHeight * 4);
+    canvasBitmap.unlockPixels();
     delete [] tempPixels;
 
     FloatRect src(0, 0, canvasWidth, canvasHeight);
     FloatRect dst(0, 0, imageWidth, imageHeight);
 
     RefPtr<BitmapImageSingleFrameSkia> bitmapImage = BitmapImageSingleFrameSkia::create(canvasBitmap, false);
-    if (rc)
-        context->drawImage(bitmapImage.get(), ColorSpaceDeviceRGB, dst, src, CompositeCopy, false);
+    context->drawImage(bitmapImage.get(), ColorSpaceDeviceRGB, dst, src, CompositeCopy, false);
 }
 
 void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)

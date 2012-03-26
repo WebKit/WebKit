@@ -709,15 +709,15 @@ static void loadBufferingImageData()
             return;
 
         loaded = true;
-        nativeImage->lockPixels();
+        nativeImage->bitmap().lockPixels();
 
-        int bufSize = nativeImage->width() * nativeImage->height() * 4;
-        s_bufferingImageWidth = nativeImage->width();
-        s_bufferingImageHeight = nativeImage->height();
+        int bufSize = nativeImage->bitmap().width() * nativeImage->bitmap().height() * 4;
+        s_bufferingImageWidth = nativeImage->bitmap().width();
+        s_bufferingImageHeight = nativeImage->bitmap().height();
         s_bufferingImageData = static_cast<char*>(malloc(bufSize));
-        memcpy(s_bufferingImageData, nativeImage->getPixels(), bufSize);
+        memcpy(s_bufferingImageData, nativeImage->bitmap().getPixels(), bufSize);
 
-        nativeImage->unlockPixels();
+        nativeImage->bitmap().unlockPixels();
         bufferingIcon->deref();
     }
 }

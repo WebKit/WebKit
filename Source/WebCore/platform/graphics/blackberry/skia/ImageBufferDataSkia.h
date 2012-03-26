@@ -29,13 +29,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageBufferData_h
-#define ImageBufferData_h
+#ifndef ImageBufferDataSkia_h
+#define ImageBufferDataSkia_h
 
 #include "BlackBerryPlatformGraphics.h"
 #include "PlatformContextSkia.h"
-
-#include "skia/ext/platform_canvas.h"
+#if USE(ACCELERATED_COMPOSITING)
+#include "LayerWebKitThread.h"
+#endif
 
 namespace WebCore {
 
@@ -46,8 +47,11 @@ public:
     OwnPtr<SkCanvas> m_canvas;
     PlatformContextSkia m_platformContext;
     BlackBerry::Platform::Graphics::Buffer* m_buffer;
+#if USE(ACCELERATED_COMPOSITING)
+    RefPtr<LayerWebKitThread> m_platformLayer;
+#endif
 };
 
 } // namespace WebCore
 
-#endif // ImageBufferData_h
+#endif // ImageBufferDataSkia_h
