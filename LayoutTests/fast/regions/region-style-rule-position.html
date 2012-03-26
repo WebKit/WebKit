@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+	<head>
+		<style>
+		p {
+			margin: 0;
+		}
+		p.body {
+			background-color: red;
+		}
+		p.body {
+			background-color: lime;
+		}
+
+		.content {
+			-webkit-flow-into: f;
+		}
+		#r {
+			-webkit-flow-from: f;
+			margin-top: 1em;
+			width: 10em;
+			height: 10em;
+			background-color: lightgray;
+		}
+
+		@-webkit-region #r {
+			* {
+				background-color: blue;
+			}
+			p.region, #para {
+				background-color: red;
+			}
+			#para {
+				background-color: red;
+			}
+		}
+		@-webkit-region #r {
+			p.region, #para {
+				background-color: lime;
+			}
+		}
+		</style>
+	</head>
+	<body>
+		<p class='body'>Text that is not flowed - should be green</p>
+		<div class='content'>
+			<p class='region'>Paragraph that *is* flowed - should be green, too</p>
+			<p id='para'>Paragraph that *is* flowed - should be green, too</p>
+		</div>
+
+		<div id='r'/></div>
+	</body>
+</html>

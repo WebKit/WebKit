@@ -2437,6 +2437,8 @@ void RuleSet::addRegionRule(WebKitCSSRegionRule* regionRule)
         if (regionStylingRule->isStyleRule())
             regionRuleSet->addStyleRule(static_cast<CSSStyleRule*>(regionStylingRule)->styleRule(), true, true);
     }
+    // Update the "global" rule count so that proper order is maintained
+    m_ruleCount = regionRuleSet->m_ruleCount;
 
     m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(regionRule->selectorList().first(), regionRuleSet));
 }
