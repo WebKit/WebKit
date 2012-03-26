@@ -49,9 +49,8 @@ WebInspector.CompilerScriptMapping.prototype = {
     rawLocationToUILocation: function(rawLocation)
     {
         var sourceMap = this._sourceMapForScriptId[rawLocation.scriptId];
-        var location = sourceMap.compiledLocationToSourceLocation(rawLocation.lineNumber, rawLocation.columnNumber || 0);
-        var uiSourceCode = this._uiSourceCodeByURL[location.sourceURL];
-        return new WebInspector.UILocation(uiSourceCode, location.lineNumber, location.columnNumber);
+        var entry = sourceMap.findEntry(rawLocation.lineNumber, rawLocation.columnNumber || 0);
+        return new WebInspector.UILocation(this._uiSourceCodeByURL[entry[2]], entry[3], entry[4]);
     },
 
     /**
@@ -63,8 +62,8 @@ WebInspector.CompilerScriptMapping.prototype = {
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {
         var sourceMap = this._sourceMapForUISourceCode.get(uiSourceCode);
-        var location = sourceMap.sourceLocationToCompiledLocation(uiSourceCode.url, lineNumber);
-        return WebInspector.debuggerModel.createRawLocation(this._scriptForSourceMap.get(sourceMap), location[0], location[1]);
+        var entry = sourceMap.findEntryReversed(uiSourceCode.url, lineNumber);
+        return WebInspector.debuggerModel.createRawLocation(this._scriptForSourceMap.get(sourceMap), entry[0], entry[1]);
     },
 
     /**
@@ -112,7 +111,12 @@ WebInspector.CompilerScriptMapping.prototype = {
             var sourceURL = sourceURLs[i];
             if (this._uiSourceCodeByURL[sourceURL])
                 continue;
-            var contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL, sourceMap);
+            var sourceContent = sourceMap.sourceContent(sourceURL);
+            var contentProvider;
+            if (sourceContent)
+                contentProvider = new WebInspector.StaticContentProvider("text/javascript", sourceContent);
+            else
+                contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL);
             var uiSourceCode = new WebInspector.UISourceCode(sourceURL, sourceURL, contentProvider);
             uiSourceCode.isContentScript = script.isContentScript;
             uiSourceCode.isEditable = false;
@@ -140,10 +144,17 @@ WebInspector.CompilerScriptMapping.prototype = {
         if (sourceMap)
             return sourceMap;
 
-        sourceMap = new WebInspector.SourceMapParser(script.sourceMapURL, script.sourceURL);
-        if (!sourceMap.load())
+        try {
+            // FIXME: make sendRequest async.
+            var response = InspectorFrontendHost.loadResourceSynchronously(sourceMapURL);
+            if (response.slice(0, 3) === ")]}")
+                response = response.substring(response.indexOf('\n'));
+            var payload = /** @type {WebInspector.SourceMapPayload} */ JSON.parse(response);
+            sourceMap = new WebInspector.SourceMapParser(sourceMapURL, payload);
+        } catch(e) {
+            console.error(e.message);
             return null;
-
+        }
         this._sourceMapByURL[sourceMapURL] = sourceMap;
         return sourceMap;
     },
@@ -166,8 +177,9 @@ WebInspector.CompilerScriptMapping.prototype.__proto__ = WebInspector.ScriptMapp
 /**
  * @constructor
  */
-WebInspector.SourceMapParserPayload = function()
+WebInspector.SourceMapPayload = function()
 {
+    this.sections = [];
     this.mappings = "";
     this.sourceRoot = "";
     this.sources = [];
@@ -178,9 +190,9 @@ WebInspector.SourceMapParserPayload = function()
  * for format description.
  * @constructor
  * @param {string} sourceMappingURL
- * @param {string} scriptSourceOrigin
+ * @param {WebInspector.SourceMapPayload} payload
  */
-WebInspector.SourceMapParser = function(sourceMappingURL, scriptSourceOrigin)
+WebInspector.SourceMapParser = function(sourceMappingURL, payload)
 {
     if (!WebInspector.SourceMapParser.prototype._base64Map) {
         const base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -189,52 +201,14 @@ WebInspector.SourceMapParser = function(sourceMappingURL, scriptSourceOrigin)
             WebInspector.SourceMapParser.prototype._base64Map[base64Digits.charAt(i)] = i;
     }
 
-    this._sourceMappingURL = this._canonicalizeURL(sourceMappingURL, scriptSourceOrigin);
+    this._sourceMappingURL = sourceMappingURL;
     this._mappings = [];
     this._reverseMappingsBySourceURL = {};
     this._sourceContentByURL = {};
+    this._parseMappingPayload(payload);
 }
 
 WebInspector.SourceMapParser.prototype = {
-    /**
-     * @return {boolean}
-     */
-    load: function()
-    {
-        try {
-            // FIXME: make sendRequest async.
-            var response = InspectorFrontendHost.loadResourceSynchronously(this._sourceMappingURL);
-            if (response.slice(0, 3) === ")]}")
-                response = response.substring(response.indexOf('\n'));
-            this._parseMappingPayload(JSON.parse(response));
-            return true
-        } catch(e) {
-            console.error(e.message);
-            return false;
-        }
-    },
-
-    /**
-     * @param {number} lineNumber
-     * @param {number} columnNumber
-     * @return {Object}
-     */
-    compiledLocationToSourceLocation: function(lineNumber, columnNumber)
-    {
-        var mapping = this._findMapping(lineNumber, columnNumber);
-        return { sourceURL: mapping[2], lineNumber: mapping[3], columnNumber: mapping[4] };
-    },
-
-    sourceLocationToCompiledLocation: function(sourceURL, lineNumber)
-    {
-        var mappings = this._reverseMappingsBySourceURL[sourceURL];
-        for ( ; lineNumber < mappings.length; ++lineNumber) {
-            var mapping = mappings[lineNumber];
-            if (mapping)
-                return [mapping[0], mapping[1]];
-        }
-    },
-
     /**
      * @return {Array.<string>}
      */
@@ -246,25 +220,12 @@ WebInspector.SourceMapParser.prototype = {
         return sources;
     },
 
-    /**
-     * @param {string} sourceURL
-     * @return {string}
-     */
-    loadSourceCode: function(sourceURL)
+    sourceContent: function(sourceURL)
     {
-        if (this._sourceContentByURL[sourceURL])
-            return this._sourceContentByURL[sourceURL];
-
-        try {
-            // FIXME: make sendRequest async.
-            return InspectorFrontendHost.loadResourceSynchronously(sourceURL);
-        } catch(e) {
-            console.error(e.message);
-            return "";
-        }
+        return this._sourceContentByURL[sourceURL];
     },
 
-    _findMapping: function(lineNumber, columnNumber)
+    findEntry: function(lineNumber, columnNumber)
     {
         var first = 0;
         var count = this._mappings.length;
@@ -280,6 +241,17 @@ WebInspector.SourceMapParser.prototype = {
           }
         }
         return this._mappings[first];
+    },
+
+    findEntryReversed: function(sourceURL, lineNumber)
+    {
+        var mappings = this._reverseMappingsBySourceURL[sourceURL];
+        for ( ; lineNumber < mappings.length; ++lineNumber) {
+            var mapping = mappings[lineNumber];
+            if (mapping)
+                return mapping;
+        }
+        return this._mappings[0];
     },
 
     _parseMappingPayload: function(mappingPayload)

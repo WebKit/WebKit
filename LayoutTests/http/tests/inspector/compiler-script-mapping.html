@@ -9,17 +9,17 @@ function test()
 {
     function checkMapping(compiledLineNumber, compiledColumnNumber, sourceURL, sourceLineNumber, sourceColumnNumber, mapping)
     {
-        var sourceLocation = mapping.compiledLocationToSourceLocation(compiledLineNumber, compiledColumnNumber);
-        InspectorTest.assertEquals(sourceURL, sourceLocation.sourceURL);
-        InspectorTest.assertEquals(sourceLineNumber, sourceLocation.lineNumber);
-        InspectorTest.assertEquals(sourceColumnNumber, sourceLocation.columnNumber);
+        var entry = mapping.findEntry(compiledLineNumber, compiledColumnNumber);
+        InspectorTest.assertEquals(sourceURL, entry[2]);
+        InspectorTest.assertEquals(sourceLineNumber, entry[3]);
+        InspectorTest.assertEquals(sourceColumnNumber, entry[4]);
     }
 
     function checkReverseMapping(compiledLineNumber, compiledColumnNumber, sourceURL, sourceLineNumber, mapping)
     {
-        var compiledLocation = mapping.sourceLocationToCompiledLocation(sourceURL, sourceLineNumber);
-        InspectorTest.assertEquals(compiledLineNumber, compiledLocation[0]);
-        InspectorTest.assertEquals(compiledColumnNumber, compiledLocation[1]);
+        var entry = mapping.findEntryReversed(sourceURL, sourceLineNumber);
+        InspectorTest.assertEquals(compiledLineNumber, entry[0]);
+        InspectorTest.assertEquals(compiledColumnNumber, entry[1]);
     }
 
     InspectorTest.runTestSuite([
@@ -45,8 +45,7 @@ function test()
                 "mappings":"AAASA,QAAAA,IAAG,CAACC,CAAD,CAAaC,CAAb,CACZ,CACI,MAAOD,EAAP,CAAoBC,CADxB,CAIA,IAAIC,OAAS;",
                 "sources":["example.js"]
             };
-            var mapping = new WebInspector.SourceMapParser();
-            mapping._parseMappingPayload(mappingPayload);
+            var mapping = new WebInspector.SourceMapParser("source-map.json", mappingPayload);
 
             checkMapping(0, 9, "example.js", 0, 9, mapping);
             checkMapping(0, 13, "example.js", 0, 13, mapping);
@@ -60,7 +59,6 @@ function test()
             checkReverseMapping(0, 18, "example.js", 2, mapping);
             checkReverseMapping(0, 29, "example.js", 4, mapping);
             checkReverseMapping(0, 29, "example.js", 5, mapping);
-            InspectorTest.assertTrue(!mapping.sourceLocationToCompiledLocation("example.js", 6));
 
             next();
         },
@@ -71,8 +69,7 @@ function test()
                 "mappings":"AAAA,C,CAAE;",
                 "sources":["example.js"]
             };
-            var mapping = new WebInspector.SourceMapParser();
-            mapping._parseMappingPayload(mappingPayload);
+            var mapping = new WebInspector.SourceMapParser("source-map.json", mappingPayload);
             checkMapping(0, 0, "example.js", 0, 0, mapping);
             checkMapping(0, 2, "example.js", 0, 2, mapping);
             next();
@@ -84,8 +81,7 @@ function test()
                 "mappings":"AAAA;;;CACA",
                 "sources":["example.js"]
             };
-            var mapping = new WebInspector.SourceMapParser();
-            mapping._parseMappingPayload(mappingPayload);
+            var mapping = new WebInspector.SourceMapParser("source-map.json", mappingPayload);
             checkMapping(0, 0, "example.js", 0, 0, mapping);
             checkReverseMapping(3, 1, "example.js", 1, mapping);
             next();
@@ -108,8 +104,7 @@ function test()
                     }
                 }
             ]};
-            var mapping = new WebInspector.SourceMapParser();
-            mapping._parseMappingPayload(mappingPayload);
+            var mapping = new WebInspector.SourceMapParser("source-map.json", mappingPayload);
             InspectorTest.assertEquals(2, mapping.sources().length);
             checkMapping(0, 0, "source1.js", 0, 0, mapping);
             checkMapping(0, 1, "source1.js", 2, 1, mapping);
