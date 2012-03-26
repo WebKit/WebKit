@@ -218,8 +218,7 @@ v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(
     v8::Handle<v8::Object> wrapper = args.Holder();
 
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
-    impl->ref();
-    V8DOMWrapper::setJSWrapperForDOMObject(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
+    V8DOMWrapper::setJSWrapperForDOMObject(impl.release(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
 }
 
