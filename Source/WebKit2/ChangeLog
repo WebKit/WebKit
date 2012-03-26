@@ -1,3 +1,16 @@
+2012-03-26  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Make sure that purged directly composited images are re-created before a layer's sync.
+        https://bugs.webkit.org/show_bug.cgi?id=81771
+
+        Reviewed by Noam Rosenthal.
+
+        This fixes a regression in tst_qquickwebview introduced by r111567.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        (WebCore::WebGraphicsLayer::updateContentBuffers):
+
 2012-03-26  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [WK2][Qt] Fix compilation without QtWidgets

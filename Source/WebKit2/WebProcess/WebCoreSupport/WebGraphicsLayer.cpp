@@ -430,6 +430,13 @@ WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer* layer)
 
 void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
 {
+    // The remote image might have been released by purgeBackingStores.
+    if (m_image) {
+        if (!m_layerInfo.imageBackingStoreID) {
+            m_layerInfo.imageBackingStoreID = m_webGraphicsLayerClient->adoptImageBackingStore(m_image.get());
+            m_layerInfo.imageIsUpdated = true;
+        }
+    }
 
     if (m_modified) {
         computeTransformedVisibleRect();
@@ -574,14 +581,6 @@ void WebGraphicsLayer::removeTile(int tileID)
 
 void WebGraphicsLayer::updateContentBuffers()
 {
-    // The remote image might have been released by purgeBackingStores.
-    if (m_image) {
-        if (!m_layerInfo.imageBackingStoreID) {
-            m_layerInfo.imageBackingStoreID = m_webGraphicsLayerClient->adoptImageBackingStore(m_image.get());
-            m_layerInfo.imageIsUpdated = true;
-        }
-    }
-
     if (!drawsContent()) {
         m_mainBackingStore.clear();
         m_previousBackingStore.clear();
