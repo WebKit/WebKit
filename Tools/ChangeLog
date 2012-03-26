@@ -1,3 +1,17 @@
+2012-03-26  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        [jhbuild] Use $MAKE if it is defined to build jhbuild itself.
+        https://bugs.webkit.org/show_bug.cgi?id=82209
+
+        Reviewed by Martin Robinson.
+
+        Respecting the $MAKE environment variable when it is defined makes
+        building jhbuild more portable, as some platforms may have GNU
+        make as gmake, for example.
+
+        * jhbuild/jhbuild-wrapper:
+        (install_jhbuild):
+
 2012-03-26  Dirk Pranke  <dpranke@chromium.org>
 
         add a Tree abstraction to test-webkitpy to better encapsulate things
