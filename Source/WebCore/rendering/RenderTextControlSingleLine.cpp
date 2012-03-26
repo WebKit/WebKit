@@ -279,6 +279,7 @@ void RenderTextControlSingleLine::layout()
     if (RenderBox* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
         placeholderBox->style()->setWidth(Length(innerTextRenderer->width() - placeholderBox->borderAndPaddingWidth(), Fixed));
         placeholderBox->style()->setHeight(Length(innerTextRenderer->height() - placeholderBox->borderAndPaddingHeight(), Fixed));
+        bool placeholderBoxHadLayout = placeholderBox->everHadLayout();
         placeholderBox->layoutIfNeeded();
         LayoutPoint textOffset = innerTextRenderer->location();
         if (innerBlockElement() && innerBlockElement()->renderBox())
@@ -286,6 +287,12 @@ void RenderTextControlSingleLine::layout()
         if (containerRenderer)
             textOffset += toLayoutSize(containerRenderer->location());
         placeholderBox->setLocation(textOffset);
+
+        if (!placeholderBoxHadLayout && placeholderBox->checkForRepaintDuringLayout()) {
+            // This assumes a shadow tree without floats. If floats are added, the
+            // logic should be shared with RenderBlock::layoutBlockChild.
+            placeholderBox->repaint();
+        }
     }
 }
 
