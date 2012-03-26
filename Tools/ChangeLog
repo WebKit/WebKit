@@ -1,3 +1,17 @@
+2012-03-26  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        [jhbuild] Revert $MAKE environment hack introduced in r101929.
+        https://bugs.webkit.org/show_bug.cgi?id=82234
+
+        Reviewed by Martin Robinson.
+
+        The problem it was supposedly fixing was fixed in jhbuild itself
+        in git revision da8944d8ca987ca48c91b350257a530050406092, so we
+        can remove the workaround added to the script.
+
+        * jhbuild/jhbuild-wrapper:
+        (install_jhbuild):
+
 2012-03-26  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Skeleton code of AsyncFileSystemBlackBerry.cpp
