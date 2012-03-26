@@ -98,7 +98,7 @@ public:
     void add(HTMLContentSelection* value) { m_set.add(value); }
     void remove(HTMLContentSelection* value) { m_set.remove(value); }
     bool isEmpty() const { return m_set.isEmpty(); }
-    HTMLContentSelection* find(Node* key) const;
+    HTMLContentSelection* find(const Node* key) const;
 
 private:
     struct Translator {
@@ -118,9 +118,9 @@ private:
     PointerSet m_set;
 };
 
-inline HTMLContentSelection* HTMLContentSelectionSet::find(Node* key) const
+inline HTMLContentSelection* HTMLContentSelectionSet::find(const Node* key) const
 {
-    PointerSet::iterator found = m_set.find<Node*, HTMLContentSelectionSet::Translator>(key);
+    PointerSet::iterator found = m_set.find<const Node*, HTMLContentSelectionSet::Translator>(key);
     return found != m_set.end() ? *found : 0;
 }
 
@@ -132,7 +132,7 @@ public:
 
     void select(InsertionPoint*, HTMLContentSelectionList*);
     void unselect(HTMLContentSelectionList*);
-    HTMLContentSelection* findFor(Node* key) const;
+    HTMLContentSelection* findFor(const Node* key) const;
 
     void willSelect();
     bool isSelecting() const;

@@ -71,7 +71,7 @@ private:
     HTMLContentSelectionList m_selections;
 };
 
-inline bool isInsertionPoint(Node* node)
+inline bool isInsertionPoint(const Node* node)
 {
     if (!node)
         return true;
@@ -86,6 +86,12 @@ inline InsertionPoint* toInsertionPoint(Node* node)
 {
     ASSERT(isInsertionPoint(node));
     return static_cast<InsertionPoint*>(node);
+}
+
+inline const InsertionPoint* toInsertionPoint(const Node* node)
+{
+    ASSERT(isInsertionPoint(node));
+    return static_cast<const InsertionPoint*>(node);
 }
 
 inline bool isShadowBoundary(Node* node)

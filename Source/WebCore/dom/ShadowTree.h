@@ -41,6 +41,7 @@ class Node;
 class Element;
 class InsertionPoint;
 class TreeScope;
+class HTMLContentSelection;
 
 class ShadowTree {
 public:
@@ -79,7 +80,8 @@ public:
     void reattachHostChildrenAndShadow();
     void hostChildrenChanged();
 
-    InsertionPoint* insertionPointFor(Node*) const;
+    InsertionPoint* insertionPointFor(const Node*) const;
+    HTMLContentSelection* selectionFor(const Node*) const;
 
     HTMLContentSelector& selector();
     const HTMLContentSelector& selector() const;

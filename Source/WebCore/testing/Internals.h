@@ -84,6 +84,12 @@ public:
 
     bool attached(Node*, ExceptionCode&);
 
+    Node* nextSiblingInReifiedTree(Node*, ExceptionCode&);
+    Node* firstChildInReifiedTree(Node*, ExceptionCode&);
+    Node* lastChildInReifiedTree(Node*, ExceptionCode&);
+    Node* traverseNextNodeInReifiedTree(Node*, ExceptionCode&);
+    Node* traversePreviousNodeInReifiedTree(Node*, ExceptionCode&);
+
 #if ENABLE(INPUT_COLOR)
     void selectColorInColorChooser(Element*, const String& colorValue);
 #endif

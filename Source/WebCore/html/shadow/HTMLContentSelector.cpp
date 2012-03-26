@@ -138,7 +138,7 @@ void HTMLContentSelector::unselect(HTMLContentSelectionList* list)
     list->clear();
 }
 
-HTMLContentSelection* HTMLContentSelector::findFor(Node* key) const
+HTMLContentSelection* HTMLContentSelector::findFor(const Node* key) const
 {
     return m_selectionSet.find(key);
 }

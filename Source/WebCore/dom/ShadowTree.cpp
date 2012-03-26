@@ -204,7 +204,7 @@ void ShadowTree::detachHost(Element* host)
     host->detachAsNode();
 }
 
-InsertionPoint* ShadowTree::insertionPointFor(Node* node) const
+InsertionPoint* ShadowTree::insertionPointFor(const Node* node) const
 {
     ASSERT(node && node->parentNode());
 
@@ -219,6 +219,11 @@ InsertionPoint* ShadowTree::insertionPointFor(Node* node) const
     if (!found)
         return 0;
     return found->insertionPoint();
+}
+
+HTMLContentSelection* ShadowTree::selectionFor(const Node* node) const
+{
+    return m_selector.findFor(node);
 }
 
 void ShadowTree::reattach()

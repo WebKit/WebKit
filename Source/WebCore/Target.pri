@@ -592,6 +592,7 @@ SOURCES += \
     dom/RangeException.cpp \
     dom/RawDataDocumentParser.h \
     dom/RegisteredEventListener.cpp \
+    dom/ReifiedTreeTraversal.cpp \
     dom/ScopedEventQueue.cpp \
     dom/ScriptedAnimationController.cpp \
     dom/ScriptableDocumentParser.cpp \
@@ -1721,6 +1722,7 @@ HEADERS += \
     dom/QualifiedName.h \
     dom/Range.h \
     dom/RegisteredEventListener.h \
+    dom/ReifiedTreeTraversal.h \
     dom/RenderedDocumentMarker.h \
     dom/ScriptedAnimationController.h \
     dom/ScriptElement.h \

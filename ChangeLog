@@ -1,3 +1,25 @@
+2012-03-25  Hayato Ito  <hayato@chromium.org>
+
+        [Shadow DOM] Add Reified DOM Tree traversal internal APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=79197
+
+        Reviewed by Dimitri Glazkov.
+
+        Add internal APIs which can be used to traverse Reified DOM tree, which is
+        a result of node distribution algorithm explained in Shadow DOM spec.
+        https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html
+
+        Every public functions defined in ReifiedTreeTraversal are static
+        functions and are named in a similar way to ones defined in WebCore::Node class.
+        The only difference is that ReifiedTreeTraversal APIs consider shadow
+        hosts and also traverse nodes is Shadow DOM subtrees, crossing shadow's upper and lower boundary
+        transparently.
+
+        There is no actual client which uses these APIs. Follow-up patches for FocusNavigation
+        and EventDispatcher will use the APIs so that they can traverse node in reified tree order.
+
+        * Source/autotools/symbols.filter:
+
 2012-03-25  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Move WTF to its own static lib build.

@@ -55,6 +55,12 @@ module window {
         Element getElementByIdInShadowRoot(in Node shadowRoot, in DOMString id) raises(DOMException);
         boolean isValidContentSelect(in Element contentElement) raises(DOMException);
 
+        Node nextSiblingInReifiedTree(in Node node) raises(DOMException);
+        Node firstChildInReifiedTree(in Node node) raises(DOMException);
+        Node lastChildInReifiedTree(in Node node) raises(DOMException);
+        Node traverseNextNodeInReifiedTree(in Node node) raises(DOMException);
+        Node traversePreviousNodeInReifiedTree(in Node node) raises(DOMException);
+
         boolean attached(in Node node) raises(DOMException);
 
 #if defined(ENABLE_INPUT_COLOR) && ENABLE_INPUT_COLOR

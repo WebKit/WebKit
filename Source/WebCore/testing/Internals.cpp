@@ -50,6 +50,7 @@
 #include "NodeRenderingContext.h"
 #include "Page.h"
 #include "Range.h"
+#include "ReifiedTreeTraversal.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
 #include "Settings.h"
@@ -179,6 +180,51 @@ bool Internals::attached(Node* node, ExceptionCode& ec)
     }
 
     return node->attached();
+}
+
+Node* Internals::nextSiblingInReifiedTree(Node* node, ExceptionCode& ec)
+{
+    if (!node) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+    return ReifiedTreeTraversal::nextSibling(node);
+}
+
+Node* Internals::firstChildInReifiedTree(Node* node, ExceptionCode& ec)
+{
+    if (!node) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+    return ReifiedTreeTraversal::firstChild(node);
+}
+
+Node* Internals::lastChildInReifiedTree(Node* node, ExceptionCode& ec)
+{
+    if (!node) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+    return ReifiedTreeTraversal::lastChild(node);
+}
+
+Node* Internals::traverseNextNodeInReifiedTree(Node* node, ExceptionCode& ec)
+{
+    if (!node) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+    return ReifiedTreeTraversal::traverseNextNode(node);
+}
+
+Node* Internals::traversePreviousNodeInReifiedTree(Node* node, ExceptionCode& ec)
+{
+    if (!node) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+    return ReifiedTreeTraversal::traversePreviousNode(node);
 }
 
 String Internals::elementRenderTreeAsText(Element* element, ExceptionCode& ec)
