@@ -43,6 +43,12 @@ function onload()
     var nonArray = new NonArrayWithLength();
     console.log(nonArray);
 
+    // Arguments
+    function generateArguments(foo, bar)
+    {
+        return arguments;
+    }
+    console.log(generateArguments(1, "2"));
     runTest();
 }
 

@@ -424,7 +424,7 @@ InjectedScript.prototype = {
         try {
             if (typeof obj.splice === "function" && isFinite(obj.length))
                 return "array";
-            if (typeof obj.callee === "function" && isFinite(obj.length)) // arguments.
+            if (Object.prototype.toString.call(obj) === "[object Arguments]" && isFinite(obj.length)) // arguments.
                 return "array";
         } catch (e) {
         }
