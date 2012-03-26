@@ -266,6 +266,7 @@ fast/mutation/cross-document.html
 fast/mutation/database-callback-delivery.html
 fast/mutation/delivery-order.html
 fast/mutation/disconnect-cancel-pending.html
+fast/mutation/document-fragment-insertion.html
 fast/mutation/inline-event-listener.html
 fast/mutation/mutate-during-delivery.html
 fast/mutation/mutation-observer-constructor.html
