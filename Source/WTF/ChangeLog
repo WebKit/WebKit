@@ -1,3 +1,14 @@
+2012-03-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        cssText should use shorthand notations
+        https://bugs.webkit.org/show_bug.cgi?id=81737
+
+        Reviewed by Enrica Casucci.
+
+        * wtf/BitVector.h:
+        (BitVector):
+        (WTF::BitVector::ensureSizeAndSet): Added.
+
 2012-03-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

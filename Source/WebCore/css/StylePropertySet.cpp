@@ -30,6 +30,7 @@
 #include "CSSValuePool.h"
 #include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
+#include <wtf/BitVector.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace std;
@@ -565,25 +566,173 @@ String StylePropertySet::asText() const
     const CSSProperty* repeatXProp = 0;
     const CSSProperty* repeatYProp = 0;
 
+    // FIXME: Stack-allocate the buffer for these BitVectors.
+    BitVector shorthandPropertyUsed;
+    BitVector shorthandPropertyAppeared;
+
     unsigned size = m_properties.size();
     for (unsigned n = 0; n < size; ++n) {
         const CSSProperty& prop = m_properties[n];
-        switch (prop.id()) {
+        int propertyID = prop.id();
+        int shorthandPropertyID = 0;
+
+        switch (propertyID) {
         case CSSPropertyBackgroundPositionX:
             positionXProp = &prop;
-            break;
+            continue;
         case CSSPropertyBackgroundPositionY:
             positionYProp = &prop;
-            break;
+            continue;
         case CSSPropertyBackgroundRepeatX:
             repeatXProp = &prop;
-            break;
+            continue;
         case CSSPropertyBackgroundRepeatY:
             repeatYProp = &prop;
+            continue;
+        case CSSPropertyBorderWidth:
+        case CSSPropertyBorderTopWidth:
+        case CSSPropertyBorderRightWidth:
+        case CSSPropertyBorderBottomWidth:
+        case CSSPropertyBorderLeftWidth:
+        case CSSPropertyBorderStyle:
+        case CSSPropertyBorderTopStyle:
+        case CSSPropertyBorderRightStyle:
+        case CSSPropertyBorderBottomStyle:
+        case CSSPropertyBorderLeftStyle:
+        case CSSPropertyBorderColor:
+        case CSSPropertyBorderTopColor:
+        case CSSPropertyBorderRightColor:
+        case CSSPropertyBorderBottomColor:
+        case CSSPropertyBorderLeftColor:
+            // FIXME: Deal with cases where only some of border-(top|right|bottom|left) are specified.
+            shorthandPropertyID = CSSPropertyBorder;
+            if (shorthandPropertyAppeared.get(CSSPropertyBorder - firstCSSProperty))
+                break;
+            for (unsigned i = 0; i < borderAbridgedLonghand().length() && shorthandPropertyID; i++) {
+                const CSSPropertyLonghand& longhand = *(borderAbridgedLonghand().longhandsForInitialization()[i]);
+                String commonValue;
+                bool commonImportance = false;
+                for (size_t j = 0; j < longhand.length(); ++j) {
+                    int id = longhand.properties()[j];
+                    RefPtr<CSSValue> value = getPropertyCSSValue(id);
+                    String currentValue = value ? value->cssText() : String();
+                    bool isImportant = propertyIsImportant(id);
+                    if (j && (currentValue != commonValue || commonImportance != isImportant)) {
+                        shorthandPropertyID = 0;
+                        break;
+                    }
+                    if (!j) {
+                        commonValue = currentValue;
+                        commonImportance = isImportant;
+                    }
+                }
+            }
             break;
-        default:
-            result.append(prop.cssText());
+        case CSSPropertyWebkitBorderHorizontalSpacing:
+        case CSSPropertyWebkitBorderVerticalSpacing:
+            shorthandPropertyID = CSSPropertyBorderSpacing;
+            break;
+        case CSSPropertyFontFamily:
+        case CSSPropertyLineHeight:
+        case CSSPropertyFontSize:
+        case CSSPropertyFontStyle:
+        case CSSPropertyFontVariant:
+        case CSSPropertyFontWeight:
+            // Don't use CSSPropertyFont because old UAs can't recognize them but are important for editing.
+            break;
+        case CSSPropertyListStyleType:
+        case CSSPropertyListStylePosition:
+        case CSSPropertyListStyleImage:
+            shorthandPropertyID = CSSPropertyListStyle;
+            break;
+        case CSSPropertyMarginTop:
+        case CSSPropertyMarginRight:
+        case CSSPropertyMarginBottom:
+        case CSSPropertyMarginLeft:
+            shorthandPropertyID = CSSPropertyMargin;
+            break;
+        case CSSPropertyOutlineWidth:
+        case CSSPropertyOutlineStyle:
+        case CSSPropertyOutlineColor:
+            shorthandPropertyID = CSSPropertyOutline;
+            break;
+        case CSSPropertyOverflowX:
+        case CSSPropertyOverflowY:
+            shorthandPropertyID = CSSPropertyOverflow;
+            break;
+        case CSSPropertyPaddingTop:
+        case CSSPropertyPaddingRight:
+        case CSSPropertyPaddingBottom:
+        case CSSPropertyPaddingLeft:
+            shorthandPropertyID = CSSPropertyPadding;
+            break;
+        case CSSPropertyWebkitAnimationName:
+        case CSSPropertyWebkitAnimationDuration:
+        case CSSPropertyWebkitAnimationTimingFunction:
+        case CSSPropertyWebkitAnimationDelay:
+        case CSSPropertyWebkitAnimationIterationCount:
+        case CSSPropertyWebkitAnimationDirection:
+        case CSSPropertyWebkitAnimationFillMode:
+            shorthandPropertyID = CSSPropertyWebkitAnimation;
+            break;
+        case CSSPropertyWebkitFlexDirection:
+        case CSSPropertyWebkitFlexWrap:
+            shorthandPropertyID = CSSPropertyWebkitFlexFlow;
+            break;
+        case CSSPropertyWebkitMaskPositionX:
+        case CSSPropertyWebkitMaskPositionY:
+        case CSSPropertyWebkitMaskRepeatX:
+        case CSSPropertyWebkitMaskRepeatY:
+        case CSSPropertyWebkitMaskImage:
+        case CSSPropertyWebkitMaskRepeat:
+        case CSSPropertyWebkitMaskAttachment:
+        case CSSPropertyWebkitMaskPosition:
+        case CSSPropertyWebkitMaskClip:
+        case CSSPropertyWebkitMaskOrigin:
+            shorthandPropertyID = CSSPropertyWebkitMask;
+            break;
+        case CSSPropertyWebkitTransformOriginX:
+        case CSSPropertyWebkitTransformOriginY:
+        case CSSPropertyWebkitTransformOriginZ:
+            shorthandPropertyID = CSSPropertyWebkitTransformOrigin;
+            break;
+        case CSSPropertyWebkitTransitionProperty:
+        case CSSPropertyWebkitTransitionDuration:
+        case CSSPropertyWebkitTransitionTimingFunction:
+        case CSSPropertyWebkitTransitionDelay:
+            shorthandPropertyID = CSSPropertyWebkitTransition;
+            break;
+        case CSSPropertyWebkitWrapFlow:
+        case CSSPropertyWebkitWrapMargin:
+        case CSSPropertyWebkitWrapPadding:
+            shorthandPropertyID = CSSPropertyWebkitWrap;
+            break;
         }
+
+        String value;
+        unsigned shortPropertyIndex = shorthandPropertyID - firstCSSProperty;
+        if (shorthandPropertyID) {
+            if (shorthandPropertyUsed.get(shortPropertyIndex))
+                continue;
+            if (!shorthandPropertyAppeared.get(shortPropertyIndex))
+                value = getPropertyValue(shorthandPropertyID);
+            shorthandPropertyAppeared.ensureSizeAndSet(shortPropertyIndex, numCSSProperties);
+        }
+
+        if (!value.isNull()) {
+            propertyID = shorthandPropertyID;
+            shorthandPropertyUsed.ensureSizeAndSet(shortPropertyIndex, numCSSProperties);
+        } else
+            value = prop.value()->cssText();
+
+        if (value == "initial" && !CSSProperty::isInheritedProperty(propertyID))
+            continue;
+
+        result.append(getPropertyName(static_cast<CSSPropertyID>(propertyID)));
+        result.append(": ");
+        result.append(value);
+        result.append(prop.isImportant() ? " !important" : "");
+        result.append("; ");
     }
 
     // FIXME: This is a not-so-nice way to turn x/y positions into single background-position in output.

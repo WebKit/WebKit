@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+
+description("This test ensures WebKit uses shorthand notations for cssText");
+
+var tests = [
+    // FIXME: This exhibits a bug. We shouldn't be outputing border-image here.
+    ['border: 1px; border-top: 1px;', 'border: 1px initial initial;'],
+    ['border: 1px solid red;', 'border: 1px solid red;'],
+    ['border: 1px red;', 'border: 1px initial red;'],
+    ['border: red;', 'border: initial initial red;'],
+    ['border-top: 1px; border-right: 1px; border-bottom: 1px; border-left: 1px;', 'border: 1px initial initial;'],
+    ['border-top: 1px; border-right: 2px; border-bottom: 3px; border-left: 4px;',
+    'border-top-width: 1px; border-right-width: 2px; border-bottom-width: 3px; border-left-width: 4px;'],
+    ['border: 1px; border-top: 2px;',
+    'border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-width: 2px;'],
+    ['border: 1px; border-top: 1px !important;',
+    'border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-width: 1px !important;'],
+    ['border: 1px; border-top-color: red;',
+    'border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-width: 1px; border-top-color: red;'],
+    ['border: solid; border-style: dotted', 'border: initial dotted initial;'],
+
+    ['-webkit-border-horizontal-spacing: 1px; -webkit-border-vertical-spacing: 2px;', 'border-spacing: 1px 2px;'],
+
+    // We don't use shorthand for font-family, etc... for compatibility reasons
+    ['font-family: sans-serif; line-height: 2em; font-size: 3em; font-style: italic; font-weight: bold;',
+        'font-family: sans-serif; line-height: 2em; font-size: 3em; font-style: italic; font-weight: bold;'],
+
+    ['list-style-type: circle; list-style-position: inside;', 'list-style: circle inside;'],
+    ['margin-top: 1px; margin-right: 2px; margin-bottom: 3px; margin-left: 4px;', 'margin: 1px 2px 3px 4px;'],
+    ['outline-width: 2px; outline-style: dotted; outline-color: blue;', 'outline: 2px dotted blue;'],
+    ['overflow-x: scroll; overflow-y: hidden;', 'overflow: scroll hidden;'],
+    ['padding-top: 1px; padding-right: 2px; padding-bottom: 3px; padding-left: 4px;', 'padding: 1px 2px 3px 4px;'],
+];
+
+function normalizeCssText(text) { return text.trim().split(/;\s*/).sort().slice(1).join("; "); }
+
+var element;
+tests.forEach(function (test) {
+    var styleAttribute = test[0];
+    var expectedCssText = test[1];
+
+    element = document.createElement('div');
+    element.setAttribute('style', styleAttribute);
+
+    shouldBe('normalizeCssText(element.style.cssText)', '"' + normalizeCssText(expectedCssText) + '"');
+});
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

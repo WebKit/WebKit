@@ -146,7 +146,13 @@ public:
         ensureSize(bit + 1);
         quickSet(bit);
     }
-    
+
+    void ensureSizeAndSet(size_t bit, size_t size)
+    {
+        ensureSize(size);
+        quickSet(bit);
+    }
+
     void clear(size_t bit)
     {
         if (bit >= size())

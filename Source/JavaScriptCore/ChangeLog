@@ -1,3 +1,14 @@
+2012-03-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        cssText should use shorthand notations
+        https://bugs.webkit.org/show_bug.cgi?id=81737
+
+        Reviewed by Enrica Casucci.
+
+        Export symbols of BitVector on Windows.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-03-26  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should assert that argument value recoveries can only be

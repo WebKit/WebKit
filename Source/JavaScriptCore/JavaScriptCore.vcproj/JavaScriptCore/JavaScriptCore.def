@@ -157,6 +157,7 @@ EXPORTS
     ?destroy@JSByteArray@JSC@@SAXPAVJSCell@2@@Z
     ?destroy@JSCell@JSC@@KAXPAV12@@Z
     ?destroy@JSGlobalObject@JSC@@SAXPAVJSCell@2@@Z
+    ?destroy@OutOfLineBits@BitVector@WTF@@SAXPAV123@@Z
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
@@ -295,6 +296,7 @@ EXPORTS
     ?reset@TimeoutChecker@JSC@@QAEXXZ
     ?resetDateCache@JSGlobalData@JSC@@QAEXXZ
     ?resize@StringBuilder@WTF@@QAEXI@Z
+    ?resizeOutOfLine@BitVector@WTF@@AAEXI@Z
     ?resolveRope@JSString@JSC@@ABEXPAVExecState@2@@Z
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCallerFromVMCode@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVJSFunction@2@@Z

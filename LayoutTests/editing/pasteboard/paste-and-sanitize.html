@@ -44,7 +44,7 @@ testPaste("div", "<div><b><i><span style=\"font-weight: normal\"><b><i>hello</i>
           "<div><b><i>hello</i></b></div><div><b><i>world</i></b></div>");
 testPaste("div", "<div><b><i><span style=\"font-weight: normal; \"><b><i>hello1</i></b><b><i> hello2</i></b></span></i></b></div>", "<b><i><span style=\"font-weight: normal; \"><b><i>hello1</i></b><b><i>&nbsp;hello2</i></b></span></i></b>");
 testPaste("div", "<i style=\"margin: 10px;\"><b><i style=\"margin: 10px;\">hello</i></b></i>",
-          "<i style=\"margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px; \"><b><i style=\"margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px; \">hello</i></b></i>");
+          "<i style=\"margin: 10px; \">hello</i></b></i>");
 testPaste("div", "<div><b><i><span style=\"font-weight: normal\"><b><i>Hello <!-- comment -->world</i></b></span></i></b></div>", "<b><i>Hello&nbsp;world</i></b>");
 testPaste("div", "<div><b><i><span style=\"font-weight: normal\">plain text<b><i>bold italic text</i></b></span></i></b></div>", "<b><i><span style=\"font-weight: normal; \">plain text<b><i>bold italic text</i></b></span></i></b>");
 
