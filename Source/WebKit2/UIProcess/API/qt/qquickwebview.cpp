@@ -137,20 +137,6 @@ bool QQuickWebViewPrivate::transparentBackground() const
     return webPageProxy->drawsTransparentBackground();
 }
 
-void QQuickWebViewPrivate::enableMouseEvents()
-{
-    Q_Q(QQuickWebView);
-    q->setAcceptedMouseButtons(Qt::MouseButtonMask);
-    q->setAcceptHoverEvents(true);
-}
-
-void QQuickWebViewPrivate::disableMouseEvents()
-{
-    Q_Q(QQuickWebView);
-    q->setAcceptedMouseButtons(Qt::NoButton);
-    q->setAcceptHoverEvents(false);
-}
-
 QPointF QQuickWebViewPrivate::pageItemPos()
 {
     ASSERT(pageView);
@@ -502,6 +488,20 @@ void QQuickWebViewLegacyPrivate::updateViewportSize()
     // has to be rendered on tiles, and in desktop mode it's all of it.
     webPageProxy->drawingArea()->setSize(viewportSize, IntSize());
     webPageProxy->drawingArea()->setVisibleContentsRect(IntRect(IntPoint(), viewportSize), 1, FloatPoint());
+}
+
+void QQuickWebViewLegacyPrivate::enableMouseEvents()
+{
+    Q_Q(QQuickWebView);
+    q->setAcceptedMouseButtons(Qt::MouseButtonMask);
+    q->setAcceptHoverEvents(true);
+}
+
+void QQuickWebViewLegacyPrivate::disableMouseEvents()
+{
+    Q_Q(QQuickWebView);
+    q->setAcceptedMouseButtons(Qt::NoButton);
+    q->setAcceptHoverEvents(false);
 }
 
 QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* viewport)

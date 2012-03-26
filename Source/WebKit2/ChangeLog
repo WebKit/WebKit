@@ -1,3 +1,18 @@
+2012-03-26  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt WK2] Disable/enable mouse events when displaying dialogs only for desktop view
+        https://bugs.webkit.org/show_bug.cgi?id=80542
+
+        Reviewed by Simon Hausmann.
+       
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewLegacyPrivate::enableMouseEvents):
+        (QQuickWebViewLegacyPrivate::disableMouseEvents):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::enableMouseEvents):
+        (QQuickWebViewPrivate::disableMouseEvents):
+        (QQuickWebViewLegacyPrivate):
+
 2012-03-26  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Make sure that purged directly composited images are re-created before a layer's sync.

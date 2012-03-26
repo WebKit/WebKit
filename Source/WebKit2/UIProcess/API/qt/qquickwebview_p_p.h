@@ -66,8 +66,8 @@ public:
 
     virtual void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
 
-    void enableMouseEvents();
-    void disableMouseEvents();
+    virtual void enableMouseEvents() { }
+    virtual void disableMouseEvents() { }
 
     virtual QPointF pageItemPos();
     virtual void updateContentsSize(const QSizeF&) { }
@@ -178,6 +178,8 @@ public:
     virtual void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
 
     virtual void updateViewportSize();
+    virtual void enableMouseEvents();
+    virtual void disableMouseEvents();
 };
 
 class QQuickWebViewFlickablePrivate : public QQuickWebViewPrivate {
