@@ -514,6 +514,12 @@ namespace WebCore {
         // VKEY_OEM_102 (E2) Windows 2000/XP: Either the angle bracket key or the backslash key on the RT 102-key keyboard
         VKEY_OEM_102 = VK_OEM_102,
 
+        // VKEY_OEM_103 (E3) GTV KEYCODE_MEDIA_REWIND
+        VKEY_OEM_103 = 0xE3,
+
+        // VKEY_OEM_104 (E4) GTV KEYCODE_MEDIA_FAST_FORWARD
+        VKEY_OEM_104 = 0xE4,
+
         // VKEY_PROCESSKEY (E5) Windows 95/98/Me, Windows NT 4.0, Windows 2000/XP: IME PROCESS key
         VKEY_PROCESSKEY = VK_PROCESSKEY,
 

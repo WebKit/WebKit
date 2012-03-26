@@ -34,8 +34,51 @@
 #include <android/keycodes.h>
 
 // The Android NDK does not provide values for these yet:
-#define AKEYCODE_MEDIA_PAUSE 127
-#define AKEYCODE_VOLUME_MUTE 164
+enum {
+    AKEYCODE_ESCAPE          = 111,
+    AKEYCODE_FORWARD_DEL     = 112,
+    AKEYCODE_CTRL_LEFT       = 113,
+    AKEYCODE_CTRL_RIGHT      = 114,
+    AKEYCODE_CAPS_LOCK       = 115,
+    AKEYCODE_SCROLL_LOCK     = 116,
+    AKEYCODE_META_LEFT       = 117,
+    AKEYCODE_META_RIGHT      = 118,
+    AKEYCODE_BREAK           = 121,
+    AKEYCODE_INSERT          = 124,
+    AKEYCODE_MEDIA_PLAY      = 126,
+    AKEYCODE_MEDIA_PAUSE     = 127,
+    AKEYCODE_F1              = 131,
+    AKEYCODE_F2              = 132,
+    AKEYCODE_F3              = 133,
+    AKEYCODE_F4              = 134,
+    AKEYCODE_F5              = 135,
+    AKEYCODE_F6              = 136,
+    AKEYCODE_F7              = 137,
+    AKEYCODE_F8              = 138,
+    AKEYCODE_F9              = 139,
+    AKEYCODE_F10             = 140,
+    AKEYCODE_F11             = 141,
+    AKEYCODE_F12             = 142,
+    AKEYCODE_NUM_LOCK        = 143,
+    AKEYCODE_NUMPAD_0        = 144,
+    AKEYCODE_NUMPAD_1        = 145,
+    AKEYCODE_NUMPAD_2        = 146,
+    AKEYCODE_NUMPAD_3        = 147,
+    AKEYCODE_NUMPAD_4        = 148,
+    AKEYCODE_NUMPAD_5        = 149,
+    AKEYCODE_NUMPAD_6        = 150,
+    AKEYCODE_NUMPAD_7        = 151,
+    AKEYCODE_NUMPAD_8        = 152,
+    AKEYCODE_NUMPAD_9        = 153,
+    AKEYCODE_NUMPAD_DIVIDE   = 154,
+    AKEYCODE_NUMPAD_MULTIPLY = 155,
+    AKEYCODE_NUMPAD_SUBTRACT = 156,
+    AKEYCODE_NUMPAD_ADD      = 157,
+    AKEYCODE_NUMPAD_DOT      = 158,
+    AKEYCODE_VOLUME_MUTE     = 164,
+    AKEYCODE_CHANNEL_UP      = 166,
+    AKEYCODE_CHANNEL_DOWN    = 167,
+};
 
 namespace WebCore {
 
@@ -176,6 +219,105 @@ int windowsKeyCodeForKeyEvent(unsigned int keyCode)
     case AKEYCODE_MUTE:
     case AKEYCODE_VOLUME_MUTE:
         return VKEY_VOLUME_MUTE;
+    case AKEYCODE_ESCAPE:
+        return VKEY_ESCAPE;
+    case AKEYCODE_MEDIA_PLAY:
+    case AKEYCODE_MEDIA_PLAY_PAUSE:
+        return VKEY_MEDIA_PLAY_PAUSE;
+    case AKEYCODE_CALL:
+        return VKEY_END;
+    case AKEYCODE_ALT_LEFT:
+    case AKEYCODE_ALT_RIGHT:
+        return VKEY_MENU;
+    case AKEYCODE_GRAVE:
+        return VKEY_OEM_3;
+    case AKEYCODE_APOSTROPHE:
+        return VKEY_OEM_3;
+    case AKEYCODE_MEDIA_REWIND:
+        return VKEY_OEM_103;
+    case AKEYCODE_MEDIA_FAST_FORWARD:
+        return VKEY_OEM_104;
+    case AKEYCODE_PAGE_UP:
+        return VKEY_PRIOR;
+    case AKEYCODE_PAGE_DOWN:
+        return VKEY_NEXT;
+    case AKEYCODE_FORWARD_DEL:
+        return VKEY_DELETE;
+    case AKEYCODE_CTRL_LEFT:
+    case AKEYCODE_CTRL_RIGHT:
+        return VKEY_CONTROL;
+    case AKEYCODE_CAPS_LOCK:
+        return VKEY_CAPITAL;
+    case AKEYCODE_SCROLL_LOCK:
+        return VKEY_SCROLL;
+    case AKEYCODE_META_LEFT:
+        return VKEY_LWIN;
+    case AKEYCODE_META_RIGHT:
+        return VKEY_RWIN;
+    case AKEYCODE_BREAK:
+        return VKEY_PAUSE;
+    case AKEYCODE_INSERT:
+        return VKEY_INSERT;
+    case AKEYCODE_F1:
+        return VKEY_F1;
+    case AKEYCODE_F2:
+        return VKEY_F2;
+    case AKEYCODE_F3:
+        return VKEY_F3;
+    case AKEYCODE_F4:
+        return VKEY_F4;
+    case AKEYCODE_F5:
+        return VKEY_F5;
+    case AKEYCODE_F6:
+        return VKEY_F6;
+    case AKEYCODE_F7:
+        return VKEY_F7;
+    case AKEYCODE_F8:
+        return VKEY_F8;
+    case AKEYCODE_F9:
+        return VKEY_F9;
+    case AKEYCODE_F10:
+        return VKEY_F10;
+    case AKEYCODE_F11:
+        return VKEY_F11;
+    case AKEYCODE_F12:
+        return VKEY_F12;
+    case AKEYCODE_NUM_LOCK:
+        return VKEY_NUMLOCK;
+    case AKEYCODE_NUMPAD_0:
+        return VKEY_NUMPAD0;
+    case AKEYCODE_NUMPAD_1:
+        return VKEY_NUMPAD1;
+    case AKEYCODE_NUMPAD_2:
+        return VKEY_NUMPAD2;
+    case AKEYCODE_NUMPAD_3:
+        return VKEY_NUMPAD3;
+    case AKEYCODE_NUMPAD_4:
+        return VKEY_NUMPAD4;
+    case AKEYCODE_NUMPAD_5:
+        return VKEY_NUMPAD5;
+    case AKEYCODE_NUMPAD_6:
+        return VKEY_NUMPAD6;
+    case AKEYCODE_NUMPAD_7:
+        return VKEY_NUMPAD7;
+    case AKEYCODE_NUMPAD_8:
+        return VKEY_NUMPAD8;
+    case AKEYCODE_NUMPAD_9:
+        return VKEY_NUMPAD9;
+    case AKEYCODE_NUMPAD_DIVIDE:
+        return VKEY_DIVIDE;
+    case AKEYCODE_NUMPAD_MULTIPLY:
+        return VKEY_MULTIPLY;
+    case AKEYCODE_NUMPAD_SUBTRACT:
+        return VKEY_SUBTRACT;
+    case AKEYCODE_NUMPAD_ADD:
+        return VKEY_ADD;
+    case AKEYCODE_NUMPAD_DOT:
+        return VKEY_DECIMAL;
+    case AKEYCODE_CHANNEL_UP:
+        return VKEY_PRIOR;
+    case AKEYCODE_CHANNEL_DOWN:
+        return VKEY_NEXT;
     default:
         return 0;
     }
