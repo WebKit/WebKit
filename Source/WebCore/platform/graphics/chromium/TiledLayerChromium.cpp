@@ -628,25 +628,46 @@ void TiledLayerChromium::prepareToUpdateIdle(const IntRect& layerRect, const CCO
 
     updateBounds();
 
-    if (m_tiler->isEmpty())
+    if (!m_tiler->numTiles())
         return;
 
-    // Protect any textures in the pre-paint area so we don't end up just
-    // reclaiming them below.
     IntRect idlePaintLayerRect = idlePaintRect(layerRect);
+    if (idlePaintLayerRect.isEmpty())
+        return;
+
+    // Protect any textures in the pre-paint area, as we would steal them from other layers
+    // over time anyhow. This ensures we don't lose tiles in the first rounds of idle painting
+    // that we have already painted.
     protectTileTextures(idlePaintLayerRect);
+
+    int prepaintLeft, prepaintTop, prepaintRight, prepaintBottom;
+    m_tiler->layerRectToTileIndices(idlePaintLayerRect, prepaintLeft, prepaintTop, prepaintRight, prepaintBottom);
+
+    // If the layer is not visible, we have nothing to expand from, so instead we prepaint the outer-most set of tiles.
+    if (layerRect.isEmpty()) {
+        prepareToUpdateTiles(true, prepaintLeft, prepaintTop, prepaintRight, prepaintTop, 0);
+        if (!m_paintRect.isEmpty() || m_skipsIdlePaint)
+            return;
+        prepareToUpdateTiles(true, prepaintLeft, prepaintBottom, prepaintRight, prepaintBottom, 0);
+        if (!m_paintRect.isEmpty() || m_skipsIdlePaint)
+            return;
+        prepareToUpdateTiles(true, prepaintLeft, prepaintTop, prepaintLeft, prepaintBottom, 0);
+        if (!m_paintRect.isEmpty() || m_skipsIdlePaint)
+            return;
+        prepareToUpdateTiles(true, prepaintRight, prepaintTop, prepaintRight, prepaintBottom, 0);
+
+        return;
+    }
 
     int left, top, right, bottom;
     m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
 
-    // Prepaint anything that was occluded but inside the layer's visible region.
+    // Otherwise, prepaint anything that was occluded but inside the layer's visible region.
     prepareToUpdateTiles(true, left, top, right, bottom, 0);
     if (!m_paintRect.isEmpty() || m_skipsIdlePaint)
         return;
 
-    // Expand outwards until we find a dirty row or column to update.
-    int prepaintLeft, prepaintTop, prepaintRight, prepaintBottom;
-    m_tiler->layerRectToTileIndices(idlePaintLayerRect, prepaintLeft, prepaintTop, prepaintRight, prepaintBottom);
+    // Then expand outwards from the visible area until we find a dirty row or column to update.
     while (!m_skipsIdlePaint && (left > prepaintLeft || top > prepaintTop || right < prepaintRight || bottom < prepaintBottom)) {
         if (bottom < prepaintBottom) {
             ++bottom;
@@ -680,12 +701,20 @@ bool TiledLayerChromium::needsIdlePaint(const IntRect& layerRect)
     if (m_skipsIdlePaint)
         return false;
 
+    if (!m_tiler->numTiles())
+        return false;
+
     IntRect idlePaintLayerRect = idlePaintRect(layerRect);
+    if (idlePaintLayerRect.isEmpty())
+        return false;
 
     int left, top, right, bottom;
     m_tiler->layerRectToTileIndices(idlePaintLayerRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
+            // If the layerRect is empty, then we are painting the outer-most set of tiles only.
+            if (layerRect.isEmpty() && i != left && i != right && j != top && j != bottom)
+                continue;
             if (m_requestedUpdateTilesRect.contains(IntPoint(i, j)))
                 continue;
             UpdatableTile* tile = tileAt(i, j);
@@ -698,6 +727,15 @@ bool TiledLayerChromium::needsIdlePaint(const IntRect& layerRect)
 
 IntRect TiledLayerChromium::idlePaintRect(const IntRect& visibleLayerRect)
 {
+    // For layers that are animating transforms but not visible at all, we don't know what part
+    // of them is going to become visible. For small layers we return the entire layer, for larger
+    // ones we avoid prepainting the layer at all.
+    if (visibleLayerRect.isEmpty()) {
+        if ((drawTransformIsAnimating() || screenSpaceTransformIsAnimating()) && m_tiler->numTiles() <= 9)
+            return IntRect(IntPoint(), contentBounds());
+        return IntRect();
+    }
+
     IntRect prepaintRect = visibleLayerRect;
     // FIXME: This can be made a lot larger if we can:
     // - reserve memory at a lower priority than for visible content

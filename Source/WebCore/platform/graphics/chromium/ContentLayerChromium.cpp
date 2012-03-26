@@ -114,10 +114,7 @@ void ContentLayerChromium::idlePaintContentsIfDirty(const CCOcclusionTracker* oc
     if (!drawsContent())
         return;
 
-    const IntRect& layerRect = visibleLayerRect();
-    if (layerRect.isEmpty())
-        return;
-
+    const IntRect layerRect = visibleLayerRect();
     prepareToUpdateIdle(layerRect, occlusion);
     if (needsIdlePaint(layerRect))
         setNeedsCommit();

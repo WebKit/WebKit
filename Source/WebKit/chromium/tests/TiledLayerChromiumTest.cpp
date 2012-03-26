@@ -26,6 +26,7 @@
 
 #include "TiledLayerChromium.h"
 
+#include "CCAnimationTestCommon.h"
 #include "CCLayerTreeTestCommon.h"
 #include "FakeCCLayerTreeHostClient.h"
 #include "LayerTextureUpdater.h"
@@ -38,6 +39,7 @@
 #include <gtest/gtest.h>
 
 using namespace WebCore;
+using namespace WebKitTests;
 using namespace WTF;
 
 #define EXPECT_EQ_RECT(a, b) \
@@ -160,37 +162,22 @@ public:
         , m_fakeTextureUpdater(adoptRef(new FakeLayerTextureUpdater))
         , m_textureManager(textureManager)
     {
-        setTileSize(IntSize(100, 100));
+        setTileSize(tileSize());
         setTextureFormat(GraphicsContext3D::RGBA);
         setBorderTexelOption(CCLayerTilingData::NoBorderTexels);
         setIsDrawable(true); // So that we don't get false positives if any of these tests expect to return false from drawsContent() for other reasons.
     }
     virtual ~FakeTiledLayerChromium() { }
 
-    void invalidateRect(const IntRect& rect)
-    {
-        TiledLayerChromium::invalidateRect(rect);
-    }
+    static IntSize tileSize() { return IntSize(100, 100); }
 
-    void prepareToUpdate(const IntRect& rect, const CCOcclusionTracker* occlusion)
-    {
-        TiledLayerChromium::prepareToUpdate(rect, occlusion);
-    }
-
-    void prepareToUpdateIdle(const IntRect& rect, const CCOcclusionTracker* occlusion)
-    {
-        TiledLayerChromium::prepareToUpdateIdle(rect, occlusion);
-    }
-
-    bool needsIdlePaint(const IntRect& rect)
-    {
-        return TiledLayerChromium::needsIdlePaint(rect);
-    }
-
-    bool skipsDraw() const
-    {
-        return TiledLayerChromium::skipsDraw();
-    }
+    using TiledLayerChromium::invalidateRect;
+    using TiledLayerChromium::prepareToUpdate;
+    using TiledLayerChromium::prepareToUpdateIdle;
+    using TiledLayerChromium::needsIdlePaint;
+    using TiledLayerChromium::skipsDraw;
+    using TiledLayerChromium::numPaintedTiles;
+    using TiledLayerChromium::idlePaintRect;
 
     virtual void setNeedsDisplayRect(const FloatRect& rect)
     {
@@ -685,6 +672,211 @@ TEST(TiledLayerChromiumTest, idlePaintOutOfMemory)
 
     layer->updateCompositorResources(0, updater);
     layer->pushPropertiesTo(layerImpl.get());
+}
+
+TEST(TiledLayerChromiumTest, idlePaintZeroSizedLayer)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(20000, 10000, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    DebugScopedSetImplThread implThread;
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    // The layer's bounds are empty.
+    IntRect contentRect;
+
+    layer->setBounds(contentRect.size());
+    layer->setVisibleLayerRect(contentRect);
+    layer->invalidateRect(contentRect);
+    layer->prepareToUpdate(contentRect, 0);
+
+    // Empty layers don't have tiles.
+    EXPECT_EQ(0u, layer->numPaintedTiles());
+
+    // Empty layers don't need prepaint.
+    EXPECT_FALSE(layer->needsIdlePaint(contentRect));
+
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // Empty layers don't have tiles.
+    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+
+    // Non-visible layers don't idle paint.
+    layer->prepareToUpdateIdle(contentRect, 0);
+
+    // Empty layers don't have tiles.
+    EXPECT_EQ(0u, layer->numPaintedTiles());
+
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // Empty layers don't have tiles.
+    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+}
+
+TEST(TiledLayerChromiumTest, idlePaintZeroSizedAnimatingLayer)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(20000, 10000, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    DebugScopedSetImplThread implThread;
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    // Pretend the layer is animating.
+    layer->setDrawTransformIsAnimating(true);
+
+    // The layer's bounds are empty.
+    IntRect contentRect;
+
+    layer->setBounds(contentRect.size());
+    layer->setVisibleLayerRect(contentRect);
+    layer->invalidateRect(contentRect);
+    layer->prepareToUpdate(contentRect, 0);
+
+    // Empty layers don't have tiles.
+    EXPECT_EQ(0u, layer->numPaintedTiles());
+
+    // Empty layers don't need prepaint.
+    EXPECT_FALSE(layer->needsIdlePaint(contentRect));
+
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // Empty layers don't have tiles.
+    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+
+    // Non-visible layers don't idle paint.
+    layer->prepareToUpdateIdle(contentRect, 0);
+
+    // Empty layers don't have tiles.
+    EXPECT_EQ(0u, layer->numPaintedTiles());
+
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // Empty layers don't have tiles.
+    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+}
+
+TEST(TiledLayerChromiumTest, idlePaintNonVisibleLayers)
+{
+    IntSize contentBounds(100, 100);
+    IntRect contentRect(IntPoint::zero(), contentBounds);
+
+    OwnPtr<TextureManager> textureManager = TextureManager::create(20000, 10000, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    DebugScopedSetImplThread implThread;
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    // Invalidate the layer but make none of it visible, so nothing paints.
+    IntRect visibleRect;
+
+    layer->setBounds(contentBounds);
+    layer->setVisibleLayerRect(visibleRect);
+    layer->invalidateRect(contentRect);
+    layer->prepareToUpdate(visibleRect, 0);
+
+    // Non-visible layers don't need idle paint.
+    EXPECT_FALSE(layer->needsIdlePaint(visibleRect));
+
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // We should not have any tiles pushed since the layer is not visible.
+    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+
+    // Non-visible layers don't idle paint.
+    layer->prepareToUpdateIdle(visibleRect, 0);
+
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // We should not have any tiles pushed since the layer is not visible.
+    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+}
+
+static void idlePaintRepeat(int repeatTimes, FakeTiledLayerChromium* layer, FakeCCTiledLayerImpl* layerImpl, CCTextureUpdater& updater, const IntRect& visibleRect)
+{
+    for (int i = 0; i < repeatTimes; ++i) {
+        layer->prepareToUpdate(visibleRect, 0);
+        layer->prepareToUpdateIdle(visibleRect, 0);
+        layer->updateCompositorResources(0, updater);
+        layer->pushPropertiesTo(layerImpl);
+    }
+}
+
+static void testHaveOuterTiles(FakeCCTiledLayerImpl* layerImpl, int width, int height, int have)
+{
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            bool hasTile = i < have || j < have || i >= width - have || j >= height - have;
+            EXPECT_EQ(hasTile, layerImpl->hasTileAt(i, j));
+        }
+    }
+}
+
+TEST(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(8000*8000*8, 8000*8000*4, 1024);
+    DebugScopedSetImplThread implThread;
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    int tileWidth = FakeTiledLayerChromium::tileSize().width();
+    int tileHeight = FakeTiledLayerChromium::tileSize().height();
+    int width[] = { 1, 2, 3, 4, 9, 10, 0 };
+    int height[] = { 1, 2, 3, 4, 9, 10, 0 };
+
+    for (int j = 0; height[j]; ++j) {
+        for (int i = 0; width[i]; ++i) {
+            RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+            OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+
+            // Pretend the layer is animating.
+            layer->setDrawTransformIsAnimating(true);
+
+            IntSize contentBounds(width[i] * tileWidth, height[j] * tileHeight);
+            IntRect contentRect(IntPoint::zero(), contentBounds);
+            IntRect visibleRect;
+
+            layer->setBounds(contentBounds);
+            layer->setVisibleLayerRect(visibleRect);
+            layer->invalidateRect(contentRect);
+
+            // If idlePaintRect gives back a non-empty result then we should paint it. Otherwise,
+            // we shoud paint nothing.
+            bool shouldPrepaint = !layer->idlePaintRect(visibleRect).isEmpty();
+
+            // This paints the layer but there's nothing visible so it's a no-op.
+            layer->prepareToUpdate(visibleRect, 0);
+            layer->updateCompositorResources(0, updater);
+            layer->pushPropertiesTo(layerImpl.get());
+
+            // We should not have any tiles pushed yet since the layer is not visible and we've not prepainted.
+            testHaveOuterTiles(layerImpl.get(), width[i], height[j], 0);
+
+            // Normally we don't allow non-visible layers to pre-paint, but if they are animating then we should.
+            EXPECT_EQ(shouldPrepaint, layer->needsIdlePaint(visibleRect));
+
+            // If the layer is to be prepainted at all, then after four updates we should have the outer row/columns painted.
+            idlePaintRepeat(4, layer.get(), layerImpl.get(), updater, visibleRect);
+            testHaveOuterTiles(layerImpl.get(), width[i], height[j], shouldPrepaint ? 1 : 0);
+
+            // We don't currently idle paint past the outermost tiles.
+            EXPECT_FALSE(layer->needsIdlePaint(visibleRect));
+            idlePaintRepeat(4, layer.get(), layerImpl.get(), updater, visibleRect);
+            testHaveOuterTiles(layerImpl.get(), width[i], height[j], shouldPrepaint ? 1 : 0);
+        }
+    }
 }
 
 TEST(TiledLayerChromiumTest, invalidateFromPrepare)

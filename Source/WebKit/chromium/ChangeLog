@@ -1,3 +1,19 @@
+2012-03-25  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Layers with animating transforms should prepaint even if they are not visible yet
+        https://bugs.webkit.org/show_bug.cgi?id=82117
+
+        Reviewed by Adrienne Walker.
+
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeTiledLayerChromium::FakeTiledLayerChromium):
+        (WTF::FakeTiledLayerChromium::tileSize):
+        (FakeTiledLayerChromium):
+        (WTF::TEST):
+        (WTF):
+        (WTF::idlePaintRepeat):
+        (WTF::testHaveOuterTiles):
+
 2012-03-24  Nat Duca  <nduca@chromium.org>
 
         [chromium] Instrument gesture animations with async traces

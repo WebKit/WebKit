@@ -77,6 +77,7 @@ protected:
     void setTextureFormat(GC3Denum textureFormat) { m_textureFormat = textureFormat; }
     void setBorderTexelOption(CCLayerTilingData::BorderTexelOption);
     void setSampledTexelFormat(LayerTextureUpdater::SampledTexelFormat sampledTexelFormat) { m_sampledTexelFormat = sampledTexelFormat; }
+    size_t numPaintedTiles() { return m_tiler->tiles().size(); }
 
     virtual LayerTextureUpdater* textureUpdater() const = 0;
     virtual void createTextureUpdaterIfNeeded() = 0;
@@ -96,6 +97,8 @@ protected:
     // After preparing an update, returns true if more pre-painting is needed.
     bool needsIdlePaint(const IntRect& layerRect);
 
+    IntRect idlePaintRect(const IntRect& visibleLayerRect);
+
     bool skipsDraw() const { return m_skipsDraw; }
 
     virtual void protectVisibleTileTextures();
@@ -112,7 +115,6 @@ private:
     bool tileNeedsBufferedUpdate(UpdatableTile*);
 
     void prepareToUpdateTiles(bool idle, int left, int top, int right, int bottom, const CCOcclusionTracker*);
-    IntRect idlePaintRect(const IntRect& visibleLayerRect);
 
     UpdatableTile* tileAt(int, int) const;
     UpdatableTile* createTile(int, int);
