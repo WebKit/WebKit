@@ -147,12 +147,6 @@ ResourceHandle::~ResourceHandle()
     LOG(Network, "Handle %p destroyed", this);
 }
 
-static const double MaxFoundationVersionWithoutdidSendBodyDataDelegate = 677.21;
-bool ResourceHandle::didSendBodyDataDelegateExists()
-{
-    return NSFoundationVersionNumber > MaxFoundationVersionWithoutdidSendBodyDataDelegate;
-}
-
 static bool shouldRelaxThirdPartyCookiePolicy(const KURL& url)
 {
     // If a URL already has cookies, then we'll relax the 3rd party cookie policy and accept new cookies.
@@ -266,10 +260,6 @@ bool ResourceHandle::start(NetworkingContext* context)
 
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
 
-    if (!ResourceHandle::didSendBodyDataDelegateExists())
-        associateStreamWithResourceHandle([firstRequest().nsURLRequest() HTTPBodyStream], this);
-
-
     d->m_needsSiteSpecificQuirks = context->needsSiteSpecificQuirks();
 
     createNSURLConnection(
@@ -321,8 +311,6 @@ void ResourceHandle::cancel()
     if (d->m_currentMacChallenge)
         [[d->m_currentMacChallenge sender] cancelAuthenticationChallenge:d->m_currentMacChallenge];
 
-    if (!ResourceHandle::didSendBodyDataDelegateExists())
-        disassociateStreamWithResourceHandle([firstRequest().nsURLRequest() HTTPBodyStream]);
     [d->m_connection.get() cancel];
 }
 
@@ -723,17 +711,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 
     m_handle->willSendRequest(request, redirectResponse);
 
-    if (!ResourceHandle::didSendBodyDataDelegateExists()) {
-        // The client may change the request's body stream, in which case we have to re-associate
-        // the handle with the new stream so upload progress callbacks continue to work correctly.
-        NSInputStream* oldBodyStream = [newRequest HTTPBodyStream];
-        NSInputStream* newBodyStream = [request.nsURLRequest() HTTPBodyStream];
-        if (oldBodyStream != newBodyStream) {
-            disassociateStreamWithResourceHandle(oldBodyStream);
-            associateStreamWithResourceHandle(newBodyStream, m_handle);
-        }
-    }
-
     return request.nsURLRequest();
 }
 
@@ -880,9 +857,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     if (!m_handle || !m_handle->client())
         return;
 
-    if (!ResourceHandle::didSendBodyDataDelegateExists())
-        disassociateStreamWithResourceHandle([m_handle->firstRequest().nsURLRequest() HTTPBodyStream]);
-
     m_handle->client()->didFinishLoading(m_handle, 0);
 }
 
@@ -894,9 +868,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 
     if (!m_handle || !m_handle->client())
         return;
-
-    if (!ResourceHandle::didSendBodyDataDelegateExists())
-        disassociateStreamWithResourceHandle([m_handle->firstRequest().nsURLRequest() HTTPBodyStream]);
 
     m_handle->client()->didFail(m_handle, error);
 }

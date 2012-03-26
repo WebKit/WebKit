@@ -106,9 +106,6 @@ public:
 
     static bool willLoadFromCache(ResourceRequest&, Frame*);
     static void cacheMetadata(const ResourceResponse&, const Vector<char>&);
-#if PLATFORM(MAC)
-    static bool didSendBodyDataDelegateExists();
-#endif
 
     virtual ~ResourceHandle();
 

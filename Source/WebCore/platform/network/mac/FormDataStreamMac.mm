@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* originally written by Becky Willrich, additional code by Darin Adler */
-
 #import "config.h"
 #import "FormDataStreamMac.h"
 
@@ -36,14 +34,11 @@
 #import "BlobRegistryImpl.h"
 #import "FileSystem.h"
 #import "FormData.h"
-#import "ResourceHandle.h"
-#import "ResourceHandleClient.h"
 #import "SchedulePair.h"
 #import "WebCoreSystemInterface.h"
 #import <sys/stat.h>
 #import <sys/types.h>
 #import <wtf/Assertions.h>
-#import <wtf/HashMap.h>
 #import <wtf/MainThread.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
@@ -66,68 +61,6 @@ static NSMapTable *streamFieldsMap()
 {
     static NSMapTable *streamFieldsMap = NSCreateMapTable(NSNonRetainedObjectMapKeyCallBacks, NSNonOwnedPointerMapValueCallBacks, 1);
     return streamFieldsMap;
-}
-
-typedef HashMap<CFReadStreamRef, RefPtr<ResourceHandle> > StreamResourceHandleMap;
-static StreamResourceHandleMap& getStreamResourceHandleMap()
-{
-    DEFINE_STATIC_LOCAL(StreamResourceHandleMap, streamResourceHandleMap, ());
-    return streamResourceHandleMap;
-}
-
-void associateStreamWithResourceHandle(NSInputStream *stream, ResourceHandle* resourceHandle)
-{
-    ASSERT(isMainThread());
-
-    ASSERT(resourceHandle);
-
-    if (!stream)
-        return;
-
-    {
-        MutexLocker locker(streamFieldsMapMutex());
-        if (!NSMapGet(streamFieldsMap(), stream))
-            return;
-    }
-
-    ASSERT(!getStreamResourceHandleMap().contains((CFReadStreamRef)stream));
-    getStreamResourceHandleMap().set((CFReadStreamRef)stream, resourceHandle);
-}
-
-void disassociateStreamWithResourceHandle(NSInputStream *stream)
-{
-    ASSERT(isMainThread());
-
-    if (!stream)
-        return;
-
-    getStreamResourceHandleMap().remove((CFReadStreamRef)stream);
-}
-
-struct DidSendDataCallbackData {
-    DidSendDataCallbackData(CFReadStreamRef stream_, unsigned long long bytesSent_, unsigned long long streamLength_)
-        : stream(stream_)
-        , bytesSent(bytesSent_)
-        , streamLength(streamLength_)
-    {
-    }
-
-    CFReadStreamRef stream;
-    unsigned long long bytesSent;
-    unsigned long long streamLength;
-};
-
-static void performDidSendDataCallback(void* context)
-{
-    ASSERT(isMainThread());
-
-    DidSendDataCallbackData* data = static_cast<DidSendDataCallbackData*>(context);
-    ResourceHandle* resourceHandle = getStreamResourceHandleMap().get(data->stream).get();
-
-    if (resourceHandle && resourceHandle->client())
-        resourceHandle->client()->didSendData(resourceHandle, data->bytesSent, data->streamLength);
-
-    delete data;
 }
 
 static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void* context);
@@ -298,7 +231,7 @@ static Boolean formOpen(CFReadStreamRef, CFStreamError* error, Boolean* openComp
     return opened;
 }
 
-static CFIndex formRead(CFReadStreamRef stream, UInt8* buffer, CFIndex bufferLength, CFStreamError* error, Boolean* atEOF, void* context)
+static CFIndex formRead(CFReadStreamRef, UInt8* buffer, CFIndex bufferLength, CFStreamError* error, Boolean* atEOF, void* context)
 {
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
@@ -321,12 +254,6 @@ static CFIndex formRead(CFReadStreamRef stream, UInt8* buffer, CFIndex bufferLen
             if (form->currentStreamRangeLength != BlobDataItem::toEndOfFile)
                 form->currentStreamRangeLength -= bytesRead;
 #endif
-
-            if (!ResourceHandle::didSendBodyDataDelegateExists()) {
-                // FIXME: Figure out how to only do this when a ResourceHandleClient is available.
-                DidSendDataCallbackData* data = new DidSendDataCallbackData(stream, form->bytesSent, form->streamLength);
-                callOnMainThread(performDidSendDataCallback, data);
-            }
 
             return bytesRead;
         }
