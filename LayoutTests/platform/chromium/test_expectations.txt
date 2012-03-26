@@ -4426,3 +4426,13 @@ BUGWK80531 MAC : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 
 // Flaky on Windows since at least r112042
 BUGWK82227 WIN : media/video-src-source.html = PASS TIMEOUT
+
+// Flaky/crashing on a single platform every 30 tries or so
+BUGWK82230 LINUX DEBUG : http/tests/cache/post-redirect-get.php = PASS CRASH
+BUGWK82231 WIN DEBUG : fast/canvas/webgl/program-test.html = PASS CRASH
+
+// Flaky/crashing svg tests on SNOWLEOPARD DEBUG
+BUGWK82232 SNOWLEOPARD DEBUG :svg/custom/empty-merge.svg = PASS CRASH
+BUGWK82232 SNOWLEOPARD DEBUG :svg/clip-path/clip-in-mask-objectBoundingBox.svg = PASS CRASH
+BUGWK82232 SNOWLEOPARD DEBUG :svg/as-image/animated-svg-as-image-same-image.html = PASS CRASH
+BUGWK82232 SNOWLEOPARD DEBUG :svg/as-background-image/background-image-tiled.html = PASS CRASH
