@@ -83,10 +83,10 @@ public:
         m_maximumDistanceBetweenForcedBreaks = 0;
         m_forcedBreakOffset = 0;
     }
-    void addForcedBreak(int offsetFromFirstPage)
+    void addForcedBreak(LayoutUnit offsetFromFirstPage)
     { 
         ASSERT(!m_columnHeight);
-        int distanceFromLastBreak = offsetFromFirstPage - m_forcedBreakOffset;
+        LayoutUnit distanceFromLastBreak = offsetFromFirstPage - m_forcedBreakOffset;
         if (!distanceFromLastBreak)
             return;
         m_forcedBreaks++;
