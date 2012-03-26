@@ -1,3 +1,10 @@
+2012-03-26  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the Windows build.
+
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::CharacterClassConstructor::putRange):
+
 2012-03-26  Gavin Barraclough  <barraclough@apple.com>
 
         Unreviewed - speculative Windows build fix.

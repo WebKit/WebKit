@@ -132,7 +132,7 @@ public:
         UCS2CanonicalizationRange* info = rangeInfoFor(lo);
         while (true) {
             // Handle the range [lo .. end]
-            UChar end = std::min(info->end, hi);
+            UChar end = std::min<UChar>(info->end, hi);
 
             switch (info->type) {
             case CanonicalizeUnique:
