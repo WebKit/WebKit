@@ -1,15 +1,33 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (9,9) size 791x591
-    RenderSVGForeignObject {foreignObject} at (10,10) size 580x380
-      RenderBlock {xhtml:div} at (0,0) size 580x21
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGForeignObject {foreignObject} at (0,0) size 250x200
+      RenderBlock {xhtml:div} at (0,0) size 250x21
         RenderText {#text} at (0,0) size 89x21
-          text run at (0,0) width 89: "This is a test"
-      RenderBlock (anonymous) at (0,21) size 580x21
+          text run at (0,0) width 89: "This is a text"
+      RenderBlock (anonymous) at (0,21) size 250x21
         RenderInline {xhtml:a} at (0,0) size 73x21 [color=#0000EE]
           RenderText {#text} at (0,0) size 73x21
             text run at (0,0) width 73: "and a link."
         RenderBR {xhtml:br} at (73,0) size 0x21
-    RenderSVGRect {rect} at (9,9) size 582x382 [stroke={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=580.00] [height=380.00]
+      RenderBlock {xhtml:div} at (0,42) size 250x21
+        RenderText {#text} at (0,0) size 52x21
+          text run at (0,0) width 52: "[HTML]"
+    RenderSVGRect {rect} at (0,0) size 251x201 [stroke={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=250.00] [height=200.00]
+    RenderSVGForeignObject {foreignObject} at (260,0) size 250x200
+      RenderSVGRoot {svg} at (260,0) size 250x208
+        RenderSVGContainer {g} at (260,0) size 250x208 [transform={m=((3.00,0.26)(0.26,3.02)) t=(0.00,0.00)}]
+          RenderSVGText {text} at (0,0) size 89x20 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 89x20
+              chunk 1 text run 1 at (0.00,16.00) startOffset 0 endOffset 14 width 88.99: "This is a text"
+          RenderSVGContainer {a} at (264,57) size 226x84
+            RenderSVGText {text} at (0,19) size 73x20 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 73x20
+                chunk 1 text run 1 at (0.00,35.00) startOffset 0 endOffset 11 width 72.78: "and a link."
+          RenderSVGText {text} at (0,40) size 43x20 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 43x20
+              chunk 1 text run 1 at (0.00,56.00) startOffset 0 endOffset 5 width 42.01: "[SVG]"
+      RenderText {#text} at (0,0) size 0x0
+    RenderSVGRect {rect} at (259,0) size 252x201 [stroke={[type=SOLID] [color=#008000]}] [x=260.00] [y=0.00] [width=250.00] [height=200.00]
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
