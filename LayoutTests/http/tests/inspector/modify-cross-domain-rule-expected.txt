@@ -1,0 +1,17 @@
+Tests that modifying a rule in a stylesheet loaded from a different domain does not crash the renderer.
+
+Text
+
+Running: testSetUp
+
+Running: testAddProperty
+=== Rule modified ===
+color: green;
+width: 100%;
+=== Selector changed ===
+body {
+  color: green;
+  width: 100%;
+}
+Affects selected (#inspected) node: false
+

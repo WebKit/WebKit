@@ -153,7 +153,15 @@ static PassRefPtr<CSSRuleList> asCSSRuleList(CSSStyleSheet* styleSheet)
     if (!styleSheet)
         return 0;
 
-    return styleSheet->cssRules();
+    RefPtr<StaticCSSRuleList> list = StaticCSSRuleList::create();
+    Vector<RefPtr<CSSRule> >& listRules = list->rules();
+    for (unsigned i = 0, size = styleSheet->length(); i < size; ++i) {
+        CSSRule* item = styleSheet->item(i);
+        if (item->isCharsetRule())
+            continue;
+        listRules.append(item);
+    }
+    return list.release();
 }
 
 static PassRefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
@@ -835,7 +843,7 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForStyleSheet()
 
     RefPtr<InspectorObject> result = InspectorObject::create();
     result->setString("styleSheetId", id());
-    RefPtr<CSSRuleList> cssRuleList = styleSheet->cssRules();
+    RefPtr<CSSRuleList> cssRuleList = asCSSRuleList(styleSheet);
     RefPtr<InspectorArray> cssRules = buildArrayForRuleList(cssRuleList.get());
     result->setArray("rules", cssRules.release());
 
