@@ -1,3 +1,10 @@
+2012-03-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Unreviewed - speculative Windows build fix.
+
+        * yarr/YarrCanonicalizeUCS2.h:
+        (JSC::Yarr::getCanonicalPair):
+
 2012-03-26  Dan Bernstein  <mitz@apple.com>
 
         Fixed builds with assertions disabled.

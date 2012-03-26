@@ -95,7 +95,8 @@ inline UChar getCanonicalPair(UCS2CanonicalizationRange* info, UChar ch)
     default:
         ASSERT_NOT_REACHED();
     }
-    return -1;
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 // Returns true if no other UCS2 codepoint can match this value.
