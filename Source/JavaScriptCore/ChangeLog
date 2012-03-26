@@ -1,3 +1,9 @@
+2012-03-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Unreviewed - errk! - accidentally the whole pbxproj.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2012-03-25  Gavin Barraclough  <barraclough@apple.com>
 
         Greek sigma is handled wrong in case independent regexp.
