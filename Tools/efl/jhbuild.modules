@@ -104,7 +104,8 @@
              md5sum="693f9c64d50c908bc4d6e01da3ff76d8"/>
   </autotools>
 
-  <autotools id="glib">
+  <autotools id="glib"
+             autogenargs="--disable-dtrace">
     <dependencies>
       <dep package="libffi"/>
     </dependencies>

@@ -112,7 +112,8 @@
     </branch>
   </autotools>
 
-  <autotools id="glib">
+  <autotools id="glib"
+             autogenargs="--disable-dtrace">
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
