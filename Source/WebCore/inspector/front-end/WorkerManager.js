@@ -189,6 +189,8 @@ WebInspector.WorkerManager.prototype = {
 
     _workerInspectorClosing: function(workerId, event)
     {
+        if (event.target.location.href === "about:blank")
+            return;
         if (this._ignoreWorkerInspectorClosing)
             return;
         delete this._workerIdToWindow[workerId];
