@@ -4423,3 +4423,6 @@ BUGWK82122 SNOWLEOPARD : css3/selectors3/xml/css3-modsel-d4.xml = FAIL PASS
 // The inner <input> should now grow to take the full cell's height.
 BUGWK80531 WIN : fast/table/colspanMinWidth-vertical.html = IMAGE
 BUGWK80531 MAC : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
+
+// Flaky on Windows since at least r112042
+BUGWK82227 WIN : media/video-src-source.html = PASS TIMEOUT
