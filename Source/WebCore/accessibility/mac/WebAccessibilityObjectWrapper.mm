@@ -2773,13 +2773,17 @@ static RenderObject* rendererForView(NSView* view)
     NSRange result = NSMakeRange(NSNotFound, 0);
     if (!range || !range->startContainer())
         return result;
-    
+
     Document* document = m_object->document();
     if (!document)
         return result;
-    
-    TextIterator::getLocationAndLengthFromRange(document->documentElement(), range, result.location, result.length);
-    
+
+    size_t location;
+    size_t length;
+    TextIterator::getLocationAndLengthFromRange(document->documentElement(), range, location, length);
+    result.location = location;
+    result.length = length;
+
     return result;
 }
 
