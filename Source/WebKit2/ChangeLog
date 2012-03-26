@@ -1,3 +1,16 @@
+2012-03-26  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Taps are sometimes not highlighted.
+        https://bugs.webkit.org/show_bug.cgi?id=82188
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Highlight any focusable parent element, or if none is found at least
+        the element returned by bestClickableNodeForTouchPoint.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::highlightPotentialActivation):
+
 2012-03-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r111993.

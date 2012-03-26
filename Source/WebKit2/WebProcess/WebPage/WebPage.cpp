@@ -1461,8 +1461,14 @@ void WebPage::highlightPotentialActivation(const IntPoint& point, const IntSize&
         HitTestResult result = mainframe->eventHandler()->hitTestResultAtPoint(mainframe->view()->windowToContents(point), /*allowShadowContent*/ false, /*ignoreClipping*/ true);
         activationNode = result.innerNode();
 #endif
-        if (activationNode && !activationNode->isFocusable())
-            activationNode = activationNode->enclosingLinkEventParentOrSelf();
+        if (activationNode && !activationNode->isFocusable()) {
+            for (Node* node = activationNode; node; node = node->parentOrHostNode()) {
+                if (node->isFocusable()) {
+                    activationNode = node;
+                    break;
+                }
+            }
+        }
     }
 
     if (activationNode)
