@@ -1126,12 +1126,21 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (this._lastEditedRange)
             this._textModel.markUndoableState();
 
-        for (var lineNumber = range.startLine; lineNumber <= range.endLine; lineNumber++)
+        var newRange = range.clone();
+
+        // Do not change a selection start position when it is at the beginning of a line
+        if (range.startColumn)
+            newRange.startColumn += indent.length;
+
+        var indentEndLine = range.endLine;
+        if (range.endColumn)
+            newRange.endColumn += indent.length;
+        else
+            indentEndLine--;
+
+        for (var lineNumber = range.startLine; lineNumber <= indentEndLine; lineNumber++)
             this._textModel.setText(new WebInspector.TextRange(lineNumber, 0, lineNumber, 0), indent);
 
-        var newRange = range.clone();
-        newRange.startColumn += indent.length;
-        newRange.endColumn += indent.length;
         this._lastEditedRange = newRange;
 
         return newRange;
@@ -1147,7 +1156,11 @@ WebInspector.TextEditorMainPanel.prototype = {
         var lineIndentRegex = new RegExp("^ {1," + indentLength + "}");
         var newRange = range.clone();
 
-        for (var lineNumber = range.startLine; lineNumber <= range.endLine; lineNumber++) {
+        var indentEndLine = range.endLine;
+        if (!range.endColumn)
+            indentEndLine--;
+
+        for (var lineNumber = range.startLine; lineNumber <= indentEndLine; lineNumber++) {
             var line = this._textModel.line(lineNumber);
             var firstCharacter = line.charAt(0);
             var lineIndentLength;
