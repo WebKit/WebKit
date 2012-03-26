@@ -154,9 +154,12 @@ void Canvas2DLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     CanvasLayerChromium::pushPropertiesTo(layer);
 
     CCTextureLayerImpl* textureLayer = static_cast<CCTextureLayerImpl*>(layer);
-    if (m_useDoubleBuffering)
-        textureLayer->setTextureId(m_frontTexture->textureId());
-    else
+    if (m_useDoubleBuffering) {
+        if (m_frontTexture && m_frontTexture->isValid(m_size, GraphicsContext3D::RGBA))
+            textureLayer->setTextureId(m_frontTexture->textureId());
+        else
+            textureLayer->setTextureId(0);
+    } else
         textureLayer->setTextureId(m_backTextureId);
 }
 
