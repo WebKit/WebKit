@@ -29,7 +29,7 @@ module threads {
     interface [
         Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
         Supplemental=WorkerContext
-    ] WorkerContextNotificiations {
+    ] WorkerContextNotifications {
         readonly attribute [V8EnabledAtRuntime] NotificationCenter webkitNotifications;
     };
 
