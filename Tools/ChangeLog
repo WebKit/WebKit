@@ -1,3 +1,10 @@
+2012-03-25  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Move WTF to its own static lib build.
+
+        * waf/build/settings.py:
+        (common_configure):
+
 2012-03-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support solution to handle invalid ax text marker

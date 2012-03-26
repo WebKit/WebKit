@@ -1,3 +1,9 @@
+2012-03-25  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Move WTF to its own static lib build.
+
+        * wscript:
+
 2012-03-25  Filip Pizlo  <fpizlo@apple.com>
 
         DFG int-to-double conversion should be revealed to CSE

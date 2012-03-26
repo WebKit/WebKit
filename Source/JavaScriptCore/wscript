@@ -68,7 +68,7 @@ def build(bld):
         defines = ['BUILDING_JavaScriptCore'],
         target = 'jscore',
         uselib = 'WX ICU ' + get_config(),
-        uselib_local = '',
+        uselib_local = 'wtf',
         install_path = output_dir)
 
     jscore.find_sources_in_dirs(full_dirs, excludes = jscore_excludes)

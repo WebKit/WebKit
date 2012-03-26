@@ -49,6 +49,7 @@ if sys.platform.startswith('win'):
 else:
     wx_root = commands.getoutput('wx-config --prefix')
 
+wtf_dir = os.path.join(wk_root, 'Source', 'WTF')
 jscore_dir = os.path.join(wk_root, 'Source', 'JavaScriptCore')
 webcore_dir = os.path.join(wk_root, 'Source', 'WebCore')
 wklibs_dir = os.path.join(wk_root, 'WebKitLibraries')
@@ -100,12 +101,15 @@ jscore_dirs = [
     'profiler',
     'runtime',
     'tools',
-    '../WTF/wtf',
-    '../WTF/wtf/dtoa',
-    '../WTF/wtf/text',
-    '../WTF/wtf/unicode',
-    '../WTF/wtf/unicode/icu',
     'yarr',
+]
+
+wtf_dirs = [
+    'wtf',
+    'wtf/dtoa',
+    'wtf/text',
+    'wtf/unicode',
+    'wtf/unicode/icu',
 ]
 
 webcore_dirs_common = [
@@ -303,7 +307,7 @@ def common_configure(conf):
 
     if Options.options.cairo and build_port == 'wx':
         if building_on_win32 and not "CAIRO_ROOT" in os.environ:
-            Log.error("To build with Cairo on Windows, you must set the CAIRO_ROOT environment variable.")
+            Logs.error("To build with Cairo on Windows, you must set the CAIRO_ROOT environment variable.")
             sys.exit(1)
 
     if building_on_win32:
@@ -417,6 +421,9 @@ def common_configure(conf):
                 archs = [arch]
 
         sdkroot = '/Developer/SDKs/MacOSX%s.sdk' % sdk_version
+        if not os.path.exists(sdkroot):
+            Logs.error("Cannot find the specified SDK needed to build: %r" % sdkroot)
+            sys.exit(1)
         sdkflags = ['-isysroot', sdkroot]
         for arch in archs:
             sdkflags.extend(['-arch', arch])

@@ -209,7 +209,7 @@ def build(bld):
 
     import TaskGen
 
-    bld.add_subdirs('Source/JavaScriptCore')
+    bld.add_subdirs('Source/WTF Source/JavaScriptCore')
 
     if sys.platform.startswith('darwin'):
         TaskGen.task_gen.mappings['.mm'] = TaskGen.task_gen.mappings['.cxx']
@@ -269,7 +269,7 @@ def build(bld):
         libpath = [output_dir],
         target = 'wxwebkit',
         uselib = 'WX ICU XML XSLT CURL SQLITE3 WKINTERFACE ' + get_config(),
-        uselib_local = 'jscore',
+        uselib_local = 'wtf jscore',
         install_path = output_dir,
         )
         
