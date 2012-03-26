@@ -51,6 +51,113 @@
         (TestFinderTest.test_clean):
         (TestFinderTest.test_find_names):
 
+2012-03-26  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: remove --worker-model flag
+        https://bugs.webkit.org/show_bug.cgi?id=82112
+
+        Reviewed by Adam Barth.
+
+        The --worker-model=inline flag is basically redundant with the
+        --child-processes=1 flag (technically, you could one run child
+        process, but this is only useful for testing); this patch
+        removes this flag, which simplifies things and enables more
+        cleanup down the road.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+        (Manager.print_config):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (get):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (make_broker):
+        (FunctionTests.test_get__inline):
+        (FunctionTests.test_get__processes):
+        (_TestsMixin.setUp):
+        (_TestsMixin.make_broker):
+        (InlineBrokerTests.setUp):
+        (MultiProcessBrokerTests.setUp):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.default_child_processes):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.check_sys_deps):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidPortTest):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockDRTPortTest.make_port):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase):
+        (PortTestCase.make_port):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.default_child_processes):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (parse_args):
+        (MainTest.test_batch_size):
+        (MainTest.test_child_processes_2):
+        (MainTest.test_child_processes_min):
+        (MainTest.test_exception_raised):
+        (MainTest.test_keyboard_interrupt):
+        (MainTest.test_exit_after_n_crashes):
+        (MainTest.assert_run_order):
+        (MainTest.test_run_order__inline):
+        (MainTest.test_virtual):
+
+2012-03-26  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: split test-finding code into a different module
+        https://bugs.webkit.org/show_bug.cgi?id=82253
+
+        Reviewed by Adam Barth.
+
+        Per suggestion from abarth, this change splits all the
+        filesystem-crawling, test-finding code in test-webkitpy out into
+        a separate module and switches to using a FileSystem object.
+        This makes things much more testable, so we also add tests :).
+
+        We also add a realpath() method to the Filesystem object, since
+        test-webkitpy needs that in order to be able to resolve symlinks
+        properly to determine whether a file is under a particular tree
+        or not.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.realpath):
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.realpath):
+        * Scripts/webkitpy/test/main.py:
+        (Tester.__init__):
+        (Tester.add_tree):
+        (Tester.run):
+        (Tester._run_tests):
+        (Tester._log_exception):
+        * Scripts/webkitpy/test/test_finder.py: Added.
+        (TestDirectoryTree):
+        (TestDirectoryTree.__init__):
+        (TestDirectoryTree.find_modules):
+        (TestDirectoryTree.find_modules.file_filter):
+        (TestDirectoryTree.to_module):
+        (TestDirectoryTree.clean):
+        (TestFinder):
+        (TestFinder.__init__):
+        (TestFinder.add_tree):
+        (TestFinder.additional_paths):
+        (TestFinder.clean_trees):
+        (TestFinder.is_module):
+        (TestFinder.to_module):
+        (TestFinder.find_names):
+        (TestFinder._exclude):
+        * Scripts/webkitpy/test/test_finder_unittest.py: Added.
+        (TestFinderTest):
+        (TestFinderTest.setUp):
+        (TestFinderTest.tearDown):
+        (TestFinderTest.test_additional_system_paths):
+        (TestFinderTest.test_is_module):
+        (TestFinderTest.test_to_module):
+        (TestFinderTest.test_clean):
+        (TestFinderTest.test_find_names):
+
 2012-03-26  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         [jhbuild] Use $MAKE if it is defined to build jhbuild itself.

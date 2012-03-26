@@ -56,10 +56,6 @@ class MockDRTPortTest(port_testcase.PortTestCase):
             return mock_drt.MockDRTPort(host, port_name='mock-chromium-win', options=options)
         return mock_drt.MockDRTPort(host, port_name='mock-mac', options=options)
 
-    def test_default_worker_model(self):
-        # only overridding the default test; we don't care about this one.
-        pass
-
     def test_port_name_in_constructor(self):
         self.assertTrue(mock_drt.MockDRTPort(MockSystemHost(), port_name='mock-test'))
 

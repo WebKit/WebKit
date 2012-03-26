@@ -751,7 +751,7 @@ class Manager(object):
         num_workers = min(int(self._options.child_processes), len(all_shards))
         self._log_num_workers(num_workers, len(all_shards), len(locked_shards))
 
-        manager_connection = manager_worker_broker.get(self._options.worker_model, self, worker.Worker)
+        manager_connection = manager_worker_broker.get(num_workers, self, worker.Worker)
 
         if self._options.dry_run:
             return (keyboard_interrupted, interrupted, thread_timings, self._group_stats, self._all_results)
@@ -760,7 +760,7 @@ class Manager(object):
         for worker_number in xrange(num_workers):
             worker_arguments = worker.WorkerArguments(worker_number, self.results_directory(), self._options)
             worker_connection = manager_connection.start_worker(worker_arguments)
-            if self._options.worker_model == 'inline':
+            if self._options.child_processes == 1:
                 # FIXME: We need to be able to share a port with the work so
                 # that some of the tests can query state on the port; ideally
                 # we'd rewrite the tests so that this wasn't necessary.
@@ -1124,7 +1124,6 @@ class Manager(object):
 
         p.print_config('Command line: ' +
                        ' '.join(self._port.driver_cmd_line()))
-        p.print_config("Worker model: %s" % self._options.worker_model)
         p.print_config("")
 
     def _print_expected_results_of_type(self, result_summary,

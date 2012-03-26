@@ -372,9 +372,6 @@ class TestPort(Port):
     def default_child_processes(self):
         return 1
 
-    def default_worker_model(self):
-        return 'inline'
-
     def worker_startup_delay_secs(self):
         return 0
 

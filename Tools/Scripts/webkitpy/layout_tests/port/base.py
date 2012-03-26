@@ -168,9 +168,6 @@ class Port(object):
             return min(supportable_instances, cpu_count)
         return cpu_count
 
-    def default_worker_model(self):
-        return 'processes'
-
     def worker_startup_delay_secs(self):
         # FIXME: If we start workers up too quickly, DumpRenderTree appears
         # to thrash on something and time out its first few tests. Until

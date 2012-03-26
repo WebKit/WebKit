@@ -73,8 +73,8 @@ def parse_args(extra_args=None, record_results=False, tests_included=False, new_
     if not new_results:
         args.append('--no-new-test-results')
 
-    if not '--child-processes' in extra_args and not '--worker-model' in extra_args:
-        args.extend(['--worker-model', 'inline'])
+    if not '--child-processes' in extra_args:
+        args.extend(['--child-processes', 1])
     args.extend(extra_args)
     if not tests_included:
         # We use the glob to test that globbing works.
@@ -285,25 +285,19 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         for batch in batch_tests_run:
             self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
 
-    def test_child_process_1(self):
-        if SHOULD_TEST_PROCESSES:
-            _, _, regular_output, _ = logging_run(
-                ['--print', 'config', '--worker-model', 'processes', '--child-processes', '1'])
-            self.assertTrue(any(['Running 1 ' in line for line in regular_output.buflist]))
-
     def test_child_processes_2(self):
         # This test seems to fail on win32.
         if sys.platform == 'win32':
             return
         if SHOULD_TEST_PROCESSES:
             _, _, regular_output, _ = logging_run(
-                ['--print', 'config', '--worker-model', 'processes', '--child-processes', '2'])
+                ['--print', 'config', '--child-processes', '2'])
             self.assertTrue(any(['Running 2 ' in line for line in regular_output.buflist]))
 
     def test_child_processes_min(self):
         if SHOULD_TEST_PROCESSES:
             _, _, regular_output, _ = logging_run(
-                ['--print', 'config', '--worker-model', 'processes', '--child-processes', '2', 'passes'],
+                ['--print', 'config', '--child-processes', '2', 'passes'],
                 tests_included=True)
             self.assertTrue(any(['Running 1 ' in line for line in regular_output.buflist]))
 
@@ -319,18 +313,17 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # whether they are in-process or out. inline exceptions work as normal,
         # which allows us to get the full stack trace and traceback from the
         # worker. The downside to this is that it could be any error, but this
-        # is actually useful in testing, which is what --worker-model=inline is
-        # usually used for.
+        # is actually useful in testing.
         #
         # Exceptions raised in a separate process are re-packaged into
         # WorkerExceptions, which have a string capture of the stack which can
         # be printed, but don't display properly in the unit test exception handlers.
         self.assertRaises(ValueError, logging_run,
-            ['failures/expected/exception.html'], tests_included=True)
+            ['failures/expected/exception.html', '--child-processes', '1'], tests_included=True)
 
         if SHOULD_TEST_PROCESSES:
             self.assertRaises(run_webkit_tests.WorkerException, logging_run,
-                ['--worker-model', 'processes', 'failures/expected/exception.html'], tests_included=True)
+                ['--child-processes', '2', '--force', 'failures/expected/exception.html', 'passes/text.html'], tests_included=True)
 
     def test_full_results_html(self):
         # FIXME: verify html?
@@ -355,12 +348,12 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # Note that this also tests running a test marked as SKIP if
         # you specify it explicitly.
         self.assertRaises(KeyboardInterrupt, logging_run,
-            ['failures/expected/keyboard.html'], tests_included=True)
-
-    def test_keyboard_interrupt_inline_worker_model(self):
-        self.assertRaises(KeyboardInterrupt, logging_run,
-            ['failures/expected/keyboard.html', '--worker-model', 'inline'],
+            ['failures/expected/keyboard.html', '--child-processes', '1'],
             tests_included=True)
+
+        if SHOULD_TEST_PROCESSES:
+            self.assertRaises(KeyboardInterrupt, logging_run,
+                ['failures/expected/keyboard.html', 'passes/text.html', '--child-processes', '2', '--force'], tests_included=True)
 
     def test_no_tests_found(self):
         res, out, err, user = logging_run(['resources'], tests_included=True)
@@ -683,17 +676,6 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
             flatten_batches=True)
         self.assertEquals(['failures/expected/crash.html', 'passes/text.html'], tests_run)
 
-    def test_exit_after_n_crashes_inline_worker_model(self):
-        tests_run = get_tests_run([
-                'failures/unexpected/timeout.html',
-                'passes/text.html',
-                '--exit-after-n-crashes-or-timeouts', '1',
-                '--worker-model', 'inline',
-            ],
-            tests_included=True,
-            flatten_batches=True)
-        self.assertEquals(['failures/unexpected/timeout.html'], tests_run)
-
     def test_results_directory_absolute(self):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
@@ -730,19 +712,17 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
     # These next tests test that we run the tests in ascending alphabetical
     # order per directory. HTTP tests are sharded separately from other tests,
     # so we have to test both.
-    def assert_run_order(self, worker_model, child_processes='1'):
-        tests_run = get_tests_run(['--worker-model', worker_model,
-            '--child-processes', child_processes, 'passes'],
+    def assert_run_order(self, child_processes='1'):
+        tests_run = get_tests_run(['--child-processes', child_processes, 'passes'],
             tests_included=True, flatten_batches=True)
         self.assertEquals(tests_run, sorted(tests_run))
 
-        tests_run = get_tests_run(['--worker-model', worker_model,
-            '--child-processes', child_processes, 'http/tests/passes'],
+        tests_run = get_tests_run(['--child-processes', child_processes, 'http/tests/passes'],
             tests_included=True, flatten_batches=True)
         self.assertEquals(tests_run, sorted(tests_run))
 
     def test_run_order__inline(self):
-        self.assert_run_order('inline')
+        self.assert_run_order()
 
     def test_tolerance(self):
         class ImageDiffTestPort(TestPort):
@@ -774,26 +754,6 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
     def test_virtual(self):
         self.assertTrue(passing_run(['passes/text.html', 'passes/args.html',
                                      'virtual/passes/text.html', 'virtual/passes/args.html']))
-
-    def test_worker_model__inline(self):
-        self.assertTrue(passing_run(['--worker-model', 'inline']))
-
-    def test_worker_model__inline_with_child_processes(self):
-        res, out, err, user = logging_run(['--worker-model', 'inline',
-                                           '--child-processes', '2'])
-        self.assertEqual(res, 0)
-        self.assertContainsLine(err, '--worker-model=inline overrides --child-processes\n')
-
-    def test_worker_model__processes(self):
-        if SHOULD_TEST_PROCESSES:
-            self.assertTrue(passing_run(['--worker-model', 'processes']))
-
-    def test_worker_model__processes_and_dry_run(self):
-        if SHOULD_TEST_PROCESSES:
-            self.assertTrue(passing_run(['--worker-model', 'processes', '--dry-run']))
-
-    def test_worker_model__unknown(self):
-        self.assertRaises(ValueError, logging_run, ['--worker-model', 'unknown'])
 
     def test_reftest_run(self):
         tests_run = get_tests_run(['passes/reftest.html'], tests_included=True, flatten_batches=True)

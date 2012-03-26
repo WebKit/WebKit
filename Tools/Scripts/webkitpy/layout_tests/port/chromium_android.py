@@ -179,9 +179,6 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
                 return False
         return True
 
-    def default_worker_model(self):
-        return 'inline'
-
     def test_expectations(self):
         # Automatically apply all expectation rules of chromium-linux to
         # chromium-android.

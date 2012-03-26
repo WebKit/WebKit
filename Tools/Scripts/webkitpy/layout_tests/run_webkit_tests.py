@@ -134,13 +134,6 @@ def _set_up_derived_options(port, options):
     # We return a list of warnings to print after the printer is initialized.
     warnings = []
 
-    if options.worker_model is None:
-        options.worker_model = port.default_worker_model()
-
-    if options.worker_model == 'inline':
-        if options.child_processes and int(options.child_processes) > 1:
-            warnings.append("--worker-model=inline overrides --child-processes")
-        options.child_processes = "1"
     if not options.child_processes:
         options.child_processes = os.environ.get("WEBKIT_TEST_CHILD_PROCESSES",
                                                  str(port.default_child_processes()))
@@ -407,9 +400,6 @@ def parse_args(args=None):
         optparse.make_option("--child-processes",
             help="Number of DumpRenderTrees to run in parallel."),
         # FIXME: Display default number of child processes that will run.
-        optparse.make_option("--worker-model", action="store",
-            default=None, help=("controls worker model. Valid values are "
-                                "'inline' and 'processes'.")),
         optparse.make_option("-f", "--experimental-fully-parallel",
             action="store_true",
             help="run all tests in parallel"),
