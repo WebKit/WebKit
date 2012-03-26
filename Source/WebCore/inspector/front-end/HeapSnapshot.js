@@ -612,11 +612,6 @@ WebInspector.HeapSnapshotNode.prototype = {
         return this._nodes[this.nodeIndex + this._snapshot._nodeIdOffset];
     },
 
-    get instancesCount()
-    {
-        return this._nodes[this.nodeIndex + this._snapshot._nodeInstancesCountOffset];
-    },
-
     get isHidden()
     {
         return this._type() === this._snapshot._nodeHiddenType;
@@ -766,12 +761,12 @@ WebInspector.HeapSnapshot.prototype = {
         this._nodeTypeOffset = meta.fields.indexOf("type");
         this._nodeNameOffset = meta.fields.indexOf("name");
         this._nodeIdOffset = meta.fields.indexOf("id");
-        this._nodeInstancesCountOffset = this._nodeIdOffset;
         this._nodeSelfSizeOffset = meta.fields.indexOf("self_size");
         this._nodeRetainedSizeOffset = meta.fields.indexOf("retained_size");
         this._dominatorOffset = meta.fields.indexOf("dominator");
         this._edgesCountOffset = meta.fields.indexOf("children_count");
         this._firstEdgeOffset = meta.fields.indexOf("children");
+        this._nodeFieldCount = this._firstEdgeOffset;
         this._nodeTypes = meta.types[this._nodeTypeOffset];
         this._nodeHiddenType = this._nodeTypes.indexOf("hidden");
         this._nodeObjectType = this._nodeTypes.indexOf("object");
@@ -803,6 +798,119 @@ WebInspector.HeapSnapshot.prototype = {
         this._buildDominatedNodes();
         this._calculateFlags();
         this._calculateObjectToWindowDistance();
+    },
+
+    _buildContinuousNodeArray: function()
+    {
+        // Estimate number of nodes.
+        var totalEdgeCount = 0;
+        var totalNodeCount = 0;
+        for (var index = this._rootNodeIndex; index < this._nodes.length; ) {
+            ++totalNodeCount;
+            var edgesCount = this._nodes[index + this._edgesCountOffset];
+            totalEdgeCount += edgesCount;
+            index += this._firstEdgeOffset + edgesCount * this._edgeFieldsCount;
+        }
+        this._createOnlyNodesArray(totalNodeCount);
+        this._createContainmentEdgesArray(totalEdgeCount);
+        this._createRetainmentEdgesArray(totalNodeCount, totalEdgeCount);
+        this._restoreNodeTypes();
+    },
+
+    _createOnlyNodesArray: function(totalNodeCount)
+    {
+        // Copy nodes to their own array.
+        this._onlyNodes = new Uint32Array(totalNodeCount * this._nodeFieldCount);
+        var dstIndex = 0;
+        var srcIndex = this._rootNodeIndex;
+        while (srcIndex < this._nodes.length) {
+            var srcNodeTypeIndex = srcIndex + this._nodeTypeOffset;
+            var currentDstIndex = dstIndex;
+            var edgesCount = this._nodes[srcIndex + this._edgesCountOffset];
+            for (var i = 0; i < this._nodeFieldCount; i++)
+                this._onlyNodes[dstIndex++] = this._nodes[srcIndex++];
+            // Write new node index into the type field.
+            this._nodes[srcNodeTypeIndex] = currentDstIndex;
+            srcIndex += edgesCount * this._edgeFieldsCount;
+        }
+        // Translate dominator indexes.
+        for (var dominatorSlotIndex = this._dominatorOffset; dominatorSlotIndex < this._onlyNodes.length; dominatorSlotIndex += this._nodeFieldCount) {
+            var dominatorIndex = this._onlyNodes[dominatorSlotIndex];
+            this._onlyNodes[dominatorSlotIndex] = this._nodes[dominatorIndex + this._nodeTypeOffset];
+        }
+    },
+
+    _createContainmentEdgesArray: function(totalEdgeCount)
+    {
+        // Copy edges to their own array.
+        this._containmentEdges = new Uint32Array(totalEdgeCount * this._edgeFieldsCount);
+        var edgeArrayIndex = 0;
+        var srcIndex = this._rootNodeIndex;
+        while (srcIndex < this._nodes.length) {
+            var srcNodeNewIndex = this._nodes[srcIndex + this._nodeTypeOffset];
+            // Set index of first outgoing egde in the _containmentEdges array.
+            this._onlyNodes[srcNodeNewIndex + this._edgesCountOffset] = edgeArrayIndex;
+
+            // Now copy all edge information.
+            var edgesCount = this._nodes[srcIndex + this._edgesCountOffset];
+            srcIndex += this._firstEdgeOffset;
+            var nextNodeIndex = srcIndex + edgesCount * this._edgeFieldsCount;
+            while (srcIndex < nextNodeIndex) {
+                this._containmentEdges[edgeArrayIndex] = this._nodes[srcIndex];
+                // Translate destination node indexes for the copied edges.
+                if (edgeArrayIndex % this._edgeFieldsCount === this._edgeToNodeOffset) {
+                    var toNodeIndex = this._containmentEdges[edgeArrayIndex];
+                    this._containmentEdges[edgeArrayIndex] = this._nodes[toNodeIndex + this._nodeTypeOffset];
+                }
+                ++edgeArrayIndex;
+                ++srcIndex;
+            }
+        }
+    },
+
+    _createRetainmentEdgesArray: function(totalNodeCount, totalEdgeCount)
+    {
+        this._retainingNodes = new Uint32Array(totalEdgeCount);
+        // Index of the first retainer in the _retainingNodes array. Addressed by retained node index.
+        this._firstRetainerIndex = new Uint32Array(totalNodeCount);
+
+        for (var toNodeIndex = this._edgeToNodeOffset; toNodeIndex < this._containmentEdges.length; toNodeIndex += this._edgeFieldsCount)
+            ++this._firstRetainerIndex[this._containmentEdges[toNodeIndex]];
+        for (var i = 0, firstUnusedRetainerSlot = 0; i < this._firstRetainerIndex.length; i++) {
+            var retainersCount = this._firstRetainerIndex[i];
+            this._firstRetainerIndex[i] = firstUnusedRetainerSlot;
+            this._retainingNodes[firstUnusedRetainerSlot] = retainersCount;
+            firstUnusedRetainerSlot += retainersCount;
+        }
+
+        var srcNodeIndex = 0;
+        var nextNodeFirstEdgeIndex = this._edgesCountOffset;
+        while (srcNodeIndex < this._onlyNodes.length) {
+            var firstEdgeIndex = nextNodeFirstEdgeIndex;
+            var nextNodeIndex = srcNodeIndex + this._nodeFieldCount;
+            var nextNodeFirstEdgeIndex = nextNodeIndex < this._onlyNodes.length
+                                       ? this._onlyNodes[nextNodeIndex + this._edgesCountOffset]
+                                       : this._containmentEdges.length;
+            for (var edgeIndex = firstEdgeIndex; edgeIndex < nextNodeFirstEdgeIndex; edgeIndex += this._edgeFieldsCount) {
+                var toNodeIndex = this._containmentEdges[edgeIndex + this._edgeToNodeOffset];
+                var firstRetainerSlotIndex = this._firstRetainerIndex[toNodeIndex];
+                var nextUnusedRetainerSlotIndex = firstRetainerSlotIndex + (--this._retainingNodes[firstRetainerSlotIndex]);
+                this._retainingNodes[nextUnusedRetainerSlotIndex] = srcNodeIndex;
+            }
+            srcNodeIndex = nextNodeIndex;
+        }
+    },
+
+    _restoreNodeTypes: function()
+    {
+        var srcIndex = this._rootNodeIndex;
+        while (srcIndex < this._nodes.length) {
+            var srcNodeTypeIndex = srcIndex + this._nodeTypeOffset;
+            var newNodeIndex = this._nodes[srcNodeTypeIndex];
+            this._nodes[srcNodeTypeIndex] = this._onlyNodes[newNodeIndex + this._nodeTypeOffset];
+            var edgesCount = this._nodes[srcIndex + this._edgesCountOffset];
+            srcIndex += this._firstEdgeOffset + edgesCount * this._edgeFieldsCount;
+        }
     },
 
     dispose: function()
