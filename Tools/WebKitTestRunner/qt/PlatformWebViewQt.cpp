@@ -76,12 +76,6 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
 {
     QQuickWebViewExperimental experimental(m_view);
     experimental.setRenderToOffscreenBuffer(true);
-
-    // QWindow does not create the underlying platform
-    // specific bits unless QWindow::setVisible() or QWindow::show() are called,
-    // and without it QWindow::isActive() will always return false.
-    // For these cases QWindow::create() is provided.
-    m_window->create();
 }
 
 PlatformWebView::~PlatformWebView()
