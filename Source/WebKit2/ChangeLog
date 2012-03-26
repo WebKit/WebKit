@@ -1,3 +1,22 @@
+2012-03-26  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [WK2][Qt] Fix compilation without QtWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=79458
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent): Replace use of QApplication::wheelScrollLines()
+        with the constant that is actually used and usually not changed anyway.
+        * Target.pri: Remove widgets from Qt variable.
+        * UIProcess/qt/QtWebPageEventHandler.cpp: Remove unecessary include.
+        * WebProcess.pro: Use widgets for the process (for the time being).
+        * WebProcess/qt/WebProcessMainQt.cpp: Delegate QApplication creation to the caller.
+        (WebKit::WebProcessMainQt):
+        * qt/MainQt.cpp: Create QApplication here.
+        (WebKit):
+        (main):
+
 2012-03-26  Andras Becsi  <andras.becsi@nokia.com>
 
         Be more careful with git gui usage

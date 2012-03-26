@@ -25,19 +25,17 @@
  */
 
 #include "config.h"
-
 #include "WebProcess.h"
-#include <WebCore/RunLoop.h>
-#include <runtime/InitializeThreading.h>
-#include <wtf/MainThread.h>
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QList>
 #include <QNetworkProxyFactory>
 #include <QString>
 #include <QStringList>
 #include <QUrl>
-#include <QtGlobal>
+#include <WebCore/RunLoop.h>
+#include <runtime/InitializeThreading.h>
+#include <wtf/MainThread.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "WebGraphicsLayer.h"
@@ -141,26 +139,8 @@ static void initializeProxy()
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 }
 
-void messageHandler(QtMsgType type, const char* message)
+Q_DECL_EXPORT int WebProcessMainQt(QGuiApplication* app)
 {
-    if (type == QtCriticalMsg) {
-        fprintf(stderr, "%s\n", message);
-        return;
-    }
-
-    // Do nothing
-}
-
-Q_DECL_EXPORT int WebProcessMainQt(int argc, char** argv)
-{
-    // Has to be done before QApplication is constructed in case
-    // QApplication itself produces debug output.
-    QByteArray suppressOutput = qgetenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT");
-    if (!suppressOutput.isEmpty() && suppressOutput != "0")
-        qInstallMsgHandler(messageHandler);
-
-    QApplication::setGraphicsSystem(QLatin1String("raster"));
-    QApplication* app = new QApplication(argc, argv);
 #ifndef NDEBUG
     if (qgetenv("QT_WEBKIT2_DEBUG") == "1") {
         qDebug() << "Waiting 3 seconds for debugger";
@@ -209,6 +189,7 @@ Q_DECL_EXPORT int WebProcessMainQt(int argc, char** argv)
     RunLoop::run();
 
     // FIXME: Do more cleanup here.
+    delete app;
 
     return 0;
 }

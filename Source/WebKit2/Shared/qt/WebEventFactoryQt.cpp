@@ -26,7 +26,6 @@
 
 #include "config.h"
 #include "WebEventFactoryQt.h"
-#include <QApplication>
 #include <QKeyEvent>
 #include <QTransform>
 #include <WebCore/IntPoint.h>
@@ -150,8 +149,10 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(QWheelEvent* e, const QTransf
     // Use the same single scroll step as QTextEdit
     // (in QTextEditPrivate::init [h,v]bar->setSingleStep)
     static const float cDefaultQtScrollStep = 20.f;
-    deltaX *= (fullTick) ? QApplication::wheelScrollLines() * cDefaultQtScrollStep : 1;
-    deltaY *= (fullTick) ? QApplication::wheelScrollLines() * cDefaultQtScrollStep : 1;
+    // ### FIXME: Default from QtGui. Should use Qt platform theme API once configurable.
+    const int wheelScrollLines = 3;
+    deltaX *= (fullTick) ? wheelScrollLines * cDefaultQtScrollStep : 1;
+    deltaY *= (fullTick) ? wheelScrollLines * cDefaultQtScrollStep : 1;
 
     return WebWheelEvent(WebEvent::Wheel, fromItemTransform.map(e->posF()).toPoint(), e->globalPosF().toPoint(), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, modifiers, timestamp);
 }

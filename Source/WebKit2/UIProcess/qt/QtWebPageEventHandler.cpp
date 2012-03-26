@@ -29,7 +29,6 @@
 #include "qquickwebview_p.h"
 #include <QCursor>
 #include <QDrag>
-#include <QGraphicsSceneMouseEvent>
 #include <QGuiApplication>
 #include <QInputPanel>
 #include <QMimeData>
