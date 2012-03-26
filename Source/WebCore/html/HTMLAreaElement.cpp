@@ -179,7 +179,7 @@ Path HTMLAreaElement::getRegion(const LayoutSize& size) const
     return path;
 }
 
-HTMLImageElement* HTMLAreaElement::imageElement()
+HTMLImageElement* HTMLAreaElement::imageElement() const
 {
     Node* mapElement = parentNode();
     if (!mapElement || !mapElement->hasTagName(mapTag))
@@ -200,6 +200,10 @@ bool HTMLAreaElement::isMouseFocusable() const
 
 bool HTMLAreaElement::isFocusable() const
 {
+    HTMLImageElement* image = imageElement();
+    if (!image || !image->renderer() || image->renderer()->style()->visibility() != VISIBLE)
+        return false;
+
     return supportsFocus() && Element::tabIndex() >= 0;
 }
     

@@ -45,7 +45,7 @@ public:
     Path computePath(RenderObject*) const;
 
     // The parent map's image.
-    HTMLImageElement* imageElement();
+    HTMLImageElement* imageElement() const;
     
 private:
     HTMLAreaElement(const QualifiedName&, Document*);
