@@ -1638,7 +1638,7 @@ bool FrameLoader::isLoading() const
     DocumentLoader* docLoader = activeDocumentLoader();
     if (!docLoader)
         return false;
-    return docLoader->isLoadingMainResource() || docLoader->isLoadingSubresources() || docLoader->isLoadingPlugIns();
+    return docLoader->isLoading();
 }
 
 bool FrameLoader::frameHasLoaded() const
@@ -2212,9 +2212,6 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 m_delegateIsHandlingProvisionalLoadError = false;
 
                 ASSERT(!pdl->isLoading());
-                ASSERT(!pdl->isLoadingMainResource());
-                ASSERT(!pdl->isLoadingSubresources());
-                ASSERT(!pdl->isLoadingPlugIns());
 
                 // If we're in the middle of loading multipart data, we need to restore the document loader.
                 if (isReplacing() && !m_documentLoader.get())
@@ -2316,9 +2313,7 @@ void FrameLoader::continueLoadAfterWillSubmitForm()
     }
 
     m_provisionalDocumentLoader->timing()->markNavigationStart(frame());
-
-    if (!m_provisionalDocumentLoader->startLoadingMainResource(identifier))
-        m_provisionalDocumentLoader->updateLoading();
+    m_provisionalDocumentLoader->startLoadingMainResource(identifier);
 }
 
 static KURL originatingURLFromBackForwardList(Page* page)

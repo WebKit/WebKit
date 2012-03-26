@@ -110,9 +110,7 @@ namespace WebCore {
         void stopLoading();
         void setCommitted(bool committed) { m_committed = committed; }
         bool isCommitted() const { return m_committed; }
-        bool isLoading() const { return m_loading; }
-        void setLoading(bool loading) { m_loading = loading; }
-        void updateLoading();
+        bool isLoading() const { return isLoadingMainResource() || !m_subresourceLoaders.isEmpty() || !m_plugInStreamLoaders.isEmpty(); }
         void receivedData(const char*, int);
         void setupForReplaceByMIMEType(const String& newMIMEType);
         void finishedLoading();
@@ -195,7 +193,7 @@ namespace WebCore {
         
         void setDefersLoading(bool);
 
-        bool startLoadingMainResource(unsigned long identifier);
+        void startLoadingMainResource(unsigned long identifier);
         void cancelMainResourceLoad(const ResourceError&);
         
         // Support iconDatabase in synchronous mode.
@@ -207,8 +205,6 @@ namespace WebCore {
         void getIconDataForIconURL(const String&);
         
         bool isLoadingMainResource() const;
-        bool isLoadingSubresources() const;
-        bool isLoadingPlugIns() const;
         bool isLoadingMultipartContent() const;
 
         void stopLoadingPlugIns();
@@ -262,6 +258,7 @@ namespace WebCore {
         void setMainDocumentError(const ResourceError&);
         void commitLoad(const char*, int);
         bool doesProgressiveLoad(const String& MIMEType) const;
+        void checkLoadComplete();
 
         void deliverSubstituteResourcesAfterDelay();
         void substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*);
@@ -300,7 +297,6 @@ namespace WebCore {
 
         bool m_committed;
         bool m_isStopping;
-        bool m_loading;
         bool m_gotFirstByte;
         bool m_primaryLoadComplete;
         bool m_isClientRedirect;
