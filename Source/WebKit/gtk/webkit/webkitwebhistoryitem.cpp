@@ -286,7 +286,7 @@ WebKitWebHistoryItem* webkit_web_history_item_new()
 
 /**
  * webkit_web_history_item_new_with_data:
- * @uri: the uri of the page
+ * @uri: the URI of the page
  * @title: the title of the page
  *
  * Creates a new #WebKitWebHistoryItem with the given URI and title

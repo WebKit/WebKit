@@ -207,7 +207,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* webResourceCl
                                     g_param_spec_string(
                                     "uri",
                                     _("URI"),
-                                    _("The uri of the resource"),
+                                    _("The URI of the resource"),
                                     NULL,
                                     (GParamFlags)(WEBKIT_PARAM_READWRITE|G_PARAM_CONSTRUCT_ONLY)));
     /**
@@ -329,7 +329,7 @@ void webkit_web_resource_init_with_core_resource(WebKitWebResource* webResource,
  * webkit_web_resource_new:
  * @data: the data to initialize the #WebKitWebResource
  * @size: the length of @data
- * @uri: the uri of the #WebKitWebResource
+ * @uri: the URI of the #WebKitWebResource
  * @mime_type: the MIME type of the #WebKitWebResource
  * @encoding: the text encoding name of the #WebKitWebResource
  * @frame_name: the frame name of the #WebKitWebResource
