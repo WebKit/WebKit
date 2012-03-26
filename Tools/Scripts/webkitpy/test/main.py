@@ -30,18 +30,19 @@ import sys
 import traceback
 import unittest
 
-# NOTE: We intentionally do not depend on anything else in webkitpy here to avoid breaking test-webkitpy.
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.test.test_finder import TestFinder
 
 _log = logging.getLogger(__name__)
 
 
 class Tester(object):
-    def __init__(self):
+    def __init__(self, filesystem=None):
         self._verbosity = 1
-        self._trees = []
+        self.finder = TestFinder(filesystem or FileSystem())
 
     def add_tree(self, top_directory, starting_subdirectory=None):
-        self._trees.append(TestDirectoryTree(top_directory, starting_subdirectory))
+        self.finder.add_tree(top_directory, starting_subdirectory)
 
     def _parse_args(self):
         parser = optparse.OptionParser(usage='usage: %prog [options] [args...]')
@@ -136,49 +137,10 @@ class Tester(object):
         options, args = self._parse_args()
         self._configure(options)
 
-        for tree in self._trees:
-            tree.clean()
+        self.finder.clean_trees()
 
-        args = args or self._find_modules()
-        return self._run_tests(args)
-
-    def _find_modules(self):
-        suffixes = ['_unittest.py']
-        if not self._options.skip_integrationtests:
-            suffixes.append('_integrationtest.py')
-
-        modules = []
-        for tree in self._trees:
-            modules.extend(tree.find_modules(suffixes))
-        modules.sort()
-
-        for module in modules:
-            _log.debug("Found: %s" % module)
-
-        # FIXME: Figure out how to move this to test-webkitpy in order to to make this file more generic.
-        if not self._options.all:
-            slow_tests = ('webkitpy.common.checkout.scm.scm_unittest',)
-            self._exclude(modules, slow_tests, 'are really, really slow', 31818)
-
-            if sys.platform == 'win32':
-                win32_blacklist = ('webkitpy.common.checkout',
-                                   'webkitpy.common.config',
-                                   'webkitpy.tool')
-                self._exclude(modules, win32_blacklist, 'fail horribly on win32', 54526)
-
-        return modules
-
-    def _exclude(self, modules, module_prefixes, reason, bugid):
-        _log.info('Skipping tests in the following modules or packages because they %s:' % reason)
-        for prefix in module_prefixes:
-            _log.info('    %s' % prefix)
-            modules_to_exclude = filter(lambda m: m.startswith(prefix), modules)
-            for m in modules_to_exclude:
-                if len(modules_to_exclude) > 1:
-                    _log.debug('        %s' % m)
-                modules.remove(m)
-        _log.info('    (https://bugs.webkit.org/show_bug.cgi?id=%d; use --all to include)' % bugid)
-        _log.info('')
+        names = self.finder.find_names(args, self._options.skip_integrationtests, self._options.all)
+        return self._run_tests(names)
 
     def _run_tests(self, args):
         if self._options.coverage:
@@ -191,14 +153,14 @@ class Tester(object):
             cov.start()
 
         # Make sure PYTHONPATH is set up properly.
-        sys.path = [tree.top_directory for tree in self._trees if tree.top_directory not in sys.path] + sys.path
+        sys.path = self.finder.additional_paths(sys.path) + sys.path
 
         _log.debug("Loading the tests...")
 
         loader = unittest.defaultTestLoader
         suites = []
         for name in args:
-            if self._is_module(name):
+            if self.finder.is_module(name):
                 # import modules explicitly before loading their tests because
                 # loadTestsFromName() produces lousy error messages for bad modules.
                 try:
@@ -224,42 +186,8 @@ class Tester(object):
             cov.report(show_missing=False)
         return result.wasSuccessful()
 
-    def _is_module(self, name):
-        relpath = name.replace('.', os.sep) + '.py'
-        return any(os.path.exists(os.path.join(tree.top_directory, relpath)) for tree in self._trees)
-
     def _log_exception(self):
         s = StringIO.StringIO()
         traceback.print_exc(file=s)
         for l in s.buflist:
             _log.error('  ' + l.rstrip())
-
-
-class TestDirectoryTree(object):
-    def __init__(self, top_directory, starting_subdirectory):
-        self.top_directory = os.path.realpath(top_directory)
-        self.search_directory = self.top_directory
-        self.top_package = ''
-        if starting_subdirectory:
-            self.top_package = starting_subdirectory.replace(os.sep, '.') + '.'
-            self.search_directory = os.path.join(self.top_directory, starting_subdirectory)
-
-    def find_modules(self, suffixes):
-        modules = []
-        for dir_path, _, filenames in os.walk(self.search_directory):
-            dir_path = os.path.join(dir_path, '')
-            package = dir_path.replace(self.top_directory + os.sep, '').replace(os.sep, '.')
-            for f in filenames:
-                if any(f.endswith(suffix) for suffix in suffixes):
-                    modules.append(package + f.replace('.py', ''))
-        return modules
-
-    def clean(self):
-        """Delete all .pyc files in the tree that have no matching .py file."""
-        _log.debug("Cleaning orphaned *.pyc files from: %s" % self.search_directory)
-        for dir_path, dir_names, file_names in os.walk(self.search_directory):
-            for file_name in file_names:
-                if file_name.endswith(".pyc") and file_name[:-1] not in file_names:
-                    file_path = os.path.join(dir_path, file_name)
-                    _log.info("Deleting orphan *.pyc file: %s" % file_path)
-                    os.remove(file_path)

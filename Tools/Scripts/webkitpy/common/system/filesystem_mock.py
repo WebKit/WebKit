@@ -82,6 +82,9 @@ class MockFileSystem(object):
             return self.normpath(path)
         return self.abspath(self.join(self.cwd, path))
 
+    def realpath(self, path):
+        return self.abspath(path)
+
     def basename(self, path):
         return self._split(path)[1]
 

@@ -55,6 +55,9 @@ class FileSystem(object):
     def abspath(self, path):
         return os.path.abspath(path)
 
+    def realpath(self, path):
+        return os.path.realpath(path)
+
     def path_to_module(self, module_name):
         """A wrapper for all calls to __file__ to allow easy unit testing."""
         # FIXME: This is the only use of sys in this file. It's possible this function should move elsewhere.
