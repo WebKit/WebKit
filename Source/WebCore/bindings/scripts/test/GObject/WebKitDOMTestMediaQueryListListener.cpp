@@ -36,7 +36,7 @@
 #include "webkitmarshal.h"
 
 namespace WebKit {
-    
+
 WebKitDOMTestMediaQueryListListener* kit(WebCore::TestMediaQueryListListener* obj)
 {
     g_return_val_if_fail(obj, 0);
@@ -46,13 +46,6 @@ WebKitDOMTestMediaQueryListListener* kit(WebCore::TestMediaQueryListListener* ob
 
     return static_cast<WebKitDOMTestMediaQueryListListener*>(DOMObjectCache::put(obj, WebKit::wrapTestMediaQueryListListener(obj)));
 }
-    
-} // namespace WebKit //
-
-
-G_DEFINE_TYPE(WebKitDOMTestMediaQueryListListener, webkit_dom_test_media_query_list_listener, WEBKIT_TYPE_DOM_OBJECT)
-
-namespace WebKit {
 
 WebCore::TestMediaQueryListListener* core(WebKitDOMTestMediaQueryListListener* request)
 {
@@ -64,14 +57,31 @@ WebCore::TestMediaQueryListListener* core(WebKitDOMTestMediaQueryListListener* r
     return coreObject;
 }
 
+WebKitDOMTestMediaQueryListListener* wrapTestMediaQueryListListener(WebCore::TestMediaQueryListListener* coreObject)
+{
+    g_return_val_if_fail(coreObject, 0);
+
+    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+     * in a C-allocated GObject structure.  See the finalize() code for the
+     * matching deref().
+     */
+    coreObject->ref();
+
+    return  WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER(g_object_new(WEBKIT_TYPE_DOM_TEST_MEDIA_QUERY_LIST_LISTENER,
+                                               "core-object", coreObject, NULL));
+}
+
 } // namespace WebKit
+
+G_DEFINE_TYPE(WebKitDOMTestMediaQueryListListener, webkit_dom_test_media_query_list_listener, WEBKIT_TYPE_DOM_OBJECT)
+
 enum {
     PROP_0,
 };
 
-
 static void webkit_dom_test_media_query_list_listener_finalize(GObject* object)
 {
+
     WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
     
     if (dom_object->coreObject) {
@@ -82,6 +92,7 @@ static void webkit_dom_test_media_query_list_listener_finalize(GObject* object)
 
         dom_object->coreObject = NULL;
     }
+
 
     G_OBJECT_CLASS(webkit_dom_test_media_query_list_listener_parent_class)->finalize(object);
 }
@@ -131,18 +142,3 @@ static void webkit_dom_test_media_query_list_listener_init(WebKitDOMTestMediaQue
 {
 }
 
-namespace WebKit {
-WebKitDOMTestMediaQueryListListener* wrapTestMediaQueryListListener(WebCore::TestMediaQueryListListener* coreObject)
-{
-    g_return_val_if_fail(coreObject, 0);
-
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
-    coreObject->ref();
-
-    return  WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER(g_object_new(WEBKIT_TYPE_DOM_TEST_MEDIA_QUERY_LIST_LISTENER,
-                                               "core-object", coreObject, NULL));
-}
-} // namespace WebKit

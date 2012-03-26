@@ -44,7 +44,7 @@
 #include "webkitmarshal.h"
 
 namespace WebKit {
-    
+
 WebKitDOMTestEventTarget* kit(WebCore::TestEventTarget* obj)
 {
     g_return_val_if_fail(obj, 0);
@@ -54,8 +54,32 @@ WebKitDOMTestEventTarget* kit(WebCore::TestEventTarget* obj)
 
     return static_cast<WebKitDOMTestEventTarget*>(DOMObjectCache::put(obj, WebKit::wrapTestEventTarget(obj)));
 }
-    
-} // namespace WebKit //
+
+WebCore::TestEventTarget* core(WebKitDOMTestEventTarget* request)
+{
+    g_return_val_if_fail(request, 0);
+
+    WebCore::TestEventTarget* coreObject = static_cast<WebCore::TestEventTarget*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    g_return_val_if_fail(coreObject, 0);
+
+    return coreObject;
+}
+
+WebKitDOMTestEventTarget* wrapTestEventTarget(WebCore::TestEventTarget* coreObject)
+{
+    g_return_val_if_fail(coreObject, 0);
+
+    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+     * in a C-allocated GObject structure.  See the finalize() code for the
+     * matching deref().
+     */
+    coreObject->ref();
+
+    return  WEBKIT_DOM_TEST_EVENT_TARGET(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_TARGET,
+                                               "core-object", coreObject, NULL));
+}
+
+} // namespace WebKit
 
 static void webkit_dom_test_event_target_dispatch_event(WebKitDOMEventTarget* target, WebKitDOMEvent* event, GError** error)
 {
@@ -89,61 +113,15 @@ static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
     iface->remove_event_listener = webkit_dom_test_event_target_remove_event_listener;
 }
 
-WebKitDOMNode*
-webkit_dom_test_event_target_item(WebKitDOMTestEventTarget* self, gulong index)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestEventTarget * item = WebKit::core(self);
-    PassRefPtr<WebCore::Node> g_res = WTF::getPtr(item->item(index));
-    WebKitDOMNode* res = WebKit::kit(g_res.get());
-    return res;
-}
-
-gboolean
-webkit_dom_test_event_target_dispatch_event(WebKitDOMTestEventTarget* self, WebKitDOMEvent* evt, GError **error)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestEventTarget * item = WebKit::core(self);
-    g_return_val_if_fail(evt, 0);
-    WebCore::Event * converted_evt = NULL;
-    if (evt != NULL) {
-        converted_evt = WebKit::core(evt);
-        g_return_val_if_fail(converted_evt, 0);
-    }
-    WebCore::ExceptionCode ec = 0;
-    gboolean res = item->dispatchEvent(converted_evt, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-    return res;
-}
-
-
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMTestEventTarget, webkit_dom_test_event_target, WEBKIT_TYPE_DOM_OBJECT, G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_DOM_EVENT_TARGET, webkit_dom_event_target_init))
 
-namespace WebKit {
-
-WebCore::TestEventTarget* core(WebKitDOMTestEventTarget* request)
-{
-    g_return_val_if_fail(request, 0);
-
-    WebCore::TestEventTarget* coreObject = static_cast<WebCore::TestEventTarget*>(WEBKIT_DOM_OBJECT(request)->coreObject);
-    g_return_val_if_fail(coreObject, 0);
-
-    return coreObject;
-}
-
-} // namespace WebKit
 enum {
     PROP_0,
 };
 
-
 static void webkit_dom_test_event_target_finalize(GObject* object)
 {
+
     WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
     
     if (dom_object->coreObject) {
@@ -154,6 +132,7 @@ static void webkit_dom_test_event_target_finalize(GObject* object)
 
         dom_object->coreObject = NULL;
     }
+
 
     G_OBJECT_CLASS(webkit_dom_test_event_target_parent_class)->finalize(object);
 }
@@ -203,18 +182,35 @@ static void webkit_dom_test_event_target_init(WebKitDOMTestEventTarget* request)
 {
 }
 
-namespace WebKit {
-WebKitDOMTestEventTarget* wrapTestEventTarget(WebCore::TestEventTarget* coreObject)
+WebKitDOMNode*
+webkit_dom_test_event_target_item(WebKitDOMTestEventTarget* self, gulong index)
 {
-    g_return_val_if_fail(coreObject, 0);
-
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
-    coreObject->ref();
-
-    return  WEBKIT_DOM_TEST_EVENT_TARGET(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_TARGET,
-                                               "core-object", coreObject, NULL));
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestEventTarget * item = WebKit::core(self);
+    PassRefPtr<WebCore::Node> g_res = WTF::getPtr(item->item(index));
+    WebKitDOMNode* res = WebKit::kit(g_res.get());
+    return res;
 }
-} // namespace WebKit
+
+gboolean
+webkit_dom_test_event_target_dispatch_event(WebKitDOMTestEventTarget* self, WebKitDOMEvent* evt, GError **error)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestEventTarget * item = WebKit::core(self);
+    g_return_val_if_fail(evt, 0);
+    WebCore::Event * converted_evt = NULL;
+    if (evt != NULL) {
+        converted_evt = WebKit::core(evt);
+        g_return_val_if_fail(converted_evt, 0);
+    }
+    WebCore::ExceptionCode ec = 0;
+    gboolean res = item->dispatchEvent(converted_evt, ec);
+    if (ec) {
+        WebCore::ExceptionCodeDescription ecdesc(ec);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+    }
+    return res;
+}
+

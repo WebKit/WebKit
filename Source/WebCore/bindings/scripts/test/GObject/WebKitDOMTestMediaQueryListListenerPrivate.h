@@ -24,6 +24,8 @@
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
 #include "TestMediaQueryListListener.h"
+
+
 namespace WebKit {
     WebKitDOMTestMediaQueryListListener *
     wrapTestMediaQueryListListener(WebCore::TestMediaQueryListListener *coreObject);

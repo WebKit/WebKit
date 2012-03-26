@@ -24,6 +24,8 @@
 #include <glib-object.h>
 #include <webkit/WebKitDOMArrayBufferView.h>
 #include "Float64Array.h"
+
+
 namespace WebKit {
     WebKitDOMFloat64Array *
     wrapFloat64Array(WebCore::Float64Array *coreObject);

@@ -24,6 +24,8 @@
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
 #include "TestEventConstructor.h"
+
+
 namespace WebKit {
     WebKitDOMTestEventConstructor *
     wrapTestEventConstructor(WebCore::TestEventConstructor *coreObject);

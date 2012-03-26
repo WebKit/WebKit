@@ -38,7 +38,7 @@
 #include "webkitmarshal.h"
 
 namespace WebKit {
-    
+
 WebKitDOMTestActiveDOMObject* kit(WebCore::TestActiveDOMObject* obj)
 {
     g_return_val_if_fail(obj, 0);
@@ -48,49 +48,6 @@ WebKitDOMTestActiveDOMObject* kit(WebCore::TestActiveDOMObject* obj)
 
     return static_cast<WebKitDOMTestActiveDOMObject*>(DOMObjectCache::put(obj, WebKit::wrapTestActiveDOMObject(obj)));
 }
-    
-} // namespace WebKit //
-
-void
-webkit_dom_test_active_dom_object_exciting_function(WebKitDOMTestActiveDOMObject* self, WebKitDOMNode* next_child)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestActiveDOMObject * item = WebKit::core(self);
-    g_return_if_fail(next_child);
-    WebCore::Node * converted_next_child = NULL;
-    if (next_child != NULL) {
-        converted_next_child = WebKit::core(next_child);
-        g_return_if_fail(converted_next_child);
-    }
-    item->excitingFunction(converted_next_child);
-}
-
-void
-webkit_dom_test_active_dom_object_post_message(WebKitDOMTestActiveDOMObject* self, const gchar* message)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestActiveDOMObject * item = WebKit::core(self);
-    g_return_if_fail(message);
-    WTF::String converted_message = WTF::String::fromUTF8(message);
-    item->postMessage(converted_message);
-}
-
-glong
-webkit_dom_test_active_dom_object_get_exciting_attr(WebKitDOMTestActiveDOMObject* self)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestActiveDOMObject * item = WebKit::core(self);
-    glong res = item->excitingAttr();
-    return res;
-}
-
-
-G_DEFINE_TYPE(WebKitDOMTestActiveDOMObject, webkit_dom_test_active_dom_object, WEBKIT_TYPE_DOM_OBJECT)
-
-namespace WebKit {
 
 WebCore::TestActiveDOMObject* core(WebKitDOMTestActiveDOMObject* request)
 {
@@ -102,15 +59,32 @@ WebCore::TestActiveDOMObject* core(WebKitDOMTestActiveDOMObject* request)
     return coreObject;
 }
 
+WebKitDOMTestActiveDOMObject* wrapTestActiveDOMObject(WebCore::TestActiveDOMObject* coreObject)
+{
+    g_return_val_if_fail(coreObject, 0);
+
+    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+     * in a C-allocated GObject structure.  See the finalize() code for the
+     * matching deref().
+     */
+    coreObject->ref();
+
+    return  WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT(g_object_new(WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT,
+                                               "core-object", coreObject, NULL));
+}
+
 } // namespace WebKit
+
+G_DEFINE_TYPE(WebKitDOMTestActiveDOMObject, webkit_dom_test_active_dom_object, WEBKIT_TYPE_DOM_OBJECT)
+
 enum {
     PROP_0,
     PROP_EXCITING_ATTR,
 };
 
-
 static void webkit_dom_test_active_dom_object_finalize(GObject* object)
 {
+
     WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
     
     if (dom_object->coreObject) {
@@ -121,6 +95,7 @@ static void webkit_dom_test_active_dom_object_finalize(GObject* object)
 
         dom_object->coreObject = NULL;
     }
+
 
     G_OBJECT_CLASS(webkit_dom_test_active_dom_object_parent_class)->finalize(object);
 }
@@ -186,18 +161,39 @@ static void webkit_dom_test_active_dom_object_init(WebKitDOMTestActiveDOMObject*
 {
 }
 
-namespace WebKit {
-WebKitDOMTestActiveDOMObject* wrapTestActiveDOMObject(WebCore::TestActiveDOMObject* coreObject)
+void
+webkit_dom_test_active_dom_object_exciting_function(WebKitDOMTestActiveDOMObject* self, WebKitDOMNode* next_child)
 {
-    g_return_val_if_fail(coreObject, 0);
-
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
-    coreObject->ref();
-
-    return  WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT(g_object_new(WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT,
-                                               "core-object", coreObject, NULL));
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestActiveDOMObject * item = WebKit::core(self);
+    g_return_if_fail(next_child);
+    WebCore::Node * converted_next_child = NULL;
+    if (next_child != NULL) {
+        converted_next_child = WebKit::core(next_child);
+        g_return_if_fail(converted_next_child);
+    }
+    item->excitingFunction(converted_next_child);
 }
-} // namespace WebKit
+
+void
+webkit_dom_test_active_dom_object_post_message(WebKitDOMTestActiveDOMObject* self, const gchar* message)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestActiveDOMObject * item = WebKit::core(self);
+    g_return_if_fail(message);
+    WTF::String converted_message = WTF::String::fromUTF8(message);
+    item->postMessage(converted_message);
+}
+
+glong
+webkit_dom_test_active_dom_object_get_exciting_attr(WebKitDOMTestActiveDOMObject* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestActiveDOMObject * item = WebKit::core(self);
+    glong res = item->excitingAttr();
+    return res;
+}
+

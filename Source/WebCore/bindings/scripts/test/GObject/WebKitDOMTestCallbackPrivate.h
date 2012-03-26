@@ -24,6 +24,9 @@
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
 #include "TestCallback.h"
+
+#if ENABLE(SQL_DATABASE)
+
 namespace WebKit {
     WebKitDOMTestCallback *
     wrapTestCallback(WebCore::TestCallback *coreObject);
@@ -35,5 +38,7 @@ namespace WebKit {
     kit(WebCore::TestCallback* node);
 
 } // namespace WebKit
+
+#endif /* ENABLE(SQL_DATABASE) */
 
 #endif /* WEB_KIT_DOM_TEST_CALLBACK_PRIVATE_H */

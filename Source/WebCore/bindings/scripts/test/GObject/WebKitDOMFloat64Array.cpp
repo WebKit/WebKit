@@ -41,7 +41,7 @@
 #include "webkitmarshal.h"
 
 namespace WebKit {
-    
+
 WebKitDOMFloat64Array* kit(WebCore::Float64Array* obj)
 {
     g_return_val_if_fail(obj, 0);
@@ -51,30 +51,6 @@ WebKitDOMFloat64Array* kit(WebCore::Float64Array* obj)
 
     return static_cast<WebKitDOMFloat64Array*>(DOMObjectCache::put(obj, WebKit::wrapFloat64Array(obj)));
 }
-    
-} // namespace WebKit //
-
-WebKitDOMInt32Array*
-webkit_dom_float64array_foo(WebKitDOMFloat64Array* self, WebKitDOMFloat32Array* array)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::Float64Array * item = WebKit::core(self);
-    g_return_val_if_fail(array, 0);
-    WebCore::Float32Array * converted_array = NULL;
-    if (array != NULL) {
-        converted_array = WebKit::core(array);
-        g_return_val_if_fail(converted_array, 0);
-    }
-    PassRefPtr<WebCore::Int32Array> g_res = WTF::getPtr(item->foo(converted_array));
-    WebKitDOMInt32Array* res = WebKit::kit(g_res.get());
-    return res;
-}
-
-
-G_DEFINE_TYPE(WebKitDOMFloat64Array, webkit_dom_float64array, WEBKIT_TYPE_DOM_ARRAY_BUFFER_VIEW)
-
-namespace WebKit {
 
 WebCore::Float64Array* core(WebKitDOMFloat64Array* request)
 {
@@ -86,14 +62,31 @@ WebCore::Float64Array* core(WebKitDOMFloat64Array* request)
     return coreObject;
 }
 
+WebKitDOMFloat64Array* wrapFloat64Array(WebCore::Float64Array* coreObject)
+{
+    g_return_val_if_fail(coreObject, 0);
+
+    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+     * in a C-allocated GObject structure.  See the finalize() code for the
+     * matching deref().
+     */
+    coreObject->ref();
+
+    return  WEBKIT_DOM_FLOAT64ARRAY(g_object_new(WEBKIT_TYPE_DOM_FLOAT64ARRAY,
+                                               "core-object", coreObject, NULL));
+}
+
 } // namespace WebKit
+
+G_DEFINE_TYPE(WebKitDOMFloat64Array, webkit_dom_float64array, WEBKIT_TYPE_DOM_ARRAY_BUFFER_VIEW)
+
 enum {
     PROP_0,
 };
 
-
 static void webkit_dom_float64array_finalize(GObject* object)
 {
+
     WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
     
     if (dom_object->coreObject) {
@@ -104,6 +97,7 @@ static void webkit_dom_float64array_finalize(GObject* object)
 
         dom_object->coreObject = NULL;
     }
+
 
     G_OBJECT_CLASS(webkit_dom_float64array_parent_class)->finalize(object);
 }
@@ -153,18 +147,20 @@ static void webkit_dom_float64array_init(WebKitDOMFloat64Array* request)
 {
 }
 
-namespace WebKit {
-WebKitDOMFloat64Array* wrapFloat64Array(WebCore::Float64Array* coreObject)
+WebKitDOMInt32Array*
+webkit_dom_float64array_foo(WebKitDOMFloat64Array* self, WebKitDOMFloat32Array* array)
 {
-    g_return_val_if_fail(coreObject, 0);
-
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
-    coreObject->ref();
-
-    return  WEBKIT_DOM_FLOAT64ARRAY(g_object_new(WEBKIT_TYPE_DOM_FLOAT64ARRAY,
-                                               "core-object", coreObject, NULL));
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::Float64Array * item = WebKit::core(self);
+    g_return_val_if_fail(array, 0);
+    WebCore::Float32Array * converted_array = NULL;
+    if (array != NULL) {
+        converted_array = WebKit::core(array);
+        g_return_val_if_fail(converted_array, 0);
+    }
+    PassRefPtr<WebCore::Int32Array> g_res = WTF::getPtr(item->foo(converted_array));
+    WebKitDOMInt32Array* res = WebKit::kit(g_res.get());
+    return res;
 }
-} // namespace WebKit
+

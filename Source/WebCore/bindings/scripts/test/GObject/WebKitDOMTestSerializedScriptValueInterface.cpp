@@ -21,8 +21,6 @@
 #include <glib-object.h>
 #include "config.h"
 
-#if ENABLE(Condition1) || ENABLE(Condition2)
-
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 #include "DOMObjectCache.h"
@@ -40,8 +38,10 @@
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
 
+#if ENABLE(Condition1) || ENABLE(Condition2)
+
 namespace WebKit {
-    
+
 WebKitDOMTestSerializedScriptValueInterface* kit(WebCore::TestSerializedScriptValueInterface* obj)
 {
     g_return_val_if_fail(obj, 0);
@@ -51,87 +51,6 @@ WebKitDOMTestSerializedScriptValueInterface* kit(WebCore::TestSerializedScriptVa
 
     return static_cast<WebKitDOMTestSerializedScriptValueInterface*>(DOMObjectCache::put(obj, WebKit::wrapTestSerializedScriptValueInterface(obj)));
 }
-    
-} // namespace WebKit //
-
-WebKitDOMSerializedScriptValue*
-webkit_dom_test_serialized_script_value_interface_get_value(WebKitDOMTestSerializedScriptValueInterface* self)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
-    PassRefPtr<WebCore::SerializedScriptValue> g_res = WTF::getPtr(item->value());
-    WebKitDOMSerializedScriptValue* res = WebKit::kit(g_res.get());
-    return res;
-}
-
-void
-webkit_dom_test_serialized_script_value_interface_set_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
-    g_return_if_fail(value);
-    WebCore::SerializedScriptValue * converted_value = NULL;
-    if (value != NULL) {
-        converted_value = WebKit::core(value);
-        g_return_if_fail(converted_value);
-    }
-    item->setValue(converted_value);
-}
-
-WebKitDOMSerializedScriptValue*
-webkit_dom_test_serialized_script_value_interface_get_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
-    PassRefPtr<WebCore::SerializedScriptValue> g_res = WTF::getPtr(item->readonlyValue());
-    WebKitDOMSerializedScriptValue* res = WebKit::kit(g_res.get());
-    return res;
-}
-
-WebKitDOMSerializedScriptValue*
-webkit_dom_test_serialized_script_value_interface_get_cached_value(WebKitDOMTestSerializedScriptValueInterface* self)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
-    PassRefPtr<WebCore::SerializedScriptValue> g_res = WTF::getPtr(item->cachedValue());
-    WebKitDOMSerializedScriptValue* res = WebKit::kit(g_res.get());
-    return res;
-}
-
-void
-webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
-    g_return_if_fail(value);
-    WebCore::SerializedScriptValue * converted_value = NULL;
-    if (value != NULL) {
-        converted_value = WebKit::core(value);
-        g_return_if_fail(converted_value);
-    }
-    item->setCachedValue(converted_value);
-}
-
-WebKitDOMSerializedScriptValue*
-webkit_dom_test_serialized_script_value_interface_get_cached_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
-    PassRefPtr<WebCore::SerializedScriptValue> g_res = WTF::getPtr(item->cachedReadonlyValue());
-    WebKitDOMSerializedScriptValue* res = WebKit::kit(g_res.get());
-    return res;
-}
-
-
-G_DEFINE_TYPE(WebKitDOMTestSerializedScriptValueInterface, webkit_dom_test_serialized_script_value_interface, WEBKIT_TYPE_DOM_OBJECT)
-
-namespace WebKit {
 
 WebCore::TestSerializedScriptValueInterface* core(WebKitDOMTestSerializedScriptValueInterface* request)
 {
@@ -143,7 +62,26 @@ WebCore::TestSerializedScriptValueInterface* core(WebKitDOMTestSerializedScriptV
     return coreObject;
 }
 
+WebKitDOMTestSerializedScriptValueInterface* wrapTestSerializedScriptValueInterface(WebCore::TestSerializedScriptValueInterface* coreObject)
+{
+    g_return_val_if_fail(coreObject, 0);
+
+    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+     * in a C-allocated GObject structure.  See the finalize() code for the
+     * matching deref().
+     */
+    coreObject->ref();
+
+    return  WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(g_object_new(WEBKIT_TYPE_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE,
+                                               "core-object", coreObject, NULL));
+}
+
 } // namespace WebKit
+
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
+
+G_DEFINE_TYPE(WebKitDOMTestSerializedScriptValueInterface, webkit_dom_test_serialized_script_value_interface, WEBKIT_TYPE_DOM_OBJECT)
+
 enum {
     PROP_0,
     PROP_VALUE,
@@ -152,9 +90,9 @@ enum {
     PROP_CACHED_READONLY_VALUE,
 };
 
-
 static void webkit_dom_test_serialized_script_value_interface_finalize(GObject* object)
 {
+#if ENABLE(Condition1) || ENABLE(Condition2)
     WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
     
     if (dom_object->coreObject) {
@@ -165,6 +103,7 @@ static void webkit_dom_test_serialized_script_value_interface_finalize(GObject* 
 
         dom_object->coreObject = NULL;
     }
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
 
     G_OBJECT_CLASS(webkit_dom_test_serialized_script_value_interface_parent_class)->finalize(object);
 }
@@ -268,19 +207,111 @@ static void webkit_dom_test_serialized_script_value_interface_init(WebKitDOMTest
 {
 }
 
-namespace WebKit {
-WebKitDOMTestSerializedScriptValueInterface* wrapTestSerializedScriptValueInterface(WebCore::TestSerializedScriptValueInterface* coreObject)
+WebKitDOMSerializedScriptValue*
+webkit_dom_test_serialized_script_value_interface_get_value(WebKitDOMTestSerializedScriptValueInterface* self)
 {
-    g_return_val_if_fail(coreObject, 0);
-
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
-    coreObject->ref();
-
-    return  WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(g_object_new(WEBKIT_TYPE_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE,
-                                               "core-object", coreObject, NULL));
-}
-} // namespace WebKit
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    PassRefPtr<WebCore::SerializedScriptValue> g_res = WTF::getPtr(item->value());
+    WebKitDOMSerializedScriptValue* res = WebKit::kit(g_res.get());
+    return res;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+    return NULL;
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+void
+webkit_dom_test_serialized_script_value_interface_set_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    g_return_if_fail(value);
+    WebCore::SerializedScriptValue * converted_value = NULL;
+    if (value != NULL) {
+        converted_value = WebKit::core(value);
+        g_return_if_fail(converted_value);
+    }
+    item->setValue(converted_value);
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+WebKitDOMSerializedScriptValue*
+webkit_dom_test_serialized_script_value_interface_get_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    PassRefPtr<WebCore::SerializedScriptValue> g_res = WTF::getPtr(item->readonlyValue());
+    WebKitDOMSerializedScriptValue* res = WebKit::kit(g_res.get());
+    return res;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+    return NULL;
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+WebKitDOMSerializedScriptValue*
+webkit_dom_test_serialized_script_value_interface_get_cached_value(WebKitDOMTestSerializedScriptValueInterface* self)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    PassRefPtr<WebCore::SerializedScriptValue> g_res = WTF::getPtr(item->cachedValue());
+    WebKitDOMSerializedScriptValue* res = WebKit::kit(g_res.get());
+    return res;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+    return NULL;
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+void
+webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    g_return_if_fail(value);
+    WebCore::SerializedScriptValue * converted_value = NULL;
+    if (value != NULL) {
+        converted_value = WebKit::core(value);
+        g_return_if_fail(converted_value);
+    }
+    item->setCachedValue(converted_value);
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+WebKitDOMSerializedScriptValue*
+webkit_dom_test_serialized_script_value_interface_get_cached_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    PassRefPtr<WebCore::SerializedScriptValue> g_res = WTF::getPtr(item->cachedReadonlyValue());
+    WebKitDOMSerializedScriptValue* res = WebKit::kit(g_res.get());
+    return res;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+    return NULL;
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+

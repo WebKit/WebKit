@@ -24,6 +24,8 @@
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
 #include "TestNamedConstructor.h"
+
+
 namespace WebKit {
     WebKitDOMTestNamedConstructor *
     wrapTestNamedConstructor(WebCore::TestNamedConstructor *coreObject);

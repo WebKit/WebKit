@@ -24,6 +24,8 @@
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
 #include "TestCustomNamedGetter.h"
+
+
 namespace WebKit {
     WebKitDOMTestCustomNamedGetter *
     wrapTestCustomNamedGetter(WebCore::TestCustomNamedGetter *coreObject);

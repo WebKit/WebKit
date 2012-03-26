@@ -66,6 +66,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMFileList.cpp \
 	DerivedSources/webkit/WebKitDOMFileListPrivate.h \
 	DerivedSources/webkit/WebKitDOMFilePrivate.h \
+	DerivedSources/webkit/WebKitDOMGeolocation.cpp \
+	DerivedSources/webkit/WebKitDOMGeolocationPrivate.h \
 	DerivedSources/webkit/WebKitDOMHistory.cpp \
 	DerivedSources/webkit/WebKitDOMHistoryPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLAnchorElement.cpp \
@@ -293,6 +295,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMBlob.h \
 	DerivedSources/webkit/WebKitDOMFile.h \
 	DerivedSources/webkit/WebKitDOMFileList.h \
+	DerivedSources/webkit/WebKitDOMGeolocation.h \
 	DerivedSources/webkit/WebKitDOMHTMLAnchorElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLAppletElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLAreaElement.h \
@@ -385,14 +388,6 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMXPathResult.h \
 	DerivedSources/webkit/webkitdom.h \
 	DerivedSources/webkit/webkitdomdefines.h
-
-if ENABLE_GEOLOCATION
-webkitgtk_built_h_api += \
-	$(top_builddir)/DerivedSources/webkit/WebKitDOMGeolocation.h
-webkitgtk_gdom_built_sources += \
-	DerivedSources/webkit/WebKitDOMGeolocation.cpp \
-	DerivedSources/webkit/WebKitDOMGeolocationPrivate.h
-endif
 
 if ENABLE_VIDEO
 webkitgtk_built_h_api += \

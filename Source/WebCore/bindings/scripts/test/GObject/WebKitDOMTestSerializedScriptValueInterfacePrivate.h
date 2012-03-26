@@ -24,6 +24,9 @@
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
 #include "TestSerializedScriptValueInterface.h"
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+
 namespace WebKit {
     WebKitDOMTestSerializedScriptValueInterface *
     wrapTestSerializedScriptValueInterface(WebCore::TestSerializedScriptValueInterface *coreObject);
@@ -35,5 +38,7 @@ namespace WebKit {
     kit(WebCore::TestSerializedScriptValueInterface* node);
 
 } // namespace WebKit
+
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 
 #endif /* WEB_KIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE_PRIVATE_H */
