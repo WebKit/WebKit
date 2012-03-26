@@ -50,6 +50,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_compositeToTextureEnabled(false)
     , m_showFPSCounter(false)
     , m_showPlatformLayerTree(false)
+    , m_viewportEnabled(false)
 {
     ASSERT(settings);
 }
@@ -556,6 +557,11 @@ void WebSettingsImpl::setPartialSwapEnabled(bool enabled)
 void WebSettingsImpl::setThreadedAnimationEnabled(bool enabled)
 {
     m_settings->setThreadedAnimationEnabled(enabled);
+}
+
+void WebSettingsImpl::setViewportEnabled(bool enabled)
+{
+    m_viewportEnabled = enabled;
 }
 
 } // namespace WebKit

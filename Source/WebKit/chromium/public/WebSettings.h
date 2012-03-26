@@ -145,6 +145,8 @@ public:
     virtual void setPerTilePaintingEnabled(bool) = 0;
     virtual void setPartialSwapEnabled(bool) = 0;
     virtual void setThreadedAnimationEnabled(bool) = 0;
+    virtual void setViewportEnabled(bool) = 0;
+    virtual bool viewportEnabled() const = 0;
 
 protected:
     ~WebSettings() { }

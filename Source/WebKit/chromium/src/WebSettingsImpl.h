@@ -140,12 +140,15 @@ public:
     virtual void setPerTilePaintingEnabled(bool);
     virtual void setPartialSwapEnabled(bool);
     virtual void setThreadedAnimationEnabled(bool);
+    virtual void setViewportEnabled(bool);
+    virtual bool viewportEnabled() const { return m_viewportEnabled; }
 
 private:
     WebCore::Settings* m_settings;
     bool m_compositeToTextureEnabled;
     bool m_showFPSCounter;
     bool m_showPlatformLayerTree;
+    bool m_viewportEnabled;
 };
 
 } // namespace WebKit
