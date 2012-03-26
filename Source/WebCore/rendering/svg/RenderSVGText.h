@@ -49,7 +49,10 @@ public:
 
     bool needsReordering() const { return m_needsReordering; }
 
-    void textDOMChanged();
+    // Call this method when either the children of a DOM text element have changed, or the length of
+    // the text in any child element has changed.
+    void invalidateTextPositioningElements();
+
     void layoutAttributesChanged(RenderObject*);
     void layoutAttributesWillBeDestroyed(RenderSVGInlineText*, Vector<SVGTextLayoutAttributes*>& affectedAttributes);
     void rebuildLayoutAttributes(bool performFullRebuild = false);

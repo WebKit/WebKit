@@ -331,7 +331,7 @@ void SVGTextContentElement::childrenChanged(bool changedByParser, Node* beforeCh
     // Invalidate the TextPosition cache in SVGTextLayoutAttributesBuilder as it may now point
     // to no-longer existing SVGTextPositioningElements and thus needs to be rebuilt.
     if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(renderer()))
-        textRenderer->textDOMChanged();
+        textRenderer->invalidateTextPositioningElements();
 }
 
 }

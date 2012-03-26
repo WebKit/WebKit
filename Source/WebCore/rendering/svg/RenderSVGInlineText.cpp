@@ -99,7 +99,7 @@ void RenderSVGInlineText::setTextInternal(PassRefPtr<StringImpl> text)
     // the RenderSVGInlineText objects, and thus needs to be rebuild. The latter will assure that the
     // SVGTextLayoutAttributes associated with the RenderSVGInlineText will be updated.
     if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this)) {
-        textRenderer->textDOMChanged();
+        textRenderer->invalidateTextPositioningElements();
         textRenderer->layoutAttributesChanged(this);
     }
 }
