@@ -59,7 +59,7 @@ TYPE_NAME_FIX_MAP = {
 TYPES_WITH_RUNTIME_CAST_SET = frozenset(["Runtime.RemoteObject", "Runtime.PropertyDescriptor",
                                          "Debugger.FunctionDetails", "Debugger.CallFrame"])
 
-STRICT_ENABLED_DOMAINS = ["Debugger", "Page"]
+STRICT_ENABLED_DOMAINS = ["CSS", "Debugger", "Page"]
 
 
 cmdline_parser = optparse.OptionParser()

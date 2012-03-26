@@ -98,23 +98,23 @@ public:
     void reset();
     void mediaQueryResultChanged();
 
-    virtual void getComputedStyleForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorArray>& style);
-    virtual void getInlineStylesForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>& inlineStyle, RefPtr<InspectorObject>& attributes);
-    virtual void getMatchedStylesForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, const bool* includePseudo, const bool* includeInherited, RefPtr<InspectorArray>& matchedCSSRules, RefPtr<InspectorArray>& pseudoIdRules, RefPtr<InspectorArray>& inheritedEntries);
-    virtual void getAllStyleSheets(ErrorString*, RefPtr<InspectorArray>& styleSheetInfos);
-    virtual void getStyleSheet(ErrorString*, const String& styleSheetId, RefPtr<InspectorObject>& result);
+    virtual void getComputedStyleForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSComputedStyleProperty> >&);
+    virtual void getInlineStylesForNode(ErrorString*, int nodeId, RefPtr<TypeBuilder::CSS::CSSStyle>& inlineStyle, RefPtr<TypeBuilder::CSS::CSSStyle>& attributes);
+    virtual void getMatchedStylesForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, const bool* includePseudo, const bool* includeInherited, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> >& matchedCSSRules, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::PseudoIdRules> >& pseudoRules, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry> >& inheritedEntries);
+    virtual void getAllStyleSheets(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSStyleSheetHeader> >& styleSheetInfos);
+    virtual void getStyleSheet(ErrorString*, const String& styleSheetId, RefPtr<TypeBuilder::CSS::CSSStyleSheetBody>& result);
     virtual void getStyleSheetText(ErrorString*, const String& styleSheetId, String* result);
     virtual void setStyleSheetText(ErrorString*, const String& styleSheetId, const String& text);
-    virtual void setPropertyText(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>& result);
-    virtual void toggleProperty(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, bool disable, RefPtr<InspectorObject>& result);
-    virtual void setRuleSelector(ErrorString*, const RefPtr<InspectorObject>& ruleId, const String& selector, RefPtr<InspectorObject>& result);
-    virtual void addRule(ErrorString*, int contextNodeId, const String& selector, RefPtr<InspectorObject>& result);
-    virtual void getSupportedCSSProperties(ErrorString*, RefPtr<InspectorArray>& result);
+    virtual void setPropertyText(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, const String& text, bool overwrite, RefPtr<TypeBuilder::CSS::CSSStyle>& result);
+    virtual void toggleProperty(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, bool disable, RefPtr<TypeBuilder::CSS::CSSStyle>& result);
+    virtual void setRuleSelector(ErrorString*, const RefPtr<InspectorObject>& ruleId, const String& selector, RefPtr<TypeBuilder::CSS::CSSRule>& result);
+    virtual void addRule(ErrorString*, int contextNodeId, const String& selector, RefPtr<TypeBuilder::CSS::CSSRule>& result);
+    virtual void getSupportedCSSProperties(ErrorString*, RefPtr<TypeBuilder::Array<String> >& result);
 
     virtual void startSelectorProfiler(ErrorString*);
-    virtual void stopSelectorProfiler(ErrorString*, RefPtr<InspectorObject>&);
+    virtual void stopSelectorProfiler(ErrorString*, RefPtr<TypeBuilder::CSS::SelectorProfile>&);
 
-    void stopSelectorProfilerImpl(ErrorString*, RefPtr<InspectorObject>* = 0);
+    PassRefPtr<TypeBuilder::CSS::SelectorProfile> stopSelectorProfilerImpl(ErrorString*, bool needProfile);
     void willMatchRule(const CSSStyleRule*);
     void didMatchRule(bool);
     void willProcessRule(const CSSStyleRule*);
@@ -138,15 +138,15 @@ private:
     void recalcStyleForPseudoStateIfNeeded(Element*, InspectorArray* forcedPseudoClasses);
     InspectorStyleSheetForInlineStyle* asInspectorStyleSheet(Element* element);
     Element* elementForId(ErrorString*, int nodeId);
-    void collectStyleSheets(CSSStyleSheet*, InspectorArray*);
+    void collectStyleSheets(CSSStyleSheet*, TypeBuilder::Array<WebCore::TypeBuilder::CSS::CSSStyleSheetHeader>*);
 
     InspectorStyleSheet* bindStyleSheet(CSSStyleSheet*);
     InspectorStyleSheet* viaInspectorStyleSheet(Document*, bool createIfAbsent);
     InspectorStyleSheet* assertStyleSheetForId(ErrorString*, const String&);
     String detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument);
 
-    PassRefPtr<InspectorArray> buildArrayForRuleList(CSSRuleList* ruleList);
-    PassRefPtr<InspectorObject> buildObjectForAttributesStyle(Element*);
+    PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > buildArrayForRuleList(CSSRuleList*);
+    PassRefPtr<TypeBuilder::CSS::CSSStyle> buildObjectForAttributesStyle(Element*);
 
     // InspectorDOMAgent::DOMListener implementation
     virtual void didRemoveDocument(Document*);

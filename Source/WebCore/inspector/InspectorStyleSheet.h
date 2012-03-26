@@ -29,6 +29,7 @@
 #include "CSSStyleDeclaration.h"
 #include "ExceptionCode.h"
 #include "InspectorStyleTextEditor.h"
+#include "InspectorTypeBuilder.h"
 #include "InspectorValues.h"
 #include "PlatformString.h"
 
@@ -79,14 +80,14 @@ public:
     const String& styleSheetId() const { return m_styleSheetId; }
     unsigned ordinal() const { return m_ordinal; }
 
-    PassRefPtr<InspectorValue> asInspectorValue() const
+    PassRefPtr<TypeBuilder::CSS::CSSStyleId> asProtocolValue() const
     {
         if (isEmpty())
-            return InspectorValue::null();
+            return 0;
 
-        RefPtr<InspectorObject> result = InspectorObject::create();
-        result->setString("styleSheetId", m_styleSheetId);
-        result->setNumber("ordinal", m_ordinal);
+        RefPtr<TypeBuilder::CSS::CSSStyleId> result = TypeBuilder::CSS::CSSStyleId::create()
+            .setStyleSheetId(m_styleSheetId)
+            .setOrdinal(m_ordinal);
         return result.release();
     }
 
@@ -130,8 +131,8 @@ public:
     virtual ~InspectorStyle();
 
     CSSStyleDeclaration* cssStyle() const { return m_style.get(); }
-    PassRefPtr<InspectorObject> buildObjectForStyle() const;
-    PassRefPtr<InspectorArray> buildArrayForComputedStyle() const;
+    PassRefPtr<TypeBuilder::CSS::CSSStyle> buildObjectForStyle() const;
+    PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSComputedStyleProperty> > buildArrayForComputedStyle() const;
     bool hasDisabledProperties() const { return !m_disabledProperties.isEmpty(); }
     bool setPropertyText(unsigned index, const String& text, bool overwrite, String* oldText, ExceptionCode&);
     bool toggleProperty(unsigned index, bool disable, ExceptionCode&);
@@ -141,7 +142,7 @@ private:
 
     bool styleText(String* result) const;
     bool populateAllProperties(Vector<InspectorStyleProperty>* result) const;
-    void populateObjectWithStyleProperties(InspectorObject* result) const;
+    PassRefPtr<TypeBuilder::CSS::CSSStyle> styleWithProperties() const;
     bool applyStyleText(const String&);
     String shorthandValue(const String& shorthandProperty) const;
     String shorthandPriority(const String& shorthandProperty) const;
@@ -181,10 +182,10 @@ public:
     CSSStyleRule* addRule(const String& selector, ExceptionCode&);
     bool deleteRule(const InspectorCSSId&, ExceptionCode&);
     CSSStyleRule* ruleForId(const InspectorCSSId&) const;
-    PassRefPtr<InspectorObject> buildObjectForStyleSheet();
-    PassRefPtr<InspectorObject> buildObjectForStyleSheetInfo();
-    PassRefPtr<InspectorObject> buildObjectForRule(CSSStyleRule*);
-    PassRefPtr<InspectorObject> buildObjectForStyle(CSSStyleDeclaration*);
+    PassRefPtr<TypeBuilder::CSS::CSSStyleSheetBody> buildObjectForStyleSheet();
+    PassRefPtr<TypeBuilder::CSS::CSSStyleSheetHeader> buildObjectForStyleSheetInfo();
+    PassRefPtr<TypeBuilder::CSS::CSSRule> buildObjectForRule(CSSStyleRule*);
+    PassRefPtr<TypeBuilder::CSS::CSSStyle> buildObjectForStyle(CSSStyleDeclaration*);
     bool setPropertyText(const InspectorCSSId&, unsigned propertyIndex, const String& text, bool overwrite, String* oldPropertyText, ExceptionCode&);
     bool toggleProperty(const InspectorCSSId&, unsigned propertyIndex, bool disable, ExceptionCode&);
 
