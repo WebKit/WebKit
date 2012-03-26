@@ -44,7 +44,24 @@ var kExampleResultsByTest = {
             "actual": "TEXT"
         }
     }
-}
+};
+
+var kExampleReftestResults = {
+    "reftest.html": {
+        "Mock Builder": {
+            "expected": "PASS",
+            "actual": "IMAGE",
+            "is_reftest": true
+        }
+    },
+    "mismatch-reftest.html": {
+        "Mock Builder": {
+            "expected": "PASS",
+            "actual": "IMAGE",
+            "is_mismatch_reftest": true
+        }
+    }
+};
 
 var kExampleResultsWithTimeoutByTest = {
     "fast/not-fast-test.html": {
@@ -53,7 +70,7 @@ var kExampleResultsWithTimeoutByTest = {
             "actual": "TIMEOUT"
         }
     }
-}
+};
 
 test('View', 8, function() {
     var delegate = {
@@ -75,6 +92,18 @@ test('View', 8, function() {
     view.previousResult();
     equals($('.test-selector', view).accordion('option', 'active'), 0);
     equals($($('.builder-selector', view)[0]).tabs('option', 'selected'), 1);
+});
+
+test('View', 2, function() {
+    var delegate = {
+        fetchResultsURLs: function(failureInfo, callback) { return; }
+    };
+
+    var view = new ui.results.View(delegate);
+    view.setResultsByTest(kExampleReftestResults);
+
+    equals($('.non-action-button', view).length, 2);
+    equals($('.action', view).length, 0);
 });
 
 test('View of timeouts', 1, function() {

@@ -171,6 +171,15 @@ $('.ui-accordion-header').live('click', function() {
     $(this).trigger('customaccordionclick');
 })
 
+function isAnyReftest(testName, resultsByTest)
+{
+    return Object.keys(resultsByTest[testName]).map(function(builder) {
+        return resultsByTest[testName][builder];
+    }).some(function(resultNode) {
+        return resultNode.is_reftest || resultNode.is_mismatch_reftest
+    });
+}
+
 ui.results.TestSelector = base.extends('div', {
     init: function(delegate, resultsByTest)
     {
@@ -188,9 +197,12 @@ ui.results.TestSelector = base.extends('div', {
             $(linkTitle).attr('href', ui.urlForFlakinessDashboard([testName])).text(testName);
 
             var header = document.createElement('h3');
-            $(header).append(new ui.actions.List([
-                new ui.actions.Rebaseline().makeDefault(),
-            ])).append(nonLinkTitle).append(linkTitle);
+            if (isAnyReftest(testName, resultsByTest))
+                $(header).append('<div class="non-action-button">Reftests cannot be rebaselined. Email webkit-gardening@chromium.org if unsure how to fix this.</div>');
+            else
+                $(header).append(new ui.actions.List([new ui.actions.Rebaseline().makeDefault()]));
+
+            $(header).append(nonLinkTitle).append(linkTitle);
             this.appendChild(header);
             this.appendChild(this._delegate.contentForTest(testName));
             ++this._length; // There doesn't seem to be any good way to get this information from accordion.

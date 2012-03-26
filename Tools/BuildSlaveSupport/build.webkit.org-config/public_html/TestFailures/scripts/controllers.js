@@ -32,6 +32,8 @@ var kCheckoutUnavailableMessage = 'Failed! Garden-o-matic needs a local server t
 // FIXME: Where should this function go?
 function rebaselineWithStatusUpdates(failureInfoList)
 {
+    // FIXME: If a test is a reftest, webkit-patch rebaseline-test should error out
+    // and we should alert (modal dialog?) the user.
     var statusView = new ui.StatusArea('Rebaseline');
     var id = statusView.newId();
 
