@@ -2697,3 +2697,6 @@ fast/css/color-correction-untagged-images.html
 
 # The inner <input> should now grow to take the full cell's height.
 fast/table/colspanMinWidth-vertical.html
+
+# Transparent image being produced
+fast/frames/transparent-scrollbar.html
