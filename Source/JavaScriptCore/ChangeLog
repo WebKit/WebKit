@@ -1,3 +1,10 @@
+2012-03-26  Dan Bernstein  <mitz@apple.com>
+
+        Fixed builds with assertions disabled.
+
+        * yarr/YarrCanonicalizeUCS2.h:
+        (JSC::Yarr::areCanonicallyEquivalent):
+
 2012-03-26  Gavin Barraclough  <barraclough@apple.com>
 
         Unreviewed - errk! - accidentally the whole pbxproj.

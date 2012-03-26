@@ -129,6 +129,7 @@ inline bool areCanonicallyEquivalent(UChar a, UChar b)
     }
 
     ASSERT_NOT_REACHED();
+    return false;
 }
 
 } } // JSC::Yarr
