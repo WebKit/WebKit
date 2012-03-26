@@ -3388,7 +3388,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         RefPtr<StyleReflection> reflection = StyleReflection::create();
         reflection->setDirection(reflectValue->direction());
         if (reflectValue->offset())
-            reflection->setOffset(reflectValue->offset()->convertToLength<FixedIntegerConversion | PercentConversion>(style(), m_rootElementStyle, zoomFactor));
+            reflection->setOffset(reflectValue->offset()->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(style(), m_rootElementStyle, zoomFactor));
         NinePieceImage mask;
         mask.setMaskDefaults();
         mapNinePieceImage(property, reflectValue->mask(), mask);
