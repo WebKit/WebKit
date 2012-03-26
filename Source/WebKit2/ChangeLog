@@ -1,3 +1,17 @@
+2012-03-26  Anders Carlsson  <andersca@apple.com>
+
+        Never remove root compositing layers in the web process
+        https://bugs.webkit.org/show_bug.cgi?id=82255
+        <rdar://problem/11058521>
+
+        Reviewed by Sam Weinig.
+
+        Since we never leave accelerated compositing mode when using tiled drawing, we should
+        never remove root compositing layers in the web process.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+
 2012-03-26  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] default families are not set in QWebPreferences
