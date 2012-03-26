@@ -1,3 +1,10 @@
+2012-03-26  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Add the build outputs dir to the list of build dirs,
+        so we make sure it finds the API headers on all platforms.
+
+        * wscript:
+
 2012-03-26  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r112039.

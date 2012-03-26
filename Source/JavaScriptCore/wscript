@@ -56,7 +56,7 @@ def build(bld):
 
     jscore_excludes.extend(get_excludes_in_dirs(abs_dirs, jscore_exclude_patterns))
 
-    includes = common_includes + full_dirs
+    includes = common_includes + full_dirs + [output_dir]
     if sys.platform.startswith('darwin'):
         includes.append(os.path.join(jscore_dir, 'icu'))
 
