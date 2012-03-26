@@ -159,11 +159,11 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint
     if (style()->isHorizontalWritingMode()) {
         LayoutUnit clipTop = paintRect.y();
         LayoutUnit clipHeight = max(static_cast<LayoutUnit>(style()->borderTopWidth()), legend->height() - ((legend->height() - borderTop()) / 2));
-        graphicsContext->clipOut(LayoutRect(paintRect.x() + legend->x(), clipTop, legend->width(), clipHeight));
+        graphicsContext->clipOut(pixelSnappedIntRect(paintRect.x() + legend->x(), clipTop, legend->width(), clipHeight));
     } else {
         LayoutUnit clipLeft = paintRect.x();
         LayoutUnit clipWidth = max(static_cast<LayoutUnit>(style()->borderLeftWidth()), legend->width());
-        graphicsContext->clipOut(LayoutRect(clipLeft, paintRect.y() + legend->y(), clipWidth, legend->height()));
+        graphicsContext->clipOut(pixelSnappedIntRect(clipLeft, paintRect.y() + legend->y(), clipWidth, legend->height()));
     }
 
     paintBorder(paintInfo, paintRect, style());
@@ -183,11 +183,11 @@ void RenderFieldset::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOff
     // cases the legend is embedded in the right and bottom borders respectively.
     // https://bugs.webkit.org/show_bug.cgi?id=47236
     if (style()->isHorizontalWritingMode()) {
-        LayoutUnit yOff = (legend->y() > 0) ? 0 : (legend->height() - borderTop()) / 2;
+        LayoutUnit yOff = (legend->y() > 0) ? zeroLayoutUnit : (legend->height() - borderTop()) / 2;
         paintRect.expand(0, -yOff);
         paintRect.move(0, yOff);
     } else {
-        LayoutUnit xOff = (legend->x() > 0) ? 0 : (legend->width() - borderLeft()) / 2;
+        LayoutUnit xOff = (legend->x() > 0) ? zeroLayoutUnit : (legend->width() - borderLeft()) / 2;
         paintRect.expand(-xOff, 0);
         paintRect.move(xOff, 0);
     }
