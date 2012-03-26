@@ -29,6 +29,7 @@
 #include <wtf/ASCIICType.h>
 #include "LinkBuffer.h"
 #include "Yarr.h"
+#include "YarrCanonicalizeUCS2.h"
 
 #if ENABLE(YARR_JIT)
 
@@ -262,10 +263,10 @@ class YarrGenerator : private MacroAssembler {
 
         // For case-insesitive compares, non-ascii characters that have different
         // upper & lower case representations are converted to a character class.
-        ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(ch) || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
+        ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(ch) || isCanonicallyUnique(ch));
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
-            or32(TrustedImm32(32), character);
-            ch = Unicode::toLower(ch);
+            or32(TrustedImm32(0x20), character);
+            ch |= 0x20;
         }
 
         return branch32(NotEqual, character, Imm32(ch));
@@ -685,9 +686,9 @@ class YarrGenerator : private MacroAssembler {
 
         // For case-insesitive compares, non-ascii characters that have different
         // upper & lower case representations are converted to a character class.
-        ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(ch) || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
+        ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(ch) || isCanonicallyUnique(ch));
 
-        if ((m_pattern.m_ignoreCase) && (isASCIIAlpha(ch)))
+        if (m_pattern.m_ignoreCase && isASCIIAlpha(ch))
             ignoreCaseMask |= 32;
 
         for (numberCharacters = 1; numberCharacters < maxCharactersAtOnce && nextOp->m_op == OpTerm; ++numberCharacters, nextOp = &m_ops[opIndex + numberCharacters]) {
@@ -713,7 +714,7 @@ class YarrGenerator : private MacroAssembler {
 
             // For case-insesitive compares, non-ascii characters that have different
             // upper & lower case representations are converted to a character class.
-            ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(currentCharacter) || (Unicode::toLower(currentCharacter) == Unicode::toUpper(currentCharacter)));
+            ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(currentCharacter) || isCanonicallyUnique(currentCharacter));
 
             allCharacters |= (currentCharacter << shiftAmount);
 
@@ -790,10 +791,10 @@ class YarrGenerator : private MacroAssembler {
 
         // For case-insesitive compares, non-ascii characters that have different
         // upper & lower case representations are converted to a character class.
-        ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(ch) || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
+        ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(ch) || isCanonicallyUnique(ch));
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
-            or32(TrustedImm32(32), character);
-            ch = Unicode::toLower(ch);
+            or32(TrustedImm32(0x20), character);
+            ch |= 0x20;
         }
 
         op.m_jumps.append(branch32(NotEqual, character, Imm32(ch)));

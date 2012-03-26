@@ -219,6 +219,7 @@ SET(JavaScriptCore_SOURCES
     tools/CodeProfile.cpp
     tools/CodeProfiling.cpp
 
+    yarr/YarrCanonicalizeUCS2.cpp
     yarr/YarrPattern.cpp
     yarr/YarrInterpreter.cpp
     yarr/YarrJIT.cpp

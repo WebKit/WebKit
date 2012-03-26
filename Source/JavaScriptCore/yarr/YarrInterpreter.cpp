@@ -29,6 +29,7 @@
 
 #include "UString.h"
 #include "Yarr.h"
+#include "YarrCanonicalizeUCS2.h"
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/DataLog.h>
 #include <wtf/text/CString.h>
@@ -383,15 +384,22 @@ public:
 
         if (pattern->m_ignoreCase) {
             for (unsigned i = 0; i < matchSize; ++i) {
-                int ch = input.reread(matchBegin + i);
+                int oldCh = input.reread(matchBegin + i);
+                int ch = input.readChecked(negativeInputOffset + matchSize - i);
 
-                int lo = Unicode::toLower(ch);
-                int hi = Unicode::toUpper(ch);
+                if (oldCh == ch)
+                    continue;
 
-                if ((lo != hi) ? (!checkCasedCharacter(lo, hi, negativeInputOffset + matchSize - i)) : (!checkCharacter(ch, negativeInputOffset + matchSize - i))) {
-                    input.uncheckInput(matchSize);
-                    return false;
-                }
+                // The definition for canonicalize (see ES 5.1, 15.10.2.8) means that
+                // unicode values are never allowed to match against ascii ones.
+                if (isASCII(oldCh) || isASCII(ch)) {
+                    if (toASCIIUpper(oldCh) == toASCIIUpper(ch))
+                        continue;
+                } else if (areCanonicallyEquivalent(oldCh, ch))
+                    continue;
+
+                input.uncheckInput(matchSize);
+                return false;
             }
         } else {
             for (unsigned i = 0; i < matchSize; ++i) {

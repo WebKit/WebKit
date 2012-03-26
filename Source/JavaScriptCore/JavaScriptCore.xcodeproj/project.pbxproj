@@ -340,6 +340,8 @@
 		863B23E00FC6118900703AA4 /* MacroAssemblerCodeRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8642C510151C06A90046D4EF /* RegExpCachedResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86F75EFB151C062F007C9BA3 /* RegExpCachedResult.cpp */; };
 		8642C512151C083D0046D4EF /* RegExpMatchesArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86F75EFD151C062F007C9BA3 /* RegExpMatchesArray.cpp */; };
+		8642C547151FE26B0046D4EF /* YarrCanonicalizeUCS2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8642C544151FE26B0046D4EF /* YarrCanonicalizeUCS2.cpp */; };
+		8642C548151FE26B0046D4EF /* YarrCanonicalizeUCS2.h in Headers */ = {isa = PBXBuildFile; fileRef = 8642C545151FE26B0046D4EF /* YarrCanonicalizeUCS2.h */; };
 		865A30F1135007E100CDB49E /* JSValueInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 865A30F0135007E100CDB49E /* JSValueInlineMethods.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		865F408810E7D56300947361 /* APIShims.h in Headers */ = {isa = PBXBuildFile; fileRef = 865F408710E7D56300947361 /* APIShims.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		866739D213BFDE710023D87C /* BigInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 866739D013BFDE710023D87C /* BigInteger.h */; };
@@ -976,6 +978,9 @@
 		8604F4F2143A6C4400B295F5 /* ChangeLog */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
 		8604F503143CE1C100B295F5 /* JSGlobalThis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalThis.h; sourceTree = "<group>"; };
 		863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerCodeRef.h; sourceTree = "<group>"; };
+		8642C544151FE26B0046D4EF /* YarrCanonicalizeUCS2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrCanonicalizeUCS2.cpp; path = yarr/YarrCanonicalizeUCS2.cpp; sourceTree = "<group>"; };
+		8642C545151FE26B0046D4EF /* YarrCanonicalizeUCS2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrCanonicalizeUCS2.h; path = yarr/YarrCanonicalizeUCS2.h; sourceTree = "<group>"; };
+		8642C546151FE26B0046D4EF /* YarrCanonicalizeUCS2.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = YarrCanonicalizeUCS2.js; path = yarr/YarrCanonicalizeUCS2.js; sourceTree = "<group>"; };
 		865A30F0135007E100CDB49E /* JSValueInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValueInlineMethods.h; sourceTree = "<group>"; };
 		865F408710E7D56300947361 /* APIShims.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIShims.h; sourceTree = "<group>"; };
 		866739D013BFDE710023D87C /* BigInteger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigInteger.h; sourceTree = "<group>"; };
@@ -1952,6 +1957,9 @@
 			isa = PBXGroup;
 			children = (
 				451539B812DC994500EF7AC4 /* Yarr.h */,
+				8642C544151FE26B0046D4EF /* YarrCanonicalizeUCS2.cpp */,
+				8642C545151FE26B0046D4EF /* YarrCanonicalizeUCS2.h */,
+				8642C546151FE26B0046D4EF /* YarrCanonicalizeUCS2.js */,
 				86704B7D12DBA33700A9FE7B /* YarrInterpreter.cpp */,
 				86704B7E12DBA33700A9FE7B /* YarrInterpreter.h */,
 				86704B7F12DBA33700A9FE7B /* YarrJIT.cpp */,
@@ -2502,9 +2510,13 @@
 				0A4337BE1506219B00991C95 /* DFGRedundantPhiEliminationPhase.h in Headers */,
 				0FA581BB150E953000B9A2D9 /* DFGNodeFlags.h in Headers */,
 				0FA581BC150E953000B9A2D9 /* DFGNodeType.h in Headers */,
+<<<<<<< .mine
+				8642C548151FE26B0046D4EF /* YarrCanonicalizeUCS2.h in Headers */,
+=======
 				0F2BDC16151C5D4F00CD8910 /* DFGFixupPhase.h in Headers */,
 				0F2BDC21151E803B00CD8910 /* DFGInsertionSet.h in Headers */,
 				0F2BDC2C151FDE9100CD8910 /* Operands.h in Headers */,
+>>>>>>> .r112137
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3062,6 +3074,7 @@
 				0F2BDC15151C5D4D00CD8910 /* DFGFixupPhase.cpp in Sources */,
 				8642C510151C06A90046D4EF /* RegExpCachedResult.cpp in Sources */,
 				8642C512151C083D0046D4EF /* RegExpMatchesArray.cpp in Sources */,
+				8642C547151FE26B0046D4EF /* YarrCanonicalizeUCS2.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

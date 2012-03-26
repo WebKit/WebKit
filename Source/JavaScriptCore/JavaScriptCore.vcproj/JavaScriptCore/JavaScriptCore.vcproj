@@ -1734,6 +1734,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\yarr\YarrCanonicalizeUCS2.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\yarr\YarrCanonicalizeUCS2.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\yarr\YarrInterpreter.cpp"
 				>
 			</File>

@@ -578,6 +578,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/tools/ProfileTreeNode.h \
 	Source/JavaScriptCore/tools/TieredMMapArray.h \
 	Source/JavaScriptCore/yarr/Yarr.h \
+	Source/JavaScriptCore/yarr/YarrCanonicalizeUCS2.cpp \
+	Source/JavaScriptCore/yarr/YarrCanonicalizeUCS2.h \
 	Source/JavaScriptCore/yarr/YarrInterpreter.cpp \
 	Source/JavaScriptCore/yarr/YarrInterpreter.h \
 	Source/JavaScriptCore/yarr/YarrJIT.cpp \
