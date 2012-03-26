@@ -1090,7 +1090,7 @@ class Port(object):
     def lookup_virtual_test_base(self, test_name):
         for suite in self.populated_virtual_test_suites():
             if test_name.startswith(suite.name):
-                return suite.tests.get(test_name)
+                return test_name.replace(suite.name, suite.base)
         return None
 
     def lookup_virtual_test_args(self, test_name):
