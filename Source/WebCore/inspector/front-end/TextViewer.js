@@ -1069,15 +1069,19 @@ WebInspector.TextEditorMainPanel.prototype = {
             return false;
 
         this.beginUpdates();
-        this._enterTextChangeMode();
 
-        function callback(oldRange, newRange)
+        function before()
         {
-            this._exitTextChangeMode(oldRange, newRange);
             this._enterTextChangeMode();
         }
-        var range = redo ? this._textModel.redo(callback.bind(this)) : this._textModel.undo(callback.bind(this));
-        this._exitTextChangeMode(null, null);
+
+        function after(oldRange, newRange)
+        {
+            this._exitTextChangeMode(oldRange, newRange);
+        }
+
+        var range = redo ? this._textModel.redo(before.bind(this), after.bind(this)) : this._textModel.undo(before.bind(this), after.bind(this));
+
         this.endUpdates();
 
         // Restore location post-repaint.
@@ -1754,11 +1758,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             return;
         }
 
-        // This is a "foreign" call outside of this class. Should be before we delete the dirty lines flag.
-        this._enterTextChangeMode();
-
         var dirtyLines = this._dirtyLines;
-        delete this._dirtyLines;
 
         var firstChunkNumber = this._chunkNumberForLine(dirtyLines.start);
         var startLine = this._textChunks[firstChunkNumber].startLine;
@@ -1836,7 +1836,18 @@ WebInspector.TextEditorMainPanel.prototype = {
         else
             var oldRange = new WebInspector.TextRange(startLine, startColumn, endLine - 1, endColumn);
 
-        var newRange = this._setText(oldRange, lines.join("\n"));
+        var newContent = lines.join("\n");
+        if (this._textModel.copyRange(oldRange) === newContent) {
+            delete this._dirtyLines;
+            return; // Noop
+        }
+
+        // This is a "foreign" call outside of this class. Should be before we delete the dirty lines flag.
+        this._enterTextChangeMode();
+
+        delete this._dirtyLines;
+
+        var newRange = this._setText(oldRange, newContent);
 
         this._paintScheduledLines(true);
         this._restoreSelection(selection);

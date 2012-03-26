@@ -33,7 +33,7 @@ After changing text model, but before updating highlights
 1 : /** : javascript-comment[0-5]
 2 :  * line #1 : javascript-comment[0-10]
 3 :  * line #2 : javascript-comment[0-10]
-4 : /** : javascript-comment[0-10]
+4 : /** : null
 5 :  * line #1 : null
 6 :  * line #2 : null
 7 :  * line #3 : null
@@ -44,7 +44,7 @@ After changing text model, but before updating highlights
 12 :  * line #8 : null
 13 :  * var a = new A(); //*/ : null
 14 : some text : null
-15 :  * line #6 : null
+15 :  * line #6 : javascript-comment[0-10]
 16 :  * line #7 : javascript-comment[0-10]
 17 :  * line #8 : javascript-comment[0-10]
 18 :  * var a = new A(); //*/ : javascript-comment[0-24]

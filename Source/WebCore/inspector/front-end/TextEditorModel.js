@@ -160,11 +160,19 @@ WebInspector.TextEditorModel.prototype = {
             postCaret += newLines[0].length;
         } else {
             this._setLine(range.startLine, prefix + newLines[0]);
+
             for (var i = 1; i < newLines.length; ++i)
-                this._insertLine(range.startLine + i, newLines[i]);
+                this._lines.splice(range.startLine + i, 0, newLines[i]);
+            // Adjust attributes, attributes move with the first character of line.
+            var spliceParameters = new Array(newLines.length + 1); // 2 + number of items to insert.
+            spliceParameters[0] = range.startColumn ? range.startLine + 1 : range.startLine;
+            spliceParameters[1] = 0;
+            this._attributes.splice.apply(this._attributes, spliceParameters);
+
             this._setLine(range.startLine + newLines.length - 1, newLines[newLines.length - 1] + suffix);
             postCaret = newLines[newLines.length - 1].length;
         }
+
         return new WebInspector.TextRange(range.startLine, range.startColumn,
                                           range.startLine + newLines.length - 1, postCaret);
     },
@@ -177,26 +185,17 @@ WebInspector.TextEditorModel.prototype = {
         var prefix = this._lines[range.startLine].substring(0, range.startColumn);
         var suffix = this._lines[range.endLine].substring(range.endColumn);
 
-        if (range.endLine > range.startLine)
-            this._removeLines(range.startLine + 1, range.endLine - range.startLine);
+        if (range.endLine > range.startLine) {
+            this._lines.splice(range.startLine + 1, range.endLine - range.startLine);
+            // Adjust attributes, attributes move with the first character of line.
+            this._attributes.splice(range.startColumn ? range.startLine + 1 : range.startLine, range.endLine - range.startLine);
+        }
         this._setLine(range.startLine, prefix + suffix);
     },
 
     _setLine: function(lineNumber, text)
     {
         this._lines[lineNumber] = text;
-    },
-
-    _removeLines: function(fromLine, count)
-    {
-        this._lines.splice(fromLine, count);
-        this._attributes.splice(fromLine, count);
-    },
-
-    _insertLine: function(lineNumber, text)
-    {
-        this._lines.splice(lineNumber, 0, text);
-        this._attributes.splice(lineNumber, 0, {});
     },
 
     wordRange: function(lineNumber, column)
@@ -282,38 +281,43 @@ WebInspector.TextEditorModel.prototype = {
         return command;
     },
 
-    undo: function(callback)
+    undo: function(beforeCallback, afterCallback)
     {
         this._markRedoableState();
 
         this._inUndo = true;
-        var range = this._doUndo(this._undoStack, callback);
+        var range = this._doUndo(this._undoStack, beforeCallback, afterCallback);
         delete this._inUndo;
 
         return range;
     },
 
-    redo: function(callback)
+    redo: function(beforeCallback, afterCallback)
     {
         this.markUndoableState();
 
         this._inRedo = true;
-        var range = this._doUndo(this._redoStack, callback);
+        var range = this._doUndo(this._redoStack, beforeCallback, afterCallback);
         delete this._inRedo;
 
         return range;
     },
 
-    _doUndo: function(stack, callback)
+    _doUndo: function(stack, beforeCallback, afterCallback)
     {
         var range = null;
         for (var i = stack.length - 1; i >= 0; --i) {
             var command = stack[i];
             stack.length = i;
 
+            if (beforeCallback)
+                beforeCallback();
+
             range = this.setText(command.range, command.text);
-            if (callback)
-                callback(command.range, range);
+
+            if (afterCallback)
+                afterCallback(command.range, range);
+
             if (i > 0 && stack[i - 1].explicit)
                 return range;
         }
