@@ -222,6 +222,13 @@ if (window.layoutTestController)
   <div data-expected-height="100" data-offset-y="0" style="width: -webkit-flex(1 0 0); height: 100px;"></div>
 </div>
 
+<div class="flexbox" style="max-height: 20px">
+  <div data-expected-height="40" data-offset-y="-10" style="width: -webkit-flex(1 0 0); -webkit-flex-item-align: center; height: 40px;"></div>
+  <div data-expected-height="40" data-offset-y="-20" style="width: -webkit-flex(1 0 0); -webkit-flex-item-align: end; height: 40px;"></div>
+  <div data-expected-height="40" data-offset-y="0" style="width: -webkit-flex(1 0 0); height: 40px;"></div>
+  <div data-expected-height="20" data-offset-y="0" style="width: -webkit-flex(1 0 0);"></div>
+</div>
+
 <div class="flexbox" style="font-family: test;">
   <div id="baseline1" style="width: -webkit-flex(1 0 0); -webkit-flex-item-align: baseline;">ahem</div>
   <div id="baseline2" data-offset-y="0" style="width: -webkit-flex(1 0 0); -webkit-flex-item-align: baseline;"><img src="../../fast/replaced/resources/1x1-blue.png" style="height: 50px;"></div>

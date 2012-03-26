@@ -250,9 +250,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
     IntSize previousSize = size();
 
     setLogicalHeight(0);
-    // We need to call both of these because we grab both crossAxisExtent and mainAxisExtent in layoutFlexItems.
     computeLogicalWidth();
-    computeLogicalHeight();
 
     m_overflow.clear();
 
@@ -264,10 +262,15 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
             layer()->setHasVerticalScrollbar(true);
     }
 
-    layoutFlexItems(relayoutChildren);
+    WTF::Vector<LineContext> lineContexts;
+    FlexOrderHashSet flexOrderValues;
+    computeMainAxisPreferredSizes(relayoutChildren, flexOrderValues);
+    FlexOrderIterator flexIterator(this, flexOrderValues);
+    layoutFlexItems(relayoutChildren, flexIterator, lineContexts);
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
     computeLogicalHeight();
+    repositionLogicalHeightDependentFlexItems(flexIterator, lineContexts, oldClientAfterEdge);
 
     if (size() != previousSize)
         relayoutChildren = true;
@@ -289,6 +292,24 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
     repainter.repaintAfterLayout();
 
     setNeedsLayout(false);
+}
+
+void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(FlexOrderIterator& iterator, WTF::Vector<LineContext>& lineContexts, LayoutUnit& oldClientAfterEdge)
+{
+    // If we have a single line flexbox, the line height is all the available space.
+    // For flex-direction: row, this means we need to use the height, so we do this after calling computeLogicalHeight.
+    if (!isMultiline() && lineContexts.size() == 1)
+        lineContexts[0].crossAxisExtent = crossAxisContentExtent();
+    alignChildren(iterator, lineContexts);
+
+    if (style()->flexWrap() == FlexWrapReverse) {
+        if (isHorizontalFlow())
+            oldClientAfterEdge = clientLogicalBottom();
+        flipForWrapReverse(iterator, lineContexts);
+    }
+
+    // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
+    flipForRightToLeftColumn(iterator);
 }
 
 bool RenderFlexibleBox::hasOrthogonalFlow(RenderBox* child) const
@@ -589,21 +610,16 @@ LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMain
     return heightResult - preferredMainAxisExtent;
 }
 
-void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
+void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren, FlexOrderIterator& iterator, WTF::Vector<LineContext>& lineContexts)
 {
-    FlexOrderHashSet flexOrderValues;
-    computeMainAxisPreferredSizes(relayoutChildren, flexOrderValues);
-
     OrderedFlexItemList orderedChildren;
     LayoutUnit preferredMainAxisExtent;
     float totalPositiveFlexibility;
     float totalNegativeFlexibility;
     LayoutUnit minMaxAppliedMainAxisExtent;
-    WTF::Vector<LineContext> lineContexts;
-    FlexOrderIterator flexIterator(this, flexOrderValues);
 
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
-    while (computeNextFlexLine(flexIterator, orderedChildren, preferredMainAxisExtent, totalPositiveFlexibility, totalNegativeFlexibility, minMaxAppliedMainAxisExtent)) {
+    while (computeNextFlexLine(iterator, orderedChildren, preferredMainAxisExtent, totalPositiveFlexibility, totalNegativeFlexibility, minMaxAppliedMainAxisExtent)) {
         LayoutUnit availableFreeSpace = computeAvailableFreeSpace(preferredMainAxisExtent);
         FlexSign flexSign = (minMaxAppliedMainAxisExtent < preferredMainAxisExtent + availableFreeSpace) ? PositiveFlexibility : NegativeFlexibility;
         InflexibleFlexItemSize inflexibleItems;
@@ -615,14 +631,6 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
 
         layoutAndPlaceChildren(crossAxisOffset, orderedChildren, childSizes, availableFreeSpace, lineContexts);
     }
-//
-    alignChildren(flexIterator, lineContexts);
-
-    if (style()->flexWrap() == FlexWrapReverse)
-        flipForWrapReverse(flexIterator, lineContexts);
-
-    // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
-    flipForRightToLeftColumn(flexIterator);
 }
 
 float RenderFlexibleBox::positiveFlexForChild(RenderBox* child) const
@@ -927,9 +935,8 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
         layoutColumnReverse(children, childSizes, crossAxisOffset, availableFreeSpace);
     }
 
-    LayoutUnit lineCrossAxisExtent = isMultiline() ? maxChildCrossAxisExtent : crossAxisContentExtent();
-    lineContexts.append(LineContext(crossAxisOffset, lineCrossAxisExtent, children.size(), maxAscent));
-    crossAxisOffset += lineCrossAxisExtent;
+    lineContexts.append(LineContext(crossAxisOffset, maxChildCrossAxisExtent, children.size(), maxAscent));
+    crossAxisOffset += maxChildCrossAxisExtent;
 }
 
 void RenderFlexibleBox::layoutColumnReverse(const OrderedFlexItemList& children, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace)
@@ -1076,9 +1083,6 @@ void RenderFlexibleBox::flipForRightToLeftColumn(FlexOrderIterator& iterator)
 
 void RenderFlexibleBox::flipForWrapReverse(FlexOrderIterator& iterator, const WTF::Vector<LineContext>& lineContexts)
 {
-    if (!isColumnFlow())
-        computeLogicalHeight();
-
     LayoutUnit contentExtent = crossAxisContentExtent();
     RenderBox* child = iterator.first();
     for (size_t lineNumber = 0; lineNumber < lineContexts.size(); ++lineNumber) {
