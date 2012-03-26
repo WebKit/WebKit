@@ -1,55 +1,8 @@
 2012-03-26  Dirk Pranke  <dpranke@chromium.org>
 
-        test-webkitpy: split test-finding code into a different module
-        https://bugs.webkit.org/show_bug.cgi?id=82253
+        Fix duplicated ChangeLog entry from r112171.
 
-        Reviewed by Adam Barth.
-
-        Per suggestion from abarth, this change splits all the
-        filesystem-crawling, test-finding code in test-webkitpy out into
-        a separate module and switches to using a FileSystem object.
-        This makes things much more testable, so we also add tests :).
-
-        We also add a realpath() method to the Filesystem object, since
-        test-webkitpy needs that in order to be able to resolve symlinks
-        properly to determine whether a file is under a particular tree
-        or not.
-
-        * Scripts/webkitpy/common/system/filesystem.py:
-        (FileSystem.realpath):
-        * Scripts/webkitpy/common/system/filesystem_mock.py:
-        (MockFileSystem.realpath):
-        * Scripts/webkitpy/test/main.py:
-        (Tester.__init__):
-        (Tester.add_tree):
-        (Tester.run):
-        (Tester._run_tests):
-        (Tester._log_exception):
-        * Scripts/webkitpy/test/test_finder.py: Added.
-        (TestDirectoryTree):
-        (TestDirectoryTree.__init__):
-        (TestDirectoryTree.find_modules):
-        (TestDirectoryTree.find_modules.file_filter):
-        (TestDirectoryTree.to_module):
-        (TestDirectoryTree.clean):
-        (TestFinder):
-        (TestFinder.__init__):
-        (TestFinder.add_tree):
-        (TestFinder.additional_paths):
-        (TestFinder.clean_trees):
-        (TestFinder.is_module):
-        (TestFinder.to_module):
-        (TestFinder.find_names):
-        (TestFinder._exclude):
-        * Scripts/webkitpy/test/test_finder_unittest.py: Added.
-        (TestFinderTest):
-        (TestFinderTest.setUp):
-        (TestFinderTest.tearDown):
-        (TestFinderTest.test_additional_system_paths):
-        (TestFinderTest.test_is_module):
-        (TestFinderTest.test_to_module):
-        (TestFinderTest.test_clean):
-        (TestFinderTest.test_find_names):
+        Unreviewed, build fix.
 
 2012-03-26  Dirk Pranke  <dpranke@chromium.org>
 
