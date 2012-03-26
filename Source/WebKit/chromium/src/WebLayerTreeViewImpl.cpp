@@ -60,6 +60,12 @@ WebLayerTreeViewImpl::~WebLayerTreeViewImpl()
 {
 }
 
+void WebLayerTreeViewImpl::willBeginFrame()
+{
+    if (m_client)
+        m_client->willBeginFrame();
+}
+
 void WebLayerTreeViewImpl::updateAnimations(double frameBeginTime)
 {
     if (m_client)

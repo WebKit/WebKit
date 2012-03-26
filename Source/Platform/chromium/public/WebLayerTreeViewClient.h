@@ -33,6 +33,13 @@ class WebThread;
 
 class WebLayerTreeViewClient {
 public:
+    // Indicates to the embedder that the compositor is about to begin a
+    // frame. This is is a signal to flow control mechanisms that a frame is
+    // beginning. This call will be followed by updateAnimations and then
+    // layout, which should be used for actual animation or tree manipulation
+    // tasks.  FIXME: make pure virtual once upstream deps are satisfied.
+    virtual void willBeginFrame() { }
+
     // Updates animation and layout. These are called before the compositing
     // pass so that layers can be updated at the given frame time.
     virtual void updateAnimations(double frameBeginTime) = 0;

@@ -1349,6 +1349,11 @@ void WebViewImpl::animate(double frameBeginTime)
 #endif
 }
 
+void WebViewImpl::willBeginFrame()
+{
+    m_client->willBeginCompositorFrame();
+}
+
 void WebViewImpl::updateAnimations(double frameBeginTime)
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME)

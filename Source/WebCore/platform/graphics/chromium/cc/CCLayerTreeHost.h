@@ -52,6 +52,7 @@ class TextureManager;
 
 class CCLayerTreeHostClient {
 public:
+    virtual void willBeginFrame() = 0;
     virtual void updateAnimations(double frameBeginTime) = 0;
     virtual void layout() = 0;
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) = 0;
@@ -129,6 +130,7 @@ public:
     static bool anyLayerTreeHostInstanceExists();
 
     // CCLayerTreeHost interface to CCProxy.
+    void willBeginFrame() { m_client->willBeginFrame(); }
     void updateAnimations(double wallClockTime);
     void layout();
     void beginCommitOnImplThread(CCLayerTreeHostImpl*);

@@ -220,6 +220,10 @@ public:
         return adoptPtr(new MockLayerTreeHostClient(testHooks));
     }
 
+    virtual void willBeginFrame()
+    {
+    }
+
     virtual void updateAnimations(double monotonicTime)
     {
         m_testHooks->updateAnimations(monotonicTime);

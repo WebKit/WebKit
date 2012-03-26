@@ -64,6 +64,13 @@ public:
     virtual void didActivateCompositor(int inputHandlerIdentifier) { }
     virtual void didDeactivateCompositor() { }
 
+    // Indicates to the embedder that the compositor is about to begin a
+    // frame. This is primarily to signal to flow control mechanisms that a
+    // frame is beginning, not to perform actual painting work.
+    //
+    // FIXME: Make pure virtual once upstream deps are satisfied.
+    virtual void willBeginCompositorFrame() { }
+
     // Called for compositing mode when the draw commands for a WebKit-side
     // frame have been issued.
     virtual void didCommitAndDrawCompositorFrame() { }

@@ -1,3 +1,29 @@
+2012-03-25  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Route willBeginFrame from compositor to WebWidget
+        https://bugs.webkit.org/show_bug.cgi?id=82171
+
+        Reviewed by Darin Fisher.
+
+        * public/WebWidgetClient.h:
+        (WebWidgetClient):
+        (WebKit::WebWidgetClient::willBeginCompositorFrame):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::willBeginFrame):
+        (WebKit):
+        * src/WebLayerTreeViewImpl.h:
+        (WebLayerTreeViewImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::willBeginFrame):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHostClient::willBeginFrame):
+        (MockLayerTreeHostClient):
+        * tests/FakeCCLayerTreeHostClient.h:
+        (WebCore::FakeCCLayerTreeHostClient::willBeginFrame):
+
 2012-03-25  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Layers with animating transforms should prepaint even if they are not visible yet

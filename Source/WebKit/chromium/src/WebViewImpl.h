@@ -254,6 +254,7 @@ public:
     virtual void removePageOverlay(WebPageOverlay*);
 
     // WebLayerTreeViewClient
+    virtual void willBeginFrame();
     virtual void updateAnimations(double frameBeginTime);
     virtual void applyScrollAndScale(const WebSize&, float);
     virtual WebGraphicsContext3D* createContext3D();
