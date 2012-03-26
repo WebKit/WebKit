@@ -76,7 +76,7 @@ http/tests/inspector/extensions-network-redirect.html
 http/tests/inspector/console-cross-origin-iframe-logging.html
 inspector/debugger/script-formatter-breakpoints.html
 inspector/debugger/snippets-model.html
-nspector/elements/edit-dom-actions.html
+inspector/elements/edit-dom-actions.html
 inspector/extensions/extensions-events.html
 inspector/styles/styles-computed-trace.html
 
@@ -1192,7 +1192,6 @@ fast/dom/tab-in-right-alignment.html
 fast/events/popup-blocked-from-fake-user-gesture.html
 fast/frames/frame-element-name.html
 fast/frames/iframe-onload-remove-self-no-crash.html
-fast/frames/iframe-reparenting-adopt-node.html
 fast/frames/sandboxed-iframe-plugins.html
 fast/frames/sandboxed-iframe-storage.html
 fast/history/multiple-classes-visited.html
