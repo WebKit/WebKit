@@ -2037,11 +2037,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             0,
             g_signal_accumulator_true_handled,
             NULL,
-            webkit_marshal_BOOLEAN__OBJECT_STRING_POINTER,
+            webkit_marshal_BOOLEAN__OBJECT_STRING_BOXED,
             G_TYPE_BOOLEAN, 3,
             WEBKIT_TYPE_WEB_FRAME,
             G_TYPE_STRING,
-            G_TYPE_POINTER);
+            G_TYPE_ERROR);
 
     /**
      * WebKitWebView::load-finished:
@@ -2841,11 +2841,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_SIGNAL_RUN_LAST,
             0,
             0, 0,
-            webkit_marshal_VOID__OBJECT_OBJECT_POINTER,
+            webkit_marshal_VOID__OBJECT_OBJECT_BOXED,
             G_TYPE_NONE, 3,
             WEBKIT_TYPE_WEB_FRAME,
             WEBKIT_TYPE_WEB_RESOURCE,
-            G_TYPE_POINTER);
+            G_TYPE_ERROR);
 
     /**
      * WebKitWebView::context-menu:

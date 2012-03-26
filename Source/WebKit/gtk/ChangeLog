@@ -1,3 +1,20 @@
+2012-03-26  Gary Kramlich  <grim@reaperworld.com>
+
+        WebKitWebView signals with GError parameters cause crashes when using GObject Introspection
+        https://bugs.webkit.org/show_bug.cgi?id=81977
+
+        Reviewed by Martin Robinson.
+
+        Added marshalers for BOOLEAN:OBJECT,STRING,BOXED and VOID:OBJECT,OBJECT,BOXED
+        and changed the signal signatures for WebKitWebView::load-fail and
+        WebKitWebView::resource-load-failed to use the new marshalers since
+        GError has been a GBoxed type since Gtk 2.26.  This fixes these signals
+        for the gobject-introspection bindings.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+        * webkitmarshal.list:
+
 2012-03-24  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Replace occurrences of "uri" in the documentation with "URI"
