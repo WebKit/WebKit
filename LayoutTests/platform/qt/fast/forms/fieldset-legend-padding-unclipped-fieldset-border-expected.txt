@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x172
+  RenderBlock {HTML} at (0,0) size 800x172
+    RenderBody {BODY} at (8,16) size 784x148
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 33x21
+          text run at (0,0) width 33: "Bug "
+        RenderInline {A} at (0,0) size 45x21 [color=#0000EE]
+          RenderText {#text} at (33,0) size 45x21
+            text run at (33,0) width 45: "78684"
+        RenderText {#text} at (78,0) size 300x21
+          text run at (78,0) width 300: ": Layout issue with fieldset legend element"
+      RenderBlock {P} at (0,37) size 784x42
+        RenderText {#text} at (0,0) size 734x42
+          text run at (0,0) width 734: "For this test to pass, you should see a full border with out any clipping, especially under blue box(legend"
+          text run at (0,21) width 66: "element)."
+      RenderBlock {FORM} at (0,95) size 784x53
+        RenderFieldSet {FIELDSET} at (2,0) size 780x53 [border: (2px groove #C0C0C0)]
+          RenderBlock {LEGEND} at (14,0) size 36x36 [border: (1px solid #0000FF)]

@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 784x304
+  RenderBlock {DIV} at (0,0) size 784x304 [border: (2px solid #000000)]
+    RenderBlock {DIV} at (2,2) size 382x250
+    RenderBlock {DIV} at (2,252) size 382x250
+layer at (10,260) size 300x200
+  RenderBlock (positioned) {DIV} at (0,0) size 300x200 [bgcolor=#D3D3D3]
+    RenderText {#text} at (0,0) size 255x42
+      text run at (0,0) width 255: "This text should paginate across the"
+      text run at (0,21) width 64: "columns."
+    RenderBR {BR} at (64,37) size 0x0
+    RenderText {#text} at (0,50) size 255x42
+      text run at (0,50) width 255: "This text should paginate across the"
+      text run at (0,71) width 64: "columns."
+    RenderBR {BR} at (64,87) size 0x0
+    RenderText {#text} at (0,92) size 255x42
+      text run at (0,92) width 255: "This text should paginate across the"
+      text run at (0,113) width 64: "columns."
+    RenderBR {BR} at (64,129) size 0x0
+    RenderText {#text} at (0,134) size 255x42
+      text run at (0,134) width 255: "This text should paginate across the"
+      text run at (0,155) width 64: "columns."
+    RenderBR {BR} at (64,171) size 0x0
+    RenderText {#text} at (0,176) size 255x42
+      text run at (0,176) width 255: "This text should paginate across the"
+      text run at (0,197) width 64: "columns."
+    RenderBR {BR} at (64,213) size 0x0

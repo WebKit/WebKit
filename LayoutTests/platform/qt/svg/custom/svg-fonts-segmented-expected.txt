@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x131
+  RenderBlock {html} at (0,0) size 800x131
+    RenderBody {body} at (8,40) size 784x51
+      RenderBlock {p} at (0,0) size 784x51
+        RenderText {#text} at (0,0) size 235x51
+          text run at (0,0) width 235: "ABCdefoooO"

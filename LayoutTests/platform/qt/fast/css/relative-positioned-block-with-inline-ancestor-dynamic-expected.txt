@@ -1,0 +1,24 @@
+layer at (0,0) size 984x584
+  RenderView at (0,0) size 800x584
+layer at (0,0) size 800x103
+  RenderBlock {HTML} at (0,0) size 800x103
+    RenderBody {BODY} at (8,16) size 784x79
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 630x21
+          text run at (0,0) width 630: "Test passes if the orange box sits atop the blue box and both are in the center of the view."
+      RenderBlock (anonymous) at (0,37) size 784x0
+      RenderBlock (anonymous) at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 0x0
+layer at (200,245) size 784x21
+  RenderBlock (anonymous) at (0,37) size 784x21
+    RenderBlock {DIV} at (0,0) size 192x21 [bgcolor=#FFA500]
+      RenderText {#text} at (0,0) size 71x21
+        text run at (0,0) width 71: "Filler Text"
+layer at (200,266) size 71x21
+  RenderInline (relative positioned) {SPAN} at (0,0) size 71x21 [bgcolor=#FFFF00]
+    RenderInline {SPAN} at (0,0) size 71x21 [bgcolor=#0000FF]
+      RenderInline {I} at (0,0) size 71x21
+        RenderText {#text} at (0,0) size 71x21
+          text run at (0,0) width 71: "Filler Text"
+      RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0

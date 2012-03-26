@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x494
+  RenderBlock {HTML} at (0,0) size 800x494
+    RenderBody {BODY} at (8,16) size 784x468
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 751x42
+          text run at (0,0) width 751: "Tests that masked elements do not render until their mask images are fully loaded. You should not see any"
+          text run at (0,21) width 129: "blue boxes below."
+layer at (18,74) size 200x200
+  RenderBlock {DIV} at (10,58) size 200x200 [bgcolor=#0000FF]
+layer at (18,284) size 200x200
+  RenderBlock {DIV} at (10,268) size 200x200 [bgcolor=#0000FF]

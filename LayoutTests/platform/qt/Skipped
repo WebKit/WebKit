@@ -2182,10 +2182,6 @@ printing/simultaneous-position-float-change.html
 # new tests without expected results
 # ============================================================================= #
 editing/selection/transformed-selection-rects.html
-svg/W3C-SVG-1.1/filters-light-04-f.svg
-
-# Needs new baseline http://webkit.org/b/66671
-fast/block/float/fit_line_below_floats.html
 
 # New tests without Qt specific expected files. Need investigation.
 animations/3d/matrix-transform-type-animation.html
@@ -2199,38 +2195,21 @@ fast/block/lineboxcontain/font.html
 fast/block/lineboxcontain/glyphs.html
 fast/block/lineboxcontain/inline-box-replaced.html
 fast/block/lineboxcontain/inline.html
-fast/block/lineboxcontain/none.html
-fast/block/positioning/differing-writing-modes-replaced.html
 fast/block/positioning/vertical-lr/002.html
 fast/block/positioning/vertical-rl/002.html
 fast/borders/rtl-border-04.html
 fast/borders/rtl-border-05.html
-fast/box-shadow/inset-box-shadow-radius.html
-fast/box-shadow/inset-box-shadows.html
-fast/box-shadow/shadow-buffer-partial.html
-fast/box-shadow/shadow-tiling-artifact.html
 fast/css/line-height-determined-by-primary-font.html
-fast/css/transformed-mask.html
 fast/dom/34176.html
-fast/dom/52776.html
 fast/dom/HTMLMeterElement/meter-appearances-capacity.html
 fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
 fast/dynamic/text-combine.html
-fast/forms/input-placeholder-visibility-1.html
-fast/forms/input-placeholder-visibility-3.html
-fast/forms/listbox-bidi-align.html
-fast/forms/placeholder-position.html
-fast/forms/textfield-focus-ring.html
 fast/images/pixel-crack-image-background-webkit-transform-scale.html
 fast/images/support-broken-image-delegate.html
 fast/inline/inline-box-background-long-image.html
 fast/inline/inline-box-background-repeat-x.html
 fast/inline/inline-box-background-repeat-y.html
 fast/inline/inline-box-background.html
-fast/multicol/positioned-split.html
-fast/multicol/vertical-lr/column-count-with-rules.html
-fast/multicol/vertical-rl/column-count-with-rules.html
-fast/repaint/block-layout-inline-children-float-positioned.html
 fast/repaint/inline-horizontal-bt-overflow.html
 fast/repaint/inline-vertical-lr-overflow.html
 fast/repaint/inline-vertical-rl-overflow.html
@@ -2242,7 +2221,6 @@ fast/text/emphasis-combined-text.html
 fast/text/emphasis-vertical.html
 fast/text/emphasis.html
 fast/text/hyphenate-first-word.html
-fast/text/hyphenate-limit-before-after.html
 fast/text/hyphenate-locale.html
 fast/text/justify-ideograph-complex.html
 fast/text/justify-ideograph-leading-expansion.html
@@ -2256,22 +2234,14 @@ fast/writing-mode/border-image-vertical-rl.html
 fast/writing-mode/border-vertical-lr.html
 fast/writing-mode/broken-ideograph-small-caps.html
 fast/writing-mode/broken-ideographic-font.html
-fast/writing-mode/fallback-orientation.html
 fast/writing-mode/japanese-rl-text-with-broken-font.html
 fast/writing-mode/text-orientation-basic.html
 fast/writing-mode/vertical-align-table-baseline.html
 fast/writing-mode/vertical-baseline-alignment.html
 fast/writing-mode/vertical-font-fallback.html
 svg/css/shadow-changes.svg
-svg/custom/mask-colorspace.svg
 svg/custom/path-zero-strokewidth.svg
-svg/custom/svg-curve-with-relative-cordinates.html
 svg/custom/use-invalid-pattern.svg
-svg/filters/feColorMatrix-offset.svg
-svg/filters/filterRes1.svg
-svg/filters/filterRes3.svg
-svg/filters/parent-children-with-same-filter.svg
-svg/repaint/filter-repaint.svg
 svg/text/bidi-embedded-direction.svg
 svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg
 svg/text/select-textLength-spacingAndGlyphs-squeeze-2.svg
@@ -2284,43 +2254,18 @@ transitions/default-timing-function.html
 http/tests/inspector/console-websocket-error.html
 
 # failing new tests
-fast/block/float/overhanging-tall-block.html
-fast/backgrounds/border-radius-split-background-image.html
-fast/backgrounds/border-radius-split-background.html
 fast/borders/border-antialiasing.html
-fast/borders/border-styles-split.html
-fast/borders/mixed-border-styles-radius2.html
-fast/box-shadow/scaled-box-shadow.html
 fast/box-shadow/single-pixel-shadow.html
 fast/text/selection-rect-rounding.html
-svg/as-object/object-box-sizing-no-width-height.html
-svg/custom/object-sizing-explicit-height.xhtml
-svg/custom/object-sizing-explicit-width.xhtml
-svg/custom/object-no-size-attributes.xhtml
 svg/custom/painting-marker-07-f-inherit.svg
 svg/custom/small-rect-scale.svg
-svg/filters/feConvolveFilter-y-bounds.svg
 
 # failing new tests
-fast/forms/range/input-appearance-range.html
 fast/text/midword-break-before-surrogate-pair.html
 svg/custom/svg-fonts-fallback.xhtml
-svg/custom/svg-fonts-segmented.xhtml
 svg/custom/svg-fonts-word-spacing.html
 
 # new tests, they needs investigation
-fast/block/float/intruding-float-add-in-sibling-block-on-static-position2.html
-fast/block/float/intruding-float-add-in-sibling-block-on-static-position.html
-fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position2.html
-fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position.html
-fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position2.html
-fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position.html
-fast/block/float/overhanging-float-add-in-static-position-block2.html
-fast/block/float/overhanging-float-add-in-static-position-block.html
-fast/block/float/overhanging-float-remove-from-absolute-position-block2.html
-fast/block/float/overhanging-float-remove-from-absolute-position-block.html
-fast/block/float/overhanging-float-remove-from-fixed-position-block2.html
-fast/block/float/overhanging-float-remove-from-fixed-position-block.html
 
 # new tests without expected files, need investigation
 css3/images/cross-fade-background-size.html
@@ -2329,101 +2274,30 @@ css3/images/cross-fade-blending.html
 css3/images/cross-fade-invalidation.html
 css3/images/cross-fade-simple.html
 css3/images/cross-fade-sizing.html
-svg/clip-path/clip-path-tspan-and-stroke.svg
 svg/clip-path/clip-in-clip.svg
 svg/clip-path/clipper-placement-issue.svg
-svg/text/modify-text-node-in-tspan.html
-svg/text/remove-text-node-from-tspan.html
 svg/text/non-bmp-positioning-lists.svg
-svg/text/remove-tspan-from-text.html
-svg/text/append-text-node-to-tspan.html
-svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml
-svg/custom/use-disappears-after-style-update.svg
 svg/custom/transform-with-shadow-and-gradient.svg
 svg/custom/clip-path-with-css-transform-2.svg
-svg/custom/path-moveto-only-rendering.svg
-svg/custom/relative-sized-image.xhtml
 svg/custom/clip-path-with-css-transform-1.svg
-svg/custom/subpaths-moveto-only-rendering.svg
 svg/stroke/zero-length-path-linecap-rendering.svg
 svg/stroke/zero-length-subpaths-linecap-rendering.svg
-svg/wicd/sizing-flakiness.html
-svg/filters/feImage-subregions.svg
-svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox.svg
-svg/filters/feImage-preserveAspectratio.svg
-svg/filters/feImage-subregions-preseveAspectRatio-none.svg
-svg/filters/feImage-target-attribute-change.svg
-svg/filters/feImage-target-property-change.svg
-svg/filters/feImage-target-attribute-change-with-use-indirection.svg
-svg/filters/filter-placement-issue.svg
-svg/filters/feImage-position.svg
-svg/filters/feImage-remove-target.svg
 svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse.svg
-svg/filters/filter-refresh.svg
-svg/filters/feImage-target-style-change.svg
-svg/filters/feImage-target-id-change.svg
-svg/filters/feImage-multiple-targets-id-change.svg
-svg/filters/feImage-target-reappend-to-document.svg
-svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg
-svg/filters/feImage-target-attribute-change-with-use-indirection-2.svg
-svg/filters/feImage-late-indirect-update.svg
-svg/filters/feImage-target-remove-from-document.svg
-svg/filters/feImage-target-add-to-document.svg
-svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox.svg
-svg/filters/feImage-target-inline-style-change.svg
-svg/filters/feImage-target-changes-id.svg
-svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox.svg
-svg/filters/feImage-change-target-id.svg
 css2.1/20110323/outline-color-applies-to-008.htm
 css2.1/20110323/border-collapse-offset-002.htm
-http/tests/misc/slow-loading-mask.html
 http/tests/misc/willCacheResponse-delegate-callback.html
-fast/text/unicode-variation-selector.html
-fast/backgrounds/mask-box-image.html
-fast/forms/select-overflow-scroll-inherited.html
-fast/forms/select-overflow-scroll.html
-fast/line-grid/line-grid-floating.html
-fast/line-grid/line-grid-inside-columns.html
-fast/line-grid/line-grid-positioned.html
-fast/line-grid/line-grid-into-floats.html
-fast/line-grid/line-grid-into-columns.html
-fast/line-grid/line-grid-contains-value.html
-fast/borders/border-image-slice-constrained.html
 fast/borders/scaled-border-image.html
 
 # new tests without expected files, need investigation
 css3/filters/composited-during-animation-layertree.html
 css3/filters/composited-during-transition-layertree.html
 css3/filters/composited-during-animation.html
-svg/foreignObject/fO-parent-display-none-with-relative-pos-content.svg
-svg/foreignObject/fO-parent-of-parent-display-none.svg
-svg/foreignObject/fO-parent-display-none.svg
 svg/foreignObject/fO-display-none-with-relative-pos-content.svg
 svg/foreignObject/fO-display-none.svg
-svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content.svg
-svg/foreignObject/fO-parent-display-changes.svg
-fast/forms/fieldset-legend-padding-unclipped-fieldset-border.html
-fast/line-grid/line-align-left-edges.html
-fast/line-grid/line-align-right-edges.html
 fast/speech/input-appearance-speechbutton.html
 fast/speech/input-appearance-searchandspeech.html
 fast/speech/speech-bidi-rendering.html
-fast/css/relative-positioned-block-nested-with-inline-parent-dynamic-removed.html
-fast/css/non-empty-span.html
-fast/css/relative-positioned-block-with-inline-parent-keeps-style.html
-fast/css/font-face-weight-matching.html
-fast/css/relative-positioned-block-nested-with-inline-parent-multiple-descendant-blocks-dynamic.html
-fast/css/relative-positioned-block-with-inline-parent-dynamic-removed.html
-fast/css/relative-positioned-block-with-inline-ancestor-dynamic.html
 fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic.html
-fast/css/relative-positioned-block-nested-with-inline-parent-dynamic.html
-fast/css/relative-positioned-block-nested-with-inline-parent.html
-fast/css/relative-positioned-block-with-inline-ancestor-dynamic-removed.html
-fast/css/relative-positioned-block-with-inline-parent-dynamic.html
-fast/css/font-face-synthetic-bold-italic.html
-fast/css/relative-positioned-block-with-inline-ancestor.html
-fast/repaint/transform-rotate-and-remove.html
-compositing/overflow/ancestor-overflow.html
 
 #[Qt]fast/text/international/bdi-dir-default-to-auto.html fails
 #https://bugs.webkit.org/show_bug.cgi?id=81899
