@@ -85,32 +85,38 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBox
     parent->mapLocalToContainer(repaintContainer, false, true, transformState, wasFixed);
 }
 
-void SVGRenderSupport::computeContainerBoundingBoxes(const RenderObject* container, FloatRect& objectBoundingBox, FloatRect& strokeBoundingBox, FloatRect& repaintBoundingBox)
+// Update a bounding box taking into account the validity of the other bounding box.
+static inline void updateObjectBoundingBox(FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, RenderObject* other, FloatRect otherBoundingBox)
 {
-    bool isFirstChild = true;
+    bool otherValid = other->isSVGContainer() ? toRenderSVGContainer(other)->isObjectBoundingBoxValid() : true;
+    if (!otherValid)
+        return;
 
+    if (!objectBoundingBoxValid) {
+        objectBoundingBox = otherBoundingBox;
+        objectBoundingBoxValid = true;
+        return;
+    }
+
+    objectBoundingBox.uniteEvenIfEmpty(otherBoundingBox);
+}
+
+void SVGRenderSupport::computeContainerBoundingBoxes(const RenderObject* container, FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, FloatRect& strokeBoundingBox, FloatRect& repaintBoundingBox)
+{
     for (RenderObject* current = container->firstChild(); current; current = current->nextSibling()) {
         if (current->isSVGHiddenContainer())
             continue;
 
         const AffineTransform& transform = current->localToParentTransform();
         if (transform.isIdentity()) {
-            if (isFirstChild)
-                objectBoundingBox = current->objectBoundingBox();
-            else
-                objectBoundingBox.uniteEvenIfEmpty(current->objectBoundingBox());
+            updateObjectBoundingBox(objectBoundingBox, objectBoundingBoxValid, current, current->objectBoundingBox());
             strokeBoundingBox.unite(current->strokeBoundingBox());
             repaintBoundingBox.unite(current->repaintRectInLocalCoordinates());
         } else {
-            if (isFirstChild)
-                objectBoundingBox = transform.mapRect(current->objectBoundingBox());
-            else
-                objectBoundingBox.uniteEvenIfEmpty(transform.mapRect(current->objectBoundingBox()));
+            updateObjectBoundingBox(objectBoundingBox, objectBoundingBoxValid, current, transform.mapRect(current->objectBoundingBox()));
             strokeBoundingBox.unite(transform.mapRect(current->strokeBoundingBox()));
             repaintBoundingBox.unite(transform.mapRect(current->repaintRectInLocalCoordinates()));
         }
-
-        isFirstChild = false;
     }
 }
 

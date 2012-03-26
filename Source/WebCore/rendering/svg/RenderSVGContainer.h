@@ -42,6 +42,7 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void setNeedsBoundariesUpdate() { m_needsBoundariesUpdate = true; }
     virtual bool didTransformToRootUpdate() { return false; }
+    bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
 
 protected:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
@@ -76,6 +77,7 @@ protected:
 private:
     RenderObjectChildList m_children;
     FloatRect m_objectBoundingBox;
+    bool m_objectBoundingBoxValid;
     FloatRect m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;
     bool m_needsBoundariesUpdate : 1;
@@ -83,15 +85,13 @@ private:
   
 inline RenderSVGContainer* toRenderSVGContainer(RenderObject* object)
 {
-    // Note: isSVGContainer is also true for RenderSVGViewportContainer, which is not derived from this.
-    ASSERT(!object || (object->isSVGContainer() && strcmp(object->renderName(), "RenderSVGViewportContainer")));
+    ASSERT(!object || object->isSVGContainer());
     return static_cast<RenderSVGContainer*>(object);
 }
 
 inline const RenderSVGContainer* toRenderSVGContainer(const RenderObject* object)
 {
-    // Note: isSVGContainer is also true for RenderSVGViewportContainer, which is not derived from this.
-    ASSERT(!object || (object->isSVGContainer() && strcmp(object->renderName(), "RenderSVGViewportContainer")));
+    ASSERT(!object || object->isSVGContainer());
     return static_cast<const RenderSVGContainer*>(object);
 }
 

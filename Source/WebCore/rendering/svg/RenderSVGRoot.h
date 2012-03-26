@@ -104,6 +104,7 @@ private:
     RenderObjectChildList m_children;
     IntSize m_containerSize;
     FloatRect m_objectBoundingBox;
+    bool m_objectBoundingBoxValid;
     FloatRect m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;
     mutable AffineTransform m_localToParentTransform;

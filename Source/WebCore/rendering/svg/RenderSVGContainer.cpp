@@ -40,6 +40,7 @@ namespace WebCore {
 
 RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
     : RenderSVGModelObject(node)
+    , m_objectBoundingBoxValid(false)
     , m_needsBoundariesUpdate(true)
 {
 }
@@ -150,10 +151,11 @@ void RenderSVGContainer::addFocusRingRects(Vector<IntRect>& rects, const LayoutP
 void RenderSVGContainer::updateCachedBoundaries()
 {
     m_objectBoundingBox = FloatRect();
+    m_objectBoundingBoxValid = false;
     m_strokeBoundingBox = FloatRect();
     m_repaintBoundingBox = FloatRect();
 
-    SVGRenderSupport::computeContainerBoundingBoxes(this, m_objectBoundingBox, m_strokeBoundingBox, m_repaintBoundingBox);
+    SVGRenderSupport::computeContainerBoundingBoxes(this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBox);
     SVGRenderSupport::intersectRepaintRectWithResources(this, m_repaintBoundingBox);
 }
 
