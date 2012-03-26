@@ -28,6 +28,7 @@
 #include "ProtectionSpaceHash.h"
 #include "SQLiteStatement.h"
 #include <BlackBerryPlatformClient.h>
+#include <BlackBerryPlatformEncryptor.h>
 
 #define HANDLE_SQL_EXEC_FAILURE(statement, returnValue, ...) \
     if (statement) { \
@@ -423,16 +424,16 @@ bool CredentialBackingStore::clearNeverRemember()
 
 String CredentialBackingStore::encryptedString(const String& plainText) const
 {
-    // FIXME: Need encrypt plainText here
-    notImplemented();
-    return plainText;
+    std::string cipherText;
+    BlackBerry::Platform::Encryptor::encryptString(std::string(plainText.latin1().data()), &cipherText);
+    return String(cipherText.c_str());
 }
 
 String CredentialBackingStore::decryptedString(const String& cipherText) const
 {
-    // FIXME: Need decrypt cipherText here
-    notImplemented();
-    return cipherText;
+    std::string plainText;
+    BlackBerry::Platform::Encryptor::decryptString(std::string(cipherText.latin1().data()), &plainText);
+    return String(plainText.c_str());
 }
 
 } // namespace WebCore
