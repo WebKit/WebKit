@@ -32,6 +32,7 @@ QWebPreferences* QWebPreferencesPrivate::createPreferences(QQuickWebViewPrivate*
 {
     QWebPreferences* prefs = new QWebPreferences;
     prefs->d->webViewPrivate = webViewPrivate;
+    prefs->d->initializeDefaultFontSettings();
     return prefs;
 }
 
@@ -95,6 +96,30 @@ void QWebPreferencesPrivate::setAttribute(QWebPreferencesPrivate::WebAttribute a
     default:
         ASSERT_NOT_REACHED();
     }
+}
+
+void QWebPreferencesPrivate::initializeDefaultFontSettings()
+{
+    setFontSize(MinimumFontSize, 0);
+    setFontSize(DefaultFontSize, 16);
+    setFontSize(DefaultFixedFontSize, 13);
+
+    QFont defaultFont;
+    defaultFont.setStyleHint(QFont::Serif);
+    setFontFamily(StandardFont, defaultFont.defaultFamily());
+    setFontFamily(SerifFont, defaultFont.defaultFamily());
+
+    defaultFont.setStyleHint(QFont::Fantasy);
+    setFontFamily(FantasyFont, defaultFont.defaultFamily());
+
+    defaultFont.setStyleHint(QFont::Cursive);
+    setFontFamily(CursiveFont, defaultFont.defaultFamily());
+
+    defaultFont.setStyleHint(QFont::SansSerif);
+    setFontFamily(SansSerifFont, defaultFont.defaultFamily());
+
+    defaultFont.setStyleHint(QFont::Monospace);
+    setFontFamily(FixedFont, defaultFont.defaultFamily());
 }
 
 void QWebPreferencesPrivate::setFontFamily(QWebPreferencesPrivate::FontFamily which, const QString& family)

@@ -1,3 +1,19 @@
+2012-03-26  Pierre Rossi  <pierre.rossi@nokia.com>
+
+        [Qt][WK2] default families are not set in QWebPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=81933
+
+        This would result in an attempt to create FontPlatformData
+        with the -webkit- prefixed family name.
+        Logic adapted from QWebSettings.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::createPreferences):
+        (QWebPreferencesPrivate::initFontDefaults):
+        * UIProcess/API/qt/qwebpreferences_p_p.h:
+
 2012-03-26  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt WK2] Disable/enable mouse events when displaying dialogs only for desktop view

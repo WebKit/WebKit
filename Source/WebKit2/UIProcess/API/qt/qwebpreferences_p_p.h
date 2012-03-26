@@ -59,6 +59,7 @@ public:
     void setAttribute(WebAttribute attr, bool enable);
     bool testAttribute(WebAttribute attr) const;
 
+    void initFontDefaults();
     void setFontFamily(FontFamily which, const QString& family);
     QString fontFamily(FontFamily which) const;
 
