@@ -44,11 +44,9 @@ _log = logging.getLogger("test-webkitpy")
 if __name__ == "__main__":
     webkit_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-    # FIXME: We should probably test each package separately to avoid naming conflicts.
-    dirs = [
-        os.path.join(webkit_root, 'Tools', 'Scripts'),
-        os.path.join(webkit_root, 'Source', 'WebKit2', 'Scripts'),
-    ]
+    tester = main.Tester()
+    tester.add_tree(os.path.join(webkit_root, 'Tools', 'Scripts'), 'webkitpy')
+    tester.add_tree(os.path.join(webkit_root, 'Source', 'WebKit2', 'Scripts'), 'webkit2')
 
     # FIXME: Do we need to be able to test QueueStatusServer on Windows as well?
     appengine_sdk_path = '/usr/local/google_appengine'
@@ -59,17 +57,8 @@ if __name__ == "__main__":
         from google.appengine.dist import use_library
         use_library('django', '1.2')
         dev_appserver.fix_sys_path()
-        dirs.append(os.path.join(webkit_root, 'Tools', 'QueueStatusServer'))
+        tester.add_tree(os.path.join(webkit_root, 'Tools', 'QueueStatusServer'))
     else:
         _log.info('Skipping QueueStatusServer tests; the Google AppEngine Python SDK is not installed.')
 
-    main.Tester.clean_packages(dirs)
-
-    tester = main.Tester()
-    options, args = tester.parse_args(sys.argv)
-    tester.configure(options)
-
-    # Make sure PYTHONPATH is set up correctly so that all of the imports will work.
-    sys.path = [d for d in dirs if d not in sys.path] + sys.path
-
-    sys.exit(not tester.run(dirs, args))
+    sys.exit(not tester.run())

@@ -1,3 +1,33 @@
+2012-03-26  Dirk Pranke  <dpranke@chromium.org>
+
+        add a Tree abstraction to test-webkitpy to better encapsulate things
+        https://bugs.webkit.org/show_bug.cgi?id=82158
+
+        Reviewed by Adam Barth.
+
+        There are no functional changes in this patch, but adding a
+        basic abstraction for the trees we are looking in for python
+        tests will allow me to add some features later on more easily
+        (like ignoring certain directories like webkitpy/thirdparty),
+        and it makes things slightly less hard-coded.
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/test/main.py:
+        (Tester.__init__):
+        (Tester):
+        (Tester.add_tree):
+        (Tester._parse_args):
+        (Tester._configure):
+        (Tester.run):
+        (Tester._find_modules):
+        (Tester._run_tests):
+        (Tester._is_module):
+        (Tester._log_exception):
+        (TestDirectoryTree):
+        (TestDirectoryTree.__init__):
+        (TestDirectoryTree.find_modules):
+        (TestDirectoryTree.clean):
+
 2012-03-26  Ojan Vafai  <ojan@chromium.org>
 
         garden-o-matic should special case reftests

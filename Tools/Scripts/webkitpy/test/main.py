@@ -36,22 +36,14 @@ _log = logging.getLogger(__name__)
 
 
 class Tester(object):
-    @staticmethod
-    def clean_packages(dirs):
-        """Delete all .pyc files under dirs that have no .py file."""
-        for dir_to_clean in dirs:
-            _log.debug("Cleaning orphaned *.pyc files from: %s" % dir_to_clean)
-            for dir_path, dir_names, file_names in os.walk(dir_to_clean):
-                for file_name in file_names:
-                    if file_name.endswith(".pyc") and file_name[:-1] not in file_names:
-                        file_path = os.path.join(dir_path, file_name)
-                        _log.info("Deleting orphan *.pyc file: %s" % file_path)
-                        os.remove(file_path)
-
     def __init__(self):
         self._verbosity = 1
+        self._trees = []
 
-    def parse_args(self, argv):
+    def add_tree(self, top_directory, starting_subdirectory=None):
+        self._trees.append(TestDirectoryTree(top_directory, starting_subdirectory))
+
+    def _parse_args(self):
         parser = optparse.OptionParser(usage='usage: %prog [options] [args...]')
         parser.add_option('-a', '--all', action='store_true', default=False,
                           help='run all the tests'),
@@ -71,10 +63,9 @@ class Tester(object):
         parser.epilog = ('[args...] is an optional list of modules, test_classes, or individual tests. '
                          'If no args are given, all the tests will be run.')
 
-        self.progName = os.path.basename(argv[0])
-        return parser.parse_args(argv[1:])
+        return parser.parse_args()
 
-    def configure(self, options):
+    def _configure(self, options):
         self._options = options
 
         if options.silent:
@@ -141,16 +132,24 @@ class Tester(object):
         _log.info("Suppressing most webkitpy logging while running unit tests.")
         handler.addFilter(testing_filter)
 
-    def run(self, dirs, args):
-        args = args or self._find_modules(dirs)
-        return self._run_tests(dirs, args)
+    def run(self):
+        options, args = self._parse_args()
+        self._configure(options)
 
-    def _find_modules(self, dirs):
+        for tree in self._trees:
+            tree.clean()
+
+        args = args or self._find_modules()
+        return self._run_tests(args)
+
+    def _find_modules(self):
+        suffixes = ['_unittest.py']
+        if not self._options.skip_integrationtests:
+            suffixes.append('_integrationtest.py')
+
         modules = []
-        for dir_to_search in dirs:
-            modules.extend(self._find_modules_under(dir_to_search, '_unittest.py'))
-            if not self._options.skip_integrationtests:
-                modules.extend(self._find_modules_under(dir_to_search, '_integrationtest.py'))
+        for tree in self._trees:
+            modules.extend(tree.find_modules(suffixes))
         modules.sort()
 
         for module in modules:
@@ -181,21 +180,7 @@ class Tester(object):
         _log.info('    (https://bugs.webkit.org/show_bug.cgi?id=%d; use --all to include)' % bugid)
         _log.info('')
 
-    def _find_modules_under(self, dir_to_search, suffix):
-
-        def to_package(dir_path):
-            return dir_path.replace(dir_to_search + os.sep, '').replace(os.sep, '.')
-
-        def to_module(filename, package):
-            return package + '.' + filename.replace('.py', '')
-
-        modules = []
-        for dir_path, _, filenames in os.walk(dir_to_search):
-            package = to_package(dir_path)
-            modules.extend(to_module(f, package) for f in filenames if f.endswith(suffix))
-        return modules
-
-    def _run_tests(self, dirs, args):
+    def _run_tests(self, args):
         if self._options.coverage:
             try:
                 import webkitpy.thirdparty.autoinstalled.coverage as coverage
@@ -205,12 +190,15 @@ class Tester(object):
             cov = coverage.coverage()
             cov.start()
 
+        # Make sure PYTHONPATH is set up properly.
+        sys.path = [tree.top_directory for tree in self._trees if tree.top_directory not in sys.path] + sys.path
+
         _log.debug("Loading the tests...")
 
         loader = unittest.defaultTestLoader
         suites = []
         for name in args:
-            if self._is_module(dirs, name):
+            if self._is_module(name):
                 # import modules explicitly before loading their tests because
                 # loadTestsFromName() produces lousy error messages for bad modules.
                 try:
@@ -236,12 +224,42 @@ class Tester(object):
             cov.report(show_missing=False)
         return result.wasSuccessful()
 
-    def _is_module(self, dirs, name):
+    def _is_module(self, name):
         relpath = name.replace('.', os.sep) + '.py'
-        return any(os.path.exists(os.path.join(d, relpath)) for d in dirs)
+        return any(os.path.exists(os.path.join(tree.top_directory, relpath)) for tree in self._trees)
 
     def _log_exception(self):
         s = StringIO.StringIO()
         traceback.print_exc(file=s)
         for l in s.buflist:
             _log.error('  ' + l.rstrip())
+
+
+class TestDirectoryTree(object):
+    def __init__(self, top_directory, starting_subdirectory):
+        self.top_directory = os.path.realpath(top_directory)
+        self.search_directory = self.top_directory
+        self.top_package = ''
+        if starting_subdirectory:
+            self.top_package = starting_subdirectory.replace(os.sep, '.') + '.'
+            self.search_directory = os.path.join(self.top_directory, starting_subdirectory)
+
+    def find_modules(self, suffixes):
+        modules = []
+        for dir_path, _, filenames in os.walk(self.search_directory):
+            dir_path = os.path.join(dir_path, '')
+            package = dir_path.replace(self.top_directory + os.sep, '').replace(os.sep, '.')
+            for f in filenames:
+                if any(f.endswith(suffix) for suffix in suffixes):
+                    modules.append(package + f.replace('.py', ''))
+        return modules
+
+    def clean(self):
+        """Delete all .pyc files in the tree that have no matching .py file."""
+        _log.debug("Cleaning orphaned *.pyc files from: %s" % self.search_directory)
+        for dir_path, dir_names, file_names in os.walk(self.search_directory):
+            for file_name in file_names:
+                if file_name.endswith(".pyc") and file_name[:-1] not in file_names:
+                    file_path = os.path.join(dir_path, file_name)
+                    _log.info("Deleting orphan *.pyc file: %s" % file_path)
+                    os.remove(file_path)
