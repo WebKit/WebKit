@@ -168,6 +168,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGGPRInfo.h \
 	Source/JavaScriptCore/dfg/DFGGraph.cpp \
 	Source/JavaScriptCore/dfg/DFGGraph.h \
+	Source/JavaScriptCore/dfg/DFGInsertionSet.h \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
 	Source/JavaScriptCore/dfg/DFGNode.h \

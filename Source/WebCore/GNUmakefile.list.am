@@ -1585,6 +1585,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSHelper.h \
 	Source/WebCore/css/CSSImageGeneratorValue.cpp \
 	Source/WebCore/css/CSSImageGeneratorValue.h \
+	Source/WebCore/css/CSSImageSetValue.cpp \
+	Source/WebCore/css/CSSImageSetValue.h \
 	Source/WebCore/css/CSSImageValue.cpp \
 	Source/WebCore/css/CSSImageValue.h \
 	Source/WebCore/css/CSSImportRule.cpp \
@@ -3012,6 +3014,8 @@ webcore_sources += \
 	Source/WebCore/platform/animation/TimingFunction.h \
 	Source/WebCore/platform/ActivePlatformGestureAnimation.cpp \
 	Source/WebCore/platform/ActivePlatformGestureAnimation.h \
+	Source/WebCore/platform/PlatformGestureCurve.h \
+	Source/WebCore/platform/PlatformGestureCurveTarget.h \
 	Source/WebCore/platform/Arena.cpp \
 	Source/WebCore/platform/Arena.h \
 	Source/WebCore/platform/AsyncFileSystem.cpp \
@@ -3873,6 +3877,8 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleBoxData.h \
 	Source/WebCore/rendering/style/StyleCachedImage.cpp \
 	Source/WebCore/rendering/style/StyleCachedImage.h \
+	Source/WebCore/rendering/style/StyleCachedImageSet.cpp \
+	Source/WebCore/rendering/style/StyleCachedImageSet.h \
 	Source/WebCore/rendering/style/StyleCachedShader.cpp \
 	Source/WebCore/rendering/style/StyleCachedShader.h \
 	Source/WebCore/rendering/style/StyleCustomFilterProgram.h \

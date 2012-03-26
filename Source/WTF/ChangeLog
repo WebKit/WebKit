@@ -1,3 +1,9 @@
+2012-03-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add config.h to the source file list.
+
 2012-03-25  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Move WTF to its own static lib build.

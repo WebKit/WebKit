@@ -1,4 +1,5 @@
 wtf_sources += \
+    Source/WTF/config.h \
     Source/WTF/wtf/Platform.h \
     Source/WTF/wtf/ASCIICType.h \
     Source/WTF/wtf/AVLTree.h \
