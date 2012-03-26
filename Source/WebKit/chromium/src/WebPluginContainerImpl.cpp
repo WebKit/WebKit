@@ -518,6 +518,10 @@ WebCore::LayerChromium* WebPluginContainerImpl::platformLayer() const
 }
 #endif
 
+bool WebPluginContainerImpl::wantWheelEvents()
+{
+    return m_scrollbarGroup;
+}
 
 ScrollbarGroup* WebPluginContainerImpl::scrollbarGroup()
 {

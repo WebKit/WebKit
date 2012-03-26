@@ -1,3 +1,15 @@
+2012-03-26  James Robinson  <jamesr@chromium.org>
+
+        Scrollable plugins not registered properly in ScrollingCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=82163
+
+        Reviewed by Anders Carlsson.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::scrollable):
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+
 2012-03-26  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Change handleGestureFling() to use CCInputHandlerClient::Wheel.

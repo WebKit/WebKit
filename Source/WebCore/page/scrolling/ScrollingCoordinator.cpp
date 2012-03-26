@@ -32,6 +32,7 @@
 #include "IntRect.h"
 #include "Page.h"
 #include "PlatformWheelEvent.h"
+#include "PluginViewBase.h"
 #include "Region.h"
 #include "RenderView.h"
 #include "ScrollAnimator.h"
@@ -111,6 +112,10 @@ static Region computeNonFastScrollableRegion(FrameView* frameView)
     for (HashSet<RefPtr<Widget> >::const_iterator it = frameView->children()->begin(), end = frameView->children()->end(); it != end; ++it) {
         if ((*it)->isFrameView())
             childFrameViews.add(static_cast<FrameView*>(it->get()));
+        else if ((*it)->isPluginViewBase()) {
+            if (static_cast<PluginViewBase*>(it->get())->wantWheelEvents())
+                nonFastScrollableRegion.unite((*it)->frameRect());
+        }
     }
 
     if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {

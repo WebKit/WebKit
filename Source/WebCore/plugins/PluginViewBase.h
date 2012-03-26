@@ -53,6 +53,8 @@ public:
     virtual bool getFormValue(String&) { return false; }
     virtual bool scroll(ScrollDirection, ScrollGranularity) { return false; }
 
+    virtual bool wantWheelEvents() { return false; }
+
     // A plug-in can ask WebKit to handle scrollbars for it.
     virtual Scrollbar* horizontalScrollbar() { return 0; }
     virtual Scrollbar* verticalScrollbar() { return 0; }
