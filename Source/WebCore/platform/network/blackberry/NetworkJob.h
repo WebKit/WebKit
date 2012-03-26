@@ -67,8 +67,6 @@ public:
     void updateDeferLoadingCount(int delta);
     virtual void notifyStatusReceived(int status, const char* message);
     void handleNotifyStatusReceived(int status, const String& message);
-    virtual void notifyWMLOverride();
-    void handleNotifyWMLOverride() { m_response.setIsWML(true); }
     virtual void notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::HeaderList& headers);
     virtual void notifyMultipartHeaderReceived(const char* key, const char* value);
     // Exists only to resolve ambiguity between char* and String parameters

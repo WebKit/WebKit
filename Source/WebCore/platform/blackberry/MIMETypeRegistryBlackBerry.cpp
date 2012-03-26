@@ -66,8 +66,6 @@ static const ExtensionMap extensionMap[] = {
     { "xpm", "image/x-xpm" },
     { "xsl", "text/xsl" },
     { "xhtml", "application/xhtml+xml" },
-    { "wml", "text/vnd.wap.wml" },
-    { "wmlc", "application/vnd.wap.wmlc" },
     { "m4a", "audio/m4a" },
     { "midi", "audio/midi" },
     { "mid", "audio/mid" },

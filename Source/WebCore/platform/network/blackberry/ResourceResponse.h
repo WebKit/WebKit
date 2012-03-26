@@ -26,19 +26,15 @@ namespace WebCore {
 class ResourceResponse : public ResourceResponseBase {
 public:
     ResourceResponse()
-        : m_isWML(false)
+        : m_isMultipartPayload(false)
     {
     }
 
     ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
         : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
         , m_isMultipartPayload(false)
-        , m_isWML(false)
     {
     }
-
-    void setIsWML(bool isWML) { m_isWML = isWML; }
-    bool isWML() const { return m_isWML; }
 
     PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData>) const;
     void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>);
@@ -48,11 +44,9 @@ public:
 
 private:
     bool m_isMultipartPayload;
-    bool m_isWML;
 };
 
 struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {
-    bool m_isWML;
 };
 
 } // namespace WebCore

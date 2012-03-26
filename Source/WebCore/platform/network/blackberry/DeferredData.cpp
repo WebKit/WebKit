@@ -28,7 +28,6 @@ DeferredData::DeferredData(NetworkJob& job)
     , m_processDataTimer(this, &DeferredData::fireProcessDataTimer)
     , m_deferredStatusReceived(false)
     , m_status(0)
-    , m_deferredWMLOverride(false)
     , m_bytesSent(0)
     , m_totalBytesToBeSent(0)
     , m_deferredCloseStatus(BlackBerry::Platform::FilterStream::StatusSuccess)
@@ -42,11 +41,6 @@ void DeferredData::deferOpen(int status, const String& message)
     m_deferredStatusReceived = true;
     m_status = status;
     m_message = message;
-}
-
-void DeferredData::deferWMLOverride()
-{
-    m_deferredWMLOverride = true;
 }
 
 void DeferredData::deferHeaderReceived(const String& key, const String& value)
@@ -119,13 +113,6 @@ void DeferredData::processDeferredData()
     if (m_deferredStatusReceived) {
         m_job.handleNotifyStatusReceived(m_status, m_message);
         m_deferredStatusReceived = false;
-        if (m_job.isDeferringLoading() || m_job.isCancelled())
-            return;
-    }
-
-    if (m_deferredWMLOverride) {
-        m_job.handleNotifyWMLOverride();
-        m_deferredWMLOverride = false;
         if (m_job.isDeferringLoading() || m_job.isCancelled())
             return;
     }

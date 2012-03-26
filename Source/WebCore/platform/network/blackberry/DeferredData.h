@@ -51,7 +51,6 @@ class DeferredData {
 public:
     DeferredData(NetworkJob&);
     void deferOpen(int status, const String& message);
-    void deferWMLOverride();
     void deferHeaderReceived(const String& key, const String& value);
     void deferMultipartHeaderReceived(const String& key, const String& value);
     void deferDataReceived(const char* buf, size_t len);
@@ -60,7 +59,7 @@ public:
 
     bool hasDeferredData() const
     {
-        return m_deferredStatusReceived || m_deferredWMLOverride || !m_headerKeys.isEmpty() || !m_multipartHeaderKeys.isEmpty() || !m_dataSegments.isEmpty() || m_deferredClose;
+        return m_deferredStatusReceived || !m_headerKeys.isEmpty() || !m_multipartHeaderKeys.isEmpty() || !m_dataSegments.isEmpty() || m_deferredClose;
     }
 
     void processDeferredData();
@@ -83,7 +82,6 @@ private:
     bool m_deferredStatusReceived;
     int m_status;
     String m_message;
-    bool m_deferredWMLOverride;
     Vector<String> m_headerKeys;
     Vector<String> m_headerValues;
     Vector<String> m_multipartHeaderKeys;

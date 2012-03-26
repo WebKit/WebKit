@@ -240,14 +240,6 @@ void NetworkJob::handleNotifyStatusReceived(int status, const String& message)
     m_response.setHTTPStatusText(message);
 }
 
-void NetworkJob::notifyWMLOverride()
-{
-    if (shouldDeferLoading())
-        m_deferredData.deferWMLOverride();
-    else
-        handleNotifyWMLOverride();
-}
-
 void NetworkJob::notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::HeaderList& headers)
 {
     BlackBerry::Platform::NetworkRequest::HeaderList::const_iterator endIt = headers.end();
