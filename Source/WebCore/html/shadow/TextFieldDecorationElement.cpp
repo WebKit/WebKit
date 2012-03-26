@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 // TextFieldDecorator ----------------------------------------------------------------
 
 TextFieldDecorator::~TextFieldDecorator()
@@ -59,6 +61,13 @@ PassRefPtr<TextFieldDecorationElement> TextFieldDecorationElement::create(Docume
     return adoptRef(new TextFieldDecorationElement(document, decorator));
 }
 
+inline HTMLInputElement* TextFieldDecorationElement::hostInput()
+{
+    ASSERT(shadowAncestorNode());
+    ASSERT(shadowAncestorNode()->hasTagName(inputTag));
+    return static_cast<HTMLInputElement*>(shadowAncestorNode());
+}
+
 bool TextFieldDecorationElement::isTextFieldDecoration() const
 {
     return true;
@@ -69,11 +78,10 @@ void TextFieldDecorationElement::updateImage()
     if (!renderer() || !renderer()->isImage())
         return;
     RenderImageResource* resource = toRenderImage(renderer())->imageResource();
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
     CachedImage* image;
-    if (input->disabled())
+    if (hostInput()->disabled())
         image = m_textFieldDecorator->imageForDisabledState();
-    else if (input->readOnly())
+    else if (hostInput()->readOnly())
         image = m_textFieldDecorator->imageForReadonlyState();
     else
         image = m_textFieldDecorator->imageForNormalState();
@@ -84,7 +92,7 @@ void TextFieldDecorationElement::updateImage()
 PassRefPtr<RenderStyle> TextFieldDecorationElement::customStyleForRenderer()
 {
     RefPtr<RenderStyle> style = RenderStyle::create();
-    RenderStyle* inputStyle = shadowAncestorNode()->renderStyle();
+    RenderStyle* inputStyle = hostInput()->renderStyle();
     ASSERT(inputStyle);
     style->setWidth(Length(inputStyle->fontSize(), Fixed));
     style->setHeight(Length(inputStyle->fontSize(), Fixed));
@@ -105,6 +113,12 @@ void TextFieldDecorationElement::attach()
     updateImage();
 }
 
+void TextFieldDecorationElement::detach()
+{
+    m_textFieldDecorator->willDetach(hostInput());
+    HTMLDivElement::detach();
+}
+
 bool TextFieldDecorationElement::isMouseFocusable() const
 {
     return false;
@@ -112,7 +126,7 @@ bool TextFieldDecorationElement::isMouseFocusable() const
 
 void TextFieldDecorationElement::defaultEventHandler(Event* event)
 {
-    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowAncestorNode()));
+    RefPtr<HTMLInputElement> input(hostInput());
     if (input->disabled() || input->readOnly() || !event->isMouseEvent()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);

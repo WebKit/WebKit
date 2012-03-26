@@ -52,6 +52,7 @@ public:
     virtual CachedImage* imageForReadonlyState() = 0;
 
     virtual void handleClick(HTMLInputElement*) = 0;
+    virtual void willDetach(HTMLInputElement*) = 0;
 
     virtual ~TextFieldDecorator();
 };
@@ -69,9 +70,11 @@ private:
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
     virtual void attach() OVERRIDE;
+    virtual void detach() OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
     virtual void defaultEventHandler(Event*) OVERRIDE;
 
+    HTMLInputElement* hostInput();
     void updateImage();
 
     TextFieldDecorator* m_textFieldDecorator;
