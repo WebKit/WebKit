@@ -154,14 +154,15 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
             String value = it->second;
             if (!key.isEmpty() && !value.isEmpty()) {
                 // We need to check the encoding and encode the cookie's value using latin1 or utf8 to support unicode characters.
-                if (equalIgnoringCase(key, "Cookie"))
-                    platformRequest.addHeader(key.latin1().data(), value.containsOnlyLatin1() ? value.latin1().data() : value.utf8().data());
-                else
+                // We wo't use the old cookies of resourceRequest for new location because these cookies may be changed by redirection.
+                if (!equalIgnoringCase(key, "Cookie"))
                     platformRequest.addHeader(key.latin1().data(), value.latin1().data());
+                else if (!isRedirect)
+                    platformRequest.addHeader(key.latin1().data(), value.containsOnlyLatin1() ? value.latin1().data() : value.utf8().data());
             }
         }
        
-        // Redirection's response may contain new cookies, so add cookies again.
+        // Redirection's response may add or update cookies, so we get cookies from CookieManager when redirection happens.
         // If there aren't cookies in the header list, we need trying to add cookies.
         if (cookiesEnabled && (isRedirect || !httpHeaderFields().contains("Cookie")) && !url().isNull()) {
             // Prepare a cookie header if there are cookies related to this url.
