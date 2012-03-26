@@ -580,7 +580,6 @@ void QtViewportInteractionEngine::pinchGestureEnded()
     m_pinchStartScale = -1;
     // Clear the update deferrer now if we're in our final position and there won't be any animation to clear it later.
     if (ensureContentWithinViewportBoundary()) {
-    if (ensureContentWithinViewportBoundary())
         m_scaleUpdateDeferrer.clear();
         m_flickProvider->cancelFlick();
         m_flickProvider->contentItem()->parentItem()->setProperty("interactive", true);

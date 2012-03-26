@@ -1,3 +1,12 @@
+2012-03-26  Andras Becsi  <andras.becsi@nokia.com>
+
+        Be more careful with git gui usage
+
+        Unreviewed typo fix.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp: Remove additional line committed by accident.
+        (WebKit::QtViewportInteractionEngine::pinchGestureEnded):
+
 2012-03-26  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Taps are sometimes not highlighted.
