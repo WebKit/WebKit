@@ -213,13 +213,7 @@ void RenderTextControlSingleLine::layout()
     // and type=search if the text height is taller than the contentHeight()
     // because of compability.
 
-    LayoutUnit oldHeight = height();
-    computeLogicalHeight();
-
-    LayoutUnit oldWidth = width();
-    computeLogicalWidth();
-
-    bool relayoutChildren = oldHeight != height() || oldWidth != width();
+    RenderBlock::layoutBlock(false);
 
     RenderBox* innerTextRenderer = innerTextElement()->renderBox();
     ASSERT(innerTextRenderer);
@@ -234,7 +228,8 @@ void RenderTextControlSingleLine::layout()
     LayoutUnit heightLimit = (inputElement()->isSearchField() || !container) ? height() : contentHeight();
     if (currentHeight > heightLimit) {
         if (desiredHeight != currentHeight)
-            relayoutChildren = true;
+            setNeedsLayout(true, false);
+
         innerTextRenderer->style()->setHeight(Length(desiredHeight, Fixed));
         m_desiredInnerTextHeight = desiredHeight;
         if (innerBlockRenderer)
@@ -246,15 +241,17 @@ void RenderTextControlSingleLine::layout()
         LayoutUnit containerHeight = containerRenderer->height();
         if (containerHeight > heightLimit) {
             containerRenderer->style()->setHeight(Length(heightLimit, Fixed));
-            relayoutChildren = true;
+            setNeedsLayout(true, false);
         } else if (containerRenderer->height() < contentHeight()) {
             containerRenderer->style()->setHeight(Length(contentHeight(), Fixed));
-            relayoutChildren = true;
+            setNeedsLayout(true, false);
         } else
             containerRenderer->style()->setHeight(Length(containerHeight, Fixed));
     }
 
-    RenderBlock::layoutBlock(relayoutChildren);
+    // If we need another layout pass, we have changed one of children's height so we need to relayout them.
+    if (needsLayout())
+        RenderBlock::layoutBlock(true);
 
     // Center the child block vertically
     currentHeight = innerTextRenderer->height();

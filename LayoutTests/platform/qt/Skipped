@@ -2093,6 +2093,8 @@ tables/mozilla/bugs/bug27038-2.html
 # Needs a rebaseline, caused by https://bugs.webkit.org/show_bug.cgi?id=43022
 tables/mozilla_expected_failures/bugs/bug85016.html
 
+# The inner <input> should now grow to take the full cell's height.
+fast/table/colspanMinWidth-vertical.html
 # ============================================================================= #
 # Failed canvas tests from http://philip.html5.org/tests/canvas/suite/tests/
 # ============================================================================= #

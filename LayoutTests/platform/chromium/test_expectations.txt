@@ -4085,8 +4085,7 @@ BUGWK75568 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE PAS
 // The change should only be layer removal.
 BUGWK75568 : fast/events/mouse-relative-position.html = TEXT
 
-BUGWK80531 : fast/repaint/search-field-cancel.html = TEXT IMAGE+TEXT
-BUGWK80531 : fast/forms/textfield-overflow.html = IMAGE+TEXT
+BUGWK80531 : fast/repaint/search-field-cancel.html = TEXT IMAGE+TEXT IMAGE
 
 // Started failing (returning an empty render tree) at
 // http://trac.webkit.org/changeset/110262; flaky in debug.
@@ -4587,3 +4586,7 @@ BUGWK82122 SNOWLEOPARD : css3/selectors3/xml/css3-modsel-99b.xml = TEXT PASS
 BUGWK82122 SNOWLEOPARD : css3/selectors3/xml/css3-modsel-99.xml = TEXT PASS
 BUGWK82122 SNOWLEOPARD : css3/selectors3/xml/css3-modsel-9.xml = TEXT PASS
 
+// Needs a rebaseline after the bug.
+// The inner <input> should now grow to take the full cell's height.
+BUGWK80531 WIN : fast/table/colspanMinWidth-vertical.html = IMAGE
+BUGWK80531 MAC : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT

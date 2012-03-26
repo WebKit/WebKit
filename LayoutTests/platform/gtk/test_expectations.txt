@@ -107,8 +107,6 @@ BUGWK76639 : fast/table/multiple-captions-crash3.html = IMAGE FAIL
 BUGWK79756 : css3/flexbox/inline-flexbox.html = IMAGE FAIL
 BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE FAIL
 
-BUGWK80531 : fast/forms/textfield-overflow.html = IMAGE+TEXT
-
 // Rebaseline after https://bugs.webkit.org/show_bug.cgi?id=78412
 BUGWK78412 : tables/mozilla/bugs/bug2123.html = TEXT
 BUGWK78412 : tables/mozilla/bugs/bug2509.html = TEXT

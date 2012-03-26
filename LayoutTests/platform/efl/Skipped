@@ -2694,3 +2694,6 @@ fast/css/color-correction-on-backgrounds.html
 fast/css/color-correction-on-box-shadow.html
 fast/css/color-correction-on-text-shadow.html
 fast/css/color-correction-untagged-images.html
+
+# The inner <input> should now grow to take the full cell's height.
+fast/table/colspanMinWidth-vertical.html
