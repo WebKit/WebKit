@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class CSSRule;
+class CSSPropertyLonghand;
 class CSSStyleDeclaration;
 class KURL;
 class PropertySetCSSStyleDeclaration;
@@ -117,17 +118,13 @@ private:
 
     void setNeedsStyleRecalc();
 
-    String getShorthandValue(const int* properties, size_t) const;
-    String getCommonValue(const int* properties, size_t) const;
-    String getLayeredShorthandValue(const int* properties, size_t) const;
-    String get4Values(const int* properties) const;
-    String borderSpacingValue(const int properties[2]) const;
+    String getShorthandValue(const CSSPropertyLonghand&) const;
+    String getCommonValue(const CSSPropertyLonghand&) const;
+    String getLayeredShorthandValue(const CSSPropertyLonghand&) const;
+    String get4Values(const CSSPropertyLonghand&) const;
+    String borderSpacingValue(const CSSPropertyLonghand&) const;
     String fontValue() const;
     bool appendFontLonghandValueIfExplicit(int propertyID, StringBuilder& result) const;
-
-    template<size_t size> String getShorthandValue(const int (&properties)[size]) const { return getShorthandValue(properties, size); }
-    template<size_t size> String getCommonValue(const int (&properties)[size]) const { return getCommonValue(properties, size); }
-    template<size_t size> String getLayeredShorthandValue(const int (&properties)[size]) const { return getLayeredShorthandValue(properties, size); }
 
     bool removeShorthandProperty(int propertyID);
     bool propertyMatches(const CSSProperty*) const;

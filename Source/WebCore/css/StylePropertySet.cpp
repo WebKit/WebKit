@@ -101,173 +101,84 @@ String StylePropertySet::getPropertyValue(int propertyID) const
 
     // Shorthand and 4-values properties
     switch (propertyID) {
-        case CSSPropertyBorderSpacing: {
-            const int properties[2] = { CSSPropertyWebkitBorderHorizontalSpacing, CSSPropertyWebkitBorderVerticalSpacing };
-            return borderSpacingValue(properties);
-        }
-        case CSSPropertyBackgroundPosition: {
-            // FIXME: Is this correct? The code in cssparser.cpp is confusing
-            const int properties[2] = { CSSPropertyBackgroundPositionX, CSSPropertyBackgroundPositionY };
-            return getLayeredShorthandValue(properties);
-        }
-        case CSSPropertyBackgroundRepeat: {
-            const int properties[2] = { CSSPropertyBackgroundRepeatX, CSSPropertyBackgroundRepeatY };
-            return getLayeredShorthandValue(properties);
-        }
-        case CSSPropertyBackground: {
-            const int properties[9] = { CSSPropertyBackgroundColor,
-                                        CSSPropertyBackgroundImage,
-                                        CSSPropertyBackgroundRepeatX,
-                                        CSSPropertyBackgroundRepeatY,
-                                        CSSPropertyBackgroundAttachment,
-                                        CSSPropertyBackgroundPositionX,
-                                        CSSPropertyBackgroundPositionY,
-                                        CSSPropertyBackgroundClip,
-                                        CSSPropertyBackgroundOrigin };
-            return getLayeredShorthandValue(properties);
-        }
-        case CSSPropertyBorder: {
-            const int properties[3][4] = {{ CSSPropertyBorderTopWidth,
-                                            CSSPropertyBorderRightWidth,
-                                            CSSPropertyBorderBottomWidth,
-                                            CSSPropertyBorderLeftWidth },
-                                          { CSSPropertyBorderTopStyle,
-                                            CSSPropertyBorderRightStyle,
-                                            CSSPropertyBorderBottomStyle,
-                                            CSSPropertyBorderLeftStyle },
-                                          { CSSPropertyBorderTopColor,
-                                            CSSPropertyBorderRightColor,
-                                            CSSPropertyBorderBottomColor,
-                                            CSSPropertyBorderLeftColor }};
-            String res;
-            for (size_t i = 0; i < WTF_ARRAY_LENGTH(properties); ++i) {
-                String value = getCommonValue(properties[i]);
-                if (!value.isNull()) {
-                    if (!res.isNull())
-                        res += " ";
-                    res += value;
-                }
+    case CSSPropertyBorderSpacing:
+        return borderSpacingValue(borderSpacingLonghand());
+    case CSSPropertyBackgroundPosition:
+        return getLayeredShorthandValue(backgroundPositionLonghand());
+    case CSSPropertyBackgroundRepeat:
+        return getLayeredShorthandValue(backgroundRepeatLonghand());
+    case CSSPropertyBackground:
+        return getLayeredShorthandValue(backgroundLonghand());
+    case CSSPropertyBorder: {
+        const CSSPropertyLonghand properties[3] = { borderWidthLonghand(), borderStyleLonghand(), borderColorLonghand() };
+        String res;
+        for (size_t i = 0; i < WTF_ARRAY_LENGTH(properties); ++i) {
+            String value = getCommonValue(properties[i]);
+            if (!value.isNull()) {
+                if (!res.isNull())
+                    res += " ";
+                res += value;
             }
-            return res;
         }
-        case CSSPropertyBorderTop: {
-            const int properties[3] = { CSSPropertyBorderTopWidth, CSSPropertyBorderTopStyle,
-                                        CSSPropertyBorderTopColor};
-            return getShorthandValue(properties);
-        }
-        case CSSPropertyBorderRight: {
-            const int properties[3] = { CSSPropertyBorderRightWidth, CSSPropertyBorderRightStyle,
-                                        CSSPropertyBorderRightColor};
-            return getShorthandValue(properties);
-        }
-        case CSSPropertyBorderBottom: {
-            const int properties[3] = { CSSPropertyBorderBottomWidth, CSSPropertyBorderBottomStyle,
-                                        CSSPropertyBorderBottomColor};
-            return getShorthandValue(properties);
-        }
-        case CSSPropertyBorderLeft: {
-            const int properties[3] = { CSSPropertyBorderLeftWidth, CSSPropertyBorderLeftStyle,
-                                        CSSPropertyBorderLeftColor};
-            return getShorthandValue(properties);
-        }
-        case CSSPropertyOutline: {
-            const int properties[3] = { CSSPropertyOutlineWidth, CSSPropertyOutlineStyle,
-                                        CSSPropertyOutlineColor };
-            return getShorthandValue(properties);
-        }
-        case CSSPropertyBorderColor: {
-            const int properties[4] = { CSSPropertyBorderTopColor, CSSPropertyBorderRightColor,
-                                        CSSPropertyBorderBottomColor, CSSPropertyBorderLeftColor };
-            return get4Values(properties);
-        }
-        case CSSPropertyBorderWidth: {
-            const int properties[4] = { CSSPropertyBorderTopWidth, CSSPropertyBorderRightWidth,
-                                        CSSPropertyBorderBottomWidth, CSSPropertyBorderLeftWidth };
-            return get4Values(properties);
-        }
-        case CSSPropertyBorderStyle: {
-            const int properties[4] = { CSSPropertyBorderTopStyle, CSSPropertyBorderRightStyle,
-                                        CSSPropertyBorderBottomStyle, CSSPropertyBorderLeftStyle };
-            return get4Values(properties);
-        }
-        case CSSPropertyWebkitFlexFlow: {
-            const int properties[] = { CSSPropertyWebkitFlexDirection, CSSPropertyWebkitFlexWrap };
-            return getShorthandValue(properties);
-        }
-        case CSSPropertyFont:
-            return fontValue();
-        case CSSPropertyMargin: {
-            const int properties[4] = { CSSPropertyMarginTop, CSSPropertyMarginRight,
-                                        CSSPropertyMarginBottom, CSSPropertyMarginLeft };
-            return get4Values(properties);
-        }
-        case CSSPropertyOverflow: {
-            const int properties[2] = { CSSPropertyOverflowX, CSSPropertyOverflowY };
-            return getCommonValue(properties);
-        }
-        case CSSPropertyPadding: {
-            const int properties[4] = { CSSPropertyPaddingTop, CSSPropertyPaddingRight,
-                                        CSSPropertyPaddingBottom, CSSPropertyPaddingLeft };
-            return get4Values(properties);
-        }
-        case CSSPropertyListStyle: {
-            const int properties[3] = { CSSPropertyListStyleType, CSSPropertyListStylePosition,
-                                        CSSPropertyListStyleImage };
-            return getShorthandValue(properties);
-        }
-        case CSSPropertyWebkitMaskPosition: {
-            // FIXME: Is this correct? The code in cssparser.cpp is confusing
-            const int properties[2] = { CSSPropertyWebkitMaskPositionX, CSSPropertyWebkitMaskPositionY };
-            return getLayeredShorthandValue(properties);
-        }
-        case CSSPropertyWebkitMaskRepeat: {
-            const int properties[2] = { CSSPropertyWebkitMaskRepeatX, CSSPropertyWebkitMaskRepeatY };
-            return getLayeredShorthandValue(properties);
-        }
-        case CSSPropertyWebkitMask: {
-            const int properties[] = { CSSPropertyWebkitMaskImage, CSSPropertyWebkitMaskRepeat,
-                                       CSSPropertyWebkitMaskAttachment, CSSPropertyWebkitMaskPosition, CSSPropertyWebkitMaskClip,
-                                       CSSPropertyWebkitMaskOrigin };
-            return getLayeredShorthandValue(properties);
-        }
-        case CSSPropertyWebkitTransformOrigin: {
-            const int properties[3] = { CSSPropertyWebkitTransformOriginX,
-                                        CSSPropertyWebkitTransformOriginY,
-                                        CSSPropertyWebkitTransformOriginZ };
-            return getShorthandValue(properties);
-        }
-        case CSSPropertyWebkitTransition: {
-            const int properties[4] = { CSSPropertyWebkitTransitionProperty, CSSPropertyWebkitTransitionDuration,
-                                        CSSPropertyWebkitTransitionTimingFunction, CSSPropertyWebkitTransitionDelay };
-            return getLayeredShorthandValue(properties);
-        }
-        case CSSPropertyWebkitAnimation: {
-            const int properties[7] = { CSSPropertyWebkitAnimationName, CSSPropertyWebkitAnimationDuration,
-                                        CSSPropertyWebkitAnimationTimingFunction, CSSPropertyWebkitAnimationDelay,
-                                        CSSPropertyWebkitAnimationIterationCount, CSSPropertyWebkitAnimationDirection,
-                                        CSSPropertyWebkitAnimationFillMode };
-            return getLayeredShorthandValue(properties);
-        }
-        case CSSPropertyWebkitWrap: {
-            const int properties[3] = { CSSPropertyWebkitWrapFlow, CSSPropertyWebkitWrapMargin,
-                CSSPropertyWebkitWrapPadding };
-            return getShorthandValue(properties);
-        }
+        return res;
+    }
+    case CSSPropertyBorderTop:
+        return getShorthandValue(borderTopLonghand());
+    case CSSPropertyBorderRight:
+        return getShorthandValue(borderRightLonghand());
+    case CSSPropertyBorderBottom:
+        return getShorthandValue(borderBottomLonghand());
+    case CSSPropertyBorderLeft:
+        return getShorthandValue(borderLeftLonghand());
+    case CSSPropertyOutline:
+        return getShorthandValue(outlineLonghand());
+    case CSSPropertyBorderColor:
+        return get4Values(borderColorLonghand());
+    case CSSPropertyBorderWidth:
+        return get4Values(borderWidthLonghand());
+    case CSSPropertyBorderStyle:
+        return get4Values(borderStyleLonghand());
+    case CSSPropertyWebkitFlexFlow:
+        return getShorthandValue(webkitFlexFlowLonghand());
+    case CSSPropertyFont:
+        return fontValue();
+    case CSSPropertyMargin:
+        return get4Values(marginLonghand());
+    case CSSPropertyOverflow:
+        return getCommonValue(overflowLonghand());
+    case CSSPropertyPadding:
+        return get4Values(paddingLonghand());
+    case CSSPropertyListStyle:
+        return getShorthandValue(listStyleLonghand());
+    case CSSPropertyWebkitMaskPosition:
+        return getLayeredShorthandValue(webkitMaskPositionLonghand());
+    case CSSPropertyWebkitMaskRepeat:
+        return getLayeredShorthandValue(webkitMaskRepeatLonghand());
+    case CSSPropertyWebkitMask:
+        return getLayeredShorthandValue(webkitMaskLonghand());
+    case CSSPropertyWebkitTransformOrigin:
+        return getShorthandValue(webkitTransformOriginLonghand());
+    case CSSPropertyWebkitTransition:
+        return getLayeredShorthandValue(webkitTransitionLonghand());
+    case CSSPropertyWebkitAnimation:
+        return getLayeredShorthandValue(webkitAnimationLonghand());
+    case CSSPropertyWebkitWrap:
+        return getShorthandValue(webkitWrapLonghand());
 #if ENABLE(SVG)
-        case CSSPropertyMarker: {
-            RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyMarkerStart);
-            if (value)
-                return value->cssText();
-        }
+    case CSSPropertyMarker: {
+        RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyMarkerStart);
+        if (value)
+            return value->cssText();
+    }
 #endif
     }
     return String();
 }
 
-String StylePropertySet::borderSpacingValue(const int properties[2]) const
+String StylePropertySet::borderSpacingValue(const CSSPropertyLonghand& longhand) const
 {
-    RefPtr<CSSValue> horizontalValue = getPropertyCSSValue(properties[0]);
-    RefPtr<CSSValue> verticalValue = getPropertyCSSValue(properties[1]);
+    RefPtr<CSSValue> horizontalValue = getPropertyCSSValue(longhand.properties()[0]);
+    RefPtr<CSSValue> verticalValue = getPropertyCSSValue(longhand.properties()[1]);
 
     if (!horizontalValue)
         return String();
@@ -336,13 +247,13 @@ String StylePropertySet::fontValue() const
     return result.toString();
 }
 
-String StylePropertySet::get4Values(const int* properties) const
+String StylePropertySet::get4Values(const CSSPropertyLonghand& longhand) const
 {
     // Assume the properties are in the usual order top, right, bottom, left.
-    RefPtr<CSSValue> topValue = getPropertyCSSValue(properties[0]);
-    RefPtr<CSSValue> rightValue = getPropertyCSSValue(properties[1]);
-    RefPtr<CSSValue> bottomValue = getPropertyCSSValue(properties[2]);
-    RefPtr<CSSValue> leftValue = getPropertyCSSValue(properties[3]);
+    RefPtr<CSSValue> topValue = getPropertyCSSValue(longhand.properties()[0]);
+    RefPtr<CSSValue> rightValue = getPropertyCSSValue(longhand.properties()[1]);
+    RefPtr<CSSValue> bottomValue = getPropertyCSSValue(longhand.properties()[2]);
+    RefPtr<CSSValue> leftValue = getPropertyCSSValue(longhand.properties()[3]);
 
     // All 4 properties must be specified.
     if (!topValue || !rightValue || !bottomValue || !leftValue)
@@ -363,16 +274,17 @@ String StylePropertySet::get4Values(const int* properties) const
     return res;
 }
 
-String StylePropertySet::getLayeredShorthandValue(const int* properties, size_t size) const
+String StylePropertySet::getLayeredShorthandValue(const CSSPropertyLonghand& longhand) const
 {
     String res;
 
+    const unsigned size = longhand.length();
     // Begin by collecting the properties into an array.
     Vector< RefPtr<CSSValue> > values(size);
     size_t numLayers = 0;
 
-    for (size_t i = 0; i < size; ++i) {
-        values[i] = getPropertyCSSValue(properties[i]);
+    for (unsigned i = 0; i < size; ++i) {
+        values[i] = getPropertyCSSValue(longhand.properties()[i]);
         if (values[i]) {
             if (values[i]->isValueList()) {
                 CSSValueList* valueList = static_cast<CSSValueList*>(values[i].get());
@@ -389,7 +301,7 @@ String StylePropertySet::getLayeredShorthandValue(const int* properties, size_t 
         bool useRepeatXShorthand = false;
         bool useRepeatYShorthand = false;
         bool useSingleWordShorthand = false;
-        for (size_t j = 0; j < size; j++) {
+        for (unsigned j = 0; j < size; j++) {
             RefPtr<CSSValue> value;
             if (values[j]) {
                 if (values[j]->isValueList())
@@ -398,7 +310,7 @@ String StylePropertySet::getLayeredShorthandValue(const int* properties, size_t 
                     value = values[j];
 
                     // Color only belongs in the last layer.
-                    if (properties[j] == CSSPropertyBackgroundColor) {
+                    if (longhand.properties()[j] == CSSPropertyBackgroundColor) {
                         if (i != numLayers - 1)
                             value = 0;
                     } else if (i != 0) // Other singletons only belong in the first layer.
@@ -409,10 +321,10 @@ String StylePropertySet::getLayeredShorthandValue(const int* properties, size_t 
             // We need to report background-repeat as it was written in the CSS. If the property is implicit,
             // then it was written with only one value. Here we figure out which value that was so we can
             // report back correctly.
-            if (properties[j] == CSSPropertyBackgroundRepeatX && isPropertyImplicit(properties[j])) {
+            if (longhand.properties()[j] == CSSPropertyBackgroundRepeatX && isPropertyImplicit(longhand.properties()[j])) {
 
                 // BUG 49055: make sure the value was not reset in the layer check just above.
-                if (j < size - 1 && properties[j + 1] == CSSPropertyBackgroundRepeatY && value) {
+                if (j < size - 1 && longhand.properties()[j + 1] == CSSPropertyBackgroundRepeatY && value) {
                     RefPtr<CSSValue> yValue;
                     RefPtr<CSSValue> nextValue = values[j + 1];
                     if (nextValue->isValueList())
@@ -460,16 +372,15 @@ String StylePropertySet::getLayeredShorthandValue(const int* properties, size_t 
             res += layerRes;
         }
     }
-
     return res;
 }
 
-String StylePropertySet::getShorthandValue(const int* properties, size_t size) const
+String StylePropertySet::getShorthandValue(const CSSPropertyLonghand& longhand) const
 {
     String res;
-    for (size_t i = 0; i < size; ++i) {
-        if (!isPropertyImplicit(properties[i])) {
-            RefPtr<CSSValue> value = getPropertyCSSValue(properties[i]);
+    for (unsigned i = 0; i < longhand.length(); ++i) {
+        if (!isPropertyImplicit(longhand.properties()[i])) {
+            RefPtr<CSSValue> value = getPropertyCSSValue(longhand.properties()[i]);
             // FIXME: provide default value if !value
             if (value) {
                 if (!res.isNull())
@@ -482,11 +393,11 @@ String StylePropertySet::getShorthandValue(const int* properties, size_t size) c
 }
 
 // only returns a non-null value if all properties have the same, non-null value
-String StylePropertySet::getCommonValue(const int* properties, size_t size) const
+String StylePropertySet::getCommonValue(const CSSPropertyLonghand& longhand) const
 {
     String res;
-    for (size_t i = 0; i < size; ++i) {
-        RefPtr<CSSValue> value = getPropertyCSSValue(properties[i]);
+    for (unsigned i = 0; i < longhand.length(); ++i) {
+        RefPtr<CSSValue> value = getPropertyCSSValue(longhand.properties()[i]);
         if (!value)
             return String();
         String text = value->cssText();
@@ -680,11 +591,9 @@ String StylePropertySet::asText() const
     // would not work in Firefox (<rdar://problem/5143183>)
     // It would be a better solution if background-position was CSS_PAIR.
     if (positionXProp && positionYProp && positionXProp->isImportant() == positionYProp->isImportant()) {
-        String positionValue;
-        const int properties[2] = { CSSPropertyBackgroundPositionX, CSSPropertyBackgroundPositionY };
         result.append("background-position: ");
         if (positionXProp->value()->isValueList() || positionYProp->value()->isValueList())
-            result.append(getLayeredShorthandValue(properties));
+            result.append(getLayeredShorthandValue(backgroundPositionLonghand()));
         else {
             result.append(positionXProp->value()->cssText());
             result.append(" ");
@@ -702,11 +611,9 @@ String StylePropertySet::asText() const
 
     // FIXME: We need to do the same for background-repeat.
     if (repeatXProp && repeatYProp && repeatXProp->isImportant() == repeatYProp->isImportant()) {
-        String repeatValue;
-        const int repeatProperties[2] = { CSSPropertyBackgroundRepeatX, CSSPropertyBackgroundRepeatY };
         result.append("background-repeat: ");
         if (repeatXProp->value()->isValueList() || repeatYProp->value()->isValueList())
-            result.append(getLayeredShorthandValue(repeatProperties));
+            result.append(getLayeredShorthandValue(backgroundRepeatLonghand()));
         else {
             result.append(repeatXProp->value()->cssText());
             result.append(" ");

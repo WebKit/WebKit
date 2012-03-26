@@ -30,15 +30,15 @@ namespace WebCore {
 const CSSPropertyLonghand& backgroundLonghand()
 {
     static const int backgroundProperties[] = {
-        CSSPropertyBackgroundAttachment,
-        CSSPropertyBackgroundClip,
         CSSPropertyBackgroundColor,
         CSSPropertyBackgroundImage,
-        CSSPropertyBackgroundOrigin,
+        CSSPropertyBackgroundRepeatX,
+        CSSPropertyBackgroundRepeatY,
+        CSSPropertyBackgroundAttachment,
         CSSPropertyBackgroundPositionX,
         CSSPropertyBackgroundPositionY,
-        CSSPropertyBackgroundRepeatX,
-        CSSPropertyBackgroundRepeatY
+        CSSPropertyBackgroundClip,
+        CSSPropertyBackgroundOrigin
     };
     DEFINE_STATIC_LOCAL(CSSPropertyLonghand, backgroundLonghand, (backgroundProperties, WTF_ARRAY_LENGTH(backgroundProperties)));
     return backgroundLonghand;
@@ -339,14 +339,14 @@ const CSSPropertyLonghand& webkitMarqueeLonghand()
 const CSSPropertyLonghand& webkitMaskLonghand()
 {
     static const int maskProperties[] = {
-        CSSPropertyWebkitMaskAttachment,
-        CSSPropertyWebkitMaskClip,
         CSSPropertyWebkitMaskImage,
-        CSSPropertyWebkitMaskOrigin,
+        CSSPropertyWebkitMaskRepeatX,
+        CSSPropertyWebkitMaskRepeatY,
+        CSSPropertyWebkitMaskAttachment,
         CSSPropertyWebkitMaskPositionX,
         CSSPropertyWebkitMaskPositionY,
-        CSSPropertyWebkitMaskRepeatX,
-        CSSPropertyWebkitMaskRepeatY
+        CSSPropertyWebkitMaskClip,
+        CSSPropertyWebkitMaskOrigin
     };
     DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitMaskLonghand, (maskProperties, WTF_ARRAY_LENGTH(maskProperties)));
     return webkitMaskLonghand;
@@ -399,7 +399,8 @@ const CSSPropertyLonghand& webkitTransformOriginLonghand()
 {
     static const int transformOriginProperties[] = {
         CSSPropertyWebkitTransformOriginX,
-        CSSPropertyWebkitTransformOriginY
+        CSSPropertyWebkitTransformOriginY,
+        CSSPropertyWebkitTransformOriginZ
     };
     DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitTransformOriginLonghand, (transformOriginProperties, WTF_ARRAY_LENGTH(transformOriginProperties)));
     return webkitTransformOriginLonghand;
