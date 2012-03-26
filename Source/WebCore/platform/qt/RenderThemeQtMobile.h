@@ -53,6 +53,9 @@ public:
 
     virtual bool delegatesMenuListRendering() const { return true; }
 
+    // drawFocusRing() will return early if the color is invalid.
+    virtual Color platformFocusRingColor() const { return Color(); }
+
 protected:
 
     virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
