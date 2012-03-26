@@ -1,3 +1,75 @@
+2012-03-26  Dirk Pranke  <dpranke@chromium.org>
+
+        clean up NRWT logging/metering, be less verbose
+        https://bugs.webkit.org/show_bug.cgi?id=73846
+
+        Reviewed by Ojan Vafai.
+
+        Re-land r112014 with a build fix for Python 2.6 compatibility.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_http_locking):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (AbstractWorker.run):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.__init__):
+        (Worker._set_up_logging):
+        (Worker):
+        (Worker._set_up_host_and_port):
+        (Worker.run):
+        (Worker.cleanup):
+        * Scripts/webkitpy/layout_tests/controllers/worker_unittest.py:
+        (WorkerTest.test_default_platform_in_worker):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+        (main):
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream):
+        (MeteredStream.implements):
+        (MeteredStream._erasure):
+        (MeteredStream._ensure_newline):
+        (MeteredStream.__init__):
+        (MeteredStream.__del__):
+        (MeteredStream.cleanup):
+        (MeteredStream.write_throttled_update):
+        (MeteredStream.write_update):
+        (MeteredStream.write):
+        (MeteredStream.writeln):
+        (MeteredStream._erase_last_partial_line):
+        (_LogHandler):
+        (_LogHandler.__init__):
+        (_LogHandler.emit):
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+        (RegularTest):
+        (RegularTest.setUp):
+        (RegularTest.tearDown):
+        (RegularTest.time_fn):
+        (RegularTest.test_logging_not_included):
+        (RegularTest._basic):
+        (RegularTest.test_basic):
+        (RegularTest._log_after_update):
+        (RegularTest.test_log_after_update):
+        (TtyTest):
+        (TtyTest.test_basic):
+        (TtyTest.test_log_after_update):
+        (VerboseTest):
+        (VerboseTest.test_basic):
+        (VerboseTest.test_log_after_update):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (parse_print_options):
+        (Printer.__init__):
+        (Printer.cleanup):
+        (Printer.print_progress):
+        (Printer.print_update):
+        (Printer._write):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.get_printer):
+        (Testprinter.test_print_progress):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.__init__):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_test_pause_before_testing):
+
 2012-03-26  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         [jhbuild] Revert $MAKE environment hack introduced in r101929.

@@ -214,7 +214,7 @@ class ManagerTest(unittest.TestCase):
         host = MockHost()
         port = host.port_factory.get(port_name=options.platform, options=options)
         run_webkit_tests._set_up_derived_options(port, options)
-        printer = printing.Printer(port, options, StringIO.StringIO(), StringIO.StringIO(), configure_logging=False)
+        printer = printing.Printer(port, options, StringIO.StringIO(), StringIO.StringIO())
         manager = LockCheckingManager(port, options, printer)
         manager.collect_tests(args)
         manager.parse_expectations()
