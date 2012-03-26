@@ -1355,11 +1355,7 @@ BUGCR10296 LEOPARD : fast/text/international/bidi-menulist.html = FAIL
 // SVG masks aren't quite working yet.
 // Might also be related to https://bugs.webkit.org/show_bug.cgi?id=21910
 // New tests. We should fix these, but they don't need to block the current release
-BUGCR3244 LINUX WIN : fast/backgrounds/svg-as-mask.html = FAIL
 BUGCR3244 LINUX WIN : svg/zoom/page/zoom-mask-with-percentages.svg = FAIL
-// More tests that fail because of masks not working properly.
-// New tests. We should fix these, but they don't need to block the current release
-BUGCR3244 LINUX WIN : fast/backgrounds/repeat/mask-negative-offset-repeat.html = FAIL
 // Marking this again as failed. This test failed even after rebaseline due to
 // the fact that the font is not specified in the test and it seems that the
 // test falls back on a different font locally than on the buildbot so the
@@ -1644,7 +1640,6 @@ BUGCR10399 MAC : fast/encoding/char-encoding-mac.html = FAIL
 // Widget location is just slightly off
 BUGCR23496 MAC : css1/box_properties/acid_test.html = IMAGE
 BUGCR23496 MAC : css2.1/t09-c5526c-display-00-e.html = IMAGE
-BUGCR23496 MAC : fast/block/basic/011.html = IMAGE
 BUGCR23496 MAC : fast/forms/001.html = IMAGE
 BUGCR23496 MAC : fast/forms/form-element-geometry.html = IMAGE+TEXT
 BUGCR23496 MAC : fast/forms/formmove.html = IMAGE
@@ -1677,7 +1672,6 @@ BUGCR23494 LEOPARD : fast/text/monospace-width-cache.html = IMAGE
 // Actual is just slightly off in color than expected
 BUGCR23488 LEOPARD RELEASE : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUGCR23488 SLOW LEOPARD DEBUG : fast/backgrounds/size/backgroundSize15.html = IMAGE
-BUGCR23488 LEOPARD : fast/block/float/float-avoidance.html = IMAGE
 BUGCR23488 MAC : fast/canvas/canvas-incremental-repaint-2.html = IMAGE
 BUGCR23488 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = IMAGE
 BUGCR23488 LEOPARD : fast/frames/content-opacity-1.html = IMAGE
@@ -1871,7 +1865,6 @@ BUGCR9798 SLOW WIN DEBUG : fast/dom/Window/slow-unload-handler.html = PASS
 // SKIA_TEXT results - differ only in low-bits of shadow, or positioning
 // when GDI integralizes its positions before applying the CTM
 // rebaseline when SKIA_TEXT is on by default
-BUGCR99500 WIN : fast/borders/border-antialiasing.html = IMAGE
 BUGCR99500 WIN : fast/reflections/reflection-overflow-hidden.html = IMAGE
 BUGCR99500 WIN : fast/repaint/reflection-redraw.html = IMAGE
 BUGCR99500 WIN : printing/width-overflow.html = IMAGE
@@ -2796,11 +2789,6 @@ BUGCR68436 LINUX DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doc
 BUGCR68436 MAC WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT TEXT
 
 // Disabled scrollbars are rendered differently
-BUGWK52414 MAC : fast/body-propagation/overflow/001-xhtml.xhtml = IMAGE
-BUGWK52414 MAC : fast/body-propagation/overflow/001.html = IMAGE
-BUGWK52414 MAC : fast/body-propagation/overflow/005-declarative.xhtml = IMAGE
-BUGWK52414 MAC : fast/body-propagation/overflow/005-xhtml.xhtml = IMAGE
-BUGWK52414 MAC : fast/body-propagation/overflow/005.html = IMAGE
 BUGWK52414 MAC : fast/overflow/006.html = IMAGE
 BUGWK52414 MAC : fast/overflow/overflow-x-y.html = IMAGE
 
@@ -3005,21 +2993,6 @@ BUGCR77468 : fast/forms/file/input-file-directory-upload.html = TIMEOUT
 // Temprary bug holding to deal with many changed tests due to
 // http://build.chromium.org/p/chromium.webkit/builders/Webkit%20Linux/builds/4837
 // http://trac.webkit.org/changeset/81992
-BUGCR77494 LINUX WIN : fast/block/positioning/056.html = FAIL
-BUGCR77494 LINUX WIN : fast/block/positioning/auto/005.html = IMAGE+TEXT
-BUGCR77494 LEOPARD : fast/block/positioning/auto/005.html = IMAGE
-BUGCR77494 LINUX WIN : fast/block/positioning/auto/006.html = IMAGE+TEXT
-BUGCR77494 LEOPARD : fast/block/positioning/auto/006.html = IMAGE
-BUGCR77494 LINUX WIN : fast/block/positioning/auto/vertical-lr/005.html = FAIL
-BUGCR77494 LINUX WIN : fast/block/positioning/auto/vertical-lr/006.html = FAIL
-BUGCR77494 LINUX WIN : fast/block/positioning/auto/vertical-rl/005.html = FAIL
-BUGCR77494 LINUX WIN : fast/block/positioning/auto/vertical-rl/006.html = FAIL
-BUGCR77494 LINUX WIN : fast/block/positioning/fixed-positioning-scrollbar-bug.html = FAIL
-BUGCR77494 LINUX WIN : fast/block/positioning/inline-block-relposition.html = IMAGE+TEXT
-BUGCR77494 LEOPARD : fast/block/positioning/inline-block-relposition.html = IMAGE
-BUGCR77494 LINUX WIN : fast/block/positioning/relative-overflow-block.html = FAIL
-BUGCR77494 LINUX WIN : fast/block/positioning/trailing-space-test.html = IMAGE+TEXT
-BUGCR77494 LEOPARD : fast/block/positioning/trailing-space-test.html = IMAGE
 BUGCR77494 LINUX WIN : fast/clip/001.html = FAIL
 BUGCR77494 LINUX WIN : fast/clip/004.html = FAIL
 BUGCR77494 LINUX WIN : fast/clip/006.html = FAIL
@@ -3234,7 +3207,6 @@ BUGCR82281 : fast/xpath/xpath-snapshot-result-should-mark-its-nodeset.html = TEX
 
 // New pixel tests added for bug 58999. These will fail on windows and linux until bug
 // 60342 is fixed and the 58999 fix enabled for skia.
-BUGWK58999 LINUX WIN : fast/borders/outline-alpha-block.html = IMAGE
 BUGWK58999 LINUX WIN : fast/borders/outline-alpha-inline.html = IMAGE
 
 // New test added at r86467, doesn't pass.
@@ -4125,7 +4097,6 @@ BUGWK81145 LION : svg/batik/text/longTextOnPath.svg = IMAGE+TEXT
 BUGWK81145 LION : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK81145 LION : animations/cross-fade-webkit-mask-box-image.html = IMAGE
 BUGWK81145 LION : compositing/iframes/iframe-content-flipping.html = IMAGE
-BUGWK81145 LION : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
 BUGWK81145 LION : fast/box-shadow/single-pixel-shadow.html = IMAGE
 BUGWK81145 LION : fast/forms/file/file-input-pressed-state.html = IMAGE
 BUGWK81145 LION : fast/frames/invalid.html = IMAGE
