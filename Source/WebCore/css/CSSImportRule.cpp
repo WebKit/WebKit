@@ -25,31 +25,34 @@
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
+#include "MediaList.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSImportRule::CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList> media)
+PassRefPtr<CSSImportRule> CSSImportRule::create(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaQuerySet> media)
+{
+    return adoptRef(new CSSImportRule(parent, href, media));
+}
+
+CSSImportRule::CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaQuerySet> media)
     : CSSRule(parent, CSSRule::IMPORT_RULE)
     , m_styleSheetClient(this)
     , m_strHref(href)
-    , m_lstMedia(media)
+    , m_mediaQueries(media)
     , m_cachedSheet(0)
     , m_loading(false)
 {
     ASSERT(parent);
-    if (m_lstMedia)
-        m_lstMedia->setParentStyleSheet(parent);
-    else
-        m_lstMedia = MediaList::create(parent, String());
+    if (!m_mediaQueries)
+        m_mediaQueries = MediaQuerySet::create(String());
 }
 
 CSSImportRule::~CSSImportRule()
 {
-    if (m_lstMedia)
-        m_lstMedia->setParentStyleSheet(0);
     if (m_styleSheet)
         m_styleSheet->clearOwnerRule();
     if (m_cachedSheet)
@@ -158,19 +161,25 @@ void CSSImportRule::requestStyleSheet()
     }
 }
 
+MediaList* CSSImportRule::media()
+{
+    return m_mediaQueries->ensureMediaList(parentStyleSheet());
+}
+
 String CSSImportRule::cssText() const
 {
-    String result = "@import url(\"";
-    result += m_strHref;
-    result += "\")";
+    StringBuilder result;
+    result.append("@import url(\"");
+    result.append(m_strHref);
+    result.append("\")");
 
-    if (m_lstMedia) {
-        result += " ";
-        result += m_lstMedia->mediaText();
+    if (m_mediaQueries) {
+        result.append(' ');
+        result.append(m_mediaQueries->mediaText());
     }
-    result += ";";
+    result.append(';');
 
-    return result;
+    return result.toString();
 }
 
 void CSSImportRule::addSubresourceStyleURLs(ListHashSet<KURL>& urls)

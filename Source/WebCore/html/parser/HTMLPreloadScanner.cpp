@@ -105,13 +105,13 @@ public:
     {
         if (attributeValue.isEmpty())
             return true;
-        RefPtr<MediaList> mediaList = MediaList::createAllowingDescriptionSyntax(attributeValue);
+        RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(attributeValue);
     
         // Only preload screen media stylesheets. Used this way, the evaluator evaluates to true for any 
         // rules containing complex queries (full evaluation is possible but it requires a frame and a style selector which
         // may be problematic here).
         MediaQueryEvaluator mediaQueryEvaluator("screen");
-        return mediaQueryEvaluator.eval(mediaList.get());
+        return mediaQueryEvaluator.eval(mediaQueries.get());
     }
 
     void setUrlToLoad(const String& attributeValue)

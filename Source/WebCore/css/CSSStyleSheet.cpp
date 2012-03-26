@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
+#include "MediaList.h"
 #include "Node.h"
 #include "SVGNames.h"
 #include "SecurityOrigin.h"
@@ -312,6 +313,18 @@ Document* CSSStyleSheet::findDocument()
     Node* ownerNode = findStyleSheetOwnerNode();
 
     return ownerNode ? ownerNode->document() : 0;
+}
+    
+MediaList* CSSStyleSheet::media() const 
+{ 
+    if (!m_mediaQueries)
+        return 0;
+    return m_mediaQueries->ensureMediaList(const_cast<CSSStyleSheet*>(this));
+}
+
+void CSSStyleSheet::setMediaQueries(PassRefPtr<MediaQuerySet> mediaQueries)
+{
+    m_mediaQueries = mediaQueries;
 }
 
 void CSSStyleSheet::styleSheetChanged()

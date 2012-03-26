@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2010, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,7 +32,7 @@ namespace WebCore {
 /* MediaList is used to store 3 types of media related entities which mean the same:
  * Media Queries, Media Types and Media Descriptors.
  * Currently MediaList always tries to parse media queries and if parsing fails,
- * tries to fallback to Media Descriptors if m_fallback flag is set.
+ * tries to fallback to Media Descriptors if m_fallbackToDescriptor flag is set.
  * Slight problem with syntax error handling:
  * CSS 2.1 Spec (http://www.w3.org/TR/CSS21/media.html)
  * specifies that failing media type parsing is a syntax error
@@ -56,21 +56,18 @@ namespace WebCore {
  * document.styleSheets[0].cssRules[0].media.mediaText = "screen and resolution > 40dpi" will
  * throw SYNTAX_ERR exception.
  */
-
-MediaList::MediaList(CSSStyleSheet* parentStyleSheet, bool fallbackToDescriptor)
-    : m_fallback(fallbackToDescriptor)
-    , m_parentStyleSheet(parentStyleSheet)
+    
+MediaQuerySet::MediaQuerySet()
+    : m_fallbackToDescriptor(false)
     , m_lastLine(0)
 {
 }
 
-MediaList::MediaList(CSSStyleSheet* parentStyleSheet, const String& media, bool fallbackToDescriptor)
-    : m_fallback(fallbackToDescriptor)
-    , m_parentStyleSheet(parentStyleSheet)
+MediaQuerySet::MediaQuerySet(const String& mediaString, bool fallbackToDescriptor)
+    : m_fallbackToDescriptor(fallbackToDescriptor)
     , m_lastLine(0)
 {
-    ExceptionCode ec = 0;
-    setMediaText(media, ec);
+    bool success = parse(mediaString);
     // FIXME: parsing can fail. The problem with failing constructor is that
     // we would need additional flag saying MediaList is not valid
     // Parse can fail only when fallbackToDescriptor == false, i.e when HTML4 media descriptor
@@ -79,78 +76,119 @@ MediaList::MediaList(CSSStyleSheet* parentStyleSheet, const String& media, bool 
     // for both html and svg, even though svg:style doesn't use media descriptors
     // Currently the only places where parsing can fail are
     // creating <svg:style>, creating css media / import rules from js
-    if (ec)
-        setMediaText("invalid", ec);
+    
+    // FIXME: This doesn't make much sense.
+    if (!success)
+        parse("invalid");
 }
 
-MediaList::~MediaList()
+MediaQuerySet::~MediaQuerySet()
 {
-    deleteAllValues(m_queries);
 }
 
-static String parseMediaDescriptor(const String& s)
+static String parseMediaDescriptor(const String& string)
 {
-    int len = s.length();
-
     // http://www.w3.org/TR/REC-html40/types.html#type-media-descriptors
     // "Each entry is truncated just before the first character that isn't a
     // US ASCII letter [a-zA-Z] (ISO 10646 hex 41-5a, 61-7a), digit [0-9] (hex 30-39),
     // or hyphen (hex 2d)."
-    int i;
-    unsigned short c;
-    for (i = 0; i < len; ++i) {
-        c = s[i];
+    unsigned length = string.length();
+    unsigned i = 0;
+    for (; i < length; ++i) {
+        unsigned short c = string[i];
         if (! ((c >= 'a' && c <= 'z')
-            || (c >= 'A' && c <= 'Z')
-            || (c >= '1' && c <= '9')
-            || (c == '-')))
+               || (c >= 'A' && c <= 'Z')
+               || (c >= '1' && c <= '9')
+               || (c == '-')))
             break;
     }
-    return s.left(i);
+    return string.left(i);
 }
 
-void MediaList::deleteMedium(const String& oldMedium, ExceptionCode& ec)
+bool MediaQuerySet::parse(const String& mediaString)
 {
-    RefPtr<MediaList> tempMediaList = MediaList::create();
-    CSSParser p(true);
-
-    MediaQuery* oldQuery = 0;
-    OwnPtr<MediaQuery> createdQuery;
-
-    if (p.parseMediaQuery(tempMediaList.get(), oldMedium)) {
-        if (tempMediaList->m_queries.size() > 0)
-            oldQuery = tempMediaList->m_queries[0];
-    } else if (m_fallback) {
-        String medium = parseMediaDescriptor(oldMedium);
-        if (!medium.isNull()) {
-            createdQuery = adoptPtr(new MediaQuery(MediaQuery::None, medium, nullptr));
-            oldQuery = createdQuery.get();
+    CSSParser parser(true);
+    
+    Vector<OwnPtr<MediaQuery> > result;
+    Vector<String> list;
+    mediaString.split(',', list);
+    for (unsigned i = 0; i < list.size(); ++i) {
+        String medium = list[i].stripWhiteSpace();
+        if (medium.isEmpty()) {
+            if (!m_fallbackToDescriptor)
+                return false;
+            continue;
         }
-    }
-
-    // DOM Style Sheets spec doesn't allow SYNTAX_ERR to be thrown in deleteMedium
-    ec = NOT_FOUND_ERR;
-
-    if (oldQuery) {
-        for (size_t i = 0; i < m_queries.size(); ++i) {
-            MediaQuery* a = m_queries[i];
-            if (*a == *oldQuery) {
-                m_queries.remove(i);
-                delete a;
-                ec = 0;
-                break;
-            }
+        OwnPtr<MediaQuery> mediaQuery = parser.parseMediaQuery(medium);
+        if (!mediaQuery) {
+            if (!m_fallbackToDescriptor)
+                return false;
+            String mediaDescriptor = parseMediaDescriptor(medium);
+            if (mediaDescriptor.isNull())
+                continue;
+            mediaQuery = adoptPtr(new MediaQuery(MediaQuery::None, mediaDescriptor, nullptr));
         }
+        result.append(mediaQuery.release());
     }
-
-    if (!ec)
-        notifyChanged();
+    // ",,,," falls straight through, but is not valid unless fallback
+    if (!m_fallbackToDescriptor && list.isEmpty()) {
+        String strippedMediaString = mediaString.stripWhiteSpace();
+        if (!strippedMediaString.isEmpty())
+            return false;
+    }
+    m_queries.swap(result);
+    return true;
 }
 
-String MediaList::mediaText() const
+bool MediaQuerySet::add(const String& queryString)
+{
+    CSSParser parser(true);
+
+    OwnPtr<MediaQuery> parsedQuery = parser.parseMediaQuery(queryString);
+    if (!parsedQuery && m_fallbackToDescriptor) {
+        String medium = parseMediaDescriptor(queryString);
+        if (!medium.isNull())
+            parsedQuery = adoptPtr(new MediaQuery(MediaQuery::None, medium, nullptr));
+    }
+    if (!parsedQuery)
+        return false;
+
+    m_queries.append(parsedQuery.release());
+    return true;
+}
+
+bool MediaQuerySet::remove(const String& queryStringToRemove)
+{
+    CSSParser parser(true);
+
+    OwnPtr<MediaQuery> parsedQuery = parser.parseMediaQuery(queryStringToRemove);
+    if (!parsedQuery && m_fallbackToDescriptor) {
+        String medium = parseMediaDescriptor(queryStringToRemove);
+        if (!medium.isNull())
+            parsedQuery = adoptPtr(new MediaQuery(MediaQuery::None, medium, nullptr));
+    }
+    if (!parsedQuery)
+        return false;
+    
+    for (size_t i = 0; i < m_queries.size(); ++i) {
+        MediaQuery* query = m_queries[i].get();
+        if (*query == *parsedQuery) {
+            m_queries.remove(i);
+            return true;
+        }
+    }
+    return false;
+}
+
+void MediaQuerySet::addMediaQuery(PassOwnPtr<MediaQuery> mediaQuery)
+{
+    m_queries.append(mediaQuery);
+}
+
+String MediaQuerySet::mediaText() const
 {
     String text("");
-
+    
     bool first = true;
     for (size_t i = 0; i < m_queries.size(); ++i) {
         if (!first)
@@ -159,83 +197,63 @@ String MediaList::mediaText() const
             first = false;
         text += m_queries[i]->cssText();
     }
-
     return text;
+}
+
+MediaList* MediaQuerySet::ensureMediaList(CSSStyleSheet* parentSheet) const
+{
+    if (!m_cssomWrapper)
+        m_cssomWrapper = adoptPtr(new MediaList(const_cast<MediaQuerySet*>(this), parentSheet));
+    return m_cssomWrapper.get();
+}
+    
+MediaList::MediaList(MediaQuerySet* mediaQueries, CSSStyleSheet* parentSheet)
+    : m_mediaQueries(mediaQueries)
+    , m_parentStyleSheet(parentSheet)
+{
+}
+
+MediaList::~MediaList()
+{
 }
 
 void MediaList::setMediaText(const String& value, ExceptionCode& ec)
 {
-    RefPtr<MediaList> tempMediaList = MediaList::create();
-    CSSParser p(true);
-
-    Vector<String> list;
-    value.split(',', list);
-    Vector<String>::const_iterator end = list.end();
-    for (Vector<String>::const_iterator it = list.begin(); it != end; ++it) {
-        String medium = (*it).stripWhiteSpace();
-        if (!medium.isEmpty()) {
-            if (!p.parseMediaQuery(tempMediaList.get(), medium)) {
-                if (m_fallback) {
-                    String mediaDescriptor = parseMediaDescriptor(medium);
-                    if (!mediaDescriptor.isNull())
-                        tempMediaList->m_queries.append(new MediaQuery(MediaQuery::None, mediaDescriptor, nullptr));
-                } else {
-                    ec = SYNTAX_ERR;
-                    return;
-                }
-            }
-        } else if (!m_fallback) {
-            ec = SYNTAX_ERR;
-            return;
-        }
+    bool success = m_mediaQueries->parse(value);
+    if (!success) {
+        ec = SYNTAX_ERR;
+        return;
     }
-    // ",,,," falls straight through, but is not valid unless fallback
-    if (!m_fallback && list.begin() == list.end()) {
-        String s = value.stripWhiteSpace();
-        if (!s.isEmpty()) {
-            ec = SYNTAX_ERR;
-            return;
-        }
-    }
-
-    ec = 0;
-    deleteAllValues(m_queries);
-    m_queries = tempMediaList->m_queries;
-    tempMediaList->m_queries.clear();
     notifyChanged();
 }
 
 String MediaList::item(unsigned index) const
 {
-    if (index < m_queries.size()) {
-        MediaQuery* query = m_queries[index];
-        return query->cssText();
-    }
-
+    const Vector<OwnPtr<MediaQuery> >& queries = m_mediaQueries->queryVector();
+    if (index < queries.size())
+        return queries[index]->cssText();
     return String();
 }
 
-void MediaList::appendMedium(const String& newMedium, ExceptionCode& ec)
+void MediaList::deleteMedium(const String& medium, ExceptionCode& ec)
 {
-    ec = INVALID_CHARACTER_ERR;
-    CSSParser p(true);
-    if (p.parseMediaQuery(this, newMedium)) {
-        ec = 0;
-    } else if (m_fallback) {
-        String medium = parseMediaDescriptor(newMedium);
-        if (!medium.isNull()) {
-            m_queries.append(new MediaQuery(MediaQuery::None, medium, nullptr));
-            ec = 0;
-        }
+    bool success = m_mediaQueries->remove(medium);
+    if (!success) {
+        ec = NOT_FOUND_ERR;
+        return;
     }
-
-    if (!ec)
-        notifyChanged();
+    notifyChanged();
 }
 
-void MediaList::appendMediaQuery(PassOwnPtr<MediaQuery> mediaQuery)
+void MediaList::appendMedium(const String& medium, ExceptionCode& ec)
 {
-    m_queries.append(mediaQuery.leakPtr());
+    bool success = m_mediaQueries->add(medium);
+    if (!success) {
+        // FIXME: Should this really be INVALID_CHARACTER_ERR?
+        ec = INVALID_CHARACTER_ERR;
+        return;
+    }
+    notifyChanged();
 }
 
 void MediaList::notifyChanged()

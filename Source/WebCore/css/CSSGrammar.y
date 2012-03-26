@@ -73,7 +73,7 @@ using namespace HTMLNames;
     Vector<OwnPtr<CSSParserSelector> >* selectorList;
     CSSSelector::MarginBoxType marginBox;
     CSSSelector::Relation relation;
-    MediaList* mediaList;
+    MediaQuerySet* mediaList;
     MediaQuery* mediaQuery;
     MediaQuery::Restrictor mediaQueryRestrictor;
     MediaQueryExp* mediaQueryExp;
@@ -566,7 +566,7 @@ media_query:
 
 maybe_media_list:
      /* empty */ {
-        $$ = static_cast<CSSParser*>(parser)->createMediaList();
+        $$ = static_cast<CSSParser*>(parser)->createMediaQuerySet();
      }
      | media_list
      ;
@@ -574,15 +574,15 @@ maybe_media_list:
 media_list:
     media_query {
         CSSParser* p = static_cast<CSSParser*>(parser);
-        $$ = p->createMediaList();
-        $$->appendMediaQuery(p->sinkFloatingMediaQuery($1));
+        $$ = p->createMediaQuerySet();
+        $$->addMediaQuery(p->sinkFloatingMediaQuery($1));
         p->updateLastMediaLine($$);
     }
     | media_list ',' maybe_space media_query {
         $$ = $1;
         if ($$) {
             CSSParser* p = static_cast<CSSParser*>(parser);
-            $$->appendMediaQuery(p->sinkFloatingMediaQuery($4));
+            $$->addMediaQuery(p->sinkFloatingMediaQuery($4));
             p->updateLastMediaLine($$);
         }
     }

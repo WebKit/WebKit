@@ -55,8 +55,8 @@ class CSSValue;
 class CSSValueList;
 class CSSWrapShape;
 class Document;
-class MediaList;
 class MediaQueryExp;
+class MediaQuerySet;
 class StylePropertySet;
 class StyledElement;
 class WebKitCSSKeyframeRule;
@@ -76,7 +76,7 @@ public:
     static PassRefPtr<CSSValueList> parseFontFaceValue(const AtomicString&, CSSStyleSheet* contextStyleSheet);
     PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int propId, CSSParserValue*);
     bool parseDeclaration(StylePropertySet*, const String&, RefPtr<CSSStyleSourceData>*, CSSStyleSheet* contextStyleSheet);
-    bool parseMediaQuery(MediaList*, const String&);
+    PassOwnPtr<MediaQuery> parseMediaQuery(const String&);
 
     Document* findDocument() const;
 
@@ -242,14 +242,14 @@ public:
 
     CSSParserValue& sinkFloatingValue(CSSParserValue&);
 
-    MediaList* createMediaList();
+    MediaQuerySet* createMediaQuerySet();
     CSSRule* createCharsetRule(const CSSParserString&);
-    CSSRule* createImportRule(const CSSParserString&, MediaList*);
+    CSSRule* createImportRule(const CSSParserString&, MediaQuerySet*);
     WebKitCSSKeyframeRule* createKeyframeRule(CSSParserValueList*);
     WebKitCSSKeyframesRule* createKeyframesRule();
 
     typedef Vector<RefPtr<CSSRule> > RuleList;
-    CSSRule* createMediaRule(MediaList*, RuleList*);
+    CSSRule* createMediaRule(MediaQuerySet*, RuleList*);
     RuleList* createRuleList();
     CSSRule* createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selectors);
     CSSRule* createFontFaceRule();
@@ -279,7 +279,7 @@ public:
     Vector<OwnPtr<CSSParserSelector> >* reusableRegionSelectorVector() { return &m_reusableRegionSelectorVector; }
 
     void updateLastSelectorLineAndPosition();
-    void updateLastMediaLine(MediaList*);
+    void updateLastMediaLine(MediaQuerySet*);
 
     void clearProperties();
 
@@ -399,7 +399,7 @@ private:
     bool m_allowNamespaceDeclarations;
 
     Vector<RefPtr<CSSRule> > m_parsedRules;
-    Vector<RefPtr<MediaList> > m_parsedMediaLists;
+    Vector<RefPtr<MediaQuerySet> > m_parsedMediaQuerySets;
     Vector<OwnPtr<RuleList> > m_parsedRuleLists;
     HashSet<CSSParserSelector*> m_floatingSelectors;
     HashSet<Vector<OwnPtr<CSSParserSelector> >*> m_floatingSelectorVectors;

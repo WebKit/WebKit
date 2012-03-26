@@ -25,31 +25,29 @@
 #include "CSSRule.h"
 #include "CachedResourceHandle.h"
 #include "CachedStyleSheetClient.h"
-#include "MediaList.h"
 #include "PlatformString.h"
 
 namespace WebCore {
 
 class CachedCSSStyleSheet;
 class MediaList;
+class MediaQuerySet;
 
 class CSSImportRule : public CSSRule {
 public:
-    static PassRefPtr<CSSImportRule> create(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList> media)
-    {
-        return adoptRef(new CSSImportRule(parent, href, media));
-    }
+    static PassRefPtr<CSSImportRule> create(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaQuerySet>);
 
     ~CSSImportRule();
 
     String href() const { return m_strHref; }
-    MediaList* media() const { return m_lstMedia.get(); }
+    MediaList* media();
     CSSStyleSheet* styleSheet() const { return m_styleSheet.get(); }
 
     String cssText() const;
 
-    // Not part of the CSSOM
+    // Not part of the CSSOM.
     bool isLoading() const;
+    MediaQuerySet* mediaQueries() { return m_mediaQueries.get(); }
 
     void addSubresourceStyleURLs(ListHashSet<KURL>& urls);
 
@@ -73,11 +71,11 @@ private:
     void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet*);
     friend class ImportedStyleSheetClient;
 
-    CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList>);
+    CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaQuerySet>);
 
     ImportedStyleSheetClient m_styleSheetClient;
     String m_strHref;
-    RefPtr<MediaList> m_lstMedia;
+    RefPtr<MediaQuerySet> m_mediaQueries;
     RefPtr<CSSStyleSheet> m_styleSheet;
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     bool m_loading;

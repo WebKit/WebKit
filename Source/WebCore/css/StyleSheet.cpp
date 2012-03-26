@@ -23,7 +23,6 @@
 #include "CSSImportRule.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
-#include "MediaList.h"
 #include "Node.h"
 
 namespace WebCore {
@@ -48,26 +47,12 @@ StyleSheet::StyleSheet(CSSImportRule* parentRule, const String& originalURL, con
 
 StyleSheet::~StyleSheet()
 {
-    if (m_media)
-        m_media->setParentStyleSheet(0);
 }
 
 StyleSheet* StyleSheet::parentStyleSheet() const
 {
     ASSERT(isCSSStyleSheet());
     return m_ownerRule ? m_ownerRule->parentStyleSheet() : 0;
-}
-
-void StyleSheet::setMedia(PassRefPtr<MediaList> media)
-{
-    ASSERT(isCSSStyleSheet());
-    ASSERT(!media->parentStyleSheet() || media->parentStyleSheet() == this);
-
-    if (m_media)
-        m_media->setParentStyleSheet(0);
-
-    m_media = media;
-    m_media->setParentStyleSheet(static_cast<CSSStyleSheet*>(this));
 }
 
 KURL StyleSheet::baseURL() const

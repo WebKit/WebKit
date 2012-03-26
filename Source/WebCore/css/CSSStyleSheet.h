@@ -32,6 +32,7 @@ class CSSRuleList;
 class CachedCSSStyleSheet;
 class CachedResourceLoader;
 class Document;
+class MediaQuerySet;
 
 typedef int ExceptionCode;
 
@@ -114,6 +115,11 @@ public:
 
     unsigned length() const { return m_children.size(); }
     CSSRule* item(unsigned index) { return index < length() ? m_children.at(index).get() : 0; }
+    
+    virtual MediaList* media() const OVERRIDE;
+
+    MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
+    void setMediaQueries(PassRefPtr<MediaQuerySet>);
 
     void notifyLoadedSheet(const CachedCSSStyleSheet*);
 
@@ -127,6 +133,8 @@ private:
     Vector<RefPtr<CSSRule> > m_children;
     OwnPtr<CSSNamespace> m_namespaces;
     String m_charset;
+    RefPtr<MediaQuerySet> m_mediaQueries;
+
     bool m_loadCompleted : 1;
     bool m_strictParsing : 1;
     bool m_isUserStyleSheet : 1;

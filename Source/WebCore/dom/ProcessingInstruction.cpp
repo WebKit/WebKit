@@ -218,7 +218,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const KURL& bas
     // type.
     parseStyleSheet(sheet->sheetText(true));
     newSheet->setTitle(m_title);
-    newSheet->setMedia(MediaList::create(newSheet.get(), m_media));
+    newSheet->setMediaQueries(MediaQuerySet::create(m_media));
     newSheet->setDisabled(m_alternate);
 }
 

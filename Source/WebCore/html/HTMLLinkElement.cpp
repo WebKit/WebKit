@@ -208,7 +208,7 @@ void HTMLLinkElement::process()
         bool mediaQueryMatches = true;
         if (!m_media.isEmpty()) {
             RefPtr<RenderStyle> documentStyle = CSSStyleSelector::styleForDocument(document());
-            RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(m_media);
+            RefPtr<MediaQuerySet> media = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
             MediaQueryEvaluator evaluator(document()->frame()->view()->mediaType(), document()->frame(), documentStyle.get());
             mediaQueryMatches = evaluator.eval(media.get());
         }
@@ -334,8 +334,8 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
 
     m_sheet->setTitle(title());
 
-    RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(m_media);
-    m_sheet->setMedia(media.get());
+    RefPtr<MediaQuerySet> media = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
+    m_sheet->setMediaQueries(media.release());
 
     m_loading = false;
     m_sheet->notifyLoadedSheet(sheet);

@@ -33,13 +33,13 @@ class CSSRuleList;
 
 class CSSMediaRule : public CSSRule {
 public:
-    static PassRefPtr<CSSMediaRule> create(CSSStyleSheet* parent, PassRefPtr<MediaList> media, Vector<RefPtr<CSSRule> >& adoptRules)
+    static PassRefPtr<CSSMediaRule> create(CSSStyleSheet* parent, PassRefPtr<MediaQuerySet> media, Vector<RefPtr<CSSRule> >& adoptRules)
     {
         return adoptRef(new CSSMediaRule(parent, media, adoptRules));
     }
     ~CSSMediaRule();
 
-    MediaList* media() const { return m_lstMedia.get(); }
+    MediaList* media() const { return m_mediaQueries ? m_mediaQueries->ensureMediaList(parentStyleSheet()) : 0; }
     CSSRuleList* cssRules();
 
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
@@ -49,14 +49,15 @@ public:
 
     // Not part of the CSSOM
     unsigned append(CSSRule*);
-    
+    MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
+
     unsigned ruleCount() const { return m_childRules.size(); }
     CSSRule* ruleAt(unsigned index) const { return m_childRules[index].get(); }
 
 private:
-    CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaList>, Vector<RefPtr<CSSRule> >& adoptRules);
+    CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaQuerySet>, Vector<RefPtr<CSSRule> >& adoptRules);
 
-    RefPtr<MediaList> m_lstMedia;
+    RefPtr<MediaQuerySet> m_mediaQueries;
     Vector<RefPtr<CSSRule> > m_childRules;
     
     OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;

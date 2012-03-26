@@ -2447,7 +2447,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
 
     // No media implies "all", but if a media list exists it must
     // contain our current medium
-    if (sheet->media() && !medium.eval(sheet->media(), styleSelector))
+    if (sheet->mediaQueries() && !medium.eval(sheet->mediaQueries(), styleSelector))
         return; // the style sheet doesn't apply
 
     int len = sheet->length();
@@ -2460,13 +2460,13 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
             addPageRule(static_cast<CSSPageRule*>(rule));
         else if (rule->isImportRule()) {
             CSSImportRule* import = static_cast<CSSImportRule*>(rule);
-            if (import->styleSheet() && (!import->media() || medium.eval(import->media(), styleSelector)))
+            if (import->styleSheet() && (!import->mediaQueries() || medium.eval(import->mediaQueries(), styleSelector)))
                 addRulesFromSheet(import->styleSheet(), medium, styleSelector, scope);
         }
         else if (rule->isMediaRule()) {
             CSSMediaRule* mediaRule = static_cast<CSSMediaRule*>(rule);
 
-            if ((!mediaRule->media() || medium.eval(mediaRule->media(), styleSelector)) && mediaRule->ruleCount()) {
+            if ((!mediaRule->mediaQueries() || medium.eval(mediaRule->mediaQueries(), styleSelector)) && mediaRule->ruleCount()) {
                 // Traverse child elements of the @media rule.
                 for (unsigned j = 0; j < mediaRule->ruleCount(); j++) {
                     CSSRule* childRule = mediaRule->ruleAt(j);

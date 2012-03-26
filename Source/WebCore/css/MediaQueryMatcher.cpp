@@ -93,7 +93,7 @@ PassOwnPtr<MediaQueryEvaluator> MediaQueryMatcher::prepareEvaluator() const
     return adoptPtr(new MediaQueryEvaluator(mediaType(), m_document->frame(), rootStyle.get()));
 }
 
-bool MediaQueryMatcher::evaluate(MediaList* media)
+bool MediaQueryMatcher::evaluate(const MediaQuerySet* media)
 {
     if (!media)
         return false;
@@ -107,7 +107,7 @@ PassRefPtr<MediaQueryList> MediaQueryMatcher::matchMedia(const String& query)
     if (!m_document)
         return 0;
 
-    RefPtr<MediaList> media = MediaList::create(query, false);
+    RefPtr<MediaQuerySet> media = MediaQuerySet::create(query);
     return MediaQueryList::create(this, media, evaluate(media.get()));
 }
 

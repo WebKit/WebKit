@@ -1091,10 +1091,10 @@ bool CSSParser::parseDeclaration(StylePropertySet* declaration, const String& st
     return ok;
 }
 
-bool CSSParser::parseMediaQuery(MediaList* queries, const String& string)
+PassOwnPtr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
 {
     if (string.isEmpty())
-        return true;
+        return nullptr;
 
     ASSERT(!m_mediaQuery);
 
@@ -1103,13 +1103,7 @@ bool CSSParser::parseMediaQuery(MediaList* queries, const String& string)
     setupParser("@-webkit-mediaquery ", string, "} ");
     cssyyparse(this);
 
-    bool ok = false;
-    if (m_mediaQuery) {
-        ok = true;
-        queries->appendMediaQuery(m_mediaQuery.release());
-    }
-
-    return ok;
+    return m_mediaQuery.release();
 }
 
 void CSSParser::addProperty(int propId, PassRefPtr<CSSValue> value, bool important, bool implicit)
@@ -8982,11 +8976,11 @@ PassOwnPtr<MediaQuery> CSSParser::sinkFloatingMediaQuery(MediaQuery* query)
     return m_floatingMediaQuery.release();
 }
 
-MediaList* CSSParser::createMediaList()
+MediaQuerySet* CSSParser::createMediaQuerySet()
 {
-    RefPtr<MediaList> list = MediaList::create();
-    MediaList* result = list.get();
-    m_parsedMediaLists.append(list.release());
+    RefPtr<MediaQuerySet> queries = MediaQuerySet::create();
+    MediaQuerySet* result = queries.get();
+    m_parsedMediaQuerySets.append(queries.release());
     return result;
 }
 
@@ -9000,7 +8994,7 @@ CSSRule* CSSParser::createCharsetRule(const CSSParserString& charset)
     return result;
 }
 
-CSSRule* CSSParser::createImportRule(const CSSParserString& url, MediaList* media)
+CSSRule* CSSParser::createImportRule(const CSSParserString& url, MediaQuerySet* media)
 {
     if (!media || !m_styleSheet || !m_allowImportRules)
         return 0;
@@ -9010,7 +9004,7 @@ CSSRule* CSSParser::createImportRule(const CSSParserString& url, MediaList* medi
     return result;
 }
 
-CSSRule* CSSParser::createMediaRule(MediaList* media, RuleList* rules)
+CSSRule* CSSParser::createMediaRule(MediaQuerySet* media, RuleList* rules)
 {
     if (!media || !rules || !m_styleSheet)
         return 0;
@@ -9257,7 +9251,7 @@ void CSSParser::updateLastSelectorLineAndPosition()
     markRuleBodyStart();
 }
 
-void CSSParser::updateLastMediaLine(MediaList* media)
+void CSSParser::updateLastMediaLine(MediaQuerySet* media)
 {
     media->setLastLine(m_lineNumber);
 }

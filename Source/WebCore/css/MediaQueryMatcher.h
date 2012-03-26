@@ -28,10 +28,10 @@
 namespace WebCore {
 
 class Document;
-class MediaList;
 class MediaQueryList;
 class MediaQueryListListener;
 class MediaQueryEvaluator;
+class MediaQuerySet;
 
 // MediaQueryMatcher class is responsible for keeping a vector of pairs
 // MediaQueryList x MediaQueryListListener. It is responsible for evaluating the queries
@@ -51,7 +51,7 @@ public:
 
     unsigned evaluationRound() const { return m_evaluationRound; }
     void styleSelectorChanged();
-    bool evaluate(MediaList*);
+    bool evaluate(const MediaQuerySet*);
 
 private:
     class Listener {

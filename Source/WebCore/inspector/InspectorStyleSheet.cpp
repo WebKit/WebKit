@@ -142,7 +142,7 @@ static PassRefPtr<InspectorObject> buildMediaObject(const MediaList* media, Medi
     }
     if (!sourceURL.isEmpty()) {
         mediaObject->setString("sourceURL", sourceURL);
-        mediaObject->setNumber("sourceLine", media->lastLine());
+        mediaObject->setNumber("sourceLine", media->queries()->lastLine());
     }
     mediaObject->setString("text", media->mediaText());
     return mediaObject.release();

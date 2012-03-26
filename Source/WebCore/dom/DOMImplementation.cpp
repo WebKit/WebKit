@@ -308,7 +308,7 @@ PassRefPtr<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, 
     // FIXME: Title should be set.
     // FIXME: Media could have wrong syntax, in which case we should generate an exception.
     RefPtr<CSSStyleSheet> sheet = CSSStyleSheet::create();
-    sheet->setMedia(MediaList::createAllowingDescriptionSyntax(sheet.get(), media));
+    sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(media));
     return sheet.release();
 }
 

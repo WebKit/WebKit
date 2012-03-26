@@ -2795,7 +2795,7 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidUR
         
         if (source->fastHasAttribute(mediaAttr)) {
             MediaQueryEvaluator screenEval("screen", document()->frame(), renderer() ? renderer()->style() : 0);
-            RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(source->media());
+            RefPtr<MediaQuerySet> media = MediaQuerySet::createAllowingDescriptionSyntax(source->media());
 #if !LOG_DISABLED
             if (shouldLog)
                 LOG(Media, "HTMLMediaElement::selectNextSourceChild - 'media' is %s", source->media().utf8().data());

@@ -57,8 +57,7 @@ public:
 
     const String& title() const { return m_strTitle; }
     void setTitle(const String& s) { m_strTitle = s; }
-    MediaList* media() const { return m_media.get(); }
-    void setMedia(PassRefPtr<MediaList>);
+    virtual MediaList* media() const { return 0; }
 
     virtual String type() const = 0;
     virtual bool isLoading() = 0;
@@ -81,7 +80,6 @@ private:
     String m_originalURL;
     KURL m_finalURL;
     String m_strTitle;
-    RefPtr<MediaList> m_media;
 };
 
 } // namespace

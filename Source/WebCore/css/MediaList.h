@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,58 +21,78 @@
 #ifndef MediaList_h
 #define MediaList_h
 
+#include "ExceptionCode.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CSSImportRule;
-class CSSRule;
 class CSSStyleSheet;
+class MediaList;
 class MediaQuery;
 
-typedef int ExceptionCode;
-
-class MediaList : public RefCounted<MediaList> {
+class MediaQuerySet : public RefCounted<MediaQuerySet> {
 public:
-    static PassRefPtr<MediaList> create()
+    static PassRefPtr<MediaQuerySet> create()
     {
-        return adoptRef(new MediaList(0, false));
+        return adoptRef(new MediaQuerySet());
     }
-    static PassRefPtr<MediaList> create(CSSStyleSheet* parentSheet, const String& media)
+    static PassRefPtr<MediaQuerySet> create(const String& mediaString)
     {
-        return adoptRef(new MediaList(parentSheet, media, false));
+        return adoptRef(new MediaQuerySet(mediaString, false));
     }
+    static PassRefPtr<MediaQuerySet> createAllowingDescriptionSyntax(const String& mediaString)
+    {
+        return adoptRef(new MediaQuerySet(mediaString, true));
+    }
+    ~MediaQuerySet();
+    
+    bool parse(const String&);
+    bool add(const String&);
+    bool remove(const String&);
 
-    static PassRefPtr<MediaList> createAllowingDescriptionSyntax(const String& mediaQueryOrDescription)
-    {
-        return adoptRef(new MediaList(0, mediaQueryOrDescription, true));
-    }
-    static PassRefPtr<MediaList> createAllowingDescriptionSyntax(CSSStyleSheet* parentSheet, const String& mediaQueryOrDescription)
-    {
-        return adoptRef(new MediaList(parentSheet, mediaQueryOrDescription, true));
-    }
+    void addMediaQuery(PassOwnPtr<MediaQuery>);
 
-    static PassRefPtr<MediaList> create(const String& media, bool allowDescriptionSyntax)
-    {
-        return adoptRef(new MediaList(0, media, allowDescriptionSyntax));
-    }
+    const Vector<OwnPtr<MediaQuery> >& queryVector() const { return m_queries; }
+    
+    int lastLine() const { return m_lastLine; }
+    void setLastLine(int lastLine) { m_lastLine = lastLine; }
+    
+    MediaList* ensureMediaList(CSSStyleSheet*) const;
+    
+    String mediaText() const;
+
+private:
+    MediaQuerySet();
+    MediaQuerySet(const String& mediaQuery, bool fallbackToDescription);
+    
+    unsigned m_fallbackToDescriptor : 1; // true if failed media query parsing should fallback to media description parsing.
+    signed m_lastLine : 31;
+    Vector<OwnPtr<MediaQuery> > m_queries;
+    
+    mutable OwnPtr<MediaList> m_cssomWrapper;
+};
+
+class MediaList {
+    WTF_MAKE_NONCOPYABLE(MediaList); WTF_MAKE_FAST_ALLOCATED;
+public:
+    void ref() { m_mediaQueries->ref(); }
+    void deref() { m_mediaQueries->deref(); }
 
     ~MediaList();
 
-    unsigned length() const { return m_queries.size(); }
+    unsigned length() const { return m_mediaQueries->queryVector().size(); }
     String item(unsigned index) const;
     void deleteMedium(const String& oldMedium, ExceptionCode&);
     void appendMedium(const String& newMedium, ExceptionCode&);
 
-    String mediaText() const;
-    void setMediaText(const String&, ExceptionCode&xo);
+    String mediaText() const { return m_mediaQueries->mediaText(); }
+    void setMediaText(const String&, ExceptionCode&);
 
-    void appendMediaQuery(PassOwnPtr<MediaQuery>);
-    const Vector<MediaQuery*>& mediaQueries() const { return m_queries; }
-
+    // Not part of CSSOM.
     CSSStyleSheet* parentStyleSheet() const { return m_parentStyleSheet; }
     void setParentStyleSheet(CSSStyleSheet* styleSheet)
     {
@@ -80,21 +100,18 @@ public:
         ASSERT(styleSheet == m_parentStyleSheet || !m_parentStyleSheet || !styleSheet);
         m_parentStyleSheet = styleSheet;
     }
-
-    int lastLine() const { return m_lastLine; }
-    void setLastLine(int lastLine) { m_lastLine = lastLine; }
+    const MediaQuerySet* queries() const { return m_mediaQueries; }
 
 private:
-    MediaList(CSSStyleSheet* parentSheet, bool fallbackToDescription);
-    MediaList(CSSStyleSheet* parentSheet, const String& media, bool fallbackToDescription);
+    MediaList();
+    MediaList(MediaQuerySet*, CSSStyleSheet* parentSheet);
 
     void notifyChanged();
 
-    bool m_fallback; // true if failed media query parsing should fallback to media description parsing.
-
+    MediaQuerySet* m_mediaQueries;
     CSSStyleSheet* m_parentStyleSheet;
-    Vector<MediaQuery*> m_queries;
-    int m_lastLine;
+    
+    friend class MediaQuerySet;
 };
 
 } // namespace

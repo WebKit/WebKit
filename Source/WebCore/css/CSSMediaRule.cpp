@@ -30,13 +30,12 @@
 
 namespace WebCore {
 
-CSSMediaRule::CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaList> media, Vector<RefPtr<CSSRule> >& adoptRules)
+CSSMediaRule::CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaQuerySet> media, Vector<RefPtr<CSSRule> >& adoptRules)
     : CSSRule(parent, CSSRule::MEDIA_RULE)
-    , m_lstMedia(media)
+    , m_mediaQueries(media)
 {
     m_childRules.swap(adoptRules);
 
-    m_lstMedia->setParentStyleSheet(parent);
     unsigned size = m_childRules.size();
     for (unsigned i = 0; i < size; i++)
         m_childRules[i]->setParentRule(this);
@@ -44,9 +43,6 @@ CSSMediaRule::CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaList> media, V
 
 CSSMediaRule::~CSSMediaRule()
 {
-    if (m_lstMedia)
-        m_lstMedia->setParentStyleSheet(0);
-
     unsigned size = m_childRules.size();
     for (unsigned i = 0; i < size; i++)
         m_childRules[i]->setParentRule(0);
@@ -119,19 +115,19 @@ String CSSMediaRule::cssText() const
 {
     StringBuilder result;
     result.append("@media ");
-    if (m_lstMedia) {
-        result.append(m_lstMedia->mediaText());
-        result.append(" ");
+    if (m_mediaQueries) {
+        result.append(m_mediaQueries->mediaText());
+        result.append(' ');
     }
     result.append("{ \n");
     
     for (unsigned i = 0; i < m_childRules.size(); ++i) {
         result.append("  ");
         result.append(m_childRules[i]->cssText());
-        result.append("\n");
+        result.append('\n');
     }
 
-    result.append("}");
+    result.append('}');
     return result.toString();
 }
 

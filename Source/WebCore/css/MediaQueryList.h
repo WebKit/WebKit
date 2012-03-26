@@ -26,10 +26,10 @@
 
 namespace WebCore {
 
-class MediaList;
 class MediaQueryListListener;
 class MediaQueryEvaluator;
 class MediaQueryMatcher;
+class MediaQuerySet;
 
 // MediaQueryList interface is specified at http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface
 // The objects of this class are returned by window.matchMedia. They may be used to
@@ -38,7 +38,7 @@ class MediaQueryMatcher;
 
 class MediaQueryList : public RefCounted<MediaQueryList> {
 public:
-    static PassRefPtr<MediaQueryList> create(PassRefPtr<MediaQueryMatcher>, PassRefPtr<MediaList>, bool);
+    static PassRefPtr<MediaQueryList> create(PassRefPtr<MediaQueryMatcher>, PassRefPtr<MediaQuerySet>, bool);
     ~MediaQueryList();
 
     String media() const;
@@ -50,11 +50,11 @@ public:
     void evaluate(MediaQueryEvaluator*, bool& notificationNeeded);
 
 private:
-    MediaQueryList(PassRefPtr<MediaQueryMatcher>, PassRefPtr<MediaList>, bool matches);
+    MediaQueryList(PassRefPtr<MediaQueryMatcher>, PassRefPtr<MediaQuerySet>, bool matches);
     void setMatches(bool);
 
     RefPtr<MediaQueryMatcher> m_matcher;
-    RefPtr<MediaList> m_media;
+    RefPtr<MediaQuerySet> m_media;
     unsigned m_evaluationRound; // Indicates if the query has been evaluated after the last style selector change.
     unsigned m_changeRound; // Used to know if the query has changed in the last style selector change.
     bool m_matches;

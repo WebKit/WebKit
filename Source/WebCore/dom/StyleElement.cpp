@@ -153,15 +153,20 @@ void StyleElement::createSheet(Element* e, int startLineNumber, const String& te
     // If type is empty or CSS, this is a CSS style sheet.
     const AtomicString& type = this->type();
     if (document->contentSecurityPolicy()->allowInlineStyle() && isCSS(e, type)) {
-        RefPtr<MediaList> mediaList = MediaList::create(media(), e->isHTMLElement());
+        RefPtr<MediaQuerySet> mediaQueries;
+        if (e->isHTMLElement())
+            mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(media());
+        else
+            mediaQueries = MediaQuerySet::create(media());
+
         MediaQueryEvaluator screenEval("screen", true);
         MediaQueryEvaluator printEval("print", true);
-        if (screenEval.eval(mediaList.get()) || printEval.eval(mediaList.get())) {
+        if (screenEval.eval(mediaQueries.get()) || printEval.eval(mediaQueries.get())) {
             document->addPendingSheet();
             m_loading = true;
             m_sheet = CSSStyleSheet::create(e, String(), KURL(), document->inputEncoding());
             m_sheet->parseStringAtLine(text, !document->inQuirksMode(), startLineNumber);
-            m_sheet->setMedia(mediaList.get());
+            m_sheet->setMediaQueries(mediaQueries.release());
             m_sheet->setTitle(e->title());
             m_loading = false;
         }
