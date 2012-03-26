@@ -63,14 +63,15 @@ public:
 
 private:
     WebKitWebView* m_webView;
-    OwnPtr<WebCore::GraphicsLayer> m_rootGraphicsLayer;
     unsigned int m_syncTimerCallbackId;
 
 #if USE(CLUTTER)
+    WebCore::GraphicsLayer* m_rootGraphicsLayer;
     GtkWidget* m_rootLayerEmbedder;
 #elif USE(TEXTURE_MAPPER_GL)
     WebCore::GLContext* glContext();
     WebCore::TextureMapperLayer* m_rootTextureMapperLayer;
+    OwnPtr<WebCore::GraphicsLayer> m_rootGraphicsLayer;
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
 #endif
 

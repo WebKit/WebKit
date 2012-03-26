@@ -1,3 +1,24 @@
+2012-03-26  Joone Hur  <joone.hur@collabora.co.uk>
+
+        [GTK] Build fix for Accelerated Compositing with Clutter
+        https://bugs.webkit.org/show_bug.cgi?id=81785
+
+        Reviewed by Martin Robinson.
+
+        AcceleratedCompositingContext was introduced to isolate different accelerated 
+        compositing implementations(r104194), but the Clutter implementation doesn't
+        build with it. This fixes the build error.
+
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        (AcceleratedCompositingContext):
+        * WebCoreSupport/AcceleratedCompositingContextClutter.cpp:
+        (WebKit::AcceleratedCompositingContext::AcceleratedCompositingContext):
+        (WebKit::AcceleratedCompositingContext::renderLayersToWindow):
+        (WebKit::AcceleratedCompositingContext::resizeRootLayer):
+        (WebKit::AcceleratedCompositingContext::syncLayersNow):
+        (WebKit::AcceleratedCompositingContext::syncLayersTimeout):
+        (WebKit):
+
 2012-03-26  Gary Kramlich  <grim@reaperworld.com>
 
         WebKitWebView signals with GError parameters cause crashes when using GObject Introspection

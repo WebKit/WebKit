@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsLayer.h"
+#include "NotImplemented.h"
 #include "webkitwebviewprivate.h"
 #include <clutter-gtk/clutter-gtk.h>
 #include <clutter/clutter.h>
@@ -35,8 +36,8 @@ namespace WebKit {
 
 AcceleratedCompositingContext::AcceleratedCompositingContext(WebKitWebView* webView)
     : m_webView(webView)
-    , m_rootGraphicsLayer(0)
     , m_syncTimerCallbackId(0)
+    , m_rootGraphicsLayer(0)
     , m_rootLayerEmbedder(0)
 {
 }
@@ -52,7 +53,7 @@ bool AcceleratedCompositingContext::enabled()
     return m_rootGraphicsLayer;
 }
 
-bool AcceleratedCompositingContext::renderLayersToWindow(cairo_t* widgetCr, const IntRect& clipRect)
+bool AcceleratedCompositingContext::renderLayersToWindow(const IntRect& clipRect)
 {
     notImplemented();
     return false;
@@ -108,7 +109,7 @@ void AcceleratedCompositingContext::resizeRootLayer(const IntSize& size)
     allocation.y = 0;
     allocation.width = size.width();
     allocation.height = size.height();
-    gtk_widget_size_allocate(GTK_WIDGET(m_webView->priv->rootLayerEmbedder), &allocation);
+    gtk_widget_size_allocate(GTK_WIDGET(m_rootLayerEmbedder), &allocation);
 }
 
 static gboolean syncLayersTimeoutCallback(AcceleratedCompositingContext* context)
@@ -127,9 +128,22 @@ void AcceleratedCompositingContext::markForSync()
     m_syncTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 0, reinterpret_cast<GSourceFunc>(syncLayersTimeoutCallback), this, 0);
 }
 
+void AcceleratedCompositingContext::syncLayersNow()
+{
+    if (m_rootGraphicsLayer)
+        m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
+
+    core(m_webView)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+}
+
 void AcceleratedCompositingContext::syncLayersTimeout()
 {
-    core(m_webView)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+    m_syncTimerCallbackId = 0;
+    syncLayersNow();
+    if (!m_rootGraphicsLayer)
+        return;
+
+    renderLayersToWindow(IntRect());
 }
 
 void AcceleratedCompositingContext::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)

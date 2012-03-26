@@ -5805,10 +5805,6 @@ webcore_sources += \
 	Source/WebCore/html/canvas/OESVertexArrayObject.h \
 	Source/WebCore/platform/graphics/ANGLEWebKitBridge.cpp \
 	Source/WebCore/platform/graphics/ANGLEWebKitBridge.h \
-	Source/WebCore/platform/graphics/cairo/DrawingBufferCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/GraphicsContext3DCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/GraphicsContext3DPrivate.cpp \
-	Source/WebCore/platform/graphics/cairo/GraphicsContext3DPrivate.h \
 	Source/WebCore/platform/graphics/gpu/DrawingBuffer.cpp \
 	Source/WebCore/platform/graphics/gpu/DrawingBuffer.h \
 	Source/WebCore/platform/graphics/GraphicsContext3D.cpp \
@@ -5819,6 +5815,20 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.h \
 	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGL.cpp \
 	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+if USE_CLUTTER
+webcore_sources += \
+	Source/WebCore/platform/graphics/clutter/DrawingBufferClutter.cpp \
+	Source/WebCore/platform/graphics/clutter/GraphicsContext3DClutter.cpp \
+	Source/WebCore/platform/graphics/clutter/GraphicsContext3DPrivate.cpp \
+	Source/WebCore/platform/graphics/clutter/GraphicsContext3DPrivate.h
+else
+webcore_sources += \
+	Source/WebCore/platform/graphics/cairo/DrawingBufferCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/GraphicsContext3DCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/GraphicsContext3DPrivate.cpp \
+	Source/WebCore/platform/graphics/cairo/GraphicsContext3DPrivate.h
+endif  # END USE_CLUTTER
+
 endif  # END ENABLE_WEBGL
 
 # ---
