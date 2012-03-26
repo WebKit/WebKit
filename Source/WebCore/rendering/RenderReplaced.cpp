@@ -488,20 +488,20 @@ LayoutRect RenderReplaced::selectionRectForRepaint(RenderBoxModelObject* repaint
     return rect;
 }
 
-IntRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
+LayoutRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
 {
     if (checkWhetherSelected && !isSelected())
-        return IntRect();
+        return LayoutRect();
 
     if (!m_inlineBoxWrapper)
         // We're a block-level replaced element.  Just return our own dimensions.
-        return IntRect(IntPoint(), size());
+        return LayoutRect(LayoutPoint(), size());
     
     RootInlineBox* root = m_inlineBoxWrapper->root();
-    int newLogicalTop = root->block()->style()->isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - root->selectionBottom() : root->selectionTop() - m_inlineBoxWrapper->logicalTop();
+    LayoutUnit newLogicalTop = root->block()->style()->isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - root->selectionBottom() : root->selectionTop() - m_inlineBoxWrapper->logicalTop();
     if (root->block()->style()->isHorizontalWritingMode())
-        return IntRect(0, newLogicalTop, width(), root->selectionHeight());
-    return IntRect(newLogicalTop, 0, root->selectionHeight(), height());
+        return LayoutRect(0, newLogicalTop, width(), root->selectionHeight());
+    return LayoutRect(newLogicalTop, 0, root->selectionHeight(), height());
 }
 
 void RenderReplaced::setSelectionState(SelectionState state)

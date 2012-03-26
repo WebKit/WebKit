@@ -59,7 +59,7 @@ protected:
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
     bool shouldPaint(PaintInfo&, const LayoutPoint&);
-    IntRect localSelectionRect(bool checkWhetherSelected = true) const; // This is in local coordinates, but it's a physical rect (so the top left corner is physical top left).
+    LayoutRect localSelectionRect(bool checkWhetherSelected = true) const; // This is in local coordinates, but it's a physical rect (so the top left corner is physical top left).
 
 private:
     virtual RenderBox* embeddedContentBox() const { return 0; }

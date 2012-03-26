@@ -147,13 +147,13 @@ LayoutRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, 
 
     // Use the edge of the selection rect to determine the caret rect.
     if (static_cast<unsigned>(caretOffset) < textBox->start() + textBox->len()) {
-        IntRect rect = textBox->localSelectionRect(caretOffset, caretOffset + 1);
-        int x = box->isLeftToRightDirection() ? rect.x() : rect.maxX();
+        LayoutRect rect = textBox->localSelectionRect(caretOffset, caretOffset + 1);
+        LayoutUnit x = box->isLeftToRightDirection() ? rect.x() : rect.maxX();
         return LayoutRect(x, rect.y(), caretWidth, rect.height());
     }
 
-    IntRect rect = textBox->localSelectionRect(caretOffset - 1, caretOffset);
-    int x = box->isLeftToRightDirection() ? rect.maxX() : rect.x();
+    LayoutRect rect = textBox->localSelectionRect(caretOffset - 1, caretOffset);
+    LayoutUnit x = box->isLeftToRightDirection() ? rect.maxX() : rect.x();
     return LayoutRect(x, rect.y(), caretWidth, rect.height());
 }
 

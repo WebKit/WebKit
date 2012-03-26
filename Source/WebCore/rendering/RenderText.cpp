@@ -312,7 +312,7 @@ void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumu
 static FloatRect localQuadForTextBox(InlineTextBox* box, unsigned start, unsigned end, bool useSelectionHeight)
 {
     unsigned realEnd = min(box->end() + 1, end);
-    IntRect r = box->localSelectionRect(start, realEnd);
+    LayoutRect r = box->localSelectionRect(start, realEnd);
     if (r.height()) {
         if (!useSelectionHeight) {
             // Change the height and y position (or width and x for vertical text)
@@ -347,7 +347,7 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
         if (start <= box->start() && box->end() < end) {
             FloatRect r = box->calculateBoundaries();
             if (useSelectionHeight) {
-                IntRect selectionRect = box->localSelectionRect(start, end);
+                LayoutRect selectionRect = box->localSelectionRect(start, end);
                 if (box->isHorizontal()) {
                     r.setHeight(selectionRect.height());
                     r.setY(selectionRect.y());
@@ -430,8 +430,7 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
         if (start <= box->start() && box->end() < end) {
             FloatRect r = box->calculateBoundaries();
             if (useSelectionHeight) {
-                // FIXME: localSelectionRect should switch to return FloatRect soon with the subpixellayout branch.
-                IntRect selectionRect = box->localSelectionRect(start, end);
+                LayoutRect selectionRect = box->localSelectionRect(start, end);
                 if (box->isHorizontal()) {
                     r.setHeight(selectionRect.height());
                     r.setY(selectionRect.y());
@@ -1548,7 +1547,7 @@ LayoutRect RenderText::selectionRectForRepaint(RenderBoxModelObject* repaintCont
 
     // Now calculate startPos and endPos for painting selection.
     // We include a selection while endPos > 0
-    LayoutUnit startPos, endPos;
+    int startPos, endPos;
     if (selectionState() == SelectionInside) {
         // We are fully selected.
         startPos = 0;
