@@ -1,3 +1,16 @@
+2012-03-27  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] A unit test to verify clipping is honored when moving occlusion to parent surface
+        https://bugs.webkit.org/show_bug.cgi?id=81783
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebCore::CCOcclusionTrackerTestSurfaceOcclusionTranslatesToParent::runMyTest):
+        (WebCore):
+        (CCOcclusionTrackerTestSurfaceOcclusionTranslatesWithClipping):
+        (WebCore::CCOcclusionTrackerTestSurfaceOcclusionTranslatesWithClipping::runMyTest):
+
 2012-03-27  James Robinson  <jamesr@chromium.org>
 
         Scrollable plugins not registered properly in ScrollingCoordinator

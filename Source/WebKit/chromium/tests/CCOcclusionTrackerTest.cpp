@@ -1889,13 +1889,35 @@ protected:
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 400, 400), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
-
-        EXPECT_EQ_RECT(occlusion.occlusionInScreenSpace().bounds(), occlusion.occlusionInTargetSurface().bounds());
-        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
     }
 };
 
 MAIN_AND_IMPL_THREAD_TEST(CCOcclusionTrackerTestSurfaceOcclusionTranslatesToParent);
+
+template<class Types, bool opaqueLayers>
+class CCOcclusionTrackerTestSurfaceOcclusionTranslatesWithClipping : public CCOcclusionTrackerTest<Types, opaqueLayers> {
+protected:
+    void runMyTest()
+    {
+        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+        typename Types::ContentLayerType* surface = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(500, 300), false);
+        surface->setOpaqueContentsRect(IntRect(0, 0, 400, 200));
+        this->calcDrawEtc(parent);
+
+        TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
+
+        occlusion.enterTargetRenderSurface(surface->renderSurface());
+        occlusion.markOccludedBehindLayer(surface);
+        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
+        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+        EXPECT_EQ_RECT(IntRect(0, 0, 300, 200), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(0, 0, 300, 200), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+    }
+};
+
+MAIN_AND_IMPL_THREAD_TEST(CCOcclusionTrackerTestSurfaceOcclusionTranslatesWithClipping);
 
 } // namespace
