@@ -201,7 +201,7 @@
 		14280870107EC1340013E7B2 /* JSWrapperObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */; };
 		14280875107EC13E0013E7B2 /* JSLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65EA4C99092AF9E20093D800 /* JSLock.cpp */; };
 		1429D77C0ED20D7300B89619 /* Interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D77B0ED20D7300B89619 /* Interpreter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1429D7D40ED2128200B89619 /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D7D30ED2128200B89619 /* Interpreter.cpp */; settings = {COMPILER_FLAGS = "-fno-var-tracking"; }; };
+		1429D7D40ED2128200B89619 /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D7D30ED2128200B89619 /* Interpreter.cpp */; };
 		1429D8780ED21ACD00B89619 /* ExceptionHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D8770ED21ACD00B89619 /* ExceptionHelpers.cpp */; };
 		1429D8850ED21C3D00B89619 /* SamplingTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D8830ED21C3D00B89619 /* SamplingTool.cpp */; };
 		1429D8860ED21C3D00B89619 /* SamplingTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D8840ED21C3D00B89619 /* SamplingTool.h */; settings = {ATTRIBUTES = (Private, ); }; };
