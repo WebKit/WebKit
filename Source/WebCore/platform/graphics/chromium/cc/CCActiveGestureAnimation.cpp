@@ -42,7 +42,7 @@ CCActiveGestureAnimation::CCActiveGestureAnimation(PassOwnPtr<CCGestureCurve> cu
     , m_gestureCurve(curve)
     , m_gestureCurveTarget(target)
 {
-    TRACE_EVENT_START1("input", "GestureAnimation", this, "curve", curve->debugName());
+    TRACE_EVENT_START1("input", "GestureAnimation", this, "curve", m_gestureCurve->debugName());
 }
 
 CCActiveGestureAnimation::~CCActiveGestureAnimation()

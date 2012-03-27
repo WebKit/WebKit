@@ -55,7 +55,7 @@ ActivePlatformGestureAnimation::ActivePlatformGestureAnimation(PassOwnPtr<Platfo
     , m_target(target)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT_START1("input", "GestureAnimation", this, "curve", curve->debugName());
+    TRACE_EVENT_START1("input", "GestureAnimation", this, "curve", m_curve->debugName());
 #endif
 }
 
