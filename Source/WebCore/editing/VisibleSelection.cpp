@@ -471,12 +471,14 @@ void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
         return;
 
     if (m_baseIsFirst) {
-        m_extent = startRootNode ? lastPositionInNode(startRootNode) : positionBeforeNode(endRootNode->shadowAncestorNode());
+        m_extent = startRootNode ? lastPositionInOrAfterNode(startRootNode) : positionBeforeNode(endRootNode->shadowAncestorNode());
         m_end = m_extent;
     } else {
-        m_extent = endRootNode ? firstPositionInNode(endRootNode) : positionAfterNode(startRootNode->shadowAncestorNode());
+        m_extent = endRootNode ? firstPositionInOrBeforeNode(endRootNode) : positionAfterNode(startRootNode->shadowAncestorNode());
         m_start = m_extent;
     }
+
+    ASSERT(m_start.anchorNode()->treeScope() == m_end.anchorNode()->treeScope());
 }
 
 void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
