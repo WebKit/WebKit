@@ -707,7 +707,7 @@ class Manager(object):
             self._printer.print_config("Running %d %ss in parallel over %d shards (%d locked)" %
                 (num_workers, driver_name, num_shards, num_locked_shards))
 
-    def _run_tests(self, file_list, result_summary):
+    def _run_tests(self, file_list, result_summary, num_workers):
         """Runs the tests in the file_list.
 
         Return: A tuple (interrupted, keyboard_interrupted, thread_timings,
@@ -748,7 +748,7 @@ class Manager(object):
         if locked_shards:
             self.start_servers_with_lock()
 
-        num_workers = min(int(self._options.child_processes), len(all_shards))
+        num_workers = min(num_workers, len(all_shards))
         self._log_num_workers(num_workers, len(all_shards), len(locked_shards))
 
         manager_connection = manager_worker_broker.get(num_workers, self, worker.Worker)
@@ -894,7 +894,7 @@ class Manager(object):
 
         start_time = time.time()
 
-        interrupted, keyboard_interrupted, thread_timings, test_timings, individual_test_timings = self._run_tests(self._test_files_list, result_summary)
+        interrupted, keyboard_interrupted, thread_timings, test_timings, individual_test_timings = self._run_tests(self._test_files_list, result_summary, int(self._options.child_processes))
 
         # We exclude the crashes from the list of results to retry, because
         # we want to treat even a potentially flaky crash as an error.
@@ -907,7 +907,7 @@ class Manager(object):
             self._retrying = True
             retry_summary = ResultSummary(self._expectations, failures.keys())
             # Note that we intentionally ignore the return value here.
-            self._run_tests(failures.keys(), retry_summary)
+            self._run_tests(failures.keys(), retry_summary, num_workers=1)
             failures = self._get_failures(retry_summary, include_crashes=True, include_missing=True)
 
         end_time = time.time()
