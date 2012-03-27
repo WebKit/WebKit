@@ -1073,7 +1073,6 @@ fast/repaint/table-writing-modes-v.html
 fast/repaint/text-emphasis-h.html
 fast/repaint/text-emphasis-v.html
 fast/repaint/background-clip-text.html
-svg/repaint/filter-repaint.svg
 
 # Needs layoutTestController.enableAutoResizeMode()
 fast/autoresize
@@ -1353,7 +1352,6 @@ svg/zoom/text/zoom-coords-viewattr-01-b.svg
 
 # [Qt] Couple of tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode
 # https://bugs.webkit.org/show_bug.cgi?id=52810
-fast/block/float/overhanging-tall-block.html
 fast/repaint/moving-shadow-on-container.html
 fast/repaint/moving-shadow-on-path.html
 svg/as-image/img-preserveAspectRatio-support-1.html
@@ -1383,7 +1381,6 @@ svg/custom/use-detach.svg
 svg/custom/use-on-symbol-inside-pattern.svg
 svg/filters/feColorMatrix-values.svg
 svg/filters/feColorMatrix-saturate.svg
-svg/filters/feImage-preserveAspectratio.svg
 svg/filters/filteredImage.svg
 svg/hixie/links/001.xml
 svg/hixie/perf/007.xml
@@ -2292,8 +2289,6 @@ svg/custom/clip-path-with-css-transform-1.svg
 svg/stroke/zero-length-path-linecap-rendering.svg
 svg/stroke/zero-length-subpaths-linecap-rendering.svg
 svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse.svg
-css2.1/20110323/outline-color-applies-to-008.htm
-css2.1/20110323/border-collapse-offset-002.htm
 http/tests/misc/willCacheResponse-delegate-callback.html
 fast/borders/scaled-border-image.html
 
