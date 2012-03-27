@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -89,6 +89,7 @@ namespace WebCore {
         void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
         void didFinishLoading(unsigned long identifier, double finishTime);
         void didFail(const ResourceError&);
+        void makeRequest(const ResourceRequest&);
         void makeSimpleCrossOriginAccessRequest(const ResourceRequest& request);
         void makeCrossOriginAccessRequestWithPreflight(const ResourceRequest& request);
         void preflightSuccess();
@@ -104,6 +105,7 @@ namespace WebCore {
         Document* m_document;
         ThreadableLoaderOptions m_options;
         bool m_sameOriginRequest;
+        bool m_simpleRequest;
         bool m_async;
         OwnPtr<ResourceRequest> m_actualRequest;  // non-null during Access Control preflight checks
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -251,6 +251,16 @@ void ResourceRequestBase::clearHTTPAuthorization()
         m_platformRequestUpdated = false;
 }
 
+void ResourceRequestBase::clearHTTPContentType()
+{
+    updateResourceRequest(); 
+
+    m_httpHeaderFields.remove("Content-Type");
+
+    if (url().protocolIsInHTTPFamily())
+        m_platformRequestUpdated = false;
+}
+
 void ResourceRequestBase::clearHTTPReferrer()
 {
     updateResourceRequest(); 
@@ -266,6 +276,26 @@ void ResourceRequestBase::clearHTTPOrigin()
     updateResourceRequest(); 
 
     m_httpHeaderFields.remove("Origin");
+
+    if (url().protocolIsInHTTPFamily())
+        m_platformRequestUpdated = false;
+}
+
+void ResourceRequestBase::clearHTTPUserAgent()
+{
+    updateResourceRequest(); 
+
+    m_httpHeaderFields.remove("User-Agent");
+
+    if (url().protocolIsInHTTPFamily())
+        m_platformRequestUpdated = false;
+}
+
+void ResourceRequestBase::clearHTTPAccept()
+{
+    updateResourceRequest(); 
+
+    m_httpHeaderFields.remove("Accept");
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
