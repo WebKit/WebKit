@@ -100,7 +100,7 @@ WebInspector.TextViewer.prototype = {
 
     focus: function()
     {
-        this._mainPanel.element.focus();
+        this._mainPanel.focus();
     },
 
     revealLine: function(lineNumber)
@@ -904,6 +904,7 @@ WebInspector.TextEditorMainPanel = function(textModel, url, syncScrollListener, 
     this.element.appendChild(this._container);
 
     this.element.addEventListener("scroll", this._scroll.bind(this), false);
+    this.element.addEventListener("focus", this._handleElementFocus.bind(this), false);
 
     // In WebKit the DOMNodeRemoved event is fired AFTER the node is removed, thus it should be
     // attached to all DOM nodes that we want to track. Instead, we attach the DOMNodeRemoved
@@ -947,6 +948,20 @@ WebInspector.TextEditorMainPanel.prototype = {
     get readOnly()
     {
         return this._readOnly;
+    },
+
+    _handleElementFocus: function()
+    {
+        if (!this._readOnly)
+            this._container.focus();
+    },
+
+    focus: function()
+    {
+        if (this._readOnly)
+            this.element.focus();
+        else
+            this._container.focus();
     },
 
     _updateSelectionOnStartEditing: function()
