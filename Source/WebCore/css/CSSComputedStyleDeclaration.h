@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class CSSPrimitiveValue;
+class CSSPropertyLonghand;
 class CSSValueList;
 class CSSValuePool;
 class Color;
@@ -109,8 +110,8 @@ private:
     PassRefPtr<CSSValue> valueForFilter(RenderStyle*) const;
 #endif
 
-    PassRefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const int* properties, size_t) const;
-    PassRefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const int* properties) const;
+    PassRefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const CSSPropertyLonghand&) const;
+    PassRefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const CSSPropertyLonghand&) const;
 
     RefPtr<Node> m_node;
     PseudoId m_pseudoElementSpecifier;

@@ -220,10 +220,9 @@ const CSSPropertyLonghand& marginLonghand()
 const CSSPropertyLonghand& outlineLonghand()
 {
     static const int outlineProperties[] = {
-        CSSPropertyOutlineWidth,
-        CSSPropertyOutlineStyle,
         CSSPropertyOutlineColor,
-        CSSPropertyOutlineOffset
+        CSSPropertyOutlineStyle,
+        CSSPropertyOutlineWidth
     };
     DEFINE_STATIC_LOCAL(CSSPropertyLonghand, outlineLonghand, (outlineProperties, WTF_ARRAY_LENGTH(outlineProperties)));
     return outlineLonghand;
