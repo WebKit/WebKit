@@ -398,14 +398,6 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
 {
     ExceptionCode ec = 0;
     switch (m_type) {
-    case AnimatedAngle:
-        ASSERT(m_data.angle);
-        m_data.angle->setValueAsString(value, ec);
-        break;
-    case AnimatedBoolean:
-        ASSERT(m_data.boolean);
-        *m_data.boolean = value == "true" ? true : false;
-        break;
     case AnimatedColor:
         ASSERT(m_data.color);
         *m_data.color = value.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(value);
@@ -453,6 +445,8 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
         break;
 
     // These types don't appear in the table in SVGStyledElement::cssPropertyToTypeMap() and thus don't need setValueAsString() support. 
+    case AnimatedAngle:
+    case AnimatedBoolean:
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
     case AnimatedInteger:
@@ -477,6 +471,7 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     // FIXME: This lists the current state of our animVal support.
     switch (type) {
     case AnimatedAngle:
+    case AnimatedBoolean:
     case AnimatedInteger:
     case AnimatedIntegerOptionalInteger:
     case AnimatedLength:
@@ -486,7 +481,6 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     case AnimatedNumberOptionalNumber:
     case AnimatedTransformList:
         return true;
-    case AnimatedBoolean:
     case AnimatedColor:
     case AnimatedEnumeration:
     case AnimatedPath:

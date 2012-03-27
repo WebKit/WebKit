@@ -39,6 +39,31 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedBooleanAnimator::constructFromString(cons
     return animtedType.release();
 }
 
+PassOwnPtr<SVGAnimatedType> SVGAnimatedBooleanAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    return SVGAnimatedType::createBoolean(constructFromOneBaseValue<bool, SVGAnimatedBoolean>(properties));
+}
+
+void SVGAnimatedBooleanAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedBoolean>(properties);
+}
+
+void SVGAnimatedBooleanAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+{
+    resetFromOneBaseValue<bool, SVGAnimatedBoolean>(properties, type, &SVGAnimatedType::boolean);
+}
+
+void SVGAnimatedBooleanAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValWillChangeForType<SVGAnimatedBoolean>(properties);
+}
+
+void SVGAnimatedBooleanAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValDidChangeForType<SVGAnimatedBoolean>(properties);
+}
+
 void SVGAnimatedBooleanAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
 {
     ASSERT(m_contextElement);

@@ -36,14 +36,17 @@ feConvolveMatrix.appendChild(animate);
 // Setup animation test
 function sample1() {
     shouldBe("feConvolveMatrix.preserveAlpha.animVal", "false");
+    shouldBe("feConvolveMatrix.preserveAlpha.baseVal", "false");
 }
 
 function sample2() {
     shouldBe("feConvolveMatrix.preserveAlpha.animVal", "false");
+    shouldBe("feConvolveMatrix.preserveAlpha.baseVal", "false");
 }
 
 function sample3() {
     shouldBe("feConvolveMatrix.preserveAlpha.animVal", "true");
+    shouldBe("feConvolveMatrix.preserveAlpha.baseVal", "false");
 }
 
 function executeTest() {
