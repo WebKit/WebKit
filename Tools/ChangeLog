@@ -1,3 +1,22 @@
+2012-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Unskip all GTK+ unit test.
+
+        Currently, skipped tests contains the list of unit tests that have
+        failed in one or more bots. In this moment it's not possible to
+        skip just the test cases that fail, so the complete unit test is
+        skipped when a single test case fails. For that reason, we don't
+        know which test cases are actually failing for every skipped
+        test. We are planning to land a patch to allow skipping individual
+        test cases, but first we need to know which test cases are
+        currently failing in the bots to skip them. So, this patch simply
+        unskips all unit tests in order to watch the bots and get the list
+        of test cases failing. Failing tests will be skipped again as soon
+        as we have the new list of failing test cases.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Reset the list of skipped tests.
+
 2012-03-26  Scott Byer  <scottbyer@chromium.org>
 
         Enable layout testing of the scroll animator.
