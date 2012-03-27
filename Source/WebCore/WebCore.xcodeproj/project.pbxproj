@@ -6112,6 +6112,7 @@
 		FABE72F91059C1EB00D999DD /* MathMLMathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72F21059C1EB00D999DD /* MathMLMathElement.h */; };
 		FABE72FD1059C21100D999DD /* MathMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72FB1059C21100D999DD /* MathMLElementFactory.cpp */; };
 		FABE72FE1059C21100D999DD /* MathMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72FC1059C21100D999DD /* MathMLNames.cpp */; };
+		FB78AD2E151BF5E600FE54D3 /* CSSParserMode.h in Headers */ = {isa = PBXBuildFile; fileRef = FB78AD2C151BF5D200FE54D3 /* CSSParserMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FBC220DF1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBC220DE1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp */; };
 		FD00D7A414A3F61900734011 /* SincResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD00D7A214A3F61900734011 /* SincResampler.cpp */; };
 		FD00D7A514A3F61900734011 /* SincResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = FD00D7A314A3F61900734011 /* SincResampler.h */; };
@@ -13260,6 +13261,7 @@
 		FABE72F31059C1EB00D999DD /* mathtags.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mathtags.in; sourceTree = "<group>"; };
 		FABE72FB1059C21100D999DD /* MathMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLElementFactory.cpp; sourceTree = "<group>"; };
 		FABE72FC1059C21100D999DD /* MathMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLNames.cpp; sourceTree = "<group>"; };
+		FB78AD2C151BF5D200FE54D3 /* CSSParserMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSParserMode.h; sourceTree = "<group>"; };
 		FBC220DE1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DOpenGL.cpp; sourceTree = "<group>"; };
 		FD00D7A214A3F61900734011 /* SincResampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SincResampler.cpp; sourceTree = "<group>"; };
 		FD00D7A314A3F61900734011 /* SincResampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SincResampler.h; sourceTree = "<group>"; };
@@ -20438,6 +20440,7 @@
 				85C56CA60AA89D5F00D95755 /* CSSPageRule.idl */,
 				BC772B370C4EA91E0083285F /* CSSParser.cpp */,
 				BC772B380C4EA91E0083285F /* CSSParser.h */,
+				FB78AD2C151BF5D200FE54D3 /* CSSParserMode.h */,
 				BC02A53F0E099C5A004B6D2B /* CSSParserValues.cpp */,
 				BC02A4B60E0997B9004B6D2B /* CSSParserValues.h */,
 				A80E6CDB0A1989CA007FB8C5 /* CSSPrimitiveValue.cpp */,
@@ -24631,6 +24634,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				FB78AD2E151BF5E600FE54D3 /* CSSParserMode.h in Headers */,
 				71E623D1151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

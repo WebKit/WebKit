@@ -35290,6 +35290,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSParserMode.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSParserValues.cpp"
 				>
 				<FileConfiguration

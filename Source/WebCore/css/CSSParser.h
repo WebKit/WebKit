@@ -25,6 +25,7 @@
 
 #include "CSSCalculationValue.h"
 #include "CSSGradientValue.h"
+#include "CSSParserMode.h"
 #include "CSSParserValues.h"
 #include "CSSProperty.h"
 #include "CSSPropertySourceData.h"
@@ -64,7 +65,11 @@ class WebKitCSSKeyframesRule;
 
 class CSSParser {
 public:
-    CSSParser(bool strictParsing = true);
+
+    // FIXME: Remove the boolean constructor once moved to CSSParserMode completely.
+    CSSParser(bool strictParsing);
+    CSSParser(CSSParserMode = CSSStrictMode);
+
     ~CSSParser();
 
     void parseSheet(CSSStyleSheet*, const String&, int startLineNumber = 0, StyleRuleRangeMap* ruleRangeMap = 0);
@@ -282,7 +287,7 @@ public:
 
     void clearProperties();
 
-    bool m_strict;
+    CSSParserMode m_cssParserMode;
     bool m_important;
     int m_id;
     CSSStyleSheet* m_styleSheet;
@@ -347,6 +352,14 @@ private:
 
     void setStyleSheet(CSSStyleSheet*);
     void ensureCSSValuePool();
+
+    inline bool inStrictMode() const { return m_cssParserMode == CSSStrictMode; }
+    inline bool inQuirksMode() const
+    {
+        // FIXME: Move SVGAttributeMode to inStrictMode() once StylePropertySet and CSSStyleSheet
+        // use CSSParserMode instead of a boolean.
+        return m_cssParserMode == CSSQuirksMode || m_cssParserMode == SVGAttributeMode;
+    }
 
     void recheckAtKeyword(const UChar* str, int len);
 
@@ -434,7 +447,11 @@ private:
     }
 
     bool validCalculationUnit(CSSParserValue*, Units);
-    bool validUnit(CSSParserValue*, Units, bool strict);
+
+    bool shouldAcceptUnitLessValues(CSSParserValue*, Units, CSSParserMode);
+
+    inline bool validUnit(CSSParserValue* value, Units unitflags) { return validUnit(value, unitflags, m_cssParserMode); }
+    bool validUnit(CSSParserValue*, Units, CSSParserMode);
 
     bool parseBorderImageQuad(Units, RefPtr<CSSPrimitiveValue>&);
     int colorIntFromValue(CSSParserValue*);

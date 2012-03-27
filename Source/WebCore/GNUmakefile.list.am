@@ -1606,6 +1606,7 @@ webcore_sources += \
 	Source/WebCore/css/CSSPageRule.h \
 	Source/WebCore/css/CSSParser.cpp \
 	Source/WebCore/css/CSSParser.h \
+	Source/WebCore/css/CSSParserMode.h \
 	Source/WebCore/css/CSSParserValues.cpp \
 	Source/WebCore/css/CSSParserValues.h \
 	Source/WebCore/css/CSSPrimitiveValue.cpp \

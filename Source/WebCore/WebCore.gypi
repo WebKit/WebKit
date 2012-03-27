@@ -2392,6 +2392,7 @@
             'css/CSSPageRule.h',
             'css/CSSParser.cpp',
             'css/CSSParser.h',
+            'css/CSSParserMode.h',
             'css/CSSParserValues.cpp',
             'css/CSSPrimitiveValue.cpp',
             'css/CSSPrimitiveValueMappings.h',

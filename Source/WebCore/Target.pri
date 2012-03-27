@@ -1591,6 +1591,7 @@ HEADERS += \
     css/CSSOMUtils.h \
     css/CSSPageRule.h \
     css/CSSParser.h \
+    css/CSSParserMode.h \
     css/CSSParserValues.h \
     css/CSSPrimitiveValue.h \
     css/CSSProperty.h \

@@ -26,6 +26,7 @@
 
 #include "CSSMediaRule.h"
 #include "CSSParser.h"
+#include "CSSParserMode.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSSelector.h"
@@ -1025,7 +1026,7 @@ specifier:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->setMatch(CSSSelector::Id);
-        if (!p->m_strict)
+        if (p->m_cssParserMode == CSSQuirksMode || p->m_cssParserMode == SVGAttributeMode)
             $1.lower();
         $$->setValue($1);
     }
@@ -1036,7 +1037,7 @@ specifier:
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = p->createFloatingSelector();
             $$->setMatch(CSSSelector::Id);
-            if (!p->m_strict)
+            if (p->m_cssParserMode == CSSQuirksMode || p->m_cssParserMode == SVGAttributeMode)
                 $1.lower();
             $$->setValue($1);
         }
@@ -1051,7 +1052,7 @@ class:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->setMatch(CSSSelector::Class);
-        if (!p->m_strict)
+        if (p->m_cssParserMode == CSSQuirksMode || p->m_cssParserMode == SVGAttributeMode)
             $2.lower();
         $$->setValue($2);
     }
