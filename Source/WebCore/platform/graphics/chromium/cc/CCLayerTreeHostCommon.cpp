@@ -139,6 +139,16 @@ static inline bool layerOpacityIsOpaque(LayerChromium* layer)
     return layer->opacity() == 1 && !layer->opacityIsAnimating();
 }
 
+static inline bool transformToParentIsKnown(CCLayerImpl*)
+{
+    return true;
+}
+
+static inline bool transformToParentIsKnown(LayerChromium* layer)
+{
+    return !layer->transformIsAnimating();
+}
+
 template<typename LayerType>
 static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlignedWithRespectToParent)
 {
@@ -169,6 +179,12 @@ static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlig
     // If the layer flattens its subtree (i.e. the layer doesn't preserve-3d), but it is
     // treated as a 3D object by its parent (i.e. parent does preserve-3d).
     if (layer->parent() && layer->parent()->preserves3D() && !layer->preserves3D() && descendantDrawsContent)
+        return true;
+
+    // On the main thread side, animating transforms are unknown, and may cause a RenderSurface on the impl side.
+    // Since they are cheap, we create a rendersurface for all animating transforms to cover these cases, and so
+    // that we can consider descendants as not animating relative to their target to aid culling.
+    if (!transformToParentIsKnown(layer) && descendantDrawsContent)
         return true;
 
     // If the layer clips its descendants but it is not axis-aligned with respect to its parent.
@@ -315,11 +331,11 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     TransformationMatrix combinedTransform = parentMatrix;
     combinedTransform = combinedTransform.multiply(layerLocalTransform);
 
-    bool layerIsInAnimatingSubtreeForSurface = layer->transformIsAnimating();
-    bool layerIsInAnimatingSubtreeForScreen = layer->transformIsAnimating();
+    bool animatingTransformToTarget = layer->transformIsAnimating();
+    bool animatingTransformToScreen = animatingTransformToTarget;
     if (layer->parent()) {
-        layerIsInAnimatingSubtreeForSurface |= layer->parent()->drawTransformIsAnimating();
-        layerIsInAnimatingSubtreeForScreen |= layer->parent()->screenSpaceTransformIsAnimating();
+        animatingTransformToTarget |= layer->parent()->drawTransformIsAnimating();
+        animatingTransformToScreen |= layer->parent()->screenSpaceTransformIsAnimating();
     }
 
     FloatRect layerRect(-0.5 * layer->bounds().width(), -0.5 * layer->bounds().height(), layer->bounds().width(), layer->bounds().height());
@@ -356,11 +372,11 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         surfaceOriginTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
         renderSurface->setOriginTransform(surfaceOriginTransform);
 
-        renderSurface->setTargetSurfaceTransformsAreAnimating(layerIsInAnimatingSubtreeForSurface);
-        renderSurface->setScreenSpaceTransformsAreAnimating(layerIsInAnimatingSubtreeForScreen);
-        layerIsInAnimatingSubtreeForSurface = false;
-        layer->setDrawTransformIsAnimating(layerIsInAnimatingSubtreeForSurface);
-        layer->setScreenSpaceTransformIsAnimating(layerIsInAnimatingSubtreeForScreen);
+        renderSurface->setTargetSurfaceTransformsAreAnimating(animatingTransformToTarget);
+        renderSurface->setScreenSpaceTransformsAreAnimating(animatingTransformToScreen);
+        animatingTransformToTarget = false;
+        layer->setDrawTransformIsAnimating(animatingTransformToTarget);
+        layer->setScreenSpaceTransformIsAnimating(animatingTransformToScreen);
 
         // Update the aggregate hierarchy matrix to include the transform of the newly created RenderSurface.
         nextHierarchyMatrix.multiply(surfaceOriginTransform);
@@ -387,8 +403,8 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         renderSurfaceLayerList.append(layer);
     } else {
         layer->setDrawTransform(combinedTransform);
-        layer->setDrawTransformIsAnimating(layerIsInAnimatingSubtreeForSurface);
-        layer->setScreenSpaceTransformIsAnimating(layerIsInAnimatingSubtreeForScreen);
+        layer->setDrawTransformIsAnimating(animatingTransformToTarget);
+        layer->setScreenSpaceTransformIsAnimating(animatingTransformToScreen);
         transformedLayerRect = enclosingIntRect(layer->drawTransform().mapRect(layerRect));
 
         layer->setDrawOpacity(drawOpacity);

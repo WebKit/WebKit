@@ -1,5 +1,15 @@
 2012-03-27  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Unknown transforms should be treated as non-axis aligned on main thread
+        https://bugs.webkit.org/show_bug.cgi?id=82370
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebKitTests::TEST):
+
+2012-03-27  Dana Jansens  <danakj@chromium.org>
+
         [chromium] Rename opaqueContentsRegion() to visibleContentOpaqueRegion()
         https://bugs.webkit.org/show_bug.cgi?id=81689
 

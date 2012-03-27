@@ -676,9 +676,8 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
 
     // In combination with descendantDrawsContent, opacity != 1 forces the layer to have a new renderSurface.
     addOpacityTransitionToController(*renderSurface1->layerAnimationController(), 10, 1, 0, false);
-    addOpacityTransitionToController(*renderSurface2->layerAnimationController(), 10, 1, 0, false);
 
-    // Also put an animation on a layer without descendants.
+    // Also put an animated opacity on a layer without descendants.
     addOpacityTransitionToController(*grandChildOfRoot->layerAnimationController(), 10, 1, 0, false);
 
     TransformationMatrix layerTransform;
@@ -686,10 +685,11 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     TransformationMatrix sublayerTransform;
     sublayerTransform.scale3d(10.0, 1.0, 1.0);
 
-    // Put transform animations on child, renderSurface2, grandChildOfRoot, and grandChildOfRS2
-    addAnimatedTransformToController(*childOfRoot->layerAnimationController(), 10, 30, 0);
-    addAnimatedTransformToController(*grandChildOfRoot->layerAnimationController(), 10, 30, 0);
+    // In combination with descendantDrawsContent, an animated transform forces the layer to have a new renderSurface.
     addAnimatedTransformToController(*renderSurface2->layerAnimationController(), 10, 30, 0);
+
+    // Also put transform animations on grandChildOfRoot, and grandChildOfRS2
+    addAnimatedTransformToController(*grandChildOfRoot->layerAnimationController(), 10, 30, 0);
     addAnimatedTransformToController(*grandChildOfRS2->layerAnimationController(), 10, 30, 0);
 
     setLayerPropertiesForTesting(parent.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
@@ -742,14 +742,14 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     EXPECT_FALSE(childOfRS1->drawOpacityIsAnimating());
     EXPECT_FALSE(grandChildOfRS1->drawOpacityIsAnimating());
     EXPECT_FALSE(renderSurface2->drawOpacityIsAnimating());
-    EXPECT_TRUE(renderSurface2->renderSurface()->drawOpacityIsAnimating());
+    EXPECT_FALSE(renderSurface2->renderSurface()->drawOpacityIsAnimating());
     EXPECT_FALSE(childOfRS2->drawOpacityIsAnimating());
     EXPECT_FALSE(grandChildOfRS2->drawOpacityIsAnimating());
 
     // Verify drawTransformsAnimatingInTarget values
     //
     EXPECT_FALSE(parent->drawTransformIsAnimating());
-    EXPECT_TRUE(childOfRoot->drawTransformIsAnimating());
+    EXPECT_FALSE(childOfRoot->drawTransformIsAnimating());
     EXPECT_TRUE(grandChildOfRoot->drawTransformIsAnimating());
     EXPECT_FALSE(renderSurface1->drawTransformIsAnimating());
     EXPECT_FALSE(renderSurface1->renderSurface()->targetSurfaceTransformsAreAnimating());
@@ -763,7 +763,7 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     // Verify drawTransformsAnimatingInScreen values
     //
     EXPECT_FALSE(parent->screenSpaceTransformIsAnimating());
-    EXPECT_TRUE(childOfRoot->screenSpaceTransformIsAnimating());
+    EXPECT_FALSE(childOfRoot->screenSpaceTransformIsAnimating());
     EXPECT_TRUE(grandChildOfRoot->screenSpaceTransformIsAnimating());
     EXPECT_FALSE(renderSurface1->screenSpaceTransformIsAnimating());
     EXPECT_FALSE(renderSurface1->renderSurface()->screenSpaceTransformsAreAnimating());
