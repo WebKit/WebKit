@@ -1472,9 +1472,9 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
     return w;
 }
 
-LayoutRect RenderText::linesBoundingBox() const
+IntRect RenderText::linesBoundingBox() const
 {
-    LayoutRect result;
+    IntRect result;
     
     ASSERT(!firstTextBox() == !lastTextBox());  // Either both are null or both exist.
     if (firstTextBox() && lastTextBox()) {

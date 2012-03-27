@@ -739,7 +739,7 @@ void RenderLayer::updateLayerPosition()
     LayoutSize inlineBoundingBoxOffset; // We don't put this into the RenderLayer x/y for inlines, so we need to subtract it out when done.
     if (renderer()->isRenderInline()) {
         RenderInline* inlineFlow = toRenderInline(renderer());
-        LayoutRect lineBox = inlineFlow->linesBoundingBox();
+        IntRect lineBox = inlineFlow->linesBoundingBox();
         setSize(lineBox.size());
         inlineBoundingBoxOffset = toSize(lineBox.location());
         localPoint += inlineBoundingBoxOffset;

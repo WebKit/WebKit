@@ -785,14 +785,14 @@ VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point)
     return RenderBoxModelObject::positionForPoint(point);
 }
 
-LayoutRect RenderInline::linesBoundingBox() const
+IntRect RenderInline::linesBoundingBox() const
 {
     if (!alwaysCreateLineBoxes()) {
         ASSERT(!firstLineBox());
-        return enclosingLayoutRect(culledInlineBoundingBox(this));
+        return enclosingIntRect(culledInlineBoundingBox(this));
     }
 
-    LayoutRect result;
+    IntRect result;
     
     // See <rdar://problem/5289721>, for an unknown reason the linked list here is sometimes inconsistent, first is non-zero and last is zero.  We have been
     // unable to reproduce this at all (and consequently unable to figure ot why this is happening).  The assert will hopefully catch the problem in debug
@@ -815,7 +815,7 @@ LayoutRect RenderInline::linesBoundingBox() const
         float y = isHorizontal ? firstLineBox()->y() : logicalLeftSide;
         float width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->logicalBottom() - x;
         float height = isHorizontal ? lastLineBox()->logicalBottom() - y : logicalRightSide - logicalLeftSide;
-        result = enclosingLayoutRect(FloatRect(x, y, width, height));
+        result = enclosingIntRect(FloatRect(x, y, width, height));
     }
 
     return result;

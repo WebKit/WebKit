@@ -51,7 +51,7 @@ public:
 
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&) const;
 
-    LayoutRect linesBoundingBox() const;
+    IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
 
     InlineFlowBox* createAndAppendInlineFlowBox();

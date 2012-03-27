@@ -165,7 +165,7 @@ FloatRect RenderSVGInlineText::floatLinesBoundingBox() const
     return boundingBox;
 }
 
-LayoutRect RenderSVGInlineText::linesBoundingBox() const
+IntRect RenderSVGInlineText::linesBoundingBox() const
 {
     return enclosingIntRect(floatLinesBoundingBox());
 }
