@@ -2850,7 +2850,7 @@ BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate.htm
 BUGWK47923 : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 
 // Chromium does not support PDF content in <img> tags.
-WONTFIX WIN LINUX : compositing/color-matching/pdf-image-match.html = IMAGE+TEXT
+WONTFIX WIN LINUX : compositing/color-matching/pdf-image-match.html = IMAGE
 WONTFIX WIN LINUX : compositing/images/direct-pdf-image.html = IMAGE
 
 // Chromium does not support the CoreAnimation plugin model right now.
@@ -4369,3 +4369,6 @@ BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-y-in-scrolling-p
 BUGWK82297 SNOWLEOPARD : fast/events/scrollbar-double-click.html = TEXT PASS
 
 BUGCR120356 : fast/regex/unicodeCaseInsensitive.html = TEXT
+
+BUGWK82300 SNOWLEOPARD : compositing/color-matching/pdf-image-match.html = IMAGE
+BUGWK82300 SNOWLEOPARD : compositing/images/direct-pdf-image.html = IMAGE
