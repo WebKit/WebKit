@@ -1,4 +1,15 @@
 =================
+WebKitGTK+ 1.8.0
+=================
+
+What's new in WebKitGTK+ 1.8.0?
+
+ - Merge WebCore and JavaScriptCore regressions committed after the branch point.
+ - Fix several crashes in script bindings by adjusting incorrect signal signatures.
+ - Fix --disable-geolocation build.
+ - Update translations.
+
+=================
 WebKitGTK+ 1.7.92
 =================
 
