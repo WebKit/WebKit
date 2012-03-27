@@ -1629,3 +1629,7 @@ plugins/netscape-dom-access-and-reload.html
 
 # The inner <input> should now grow to take the full cell's height.
 fast/table/colspanMinWidth-vertical.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82309
+http/tests/xmlhttprequest/basic-auth-default.html
+http/tests/xmlhttprequest/re-login-async.html
