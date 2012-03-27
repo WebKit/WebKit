@@ -177,8 +177,6 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessagesCleared, this._consoleMessagesCleared, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UIBreakpointAdded, this._uiBreakpointAdded, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UIBreakpointRemoved, this._uiBreakpointRemoved, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, this._debuggerPaused, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerResumed, this._debuggerResumed, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
@@ -258,6 +256,7 @@ WebInspector.ScriptsPanel.prototype = {
     _uiSourceCodeAdded: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        this._addBreakpointListeners(uiSourceCode);
 
         if (!uiSourceCode.url || uiSourceCode.isSnippetEvaluation) {
             // Anonymous sources and snippets evaluations are shown only when stepping.
@@ -280,6 +279,25 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
         this._removeSourceFrame(uiSourceCode);
+        this._removeBreakpointListeners(uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _addBreakpointListeners: function(uiSourceCode)
+    {
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.BreakpointAdded, this._uiBreakpointAdded, this);
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.BreakpointRemoved, this._uiBreakpointRemoved, this);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _removeBreakpointListeners: function(uiSourceCode)
+    {
+        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.BreakpointAdded, this._uiBreakpointAdded, this);
+        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.BreakpointRemoved, this._uiBreakpointRemoved, this);
     },
 
     /**
@@ -573,6 +591,11 @@ WebInspector.ScriptsPanel.prototype = {
         this._editorContainer.replaceFiles(oldUISourceCodeList, uiSourceCodeList);
         for (var i = 0; i < oldUISourceCodeList.length; ++i)
             this._removeSourceFrame(oldUISourceCodeList[i]);
+
+        for (var i = 0; i < oldUISourceCodeList.length; ++i)
+            this._removeBreakpointListeners(oldUISourceCodeList[i]);
+        for (var i = 0; i < uiSourceCodeList.length; ++i)
+            this._addBreakpointListeners(uiSourceCodeList[i]);
     },
 
     _sourceFrameLoaded: function(event)

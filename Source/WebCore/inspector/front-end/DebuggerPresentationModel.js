@@ -39,7 +39,7 @@ WebInspector.DebuggerPresentationModel = function()
 
     this._presentationCallFrames = [];
 
-    this._breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this._breakpointAdded.bind(this), this._breakpointRemoved.bind(this), WebInspector.debuggerModel, this._scriptMapping);
+    this._breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, WebInspector.debuggerModel, this._scriptMapping);
 
     this._pendingConsoleMessages = {};
     this._consoleMessageLiveLocations = [];
@@ -63,8 +63,6 @@ WebInspector.DebuggerPresentationModel.Events = {
     UISourceCodeRemoved: "source-file-removed",
     ConsoleMessageAdded: "console-message-added",
     ConsoleMessagesCleared: "console-messages-cleared",
-    UIBreakpointAdded: "ui-breakpoint-added",
-    UIBreakpointRemoved: "ui-breakpoint-removed",
     DebuggerPaused: "debugger-paused",
     DebuggerResumed: "debugger-resumed",
     DebuggerReset: "debugger-reset",
@@ -436,22 +434,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return uiSourceCode.breakpoints()[lineNumber];
     },
 
-    /**
-     * @param {WebInspector.UIBreakpoint} uiBreakpoint
-     */
-    _breakpointAdded: function(uiBreakpoint)
-    {
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UIBreakpointAdded, uiBreakpoint);
-    },
-
-    /**
-     * @param {WebInspector.UIBreakpoint} uiBreakpoint
-     */
-    _breakpointRemoved: function(uiBreakpoint)
-    {
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UIBreakpointRemoved, uiBreakpoint);
-    },
-
     _debuggerPaused: function()
     {
         var callFrames = WebInspector.debuggerModel.callFrames;
@@ -596,13 +578,17 @@ WebInspector.UISourceCodeImpl.prototype = {
 
     breakpointAdded: function(lineNumber, breakpoint)
     {
+        console.assert(!this._breakpoints[lineNumber]);
         this._breakpoints[lineNumber] = breakpoint;
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.BreakpointAdded, breakpoint);
     },
 
     breakpointRemoved: function(lineNumber)
     {
+        var breakpoint = this._breakpoints[lineNumber];
         delete this._breakpoints[lineNumber];
-    }
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.BreakpointRemoved, breakpoint);
+    },
 }
 
 WebInspector.UISourceCodeImpl.prototype.__proto__ = WebInspector.UISourceCode.prototype;

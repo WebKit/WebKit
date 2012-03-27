@@ -31,16 +31,12 @@
 /**
  * @constructor
  * @param {WebInspector.Setting} breakpointStorage
- * @param {function(WebInspector.UIBreakpoint)} breakpointAddedDelegate
- * @param {function(WebInspector.UIBreakpoint)} breakpointRemovedDelegate
  * @param {WebInspector.DebuggerModel} debuggerModel
  * @param {WebInspector.MainScriptMapping} scriptMapping
  */
-WebInspector.BreakpointManager = function(breakpointStorage, breakpointAddedDelegate, breakpointRemovedDelegate, debuggerModel, scriptMapping)
+WebInspector.BreakpointManager = function(breakpointStorage, debuggerModel, scriptMapping)
 {
     this._breakpointStorage = breakpointStorage;
-    this._breakpointAddedDelegate = breakpointAddedDelegate;
-    this._breakpointRemovedDelegate = breakpointRemovedDelegate;
 
     /**
      * @type {Object.<string, Object.<string,WebInspector.Breakpoint>>}
@@ -198,9 +194,7 @@ WebInspector.BreakpointManager.prototype = {
     _addBreakpointToUI: function(breakpoint, uiSourceCode)
     {
         var uiBreakpoint = breakpoint.createUIBreakpoint(uiSourceCode);
-        console.assert(!uiSourceCode.breakpoints()[uiBreakpoint.lineNumber]);
         uiSourceCode.breakpointAdded(uiBreakpoint.lineNumber, uiBreakpoint);
-        this._breakpointAddedDelegate(uiBreakpoint);
     },
 
     /**
@@ -213,7 +207,6 @@ WebInspector.BreakpointManager.prototype = {
         console.assert(uiSourceCode.breakpoints()[lineNumber] === uiBreakpoint);
         uiSourceCode.breakpointRemoved(lineNumber);
         uiBreakpoint.breakpoint.removeUIBreakpoint();
-        this._breakpointRemovedDelegate(uiBreakpoint);
     },
 
     /**

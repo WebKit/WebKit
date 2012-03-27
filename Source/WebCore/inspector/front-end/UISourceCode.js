@@ -49,7 +49,9 @@ WebInspector.UISourceCode = function(id, url, contentProvider)
 }
 
 WebInspector.UISourceCode.Events = {
-    ContentChanged: "content-changed"
+    ContentChanged: "content-changed",
+    BreakpointAdded: "breakpoint-added",
+    BreakpointRemoved: "breakpoint-removed"
 }
 
 WebInspector.UISourceCode.prototype = {
@@ -207,6 +209,9 @@ WebInspector.UISourceCode.prototype = {
         this._requestContentCallbacks = [];
     },
 
+    /**
+     * @return {Array.<WebInspector.UIBreakpoint>}
+     */
     breakpoints: function() {}
 }
 

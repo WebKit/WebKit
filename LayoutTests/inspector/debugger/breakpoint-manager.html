@@ -13,15 +13,17 @@ function test()
     };
 
     var uiBreakpoints = {};
-    function breakpointAdded(breakpoint)
+    function breakpointAdded(event)
     {
+        var breakpoint = event.data;
         InspectorTest.addResult("breakpointAdded(" + [breakpoint.uiSourceCode.id, breakpoint.lineNumber, breakpoint.condition, breakpoint.enabled].join(", ") + ")");
         var breakpointId = breakpoint.uiSourceCode.id + ":" + breakpoint.lineNumber;
         InspectorTest.assertTrue(!(breakpointId in uiBreakpoints));
         uiBreakpoints[breakpointId] = breakpoint.condition + "|" + breakpoint.enabled;
     }
-    function breakpointRemoved(breakpoint)
+    function breakpointRemoved(event)
     {
+        var breakpoint = event.data;
         InspectorTest.addResult("breakpointRemoved(" + [breakpoint.uiSourceCode.id, breakpoint.lineNumber].join(", ") + ")");
         var breakpointId = breakpoint.uiSourceCode.id + ":" + breakpoint.lineNumber;
         InspectorTest.assertTrue(breakpointId in uiBreakpoints);
@@ -59,15 +61,12 @@ function test()
     serializedBreakpoints.push(createBreakpoint("b.js", 3, "", true));
 
     function createUISourceCode(id, url) { return new WebInspector.UISourceCodeImpl(id, url, null); }
-    var uiSourceCodeA = createUISourceCode("a.js", "a.js");
-    var uiSourceCodeB = createUISourceCode("b.js", "b.js");
 
     var scriptMapping = {};
     scriptMapping.rawLocationToUILocation = function(rawLocation) { return rawLocation; };
     scriptMapping.uiLocationToRawLocation = function(uiSourceCode, lineNumber)
     {
-        scriptId = uiSourceCode === uiSourceCodeA ? "a.js" : "b.js";
-        return { scriptId: scriptId, lineNumber: lineNumber, columnNumber: 0 };
+        return { scriptId: uiSourceCode.id, lineNumber: lineNumber, columnNumber: 0 };
     }
 
     function createBreakpointManager(breakpoints, scriptMapping)
@@ -76,15 +75,22 @@ function test()
         uiBreakpoints = {};
         debuggerBreakpoints = {};
         debuggerModel.removeAllListeners();
-        return new WebInspector.BreakpointManager(breakpointStorage, breakpointAdded, breakpointRemoved, debuggerModel, scriptMapping);
+        return new WebInspector.BreakpointManager(breakpointStorage, debuggerModel, scriptMapping);
+    }
+
+    function addUISourceCode(breakpointManager, uiSourceCode)
+    {
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.BreakpointAdded, breakpointAdded);
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.BreakpointRemoved, breakpointRemoved);
+        breakpointManager.uiSourceCodeAdded(uiSourceCode);
     }
 
     InspectorTest.runTestSuite([
         function uiSourceCodeAdded(next)
         {
             var breakpointManager = createBreakpointManager(serializedBreakpoints, scriptMapping);
-
-            breakpointManager.uiSourceCodeAdded(uiSourceCodeA);
+            var uiSourceCode = createUISourceCode("a.js", "a.js");
+            addUISourceCode(breakpointManager, uiSourceCode);
             setTimeout(checkResults, 0);
 
             function checkResults()
@@ -98,18 +104,18 @@ function test()
         function setAndRemoveBreakpoints(next)
         {
             var breakpointManager = createBreakpointManager(serializedBreakpoints, scriptMapping);
-
-            breakpointManager.uiSourceCodeAdded(uiSourceCodeA);
+            var uiSourceCode = createUISourceCode("a.js", "a.js");
+            addUISourceCode(breakpointManager, uiSourceCode);
             setTimeout(setAndRemove, 0);
 
             function setAndRemove()
             {
-                breakpointManager.setBreakpoint(uiSourceCodeA, 30, "", true);
+                breakpointManager.setBreakpoint(uiSourceCode, 30, "", true);
                 // Remove breakpoint immediately, breakpoint should be removed correctly from both debugger model and UI.
-                breakpointManager.removeBreakpoint(uiSourceCodeA, 30);
+                breakpointManager.removeBreakpoint(uiSourceCode, 30);
 
-                breakpointManager.removeBreakpoint(uiSourceCodeA, 10);
-                breakpointManager.removeBreakpoint(uiSourceCodeA, 20);
+                breakpointManager.removeBreakpoint(uiSourceCode, 10);
+                breakpointManager.removeBreakpoint(uiSourceCode, 20);
                 setTimeout(checkResults, 0);
             }
 
@@ -124,11 +130,11 @@ function test()
         function setBreakpointOnComment(next)
         {
             var breakpointManager = createBreakpointManager([], scriptMapping);
-
-            breakpointManager.uiSourceCodeAdded(uiSourceCodeA);
+            var uiSourceCode = createUISourceCode("a.js", "a.js");
+            addUISourceCode(breakpointManager, uiSourceCode);
 
             debuggerModel.actualLocations = [{ lineNumber: 16, columnNumber: 0 }];
-            breakpointManager.setBreakpoint(uiSourceCodeA, 15, "", true);
+            breakpointManager.setBreakpoint(uiSourceCode, 15, "", true);
             setTimeout(checkResults, 0);
             function checkResults()
             {
@@ -140,11 +146,11 @@ function test()
         function setBreakpointOutsideOfScript(next)
         {
             var breakpointManager = createBreakpointManager([], scriptMapping);
-
-            breakpointManager.uiSourceCodeAdded(uiSourceCodeA);
+            var uiSourceCode = createUISourceCode("a.js", "a.js");
+            addUISourceCode(breakpointManager, uiSourceCode);
 
             debuggerModel.actualLocations = [];
-            breakpointManager.setBreakpoint(uiSourceCodeA, 15, "", true);
+            breakpointManager.setBreakpoint(uiSourceCode, 15, "", true);
             setTimeout(checkResults, 0);
             function checkResults()
             {
@@ -156,8 +162,8 @@ function test()
         function testNavigation(next)
         {
             var breakpointManager = createBreakpointManager(serializedBreakpoints, scriptMapping);
-
-            breakpointManager.uiSourceCodeAdded(uiSourceCodeA);
+            var uiSourceCodeA = createUISourceCode("a.js", "a.js");
+            addUISourceCode(breakpointManager, uiSourceCodeA);
             setTimeout(navigateToB, 0);
 
             function navigateToB()
@@ -167,7 +173,8 @@ function test()
                 InspectorTest.addResult("\nNavigate to B.");
                 breakpointManager.debuggerReset();
 
-                breakpointManager.uiSourceCodeAdded(uiSourceCodeB);
+                var uiSourceCodeB = createUISourceCode("b.js", "b.js");
+                addUISourceCode(breakpointManager, uiSourceCodeB);
                 setTimeout(navigateToA, 0);
             }
 
@@ -181,7 +188,8 @@ function test()
 
                 var eventData = { breakpointId: "a.js:10:0", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
                 debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);
-                breakpointManager.uiSourceCodeAdded(uiSourceCodeA);
+                var uiSourceCodeA = createUISourceCode("a.js", "a.js");
+                addUISourceCode(breakpointManager, uiSourceCodeA);
                 setTimeout(checkResults, 0);
             }
 
@@ -207,7 +215,7 @@ function test()
             scriptMapping.rawLocationToUILocation = function(rawLocation) { return rawLocation; };
             scriptMapping.uiLocationToRawLocation = function(uiSourceCode, lineNumber) { return { scriptId: "c.js", lineNumber: lineNumber, columnNumber: 0 }; };
 
-            breakpointManager.uiSourceCodeAdded(originalUISourceCode);
+            addUISourceCode(breakpointManager, originalUISourceCode);
             setTimeout(format, 0);
 
             function format()
@@ -222,7 +230,7 @@ function test()
                 scriptMapping.rawLocationToUILocation = function(rawLocation) { return { lineNumber: rawLocation.lineNumber * 2, columnNumber: rawLocation.columnNumber * 2 }; };
                 scriptMapping.uiLocationToRawLocation = function(uiSourceCode, lineNumber) { return { scriptId: "c.js", lineNumber: Math.floor(lineNumber / 2), columnNumber: 0 }; };
 
-                breakpointManager.uiSourceCodeAdded(formattedUISourceCode);
+                addUISourceCode(breakpointManager, formattedUISourceCode);
                 breakpointManager.setBreakpoint(formattedUISourceCode, 4, "", true);
                 breakpointManager.setBreakpoint(formattedUISourceCode, 8, "", false);
                 setTimeout(changeBreakpoints, 0);
@@ -245,7 +253,8 @@ function test()
                 InspectorTest.addResult("\nReload.");
                 breakpointManager.debuggerReset();
 
-                breakpointManager.uiSourceCodeAdded(formattedUISourceCode);
+                var formattedUISourceCode = createUISourceCode("deobfuscated:c.js", "c.js");
+                addUISourceCode(breakpointManager, formattedUISourceCode);
                 var eventData = { breakpointId: "c.js:2:0", location: { scriptId: "c.js", lineNumber: 3, columnNumber: 0 }};
                 debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);
                 eventData = { breakpointId: "c.js:6:0", location: { scriptId: "c.js", lineNumber: 6, columnNumber: 0 }};
