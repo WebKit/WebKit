@@ -134,7 +134,7 @@
   </autotools>
 
   <autotools id="gnutls"
-             autogenargs="--enable-ld-version-script --enable-cxx --without-lzo --with-libgcrypt">
+             autogenargs="--enable-ld-version-script --enable-cxx --without-lzo --with-libgcrypt --without-p11-kit">
     <branch module="/gnu/gnutls/gnutls-2.12.14.tar.bz2" version="2.12.14"
             repo="gnu.org"
             hash="sha256:5ee72ba6de7a23cf315792561954451e022dac8730149ca95f93c61e95be2ce3"

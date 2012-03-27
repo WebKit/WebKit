@@ -1,3 +1,14 @@
+2012-03-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Build gnutls without p11-kit support
+        https://bugs.webkit.org/show_bug.cgi?id=82212
+
+        Reviewed by Martin Robinson.
+
+        * gtk/jhbuild.modules: pass --without-p11-kit to gnutls'
+        configure, to avoid requiring that dependency, which is not used
+        by libsoup and WebKit anyway
+
 2012-03-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Make debug build work on 32 bit
