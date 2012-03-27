@@ -24,8 +24,8 @@
 #include "LayerCompositingThread.h"
 #include "LayerRenderer.h"
 
+#include <BlackBerryPlatformAnimation.h>
 #include <BlackBerryPlatformGLES2Context.h>
-#include <BlackBerryPlatformTimer.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -41,7 +41,7 @@ class WebPageCompositorClient;
 class WebPagePrivate;
 
 // This class may only be used on the compositing thread. So it does not need to be threadsaferefcounted.
-class WebPageCompositorPrivate : public RefCounted<WebPageCompositorPrivate> {
+class WebPageCompositorPrivate : public RefCounted<WebPageCompositorPrivate>, public Platform::AnimationFrameRateClient {
 public:
     static PassRefPtr<WebPageCompositorPrivate> create(WebPagePrivate* page, WebPageCompositorClient* client)
     {
@@ -86,7 +86,7 @@ protected:
     WebPageCompositorPrivate(WebPagePrivate*, WebPageCompositorClient*);
 
 private:
-    void animationTimerFired();
+    void animationFrameChanged();
 
     WebPageCompositorClient* m_client;
     WebPagePrivate* m_webPage;
@@ -96,8 +96,6 @@ private:
     WebCore::IntRect m_layoutRectForCompositing;
     WebCore::IntSize m_contentsSizeForCompositing;
     WebCore::LayerRenderingResults m_lastCompositingResults;
-    BlackBerry::Platform::Timer<WebPageCompositorPrivate> m_animationTimer;
-    BlackBerry::Platform::TimerClient* m_timerClient;
     double m_pendingAnimationFrame;
 };
 
