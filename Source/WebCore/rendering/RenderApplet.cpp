@@ -44,13 +44,13 @@ RenderApplet::~RenderApplet()
 {
 }
 
-LayoutSize RenderApplet::intrinsicSize() const
+IntSize RenderApplet::intrinsicSize() const
 {
     // FIXME: This doesn't make sense. We can't just start returning
     // a different size once we've created the widget and expect
     // layout and sizing to be correct. We should remove this and
     // pass the appropriate intrinsic size in the constructor.
-    return widget() ? LayoutSize(50, 50) : LayoutSize(150, 150);
+    return widget() ? IntSize(50, 50) : IntSize(150, 150);
 }
 
 void RenderApplet::createWidgetIfNecessary()

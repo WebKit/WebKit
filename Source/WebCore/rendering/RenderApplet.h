@@ -46,7 +46,7 @@ private:
     virtual bool isApplet() const { return true; }
 
     virtual void layout();
-    virtual LayoutSize intrinsicSize() const;
+    virtual IntSize intrinsicSize() const;
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool requiresLayer() const;
