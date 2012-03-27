@@ -148,6 +148,11 @@ void addOpacityTransitionToController(WebCore::CCLayerAnimationController& contr
     addOpacityTransition(controller, duration, startOpacity, endOpacity, useTimingFunction);
 }
 
+void addAnimatedTransformToController(WebCore::CCLayerAnimationController& controller, double duration, int deltaX, int deltaY)
+{
+    addAnimatedTransform(controller, duration, deltaX, deltaY);
+}
+
 void addOpacityTransitionToLayer(WebCore::LayerChromium& layer, double duration, float startOpacity, float endOpacity, bool useTimingFunction)
 {
     addOpacityTransition(layer, duration, startOpacity, endOpacity, useTimingFunction);

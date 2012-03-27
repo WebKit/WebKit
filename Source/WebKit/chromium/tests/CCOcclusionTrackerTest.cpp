@@ -26,6 +26,7 @@
 
 #include "cc/CCOcclusionTracker.h"
 
+#include "CCAnimationTestCommon.h"
 #include "FilterOperations.h"
 #include "LayerChromium.h"
 #include "Region.h"
@@ -40,6 +41,7 @@
 #include <gtest/gtest.h>
 
 using namespace WebCore;
+using namespace WebKitTests;
 
 #define EXPECT_EQ_RECT(a, b) \
     EXPECT_EQ(a.x(), b.x()); \
@@ -1677,40 +1679,6 @@ protected:
 
 MAIN_THREAD_TEST(CCOcclusionTrackerTestPerspectiveTransformBehindCamera);
 
-template<typename LayerType>
-static int addOpacityAnimationToLayer(LayerType* layer, float startValue, float endValue, double duration)
-{
-    static int id = 0;
-    WebCore::KeyframeValueList values(AnimatedPropertyOpacity);
-    values.insert(new FloatAnimationValue(0, startValue));
-    values.insert(new FloatAnimationValue(duration, endValue));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-
-    IntSize boxSize;
-    layer->layerAnimationController()->addAnimation(values, boxSize, animation.get(), id, 0, 0);
-    return id++;
-}
-
-template<typename LayerType>
-static int addTransformAnimationToLayer(LayerType* layer, double duration)
-{
-    static int id = 0;
-    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
-
-    TransformOperations operations1;
-    operations1.operations().append(TranslateTransformOperation::create(Length(2, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
-    values.insert(new TransformAnimationValue(0, &operations1));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-
-    IntSize boxSize;
-    layer->layerAnimationController()->addAnimation(values, boxSize, animation.get(), id, 0, 0);
-    return id++;
-}
-
 template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestAnimationOpacity1OnMainThread : public CCOcclusionTrackerTest<Types, opaqueLayers> {
 protected:
@@ -1722,8 +1690,8 @@ protected:
         typename Types::ContentLayerType* surfaceChild = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(200, 300), true);
         typename Types::ContentLayerType* surfaceChild2 = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(100, 300), true);
 
-        addOpacityAnimationToLayer(layer, 0, 1, 10);
-        addOpacityAnimationToLayer(surface, 0, 1, 10);
+        addOpacityTransitionToController(*layer->layerAnimationController(), 10, 0, 1, false);
+        addOpacityTransitionToController(*surface->layerAnimationController(), 10, 0, 1, false);
         this->calcDrawEtc(parent);
 
         EXPECT_TRUE(layer->drawOpacityIsAnimating());
@@ -1763,8 +1731,8 @@ protected:
         typename Types::ContentLayerType* surfaceChild = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(200, 300), true);
         typename Types::ContentLayerType* surfaceChild2 = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(100, 300), true);
 
-        addOpacityAnimationToLayer(layer, 1, 0, 10);
-        addOpacityAnimationToLayer(surface, 1, 0, 10);
+        addOpacityTransitionToController(*layer->layerAnimationController(), 10, 1, 0, false);
+        addOpacityTransitionToController(*surface->layerAnimationController(), 10, 1, 0, false);
         this->calcDrawEtc(parent);
 
         EXPECT_TRUE(layer->drawOpacityIsAnimating());
@@ -1805,9 +1773,9 @@ protected:
         typename Types::ContentLayerType* surfaceChild2 = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(100, 300), true);
         typename Types::ContentLayerType* surface2 = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(50, 300), true);
 
-        addTransformAnimationToLayer(layer, 10);
-        addTransformAnimationToLayer(surface, 10);
-        addTransformAnimationToLayer(surfaceChild, 10);
+        addAnimatedTransformToController(*layer->layerAnimationController(), 10, 30, 0);
+        addAnimatedTransformToController(*surface->layerAnimationController(), 10, 30, 0);
+        addAnimatedTransformToController(*surfaceChild->layerAnimationController(), 10, 30, 0);
         this->calcDrawEtc(parent);
 
         EXPECT_TRUE(layer->drawTransformIsAnimating());

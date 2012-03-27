@@ -97,6 +97,7 @@ private:
 };
 
 void addOpacityTransitionToController(WebCore::CCLayerAnimationController&, double duration, float startOpacity, float endOpacity, bool useTimingFunction);
+void addAnimatedTransformToController(WebCore::CCLayerAnimationController&, double duration, int deltaX, int deltaY);
 
 void addOpacityTransitionToLayer(WebCore::LayerChromium&, double duration, float startOpacity, float endOpacity, bool useTimingFunction);
 void addOpacityTransitionToLayer(WebCore::CCLayerImpl&, double duration, float startOpacity, float endOpacity, bool useTimingFunction);

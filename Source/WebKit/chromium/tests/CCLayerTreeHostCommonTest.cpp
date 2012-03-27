@@ -26,6 +26,7 @@
 
 #include "cc/CCLayerTreeHostCommon.h"
 
+#include "CCAnimationTestCommon.h"
 #include "CCLayerTreeTestCommon.h"
 #include "LayerChromium.h"
 #include "TransformationMatrix.h"
@@ -36,6 +37,7 @@
 #include <gtest/gtest.h>
 
 using namespace WebCore;
+using namespace WebKitTests;
 
 namespace {
 
@@ -651,38 +653,6 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
     EXPECT_EQ(child->id(), renderSurfaceLayerList[1]->id());
 }
 
-static int addOpacityAnimationToLayer(LayerChromium* layer, float startValue, float endValue, double duration)
-{
-    static int id = 0;
-    WebCore::KeyframeValueList values(AnimatedPropertyOpacity);
-    values.insert(new FloatAnimationValue(0, startValue));
-    values.insert(new FloatAnimationValue(duration, endValue));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-
-    IntSize boxSize;
-    layer->layerAnimationController()->addAnimation(values, boxSize, animation.get(), id, 0, 0);
-    return id++;
-}
-
-static int addTransformAnimationToLayer(LayerChromium* layer, double duration)
-{
-    static int id = 0;
-    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
-
-    TransformOperations operations1;
-    operations1.operations().append(TranslateTransformOperation::create(Length(2, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
-    values.insert(new TransformAnimationValue(0, &operations1));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-
-    IntSize boxSize;
-    layer->layerAnimationController()->addAnimation(values, boxSize, animation.get(), id, 0, 0);
-    return id++;
-}
-
 TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
 {
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -705,11 +675,11 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     childOfRS2->addChild(grandChildOfRS2);
 
     // In combination with descendantDrawsContent, opacity != 1 forces the layer to have a new renderSurface.
-    addOpacityAnimationToLayer(renderSurface1.get(), 1, 0, 10);
-    addOpacityAnimationToLayer(renderSurface2.get(), 1, 0, 10);
+    addOpacityTransitionToController(*renderSurface1->layerAnimationController(), 10, 1, 0, false);
+    addOpacityTransitionToController(*renderSurface2->layerAnimationController(), 10, 1, 0, false);
 
     // Also put an animation on a layer without descendants.
-    addOpacityAnimationToLayer(grandChildOfRoot.get(), 1, 0, 10);
+    addOpacityTransitionToController(*grandChildOfRoot->layerAnimationController(), 10, 1, 0, false);
 
     TransformationMatrix layerTransform;
     layerTransform.translate(1.0, 1.0);
@@ -717,10 +687,10 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     sublayerTransform.scale3d(10.0, 1.0, 1.0);
 
     // Put transform animations on child, renderSurface2, grandChildOfRoot, and grandChildOfRS2
-    addTransformAnimationToLayer(childOfRoot.get(), 10);
-    addTransformAnimationToLayer(grandChildOfRoot.get(), 10);
-    addTransformAnimationToLayer(renderSurface2.get(), 10);
-    addTransformAnimationToLayer(grandChildOfRS2.get(), 10);
+    addAnimatedTransformToController(*childOfRoot->layerAnimationController(), 10, 30, 0);
+    addAnimatedTransformToController(*grandChildOfRoot->layerAnimationController(), 10, 30, 0);
+    addAnimatedTransformToController(*renderSurface2->layerAnimationController(), 10, 30, 0);
+    addAnimatedTransformToController(*grandChildOfRS2->layerAnimationController(), 10, 30, 0);
 
     setLayerPropertiesForTesting(parent.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
     setLayerPropertiesForTesting(renderSurface1.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
