@@ -382,8 +382,8 @@ String StylePropertySet::getShorthandValue(const CSSPropertyLonghand& longhand) 
     for (unsigned i = 0; i < longhand.length(); ++i) {
         if (!isPropertyImplicit(longhand.properties()[i])) {
             RefPtr<CSSValue> value = getPropertyCSSValue(longhand.properties()[i]);
-            // FIXME: provide default value if !value
-            if (value) {
+            // FIXME: provide default value if !value or value is initial value
+            if (value && !value->isInitialValue()) {
                 if (!res.isNull())
                     res += " ";
                 res += value->cssText();
@@ -399,7 +399,8 @@ String StylePropertySet::getCommonValue(const CSSPropertyLonghand& longhand) con
     String res;
     for (unsigned i = 0; i < longhand.length(); ++i) {
         RefPtr<CSSValue> value = getPropertyCSSValue(longhand.properties()[i]);
-        if (!value)
+        // FIXME: CSSInitialValue::cssText should generate the right value.
+        if (!value || value->isInitialValue())
             return String();
         String text = value->cssText();
         if (text.isNull())
