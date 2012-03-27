@@ -71,10 +71,10 @@ public:
         m_object->repaintUsingContainer(m_repaintContainer, m_rect);
     }
 
-    IntRect rect() const { return m_rect; }
+    LayoutRect rect() const { return m_rect; }
 
 private:
-    IntRect m_rect; // relative to repaint container
+    LayoutRect m_rect; // relative to repaint container
 };
 
 
