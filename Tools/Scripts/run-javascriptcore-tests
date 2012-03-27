@@ -124,7 +124,7 @@ sub testapiPath($)
 #run api tests
 if (isAppleMacWebKit() || isAppleWinWebKit()) {
     chdirWebKit();
-    chdir($productDir) or die;
+    chdir($productDir) or die "Failed to switch directory to '$productDir'\n";
     my $path = testapiPath($productDir);
     # Use an "indirect object" so that system() won't get confused if the path
     # contains spaces (see perldoc -f exec).
@@ -135,14 +135,14 @@ if (isAppleMacWebKit() || isAppleWinWebKit()) {
 # Find JavaScriptCore directory
 chdirWebKit();
 chdir("Source/JavaScriptCore");
-chdir "tests/mozilla" or die;
+chdir "tests/mozilla" or die "Failed to switch directory to 'tests/mozilla'\n";
 printf "Running: jsDriver.pl -e squirrelfish -s %s -f actual.html %s\n", jscPath($productDir), join(" ", @jsArgs);
 my $result = system "perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs;
 exit exitStatus($result)  if $result;
 
 my %failures;
 
-open EXPECTED, "expected.html" or die;
+open EXPECTED, "expected.html" or die "Failed to open 'expected.html'\n";
 while (<EXPECTED>) {
     last if /failures reported\.$/;
 }
@@ -154,7 +154,7 @@ close EXPECTED;
 
 my %newFailures;
 
-open ACTUAL, "actual.html" or die;
+open ACTUAL, "actual.html" or die "Failed to open 'actual.html'";
 while (<ACTUAL>) {
     last if /failures reported\.$/;
 }
