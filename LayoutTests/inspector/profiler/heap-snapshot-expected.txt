@@ -23,5 +23,3 @@ Running: heapSnapshotNodesProviderTest
 
 Running: heapSnapshotEdgesProviderTest
 
-Running: heapSnapshotPathFinderTest
-

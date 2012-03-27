@@ -211,34 +211,6 @@ function test()
                 names.push(provider.item.name);
             InspectorTest.assertEquals("b", names.join(","), "edges provider names");
             next();
-        },
-
-        function heapSnapshotPathFinderTest(next)
-        {
-            var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());
-            var expectedPaths = {
-                 1: [],
-                14: [],
-                27: ["A@2[1]"],
-                40: ["A@2.ac", "A@2[1].bc", "B@3.bc"],
-                50: ["A@2[1].bd", "B@3.bd"],
-                57: ["A@2.ac.ce", "A@2[1].bc.ce", "B@3.bc.ce"]
-            };
-            for (var nodes = snapshot._allNodes; nodes.hasNext(); nodes.next()) {
-                var pathFinder = new WebInspector.HeapSnapshotPathFinder(snapshot, nodes.index);
-                var paths = [];
-                var path;
-                while (true) {
-                    path = pathFinder.findNext();
-                    if (path === null)
-                        break;
-                    else if (path !== false)
-                        paths.push(path.path);
-                } 
-                paths.sort();
-                InspectorTest.assertEquals(expectedPaths[nodes.index].join(";"), paths.join(";"), "paths to \"" + nodes.item.name + "\""); 
-            }
-            next();
         }
     ]);
 }
