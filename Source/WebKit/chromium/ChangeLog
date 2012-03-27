@@ -1,5 +1,20 @@
 2012-03-27  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Rename opaqueContentsRegion() to visibleContentOpaqueRegion()
+        https://bugs.webkit.org/show_bug.cgi?id=81689
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TestLayerChromium::opaqueVisibleContents):
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebCore::TestContentLayerChromium::opaqueVisibleContents):
+        (WebCore::TestContentLayerImpl::opaqueVisibleContents):
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+
+2012-03-27  Dana Jansens  <danakj@chromium.org>
+
         [chromium] A unit test to verify clipping is honored when moving occlusion to parent surface
         https://bugs.webkit.org/show_bug.cgi?id=81783
 

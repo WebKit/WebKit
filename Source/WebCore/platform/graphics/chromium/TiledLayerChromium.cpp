@@ -578,7 +578,7 @@ void TiledLayerChromium::reserveTextures()
     }
 }
 
-Region TiledLayerChromium::opaqueContentsRegion() const
+Region TiledLayerChromium::visibleContentOpaqueRegion() const
 {
     if (m_skipsDraw)
         return Region();

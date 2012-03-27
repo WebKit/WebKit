@@ -1761,7 +1761,7 @@ public:
 
     virtual bool drawsContent() const { return true; }
 
-    virtual Region opaqueContentsRegion() const { return intersection(m_opaqueContentsRect, visibleLayerRect()); }
+    virtual Region visibleContentOpaqueRegion() const { return intersection(m_opaqueContentsRect, visibleLayerRect()); }
     void setOpaqueContentsRect(const IntRect& opaqueContentsRect) { m_opaqueContentsRect = opaqueContentsRect; }
 
     const Region& occludedScreenSpace() const { return m_occludedScreenSpace; }

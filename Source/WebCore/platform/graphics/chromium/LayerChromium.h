@@ -246,7 +246,7 @@ public:
 
     void notifyAnimationStarted(const CCAnimationStartedEvent&, double wallClockTime);
 
-    virtual Region opaqueContentsRegion() const { return Region(); };
+    virtual Region visibleContentOpaqueRegion() const { return Region(); };
 
     virtual ScrollbarLayerChromium* toScrollbarLayerChromium() { return 0; }
 

@@ -206,9 +206,9 @@ static inline Region computeOcclusionBehindLayer(const LayerType* layer, const T
     if (layer->opaque())
         opaqueRegion = enclosedIntRect(unoccludedQuad.boundingBox());
     else if (usePaintTracking && transform.isIdentity())
-        opaqueRegion = layer->opaqueContentsRegion();
+        opaqueRegion = layer->visibleContentOpaqueRegion();
     else if (usePaintTracking) {
-        Region contentRegion = layer->opaqueContentsRegion();
+        Region contentRegion = layer->visibleContentOpaqueRegion();
         Vector<IntRect> contentRects = contentRegion.rects();
         for (size_t i = 0; i < contentRects.size(); ++i)
             opaqueRegion.unite(enclosedIntRect(transform.mapRect(FloatRect(contentRects[i]))));

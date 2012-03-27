@@ -223,7 +223,7 @@ void CCTiledLayerImpl::pushTileProperties(int i, int j, Platform3DObject texture
     tile->setOpaqueRect(opaqueRect);
 }
 
-Region CCTiledLayerImpl::opaqueContentsRegion() const
+Region CCTiledLayerImpl::visibleContentOpaqueRegion() const
 {
     if (m_skipsDraw)
         return Region();

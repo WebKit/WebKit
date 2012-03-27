@@ -1380,7 +1380,7 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 10000 + 10000, 1);
 }
 
-TEST(TiledLayerChromiumTest, opaqueContentsRegion)
+TEST(TiledLayerChromiumTest, visibleContentOpaqueRegion)
 {
     OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
@@ -1399,11 +1399,11 @@ TEST(TiledLayerChromiumTest, opaqueContentsRegion)
     layer->setVisibleLayerRect(visibleBounds);
     layer->setDrawOpacity(1);
 
-    // If the layer doesn't paint opaque content, then the opaqueContentsRegion should be empty.
+    // If the layer doesn't paint opaque content, then the visibleContentOpaqueRegion should be empty.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
     layer->invalidateRect(contentBounds);
     layer->prepareToUpdate(contentBounds, &occluded);
-    opaqueContents = layer->opaqueContentsRegion();
+    opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_TRUE(opaqueContents.isEmpty());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 20000, 1);
@@ -1411,12 +1411,12 @@ TEST(TiledLayerChromiumTest, opaqueContentsRegion)
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
 
-    // opaqueContentsRegion should match the visible part of what is painted opaque.
+    // visibleContentOpaqueRegion should match the visible part of what is painted opaque.
     opaquePaintRect = IntRect(10, 10, 90, 190);
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(opaquePaintRect);
     layer->invalidateRect(contentBounds);
     layer->prepareToUpdate(contentBounds, &occluded);
-    opaqueContents = layer->opaqueContentsRegion();
+    opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
@@ -1428,7 +1428,7 @@ TEST(TiledLayerChromiumTest, opaqueContentsRegion)
     // If we paint again without invalidating, the same stuff should be opaque.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
     layer->prepareToUpdate(contentBounds, &occluded);
-    opaqueContents = layer->opaqueContentsRegion();
+    opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
@@ -1442,7 +1442,7 @@ TEST(TiledLayerChromiumTest, opaqueContentsRegion)
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
     layer->invalidateRect(IntRect(0, 0, 1, 1));
     layer->prepareToUpdate(contentBounds, &occluded);
-    opaqueContents = layer->opaqueContentsRegion();
+    opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
@@ -1456,7 +1456,7 @@ TEST(TiledLayerChromiumTest, opaqueContentsRegion)
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
     layer->invalidateRect(IntRect(10, 10, 1, 1));
     layer->prepareToUpdate(contentBounds, &occluded);
-    opaqueContents = layer->opaqueContentsRegion();
+    opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_EQ_RECT(intersection(IntRect(10, 100, 90, 100), visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
@@ -1489,7 +1489,7 @@ TEST(TiledLayerChromiumTest, pixelsPaintedMetrics)
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
     layer->invalidateRect(contentBounds);
     layer->prepareToUpdate(contentBounds, &occluded);
-    opaqueContents = layer->opaqueContentsRegion();
+    opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_TRUE(opaqueContents.isEmpty());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 30000, 1);
@@ -1503,7 +1503,7 @@ TEST(TiledLayerChromiumTest, pixelsPaintedMetrics)
     layer->invalidateRect(IntRect(0, 0, 1, 1));
     layer->invalidateRect(IntRect(50, 200, 10, 10));
     layer->prepareToUpdate(contentBounds, &occluded);
-    opaqueContents = layer->opaqueContentsRegion();
+    opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_TRUE(opaqueContents.isEmpty());
 
     // The middle tile was painted even though not invalidated.

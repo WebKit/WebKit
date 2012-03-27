@@ -231,7 +231,7 @@ public:
 
     CCLayerAnimationController* layerAnimationController() { return m_layerAnimationController.get(); }
 
-    virtual Region opaqueContentsRegion() const { return Region(); };
+    virtual Region visibleContentOpaqueRegion() const { return Region(); };
 
     // Indicates that the context previously used to render this layer
     // was lost and that a new one has been created. Won't be called

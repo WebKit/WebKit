@@ -56,7 +56,7 @@ public:
     TestContentLayerChromium() : LayerChromium() { }
 
     virtual bool drawsContent() const { return true; }
-    virtual Region opaqueContentsRegion() const { return intersection(m_opaqueContentsRect, visibleLayerRect()); }
+    virtual Region visibleContentOpaqueRegion() const { return intersection(m_opaqueContentsRect, visibleLayerRect()); }
     void setOpaqueContentsRect(const IntRect& opaqueContentsRect) { m_opaqueContentsRect = opaqueContentsRect; }
 
 private:
@@ -67,7 +67,7 @@ class TestContentLayerImpl : public CCLayerImpl {
 public:
     TestContentLayerImpl(int id) : CCLayerImpl(id) { setDrawsContent(true); }
 
-    virtual Region opaqueContentsRegion() const { return intersection(m_opaqueContentsRect, visibleLayerRect()); }
+    virtual Region visibleContentOpaqueRegion() const { return intersection(m_opaqueContentsRect, visibleLayerRect()); }
     void setOpaqueContentsRect(const IntRect& opaqueContentsRect) { m_opaqueContentsRect = opaqueContentsRect; }
 private:
     IntRect m_opaqueContentsRect;
