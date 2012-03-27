@@ -86,6 +86,16 @@ WebInspector.TabbedPane.prototype = {
         this._closeableTabs = closeableTabs;
     },
 
+    focus: function()
+    {
+        if (!this.visibleView)
+            return;
+        if (typeof(this.visibleView.focus) === "function")
+            this.visibleView.focus();
+        else
+            this.visibleView.element.focus();
+    },
+
     /**
      * @param {string} id
      * @param {string} tabTitle
@@ -172,7 +182,7 @@ WebInspector.TabbedPane.prototype = {
         this._tabsHistory.splice(0, 0, tab);
         
         this._updateTabElements();
-        
+
         var eventData = { tabId: id, view: tab.view, isUserGesture: userGesture };
         this.dispatchEventToListeners(WebInspector.TabbedPane.EventTypes.TabSelected, eventData);
         return true;
@@ -588,6 +598,7 @@ WebInspector.TabbedPaneTab.prototype = {
     {
         var tabElement = document.createElement("div");
         tabElement.addStyleClass("tabbed-pane-header-tab");
+        tabElement.tabIndex = -1;
         
         var titleElement = tabElement.createChild("span", "tabbed-pane-header-tab-title");
         titleElement.textContent = this.title;
@@ -627,5 +638,6 @@ WebInspector.TabbedPaneTab.prototype = {
             this._tabbedPane.closeTab(this.id, true);
         else
             this._tabbedPane.selectTab(this.id, true);
+        this._tabbedPane.focus();
     }
 }
