@@ -21,6 +21,7 @@
 #include "config.h"
 #include "CSSStyleSheet.h"
 
+#include "CSSCharsetRule.h"
 #include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
 #include "CSSNamespace.h"
@@ -98,6 +99,56 @@ CSSStyleSheet::CSSStyleSheet(CSSImportRule* ownerRule, const String& href, const
 
 CSSStyleSheet::~CSSStyleSheet()
 {
+    clearRules();
+}
+
+void CSSStyleSheet::parserAppendRule(PassRefPtr<CSSRule> child)
+{
+    ASSERT(!child->isCharsetRule());
+    CSSRule* c = child.get();
+    m_children.append(child);
+    if (c->isImportRule())
+        static_cast<CSSImportRule*>(c)->requestStyleSheet();
+}
+
+CSSCharsetRule* CSSStyleSheet::ensureCharsetRule()
+{
+    // Note that mutating charset has absolutely no effect.
+    if (!m_charsetRuleCSSOMWrapper)
+        m_charsetRuleCSSOMWrapper = CSSCharsetRule::create(this, m_encodingFromCharsetRule);
+    return m_charsetRuleCSSOMWrapper.get();
+}
+
+unsigned CSSStyleSheet::length() const
+{
+    unsigned result = 0;
+    result += hasCharsetRule() ? 1 : 0;
+    result += m_children.size();
+    return result;
+}
+
+CSSRule* CSSStyleSheet::item(unsigned index)
+{
+    unsigned childVectorIndex = index;
+    if (hasCharsetRule()) {
+        if (index == 0)
+            return ensureCharsetRule();
+        --childVectorIndex;
+    }
+    return childVectorIndex < m_children.size() ? m_children[childVectorIndex].get() : 0; 
+}
+
+void CSSStyleSheet::clearCharsetRule()
+{
+    m_encodingFromCharsetRule = String();
+    if (m_charsetRuleCSSOMWrapper) {
+        m_charsetRuleCSSOMWrapper->setParentStyleSheet(0);
+        m_charsetRuleCSSOMWrapper.clear();
+    }
+}
+
+void CSSStyleSheet::clearRules()
+{
     // For style rules outside the document, .parentStyleSheet can become null even if the style rule
     // is still observable from JavaScript. This matches the behavior of .parentNode for nodes, but
     // it's not ideal because it makes the CSSOM's behavior depend on the timing of garbage collection.
@@ -105,21 +156,17 @@ CSSStyleSheet::~CSSStyleSheet()
         ASSERT(m_children.at(i)->parentStyleSheet() == this);
         m_children.at(i)->setParentStyleSheet(0);
     }
+    m_children.clear();
+    clearCharsetRule();
 }
 
-void CSSStyleSheet::append(PassRefPtr<CSSRule> child)
+void CSSStyleSheet::parserSetEncodingFromCharsetRule(const String& encoding)
 {
-    CSSRule* c = child.get();
-    m_children.append(child);
-    if (c->isImportRule())
-        static_cast<CSSImportRule*>(c)->requestStyleSheet();
+    // Parser enforces that there is ever only one @charset.
+    ASSERT(m_encodingFromCharsetRule.isNull());
+    m_encodingFromCharsetRule = encoding; 
 }
 
-void CSSStyleSheet::remove(unsigned index)
-{
-    m_children.remove(index);
-}
-    
 PassRefPtr<CSSRuleList> CSSStyleSheet::rules()
 {
     KURL url = finalURL();
@@ -128,18 +175,14 @@ PassRefPtr<CSSRuleList> CSSStyleSheet::rules()
         return 0;
     // IE behavior.
     RefPtr<StaticCSSRuleList> nonCharsetRules = StaticCSSRuleList::create();
-    for (unsigned i = 0; i < m_children.size(); ++i) {
-        if (m_children[i]->isCharsetRule())
-            continue;
-        nonCharsetRules->rules().append(m_children[i]);
-    }
+    nonCharsetRules->rules().append(m_children);
     return nonCharsetRules.release();
 }
 
 unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, ExceptionCode& ec)
 {
     ec = 0;
-    if (index > m_children.size()) {
+    if (index > length()) {
         ec = INDEX_SIZE_ERR;
         return 0;
     }
@@ -150,27 +193,34 @@ unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, Exception
         ec = SYNTAX_ERR;
         return 0;
     }
-
-    // Throw a HIERARCHY_REQUEST_ERR exception if the rule cannot be inserted at the specified index.  The best
-    // example of this is an @import rule inserted after regular rules.
-    if (index > 0) {
-        if (r->isImportRule()) {
-            // Check all the rules that come before this one to make sure they are only @charset and @import rules.
-            for (unsigned i = 0; i < index; ++i) {
-                if (!m_children.at(i)->isCharsetRule() && !m_children.at(i)->isImportRule()) {
-                    ec = HIERARCHY_REQUEST_ERR;
-                    return 0;
-                }
-            }
-        } else if (r->isCharsetRule()) {
-            // The @charset rule has to come first and there can be only one.
+    // Parser::parseRule doesn't currently allow @charset so we don't need to deal with it.
+    ASSERT(!r->isCharsetRule());
+    
+    unsigned childVectorIndex = index;
+    // m_children does not contain @charset which is always in index 0 if it exists.
+    if (hasCharsetRule()) {
+        if (index == 0) {
+            // Nothing can be inserted before @charset.
             ec = HIERARCHY_REQUEST_ERR;
             return 0;
         }
+        --childVectorIndex;
     }
 
+    // Throw a HIERARCHY_REQUEST_ERR exception if the rule cannot be inserted at the specified index. The best
+    // example of this is an @import rule inserted after regular rules.
+    if (r->isImportRule()) {
+        // Check all the rules that come before this one to make sure they are only @import rules.
+        for (unsigned i = 0; i < childVectorIndex; ++i) {
+            if (!m_children.at(i)->isImportRule()) {
+                ec = HIERARCHY_REQUEST_ERR;
+                return 0;
+            }
+        }
+    } 
+ 
     CSSRule* c = r.get();
-    m_children.insert(index, r.release());
+    m_children.insert(childVectorIndex, r.release());
     if (c->isImportRule())
         static_cast<CSSImportRule*>(c)->requestStyleSheet();
 
@@ -189,7 +239,7 @@ int CSSStyleSheet::addRule(const String& selector, const String& style, int inde
 
 int CSSStyleSheet::addRule(const String& selector, const String& style, ExceptionCode& ec)
 {
-    return addRule(selector, style, m_children.size(), ec);
+    return addRule(selector, style, length(), ec);
 }
 
 PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules()
@@ -205,14 +255,24 @@ PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules()
 
 void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)
 {
-    if (index >= m_children.size()) {
+    if (index >= length()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
-
+    
     ec = 0;
-    m_children.at(index)->setParentStyleSheet(0);
-    m_children.remove(index);
+    unsigned childVectorIndex = index;
+    if (hasCharsetRule()) {
+        if (index == 0) {
+            clearCharsetRule();
+            styleSheetChanged();
+            return;
+        }
+        --childVectorIndex;
+    }
+
+    m_children.at(childVectorIndex)->setParentStyleSheet(0);
+    m_children.remove(childVectorIndex);
     styleSheetChanged();
 }
 

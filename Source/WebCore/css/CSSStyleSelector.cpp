@@ -2224,10 +2224,10 @@ bool CSSStyleSelector::checkRegionSelector(CSSSelector* regionSelector, Element*
 bool CSSStyleSelector::determineStylesheetSelectorScopes(CSSStyleSheet* stylesheet, HashSet<AtomicStringImpl*>& idScopes, HashSet<AtomicStringImpl*>& classScopes)
 {
     ASSERT(!stylesheet->isLoading());
-    
-    size_t size = stylesheet->length();
-    for (size_t i = 0; i < size; i++) {
-        CSSRule* rule = stylesheet->item(i);
+
+    const Vector<RefPtr<CSSRule> >& rules = stylesheet->ruleVector();
+    for (unsigned i = 0; i < rules.size(); i++) {
+        CSSRule* rule = rules[i].get();
         if (rule->isStyleRule()) {
             StyleRule* styleRule = static_cast<CSSStyleRule*>(rule)->styleRule();
             if (!SelectorChecker::determineSelectorScopes(styleRule->selectorList(), idScopes, classScopes))
@@ -2454,10 +2454,9 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
     if (sheet->mediaQueries() && !medium.eval(sheet->mediaQueries(), styleSelector))
         return; // the style sheet doesn't apply
 
-    int len = sheet->length();
-
-    for (int i = 0; i < len; i++) {
-        CSSRule* rule = sheet->item(i);
+    const Vector<RefPtr<CSSRule> >& rules = sheet->ruleVector();
+    for (unsigned i = 0; i < rules.size(); ++i) {
+        CSSRule* rule = rules[i].get();
         if (rule->isStyleRule())
             addStyleRule(static_cast<CSSStyleRule*>(rule)->styleRule(), !scope);
         else if (rule->isPageRule())

@@ -375,9 +375,9 @@ closing_brace:
 charset:
   CHARSET_SYM maybe_space STRING maybe_space ';' {
      CSSParser* p = static_cast<CSSParser*>(parser);
-     $$ = static_cast<CSSParser*>(parser)->createCharsetRule($3);
-     if ($$ && p->m_styleSheet)
-         p->m_styleSheet->append($$);
+     if (p->m_styleSheet)
+         p->m_styleSheet->parserSetEncodingFromCharsetRule($3);
+     $$ = 0;
   }
   | CHARSET_SYM error invalid_block {
   }
@@ -397,7 +397,7 @@ rule_list:
  | rule_list rule maybe_sgml {
      CSSParser* p = static_cast<CSSParser*>(parser);
      if ($2 && p->m_styleSheet)
-         p->m_styleSheet->append($2);
+         p->m_styleSheet->parserAppendRule($2);
  }
  ;
 

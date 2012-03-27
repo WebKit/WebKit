@@ -243,7 +243,6 @@ public:
     CSSParserValue& sinkFloatingValue(CSSParserValue&);
 
     MediaQuerySet* createMediaQuerySet();
-    CSSRule* createCharsetRule(const CSSParserString&);
     CSSRule* createImportRule(const CSSParserString&, MediaQuerySet*);
     WebKitCSSKeyframeRule* createKeyframeRule(CSSParserValueList*);
     WebKitCSSKeyframesRule* createKeyframesRule();

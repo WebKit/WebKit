@@ -28,7 +28,6 @@
 #include "CSSAspectRatioValue.h"
 #include "CSSBorderImage.h"
 #include "CSSCanvasValue.h"
-#include "CSSCharsetRule.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFlexValue.h"
@@ -8981,16 +8980,6 @@ MediaQuerySet* CSSParser::createMediaQuerySet()
     RefPtr<MediaQuerySet> queries = MediaQuerySet::create();
     MediaQuerySet* result = queries.get();
     m_parsedMediaQuerySets.append(queries.release());
-    return result;
-}
-
-CSSRule* CSSParser::createCharsetRule(const CSSParserString& charset)
-{
-    if (!m_styleSheet)
-        return 0;
-    RefPtr<CSSCharsetRule> rule = CSSCharsetRule::create(m_styleSheet, charset);
-    CSSCharsetRule* result = rule.get();
-    m_parsedRules.append(rule.release());
     return result;
 }
 

@@ -27,6 +27,7 @@ namespace WebCore {
 
 struct CSSNamespace;
 class CSSParser;
+class CSSCharsetRule;
 class CSSRule;
 class CSSRuleList;
 class CachedCSSStyleSheet;
@@ -110,12 +111,17 @@ public:
     void setHasSyntacticallyValidCSSHeader(bool b) { m_hasSyntacticallyValidCSSHeader = b; }
     bool hasSyntacticallyValidCSSHeader() const { return m_hasSyntacticallyValidCSSHeader; }
 
-    void append(PassRefPtr<CSSRule>);
-    void remove(unsigned index);
+    void parserAppendRule(PassRefPtr<CSSRule>);
+    void parserSetEncodingFromCharsetRule(const String& encoding); 
 
-    unsigned length() const { return m_children.size(); }
-    CSSRule* item(unsigned index) { return index < length() ? m_children.at(index).get() : 0; }
-    
+    void clearRules();
+
+    unsigned length() const;
+    CSSRule* item(unsigned index);
+
+    // Does not contain @charset rule.
+    const Vector<RefPtr<CSSRule> >& ruleVector() const { return m_children; }
+
     virtual MediaList* media() const OVERRIDE;
 
     MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
@@ -129,7 +135,13 @@ private:
 
     virtual bool isCSSStyleSheet() const { return true; }
     virtual String type() const { return "text/css"; }
+    
+    void clearCharsetRule();
+    bool hasCharsetRule() const { return !m_encodingFromCharsetRule.isNull() || m_charsetRuleCSSOMWrapper; }
+    CSSCharsetRule* ensureCharsetRule();
 
+    String m_encodingFromCharsetRule;
+    RefPtr<CSSCharsetRule> m_charsetRuleCSSOMWrapper;
     Vector<RefPtr<CSSRule> > m_children;
     OwnPtr<CSSNamespace> m_namespaces;
     String m_charset;
