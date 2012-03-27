@@ -1148,7 +1148,7 @@ WebInspector.HeapSnapshot.prototype = {
     _bfs: function(list)
     {
         var index = 0;
-        var node = this.rootNode;
+        var nodes = this._nodes;
         while (index < list.length) {
             var nodeIndex = list[index++]; // shift generates too much garbage.
             if (index > 100000) {
@@ -1156,9 +1156,11 @@ WebInspector.HeapSnapshot.prototype = {
                 index = 0;
             }
             var distance = this._distancesToWindow[nodeIndex] + 1;
-            node.nodeIndex = nodeIndex;
-            for (var iter = node.edges; iter.hasNext(); iter.next()) {
-                var childNodeIndex = iter.edge.nodeIndex;
+            var edgesCount = nodes[nodeIndex + this._edgesCountOffset];
+            var edgeToNodeIndex = nodeIndex + this._firstEdgeOffset + this._edgeToNodeOffset;
+            for (var i = 0; i < edgesCount; ++i) {
+                var childNodeIndex = nodes[edgeToNodeIndex];
+                edgeToNodeIndex += this._edgeFieldsCount;
                 if (childNodeIndex in this._distancesToWindow)
                     continue;
                 this._distancesToWindow[childNodeIndex] = distance;
