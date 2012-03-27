@@ -29,10 +29,10 @@ function sample1() {
     shouldBeCloseEnough("rootSVGElement.viewBox.animVal.width", "100");
     shouldBeCloseEnough("rootSVGElement.viewBox.animVal.height", "100");
 
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.x", "0");
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.y", "0");
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.width", "100");
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.height", "100");
+    shouldBe("rootSVGElement.viewBox.baseVal.x", "0");
+    shouldBe("rootSVGElement.viewBox.baseVal.y", "0");
+    shouldBe("rootSVGElement.viewBox.baseVal.width", "100");
+    shouldBe("rootSVGElement.viewBox.baseVal.height", "100");
 }
 
 function sample2() {
@@ -41,10 +41,10 @@ function sample2() {
     shouldBeCloseEnough("rootSVGElement.viewBox.animVal.width", "75");
     shouldBeCloseEnough("rootSVGElement.viewBox.animVal.height", "75");
 
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.x", "25");
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.y", "25");
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.width", "75");
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.height", "75");
+    shouldBe("rootSVGElement.viewBox.baseVal.x", "0");
+    shouldBe("rootSVGElement.viewBox.baseVal.y", "0");
+    shouldBe("rootSVGElement.viewBox.baseVal.width", "100");
+    shouldBe("rootSVGElement.viewBox.baseVal.height", "100");
 }
 
 function sample3() {
@@ -53,10 +53,10 @@ function sample3() {
     shouldBeCloseEnough("rootSVGElement.viewBox.animVal.width", "50");
     shouldBeCloseEnough("rootSVGElement.viewBox.animVal.height", "50");
 
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.x", "50");
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.y", "50");
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.width", "50");
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.height", "50");
+    shouldBe("rootSVGElement.viewBox.baseVal.x", "0");
+    shouldBe("rootSVGElement.viewBox.baseVal.y", "0");
+    shouldBe("rootSVGElement.viewBox.baseVal.width", "100");
+    shouldBe("rootSVGElement.viewBox.baseVal.height", "100");
 }
 
 function executeTest() {

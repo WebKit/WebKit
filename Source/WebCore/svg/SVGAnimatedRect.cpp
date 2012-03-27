@@ -39,6 +39,31 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedRectAnimator::constructFromString(const S
     return animatedType.release();
 }
 
+PassOwnPtr<SVGAnimatedType> SVGAnimatedRectAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    return SVGAnimatedType::createRect(constructFromOneBaseValue<FloatRect, SVGAnimatedRect>(properties));
+}
+
+void SVGAnimatedRectAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedRect>(properties);
+}
+
+void SVGAnimatedRectAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+{
+    resetFromOneBaseValue<FloatRect, SVGAnimatedRect>(properties, type, &SVGAnimatedType::rect);
+}
+
+void SVGAnimatedRectAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValWillChangeForType<SVGAnimatedRect>(properties);
+}
+
+void SVGAnimatedRectAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValDidChangeForType<SVGAnimatedRect>(properties);
+}
+
 void SVGAnimatedRectAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
 {
     from = constructFromString(fromString);

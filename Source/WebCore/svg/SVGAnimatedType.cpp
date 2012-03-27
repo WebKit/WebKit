@@ -479,6 +479,7 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     case AnimatedNumber:
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
+    case AnimatedRect:
     case AnimatedString:
     case AnimatedTransformList:
         return true;
@@ -487,7 +488,6 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     case AnimatedPath:
     case AnimatedPoints:
     case AnimatedPreserveAspectRatio:
-    case AnimatedRect:
     case AnimatedUnknown:
         return false;
     }
