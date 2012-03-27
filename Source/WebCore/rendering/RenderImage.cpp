@@ -6,6 +6,7 @@
  *           (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2011-2012. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -503,52 +504,34 @@ void RenderImage::updateAltText()
         m_altText = static_cast<HTMLImageElement*>(node())->altText();
 }
 
-LayoutUnit RenderImage::computeReplacedLogicalWidth(bool includeMaxWidth) const
+void RenderImage::layout()
 {
-    // If we've got an explicit width/height assigned, propagate it to the image resource.
-    if (style()->logicalWidth().isSpecified() && style()->logicalHeight().isSpecified()) {
-        LayoutUnit width = RenderReplaced::computeReplacedLogicalWidth(includeMaxWidth);
-        m_imageResource->setContainerSizeForRenderer(IntSize(width, computeReplacedLogicalHeight()));
-        return width;
-    }
+    RenderReplaced::layout();
 
-    IntSize containerSize;
-    if (m_imageResource->imageHasRelativeWidth() || m_imageResource->imageHasRelativeHeight()) {
-        // Propagate the containing block size to the image resource, otherwhise we can't compute our own intrinsic size, if it's relative.
-        RenderObject* containingBlock = isPositioned() ? container() : this->containingBlock();
-        if (containingBlock->isBox()) {
-            RenderBox* box = toRenderBox(containingBlock);
-            containerSize = IntSize(box->availableWidth(), box->availableHeight()); // Already contains zooming information.
-        }
-    } else {
-        // Propagate the current zoomed image size to the image resource, otherwhise the image size will remain the same on-screen.
-        CachedImage* cachedImage = m_imageResource->cachedImage();
-        if (cachedImage && cachedImage->image()) {
-            containerSize = cachedImage->image()->size();
-            // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-            containerSize.setWidth(roundToInt(containerSize.width() * style()->effectiveZoom()));
-            containerSize.setHeight(roundToInt(containerSize.height() * style()->effectiveZoom()));
-        }
-    }
-
-    if (!containerSize.isEmpty()) {
+    // Propagate container size to image resource.
+    IntSize containerSize(contentWidth(), contentHeight());
+    if (!containerSize.isEmpty())
         m_imageResource->setContainerSizeForRenderer(containerSize);
-        const_cast<RenderImage*>(this)->updateIntrinsicSizeIfNeeded(containerSize, false);
-    }
-
-    return RenderReplaced::computeReplacedLogicalWidth(includeMaxWidth);
 }
 
 void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const
 {
-    // Assure this method is never used for SVGImages.
-    ASSERT(!embeddedContentBox());
-    isPercentageIntrinsicSize = false;
-    CachedImage* cachedImage = m_imageResource ? m_imageResource->cachedImage() : 0;
-    if (!cachedImage || !cachedImage->image())
+    RenderReplaced::computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio, isPercentageIntrinsicSize);
+
+    // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.
+    if (intrinsicSize.isEmpty() && (m_imageResource->imageHasRelativeWidth() || m_imageResource->imageHasRelativeHeight())) {
+        RenderObject* containingBlock = isPositioned() ? container() : this->containingBlock();
+        if (containingBlock->isBox()) {
+            RenderBox* box = toRenderBox(containingBlock);
+            intrinsicSize.setWidth(box->availableLogicalWidth());
+            intrinsicSize.setHeight(box->availableLogicalHeight());
+        }
+    }
+    // Don't compute an intrinsic ratio to preserve historical WebKit behavior if we're painting alt text and/or a broken image.
+    if (m_imageResource && m_imageResource->errorOccurred()) {
+        intrinsicRatio = 1;
         return;
-    intrinsicSize = cachedImage->image()->size();
-    intrinsicRatio = intrinsicSize.width() / static_cast<double>(intrinsicSize.height());
+    }
 }
 
 bool RenderImage::needsPreferredWidthsRecalculation() const

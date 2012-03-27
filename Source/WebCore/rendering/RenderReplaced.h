@@ -43,7 +43,8 @@ protected:
 
     virtual void layout();
 
-    virtual IntSize intrinsicSize() const;
+    virtual IntSize intrinsicSize() const { return m_intrinsicSize; }
+    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
 
     virtual int minimumReplacedHeight() const { return 0; }
 
@@ -53,9 +54,8 @@ protected:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    void setIntrinsicSize(const IntSize&);
+    void setIntrinsicSize(const IntSize& intrinsicSize) { m_intrinsicSize = intrinsicSize; }
     virtual void intrinsicSizeChanged();
-    void setHasIntrinsicSize() { m_hasIntrinsicSize = true; }
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
     bool shouldPaint(PaintInfo&, const LayoutPoint&);
@@ -63,18 +63,11 @@ protected:
 
 private:
     virtual RenderBox* embeddedContentBox() const { return 0; }
-    int computeIntrinsicLogicalWidth(RenderBox* contentRenderer, bool includeMaxWidth) const;
-    int computeIntrinsicLogicalHeight(RenderBox* contentRenderer) const;
-
     virtual const char* renderName() const { return "RenderReplaced"; }
 
     virtual bool canHaveChildren() const { return false; }
 
     virtual void computePreferredLogicalWidths();
-
-    int calcAspectRatioLogicalWidth() const;
-    int calcAspectRatioLogicalHeight() const;
-
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) { }
 
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
@@ -84,9 +77,9 @@ private:
     virtual bool canBeSelectionLeaf() const { return true; }
 
     virtual LayoutRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent = true);
+    void computeIntrinsicRatioInformationForRenderBox(RenderBox*, FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
 
     IntSize m_intrinsicSize;
-    bool m_hasIntrinsicSize;
 };
 
 }

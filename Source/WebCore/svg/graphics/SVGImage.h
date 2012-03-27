@@ -69,7 +69,7 @@ private:
     virtual String filenameExtension() const;
 
     virtual void setContainerSize(const IntSize&);
-    virtual bool usesContainerSize() const;
+    virtual bool usesContainerSize() const { return true; }
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio, float scaleFactor = 1);
 
     virtual bool dataChanged(bool allDataReceived);

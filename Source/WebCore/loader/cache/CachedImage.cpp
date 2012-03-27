@@ -240,34 +240,29 @@ IntSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float mu
 
     if (!m_image)
         return IntSize();
+
+    IntSize imageSize = m_image->size();
+
 #if ENABLE(SVG)
     if (m_image->isSVGImage()) {
-        // SVGImages already includes the zooming in its intrinsic size.
         SVGImageCache::SizeAndZoom sizeAndZoom = m_svgImageCache->requestedSizeAndZoom(renderer);
-        if (sizeAndZoom.size.isEmpty())
-            return m_image->size();
-        if (sizeAndZoom.zoom == 1)
-            return sizeAndZoom.size;
-        if (multiplier == 1) {
-            // Consumer wants unscaled coordinates.
-            sizeAndZoom.size.setWidth(sizeAndZoom.size.width() / sizeAndZoom.zoom);
-            sizeAndZoom.size.setHeight(sizeAndZoom.size.height() / sizeAndZoom.zoom);
-            return sizeAndZoom.size;
+        if (!sizeAndZoom.size.isEmpty()) {
+            imageSize.setWidth(sizeAndZoom.size.width() / sizeAndZoom.zoom);
+            imageSize.setHeight(sizeAndZoom.size.height() / sizeAndZoom.zoom);
         }
-        return sizeAndZoom.size;
     }
 #else
     UNUSED_PARAM(renderer);
 #endif
 
     if (multiplier == 1.0f)
-        return m_image->size();
+        return imageSize;
         
     // Don't let images that have a width/height >= 1 shrink below 1 when zoomed.
-    bool hasWidth = m_image->size().width() > 0;
-    bool hasHeight = m_image->size().height() > 0;
-    int width = m_image->size().width() * (m_image->hasRelativeWidth() ? 1.0f : multiplier);
-    int height = m_image->size().height() * (m_image->hasRelativeHeight() ? 1.0f : multiplier);
+    bool hasWidth = imageSize.width() > 0;
+    bool hasHeight = imageSize.height() > 0;
+    int width = imageSize.width() * (m_image->hasRelativeWidth() ? 1.0f : multiplier);
+    int height = imageSize.height() * (m_image->hasRelativeHeight() ? 1.0f : multiplier);
     if (hasWidth)
         width = max(1, width);
     if (hasHeight)

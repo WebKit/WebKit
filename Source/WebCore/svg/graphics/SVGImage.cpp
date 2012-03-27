@@ -102,20 +102,8 @@ SVGImage::~SVGImage()
 
 void SVGImage::setContainerSize(const IntSize&)
 {
+    // SVGImageCache already intercepted this call, as it stores & caches the desired container sizes & zoom levels.
     ASSERT_NOT_REACHED();
-}
-
-bool SVGImage::usesContainerSize() const
-{
-    if (!m_page)
-        return false;
-    Frame* frame = m_page->mainFrame();
-    SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
-    if (!rootElement)
-        return false;
-    if (RenderSVGRoot* renderer = toRenderSVGRoot(rootElement->renderer()))
-        return !renderer->containerSize().isEmpty();
-    return false;
 }
 
 IntSize SVGImage::size() const
