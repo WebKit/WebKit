@@ -716,12 +716,12 @@ String StylePropertySet::asText() const
                 continue;
             if (!shorthandPropertyAppeared.get(shortPropertyIndex))
                 value = getPropertyValue(shorthandPropertyID);
-            shorthandPropertyAppeared.ensureSizeAndSet(static_cast<size_t>(shortPropertyIndex), static_cast<size_t>(numCSSProperties));
+            shorthandPropertyAppeared.ensureSizeAndSet(shortPropertyIndex, numCSSProperties);
         }
 
         if (!value.isNull()) {
             propertyID = shorthandPropertyID;
-            shorthandPropertyUsed.ensureSizeAndSet(static_cast<size_t>(shortPropertyIndex), static_cast<size_t>(numCSSProperties));
+            shorthandPropertyUsed.ensureSizeAndSet(shortPropertyIndex, numCSSProperties);
         } else
             value = prop.value()->cssText();
 
