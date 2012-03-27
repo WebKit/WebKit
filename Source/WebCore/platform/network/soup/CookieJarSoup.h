@@ -31,8 +31,10 @@
 #include <libsoup/soup.h>
 
 namespace WebCore {
-    SoupCookieJar* defaultCookieJar();
-    void setDefaultCookieJar(SoupCookieJar* jar);
+
+SoupCookieJar* soupCookieJar();
+void setSoupCookieJar(SoupCookieJar*);
+
 }
 
 #endif

@@ -35,7 +35,7 @@ namespace WebKit {
 
 void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    SoupCookieJar* cookieJar = WebCore::soupCookieJar();
     SoupCookieJarAcceptPolicy soupPolicy;
 
     soupPolicy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
@@ -55,7 +55,7 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
 
 HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
 {
-    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    SoupCookieJar* cookieJar = WebCore::soupCookieJar();
     SoupCookieJarAcceptPolicy soupPolicy;
 
     HTTPCookieAcceptPolicy policy;

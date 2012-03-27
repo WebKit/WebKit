@@ -23,10 +23,12 @@
 #include <wtf/gobject/GOwnPtr.h>
 
 typedef struct _SoupURI SoupURI;
+typedef struct _SoupCookie SoupCookie;
 
 namespace WTF {
 
 template<> void freeOwnedGPtr<SoupURI>(SoupURI* ptr);
+template<> void freeOwnedGPtr<SoupCookie>(SoupCookie* ptr);
 
 }
 

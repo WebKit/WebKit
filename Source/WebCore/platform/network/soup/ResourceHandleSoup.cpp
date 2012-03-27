@@ -159,9 +159,9 @@ static void ensureSessionIsInitialized(SoupSession* session)
     if (session == ResourceHandle::defaultSession()) {
         SoupCookieJar* jar = SOUP_COOKIE_JAR(soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR));
         if (!jar)
-            soup_session_add_feature(session, SOUP_SESSION_FEATURE(defaultCookieJar()));
+            soup_session_add_feature(session, SOUP_SESSION_FEATURE(soupCookieJar()));
         else
-            setDefaultCookieJar(jar);
+            setSoupCookieJar(jar);
     }
 
     if (!soup_session_get_feature(session, SOUP_TYPE_LOGGER) && LogNetwork.state == WTFLogChannelOn) {

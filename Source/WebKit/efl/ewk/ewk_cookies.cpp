@@ -47,7 +47,7 @@ Eina_Bool ewk_cookies_file_set(const char* filename)
     if (oldjar)
         soup_session_remove_feature(session, oldjar);
 
-    WebCore::setDefaultCookieJar(cookieJar);
+    WebCore::setSoupCookieJar(cookieJar);
     soup_session_add_feature(session, SOUP_SESSION_FEATURE(cookieJar));
 
     return true;
@@ -57,7 +57,7 @@ void ewk_cookies_clear(void)
 {
     GSList* list;
     GSList* p;
-    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    SoupCookieJar* cookieJar = WebCore::soupCookieJar();
 
     list = soup_cookie_jar_all_cookies(cookieJar);
     for (p = list; p; p = p->next)
@@ -71,7 +71,7 @@ Eina_List* ewk_cookies_get_all(void)
     Eina_List* result = 0;
     GSList* list;
     GSList* p;
-    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    SoupCookieJar* cookieJar = WebCore::soupCookieJar();
 
     list = soup_cookie_jar_all_cookies(cookieJar);
     for (p = list; p; p = p->next) {
@@ -97,7 +97,7 @@ void ewk_cookies_cookie_del(Ewk_Cookie* cookie)
     EINA_SAFETY_ON_NULL_RETURN(cookie);
     GSList* list;
     GSList* p;
-    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    SoupCookieJar* cookieJar = WebCore::soupCookieJar();
     SoupCookie* cookie1 = soup_cookie_new(
         cookie->name, cookie->value, cookie->domain, cookie->path, -1);
 
@@ -126,7 +126,7 @@ void ewk_cookies_cookie_free(Ewk_Cookie* cookie)
 
 void ewk_cookies_policy_set(Ewk_Cookie_Policy cookiePolicy)
 {
-    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    SoupCookieJar* cookieJar = WebCore::soupCookieJar();
     SoupCookieJarAcceptPolicy policy;
 
     policy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
@@ -148,7 +148,7 @@ void ewk_cookies_policy_set(Ewk_Cookie_Policy cookiePolicy)
 Ewk_Cookie_Policy ewk_cookies_policy_get(void)
 {
     Ewk_Cookie_Policy ewkPolicy = EWK_COOKIE_JAR_ACCEPT_ALWAYS;
-    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    SoupCookieJar* cookieJar = WebCore::soupCookieJar();
     SoupCookieJarAcceptPolicy policy;
 
     policy = soup_cookie_jar_get_accept_policy(cookieJar);

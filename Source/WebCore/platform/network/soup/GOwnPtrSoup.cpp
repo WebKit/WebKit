@@ -20,6 +20,7 @@
 #include "config.h"
 #include "GOwnPtrSoup.h"
 
+#include <libsoup/soup-cookie.h>
 #include <libsoup/soup-uri.h>
 
 namespace WTF {
@@ -28,6 +29,12 @@ template <> void freeOwnedGPtr<SoupURI>(SoupURI* ptr)
 {
     if (ptr)
         soup_uri_free(ptr);
+}
+
+template <> void freeOwnedGPtr<SoupCookie>(SoupCookie* ptr)
+{
+    if (ptr)
+        soup_cookie_free(ptr);
 }
 
 }
