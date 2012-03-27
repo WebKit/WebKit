@@ -136,6 +136,10 @@ public:
     virtual bool showDebugBorders(const GraphicsLayer*) const;
     virtual bool showRepaintCounter(const GraphicsLayer*) const;
 
+#ifndef NDEBUG
+    virtual void verifyNotPainting();
+#endif
+
     IntRect contentsBox() const;
     
     // For informative purposes only.

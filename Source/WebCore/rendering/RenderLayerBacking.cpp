@@ -1160,6 +1160,10 @@ static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const
 // Up-call from compositing layer drawing callback.
 void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const IntRect& clip)
 {
+#ifndef NDEBUG
+    if (Page* page = renderer()->frame()->page())
+        page->setIsPainting(true);
+#endif
     if (graphicsLayer == m_graphicsLayer.get() || graphicsLayer == m_foregroundLayer.get() || graphicsLayer == m_maskLayer.get()) {
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willPaint(m_owningLayer->renderer()->frame(), &context, clip);
 
@@ -1185,6 +1189,10 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         m_owningLayer->paintResizer(&context, IntPoint(), transformedClip);
         context.restore();
     }
+#ifndef NDEBUG
+    if (Page* page = renderer()->frame()->page())
+        page->setIsPainting(false);
+#endif
 }
 
 float RenderLayerBacking::pageScaleFactor() const
@@ -1211,6 +1219,13 @@ bool RenderLayerBacking::showRepaintCounter(const GraphicsLayer*) const
 {
     return compositor() ? compositor()->compositorShowRepaintCounter() : false;
 }
+
+#ifndef NDEBUG
+void RenderLayerBacking::verifyNotPainting()
+{
+    ASSERT(!renderer()->frame()->page() || !renderer()->frame()->page()->isPainting());
+}
+#endif
 
 bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim, const KeyframeList& keyframes)
 {

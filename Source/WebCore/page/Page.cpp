@@ -160,6 +160,9 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_displayID(0)
     , m_isCountingRelevantRepaintedObjects(false)
+#ifndef NDEBUG
+    , m_isPainting(false)
+#endif
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;

@@ -74,6 +74,15 @@ public:
 
     virtual bool showDebugBorders(const GraphicsLayer*) const = 0;
     virtual bool showRepaintCounter(const GraphicsLayer*) const = 0;
+
+#ifndef NDEBUG
+    // RenderLayerBacking overrides this to verify that it is not
+    // currently painting contents. An ASSERT fails, if it is.
+    // This is executed in GraphicsLayer construction and destruction
+    // to verify that we don't create or destroy GraphicsLayers
+    // while painting.
+    virtual void verifyNotPainting() { }
+#endif
 };
 
 } // namespace WebCore

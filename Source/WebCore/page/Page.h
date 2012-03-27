@@ -331,7 +331,10 @@ namespace WebCore {
 
         void suspendActiveDOMObjectsAndAnimations();
         void resumeActiveDOMObjectsAndAnimations();
-
+#ifndef NDEBUG
+        void setIsPainting(bool painting) { m_isPainting = painting; }
+        bool isPainting() const { return m_isPainting; }
+#endif
     private:
         void initGroup();
 
@@ -431,6 +434,9 @@ namespace WebCore {
         Region m_relevantPaintedRegion;
         Region m_relevantUnpaintedRegion;
         bool m_isCountingRelevantRepaintedObjects;
+#ifndef NDEBUG
+        bool m_isPainting;
+#endif
     };
 
 } // namespace WebCore
