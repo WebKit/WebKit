@@ -631,7 +631,7 @@ public:
             return fontMetrics().lineSpacing();
 
         if (lh.isPercent())
-            return miminumValueForLength(lh, fontSize());
+            return minimumValueForLength(lh, fontSize());
 
         return lh.value();
     }

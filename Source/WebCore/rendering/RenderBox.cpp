@@ -1779,8 +1779,8 @@ void RenderBox::computeLogicalWidthInRegion(RenderRegion* region, LayoutUnit off
     
     if (isInline() && !isInlineBlockOrInlineTable()) {
         // just calculate margins
-        setMarginStart(miminumValueForLength(styleToUse->marginStart(), containerLogicalWidth));
-        setMarginEnd(miminumValueForLength(styleToUse->marginEnd(), containerLogicalWidth));
+        setMarginStart(minimumValueForLength(styleToUse->marginStart(), containerLogicalWidth));
+        setMarginEnd(minimumValueForLength(styleToUse->marginEnd(), containerLogicalWidth));
         if (treatAsReplaced)
             setLogicalWidth(max<LayoutUnit>(floatValueForLength(logicalWidthLength, 0) + borderAndPaddingLogicalWidth(), minPreferredLogicalWidth()));
         return;
@@ -1818,8 +1818,8 @@ void RenderBox::computeLogicalWidthInRegion(RenderRegion* region, LayoutUnit off
 
     // Margin calculations.
     if (logicalWidthLength.isAuto() || hasPerpendicularContainingBlock) {
-        setMarginStart(miminumValueForLength(styleToUse->marginStart(), containerLogicalWidth));
-        setMarginEnd(miminumValueForLength(styleToUse->marginEnd(), containerLogicalWidth));
+        setMarginStart(minimumValueForLength(styleToUse->marginStart(), containerLogicalWidth));
+        setMarginEnd(minimumValueForLength(styleToUse->marginEnd(), containerLogicalWidth));
     } else
         computeInlineDirectionMargins(cb, containerLogicalWidth, logicalWidth());
 
@@ -1842,8 +1842,8 @@ LayoutUnit RenderBox::computeLogicalWidthInRegionUsing(LogicalWidthType widthTyp
         logicalWidth = styleToUse->logicalMaxWidth();
 
     if (logicalWidth.isIntrinsicOrAuto()) {
-        LayoutUnit marginStart = miminumValueForLength(styleToUse->marginStart(), availableLogicalWidth);
-        LayoutUnit marginEnd = miminumValueForLength(styleToUse->marginEnd(), availableLogicalWidth);
+        LayoutUnit marginStart = minimumValueForLength(styleToUse->marginStart(), availableLogicalWidth);
+        LayoutUnit marginEnd = minimumValueForLength(styleToUse->marginEnd(), availableLogicalWidth);
         logicalWidthResult = availableLogicalWidth - marginStart - marginEnd;
 
         if (shrinkToAvoidFloats() && cb->containsFloats())
@@ -1925,8 +1925,8 @@ void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, Layo
 
     if (isFloating() || isInline()) {
         // Inline blocks/tables and floats don't have their margins increased.
-        containingBlock->setMarginStartForChild(this, miminumValueForLength(marginStartLength, containerWidth));
-        containingBlock->setMarginEndForChild(this, miminumValueForLength(marginEndLength, containerWidth));
+        containingBlock->setMarginStartForChild(this, minimumValueForLength(marginStartLength, containerWidth));
+        containingBlock->setMarginEndForChild(this, minimumValueForLength(marginEndLength, containerWidth));
         return;
     }
 
@@ -1956,8 +1956,8 @@ void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, Layo
     
     // Case Four: Either no auto margins, or our width is >= the container width (css2.1, 10.3.3).  In that case
     // auto margins will just turn into 0.
-    containingBlock->setMarginStartForChild(this, miminumValueForLength(marginStartLength, containerWidth));
-    containingBlock->setMarginEndForChild(this, miminumValueForLength(marginEndLength, containerWidth));
+    containingBlock->setMarginStartForChild(this, minimumValueForLength(marginStartLength, containerWidth));
+    containingBlock->setMarginEndForChild(this, minimumValueForLength(marginEndLength, containerWidth));
 }
 
 RenderBoxRegionInfo* RenderBox::renderBoxRegionInfo(RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage, RenderBoxRegionInfoFlags cacheFlag) const
@@ -2281,7 +2281,7 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) cons
             // https://bugs.webkit.org/show_bug.cgi?id=46496
             const LayoutUnit cw = isPositioned() ? containingBlockLogicalWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockLogicalWidthForContent();
             if (cw > 0)
-                return computeContentBoxLogicalWidth(miminumValueForLength(logicalWidth, cw));
+                return computeContentBoxLogicalWidth(minimumValueForLength(logicalWidth, cw));
         }
         // fall through
         default:
@@ -2418,8 +2418,8 @@ void RenderBox::computeBlockDirectionMargins(RenderBlock* containingBlock)
     LayoutUnit cw = containingBlockLogicalWidthForContent();
 
     RenderStyle* containingBlockStyle = containingBlock->style();
-    containingBlock->setMarginBeforeForChild(this, miminumValueForLength(style()->marginBeforeUsing(containingBlockStyle), cw));
-    containingBlock->setMarginAfterForChild(this, miminumValueForLength(style()->marginAfterUsing(containingBlockStyle), cw));
+    containingBlock->setMarginBeforeForChild(this, minimumValueForLength(style()->marginBeforeUsing(containingBlockStyle), cw));
+    containingBlock->setMarginAfterForChild(this, minimumValueForLength(style()->marginAfterUsing(containingBlockStyle), cw));
 }
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, RenderRegion* region,
@@ -2842,8 +2842,8 @@ void RenderBox::computePositionedLogicalWidthUsing(Length logicalWidth, const Re
         // because the value is not used for any further calculations.
 
         // Calculate margins, 'auto' margins are ignored.
-        marginLogicalLeftValue = miminumValueForLength(marginLogicalLeft, containerLogicalWidth);
-        marginLogicalRightValue = miminumValueForLength(marginLogicalRight, containerLogicalWidth);
+        marginLogicalLeftValue = minimumValueForLength(marginLogicalLeft, containerLogicalWidth);
+        marginLogicalRightValue = minimumValueForLength(marginLogicalRight, containerLogicalWidth);
 
         const LayoutUnit availableSpace = containerLogicalWidth - (marginLogicalLeftValue + marginLogicalRightValue + bordersPlusPadding);
 
@@ -3145,8 +3145,8 @@ void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, 
         // because the value is not used for any further calculations.
 
         // Calculate margins, 'auto' margins are ignored.
-        marginBeforeValue = miminumValueForLength(marginBefore, containerLogicalHeight);
-        marginAfterValue = miminumValueForLength(marginAfter, containerLogicalHeight);
+        marginBeforeValue = minimumValueForLength(marginBefore, containerLogicalHeight);
+        marginAfterValue = minimumValueForLength(marginAfter, containerLogicalHeight);
 
         const LayoutUnit availableSpace = containerLogicalHeight - (marginBeforeValue + marginAfterValue + bordersPlusPadding);
 

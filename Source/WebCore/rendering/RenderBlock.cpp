@@ -3921,7 +3921,7 @@ LayoutUnit RenderBlock::textIndentOffset() const
     LayoutUnit cw = 0;
     if (style()->textIndent().isPercent())
         cw = containingBlock()->availableLogicalWidth();
-    return miminumValueForLength(style()->textIndent(), cw);
+    return minimumValueForLength(style()->textIndent(), cw);
 }
 
 LayoutUnit RenderBlock::logicalLeftOffsetForContent(RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage) const
@@ -5561,7 +5561,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 LayoutUnit ti = 0;
                 if (!addedTextIndent) {
                     addedTextIndent = true;
-                    ti = miminumValueForLength(styleToUse->textIndent(), cw);
+                    ti = minimumValueForLength(styleToUse->textIndent(), cw);
                     childMin += ti;
                     childMax += ti;
                 }
@@ -5632,7 +5632,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 LayoutUnit ti = 0;
                 if (!addedTextIndent) {
                     addedTextIndent = true;
-                    ti = miminumValueForLength(styleToUse->textIndent(), cw);
+                    ti = minimumValueForLength(styleToUse->textIndent(), cw);
                     childMin+=ti; beginMin += ti;
                     childMax+=ti; beginMax += ti;
                 }

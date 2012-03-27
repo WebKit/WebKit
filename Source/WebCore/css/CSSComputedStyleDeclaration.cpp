@@ -1777,7 +1777,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 // RenderBox gives a marginRight() that is the distance between the right-edge of the child box
                 // and the right-edge of the containing box, when display == BLOCK. Let's calculate the absolute
                 // value of the specified margin-right % instead of relying on RenderBox's marginRight() value.
-                value = miminumValueForLength(marginRight, toRenderBox(renderer)->containingBlockLogicalWidthForContent());
+                value = minimumValueForLength(marginRight, toRenderBox(renderer)->containingBlockLogicalWidthForContent());
             else
                 value = toRenderBox(renderer)->marginRight();
             return zoomAdjustedPixelValue(value, style.get(), cssValuePool);
@@ -2189,8 +2189,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             if (renderer) {
                 LayoutRect box = sizingBox(renderer);
-                list->append(zoomAdjustedPixelValue(miminumValueForLength(style->perspectiveOriginX(), box.width()), style.get(), cssValuePool));
-                list->append(zoomAdjustedPixelValue(miminumValueForLength(style->perspectiveOriginY(), box.height()), style.get(), cssValuePool));
+                list->append(zoomAdjustedPixelValue(minimumValueForLength(style->perspectiveOriginX(), box.width()), style.get(), cssValuePool));
+                list->append(zoomAdjustedPixelValue(minimumValueForLength(style->perspectiveOriginY(), box.height()), style.get(), cssValuePool));
             }
             else {
                 list->append(zoomAdjustedPixelValueForLength(style->perspectiveOriginX(), style.get(), cssValuePool));
@@ -2235,8 +2235,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             if (renderer) {
                 IntRect box = sizingBox(renderer);
-                list->append(zoomAdjustedPixelValue(miminumValueForLength(style->transformOriginX(), box.width()), style.get(), cssValuePool));
-                list->append(zoomAdjustedPixelValue(miminumValueForLength(style->transformOriginY(), box.height()), style.get(), cssValuePool));
+                list->append(zoomAdjustedPixelValue(minimumValueForLength(style->transformOriginX(), box.width()), style.get(), cssValuePool));
+                list->append(zoomAdjustedPixelValue(minimumValueForLength(style->transformOriginY(), box.height()), style.get(), cssValuePool));
                 if (style->transformOriginZ() != 0)
                     list->append(zoomAdjustedPixelValue(style->transformOriginZ(), style.get(), cssValuePool));
             } else {

@@ -1,3 +1,13 @@
+2012-03-26  Pratik Solanki  <psolanki@apple.com>
+
+        Fix typo in method name - WebCore::miminumValueForLength should be WebCore::minimumValueForLength
+        https://bugs.webkit.org/show_bug.cgi?id=82254
+
+        Reviewed by Benjamin Poulain.
+
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+
 2012-03-26  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][WK2] Support multi-file upload

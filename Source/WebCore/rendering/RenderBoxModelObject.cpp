@@ -556,7 +556,7 @@ LayoutUnit RenderBoxModelObject::paddingTop(PaddingOptions) const
     Length padding = style()->paddingTop();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return miminumValueForLength(padding, w);
+    return minimumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingBottom(PaddingOptions) const
@@ -565,7 +565,7 @@ LayoutUnit RenderBoxModelObject::paddingBottom(PaddingOptions) const
     Length padding = style()->paddingBottom();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return miminumValueForLength(padding, w);
+    return minimumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingLeft(PaddingOptions) const
@@ -574,7 +574,7 @@ LayoutUnit RenderBoxModelObject::paddingLeft(PaddingOptions) const
     Length padding = style()->paddingLeft();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return miminumValueForLength(padding, w);
+    return minimumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingRight(PaddingOptions) const
@@ -583,7 +583,7 @@ LayoutUnit RenderBoxModelObject::paddingRight(PaddingOptions) const
     Length padding = style()->paddingRight();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return miminumValueForLength(padding, w);
+    return minimumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingBefore(PaddingOptions) const
@@ -592,7 +592,7 @@ LayoutUnit RenderBoxModelObject::paddingBefore(PaddingOptions) const
     Length padding = style()->paddingBefore();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return miminumValueForLength(padding, w);
+    return minimumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingAfter(PaddingOptions) const
@@ -601,7 +601,7 @@ LayoutUnit RenderBoxModelObject::paddingAfter(PaddingOptions) const
     Length padding = style()->paddingAfter();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return miminumValueForLength(padding, w);
+    return minimumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingStart(PaddingOptions) const
@@ -610,7 +610,7 @@ LayoutUnit RenderBoxModelObject::paddingStart(PaddingOptions) const
     Length padding = style()->paddingStart();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return miminumValueForLength(padding, w);
+    return minimumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingEnd(PaddingOptions) const
@@ -619,7 +619,7 @@ LayoutUnit RenderBoxModelObject::paddingEnd(PaddingOptions) const
     Length padding = style()->paddingEnd();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return miminumValueForLength(padding, w);
+    return minimumValueForLength(padding, w);
 }
 
 RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& borderRect, InlineFlowBox* box, LayoutUnit inlineBoxWidth, LayoutUnit inlineBoxHeight,
@@ -1139,13 +1139,13 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     EFillRepeat backgroundRepeatX = fillLayer->repeatX();
     EFillRepeat backgroundRepeatY = fillLayer->repeatY();
 
-    LayoutUnit xPosition = miminumValueForLength(fillLayer->xPosition(), positioningAreaSize.width() - geometry.tileSize().width(), true);
+    LayoutUnit xPosition = minimumValueForLength(fillLayer->xPosition(), positioningAreaSize.width() - geometry.tileSize().width(), true);
     if (backgroundRepeatX == RepeatFill)
         geometry.setPhaseX(geometry.tileSize().width() ? geometry.tileSize().width() - (xPosition + left) % geometry.tileSize().width() : 0);
     else
         geometry.setNoRepeatX(xPosition + left);
 
-    LayoutUnit yPosition = miminumValueForLength(fillLayer->yPosition(), positioningAreaSize.height() - geometry.tileSize().height(), true);
+    LayoutUnit yPosition = minimumValueForLength(fillLayer->yPosition(), positioningAreaSize.height() - geometry.tileSize().height(), true);
     if (backgroundRepeatY == RepeatFill)
         geometry.setPhaseY(geometry.tileSize().height() ? geometry.tileSize().height() - (yPosition + top) % geometry.tileSize().height() : 0);
     else 

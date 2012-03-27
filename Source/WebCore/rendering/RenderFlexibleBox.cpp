@@ -586,7 +586,7 @@ LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* 
         LayoutUnit mainAxisExtent = hasOrthogonalFlow(child) ? child->logicalHeight() : child->maxPreferredLogicalWidth();
         return mainAxisExtent - mainAxisBorderAndPaddingExtentForChild(child);
     }
-    return miminumValueForLength(mainAxisLength, mainAxisContentExtent());
+    return minimumValueForLength(mainAxisLength, mainAxisContentExtent());
 }
 
 LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMainAxisExtent)
@@ -677,11 +677,11 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Fle
         // of 0 and because if we're not auto sizing, we don't do a layout that
         // computes the start/end margins.
         if (isHorizontalFlow()) {
-            child->setMarginLeft(miminumValueForLength(child->style()->marginLeft(), flexboxAvailableContentExtent));
-            child->setMarginRight(miminumValueForLength(child->style()->marginRight(), flexboxAvailableContentExtent));
+            child->setMarginLeft(minimumValueForLength(child->style()->marginLeft(), flexboxAvailableContentExtent));
+            child->setMarginRight(minimumValueForLength(child->style()->marginRight(), flexboxAvailableContentExtent));
         } else {
-            child->setMarginTop(miminumValueForLength(child->style()->marginTop(), flexboxAvailableContentExtent));
-            child->setMarginBottom(miminumValueForLength(child->style()->marginBottom(), flexboxAvailableContentExtent));
+            child->setMarginTop(minimumValueForLength(child->style()->marginTop(), flexboxAvailableContentExtent));
+            child->setMarginBottom(minimumValueForLength(child->style()->marginBottom(), flexboxAvailableContentExtent));
         }
     }
 }

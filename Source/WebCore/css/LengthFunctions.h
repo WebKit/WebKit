@@ -28,7 +28,7 @@ namespace WebCore {
 
 struct Length;
 
-int miminumValueForLength(Length, int maximumValue, bool roundPercentages = false);
+int minimumValueForLength(Length, int maximumValue, bool roundPercentages = false);
 int valueForLength(Length, int maximumValue, bool roundPercentages = false);
 float floatValueForLength(Length, int maximumValue);
 float floatValueForLength(Length, float maximumValue);

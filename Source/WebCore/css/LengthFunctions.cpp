@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-int miminumValueForLength(Length length, int maximumValue, bool roundPercentages)
+int minimumValueForLength(Length length, int maximumValue, bool roundPercentages)
 {
     switch (length.type()) {
     case Fixed:
@@ -59,7 +59,7 @@ int valueForLength(Length length, int maximumValue, bool roundPercentages)
     case Fixed:
     case Percent:
     case Calculated:
-        return miminumValueForLength(length, maximumValue, roundPercentages);
+        return minimumValueForLength(length, maximumValue, roundPercentages);
     case Auto:
         return maximumValue;
     case Relative:

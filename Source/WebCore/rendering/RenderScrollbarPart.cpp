@@ -83,7 +83,7 @@ static int calcScrollbarThicknessUsing(const Length& l, int containingLength)
 {
     if (l.isIntrinsicOrAuto())
         return ScrollbarTheme::theme()->scrollbarThickness();
-    return miminumValueForLength(l, containingLength);
+    return minimumValueForLength(l, containingLength);
 }
 
 void RenderScrollbarPart::computeScrollbarWidth()
@@ -97,8 +97,8 @@ void RenderScrollbarPart::computeScrollbarWidth()
     setWidth(max(minWidth, min(maxWidth, w)));
     
     // Buttons and track pieces can all have margins along the axis of the scrollbar. 
-    m_marginLeft = miminumValueForLength(style()->marginLeft(), visibleSize);
-    m_marginRight = miminumValueForLength(style()->marginRight(), visibleSize);
+    m_marginLeft = minimumValueForLength(style()->marginLeft(), visibleSize);
+    m_marginRight = minimumValueForLength(style()->marginRight(), visibleSize);
 }
 
 void RenderScrollbarPart::computeScrollbarHeight()
@@ -112,8 +112,8 @@ void RenderScrollbarPart::computeScrollbarHeight()
     setHeight(max(minHeight, min(maxHeight, h)));
 
     // Buttons and track pieces can all have margins along the axis of the scrollbar. 
-    m_marginTop = miminumValueForLength(style()->marginTop(), visibleSize);
-    m_marginBottom = miminumValueForLength(style()->marginBottom(), visibleSize);
+    m_marginTop = minimumValueForLength(style()->marginTop(), visibleSize);
+    m_marginBottom = minimumValueForLength(style()->marginBottom(), visibleSize);
 }
 
 void RenderScrollbarPart::computePreferredLogicalWidths()
