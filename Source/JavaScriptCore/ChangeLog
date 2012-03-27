@@ -1,3 +1,30 @@
+2012-03-26  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        Unaligned userspace access for SH4 platforms
+        https://bugs.webkit.org/show_bug.cgi?id=79104
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/AbstractMacroAssembler.h:
+        (Jump):
+        (JSC::AbstractMacroAssembler::Jump::Jump):
+        (JSC::AbstractMacroAssembler::Jump::link):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::load16Unaligned):
+        (JSC::MacroAssemblerSH4::load32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerSH4::branchDouble):
+        (JSC::MacroAssemblerSH4::branchTrue):
+        (JSC::MacroAssemblerSH4::branchFalse):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::extraInstrForBranch):
+        (SH4Assembler):
+        (JSC::SH4Assembler::bra):
+        (JSC::SH4Assembler::linkJump):
+        * jit/JIT.h:
+        (JIT):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+
 2012-03-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         cssText should use shorthand notations

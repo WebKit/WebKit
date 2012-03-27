@@ -326,6 +326,10 @@ public:
         padForAlign32 = 0x00090009,
     };
 
+    enum JumpType { JumpFar,
+                    JumpNear
+    };
+
     SH4Assembler()
     {
         m_claimscratchReg = 0x0;
@@ -1188,6 +1192,13 @@ public:
         return label;
     }
 
+    void extraInstrForBranch(RegisterID dst)
+    {
+        loadConstantUnReusable(0x0, dst);
+        nop();
+        nop();
+    }
+
     AssemblerLabel jmp(RegisterID dst)
     {
         jmpReg(dst);
@@ -1212,6 +1223,13 @@ public:
     {
         AssemblerLabel label = m_buffer.label();
         branch(BT_OPCODE, 0);
+        return label;
+    }
+
+    AssemblerLabel bra()
+    {
+        AssemblerLabel label = m_buffer.label();
+        branch(BRA_OPCODE, 0);
         return label;
     }
 
@@ -1424,7 +1442,7 @@ public:
 
     // Linking & patching
 
-    void linkJump(AssemblerLabel from, AssemblerLabel to)
+    void linkJump(AssemblerLabel from, AssemblerLabel to, JumpType type = JumpFar)
     {
         ASSERT(to.isSet());
         ASSERT(from.isSet());
@@ -1432,6 +1450,14 @@ public:
         uint16_t* instructionPtr = getInstructionPtr(data(), from.m_offset);
         uint16_t instruction = *instructionPtr;
         int offsetBits;
+
+        if (type == JumpNear) {
+            ASSERT((instruction ==  BT_OPCODE) || (instruction == BF_OPCODE) || (instruction == BRA_OPCODE));
+            int offset = (codeSize() - from.m_offset) - 4;
+            *instructionPtr++ = instruction | (offset >> 1);
+            printInstr(*instructionPtr, from.m_offset + 2);
+            return;
+        }
 
         if (((instruction & 0xff00) == BT_OPCODE) || ((instruction & 0xff00) == BF_OPCODE)) {
             /* BT label => BF 2

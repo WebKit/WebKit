@@ -552,8 +552,8 @@ namespace JSC {
         static const int sequenceGetByIdHotPathInstructionSpace = 36;
         static const int sequenceGetByIdHotPathConstantSpace = 5;
         // sequenceGetByIdSlowCase
-        static const int sequenceGetByIdSlowCaseInstructionSpace = 30;
-        static const int sequenceGetByIdSlowCaseConstantSpace = 3;
+        static const int sequenceGetByIdSlowCaseInstructionSpace = 38;
+        static const int sequenceGetByIdSlowCaseConstantSpace = 4;
         // sequencePutById
         static const int sequencePutByIdInstructionSpace = 36;
         static const int sequencePutByIdConstantSpace = 5;
@@ -567,7 +567,7 @@ namespace JSC {
 #if ENABLE(OPCODE_SAMPLING)
         static const int patchOffsetGetByIdSlowCaseCall = 0; // FIMXE
 #else
-        static const int patchOffsetGetByIdSlowCaseCall = 26;
+        static const int patchOffsetGetByIdSlowCaseCall = 34;
 #endif
         static const int patchOffsetOpCallCompareToJump = 4;
 

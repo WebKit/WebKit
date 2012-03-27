@@ -729,12 +729,12 @@ class YarrGenerator : private MacroAssembler {
                 return;
             case 2: {
                 BaseIndex address(input, index, TimesOne, (startTermPosition - m_checked) * sizeof(LChar));
-                load16(address, character);
+                load16Unaligned(address, character);
                 break;
             }
             case 3: {
                 BaseIndex highAddress(input, index, TimesOne, (startTermPosition - m_checked) * sizeof(LChar));
-                load16(highAddress, character);
+                load16Unaligned(highAddress, character);
                 if (ignoreCaseMask)
                     or32(Imm32(ignoreCaseMask), character);
                 op.m_jumps.append(branch32(NotEqual, character, Imm32((allCharacters & 0xffff) | ignoreCaseMask)));
