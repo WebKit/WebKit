@@ -453,6 +453,7 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
 {
     // FIXME: This lists the current state of our animVal support.
     switch (type) {
+    case AnimatedAngle:
     case AnimatedLength:
     case AnimatedLengthList:
     case AnimatedNumber:
@@ -460,7 +461,6 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     case AnimatedNumberOptionalNumber:
     case AnimatedTransformList:
         return true;
-    case AnimatedAngle:
     case AnimatedBoolean:
     case AnimatedColor:
     case AnimatedEnumeration:

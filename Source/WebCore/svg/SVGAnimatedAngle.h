@@ -39,12 +39,16 @@ DEFINE_ANIMATED_PROPERTY(AnimatedAngle, OwnerType, DOMAttribute, SVGDOMAttribute
 class SVGAnimationElement;
 
 class SVGAnimatedAngleAnimator : public SVGAnimatedTypeAnimator {
-
 public:
     SVGAnimatedAngleAnimator(SVGAnimationElement*, SVGElement*);
     virtual ~SVGAnimatedAngleAnimator() { }
 
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
+    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
+    virtual void stopAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
+    virtual void resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*);
+    virtual void animValWillChange(const Vector<SVGAnimatedProperty*>&);
+    virtual void animValDidChange(const Vector<SVGAnimatedProperty*>&);
 
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);

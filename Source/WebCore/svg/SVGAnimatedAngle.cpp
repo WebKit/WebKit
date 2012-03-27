@@ -34,19 +34,40 @@ SVGAnimatedAngleAnimator::SVGAnimatedAngleAnimator(SVGAnimationElement* animatio
 static inline SVGAngle& sharedSVGAngle(const String& valueAsString)
 {
     DEFINE_STATIC_LOCAL(SVGAngle, sharedAngle, ());
-    ExceptionCode ec = 0;
-    sharedAngle.setValueAsString(valueAsString, ec);
-    ASSERT(!ec);
+    sharedAngle.setValueAsString(valueAsString, ASSERT_NO_EXCEPTION);
     return sharedAngle;
 }
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedAngleAnimator::constructFromString(const String& string)
 {
     OwnPtr<SVGAnimatedType> animatedType = SVGAnimatedType::createAngle(new SVGAngle);
-    ExceptionCode ec = 0;
-    animatedType->angle().setValueAsString(string, ec);
-    ASSERT(!ec);
+    animatedType->angle().setValueAsString(string, ASSERT_NO_EXCEPTION);
     return animatedType.release();
+}
+
+PassOwnPtr<SVGAnimatedType> SVGAnimatedAngleAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    return SVGAnimatedType::createAngle(constructFromOneBaseValue<SVGAngle, SVGAnimatedAngle>(properties));
+}
+
+void SVGAnimatedAngleAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedAngle>(properties);
+}
+
+void SVGAnimatedAngleAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+{
+    resetFromOneBaseValue<SVGAngle, SVGAnimatedAngle>(properties, type, &SVGAnimatedType::angle);
+}
+
+void SVGAnimatedAngleAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValWillChangeForType<SVGAnimatedAngle>(properties);
+}
+
+void SVGAnimatedAngleAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValDidChangeForType<SVGAnimatedAngle>(properties);
 }
 
 void SVGAnimatedAngleAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
@@ -123,13 +144,10 @@ void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned
 
 float SVGAnimatedAngleAnimator::calculateDistance(const String& fromString, const String& toString)
 {
-    ExceptionCode ec = 0;
     SVGAngle from = SVGAngle();
-    from.setValueAsString(fromString, ec);
-    ASSERT(!ec);
+    from.setValueAsString(fromString, ASSERT_NO_EXCEPTION);
     SVGAngle to = SVGAngle();
-    to.setValueAsString(toString, ec);
-    ASSERT(!ec);
+    to.setValueAsString(toString, ASSERT_NO_EXCEPTION);
     return fabsf(to.value() - from.value());
 }
 

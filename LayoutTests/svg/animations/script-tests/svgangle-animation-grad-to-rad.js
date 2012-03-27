@@ -49,12 +49,12 @@ function sample1() {
 
 function sample2() {
     shouldBeCloseEnough("marker.orientAngle.animVal.value", "90");
-    shouldBeCloseEnough("marker.orientAngle.baseVal.value", "90");
+    shouldBeCloseEnough("marker.orientAngle.baseVal.value", "0");
 }
 
 function sample3() {
     shouldBeCloseEnough("marker.orientAngle.animVal.value", "180");
-    shouldBeCloseEnough("marker.orientAngle.baseVal.value", "180");
+    shouldBeCloseEnough("marker.orientAngle.baseVal.value", "0");
 }
 
 function executeTest() {
