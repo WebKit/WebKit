@@ -294,7 +294,7 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
     // FIXME: Find a good spot for these.
     ASSERT(submission->data());
     ASSERT(submission->state());
-    ASSERT(submission->state()->sourceFrame() == m_frame);
+    ASSERT(!submission->state()->sourceDocument()->frame() || submission->state()->sourceDocument()->frame() == m_frame);
     
     if (!m_frame->page())
         return;
@@ -313,7 +313,7 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
     }
 
     Frame* targetFrame = m_frame->tree()->find(submission->target());
-    if (!shouldAllowNavigation(targetFrame))
+    if (!submission->state()->sourceDocument()->canNavigate(targetFrame))
         return;
     if (!targetFrame) {
         if (!DOMWindow::allowPopUp(m_frame) && !ScriptController::processingUserGesture())
@@ -1172,7 +1172,9 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
 
     // FIXME: It's possible this targetFrame will not be the same frame that was targeted by the actual
     // load if frame names have changed.
-    Frame* sourceFrame = formState ? formState->sourceFrame() : m_frame;
+    Frame* sourceFrame = formState ? formState->sourceDocument()->frame() : m_frame;
+    if (!sourceFrame)
+        sourceFrame = m_frame;
     Frame* targetFrame = sourceFrame->loader()->findFrameForNavigation(request.frameName());
     if (targetFrame && targetFrame != sourceFrame) {
         if (Page* page = targetFrame->page())
@@ -1496,86 +1498,6 @@ void FrameLoader::reload(bool endToEndReload)
     loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
     
     loadWithDocumentLoader(loader.get(), endToEndReload ? FrameLoadTypeReloadFromOrigin : FrameLoadTypeReload, 0);
-}
-
-static bool canAccessAncestor(const SecurityOrigin* activeSecurityOrigin, Frame* targetFrame)
-{
-    // targetFrame can be NULL when we're trying to navigate a top-level frame
-    // that has a NULL opener.
-    if (!targetFrame)
-        return false;
-
-    const bool isLocalActiveOrigin = activeSecurityOrigin->isLocal();
-    for (Frame* ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree()->parent()) {
-        Document* ancestorDocument = ancestorFrame->document();
-        if (!ancestorDocument)
-            return true;
-
-        const SecurityOrigin* ancestorSecurityOrigin = ancestorDocument->securityOrigin();
-        if (activeSecurityOrigin->canAccess(ancestorSecurityOrigin))
-            return true;
-        
-        // Allow file URL descendant navigation even when allowFileAccessFromFileURLs is false.
-        if (isLocalActiveOrigin && ancestorSecurityOrigin->isLocal())
-            return true;
-    }
-
-    return false;
-}
-
-bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
-{
-    // The navigation change is safe if the active frame is:
-    //   - in the same security origin as the target or one of the target's
-    //     ancestors.
-    //
-    // Or the target frame is:
-    //   - a top-level frame in the frame hierarchy and the active frame can
-    //     navigate the target frame's opener per above or it is the opener of
-    //     the target frame.
-
-    if (!targetFrame)
-        return true;
-
-    // Performance optimization.
-    if (m_frame == targetFrame)
-        return true;
-
-    // Let a frame navigate the top-level window that contains it.  This is
-    // important to allow because it lets a site "frame-bust" (escape from a
-    // frame created by another web site).
-    if (!isDocumentSandboxed(m_frame, SandboxTopNavigation) && targetFrame == m_frame->tree()->top())
-        return true;
-
-    // A sandboxed frame can only navigate itself and its descendants.
-    if (isDocumentSandboxed(m_frame, SandboxNavigation) && !targetFrame->tree()->isDescendantOf(m_frame))
-        return false;
-
-    // Let a frame navigate its opener if the opener is a top-level window.
-    if (!targetFrame->tree()->parent() && m_frame->loader()->opener() == targetFrame)
-        return true;
-
-    Document* activeDocument = m_frame->document();
-    ASSERT(activeDocument);
-    const SecurityOrigin* activeSecurityOrigin = activeDocument->securityOrigin();
-
-    // For top-level windows, check the opener.
-    if (!targetFrame->tree()->parent() && canAccessAncestor(activeSecurityOrigin, targetFrame->loader()->opener()))
-        return true;
-
-    // In general, check the frame's ancestors.
-    if (canAccessAncestor(activeSecurityOrigin, targetFrame))
-        return true;
-
-    Document* targetDocument = targetFrame->document();
-    // FIXME: this error message should contain more specifics of why the navigation change is not allowed.
-    String message = "Unsafe JavaScript attempt to initiate a navigation change for frame with URL " +
-                     targetDocument->url().string() + " from frame with URL " + activeDocument->url().string() + ".\n";
-
-    // FIXME: should we print to the console of the activeFrame as well?
-    targetFrame->domWindow()->printErrorMessage(message);
-
-    return false;
 }
 
 void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItemPolicy)
@@ -3043,7 +2965,10 @@ void FrameLoader::checkDidPerformFirstNavigation()
 Frame* FrameLoader::findFrameForNavigation(const AtomicString& name)
 {
     Frame* frame = m_frame->tree()->find(name);
-    if (!shouldAllowNavigation(frame))
+    // FIXME: We calling canNavigate on the Document that's requesting the
+    // navigation, not based on the document that happens to be displayed in
+    // this Frame.
+    if (!m_frame->document()->canNavigate(frame))
         return 0;
     return frame;
 }
@@ -3306,7 +3231,7 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
 
     if (!request.frameName().isEmpty() && request.frameName() != "_blank") {
         Frame* frame = lookupFrame->tree()->find(request.frameName());
-        if (frame && openerFrame->loader()->shouldAllowNavigation(frame)) {
+        if (frame && openerFrame->document()->canNavigate(frame)) {
             if (Page* page = frame->page())
                 page->chrome()->focus();
             created = false;

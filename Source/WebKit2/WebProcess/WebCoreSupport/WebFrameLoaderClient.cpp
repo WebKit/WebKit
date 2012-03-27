@@ -740,7 +740,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
     RefPtr<FormState> formState = prpFormState;
     
     HTMLFormElement* form = formState->form();
-    WebFrame* sourceFrame = static_cast<WebFrameLoaderClient*>(formState->sourceFrame()->loader()->client())->webFrame();    
+    WebFrame* sourceFrame = static_cast<WebFrameLoaderClient*>(formState->sourceDocument()->frame()->loader()->client())->webFrame();
     const Vector<std::pair<String, String> >& values = formState->textFieldValues();
 
     RefPtr<APIObject> userData;

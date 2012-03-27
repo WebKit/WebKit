@@ -227,10 +227,10 @@ public:
         // Now that the timer has fired, we need to repeat the security check which normally is done when
         // selecting a target, in case conditions have changed. Other code paths avoid this by targeting
         // without leaving a time window. If we fail the check just silently drop the form submission.
-        Frame* requestingFrame = m_submission->state()->sourceFrame();
-        if (!requestingFrame->loader()->shouldAllowNavigation(frame))
+        Document* requestingDocument = m_submission->state()->sourceDocument();
+        if (!requestingDocument->canNavigate(frame))
             return;
-        FrameLoadRequest frameRequest(requestingFrame->document()->securityOrigin());
+        FrameLoadRequest frameRequest(requestingDocument->document()->securityOrigin());
         m_submission->populateFrameLoadRequest(frameRequest);
         frame->loader()->loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), MaybeSendReferrer);
     }

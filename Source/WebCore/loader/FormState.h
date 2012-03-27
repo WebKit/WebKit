@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-    class Frame;
+    class Document;
     class HTMLFormElement;
 
     enum FormSubmissionTrigger {
@@ -46,19 +46,19 @@ namespace WebCore {
 
     class FormState : public RefCounted<FormState> {
     public:
-        static PassRefPtr<FormState> create(PassRefPtr<HTMLFormElement>, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Frame>, FormSubmissionTrigger);
+        static PassRefPtr<FormState> create(PassRefPtr<HTMLFormElement>, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Document>, FormSubmissionTrigger);
 
         HTMLFormElement* form() const { return m_form.get(); }
         const StringPairVector& textFieldValues() const { return m_textFieldValues; }
-        Frame* sourceFrame() const { return m_sourceFrame.get(); }
+        Document* sourceDocument() const { return m_sourceDocument.get(); }
         FormSubmissionTrigger formSubmissionTrigger() const { return m_formSubmissionTrigger; }
 
     private:
-        FormState(PassRefPtr<HTMLFormElement>, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Frame>, FormSubmissionTrigger);
+        FormState(PassRefPtr<HTMLFormElement>, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Document>, FormSubmissionTrigger);
 
         RefPtr<HTMLFormElement> m_form;
         StringPairVector m_textFieldValues;
-        RefPtr<Frame> m_sourceFrame;
+        RefPtr<Document> m_sourceDocument;
         FormSubmissionTrigger m_formSubmissionTrigger;
     };
 
