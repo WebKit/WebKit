@@ -916,6 +916,9 @@ void FrameView::layout(bool allowSubtree)
     if (m_inLayout)
         return;
 
+    // Protect the view from being deleted during layout (in recalcStyle)
+    RefPtr<FrameView> protector(this);
+
     bool inChildFrameLayoutWithFrameFlattening = isInChildFrameWithFrameFlattening();
 
     if (inChildFrameLayoutWithFrameFlattening) {
@@ -935,9 +938,6 @@ void FrameView::layout(bool allowSubtree)
     m_layoutTimer.stop();
     m_delayedLayout = false;
     m_setNeedsLayoutWasDeferred = false;
-
-    // Protect the view from being deleted during layout (in recalcStyle)
-    RefPtr<FrameView> protector(this);
 
     if (!m_frame) {
         // FIXME: Do we need to set m_size.width here?
