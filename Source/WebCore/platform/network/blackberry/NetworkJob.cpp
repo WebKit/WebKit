@@ -394,9 +394,9 @@ void NetworkJob::handleNotifyDataReceived(const char* buf, size_t len)
         // is on a file system if it has a MIME mappable file extension.
         // The file extension is likely to be correct.
         if (m_isFile) {
-            WTF::String urlFilename = m_response.url().lastPathComponent();
+            String urlFilename = m_response.url().lastPathComponent();
             size_t pos = urlFilename.reverseFind('.');
-            if (pos != WTF::notFound) {
+            if (pos != notFound) {
                 String extension = urlFilename.substring(pos + 1);
                 String mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
                 if (!mimeType.isEmpty())
