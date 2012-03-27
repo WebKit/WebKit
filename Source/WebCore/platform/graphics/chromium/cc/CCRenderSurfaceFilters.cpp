@@ -203,7 +203,7 @@ SkBitmap CCRenderSurfaceFilters::apply(const FilterOperations& filters, unsigned
         desc.fSampleCnt = 0;
         desc.fWidth = size.width();
         desc.fHeight = size.height();
-        desc.fConfig = kRGBA_8888_GrPixelConfig;
+        desc.fConfig = kSkia8888_PM_GrPixelConfig;
         // FIXME: could we use approximate match, and fix texcoords on draw
         dest = gr->lockScratchTexture(desc, GrContext::kExact_ScratchTexMatch);
         if (!dest.texture())
