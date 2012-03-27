@@ -53,6 +53,7 @@ namespace WebCore {
         virtual void setEncoding(const String&);
         virtual String encoding() const;
         virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
+        virtual void error(Status);
 
         virtual void destroyDecodedData();
 #if USE(JSC)        

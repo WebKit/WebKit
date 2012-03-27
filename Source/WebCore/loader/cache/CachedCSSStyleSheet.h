@@ -49,14 +49,15 @@ namespace WebCore {
         virtual void setEncoding(const String&);
         virtual String encoding() const;
         virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
+        virtual void error(CachedResource::Status);
+
+        void checkNotify();
     
     private:
         bool canUseSheet(bool enforceMIMEType, bool* hasValidMIMEType) const;
         virtual PurgePriority purgePriority() const { return PurgeLast; }
 
     protected:
-        virtual void checkNotify();
-
         RefPtr<TextResourceDecoder> m_decoder;
         String m_decodedSheetText;
     };
