@@ -295,4 +295,26 @@ void InternalSettings::setPictographFontFamily(const String& family, const Strin
     setFontFamily(settings(), family, script, &Settings::setPictographFontFamily);
 }
 
+void InternalSettings::setEnableScrollAnimator(bool enabled, ExceptionCode& ec)
+{
+#if ENABLE(SMOOTH_SCROLLING)
+    InternalSettingsGuardForSettings();
+    settings()->setEnableScrollAnimator(enabled);
+#else
+    UNUSED_PARAM(enabled);
+    UNUSED_PARAM(ec);
+#endif
+}
+
+bool InternalSettings::scrollAnimatorEnabled(ExceptionCode& ec)
+{
+#if ENABLE(SMOOTH_SCROLLING)
+    InternalSettingsGuardForSettingsReturn(false);
+    return settings()->scrollAnimatorEnabled();
+#else
+    UNUSED_PARAM(ec);
+    return false;
+#endif
+}
+
 }

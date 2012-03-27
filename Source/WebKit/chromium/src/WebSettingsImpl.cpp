@@ -498,6 +498,15 @@ void WebSettingsImpl::setEnableScrollAnimator(bool enabled)
 #endif
 }
 
+bool WebSettingsImpl::scrollAnimatorEnabled() const
+{
+#if ENABLE(SMOOTH_SCROLLING)
+    return m_settings->scrollAnimatorEnabled();
+#else
+    return false;
+#endif
+}
+
 void WebSettingsImpl::setHixie76WebSocketProtocolEnabled(bool enabled)
 {
 #if ENABLE(WEB_SOCKETS)

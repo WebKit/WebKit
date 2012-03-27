@@ -1,3 +1,20 @@
+2012-03-26  Scott Byer  <scottbyer@chromium.org>
+
+        Enable layout testing of the scroll animator.
+        https://bugs.webkit.org/show_bug.cgi?id=81858
+        Add a call to the InternalSettings that layout tests can use to
+        turn on scroll animation. Enable animation updates for the
+        Chromium platform DRT when scroll animation has been turned on in
+        a test. This should be a no-op for all current layout tests.
+
+        Reviewed by James Robinson.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::serviceAnimation):
+        (WebViewHost::scheduleAnimation):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-03-26  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][WK2] Support multi-file upload

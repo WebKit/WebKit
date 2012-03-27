@@ -139,6 +139,7 @@ public:
     virtual void setPasswordEchoDurationInSeconds(double) = 0;
     virtual void setShouldPrintBackgrounds(bool) = 0;
     virtual void setEnableScrollAnimator(bool) = 0;
+    virtual bool scrollAnimatorEnabled() const = 0;
     virtual void setHixie76WebSocketProtocolEnabled(bool) = 0;
     virtual void setVisualWordMovementEnabled(bool) = 0;
     virtual void setAcceleratedPaintingEnabled(bool) = 0;

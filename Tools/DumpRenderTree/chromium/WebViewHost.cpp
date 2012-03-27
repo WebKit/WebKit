@@ -757,9 +757,16 @@ void WebViewHost::scheduleComposite()
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
+void WebViewHost::serviceAnimation()
+{
+    if (webView()->settings()->scrollAnimatorEnabled())
+        webView()->animate(0.0);
+    scheduleComposite();
+}
+
 void WebViewHost::scheduleAnimation()
 {
-    postDelayedTask(new HostMethodTask(this, &WebViewHost::scheduleComposite), 0);
+    postDelayedTask(new HostMethodTask(this, &WebViewHost::serviceAnimation), 0);
 }
 #endif
 

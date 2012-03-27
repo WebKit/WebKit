@@ -175,6 +175,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual void didAutoResize(const WebKit::WebSize& newSize);
     virtual void scheduleComposite();
 #if ENABLE(REQUEST_ANIMATION_FRAME)
+    virtual void serviceAnimation();
     virtual void scheduleAnimation();
 #endif
     virtual void didFocus();

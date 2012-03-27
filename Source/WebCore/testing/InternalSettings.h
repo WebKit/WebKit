@@ -70,6 +70,8 @@ public:
     void setCursiveFontFamily(const String& family, const String& script, ExceptionCode&);
     void setFantasyFontFamily(const String& family, const String& script, ExceptionCode&);
     void setPictographFontFamily(const String& family, const String& script, ExceptionCode&);
+    void setEnableScrollAnimator(bool enabled, ExceptionCode&);
+    bool scrollAnimatorEnabled(ExceptionCode&);
 
     void restoreTo(Settings*);
 
