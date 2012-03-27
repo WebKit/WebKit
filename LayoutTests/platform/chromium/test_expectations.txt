@@ -4387,4 +4387,4 @@ BUGWK82300 SNOWLEOPARD : compositing/images/direct-pdf-image.html = IMAGE
 BUGWK82372 LINUX X86_64 DEBUG : css3/filters/custom/effect-custom-parameters.html = IMAGE
 BUGWK82372 LINUX X86 RELEASE : css3/filters/custom/effect-custom-parameters.html = IMAGE
 
-BUGWK82374 DEBUG: media/track/track-delete-during-setup.html = CRASH
+BUGWK82269 DEBUG: media/track/track-delete-during-setup.html = CRASH
