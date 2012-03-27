@@ -122,6 +122,11 @@ void WebLayerTreeView::setNeedsRedraw()
     m_private->setNeedsRedraw();
 }
 
+bool WebLayerTreeView::commitRequested() const
+{
+    return m_private->commitRequested();
+}
+
 void WebLayerTreeView::composite()
 {
     if (CCProxy::hasImplThread())

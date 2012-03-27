@@ -233,6 +233,7 @@ void CCLayerTreeHost::commitComplete()
     m_deleteTextureAfterCommitList.clear();
     clearPendingUpdate();
     m_contentsTextureManager->unprotectAllTextures();
+    m_client->didCommit();
 }
 
 PassRefPtr<GraphicsContext3D> CCLayerTreeHost::createContext()
@@ -308,6 +309,11 @@ void CCLayerTreeHost::setNeedsRedraw()
     m_proxy->setNeedsRedraw();
     if (!CCThreadProxy::implThread())
         m_client->scheduleComposite();
+}
+
+bool CCLayerTreeHost::commitRequested() const
+{
+    return m_proxy->commitRequested();
 }
 
 void CCLayerTreeHost::setAnimationEvents(PassOwnPtr<CCAnimationEventsVector> events, double wallClockTime)

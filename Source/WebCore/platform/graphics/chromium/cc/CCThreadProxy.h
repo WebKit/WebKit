@@ -65,6 +65,7 @@ public:
     virtual void setNeedsAnimate();
     virtual void setNeedsCommit();
     virtual void setNeedsRedraw();
+    virtual bool commitRequested() const;
     virtual void setVisible(bool);
     virtual void start();
     virtual void stop();

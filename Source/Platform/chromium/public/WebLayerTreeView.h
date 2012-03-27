@@ -129,6 +129,9 @@ public:
     // Indicates that the view needs to be redrawn. This is typically used when the frontbuffer is damaged.
     WEBKIT_EXPORT void setNeedsRedraw();
 
+    // Indicates whether a commit is pending.
+    WEBKIT_EXPORT bool commitRequested() const;
+
     // Triggers a compositing pass. If the compositor thread was not
     // enabled via WebCompositor::initialize, the compositing pass happens
     // immediately. If it is enabled, the compositing pass will happen at a

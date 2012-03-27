@@ -101,6 +101,12 @@ void WebLayerTreeViewImpl::didRecreateContext(bool success)
         m_client->didRebindGraphicsContext(success);
 }
 
+void WebLayerTreeViewImpl::didCommit()
+{
+    if (m_client)
+        m_client->didCommit();
+}
+
 void WebLayerTreeViewImpl::didCommitAndDrawFrame()
 {
     if (m_client)

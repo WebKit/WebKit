@@ -58,6 +58,7 @@ public:
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) = 0;
     virtual PassRefPtr<GraphicsContext3D> createContext() = 0;
     virtual void didRecreateContext(bool success) = 0;
+    virtual void didCommit() = 0;
     virtual void didCommitAndDrawFrame() = 0;
     virtual void didCompleteSwapBuffers() = 0;
 
@@ -184,6 +185,7 @@ public:
     // virtual for testing
     virtual void setNeedsCommit();
     void setNeedsRedraw();
+    bool commitRequested() const;
 
     void setAnimationEvents(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime);
 

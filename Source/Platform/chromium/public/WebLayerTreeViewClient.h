@@ -59,7 +59,18 @@ public:
     // context event).
     virtual void didRebindGraphicsContext(bool success) = 0;
 
+    // Indicates that a frame was committed to the impl side of the compositor
+    // for rendering.
+    //
+    // FIXME: make this non-virtual when ui/compositor DEP is resolved.
+    virtual void didCommit() { }
+
+    // Indicates that a frame was committed to the impl side and drawing
+    // commands for it were issued to the GPU.
     virtual void didCommitAndDrawFrame() = 0;
+
+    // Indicates that a frame previously issued to the GPU has completed
+    // rendering.
     virtual void didCompleteSwapBuffers() = 0;
 
     // Schedules a compositing pass, meaning the client should call

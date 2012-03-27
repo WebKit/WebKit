@@ -112,6 +112,15 @@ public:
     // removed when the WebWidget inversion patch lands --- http://crbug.com/112837
     virtual void setNeedsRedraw() { }
 
+    // Temporary method for the embedder to check for throttled input. When this
+    // is true, the WebWidget is indicating that it would prefer to not receive
+    // additional input events until
+    // WebWidgetClient::didBecomeReadyForAdditionalInput is called.
+    //
+    // This method will be removed when the WebWidget inversion patch lands ---
+    // http://crbug.com/112837
+    virtual bool isInputThrottled() const { return false; }
+
     // Called to inform the WebWidget of a change in theme.
     // Implementors that cache rendered copies of widgets need to re-render
     // on receiving this message

@@ -44,6 +44,7 @@ public:
         return createCompositorMockGraphicsContext3D(attrs);
     }
     virtual void didRecreateContext(bool success) { }
+    virtual void didCommit() { }
     virtual void didCommitAndDrawFrame() { }
     virtual void didCompleteSwapBuffers() { }
 

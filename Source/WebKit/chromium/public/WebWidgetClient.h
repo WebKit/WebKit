@@ -67,9 +67,11 @@ public:
     // Indicates to the embedder that the compositor is about to begin a
     // frame. This is primarily to signal to flow control mechanisms that a
     // frame is beginning, not to perform actual painting work.
-    //
-    // FIXME: Make pure virtual once upstream deps are satisfied.
     virtual void willBeginCompositorFrame() { }
+
+    // Indicates to the embedder that the WebWidget is ready for additional
+    // input.
+    virtual void didBecomeReadyForAdditionalInput() { }
 
     // Called for compositing mode when the draw commands for a WebKit-side
     // frame have been issued.

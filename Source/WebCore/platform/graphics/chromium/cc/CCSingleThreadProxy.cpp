@@ -236,6 +236,11 @@ void CCSingleThreadProxy::setNeedsRedraw()
     setNeedsCommit();
 }
 
+bool CCSingleThreadProxy::commitRequested() const
+{
+    return false;
+}
+
 void CCSingleThreadProxy::setVisible(bool visible)
 {
     m_layerTreeHostImpl->setVisible(visible);

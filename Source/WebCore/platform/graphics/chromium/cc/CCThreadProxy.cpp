@@ -314,6 +314,12 @@ void CCThreadProxy::setNeedsRedraw()
     CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::setNeedsRedrawOnImplThread));
 }
 
+bool CCThreadProxy::commitRequested() const
+{
+    ASSERT(isMainThread());
+    return m_commitRequested;
+}
+
 void CCThreadProxy::setVisible(bool visible)
 {
     ASSERT(isMainThread());

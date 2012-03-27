@@ -1497,6 +1497,15 @@ void WebViewImpl::setNeedsRedraw()
 #endif
 }
 
+bool WebViewImpl::isInputThrottled() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (!m_layerTreeView.isNull() && isAcceleratedCompositingActive())
+        return m_layerTreeView.commitRequested();
+#endif
+    return false;
+}
+
 void WebViewImpl::loseCompositorContext(int numTimes)
 {
 #if USE(ACCELERATED_COMPOSITING)
@@ -3347,6 +3356,12 @@ void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScal
                                     scrollOffset.height * pageScaleDelta);
         setPageScaleFactor(pageScaleFactor() * pageScaleDelta, scaledScrollOffset);
     }
+}
+
+void WebViewImpl::didCommit()
+{
+    if (m_client)
+        m_client->didBecomeReadyForAdditionalInput();
 }
 
 void WebViewImpl::didCommitAndDrawFrame()

@@ -1,3 +1,44 @@
+2012-03-26  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Add isInputThrottled/didBecomeReadyForAdditionalInput to WebWidget
+        https://bugs.webkit.org/show_bug.cgi?id=82265
+
+        In threaded compositing mode, the WebWidget is self-scheduled,
+        receiving damage and processing it without forwarding that damage
+        up to the embedding WebWidgetClient. In Chromium's case, the
+        client uses the presence of damage to perform input flow
+        control. This patch exposes the need for input flow control to the
+        embedder, while keeping the actual logic about what exactly
+        warrants input flow control inside the implementation.
+
+        Reviewed by James Robinson.
+
+        * public/WebWidget.h:
+        (WebWidget):
+        (WebKit::WebWidget::isInputThrottled):
+        * public/WebWidgetClient.h:
+        (WebWidgetClient):
+        (WebKit::WebWidgetClient::didBecomeReadyForAdditionalInput):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::commitRequested):
+        (WebKit):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::didCommit):
+        (WebKit):
+        * src/WebLayerTreeViewImpl.h:
+        (WebLayerTreeViewImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::isInputThrottled):
+        (WebKit):
+        (WebKit::WebViewImpl::didCommit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHostClient::didCommit):
+        (MockLayerTreeHostClient):
+        * tests/FakeCCLayerTreeHostClient.h:
+        (FakeCCLayerTreeHostClient):
+
 2012-03-26  Vangelis Kokkevis  <vangelis@chromium.org>
 
         [chromium] Simplify and fix CCLayerSorter

@@ -249,6 +249,10 @@ public:
         return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow);
     }
 
+    virtual void didCommit()
+    {
+    }
+
     virtual void didCommitAndDrawFrame()
     {
         m_testHooks->didCommitAndDrawFrame();

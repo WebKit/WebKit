@@ -47,6 +47,7 @@ private:
     virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale);
     virtual PassRefPtr<WebCore::GraphicsContext3D> createContext();
     virtual void didRecreateContext(bool success);
+    virtual void didCommit();
     virtual void didCommitAndDrawFrame();
     virtual void didCompleteSwapBuffers();
 
