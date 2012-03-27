@@ -230,7 +230,7 @@ void RenderFlexibleBox::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
+void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit, BlockLayoutPass)
 {
     ASSERT(needsLayout());
 
@@ -247,7 +247,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
     }
     computeInitialRegionRangeForBlock();
 
-    IntSize previousSize = size();
+    LayoutSize previousSize = size();
 
     setLogicalHeight(0);
     computeLogicalWidth();
