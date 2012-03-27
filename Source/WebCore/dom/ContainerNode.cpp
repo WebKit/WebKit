@@ -142,6 +142,8 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
     if (refChild->previousSibling() == newChild || refChild == newChild) // nothing to do
         return true;
 
+    RefPtr<Node> next = refChild;
+
     NodeVector targets;
     collectChildrenAndRemoveFromOldParent(newChild.get(), targets, ec);
     if (ec)
@@ -153,8 +155,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
     ChildListMutationScope mutation(this);
 #endif
 
-    RefPtr<Node> next = refChild;
-    RefPtr<Node> refChildPreviousSibling = refChild->previousSibling();
+    RefPtr<Node> prev = next->previousSibling();
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         Node* child = it->get();
 
@@ -176,7 +177,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         insertBeforeCommon(next.get(), child);
 
         // Send notification about the children change.
-        childrenChanged(false, refChildPreviousSibling.get(), next.get(), 1);
+        childrenChanged(false, prev.get(), next.get(), 1);
         notifyChildInserted(child);
 
         // Add child to the rendering tree.

@@ -1,0 +1,18 @@
+<div>Test passes if it does not crash.</div>
+<span id=container><span></span></span>
+<span id=newChild></span>
+<script src="../../resources/gc.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var container = document.getElementById('container');
+var newChild = document.getElementById('newChild');
+newChild.addEventListener('DOMNodeRemoved', function() {
+    container.innerHTML = '';
+    gc();
+}, false);
+var range = document.createRange();
+range.selectNodeContents(container);
+range.insertNode(newChild);
+</script>
