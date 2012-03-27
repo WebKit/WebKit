@@ -1,5 +1,11 @@
 2012-03-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Set eol-style: native on WTF.sln per Ryan Sleevi's request.
+
+        * WTF.vcproj/WTF.sln: Added property svn:eol-style.
+
+2012-03-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium build fix; add BitVector.h/cpp to gypi.
 
         * WTF.gypi:
