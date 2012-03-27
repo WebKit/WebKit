@@ -2201,7 +2201,7 @@ public:
     }
 };
 
-TEST_F(CCLayerTreeHostTestSetSingleLostContext, runMultiThread)
+TEST_F(CCLayerTreeHostTestSetSingleLostContext, DISABLED_runMultiThread)
 {
     runTestThreaded();
 }
