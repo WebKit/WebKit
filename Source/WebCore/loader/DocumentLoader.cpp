@@ -791,11 +791,11 @@ bool DocumentLoader::isLoadingMultipartContent() const
     return m_mainResourceLoader && m_mainResourceLoader->isLoadingMultipartContent();
 }
 
-void DocumentLoader::startLoadingMainResource(unsigned long identifier)
+void DocumentLoader::startLoadingMainResource()
 {
+    timing()->markNavigationStart(m_frame);
     ASSERT(!m_mainResourceLoader);
     m_mainResourceLoader = MainResourceLoader::create(m_frame);
-    m_mainResourceLoader->setIdentifier(identifier);
 
     // FIXME: Is there any way the extra fields could have not been added by now?
     // If not, it would be great to remove this line of code.

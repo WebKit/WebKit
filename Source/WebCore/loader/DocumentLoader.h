@@ -193,7 +193,7 @@ namespace WebCore {
         
         void setDefersLoading(bool);
 
-        void startLoadingMainResource(unsigned long identifier);
+        void startLoadingMainResource();
         void cancelMainResourceLoad(const ResourceError&);
         
         // Support iconDatabase in synchronous mode.

@@ -66,7 +66,6 @@ namespace WebCore {
         
         virtual void setDefersLoading(bool);
 
-        void setIdentifier(unsigned long identifier) { m_identifier = identifier; }
         unsigned long identifier() const { return m_identifier; }
 
         virtual void releaseResources();

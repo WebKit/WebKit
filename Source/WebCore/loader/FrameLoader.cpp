@@ -2226,16 +2226,7 @@ void FrameLoader::continueLoadAfterWillSubmitForm()
         return;
 
     m_loadingFromCachedPage = false;
-
-    unsigned long identifier = 0;
-
-    if (Page* page = m_frame->page()) {
-        identifier = page->progress()->createUniqueIdentifier();
-        notifier()->assignIdentifierToInitialRequest(identifier, m_provisionalDocumentLoader.get(), m_provisionalDocumentLoader->originalRequest());
-    }
-
-    m_provisionalDocumentLoader->timing()->markNavigationStart(frame());
-    m_provisionalDocumentLoader->startLoadingMainResource(identifier);
+    m_provisionalDocumentLoader->startLoadingMainResource();
 }
 
 static KURL originatingURLFromBackForwardList(Page* page)
