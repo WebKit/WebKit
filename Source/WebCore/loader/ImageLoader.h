@@ -66,6 +66,7 @@ public:
 
     static void dispatchPendingBeforeLoadEvents();
     static void dispatchPendingLoadEvents();
+    static void dispatchPendingErrorEvents();
 
 protected:
     virtual void notifyFinished(CachedResource*);
@@ -76,6 +77,7 @@ private:
 
     void dispatchPendingBeforeLoadEvent();
     void dispatchPendingLoadEvent();
+    void dispatchPendingErrorEvent();
 
     RenderImageResource* renderImageResource();
     void updateRenderer();
@@ -85,6 +87,7 @@ private:
     AtomicString m_failedLoadURL;
     bool m_firedBeforeLoad : 1;
     bool m_firedLoad : 1;
+    bool m_firedError : 1;
     bool m_imageComplete : 1;
     bool m_loadManually : 1;
 };

@@ -10,6 +10,10 @@ img.addEventListener('load', function(event) {
     alert('FAIL: The image loaded.');
 }, false);
 
+img.addEventListener('error', function(event) {
+    alert('PASS: The error event was called.');
+}, false);
+
 img.crossOrigin = "";
 img.src = "http://localhost:8080/security/resources/red200x100.png";
 document.body.appendChild(img);

@@ -75,11 +75,18 @@ static ImageEventSender& loadEventSender()
     return sender;
 }
 
+static ImageEventSender& errorEventSender()
+{
+    DEFINE_STATIC_LOCAL(ImageEventSender, sender, (eventNames().errorEvent));
+    return sender;
+}
+
 ImageLoader::ImageLoader(Element* element)
     : m_element(element)
     , m_image(0)
     , m_firedBeforeLoad(true)
     , m_firedLoad(true)
+    , m_firedError(true)
     , m_imageComplete(true)
     , m_loadManually(false)
 {
@@ -97,6 +104,10 @@ ImageLoader::~ImageLoader()
     ASSERT(!m_firedLoad || !loadEventSender().hasPendingEvents(this));
     if (!m_firedLoad)
         loadEventSender().cancelEvent(this);
+
+    ASSERT(!m_firedError || !errorEventSender().hasPendingEvents(this));
+    if (!m_firedError)
+        errorEventSender().cancelEvent(this);
 }
 
 void ImageLoader::setImage(CachedImage* newImage)
@@ -112,6 +123,10 @@ void ImageLoader::setImage(CachedImage* newImage)
         if (!m_firedLoad) {
             loadEventSender().cancelEvent(this);
             m_firedLoad = true;
+        }
+        if (!m_firedError) {
+            errorEventSender().cancelEvent(this);
+            m_firedError = true;
         }
         m_imageComplete = true;
         if (newImage)
@@ -163,8 +178,11 @@ void ImageLoader::updateFromElement()
         // If we do not have an image here, it means that a cross-site
         // violation occurred.
         m_failedLoadURL = !newImage ? attr : AtomicString();
-    } else if (!attr.isNull()) // Fire an error event if the url is empty.
+    } else if (!attr.isNull()) {
+        // Fire an error event if the url is empty.
+        // FIXME: Should we fire this event asynchronoulsy via errorEventSender()?
         m_element->dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+    }
     
     CachedImage* oldImage = m_image.get();
     if (newImage != oldImage) {
@@ -172,6 +190,8 @@ void ImageLoader::updateFromElement()
             beforeLoadEventSender().cancelEvent(this);
         if (!m_firedLoad)
             loadEventSender().cancelEvent(this);
+        if (!m_firedError)
+            errorEventSender().cancelEvent(this);
 
         m_image = newImage;
         m_firedBeforeLoad = !newImage;
@@ -221,6 +241,9 @@ void ImageLoader::notifyFinished(CachedResource* resource)
         && !resource->passesAccessControlCheck(m_element->document()->securityOrigin())) {
 
         setImage(0);
+
+        m_firedError = false;
+        errorEventSender().dispatchEventSoon(this);
 
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Cross-origin image load denied by Cross-Origin Resource Sharing policy."));
         m_element->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
@@ -279,12 +302,14 @@ void ImageLoader::updateRenderer()
 
 void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender)
 {
-    ASSERT(eventSender == &beforeLoadEventSender() || eventSender == &loadEventSender());
+    ASSERT(eventSender == &beforeLoadEventSender() || eventSender == &loadEventSender() || eventSender == &errorEventSender());
     const AtomicString& eventType = eventSender->eventType();
     if (eventType == eventNames().beforeloadEvent)
         dispatchPendingBeforeLoadEvent();
     if (eventType == eventNames().loadEvent)
         dispatchPendingLoadEvent();
+    if (eventType == eventNames().errorEvent)
+        dispatchPendingErrorEvent();
 }
 
 void ImageLoader::dispatchPendingBeforeLoadEvent()
@@ -324,6 +349,16 @@ void ImageLoader::dispatchPendingLoadEvent()
     dispatchLoadEvent();
 }
 
+void ImageLoader::dispatchPendingErrorEvent()
+{
+    if (m_firedError)
+        return;
+    if (!m_element->document()->attached())
+        return;
+    m_firedError = true;
+    m_element->dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+}
+
 void ImageLoader::dispatchPendingBeforeLoadEvents()
 {
     beforeLoadEventSender().dispatchPendingEvents();
@@ -332,6 +367,11 @@ void ImageLoader::dispatchPendingBeforeLoadEvents()
 void ImageLoader::dispatchPendingLoadEvents()
 {
     loadEventSender().dispatchPendingEvents();
+}
+
+void ImageLoader::dispatchPendingErrorEvents()
+{
+    errorEventSender().dispatchPendingEvents();
 }
 
 void ImageLoader::elementDidMoveToNewDocument()
