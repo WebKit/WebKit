@@ -34,10 +34,11 @@ namespace WebCore {
 
 class GraphicsContext3D;
 class TextureAllocator;
+class TextureCopier;
 
 class CCTextureUpdater {
 public:
-    CCTextureUpdater(TextureAllocator*);
+    CCTextureUpdater(TextureAllocator*, TextureCopier*);
     ~CCTextureUpdater();
 
     void append(LayerTextureUpdater::Texture*, const IntRect& sourceRect, const IntRect& destRect);
@@ -51,6 +52,7 @@ public:
     void clear();
 
     TextureAllocator* allocator() { return m_allocator; }
+    TextureCopier* copier() { return m_copier; }
 
 private:
     struct UpdateEntry {
@@ -62,6 +64,7 @@ private:
     static void append(LayerTextureUpdater::Texture*, const IntRect& sourceRect, const IntRect& destRect, Vector<UpdateEntry>&);
 
     TextureAllocator* m_allocator;
+    TextureCopier* m_copier;
     size_t m_entryIndex;
     Vector<UpdateEntry> m_entries;
     Vector<UpdateEntry> m_partialEntries;

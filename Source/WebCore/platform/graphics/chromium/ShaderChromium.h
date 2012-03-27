@@ -95,6 +95,12 @@ private:
     int m_matrixLocation;
 };
 
+class VertexShaderPosTexIdentity {
+public:
+    void init(GraphicsContext3D*, unsigned program) { }
+    String getShaderString() const;
+};
+
 class VertexShaderPosTexTransform {
 public:
     VertexShaderPosTexTransform();
@@ -209,6 +215,11 @@ public:
 };
 
 class FragmentShaderRGBATexOpaque : public FragmentTexOpaqueBinding {
+public:
+    String getShaderString() const;
+};
+
+class FragmentShaderRGBATex : public FragmentTexOpaqueBinding {
 public:
     String getShaderString() const;
 };

@@ -37,8 +37,9 @@ using namespace std;
 
 namespace WebCore {
 
-CCTextureUpdater::CCTextureUpdater(TextureAllocator* allocator)
+CCTextureUpdater::CCTextureUpdater(TextureAllocator* allocator, TextureCopier* copier)
     : m_allocator(allocator)
+    , m_copier(copier)
     , m_entryIndex(0)
 {
     ASSERT(m_allocator);

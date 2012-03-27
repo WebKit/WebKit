@@ -31,6 +31,7 @@
 #include "FakeCCLayerTreeHostClient.h"
 #include "LayerTextureUpdater.h"
 #include "Region.h"
+#include "TextureCopier.h"
 #include "TextureManager.h"
 #include "WebCompositor.h"
 #include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
@@ -73,6 +74,11 @@ class FakeTextureAllocator : public TextureAllocator {
 public:
     virtual unsigned createTexture(const IntSize&, GC3Denum) { return 1; }
     virtual void deleteTexture(unsigned, const IntSize&, GC3Denum) { }
+};
+
+class FakeTextureCopier : public TextureCopier {
+public:
+    virtual void copyTexture(GraphicsContext3D*, unsigned, unsigned, const IntSize&) { }
 };
 
 class FakeTiledLayerChromium;
@@ -243,6 +249,23 @@ void FakeLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const 
     *resultingOpaqueRect = m_opaquePaintRect;
 }
 
+class FakeCCTextureUpdater : public CCTextureUpdater {
+public:
+    explicit FakeCCTextureUpdater()
+        : CCTextureUpdater(&m_textureAllocator, &m_textureCopier)
+    {
+    }
+
+    FakeTextureAllocator& textureAllocator()
+    {
+        return m_textureAllocator;
+    }
+
+protected:
+    FakeTextureAllocator m_textureAllocator;
+    FakeTextureCopier m_textureCopier;
+};
+
 TEST(TiledLayerChromiumTest, pushDirtyTiles)
 {
     OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
@@ -250,8 +273,7 @@ TEST(TiledLayerChromiumTest, pushDirtyTiles)
     DebugScopedSetImplThread implThread;
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
@@ -286,8 +308,7 @@ TEST(TiledLayerChromiumTest, pushOccludedDirtyTiles)
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
     TestCCOcclusionTracker occluded;
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
@@ -332,8 +353,7 @@ TEST(TiledLayerChromiumTest, pushDeletedTiles)
     DebugScopedSetImplThread implThread;
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
@@ -346,7 +366,7 @@ TEST(TiledLayerChromiumTest, pushDeletedTiles)
     EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
     EXPECT_TRUE(layerImpl->hasTileAt(0, 1));
 
-    textureManager->evictAndDeleteAllTextures(&textureAllocator);
+    textureManager->evictAndDeleteAllTextures(&updater.textureAllocator());
     textureManager->setMaxMemoryLimitBytes(4*1024*1024);
     textureManager->setPreferredMemoryLimitBytes(4*1024*1024);
 
@@ -374,8 +394,7 @@ TEST(TiledLayerChromiumTest, pushIdlePaintTiles)
     DebugScopedSetImplThread implThread;
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // The tile size is 100x100. Setup 5x5 tiles with one visible tile in the center.
     IntSize contentBounds(500, 500);
@@ -433,8 +452,7 @@ TEST(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     RefPtr<FakeTiledLayerChromium> layer2 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     OwnPtr<FakeCCTiledLayerImpl> layerImpl2(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // For this test we have two layers. layer1 exhausts most texture memory, leaving room for 2 more tiles from
     // layer2, but not all three tiles. First we paint layer1, and one tile from layer2. Then when we idle paint
@@ -514,8 +532,7 @@ TEST(TiledLayerChromiumTest, pushIdlePaintedOccludedTiles)
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
     TestCCOcclusionTracker occluded;
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // The tile size is 100x100, so this invalidates one occluded tile, culls it during paint, but prepaints it.
     occluded.setOcclusion(IntRect(0, 0, 100, 100));
@@ -540,8 +557,7 @@ TEST(TiledLayerChromiumTest, pushTilesMarkedDirtyDuringPaint)
     DebugScopedSetImplThread implThread;
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     // However, during the paint, we invalidate one of the tiles. This should
@@ -567,8 +583,7 @@ TEST(TiledLayerChromiumTest, pushTilesLayerMarkedDirtyDuringPaintOnNextLayer)
     OwnPtr<FakeCCTiledLayerImpl> layer1Impl(adoptPtr(new FakeCCTiledLayerImpl(0)));
     OwnPtr<FakeCCTiledLayerImpl> layer2Impl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     layer1->setBounds(IntSize(100, 200));
     layer1->invalidateRect(IntRect(0, 0, 100, 200));
@@ -603,8 +618,7 @@ TEST(TiledLayerChromiumTest, pushTilesLayerMarkedDirtyDuringPaintOnPreviousLayer
     OwnPtr<FakeCCTiledLayerImpl> layer1Impl(adoptPtr(new FakeCCTiledLayerImpl(0)));
     OwnPtr<FakeCCTiledLayerImpl> layer2Impl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     layer1->setBounds(IntSize(100, 200));
     layer1->invalidateRect(IntRect(0, 0, 100, 200));
@@ -645,8 +659,7 @@ TEST(TiledLayerChromiumTest, idlePaintOutOfMemory)
     DebugScopedSetImplThread implThread;
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // This invalidates 9 tiles and then paints one visible tile.
     layer->setBounds(contentBounds);
@@ -681,8 +694,7 @@ TEST(TiledLayerChromiumTest, idlePaintZeroSizedLayer)
     DebugScopedSetImplThread implThread;
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // The layer's bounds are empty.
     IntRect contentRect;
@@ -724,8 +736,7 @@ TEST(TiledLayerChromiumTest, idlePaintZeroSizedAnimatingLayer)
     DebugScopedSetImplThread implThread;
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // Pretend the layer is animating.
     layer->setDrawTransformIsAnimating(true);
@@ -773,8 +784,7 @@ TEST(TiledLayerChromiumTest, idlePaintNonVisibleLayers)
     DebugScopedSetImplThread implThread;
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // Invalidate the layer but make none of it visible, so nothing paints.
     IntRect visibleRect;
@@ -828,8 +838,7 @@ TEST(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
     OwnPtr<TextureManager> textureManager = TextureManager::create(8000*8000*8, 8000*8000*4, 1024);
     DebugScopedSetImplThread implThread;
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     int tileWidth = FakeTiledLayerChromium::tileSize().width();
     int tileHeight = FakeTiledLayerChromium::tileSize().height();
@@ -886,8 +895,7 @@ TEST(TiledLayerChromiumTest, invalidateFromPrepare)
     DebugScopedSetImplThread implThread;
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
@@ -928,8 +936,7 @@ TEST(TiledLayerChromiumTest, verifyUpdateRectWhenContentBoundsAreScaled)
     OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
     RefPtr<FakeTiledLayerWithScaledBounds> layer = adoptRef(new FakeTiledLayerWithScaledBounds(textureManager.get()));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     IntRect layerBounds(0, 0, 300, 200);
     IntRect contentBounds(0, 0, 200, 250);
@@ -966,8 +973,7 @@ TEST(TiledLayerChromiumTest, verifyInvalidationWhenContentsScaleChanges)
     DebugScopedSetImplThread implThread;
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     // Create a layer with one tile.
     layer->setBounds(IntSize(100, 100));
@@ -1037,8 +1043,7 @@ TEST(TiledLayerChromiumTest, skipsDrawGetsReset)
     rootLayer->invalidateRect(contentRect);
     childLayer->invalidateRect(contentRect);
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     ccLayerTreeHost->setRootLayer(rootLayer);
     ccLayerTreeHost->setViewportSize(IntSize(300, 300));
@@ -1096,8 +1101,7 @@ TEST(TiledLayerChromiumTest, partialUpdates)
     layer->setPosition(FloatPoint(150, 150));
     layer->invalidateRect(contentRect);
 
-    FakeTextureAllocator textureAllocator;
-    CCTextureUpdater updater(&textureAllocator);
+    FakeCCTextureUpdater updater;
 
     ccLayerTreeHost->setRootLayer(layer);
     ccLayerTreeHost->setViewportSize(IntSize(300, 200));

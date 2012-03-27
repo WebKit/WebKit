@@ -119,6 +119,7 @@
             'tests/RegionTest.cpp',
             'tests/RenderTableCellTest.cpp',
             'tests/ScrollbarLayerChromiumTest.cpp',
+            'tests/TextureCopierTest.cpp',
             'tests/TextureManagerTest.cpp',
             'tests/TiledLayerChromiumTest.cpp',
             'tests/TilingDataTest.cpp',

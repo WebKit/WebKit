@@ -1,3 +1,21 @@
+2012-03-27  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Add TextureCopier for copying texture contents
+        https://bugs.webkit.org/show_bug.cgi?id=80870
+
+        Reviewed by Stephen White.
+
+        Add new test for TextureCopier.
+
+        * WebKit.gypi:
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        * tests/TextureCopierTest.cpp: Added.
+        * tests/TiledLayerChromiumTest.cpp:
+        (FakeTextureCopier):
+        (WTF::FakeTextureCopier::copyTexture):
+        (WTF):
+        (WTF::TEST):
+
 2012-03-27  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Fix filter context usage in webkit_unit_tests.

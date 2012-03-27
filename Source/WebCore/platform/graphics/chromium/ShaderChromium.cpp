@@ -188,6 +188,19 @@ VertexShaderQuad::VertexShaderQuad()
 {
 }
 
+String VertexShaderPosTexIdentity::getShaderString() const
+{
+    return SHADER(
+        attribute vec4 a_position;
+        varying vec2 v_texCoord;
+        void main()
+        {
+            gl_Position = a_position;
+            v_texCoord = (a_position.xy + vec2(1.0)) * 0.5;
+        }
+    );
+}
+
 void VertexShaderQuad::init(GraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
@@ -406,6 +419,19 @@ String FragmentShaderRGBATexOpaque::getShaderString() const
         {
             vec4 texColor = texture2D(s_texture, v_texCoord);
             gl_FragColor = vec4(texColor.rgb, 1.0);
+        }
+    );
+}
+
+String FragmentShaderRGBATex::getShaderString() const
+{
+    return SHADER(
+        precision mediump float;
+        varying vec2 v_texCoord;
+        uniform sampler2D s_texture;
+        void main()
+        {
+            gl_FragColor = texture2D(s_texture, v_texCoord);
         }
     );
 }

@@ -45,6 +45,7 @@
 #include "PlatformColor.h"
 #include "RenderSurfaceChromium.h"
 #include "TextStream.h"
+#include "TextureCopier.h"
 #include "TextureManager.h"
 #include "TraceEvent.h"
 #include "TrackingTextureAllocator.h"
@@ -1297,6 +1298,7 @@ bool LayerRendererChromium::initializeSharedObjects()
     m_renderSurfaceTextureManager = TextureManager::create(TextureManager::highLimitBytes(viewportSize()),
                                                            TextureManager::reclaimLimitBytes(viewportSize()),
                                                            m_capabilities.maxTextureSize);
+    m_textureCopier = AcceleratedTextureCopier::create(m_context.get());
     m_contentsTextureAllocator = TrackingTextureAllocator::create(m_context.get());
     m_renderSurfaceTextureAllocator = TrackingTextureAllocator::create(m_context.get());
     if (m_capabilities.usingTextureUsageHint)
@@ -1609,6 +1611,7 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_streamTextureLayerProgram.clear();
     if (m_offscreenFramebufferId)
         GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
+    m_textureCopier.clear();
 
     releaseRenderSurfaceTextures();
 }

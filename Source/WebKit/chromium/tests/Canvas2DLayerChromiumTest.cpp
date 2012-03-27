@@ -31,6 +31,7 @@
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "Region.h"
+#include "TextureCopier.h"
 #include "TextureManager.h"
 #include "WebCompositor.h"
 #include "WebKit.h"
@@ -92,6 +93,11 @@ public:
     MOCK_METHOD3(deleteTexture, void(unsigned, const IntSize&, GC3Denum));
 };
 
+class MockTextureCopier : public TextureCopier {
+public:
+    MOCK_METHOD4(copyTexture, void(GraphicsContext3D*, unsigned, unsigned, const IntSize&));
+};
+
 class Canvas2DLayerChromiumTest : public Test {
 protected:
     void fullLifecycleTest(bool threaded)
@@ -101,11 +107,9 @@ protected:
         RefPtr<GraphicsContext3D> mainContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext()), GraphicsContext3D::RenderDirectlyToHostWindow);
         RefPtr<GraphicsContext3D> implContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext()), GraphicsContext3D::RenderDirectlyToHostWindow);
 
-        MockCanvasContext& mainMock = *static_cast<MockCanvasContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(mainContext.get()));
-        MockCanvasContext& implMock = *static_cast<MockCanvasContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(implContext.get()));
-
         MockTextureAllocator allocatorMock;
-        CCTextureUpdater updater(&allocatorMock);
+        MockTextureCopier copierMock;
+        CCTextureUpdater updater(&allocatorMock, &copierMock);
 
         const IntSize size(300, 150);
 
@@ -120,28 +124,16 @@ protected:
 
         const WebGLId backTextureId = 1;
         const WebGLId frontTextureId = 2;
-        const WebGLId fboId = 3;
         {
             InSequence sequence;
 
             // Note that the canvas backing texture is doublebuffered only when using the threaded
             // compositor.
             if (threaded) {
-                // Setup Canvas2DLayerChromium (on the main thread).
-                EXPECT_CALL(mainMock, createFramebuffer())
-                    .WillOnce(Return(fboId));
-
                 // Create texture and do the copy (on the impl thread).
                 EXPECT_CALL(allocatorMock, createTexture(size, GraphicsContext3D::RGBA))
                     .WillOnce(Return(frontTextureId));
-                EXPECT_CALL(implMock, bindTexture(GraphicsContext3D::TEXTURE_2D, frontTextureId));
-                EXPECT_CALL(implMock, bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, fboId));
-                EXPECT_CALL(implMock, framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, backTextureId, 0));
-                EXPECT_CALL(implMock, copyTexSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, 0, 0, 300, 150));
-                EXPECT_CALL(implMock, bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
-
-                // Teardown Canvas2DLayerChromium.
-                EXPECT_CALL(mainMock, deleteFramebuffer(fboId));
+                EXPECT_CALL(copierMock, copyTexture(implContext.get(), backTextureId, frontTextureId, size));
 
                 // Teardown TextureManager.
                 EXPECT_CALL(allocatorMock, deleteTexture(frontTextureId, size, GraphicsContext3D::RGBA));

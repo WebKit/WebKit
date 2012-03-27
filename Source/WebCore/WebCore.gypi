@@ -3525,6 +3525,8 @@
             'platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.h',
             'platform/graphics/chromium/TrackingTextureAllocator.cpp',
             'platform/graphics/chromium/TrackingTextureAllocator.h',
+            'platform/graphics/chromium/TextureCopier.cpp',
+            'platform/graphics/chromium/TextureCopier.h',
             'platform/graphics/chromium/TextureManager.cpp',
             'platform/graphics/chromium/TextureManager.h',
             'platform/graphics/chromium/TiledLayerChromium.cpp',

@@ -37,6 +37,7 @@
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h" // For the GLC() macro
+#include "TextureCopier.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCTextureLayerImpl.h"
 #include "cc/CCTextureUpdater.h"
@@ -56,18 +57,13 @@ Canvas2DLayerChromium::Canvas2DLayerChromium(PassRefPtr<GraphicsContext3D> conte
     , m_contextLost(false)
     , m_size(size)
     , m_backTextureId(0)
-    , m_fbo(0)
     , m_useDoubleBuffering(CCProxy::hasImplThread())
     , m_canvas(0)
 {
-    if (m_useDoubleBuffering)
-        GLC(m_context, m_fbo = m_context->createFramebuffer());
 }
 
 Canvas2DLayerChromium::~Canvas2DLayerChromium()
 {
-    if (m_useDoubleBuffering && m_fbo)
-       GLC(m_context, m_context->deleteFramebuffer(m_fbo));
     if (m_context && layerTreeHost())
         layerTreeHost()->stopRateLimiter(m_context.get());
 }
@@ -138,15 +134,8 @@ void Canvas2DLayerChromium::updateCompositorResources(GraphicsContext3D* context
     if (!m_backTextureId || !m_frontTexture || !m_frontTexture->isValid(m_size, GraphicsContext3D::RGBA))
         return;
 
-    m_frontTexture->bindTexture(context, updater.allocator());
-
-    GLC(context, context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo));
-    GLC(context, context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_backTextureId, 0));
-    // FIXME: The copy operation will fail if the m_backTexture is allocated as BGRA since glCopyTex(Sub)Image2D doesn't
-    //        support the BGRA format. See bug https://bugs.webkit.org/show_bug.cgi?id=75142
-    GLC(context, context->copyTexSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, 0, 0, m_size.width(), m_size.height()));
-    GLC(context, context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
-    GLC(context, context->flush());
+    m_frontTexture->allocate(updater.allocator());
+    updater.copier()->copyTexture(context, m_backTextureId, m_frontTexture->textureId(), m_size);
 }
 
 void Canvas2DLayerChromium::pushPropertiesTo(CCLayerImpl* layer)

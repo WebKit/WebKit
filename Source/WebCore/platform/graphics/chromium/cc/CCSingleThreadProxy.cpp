@@ -202,7 +202,7 @@ void CCSingleThreadProxy::doCommit()
         m_layerTreeHostImpl->beginCommit();
 
         m_layerTreeHost->beginCommitOnImplThread(m_layerTreeHostImpl.get());
-        CCTextureUpdater updater(m_layerTreeHostImpl->contentsTextureAllocator());
+        CCTextureUpdater updater(m_layerTreeHostImpl->contentsTextureAllocator(), m_layerTreeHostImpl->layerRenderer()->textureCopier());
         m_layerTreeHost->updateCompositorResources(m_layerTreeHostImpl->context(), updater);
         updater.update(m_layerTreeHostImpl->context(), numeric_limits<size_t>::max());
         ASSERT(!updater.hasMoreUpdates());
