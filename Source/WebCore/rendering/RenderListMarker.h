@@ -74,7 +74,7 @@ private:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     IntRect getRelativeMarkerRect();
-    IntRect localSelectionRect();
+    LayoutRect localSelectionRect();
 
     String m_text;
     RefPtr<StyleImage> m_image;

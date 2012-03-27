@@ -1090,16 +1090,16 @@ bool RenderListMarker::isImage() const
     return m_image && !m_image->errorOccurred();
 }
 
-IntRect RenderListMarker::localSelectionRect()
+LayoutRect RenderListMarker::localSelectionRect()
 {
     InlineBox* box = inlineBoxWrapper();
     if (!box)
-        return IntRect(IntPoint(), size());
+        return LayoutRect(LayoutPoint(), size());
     RootInlineBox* root = m_inlineBoxWrapper->root();
-    int newLogicalTop = root->block()->style()->isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - root->selectionBottom() : root->selectionTop() - m_inlineBoxWrapper->logicalTop();
+    LayoutUnit newLogicalTop = root->block()->style()->isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - root->selectionBottom() : root->selectionTop() - m_inlineBoxWrapper->logicalTop();
     if (root->block()->style()->isHorizontalWritingMode())
-        return IntRect(0, newLogicalTop, width(), root->selectionHeight());
-    return IntRect(newLogicalTop, 0, root->selectionHeight(), height());
+        return LayoutRect(0, newLogicalTop, width(), root->selectionHeight());
+    return LayoutRect(newLogicalTop, 0, root->selectionHeight(), height());
 }
 
 void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -1110,18 +1110,18 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (style()->visibility() != VISIBLE)
         return;
 
-    IntPoint boxOrigin(paintOffset + location());
+    LayoutPoint boxOrigin(paintOffset + location());
     LayoutRect overflowRect(visualOverflowRect());
     overflowRect.moveBy(boxOrigin);
     overflowRect.inflate(maximalOutlineSize(paintInfo.phase));
 
-    if (!paintInfo.rect.intersects(overflowRect))
+    if (!paintInfo.rect.intersects(pixelSnappedIntRect(overflowRect)))
         return;
 
-    LayoutRect box(boxOrigin, LayoutSize(width(), height()));
+    LayoutRect box(boxOrigin, size());
     
-    LayoutRect marker = getRelativeMarkerRect();
-    marker.moveBy(boxOrigin);
+    IntRect marker = getRelativeMarkerRect();
+    marker.moveBy(roundedIntPoint(boxOrigin));
 
     GraphicsContext* context = paintInfo.context;
 
@@ -1134,7 +1134,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         if (selectionState() != SelectionNone) {
             LayoutRect selRect = localSelectionRect();
             selRect.moveBy(boxOrigin);
-            context->fillRect(selRect, selectionBackgroundColor(), style()->colorSpace());
+            context->fillRect(pixelSnappedIntRect(selRect), selectionBackgroundColor(), style()->colorSpace());
         }
         return;
     }
@@ -1148,7 +1148,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (selectionState() != SelectionNone) {
         LayoutRect selRect = localSelectionRect();
         selRect.moveBy(boxOrigin);
-        context->fillRect(selRect, selectionBackgroundColor(), style()->colorSpace());
+        context->fillRect(pixelSnappedIntRect(selRect), selectionBackgroundColor(), style()->colorSpace());
     }
 
     const Color color(style()->visitedDependentColor(CSSPropertyColor));
@@ -1258,16 +1258,16 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     GraphicsContextStateSaver stateSaver(*context, false);
     if (!style()->isHorizontalWritingMode()) {
-        marker.moveBy(-boxOrigin);
+        marker.moveBy(roundedIntPoint(-boxOrigin));
         marker = marker.transposedRect();
-        marker.move(box.x(), box.y() - logicalHeight());
+        marker.moveBy(IntPoint(roundToInt(box.x()), roundToInt(box.y() - logicalHeight())));
         stateSaver.save();
         context->translate(marker.x(), marker.maxY());
         context->rotate(static_cast<float>(deg2rad(90.)));
         context->translate(-marker.x(), -marker.maxY());
     }
 
-    LayoutPoint textOrigin = LayoutPoint(marker.x(), marker.y() + style()->fontMetrics().ascent());
+    IntPoint textOrigin = IntPoint(marker.x(), marker.y() + style()->fontMetrics().ascent());
 
     if (type == Asterisks || type == Footnotes)
         context->drawText(font, textRun, textOrigin);
@@ -1286,14 +1286,14 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
         const UChar suffix = listMarkerSuffix(type, m_listItem->value());
         if (style()->isLeftToRightDirection()) {
-            LayoutUnit width = font.width(textRun);
+            int width = font.width(textRun);
             context->drawText(font, textRun, textOrigin);
             UChar suffixSpace[2] = { suffix, ' ' };
             context->drawText(font, RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()), textOrigin + IntSize(width, 0));
         } else {
             UChar spaceSuffix[2] = { ' ', suffix };
             TextRun spaceSuffixRun = RenderBlock::constructTextRun(this, font, spaceSuffix, 2, style());
-            LayoutUnit width = font.width(spaceSuffixRun);
+            int width = font.width(spaceSuffixRun);
             context->drawText(font, spaceSuffixRun, textOrigin);
             context->drawText(font, textRun, textOrigin + IntSize(width, 0));
         }
@@ -1349,8 +1349,8 @@ void RenderListMarker::computePreferredLogicalWidths()
     if (isImage()) {
         // FIXME: This is a somewhat arbitrary width.  Generated images for markers really won't become particularly useful
         // until we support the CSS3 marker pseudoclass to allow control over the width and height of the marker box.
-        LayoutUnit bulletWidth = fontMetrics.ascent() / 2;
-        m_image->setContainerSizeForRenderer(this, LayoutSize(bulletWidth, bulletWidth), style()->effectiveZoom());
+        int bulletWidth = fontMetrics.ascent() / 2;
+        m_image->setContainerSizeForRenderer(this, IntSize(bulletWidth, bulletWidth), style()->effectiveZoom());
         LayoutSize imageSize = m_image->imageSize(this, style()->effectiveZoom());
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = style()->isHorizontalWritingMode() ? imageSize.width() : imageSize.height();
         setPreferredLogicalWidthsDirty(false);
@@ -1473,8 +1473,8 @@ void RenderListMarker::updateMargins()
 {
     const FontMetrics& fontMetrics = style()->fontMetrics();
 
-    int marginStart = 0;
-    int marginEnd = 0;
+    LayoutUnit marginStart = 0;
+    LayoutUnit marginEnd = 0;
 
     if (isInside()) {
         if (isImage())
@@ -1504,7 +1504,7 @@ void RenderListMarker::updateMargins()
                     case NoneListStyle:
                         break;
                     default:
-                        marginStart = m_text.isEmpty() ? 0 : -minPreferredLogicalWidth() - offset / 2;
+                        marginStart = m_text.isEmpty() ? zeroLayoutUnit : -minPreferredLogicalWidth() - offset / 2;
                 }
             }
             marginEnd = -marginStart - minPreferredLogicalWidth();
