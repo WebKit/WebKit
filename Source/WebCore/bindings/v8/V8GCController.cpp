@@ -291,7 +291,7 @@ typedef Vector<GrouperItem> GrouperList;
 // element of the tree to which it belongs.
 static GroupId calculateGroupId(Node* node)
 {
-    if (node->inDocument() || (node->hasTagName(HTMLNames::imgTag) && !static_cast<HTMLImageElement*>(node)->haveFiredLoadEvent()))
+    if (node->inDocument() || (node->hasTagName(HTMLNames::imgTag) && static_cast<HTMLImageElement*>(node)->hasPendingLoadEvent()))
         return GroupId(node->document());
 
     Node* root = node;

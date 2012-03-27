@@ -194,7 +194,7 @@ RenderObject* SVGImageElement::createRenderer(RenderArena* arena, RenderStyle*)
 
 bool SVGImageElement::haveLoadedRequiredResources()
 {
-    return !externalResourcesRequiredBaseValue() || m_imageLoader.haveFiredLoadEvent();
+    return !externalResourcesRequiredBaseValue() || !m_imageLoader.hasPendingLoadEvent();
 }
 
 void SVGImageElement::attach()

@@ -84,9 +84,9 @@ static ImageEventSender& errorEventSender()
 ImageLoader::ImageLoader(Element* element)
     : m_element(element)
     , m_image(0)
-    , m_firedBeforeLoad(true)
-    , m_firedLoad(true)
-    , m_firedError(true)
+    , m_hasPendingBeforeLoadEvent(false)
+    , m_hasPendingLoadEvent(false)
+    , m_hasPendingErrorEvent(false)
     , m_imageComplete(true)
     , m_loadManually(false)
 {
@@ -97,16 +97,16 @@ ImageLoader::~ImageLoader()
     if (m_image)
         m_image->removeClient(this);
 
-    ASSERT(!m_firedBeforeLoad || !beforeLoadEventSender().hasPendingEvents(this));
-    if (!m_firedBeforeLoad)
+    ASSERT(m_hasPendingBeforeLoadEvent || !beforeLoadEventSender().hasPendingEvents(this));
+    if (m_hasPendingBeforeLoadEvent)
         beforeLoadEventSender().cancelEvent(this);
 
-    ASSERT(!m_firedLoad || !loadEventSender().hasPendingEvents(this));
-    if (!m_firedLoad)
+    ASSERT(m_hasPendingLoadEvent || !loadEventSender().hasPendingEvents(this));
+    if (m_hasPendingLoadEvent)
         loadEventSender().cancelEvent(this);
 
-    ASSERT(!m_firedError || !errorEventSender().hasPendingEvents(this));
-    if (!m_firedError)
+    ASSERT(m_hasPendingErrorEvent || !errorEventSender().hasPendingEvents(this));
+    if (m_hasPendingErrorEvent)
         errorEventSender().cancelEvent(this);
 }
 
@@ -116,17 +116,17 @@ void ImageLoader::setImage(CachedImage* newImage)
     CachedImage* oldImage = m_image.get();
     if (newImage != oldImage) {
         m_image = newImage;
-        if (!m_firedBeforeLoad) {
+        if (m_hasPendingBeforeLoadEvent) {
             beforeLoadEventSender().cancelEvent(this);
-            m_firedBeforeLoad = true;
+            m_hasPendingBeforeLoadEvent = false;
         }
-        if (!m_firedLoad) {
+        if (m_hasPendingLoadEvent) {
             loadEventSender().cancelEvent(this);
-            m_firedLoad = true;
+            m_hasPendingLoadEvent = false;
         }
-        if (!m_firedError) {
+        if (m_hasPendingErrorEvent) {
             errorEventSender().cancelEvent(this);
-            m_firedError = true;
+            m_hasPendingErrorEvent = false;
         }
         m_imageComplete = true;
         if (newImage)
@@ -186,16 +186,16 @@ void ImageLoader::updateFromElement()
     
     CachedImage* oldImage = m_image.get();
     if (newImage != oldImage) {
-        if (!m_firedBeforeLoad)
+        if (m_hasPendingBeforeLoadEvent)
             beforeLoadEventSender().cancelEvent(this);
-        if (!m_firedLoad)
+        if (m_hasPendingLoadEvent)
             loadEventSender().cancelEvent(this);
-        if (!m_firedError)
+        if (m_hasPendingErrorEvent)
             errorEventSender().cancelEvent(this);
 
         m_image = newImage;
-        m_firedBeforeLoad = !newImage;
-        m_firedLoad = !newImage;
+        m_hasPendingBeforeLoadEvent = newImage;
+        m_hasPendingLoadEvent = newImage;
         m_imageComplete = !newImage;
 
         if (newImage) {
@@ -230,10 +230,10 @@ void ImageLoader::notifyFinished(CachedResource* resource)
     ASSERT(resource == m_image.get());
 
     m_imageComplete = true;
-    if (haveFiredBeforeLoadEvent())
+    if (!hasPendingBeforeLoadEvent())
         updateRenderer();
 
-    if (m_firedLoad)
+    if (!m_hasPendingLoadEvent)
         return;
 
     if (m_element->fastHasAttribute(HTMLNames::crossoriginAttr)
@@ -242,18 +242,18 @@ void ImageLoader::notifyFinished(CachedResource* resource)
 
         setImage(0);
 
-        m_firedError = false;
+        m_hasPendingErrorEvent = true;
         errorEventSender().dispatchEventSoon(this);
 
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Cross-origin image load denied by Cross-Origin Resource Sharing policy."));
         m_element->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
 
-        ASSERT(m_firedLoad);
+        ASSERT(!m_hasPendingLoadEvent);
         return;
     }
 
     if (resource->wasCanceled()) {
-        m_firedLoad = true;
+        m_hasPendingLoadEvent = false;
         return;
     }
 
@@ -314,13 +314,13 @@ void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender)
 
 void ImageLoader::dispatchPendingBeforeLoadEvent()
 {
-    if (m_firedBeforeLoad)
+    if (!m_hasPendingBeforeLoadEvent)
         return;
     if (!m_image)
         return;
     if (!m_element->document()->attached())
         return;
-    m_firedBeforeLoad = true;
+    m_hasPendingBeforeLoadEvent = false;
     if (m_element->dispatchBeforeLoadEvent(m_image->url())) {
         updateRenderer();
         return;
@@ -331,7 +331,7 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
     }
 
     loadEventSender().cancelEvent(this);
-    m_firedLoad = true;
+    m_hasPendingLoadEvent = false;
     
     if (m_element->hasTagName(HTMLNames::objectTag))
         static_cast<HTMLObjectElement*>(m_element)->renderFallbackContent();
@@ -339,23 +339,23 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
 
 void ImageLoader::dispatchPendingLoadEvent()
 {
-    if (m_firedLoad)
+    if (!m_hasPendingLoadEvent)
         return;
     if (!m_image)
         return;
     if (!m_element->document()->attached())
         return;
-    m_firedLoad = true;
+    m_hasPendingLoadEvent = false;
     dispatchLoadEvent();
 }
 
 void ImageLoader::dispatchPendingErrorEvent()
 {
-    if (m_firedError)
+    if (!m_hasPendingErrorEvent)
         return;
     if (!m_element->document()->attached())
         return;
-    m_firedError = true;
+    m_hasPendingErrorEvent = false;
     m_element->dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 

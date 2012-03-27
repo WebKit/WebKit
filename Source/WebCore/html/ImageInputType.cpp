@@ -130,7 +130,7 @@ void ImageInputType::attach()
     if (!renderer)
         return;
 
-    if (!m_imageLoader->haveFiredBeforeLoadEvent())
+    if (m_imageLoader->hasPendingBeforeLoadEvent())
         return;
 
     RenderImageResource* imageResource = renderer->imageResource();
