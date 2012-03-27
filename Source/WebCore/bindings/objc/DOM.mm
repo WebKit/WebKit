@@ -44,6 +44,11 @@
 #import "WebScriptObjectPrivate.h"
 #import <wtf/HashMap.h>
 
+#if ENABLE(INSPECTOR)
+#import "InspectorController.h"
+#import "Page.h"
+#endif
+
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
 #import "DOMSVG.h"
 #import "SVGElementInstance.h"
@@ -389,6 +394,18 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     range->textRects(rects);
     return kit(rects);
 }
+
+- (void)inspect
+{
+#if ENABLE(INSPECTOR)
+    WebCore::Node* node = core(self);
+    if (WebCore::Document* document = node->document()) {
+        if (WebCore::Page* page = document->page())
+            page->inspectorController()->inspect(node);
+    }
+#endif
+}
+
 @end
 
 @implementation DOMRange (DOMRangeExtensions)

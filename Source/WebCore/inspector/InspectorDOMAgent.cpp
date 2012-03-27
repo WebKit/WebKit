@@ -914,7 +914,6 @@ bool InspectorDOMAgent::handleMousePress()
 
     if (m_highlightData && m_highlightData->node) {
         RefPtr<Node> node = m_highlightData->node;
-        setSearchingForNode(false, 0);
         inspect(node.get());
     }
     return true;
@@ -922,6 +921,8 @@ bool InspectorDOMAgent::handleMousePress()
 
 void InspectorDOMAgent::inspect(Node* node)
 {
+    setSearchingForNode(false, 0);
+
     if (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE)
         node = node->parentNode();
     m_nodeToFocus = node;
