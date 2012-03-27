@@ -53,12 +53,8 @@ public:
 
     virtual void didAddClient(CachedResourceClient*);
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
-    virtual void error(CachedResource::Status);
 
     virtual void allClientsRemoved();
-
-    void checkNotify();
-
     void beginLoadIfNeeded(CachedResourceLoader* dl);
     bool stillNeedsLoad() const { return !m_loadInitiated; }
 
@@ -71,6 +67,7 @@ public:
 #endif
 
 private:
+    virtual void checkNotify();
     FontCustomPlatformData* m_fontData;
     bool m_loadInitiated;
 

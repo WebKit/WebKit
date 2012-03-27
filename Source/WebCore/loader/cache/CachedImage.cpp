@@ -380,14 +380,11 @@ void CachedImage::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 
 void CachedImage::error(CachedResource::Status status)
 {
+    CachedResource::error(status);
     checkShouldPaintBrokenImage();
     clear();
-    setStatus(status);
-    ASSERT(errorOccurred());
     m_data.clear();
     notifyObservers();
-    setLoading(false);
-    checkNotify();
 }
 
 void CachedImage::setResponse(const ResourceResponse& response)

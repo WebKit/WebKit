@@ -46,11 +46,10 @@ namespace WebCore {
         virtual void setEncoding(const String&);
         virtual String encoding() const;
         virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
-        virtual void error(CachedResource::Status);
-        
-        void checkNotify();
         
     protected:
+        virtual void checkNotify();
+
         String m_sheet;
         RefPtr<TextResourceDecoder> m_decoder;
     };
