@@ -52,6 +52,10 @@ NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "compiler/preprocessor/memory.h"
 
+#if defined(_MSC_VER)
+#pragma warning(disable: 4706)
+#endif
+
 // default alignment and chunksize, if called with 0 arguments
 #define CHUNKSIZE       (64*1024)
 #define ALIGN           8

@@ -17,11 +17,12 @@
 #include <d3d9.h>
 
 #include "common/angleutils.h"
-#include "libGLESv2/RefCountObject.h"
+#include "common/RefCountObject.h"
 
 namespace gl
 {
 class Texture;
+class Renderbuffer;
 class Colorbuffer;
 class DepthStencilbuffer;
 
@@ -31,6 +32,9 @@ class RenderbufferInterface
     RenderbufferInterface();
 
     virtual ~RenderbufferInterface() {};
+
+    virtual void addProxyRef(const Renderbuffer *proxy);
+    virtual void releaseProxy(const Renderbuffer *proxy);
 
     virtual IDirect3DSurface9 *getRenderTarget() = 0;
     virtual IDirect3DSurface9 *getDepthStencil() = 0;
@@ -61,6 +65,9 @@ class RenderbufferTexture : public RenderbufferInterface
 
     virtual ~RenderbufferTexture();
 
+    void addProxyRef(const Renderbuffer *proxy);
+    void releaseProxy(const Renderbuffer *proxy);
+
     IDirect3DSurface9 *getRenderTarget();
     IDirect3DSurface9 *getDepthStencil();
 
@@ -75,7 +82,7 @@ class RenderbufferTexture : public RenderbufferInterface
   private:
     DISALLOW_COPY_AND_ASSIGN(RenderbufferTexture);
 
-    Texture *mTexture;
+    BindingPointer <Texture> mTexture;
     GLenum mTarget;
 };
 
@@ -127,6 +134,13 @@ class Renderbuffer : public RefCountObject
     Renderbuffer(GLuint id, RenderbufferInterface *storage);
 
     virtual ~Renderbuffer();
+
+    // These functions from RefCountObject are overloaded here because
+    // Textures need to maintain their own count of references to them via
+    // Renderbuffers/RenderbufferTextures. These functions invoke those
+    // reference counting functions on the RenderbufferInterface.
+    void addRef() const;
+    void release() const;
 
     IDirect3DSurface9 *getRenderTarget();
     IDirect3DSurface9 *getDepthStencil();

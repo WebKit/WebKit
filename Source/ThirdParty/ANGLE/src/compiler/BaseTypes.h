@@ -47,6 +47,7 @@ enum TBasicType
     EbtGuardSamplerEnd,    // non type:  see implementation of IsSampler()
     EbtStruct,
     EbtAddress,            // should be deprecated??
+    EbtInvariant,          // used as a type when qualifying a previously declared variable as being invariant
 };
 
 inline const char* getBasicString(TBasicType t)

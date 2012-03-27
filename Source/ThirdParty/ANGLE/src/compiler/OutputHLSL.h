@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2011 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -32,7 +32,7 @@ class OutputHLSL : public TIntermTraverser
     static TString arrayString(const TType &type);
     static TString initializer(const TType &type);
     static TString decorate(const TString &string);                      // Prepends an underscore to avoid naming clashes
-    static TString decorateUniform(const TString &string, bool array);
+    static TString decorateUniform(const TString &string, const TType &type);
 
   protected:
     void header();
@@ -113,7 +113,10 @@ class OutputHLSL : public TIntermTraverser
     bool mUsesEqualBVec2;
     bool mUsesEqualBVec3;
     bool mUsesEqualBVec4;
-    bool mUsesAtan2;
+    bool mUsesAtan2_1;
+    bool mUsesAtan2_2;
+    bool mUsesAtan2_3;
+    bool mUsesAtan2_4;
 
     typedef std::set<TString> Constructors;
     Constructors mConstructors;

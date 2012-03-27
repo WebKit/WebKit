@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2011 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -27,6 +27,7 @@
 #include "libGLESv2/Renderbuffer.h"
 #include "libGLESv2/Shader.h"
 #include "libGLESv2/Texture.h"
+#include "libGLESv2/Query.h"
 
 bool validImageSize(GLint level, GLsizei width, GLsizei height)
 {
@@ -196,6 +197,39 @@ void __stdcall glAttachShader(GLuint program, GLuint shader)
             {
                 return error(GL_INVALID_OPERATION);
             }
+        }
+    }
+    catch(std::bad_alloc&)
+    {
+        return error(GL_OUT_OF_MEMORY);
+    }
+}
+
+void __stdcall glBeginQueryEXT(GLenum target, GLuint id)
+{
+    EVENT("(GLenum target = 0x%X, GLuint %d)", target, id);
+
+    try
+    {
+        switch (target)
+        {
+          case GL_ANY_SAMPLES_PASSED_EXT: 
+          case GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT:
+              break;
+          default: 
+              return error(GL_INVALID_ENUM);
+        }
+
+        if (id == 0)
+        {
+            return error(GL_INVALID_OPERATION);
+        }
+
+        gl::Context *context = gl::getNonLostContext();
+
+        if (context)
+        {
+            context->beginQuery(target, id);
         }
     }
     catch(std::bad_alloc&)
@@ -988,7 +1022,7 @@ void __stdcall glCompressedTexSubImage2D(GLenum target, GLint level, GLint xoffs
 
     try
     {
-        if (!gl::IsTextureTarget(target))
+        if (!gl::IsInternalTextureTarget(target))
         {
             return error(GL_INVALID_ENUM);
         }
@@ -1277,7 +1311,7 @@ void __stdcall glCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GL
 
     try
     {
-        if (!gl::IsTextureTarget(target))
+        if (!gl::IsInternalTextureTarget(target))
         {
             return error(GL_INVALID_ENUM);
         }
@@ -1593,6 +1627,33 @@ void __stdcall glDeleteProgram(GLuint program)
     }
 }
 
+void __stdcall glDeleteQueriesEXT(GLsizei n, const GLuint *ids)
+{
+    EVENT("(GLsizei n = %d, const GLuint *ids = 0x%0.8p)", n, ids);
+
+    try
+    {
+        if (n < 0)
+        {
+            return error(GL_INVALID_VALUE);
+        }
+
+        gl::Context *context = gl::getNonLostContext();
+
+        if (context)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                context->deleteQuery(ids[i]);
+            }
+        }
+    }
+    catch(std::bad_alloc&)
+    {
+        return error(GL_OUT_OF_MEMORY);
+    }
+}
+
 void __stdcall glDeleteRenderbuffers(GLsizei n, const GLuint* renderbuffers)
 {
     EVENT("(GLsizei n = %d, const GLuint* renderbuffers = 0x%0.8p)", n, renderbuffers);
@@ -1882,7 +1943,34 @@ void __stdcall glDrawArrays(GLenum mode, GLint first, GLsizei count)
 
         if (context)
         {
-            context->drawArrays(mode, first, count);
+            context->drawArrays(mode, first, count, 0);
+        }
+    }
+    catch(std::bad_alloc&)
+    {
+        return error(GL_OUT_OF_MEMORY);
+    }
+}
+
+void __stdcall glDrawArraysInstancedANGLE(GLenum mode, GLint first, GLsizei count, GLsizei primcount)
+{
+    EVENT("(GLenum mode = 0x%X, GLint first = %d, GLsizei count = %d, GLsizei primcount = %d)", mode, first, count, primcount);
+
+    try
+    {
+        if (count < 0 || first < 0 || primcount < 0)
+        {
+            return error(GL_INVALID_VALUE);
+        }
+
+        if (primcount > 0)
+        {
+            gl::Context *context = gl::getNonLostContext();
+
+            if (context)
+            {
+                context->drawArrays(mode, first, count, primcount);
+            }
         }
     }
     catch(std::bad_alloc&)
@@ -1922,7 +2010,50 @@ void __stdcall glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLv
                 return error(GL_INVALID_ENUM);
             }
         
-            context->drawElements(mode, count, type, indices);
+            context->drawElements(mode, count, type, indices, 0);
+        }
+    }
+    catch(std::bad_alloc&)
+    {
+        return error(GL_OUT_OF_MEMORY);
+    }
+}
+
+void __stdcall glDrawElementsInstancedANGLE(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei primcount)
+{
+    EVENT("(GLenum mode = 0x%X, GLsizei count = %d, GLenum type = 0x%X, const GLvoid* indices = 0x%0.8p, GLsizei primcount = %d)",
+          mode, count, type, indices, primcount);
+
+    try
+    {
+        if (count < 0 || primcount < 0)
+        {
+            return error(GL_INVALID_VALUE);
+        }
+
+        if (primcount > 0)
+        {
+            gl::Context *context = gl::getNonLostContext();
+
+            if (context)
+            {
+                switch (type)
+                {
+                  case GL_UNSIGNED_BYTE:
+                  case GL_UNSIGNED_SHORT:
+                    break;
+                  case GL_UNSIGNED_INT:
+                    if (!context->supports32bitIndices())
+                    {
+                        return error(GL_INVALID_ENUM);    
+                    }
+                    break;
+                  default:
+                    return error(GL_INVALID_ENUM);
+                }
+            
+                context->drawElements(mode, count, type, indices, primcount);
+            }
         }
     }
     catch(std::bad_alloc&)
@@ -1979,6 +2110,34 @@ void __stdcall glEnableVertexAttribArray(GLuint index)
         if (context)
         {
             context->setEnableVertexAttribArray(index, true);
+        }
+    }
+    catch(std::bad_alloc&)
+    {
+        return error(GL_OUT_OF_MEMORY);
+    }
+}
+
+void __stdcall glEndQueryEXT(GLenum target)
+{
+    EVENT("GLenum target = 0x%X)", target);
+
+    try
+    {
+        switch (target)
+        {
+          case GL_ANY_SAMPLES_PASSED_EXT: 
+          case GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT:
+              break;
+          default: 
+              return error(GL_INVALID_ENUM);
+        }
+
+        gl::Context *context = gl::getNonLostContext();
+
+        if (context)
+        {
+            context->endQuery(target);
         }
     }
     catch(std::bad_alloc&)
@@ -2356,6 +2515,33 @@ void __stdcall glGenFramebuffers(GLsizei n, GLuint* framebuffers)
             for (int i = 0; i < n; i++)
             {
                 framebuffers[i] = context->createFramebuffer();
+            }
+        }
+    }
+    catch(std::bad_alloc&)
+    {
+        return error(GL_OUT_OF_MEMORY);
+    }
+}
+
+void __stdcall glGenQueriesEXT(GLsizei n, GLuint* ids)
+{
+    EVENT("(GLsizei n = %d, GLuint* ids = 0x%0.8p)", n, ids);
+
+    try
+    {
+        if (n < 0)
+        {
+            return error(GL_INVALID_VALUE);
+        }
+
+        gl::Context *context = gl::getNonLostContext();
+
+        if (context)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                ids[i] = context->createQuery();
             }
         }
     }
@@ -2860,11 +3046,15 @@ void __stdcall glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attac
             {
                 attachmentObjectType = attachmentType;
             }
-            else if (gl::IsTextureTarget(attachmentType))
+            else if (gl::IsInternalTextureTarget(attachmentType))
             {
                 attachmentObjectType = GL_TEXTURE;
             }
-            else UNREACHABLE();
+            else
+            {
+                UNREACHABLE();
+                return;
+            }
 
             switch (pname)
             {
@@ -3086,6 +3276,82 @@ void __stdcall glGetProgramInfoLog(GLuint program, GLsizei bufsize, GLsizei* len
             }
 
             programObject->getInfoLog(bufsize, length, infolog);
+        }
+    }
+    catch(std::bad_alloc&)
+    {
+        return error(GL_OUT_OF_MEMORY);
+    }
+}
+
+void __stdcall glGetQueryivEXT(GLenum target, GLenum pname, GLint *params)
+{
+    EVENT("GLenum target = 0x%X, GLenum pname = 0x%X, GLint *params = 0x%0.8p)", target, pname, params);
+
+    try
+    {
+        switch (pname)
+        {
+          case GL_CURRENT_QUERY_EXT:
+            break;
+          default:
+            return error(GL_INVALID_ENUM);
+        }
+
+        gl::Context *context = gl::getNonLostContext();
+
+        if (context)
+        {
+            params[0] = context->getActiveQuery(target);
+        }
+    }
+    catch(std::bad_alloc&)
+    {
+        return error(GL_OUT_OF_MEMORY);
+    }
+}
+
+void __stdcall glGetQueryObjectuivEXT(GLuint id, GLenum pname, GLuint *params)
+{
+    EVENT("(GLuint id = %d, GLenum pname = 0x%X, GLuint *params = 0x%0.8p)", id, pname, params);
+
+    try
+    {
+        switch (pname)
+        {
+          case GL_QUERY_RESULT_EXT:
+          case GL_QUERY_RESULT_AVAILABLE_EXT:
+            break;
+          default:
+            return error(GL_INVALID_ENUM);
+        }
+        gl::Context *context = gl::getNonLostContext();
+
+        if (context)
+        {
+            gl::Query *queryObject = context->getQuery(id, false, GL_NONE);
+
+            if (!queryObject)
+            {
+                return error(GL_INVALID_OPERATION);
+            }
+
+            if (context->getActiveQuery(queryObject->getType()) == id)
+            {
+                return error(GL_INVALID_OPERATION);
+            }
+
+            switch(pname)
+            {
+              case GL_QUERY_RESULT_EXT:
+                params[0] = queryObject->getResult();
+                break;
+              case GL_QUERY_RESULT_AVAILABLE_EXT:
+                params[0] = queryObject->isResultAvailable();
+                break;
+              default:
+                ASSERT(false);
+            }
         }
     }
     catch(std::bad_alloc&)
@@ -3365,8 +3631,6 @@ const GLubyte* __stdcall glGetString(GLenum name)
     {
         return error(GL_OUT_OF_MEMORY, (GLubyte*)NULL);
     }
-
-    return NULL;
 }
 
 void __stdcall glGetTexParameterfv(GLenum target, GLenum pname, GLfloat* params)
@@ -3725,6 +3989,9 @@ void __stdcall glGetVertexAttribfv(GLuint index, GLenum pname, GLfloat* params)
                     params[i] = attribState.mCurrentValue[i];
                 }
                 break;
+              case GL_VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE:
+                *params = (GLfloat)attribState.mDivisor;
+                break;
               default: return error(GL_INVALID_ENUM);
             }
         }
@@ -3778,6 +4045,9 @@ void __stdcall glGetVertexAttribiv(GLuint index, GLenum pname, GLint* params)
                     float currentValue = attribState.mCurrentValue[i];
                     params[i] = (GLint)(currentValue > 0.0f ? floor(currentValue + 0.5f) : ceil(currentValue - 0.5f));
                 }
+                break;
+              case GL_VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE:
+                *params = (GLint)attribState.mDivisor;
                 break;
               default: return error(GL_INVALID_ENUM);
             }
@@ -3980,6 +4250,37 @@ GLboolean __stdcall glIsProgram(GLuint program)
             gl::Program *programObject = context->getProgram(program);
 
             if (programObject)
+            {
+                return GL_TRUE;
+            }
+        }
+    }
+    catch(std::bad_alloc&)
+    {
+        return error(GL_OUT_OF_MEMORY, GL_FALSE);
+    }
+
+    return GL_FALSE;
+}
+
+GLboolean __stdcall glIsQueryEXT(GLuint id)
+{
+    EVENT("(GLuint id = %d)", id);
+
+    try
+    {
+        if (id == 0)
+        {
+            return GL_FALSE;
+        }
+
+        gl::Context *context = gl::getNonLostContext();
+
+        if (context)
+        {
+            gl::Query *queryObject = context->getQuery(id, false, GL_NONE);
+
+            if (queryObject)
             {
                 return GL_TRUE;
             }
@@ -4706,7 +5007,7 @@ void __stdcall glTexImage2D(GLenum target, GLint level, GLint internalformat, GL
             return error(GL_INVALID_VALUE);
         }
 
-        if (internalformat != format)
+        if (internalformat != GLint(format))
         {
             return error(GL_INVALID_OPERATION);
         }
@@ -5168,7 +5469,7 @@ void __stdcall glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint 
 
     try
     {
-        if (!gl::IsTextureTarget(target))
+        if (!gl::IsInternalTextureTarget(target))
         {
             return error(GL_INVALID_ENUM);
         }
@@ -5999,6 +6300,30 @@ void __stdcall glVertexAttrib4fv(GLuint index, const GLfloat* values)
     }
 }
 
+void __stdcall glVertexAttribDivisorANGLE(GLuint index, GLuint divisor)
+{
+    EVENT("(GLuint index = %d, GLuint divisor = %d)", index, divisor);
+
+    try
+    {
+        if (index >= gl::MAX_VERTEX_ATTRIBS)
+        {
+            return error(GL_INVALID_VALUE);
+        }
+
+        gl::Context *context = gl::getNonLostContext();
+
+        if (context)
+        {
+            context->setVertexAttribDivisor(index, divisor);
+        }
+    }
+    catch(std::bad_alloc&)
+    {
+        return error(GL_OUT_OF_MEMORY);
+    }
+}
+
 void __stdcall glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid* ptr)
 {
     EVENT("(GLuint index = %d, GLint size = %d, GLenum type = 0x%X, "
@@ -6164,6 +6489,16 @@ __eglMustCastToProperFunctionPointerType __stdcall glGetProcAddress(const char *
         {"glReadnPixelsEXT", (__eglMustCastToProperFunctionPointerType)glReadnPixelsEXT},
         {"glGetnUniformfvEXT", (__eglMustCastToProperFunctionPointerType)glGetnUniformfvEXT},
         {"glGetnUniformivEXT", (__eglMustCastToProperFunctionPointerType)glGetnUniformivEXT},
+        {"glGenQueriesEXT", (__eglMustCastToProperFunctionPointerType)glGenQueriesEXT},
+        {"glDeleteQueriesEXT", (__eglMustCastToProperFunctionPointerType)glDeleteQueriesEXT},
+        {"glIsQueryEXT", (__eglMustCastToProperFunctionPointerType)glIsQueryEXT},
+        {"glBeginQueryEXT", (__eglMustCastToProperFunctionPointerType)glBeginQueryEXT},
+        {"glEndQueryEXT", (__eglMustCastToProperFunctionPointerType)glEndQueryEXT},
+        {"glGetQueryivEXT", (__eglMustCastToProperFunctionPointerType)glGetQueryivEXT},
+        {"glGetQueryObjectuivEXT", (__eglMustCastToProperFunctionPointerType)glGetQueryObjectuivEXT},
+        {"glVertexAttribDivisorANGLE", (__eglMustCastToProperFunctionPointerType)glVertexAttribDivisorANGLE},
+        {"glDrawArraysInstancedANGLE", (__eglMustCastToProperFunctionPointerType)glDrawArraysInstancedANGLE},
+        {"glDrawElementsInstancedANGLE", (__eglMustCastToProperFunctionPointerType)glDrawElementsInstancedANGLE},
     };
 
     for (int ext = 0; ext < sizeof(glExtensions) / sizeof(Extension); ext++)

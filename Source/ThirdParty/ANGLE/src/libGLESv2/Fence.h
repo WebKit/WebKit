@@ -15,13 +15,18 @@
 
 #include "common/angleutils.h"
 
+namespace egl
+{
+class Display;
+}
+
 namespace gl
 {
 
 class Fence
 {
   public:
-    Fence();
+    explicit Fence(egl::Display* display);
     virtual ~Fence();
 
     GLboolean isFence();
@@ -33,6 +38,7 @@ class Fence
   private:
     DISALLOW_COPY_AND_ASSIGN(Fence);
 
+    egl::Display* mDisplay;
     IDirect3DQuery9* mQuery;
     GLenum mCondition;
     GLboolean mStatus;

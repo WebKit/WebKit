@@ -37,7 +37,7 @@ GLsizei ComputeCompressedPitch(GLsizei width, GLenum format);
 GLsizei ComputeCompressedSize(GLsizei width, GLsizei height, GLenum format);
 bool IsCompressed(GLenum format);
 bool IsCubemapTextureTarget(GLenum target);
-bool IsTextureTarget(GLenum target);
+bool IsInternalTextureTarget(GLenum target);
 bool CheckTextureFormatType(GLenum format, GLenum type);
 GLenum ExtractFormat(GLenum internalformat);
 GLenum ExtractType(GLenum internalformat);

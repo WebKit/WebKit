@@ -665,8 +665,6 @@ int yylex_CPP(char* buf, int maxSize)
             return 0;
         }
     }
-
-    return 0;
 } // yylex
 
 //Checks if the token just read is EOF or not.

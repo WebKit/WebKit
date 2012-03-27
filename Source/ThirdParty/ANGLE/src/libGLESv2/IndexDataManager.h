@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -17,6 +17,11 @@
 #include <GLES2/gl2.h>
 
 #include "libGLESv2/Context.h"
+
+namespace
+{
+    enum { INITIAL_INDEX_BUFFER_SIZE = 4096 * sizeof(GLuint) };
+}
 
 namespace gl
 {
@@ -123,7 +128,8 @@ class IndexDataManager
     IndexDataManager(Context *context, IDirect3DDevice9 *evice);
     virtual ~IndexDataManager();
 
-    GLenum prepareIndexData(GLenum type, GLsizei count, Buffer *arrayElementBuffer, const void *indices, TranslatedIndexData *translated);
+    GLenum prepareIndexData(GLenum type, GLsizei count, Buffer *arrayElementBuffer, const GLvoid *indices, TranslatedIndexData *translated);
+    StaticIndexBuffer *getCountingIndices(GLsizei count);
 
   private:
     DISALLOW_COPY_AND_ASSIGN(IndexDataManager);
@@ -135,6 +141,7 @@ class IndexDataManager
 
     StreamingIndexBuffer *mStreamingBufferShort;
     StreamingIndexBuffer *mStreamingBufferInt;
+    StaticIndexBuffer *mCountingBuffer;
 };
 
 }

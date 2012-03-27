@@ -9,6 +9,10 @@
 // are documented in the header file.
 //
 
+#if defined(_MSC_VER)
+#pragma warning(disable: 4718)
+#endif
+
 #include "compiler/SymbolTable.h"
 
 #include <stdio.h>

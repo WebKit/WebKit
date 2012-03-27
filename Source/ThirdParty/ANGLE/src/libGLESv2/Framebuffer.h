@@ -15,7 +15,7 @@
 #include <d3d9.h>
 
 #include "common/angleutils.h"
-#include "libGLESv2/RefCountObject.h"
+#include "common/RefCountObject.h"
 
 namespace gl
 {

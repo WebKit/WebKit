@@ -328,7 +328,7 @@ bool IsCubemapTextureTarget(GLenum target)
     return (target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
 }
 
-bool IsTextureTarget(GLenum target)
+bool IsInternalTextureTarget(GLenum target)
 {
     return target == GL_TEXTURE_2D || IsCubemapTextureTarget(target);
 }

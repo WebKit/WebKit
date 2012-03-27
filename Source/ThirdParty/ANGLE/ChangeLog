@@ -1,3 +1,430 @@
+2012-03-26  Dean Jackson  <dino@apple.com>
+
+        Update ANGLE in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=81717
+
+        Reviewed by Kenneth Russell.
+
+        Update angleproject to r1009. Synced the source directory
+        between the angle repository and WebKit. Ran the OS X Lion
+        version of Bison over the glslang.l input which generates
+        a slightly different output than angle provided.
+
+        * include/EGL/eglext.h:
+        * include/GLES2/gl2ext.h:
+        * include/GLSLANG/ShaderLang.h:
+        * src/common/RefCountObject.cpp: Renamed from Source/ThirdParty/ANGLE/src/libGLESv2/RefCountObject.cpp.
+        (RefCountObject::RefCountObject):
+        (RefCountObject::~RefCountObject):
+        (RefCountObject::addRef):
+        (RefCountObject::release):
+        (RefCountObjectBindingPointer::set):
+        * src/common/RefCountObject.h: Renamed from Source/ThirdParty/ANGLE/src/libGLESv2/RefCountObject.h.
+        (RefCountObject):
+        (RefCountObject::id):
+        (RefCountObjectBindingPointer):
+        (RefCountObjectBindingPointer::RefCountObjectBindingPointer):
+        (RefCountObjectBindingPointer::~RefCountObjectBindingPointer):
+        (RefCountObjectBindingPointer::get):
+        (RefCountObjectBindingPointer::id):
+        (RefCountObjectBindingPointer::operator ! ):
+        (BindingPointer):
+        (BindingPointer::set):
+        (BindingPointer::get):
+        (BindingPointer::operator -> ):
+        * src/common/debug.cpp:
+        (gl::output):
+        * src/common/version.h:
+        * src/compiler/BaseTypes.h:
+        * src/compiler/Compiler.cpp:
+        (TCompiler::TCompiler):
+        (TCompiler::~TCompiler):
+        (TCompiler::mapLongVariableNames):
+        * src/compiler/ConstantUnion.h:
+        (ConstantUnion::ConstantUnion):
+        (ConstantUnion::operator==):
+        (ConstantUnion::operator>):
+        (ConstantUnion::operator<):
+        * src/compiler/Intermediate.cpp:
+        (TIntermConstantUnion::fold):
+        * src/compiler/MapLongVariableNames.cpp:
+        (LongNameMap::LongNameMap):
+        (LongNameMap::~LongNameMap):
+        (LongNameMap::GetInstance):
+        (LongNameMap::Release):
+        (LongNameMap::Find):
+        (LongNameMap::Insert):
+        (LongNameMap::Size):
+        (MapLongVariableNames::MapLongVariableNames):
+        (MapLongVariableNames::visitSymbol):
+        (MapLongVariableNames::mapGlobalLongName):
+        * src/compiler/MapLongVariableNames.h:
+        (LongNameMap):
+        (MapLongVariableNames):
+        * src/compiler/OutputHLSL.cpp:
+        (sh::OutputHLSL::OutputHLSL):
+        (sh::OutputHLSL::header):
+        (sh::OutputHLSL::visitSymbol):
+        (sh::OutputHLSL::visitUnary):
+        (sh::OutputHLSL::visitAggregate):
+        (sh::OutputHLSL::visitLoop):
+        (sh::OutputHLSL::handleExcessiveLoop):
+        (sh::OutputHLSL::typeString):
+        (sh::OutputHLSL::addConstructor):
+        (sh::OutputHLSL::decorateUniform):
+        * src/compiler/OutputHLSL.h:
+        (OutputHLSL):
+        * src/compiler/PoolAlloc.cpp:
+        (TAllocation::checkGuardBlock):
+        * src/compiler/ShHandle.h:
+        (TCompiler):
+        * src/compiler/SymbolTable.cpp:
+        * src/compiler/SymbolTable.h:
+        (TSymbolTable):
+        (TSymbolTable::getOuterLevel):
+        * src/compiler/VariableInfo.cpp:
+        (getVariableDataType):
+        * src/compiler/glslang.l:
+        * src/compiler/glslang.y:
+        * src/compiler/glslang_lex.cpp:
+        (yy_buffer_state):
+        (yyguts_t):
+        (input):
+        (yyensure_buffer_stack):
+        (yy_scan_bytes):
+        (yyget_leng):
+        * src/compiler/glslang_tab.cpp:
+        * src/compiler/osinclude.h:
+        * src/compiler/preprocessor/cpp.c:
+        * src/compiler/preprocessor/memory.c:
+        * src/compiler/preprocessor/new/Context.cpp: Added.
+        (isMacroNameReserved):
+        (pp):
+        (pp::Context::Context):
+        (pp::Context::~Context):
+        (pp::Context::init):
+        (pp::Context::process):
+        (pp::Context::defineMacro):
+        (pp::Context::undefineMacro):
+        (pp::Context::isMacroDefined):
+        (pp::Context::reset):
+        (pp::Context::defineBuiltInMacro):
+        * src/compiler/preprocessor/new/Context.h: Added.
+        (pp):
+        (Context):
+        (pp::Context::lexer):
+        (pp::Context::output):
+        * src/compiler/preprocessor/new/Input.cpp: Added.
+        (pp):
+        (pp::Input::Input):
+        (pp::Input::eof):
+        (pp::Input::read):
+        (pp::Input::getChar):
+        (pp::Input::peekChar):
+        (pp::Input::switchToNextString):
+        (pp::Input::isStringEmpty):
+        (pp::Input::stringLength):
+        * src/compiler/preprocessor/new/Input.h: Added.
+        (pp):
+        (Input):
+        (pp::Input::error):
+        (pp::Input::stringIndex):
+        * src/compiler/preprocessor/new/Macro.cpp: Added.
+        (pp):
+        (pp::Macro::Macro):
+        (pp::Macro::~Macro):
+        * src/compiler/preprocessor/new/Macro.h: Added.
+        (pp):
+        (Macro):
+        (pp::Macro::type):
+        (pp::Macro::identifier):
+        (pp::Macro::parameters):
+        (pp::Macro::replacements):
+        * src/compiler/preprocessor/new/Preprocessor.cpp: Added.
+        (pp):
+        (pp::Preprocessor::Preprocessor):
+        (pp::Preprocessor::~Preprocessor):
+        (pp::Preprocessor::init):
+        (pp::Preprocessor::process):
+        (pp::Preprocessor::reset):
+        * src/compiler/preprocessor/new/Preprocessor.h: Added.
+        (pp):
+        (Preprocessor):
+        (pp::Preprocessor::begin):
+        (pp::Preprocessor::end):
+        * src/compiler/preprocessor/new/Token.cpp: Added.
+        (pp):
+        (pp::Token::encodeLocation):
+        (pp::Token::decodeLocation):
+        (pp::Token::Token):
+        (pp::Token::~Token):
+        (pp::operator<<):
+        * src/compiler/preprocessor/new/Token.h: Added.
+        (pp):
+        (Token):
+        (pp::Token::location):
+        (pp::Token::type):
+        (pp::Token::value):
+        * src/compiler/preprocessor/new/generate_parser.sh: Added.
+        * src/compiler/preprocessor/new/pp.l: Added.
+        * src/compiler/preprocessor/new/pp.y: Added.
+        * src/compiler/preprocessor/new/pp_lex.cpp: Added.
+        (yy_buffer_state):
+        (yy_trans_info):
+        (yyguts_t):
+        (yy_get_previous_state):
+        (yy_try_NUL_trans):
+        (input):
+        (pprestart):
+        (pp_switch_to_buffer):
+        (pp_load_buffer_state):
+        (pp_create_buffer):
+        (pp_delete_buffer):
+        (pp_init_buffer):
+        (pp_flush_buffer):
+        (pppush_buffer_state):
+        (pppop_buffer_state):
+        (ppensure_buffer_stack):
+        (pp_scan_buffer):
+        (pp_scan_string):
+        (pp_scan_bytes):
+        (yy_push_state):
+        (yy_pop_state):
+        (yy_top_state):
+        (yy_fatal_error):
+        (ppget_extra):
+        (ppget_lineno):
+        (ppget_column):
+        (ppget_in):
+        (ppget_out):
+        (ppget_leng):
+        (ppget_text):
+        (ppset_extra):
+        (ppset_lineno):
+        (ppset_column):
+        (ppset_in):
+        (ppset_out):
+        (ppget_debug):
+        (ppset_debug):
+        (ppget_lval):
+        (ppset_lval):
+        (ppget_lloc):
+        (ppset_lloc):
+        (pplex_init):
+        (pplex_init_extra):
+        (yy_init_globals):
+        (pplex_destroy):
+        (yy_flex_strncpy):
+        (yy_flex_strlen):
+        (ppalloc):
+        (pprealloc):
+        (ppfree):
+        (extractMacroName):
+        (pp):
+        (pp::Context::readInput):
+        (pp::Context::initLexer):
+        (pp::Context::destroyLexer):
+        * src/compiler/preprocessor/new/pp_tab.cpp: Added.
+        (YYLTYPE):
+        (yysyntax_error):
+        (yyerror):
+        (pushConditionalBlock):
+        (popConditionalBlock):
+        (pp::Context::parse):
+        * src/compiler/preprocessor/new/pp_tab.h: Added.
+        (YYLTYPE):
+        * src/compiler/preprocessor/new/stl_utils.h: Added.
+        (pp):
+        (Delete):
+        (pp::Delete::operator()):
+        (DeleteSecond):
+        (pp::DeleteSecond::operator()):
+        * src/compiler/preprocessor/new/token_type.h: Added.
+        * src/compiler/preprocessor/scanner.c:
+        (yylex_CPP):
+        * src/compiler/preprocessor/symbols.c:
+        * src/compiler/preprocessor/tokens.c:
+        * src/libEGL/Config.cpp:
+        (egl::ConfigSet::getConfigs):
+        * src/libEGL/Display.cpp:
+        (egl::Display::initialize):
+        (egl::Display::terminate):
+        (egl::Display::restoreLostDevice):
+        (egl::Display::sync):
+        (egl):
+        (egl::Display::allocateEventQuery):
+        (egl::Display::freeEventQuery):
+        (egl::Display::getFloat32TextureSupport):
+        (egl::Display::getFloat16TextureSupport):
+        (egl::Display::getEventQuerySupport):
+        (egl::Display::initExtensionString):
+        (egl::Display::shareHandleSupported):
+        (egl::Display::getOcclusionQuerySupport):
+        (egl::Display::getInstancingSupport):
+        * src/libEGL/Display.h:
+        (Display):
+        (egl::Display::isD3d9ExDevice):
+        * src/libEGL/Surface.cpp:
+        (egl::Surface::resetSwapChain):
+        * src/libEGL/libEGL.cpp:
+        * src/libEGL/libEGL.vcproj:
+        * src/libGLESv2/Blit.cpp:
+        (gl::Blit::setCommonBlitState):
+        * src/libGLESv2/Buffer.h:
+        (Buffer):
+        * src/libGLESv2/Context.cpp:
+        (gl::Context::Context):
+        (gl::Context::~Context):
+        (gl::Context::makeCurrent):
+        (gl::Context::getActiveQuery):
+        (gl):
+        (gl::Context::createFence):
+        (gl::Context::createQuery):
+        (gl::Context::deleteQuery):
+        (gl::Context::beginQuery):
+        (gl::Context::endQuery):
+        (gl::Context::getQuery):
+        (gl::Context::applyVertexBuffer):
+        (gl::Context::applyIndexBuffer):
+        (gl::Context::readPixels):
+        (gl::Context::clear):
+        (gl::Context::drawArrays):
+        (gl::Context::drawElements):
+        (gl::Context::sync):
+        (gl::Context::drawLineLoop):
+        (gl::Context::supportsOcclusionQueries):
+        (gl::Context::supportsInstancing):
+        (gl::Context::setVertexAttribDivisor):
+        (gl::Context::initExtensionString):
+        (gl::VertexDeclarationCache::applyDeclaration):
+        (gl::VertexDeclarationCache::markStateDirty):
+        * src/libGLESv2/Context.h:
+        (gl):
+        (gl::VertexAttribute::VertexAttribute):
+        (State):
+        (VertexDeclarationCache):
+        (Context):
+        * src/libGLESv2/Fence.cpp:
+        (gl::Fence::Fence):
+        (gl::Fence::~Fence):
+        (gl::Fence::setFence):
+        * src/libGLESv2/Fence.h:
+        (egl):
+        (Fence):
+        * src/libGLESv2/Framebuffer.cpp:
+        (gl::Framebuffer::lookupRenderbuffer):
+        (gl::Framebuffer::detachTexture):
+        (gl::Framebuffer::completeness):
+        * src/libGLESv2/Framebuffer.h:
+        * src/libGLESv2/IndexDataManager.cpp:
+        (gl::IndexDataManager::IndexDataManager):
+        (gl::IndexDataManager::~IndexDataManager):
+        (gl::computeRange):
+        (gl::IndexDataManager::prepareIndexData):
+        (gl::IndexDataManager::getCountingIndices):
+        (gl):
+        * src/libGLESv2/IndexDataManager.h:
+        (IndexDataManager):
+        * src/libGLESv2/Program.cpp:
+        (gl::Program::getUniformLocation):
+        (gl::Program::setUniform1fv):
+        (gl::Program::setUniform2fv):
+        (gl::Program::setUniform3fv):
+        (gl::Program::setUniform4fv):
+        (gl::Program::setUniform1iv):
+        (gl::Program::setUniform2iv):
+        (gl::Program::setUniform3iv):
+        (gl::Program::setUniform4iv):
+        (gl::Program::packVaryings):
+        (gl::Program::linkVaryings):
+        (gl::Program::defineUniform):
+        (gl::Program::createUniform):
+        (gl::Program::applyUniformnbv):
+        (gl::Program::applyUniform1iv):
+        (gl::Program::applyUniform2iv):
+        (gl::Program::applyUniform3iv):
+        (gl::Program::applyUniform4iv):
+        (gl::Program::getInfoLog):
+        * src/libGLESv2/Program.h:
+        (Program):
+        * src/libGLESv2/Query.cpp: Added.
+        (gl):
+        (gl::Query::Query):
+        (gl::Query::~Query):
+        (gl::Query::begin):
+        (gl::Query::end):
+        (gl::Query::getResult):
+        (gl::Query::isResultAvailable):
+        (gl::Query::getType):
+        (gl::Query::testQuery):
+        * src/libGLESv2/Query.h: Added.
+        (gl):
+        (Query):
+        * src/libGLESv2/Renderbuffer.cpp:
+        (gl):
+        (gl::RenderbufferInterface::addProxyRef):
+        (gl::RenderbufferInterface::releaseProxy):
+        (gl::RenderbufferTexture::RenderbufferTexture):
+        (gl::RenderbufferTexture::~RenderbufferTexture):
+        (gl::RenderbufferTexture::addProxyRef):
+        (gl::RenderbufferTexture::releaseProxy):
+        (gl::Renderbuffer::addRef):
+        (gl::Renderbuffer::release):
+        * src/libGLESv2/Renderbuffer.h:
+        (gl):
+        (RenderbufferInterface):
+        (RenderbufferTexture):
+        (Renderbuffer):
+        * src/libGLESv2/Shader.cpp:
+        (gl::Shader::Shader):
+        (gl::Shader::getInfoLog):
+        (gl::Shader::getSourceImpl):
+        (gl):
+        (gl::Shader::initializeCompiler):
+        (gl::Shader::parseVaryings):
+        (gl::Shader::uncompile):
+        (gl::Shader::compileToHLSL):
+        (gl::VertexShader::uncompile):
+        (gl::VertexShader::compile):
+        (gl::VertexShader::parseAttributes):
+        (gl::FragmentShader::compile):
+        * src/libGLESv2/Shader.h:
+        (Shader):
+        (VertexShader):
+        * src/libGLESv2/Texture.cpp:
+        (gl::Texture2D::Texture2D):
+        (gl::Texture2D::~Texture2D):
+        (gl):
+        (gl::Texture2D::addProxyRef):
+        (gl::Texture2D::releaseProxy):
+        (gl::Texture2D::getRenderbuffer):
+        (gl::TextureCubeMap::TextureCubeMap):
+        (gl::TextureCubeMap::~TextureCubeMap):
+        (gl::TextureCubeMap::addProxyRef):
+        (gl::TextureCubeMap::releaseProxy):
+        (gl::TextureCubeMap::isSamplerComplete):
+        (gl::TextureCubeMap::convertToRenderTarget):
+        (gl::TextureCubeMap::getRenderbuffer):
+        * src/libGLESv2/Texture.h:
+        (Texture):
+        (Texture2D):
+        (TextureCubeMap):
+        * src/libGLESv2/VertexDataManager.cpp:
+        (gl::VertexDataManager::writeAttributeData):
+        (gl::VertexDataManager::prepareVertexData):
+        (gl::VertexDataManager::spaceRequired):
+        (gl):
+        * src/libGLESv2/VertexDataManager.h:
+        (TranslatedAttribute):
+        (VertexDataManager):
+        * src/libGLESv2/libGLESv2.cpp:
+        * src/libGLESv2/libGLESv2.def:
+        * src/libGLESv2/libGLESv2.vcproj:
+        * src/libGLESv2/utilities.cpp:
+        (gl::IsInternalTextureTarget):
+        * src/libGLESv2/utilities.h:
+        (gl):
+
 2012-03-09  Ashod Nakashian  <ashodnakashian@yahoo.com>
 
         Bash scripts should support LF endings only

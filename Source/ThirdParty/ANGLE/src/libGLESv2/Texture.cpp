@@ -1722,11 +1722,13 @@ Texture2D::Texture2D(GLuint id) : Texture(id)
 {
     mTexStorage = NULL;
     mSurface = NULL;
+    mColorbufferProxy = NULL;
+    mProxyRefs = 0;
 }
 
 Texture2D::~Texture2D()
 {
-    mColorbufferProxy.set(NULL);
+    mColorbufferProxy = NULL;
 
     delete mTexStorage;
     mTexStorage = NULL;
@@ -1736,6 +1738,23 @@ Texture2D::~Texture2D()
         mSurface->setBoundTexture(NULL);
         mSurface = NULL;
     }
+}
+
+// We need to maintain a count of references to renderbuffers acting as 
+// proxies for this texture, so that we do not attempt to use a pointer 
+// to a renderbuffer proxy which has been deleted.
+void Texture2D::addProxyRef(const Renderbuffer *proxy)
+{
+    mProxyRefs++;
+}
+
+void Texture2D::releaseProxy(const Renderbuffer *proxy)
+{
+    if (mProxyRefs > 0)
+        mProxyRefs--;
+
+    if (mProxyRefs == 0)
+        mColorbufferProxy = NULL;
 }
 
 GLenum Texture2D::getTarget() const
@@ -2294,12 +2313,12 @@ Renderbuffer *Texture2D::getRenderbuffer(GLenum target)
         return error(GL_INVALID_OPERATION, (Renderbuffer *)NULL);
     }
 
-    if (mColorbufferProxy.get() == NULL)
+    if (mColorbufferProxy == NULL)
     {
-        mColorbufferProxy.set(new Renderbuffer(id(), new RenderbufferTexture(this, target)));
+        mColorbufferProxy = new Renderbuffer(id(), new RenderbufferTexture(this, target));
     }
 
-    return mColorbufferProxy.get();
+    return mColorbufferProxy;
 }
 
 IDirect3DSurface9 *Texture2D::getRenderTarget(GLenum target)
@@ -2383,17 +2402,51 @@ unsigned int TextureStorageCubeMap::getRenderTargetSerial(GLenum target) const
 TextureCubeMap::TextureCubeMap(GLuint id) : Texture(id)
 {
     mTexStorage = NULL;
+    for (int i = 0; i < 6; i++)
+    {
+        mFaceProxies[i] = NULL;
+        mFaceProxyRefs[i] = 0;
+    }
 }
 
 TextureCubeMap::~TextureCubeMap()
 {
     for (int i = 0; i < 6; i++)
     {
-        mFaceProxies[i].set(NULL);
+        mFaceProxies[i] = NULL;
     }
 
     delete mTexStorage;
     mTexStorage = NULL;
+}
+
+// We need to maintain a count of references to renderbuffers acting as 
+// proxies for this texture, so that the texture is not deleted while 
+// proxy references still exist. If the reference count drops to zero,
+// we set our proxy pointer NULL, so that a new attempt at referencing
+// will cause recreation.
+void TextureCubeMap::addProxyRef(const Renderbuffer *proxy)
+{
+    for (int i = 0; i < 6; i++)
+    {
+        if (mFaceProxies[i] == proxy)
+            mFaceProxyRefs[i]++;
+    }
+}
+
+void TextureCubeMap::releaseProxy(const Renderbuffer *proxy)
+{
+    for (int i = 0; i < 6; i++)
+    {
+        if (mFaceProxies[i] == proxy)
+        {
+            if (mFaceProxyRefs[i] > 0)
+                mFaceProxyRefs[i]--;
+
+            if (mFaceProxyRefs[i] == 0)
+                mFaceProxies[i] = NULL;
+        }
+    }
 }
 
 GLenum TextureCubeMap::getTarget() const
@@ -2524,7 +2577,9 @@ bool TextureCubeMap::isSamplerComplete() const
       case GL_LINEAR_MIPMAP_LINEAR:
         mipmapping = true;
         break;
-      default: UNREACHABLE();
+      default:
+        UNREACHABLE();
+        return false;
     }
 
     if ((getInternalFormat() == GL_FLOAT && !getContext()->supportsFloat32LinearFilter()) ||
@@ -2693,9 +2748,6 @@ void TextureCubeMap::convertToRenderTarget()
 
         if (mTexStorage != NULL)
         {
-            egl::Display *display = getDisplay();
-            IDirect3DDevice9 *device = display->getDevice();
-
             int levels = levelCount();
             for (int f = 0; f < 6; f++)
             {
@@ -2995,12 +3047,12 @@ Renderbuffer *TextureCubeMap::getRenderbuffer(GLenum target)
 
     unsigned int face = faceIndex(target);
 
-    if (mFaceProxies[face].get() == NULL)
+    if (mFaceProxies[face] == NULL)
     {
-        mFaceProxies[face].set(new Renderbuffer(id(), new RenderbufferTexture(this, target)));
+        mFaceProxies[face] = new Renderbuffer(id(), new RenderbufferTexture(this, target));
     }
 
-    return mFaceProxies[face].get();
+    return mFaceProxies[face];
 }
 
 IDirect3DSurface9 *TextureCubeMap::getRenderTarget(GLenum target)

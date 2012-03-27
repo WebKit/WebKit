@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -22,6 +22,7 @@
 #include "compiler/SymbolTable.h"
 #include "compiler/VariableInfo.h"
 
+class LongNameMap;
 class TCompiler;
 
 //
@@ -100,8 +101,8 @@ private:
     TVariableInfoList attribs;  // Active attributes in the compiled shader.
     TVariableInfoList uniforms;  // Active uniforms in the compiled shader.
 
-    // Pair of long varying varibale name <originalName, mappedName>.
-    std::map<std::string, std::string> varyingLongNameMap;
+    // Cached copy of the ref-counted singleton.
+    LongNameMap* longNameMap;
 };
 
 //

@@ -504,6 +504,11 @@ void Blit::setCommonBlitState()
 
     RECT scissorRect = {0};   // Scissoring is disabled for flipping, but we need this to capture and restore the old rectangle
     device->SetScissorRect(&scissorRect);
+
+    for(int i = 0; i < MAX_VERTEX_ATTRIBS; i++)
+    {
+        device->SetStreamSourceFreq(i, 1);
+    }
 }
 
 void Blit::render()

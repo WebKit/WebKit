@@ -77,7 +77,8 @@ typedef enum {
   SH_FLOAT_MAT4     = 0x8B5C,
   SH_SAMPLER_2D     = 0x8B5E,
   SH_SAMPLER_CUBE   = 0x8B60,
-  SH_SAMPLER_2D_RECT_ARB = 0x8B63
+  SH_SAMPLER_2D_RECT_ARB = 0x8B63,
+  SH_SAMPLER_EXTERNAL_OES = 0x8D66
 } ShDataType;
 
 typedef enum {

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -62,6 +62,7 @@ class Shader
     void getTranslatedSource(GLsizei bufSize, GLsizei *length, char *buffer);
 
     virtual void compile() = 0;
+    virtual void uncompile();
     bool isCompiled();
     const char *getHLSL();
 
@@ -74,8 +75,6 @@ class Shader
     static void releaseCompiler();
 
   protected:
-    DISALLOW_COPY_AND_ASSIGN(Shader);
-
     void parseVaryings();
 
     void compileToHLSL(void *compiler);
@@ -85,6 +84,21 @@ class Shader
     static GLenum parseType(const std::string &type);
     static bool compareVarying(const Varying &x, const Varying &y);
 
+    VaryingList mVaryings;
+
+    bool mUsesFragCoord;
+    bool mUsesFrontFacing;
+    bool mUsesPointSize;
+    bool mUsesPointCoord;
+
+    static void *mFragmentCompiler;
+    static void *mVertexCompiler;
+
+  private:
+    DISALLOW_COPY_AND_ASSIGN(Shader);
+
+    void initializeCompiler();
+
     const GLuint mHandle;
     unsigned int mRefCount;     // Number of program objects this shader is attached to
     bool mDeleteStatus;         // Flag to indicate that the shader can be deleted when no longer in use
@@ -93,17 +107,7 @@ class Shader
     char *mHlsl;
     char *mInfoLog;
 
-    VaryingList varyings;
-
-    bool mUsesFragCoord;
-    bool mUsesFrontFacing;
-    bool mUsesPointSize;
-    bool mUsesPointCoord;
-
     ResourceManager *mResourceManager;
-
-    static void *mFragmentCompiler;
-    static void *mVertexCompiler;
 };
 
 struct Attribute
@@ -133,6 +137,7 @@ class VertexShader : public Shader
 
     virtual GLenum getType();
     virtual void compile();
+    virtual void uncompile();
     int getSemanticIndex(const std::string &attributeName);
 
   private:

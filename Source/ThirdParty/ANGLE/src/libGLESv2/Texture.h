@@ -17,10 +17,10 @@
 #include <GLES2/gl2.h>
 #include <d3d9.h>
 
-#include "libGLESv2/Renderbuffer.h"
-#include "libGLESv2/RefCountObject.h"
-#include "libGLESv2/utilities.h"
 #include "common/debug.h"
+#include "common/RefCountObject.h"
+#include "libGLESv2/Renderbuffer.h"
+#include "libGLESv2/utilities.h"
 
 namespace egl
 {
@@ -173,6 +173,9 @@ class Texture : public RefCountObject
 
     virtual ~Texture();
 
+    virtual void addProxyRef(const Renderbuffer *proxy) = 0;
+    virtual void releaseProxy(const Renderbuffer *proxy) = 0;
+
     virtual GLenum getTarget() const = 0;
 
     bool setMinFilter(GLenum filter);
@@ -278,6 +281,9 @@ class Texture2D : public Texture
 
     ~Texture2D();
 
+    void addProxyRef(const Renderbuffer *proxy);
+    void releaseProxy(const Renderbuffer *proxy);
+
     virtual GLenum getTarget() const;
 
     virtual GLsizei getWidth(GLint level) const;
@@ -323,7 +329,13 @@ class Texture2D : public Texture
     TextureStorage2D *mTexStorage;
     egl::Surface *mSurface;
 
-    BindingPointer<Renderbuffer> mColorbufferProxy;
+    // A specific internal reference count is kept for colorbuffer proxy references,
+    // because, as the renderbuffer acting as proxy will maintain a binding pointer
+    // back to this texture, there would be a circular reference if we used a binding
+    // pointer here. This reference count will cause the pointer to be set to NULL if
+    // the count drops to zero, but will not cause deletion of the Renderbuffer.
+    Renderbuffer *mColorbufferProxy;
+    unsigned int mProxyRefs;
 };
 
 class TextureStorageCubeMap : public TextureStorage
@@ -351,6 +363,9 @@ class TextureCubeMap : public Texture
     explicit TextureCubeMap(GLuint id);
 
     ~TextureCubeMap();
+
+    void addProxyRef(const Renderbuffer *proxy);
+    void releaseProxy(const Renderbuffer *proxy);
 
     virtual GLenum getTarget() const;
     
@@ -405,7 +420,13 @@ class TextureCubeMap : public Texture
 
     TextureStorageCubeMap *mTexStorage;
 
-    BindingPointer<Renderbuffer> mFaceProxies[6];
+    // A specific internal reference count is kept for colorbuffer proxy references,
+    // because, as the renderbuffer acting as proxy will maintain a binding pointer
+    // back to this texture, there would be a circular reference if we used a binding
+    // pointer here. This reference count will cause the pointer to be set to NULL if
+    // the count drops to zero, but will not cause deletion of the Renderbuffer.
+    Renderbuffer *mFaceProxies[6];
+    unsigned int *mFaceProxyRefs[6];
 };
 }
 

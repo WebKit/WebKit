@@ -9,8 +9,8 @@
 // that need to be reference counted for correct cross-context deletion.
 // (Concretely, textures, buffers and renderbuffers.)
 
-#ifndef LIBGLESV2_REFCOUNTOBJECT_H_
-#define LIBGLESV2_REFCOUNTOBJECT_H_
+#ifndef COMMON_REFCOUNTOBJECT_H_
+#define COMMON_REFCOUNTOBJECT_H_
 
 #include <cstddef>
 
@@ -18,9 +18,6 @@
 #include <GLES2/gl2.h>
 
 #include "common/debug.h"
-
-namespace gl
-{
 
 class RefCountObject
 {
@@ -65,6 +62,4 @@ class BindingPointer : public RefCountObjectBindingPointer
     ObjectType *operator -> () const { return get(); }
 };
 
-}
-
-#endif   // LIBGLESV2_REFCOUNTOBJECT_H_
+#endif   // COMMON_REFCOUNTOBJECT_H_

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -27,31 +27,8 @@ Shader::Shader(ResourceManager *manager, GLuint handle) : mHandle(handle), mReso
     mHlsl = NULL;
     mInfoLog = NULL;
 
-    // Perform a one-time initialization of the shader compiler (or after being destructed by releaseCompiler)
-    if (!mFragmentCompiler)
-    {
-        int result = ShInitialize();
-
-        if (result)
-        {
-            ShBuiltInResources resources;
-            ShInitBuiltInResources(&resources);
-            Context *context = getContext();
-
-            resources.MaxVertexAttribs = MAX_VERTEX_ATTRIBS;
-            resources.MaxVertexUniformVectors = MAX_VERTEX_UNIFORM_VECTORS;
-            resources.MaxVaryingVectors = context->getMaximumVaryingVectors();
-            resources.MaxVertexTextureImageUnits = context->getMaximumVertexTextureImageUnits();
-            resources.MaxCombinedTextureImageUnits = context->getMaximumCombinedTextureImageUnits();
-            resources.MaxTextureImageUnits = MAX_TEXTURE_IMAGE_UNITS;
-            resources.MaxFragmentUniformVectors = context->getMaximumFragmentUniformVectors();
-            resources.MaxDrawBuffers = MAX_DRAW_BUFFERS;
-            resources.OES_standard_derivatives = 1;
-
-            mFragmentCompiler = ShConstructCompiler(SH_FRAGMENT_SHADER, SH_GLES2_SPEC, SH_HLSL_OUTPUT, &resources);
-            mVertexCompiler = ShConstructCompiler(SH_VERTEX_SHADER, SH_GLES2_SPEC, SH_HLSL_OUTPUT, &resources);
-        }
-    }
+    uncompile();
+    initializeCompiler();
 
     mRefCount = 0;
     mDeleteStatus = false;
@@ -127,11 +104,8 @@ void Shader::getInfoLog(GLsizei bufSize, GLsizei *length, char *infoLog)
 
     if (mInfoLog)
     {
-        while (index < bufSize - 1 && index < (int)strlen(mInfoLog))
-        {
-            infoLog[index] = mInfoLog[index];
-            index++;
-        }
+        index = std::min(bufSize - 1, (int)strlen(mInfoLog));
+        memcpy(infoLog, mInfoLog, index);
     }
 
     if (bufSize)
@@ -175,11 +149,8 @@ void Shader::getSourceImpl(char *source, GLsizei bufSize, GLsizei *length, char 
 
     if (source)
     {
-        while (index < bufSize - 1 && index < (int)strlen(source))
-        {
-            buffer[index] = source[index];
-            index++;
-        }
+        index = std::min(bufSize - 1, (int)strlen(source));
+        memcpy(buffer, source, index);
     }
 
     if (bufSize)
@@ -243,6 +214,36 @@ void Shader::flagForDeletion()
     mDeleteStatus = true;
 }
 
+// Perform a one-time initialization of the shader compiler (or after being destructed by releaseCompiler)
+void Shader::initializeCompiler()
+{
+    if (!mFragmentCompiler)
+    {
+        int result = ShInitialize();
+
+        if (result)
+        {
+            ShBuiltInResources resources;
+            ShInitBuiltInResources(&resources);
+            Context *context = getContext();
+
+            resources.MaxVertexAttribs = MAX_VERTEX_ATTRIBS;
+            resources.MaxVertexUniformVectors = MAX_VERTEX_UNIFORM_VECTORS;
+            resources.MaxVaryingVectors = context->getMaximumVaryingVectors();
+            resources.MaxVertexTextureImageUnits = context->getMaximumVertexTextureImageUnits();
+            resources.MaxCombinedTextureImageUnits = context->getMaximumCombinedTextureImageUnits();
+            resources.MaxTextureImageUnits = MAX_TEXTURE_IMAGE_UNITS;
+            resources.MaxFragmentUniformVectors = context->getMaximumFragmentUniformVectors();
+            resources.MaxDrawBuffers = MAX_DRAW_BUFFERS;
+            resources.OES_standard_derivatives = 1;
+            // resources.OES_EGL_image_external = getDisplay()->isD3d9ExDevice() ? 1 : 0; // TODO: commented out until the extension is actually supported.
+
+            mFragmentCompiler = ShConstructCompiler(SH_FRAGMENT_SHADER, SH_GLES2_SPEC, SH_HLSL_OUTPUT, &resources);
+            mVertexCompiler = ShConstructCompiler(SH_VERTEX_SHADER, SH_GLES2_SPEC, SH_HLSL_OUTPUT, &resources);
+        }
+    }
+}
+
 void Shader::releaseCompiler()
 {
     ShDestruct(mFragmentCompiler);
@@ -281,7 +282,7 @@ void Shader::parseVaryings()
                 *array = '\0';
             }
 
-            varyings.push_back(Varying(parseType(varyingType), varyingName, size, array != NULL));
+            mVaryings.push_back(Varying(parseType(varyingType), varyingName, size, array != NULL));
 
             input = strstr(input, ";") + 2;
         }
@@ -293,36 +294,56 @@ void Shader::parseVaryings()
     }
 }
 
-void Shader::compileToHLSL(void *compiler)
+// initialize/clean up previous state
+void Shader::uncompile()
 {
-    if (isCompiled() || !mSource)
-    {
-        return;
-    }
-
+    // set by compileToHLSL
+    delete[] mHlsl;
+    mHlsl = NULL;
     delete[] mInfoLog;
     mInfoLog = NULL;
+
+    // set by parseVaryings
+    mVaryings.clear();
+
+    mUsesFragCoord = false;
+    mUsesFrontFacing = false;
+    mUsesPointSize = false;
+    mUsesPointCoord = false;
+}
+
+void Shader::compileToHLSL(void *compiler)
+{
+    // ensure we don't pass a NULL source to the compiler
+    char *source = "\0";
+    if (mSource)
+    {
+        source = mSource;
+    }
+
+    // ensure the compiler is loaded
+    initializeCompiler();
 
     int compileOptions = SH_OBJECT_CODE;
     std::string sourcePath;
     if (perfActive())
     {
         sourcePath = getTempPath();
-        writeFile(sourcePath.c_str(), mSource, strlen(mSource));
+        writeFile(sourcePath.c_str(), source, strlen(source));
         compileOptions |= SH_LINE_DIRECTIVES;
     }
 
     int result;
     if (sourcePath.empty())
     {
-        result = ShCompile(compiler, &mSource, 1, compileOptions);
+        result = ShCompile(compiler, &source, 1, compileOptions);
     }
     else
     {
         const char* sourceStrings[2] =
         {
             sourcePath.c_str(),
-            mSource
+            source
         };
 
         result = ShCompile(compiler, sourceStrings, 2, compileOptions | SH_SOURCE_PATH);
@@ -477,8 +498,18 @@ GLenum VertexShader::getType()
     return GL_VERTEX_SHADER;
 }
 
+void VertexShader::uncompile()
+{
+    Shader::uncompile();
+
+    // set by ParseAttributes
+    mAttributes.clear();
+};
+
 void VertexShader::compile()
 {
+    uncompile();
+
     compileToHLSL(mVertexCompiler);
     parseAttributes();
     parseVaryings();
@@ -505,9 +536,10 @@ int VertexShader::getSemanticIndex(const std::string &attributeName)
 
 void VertexShader::parseAttributes()
 {
-    if (mHlsl)
+    const char *hlsl = getHLSL();
+    if (hlsl)
     {
-        const char *input = strstr(mHlsl, "// Attributes") + 14;
+        const char *input = strstr(hlsl, "// Attributes") + 14;
 
         while(true)
         {
@@ -543,8 +575,10 @@ GLenum FragmentShader::getType()
 
 void FragmentShader::compile()
 {
+    uncompile();
+
     compileToHLSL(mFragmentCompiler);
     parseVaryings();
-    varyings.sort(compareVarying);
+    mVaryings.sort(compareVarying);
 }
 }

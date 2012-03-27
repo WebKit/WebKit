@@ -11,9 +11,6 @@
 
 #include "RefCountObject.h"
 
-namespace gl
-{
-
 RefCountObject::RefCountObject(GLuint id)
 {
     mId = id;
@@ -47,6 +44,4 @@ void RefCountObjectBindingPointer::set(RefCountObject *newObject)
     if (mObject != NULL) mObject->release();
 
     mObject = newObject;
-}
-
 }

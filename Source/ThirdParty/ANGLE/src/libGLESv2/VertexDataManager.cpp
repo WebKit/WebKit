@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2011 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -65,7 +65,7 @@ VertexDataManager::~VertexDataManager()
     }
 }
 
-std::size_t VertexDataManager::writeAttributeData(ArrayVertexBuffer *vertexBuffer, GLint start, GLsizei count, const VertexAttribute &attribute)
+std::size_t VertexDataManager::writeAttributeData(ArrayVertexBuffer *vertexBuffer, GLint start, GLsizei count, const VertexAttribute &attribute, GLsizei instances)
 {
     Buffer *buffer = attribute.mBoundBuffer.get();
 
@@ -78,7 +78,7 @@ std::size_t VertexDataManager::writeAttributeData(ArrayVertexBuffer *vertexBuffe
     
     if (vertexBuffer)
     {
-        output = vertexBuffer->map(attribute, spaceRequired(attribute, count), &streamOffset);
+        output = vertexBuffer->map(attribute, spaceRequired(attribute, count, instances), &streamOffset);
     }
 
     if (output == NULL)
@@ -100,7 +100,10 @@ std::size_t VertexDataManager::writeAttributeData(ArrayVertexBuffer *vertexBuffe
         input = static_cast<const char*>(attribute.mPointer);
     }
 
-    input += inputStride * start;
+    if (instances == 0 || attribute.mDivisor == 0)
+    {
+        input += inputStride * start;
+    }
 
     if (converter.identity && inputStride == elementSize)
     {
@@ -116,7 +119,7 @@ std::size_t VertexDataManager::writeAttributeData(ArrayVertexBuffer *vertexBuffe
     return streamOffset;
 }
 
-GLenum VertexDataManager::prepareVertexData(GLint start, GLsizei count, TranslatedAttribute *translated)
+GLenum VertexDataManager::prepareVertexData(GLint start, GLsizei count, TranslatedAttribute *translated, GLsizei instances)
 {
     if (!mStreamingBuffer)
     {
@@ -144,7 +147,7 @@ GLenum VertexDataManager::prepareVertexData(GLint start, GLsizei count, Translat
                 if (staticBuffer->size() == 0)
                 {
                     int totalCount = elementsInBuffer(attribs[i], buffer->size());
-                    staticBuffer->addRequiredSpace(spaceRequired(attribs[i], totalCount));
+                    staticBuffer->addRequiredSpace(spaceRequired(attribs[i], totalCount, 0));
                 }
                 else if (staticBuffer->lookupAttribute(attribs[i]) == -1)
                 {
@@ -159,19 +162,19 @@ GLenum VertexDataManager::prepareVertexData(GLint start, GLsizei count, Translat
 
                             if (staticBuffer == previousStaticBuffer)
                             {
-                                mStreamingBuffer->addRequiredSpace(spaceRequired(attribs[previous], count));
+                                mStreamingBuffer->addRequiredSpace(spaceRequired(attribs[previous], count, instances));
                             }
                         }
                     }
 
-                    mStreamingBuffer->addRequiredSpace(spaceRequired(attribs[i], count));
+                    mStreamingBuffer->addRequiredSpace(spaceRequired(attribs[i], count, instances));
 
                     buffer->invalidateStaticData();
                 }    
             }
             else
             {
-                mStreamingBuffer->addRequiredSpace(spaceRequired(attribs[i], count));
+                mStreamingBuffer->addRequiredSpace(spaceRequired(attribs[i], count, instances));
             }
         }
     }
@@ -225,17 +228,22 @@ GLenum VertexDataManager::prepareVertexData(GLint start, GLsizei count, Translat
                         int totalCount = elementsInBuffer(attribs[i], buffer->size());
                         int startIndex = attribs[i].mOffset / attribs[i].stride();
 
-                        streamOffset = writeAttributeData(staticBuffer, -startIndex, totalCount, attribs[i]);
+                        streamOffset = writeAttributeData(staticBuffer, -startIndex, totalCount, attribs[i], 0);
                     }
 
                     if (streamOffset != -1)
                     {
-                        streamOffset += (start + attribs[i].mOffset / attribs[i].stride()) * converter.outputElementSize;
+                        streamOffset += (attribs[i].mOffset / attribs[i].stride()) * converter.outputElementSize;
+
+                        if (instances == 0 || attribs[i].mDivisor == 0)
+                        {
+                            streamOffset += start * converter.outputElementSize;
+                        }
                     }
                 }
                 else
                 {
-                    streamOffset = writeAttributeData(mStreamingBuffer, start, count, attribs[i]);
+                    streamOffset = writeAttributeData(mStreamingBuffer, start, count, attribs[i], instances);
                 }
 
                 if (streamOffset == -1)
@@ -245,6 +253,8 @@ GLenum VertexDataManager::prepareVertexData(GLint start, GLsizei count, Translat
 
                 translated[i].vertexBuffer = vertexBuffer->getBuffer();
                 translated[i].serial = vertexBuffer->getSerial();
+                translated[i].divisor = attribs[i].mDivisor;
+
                 translated[i].type = converter.d3dDeclType;
                 translated[i].stride = converter.outputElementSize;
                 translated[i].offset = streamOffset;
@@ -277,6 +287,7 @@ GLenum VertexDataManager::prepareVertexData(GLint start, GLsizei count, Translat
 
                 translated[i].vertexBuffer = mCurrentValueBuffer[i]->getBuffer();
                 translated[i].serial = mCurrentValueBuffer[i]->getSerial();
+                translated[i].divisor = 0;
 
                 translated[i].type = D3DDECLTYPE_FLOAT4;
                 translated[i].stride = 0;
@@ -301,9 +312,18 @@ GLenum VertexDataManager::prepareVertexData(GLint start, GLsizei count, Translat
     return GL_NO_ERROR;
 }
 
-std::size_t VertexDataManager::spaceRequired(const VertexAttribute &attrib, std::size_t count) const
+std::size_t VertexDataManager::spaceRequired(const VertexAttribute &attrib, std::size_t count, GLsizei instances) const
 {
-    return formatConverter(attrib).outputElementSize * count;
+    size_t elementSize = formatConverter(attrib).outputElementSize;
+
+    if (instances == 0 || attrib.mDivisor == 0)
+    {
+        return elementSize * count;
+    }
+    else
+    {
+        return elementSize * ((instances + attrib.mDivisor - 1) / attrib.mDivisor);
+    }
 }
 
 // Mapping from OpenGL-ES vertex attrib type to D3D decl type:
@@ -497,14 +517,20 @@ public:
         { TRANSLATION_FOR_TYPE_NORM_SIZE(type, true, 1), TRANSLATION_FOR_TYPE_NORM_SIZE(type, true, 2), TRANSLATION_FOR_TYPE_NORM_SIZE(type, true, 3), TRANSLATION_FOR_TYPE_NORM_SIZE(type, true, 4) },     \
     }
 
+#define TRANSLATIONS_FOR_TYPE_NO_NORM(type)                                                                                                                                                                 \
+    {                                                                                                                                                                                                       \
+        { TRANSLATION_FOR_TYPE_NORM_SIZE(type, false, 1), TRANSLATION_FOR_TYPE_NORM_SIZE(type, false, 2), TRANSLATION_FOR_TYPE_NORM_SIZE(type, false, 3), TRANSLATION_FOR_TYPE_NORM_SIZE(type, false, 4) }, \
+        { TRANSLATION_FOR_TYPE_NORM_SIZE(type, false, 1), TRANSLATION_FOR_TYPE_NORM_SIZE(type, false, 2), TRANSLATION_FOR_TYPE_NORM_SIZE(type, false, 3), TRANSLATION_FOR_TYPE_NORM_SIZE(type, false, 4) }, \
+    }
+
 const VertexDataManager::TranslationDescription VertexDataManager::mPossibleTranslations[NUM_GL_VERTEX_ATTRIB_TYPES][2][4] = // [GL types as enumerated by typeIndex()][normalized][size-1]
 {
     TRANSLATIONS_FOR_TYPE(GL_BYTE),
     TRANSLATIONS_FOR_TYPE(GL_UNSIGNED_BYTE),
     TRANSLATIONS_FOR_TYPE(GL_SHORT),
     TRANSLATIONS_FOR_TYPE(GL_UNSIGNED_SHORT),
-    TRANSLATIONS_FOR_TYPE(GL_FIXED),
-    TRANSLATIONS_FOR_TYPE(GL_FLOAT)
+    TRANSLATIONS_FOR_TYPE_NO_NORM(GL_FIXED),
+    TRANSLATIONS_FOR_TYPE_NO_NORM(GL_FLOAT)
 };
 
 void VertexDataManager::checkVertexCaps(DWORD declTypes)

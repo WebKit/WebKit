@@ -53,6 +53,12 @@ NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "compiler/preprocessor/slglobals.h"
 
+#if defined(_MSC_VER)
+#pragma warning(disable: 4054)
+#pragma warning(disable: 4152)
+#pragma warning(disable: 4706)
+#endif
+
 static int CPPif(yystypepp * yylvalpp);
 
 /* Don't use memory.c's replacements, as we clean up properly here */

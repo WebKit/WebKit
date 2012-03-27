@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2011 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -22,6 +22,7 @@
 #include "libGLESv2/Fence.h"
 #include "libGLESv2/FrameBuffer.h"
 #include "libGLESv2/Program.h"
+#include "libGLESv2/Query.h"
 #include "libGLESv2/RenderBuffer.h"
 #include "libGLESv2/Shader.h"
 #include "libGLESv2/Texture.h"
@@ -30,11 +31,6 @@
 
 #undef near
 #undef far
-
-namespace
-{
-    enum { CLOSING_INDEX_BUFFER_SIZE = 4096 };
-}
 
 namespace gl
 {
@@ -152,7 +148,7 @@ Context::Context(const egl::Config *config, const gl::Context *shareContext, boo
     mVertexDataManager = NULL;
     mIndexDataManager = NULL;
     mBlit = NULL;
-    mClosingIB = NULL;
+    mLineLoopIB = NULL;
 
     mInvalidEnum = false;
     mInvalidValue = false;
@@ -170,6 +166,7 @@ Context::Context(const egl::Config *config, const gl::Context *shareContext, boo
     mSupportsDXT3Textures = false;
     mSupportsDXT5Textures = false;
     mSupportsEventQueries = false;
+    mSupportsOcclusionQueries = false;
     mNumCompressedTextureFormats = 0;
     mMaxSupportedSamples = 0;
     mMaskedClearSavedState = NULL;
@@ -198,6 +195,11 @@ Context::~Context()
         deleteFence(mFenceMap.begin()->first);
     }
 
+    while (!mQueryMap.empty())
+    {
+        deleteQuery(mQueryMap.begin()->first);
+    }
+
     while (!mMultiSampleSupport.empty())
     {
         delete [] mMultiSampleSupport.begin()->second;
@@ -222,6 +224,11 @@ Context::~Context()
         mState.vertexAttribute[i].mBoundBuffer.set(NULL);
     }
 
+    for (int i = 0; i < QUERY_TYPE_COUNT; i++)
+    {
+        mState.activeQuery[i].set(NULL);
+    }
+
     mState.arrayBuffer.set(NULL);
     mState.elementArrayBuffer.set(NULL);
     mState.renderbuffer.set(NULL);
@@ -232,7 +239,7 @@ Context::~Context()
     delete mVertexDataManager;
     delete mIndexDataManager;
     delete mBlit;
-    delete mClosingIB;
+    delete mLineLoopIB;
 
     if (mMaskedClearSavedState)
     {
@@ -255,9 +262,10 @@ void Context::makeCurrent(egl::Display *display, egl::Surface *surface)
         mIndexDataManager = new IndexDataManager(this, mDevice);
         mBlit = new Blit(this);
 
-        mSupportsShaderModel3 = mDeviceCaps.PixelShaderVersion == D3DPS_VERSION(3, 0);
+        mSupportsShaderModel3 = mDeviceCaps.PixelShaderVersion >= D3DPS_VERSION(3, 0);
         mSupportsVertexTexture = mDisplay->getVertexTextureSupport();
         mSupportsNonPower2Texture = mDisplay->getNonPower2TextureSupport();
+        mSupportsInstancing = mDisplay->getInstancingSupport();
 
         mMaxTextureDimension = std::min(std::min((int)mDeviceCaps.MaxTextureWidth, (int)mDeviceCaps.MaxTextureHeight),
                                         (int)gl::IMPLEMENTATION_MAX_TEXTURE_SIZE);
@@ -294,6 +302,7 @@ void Context::makeCurrent(egl::Display *display, egl::Surface *surface)
         mMaxSupportedSamples = max;
 
         mSupportsEventQueries = mDisplay->getEventQuerySupport();
+        mSupportsOcclusionQueries = mDisplay->getOcclusionQuerySupport();
         mSupportsDXT1Textures = mDisplay->getDXT1TextureSupport();
         mSupportsDXT3Textures = mDisplay->getDXT3TextureSupport();
         mSupportsDXT5Textures = mDisplay->getDXT5TextureSupport();
@@ -805,6 +814,32 @@ GLuint Context::getArrayBufferHandle() const
     return mState.arrayBuffer.id();
 }
 
+GLuint Context::getActiveQuery(GLenum target) const
+{
+    Query *queryObject = NULL;
+    
+    switch (target)
+    {
+      case GL_ANY_SAMPLES_PASSED_EXT:
+        queryObject = mState.activeQuery[QUERY_ANY_SAMPLES_PASSED].get();
+        break;
+      case GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT:
+        queryObject = mState.activeQuery[QUERY_ANY_SAMPLES_PASSED_CONSERVATIVE].get();
+        break;
+      default:
+        ASSERT(false);
+    }
+
+    if (queryObject)
+    {
+        return queryObject->id();
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 void Context::setEnableVertexAttribArray(unsigned int attribNum, bool enabled)
 {
     mState.vertexAttribute[attribNum].mArrayEnabled = enabled;
@@ -905,7 +940,17 @@ GLuint Context::createFence()
 {
     GLuint handle = mFenceHandleAllocator.allocate();
 
-    mFenceMap[handle] = new Fence;
+    mFenceMap[handle] = new Fence(mDisplay);
+
+    return handle;
+}
+
+// Returns an unused query name
+GLuint Context::createQuery()
+{
+    GLuint handle = mQueryHandleAllocator.allocate();
+
+    mQueryMap[handle] = NULL;
 
     return handle;
 }
@@ -974,6 +1019,20 @@ void Context::deleteFence(GLuint fence)
         mFenceHandleAllocator.release(fenceObject->first);
         delete fenceObject->second;
         mFenceMap.erase(fenceObject);
+    }
+}
+
+void Context::deleteQuery(GLuint query)
+{
+    QueryMap::iterator queryObject = mQueryMap.find(query);
+    if (queryObject != mQueryMap.end())
+    {
+        mQueryHandleAllocator.release(queryObject->first);
+        if (queryObject->second)
+        {
+            queryObject->second->release();
+        }
+        mQueryMap.erase(queryObject);
     }
 }
 
@@ -1093,6 +1152,95 @@ void Context::useProgram(GLuint program)
     }
 }
 
+void Context::beginQuery(GLenum target, GLuint query)
+{
+    // From EXT_occlusion_query_boolean: If BeginQueryEXT is called with an <id>  
+    // of zero, if the active query object name for <target> is non-zero (for the  
+    // targets ANY_SAMPLES_PASSED_EXT and ANY_SAMPLES_PASSED_CONSERVATIVE_EXT, if  
+    // the active query for either target is non-zero), if <id> is the name of an 
+    // existing query object whose type does not match <target>, or if <id> is the
+    // active query object name for any query type, the error INVALID_OPERATION is
+    // generated.
+
+    // Ensure no other queries are active
+    // NOTE: If other queries than occlusion are supported, we will need to check
+    // separately that:
+    //    a) The query ID passed is not the current active query for any target/type
+    //    b) There are no active queries for the requested target (and in the case
+    //       of GL_ANY_SAMPLES_PASSED_EXT and GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT,
+    //       no query may be active for either if glBeginQuery targets either.
+    for (int i = 0; i < QUERY_TYPE_COUNT; i++)
+    {
+        if (mState.activeQuery[i].get() != NULL)
+        {
+            return error(GL_INVALID_OPERATION);
+        }
+    }
+
+    QueryType qType;
+    switch (target)
+    {
+      case GL_ANY_SAMPLES_PASSED_EXT: 
+        qType = QUERY_ANY_SAMPLES_PASSED; 
+        break;
+      case GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT: 
+        qType = QUERY_ANY_SAMPLES_PASSED_CONSERVATIVE; 
+        break;
+      default: 
+        ASSERT(false);
+        return;
+    }
+
+    Query *queryObject = getQuery(query, true, target);
+
+    // check that name was obtained with glGenQueries
+    if (!queryObject)
+    {
+        return error(GL_INVALID_OPERATION);
+    }
+
+    // check for type mismatch
+    if (queryObject->getType() != target)
+    {
+        return error(GL_INVALID_OPERATION);
+    }
+
+    // set query as active for specified target
+    mState.activeQuery[qType].set(queryObject);
+
+    // begin query
+    queryObject->begin();
+}
+
+void Context::endQuery(GLenum target)
+{
+    QueryType qType;
+
+    switch (target)
+    {
+      case GL_ANY_SAMPLES_PASSED_EXT: 
+        qType = QUERY_ANY_SAMPLES_PASSED; 
+        break;
+      case GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT: 
+        qType = QUERY_ANY_SAMPLES_PASSED_CONSERVATIVE; 
+        break;
+      default: 
+        ASSERT(false);
+        return;
+    }
+
+    Query *queryObject = mState.activeQuery[qType].get();
+
+    if (queryObject == NULL)
+    {
+        return error(GL_INVALID_OPERATION);
+    }
+
+    queryObject->end();
+
+    mState.activeQuery[qType].set(NULL);
+}
+
 void Context::setFramebufferZero(Framebuffer *buffer)
 {
     delete mFramebufferMap[0];
@@ -1134,6 +1282,25 @@ Fence *Context::getFence(unsigned int handle)
     else
     {
         return fence->second;
+    }
+}
+
+Query *Context::getQuery(unsigned int handle, bool create, GLenum type)
+{
+    QueryMap::iterator query = mQueryMap.find(handle);
+
+    if (query == mQueryMap.end())
+    {
+        return NULL;
+    }
+    else
+    {
+        if (!query->second && create)
+        {
+            query->second = new Query(handle, type);
+            query->second->addRef();
+        }
+        return query->second;
     }
 }
 
@@ -2079,21 +2246,21 @@ void Context::applyState(GLenum drawMode)
     }
 }
 
-GLenum Context::applyVertexBuffer(GLint first, GLsizei count)
+GLenum Context::applyVertexBuffer(GLint first, GLsizei count, GLsizei instances, GLsizei *repeatDraw)
 {
     TranslatedAttribute attributes[MAX_VERTEX_ATTRIBS];
 
-    GLenum err = mVertexDataManager->prepareVertexData(first, count, attributes);
+    GLenum err = mVertexDataManager->prepareVertexData(first, count, attributes, instances);
     if (err != GL_NO_ERROR)
     {
         return err;
     }
 
-    return mVertexDeclarationCache.applyDeclaration(mDevice, attributes, getCurrentProgram());
+    return mVertexDeclarationCache.applyDeclaration(mDevice, attributes, getCurrentProgram(), instances, repeatDraw);
 }
 
 // Applies the indices and element array bindings to the Direct3D 9 device
-GLenum Context::applyIndexBuffer(const void *indices, GLsizei count, GLenum mode, GLenum type, TranslatedIndexData *indexInfo)
+GLenum Context::applyIndexBuffer(const GLvoid *indices, GLsizei count, GLenum mode, GLenum type, TranslatedIndexData *indexInfo)
 {
     GLenum err = mIndexDataManager->prepareIndexData(type, count, mState.elementArrayBuffer.get(), indices, indexInfo);
 
@@ -2263,7 +2430,7 @@ void Context::readPixels(GLint x, GLint y, GLsizei width, GLsizei height,
     HRESULT result;
     IDirect3DSurface9 *systemSurface = NULL;
     bool directToPixels = getPackReverseRowOrder() && getPackAlignment() <= 4 && mDisplay->isD3d9ExDevice() &&
-                          x == 0 && y == 0 && width == desc.Width && height == desc.Height &&
+                          x == 0 && y == 0 && UINT(width) == desc.Width && UINT(height) == desc.Height &&
                           desc.Format == D3DFMT_A8R8G8B8 && format == GL_BGRA_EXT && type == GL_UNSIGNED_BYTE;
     if (directToPixels)
     {
@@ -2446,6 +2613,7 @@ void Context::readPixels(GLint x, GLint y, GLsizei width, GLsizei height,
               default:
                 UNIMPLEMENTED();   // FIXME
                 UNREACHABLE();
+                return;
             }
 
             switch (format)
@@ -2638,6 +2806,11 @@ void Context::clear(GLbitfield mask)
             mDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TFACTOR);
             mDevice->SetRenderState(D3DRS_TEXTUREFACTOR, color);
             mDevice->SetRenderState(D3DRS_MULTISAMPLEMASK, 0xFFFFFFFF);
+            
+            for(int i = 0; i < MAX_VERTEX_ATTRIBS; i++)
+            {
+                mDevice->SetStreamSourceFreq(i, 1);
+            }
 
             hr = mDevice->EndStateBlock(&mMaskedClearSavedState);
             ASSERT(SUCCEEDED(hr) || hr == D3DERR_OUTOFVIDEOMEMORY || hr == E_OUTOFMEMORY);
@@ -2697,6 +2870,11 @@ void Context::clear(GLbitfield mask)
         mDevice->SetRenderState(D3DRS_TEXTUREFACTOR, color);
         mDevice->SetRenderState(D3DRS_MULTISAMPLEMASK, 0xFFFFFFFF);
 
+        for(int i = 0; i < MAX_VERTEX_ATTRIBS; i++)
+        {
+            mDevice->SetStreamSourceFreq(i, 1);
+        }
+
         float quad[4][4];   // A quadrilateral covering the target, aligned to match the edges
         quad[0][0] = -0.5f;
         quad[0][1] = mRenderTargetDesc.Height - 0.5f;
@@ -2739,7 +2917,7 @@ void Context::clear(GLbitfield mask)
     }
 }
 
-void Context::drawArrays(GLenum mode, GLint first, GLsizei count)
+void Context::drawArrays(GLenum mode, GLint first, GLsizei count, GLsizei instances)
 {
     if (!mState.currentProgram)
     {
@@ -2764,7 +2942,8 @@ void Context::drawArrays(GLenum mode, GLint first, GLsizei count)
 
     applyState(mode);
 
-    GLenum err = applyVertexBuffer(first, count);
+    GLsizei repeatDraw = 1;
+    GLenum err = applyVertexBuffer(first, count, instances, &repeatDraw);
     if (err != GL_NO_ERROR)
     {
         return error(err);
@@ -2782,16 +2961,40 @@ void Context::drawArrays(GLenum mode, GLint first, GLsizei count)
     {
         mDisplay->startScene();
         
-        mDevice->DrawPrimitive(primitiveType, 0, primitiveCount);
-
-        if (mode == GL_LINE_LOOP)   // Draw the last segment separately
+        if (mode == GL_LINE_LOOP)
         {
-            drawClosingLine(0, count - 1, 0);
+            drawLineLoop(count, GL_NONE, NULL, 0);
+        }
+        else if (instances > 0)
+        {
+            StaticIndexBuffer *countingIB = mIndexDataManager->getCountingIndices(count);
+            if (countingIB)
+            {
+                if (mAppliedIBSerial != countingIB->getSerial())
+                {
+                    mDevice->SetIndices(countingIB->getBuffer());
+                    mAppliedIBSerial = countingIB->getSerial();
+                }
+
+                for (int i = 0; i < repeatDraw; i++)
+                {
+                    mDevice->DrawIndexedPrimitive(primitiveType, 0, 0, count, 0, primitiveCount);
+                }
+            }
+            else
+            {
+                ERR("Could not create a counting index buffer for glDrawArraysInstanced.");
+                return error(GL_OUT_OF_MEMORY);
+            }
+        }
+        else   // Regular case
+        {
+            mDevice->DrawPrimitive(primitiveType, 0, primitiveCount);
         }
     }
 }
 
-void Context::drawElements(GLenum mode, GLsizei count, GLenum type, const void *indices)
+void Context::drawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei instances)
 {
     if (!mState.currentProgram)
     {
@@ -2829,7 +3032,8 @@ void Context::drawElements(GLenum mode, GLsizei count, GLenum type, const void *
     }
 
     GLsizei vertexCount = indexInfo.maxIndex - indexInfo.minIndex + 1;
-    err = applyVertexBuffer(indexInfo.minIndex, vertexCount);
+    GLsizei repeatDraw = 1;
+    err = applyVertexBuffer(indexInfo.minIndex, vertexCount, instances, &repeatDraw);
     if (err != GL_NO_ERROR)
     {
         return error(err);
@@ -2847,11 +3051,16 @@ void Context::drawElements(GLenum mode, GLsizei count, GLenum type, const void *
     {
         mDisplay->startScene();
 
-        mDevice->DrawIndexedPrimitive(primitiveType, -(INT)indexInfo.minIndex, indexInfo.minIndex, vertexCount, indexInfo.startIndex, primitiveCount);
-
-        if (mode == GL_LINE_LOOP)   // Draw the last segment separately
+        if (mode == GL_LINE_LOOP)
         {
-            drawClosingLine(count, type, indices, indexInfo.minIndex);
+            drawLineLoop(count, type, indices, indexInfo.minIndex);   
+        }
+        else
+        {
+            for (int i = 0; i < repeatDraw; i++)
+            {
+                mDevice->DrawIndexedPrimitive(primitiveType, -(INT)indexInfo.minIndex, indexInfo.minIndex, vertexCount, indexInfo.startIndex, primitiveCount);
+            }
         }
     }
 }
@@ -2859,151 +3068,152 @@ void Context::drawElements(GLenum mode, GLsizei count, GLenum type, const void *
 // Implements glFlush when block is false, glFinish when block is true
 void Context::sync(bool block)
 {
-    egl::Display *display = getDisplay();
-    IDirect3DQuery9 *eventQuery = NULL;
-    HRESULT result;
-
-    result = mDevice->CreateQuery(D3DQUERYTYPE_EVENT, &eventQuery);
-    if (FAILED(result))
-    {
-        ERR("CreateQuery failed hr=%x\n", result);
-        if (result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY)
-        {
-            return error(GL_OUT_OF_MEMORY);
-        }
-        ASSERT(false);
-        return;
-    }
-
-    result = eventQuery->Issue(D3DISSUE_END);
-    if (FAILED(result))
-    {
-        ERR("eventQuery->Issue(END) failed hr=%x\n", result);
-        ASSERT(false);
-        eventQuery->Release();
-        return;
-    }
-
-    do
-    {
-        result = eventQuery->GetData(NULL, 0, D3DGETDATA_FLUSH);
-
-        if(block && result == S_FALSE)
-        {
-            // Keep polling, but allow other threads to do something useful first
-            Sleep(0);
-            // explicitly check for device loss
-            // some drivers seem to return S_FALSE even if the device is lost
-            // instead of D3DERR_DEVICELOST like they should
-            if (display->testDeviceLost())
-            {
-                result = D3DERR_DEVICELOST;
-            }
-        }
-    }
-    while(block && result == S_FALSE);
-
-    eventQuery->Release();
-
-    if (checkDeviceLost(result))
-    {
-        error(GL_OUT_OF_MEMORY);
-    }
+    mDisplay->sync(block);
 }
 
-void Context::drawClosingLine(unsigned int first, unsigned int last, int minIndex)
+void Context::drawLineLoop(GLsizei count, GLenum type, const GLvoid *indices, int minIndex)
 {
-    IDirect3DIndexBuffer9 *indexBuffer = NULL;
-    bool succeeded = false;
-    UINT offset;
-
-    if (supports32bitIndices())
-    {
-        const int spaceNeeded = 2 * sizeof(unsigned int);
-
-        if (!mClosingIB)
-        {
-            mClosingIB = new StreamingIndexBuffer(mDevice, CLOSING_INDEX_BUFFER_SIZE, D3DFMT_INDEX32);
-        }
-
-        mClosingIB->reserveSpace(spaceNeeded, GL_UNSIGNED_INT);
-
-        unsigned int *data = static_cast<unsigned int*>(mClosingIB->map(spaceNeeded, &offset));
-        if (data)
-        {
-            data[0] = last;
-            data[1] = first;
-            mClosingIB->unmap();
-            offset /= 4;
-            succeeded = true;
-        }
-    }
-    else
-    {
-        const int spaceNeeded = 2 * sizeof(unsigned short);
-
-        if (!mClosingIB)
-        {
-            mClosingIB = new StreamingIndexBuffer(mDevice, CLOSING_INDEX_BUFFER_SIZE, D3DFMT_INDEX16);
-        }
-
-        mClosingIB->reserveSpace(spaceNeeded, GL_UNSIGNED_SHORT);
-
-        unsigned short *data = static_cast<unsigned short*>(mClosingIB->map(spaceNeeded, &offset));
-        if (data)
-        {
-            data[0] = last;
-            data[1] = first;
-            mClosingIB->unmap();
-            offset /= 2;
-            succeeded = true;
-        }
-    }
-    
-    if (succeeded)
-    {
-        mDevice->SetIndices(mClosingIB->getBuffer());
-        mAppliedIBSerial = mClosingIB->getSerial();
-
-        mDevice->DrawIndexedPrimitive(D3DPT_LINELIST, -minIndex, minIndex, last, offset, 1);
-    }
-    else
-    {
-        ERR("Could not create an index buffer for closing a line loop.");
-        error(GL_OUT_OF_MEMORY);
-    }
-}
-
-void Context::drawClosingLine(GLsizei count, GLenum type, const void *indices, int minIndex)
-{
-    unsigned int first = 0;
-    unsigned int last = 0;
-
-    if (mState.elementArrayBuffer.get())
+    // Get the raw indices for an indexed draw
+    if (type != GL_NONE && mState.elementArrayBuffer.get())
     {
         Buffer *indexBuffer = mState.elementArrayBuffer.get();
         intptr_t offset = reinterpret_cast<intptr_t>(indices);
         indices = static_cast<const GLubyte*>(indexBuffer->data()) + offset;
     }
 
-    switch (type)
-    {
-      case GL_UNSIGNED_BYTE:
-        first = static_cast<const GLubyte*>(indices)[0];
-        last = static_cast<const GLubyte*>(indices)[count - 1];
-        break;
-      case GL_UNSIGNED_SHORT:
-        first = static_cast<const GLushort*>(indices)[0];
-        last = static_cast<const GLushort*>(indices)[count - 1];
-        break;
-      case GL_UNSIGNED_INT:
-        first = static_cast<const GLuint*>(indices)[0];
-        last = static_cast<const GLuint*>(indices)[count - 1];
-        break;
-      default: UNREACHABLE();
-    }
+    UINT startIndex = 0;
+    bool succeeded = false;
 
-    drawClosingLine(first, last, minIndex);
+    if (supports32bitIndices())
+    {
+        const int spaceNeeded = (count + 1) * sizeof(unsigned int);
+
+        if (!mLineLoopIB)
+        {
+            mLineLoopIB = new StreamingIndexBuffer(mDevice, INITIAL_INDEX_BUFFER_SIZE, D3DFMT_INDEX32);
+        }
+
+        if (mLineLoopIB)
+        {
+            mLineLoopIB->reserveSpace(spaceNeeded, GL_UNSIGNED_INT);
+
+            UINT offset = 0;
+            unsigned int *data = static_cast<unsigned int*>(mLineLoopIB->map(spaceNeeded, &offset));
+            startIndex = offset / 4;
+            
+            if (data)
+            {
+                switch (type)
+                {
+                  case GL_NONE:   // Non-indexed draw
+                    for (int i = 0; i < count; i++)
+                    {
+                        data[i] = i;
+                    }
+                    data[count] = 0;
+                    break;
+                  case GL_UNSIGNED_BYTE:
+                    for (int i = 0; i < count; i++)
+                    {
+                        data[i] = static_cast<const GLubyte*>(indices)[i];
+                    }
+                    data[count] = static_cast<const GLubyte*>(indices)[0];
+                    break;
+                  case GL_UNSIGNED_SHORT:
+                    for (int i = 0; i < count; i++)
+                    {
+                        data[i] = static_cast<const GLushort*>(indices)[i];
+                    }
+                    data[count] = static_cast<const GLushort*>(indices)[0];
+                    break;
+                  case GL_UNSIGNED_INT:
+                    for (int i = 0; i < count; i++)
+                    {
+                        data[i] = static_cast<const GLuint*>(indices)[i];
+                    }
+                    data[count] = static_cast<const GLuint*>(indices)[0];
+                    break;
+                  default: UNREACHABLE();
+                }
+
+                mLineLoopIB->unmap();
+                succeeded = true;
+            }
+        }
+    }
+    else
+    {
+        const int spaceNeeded = (count + 1) * sizeof(unsigned short);
+
+        if (!mLineLoopIB)
+        {
+            mLineLoopIB = new StreamingIndexBuffer(mDevice, INITIAL_INDEX_BUFFER_SIZE, D3DFMT_INDEX16);
+        }
+
+        if (mLineLoopIB)
+        {
+            mLineLoopIB->reserveSpace(spaceNeeded, GL_UNSIGNED_SHORT);
+
+            UINT offset = 0;
+            unsigned short *data = static_cast<unsigned short*>(mLineLoopIB->map(spaceNeeded, &offset));
+            startIndex = offset / 2;
+            
+            if (data)
+            {
+                switch (type)
+                {
+                  case GL_NONE:   // Non-indexed draw
+                    for (int i = 0; i < count; i++)
+                    {
+                        data[i] = i;
+                    }
+                    data[count] = 0;
+                    break;
+                  case GL_UNSIGNED_BYTE:
+                    for (int i = 0; i < count; i++)
+                    {
+                        data[i] = static_cast<const GLubyte*>(indices)[i];
+                    }
+                    data[count] = static_cast<const GLubyte*>(indices)[0];
+                    break;
+                  case GL_UNSIGNED_SHORT:
+                    for (int i = 0; i < count; i++)
+                    {
+                        data[i] = static_cast<const GLushort*>(indices)[i];
+                    }
+                    data[count] = static_cast<const GLushort*>(indices)[0];
+                    break;
+                  case GL_UNSIGNED_INT:
+                    for (int i = 0; i < count; i++)
+                    {
+                        data[i] = static_cast<const GLuint*>(indices)[i];
+                    }
+                    data[count] = static_cast<const GLuint*>(indices)[0];
+                    break;
+                  default: UNREACHABLE();
+                }
+
+                mLineLoopIB->unmap();
+                succeeded = true;
+            }
+        }
+    }
+    
+    if (succeeded)
+    {
+        if (mAppliedIBSerial != mLineLoopIB->getSerial())
+        {
+            mDevice->SetIndices(mLineLoopIB->getBuffer());
+            mAppliedIBSerial = mLineLoopIB->getSerial();
+        }
+
+        mDevice->DrawIndexedPrimitive(D3DPT_LINESTRIP, -minIndex, minIndex, count, startIndex, count);
+    }
+    else
+    {
+        ERR("Could not create a looping index buffer for GL_LINE_LOOP.");
+        return error(GL_OUT_OF_MEMORY);
+    }
 }
 
 void Context::recordInvalidEnum()
@@ -3162,6 +3372,11 @@ bool Context::supportsEventQueries() const
     return mSupportsEventQueries;
 }
 
+bool Context::supportsOcclusionQueries() const
+{
+    return mSupportsOcclusionQueries;
+}
+
 bool Context::supportsDXT1Textures() const
 {
     return mSupportsDXT1Textures;
@@ -3245,6 +3460,11 @@ bool Context::supports32bitIndices() const
 bool Context::supportsNonPower2Texture() const
 {
     return mSupportsNonPower2Texture;
+}
+
+bool Context::supportsInstancing() const
+{
+    return mSupportsInstancing;
 }
 
 void Context::detachBuffer(GLuint buffer)
@@ -3435,6 +3655,13 @@ void Context::setVertexAttrib(GLuint index, const GLfloat *values)
     mVertexDataManager->dirtyCurrentValue(index);
 }
 
+void Context::setVertexAttribDivisor(GLuint index, GLuint divisor)
+{
+    ASSERT(index < gl::MAX_VERTEX_ATTRIBS);
+
+    mState.vertexAttribute[index].mDivisor = divisor;
+}
+
 // keep list sorted in following order
 // OES extensions
 // EXT extensions
@@ -3476,6 +3703,11 @@ void Context::initExtensionString()
     }
 
     // Multi-vendor (EXT) extensions
+    if (supportsOcclusionQueries())
+    {
+        mExtensionString += "GL_EXT_occlusion_query_boolean ";
+    }
+
     mExtensionString += "GL_EXT_read_format_bgra ";
     mExtensionString += "GL_EXT_robustness ";
 
@@ -3492,6 +3724,11 @@ void Context::initExtensionString()
     if (getMaxSupportedSamples() != 0)
     {
         mExtensionString += "GL_ANGLE_framebuffer_multisample ";
+    }
+
+    if (supportsInstancing())
+    {
+        mExtensionString += "GL_ANGLE_instanced_arrays ";
     }
 
     mExtensionString += "GL_ANGLE_pack_reverse_row_order ";
@@ -3837,8 +4074,44 @@ VertexDeclarationCache::~VertexDeclarationCache()
     }
 }
 
-GLenum VertexDeclarationCache::applyDeclaration(IDirect3DDevice9 *device, TranslatedAttribute attributes[], Program *program)
+GLenum VertexDeclarationCache::applyDeclaration(IDirect3DDevice9 *device, TranslatedAttribute attributes[], Program *program, GLsizei instances, GLsizei *repeatDraw)
 {
+    *repeatDraw = 1;
+
+    int indexedAttribute = MAX_VERTEX_ATTRIBS;
+    int instancedAttribute = MAX_VERTEX_ATTRIBS;
+
+    if (instances > 0)
+    {
+        // Find an indexed attribute to be mapped to D3D stream 0
+        for (int i = 0; i < MAX_VERTEX_ATTRIBS; i++)
+        {
+            if (attributes[i].active)
+            {
+                if (indexedAttribute == MAX_VERTEX_ATTRIBS)
+                {
+                    if (attributes[i].divisor == 0)
+                    {
+                        indexedAttribute = i;
+                    }
+                }
+                else if (instancedAttribute == MAX_VERTEX_ATTRIBS)
+                {
+                    if (attributes[i].divisor != 0)
+                    {
+                        instancedAttribute = i;
+                    }
+                }
+                else break;   // Found both an indexed and instanced attribute
+            }
+        }
+
+        if (indexedAttribute == MAX_VERTEX_ATTRIBS)
+        {
+            return GL_INVALID_OPERATION;
+        }
+    }
+
     D3DVERTEXELEMENT9 elements[MAX_VERTEX_ATTRIBS + 1];
     D3DVERTEXELEMENT9 *element = &elements[0];
 
@@ -3846,23 +4119,72 @@ GLenum VertexDeclarationCache::applyDeclaration(IDirect3DDevice9 *device, Transl
     {
         if (attributes[i].active)
         {
-            if (mAppliedVBs[i].serial != attributes[i].serial ||
-                mAppliedVBs[i].stride != attributes[i].stride ||
-                mAppliedVBs[i].offset != attributes[i].offset)
+            int stream = i;
+
+            if (instances > 0)
             {
-                device->SetStreamSource(i, attributes[i].vertexBuffer, attributes[i].offset, attributes[i].stride);
-                mAppliedVBs[i].serial = attributes[i].serial;
-                mAppliedVBs[i].stride = attributes[i].stride;
-                mAppliedVBs[i].offset = attributes[i].offset;
+                // Due to a bug on ATI cards we can't enable instancing when none of the attributes are instanced.
+                if (instancedAttribute == MAX_VERTEX_ATTRIBS)
+                {
+                    *repeatDraw = instances;
+                }
+                else
+                {
+                    if (i == indexedAttribute)
+                    {
+                        stream = 0;
+                    }
+                    else if (i == 0)
+                    {
+                        stream = indexedAttribute;
+                    }
+
+                    UINT frequency = 1;
+                    
+                    if (attributes[i].divisor == 0)
+                    {
+                        frequency = D3DSTREAMSOURCE_INDEXEDDATA | instances;
+                    }
+                    else
+                    {
+                        frequency = D3DSTREAMSOURCE_INSTANCEDATA | attributes[i].divisor;
+                    }
+                    
+                    device->SetStreamSourceFreq(stream, frequency);
+                    mInstancingEnabled = true;
+                }
             }
 
-            element->Stream = i;
+            if (mAppliedVBs[stream].serial != attributes[i].serial ||
+                mAppliedVBs[stream].stride != attributes[i].stride ||
+                mAppliedVBs[stream].offset != attributes[i].offset)
+            {
+                device->SetStreamSource(stream, attributes[i].vertexBuffer, attributes[i].offset, attributes[i].stride);
+                mAppliedVBs[stream].serial = attributes[i].serial;
+                mAppliedVBs[stream].stride = attributes[i].stride;
+                mAppliedVBs[stream].offset = attributes[i].offset;
+            }
+
+            element->Stream = stream;
             element->Offset = 0;
             element->Type = attributes[i].type;
             element->Method = D3DDECLMETHOD_DEFAULT;
             element->Usage = D3DDECLUSAGE_TEXCOORD;
             element->UsageIndex = program->getSemanticIndex(i);
             element++;
+        }
+    }
+
+    if (instances == 0 || instancedAttribute == MAX_VERTEX_ATTRIBS)
+    {
+        if (mInstancingEnabled)
+        {
+            for (int i = 0; i < MAX_VERTEX_ATTRIBS; i++)
+            {
+                device->SetStreamSourceFreq(i, 1);
+            }
+
+            mInstancingEnabled = false;
         }
     }
 
@@ -3920,6 +4242,7 @@ void VertexDeclarationCache::markStateDirty()
     }
 
     mLastSetVDecl = NULL;
+    mInstancingEnabled = true;   // Forces it to be disabled when not used
 }
 
 }

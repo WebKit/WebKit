@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2011 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -18,6 +18,7 @@
 #include <d3d9.h>
 
 #include <set>
+#include <vector>
 
 #include "libGLESv2/Context.h"
 
@@ -63,6 +64,9 @@ class Display
     virtual D3DADAPTER_IDENTIFIER9 *getAdapterIdentifier();
     virtual bool testDeviceLost();
     virtual bool testDeviceResettable();
+    virtual void sync(bool block);
+    virtual IDirect3DQuery9* allocateEventQuery();
+    virtual void freeEventQuery(IDirect3DQuery9* query);
     virtual void getMultiSampleSupport(D3DFORMAT format, bool *multiSampleArray);
     virtual bool getDXT1TextureSupport();
     virtual bool getDXT3TextureSupport();
@@ -74,14 +78,17 @@ class Display
     virtual bool getLuminanceAlphaTextureSupport();
     virtual bool getVertexTextureSupport() const;
     virtual bool getNonPower2TextureSupport() const;
+    virtual bool getOcclusionQuerySupport() const;
+    virtual bool getInstancingSupport() const;
     virtual D3DPOOL getBufferPool(DWORD usage) const;
     virtual D3DPOOL getTexturePool(bool renderable) const;
 
     virtual void notifyDeviceLost();
     bool isDeviceLost();
 
-    bool isD3d9ExDevice() { return mD3d9Ex != NULL; }
+    bool isD3d9ExDevice() const { return mD3d9Ex != NULL; }
     const char *getExtensionString() const;
+    bool shareHandleSupported() const;
 
   private:
     DISALLOW_COPY_AND_ASSIGN(Display);
@@ -103,6 +110,10 @@ class Display
     IDirect3D9Ex *mD3d9Ex;  // Might be null if D3D9Ex is not supported.
     IDirect3DDevice9 *mDevice;
     IDirect3DDevice9Ex *mDeviceEx;  // Might be null if D3D9Ex is not supported.
+
+    // A pool of event queries that are currently unused.
+    std::vector<IDirect3DQuery9*> mEventQueryPool;
+
     D3DCAPS9 mDeviceCaps;
     D3DADAPTER_IDENTIFIER9 mAdapterIdentifier;
     HWND mDeviceWindow;

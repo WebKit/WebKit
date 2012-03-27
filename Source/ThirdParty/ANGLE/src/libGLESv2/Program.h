@@ -154,8 +154,8 @@ class Program
 
     bool linkUniforms(ID3DXConstantTable *constantTable);
     bool defineUniform(const D3DXHANDLE &constantHandle, const D3DXCONSTANT_DESC &constantDescription, std::string name = "");
-    bool defineUniform(const D3DXCONSTANT_DESC &constantDescription, std::string &name);
-    Uniform *createUniform(const D3DXCONSTANT_DESC &constantDescription, std::string &name);
+    bool defineUniform(const D3DXCONSTANT_DESC &constantDescription, const std::string &name);
+    Uniform *createUniform(const D3DXCONSTANT_DESC &constantDescription, const std::string &name);
     bool applyUniformnfv(Uniform *targetUniform, const GLfloat *v);
     bool applyUniform1iv(Uniform *targetUniform, GLsizei count, const GLint *v);
     bool applyUniform2iv(Uniform *targetUniform, GLsizei count, const GLint *v);

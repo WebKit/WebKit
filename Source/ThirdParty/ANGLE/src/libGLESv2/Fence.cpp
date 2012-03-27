@@ -13,8 +13,9 @@
 namespace gl
 {
 
-Fence::Fence()
-{ 
+Fence::Fence(egl::Display* display)
+{
+    mDisplay = display;
     mQuery = NULL;
     mCondition = GL_NONE;
     mStatus = GL_FALSE;
@@ -24,8 +25,7 @@ Fence::~Fence()
 {
     if (mQuery != NULL)
     {
-        mQuery->Release();
-        mQuery = NULL;
+        mDisplay->freeEventQuery(mQuery);
     }
 }
 
@@ -38,15 +38,13 @@ GLboolean Fence::isFence()
 
 void Fence::setFence(GLenum condition)
 {
-    if (mQuery != NULL)
+    if (!mQuery)
     {
-        mQuery->Release();
-        mQuery = NULL;
-    }
-
-    if (FAILED(getDevice()->CreateQuery(D3DQUERYTYPE_EVENT, &mQuery)))
-    {
-        return error(GL_OUT_OF_MEMORY);
+        mQuery = mDisplay->allocateEventQuery();
+        if (!mQuery)
+        {
+            return error(GL_OUT_OF_MEMORY);
+        }
     }
 
     HRESULT result = mQuery->Issue(D3DISSUE_END);

@@ -302,6 +302,12 @@ public:
         assert(table.size() >= 2);
         return table[1];
     }
+
+    TSymbolTableLevel* getOuterLevel() {
+        assert(table.size() >= 2);
+        return table[currentLevel() - 1];
+    }
+
     void relateToOperator(const char* name, TOperator op) {
         table[0]->relateToOperator(name, op);
     }

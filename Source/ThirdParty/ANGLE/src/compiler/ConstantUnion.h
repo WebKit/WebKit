@@ -11,6 +11,10 @@
 
 class ConstantUnion {
 public:
+    ConstantUnion()
+    {
+        iConst = 0;
+    }
 
     POOL_ALLOCATOR_NEW_DELETE(GlobalPoolAllocator)        
     void setIConst(int i) {iConst = i; type = EbtInt; }
@@ -54,8 +58,6 @@ public:
         default:
             return false;
         }
-
-        return false;
     }
 
     bool operator!=(const int i) const
@@ -89,8 +91,6 @@ public:
         default:
             return false;   // Invalid operation, handled at semantic analysis
         }
-
-        return false;
     }
 
     bool operator<(const ConstantUnion& constant) const
@@ -104,8 +104,6 @@ public:
         default:
             return false;   // Invalid operation, handled at semantic analysis
         }
-
-        return false;
     }
 
     ConstantUnion operator+(const ConstantUnion& constant) const

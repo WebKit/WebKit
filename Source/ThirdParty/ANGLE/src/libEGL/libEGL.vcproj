@@ -50,9 +50,11 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="4"
+				DisableSpecificWarnings="4100;4127;4189;4239;4244;4245;4512;4702"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
+				WarnAsError="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -129,9 +131,11 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBEGL_EXPORTS;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;_SECURE_SCL=0"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="4"
+				DisableSpecificWarnings="4100;4127;4189;4239;4244;4245;4512;4702"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				WarnAsError="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -211,9 +215,11 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="4"
+				DisableSpecificWarnings="4100;4127;4189;4239;4244;4245;4512;4702"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				WarnAsError="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -291,9 +297,11 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBEGL_EXPORTS;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;_SECURE_SCL=0"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="4"
+				DisableSpecificWarnings="4100;4127;4189;4239;4244;4245;4512;4702"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				WarnAsError="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

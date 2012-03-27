@@ -22,6 +22,17 @@ RenderbufferInterface::RenderbufferInterface()
 {
 }
 
+// The default case for classes inherited from RenderbufferInterface is not to
+// need to do anything upon the reference count to the parent Renderbuffer incrementing
+// or decrementing. 
+void RenderbufferInterface::addProxyRef(const Renderbuffer *proxy)
+{
+}
+
+void RenderbufferInterface::releaseProxy(const Renderbuffer *proxy)
+{
+}
+
 GLuint RenderbufferInterface::getRedSize() const
 {
     return dx2es::GetRedSize(getD3DFormat());
@@ -52,12 +63,26 @@ GLuint RenderbufferInterface::getStencilSize() const
     return dx2es::GetStencilSize(getD3DFormat());
 }
 
-RenderbufferTexture::RenderbufferTexture(Texture *texture, GLenum target) : mTexture(texture), mTarget(target)
+RenderbufferTexture::RenderbufferTexture(Texture *texture, GLenum target) : mTarget(target)
 {
+    mTexture.set(texture);
 }
 
 RenderbufferTexture::~RenderbufferTexture()
 {
+    mTexture.set(NULL);
+}
+
+// Textures need to maintain their own reference count for references via
+// Renderbuffers acting as proxies. Here, we notify the texture of a reference.
+void RenderbufferTexture::addProxyRef(const Renderbuffer *proxy)
+{
+    mTexture->addProxyRef(proxy);
+}
+
+void RenderbufferTexture::releaseProxy(const Renderbuffer *proxy)
+{
+    mTexture->releaseProxy(proxy);
 }
 
 IDirect3DSurface9 *RenderbufferTexture::getRenderTarget()
@@ -109,6 +134,22 @@ Renderbuffer::Renderbuffer(GLuint id, RenderbufferInterface *instance) : RefCoun
 Renderbuffer::~Renderbuffer()
 {
     delete mInstance;
+}
+
+// The RenderbufferInterface contained in this Renderbuffer may need to maintain
+// its own reference count, so we pass it on here.
+void Renderbuffer::addRef() const
+{
+    mInstance->addProxyRef(this);
+
+    RefCountObject::addRef();
+}
+
+void Renderbuffer::release() const
+{
+    mInstance->releaseProxy(this);
+
+    RefCountObject::release();
 }
 
 IDirect3DSurface9 *Renderbuffer::getRenderTarget()
