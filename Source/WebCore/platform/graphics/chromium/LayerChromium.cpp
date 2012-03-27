@@ -318,6 +318,7 @@ void LayerChromium::setFilters(const FilterOperations& filters)
         return;
     m_filters = filters;
     setNeedsCommit();
+    CCLayerTreeHost::setNeedsFilterContext();
 }
 
 void LayerChromium::setOpacity(float opacity)
@@ -459,6 +460,18 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setDebugName(m_debugName.isolatedCopy()); // We have to use isolatedCopy() here to safely pass ownership to another thread.
     layer->setDoubleSided(m_doubleSided);
     layer->setDrawsContent(drawsContent());
+    if (CCProxy::hasImplThread()) {
+        // Since FilterOperations contains a vector of RefPtrs, we must deep copy the filters.
+        FilterOperations filtersCopy;
+        for (unsigned i = 0; i < m_filters.size(); ++i) {
+            RefPtr<FilterOperation> clone = m_filters.at(i)->clone();
+            if (clone)
+                filtersCopy.operations().append(clone);
+        }
+        layer->setFilters(filtersCopy);
+    } else
+        layer->setFilters(filters());
+
     layer->setFilters(filters());
     layer->setIsNonCompositedContent(m_isNonCompositedContent);
     layer->setMasksToBounds(m_masksToBounds);

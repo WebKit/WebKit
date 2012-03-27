@@ -129,6 +129,9 @@ public:
     // Returns true if any CCLayerTreeHost is alive.
     static bool anyLayerTreeHostInstanceExists();
 
+    static bool needsFilterContext() { return s_needsFilterContext; }
+    static void setNeedsFilterContext() { s_needsFilterContext = true; }
+
     // CCLayerTreeHost interface to CCProxy.
     void willBeginFrame() { m_client->willBeginFrame(); }
     void updateAnimations(double wallClockTime);
@@ -268,6 +271,7 @@ private:
 
     TextureList m_deleteTextureAfterCommitList;
     size_t m_partialTextureUpdateRequests;
+    static bool s_needsFilterContext;
 };
 
 }

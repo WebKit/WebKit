@@ -82,6 +82,8 @@ public:
     // True if the the value of one pixel can affect the value of another pixel under this operation, such as blur.
     virtual bool movesPixels() const { return false; }
 
+    virtual PassRefPtr<FilterOperation> clone() const = 0;
+
 protected:
     FilterOperation(OperationType type)
         : m_type(type)
@@ -96,6 +98,11 @@ public:
     static PassRefPtr<DefaultFilterOperation> create(OperationType type)
     {
         return adoptRef(new DefaultFilterOperation(type));
+    }
+
+    virtual PassRefPtr<FilterOperation> clone() const
+    {
+        return adoptRef(new DefaultFilterOperation(m_type));
     }
 
 private:
@@ -120,6 +127,11 @@ public:
         return adoptRef(new PassthroughFilterOperation());
     }
 
+    virtual PassRefPtr<FilterOperation> clone() const
+    {
+        return adoptRef(new PassthroughFilterOperation());
+    }
+
 private:
 
     virtual bool operator==(const FilterOperation& o) const
@@ -138,6 +150,12 @@ public:
     static PassRefPtr<ReferenceFilterOperation> create(const AtomicString& reference, OperationType type)
     {
         return adoptRef(new ReferenceFilterOperation(reference, type));
+    }
+
+    virtual PassRefPtr<FilterOperation> clone() const
+    {
+        // AtomicString is thread-hostile, so we can't be cloned.
+        return 0;
     }
 
     virtual bool affectsOpacity() const { return true; }
@@ -173,6 +191,11 @@ public:
         return adoptRef(new BasicColorMatrixFilterOperation(amount, type));
     }
 
+    virtual PassRefPtr<FilterOperation> clone() const
+    {
+        return adoptRef(new BasicColorMatrixFilterOperation(m_amount, m_type));
+    }
+
     double amount() const { return m_amount; }
 
     virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false);
@@ -203,6 +226,11 @@ public:
     static PassRefPtr<BasicComponentTransferFilterOperation> create(double amount, OperationType type)
     {
         return adoptRef(new BasicComponentTransferFilterOperation(amount, type));
+    }
+
+    virtual PassRefPtr<FilterOperation> clone() const
+    {
+        return adoptRef(new BasicComponentTransferFilterOperation(m_amount, m_type));
     }
 
     double amount() const { return m_amount; }
@@ -236,6 +264,11 @@ public:
     static PassRefPtr<GammaFilterOperation> create(double amplitude, double exponent, double offset, OperationType type)
     {
         return adoptRef(new GammaFilterOperation(amplitude, exponent, offset, type));
+    }
+
+    virtual PassRefPtr<FilterOperation> clone() const
+    {
+        return adoptRef(new GammaFilterOperation(m_amplitude, m_exponent, m_offset, m_type));
     }
 
     double amplitude() const { return m_amplitude; }
@@ -273,6 +306,11 @@ public:
         return adoptRef(new BlurFilterOperation(stdDeviation, type));
     }
 
+    virtual PassRefPtr<FilterOperation> clone() const
+    {
+        return adoptRef(new BlurFilterOperation(m_stdDeviation, m_type));
+    }
+
     Length stdDeviation() const { return m_stdDeviation; }
 
     virtual bool affectsOpacity() const { return true; }
@@ -303,6 +341,11 @@ public:
     static PassRefPtr<DropShadowFilterOperation> create(int x, int y, int stdDeviation, Color color, OperationType type)
     {
         return adoptRef(new DropShadowFilterOperation(x, y, stdDeviation, color, type));
+    }
+
+    virtual PassRefPtr<FilterOperation> clone() const
+    {
+        return adoptRef(new DropShadowFilterOperation(m_x, m_y, m_stdDeviation, m_color, m_type));
     }
 
     int x() const { return m_x; }

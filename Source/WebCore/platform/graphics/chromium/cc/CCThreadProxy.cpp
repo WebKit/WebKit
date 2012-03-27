@@ -27,6 +27,7 @@
 #include "cc/CCThreadProxy.h"
 
 #include "GraphicsContext3D.h"
+#include "SharedGraphicsContext3D.h"
 #include "TraceEvent.h"
 #include "cc/CCDelayBasedTimeSource.h"
 #include "cc/CCFrameRateController.h"
@@ -209,6 +210,10 @@ bool CCThreadProxy::recreateContext()
     RefPtr<GraphicsContext3D> context = m_layerTreeHost->createContext();
     if (!context)
         return false;
+    if (CCLayerTreeHost::needsFilterContext())
+        if (!SharedGraphicsContext3D::createForImplThread())
+            return false;
+
     ASSERT(context->hasOneRef());
 
     // Leak the context pointer so we can transfer ownership of it to the other side...
@@ -421,6 +426,9 @@ void CCThreadProxy::beginFrame()
         TRACE_EVENT0("cc", "EarlyOut_StaleBeginFrameMessage");
         return;
     }
+
+    if (CCLayerTreeHost::needsFilterContext() && !SharedGraphicsContext3D::haveForImplThread())
+        SharedGraphicsContext3D::createForImplThread();
 
     OwnPtr<BeginFrameAndCommitState> request(m_pendingBeginFrameRequest.release());
 

@@ -28,31 +28,42 @@
 
 #include "SharedGraphicsContext3D.h"
 #include "Extensions3D.h"
+#include "cc/CCProxy.h"
 
 namespace WebCore {
 
 class SharedGraphicsContext3DImpl {
 public:
     SharedGraphicsContext3DImpl() : m_context(0) { }
-    PassRefPtr<GraphicsContext3D> get()
+    PassRefPtr<GraphicsContext3D> getOrCreateContext()
     {
         // If we lost the context, or can't make it current, create a new one.
         if (m_context && (!m_context->makeContextCurrent() || (m_context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR)))
             m_context.clear();
 
-        if (!m_context) {
-            GraphicsContext3D::Attributes attributes;
-            attributes.depth = false;
-            attributes.stencil = true;
-            attributes.antialias = false;
-            attributes.shareResources = true;
-            attributes.preferDiscreteGPU = true;
-            m_context = GraphicsContext3D::create(attributes, 0);
-        }
+        if (!m_context)
+            createContext();
 
         if (m_context && !m_context->makeContextCurrent())
             m_context.clear();
 
+        return m_context;
+    }
+
+    PassRefPtr<GraphicsContext3D> getContext()
+    {
+        return m_context;
+    }
+
+    PassRefPtr<GraphicsContext3D> createContext()
+    {
+        GraphicsContext3D::Attributes attributes;
+        attributes.depth = false;
+        attributes.stencil = true;
+        attributes.antialias = false;
+        attributes.shareResources = true;
+        attributes.preferDiscreteGPU = true;
+        m_context = GraphicsContext3D::create(attributes, 0);
         return m_context;
     }
 private:
@@ -62,7 +73,35 @@ private:
 PassRefPtr<GraphicsContext3D> SharedGraphicsContext3D::get()
 {
     DEFINE_STATIC_LOCAL(SharedGraphicsContext3DImpl, impl, ());
-    return impl.get();
+    return impl.getOrCreateContext();
+}
+
+enum ContextOperation {
+    Get, Create
+};
+
+static PassRefPtr<GraphicsContext3D> getOrCreateContextForImplThread(ContextOperation op)
+{
+    DEFINE_STATIC_LOCAL(SharedGraphicsContext3DImpl, impl, ());
+    return op == Create ? impl.createContext() : impl.getContext();
+}
+
+PassRefPtr<GraphicsContext3D> SharedGraphicsContext3D::getForImplThread()
+{
+    ASSERT(CCProxy::isImplThread());
+    return getOrCreateContextForImplThread(Get);
+}
+
+bool SharedGraphicsContext3D::haveForImplThread()
+{
+    ASSERT(CCProxy::isMainThread());
+    return getOrCreateContextForImplThread(Get);
+}
+
+bool SharedGraphicsContext3D::createForImplThread()
+{
+    ASSERT(CCProxy::isMainThread());
+    return getOrCreateContextForImplThread(Create);
 }
 
 }

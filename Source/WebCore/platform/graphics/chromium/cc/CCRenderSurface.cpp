@@ -223,13 +223,16 @@ void CCRenderSurface::drawSurface(LayerRendererChromium* layerRenderer, CCLayerI
 
 SkBitmap CCRenderSurface::applyFilters(LayerRendererChromium* layerRenderer)
 {
-    // Don't use the utility context if we have a compositor thread, since
-    // it can race with canvas's use.
-    if (!m_contentsTexture || !m_filters.size() || CCProxy::hasImplThread())
+    if (!m_contentsTexture || !m_filters.size())
+        return SkBitmap();
+
+    RefPtr<GraphicsContext3D> filterContext = CCProxy::hasImplThread() ? SharedGraphicsContext3D::getForImplThread() : SharedGraphicsContext3D::get();
+    if (!filterContext)
         return SkBitmap();
 
     layerRenderer->context()->flush();
-    return CCRenderSurfaceFilters::apply(m_filters, m_contentsTexture->textureId(), m_contentRect.size(), SharedGraphicsContext3D::get().get());
+
+    return CCRenderSurfaceFilters::apply(m_filters, m_contentsTexture->textureId(), m_contentRect.size(), filterContext.get());
 }
 
 String CCRenderSurface::name() const

@@ -49,6 +49,8 @@ static int numLayerTreeInstances;
 
 namespace WebCore {
 
+bool CCLayerTreeHost::s_needsFilterContext = false;
+
 bool CCLayerTreeHost::anyLayerTreeHostInstanceExists()
 {
     return numLayerTreeInstances > 0;

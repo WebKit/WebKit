@@ -40,6 +40,15 @@ public:
     // function again. Note that the return value may be 0 if the
     // GPU is unavailable.
     static PassRefPtr<GraphicsContext3D> get();
+    // This one returns the context, and does not touch it or re-create it.
+    // Should only be called on the impl thread.
+    static PassRefPtr<GraphicsContext3D> getForImplThread();
+    // This one returns if the threaded utility context exists.
+    // Should only be called on the main thread.
+    static bool haveForImplThread();
+    // This call creates the context unconditionally, but does not touch it.
+    // Should only be called on the main thread.
+    static bool createForImplThread();
 };
 
 }
