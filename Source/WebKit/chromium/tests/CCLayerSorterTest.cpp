@@ -34,81 +34,94 @@ using namespace WebCore;
 
 namespace {
 
-TEST(CCLayerSorterTest, PointInTriangle)
+// Note: In the following overlap tests, the "camera" is looking down the negative Z axis,
+// meaning that layers with smaller z values (more negative) are further from the camera
+// and therefore must be drawn before layers with higher z values.
+
+TEST(CCLayerSorterTest, BasicOverlap)
 {
-    FloatPoint a(10.0, 10.0);
-    FloatPoint b(30.0, 10.0);
-    FloatPoint c(20.0, 20.0);
-
-    // Point in the center is in the triangle.
-    EXPECT_TRUE(CCLayerSorter::pointInTriangle(FloatPoint(20.0, 15.0), a, b, c));
-
-    // Permuting the corners doesn't change the result.
-    EXPECT_TRUE(CCLayerSorter::pointInTriangle(FloatPoint(20.0, 15.0), a, c, b));
-    EXPECT_TRUE(CCLayerSorter::pointInTriangle(FloatPoint(20.0, 15.0), b, a, c));
-    EXPECT_TRUE(CCLayerSorter::pointInTriangle(FloatPoint(20.0, 15.0), b, c, a));
-    EXPECT_TRUE(CCLayerSorter::pointInTriangle(FloatPoint(20.0, 15.0), c, a, b));
-    EXPECT_TRUE(CCLayerSorter::pointInTriangle(FloatPoint(20.0, 15.0), c, b, a));
-
-    // Points on the edges are not in the triangle.
-    EXPECT_FALSE(CCLayerSorter::pointInTriangle(FloatPoint(20.0, 10.0), a, b, c));
-    EXPECT_FALSE(CCLayerSorter::pointInTriangle(FloatPoint(15.0, 15.0), a, b, c));
-    EXPECT_FALSE(CCLayerSorter::pointInTriangle(FloatPoint(25.0, 15.0), a, b, c));
-
-    // Points just inside the edges are in the triangle.
-    EXPECT_TRUE(CCLayerSorter::pointInTriangle(FloatPoint(20.0, 10.01), a, b, c));
-    EXPECT_TRUE(CCLayerSorter::pointInTriangle(FloatPoint(15.01, 15.0), a, b, c));
-    EXPECT_TRUE(CCLayerSorter::pointInTriangle(FloatPoint(24.99, 15.0), a, b, c));
-
-    // Zero-area triangle doesn't intersect any point.
-    EXPECT_FALSE(CCLayerSorter::pointInTriangle(FloatPoint(15.0, 10.0), a, b, FloatPoint(20.0, 10.0)));
-}
-
-TEST(CCLayerSorterTest, CalculateZDiff)
-{
-    // This should be bigger than the range of z values used.
-    const float threshold = 10.0;
+    CCLayerSorter::ABCompareResult overlapResult;
+    const float zThreshold = 0.1f;
+    float weight = 0;
 
     // Trivial test, with one layer directly obscuring the other.
+    TransformationMatrix neg4Translate;
+    neg4Translate.translate3d(0, 0, -4);
+    CCLayerSorter::LayerShape front(2, 2, neg4Translate);
 
-    CCLayerSorter::LayerShape front(
-        FloatPoint3D(-1.0, 1.0, 5.0),
-        FloatPoint3D(1.0, 1.0, 5.0),
-        FloatPoint3D(1.0, -1.0, 5.0),
-        FloatPoint3D(-1.0, -1.0, 5.0));
+    TransformationMatrix neg5Translate;
+    neg5Translate.translate3d(0, 0, -5);
+    CCLayerSorter::LayerShape back(2, 2, neg5Translate);
 
-    CCLayerSorter::LayerShape back(
-        FloatPoint3D(-1.0, 1.0, 4.0),
-        FloatPoint3D(1.0, 1.0, 4.0),
-        FloatPoint3D(1.0, -1.0, 4.0),
-        FloatPoint3D(-1.0, -1.0, 4.0));
+    overlapResult = CCLayerSorter::checkOverlap(&front, &back, zThreshold, weight);
+    EXPECT_EQ(CCLayerSorter::BBeforeA, overlapResult);
+    EXPECT_EQ(1, weight);
 
-    EXPECT_GT(CCLayerSorter::calculateZDiff(front, back, threshold), 0.0);
-    EXPECT_LT(CCLayerSorter::calculateZDiff(back, front, threshold), 0.0);
+    overlapResult = CCLayerSorter::checkOverlap(&back, &front, zThreshold, weight);
+    EXPECT_EQ(CCLayerSorter::ABeforeB, overlapResult);
+    EXPECT_EQ(1, weight);
 
-    // When comparing a layer with itself, zDiff is always 0.
-    EXPECT_EQ(CCLayerSorter::calculateZDiff(front, front, threshold), 0.0);
-    EXPECT_EQ(CCLayerSorter::calculateZDiff(back, back, threshold), 0.0);
+    // One layer translated off to the right. No overlap should be detected.
+    TransformationMatrix rightTranslate;
+    rightTranslate.translate3d(10, 0, -5);
+    CCLayerSorter::LayerShape backRight(2, 2, rightTranslate);
+    overlapResult = CCLayerSorter::checkOverlap(&front, &backRight, zThreshold, weight);
+    EXPECT_EQ(CCLayerSorter::None, overlapResult);
 
-    // Same again but with two layers that intersect only at one point (0,0).
-    // This *does* count as obscuring, so we should get the same results.
+    // When comparing a layer with itself, z difference is always 0.
+    overlapResult = CCLayerSorter::checkOverlap(&front, &front, zThreshold, weight);
+    EXPECT_EQ(0, weight);
+}
 
-    front = CCLayerSorter::LayerShape(
-        FloatPoint3D(-1.0, 0.0, 5.0),
-        FloatPoint3D(0.0, 0.0, 5.0),
-        FloatPoint3D(0.0, -1.0, 5.0),
-        FloatPoint3D(-1.0, -1.0, 5.0));
+TEST(CCLayerSorterTest, RightAngleOverlap)
+{
+    CCLayerSorter::ABCompareResult overlapResult;
+    const float zThreshold = 0.1f;
+    float weight = 0;
 
-    back = CCLayerSorter::LayerShape(
-        FloatPoint3D(0.0, 1.0, 4.0),
-        FloatPoint3D(1.0, 1.0, 4.0),
-        FloatPoint3D(1.0, 0.0, 4.0),
-        FloatPoint3D(0.0, 0.0, 4.0));
+    TransformationMatrix perspectiveMatrix;
+    perspectiveMatrix.applyPerspective(1000);
 
-    EXPECT_GT(CCLayerSorter::calculateZDiff(front, back, threshold), 0.0);
-    EXPECT_LT(CCLayerSorter::calculateZDiff(back, front, threshold), 0.0);
-    EXPECT_EQ(CCLayerSorter::calculateZDiff(front, front, threshold), 0.0);
-    EXPECT_EQ(CCLayerSorter::calculateZDiff(back, back, threshold), 0.0);
+    // Two layers forming a right angle with a perspective viewing transform.
+    TransformationMatrix leftFaceMatrix;
+    leftFaceMatrix.rotate3d(0, 1, 0, -90).translateRight3d(-1, 0, -5);
+    CCLayerSorter::LayerShape leftFace(2, 2, perspectiveMatrix * leftFaceMatrix);
+    TransformationMatrix frontFaceMatrix;
+    frontFaceMatrix.translate3d(0, 0, -4);
+    CCLayerSorter::LayerShape frontFace(2, 2, perspectiveMatrix * frontFaceMatrix);
+
+    overlapResult = CCLayerSorter::checkOverlap(&frontFace, &leftFace, zThreshold, weight);
+    EXPECT_EQ(CCLayerSorter::BBeforeA, overlapResult);
+}
+
+TEST(CCLayerSorterTest, IntersectingLayerOverlap)
+{
+    CCLayerSorter::ABCompareResult overlapResult;
+    const float zThreshold = 0.1f;
+    float weight = 0;
+
+    TransformationMatrix perspectiveMatrix;
+    perspectiveMatrix.applyPerspective(1000);
+
+    // Intersecting layers. An explicit order will be returned based on relative z
+    // values at the overlapping features but the weight returned should be zero.
+    TransformationMatrix frontFaceMatrix;
+    frontFaceMatrix.translate3d(0, 0, -4);
+    CCLayerSorter::LayerShape frontFace(2, 2, perspectiveMatrix * frontFaceMatrix);
+
+    TransformationMatrix throughMatrix;
+    throughMatrix.rotate3d(0, 1, 0, 45).translateRight3d(0, 0, -4);
+    CCLayerSorter::LayerShape rotatedFace(2, 2, perspectiveMatrix * throughMatrix);
+    overlapResult = CCLayerSorter::checkOverlap(&frontFace, &rotatedFace, zThreshold, weight);
+    EXPECT_NE(CCLayerSorter::None, overlapResult);
+    EXPECT_EQ(0, weight);
+}
+
+TEST(CCLayerSorterTest, LayersAtAngleOverlap)
+{
+    CCLayerSorter::ABCompareResult overlapResult;
+    const float zThreshold = 0.1f;
+    float weight = 0;
 
     // Trickier test with layers at an angle.
     //
@@ -120,42 +133,26 @@ TEST(CCLayerSorterTest, CalculateZDiff)
     // +z         /
     //
     // C is in front of A and behind B (not what you'd expect by comparing centers).
-    // A and B don't overlap, so they're incomparable (zDiff = 0).
+    // A and B don't overlap, so they're incomparable.
 
-    const float yHi = 10.0;
-    const float yLo = -10.0;
-    const float zA = 1.0;
-    const float zB = -1.0;
+    TransformationMatrix transformA;
+    transformA.translate3d(-6, 0, 1);
+    CCLayerSorter::LayerShape layerA(8, 20, transformA);
 
-    CCLayerSorter::LayerShape layerA(
-        FloatPoint3D(-10.0, yHi, zA),
-        FloatPoint3D(-2.0, yHi, zA),
-        FloatPoint3D(-2.0, yLo, zA),
-        FloatPoint3D(-10.0, yLo, zA));
+    TransformationMatrix transformB;
+    transformB.translate3d(6, 0, -1);
+    CCLayerSorter::LayerShape layerB(8, 20, transformB);
 
-    CCLayerSorter::LayerShape layerB(
-        FloatPoint3D(2.0, yHi, zB),
-        FloatPoint3D(10.0, yHi, zB),
-        FloatPoint3D(10.0, yLo, zB),
-        FloatPoint3D(2.0, yLo, zB));
+    TransformationMatrix transformC;
+    transformC.rotate3d(0, 1, 0, 40);
+    CCLayerSorter::LayerShape layerC(8, 20, transformC);
 
-    CCLayerSorter::LayerShape layerC(
-        FloatPoint3D(-5.0, yHi, 5.0),
-        FloatPoint3D(5.0, yHi, -5.0),
-        FloatPoint3D(5.0, yLo, -5.0),
-        FloatPoint3D(-5.0, yLo, 5.0));
-
-    EXPECT_EQ(CCLayerSorter::calculateZDiff(layerA, layerA, threshold), 0.0);
-    EXPECT_EQ(CCLayerSorter::calculateZDiff(layerA, layerB, threshold), 0.0);
-    EXPECT_LT(CCLayerSorter::calculateZDiff(layerA, layerC, threshold), 0.0);
-
-    EXPECT_EQ(CCLayerSorter::calculateZDiff(layerB, layerA, threshold), 0.0);
-    EXPECT_EQ(CCLayerSorter::calculateZDiff(layerB, layerB, threshold), 0.0);
-    EXPECT_GT(CCLayerSorter::calculateZDiff(layerB, layerC, threshold), 0.0);
-
-    EXPECT_GT(CCLayerSorter::calculateZDiff(layerC, layerA, threshold), 0.0);
-    EXPECT_LT(CCLayerSorter::calculateZDiff(layerC, layerB, threshold), 0.0);
-    EXPECT_EQ(CCLayerSorter::calculateZDiff(layerC, layerC, threshold), 0.0);
+    overlapResult = CCLayerSorter::checkOverlap(&layerA, &layerC, zThreshold, weight);
+    EXPECT_EQ(CCLayerSorter::ABeforeB, overlapResult);
+    overlapResult = CCLayerSorter::checkOverlap(&layerC, &layerB, zThreshold, weight);
+    EXPECT_EQ(CCLayerSorter::ABeforeB, overlapResult);
+    overlapResult = CCLayerSorter::checkOverlap(&layerA, &layerB, zThreshold, weight);
+    EXPECT_EQ(CCLayerSorter::None, overlapResult);
 }
 
 TEST(CCLayerSorterTest, verifyExistingOrderingPreservedWhenNoZDiff)

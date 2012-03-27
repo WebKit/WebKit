@@ -1,3 +1,17 @@
+2012-03-26  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        [chromium] Simplify and fix CCLayerSorter
+        https://bugs.webkit.org/show_bug.cgi?id=82114
+
+        Adjustments to the CCLayerSorter unit tests to account for API changes in the
+        CCLayerSorter class.
+
+        Reviewed by Kenneth Russell.
+
+        * tests/CCLayerSorterTest.cpp:
+        (WebCore):
+        (WebCore::TEST):
+
 2012-03-26  James Robinson  <jamesr@chromium.org>
 
         Scrollable plugins not registered properly in ScrollingCoordinator

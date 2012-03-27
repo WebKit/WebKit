@@ -46,54 +46,9 @@ static WTFLogChannel LogCCLayerSorter = { 0x00000000, "", WTFLogChannelOff };
 
 namespace WebCore {
 
-bool CCLayerSorter::pointInTriangle(const FloatPoint& point,
-                                    const FloatPoint& a,
-                                    const FloatPoint& b,
-                                    const FloatPoint& c)
-{
-    // Algorithm from http://www.blackpawn.com/texts/pointinpoly/default.html
-    float x0 = c.x() - a.x();
-    float y0 = c.y() - a.y();
-    float x1 = b.x() - a.x();
-    float y1 = b.y() - a.y();
-    float x2 = point.x() - a.x();
-    float y2 = point.y() - a.y();
-
-    float dot00 = x0 * x0 + y0 * y0;
-    float dot01 = x0 * x1 + y0 * y1;
-    float dot02 = x0 * x2 + y0 * y2;
-    float dot11 = x1 * x1 + y1 * y1;
-    float dot12 = x1 * x2 + y1 * y2;
-    float denominator = dot00 * dot11 - dot01 * dot01;
-    if (!denominator)
-        // Triangle is zero-area. Treat query point as not being inside.
-        return false;
-    // Compute
-    float inverseDenominator = 1.0f / denominator;
-    float u = (dot11 * dot02 - dot01 * dot12) * inverseDenominator;
-    float v = (dot00 * dot12 - dot01 * dot02) * inverseDenominator;
-
-    return (u > 0.0f) && (v > 0.0f) && (u + v < 1.0f);
-}
-
 inline static float perpProduct(const FloatSize& u, const FloatSize& v)
 {
     return u.width() * v.height() - u.height() * v.width();
-}
-
-inline static float innerProduct(const FloatSize& u, const FloatSize& v)
-{
-    return u.width() * v.width() + u.height() * v.height();
-}
-
-
-inline static bool pointInColinearEdge(const FloatPoint& p, const FloatPoint& a, const FloatPoint& b)
-{
-    // if ab is not vertical.
-    if (a.x() != b.x())
-        return (p.x() >= min(a.x(), b.x()) && p.x() <= max(a.x(), b.x()));
-
-    return (p.y() >= min(a.y(), b.y()) && p.y() <= max(a.y(), b.y()));
 }
 
 // Tests if two edges defined by their endpoints (a,b) and (c,d) intersect. Returns true and the
@@ -106,31 +61,12 @@ static bool edgeEdgeTest(const FloatPoint& a, const FloatPoint& b, const FloatPo
 
     float denom = perpProduct(u, v);
 
-    // If denom == 0 then the edges are parallel.
-    if (!denom) {
-        // If the edges are not colinear then there's no intersection.
-        if (perpProduct(u, w) || perpProduct(v, w))
-            return false;
-
-        if (pointInColinearEdge(a, c, d)) {
-            r = a;
-            return true;
-        }
-        if (pointInColinearEdge(b, c, d)) {
-            r = b;
-            return true;
-        }
-        if (pointInColinearEdge(c, a, b)) {
-            r = c;
-            return true;
-        }
-        if (pointInColinearEdge(d, a, b)) {
-            r = d;
-            return true;
-        }
-
+    // If denom == 0 then the edges are parallel. While they could be overlapping
+    // we don't bother to check here as the we'll find their intersections from the
+    // corner to quad tests.
+    if (!denom)
         return false;
-    }
+
     float s = perpProduct(v, w) / denom;
     if (s < 0 || s > 1)
         return false;
@@ -144,147 +80,119 @@ static bool edgeEdgeTest(const FloatPoint& a, const FloatPoint& b, const FloatPo
     return true;
 }
 
-float CCLayerSorter::calculateZDiff(const LayerShape& layerA, const LayerShape& layerB, float earlyExitThreshold)
+// Checks whether layer "a" draws on top of layer "b". The weight value returned is an indication of
+// the maximum z-depth difference between the layers or zero if the layers are found to be intesecting
+// (some features are in front and some are behind).
+CCLayerSorter::ABCompareResult CCLayerSorter::checkOverlap(LayerShape* a, LayerShape* b, float zThreshold, float& weight)
 {
-    LayerIntersector intersector(layerA, layerB, earlyExitThreshold);
-    intersector.go();
-    return intersector.zDiff;
-}
+    weight = 0;
 
-CCLayerSorter::LayerIntersector::LayerIntersector(const LayerShape& layerA, const LayerShape& layerB, float earlyExitThreshold)
-    : layerA(layerA)
-    , layerB(layerB)
-    , zDiff(0)
-    , earlyExitThreshold(earlyExitThreshold)
-{
-}
+    // Early out if the projected bounds don't overlap.
+    if (!a->projectedBounds.intersects(b->projectedBounds))
+        return None;
 
-void CCLayerSorter::LayerIntersector::go()
-{
-    (triangleTriangleTest(layerA.c1, layerA.c2, layerA.c3, layerB.c1, layerB.c2, layerB.c3)
-     || triangleTriangleTest(layerA.c3, layerA.c4, layerA.c1, layerB.c1, layerB.c2, layerB.c3)
-     || triangleTriangleTest(layerA.c1, layerA.c2, layerA.c3, layerB.c3, layerB.c4, layerB.c1)
-     || triangleTriangleTest(layerA.c3, layerA.c4, layerA.c1, layerB.c3, layerB.c4, layerB.c1));
-}
+    FloatPoint aPoints[4] = {a->projectedQuad.p1(), a->projectedQuad.p2(), a->projectedQuad.p3(), a->projectedQuad.p4() };
+    FloatPoint bPoints[4] = {b->projectedQuad.p1(), b->projectedQuad.p2(), b->projectedQuad.p3(), b->projectedQuad.p4() };
 
-// Checks if segment pq intersects any of the sides of triangle abc.
-bool CCLayerSorter::LayerIntersector::edgeTriangleTest(const FloatPoint& p, const FloatPoint& q, const FloatPoint& a, const FloatPoint& b, const FloatPoint& c)
-{
-    FloatPoint r;
-    if ((edgeEdgeTest(p, q, a, b, r) && checkZDiff(r))
-        || (edgeEdgeTest(p, q, a, c, r) && checkZDiff(r))
-        || (edgeEdgeTest(p, q, b, c, r) && checkZDiff(r)))
-        return true;
+    // Make a list of points that inside both layer quad projections.
+    Vector<FloatPoint> overlapPoints;
 
-    return false;
-}
-
-// Checks if two co-planar triangles intersect.
-bool CCLayerSorter::LayerIntersector::triangleTriangleTest(const FloatPoint& a1, const FloatPoint& b1, const FloatPoint& c1, const FloatPoint& a2, const FloatPoint& b2, const FloatPoint& c2)
-{
-    // Check all edges of first triangle with edges of the second one.
-    if (edgeTriangleTest(a1, b1, a2, b2, c2)
-        || edgeTriangleTest(a1, c1, a2, b2, c2)
-        || edgeTriangleTest(b1, c1, a2, b2, c2))
-        return true;
-
-    // Check all points of the first triangle for inclusion in the second triangle.
-    if ((pointInTriangle(a1, a2, b2, c2) && checkZDiff(a1))
-        || (pointInTriangle(b1, a2, b2, c2) && checkZDiff(b1))
-        || (pointInTriangle(c1, a2, b2, c2) && checkZDiff(c1)))
-        return true;
-
-    // Check all points of the second triangle for inclusion in the first triangle.
-    if ((pointInTriangle(a2, a1, b1, c1) && checkZDiff(a2))
-        || (pointInTriangle(b2, a1, b1, c1) && checkZDiff(b2))
-        || (pointInTriangle(c2, a1, b1, c1) && checkZDiff(c2)))
-        return true;
-
-    return false;
-}
-
-// Computes the z difference between point p projected onto the two layers to determine
-// which layer is in front. If the new z difference is higher than the currently
-// recorded one the this becomes the point of choice for doing the comparison between the 
-// layers. If the value of difference is higher than our early exit threshold then
-// it means that the z difference is conclusive enough that we don't have to check
-// other intersection points.
-bool CCLayerSorter::LayerIntersector::checkZDiff(const FloatPoint& p)
-{
-    float za = layerZFromProjectedPoint(layerA, p);
-    float zb = layerZFromProjectedPoint(layerB, p);
-
-    float diff = za - zb;
-    float absDiff = fabsf(diff);
-    if ((absDiff) > fabsf(zDiff)) {
-        intersectionPoint = p;
-        zDiff = diff;
+    // Check all four corners of one layer against the other layer's quad.
+    for (int i = 0; i < 4; ++i) {
+        if (a->projectedQuad.containsPoint(bPoints[i]))
+            overlapPoints.append(bPoints[i]);
+        if (b->projectedQuad.containsPoint(aPoints[i]))
+            overlapPoints.append(aPoints[i]);
     }
 
-    if (absDiff > earlyExitThreshold)
-        return true;
+    // Check all the edges of one layer for intersection with the other layer's edges.
+    FloatPoint r;
+    for (int ea = 0; ea < 4; ++ea)
+        for (int eb = 0; eb < 4; ++eb)
+            if (edgeEdgeTest(aPoints[ea], aPoints[(ea + 1) % 4],
+                             bPoints[eb], bPoints[(eb + 1) % 4],
+                             r))
+                overlapPoints.append(r);
 
-    return false;
+    if (!overlapPoints.size())
+        return None;
+
+    // Check the corresponding layer depth value for all overlap points to determine
+    // which layer is in front.
+    float maxPositive = 0;
+    float maxNegative = 0;
+    for (unsigned o = 0; o < overlapPoints.size(); o++) {
+        float za = a->layerZFromProjectedPoint(overlapPoints[o]);
+        float zb = b->layerZFromProjectedPoint(overlapPoints[o]);
+
+        float diff = za - zb;
+        if (diff > maxPositive)
+            maxPositive = diff;
+        if (diff < maxNegative)
+            maxNegative = diff;
+    }
+
+    float maxDiff = (fabsf(maxPositive) > fabsf(maxNegative) ? maxPositive : maxNegative);
+
+    // If the results are inconsistent (and the z difference substantial to rule out
+    // numerical errors) then the layers are intersecting. We will still return an
+    // order based on the maximum depth difference but with an edge weight of zero
+    // these layers will get priority if a graph cycle is present and needs to be broken.
+    if (maxPositive > zThreshold && maxNegative < -zThreshold)
+        weight = 0;
+    else
+        weight = fabsf(maxDiff);
+
+    // Maintain relative order if the layers have the same depth at all intersection points.
+    if (maxDiff <= 0)
+        return ABeforeB;
+
+    return BBeforeA;
 }
 
+CCLayerSorter::LayerShape::LayerShape(float width, float height, const TransformationMatrix& drawTransform)
+{
+    FloatQuad layerQuad(FloatPoint(-width * 0.5, height * 0.5),
+                        FloatPoint(width * 0.5, height * 0.5),
+                        FloatPoint(width * 0.5, -height * 0.5),
+                        FloatPoint(-width * 0.5, -height * 0.5));
 
-// Returns the Z coordinate of a point on the given layer that projects
+    // Compute the projection of the layer quad onto the z = 0 plane.
+    projectedQuad = drawTransform.mapQuad(layerQuad);
+    projectedBounds = projectedQuad.boundingBox();
+
+    // Compute the normal of the layer's plane.
+    FloatPoint3D c1 = drawTransform.mapPoint(FloatPoint3D(0, 0, 0));
+    FloatPoint3D c2 = drawTransform.mapPoint(FloatPoint3D(0, 1, 0));
+    FloatPoint3D c3 = drawTransform.mapPoint(FloatPoint3D(1, 0, 0));
+    FloatPoint3D c12 = c2 - c1;
+    FloatPoint3D c13 = c3 - c1;
+    layerNormal = c13.cross(c12);
+
+    transformOrigin = c1;
+}
+
+// Returns the Z coordinate of a point on the layer that projects
 // to point p which lies on the z = 0 plane. It does it by computing the
 // intersection of a line starting from p along the Z axis and the plane
 // of the layer.
-float CCLayerSorter::LayerIntersector::layerZFromProjectedPoint(const LayerShape& layer, const FloatPoint& p)
+float CCLayerSorter::LayerShape::layerZFromProjectedPoint(const FloatPoint& p) const
 {
     const FloatPoint3D zAxis(0, 0, 1);
-    FloatPoint3D w = FloatPoint3D(p.x(), p.y(), 0) - layer.origin;
+    FloatPoint3D w = FloatPoint3D(p) - transformOrigin;
 
-    float d = layer.normal.dot(zAxis);
-    float n = -layer.normal.dot(w);
+    float d = layerNormal.dot(zAxis);
+    float n = -layerNormal.dot(w);
 
-    // Check if layer is parallel to the z = 0 axis
+    // Check if layer is parallel to the z = 0 axis which will make it
+    // invisible and hence returning zero is fine.
     if (!d)
-        return layer.origin.z();
+        return 0;
 
     // The intersection point would be given by:
     // p + (n / d) * u  but since we are only interested in the 
     // z coordinate and p's z coord is zero, all we need is the value of n/d.
     return n / d;
-}
-
-CCLayerSorter::CCLayerSorter()
-    : m_zRange(0)
-{
-}
-
-CCLayerSorter::ABCompareResult CCLayerSorter::checkOverlap(GraphNode* a, GraphNode* b)
-{
-    if (!a->shape.boundingBox.intersects(b->shape.boundingBox))
-        return None;
-
-    // These thresholds are defined relative to the total Z range. If further Z-fighting
-    // bugs come up due to precision errors, it may be worth considering doing an ulp
-    // error measurement instead.
-    float exitThreshold = m_zRange * 0.01;
-    float nonZeroThreshold = max(exitThreshold, 0.001f);
-
-    float zDiff = calculateZDiff(a->shape, b->shape, exitThreshold);
-
-    if (zDiff > nonZeroThreshold)
-        return BBeforeA;
-    if (zDiff < -nonZeroThreshold)
-        return ABeforeB;
-
-    return None;
-}
-
-CCLayerSorter::LayerShape::LayerShape(const FloatPoint3D& p1, const FloatPoint3D& p2, const FloatPoint3D& p3, const FloatPoint3D& p4)
-    : normal((p2 - p1).cross(p3 - p1))
-    , c1(FloatPoint(p1.x(), p1.y()))
-    , c2(FloatPoint(p2.x(), p2.y()))
-    , c3(FloatPoint(p3.x(), p3.y()))
-    , c4(FloatPoint(p4.x(), p4.y()))
-    , origin(p1)
-{
-    boundingBox.fitToPoints(c1, c2, c3, c4);
 }
 
 void CCLayerSorter::createGraphNodes(LayerList::iterator first, LayerList::iterator last)
@@ -309,25 +217,21 @@ void CCLayerSorter::createGraphNodes(LayerList::iterator first, LayerList::itera
         float layerWidth, layerHeight;
         if (renderSurface) {
             drawTransform = renderSurface->drawTransform();
-            layerWidth = 0.5 * renderSurface->contentRect().width();
-            layerHeight = 0.5 * renderSurface->contentRect().height();
+            layerWidth = renderSurface->contentRect().width();
+            layerHeight = renderSurface->contentRect().height();
         } else {
             drawTransform = node.layer->drawTransform();
-            layerWidth = 0.5 * node.layer->bounds().width();
-            layerHeight = 0.5 * node.layer->bounds().height();
+            layerWidth = node.layer->bounds().width();
+            layerHeight = node.layer->bounds().height();
         }
 
-        FloatPoint3D c1 = drawTransform.mapPoint(FloatPoint3D(-layerWidth, layerHeight, 0));
-        FloatPoint3D c2 = drawTransform.mapPoint(FloatPoint3D(layerWidth, layerHeight, 0));
-        FloatPoint3D c3 = drawTransform.mapPoint(FloatPoint3D(layerWidth, -layerHeight, 0));
-        FloatPoint3D c4 = drawTransform.mapPoint(FloatPoint3D(-layerWidth, -layerHeight, 0));
-        node.shape = LayerShape(c1, c2, c3, c4);
-    
-        maxZ = max(c4.z(), max(c3.z(), max(c2.z(), max(maxZ, c1.z()))));
-        minZ = min(c4.z(), min(c3.z(), min(c2.z(), min(minZ, c1.z()))));
+        node.shape = LayerShape(layerWidth, layerHeight, drawTransform);
+
+        maxZ = max(maxZ, node.shape.transformOrigin.z());
+        minZ = min(minZ, node.shape.transformOrigin.z());
     }
-    if (last - first)
-        m_zRange = fabsf(maxZ - minZ);
+
+    m_zRange = fabsf(maxZ - minZ);
 }
 
 void CCLayerSorter::createGraphEdges()
@@ -335,6 +239,11 @@ void CCLayerSorter::createGraphEdges()
 #if !defined( NDEBUG )
     LOG(CCLayerSorter, "Edges:\n");
 #endif
+    // Fraction of the total zRange below which z differences
+    // are not considered reliable.
+    const float zThresholdFactor = 0.01;
+    float zThreshold = m_zRange * zThresholdFactor;
+
     for (unsigned na = 0; na < m_nodes.size(); na++) {
         GraphNode& nodeA = m_nodes[na];
         if (!nodeA.layer->drawsContent() && !nodeA.layer->renderSurface())
@@ -343,7 +252,8 @@ void CCLayerSorter::createGraphEdges()
             GraphNode& nodeB = m_nodes[nb];
             if (!nodeB.layer->drawsContent() && !nodeB.layer->renderSurface())
                 continue;
-            ABCompareResult overlapResult = checkOverlap(&nodeA, &nodeB);
+            float weight = 0;
+            ABCompareResult overlapResult = checkOverlap(&nodeA.shape, &nodeB.shape, zThreshold, weight);
             GraphNode* startNode = 0;
             GraphNode* endNode = 0;
             if (overlapResult == ABeforeB) {
@@ -358,7 +268,7 @@ void CCLayerSorter::createGraphEdges()
 #if !defined( NDEBUG )
                 LOG(CCLayerSorter, "%d -> %d\n", startNode->layer->debugID(), endNode->layer->debugID());
 #endif
-                m_edges.append(GraphEdge(startNode, endNode));
+                m_edges.append(GraphEdge(startNode, endNode, weight));
             }
         }
     }
@@ -368,6 +278,7 @@ void CCLayerSorter::createGraphEdges()
         m_activeEdges.add(&edge, &edge);
         edge.from->outgoing.append(&edge);
         edge.to->incoming.append(&edge);
+        edge.to->incomingEdgeWeight += edge.weight;
     }
 }
 
@@ -390,7 +301,7 @@ void CCLayerSorter::removeEdgeFromList(GraphEdge* edge, Vector<GraphEdge*>& list
 
 // Sorts the given list of layers such that they can be painted in a back-to-front
 // order. Sorting produces correct results for non-intersecting layers that don't have
-// cyclical order dependencies. Cycles and intersections are broken aribtrarily.
+// cyclical order dependencies. Cycles and intersections are broken (somewhat) aribtrarily.
 // Sorting of layers is done via a topological sort of a directed graph whose nodes are
 // the layers themselves. An edge from node A to node B signifies that layer A needs to
 // be drawn before layer B. If A and B have no dependency between each other, then we
@@ -450,6 +361,7 @@ void CCLayerSorter::sort(LayerList::iterator first, LayerList::iterator last)
 
                 m_activeEdges.remove(outgoingEdge);
                 removeEdgeFromList(outgoingEdge, outgoingEdge->to->incoming);
+                outgoingEdge->to->incomingEdgeWeight -= outgoingEdge->weight;
 
                 if (!outgoingEdge->to->incoming.size())
                     noIncomingEdgeNodeList.append(outgoingEdge->to);
@@ -462,12 +374,14 @@ void CCLayerSorter::sort(LayerList::iterator first, LayerList::iterator last)
 
         // If there are still active edges but the list of nodes without incoming edges
         // is empty then we have run into a cycle. Break the cycle by finding the node
-        // with the least number incoming edges and remove them all.
-        unsigned minIncomingEdgeCount = UINT_MAX;
+        // with the smallest overall incoming edge weight and use it. This will favor
+        // nodes that have zero-weight incoming edges i.e. layers that are being
+        // occluded by a layer that intersects them.
+        float minIncomingEdgeWeight = FLT_MAX;
         GraphNode* nextNode = 0;
         for (unsigned i = 0; i < m_nodes.size(); i++) {
-            if (m_nodes[i].incoming.size() && (m_nodes[i].incoming.size() < minIncomingEdgeCount)) {
-                minIncomingEdgeCount = m_nodes[i].incoming.size();
+            if (m_nodes[i].incoming.size() && m_nodes[i].incomingEdgeWeight < minIncomingEdgeWeight) {
+                minIncomingEdgeWeight = m_nodes[i].incomingEdgeWeight;
                 nextNode = &m_nodes[i];
             }
         }
@@ -480,9 +394,10 @@ void CCLayerSorter::sort(LayerList::iterator first, LayerList::iterator last)
             removeEdgeFromList(incomingEdge, incomingEdge->from->outgoing);
         }
         nextNode->incoming.clear();
+        nextNode->incomingEdgeWeight = 0;
         noIncomingEdgeNodeList.append(nextNode);
 #if !defined( NDEBUG )
-        LOG(CCLayerSorter, "Breaking cycle by cleaning up %d edges from %d\n", minIncomingEdgeCount, nextNode->layer->debugID());
+        LOG(CCLayerSorter, "Breaking cycle by cleaning up incoming edges from %d (weight = %f)\n", nextNode->layer->debugID(), minIncomingEdgeWeight);
 #endif
     }
 
