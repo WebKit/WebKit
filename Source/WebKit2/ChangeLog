@@ -1,3 +1,97 @@
+2012-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add resources API to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=79477
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitResourceLoadClient.cpp: Added.
+        (didInitiateLoadForResource): Call
+        webkitWebViewResourceLoadStarted() so that view will create the
+        resource and emit WebKitWebView::resource-load-started.
+        (didSendRequestForResource): Call webkitWebResourceSentRequest()
+        with the given request and response.
+        (didReceiveResponseForResource): Call
+        webkitWebResourceSetResponse() with the given response.
+        (didReceiveContentLengthForResource): Call
+        webkitWebResourceNotifyProgress().
+        (didFinishLoadForResource): Call webkitWebResourceFinished().
+        (didFailLoadForResource): Create a GError for the given WKError
+        and call webkitWebResourceFailed().
+        (attachResourceLoadClientToView): Add callbacks for the
+        WKPageResourceLoadClient.
+        * UIProcess/API/gtk/WebKitResourceLoadClient.h: Added.
+        * UIProcess/API/gtk/WebKitWebResource.cpp: Added.
+        (webkitWebResourceGetProperty):
+        (webkit_web_resource_init):
+        (webkit_web_resource_class_init):
+        (webkitWebResourceUpdateURI): Update the active URI every time a
+        new request is sent to the server.
+        (webkitWebResourceCreate): Create a WebResource for the given
+        frame.
+        (webkitWebResourceSentRequest): Update uri and emit
+        WebKitWebResource::sent-request.
+        (webkitWebResourceSetResponse): Set the response property.
+        (webkitWebResourceNotifyProgress): Emit
+        WebKitWebResource::received-data.
+        (webkitWebResourceFinished): Emit WebKitWebResource::finished.
+        (webkitWebResourceFailed): Emit WebKitWebResource::failed and then
+        WebKitWebResource::finished.
+        (webkit_web_resource_get_uri): Return the currentr active URI.
+        (webkit_web_resource_get_response): Return the response received
+        from the server.
+        * UIProcess/API/gtk/WebKitWebResource.h: Added.
+        * UIProcess/API/gtk/WebKitWebResourcePrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Attach the resource load client to the
+        view.
+        (webkit_web_view_class_init): Add
+        WebKitWebView::resource-load-started signal.
+        (webkitWebViewLoadChanged): Clear loading resources map when a new
+        load starts and loaded resources map when the new load has been
+        committed.
+        (webkitWebViewResourceLoadStarted): Create a resource for the
+        given identifier, add it to the loading resources map and emit
+        WebKitWebView::resource-load-started signal.
+        (webkitWebViewGetLoadingWebResource): Return the resource that is
+        being loaded corresponding to the given identifier.
+        (webkitWebViewRemoveLoadingWebResource): Remove the resouurce
+        corresponfing to the given identifier from the loading resources
+        map.
+        (webkitWebViewResourceLoadFinished): Move the resource from the
+        loading resources map to the loaded resources map.
+        (webkit_web_view_get_main_resource): Return the main resource.
+        (webkit_web_view_get_subresources): Return the list of
+        subresources.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for
+        WebKitWebResource.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add
+        webkit_web_resource_get_type.
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Add new test for resources.
+        * UIProcess/API/gtk/tests/TestDownloads.cpp:
+        (testDownloadLocalFile): Use getWebKit1TestResoucesDir() from Test.
+        (testDownloadLocalFileError): Ditto.
+        (serverCallback): Ditto.
+        * UIProcess/API/gtk/tests/TestMain.h:
+        (Test::getWebKit1TestResoucesDir): Moed from TestDownloads so that
+        it can be used by other tests.
+        (Test): Add information about leaked objects.
+        * UIProcess/API/gtk/tests/TestResources.cpp: Added.
+        (testWebViewResources):
+        (testWebResourceLoading):
+        (testWebResourceResponse):
+        (testWebResourceActiveURI):
+        (addCacheHTTPHeadersToResponse):
+        (serverCallback):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/webkit2.h: Include WebKitWebResource.h
+        * UIProcess/API/gtk/webkit2marshal.list:
+
 2012-03-26  Pratik Solanki  <psolanki@apple.com>
 
         Fix typo in method name - WebCore::miminumValueForLength should be WebCore::minimumValueForLength

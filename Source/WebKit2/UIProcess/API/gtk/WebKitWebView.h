@@ -38,6 +38,7 @@
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitWebContext.h>
+#include <webkit2/WebKitWebResource.h>
 #include <webkit2/WebKitWebViewBase.h>
 #include <webkit2/WebKitWindowProperties.h>
 #include <webkit2/WebKitPolicyDecision.h>
@@ -123,28 +124,31 @@ struct _WebKitWebView {
 struct _WebKitWebViewClass {
     WebKitWebViewBaseClass parent;
 
-    void       (* load_changed)         (WebKitWebView             *web_view,
-                                         WebKitLoadEvent            load_event);
-    gboolean   (* load_failed)          (WebKitWebView             *web_view,
-                                         WebKitLoadEvent            load_event,
-                                         const gchar               *failing_uri,
-                                         GError                    *error);
+    void       (* load_changed)          (WebKitWebView             *web_view,
+                                          WebKitLoadEvent            load_event);
+    gboolean   (* load_failed)           (WebKitWebView             *web_view,
+                                          WebKitLoadEvent            load_event,
+                                          const gchar               *failing_uri,
+                                          GError                    *error);
 
-    GtkWidget *(* create)               (WebKitWebView             *web_view);
-    void       (* ready_to_show)        (WebKitWebView             *web_view);
-    void       (* close)                (WebKitWebView             *web_view);
+    GtkWidget *(* create)                (WebKitWebView             *web_view);
+    void       (* ready_to_show)         (WebKitWebView             *web_view);
+    void       (* close)                 (WebKitWebView             *web_view);
 
-    gboolean   (* script_dialog)        (WebKitWebView             *web_view,
-                                         WebKitScriptDialog        *dialog);
+    gboolean   (* script_dialog)         (WebKitWebView             *web_view,
+                                          WebKitScriptDialog        *dialog);
 
-    gboolean   (* decide_policy)        (WebKitWebView             *web_view,
-                                         WebKitPolicyDecision      *decision,
-                                         WebKitPolicyDecisionType   type);
-    void       (* mouse_target_changed) (WebKitWebView             *web_view,
-                                         WebKitHitTestResult       *hit_test_result,
-                                         guint                      modifiers);
-    gboolean   (* print_requested)      (WebKitWebView             *web_view,
-                                         WebKitPrintOperation      *print_operation);
+    gboolean   (* decide_policy)         (WebKitWebView             *web_view,
+                                          WebKitPolicyDecision      *decision,
+                                          WebKitPolicyDecisionType   type);
+    void       (* mouse_target_changed)  (WebKitWebView             *web_view,
+                                          WebKitHitTestResult       *hit_test_result,
+                                          guint                      modifiers);
+    gboolean   (* print_requested)       (WebKitWebView             *web_view,
+                                          WebKitPrintOperation      *print_operation);
+    void       (* resource_load_started) (WebKitWebView             *web_view,
+                                          WebKitWebResource         *resource,
+                                          WebKitURIRequest          *request);
 
     /* Padding for future expansion */
     void (*_webkit_reserved0) (void);
@@ -281,6 +285,12 @@ WEBKIT_API WebKitJavascriptResult *
 webkit_web_view_run_javascript_finish              (WebKitWebView             *web_view,
                                                     GAsyncResult              *result,
                                                     GError                   **error);
+
+WEBKIT_API WebKitWebResource *
+webkit_web_view_get_main_resource                  (WebKitWebView             *web_view);
+
+WEBKIT_API GList *
+webkit_web_view_get_subresources                   (WebKitWebView             *web_view);
 G_END_DECLS
 
 #endif

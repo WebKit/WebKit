@@ -45,5 +45,9 @@ WKStringRef webkitWebViewRunJavaScriptPrompt(WebKitWebView*, const CString& mess
 void webkitWebViewMakePolicyDecision(WebKitWebView*, WebKitPolicyDecisionType, WebKitPolicyDecision*);
 void webkitWebViewMouseTargetChanged(WebKitWebView*, WKHitTestResultRef, unsigned modifiers);
 void webkitWebViewPrintFrame(WebKitWebView*, WKFrameRef);
+void webkitWebViewResourceLoadStarted(WebKitWebView*, WKFrameRef, uint64_t resourceIdentifier, WebKitURIRequest*, bool isMainResource);
+WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
+void webkitWebViewRemoveLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
+WebKitWebResource* webkitWebViewResourceLoadFinished(WebKitWebView*, uint64_t resourceIdentifier);
 
 #endif // WebKitWebViewPrivate_h

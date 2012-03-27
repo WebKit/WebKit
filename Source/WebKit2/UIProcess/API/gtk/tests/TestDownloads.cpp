@@ -173,15 +173,9 @@ public:
     guint64 m_downloadSize;
 };
 
-static CString getWebKit1TestResoucesDir()
-{
-    GOwnPtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Source", "WebKit", "gtk", "tests", "resources", NULL));
-    return resourcesDir.get();
-}
-
 static void testDownloadLocalFile(DownloadTest* test, gconstpointer)
 {
-    GOwnPtr<char> sourcePath(g_build_filename(getWebKit1TestResoucesDir().data(), "test.pdf", NULL));
+    GOwnPtr<char> sourcePath(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "test.pdf", NULL));
     GRefPtr<GFile> source = adoptGRef(g_file_new_for_path(sourcePath.get()));
     GRefPtr<GFileInfo> sourceInfo = adoptGRef(g_file_query_info(source.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE, static_cast<GFileQueryInfoFlags>(0), 0, 0));
     GOwnPtr<char> sourceURI(g_file_get_uri(source.get()));
@@ -258,7 +252,7 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), <, 1);
 
     test->m_expectedError = WEBKIT_DOWNLOAD_ERROR_DESTINATION;
-    GOwnPtr<char> path(g_build_filename(getWebKit1TestResoucesDir().data(), "test.pdf", NULL));
+    GOwnPtr<char> path(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "test.pdf", NULL));
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.get()));
     GOwnPtr<char> uri(g_file_get_uri(file.get()));
     download = adoptGRef(webkit_web_context_download_uri(test->m_webContext, uri.get()));
@@ -301,7 +295,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         return;
     }
 
-    GOwnPtr<char> filePath(g_build_filename(getWebKit1TestResoucesDir().data(), path, NULL));
+    GOwnPtr<char> filePath(g_build_filename(Test::getWebKit1TestResoucesDir().data(), path, NULL));
     char* contents;
     gsize contentsLength;
     if (!g_file_get_contents(filePath.get(), &contents, &contentsLength, 0)) {

@@ -106,6 +106,8 @@ webkit_script_dialog_get_message
 webkit_script_dialog_confirm_set_confirmed
 webkit_script_dialog_prompt_get_default_text
 webkit_script_dialog_prompt_set_text
+webkit_web_view_get_main_resource
+webkit_web_view_get_subresources
 
 <SUBSECTION Standard>
 WebKitWebViewClass
@@ -471,6 +473,26 @@ WEBKIT_PRINT_OPERATION_GET_CLASS
 <SUBSECTION Private>
 WebKitPrintOperationPrivate
 webkit_print_operation_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebResource</FILE>
+WebKitWebResource
+webkit_web_resource_get_uri
+webkit_web_resource_get_response
+
+<SUBSECTION Standard>
+WebKitWebResourceClass
+WEBKIT_TYPE_WEB_RESOURCE
+WEBKIT_WEB_RESOURCE
+WEBKIT_IS_WEB_RESOURCE
+WEBKIT_WEB_RESOURCE_CLASS
+WEBKIT_IS_WEB_RESOURCE_CLASS
+WEBKIT_WEB_RESOURCE_GET_CLASS
+
+<SUBSECTION Private>
+WebKitWebResourcePrivate
+webkit_web_resource_get_type
 </SECTION>
 
 <SECTION>

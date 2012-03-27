@@ -102,6 +102,7 @@ libwebkit2gtkinclude_HEADERS = \
 	$(WebKit2)/UIProcess/API/gtk/WebKitURIRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitURIResponse.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebContext.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitWebResource.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebView.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebViewBase.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWindowProperties.h \
@@ -576,6 +577,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPrintOperationPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPrivate.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitResourceLoadClient.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitResourceLoadClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h \
@@ -596,6 +599,9 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContextPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebResource.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebResourcePrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebView.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebView.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebView.h \

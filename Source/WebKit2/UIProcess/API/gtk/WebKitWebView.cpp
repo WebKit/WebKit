@@ -31,10 +31,12 @@
 #include "WebKitPolicyClient.h"
 #include "WebKitPrintOperationPrivate.h"
 #include "WebKitPrivate.h"
+#include "WebKitResourceLoadClient.h"
 #include "WebKitScriptDialogPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitUIClient.h"
 #include "WebKitWebContextPrivate.h"
+#include "WebKitWebResourcePrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
@@ -66,6 +68,8 @@ enum {
 
     PRINT_REQUESTED,
 
+    RESOURCE_LOAD_STARTED,
+
     LAST_SIGNAL
 };
 
@@ -86,6 +90,9 @@ typedef enum {
     DidReplaceContent
 } ReplaceContentStatus;
 
+typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
+typedef HashMap<String, GRefPtr<WebKitWebResource> > ResourcesMap;
+
 struct _WebKitWebViewPrivate {
     WebKitWebContext* context;
     CString title;
@@ -103,6 +110,10 @@ struct _WebKitWebViewPrivate {
 
     GRefPtr<WebKitFindController> findController;
     JSGlobalContextRef javascriptGlobalContext;
+
+    GRefPtr<WebKitWebResource> mainResource;
+    LoadingResourcesMap loadingResourcesMap;
+    ResourcesMap subresourcesMap;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -205,6 +216,7 @@ static void webkitWebViewConstructed(GObject* object)
     attachLoaderClientToView(webView);
     attachUIClientToView(webView);
     attachPolicyClientToPage(webView);
+    attachResourceLoadClientToView(webView);
 
     WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(WKPageGetBackForwardList(toAPI(page))));
@@ -672,6 +684,28 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      webkit_marshal_BOOLEAN__OBJECT,
                      G_TYPE_BOOLEAN, 1,
                      WEBKIT_TYPE_PRINT_OPERATION);
+
+    /**
+     * WebKitWebView::resource-load-started:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @resource: a #WebKitWebResource
+     * @request: a #WebKitURIRequest
+     *
+     * Emitted when a new resource is going to be loaded. The @request parameter
+     * contains the #WebKitURIRequest that will be sent to the server.
+     * You can monitor the load operation by connecting to the different signals
+     * of @resource.
+     */
+    signals[RESOURCE_LOAD_STARTED] =
+        g_signal_new("resource-load-started",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, resource_load_started),
+                     0, 0,
+                     webkit_marshal_VOID__OBJECT_OBJECT,
+                     G_TYPE_NONE, 2,
+                     WEBKIT_TYPE_WEB_RESOURCE,
+                     WEBKIT_TYPE_URI_REQUEST);
 }
 
 static bool updateReplaceContentStatus(WebKitWebView* webView, WebKitLoadEvent loadEvent)
@@ -697,6 +731,11 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
     if (updateReplaceContentStatus(webView, loadEvent))
         return;
+
+    if (loadEvent == WEBKIT_LOAD_STARTED)
+        webView->priv->loadingResourcesMap.clear();
+    else if (loadEvent == WEBKIT_LOAD_COMMITTED)
+        webView->priv->subresourcesMap.clear();
 
     if (loadEvent != WEBKIT_LOAD_FINISHED)
         webkitWebViewUpdateURI(webView);
@@ -826,6 +865,38 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WKFrameRef wkFrame)
     if (response == WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL)
         return;
     g_signal_connect(printOperation.leakRef(), "finished", G_CALLBACK(g_object_unref), 0);
+}
+
+void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WKFrameRef wkFrame, uint64_t resourceIdentifier, WebKitURIRequest* request, bool isMainResource)
+{
+    // FIXME: ignore resources when replacing content.
+    WebKitWebResource* resource = webkitWebResourceCreate(wkFrame, request);
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (WKFrameIsMainFrame(wkFrame) && isMainResource)
+        priv->mainResource = resource;
+    priv->loadingResourcesMap.set(resourceIdentifier, adoptGRef(resource));
+    g_signal_emit(webView, signals[RESOURCE_LOAD_STARTED], 0, resource, request);
+}
+
+WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView* webView, uint64_t resourceIdentifier)
+{
+    GRefPtr<WebKitWebResource> resource = webView->priv->loadingResourcesMap.get(resourceIdentifier);
+    return resource.get();
+}
+
+void webkitWebViewRemoveLoadingWebResource(WebKitWebView* webView, uint64_t resourceIdentifier)
+{
+    webView->priv->loadingResourcesMap.remove(resourceIdentifier);
+}
+
+WebKitWebResource* webkitWebViewResourceLoadFinished(WebKitWebView* webView, uint64_t resourceIdentifier)
+{
+    WebKitWebResource* resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier);
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (resource != priv->mainResource)
+        priv->subresourcesMap.set(String::fromUTF8(webkit_web_resource_get_uri(resource)), resource);
+    webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier);
+    return resource;
 }
 
 /**
@@ -1608,4 +1679,43 @@ WebKitJavascriptResult* webkit_web_view_run_javascript_finish(WebKitWebView* web
 
     WebKitJavascriptResult* scriptResult = static_cast<WebKitJavascriptResult*>(g_simple_async_result_get_op_res_gpointer(simpleResult));
     return scriptResult ? webkit_javascript_result_ref(scriptResult) : 0;
+}
+
+/**
+ * webkit_web_view_get_main_resource:
+ * @web_view: a #WebKitWebView
+ *
+ * Return the main resource of @web_view.
+ * See also webkit_web_view_get_subresources():
+ *
+ * Returns: (transfer none): the main #WebKitWebResource of the view
+ *    or %NULL if nothing has been loaded.
+ */
+WebKitWebResource* webkit_web_view_get_main_resource(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    return webView->priv->mainResource.get();
+}
+
+/**
+ * webkit_web_view_get_subresources:
+ * @web_view: a #WebKitWebView
+ *
+ * Return the list of subresources of @web_view.
+ * See also webkit_web_view_get_main_resource().
+ *
+ * Returns: (element-type WebKitWebResource) (transfer container): a list of #WebKitWebResource.
+ */
+GList* webkit_web_view_get_subresources(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    GList* subresources = 0;
+    WebKitWebViewPrivate* priv = webView->priv;
+    ResourcesMap::const_iterator end = priv->subresourcesMap.end();
+    for (ResourcesMap::const_iterator it = priv->subresourcesMap.begin(); it != end; ++it)
+        subresources = g_list_prepend(subresources, it->second.get());
+
+    return g_list_reverse(subresources);
 }
