@@ -25,7 +25,6 @@
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebKit.h"
-#include "WebMediaElement.h"
 #include "WebMediaPlayer.h"
 #include "WebViewImpl.h"
 #include "cc/CCProxy.h"
@@ -85,12 +84,6 @@ void WebMediaPlayerClientImpl::registerSelf(MediaEngineRegistrar registrar)
                   0,
                   0);
     }
-}
-
-WebMediaPlayerClientImpl* WebMediaPlayerClientImpl::fromMediaElement(const WebMediaElement* element)
-{
-    PlatformMedia pm = element->constUnwrap<HTMLMediaElement>()->platformMedia();
-    return static_cast<WebMediaPlayerClientImpl*>(pm.media.chromiumMediaPlayer);
 }
 
 WebMediaPlayer* WebMediaPlayerClientImpl::mediaPlayer() const
