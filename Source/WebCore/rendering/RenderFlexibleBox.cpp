@@ -769,6 +769,7 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, const OrderedF
     childSizes.clear();
     LayoutUnit flexboxAvailableContentExtent = mainAxisContentExtent();
     LayoutUnit totalViolation = 0;
+    LayoutUnit usedFreeSpace = 0;
     WTF::Vector<Violation> minViolations;
     WTF::Vector<Violation> maxViolations;
     for (size_t i = 0; i < children.size(); ++i) {
@@ -781,7 +782,8 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, const OrderedF
         if (inflexibleItems.contains(child))
             childSizes.append(inflexibleItems.get(child));
         else {
-            LayoutUnit childSize = preferredMainAxisContentExtentForChild(child);
+            LayoutUnit preferredChildSize = preferredMainAxisContentExtentForChild(child);
+            LayoutUnit childSize = preferredChildSize;
             if (availableFreeSpace > 0 && totalPositiveFlexibility > 0 && flexSign == PositiveFlexibility)
                 childSize += lroundf(availableFreeSpace * positiveFlexForChild(child) / totalPositiveFlexibility);
             else if (availableFreeSpace < 0 && totalNegativeFlexibility > 0  && flexSign == NegativeFlexibility)
@@ -789,6 +791,7 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, const OrderedF
 
             LayoutUnit adjustedChildSize = adjustChildSizeForMinAndMax(child, childSize, flexboxAvailableContentExtent);
             childSizes.append(adjustedChildSize);
+            usedFreeSpace += adjustedChildSize - preferredChildSize;
 
             LayoutUnit violation = adjustedChildSize - childSize;
             if (violation > 0)
@@ -801,20 +804,22 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, const OrderedF
 
     if (totalViolation)
         freezeViolations(totalViolation < 0 ? maxViolations : minViolations, availableFreeSpace, totalPositiveFlexibility, totalNegativeFlexibility, inflexibleItems);
+    else
+        availableFreeSpace -= usedFreeSpace;
+
     return !totalViolation;
 }
 
 static LayoutUnit initialPackingOffset(LayoutUnit availableFreeSpace, EFlexPack flexPack, size_t numberOfChildren)
 {
-    if (availableFreeSpace > 0) {
-        if (flexPack == PackEnd)
-            return availableFreeSpace;
-        if (flexPack == PackCenter)
-            return availableFreeSpace / 2;
-        if (flexPack == PackDistribute && numberOfChildren)
+    if (flexPack == PackEnd)
+        return availableFreeSpace;
+    if (flexPack == PackCenter)
+        return availableFreeSpace / 2;
+    if (flexPack == PackDistribute) {
+        if (availableFreeSpace > 0 && numberOfChildren)
             return availableFreeSpace / (2 * numberOfChildren);
-    } else if (availableFreeSpace < 0) {
-        if (flexPack == PackCenter || flexPack == PackDistribute)
+        if (availableFreeSpace < 0)
             return availableFreeSpace / 2;
     }
     return 0;
