@@ -30,14 +30,14 @@
 
 namespace WebCore {
 
-LayoutRepainter::LayoutRepainter(RenderObject& object, bool checkForRepaint, const IntRect* oldBounds)
+LayoutRepainter::LayoutRepainter(RenderObject& object, bool checkForRepaint)
     : m_object(object)
     , m_repaintContainer(0)
     , m_checkForRepaint(checkForRepaint)
 {
     if (m_checkForRepaint) {
         m_repaintContainer = m_object.containerForRepaint();
-        m_oldBounds = oldBounds ? *oldBounds : m_object.clippedOverflowRectForRepaint(m_repaintContainer);
+        m_oldBounds = m_object.clippedOverflowRectForRepaint(m_repaintContainer);
         m_oldOutlineBox = m_object.outlineBoundsForRepaint(m_repaintContainer);
     }
 }

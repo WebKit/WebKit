@@ -35,7 +35,7 @@ class RenderBoxModelObject;
 
 class LayoutRepainter {
 public:
-    LayoutRepainter(RenderObject&, bool checkForRepaint, const IntRect* oldBounds = 0);
+    LayoutRepainter(RenderObject&, bool checkForRepaint);
 
     bool checkForRepaint() const { return m_checkForRepaint; }
 
@@ -45,8 +45,9 @@ public:
 private:
     RenderObject& m_object;
     RenderBoxModelObject* m_repaintContainer;
-    IntRect m_oldBounds;
-    IntRect m_oldOutlineBox;
+    // We store these values as LayoutRects, but the final invalidations will be pixel snapped
+    LayoutRect m_oldBounds;
+    LayoutRect m_oldOutlineBox;
     bool m_checkForRepaint;
 };
 
