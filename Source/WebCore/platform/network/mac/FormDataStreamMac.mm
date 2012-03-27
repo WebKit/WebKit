@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2008, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,12 +57,6 @@ static Mutex& streamFieldsMapMutex()
     return staticMutex;
 }
 
-static NSMapTable *streamFieldsMap()
-{
-    static NSMapTable *streamFieldsMap = NSCreateMapTable(NSNonRetainedObjectMapKeyCallBacks, NSNonOwnedPointerMapValueCallBacks, 1);
-    return streamFieldsMap;
-}
-
 static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void* context);
 
 struct FormContext {
@@ -83,6 +77,13 @@ struct FormStreamFields {
     unsigned long long streamLength;
     unsigned long long bytesSent;
 };
+
+typedef HashMap<CFReadStreamRef, FormStreamFields*> StreamFieldsMap;
+static StreamFieldsMap& streamFieldsMap()
+{
+    DEFINE_STATIC_LOCAL(StreamFieldsMap, streamFieldsMap, ());
+    return streamFieldsMap;
+}
 
 static void closeCurrentStream(FormStreamFields *form)
 {
@@ -189,8 +190,8 @@ static void* formCreate(CFReadStreamRef stream, void* context)
         newInfo->remainingElements.append(newInfo->formData->elements()[size - i - 1]);
 
     MutexLocker locker(streamFieldsMapMutex());
-    ASSERT(!NSMapGet(streamFieldsMap(), stream));
-    NSMapInsertKnownAbsent(streamFieldsMap(), stream, newInfo);
+    ASSERT(!streamFieldsMap().contains(stream));
+    streamFieldsMap().add(stream, newInfo);
 
     return newInfo;
 }
@@ -209,13 +210,13 @@ static void formFinalize(CFReadStreamRef stream, void* context)
     MutexLocker locker(streamFieldsMapMutex());
 
     ASSERT(form->formStream == stream);
-    ASSERT(NSMapGet(streamFieldsMap(), stream) == context);
+    ASSERT(streamFieldsMap().get(stream) == context);
 
     // Do this right away because the CFReadStreamRef is being deallocated.
     // We can't wait to remove this from the map until we finish finalizing
     // on the main thread because in theory the freed memory could be reused
     // for a new CFReadStream before that runs.
-    NSMapRemove(streamFieldsMap(), stream);
+    streamFieldsMap().remove(stream);
 
     callOnMainThread(formFinishFinalizationOnMainThread, form);
 }
@@ -435,7 +436,7 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> prpFormData)
 FormData* httpBodyFromStream(NSInputStream* stream)
 {
     MutexLocker locker(streamFieldsMapMutex());
-    FormStreamFields* formStream = static_cast<FormStreamFields*>(NSMapGet(streamFieldsMap(), stream));
+    FormStreamFields* formStream = streamFieldsMap().get(reinterpret_cast<CFReadStreamRef>(stream));
     if (!formStream)
         return 0;
     return formStream->formData.get();
