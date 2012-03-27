@@ -333,7 +333,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint&)
     PaintInfo blockInfo(paintInfo);
     GraphicsContextStateSaver stateSaver(*blockInfo.context);
     blockInfo.applyTransform(localToParentTransform());
-    RenderBlock::paint(blockInfo, IntPoint());
+    RenderBlock::paint(blockInfo, LayoutPoint());
 }
 
 FloatRect RenderSVGText::strokeBoundingBox() const

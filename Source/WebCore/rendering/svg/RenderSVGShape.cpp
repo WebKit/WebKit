@@ -318,7 +318,7 @@ void RenderSVGShape::fillAndStrokePath(GraphicsContext* context)
 
 }
 
-void RenderSVGShape::paint(PaintInfo& paintInfo, const IntPoint&)
+void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
     if (paintInfo.context->paintingDisabled() || style()->visibility() == HIDDEN || isEmpty())
         return;
