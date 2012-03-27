@@ -4360,7 +4360,6 @@ BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/animated-svg-as-image-same-image.htm
 BUGWK82232 SNOWLEOPARD DEBUG : svg/as-background-image/background-image-tiled.html = PASS CRASH
 
 // Flaky since at least r111670
-BUGWK82257 LINUX DEBUG : fast/eventsource/eventsource-url-attribute.html = TEXT PASS
 BUGWK82258 : svg/custom/circular-marker-reference-4.svg = TEXT PASS
 BUGWK82260 : media/video-beforeload-remove-source.html = TIMEOUT PASS
 
