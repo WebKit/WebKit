@@ -1,3 +1,36 @@
+2012-03-23  Balazs Ankes  <bank@inf.u-szeged.hu>
+
+        Add png checking to check-webkit-style
+        https://bugs.webkit.org/show_bug.cgi?id=75824
+
+        Reviewed by NOBODY Tony Chang.
+
+        * Scripts/webkitpy/style/checker.py:
+        (_all_categories):
+        (FileType):
+        (CheckerDispatcher._should_skip_file_path):
+        (CheckerDispatcher._file_type):
+        (CheckerDispatcher._create_checker):
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (CheckerDispatcherDispatchTest.test_none_paths):
+        * Scripts/webkitpy/style/checkers/png.py: Added.
+        (PNGChecker):
+        (PNGChecker.__init__):
+        (PNGChecker.check):
+        (PNGChecker._config_file_path):
+        * Scripts/webkitpy/style/checkers/png_unittest.py: Added.
+        (MockSCMDetector):
+        (MockSCMDetector.__init__):
+        (MockSCMDetector.display_name):
+        (MockSCMDetector.propget):
+        (PNGCheckerTest):
+        (PNGCheckerTest.test_init):
+        (PNGCheckerTest.test_init.mock_handle_style_error):
+        (PNGCheckerTest.test_check):
+        (PNGCheckerTest.test_check.mock_handle_style_error):
+        * Scripts/webkitpy/style/patchreader.py:
+        (PatchReader.check):
+
 2012-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Skip GTK+ unit tests that fail in the bots

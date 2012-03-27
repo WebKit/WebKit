@@ -29,8 +29,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import re
 
 from webkitpy.common.checkout.diff_parser import DiffParser
+from webkitpy.common.system.executive import Executive
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.checkout.scm.detection import SCMDetector
 
 
 _log = logging.getLogger(__name__)
@@ -52,11 +56,23 @@ class PatchReader(object):
         """Check style in the given patch."""
         patch_files = DiffParser(patch_string.splitlines()).files
 
+        # If the user uses git, checking subversion config file only once is enough.
+        call_only_once = True
+
         for path, diff_file in patch_files.iteritems():
             line_numbers = diff_file.added_or_modified_line_numbers()
             _log.debug('Found %s new or modified lines in: %s' % (len(line_numbers), path))
 
             if not line_numbers:
+                match = re.search("\s*png$", path)
+                if match:
+                    if call_only_once:
+                        self._text_file_reader.process_file(file_path=path, line_numbers=None)
+                        cwd = FileSystem().getcwd()
+                        detection = SCMDetector(FileSystem(), Executive()).detect_scm_system(cwd)
+                        if detection.display_name() == "git":
+                            call_only_once = False
+                    continue
                 # Don't check files which contain only deleted lines
                 # as they can never add style errors. However, mark them as
                 # processed so that we count up number of such files.

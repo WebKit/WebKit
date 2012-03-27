@@ -590,7 +590,6 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         paths = [
            "Makefile",
            "foo.asdf",  # Non-sensical file extension.
-           "foo.png",
            "foo.exe",
             ]
 
