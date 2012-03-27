@@ -1809,6 +1809,7 @@ bool Document::isPageBoxVisible(int pageIndex)
 void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
 {
     RefPtr<RenderStyle> style = styleForPage(pageIndex);
+    RenderView* view = renderView();
 
     int width = pageSize.width();
     int height = pageSize.height();
@@ -1827,8 +1828,8 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
         LengthSize size = style->pageSize();
         ASSERT(size.width().isFixed());
         ASSERT(size.height().isFixed());
-        width = valueForLength(size.width(), 0);
-        height = valueForLength(size.height(), 0);
+        width = valueForLength(size.width(), 0, view);
+        height = valueForLength(size.height(), 0, view);
         break;
     }
     default:
@@ -1838,10 +1839,10 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 
     // The percentage is calculated with respect to the width even for margin top and bottom.
     // http://www.w3.org/TR/CSS2/box.html#margin-properties
-    marginTop = style->marginTop().isAuto() ? marginTop : valueForLength(style->marginTop(), width);
-    marginRight = style->marginRight().isAuto() ? marginRight : valueForLength(style->marginRight(), width);
-    marginBottom = style->marginBottom().isAuto() ? marginBottom : valueForLength(style->marginBottom(), width);
-    marginLeft = style->marginLeft().isAuto() ? marginLeft : valueForLength(style->marginLeft(), width);
+    marginTop = style->marginTop().isAuto() ? marginTop : valueForLength(style->marginTop(), width, view);
+    marginRight = style->marginRight().isAuto() ? marginRight : valueForLength(style->marginRight(), width, view);
+    marginBottom = style->marginBottom().isAuto() ? marginBottom : valueForLength(style->marginBottom(), width, view);
+    marginLeft = style->marginLeft().isAuto() ? marginLeft : valueForLength(style->marginLeft(), width, view);
 }
 
 PassRefPtr<CSSValuePool> Document::cssValuePool() const
@@ -5745,5 +5746,12 @@ void Document::removeCachedMicroDataItemList(MicroDataItemList* list, const Stri
     data->m_microDataItemListCache.remove(localTypeNames);
 }
 #endif
+
+IntSize Document::viewportSize() const
+{
+    if (!view())
+        return IntSize();
+    return view()->visibleContentRect(/* includeScrollbars */ true).size();
+}
 
 } // namespace WebCore

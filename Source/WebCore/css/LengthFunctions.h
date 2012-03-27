@@ -26,12 +26,13 @@
 
 namespace WebCore {
 
+class RenderView;
 struct Length;
 
-int minimumValueForLength(Length, int maximumValue, bool roundPercentages = false);
-int valueForLength(Length, int maximumValue, bool roundPercentages = false);
-float floatValueForLength(Length, int maximumValue);
-float floatValueForLength(Length, float maximumValue);
+int minimumValueForLength(Length, int maximumValue, RenderView* = 0, bool roundPercentages = false);
+int valueForLength(Length, int maximumValue, RenderView* = 0, bool roundPercentages = false);
+float floatValueForLength(Length, int maximumValue, RenderView* = 0);
+float floatValueForLength(Length, float maximumValue, RenderView* = 0);
 
 } // namespace WebCore
 

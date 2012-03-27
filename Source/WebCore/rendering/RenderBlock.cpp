@@ -3919,9 +3919,12 @@ inline void RenderBlock::FloatIntervalSearchAdapter<FloatTypeValue>::collectIfNe
 LayoutUnit RenderBlock::textIndentOffset() const
 {
     LayoutUnit cw = 0;
+    RenderView* renderView = 0;
     if (style()->textIndent().isPercent())
         cw = containingBlock()->availableLogicalWidth();
-    return minimumValueForLength(style()->textIndent(), cw);
+    else if (style()->textIndent().isViewportRelative())
+        renderView = view();
+    return minimumValueForLength(style()->textIndent(), cw, renderView);
 }
 
 LayoutUnit RenderBlock::logicalLeftOffsetForContent(RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage) const
@@ -5561,7 +5564,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 LayoutUnit ti = 0;
                 if (!addedTextIndent) {
                     addedTextIndent = true;
-                    ti = minimumValueForLength(styleToUse->textIndent(), cw);
+                    ti = minimumValueForLength(styleToUse->textIndent(), cw, view());
                     childMin += ti;
                     childMax += ti;
                 }
@@ -5632,7 +5635,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 LayoutUnit ti = 0;
                 if (!addedTextIndent) {
                     addedTextIndent = true;
-                    ti = minimumValueForLength(styleToUse->textIndent(), cw);
+                    ti = minimumValueForLength(styleToUse->textIndent(), cw, view());
                     childMin+=ti; beginMin += ti;
                     childMax+=ti; beginMax += ti;
                 }
@@ -5826,11 +5829,11 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
     if (firstLine && document()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
-            return s->computedLineHeight();
+            return s->computedLineHeight(view());
     }
     
     if (m_lineHeight == -1)
-        m_lineHeight = style()->computedLineHeight();
+        m_lineHeight = style()->computedLineHeight(view());
 
     return m_lineHeight;
 }

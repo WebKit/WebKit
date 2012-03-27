@@ -622,7 +622,7 @@ public:
     bool isLeftToRightDirection() const { return direction() == LTR; }
 
     Length lineHeight() const { return inherited->line_height; }
-    int computedLineHeight() const
+    int computedLineHeight(RenderView* renderView = 0) const
     {
         const Length& lh = inherited->line_height;
 
@@ -632,6 +632,9 @@ public:
 
         if (lh.isPercent())
             return minimumValueForLength(lh, fontSize());
+
+        if (lh.isViewportRelative())
+            return valueForLength(lh, 0, renderView);
 
         return lh.value();
     }
@@ -1065,7 +1068,7 @@ public:
         setBorderRadius(LengthSize(Length(s.width(), Fixed), Length(s.height(), Fixed)));
     }
     
-    RoundedRect getRoundedBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
+    RoundedRect getRoundedBorderFor(const LayoutRect& borderRect, RenderView* = 0, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
     RoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
 
     RoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect,

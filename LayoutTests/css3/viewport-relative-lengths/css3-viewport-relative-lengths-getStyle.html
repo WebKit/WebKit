@@ -1,0 +1,215 @@
+<!DOCTYPE>
+<html>
+<style>
+ #element-container-vw {
+   background:green;
+   height:30vw;
+   width:30vw;
+   font-size:3vw;
+   line-height:4vw;
+   text-indent:2vw;
+   margin-left:2vw;
+   margin-right:2vw;
+   margin-top:2vw;
+   margin-bottom:2vw;
+   border-top-left-radius:1vw;
+   border-top-right-radius:1vw;
+   border-bottom-left-radius:1vw;
+   border-bottom-right-radius:1vw;
+   min-height:10vw;
+   min-width:10vw;
+   max-height:60vw;
+   max-width:60vw;
+ }
+
+ #element-container-absolute-vw {
+   background:green;
+   position:absolute;
+   top:10vw;
+   bottom:10vw;
+   left:10vw;
+   right:10vw;
+   padding-left:2vw;
+   padding-right:2vw;
+   padding-top:2vw;
+   padding-bottom:2vw;
+ }
+
+ #element-container-vh {
+   background:green;
+   height:30vh;
+   width:30vh;
+   font-size:3vh;
+   line-height:4vh;
+   text-indent:2vh;
+   margin-left:2vh;
+   margin-right:2vh;
+   margin-top:2vh;
+   margin-bottom:2vh;
+   border-top-left-radius:1vh;
+   border-top-right-radius:1vh;
+   border-bottom-left-radius:1vh;
+   border-bottom-right-radius:1vh;
+   min-height:10vh;
+   min-width:10vh;
+   max-height:60vh;
+   max-width:60vh;
+ }
+
+ #element-container-absolute-vh {
+   background:green;
+   position:absolute;
+   top:10vh;
+   bottom:10vh;
+   left:10vh;
+   right:10vh;
+   padding-left:2vh;
+   padding-right:2vh;
+   padding-top:2vh;
+   padding-bottom:2vh;
+ }
+
+ #element-container-vmin {
+   background:green;
+   height:30vmin;
+   width:30vmin;
+   font-size:3vmin;
+   line-height:4vmin;
+   text-indent:2vmin;
+   margin-left:2vmin;
+   margin-right:2vmin;
+   margin-top:2vmin;
+   margin-bottom:2vmin;
+   border-top-left-radius:1vmin;
+   border-top-right-radius:1vmin;
+   border-bottom-left-radius:1vmin;
+   border-bottom-right-radius:1vmin;
+   min-height:10vmin;
+   min-width:10vmin;
+   max-height:60vmin;
+   max-width:60vmin;
+ }
+
+ #element-container-absolute-vmin {
+   background:green;
+   position:absolute;
+   top:10vmin;
+   bottom:10vmin;
+   left:10vmin;
+   right:10vmin;
+   padding-left:2vmin;
+   padding-right:2vmin;
+   padding-top:2vmin;
+   padding-bottom:2vmin;
+ }
+ 
+</style>
+<div id="element-container-vw"></div>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+description("Test for Bug: 27160 - Implement vw/vh/vm (viewport sizes) from CSS 3 Values and Units");
+
+// These have to be global for the test helpers to see them.
+var element, style;
+
+function getTheStyle() {
+    debug("Test for vw")
+    element = document.getElementById("element-container-vw");
+    style = window.getComputedStyle(element,null);
+    var viewportWidth = window.innerWidth;
+    shouldBe('style.getPropertyValue("height")', "'" + Math.floor(30 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("width")', "'" + Math.floor(30 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("font-size")', "'" + Math.floor(3 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("line-height")', "'" + Math.floor(4 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("text-indent")', "'2vw'");
+    shouldBe('style.getPropertyValue("margin-left")', "'" + Math.floor(2 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("margin-right")', "'" + Math.floor(2 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("margin-top")', "'" + Math.floor(2 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("margin-bottom")', "'" + Math.floor(2 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("border-top-left-radius")', "'" + Math.floor(1 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("border-top-right-radius")', "'" + Math.floor(1 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("border-bottom-left-radius")', "'" + Math.floor(1 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("border-bottom-right-radius")', "'" + Math.floor(1 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("min-height")', "'10vw'");
+    shouldBe('style.getPropertyValue("min-width")', "'10vw'");
+    shouldBe('style.getPropertyValue("max-height")', "'60vw'");
+    shouldBe('style.getPropertyValue("max-width")', "'60vw'");
+    element.id = "element-container-absolute-vw";
+    shouldBe('style.getPropertyValue("top")', "'" + Math.floor(10 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("bottom")', "'" + Math.floor(10 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("left")', "'" + Math.floor(10 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("right")', "'" + Math.floor(10 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("padding-left")', "'" + Math.floor(2 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("padding-right")', "'" + Math.floor(2 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("padding-top")', "'" + Math.floor(2 * viewportWidth / 100) + "px'");
+    shouldBe('style.getPropertyValue("padding-bottom")', "'" + Math.floor(2 * viewportWidth / 100) + "px'");
+
+    debug("\nTest for vh")
+    element.id = "element-container-vh";
+    style = window.getComputedStyle(element,null);
+    var viewportHeight = window.innerHeight;
+    shouldBe('style.getPropertyValue("height")', "'" + Math.floor(30 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("width")', "'" + Math.floor(30 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("font-size")', "'" + Math.floor(3 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("line-height")', "'" + Math.floor(4 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("text-indent")', "'2vh'");
+    shouldBe('style.getPropertyValue("margin-left")', "'" + Math.floor(2 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("margin-right")', "'" + Math.floor(2 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("margin-top")', "'" + Math.floor(2 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("margin-bottom")', "'" + Math.floor(2 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("border-top-left-radius")', "'" + Math.floor(1 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("border-top-right-radius")', "'" + Math.floor(1 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("border-bottom-left-radius")', "'" + Math.floor(1 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("border-bottom-right-radius")', "'" + Math.floor(1 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("min-height")', "'10vh'");
+    shouldBe('style.getPropertyValue("min-width")', "'10vh'");
+    shouldBe('style.getPropertyValue("max-height")', "'60vh'");
+    shouldBe('style.getPropertyValue("max-width")', "'60vh'");
+    element.id = "element-container-absolute-vh";
+    shouldBe('style.getPropertyValue("top")', "'" + Math.floor(10 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("bottom")', "'" + Math.floor(10 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("left")', "'" + Math.floor(10 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("right")', "'" + Math.floor(10 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("padding-left")', "'" + Math.floor(2 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("padding-right")', "'" + Math.floor(2 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("padding-top")', "'" + Math.floor(2 * viewportHeight / 100) + "px'");
+    shouldBe('style.getPropertyValue("padding-bottom")', "'" + Math.floor(2 * viewportHeight / 100) + "px'");
+
+    debug("\nTest for vmin")
+    element.id = "element-container-vmin";
+    style = window.getComputedStyle(element,null);
+    var viewportMinLength = Math.min(window.innerWidth, window.innerHeight);
+    shouldBe('style.getPropertyValue("height")', "'" + Math.floor(30 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("width")', "'" + Math.floor(30 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("font-size")', "'" + Math.floor(3 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("line-height")', "'" + Math.floor(4 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("text-indent")', "'2vmin'");
+    shouldBe('style.getPropertyValue("margin-left")', "'" + Math.floor(2 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("margin-right")', "'" + Math.floor(2 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("margin-top")', "'" + Math.floor(2 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("margin-bottom")', "'" + Math.floor(2 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("border-top-left-radius")', "'" + Math.floor(1 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("border-top-right-radius")', "'" + Math.floor(1 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("border-bottom-left-radius")', "'" + Math.floor(1 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("border-bottom-right-radius")', "'" + Math.floor(1 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("min-height")', "'10vmin'");
+    shouldBe('style.getPropertyValue("min-width")', "'10vmin'");
+    shouldBe('style.getPropertyValue("max-height")', "'60vmin'");
+    shouldBe('style.getPropertyValue("max-width")', "'60vmin'");
+    element.id = "element-container-absolute-vmin";
+    shouldBe('style.getPropertyValue("top")', "'" + Math.floor(10 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("bottom")', "'" + Math.floor(10 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("left")', "'" + Math.floor(10 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("right")', "'" + Math.floor(10 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("padding-left")', "'" + Math.floor(2 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("padding-right")', "'" + Math.floor(2 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("padding-top")', "'" + Math.floor(2 * viewportMinLength / 100) + "px'");
+    shouldBe('style.getPropertyValue("padding-bottom")', "'" + Math.floor(2 * viewportMinLength / 100) + "px'");
+}
+getTheStyle();
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</html>

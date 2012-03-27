@@ -437,12 +437,12 @@ LayoutUnit RenderBoxModelObject::relativePositionOffsetX() const
     if (!style()->left().isAuto()) {
         RenderBlock* cb = containingBlock();
         if (!style()->right().isAuto() && !cb->style()->isLeftToRightDirection())
-            return -valueForLength(style()->right(), cb->availableWidth());
-        return offset + valueForLength(style()->left(), cb->availableWidth());
+            return -valueForLength(style()->right(), cb->availableWidth(), view());
+        return offset + valueForLength(style()->left(), cb->availableWidth(), view());
     }
     if (!style()->right().isAuto()) {
         RenderBlock* cb = containingBlock();
-        return offset + -valueForLength(style()->right(), cb->availableWidth());
+        return offset + -valueForLength(style()->right(), cb->availableWidth(), view());
     }
     return offset;
 }
@@ -462,13 +462,13 @@ LayoutUnit RenderBoxModelObject::relativePositionOffsetY() const
         && (!containingBlock->style()->height().isAuto()
             || !style()->top().isPercent()
             || containingBlock->stretchesToViewport()))
-        return offset + valueForLength(style()->top(), containingBlock->availableHeight());
+        return offset + valueForLength(style()->top(), containingBlock->availableHeight(), view());
 
     if (!style()->bottom().isAuto()
         && (!containingBlock->style()->height().isAuto()
             || !style()->bottom().isPercent()
             || containingBlock->stretchesToViewport()))
-        return offset + -valueForLength(style()->bottom(), containingBlock->availableHeight());
+        return offset + -valueForLength(style()->bottom(), containingBlock->availableHeight(), view());
 
     return offset;
 }
@@ -553,81 +553,106 @@ int RenderBoxModelObject::pixelSnappedOffsetHeight() const
 LayoutUnit RenderBoxModelObject::paddingTop(PaddingOptions) const
 {
     LayoutUnit w = 0;
+    RenderView* renderView = 0;
     Length padding = style()->paddingTop();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return minimumValueForLength(padding, w);
+    else if (padding.isViewportRelative())
+        renderView = view();
+    return minimumValueForLength(padding, w, renderView);
 }
 
 LayoutUnit RenderBoxModelObject::paddingBottom(PaddingOptions) const
 {
     LayoutUnit w = 0;
+    RenderView* renderView = 0;
     Length padding = style()->paddingBottom();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return minimumValueForLength(padding, w);
+    else if (padding.isViewportRelative())
+        renderView = view();
+    return minimumValueForLength(padding, w, renderView);
 }
 
 LayoutUnit RenderBoxModelObject::paddingLeft(PaddingOptions) const
 {
     LayoutUnit w = 0;
+    RenderView* renderView = 0;
     Length padding = style()->paddingLeft();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return minimumValueForLength(padding, w);
+    else if (padding.isViewportRelative())
+        renderView = view();
+    return minimumValueForLength(padding, w, renderView);
 }
 
 LayoutUnit RenderBoxModelObject::paddingRight(PaddingOptions) const
 {
     LayoutUnit w = 0;
+    RenderView* renderView = 0;
     Length padding = style()->paddingRight();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return minimumValueForLength(padding, w);
+    else if (padding.isViewportRelative())
+        renderView = view();
+    return minimumValueForLength(padding, w, renderView);
 }
 
 LayoutUnit RenderBoxModelObject::paddingBefore(PaddingOptions) const
 {
     LayoutUnit w = 0;
+    RenderView* renderView = 0;
     Length padding = style()->paddingBefore();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return minimumValueForLength(padding, w);
+    else if (padding.isViewportRelative())
+        renderView = view();
+    return minimumValueForLength(padding, w, renderView);
 }
 
 LayoutUnit RenderBoxModelObject::paddingAfter(PaddingOptions) const
 {
     LayoutUnit w = 0;
+    RenderView* renderView = 0;
     Length padding = style()->paddingAfter();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return minimumValueForLength(padding, w);
+    else if (padding.isViewportRelative())
+        renderView = view();
+    return minimumValueForLength(padding, w, renderView);
 }
 
 LayoutUnit RenderBoxModelObject::paddingStart(PaddingOptions) const
 {
     LayoutUnit w = 0;
+    RenderView* renderView = 0;
     Length padding = style()->paddingStart();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return minimumValueForLength(padding, w);
+    else if (padding.isViewportRelative())
+        renderView = view();
+    return minimumValueForLength(padding, w, renderView);
 }
 
 LayoutUnit RenderBoxModelObject::paddingEnd(PaddingOptions) const
 {
     LayoutUnit w = 0;
+    RenderView* renderView = 0;
     Length padding = style()->paddingEnd();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return minimumValueForLength(padding, w);
+    else if (padding.isViewportRelative())
+        renderView = view();
+    return minimumValueForLength(padding, w, renderView);
 }
 
 RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& borderRect, InlineFlowBox* box, LayoutUnit inlineBoxWidth, LayoutUnit inlineBoxHeight,
     bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
-    RoundedRect border = style()->getRoundedBorderFor(borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+    RenderView* renderView = view();
+    RoundedRect border = style()->getRoundedBorderFor(borderRect, renderView, includeLogicalLeftEdge, includeLogicalRightEdge);
     if (box && (box->nextLineBox() || box->prevLineBox())) {
-        RoundedRect segmentBorder = style()->getRoundedBorderFor(LayoutRect(0, 0, inlineBoxWidth, inlineBoxHeight), includeLogicalLeftEdge, includeLogicalRightEdge);
+        RoundedRect segmentBorder = style()->getRoundedBorderFor(LayoutRect(0, 0, inlineBoxWidth, inlineBoxHeight), renderView, includeLogicalLeftEdge, includeLogicalRightEdge);
         border.setRadii(segmentBorder.radii());
     }
 
@@ -986,7 +1011,7 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
     EFillSizeType type = fillLayer->size().type;
 
     IntSize imageIntrinsicSize = calculateImageIntrinsicDimensions(image, positioningAreaSize);
-
+    RenderView* renderView = view();
     switch (type) {
         case SizeLength: {
             int w = positioningAreaSize.width();
@@ -997,13 +1022,13 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
 
             if (layerWidth.isFixed())
                 w = layerWidth.value();
-            else if (layerWidth.isPercent())
-                w = valueForLength(layerWidth, positioningAreaSize.width());
+            else if (layerWidth.isPercent() || layerHeight.isViewportRelative())
+                w = valueForLength(layerWidth, positioningAreaSize.width(), renderView);
             
             if (layerHeight.isFixed())
                 h = layerHeight.value();
-            else if (layerHeight.isPercent())
-                h = valueForLength(layerHeight, positioningAreaSize.height());
+            else if (layerHeight.isPercent() || layerHeight.isViewportRelative())
+                h = valueForLength(layerHeight, positioningAreaSize.height(), renderView);
             
             // If one of the values is auto we have to use the appropriate
             // scale to maintain our aspect ratio.
@@ -1138,14 +1163,15 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
 
     EFillRepeat backgroundRepeatX = fillLayer->repeatX();
     EFillRepeat backgroundRepeatY = fillLayer->repeatY();
+    RenderView* renderView = view();
 
-    LayoutUnit xPosition = minimumValueForLength(fillLayer->xPosition(), positioningAreaSize.width() - geometry.tileSize().width(), true);
+    LayoutUnit xPosition = minimumValueForLength(fillLayer->xPosition(), positioningAreaSize.width() - geometry.tileSize().width(), renderView, true);
     if (backgroundRepeatX == RepeatFill)
         geometry.setPhaseX(geometry.tileSize().width() ? geometry.tileSize().width() - (xPosition + left) % geometry.tileSize().width() : 0);
     else
         geometry.setNoRepeatX(xPosition + left);
 
-    LayoutUnit yPosition = minimumValueForLength(fillLayer->yPosition(), positioningAreaSize.height() - geometry.tileSize().height(), true);
+    LayoutUnit yPosition = minimumValueForLength(fillLayer->yPosition(), positioningAreaSize.height() - geometry.tileSize().height(), renderView, true);
     if (backgroundRepeatY == RepeatFill)
         geometry.setPhaseY(geometry.tileSize().height() ? geometry.tileSize().height() - (yPosition + top) % geometry.tileSize().height() : 0);
     else 
@@ -1158,13 +1184,13 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     geometry.setDestOrigin(geometry.destRect().location());
 }
 
-static LayoutUnit computeBorderImageSide(Length borderSlice, LayoutUnit borderSide, LayoutUnit imageSide, LayoutUnit boxExtent)
+static LayoutUnit computeBorderImageSide(Length borderSlice, LayoutUnit borderSide, LayoutUnit imageSide, LayoutUnit boxExtent, RenderView* renderView)
 {
     if (borderSlice.isRelative())
         return borderSlice.value() * borderSide;
     if (borderSlice.isAuto())
         return imageSide;
-    return valueForLength(borderSlice, boxExtent);
+    return valueForLength(borderSlice, boxExtent, renderView);
 }
 
 bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext, const LayoutRect& rect, const RenderStyle* style,
@@ -1201,19 +1227,20 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
 
     int imageWidth = imageSize.width() / style->effectiveZoom();
     int imageHeight = imageSize.height() / style->effectiveZoom();
+    RenderView* renderView = view();
 
-    int topSlice = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().top(), imageHeight));
-    int rightSlice = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().right(), imageWidth));
-    int bottomSlice = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().bottom(), imageHeight));
-    int leftSlice = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().left(), imageWidth));
+    int topSlice = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().top(), imageHeight, renderView));
+    int rightSlice = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().right(), imageWidth, renderView));
+    int bottomSlice = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().bottom(), imageHeight, renderView));
+    int leftSlice = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().left(), imageWidth, renderView));
 
     ENinePieceImageRule hRule = ninePieceImage.horizontalRule();
     ENinePieceImageRule vRule = ninePieceImage.verticalRule();
-   
-    LayoutUnit topWidth = computeBorderImageSide(ninePieceImage.borderSlices().top(), style->borderTopWidth(), topSlice, borderImageRect.height());
-    LayoutUnit rightWidth = computeBorderImageSide(ninePieceImage.borderSlices().right(), style->borderRightWidth(), rightSlice, borderImageRect.width());
-    LayoutUnit bottomWidth = computeBorderImageSide(ninePieceImage.borderSlices().bottom(), style->borderBottomWidth(), bottomSlice, borderImageRect.height());
-    LayoutUnit leftWidth = computeBorderImageSide(ninePieceImage.borderSlices().left(), style->borderLeftWidth(), leftSlice, borderImageRect.width());
+
+    LayoutUnit topWidth = computeBorderImageSide(ninePieceImage.borderSlices().top(), style->borderTopWidth(), topSlice, borderImageRect.height(), renderView);
+    LayoutUnit rightWidth = computeBorderImageSide(ninePieceImage.borderSlices().right(), style->borderRightWidth(), rightSlice, borderImageRect.width(), renderView);
+    LayoutUnit bottomWidth = computeBorderImageSide(ninePieceImage.borderSlices().bottom(), style->borderBottomWidth(), bottomSlice, borderImageRect.height(), renderView);
+    LayoutUnit leftWidth = computeBorderImageSide(ninePieceImage.borderSlices().left(), style->borderLeftWidth(), leftSlice, borderImageRect.width(), renderView);
     
     // Reduce the widths if they're too large.
     // The spec says: Given Lwidth as the width of the border image area, Lheight as its height, and Wside as the border image width
@@ -1757,8 +1784,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
 
     BorderEdge edges[4];
     getBorderEdgeInfo(edges, style, includeLogicalLeftEdge, includeLogicalRightEdge);
-
-    RoundedRect outerBorder = style->getRoundedBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
+    RoundedRect outerBorder = style->getRoundedBorderFor(rect, view(), includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect innerBorder = style->getRoundedInnerBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
 
     bool haveAlphaColor = false;
@@ -2043,7 +2069,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const IntRect& rec
     
     GraphicsContextStateSaver stateSaver(*graphicsContext, false);
     if (style->hasBorderRadius()) {
-        border.includeLogicalEdges(style->getRoundedBorderFor(border.rect()).radii(),
+        border.includeLogicalEdges(style->getRoundedBorderFor(border.rect(), view()).radii(),
                                    horizontal, includeLogicalLeftEdge, includeLogicalRightEdge);
         if (border.isRounded()) {
             stateSaver.save();
@@ -2696,7 +2722,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
         return;
 
     RoundedRect border = (shadowStyle == Inset) ? s->getRoundedInnerBorderFor(paintRect, includeLogicalLeftEdge, includeLogicalRightEdge)
-                                                   : s->getRoundedBorderFor(paintRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+                                                   : s->getRoundedBorderFor(paintRect, view(), includeLogicalLeftEdge, includeLogicalRightEdge);
 
     bool hasBorderRadius = s->hasBorderRadius();
     bool isHorizontal = s->isHorizontalWritingMode();

@@ -24,6 +24,7 @@
 #define RenderText_h
 
 #include "RenderObject.h"
+#include "RenderView.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -99,8 +100,8 @@ public:
     virtual LayoutRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent = true);
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
 
-    virtual LayoutUnit marginLeft() const { return minimumValueForLength(style()->marginLeft(), 0); }
-    virtual LayoutUnit marginRight() const { return minimumValueForLength(style()->marginRight(), 0); }
+    virtual LayoutUnit marginLeft() const { return minimumValueForLength(style()->marginLeft(), 0, view()); }
+    virtual LayoutUnit marginRight() const { return minimumValueForLength(style()->marginRight(), 0, view()); }
 
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
 

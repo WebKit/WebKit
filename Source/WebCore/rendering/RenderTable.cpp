@@ -222,6 +222,7 @@ void RenderTable::computeLogicalWidth()
         computePositionedLogicalWidth();
 
     RenderBlock* cb = containingBlock();
+    RenderView* renderView = view();
 
     LayoutUnit availableLogicalWidth = containingBlockLogicalWidthForContent();
     bool hasPerpendicularContainingBlock = cb->style()->isHorizontalWritingMode() != style()->isHorizontalWritingMode();
@@ -232,10 +233,10 @@ void RenderTable::computeLogicalWidth()
         setLogicalWidth(convertStyleLogicalWidthToComputedWidth(styleLogicalWidth, containerWidthInInlineDirection));
     else {
         // Subtract out any fixed margins from our available width for auto width tables.
-        LayoutUnit marginStart = minimumValueForLength(style()->marginStart(), availableLogicalWidth);
-        LayoutUnit marginEnd = minimumValueForLength(style()->marginEnd(), availableLogicalWidth);
+        LayoutUnit marginStart = minimumValueForLength(style()->marginStart(), availableLogicalWidth, renderView);
+        LayoutUnit marginEnd = minimumValueForLength(style()->marginEnd(), availableLogicalWidth, renderView);
         LayoutUnit marginTotal = marginStart + marginEnd;
-        
+
         // Subtract out our margins to get the available content width.
         LayoutUnit availableContentLogicalWidth = max<LayoutUnit>(0, containerWidthInInlineDirection - marginTotal);
         if (shrinkToAvoidFloats() && cb->containsFloats() && !hasPerpendicularContainingBlock) {
@@ -261,8 +262,8 @@ void RenderTable::computeLogicalWidth()
     if (!hasPerpendicularContainingBlock)
         computeInlineDirectionMargins(cb, availableLogicalWidth, logicalWidth());
     else {
-        setMarginStart(minimumValueForLength(style()->marginStart(), availableLogicalWidth));
-        setMarginEnd(minimumValueForLength(style()->marginEnd(), availableLogicalWidth));
+        setMarginStart(minimumValueForLength(style()->marginStart(), availableLogicalWidth, renderView));
+        setMarginEnd(minimumValueForLength(style()->marginEnd(), availableLogicalWidth, renderView));
     }
 }
 
@@ -276,7 +277,7 @@ LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& st
         recalcBordersInRowDirection();
         borders = borderStart() + borderEnd() + (collapseBorders() ? 0 : paddingStart() + paddingEnd());
     }
-    return minimumValueForLength(styleLogicalWidth, availableWidth) + borders;
+    return minimumValueForLength(styleLogicalWidth, availableWidth, view()) + borders;
 }
 
 void RenderTable::layoutCaption(RenderTableCaption* caption)

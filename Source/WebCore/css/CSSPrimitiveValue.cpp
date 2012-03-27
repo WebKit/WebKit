@@ -77,6 +77,9 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue:: CSS_REMS:
     case CSSPrimitiveValue:: CSS_S:
     case CSSPrimitiveValue:: CSS_TURN:
+    case CSSPrimitiveValue:: CSS_VW:
+    case CSSPrimitiveValue:: CSS_VH:
+    case CSSPrimitiveValue:: CSS_VMIN:
         return true;
     case CSSPrimitiveValue:: CSS_ATTR:
     case CSSPrimitiveValue:: CSS_COUNTER:
@@ -130,6 +133,10 @@ static CSSPrimitiveValue::UnitCategory unitCategory(CSSPrimitiveValue::UnitTypes
     case CSSPrimitiveValue::CSS_HZ:
     case CSSPrimitiveValue::CSS_KHZ:
         return CSSPrimitiveValue::UFrequency;
+    case CSSPrimitiveValue::CSS_VW:
+    case CSSPrimitiveValue::CSS_VH:
+    case CSSPrimitiveValue::CSS_VMIN:
+        return CSSPrimitiveValue::UViewportRelativeLength;
     default:
         return CSSPrimitiveValue::UOther;
     }
@@ -245,6 +252,18 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
             m_primitiveUnitType = CSS_PERCENTAGE;
             ASSERT(isfinite(length.percent()));
             m_value.num = length.percent();
+            break;
+        case ViewportRelativeWidth:
+            m_primitiveUnitType = CSS_VW;
+            m_value.num = length.viewportRelativeLength();
+            break;
+        case ViewportRelativeHeight:
+            m_primitiveUnitType = CSS_VH;
+            m_value.num = length.viewportRelativeLength();
+            break;
+        case ViewportRelativeMin:
+            m_primitiveUnitType = CSS_VMIN;
+            m_value.num = length.viewportRelativeLength();
             break;
         case Calculated:
         case Relative:
@@ -574,6 +593,8 @@ CSSPrimitiveValue::UnitTypes CSSPrimitiveValue::canonicalUnitTypeForCategory(Uni
         return CSS_DEG;
     case UFrequency:
         return CSS_HZ;
+    case UViewportRelativeLength:
+        return CSS_UNKNOWN; // Cannot convert between numbers and relative lengths.
     default:
         return CSS_UNKNOWN;
     }
@@ -994,6 +1015,15 @@ String CSSPrimitiveValue::customCssText() const
         case CSS_SHAPE:
             text = m_value.shape->cssText();
             break;
+        case CSS_VW:
+            text = formatNumber(m_value.num) + "vw";
+            break;
+        case CSS_VH:
+            text = formatNumber(m_value.num) + "vh";
+            break;
+        case CSS_VMIN:
+            text = formatNumber(m_value.num) + "vmin";
+            break;
     }
 
     ASSERT(!cssTextCache().contains(this));
@@ -1006,6 +1036,26 @@ void CSSPrimitiveValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const C
 {
     if (m_primitiveUnitType == CSS_URI)
         addSubresourceURL(urls, styleSheet->completeURL(m_value.string));
+}
+
+Length CSSPrimitiveValue::viewportRelativeLength()
+{
+    ASSERT(isViewportRelativeLength());
+    Length viewportLength;
+    switch (m_primitiveUnitType) {
+    case CSS_VW:
+        viewportLength = Length(getDoubleValue(), ViewportRelativeWidth);
+        break;
+    case CSS_VH:
+        viewportLength = Length(getDoubleValue(), ViewportRelativeHeight);
+        break;
+    case CSS_VMIN:
+        viewportLength = Length(getDoubleValue(), ViewportRelativeMin);
+        break;
+    default:
+        break;
+    }
+    return viewportLength;
 }
 
 } // namespace WebCore

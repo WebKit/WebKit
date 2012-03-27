@@ -48,7 +48,10 @@ module css {
         const unsigned short CSS_COUNTER    = 23;
         const unsigned short CSS_RECT       = 24;
         const unsigned short CSS_RGBCOLOR   = 25;
-
+        const unsigned short CSS_VW         = 26;
+        const unsigned short CSS_VH         = 27;
+        const unsigned short CSS_VMIN       = 28;
+        
         readonly attribute unsigned short primitiveType;
 
         [ObjCLegacyUnnamedParameters] void setFloatValue(in [Optional=DefaultIsUndefined] unsigned short unitType,

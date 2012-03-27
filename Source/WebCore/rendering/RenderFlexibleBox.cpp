@@ -586,7 +586,7 @@ LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* 
         LayoutUnit mainAxisExtent = hasOrthogonalFlow(child) ? child->logicalHeight() : child->maxPreferredLogicalWidth();
         return mainAxisExtent - mainAxisBorderAndPaddingExtentForChild(child);
     }
-    return minimumValueForLength(mainAxisLength, mainAxisContentExtent());
+    return minimumValueForLength(mainAxisLength, mainAxisContentExtent(), view());
 }
 
 LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMainAxisExtent)
@@ -660,6 +660,7 @@ LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(RenderBox* child)
 void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, FlexOrderHashSet& flexOrderValues)
 {
     LayoutUnit flexboxAvailableContentExtent = mainAxisContentExtent();
+    RenderView* renderView = view();
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         flexOrderValues.add(child->style()->flexOrder());
 
@@ -677,11 +678,11 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Fle
         // of 0 and because if we're not auto sizing, we don't do a layout that
         // computes the start/end margins.
         if (isHorizontalFlow()) {
-            child->setMarginLeft(minimumValueForLength(child->style()->marginLeft(), flexboxAvailableContentExtent));
-            child->setMarginRight(minimumValueForLength(child->style()->marginRight(), flexboxAvailableContentExtent));
+            child->setMarginLeft(minimumValueForLength(child->style()->marginLeft(), flexboxAvailableContentExtent, renderView));
+            child->setMarginRight(minimumValueForLength(child->style()->marginRight(), flexboxAvailableContentExtent, renderView));
         } else {
-            child->setMarginTop(minimumValueForLength(child->style()->marginTop(), flexboxAvailableContentExtent));
-            child->setMarginBottom(minimumValueForLength(child->style()->marginBottom(), flexboxAvailableContentExtent));
+            child->setMarginTop(minimumValueForLength(child->style()->marginTop(), flexboxAvailableContentExtent, renderView));
+            child->setMarginBottom(minimumValueForLength(child->style()->marginBottom(), flexboxAvailableContentExtent, renderView));
         }
     }
 }
@@ -704,12 +705,13 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox* child, Layo
 {
     Length max = isHorizontalFlow() ? child->style()->maxWidth() : child->style()->maxHeight();
     Length min = isHorizontalFlow() ? child->style()->minWidth() : child->style()->minHeight();
+    RenderView* renderView = view();
     // FIXME: valueForLength isn't quite right in quirks mode: percentage heights should check parents until a value is found.
     // https://bugs.webkit.org/show_bug.cgi?id=81809
-    if (max.isSpecified() && childSize > valueForLength(max, flexboxAvailableContentExtent))
-        childSize = valueForLength(max, flexboxAvailableContentExtent);
-    if (min.isSpecified() && childSize < valueForLength(min, flexboxAvailableContentExtent))
-        childSize = valueForLength(min, flexboxAvailableContentExtent);
+    if (max.isSpecified() && childSize > valueForLength(max, flexboxAvailableContentExtent, renderView))
+        childSize = valueForLength(max, flexboxAvailableContentExtent, renderView);
+    if (min.isSpecified() && childSize < valueForLength(min, flexboxAvailableContentExtent, renderView))
+        childSize = valueForLength(min, flexboxAvailableContentExtent, renderView);
     return childSize;
 }
 
@@ -765,7 +767,6 @@ void RenderFlexibleBox::freezeViolations(const WTF::Vector<Violation>& violation
 bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, const OrderedFlexItemList& children, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize& inflexibleItems, WTF::Vector<LayoutUnit>& childSizes)
 {
     childSizes.clear();
-
     LayoutUnit flexboxAvailableContentExtent = mainAxisContentExtent();
     LayoutUnit totalViolation = 0;
     WTF::Vector<Violation> minViolations;

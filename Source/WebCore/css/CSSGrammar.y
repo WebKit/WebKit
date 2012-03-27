@@ -99,7 +99,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 55
+%expect 58
 
 %nonassoc LOWEST_PREC
 
@@ -188,6 +188,9 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token <number> PERCENTAGE
 %token <number> FLOATTOKEN
 %token <number> INTEGER
+%token <number> VW
+%token <number> VH
+%token <number> VMIN
 
 %token <string> URI
 %token <string> FUNCTION
@@ -1472,6 +1475,9 @@ unary_term:
       if (Document* doc = p->findDocument())
           doc->setUsesRemUnits(true);
   }
+  | VW maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VW; }
+  | VH maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VH; }
+  | VMIN maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VMIN; }
   ;
 
 function:
