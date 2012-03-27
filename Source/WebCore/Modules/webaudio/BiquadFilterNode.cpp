@@ -36,7 +36,7 @@ BiquadFilterNode::BiquadFilterNode(AudioContext* context, float sampleRate)
     : AudioBasicProcessorNode(context, sampleRate)
 {
     // Initially setup as lowpass filter.
-    m_processor = adoptPtr(new BiquadProcessor(BiquadProcessor::LowPass, sampleRate, 1, false));
+    m_processor = adoptPtr(new BiquadProcessor(sampleRate, 1, false));
     biquadProcessor()->parameter1()->setContext(context);
     biquadProcessor()->parameter2()->setContext(context);
     biquadProcessor()->parameter3()->setContext(context);

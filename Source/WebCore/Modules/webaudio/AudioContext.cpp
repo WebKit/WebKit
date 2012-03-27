@@ -49,9 +49,7 @@
 #include "FFTFrame.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
-#include "HighPass2FilterNode.h"
 #include "JavaScriptAudioNode.h"
-#include "LowPass2FilterNode.h"
 #include "OfflineAudioCompletionEvent.h"
 #include "OfflineAudioDestinationNode.h"
 #include "PlatformString.h"
@@ -391,26 +389,6 @@ PassRefPtr<WaveShaperNode> AudioContext::createWaveShaper()
     ASSERT(isMainThread());
     lazyInitialize();
     return WaveShaperNode::create(this);
-}
-
-PassRefPtr<LowPass2FilterNode> AudioContext::createLowPass2Filter()
-{
-    ASSERT(isMainThread());
-    lazyInitialize();
-    if (document())
-        document()->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, "createLowPass2Filter() is deprecated.  Use createBiquadFilter() instead.");
-        
-    return LowPass2FilterNode::create(this, m_destinationNode->sampleRate());
-}
-
-PassRefPtr<HighPass2FilterNode> AudioContext::createHighPass2Filter()
-{
-    ASSERT(isMainThread());
-    lazyInitialize();
-    if (document())
-        document()->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, "createHighPass2Filter() is deprecated.  Use createBiquadFilter() instead.");
-
-    return HighPass2FilterNode::create(this, m_destinationNode->sampleRate());
 }
 
 PassRefPtr<AudioPannerNode> AudioContext::createPanner()

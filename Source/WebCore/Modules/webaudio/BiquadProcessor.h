@@ -51,9 +51,6 @@ public:
 
     BiquadProcessor(float sampleRate, size_t numberOfChannels, bool autoInitialize);
 
-    // Old constructor used by deprecated LowPass2FilterNode and HighPass2FilterNode
-    BiquadProcessor(FilterType, float sampleRate, size_t numberOfChannels, bool autoInitialize = true);
-
     virtual ~BiquadProcessor();
     
     virtual PassOwnPtr<AudioDSPKernel> createKernel();

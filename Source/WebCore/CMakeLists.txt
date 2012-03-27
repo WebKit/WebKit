@@ -141,9 +141,7 @@ SET(WebCore_IDL_FILES
     Modules/webaudio/ConvolverNode.idl
     Modules/webaudio/DOMWindowWebAudio.idl
     Modules/webaudio/DelayNode.idl
-    Modules/webaudio/HighPass2FilterNode.idl
     Modules/webaudio/JavaScriptAudioNode.idl
-    Modules/webaudio/LowPass2FilterNode.idl
     Modules/webaudio/RealtimeAnalyserNode.idl
 
     Modules/websockets/CloseEvent.idl

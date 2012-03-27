@@ -67,8 +67,6 @@ module webaudio {
         DelayNode createDelayNode(in [Optional] double maxDelayTime);
         BiquadFilterNode createBiquadFilter();
         WaveShaperNode createWaveShaper();
-        LowPass2FilterNode createLowPass2Filter();
-        HighPass2FilterNode createHighPass2Filter();
         AudioPannerNode createPanner();
         ConvolverNode createConvolver();
         DynamicsCompressorNode createDynamicsCompressor();

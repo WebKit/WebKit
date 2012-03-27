@@ -6168,12 +6168,8 @@
 		FD31602E12B0267600C1A359 /* DelayNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FE412B0267600C1A359 /* DelayNode.h */; };
 		FD31603012B0267600C1A359 /* DelayProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FE612B0267600C1A359 /* DelayProcessor.cpp */; };
 		FD31603112B0267600C1A359 /* DelayProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FE712B0267600C1A359 /* DelayProcessor.h */; };
-		FD31603212B0267600C1A359 /* HighPass2FilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FE812B0267600C1A359 /* HighPass2FilterNode.cpp */; };
-		FD31603312B0267600C1A359 /* HighPass2FilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FE912B0267600C1A359 /* HighPass2FilterNode.h */; };
 		FD31603512B0267600C1A359 /* JavaScriptAudioNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FEB12B0267600C1A359 /* JavaScriptAudioNode.cpp */; };
 		FD31603612B0267600C1A359 /* JavaScriptAudioNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FEC12B0267600C1A359 /* JavaScriptAudioNode.h */; };
-		FD31603812B0267600C1A359 /* LowPass2FilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FEE12B0267600C1A359 /* LowPass2FilterNode.cpp */; };
-		FD31603912B0267600C1A359 /* LowPass2FilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FEF12B0267600C1A359 /* LowPass2FilterNode.h */; };
 		FD31603B12B0267600C1A359 /* RealtimeAnalyser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FF112B0267600C1A359 /* RealtimeAnalyser.cpp */; };
 		FD31603C12B0267600C1A359 /* RealtimeAnalyser.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FF212B0267600C1A359 /* RealtimeAnalyser.h */; };
 		FD31603D12B0267600C1A359 /* RealtimeAnalyserNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FF312B0267600C1A359 /* RealtimeAnalyserNode.cpp */; };
@@ -6295,10 +6291,6 @@
 		FDA15EB812B03EE1003A583A /* JSAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9C12B03EE1003A583A /* JSAudioSourceNode.h */; };
 		FDA15EBD12B03F0B003A583A /* JSConvolverNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15EBB12B03F0B003A583A /* JSConvolverNode.cpp */; };
 		FDA15EBE12B03F0B003A583A /* JSConvolverNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15EBC12B03F0B003A583A /* JSConvolverNode.h */; };
-		FDA15EC112B03F2D003A583A /* JSHighPass2FilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15EBF12B03F2D003A583A /* JSHighPass2FilterNode.cpp */; };
-		FDA15EC212B03F2D003A583A /* JSHighPass2FilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15EC012B03F2D003A583A /* JSHighPass2FilterNode.h */; };
-		FDA15EC512B03F3B003A583A /* JSLowPass2FilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15EC312B03F3B003A583A /* JSLowPass2FilterNode.cpp */; };
-		FDA15EC612B03F3B003A583A /* JSLowPass2FilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15EC412B03F3B003A583A /* JSLowPass2FilterNode.h */; };
 		FDA15EC912B03F50003A583A /* JSRealtimeAnalyserNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15EC712B03F50003A583A /* JSRealtimeAnalyserNode.cpp */; };
 		FDA15ECA12B03F50003A583A /* JSRealtimeAnalyserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15EC812B03F50003A583A /* JSRealtimeAnalyserNode.h */; };
 		FDA15ECD12B03F61003A583A /* JSJavaScriptAudioNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15ECB12B03F61003A583A /* JSJavaScriptAudioNode.cpp */; };
@@ -13340,15 +13332,9 @@
 		FD315FE512B0267600C1A359 /* DelayNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DelayNode.idl; sourceTree = "<group>"; };
 		FD315FE612B0267600C1A359 /* DelayProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DelayProcessor.cpp; sourceTree = "<group>"; };
 		FD315FE712B0267600C1A359 /* DelayProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelayProcessor.h; sourceTree = "<group>"; };
-		FD315FE812B0267600C1A359 /* HighPass2FilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HighPass2FilterNode.cpp; sourceTree = "<group>"; };
-		FD315FE912B0267600C1A359 /* HighPass2FilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HighPass2FilterNode.h; sourceTree = "<group>"; };
-		FD315FEA12B0267600C1A359 /* HighPass2FilterNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HighPass2FilterNode.idl; sourceTree = "<group>"; };
 		FD315FEB12B0267600C1A359 /* JavaScriptAudioNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptAudioNode.cpp; sourceTree = "<group>"; };
 		FD315FEC12B0267600C1A359 /* JavaScriptAudioNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptAudioNode.h; sourceTree = "<group>"; };
 		FD315FED12B0267600C1A359 /* JavaScriptAudioNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = JavaScriptAudioNode.idl; sourceTree = "<group>"; };
-		FD315FEE12B0267600C1A359 /* LowPass2FilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LowPass2FilterNode.cpp; sourceTree = "<group>"; };
-		FD315FEF12B0267600C1A359 /* LowPass2FilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LowPass2FilterNode.h; sourceTree = "<group>"; };
-		FD315FF012B0267600C1A359 /* LowPass2FilterNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LowPass2FilterNode.idl; sourceTree = "<group>"; };
 		FD315FF112B0267600C1A359 /* RealtimeAnalyser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeAnalyser.cpp; sourceTree = "<group>"; };
 		FD315FF212B0267600C1A359 /* RealtimeAnalyser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeAnalyser.h; sourceTree = "<group>"; };
 		FD315FF312B0267600C1A359 /* RealtimeAnalyserNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeAnalyserNode.cpp; sourceTree = "<group>"; };
@@ -13475,10 +13461,6 @@
 		FDA15E9C12B03EE1003A583A /* JSAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioSourceNode.h; sourceTree = "<group>"; };
 		FDA15EBB12B03F0B003A583A /* JSConvolverNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConvolverNode.cpp; sourceTree = "<group>"; };
 		FDA15EBC12B03F0B003A583A /* JSConvolverNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSConvolverNode.h; sourceTree = "<group>"; };
-		FDA15EBF12B03F2D003A583A /* JSHighPass2FilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHighPass2FilterNode.cpp; sourceTree = "<group>"; };
-		FDA15EC012B03F2D003A583A /* JSHighPass2FilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHighPass2FilterNode.h; sourceTree = "<group>"; };
-		FDA15EC312B03F3B003A583A /* JSLowPass2FilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLowPass2FilterNode.cpp; sourceTree = "<group>"; };
-		FDA15EC412B03F3B003A583A /* JSLowPass2FilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSLowPass2FilterNode.h; sourceTree = "<group>"; };
 		FDA15EC712B03F50003A583A /* JSRealtimeAnalyserNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRealtimeAnalyserNode.cpp; sourceTree = "<group>"; };
 		FDA15EC812B03F50003A583A /* JSRealtimeAnalyserNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRealtimeAnalyserNode.h; sourceTree = "<group>"; };
 		FDA15ECB12B03F61003A583A /* JSJavaScriptAudioNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptAudioNode.cpp; sourceTree = "<group>"; };
@@ -21291,15 +21273,9 @@
 				FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */,
 				FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */,
 				FD6ED2C9136B8E9D003CF072 /* DynamicsCompressorNode.idl */,
-				FD315FE812B0267600C1A359 /* HighPass2FilterNode.cpp */,
-				FD315FE912B0267600C1A359 /* HighPass2FilterNode.h */,
-				FD315FEA12B0267600C1A359 /* HighPass2FilterNode.idl */,
 				FD315FEB12B0267600C1A359 /* JavaScriptAudioNode.cpp */,
 				FD315FEC12B0267600C1A359 /* JavaScriptAudioNode.h */,
 				FD315FED12B0267600C1A359 /* JavaScriptAudioNode.idl */,
-				FD315FEE12B0267600C1A359 /* LowPass2FilterNode.cpp */,
-				FD315FEF12B0267600C1A359 /* LowPass2FilterNode.h */,
-				FD315FF012B0267600C1A359 /* LowPass2FilterNode.idl */,
 				FD6F252913F5EF0E0065165F /* MediaElementAudioSourceNode.cpp */,
 				FD6F252A13F5EF0E0065165F /* MediaElementAudioSourceNode.h */,
 				FD6F252B13F5EF0E0065165F /* MediaElementAudioSourceNode.idl */,
@@ -21454,12 +21430,8 @@
 				FDA15ED012B03F94003A583A /* JSDelayNode.h */,
 				FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */,
 				FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */,
-				FDA15EBF12B03F2D003A583A /* JSHighPass2FilterNode.cpp */,
-				FDA15EC012B03F2D003A583A /* JSHighPass2FilterNode.h */,
 				FDA15ECB12B03F61003A583A /* JSJavaScriptAudioNode.cpp */,
 				FDA15ECC12B03F61003A583A /* JSJavaScriptAudioNode.h */,
-				FDA15EC312B03F3B003A583A /* JSLowPass2FilterNode.cpp */,
-				FDA15EC412B03F3B003A583A /* JSLowPass2FilterNode.h */,
 				FD23A12313F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp */,
 				FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */,
 				FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */,
@@ -22715,7 +22687,6 @@
 				8482B7461198C35400BFB005 /* HashChangeEvent.h in Headers */,
 				A8748BE012CBF2DC001FBA41 /* HashTools.h in Headers */,
 				F55B3DC01251F12D003EF269 /* HiddenInputType.h in Headers */,
-				FD31603312B0267600C1A359 /* HighPass2FilterNode.h in Headers */,
 				D630E2AC149BF344005B2F93 /* HistogramSupport.h in Headers */,
 				BC94D1540C275C8B006BC617 /* History.h in Headers */,
 				97DCE20210807C750057D394 /* HistoryController.h in Headers */,
@@ -23129,7 +23100,6 @@
 				FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */,
 				FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */,
 				8482B7521198CB6B00BFB005 /* JSHashChangeEvent.h in Headers */,
-				FDA15EC212B03F2D003A583A /* JSHighPass2FilterNode.h in Headers */,
 				BC94D14F0C275C68006BC617 /* JSHistory.h in Headers */,
 				BC97E413109154FA0010D361 /* JSHTMLAllCollection.h in Headers */,
 				1A4A2DF00A1B852A00C807F8 /* JSHTMLAnchorElement.h in Headers */,
@@ -23238,7 +23208,6 @@
 				A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */,
 				935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */,
 				BCE1C43C0D9830D3003B02F2 /* JSLocation.h in Headers */,
-				FDA15EC612B03F3B003A583A /* JSLowPass2FilterNode.h in Headers */,
 				FD23A12613F5FA5900F67001 /* JSMediaElementAudioSourceNode.h in Headers */,
 				E44614190CD6826900FADA75 /* JSMediaError.h in Headers */,
 				BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */,
@@ -23567,7 +23536,6 @@
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
 				BCE1C41B0D982980003B02F2 /* Location.h in Headers */,
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
-				FD31603912B0267600C1A359 /* LowPass2FilterNode.h in Headers */,
 				656D37410ADBA5DE00A4554D /* MainResourceLoader.h in Headers */,
 				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
@@ -25822,7 +25790,6 @@
 				B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */,
 				C50B561612119D23008B46E0 /* GroupSettings.cpp in Sources */,
 				F55B3DBF1251F12D003EF269 /* HiddenInputType.cpp in Sources */,
-				FD31603212B0267600C1A359 /* HighPass2FilterNode.cpp in Sources */,
 				D6FDAEF3149C06190037B1E1 /* HistogramSupport.cpp in Sources */,
 				BC94D1530C275C8B006BC617 /* History.cpp in Sources */,
 				97DCE20110807C750057D394 /* HistoryController.cpp in Sources */,
@@ -26256,7 +26223,6 @@
 				FE80D7AB0E9C1ED2000D6F75 /* JSGeolocationCustom.cpp in Sources */,
 				FE80DA650E9C4703000D6F75 /* JSGeoposition.cpp in Sources */,
 				8482B7511198CB6B00BFB005 /* JSHashChangeEvent.cpp in Sources */,
-				FDA15EC112B03F2D003A583A /* JSHighPass2FilterNode.cpp in Sources */,
 				BC94D14E0C275C68006BC617 /* JSHistory.cpp in Sources */,
 				BCE7B1930D4E86960075A539 /* JSHistoryCustom.cpp in Sources */,
 				BC97E412109154FA0010D361 /* JSHTMLAllCollection.cpp in Sources */,
@@ -26392,7 +26358,6 @@
 				935F45420F7C3B5F00D7C1FB /* JSLazyEventListener.cpp in Sources */,
 				BCE1C43B0D9830D3003B02F2 /* JSLocation.cpp in Sources */,
 				BCE1C4400D9830F4003B02F2 /* JSLocationCustom.cpp in Sources */,
-				FDA15EC512B03F3B003A583A /* JSLowPass2FilterNode.cpp in Sources */,
 				8FAC774D119872CB0015AE94 /* JSMainThreadExecState.cpp in Sources */,
 				CD27F6E51457685A0078207D /* JSMediaController.cpp in Sources */,
 				FD23A12513F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp in Sources */,
@@ -26771,7 +26736,6 @@
 				BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */,
 				A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */,
 				1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */,
-				FD31603812B0267600C1A359 /* LowPass2FilterNode.cpp in Sources */,
 				93E227E10AF589AD00D48324 /* MainResourceLoader.cpp in Sources */,
 				1A8F6BC50DB55CDC001DB794 /* ManifestParser.cpp in Sources */,
 				93309DF7099E64920056E581 /* markup.cpp in Sources */,

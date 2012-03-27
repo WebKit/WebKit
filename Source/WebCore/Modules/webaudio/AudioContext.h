@@ -58,8 +58,6 @@ class AudioListener;
 class BiquadFilterNode;
 class DelayNode;
 class Document;
-class LowPass2FilterNode;
-class HighPass2FilterNode;
 class ConvolverNode;
 class DynamicsCompressorNode;
 class RealtimeAnalyserNode;
@@ -119,8 +117,6 @@ public:
     PassRefPtr<WaveShaperNode> createWaveShaper();
     PassRefPtr<DelayNode> createDelayNode();
     PassRefPtr<DelayNode> createDelayNode(double maxDelayTime);
-    PassRefPtr<LowPass2FilterNode> createLowPass2Filter();
-    PassRefPtr<HighPass2FilterNode> createHighPass2Filter();
     PassRefPtr<AudioPannerNode> createPanner();
     PassRefPtr<ConvolverNode> createConvolver();
     PassRefPtr<DynamicsCompressorNode> createDynamicsCompressor();    

@@ -124,9 +124,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/DOMWindowWebAudio.idl \
     $(WebCore)/Modules/webaudio/DelayNode.idl \
     $(WebCore)/Modules/webaudio/DynamicsCompressorNode.idl \
-    $(WebCore)/Modules/webaudio/HighPass2FilterNode.idl \
     $(WebCore)/Modules/webaudio/JavaScriptAudioNode.idl \
-    $(WebCore)/Modules/webaudio/LowPass2FilterNode.idl \
     $(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
     $(WebCore)/Modules/webaudio/OfflineAudioCompletionEvent.idl \
     $(WebCore)/Modules/webaudio/RealtimeAnalyserNode.idl \

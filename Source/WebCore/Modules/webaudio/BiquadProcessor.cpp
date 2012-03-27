@@ -51,34 +51,6 @@ BiquadProcessor::BiquadProcessor(float sampleRate, size_t numberOfChannels, bool
         initialize();
 }
 
-BiquadProcessor::BiquadProcessor(FilterType type, float sampleRate, size_t numberOfChannels, bool autoInitialize)
-    : AudioDSPKernelProcessor(sampleRate, numberOfChannels)
-    , m_type(type)
-    , m_parameter1(0)
-    , m_parameter2(0)
-    , m_parameter3(0)
-    , m_filterCoefficientsDirty(true)
-{
-    double nyquist = 0.5 * this->sampleRate();
-    
-    // Handle the deprecated LowPass2FilterNode and HighPass2FilterNode.
-    switch (type) {
-    // Highpass and lowpass share the same parameters and only differ in filter type.
-    case LowPass:
-    case HighPass:
-        m_parameter1 = AudioParam::create("frequency", 350.0, 20.0, nyquist);
-        m_parameter2 = AudioParam::create("resonance", 0.0, -20.0, 20.0);
-        m_parameter3 = AudioParam::create("unused", 0.0, 0.0, 1.0);
-        break;
-
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    if (autoInitialize)
-        initialize();
-}
-
 BiquadProcessor::~BiquadProcessor()
 {
     if (isInitialized())

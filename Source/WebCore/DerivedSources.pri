@@ -146,9 +146,7 @@ IDL_BINDINGS += \
     $$PWD/Modules/webaudio/ConvolverNode.idl \
     $$PWD/Modules/webaudio/DelayNode.idl \
     $$PWD/Modules/webaudio/DOMWindowWebAudio.idl \
-    $$PWD/Modules/webaudio/HighPass2FilterNode.idl \
     $$PWD/Modules/webaudio/JavaScriptAudioNode.idl \
-    $$PWD/Modules/webaudio/LowPass2FilterNode.idl \
     $$PWD/Modules/webaudio/RealtimeAnalyserNode.idl \
     $$PWD/Modules/webdatabase/DOMWindowWebDatabase.idl \
     $$PWD/Modules/webdatabase/Database.idl \

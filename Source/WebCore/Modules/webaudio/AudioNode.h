@@ -62,8 +62,6 @@ public:
         NodeTypeMediaElementAudioSource,
         NodeTypeJavaScript,
         NodeTypeBiquadFilter,
-        NodeTypeLowPass2Filter,
-        NodeTypeHighPass2Filter,
         NodeTypePanner,
         NodeTypeConvolver,
         NodeTypeDelay,
