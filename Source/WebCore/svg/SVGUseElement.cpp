@@ -181,8 +181,7 @@ void SVGUseElement::insertedIntoDocument()
     SVGStyledTransformableElement::insertedIntoDocument();
     ASSERT(!m_targetElementInstance || !isWellFormedDocument(document()));
     ASSERT(!hasPendingResources() || !isWellFormedDocument(document()));
-    if (!m_wasInsertedByParser)
-        buildPendingResource();
+    buildPendingResource();
     SVGExternalResourcesRequired::insertedIntoDocument(this);
 }
 
@@ -253,8 +252,7 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
             m_cachedDocument->removeClient(this);
             m_cachedDocument = 0;
         }
-        if (!m_wasInsertedByParser)
-            buildPendingResource();
+        buildPendingResource();
         return;
     }
 
@@ -272,7 +270,7 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
 
 bool SVGUseElement::willRecalcStyle(StyleChange)
 {
-    if (!m_wasInsertedByParser && m_needsShadowTreeRecreation && renderer() && needsStyleRecalc())
+    if (m_needsShadowTreeRecreation && renderer() && needsStyleRecalc())
         buildPendingResource();
     return true;
 }
@@ -955,10 +953,6 @@ void SVGUseElement::finishParsingChildren()
 {
     SVGStyledTransformableElement::finishParsingChildren();
     SVGExternalResourcesRequired::finishParsingChildren();
-    if (m_wasInsertedByParser) {
-        buildPendingResource();
-        m_wasInsertedByParser = false;
-    }
 }
 
 }
