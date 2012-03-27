@@ -168,13 +168,15 @@ v8::Handle<v8::Object> V8TestActiveDOMObject::wrapSlow(PassRefPtr<TestActiveDOMO
             proxy->windowShell()->initContextIfNeeded();
     }
 
-    v8::Handle<v8::Context> context;
-    if (proxy)
-        context = proxy->context();
-
     // Enter the node's context and create the wrapper in that context.
-    if (!context.IsEmpty())
-        context->Enter();
+    v8::Handle<v8::Context> context;
+    if (proxy && !proxy->matchesCurrentContext()) {
+        // For performance, we enter the context only if the currently running context
+        // is different from the context that we are about to enter.
+        context = proxy->context();
+        if (!context.IsEmpty())
+            context->Enter();
+    }
     wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl.get());
     // Exit the node's context if it was entered.
     if (!context.IsEmpty())

@@ -243,6 +243,7 @@ namespace WebCore {
 
         v8::Local<v8::Context> context();
         v8::Local<v8::Context> mainWorldContext();
+        bool matchesCurrentContext();
 
         // FIXME: This should eventually take DOMWrapperWorld argument!
         V8DOMWindowShell* windowShell() const { return m_windowShell.get(); }

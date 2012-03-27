@@ -642,6 +642,20 @@ v8::Local<v8::Context> V8Proxy::mainWorldContext()
     return v8::Local<v8::Context>::New(windowShell()->context());
 }
 
+bool V8Proxy::matchesCurrentContext()
+{
+    v8::Handle<v8::Context> context;
+    if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
+        context = isolatedContext->sharedContext()->get();
+        if (m_frame != V8Proxy::retrieveFrame(context))
+            return false;
+    } else {
+        windowShell()->initContextIfNeeded();
+        context = windowShell()->context();
+    }
+    return context == context->GetCurrent();
+}
+
 v8::Local<v8::Context> V8Proxy::mainWorldContext(Frame* frame)
 {
     V8Proxy* proxy = retrieve(frame);
