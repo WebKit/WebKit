@@ -480,6 +480,8 @@ webkit_print_operation_get_type
 WebKitWebResource
 webkit_web_resource_get_uri
 webkit_web_resource_get_response
+webkit_web_resource_get_data
+webkit_web_resource_get_data_finish
 
 <SUBSECTION Standard>
 WebKitWebResourceClass

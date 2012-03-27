@@ -50,6 +50,7 @@ struct _WebKitWebResourcePrivate {
     WKRetainPtr<WKFrameRef> wkFrame;
     CString uri;
     GRefPtr<WebKitURIResponse> response;
+    bool isMainResource;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -204,12 +205,13 @@ static void webkitWebResourceUpdateURI(WebKitWebResource* resource, const CStrin
     g_object_notify(G_OBJECT(resource), "uri");
 }
 
-WebKitWebResource* webkitWebResourceCreate(WKFrameRef wkFrame, WebKitURIRequest* request)
+WebKitWebResource* webkitWebResourceCreate(WKFrameRef wkFrame, WebKitURIRequest* request, bool isMainResource)
 {
     ASSERT(wkFrame);
     WebKitWebResource* resource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, NULL));
     resource->priv->wkFrame = wkFrame;
     resource->priv->uri = webkit_uri_request_get_uri(request);
+    resource->priv->isMainResource = isMainResource;
     return resource;
 }
 
@@ -299,3 +301,63 @@ WebKitURIResponse* webkit_web_resource_get_response(WebKitWebResource* resource)
     return resource->priv->response.get();
 }
 
+static void resourceDataCallback(WKDataRef data, WKErrorRef, void* context)
+{
+    GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
+    g_simple_async_result_set_op_res_gpointer(result.get(), const_cast<OpaqueWKData*>(data), 0);
+    g_simple_async_result_complete(result.get());
+}
+
+/**
+ * webkit_web_resource_get_data:
+ * @resource: a #WebKitWebResource
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously get the raw data for @resource.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_web_resource_get_data_finish() to get the result of the operation.
+ */
+void webkit_web_resource_get_data(WebKitWebResource* resource, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_RESOURCE(resource));
+
+    GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(resource), callback, userData,
+                                                           reinterpret_cast<gpointer>(webkit_web_resource_get_data));
+    if (resource->priv->isMainResource)
+        WKFrameGetMainResourceData(resource->priv->wkFrame.get(), resourceDataCallback, result);
+    else {
+        WKRetainPtr<WKURLRef> url(AdoptWK, WKURLCreateWithUTF8CString(resource->priv->uri.data()));
+        WKFrameGetResourceData(resource->priv->wkFrame.get(), url.get(), resourceDataCallback, result);
+    }
+}
+
+/**
+ * webkit_web_resource_get_data_finish:
+ * @resource: a #WebKitWebResource
+ * @result: a #GAsyncResult
+ * @length: (out): return location for the length of the resource data
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_web_resource_get_data().
+ *
+ * Returns: (transfer full): a string with the data of @resource, or %NULL in case
+ *    of error. if @length is not %NULL, the size of the data will be assigned to it.
+ */
+guchar* webkit_web_resource_get_data_finish(WebKitWebResource* resource, GAsyncResult* result, gsize* length, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_RESOURCE(resource), 0);
+    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), 0);
+
+    GSimpleAsyncResult* simple = G_SIMPLE_ASYNC_RESULT(result);
+    g_warn_if_fail(g_simple_async_result_get_source_tag(simple) == webkit_web_resource_get_data);
+
+    if (g_simple_async_result_propagate_error(simple, error))
+        return 0;
+
+    WKDataRef wkData = static_cast<WKDataRef>(g_simple_async_result_get_op_res_gpointer(simple));
+    if (length)
+        *length = WKDataGetSize(wkData);
+    return static_cast<guchar*>(g_memdup(WKDataGetBytes(wkData), WKDataGetSize(wkData)));
+}

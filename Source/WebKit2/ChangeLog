@@ -1,5 +1,32 @@
 2012-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add method webkit_web_resource_get_data() to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=79667
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (webkitWebResourceCreate): Add isMainResource parameter indication
+        whether the resource is the main one of the frame.
+        (resourceDataCallback): C API callback called when resource data
+        is available.
+        (webkit_web_resource_get_data): Asynchronously get the raw data of
+        the resource.
+        (webkit_web_resource_get_data_finish): Finish asynchronous
+        operation started by webkit_web_resource_get_data().
+        * UIProcess/API/gtk/WebKitWebResource.h:
+        * UIProcess/API/gtk/WebKitWebResourcePrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewResourceLoadStarted): Pass isMainResource parameter
+        to webkitWebResourceCreate().
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestResources.cpp:
+        (testWebResourceGetData):
+        (serverCallback):
+        (beforeAll):
+
+2012-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add resources API to WebKit2 GTK+
         https://bugs.webkit.org/show_bug.cgi?id=79477
 

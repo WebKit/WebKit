@@ -25,6 +25,7 @@
 #define WebKitWebResource_h
 
 #include <glib-object.h>
+#include <gio/gio.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitURIResponse.h>
 
@@ -59,6 +60,17 @@ webkit_web_resource_get_uri         (WebKitWebResource  *resource);
 
 WEBKIT_API WebKitURIResponse *
 webkit_web_resource_get_response    (WebKitWebResource  *resource);
+
+WEBKIT_API void
+webkit_web_resource_get_data        (WebKitWebResource  *resource,
+                                     GAsyncReadyCallback callback,
+                                     gpointer            user_data);
+
+WEBKIT_API guchar *
+webkit_web_resource_get_data_finish (WebKitWebResource  *resource,
+                                     GAsyncResult       *result,
+                                     gsize              *length,
+                                     GError            **error);
 
 G_END_DECLS
 

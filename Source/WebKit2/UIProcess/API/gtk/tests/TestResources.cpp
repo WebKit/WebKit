@@ -25,6 +25,23 @@
 
 static WebKitTestServer* kServer;
 
+static const char* kIndexHtml =
+    "<html><head>"
+    " <link rel='stylesheet' href='/style.css' type='text/css'>"
+    " <script language='javascript' src='/javascript.js'></script>"
+    "</head><body>WebKitGTK+ resources test</body></html>";
+
+static const char* kStyleCSS =
+    "body {"
+    "    margin: 0px;"
+    "    padding: 0px;"
+    "    font-family: sans-serif;"
+    "    background: url(/blank.ico) 0 0 no-repeat;"
+    "    color: black;"
+    "}";
+
+static const char* kJavascript = "function foo () { var a = 1; }";
+
 class ResourcesTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(ResourcesTest);
@@ -75,6 +92,7 @@ public:
         : WebViewTest()
         , m_resourcesLoaded(0)
         , m_resourcesToLoad(0)
+        , m_resourceDataSize(0)
     {
         g_signal_connect(m_webView, "resource-load-started", G_CALLBACK(resourceLoadStartedCallback), this);
     }
@@ -114,8 +132,46 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
+    static void resourceGetDataCallback(GObject* object, GAsyncResult* result, gpointer userData)
+    {
+        size_t dataSize;
+        GOwnPtr<GError> error;
+        unsigned char* data = webkit_web_resource_get_data_finish(WEBKIT_WEB_RESOURCE(object), result, &dataSize, &error.outPtr());
+        g_assert(!error.get());
+        g_assert(data);
+        g_assert_cmpint(dataSize, >, 0);
+
+        ResourcesTest* test = static_cast<ResourcesTest*>(userData);
+        test->m_resourceData.set(reinterpret_cast<char*>(data));
+        test->m_resourceDataSize = dataSize;
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void checkResourceData(WebKitWebResource* resource)
+    {
+        m_resourceDataSize = 0;
+        webkit_web_resource_get_data(resource, resourceGetDataCallback, this);
+        g_main_loop_run(m_mainLoop);
+
+        const char* uri = webkit_web_resource_get_uri(resource);
+        if (uri == kServer->getURIForPath("/")) {
+            g_assert_cmpint(m_resourceDataSize, ==, strlen(kIndexHtml));
+            g_assert(!strncmp(m_resourceData.get(), kIndexHtml, m_resourceDataSize));
+        } else if (uri == kServer->getURIForPath("/style.css")) {
+            g_assert_cmpint(m_resourceDataSize, ==, strlen(kStyleCSS));
+            g_assert(!strncmp(m_resourceData.get(), kStyleCSS, m_resourceDataSize));
+        } else if (uri == kServer->getURIForPath("/javascript.js")) {
+            g_assert_cmpint(m_resourceDataSize, ==, strlen(kJavascript));
+            g_assert(!strncmp(m_resourceData.get(), kJavascript, m_resourceDataSize));
+        } else
+            g_assert_not_reached();
+        m_resourceData.clear();
+    }
+
     size_t m_resourcesLoaded;
     size_t m_resourcesToLoad;
+    GOwnPtr<char> m_resourceData;
+    size_t m_resourceDataSize;
 };
 
 static void testWebViewResources(ResourcesTest* test, gconstpointer)
@@ -409,6 +465,22 @@ static void testWebResourceActiveURI(ResourceURITrackingTest* test, gconstpointe
     test->waitUntilResourceLoadFinsihed();
 }
 
+static void testWebResourceGetData(ResourcesTest* test, gconstpointer)
+{
+    test->loadURI(kServer->getURIForPath("/").data());
+    // FIXME: this should be 4 instead of 3, but we don't get the css image resource
+    // due to bug https://bugs.webkit.org/show_bug.cgi?id=78510.
+    test->waitUntilResourcesLoaded(3);
+
+    WebKitWebResource* resource = webkit_web_view_get_main_resource(test->m_webView);
+    g_assert(resource);
+    test->checkResourceData(resource);
+
+    GOwnPtr<GList> subresources(webkit_web_view_get_subresources(test->m_webView));
+    for (GList* item = subresources.get(); item; item = g_list_next(item))
+        test->checkResourceData(WEBKIT_WEB_RESOURCE(item->data));
+}
+
 static void addCacheHTTPHeadersToResponse(SoupMessage* message)
 {
     // The actual date doesn't really matter.
@@ -439,12 +511,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     }
 
     if (g_str_equal(path, "/")) {
-        static const char* indexHtml =
-            "<html><head>"
-            " <link rel='stylesheet' href='/style.css' type='text/css'>"
-            " <script language='javascript' src='/javascript.js'></script>"
-            "</head><body>WebKitGTK+ resources test</body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, indexHtml, strlen(indexHtml));
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kIndexHtml, strlen(kIndexHtml));
     } else if (g_str_equal(path, "/javascript.html")) {
         static const char* javascriptHtml = "<html><head><script language='javascript' src='/javascript.js'></script></head><body></body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, javascriptHtml, strlen(javascriptHtml));
@@ -458,19 +525,10 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         static const char* invalidCSSHtml = "<html><head><link rel='stylesheet' href='/invalid.css' type='text/css'></head><body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, invalidCSSHtml, strlen(invalidCSSHtml));
     } else if (g_str_equal(path, "/style.css")) {
-        static const char* css =
-            "body {"
-            "    margin: 0px;"
-            "    padding: 0px;"
-            "    font-family: sans-serif;"
-            "    background: url(/blank.ico) 0 0 no-repeat;"
-            "    color: black;"
-            "}";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, css, strlen(css));
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kStyleCSS, strlen(kStyleCSS));
         addCacheHTTPHeadersToResponse(message);
     } else if (g_str_equal(path, "/javascript.js")) {
-        static const char* javascript = "function foo () { var a = 1; }";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, javascript, strlen(javascript));
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kJavascript, strlen(kJavascript));
     } else if (g_str_equal(path, "/blank.ico")) {
         GOwnPtr<char> filePath(g_build_filename(Test::getWebKit1TestResoucesDir().data(), path, NULL));
         char* contents;
@@ -502,6 +560,7 @@ void beforeAll()
     SingleResourceLoadTest::add("WebKitWebResource", "loading", testWebResourceLoading);
     SingleResourceLoadTest::add("WebKitWebResource", "response", testWebResourceResponse);
     ResourceURITrackingTest::add("WebKitWebResource", "active-uri", testWebResourceActiveURI);
+    ResourcesTest::add("WebKitWebResource", "get-data", testWebResourceGetData);
 }
 
 void afterAll()

@@ -870,7 +870,7 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WKFrameRef wkFrame)
 void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WKFrameRef wkFrame, uint64_t resourceIdentifier, WebKitURIRequest* request, bool isMainResource)
 {
     // FIXME: ignore resources when replacing content.
-    WebKitWebResource* resource = webkitWebResourceCreate(wkFrame, request);
+    WebKitWebResource* resource = webkitWebResourceCreate(wkFrame, request, isMainResource);
     WebKitWebViewPrivate* priv = webView->priv;
     if (WKFrameIsMainFrame(wkFrame) && isMainResource)
         priv->mainResource = resource;

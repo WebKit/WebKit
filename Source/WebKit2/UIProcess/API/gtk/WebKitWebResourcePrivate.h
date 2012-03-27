@@ -23,7 +23,7 @@
 #include "WebKitPrivate.h"
 #include "WebKitWebResource.h"
 
-WebKitWebResource* webkitWebResourceCreate(WKFrameRef, WebKitURIRequest*);
+WebKitWebResource* webkitWebResourceCreate(WKFrameRef, WebKitURIRequest*, bool isMainResource);
 void webkitWebResourceSentRequest(WebKitWebResource*, WebKitURIRequest*, WebKitURIResponse*);
 void webkitWebResourceSetResponse(WebKitWebResource*, WebKitURIResponse*);
 void webkitWebResourceNotifyProgress(WebKitWebResource*, guint64 bytesReceived);
