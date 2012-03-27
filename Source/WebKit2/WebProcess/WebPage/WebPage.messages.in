@@ -105,7 +105,6 @@ messages -> WebPage {
     ResumeActiveDOMObjectsAndAnimations()
 
 #if USE(TILED_BACKING_STORE)
-    SetFixedVisibleContentRect(WebCore::IntRect rect)
     SetViewportSize(WebCore::IntSize size)
 #endif
 

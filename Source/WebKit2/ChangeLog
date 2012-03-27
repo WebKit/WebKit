@@ -1,3 +1,22 @@
+2012-03-27  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt][WK2] Merge setVisibleContentsRect with setFixedVisibleContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=82289
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        As we scroll, we constantly send 2 messages. Those 2 messages can be merged into one.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::_q_contentViewportChanged):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::setVisibleContentsRect):
+
 2012-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Implement missing methods in CookieJarSoup

@@ -443,6 +443,8 @@ void LayerTreeHostQt::setVisibleContentsRect(const IntRect& rect, float scale, c
     }
 
     scheduleLayerFlush();
+    if (m_webPage->useFixedLayout())
+        m_webPage->setFixedVisibleContentRect(rect);
 }
 
 void LayerTreeHostQt::renderNextFrame()

@@ -844,14 +844,6 @@ void WebPageProxy::executeEditCommand(const String& commandName)
 }
     
 #if USE(TILED_BACKING_STORE)
-void WebPageProxy::setFixedVisibleContentRect(const IntRect& rect)
-{
-    if (!isValid())
-        return;
-
-    process()->send(Messages::WebPage::SetFixedVisibleContentRect(rect), m_pageID);
-}
-
 void WebPageProxy::setViewportSize(const IntSize& size)
 {
     if (!isValid())

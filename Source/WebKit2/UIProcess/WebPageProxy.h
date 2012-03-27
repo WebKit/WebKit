@@ -378,7 +378,6 @@ public:
     PlatformWidget viewWidget();
 #endif
 #if USE(TILED_BACKING_STORE)
-    void setFixedVisibleContentRect(const WebCore::IntRect&);
     void setViewportSize(const WebCore::IntSize&);
 #endif
 

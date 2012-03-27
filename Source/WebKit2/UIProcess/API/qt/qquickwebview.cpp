@@ -642,7 +642,6 @@ void QQuickWebViewFlickablePrivate::_q_contentViewportChanged(const QPointF& tra
     float scale = pageView->contentsScale();
 
     drawingArea->setVisibleContentsRect(visibleRect, scale, trajectoryVector);
-    webPageProxy->setFixedVisibleContentRect(visibleRect);
 }
 
 void QQuickWebViewFlickablePrivate::_q_suspend()
