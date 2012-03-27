@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,23 +32,24 @@
 
 #include <WebCore/FrameNetworkingContext.h>
 
+namespace WebKit {
+
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
-    static PassRefPtr<WebFrameNetworkingContext> create(WebKit::WebFrame*)
+    static PassRefPtr<WebFrameNetworkingContext> create(WebFrame* frame)
     {
-        return 0;
+        return adoptRef(new WebFrameNetworkingContext(frame));
     }
 
 private:
-    WebFrameNetworkingContext(WebKit::WebFrame* frame)
+    WebFrameNetworkingContext(WebFrame* frame)
         : WebCore::FrameNetworkingContext(frame->coreFrame())
     {
     }
 
-    virtual WTF::String userAgent() const;
-    virtual WTF::String referrer() const;
-
-    WTF::String m_userAgent;
+    virtual SoupSession* soupSession() const;
 };
+
+}
 
 #endif // WebFrameNetworkingContext_h

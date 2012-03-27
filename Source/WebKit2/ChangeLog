@@ -1,3 +1,23 @@
+2012-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Implement WebFrameNetworkingContext for soup in WebKit2
+
+        [SOUP] Implement WebFrameNetworkingContext for soup in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=82081
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add new files to compilation
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp: Copied from Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebFrameNetworkingContext.h.
+        (WebKit::WebFrameNetworkingContext::soupSession): Return the
+        default SoupSession.
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h: Renamed from Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebFrameNetworkingContext.h.
+        (WebKit):
+        (WebFrameNetworkingContext):
+        (WebKit::WebFrameNetworkingContext::create): Create a new
+        WebFrameNetworkingContext().
+        (WebKit::WebFrameNetworkingContext::WebFrameNetworkingContext):
+
 2012-03-27  Yael Aharon  <yael.aharon@nokia.com>
 
         [Qt][WK2] Merge setVisibleContentsRect with setFixedVisibleContentRect
