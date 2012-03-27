@@ -1,3 +1,19 @@
+2012-03-26  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        [jhbuild] Prepend jhbuildrc's directory to sys.path instead of appending.
+        https://bugs.webkit.org/show_bug.cgi?id=82252
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Appending the directory containing common.py may be problematic if
+        another path in sys.path also contains either a common.py or a
+        common/ module, so prepend to select our version instead. This is
+        the case with fail2ban, which has a common/ directory which may
+        end up being in Python's default path.
+
+        * efl/jhbuildrc:
+        * gtk/jhbuildrc:
+
 2012-03-27  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy: prepare for better test run output

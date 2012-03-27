@@ -20,7 +20,7 @@ import multiprocessing
 import sys
 
 __efl_tools_directory = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(__efl_tools_directory)
+sys.path = [__efl_tools_directory] + sys.path
 import common
 
 build_policy = 'updated'
