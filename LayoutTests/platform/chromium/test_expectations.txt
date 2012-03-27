@@ -4363,3 +4363,8 @@ BUGWK82232 SNOWLEOPARD DEBUG : svg/as-background-image/background-image-tiled.ht
 BUGWK82257 LINUX DEBUG : fast/eventsource/eventsource-url-attribute.html = TEXT PASS
 BUGWK82258 : svg/custom/circular-marker-reference-4.svg = TEXT PASS
 BUGWK82260 : media/video-beforeload-remove-source.html = TIMEOUT PASS
+
+BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-x-in-scrolling-page.html = TEXT PASS
+BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html = TEXT PASS
+BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-y-in-scrolling-page.html = TEXT PASS
+BUGWK82297 SNOWLEOPARD : fast/events/scrollbar-double-click.html = TEXT PASS
