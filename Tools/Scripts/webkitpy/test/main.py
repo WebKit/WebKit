@@ -32,6 +32,7 @@ import unittest
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.test.test_finder import TestFinder
+from webkitpy.test.runner import TestRunner
 
 _log = logging.getLogger(__name__)
 
@@ -40,6 +41,7 @@ class Tester(object):
     def __init__(self, filesystem=None):
         self._verbosity = 1
         self.finder = TestFinder(filesystem or FileSystem())
+        self.stream = sys.stderr
 
     def add_tree(self, top_directory, starting_subdirectory=None):
         self.finder.add_tree(top_directory, starting_subdirectory)
@@ -92,7 +94,7 @@ class Tester(object):
         except for messages from the autoinstall module.  Also set the
         logging level as described below.
         """
-        handler = logging.StreamHandler(sys.stderr)
+        handler = logging.StreamHandler(self.stream)
         # We constrain the level on the handler rather than on the root
         # logger itself.  This is probably better because the handler is
         # configured and known only to this module, whereas the root logger
@@ -142,7 +144,7 @@ class Tester(object):
         names = self.finder.find_names(args, self._options.skip_integrationtests, self._options.all)
         return self._run_tests(names)
 
-    def _run_tests(self, args):
+    def _run_tests(self, names):
         if self._options.coverage:
             try:
                 import webkitpy.thirdparty.autoinstalled.coverage as coverage
@@ -159,16 +161,18 @@ class Tester(object):
 
         loader = unittest.defaultTestLoader
         suites = []
-        for name in args:
+        for name in names:
             if self.finder.is_module(name):
-                # import modules explicitly before loading their tests because
-                # loadTestsFromName() produces lousy error messages for bad modules.
+                # if we failed to load a name and it looks like a module,
+                # try importing it directly, because loadTestsFromName()
+                # produces lousy error messages for bad modules.
                 try:
                     __import__(name)
                 except ImportError, e:
                     _log.fatal('Failed to import %s:' % name)
                     self._log_exception()
                     return False
+
             suites.append(loader.loadTestsFromName(name, None))
 
         test_suite = unittest.TestSuite(suites)
@@ -176,7 +180,7 @@ class Tester(object):
             from webkitpy.thirdparty.autoinstalled.xmlrunner import XMLTestRunner
             test_runner = XMLTestRunner(output='test-webkitpy-xml-reports')
         else:
-            test_runner = unittest.TextTestRunner(verbosity=self._verbosity)
+            test_runner = TestRunner(self.stream, self._options, loader)
 
         _log.debug("Running the tests.")
         result = test_runner.run(test_suite)
