@@ -50,8 +50,6 @@ SVGDocumentExtensions::SVGDocumentExtensions(Document* document)
 
 SVGDocumentExtensions::~SVGDocumentExtensions()
 {
-    ASSERT(m_svgFontFaceElements.isEmpty());
-
     deleteAllValues(m_animatedElements);
     deleteAllValues(m_pendingResources);
     deleteAllValues(m_pendingResourcesForRemoval);
