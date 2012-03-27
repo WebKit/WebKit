@@ -57,6 +57,10 @@ class MacPort(ApplePort):
         # This represents the most recently-shipping version of the operating system.
         return self.VERSION_FALLBACK_ORDER[-2]
 
+    def should_retry_crashes(self):
+        # On Apple Mac, we retry crashes due to https://bugs.webkit.org/show_bug.cgi?id=82233
+        return True
+
     def baseline_path(self):
         if self.name() == self._most_recent_version():
             # Baselines for the most recently shiping version should go into 'mac', not 'mac-foo'.

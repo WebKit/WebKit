@@ -898,7 +898,7 @@ class Manager(object):
 
         # We exclude the crashes from the list of results to retry, because
         # we want to treat even a potentially flaky crash as an error.
-        failures = self._get_failures(result_summary, include_crashes=False, include_missing=False)
+        failures = self._get_failures(result_summary, include_crashes=self._port.should_retry_crashes(), include_missing=False)
         retry_summary = result_summary
         while (len(failures) and self._options.retry_failures and not self._retrying and not interrupted and not keyboard_interrupted):
             _log.info('')
