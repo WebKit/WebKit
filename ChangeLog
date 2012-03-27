@@ -1,3 +1,7 @@
+2012-03-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Trigger a build on Chromium Linux boxes to see if clean builds succeed or not.
+
 2012-03-26  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Skeleton code of AsyncFileSystemBlackBerry.cpp
