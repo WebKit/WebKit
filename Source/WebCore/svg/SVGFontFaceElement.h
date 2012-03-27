@@ -48,7 +48,8 @@ public:
 
     SVGFontElement* associatedFontElement() const;
     void rebuildFontFace();
-    void removeFromMappedElementSheet();
+    
+    CSSFontFaceRule* fontFaceRule() const { return m_fontFaceRule.get(); }
 
 private:
     SVGFontFaceElement(const QualifiedName&, Document*);

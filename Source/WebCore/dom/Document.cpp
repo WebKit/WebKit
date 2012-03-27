@@ -584,8 +584,6 @@ Document::~Document()
 
     if (m_elemSheet)
         m_elemSheet->clearOwnerNode();
-    if (m_mappedElementSheet)
-        m_mappedElementSheet->clearOwnerNode();
     if (m_pageUserSheet)
         m_pageUserSheet->clearOwnerNode();
     if (m_pageGroupUserSheets) {
@@ -1884,11 +1882,10 @@ void Document::createStyleSelector()
     bool matchAuthorAndUserStyles = true;
     if (Settings* docSettings = settings())
         matchAuthorAndUserStyles = docSettings->authorAndUserStylesEnabled();
-    m_styleSelector = adoptPtr(new CSSStyleSelector(this, m_styleSheets.get(), m_mappedElementSheet.get(), pageUserSheet(), pageGroupUserSheets(), m_userSheets.get(),
-                                                    !inQuirksMode(), matchAuthorAndUserStyles));
+    m_styleSelector = adoptPtr(new CSSStyleSelector(this, matchAuthorAndUserStyles));
     combineCSSFeatureFlags();
 }
-    
+
 inline void Document::clearStyleSelector()
 {
     m_styleSelector.clear();
@@ -2552,8 +2549,6 @@ void Document::updateBaseURL()
 
     if (m_elemSheet)
         m_elemSheet->setFinalURL(m_baseURL);
-    if (m_mappedElementSheet)
-        m_mappedElementSheet->setFinalURL(m_baseURL);
     
     if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {
         // Base URL change changes any relative visited links.
@@ -2775,13 +2770,6 @@ CSSStyleSheet* Document::elementSheet()
     if (!m_elemSheet)
         m_elemSheet = CSSStyleSheet::createInline(this, m_baseURL);
     return m_elemSheet.get();
-}
-
-CSSStyleSheet* Document::mappedElementSheet()
-{
-    if (!m_mappedElementSheet)
-        m_mappedElementSheet = CSSStyleSheet::createInline(this, m_baseURL);
-    return m_mappedElementSheet.get();
 }
 
 int Document::nodeAbsIndex(Node *node)

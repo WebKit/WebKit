@@ -104,9 +104,7 @@ public:
 class CSSStyleSelector {
     WTF_MAKE_NONCOPYABLE(CSSStyleSelector); WTF_MAKE_FAST_ALLOCATED;
 public:
-    CSSStyleSelector(Document*, StyleSheetList* authorSheets, CSSStyleSheet* mappedElementSheet,
-                     CSSStyleSheet* pageUserSheet, const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets, const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets,
-                     bool strictParsing, bool matchAuthorAndUserStyles);
+    CSSStyleSelector(Document*, bool matchAuthorAndUserStyles);
     ~CSSStyleSelector();
 
     // Using these during tree walk will allow style selector to optimize child and descendant selector lookups.

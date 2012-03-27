@@ -34,6 +34,9 @@ namespace WebCore {
 class Document;
 class RenderSVGResourceContainer;
 class SVGElement;
+#if ENABLE(SVG_FONTS)
+class SVGFontFaceElement;
+#endif
 class SVGResourcesCache;
 class SVGSMILElement;
 class SVGSVGElement;
@@ -72,10 +75,19 @@ public:
     void removeAllTargetReferencesForElement(SVGElement* referencingElement);
     void removeAllElementReferencesForTarget(SVGElement* referencedElement);
 
+#if ENABLE(SVG_FONTS)
+    const HashSet<SVGFontFaceElement*>& svgFontFaceElements() const { return m_svgFontFaceElements; }
+    void registerSVGFontFaceElement(SVGFontFaceElement*);
+    void unregisterSVGFontFaceElement(SVGFontFaceElement*);
+#endif
+
 private:
     Document* m_document; // weak reference
     HashSet<SVGSVGElement*> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
     HashMap<SVGElement*, HashSet<SVGSMILElement*>* > m_animatedElements;
+#if ENABLE(SVG_FONTS)
+    HashSet<SVGFontFaceElement*> m_svgFontFaceElements;
+#endif
     HashMap<AtomicString, RenderSVGResourceContainer*> m_resources;
     HashMap<AtomicString, SVGPendingElements*> m_pendingResources; // Resources that are pending.
     HashMap<AtomicString, SVGPendingElements*> m_pendingResourcesForRemoval; // Resources that are pending and scheduled for removal.

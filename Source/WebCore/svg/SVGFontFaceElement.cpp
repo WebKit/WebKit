@@ -36,6 +36,7 @@
 #include "CSSValueList.h"
 #include "Document.h"
 #include "Font.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceSrcElement.h"
 #include "SVGGlyphElement.h"
@@ -318,37 +319,27 @@ void SVGFontFaceElement::rebuildFontFace()
 void SVGFontFaceElement::insertedIntoDocument()
 {
     SVGElement::insertedIntoDocument();
-    document()->mappedElementSheet()->append(m_fontFaceRule);
-    m_fontFaceRule->setParentStyleSheet(document()->mappedElementSheet());
+
+    document()->accessSVGExtensions()->registerSVGFontFaceElement(this);
+    m_fontFaceRule->setParentStyleSheet(document()->elementSheet());
+
     rebuildFontFace();
 }
 
 void SVGFontFaceElement::removedFromDocument()
 {
-    removeFromMappedElementSheet();
     SVGElement::removedFromDocument();
+
+    document()->accessSVGExtensions()->unregisterSVGFontFaceElement(this);
     m_fontFaceRule->declaration()->parseDeclaration(emptyString(), 0);
+
+    document()->styleSelectorChanged(DeferRecalcStyle);
 }
 
 void SVGFontFaceElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     rebuildFontFace();
-}
-
-void SVGFontFaceElement::removeFromMappedElementSheet()
-{
-    CSSStyleSheet* mappedElementSheet = document()->mappedElementSheet();
-    if (!mappedElementSheet)
-        return;
-
-    for (unsigned i = 0; i < mappedElementSheet->length(); ++i) {
-        if (mappedElementSheet->item(i) == m_fontFaceRule) {
-            mappedElementSheet->remove(i);
-            break;
-        }
-    }
-    document()->styleSelectorChanged(DeferRecalcStyle);
 }
 
 } // namespace WebCore

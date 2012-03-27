@@ -631,10 +631,10 @@ public:
     void clearPageGroupUserSheets();
     void updatePageGroupUserSheets();
 
+    const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets() const { return m_userSheets.get(); }
     void addUserSheet(PassRefPtr<CSSStyleSheet> userSheet);
 
     CSSStyleSheet* elementSheet();
-    CSSStyleSheet* mappedElementSheet();
     
     virtual PassRefPtr<DocumentParser> createParser();
     DocumentParser* parser() const { return m_parser.get(); }
@@ -1257,7 +1257,6 @@ private:
     bool m_hasNodesWithPlaceholderStyle;
 
     RefPtr<CSSStyleSheet> m_elemSheet;
-    RefPtr<CSSStyleSheet> m_mappedElementSheet;
     RefPtr<CSSStyleSheet> m_pageUserSheet;
     mutable OwnPtr<Vector<RefPtr<CSSStyleSheet> > > m_pageGroupUserSheets;
     OwnPtr<Vector<RefPtr<CSSStyleSheet> > > m_userSheets;

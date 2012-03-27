@@ -50,6 +50,8 @@ SVGDocumentExtensions::SVGDocumentExtensions(Document* document)
 
 SVGDocumentExtensions::~SVGDocumentExtensions()
 {
+    ASSERT(m_svgFontFaceElements.isEmpty());
+
     deleteAllValues(m_animatedElements);
     deleteAllValues(m_pendingResources);
     deleteAllValues(m_pendingResourcesForRemoval);
@@ -417,6 +419,19 @@ void SVGDocumentExtensions::removeAllElementReferencesForTarget(SVGElement* refe
     for (Vector<SVGElement*>::iterator vectorIt = toBeNotified.begin(); vectorIt != vectorEnd; ++vectorIt)
         (*vectorIt)->svgAttributeChanged(XLinkNames::hrefAttr);
 }
+
+#if ENABLE(SVG_FONTS)
+void SVGDocumentExtensions::registerSVGFontFaceElement(SVGFontFaceElement* element)
+{
+    m_svgFontFaceElements.add(element);
+}
+
+void SVGDocumentExtensions::unregisterSVGFontFaceElement(SVGFontFaceElement* element)
+{
+    ASSERT(m_svgFontFaceElements.contains(element));
+    m_svgFontFaceElements.remove(element);
+}
+#endif
 
 }
 

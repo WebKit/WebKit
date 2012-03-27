@@ -91,6 +91,8 @@
 #include "RenderTheme.h"
 #include "RotateTransformOperation.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGDocumentExtensions.h"
+#include "SVGFontFaceElement.h"
 #include "ScaleTransformOperation.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -321,13 +323,11 @@ static StylePropertySet* rightToLeftDeclaration()
     return rightToLeftDecl.get();
 }
 
-CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleSheets, CSSStyleSheet* mappedElementSheet,
-                                   CSSStyleSheet* pageUserSheet, const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets, const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets,
-                                   bool strictParsing, bool matchAuthorAndUserStyles)
+CSSStyleSelector::CSSStyleSelector(Document* document, bool matchAuthorAndUserStyles)
     : m_hasUAAppearance(false)
     , m_backgroundData(BackgroundFillLayer)
     , m_matchedPropertiesCacheAdditionsSinceLastSweep(0)
-    , m_checker(document, strictParsing)
+    , m_checker(document, !document->inQuirksMode())
     , m_parentStyle(0)
     , m_rootElementStyle(0)
     , m_element(0)
@@ -386,9 +386,9 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
 
     // FIXME: This sucks! The user sheet is reparsed every time!
     OwnPtr<RuleSet> tempUserStyle = adoptPtr(new RuleSet);
-    if (pageUserSheet)
+    if (CSSStyleSheet* pageUserSheet = document->pageUserSheet())
         tempUserStyle->addRulesFromSheet(pageUserSheet, *m_medium, this);
-    if (pageGroupUserSheets) {
+    if (const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets = document->pageGroupUserSheets()) {
         unsigned length = pageGroupUserSheets->size();
         for (unsigned i = 0; i < length; i++) {
             if (pageGroupUserSheets->at(i)->isUserStyleSheet())
@@ -397,7 +397,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
                 m_authorStyle->addRulesFromSheet(pageGroupUserSheets->at(i).get(), *m_medium, this);
         }
     }
-    if (documentUserSheets) {
+    if (const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets = document->documentUserSheets()) {
         unsigned length = documentUserSheets->size();
         for (unsigned i = 0; i < length; i++) {
             if (documentUserSheets->at(i)->isUserStyleSheet())
@@ -410,14 +410,16 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     if (tempUserStyle->m_ruleCount > 0 || tempUserStyle->m_pageRules.size() > 0)
         m_userStyle = tempUserStyle.release();
 
-    // Add rules from elements like SVG's <font-face>
-    if (mappedElementSheet) {
-        // FIXME: see if style scopes can/should be added here.
-        m_authorStyle->addRulesFromSheet(mappedElementSheet, *m_medium, this);
+#if ENABLE(SVG_FONTS)
+    if (document->svgExtensions()) {
+        const HashSet<SVGFontFaceElement*>& svgFontFaceElements = document->svgExtensions()->svgFontFaceElements();
+        HashSet<SVGFontFaceElement*>::const_iterator end = svgFontFaceElements.end();
+        for (HashSet<SVGFontFaceElement*>::const_iterator it = svgFontFaceElements.begin(); it != end; ++it)
+            fontSelector()->addFontFaceRule((*it)->fontFaceRule());
     }
+#endif
 
-    // add stylesheets from document
-    appendAuthorStylesheets(0, styleSheets->vector());
+    appendAuthorStylesheets(0, document->styleSheets()->vector());
 }
     
 static PassOwnPtr<RuleSet> makeRuleSet(const Vector<CSSStyleSelector::RuleSelectorPair>& rules)
