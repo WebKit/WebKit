@@ -1,5 +1,11 @@
 2012-03-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium build fix; add BitVector.h/cpp to gypi.
+
+        * WTF.gypi:
+
+2012-03-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Touch BitVector as a speculative fix for Chromium Linux.
 
         * wtf/BitVector.h:
