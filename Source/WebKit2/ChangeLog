@@ -1,3 +1,16 @@
+2012-03-27  Timothy Hatcher  <timothy@apple.com>
+
+        Make WebKit properly load a staged framework when soft linking.
+
+        https://webkit.org/b/82371
+        rdar://problem/11125989
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm: Use SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL to properly
+        load the WebInspector framework.
+        * WebProcess/WebPage/mac/WebInspectorMac.mm: Ditto.
+
 2012-03-27  Anders Carlsson  <andersca@apple.com>
 
         Don't update the layer hosting state unless the WKView is added to a window

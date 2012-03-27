@@ -1,3 +1,15 @@
+2012-03-27  Timothy Hatcher  <timothy@apple.com>
+
+        Make WebKit properly load a staged framework when soft linking.
+
+        https://webkit.org/b/82371
+        rdar://problem/11125989
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebInspectorClient.mm: Use SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL to properly
+        load the WebInspector framework.
+
 2012-03-26  Adam Barth  <abarth@webkit.org>
 
         FrameLoader::shouldAllowNavigation uses Frame for context rather than Document
