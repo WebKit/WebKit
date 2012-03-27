@@ -201,10 +201,8 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 
     ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;
     ETextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TSNONE;
-    if (needsResetText || oldTransform != newStyle->textTransform() || oldSecurity != newStyle->textSecurity()) {
-        if (RefPtr<StringImpl> textToTransform = originalText())
-            setText(textToTransform.release(), true);
-    }
+    if (needsResetText || oldTransform != newStyle->textTransform() || oldSecurity != newStyle->textSecurity()) 
+        transformText();
 }
 
 void RenderText::removeAndDestroyTextBoxes()
@@ -1236,6 +1234,12 @@ void RenderText::setTextWithOffset(PassRefPtr<StringImpl> text, unsigned offset,
 
     m_linesDirty = dirtiedLines;
     setText(text, force);
+}
+
+void RenderText::transformText()
+{
+    if (RefPtr<StringImpl> textToTransform = originalText())
+        setText(textToTransform.release(), true);
 }
 
 static inline bool isInlineFlowOrEmptyText(const RenderObject* o)

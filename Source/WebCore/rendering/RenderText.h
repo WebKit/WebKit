@@ -89,8 +89,10 @@ public:
     float firstRunX() const;
     float firstRunY() const;
 
-    void setText(PassRefPtr<StringImpl>, bool force = false);
+    virtual void setText(PassRefPtr<StringImpl>, bool force = false);
     void setTextWithOffset(PassRefPtr<StringImpl>, unsigned offset, unsigned len, bool force = false);
+
+    virtual void transformText();
 
     virtual bool canBeSelectionLeaf() const { return true; }
     virtual void setSelectionState(SelectionState s);
@@ -160,7 +162,6 @@ private:
     bool isAllASCII() const { return m_isAllASCII; }
     void updateNeedsTranscoding();
 
-    inline void transformText(String&) const;
     void secureText(UChar mask);
 
     float m_minWidth; // here to minimize padding in 64-bit.

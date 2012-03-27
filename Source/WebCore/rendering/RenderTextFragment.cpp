@@ -33,7 +33,6 @@ RenderTextFragment::RenderTextFragment(Node* node, StringImpl* str, int startOff
     , m_start(startOffset)
     , m_end(length)
     , m_firstLetter(0)
-    , m_allowFragmentReset(true)
 {
 }
 
@@ -43,7 +42,6 @@ RenderTextFragment::RenderTextFragment(Node* node, StringImpl* str)
     , m_end(str ? str->length() : 0)
     , m_contentString(str)
     , m_firstLetter(0)
-    , m_allowFragmentReset(true)
 {
 }
 
@@ -62,9 +60,7 @@ PassRefPtr<StringImpl> RenderTextFragment::originalText() const
 
 void RenderTextFragment::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    m_allowFragmentReset = false;
     RenderText::styleDidChange(diff, oldStyle);
-    m_allowFragmentReset = true;
 
     if (RenderBlock* block = blockForAccompanyingFirstLetter()) {
         block->style()->removeCachedPseudoStyle(FIRST_LETTER);
@@ -79,23 +75,28 @@ void RenderTextFragment::willBeDestroyed()
     RenderText::willBeDestroyed();
 }
 
-void RenderTextFragment::setTextInternal(PassRefPtr<StringImpl> text)
+void RenderTextFragment::setText(PassRefPtr<StringImpl> text, bool force)
 {
-    RenderText::setTextInternal(text);
+    RenderText::setText(text, force);
 
-    if (m_allowFragmentReset) {
-        m_start = 0;
-        m_end = textLength();
-        if (m_firstLetter) {
-            ASSERT(!m_contentString);
-            m_firstLetter->destroy();
-            m_firstLetter = 0;
-            if (Node* t = node()) {
-                ASSERT(!t->renderer());
-                t->setRenderer(this);
-            }
+    m_start = 0;
+    m_end = textLength();
+    if (m_firstLetter) {
+        ASSERT(!m_contentString);
+        m_firstLetter->destroy();
+        m_firstLetter = 0;
+        if (Node* t = node()) {
+            ASSERT(!t->renderer());
+            t->setRenderer(this);
         }
     }
+}
+
+void RenderTextFragment::transformText()
+{
+    // Don't reset first-letter here because we are only transforming the truncated fragment.
+    if (RefPtr<StringImpl> textToTransform = originalText())
+        RenderText::setText(textToTransform.release(), true);
 }
 
 UChar RenderTextFragment::previousCharacter() const
