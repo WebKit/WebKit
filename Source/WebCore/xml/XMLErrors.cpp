@@ -144,11 +144,10 @@ void XMLErrors::insertErrorMessageBlock()
         body->parserAddChild(documentElement);
         m_document->parserAddChild(rootElement.get());
 
-        if (m_document->attached()) {
-            // rootElement shouldn't be attached right now, but in some cases might be.
-            // See https://bugs.webkit.org/show_bug.cgi?id=81985
+        if (m_document->attached())
+            // In general, rootElement shouldn't be attached right now, but it will be if there is a style element
+            // in the SVG content.
             rootElement->reattach();
-        }
 
         documentElement = body.get();
     }
