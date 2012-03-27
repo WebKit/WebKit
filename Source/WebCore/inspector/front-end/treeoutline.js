@@ -38,6 +38,7 @@ function TreeOutline(listNode, nonFocusable)
     this.children = [];
     this.selectedTreeElement = null;
     this._childrenListNode = listNode;
+    this.childrenListElement = this._childrenListNode;
     this._childrenListNode.removeChildren();
     this.expandTreeElementsWhenArrowing = false;
     this.root = true;
@@ -335,7 +336,7 @@ TreeOutline.prototype.treeElementFromPoint = function(x, y)
 
 TreeOutline.prototype._treeKeyPress = function(event)
 {
-    if (!this.searchable)
+    if (!this.searchable || WebInspector.isBeingEdited(this._childrenListNode))
         return;
     
     var searchText = String.fromCharCode(event.charCode);
