@@ -620,3 +620,6 @@ fast/table/cell-pref-width-invalidation.html
 
 # The inner <input> should now grow to take the full cell's height.
 fast/table/colspanMinWidth-vertical.html
+
+# Has failed since its introduction in r105826. Skipped everywhere but chromium.
+fast/events/dropzone-005.html
