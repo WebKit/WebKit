@@ -778,10 +778,12 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
             process()->send(Messages::WebPage::SetIsInWindow(isInWindow), m_pageID);
         }
 
-        LayerHostingMode layerHostingMode = m_pageClient->viewLayerHostingMode();
-        if (m_layerHostingMode != layerHostingMode) {
-            m_layerHostingMode = layerHostingMode;
-            m_drawingArea->layerHostingModeDidChange();
+        if (isInWindow) {
+            LayerHostingMode layerHostingMode = m_pageClient->viewLayerHostingMode();
+            if (m_layerHostingMode != layerHostingMode) {
+                m_layerHostingMode = layerHostingMode;
+                m_drawingArea->layerHostingModeDidChange();
+            }
         }
     }
 

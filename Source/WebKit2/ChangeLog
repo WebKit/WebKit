@@ -1,3 +1,15 @@
+2012-03-27  Anders Carlsson  <andersca@apple.com>
+
+        Don't update the layer hosting state unless the WKView is added to a window
+        https://bugs.webkit.org/show_bug.cgi?id=82359
+
+        Reviewed by Sam Weinig.
+
+        This avoids thrashing the layer hosting state when switching tabs.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+
 2012-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Implement WebFrameNetworkingContext for soup in WebKit2
