@@ -9,7 +9,7 @@ layer at (0,0) size 800x76
         text run at (640,0) width 136: "This test is checking to"
         text run at (0,20) width 204: "make sure overflow is done using "
         text run at (204,20) width 542: "a containing block model, and that a fixed positioned element inside an absolute positioned"
-        text run at (0,40) width 217: "element is not considered overflow. "
+        text run at (0,40) width 213: "element is not considered overflow."
       RenderText {#text} at (0,0) size 0x0
 layer at (8,68) size 100x100
   RenderBlock (positioned) {DIV} at (8,68) size 100x100

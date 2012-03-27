@@ -1199,8 +1199,6 @@ BUGCR14885 : fast/js/JSON-stringify-replacer.html = FAIL
 BUGCR23270 LINUX WIN : fast/css/font-smoothing.html = FAIL
 
 // Make canvas shadow work with drawImage.
-BUGCR11153 LINUX WIN : fast/canvas/canvas-incremental-repaint-2.html = FAIL
-BUGCR11153 LINUX WIN : fast/canvas/canvas-incremental-repaint.html = FAIL
 BUGCR11153 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = FAIL
 BUGCR11153 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html = FAIL
 
@@ -1468,7 +1466,6 @@ BUGWK75276 : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
 // the image change should be very slight (only in low-bits of color components)
 //
 BUGCR105305 : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE
-BUGCR105305 LINUX MAC : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGCR105305 LINUX MAC : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
 BUGCR105305 : svg/css/composite-shadow-text.svg = IMAGE
 BUGCR105305 : svg/css/text-gradient-shadow.svg = IMAGE
@@ -1525,18 +1522,6 @@ BUGCR30536 : http/tests/misc/favicon-as-image.html = FAIL
 
 // Has failed for Chromium since it was first checked in.  (Lighttpd related?)
 BUGCR10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProgress.html = TEXT TIMEOUT
-
-// Post-MERGE failures: these will all need to be fixed one day
-
-// On Linux, we don't seem to be getting Helvetica Bold for all cases.
-BUGCR10328 LINUX : fast/css/font-face-multiple-faces.html = IMAGE+TEXT
-
-// Asks for "system" fonts, which we don't support at all.
-BUGCR10335 LINUX : fast/css/css2-system-fonts.html = FAIL
-
-// Wants Helvetica, Monaco.  It's still testing something useful, but we may
-// need to check in a wrong-looking baseline.  Windows looks wrong too.
-BUGCR10337 LINUX : fast/css/font-face-locally-installed.html = FAIL
 
 // Font metrics wrong, despite using Lucida Grande?
 BUGCR10338 LINUX : fast/events/updateLayoutForHitTest.html = FAIL
@@ -1672,7 +1657,6 @@ BUGCR23494 LEOPARD : fast/text/monospace-width-cache.html = IMAGE
 // Actual is just slightly off in color than expected
 BUGCR23488 LEOPARD RELEASE : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUGCR23488 SLOW LEOPARD DEBUG : fast/backgrounds/size/backgroundSize15.html = IMAGE
-BUGCR23488 MAC : fast/canvas/canvas-incremental-repaint-2.html = IMAGE
 BUGCR23488 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = IMAGE
 BUGCR23488 LEOPARD : fast/frames/content-opacity-1.html = IMAGE
 BUGCR23488 LEOPARD : fast/frames/content-opacity-2.html = IMAGE
@@ -1687,9 +1671,7 @@ BUGCR23489 MAC : fast/table/empty-section-crash.html = IMAGE
 
 // Various drawing tests that are broken
 BUGCR23477 MAC : fast/backgrounds/bgCompositeCopy.html = IMAGE
-BUGCR23477 MAC : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
 BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
-BUGCR23477 MAC : fast/canvas/canvas-incremental-repaint.html = IMAGE
 BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html = IMAGE
 BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
 BUGCR23477 MAC : fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
@@ -1819,14 +1801,6 @@ BUGCR104128 : fast/writing-mode/english-lr-text.html = IMAGE
 BUGCR104128 : svg/css/shadow-with-large-radius.svg = IMAGE
 BUGCR104128 : svg/css/shadow-with-negative-offset.svg = IMAGE
 BUGCR104128 : transitions/svg-text-shadow-transition.html = IMAGE
-
-// Appears to be a regression from Skia rev. 2735 (improved luminance computation)
-BUGCR105271 WIN : fast/css/shadow-multiple.html = IMAGE
-
-// Linux pixeltest failure: alpha=0.5 red (1,0,0) atop yellow (1,1,0) is
-// coming out with with a slightly-less-than-100% red channel. This test fails
-// because we enforce non-transparent color in Font::drawGlyphs.
-BUGCR24191 LINUX : fast/css/hsla-color.html = FAIL
 
 // Merge 39309:39335 Regressions (RenderButton::setupInnerStyle regression).
 BUGCR5737 LINUX : fast/forms/001.html = FAIL
@@ -2058,7 +2032,6 @@ BUGWK73329 LEOPARD : fast/text/international/hindi-whitespace.html = IMAGE
 // http://trac.webkit.org/changeset/50852
 // The ColorSpace was only implemented for CG, more port implementation
 // required in order for Chromium to support color correction.
-BUGCR28005 LINUX WIN : fast/css/color-correction-backgrounds-and-text.html = FAIL
 BUGCR28005 LINUX WIN : fast/css/color-correction-on-backgrounds.html = IMAGE+TEXT
 BUGCR28005 LINUX WIN : fast/css/color-correction-on-text.html = IMAGE+TEXT
 BUGCR28005 LINUX WIN : fast/css/color-correction.html = IMAGE+TEXT
@@ -2719,8 +2692,6 @@ BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = PASS CRASH TIMEOU
 // Occasionally times out with, only under the DRT for Linux
 BUGCR58212 LINUX : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT
 
-// Not investigated.
-BUG_DRT MAC : fast/css/line-height-determined-by-primary-font.html = IMAGE
 BUG_DRT : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT DEBUG : fast/frames/calculate-round.html = PASS TIMEOUT
 BUGCR43890 SLOW DEBUG : fast/forms/implicit-submission.html = PASS TEXT
@@ -2764,8 +2735,6 @@ BUGCR66751 : http/tests/local/link-stylesheet-load-order-preload.html = PASS TIM
 BUGCR66751 RELEASE : http/tests/local/link-stylesheet-load-order.html = PASS TIMEOUT TEXT
 BUGCR66751 DEBUG : http/tests/local/link-stylesheet-load-order.html = PASS CRASH TIMEOUT TEXT
 
-BUGCR66923 MAC : fast/css/focus-ring-detached.html = IMAGE
-BUGCR66923 MAC : fast/css/focus-ring-multiline.html = IMAGE
 
 // The test is just too slow and has never passed since on Dbg build.
 BUG_YURYS SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
@@ -2993,19 +2962,6 @@ BUGCR77468 : fast/forms/file/input-file-directory-upload.html = TIMEOUT
 // Temprary bug holding to deal with many changed tests due to
 // http://build.chromium.org/p/chromium.webkit/builders/Webkit%20Linux/builds/4837
 // http://trac.webkit.org/changeset/81992
-BUGCR77494 LINUX WIN : fast/clip/001.html = FAIL
-BUGCR77494 LINUX WIN : fast/clip/004.html = FAIL
-BUGCR77494 LINUX WIN : fast/clip/006.html = FAIL
-BUGCR77494 LINUX WIN : fast/clip/007.html = FAIL
-BUGCR77494 LINUX WIN : fast/clip/008.html = FAIL
-BUGCR77494 LINUX WIN : fast/clip/009.html = FAIL
-BUGCR77494 LINUX WIN : fast/clip/010.html = FAIL
-BUGCR77494 LINUX WIN : fast/clip/011.html = FAIL
-BUGCR77494 LINUX WIN : fast/clip/012.html = FAIL
-BUGCR77494 LINUX WIN : fast/clip/013.html = FAIL
-BUGCR77494 LINUX WIN : fast/clip/014.html = FAIL
-BUGCR77494 LINUX WIN : fast/clip/nestedTransparencyClip.html = FAIL
-BUGCR77494 LINUX WIN : fast/clip/outline-overflowClip.html = FAIL
 BUGCR77494 LINUX WIN : fast/invalid/014.html = TEXT
 BUGCR77494 LINUX WIN : fast/layers/layer-visibility.html = FAIL
 BUGCR77494 LINUX WIN : fast/repaint/layout-state-scrolloffset.html = FAIL
@@ -3094,9 +3050,6 @@ BUGCR79857 DEBUG : fast/events/popup-blocking-timers.html = PASS TEXT
 // Slow test, flaky on linux debug.
 BUGCR79859 LINUX DEBUG : fast/css/create_element_align.xhtml = PASS TIMEOUT
 
-// line height may be incorrect
-BUGCR79908 SNOWLEOPARD : fast/css/line-height-font-order.html = IMAGE
-
 BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-001.html = IMAGE
 BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-002.html = IMAGE
 BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-003.html = IMAGE
@@ -3119,7 +3072,6 @@ BUGDPRANKE LINUX MAC : transitions/interrupt-zero-duration.html = PASS TEXT
 
 // pulled in from downstream during webkit roll 84350:84431
 BUGCASEQ LINUX WIN : fast/forms/input-text-drag-down.html = IMAGE+TEXT
-BUGCASEQ LEOPARD : fast/canvas/image-object-in-canvas.html = IMAGE
 
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = PASS TEXT
 BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = PASS CRASH
@@ -3380,7 +3332,6 @@ BUGCR88588 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-1.html = PASS
 BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-2.html = PASS
 
-BUGCR88911 LEOPARD : fast/css/stylesheet-candidate-nodes-crash.xhtml = TEXT
 BUGCR88911 LEOPARD : fast/dom/getElementsByClassName/011.xml = TEXT
 BUGCR88911 LEOPARD : fast/forms/number/input-number-unacceptable-style.html = TEXT
 BUGCR88911 LEOPARD : fast/parser/external-entities.xml = TEXT
