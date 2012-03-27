@@ -422,6 +422,11 @@ function isLayoutTestResults()
     return g_currentState.testType == 'layout-tests';
 }
 
+function isGPUTestResults()
+{
+    return g_currentState.testType == 'gpu_tests';
+}
+
 function currentBuilderGroupCategory(opt_state)
 {
     var state = opt_state || g_currentState;

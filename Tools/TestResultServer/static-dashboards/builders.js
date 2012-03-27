@@ -51,6 +51,7 @@ var LEGACY_BUILDER_MASTERS_TO_GROUPS = {
     'Chromium': '@DEPS - chromium.org',
     'ChromiumChromiumOS': '@DEPS CrOS - chromium.org',
     'ChromiumGPU': '@DEPS - chromium.org',
+    'ChromiumGPUFYI': '@DEPS FYI - chromium.org',
     'ChromiumWebkit': '@ToT - chromium.org',
     'webkit.org': '@ToT - webkit.org'
 };
@@ -161,11 +162,15 @@ var CHROMIUM_GPU_FYI_GTESTS_DEPS_BUILDERS = [
     ['Mac Release (ATI)'],
     ['Linux Release (ATI)'],
     ['Linux Release (Intel)'],
+    ['Win7 Audio'],
+    ['Linux Audio'],
 ];
 associateBuildersWithMaster(CHROMIUM_GPU_FYI_GTESTS_DEPS_BUILDERS, CHROMIUM_GPU_FYI_BUILDER_MASTER);
 
 var CHROMIUM_GPU_GTESTS_TOT_BUILDERS = [
-    ['GPU Win7 (dbg) (NVIDIA)', BuilderGroup.DEFAULT_BUILDER],
+    ['GPU Win7 (NVIDIA)', BuilderGroup.DEFAULT_BUILDER],
+    ['GPU Win7 (dbg) (NVIDIA)'],
+    ['GPU Mac'],
     ['GPU Mac (dbg)'],
     ['GPU Linux (dbg) (NVIDIA)'],
 ];

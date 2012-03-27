@@ -262,6 +262,9 @@ pre.expectation {
 .non-webkit-results {
     width: 99%;
 }
+.gpu-test-results {
+    width: 400px;
+}
 .used-platform {
     float: right;
     color: darkblue;
@@ -1213,8 +1216,8 @@ function isFailure(builder, testName, index)
     console.error('Index exceeds number of results: ' + index);
 }
 
-// Returns an array of buildNumbers for all builds where this test failed.
-function buildNumbersForFailures(builder, testName)
+// Returns an array of indexes for all builds where this test failed.
+function indexesForFailures(builder, testName)
 {
     var rawResults = g_resultsByBuilder[builder].tests[testName].results;
     var buildNumbers = g_resultsByBuilder[builder].buildNumbers;
@@ -1224,7 +1227,7 @@ function buildNumbersForFailures(builder, testName)
         var numResults = rawResults[i][RLE.LENGTH];
         if (isFailingResult(rawResults[i][RLE.VALUE])) {
             for (var j = 0; j < numResults; j++)
-                failures.push(buildNumbers[index + j]);
+                failures.push(index + j);
         }
         index += numResults;
     }
@@ -1829,16 +1832,17 @@ function htmlForIndividulTestOnAllBuilders(test)
     html += '<div class=expectations test=' + test + '><div>' +
         linkHTMLToToggleState('showExpectations', 'results')
 
-    if (isLayoutTestResults()) {
-        html += ' | ' + linkHTMLToToggleState('showLargeExpectations', 'large thumbnails');
+    if (isLayoutTestResults() || isGPUTestResults()) {
+        if (isLayoutTestResults())
+            html += ' | ' + linkHTMLToToggleState('showLargeExpectations', 'large thumbnails');
         if (master == WEBKIT_BUILDER_MASTER) {
             var revision = g_currentState.revision || '';
             html += '<form onsubmit="setQueryParameter(\'revision\', revision.value);' +
                 'return false;">Show results for WebKit revision: ' +
                 '<input name=revision placeholder="e.g. 65540" value="' + revision +
                 '" id=revision-input></form>';
-      } else
-        html += ' | <b>Only shows actual results/diffs from the most recent *failure* on each bot.</b>';
+        } else
+            html += ' | <b>Only shows actual results/diffs from the most recent *failure* on each bot.</b>';
     } else {
       html += ' | <span>Results height:<input ' +
           'onchange="setQueryParameter(\'resultsHeight\',this.value)" value="' +
@@ -2114,31 +2118,59 @@ function expectationsTitle(platform, path, builder)
 
 function loadExpectations(expectationsContainer)
 {
+    var test = expectationsContainer.getAttribute('test');
     if (isLayoutTestResults())
-        loadExpectationsLayoutTests(expectationsContainer);
+        loadExpectationsLayoutTests(test, expectationsContainer);
     else {
-        var test = expectationsContainer.getAttribute('test');
         var results = g_testToResultsMap[test];
         for (var i = 0; i < results.length; i++)
-            loadNonWebKitResultsForBuilder(results[i].builder, test, expectationsContainer);
+            if (isGPUTestResults())
+                loadGPUResultsForBuilder(results[i].builder, test, expectationsContainer);
+            else
+                loadNonWebKitResultsForBuilder(results[i].builder, test, expectationsContainer);
     }
+}
+
+function loadGPUResultsForBuilder(builder, test, expectationsContainer)
+{
+    var container = document.createElement('div');
+    container.className = 'expectations-container';
+    container.innerHTML = '<div><b>' + builder + '</b></div>';
+    expectationsContainer.appendChild(container);
+
+    var baseUrl = 'http://chromium-browser-gpu-tests.commondatastorage.googleapis.com/runs/'
+    var failureIndex = indexesForFailures(builder, test)[0];
+
+    var buildNumber = g_resultsByBuilder[builder].buildNumbers[failureIndex];
+    var pathToLog = builderMaster(builder).getLogPath(builder, buildNumber) + pathToFailureLog(test);
+
+    var chromeRevision = g_resultsByBuilder[builder].chromeRevision[failureIndex];
+    var builderName = builder.replace(/[^A-Za-z0-9 ]/g, '').replace(/ /g, '_');
+    var resultsUrl = baseUrl + chromeRevision + '_' + builderName + '_/';
+    var filename = test.split(/\./)[1] + '.png';
+
+    appendNonWebKitResults(container, pathToLog, 'non-webkit-results');
+    appendNonWebKitResults(container, resultsUrl + 'gen/' + filename, 'gpu-test-results', 'Generated');
+    appendNonWebKitResults(container, resultsUrl + 'ref/' + filename, 'gpu-test-results', 'Reference');
+    appendNonWebKitResults(container, resultsUrl + 'diff/' + filename, 'gpu-test-results', 'Diff');
 }
 
 function loadNonWebKitResultsForBuilder(builder, test, expectationsContainer)
 {
-    var failures = buildNumbersForFailures(builder, test);
+    var failureIndexes = indexesForFailures(builder, test);
     var container = document.createElement('div');
     container.innerHTML = '<div><b>' + builder + '</b></div>';
     expectationsContainer.appendChild(container);
-    for (var i = 0; i < failures.length; i++) {
+    for (var i = 0; i < failureIndexes.length; i++) {
         // FIXME: This doesn't seem to work anymore. Did the paths change?
         // Once that's resolved, see if we need to try each GTEST_MODIFIERS prefix as well.
-        var pathToLog = builderMaster(builder).getLogPath(builder, failures[i]) + pathToFailureLog(test);
-        appendNonWebKitResults(container, pathToLog);
+        var buildNumber = g_resultsByBuilder[builder].buildNumbers[failureIndexes[i]];
+        var pathToLog = builderMaster(builder).getLogPath(builder, buildNumber) + pathToFailureLog(test);
+        appendNonWebKitResults(container, pathToLog, 'non-webkit-results');
     }
 }
 
-function appendNonWebKitResults(container, url)
+function appendNonWebKitResults(container, url, itemClassName, opt_title)
 {
     // Use a script tag to detect whether the URL 404s.
     // Need to use a script tag since the URL is cross-domain.
@@ -2148,12 +2180,22 @@ function appendNonWebKitResults(container, url)
     dummyNode.onload = function() {
         var item = document.createElement('iframe');
         item.src = dummyNode.src;
-        item.className = 'non-webkit-results';
+        item.className = itemClassName;
         item.style.height = g_currentState.resultsHeight + 'px';
-        container.appendChild(item);
+
+        if (opt_title) {
+            var childContainer = document.createElement('div');
+            childContainer.style.display = 'inline-block';
+            var title = document.createElement('div');
+            title.textContent = opt_title;
+            childContainer.appendChild(title);
+            childContainer.appendChild(item);
+            container.replaceChild(childContainer, dummyNode);
+        } else
+            container.replaceChild(item, dummyNode);
     }
     dummyNode.onerror = function() {
-        container.parentNode.removeChild(childContainer);
+        container.removeChild(dummyNode);
     }
 
     container.appendChild(dummyNode);
@@ -2218,11 +2260,10 @@ function loadBaselinesForTest(expectationsContainers, expectationsContainer, tes
         loadBaselinesForTest(expectationsContainers, expectationsContainer, baseTest(test, suite));
 }
 
-function loadExpectationsLayoutTests(expectationsContainer)
+function loadExpectationsLayoutTests(test, expectationsContainer)
 {
     // Map from file extension to container div for expectations of that type.
     var expectationsContainers = {};
-    var test = expectationsContainer.getAttribute('test');
 
     var revisionContainer = document.createElement('div');
     revisionContainer.textContent = "Showing results for: "

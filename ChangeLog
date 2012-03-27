@@ -1,3 +1,20 @@
+2012-03-27  Dave Tu  <dtu@chromium.org>
+
+        Show image diffs for gpu_tests on flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=81848
+
+        Reviewed by Ojan Vafai.
+
+        Add a new results layout for gpu_tests that pulls the image diffs in
+        addition to the text output. Also add new gpu_tests builders.
+
+        * Tools/TestResultServer/static-dashboards/builders.js: Update
+        gpu_tests builders.
+        * Tools/TestResultServer/static-dashboards/dashboard_base.js: Add a
+        function to check for GPU test type.
+        * Tools/TestResultServer/static-dashboards/flakiness_dashboard.html:
+        Add new GPU results layout.
+
 2012-03-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Trigger a build on Chromium Linux boxes to see if clean builds succeed or not.
