@@ -163,25 +163,36 @@ private:
 class FilePickerContextObject : public QObject {
     Q_OBJECT
     Q_PROPERTY(QStringList fileList READ fileList CONSTANT)
+    Q_PROPERTY(bool allowMultipleFiles READ allowMultipleFiles CONSTANT)
 
 public:
-    FilePickerContextObject(const QStringList& selectedFiles)
+    FilePickerContextObject(const QStringList& selectedFiles, bool allowMultiple)
         : QObject()
+        , m_allowMultiple(allowMultiple)
         , m_fileList(selectedFiles)
     {
     }
 
     QStringList fileList() const { return m_fileList; }
+    bool allowMultipleFiles() const { return m_allowMultiple;}
 
 public slots:
     void reject() { emit rejected();}
-    void accept(const QVariant& path) { emit fileSelected(path.toStringList()); }
+    void accept(const QVariant& path)
+    {
+        QStringList filesPath = path.toStringList();
+        // For single file upload, send only the first element if there are more than one file paths
+        if (!m_allowMultiple && filesPath.count() > 1)
+            filesPath = QStringList(filesPath.at(0));
+        emit fileSelected(filesPath);
+    }
 
 signals:
     void rejected();
     void fileSelected(const QStringList&);
 
 private:
+    bool m_allowMultiple;
     QStringList m_fileList;
 };
 
@@ -312,9 +323,9 @@ bool QtDialogRunner::initForCertificateVerification(QDeclarativeComponent* compo
     return true;
 }
 
-bool QtDialogRunner::initForFilePicker(QDeclarativeComponent* component, QQuickItem* dialogParent, const QStringList& selectedFiles)
+bool QtDialogRunner::initForFilePicker(QDeclarativeComponent* component, QQuickItem* dialogParent, const QStringList& selectedFiles, bool allowMultiple)
 {
-    FilePickerContextObject* contextObject = new FilePickerContextObject(selectedFiles);
+    FilePickerContextObject* contextObject = new FilePickerContextObject(selectedFiles, allowMultiple);
     if (!createDialog(component, dialogParent, contextObject))
         return false;
 

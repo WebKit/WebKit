@@ -364,11 +364,11 @@ void QQuickWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef,
 {
     Q_Q(QQuickWebView);
 
-    if (!filePicker || type == QtWebPageUIClient::MultipleFilesSelection)
+    if (!filePicker)
         return;
 
     QtDialogRunner dialogRunner;
-    if (!dialogRunner.initForFilePicker(filePicker, q, selectedFileNames))
+    if (!dialogRunner.initForFilePicker(filePicker, q, selectedFileNames, (type == QtWebPageUIClient::MultipleFilesSelection)))
         return;
 
     execDialogRunner(dialogRunner);

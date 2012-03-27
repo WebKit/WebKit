@@ -43,7 +43,7 @@ public:
     bool initForAuthentication(QDeclarativeComponent*, QQuickItem* dialogParent, const QString& hostname, const QString& realm, const QString& prefilledUsername);
     bool initForCertificateVerification(QDeclarativeComponent*, QQuickItem*, const QString& hostname);
     bool initForProxyAuthentication(QDeclarativeComponent*, QQuickItem*, const QString& hostname, uint16_t port, const QString& prefilledUsername);
-    bool initForFilePicker(QDeclarativeComponent*, QQuickItem*, const QStringList& selectedFiles);
+    bool initForFilePicker(QDeclarativeComponent*, QQuickItem*, const QStringList& selectedFiles, bool allowMultiple);
     bool initForDatabaseQuotaDialog(QDeclarativeComponent*, QQuickItem*, const QString& databaseName, const QString& displayName, WKSecurityOriginRef, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage);
 
     QQuickItem* dialog() const { return m_dialog.get(); }

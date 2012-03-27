@@ -13,7 +13,6 @@ TestWebView {
     height: 400
 
     property bool selectFile
-    property bool acceptMultiple: false
 
     experimental.filePicker: Item {
         Timer {
@@ -21,12 +20,8 @@ TestWebView {
             interval: 1
             onTriggered: {
                 var selectedFiles = ["filename1", "filename2"]
-                if (selectFile) {
-                    if (acceptMultiple)
-                        model.accept(selectedFiles)
-                    else
-                        model.accept("acceptedfilename");
-                }
+                if (selectFile)
+                    model.accept(selectedFiles)
                 else
                     model.reject();
             }
@@ -41,11 +36,11 @@ TestWebView {
 
     TestCase {
         id: test
-        name: "WebViewSingleFilePicker"
+        name: "WebViewMultiFilePicker"
         when: windowShown
 
         function init() {
-            webView.url = Qt.resolvedUrl("../common/singlefileupload.html")
+            webView.url = Qt.resolvedUrl("../common/multifileupload.html")
             verify(webView.waitForLoadSucceeded())
             titleSpy.clear()
         }
@@ -58,15 +53,7 @@ TestWebView {
             webView.selectFile = true;
             openItemSelector()
             titleSpy.wait()
-            compare(webView.title, "acceptedfilename")
-        }
-
-        function test_multiple() {
-            webView.selectFile = true;
-            webView.acceptMultiple = true;
-            openItemSelector()
-            titleSpy.wait()
-            compare(webView.title, "filename1")
+            compare(webView.title, "filename1,filename2")
         }
 
         function test_reject() {

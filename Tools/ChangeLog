@@ -1,3 +1,22 @@
+2012-03-26  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][WK2] Support multi-file upload
+        https://bugs.webkit.org/show_bug.cgi?id=81589
+
+        Reviewed by Simon Hausmann.
+
+        Modified filePicker to support multi-file upload.
+
+        * MiniBrowser/qt/MiniBrowser.qrc:
+        * MiniBrowser/qt/icons/checkbox_checked.png: Added.
+        * MiniBrowser/qt/icons/checkbox_unchecked.png: Added.
+        * MiniBrowser/qt/js/MultiSelect.js: Added.
+        (values):
+        (isSelected):
+        (removeValue):
+        * MiniBrowser/qt/qml/CheckBox.qml: Added.
+        * MiniBrowser/qt/qml/FilePicker.qml:
+
 2012-03-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Retry crashing tests serially at the end of NRWT on Apple Mac

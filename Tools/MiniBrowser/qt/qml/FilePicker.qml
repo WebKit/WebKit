@@ -20,6 +20,7 @@
 
 import QtQuick 2.0
 import Qt.labs.folderlistmodel 1.0
+import "../js/MultiSelect.js" as MultiSelect
 
 Rectangle {
     id: filePicker
@@ -109,8 +110,19 @@ Rectangle {
                 function selected() {
                     if (folders.isFolder(index))
                         openFolder(filePath);
-                    else
-                        fileModel.accept(filePath);
+                    else {
+
+                        if (fileModel.allowMultipleFiles) {
+                            checkbox.checked = !checkbox.checked
+
+                            if (checkbox.checked)
+                                MultiSelect.addValue(filePath)
+                            else
+                                MultiSelect.removeValue(filePath)
+                        }
+                        else
+                            fileModel.accept(filePath)
+                    }
                 }
 
                 height: 50
@@ -118,7 +130,7 @@ Rectangle {
                 color: folders.isFolder(index) ? "lightgray": "darkgray"
 
                 Item {
-                    width: 48;
+                    width: 50
                     height: 48
                     Image {
                         source: "../icons/folder.png"
@@ -128,9 +140,22 @@ Rectangle {
                 }
 
                 Text {
+                    id: fileNameText
                     anchors.centerIn: parent
-                    anchors.leftMargin: 50
+                    anchors.leftMargin: 20
+                    width: 300
                     text: fileName
+                    elide: Text.ElideLeft;
+                }
+
+                CheckBox {
+                    id: checkbox
+
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    checked: MultiSelect.isSelected(filePath)
+                    visible: fileModel.allowMultipleFiles && !folders.isFolder(index)
                 }
 
                 MouseArea {
@@ -160,15 +185,25 @@ Rectangle {
             right: parent.right
         }
 
-        DialogButton {
-            id: cancel
-            text: "Cancel"
-            anchors {
-                horizontalCenter: parent.horizontalCenter;
-                verticalCenter:  parent.verticalCenter
+        Row {
+            id: buttonRow
+            spacing: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+
+            DialogButton {
+                id: cancel
+                text: "Cancel"
+                onClicked: fileModel.reject()
             }
 
-            onClicked: fileModel.reject()
+            DialogButton {
+                id: accept
+                text: "Ok"
+                visible: fileModel.allowMultipleFiles
+                onClicked:
+                    fileModel.accept(MultiSelect.selectedValues());
+            }
         }
     }
 
