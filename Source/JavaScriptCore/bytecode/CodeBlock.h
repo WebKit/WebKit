@@ -1385,13 +1385,18 @@ namespace JSC {
 #endif
     };
 
+    inline CodeBlock* baselineCodeBlockForInlineCallFrame(InlineCallFrame* inlineCallFrame)
+    {
+        ASSERT(inlineCallFrame);
+        ExecutableBase* executable = inlineCallFrame->executable.get();
+        ASSERT(executable->structure()->classInfo() == &FunctionExecutable::s_info);
+        return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(inlineCallFrame->isCall ? CodeForCall : CodeForConstruct);
+    }
+    
     inline CodeBlock* baselineCodeBlockForOriginAndBaselineCodeBlock(const CodeOrigin& codeOrigin, CodeBlock* baselineCodeBlock)
     {
-        if (codeOrigin.inlineCallFrame) {
-            ExecutableBase* executable = codeOrigin.inlineCallFrame->executable.get();
-            ASSERT(executable->structure()->classInfo() == &FunctionExecutable::s_info);
-            return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(codeOrigin.inlineCallFrame->isCall ? CodeForCall : CodeForConstruct);
-        }
+        if (codeOrigin.inlineCallFrame)
+            return baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame);
         return baselineCodeBlock;
     }
     

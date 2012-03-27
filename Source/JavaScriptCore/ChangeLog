@@ -1,3 +1,20 @@
+2012-03-27  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG OSR exit should not generate an exit for variables of inlinees if the
+        inlinees are not in scope
+        https://bugs.webkit.org/show_bug.cgi?id=82312
+
+        Reviewed by Oliver Hunt.
+        
+        * bytecode/CodeBlock.h:
+        (JSC::baselineCodeBlockForInlineCallFrame):
+        (JSC):
+        (JSC::baselineCodeBlockForOriginAndBaselineCodeBlock):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::computeNumVariablesForCodeOrigin):
+        (DFG):
+        (JSC::DFG::OSRExit::OSRExit):
+
 2012-03-27  Matt Lilek  <mrl@apple.com>
 
         Stop compiling Interpreter.cpp with -fno-var-tracking
