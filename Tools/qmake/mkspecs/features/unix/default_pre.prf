@@ -12,9 +12,6 @@ haveQt(5): CONFIG += object_parallel_to_source
 SBOX_CHECK = $$(_SBOX_DIR)
 !isEmpty(SBOX_CHECK): CONFIG += scratchbox
 
-# Use gold if available
-!scratchbox:!mac:exists(/usr/bin/ld.gold): QMAKE_LFLAGS += -fuse-ld=gold
-
 # If Qt is configured with embedded or QPA we set a convenience config
 # flag that can be used to test for either of these situations.
 contains(QT_CONFIG, qpa)|contains(QT_CONFIG, embedded): CONFIG += embedded

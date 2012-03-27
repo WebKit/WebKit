@@ -1,3 +1,16 @@
+2012-03-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Make debug build work on 32 bit
+        https://bugs.webkit.org/show_bug.cgi?id=82331
+
+        Use --no-keep-memory option of ld not to cache the symbol tables of input files in
+        memory to avoid memory exhaustion during the linking phase for x86-debug builds.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/unix/default_post.prf:
+        * qmake/mkspecs/features/unix/default_pre.prf:
+
 2012-03-23  Balazs Ankes  <bank@inf.u-szeged.hu>
 
         Add png checking to check-webkit-style
