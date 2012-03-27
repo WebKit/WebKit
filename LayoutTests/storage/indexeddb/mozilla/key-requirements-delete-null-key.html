@@ -1,53 +1,10 @@
-<!DOCTYPE html>
-<!--
-  original test: http://mxr.mozilla.org/mozilla2.0/source/dom/indexedDB/test/test_key_requirements.html
-  license of original test:
-    " Any copyright is dedicated to the Public Domain.
-      http://creativecommons.org/publicdomain/zero/1.0/ "
--->
 <html>
 <head>
 <script src="../../../fast/js/resources/js-test-pre.js"></script>
 <script src="../resources/shared.js"></script>
 </head>
 <body>
-<script>
-
-description("Test IndexedDB's behavior deleting entry with no key");
-
-function test()
-{
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    description = "My Test Database";
-    request = evalAndLog("indexedDB.open(name, description)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('version 1')");
-    request.onsuccess = cleanDatabaseAndCreateObjectStore;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabaseAndCreateObjectStore()
-{
-    deleteAllObjectStores(db);
-    objectStore = evalAndLog("objectStore = db.createObjectStore('bar');");
-    evalAndExpectException("objectStore.delete(null);", "IDBDatabaseException.DATA_ERR");
-    finishJSTest();
-}
-
-
-test();
-
-</script>
+<script src="resources/key-requirements-delete-null-key.js"></script>
 <script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
-

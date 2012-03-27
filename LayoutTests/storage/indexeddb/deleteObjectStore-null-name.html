@@ -1,47 +1,10 @@
-<!DOCTYPE html>
 <html>
 <head>
 <script src="../../fast/js/resources/js-test-pre.js"></script>
 <script src="resources/shared.js"></script>
 </head>
 <body>
-<script>
-
-description("Test IndexedDB deleteObjectStore required argument");
-
-function test()
-{
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    description = "My Test Database";
-    request = evalAndLog("indexedDB.open(name, description)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = createAndPopulateObjectStore;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function createAndPopulateObjectStore()
-{
-    deleteAllObjectStores(db);
-
-    evalAndLog("db.createObjectStore('null');");
-    evalAndLog("db.deleteObjectStore(null);");
-    finishJSTest();
-}
-
-
-test();
-
-</script>
+<script src="resources/deleteObjectStore-null-name.js"></script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

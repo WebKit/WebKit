@@ -1,44 +1,10 @@
-<!DOCTYPE html> 
-<html> 
+<html>
 <head>
-<script src="../../fast/js/resources/js-test-pre.js"></script> 
-<script src="resources/shared.js"></script> 
-</head> 
-<body> 
-<script> 
- 
-description("Test IndexedDB with null version string");
- 
-function test()
-{
-    removeVendorPrefixes();
- 
-    name = self.location.pathname;
-    description = "My Test Database";
-    request = evalAndLog("indexedDB.open(name, description)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
- 
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
- 
-    request = evalAndLog("db.setVersion(null);");
-    request.onsuccess = postSetVersion;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function postSetVersion()
-{
-    shouldBe("db.version", "'null'");
-    finishJSTest();
-}
- 
- 
-test();
- 
-</script>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<script src="resources/setVersion-null.js"></script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
-</body> 
+</body>
 </html>

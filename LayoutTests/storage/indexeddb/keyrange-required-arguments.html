@@ -1,31 +1,10 @@
-<!DOCTYPE html>
 <html>
 <head>
 <script src="../../fast/js/resources/js-test-pre.js"></script>
 <script src="resources/shared.js"></script>
 </head>
 <body>
-<script>
-
-description("Test IndexedDB keyrange required arguments");
-
-function test()
-{
-    removeVendorPrefixes();
-
-    shouldThrow("IDBKeyRange.only();");
-    shouldThrow("IDBKeyRange.lowerBound();");
-    shouldThrow("IDBKeyRange.upperBound();");
-    shouldThrow("IDBKeyRange.bound(1);");
-    shouldThrow("IDBKeyRange.bound();");
-
-    finishJSTest();
-}
-
-
-test();
-
-</script>
+<script src="resources/keyrange-required-arguments.js"></script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
