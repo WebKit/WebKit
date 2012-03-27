@@ -328,8 +328,10 @@ void WebPluginContainerImpl::reportGeometry()
 
     m_webPlugin->updateGeometry(windowRect, clipRect, cutOutRects, isVisible());
 
-    if (m_scrollbarGroup)
+    if (m_scrollbarGroup) {
         m_scrollbarGroup->scrollAnimator()->contentsResized();
+        m_scrollbarGroup->setFrameRect(frameRect());
+    }
 }
 
 void WebPluginContainerImpl::setBackingTextureId(unsigned id)
@@ -518,15 +520,10 @@ WebCore::LayerChromium* WebPluginContainerImpl::platformLayer() const
 }
 #endif
 
-bool WebPluginContainerImpl::wantWheelEvents()
-{
-    return m_scrollbarGroup;
-}
-
 ScrollbarGroup* WebPluginContainerImpl::scrollbarGroup()
 {
     if (!m_scrollbarGroup)
-        m_scrollbarGroup = adoptPtr(new ScrollbarGroup(m_element->document()->frame()->view()));
+        m_scrollbarGroup = adoptPtr(new ScrollbarGroup(m_element->document()->frame()->view(), frameRect()));
     return m_scrollbarGroup.get();
 }
 

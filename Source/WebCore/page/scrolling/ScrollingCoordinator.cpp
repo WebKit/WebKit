@@ -112,10 +112,6 @@ static Region computeNonFastScrollableRegion(FrameView* frameView)
     for (HashSet<RefPtr<Widget> >::const_iterator it = frameView->children()->begin(), end = frameView->children()->end(); it != end; ++it) {
         if ((*it)->isFrameView())
             childFrameViews.add(static_cast<FrameView*>(it->get()));
-        else if ((*it)->isPluginViewBase()) {
-            if (static_cast<PluginViewBase*>(it->get())->wantWheelEvents())
-                nonFastScrollableRegion.unite((*it)->frameRect());
-        }
     }
 
     if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
@@ -157,6 +153,15 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
                         IntRect(IntPoint(), frameView->visibleContentRect().size()),
                         frameView->contentsSize());
 
+}
+
+void ScrollingCoordinator::frameViewScrollableAreasDidChange(FrameView*)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    Region nonFastScrollableRegion = computeNonFastScrollableRegion(m_page->mainFrame()->view());
+    setNonFastScrollableRegion(nonFastScrollableRegion);
 }
 
 void ScrollingCoordinator::frameViewWheelEventHandlerCountChanged(FrameView*)

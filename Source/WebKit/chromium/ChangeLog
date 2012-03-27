@@ -1,3 +1,31 @@
+2012-03-27  James Robinson  <jamesr@chromium.org>
+
+        Scrollable plugins not registered properly in ScrollingCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=82163
+
+        Reviewed by Anders Carlsson.
+
+        Since ScrollbarGroups are ScrollableAreas, they need to be able to report their bounds for the
+        ScrollingCoordinator's calculateNonFastScrollableRegion. This also changes ScrollbarGroups to only be registered
+        as ScrollableAreas on the FrameView's set when they actually have Scrollbars.
+
+        * src/ScrollbarGroup.cpp:
+        (WebKit::ScrollbarGroup::ScrollbarGroup):
+        (WebKit::ScrollbarGroup::~ScrollbarGroup):
+        (WebKit::ScrollbarGroup::scrollbarCreated):
+        (WebKit::ScrollbarGroup::scrollbarDestroyed):
+        (WebKit::ScrollbarGroup::setFrameRect):
+        (WebKit):
+        (WebKit::ScrollbarGroup::scrollableAreaBoundingBox):
+        * src/ScrollbarGroup.h:
+        (ScrollbarGroup):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::reportGeometry):
+        (WebKit):
+        (WebKit::WebPluginContainerImpl::scrollbarGroup):
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+
 2012-03-27  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Make use of common animation unit test methods

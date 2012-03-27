@@ -36,23 +36,23 @@ using namespace WebCore;
 
 namespace WebKit {
 
-ScrollbarGroup::ScrollbarGroup(FrameView* frameView)
+ScrollbarGroup::ScrollbarGroup(FrameView* frameView, const IntRect& frameRect)
     : m_frameView(frameView)
+    , m_frameRect(frameRect)
     , m_horizontalScrollbar(0)
     , m_verticalScrollbar(0)
 {
-    m_frameView->addScrollableArea(this);
 }
 
 ScrollbarGroup::~ScrollbarGroup()
 {
     ASSERT(!m_horizontalScrollbar);
     ASSERT(!m_verticalScrollbar);
-    m_frameView->removeScrollableArea(this);
 }
 
 void ScrollbarGroup::scrollbarCreated(WebScrollbarImpl* scrollbar)
 {
+    bool hadScrollbars = m_horizontalScrollbar || m_verticalScrollbar;
     if (scrollbar->scrollbar()->orientation() == HorizontalScrollbar) {
         ASSERT(!m_horizontalScrollbar);
         m_horizontalScrollbar = scrollbar;
@@ -62,6 +62,9 @@ void ScrollbarGroup::scrollbarCreated(WebScrollbarImpl* scrollbar)
         m_verticalScrollbar = scrollbar;
         didAddVerticalScrollbar(scrollbar->scrollbar());
     }
+
+    if (!hadScrollbars)
+        m_frameView->addScrollableArea(this);
 }
 
 void ScrollbarGroup::scrollbarDestroyed(WebScrollbarImpl* scrollbar)
@@ -74,6 +77,9 @@ void ScrollbarGroup::scrollbarDestroyed(WebScrollbarImpl* scrollbar)
         willRemoveVerticalScrollbar(scrollbar->scrollbar());
         m_verticalScrollbar = 0;
     }
+
+    if (!m_horizontalScrollbar && !m_verticalScrollbar)
+        m_frameView->removeScrollableArea(this);
 }
 
 void ScrollbarGroup::setLastMousePosition(const IntPoint& point)
@@ -127,6 +133,16 @@ ScrollableArea* ScrollbarGroup::enclosingScrollableArea() const
 {
     // FIXME: Return a parent scrollable area that can be scrolled.
     return 0;
+}
+
+void ScrollbarGroup::setFrameRect(const IntRect& frameRect)
+{
+    m_frameRect = frameRect;
+}
+
+IntRect ScrollbarGroup::scrollableAreaBoundingBox() const
+{
+    return m_frameRect;
 }
 
 bool ScrollbarGroup::isScrollCornerVisible() const

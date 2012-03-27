@@ -73,7 +73,6 @@ public:
 
     // PluginViewBase methods
     virtual bool getFormValue(String&);
-    virtual bool wantWheelEvents();
 
     // Widget methods
     virtual void setFrameRect(const WebCore::IntRect&);

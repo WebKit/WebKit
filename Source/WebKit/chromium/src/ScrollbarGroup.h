@@ -40,12 +40,13 @@ class WebScrollbarImpl;
 
 class ScrollbarGroup : public WebCore::ScrollableArea {
 public:
-    explicit ScrollbarGroup(WebCore::FrameView*);
+    ScrollbarGroup(WebCore::FrameView*, const WebCore::IntRect& frameRect);
     ~ScrollbarGroup();
 
     void scrollbarCreated(WebScrollbarImpl*);
     void scrollbarDestroyed(WebScrollbarImpl*);
     void setLastMousePosition(const WebCore::IntPoint&);
+    void setFrameRect(const WebCore::IntRect&);
 
     // WebCore::ScrollableArea methods
     virtual int scrollSize(WebCore::ScrollbarOrientation) const;
@@ -72,10 +73,12 @@ public:
     virtual bool shouldSuspendScrollAnimations() const;
     virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);
     virtual bool isOnActivePage() const;
+    virtual WebCore::IntRect scrollableAreaBoundingBox() const;
 
 private:
     WebCore::FrameView* m_frameView;
     WebCore::IntPoint m_lastMousePosition;
+    WebCore::IntRect m_frameRect;
     WebScrollbarImpl* m_horizontalScrollbar;
     WebScrollbarImpl* m_verticalScrollbar;
 };
