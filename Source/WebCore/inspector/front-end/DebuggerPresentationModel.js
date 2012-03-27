@@ -220,7 +220,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     _updateBreakpointsAfterLiveEdit: function(uiSourceCode, oldSource, newSource)
     {
-        var breakpoints = this._breakpointManager.breakpointsForUISourceCode(uiSourceCode);
+        var breakpoints = uiSourceCode.breakpoints();
 
         // Clear and re-create breakpoints according to text diff.
         var diff = Array.diff(oldSource.split("\n"), newSource.split("\n"));
@@ -351,7 +351,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     breakpointsForUISourceCode: function(uiSourceCode)
     {
-        var breakpointsMap = this._breakpointManager.breakpointsForUISourceCode(uiSourceCode);
+        var breakpointsMap = uiSourceCode.breakpoints();
         var breakpointsList = [];
         for (var lineNumber in breakpointsMap)
             breakpointsList.push(breakpointsMap[lineNumber]);
@@ -433,7 +433,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     findBreakpoint: function(uiSourceCode, lineNumber)
     {
-        return this._breakpointManager.breakpointsForUISourceCode(uiSourceCode)[String(lineNumber)];
+        return uiSourceCode.breakpoints()[lineNumber];
     },
 
     /**
@@ -570,6 +570,42 @@ WebInspector.DebuggerPresentationModel.prototype = {
 }
 
 WebInspector.DebuggerPresentationModel.prototype.__proto__ = WebInspector.Object.prototype;
+
+
+/**
+ * @constructor
+ * @extends {WebInspector.UISourceCode}
+ * @param {string} id
+ * @param {string} url
+ * @param {WebInspector.ContentProvider} contentProvider
+ */
+WebInspector.UISourceCodeImpl = function(id, url, contentProvider)
+{
+    WebInspector.UISourceCode.call(this, id, url, contentProvider);
+    /**
+     * @type {Object.<string,WebInspector.UIBreakpoint>}
+     */
+    this._breakpoints = {};
+}
+
+WebInspector.UISourceCodeImpl.prototype = {
+    breakpoints: function()
+    {
+        return this._breakpoints;
+    },
+
+    breakpointAdded: function(lineNumber, breakpoint)
+    {
+        this._breakpoints[lineNumber] = breakpoint;
+    },
+
+    breakpointRemoved: function(lineNumber)
+    {
+        delete this._breakpoints[lineNumber];
+    }
+}
+
+WebInspector.UISourceCodeImpl.prototype.__proto__ = WebInspector.UISourceCode.prototype;
 
 /**
  * @constructor

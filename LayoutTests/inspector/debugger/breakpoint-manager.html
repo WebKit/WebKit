@@ -58,7 +58,7 @@ function test()
     serializedBreakpoints.push(createBreakpoint("a.js", 20, "", false));
     serializedBreakpoints.push(createBreakpoint("b.js", 3, "", true));
 
-    function createUISourceCode(id, url) { return { id: id, url: url }; }
+    function createUISourceCode(id, url) { return new WebInspector.UISourceCodeImpl(id, url, null); }
     var uiSourceCodeA = createUISourceCode("a.js", "a.js");
     var uiSourceCodeB = createUISourceCode("b.js", "b.js");
 
