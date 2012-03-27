@@ -1,3 +1,19 @@
+2012-03-27  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Fix filter context usage in webkit_unit_tests.
+        https://bugs.webkit.org/show_bug.cgi?id=82349
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestLayerOcclusionWithFilters::beginTest):
+        Cancel request for filter context after test run.
+        (WTF::TEST_F):
+        * tests/CCOcclusionTrackerTest.cpp:
+        Re-enable CCLayerTreeHostTestSetSingleLostContext.runMultiThread.
+        (WebCore::CCOcclusionTrackerTest::TearDown):
+        Cancel request for filter context after test run.
+
 2012-03-26  Stephen White  <senorblanco@chromium.org>
 
         Disable CCLayerTreeHostTestSetSingleLostContext.runMultiThread.

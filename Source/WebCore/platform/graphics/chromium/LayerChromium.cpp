@@ -318,7 +318,8 @@ void LayerChromium::setFilters(const FilterOperations& filters)
         return;
     m_filters = filters;
     setNeedsCommit();
-    CCLayerTreeHost::setNeedsFilterContext();
+    if (!filters.isEmpty())
+        CCLayerTreeHost::setNeedsFilterContext(true);
 }
 
 void LayerChromium::setOpacity(float opacity)

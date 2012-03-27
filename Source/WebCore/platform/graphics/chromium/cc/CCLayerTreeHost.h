@@ -131,7 +131,7 @@ public:
     static bool anyLayerTreeHostInstanceExists();
 
     static bool needsFilterContext() { return s_needsFilterContext; }
-    static void setNeedsFilterContext() { s_needsFilterContext = true; }
+    static void setNeedsFilterContext(bool needsFilterContext) { s_needsFilterContext = needsFilterContext; }
 
     // CCLayerTreeHost interface to CCProxy.
     void willBeginFrame() { m_client->willBeginFrame(); }

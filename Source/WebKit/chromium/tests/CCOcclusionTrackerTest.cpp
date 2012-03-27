@@ -139,6 +139,7 @@ protected:
         m_root.clear();
         m_renderSurfaceLayerListChromium.clear();
         m_renderSurfaceLayerListImpl.clear();
+        CCLayerTreeHost::setNeedsFilterContext(false);
     }
 
     typename Types::ContentLayerType* createRoot(const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)

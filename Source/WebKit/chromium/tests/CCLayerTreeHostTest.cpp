@@ -2106,6 +2106,7 @@ public:
         m_layerTreeHost->setRootLayer(0);
         m_layerTreeHost.clear();
 
+        CCLayerTreeHost::setNeedsFilterContext(false);
         endTest();
     }
 
@@ -2201,7 +2202,7 @@ public:
     }
 };
 
-TEST_F(CCLayerTreeHostTestSetSingleLostContext, DISABLED_runMultiThread)
+TEST_F(CCLayerTreeHostTestSetSingleLostContext, runMultiThread)
 {
     runTestThreaded();
 }
