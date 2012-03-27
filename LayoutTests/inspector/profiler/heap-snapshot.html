@@ -216,7 +216,7 @@ function test()
                 return edge.name === "b";
             }
          
-            var provider = new WebInspector.HeapSnapshotEdgesProvider(snapshot, snapshot.rootNodeIndex, edgeFilter);
+            var provider = snapshot.createEdgesProvider(snapshot.rootNodeIndex, edgeFilter);
             InspectorTest.assertEquals(1, provider.length, "edges provider length");
             provider.sort(WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator(["!edgeName", false, "id", false]), 0, 0, 1);
             InspectorTest.assertEquals(1, provider.length, "edges provider length");
