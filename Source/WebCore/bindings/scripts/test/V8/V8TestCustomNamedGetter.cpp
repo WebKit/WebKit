@@ -122,7 +122,7 @@ v8::Handle<v8::Object> V8TestCustomNamedGetter::wrapSlow(PassRefPtr<TestCustomNa
 
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
-    getDOMObjectMap().set(impl.leakRef(), wrapperHandle);
+    V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapperHandle);
     return wrapper;
 }
 

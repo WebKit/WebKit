@@ -66,15 +66,6 @@
 
 namespace WebCore {
 
-void V8DOMWrapper::setJSWrapperForDOMNode(PassRefPtr<Node> node, v8::Persistent<v8::Object> wrapper)
-{
-    ASSERT(maybeDOMWrapper(wrapper));
-    if (node->isActiveNode())
-        getActiveDOMNodeMap().set(node.leakRef(), wrapper);
-    else
-        getDOMNodeMap().set(node.leakRef(), wrapper);
-}
-
 v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, v8::Handle<v8::Value> objectPrototype)
 {
     // A DOM constructor is a function instance created from a DOM constructor

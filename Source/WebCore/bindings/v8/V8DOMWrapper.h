@@ -54,7 +54,7 @@ namespace WebCore {
     class DOMWindow;
     class EventTarget;
     class Frame;
-    class Node;
+    class SVGElementInstance;
     class V8Proxy;
     class WorkerContext;
 
@@ -110,6 +110,10 @@ namespace WebCore {
         template<typename T> static void setJSWrapperForDOMObject(PassRefPtr<T>, v8::Persistent<v8::Object>);
         template<typename T> static void setJSWrapperForActiveDOMObject(PassRefPtr<T>, v8::Persistent<v8::Object>);
         static void setJSWrapperForDOMNode(PassRefPtr<Node>, v8::Persistent<v8::Object>);
+        static void setJSWrapperForActiveDOMNode(PassRefPtr<Node>, v8::Persistent<v8::Object>);
+#if ENABLE(SVG)
+        static void setJSWrapperForDOMSVGElementInstance(PassRefPtr<SVGElementInstance>, v8::Persistent<v8::Object>);
+#endif
 
         static bool isValidDOMObject(v8::Handle<v8::Value>);
 
@@ -150,7 +154,7 @@ namespace WebCore {
     };
 
     template<typename T>
-    void V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<T> object, v8::Persistent<v8::Object> wrapper)
+    inline void V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<T> object, v8::Persistent<v8::Object> wrapper)
     {
         ASSERT(maybeDOMWrapper(wrapper));
         ASSERT(!domWrapperType(wrapper)->toActiveDOMObjectFunction);
@@ -158,12 +162,37 @@ namespace WebCore {
     }
 
     template<typename T>
-    void V8DOMWrapper::setJSWrapperForActiveDOMObject(PassRefPtr<T> object, v8::Persistent<v8::Object> wrapper)
+    inline void V8DOMWrapper::setJSWrapperForActiveDOMObject(PassRefPtr<T> object, v8::Persistent<v8::Object> wrapper)
     {
         ASSERT(maybeDOMWrapper(wrapper));
         ASSERT(domWrapperType(wrapper)->toActiveDOMObjectFunction);
         getActiveDOMObjectMap().set(object.leakRef(), wrapper);
     }
+
+    inline void V8DOMWrapper::setJSWrapperForDOMNode(PassRefPtr<Node> node, v8::Persistent<v8::Object> wrapper)
+    {
+        ASSERT(maybeDOMWrapper(wrapper));
+        ASSERT(!domWrapperType(wrapper)->toActiveDOMObjectFunction);
+        ASSERT(!node->isActiveNode());
+        getDOMNodeMap().set(node.leakRef(), wrapper);
+    }
+
+    inline void V8DOMWrapper::setJSWrapperForActiveDOMNode(PassRefPtr<Node> node, v8::Persistent<v8::Object> wrapper)
+    {
+        ASSERT(maybeDOMWrapper(wrapper));
+        ASSERT(domWrapperType(wrapper)->toActiveDOMObjectFunction);
+        ASSERT(node->isActiveNode());
+        getActiveDOMNodeMap().set(node.leakRef(), wrapper);
+    }
+
+#if ENABLE(SVG)
+    inline void V8DOMWrapper::setJSWrapperForDOMSVGElementInstance(PassRefPtr<SVGElementInstance> element, v8::Persistent<v8::Object> wrapper)
+    {
+        ASSERT(maybeDOMWrapper(wrapper));
+        getDOMSVGElementInstanceMap().set(element.leakRef(), wrapper);
+    }
+#endif
+
 } // namespace WebCore
 
 #endif // V8DOMWrapper_h
