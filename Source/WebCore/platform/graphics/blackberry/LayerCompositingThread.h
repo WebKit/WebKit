@@ -53,7 +53,6 @@ class Buffer;
 
 namespace WebCore {
 
-class DestroyOnCompositingThread;
 class LayerRenderer;
 
 class LayerCompositingThread : public ThreadSafeRefCounted<LayerCompositingThread>, public LayerData, public BlackBerry::Platform::GuardedPointerBase {
@@ -145,7 +144,7 @@ public:
 private:
     LayerCompositingThread(LayerType, PassRefPtr<LayerTiler>);
 
-    friend class DestroyOnCompositingThread;
+    friend class WTF::ThreadSafeRefCounted<WebCore::LayerCompositingThread>;
     void destroyOnCompositingThread();
 
     void updateTileContents(const IntRect& tile);
@@ -188,7 +187,24 @@ private:
     RefPtr<LayerTiler> m_tiler;
 };
 
+} // namespace WebCore
+
+namespace WTF {
+
+// LayerCompositingThread objects must be destroyed on the compositing thread.
+// But it's possible for the last reference to be held by the WebKit thread.
+// So we create a custom specialization of ThreadSafeRefCounted which calls a
+// function that ensures the destructor is called on the correct thread, rather
+// than calling delete directly.
+template<>
+inline void ThreadSafeRefCounted<WebCore::LayerCompositingThread>::deref()
+{
+    if (derefBase())
+        static_cast<WebCore::LayerCompositingThread*>(this)->destroyOnCompositingThread();
 }
+
+} // namespace WTF
+
 
 #endif // USE(ACCELERATED_COMPOSITING)
 

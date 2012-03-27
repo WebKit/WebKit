@@ -71,14 +71,6 @@ LayerCompositingThread::LayerCompositingThread(LayerType type, PassRefPtr<LayerT
 {
 }
 
-LayerCompositingThread::~LayerCompositingThread()
-{
-    // Unfortunately, ThreadSafeShared<T> is hardwired to call T::~T().
-    // To switch threads in case the last reference is released on the
-    // WebKit thread, we send a sync message to the compositing thread.
-    destroyOnCompositingThread();
-}
-
 void LayerCompositingThread::destroyOnCompositingThread()
 {
     if (!isCompositingThread()) {
@@ -87,6 +79,13 @@ void LayerCompositingThread::destroyOnCompositingThread()
             this));
         return;
     }
+
+    delete this;
+}
+
+LayerCompositingThread::~LayerCompositingThread()
+{
+    ASSERT(isCompositingThread());
 
     m_tiler->layerCompositingThreadDestroyed();
 
