@@ -1212,17 +1212,11 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 // Chromium failure needs investigation
 BUGWK79068 : svg/transforms/transform-origin-css-property.xhtml = FAIL
 
-// New test requires rebaseline
-BUGWK77535 : svg/repaint/inner-svg-change-viewPort-relative.svg = IMAGE IMAGE+TEXT
-
 // Updated test, needs a rebaseline
 BUGWK78613 : svg/custom/circle-move-invalidation.svg = IMAGE IMAGE+TEXT
 
 // Has been crashing since it was added.
 BUGWK81796 SNOWLEOPARD DEBUG : svg/custom/fill-opacity-update.svg = CRASH
-
-// Updated test, needs a rebaseline
-BUGWK81219 : svg/filters/feColorMatrix-invalid-animation.svg = TEXT
 
 // Needs a rebaseline after https://bugs.webkit.org/show_bug.cgi?id=82085
 BUGWK82085 : svg/filters/filterRes.svg = IMAGE
@@ -1286,7 +1280,7 @@ BUGWK75968 : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE+TEXT
 // Appears elsewhere commented
 BUGWK75968 : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE+TEXT TEXT
 // This may be unrelated.
-BUGWK75968 : svg/css/group-with-shadow.svg = IMAGE
+BUGWK75968 LION : svg/css/group-with-shadow.svg = IMAGE
 // Appears elsewhere commented
 BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-36-t.svg = TEXT
 // Appears elsewhere commented
@@ -1465,7 +1459,6 @@ BUGWK75276 : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
 // Rebaseline after SK_ENABLE_FAST_SHADERMASK is enabled in skia.gyp
 // the image change should be very slight (only in low-bits of color components)
 //
-BUGCR105305 : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE
 BUGCR105305 LINUX MAC : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
 BUGCR105305 : svg/css/composite-shadow-text.svg = IMAGE
 BUGCR105305 : svg/css/text-gradient-shadow.svg = IMAGE
@@ -1781,14 +1774,7 @@ BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
 // Rebaseline to take advantage of skia ColorFilter optimization.
 // Note that two of tests below are broken on Leopard for other reasons (search
 // elsewhere within this file) and thus should not be blindly rebaselined there.
-BUGCR104128 : fast/box-shadow/box-shadow-radius.html = IMAGE
-BUGCR104128 : fast/box-shadow/inset-box-shadow-radius.html = IMAGE
 // Need TEXT rebaseline after BUGWK75568
-BUGCR104128 : fast/box-shadow/shadow-buffer-partial.html = IMAGE+TEXT
-BUGCR104128 : fast/canvas/shadow-offset-4.html = IMAGE
-BUGCR104128 : fast/canvas/shadow-offset-5.html = IMAGE
-BUGCR104128 : fast/canvas/shadow-offset-6.html = IMAGE
-BUGCR104128 : fast/canvas/shadow-offset-7.html = IMAGE
 BUGCR104128 : fast/repaint/box-shadow-h.html = IMAGE
 BUGCR104128 : fast/repaint/box-shadow-v.html = IMAGE
 BUGCR104128 LINUX MAC : fast/repaint/text-shadow-horizontal.html = IMAGE
@@ -1900,13 +1886,6 @@ BUGCR9798 SLOW LINUX RELEASE : transitions/transition-timing-function.html = PAS
 BUGCR9798 WIN RELEASE : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
 
 // Rebaseline once fixed sampling matrixproc lands in Skia
-BUGCR117799 : fast/borders/border-image-massive-scale.html = IMAGE
-BUGCR117799 : fast/borders/border-image-outset-in-shorthand.html = IMAGE
-BUGCR117799 : fast/borders/border-image-outset.html = IMAGE
-BUGCR117799 : fast/borders/border-image-rotate-transform.html = IMAGE
-BUGCR117799 : fast/borders/border-image-scaled-gradient.html = IMAGE
-BUGCR117799 : fast/borders/border-image-scaled.html = IMAGE
-BUGCR117799 : fast/canvas/canvas-bg-zoom.html = IMAGE
 BUGCR117799 : fast/gradients/background-clipped.html = IMAGE
 BUGCR117799 : fast/repaint/background-misaligned.html = IMAGE
 BUGCR117799 : fast/repaint/backgroundSizeRepaint.html = IMAGE
@@ -1955,7 +1934,6 @@ BUGCR15270 LINUX MAC DEBUG : fast/js/excessive-comma-usage.html = CRASH TIMEOUT 
 BUGCR15270 WIN : fast/js/excessive-comma-usage.html = CRASH TIMEOUT FAIL
 
 // rebaseline after skia rev. 2527 lands
-BUGCR101797 : fast/backgrounds/size/contain-and-cover.html = IMAGE
 BUGCR101797 SLOW DEBUG : svg/as-background-image/svg-as-background-5.html = IMAGE
 BUGCR101797 RELEASE : svg/as-background-image/svg-as-background-5.html = IMAGE
 BUGCR101797 : svg/filters/subRegion-one-effect.svg = IMAGE
@@ -2210,8 +2188,6 @@ BUGWK58000 : fast/history/visited-link-background-color.html = FAIL
 BUGCR41206 : fast/history/multiple-classes-visited.html = TIMEOUT TEXT
 
 // Tests that work with KURL, but fail with GURL
-BUGCR41292 : fast/url/ipv4.html = TEXT
-BUGCR41292 : fast/url/anchor.html = TEXT
 
 BUGWK71758 : fast/url/invalid-urls-utf8.html = TEXT
 BUGWK71758 : fast/url/file.html = TEXT PASS
@@ -2403,9 +2379,6 @@ BUGCR47083 : fast/text/hyphenate-limit-lines.html = IMAGE IMAGE+TEXT
 // it was CR75019 for unknown reason.
 BUGCR47083 : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
-// WebKit roll 61547:61629. Still need to investigate.
-BUG_HCLAM : fast/js/script-line-number.html = TEXT
-
 // First noticed on trybots after r61836, now in the tree.
 BUG_MNAGANOV LINUX : fast/js/Object-create.html = CRASH FAIL
 
@@ -2492,9 +2465,6 @@ BUGCR53073 SKIP DEBUG : storage/change-version.html = PASS CRASH
 // special-document machinery still works.
 BUGCR53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 
-// New test, need to verify if it's safe to rebaseline.
-BUGWK44770 LINUX WIN : svg/repaint/filter-repaint.svg = CRASH IMAGE+TEXT
-
 // Not focusing an anchor when tab is pressed.
 BUGWK45061 : fast/forms/focus2.html = TIMEOUT FAIL
 
@@ -2547,10 +2517,6 @@ BUGCR60651 : platform/chromium/virtual/gpu/fast/canvas/webgl/uniform-location.ht
 
 // Flaky since r68438:r68445 or before that.
 BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
-
-// New failures introduced in 68854.
-BUGWK46951 : fast/url/segments-from-data-url.html = TEXT
-BUGWK46951 : fast/url/segments.html = TEXT
 
 // Unexpected timeout in these tests.
 BUG_HCLAM : http/tests/css/border-image-loading.html = PASS TIMEOUT
@@ -2850,7 +2816,6 @@ BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate.htm
 BUGWK47923 : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 
 // Chromium does not support PDF content in <img> tags.
-WONTFIX WIN LINUX : compositing/color-matching/pdf-image-match.html = IMAGE
 WONTFIX WIN LINUX : compositing/images/direct-pdf-image.html = IMAGE
 
 // Chromium does not support the CoreAnimation plugin model right now.
@@ -2889,16 +2854,8 @@ BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = 
 BUGWK54322 SLOW SNOWLEOPARD : fast/loader/loadInProgress.html = PASS
 BUGWK54322 SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS TEXT
 
-BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-normalcaller-indirect-strictcode.html = TEXT
-BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-strictcaller-indirect-strictcode.html = TEXT
-BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-normalcaller-direct-strictcode.html = TEXT
-BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-normalcaller-indirect-strictcode.html = TEXT
-BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-strictcaller-direct-normalcode.html = TEXT
-BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-strictcaller-direct-strictcode.html = TEXT
-BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-strictcaller-indirect-strictcode.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/10.6.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/15.5.5.2.html = TEXT
-BUGV8_1168 : fast/js/mozilla/strict/8.12.5.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/B.1.2.html = TEXT
 
 BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
@@ -3542,7 +3499,6 @@ BUGWK70210 : fast/js/stack-overflow-arrity-catch.html = TEXT
 
 // These all will timeout, because we are lacking a hook that signals test completion.
 BUGWK70066 SKIP : fast/hidpi = TIMEOUT
-BUGWK70151 : fast/css/clip-text-in-scaled-div.html = FAIL
 
 // CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
 BUGWK81859 SKIP : fast/css/image-set-parsing.html = FAIL
@@ -3726,8 +3682,6 @@ BUGWK75367 : svg/css/composite-shadow-with-opacity.html = PASS TEXT
 // Crashes due to an OOM error on V8.
 BUGCR108832 SKIP : fast/js/array-splice.html = CRASH
 
-BUGWK75418 WIN LINUX : css2.1/20110323/border-collapse-offset-002.htm = MISSING
-
 BUGWK75430 MAC : plugins/iframe-plugin-bgcolor.html = TEXT TIMEOUT
 BUGWK75468 : fast/js/kde/GlobalObject.html = TEXT
 BUGWK75083 RELEASE : perf/nested-combined-selectors.html = MISSING
@@ -3790,8 +3744,6 @@ BUGWK76647 WIN LINUX : svg/custom/object-sizing-width-50p-height-50p-on-target-s
 BUGWK76647 WIN LINUX : svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute.xhtml = IMAGE+TEXT
 BUGWK76647 WIN LINUX : svg/custom/object-sizing-width-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
 BUGWK76647 WIN LINUX : svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
-BUGWK76647 WIN LINUX : tables/mozilla/bugs/bug86708.html = IMAGE+TEXT
-BUGWK76647 WIN LINUX : tables/mozilla_expected_failures/bugs/97619.html = IMAGE+TEXT
 
 // Just needs a rebaseline.
 BUGWK69714 WIN LINUX : svg/clip-path/clip-path-tspan-and-stroke.svg = IMAGE+TEXT
@@ -4008,14 +3960,6 @@ BUGWK75568 : fast/events/mouse-relative-position.html = TEXT
 
 BUGWK80531 : fast/repaint/search-field-cancel.html = TEXT IMAGE+TEXT IMAGE
 
-// Started failing (returning an empty render tree) at
-// http://trac.webkit.org/changeset/110262; flaky in debug.
-BUG_SENORBLANCO RELEASE : css3/filters/composited-during-animation-layertree.html = TEXT
-BUG_SENORBLANCO DEBUG : css3/filters/composited-during-animation-layertree.html = TEXT PASS
-
-// New test, crashing as of r110224:110226.
-BUG_SENORBLANCO : fast/events/input-focus-no-duplicate-events.html = CRASH
-
 BUGWK80665 : fast/js/string-match.html = TEXT
 BUGWK80665 : fast/js/string-replace-2.html = TEXT
 
@@ -4119,16 +4063,12 @@ BUGWK81145 LION : fast/events/scrollbar-double-click.html = TEXT
 
 // Migrated from chromium's downstream test_expectations
 BUGYANGGUO LINUX X86_64 : fast/repaint/moving-shadow-on-container.html = TEXT
-BUGYANGGUO LINUX X86_64 : fast/repaint/moving-shadow-on-path.html = TEXT
-BUGYANGGUO LINUX X86_64 : svg/css/stars-with-shadow.html = TEXT
 BUGYANGGUO MAC : fast/repaint/moving-shadow-on-container.html = TEXT
 BUGYANGGUO MAC : fast/repaint/moving-shadow-on-path.html = TEXT
-BUGYANGGUO MAC : svg/css/stars-with-shadow.html = TEXT
+BUGYANGGUO LION : svg/css/stars-with-shadow.html = TEXT
 BUGYANGGUO WIN : fast/repaint/moving-shadow-on-container.html = TEXT
 BUGYANGGUO WIN : fast/repaint/moving-shadow-on-path.html = TEXT
 BUGYANGGUO WIN : svg/css/stars-with-shadow.html = TEXT
-
-BUGWK81325 : fast/canvas/webgl/context-lost.html = TEXT
 
 // Needs rebaseline due to a progression 
 // BUGWK43022 WIN : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
@@ -4381,7 +4321,6 @@ BUGWK82297 SNOWLEOPARD : fast/events/scrollbar-double-click.html = TEXT PASS
 
 BUGCR120356 : fast/regex/unicodeCaseInsensitive.html = TEXT
 
-BUGWK82300 SNOWLEOPARD : compositing/color-matching/pdf-image-match.html = IMAGE
 BUGWK82300 SNOWLEOPARD : compositing/images/direct-pdf-image.html = IMAGE
 
 BUGWK82372 LINUX X86_64 DEBUG : css3/filters/custom/effect-custom-parameters.html = IMAGE
