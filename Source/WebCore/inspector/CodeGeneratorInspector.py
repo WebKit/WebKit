@@ -338,7 +338,7 @@ class RawTypes(object):
     class Number(BaseType):
         @staticmethod
         def get_getter_name():
-            return "Object"
+            return "Double"
 
         @staticmethod
         def get_setter_name():
@@ -346,15 +346,19 @@ class RawTypes(object):
 
         @staticmethod
         def get_c_initializer():
-            raise Exception("Unsupported")
+            return "0"
 
         @staticmethod
         def get_js_bind_type():
-            raise Exception("Unsupported")
+            return "number"
 
         @staticmethod
         def get_validate_method_params():
-            raise Exception("TODO")
+            class ValidateMethodParams:
+                name = "Double"
+                var_type = "double"
+                as_method_name = "Number"
+            return ValidateMethodParams
 
         @staticmethod
         def get_output_pass_model():
@@ -1881,6 +1885,7 @@ $fieldDeclarations
     static R getPropertyValueImpl(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors, V0 initial_value, bool (*as_method)(InspectorValue*, V*), const char* type_name);
 
     static int getInt(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static double getDouble(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static String getString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static bool getBoolean(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static PassRefPtr<InspectorObject> getObject(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
@@ -2049,6 +2054,7 @@ R InspectorBackendDispatcherImpl::getPropertyValueImpl(InspectorObject* object, 
 
 struct AsMethodBridges {
     static bool asInt(InspectorValue* value, int* output) { return value->asNumber(output); }
+    static bool asDouble(InspectorValue* value, double* output) { return value->asNumber(output); }
     static bool asString(InspectorValue* value, String* output) { return value->asString(output); }
     static bool asBoolean(InspectorValue* value, bool* output) { return value->asBoolean(output); }
     static bool asObject(InspectorValue* value, RefPtr<InspectorObject>* output) { return value->asObject(output); }
@@ -2058,6 +2064,11 @@ struct AsMethodBridges {
 int InspectorBackendDispatcherImpl::getInt(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
     return getPropertyValueImpl<int, int, int>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asInt, "Number");
+}
+
+double InspectorBackendDispatcherImpl::getDouble(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
+{
+    return getPropertyValueImpl<double, double, double>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asDouble, "Number");
 }
 
 String InspectorBackendDispatcherImpl::getString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
