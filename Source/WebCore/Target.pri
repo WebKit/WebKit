@@ -2604,6 +2604,7 @@ HEADERS += \
     svg/SVGAnimatedColor.h \
     svg/SVGAnimatedEnumeration.h \
     svg/SVGAnimatedInteger.h \
+    svg/SVGAnimatedIntegerOptionalInteger.h \
     svg/SVGAnimatedLength.h \
     svg/SVGAnimatedLengthList.h \
     svg/SVGAnimatedNumber.h \
@@ -3506,6 +3507,7 @@ contains(DEFINES, ENABLE_SVG=1) {
                   svg/SVGAnimatedBoolean.cpp \
                   svg/SVGAnimatedColor.cpp \
                   svg/SVGAnimatedInteger.cpp \
+                  svg/SVGAnimatedIntegerOptionalInteger.cpp \
                   svg/SVGAnimatedLength.cpp \
                   svg/SVGAnimatedLengthList.cpp \
                   svg/SVGAnimatedNumber.cpp \

@@ -36,15 +36,15 @@ struct SVGPropertyTraits<bool> {
 };
 
 template<>
-struct SVGPropertyTraits<int> {
-    static int initialValue() { return 0; }
-    static String toString(int type) { return String::number(type); }
+struct SVGPropertyTraits<unsigned short> {
+    static unsigned short initialValue() { return 0; }
+    static String toString(unsigned short type) { return String::number(type); }
 };
 
 template<>
-struct SVGPropertyTraits<long> {
-    static long initialValue() { return 0; }
-    static String toString(long type) { return String::number(type); }
+struct SVGPropertyTraits<int> {
+    static int initialValue() { return 0; }
+    static String toString(int type) { return String::number(type); }
 };
 
 template<>

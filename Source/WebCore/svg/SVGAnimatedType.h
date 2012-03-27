@@ -45,6 +45,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createBoolean(bool*);
     static PassOwnPtr<SVGAnimatedType> createColor(Color*);
     static PassOwnPtr<SVGAnimatedType> createInteger(int*);
+    static PassOwnPtr<SVGAnimatedType> createIntegerOptionalInteger(std::pair<int, int>*);
     static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
     static PassOwnPtr<SVGAnimatedType> createLengthList(SVGLengthList*);
     static PassOwnPtr<SVGAnimatedType> createNumber(float*);
@@ -64,6 +65,7 @@ public:
     bool& boolean();
     Color& color();
     int& integer();
+    std::pair<int, int>& integerOptionalInteger();
     SVGLength& length();
     SVGLengthList& lengthList();
     float& number();
@@ -97,6 +99,7 @@ private:
         bool* boolean;
         Color* color;
         int* integer;
+        std::pair<int, int>* integerOptionalInteger;
         SVGLength* length;
         SVGLengthList* lengthList;
         float* number;

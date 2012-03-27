@@ -34,6 +34,7 @@ enum AnimatedPropertyType {
     AnimatedColor,
     AnimatedEnumeration,
     AnimatedInteger,
+    AnimatedIntegerOptionalInteger,
     AnimatedLength,
     AnimatedLengthList,
     AnimatedNumber,

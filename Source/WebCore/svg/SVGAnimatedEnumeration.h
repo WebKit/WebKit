@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-typedef SVGAnimatedStaticPropertyTearOff<int> SVGAnimatedEnumeration;
+typedef SVGAnimatedStaticPropertyTearOff<unsigned short> SVGAnimatedEnumeration;
 
 // Helper macros to declare/define a SVGAnimatedEnumeration object
 #define DECLARE_ANIMATED_ENUMERATION(UpperProperty, LowerProperty, EnumType) \

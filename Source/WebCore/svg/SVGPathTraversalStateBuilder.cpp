@@ -76,7 +76,7 @@ void SVGPathTraversalStateBuilder::incrementPathSegmentCount()
     ++m_traversalState->m_segmentIndex;
 }
 
-unsigned long SVGPathTraversalStateBuilder::pathSegmentIndex()
+unsigned SVGPathTraversalStateBuilder::pathSegmentIndex()
 {
     ASSERT(m_traversalState);
     return m_traversalState->m_segmentIndex;

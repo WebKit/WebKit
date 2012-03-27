@@ -70194,6 +70194,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGAnimatedIntegerOptionalInteger.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAnimatedLength.h"
 				>
 			</File>

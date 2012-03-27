@@ -37,17 +37,17 @@ feConvlveMatrix.appendChild(animate);
 // Setup animation test
 function sample1() {
     shouldBeCloseEnough("feConvolveMatrix.targetX.animVal", "0");
-    // shouldBe("feConvolveMatrix.targetX.baseVal", "0");
+    shouldBe("feConvolveMatrix.targetX.baseVal", "0");
 }
 
 function sample2() {
     shouldBeCloseEnough("feConvolveMatrix.targetX.animVal", "1");
-    // shouldBe("feConvolveMatrix.targetX.baseVal", "0");
+    shouldBe("feConvolveMatrix.targetX.baseVal", "0");
 }
 
 function sample3() {
     shouldBeCloseEnough("feConvolveMatrix.targetX.animVal", "2");
-    // shouldBe("feConvolveMatrix.targetX.baseVal", "0");
+    shouldBe("feConvolveMatrix.targetX.baseVal", "0");
 }
 
 function executeTest() {

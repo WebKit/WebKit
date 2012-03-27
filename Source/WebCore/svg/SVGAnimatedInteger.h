@@ -27,18 +27,17 @@
 
 namespace WebCore {
 
-typedef SVGAnimatedStaticPropertyTearOff<long> SVGAnimatedInteger;
+typedef SVGAnimatedStaticPropertyTearOff<int> SVGAnimatedInteger;
 
 // Helper macros to declare/define a SVGAnimatedInteger object
 #define DECLARE_ANIMATED_INTEGER(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedInteger, long, UpperProperty, LowerProperty)
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedInteger, int, UpperProperty, LowerProperty)
 
 #define DEFINE_ANIMATED_INTEGER(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(AnimatedInteger, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
 
-// FIXME: This currently animates as number-optional-number, instead of integer-optional-integer, which is missing.
 #define DEFINE_ANIMATED_INTEGER_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedNumberOptionalNumber, OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty)
+DEFINE_ANIMATED_PROPERTY(AnimatedIntegerOptionalInteger, OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty)
 
 class SVGAnimationElement;
 
@@ -48,10 +47,15 @@ public:
     SVGAnimatedIntegerAnimator(SVGAnimationElement*, SVGElement*);
     virtual ~SVGAnimatedIntegerAnimator() { }
     
-    static void calculateAnimatedNumber(SVGAnimationElement*, float percentage, unsigned repeatCount, float& animatedNumber, float fromNumber, float toNumber);
-    
+    static void calculateAnimatedInteger(SVGAnimationElement*, float percentage, unsigned repeatCount, int& animatedNumber, int fromNumber, int toNumber);
+
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
-    
+    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
+    virtual void stopAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
+    virtual void resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*);
+    virtual void animValWillChange(const Vector<SVGAnimatedProperty*>&);
+    virtual void animValDidChange(const Vector<SVGAnimatedProperty*>&);
+
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,

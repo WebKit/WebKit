@@ -43,7 +43,7 @@ class SVGFilterElement : public SVGStyledElement,
 public:
     static PassRefPtr<SVGFilterElement> create(const QualifiedName&, Document*);
 
-    void setFilterRes(unsigned long filterResX, unsigned long filterResY);
+    void setFilterRes(unsigned filterResX, unsigned filterResY);
 
 private:
     SVGFilterElement(const QualifiedName&, Document*);

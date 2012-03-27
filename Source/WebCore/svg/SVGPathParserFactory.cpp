@@ -262,7 +262,7 @@ bool SVGPathParserFactory::buildAnimatedSVGPathByteStream(SVGPathByteStream* fro
     return ok;
 }
 
-bool SVGPathParserFactory::getSVGPathSegAtLengthFromSVGPathByteStream(SVGPathByteStream* stream, float length, unsigned long& pathSeg)
+bool SVGPathParserFactory::getSVGPathSegAtLengthFromSVGPathByteStream(SVGPathByteStream* stream, float length, unsigned& pathSeg)
 {
     ASSERT(stream);
     if (stream->isEmpty())

@@ -93,7 +93,7 @@ const AtomicString& SVGFilterElement::filterResYIdentifier()
     return s_identifier;
 }
 
-void SVGFilterElement::setFilterRes(unsigned long filterResX, unsigned long filterResY)
+void SVGFilterElement::setFilterRes(unsigned filterResX, unsigned filterResY)
 {
     setFilterResXBaseValue(filterResX);
     setFilterResYBaseValue(filterResY);

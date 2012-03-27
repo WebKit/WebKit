@@ -101,9 +101,9 @@ FloatPoint SVGPathElement::getPointAtLength(float length)
     return point;
 }
 
-unsigned long SVGPathElement::getPathSegAtLength(float length)
+unsigned SVGPathElement::getPathSegAtLength(float length)
 {
-    unsigned long pathSeg = 0;
+    unsigned pathSeg = 0;
     SVGPathParserFactory::self()->getSVGPathSegAtLengthFromSVGPathByteStream(m_pathByteStream.get(), length, pathSeg);
     return pathSeg;
 }

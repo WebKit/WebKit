@@ -62,7 +62,7 @@ public:
     
     float getTotalLength();
     FloatPoint getPointAtLength(float distance);
-    unsigned long getPathSegAtLength(float distance);
+    unsigned getPathSegAtLength(float distance);
 
     PassRefPtr<SVGPathSegClosePath> createSVGPathSegClosePath(SVGPathSegRole role = PathSegUndefinedRole);
     PassRefPtr<SVGPathSegMovetoAbs> createSVGPathSegMovetoAbs(float x, float y, SVGPathSegRole role = PathSegUndefinedRole);

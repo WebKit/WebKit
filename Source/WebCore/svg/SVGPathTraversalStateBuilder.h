@@ -32,7 +32,7 @@ class SVGPathTraversalStateBuilder : public SVGPathConsumer {
 public:
     SVGPathTraversalStateBuilder();
 
-    unsigned long pathSegmentIndex();
+    unsigned pathSegmentIndex();
     float totalLength();
     FloatPoint currentPoint();
 
