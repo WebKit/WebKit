@@ -1188,7 +1188,7 @@ void FrameLoaderClientBlackBerry::dispatchDidReceiveIcon()
 
 bool FrameLoaderClientBlackBerry::canCachePage() const
 {
-    // We won't cache pages containing video or audio.
+    // We won't cache pages containing video, audio or multipart with "multipart/x-mixed-replace".
     ASSERT(m_frame->document());
     RefPtr<NodeList> nodeList = m_frame->document()->getElementsByTagName(HTMLNames::videoTag.localName());
     if (nodeList.get()->length() > 0)
@@ -1197,6 +1197,13 @@ bool FrameLoaderClientBlackBerry::canCachePage() const
     if (nodeList.get()->length() > 0)
         return false;
 
+    ASSERT(m_frame->loader()->documentLoader());
+    const ResponseVector& responses = m_frame->loader()->documentLoader()->responses();
+    size_t count = responses.size();
+    for (size_t i = 0; i < count; i++) {
+        if (responses[i].isMultipartPayload())
+            return false;
+    }
     return true;
 }
 

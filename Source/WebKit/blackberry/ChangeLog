@@ -1,3 +1,18 @@
+2012-03-27  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        A page containing multiparts with "multipart/x-mixed-replace" should not be cached.
+        https://bugs.webkit.org/show_bug.cgi?id=82291
+
+        Reviewed by Rob Buis.
+
+        If we have a multiPart reponse with multipart/x-mixed-replace, 
+        the current page should not be cached. I use isMultipartPayload() 
+        API which was supposed to be set in NetworkJob to decide to 
+        cache page or not.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::canCachePage):
+
 2012-03-25  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Accelerated compositing layers fail to render when using WebPageCompositor
