@@ -172,6 +172,20 @@ function test()
             next();
         },
 
+        function heapSnapshotArraySliceTest(next)
+        {
+            var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());
+            var root = snapshot.rootNode;
+            var rawEdges = root.rawEdges;
+            InspectorTest.assertEquals(6, rawEdges.length);
+            InspectorTest.assertEquals(6, rawEdges.slice(0).length);
+            InspectorTest.assertEquals(3, rawEdges.slice(3).length);
+            InspectorTest.assertEquals(3, rawEdges.slice(3, 6).length);
+            InspectorTest.assertEquals(3, rawEdges.slice(0, 3).length);
+            InspectorTest.assertEquals(0, rawEdges.slice(3, 3).length);
+            next();
+        },
+
         function heapSnapshotNodesProviderTest(next)
         {
             var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());

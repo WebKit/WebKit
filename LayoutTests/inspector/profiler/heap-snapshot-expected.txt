@@ -19,6 +19,8 @@ Running: heapSnapshotAggregatesTest
 
 Running: heapSnapshotFlagsTest
 
+Running: heapSnapshotArraySliceTest
+
 Running: heapSnapshotNodesProviderTest
 
 Running: heapSnapshotEdgesProviderTest

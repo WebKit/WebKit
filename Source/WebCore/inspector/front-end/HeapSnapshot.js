@@ -230,8 +230,8 @@ WebInspector.HeapSnapshotArraySlice.prototype = {
     slice: function(start, end)
     {
         if (typeof end === "undefined")
-            end = start + this._start + this.length;
-        return this._snapshot[this._arrayName].subarray(this._start + start, end);
+            end = this.length;
+        return this._snapshot[this._arrayName].subarray(this._start + start, this._start + end);
     }
 }
 

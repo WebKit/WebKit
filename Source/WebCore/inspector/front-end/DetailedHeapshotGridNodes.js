@@ -503,7 +503,7 @@ WebInspector.HeapSnapshotInstanceNode.prototype = {
 
     _createProvider: function(snapshot, nodeIndex)
     {
-        var showHiddenData = WebInspector.DetailedHeapshotView.prototype.showHiddenData;
+        var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
         return snapshot.createEdgesProvider(
             nodeIndex,
             "function(edge) {" +
@@ -836,11 +836,8 @@ WebInspector.HeapSnapshotDominatorObjectNode.prototype = {
 
     _createProvider: function(snapshot, nodeIndex)
     {
-        var showHiddenData = WebInspector.DetailedHeapshotView.prototype.showHiddenData;
         return snapshot.createNodesProviderForDominator(nodeIndex,
-            "function (node) {" +
-            "     return " + showHiddenData + " || !node.isHidden;" +
-            "}");
+            "function (node) { return true; }");
     },
 
     _childHashForEntity: function(node)
