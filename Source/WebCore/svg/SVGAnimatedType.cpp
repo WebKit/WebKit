@@ -479,6 +479,7 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     case AnimatedNumber:
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
+    case AnimatedString:
     case AnimatedTransformList:
         return true;
     case AnimatedColor:
@@ -487,7 +488,6 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     case AnimatedPoints:
     case AnimatedPreserveAspectRatio:
     case AnimatedRect:
-    case AnimatedString:
     case AnimatedUnknown:
         return false;
     }

@@ -38,6 +38,31 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedStringAnimator::constructFromString(const
     return animatedType.release();
 }
 
+PassOwnPtr<SVGAnimatedType> SVGAnimatedStringAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    return SVGAnimatedType::createString(constructFromOneBaseValue<String, SVGAnimatedString>(properties));
+}
+
+void SVGAnimatedStringAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedString>(properties);
+}
+
+void SVGAnimatedStringAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+{
+    resetFromOneBaseValue<String, SVGAnimatedString>(properties, type, &SVGAnimatedType::string);
+}
+
+void SVGAnimatedStringAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValWillChangeForType<SVGAnimatedString>(properties);
+}
+
+void SVGAnimatedStringAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValDidChangeForType<SVGAnimatedString>(properties);
+}
+
 void SVGAnimatedStringAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
 {
     ASSERT(m_contextElement);
