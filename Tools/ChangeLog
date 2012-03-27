@@ -1,5 +1,12 @@
 2012-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Skip GTK+ unit tests that fail in the bots
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Add failing tests to the skipped list.
+
+2012-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Unskip all GTK+ unit test.
 
         Currently, skipped tests contains the list of unit tests that have
