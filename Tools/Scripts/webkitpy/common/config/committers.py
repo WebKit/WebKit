@@ -119,6 +119,7 @@ contributors_who_are_not_committers = [
     Contributor("Commit Queue", "commit-queue@webkit.org"),
     Contributor("Dana Jansens", "danakj@chromium.org", "danakj"),
     Contributor("Daniel Sievers", "sievers@chromium.org"),
+    Contributor("Dave Barton", "dbarton@mathscribe.com"),
     Contributor("David Barr", "davidbarr@chromium.org", "barrbrain"),
     Contributor("David Dorwin", "ddorwin@chromium.org", "ddorwin"),
     Contributor("David Reveman", "reveman@chromium.org", "reveman"),

@@ -1,3 +1,15 @@
+2012-03-27  Eric Seidel  <eric@webkit.org>
+
+        Add Dave Barton to the Contributors list so I can more easily CC him on bugs
+        https://bugs.webkit.org/show_bug.cgi?id=82373
+
+        Reviewed by Ryosuke Niwa.
+
+        Dave's committer-status in in-progress, so until then
+        list him as a Contributor so at least I can more easily CC him on bugs.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-03-26  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         [jhbuild] Prepend jhbuildrc's directory to sys.path instead of appending.
