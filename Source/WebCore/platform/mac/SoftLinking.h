@@ -60,7 +60,7 @@
             if (!result) \
                 result = dlopen("/System/Library/StagedFrameworks/Safari/" #framework ".framework/" #framework, RTLD_LAZY); \
             return result; \
-        }; \
+        }(); \
         return frameworkLibrary; \
     }
 
