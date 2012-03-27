@@ -62,7 +62,9 @@ bool JSFunction::isHostFunctionNonInline() const
 JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, int length, const Identifier& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
     NativeExecutable* executable;
-#if ENABLE(JIT)
+#if !ENABLE(JIT)
+    UNUSED_PARAM(intrinsic);
+#else
     if (intrinsic != NoIntrinsic && exec->globalData().canUseJIT()) {
         ASSERT(nativeConstructor == callHostFunctionAsConstructor);
         executable = exec->globalData().getHostFunction(nativeFunction, intrinsic);
