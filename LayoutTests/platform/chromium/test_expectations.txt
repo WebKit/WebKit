@@ -51,7 +51,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/loader/javascript-url-iframe-crash.html
 // See BUGCR104797
 
 // V8 roll to 3.9.24.1. Remember to remove WIN LINUX from the line below upon fixing.
-BUGCR119915 MAC : fast/js/dfg-double-vote-fuzz.html = TEXT
+BUGCR119915 MAC SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
 BUGWK77184 DEBUG WIN LINUX SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
 BUGWK77069 DEBUG SLOW : fast/js/dfg-uint32array-overflow-values.html = PASS
 BUGWK74787 DEBUG SLOW : fast/js/dfg-poison-fuzz.html = PASS
@@ -1284,7 +1284,7 @@ BUGWK75968 WIN : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE+TEXT
 BUGWK75968 WIN LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE+TEXT TEXT
 // This may be unrelated.
 BUGWK75968 LION : svg/css/group-with-shadow.svg = IMAGE
-BUGWK75968 MAC : svg/text/text-text-05-t.svg = TEXT
+BUGWK75968 LEOPARD SNOWLEOPARD : svg/text/text-text-05-t.svg = TEXT
 
 // Flaky on Linux after http://trac.webkit.org/changeset/112022
 BUGWK82217 LINUX : svg/zoom/text/zoom-foreignObject.svg = IMAGE PASS
@@ -1536,10 +1536,6 @@ BUGWK80335 : fast/js/mozilla/strict/15.4.4.9.html = TEXT
 BUGWK80335 : fast/js/mozilla/strict/15.4.4.12.html = TEXT
 BUGWK80335 : fast/js/mozilla/strict/15.4.4.13.html = TEXT
 
-// We print to stderr when a failure happens while importing XSL;
-// should disable this in libxml.
-BUGCR10347 MAC : fast/xsl/transform-xhr-doc.xhtml = FAIL
-
 // V8 should implement the length property of constructors
 BUGWK78657 : fast/js/constructor-length.html = FAIL
 
@@ -1612,8 +1608,6 @@ BUGCR10399 MAC : fast/encoding/char-encoding-mac.html = FAIL
 // Broken pixel tests
 
 // Widget location is just slightly off
-BUGCR23496 MAC : css1/box_properties/acid_test.html = IMAGE
-BUGCR23496 MAC : css2.1/t09-c5526c-display-00-e.html = IMAGE
 BUGCR23496 MAC : fast/forms/001.html = IMAGE
 BUGCR23496 MAC : fast/forms/form-element-geometry.html = IMAGE+TEXT
 BUGCR23496 MAC : fast/forms/formmove.html = IMAGE
@@ -1639,7 +1633,6 @@ BUGCR9798 WIN RELEASE : http/tests/navigation/no-referrer-reset.html = PASS TIME
 BUGCR10364 MAC : http/tests/navigation/reload-subframe-object.html = FAIL
 
 // Text declared as "monospace" with no size is bigger in Chromium
-BUGCR23494 MAC : css1/font_properties/font_family.html = IMAGE
 BUGCR23494 LEOPARD : css2.1/t1503-c522-font-family-00-b.html = IMAGE
 BUGCR23494 LEOPARD : fast/text/monospace-width-cache.html = IMAGE
 
@@ -2441,7 +2434,7 @@ BUGWK44199 RELEASE : perf/typing-at-end-of-line.html = PASS TEXT
 BUGWK44199 BUGWK63057 RELEASE SLOW : perf/array-binary-search.html = MISSING PASS TEXT
 BUGWK72901 RELEASE SLOW : perf/array-push-pop.html = PASS
 BUGWK44199 RELEASE : perf/array-reverse.html = PASS TIMEOUT
-BUGWK63057 RELEASE : perf/adding-radio-buttons.html = MISSING FAIL
+BUGWK63057 RELEASE : perf/adding-radio-buttons.html = MISSING FAIL PASS
 
 // Failing after http://trac.webkit.org/changeset/65665/
 BUGWK44278 : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT IMAGE
@@ -2799,7 +2792,7 @@ BUGCR71783 MAC : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 BUGWK77550 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
 
 // These will have slight differences on the edges of antialiased paths and need rebaseling
-BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/arc360.html = IMAGE
+BUGBSALOMON WIN LINUX : platform/chromium/virtual/gpu/fast/canvas/arc360.html = IMAGE
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite-transformclip.html = IMAGE
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite.html = IMAGE
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-transform-skewed.html = IMAGE
@@ -3179,7 +3172,7 @@ BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = PASS T
 BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
 
 BUGWK81310 : fast/dom/shadow/content-element-in-media-element.html = TEXT
-BUGWK81311 : fast/dom/shadow/content-element-in-meter-element.html = TEXT
+BUGWK81311 WIN LINUX : fast/dom/shadow/content-element-in-meter-element.html = TEXT
 
 // CSS Grid Layout is not enabled yet.
 BUGWK60731 SKIP : fast/css-grid-layout = PASS
@@ -3328,7 +3321,7 @@ BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
 BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT TEXT
 BUGWK74694 LINUX : http/tests/cache/history-only-cached-subresource-loads.html = MISSING FAIL
-BUGWK74694 LINUX MAC : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = MISSING FAIL
+BUGWK74694 LINUX SNOWLEOPARD : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = MISSING FAIL
 
 BUGWK67915 LINUX WIN : fast/borders/borderRadiusDashed06.html = IMAGE
 
@@ -3654,7 +3647,7 @@ BUGWK74357 SKIP : plugins/netscape-plugin-page-cache-works.html = TEXT TIMEOUT
 
 BUGWK74374 WIN : fast/forms/select-listbox-multiple-no-focusring.html = IMAGE
 
-BUGWK74662 : fast/text/unicode-variation-selector.html = IMAGE+TEXT
+BUGWK74662 WIN LINUX : fast/text/unicode-variation-selector.html = IMAGE+TEXT
 
 
 BUGWK74746 : fast/filesystem/workers/file-from-file-entry-sync.html = PASS CRASH
@@ -3791,7 +3784,7 @@ BUGWK78115 WIN : svg/custom/repaint-on-constant-size-change.svg = IMAGE
 BUGWK78159 DEBUG WIN MAC LINUX : compositing/iframes/scrolling-iframe.html = PASS TEXT
 
 // Some of the new baselines don't make any sense.
-BUGWK78175 MAC : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
+BUGWK78175 LEOPARD SNOWLEOPARD : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
 
 // Needs investigation.
 BUGWK78422 WIN LINUX : svg/animations/animate-text-nested-transforms.html = TEXT
@@ -3827,7 +3820,7 @@ BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
 // Need rebaselining.
 BUGWK69210 MAC : fast/encoding/utf-16-big-endian.html = IMAGE+TEXT
 BUGWK69210 MAC : fast/encoding/utf-16-little-endian.html = IMAGE+TEXT
-BUGWK69210 MAC : fast/inline/continuation-outlines-with-layers-2.html = TEXT
+BUGWK69210 LEOPARD SNOWLEOPARD : fast/inline/continuation-outlines-with-layers-2.html = TEXT
 BUGWK69210 MAC : fast/inline/continuation-outlines-with-layers.html = IMAGE+TEXT
 
 BUGWK77047 BUGWK79013 WIN DEBUG : http/tests/workers/terminate-during-sync-operation.html = PASS CRASH TIMEOUT
@@ -3895,7 +3888,7 @@ BUGV8_1973 : fast/js/caller-property.html = TEXT
 //NEED REBASELINING
 BUGWK78684 : fast/block/basic/fieldset-stretch-to-legend.html = FAIL
 BUGWK78684 : fast/borders/fieldsetBorderRadius.html = FAIL
-BUGWK78684 : fast/forms/fieldset-legend-padding-unclipped-fieldset-border.html = FAIL
+BUGWK78684 WIN LINUX : fast/forms/fieldset-legend-padding-unclipped-fieldset-border.html = FAIL
 
 // New test; landed at r109779 but results look wrong on most Chrome platforms.
 BUGSENORBLANCO : http/tests/incremental/partial-jpeg.html = FAIL
@@ -3932,8 +3925,8 @@ BUGSENORBLANCO : platform/chromium/fast/events/rtl-scrollbar.html = TEXT PASS
 // The difference should be only layer removal, no size or position should change.
 
 // Those tests have other entries in our expectations filed and may not totally covers
-BUGWK75568 MAC : fast/layers/add-layer-with-nested-stacking.html = IMAGE
-BUGWK75568 MAC : fast/layers/remove-layer-with-nested-stacking.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/layers/add-layer-with-nested-stacking.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/layers/remove-layer-with-nested-stacking.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/inline-relative-positioned.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/lines-with-layout-delta.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/overflow-clip-subtree-layout.html = IMAGE
@@ -3944,7 +3937,7 @@ BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip-2.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-skipped.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/replaced/replaced-breaking.html = IMAGE
-BUGWK75568 MAC : fast/replaced/width100percent-searchfield.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/replaced/width100percent-searchfield.html = IMAGE
 BUGWK75568 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE PASS
 BUGWK75568 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE PASS
 
@@ -3976,7 +3969,6 @@ BUGWK80976 SNOWLEOPARD : svg/custom/feComponentTransfer-Gamma.svg = PASS CRASH
 BUGWK80976 SNOWLEOPARD : transitions/multiple-text-shadow-transition.html = PASS CRASH
 
 BUGWK81145 LION : compositing/plugins/composited-plugin.html = IMAGE+TEXT
-BUGWK81145 LION : css1/text_properties/text_transform.html = IMAGE+TEXT
 BUGWK81145 LION : fast/repaint/transform-absolute-in-positioned-container.html = IMAGE+TEXT
 BUGWK81145 LION : fast/text/international/bidi-AN-after-empty-run.html = IMAGE+TEXT
 BUGWK81145 LION : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
@@ -4046,7 +4038,6 @@ BUGWK81145 LION : fast/text/selection-rect-rounding.html = TEXT
 BUGWK81145 LION : platform/chromium/virtual/gpu/fast/canvas/set-colors.html = TEXT
 BUGWK81145 LION : plugins/plugin-javascript-access.html = TEXT
 BUGWK81145 LION : svg/css/getComputedStyle-basic.xhtml = TEXT
-BUGWK81145 LION : svg/custom/delete-text-crash.html = TEXT
 BUGWK81145 LION : fast/writing-mode/broken-ideograph-small-caps.html = CRASH
 BUGWK81145 LION : fast/writing-mode/broken-ideographic-font.html = CRASH
 BUGWK81145 LION : fast/writing-mode/japanese-rl-text-with-broken-font.html = CRASH
