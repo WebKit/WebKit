@@ -26,24 +26,42 @@
 
 #include "config.h"
 #include "DNS.h"
+#include "DNSResolveQueue.h"
 
 #include "GOwnPtrSoup.h"
 #include "ResourceHandle.h"
+#include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
+// There is no current reliable way to know if we're behind a proxy at
+// this level. We'll have to implement it in
+// SoupSession/SoupProxyURIResolver/GProxyResolver
+bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
+{
+    return false;
+}
+
+static void resolvedCallback(SoupAddress* soupAddress, guint status, void* userData)
+{
+    DNSResolveQueue::shared().decrementRequestCount();
+}
+
+void DNSResolveQueue::platformResolve(const String& hostname)
+{
+    ASSERT(isMainThread());
+
+    soup_session_prefetch_dns(ResourceHandle::defaultSession(), hostname.utf8().data(), 0, resolvedCallback, 0);
+}
+
 void prefetchDNS(const String& hostname)
 {
+    ASSERT(isMainThread());
     if (hostname.isEmpty())
         return;
 
-    String uri = "http://" + hostname;
-    GOwnPtr<SoupURI> soupURI(soup_uri_new(uri.utf8().data()));
-    if (!soupURI)
-        return;
-
-    soup_session_prepare_for_uri(ResourceHandle::defaultSession(), soupURI.get());
+    DNSResolveQueue::shared().add(hostname);
 }
 
 }

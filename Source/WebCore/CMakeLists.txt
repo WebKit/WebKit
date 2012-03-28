@@ -1221,6 +1221,7 @@ SET(WebCore_SOURCES
     platform/network/CredentialStorage.cpp
     platform/network/ContentTypeParser.cpp
     platform/network/DataURL.cpp
+    platform/network/DNSResolveQueue.cpp
     platform/network/FormDataBuilder.cpp
     platform/network/FormData.cpp
     platform/network/HTTPHeaderMap.cpp
