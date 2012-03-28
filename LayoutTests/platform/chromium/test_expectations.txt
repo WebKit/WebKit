@@ -2824,6 +2824,7 @@ BUGWK49629 SKIP : compositing/iframes/page-cache-layer-tree.html = PASS
 BUGNONE SLOW WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-getImageData.html = PASS
 
 BUGWK55968 MAC WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
+BUGWK82412 LION RELEASE : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE PASS
 
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
@@ -3931,7 +3932,7 @@ BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip-2.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-skipped.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/replaced/replaced-breaking.html = IMAGE
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/replaced/width100percent-searchfield.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/replaced/width100percent-searchfield.html = IMAGE PASS
 BUGWK75568 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE PASS
 BUGWK75568 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE PASS
 
@@ -4308,3 +4309,17 @@ BUGWK82269 DEBUG: media/track/track-delete-during-setup.html = CRASH
 
 // this test appears to consistently fail during the main run but usually passes on a retry.
 BUGWK82404 LINUX LEOPARD SNOWLEOPARD : plugins/netscape-dom-access-and-reload.html = PASS TEXT 
+
+BUGWK82409 LINUX RELEASE : inspector/styles/css-live-edit.html = PASS TIMEOUT
+
+BUGWK82410 : css2.1/20110323/abspos-containing-block-initial-004b.htm = PASS IMAGE
+BUGWK82410 : css2.1/20110323/abspos-containing-block-initial-004d.htm = PASS IMAGE
+
+BUGWK82415 : transforms/no_transform_hit_testing.html = PASS IMAGE
+
+BUGWK82416 : svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml = PASS IMAGE
+
+BUGWK82413 LINUX : fast/filesystem/workers/async-operations.html = PASS TIMEOUT
+BUGWK82413 MAC DEBUG : fast/filesystem/workers/async-operations.html = PASS TIMEOUT
+
+BUGWK82417 LINUX SLOW : fast/frames/set-unloaded-frame-location.html = PASS
