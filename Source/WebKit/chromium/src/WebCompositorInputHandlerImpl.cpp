@@ -188,7 +188,9 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
             return DidHandle;
         }
         case CCInputHandlerClient::ScrollIgnored:
-            return DropEvent;
+            // FIXME: This should be DropEvent, but in cases where we fail to properly sync scrollability it's safer to send the
+            // event to the main thread. Change back to DropEvent once we have synchronization bugs sorted out.
+            return DidNotHandle; 
         case CCInputHandlerClient::ScrollFailed:
             return DidNotHandle;
         }

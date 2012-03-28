@@ -1,3 +1,13 @@
+2012-03-27  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Send wheel events to main thread even if we think nothing is scrollable
+        https://bugs.webkit.org/show_bug.cgi?id=82408
+
+        Reviewed by Adrienne Walker.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleInputEventInternal):
+
 2012-03-27  Nat Duca  <nduca@chromium.org>
 
         [chromium] Route monotonic clock up from compositor
