@@ -26,17 +26,39 @@ from gi.repository import Gio, GLib
 
 TIMEOUT=180 # seconds
 
+class SkippedTest:
+    def __init__(self, test, reason, bug=None, test_cases=[]):
+        self.test = test
+        self.reason = reason
+        self.bug = bug
+        self.test_cases = test_cases
+
+    def __str__(self):
+        skipped_test_str = "%s" % self.test
+        if self.test_cases:
+            skipped_test_str += " [%s]" % ", ".join(self.test_cases)
+        skipped_test_str += ": %s " % self.reason
+        if self.bug is not None:
+            skipped_test_str += "(https://bugs.webkit.org/show_bug.cgi?id=%d)" % self.bug
+        return skipped_test_str
+
 class TestRunner:
 
     TEST_DIRS = [ "unittests", "WebKit2APITests" ]
-    # FIXME: https://bugs.webkit.org/show_bug.cgi?id=74717
+
     SKIPPED = [
-        # https://bugs.webkit.org/show_bug.cgi?id=82329
-        "unittests/testdownload",
-        # https://bugs.webkit.org/show_bug.cgi?id=82328
-        "unittests/testwebview",
-        # https://bugs.webkit.org/show_bug.cgi?id=82330
-        "unittests/testwebresource"
+        SkippedTest("unittests/testdownload",
+                    "Test fails in GTK Linux 64-bit Release bot",
+                    82329,
+                    ["/webkit/download/not-found"]),
+        SkippedTest("unittests/testwebview",
+                    "Test times out in GTK Linux 64-bit Release bot",
+                    82328,
+                    ["/webkit/webview/icon-uri"]),
+        SkippedTest("unittests/testwebresource",
+                    "Test fails in GTK Linux 64-bit Release bot",
+                    82330,
+                    ["/webkit/webresource/sub_resource_loading"])
     ]
 
     def __init__(self, options, tests=[]):
@@ -165,7 +187,8 @@ class TestRunner:
         # If we cannot start the accessibility daemons, we can just skip the accessibility tests.
         if not self._start_accessibility_daemons():
             print "Could not start accessibility bus, so skipping TestWebKitAccessibility"
-            self._skipped_tests.append("TestWebKitAccessibility")
+            self._skipped_tests.append(SkippedTest("WebKit2APITests/TestWebKitAccessibility",
+                                                   "Could not start accessibility bus"))
         return True
 
     def _tear_down_testing_environment(self):
@@ -175,17 +198,31 @@ class TestRunner:
             self._spi_bus_launcher.terminate()
         self._xvfb.kill();
 
-    def _remove_skipped_tests(self):
-        tests_to_remove = []
-        for test in self._tests:
-            for skipped in self._skipped_tests:
-                if test.find(skipped) != -1:
-                    tests_to_remove.append(test)
-                    continue
+    def _find_skipped_test(self, test):
+        for skipped in self._skipped_tests:
+            if test.endswith(skipped.test):
+                return skipped
+        return None
 
-        for test in tests_to_remove:
-            self._tests.remove(test)
-            print "Skipping %s" % test
+    def _test_cases_to_skip(self, test):
+        skipped = self._find_skipped_test(test)
+        if skipped is not None:
+            return skipped.test_cases
+        return []
+
+    def _should_run_test(self, test):
+        skipped = self._find_skipped_test(test)
+        return skipped is None or skipped.test_cases
+
+    def _run_test(self, test):
+        tester_command = ['gtester']
+        if self._options.verbose:
+            tester_command.append('--verbose')
+        for test_case in self._test_cases_to_skip(test):
+            tester_command.extend(['-s', test_case])
+        tester_command.append(test)
+
+        return not self._create_process(tester_command, env=self._test_env).wait()
 
     def run_tests(self):
         if not self._tests:
@@ -198,17 +235,13 @@ class TestRunner:
 
         # Remove skipped tests now instead of when we find them, because
         # some tests might be skipped while setting up the test environment.
-        self._remove_skipped_tests()
+        self._tests = [test for test in self._tests if self._should_run_test(test)]
 
         failed_tests = []
         try:
             start_time = time.time()
             for test in self._tests:
-                tester_command = ['gtester', test]
-                if self._options.verbose:
-                    tester_command.insert(1, '--verbose')
-                process = self._create_process(tester_command, env=self._test_env)
-                if process.wait():
+                if not self._run_test(test):
                     failed_tests.append(test)
 
                 if time.time() - start_time >= TIMEOUT:
@@ -220,8 +253,12 @@ class TestRunner:
             self._tear_down_testing_environment()
 
         if failed_tests:
-            names = [os.path.basename(test) for test in failed_tests]
+            names = [test.lstrip(self._programs_path) for test in failed_tests]
             sys.stdout.write("Tests failed: %s\n" % ", ".join(names))
+            sys.stdout.flush()
+
+        if self._skipped_tests:
+            sys.stdout.write("Tests skipped:\n%s\n" % "\n".join([str(skipped) for skipped in self._skipped_tests]))
             sys.stdout.flush()
 
         return len(failed_tests)

@@ -1,3 +1,29 @@
+2012-03-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use gtester -s to skip individual test cases instead of unit tests as a whole
+        https://bugs.webkit.org/show_bug.cgi?id=82333
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner.SkippedTest): Add SkippedTest class to store more
+        information about skipped tests.
+        (TestRunner._setup_testing_environment): Use SkippedTest to add
+        TestWebKitAccessibility to the skipped list.
+        (TestRunner._find_skipped_test): Return the SkippedTest object for
+        a given test path.
+        (TestRunner._test_cases_to_skip): Returns the list of test cases
+        that should be skipped for a given test path.
+        (TestRunner._should_run_test): Helper funtion to decide whether
+        the given test path should be run or not. Tests in the skipped
+        list that don't have a list of failing test cases are not run at
+        all. Tests in the skipped list that contain a list of test cases
+        are run with gtester -s to skip the individual test cases.
+        (TestRunner._run_test): Helper funtion to run a given test.
+        (TestRunner.run_tests): Build the list of tests to run based on
+        _should_run_test() and use helper function _run_test() to run
+        every test.
+
 2012-03-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Couple of tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode
