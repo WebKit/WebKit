@@ -1981,9 +1981,7 @@ sub buildAutotoolsProject($@)
 
     if ($project eq 'WebKit' && !isCrossCompilation()) {
         my @docGenerationOptions = ($runWithJhbuild, "$gtkScriptsPath/generate-gtkdoc", "--skip-html");
-        if ($debug) {
-            push(@docGenerationOptions, "--debug");
-        }
+        push(@docGenerationOptions, productDir());
 
         if (system(@docGenerationOptions)) {
             die "\n gtkdoc did not build without warnings\n";

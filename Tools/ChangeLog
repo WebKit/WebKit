@@ -1,3 +1,18 @@
+2012-03-28  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] generate-gtk-doc doesn't cope with custom build directory
+        https://bugs.webkit.org/show_bug.cgi?id=82448
+
+        Reviewed by Martin Robinson.
+
+        Pass the product directory in generate-gtkdoc arguments from
+        build-webkit.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject):
+        * gtk/common.py:
+        (get_build_path):
+
 2012-03-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add --skipped command line option to Tools/Scripts/run-gtk-tests
