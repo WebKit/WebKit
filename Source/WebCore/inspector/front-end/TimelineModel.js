@@ -35,6 +35,8 @@
 WebInspector.TimelineModel = function()
 {
     this._records = [];
+    this._minimumRecordTime = -1;
+    this._maximumRecordTime = -1;
     this._collectionEnabled = false;
 
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._onRecordAdded, this);
@@ -83,6 +85,21 @@ WebInspector.TimelineModel.Events = {
     RecordsCleared: "RecordsCleared"
 }
 
+WebInspector.TimelineModel.startTimeInSeconds = function(record)
+{
+    return record.startTime / 1000;
+}
+
+WebInspector.TimelineModel.endTimeInSeconds = function(record)
+{
+    return (typeof record.endTime === "undefined" ? record.startTime : record.endTime) / 1000;
+}
+
+WebInspector.TimelineModel.durationInSeconds = function(record)
+{
+    return WebInspector.TimelineModel.endTimeInSeconds(record) - WebInspector.TimelineModel.startTimeInSeconds(record);
+}
+
 WebInspector.TimelineModel.prototype = {
     startRecord: function()
     {
@@ -115,6 +132,7 @@ WebInspector.TimelineModel.prototype = {
     _addRecord: function(record)
     {
         this._records.push(record);
+        this._updateBoundaries(record);
         this.dispatchEventToListeners(WebInspector.TimelineModel.Events.RecordAdded, record);
     },
 
@@ -174,7 +192,30 @@ WebInspector.TimelineModel.prototype = {
     reset: function()
     {
         this._records = [];
+        this._minimumRecordTime = -1;
+        this._maximumRecordTime = -1;
         this.dispatchEventToListeners(WebInspector.TimelineModel.Events.RecordsCleared);
+    },
+
+    minimumRecordTime: function()
+    {
+        return this._minimumRecordTime;
+    },
+
+    maximumRecordTime: function()
+    {
+        return this._maximumRecordTime;
+    },
+
+    _updateBoundaries: function(record)
+    {
+        var startTime = WebInspector.TimelineModel.startTimeInSeconds(record);
+        var endTime = WebInspector.TimelineModel.endTimeInSeconds(record);
+
+        if (this._minimumRecordTime === -1 || startTime < this._minimumRecordTime)
+            this._minimumRecordTime = startTime;
+        if (this._maximumRecordTime === -1 || endTime > this._maximumRecordTime)
+            this._maximumRecordTime = endTime;
     }
 }
 

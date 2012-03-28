@@ -37,10 +37,12 @@ WebInspector.TimelinePanel = function()
     WebInspector.Panel.call(this, "timeline");
     this.registerRequiredCSS("timelinePanel.css");
 
+    this._model = new WebInspector.TimelineModel();
     this._presentationModel = new WebInspector.TimelinePresentationModel();
 
-    this._overviewPane = new WebInspector.TimelineOverviewPane(this._presentationModel);
+    this._overviewPane = new WebInspector.TimelineOverviewPane(this._model);
     this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.WindowChanged, this._scheduleRefresh.bind(this, false));
+    this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._timelinesOverviewModeChanged, this);
 
     this.element.appendChild(this._overviewPane.element);
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
@@ -60,7 +62,6 @@ WebInspector.TimelinePanel = function()
     this._timelineMemorySplitter.addEventListener("mousedown", this._startSplitterDragging.bind(this), false);
     this._timelineMemorySplitter.addStyleClass("hidden");
     this._memoryStatistics = new WebInspector.MemoryStatistics(this, this.splitView.preferredSidebarWidth());
-    this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._timelinesOverviewModeChanged, this);
     WebInspector.settings.memoryCounterGraphsHeight = WebInspector.settings.createSetting("memoryCounterGraphsHeight", 150);
 
     var itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);
@@ -94,7 +95,7 @@ WebInspector.TimelinePanel = function()
     this._expandElements.id = "orphan-expand-elements";
     this._itemsGraphsElement.appendChild(this._expandElements);
 
-    this._calculator = new WebInspector.TimelineCalculator(this._presentationModel);
+    this._calculator = new WebInspector.TimelineCalculator(this._model);
     var shortRecordThresholdTitle = Number.secondsToString(WebInspector.TimelinePresentationModel.shortRecordThreshold);
     this._showShortRecordsTitleText = WebInspector.UIString("Show the records that are shorter than %s", shortRecordThresholdTitle);
     this._hideShortRecordsTitleText = WebInspector.UIString("Hide the records that are shorter than %s", shortRecordThresholdTitle);
@@ -111,11 +112,13 @@ WebInspector.TimelinePanel = function()
     // Disable short events filter by default.
     this.toggleFilterButton.toggled = true;
     this._showShortEvents = this.toggleFilterButton.toggled;
+    this._overviewPane.setShowShortEvents(this._showShortEvents);
+
     this._timeStampRecords = [];
     this._expandOffset = 15;
 
     this._createFileSelector();
-    this._model = new WebInspector.TimelineModel();
+
     this._model.addEventListener(WebInspector.TimelineModel.Events.RecordAdded, this._onTimelineEventRecorded, this);
     this._model.addEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this._onRecordsCleared, this);
 
@@ -220,7 +223,7 @@ WebInspector.TimelinePanel.prototype = {
 
         this.statusBarFilters = document.createElement("div");
         this.statusBarFilters.className = "status-bar-items";
-        var categories = this._presentationModel.categories;
+        var categories = WebInspector.TimelinePresentationModel.categories();
         for (var categoryName in categories) {
             var category = categories[categoryName];
             this.statusBarFilters.appendChild(this._createTimelineCategoryStatusBarCheckbox(category, this._onCategoryCheckboxClicked.bind(this, category)));
@@ -416,6 +419,7 @@ WebInspector.TimelinePanel.prototype = {
     {
         this.toggleFilterButton.toggled = !this.toggleFilterButton.toggled;
         this._showShortEvents = this.toggleFilterButton.toggled;
+        this._overviewPane.setShowShortEvents(this._showShortEvents);
         this.toggleFilterButton.element.title = this._showShortEvents ? this._hideShortRecordsTitleText : this._showShortRecordsTitleText;
         this._scheduleRefresh(true);
     },
@@ -499,7 +503,6 @@ WebInspector.TimelinePanel.prototype = {
         this._presentationModel.reset();
         this._timeStampRecords = [];
         this._boundariesAreValid = false;
-        this._overviewPane.reset();
         this._adjustScrollPosition(0);
         this._closeRecordDetails();
         this._allRecordsCount = 0;
@@ -556,8 +559,6 @@ WebInspector.TimelinePanel.prototype = {
             clearTimeout(this._refreshTimeout);
             delete this._refreshTimeout;
         }
-
-        this._overviewPane.update(this._showShortEvents);
 
         if (!this._boundariesAreValid)
             this._calculator.setWindow(this._overviewPane.windowStartTime(), this._overviewPane.windowEndTime());
@@ -751,11 +752,11 @@ WebInspector.TimelinePanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 /**
  * @constructor
- * @param {WebInspector.TimelinePresentationModel} presentationModel
+ * @param {WebInspector.TimelineModel} model
  */
-WebInspector.TimelineCalculator = function(presentationModel)
+WebInspector.TimelineCalculator = function(model)
 {
-    this._presentationModel = presentationModel;
+    this._model = model;
 }
 
 WebInspector.TimelineCalculator.prototype = {
@@ -793,7 +794,7 @@ WebInspector.TimelineCalculator.prototype = {
 
     formatTime: function(value)
     {
-        return Number.secondsToString(value + this.minimumBoundary - this._presentationModel.minimumRecordTime());
+        return Number.secondsToString(value + this.minimumBoundary - this._model.minimumRecordTime());
     }
 }
 
