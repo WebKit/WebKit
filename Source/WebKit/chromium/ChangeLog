@@ -1,3 +1,11 @@
+2012-03-27  Dirk Pranke  <dpranke@chromium.org>
+
+        Roll chromium DEPS to r129300.
+
+        Unreviewed, deps change.
+
+        * DEPS:
+
 2012-03-27  Bill Budge  <bbudge@chromium.org>
 
         AssociatedURLLoader does not support Cross Origin Redirects when using
