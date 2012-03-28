@@ -139,8 +139,14 @@ void SimpleFontData::platformInit()
             static const UChar32 xChar = 'x';
             const Glyph xGlyph = glyphPageZero->glyphDataForCharacter(xChar).glyph;
 
-            if (xGlyph)
+            if (xGlyph) {
+                // In widthForGlyph(), xGlyph will be compared with
+                // m_zeroWidthSpaceGlyph, which isn't initialized yet here.
+                // Initialize it with zero to make sure widthForGlyph() returns
+                // the right width.
+                m_zeroWidthSpaceGlyph = 0;
                 m_avgCharWidth = widthForGlyph(xGlyph);
+            }
         }
     }
 }
