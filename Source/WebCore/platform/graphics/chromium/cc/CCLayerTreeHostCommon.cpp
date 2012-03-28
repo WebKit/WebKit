@@ -386,6 +386,10 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         // surface and is therefore expressed in the parent's coordinate system.
         renderSurface->setClipRect(layer->parent() ? layer->parent()->clipRect() : layer->clipRect());
 
+        // The layer's clipRect can be reset here. The renderSurface will correctly clip the subtree.
+        layer->setUsesLayerClipping(false);
+        layer->setClipRect(IntRect());
+
         if (layer->maskLayer()) {
             renderSurface->setMaskLayer(layer->maskLayer());
             layer->maskLayer()->setTargetRenderSurface(renderSurface);
@@ -422,13 +426,18 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
             // Layers without their own renderSurface will render into the nearest ancestor surface.
             layer->setTargetRenderSurface(layer->parent()->targetRenderSurface());
         }
+    }
 
-        if (layer->masksToBounds()) {
-            IntRect clipRect = transformedLayerRect;
+    if (layer->masksToBounds()) {
+        IntRect clipRect = transformedLayerRect;
+
+        // If the layer already inherited a clipRect, we need to intersect with it before
+        // overriding the layer's clipRect and usesLayerClipping.
+        if (layer->usesLayerClipping())
             clipRect.intersect(layer->clipRect());
-            layer->setClipRect(clipRect);
-            layer->setUsesLayerClipping(true);
-        }
+
+        layer->setClipRect(clipRect);
+        layer->setUsesLayerClipping(true);
     }
 
     // Note that at this point, layer->drawTransform() is not necessarily the same as local variable drawTransform.

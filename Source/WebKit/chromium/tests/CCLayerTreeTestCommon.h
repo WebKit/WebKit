@@ -27,12 +27,18 @@
 
 namespace WebKitTests {
 
-// This is a macro instead of function so that we get useful line numbers where a test failed.
+// These are macros instead of functions so that we get useful line numbers where a test failed.
 #define EXPECT_FLOAT_RECT_EQ(expected, actual)                          \
     EXPECT_FLOAT_EQ((expected).location().x(), (actual).location().x()); \
     EXPECT_FLOAT_EQ((expected).location().y(), (actual).location().y()); \
     EXPECT_FLOAT_EQ((expected).size().width(), (actual).size().width()); \
     EXPECT_FLOAT_EQ((expected).size().height(), (actual).size().height())
+
+#define EXPECT_INT_RECT_EQ(expected, actual)                            \
+    EXPECT_EQ((expected).location().x(), (actual).location().x());      \
+    EXPECT_EQ((expected).location().y(), (actual).location().y());      \
+    EXPECT_EQ((expected).size().width(), (actual).size().width());      \
+    EXPECT_EQ((expected).size().height(), (actual).size().height())
 
 // This is a macro instead of a function so that we get useful line numbers where a test failed.
 // Even though TransformationMatrix values are double precision, there are many other floating-point values used that affect

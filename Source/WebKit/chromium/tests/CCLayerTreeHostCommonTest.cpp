@@ -625,6 +625,55 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
     grandChild->setOpacity(0.5);
     greatGrandChild->setOpacity(0.4);
 
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    // FIXME: when we fix this "root-layer special case" behavior in CCLayerTreeHost, we will have to fix it here, too.
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent.get());
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    ASSERT_EQ(2U, renderSurfaceLayerList.size());
+    EXPECT_EQ(parent->id(), renderSurfaceLayerList[0]->id());
+    EXPECT_EQ(child->id(), renderSurfaceLayerList[1]->id());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfacesCrashRepro)
+{
+    // This is a similar situation as verifyClipRectCullsRenderSurfaces, except that
+    // it reproduces a crash bug http://code.google.com/p/chromium/issues/detail?id=106734.
+
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild = LayerChromium::create();
+    RefPtr<LayerChromium> greatGrandChild = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(child);
+    child->addChild(grandChild);
+    grandChild->addChild(greatGrandChild);
+
+    // leafNode1 ensures that parent and child are kept on the renderSurfaceLayerList,
+    // even though grandChild and greatGrandChild should be clipped.
+    child->addChild(leafNode1);
+    greatGrandChild->addChild(leafNode2);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(500, 500), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(20, 20), false);
+    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(45, 45), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(greatGrandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(leafNode1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(500, 500), false);
+    setLayerPropertiesForTesting(leafNode2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(20, 20), false);
+
+    child->setMasksToBounds(true);
+    child->setOpacity(0.4);
+    grandChild->setOpacity(0.5);
+    greatGrandChild->setOpacity(0.4);
+
     // Contaminate the grandChild and greatGrandChild's clipRect to reproduce the crash
     // bug found in http://code.google.com/p/chromium/issues/detail?id=106734. In this
     // bug, the clipRect was not re-computed for layers that create RenderSurfaces, and
@@ -632,9 +681,6 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
     // renderSurface remains on the renderSurfaceLayerList, which violates the assumption
     // that an empty renderSurface will always be the last item on the list, which
     // ultimately caused the crash.
-    //
-    // FIXME: it is also useful to test with this commented out. Eventually we should
-    // create several test cases that test clipRect/drawableContentRect computation.
     child->setClipRect(IntRect(IntPoint::zero(), IntSize(20, 20)));
     greatGrandChild->setClipRect(IntRect(IntPoint::zero(), IntSize(1234, 1234)));
 
@@ -651,6 +697,148 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
     ASSERT_EQ(2U, renderSurfaceLayerList.size());
     EXPECT_EQ(parent->id(), renderSurfaceLayerList[0]->id());
     EXPECT_EQ(child->id(), renderSurfaceLayerList[1]->id());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyClipRectIsPropagatedCorrectlyToLayers)
+{
+    // Verify that layers get the appropriate clipRects when their parent masksToBounds is true.
+    //
+    //   grandChild1 - completely inside the region; clipRect should be the mask region (larger than this layer's bounds).
+    //   grandChild2 - partially clipped but NOT masksToBounds; the clipRect should be the parent's clipRect regardless of the layer's bounds.
+    //   grandChild3 - partially clipped and masksToBounds; the clipRect will be the intersection of layerBounds and the mask region.
+    //   grandChild4 - outside parent's clipRect, and masksToBounds; the clipRect should be empty.
+    //
+
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild1 = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild2 = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild3 = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild4 = LayerChromium::create();
+
+    parent->createRenderSurface();
+    parent->addChild(child);
+    child->addChild(grandChild1);
+    child->addChild(grandChild2);
+    child->addChild(grandChild3);
+    child->addChild(grandChild4);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(500, 500), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(20, 20), false);
+    setLayerPropertiesForTesting(grandChild1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(5, 5), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChild2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(15, 15), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChild3.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(15, 15), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChild4.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(45, 45), IntSize(10, 10), false);
+
+    child->setMasksToBounds(true);
+    grandChild3->setMasksToBounds(true);
+    grandChild4->setMasksToBounds(true);
+
+    // Force everyone to be a render surface.
+    child->setOpacity(0.4);
+    grandChild1->setOpacity(0.5);
+    grandChild2->setOpacity(0.5);
+    grandChild3->setOpacity(0.5);
+    grandChild4->setOpacity(0.5);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    // FIXME: when we fix this "root-layer special case" behavior in CCLayerTreeHost, we will have to fix it here, too.
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent.get());
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    EXPECT_INT_RECT_EQ(IntRect(IntPoint::zero(), IntSize(20, 20)), grandChild1->clipRect());
+    EXPECT_INT_RECT_EQ(IntRect(IntPoint::zero(), IntSize(20, 20)), grandChild2->clipRect());
+    EXPECT_INT_RECT_EQ(IntRect(IntPoint(15, 15), IntSize(5, 5)), grandChild3->clipRect());
+    EXPECT_TRUE(grandChild4->clipRect().isEmpty());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyClipRectIsPropagatedCorrectlyToSurfaces)
+{
+    // Verify that renderSurfaces (and their layers) get the appropriate clipRects when their parent masksToBounds is true.
+    //
+    // Layers that own renderSurfaces (at least for now) do not inherit any clipRect;
+    // instead the surface will enforce the clip for the entire subtree. They may still
+    // have a clipRect of their own layer bounds, however, if masksToBounds was true.
+    //
+
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild1 = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild2 = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild3 = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild4 = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode3 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode4 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+
+    parent->createRenderSurface();
+    parent->addChild(child);
+    child->addChild(grandChild1);
+    child->addChild(grandChild2);
+    child->addChild(grandChild3);
+    child->addChild(grandChild4);
+
+    // the leaf nodes ensure that these grandChildren become renderSurfaces for this test.
+    grandChild1->addChild(leafNode1);
+    grandChild2->addChild(leafNode2);
+    grandChild3->addChild(leafNode3);
+    grandChild4->addChild(leafNode4);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(500, 500), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(20, 20), false);
+    setLayerPropertiesForTesting(grandChild1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(5, 5), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChild2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(15, 15), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChild3.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(15, 15), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChild4.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(45, 45), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(leafNode1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(leafNode2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(leafNode3.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(leafNode4.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+
+    child->setMasksToBounds(true);
+    grandChild3->setMasksToBounds(true);
+    grandChild4->setMasksToBounds(true);
+
+    // Force everyone to be a render surface.
+    child->setOpacity(0.4);
+    grandChild1->setOpacity(0.5);
+    grandChild2->setOpacity(0.5);
+    grandChild3->setOpacity(0.5);
+    grandChild4->setOpacity(0.5);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    // FIXME: when we fix this "root-layer special case" behavior in CCLayerTreeHost, we will have to fix it here, too.
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent.get());
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    ASSERT_TRUE(grandChild1->renderSurface());
+    ASSERT_TRUE(grandChild2->renderSurface());
+    ASSERT_TRUE(grandChild3->renderSurface());
+    EXPECT_FALSE(grandChild4->renderSurface()); // Because grandChild4 is entirely clipped, it is expected to not have a renderSurface.
+
+    // Surfaces are clipped by their parent, but un-affected by the owning layer's masksToBounds.
+    EXPECT_INT_RECT_EQ(IntRect(IntPoint(0, 0), IntSize(20, 20)), grandChild1->renderSurface()->clipRect());
+    EXPECT_INT_RECT_EQ(IntRect(IntPoint(0, 0), IntSize(20, 20)), grandChild2->renderSurface()->clipRect());
+    EXPECT_INT_RECT_EQ(IntRect(IntPoint(0, 0), IntSize(20, 20)), grandChild3->renderSurface()->clipRect());
+
+    // Layers do not inherit the clipRect from their owned surfaces, but if masksToBounds is true, they do create their own clipRect.
+    EXPECT_FALSE(grandChild1->usesLayerClipping());
+    EXPECT_FALSE(grandChild2->usesLayerClipping());
+    EXPECT_TRUE(grandChild3->usesLayerClipping());
+    EXPECT_TRUE(grandChild4->usesLayerClipping());
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)

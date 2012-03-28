@@ -43,6 +43,7 @@ public:
     // The transform that layerRect() should be transformed with.
     const TransformationMatrix& layerTransform() const { return m_layerTransform; }
     const IntRect& layerRect() const { return m_layerRect; }
+    // Usage: if clipRect is empty, this clipRect should not be used.
     const IntRect& clipRect() const { return m_clipRect; }
 
     float opacity() const { return m_opacity; }

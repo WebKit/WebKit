@@ -340,8 +340,7 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::layerScissorRectIn
 {
     const RenderSurfaceType* targetSurface = m_stack.last().surface;
     FloatRect totalScissor = targetSurface->contentRect();
-    // FIXME: layer->clipRect() and layer->usesLayerClipping() is changing: https://bugs.webkit.org/show_bug.cgi?id=80622
-    if (!layer->clipRect().isEmpty())
+    if (layer->usesLayerClipping())
         totalScissor.intersect(layer->clipRect());
     return enclosingIntRect(totalScissor);
 }

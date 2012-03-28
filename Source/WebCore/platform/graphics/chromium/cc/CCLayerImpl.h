@@ -158,6 +158,7 @@ public:
     bool drawOpacityIsAnimating() const { return m_drawOpacityIsAnimating; }
     void setDrawOpacityIsAnimating(bool drawOpacityIsAnimating) { m_drawOpacityIsAnimating = drawOpacityIsAnimating; }
 
+    // Usage: if this->usesLayerClipping() is false, then this clipRect should not be used.
     const IntRect& clipRect() const { return m_clipRect; }
     void setClipRect(const IntRect& rect) { m_clipRect = rect; }
     CCRenderSurface* targetRenderSurface() const { return m_targetRenderSurface; }
