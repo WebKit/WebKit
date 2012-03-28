@@ -104,6 +104,7 @@ public:
 
     void TearDown()
     {
+        webkit_support::UnregisterAllMockedURLs();
         m_webView->close();
     }
 
@@ -431,66 +432,23 @@ TEST_F(AssociatedURLLoaderTest, RedirectSuccess)
     EXPECT_TRUE(m_didFinishLoading);
 }
 
-// Test that a cross origin redirect response without CORS headers fails.
-TEST_F(AssociatedURLLoaderTest, RedirectCrossOriginWithAccessControlFailure)
-{
-    GURL url = GURL("http://www.test.com/RedirectCrossOriginWithAccessControlFailure.html");
-    char redirect[] = "http://www.other.com/RedirectCrossOriginWithAccessControlFailure2.html";  // Cross-origin
-    GURL redirectURL = GURL(redirect);
-
-    WebURLRequest request;
-    request.initialize();
-    request.setURL(url);
-
-    // Create a redirect response without CORS headers.
-    m_expectedRedirectResponse = WebURLResponse();
-    m_expectedRedirectResponse.initialize();
-    m_expectedRedirectResponse.setMIMEType("text/html");
-    m_expectedRedirectResponse.setHTTPStatusCode(301);
-    m_expectedRedirectResponse.setHTTPHeaderField("Location", redirect);
-    webkit_support::RegisterMockedURL(url, m_expectedRedirectResponse, m_frameFilePath);
-
-    m_expectedNewRequest = WebURLRequest();
-    m_expectedNewRequest.initialize();
-    m_expectedNewRequest.setURL(redirectURL);
-
-    m_expectedResponse = WebURLResponse();
-    m_expectedResponse.initialize();
-    m_expectedResponse.setMIMEType("text/html");
-    m_expectedResponse.addHTTPHeaderField("access-control-allow-origin", "*");
-    webkit_support::RegisterMockedURL(redirectURL, m_expectedResponse, m_frameFilePath);
-
-    WebURLLoaderOptions options;
-    options.crossOriginRequestPolicy = WebURLLoaderOptions::CrossOriginRequestPolicyUseAccessControl;
-    m_expectedLoader = createAssociatedURLLoader(options);
-    EXPECT_TRUE(m_expectedLoader);
-    m_expectedLoader->loadAsynchronously(request, this);
-    serveRequests();
-    // We should not receive a notification for the redirect or any response.
-    EXPECT_FALSE(m_willSendRequest);
-    EXPECT_FALSE(m_didReceiveResponse);
-    EXPECT_FALSE(m_didReceiveData);
-    EXPECT_FALSE(m_didFail);
-}
-
-// Test that a cross origin redirect response with CORS headers that allow the requesting origin succeeds.
-TEST_F(AssociatedURLLoaderTest, RedirectCrossOriginWithAccessControlSuccess)
+// Test a successful redirect and cross-origin load using CORS.
+// FIXME: Enable this when DocumentThreadableLoader supports cross-origin redirects.
+TEST_F(AssociatedURLLoaderTest, DISABLED_RedirectCrossOriginWithAccessControlSuccess)
 {
     GURL url = GURL("http://www.test.com/RedirectCrossOriginWithAccessControlSuccess.html");
-    char redirect[] = "http://www.other.com/RedirectCrossOriginWithAccessControlSuccess2.html";  // Cross-origin
+    char redirect[] = "http://www.other.com/RedirectCrossOriginWithAccessControlSuccess.html";  // Cross-origin
     GURL redirectURL = GURL(redirect);
 
     WebURLRequest request;
     request.initialize();
     request.setURL(url);
 
-    // Create a redirect response that allows the redirect to pass the access control checks.
     m_expectedRedirectResponse = WebURLResponse();
     m_expectedRedirectResponse.initialize();
     m_expectedRedirectResponse.setMIMEType("text/html");
     m_expectedRedirectResponse.setHTTPStatusCode(301);
     m_expectedRedirectResponse.setHTTPHeaderField("Location", redirect);
-    m_expectedRedirectResponse.addHTTPHeaderField("access-control-allow-origin", "*");
     webkit_support::RegisterMockedURL(url, m_expectedRedirectResponse, m_frameFilePath);
 
     m_expectedNewRequest = WebURLRequest();
@@ -509,8 +467,7 @@ TEST_F(AssociatedURLLoaderTest, RedirectCrossOriginWithAccessControlSuccess)
     EXPECT_TRUE(m_expectedLoader);
     m_expectedLoader->loadAsynchronously(request, this);
     serveRequests();
-    // We should not receive a notification for the redirect.
-    EXPECT_FALSE(m_willSendRequest);
+    EXPECT_TRUE(m_willSendRequest);
     EXPECT_TRUE(m_didReceiveResponse);
     EXPECT_TRUE(m_didReceiveData);
     EXPECT_TRUE(m_didFinishLoading);

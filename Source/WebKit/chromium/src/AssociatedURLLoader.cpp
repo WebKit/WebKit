@@ -140,7 +140,6 @@ public:
     virtual void didReceiveCachedMetadata(const char*, int /*dataLength*/);
     virtual void didFinishLoading(unsigned long /*identifier*/, double /*finishTime*/);
     virtual void didFail(const ResourceError&);
-    virtual void didFailRedirectCheck();
 
     virtual bool isDocumentThreadableLoaderClient() { return true; }
 
@@ -262,11 +261,6 @@ void AssociatedURLLoader::ClientAdapter::didFail(const ResourceError& error)
     m_error = WebURLError(error);
     if (m_enableErrorNotifications)
         notifyError(&m_errorTimer);
-}
-
-void AssociatedURLLoader::ClientAdapter::didFailRedirectCheck()
-{
-    m_loader->cancel();
 }
 
 void AssociatedURLLoader::ClientAdapter::setDelayedError(const ResourceError& error)
