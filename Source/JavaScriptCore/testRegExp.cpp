@@ -215,7 +215,7 @@ static bool testOneRegExp(JSGlobalData& globalData, RegExp* regexp, RegExpTest* 
     bool result = true;
     Vector<int, 32> outVector;
     outVector.resize(regExpTest->expectVector.size());
-    int matchResult = regexp->match(globalData, regExpTest->subject, regExpTest->offset, &outVector);
+    int matchResult = regexp->match(globalData, regExpTest->subject, regExpTest->offset, outVector);
 
     if (matchResult != regExpTest->result) {
         result = false;

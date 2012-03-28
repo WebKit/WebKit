@@ -58,7 +58,7 @@ void RegExpMatchesArray::reifyAllProperties(ExecState* exec)
 
     if (unsigned numSubpatterns = m_regExp->numSubpatterns()) {
         Vector<int, 32> subpatternResults;
-        int position = m_regExp->match(exec->globalData(), m_input->value(exec), m_result.start, &subpatternResults);
+        int position = m_regExp->match(exec->globalData(), m_input->value(exec), m_result.start, subpatternResults);
         ASSERT_UNUSED(position, position >= 0 && static_cast<size_t>(position) == m_result.start);
         ASSERT(m_result.start == static_cast<size_t>(subpatternResults[0]));
         ASSERT(m_result.end == static_cast<size_t>(subpatternResults[1]));

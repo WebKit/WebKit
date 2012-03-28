@@ -1,3 +1,89 @@
+2012-03-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Yarr: if we're not using the output array, don't populate it!
+        https://bugs.webkit.org/show_bug.cgi?id=82519
+
+        Reviewed by Sam Weinig.
+
+        Add a new variant of the match method to RegExp that returns a MatchResult,
+        and modify YarrJIT to be able to compile code that doesn't use an output vector.
+
+        This is a 3% progression on v8-regexp.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            - Moved MatchResult into its own header.
+        * assembler/AbstractMacroAssembler.h:
+            - Added missing include.
+        * runtime/MatchResult.h: Added.
+        (MatchResult::MatchResult):
+        (MatchResult):
+        (MatchResult::failed):
+        (MatchResult::operator bool):
+        (MatchResult::empty):
+            - Moved MatchResult into its own header.
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileIfNecessary):
+        (JSC::RegExp::match):
+            - Changed due to execute & representation changes.
+        (JSC::RegExp::compileMatchOnly):
+        (JSC::RegExp::compileIfNecessaryMatchOnly):
+            - Added helper to compile MatchOnly code.
+        (JSC::RegExp::invalidateCode):
+        (JSC::RegExp::matchCompareWithInterpreter):
+        (JSC::RegExp::printTraceData):
+            - Changed due representation changes.
+        * runtime/RegExp.h:
+        (RegExp):
+        (JSC::RegExp::hasCode):
+            - Made YarrCodeBlock a member.
+        * runtime/RegExpConstructor.h:
+        (RegExpConstructor):
+        (JSC::RegExpConstructor::performMatch):
+            - Added no-ovector form.
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::RegExpMatchesArray::reifyAllProperties):
+            - Match now takes a reference to ovector, not a pointer.
+        * runtime/RegExpObject.h:
+        (JSC):
+            - Moved MatchResult into its own header.
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncSplit):
+            - Match now takes a reference to ovector, not a pointer.
+        * testRegExp.cpp:
+        (testOneRegExp):
+            - Match now takes a reference to ovector, not a pointer.
+        * yarr/YarrJIT.cpp:
+        (Yarr):
+        (YarrGenerator):
+        (JSC::Yarr::YarrGenerator::initCallFrame):
+        (JSC::Yarr::YarrGenerator::removeCallFrame):
+        (JSC::Yarr::YarrGenerator::setSubpatternStart):
+        (JSC::Yarr::YarrGenerator::setSubpatternEnd):
+        (JSC::Yarr::YarrGenerator::clearSubpatternStart):
+        (JSC::Yarr::YarrGenerator::setMatchStart):
+        (JSC::Yarr::YarrGenerator::getMatchStart):
+            - Added helper functions to intermediate access to output.
+        (JSC::Yarr::YarrGenerator::generateDotStarEnclosure):
+        (JSC::Yarr::YarrGenerator::generate):
+        (JSC::Yarr::YarrGenerator::backtrack):
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::compile):
+            - Changed to use the new helpers, only generate subpatterns if IncludeSubpatterns.
+        (JSC::Yarr::jitCompile):
+            - Needs to template of MatchOnly or IncludeSubpatterns.
+        * yarr/YarrJIT.h:
+        (YarrCodeBlock):
+        (JSC::Yarr::YarrCodeBlock::set8BitCode):
+        (JSC::Yarr::YarrCodeBlock::set16BitCode):
+        (JSC::Yarr::YarrCodeBlock::has8BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::has16BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::set8BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::set16BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::execute):
+        (JSC::Yarr::YarrCodeBlock::clear):
+            - Added a second set of CodeRefs, so that we can compile RexExps with/without subpattern matching.
+
 2012-03-27  Filip Pizlo  <fpizlo@apple.com>
 
         DFG OSR exit should not generate an exit for variables of inlinees if the

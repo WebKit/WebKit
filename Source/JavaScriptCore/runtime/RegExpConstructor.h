@@ -55,7 +55,8 @@ namespace JSC {
 
         static const ClassInfo s_info;
 
-        MatchResult performMatch(JSGlobalData&, RegExp*, JSString*, const UString&, int startOffset, int** ovector = 0);
+        MatchResult performMatch(JSGlobalData&, RegExp*, JSString*, const UString&, int startOffset, int** ovector);
+        MatchResult performMatch(JSGlobalData&, RegExp*, JSString*, const UString&, int startOffset);
 
         void setMultiline(bool multiline) { m_multiline = multiline; }
         bool multiline() const { return m_multiline; }
@@ -102,7 +103,7 @@ namespace JSC {
     */
     ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(JSGlobalData& globalData, RegExp* regExp, JSString* string, const UString& input, int startOffset, int** ovector)
     {
-        int position = regExp->match(globalData, input, startOffset, &m_ovector);
+        int position = regExp->match(globalData, input, startOffset, m_ovector);
 
         if (ovector)
             *ovector = m_ovector.data();
@@ -118,6 +119,13 @@ namespace JSC {
         m_cachedResult.record(globalData, this, regExp, string, MatchResult(position, end));
 
         return MatchResult(position, end);
+    }
+    ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(JSGlobalData& globalData, RegExp* regExp, JSString* string, const UString& input, int startOffset)
+    {
+        MatchResult result = regExp->match(globalData, input, startOffset);
+        if (result)
+            m_cachedResult.record(globalData, this, regExp, string, result);
+        return result;
     }
 
 } // namespace JSC

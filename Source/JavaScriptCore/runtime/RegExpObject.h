@@ -26,28 +26,6 @@
 
 namespace JSC {
     
-    struct MatchResult {
-        ALWAYS_INLINE MatchResult(size_t start, size_t end)
-            : start(start)
-            , end(end)
-        {
-        }
-        ALWAYS_INLINE static MatchResult failed()
-        {
-            return MatchResult(WTF::notFound, 0);
-        }
-        ALWAYS_INLINE operator bool()
-        {
-            return start != WTF::notFound;
-        }
-        ALWAYS_INLINE bool empty()
-        {
-            return start == end;
-        }
-        size_t start;
-        size_t end;
-    };
-    
     class RegExpObject : public JSNonFinalObject {
     public:
         typedef JSNonFinalObject Base;

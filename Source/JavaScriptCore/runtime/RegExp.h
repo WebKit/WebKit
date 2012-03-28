@@ -22,13 +22,18 @@
 #ifndef RegExp_h
 #define RegExp_h
 
-#include "UString.h"
 #include "ExecutableAllocator.h"
-#include "Structure.h"
+#include "MatchResult.h"
 #include "RegExpKey.h"
+#include "Structure.h"
+#include "UString.h"
 #include "yarr/Yarr.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+
+#if ENABLE(YARR_JIT)
+#include "yarr/YarrJIT.h"
+#endif
 
 namespace JSC {
 
@@ -53,12 +58,13 @@ namespace JSC {
         bool isValid() const { return !m_constructionError && m_flags != InvalidFlags; }
         const char* errorMessage() const { return m_constructionError; }
 
-        JS_EXPORT_PRIVATE int match(JSGlobalData&, const UString&, unsigned startOffset, Vector<int, 32>* ovector = 0);
+        JS_EXPORT_PRIVATE int match(JSGlobalData&, const UString&, unsigned startOffset, Vector<int, 32>& ovector);
+        MatchResult match(JSGlobalData&, const UString&, unsigned startOffset);
         unsigned numSubpatterns() const { return m_numSubpatterns; }
 
         bool hasCode()
         {
-            return m_representation;
+            return m_state != NotCompiled;
         }
 
         void invalidateCode();
@@ -95,6 +101,9 @@ namespace JSC {
         void compile(JSGlobalData*, Yarr::YarrCharSize);
         void compileIfNecessary(JSGlobalData&, Yarr::YarrCharSize);
 
+        void compileMatchOnly(JSGlobalData*, Yarr::YarrCharSize);
+        void compileIfNecessaryMatchOnly(JSGlobalData&, Yarr::YarrCharSize);
+
 #if ENABLE(YARR_JIT_DEBUG)
         void matchCompareWithInterpreter(const UString&, int startOffset, int* offsetVector, int jitResult);
 #endif
@@ -108,7 +117,10 @@ namespace JSC {
         unsigned m_rtMatchFoundCount;
 #endif
 
-        OwnPtr<RegExpRepresentation> m_representation;
+#if ENABLE(YARR_JIT)
+        Yarr::YarrCodeBlock m_regExpJITCode;
+#endif
+        OwnPtr<Yarr::BytecodePattern> m_regExpBytecode;
     };
 
 } // namespace JSC

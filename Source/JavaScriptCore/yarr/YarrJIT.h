@@ -29,7 +29,8 @@
 #if ENABLE(YARR_JIT)
 
 #include "JSGlobalData.h"
-#include "MacroAssembler.h"
+#include "MacroAssemblerCodeRef.h"
+#include "MatchResult.h"
 #include "UString.h"
 #include "Yarr.h"
 #include "YarrPattern.h"
@@ -48,8 +49,17 @@ class ExecutablePool;
 namespace Yarr {
 
 class YarrCodeBlock {
-    typedef int (*YarrJITCode8)(const LChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
-    typedef int (*YarrJITCode16)(const UChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
+#if CPU(X86_64)
+    typedef MatchResult (*YarrJITCode8)(const LChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
+    typedef MatchResult (*YarrJITCode16)(const UChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
+    typedef MatchResult (*YarrJITCodeMatchOnly8)(const LChar* input, unsigned start, unsigned length) YARR_CALL;
+    typedef MatchResult (*YarrJITCodeMatchOnly16)(const UChar* input, unsigned start, unsigned length) YARR_CALL;
+#else
+    typedef EncodedMatchResult (*YarrJITCode8)(const LChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
+    typedef EncodedMatchResult (*YarrJITCode16)(const UChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
+    typedef EncodedMatchResult (*YarrJITCodeMatchOnly8)(const LChar* input, unsigned start, unsigned length) YARR_CALL;
+    typedef EncodedMatchResult (*YarrJITCodeMatchOnly16)(const UChar* input, unsigned start, unsigned length) YARR_CALL;
+#endif
 
 public:
     YarrCodeBlock()
@@ -63,43 +73,67 @@ public:
 
     void setFallBack(bool fallback) { m_needFallBack = fallback; }
     bool isFallBack() { return m_needFallBack; }
+
     bool has8BitCode() { return m_ref8.size(); }
     bool has16BitCode() { return m_ref16.size(); }
-    void set8BitCode(MacroAssembler::CodeRef ref) { m_ref8 = ref; }
-    void set16BitCode(MacroAssembler::CodeRef ref) { m_ref16 = ref; }
+    void set8BitCode(MacroAssemblerCodeRef ref) { m_ref8 = ref; }
+    void set16BitCode(MacroAssemblerCodeRef ref) { m_ref16 = ref; }
 
-    int execute(const LChar* input, unsigned start, unsigned length, int* output)
+    bool has8BitCodeMatchOnly() { return m_matchOnly8.size(); }
+    bool has16BitCodeMatchOnly() { return m_matchOnly16.size(); }
+    void set8BitCodeMatchOnly(MacroAssemblerCodeRef matchOnly) { m_matchOnly8 = matchOnly; }
+    void set16BitCodeMatchOnly(MacroAssemblerCodeRef matchOnly) { m_matchOnly16 = matchOnly; }
+
+    MatchResult execute(const LChar* input, unsigned start, unsigned length, int* output)
     {
         ASSERT(has8BitCode());
-        return reinterpret_cast<YarrJITCode8>(m_ref8.code().executableAddress())(input, start, length, output);
+        return MatchResult(reinterpret_cast<YarrJITCode8>(m_ref8.code().executableAddress())(input, start, length, output));
     }
 
-    int execute(const UChar* input, unsigned start, unsigned length, int* output)
+    MatchResult execute(const UChar* input, unsigned start, unsigned length, int* output)
     {
         ASSERT(has16BitCode());
-        return reinterpret_cast<YarrJITCode16>(m_ref16.code().executableAddress())(input, start, length, output);
+        return MatchResult(reinterpret_cast<YarrJITCode16>(m_ref16.code().executableAddress())(input, start, length, output));
     }
+
+    MatchResult execute(const LChar* input, unsigned start, unsigned length)
+    {
+        ASSERT(has8BitCodeMatchOnly());
+        return MatchResult(reinterpret_cast<YarrJITCodeMatchOnly8>(m_matchOnly8.code().executableAddress())(input, start, length));
+    }
+
+    MatchResult execute(const UChar* input, unsigned start, unsigned length)
+    {
+        ASSERT(has16BitCodeMatchOnly());
+        return MatchResult(reinterpret_cast<YarrJITCodeMatchOnly16>(m_matchOnly16.code().executableAddress())(input, start, length));
+    }
+
 #if ENABLE(REGEXP_TRACING)
     void *getAddr() { return m_ref.code().executableAddress(); }
 #endif
 
+    void clear()
+    {
+        m_ref8 = MacroAssemblerCodeRef();
+        m_ref16 = MacroAssemblerCodeRef();
+        m_matchOnly8 = MacroAssemblerCodeRef();
+        m_matchOnly16 = MacroAssemblerCodeRef();
+        m_needFallBack = false;
+    }
+
 private:
-    MacroAssembler::CodeRef m_ref8;
-    MacroAssembler::CodeRef m_ref16;
+    MacroAssemblerCodeRef m_ref8;
+    MacroAssemblerCodeRef m_ref16;
+    MacroAssemblerCodeRef m_matchOnly8;
+    MacroAssemblerCodeRef m_matchOnly16;
     bool m_needFallBack;
 };
 
-void jitCompile(YarrPattern&, YarrCharSize, JSGlobalData*, YarrCodeBlock& jitObject);
-
-inline int execute(YarrCodeBlock& jitObject, const LChar* input, unsigned start, unsigned length, int* output)
-{
-    return jitObject.execute(input, start, length, output);
-}
-
-inline int execute(YarrCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output)
-{
-    return jitObject.execute(input, start, length, output);
-}
+enum YarrJITCompileMode {
+    MatchOnly,
+    IncludeSubpatterns
+};
+void jitCompile(YarrPattern&, YarrCharSize, JSGlobalData*, YarrCodeBlock& jitObject, YarrJITCompileMode = IncludeSubpatterns);
 
 } } // namespace JSC::Yarr
 
