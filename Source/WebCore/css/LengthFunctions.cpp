@@ -80,9 +80,13 @@ int valueForLength(Length length, int maximumValue, RenderView* renderView, bool
         return minimumValueForLength(length, maximumValue, renderView, roundPercentages);
     case Auto:
         return maximumValue;
+    // multiple assertions are used below to provide more useful debug output.
     case Relative:
+        ASSERT_NOT_REACHED();
     case Intrinsic:
+        ASSERT_NOT_REACHED();
     case MinIntrinsic:
+        ASSERT_NOT_REACHED();
     case Undefined:
         ASSERT_NOT_REACHED();
         return 0;

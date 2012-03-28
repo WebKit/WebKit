@@ -1845,6 +1845,8 @@ LayoutUnit RenderBox::computeLogicalWidthInRegionUsing(LogicalWidthType widthTyp
     else
         logicalWidth = styleToUse->logicalMaxWidth();
 
+    ASSERT(!logicalWidth.isUndefined());
+
     if (logicalWidth.isIntrinsicOrAuto()) {
         RenderView* renderView = view();
         LayoutUnit marginStart = minimumValueForLength(styleToUse->marginStart(), availableLogicalWidth, renderView);
