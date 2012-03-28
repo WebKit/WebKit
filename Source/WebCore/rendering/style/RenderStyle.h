@@ -465,7 +465,7 @@ public:
     }
 
 #if ENABLE(CSS_FILTERS)
-    void getFilterOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const
+    void getFilterOutsets(int& top, int& right, int& bottom, int& left) const
     {
         if (hasFilter())
             filter().getOutsets(top, right, bottom, left);

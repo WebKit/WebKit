@@ -97,7 +97,7 @@ bool FilterOperations::hasOutsets() const
     return false;
 }
 
-void FilterOperations::getOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const
+void FilterOperations::getOutsets(int& top, int& right, int& bottom, int& left) const
 {
     top = 0;
     right = 0;

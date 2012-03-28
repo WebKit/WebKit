@@ -1114,10 +1114,10 @@ void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
 
 #if ENABLE(CSS_FILTERS)
     if (style()->hasFilterOutsets()) {
-        LayoutUnit topOutset;
-        LayoutUnit rightOutset;
-        LayoutUnit bottomOutset;
-        LayoutUnit leftOutset;
+        int topOutset;
+        int rightOutset;
+        int bottomOutset;
+        int leftOutset;
         style()->filter().getOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
         rect.move(-leftOutset, -topOutset);
         rect.expand(leftOutset + rightOutset, topOutset + bottomOutset);

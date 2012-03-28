@@ -1645,10 +1645,10 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
 
 #if ENABLE(CSS_FILTERS)
     if (styleToUse->hasFilterOutsets()) {
-        LayoutUnit topOutset;
-        LayoutUnit rightOutset;
-        LayoutUnit bottomOutset;
-        LayoutUnit leftOutset;
+        int topOutset;
+        int rightOutset;
+        int bottomOutset;
+        int leftOutset;
         styleToUse->filter().getOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
         rect.move(-leftOutset, -topOutset);
         rect.expand(leftOutset + rightOutset, topOutset + bottomOutset);
@@ -3683,10 +3683,10 @@ void RenderBox::addVisualEffectOverflow()
 #if ENABLE(CSS_FILTERS)
     // Compute any filter outset overflow.
     if (style()->hasFilterOutsets()) {
-        LayoutUnit filterOutsetLeft;
-        LayoutUnit filterOutsetRight;
-        LayoutUnit filterOutsetTop;
-        LayoutUnit filterOutsetBottom;
+        int filterOutsetLeft;
+        int filterOutsetRight;
+        int filterOutsetTop;
+        int filterOutsetBottom;
         style()->getFilterOutsets(filterOutsetTop, filterOutsetRight, filterOutsetBottom, filterOutsetLeft);
         
         overflowMinX = min(overflowMinX, borderBox.x() - filterOutsetLeft);
