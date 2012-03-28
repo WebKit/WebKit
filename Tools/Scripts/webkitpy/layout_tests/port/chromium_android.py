@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (C) 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +32,7 @@ import re
 import signal
 import time
 
+from webkitpy.layout_tests.port import base
 from webkitpy.layout_tests.port import chromium
 from webkitpy.layout_tests.port import factory
 
@@ -144,6 +146,9 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def __init__(self, host, port_name, **kwargs):
         chromium.ChromiumPort.__init__(self, host, port_name, **kwargs)
 
+        # The Chromium port for Android always uses the hardware GPU path.
+        self._options.enable_hardware_gpu = True
+
         self._operating_system = 'android'
         self._version = 'icecreamsandwich'
         self._original_governor = None
@@ -223,6 +228,13 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         # Leave the forwarder and tests httpd server there because they are
         # useful for debugging and do no harm to subsequent tests.
         self._teardown_performance()
+
+    def skipped_tests(self, test_list):
+        return base.Port._real_tests(self, [
+            # Canvas tests are run as virtual gpu tests.
+            'fast/canvas',
+            'canvas/philip',
+        ])
 
     def _build_path(self, *comps):
         return self._host_port._build_path(*comps)
