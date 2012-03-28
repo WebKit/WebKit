@@ -66,10 +66,10 @@ void WebLayerTreeViewImpl::willBeginFrame()
         m_client->willBeginFrame();
 }
 
-void WebLayerTreeViewImpl::updateAnimations(double frameBeginTime)
+void WebLayerTreeViewImpl::updateAnimations(double monotonicFrameBeginTime)
 {
     if (m_client)
-        m_client->updateAnimations(frameBeginTime);
+        m_client->updateAnimations(monotonicFrameBeginTime);
 }
 
 void WebLayerTreeViewImpl::layout()

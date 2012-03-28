@@ -116,7 +116,7 @@ public:
     virtual void didEnterFullScreen();
     virtual void willExitFullScreen();
     virtual void didExitFullScreen();
-    virtual void animate(double frameBeginTime);
+    virtual void animate(double);
     virtual void layout(); // Also implements CCLayerTreeHostClient::layout()
     virtual void paint(WebCanvas*, const WebRect&);
     virtual void themeChanged();
@@ -256,7 +256,7 @@ public:
 
     // WebLayerTreeViewClient
     virtual void willBeginFrame();
-    virtual void updateAnimations(double frameBeginTime);
+    virtual void updateAnimations(double monotonicFrameBeginTime);
     virtual void applyScrollAndScale(const WebSize&, float);
     virtual WebGraphicsContext3D* createContext3D();
     virtual void didRebindGraphicsContext(bool);

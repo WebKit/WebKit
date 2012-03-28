@@ -411,7 +411,7 @@ void CCThreadProxy::scheduledActionBeginFrame()
     TRACE_EVENT0("cc", "CCThreadProxy::scheduledActionBeginFrame");
     ASSERT(!m_pendingBeginFrameRequest);
     m_pendingBeginFrameRequest = adoptPtr(new BeginFrameAndCommitState());
-    m_pendingBeginFrameRequest->frameBeginTime = currentTime();
+    m_pendingBeginFrameRequest->monotonicFrameBeginTime = monotonicallyIncreasingTime();
     m_pendingBeginFrameRequest->scrollInfo = m_layerTreeHostImpl->processScrollDeltas();
 
     m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::beginFrame));
@@ -458,7 +458,7 @@ void CCThreadProxy::beginFrame()
     m_layerTreeHost->willBeginFrame();
 
     // FIXME: recreate the context if it was requested by the impl thread.
-    m_layerTreeHost->updateAnimations(request->frameBeginTime);
+    m_layerTreeHost->updateAnimations(request->monotonicFrameBeginTime);
     m_layerTreeHost->layout();
 
     // Clear the commit flag after updating animations and layout here --- objects that only

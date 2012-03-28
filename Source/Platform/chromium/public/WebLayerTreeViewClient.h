@@ -42,7 +42,7 @@ public:
 
     // Updates animation and layout. These are called before the compositing
     // pass so that layers can be updated at the given frame time.
-    virtual void updateAnimations(double frameBeginTime) = 0;
+    virtual void updateAnimations(double monotonicFrameBeginTime) = 0;
     virtual void layout() = 0;
 
     // Applies a scroll delta to the root layer, which is bundled with a page

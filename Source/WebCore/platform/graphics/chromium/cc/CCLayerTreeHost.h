@@ -135,7 +135,7 @@ public:
 
     // CCLayerTreeHost interface to CCProxy.
     void willBeginFrame() { m_client->willBeginFrame(); }
-    void updateAnimations(double wallClockTime);
+    void updateAnimations(double monotonicFrameBeginTime);
     void layout();
     void beginCommitOnImplThread(CCLayerTreeHostImpl*);
     void finishCommitOnImplThread(CCLayerTreeHostImpl*);

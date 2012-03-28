@@ -35,7 +35,7 @@ namespace WebCore {
 class FakeCCLayerTreeHostClient : public CCLayerTreeHostClient {
 public:
     virtual void willBeginFrame() { }
-    virtual void updateAnimations(double frameBeginTime) { }
+    virtual void updateAnimations(double monotonicFrameBeginTime) { }
     virtual void layout() { }
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) { }
     virtual PassRefPtr<GraphicsContext3D> createContext()

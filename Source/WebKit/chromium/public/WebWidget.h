@@ -79,10 +79,10 @@ public:
     virtual void didExitFullScreen() { }
 
     // Called to update imperative animation state. This should be called before
-    // paint, although the client can rate-limit these calls. When
-    // frameBeginTime is 0.0, the WebWidget will determine the frame begin time
-    // itself.
-    virtual void animate(double frameBeginTime) { }
+    // paint, although the client can rate-limit these calls.
+    //
+    // FIXME: remove this function entirely when inversion patches land.
+    virtual void animate(double ignored) { }
 
     // Called to layout the WebWidget. This MUST be called before Paint,
     // and it may result in calls to WebWidgetClient::didInvalidateRect.

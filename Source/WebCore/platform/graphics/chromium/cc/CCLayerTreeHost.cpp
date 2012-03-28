@@ -181,11 +181,11 @@ void CCLayerTreeHost::deleteContentsTexturesOnImplThread(TextureAllocator* alloc
         m_contentsTextureManager->evictAndDeleteAllTextures(allocator);
 }
 
-void CCLayerTreeHost::updateAnimations(double wallClockTime)
+void CCLayerTreeHost::updateAnimations(double monotonicFrameBeginTime)
 {
     m_animating = true;
-    m_client->updateAnimations(wallClockTime);
-    animateLayers(monotonicallyIncreasingTime());
+    m_client->updateAnimations(monotonicFrameBeginTime);
+    animateLayers(monotonicFrameBeginTime);
     m_animating = false;
 }
 

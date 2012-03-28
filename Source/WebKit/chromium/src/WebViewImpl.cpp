@@ -1330,22 +1330,19 @@ void WebViewImpl::instrumentCancelFrame()
     InspectorInstrumentation::didCancelFrame(m_page.get());
 }
 
-void WebViewImpl::animate(double frameBeginTime)
+void WebViewImpl::animate(double)
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    // FIXME: remove this zero-check once render_widget has been modified to
-    // pass in a frameBeginTime.
-    if (!frameBeginTime)
-        frameBeginTime = currentTime();
+    double monotonicFrameBeginTime = monotonicallyIncreasingTime();
 
 #if USE(ACCELERATED_COMPOSITING)
     // In composited mode, we always go through the compositor so it can apply
     // appropriate flow-control mechanisms.
     if (isAcceleratedCompositingActive())
-        m_layerTreeView.updateAnimations(frameBeginTime);
+        m_layerTreeView.updateAnimations(monotonicFrameBeginTime);
     else
 #endif
-        updateAnimations(frameBeginTime);
+        updateAnimations(monotonicFrameBeginTime);
 #endif
 }
 
@@ -1354,7 +1351,7 @@ void WebViewImpl::willBeginFrame()
     m_client->willBeginCompositorFrame();
 }
 
-void WebViewImpl::updateAnimations(double frameBeginTime)
+void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     TRACE_EVENT("WebViewImpl::updateAnimations", this, 0);
@@ -1368,13 +1365,14 @@ void WebViewImpl::updateAnimations(double frameBeginTime)
 
     // Create synthetic wheel events as necessary for fling.
     if (m_gestureAnimation) {
-        if (m_gestureAnimation->animate(frameBeginTime))
+        if (m_gestureAnimation->animate(monotonicFrameBeginTime))
             scheduleAnimation();
         else
             m_gestureAnimation.clear();
     }
 
-    view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(frameBeginTime));
+    double timeShift = currentTime() - monotonicallyIncreasingTime();
+    view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(monotonicFrameBeginTime + timeShift));
 #endif
 }
 
