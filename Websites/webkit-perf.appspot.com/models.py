@@ -435,6 +435,9 @@ class Runs(db.Model):
             chart_data_x.append(timestamp)
             chart_data_y.append(value)
 
+        if not chart_data_y:
+            return None
+
         dates = [end_time - timedelta(display_days / 7.0 * (7 - i)) for i in range(0, 8)]
 
         y_max = max(chart_data_y) * 1.1
