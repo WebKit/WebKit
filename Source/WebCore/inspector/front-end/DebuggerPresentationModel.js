@@ -43,7 +43,6 @@ WebInspector.DebuggerPresentationModel = function()
 
     this._pendingConsoleMessages = {};
     this._consoleMessageLiveLocations = [];
-    this._presentationConsoleMessages = [];
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
@@ -61,8 +60,6 @@ WebInspector.DebuggerPresentationModel.Events = {
     UISourceCodeAdded: "source-file-added",
     UISourceCodeReplaced: "source-file-replaced",
     UISourceCodeRemoved: "source-file-removed",
-    ConsoleMessageAdded: "console-message-added",
-    ConsoleMessagesCleared: "console-messages-cleared",
     DebuggerPaused: "debugger-paused",
     DebuggerResumed: "debugger-resumed",
     DebuggerReset: "debugger-reset",
@@ -280,8 +277,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         function updateLocation(uiLocation)
         {
             var presentationMessage = new WebInspector.PresentationConsoleMessage(uiLocation.uiSourceCode, uiLocation.lineNumber, message);
-            this._presentationConsoleMessages.push(presentationMessage);
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleMessageAdded, presentationMessage);
+            uiLocation.uiSourceCode.consoleMessageAdded(presentationMessage);
         }
         var liveLocation = this.createLiveLocation(rawLocation, updateLocation.bind(this));
         liveLocation.init();
@@ -329,8 +325,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
         for (var i = 0; i < this._consoleMessageLiveLocations.length; ++i)
             this._consoleMessageLiveLocations[i].dispose();
         this._consoleMessageLiveLocations = [];
-        this._presentationConsoleMessages = [];
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleMessagesCleared);
+        var uiSourceCodes = this.uiSourceCodes();
+        for (var i = 0; i < uiSourceCodes.length; ++i)
+            uiSourceCodes[i].consoleMessagesCleared();
     },
 
     /**
@@ -354,21 +351,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         for (var lineNumber in breakpointsMap)
             breakpointsList.push(breakpointsMap[lineNumber]);
         return breakpointsList;
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @return {Array.<WebInspector.PresentationConsoleMessage>}
-     */
-    messagesForUISourceCode: function(uiSourceCode)
-    {
-        var messages = [];
-        for (var i = 0; i < this._presentationConsoleMessages.length; ++i) {
-            var message = this._presentationConsoleMessages[i];
-            if (message.uiSourceCode === uiSourceCode)
-                messages.push(message);
-        }
-        return messages;
     },
 
     /**
@@ -546,7 +528,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._breakpointManager.debuggerReset();
         this._pendingConsoleMessages = {};
         this._consoleMessageLiveLocations = [];
-        this._presentationConsoleMessages = [];
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerReset);
     }
 }
@@ -568,14 +549,25 @@ WebInspector.UISourceCodeImpl = function(id, url, contentProvider)
      * @type {Object.<string,WebInspector.UIBreakpoint>}
      */
     this._breakpoints = {};
+    /**
+     * @type {Array.<WebInspector.PresentationConsoleMessage>}
+     */
+    this._consoleMessages = [];
 }
 
 WebInspector.UISourceCodeImpl.prototype = {
+    /**
+     * @return {Object.<string,WebInspector.UIBreakpoint>}
+     */
     breakpoints: function()
     {
         return this._breakpoints;
     },
 
+    /**
+     * @param {number} lineNumber
+     * @param {WebInspector.UIBreakpoint} breakpoint
+     */
     breakpointAdded: function(lineNumber, breakpoint)
     {
         console.assert(!this._breakpoints[lineNumber]);
@@ -583,12 +575,38 @@ WebInspector.UISourceCodeImpl.prototype = {
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.BreakpointAdded, breakpoint);
     },
 
+    /**
+     * @param {number} lineNumber
+     */
     breakpointRemoved: function(lineNumber)
     {
         var breakpoint = this._breakpoints[lineNumber];
         delete this._breakpoints[lineNumber];
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.BreakpointRemoved, breakpoint);
     },
+
+    /**
+     * @return {Array.<WebInspector.PresentationConsoleMessage>}
+     */
+    consoleMessages: function()
+    {
+        return this._consoleMessages;
+    },
+
+    /**
+     * @param {WebInspector.PresentationConsoleMessage} message
+     */
+    consoleMessageAdded: function(message)
+    {
+        this._consoleMessages.push(message);
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ConsoleMessageAdded, message);
+    },
+
+    consoleMessagesCleared: function()
+    {
+        this._consoleMessages = [];
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ConsoleMessagesCleared);
+    }
 }
 
 WebInspector.UISourceCodeImpl.prototype.__proto__ = WebInspector.UISourceCode.prototype;

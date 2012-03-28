@@ -51,7 +51,9 @@ WebInspector.UISourceCode = function(id, url, contentProvider)
 WebInspector.UISourceCode.Events = {
     ContentChanged: "content-changed",
     BreakpointAdded: "breakpoint-added",
-    BreakpointRemoved: "breakpoint-removed"
+    BreakpointRemoved: "breakpoint-removed",
+    ConsoleMessageAdded: "console-message-added",
+    ConsoleMessagesCleared: "console-messages-cleared"
 }
 
 WebInspector.UISourceCode.prototype = {
@@ -210,9 +212,14 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
-     * @return {Array.<WebInspector.UIBreakpoint>}
+     * @return {Object.<string,WebInspector.UIBreakpoint>}
      */
-    breakpoints: function() {}
+    breakpoints: function() {},
+
+    /**
+     * @return {Array.<WebInspector.PresentationConsoleMessage>}
+     */
+    consoleMessages: function() {}
 }
 
 WebInspector.UISourceCode.prototype.__proto__ = WebInspector.Object.prototype;

@@ -175,8 +175,6 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, this._uiSourceCodeAdded, this)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessagesCleared, this._consoleMessagesCleared, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, this._debuggerPaused, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerResumed, this._debuggerResumed, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
@@ -312,22 +310,6 @@ WebInspector.ScriptsPanel.prototype = {
     {
         this._fileSelector.setScriptSourceIsDirty(uiSourceCode, isDirty);
         this._editorContainer.setFileIsDirty(uiSourceCode, isDirty);
-    },
-
-    _consoleMessagesCleared: function()
-    {
-        var sourceFrames = this._sourceFramesByUISourceCode.values();
-        for (var i = 0; i < sourceFrames.length; ++i)
-            sourceFrames[i].clearMessages();
-    },
-
-    _consoleMessageAdded: function(event)
-    {
-        var message = event.data;
-
-        var sourceFrame = this._sourceFramesByUISourceCode.get(message.uiSourceCode)
-        if (sourceFrame && sourceFrame.loaded)
-            sourceFrame.addMessageToSource(message.lineNumber, message.originalMessage);
     },
 
     _uiBreakpointAdded: function(event)
@@ -606,12 +588,6 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var sourceFrame = /** @type {WebInspector.JavaScriptSourceFrame} */ event.target;
         var uiSourceCode = sourceFrame._uiSourceCode;
-
-        var messages = this._presentationModel.messagesForUISourceCode(uiSourceCode);
-        for (var i = 0; i < messages.length; ++i) {
-            var message = messages[i];
-            sourceFrame.addMessageToSource(message.lineNumber, message.originalMessage);
-        }
 
         var breakpoints = this._presentationModel.breakpointsForUISourceCode(uiSourceCode);
         for (var i = 0; i < breakpoints.length; ++i) {
