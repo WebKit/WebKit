@@ -153,7 +153,7 @@ void RenderTableRow::layout()
         if (child->isTableCell()) {
             RenderTableCell* cell = toRenderTableCell(child);
             if (!cell->needsLayout() && paginated && view()->layoutState()->pageLogicalHeight() && view()->layoutState()->pageLogicalOffset(cell->logicalTop()) != cell->pageLogicalOffset())
-                cell->setChildNeedsLayout(true, false);
+                cell->setChildNeedsLayout(true, MarkOnlyThis);
 
             if (child->needsLayout()) {
                 cell->computeBlockDirectionMargins(table());

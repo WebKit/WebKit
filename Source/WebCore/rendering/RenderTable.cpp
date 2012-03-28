@@ -336,7 +336,7 @@ void RenderTable::layout()
 
     if (logicalWidth() != oldLogicalWidth) {
         for (unsigned i = 0; i < m_captions.size(); i++)
-            m_captions[i]->setNeedsLayout(true, false);
+            m_captions[i]->setNeedsLayout(true, MarkOnlyThis);
     }
     // FIXME: The optimisation below doesn't work since the internal table
     // layout could have changed.  we need to add a flag to the table

@@ -220,7 +220,7 @@ RenderObject* RenderRubyRun::layoutSpecialExcludedChild(bool relayoutChildren)
     if (!rt)
         return 0;
     if (relayoutChildren)
-        rt->setChildNeedsLayout(true, false);
+        rt->setChildNeedsLayout(true, MarkOnlyThis);
     rt->layoutIfNeeded();
     return rt;
 }

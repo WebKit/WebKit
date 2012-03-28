@@ -2376,7 +2376,7 @@ void RenderLayer::updateScrollInfoAfterLayout()
             if (!m_inOverflowRelayout) {
                 // Our proprietary overflow: overlay value doesn't trigger a layout.
                 m_inOverflowRelayout = true;
-                renderer()->setNeedsLayout(true, false);
+                renderer()->setNeedsLayout(true, MarkOnlyThis);
                 if (renderer()->isRenderBlock()) {
                     RenderBlock* block = toRenderBlock(renderer());
                     block->scrollbarsChanged(box->hasAutoHorizontalScrollbar() && haveHorizontalBar != horizontalOverflow,

@@ -367,7 +367,7 @@ int RenderTableSection::calcRowLogicalHeight()
                 }
                 cell->clearIntrinsicPadding();
                 cell->clearOverrideSize();
-                cell->setChildNeedsLayout(true, false);
+                cell->setChildNeedsLayout(true, MarkOnlyThis);
                 cell->layoutIfNeeded();
             }
 
@@ -583,7 +583,7 @@ void RenderTableSection::layoutRows()
                 if (!o->isText() && o->style()->logicalHeight().isPercent() && (flexAllChildren || o->isReplaced() || (o->isBox() && toRenderBox(o)->scrollsOverflow()))) {
                     // Tables with no sections do not flex.
                     if (!o->isTable() || toRenderTable(o)->hasSections()) {
-                        o->setNeedsLayout(true, false);
+                        o->setNeedsLayout(true, MarkOnlyThis);
                         cellChildrenFlex = true;
                     }
                 }
@@ -599,7 +599,7 @@ void RenderTableSection::layoutRows()
                     while (box != cell) {
                         if (box->normalChildNeedsLayout())
                             break;
-                        box->setChildNeedsLayout(true, false);
+                        box->setChildNeedsLayout(true, MarkOnlyThis);
                         box = box->containingBlock();
                         ASSERT(box);
                         if (!box)
@@ -610,7 +610,7 @@ void RenderTableSection::layoutRows()
             }
 
             if (cellChildrenFlex) {
-                cell->setChildNeedsLayout(true, false);
+                cell->setChildNeedsLayout(true, MarkOnlyThis);
                 // Alignment within a cell is based off the calculated
                 // height, which becomes irrelevant once the cell has
                 // been resized based off its percentage.
@@ -669,10 +669,10 @@ void RenderTableSection::layoutRows()
             view()->addLayoutDelta(oldCellRect.location() - cell->location());
 
             if (intrinsicPaddingBefore != oldIntrinsicPaddingBefore || intrinsicPaddingAfter != oldIntrinsicPaddingAfter)
-                cell->setNeedsLayout(true, false);
+                cell->setNeedsLayout(true, MarkOnlyThis);
 
             if (!cell->needsLayout() && view()->layoutState()->pageLogicalHeight() && view()->layoutState()->pageLogicalOffset(cell->logicalTop()) != cell->pageLogicalOffset())
-                cell->setChildNeedsLayout(true, false);
+                cell->setChildNeedsLayout(true, MarkOnlyThis);
 
             cell->layoutIfNeeded();
 

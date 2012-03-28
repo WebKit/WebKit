@@ -234,7 +234,7 @@ void RenderMathMLRoot::layout()
         style()->setPaddingTop(Length(rootExtraTop + static_cast<int>(gRootPaddingEms * style()->fontSize()), Fixed));
     
     setNeedsLayout(true);
-    setPreferredLogicalWidthsDirty(true, false); // FIXME: Can this really be right?
+    setPreferredLogicalWidthsDirty(true, MarkOnlyThis); // FIXME: Can this really be right?
     RenderBlock::layout();
 
     indexBox->style()->setBottom(Length(partDipHeight + style()->paddingBottom().value(), Fixed));

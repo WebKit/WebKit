@@ -680,11 +680,11 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderOb
         last->scheduleRelayout();
 }
 
-void RenderObject::setPreferredLogicalWidthsDirty(bool b, bool markParents)
+void RenderObject::setPreferredLogicalWidthsDirty(bool shouldBeDirty, MarkingBehavior markParents)
 {
     bool alreadyDirty = preferredLogicalWidthsDirty();
-    m_bitfields.setPreferredLogicalWidthsDirty(b);
-    if (b && !alreadyDirty && markParents && (isText() || !style()->isPositioned()))
+    m_bitfields.setPreferredLogicalWidthsDirty(shouldBeDirty);
+    if (shouldBeDirty && !alreadyDirty && markParents == MarkContainingBlockChain && (isText() || !style()->isPositioned()))
         invalidateContainerPreferredLogicalWidths();
 }
 

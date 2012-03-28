@@ -76,7 +76,7 @@ void RenderMathMLRow::layout()
         }
         if (didStretch) {
             setNeedsLayout(true);
-            setPreferredLogicalWidthsDirty(true, false);
+            setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
             RenderBlock::layout();
         }
     }

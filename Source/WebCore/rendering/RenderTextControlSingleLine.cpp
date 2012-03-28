@@ -228,7 +228,7 @@ void RenderTextControlSingleLine::layout()
     LayoutUnit heightLimit = (inputElement()->isSearchField() || !container) ? height() : contentHeight();
     if (currentHeight > heightLimit) {
         if (desiredHeight != currentHeight)
-            setNeedsLayout(true, false);
+            setNeedsLayout(true, MarkOnlyThis);
 
         innerTextRenderer->style()->setHeight(Length(desiredHeight, Fixed));
         m_desiredInnerTextHeight = desiredHeight;
@@ -241,10 +241,10 @@ void RenderTextControlSingleLine::layout()
         LayoutUnit containerHeight = containerRenderer->height();
         if (containerHeight > heightLimit) {
             containerRenderer->style()->setHeight(Length(heightLimit, Fixed));
-            setNeedsLayout(true, false);
+            setNeedsLayout(true, MarkOnlyThis);
         } else if (containerRenderer->height() < contentHeight()) {
             containerRenderer->style()->setHeight(Length(contentHeight(), Fixed));
-            setNeedsLayout(true, false);
+            setNeedsLayout(true, MarkOnlyThis);
         } else
             containerRenderer->style()->setHeight(Length(containerHeight, Fixed));
     }

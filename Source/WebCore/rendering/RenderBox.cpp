@@ -1535,7 +1535,7 @@ void RenderBox::positionLineBox(InlineBox* box)
             RootInlineBox* root = box->root();
             root->block()->setStaticInlinePositionForChild(this, root->lineTopWithLeading(), roundedLayoutUnit(box->logicalLeft()));
             if (style()->hasStaticInlinePosition(box->isHorizontal()))
-                setChildNeedsLayout(true, false); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
+                setChildNeedsLayout(true, MarkOnlyThis); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
         } else {
             // Our object was a block originally, so we make our normal flow position be
             // just below the line box (as though all the inlines that came before us got
@@ -1543,7 +1543,7 @@ void RenderBox::positionLineBox(InlineBox* box)
             // in flow).  This value was cached in the y() of the box.
             layer()->setStaticBlockPosition(box->logicalTop());
             if (style()->hasStaticBlockPosition(box->isHorizontal()))
-                setChildNeedsLayout(true, false); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
+                setChildNeedsLayout(true, MarkOnlyThis); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
         }
 
         // Nuke the box.

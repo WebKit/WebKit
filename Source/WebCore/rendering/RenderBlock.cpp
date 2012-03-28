@@ -1646,7 +1646,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     }
     
     if (needAnotherLayoutPass && layoutPass == NormalLayoutPass) {
-        setChildNeedsLayout(true, false);
+        setChildNeedsLayout(true, MarkOnlyThis);
         layoutBlock(false, pageLogicalHeight, PositionedFloatLayoutPass);
     } else
         setNeedsLayout(false);
@@ -1790,7 +1790,7 @@ void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marg
     if (childLayer->staticBlockPosition() != logicalTop) {
         childLayer->setStaticBlockPosition(logicalTop);
         if (hasStaticBlockPosition)
-            child->setChildNeedsLayout(true, false);
+            child->setChildNeedsLayout(true, MarkOnlyThis);
     }
 }
 
@@ -2229,7 +2229,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloa
                 while (box != this) {
                     if (box->normalChildNeedsLayout())
                         break;
-                    box->setChildNeedsLayout(true, false);
+                    box->setChildNeedsLayout(true, MarkOnlyThis);
                     box = box->containingBlock();
                     ASSERT(box);
                     if (!box)
@@ -2272,11 +2272,11 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloa
         // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
         // an auto value.  Add a method to determine this, so that we can avoid the relayout.
         if (relayoutChildren || (child->hasRelativeLogicalHeight() && !isRenderView()))
-            child->setChildNeedsLayout(true, false);
+            child->setChildNeedsLayout(true, MarkOnlyThis);
 
         // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
         if (relayoutChildren && child->needsPreferredWidthsRecalculation())
-            child->setPreferredLogicalWidthsDirty(true, false);
+            child->setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
 
         // Handle the four types of special elements first.  These include positioned content, floating content, compacts and
         // run-ins.  When we encounter these four types of objects, we don't actually lay them out as normal flow blocks.
@@ -2374,7 +2374,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
             // When the child shifts to clear an item, its width can
             // change (because it has more available line width).
             // So go ahead and mark the item as dirty.
-            child->setChildNeedsLayout(true, false);
+            child->setChildNeedsLayout(true, MarkOnlyThis);
         }
         
         if (childRenderBlock) {
@@ -2543,11 +2543,11 @@ bool RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
         // positioned explicitly) this should not incur a performance penalty.
         if (relayoutChildren || (r->style()->hasStaticBlockPosition(isHorizontalWritingMode()) && r->parent() != this))
-            r->setChildNeedsLayout(true, false);
+            r->setChildNeedsLayout(true, MarkOnlyThis);
             
         // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
         if (relayoutChildren && r->needsPreferredWidthsRecalculation())
-            r->setPreferredLogicalWidthsDirty(true, false);
+            r->setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
         
         if (!r->needsLayout())
             r->markForPaginationRelayoutIfNeeded();
@@ -2578,7 +2578,7 @@ bool RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         
         // Lay out again if our estimate was wrong.
         if (needsBlockDirectionLocationSetBeforeLayout && logicalTopForChild(r) != oldLogicalTop) {
-            r->setChildNeedsLayout(true, false);
+            r->setChildNeedsLayout(true, MarkOnlyThis);
             r->layoutIfNeeded();
         }
     }
@@ -2608,7 +2608,7 @@ void RenderBlock::markForPaginationRelayoutIfNeeded()
         return;
 
     if (view()->layoutState()->pageLogicalHeightChanged() || (view()->layoutState()->pageLogicalHeight() && view()->layoutState()->pageLogicalOffset(logicalTop()) != pageLogicalOffset()))
-        setChildNeedsLayout(true, false);
+        setChildNeedsLayout(true, MarkOnlyThis);
 }
 
 void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
@@ -3527,7 +3527,7 @@ void RenderBlock::removePositionedObjects(RenderBlock* o)
         r = *it;
         if (!o || r->isDescendantOf(o)) {
             if (o)
-                r->setChildNeedsLayout(true, false);
+                r->setChildNeedsLayout(true, MarkOnlyThis);
             
             // It is parent blocks job to add positioned child to positioned objects list of its containing block
             // Parent layout needs to be invalidated to ensure this happens.
@@ -3569,7 +3569,7 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
     if (!o->isPositioned()) {
         bool isChildRenderBlock = o->isRenderBlock();
         if (isChildRenderBlock && !o->needsLayout() && view()->layoutState()->pageLogicalHeightChanged())
-            o->setChildNeedsLayout(true, false);
+            o->setChildNeedsLayout(true, MarkOnlyThis);
             
         bool needsBlockDirectionLocationSetBeforeLayout = isChildRenderBlock && view()->layoutState()->needsBlockDirectionLocationSetBeforeLayout();
         if (!needsBlockDirectionLocationSetBeforeLayout || isWritingModeRoot()) // We are unsplittable if we're a block flow root.
@@ -3782,7 +3782,7 @@ bool RenderBlock::positionNewFloats()
                 setLogicalTopForChild(childBox, floatLogicalLocation.y() + marginBeforeForChild(childBox));
         
                 if (childBlock)
-                    childBlock->setChildNeedsLayout(true, false);
+                    childBlock->setChildNeedsLayout(true, MarkOnlyThis);
                 childBox->layoutIfNeeded();
             }
         }
@@ -4385,7 +4385,8 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove
     if (!everHadLayout())
         return;
 
-    setChildNeedsLayout(true, !inLayout);
+    MarkingBehavior markParents = inLayout ? MarkOnlyThis : MarkContainingBlockChain;
+    setChildNeedsLayout(true, markParents);
  
     if (floatToRemove)
         removeFloatingObject(floatToRemove);
@@ -6903,7 +6904,7 @@ LayoutUnit RenderBlock::adjustBlockChildForPagination(LayoutUnit logicalTopAfter
             // When the child shifts to clear an item, its width can
             // change (because it has more available line width).
             // So go ahead and mark the item as dirty.
-            child->setChildNeedsLayout(true, false);
+            child->setChildNeedsLayout(true, MarkOnlyThis);
         }
         
         if (childRenderBlock) {

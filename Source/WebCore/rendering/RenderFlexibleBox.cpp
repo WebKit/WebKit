@@ -859,7 +859,7 @@ void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox* child, Layout
     if (childLayer->staticBlockPosition() != staticBlockPosition) {
         childLayer->setStaticBlockPosition(staticBlockPosition);
         if (child->style()->hasStaticBlockPosition(style()->isHorizontalWritingMode()))
-            child->setChildNeedsLayout(true, false);
+            child->setChildNeedsLayout(true, MarkOnlyThis);
     }
 }
 

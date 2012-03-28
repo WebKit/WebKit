@@ -2028,7 +2028,7 @@ void FrameView::scheduleRelayout()
     // When frame flattening is enabled, the contents of the frame could affect the layout of the parent frames.
     // Also invalidate parent frame starting from the owner element of this frame.
     if (isInChildFrameWithFrameFlattening() && m_frame->ownerRenderer())
-        m_frame->ownerRenderer()->setNeedsLayout(true, true);
+        m_frame->ownerRenderer()->setNeedsLayout(true, MarkContainingBlockChain);
 
     int delay = m_frame->document()->minimumLayoutDelay();
     if (m_layoutTimer.isActive() && m_delayedLayout && !delay)

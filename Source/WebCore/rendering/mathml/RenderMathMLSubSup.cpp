@@ -169,15 +169,15 @@ void RenderMathMLSubSup::layout()
         basePaddingTop = 0;
     }
     
-    setChildNeedsLayout(true, false);
+    setChildNeedsLayout(true, MarkOnlyThis);
     
     RenderObject* baseWrapper = firstChild();
     baseWrapper->style()->setPaddingTop(Length(basePaddingTop, Fixed));
-    baseWrapper->setNeedsLayout(true, false);
+    baseWrapper->setNeedsLayout(true, MarkOnlyThis);
     
     superscriptWrapper->style()->setPaddingBottom(Length(superPaddingBottom, Fixed));
-    superscriptWrapper->setNeedsLayout(true, false);
-    m_scripts->setNeedsLayout(true, false);
+    superscriptWrapper->setNeedsLayout(true, MarkOnlyThis);
+    m_scripts->setNeedsLayout(true, MarkOnlyThis);
     
     RenderBlock::layout();
 }

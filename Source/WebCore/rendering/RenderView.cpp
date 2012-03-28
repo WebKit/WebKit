@@ -69,7 +69,7 @@ RenderView::RenderView(Node* node, FrameView* view)
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;
 
-    setPreferredLogicalWidthsDirty(true, false);
+    setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
     
     setPositioned(true); // to 0,0 :)
 }
@@ -115,13 +115,13 @@ void RenderView::layout()
     // Use calcWidth/Height to get the new width/height, since this will take the full page zoom factor into account.
     bool relayoutChildren = !printing() && (!m_frameView || width() != viewWidth() || height() != viewHeight());
     if (relayoutChildren) {
-        setChildNeedsLayout(true, false);
+        setChildNeedsLayout(true, MarkOnlyThis);
         for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
             if ((child->isBox() && toRenderBox(child)->hasRelativeLogicalHeight())
                     || child->style()->logicalHeight().isPercent()
                     || child->style()->logicalMinHeight().isPercent()
                     || child->style()->logicalMaxHeight().isPercent())
-                child->setChildNeedsLayout(true, false);
+                child->setChildNeedsLayout(true, MarkOnlyThis);
         }
     }
 
