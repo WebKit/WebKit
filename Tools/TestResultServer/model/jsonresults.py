@@ -48,7 +48,7 @@ JSON_RESULTS_SKIP = "X"
 JSON_RESULTS_NO_DATA = "N"
 JSON_RESULTS_MIN_TIME = 5
 JSON_RESULTS_HIERARCHICAL_VERSION = 4
-JSON_RESULTS_MAX_BUILDS = 750
+JSON_RESULTS_MAX_BUILDS = 500
 JSON_RESULTS_MAX_BUILDS_SMALL = 200
 
 
@@ -306,7 +306,7 @@ class JsonResults(object):
             new_results = cls.merge(builder, file.data, incremental, num_runs)
         else:
             # Use the incremental data if there is no aggregated file to merge.
-            file = TestFile()            
+            file = TestFile()
             file.master = master
             file.builder = builder
             file.test_type = test_type

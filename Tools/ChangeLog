@@ -1,3 +1,20 @@
+2012-03-28  Dirk Pranke  <dpranke@chromium.org>
+
+        flakiness dashboard should only keep the last 500 runs
+        https://bugs.webkit.org/show_bug.cgi?id=82530
+
+        Reviewed by Ojan Vafai.
+
+        If a bot has an overly large amount of failing tests, then
+        storing 750 runs' worth takes a lot of memory and CPU time to
+        process and we end up getting killed by AppEngine; this cases
+        data corruption and confusion down the road when we have to
+        retry the upload of the data and the tests show up as multiple
+        runs.
+
+        * TestResultServer/model/jsonresults.py:
+        (JsonResults.update_file):
+
 2012-03-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         extract-built-product build step should fail if unzipping fails
