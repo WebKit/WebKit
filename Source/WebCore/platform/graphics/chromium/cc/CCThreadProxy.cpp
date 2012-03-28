@@ -561,13 +561,16 @@ void CCThreadProxy::scheduledActionBeginContextRecreation()
     m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::beginContextRecreation));
 }
 
-bool CCThreadProxy::scheduledActionDrawAndSwapInternal(bool forcedDraw)
+CCScheduledActionDrawAndSwapResult CCThreadProxy::scheduledActionDrawAndSwapInternal(bool forcedDraw)
 {
     TRACE_EVENT("CCThreadProxy::scheduledActionDrawAndSwap", this, 0);
+    CCScheduledActionDrawAndSwapResult result;
+    result.didDraw = false;
+    result.didSwap = false;
     ASSERT(isImplThread());
     ASSERT(m_layerTreeHostImpl);
     if (!m_layerTreeHostImpl)
-        return false;
+        return result;
 
     // FIXME: compute the frame display time more intelligently
     double monotonicTime = monotonicallyIncreasingTime();
@@ -577,8 +580,10 @@ bool CCThreadProxy::scheduledActionDrawAndSwapInternal(bool forcedDraw)
     m_layerTreeHostImpl->animate(monotonicTime, wallClockTime);
     CCLayerTreeHostImpl::FrameData frame;
     bool drawFrame = m_layerTreeHostImpl->prepareToDraw(frame) || forcedDraw;
-    if (drawFrame)
+    if (drawFrame) {
         m_layerTreeHostImpl->drawLayers(frame);
+        result.didDraw = true;
+    }
 
     // Check for a pending compositeAndReadback.
     if (m_readbackRequestOnImplThread) {
@@ -590,7 +595,7 @@ bool CCThreadProxy::scheduledActionDrawAndSwapInternal(bool forcedDraw)
     }
 
     if (drawFrame)
-        m_layerTreeHostImpl->swapBuffers();
+        result.didSwap = m_layerTreeHostImpl->swapBuffers();
 
     // Process any finish request
     if (m_finishAllRenderingCompletionEventOnImplThread) {
@@ -607,17 +612,17 @@ bool CCThreadProxy::scheduledActionDrawAndSwapInternal(bool forcedDraw)
     }
 
     ASSERT(drawFrame || (!drawFrame && !forcedDraw));
-    return drawFrame;
+    return result;
 }
 
-bool CCThreadProxy::scheduledActionDrawAndSwapIfPossible()
+CCScheduledActionDrawAndSwapResult CCThreadProxy::scheduledActionDrawAndSwapIfPossible()
 {
     return scheduledActionDrawAndSwapInternal(false);
 }
 
-void CCThreadProxy::scheduledActionDrawAndSwapForced()
+CCScheduledActionDrawAndSwapResult CCThreadProxy::scheduledActionDrawAndSwapForced()
 {
-    scheduledActionDrawAndSwapInternal(true);
+    return scheduledActionDrawAndSwapInternal(true);
 }
 
 void CCThreadProxy::didCommitAndDrawFrame()

@@ -45,7 +45,8 @@ public:
         m_actions.clear();
         m_hasMoreResourceUpdates = false;
         m_canDraw = true;
-        m_drawSuccess = true;
+        m_drawWillHappen = true;
+        m_swapWillHappenIfDrawHappens = true;
         m_numDraws = 0;
     }
 
@@ -56,32 +57,42 @@ public:
     int numActions() const { return static_cast<int>(m_actions.size()); }
     const char* action(int i) const { return m_actions[i]; }
 
+    bool hasAction(const char* action) const
+    {
+        for (size_t i = 0; i < m_actions.size(); i++)
+            if (!strcmp(m_actions[i], action))
+                return true;
+        return false;
+    }
+
     virtual bool canDraw() { return m_canDraw; }
     virtual bool hasMoreResourceUpdates() const { return m_hasMoreResourceUpdates; }
     virtual void scheduledActionBeginFrame() { m_actions.push_back("scheduledActionBeginFrame"); }
-    virtual bool scheduledActionDrawAndSwapIfPossible()
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible()
     {
         m_actions.push_back("scheduledActionDrawAndSwapIfPossible");
         m_numDraws++;
-        return m_drawSuccess;
+        return CCScheduledActionDrawAndSwapResult(m_drawWillHappen, m_drawWillHappen && m_swapWillHappenIfDrawHappens);
     }
 
-    virtual void scheduledActionDrawAndSwapForced()
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced()
     {
         m_actions.push_back("scheduledActionDrawAndSwapForced");
-        m_numDraws++;
+        return CCScheduledActionDrawAndSwapResult(true, m_swapWillHappenIfDrawHappens);
     }
 
     virtual void scheduledActionUpdateMoreResources() { m_actions.push_back("scheduledActionUpdateMoreResources"); }
     virtual void scheduledActionCommit() { m_actions.push_back("scheduledActionCommit"); }
     virtual void scheduledActionBeginContextRecreation() { m_actions.push_back("scheduledActionBeginContextRecreation"); }
 
-    void setDrawSuccess(bool drawSuccess) { m_drawSuccess = drawSuccess; }
+    void setDrawWillHappen(bool drawWillHappen) { m_drawWillHappen = drawWillHappen; }
+    void setSwapWillHappenIfDrawHappens(bool swapWillHappenIfDrawHappens) { m_swapWillHappenIfDrawHappens = swapWillHappenIfDrawHappens; }
 
 protected:
     bool m_hasMoreResourceUpdates;
     bool m_canDraw;
-    bool m_drawSuccess;
+    bool m_drawWillHappen;
+    bool m_swapWillHappenIfDrawHappens;
     int m_numDraws;
     std::vector<const char*> m_actions;
 };
@@ -163,7 +174,7 @@ public:
     void setScheduler(CCScheduler* scheduler) { m_scheduler = scheduler; }
 
     virtual void scheduledActionBeginFrame() { }
-    virtual bool scheduledActionDrawAndSwapIfPossible()
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible()
     {
         // Only setNeedsRedraw the first time this is called
         if (!m_numDraws)
@@ -171,7 +182,12 @@ public:
         return FakeCCSchedulerClient::scheduledActionDrawAndSwapIfPossible();
     }
 
-    virtual void scheduledActionDrawAndSwapForced() { }
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced()
+    {
+        ASSERT_NOT_REACHED();
+        return CCScheduledActionDrawAndSwapResult(true, true);
+    }
+
     virtual void scheduledActionUpdateMoreResources() { }
     virtual void scheduledActionCommit() { }
     virtual void scheduledActionBeginContextRecreation() { }
@@ -216,7 +232,7 @@ TEST(CCSchedulerTest, RequestRedrawInsideFailedDraw)
     OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, adoptPtr(new CCFrameRateController(timeSource)));
     client.setScheduler(scheduler.get());
     scheduler->setVisible(true);
-    client.setDrawSuccess(false);
+    client.setDrawWillHappen(false);
 
     scheduler->setNeedsRedraw();
     EXPECT_TRUE(scheduler->redrawPending());
@@ -240,7 +256,7 @@ TEST(CCSchedulerTest, RequestRedrawInsideFailedDraw)
     EXPECT_TRUE(timeSource->active());
 
     // Draw successfully.
-    client.setDrawSuccess(true);
+    client.setDrawWillHappen(true);
     timeSource->tick();
     EXPECT_EQ(3, client.numDraws());
     EXPECT_TRUE(scheduler->commitPending());
@@ -256,7 +272,7 @@ public:
     void setScheduler(CCScheduler* scheduler) { m_scheduler = scheduler; }
 
     virtual void scheduledActionBeginFrame() { }
-    virtual bool scheduledActionDrawAndSwapIfPossible()
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible()
     {
         // Only setNeedsCommit the first time this is called
         if (!m_numDraws)
@@ -264,7 +280,12 @@ public:
         return FakeCCSchedulerClient::scheduledActionDrawAndSwapIfPossible();
     }
 
-    virtual void scheduledActionDrawAndSwapForced() { }
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced()
+    {
+        ASSERT_NOT_REACHED();
+        return CCScheduledActionDrawAndSwapResult(true, true);
+    }
+
     virtual void scheduledActionUpdateMoreResources() { }
     virtual void scheduledActionCommit() { }
     virtual void scheduledActionBeginContextRecreation() { }
@@ -308,7 +329,7 @@ TEST(CCSchedulerTest, RequestCommitInsideFailedDraw)
     OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, adoptPtr(new CCFrameRateController(timeSource)));
     client.setScheduler(scheduler.get());
     scheduler->setVisible(true);
-    client.setDrawSuccess(false);
+    client.setDrawWillHappen(false);
 
     scheduler->setNeedsRedraw();
     EXPECT_TRUE(scheduler->redrawPending());
@@ -332,7 +353,7 @@ TEST(CCSchedulerTest, RequestCommitInsideFailedDraw)
     EXPECT_TRUE(timeSource->active());
 
     // Draw successfully.
-    client.setDrawSuccess(true);
+    client.setDrawWillHappen(true);
     timeSource->tick();
     EXPECT_EQ(3, client.numDraws());
     EXPECT_TRUE(scheduler->commitPending());
@@ -380,9 +401,32 @@ TEST(CCSchedulerTest, NoBeginFrameWhenDrawFails)
     EXPECT_TRUE(timeSource->active());
 
     // Fail to draw, this should not start a frame.
-    client.setDrawSuccess(false);
+    client.setDrawWillHappen(false);
     timeSource->tick();
     EXPECT_EQ(3, client.numDraws());
+    EXPECT_EQ(0, controllerPtr->numFramesPending());
+}
+
+TEST(CCSchedulerTest, NoBeginFrameWhenSwapFailsDuringForcedCommit)
+{
+    RefPtr<FakeCCTimeSource> timeSource = adoptRef(new FakeCCTimeSource());
+    FakeCCSchedulerClient client;
+    OwnPtr<FakeCCFrameRateController> controller = adoptPtr(new FakeCCFrameRateController(timeSource));
+    FakeCCFrameRateController* controllerPtr = controller.get();
+    OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, controller.release());
+
+    EXPECT_EQ(0, controllerPtr->numFramesPending());
+
+    // Tell the client that it will fail to swap.
+    client.setDrawWillHappen(true);
+    client.setSwapWillHappenIfDrawHappens(false);
+
+    // Get the compositor to do a scheduledActionDrawAndSwapForced.
+    scheduler->setNeedsRedraw();
+    scheduler->setNeedsForcedRedraw();
+    EXPECT_TRUE(client.hasAction("scheduledActionDrawAndSwapForced"));
+
+    // We should not have told the frame rate controller that we began a frame.
     EXPECT_EQ(0, controllerPtr->numFramesPending());
 }
 

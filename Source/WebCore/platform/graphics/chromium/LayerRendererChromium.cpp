@@ -1073,13 +1073,13 @@ void LayerRendererChromium::finish()
     m_context->finish();
 }
 
-void LayerRendererChromium::swapBuffers(const IntRect& subBuffer)
+bool LayerRendererChromium::swapBuffers(const IntRect& subBuffer)
 {
     // FIXME: Remove this once gpu process supports ignoring swap buffers command while framebuffer is discarded.
     //        Alternatively (preferably?), protect all cc code so as not to attempt a swap after a framebuffer discard.
     if (m_isFramebufferDiscarded) {
         m_client->setFullRootLayerDamage();
-        return;
+        return false;
     }
 
     TRACE_EVENT("LayerRendererChromium::swapBuffers", this, 0);
@@ -1098,6 +1098,7 @@ void LayerRendererChromium::swapBuffers(const IntRect& subBuffer)
         m_context->prepareTexture();
 
     m_headsUpDisplay->onSwapBuffers();
+    return true;
 }
 
 void LayerRendererChromium::onSwapBuffersComplete()

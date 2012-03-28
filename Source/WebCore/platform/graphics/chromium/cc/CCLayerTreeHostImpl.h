@@ -114,7 +114,7 @@ public:
     const LayerRendererCapabilities& layerRendererCapabilities() const;
     TextureAllocator* contentsTextureAllocator() const;
 
-    void swapBuffers();
+    bool swapBuffers();
 
     void readback(void* pixels, const IntRect&);
 

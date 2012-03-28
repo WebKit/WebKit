@@ -163,17 +163,18 @@ void CCScheduler::processScheduledActions()
             m_client->scheduledActionCommit();
             break;
         case CCSchedulerStateMachine::ACTION_DRAW_IF_POSSIBLE: {
-            bool drawSuccess = m_client->scheduledActionDrawAndSwapIfPossible();
-            m_stateMachine.didDrawIfPossibleCompleted(drawSuccess);
-            if (drawSuccess)
+            CCScheduledActionDrawAndSwapResult result = m_client->scheduledActionDrawAndSwapIfPossible();
+            m_stateMachine.didDrawIfPossibleCompleted(result.didDraw);
+            if (result.didSwap)
                 m_frameRateController->didBeginFrame();
             break;
         }
-        case CCSchedulerStateMachine::ACTION_DRAW_FORCED:
-            m_client->scheduledActionDrawAndSwapForced();
-            m_frameRateController->didBeginFrame();
+        case CCSchedulerStateMachine::ACTION_DRAW_FORCED: {
+            CCScheduledActionDrawAndSwapResult result = m_client->scheduledActionDrawAndSwapForced();
+            if (result.didSwap)
+                m_frameRateController->didBeginFrame();
             break;
-        case CCSchedulerStateMachine::ACTION_BEGIN_CONTEXT_RECREATION:
+        } case CCSchedulerStateMachine::ACTION_BEGIN_CONTEXT_RECREATION:
             m_client->scheduledActionBeginContextRecreation();
             break;
         }

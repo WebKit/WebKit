@@ -35,14 +35,29 @@ namespace WebCore {
 
 class CCThread;
 
+struct CCScheduledActionDrawAndSwapResult {
+    CCScheduledActionDrawAndSwapResult()
+            : didDraw(false)
+            , didSwap(false)
+    {
+    }
+    CCScheduledActionDrawAndSwapResult(bool didDraw, bool didSwap)
+            : didDraw(didDraw)
+            , didSwap(didSwap)
+    {
+    }
+    bool didDraw;
+    bool didSwap;
+};
+
 class CCSchedulerClient {
 public:
     virtual bool canDraw() = 0;
     virtual bool hasMoreResourceUpdates() const = 0;
 
     virtual void scheduledActionBeginFrame() = 0;
-    virtual bool scheduledActionDrawAndSwapIfPossible() = 0;
-    virtual void scheduledActionDrawAndSwapForced() = 0;
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible() = 0;
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced() = 0;
     virtual void scheduledActionUpdateMoreResources() = 0;
     virtual void scheduledActionCommit() = 0;
     virtual void scheduledActionBeginContextRecreation() = 0;

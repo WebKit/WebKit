@@ -1,3 +1,27 @@
+2012-03-28  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Scheduler should not tell FrameRateController to begin a frame when we dont swap
+        https://bugs.webkit.org/show_bug.cgi?id=82516
+
+        Reviewed by James Robinson.
+
+        * tests/CCSchedulerTest.cpp:
+        (WebKitTests::FakeCCSchedulerClient::reset):
+        (WebKitTests::FakeCCSchedulerClient::hasAction):
+        (FakeCCSchedulerClient):
+        (WebKitTests::FakeCCSchedulerClient::scheduledActionDrawAndSwapIfPossible):
+        (WebKitTests::FakeCCSchedulerClient::scheduledActionDrawAndSwapForced):
+        (WebKitTests::FakeCCSchedulerClient::setDrawWillHappen):
+        (WebKitTests::FakeCCSchedulerClient::setSwapWillHappenIfDrawHappens):
+        (WebKitTests::SchedulerClientThatSetNeedsDrawInsideDraw::scheduledActionDrawAndSwapIfPossible):
+        (WebKitTests::SchedulerClientThatSetNeedsDrawInsideDraw::scheduledActionDrawAndSwapForced):
+        (SchedulerClientThatSetNeedsDrawInsideDraw):
+        (WebKitTests::TEST):
+        (WebKitTests::SchedulerClientThatSetNeedsCommitInsideDraw::scheduledActionDrawAndSwapIfPossible):
+        (WebKitTests::SchedulerClientThatSetNeedsCommitInsideDraw::scheduledActionDrawAndSwapForced):
+        (SchedulerClientThatSetNeedsCommitInsideDraw):
+        (WebKitTests):
+
 2012-03-26  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] layer->clipRect() is not initialized for layers that create a renderSurface.

@@ -108,7 +108,7 @@ public:
     void finish();
 
     // puts backbuffer onscreen
-    void swapBuffers(const IntRect& subBuffer);
+    bool swapBuffers(const IntRect& subBuffer);
 
     static void debugGLCall(GraphicsContext3D*, const char* command, const char* file, int line);
 
