@@ -1,3 +1,26 @@
+2012-03-27  Hao Zheng  <zhenghao@chromium.org>
+
+        Handle DRT crash caused by Android OOM.
+        https://bugs.webkit.org/show_bug.cgi?id=82310
+
+        Reviewed by Tony Chang.
+
+        When Android is OOM, it sends a SIGKILL (137) signal to DRT. DRT
+        is stopped silently and regarded as crashed. Re-run the test for
+        such crash.
+
+        Add some debug log to NRWT.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        (ChromiumAndroidPort.get_last_stacktrace):
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._start):
+        (ChromiumAndroidDriver.run_test):
+        (ChromiumAndroidDriver._get_drt_return_value):
+
 2012-03-27  Ojan Vafai  <ojan@chromium.org>
 
         Fix expected results for some unittest failures.

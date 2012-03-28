@@ -576,6 +576,8 @@ class ChromiumDriver(Driver):
 
             line, crash = self._write_command_and_read_line(input=None)
 
+        if crash and line is not None:
+            error.append(line)
         run_time = time.time() - start_time
         output_image = self._output_image_with_retry()
 
