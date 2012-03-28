@@ -72,7 +72,7 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
     m_instrumentingAgents->setInspectorRuntimeAgent(0);
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptions, const String* const frameId, const bool* const returnByValue, RefPtr<InspectorObject>& result, bool* wasThrown)
+void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptions, const String* const frameId, const bool* const returnByValue, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown)
 {
     ScriptState* scriptState = 0;
     if (frameId) {
@@ -98,9 +98,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
     }
 #endif
 
-    TypeBuilder::OptOutput<bool> wasThrownOpt;
-    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", asBool(includeCommandLineAPI), asBool(returnByValue), &result, &wasThrownOpt);
-    *wasThrown = wasThrownOpt.isAssigned() ? wasThrownOpt.getValue() : false;
+    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", asBool(includeCommandLineAPI), asBool(returnByValue), &result, wasThrown);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (pauseStateChanged)
@@ -108,7 +106,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
 #endif
 }
 
-void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, const bool* const returnByValue, RefPtr<InspectorObject>& result, bool* wasThrown)
+void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, const bool* const returnByValue, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
@@ -119,12 +117,10 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const Strin
     if (optionalArguments)
         arguments = (*optionalArguments)->toJSONString();
 
-    TypeBuilder::OptOutput<bool> wasThrownOpt;
-    injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), &result, &wasThrownOpt);
-    *wasThrown = wasThrownOpt.isAssigned() ? wasThrownOpt.getValue() : false;
+    injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), &result, wasThrown);
 }
 
-void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String& objectId, const bool* const ownProperties, RefPtr<InspectorArray>& result)
+void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String& objectId, const bool* const ownProperties, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::PropertyDescriptor> >& result)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {

@@ -110,7 +110,7 @@ public:
     void didRecalculateStyle();
     void didScheduleStyleRecalculation(Document*);
 
-    PassRefPtr<InspectorObject> buildInitiatorObject(Document*);
+    PassRefPtr<TypeBuilder::Network::Initiator> buildInitiatorObject(Document*);
 
 #if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const KURL& requestURL);
@@ -150,7 +150,7 @@ private:
     bool m_loadingXHRSynchronously;
 
     // FIXME: InspectorResourceAgent should now be aware of style recalculation.
-    RefPtr<InspectorObject> m_styleRecalculationInitiator;
+    RefPtr<TypeBuilder::Network::Initiator> m_styleRecalculationInitiator;
     bool m_isRecalculatingStyle;
 };
 

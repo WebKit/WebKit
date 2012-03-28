@@ -63,14 +63,14 @@ public:
                   const String& objectGroup,
                   bool includeCommandLineAPI,
                   bool returnByValue,
-                  RefPtr<InspectorObject>* result,
+                  RefPtr<TypeBuilder::Runtime::RemoteObject>* result,
                   TypeBuilder::OptOutput<bool>* wasThrown);
     void callFunctionOn(ErrorString*,
                         const String& objectId,
                         const String& expression,
                         const String& arguments,
                         bool returnByValue,
-                        RefPtr<InspectorObject>* result,
+                        RefPtr<TypeBuilder::Runtime::RemoteObject>* result,
                         TypeBuilder::OptOutput<bool>* wasThrown);
     void evaluateOnCallFrame(ErrorString*,
                              const ScriptValue& callFrames,
@@ -82,7 +82,7 @@ public:
                              RefPtr<TypeBuilder::Runtime::RemoteObject>* result,
                              TypeBuilder::OptOutput<bool>* wasThrown);
     void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<TypeBuilder::Debugger::FunctionDetails>* result);
-    void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<InspectorArray>* result);
+    void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::PropertyDescriptor> >* result);
     Node* nodeForObjectId(const String& objectId);
     void releaseObject(const String& objectId);
 
@@ -90,9 +90,9 @@ public:
     PassRefPtr<TypeBuilder::Array<TypeBuilder::Debugger::CallFrame> > wrapCallFrames(const ScriptValue&);
 #endif
 
-    PassRefPtr<InspectorObject> wrapObject(ScriptValue, const String& groupName) const;
-    PassRefPtr<InspectorObject> wrapNode(Node*, const String& groupName);
-    PassRefPtr<InspectorObject> wrapSerializedObject(SerializedScriptValue*, const String& groupName) const;
+    PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapObject(ScriptValue, const String& groupName) const;
+    PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapNode(Node*, const String& groupName);
+    PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapSerializedObject(SerializedScriptValue*, const String& groupName) const;
     void inspectNode(Node*);
     void releaseObjectGroup(const String&);
     ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }
@@ -105,7 +105,7 @@ private:
     bool canAccessInspectedWindow() const;
     ScriptValue callFunctionWithEvalEnabled(ScriptFunctionCall&, bool& hadException) const;
     void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
-    void makeEvalCall(ErrorString*, ScriptFunctionCall&, RefPtr<InspectorObject>* result, TypeBuilder::OptOutput<bool>* wasThrown);
+    void makeEvalCall(ErrorString*, ScriptFunctionCall&, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown);
     ScriptValue nodeAsScriptValue(Node*);
 
     ScriptObject m_injectedScriptObject;

@@ -59,7 +59,7 @@ TYPE_NAME_FIX_MAP = {
 TYPES_WITH_RUNTIME_CAST_SET = frozenset(["Runtime.RemoteObject", "Runtime.PropertyDescriptor",
                                          "Debugger.FunctionDetails", "Debugger.CallFrame"])
 
-STRICT_ENABLED_DOMAINS = ["CSS", "Debugger", "Page"]
+STRICT_ENABLED_DOMAINS = ["CSS", "Debugger", "DOM", "Network", "Page", "Runtime"]
 
 
 cmdline_parser = optparse.OptionParser()
@@ -2149,7 +2149,6 @@ $methods
 #if ENABLE(INSPECTOR)
 
 #include "InspectorValues.h"
-#include <PlatformString.h>
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 
@@ -2258,6 +2257,18 @@ struct ArrayItemHelper<String> {
         }
     };
 };
+
+template<>
+struct ArrayItemHelper<int> {
+    struct Traits {
+        static void pushRaw(InspectorArray* array, int value)
+        {
+            array->pushInt(value);
+        }
+    };
+};
+
+
 
 template<>
 struct ArrayItemHelper<InspectorObject> {
@@ -2491,6 +2502,8 @@ class Generator:
             Generator.method_handler_list,
             Generator.method_name_enum_list]
 
+        strict_enabled_domains_unused = set(STRICT_ENABLED_DOMAINS)
+
         for json_domain in json_api["domains"]:
             domain_name = json_domain["domain"]
             domain_name_lower = domain_name.lower()
@@ -2537,6 +2550,11 @@ class Generator:
                 for l in reversed(first_cycle_guardable_list_list):
                     domain_guard.generate_close(l)
             Generator.backend_js_domain_initializer_list.append("\n")
+
+            strict_enabled_domains_unused.discard(domain_name)
+
+        if strict_enabled_domains_unused:
+            raise Exception("Unknown domains listed: %s" % strict_enabled_domains_unused)
 
         sorted_json_domains = list(json_api["domains"])
         sorted_json_domains.sort(key=lambda o: o["domain"])

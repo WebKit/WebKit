@@ -84,9 +84,9 @@ public:
 
     static PassRefPtr<SharedBuffer> resourceData(Frame*, const KURL&, String* textEncodingName);
     static CachedResource* cachedResource(Frame*, const KURL&);
-    static String resourceTypeString(ResourceType);
+    static TypeBuilder::Page::ResourceType::Enum resourceTypeJson(ResourceType);
     static ResourceType cachedResourceType(const CachedResource&);
-    static String cachedResourceTypeString(const CachedResource&);
+    static TypeBuilder::Page::ResourceType::Enum cachedResourceTypeJson(const CachedResource&);
 
     // Page API for InspectorFrontend
     virtual void enable(ErrorString*);

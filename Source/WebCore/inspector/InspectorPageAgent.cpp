@@ -252,27 +252,27 @@ CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const KURL& url
     return cachedResource;
 }
 
-String InspectorPageAgent::resourceTypeString(InspectorPageAgent::ResourceType resourceType)
+TypeBuilder::Page::ResourceType::Enum InspectorPageAgent::resourceTypeJson(InspectorPageAgent::ResourceType resourceType)
 {
     switch (resourceType) {
     case DocumentResource:
-        return "Document";
+        return TypeBuilder::Page::ResourceType::Document;
     case ImageResource:
-        return "Image";
+        return TypeBuilder::Page::ResourceType::Image;
     case FontResource:
-        return "Font";
+        return TypeBuilder::Page::ResourceType::Font;
     case StylesheetResource:
-        return "Stylesheet";
+        return TypeBuilder::Page::ResourceType::Stylesheet;
     case ScriptResource:
-        return "Script";
+        return TypeBuilder::Page::ResourceType::Script;
     case XHRResource:
-        return "XHR";
+        return TypeBuilder::Page::ResourceType::XHR;
     case WebSocketResource:
-        return "WebSocket";
+        return TypeBuilder::Page::ResourceType::WebSocket;
     case OtherResource:
-        return "Other";
+        return TypeBuilder::Page::ResourceType::Other;
     }
-    return "Other";
+    return TypeBuilder::Page::ResourceType::Other;
 }
 
 InspectorPageAgent::ResourceType InspectorPageAgent::cachedResourceType(const CachedResource& cachedResource)
@@ -298,9 +298,9 @@ InspectorPageAgent::ResourceType InspectorPageAgent::cachedResourceType(const Ca
     return InspectorPageAgent::OtherResource;
 }
 
-String InspectorPageAgent::cachedResourceTypeString(const CachedResource& cachedResource)
+TypeBuilder::Page::ResourceType::Enum InspectorPageAgent::cachedResourceTypeJson(const CachedResource& cachedResource)
 {
-    return resourceTypeString(cachedResourceType(cachedResource));
+    return resourceTypeJson(cachedResourceType(cachedResource));
 }
 
 InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager, InspectorClient* client)
@@ -844,7 +844,7 @@ PassRefPtr<TypeBuilder::Page::Frame> InspectorPageAgent::buildObjectForFrame(Fra
 PassRefPtr<TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTree(Frame* frame)
 {
     RefPtr<InspectorObject> frameObject = buildObjectForFrame(frame);
-    RefPtr<InspectorArray> subresources = InspectorArray::create();
+    RefPtr<TypeBuilder::Array<TypeBuilder::Page::FrameResourceTree::Resources> > subresources = TypeBuilder::Array<TypeBuilder::Page::FrameResourceTree::Resources>::create();
     RefPtr<TypeBuilder::Page::FrameResourceTree> result = TypeBuilder::Page::FrameResourceTree::create()
          .setFrame(frameObject)
          .setResources(subresources);
@@ -853,15 +853,15 @@ PassRefPtr<TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::buildObject
     for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
         CachedResource* cachedResource = *it;
 
-        RefPtr<InspectorObject> resourceObject = InspectorObject::create();
-        resourceObject->setString("url", cachedResource->url());
-        resourceObject->setString("type", cachedResourceTypeString(*cachedResource));
-        resourceObject->setString("mimeType", cachedResource->response().mimeType());
+        RefPtr<TypeBuilder::Page::FrameResourceTree::Resources> resourceObject = TypeBuilder::Page::FrameResourceTree::Resources::create()
+            .setUrl(cachedResource->url())
+            .setType(cachedResourceTypeJson(*cachedResource))
+            .setMimeType(cachedResource->response().mimeType());
         if (cachedResource->status() == CachedResource::LoadError)
-            resourceObject->setBoolean("failed", true);
+            resourceObject->setFailed(true);
         if (cachedResource->status() == CachedResource::Canceled)
-            resourceObject->setBoolean("canceled", true);
-        subresources->pushValue(resourceObject);
+            resourceObject->setCanceled(true);
+        subresources->addItem(resourceObject);
     }
 
     RefPtr<InspectorArray> childrenArray;

@@ -64,17 +64,17 @@ public:
                   const bool* doNotPauseOnExceptions,
                   const String* frameId,
                   const bool* returnByValue,
-                  RefPtr<InspectorObject>& result,
-                  bool* wasThrown);
+                  RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
+                  TypeBuilder::OptOutput<bool>* wasThrown);
     virtual void callFunctionOn(ErrorString*,
                         const String& objectId,
                         const String& expression,
                         const RefPtr<InspectorArray>* optionalArguments,
                         const bool* returnByValue,
-                        RefPtr<InspectorObject>& result,
-                        bool* wasThrown);
+                        RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
+                        TypeBuilder::OptOutput<bool>* wasThrown);
     virtual void releaseObject(ErrorString*, const String& objectId);
-    virtual void getProperties(ErrorString*, const String& objectId, const bool* ownProperties, RefPtr<InspectorArray>& result);
+    virtual void getProperties(ErrorString*, const String& objectId, const bool* ownProperties, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::PropertyDescriptor> >& result);
     virtual void releaseObjectGroup(ErrorString*, const String& objectGroup);
     virtual void run(ErrorString*);
 

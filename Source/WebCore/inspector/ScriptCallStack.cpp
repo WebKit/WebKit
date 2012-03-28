@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScriptCallStack.h"
 
+#include "InspectorTypeBuilder.h"
 #include "InspectorValues.h"
 
 namespace WebCore {
@@ -78,11 +79,11 @@ bool ScriptCallStack::isEqual(ScriptCallStack* o) const
 }
 
 #if ENABLE(INSPECTOR)
-PassRefPtr<InspectorArray> ScriptCallStack::buildInspectorArray() const
+PassRefPtr<TypeBuilder::Array<TypeBuilder::Console::CallFrame> > ScriptCallStack::buildInspectorArray() const
 {
-    RefPtr<InspectorArray> frames = InspectorArray::create();
+    RefPtr<TypeBuilder::Array<TypeBuilder::Console::CallFrame> > frames = TypeBuilder::Array<TypeBuilder::Console::CallFrame>::create();
     for (size_t i = 0; i < m_frames.size(); i++)
-        frames->pushObject(m_frames.at(i).buildInspectorObject());
+        frames->addItem(m_frames.at(i).buildInspectorObject());
     return frames;
 }
 #endif

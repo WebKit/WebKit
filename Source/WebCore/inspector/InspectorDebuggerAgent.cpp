@@ -569,6 +569,7 @@ void InspectorDebuggerAgent::didPause(ScriptState* scriptState, const ScriptValu
         if (!injectedScript.hasNoValue()) {
             m_breakReason = InspectorFrontend::Debugger::Reason::Exception;
             m_breakAuxData = injectedScript.wrapObject(exception, "backtrace");
+            // m_breakAuxData might be null after this.
         }
     }
 

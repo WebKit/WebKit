@@ -122,62 +122,72 @@ static PassRefPtr<InspectorObject> buildObjectForTiming(const ResourceLoadTiming
     return timingObject;
 }
 
-static PassRefPtr<InspectorObject> buildObjectForResourceRequest(const ResourceRequest& request)
+static PassRefPtr<TypeBuilder::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request)
 {
-    RefPtr<InspectorObject> requestObject = InspectorObject::create();
-    requestObject->setString("url", request.url().string());
-    requestObject->setString("method", request.httpMethod());
-    requestObject->setObject("headers", buildObjectForHeaders(request.httpHeaderFields()));
+    RefPtr<TypeBuilder::Network::Request> requestObject = TypeBuilder::Network::Request::create()
+        .setUrl(request.url().string())
+        .setMethod(request.httpMethod())
+        .setHeaders(buildObjectForHeaders(request.httpHeaderFields()));
     if (request.httpBody() && !request.httpBody()->isEmpty())
-        requestObject->setString("postData", request.httpBody()->flattenToString());
+        requestObject->setPostData(request.httpBody()->flattenToString());
     return requestObject;
 }
 
-static PassRefPtr<InspectorObject> buildObjectForResourceResponse(const ResourceResponse& response, DocumentLoader* loader)
+static PassRefPtr<TypeBuilder::Network::Response> buildObjectForResourceResponse(const ResourceResponse& response, DocumentLoader* loader)
 {
     if (response.isNull())
         return 0;
 
-    RefPtr<InspectorObject> responseObject = InspectorObject::create();
-    responseObject->setString("url", response.url().string());
-    if (response.resourceLoadInfo() && response.resourceLoadInfo()->httpStatusCode) {
-        responseObject->setNumber("status", response.resourceLoadInfo()->httpStatusCode);
-        responseObject->setString("statusText", response.resourceLoadInfo()->httpStatusText);
-    } else {
-        responseObject->setNumber("status", response.httpStatusCode());
-        responseObject->setString("statusText", response.httpStatusText());
-    }
 
-    responseObject->setString("mimeType", response.mimeType());
-    responseObject->setBoolean("connectionReused", response.connectionReused());
-    responseObject->setNumber("connectionId", response.connectionID());
-    responseObject->setBoolean("fromDiskCache", response.wasCached());
+    double status;
+    String statusText;
+    if (response.resourceLoadInfo() && response.resourceLoadInfo()->httpStatusCode) {
+        status = response.resourceLoadInfo()->httpStatusCode;
+        statusText = response.resourceLoadInfo()->httpStatusText;
+    } else {
+        status = response.httpStatusCode();
+        statusText = response.httpStatusText();
+    }
+    RefPtr<InspectorObject> headers;
+    if (response.resourceLoadInfo())
+        headers = buildObjectForHeaders(response.resourceLoadInfo()->responseHeaders);
+    else
+        headers = buildObjectForHeaders(response.httpHeaderFields());
+
+    RefPtr<TypeBuilder::Network::Response> responseObject = TypeBuilder::Network::Response::create()
+        .setUrl(response.url().string())
+        .setStatus(status)
+        .setStatusText(statusText)
+        .setHeaders(headers)
+        .setMimeType(response.mimeType())
+        .setConnectionReused(response.connectionReused())
+        .setConnectionId(response.connectionID());
+
+    responseObject->setFromDiskCache(response.wasCached());
     if (response.resourceLoadTiming())
-        responseObject->setObject("timing", buildObjectForTiming(*response.resourceLoadTiming(), loader));
+        responseObject->setTiming(buildObjectForTiming(*response.resourceLoadTiming(), loader));
 
     if (response.resourceLoadInfo()) {
-        responseObject->setObject("headers", buildObjectForHeaders(response.resourceLoadInfo()->responseHeaders));
         if (!response.resourceLoadInfo()->responseHeadersText.isEmpty())
-            responseObject->setString("headersText", response.resourceLoadInfo()->responseHeadersText);
+            responseObject->setHeadersText(response.resourceLoadInfo()->responseHeadersText);
 
-        responseObject->setObject("requestHeaders", buildObjectForHeaders(response.resourceLoadInfo()->requestHeaders));
+        responseObject->setRequestHeaders(buildObjectForHeaders(response.resourceLoadInfo()->requestHeaders));
         if (!response.resourceLoadInfo()->requestHeadersText.isEmpty())
-            responseObject->setString("requestHeadersText", response.resourceLoadInfo()->requestHeadersText);
-    } else
-        responseObject->setObject("headers", buildObjectForHeaders(response.httpHeaderFields()));
+            responseObject->setRequestHeadersText(response.resourceLoadInfo()->requestHeadersText);
+    }
 
     return responseObject;
 }
 
-static PassRefPtr<InspectorObject> buildObjectForCachedResource(const CachedResource& cachedResource, DocumentLoader* loader)
+static PassRefPtr<TypeBuilder::Network::CachedResource> buildObjectForCachedResource(const CachedResource& cachedResource, DocumentLoader* loader)
 {
-    RefPtr<InspectorObject> resourceObject = InspectorObject::create();
-    resourceObject->setString("url", cachedResource.url());
-    resourceObject->setString("type", InspectorPageAgent::cachedResourceTypeString(cachedResource));
-    resourceObject->setNumber("bodySize", cachedResource.encodedSize());
+    RefPtr<TypeBuilder::Network::CachedResource> resourceObject = TypeBuilder::Network::CachedResource::create()
+        .setUrl(cachedResource.url())
+        .setType(InspectorPageAgent::cachedResourceTypeJson(cachedResource))
+        .setBodySize(cachedResource.encodedSize());
     RefPtr<InspectorObject> resourceResponse = buildObjectForResourceResponse(cachedResource.response(), loader);
     if (resourceResponse)
-        resourceObject->setObject("response", resourceResponse);
+        resourceObject->setResponse(resourceResponse);
     return resourceObject;
 }
 
@@ -216,12 +226,12 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
     }
 
     RefPtr<ScriptCallStack> callStack = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
-    RefPtr<InspectorArray> callStackValue;
+    RefPtr<TypeBuilder::Array<TypeBuilder::Console::CallFrame> > callStackValue;
     if (callStack)
         callStackValue = callStack->buildInspectorArray();
     else
-        callStackValue = InspectorArray::create();
-    RefPtr<InspectorObject> initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : 0);
+        callStackValue = TypeBuilder::Array<TypeBuilder::Console::CallFrame>::create();
+    RefPtr<TypeBuilder::Network::Initiator> initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : 0);
     m_frontend->requestWillBeSent(requestId, m_pageAgent->frameId(loader->frame()), m_pageAgent->loaderId(loader), loader->url().string(), buildObjectForResourceRequest(request), currentTime(), initiatorObject, callStackValue, buildObjectForResourceResponse(redirectResponse, loader));
 }
 
@@ -233,7 +243,7 @@ void InspectorResourceAgent::markResourceAsCached(unsigned long identifier)
 void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response)
 {
     String requestId = IdentifiersFactory::requestId(identifier);
-    RefPtr<InspectorObject> resourceResponse = buildObjectForResourceResponse(response, loader);
+    RefPtr<TypeBuilder::Network::Response> resourceResponse = buildObjectForResourceResponse(response, loader);
     InspectorPageAgent::ResourceType type = InspectorPageAgent::OtherResource;
     long cachedResourceSize = 0;
 
@@ -260,7 +270,7 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
         m_resourcesData->responseReceived(requestId, m_pageAgent->frameId(loader->frame()), response);
     }
     m_resourcesData->setResourceType(requestId, type);
-    m_frontend->responseReceived(requestId, m_pageAgent->frameId(loader->frame()), m_pageAgent->loaderId(loader), currentTime(), InspectorPageAgent::resourceTypeString(type), resourceResponse);
+    m_frontend->responseReceived(requestId, m_pageAgent->frameId(loader->frame()), m_pageAgent->loaderId(loader), currentTime(), InspectorPageAgent::resourceTypeJson(type), resourceResponse);
     // If we revalidated the resource and got Not modified, send content length following didReceiveResponse
     // as there will be no calls to didReceiveData from the network stack.
     if (cachedResourceSize && response.httpStatusCode() == 304)
@@ -312,7 +322,7 @@ void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* load
     String requestId = IdentifiersFactory::requestId(identifier);
     m_resourcesData->resourceCreated(requestId, loaderId);
     m_resourcesData->addCachedResource(requestId, resource);
-    RefPtr<InspectorObject> initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : 0);
+    RefPtr<TypeBuilder::Network::Initiator> initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : 0);
 
     m_frontend->requestServedFromMemoryCache(requestId, frameId, loaderId, loader->url().string(), currentTime(), initiatorObject, buildObjectForCachedResource(*resource, loader));
 }
@@ -374,30 +384,29 @@ void InspectorResourceAgent::didScheduleStyleRecalculation(Document* document)
         m_styleRecalculationInitiator = buildInitiatorObject(document);
 }
 
-PassRefPtr<InspectorObject> InspectorResourceAgent::buildInitiatorObject(Document* document)
+PassRefPtr<TypeBuilder::Network::Initiator> InspectorResourceAgent::buildInitiatorObject(Document* document)
 {
     RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
     if (stackTrace && stackTrace->size() > 0) {
-        RefPtr<InspectorObject> initiatorObject = InspectorObject::create();
-        initiatorObject->setString("type", "script");
-        initiatorObject->setArray("stackTrace", stackTrace->buildInspectorArray());
+        RefPtr<TypeBuilder::Network::Initiator> initiatorObject = TypeBuilder::Network::Initiator::create()
+            .setType(TypeBuilder::Network::Initiator::Type::Script);
+        initiatorObject->setStackTrace(stackTrace->buildInspectorArray());
         return initiatorObject;
     }
 
     if (document && document->scriptableDocumentParser()) {
-        RefPtr<InspectorObject> initiatorObject = InspectorObject::create();
-        initiatorObject->setString("type", "parser");
-        initiatorObject->setString("url", document->url().string());
-        initiatorObject->setNumber("lineNumber", document->scriptableDocumentParser()->lineNumber().oneBasedInt());
+        RefPtr<TypeBuilder::Network::Initiator> initiatorObject = TypeBuilder::Network::Initiator::create()
+            .setType(TypeBuilder::Network::Initiator::Type::Parser);
+        initiatorObject->setUrl(document->url().string());
+        initiatorObject->setLineNumber(document->scriptableDocumentParser()->lineNumber().oneBasedInt());
         return initiatorObject;
     }
 
     if (m_isRecalculatingStyle && m_styleRecalculationInitiator)
         return m_styleRecalculationInitiator;
 
-    RefPtr<InspectorObject> initiatorObject = InspectorObject::create();
-    initiatorObject->setString("type", "other");
-    return initiatorObject;
+    return TypeBuilder::Network::Initiator::create()
+        .setType(TypeBuilder::Network::Initiator::Type::Other);
 }
 
 #if ENABLE(WEB_SOCKETS)
@@ -424,19 +433,19 @@ void InspectorResourceAgent::didCreateWebSocket(unsigned long identifier, const 
 
 void InspectorResourceAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest& request)
 {
-    RefPtr<InspectorObject> requestObject = InspectorObject::create();
-    requestObject->setObject("headers", buildObjectForHeaders(request.headerFields()));
-    requestObject->setString("requestKey3", createReadableStringFromBinary(request.key3().value, sizeof(request.key3().value)));
+    RefPtr<TypeBuilder::Network::WebSocketRequest> requestObject = TypeBuilder::Network::WebSocketRequest::create()
+        .setRequestKey3(createReadableStringFromBinary(request.key3().value, sizeof(request.key3().value)))
+        .setHeaders(buildObjectForHeaders(request.headerFields()));
     m_frontend->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier), currentTime(), requestObject);
 }
 
 void InspectorResourceAgent::didReceiveWebSocketHandshakeResponse(unsigned long identifier, const WebSocketHandshakeResponse& response)
 {
-    RefPtr<InspectorObject> responseObject = InspectorObject::create();
-    responseObject->setNumber("status", response.statusCode());
-    responseObject->setString("statusText", response.statusText());
-    responseObject->setObject("headers", buildObjectForHeaders(response.headerFields()));
-    responseObject->setString("challengeResponse", createReadableStringFromBinary(response.challengeResponse().value, sizeof(response.challengeResponse().value)));
+    RefPtr<TypeBuilder::Network::WebSocketResponse> responseObject = TypeBuilder::Network::WebSocketResponse::create()
+        .setStatus(response.statusCode())
+        .setStatusText(response.statusText())
+        .setHeaders(buildObjectForHeaders(response.headerFields()))
+        .setChallengeResponse(createReadableStringFromBinary(response.challengeResponse().value, sizeof(response.challengeResponse().value)));
     m_frontend->webSocketHandshakeResponseReceived(IdentifiersFactory::requestId(identifier), currentTime(), responseObject);
 }
 

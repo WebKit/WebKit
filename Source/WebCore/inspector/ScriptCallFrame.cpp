@@ -57,14 +57,13 @@ bool ScriptCallFrame::isEqual(const ScriptCallFrame& o) const
 }
 
 #if ENABLE(INSPECTOR)
-PassRefPtr<InspectorObject> ScriptCallFrame::buildInspectorObject() const
+PassRefPtr<TypeBuilder::Console::CallFrame> ScriptCallFrame::buildInspectorObject() const
 {
-    RefPtr<TypeBuilder::Console::CallFrame> frame = TypeBuilder::Console::CallFrame::create()
+    return TypeBuilder::Console::CallFrame::create()
         .setFunctionName(m_functionName)
         .setUrl(m_scriptName)
         .setLineNumber(m_lineNumber)
         .setColumnNumber(m_column);
-    return frame;
 }
 #endif
 
