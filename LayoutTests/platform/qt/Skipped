@@ -1483,9 +1483,11 @@ svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
 # [Qt] REGRESSION(r111480): It made svg/as-image tests assert
 # https://bugs.webkit.org/show_bug.cgi?id=82052
 svg/as-image/animated-svg-as-image.html
-svg/as-image/img-preserveAspectRatio-support-2.html
-svg/as-image/svg-image-leak-loader.html
 svg/as-image/animated-svg-as-image-same-image.html
+svg/as-image/img-preserveAspectRatio-support-2.html
+svg/as-image/img-relative-width.html
+svg/as-image/svg-image-leak-loader.html
+svg/as-image/svg-non-integer-scaled-image.html
 
 # [Qt] svg/animations tests are very flaky
 # https://bugs.webkit.org/show_bug.cgi?id=80703
