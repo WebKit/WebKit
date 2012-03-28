@@ -1,3 +1,16 @@
+2012-03-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        extract-built-product build step should fail if unzipping fails
+        https://bugs.webkit.org/show_bug.cgi?id=82493
+
+        Reviewed by Simon Fraser.
+
+        Forward non-zero exit code from subprocesses so that the master can detect any failures
+        and bail out early.
+
+        * BuildSlaveSupport/built-product-archive:
+        (main):
+
 2012-03-28  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy should support files, directories, and packages as command line args
