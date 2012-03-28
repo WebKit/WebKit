@@ -1,3 +1,17 @@
+2012-03-28  Simon Fraser  <simon.fraser@apple.com>
+
+        download-built-product build step should detect 404 errors
+        https://bugs.webkit.org/show_bug.cgi?id=82491
+
+        Reviewed by Ryosuke Niwa.
+        
+        Pass --fail to curl so that it reports 404 errors.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (DownloadBuiltProduct): Pass --fail to curl so that it reports errors.
+        * BuildSlaveSupport/built-product-archive:
+        (extractBuiltProduct): Remove trailing whitespace.
+
 2012-03-28  Dirk Pranke  <dpranke@chromium.org>
 
         flakiness dashboard should only keep the last 500 runs

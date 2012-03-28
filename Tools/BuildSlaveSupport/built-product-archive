@@ -127,7 +127,7 @@ def extractBuiltProduct(configuration, platform):
         os.unlink(archiveFile)
 
     elif platform == 'win':
-        binDirectory = os.path.join(configurationBuildDirectory, "bin")        
+        binDirectory = os.path.join(configurationBuildDirectory, "bin")
         if os.path.isdir(binDirectory):
             shutil.rmtree(binDirectory)
 
