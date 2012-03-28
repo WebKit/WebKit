@@ -289,7 +289,7 @@ PluginView::~PluginView()
         m_plugin->destroyPlugin();
         m_isBeingDestroyed = false;
 #if PLATFORM(MAC)
-        setComplexTextInputState(PluginComplexTextInputDisabled);
+        pluginFocusOrWindowFocusChanged(false);
 #endif
     }
 

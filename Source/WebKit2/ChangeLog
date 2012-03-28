@@ -1,3 +1,21 @@
+2012-03-28  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r109826): Can't type into Flash text fields
+        https://bugs.webkit.org/show_bug.cgi?id=82488
+        <rdar://problem/11022004>
+
+        Reviewed by Sam Weinig.
+
+        This was caused by the fix in r109826. Revert that change and fix the original bug by notifying the UI process
+        that the plug-in lost focus when it's destroyed. This will correctly reset the text input state (merely setting 
+        the text input state to PluginComplexTextInputDisabled doesn't reset the state correctly).
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setPluginComplexTextInputState:]):
+        (-[WKView _handlePluginComplexTextInputKeyDown:]):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::~PluginView):
+
 2012-03-28  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Fix QWARN in test_loadIgnoreEmptyUrl API test.
