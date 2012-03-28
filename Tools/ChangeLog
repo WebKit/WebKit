@@ -1,3 +1,9 @@
+2012-03-27  Ojan Vafai  <ojan@chromium.org>
+
+        Fix expected results for some unittest failures.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures_unittests.js:
+
 2012-03-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Fix --enabled-threaded-compositing flag in DRT

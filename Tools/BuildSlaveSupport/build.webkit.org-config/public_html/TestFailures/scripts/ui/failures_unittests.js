@@ -89,7 +89,7 @@ test('FailureGrid', 10, function() {
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
-            '<tr class="TEXT">' +
+            '<tr class="TEXT" style="">' +
                 '<td><span>TEXT</span></td>' +
                 '<td></td>' +
                 '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
@@ -106,7 +106,7 @@ test('FailureGrid', 10, function() {
                 '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5"><span class="version">leopard</span></a></td>' +
                 '<td></td>' +
             '</tr>' +
-            '<tr class="TEXT">' +
+            '<tr class="TEXT" style="">' +
                 '<td><span>TEXT</span></td>' +
                 '<td></td>' +
                 '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
@@ -118,12 +118,12 @@ test('FailureGrid', 10, function() {
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
-            '<tr class="IMAGE+TEXT">' +
+            '<tr class="IMAGE+TEXT" style="">' +
                 '<td><span>IMAGE+TEXT</span></td>' +
                 '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5"><span class="version">leopard</span></a></td>' +
                 '<td></td>' +
             '</tr>' +
-            '<tr class="TEXT">' +
+            '<tr class="TEXT" style="">' +
                 '<td><span>TEXT</span></td>' +
                 '<td></td>' +
                 '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
