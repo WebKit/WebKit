@@ -27,6 +27,7 @@
 #include "ScrollbarLayerChromium.h"
 
 #include "Scrollbar.h"
+#include "Settings.h"
 #include "TreeSynchronizer.h"
 #include "cc/CCScrollbarLayerImpl.h"
 #include "cc/CCSingleThreadProxy.h"
@@ -90,6 +91,7 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
 {
     DebugScopedSetImplThread impl;
 
+    Settings::setMockScrollbarsEnabled(true);
     {
         RefPtr<MockScrollbar> scrollbar = adoptRef(new MockScrollbar);
         RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();

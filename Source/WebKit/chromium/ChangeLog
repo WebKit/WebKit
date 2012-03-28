@@ -1,3 +1,16 @@
+2012-03-27  James Robinson  <jamesr@chromium.org>
+
+        webkit_unit_tests crashing on chromium lion in ScrollbarLayerChromiumTest.resolveScrollLayerPointer
+        https://bugs.webkit.org/show_bug.cgi?id=82381
+
+        Reviewed by Adrienne Walker.
+
+        Use the mock scrollbar theme for this unit test. The real ScrollbarThemeMac isn't compatible with the mocks this
+        test uses and the test isn't designed to cover the theming code, only code inside the compositor.
+
+        * tests/ScrollbarLayerChromiumTest.cpp:
+        (WebCore::TEST):
+
 2012-03-27  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r112339.
