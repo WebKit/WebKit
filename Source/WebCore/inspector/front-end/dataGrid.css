@@ -49,7 +49,9 @@
 }
 
 .data-grid th.corner {
-    width: 15px;
+    width: 14px;
+    padding-right: 0px;
+    padding-left: 0px;
     border-right: 0 none transparent;
 }
 
