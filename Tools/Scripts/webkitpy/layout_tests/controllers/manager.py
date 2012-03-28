@@ -760,7 +760,7 @@ class Manager(object):
         for worker_number in xrange(num_workers):
             worker_arguments = worker.WorkerArguments(worker_number, self.results_directory(), self._options)
             worker_connection = manager_connection.start_worker(worker_arguments)
-            if self._options.child_processes == 1:
+            if num_workers == 1:
                 # FIXME: We need to be able to share a port with the work so
                 # that some of the tests can query state on the port; ideally
                 # we'd rewrite the tests so that this wasn't necessary.

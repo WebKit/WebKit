@@ -1,3 +1,18 @@
+2012-03-28  Dirk Pranke  <dpranke@chromium.org>
+
+        new-run-webkit-tests doesn't log correctly after retrying failures
+        https://bugs.webkit.org/show_bug.cgi?id=82541
+
+        Unreviewed, build fix.
+
+        r112189 introduced a regression where we would accidentally
+        delete the log handler after we retried any failing tests - that
+        meant that any log messages around uploading the results got
+        dropped.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+
 2012-03-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed. Build fix, move WTF back into JSCore target
