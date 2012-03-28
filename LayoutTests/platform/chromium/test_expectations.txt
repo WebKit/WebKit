@@ -1250,13 +1250,13 @@ BUGWK79568 WIN LINUX : svg/clip-path/clip-path-with-text-clipped.svg = TEXT
 // Appears elsewhere commented
 BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = TEXT
 // Appears elsewhere commented
-BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-39-t.svg = TEXT
+BUGWK75968 WIN LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-39-t.svg = TEXT
 // Appears elsewhere commented
 BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-40-t.svg = TEXT
 // Appears elsewhere commented
 BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE+TEXT
 // Appears elsewhere commented
-BUGWK75968 WIN SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE+TEXT TEXT
+BUGWK75968 WIN LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE+TEXT TEXT
 // Appears elsewhere commented
 BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-61-t.svg = IMAGE+TEXT
 // Appears elsewhere commented
@@ -1352,7 +1352,9 @@ BUGCR3244 LINUX WIN : svg/zoom/page/zoom-mask-with-percentages.svg = FAIL
 // or might be expected and that we should either go with the buildbot output
 // or change the test upstream to specify explicitly what font to use.
 // The mask part of this test is totally wrong.
-BUGCR3244 WIN LINUX SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = FAIL
+BUGCR3244 WIN LINUX LEOPARD : svg/as-background-image/svg-as-background-6.html = FAIL
+BUGCR3244 SNOWLEOPARD RELEASE : svg/as-background-image/svg-as-background-6.html = FAIL
+BUGCR3244 SNOWLEOPARD DEBUG : svg/as-background-image/svg-as-background-6.html = FAIL CRASH
 
 // Our gradients are wrong here.
 BUGCR19559 LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
