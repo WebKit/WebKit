@@ -272,7 +272,7 @@ class Main(Log):
             Popen(self._options.browser + " " + self._options.output_file, stdout=None, stderr=None, shell=True)
 
     def check_crash_occurences(self, results):
-    """ Checks if any test crashes and it sums them  """
+        """ Checks if any test crashes and it sums them  """
         totals = [0,0,0]
         crash_count = 0
         txt = []

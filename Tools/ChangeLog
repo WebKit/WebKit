@@ -1,3 +1,10 @@
+2012-03-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed typo fix after r112383.
+
+        * Scripts/run-qtwebkit-tests:
+        (Main.check_crash_occurences):
+
 2012-03-28  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] run-qtwebkit-tests should report crashes
