@@ -1,3 +1,12 @@
+2012-03-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Build fix - some compiles generating NORETURN related warnings.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::setSubpatternStart):
+        (JSC::Yarr::YarrGenerator::setSubpatternEnd):
+        (JSC::Yarr::YarrGenerator::clearSubpatternStart):
+
 2012-03-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed. Build fix, move WTF back into JSCore target

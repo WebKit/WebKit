@@ -328,19 +328,19 @@ class YarrGenerator : private MacroAssembler {
     void setSubpatternStart(RegisterID reg, unsigned subpattern)
     {
         ASSERT(subpattern);
-        ASSERT(compileMode == IncludeSubpatterns);
+        // FIXME: should be able to ASSERT(compileMode == IncludeSubpatterns), but then this function is conditionally NORETURN. :-(
         store32(reg, Address(output, (subpattern << 1) * sizeof(int)));
     }
     void setSubpatternEnd(RegisterID reg, unsigned subpattern)
     {
         ASSERT(subpattern);
-        ASSERT(compileMode == IncludeSubpatterns);
+        // FIXME: should be able to ASSERT(compileMode == IncludeSubpatterns), but then this function is conditionally NORETURN. :-(
         store32(reg, Address(output, ((subpattern << 1) + 1) * sizeof(int)));
     }
     void clearSubpatternStart(unsigned subpattern)
     {
         ASSERT(subpattern);
-        ASSERT(compileMode == IncludeSubpatterns);
+        // FIXME: should be able to ASSERT(compileMode == IncludeSubpatterns), but then this function is conditionally NORETURN. :-(
         store32(TrustedImm32(-1), Address(output, (subpattern << 1) * sizeof(int)));
     }
 
