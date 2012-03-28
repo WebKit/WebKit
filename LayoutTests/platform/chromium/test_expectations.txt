@@ -1468,11 +1468,6 @@ BUGCR105305 MAC LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg 
 // Other failures
 // -----------------------------------------------------------------
 
-// These fail the pixel tests in debug mode because they have
-// unpainted space (filled red in Debug but not in Release).
-// https://bugs.webkit.org/show_bug.cgi?id=8423
-BUGCR24204 LINUX WIN LEOPARD SNOWLEOPARD : tables/mozilla_expected_failures/bugs/bug178855.xml = IMAGE+TEXT TEXT
-
 // Fails on webkit windows as well.
 BUGCR24207 : fast/events/attempt-scroll-with-no-scrollbars.html = FAIL
 
@@ -3791,9 +3786,6 @@ BUGWK78422 WIN LINUX : svg/animations/animate-text-nested-transforms.html = TEXT
 
 BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
 
-BUGWK78561 WIN : css3/filters/crash-hw-sw-switch.html = MISSING
-BUGWK78561 WIN : css3/filters/filter-empty-element-crash.html = MISSING
-
 // Still flaky:
 BUGWK78830 DEBUG : svg/custom/mask-invalidation.svg = IMAGE PASS
 
@@ -3891,7 +3883,7 @@ BUGWK78684 : fast/borders/fieldsetBorderRadius.html = FAIL
 BUGWK78684 WIN LINUX : fast/forms/fieldset-legend-padding-unclipped-fieldset-border.html = FAIL
 
 // New test; landed at r109779 but results look wrong on most Chrome platforms.
-BUGSENORBLANCO : http/tests/incremental/partial-jpeg.html = FAIL
+BUGSENORBLANCO : http/tests/incremental/partial-jpeg.html = FAIL PASS
 
 // Since r109914, flaky crash
 BUGWK80481 MAC : canvas/philip/tests/2d.text-custom-font-load-crash.html = CRASH PASS
@@ -4047,7 +4039,6 @@ BUGWK81145 LION : fast/events/platform-wheelevent-paging-y-in-scrolling-page.htm
 BUGWK81145 LION : fast/events/scrollbar-double-click.html = TEXT
 
 // Migrated from chromium's downstream test_expectations
-BUGYANGGUO LINUX X86_64 : fast/repaint/moving-shadow-on-container.html = TEXT
 BUGYANGGUO MAC : fast/repaint/moving-shadow-on-container.html = TEXT
 BUGYANGGUO LEOPARD SNOWLEOPARD : fast/repaint/moving-shadow-on-path.html = TEXT
 BUGYANGGUO LION : svg/css/stars-with-shadow.html = TEXT
@@ -4064,7 +4055,7 @@ BUGWK81493 LINUX : svg/custom/js-late-gradient-creation.svg = PASS IMAGE
 
 BUGWK77368 WIN : css3/flexbox/child-overflow.html = IMAGE
 
-BUGWK81537 : fast/events/touch/gesture/pad-gesture-fling.html = TEXT
+BUGWK81537 : fast/events/touch/gesture/pad-gesture-fling.html = TEXT PASS
 
 BUGWK81544 : fast/text/international/font-fallback-to-common-script.html = IMAGE PASS
 
