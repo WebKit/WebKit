@@ -127,6 +127,7 @@ static SkCanvas* createNonPlatformCanvas(const IntSize& size)
 ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderingMode, DeferralMode deferralMode, bool& success)
     : m_data(size)
     , m_size(size)
+    , m_resolutionScale(1)
 {
     OwnPtr<SkCanvas> canvas;
 

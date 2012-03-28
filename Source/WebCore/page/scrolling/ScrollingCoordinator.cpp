@@ -60,6 +60,7 @@ ScrollingCoordinator::ScrollingCoordinator(Page* page)
     , m_scrollingTree(ScrollingTree::create(this))
     , m_scrollingTreeStateCommitterTimer(this, &ScrollingCoordinator::scrollingTreeStateCommitterTimerFired)
 #endif
+    , m_private(0)
 {
 }
 

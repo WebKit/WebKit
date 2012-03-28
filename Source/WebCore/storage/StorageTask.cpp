@@ -52,12 +52,16 @@ StorageTask::StorageTask(Type type, StorageThread* thread)
 
 StorageTask::StorageTask(Type type)
     : m_type(type)
+    , m_area(0)
+    , m_thread(0)
 {
     ASSERT(m_type == ImportOrigins || m_type == DeleteAllOrigins);
 }
 
 StorageTask::StorageTask(Type type, const String& originIdentifier)
     : m_type(type)
+    , m_area(0)
+    , m_thread(0)
     , m_originIdentifier(originIdentifier)
 {
     ASSERT(m_type == DeleteOrigin);
@@ -65,6 +69,8 @@ StorageTask::StorageTask(Type type, const String& originIdentifier)
 
 StorageTask::StorageTask(Type type, const String& originIdentifier, const String& databaseFilename)
     : m_type(type)
+    , m_area(0)
+    , m_thread(0)
     , m_originIdentifier(originIdentifier)
     , m_databaseFilename(databaseFilename)
 {

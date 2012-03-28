@@ -1,3 +1,15 @@
+2012-03-27  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
+
+        [Coverity] Address some uninitialized constructor values.
+        https://bugs.webkit.org/show_bug.cgi?id=82376
+
+        Reviewed by James Robinson.
+
+        New tests are not required since I did not modify any code behavior. I just initialized the class member variables in the constructor.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebCore::PlatformGestureToCCGestureAdapter::PlatformGestureToCCGestureAdapter):
+
 2012-03-27  Dirk Pranke  <dpranke@chromium.org>
 
         Roll chromium DEPS to r129300.

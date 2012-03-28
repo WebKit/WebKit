@@ -70,7 +70,6 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
     InspectorPageAgent* m_pageAgent;
     RefPtr<FrontendProvider> m_frontendProvider;
-    bool m_enabled;
 };
 
 } // namespace WebCore

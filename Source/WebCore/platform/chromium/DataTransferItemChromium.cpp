@@ -95,6 +95,7 @@ DataTransferItemChromium::DataTransferItemChromium(const String& kind, const Str
     : m_source(InternalSource)
     , m_kind(kind)
     , m_type(type)
+    , m_sequenceNumber(0)
 {
 }
 

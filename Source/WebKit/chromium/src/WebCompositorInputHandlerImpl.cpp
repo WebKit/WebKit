@@ -76,6 +76,7 @@ public:
 private:
     PlatformGestureToCCGestureAdapter(PassOwnPtr<PlatformGestureCurve> curve)
         : m_curve(curve)
+        , m_target(0)
     {
     }
 
