@@ -278,7 +278,7 @@ class MockFileSystem(object):
     def normpath(self, path):
         # This function is called a lot, so we try to optimize the common cases
         # instead of always calling _slow_but_correct_normpath(), above.
-        if '..' in path:
+        if '..' in path or '/./' in path:
             # This doesn't happen very often; don't bother trying to optimize it.
             return self._slow_but_correct_normpath(path)
         if not path:

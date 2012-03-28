@@ -24,6 +24,7 @@ import logging
 import unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.test.test_finder import TestFinder
 
 
@@ -36,17 +37,28 @@ class TestFinderTest(unittest.TestCase):
           '/foo2/bar2/baz2.pyc': '',
           '/foo2/bar2/baz2_integrationtest.py': '',
           '/foo2/bar2/missing.pyc': '',
+          '/tmp/another_unittest.py': '',
         }
         self.fs = MockFileSystem(files)
         self.finder = TestFinder(self.fs)
         self.finder.add_tree('/foo', 'bar')
         self.finder.add_tree('/foo2')
+
+        # Here we have to jump through a hoop to make sure test-webkitpy doesn't log
+        # any messages from these tests :(.
         self.root_logger = logging.getLogger()
-        self.log_level = self.root_logger.level
-        self.root_logger.setLevel(logging.WARNING)
+        self.log_handler = None
+        for h in self.root_logger.handlers:
+            if getattr(h, 'name', None) == 'webkitpy.test.main':
+                self.log_handler = h
+                break
+        if self.log_handler:
+            self.log_level = self.log_handler.level
+            self.log_handler.level = logging.CRITICAL
 
     def tearDown(self):
-        self.root_logger.setLevel(self.log_level)
+        if self.log_handler:
+            self.log_handler.setLevel(self.log_level)
 
     def test_additional_system_paths(self):
         self.assertEquals(self.finder.additional_paths(['/usr']),
@@ -70,19 +82,53 @@ class TestFinderTest(unittest.TestCase):
         self.finder.clean_trees()
         self.assertFalse(self.fs.exists('/foo2/bar2/missing.pyc'))
 
-    def test_find_names(self):
-        self.assertEquals(self.finder.find_names([], skip_integrationtests=False, find_all=True),
-            ['bar.baz_unittest', 'bar2.baz2_integrationtest'])
+    def check_names(self, names, expected_names, skip_integrationtests=False, find_all=False):
+        self.assertEquals(self.finder.find_names(names, skip_integrationtests, find_all),
+                          expected_names)
 
-        self.assertEquals(self.finder.find_names([], skip_integrationtests=True, find_all=True),
-            ['bar.baz_unittest'])
-        self.assertEquals(self.finder.find_names([], skip_integrationtests=True, find_all=False),
-            ['bar.baz_unittest'])
+    def test_default_names(self):
+        self.check_names([], ['bar.baz_unittest', 'bar2.baz2_integrationtest'])
+        self.check_names([], ['bar.baz_unittest'], skip_integrationtests=True, find_all=True)
+        self.check_names([], ['bar.baz_unittest'], skip_integrationtests=True, find_all=False)
 
         # Should return the names given it, even if they don't exist.
-        self.assertEquals(self.finder.find_names(['foobar'], skip_integrationtests=True, find_all=True),
-            ['foobar'])
+        self.check_names(['foobar'], ['foobar'], skip_integrationtests=True, find_all=False)
 
+    def test_paths(self):
+        self.fs.chdir('/foo/bar')
+        self.check_names(['baz_unittest.py'], ['bar.baz_unittest'])
+        self.check_names(['./baz_unittest.py'], ['bar.baz_unittest'])
+        self.check_names(['/foo/bar/baz_unittest.py'], ['bar.baz_unittest'])
+        self.check_names(['.'], ['bar.baz_unittest'])
+        self.check_names(['../../foo2/bar2'], ['bar2.baz2_integrationtest'])
+
+        self.fs.chdir('/')
+        self.check_names(['bar'], ['bar.baz_unittest'])
+        self.check_names(['/foo/bar/'], ['bar.baz_unittest'])
+
+        # This works 'by accident' since it maps onto a package.
+        self.check_names(['bar/'], ['bar.baz_unittest'])
+
+        # This should log an error, since it's outside the trees.
+        oc = OutputCapture()
+        oc.set_log_level(logging.ERROR)
+        oc.capture_output()
+        try:
+            self.check_names(['/tmp/another_unittest.py'], [])
+        finally:
+            _, _, logs = oc.restore_output()
+            self.assertTrue('another_unittest.py' in logs)
+
+        # Paths that don't exist are errors.
+        oc.capture_output()
+        try:
+            self.check_names(['/foo/bar/notexist_unittest.py'], [])
+        finally:
+            _, _, logs = oc.restore_output()
+            self.assertTrue('notexist_unittest.py' in logs)
+
+        # Names that don't exist are caught later, at load time.
+        self.check_names(['bar.notexist_unittest'], ['bar.notexist_unittest'])
 
 if __name__ == '__main__':
     unittest.main()

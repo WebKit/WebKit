@@ -24,6 +24,7 @@
 """this module is responsible for finding python tests."""
 
 import logging
+import re
 import sys
 
 
@@ -40,16 +41,28 @@ class TestDirectoryTree(object):
             self.top_package = starting_subdirectory.replace(filesystem.sep, '.') + '.'
             self.search_directory = filesystem.join(self.top_directory, starting_subdirectory)
 
-    def find_modules(self, suffixes):
+    def find_modules(self, suffixes, sub_directory=None):
+        if sub_directory:
+            search_directory = self.filesystem.join(self.top_directory, sub_directory)
+        else:
+            search_directory = self.search_directory
 
         def file_filter(filesystem, dirname, basename):
             return any(basename.endswith(suffix) for suffix in suffixes)
 
-        filenames = self.filesystem.files_under(self.search_directory, file_filter=file_filter)
+        filenames = self.filesystem.files_under(search_directory, file_filter=file_filter)
         return [self.to_module(filename) for filename in filenames]
 
     def to_module(self, path):
         return path.replace(self.top_directory + self.filesystem.sep, '').replace(self.filesystem.sep, '.')[:-3]
+
+    def subpath(self, path):
+        """Returns the relative path from the top of the tree to the path, or None if the path is not under the top of the tree."""
+        realpath = self.filesystem.realpath(self.filesystem.join(self.top_directory, path))
+        if realpath.startswith(self.top_directory + self.filesystem.sep):
+            return realpath.replace(self.top_directory + self.filesystem.sep, '')
+        return None
+
 
     def clean(self):
         """Delete all .pyc files in the tree that have no matching .py file."""
@@ -80,6 +93,9 @@ class TestFinder(object):
         relpath = name.replace('.', self.filesystem.sep) + '.py'
         return any(self.filesystem.exists(self.filesystem.join(tree.top_directory, relpath)) for tree in self.trees)
 
+    def is_dotted_name(self, name):
+        return re.match(r'[a-zA-Z.][a-zA-Z0-9_.]*', name)
+
     def to_module(self, path):
         for tree in self.trees:
             if path.startswith(tree.top_directory):
@@ -87,13 +103,50 @@ class TestFinder(object):
         return None
 
     def find_names(self, args, skip_integrationtests, find_all):
-        if args:
-            return args
-
         suffixes = ['_unittest.py']
         if not skip_integrationtests:
             suffixes.append('_integrationtest.py')
 
+        if args:
+            names = []
+            for arg in args:
+                names.extend(self._find_names_for_arg(arg, suffixes))
+            return names
+
+        return self._default_names(suffixes, find_all)
+
+    def _find_names_for_arg(self, arg, suffixes):
+        realpath = self.filesystem.realpath(arg)
+        if self.filesystem.exists(realpath):
+            names = self._find_in_trees(realpath, suffixes)
+            if not names:
+                _log.error("%s is not in one of the test trees." % arg)
+            return names
+
+        # See if it's a python package in a tree (or a relative path from the top of a tree).
+        names = self._find_in_trees(arg.replace('.', self.filesystem.sep), suffixes)
+        if names:
+            return names
+
+        if self.is_dotted_name(arg):
+            # The name may not exist, but that's okay; we'll find out later.
+            return [arg]
+
+        _log.error("%s is not a python name or an existing file or directory." % arg)
+        return []
+
+    def _find_in_trees(self, path, suffixes):
+        for tree in self.trees:
+            relpath = tree.subpath(path)
+            if not relpath:
+                continue
+            if self.filesystem.isfile(path):
+                return [tree.to_module(path)]
+            else:
+                return tree.find_modules(suffixes, path)
+        return []
+
+    def _default_names(self, suffixes, find_all):
         modules = []
         for tree in self.trees:
             modules.extend(tree.find_modules(suffixes))

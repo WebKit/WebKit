@@ -24,7 +24,6 @@
 
 import logging
 import optparse
-import os
 import StringIO
 import sys
 import traceback
@@ -102,6 +101,7 @@ class Tester(object):
         # Modifying the handler, then, is less intrusive and less likely to
         # interfere with modifications made by other modules (e.g. in unit
         # tests).
+        handler.name = __name__
         handler.setLevel(log_level)
         formatter = logging.Formatter("%(message)s")
         handler.setFormatter(formatter)

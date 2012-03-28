@@ -1,3 +1,40 @@
+2012-03-28  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy should support files, directories, and packages as command line args
+        https://bugs.webkit.org/show_bug.cgi?id=76765
+
+        Reviewed by Adam Barth.
+
+        This patch adds support for specifying files, directories, and
+        packages to test-webkitpy along with the already existing
+        support for modules, test classes, and individual test names.
+
+        Also, fix a bug in filesystem_mock where we wouldn't normalize a
+        path containing a reference to the current directory properly,
+        for example, '/foo/./bar.py'.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.normpath):
+        * Scripts/webkitpy/test/main.py:
+        (Tester._configure_logging):
+        (Tester._run_tests):
+        * Scripts/webkitpy/test/test_finder.py:
+        (TestDirectoryTree.find_modules):
+        (TestDirectoryTree.subpath):
+        (TestFinder.is_dotted_name):
+        (TestFinder.find_names):
+        (TestFinder):
+        (TestFinder._find_names_for_arg):
+        (TestFinder._find_in_trees):
+        (TestFinder._default_names):
+        * Scripts/webkitpy/test/test_finder_unittest.py:
+        (TestFinderTest.setUp):
+        (TestFinderTest.tearDown):
+        (TestFinderTest.check_names):
+        (TestFinderTest.test_default_names):
+        (TestFinderTest):
+        (TestFinderTest.test_paths):
+
 2012-03-28  Simon Fraser  <simon.fraser@apple.com>
 
         Fix inspector tests when running in internal builds.
