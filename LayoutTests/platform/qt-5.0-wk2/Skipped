@@ -341,7 +341,6 @@ editing/text-iterator/findString-selection-disabled.html
 editing/selection/click-in-margins-inside-editable-div.html
 fast/block/basic/020.html
 fast/dom/access-key-iframe.html
-fast/dom/Window/window-properties.html
 fast/forms/basic-selects.html
 fast/history/visited-link-background-color.html
 fast/layers/layer-visibility-sublayer.html
