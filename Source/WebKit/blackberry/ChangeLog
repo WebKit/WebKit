@@ -1,3 +1,23 @@
+2012-03-27  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] Text selection - selection gets broken in test.com/individuals.htm
+        https://bugs.webkit.org/show_bug.cgi?id=82292
+
+        Change to check and avoid text selection across frames.
+
+        Internal reviewed by Mike Fenton
+
+        Reviewed by Rob Buis.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::visiblePositionForPointIgnoringClipping):
+            support selection across frames, so check if the *framePoint* is in
+            the *frame*.
+        (BlackBerry::WebKit::SelectionHandler::setSelection):
+            function returns a null VisablePosition, it stands for a invalid position
+            or a position in the different frames, therefor we don't execute setting
+            handle's position.
+
 2012-03-27  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Switch WebPageCompositor to use AnimationFrameRateController instead of timer

@@ -138,7 +138,7 @@ static VisiblePosition visiblePositionForPointIgnoringClipping(const Frame& fram
     HitTestResult result = frame.eventHandler()->hitTestResultAtPoint(framePoint, true /* allowShadowContent */, true /* ignoreClipping */);
 
     Node* node = result.innerNode();
-    if (!node)
+    if (!node || node->document() != frame.document())
         return VisiblePosition();
 
     RenderObject* renderer = node->renderer();
@@ -450,24 +450,31 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
     if (!controller->selection().isBaseFirst())
         controller->setSelection(VisibleSelection(controller->selection().start(), controller->selection().end(), true /* isDirectional */));
 
+    // We don't return early in the following, so that we can do input field scrolling if the
+    // handle is outside the bounds of the field. This can be extended to handle sub-region
+    // scrolling as well
     if (startIsValid) {
         relativeStart = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), focusedFrame, start);
 
-        // Set the selection with validation.
-        newSelection.setBase(visiblePositionForPointIgnoringClipping(*focusedFrame, clipPointToVisibleContainer(start)));
-
-        // Reset the selection using the existing extent without validation.
-        newSelection.setWithoutValidation(newSelection.base(), controller->selection().end());
+        VisiblePosition base = visiblePositionForPointIgnoringClipping(*focusedFrame, clipPointToVisibleContainer(start));
+        if (base.isNotNull()) {
+            // The function setBase validates the "base"
+            newSelection.setBase(base);
+            newSelection.setWithoutValidation(newSelection.base(), controller->selection().end());
+            // Don't return early.
+        }
     }
 
     if (m_lastUpdatedEndPointIsValid) {
         relativeEnd = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), focusedFrame, end);
 
-        // Set the selection with validation.
-        newSelection.setExtent(visiblePositionForPointIgnoringClipping(*focusedFrame, clipPointToVisibleContainer(end)));
-
-        // Reset the selection using the existing base without validation.
-        newSelection.setWithoutValidation(controller->selection().start(), newSelection.extent());
+        VisiblePosition extent = visiblePositionForPointIgnoringClipping(*focusedFrame, clipPointToVisibleContainer(end));
+        if (extent.isNotNull()) {
+            // The function setExtent validates the "extent"
+            newSelection.setExtent(extent);
+            newSelection.setWithoutValidation(controller->selection().start(), newSelection.extent());
+            // Don't return early.
+        }
     }
 
     newSelection.setIsDirectional(true);
