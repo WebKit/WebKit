@@ -1349,7 +1349,8 @@ void DOMWindow::scrollBy(int x, int y) const
     if (!view)
         return;
 
-    view->scrollBy(IntSize(x, y));
+    IntSize scaledOffset(view->mapFromCSSToLayoutUnits(x), view->mapFromCSSToLayoutUnits(y));
+    view->scrollBy(scaledOffset);
 }
 
 void DOMWindow::scrollTo(int x, int y) const
