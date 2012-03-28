@@ -1,3 +1,17 @@
+2012-03-28  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Use WebCore::PlatformMouseEvent::globalPosition() instead of WebCore::PlatformMouseEvent::globalPos() in WebPage.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=82420
+
+        Reviewed by Rob Buis.
+
+        In PlatformMouseEvent.h the blackberry porting added globalPos() (but not upstreamed yet)
+        for PlatformMouseEvent, but this method is same as globalPosition() that is available for
+        every porting. We should use globalPosition().
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::updateCursor):
+
 2012-03-27  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         [BlackBerry] Text selection - selection gets broken in test.com/individuals.htm
