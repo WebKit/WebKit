@@ -396,11 +396,6 @@ void FrameLoaderClientWinCE::cancelPolicyCheck()
     notImplemented();
 }
 
-void FrameLoaderClientWinCE::dispatchDidLoadMainResource(DocumentLoader*)
-{
-    notImplemented();
-}
-
 void FrameLoaderClientWinCE::revertToProvisionalState(DocumentLoader*)
 {
     notImplemented();

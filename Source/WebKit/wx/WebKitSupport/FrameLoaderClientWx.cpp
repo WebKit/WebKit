@@ -385,12 +385,6 @@ void FrameLoaderClientWx::dispatchWillSubmitForm(FramePolicyFunction function,
 }
 
 
-void FrameLoaderClientWx::dispatchDidLoadMainResource(DocumentLoader*)
-{
-    notImplemented();
-}
-
-
 void FrameLoaderClientWx::revertToProvisionalState(DocumentLoader*)
 {
     notImplemented();

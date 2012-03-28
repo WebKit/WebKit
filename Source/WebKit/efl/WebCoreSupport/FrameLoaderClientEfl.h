@@ -122,7 +122,6 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void dispatchWillSendSubmitEvent(HTMLFormElement*) { }
     virtual void dispatchWillSubmitForm(FramePolicyFunction, WTF::PassRefPtr<FormState>);
 
-    virtual void dispatchDidLoadMainResource(DocumentLoader*);
     virtual void revertToProvisionalState(DocumentLoader*);
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&);
 

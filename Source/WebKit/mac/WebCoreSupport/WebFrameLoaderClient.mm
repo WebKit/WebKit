@@ -771,10 +771,6 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
     [dictionary release];
 }
 
-void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader* loader)
-{
-}
-
 void WebFrameLoaderClient::revertToProvisionalState(DocumentLoader* loader)
 {
     [dataSource(loader) _revertToProvisionalState];

@@ -628,11 +628,6 @@ void FrameLoaderClientEfl::cancelPolicyCheck()
     notImplemented();
 }
 
-void FrameLoaderClientEfl::dispatchDidLoadMainResource(DocumentLoader*)
-{
-    notImplemented();
-}
-
 void FrameLoaderClientEfl::revertToProvisionalState(DocumentLoader*)
 {
     m_hasRepresentation = true;

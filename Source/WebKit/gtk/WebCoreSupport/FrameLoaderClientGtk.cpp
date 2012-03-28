@@ -882,11 +882,6 @@ void FrameLoaderClient::cancelPolicyCheck()
         webkit_web_policy_decision_cancel(m_policyDecision);
 }
 
-void FrameLoaderClient::dispatchDidLoadMainResource(WebCore::DocumentLoader*)
-{
-    notImplemented();
-}
-
 void FrameLoaderClient::revertToProvisionalState(WebCore::DocumentLoader*)
 {
     m_hasRepresentation = true;

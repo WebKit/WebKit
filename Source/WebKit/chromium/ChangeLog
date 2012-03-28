@@ -1,3 +1,16 @@
+2012-03-28  Nate Chapin  <japhet@chromium.org>
+
+        Remove dispatchDidLoadMainResource callback, since no
+        port implements it.
+        https://bugs.webkit.org/show_bug.cgi?id=82539
+
+        Reviewed by Alexey Proskuryakov.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit):
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+
 2012-03-28  Dirk Pranke  <dpranke@chromium.org>
 
         Roll chromium from 129300 to 129509.

@@ -93,7 +93,6 @@ public:
     virtual void cancelPolicyCheck();
     virtual void dispatchUnableToImplementPolicy(const ResourceError&) { notImplemented(); }
     virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>);
-    virtual void dispatchDidLoadMainResource(DocumentLoader*) { notImplemented(); }
     virtual void revertToProvisionalState(DocumentLoader*) { notImplemented(); }
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&);
     virtual void postProgressStartedNotification();

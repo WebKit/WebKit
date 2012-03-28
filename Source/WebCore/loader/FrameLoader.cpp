@@ -1983,7 +1983,6 @@ void FrameLoader::finishedLoading()
     if (!dl->mainDocumentError().isNull() || !dl->frameLoader())
         return;
     dl->setPrimaryLoadComplete(true);
-    m_client->dispatchDidLoadMainResource(dl.get());
     checkLoadComplete();
 }
 
@@ -3085,7 +3084,6 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
 void FrameLoader::mainReceivedCompleteError(DocumentLoader* loader, const ResourceError&)
 {
     loader->setPrimaryLoadComplete(true);
-    m_client->dispatchDidLoadMainResource(activeDocumentLoader());
     checkCompleted();
     if (m_frame->page())
         checkLoadComplete();

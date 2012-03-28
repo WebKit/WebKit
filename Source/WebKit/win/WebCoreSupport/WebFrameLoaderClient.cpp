@@ -460,10 +460,6 @@ void WebFrameLoaderClient::dispatchShow()
         ui->webViewShow(webView);
 }
 
-void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader*)
-{
-}
-
 void WebFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError& error)
 {
     if (!m_manualLoader)

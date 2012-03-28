@@ -753,11 +753,6 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
     webPage->send(Messages::WebPageProxy::WillSubmitForm(m_frame->frameID(), sourceFrame->frameID(), valuesVector, listenerID, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
-void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader*)
-{
-    notImplemented();
-}
-
 void WebFrameLoaderClient::revertToProvisionalState(DocumentLoader*)
 {
     notImplemented();

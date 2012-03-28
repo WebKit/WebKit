@@ -1050,11 +1050,6 @@ void FrameLoaderClientImpl::dispatchWillSubmitForm(FramePolicyFunction function,
     (m_webFrame->frame()->loader()->policyChecker()->*function)(PolicyUse);
 }
 
-void FrameLoaderClientImpl::dispatchDidLoadMainResource(DocumentLoader*)
-{
-    // FIXME
-}
-
 void FrameLoaderClientImpl::revertToProvisionalState(DocumentLoader*)
 {
     m_hasRepresentation = true;

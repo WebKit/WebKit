@@ -567,11 +567,6 @@ void FrameLoaderClientQt::dispatchWillSubmitForm(FramePolicyFunction function,
 }
 
 
-void FrameLoaderClientQt::dispatchDidLoadMainResource(DocumentLoader*)
-{
-}
-
-
 void FrameLoaderClientQt::revertToProvisionalState(DocumentLoader*)
 {
     m_hasRepresentation = true;
