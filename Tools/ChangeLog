@@ -1,3 +1,10 @@
+2012-03-28  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, trivial update-webkit-libs-jhbuild system call fix.
+
+        * Scripts/update-webkitgtk-libs: This script is written in
+        Perl. Not Python. So use perl vocabulary to refer to command line arguments.
+
 2012-03-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         kill-old-processes doesn't do anything on linux
