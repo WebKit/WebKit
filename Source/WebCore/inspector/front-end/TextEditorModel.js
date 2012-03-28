@@ -160,21 +160,35 @@ WebInspector.TextEditorModel.prototype = {
             postCaret += newLines[0].length;
         } else {
             this._setLine(range.startLine, prefix + newLines[0]);
-
-            for (var i = 1; i < newLines.length; ++i)
-                this._lines.splice(range.startLine + i, 0, newLines[i]);
-            // Adjust attributes, attributes move with the first character of line.
-            var spliceParameters = new Array(newLines.length + 1); // 2 + number of items to insert.
-            spliceParameters[0] = range.startColumn ? range.startLine + 1 : range.startLine;
-            spliceParameters[1] = 0;
-            this._attributes.splice.apply(this._attributes, spliceParameters);
-
+            this._insertLines(range, newLines);
             this._setLine(range.startLine + newLines.length - 1, newLines[newLines.length - 1] + suffix);
             postCaret = newLines[newLines.length - 1].length;
         }
 
         return new WebInspector.TextRange(range.startLine, range.startColumn,
                                           range.startLine + newLines.length - 1, postCaret);
+    },
+
+    _insertLines: function(range, newLines)
+    {
+        var lines = new Array(this._lines.length + newLines.length - 1);
+        for (var i = 0; i <= range.startLine; ++i)
+            lines[i] = this._lines[i];
+        // Line at [0] is already set via setLine.
+        for (var i = 1; i < newLines.length; ++i)
+            lines[range.startLine + i] = newLines[i];
+        for (var i = range.startLine + newLines.length; i < lines.length; ++i)
+            lines[i] = this._lines[i - newLines.length + 1];
+        this._lines = lines;
+
+        // Adjust attributes, attributes move with the first character of line.
+        var attributes = new Array(lines.length);
+        var insertionIndex = range.startColumn ? range.startLine + 1 : range.startLine;
+        for (var i = 0; i < insertionIndex; ++i)
+            attributes[i] = this._attributes[i];
+        for (var i = insertionIndex + newLines.length - 1; i < attributes.length; ++i)
+            attributes[i] = this._attributes[i - newLines.length + 1];
+        this._attributes = attributes;
     },
 
     _eraseRange: function(range)
