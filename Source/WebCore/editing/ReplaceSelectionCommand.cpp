@@ -121,9 +121,16 @@ static Position positionAvoidingPrecedingNodes(Position pos)
     // same.  E.g.,
     //   <div>foo^</div>^
     // The two positions above are the same visual position, but we want to stay in the same block.
-    Node* stopNode = pos.deprecatedNode()->enclosingBlockFlowElement();
-    while (stopNode != pos.deprecatedNode() && VisiblePosition(pos) == VisiblePosition(pos.next()))
-        pos = pos.next();
+    Node* enclosingBlockNode = enclosingBlock(pos.containerNode());
+    for (Position nextPosition = pos; nextPosition.containerNode() != enclosingBlockNode; pos = nextPosition) {
+        if (pos.containerNode()->nonShadowBoundaryParentNode())
+            nextPosition = positionInParentAfterNode(pos.containerNode());
+        
+        if (nextPosition == pos 
+            || enclosingBlock(nextPosition.containerNode()) != enclosingBlockNode
+            || VisiblePosition(pos) != VisiblePosition(nextPosition))
+            break;
+    }
     return pos;
 }
 
