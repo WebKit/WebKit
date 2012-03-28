@@ -91,7 +91,8 @@ private:
     enum Operation {
         OperationNone,
         OperationWrite,
-        OperationTruncate
+        OperationTruncate,
+        OperationAbort
     };
 
     FileWriter(ScriptExecutionContext*);
@@ -104,6 +105,8 @@ private:
     virtual EventTargetData* eventTargetData() { return &m_eventTargetData; }
     virtual EventTargetData* ensureEventTargetData() { return &m_eventTargetData; }
 
+    void completeAbort();
+
     void doOperation(Operation);
 
     void signalCompletion(FileError::ErrorCode);
@@ -115,7 +118,7 @@ private:
     RefPtr<FileError> m_error;
     EventTargetData m_eventTargetData;
     ReadyState m_readyState;
-    bool m_isOperationInProgress;
+    Operation m_operationInProgress;
     Operation m_queuedOperation;
     long long m_bytesWritten;
     long long m_bytesToWrite;
