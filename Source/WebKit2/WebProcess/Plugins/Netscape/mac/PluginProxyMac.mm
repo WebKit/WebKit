@@ -29,22 +29,29 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #import "PluginController.h"
+#import "PluginControllerProxyMessages.h"
+#import "PluginProcessConnection.h"
 #import <WebKitSystemInterface.h>
 
 namespace WebKit {
 
+static void makeRenderLayer(CALayer *pluginLayer, uint32_t layerHostingContextID)
+{
+    CALayer *renderLayer = WKMakeRenderLayer(layerHostingContextID);
+    [renderLayer setFrame:[pluginLayer bounds]];
+    [renderLayer setAutoresizingMask:kCALayerWidthSizable | kCALayerHeightSizable];
+    [pluginLayer setSublayers:[NSArray arrayWithObject:renderLayer]];
+}
+
 PlatformLayer* PluginProxy::pluginLayer()
 {
     if (!m_pluginLayer && m_remoteLayerClientID) {
-        CALayer *renderLayer = WKMakeRenderLayer(m_remoteLayerClientID);
-
         // Create a layer with flipped geometry and add the real plug-in layer as a sublayer
         // so the coordinate system will match the event coordinate system.
         m_pluginLayer.adoptNS([[CALayer alloc] init]);
         [m_pluginLayer.get() setGeometryFlipped:YES];
-        
-        [renderLayer setAutoresizingMask:kCALayerWidthSizable | kCALayerHeightSizable];
-        [m_pluginLayer.get() addSublayer:renderLayer];
+
+        makeRenderLayer(m_pluginLayer.get(), m_remoteLayerClientID);
     }
 
     return m_pluginLayer.get();
@@ -64,6 +71,20 @@ void PluginProxy::setComplexTextInputState(uint64_t complexTextInputState)
 {
     controller()->setComplexTextInputState(static_cast<PluginComplexTextInputState>(complexTextInputState));
 }
+
+void PluginProxy::setLayerHostingMode(LayerHostingMode layerHostingMode)
+{
+    m_connection->connection()->send(Messages::PluginControllerProxy::SetLayerHostingMode(layerHostingMode), m_pluginInstanceID);
+}
+
+void PluginProxy::setLayerHostingContextID(uint32_t layerHostingContextID)
+{
+    ASSERT(m_pluginLayer.get());
+
+    m_remoteLayerClientID = layerHostingContextID;
+    makeRenderLayer(m_pluginLayer.get(), m_remoteLayerClientID);
+}
+
 
 } // namespace WebKit
 

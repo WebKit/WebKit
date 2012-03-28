@@ -34,7 +34,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void PluginControllerProxy::platformInitialize()
+void PluginControllerProxy::platformInitialize(const PluginCreationParameters&)
 {
     notImplemented();
 }

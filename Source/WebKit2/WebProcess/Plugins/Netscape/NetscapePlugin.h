@@ -205,6 +205,7 @@ private:
 
     virtual uint64_t pluginComplexTextInputIdentifier() const;
     virtual void sendComplexTextInput(const String& textInput);
+    virtual void setLayerHostingMode(LayerHostingMode) OVERRIDE;
 
     void pluginFocusOrWindowFocusChanged();
     void setComplexTextInputEnabled(bool);

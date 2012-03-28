@@ -323,6 +323,8 @@ void TiledCoreAnimationDrawingArea::setLayerHostingMode(uint32_t opaqueLayerHost
 
         m_layerHostingContext->setRootLayer(m_rootLayer.get());
 
+        m_webPage->setLayerHostingMode(layerHostingMode);
+
         // Finally, inform the UIProcess that the context has changed.
         LayerTreeContext layerTreeContext;
         layerTreeContext.contextID = m_layerHostingContext->contextID();

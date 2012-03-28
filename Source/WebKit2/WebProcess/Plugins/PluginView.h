@@ -65,6 +65,7 @@ public:
     void setDeviceScaleFactor(float);
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     bool sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
+    void setLayerHostingMode(LayerHostingMode);
 #endif
 
 #if USE(CG)

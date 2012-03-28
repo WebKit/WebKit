@@ -39,6 +39,9 @@ void Plugin::Parameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(values);
     encoder->encode(mimeType);
     encoder->encode(loadManually);
+#if PLATFORM(MAC)
+    encoder->encodeEnum(layerHostingMode);
+#endif
 }
 
 bool Plugin::Parameters::decode(CoreIPC::ArgumentDecoder* decoder, Parameters& parameters)
@@ -57,7 +60,10 @@ bool Plugin::Parameters::decode(CoreIPC::ArgumentDecoder* decoder, Parameters& p
         return false;
     if (!decoder->decode(parameters.loadManually))
         return false;
-
+#if PLATFORM(MAC)
+    if (!decoder->decodeEnum(parameters.layerHostingMode))
+        return false;
+#endif
     if (parameters.names.size() != parameters.values.size()) {
         decoder->markInvalid();
         return false;

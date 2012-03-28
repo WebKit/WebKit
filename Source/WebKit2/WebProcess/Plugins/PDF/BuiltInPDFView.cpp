@@ -640,6 +640,10 @@ void BuiltInPDFView::sendComplexTextInput(const String&)
 {
 }
 
+void BuiltInPDFView::setLayerHostingMode(LayerHostingMode)
+{
+}
+
 #endif
 
 void BuiltInPDFView::privateBrowsingStateChanged(bool)

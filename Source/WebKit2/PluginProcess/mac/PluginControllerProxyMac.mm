@@ -29,6 +29,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #import "LayerHostingContext.h"
+#import "PluginCreationParameters.h"
 #import "PluginProcess.h"
 #import "PluginProxyMessages.h"
 #import "WebProcessConnection.h"
@@ -53,15 +54,10 @@ mach_port_t PluginControllerProxy::compositingRenderServerPort()
     return PluginProcess::shared().compositingRenderServerPort();
 }
 
-void PluginControllerProxy::platformInitialize()
+void PluginControllerProxy::platformInitialize(const PluginCreationParameters& creationParameters)
 {
-    CALayer * platformLayer = m_plugin->pluginLayer();
-    if (!platformLayer)
-        return;
-
     ASSERT(!m_layerHostingContext);
-    m_layerHostingContext = LayerHostingContext::createForPort(PluginProcess::shared().compositingRenderServerPort());
-    m_layerHostingContext->setRootLayer(platformLayer);
+    updateLayerHostingContext(creationParameters.parameters.layerHostingMode);
 }
 
 void PluginControllerProxy::platformDestroy()
@@ -110,6 +106,41 @@ void PluginControllerProxy::windowVisibilityChanged(bool isVisible)
 void PluginControllerProxy::sendComplexTextInput(const String& textInput)
 {
     m_plugin->sendComplexTextInput(textInput);
+}
+
+void PluginControllerProxy::setLayerHostingMode(uint32_t opaqueLayerHostingMode)
+{
+    LayerHostingMode layerHostingMode = static_cast<LayerHostingMode>(opaqueLayerHostingMode);
+    updateLayerHostingContext(layerHostingMode);
+
+    m_connection->connection()->send(Messages::PluginProxy::SetLayerHostingContextID(m_layerHostingContext->contextID()), m_pluginInstanceID);
+}
+
+void PluginControllerProxy::updateLayerHostingContext(LayerHostingMode layerHostingMode)
+{
+    CALayer *platformLayer = m_plugin->pluginLayer();
+    if (!platformLayer)
+        return;
+
+    if (m_layerHostingContext) {
+        if (m_layerHostingContext->layerHostingMode() == layerHostingMode)
+            return;
+
+        m_layerHostingContext->invalidate();
+    }
+
+    switch (layerHostingMode) {
+        case LayerHostingModeDefault:
+            m_layerHostingContext = LayerHostingContext::createForPort(PluginProcess::shared().compositingRenderServerPort());
+            break;
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+        case LayerHostingModeInWindowServer:
+            m_layerHostingContext = LayerHostingContext::createForWindowServer();
+            break;
+#endif
+    }
+
+    m_layerHostingContext->setRootLayer(platformLayer);
 }
 
 } // namespace WebKit

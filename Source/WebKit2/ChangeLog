@@ -1,3 +1,94 @@
+2012-03-27  Anders Carlsson  <andersca@apple.com>
+
+        Plug-ins using the Core Animation drawing model should work when hosting the layer tree in the window server
+        https://bugs.webkit.org/show_bug.cgi?id=82387
+        <rdar://problem/11031942>
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        (WebKit::PluginControllerProxy::initialize):
+        Remove m_pluginCreationParameters; it was used by the old NPRuntime short-circuit code. 
+        Make platformInitialize take creation parameters.
+
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Add SetLayerHostingMode message.
+
+        * PluginProcess/gtk/PluginControllerProxyGtk.cpp:
+        (WebKit::PluginControllerProxy::platformInitialize):
+        Make platformInitialize take creation parameters.
+
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::platformInitialize):
+        Call updateLayerHostingContext.
+
+        (WebKit::PluginControllerProxy::setLayerHostingMode):
+        Call updateLayerHostingContext and send back the new context ID.
+
+        (WebKit::PluginControllerProxy::updateLayerHostingContext):
+        Create a new LayerHostingContext given the layer hosting mode.
+
+        * PluginProcess/qt/PluginControllerProxyQt.cpp:
+        (WebKit::PluginControllerProxy::platformInitialize):
+        Make platformInitialize take creation parameters.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::setLayerHostingMode):
+        Add stub.
+
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        (WebKit::makeRenderLayer):
+        Add helper function for creating a new render layer.
+
+        (WebKit::PluginProxy::pluginLayer):
+        Call makeRenderLayer.
+
+        (WebKit::PluginProxy::setLayerHostingMode):
+        Send a message to the plug-in process.
+
+        (WebKit::PluginProxy::setLayerHostingContextID):
+        Update the context ID and make a new render layer.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::setLayerHostingMode):
+        Add stub.
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Parameters::encode):
+        (WebKit::Plugin::Parameters::decode):
+        * WebProcess/Plugins/Plugin.h:
+        Add the layer hosting mode as a parameter. Add a new setLayerHostingMode pure virtual member function.
+
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        Add a SetLayerHostingContextID message.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setLayerHostingMode):
+        Call down to the plug-in.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        Set the layer hosting mode of the page.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Initialize m_layerHostingMode to false.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::layerHostingMode):
+        Add m_layerHostingMode and a getter.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setLayerHostingMode):
+        Call WebPage::setLayerHostingMode.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setLayerHostingMode):
+        Tell all plug-ins that the layer hosting mode changed.
+
 2012-03-27  Timothy Hatcher  <timothy@apple.com>
 
         Make WebKit properly load a staged framework when soft linking.

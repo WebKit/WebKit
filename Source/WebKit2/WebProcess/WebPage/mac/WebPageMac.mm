@@ -711,4 +711,12 @@ void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& ev
         result = !!hitResult.scrollbar();
 }
 
+void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
+{
+    m_layerHostingMode = layerHostingMode;
+
+    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
+        (*it)->setLayerHostingMode(layerHostingMode);
+}
+
 } // namespace WebKit

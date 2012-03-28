@@ -1022,6 +1022,10 @@ void NetscapePlugin::sendComplexTextInput(const String& textInput)
     }
 }
 
+void NetscapePlugin::setLayerHostingMode(LayerHostingMode)
+{
+}
+
 void NetscapePlugin::pluginFocusOrWindowFocusChanged()
 {
     bool pluginHasFocusAndWindowHasFocus = m_pluginHasFocus && m_windowHasFocus;

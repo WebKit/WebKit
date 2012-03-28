@@ -434,6 +434,14 @@ bool PluginView::sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier,
     return true;
 }
 
+void PluginView::setLayerHostingMode(LayerHostingMode layerHostingMode)
+{
+    if (!m_plugin)
+        return;
+
+    m_plugin->setLayerHostingMode(layerHostingMode);
+}
+
 #endif
 
 void PluginView::initializePlugin()

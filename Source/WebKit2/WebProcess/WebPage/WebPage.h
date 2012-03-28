@@ -81,6 +81,7 @@
 
 #if PLATFORM(MAC)
 #include "DictionaryPopupInfo.h"
+#include "LayerHostingContext.h"
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
@@ -298,6 +299,9 @@ public:
 #if PLATFORM(MAC)
     void addPluginView(PluginView*);
     void removePluginView(PluginView*);
+
+    LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
+    void setLayerHostingMode(LayerHostingMode);
 
     bool windowIsVisible() const { return m_windowIsVisible; }
     const WebCore::IntRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }
@@ -699,6 +703,9 @@ private:
     
     // All plug-in views on this web page.
     HashSet<PluginView*> m_pluginViews;
+
+    // The layer hosting mode.
+    LayerHostingMode m_layerHostingMode;
 
     RetainPtr<WKAccessibilityWebPageObject> m_mockAccessibilityElement;
 

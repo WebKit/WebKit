@@ -33,6 +33,10 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(MAC)
+#include "LayerHostingContext.h"
+#endif
+
 struct NPObject;
 
 namespace CoreIPC {
@@ -65,6 +69,9 @@ public:
         Vector<String> values;
         String mimeType;
         bool loadManually;
+#if PLATFORM(MAC)
+        LayerHostingMode layerHostingMode;
+#endif
 
         void encode(CoreIPC::ArgumentEncoder*) const;
         static bool decode(CoreIPC::ArgumentDecoder*, Parameters&);
@@ -193,6 +200,9 @@ public:
 
     // Send the complex text input to the plug-in.
     virtual void sendComplexTextInput(const String& textInput) = 0;
+
+    // Tells the plug-in about changes to the layer hosting mode.
+    virtual void setLayerHostingMode(LayerHostingMode) = 0;
 #endif
 
     // Tells the plug-in about scale factor changes.

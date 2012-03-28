@@ -105,6 +105,7 @@ private:
     virtual void contentsScaleFactorChanged(float);
     virtual uint64_t pluginComplexTextInputIdentifier() const;
     virtual void sendComplexTextInput(const String& textInput);
+    virtual void setLayerHostingMode(LayerHostingMode) OVERRIDE;
 #endif
 
     virtual void privateBrowsingStateChanged(bool);

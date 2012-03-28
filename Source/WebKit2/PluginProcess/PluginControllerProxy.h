@@ -133,14 +133,15 @@ private:
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     void windowVisibilityChanged(bool);
     void sendComplexTextInput(const String& textInput);
+    void setLayerHostingMode(uint32_t);
+
+    void updateLayerHostingContext(LayerHostingMode);
 #endif
 
     void privateBrowsingStateChanged(bool);
     void getFormValue(bool& returnValue, String& formValue);
 
-    bool inInitialize() const { return m_pluginCreationParameters; }
-
-    void platformInitialize();
+    void platformInitialize(const PluginCreationParameters&);
     void platformDestroy();
     void platformGeometryDidChange();
 
@@ -167,9 +168,6 @@ private:
     // A timer that we use to prevent destruction of the plug-in while plug-in
     // code is on the stack.
     WebCore::RunLoop::Timer<PluginControllerProxy> m_pluginDestroyTimer;
-
-    // Will point to the plug-in creation parameters of the plug-in we're currently initializing and will be null when we're done initializing.
-    const PluginCreationParameters* m_pluginCreationParameters;
 
     // Whether we're waiting for the plug-in proxy in the web process to draw the contents of its
     // backing store into the web process backing store.

@@ -100,6 +100,7 @@ private:
     virtual void windowVisibilityChanged(bool);
     virtual uint64_t pluginComplexTextInputIdentifier() const;
     virtual void sendComplexTextInput(const String& textInput);
+    virtual void setLayerHostingMode(LayerHostingMode) OVERRIDE;
 #endif
 
     virtual void contentsScaleFactorChanged(float);
@@ -132,6 +133,7 @@ private:
 #if PLATFORM(MAC)
     void pluginFocusOrWindowFocusChanged(bool);
     void setComplexTextInputState(uint64_t);
+    void setLayerHostingContextID(uint32_t);
 #endif
 
     String m_pluginPath;

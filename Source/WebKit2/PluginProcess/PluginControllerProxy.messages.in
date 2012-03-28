@@ -98,6 +98,9 @@ messages -> PluginControllerProxy {
 
     # Sent when the containing NSWindow's visibility changes
     WindowVisibilityChanged(bool isVisible)
+
+    # Sent when the containing window's layer hosting mode changes
+    SetLayerHostingMode(uint32_t layerHostingMode)
 #endif
 
     # Return a snapshot of the plugin

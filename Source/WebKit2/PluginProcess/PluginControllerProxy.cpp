@@ -69,7 +69,6 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, c
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
     , m_pluginDestructionProtectCount(0)
     , m_pluginDestroyTimer(RunLoop::main(), this, &PluginControllerProxy::destroy)
-    , m_pluginCreationParameters(0)
     , m_waitingForDidUpdate(false)
     , m_pluginCanceledManualStreamLoad(false)
 #if PLATFORM(MAC)
@@ -106,9 +105,7 @@ bool PluginControllerProxy::initialize(const PluginCreationParameters& creationP
     m_windowNPObject = m_connection->npRemoteObjectMap()->createNPObjectProxy(creationParameters.windowNPObjectID, m_plugin.get());
     ASSERT(m_windowNPObject);
 
-    m_pluginCreationParameters = &creationParameters;
     bool returnValue = m_plugin->initialize(this, creationParameters.parameters);
-    m_pluginCreationParameters = 0;
 
     if (!returnValue) {
         // Get the plug-in so we can pass it to removePluginControllerProxy. The pointer is only
@@ -122,7 +119,7 @@ bool PluginControllerProxy::initialize(const PluginCreationParameters& creationP
         return false;
     }
 
-    platformInitialize();
+    platformInitialize(creationParameters);
 
     return true;
 }
