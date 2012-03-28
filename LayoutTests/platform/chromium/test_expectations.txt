@@ -4321,3 +4321,6 @@ BUGWK82372 LINUX X86_64 DEBUG : css3/filters/custom/effect-custom-parameters.htm
 BUGWK82372 LINUX X86 RELEASE : css3/filters/custom/effect-custom-parameters.html = IMAGE
 
 BUGWK82269 DEBUG: media/track/track-delete-during-setup.html = CRASH
+
+// this test appears to consistently fail during the main run but usually passes on a retry.
+BUGWK82404 LINUX LEOPARD SNOWLEOPARD : plugins/netscape-dom-access-and-reload.html = PASS TEXT 
