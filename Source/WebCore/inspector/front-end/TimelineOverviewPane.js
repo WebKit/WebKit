@@ -196,10 +196,9 @@ WebInspector.TimelineOverviewPane.prototype = {
         var records = this._presentationModel.rootRecord().children;
         WebInspector.TimelinePanel.forAllRecords(records, updateBoundaries.bind(this));
 
-        if (this._heapGraph.visible) {
-            this._heapGraph.setSize(this._overviewGrid.element.offsetWidth, 60);
+        if (this._heapGraph.visible)
             this._heapGraph.update(records);
-        } else if (this._verticalOverview)
+        else if (this._verticalOverview)
             this._verticalOverview.update(records);
         else
             this._updateCategoryStrips(records);
@@ -710,15 +709,14 @@ WebInspector.HeapGraph.prototype = {
         this.element.addStyleClass("hidden");
     },
 
-    setSize: function(w, h) {
-        this._canvas.width = w;
-        this._canvas.height = h - 5;
-    },
-
     update: function(records)
     {
         if (!records.length)
             return;
+
+        const yPadding = 5;
+        this._canvas.width = this.element.clientWidth;
+        this._canvas.height = this.element.clientHeight - yPadding;
 
         const lowerOffset = 3;
         var maxUsedHeapSize = 0;
