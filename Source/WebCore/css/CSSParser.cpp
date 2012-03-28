@@ -1538,19 +1538,17 @@ bool CSSParser::parseValue(int propId, bool important)
         return parseFontWeight(important);
 
     case CSSPropertyBorderSpacing: {
-        const int properties[2] = { CSSPropertyWebkitBorderHorizontalSpacing,
-                                    CSSPropertyWebkitBorderVerticalSpacing };
         if (num == 1) {
             ShorthandScope scope(this, CSSPropertyBorderSpacing);
-            if (!parseValue(properties[0], important))
+            if (!parseValue(CSSPropertyWebkitBorderHorizontalSpacing, important))
                 return false;
             CSSValue* value = m_parsedProperties.last().value();
-            addProperty(properties[1], value, important);
+            addProperty(CSSPropertyWebkitBorderVerticalSpacing, value, important);
             return true;
         }
         else if (num == 2) {
             ShorthandScope scope(this, CSSPropertyBorderSpacing);
-            if (!parseValue(properties[0], important) || !parseValue(properties[1], important))
+            if (!parseValue(CSSPropertyWebkitBorderHorizontalSpacing, important) || !parseValue(CSSPropertyWebkitBorderVerticalSpacing, important))
                 return false;
             return true;
         }
