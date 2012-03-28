@@ -727,7 +727,7 @@ function testStyleAttributePropertyAccessOldValue() {
         shouldBe('mutations[0].oldValue', '"color: yellow; width: 100px; "');
         shouldBe('mutations[1].type', '"attributes"');
         shouldBe('mutations[1].attributeName', '"style"');
-        shouldBe('mutations[1].oldValue', '"width: 100px; color: red; "');
+        shouldBe('mutations[1].oldValue', '"color: red; width: 100px; "');
         shouldBe('mutations[2].type', '"attributes"');
         shouldBe('mutations[2].attributeName', '"style"');
         shouldBe('mutations[2].oldValue', '"color: red; width: 200px; "');

@@ -419,6 +419,10 @@ raw style
 ['font-size':'12px'] @[88-104] active
 ['border-width':'1px'] @[109-127] active
 [text='font-size: 14px;'] disabled
+['border-top-width':'1px'] @[undefined-undefined] style
+['border-right-width':'1px'] @[undefined-undefined] style
+['border-bottom-width':'1px'] @[undefined-undefined] style
+['border-left-width':'1px'] @[undefined-undefined] style
 ['border-top-style':'solid'] @[undefined-undefined] style
 ['border-right-style':'solid'] @[undefined-undefined] style
 ['border-bottom-style':'solid'] @[undefined-undefined] style
@@ -428,10 +432,6 @@ raw style
 ['border-bottom-color':'initial'] @[undefined-undefined] style
 ['border-left-color':'initial'] @[undefined-undefined] style
 ['border-image':'initial'] @[undefined-undefined] style
-['border-top-width':'1px'] @[undefined-undefined] style
-['border-right-width':'1px'] @[undefined-undefined] style
-['border-bottom-width':'1px'] @[undefined-undefined] style
-['border-left-width':'1px'] @[undefined-undefined] style
 
 === After property enabled ===
 
@@ -446,6 +446,10 @@ raw style
 ['font-size':'12px'] @[88-104] inactive
 ['border-width':'1px'] @[109-127] active
 ['font-size':'14px'] @[132-148] active
+['border-top-width':'1px'] @[undefined-undefined] style
+['border-right-width':'1px'] @[undefined-undefined] style
+['border-bottom-width':'1px'] @[undefined-undefined] style
+['border-left-width':'1px'] @[undefined-undefined] style
 ['border-top-style':'solid'] @[undefined-undefined] style
 ['border-right-style':'solid'] @[undefined-undefined] style
 ['border-bottom-style':'solid'] @[undefined-undefined] style
@@ -455,8 +459,4 @@ raw style
 ['border-bottom-color':'initial'] @[undefined-undefined] style
 ['border-left-color':'initial'] @[undefined-undefined] style
 ['border-image':'initial'] @[undefined-undefined] style
-['border-top-width':'1px'] @[undefined-undefined] style
-['border-right-width':'1px'] @[undefined-undefined] style
-['border-bottom-width':'1px'] @[undefined-undefined] style
-['border-left-width':'1px'] @[undefined-undefined] style
 

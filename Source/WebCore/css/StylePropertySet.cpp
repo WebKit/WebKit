@@ -552,10 +552,8 @@ void StylePropertySet::addParsedProperties(const CSSProperty* properties, int nu
 void StylePropertySet::addParsedProperty(const CSSProperty& property)
 {
     // Only add properties that have no !important counterpart present
-    if (!propertyIsImportant(property.id()) || property.isImportant()) {
-        removeProperty(property.id());
-        m_properties.append(property);
-    }
+    if (!propertyIsImportant(property.id()) || property.isImportant())
+        setProperty(property);
 }
 
 String StylePropertySet::asText() const
