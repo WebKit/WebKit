@@ -1,3 +1,25 @@
+2012-03-28  Ojan Vafai  <ojan@chromium.org>
+
+        Add history navigation to garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=82495
+
+        Reviewed by Dimitri Glazkov.
+
+        Also, maintain scroll offsets when returning to a tab. This makes addressing
+        expected failures considerably easier when dealing with below-the-fold tests.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        -Store the scrollTop before switching to a new tab and restore the appropriate scrollTop after
+        switching.
+        -Modify window.location with the tabName in the hash. Can't use pushState because this is served
+        from a file URL and Chrome puts each different file URL in it's own origin.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        Remove the href so that clicking on the accordion item does not modify window.location.hash.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/results.css:
+
 2012-03-28  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] generate-gtk-doc doesn't cope with custom build directory

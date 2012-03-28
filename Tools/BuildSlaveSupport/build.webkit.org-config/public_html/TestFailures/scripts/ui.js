@@ -75,13 +75,53 @@ ui.onebar = base.extends('div', {
             'expected',
             'results',
         ]
+        this._tabIndexToSavedScrollOffset = {};
         this._tabs = $(this).tabs({
             disabled: [2],
+            show: function(event, ui) { this._restoreScrollOffset(ui.index); },
         });
+    },
+    _saveScrollOffset: function() {
+        var tabIndex = this._tabs.tabs('option', 'selected');
+        this._tabIndexToSavedScrollOffset[tabIndex] = document.body.scrollTop;
+    },
+    _restoreScrollOffset: function(tabIndex)
+    {
+        document.body.scrollTop = this._tabIndexToSavedScrollOffset[tabIndex] || 0;
+    },
+    _setupHistoryHandlers: function()
+    {
+        function currentHash() {
+            var hash = window.location.hash;
+            return (!hash || hash == '#') ? '#unexpected' : hash;
+        }
+
+        var self = this;
+        $('.ui-tabs-nav a').bind('mouseup', function(event) {
+            var href = event.target.getAttribute('href');
+            var hash = currentHash();
+            if (href != hash) {
+                self._saveScrollOffset();
+                window.location = href
+            }
+        });
+
+        window.onhashchange = function(event) {
+            var tabName = currentHash().substring(1);
+            self._selectInternal(tabName);
+        };
+
+        // When navigating from the browser chrome, we'll
+        // scroll to the #tabname contents. popstate fires before
+        // we scroll, so we can save the scroll offset first.
+        window.onpopstate = function() {
+            self._saveScrollOffset();
+        };
     },
     attach: function()
     {
         document.body.insertBefore(this, document.body.firstChild);
+        this._setupHistoryHandlers();
     },
     tabNamed: function(tabName)
     {
@@ -108,11 +148,16 @@ ui.onebar = base.extends('div', {
     {
         return this.tabNamed('results');
     },
-    select: function(tabName)
-    {
+    _selectInternal: function(tabName) {
         var tabIndex = this._tabNames.indexOf(tabName);
         this._tabs.tabs('enable', tabIndex);
         this._tabs.tabs('select', tabIndex);
+    },
+    select: function(tabName)
+    {
+        this._saveScrollOffset();
+        this._selectInternal(tabName);
+        window.location = '#' + tabName;
     }
 });
 

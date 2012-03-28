@@ -90,7 +90,8 @@
     text-decoration: underline;
     display: inline-block;
 }
-.ui-state-active .non-link-title, .ui-state-active .non-link-title:link, .ui-state-active .non-link-title:visited {
+/* Stupid CSS specificity rules. We need the .ui-accordion-header to override the builtin jquery styling on anchor tags in accordion headers. */
+.ui-state-active.ui-accordion-header .non-link-title, .ui-state-active .non-link-title:link, .ui-state-active .non-link-title:visited {
     display: none;
 }
 

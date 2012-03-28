@@ -190,7 +190,7 @@ ui.results.TestSelector = base.extends('div', {
         Object.keys(resultsByTest).sort().forEach(function(testName) {
             var nonLinkTitle = document.createElement('a');
             $(nonLinkTitle).addClass('non-link-title');
-            $(nonLinkTitle).attr('href', "#").text(testName);
+            $(nonLinkTitle).text(testName);
 
             var linkTitle = document.createElement('a');
             $(linkTitle).addClass('link-title');
