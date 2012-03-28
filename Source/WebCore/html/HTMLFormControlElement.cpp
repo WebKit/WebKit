@@ -463,4 +463,13 @@ bool HTMLFormControlElement::isDefaultButtonForForm() const
     return isSuccessfulSubmitButton() && form() && form()->defaultButton() == this;
 }
 
+HTMLFormControlElement* HTMLFormControlElement::enclosingFormControlElement(Node* node)
+{
+    for (; node; node = node->parentNode()) {
+        if (node->isElementNode() && toElement(node)->isFormControlElement())
+            return static_cast<HTMLFormControlElement*>(node);
+    }
+    return 0;
+}
+
 } // namespace Webcore

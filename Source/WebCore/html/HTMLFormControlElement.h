@@ -104,6 +104,8 @@ public:
     bool hasAutofocused() { return m_hasAutofocused; }
     void setAutofocused() { m_hasAutofocused = true; }
 
+    static HTMLFormControlElement* enclosingFormControlElement(Node*);
+
     using TreeShared<ContainerNode>::ref;
     using TreeShared<ContainerNode>::deref;
 

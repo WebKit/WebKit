@@ -113,6 +113,8 @@
             'editing/ReplaceSelectionCommand.h',
             'editing/SmartReplace.h',
             'editing/SpellChecker.h',
+            'editing/SurroundingText.cpp',
+            'editing/SurroundingText.h',
             'editing/TextAffinity.h',
             'editing/TextGranularity.h',
             'editing/TextIterator.h',
