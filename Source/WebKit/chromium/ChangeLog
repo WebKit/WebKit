@@ -1,5 +1,20 @@
 2012-03-27  James Robinson  <jamesr@chromium.org>
 
+        webkit_unit_tests crashing on chromium lion in CCLayerTreeHostTestCompositeAndReadbackWhileInvisible
+        https://bugs.webkit.org/show_bug.cgi?id=82382
+
+        Reviewed by Adrienne Walker.
+
+        Use UnsignedWithZeroKeyHashTraits trait for the HashSet<WebGLId> m_usedTextures in
+        CompositorFakeWebGraphicsContext3DWithTextureTracking. This set is used to track all textures that are bound in
+        a given context during a test. During ..CompositeAndReadback.. we bind texture id 0. By default, HashSet<T>
+        where T is an unsigned does not allow 0 as a value. WebGLId is typedef'd to unsigned.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (CompositorFakeWebGraphicsContext3DWithTextureTracking):
+
+2012-03-27  James Robinson  <jamesr@chromium.org>
+
         webkit_unit_tests crashing on chromium lion in ScrollbarLayerChromiumTest.resolveScrollLayerPointer
         https://bugs.webkit.org/show_bug.cgi?id=82381
 

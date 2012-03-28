@@ -209,7 +209,7 @@ private:
     }
 
     Vector<WebGLId> m_textures;
-    HashSet<WebGLId> m_usedTextures;
+    HashSet<WebGLId, DefaultHash<WebGLId>::Hash, UnsignedWithZeroKeyHashTraits<WebGLId> > m_usedTextures;
 };
 
 // Implementation of CCLayerTreeHost callback interface.
