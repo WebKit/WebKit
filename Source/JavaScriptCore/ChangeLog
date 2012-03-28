@@ -1,3 +1,10 @@
+2012-03-28  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed. Build fix, move WTF back into JSCore target
+        until issues with JSCore not linking in all WTF symbols are resolved.
+        
+        * wscript:
+
 2012-03-28  Gavin Barraclough  <barraclough@apple.com>
 
         Yarr: if we're not using the output array, don't populate it!

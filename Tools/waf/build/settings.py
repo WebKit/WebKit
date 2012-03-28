@@ -102,14 +102,11 @@ jscore_dirs = [
     'runtime',
     'tools',
     'yarr',
-]
-
-wtf_dirs = [
-    'wtf',
-    'wtf/dtoa',
-    'wtf/text',
-    'wtf/unicode',
-    'wtf/unicode/icu',
+    '../WTF/wtf',
+    '../WTF/wtf/dtoa',
+    '../WTF/wtf/text',
+    '../WTF/wtf/unicode',
+    '../WTF/wtf/unicode/icu',
 ]
 
 webcore_dirs_common = [

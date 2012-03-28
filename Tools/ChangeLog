@@ -1,3 +1,10 @@
+2012-03-28  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed. Build fix, move WTF back into JSCore target
+        until issues with JSCore not linking in all WTF symbols are resolved.
+
+        * waf/build/settings.py:
+
 2012-03-28  Simon Fraser  <simon.fraser@apple.com>
 
         download-built-product build step should detect 404 errors
