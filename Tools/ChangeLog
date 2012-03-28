@@ -1,3 +1,15 @@
+2012-03-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Couple of tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode
+        https://bugs.webkit.org/show_bug.cgi?id=52810
+
+        Reviewed by Simon Hausmann.
+
+        Use SSE2 floating point math on 32 bit instead of the default
+        387 to make layout test result same on 32 and on 64 bit builds.
+
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-03-28  Sergio Villar Senin  <svillar@igalia.com>
 
         [Soup] DNS prefetching spams resolver, shoots self in the foot
