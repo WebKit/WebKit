@@ -64,6 +64,12 @@ fast/text/large-text-composed-char-dos.html
 # https://bugs.webkit.org/show_bug.cgi?id=58972
 media/adopt-node-crash.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=82484
+# Started to fail after upgrading libsoup to 2.37.92
+fast/encoding/percent-escaping.html
+fast/loader/file-URL-with-port-number.html
+fast/loader/location-port.html
+
 ###############################################################################
 # TESTS CRASHING
 ###############################################################################
