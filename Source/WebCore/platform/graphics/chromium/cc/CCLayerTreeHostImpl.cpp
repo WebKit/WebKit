@@ -44,6 +44,17 @@
 
 namespace {
 const double lowFrequencyAnimationInterval = 1;
+
+void didVisibilityChange(WebCore::CCLayerTreeHostImpl* id, bool visible)
+{
+    if (visible) {
+        TRACE_EVENT_START1("webkit", "CCLayerTreeHostImpl::setVisible", id, "CCLayerTreeHostImpl", id);
+        return;
+    }
+
+    TRACE_EVENT_FINISH0("webkit", "CCLayerTreeHostImpl::setVisible", id);
+}
+
 } // namespace
 
 namespace WebCore {
@@ -106,6 +117,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_timeSourceClientAdapter(CCLayerTreeHostImplTimeSourceAdapter::create(this, CCDelayBasedTimeSource::create(lowFrequencyAnimationInterval * 1000.0, CCProxy::currentThread())))
 {
     ASSERT(CCProxy::isImplThread());
+    didVisibilityChange(this, m_visible);
 }
 
 CCLayerTreeHostImpl::~CCLayerTreeHostImpl()
@@ -474,6 +486,7 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
     if (m_visible == visible)
         return;
     m_visible = visible;
+    didVisibilityChange(this, m_visible);
 
     if (!m_layerRenderer)
         return;
