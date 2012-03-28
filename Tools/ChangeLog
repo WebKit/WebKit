@@ -1,3 +1,14 @@
+2012-03-28  Stuart Eichert  <stuart.eichert@palm.com>
+
+        build-webkit : the word "pass" is spelled incorrectly as "passs"
+        https://bugs.webkit.org/show_bug.cgi?id=82532
+
+        Reviewed by Julien Chaffraix.
+
+        Corrected spelling of the word "pass" in build-webkit.
+
+        * Scripts/build-webkit:
+
 2012-03-28  Dirk Pranke  <dpranke@chromium.org>
 
         new-run-webkit-tests doesn't log correctly after retrying failures
