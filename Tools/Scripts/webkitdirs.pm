@@ -1791,14 +1791,6 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
     print "Calling autogen.sh in " . $dir . "\n\n";
     print "Installation prefix directory: $prefix\n" if(defined($prefix));
 
-    # Save md5sum for jhbuild-related files.
-    foreach my $file (qw(jhbuildrc jhbuild.modules)) {
-        my $path = join('/', $sourceDir, 'Tools', 'gtk', $file);
-        open(SUM, ">$file.md5sum");
-        print SUM getMD5HashForFile($path);
-        close(SUM);
-    }
-
     # Only for WebKit, write the autogen.sh arguments to a file so that we can detect
     # when they change and automatically re-run it.
     if ($project eq 'WebKit') {
@@ -1830,7 +1822,8 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
 sub jhbuildConfigurationChanged()
 {
     foreach my $file (qw(jhbuildrc.md5sum jhbuild.modules.md5sum)) {
-        if (! -e $file) {
+        my $path = join('/', $sourceDir, "WebKitBuild", "Dependencies", $file);
+        if (! -e $path) {
             return 1;
         }
 
@@ -1840,7 +1833,7 @@ sub jhbuildConfigurationChanged()
         my $currentSum = getMD5HashForFile($actualFile);
 
         # Get our previous record.
-        open(PREVIOUS_MD5, $file);
+        open(PREVIOUS_MD5, $path);
         chomp(my $previousSum = <PREVIOUS_MD5>);
         close(PREVIOUS_MD5);
 
@@ -1962,6 +1955,15 @@ sub buildAutotoolsProject($@)
         system("rm -f previous-autogen-arguments.txt");
 
         system("perl", "$sourceDir/Tools/Scripts/update-webkitgtk-libs") == 0 or die $!;
+    }
+
+    # Save md5sum for jhbuild-related files.
+    foreach my $file (qw(jhbuildrc jhbuild.modules)) {
+        my $source = join('/', $sourceDir, "Tools", "gtk", $file);
+        my $destination = join('/', $sourceDir, "WebKitBuild", "Dependencies", $file);
+        open(SUM, ">$destination" . ".md5sum");
+        print SUM getMD5HashForFile($source);
+        close(SUM);
     }
 
     # If GNUmakefile exists, don't run autogen.sh unless its arguments
