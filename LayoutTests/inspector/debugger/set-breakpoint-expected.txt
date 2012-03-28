@@ -8,6 +8,14 @@ Set timer for test function.
 Script execution paused.
 Call stack:
     0) testFunction (set-breakpoint.html:17)
+
+Dump breakpoint sidebar pane:
+
+    set-breakpoint.html:17
+    var x = Math.sqrt(10);
+
+Dump breakpoint sidebar pane:
+
 Script execution resumed.
 
 Running: testSetBreakpointOnTheLastLine

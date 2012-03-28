@@ -256,6 +256,10 @@ WebInspector.ScriptsPanel.prototype = {
     _uiSourceCodeAdded: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+
+        var breakpoints = uiSourceCode.breakpoints();
+        for (var lineNumber in breakpoints)
+            this._uiBreakpointAdded({ data: breakpoints[lineNumber] });
         this._addBreakpointListeners(uiSourceCode);
 
         if (!uiSourceCode.url || uiSourceCode.isSnippetEvaluation) {
