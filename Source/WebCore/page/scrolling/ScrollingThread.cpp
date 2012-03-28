@@ -66,11 +66,12 @@ void ScrollingThread::createThreadIfNeeded()
     if (m_threadIdentifier)
         return;
 
-    m_threadIdentifier = createThread(threadCallback, this, "WebCore: Scrolling");
-
     // Wait for the thread to initialize the run loop.
     {
         MutexLocker locker(m_initializeRunLoopConditionMutex);
+
+        m_threadIdentifier = createThread(threadCallback, this, "WebCore: Scrolling");
+        
 #if PLATFORM(MAC)
         while (!m_threadRunLoop)
             m_initializeRunLoopCondition.wait(m_initializeRunLoopConditionMutex);
