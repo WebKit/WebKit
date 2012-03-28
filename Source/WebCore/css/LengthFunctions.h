@@ -29,10 +29,10 @@ namespace WebCore {
 class RenderView;
 struct Length;
 
-int minimumValueForLength(Length, int maximumValue, RenderView* = 0, bool roundPercentages = false);
-int valueForLength(Length, int maximumValue, RenderView* = 0, bool roundPercentages = false);
-float floatValueForLength(Length, int maximumValue, RenderView* = 0);
-float floatValueForLength(Length, float maximumValue, RenderView* = 0);
+int minimumValueForLength(const Length&, int maximumValue, RenderView* = 0, bool roundPercentages = false);
+int valueForLength(const Length&, int maximumValue, RenderView* = 0, bool roundPercentages = false);
+float floatValueForLength(const Length&, int maximumValue, RenderView* = 0);
+float floatValueForLength(const Length&, float maximumValue, RenderView* = 0);
 
 } // namespace WebCore
 

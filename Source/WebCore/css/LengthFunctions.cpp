@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-int minimumValueForLength(Length length, int maximumValue, RenderView* renderView, bool roundPercentages)
+int minimumValueForLength(const Length& length, int maximumValue, RenderView* renderView, bool roundPercentages)
 {
     switch (length.type()) {
     case Fixed:
@@ -68,7 +68,7 @@ int minimumValueForLength(Length length, int maximumValue, RenderView* renderVie
     return 0;
 }
 
-int valueForLength(Length length, int maximumValue, RenderView* renderView, bool roundPercentages)
+int valueForLength(const Length& length, int maximumValue, RenderView* renderView, bool roundPercentages)
 {
     switch (length.type()) {
     case Fixed:
@@ -96,7 +96,7 @@ int valueForLength(Length length, int maximumValue, RenderView* renderView, bool
 }
 
 // FIXME: when subpixel layout is supported this copy of floatValueForLength() can be removed. See bug 71143.
-float floatValueForLength(Length length, int maximumValue, RenderView* renderView)
+float floatValueForLength(const Length& length, int maximumValue, RenderView* renderView)
 {
     switch (length.type()) {
     case Fixed:
@@ -132,7 +132,7 @@ float floatValueForLength(Length length, int maximumValue, RenderView* renderVie
     return 0;
 }
 
-float floatValueForLength(Length length, float maximumValue, RenderView* renderView)
+float floatValueForLength(const Length& length, float maximumValue, RenderView* renderView)
 {
     switch (length.type()) {
     case Fixed:
