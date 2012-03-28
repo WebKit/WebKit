@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 ProFUSION embedded systems. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,23 +27,122 @@
 #include "config.h"
 #include "RunLoop.h"
 
-#include "NotImplemented.h"
+#include <Ecore.h>
+#include <Ecore_Evas.h>
+#include <Ecore_File.h>
+#include <Edje.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+
+static const int ecorePipeMessageSize = 1;
+static const char wakupEcorePipeMessage[] = "W";
 
 namespace WebCore {
 
 RunLoop::RunLoop()
+    : m_initEfl(false)
 {
-    notImplemented();
+    if (!ecore_init()) {
+        LOG_ERROR("could not init ecore.");
+        return;
+    }
+
+    if (!ecore_evas_init()) {
+        LOG_ERROR("could not init ecore_evas.");
+        goto errorEcoreEvas;
+    }
+
+    if (!ecore_file_init()) {
+        LOG_ERROR("could not init ecore_file.");
+        goto errorEcoreFile;
+    }
+
+    if (!edje_init()) {
+        LOG_ERROR("could not init edje.");
+        goto errorEdje;
+    }
+
+    m_pipe = adoptPtr(ecore_pipe_add(wakeUpEvent, this));
+    m_initEfl = true;
+
+    return;
+
+errorEdje:
+    ecore_file_shutdown();
+errorEcoreFile:
+    ecore_evas_shutdown();
+errorEcoreEvas:
+    ecore_shutdown();
 }
 
 RunLoop::~RunLoop()
 {
-    notImplemented();
+    if (m_initEfl) {
+        edje_shutdown();
+        ecore_file_shutdown();
+        ecore_evas_shutdown();
+        ecore_shutdown();
+    }
+}
+
+void RunLoop::run()
+{
+    ecore_main_loop_begin();
+}
+
+void RunLoop::stop()
+{
+    ecore_main_loop_quit();
+}
+
+void RunLoop::wakeUpEvent(void* data, void*, unsigned int)
+{
+    static_cast<RunLoop*>(data)->performWork();
 }
 
 void RunLoop::wakeUp()
 {
-    notImplemented();
+    ecore_pipe_write(m_pipe.get(), wakupEcorePipeMessage, ecorePipeMessageSize);
+}
+
+RunLoop::TimerBase::TimerBase(RunLoop*)
+    : m_isRepeating(false)
+{
+}
+
+RunLoop::TimerBase::~TimerBase()
+{
+    stop();
+}
+
+bool RunLoop::TimerBase::timerFired(void* data)
+{
+    RunLoop::TimerBase* timer = static_cast<RunLoop::TimerBase*>(data);
+
+    timer->fired();
+
+    if (!timer->m_isRepeating) {
+        timer->m_timer = nullptr;
+        return ECORE_CALLBACK_CANCEL;
+    }
+
+    return ECORE_CALLBACK_RENEW;
+}
+
+void RunLoop::TimerBase::start(double nextFireInterval, bool repeat)
+{
+    m_isRepeating = repeat;
+    m_timer = adoptPtr(ecore_timer_add(nextFireInterval, reinterpret_cast<Ecore_Task_Cb>(timerFired), this));
+}
+
+void RunLoop::TimerBase::stop()
+{
+    m_timer = nullptr;
+}
+
+bool RunLoop::TimerBase::isActive() const
+{
+    return (m_timer) ? true : false;
 }
 
 } // namespace WebCore

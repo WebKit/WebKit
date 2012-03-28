@@ -46,6 +46,8 @@ typedef void* GPid;
 typedef int GPid;
 #endif
 typedef GPid PlatformProcessIdentifier;
+#elif PLATFORM(EFL)
+typedef pid_t PlatformProcessIdentifier;
 #endif
 
 } // namespace WebKit 

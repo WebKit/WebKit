@@ -41,15 +41,19 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
+#if (PLATFORM(QT) && !OS(DARWIN)) || PLATFORM(GTK) || PLATFORM(EFL)
+#include "PlatformProcessIdentifier.h"
+#endif
+
 #if PLATFORM(QT) && !OS(DARWIN)
 #include <QSocketNotifier>
-#include "PlatformProcessIdentifier.h"
 class QObject;
 class QThread;
 #elif PLATFORM(GTK)
-#include "PlatformProcessIdentifier.h"
 #include <wtf/gobject/GRefPtr.h>
 typedef gboolean (*GSourceFunc) (gpointer data);
+#elif PLATFORM(EFL)
+#include <Ecore.h>
 #endif
 
 class WorkQueue {
@@ -90,6 +94,9 @@ public:
     void registerEventSourceHandler(int, int, const Function<void()>&);
     void unregisterEventSourceHandler(int);
     void dispatchOnTermination(WebKit::PlatformProcessIdentifier, const Function<void()>&);
+#elif PLATFORM(EFL)
+    void registerSocketEventHandler(int, const Function<void()>&);
+    void unregisterSocketEventHandler(int);
 #endif
 
 private:
@@ -177,6 +184,26 @@ private:
     class EventSource;
     HashMap<int, Vector<EventSource*> > m_eventSources;
     typedef HashMap<int, Vector<EventSource*> >::iterator EventSourceIterator; 
+#elif PLATFORM(EFL)
+    fd_set m_fileDescriptorSet;
+    int m_maxFileDescriptor;
+    int m_readFromPipeDescriptor;
+    int m_writeToPipeDescriptor;
+    bool m_threadLoop;
+
+    Vector<Function<void()> > m_workItemQueue;
+    Mutex m_workItemQueueLock;
+
+    int m_socketDescriptor;
+    Function<void()> m_socketEventHandler;
+
+    HashMap<int, OwnPtr<Ecore_Timer> > m_timers;
+
+    void sendMessageToThread(const char*);
+    static void* workQueueThread(WorkQueue*);
+    void performWork();
+    void performFileDescriptorWork();
+    static bool timerFired(void*);
 #endif
 };
 

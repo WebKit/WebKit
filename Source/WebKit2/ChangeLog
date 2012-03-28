@@ -1,3 +1,40 @@
+2012-03-27  YoungTaeck Song  <youngtaeck.song@samsung.com>
+
+        [EFL][WK2] Add RunLoopEfl and WorkQueueEfl
+        https://bugs.webkit.org/show_bug.cgi?id=62777
+
+        Reviewed by Hajime Morita.
+
+        Add initial version WorkQueueEfl for WebKit2 Efl.
+
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::platformInvalidate):
+        (CoreIPC::Connection::open):
+        * Platform/PlatformProcessIdentifier.h:
+        (WebKit):
+        * Platform/WorkQueue.h:
+        (WorkQueue):
+        * Platform/efl/WorkQueueEfl.cpp: Added.
+        (TimerWorkItem):
+        (TimerWorkItem::TimerWorkItem):
+        (TimerWorkItem::~TimerWorkItem):
+        (TimerWorkItem::function):
+        (TimerWorkItem::queue):
+        (TimerWorkItem::timerID):
+        (WorkQueue::platformInitialize):
+        (WorkQueue::platformInvalidate):
+        (WorkQueue::performWork):
+        (WorkQueue::performFdWork):
+        (WorkQueue::sendMessageToThread):
+        (WorkQueue::workQueueThread):
+        (WorkQueue::registerSocketEventHandler):
+        (WorkQueue::unregisterSocketEventHandler):
+        (WorkQueue::dispatch):
+        (WorkQueue::timerFired):
+        (WorkQueue::dispatchAfterDelay):
+        * PlatformEfl.cmake:
+
 2012-03-27  Anders Carlsson  <andersca@apple.com>
 
         Plug-ins using the Core Animation drawing model should work when hosting the layer tree in the window server

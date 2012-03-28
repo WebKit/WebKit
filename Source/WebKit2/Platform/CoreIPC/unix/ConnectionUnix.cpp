@@ -153,6 +153,10 @@ void Connection::platformInvalidate()
     m_socketNotifier = 0;
 #endif
 
+#if PLATFORM(EFL)
+    m_connectionQueue.unregisterSocketEventHandler(m_socketDescriptor);
+#endif
+
     m_socketDescriptor = -1;
     m_isConnected = false;
 }
@@ -423,6 +427,8 @@ bool Connection::open()
 #elif PLATFORM(GTK)
     m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, (G_IO_HUP | G_IO_ERR), bind(&Connection::connectionDidClose, this));
     m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, G_IO_IN, bind(&Connection::readyReadHandler, this));
+#elif PLATFORM(EFL)
+    m_connectionQueue.registerSocketEventHandler(m_socketDescriptor, bind(&Connection::readyReadHandler, this));
 #endif
 
     // Schedule a call to readyReadHandler. Data may have arrived before installation of the signal
