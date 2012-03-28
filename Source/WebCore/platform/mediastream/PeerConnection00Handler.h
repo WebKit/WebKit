@@ -46,6 +46,10 @@ class MediaHints;
 class PeerConnection00HandlerClient;
 class SessionDescriptionDescriptor;
 
+#if PLATFORM(CHROMIUM)
+class PeerConnection00HandlerInternal;
+#endif
+
 class PeerConnection00Handler {
     WTF_MAKE_NONCOPYABLE(PeerConnection00Handler);
     WTF_MAKE_FAST_ALLOCATED;
@@ -68,7 +72,11 @@ public:
 private:
     PeerConnection00Handler(PeerConnection00HandlerClient*, const String& serverConfiguration, const String& username);
 
+#if PLATFORM(CHROMIUM)
+    OwnPtr<PeerConnection00HandlerInternal> m_private;
+#else
     PeerConnection00HandlerClient* m_client;
+#endif
 };
 
 } // namespace WebCore

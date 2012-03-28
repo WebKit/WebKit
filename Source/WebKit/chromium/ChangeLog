@@ -1,3 +1,67 @@
+2012-03-28  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API (JSEP): Introducing WebPeerConnection00Handler
+        https://bugs.webkit.org/show_bug.cgi?id=82450
+
+        Reviewed by Adam Barth.
+
+        Last patch to enable the PeerConnection00 functionality in Chromium introduces
+        WebPeerConnection00Handler and WebPeerConnection00HandlerClient, together with the necessary plumbing.
+
+        * WebKit.gyp:
+        * bridge/PeerConnection00Handler.cpp: Added.
+        (WebCore):
+        (WebCore::PeerConnection00Handler::create):
+        (WebCore::PeerConnection00Handler::PeerConnection00Handler):
+        (WebCore::PeerConnection00Handler::~PeerConnection00Handler):
+        (WebCore::PeerConnection00Handler::createOffer):
+        (WebCore::PeerConnection00Handler::createAnswer):
+        (WebCore::PeerConnection00Handler::setLocalDescription):
+        (WebCore::PeerConnection00Handler::setRemoteDescription):
+        (WebCore::PeerConnection00Handler::localDescription):
+        (WebCore::PeerConnection00Handler::remoteDescription):
+        (WebCore::PeerConnection00Handler::startIce):
+        (WebCore::PeerConnection00Handler::processIceMessage):
+        (WebCore::PeerConnection00Handler::addStream):
+        (WebCore::PeerConnection00Handler::removeStream):
+        (WebCore::PeerConnection00Handler::stop):
+        * bridge/PeerConnection00HandlerInternal.cpp: Added.
+        (WebCore):
+        (WebCore::PeerConnection00HandlerInternal::PeerConnection00HandlerInternal):
+        (WebCore::PeerConnection00HandlerInternal::~PeerConnection00HandlerInternal):
+        (WebCore::PeerConnection00HandlerInternal::createOffer):
+        (WebCore::PeerConnection00HandlerInternal::createAnswer):
+        (WebCore::PeerConnection00HandlerInternal::setLocalDescription):
+        (WebCore::PeerConnection00HandlerInternal::setRemoteDescription):
+        (WebCore::PeerConnection00HandlerInternal::localDescription):
+        (WebCore::PeerConnection00HandlerInternal::remoteDescription):
+        (WebCore::PeerConnection00HandlerInternal::startIce):
+        (WebCore::PeerConnection00HandlerInternal::processIceMessage):
+        (WebCore::PeerConnection00HandlerInternal::addStream):
+        (WebCore::PeerConnection00HandlerInternal::removeStream):
+        (WebCore::PeerConnection00HandlerInternal::stop):
+        (WebCore::PeerConnection00HandlerInternal::didGenerateICECandidate):
+        (WebCore::PeerConnection00HandlerInternal::didChangeReadyState):
+        (WebCore::PeerConnection00HandlerInternal::didChangeICEState):
+        (WebCore::PeerConnection00HandlerInternal::didAddRemoteStream):
+        (WebCore::PeerConnection00HandlerInternal::didRemoveRemoteStream):
+        * bridge/PeerConnection00HandlerInternal.h: Copied from Source/WebCore/platform/mediastream/PeerConnection00Handler.h.
+        (WebKit):
+        (WebCore):
+        (PeerConnection00HandlerInternal):
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKit):
+        (WebKit::WebKitPlatformSupport::createPeerConnection00Handler):
+        * public/platform/WebPeerConnection00Handler.h: Added.
+        (WebKit):
+        (WebPeerConnection00Handler):
+        (WebKit::WebPeerConnection00Handler::~WebPeerConnection00Handler):
+        * public/platform/WebPeerConnection00HandlerClient.h: Added.
+        (WebKit):
+        (WebPeerConnection00HandlerClient):
+        (WebKit::WebPeerConnection00HandlerClient::~WebPeerConnection00HandlerClient):
+        * src/AssertMatchingEnums.cpp:
+
 2012-03-28  James Robinson  <jamesr@chromium.org>
 
         [chromium] Compositor visibility setting must be updated even if not actively compositing

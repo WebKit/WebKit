@@ -58,6 +58,7 @@
 #include "NotificationClient.h"
 #include "PageVisibilityState.h"
 #include "PasteboardPrivate.h"
+#include "PeerConnection00.h"
 #include "PlatformCursor.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
@@ -103,6 +104,8 @@
 #include "platform/WebFileSystem.h"
 #include "platform/WebICEOptions.h"
 #include "platform/WebMediaStreamSource.h"
+#include "platform/WebPeerConnection00Handler.h"
+#include "platform/WebPeerConnection00HandlerClient.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>
 
@@ -509,6 +512,23 @@ COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::TypeVideo, MediaStreamSource:
 COMPILE_ASSERT_MATCHING_ENUM(WebICEOptions::CandidateTypeAll, IceOptions::ALL);
 COMPILE_ASSERT_MATCHING_ENUM(WebICEOptions::CandidateTypeNoRelay, IceOptions::NO_RELAY);
 COMPILE_ASSERT_MATCHING_ENUM(WebICEOptions::CandidateTypeOnlyRelay, IceOptions::ONLY_RELAY);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00Handler::ActionSDPOffer, PeerConnection00::SDP_OFFER);
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00Handler::ActionSDPPRanswer, PeerConnection00::SDP_PRANSWER);
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00Handler::ActionSDPAnswer, PeerConnection00::SDP_ANSWER);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ReadyStateNew, PeerConnection00::NEW);
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ReadyStateNegotiating, PeerConnection00::NEGOTIATING);
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ReadyStateActive, PeerConnection00::ACTIVE);
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ReadyStateClosed, PeerConnection00::CLOSED);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateGathering, PeerConnection00::ICE_GATHERING);
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateWaiting, PeerConnection00::ICE_WAITING);
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateChecking, PeerConnection00::ICE_CHECKING);
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateConnected, PeerConnection00::ICE_CONNECTED);
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateCompleted, PeerConnection00::ICE_COMPLETED);
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateFailed, PeerConnection00::ICE_FAILED);
+COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateClosed, PeerConnection00::ICE_CLOSED);
 #endif
 
 COMPILE_ASSERT_MATCHING_ENUM(WebReferrerPolicyAlways, SecurityPolicy::ReferrerPolicyAlways);
