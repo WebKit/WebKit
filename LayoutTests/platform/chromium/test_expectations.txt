@@ -1225,9 +1225,6 @@ BUGWK82085 : svg/filters/filterRes.svg = IMAGE
 BUGWK34714 : svg/text/select-textLength-spacing-squeeze-2.svg = IMAGE IMAGE+TEXT
 
 // New test, needs a rebaseline
-BUGWK77903 MAC : svg/repaint/inner-svg-change-viewBox-contract.svg = IMAGE IMAGE+TEXT
-
-// New test, needs a rebaseline
 BUGWK78631 : svg/dom/SVGLocatable-getCTM-svg-root.html = IMAGE
 
 // Still failing on LinuxC. Possibly an out-of-date baseline that was not noticed
@@ -1246,47 +1243,47 @@ BUGWK81253 LINUX : svg/text/text-tselect-02-f.svg = IMAGE
 // Appears elsewhere commented
 BUGWK79568 : svg/W3C-SVG-1.1/animate-elem-80-t.svg = FAIL
 // Appears elsewhere commented
-BUGWK79568 : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = FAIL
+BUGWK79568 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = FAIL
 BUGWK79568 : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
+BUGWK79568 WIN LINUX : svg/clip-path/clip-path-text-and-shape.svg = TEXT
+BUGWK79568 WIN LINUX : svg/clip-path/clip-path-with-text-clipped.svg = TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-39-t.svg = TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-40-t.svg = TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE+TEXT TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-61-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-63-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-64-t.svg = IMAGE+TEXT
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-65-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-66-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-67-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-68-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-69-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-70-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
 BUGWK79568 LINUX : svg/W3C-SVG-1.1/animate-elem-77-t.svg = IMAGE
-BUGWK79568 MAC : svg/W3C-SVG-1.1/animate-elem-77-t.svg = TEXT
-BUGWK79568 : svg/clip-path/clip-path-text-and-shape.svg = TEXT
-BUGWK79568 : svg/clip-path/clip-path-with-text-clipped.svg = TEXT
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE+TEXT
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE+TEXT TEXT
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-61-t.svg = IMAGE+TEXT
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-63-t.svg = IMAGE+TEXT
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-64-t.svg = IMAGE+TEXT
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-65-t.svg = IMAGE+TEXT
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-66-t.svg = IMAGE+TEXT
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-67-t.svg = IMAGE+TEXT
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-68-t.svg = IMAGE+TEXT
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-69-t.svg = IMAGE+TEXT
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-70-t.svg = IMAGE+TEXT
-// Appears elsewhere commented
+BUGWK79568 LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-77-t.svg = TEXT
 BUGWK75968 : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE+TEXT IMAGE
 // Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE+TEXT
+BUGWK75968 WIN : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE+TEXT
 // Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE+TEXT TEXT
+BUGWK75968 WIN LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE+TEXT TEXT
 // This may be unrelated.
 BUGWK75968 LION : svg/css/group-with-shadow.svg = IMAGE
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-36-t.svg = TEXT
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = TEXT
-// Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-40-t.svg = TEXT
 BUGWK75968 MAC : svg/text/text-text-05-t.svg = TEXT
 
 // Flaky on Linux after http://trac.webkit.org/changeset/112022
@@ -1355,7 +1352,7 @@ BUGCR3244 LINUX WIN : svg/zoom/page/zoom-mask-with-percentages.svg = FAIL
 // or might be expected and that we should either go with the buildbot output
 // or change the test upstream to specify explicitly what font to use.
 // The mask part of this test is totally wrong.
-BUGCR3244 : svg/as-background-image/svg-as-background-6.html = FAIL
+BUGCR3244 WIN LINUX SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = FAIL
 
 // Our gradients are wrong here.
 BUGCR19559 LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
@@ -1474,7 +1471,7 @@ BUGCR105305 MAC LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg 
 // These fail the pixel tests in debug mode because they have
 // unpainted space (filled red in Debug but not in Release).
 // https://bugs.webkit.org/show_bug.cgi?id=8423
-BUGCR24204 LINUX WIN : tables/mozilla_expected_failures/bugs/bug178855.xml = IMAGE+TEXT TEXT
+BUGCR24204 LINUX WIN LEOPARD SNOWLEOPARD : tables/mozilla_expected_failures/bugs/bug178855.xml = IMAGE+TEXT TEXT
 
 // Fails on webkit windows as well.
 BUGCR24207 : fast/events/attempt-scroll-with-no-scrollbars.html = FAIL
@@ -1589,7 +1586,6 @@ BUGCR8729 WIN : http/tests/multipart/invalid-image-data.html = IMAGE+TEXT
 // to add new failures in the appropriate bucket.
 
 // text fields wrong width
-BUGCR10363 MAC : tables/mozilla/bugs/bug53690-1.html = FAIL
 BUGCR10363 LEOPARD : tables/mozilla/bugs/bug9024.html = FAIL
 
 // We ignore tab/option-tab distinctions (may be other problems too).
@@ -1657,7 +1653,6 @@ BUGCR23488 MAC : fast/layers/inline-dirty-z-order-lists.html = IMAGE
 BUGCR23488 MAC : fast/layers/layer-content-visibility-change.html = IMAGE
 BUGCR23488 LEOPARD : fast/lists/ol-start-parsing.html = IMAGE
 BUGCR23488 LEOPARD : fast/multicol/positioned-with-constrained-height.html = IMAGE
-BUGCR23488 MAC : tables/mozilla_expected_failures/bugs/bug178855.xml = IMAGE
 
 // Looks the same to me... huh. Variation of above?
 BUGCR23489 MAC : fast/table/empty-section-crash.html = IMAGE
@@ -2021,7 +2016,7 @@ BUGCR28005 LINUX WIN : fast/css/color-correction-on-background-image.html = FAIL
 BUGCR28005 LINUX WIN : fast/css/color-correction-untagged-images.html = IMAGE+TEXT
 
 // Rebaseline when the CR bug is closed (enabling hairline clipping fix)
-BUGCR118411 : fast/repaint/focus-ring.html = IMAGE
+BUGCR118411 WIN LINUX : fast/repaint/focus-ring.html = IMAGE
 BUGCR118411 : fast/repaint/list-marker.html = IMAGE
 BUGCR118411 : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE
 BUGCR118411 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE
@@ -3620,7 +3615,7 @@ BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overlo
 // Tests needing rebaseline after bug 73643 patch
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE
-BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
+BUGWK73643 WIN LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
 // BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/masking-path-01-b.svg = IMAGE
 BUGWK73643 WIN MAC : svg/clip-path/clipper-placement-issue.svg = IMAGE
@@ -3747,7 +3742,6 @@ BUGWK76647 WIN LINUX : svg/custom/object-sizing-width-75p-height-50p-on-target-s
 
 // Just needs a rebaseline.
 BUGWK69714 WIN LINUX : svg/clip-path/clip-path-tspan-and-stroke.svg = IMAGE+TEXT
-BUGWK77103 MAC : svg/repaint/image-href-change.svg = IMAGE
 
 // Need to implement file name logging.
 BUGWK76572 : http/tests/download = FAIL
@@ -3857,7 +3851,7 @@ BUGWK81217 : svg/carto.net/window.svg = FAIL
 BUGWK81217 : svg/custom/js-late-clipPath-and-object-creation.svg = FAIL PASS
 BUGWK81217 : svg/custom/js-late-gradient-and-object-creation.svg = FAIL PASS
 BUGWK81217 : svg/custom/js-late-pattern-and-object-creation.svg = FAIL PASS
-BUGWK81217 : svg/custom/text-ctm.svg = FAIL
+BUGWK81217 WIN LINUX : svg/custom/text-ctm.svg = FAIL
 BUGWK81217 : svg/custom/use-detach.svg = FAIL
 BUGWK81217 : svg/hixie/perf/003.xml = FAIL
 
@@ -3940,16 +3934,16 @@ BUGSENORBLANCO : platform/chromium/fast/events/rtl-scrollbar.html = TEXT PASS
 // Those tests have other entries in our expectations filed and may not totally covers
 BUGWK75568 MAC : fast/layers/add-layer-with-nested-stacking.html = IMAGE
 BUGWK75568 MAC : fast/layers/remove-layer-with-nested-stacking.html = IMAGE
-BUGWK75568 MAC : fast/repaint/inline-relative-positioned.html = IMAGE
-BUGWK75568 MAC : fast/repaint/lines-with-layout-delta.html = IMAGE
-BUGWK75568 MAC : fast/repaint/overflow-clip-subtree-layout.html = IMAGE
-BUGWK75568 MAC : fast/repaint/overflow-delete-line.html = IMAGE
-BUGWK75568 MAC : fast/repaint/repaint-resized-overflow.html = IMAGE
-BUGWK75568 MAC : fast/repaint/subtree-layoutstate-transform.html = IMAGE
-BUGWK75568 MAC : fast/repaint/subtree-root-clip-2.html = IMAGE
-BUGWK75568 MAC : fast/repaint/subtree-root-clip.html = IMAGE
-BUGWK75568 MAC : fast/repaint/subtree-root-skipped.html = IMAGE
-BUGWK75568 MAC : fast/replaced/replaced-breaking.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/inline-relative-positioned.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/lines-with-layout-delta.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/overflow-clip-subtree-layout.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/overflow-delete-line.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/repaint-resized-overflow.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-layoutstate-transform.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip-2.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-skipped.html = IMAGE
+BUGWK75568 LEOPARD SNOWLEOPARD : fast/replaced/replaced-breaking.html = IMAGE
 BUGWK75568 MAC : fast/replaced/width100percent-searchfield.html = IMAGE
 BUGWK75568 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE PASS
 BUGWK75568 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE PASS
@@ -4064,7 +4058,7 @@ BUGWK81145 LION : fast/events/scrollbar-double-click.html = TEXT
 // Migrated from chromium's downstream test_expectations
 BUGYANGGUO LINUX X86_64 : fast/repaint/moving-shadow-on-container.html = TEXT
 BUGYANGGUO MAC : fast/repaint/moving-shadow-on-container.html = TEXT
-BUGYANGGUO MAC : fast/repaint/moving-shadow-on-path.html = TEXT
+BUGYANGGUO LEOPARD SNOWLEOPARD : fast/repaint/moving-shadow-on-path.html = TEXT
 BUGYANGGUO LION : svg/css/stars-with-shadow.html = TEXT
 BUGYANGGUO WIN : fast/repaint/moving-shadow-on-container.html = TEXT
 BUGYANGGUO WIN : fast/repaint/moving-shadow-on-path.html = TEXT
