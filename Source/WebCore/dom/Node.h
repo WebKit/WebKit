@@ -349,6 +349,8 @@ public:
     bool isContentEditable();
     bool isContentRichlyEditable();
 
+    void inspect();
+
     bool rendererIsEditable(EditableType editableType = ContentIsEditable) const
     {
         switch (editableType) {

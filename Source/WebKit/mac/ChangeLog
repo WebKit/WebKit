@@ -1,3 +1,11 @@
+2012-03-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        <http://webkit.org/b/82419> Web Inspector: Create -[DOMNode inspect] from IDL
+
+        Reviewed by Timothy Hatcher.
+
+        * MigrateHeaders.make: Copy DOMNodePrivate.h to PrivateHeaders.
+
 2012-03-27  Timothy Hatcher  <timothy@apple.com>
 
         Make WebKit properly load a staged framework when soft linking.

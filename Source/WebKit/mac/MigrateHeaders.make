@@ -152,6 +152,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMNamedNodeMap.h \
     $(PUBLIC_HEADERS_DIR)/DOMNode.h \
     $(INTERNAL_HEADERS_DIR)/DOMNodeInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMNodePrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMNodeFilter.h \
     $(PUBLIC_HEADERS_DIR)/DOMNodeIterator.h \
     $(PUBLIC_HEADERS_DIR)/DOMNodeList.h \

@@ -107,6 +107,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(INSPECTOR)
+#include "InspectorController.h"
+#endif
+
 #if ENABLE(SVG)
 #include "SVGElementInstance.h"
 #include "SVGUseElement.h"
@@ -715,6 +719,14 @@ bool Node::isContentRichlyEditable()
 {
     document()->updateStyleIfNeeded();
     return rendererIsEditable(RichlyEditable);
+}
+
+void Node::inspect()
+{
+#if ENABLE(INSPECTOR)
+    if (document() && document()->page())
+        document()->page()->inspectorController()->inspect(this);
+#endif
 }
 
 bool Node::rendererIsEditable(EditableLevel editableLevel) const

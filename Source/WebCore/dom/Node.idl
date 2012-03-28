@@ -136,6 +136,8 @@ module core {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // Objective-C extensions
         readonly attribute boolean          isContentEditable;
+
+        void inspect();
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
