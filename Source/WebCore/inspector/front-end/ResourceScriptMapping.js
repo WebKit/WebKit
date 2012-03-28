@@ -152,7 +152,7 @@ WebInspector.ResourceScriptMapping.prototype = {
 
         if (addedItem) {
             for (var i = 0; i < scriptIds.length; ++i) {
-                var data = { scriptId: scriptIds[i], uiSourceCodes: [addedItem] };
+                data = { scriptId: scriptIds[i], uiSourceCodes: [addedItem] };
                 this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptBound, data);
             }
         }

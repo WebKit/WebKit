@@ -129,7 +129,7 @@ WebInspector.CompilerScriptMapping.prototype = {
         this._scriptForSourceMap.put(sourceMap, script);
         var data = { removedItems: [], addedItems: uiSourceCodeList };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
-        var data = { scriptId: script.scriptId, uiSourceCodes: uiSourceCodeList };
+        data = { scriptId: script.scriptId, uiSourceCodes: uiSourceCodeList };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptBound, data);
     },
 

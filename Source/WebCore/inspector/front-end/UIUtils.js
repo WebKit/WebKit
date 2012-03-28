@@ -281,7 +281,7 @@ WebInspector.startEditing = function(element, config)
     element.addStyleClass("editing");
 
     var oldTabIndex = element.getAttribute("tabIndex");
-    if (isNaN(oldTabIndex) || oldTabIndex < 0)
+    if (typeof oldTabIndex !== "number" || oldTabIndex < 0)
         element.tabIndex = 0;
 
     function blurEventListener() {
@@ -302,7 +302,7 @@ WebInspector.startEditing = function(element, config)
 
         this.removeStyleClass("editing");
         
-        if (isNaN(oldTabIndex))
+        if (typeof oldTabIndex !== "number")
             element.removeAttribute("tabIndex");
         else
             this.tabIndex = oldTabIndex;

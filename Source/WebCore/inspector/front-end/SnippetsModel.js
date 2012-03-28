@@ -405,9 +405,9 @@ WebInspector.SnippetsScriptMapping.prototype = {
         this._scriptForUISourceCode.put(uiSourceCode, script);
         var data = { scriptId: script.scriptId, uiSourceCodes: [oldUISourceCode] };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptUnbound, data);
-        var data = { removedItems: [], addedItems: [uiSourceCode] };
+        data = { removedItems: [], addedItems: [uiSourceCode] };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
-        var data = { scriptId: script.scriptId, uiSourceCodes: [uiSourceCode] };
+        data = { scriptId: script.scriptId, uiSourceCodes: [uiSourceCode] };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptBound, data);
     },
 
