@@ -43,6 +43,7 @@ private:
     virtual void deviceScaleFactorDidChange() OVERRIDE;
     virtual void layerHostingModeDidChange() OVERRIDE;
     virtual void sizeDidChange() OVERRIDE;
+    virtual void waitForPossibleGeometryUpdate() OVERRIDE;
 
     virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) OVERRIDE;
     virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) OVERRIDE;

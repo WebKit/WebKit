@@ -84,6 +84,7 @@ public:
     void setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
 
     virtual void pageCustomRepresentationChanged() { }
+    virtual void waitForPossibleGeometryUpdate() { }
 
 #if USE(UI_SIDE_COMPOSITING)
     virtual void updateViewport();

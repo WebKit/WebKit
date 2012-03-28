@@ -2924,6 +2924,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)updateLayer
 {
     self.layer.backgroundColor = CGColorGetConstantColor(kCGColorWhite);
+    _data->_page->drawingArea()->waitForPossibleGeometryUpdate();
 }
 #endif
 

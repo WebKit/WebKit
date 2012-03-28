@@ -72,6 +72,12 @@ void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
         return;
 
     sendUpdateGeometry();
+}
+
+void TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate()
+{
+    if (!m_isWaitingForDidUpdateGeometry)
+        return;
 
     if (m_webPageProxy->process()->isLaunching())
         return;
