@@ -95,7 +95,7 @@
       'ENABLE_V8_SCRIPT_DEBUG_SERVER=1',
       'ENABLE_VIDEO=1',
       'ENABLE_VIDEO_TRACK=1',
-      'ENABLE_VIEWPORT=<(enable_viewport)',
+      'ENABLE_VIEWPORT=1',
       'ENABLE_WEBGL=1',
       'ENABLE_WEB_SOCKETS=1',
       'ENABLE_WEB_TIMING=1',
