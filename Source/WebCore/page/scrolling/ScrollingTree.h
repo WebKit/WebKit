@@ -79,6 +79,7 @@ public:
 
     void updateMainFrameScrollPosition(const IntPoint& scrollPosition);
     void updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint& scrollPosition);
+    IntPoint mainFrameScrollPosition();
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
     void handleWheelEventPhase(PlatformWheelEventPhase);

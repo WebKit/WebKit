@@ -278,9 +278,9 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
     frameView->setConstrainsScrollingToContentEdge(true);
 }
 
-void ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint& scrollPosition)
+void ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition()
 {
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && ENABLE(THREADED_SCROLLING)
     ASSERT(isMainThread());
 
     if (!m_page)
@@ -289,6 +289,8 @@ void ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition(c
     FrameView* frameView = m_page->mainFrame()->view();
     if (!frameView)
         return;
+
+    IntPoint scrollPosition = m_scrollingTree->mainFrameScrollPosition();
 
     // Make sure to update the main frame scroll position before changing the scroll layer position,
     // otherwise we'll introduce jittering on pages with slow repaint objects (like background-attachment: fixed).

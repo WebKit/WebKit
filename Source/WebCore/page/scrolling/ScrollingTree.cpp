@@ -161,6 +161,12 @@ void ScrollingTree::updateMainFrameScrollPosition(const IntPoint& scrollPosition
     callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPosition, m_scrollingCoordinator.get(), scrollPosition));
 }
 
+IntPoint ScrollingTree::mainFrameScrollPosition()
+{
+    MutexLocker lock(m_mutex);
+    return m_mainFrameScrollPosition;
+}
+
 void ScrollingTree::updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint& scrollPosition)
 {
     if (!m_scrollingCoordinator)
@@ -171,7 +177,7 @@ void ScrollingTree::updateMainFrameScrollPositionAndScrollLayerPosition(const In
         m_mainFrameScrollPosition = scrollPosition;
     }
 
-    callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition, m_scrollingCoordinator.get(), scrollPosition));
+    callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition, m_scrollingCoordinator.get()));
 }
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))

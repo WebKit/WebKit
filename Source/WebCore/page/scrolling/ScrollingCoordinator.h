@@ -108,7 +108,7 @@ public:
     void updateMainFrameScrollPosition(const IntPoint&);
 
     // Dispatched by the scrolling tree whenever the main frame scroll position changes and the scroll layer position needs to be updated as well.
-    void updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint&);
+    void updateMainFrameScrollPositionAndScrollLayerPosition();
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
     // Dispatched by the scrolling tree during handleWheelEvent. This is required as long as scrollbars are painted on the main thread.
