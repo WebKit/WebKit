@@ -576,6 +576,7 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
     Vector<char> name;
     Vector<char> value;
     bool sawSecWebSocketAcceptHeaderField = false;
+    bool sawSecWebSocketProtocolHeaderField = false;
     for (const char* p = start; p < end; p++) {
         name.clear();
         value.clear();
@@ -652,6 +653,13 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
             }
             m_response.addHeaderField(nameStr, valueStr);
             sawSecWebSocketAcceptHeaderField = true;
+        } else if (equalIgnoringCase("Sec-WebSocket-Protocol", nameStr)) {
+            if (sawSecWebSocketProtocolHeaderField) {
+                m_failureReason = "The Sec-WebSocket-Protocol header MUST NOT appear more than once in an HTTP response";
+                return 0;
+            }
+            m_response.addHeaderField(nameStr, valueStr);
+            sawSecWebSocketProtocolHeaderField = true;
         } else
             m_response.addHeaderField(nameStr, valueStr);
     }
