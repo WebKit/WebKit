@@ -1,3 +1,17 @@
+2012-03-28  David Kilzer  <ddkilzer@apple.com>
+
+        Use xcrun to find nm and ranlib on OS X builds
+        <http://webkit.org/b/82466>
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/build-webkit: Use xcrun to find ranlib.
+        * Scripts/webkitdirs.pm:
+        (determineNmPath): Added.  Use xcrun to find nm on OS X.
+        (nmPath): Added.
+        * Scripts/webkitperl/features.pm:
+        (libraryContainsSymbol): Use nmPath().
+
 2012-03-28  Ojan Vafai  <ojan@chromium.org>
 
         Add history navigation to garden-o-matic

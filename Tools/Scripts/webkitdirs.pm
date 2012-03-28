@@ -1,4 +1,4 @@
-# Copyright (C) 2005, 2006, 2007, 2010, 2012 Apple Inc. All rights reserved.
+# Copyright (C) 2005, 2006, 2007, 2010, 2011, 2012 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 #
@@ -56,6 +56,7 @@ BEGIN {
        &cmakeBasedPortName
        &currentSVNRevision
        &debugSafari
+       &nmPath
        &passedConfiguration
        &printHelpAndExitForRunAndDebugWebKitAppIfNeeded
        &productDir
@@ -81,6 +82,7 @@ my $configurationForVisualStudio;
 my $configurationProductDir;
 my $sourceDir;
 my $currentSVNRevision;
+my $nmPath;
 my $osXVersion;
 my $generateDsym;
 my $isQt;
@@ -1305,6 +1307,23 @@ sub isPerianInstalled()
     }
 
     return 0;
+}
+
+sub determineNmPath()
+{
+    return if $nmPath;
+
+    if (isAppleMacWebKit()) {
+        $nmPath = `xcrun -find nm`;
+        chomp $nmPath;
+    }
+    $nmPath = "nm" if !$nmPath;
+}
+
+sub nmPath()
+{
+    determineNmPath();
+    return $nmPath;
 }
 
 sub determineOSXVersion()

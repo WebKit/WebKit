@@ -1,4 +1,4 @@
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved
+# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved
 # Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
 # Copyright (C) 2010 Andras Becsi (abecsi@inf.u-szeged.hu), University of Szeged
 #
@@ -31,6 +31,10 @@
 use strict;
 use warnings;
 
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
+
 BEGIN {
    use Exporter   ();
    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
@@ -53,7 +57,7 @@ sub libraryContainsSymbol($$)
 
     my $foundSymbol = 0;
     if (-e $path) {
-        open NM, "-|", "nm", $path or die;
+        open NM, "-|", nmPath(), $path or die;
         while (<NM>) {
             $foundSymbol = 1 if /$symbol/; # FIXME: This should probably check for word boundaries before/after the symbol name.
         }
