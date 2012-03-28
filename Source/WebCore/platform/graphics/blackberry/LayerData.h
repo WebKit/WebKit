@@ -78,7 +78,7 @@ public:
         , m_suspendTime(0)
         , m_doubleSided(true)
         , m_masksToBounds(false)
-        , m_opaque(true)
+        , m_isOpaque(false)
         , m_preserves3D(false)
         , m_needsDisplayOnBoundsChange(false)
         , m_needsTexture(false)
@@ -113,7 +113,7 @@ public:
 
     float opacity() const { return m_opacity; }
 
-    bool opaque() const { return m_opaque; }
+    bool isOpaque() const { return m_isOpaque; }
 
     FloatPoint position() const { return m_position; }
 
@@ -197,7 +197,7 @@ protected:
 
     unsigned m_doubleSided : 1;
     unsigned m_masksToBounds : 1;
-    unsigned m_opaque : 1;
+    unsigned m_isOpaque : 1;
     unsigned m_preserves3D : 1;
     unsigned m_needsDisplayOnBoundsChange : 1;
 

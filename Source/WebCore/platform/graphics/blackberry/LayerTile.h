@@ -63,7 +63,7 @@ public:
 
     void setContents(const SkBitmap& contents, const IntRect& tileRect, const TileIndex&, bool isOpaque);
     void setContentsToColor(const Color&);
-    void updateContents(const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tileRect);
+    void updateContents(const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque);
     void discardContents();
 
     // The current texture is an accurate preview of this layer, but a more

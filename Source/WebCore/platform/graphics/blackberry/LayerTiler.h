@@ -100,7 +100,7 @@ private:
             ASSERT(type == DiscardContents || type == DirtyContents);
         }
 
-        TextureJob(Type type, const SkBitmap& contents, const IntRect& dirtyRect, bool isOpaque = false)
+        TextureJob(Type type, const SkBitmap& contents, const IntRect& dirtyRect, bool isOpaque)
             : m_type(type)
             , m_contents(contents)
             , m_isOpaque(isOpaque)
@@ -121,7 +121,7 @@ private:
 
         static TextureJob setContents(const SkBitmap& contents, bool isOpaque) { return TextureJob(SetContents, contents, IntRect(IntPoint::zero(), IntSize(contents.width(), contents.height())), isOpaque); }
         static TextureJob setContentsToColor(const Color& color, const TileIndex& index) { return TextureJob(SetContentsToColor, color, index); }
-        static TextureJob updateContents(const SkBitmap& contents, const IntRect& dirtyRect) { return TextureJob(UpdateContents, contents, dirtyRect); }
+        static TextureJob updateContents(const SkBitmap& contents, const IntRect& dirtyRect, bool isOpaque) { return TextureJob(UpdateContents, contents, dirtyRect, isOpaque); }
         static TextureJob discardContents(const IntRect& dirtyRect) { return TextureJob(DiscardContents, dirtyRect); }
         static TextureJob resizeContents(const IntSize& newSize) { return TextureJob(ResizeContents, newSize); }
         static TextureJob dirtyContents(const IntRect& dirtyRect) { return TextureJob(DirtyContents, dirtyRect); }

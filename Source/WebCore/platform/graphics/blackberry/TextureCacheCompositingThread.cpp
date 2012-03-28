@@ -254,7 +254,7 @@ PassRefPtr<Texture> TextureCacheCompositingThread::textureForColor(const Color& 
     return texture.release();
 }
 
-PassRefPtr<Texture> TextureCacheCompositingThread::updateContents(const RefPtr<Texture>& textureIn, const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tileRect)
+PassRefPtr<Texture> TextureCacheCompositingThread::updateContents(const RefPtr<Texture>& textureIn, const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque)
 {
     RefPtr<Texture> texture(textureIn);
 
@@ -266,7 +266,7 @@ PassRefPtr<Texture> TextureCacheCompositingThread::updateContents(const RefPtr<T
     // Protect newly created texture from being evicted.
     TextureProtector protector(texture.get());
 
-    texture->updateContents(contents, dirtyRect, tileRect);
+    texture->updateContents(contents, dirtyRect, tileRect, isOpaque);
 
     return texture.release();
 }

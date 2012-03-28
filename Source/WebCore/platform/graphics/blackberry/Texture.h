@@ -61,7 +61,7 @@ public:
     void unprotect() { --m_protectionCount; }
     bool protect(const IntSize&);
 
-    void updateContents(const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tile, bool isOpaque = false);
+    void updateContents(const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tile, bool isOpaque);
     void setContentsToColor(const Color&);
 
     IntSize size() const { return m_size; }

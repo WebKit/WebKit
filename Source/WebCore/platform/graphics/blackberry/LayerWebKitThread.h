@@ -95,7 +95,7 @@ public:
 
     void setOpacity(float opacity) { m_opacity = opacity; setNeedsCommit(); }
 
-    void setOpaque(bool opaque) { m_opaque = opaque; setNeedsCommit(); }
+    void setOpaque(bool isOpaque) { m_isOpaque = isOpaque; setNeedsCommit(); }
 
     void setPosition(const FloatPoint& position) { m_position = position; setNeedsCommit(); }
 

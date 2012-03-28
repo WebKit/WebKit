@@ -202,7 +202,7 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
                     if (isSolidColor)
                         addTextureJob(TextureJob::setContentsToColor(color, *it));
                     else
-                        addTextureJob(TextureJob::updateContents(bitmap, tileRect));
+                        addTextureJob(TextureJob::updateContents(bitmap, tileRect, m_layer->isOpaque()));
                 }
 
                 finishedJobs.add(*it);
@@ -297,7 +297,7 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
                 if (isSolidColor)
                     addTextureJob(TextureJob::setContentsToColor(color, index));
                 else
-                    addTextureJob(TextureJob::updateContents(bitmap, tileRect));
+                    addTextureJob(TextureJob::updateContents(bitmap, tileRect, m_layer->isOpaque()));
             }
         }
     }
@@ -452,7 +452,7 @@ void LayerTiler::performTileJob(LayerTile* tile, const TextureJob& job, const In
         tile->setContents(job.m_contents, tileRect, indexOfTile(tileRect.location()), job.m_isOpaque);
         return;
     case TextureJob::UpdateContents:
-        tile->updateContents(job.m_contents, job.m_dirtyRect, tileRect);
+        tile->updateContents(job.m_contents, job.m_dirtyRect, tileRect, job.m_isOpaque);
         return;
     case TextureJob::DiscardContents:
         tile->discardContents();

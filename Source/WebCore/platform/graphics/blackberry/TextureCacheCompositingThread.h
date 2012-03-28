@@ -54,7 +54,7 @@ public:
     PassRefPtr<Texture> textureForColor(const Color&);
 
     // Update contents of an existing texture, or create a new one if texture is 0.
-    PassRefPtr<Texture> updateContents(const RefPtr<Texture>&, const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tileRect);
+    PassRefPtr<Texture> updateContents(const RefPtr<Texture>&, const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque);
 
     size_t memoryUsage() const { return m_memoryUsage; }
     size_t memoryLimit() const { return m_memoryLimit; }

@@ -47,9 +47,9 @@ void LayerTile::setContentsToColor(const Color& color)
     setTexture(textureCacheCompositingThread()->textureForColor(color));
 }
 
-void LayerTile::updateContents(const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tileRect)
+void LayerTile::updateContents(const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque)
 {
-    setTexture(textureCacheCompositingThread()->updateContents(m_texture, contents, dirtyRect, tileRect));
+    setTexture(textureCacheCompositingThread()->updateContents(m_texture, contents, dirtyRect, tileRect, isOpaque));
 }
 
 void LayerTile::discardContents()
