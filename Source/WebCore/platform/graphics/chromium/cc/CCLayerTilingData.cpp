@@ -106,7 +106,8 @@ void CCLayerTilingData::layerRectToTileIndices(const IntRect& layerRect, int& le
 
 IntRect CCLayerTilingData::tileRect(const Tile* tile) const
 {
-    IntRect tileRect = m_tilingData.tileBoundsWithBorder(tile->i(), tile->j());
+    const int index = m_tilingData.tileIndex(tile->i(), tile->j());
+    IntRect tileRect = m_tilingData.tileBoundsWithBorder(index);
     tileRect.setSize(m_tileSize);
     return tileRect;
 }

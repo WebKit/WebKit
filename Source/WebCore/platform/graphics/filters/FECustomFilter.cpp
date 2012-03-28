@@ -112,7 +112,7 @@ void FECustomFilter::platformApplySoftware()
         resizeContext(newContextSize);
     
     // Do not draw the filter if the input image cannot fit inside a single GPU texture.
-    if (m_inputTexture->tiles().numTilesX() != 1 || m_inputTexture->tiles().numTilesY() != 1)
+    if (m_inputTexture->tiles().numTiles() != 1)
         return;
     
     // The shader had compiler errors. We cannot draw anything.

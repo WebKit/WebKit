@@ -1082,19 +1082,6 @@ TEST(TiledLayerChromiumTest, resizeToSmaller)
     layer->invalidateRect(IntRect(0, 0, 200, 200));
 }
 
-TEST(TiledLayerChromiumTest, hugeLayerUpdateCrash)
-{
-    OwnPtr<TextureManager> textureManager = TextureManager::create(60*1024*1024, 60*1024*1024, 1024);
-    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
-
-    int size = 1 << 30;
-    layer->setBounds(IntSize(size, size));
-    layer->invalidateRect(IntRect(0, 0, size, size));
-
-    // Ensure no crash for bounds where size * size would overflow an int.
-    layer->prepareToUpdate(IntRect(0, 0, 700, 700), 0);
-}
-
 TEST(TiledLayerChromiumTest, partialUpdates)
 {
     CCSettings settings;

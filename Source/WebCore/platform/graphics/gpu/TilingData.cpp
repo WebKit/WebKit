@@ -99,21 +99,23 @@ int TilingData::tileYIndexFromSrcCoord(int srcPos) const
     return min(max(y, 0), numTilesY() - 1);
 }
 
-IntRect TilingData::tileBounds(int i, int j) const
+IntRect TilingData::tileBounds(int tile) const
 {
-    assertTile(i, j);
-    int x = tilePositionX(i);
-    int y = tilePositionY(j);
-    int width = tileSizeX(i);
-    int height = tileSizeY(j);
+    assertTile(tile);
+    int ix = tileXIndex(tile);
+    int iy = tileYIndex(tile);
+    int x = tilePositionX(ix);
+    int y = tilePositionY(iy);
+    int width = tileSizeX(ix);
+    int height = tileSizeY(iy);
     ASSERT(x >= 0 && y >= 0 && width >= 0 && height >= 0);
     ASSERT(x <= totalSizeX() && y <= totalSizeY());
     return IntRect(x, y, width, height);
 }
 
-IntRect TilingData::tileBoundsWithBorder(int i, int j) const
+IntRect TilingData::tileBoundsWithBorder(int tile) const
 {
-    IntRect bounds = tileBounds(i, j);
+    IntRect bounds = tileBounds(tile);
 
     if (m_borderTexels) {
         int x1 = bounds.x();
@@ -121,13 +123,13 @@ IntRect TilingData::tileBoundsWithBorder(int i, int j) const
         int y1 = bounds.y();
         int y2 = bounds.maxY();
 
-        if (i > 0)
+        if (tileXIndex(tile) > 0)
             x1--;
-        if (i < (numTilesX() - 1))
+        if (tileXIndex(tile) < (numTilesX() - 1))
             x2++;
-        if (j > 0)
+        if (tileYIndex(tile) > 0)
             y1--;
-        if (j < (numTilesY() - 1))
+        if (tileYIndex(tile) < (numTilesY() - 1))
             y2++;
 
         bounds = IntRect(x1, y1, x2 - x1, y2 - y1);
@@ -136,10 +138,10 @@ IntRect TilingData::tileBoundsWithBorder(int i, int j) const
     return bounds;
 }
 
-FloatRect TilingData::tileBoundsNormalized(int i, int j) const
+FloatRect TilingData::tileBoundsNormalized(int tile) const
 {
-    assertTile(i, j);
-    FloatRect bounds(tileBounds(i, j));
+    assertTile(tile);
+    FloatRect bounds(tileBounds(tile));
     bounds.scale(1.0f / m_totalSizeX, 1.0f / m_totalSizeY);
     return bounds;
 }
@@ -212,6 +214,36 @@ IntRect TilingData::overlappedTileIndices(const WebCore::IntRect &srcRect) const
 IntRect TilingData::overlappedTileIndices(const WebCore::FloatRect &srcRect) const
 {
     return overlappedTileIndices(enclosingIntRect(srcRect));
+}
+
+void TilingData::intersectDrawQuad(const FloatRect& srcRect, const FloatRect& dstRect, int tile,
+                                   FloatRect* newSrc, FloatRect* newDst) const
+{
+    // Intersect with tile
+    FloatRect tileBounds = this->tileBounds(tile);
+    FloatRect srcRectIntersected = srcRect;
+    srcRectIntersected.intersect(tileBounds);
+
+    if (srcRectIntersected.isEmpty()) {
+        *newSrc = *newDst = FloatRect(0, 0, 0, 0);
+        return;
+    }
+
+    float srcRectIntersectedNormX = (srcRectIntersected.x() - srcRect.x()) / srcRect.width();
+    float srcRectIntersectedNormY = (srcRectIntersected.y() - srcRect.y()) / srcRect.height();
+    float srcRectIntersectedNormW = srcRectIntersected.width() / srcRect.width();
+    float srcRectIntersectedNormH = srcRectIntersected.height() / srcRect.height();
+
+    *newSrc = srcRectIntersected;
+    newSrc->move(
+        -tileBounds.x() + ((tileXIndex(tile) > 0) ? m_borderTexels : 0),
+        -tileBounds.y() + ((tileYIndex(tile) > 0) ? m_borderTexels : 0));
+
+    *newDst = FloatRect(
+        srcRectIntersectedNormX * dstRect.width() + dstRect.x(),
+        srcRectIntersectedNormY * dstRect.height() + dstRect.y(),
+        srcRectIntersectedNormW * dstRect.width(),
+        srcRectIntersectedNormH * dstRect.height());
 }
 
 IntPoint TilingData::textureOffset(int xIndex, int yIndex) const

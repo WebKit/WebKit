@@ -80,8 +80,7 @@ void CCTiledLayerImpl::bindContentsTexture(LayerRendererChromium* layerRenderer)
 {
     // This function is only valid for single texture layers, e.g. masks.
     ASSERT(m_tiler);
-    ASSERT(m_tiler->numTilesX() == 1);
-    ASSERT(m_tiler->numTilesY() == 1);
+    ASSERT(m_tiler->numTiles() == 1);
 
     DrawableTile* tile = tileAt(0, 0);
     Platform3DObject textureId = tile ? tile->textureId() : 0;
@@ -144,7 +143,7 @@ void CCTiledLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
 
     appendGutterQuads(quadList, sharedQuadState);
 
-    if (!m_tiler || m_tiler->hasEmptyBounds() || layerRect.isEmpty())
+    if (!m_tiler || !m_tiler->numTiles() || layerRect.isEmpty())
         return;
 
     int left, top, right, bottom;

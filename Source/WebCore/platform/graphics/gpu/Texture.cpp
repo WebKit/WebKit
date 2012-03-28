@@ -90,13 +90,7 @@ PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, i
     int maxTextureSize = 0;
     context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &maxTextureSize);
     TilingData tiling(maxTextureSize, width, height, true);
-
-    // Check for overflow.
-    int numTiles = width * height;
-    if (numTiles / width != height) {
-        tiling.setTotalSize(0, 0);
-        numTiles = 0;
-    }
+    int numTiles = tiling.numTiles();
 
     OwnPtr<Vector<unsigned int> > textureIds = adoptPtr(new Vector<unsigned int>(numTiles));
     textureIds->fill(0, numTiles);
@@ -110,9 +104,7 @@ PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, i
         }
         textureIds->at(i) = textureId;
 
-        int xIndex = i % width;
-        int yIndex = i / width;
-        IntRect tileBoundsWithBorder = tiling.tileBoundsWithBorder(xIndex, yIndex);
+        IntRect tileBoundsWithBorder = tiling.tileBoundsWithBorder(i);
 
         unsigned int glFormat = 0;
         unsigned int glType = 0;
@@ -176,12 +168,9 @@ void Texture::updateSubRect(void* pixels, const IntRect& updateRect)
         min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRectSanitized.height());
     OwnArrayPtr<uint32_t> tempBuff = adoptArrayPtr(new uint32_t[tempBuffSize]);
 
-    for (int tile = 0; tile < m_tiles.numTilesX() * m_tiles.numTilesY(); tile++) {
-        int xIndex = tile % m_tiles.totalSizeX();
-        int yIndex = tile / m_tiles.totalSizeX();
-
+    for (int tile = 0; tile < m_tiles.numTiles(); tile++) {
         // Intersect with tile
-        IntRect tileBoundsWithBorder = m_tiles.tileBoundsWithBorder(xIndex, yIndex);
+        IntRect tileBoundsWithBorder = m_tiles.tileBoundsWithBorder(tile);
 
         IntRect updateRectIntersected = updateRectSanitized;
         updateRectIntersected.intersect(tileBoundsWithBorder);
