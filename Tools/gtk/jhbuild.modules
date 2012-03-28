@@ -88,7 +88,8 @@
              md5sum="79390673f5d07a8fb342bc09b5055b6f"/>
   </autotools>
 
-  <autotools id="gdk-pixbuf" autogen-sh="configure">
+  <autotools id="gdk-pixbuf" autogen-sh="configure"
+             autogenargs="--disable-introspection">
     <dependencies>
       <dep package="glib"/>
     </dependencies>
@@ -98,7 +99,8 @@
             md5sum="066e30277cadc225a7cef4c258da830b"/>
   </autotools>
 
-  <autotools id="gtk+">
+  <autotools id="gtk+"
+             autogenargs="--disable-introspection">
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
@@ -141,7 +143,8 @@
             md5sum="555687a7ffefba0bd9de1e71cb61402c"/>
   </autotools>
 
-  <autotools id="libsoup" autogenargs="--without-gnome">
+  <autotools id="libsoup"
+             autogenargs="--without-gnome --disable-introspection">
     <dependencies>
       <dep package="glib-networking"/>
     </dependencies>

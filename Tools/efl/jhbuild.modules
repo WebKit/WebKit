@@ -137,7 +137,8 @@
             md5sum="555687a7ffefba0bd9de1e71cb61402c"/>
   </autotools>
 
-  <autotools id="libsoup" autogenargs="--without-gnome">
+  <autotools id="libsoup"
+             autogenargs="--without-gnome --disable-introspection">
     <dependencies>
       <dep package="glib-networking"/>
     </dependencies>
