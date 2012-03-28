@@ -202,9 +202,8 @@ static Vector<String> absoluteURLsFromPasteboard(const String& pasteboardName, b
 
     // Fallback to NSURLPboardType (which is a single URL)
     if (availableTypes.contains(String(NSURLPboardType))) {
-        platformStrategies()->pasteboardStrategy()->getPathnamesForType(absoluteURLs, String(NSURLPboardType), pasteboardName);
-        if (!absoluteURLs.isEmpty())
-            return absoluteURLs;
+        absoluteURLs.append(platformStrategies()->pasteboardStrategy()->stringForType(String(NSURLPboardType), pasteboardName));
+        return absoluteURLs;
     }
 
     // No file paths on the pasteboard, return nil

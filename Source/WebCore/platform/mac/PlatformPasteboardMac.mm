@@ -65,6 +65,9 @@ void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const St
 
 String PlatformPasteboard::stringForType(const String& pasteboardType)
 {
+    if (pasteboardType == String(NSURLPboardType))
+        return [[NSURL URLFromPasteboard:m_pasteboard.get()] absoluteString];
+
     return [m_pasteboard.get() stringForType:pasteboardType];
 }
 
