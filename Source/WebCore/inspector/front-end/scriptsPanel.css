@@ -362,6 +362,10 @@
     top: 1px;
 }
 
+#scripts-navigator-tabbed-pane .navigator .base-navigator-tree-element-title.editing {
+    margin: auto;
+}
+
 .function-location-link {
     float: right;
     margin-left: 10px;

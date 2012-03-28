@@ -135,12 +135,24 @@ WebInspector.ScriptsNavigator.prototype = {
         if (this._scriptTreeElementsByUISourceCode.get(uiSourceCode))
             return;
         
-        var scriptTitle = uiSourceCode.fileName || WebInspector.UIString("(program)");
-        var scriptTreeElement = new WebInspector.NavigatorScriptTreeElement(this, uiSourceCode, scriptTitle);
+        var scriptTreeElement = new WebInspector.NavigatorScriptTreeElement(this, uiSourceCode, "");
         this._scriptTreeElementsByUISourceCode.put(uiSourceCode, scriptTreeElement);
+        this._updateScriptTitle(uiSourceCode);
 
         var folderTreeElement = this._getOrCreateFolderTreeElement(uiSourceCode);
         folderTreeElement.appendChild(scriptTreeElement);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _updateScriptTitle: function(uiSourceCode)
+    {
+        var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
+        if (!scriptTreeElement)
+            return;
+        var scriptTitle = uiSourceCode.fileName || WebInspector.UIString("(program)");
+        scriptTreeElement.titleText = scriptTitle;
     },
 
     /**
@@ -317,7 +329,7 @@ WebInspector.ScriptsNavigator.prototype = {
      */
     _handleRenameSnippet: function(uiSourceCode, event)
     {
-        // FIXME: To be implemented.
+        this.rename(uiSourceCode);
     },
 
     /**
@@ -335,6 +347,48 @@ WebInspector.ScriptsNavigator.prototype = {
     _handleCreateSnippet: function(event)
     {
         // FIXME: To be implemented.
+    },
+
+    _fileRenamed: function(uiSourceCode, newTitle)
+    {
+        // FIXME: To be implemented.
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    rename: function(uiSourceCode, callback)
+    {
+        var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
+        if (!scriptTreeElement)
+            return;
+
+        // Tree outline should be marked as edited as well as the tree element to prevent search from starting.
+        WebInspector.markBeingEdited(scriptTreeElement.treeOutline.element, true);
+
+        function commitHandler(element, newTitle, oldTitle)
+        {
+            if (newTitle && newTitle !== oldTitle)
+                this._fileRenamed(uiSourceCode, newTitle);
+            else
+                this._updateScriptTitle(uiSourceCode);
+            afterEditing();
+        }
+
+        function cancelHandler()
+        {
+            afterEditing();
+        }
+
+        function afterEditing()
+        {
+            WebInspector.markBeingEdited(scriptTreeElement.treeOutline.element, false);
+            callback();
+        }
+
+        var editingConfig = new WebInspector.EditingConfig(commitHandler.bind(this), cancelHandler.bind(this));
+        WebInspector.startEditing(scriptTreeElement.titleElement, editingConfig);
+        window.getSelection().setBaseAndExtent(scriptTreeElement.titleElement, 0, scriptTreeElement.titleElement, 1);
     },
 
     reset: function()
@@ -564,7 +618,8 @@ WebInspector.BaseNavigatorTreeElement.prototype = {
     set titleText(titleText)
     {
         this._titleText = titleText || "";
-        this._titleTextNode.textContent = this._titleText;
+        if (this.titleElement)
+            this.titleElement.textContent = this._titleText;
     },
     
     /**
