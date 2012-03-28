@@ -3887,7 +3887,7 @@ BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip-2.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-skipped.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/replaced/replaced-breaking.html = IMAGE
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/replaced/width100percent-searchfield.html = IMAGE PASS
+BUGWK75568 MAC : fast/replaced/width100percent-searchfield.html = IMAGE PASS
 BUGWK75568 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE PASS
 BUGWK75568 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE PASS
 
@@ -4268,7 +4268,7 @@ BUGWK82372 LINUX X86 RELEASE : css3/filters/custom/effect-custom-parameters.html
 BUGWK82269 DEBUG: media/track/track-delete-during-setup.html = CRASH
 
 // this test appears to consistently fail during the main run but usually passes on a retry.
-BUGWK82404 LINUX LEOPARD SNOWLEOPARD : plugins/netscape-dom-access-and-reload.html = PASS TEXT 
+BUGWK82404 LINUX MAC : plugins/netscape-dom-access-and-reload.html = PASS TEXT 
 
 BUGWK82409 LINUX RELEASE : inspector/styles/css-live-edit.html = PASS TIMEOUT
 
@@ -4291,3 +4291,5 @@ BUGWK82507 LEOPARD SNOWLEOPARD DEBUG : media/W3C/video/events/event_order_canpla
 BUGWK82508 LINUX DEBUG : http/tests/media/video-cancel-load.html = PASS TEXT
 
 BUGWK82509 LINUX : svg/text/append-text-node-to-tspan.html = PASS IMAGE
+
+BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = PASS IMAGE
