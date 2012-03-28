@@ -102,13 +102,17 @@ CSSStyleSheet::~CSSStyleSheet()
     clearRules();
 }
 
-void CSSStyleSheet::parserAppendRule(PassRefPtr<CSSRule> child)
+void CSSStyleSheet::parserAppendRule(PassRefPtr<CSSRule> rule)
 {
-    ASSERT(!child->isCharsetRule());
-    CSSRule* c = child.get();
-    m_children.append(child);
-    if (c->isImportRule())
-        static_cast<CSSImportRule*>(c)->requestStyleSheet();
+    ASSERT(!rule->isCharsetRule());
+    if (rule->isImportRule()) {
+        // Parser enforces that @import rules come before anything else except @charset.
+        ASSERT(m_childRules.isEmpty());
+        m_importRules.append(static_cast<CSSImportRule*>(rule.get()));
+        m_importRules.last()->requestStyleSheet();
+        return;
+    }
+    m_childRules.append(rule);
 }
 
 CSSCharsetRule* CSSStyleSheet::ensureCharsetRule()
@@ -123,7 +127,8 @@ unsigned CSSStyleSheet::length() const
 {
     unsigned result = 0;
     result += hasCharsetRule() ? 1 : 0;
-    result += m_children.size();
+    result += m_importRules.size();
+    result += m_childRules.size();
     return result;
 }
 
@@ -135,7 +140,12 @@ CSSRule* CSSStyleSheet::item(unsigned index)
             return ensureCharsetRule();
         --childVectorIndex;
     }
-    return childVectorIndex < m_children.size() ? m_children[childVectorIndex].get() : 0; 
+    if (childVectorIndex < m_importRules.size())
+        return m_importRules[childVectorIndex].get();
+
+    childVectorIndex -= m_importRules.size();
+
+    return childVectorIndex < m_childRules.size() ? m_childRules[childVectorIndex].get() : 0; 
 }
 
 void CSSStyleSheet::clearCharsetRule()
@@ -152,11 +162,18 @@ void CSSStyleSheet::clearRules()
     // For style rules outside the document, .parentStyleSheet can become null even if the style rule
     // is still observable from JavaScript. This matches the behavior of .parentNode for nodes, but
     // it's not ideal because it makes the CSSOM's behavior depend on the timing of garbage collection.
-    for (unsigned i = 0; i < m_children.size(); ++i) {
-        ASSERT(m_children.at(i)->parentStyleSheet() == this);
-        m_children.at(i)->setParentStyleSheet(0);
+    for (unsigned i = 0; i < m_childRules.size(); ++i) {
+        ASSERT(m_childRules[i]->parentStyleSheet() == this);
+        m_childRules[i]->setParentStyleSheet(0);
     }
-    m_children.clear();
+    m_childRules.clear();
+
+    for (unsigned i = 0; i < m_importRules.size(); ++i) {
+        ASSERT(m_importRules.at(i)->parentStyleSheet() == this);
+        m_importRules[i]->setParentStyleSheet(0);
+    }
+    m_importRules.clear();
+
     clearCharsetRule();
 }
 
@@ -175,11 +192,12 @@ PassRefPtr<CSSRuleList> CSSStyleSheet::rules()
         return 0;
     // IE behavior.
     RefPtr<StaticCSSRuleList> nonCharsetRules = StaticCSSRuleList::create();
-    nonCharsetRules->rules().append(m_children);
+    nonCharsetRules->rules().append(m_importRules.data(), m_importRules.size());
+    nonCharsetRules->rules().append(m_childRules.data(), m_childRules.size());
     return nonCharsetRules.release();
 }
 
-unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, ExceptionCode& ec)
+unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, ExceptionCode& ec)
 {
     ec = 0;
     if (index > length()) {
@@ -187,17 +205,17 @@ unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, Exception
         return 0;
     }
     CSSParser p(useStrictParsing());
-    RefPtr<CSSRule> r = p.parseRule(this, rule);
+    RefPtr<CSSRule> rule = p.parseRule(this, ruleString);
 
-    if (!r) {
+    if (!rule) {
         ec = SYNTAX_ERR;
         return 0;
     }
     // Parser::parseRule doesn't currently allow @charset so we don't need to deal with it.
-    ASSERT(!r->isCharsetRule());
+    ASSERT(!rule->isCharsetRule());
     
     unsigned childVectorIndex = index;
-    // m_children does not contain @charset which is always in index 0 if it exists.
+    // m_childRules does not contain @charset which is always in index 0 if it exists.
     if (hasCharsetRule()) {
         if (index == 0) {
             // Nothing can be inserted before @charset.
@@ -206,26 +224,30 @@ unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, Exception
         }
         --childVectorIndex;
     }
-
-    // Throw a HIERARCHY_REQUEST_ERR exception if the rule cannot be inserted at the specified index. The best
-    // example of this is an @import rule inserted after regular rules.
-    if (r->isImportRule()) {
-        // Check all the rules that come before this one to make sure they are only @import rules.
-        for (unsigned i = 0; i < childVectorIndex; ++i) {
-            if (!m_children.at(i)->isImportRule()) {
-                ec = HIERARCHY_REQUEST_ERR;
-                return 0;
-            }
+    
+    if (childVectorIndex < m_importRules.size() || (childVectorIndex == m_importRules.size() && rule->isImportRule())) {
+        // Inserting non-import rule before @import is not allowed.
+        if (!rule->isImportRule()) {
+            ec = HIERARCHY_REQUEST_ERR;
+            return 0;
         }
-    } 
+        m_importRules.insert(childVectorIndex, static_cast<CSSImportRule*>(rule.get()));
+        m_importRules[childVectorIndex]->requestStyleSheet();
+
+        // FIXME: Stylesheet doesn't actually change meaningfully before the imported sheets are loaded.
+        styleSheetChanged();
+        return index;
+    }
+    // Inserting @import rule after a non-import rule is not allowed.
+    if (rule->isImportRule()) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return 0;
+    }
+    childVectorIndex -= m_importRules.size();
  
-    CSSRule* c = r.get();
-    m_children.insert(childVectorIndex, r.release());
-    if (c->isImportRule())
-        static_cast<CSSImportRule*>(c)->requestStyleSheet();
+    m_childRules.insert(childVectorIndex, rule.release());
 
     styleSheetChanged();
-
     return index;
 }
 
@@ -270,9 +292,16 @@ void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)
         }
         --childVectorIndex;
     }
+    if (childVectorIndex < m_importRules.size()) {
+        m_importRules[childVectorIndex]->setParentStyleSheet(0);
+        m_importRules.remove(childVectorIndex);
+        styleSheetChanged();
+        return;
+    }
+    childVectorIndex -= m_importRules.size();
 
-    m_children.at(childVectorIndex)->setParentStyleSheet(0);
-    m_children.remove(childVectorIndex);
+    m_childRules[childVectorIndex]->setParentStyleSheet(0);
+    m_childRules.remove(childVectorIndex);
     styleSheetChanged();
 }
 
@@ -317,9 +346,8 @@ bool CSSStyleSheet::parseStringAtLine(const String& string, bool strict, int sta
 
 bool CSSStyleSheet::isLoading()
 {
-    for (unsigned i = 0; i < m_children.size(); ++i) {
-        CSSRule* rule = m_children.at(i).get();
-        if (rule->isImportRule() && static_cast<CSSImportRule*>(rule)->isLoading())
+    for (unsigned i = 0; i < m_importRules.size(); ++i) {
+        if (m_importRules[i]->isLoading())
             return true;
     }
     return false;
@@ -421,14 +449,17 @@ void CSSStyleSheet::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
 
     while (!styleSheetQueue.isEmpty()) {
         CSSStyleSheet* styleSheet = styleSheetQueue.takeFirst();
+        
+        for (unsigned i = 0; i < styleSheet->m_importRules.size(); ++i) {
+            CSSImportRule* importRule = styleSheet->m_importRules[i].get();
+            if (importRule->styleSheet())
+                styleSheetQueue.append(importRule->styleSheet());
+            importRule->addSubresourceStyleURLs(urls);
+        }
 
-        for (unsigned i = 0; i < styleSheet->m_children.size(); ++i) {
-            CSSRule* rule = styleSheet->m_children.at(i).get();
-            if (rule->isImportRule()) {
-                if (CSSStyleSheet* ruleStyleSheet = static_cast<CSSImportRule*>(rule)->styleSheet())
-                    styleSheetQueue.append(ruleStyleSheet);
-                static_cast<CSSImportRule*>(rule)->addSubresourceStyleURLs(urls);
-            } else if (rule->isFontFaceRule())
+        for (unsigned i = 0; i < styleSheet->m_childRules.size(); ++i) {
+            CSSRule* rule = styleSheet->m_childRules[i].get();
+            if (rule->isFontFaceRule())
                 static_cast<CSSFontFaceRule*>(rule)->addSubresourceStyleURLs(urls);
             else if (rule->isStyleRule() || rule->isPageRule())
                 static_cast<CSSStyleRule*>(rule)->styleRule()->addSubresourceStyleURLs(urls, this);

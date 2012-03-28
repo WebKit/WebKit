@@ -28,6 +28,7 @@ namespace WebCore {
 struct CSSNamespace;
 class CSSParser;
 class CSSCharsetRule;
+class CSSImportRule;
 class CSSRule;
 class CSSRuleList;
 class CachedCSSStyleSheet;
@@ -119,8 +120,9 @@ public:
     unsigned length() const;
     CSSRule* item(unsigned index);
 
-    // Does not contain @charset rule.
-    const Vector<RefPtr<CSSRule> >& ruleVector() const { return m_children; }
+    // Rules other than @charset and @import.
+    const Vector<RefPtr<CSSRule> >& childRules() const { return m_childRules; }
+    const Vector<RefPtr<CSSImportRule> >& importRules() const { return m_importRules; }
 
     virtual MediaList* media() const OVERRIDE;
 
@@ -142,7 +144,8 @@ private:
 
     String m_encodingFromCharsetRule;
     RefPtr<CSSCharsetRule> m_charsetRuleCSSOMWrapper;
-    Vector<RefPtr<CSSRule> > m_children;
+    Vector<RefPtr<CSSImportRule> > m_importRules;
+    Vector<RefPtr<CSSRule> > m_childRules;
     OwnPtr<CSSNamespace> m_namespaces;
     String m_charset;
     RefPtr<MediaQuerySet> m_mediaQueries;

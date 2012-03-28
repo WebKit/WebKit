@@ -2225,7 +2225,15 @@ bool CSSStyleSelector::determineStylesheetSelectorScopes(CSSStyleSheet* styleshe
 {
     ASSERT(!stylesheet->isLoading());
 
-    const Vector<RefPtr<CSSRule> >& rules = stylesheet->ruleVector();
+    const Vector<RefPtr<CSSImportRule> >& importRules = stylesheet->importRules();
+    for (unsigned i = 0; i < importRules.size(); ++i) {
+        if (!importRules[i]->styleSheet())
+            continue;
+        if (!determineStylesheetSelectorScopes(importRules[i]->styleSheet(), idScopes, classScopes))
+            return false;
+    }
+
+    const Vector<RefPtr<CSSRule> >& rules = stylesheet->childRules();
     for (unsigned i = 0; i < rules.size(); i++) {
         CSSRule* rule = rules[i].get();
         if (rule->isStyleRule()) {
@@ -2234,14 +2242,6 @@ bool CSSStyleSelector::determineStylesheetSelectorScopes(CSSStyleSheet* styleshe
                 return false;
             continue;
         } 
-        if (rule->isImportRule()) {
-            CSSImportRule* importRule = static_cast<CSSImportRule*>(rule);
-            if (importRule->styleSheet()) {
-                if (!determineStylesheetSelectorScopes(importRule->styleSheet(), idScopes, classScopes))
-                    return false;
-            }
-            continue;
-        }
         // FIXME: Media rules and maybe some others could be allowed.
         return false;
     }
@@ -2453,19 +2453,23 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
     // contain our current medium
     if (sheet->mediaQueries() && !medium.eval(sheet->mediaQueries(), styleSelector))
         return; // the style sheet doesn't apply
+    
+    const Vector<RefPtr<CSSImportRule> >& importRules = sheet->importRules();
+    for (unsigned i = 0; i < importRules.size(); ++i) {
+        CSSImportRule* importRule = importRules[i].get();
+        if (importRule->styleSheet() && (!importRule->mediaQueries() || medium.eval(importRule->mediaQueries(), styleSelector)))
+            addRulesFromSheet(importRule->styleSheet(), medium, styleSelector, scope);
+    }
 
-    const Vector<RefPtr<CSSRule> >& rules = sheet->ruleVector();
+    const Vector<RefPtr<CSSRule> >& rules = sheet->childRules();
     for (unsigned i = 0; i < rules.size(); ++i) {
         CSSRule* rule = rules[i].get();
+
+        ASSERT(!rule->isImportRule());
         if (rule->isStyleRule())
             addStyleRule(static_cast<CSSStyleRule*>(rule)->styleRule(), !scope);
         else if (rule->isPageRule())
             addPageRule(static_cast<CSSPageRule*>(rule));
-        else if (rule->isImportRule()) {
-            CSSImportRule* import = static_cast<CSSImportRule*>(rule);
-            if (import->styleSheet() && (!import->mediaQueries() || medium.eval(import->mediaQueries(), styleSelector)))
-                addRulesFromSheet(import->styleSheet(), medium, styleSelector, scope);
-        }
         else if (rule->isMediaRule()) {
             CSSMediaRule* mediaRule = static_cast<CSSMediaRule*>(rule);
 
