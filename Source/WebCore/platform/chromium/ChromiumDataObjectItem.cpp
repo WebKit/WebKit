@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "DataTransferItemChromium.h"
+#include "ChromiumDataObjectItem.h"
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
@@ -46,52 +46,52 @@
 
 namespace WebCore {
 
-PassRefPtr<DataTransferItemChromium> DataTransferItemChromium::createFromString(const String& type, const String& data)
+PassRefPtr<ChromiumDataObjectItem> ChromiumDataObjectItem::createFromString(const String& type, const String& data)
 {
-    RefPtr<DataTransferItemChromium> item = adoptRef(new DataTransferItemChromium(DataTransferItem::kindString, type));
+    RefPtr<ChromiumDataObjectItem> item = adoptRef(new ChromiumDataObjectItem(DataTransferItem::kindString, type));
     item->m_data = data;
     return item.release();
 }
 
-PassRefPtr<DataTransferItemChromium> DataTransferItemChromium::createFromFile(PassRefPtr<File> file)
+PassRefPtr<ChromiumDataObjectItem> ChromiumDataObjectItem::createFromFile(PassRefPtr<File> file)
 {
-    RefPtr<DataTransferItemChromium> item = adoptRef(new DataTransferItemChromium(DataTransferItem::kindFile, file->type()));
+    RefPtr<ChromiumDataObjectItem> item = adoptRef(new ChromiumDataObjectItem(DataTransferItem::kindFile, file->type()));
     item->m_file = file;
     return item.release();
 }
 
-PassRefPtr<DataTransferItemChromium> DataTransferItemChromium::createFromURL(const String& url, const String& title)
+PassRefPtr<ChromiumDataObjectItem> ChromiumDataObjectItem::createFromURL(const String& url, const String& title)
 {
-    RefPtr<DataTransferItemChromium> item = adoptRef(new DataTransferItemChromium(DataTransferItem::kindString, mimeTypeTextURIList));
+    RefPtr<ChromiumDataObjectItem> item = adoptRef(new ChromiumDataObjectItem(DataTransferItem::kindString, mimeTypeTextURIList));
     item->m_data = url;
     item->m_title = title;
     return item.release();
 }
 
-PassRefPtr<DataTransferItemChromium> DataTransferItemChromium::createFromHTML(const String& html, const KURL& baseURL)
+PassRefPtr<ChromiumDataObjectItem> ChromiumDataObjectItem::createFromHTML(const String& html, const KURL& baseURL)
 {
-    RefPtr<DataTransferItemChromium> item = adoptRef(new DataTransferItemChromium(DataTransferItem::kindString, mimeTypeTextHTML));
+    RefPtr<ChromiumDataObjectItem> item = adoptRef(new ChromiumDataObjectItem(DataTransferItem::kindString, mimeTypeTextHTML));
     item->m_data = html;
     item->m_baseURL = baseURL;
     return item.release();
 }
 
-PassRefPtr<DataTransferItemChromium> DataTransferItemChromium::createFromSharedBuffer(const String& name, PassRefPtr<SharedBuffer> buffer)
+PassRefPtr<ChromiumDataObjectItem> ChromiumDataObjectItem::createFromSharedBuffer(const String& name, PassRefPtr<SharedBuffer> buffer)
 {
-    RefPtr<DataTransferItemChromium> item = adoptRef(new DataTransferItemChromium(DataTransferItem::kindFile, String()));
+    RefPtr<ChromiumDataObjectItem> item = adoptRef(new ChromiumDataObjectItem(DataTransferItem::kindFile, String()));
     item->m_sharedBuffer = buffer;
     item->m_title = name;
     return item.release();
 }
 
-PassRefPtr<DataTransferItemChromium> DataTransferItemChromium::createFromPasteboard(const String& type, uint64_t sequenceNumber)
+PassRefPtr<ChromiumDataObjectItem> ChromiumDataObjectItem::createFromPasteboard(const String& type, uint64_t sequenceNumber)
 {
     if (type == mimeTypeImagePng)
-        return adoptRef(new DataTransferItemChromium(DataTransferItem::kindFile, type, sequenceNumber));
-    return adoptRef(new DataTransferItemChromium(DataTransferItem::kindString, type, sequenceNumber));
+        return adoptRef(new ChromiumDataObjectItem(DataTransferItem::kindFile, type, sequenceNumber));
+    return adoptRef(new ChromiumDataObjectItem(DataTransferItem::kindString, type, sequenceNumber));
 }
 
-DataTransferItemChromium::DataTransferItemChromium(const String& kind, const String& type)
+ChromiumDataObjectItem::ChromiumDataObjectItem(const String& kind, const String& type)
     : m_source(InternalSource)
     , m_kind(kind)
     , m_type(type)
@@ -99,7 +99,7 @@ DataTransferItemChromium::DataTransferItemChromium(const String& kind, const Str
 {
 }
 
-DataTransferItemChromium::DataTransferItemChromium(const String& kind, const String& type, uint64_t sequenceNumber)
+ChromiumDataObjectItem::ChromiumDataObjectItem(const String& kind, const String& type, uint64_t sequenceNumber)
     : m_source(PasteboardSource)
     , m_kind(kind)
     , m_type(type)
@@ -107,7 +107,7 @@ DataTransferItemChromium::DataTransferItemChromium(const String& kind, const Str
 {
 }
 
-void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback, ScriptExecutionContext* context) const
+void ChromiumDataObjectItem::getAsString(PassRefPtr<StringCallback> callback, ScriptExecutionContext* context) const
 {
     if (!callback || kind() != DataTransferItem::kindString)
         return;
@@ -115,7 +115,7 @@ void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback, 
     callback->scheduleCallback(context, internalGetAsString());
 }
 
-PassRefPtr<Blob> DataTransferItemChromium::getAsFile() const
+PassRefPtr<Blob> ChromiumDataObjectItem::getAsFile() const
 {
     if (kind() != DataTransferItem::kindFile)
         return 0;
@@ -153,7 +153,7 @@ PassRefPtr<Blob> DataTransferItemChromium::getAsFile() const
     return 0;
 }
 
-String DataTransferItemChromium::internalGetAsString() const
+String ChromiumDataObjectItem::internalGetAsString() const
 {
     ASSERT(m_kind == DataTransferItem::kindString);
 
@@ -176,7 +176,7 @@ String DataTransferItemChromium::internalGetAsString() const
     return PlatformSupport::clipboardSequenceNumber(currentPasteboardBuffer()) == m_sequenceNumber ? data : String();
 }
 
-bool DataTransferItemChromium::isFilename() const
+bool ChromiumDataObjectItem::isFilename() const
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=81261: When we properly support File dragout,
     // we'll need to make sure this works as expected for DragDataChromium.

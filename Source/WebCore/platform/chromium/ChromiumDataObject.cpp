@@ -34,28 +34,26 @@
 #include "ClipboardMimeTypes.h"
 #include "ClipboardUtilitiesChromium.h"
 #include "DataTransferItem.h"
-#include "DataTransferItemListChromium.h"
+#include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
+#include "PlatformSupport.h"
 
 namespace WebCore {
 
-static PassRefPtr<DataTransferItemChromium> findItem(PassRefPtr<DataTransferItemListChromium> itemList, const String& type)
-{
-    for (size_t i = 0; i < itemList->length(); ++i) {
-        if (itemList->item(i)->kind() == DataTransferItem::kindString && itemList->item(i)->type() == type)
-            return itemList->item(i);
-    }
-    return 0;
-}
-
 PassRefPtr<ChromiumDataObject> ChromiumDataObject::createFromPasteboard()
 {
-    return adoptRef(new ChromiumDataObject(DataTransferItemListChromium::createFromPasteboard()));
+    RefPtr<ChromiumDataObject> dataObject = create();
+    uint64_t sequenceNumber = PlatformSupport::clipboardSequenceNumber(currentPasteboardBuffer());
+    bool ignored;
+    HashSet<String> types = PlatformSupport::clipboardReadAvailableTypes(currentPasteboardBuffer(), &ignored);
+    for (HashSet<String>::const_iterator it = types.begin(); it != types.end(); ++it)
+        dataObject->m_itemList.append(ChromiumDataObjectItem::createFromPasteboard(*it, sequenceNumber));
+    return dataObject.release();
 }
 
 PassRefPtr<ChromiumDataObject> ChromiumDataObject::create()
 {
-    return adoptRef(new ChromiumDataObject(DataTransferItemListChromium::create()));
+    return adoptRef(new ChromiumDataObject());
 }
 
 PassRefPtr<ChromiumDataObject> ChromiumDataObject::copy() const
@@ -63,32 +61,60 @@ PassRefPtr<ChromiumDataObject> ChromiumDataObject::copy() const
     return adoptRef(new ChromiumDataObject(*this));
 }
 
-PassRefPtr<DataTransferItemListChromium> ChromiumDataObject::items() const
+size_t ChromiumDataObject::length() const
 {
-    return m_itemList;
+    return m_itemList.size();
+}
+
+PassRefPtr<ChromiumDataObjectItem> ChromiumDataObject::item(unsigned long index)
+{
+    if (index >= length())
+        return 0;
+    return m_itemList[index];
+}
+
+void ChromiumDataObject::deleteItem(unsigned long index)
+{
+    if (index >= length())
+        return;
+    m_itemList.remove(index);
+}
+
+void ChromiumDataObject::clearAll()
+{
+    m_itemList.clear();
+}
+
+void ChromiumDataObject::add(const String& data, const String& type, ExceptionCode& ec)
+{
+    if (!internalAddStringItem(ChromiumDataObjectItem::createFromString(type, data)))
+        ec = NOT_SUPPORTED_ERR;
+}
+
+void ChromiumDataObject::add(PassRefPtr<File> file, ScriptExecutionContext* context)
+{
+    if (!file)
+        return;
+
+    m_itemList.append(ChromiumDataObjectItem::createFromFile(file));
 }
 
 void ChromiumDataObject::clearData(const String& type)
 {
-    for (size_t i = 0; i < m_itemList->length(); ++i) {
-        if (m_itemList->item(i)->kind() == DataTransferItem::kindString && m_itemList->item(i)->type() == type) {
+    for (size_t i = 0; i < m_itemList.size(); ++i) {
+        if (m_itemList[i]->kind() == DataTransferItem::kindString && m_itemList[i]->type() == type) {
             // Per the spec, type must be unique among all items of kind 'string'.
-            m_itemList->deleteItem(i);
+            m_itemList.remove(i);
             return;
         }
     }
 }
 
-void ChromiumDataObject::clearAll()
-{
-    m_itemList->clear();
-}
-
 void ChromiumDataObject::clearAllExceptFiles()
 {
-    for (size_t i = 0; i < m_itemList->length(); ) {
-        if (m_itemList->item(i)->kind() != DataTransferItem::kindFile) {
-            m_itemList->deleteItem(i);
+    for (size_t i = 0; i < m_itemList.size(); ) {
+        if (m_itemList[i]->kind() != DataTransferItem::kindFile) {
+            m_itemList.remove(i);
             continue;
         }
         ++i;
@@ -99,10 +125,10 @@ HashSet<String> ChromiumDataObject::types() const
 {
     HashSet<String> results;
     bool containsFiles = false;
-    for (size_t i = 0; i < m_itemList->length(); ++i) {
-        if (m_itemList->item(i)->kind() == DataTransferItem::kindString)
-            results.add(m_itemList->item(i)->type());
-        else if (m_itemList->item(i)->kind() == DataTransferItem::kindFile)
+    for (size_t i = 0; i < m_itemList.size(); ++i) {
+        if (m_itemList[i]->kind() == DataTransferItem::kindString)
+            results.add(m_itemList[i]->type());
+        else if (m_itemList[i]->kind() == DataTransferItem::kindFile)
             containsFiles = true;
         else
             ASSERT_NOT_REACHED();
@@ -114,9 +140,9 @@ HashSet<String> ChromiumDataObject::types() const
 
 String ChromiumDataObject::getData(const String& type) const
 {
-    for (size_t i = 0; i < m_itemList->length(); ++i)  {
-        if (m_itemList->item(i)->kind() == DataTransferItem::kindString && m_itemList->item(i)->type() == type)
-            return m_itemList->item(i)->internalGetAsString();
+    for (size_t i = 0; i < m_itemList.size(); ++i)  {
+        if (m_itemList[i]->kind() == DataTransferItem::kindString && m_itemList[i]->type() == type)
+            return m_itemList[i]->internalGetAsString();
     }
     return String();
 }
@@ -124,13 +150,13 @@ String ChromiumDataObject::getData(const String& type) const
 bool ChromiumDataObject::setData(const String& type, const String& data)
 {
     clearData(type);
-    m_itemList->add(data, type, ASSERT_NO_EXCEPTION);
+    add(data, type, ASSERT_NO_EXCEPTION);
     return true;
 }
 
 void ChromiumDataObject::urlAndTitle(String& url, String* title) const
 {
-    RefPtr<DataTransferItemChromium> item = findItem(m_itemList, mimeTypeTextURIList);
+    RefPtr<ChromiumDataObjectItem> item = findStringItem(mimeTypeTextURIList);
     if (!item)
         return;
     url = convertURIListToURL(item->internalGetAsString());
@@ -141,12 +167,12 @@ void ChromiumDataObject::urlAndTitle(String& url, String* title) const
 void ChromiumDataObject::setURLAndTitle(const String& url, const String& title)
 {
     clearData(mimeTypeTextURIList);
-    m_itemList->internalAddStringItem(DataTransferItemChromium::createFromURL(url, title));
+    internalAddStringItem(ChromiumDataObjectItem::createFromURL(url, title));
 }
 
 void ChromiumDataObject::htmlAndBaseURL(String& html, KURL& baseURL) const
 {
-    RefPtr<DataTransferItemChromium> item = findItem(m_itemList, mimeTypeTextHTML);
+    RefPtr<ChromiumDataObjectItem> item = findStringItem(mimeTypeTextHTML);
     if (!item)
         return;
     html = item->internalGetAsString();
@@ -156,13 +182,13 @@ void ChromiumDataObject::htmlAndBaseURL(String& html, KURL& baseURL) const
 void ChromiumDataObject::setHTMLAndBaseURL(const String& html, const KURL& baseURL)
 {
     clearData(mimeTypeTextHTML);
-    m_itemList->internalAddStringItem(DataTransferItemChromium::createFromHTML(html, baseURL));
+    internalAddStringItem(ChromiumDataObjectItem::createFromHTML(html, baseURL));
 }
 
 bool ChromiumDataObject::containsFilenames() const
 {
-    for (size_t i = 0; i < m_itemList->length(); ++i)
-        if (m_itemList->item(i)->isFilename())
+    for (size_t i = 0; i < m_itemList.size(); ++i)
+        if (m_itemList[i]->isFilename())
             return true;
     return false;
 }
@@ -170,24 +196,23 @@ bool ChromiumDataObject::containsFilenames() const
 Vector<String> ChromiumDataObject::filenames() const
 {
     Vector<String> results;
-    for (size_t i = 0; i < m_itemList->length(); ++i)
-        if (m_itemList->item(i)->isFilename())
-            results.append(static_cast<File*>(m_itemList->item(i)->getAsFile().get())->path());
+    for (size_t i = 0; i < m_itemList.size(); ++i)
+        if (m_itemList[i]->isFilename())
+            results.append(static_cast<File*>(m_itemList[i]->getAsFile().get())->path());
     return results;
 }
 
 void ChromiumDataObject::addFilename(const String& filename)
 {
-    m_itemList->internalAddFileItem(DataTransferItemChromium::createFromFile(File::create(filename)));
+    internalAddFileItem(ChromiumDataObjectItem::createFromFile(File::create(filename)));
 }
 
 void ChromiumDataObject::addSharedBuffer(const String& name, PassRefPtr<SharedBuffer> buffer)
 {
-    m_itemList->internalAddFileItem(DataTransferItemChromium::createFromSharedBuffer(name, buffer));
+    internalAddFileItem(ChromiumDataObjectItem::createFromSharedBuffer(name, buffer));
 }
 
-ChromiumDataObject::ChromiumDataObject(PassRefPtr<DataTransferItemListChromium> itemList)
-    : m_itemList(itemList)
+ChromiumDataObject::ChromiumDataObject()
 {
 }
 
@@ -195,6 +220,32 @@ ChromiumDataObject::ChromiumDataObject(const ChromiumDataObject& other)
     : RefCounted<ChromiumDataObject>()
     , m_itemList(other.m_itemList)
 {
+}
+
+PassRefPtr<ChromiumDataObjectItem> ChromiumDataObject::findStringItem(const String& type) const
+{
+    for (size_t i = 0; i < m_itemList.size(); ++i) {
+        if (m_itemList[i]->kind() == DataTransferItem::kindString && m_itemList[i]->type() == type)
+            return m_itemList[i];
+    }
+    return 0;
+}
+
+bool ChromiumDataObject::internalAddStringItem(PassRefPtr<ChromiumDataObjectItem> item)
+{
+    ASSERT(item->kind() == DataTransferItem::kindString);
+    for (size_t i = 0; i < m_itemList.size(); ++i)
+        if (m_itemList[i]->kind() == DataTransferItem::kindString && m_itemList[i]->type() == item->type())
+            return false;
+
+    m_itemList.append(item);
+    return true;
+}
+
+void ChromiumDataObject::internalAddFileItem(PassRefPtr<ChromiumDataObjectItem> item)
+{
+    ASSERT(item->kind() == DataTransferItem::kindFile);
+    m_itemList.append(item);
 }
 
 } // namespace WebCore

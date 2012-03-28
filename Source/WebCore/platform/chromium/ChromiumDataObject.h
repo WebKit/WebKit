@@ -31,7 +31,7 @@
 #ifndef ChromiumDataObject_h
 #define ChromiumDataObject_h
 
-#include "DataTransferItemListChromium.h"
+#include "ChromiumDataObjectItem.h"
 #include "PlatformString.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -43,6 +43,8 @@ namespace WebCore {
 class KURL;
 class SharedBuffer;
 
+typedef int ExceptionCode;
+
 // A data object for holding data that would be in a clipboard or moved
 // during a drag-n-drop operation.  This is the data that WebCore is aware
 // of and is not specific to a platform.
@@ -53,10 +55,17 @@ public:
 
     PassRefPtr<ChromiumDataObject> copy() const;
 
-    PassRefPtr<DataTransferItemListChromium> items() const;
-
-    void clearData(const String& type);
+    // DataTransferItemList support.
+    size_t length() const;
+    PassRefPtr<ChromiumDataObjectItem> item(unsigned long index);
+    // FIXME: Implement V8DataTransferItemList::indexedPropertyDeleter to get this called.
+    void deleteItem(unsigned long index);
     void clearAll();
+    void add(const String& data, const String& type, ExceptionCode&);
+    void add(PassRefPtr<File>, ScriptExecutionContext*);
+
+    // WebCore helpers.
+    void clearData(const String& type);
     void clearAllExceptFiles();
 
     HashSet<String> types() const;
@@ -77,10 +86,14 @@ public:
     void addSharedBuffer(const String& name, PassRefPtr<SharedBuffer>);
 
 private:
-    explicit ChromiumDataObject(PassRefPtr<DataTransferItemListChromium>);
+    ChromiumDataObject();
     explicit ChromiumDataObject(const ChromiumDataObject&);
 
-    RefPtr<DataTransferItemListChromium> m_itemList;
+    PassRefPtr<ChromiumDataObjectItem> findStringItem(const String& type) const;
+    bool internalAddStringItem(PassRefPtr<ChromiumDataObjectItem>);
+    void internalAddFileItem(PassRefPtr<ChromiumDataObjectItem>);
+
+    Vector<RefPtr<ChromiumDataObjectItem> > m_itemList;
 };
 
 } // namespace WebCore

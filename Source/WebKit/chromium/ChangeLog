@@ -1,3 +1,13 @@
+2012-03-27  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Merge ChromiumDataObject and DataTransferItemListChromium.
+        https://bugs.webkit.org/show_bug.cgi?id=82407
+
+        Reviewed by Tony Chang.
+
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::items):
+
 2012-03-28  Nat Duca  <nduca@chromium.org>
 
         [chromium] Scheduler should not tell FrameRateController to begin a frame when we dont swap

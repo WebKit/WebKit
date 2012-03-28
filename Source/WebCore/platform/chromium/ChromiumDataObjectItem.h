@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataTransferItemChromium_h
-#define DataTransferItemChromium_h
+#ifndef ChromiumDataObjectItem_h 
+#define ChromiumDataObjectItem_h
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
@@ -46,14 +46,14 @@ class Blob;
 class ScriptExecutionContext;
 class StringCallback;
 
-class DataTransferItemChromium : public RefCounted<DataTransferItemChromium> {
+class ChromiumDataObjectItem : public RefCounted<ChromiumDataObjectItem> {
 public:
-    static PassRefPtr<DataTransferItemChromium> createFromString(const String& type, const String& data);
-    static PassRefPtr<DataTransferItemChromium> createFromFile(PassRefPtr<File>);
-    static PassRefPtr<DataTransferItemChromium> createFromURL(const String& url, const String& title);
-    static PassRefPtr<DataTransferItemChromium> createFromHTML(const String& html, const KURL& baseURL);
-    static PassRefPtr<DataTransferItemChromium> createFromSharedBuffer(const String& filename, PassRefPtr<SharedBuffer>);
-    static PassRefPtr<DataTransferItemChromium> createFromPasteboard(const String& type, uint64_t sequenceNumber);
+    static PassRefPtr<ChromiumDataObjectItem> createFromString(const String& type, const String& data);
+    static PassRefPtr<ChromiumDataObjectItem> createFromFile(PassRefPtr<File>);
+    static PassRefPtr<ChromiumDataObjectItem> createFromURL(const String& url, const String& title);
+    static PassRefPtr<ChromiumDataObjectItem> createFromHTML(const String& html, const KURL& baseURL);
+    static PassRefPtr<ChromiumDataObjectItem> createFromSharedBuffer(const String& filename, PassRefPtr<SharedBuffer>);
+    static PassRefPtr<ChromiumDataObjectItem> createFromPasteboard(const String& type, uint64_t sequenceNumber);
 
     String kind() const { return m_kind; }
     String type() const { return m_type; }
@@ -73,8 +73,8 @@ private:
         InternalSource,
     };
 
-    DataTransferItemChromium(const String& kind, const String& type);
-    DataTransferItemChromium(const String& kind, const String& type, uint64_t sequenceNumber);
+    ChromiumDataObjectItem(const String& kind, const String& type);
+    ChromiumDataObjectItem(const String& kind, const String& type, uint64_t sequenceNumber);
 
     DataSource m_source;
     String m_kind;
@@ -94,4 +94,4 @@ private:
 
 #endif // ENABLE(DATA_TRANSFER_ITEMS)
 
-#endif // DataTransferItem_h
+#endif // ChromiumDataObjectItem_h

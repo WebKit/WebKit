@@ -70,8 +70,8 @@ void WebDragData::assign(const WebDragData& other)
 WebVector<WebDragData::Item> WebDragData::items() const
 {
     Vector<Item> itemList;
-    for (size_t i = 0; i < m_private->items()->length(); ++i) {
-        DataTransferItemChromium* originalItem = m_private->items()->item(i).get();
+    for (size_t i = 0; i < m_private->length(); ++i) {
+        ChromiumDataObjectItem* originalItem = m_private->item(i).get();
         WebDragData::Item item;
         if (originalItem->kind() == DataTransferItem::kindString) {
             item.storageType = Item::StorageTypeString;

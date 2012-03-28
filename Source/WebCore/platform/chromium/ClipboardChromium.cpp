@@ -29,12 +29,11 @@
 
 #include "CachedImage.h"
 #include "ChromiumDataObject.h"
+#include "ChromiumDataObjectItem.h"
 #include "ClipboardMimeTypes.h"
 #include "ClipboardUtilitiesChromium.h"
 #include "DataTransferItem.h"
-#include "DataTransferItemChromium.h"
 #include "DataTransferItemList.h"
-#include "DataTransferItemListChromium.h"
 #include "Document.h"
 #include "DragData.h"
 #include "Element.h"
@@ -64,7 +63,7 @@ namespace {
 class DataTransferItemListPolicyWrapper : public DataTransferItemList {
 public:
     static PassRefPtr<DataTransferItemListPolicyWrapper> create(
-        PassRefPtr<ClipboardChromium>, PassRefPtr<DataTransferItemListChromium>);
+        PassRefPtr<ClipboardChromium>, PassRefPtr<ChromiumDataObject>);
 
     virtual size_t length() const;
     virtual PassRefPtr<DataTransferItem> item(unsigned long index);
@@ -74,16 +73,16 @@ public:
     virtual void add(PassRefPtr<File>);
 
 private:
-    DataTransferItemListPolicyWrapper(PassRefPtr<ClipboardChromium>, PassRefPtr<DataTransferItemListChromium>);
+    DataTransferItemListPolicyWrapper(PassRefPtr<ClipboardChromium>, PassRefPtr<ChromiumDataObject>);
 
     RefPtr<ClipboardChromium> m_clipboard;
-    RefPtr<DataTransferItemListChromium> m_list;
+    RefPtr<ChromiumDataObject> m_dataObject;
 };
 
 class DataTransferItemPolicyWrapper : public DataTransferItem {
 public:
     static PassRefPtr<DataTransferItemPolicyWrapper> create(
-        PassRefPtr<ClipboardChromium>, PassRefPtr<DataTransferItemChromium>);
+        PassRefPtr<ClipboardChromium>, PassRefPtr<ChromiumDataObjectItem>);
 
     virtual String kind() const;
     virtual String type() const;
@@ -92,14 +91,14 @@ public:
     virtual PassRefPtr<Blob> getAsFile() const;
 
 private:
-    DataTransferItemPolicyWrapper(PassRefPtr<ClipboardChromium>, PassRefPtr<DataTransferItemChromium>);
+    DataTransferItemPolicyWrapper(PassRefPtr<ClipboardChromium>, PassRefPtr<ChromiumDataObjectItem>);
 
     RefPtr<ClipboardChromium> m_clipboard;
-    RefPtr<DataTransferItemChromium> m_item;
+    RefPtr<ChromiumDataObjectItem> m_item;
 };
 
 PassRefPtr<DataTransferItemListPolicyWrapper> DataTransferItemListPolicyWrapper::create(
-    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<DataTransferItemListChromium> list)
+    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<ChromiumDataObject> list)
 {
     return adoptRef(new DataTransferItemListPolicyWrapper(clipboard, list));
 }
@@ -108,14 +107,14 @@ size_t DataTransferItemListPolicyWrapper::length() const
 {
     if (m_clipboard->policy() == ClipboardNumb)
         return 0;
-    return m_list->length();
+    return m_dataObject->length();
 }
 
 PassRefPtr<DataTransferItem> DataTransferItemListPolicyWrapper::item(unsigned long index)
 {
     if (m_clipboard->policy() == ClipboardNumb)
         return 0;
-    RefPtr<DataTransferItemChromium> item = m_list->item(index);
+    RefPtr<ChromiumDataObjectItem> item = m_dataObject->item(index);
     if (!item)
         return 0;
     return DataTransferItemPolicyWrapper::create(m_clipboard, item);
@@ -127,39 +126,39 @@ void DataTransferItemListPolicyWrapper::deleteItem(unsigned long index, Exceptio
         ec = INVALID_STATE_ERR;
         return;
     }
-    m_list->deleteItem(index);
+    m_dataObject->deleteItem(index);
 }
 
 void DataTransferItemListPolicyWrapper::clear()
 {
     if (m_clipboard->policy() != ClipboardWritable)
         return;
-    m_list->clear();
+    m_dataObject->clearAll();
 }
 
 void DataTransferItemListPolicyWrapper::add(const String& data, const String& type, ExceptionCode& ec)
 {
     if (m_clipboard->policy() != ClipboardWritable)
         return;
-    m_list->add(data, type, ec);
+    m_dataObject->add(data, type, ec);
 }
 
 void DataTransferItemListPolicyWrapper::add(PassRefPtr<File> file)
 {
     if (m_clipboard->policy() != ClipboardWritable)
         return;
-    m_list->add(file, m_clipboard->frame()->document()->scriptExecutionContext());
+    m_dataObject->add(file, m_clipboard->frame()->document()->scriptExecutionContext());
 }
 
 DataTransferItemListPolicyWrapper::DataTransferItemListPolicyWrapper(
-    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<DataTransferItemListChromium> list)
+    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<ChromiumDataObject> dataObject)
     : m_clipboard(clipboard)
-    , m_list(list)
+    , m_dataObject(dataObject)
 {
 }
 
 PassRefPtr<DataTransferItemPolicyWrapper> DataTransferItemPolicyWrapper::create(
-    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<DataTransferItemChromium> item)
+    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<ChromiumDataObjectItem> item)
 {
     return adoptRef(new DataTransferItemPolicyWrapper(clipboard, item));
 }
@@ -195,7 +194,7 @@ PassRefPtr<Blob> DataTransferItemPolicyWrapper::getAsFile() const
 }
 
 DataTransferItemPolicyWrapper::DataTransferItemPolicyWrapper(
-    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<DataTransferItemChromium> item)
+    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<ChromiumDataObjectItem> item)
     : m_clipboard(clipboard)
     , m_item(item)
 {
@@ -320,10 +319,9 @@ PassRefPtr<FileList> ClipboardChromium::files() const
     if (policy() != ClipboardReadable)
         return files.release();
 
-    RefPtr<DataTransferItemListChromium> list = m_dataObject->items();
-    for (size_t i = 0; i < list->length(); ++i) {
-        if (list->item(i)->kind() == DataTransferItem::kindFile) {
-            RefPtr<Blob> blob = list->item(i)->getAsFile();
+    for (size_t i = 0; i < m_dataObject->length(); ++i) {
+        if (m_dataObject->item(i)->kind() == DataTransferItem::kindFile) {
+            RefPtr<Blob> blob = m_dataObject->item(i)->getAsFile();
             if (blob && blob->isFile())
                 files->append(static_cast<File*>(blob.get()));
         }
@@ -484,7 +482,7 @@ bool ClipboardChromium::hasData()
 {
     ASSERT(isForDragAndDrop());
 
-    return m_dataObject->items()->length() > 0;
+    return m_dataObject->length() > 0;
 }
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
@@ -493,7 +491,7 @@ PassRefPtr<DataTransferItemList> ClipboardChromium::items()
     // FIXME: According to the spec, we are supposed to return the same collection of items each
     // time. We now return a wrapper that always wraps the *same* set of items, so JS shouldn't be
     // able to tell, but we probably still want to fix this.
-    return DataTransferItemListPolicyWrapper::create(this, m_dataObject->items());
+    return DataTransferItemListPolicyWrapper::create(this, m_dataObject);
 }
 #endif
 
