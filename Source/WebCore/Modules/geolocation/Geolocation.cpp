@@ -120,13 +120,31 @@ bool Geolocation::GeoNotifier::hasZeroTimeout() const
 
 void Geolocation::GeoNotifier::runSuccessCallback(Geoposition* position)
 {
+    // If we are here and the Geolocation permission is not approved, something has
+    // gone horribly wrong.
+    // We bail out to avoid any privacy issue.
+    ASSERT(m_geolocation->isAllowed());
+    if (!m_geolocation->isAllowed())
+        return;
+
     m_successCallback->handleEvent(position);
+}
+
+void Geolocation::GeoNotifier::runErrorCallback(PositionError* error)
+{
+    if (m_errorCallback)
+        m_errorCallback->handleEvent(error);
 }
 
 void Geolocation::GeoNotifier::startTimerIfNeeded()
 {
     if (m_options->hasTimeout())
         m_timer.startOneShot(m_options->timeout() / 1000.0);
+}
+
+void Geolocation::GeoNotifier::stopTimer()
+{
+    m_timer.stop();
 }
 
 void Geolocation::GeoNotifier::timerFired(Timer<GeoNotifier>*)
@@ -140,8 +158,7 @@ void Geolocation::GeoNotifier::timerFired(Timer<GeoNotifier>*)
     // Test for fatal error first. This is required for the case where the Frame is
     // disconnected and requests are cancelled.
     if (m_fatalError) {
-        if (m_errorCallback)
-            m_errorCallback->handleEvent(m_fatalError.get());
+        runErrorCallback(m_fatalError.get());
         // This will cause this notifier to be deleted.
         m_geolocation->fatalErrorOccurred(this);
         return;
@@ -314,7 +331,7 @@ PassRefPtr<Geolocation::GeoNotifier> Geolocation::startRequest(PassRefPtr<Positi
     // the permission state can not change again in the lifetime of this page.
     if (isDenied())
         notifier->setFatalError(PositionError::create(PositionError::PERMISSION_DENIED, permissionDeniedErrorMessage));
-    else if (haveSuitableCachedPosition(notifier->m_options.get()))
+    else if (haveSuitableCachedPosition(notifier->options()))
         notifier->setUseCachedPosition();
     else if (notifier->hasZeroTimeout())
         notifier->startTimerIfNeeded();
@@ -469,29 +486,22 @@ void Geolocation::sendError(GeoNotifierVector& notifiers, PositionError* error)
      for (GeoNotifierVector::const_iterator it = notifiers.begin(); it != end; ++it) {
          RefPtr<GeoNotifier> notifier = *it;
          
-         if (notifier->m_errorCallback)
-             notifier->m_errorCallback->handleEvent(error);
+         notifier->runErrorCallback(error);
      }
 }
 
 void Geolocation::sendPosition(GeoNotifierVector& notifiers, Geoposition* position)
 {
     GeoNotifierVector::const_iterator end = notifiers.end();
-    for (GeoNotifierVector::const_iterator it = notifiers.begin(); it != end; ++it) {
-        RefPtr<GeoNotifier> notifier = *it;
-        ASSERT(notifier->m_successCallback);
-        
-        notifier->m_successCallback->handleEvent(position);
-    }
+    for (GeoNotifierVector::const_iterator it = notifiers.begin(); it != end; ++it)
+        (*it)->runSuccessCallback(position);
 }
 
 void Geolocation::stopTimer(GeoNotifierVector& notifiers)
 {
     GeoNotifierVector::const_iterator end = notifiers.end();
-    for (GeoNotifierVector::const_iterator it = notifiers.begin(); it != end; ++it) {
-        RefPtr<GeoNotifier> notifier = *it;
-        notifier->m_timer.stop();
-    }
+    for (GeoNotifierVector::const_iterator it = notifiers.begin(); it != end; ++it)
+        (*it)->stopTimer();
 }
 
 void Geolocation::stopTimersForOneShots()
@@ -538,7 +548,7 @@ void Geolocation::extractNotifiersWithCachedPosition(GeoNotifierVector& notifier
     GeoNotifierVector::iterator end = notifiers.end();
     for (GeoNotifierVector::const_iterator it = notifiers.begin(); it != end; ++it) {
         GeoNotifier* notifier = it->get();
-        if (notifier->m_useCachedPosition) {
+        if (notifier->useCachedPosition()) {
             if (cached)
                 cached->append(notifier);
         } else
@@ -666,7 +676,7 @@ bool Geolocation::startUpdating(GeoNotifier* notifier)
     if (!page)
         return false;
 
-    page->geolocationController()->addObserver(this, notifier->m_options->enableHighAccuracy());
+    page->geolocationController()->addObserver(this, notifier->options()->enableHighAccuracy());
     return true;
 }
 
