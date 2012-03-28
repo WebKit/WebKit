@@ -20,7 +20,7 @@ layer at (0,0) size 800x556
 Flow Threads
   Thread with flow-name 'flow1'
     layer at (0,0) size 280x30
-      RenderFlowThread at (0,0) size 280x30
+      RenderNamedFlowThread at (0,0) size 280x30
         RenderBlock {DIV} at (0,16) size 280x18
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
             RenderText {#text} at (0,0) size 258x18
@@ -29,7 +29,7 @@ Flow Threads
     RenderRegion {DIV} #region1 region style: 1
   Thread with flow-name 'flow2'
     layer at (0,0) size 280x80
-      RenderFlowThread at (0,0) size 280x80
+      RenderNamedFlowThread at (0,0) size 280x80
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
             RenderText {#text} at (0,0) size 266x18
@@ -42,7 +42,7 @@ Flow Threads
     RenderRegion {DIV} #region22 region style: 1
   Thread with flow-name 'flow3'
     layer at (0,0) size 280x130
-      RenderFlowThread at (0,0) size 280x130
+      RenderNamedFlowThread at (0,0) size 280x130
         RenderBlock {DIV} at (0,16) size 280x102
           RenderBlock {P} at (0,0) size 280x102 [bgcolor=#FF0000]
             RenderText {#text} at (0,0) size 266x102
@@ -56,7 +56,7 @@ Flow Threads
     RenderRegion {DIV} #region31 region style: 1
   Thread with flow-name 'flow41'
     layer at (0,0) size 280x80
-      RenderFlowThread at (0,0) size 280x80
+      RenderNamedFlowThread at (0,0) size 280x80
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
             RenderText {#text} at (0,0) size 270x18
@@ -69,7 +69,7 @@ Flow Threads
     RenderRegion {DIV} #region41 region style: 1
   Thread with flow-name 'flow42'
     layer at (0,0) size 280x80
-      RenderFlowThread at (0,0) size 280x80
+      RenderNamedFlowThread at (0,0) size 280x80
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
             RenderText {#text} at (0,0) size 264x18
@@ -82,7 +82,7 @@ Flow Threads
     RenderRegion {DIV} #region42 region style: 1
   Thread with flow-name 'flow5'
     layer at (0,0) size 280x30
-      RenderFlowThread at (0,0) size 280x30
+      RenderNamedFlowThread at (0,0) size 280x30
         RenderBlock {DIV} at (0,16) size 280x18
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
             RenderInline {I} at (0,0) size 270x18
@@ -93,7 +93,7 @@ Flow Threads
     RenderRegion {DIV} #region5 region style: 1
   Thread with flow-name 'flow6'
     layer at (0,0) size 280x30
-      RenderFlowThread at (0,0) size 280x30
+      RenderNamedFlowThread at (0,0) size 280x30
         RenderBlock {DIV} at (0,16) size 280x18
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
             RenderText {#text} at (0,0) size 253x18
@@ -102,7 +102,7 @@ Flow Threads
     RenderRegion {DIV} #region6 region style: 1
   Thread with flow-name 'flow7'
     layer at (0,0) size 280x80
-      RenderFlowThread at (0,0) size 280x80
+      RenderNamedFlowThread at (0,0) size 280x80
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x52 [bgcolor=#008000]
             RenderText {#text} at (0,0) size 261x52

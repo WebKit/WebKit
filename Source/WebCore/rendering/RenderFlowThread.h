@@ -36,17 +36,13 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/UnusedParam.h>
-#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
 class RenderFlowThread;
 class RenderStyle;
 class RenderRegion;
-class WebKitNamedFlow;
 
-typedef ListHashSet<RenderFlowThread*> RenderFlowThreadList;
-typedef HashCountedSet<RenderFlowThread*> RenderFlowThreadCountedSet;
 typedef ListHashSet<RenderRegion*> RenderRegionList;
 
 // RenderFlowThread is used to collect all the render objects that participate in a
@@ -57,32 +53,24 @@ typedef ListHashSet<RenderRegion*> RenderRegionList;
 
 class RenderFlowThread: public RenderBlock {
 public:
-    RenderFlowThread(Node*, const AtomicString& flowThread);
-
+    RenderFlowThread(Node*);
+    virtual ~RenderFlowThread() { };
+    
     virtual bool isRenderFlowThread() const { return true; }
 
     virtual void layout();
 
-    AtomicString flowThread() const { return m_flowThread; }
-
-    // Always create a RenderLayer for the RenderFlowThread, so that we 
-    // can easily avoid to draw it's children directly.
+    // Always create a RenderLayer for the RenderFlowThread so that we 
+    // can easily avoid drawing the children directly.
     virtual bool requiresLayer() const { return true; }
-
-    RenderObject* nextRendererForNode(Node*) const;
-    RenderObject* previousRendererForNode(Node*) const;
     
-    void addFlowChild(RenderObject* newChild, RenderObject* beforeChild = 0);
-    void removeFlowChild(RenderObject*);
     void removeFlowChildInfo(RenderObject*);
-    bool hasChildren() const { return !m_flowThreadChildList.isEmpty(); }
 #ifndef NDEBUG
-    bool hasChild(RenderObject* child) const { return m_flowThreadChildList.contains(child); }
     bool hasChildInfo(RenderObject* child) const { return child && child->isBox() && m_regionRangeMap.contains(toRenderBox(child)); }
 #endif
 
-    void addRegionToThread(RenderRegion*);
-    void removeRegionFromThread(RenderRegion*);
+    virtual void addRegionToThread(RenderRegion*);
+    virtual void removeRegionFromThread(RenderRegion*);
     const RenderRegionList& renderRegionList() const { return m_regionList; }
 
     void computeLogicalWidth();
@@ -100,8 +88,6 @@ public:
     static PassRefPtr<RenderStyle> createFlowThreadStyle(RenderStyle* parentStyle);
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-
-    void pushDependencies(RenderFlowThreadList&);
 
     void repaintRectangleInRegions(const LayoutRect&, bool immediate);
 
@@ -132,7 +118,7 @@ public:
     void clearRenderBoxCustomStyle(const RenderBox*,
                                       const RenderRegion* oldStartRegion = 0, const RenderRegion* oldEndRegion = 0,
                                       const RenderRegion* newStartRegion = 0, const RenderRegion* newEndRegion = 0);
-    WebKitNamedFlow* ensureNamedFlow();
+    
     void computeOverflowStateForRegions(LayoutUnit oldClientAfterEdge);
 
     bool overflow() const { return m_overflow; }
@@ -140,22 +126,13 @@ public:
     // Check if the object is in region and the region is part of this flow thread.
     bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
 
-private:
-    virtual const char* renderName() const { return "RenderFlowThread"; }
-
-    bool dependsOn(RenderFlowThread* otherRenderFlowThread) const;
-    void addDependencyOnFlowThread(RenderFlowThread*);
-    void removeDependencyOnFlowThread(RenderFlowThread*);
-    void checkInvalidRegions();
+protected:
+    virtual const char* renderName() const = 0;
 
     bool shouldRepaint(const LayoutRect&) const;
     void regionLayoutUpdateEventTimerFired(Timer<RenderFlowThread>*);
     bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
 
-    typedef ListHashSet<RenderObject*> FlowThreadChildList;
-    FlowThreadChildList m_flowThreadChildList;
-
-    AtomicString m_flowThread;
     RenderRegionList m_regionList;
 
     class RenderRegionRange {
@@ -184,16 +161,6 @@ private:
         RenderRegion* m_endRegion;
     };
 
-    // Observer flow threads have invalid regions that depend on the state of this thread
-    // to re-validate their regions. Keeping a set of observer threads make it easy
-    // to notify them when a region was removed from this flow.
-    RenderFlowThreadCountedSet m_observerThreadsSet;
-
-    // Some threads need to have a complete layout before we layout this flow.
-    // That's because they contain a RenderRegion that should display this thread. The set makes it
-    // easy to sort the order of threads layout.
-    RenderFlowThreadCountedSet m_layoutBeforeThreadsSet;
-
     // A maps from RenderBox
     typedef HashMap<const RenderBox*, RenderRegionRange> RenderRegionRangeMap;
     RenderRegionRangeMap m_regionRangeMap;
@@ -203,7 +170,6 @@ private:
     bool m_regionsHaveUniformLogicalWidth;
     bool m_regionsHaveUniformLogicalHeight;
     bool m_overflow;
-    RefPtr<WebKitNamedFlow> m_namedFlow;
     Timer<RenderFlowThread> m_regionLayoutUpdateEventTimer;
 };
 

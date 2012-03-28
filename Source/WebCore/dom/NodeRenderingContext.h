@@ -36,7 +36,7 @@ class ContainerNode;
 class Document;
 class InsertionPoint;
 class Node;
-class RenderFlowThread;
+class RenderNamedFlowThread;
 class RenderObject;
 class RenderStyle;
 class ShadowTree;
@@ -65,7 +65,7 @@ public:
     bool isOnUpperEncapsulationBoundary() const;
     bool isOnEncapsulationBoundary() const;
     bool hasFlowThreadParent() const { return m_parentFlowRenderer; }
-    RenderFlowThread* parentFlowRenderer() const { return m_parentFlowRenderer; }
+    RenderNamedFlowThread* parentFlowRenderer() const { return m_parentFlowRenderer; }
     void moveToFlowThreadIfNeeded();
 
 private:
@@ -86,7 +86,7 @@ private:
     ShadowTree* m_visualParentShadowTree;
     InsertionPoint* m_insertionPoint;
     RefPtr<RenderStyle> m_style;
-    RenderFlowThread* m_parentFlowRenderer;
+    RenderNamedFlowThread* m_parentFlowRenderer;
     AtomicString m_flowThread;
 };
 

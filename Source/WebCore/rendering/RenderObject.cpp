@@ -46,13 +46,13 @@
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
-#include "RenderFlowThread.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderMultiColumnBlock.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderRuby.h"
 #include "RenderRubyText.h"
@@ -2288,11 +2288,11 @@ void RenderObject::willBeDestroyed()
     remove();
 
 #ifndef NDEBUG
-    if (!documentBeingDestroyed() && view() && view()->hasRenderFlowThreads()) {
+    if (!documentBeingDestroyed() && view() && view()->hasRenderNamedFlowThreads()) {
         // After remove, the object and the associated information should not be in any flow thread.
-        const RenderFlowThreadList* flowThreadList = view()->renderFlowThreadList();
-        for (RenderFlowThreadList::const_iterator iter = flowThreadList->begin(); iter != flowThreadList->end(); ++iter) {
-            const RenderFlowThread* renderFlowThread = *iter;
+        const RenderNamedFlowThreadList* flowThreadList = view()->renderNamedFlowThreadList();
+        for (RenderNamedFlowThreadList::const_iterator iter = flowThreadList->begin(); iter != flowThreadList->end(); ++iter) {
+            const RenderNamedFlowThread* renderFlowThread = *iter;
             ASSERT(!renderFlowThread->hasChild(this));
             ASSERT(!renderFlowThread->hasChildInfo(this));
         }

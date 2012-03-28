@@ -31,8 +31,8 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
 #include "Page.h"
-#include "RenderFlowThread.h"
 #include "RenderLayer.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"
 #include "RenderWidgetProtector.h"
@@ -54,7 +54,7 @@ RenderView::RenderView(Node* node, FrameView* view)
     , m_maximalOutlineSize(0)
     , m_pageLogicalHeight(0)
     , m_pageLogicalHeightChanged(false)
-    , m_isRenderFlowThreadOrderDirty(false)
+    , m_isRenderNamedFlowThreadOrderDirty(false)
     , m_layoutState(0)
     , m_layoutStateDisableCount(0)
     , m_currentRenderFlowThread(0)
@@ -137,8 +137,8 @@ void RenderView::layout()
 
     if (needsLayout()) {
         RenderBlock::layout();
-        if (hasRenderFlowThreads())
-            layoutRenderFlowThreads();
+        if (hasRenderNamedFlowThreads())
+            layoutRenderNamedFlowThreads();
     }
 
     ASSERT(layoutDelta() == LayoutSize());
@@ -888,55 +888,55 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     RenderBlock::styleDidChange(diff, oldStyle);
     
     for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
-        if (renderer->isRenderFlowThread()) {
-            RenderFlowThread* flowRenderer = toRenderFlowThread(renderer);
+        if (renderer->isRenderNamedFlowThread()) {
+            RenderNamedFlowThread* flowRenderer = toRenderNamedFlowThread(renderer);
             flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(style()));
         }
     }
 }
 
-RenderFlowThread* RenderView::ensureRenderFlowThreadWithName(const AtomicString& flowThread)
+RenderNamedFlowThread* RenderView::ensureRenderFlowThreadWithName(const AtomicString& name)
 {
-    if (!m_renderFlowThreadList)
-        m_renderFlowThreadList = adoptPtr(new RenderFlowThreadList());
+    if (!m_renderNamedFlowThreadList)
+        m_renderNamedFlowThreadList = adoptPtr(new RenderNamedFlowThreadList());
     else {
-        for (RenderFlowThreadList::iterator iter = m_renderFlowThreadList->begin(); iter != m_renderFlowThreadList->end(); ++iter) {
-            RenderFlowThread* flowRenderer = *iter;
-            if (flowRenderer->flowThread() == flowThread)
+        for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
+            RenderNamedFlowThread* flowRenderer = *iter;
+            if (flowRenderer->flowThreadName() == name)
                 return flowRenderer;
         }
     }
 
-    RenderFlowThread* flowRenderer = new (renderArena()) RenderFlowThread(document(), flowThread);
+    RenderNamedFlowThread* flowRenderer = new (renderArena()) RenderNamedFlowThread(document(), name);
     flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(style()));
     addChild(flowRenderer);
 
-    m_renderFlowThreadList->add(flowRenderer);
-    setIsRenderFlowThreadOrderDirty(true);
+    m_renderNamedFlowThreadList->add(flowRenderer);
+    setIsRenderNamedFlowThreadOrderDirty(true);
 
     return flowRenderer;
 }
 
-void RenderView::layoutRenderFlowThreads()
+void RenderView::layoutRenderNamedFlowThreads()
 {
-    ASSERT(m_renderFlowThreadList);
+    ASSERT(m_renderNamedFlowThreadList);
 
-    if (isRenderFlowThreadOrderDirty()) {
+    if (isRenderNamedFlowThreadOrderDirty()) {
         // Arrange the thread list according to dependencies.
-        RenderFlowThreadList sortedList;
-        for (RenderFlowThreadList::iterator iter = m_renderFlowThreadList->begin(); iter != m_renderFlowThreadList->end(); ++iter) {
-            RenderFlowThread* flowRenderer = *iter;
+        RenderNamedFlowThreadList sortedList;
+        for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
+            RenderNamedFlowThread* flowRenderer = *iter;
             if (sortedList.contains(flowRenderer))
                 continue;
             flowRenderer->pushDependencies(sortedList);
             sortedList.add(flowRenderer);
         }
-        m_renderFlowThreadList->swap(sortedList);
-        setIsRenderFlowThreadOrderDirty(false);
+        m_renderNamedFlowThreadList->swap(sortedList);
+        setIsRenderNamedFlowThreadOrderDirty(false);
     }
 
-    for (RenderFlowThreadList::iterator iter = m_renderFlowThreadList->begin(); iter != m_renderFlowThreadList->end(); ++iter) {
-        RenderFlowThread* flowRenderer = *iter;
+    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
         flowRenderer->layoutIfNeeded();
     }
 }

@@ -8,7 +8,7 @@ layer at (296,100) size 404x404
 Flow Threads
   Thread with flow-name 'thread'
     layer at (400,0) size 400x400
-      RenderFlowThread at (0,0) size 400x400
+      RenderNamedFlowThread at (0,0) size 400x400
         RenderBlock {DIV} at (0,0) size 312x400
           RenderText {#text} at (0,0) size 312x398
             text run at (0,0) width 364: "\x{305B}\x{3063}\x{304B}\x{304F}\x{898B}\x{3064}\x{3051}\x{305F}\x{3059}\x{3070}\x{3089}\x{3057}\x{3044}\x{8A18}\x{4E8B}\x{304C}\x{3069}\x{3053}\x{306B}"

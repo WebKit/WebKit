@@ -22,7 +22,7 @@ layer at (0,0) size 800x546
 Flow Threads
   Thread with flow-name 'flow1'
     layer at (0,0) size 280x50
-      RenderFlowThread at (0,0) size 280x50
+      RenderNamedFlowThread at (0,0) size 280x50
         RenderBlock {DIV} at (0,16) size 280x18
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
             RenderText {#text} at (0,0) size 258x18
@@ -32,7 +32,7 @@ Flow Threads
   Thread with flow-name 'flow2'
   Thread with flow-name 'flow3'
     layer at (0,0) size 280x80
-      RenderFlowThread at (0,0) size 280x80
+      RenderNamedFlowThread at (0,0) size 280x80
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
             RenderText {#text} at (0,0) size 266x18
@@ -45,7 +45,7 @@ Flow Threads
     RenderRegion {DIV} #region32 region style: 1
   Thread with flow-name 'flow4'
     layer at (0,0) size 280x80
-      RenderFlowThread at (0,0) size 280x80
+      RenderNamedFlowThread at (0,0) size 280x80
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
             RenderText {#text} at (0,0) size 266x18
@@ -58,7 +58,7 @@ Flow Threads
     RenderRegion {DIV} #region42 region style: 1
   Thread with flow-name 'flow5'
     layer at (0,0) size 280x110
-      RenderFlowThread at (0,0) size 280x110
+      RenderNamedFlowThread at (0,0) size 280x110
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
             RenderText {#text} at (0,0) size 266x18
@@ -71,7 +71,7 @@ Flow Threads
     RenderRegion {DIV} #region52 region style: 1
   Thread with flow-name 'flow6'
     layer at (0,0) size 280x80
-      RenderFlowThread at (0,0) size 280x80
+      RenderNamedFlowThread at (0,0) size 280x80
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
             RenderText {#text} at (0,0) size 266x18
@@ -84,7 +84,7 @@ Flow Threads
     RenderRegion {DIV} #region62 region style: 1
   Thread with flow-name 'flow7'
     layer at (0,0) size 280x80
-      RenderFlowThread at (0,0) size 280x80
+      RenderNamedFlowThread at (0,0) size 280x80
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
             RenderText {#text} at (0,0) size 266x18

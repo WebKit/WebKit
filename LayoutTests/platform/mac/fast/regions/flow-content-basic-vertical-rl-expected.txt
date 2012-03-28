@@ -22,7 +22,7 @@ layer at (446,0) size 354x600
 Flow Threads
   Thread with flow-name 'main-thread'
     layer at (600,0) size 200x300
-      RenderFlowThread at (0,0) size 200x300
+      RenderNamedFlowThread at (0,0) size 200x300
         RenderBlock {DIV} at (0,0) size 200x300 [color=#008000]
           RenderBlock {DIV} at (0,0) size 100x300
             RenderText {#text} at (0,0) size 18x107

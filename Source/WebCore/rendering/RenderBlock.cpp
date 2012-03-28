@@ -45,11 +45,11 @@
 #include "RenderBoxRegionInfo.h"
 #include "RenderCombineText.h"
 #include "RenderDeprecatedFlexibleBox.h"
-#include "RenderFlowThread.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderMarquee.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderReplica.h"
 #include "RenderTableCell.h"
@@ -1227,8 +1227,8 @@ void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderObject* c
     // Delete the now-empty block's lines and nuke it.
     if (!parent->documentBeingDestroyed())
         anonBlock->deleteLineBoxTree();
-    if (childFlowThread && !parent->documentBeingDestroyed())
-        childFlowThread->removeFlowChildInfo(anonBlock);
+    if (!parent->documentBeingDestroyed() && childFlowThread && childFlowThread->isRenderNamedFlowThread())
+        toRenderNamedFlowThread(childFlowThread)->removeFlowChildInfo(anonBlock);
     anonBlock->destroy();
 }
 

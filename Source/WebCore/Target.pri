@@ -1253,7 +1253,9 @@ SOURCES += \
     rendering/RenderMenuList.cpp \
     rendering/RenderMeter.cpp \
     rendering/RenderMultiColumnBlock.cpp \
+    rendering/RenderMultiColumnFlowThread.cpp \
     rendering/RenderMultiColumnSet.cpp \
+    rendering/RenderNamedFlowThread.cpp \
     rendering/RenderObject.cpp \
     rendering/RenderObjectChildList.cpp \
     rendering/RenderPart.cpp \

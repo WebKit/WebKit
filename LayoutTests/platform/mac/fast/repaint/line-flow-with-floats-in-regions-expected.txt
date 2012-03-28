@@ -8,7 +8,7 @@ layer at (100,0) size 500x600
 Flow Threads
   Thread with flow-name 'thread'
     layer at (0,0) size 500x600
-      RenderFlowThread at (0,0) size 500x600
+      RenderNamedFlowThread at (0,0) size 500x600
         RenderPartObject {IFRAME} at (0,0) size 500x600
           layer at (0,0) size 500x600
             RenderView at (0,0) size 500x600

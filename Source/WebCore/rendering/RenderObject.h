@@ -349,6 +349,7 @@ public:
 #endif
 
     virtual bool isRenderFlowThread() const { return false; }
+    virtual bool isRenderNamedFlowThread() const { return false; }
     bool canHaveRegionStyle() const { return isRenderBlock() && !isAnonymous() && !isRenderFlowThread(); }
 
     bool isRoot() const { return document()->documentElement() == m_node; }

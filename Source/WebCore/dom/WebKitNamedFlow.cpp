@@ -30,13 +30,13 @@
 #include "config.h"
 #include "WebKitNamedFlow.h"
 
-#include "RenderFlowThread.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "StaticNodeList.h"
 
 namespace WebCore {
 
-WebKitNamedFlow::WebKitNamedFlow(RenderFlowThread* parentFlowThread)
+WebKitNamedFlow::WebKitNamedFlow(RenderNamedFlowThread* parentFlowThread)
 : m_parentFlowThread(parentFlowThread)
 {
 }

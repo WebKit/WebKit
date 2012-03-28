@@ -14,7 +14,7 @@ layer at (0,0) size 800x532
 Flow Threads
   Thread with flow-name 'flow1'
     layer at (0,0) size 300x450
-      RenderFlowThread at (0,0) size 300x450
+      RenderNamedFlowThread at (0,0) size 300x450
         RenderBlock {DIV} at (0,30) size 300x350
           RenderBlock {DIV} at (30,0) size 240x350 [bgcolor=#CCCCCC]
     layer at (120,0) size 150x450

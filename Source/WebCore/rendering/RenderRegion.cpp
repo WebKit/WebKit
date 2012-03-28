@@ -36,7 +36,7 @@
 #include "IntRect.h"
 #include "PaintInfo.h"
 #include "RenderBoxRegionInfo.h"
-#include "RenderFlowThread.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderView.h"
 
 namespace WebCore {
@@ -44,7 +44,7 @@ namespace WebCore {
 RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
     : RenderReplaced(node, IntSize())
     , m_flowThread(flowThread)
-    , m_parentFlowThread(0)
+    , m_parentNamedFlowThread(0)
     , m_isValid(false)
     , m_hasCustomRegionStyle(false)
     , m_regionState(RegionUndefined)
@@ -209,13 +209,13 @@ void RenderRegion::attachRegion()
     // so we go up the rendering parents and check that this region is not part of the same
     // flow that it actually needs to display. It would create a circular reference.
     RenderObject* parentObject = parent();
-    m_parentFlowThread = 0;
+    m_parentNamedFlowThread = 0;
     for ( ; parentObject; parentObject = parentObject->parent()) {
-        if (parentObject->isRenderFlowThread()) {
-            m_parentFlowThread = toRenderFlowThread(parentObject);
+        if (parentObject->isRenderNamedFlowThread()) {
+            m_parentNamedFlowThread = toRenderNamedFlowThread(parentObject);
             // Do not take into account a region that links a flow with itself. The dependency
             // cannot change, so it is not worth adding it to the list.
-            if (m_flowThread == m_parentFlowThread) {
+            if (m_flowThread == m_parentNamedFlowThread) {
                 m_flowThread = 0;
                 return;
             }

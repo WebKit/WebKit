@@ -14,7 +14,7 @@ layer at (0,0) size 800x482
 Flow Threads
   Thread with flow-name 'flow1'
     layer at (0,0) size 300x400
-      RenderFlowThread at (0,0) size 300x400
+      RenderNamedFlowThread at (0,0) size 300x400
         RenderBlock {DIV} at (0,0) size 300x359
           RenderBlock {DIV} at (5,5) size 290x349 [border: (1px solid #0000FF)]
     layer at (41,6) size 218x347 clip at (42,7) size 216x345 scrollX 284 scrollWidth 500

@@ -31,14 +31,14 @@
 
 namespace WebCore {
 
-class RenderFlowThread;
+class RenderNamedFlowThread;
 class RenderWidget;
 
 #if USE(ACCELERATED_COMPOSITING)
 class RenderLayerCompositor;
 #endif
 
-typedef ListHashSet<RenderFlowThread*> RenderFlowThreadList;
+typedef ListHashSet<RenderNamedFlowThread*> RenderNamedFlowThreadList;
 
 class RenderView : public RenderBlock {
 public:
@@ -172,17 +172,17 @@ public:
 
     IntRect documentRect() const;
 
-    RenderFlowThread* ensureRenderFlowThreadWithName(const AtomicString& flowThread);
-    bool hasRenderFlowThreads() const { return m_renderFlowThreadList && !m_renderFlowThreadList->isEmpty(); }
-    void layoutRenderFlowThreads();
-    bool isRenderFlowThreadOrderDirty() const { return m_isRenderFlowThreadOrderDirty; }
-    void setIsRenderFlowThreadOrderDirty(bool dirty)
+    RenderNamedFlowThread* ensureRenderFlowThreadWithName(const AtomicString&);
+    bool hasRenderNamedFlowThreads() const { return m_renderNamedFlowThreadList && !m_renderNamedFlowThreadList->isEmpty(); }
+    void layoutRenderNamedFlowThreads();
+    bool isRenderNamedFlowThreadOrderDirty() const { return m_isRenderNamedFlowThreadOrderDirty; }
+    void setIsRenderNamedFlowThreadOrderDirty(bool dirty)
     {
-        m_isRenderFlowThreadOrderDirty = dirty;
+        m_isRenderNamedFlowThreadOrderDirty = dirty;
         if (dirty)
             setNeedsLayout(true);
     }
-    const RenderFlowThreadList* renderFlowThreadList() const { return m_renderFlowThreadList.get(); }
+    const RenderNamedFlowThreadList* renderNamedFlowThreadList() const { return m_renderNamedFlowThreadList.get(); }
 
     RenderFlowThread* currentRenderFlowThread() const { return m_currentRenderFlowThread; }
     void setCurrentRenderFlowThread(RenderFlowThread* flowThread) { m_currentRenderFlowThread = flowThread; }
@@ -271,13 +271,13 @@ protected:
 private:
     unsigned m_pageLogicalHeight;
     bool m_pageLogicalHeightChanged;
-    bool m_isRenderFlowThreadOrderDirty;
+    bool m_isRenderNamedFlowThreadOrderDirty;
     LayoutState* m_layoutState;
     unsigned m_layoutStateDisableCount;
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerCompositor> m_compositor;
 #endif
-    OwnPtr<RenderFlowThreadList> m_renderFlowThreadList;
+    OwnPtr<RenderNamedFlowThreadList> m_renderNamedFlowThreadList;
     RenderFlowThread* m_currentRenderFlowThread;
     RefPtr<IntervalArena> m_intervalArena;
 };

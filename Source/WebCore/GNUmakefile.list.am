@@ -3755,8 +3755,12 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderMeter.h \
     Source/WebCore/rendering/RenderMultiColumnBlock.cpp \
     Source/WebCore/rendering/RenderMultiColumnBlock.h \
+    Source/WebCore/rendering/RenderMultiColumnFlowThread.cpp \
+    Source/WebCore/rendering/RenderMultiColumnFlowThread.h \
     Source/WebCore/rendering/RenderMultiColumnSet.cpp \
     Source/WebCore/rendering/RenderMultiColumnSet.h \
+    Source/WebCore/rendering/RenderNamedFlowThread.cpp \
+	Source/WebCore/rendering/RenderNamedFlowThread.h \
 	Source/WebCore/rendering/RenderObjectChildList.cpp \
 	Source/WebCore/rendering/RenderObjectChildList.h \
 	Source/WebCore/rendering/RenderObject.cpp \

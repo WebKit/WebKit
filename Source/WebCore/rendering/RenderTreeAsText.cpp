@@ -37,11 +37,11 @@
 #include "RenderBR.h"
 #include "RenderDetailsMarker.h"
 #include "RenderFileUploadControl.h"
-#include "RenderFlowThread.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderPart.h"
 #include "RenderRegion.h"
 #include "RenderTableCell.h"
@@ -642,21 +642,21 @@ static void write(TextStream& ts, RenderLayer& l,
         write(ts, *l.renderer(), indent + 1, behavior);
 }
 
-static void writeRenderFlowThreads(TextStream& ts, RenderView* renderView, const RenderLayer* rootLayer,
+static void writeRenderNamedFlowThreads(TextStream& ts, RenderView* renderView, const RenderLayer* rootLayer,
                         const IntRect& paintRect, int indent, RenderAsTextBehavior behavior)
 {
-    const RenderFlowThreadList* list = renderView->renderFlowThreadList();
+    const RenderNamedFlowThreadList* list = renderView->renderNamedFlowThreadList();
     if (!list || list->isEmpty())
         return;
 
     writeIndent(ts, indent);
     ts << "Flow Threads\n";
 
-    for (RenderFlowThreadList::const_iterator iter = list->begin(); iter != list->end(); ++iter) {
-        const RenderFlowThread* renderFlowThread = *iter;
+    for (RenderNamedFlowThreadList::const_iterator iter = list->begin(); iter != list->end(); ++iter) {
+        const RenderNamedFlowThread* renderFlowThread = *iter;
 
         writeIndent(ts, indent + 1);
-        ts << "Thread with flow-name '" << renderFlowThread->flowThread() << "'\n";
+        ts << "Thread with flow-name '" << renderFlowThread->flowThreadName() << "'\n";
 
         RenderLayer* layer = renderFlowThread->layer();
         writeLayers(ts, rootLayer, layer, paintRect, indent + 2, behavior);
@@ -665,7 +665,7 @@ static void writeRenderFlowThreads(TextStream& ts, RenderView* renderView, const
         const RenderRegionList& flowThreadRegionList = renderFlowThread->renderRegionList();
         if (!flowThreadRegionList.isEmpty()) {
             writeIndent(ts, indent + 1);
-            ts << "Regions for flow '"<< renderFlowThread->flowThread() << "'\n";
+            ts << "Regions for flow '"<< renderFlowThread->flowThreadName() << "'\n";
             for (RenderRegionList::const_iterator itRR = flowThreadRegionList.begin(); itRR != flowThreadRegionList.end(); ++itRR) {
                 RenderRegion* renderRegion = *itRR;
                 writeIndent(ts, indent + 2);
@@ -755,7 +755,7 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     // so we have to treat it as a special case.
     if (l->renderer()->isRenderView()) {
         RenderView* renderView = toRenderView(l->renderer());
-        writeRenderFlowThreads(ts, renderView, rootLayer, paintDirtyRect, indent, behavior);
+        writeRenderNamedFlowThreads(ts, renderView, rootLayer, paintDirtyRect, indent, behavior);
     }
 }
 

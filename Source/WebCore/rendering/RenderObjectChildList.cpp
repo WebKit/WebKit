@@ -31,12 +31,12 @@
 #include "ContentData.h"
 #include "RenderBlock.h"
 #include "RenderCounter.h"
-#include "RenderFlowThread.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderQuote.h"
 #include "RenderRegion.h"
 #include "RenderStyle.h"
@@ -63,12 +63,12 @@ void RenderObjectChildList::destroyLeftoverChildren()
     }
 }
 
-static RenderFlowThread* renderFlowThreadContainer(RenderObject* object)
+static RenderNamedFlowThread* renderNamedFlowThreadContainer(RenderObject* object)
 {
-    while (object && object->isAnonymousBlock() && !object->isRenderFlowThread())
+    while (object && object->isAnonymousBlock() && !object->isRenderNamedFlowThread())
         object = object->parent();
 
-    return object && object->isRenderFlowThread() ? toRenderFlowThread(object) : 0;
+    return object && object->isRenderNamedFlowThread() ? toRenderNamedFlowThread(object) : 0;
 }
 
 RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, RenderObject* oldChild, bool fullRemove)
@@ -120,7 +120,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
                 oldChild->enclosingRenderFlowThread()->clearRenderBoxCustomStyle(toRenderBox(oldChild));
         }
 
-        if (RenderFlowThread* containerFlowThread = renderFlowThreadContainer(owner))
+        if (RenderNamedFlowThread* containerFlowThread = renderNamedFlowThreadContainer(owner))
             containerFlowThread->removeFlowChild(oldChild);
 
 #if ENABLE(SVG)
@@ -203,9 +203,10 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
         if (newChild->isRenderRegion())
             toRenderRegion(newChild)->attachRegion();
 
-        if (RenderFlowThread* containerFlowThread = renderFlowThreadContainer(owner))
+        if (RenderNamedFlowThread* containerFlowThread = renderNamedFlowThreadContainer(owner))
             containerFlowThread->addFlowChild(newChild);
     }
+
     RenderCounter::rendererSubtreeAttached(newChild);
     RenderQuote::rendererSubtreeAttached(newChild);
     newChild->setNeedsLayoutAndPrefWidthsRecalc(); // Goes up the containing block hierarchy.
@@ -269,7 +270,7 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
         if (child->isRenderRegion())
             toRenderRegion(child)->attachRegion();
 
-        if (RenderFlowThread* containerFlowThread = renderFlowThreadContainer(owner))
+        if (RenderNamedFlowThread* containerFlowThread = renderNamedFlowThreadContainer(owner))
             containerFlowThread->addFlowChild(child, beforeChild);
     }
 

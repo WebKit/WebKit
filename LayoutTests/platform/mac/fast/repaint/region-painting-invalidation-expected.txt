@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
 Flow Threads
   Thread with flow-name 'flow1'
     layer at (0,0) size 300x350
-      RenderFlowThread at (0,0) size 300x350
+      RenderNamedFlowThread at (0,0) size 300x350
         RenderBlock {DIV} at (0,0) size 300x350
           RenderBlock {DIV} at (0,0) size 300x350 [bgcolor=#008000]
   Regions for flow 'flow1'

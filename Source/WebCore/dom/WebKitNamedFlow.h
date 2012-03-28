@@ -37,11 +37,11 @@ namespace WebCore {
 
 class Node;
 class NodeList;
-class RenderFlowThread;
+class RenderNamedFlowThread;
 
 class WebKitNamedFlow : public RefCounted<WebKitNamedFlow> {
 public:
-    static PassRefPtr<WebKitNamedFlow> create(RenderFlowThread* parentFlowThread)
+    static PassRefPtr<WebKitNamedFlow> create(RenderNamedFlowThread* parentFlowThread)
     {
         return adoptRef(new WebKitNamedFlow(parentFlowThread));
     }
@@ -52,9 +52,9 @@ public:
     PassRefPtr<NodeList> getRegionsByContentNode(Node*);
 
 private:
-    WebKitNamedFlow(RenderFlowThread*);
+    WebKitNamedFlow(RenderNamedFlowThread*);
 
-    RenderFlowThread* m_parentFlowThread;
+    RenderNamedFlowThread* m_parentFlowThread;
 };
 
 }
