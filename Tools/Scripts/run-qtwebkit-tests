@@ -271,25 +271,46 @@ class Main(Log):
         if self._options.open_results:
             Popen(self._options.browser + " " + self._options.output_file, stdout=None, stderr=None, shell=True)
 
+    def check_crash_occurences(self, results):
+    """ Checks if any test crashes and it sums them  """
+        totals = [0,0,0]
+        crash_count = 0
+        txt = []
+        #collecting results into one container with checking crash
+        for result in results:
+            found = None
+            if result.output():
+                txt.append(result.output())
+                found = re.search(r"([0-9]+) passed, ([0-9]+) failed, ([0-9]+) skipped", result.output())
+
+            if found:
+                totals = reduce(lambda x, y: (int(x[0]) + int(y[0]), int(x[1]) + int(y[1]), int(x[2]) + int(y[2])), (totals, found.groups()))
+            else:
+                txt.append('CRASHED: %s' % result.test_file_name())
+                crash_count += 1
+                self.warn("Missing sub-summary: %s" % result.test_file_name())
+
+        txt='\n\n'.join(txt)
+
+        totals = list(totals)
+        totals.append(crash_count)
+        totals = map(str, totals)
+        return txt, totals
+
     def convert_to_stdout(self, results):
         """ Converts results, that they could be nicely presented in the stdout. """
-        # Join all results into one piece.
-        txt = "\n\n".join(map(lambda w: w.output(), results))
-        # Find total count of failed, skipped and passed tests.
-        totals = re.findall(r"([0-9]+) passed, ([0-9]+) failed, ([0-9]+) skipped", txt)
-        totals = reduce(lambda x, y: (int(x[0]) + int(y[0]), int(x[1]) + int(y[1]), int(x[2]) + int(y[2])), totals)
-        totals = map(str, totals)
-        totals = totals[0] + " passed, " + totals[1] + " failed, " + totals[2] + " skipped"
-        # Add a summary.
-        txt += '\n\n\n' + '*' * 70
+        txt, totals = self.check_crash_occurences(results)
+
+        totals = "%s passed, %s failed, %s skipped, %s crashed" % (totals[0], totals[1], totals[2], totals[3])
+
+        txt += '\n' + '*' * 70
         txt += "\n**" + ("TOTALS: " + totals).center(66) + '**'
         txt += '\n' + '*' * 70 + '\n'
         return txt
 
     def convert_to_html(self, results):
         """ Converts results, that they could showed as a html page. """
-        # Join results into one piece.
-        txt = "\n\n".join(map(lambda w: w.output(), results))
+        txt, totals = self.check_crash_occurences(results)
         txt = txt.replace('&', '&amp;').replace('<', "&lt;").replace('>', "&gt;")
         # Add a color and a style.
         txt = re.sub(r"([* ]+(Finished)[ a-z_A-Z0-9]+[*]+)",
@@ -322,17 +343,14 @@ class Main(Log):
         txt = re.sub(r"\n(RESULT)((.)+)",
             lambda w: "</case>\n<case class='good'><br><status class='benchmark'>" + w.group(1) + r"</status>" + w.group(2),
             txt)
-        txt = re.sub(r"\n(QFATAL)((.)+)",
+        txt = re.sub(r"\n(QFATAL|CRASHED)((.)+)",
             lambda w: "</case>\n<case class='bad'><br><status class='crash'>" + w.group(1) + r"</status>" + w.group(2),
             txt)
         txt = re.sub(r"\n(Totals:)([0-9', a-z]*)",
             lambda w: "</case>\n<case class='good'><br><b>" + w.group(1) + r"</b>" + w.group(2) + "</case>",
             txt)
-        # Find total count of failed, skipped and passed tests.
-        totals = re.findall(r"([0-9]+) passed, ([0-9]+) failed, ([0-9]+) skipped", txt)
-        totals = reduce(lambda x, y: (int(x[0]) + int(y[0]), int(x[1]) + int(y[1]), int(x[2]) + int(y[2])), totals)
-        totals = map(str, totals)
-        totals = totals[0] + " passed, " + totals[1] + " failed, " + totals[2] + " skipped."
+        # Find total count of failed, skipped, passed and crashed tests.
+        totals = "%s passed, %s failed, %s skipped, %s crashed." % (totals[0], totals[1], totals[2], totals[3])
         # Create a header of the html source.
         txt = """
         <html>

@@ -102,7 +102,7 @@ QWARN  : tst_QQuickWebView::accessPage() QQuickCanvas: platform does not support
 .
 
 **********************************************************************
-**              TOTALS: 16 passed, 0 failed, 0 skipped              **
+**        TOTALS: 16 passed, 0 failed, 0 skipped, 0 crashed         **
 **********************************************************************""")
 
     def test_success(self):
@@ -119,11 +119,11 @@ QWARN  : tst_QQuickWebView::accessPage() QQuickCanvas: platform does not support
 .
 
 **********************************************************************
-**              TOTALS: 16 passed, 0 failed, 0 skipped              **
+**        TOTALS: 16 passed, 0 failed, 0 skipped, 0 crashed         **
 **********************************************************************""")
 
     def test_failure(self):
-        self.assertResults(WARNINGS, "16 passed, 1 failed, 0 skipped", """********* Start testing of tst_QDeclarativeWebView *********
+        self.assertResults(WARNINGS, "16 passed, 1 failed, 0 skipped, 0 crashed", """********* Start testing of tst_QDeclarativeWebView *********
 PASS   : tst_QDeclarativeWebView::pressGrabTime()
 PASS   : tst_QDeclarativeWebView::renderingEnabled()
 PASS   : tst_QDeclarativeWebView::setHtml()
@@ -136,7 +136,7 @@ PASS   : tst_QDeclarativeWebView::cleanupTestCase()
 .
 
 **********************************************************************
-**              TOTALS: 16 passed, 1 failed, 0 skipped              **
+**        TOTALS: 16 passed, 1 failed, 0 skipped, 0 crashed         **
 **********************************************************************""")
 
     def test_timeout_and_failure(self):
@@ -171,7 +171,28 @@ Totals: 16 passed, 3 failed, 1 skipped
 .
 .
 **********************************************************************
-**              TOTALS: 73 passed, 3 failed, 1 skipped              **
+**        TOTALS: 73 passed, 3 failed, 1 skipped, 0 crashed         **
+**********************************************************************""")
+
+    def test_crash(self):
+        self.assertResults(FAILURE, "API tests", """********* Start testing of tst_QQuickWebView *********
+Config: Using QTest library 5.0.0, Qt 5.0.0
+PASS   : tst_QQuickWebView::initTestCase()
+PASS   : tst_QQuickWebView::accessPage()
+
+CRASHED: WebKitBuild/Release/Source/WebKit2/UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview
+
+CRASHED: WebKitBuild/Release/Source/WebKit2/UIProcess/API/qt/tests/qquickwebview/tst_hello
+
+********* Start testing of tst_publicapi *********
+Config: Using QTest library 5.0.0, Qt 5.0.0
+PASS   : tst_publicapi::initTestCase()
+PASS   : tst_publicapi::publicAPI()
+PASS   : tst_publicapi::cleanupTestCase()
+Totals: 3 passed, 0 failed, 0 skipped
+********* Finished testing of tst_publicapi *********
+**********************************************************************
+**        TOTALS: 92 passed, 0 failed, 0 skipped, 2 crashed         **
 **********************************************************************""")
 
 
