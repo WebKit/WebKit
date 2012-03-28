@@ -1,5 +1,12 @@
 2012-03-28  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed, fix API tests after adding full platforms. (r111658)
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (BuildAndTestFactory.__init__):
+
+2012-03-28  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed typo fix after r112383.
 
         * Scripts/run-qtwebkit-tests:
