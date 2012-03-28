@@ -1,3 +1,15 @@
+2012-03-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        kill-old-processes doesn't do anything on linux
+        https://bugs.webkit.org/show_bug.cgi?id=82388
+
+        Reviewed by Tony Chang.
+
+        Kill cc1plus, ld, etc... on linux. Also ps aux + grep to kill old run-webkit-tests processes.
+        This should help stabilizing Chromium linux bots.
+
+        * BuildSlaveSupport/kill-old-processes:
+
 2012-03-28  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] jhbuild wrongly tricked into clean-up
