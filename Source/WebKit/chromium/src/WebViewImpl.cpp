@@ -31,11 +31,10 @@
 #include "config.h"
 #include "WebViewImpl.h"
 
+#include "AXObjectCache.h"
 #include "ActivePlatformGestureAnimation.h"
 #include "AutofillPopupMenuClient.h"
-#include "AXObjectCache.h"
 #include "BackForwardListChromium.h"
-#include "cc/CCProxy.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
@@ -115,36 +114,39 @@
 #include "TypingCommand.h"
 #include "UserGestureIndicator.h"
 #include "WebAccessibilityObject.h"
+#include "WebActiveWheelFlingParameters.h"
 #include "WebAutofillClient.h"
 #include "WebCompositorImpl.h"
 #include "WebDevToolsAgentImpl.h"
 #include "WebDevToolsAgentPrivate.h"
-#include "platform/WebDragData.h"
 #include "WebFrameImpl.h"
-#include "platform/WebGraphicsContext3D.h"
-#include "platform/WebImage.h"
 #include "WebInputElement.h"
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
 #include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
-#include "platform/WebLayer.h"
-#include "platform/WebLayerTreeView.h"
 #include "WebMediaPlayerAction.h"
 #include "WebNode.h"
 #include "WebPlugin.h"
 #include "WebPluginAction.h"
 #include "WebPluginContainerImpl.h"
-#include "platform/WebPoint.h"
 #include "WebPopupMenuImpl.h"
 #include "WebRange.h"
-#include "platform/WebRect.h"
 #include "WebRuntimeFeatures.h"
 #include "WebSettingsImpl.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
 #include "WebViewClient.h"
 #include "WheelEvent.h"
+#include "cc/CCProxy.h"
+#include "platform/WebDragData.h"
+#include "platform/WebImage.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
+#include <public/WebFloatPoint.h>
+#include <public/WebGraphicsContext3D.h>
+#include <public/WebLayer.h>
+#include <public/WebLayerTreeView.h>
+#include <public/WebPoint.h>
+#include <public/WebRect.h>
 #include <wtf/ByteArray.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -675,6 +677,18 @@ bool WebViewImpl::gestureEvent(const WebGestureEvent& event)
         ASSERT_NOT_REACHED();
     }
     return false;
+}
+
+void WebViewImpl::transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters& parameters)
+{
+    TRACE_EVENT0("webkit", "WebViewImpl::transferActiveWheelFlingAnimation");
+    ASSERT(!m_gestureAnimation);
+    m_lastWheelPosition = parameters.point;
+    m_lastWheelGlobalPosition = parameters.globalPoint;
+    m_flingModifier = parameters.modifiers;
+    OwnPtr<PlatformGestureCurve> curve = TouchpadFlingPlatformGestureCurve::create(parameters.delta, IntPoint(parameters.cumulativeScroll));
+    m_gestureAnimation = ActivePlatformGestureAnimation::create(curve.release(), this, parameters.startTime);
+    scheduleAnimation();
 }
 
 void WebViewImpl::startPageScaleAnimation(const IntPoint& scroll, bool useAnchor, float newScale, double durationSec)

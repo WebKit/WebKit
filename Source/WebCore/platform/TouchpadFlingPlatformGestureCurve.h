@@ -41,15 +41,15 @@ class PlatformGestureCurveTarget;
 // the initial velocity.
 class TouchpadFlingPlatformGestureCurve : public PlatformGestureCurve {
 public:
-    static PassOwnPtr<PlatformGestureCurve> create(const FloatPoint& velocity);
-    static PassOwnPtr<PlatformGestureCurve> create(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2);
+    static PassOwnPtr<PlatformGestureCurve> create(const FloatPoint& velocity, IntPoint cumulativeScroll = IntPoint());
+    static PassOwnPtr<PlatformGestureCurve> create(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2, IntPoint cumulativeScroll = IntPoint());
     virtual ~TouchpadFlingPlatformGestureCurve();
 
     virtual const char* debugName() const { return "TouchpadFling"; }
     virtual bool apply(double monotonicTime, PlatformGestureCurveTarget*);
 
 private:
-    explicit TouchpadFlingPlatformGestureCurve(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2);
+    TouchpadFlingPlatformGestureCurve(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2, const IntPoint& cumulativeScroll);
 
     FloatPoint m_velocity;
     float m_timeScaleFactor;

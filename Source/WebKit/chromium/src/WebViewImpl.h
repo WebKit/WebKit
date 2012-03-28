@@ -253,6 +253,7 @@ public:
     virtual void performCustomContextMenuAction(unsigned action);
     virtual void addPageOverlay(WebPageOverlay*, int /* zOrder */);
     virtual void removePageOverlay(WebPageOverlay*);
+    virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&);
 
     // WebLayerTreeViewClient
     virtual void willBeginFrame();

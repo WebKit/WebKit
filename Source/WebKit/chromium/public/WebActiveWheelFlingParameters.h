@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositorInputHandlerClient_h
-#define WebCompositorInputHandlerClient_h
+#ifndef WebActiveWheelFlingParameters_h
+#define WebActiveWheelFlingParameters_h
+
+#include "platform/WebCommon.h"
+
+#include "platform/WebFloatPoint.h"
+#include "platform/WebPoint.h"
+#include "platform/WebSize.h"
 
 namespace WebKit {
 
-struct WebActiveWheelFlingParameters;
+struct WebActiveWheelFlingParameters {
+    WebFloatPoint delta;
+    WebPoint point;
+    WebPoint globalPoint;
+    int modifiers;
+    WebSize cumulativeScroll;
+    double startTime;
 
-class WebCompositorInputHandlerClient {
-public:
-    // Callbacks invoked from the compositor thread.
-    virtual void willShutdown() = 0;
-
-    // Exactly one of the following two callbacks will be invoked after every call to WebCompositor::handleInputEvent():
-
-    // Called when the WebCompositor handled the input event and no further processing is required.
-    virtual void didHandleInputEvent() = 0;
-
-    // Called when the WebCompositor did not handle the input event. If sendToWidget is true, the input event
-    // should be forwarded to the WebWidget associated with this compositor for further processing.
-    virtual void didNotHandleInputEvent(bool sendToWidget) = 0;
-
-    // Transfers an active wheel fling animation initiated by a previously handled input event out to the client.
-    // FIXME: Make pure virtual once implementation lands on Chromium side.
-    virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&) { }
-
-protected:
-    virtual ~WebCompositorInputHandlerClient() { }
+    WebActiveWheelFlingParameters()
+        : modifiers(0)
+        , startTime(0)
+    {
+    }
 };
 
-} // namespace WebKit
+}
 
 #endif

@@ -43,6 +43,7 @@ class ActivePlatformGestureAnimation {
     WTF_MAKE_NONCOPYABLE(ActivePlatformGestureAnimation);
 public:
     static PassOwnPtr<ActivePlatformGestureAnimation> create(PassOwnPtr<PlatformGestureCurve>, PlatformGestureCurveTarget*);
+    static PassOwnPtr<ActivePlatformGestureAnimation> create(PassOwnPtr<PlatformGestureCurve>, PlatformGestureCurveTarget*, double startTime);
     ~ActivePlatformGestureAnimation();
 
     bool animate(double time);
@@ -50,6 +51,7 @@ public:
 private:
     // Assumes a valid PlatformGestureCurveTarget that outlives the animation.
     ActivePlatformGestureAnimation(PassOwnPtr<PlatformGestureCurve>, PlatformGestureCurveTarget*);
+    ActivePlatformGestureAnimation(PassOwnPtr<PlatformGestureCurve>, PlatformGestureCurveTarget*, double startTime);
 
     double m_startTime;
     bool m_waitingForFirstTick;

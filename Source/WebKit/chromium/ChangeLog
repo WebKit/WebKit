@@ -1,5 +1,52 @@
 2012-03-27  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Transfer wheel fling via WebCompositorInputHandlerClient
+        https://bugs.webkit.org/show_bug.cgi?id=81740
+
+        Reviewed by Adrienne Walker.
+
+        Adds a path for transfering an active wheel fling animation out to the embedder from the compositor and back in
+        to a WebViewImpl via the embedder. This is used when we start a wheel fling animation on the compositor thread
+        but then hit a condition that we can't handle from the compositor, such as registered wheel event listeners or a
+        scrollable area we can't handle.
+
+        New tests added to WebCompositorInputHandlerTest for the transfering logic.
+
+        * public/WebActiveWheelFlingParameters.h: Copied from Source/WebKit/chromium/public/WebCompositorInputHandlerClient.h.
+        (WebKit):
+        (WebActiveWheelFlingParameters):
+        (WebKit::WebActiveWheelFlingParameters::WebActiveWheelFlingParameters):
+        * public/WebCompositorInputHandlerClient.h:
+        (WebKit):
+        (WebCompositorInputHandlerClient):
+        (WebKit::WebCompositorInputHandlerClient::transferActiveWheelFlingAnimation):
+        * public/WebView.h:
+        (WebKit):
+        (WebView):
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+        (WebKit::WebCompositorInputHandlerImpl::animate):
+        (WebKit::WebCompositorInputHandlerImpl::cancelCurrentFling):
+        (WebKit::WebCompositorInputHandlerImpl::scrollBy):
+        * src/WebCompositorInputHandlerImpl.h:
+        (WebCore):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::transferActiveWheelFlingAnimation):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+        (WebKit::MockWebCompositorInputHandlerClient::MockWebCompositorInputHandlerClient):
+        (MockWebCompositorInputHandlerClient):
+        (WebKit::TEST):
+        (WebKit::WebCompositorInputHandlerImplTest::WebCompositorInputHandlerImplTest):
+        (WebKit::WebCompositorInputHandlerImplTest::~WebCompositorInputHandlerImplTest):
+        (WebCompositorInputHandlerImplTest):
+        (WebKit::TEST_F):
+        (WebKit):
+
+2012-03-27  James Robinson  <jamesr@chromium.org>
+
         [chromium] Send wheel events to main thread even if we think nothing is scrollable
         https://bugs.webkit.org/show_bug.cgi?id=82408
 

@@ -269,9 +269,12 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     switch (scrollStatus) {
     case CCInputHandlerClient::ScrollStarted: {
         TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::started");
-        OwnPtr<PlatformGestureCurve> flingCurve = TouchpadFlingPlatformGestureCurve::create(FloatPoint(-gestureEvent.deltaX, -gestureEvent.deltaY));
+        OwnPtr<PlatformGestureCurve> flingCurve = TouchpadFlingPlatformGestureCurve::create(FloatPoint(gestureEvent.deltaX, gestureEvent.deltaY));
         m_wheelFlingAnimation = CCActiveGestureAnimation::create(PlatformGestureToCCGestureAdapter::create(flingCurve.release()), this);
-        m_wheelFlingPoint = IntPoint(gestureEvent.x, gestureEvent.y);
+        m_wheelFlingParameters.delta = WebFloatPoint(gestureEvent.deltaX, gestureEvent.deltaY);
+        m_wheelFlingParameters.point = WebPoint(gestureEvent.x, gestureEvent.y);
+        m_wheelFlingParameters.globalPoint = WebPoint(gestureEvent.globalX, gestureEvent.globalY);
+        m_wheelFlingParameters.modifiers = gestureEvent.modifiers;
         m_inputHandlerClient->scheduleAnimation();
         return DidHandle;
     }
@@ -300,11 +303,14 @@ void WebCompositorInputHandlerImpl::animate(double monotonicTime)
     if (!m_wheelFlingAnimation)
         return;
 
+    if (!m_wheelFlingParameters.startTime)
+        m_wheelFlingParameters.startTime = monotonicTime;
+
     if (m_wheelFlingAnimation->animate(monotonicTime))
         m_inputHandlerClient->scheduleAnimation();
     else {
         TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::animate::flingOver");
-        m_wheelFlingAnimation.clear();
+        cancelCurrentFling();
     }
 }
 
@@ -313,6 +319,7 @@ bool WebCompositorInputHandlerImpl::cancelCurrentFling()
     bool hadFlingAnimation = m_wheelFlingAnimation;
     TRACE_EVENT_INSTANT1("cc", "WebCompositorInputHandlerImpl::cancelCurrentFling", "hadFlingAnimation", hadFlingAnimation);
     m_wheelFlingAnimation.clear();
+    m_wheelFlingParameters = WebActiveWheelFlingParameters();
     return hadFlingAnimation;
 }
 
@@ -322,30 +329,35 @@ void WebCompositorInputHandlerImpl::scrollBy(const IntPoint& increment)
         return;
 
     TRACE_EVENT2("cc", "WebCompositorInputHandlerImpl::scrollBy", "x", increment.x(), "y", increment.y());
+    WebMouseWheelEvent syntheticWheel;
+    syntheticWheel.type = WebInputEvent::MouseWheel;
+    syntheticWheel.deltaX = increment.x();
+    syntheticWheel.deltaY = increment.y();
+    syntheticWheel.hasPreciseScrollingDeltas = true;
+    syntheticWheel.x = m_wheelFlingParameters.point.x;
+    syntheticWheel.y = m_wheelFlingParameters.point.y;
+    syntheticWheel.globalX = m_wheelFlingParameters.globalPoint.x;
+    syntheticWheel.globalY = m_wheelFlingParameters.globalPoint.y;
+    syntheticWheel.modifiers = m_wheelFlingParameters.modifiers;
 
-    WebMouseWheelEvent event;
-    event.type = WebInputEvent::MouseWheel;
-    event.deltaX = -increment.x();
-    event.deltaY = -increment.y();
-    event.hasPreciseScrollingDeltas = true;
-    event.x = m_wheelFlingPoint.x();
-    event.y = m_wheelFlingPoint.y();
-
-    WebCompositorInputHandlerImpl::EventDisposition disposition = handleInputEventInternal(event);
+    WebCompositorInputHandlerImpl::EventDisposition disposition = handleInputEventInternal(syntheticWheel);
     switch (disposition) {
     case DidHandle:
+        m_wheelFlingParameters.cumulativeScroll.width += increment.x();
+        m_wheelFlingParameters.cumulativeScroll.height += increment.y();
     case DropEvent:
         break;
     case DidNotHandle:
         TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::scrollBy::AbortFling");
-        // FIXME: If we got a DidNotHandle, that means we need to deliver wheels on the main thread.
+        // If we got a DidNotHandle, that means we need to deliver wheels on the main thread.
         // In this case we need to schedule a commit and transfer the fling curve over to the main
         // thread and run the rest of the wheels from there.
         // This can happen when flinging a page that contains a scrollable subarea that we can't
         // scroll on the thread if the fling starts outside the subarea but then is flung "under" the
         // pointer.
-        // For now, just abort the fling.
+        m_client->transferActiveWheelFlingAnimation(m_wheelFlingParameters);
         cancelCurrentFling();
+        break;
     }
 }
 

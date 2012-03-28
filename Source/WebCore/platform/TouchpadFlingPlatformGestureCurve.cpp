@@ -33,19 +33,20 @@ namespace WebCore {
 
 using namespace std;
 
-PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity)
+PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity, IntPoint cumulativeScroll)
 {
-    return create(velocity, 3, FloatPoint(0.3333, 0.6666), FloatPoint(0.6666, 1));
+    return create(velocity, 3, FloatPoint(0.3333, 0.6666), FloatPoint(0.6666, 1), cumulativeScroll);
 }
 
-PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2)
+PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2, IntPoint cumulativeScroll)
 {
-    return adoptPtr(new TouchpadFlingPlatformGestureCurve(velocity, unitTimeScaleLog10, bezierP1, bezierP2));
+    return adoptPtr(new TouchpadFlingPlatformGestureCurve(velocity, unitTimeScaleLog10, bezierP1, bezierP2, cumulativeScroll));
 }
 
-TouchpadFlingPlatformGestureCurve::TouchpadFlingPlatformGestureCurve(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2)
+TouchpadFlingPlatformGestureCurve::TouchpadFlingPlatformGestureCurve(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2, const IntPoint& cumulativeScroll)
     : m_velocity(velocity)
     , m_timeScaleFactor(unitTimeScaleLog10 / log10(max(10.f, max(fabs(velocity.x()), fabs(velocity.y())))))
+    , m_cumulativeScroll(cumulativeScroll)
     , m_flingBezier(bezierP1.x(), bezierP1.y(), bezierP2.x(), bezierP2.y())
 {
     ASSERT(velocity != FloatPoint::zero());

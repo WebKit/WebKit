@@ -26,7 +26,7 @@
 #ifndef WebCompositorInputHandlerImpl_h
 #define WebCompositorInputHandlerImpl_h
 
-#include "IntPoint.h"
+#include "WebActiveWheelFlingParameters.h"
 #include "WebCompositor.h"
 #include "WebCompositorInputHandler.h"
 #include "WebInputEvent.h"
@@ -41,6 +41,7 @@ class Mutex;
 }
 
 namespace WebCore {
+class IntPoint;
 class CCGestureCurveTarget;
 class CCInputHandlerClient;
 class CCThread;
@@ -83,7 +84,8 @@ private:
     bool cancelCurrentFling();
 
     OwnPtr<WebCore::CCActiveGestureAnimation> m_wheelFlingAnimation;
-    WebCore::IntPoint m_wheelFlingPoint; // Pointer position for the current fling.
+    // Parameters for the active fling animation, stored in case we need to transfer it out later.
+    WebActiveWheelFlingParameters m_wheelFlingParameters;
 
     WebCompositorInputHandlerClient* m_client;
     int m_identifier;
