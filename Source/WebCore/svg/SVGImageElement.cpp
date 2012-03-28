@@ -118,9 +118,11 @@ void SVGImageElement::parseAttribute(Attribute* attr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
     else if (attr->name() == SVGNames::yAttr)
         setYBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (attr->name() == SVGNames::preserveAspectRatioAttr)
-        SVGPreserveAspectRatio::parsePreserveAspectRatio(this, attr->value());
-    else if (attr->name() == SVGNames::widthAttr)
+    else if (attr->name() == SVGNames::preserveAspectRatioAttr) {
+        SVGPreserveAspectRatio preserveAspectRatio;
+        preserveAspectRatio.parse(attr->value());
+        setPreserveAspectRatioBaseValue(preserveAspectRatio);
+    } else if (attr->name() == SVGNames::widthAttr)
         setWidthBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError, ForbidNegativeLengths));
     else if (attr->name() == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError, ForbidNegativeLengths));

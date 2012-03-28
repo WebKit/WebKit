@@ -310,46 +310,46 @@ PASS imageElement.preserveAspectRatio.baseVal.align is 2
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
 
 Test string: 'slice'
-PASS imageElement.preserveAspectRatio.baseVal.align is 1
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+PASS imageElement.preserveAspectRatio.baseVal.align is 0
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 0
 
-Strings that fail to parse, and hence parse as "none".
+Strings that fail to parse, and hence parse as unknown
 
 Test string: ''
-PASS imageElement.preserveAspectRatio.baseVal.align is 1
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+PASS imageElement.preserveAspectRatio.baseVal.align is 0
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 0
 
 Test string: 'defer'
-PASS imageElement.preserveAspectRatio.baseVal.align is 1
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+PASS imageElement.preserveAspectRatio.baseVal.align is 0
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 0
 
 Test string: 'meet'
-PASS imageElement.preserveAspectRatio.baseVal.align is 1
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+PASS imageElement.preserveAspectRatio.baseVal.align is 0
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 0
 
 Test string: 'slice'
-PASS imageElement.preserveAspectRatio.baseVal.align is 1
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+PASS imageElement.preserveAspectRatio.baseVal.align is 0
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 0
 
 Test string: 'xminymin'
-PASS imageElement.preserveAspectRatio.baseVal.align is 1
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+PASS imageElement.preserveAspectRatio.baseVal.align is 0
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 0
 
 Test string: 'refer xMinYMin slice'
-PASS imageElement.preserveAspectRatio.baseVal.align is 1
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+PASS imageElement.preserveAspectRatio.baseVal.align is 0
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 0
 
 Test string: 'xMinYMin defer'
-PASS imageElement.preserveAspectRatio.baseVal.align is 1
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+PASS imageElement.preserveAspectRatio.baseVal.align is 0
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 0
 
 Test string: 'slice xMinYMin'
-PASS imageElement.preserveAspectRatio.baseVal.align is 1
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+PASS imageElement.preserveAspectRatio.baseVal.align is 0
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 0
 
 Test string: 'xMinYMin '
-PASS imageElement.preserveAspectRatio.baseVal.align is 1
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+PASS imageElement.preserveAspectRatio.baseVal.align is 0
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 0
 
 PASS successfullyParsed is true
 

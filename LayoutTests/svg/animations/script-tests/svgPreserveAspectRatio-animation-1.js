@@ -26,16 +26,25 @@ rootSVGElement.appendChild(animate);
 function sample1() {
     shouldBe("rootSVGElement.preserveAspectRatio.animVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMIN");
     shouldBe("rootSVGElement.preserveAspectRatio.animVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET");
+
+    shouldBe("rootSVGElement.preserveAspectRatio.baseVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMIN");
+    shouldBe("rootSVGElement.preserveAspectRatio.baseVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET");
 }
 
 function sample2() {
     shouldBe("rootSVGElement.preserveAspectRatio.animVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMIN");
     shouldBe("rootSVGElement.preserveAspectRatio.animVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET");
+
+    shouldBe("rootSVGElement.preserveAspectRatio.baseVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMIN");
+    shouldBe("rootSVGElement.preserveAspectRatio.baseVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET");
 }
 
 function sample3() {
     shouldBe("rootSVGElement.preserveAspectRatio.animVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMID");
     shouldBe("rootSVGElement.preserveAspectRatio.animVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE");
+
+    shouldBe("rootSVGElement.preserveAspectRatio.baseVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMIN");
+    shouldBe("rootSVGElement.preserveAspectRatio.baseVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET");
 }
 
 function executeTest() {

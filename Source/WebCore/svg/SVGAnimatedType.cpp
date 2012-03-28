@@ -340,6 +340,10 @@ String SVGAnimatedType::valueAsString()
     case AnimatedColor:
         ASSERT(m_data.color);
         return m_data.color->serialized();
+    case AnimatedEnumeration:
+        // FIXME: AnimatedEnumeration is left todo.
+        ASSERT_NOT_REACHED();
+        break;
     case AnimatedInteger:
         ASSERT(m_data.integer);
         return String::number(*m_data.integer);
@@ -383,10 +387,6 @@ String SVGAnimatedType::valueAsString()
      case AnimatedTransformList:
         ASSERT(m_data.transformList);
         return m_data.transformList->valueAsString();
-    case AnimatedEnumeration:
-        // FIXME: AnimatedEnumeration is left todo.
-        ASSERT_NOT_REACHED();
-        break;
     case AnimatedUnknown:
         break;
     }
@@ -431,10 +431,6 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
         m_data.pointList->clear();
         pointsListFromSVGData(*m_data.pointList, value);
         break;
-    case AnimatedPreserveAspectRatio:
-        ASSERT(m_data.preserveAspectRatio);
-        SVGPreserveAspectRatio::parsePreserveAspectRatio(this, value);
-        break;
     case AnimatedRect:
         ASSERT(m_data.rect);
         parseRect(value, *m_data.rect);
@@ -447,10 +443,11 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     // These types don't appear in the table in SVGStyledElement::cssPropertyToTypeMap() and thus don't need setValueAsString() support. 
     case AnimatedAngle:
     case AnimatedBoolean:
-    case AnimatedNumberList:
-    case AnimatedNumberOptionalNumber:
     case AnimatedInteger:
     case AnimatedIntegerOptionalInteger:
+    case AnimatedNumberList:
+    case AnimatedNumberOptionalNumber:
+    case AnimatedPreserveAspectRatio:
     case AnimatedTransformList:
     case AnimatedUnknown:
         // Only SVG DOM animations use these property types - that means setValueAsString() is never used for those.
@@ -468,7 +465,6 @@ void SVGAnimatedType::setPreserveAspectRatioBaseValue(const SVGPreserveAspectRat
 
 bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
 {
-    // FIXME: This lists the current state of our animVal support.
     switch (type) {
     case AnimatedAngle:
     case AnimatedBoolean:
@@ -479,15 +475,20 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     case AnimatedNumber:
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
+    case AnimatedPreserveAspectRatio:
     case AnimatedRect:
     case AnimatedString:
     case AnimatedTransformList:
         return true;
+
+    // Types only used for CSS property animations.
     case AnimatedColor:
+        return false;
+
+    // FIXME: Handle the remaining types in animVal concept.
     case AnimatedEnumeration:
     case AnimatedPath:
     case AnimatedPoints:
-    case AnimatedPreserveAspectRatio:
     case AnimatedUnknown:
         return false;
     }

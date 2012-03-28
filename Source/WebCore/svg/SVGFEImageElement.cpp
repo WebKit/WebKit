@@ -133,9 +133,10 @@ void SVGFEImageElement::parseAttribute(Attribute* attr)
         return;
     }
 
-    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::preserveAspectRatioAttr) {
-        SVGPreserveAspectRatio::parsePreserveAspectRatio(this, value);
+        SVGPreserveAspectRatio preserveAspectRatio;
+        preserveAspectRatio.parse(attr->value());
+        setPreserveAspectRatioBaseValue(preserveAspectRatio);
         return;
     }
 
