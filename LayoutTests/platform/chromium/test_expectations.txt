@@ -922,7 +922,6 @@ BUGCR8630 LINUX WIN : fast/repaint/body-background-image.html = FAIL
 // Relies on text metrics to pass. Rework to be meaningful for ports other than platform/mac.
 BUGCR8630 LINUX WIN : fast/repaint/overflow-outline-repaint.html = FAIL
 BUGCR8630 LINUX WIN : fast/backgrounds/solid-color-context-restore.html = FAIL
-BUGCR8630 LINUX WIN : fast/dynamic/containing-block-change.html = FAIL
 BUGCR8630 LINUX : fast/forms/listbox-clip.html = IMAGE+TEXT
 BUGCR8630 LINUX WIN : fast/overflow/hidden-scrollbar-resize.html = FAIL
 BUGCR8630 LINUX WIN RELEASE : fast/reflections/inline-crash.html = FAIL
@@ -1510,9 +1509,6 @@ BUGCR30536 : http/tests/misc/favicon-as-image.html = FAIL
 // Has failed for Chromium since it was first checked in.  (Lighttpd related?)
 BUGCR10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProgress.html = TEXT TIMEOUT
 
-// Font metrics wrong, despite using Lucida Grande?
-BUGCR10338 LINUX : fast/events/updateLayoutForHitTest.html = FAIL
-
 // We fail to load a file URL with a port number -- how does this work on
 // Windows?
 BUGCR10342 SKIP WONTFIX LINUX MAC : fast/loader/file-URL-with-port-number.html = TIMEOUT
@@ -1653,7 +1649,6 @@ BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-as-image-incre
 BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html = IMAGE
 BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
 BUGCR23477 MAC : fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
-BUGCR23477 MAC : fast/dynamic/containing-block-change.html = IMAGE
 
 // Unexpected gray
 BUGCR23476 MAC : fast/frames/inline-object-inside-frameset.html = IMAGE
@@ -1886,9 +1881,6 @@ BUGCR117799 : svg/custom/pattern-skew-transformed.svg = IMAGE
 // New tests or failures from WebKit merge 42324:42364. Re-baselined on
 // Windows. Probably just need the same on other platforms.
 BUGCR9962 MAC : fast/js/function-apply-aliased.html = FAIL
-
-// Regressions from WebKit merge 43264:42403, unknown cause(s)
-BUGCR10055 MAC : fast/events/updateLayoutForHitTest.html = FAIL
 
 // New tests from WebKit Merge 42609:42671
 BUGCR10760 LINUX : fast/forms/input-text-scroll-left-on-blur.html = FAIL
@@ -2454,9 +2446,6 @@ BUGCR53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 // Not focusing an anchor when tab is pressed.
 BUGWK45061 : fast/forms/focus2.html = TIMEOUT FAIL
 
-// Regression from r67285
-BUGWK45623 LINUX WIN : fast/dynamic/first-letter-display-change.html = IMAGE
-
 // We don't support LayoutTestController.dumpConfigurationForViewport
 BUGWK45652 : fast/viewport = TEXT
 BUGWK45652 : fast/viewport/viewport-65.html = MISSING
@@ -2951,7 +2940,6 @@ BUGWK57593 : fast/preloader/document-write.html = TEXT
 
 // We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
 // http://trac.webkit.org/changeset/83126
-BUGWK58008 SNOWLEOPARD : fast/dom/52776.html = IMAGE+TEXT
 BUGWK58008 SNOWLEOPARD : fast/text/complex-text-opacity.html = IMAGE+TEXT
 BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-AN-after-L.html = IMAGE+TEXT
 BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-AN-after-empty-run.html = IMAGE+TEXT
@@ -3235,7 +3223,6 @@ BUGWK49142 SKIP : fast/regions/style-scoped-in-flow.html = PASS
 
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 
-BUGWK62430 LINUX WIN : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = FAIL
 
 // Has been flaky, probably since birth.
 BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT
@@ -3281,7 +3268,6 @@ BUGCR88588 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-1.html = PASS
 BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-2.html = PASS
 
-BUGCR88911 LEOPARD : fast/dom/getElementsByClassName/011.xml = TEXT
 BUGCR88911 LEOPARD : fast/forms/number/input-number-unacceptable-style.html = TEXT
 BUGCR88911 LEOPARD : fast/parser/external-entities.xml = TEXT
 BUGCR88911 LEOPARD : fast/text/find-kana.html = TEXT
@@ -3505,7 +3491,7 @@ BUGWK70298 : plugins/hidden-iframe-with-swf-plugin.html = FAIL TIMEOUT PASS
 BUGWK70298 WIN LINUX SNOWLEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS
 BUGWK70298 LEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE
 
-BUGCR101024 MAC : fast/events/reveal-link-when-focused.html = IMAGE
+BUGCR101024 LEOPARD : fast/events/reveal-link-when-focused.html = IMAGE
 
 BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-lr/rules-with-border-before.html = PASS TEXT
 BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-rl/rules-with-border-before.html = PASS TEXT
@@ -3819,8 +3805,6 @@ BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
 // Needs new baselines, most text only, after the SVG <use> rewrite.
 
 // Need rebaselining.
-BUGWK69210 MAC : fast/encoding/utf-16-big-endian.html = IMAGE+TEXT
-BUGWK69210 MAC : fast/encoding/utf-16-little-endian.html = IMAGE+TEXT
 BUGWK69210 LEOPARD SNOWLEOPARD : fast/inline/continuation-outlines-with-layers-2.html = TEXT
 BUGWK69210 MAC : fast/inline/continuation-outlines-with-layers.html = IMAGE+TEXT
 

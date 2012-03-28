@@ -93,7 +93,7 @@ PASS: canGet('HTMLImageElement') should be 'true' and is.
 PASS: canSet('HTMLImageElement') should be 'true' and is.
 PASS: canGet('HTMLInputElement') should be 'true' and is.
 PASS: canSet('HTMLInputElement') should be 'true' and is.
-PASS: canGet('HTMLIsIndexElement') should be 'true' and is.
+*** FAIL: canGet('HTMLIsIndexElement') should be 'true' but instead is false. ***
 PASS: canSet('HTMLIsIndexElement') should be 'true' and is.
 PASS: canGet('HTMLLIElement') should be 'true' and is.
 PASS: canSet('HTMLLIElement') should be 'true' and is.
@@ -217,6 +217,8 @@ PASS: canGet('event') should be 'true' and is.
 PASS: canSet('event') should be 'true' and is.
 PASS: canGet('frames') should be 'true' and is.
 PASS: canSet('frames') should be 'true' and is.
+PASS: canGet('history') should be 'true' and is.
+PASS: canSet('history') should be 'true' and is.
 PASS: canGet('innerHeight') should be 'true' and is.
 PASS: canSet('innerHeight') should be 'true' and is.
 PASS: canGet('innerWidth') should be 'true' and is.
@@ -270,8 +272,6 @@ PASS: canGet('closed') should be 'true' and is.
 PASS: canSet('closed') should be 'false' and is.
 PASS: canGet('document') should be 'true' and is.
 PASS: canSet('document') should be 'false' and is.
-PASS: canGet('history') should be 'true' and is.
-PASS: canSet('history') should be 'false' and is.
 PASS: canGet('pageXOffset') should be 'true' and is.
 PASS: canSet('pageXOffset') should be 'false' and is.
 PASS: canGet('pageYOffset') should be 'true' and is.
