@@ -371,3 +371,5 @@ BUGWK81936 : ietestcenter/css3/text/textshadow-008.htm = FAIL MISSING
 BUGWK81936 : ietestcenter/css3/text/textshadow-009.htm = FAIL MISSING
 BUGWK81936 : ietestcenter/css3/text/textshadow-010.htm = FAIL MISSING
 
+// Tiled-layer compositing tests are flakey.
+BUGWK82546 : compositing/tiling/crash-reparent-tiled-layer.html = PASS TEXT
