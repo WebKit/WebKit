@@ -1,3 +1,15 @@
+2012-03-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        kill-old-processes doesn't do anything on linux
+        https://bugs.webkit.org/show_bug.cgi?id=82388
+
+        Disable kill-old-processes on the Qt bots not to kill each others.
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (Factory.__init__):
+
 2012-03-27  Hao Zheng  <zhenghao@chromium.org>
 
         Handle DRT crash caused by Android OOM.
