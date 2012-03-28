@@ -205,14 +205,26 @@ class TestRunner:
         return None
 
     def _test_cases_to_skip(self, test):
+        if self._options.skipped_action != 'skip':
+            return []
+
         skipped = self._find_skipped_test(test)
         if skipped is not None:
             return skipped.test_cases
         return []
 
     def _should_run_test(self, test):
+        # Skipped test are ignored, run all tests.
+        if self._options.skipped_action == 'ignore':
+            return True
+
         skipped = self._find_skipped_test(test)
-        return skipped is None or skipped.test_cases
+        # By default skipped test are skipped, run them only when there are specific test cases failing.
+        if self._options.skipped_action == 'skip':
+            return skipped is None or skipped.test_cases
+
+        # Run only skipped tests.
+        return skipped is not None
 
     def _run_test(self, test):
         tester_command = ['gtester']
@@ -257,7 +269,7 @@ class TestRunner:
             sys.stdout.write("Tests failed: %s\n" % ", ".join(names))
             sys.stdout.flush()
 
-        if self._skipped_tests:
+        if self._skipped_tests and self._options.skipped_action == 'skip':
             sys.stdout.write("Tests skipped:\n%s\n" % "\n".join([str(skipped) for skipped in self._skipped_tests]))
             sys.stdout.flush()
 
@@ -276,6 +288,10 @@ if __name__ == "__main__":
                              help='Run gtester in verbose mode')
     option_parser.add_option('--display', action='store', dest='display', default=':55',
                              help='Display to run Xvfb')
+    option_parser.add_option('--skipped', action='store', dest='skipped_action',
+                             choices=['skip', 'ignore', 'only'], default='skip',
+                             metavar='skip|ignore|only',
+                             help='Specifies how to treat the skipped tests')
     options, args = option_parser.parse_args()
 
     sys.exit(TestRunner(options, args).run_tests())

@@ -1,5 +1,22 @@
 2012-03-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add --skipped command line option to Tools/Scripts/run-gtk-tests
+        https://bugs.webkit.org/show_bug.cgi?id=82341
+
+        Reviewed by Martin Robinson.
+
+        Add --skipped=skip|ignore|only command line option.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._test_cases_to_skip): Return the list of test cases
+        to skip for the given test depending on the skipped action.
+        (TestRunner._should_run_test): Decide whether to run the test or
+        not depending on the skipped action.
+        (TestRunner.run_tests): Only show the list of skipped tests when
+        skipped action is 'skip'.
+
+2012-03-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use gtester -s to skip individual test cases instead of unit tests as a whole
         https://bugs.webkit.org/show_bug.cgi?id=82333
 
