@@ -1,3 +1,18 @@
+2012-03-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        kill-old-processes doesn't do anything on linux
+        https://bugs.webkit.org/show_bug.cgi?id=82388
+
+        One more attempt to disable kill-old-processes on the Qt bots not to kill each others.
+
+        The platform in Factory comes from config.json, accordingly platform is fullplatform,
+        for example: qt-4.8, qt-5.0-wk2. We have to check only the prefix of platform.
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (Factory.__init__):
+
 2012-03-28  Hao Zheng  <zhenghao@chromium.org>
 
         Make Chromium port for Android use hardware gpu path default.
