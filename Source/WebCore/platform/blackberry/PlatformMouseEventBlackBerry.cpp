@@ -39,9 +39,4 @@ PlatformMouseEvent::PlatformMouseEvent(const IntPoint& eventPos, const IntPoint&
     ASSERT(type != MouseEventScroll);
 }
 
-void PlatformMouseEvent::setClickCount(int count)
-{
-    m_clickCount = count;
-}
-
 } // namespace WebCore
