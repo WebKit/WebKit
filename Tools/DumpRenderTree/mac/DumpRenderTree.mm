@@ -572,6 +572,7 @@ static void resetDefaultsToConsistentValues()
     [defaults setObject:[NSArray arrayWithObject:@"en"] forKey:@"AppleLanguages"];
     [defaults setBool:YES forKey:WebKitEnableFullDocumentTeardownPreferenceKey];
     [defaults setBool:YES forKey:WebKitFullScreenEnabledPreferenceKey];
+    [defaults setBool:YES forKey:@"UseWebKitWebInspector"];
 
     // Scrollbars are drawn either using AppKit (which uses NSUserDefaults) or using HIToolbox (which uses CFPreferences / kCFPreferencesAnyApplication / kCFPreferencesCurrentUser / kCFPreferencesAnyHost)
     [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];

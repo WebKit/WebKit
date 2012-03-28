@@ -475,6 +475,7 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetSansSerifFontFamily(preferences, sansSerifFontFamily);
     WKPreferencesSetSerifFontFamily(preferences, serifFontFamily);
 #endif
+    WKPreferencesSetInspectorUsesWebKitUserInterface(preferences, true);
 
     // in the case that a test using the chrome input field failed, be sure to clean up for the next test
     m_mainWebView->removeChromeInputField();
