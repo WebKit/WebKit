@@ -2023,7 +2023,8 @@ BUGCR22700 LINUX WIN : fast/canvas/canvas-shadow.html = TEXT
 // The test requires DRT/Test Shell to support error page handling.
 BUGCR27850 : fast/history/back-forward-reset-after-error-handling.html = TEXT
 
-BUGCR28092 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS FAIL
+BUGWK82505 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT
+BUGWK82505 LINUX MAC DEBUG : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT
 
 // Started failing with move from Lighttpd to Apache.
 // Since we have some bots on Lighttpd and some on Apache, mark it as flaky for
@@ -4291,8 +4292,11 @@ BUGWK82231 WIN DEBUG : fast/canvas/webgl/program-test.html = PASS CRASH
 // Flaky/crashing svg tests on SNOWLEOPARD DEBUG
 BUGWK82232 SNOWLEOPARD DEBUG : svg/custom/empty-merge.svg = PASS CRASH
 BUGWK82232 SNOWLEOPARD DEBUG : svg/clip-path/clip-in-mask-objectBoundingBox.svg = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/animated-svg-as-image-same-image.html = PASS CRASH
+BUGWK82232 SNOWLEOPARD DEBUG : svg/clip-path/clip-path-css-transform-1.svg = CRASH
+BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/animated-svg-as-image-same-image.html = PASS IMAGE CRASH
 BUGWK82232 SNOWLEOPARD DEBUG : svg/as-background-image/background-image-tiled.html = PASS CRASH
+BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/svg-as-image.html = CRASH
+BUGWK82232 SNOWLEOPARD DEBUG : traversal/hixie-node-iterator/002.xml = CRASH
 
 // Flaky since at least r111670
 BUGWK82258 : svg/custom/circular-marker-reference-4.svg = TEXT PASS
@@ -4330,3 +4334,9 @@ BUGWK82413 MAC DEBUG : fast/filesystem/workers/async-operations.html = PASS TIME
 BUGWK82417 LINUX SLOW : fast/frames/set-unloaded-frame-location.html = PASS
 
 BUGWK82469 : svg/custom/preserve-aspect-ratio-syntax.svg = IMAGE+TEXT
+
+BUGWK82507 LEOPARD SNOWLEOPARD DEBUG : media/W3C/video/events/event_order_canplay_canplaythrough.html = PASS CRASH
+
+BUGWK82508 LINUX DEBUG : http/tests/media/video-cancel-load.html = PASS TEXT
+
+BUGWK82509 LINUX : svg/text/append-text-node-to-tspan.html = PASS IMAGE
