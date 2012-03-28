@@ -49,29 +49,29 @@ WebInspector.ScriptsNavigator = function()
 
     var scriptsTreeElement = document.createElement("ol");
     var scriptsView = new WebInspector.View();
-    scriptsView.element.addStyleClass("outline-disclosure");
-    scriptsView.element.addStyleClass("navigator");
-    scriptsView.element.appendChild(scriptsTreeElement);
+    scriptsView.element.addStyleClass("fill");
+    scriptsView.element.addStyleClass("navigator-container");
+    var scriptsOutlineElement = document.createElement("div");
+    scriptsOutlineElement.addStyleClass("outline-disclosure");
+    scriptsOutlineElement.addStyleClass("navigator");
+    scriptsOutlineElement.appendChild(scriptsTreeElement);
+    scriptsView.element.appendChild(scriptsOutlineElement);
     this._scriptsTree = new WebInspector.NavigatorTreeOutline(this, scriptsTreeElement);
     this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.ScriptsTab, WebInspector.UIString("Scripts"), scriptsView);
     this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.ScriptsTab);
 
     var contentScriptsTreeElement = document.createElement("ol");
     var contentScriptsView = new WebInspector.View();
-    contentScriptsView.element.addStyleClass("outline-disclosure");
-    contentScriptsView.element.addStyleClass("navigator");
-    contentScriptsView.element.appendChild(contentScriptsTreeElement);
+    contentScriptsView.element.addStyleClass("fill");
+    contentScriptsView.element.addStyleClass("navigator-container");
+    var contentScriptsOutlineElement = document.createElement("div");
+    contentScriptsOutlineElement.addStyleClass("outline-disclosure");
+    contentScriptsOutlineElement.addStyleClass("navigator");
+    contentScriptsOutlineElement.appendChild(contentScriptsTreeElement);
     this._contentScriptsTree = new WebInspector.NavigatorTreeOutline(this, contentScriptsTreeElement);
     this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.ContentScriptsTab, WebInspector.UIString("Content scripts"), contentScriptsView);
 
-    var snippetsTreeElement = document.createElement("ol");
-    var snippetsView = new WebInspector.View();
-    snippetsView.element.addStyleClass("outline-disclosure");
-    snippetsView.element.addStyleClass("navigator");
-    snippetsView.element.appendChild(snippetsTreeElement);
-    this._snippetsTree = new WebInspector.NavigatorTreeOutline(this, snippetsTreeElement);
-    if (WebInspector.experimentsSettings.snippetsSupport.isEnabled())
-        this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.SnippetsTab, WebInspector.UIString("Snippets"), snippetsView);
+    this._snippetsTree = this._createSnippetsTree();
 
     this._folderTreeElements = {};
     
@@ -259,6 +259,24 @@ WebInspector.ScriptsNavigator.prototype = {
             this.revealUISourceCode(this._lastSelectedUISourceCode);
     },
     
+    _createSnippetsTree: function()
+    {
+        var snippetsTreeElement = document.createElement("ol");
+        var snippetsView = new WebInspector.View();
+        snippetsView.element.addStyleClass("fill");
+        snippetsView.element.addStyleClass("navigator-container");
+        var snippetsOutlineElement = document.createElement("div");
+        snippetsOutlineElement.addStyleClass("outline-disclosure");
+        snippetsOutlineElement.addStyleClass("navigator");
+        snippetsOutlineElement.appendChild(snippetsTreeElement);
+        snippetsView.element.appendChild(snippetsOutlineElement);
+        var snippetsTree = new WebInspector.NavigatorTreeOutline(this, snippetsTreeElement);
+        if (WebInspector.experimentsSettings.snippetsSupport.isEnabled())
+            this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.SnippetsTab, WebInspector.UIString("Snippets"), snippetsView);
+        return snippetsTree;
+    },
+
+
     reset: function()
     {
         this._scriptsTree.stopSearch();
@@ -315,7 +333,7 @@ WebInspector.ScriptsNavigator.prototype = {
         var contentScriptPrefix = isContentScript ? "0" : "1";
         return contentScriptPrefix + ":" + domain + folderName;
     },
-    
+
     /**
      * @param {boolean} isContentScript
      * @param {string} domain
@@ -348,6 +366,7 @@ WebInspector.ScriptsNavigator.prototype.__proto__ = WebInspector.Object.prototyp
 /**
  * @constructor
  * @extends {TreeOutline}
+ * @param {WebInspector.ScriptsNavigator} navigator
  * @param {Element} element
  */
 WebInspector.NavigatorTreeOutline = function(navigator, element)

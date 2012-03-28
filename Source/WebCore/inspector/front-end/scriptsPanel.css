@@ -247,6 +247,15 @@
     content: url(Images/resourceJSIcon.png);
 }
 
+#scripts-navigator-tabbed-pane .tabbed-pane-content {
+    overflow: hidden;
+}
+
+#scripts-navigator-tabbed-pane .navigator-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 #scripts-navigator-tabbed-pane .navigator {
     padding-left: 0;
 }
