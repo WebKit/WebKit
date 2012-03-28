@@ -16,9 +16,4 @@ After copy-paste:
 |       <font>
 |         color="red"
 |         "hello world<#selection-caret>"
-| <font>
-|   color="#ff0000"
-|   <b>
-|     <i>
-|       <u>
-|         <br>
+| <br>

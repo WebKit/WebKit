@@ -1,2 +1,2 @@
 
-execDeleteCommand: <font size="3"><br></font>
+execDeleteCommand: <br>

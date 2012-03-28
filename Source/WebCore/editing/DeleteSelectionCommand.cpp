@@ -688,23 +688,6 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
     m_typingStyle->prepareToApplyAt(m_endingPosition);
     if (m_typingStyle->isEmpty())
         m_typingStyle = 0;
-    VisiblePosition visibleEnd(m_endingPosition);
-    if (m_typingStyle && 
-        isStartOfParagraph(visibleEnd) &&
-        isEndOfParagraph(visibleEnd) &&
-        lineBreakExistsAtVisiblePosition(visibleEnd)) {
-        // Apply style to the placeholder that is now holding open the empty paragraph. 
-        // This makes sure that the paragraph has the right height, and that the paragraph 
-        // takes on the right style and retains it even if you move the selection away and
-        // then move it back (which will clear typing style).
-
-        setEndingSelection(visibleEnd);
-        applyStyle(m_typingStyle.get(), EditActionUnspecified);
-        // applyStyle can destroy the placeholder that was at m_endingPosition if it needs to 
-        // move it, but it will set an endingSelection() at [movedPlaceholder, 0] if it does so.
-        m_endingPosition = endingSelection().start();
-        m_typingStyle = 0;
-    }
     // This is where we've deleted all traces of a style but not a whole paragraph (that's handled above).
     // In this case if we start typing, the new characters should have the same style as the just deleted ones,
     // but, if we change the selection, come back and start typing that style should be lost.  Also see 

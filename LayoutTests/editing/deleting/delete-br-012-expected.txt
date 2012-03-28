@@ -15,10 +15,8 @@ This tests pressing delete key to remove empty quoted line places cursor at the 
 | <div>
 |   id="test"
 |   style="border-style:solid; border-color:blue;"
-|   <font>
-|     size="5"
-|     <#selection-caret>
-|     <br>
+|   <#selection-caret>
+|   <br>
 |   "
 "
 | "
