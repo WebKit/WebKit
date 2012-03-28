@@ -13,7 +13,7 @@ TestWebView {
     onLoadProgressChanged: {
         if (watchProgress && webView.loadProgress != 100) {
             watchProgress = false
-            load('')
+            url = ''
         }
     }
 
