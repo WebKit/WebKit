@@ -1,3 +1,26 @@
+2012-03-27  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix --enabled-threaded-compositing flag in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=82405
+
+        Reviewed by James Robinson.
+
+        --enable-threaded-compositing wasn't working because there was no way
+        to set the value before it was used in the TestShell constructor.
+
+        To avoid adding yet another boolean parameter to TestShell's
+        constructor, add an explicit initialize function that can operate on
+        any boolean settings that are set post-constructor.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::initialize):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+        (TestShell::setTestShellMode):
+
 2012-03-27  Dirk Pranke  <dpranke@chromium.org>
 
         new-run-webkit-tests: suppress debug output from run-safari on results file

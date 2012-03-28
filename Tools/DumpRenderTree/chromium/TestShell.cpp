@@ -98,11 +98,11 @@ static void makeCanvasOpaque(SkCanvas* canvas)
     }
 }
 
-TestShell::TestShell(bool testShellMode)
+TestShell::TestShell()
     : m_testIsPending(false)
     , m_testIsPreparing(false)
     , m_focusedWidget(0)
-    , m_testShellMode(testShellMode)
+    , m_testShellMode(false)
     , m_devTools(0)
     , m_allowExternalPages(false)
     , m_acceleratedCompositingForVideoEnabled(false)
@@ -131,7 +131,10 @@ TestShell::TestShell(bool testShellMode)
     WebRuntimeFeatures::enableShadowDOM(true);
     WebRuntimeFeatures::enableStyleScoped(true);
     WebRuntimeFeatures::enableScriptedSpeech(true);
+}
 
+void TestShell::initialize()
+{
     m_webPermissions = adoptPtr(new WebPermissions(this));
     m_accessibilityController = adoptPtr(new AccessibilityController(this));
     m_gamepadController = adoptPtr(new GamepadController(this));
@@ -150,7 +153,6 @@ TestShell::TestShell(bool testShellMode)
         WebCompositor::initialize(m_webCompositorThread.get());
     } else
         WebCompositor::initialize(0);
-
 
     // 30 second is the same as the value in Mac DRT.
     // If we use a value smaller than the timeout value of

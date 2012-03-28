@@ -234,7 +234,8 @@ int main(int argc, char* argv[])
         openStartupDialog();
 
     { // Explicit scope for the TestShell instance.
-        TestShell shell(testShellMode);
+        TestShell shell;
+        shell.setTestShellMode(testShellMode);
         shell.setAllowExternalPages(allowExternalPages);
         shell.setAcceleratedCompositingForVideoEnabled(acceleratedCompositingForVideoEnabled);
         shell.setThreadedCompositingEnabled(threadedCompositingEnabled);
@@ -251,6 +252,7 @@ int main(int argc, char* argv[])
             // 0x20000000ms is big enough for the purpose to avoid timeout in debugging.
             shell.setLayoutTestTimeout(0x20000000);
         }
+        shell.initialize();
         if (serverMode && !tests.size()) {
 #if OS(ANDROID)
             // Send a signal to host to indicate DRT is ready to process commands.
