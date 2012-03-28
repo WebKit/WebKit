@@ -7,10 +7,10 @@ PASS event.ports is non-null and zero length when no port sent
 PASS event.ports is non-null and zero length when empty array sent
 PASS event.ports contains two ports when two ports sent
 PASS posting a null port did throw: Error: DATA_CLONE_ERR: DOM Exception 25
-PASS posting a non-port did throw: TypeError: MessagePortArray argument must contain only MessagePorts
+PASS posting a non-port did throw: TypeError: TransferArray argument must contain only Transferables
 PASS event.ports contains two ports when two ports re-sent after error
-PASS posting a non-array did throw: TypeError: MessagePortArray argument has no length attribute
-PASS posting a non-sequence did throw: TypeError: MessagePortArray argument must contain only MessagePorts
+PASS posting a non-array did throw: TypeError: TransferArray argument has no length attribute
+PASS posting a non-sequence did throw: TypeError: TransferArray argument must contain only Transferables
 
 TEST COMPLETE
 
