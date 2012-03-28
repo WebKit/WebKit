@@ -1,3 +1,33 @@
+2012-03-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement PlatformStrategies
+        https://bugs.webkit.org/show_bug.cgi?id=82454
+
+        Reviewed by Xan Lopez.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * WebCoreSupport/PlatformStrategiesGtk.cpp: Added.
+        (PlatformStrategiesGtk::initialize): Initialize platform
+        strategies.
+        (PlatformStrategiesGtk::PlatformStrategiesGtk):
+        (PlatformStrategiesGtk::createCookiesStrategy): Return this.
+        (PlatformStrategiesGtk::createPluginStrategy): Ditto.
+        (PlatformStrategiesGtk::createVisitedLinkStrategy): Ditto.
+        (PlatformStrategiesGtk::createPasteboardStrategy): Return 0, since
+        PasteboardStrategy is only used by mac code for now.
+        (PlatformStrategiesGtk::notifyCookiesChanged):
+        (PlatformStrategiesGtk::refreshPlugins): Refresh the plugin
+        database.
+        (PlatformStrategiesGtk::getPluginInfo): Initialize plugins and
+        populate the given vector with plugins information.
+        (PlatformStrategiesGtk::isLinkVisited): Return whether the given
+        hash is a visited link of the page group.
+        (PlatformStrategiesGtk::addVisitedLink): Add the given hash to the
+        page group visited links.
+        * WebCoreSupport/PlatformStrategiesGtk.h: Added.
+        * webkit/webkitglobals.cpp:
+        (webkitInit): Initialize PlatformStrategiesGtk.
+
 2012-03-26  Joone Hur  <joone.hur@collabora.co.uk>
 
         [GTK] Build fix for Accelerated Compositing with Clutter

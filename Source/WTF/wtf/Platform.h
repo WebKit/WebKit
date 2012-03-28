@@ -1097,7 +1097,7 @@
 #define WTF_PLATFORM_CFNETWORK Error USE_macro_should_be_used_with_CFNETWORK
 
 /* FIXME: Eventually we should enable this for all platforms and get rid of the define. */
-#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT)
+#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT) || PLATFORM(GTK)
 #define WTF_USE_PLATFORM_STRATEGIES 1
 #endif
 

@@ -3035,6 +3035,7 @@ webcore_sources += \
 	Source/WebCore/platform/ContextMenu.h \
 	Source/WebCore/platform/ContextMenuItem.h \
 	Source/WebCore/platform/Cookie.h \
+	Source/WebCore/platform/CookiesStrategy.h \
 	Source/WebCore/platform/CookieJar.h \
 	Source/WebCore/platform/CrossThreadCopier.cpp \
 	Source/WebCore/platform/CrossThreadCopier.h \
@@ -3462,6 +3463,7 @@ webcore_sources += \
 	Source/WebCore/platform/network/soup/SoupURIUtils.h \
 	Source/WebCore/platform/NotImplemented.h \
 	Source/WebCore/platform/Pasteboard.h \
+	Source/WebCore/platform/PasteboardStrategy.h \
 	Source/WebCore/platform/PlatformEvent.cpp \
 	Source/WebCore/platform/PlatformEvent.h \
 	Source/WebCore/platform/PlatformExportMacros.h \
@@ -3471,6 +3473,8 @@ webcore_sources += \
 	Source/WebCore/platform/PlatformMenuDescription.h \
 	Source/WebCore/platform/PlatformMouseEvent.h \
 	Source/WebCore/platform/PlatformScreen.h \
+	Source/WebCore/platform/PlatformStrategies.cpp \
+	Source/WebCore/platform/PlatformStrategies.h \
 	Source/WebCore/platform/PlatformWheelEvent.h \
 	Source/WebCore/platform/PODArena.h \
 	Source/WebCore/platform/PODFreeListArena.h \
@@ -3600,6 +3604,7 @@ webcore_sources += \
 	Source/WebCore/platform/TreeShared.h \
 	Source/WebCore/platform/UUID.cpp \
 	Source/WebCore/platform/UUID.h \
+	Source/WebCore/platform/VisitedLinkStrategy.h \
 	Source/WebCore/platform/Widget.cpp \
 	Source/WebCore/platform/Widget.h \
 	Source/WebCore/platform/WindowsKeyboardCodes.h \
@@ -3627,12 +3632,12 @@ webcore_sources += \
 	Source/WebCore/plugins/PluginPackage.cpp \
 	Source/WebCore/plugins/PluginPackage.h \
 	Source/WebCore/plugins/PluginQuirkSet.h \
+	Source/WebCore/plugins/PluginStrategy.h \
 	Source/WebCore/plugins/PluginStream.cpp \
 	Source/WebCore/plugins/PluginStream.h \
 	Source/WebCore/plugins/PluginViewBase.h \
 	Source/WebCore/plugins/PluginView.cpp \
 	Source/WebCore/plugins/PluginView.h \
-	Source/WebCore/plugins/gtk/PluginDataGtk.cpp \
 	Source/WebCore/rendering/AutoTableLayout.cpp \
 	Source/WebCore/rendering/AutoTableLayout.h \
 	Source/WebCore/rendering/BidiRun.cpp \

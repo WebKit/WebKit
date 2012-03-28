@@ -1,3 +1,13 @@
+2012-03-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement PlatformStrategies
+        https://bugs.webkit.org/show_bug.cgi?id=82454
+
+        Reviewed by Xan Lopez.
+
+        * wtf/Platform.h: Define WTF_USE_PLATFORM_STRATEGIES for GTK+
+        platform too.
+
 2012-03-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Set eol-style: native on WTF.sln per Ryan Sleevi's request.

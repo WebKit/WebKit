@@ -32,6 +32,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageGroup.h"
+#include "PlatformStrategiesGtk.h"
 #include "TextEncodingRegistry.h"
 #include "Pasteboard.h"
 #include "PasteboardHelperGtk.h"
@@ -500,6 +501,7 @@ void webkitInit()
     WTF::initializeMainThread();
 
     WebCore::initializeLoggingChannelsIfNecessary();
+    PlatformStrategiesGtk::initialize();
 
     // We make sure the text codecs have been initialized, because
     // that may only be done by the main thread.
