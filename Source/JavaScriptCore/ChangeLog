@@ -5,6 +5,17 @@
 
         Reviewed by Sam Weinig.
 
+        * runtime/RegExp.cpp:
+        (JSC):
+            - Missed review comment! - didn't fully remove RegExpRepresentation.
+
+2012-03-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Yarr: if we're not using the output array, don't populate it!
+        https://bugs.webkit.org/show_bug.cgi?id=82519
+
+        Reviewed by Sam Weinig.
+
         Add a new variant of the match method to RegExp that returns a MatchResult,
         and modify YarrJIT to be able to compile code that doesn't use an output vector.
 

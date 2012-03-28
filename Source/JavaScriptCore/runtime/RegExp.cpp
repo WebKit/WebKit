@@ -217,9 +217,6 @@ void RegExpFunctionalTestCollector::outputEscapedUString(const UString& s, bool 
 }
 #endif
 
-struct RegExpRepresentation {
-};
-
 RegExp::RegExp(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
     : JSCell(globalData, globalData.regExpStructure.get())
     , m_state(NotCompiled)
