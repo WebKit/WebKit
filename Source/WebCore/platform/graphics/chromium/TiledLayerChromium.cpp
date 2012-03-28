@@ -166,7 +166,8 @@ bool TiledLayerChromium::drawsContent() const
     if (!LayerChromium::drawsContent())
         return false;
 
-    if (m_tilingOption == NeverTile && m_tiler->numTiles() > 1)
+    bool hasMoreThanOneTile = m_tiler->numTilesX() > 1 || m_tiler->numTilesY() > 1;
+    if (m_tilingOption == NeverTile && hasMoreThanOneTile)
         return false;
 
     return true;
@@ -556,7 +557,7 @@ void TiledLayerChromium::reserveTextures()
     updateBounds();
 
     const IntRect& layerRect = visibleLayerRect();
-    if (layerRect.isEmpty() || !m_tiler->numTiles())
+    if (layerRect.isEmpty() || m_tiler->hasEmptyBounds())
         return;
 
     int left, top, right, bottom;
@@ -609,7 +610,7 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& layerRect, const CCOcclu
 
     resetUpdateState();
 
-    if (layerRect.isEmpty() || !m_tiler->numTiles())
+    if (layerRect.isEmpty() || m_tiler->hasEmptyBounds())
         return;
 
     int left, top, right, bottom;
@@ -628,7 +629,7 @@ void TiledLayerChromium::prepareToUpdateIdle(const IntRect& layerRect, const CCO
 
     updateBounds();
 
-    if (!m_tiler->numTiles())
+    if (m_tiler->hasEmptyBounds())
         return;
 
     IntRect idlePaintLayerRect = idlePaintRect(layerRect);
@@ -701,7 +702,7 @@ bool TiledLayerChromium::needsIdlePaint(const IntRect& layerRect)
     if (m_skipsIdlePaint)
         return false;
 
-    if (!m_tiler->numTiles())
+    if (m_tiler->hasEmptyBounds())
         return false;
 
     IntRect idlePaintLayerRect = idlePaintRect(layerRect);
@@ -731,7 +732,8 @@ IntRect TiledLayerChromium::idlePaintRect(const IntRect& visibleLayerRect)
     // of them is going to become visible. For small layers we return the entire layer, for larger
     // ones we avoid prepainting the layer at all.
     if (visibleLayerRect.isEmpty()) {
-        if ((drawTransformIsAnimating() || screenSpaceTransformIsAnimating()) && m_tiler->numTiles() <= 9)
+        bool isSmallLayer = m_tiler->numTilesX() <= 9 && m_tiler->numTilesY() <= 9 && m_tiler->numTilesX() * m_tiler->numTilesY() <= 9;
+        if ((drawTransformIsAnimating() || screenSpaceTransformIsAnimating()) && isSmallLayer)
             return IntRect(IntPoint(), contentBounds());
         return IntRect();
     }

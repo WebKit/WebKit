@@ -50,18 +50,15 @@ public:
     void setHasBorderTexels(bool);
     int borderTexels() const { return m_borderTexels; }
 
-    int numTiles() const { return numTilesX() * numTilesY(); }
+    bool hasEmptyBounds() const { return !numTilesX() || !numTilesY(); }
     int numTilesX() const { return m_numTilesX; }
     int numTilesY() const { return m_numTilesY; }
-    int tileIndex(int x, int y) const { return x + y * numTilesX(); }
-    int tileXIndex(int tile) const { assertTile(tile); return tile % numTilesX(); }
-    int tileYIndex(int tile) const { assertTile(tile); return tile / numTilesX(); }
     int tileXIndexFromSrcCoord(int) const;
     int tileYIndexFromSrcCoord(int) const;
 
-    IntRect tileBounds(int tile) const;
-    IntRect tileBoundsWithBorder(int tile) const;
-    FloatRect tileBoundsNormalized(int tile) const;
+    IntRect tileBounds(int, int) const;
+    IntRect tileBoundsWithBorder(int, int) const;
+    FloatRect tileBoundsNormalized(int, int) const;
     int tilePositionX(int xIndex) const;
     int tilePositionY(int yIndex) const;
     int tileSizeX(int xIndex) const;
@@ -69,16 +66,12 @@ public:
     IntRect overlappedTileIndices(const IntRect& srcRect) const;
     IntRect overlappedTileIndices(const FloatRect& srcRect) const;
 
-    // Given a set of source and destination coordinates for a drawing quad
-    // in texel units, returns adjusted data to render just the one tile.
-    void intersectDrawQuad(const FloatRect& srcRect, const FloatRect& dstRect, int tile, FloatRect* newSrc, FloatRect* newDst) const;
-
     // Difference between tileBound's and tileBoundWithBorder's location().
     IntPoint textureOffset(int xIndex, int yIndex) const;
 
 private:
     TilingData() : m_maxTextureSize(0), m_totalSizeX(0), m_totalSizeY(0) {}
-    void assertTile(int tile) const { ASSERT_UNUSED(tile, tile >= 0 && tile < numTiles()); }
+    void assertTile(int i, int j) const { ASSERT_UNUSED(i, i >= 0 && i < numTilesX()); ASSERT_UNUSED(j, j >= 0 && j < numTilesY()); }
     void recomputeNumTiles();
 
     int m_maxTextureSize;

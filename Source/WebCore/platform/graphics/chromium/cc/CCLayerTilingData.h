@@ -44,10 +44,10 @@ public:
 
     static PassOwnPtr<CCLayerTilingData> create(const IntSize& tileSize, BorderTexelOption);
 
-    int numTiles() const { return m_tilingData.numTiles(); }
+    bool hasEmptyBounds() const { return m_tilingData.hasEmptyBounds(); }
     int numTilesX() const { return m_tilingData.numTilesX(); }
     int numTilesY() const { return m_tilingData.numTilesY(); }
-    IntRect tileBounds(int i, int j) const { return m_tilingData.tileBounds(m_tilingData.tileIndex(i, j)); }
+    IntRect tileBounds(int i, int j) const { return m_tilingData.tileBounds(i, j); }
     IntPoint textureOffset(int xIndex, int yIndex) const { return m_tilingData.textureOffset(xIndex, yIndex); }
 
     // Change the tile size. This may invalidate all the existing tiles.
@@ -57,7 +57,7 @@ public:
     void setBorderTexelOption(BorderTexelOption);
     bool hasBorderTexels() const { return m_tilingData.borderTexels(); }
 
-    bool isEmpty() const { return !m_tilingData.numTiles() || !tiles().size(); }
+    bool isEmpty() const { return hasEmptyBounds() || !tiles().size(); }
 
     const CCLayerTilingData& operator=(const CCLayerTilingData&);
 
