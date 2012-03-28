@@ -922,7 +922,6 @@ BUGCR8630 LINUX WIN : fast/repaint/body-background-image.html = FAIL
 // Relies on text metrics to pass. Rework to be meaningful for ports other than platform/mac.
 BUGCR8630 LINUX WIN : fast/repaint/overflow-outline-repaint.html = FAIL
 BUGCR8630 LINUX WIN : fast/backgrounds/solid-color-context-restore.html = FAIL
-BUGCR8630 LINUX : fast/forms/listbox-clip.html = IMAGE+TEXT
 BUGCR8630 LINUX WIN : fast/overflow/hidden-scrollbar-resize.html = FAIL
 BUGCR8630 LINUX WIN RELEASE : fast/reflections/inline-crash.html = FAIL
 BUGCR8630 LINUX WIN DEBUG : fast/reflections/inline-crash.html = FAIL
@@ -1035,7 +1034,6 @@ BUGCR19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline
 // Directionality of mixed-direction text in selected choice should
 // match that in the <select> option lists.
 // Low priority, unclear if test expectations are correct (see bug)
-BUGCR6139 LINUX WIN : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
 
 // Selection is wrong.
@@ -1491,9 +1489,6 @@ BUGCR24209 : fast/js/pic/cached-prototype-setter.html = FAIL
 BUGCR10318 : fast/canvas/toDataURL-supportedTypes.html = FAIL
 BUGCR10318 : platform/chromium/virtual/gpu/fast/canvas/toDataURL-supportedTypes.html = FAIL
 
-// Regression from the 41362:41402 merge.
-BUGCR8402 MAC : fast/forms/drag-out-of-textarea.html = FAIL
-
 // GURL doesn't handle switching from standard URL to path URL correctly
 BUGWK27914 WIN : fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html = TEXT
 
@@ -1531,9 +1526,6 @@ BUGWK80335 : fast/js/mozilla/strict/15.4.4.13.html = TEXT
 
 // V8 should implement the length property of constructors
 BUGWK78657 : fast/js/constructor-length.html = FAIL
-
-// Linux pixeltest failure: Failing to apply style
-BUGCR10349 LINUX : fast/forms/select-style.html = FAIL
 
 // Linux pixeltest failure: The text suggests that the radios should not
 // overlap, but it's very close and quite different from the Windows version
@@ -1598,17 +1590,6 @@ BUGCR10384 SLOW MAC : fast/dom/Window/new-window-opener.html = TEXT PASS
 BUGCR10399 MAC : fast/encoding/char-decoding-mac.html = FAIL
 BUGCR10399 MAC : fast/encoding/char-encoding-mac.html = FAIL
 
-// Broken pixel tests
-
-// Widget location is just slightly off
-BUGCR23496 MAC : fast/forms/001.html = IMAGE
-BUGCR23496 MAC : fast/forms/form-element-geometry.html = IMAGE+TEXT
-BUGCR23496 MAC : fast/forms/formmove.html = IMAGE
-// Recently became crashy. See http://crbug.com/24721
-BUGCR23496 MAC : fast/forms/formmove2.html = IMAGE
-BUGCR23496 MAC : fast/forms/indeterminate.html = IMAGE
-BUGCR23496 MAC : fast/forms/input-value.html = IMAGE+TEXT
-BUGCR23496 MAC : fast/inline/positionedLifetime.html = IMAGE
 BUGCR23496 MAC : fast/parser/bad-xml-slash.html = IMAGE
 BUGCR23496 MAC : fast/text/whitespace/normal-after-nowrap-breaking.html = IMAGE
 BUGCR23496 MAC : tables/mozilla_expected_failures/core/captions1.html = IMAGE+TEXT
@@ -1768,10 +1749,6 @@ BUGCR104128 : svg/css/shadow-with-large-radius.svg = IMAGE
 BUGCR104128 : svg/css/shadow-with-negative-offset.svg = IMAGE
 BUGCR104128 : transitions/svg-text-shadow-transition.html = IMAGE
 
-// Merge 39309:39335 Regressions (RenderButton::setupInnerStyle regression).
-BUGCR5737 LINUX : fast/forms/001.html = FAIL
-BUGCR5737 LINUX : fast/forms/input-first-letter.html = FAIL
-
 // We could fix this test for us and upstream it if the test shell user agent
 // would let us differentiate test_shell and WebKit DumpTreeNode.
 BUGCR7482 MAC : http/tests/misc/timer-vs-loading.html = PASS TIMEOUT TEXT
@@ -1882,11 +1859,6 @@ BUGCR117799 : svg/custom/pattern-skew-transformed.svg = IMAGE
 // Windows. Probably just need the same on other platforms.
 BUGCR9962 MAC : fast/js/function-apply-aliased.html = FAIL
 
-// New tests from WebKit Merge 42609:42671
-BUGCR10760 LINUX : fast/forms/input-text-scroll-left-on-blur.html = FAIL
-BUGCR10760 LINUX : fast/inline/25277-2.html = FAIL
-BUGCR10760 LINUX : fast/inline/25277.html = FAIL
-
 // New failures from WebKit merge 42725:42805
 // WebKit change http://trac.webkit.org/changeset/42785
 // added a test which submits a form and then uses history.back()
@@ -1896,8 +1868,6 @@ BUGCR11001 : http/tests/history/back-to-post.php = TIMEOUT
 
 // Regressions from WebKit Merge 42932:42994 due to text metric changes.
 BUGCR11251 WIN DEBUG : fast/forms/textarea-width.html = FAIL
-BUGCR11251 SLOW WIN RELEASE : fast/forms/textarea-width.html = FAIL
-BUGCR11251 LINUX WIN RELEASE : fast/forms/text-control-intrinsic-widths.html = FAIL
 BUGCR11251 LINUX WIN DEBUG : fast/forms/text-control-intrinsic-widths.html = FAIL
 BUGCR11251 LINUX WIN : svg/custom/svg-fonts-in-text-controls.html = FAIL
 BUGCR11251 LINUX WIN : fast/forms/textarea-metrics.html = FAIL
@@ -1963,9 +1933,6 @@ BUGCR24182 SLOW DEBUG : fast/forms/input-maxlength.html = PASS
 
 // WebKit roll 49405:49413
 BUGCR28409 : http/tests/xmlhttprequest/logout.html = FAIL
-
-// WebKit Roll 49640:49684
-BUG_JEREMY MAC : fast/frames/onlyCommentInIFrame.html = FAIL
 
 // This only crashes on the old buildbot slave. It fails image, like the other slaves, on the new one.
 // FIXME: Make this just be IMAGE after we move over to the new bots.
@@ -2895,7 +2862,6 @@ BUGCR77468 : fast/forms/file/input-file-directory-upload.html = TIMEOUT
 // Temprary bug holding to deal with many changed tests due to
 // http://build.chromium.org/p/chromium.webkit/builders/Webkit%20Linux/builds/4837
 // http://trac.webkit.org/changeset/81992
-BUGCR77494 LINUX WIN : fast/invalid/014.html = TEXT
 BUGCR77494 LINUX WIN : fast/layers/layer-visibility.html = FAIL
 BUGCR77494 LINUX WIN : fast/repaint/layout-state-scrolloffset.html = FAIL
 BUGCR77494 LINUX WIN : fast/repaint/layout-state-scrolloffset2.html = FAIL
@@ -3873,7 +3839,6 @@ BUGV8_1973 : fast/js/caller-property.html = TEXT
 //NEED REBASELINING
 BUGWK78684 : fast/block/basic/fieldset-stretch-to-legend.html = FAIL
 BUGWK78684 : fast/borders/fieldsetBorderRadius.html = FAIL
-BUGWK78684 WIN LINUX : fast/forms/fieldset-legend-padding-unclipped-fieldset-border.html = FAIL
 
 // New test; landed at r109779 but results look wrong on most Chrome platforms.
 BUGSENORBLANCO : http/tests/incremental/partial-jpeg.html = FAIL PASS
@@ -3964,9 +3929,7 @@ BUGWK81145 LION : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK81145 LION : animations/cross-fade-webkit-mask-box-image.html = IMAGE
 BUGWK81145 LION : compositing/iframes/iframe-content-flipping.html = IMAGE
 BUGWK81145 LION : fast/box-shadow/single-pixel-shadow.html = IMAGE
-BUGWK81145 LION : fast/forms/file/file-input-pressed-state.html = IMAGE
 BUGWK81145 LION : fast/frames/invalid.html = IMAGE
-BUGWK81145 LION : fast/frames/valid.html = IMAGE
 BUGWK81145 LION : fast/gradients/css3-color-stop-units.html = IMAGE
 BUGWK81145 LION : fast/repaint/background-scaling.html = IMAGE
 BUGWK81145 LION : fast/repaint/scale-page-shrink.html = IMAGE
