@@ -1420,6 +1420,15 @@ svg/animations/animate-elem-08-t-drt.html
 # https://bugs.webkit.org/show_bug.cgi?id=82326
 svg/custom/preserve-aspect-ratio-syntax.svg
 
+# [Qt] Diverging test results on 32/64 bit architectures
+# https://bugs.webkit.org/show_bug.cgi?id=82601
+fast/repaint/moving-shadow-on-container.html
+fast/repaint/moving-shadow-on-path.html
+svg/W3C-SVG-1.1/paths-data-03-f.svg
+svg/css/stars-with-shadow.html
+svg/custom/use-on-symbol-inside-pattern.svg
+svg/transforms/transform-origin-css-property.xhtml
+
 # ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
