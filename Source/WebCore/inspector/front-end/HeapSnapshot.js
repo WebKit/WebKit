@@ -1091,7 +1091,7 @@ WebInspector.HeapSnapshot.prototype = {
         {
             if (filter && !filter(node))
                 return true;
-            if (!node.isNative && node.selfSize === 0)
+            if (!node.selfSize && !node.isNative)
                 return true;
             return false;
         }
@@ -1176,29 +1176,29 @@ WebInspector.HeapSnapshot.prototype = {
         // All nodes except the root have dominators.
         var dominatedNodes = this._dominatedNodes = new Uint32Array(this.nodeCount - 1);
 
-        // Count the number of dominated nodes for each node
-        for (var nodeIndex = 0; nodeIndex < this._onlyNodes.length; nodeIndex += this._nodeFieldCount) {
+        // Count the number of dominated nodes for each node. Skip the root (node at
+        // index 0) as it is the only node that dominates itself.
+        for (var nodeIndex = this._nodeFieldCount; nodeIndex < this._onlyNodes.length; nodeIndex += this._nodeFieldCount) {
             var dominatorIndex = this._onlyNodes[nodeIndex + this._dominatorOffset];
             if (dominatorIndex % this._nodeFieldCount)
                 throw new Error("Wrong dominatorIndex " + dominatorIndex + " nodeIndex = " + nodeIndex + " nodeCount = " + this.nodeCount);
-            // Skip root node. We may simplify this by starting iteration from second node.
-            if (nodeIndex === dominatorIndex) continue;
             ++indexArray[dominatorIndex / this._nodeFieldCount];
         }
         // Put in the first slot of each dominatedNodes slice the count of entries
         // that will be filled.
         var firstDominatedNodeIndex = 0;
-        for (i = 0; i <= this.nodeCount; ++i) {
+        for (i = 0; i < this.nodeCount; ++i) {
             var dominatedCount = dominatedNodes[firstDominatedNodeIndex] = indexArray[i];
             indexArray[i] = firstDominatedNodeIndex;
             firstDominatedNodeIndex += dominatedCount;
         }
-        // Fill up the dominatedNodes array with indexes of dominated nodes.
-        for (var nodeIndex = 0; nodeIndex < this._onlyNodes.length; nodeIndex += this._nodeFieldCount) {
+        indexArray[this.nodeCount] = dominatedNodes.length;
+        // Fill up the dominatedNodes array with indexes of dominated nodes. Skip the root (node at
+        // index 0) as it is the only node that dominates itself.
+        for (var nodeIndex = this._nodeFieldCount; nodeIndex < this._onlyNodes.length; nodeIndex += this._nodeFieldCount) {
             var dominatorIndex = this._onlyNodes[nodeIndex + this._dominatorOffset];
             if (dominatorIndex % this._nodeFieldCount)
                 throw new Error("Wrong dominatorIndex " + dominatorIndex);
-            if (nodeIndex === dominatorIndex) continue;
             var dominatorPos = dominatorIndex / this._nodeFieldCount;
             var dominatedRefIndex = indexArray[dominatorPos];
             dominatedRefIndex += (--dominatedNodes[dominatedRefIndex]);
