@@ -372,3 +372,7 @@ BUGWK81936 : ietestcenter/css3/text/textshadow-010.htm = FAIL MISSING
 
 // Tiled-layer compositing tests are flakey.
 BUGWK82546 : compositing/tiling/crash-reparent-tiled-layer.html = PASS TEXT
+
+// Spelling tests that are flakey.
+BUGWK82555 : editing/spelling/spellcheck-async-mutation.html = PASS TEXT
+
