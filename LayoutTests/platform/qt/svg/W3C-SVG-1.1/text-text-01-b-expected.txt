@@ -40,7 +40,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (4,132) size 421x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,22.00)}]
         RenderSVGContainer {g} at (9,132) size 414x33
           RenderSVGText {text} at (3,22) size 65x10 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 65x10
+            RenderSVGInlineText {#text} at (0,0) size 65x11
               chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 1 width 4.33: "L"
               chunk 1 text run 2 at (8.24,30.00) startOffset 1 endOffset 2 width 1.67: "i"
               chunk 1 text run 3 at (10.82,30.00) startOffset 2 endOffset 3 width 4.33: "n"
@@ -57,7 +57,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 14 at (57.84,30.00) startOffset 13 endOffset 14 width 4.00: "c"
               chunk 1 text run 15 at (62.76,30.00) startOffset 14 endOffset 15 width 4.33: "h"
           RenderSVGText {text} at (75,22) size 66x10 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 66x10
+            RenderSVGInlineText {#text} at (0,0) size 66x11
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 1 width 2.33: "t"
               chunk 1 text run 2 at (76.64,30.00) startOffset 1 endOffset 2 width 4.33: "h"
               chunk 1 text run 3 at (80.28,30.00) startOffset 2 endOffset 3 width 1.67: "i"
@@ -106,7 +106,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (4,198) size 421x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,44.00)}]
         RenderSVGContainer {g} at (9,198) size 414x33
           RenderSVGText {text} at (3,22) size 65x10 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 65x10
+            RenderSVGInlineText {#text} at (0,0) size 65x11
               chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 1 width 4.33: "L"
               chunk 1 text run 2 at (8.24,30.00) startOffset 1 endOffset 2 width 1.67: "i"
               chunk 1 text run 3 at (10.82,30.00) startOffset 2 endOffset 3 width 4.33: "n"
@@ -123,7 +123,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 14 at (57.84,30.00) startOffset 13 endOffset 14 width 4.00: "c"
               chunk 1 text run 15 at (62.76,30.00) startOffset 14 endOffset 15 width 4.33: "h"
           RenderSVGText {text} at (75,22) size 66x10 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 66x10
+            RenderSVGInlineText {#text} at (0,0) size 66x11
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 1 width 2.33: "t"
               chunk 1 text run 2 at (76.64,30.00) startOffset 1 endOffset 2 width 4.33: "h"
               chunk 1 text run 3 at (80.28,30.00) startOffset 2 endOffset 3 width 1.67: "i"
