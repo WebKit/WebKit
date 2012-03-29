@@ -95,7 +95,7 @@ namespace WebCore {
         bool m_failed;
         unsigned long m_identifier;
         bool m_finishing;
-#if PLATFORM(CHROMIUM)
+#if PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)
         ResourceRequest::TargetType m_targetType;
 #endif
     };
