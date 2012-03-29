@@ -3,17 +3,22 @@ from mod_pywebsocket import common
 from mod_pywebsocket import stream
 
 
+bit = 0
+
 def web_socket_do_extra_handshake(request):
-    pass
-
-
-def web_socket_transfer_data(request):
-    match = re.search(r'\?bit=(\d+)$', request.ws_resource)
+    match = re.search(r'\?compressed=(true|false)&bitNumber=(\d)$', request.ws_resource)
     if match is None:
         msgutil.send_message(request, 'FAIL: Query value is incorrect or missing')
         return
+    
+    global bit
+    compressed = match.group(1)
+    bit = int(match.group(2))
+    if compressed == "false":
+        request.ws_extension_processors = [] # using no extension response
 
-    bit = int(match.group(1))
+
+def web_socket_transfer_data(request):
     message = "This message should be ignored."
     if bit == 1:
         frame = stream.create_header(common.OPCODE_TEXT, len(message), 1, 1, 0, 0, 0) + message

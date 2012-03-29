@@ -1,14 +1,29 @@
+CONSOLE MESSAGE: Received unexpected compressed frame
+CONSOLE MESSAGE: One or more reserved bits are on: reserved2 = 1, reserved3 = 0
+CONSOLE MESSAGE: One or more reserved bits are on: reserved2 = 0, reserved3 = 1
 CONSOLE MESSAGE: One or more reserved bits are on: reserved2 = 1, reserved3 = 0
 CONSOLE MESSAGE: One or more reserved bits are on: reserved2 = 0, reserved3 = 1
 Test whether WebSocket rejects frames whose reserved bit is on.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-Bit 2: Test started.
+Case compressed=false&bitNumber=1: Test started.
 onopen() was called.
 onclose() was called.
 PASS closeEvent.wasClean is false
-Bit 3: Test started.
+Case compressed=false&bitNumber=2: Test started.
+onopen() was called.
+onclose() was called.
+PASS closeEvent.wasClean is false
+Case compressed=false&bitNumber=3: Test started.
+onopen() was called.
+onclose() was called.
+PASS closeEvent.wasClean is false
+Case compressed=true&bitNumber=2: Test started.
+onopen() was called.
+onclose() was called.
+PASS closeEvent.wasClean is false
+Case compressed=true&bitNumber=3: Test started.
 onopen() was called.
 onclose() was called.
 PASS closeEvent.wasClean is false

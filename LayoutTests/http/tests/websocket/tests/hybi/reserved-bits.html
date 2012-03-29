@@ -13,15 +13,20 @@ window.jsTestIsAsync = true;
 if (window.layoutTestController)
     layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
+// "compressed=true&bitNumber=1" must not be included in compressedAndBitNumberParameters array.
+var compressedAndBitNumberParameters = ["compressed=false&bitNumber=1",
+                                        "compressed=false&bitNumber=2",
+                                        "compressed=false&bitNumber=3",
+                                        "compressed=true&bitNumber=2",
+                                        "compressed=true&bitNumber=3"];
 var closeEvent;
 
-// bitNumber must be 2 or 3.
-function doTest(bitNumber)
+function doTest(curTestIndex)
 {
-    var url = "ws://localhost:8880/websocket/tests/hybi/reserved-bits?bit=" + bitNumber;
+    var url = "ws://localhost:8880/websocket/tests/hybi/reserved-bits?" + compressedAndBitNumberParameters[curTestIndex];
     var ws = new WebSocket(url);
 
-    debug("Bit " + bitNumber + ": Test started.");
+    debug("Case " + compressedAndBitNumberParameters[curTestIndex] + ": Test started.");
 
     ws.onopen = function()
     {
@@ -39,14 +44,14 @@ function doTest(bitNumber)
         debug("onclose() was called.");
         closeEvent = event;
         shouldBeFalse("closeEvent.wasClean");
-        if (bitNumber === 3)
+        if (curTestIndex === compressedAndBitNumberParameters.length - 1)
             finishJSTest();
         else
-            doTest(bitNumber + 1);
+            doTest(curTestIndex + 1);
     };
 }
 
-doTest(2);
+doTest(0);
 
 </script>
 <script src="../../../../js-test-resources/js-test-post.js"></script>
