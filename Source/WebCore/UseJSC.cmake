@@ -11,6 +11,16 @@ LIST(APPEND WebCore_IDL_INCLUDES
     bindings/js
 )
 
+IF (PORT MATCHES "BlackBerry")
+    LIST(APPEND WebCore_IDL_INCLUDES
+        testing/js
+    )
+    LIST(APPEND WebCore_IDL_FILES
+        testing/Internals.idl
+        testing/InternalSettings.idl
+    )
+ENDIF ()
+
 LIST(APPEND WebCore_SOURCES
     bindings/js/CallbackFunction.cpp
     bindings/js/DOMObjectHashTableMap.cpp
