@@ -1,3 +1,13 @@
+2012-03-29  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Adding better comments for the WebRTC methods in WebKitPlatformSupport.h
+        https://bugs.webkit.org/show_bug.cgi?id=82588
+
+        Reviewed by Adam Barth.
+
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKitPlatformSupport):
+
 2012-03-28  Kinuko Yasuda  <kinuko@chromium.org>
 
         [chromium] Add isolated filesystem type and WebDragData::filesystem_id for drag-and-drop using File/DirectoryEntry.
