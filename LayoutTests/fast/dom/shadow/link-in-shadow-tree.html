@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+</head>
+<body>
+<div id="container"><span id="in-host-children" class="kotori" href="/">tehepero</span></div>
+<div><span id="outside-of-shadow" class="kotori" href="/">tehepero</span></div>
+
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+function computedBackgroundColor(elem) {
+    var style = document.defaultView.getComputedStyle(elem, '');
+    return style.backgroundColor;
+}
+
+var container = document.getElementById('container');
+
+var shadowRoot = new WebKitShadowRoot(container);
+
+var link = document.createElement('link');
+link.setAttribute('rel', 'stylesheet');
+link.setAttribute('href', 'resources/link-in-shadow-style.css');
+
+var spanInShadow = document.createElement('span');
+spanInShadow.innerHTML = 'tehepero';
+spanInShadow.className = 'kotori';
+
+shadowRoot.appendChild(link);
+shadowRoot.appendChild(spanInShadow);
+shadowRoot.appendChild(document.createElement('content'));
+
+var spanInHostChildren = document.getElementById('in-host-children');
+var spanOutsideOfShadow = document.getElementById('outside-of-shadow');
+
+shouldBe('computedBackgroundColor(spanInShadow)', '"rgba(0, 0, 0, 0)"');
+shouldBe('computedBackgroundColor(spanInHostChildren)', '"rgba(0, 0, 0, 0)"');
+shouldBe('computedBackgroundColor(spanOutsideOfShadow)', '"rgba(0, 0, 0, 0)"');
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

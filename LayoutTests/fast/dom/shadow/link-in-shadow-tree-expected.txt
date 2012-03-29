@@ -1,0 +1,8 @@
+PASS computedBackgroundColor(spanInShadow) is "rgba(0, 0, 0, 0)"
+PASS computedBackgroundColor(spanInHostChildren) is "rgba(0, 0, 0, 0)"
+PASS computedBackgroundColor(spanOutsideOfShadow) is "rgba(0, 0, 0, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+tehepero
+tehepero

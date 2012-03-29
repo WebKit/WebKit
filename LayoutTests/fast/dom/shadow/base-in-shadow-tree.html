@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+</head>
+<body>
+<div id="container"><a id="anchor-in-host-children" href="/">tehepero</a></div>
+<div><a id="anchor-outside-of-shadow" href="/">tehepero</a></div>
+
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+var container = document.getElementById('container');
+
+var shadowRoot = new WebKitShadowRoot(container);
+
+var base = document.createElement('base');
+base.setAttribute('href', 'http://www.example.com/');
+var anchorInShadow = document.createElement('a');
+anchorInShadow.setAttribute('href', '/');
+
+shadowRoot.appendChild(base);
+shadowRoot.appendChild(anchorInShadow);
+
+var anchorInHostChildren = document.getElementById('anchor-in-host-children');
+var anchorOutsideOfShadow = document.getElementById('anchor-outside-of-shadow');
+
+shouldBe('anchorInShadow.href.indexOf("http://www.example.com")', '-1');
+shouldBe('anchorInHostChildren.href.indexOf("http://www.example.com")', '-1');
+shouldBe('anchorOutsideOfShadow.href.indexOf("http://www.example.com")', '-1');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
