@@ -1,3 +1,16 @@
+2012-03-29  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [GTK][EFL] run-javascriptcore-tests should be run through jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=82581
+
+        Reviewed by Martin Robinson.
+
+        Running Javascriptcore tests through jhbuild
+        for consistency with run-webkit-tests and in order to
+        avoid confusing libraries when facing regressions.
+
+        * Scripts/run-javascriptcore-tests:
+
 2012-03-29  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy: add --timing
