@@ -805,7 +805,13 @@ WebInspector.TimelineVerticalOverview = function(model) {
     this._model = model;
     this.reset();
 
+    this._outerPadding = 4;
     this._maxInnerBarWidth = 10;
+
+    // The below two are really computed by update() -- but let's have something so that getWindowTimes() is happy.
+    this._actualPadding = 5;
+    this._actualOuterBarWidth = this._maxInnerBarWidth + this._actualPadding;
+
     this._context = this.element.getContext("2d");
     this._fillStyles = {};
     this._fillStyles.loading = this._context.createLinearGradient(0, 0, this._maxInnerBarWidth, 0);
@@ -973,11 +979,11 @@ WebInspector.TimelineVerticalOverview.prototype = {
         this.element.height = this.element.clientHeight;
 
         const maxPadding = 5;
-        this._actualBarWidth = Math.min((this.element.width - 2 * maxPadding) / allBarHeights.length, this._maxInnerBarWidth + maxPadding);
-        var padding = Math.min(Math.floor(this._actualBarWidth / 3), maxPadding);
+        this._actualOuterBarWidth = Math.min((this.element.width - 2 * this._outerPadding) / allBarHeights.length, this._maxInnerBarWidth + maxPadding);
+        this._actualPadding = Math.min(Math.floor(this._actualOuterBarWidth / 3), maxPadding);
 
         for (var i = 0; i < allBarHeights.length; ++i)
-            this._renderBar(maxPadding + this._actualBarWidth * i, this._actualBarWidth - padding , allBarHeights[i], scale);
+            this._renderBar(this._outerPadding + this._actualOuterBarWidth * i, this._actualOuterBarWidth - this._actualPadding, allBarHeights[i], scale);
     },
 
     _renderBar: function(left, width, barHeights, scale)
@@ -1009,11 +1015,11 @@ WebInspector.TimelineVerticalOverview.prototype = {
     getWindowTimes: function(windowLeft, windowRight)
     {
         var windowSpan = this.element.clientWidth
-        var leftOffset = windowLeft * windowSpan;
-        var rightOffset = windowRight * windowSpan;
+        var leftOffset = windowLeft * windowSpan - this._outerPadding + this._actualPadding;
+        var rightOffset = windowRight * windowSpan - this._outerPadding;
         var bars = this.element.children;
-        var firstBar = Math.floor(Math.max(leftOffset, 0) / this._actualBarWidth);
-        var lastBar = Math.min(Math.ceil((rightOffset - 2) / this._actualBarWidth), this._barTimes.length - 1);
+        var firstBar = Math.floor(Math.max(leftOffset, 0) / this._actualOuterBarWidth);
+        var lastBar = Math.min(Math.floor(rightOffset / this._actualOuterBarWidth), this._barTimes.length - 1);
         const snapToRightTolerancePixels = 3;
         return {
             startTime: firstBar >= this._barTimes.length ? Infinity : this._barTimes[firstBar].startTime,
