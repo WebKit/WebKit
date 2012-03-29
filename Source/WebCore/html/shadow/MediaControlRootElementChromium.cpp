@@ -106,7 +106,11 @@ PassRefPtr<MediaControlRootElementChromium> MediaControlRootElementChromium::cre
     if (ec)
         return 0;
 
-    RefPtr<HTMLDivElement> panelVolumeControlContainer = HTMLDivElement::create(document);
+    RefPtr<MediaControlPanelMuteButtonElement> panelMuteButton = MediaControlPanelMuteButtonElement::create(document, controls.get());
+    controls->m_panelMuteButton = panelMuteButton.get();
+    panel->appendChild(panelMuteButton.release(), ec, true);
+    if (ec)
+        return 0;
 
     RefPtr<MediaControlVolumeSliderContainerElement> volumeSliderContainer = MediaControlVolumeSliderContainerElement::create(document);
 
@@ -117,17 +121,7 @@ PassRefPtr<MediaControlRootElementChromium> MediaControlRootElementChromium::cre
         return 0;
 
     controls->m_volumeSliderContainer = volumeSliderContainer.get();
-    panelVolumeControlContainer->appendChild(volumeSliderContainer.release(), ec, true);
-    if (ec)
-        return 0;
-
-    RefPtr<MediaControlPanelMuteButtonElement> panelMuteButton = MediaControlPanelMuteButtonElement::create(document, controls.get());
-    controls->m_panelMuteButton = panelMuteButton.get();
-    panelVolumeControlContainer->appendChild(panelMuteButton.release(), ec, true);
-    if (ec)
-        return 0;
-
-    panel->appendChild(panelVolumeControlContainer, ec, true);
+    panel->appendChild(volumeSliderContainer.release(), ec, true);
     if (ec)
         return 0;
 
