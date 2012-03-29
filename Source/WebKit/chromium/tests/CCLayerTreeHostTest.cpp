@@ -27,6 +27,7 @@
 #include "cc/CCLayerTreeHost.h"
 
 #include "CCAnimationTestCommon.h"
+#include "CCOcclusionTrackerTestCommon.h"
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "ContentLayerChromium.h"
 #include "FilterOperations.h"
@@ -1756,7 +1757,9 @@ public:
 
     virtual void paintContentsIfDirty(const CCOcclusionTracker* occlusion)
     {
-        m_occludedScreenSpace = occlusion ? occlusion->currentOcclusionInScreenSpace() : Region();
+        // Gain access to internals of the CCOcclusionTracker.
+        const TestCCOcclusionTracker* testOcclusion = static_cast<const TestCCOcclusionTracker*>(occlusion);
+        m_occludedScreenSpace = testOcclusion ? testOcclusion->occlusionInScreenSpace() : Region();
     }
 
     virtual bool drawsContent() const { return true; }

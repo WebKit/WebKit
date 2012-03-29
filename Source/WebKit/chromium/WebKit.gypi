@@ -79,6 +79,7 @@
             'tests/CCLayerTreeHostTest.cpp',
             'tests/CCLayerTreeTestCommon.h',
             'tests/CCOcclusionTrackerTest.cpp',
+            'tests/CCOcclusionTrackerTestCommon.h',
             'tests/CCQuadCullerTest.cpp',
             'tests/CCRenderSurfaceTest.cpp',
             'tests/CCSchedulerStateMachineTest.cpp',

@@ -73,10 +73,6 @@ public:
     // FIXME: Remove this when paint tracking is on for paint culling.
     void setUsePaintTracking(bool use) { m_usePaintTracking = use; }
 
-    // FIXME: Remove these in future, they are to make CLs for transitioning to this easier.
-    const Region& currentOcclusionInScreenSpace() const;
-    const Region& currentOcclusionInTargetSurface() const;
-
 protected:
     struct StackObject {
         StackObject() : surface(0) { }
