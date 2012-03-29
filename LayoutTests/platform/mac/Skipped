@@ -654,6 +654,10 @@ media/video-empty-source.html
 media/video-playing-and-pause.html
 media/controls-after-reload.html
 
+# Remove from the skipped list when https://bugs.webkit.org/show_bug.cgi?id=82660 is fixed.
+fast/workers/empty-worker-nocrash.html
+fast/workers/shared-worker-constructor.html
+
 # This should only be a layer change.
 # http://webkit.org/b/82129
 fast/box-shadow/shadow-buffer-partial.html
