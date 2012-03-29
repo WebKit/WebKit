@@ -169,7 +169,6 @@ LIST(APPEND WebCore_SOURCES
 )
 
 LIST(APPEND WebCoreTestSupport_SOURCES
-    testing/js/JSInternalsCustom.cpp
     testing/js/WebCoreTestSupport.cpp
 )
 

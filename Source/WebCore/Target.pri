@@ -237,7 +237,6 @@ v8 {
         bindings/v8/custom/V8ConsoleCustom.cpp \
         bindings/v8/custom/V8SQLTransactionSyncCustom.cpp \
         bindings/v8/V8WorkerContextErrorHandler.cpp \
-        testing/v8/V8InternalsCustom.cpp \
         testing/v8/WebCoreTestSupport.cpp
 } else {
     SOURCES += \
@@ -398,7 +397,6 @@ v8 {
         bridge/runtime_method.cpp \
         bridge/runtime_object.cpp \
         bridge/runtime_root.cpp \
-        testing/js/JSInternalsCustom.cpp \
         testing/js/WebCoreTestSupport.cpp
 }
 

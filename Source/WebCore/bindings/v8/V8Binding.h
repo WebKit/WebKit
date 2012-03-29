@@ -286,15 +286,26 @@ namespace WebCore {
         return v8ExternalString(string);
     }
 
-    template<typename Iterable>
-    v8::Handle<v8::Value> v8Array(const Iterable& iterator)
+    template<typename T>
+    v8::Handle<v8::Value> v8Array(const Vector<T>& iterator)
     {
         v8::Local<v8::Array> result = v8::Array::New(iterator.size());
         int index = 0;
-        typename Iterable::const_iterator end = iterator.end();
-        for (typename Iterable::const_iterator iter = iterator.begin(); iter != end; ++iter)
+        typename Vector<T>::const_iterator end = iterator.end();
+        for (typename Vector<T>::const_iterator iter = iterator.begin(); iter != end; ++iter)
             result->Set(v8::Integer::New(index++), toV8(WTF::getPtr(*iter)));
         return result;
+    }
+
+    template<>
+    inline v8::Handle<v8::Value> v8Array(const Vector<String>& iterator)
+    {
+        v8::Local<v8::Array> array = v8::Array::New(iterator.size());
+        Vector<String>::const_iterator end = iterator.end();
+        int index = 0;
+        for (Vector<String>::const_iterator iter = iterator.begin(); iter != end; ++iter)
+            array->Set(v8::Integer::New(index++), v8String(*iter));
+        return array;
     }
 
     template <class T>
@@ -309,8 +320,7 @@ namespace WebCore {
         size_t length = array->Length();
 
         for (size_t i = 0; i < length; ++i) {
-            String indexedValue = v8StringToWebCoreString(array->Get(i));
-            result.append(indexedValue);
+            result.append(v8ValueToWebCoreString(array->Get(i)));
         }
         return result;
     }

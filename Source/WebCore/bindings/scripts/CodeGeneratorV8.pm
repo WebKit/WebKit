@@ -3549,8 +3549,9 @@ sub JSValueToNative
         return "V8DOMWrapper::getXPathNSResolver($value)";
     }
 
-    if ($codeGenerator->GetArrayType($type)) {
-        return "toNativeArray($value)";
+    my $arrayType = $codeGenerator->GetArrayType($type);
+    if ($arrayType) {
+        return "toNativeArray<$arrayType>($value)";
     }
 
     AddIncludesForType($type);
@@ -3768,8 +3769,10 @@ sub NativeToJSValue
 
     my $arrayType = $codeGenerator->GetArrayType($type);
     if ($arrayType) {
-        AddToImplIncludes("V8$arrayType.h");
-        AddToImplIncludes("$arrayType.h");
+        if ($arrayType ne "String") {
+            AddToImplIncludes("V8$arrayType.h");
+            AddToImplIncludes("$arrayType.h");
+        }
         return "v8Array($value)";
     }
 

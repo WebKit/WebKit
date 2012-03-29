@@ -231,7 +231,7 @@ static void sequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Val
 {
     INC_STATS("DOM.TestObj.sequenceAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    Vector<ScriptProfile> v = toNativeArray(value);
+    Vector<ScriptProfile> v = toNativeArray<ScriptProfile>(value);
     imp->setSequenceAttr(v);
     return;
 }

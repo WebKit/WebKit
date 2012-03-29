@@ -984,7 +984,7 @@ void setJSTestObjSequenceAttr(ExecState* exec, JSObject* thisObject, JSValue val
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setSequenceAttr(toNativeArray(exec, value));
+    impl->setSequenceAttr(toNativeArray<ScriptProfile>(exec, value));
 }
 
 

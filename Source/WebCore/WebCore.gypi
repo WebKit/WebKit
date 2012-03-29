@@ -6148,10 +6148,8 @@
           'testing/InternalSettings.idl',
         ],
         'webcore_test_support_files': [
-            'testing/v8/V8InternalsCustom.cpp',
             'testing/v8/WebCoreTestSupport.cpp',
             'testing/v8/WebCoreTestSupport.h',
-            'testing/js/JSInternalsCustom.cpp',
             'testing/js/WebCoreTestSupport.cpp',
             'testing/js/WebCoreTestSupport.h',
             'testing/Internals.cpp',

@@ -1,3 +1,14 @@
+2012-03-29  Vineet Chaudhary  <rgf748@motorola.com>
+
+        Remove custom bindings form Internals.idl of attribute type Array.
+        https://bugs.webkit.org/show_bug.cgi?id=82319
+
+        Reviewed by Kentaro Hara.
+
+        Remove JSInternalsCustom.cpp and V8InternalsCustom.cpp as no longer required.
+
+        * GNUmakefile.am:
+
 2012-03-28  Mark Rowe  <mrowe@apple.com>
 
         Fix --no-saved-state.

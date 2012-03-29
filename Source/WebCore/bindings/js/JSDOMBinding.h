@@ -279,16 +279,28 @@ enum ParameterDefaultPolicy {
         return toJS(exec, globalObject, ptr.get());
     }
 
-    template <typename Iterable>
-    JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Iterable& iterator)
+    template <typename T>
+    JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T>& iterator)
     {
         JSC::MarkedArgumentBuffer list;
-        typename Iterable::const_iterator end = iterator.end();
+        typename Vector<T>::const_iterator end = iterator.end();
 
-        for (typename Iterable::const_iterator iter = iterator.begin(); iter != end; ++iter)
+        for (typename Vector<T>::const_iterator iter = iterator.begin(); iter != end; ++iter)
             list.append(toJS(exec, globalObject, WTF::getPtr(*iter)));
 
         return JSC::constructArray(exec, globalObject, list);
+    }
+
+    template<>
+    inline JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<String>& iterator)
+    {
+        JSC::MarkedArgumentBuffer array;
+        Vector<String>::const_iterator end = iterator.end();
+
+        for (Vector<String>::const_iterator it = iterator.begin(); it != end; ++it)
+            array.append(jsString(exec, stringToUString(*it)));
+
+        return JSC::constructArray(exec, globalObject, array);
     }
 
     template <class T>

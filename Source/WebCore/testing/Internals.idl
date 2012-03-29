@@ -107,7 +107,7 @@ module window {
         boolean shouldDisplayTrackKind(in Document document, in DOMString trackKind) raises (DOMException);
 #endif
 
-        attribute [Custom] Array userPreferredLanguages;
+        attribute sequence<String> userPreferredLanguages;
 
         unsigned long wheelEventHandlerCount(in Document document) raises (DOMException);
         unsigned long touchEventHandlerCount(in Document document) raises (DOMException);
