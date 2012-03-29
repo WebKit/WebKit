@@ -50,6 +50,7 @@ namespace WebCore {
 static void notifyChildInserted(Node*);
 static void dispatchChildInsertionEvents(Node*);
 static void dispatchChildRemovalEvents(Node*);
+static void updateTreeAfterInsertion(ContainerNode*, Node*, bool shouldLazyAttach);
 
 typedef pair<RefPtr<Node>, unsigned> CallbackParameters;
 typedef pair<NodeCallback, CallbackParameters> CallbackInfo;
@@ -155,7 +156,6 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
     ChildListMutationScope mutation(this);
 #endif
 
-    RefPtr<Node> prev = next->previousSibling();
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         Node* child = it->get();
 
@@ -176,21 +176,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 
         insertBeforeCommon(next.get(), child);
 
-        // Send notification about the children change.
-        childrenChanged(false, prev.get(), next.get(), 1);
-        notifyChildInserted(child);
-
-        // Add child to the rendering tree.
-        if (attached() && !child->attached() && child->parentNode() == this) {
-            if (shouldLazyAttach)
-                child->lazyAttach();
-            else
-                child->attach();
-        }
-
-        // Now that the child is attached to the render tree, dispatch
-        // the relevant mutation events.
-        dispatchChildInsertionEvents(child);
+        updateTreeAfterInsertion(this, child, shouldLazyAttach);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -276,7 +262,6 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     ChildListMutationScope mutation(this);
 #endif
 
-    RefPtr<Node> prev = oldChild->previousSibling();
     RefPtr<Node> next = oldChild->nextSibling();
 
     // Remove the node we're replacing
@@ -320,21 +305,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
             appendChildToContainer(child, this);
         allowEventDispatch();
 
-        childrenChanged(false, prev.get(), next.get(), 1);
-        notifyChildInserted(child);
-
-        // Add child to the rendering tree
-        if (attached() && !child->attached() && child->parentNode() == this) {
-            if (shouldLazyAttach)
-                child->lazyAttach();
-            else
-                child->attach();
-        }
-
-        // Now that the child is attached to the render tree, dispatch
-        // the relevant mutation events.
-        dispatchChildInsertionEvents(child);
-        prev = child;
+        updateTreeAfterInsertion(this, child, shouldLazyAttach);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -592,7 +563,6 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
 #endif
 
     // Now actually add the child(ren)
-    RefPtr<Node> prev = lastChild();
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         Node* child = it->get();
 
@@ -613,22 +583,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
         appendChildToContainer(child, this);
         allowEventDispatch();
 
-        // Send notification about the children change.
-        childrenChanged(false, prev.get(), 0, 1);
-        notifyChildInserted(child);
-
-        // Add child to the rendering tree
-        if (attached() && !child->attached() && child->parentNode() == this) {
-            if (shouldLazyAttach)
-                child->lazyAttach();
-            else
-                child->attach();
-        }
-
-        // Now that the child is attached to the render tree, dispatch
-        // the relevant mutation events.
-        dispatchChildInsertionEvents(child);
-        prev = child;
+        updateTreeAfterInsertion(this, child, shouldLazyAttach);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -1130,6 +1085,27 @@ static void dispatchChildRemovalEvents(Node* child)
         for (; c; c = c->traverseNextNode(child))
             c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedFromDocumentEvent, false));
     }
+}
+
+static void updateTreeAfterInsertion(ContainerNode* parent, Node* child, bool shouldLazyAttach)
+{
+    ASSERT(parent->refCount());
+    ASSERT(child->refCount());
+
+    parent->childrenChanged(false, child->previousSibling(), child->nextSibling(), 1);
+
+    notifyChildInserted(child);
+
+    // FIXME: Attachment should be the first operation in this function, but some code
+    // (for example, HTMLFormControlElement's autofocus support) requires this ordering.
+    if (parent->attached() && !child->attached() && child->parentNode() == parent) {
+        if (shouldLazyAttach)
+            child->lazyAttach();
+        else
+            child->attach();
+    }
+
+    dispatchChildInsertionEvents(child);
 }
 
 } // namespace WebCore
