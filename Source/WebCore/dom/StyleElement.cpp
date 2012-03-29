@@ -165,7 +165,7 @@ void StyleElement::createSheet(Element* e, int startLineNumber, const String& te
             document->addPendingSheet();
             m_loading = true;
             m_sheet = CSSStyleSheet::create(e, String(), KURL(), document->inputEncoding());
-            m_sheet->parseStringAtLine(text, !document->inQuirksMode(), startLineNumber);
+            m_sheet->parseStringAtLine(text, strictToCSSParserMode(!document->inQuirksMode()), startLineNumber);
             m_sheet->setMediaQueries(mediaQueries.release());
             m_sheet->setTitle(e->title());
             m_loading = false;

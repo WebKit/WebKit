@@ -21,6 +21,7 @@
 #ifndef StylePropertySet_h
 #define StylePropertySet_h
 
+#include "CSSParserMode.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
 #include <wtf/ListHashSet.h>
@@ -40,13 +41,13 @@ class StylePropertySet : public RefCounted<StylePropertySet> {
 public:
     ~StylePropertySet();
 
-    static PassRefPtr<StylePropertySet> create()
+    static PassRefPtr<StylePropertySet> create(CSSParserMode cssParserMode = CSSQuirksMode)
     {
-        return adoptRef(new StylePropertySet);
+        return adoptRef(new StylePropertySet(cssParserMode));
     }
-    static PassRefPtr<StylePropertySet> create(const CSSProperty* properties, int numProperties, bool useStrictParsing)
+    static PassRefPtr<StylePropertySet> create(const CSSProperty* properties, int numProperties, CSSParserMode cssParserMode)
     {
-        return adoptRef(new StylePropertySet(properties, numProperties, useStrictParsing));
+        return adoptRef(new StylePropertySet(properties, numProperties, cssParserMode));
     }
     static PassRefPtr<StylePropertySet> create(const Vector<CSSProperty>& properties)
     {
@@ -86,8 +87,8 @@ public:
 
     void merge(const StylePropertySet*, bool argOverridesOnConflict = true);
 
-    void setStrictParsing(bool b) { m_strictParsing = b; }
-    bool useStrictParsing() const { return m_strictParsing; }
+    void setCSSParserMode(CSSParserMode cssParserMode) { m_cssParserMode = cssParserMode; }
+    CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&, CSSStyleSheet* contextStyleSheet);
 
@@ -112,9 +113,9 @@ public:
     bool hasCSSOMWrapper() const { return m_hasCSSOMWrapper; }
 
 private:
-    StylePropertySet();
+    StylePropertySet(CSSParserMode);
     StylePropertySet(const Vector<CSSProperty>&);
-    StylePropertySet(const CSSProperty*, int numProperties, bool useStrictParsing);
+    StylePropertySet(const CSSProperty*, int numProperties, CSSParserMode);
 
     void setNeedsStyleRecalc();
 
@@ -134,8 +135,8 @@ private:
 
     Vector<CSSProperty, 4> m_properties;
 
-    bool m_strictParsing : 1;
-    mutable bool m_hasCSSOMWrapper : 1;
+    unsigned m_cssParserMode : 2;
+    mutable unsigned m_hasCSSOMWrapper : 1;
     
     friend class PropertySetCSSStyleDeclaration;
 };

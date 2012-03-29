@@ -65,9 +65,6 @@ class WebKitCSSKeyframesRule;
 
 class CSSParser {
 public:
-
-    // FIXME: Remove the boolean constructor once moved to CSSParserMode completely.
-    CSSParser(bool strictParsing);
     CSSParser(CSSParserMode = CSSStrictMode);
 
     ~CSSParser();
@@ -75,7 +72,7 @@ public:
     void parseSheet(CSSStyleSheet*, const String&, int startLineNumber = 0, StyleRuleRangeMap* ruleRangeMap = 0);
     PassRefPtr<CSSRule> parseRule(CSSStyleSheet*, const String&);
     PassRefPtr<StyleKeyframe> parseKeyframeRule(CSSStyleSheet*, const String&);
-    static bool parseValue(StylePropertySet*, int propId, const String&, bool important, bool strict, CSSStyleSheet* contextStyleSheet);
+    static bool parseValue(StylePropertySet*, int propId, const String&, bool important, CSSParserMode, CSSStyleSheet* contextStyleSheet);
     static bool parseColor(RGBA32& color, const String&, bool strict = false);
     static bool parseSystemColor(RGBA32& color, const String&, Document*);
     static PassRefPtr<CSSValueList> parseFontFaceValue(const AtomicString&, CSSStyleSheet* contextStyleSheet);

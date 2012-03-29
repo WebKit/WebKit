@@ -26,10 +26,10 @@
 #include "HTMLLinkElement.h"
 
 #include "Attribute.h"
+#include "CSSStyleSelector.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
-#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "EventSender.h"
 #include "Frame.h"
@@ -305,7 +305,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
 #endif
 
     String sheetText = sheet->sheetText(enforceMIMEType, &validMIMEType);
-    m_sheet->parseString(sheetText, strictParsing);
+    m_sheet->parseString(sheetText, strictToCSSParserMode(strictParsing));
 
     // If we're loading a stylesheet cross-origin, and the MIME type is not
     // standard, require the CSS to at least start with a syntactically

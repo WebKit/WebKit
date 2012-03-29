@@ -1121,7 +1121,7 @@ void StyledElement::copyNonAttributeProperties(const Element* sourceElement)
 
     StylePropertySet* inlineStyle = ensureAttributeData()->ensureMutableInlineStyle(this);
     inlineStyle->copyPropertiesFrom(*source->inlineStyle());
-    inlineStyle->setStrictParsing(source->inlineStyle()->useStrictParsing());
+    inlineStyle->setCSSParserMode(source->inlineStyle()->cssParserMode());
 
     setIsStyleAttributeValid(source->isStyleAttributeValid());
 

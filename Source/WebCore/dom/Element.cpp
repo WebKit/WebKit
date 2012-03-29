@@ -1749,7 +1749,7 @@ bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
     }
 
     bool strictParsing = !document()->inQuirksMode();
-    CSSParser p(strictParsing);
+    CSSParser p(strictToCSSParserMode(strictParsing));
 
     CSSSelectorList selectorList;
     p.parseSelector(selector, document(), selectorList);

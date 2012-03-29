@@ -72,7 +72,7 @@ CachedResourceLoader* XSLStyleSheet::cachedResourceLoader()
     return document->cachedResourceLoader();
 }
 
-bool XSLStyleSheet::parseString(const String& string, bool)
+bool XSLStyleSheet::parseString(const String& string, CSSParserMode)
 {
     // FIXME: Fix QXmlQuery so that it allows compiling the stylesheet before setting the document
     // to be transformed. This way we could not only check if the stylesheet is correct before using it

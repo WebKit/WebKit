@@ -1068,8 +1068,8 @@ PassRefPtr<WebKitNamedFlow> Document::webkitGetFlowByName(const String& flowName
         return 0;
 
     // Make a slower check for invalid flow name
-    CSSParser p(true);
-    if (!p.parseFlowThread(flowName, this))
+    CSSParser parser(CSSStrictMode);
+    if (!parser.parseFlowThread(flowName, this))
         return 0;
 
     if (RenderView* view = renderer()->view())
@@ -2686,7 +2686,7 @@ CSSStyleSheet* Document::pageUserSheet()
     // Parse the sheet and cache it.
     m_pageUserSheet = CSSStyleSheet::createInline(this, settings()->userStyleSheetLocation());
     m_pageUserSheet->setIsUserStyleSheet(true);
-    m_pageUserSheet->parseString(userSheetText, !inQuirksMode());
+    m_pageUserSheet->parseString(userSheetText, strictToCSSParserMode(!inQuirksMode()));
     return m_pageUserSheet.get();
 }
 
@@ -2732,7 +2732,7 @@ const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
                 continue;
             RefPtr<CSSStyleSheet> parsedSheet = CSSStyleSheet::createInline(const_cast<Document*>(this), sheet->url());
             parsedSheet->setIsUserStyleSheet(sheet->level() == UserStyleUserLevel);
-            parsedSheet->parseString(sheet->source(), !inQuirksMode());
+            parsedSheet->parseString(sheet->source(), strictToCSSParserMode(!inQuirksMode()));
             if (!m_pageGroupUserSheets)
                 m_pageGroupUserSheets = adoptPtr(new Vector<RefPtr<CSSStyleSheet> >);
             m_pageGroupUserSheets->append(parsedSheet.release());

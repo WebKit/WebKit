@@ -107,7 +107,7 @@ static String parseMediaDescriptor(const String& string)
 
 bool MediaQuerySet::parse(const String& mediaString)
 {
-    CSSParser parser(true);
+    CSSParser parser(CSSStrictMode);
     
     Vector<OwnPtr<MediaQuery> > result;
     Vector<String> list;
@@ -142,7 +142,7 @@ bool MediaQuerySet::parse(const String& mediaString)
 
 bool MediaQuerySet::add(const String& queryString)
 {
-    CSSParser parser(true);
+    CSSParser parser(CSSStrictMode);
 
     OwnPtr<MediaQuery> parsedQuery = parser.parseMediaQuery(queryString);
     if (!parsedQuery && m_fallbackToDescriptor) {
@@ -159,7 +159,7 @@ bool MediaQuerySet::add(const String& queryString)
 
 bool MediaQuerySet::remove(const String& queryStringToRemove)
 {
-    CSSParser parser(true);
+    CSSParser parser(CSSStrictMode);
 
     OwnPtr<MediaQuery> parsedQuery = parser.parseMediaQuery(queryStringToRemove);
     if (!parsedQuery && m_fallbackToDescriptor) {

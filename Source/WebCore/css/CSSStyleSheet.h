@@ -21,6 +21,7 @@
 #ifndef CSSStyleSheet_h
 #define CSSStyleSheet_h
 
+#include "CSSParserMode.h"
 #include "StyleSheet.h"
 
 namespace WebCore {
@@ -85,9 +86,9 @@ public:
 
     void styleSheetChanged();
 
-    virtual bool parseString(const String&, bool strict = true);
+    virtual bool parseString(const String&, CSSParserMode = CSSStrictMode);
 
-    bool parseStringAtLine(const String&, bool strict, int startLineNumber);
+    bool parseStringAtLine(const String&, CSSParserMode, int startLineNumber);
 
     virtual bool isLoading();
 
@@ -104,8 +105,8 @@ public:
     KURL completeURL(const String& url) const;
     void addSubresourceStyleURLs(ListHashSet<KURL>&);
 
-    void setStrictParsing(bool b) { m_strictParsing = b; }
-    bool useStrictParsing() const { return m_strictParsing; }
+    void setCSSParserMode(CSSParserMode cssParserMode) { m_cssParserMode = cssParserMode; }
+    CSSParserMode cssParserMode() const { return m_cssParserMode; }
 
     void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }
     bool isUserStyleSheet() const { return m_isUserStyleSheet; }
@@ -151,7 +152,7 @@ private:
     RefPtr<MediaQuerySet> m_mediaQueries;
 
     bool m_loadCompleted : 1;
-    bool m_strictParsing : 1;
+    CSSParserMode m_cssParserMode;
     bool m_isUserStyleSheet : 1;
     bool m_hasSyntacticallyValidCSSHeader : 1;
     bool m_didLoadErrorOccur : 1;

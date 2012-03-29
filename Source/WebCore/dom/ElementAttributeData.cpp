@@ -57,7 +57,7 @@ StylePropertySet* ElementAttributeData::ensureInlineStyle(StyledElement* element
     if (!m_inlineStyleDecl) {
         ASSERT(element->isStyledElement());
         m_inlineStyleDecl = StylePropertySet::create();
-        m_inlineStyleDecl->setStrictParsing(element->isHTMLElement() && !element->document()->inQuirksMode());
+        m_inlineStyleDecl->setCSSParserMode(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
     }
     return m_inlineStyleDecl.get();
 }
@@ -66,7 +66,7 @@ StylePropertySet* ElementAttributeData::ensureMutableInlineStyle(StyledElement* 
 {
     if (m_inlineStyleDecl && !m_inlineStyleDecl->hasCSSOMWrapper()) {
         m_inlineStyleDecl = m_inlineStyleDecl->copy();
-        m_inlineStyleDecl->setStrictParsing(element->isHTMLElement() && !element->document()->inQuirksMode());
+        m_inlineStyleDecl->setCSSParserMode(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
         return m_inlineStyleDecl.get();
     }
     return ensureInlineStyle(element);
@@ -80,7 +80,7 @@ void ElementAttributeData::updateInlineStyleAvoidingMutation(StyledElement* elem
         m_inlineStyleDecl.clear();
     if (!m_inlineStyleDecl) {
         m_inlineStyleDecl = StylePropertySet::create();
-        m_inlineStyleDecl->setStrictParsing(element->isHTMLElement() && !element->document()->inQuirksMode());
+        m_inlineStyleDecl->setCSSParserMode(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
     }
     m_inlineStyleDecl->parseDeclaration(text, element->document()->elementSheet());
 }

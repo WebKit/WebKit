@@ -1675,7 +1675,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
         return 0;
     }
     bool strictParsing = !document()->inQuirksMode();
-    CSSParser p(strictParsing);
+    CSSParser p(strictToCSSParserMode(strictParsing));
 
     CSSSelectorList querySelectorList;
     p.parseSelector(selectors, document(), querySelectorList);
@@ -1702,7 +1702,7 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
         return 0;
     }
     bool strictParsing = !document()->inQuirksMode();
-    CSSParser p(strictParsing);
+    CSSParser p(strictToCSSParserMode(strictParsing));
 
     CSSSelectorList querySelectorList;
     p.parseSelector(selectors, document(), querySelectorList);

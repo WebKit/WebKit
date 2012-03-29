@@ -44,22 +44,22 @@ static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
     return propertySetCSSOMWrapperMapInstance;
 }
 
-StylePropertySet::StylePropertySet()
-    : m_strictParsing(false)
+StylePropertySet::StylePropertySet(CSSParserMode cssParserMode)
+    : m_cssParserMode(cssParserMode)
     , m_hasCSSOMWrapper(false)
 {
 }
 
 StylePropertySet::StylePropertySet(const Vector<CSSProperty>& properties)
     : m_properties(properties)
-    , m_strictParsing(true)
+    , m_cssParserMode(CSSStrictMode)
     , m_hasCSSOMWrapper(false)
 {
     m_properties.shrinkToFit();
 }
 
-StylePropertySet::StylePropertySet(const CSSProperty* properties, int numProperties, bool useStrictParsing)
-    : m_strictParsing(useStrictParsing)
+StylePropertySet::StylePropertySet(const CSSProperty* properties, int numProperties, CSSParserMode cssParserMode)
+    : m_cssParserMode(cssParserMode)
     , m_hasCSSOMWrapper(false)
 {
     // FIXME: This logic belongs in CSSParser.
@@ -493,7 +493,7 @@ bool StylePropertySet::setProperty(int propertyID, const String& value, bool imp
 
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    return CSSParser::parseValue(this, propertyID, value, important, useStrictParsing(), contextStyleSheet);
+    return CSSParser::parseValue(this, propertyID, value, important, cssParserMode(), contextStyleSheet);
 }
 
 void StylePropertySet::setProperty(int propertyID, PassRefPtr<CSSValue> prpValue, bool important)
@@ -538,7 +538,7 @@ bool StylePropertySet::setProperty(int propertyID, int identifier, bool importan
 void StylePropertySet::parseDeclaration(const String& styleDeclaration, CSSStyleSheet* contextStyleSheet)
 {
     m_properties.clear();
-    CSSParser parser(useStrictParsing());
+    CSSParser parser(cssParserMode());
     parser.parseDeclaration(this, styleDeclaration, 0, contextStyleSheet);
 }
 

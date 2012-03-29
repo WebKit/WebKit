@@ -68,8 +68,8 @@ void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, co
     bool crossOriginCSS = false;
     bool validMIMEType = false;
     CSSStyleSheet* parent = parentStyleSheet();
-    bool strict = !parent || parent->useStrictParsing();
-    bool enforceMIMEType = strict;
+    CSSParserMode cssParserMode = parent ? parent->cssParserMode() : CSSStrictMode;
+    bool enforceMIMEType = isStrictParserMode(cssParserMode);
     Document* document = parent ? parent->findDocument() : 0;
     bool needsSiteSpecificQuirks = document && document->settings() && document->settings()->needsSiteSpecificQuirks();
 
@@ -82,7 +82,7 @@ void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, co
 #endif
 
     String sheetText = sheet->sheetText(enforceMIMEType, &validMIMEType);
-    m_styleSheet->parseString(sheetText, strict);
+    m_styleSheet->parseString(sheetText, cssParserMode);
 
     if (!document || !document->securityOrigin()->canRequest(baseURL))
         crossOriginCSS = true;
@@ -90,7 +90,7 @@ void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, co
     if (crossOriginCSS && !validMIMEType && !m_styleSheet->hasSyntacticallyValidCSSHeader())
         m_styleSheet = CSSStyleSheet::create(this, href, baseURL, charset);
 
-    if (strict && needsSiteSpecificQuirks) {
+    if (isStrictParserMode(cssParserMode) && needsSiteSpecificQuirks) {
         // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
         DEFINE_STATIC_LOCAL(const String, slashKHTMLFixesDotCss, ("/KHTMLFixes.css"));
         DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, ("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));

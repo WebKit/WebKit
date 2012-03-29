@@ -66,7 +66,7 @@ unsigned CSSMediaRule::insertRule(const String& rule, unsigned index, ExceptionC
         return 0;
     }
 
-    CSSParser p(useStrictParsing());
+    CSSParser p(cssParserMode());
     RefPtr<CSSRule> newRule = p.parseRule(parentStyleSheet(), rule);
     if (!newRule) {
         // SYNTAX_ERR: Raised if the specified rule has a syntax error and is unparsable.

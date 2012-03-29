@@ -53,7 +53,7 @@ inline SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Docu
 {
     ASSERT(hasTagName(font_faceTag));
     RefPtr<StylePropertySet> styleDeclaration = StylePropertySet::create();
-    styleDeclaration->setStrictParsing(true);
+    styleDeclaration->setCSSParserMode(CSSStrictMode);
     m_fontFaceRule->setDeclaration(styleDeclaration.release());
 }
 

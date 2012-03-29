@@ -37,4 +37,15 @@ enum CSSParserMode {
     SVGAttributeMode
 };
 
+inline CSSParserMode strictToCSSParserMode(bool inStrictMode)
+{
+    return inStrictMode ? CSSStrictMode : CSSQuirksMode;
+}
+
+inline bool isStrictParserMode(CSSParserMode cssParserMode)
+{
+    // FIXME: SVG presnetation attribute values should be parsed in strict mode as well.
+    return cssParserMode == CSSStrictMode;
+}
+
 #endif // CSSParserMode_h

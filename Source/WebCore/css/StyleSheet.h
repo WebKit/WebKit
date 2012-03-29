@@ -21,6 +21,7 @@
 #ifndef StyleSheet_h
 #define StyleSheet_h
 
+#include "CSSParserMode.h"
 #include "KURLHash.h"
 #include "PlatformString.h"
 #include <wtf/ListHashSet.h>
@@ -62,7 +63,7 @@ public:
     virtual String type() const = 0;
     virtual bool isLoading() = 0;
 
-    virtual bool parseString(const String&, bool strict = true) = 0;
+    virtual bool parseString(const String&, CSSParserMode = CSSStrictMode) = 0;
 
     virtual bool isCSSStyleSheet() const { return false; }
     virtual bool isXSLStyleSheet() const { return false; }

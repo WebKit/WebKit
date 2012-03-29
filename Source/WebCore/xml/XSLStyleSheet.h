@@ -69,7 +69,7 @@ public:
 
     virtual String type() const { return "text/xml"; }
 
-    virtual bool parseString(const String &string, bool strict = true);
+    virtual bool parseString(const String&, CSSParserMode cssParseMode = CSSStrictMode);
     
     virtual bool isLoading();
     void checkLoaded();

@@ -1,3 +1,13 @@
+2012-03-28  Dirk Schulze  <krit@webkit.org>
+
+        Introduce CSSParserMode in all classes
+        https://bugs.webkit.org/show_bug.cgi?id=82335
+
+        Use CSSParserMode for setting the parsing mode on parseValue.
+
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::insertUserStyleSheet):
+
 2012-03-29  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Adding better comments for the WebRTC methods in WebKitPlatformSupport.h

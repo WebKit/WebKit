@@ -69,13 +69,13 @@ public:
     bool isRegionRule() const { return type() == WEBKIT_REGION_RULE; }
     bool isImportRule() const { return type() == IMPORT_RULE; }
 
-    bool useStrictParsing() const
+    CSSParserMode cssParserMode() const
     {
         if (parentRule())
-            return parentRule()->useStrictParsing();
+            return parentRule()->cssParserMode();
         if (parentStyleSheet())
-            return parentStyleSheet()->useStrictParsing();
-        return true;
+            return parentStyleSheet()->cssParserMode();
+        return CSSStrictMode;
     }
 
     void setParentStyleSheet(CSSStyleSheet* styleSheet)

@@ -181,38 +181,6 @@ inline void CSSParser::ensureCSSValuePool()
         m_cssValuePool = CSSValuePool::create();
 }
 
-CSSParser::CSSParser(bool strictParsing)
-    : m_cssParserMode(strictParsing ? CSSStrictMode : CSSQuirksMode)
-    , m_important(false)
-    , m_id(0)
-    , m_styleSheet(0)
-    , m_inParseShorthand(0)
-    , m_currentShorthand(0)
-    , m_implicitShorthand(false)
-    , m_hasFontFaceOnlyValues(false)
-    , m_hadSyntacticallyValidCSSRule(false)
-    , m_defaultNamespace(starAtom)
-    , m_inStyleRuleOrDeclaration(false)
-    , m_selectorListRange(0, 0)
-    , m_ruleBodyRange(0, 0)
-    , m_propertyRange(UINT_MAX, UINT_MAX)
-    , m_ruleRangeMap(0)
-    , m_currentRuleData(0)
-    , m_parsingMode(NormalMode)
-    , m_currentCharacter(0)
-    , m_token(0)
-    , m_lineNumber(0)
-    , m_lastSelectorLineNumber(0)
-    , m_allowImportRules(true)
-    , m_allowNamespaceDeclarations(true)
-{
-#if YYDEBUG > 0
-        cssyydebug = 1;
-#endif
-        CSSPropertySourceData::init();
-}
-
-
 CSSParser::CSSParser(CSSParserMode cssParserMode)
     : m_cssParserMode(cssParserMode)
     , m_important(false)
@@ -354,8 +322,9 @@ static inline bool isColorPropertyID(int propertyId)
     }
 }
 
-static bool parseColorValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict, CSSStyleSheet* contextStyleSheet)
+static bool parseColorValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, CSSParserMode cssParserMode, CSSStyleSheet* contextStyleSheet)
 {
+    bool strict = isStrictParserMode(cssParserMode);
     if (!string.length())
         return false;
     if (!isColorPropertyID(propertyId))
@@ -440,9 +409,10 @@ static inline bool isSimpleLengthPropertyID(int propertyId, bool& acceptsNegativ
     }
 }
 
-static bool parseSimpleLengthValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict, CSSStyleSheet* contextStyleSheet)
+static bool parseSimpleLengthValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, CSSParserMode cssParserMode, CSSStyleSheet* contextStyleSheet)
 {
     bool acceptsNegativeNumbers;
+    bool strict = isStrictParserMode(cssParserMode);
     unsigned length = string.length();
 
     if (!length)
@@ -966,20 +936,20 @@ static bool parseKeywordValue(StylePropertySet* declaration, int propertyId, con
 PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& string, CSSStyleSheet* contextStyleSheet)
 {
     RefPtr<StylePropertySet> dummyStyle = StylePropertySet::create();
-    if (!parseValue(dummyStyle.get(), CSSPropertyFontFamily, string, false, false, contextStyleSheet))
+    if (!parseValue(dummyStyle.get(), CSSPropertyFontFamily, string, false, CSSQuirksMode, contextStyleSheet))
         return 0;
     return static_pointer_cast<CSSValueList>(dummyStyle->getPropertyCSSValue(CSSPropertyFontFamily));
 }
 
-bool CSSParser::parseValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict, CSSStyleSheet* contextStyleSheet)
+bool CSSParser::parseValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, CSSParserMode cssParserMode, CSSStyleSheet* contextStyleSheet)
 {
-    if (parseSimpleLengthValue(declaration, propertyId, string, important, strict, contextStyleSheet))
+    if (parseSimpleLengthValue(declaration, propertyId, string, important, cssParserMode, contextStyleSheet))
         return true;
-    if (parseColorValue(declaration, propertyId, string, important, strict, contextStyleSheet))
+    if (parseColorValue(declaration, propertyId, string, important, cssParserMode, contextStyleSheet))
         return true;
     if (parseKeywordValue(declaration, propertyId, string, important, contextStyleSheet))
         return true;
-    CSSParser parser(strict);
+    CSSParser parser(cssParserMode);
     return parser.parseValue(declaration, propertyId, string, important, contextStyleSheet);
 }
 
@@ -1016,7 +986,7 @@ bool CSSParser::parseColor(RGBA32& color, const String& string, bool strict)
     if (fastParseColor(color, string, strict))
         return true;
 
-    CSSParser parser(true);
+    CSSParser parser(CSSStrictMode);
 
     // In case the fast-path parser didn't understand the color, try the full parser.
     if (!parser.parseColor(string))
@@ -9092,7 +9062,7 @@ CSSRule* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selector
         rule->styleRule()->adoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
-        rule->styleRule()->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), inStrictMode()));
+        rule->styleRule()->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
         result = rule.get();
         m_parsedRules.append(rule.release());
         if (m_ruleRangeMap) {
@@ -9130,7 +9100,7 @@ CSSRule* CSSParser::createFontFaceRule()
         }
     }
     RefPtr<CSSFontFaceRule> rule = CSSFontFaceRule::create(m_styleSheet);
-    rule->setDeclaration(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), inStrictMode()));
+    rule->setDeclaration(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
     clearProperties();
     CSSFontFaceRule* result = rule.get();
     m_parsedRules.append(rule.release());
@@ -9201,7 +9171,7 @@ CSSRule* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelector)
         Vector<OwnPtr<CSSParserSelector> > selectorVector;
         selectorVector.append(pageSelector);
         rule->adoptSelectorVector(selectorVector);
-        rule->setDeclaration(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), inStrictMode()));
+        rule->setDeclaration(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
         pageRule = rule.get();
         m_parsedRules.append(rule.release());
     }
@@ -9279,7 +9249,7 @@ StyleKeyframe* CSSParser::createKeyframe(CSSParserValueList* keys)
 
     RefPtr<StyleKeyframe> keyframe = StyleKeyframe::create();
     keyframe->setKeyText(keyString);
-    keyframe->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), inStrictMode()));
+    keyframe->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
 
     clearProperties();
 

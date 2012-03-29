@@ -71,7 +71,7 @@ void WebKitCSSKeyframesRule::parserAppendKeyframe(PassRefPtr<StyleKeyframe> keyf
 
 void WebKitCSSKeyframesRule::insertRule(const String& ruleText)
 {
-    CSSParser p(useStrictParsing());
+    CSSParser p(cssParserMode());
     RefPtr<StyleKeyframe> keyframe = p.parseKeyframeRule(parentStyleSheet(), ruleText);
     if (!keyframe)
         return;

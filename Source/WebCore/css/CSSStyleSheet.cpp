@@ -77,7 +77,7 @@ CSSStyleSheet::CSSStyleSheet(Node* parentNode, const String& href, const KURL& b
     : StyleSheet(parentNode, href, baseURL)
     , m_charset(charset)
     , m_loadCompleted(false)
-    , m_strictParsing(false)
+    , m_cssParserMode(CSSQuirksMode)
     , m_isUserStyleSheet(false)
     , m_hasSyntacticallyValidCSSHeader(true)
     , m_didLoadErrorOccur(false)
@@ -89,7 +89,7 @@ CSSStyleSheet::CSSStyleSheet(CSSImportRule* ownerRule, const String& href, const
     : StyleSheet(ownerRule, href, baseURL)
     , m_charset(charset)
     , m_loadCompleted(false)
-    , m_strictParsing(!ownerRule || ownerRule->useStrictParsing())
+    , m_cssParserMode(ownerRule ? ownerRule->cssParserMode() : CSSStrictMode)
     , m_hasSyntacticallyValidCSSHeader(true)
     , m_didLoadErrorOccur(false)
 {
@@ -204,7 +204,7 @@ unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, Exc
         ec = INDEX_SIZE_ERR;
         return 0;
     }
-    CSSParser p(useStrictParsing());
+    CSSParser p(cssParserMode());
     RefPtr<CSSRule> rule = p.parseRule(this, ruleString);
 
     if (!rule) {
@@ -331,15 +331,15 @@ const AtomicString& CSSStyleSheet::determineNamespace(const AtomicString& prefix
     return nullAtom; // Assume we won't match any namespaces.
 }
 
-bool CSSStyleSheet::parseString(const String &string, bool strict)
+bool CSSStyleSheet::parseString(const String &string, CSSParserMode cssParserMode)
 {
-    return parseStringAtLine(string, strict, 0);
+    return parseStringAtLine(string, cssParserMode, 0);
 }
 
-bool CSSStyleSheet::parseStringAtLine(const String& string, bool strict, int startLineNumber)
+bool CSSStyleSheet::parseStringAtLine(const String& string, CSSParserMode cssParserMode, int startLineNumber)
 {
-    setStrictParsing(strict);
-    CSSParser p(strict);
+    setCSSParserMode(cssParserMode);
+    CSSParser p(cssParserMode);
     p.parseSheet(this, string, startLineNumber);
     return true;
 }

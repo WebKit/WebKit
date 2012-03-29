@@ -129,7 +129,7 @@ CachedResourceLoader* XSLStyleSheet::cachedResourceLoader()
     return document->cachedResourceLoader();
 }
 
-bool XSLStyleSheet::parseString(const String& string, bool)
+bool XSLStyleSheet::parseString(const String& string, CSSParserMode)
 {
     // Parse in a single chunk into an xmlDocPtr
     const UChar BOM = 0xFEFF;

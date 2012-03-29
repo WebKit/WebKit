@@ -719,7 +719,7 @@ String InspectorStyleSheet::finalURL() const
 void InspectorStyleSheet::reparseStyleSheet(const String& text)
 {
     m_pageStyleSheet->clearRules();
-    m_pageStyleSheet->parseString(text, m_pageStyleSheet->useStrictParsing());
+    m_pageStyleSheet->parseString(text, m_pageStyleSheet->cssParserMode());
     m_pageStyleSheet->styleSheetChanged();
     m_inspectorStyles.clear();
     fireStyleSheetChanged();

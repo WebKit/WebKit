@@ -233,7 +233,7 @@ void ProcessingInstruction::setXSLStyleSheet(const String& href, const KURL& bas
 
 void ProcessingInstruction::parseStyleSheet(const String& sheet)
 {
-    m_sheet->parseString(sheet, true);
+    m_sheet->parseString(sheet, CSSStrictMode);
     if (m_cachedSheet)
         m_cachedSheet->removeClient(this);
     m_cachedSheet = 0;
