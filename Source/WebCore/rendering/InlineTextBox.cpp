@@ -59,21 +59,21 @@ static InlineTextBoxOverflowMap* gTextBoxesWithOverflow;
 
 void InlineTextBox::destroy(RenderArena* arena)
 {
-    if (!m_knownToHaveNoOverflow && gTextBoxesWithOverflow)
+    if (!knownToHaveNoOverflow() && gTextBoxesWithOverflow)
         gTextBoxesWithOverflow->remove(this);
     InlineBox::destroy(arena);
 }
 
 LayoutRect InlineTextBox::logicalOverflowRect() const
 {
-    if (m_knownToHaveNoOverflow || !gTextBoxesWithOverflow)
+    if (knownToHaveNoOverflow() || !gTextBoxesWithOverflow)
         return enclosingIntRect(logicalFrameRect());
     return gTextBoxesWithOverflow->get(this);
 }
 
 void InlineTextBox::setLogicalOverflowRect(const LayoutRect& rect)
 {
-    ASSERT(!m_knownToHaveNoOverflow);
+    ASSERT(!knownToHaveNoOverflow());
     if (!gTextBoxesWithOverflow)
         gTextBoxesWithOverflow = new InlineTextBoxOverflowMap;
     gTextBoxesWithOverflow->add(this, rect);
@@ -85,7 +85,7 @@ LayoutUnit InlineTextBox::baselinePosition(FontBaseline baselineType) const
         return 0;
     if (parent()->renderer() == renderer()->parent())
         return parent()->baselinePosition(baselineType);
-    return toRenderBoxModelObject(renderer()->parent())->baselinePosition(baselineType, m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
+    return toRenderBoxModelObject(renderer()->parent())->baselinePosition(baselineType, isFirstLineStyle(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
 LayoutUnit InlineTextBox::lineHeight() const
@@ -93,10 +93,10 @@ LayoutUnit InlineTextBox::lineHeight() const
     if (!isText() || !renderer()->parent())
         return 0;
     if (m_renderer->isBR())
-        return toRenderBR(m_renderer)->lineHeight(m_firstLine);
+        return toRenderBR(m_renderer)->lineHeight(isFirstLineStyle());
     if (parent()->renderer() == renderer()->parent())
         return parent()->lineHeight();
-    return toRenderBoxModelObject(renderer()->parent())->lineHeight(m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
+    return toRenderBoxModelObject(renderer()->parent())->lineHeight(isFirstLineStyle(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
 LayoutUnit InlineTextBox::selectionTop()
@@ -187,7 +187,7 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos)
     RenderText* textObj = textRenderer();
     LayoutUnit selTop = selectionTop();
     LayoutUnit selHeight = selectionHeight();
-    RenderStyle* styleToUse = textObj->style(m_firstLine);
+    RenderStyle* styleToUse = textObj->style(isFirstLineStyle());
     const Font& font = styleToUse->font();
 
     BufferForAppendingHyphen charactersWithHyphen;
@@ -219,7 +219,7 @@ void InlineTextBox::deleteLine(RenderArena* arena)
 
 void InlineTextBox::extractLine()
 {
-    if (m_extracted)
+    if (extracted())
         return;
 
     toRenderText(renderer())->extractTextBox(this);
@@ -227,7 +227,7 @@ void InlineTextBox::extractLine()
 
 void InlineTextBox::attachLine()
 {
-    if (!m_extracted)
+    if (!extracted())
         return;
     
     toRenderText(renderer())->attachTextBox(this);
@@ -283,7 +283,7 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
 
         // If we got here that means that we were only partially truncated and we need to return the pixel offset at which
         // to place the ellipsis.
-        float widthOfVisibleText = toRenderText(renderer())->width(m_start, offset, textPos(), m_firstLine);
+        float widthOfVisibleText = toRenderText(renderer())->width(m_start, offset, textPos(), isFirstLineStyle());
 
         // The ellipsis needs to be placed just after the last visible character.
         // Where "after" is defined by the flow directionality, not the inline
@@ -506,7 +506,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
             // farther to the right.
             // NOTE: WebKit's behavior differs from that of IE which appears to just overlay the ellipsis on top of the
             // truncated string i.e.  |Hello|CBA| -> |...lo|CBA|
-            LayoutUnit widthOfVisibleText = toRenderText(renderer())->width(m_start, m_truncation, textPos(), m_firstLine);
+            LayoutUnit widthOfVisibleText = toRenderText(renderer())->width(m_start, m_truncation, textPos(), isFirstLineStyle());
             LayoutUnit widthOfHiddenText = m_logicalWidth - widthOfVisibleText;
             // FIXME: The hit testing logic also needs to take this translation into account.
             LayoutSize truncationOffset(isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText, 0);
@@ -516,7 +516,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
     GraphicsContext* context = paintInfo.context;
 
-    RenderStyle* styleToUse = renderer()->style(m_firstLine);
+    RenderStyle* styleToUse = renderer()->style(isFirstLineStyle());
     
     adjustedPaintOffset.move(0, styleToUse->isHorizontalWritingMode() ? 0 : -logicalHeight());
 
@@ -904,7 +904,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
 
     float width = m_logicalWidth;
     if (m_truncation != cNoTruncation) {
-        width = toRenderText(renderer())->width(m_start, m_truncation, textPos(), m_firstLine);
+        width = toRenderText(renderer())->width(m_start, m_truncation, textPos(), isFirstLineStyle());
         if (!isLeftToRightDirection())
             localOrigin.move(m_logicalWidth - width, 0);
     }
@@ -919,7 +919,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
 
     bool linesAreOpaque = !isPrinting && (!(deco & UNDERLINE) || underline.alpha() == 255) && (!(deco & OVERLINE) || overline.alpha() == 255) && (!(deco & LINE_THROUGH) || linethrough.alpha() == 255);
 
-    RenderStyle* styleToUse = renderer()->style(m_firstLine);
+    RenderStyle* styleToUse = renderer()->style(isFirstLineStyle());
     int baseline = styleToUse->fontMetrics().ascent();
 
     bool setClip = false;
@@ -1053,7 +1053,7 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, const Floa
     // So, we generally place the underline at the bottom of the text, but in larger fonts that's not so good so
     // we pin to two pixels under the baseline.
     int lineThickness = cMisspellingLineThickness;
-    int baseline = renderer()->style(m_firstLine)->fontMetrics().ascent();
+    int baseline = renderer()->style(isFirstLineStyle())->fontMetrics().ascent();
     int descent = logicalHeight() - baseline;
     int underlineOffset;
     if (descent <= (2 + lineThickness)) {
@@ -1187,7 +1187,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, const FloatP
     if (paintStart <= underline.startOffset) {
         paintStart = underline.startOffset;
         useWholeWidth = false;
-        start = toRenderText(renderer())->width(m_start, paintStart - m_start, textPos(), m_firstLine);
+        start = toRenderText(renderer())->width(m_start, paintStart - m_start, textPos(), isFirstLineStyle());
     }
     if (paintEnd != underline.endOffset) {      // end points at the last char, not past it
         paintEnd = min(paintEnd, (unsigned)underline.endOffset);
@@ -1198,14 +1198,14 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, const FloatP
         useWholeWidth = false;
     }
     if (!useWholeWidth) {
-        width = toRenderText(renderer())->width(paintStart, paintEnd - paintStart, textPos() + start, m_firstLine);
+        width = toRenderText(renderer())->width(paintStart, paintEnd - paintStart, textPos() + start, isFirstLineStyle());
     }
 
     // Thick marked text underlines are 2px thick as long as there is room for the 2px line under the baseline.
     // All other marked text underlines are 1px thick.
     // If there's not enough space the underline will touch or overlap characters.
     int lineThickness = 1;
-    int baseline = renderer()->style(m_firstLine)->fontMetrics().ascent();
+    int baseline = renderer()->style(isFirstLineStyle())->fontMetrics().ascent();
     if (underline.thick && logicalHeight() - baseline >= 2)
         lineThickness = 2;
 
@@ -1251,7 +1251,7 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
     FontCachePurgePreventer fontCachePurgePreventer;
 
     RenderText* text = toRenderText(renderer());
-    RenderStyle* style = text->style(m_firstLine);
+    RenderStyle* style = text->style(isFirstLineStyle());
     const Font& font = style->font();
     return font.offsetForPosition(constructTextRun(style, font), lineOffset - logicalLeft(), includePartialGlyphs);
 }
@@ -1267,7 +1267,7 @@ float InlineTextBox::positionForOffset(int offset) const
     FontCachePurgePreventer fontCachePurgePreventer;
 
     RenderText* text = toRenderText(renderer());
-    RenderStyle* styleToUse = text->style(m_firstLine);
+    RenderStyle* styleToUse = text->style(isFirstLineStyle());
     ASSERT(styleToUse);
     const Font& font = styleToUse->font();
     int from = !isLeftToRightDirection() ? offset - m_start : 0;
@@ -1325,7 +1325,7 @@ TextRun InlineTextBox::constructTextRun(RenderStyle* style, const Font& font, co
 
     ASSERT(maximumLength >= length);
 
-    TextRun run(characters, length, textRenderer->allowTabs(), textPos(), expansion(), expansionBehavior(), direction(), m_dirOverride || style->rtlOrdering() == VisualOrder);
+    TextRun run(characters, length, textRenderer->allowTabs(), textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style->rtlOrdering() == VisualOrder);
     if (textRunNeedsRenderingContext(font))
         run.setRenderingContext(SVGTextRunRenderingContext::create(textRenderer));
 

@@ -443,9 +443,9 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
         else
             ts << " width " << fragment.width;
 
-        if (!textBox->isLeftToRightDirection() || textBox->m_dirOverride) {
+        if (!textBox->isLeftToRightDirection() || textBox->dirOverride()) {
             ts << (textBox->isLeftToRightDirection() ? " LTR" : " RTL");
-            if (textBox->m_dirOverride)
+            if (textBox->dirOverride())
                 ts << " override";
         }
 

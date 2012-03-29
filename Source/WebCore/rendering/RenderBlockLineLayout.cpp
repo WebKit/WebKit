@@ -522,7 +522,7 @@ RootInlineBox* RenderBlock::constructLine(BidiRunList<BidiRun>& bidiRuns, const 
             InlineTextBox* text = toInlineTextBox(box);
             text->setStart(r->m_start);
             text->setLen(r->m_stop - r->m_start);
-            text->m_dirOverride = r->dirOverride(visuallyOrdered);
+            text->setDirOverride(r->dirOverride(visuallyOrdered));
             if (r->m_hasHyphen)
                 text->setHasHyphen(true);
         }

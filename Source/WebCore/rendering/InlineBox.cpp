@@ -37,22 +37,18 @@ using namespace std;
 
 namespace WebCore {
 
-#if !COMPILER(MSVC)
-// FIXME: Figure out why this doesn't work on MSVC.
 class SameSizeAsInlineBox {
     virtual ~SameSizeAsInlineBox() { }
     void* a[4];
     FloatPoint b;
     float c;
-    uint32_t d : 31;
-    bool e : 1;
+    uint32_t d : 32;
 #ifndef NDEBUG
     bool f;
 #endif
 };
 
 COMPILE_ASSERT(sizeof(InlineBox) == sizeof(SameSizeAsInlineBox), InlineBox_size_guard);
-#endif
 
 #ifndef NDEBUG
 static bool inInlineBoxDetach;
@@ -149,17 +145,27 @@ float InlineBox::logicalHeight() const
         return virtualLogicalHeight();
     
     if (renderer()->isText())
-        return m_isText ? renderer()->style(m_firstLine)->fontMetrics().height() : 0;
+        return m_bitfields.isText() ? renderer()->style(isFirstLineStyle())->fontMetrics().height() : 0;
     if (renderer()->isBox() && parent())
         return isHorizontal() ? toRenderBox(m_renderer)->height() : toRenderBox(m_renderer)->width();
 
     ASSERT(isInlineFlowBox());
     RenderBoxModelObject* flowObject = boxModelObject();
-    const FontMetrics& fontMetrics = renderer()->style(m_firstLine)->fontMetrics();
+    const FontMetrics& fontMetrics = renderer()->style(isFirstLineStyle())->fontMetrics();
     float result = fontMetrics.height();
     if (parent())
         result += flowObject->borderAndPaddingLogicalHeight();
     return result;
+}
+
+LayoutUnit InlineBox::baselinePosition(FontBaseline baselineType) const
+{
+    return boxModelObject()->baselinePosition(baselineType, m_bitfields.firstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
+}
+
+LayoutUnit InlineBox::lineHeight() const
+{
+    return boxModelObject()->lineHeight(m_bitfields.firstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
 int InlineBox::caretMinOffset() const 
@@ -181,21 +187,21 @@ void InlineBox::dirtyLineBoxes()
 
 void InlineBox::deleteLine(RenderArena* arena)
 {
-    if (!m_extracted && m_renderer->isBox())
+    if (!m_bitfields.extracted() && m_renderer->isBox())
         toRenderBox(m_renderer)->setInlineBoxWrapper(0);
     destroy(arena);
 }
 
 void InlineBox::extractLine()
 {
-    m_extracted = true;
+    m_bitfields.setExtracted(true);
     if (m_renderer->isBox())
         toRenderBox(m_renderer)->setInlineBoxWrapper(0);
 }
 
 void InlineBox::attachLine()
 {
-    m_extracted = false;
+    m_bitfields.setExtracted(false);
     if (m_renderer->isBox())
         toRenderBox(m_renderer)->setInlineBoxWrapper(this);
 }
@@ -262,17 +268,17 @@ RootInlineBox* InlineBox::root()
 
 bool InlineBox::nextOnLineExists() const
 {
-    if (!m_determinedIfNextOnLineExists) {
-        m_determinedIfNextOnLineExists = true;
+    if (!m_bitfields.determinedIfNextOnLineExists()) {
+        m_bitfields.setDeterminedIfNextOnLineExists(true);
 
         if (!parent())
-            m_nextOnLineExists = false;
+            m_bitfields.setNextOnLineExists(false);
         else if (nextOnLine())
-            m_nextOnLineExists = true;
+            m_bitfields.setNextOnLineExists(true);
         else
-            m_nextOnLineExists = parent()->nextOnLineExists();
+            m_bitfields.setNextOnLineExists(parent()->nextOnLineExists());
     }
-    return m_nextOnLineExists;
+    return m_bitfields.nextOnLineExists();
 }
 
 InlineBox* InlineBox::nextLeafChild() const
@@ -335,7 +341,7 @@ float InlineBox::placeEllipsisBox(bool, float, float, float, bool&)
 
 void InlineBox::clearKnownToHaveNoOverflow()
 { 
-    m_knownToHaveNoOverflow = false;
+    m_bitfields.setKnownToHaveNoOverflow(false);
     if (parent() && parent()->knownToHaveNoOverflow())
         parent()->clearKnownToHaveNoOverflow();
 }

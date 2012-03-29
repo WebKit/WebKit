@@ -500,9 +500,9 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
         y -= toRenderTableCell(o.containingBlock())->intrinsicPaddingBefore();
         
     ts << "text run at (" << x << "," << y << ") width " << logicalWidth;
-    if (!run.isLeftToRightDirection() || run.m_dirOverride) {
+    if (!run.isLeftToRightDirection() || run.dirOverride()) {
         ts << (!run.isLeftToRightDirection() ? " RTL" : " LTR");
-        if (run.m_dirOverride)
+        if (run.dirOverride())
             ts << " override";
     }
     ts << ": "

@@ -40,22 +40,6 @@ public:
         , m_parent(0)
         , m_renderer(obj)
         , m_logicalWidth(0)
-        , m_firstLine(false)
-        , m_constructed(false)
-        , m_bidiEmbeddingLevel(0)
-        , m_dirty(false)
-        , m_extracted(false)
-        , m_hasVirtualLogicalHeight(false)
-        , m_isHorizontal(true)
-        , m_endsWithBreak(false)
-        , m_hasSelectedChildrenOrCanHaveLeadingExpansion(false)
-        , m_knownToHaveNoOverflow(true)
-        , m_hasEllipsisBoxOrHyphen(false)
-        , m_dirOverride(false)
-        , m_isText(false)
-        , m_determinedIfNextOnLineExists(false)
-        , m_nextOnLineExists(false)
-        , m_expansion(0)
 #ifndef NDEBUG
         , m_hasBadParent(false)
 #endif
@@ -70,22 +54,7 @@ public:
         , m_renderer(obj)
         , m_topLeft(topLeft)
         , m_logicalWidth(logicalWidth)
-        , m_firstLine(firstLine)
-        , m_constructed(constructed)
-        , m_bidiEmbeddingLevel(0)
-        , m_dirty(dirty)
-        , m_extracted(extracted)
-        , m_hasVirtualLogicalHeight(false)
-        , m_isHorizontal(isHorizontal)
-        , m_endsWithBreak(false)
-        , m_hasSelectedChildrenOrCanHaveLeadingExpansion(false)
-        , m_knownToHaveNoOverflow(true)  
-        , m_hasEllipsisBoxOrHyphen(false)
-        , m_dirOverride(false)
-        , m_isText(false)
-        , m_determinedIfNextOnLineExists(false)
-        , m_nextOnLineExists(false)
-        , m_expansion(0)
+        , m_bitfields(firstLine, constructed, dirty, extracted, isHorizontal)
 #ifndef NDEBUG
         , m_hasBadParent(false)
 #endif
@@ -143,8 +112,8 @@ public:
     virtual const char* boxName() const;
 #endif
 
-    bool isText() const { return m_isText; }
-    void setIsText(bool b) { m_isText = b; }
+    bool isText() const { return m_bitfields.isText(); }
+    void setIsText(bool isText) { m_bitfields.setIsText(isText); }
  
     virtual bool isInlineFlowBox() const { return false; }
     virtual bool isInlineTextBox() const { return false; }
@@ -155,16 +124,16 @@ public:
     virtual bool isSVGRootInlineBox() const { return false; }
 #endif
 
-    bool hasVirtualLogicalHeight() const { return m_hasVirtualLogicalHeight; }
-    void setHasVirtualLogicalHeight() { m_hasVirtualLogicalHeight = true; }
+    bool hasVirtualLogicalHeight() const { return m_bitfields.hasVirtualLogicalHeight(); }
+    void setHasVirtualLogicalHeight() { m_bitfields.setHasVirtualLogicalHeight(true); }
     virtual float virtualLogicalHeight() const
     {
         ASSERT_NOT_REACHED();
         return 0;
     }
 
-    bool isHorizontal() const { return m_isHorizontal; }
-    void setIsHorizontal(bool horizontal) { m_isHorizontal = horizontal; }
+    bool isHorizontal() const { return m_bitfields.isHorizontal(); }
+    void setIsHorizontal(bool isHorizontal) { m_bitfields.setIsHorizontal(isHorizontal); }
 
     virtual FloatRect calculateBoundaries() const
     {
@@ -172,13 +141,13 @@ public:
         return FloatRect();
     }
 
-    bool isConstructed() { return m_constructed; }
-    virtual void setConstructed() { m_constructed = true; }
+    bool isConstructed() { return m_bitfields.constructed(); }
+    virtual void setConstructed() { m_bitfields.setConstructed(true); }
 
-    void setExtracted(bool b = true) { m_extracted = b; }
+    void setExtracted(bool extracted = true) { m_bitfields.setExtracted(extracted); }
     
-    void setFirstLineStyleBit(bool f) { m_firstLine = f; }
-    bool isFirstLineStyle() const { return m_firstLine; }
+    void setFirstLineStyleBit(bool firstLine) { m_bitfields.setFirstLine(firstLine); }
+    bool isFirstLineStyle() const { return m_bitfields.firstLine(); }
 
     void remove();
 
@@ -272,23 +241,23 @@ public:
 
     FloatRect logicalFrameRect() const { return isHorizontal() ? FloatRect(m_topLeft.x(), m_topLeft.y(), m_logicalWidth, logicalHeight()) : FloatRect(m_topLeft.y(), m_topLeft.x(), m_logicalWidth, logicalHeight()); }
 
-    virtual LayoutUnit baselinePosition(FontBaseline baselineType) const { return boxModelObject()->baselinePosition(baselineType, m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine); }
-    virtual LayoutUnit lineHeight() const { return boxModelObject()->lineHeight(m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine); }
-    
+    virtual LayoutUnit baselinePosition(FontBaseline baselineType) const;
+    virtual LayoutUnit lineHeight() const;
+
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
 
-    unsigned char bidiLevel() const { return m_bidiEmbeddingLevel; }
-    void setBidiLevel(unsigned char level) { m_bidiEmbeddingLevel = level; }
-    TextDirection direction() const { return m_bidiEmbeddingLevel % 2 ? RTL : LTR; }
+    unsigned char bidiLevel() const { return m_bitfields.bidiEmbeddingLevel(); }
+    void setBidiLevel(unsigned char level) { m_bitfields.setBidiEmbeddingLevel(level); }
+    TextDirection direction() const { return bidiLevel() % 2 ? RTL : LTR; }
     bool isLeftToRightDirection() const { return direction() == LTR; }
     int caretLeftmostOffset() const { return isLeftToRightDirection() ? caretMinOffset() : caretMaxOffset(); }
     int caretRightmostOffset() const { return isLeftToRightDirection() ? caretMaxOffset() : caretMinOffset(); }
 
     virtual void clearTruncation() { }
 
-    bool isDirty() const { return m_dirty; }
-    void markDirty(bool dirty = true) { m_dirty = dirty; }
+    bool isDirty() const { return m_bitfields.dirty(); }
+    void markDirty(bool dirty = true) { m_bitfields.setDirty(dirty); }
 
     virtual void dirtyLineBoxes();
     
@@ -300,11 +269,11 @@ public:
 
     void setHasBadParent();
 
-    int expansion() const { return m_expansion; }
-    
+    int expansion() const { return m_bitfields.expansion(); }
+
     bool visibleToHitTesting() const { return renderer()->style()->visibility() == VISIBLE && renderer()->style()->pointerEvents() != PE_NONE; }
     
-    EVerticalAlign verticalAlign() const { return renderer()->style(m_firstLine)->verticalAlign(); }
+    EVerticalAlign verticalAlign() const { return renderer()->style(m_bitfields.firstLine())->verticalAlign(); }
 
     // Use with caution! The type is not checked!
     RenderBoxModelObject* boxModelObject() const
@@ -320,8 +289,11 @@ public:
     void flipForWritingMode(LayoutRect&);
     LayoutPoint flipForWritingMode(const LayoutPoint&);
 
-    bool knownToHaveNoOverflow() const { return m_knownToHaveNoOverflow; }
+    bool knownToHaveNoOverflow() const { return m_bitfields.knownToHaveNoOverflow(); }
     void clearKnownToHaveNoOverflow();
+
+    bool dirOverride() const { return m_bitfields.dirOverride(); }
+    void setDirOverride(bool dirOverride) { m_bitfields.setDirOverride(dirOverride); }
 
 private:
     InlineBox* m_next; // The next element on the same line as us.
@@ -334,37 +306,107 @@ public:
 
     FloatPoint m_topLeft;
     float m_logicalWidth;
-    
-    // Some of these bits are actually for subclasses and moved here to compact the structures.
 
-    // for this class
-protected:
-    bool m_firstLine : 1;
+#define ADD_BOOLEAN_BITFIELD(name, Name) \
+    private:\
+    unsigned m_##name : 1;\
+    public:\
+    bool name() const { return m_##name; }\
+    void set##Name(bool name) { m_##name = name; }\
+
+    class InlineBoxBitfields {
+    public:
+        InlineBoxBitfields(bool firstLine = false, bool constructed = false, bool dirty = false, bool extracted = false, bool isHorizontal = true)
+            : m_firstLine(firstLine)
+            , m_constructed(constructed)
+            , m_bidiEmbeddingLevel(0)
+            , m_dirty(dirty)
+            , m_extracted(extracted)
+            , m_hasVirtualLogicalHeight(false)
+            , m_isHorizontal(isHorizontal)
+            , m_endsWithBreak(false)
+            , m_hasSelectedChildrenOrCanHaveLeadingExpansion(false)
+            , m_knownToHaveNoOverflow(true)  
+            , m_hasEllipsisBoxOrHyphen(false)
+            , m_dirOverride(false)
+            , m_isText(false)
+            , m_determinedIfNextOnLineExists(false)
+            , m_nextOnLineExists(false)
+            , m_expansion(0)
+        {
+        }
+
+        // Some of these bits are actually for subclasses and moved here to compact the structures.
+        // for this class
+        ADD_BOOLEAN_BITFIELD(firstLine, FirstLine);
+        ADD_BOOLEAN_BITFIELD(constructed, Constructed);
+
+    private:
+        unsigned m_bidiEmbeddingLevel : 6;
+
+    public:
+        unsigned char bidiEmbeddingLevel() const { return m_bidiEmbeddingLevel; }
+        void setBidiEmbeddingLevel(unsigned char bidiEmbeddingLevel) { m_bidiEmbeddingLevel = bidiEmbeddingLevel; }
+
+        ADD_BOOLEAN_BITFIELD(dirty, Dirty);
+        ADD_BOOLEAN_BITFIELD(extracted, Extracted);
+        ADD_BOOLEAN_BITFIELD(hasVirtualLogicalHeight, HasVirtualLogicalHeight);
+        ADD_BOOLEAN_BITFIELD(isHorizontal, IsHorizontal);
+        // for RootInlineBox
+        ADD_BOOLEAN_BITFIELD(endsWithBreak, EndsWithBreak); // Whether the line ends with a <br>.
+        // shared between RootInlineBox and InlineTextBox
+        ADD_BOOLEAN_BITFIELD(hasSelectedChildrenOrCanHaveLeadingExpansion, HasSelectedChildrenOrCanHaveLeadingExpansion);
+        ADD_BOOLEAN_BITFIELD(knownToHaveNoOverflow, KnownToHaveNoOverflow);
+        ADD_BOOLEAN_BITFIELD(hasEllipsisBoxOrHyphen, HasEllipsisBoxOrHyphen);
+        // for InlineTextBox
+        ADD_BOOLEAN_BITFIELD(dirOverride, DirOverride);
+        ADD_BOOLEAN_BITFIELD(isText, IsText); // Whether or not this object represents text with a non-zero height. Includes non-image list markers, text boxes.
+
+    private:
+        mutable unsigned m_determinedIfNextOnLineExists : 1;
+
+    public:
+        bool determinedIfNextOnLineExists() const { return m_determinedIfNextOnLineExists; }
+        void setDeterminedIfNextOnLineExists(bool determinedIfNextOnLineExists) const { m_determinedIfNextOnLineExists = determinedIfNextOnLineExists; }
+
+    private:
+        mutable unsigned m_nextOnLineExists : 1;
+        
+    public:
+        bool nextOnLineExists() const { return m_nextOnLineExists; }
+        void setNextOnLineExists(bool nextOnLineExists) const { m_nextOnLineExists = nextOnLineExists; }
+
+    private:
+        signed m_expansion : 12; // for justified text
+        
+    public:
+        signed expansion() const { return m_expansion; }
+        void setExpansion(signed expansion) { m_expansion = expansion; }
+    };
+#undef ADD_BOOLEAN_BITFIELD
+
 private:
-    bool m_constructed : 1;
-    unsigned char m_bidiEmbeddingLevel : 6;
+    InlineBoxBitfields m_bitfields;
+
 protected:
-    bool m_dirty : 1;
-    bool m_extracted : 1;
-    bool m_hasVirtualLogicalHeight : 1;
+    // For RootInlineBox
+    bool endsWithBreak() const { return m_bitfields.endsWithBreak(); }
+    void setEndsWithBreak(bool endsWithBreak) { m_bitfields.setEndsWithBreak(endsWithBreak); }
+    bool hasEllipsisBox() const { return m_bitfields.hasEllipsisBoxOrHyphen(); }
+    bool hasSelectedChildren() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeadingExpansion(); }
+    void setHasSelectedChildren(bool hasSelectedChildren) { m_bitfields.setHasSelectedChildrenOrCanHaveLeadingExpansion(hasSelectedChildren); }
+    void setHasEllipsisBox(bool hasEllipsisBox) { m_bitfields.setHasEllipsisBoxOrHyphen(hasEllipsisBox); }
 
-    bool m_isHorizontal : 1;
-
-    // for RootInlineBox
-    bool m_endsWithBreak : 1;  // Whether the line ends with a <br>.
-    // shared between RootInlineBox and InlineTextBox
-    bool m_hasSelectedChildrenOrCanHaveLeadingExpansion : 1; // Whether we have any children selected (this bit will also be set if the <br> that terminates our line is selected).
-    bool m_knownToHaveNoOverflow : 1;
-    bool m_hasEllipsisBoxOrHyphen : 1;
-
-    // for InlineTextBox
-public:
-    bool m_dirOverride : 1;
-    bool m_isText : 1; // Whether or not this object represents text with a non-zero height. Includes non-image list markers, text boxes.
-protected:
-    mutable bool m_determinedIfNextOnLineExists : 1;
-    mutable bool m_nextOnLineExists : 1;
-    signed m_expansion : 12; // for justified text
+    // For InlineTextBox
+    bool hasHyphen() const { return m_bitfields.hasEllipsisBoxOrHyphen(); }
+    void setHasHyphen(bool hasHyphen) { m_bitfields.setHasEllipsisBoxOrHyphen(hasHyphen); }    
+    bool canHaveLeadingExpansion() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeadingExpansion(); }
+    void setCanHaveLeadingExpansion(bool canHaveLeadingExpansion) { m_bitfields.setHasSelectedChildrenOrCanHaveLeadingExpansion(canHaveLeadingExpansion); }
+    signed expansion() { return m_bitfields.expansion(); }
+    void setExpansion(signed expansion) { m_bitfields.setExpansion(expansion); }
+    
+    // For InlineFlowBox and InlineTextBox
+    bool extracted() const { return m_bitfields.extracted(); }
 
 #ifndef NDEBUG
 private:

@@ -75,11 +75,10 @@ public:
 
     unsigned short truncation() { return m_truncation; }
 
-    bool hasHyphen() const { return m_hasEllipsisBoxOrHyphen; }
-    void setHasHyphen(bool hasHyphen) { m_hasEllipsisBoxOrHyphen = hasHyphen; }
-
-    bool canHaveLeadingExpansion() const { return m_hasSelectedChildrenOrCanHaveLeadingExpansion; }
-    void setCanHaveLeadingExpansion(bool canHaveLeadingExpansion) { m_hasSelectedChildrenOrCanHaveLeadingExpansion = canHaveLeadingExpansion; }
+    using InlineBox::hasHyphen;
+    using InlineBox::setHasHyphen;
+    using InlineBox::canHaveLeadingExpansion;
+    using InlineBox::setCanHaveLeadingExpansion;
 
     static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 
@@ -136,7 +135,12 @@ private:
 public:
     virtual bool isLineBreak() const;
 
-    void setExpansion(int expansion) { m_logicalWidth -= m_expansion; m_expansion = expansion; m_logicalWidth += m_expansion; }
+    void setExpansion(int newExpansion)
+    {
+        m_logicalWidth -= expansion();
+        InlineBox::setExpansion(newExpansion);
+        m_logicalWidth += newExpansion;
+    }
 
 private:
     virtual bool isInlineTextBox() const { return true; }    
@@ -185,7 +189,7 @@ private:
     TextRun::ExpansionBehavior expansionBehavior() const
     {
         return (canHaveLeadingExpansion() ? TextRun::AllowLeadingExpansion : TextRun::ForbidLeadingExpansion)
-            | (m_expansion && nextLeafChild() ? TextRun::AllowTrailingExpansion : TextRun::ForbidTrailingExpansion);
+            | (expansion() && nextLeafChild() ? TextRun::AllowTrailingExpansion : TextRun::ForbidTrailingExpansion);
     }
 };
 

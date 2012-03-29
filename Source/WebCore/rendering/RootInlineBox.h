@@ -83,8 +83,8 @@ public:
     unsigned lineBreakPos() const { return m_lineBreakPos; }
     void setLineBreakPos(unsigned p) { m_lineBreakPos = p; }
 
-    bool endsWithBreak() const { return m_endsWithBreak; }
-    void setEndsWithBreak(bool b) { m_endsWithBreak = b; }
+    using InlineBox::endsWithBreak;
+    using InlineBox::setEndsWithBreak;
 
     void childRemoved(InlineBox* box);
 
@@ -92,7 +92,7 @@ public:
     void placeEllipsis(const AtomicString& ellipsisStr, bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, InlineBox* markupBox = 0);
     virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, bool& foundBox);
 
-    bool hasEllipsisBox() const { return m_hasEllipsisBoxOrHyphen; }
+    using InlineBox::hasEllipsisBox;
     EllipsisBox* ellipsisBox() const;
 
     void paintEllipsisBox(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) const;
@@ -101,8 +101,8 @@ public:
 
     bool isHyphenated() const;
 
-    virtual LayoutUnit baselinePosition(FontBaseline baselineType) const { return boxModelObject()->baselinePosition(baselineType, m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes); }
-    virtual LayoutUnit lineHeight() const { return boxModelObject()->lineHeight(m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes); }
+    virtual LayoutUnit baselinePosition(FontBaseline baselineType) const;
+    virtual LayoutUnit lineHeight() const;
 
 #if PLATFORM(MAC)
     void addHighlightOverflow();
@@ -112,8 +112,8 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom);
 
-    bool hasSelectedChildren() const { return m_hasSelectedChildrenOrCanHaveLeadingExpansion; }
-    void setHasSelectedChildren(bool hasSelectedChildren) { m_hasSelectedChildrenOrCanHaveLeadingExpansion = hasSelectedChildren; }
+    using InlineBox::hasSelectedChildren;
+    using InlineBox::setHasSelectedChildren;
 
     virtual RenderObject::SelectionState selectionState();
     InlineBox* firstSelectedBox();
@@ -181,8 +181,7 @@ public:
     virtual const char* boxName() const;
 #endif
 private:
-    void setHasEllipsisBox(bool hasEllipsisBox) { m_hasEllipsisBoxOrHyphen = hasEllipsisBox; }
-    
+
     LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0) const;
 
     int beforeAnnotationsAdjustment() const;

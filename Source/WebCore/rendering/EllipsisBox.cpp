@@ -33,7 +33,7 @@ namespace WebCore {
 void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     GraphicsContext* context = paintInfo.context;
-    RenderStyle* style = m_renderer->style(m_firstLine);
+    RenderStyle* style = m_renderer->style(isFirstLineStyle());
     Color textColor = style->visitedDependentColor(CSSPropertyColor);
     if (textColor != context->fillColor())
         context->setFillColor(textColor, style->colorSpace());
@@ -68,14 +68,14 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
         // Paint the markup box
         LayoutPoint adjustedPaintOffset = paintOffset;
         adjustedPaintOffset.move(x() + m_logicalWidth - m_markupBox->x(),
-            y() + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->fontMetrics().ascent()));
+            y() + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(isFirstLineStyle())->fontMetrics().ascent()));
         m_markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
     }
 }
 
 IntRect EllipsisBox::selectionRect()
 {
-    RenderStyle* style = m_renderer->style(m_firstLine);
+    RenderStyle* style = m_renderer->style(isFirstLineStyle());
     const Font& font = style->font();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
     return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x(), y() + root()->selectionTop()), root()->selectionHeight()));
@@ -108,9 +108,9 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     // Hit test the markup box.
     if (m_markupBox) {
-        RenderStyle* style = m_renderer->style(m_firstLine);
+        RenderStyle* style = m_renderer->style(isFirstLineStyle());
         LayoutUnit mtx = adjustedLocation.x() + m_logicalWidth - m_markupBox->x();
-        LayoutUnit mty = adjustedLocation.y() + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->fontMetrics().ascent());
+        LayoutUnit mty = adjustedLocation.y() + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(isFirstLineStyle())->fontMetrics().ascent());
         if (m_markupBox->nodeAtPoint(request, result, pointInContainer, LayoutPoint(mtx, mty), lineTop, lineBottom)) {
             renderer()->updateHitTestResult(result, pointInContainer - LayoutSize(mtx, mty));
             return true;
