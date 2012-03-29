@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2012 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,99 +26,464 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* originally written by Becky Willrich, additional code by Darin Adler */
-
 #include "config.h"
 #include "FormDataStreamCFNet.h"
 
-#if USE(CFNETWORK)
-
+#include "BlobRegistryImpl.h"
 #include "FileSystem.h"
 #include "FormData.h"
-#include <CFNetwork/CFURLRequestPriv.h>
+#include "SchedulePair.h"
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/text/CString.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/Threading.h>
+
+#if PLATFORM(IOS)
+#include <MacErrors.h>
+#else
+#include <CoreServices/CoreServices.h>
+#endif
 
 #if PLATFORM(MAC)
-#include "WebCoreSystemInterface.h"
+extern "C" void CFURLRequestSetHTTPRequestBody(CFMutableURLRequestRef mutableHTTPRequest, CFDataRef httpBody);
+extern "C" void CFURLRequestSetHTTPHeaderFieldValue(CFMutableURLRequestRef mutableHTTPRequest, CFStringRef httpHeaderField, CFStringRef httpHeaderFieldValue);
+extern "C" void CFURLRequestSetHTTPRequestBodyStream(CFMutableURLRequestRef req, CFReadStreamRef bodyStream);
+extern "C" CFReadStreamRef CFURLRequestCopyHTTPRequestBodyStream(CFURLRequestRef request);
 #elif PLATFORM(WIN)
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <CFNetwork/CFURLRequest.h>
 #endif
+
+typedef struct {
+    CFIndex version; /* == 1 */
+    void *(*create)(CFReadStreamRef stream, void *info);
+    void (*finalize)(CFReadStreamRef stream, void *info);
+    CFStringRef (*copyDescription)(CFReadStreamRef stream, void *info);
+    Boolean (*open)(CFReadStreamRef stream, CFStreamError *error, Boolean *openComplete, void *info);
+    Boolean (*openCompleted)(CFReadStreamRef stream, CFStreamError *error, void *info);
+    CFIndex (*read)(CFReadStreamRef stream, UInt8 *buffer, CFIndex bufferLength, CFStreamError *error, Boolean *atEOF, void *info);
+    const UInt8 *(*getBuffer)(CFReadStreamRef stream, CFIndex maxBytesToRead, CFIndex *numBytesRead, CFStreamError *error, Boolean *atEOF, void *info);
+    Boolean (*canRead)(CFReadStreamRef stream, void *info);
+    void (*close)(CFReadStreamRef stream, void *info);
+    CFTypeRef (*copyProperty)(CFReadStreamRef stream, CFStringRef propertyName, void *info);
+    Boolean (*setProperty)(CFReadStreamRef stream, CFStringRef propertyName, CFTypeRef propertyValue, void *info);
+    void (*requestEvents)(CFReadStreamRef stream, CFOptionFlags streamEvents, void *info);
+    void (*schedule)(CFReadStreamRef stream, CFRunLoopRef runLoop, CFStringRef runLoopMode, void *info);
+    void (*unschedule)(CFReadStreamRef stream, CFRunLoopRef runLoop, CFStringRef runLoopMode, void *info);
+} CFReadStreamCallBacksV1;
+
+#if PLATFORM(WIN)
+#define EXTERN extern "C" __declspec(dllimport)
+#else
+#define EXTERN extern "C"
+#endif
+
+EXTERN void CFReadStreamSignalEvent(CFReadStreamRef stream, CFStreamEventType event, const void *error);
+EXTERN CFReadStreamRef CFReadStreamCreate(CFAllocatorRef alloc, const void *callbacks, void *info);
 
 namespace WebCore {
 
-void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> formData)
+static Mutex& streamFieldsMapMutex()
 {
-    if (!formData) {
-        wkCFURLRequestSetHTTPRequestBodyParts(request, 0);
-        return;
+    DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
+    return staticMutex;
+}
+
+static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void* context);
+
+struct FormContext {
+    RefPtr<FormData> formData;
+    unsigned long long streamLength;
+};
+
+struct FormStreamFields {
+    RefPtr<FormData> formData;
+    SchedulePairHashSet scheduledRunLoopPairs;
+    Vector<FormDataElement> remainingElements; // in reverse order
+    CFReadStreamRef currentStream;
+#if ENABLE(BLOB)
+    long long currentStreamRangeLength;
+#endif
+    char* currentData;
+    CFReadStreamRef formStream;
+    unsigned long long streamLength;
+    unsigned long long bytesSent;
+};
+
+typedef HashMap<CFReadStreamRef, FormStreamFields*> StreamFieldsMap;
+static StreamFieldsMap& streamFieldsMap()
+{
+    DEFINE_STATIC_LOCAL(StreamFieldsMap, streamFieldsMap, ());
+    return streamFieldsMap;
+}
+
+static void closeCurrentStream(FormStreamFields *form)
+{
+    if (form->currentStream) {
+        CFReadStreamClose(form->currentStream);
+        CFReadStreamSetClient(form->currentStream, kCFStreamEventNone, 0, 0);
+        CFRelease(form->currentStream);
+        form->currentStream = 0;
+#if ENABLE(BLOB)
+        form->currentStreamRangeLength = BlobDataItem::toEndOfFile;
+#endif
+    }
+    if (form->currentData) {
+        fastFree(form->currentData);
+        form->currentData = 0;
+    }
+}
+
+// Return false if we cannot advance the stream. Currently the only possible failure is that the underlying file has been removed or changed since File.slice.
+static bool advanceCurrentStream(FormStreamFields* form)
+{
+    closeCurrentStream(form);
+
+    if (form->remainingElements.isEmpty())
+        return true;
+
+    // Create the new stream.
+    FormDataElement& nextInput = form->remainingElements.last();
+
+    if (nextInput.m_type == FormDataElement::data) {
+        size_t size = nextInput.m_data.size();
+        char* data = nextInput.m_data.releaseBuffer();
+        form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data), size, kCFAllocatorNull);
+        form->currentData = data;
+    } else {
+#if ENABLE(BLOB)
+        // Check if the file has been changed or not if required.
+        if (nextInput.m_expectedFileModificationTime != BlobDataItem::doNotCheckFileChange) {
+            time_t fileModificationTime;
+            if (!getFileModificationTime(nextInput.m_filename, fileModificationTime) || fileModificationTime != static_cast<time_t>(nextInput.m_expectedFileModificationTime))
+                return false;
+        }
+#endif
+        const String& path = nextInput.m_shouldGenerateFile ? nextInput.m_generatedFilename : nextInput.m_filename;
+        form->currentStream = CFReadStreamCreateWithFile(0, pathAsURL(path).get());
+        if (!form->currentStream) {
+            // The file must have been removed or become unreadable.
+            return false;
+        }
+#if ENABLE(BLOB)
+        if (nextInput.m_fileStart > 0) {
+            RetainPtr<CFNumberRef> position(AdoptCF, CFNumberCreate(0, kCFNumberLongLongType, &nextInput.m_fileStart));
+            CFReadStreamSetProperty(form->currentStream, kCFStreamPropertyFileCurrentOffset, position.get());
+        }
+        form->currentStreamRangeLength = nextInput.m_fileLength;
+#endif
+    }
+    form->remainingElements.removeLast();
+
+    // Set up the callback.
+    CFStreamClientContext context = { 0, form, 0, 0, 0 };
+    CFReadStreamSetClient(form->currentStream, kCFStreamEventHasBytesAvailable | kCFStreamEventErrorOccurred | kCFStreamEventEndEncountered,
+        formEventCallback, &context);
+
+    // Schedule with the current set of run loops.
+    SchedulePairHashSet::iterator end = form->scheduledRunLoopPairs.end();
+    for (SchedulePairHashSet::iterator it = form->scheduledRunLoopPairs.begin(); it != end; ++it)
+        CFReadStreamScheduleWithRunLoop(form->currentStream, (*it)->runLoop(), (*it)->mode());
+
+    return true;
+}
+
+static bool openNextStream(FormStreamFields* form)
+{
+    // Skip over any streams we can't open.
+    if (!advanceCurrentStream(form))
+        return false;
+    while (form->currentStream && !CFReadStreamOpen(form->currentStream)) {
+        if (!advanceCurrentStream(form))
+            return false;
+    }
+    return true;
+}
+
+static void* formCreate(CFReadStreamRef stream, void* context)
+{
+    FormContext* formContext = static_cast<FormContext*>(context);
+
+    FormStreamFields* newInfo = new FormStreamFields;
+    newInfo->formData = formContext->formData.release();
+    newInfo->currentStream = 0;
+#if ENABLE(BLOB)
+    newInfo->currentStreamRangeLength = BlobDataItem::toEndOfFile;
+#endif
+    newInfo->currentData = 0;
+    newInfo->formStream = stream; // Don't retain. That would create a reference cycle.
+    newInfo->streamLength = formContext->streamLength;
+    newInfo->bytesSent = 0;
+
+    // Append in reverse order since we remove elements from the end.
+    size_t size = newInfo->formData->elements().size();
+    newInfo->remainingElements.reserveInitialCapacity(size);
+    for (size_t i = 0; i < size; ++i)
+        newInfo->remainingElements.append(newInfo->formData->elements()[size - i - 1]);
+
+    MutexLocker locker(streamFieldsMapMutex());
+    ASSERT(!streamFieldsMap().contains(stream));
+    streamFieldsMap().add(stream, newInfo);
+
+    return newInfo;
+}
+
+static void formFinishFinalizationOnMainThread(void* context)
+{
+    OwnPtr<FormStreamFields> form = adoptPtr(static_cast<FormStreamFields*>(context));
+
+    closeCurrentStream(form.get());
+}
+
+static void formFinalize(CFReadStreamRef stream, void* context)
+{
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
+
+    MutexLocker locker(streamFieldsMapMutex());
+
+    ASSERT(form->formStream == stream);
+    ASSERT(streamFieldsMap().get(stream) == context);
+
+    // Do this right away because the CFReadStreamRef is being deallocated.
+    // We can't wait to remove this from the map until we finish finalizing
+    // on the main thread because in theory the freed memory could be reused
+    // for a new CFReadStream before that runs.
+    streamFieldsMap().remove(stream);
+
+    callOnMainThread(formFinishFinalizationOnMainThread, form);
+}
+
+static Boolean formOpen(CFReadStreamRef, CFStreamError* error, Boolean* openComplete, void* context)
+{
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
+
+    bool opened = openNextStream(form);
+
+    *openComplete = opened;
+    error->error = opened ? 0 : fnfErr;
+    return opened;
+}
+
+static CFIndex formRead(CFReadStreamRef, UInt8* buffer, CFIndex bufferLength, CFStreamError* error, Boolean* atEOF, void* context)
+{
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
+
+    while (form->currentStream) {
+        CFIndex bytesToRead = bufferLength;
+#if ENABLE(BLOB)
+        if (form->currentStreamRangeLength != BlobDataItem::toEndOfFile && form->currentStreamRangeLength < bytesToRead)
+            bytesToRead = static_cast<CFIndex>(form->currentStreamRangeLength);
+#endif
+        CFIndex bytesRead = CFReadStreamRead(form->currentStream, buffer, bytesToRead);
+        if (bytesRead < 0) {
+            *error = CFReadStreamGetError(form->currentStream);
+            return -1;
+        }
+        if (bytesRead > 0) {
+            error->error = 0;
+            *atEOF = FALSE;
+            form->bytesSent += bytesRead;
+#if ENABLE(BLOB)
+            if (form->currentStreamRangeLength != BlobDataItem::toEndOfFile)
+                form->currentStreamRangeLength -= bytesRead;
+#endif
+
+            return bytesRead;
+        }
+        openNextStream(form);
     }
 
+    error->error = 0;
+    *atEOF = TRUE;
+    return 0;
+}
+
+static Boolean formCanRead(CFReadStreamRef stream, void* context)
+{
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
+
+    while (form->currentStream && CFReadStreamGetStatus(form->currentStream) == kCFStreamStatusAtEnd)
+        openNextStream(form);
+
+    if (!form->currentStream) {
+        CFReadStreamSignalEvent(stream, kCFStreamEventEndEncountered, 0);
+        return FALSE;
+    }
+    return CFReadStreamHasBytesAvailable(form->currentStream);
+}
+
+static void formClose(CFReadStreamRef, void* context)
+{
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
+
+    closeCurrentStream(form);
+}
+
+static void formSchedule(CFReadStreamRef, CFRunLoopRef runLoop, CFStringRef runLoopMode, void* context)
+{
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
+
+    if (form->currentStream)
+        CFReadStreamScheduleWithRunLoop(form->currentStream, runLoop, runLoopMode);
+    form->scheduledRunLoopPairs.add(SchedulePair::create(runLoop, runLoopMode));
+}
+
+static void formUnschedule(CFReadStreamRef, CFRunLoopRef runLoop, CFStringRef runLoopMode, void* context)
+{
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
+
+    if (form->currentStream)
+        CFReadStreamUnscheduleFromRunLoop(form->currentStream, runLoop, runLoopMode);
+    form->scheduledRunLoopPairs.remove(SchedulePair::create(runLoop, runLoopMode));
+}
+
+static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void* context)
+{
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
+
+    switch (type) {
+    case kCFStreamEventHasBytesAvailable:
+        CFReadStreamSignalEvent(form->formStream, kCFStreamEventHasBytesAvailable, 0);
+        break;
+    case kCFStreamEventErrorOccurred: {
+        CFStreamError readStreamError = CFReadStreamGetError(stream);
+        CFReadStreamSignalEvent(form->formStream, kCFStreamEventErrorOccurred, &readStreamError);
+        break;
+    }
+    case kCFStreamEventEndEncountered:
+        openNextStream(form);
+        if (!form->currentStream)
+            CFReadStreamSignalEvent(form->formStream, kCFStreamEventEndEncountered, 0);
+        break;
+    case kCFStreamEventNone:
+        LOG_ERROR("unexpected kCFStreamEventNone");
+        break;
+    case kCFStreamEventOpenCompleted:
+        LOG_ERROR("unexpected kCFStreamEventOpenCompleted");
+        break;
+    case kCFStreamEventCanAcceptBytes:
+        LOG_ERROR("unexpected kCFStreamEventCanAcceptBytes");
+        break;
+    }
+}
+
+void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> prpFormData)
+{
+    RefPtr<FormData> formData = prpFormData;
+
+    if (!formData)
+        return;
+        
     size_t count = formData->elements().size();
 
-    if (count == 0)
-        return;
-
     // Handle the common special case of one piece of form data, with no files.
-    if (count == 1) {
+    if (count == 1 && !formData->alwaysStream()) {
         const FormDataElement& element = formData->elements()[0];
         if (element.m_type == FormDataElement::data) {
-            CFDataRef data = CFDataCreate(0, reinterpret_cast<const UInt8 *>(element.m_data.data()), element.m_data.size());
-            CFURLRequestSetHTTPRequestBody(request, data);
-            CFRelease(data);
+            RetainPtr<CFDataRef> data = adoptCF(CFDataCreate(0, reinterpret_cast<const UInt8 *>(element.m_data.data()), element.m_data.size()));
+            CFURLRequestSetHTTPRequestBody(request, data.get());
             return;
         }
     }
 
-    RetainPtr<CFMutableArrayRef> array(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
-
+#if ENABLE(BLOB)
+    // Check if there is a blob in the form data.
+    bool hasBlob = false;
     for (size_t i = 0; i < count; ++i) {
         const FormDataElement& element = formData->elements()[i];
-        if (element.m_type == FormDataElement::data) {
-            RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(0, reinterpret_cast<const UInt8*>(element.m_data.data()), element.m_data.size()));
-            CFArrayAppendValue(array.get(), data.get());
-        } else {
-            RetainPtr<CFStringRef> filename(AdoptCF, element.m_filename.createCFString());
-            CFArrayAppendValue(array.get(), filename.get());
+        if (element.m_type == FormDataElement::encodedBlob) {
+            hasBlob = true;
+            break;
         }
     }
 
-    wkCFURLRequestSetHTTPRequestBodyParts(request, array.get());
+    // If yes, we have to resolve all the blob references and regenerate the form data with only data and file types.
+    if (hasBlob) {
+        RefPtr<FormData> newFormData = FormData::create();
+        newFormData->setAlwaysStream(formData->alwaysStream());
+        newFormData->setIdentifier(formData->identifier());
+        for (size_t i = 0; i < count; ++i) {
+            const FormDataElement& element = formData->elements()[i];
+            if (element.m_type == FormDataElement::data)
+                newFormData->appendData(element.m_data.data(), element.m_data.size());
+            else if (element.m_type == FormDataElement::encodedFile)
+                newFormData->appendFile(element.m_filename, element.m_shouldGenerateFile);
+            else {
+                ASSERT(element.m_type == FormDataElement::encodedBlob);
+                RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, element.m_blobURL));
+                if (blobData) {
+                    for (size_t j = 0; j < blobData->items().size(); ++j) {
+                        const BlobDataItem& blobItem = blobData->items()[j];
+                        if (blobItem.type == BlobDataItem::Data)
+                            newFormData->appendData(blobItem.data->data() + static_cast<int>(blobItem.offset), static_cast<int>(blobItem.length));
+                        else {
+                            ASSERT(blobItem.type == BlobDataItem::File);
+                            newFormData->appendFileRange(blobItem.path, blobItem.offset, blobItem.length, blobItem.expectedModificationTime);
+                        }
+                    }
+                }
+            }
+        }
+        formData = newFormData.release();
+        count = formData->elements().size();
+    }
+#endif
+
+    // Precompute the content length so NSURLConnection doesn't use chunked mode.
+    long long length = 0;
+    for (size_t i = 0; i < count; ++i) {
+        const FormDataElement& element = formData->elements()[i];
+        if (element.m_type == FormDataElement::data)
+            length += element.m_data.size();
+        else {
+#if ENABLE(BLOB)
+            // If we're sending the file range, use the existing range length for now. We will detect if the file has been changed right before we read the file and abort the operation if necessary.
+            if (element.m_fileLength != BlobDataItem::toEndOfFile) {
+                length += element.m_fileLength;
+                continue;
+            }
+#endif
+            long long fileSize;
+            if (getFileSize(element.m_shouldGenerateFile ? element.m_generatedFilename : element.m_filename, fileSize))
+                length += fileSize;
+        }
+    }
+
+    // Set the length.
+    RetainPtr<CFStringRef> lengthString = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%lld"), length));
+    CFURLRequestSetHTTPHeaderFieldValue(request, CFSTR("Content-Length"), lengthString.get());
+
+    // Create and set the stream.
+
+    // Pass the length along with the formData so it does not have to be recomputed.
+    FormContext formContext = { formData.release(), length };
+
+    CFReadStreamCallBacksV1 callBacks = { 1, formCreate, formFinalize, 0, formOpen, 0, formRead, 0, formCanRead, formClose, 0, 0, 0, formSchedule, formUnschedule
+    };
+    RetainPtr<CFReadStreamRef> stream = adoptCF(CFReadStreamCreate(0, static_cast<const void*>(&callBacks), &formContext));
+
+    CFURLRequestSetHTTPRequestBodyStream(request, stream.get());
+}
+
+FormData* httpBodyFromStream(CFReadStreamRef stream)
+{
+    if (!stream)
+        return 0;
+
+    MutexLocker locker(streamFieldsMapMutex());
+    FormStreamFields* formStream = streamFieldsMap().get(stream);
+    if (!formStream)
+        return 0;
+    return formStream->formData.get();
 }
 
 PassRefPtr<FormData> httpBodyFromRequest(CFURLRequestRef request)
 {
-    RetainPtr<CFDataRef> bodyData(AdoptCF, CFURLRequestCopyHTTPRequestBody(request));
-    if (bodyData)
-        return FormData::create(CFDataGetBytePtr(bodyData.get()), CFDataGetLength(bodyData.get()));
-
-    RetainPtr<CFArrayRef> bodyParts(AdoptCF, wkCFURLRequestCopyHTTPRequestBodyParts(request));
-    if (bodyParts) {
-        RefPtr<FormData> formData = FormData::create();
-
-        CFIndex count = CFArrayGetCount(bodyParts.get());
-        for (CFIndex i = 0; i < count; i++) {
-            CFTypeRef bodyPart = CFArrayGetValueAtIndex(bodyParts.get(), i);
-            CFTypeID typeID = CFGetTypeID(bodyPart);
-            if (typeID == CFStringGetTypeID()) {
-                String filename = (CFStringRef)bodyPart;
-                formData->appendFile(filename);
-            } else if (typeID == CFDataGetTypeID()) {
-                CFDataRef data = (CFDataRef)bodyPart;
-                formData->appendData(CFDataGetBytePtr(data), CFDataGetLength(data));
-            } else
-                ASSERT_NOT_REACHED();
-        }
-        return formData.release();
-    }
-
-    // FIXME: what to do about arbitrary body streams?
-    return 0;
+    RetainPtr<CFReadStreamRef> bodyStream = adoptCF(CFURLRequestCopyHTTPRequestBodyStream(request));
+    return httpBodyFromStream(bodyStream.get());
 }
 
 } // namespace WebCore
-
-#endif // USE(CFNETWORK)

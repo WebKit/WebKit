@@ -28385,11 +28385,23 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\cf\FileSystemCF.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\cf\KURLCFNet.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\platform\cf\RetainPtr.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\cf\SchedulePair.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\cf\SchedulePair.h"
 					>
 				</File>
 				<File

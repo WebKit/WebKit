@@ -26,12 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "FileSystem.h"
+#include "config.h"
+#include "FileSystem.h"
 
-#import "PlatformString.h"
-#import <wtf/RetainPtr.h>
-#import <wtf/text/CString.h>
+#include "PlatformString.h"
+#include <wtf/RetainPtr.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

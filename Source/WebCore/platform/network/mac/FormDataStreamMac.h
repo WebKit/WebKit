@@ -31,8 +31,9 @@
 
 #if !USE(CFNETWORK)
 
-#include "FormData.h"
+#include <wtf/Forward.h>
 
+@class NSInputStream;
 @class NSMutableURLRequest;
 
 namespace WebCore {

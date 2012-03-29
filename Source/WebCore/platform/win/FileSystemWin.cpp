@@ -123,10 +123,15 @@ String pathByAppendingComponent(const String& path, const String& component)
     return String::adopt(buffer);
 }
 
+#if !USE(CF)
+
 CString fileSystemRepresentation(const String&)
 {
+    ASSERT_NOT_REACHED();
     return "";
 }
+
+#endif !USE(CF)
 
 bool makeAllDirectories(const String& path)
 {
