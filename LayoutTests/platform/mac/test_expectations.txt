@@ -190,7 +190,6 @@ BUGWK75568 : compositing/geometry/object-clip-rects-assertion.html = TEXT
 BUGWK75568 : compositing/overflow/ancestor-overflow.html = TEXT
 BUGWK75568 : editing/inserting/before-after-input-element.html = TEXT
 BUGWK75568 : editing/pasteboard/4806874.html = TEXT
-BUGWK75568 : editing/pasteboard/drop-text-without-selection.html = TEXT
 BUGWK75568 : editing/pasteboard/input-field-1.html = TEXT
 BUGWK75568 : editing/selection/3690703-2.html = TEXT
 BUGWK75568 : editing/selection/3690703.html = TEXT
