@@ -63,6 +63,7 @@ class TextFieldDecorationElement : public HTMLDivElement {
 public:
     static PassRefPtr<TextFieldDecorationElement> create(Document*, TextFieldDecorator*);
     TextFieldDecorator* textFieldDecorator() { return m_textFieldDecorator; }
+    void decorate(HTMLInputElement*);
 
 private:
     TextFieldDecorationElement(Document*, TextFieldDecorator*);
