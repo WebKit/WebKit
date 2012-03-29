@@ -1,3 +1,12 @@
+2012-03-29  Andy Estes  <aestes@apple.com>
+
+        Remove an unused variable that breaks the build with newer versions of clang.
+
+        Rubber stamped by Gavin Barraclough.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+
 2012-03-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         HashMap<>::add should return a more descriptive object

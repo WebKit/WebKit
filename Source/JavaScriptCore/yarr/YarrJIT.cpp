@@ -1095,7 +1095,6 @@ class YarrGenerator : private MacroAssembler {
 
         m_backtrackingState.link(this);
 
-        Label backtrackBegin(this);
         loadFromFrame(term->frameLocation, countRegister);
 
         nonGreedyFailures.append(atEndOfInput());
