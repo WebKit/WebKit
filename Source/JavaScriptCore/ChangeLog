@@ -1,5 +1,11 @@
 2012-03-29  Gavin Barraclough  <barraclough@apple.com>
 
+        Windows build fix p1.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-03-29  Gavin Barraclough  <barraclough@apple.com>
+
         Template the Yarr::Interpreter on the character type
         https://bugs.webkit.org/show_bug.cgi?id=82637
 
