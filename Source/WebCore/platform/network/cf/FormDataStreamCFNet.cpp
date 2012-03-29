@@ -44,7 +44,7 @@
 
 #if PLATFORM(IOS)
 #include <MacErrors.h>
-#else
+#elif PLATFORM(MAC)
 #include <CoreServices/CoreServices.h>
 #endif
 
@@ -263,7 +263,12 @@ static Boolean formOpen(CFReadStreamRef, CFStreamError* error, Boolean* openComp
     bool opened = openNextStream(form);
 
     *openComplete = opened;
-    error->error = opened ? 0 : fnfErr;
+    error->error = opened ? 0 :
+#if PLATFORM(WIN)
+        ENOENT;
+#else
+        fnfErr;
+#endif
     return opened;
 }
 
