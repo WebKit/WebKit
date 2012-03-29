@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPrivateOwnPtr_h
-#define WebPrivateOwnPtr_h
-
-#include "WebCommon.h"
-
-namespace WebKit {
-
-// This class is an implementation detail of the WebKit API.  It exists
-// to help simplify the implementation of WebKit interfaces that merely
-// wrap a pointer to a WebCore class. It's similar to WebPrivatePtr, but it
-// wraps a naked pointer rather than a reference counted.
-// Note: you must call reset(0) on the implementation side in order to delete
-// the WebCore pointer.
-template <typename T>
-class WebPrivateOwnPtr {
-public:
-    WebPrivateOwnPtr() : m_ptr(0) {}
-    ~WebPrivateOwnPtr() { WEBKIT_ASSERT(!m_ptr); }
-
-#if WEBKIT_IMPLEMENTATION
-    explicit WebPrivateOwnPtr(T* ptr)
-        : m_ptr(ptr)
-    {
-    }
-
-    void reset(T* ptr)
-    {
-        delete m_ptr;
-        m_ptr = ptr;
-    }
-
-    T* get() const { return m_ptr; }
-
-    T* operator->() const
-    {
-        WEBKIT_ASSERT(m_ptr);
-        return m_ptr;
-    }
-#endif // WEBKIT_IMPLEMENTATION
-
-private:
-    T* m_ptr;
-
-    WebPrivateOwnPtr(const WebPrivateOwnPtr&);
-    void operator=(const WebPrivateOwnPtr&);
-};
-
-} // namespace WebKit
-
-#endif
+#include "../../../../Platform/chromium/public/WebPrivateOwnPtr.h"

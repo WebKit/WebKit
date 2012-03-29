@@ -1,3 +1,28 @@
+2012-03-28  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Move APIs related to ResourceHandle into Platform
+        https://bugs.webkit.org/show_bug.cgi?id=82553
+
+        Reviewed by James Robinson.
+
+        These headers are now just forwarding headers to the new location of
+        these headers. These forwarding headers exist to avoid breaking
+        existing users of the API. They will likely be removed (or changed)
+        in the future once we've updated all folks using them.
+
+        * public/platform/WebData.h:
+        * public/platform/WebHTTPBody.h:
+        * public/platform/WebHTTPHeaderVisitor.h:
+        * public/platform/WebHTTPLoadInfo.h:
+        * public/platform/WebPrivateOwnPtr.h:
+        * public/platform/WebURL.h:
+        * public/platform/WebURLError.h:
+        * public/platform/WebURLLoadTiming.h:
+        * public/platform/WebURLLoader.h:
+        * public/platform/WebURLLoaderClient.h:
+        * public/platform/WebURLRequest.h:
+        * public/platform/WebURLResponse.h:
+
 2012-03-28  Bill Budge  <bbudge@chromium.org>
 
         AssociatedURLLoader does not support Cross Origin Redirects when using

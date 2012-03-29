@@ -1,3 +1,119 @@
+2012-03-28  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Move APIs related to ResourceHandle into Platform
+        https://bugs.webkit.org/show_bug.cgi?id=82553
+
+        Reviewed by James Robinson.
+
+        This patch is the first patch in this series:
+        https://github.com/abarth/webkit/compare/master...webcore-platform
+
+        The goal of these patches is to move WebCore::ResourceHandle out of
+        Chromium's WebKit layer and into WebCore/platform, where it belongs.
+
+        This patch moves the Chromium-WebKit APIs used by ResourceHandle out of
+        the WebKit layer and into the Plaform layer. These are APIs that WebKit
+        uses to call "down" to manipulate the underlying platform (rather than
+        "up" to the client to make decisions). The long-term plan is to move
+        all of the headers in WebKit/chromium/public/platform into
+        Platform/chromium/public (although we'll likely need to clean up some
+        layering violations as we go).
+
+        * Platform.gypi:
+        * chromium/public/WebData.h: Added.
+        (WebKit):
+        (WebData):
+        (WebKit::WebData::~WebData):
+        (WebKit::WebData::WebData):
+        (WebKit::WebData::operator=):
+        (WebKit::WebData::isEmpty):
+        (WebKit::WebData::isNull):
+        * chromium/public/WebHTTPBody.h: Added.
+        (WebKit):
+        (WebHTTPBody):
+        (WebKit::WebHTTPBody::~WebHTTPBody):
+        (WebKit::WebHTTPBody::WebHTTPBody):
+        (WebKit::WebHTTPBody::operator=):
+        (WebKit::WebHTTPBody::isNull):
+        * chromium/public/WebHTTPHeaderVisitor.h: Added.
+        (WebKit):
+        (WebHTTPHeaderVisitor):
+        (WebKit::WebHTTPHeaderVisitor::~WebHTTPHeaderVisitor):
+        * chromium/public/WebHTTPLoadInfo.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebHTTPLoadInfo):
+        (WebKit::WebHTTPLoadInfo::WebHTTPLoadInfo):
+        (WebKit::WebHTTPLoadInfo::~WebHTTPLoadInfo):
+        (WebKit::WebHTTPLoadInfo::operator =):
+        * chromium/public/WebPrivateOwnPtr.h: Added.
+        (WebKit):
+        (WebPrivateOwnPtr):
+        (WebKit::WebPrivateOwnPtr::WebPrivateOwnPtr):
+        (WebKit::WebPrivateOwnPtr::~WebPrivateOwnPtr):
+        (WebKit::WebPrivateOwnPtr::reset):
+        (WebKit::WebPrivateOwnPtr::get):
+        (WebKit::WebPrivateOwnPtr::operator->):
+        * chromium/public/WebURL.h: Added.
+        (WebKit):
+        (WebURL):
+        (WebKit::WebURL::~WebURL):
+        (WebKit::WebURL::WebURL):
+        (WebKit::WebURL::operator=):
+        (WebKit::WebURL::assign):
+        (WebKit::WebURL::spec):
+        (WebKit::WebURL::parsed):
+        (WebKit::WebURL::isValid):
+        (WebKit::WebURL::isEmpty):
+        (WebKit::WebURL::isNull):
+        (WebKit::WebURL::operator GURL):
+        (WebKit::operator<):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * chromium/public/WebURLError.h: Added.
+        (WebKit):
+        (WebURLError):
+        (WebKit::WebURLError::WebURLError):
+        * chromium/public/WebURLLoadTiming.h: Added.
+        (WebKit):
+        (WebURLLoadTiming):
+        (WebKit::WebURLLoadTiming::~WebURLLoadTiming):
+        (WebKit::WebURLLoadTiming::WebURLLoadTiming):
+        (WebKit::WebURLLoadTiming::operator=):
+        (WebKit::WebURLLoadTiming::isNull):
+        * chromium/public/WebURLLoader.h: Added.
+        (WebKit):
+        (WebURLLoader):
+        (WebKit::WebURLLoader::~WebURLLoader):
+        * chromium/public/WebURLLoaderClient.h: Added.
+        (WebKit):
+        (WebURLLoaderClient):
+        (WebKit::WebURLLoaderClient::willSendRequest):
+        (WebKit::WebURLLoaderClient::didSendData):
+        (WebKit::WebURLLoaderClient::didReceiveResponse):
+        (WebKit::WebURLLoaderClient::didDownloadData):
+        (WebKit::WebURLLoaderClient::didReceiveData):
+        (WebKit::WebURLLoaderClient::didReceiveCachedMetadata):
+        (WebKit::WebURLLoaderClient::didFinishLoading):
+        (WebKit::WebURLLoaderClient::didFail):
+        (WebKit::WebURLLoaderClient::~WebURLLoaderClient):
+        * chromium/public/WebURLRequest.h: Added.
+        (WebKit):
+        (WebURLRequest):
+        (ExtraData):
+        (WebKit::WebURLRequest::ExtraData::~ExtraData):
+        (WebKit::WebURLRequest::~WebURLRequest):
+        (WebKit::WebURLRequest::WebURLRequest):
+        (WebKit::WebURLRequest::operator=):
+        * chromium/public/WebURLResponse.h: Added.
+        (WebKit):
+        (WebURLResponse):
+        (ExtraData):
+        (WebKit::WebURLResponse::ExtraData::~ExtraData):
+        (WebKit::WebURLResponse::~WebURLResponse):
+        (WebKit::WebURLResponse::WebURLResponse):
+        (WebKit::WebURLResponse::operator=):
+
 2012-03-27  Nat Duca  <nduca@chromium.org>
 
         [chromium] Route monotonic clock up from compositor
