@@ -1,3 +1,14 @@
+2012-03-28  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG object equality speculations should be simplified
+        https://bugs.webkit.org/show_bug.cgi?id=82557
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateFinalObject):
+        (JSC::DFG::Node::shouldSpeculateArray):
+
 2012-03-28  David Kilzer  <ddkilzer@apple.com>
 
         minidom configurations should be based on ToolExecutable.xcconfig

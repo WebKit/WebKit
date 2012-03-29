@@ -788,14 +788,12 @@ struct Node {
     
     static bool shouldSpeculateFinalObject(Node& op1, Node& op2)
     {
-        return (op1.shouldSpeculateFinalObject() && op2.shouldSpeculateObject())
-            || (op1.shouldSpeculateObject() && op2.shouldSpeculateFinalObject());
+        return op1.shouldSpeculateFinalObject() && op2.shouldSpeculateFinalObject();
     }
 
     static bool shouldSpeculateArray(Node& op1, Node& op2)
     {
-        return (op1.shouldSpeculateArray() && op2.shouldSpeculateObject())
-            || (op1.shouldSpeculateObject() && op2.shouldSpeculateArray());
+        return op1.shouldSpeculateArray() && op2.shouldSpeculateArray();
     }
     
     bool canSpeculateInteger()
