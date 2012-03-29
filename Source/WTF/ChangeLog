@@ -1,3 +1,17 @@
+2012-03-29  Andreas Kling  <kling@webkit.org>
+
+        String: Subscript operator shouldn't force conversion to 16-bit characters.
+        <http://webkit.org/b/82613>
+
+        Reviewed by Anders Carlsson.
+
+        Forward String::operator[] to StringImpl::operator[] instead of indexing into characters().
+        This avoid implicit conversion of 8-bit strings to 16-bit, and as an example, reduces memory
+        usage on http://www.allthingsd.com/ by 360kB.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::operator[]):
+
 2012-03-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement PlatformStrategies

@@ -186,7 +186,7 @@ public:
     {
         if (!m_impl || index >= m_impl->length())
             return 0;
-        return m_impl->characters()[index];
+        return (*m_impl)[index];
     }
 
     static String number(short);
