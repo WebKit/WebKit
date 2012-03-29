@@ -375,6 +375,11 @@ private:
     Vector<CharacterClass*> m_userCharacterClasses;
 };
 
+JS_EXPORT_PRIVATE PassOwnPtr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*);
+JS_EXPORT_PRIVATE unsigned interpret(BytecodePattern*, const UString& input, unsigned start, unsigned* output);
+unsigned interpret(BytecodePattern*, const LChar* input, unsigned length, unsigned start, unsigned* output);
+unsigned interpret(BytecodePattern*, const UChar* input, unsigned length, unsigned start, unsigned* output);
+
 } } // namespace JSC::Yarr
 
 #endif // YarrInterpreter_h

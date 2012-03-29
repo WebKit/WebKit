@@ -343,7 +343,7 @@ int RegExp::match(JSGlobalData& globalData, const UString& s, unsigned startOffs
 #endif
     } else
 #endif
-        result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, s.length(), reinterpret_cast<unsigned*>(offsetVector));
+        result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
 
     // FIXME: The YARR engine should handle unsigned or size_t length matches.
     // The YARR Interpreter is "unsigned" clean, while the YARR JIT hasn't been addressed.
@@ -467,7 +467,7 @@ MatchResult RegExp::match(JSGlobalData& globalData, const UString& s, unsigned s
     Vector<int, 32> nonReturnedOvector;
     nonReturnedOvector.resize(offsetVectorSize);
     offsetVector = nonReturnedOvector.data();
-    int r = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, s.length(), reinterpret_cast<unsigned*>(offsetVector));
+    int r = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
 #if REGEXP_FUNC_TEST_DATA_GEN
     RegExpFunctionalTestCollector::get()->outputOneTest(this, s, startOffset, offsetVector, result);
 #endif
@@ -509,7 +509,7 @@ void RegExp::matchCompareWithInterpreter(const UString& s, int startOffset, int*
     for (unsigned j = 0, i = 0; i < m_numSubpatterns + 1; j += 2, i++)
         interpreterOffsetVector[j] = -1;
 
-    interpreterResult = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, s.length(), interpreterOffsetVector);
+    interpreterResult = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, interpreterOffsetVector);
 
     if (jitResult != interpreterResult)
         differences++;
