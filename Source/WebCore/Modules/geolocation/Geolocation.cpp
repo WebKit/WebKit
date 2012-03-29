@@ -617,25 +617,6 @@ void Geolocation::requestPermission()
     page->geolocationController()->requestPermission(this);
 }
 
-void Geolocation::positionChangedInternal()
-{
-    m_cachedPosition = lastPosition();
-
-    // Stop all currently running timers.
-    stopTimers();
-
-    if (!isAllowed()) {
-        // requestPermission() will ask the chrome for permission. This may be
-        // implemented synchronously or asynchronously. In both cases,
-        // makeSuccessCallbacks() will be called if permission is granted, so
-        // there's nothing more to do here.
-        requestPermission();
-        return;
-    }
-
-    makeSuccessCallbacks();
-}
-
 void Geolocation::makeSuccessCallbacks()
 {
     ASSERT(lastPosition());
@@ -661,7 +642,21 @@ void Geolocation::makeSuccessCallbacks()
 
 void Geolocation::positionChanged()
 {
-    positionChangedInternal();
+    m_cachedPosition = lastPosition();
+
+    // Stop all currently running timers.
+    stopTimers();
+
+    if (!isAllowed()) {
+        // requestPermission() will ask the chrome for permission. This may be
+        // implemented synchronously or asynchronously. In both cases,
+        // makeSuccessCallbacks() will be called if permission is granted, so
+        // there's nothing more to do here.
+        requestPermission();
+        return;
+    }
+
+    makeSuccessCallbacks();
 }
 
 void Geolocation::setError(GeolocationError* error)

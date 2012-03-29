@@ -141,7 +141,6 @@ private:
     void cancelRequests(GeoNotifierVector&);
     void cancelAllRequests();
 
-    void positionChangedInternal();
     void makeSuccessCallbacks();
     void handleError(PositionError*);
 
