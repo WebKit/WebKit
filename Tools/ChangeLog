@@ -1,3 +1,17 @@
+2012-03-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: chromium: DRT --no-timeout option doesn't work.
+        https://bugs.webkit.org/show_bug.cgi?id=82608
+
+        Initial value for m_timeout was initialized in constructor and was overwritten in DRT::main.
+        This was broken by r112354 and the sequence became opposite.
+
+        Reviewed by Yury Semikhatsky.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::initialize):
+
 2012-03-29  Vineet Chaudhary  <rgf748@motorola.com>
 
         Remove custom bindings form Internals.idl of attribute type Array.

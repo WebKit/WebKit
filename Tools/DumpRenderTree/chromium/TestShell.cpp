@@ -131,6 +131,12 @@ TestShell::TestShell()
     WebRuntimeFeatures::enableShadowDOM(true);
     WebRuntimeFeatures::enableStyleScoped(true);
     WebRuntimeFeatures::enableScriptedSpeech(true);
+
+    // 30 second is the same as the value in Mac DRT.
+    // If we use a value smaller than the timeout value of
+    // (new-)run-webkit-tests, (new-)run-webkit-tests misunderstands that a
+    // timed-out DRT process was crashed.
+    m_timeout = 30 * 1000;
 }
 
 void TestShell::initialize()
@@ -153,12 +159,6 @@ void TestShell::initialize()
         WebCompositor::initialize(m_webCompositorThread.get());
     } else
         WebCompositor::initialize(0);
-
-    // 30 second is the same as the value in Mac DRT.
-    // If we use a value smaller than the timeout value of
-    // (new-)run-webkit-tests, (new-)run-webkit-tests misunderstands that a
-    // timed-out DRT process was crashed.
-    m_timeout = 30 * 1000;
 
     createMainWindow();
 }
