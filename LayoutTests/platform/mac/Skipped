@@ -452,6 +452,9 @@ compositing/rtl/rtl-iframe-fixed-overflow.html
 compositing/rtl/rtl-iframe-fixed.html
 compositing/rtl/rtl-iframe-relative.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=82554
+compositing/rtl/rtl-fixed-overflow-scrolled.html
+
 # For now, Web Audio API is disabled
 webaudio/
 
