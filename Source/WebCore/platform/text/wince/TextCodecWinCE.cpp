@@ -98,7 +98,7 @@ LanguageManager::LanguageManager()
                 CharsetInfo info;
                 info.m_codePage = cpInfo.uiCodePage;
                 knownCharsets().set(name.data(), info);
-                i = codePageCharsets().set(cpInfo.uiCodePage, name).first;
+                i = codePageCharsets().set(cpInfo.uiCodePage, name).iterator;
             }
             if (i != codePageCharsets().end()) {
                 HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(String(i->second.data(), i->second.length()));
