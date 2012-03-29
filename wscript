@@ -341,7 +341,8 @@ def build(bld):
         excludes.append('WebGLContextEvent.cpp')
         excludes.append('FileSystemPOSIX.cpp')
         excludes.append('SharedBufferPOSIX.cpp')
-        
+        excludes.append('TouchAdjustment.cpp')
+        excludes.append('DNSResolveQueue.cpp')
         
         # These files appear not to build with older versions of ICU
         excludes.append('LocalizedNumberICU.cpp')

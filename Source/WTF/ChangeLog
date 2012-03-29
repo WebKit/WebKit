@@ -1,5 +1,16 @@
 2012-03-29  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Unreviewed build fix. Add export symbols needed to
+        build wx under Windows.
+        
+        * wtf/NullPtr.h:
+        * wtf/ParallelJobsGeneric.h:
+        (ParallelEnvironment):
+        * wtf/ThreadSpecific.h:
+        (WTF):
+
+2012-03-29  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Unreviewed build fix. Add WTF_EXPORT_PRIVATE_NO_RTTI
         so that ports not using RTTI can add symbol exports to
         classes that RTTI ports export with WTF_EXPORT_PRIVATE_RTTI.

@@ -40,10 +40,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #else
 
 namespace std {
-    class nullptr_t { };
+     class WTF_EXPORT_PRIVATE nullptr_t { };
 }
 
-extern std::nullptr_t nullptr;
+extern WTF_EXPORT_PRIVATE std::nullptr_t nullptr;
 
 #endif
 

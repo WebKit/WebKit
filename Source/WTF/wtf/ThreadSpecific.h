@@ -136,8 +136,8 @@ inline void ThreadSpecific<T>::set(T* ptr)
 // 2) We do not need to hold many instances of ThreadSpecific<> data. This fixed number should be far enough.
 const int kMaxTlsKeySize = 256;
 
-long& tlsKeyCount();
-DWORD* tlsKeys();
+WTF_EXPORT_PRIVATE long& tlsKeyCount();
+WTF_EXPORT_PRIVATE DWORD* tlsKeys();
 
 template<typename T>
 inline ThreadSpecific<T>::ThreadSpecific()

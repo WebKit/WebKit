@@ -1,3 +1,10 @@
+2012-03-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix, add Win-specific sources
+        the wx port needs after WTF move.
+
+        * wscript:
+
 2012-03-29  Andy Estes  <aestes@apple.com>
 
         Remove an unused variable that breaks the build with newer versions of clang.

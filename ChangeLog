@@ -1,3 +1,10 @@
+2012-03-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Remove a couple sources wx
+        should not build.
+
+        * wscript:
+
 2012-03-29  Zalan Bujtas  <zbujtas@gmail.com>
 
         Remove redundant updateViewportArguments() call when page is restored from page cache.

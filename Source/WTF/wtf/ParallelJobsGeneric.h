@@ -40,14 +40,14 @@ class ParallelEnvironment {
 public:
     typedef void (*ThreadFunction)(void*);
 
-    ParallelEnvironment(ThreadFunction, size_t sizeOfParameter, int requestedJobNumber);
+    WTF_EXPORT_PRIVATE ParallelEnvironment(ThreadFunction, size_t sizeOfParameter, int requestedJobNumber);
 
     int numberOfJobs()
     {
         return m_numberOfJobs;
     }
 
-    void execute(void* parameters);
+    WTF_EXPORT_PRIVATE void execute(void* parameters);
 
     class ThreadPrivate : public RefCounted<ThreadPrivate> {
     public:
