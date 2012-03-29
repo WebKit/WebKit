@@ -53,6 +53,7 @@ class WebSocket : public RefCounted<WebSocket>, public EventTarget, public Activ
 public:
     static void setIsAvailable(bool);
     static bool isAvailable();
+    static const char* subProtocolSeperator();
     static PassRefPtr<WebSocket> create(ScriptExecutionContext*);
     virtual ~WebSocket();
 

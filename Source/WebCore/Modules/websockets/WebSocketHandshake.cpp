@@ -34,6 +34,7 @@
 #if ENABLE(WEB_SOCKETS)
 
 #include "WebSocketHandshake.h"
+#include "WebSocket.h"
 
 #include "Base64.h"
 #include "Cookie.h"
@@ -726,6 +727,18 @@ bool WebSocketHandshake::checkResponseHeaders()
         if (serverWebSocketAccept != m_expectedAccept) {
             m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Accept mismatch";
             return false;
+        }
+        if (!serverWebSocketProtocol.isNull()) {
+            if (m_clientProtocol.isEmpty()) {
+                m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch";
+                return false;
+            }
+            Vector<String> result;
+            m_clientProtocol.split(String(WebSocket::subProtocolSeperator()), result);
+            if (!result.contains(serverWebSocketProtocol)) {
+                m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch";
+                return false;
+            }
         }
     }
     return true;

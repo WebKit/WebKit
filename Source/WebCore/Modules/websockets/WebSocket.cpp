@@ -147,6 +147,11 @@ bool WebSocket::isAvailable()
     return webSocketsAvailable;
 }
 
+const char* WebSocket::subProtocolSeperator()
+{
+    return ", ";
+}
+
 WebSocket::WebSocket(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_state(CONNECTING)
@@ -267,7 +272,7 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
         }
 
         if (!protocols.isEmpty())
-            protocolString = joinStrings(protocols, ", ");
+            protocolString = joinStrings(protocols, subProtocolSeperator());
     }
 
     m_channel->connect(m_url, protocolString);
