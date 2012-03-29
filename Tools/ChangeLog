@@ -1,3 +1,20 @@
+2012-03-29  Dirk Pranke  <dpranke@chromium.org>
+
+        new-run-webkit-tests: crashes when it fails to decode a stack trace
+        https://bugs.webkit.org/show_bug.cgi?id=82673
+
+        Unreviewed, build fix.
+
+        We are assuming the stdout/stderr output from the driver is utf-8
+        encoded when we get stack traces; this may not be a valid
+        assumption generally, but if we do get strings that aren't valid
+        utf-8, we would crash. Now we will ignore any decoding errors.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_get_crash_log):
+
 2012-03-29  Simon Fraser  <simon.fraser@apple.com>
 
         Scripts fail to detect when a tool crashes

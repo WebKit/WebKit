@@ -1054,8 +1054,8 @@ class Port(object):
     def _get_crash_log(self, name, pid, stdout, stderr):
         name_str = name or '<unknown process name>'
         pid_str = str(pid or '<unknown>')
-        stdout_lines = (stdout or '<empty>').decode('utf8').splitlines()
-        stderr_lines = (stderr or '<empty>').decode('utf8').splitlines()
+        stdout_lines = (stdout or '<empty>').decode('utf8', 'replace').splitlines()
+        stderr_lines = (stderr or '<empty>').decode('utf8', 'replace').splitlines()
         return 'crash log for %s (pid %s):\n%s\n%s\n' % (name_str, pid_str,
             '\n'.join(('STDOUT: ' + l) for l in stdout_lines),
             '\n'.join(('STDERR: ' + l) for l in stderr_lines))

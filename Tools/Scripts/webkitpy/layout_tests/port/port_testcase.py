@@ -314,6 +314,18 @@ class PortTestCase(unittest.TestCase):
             'STDOUT: <empty>\n'
             'STDERR: <empty>\n'))
 
+        self.assertEquals(port._get_crash_log('foo', 1234, 'out bar\nout baz', 'err bar\nerr baz\n'),
+            ('crash log for foo (pid 1234):\n'
+             'STDOUT: out bar\n'
+             'STDOUT: out baz\n'
+             'STDERR: err bar\n'
+             'STDERR: err baz\n'))
+
+        self.assertEquals(port._get_crash_log('foo', 1234, 'foo\xa6bar', 'foo\xa6bar'),
+            (u'crash log for foo (pid 1234):\n'
+             u'STDOUT: foo\ufffdbar\n'
+             u'STDERR: foo\ufffdbar\n'))
+
 
 # FIXME: This class and main() should be merged into test-webkitpy.
 class EnhancedTestLoader(unittest.TestLoader):
