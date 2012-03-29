@@ -18,8 +18,8 @@ function testComputedStyle(value) {
 }
 
 shouldBeEqualToString('test("-webkit-wrap: auto")', "auto");
-shouldBeEqualToString('test("-webkit-wrap: left 1px")', "left 1px");
-shouldBeEqualToString('test("-webkit-wrap: right 1px 2px")', "right 1px 2px");
+shouldBeEqualToString('test("-webkit-wrap: start 1px")', "start 1px");
+shouldBeEqualToString('test("-webkit-wrap: end 1px 2px")', "end 1px 2px");
 shouldBeEqualToString('test("-webkit-wrap: 5px both 10pt;")', "both 5px 10pt");
 shouldBeEqualToString('test("-webkit-wrap: 2px 3px clear;")', "clear 2px 3px");
 shouldBeEqualToString('test("-webkit-wrap: 5px maximum;")', "maximum 5px");
@@ -30,12 +30,12 @@ shouldBeEqualToString('test("-webkit-wrap: none 10px 10em;")', "");
 shouldBeEqualToString('test("-webkit-wrap: auto -5px;")', "");
 shouldBeEqualToString('test("-webkit-wrap: auto both;")', "");
 shouldBeEqualToString('test("-webkit-wrap: auto 1px -10px;")', "");
-shouldBeEqualToString('test("-webkit-wrap: -5px left;")', "");
-shouldBeEqualToString('test("-webkit-wrap: 5px right \'string\';")', "");
+shouldBeEqualToString('test("-webkit-wrap: -5px start;")', "");
+shouldBeEqualToString('test("-webkit-wrap: 5px end \'string\';")', "");
 
 shouldBeEqualToString('testComputedStyle("auto")', "auto 0px 0px");
-shouldBeEqualToString('testComputedStyle("left 1px")', "left 1px 0px");
-shouldBeEqualToString('testComputedStyle("right 1px 2px")', "right 1px 2px");
+shouldBeEqualToString('testComputedStyle("start 1px")', "start 1px 0px");
+shouldBeEqualToString('testComputedStyle("end 1px 2px")', "end 1px 2px");
 shouldBeEqualToString('testComputedStyle("5px maximum")', "maximum 5px 0px");
 shouldBeEqualToString('testComputedStyle("5px")', "auto 5px 0px");
 shouldBeEqualToString('testComputedStyle("5px 10px")', "auto 5px 10px");

@@ -775,7 +775,7 @@ static inline bool isValidKeywordPropertyAndValue(int propertyId, int valueID)
             return true;
         break;
     case CSSPropertyWebkitWrapFlow:
-        if (valueID == CSSValueAuto || valueID == CSSValueBoth || valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueMaximum || valueID == CSSValueClear)
+        if (valueID == CSSValueAuto || valueID == CSSValueBoth || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueMaximum || valueID == CSSValueClear)
             return true;
         break;
     case CSSPropertyWebkitWrapThrough:
