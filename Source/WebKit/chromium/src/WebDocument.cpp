@@ -180,7 +180,7 @@ void WebDocument::insertUserStyleSheet(const WebString& sourceCode, UserStyleLev
 
     RefPtr<CSSStyleSheet> parsedSheet = CSSStyleSheet::create(document.get());
     parsedSheet->setIsUserStyleSheet(level == UserStyleUserLevel);
-    parsedSheet->parseString(sourceCode, toCSSParserMode(!document->inQuirksMode()));
+    parsedSheet->parseString(sourceCode, strictToCSSParserMode(!document->inQuirksMode()));
     document->addUserSheet(parsedSheet.release());
 }
 
