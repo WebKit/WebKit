@@ -7,7 +7,9 @@ InspectorTest.createHeapSnapshotMockObject = function()
         _nodeTypeOffset: 0,
         _nodeNameOffset: 1,
         _edgesCountOffset: 2,
+        _firstEdgeIndexOffset: 2,
         _firstEdgeOffset: 3,
+        _nodeFieldCount: 3,
         _edgeFieldsCount: 3,
         _edgeTypeOffset: 0,
         _edgeNameOffset: 1,
@@ -20,19 +22,24 @@ InspectorTest.createHeapSnapshotMockObject = function()
         // Represents the following graph:
         //   (numbers in parentheses indicate node offset)
         // 
-        //         A (9) --ac- C (27) -ce- E(36)
+        //         A (3) --ac- C (9) -ce- E(15)
         //       a/|         /
         //  "" (0) 1      bc
         //       b\v    /
-        //         B (18) -bd- D (33)
+        //         B (6) -bd- D (12)
         //
-        _nodes: [
-            0, 0, 2, 1,  6,  9, 1,  7, 18,
-            1, 1, 2, 0,  1, 18, 1,  8, 27,
-            1, 2, 2, 1,  9, 27, 1, 10, 33,
-            1, 3, 1, 1, 11, 36,
-            1, 4, 0,
-            1, 5, 0],
+        _onlyNodes: [
+            0, 0, 0,
+            1, 1, 6,
+            1, 2, 12,
+            1, 3, 18,
+            1, 4, 21,
+            1, 5, 21],
+        _containmentEdges: [
+            1,  6, 3, 1,  7, 6,
+            0,  1, 6, 1,  8, 9,
+            1,  9, 9, 1, 10, 12,
+            1, 11, 15],
         _strings: ["", "A", "B", "C", "D", "E", "a", "b", "ac", "bc", "bd", "ce"]
     };
 };
