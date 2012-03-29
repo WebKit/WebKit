@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,12 +43,12 @@ void JSAudioBufferSourceNode::setBuffer(ExecState* exec, JSValue value)
     AudioBufferSourceNode* imp = static_cast<AudioBufferSourceNode*>(impl());
     AudioBuffer* buffer = toAudioBuffer(value);
     if (!buffer) {
-        throwError(exec, createSyntaxError(exec, "Value is not of type AudioBuffer"));
+        throwError(exec, createTypeError(exec, "Value is not of type AudioBuffer"));
         return;
     }
     
     if (!imp->setBuffer(buffer))
-        throwError(exec, createSyntaxError(exec, "AudioBuffer unsupported number of channels"));
+        throwError(exec, createTypeError(exec, "AudioBuffer unsupported number of channels"));
 }
 
 } // namespace WebCore
