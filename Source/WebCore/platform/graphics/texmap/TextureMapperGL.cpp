@@ -30,11 +30,9 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#if PLATFORM(QT)
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if PLATFORM(QT) && QT_VERSION >= 0x050000
 #include <QOpenGLContext>
 #include <QPlatformPixmap>
-#endif
 #endif
 
 #if OS(WINDOWS)
@@ -71,7 +69,7 @@ inline static void debugGLCommand(const char* command, int line)
 
 struct TextureMapperGLData {
     struct SharedGLData : public RefCounted<SharedGLData> {
-#if PLATFORM(QT) && (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#if PLATFORM(QT) && QT_VERSION >= 0x050000
         typedef QOpenGLContext* GLContext;
         static GLContext getCurrentGLContext()
         {
