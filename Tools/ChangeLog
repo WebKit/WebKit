@@ -1,3 +1,17 @@
+2012-03-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Scripts fail to detect when a tool crashes
+        https://bugs.webkit.org/show_bug.cgi?id=82659
+
+        Reviewed by Mark Rowe.
+        
+        Have exitStatus() detect when the process fail to exit cleanly
+        (possibly because of a crash), and return a non-zero exit code
+        in that case.
+
+        * Scripts/VCSUtils.pm:
+        (exitStatus):
+
 2012-03-29  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         [GTK][EFL] run-javascriptcore-tests should be run through jhbuild

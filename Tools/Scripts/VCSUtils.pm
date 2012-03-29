@@ -120,6 +120,9 @@ sub exitStatus($)
     if ($^O eq "MSWin32") {
         return $returnvalue >> 8;
     }
+    if (!WIFEXITED($returnvalue)) {
+        return 254;
+    }
     return WEXITSTATUS($returnvalue);
 }
 
