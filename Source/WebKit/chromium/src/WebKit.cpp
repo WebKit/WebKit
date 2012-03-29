@@ -38,21 +38,21 @@
 #include "TextEncoding.h"
 #include "V8Binding.h"
 #include "WebKitMutationObserver.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "WebMediaPlayerClientImpl.h"
 #include "WebSocket.h"
-#include "platform/WebThread.h"
 #include "WorkerContextExecutionProxy.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebThread.h"
 #include "v8.h"
-
-#if OS(DARWIN)
-#include "WebSystemInterface.h"
-#endif
-
+#include <public/Platform.h>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 #include <wtf/text/AtomicString.h>
+
+#if OS(DARWIN)
+#include "WebSystemInterface.h"
+#endif
 
 namespace WebKit {
 
@@ -118,6 +118,7 @@ void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
     ASSERT(webKitPlatformSupport);
     ASSERT(!s_webKitPlatformSupport);
     s_webKitPlatformSupport = webKitPlatformSupport;
+    Platform::initialize(s_webKitPlatformSupport);
 
     WTF::initializeThreading();
     WTF::initializeMainThread();
@@ -145,6 +146,7 @@ void shutdown()
     }
 #endif
     s_webKitPlatformSupport = 0;
+    Platform::shutdown();
 }
 
 WebKitPlatformSupport* webKitPlatformSupport()

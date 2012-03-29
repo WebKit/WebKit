@@ -42,8 +42,8 @@
 #include "WebString.h"
 #include "WebURL.h"
 #include "WebVector.h"
-
 #include <time.h>
+#include "../../../../Platform/chromium/public/Platform.h"
 
 #ifdef WIN32
 typedef void *HANDLE;
@@ -75,10 +75,10 @@ class WebSocketStreamHandle;
 class WebStorageNamespace; // FIXME: Does this belong in platform?
 class WebThemeEngine;
 class WebThread;
-class WebURLLoader;
 class WebWorkerRunLoop;
 
-class WebKitPlatformSupport {
+// FIXME: Eventually all these API will need to move to WebKit::Platform.
+class WebKitPlatformSupport : public Platform {
 public:
     // Must return non-null.
     virtual WebClipboard* clipboard() { return 0; }
@@ -215,9 +215,6 @@ public:
 
     // A suggestion to prefetch IP information for the given hostname.
     virtual void prefetchHostName(const WebString&) { }
-
-    // Returns a new WebURLLoader instance.
-    virtual WebURLLoader* createURLLoader() { return 0; }
 
     // Returns a new WebSocketStreamHandle instance.
     virtual WebSocketStreamHandle* createSocketStreamHandle() { return 0; }

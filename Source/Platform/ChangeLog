@@ -1,3 +1,31 @@
+2012-03-29  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Move createURLLoader() into Platform
+        https://bugs.webkit.org/show_bug.cgi?id=82587
+
+        Reviewed by James Robinson.
+
+        This patch introduces a base class for WebKitPlatformSupport that we
+        can use to incrementally more APIs from WebKit/chromium/public/platform
+        into Platform/chromium/public. Using this technique lets us avoid
+        making changes in the embedder during the transition.
+
+        This patch moves createURLLoader() because it's necessary for
+        ResourceHandle.  This is the third patch in this sequence:
+        https://github.com/abarth/webkit/compare/master...webcore-platform
+
+        * Platform.gypi:
+        * chromium/public/Platform.h: Added.
+        (WebKit):
+        (Platform):
+        (WebKit::Platform::createURLLoader):
+        (WebKit::Platform::~Platform):
+        * chromium/src/Platform.cpp: Added.
+        (WebKit):
+        (WebKit::Platform::initialize):
+        (WebKit::Platform::shutdown):
+        (WebKit::Platform::current):
+
 2012-03-28  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Move APIs related to ResourceHandle into Platform

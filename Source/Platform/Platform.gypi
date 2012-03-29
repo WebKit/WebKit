@@ -31,6 +31,7 @@
 {
     'variables': {
         'platform_files': [
+            'chromium/public/Platform.h',
             'chromium/public/WebCString.h',
             'chromium/public/WebCanvas.h',
             'chromium/public/WebColor.h',
@@ -65,6 +66,7 @@
             'chromium/public/WebURLLoaderClient.h',
             'chromium/public/WebURLRequest.h',
             'chromium/public/WebURLResponse.h',
+            'chromium/src/Platform.cpp',
             'chromium/src/WebCString.cpp',
             'chromium/src/WebFloatQuad.cpp',
             'chromium/src/WebString.cpp',

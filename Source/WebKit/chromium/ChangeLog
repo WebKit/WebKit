@@ -1,3 +1,17 @@
+2012-03-29  Adam Barth  <abarth@webkit.org>
+
+        Move createURLLoader() into Platform
+        https://bugs.webkit.org/show_bug.cgi?id=82587
+
+        Reviewed by James Robinson.
+
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKit):
+        (WebKitPlatformSupport):
+        * src/WebKit.cpp:
+        (WebKit::initializeWithoutV8):
+        (WebKit::shutdown):
+
 2012-03-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r112553.
