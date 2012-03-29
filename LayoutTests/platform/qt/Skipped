@@ -630,6 +630,10 @@ http/tests/misc/onload-remove-iframe-crash-2.html
 http/tests/websocket/tests/hybi/unpaired-surrogates-in-close-reason.html
 http/tests/websocket/tests/hybi/unpaired-surrogates-in-message.html
 
+# [Qt] REGRESSION (112488) It made http/tests/websocket/tests/hybi/reserved-bits.html test fail.
+# https://bugs.webkit.org/show_bug.cgi?id=82100
+http/tests/websocket/tests/hybi/reserved-bits.html
+
 # =========================================================================== #
 #       Failing xmlhttprequest tests                                          #
 # =========================================================================== #
@@ -1493,6 +1497,10 @@ svg/as-object
 # [Qt] svg/animations tests are very flaky
 # https://bugs.webkit.org/show_bug.cgi?id=80703
 svg/animations/animate-elem-08-t-drt.html
+
+# [Qt] REGRESSION(112391) It made svg/custom/preserve-aspect-ratio-syntax.svg test fail.
+# https://bugs.webkit.org/show_bug.cgi?id=82326
+svg/custom/preserve-aspect-ratio-syntax.svg
 
 # ============================================================================= #
 # Failing CSS Tests
