@@ -63,13 +63,17 @@ private:
 
 class FakeLayerRendererChromiumClient : public LayerRendererChromiumClient {
 public:
-    FakeLayerRendererChromiumClient() : m_setFullRootLayerDamageCount(0) { }
+    FakeLayerRendererChromiumClient()
+        : m_setFullRootLayerDamageCount(0)
+        , m_rootLayer(CCLayerImpl::create(1))
+    {
+    }
 
     // LayerRendererChromiumClient methods.
     virtual const IntSize& viewportSize() const { static IntSize fakeSize; return fakeSize; }
     virtual const CCSettings& settings() const { static CCSettings fakeSettings; return fakeSettings; }
-    virtual CCLayerImpl* rootLayer() { return 0; }
-    virtual const CCLayerImpl* rootLayer() const { return 0; }
+    virtual CCLayerImpl* rootLayer() { return m_rootLayer.get(); }
+    virtual const CCLayerImpl* rootLayer() const { return m_rootLayer.get(); }
     virtual void didLoseContext() { }
     virtual void onSwapBuffersComplete() { }
     virtual void setFullRootLayerDamage() { m_setFullRootLayerDamageCount++; }
@@ -80,6 +84,7 @@ public:
 private:
     int m_setFullRootLayerDamageCount;
     DebugScopedSetImplThread m_implThread;
+    OwnPtr<CCLayerImpl> m_rootLayer;
 };
 
 class FakeLayerRendererChromium : public LayerRendererChromium {
@@ -90,6 +95,7 @@ public:
 
     // Changing visibility to public.
     using LayerRendererChromium::initialize;
+    using LayerRendererChromium::isFramebufferDiscarded;
 };
 
 class LayerRendererChromiumTest : public testing::Test {
@@ -178,51 +184,17 @@ TEST_F(LayerRendererChromiumTest, SwapBuffersWhileBackbufferDiscardedShouldIgnor
 }
 
 // Test LayerRendererChromium discardFramebuffer functionality:
-// Discard framebuffer, then set visibility to true.
-// Expected: recreates the framebuffer.
-TEST_F(LayerRendererChromiumTest, SetVisibilityTrueShouldRecreateBackbuffer)
-{
-    m_mockContext.setMemoryAllocation(m_suggestHaveBackbufferNo);
-    EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
-
-    m_layerRendererChromium.setVisible(true);
-    EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
-}
-
-// Test LayerRendererChromium discardFramebuffer functionality:
-// Create a ScopedEnsureFramebufferAllocation while a framebuffer was discarded and then swapBuffers.
-// Expected: will recreate framebuffer scope duration, during which swaps will work fine, and discard on scope exit.
+// Begin drawing a frame while a framebuffer is discarded.
+// Expected: will recreate framebuffer.
 TEST_F(LayerRendererChromiumTest, DiscardedBackbufferIsRecreatredForScopeDuration)
 {
     m_mockContext.setMemoryAllocation(m_suggestHaveBackbufferNo);
     EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
-    {
-        ScopedEnsureFramebufferAllocation ensureFramebuffer(&m_layerRendererChromium);
-        EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
 
-        swapBuffers();
-        EXPECT_EQ(1, m_mockContext.frameCount());
-    }
-    EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
-    EXPECT_EQ(2, m_mockClient.setFullRootLayerDamageCount());
-}
-
-// Test LayerRendererChromium discardFramebuffer functionality:
-// Create a ScopedEnsureFramebufferAllocation while a framebuffer was not discarded and then swapBuffers.
-// Expected: will have no effect.
-TEST_F(LayerRendererChromiumTest, EnsuringBackbufferForScopeDurationDoesNothingIfAlreadyExists)
-{
+    m_layerRendererChromium.beginDrawingFrame();
     EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
-    EXPECT_EQ(0, m_mockClient.setFullRootLayerDamageCount());
-    {
-        ScopedEnsureFramebufferAllocation ensureFramebuffer(&m_layerRendererChromium);
-        EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
-        EXPECT_EQ(0, m_mockClient.setFullRootLayerDamageCount());
 
-        swapBuffers();
-        EXPECT_EQ(1, m_mockContext.frameCount());
-    }
-    EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
-    EXPECT_EQ(0, m_mockClient.setFullRootLayerDamageCount());
+    swapBuffers();
+    EXPECT_EQ(1, m_mockContext.frameCount());
 }

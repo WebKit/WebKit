@@ -1,3 +1,16 @@
+2012-03-29  Michal Mocny  <mmocny@google.com>
+
+        [chromium] Ensure framebuffer exists at the start of beginDrawingFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=82569
+
+        Reviewed by James Robinson.
+
+        * tests/LayerRendererChromiumTest.cpp:
+        (FakeLayerRendererChromiumClient::FakeLayerRendererChromiumClient):
+        (FakeLayerRendererChromiumClient::rootLayer):
+        (FakeLayerRendererChromiumClient):
+        (TEST_F):
+
 2012-03-29  Adam Barth  <abarth@webkit.org>
 
         Move createURLLoader() into Platform

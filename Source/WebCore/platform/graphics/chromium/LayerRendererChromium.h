@@ -61,6 +61,7 @@ class CCTextureDrawQuad;
 class GeometryBinding;
 class GraphicsContext3D;
 class LayerRendererSwapBuffersCompleteCallbackAdapter;
+class LayerRendererGpuMemoryAllocationChangedCallbackAdapter;
 class ScopedEnsureFramebufferAllocation;
 
 class LayerRendererChromiumClient {
@@ -163,11 +164,12 @@ public:
                           float width, float height, float opacity, const FloatQuad&,
                           int matrixLocation, int alphaLocation, int quadLocation);
 
+protected:
+    friend class LayerRendererGpuMemoryAllocationChangedCallbackAdapter;
     void discardFramebuffer();
     void ensureFramebuffer();
     bool isFramebufferDiscarded() const { return m_isFramebufferDiscarded; }
 
-protected:
     LayerRendererChromium(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>);
     bool initialize();
 
@@ -264,33 +266,6 @@ private:
 
     bool m_isViewportChanged;
     bool m_isFramebufferDiscarded;
-};
-
-// The purpose of this helper is twofold:
-// 1. To ensure that a framebuffer is available for scope lifetime, and
-// 2. To reset framebuffer allocation to previous state on scope exit.
-// If the framebuffer is recreated, its contents are undefined.
-// FIXME: Prevent/delay discarding framebuffer via any means while any
-// instance of this is alive. At the moment, this isn't an issue.
-class ScopedEnsureFramebufferAllocation {
-public:
-    explicit ScopedEnsureFramebufferAllocation(LayerRendererChromium* layerRenderer)
-        : m_layerRenderer(layerRenderer)
-        , m_framebufferWasInitiallyDiscarded(layerRenderer->isFramebufferDiscarded())
-    {
-        if (m_framebufferWasInitiallyDiscarded)
-            m_layerRenderer->ensureFramebuffer();
-    }
-
-    ~ScopedEnsureFramebufferAllocation()
-    {
-        if (m_framebufferWasInitiallyDiscarded)
-            m_layerRenderer->discardFramebuffer();
-    }
-
-private:
-    LayerRendererChromium* m_layerRenderer;
-    bool m_framebufferWasInitiallyDiscarded;
 };
 
 

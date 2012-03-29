@@ -350,10 +350,6 @@ void LayerRendererChromium::setVisible(bool visible)
     if (!visible)
         releaseRenderSurfaceTextures();
 
-    // FIXME: Remove this once framebuffer is automatically recreated on first use
-    if (visible)
-        ensureFramebuffer();
-
     // TODO: Replace setVisibilityCHROMIUM with an extension to explicitly manage front/backbuffers
     // crbug.com/116049
     if (m_capabilities.usingSetVisibility) {
@@ -406,6 +402,10 @@ void LayerRendererChromium::clearRenderSurface(CCRenderSurface* renderSurface, C
 void LayerRendererChromium::beginDrawingFrame()
 {
     ASSERT(rootLayer());
+
+    // FIXME: Remove this once framebuffer is automatically recreated on first use
+    ensureFramebuffer();
+
     m_defaultRenderSurface = rootLayer()->renderSurface();
 
     // FIXME: use the frame begin time from the overall compositor scheduler.

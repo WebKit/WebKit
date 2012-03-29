@@ -72,8 +72,6 @@ bool CCSingleThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect
     TRACE_EVENT("CCSingleThreadProxy::compositeAndReadback", this, 0);
     ASSERT(CCProxy::isMainThread());
 
-    ScopedEnsureFramebufferAllocation ensureFramebuffer(m_layerTreeHostImpl->layerRenderer());
-
     if (!commitIfNeeded())
         return false;
 
