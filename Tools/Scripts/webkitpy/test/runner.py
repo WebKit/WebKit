@@ -82,6 +82,9 @@ class TestRunner(object):
         return result
 
     def write_result(self, result, test_name, test_time, failure=None, err=None):
+        timing = ''
+        if self.options.timing:
+            timing = ' %.4fs' % test_time
         if self.options.verbose:
             if failure:
                 msg = ' failed'
@@ -89,7 +92,7 @@ class TestRunner(object):
                 msg = ' erred'
             else:
                 msg = ' passed'
-            self.stream.write(msg + '\n')
+            self.stream.write(msg + timing + '\n')
         else:
             if failure:
                 msg = 'F'

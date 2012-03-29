@@ -69,7 +69,7 @@ class FakeLoader(object):
 
 class RunnerTest(unittest.TestCase):
     def test_regular(self):
-        options = MockOptions(verbose=False)
+        options = MockOptions(verbose=0, timing=False)
         stream = StringIO.StringIO()
         loader = FakeLoader(('test1 (Foo)', '.', ''),
                             ('test2 (Foo)', 'F', 'test2\nfailed'),
@@ -82,7 +82,20 @@ class RunnerTest(unittest.TestCase):
         # FIXME: check the output from the test
 
     def test_verbose(self):
-        options = MockOptions(verbose=True)
+        options = MockOptions(verbose=1, timing=False)
+        stream = StringIO.StringIO()
+        loader = FakeLoader(('test1 (Foo)', '.', ''),
+                            ('test2 (Foo)', 'F', 'test2\nfailed'),
+                            ('test3 (Foo)', 'E', 'test3\nerred'))
+        result = TestRunner(stream, options, loader).run(loader.top_suite())
+        self.assertFalse(result.wasSuccessful())
+        self.assertEquals(result.testsRun, 3)
+        self.assertEquals(len(result.failures), 1)
+        self.assertEquals(len(result.errors), 1)
+        # FIXME: check the output from the test
+
+    def test_timing(self):
+        options = MockOptions(verbose=0, timing=True)
         stream = StringIO.StringIO()
         loader = FakeLoader(('test1 (Foo)', '.', ''),
                             ('test2 (Foo)', 'F', 'test2\nfailed'),

@@ -1,3 +1,4 @@
+# Copyright (C) 2012 Google, Inc.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -38,7 +39,6 @@ _log = logging.getLogger(__name__)
 
 class Tester(object):
     def __init__(self, filesystem=None):
-        self._verbosity = 1
         self.finder = TestFinder(filesystem or FileSystem())
         self.stream = sys.stderr
 
@@ -53,8 +53,8 @@ class Tester(object):
                           help='generate code coverage info (requires http://pypi.python.org/pypi/coverage)'),
         parser.add_option('-q', '--quiet', action='store_true', default=False,
                           help='run quietly (errors, warnings, and progress only)'),
-        parser.add_option('-s', '--silent', action='store_true', default=False,
-                          help='run silently (errors and warnings only)'),
+        parser.add_option('-t', '--timing', action='store_true', default=False,
+                          help='display per-test execution time (implies --verbose)'),
         parser.add_option('-x', '--xml', action='store_true', default=False,
                           help='output xUnit-style XML output')
         parser.add_option('-v', '--verbose', action='count', default=0,
@@ -70,21 +70,16 @@ class Tester(object):
     def _configure(self, options):
         self._options = options
 
-        if options.silent:
-            self._verbosity = 0
-            self._configure_logging(logging.WARNING)
-        elif options.quiet:
-            self._verbosity = 1
-            self._configure_logging(logging.WARNING)
-        elif options.verbose == 0:
-            self._verbosity = 1
-            self._configure_logging(logging.INFO)
-        elif options.verbose == 1:
-            self._verbosity = 2
-            self._configure_logging(logging.INFO)
+        if options.timing:
+            # --timing implies --verbose
+            options.verbose = max(options.verbose, 1)
+
+        log_level = logging.INFO
+        if options.quiet:
+            log_level = logging.WARNING
         elif options.verbose == 2:
-            self._verbosity = 2
-            self._configure_logging(logging.DEBUG)
+            log_level = logging.DEBUG
+        self._configure_logging(log_level)
 
     def _configure_logging(self, log_level):
         """Configure the root logger.

@@ -1,3 +1,26 @@
+2012-03-29  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: add --timing
+        https://bugs.webkit.org/show_bug.cgi?id=82550
+
+        Reviewed by Eric Seidel.
+
+        This patch adds a --timing option that will display the time
+        each test takes. It also removes the --silent option, since
+        probably no one ever used it, and cleans up the logging
+        option parsing code to be easier to follow.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._parse_args):
+        (Tester._configure):
+        * Scripts/webkitpy/test/runner.py:
+        (TestRunner.write_result):
+        * Scripts/webkitpy/test/runner_unittest.py:
+        (RunnerTest.test_regular):
+        (RunnerTest.test_verbose):
+        (RunnerTest):
+        (RunnerTest.test_timing):
+
 2012-03-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         HashMap<>::add should return a more descriptive object
