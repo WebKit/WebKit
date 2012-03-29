@@ -30,7 +30,9 @@
 namespace WebCore {
 
 class FormDataList;
+class HTMLFieldSetElement;
 class HTMLFormElement;
+class HTMLLegendElement;
 class ValidationMessage;
 class ValidityState;
 
@@ -49,6 +51,8 @@ public:
     void setFormMethod(const String&);
     bool formNoValidate() const;
 
+    void updateFieldSetAndLegendAncestor() const;
+
     virtual void reset() { }
 
     virtual bool formControlValueMatchesRenderer() const { return m_valueMatchesRenderer; }
@@ -60,7 +64,7 @@ public:
     virtual void dispatchFormControlChangeEvent();
     virtual void dispatchFormControlInputEvent();
 
-    virtual bool disabled() const { return m_disabled; }
+    virtual bool disabled() const;
     void setDisabled(bool);
 
     virtual bool isFocusable() const;
@@ -114,6 +118,7 @@ protected:
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void requiredAttributeChanged();
+    virtual void disabledAttributeChanged();
     virtual void attach();
     virtual void insertedIntoTree(bool deep);
     virtual void removedFromTree(bool deep);
@@ -147,7 +152,10 @@ private:
     virtual bool isValidFormControlElement();
     String visibleValidationMessage() const;
 
+    mutable HTMLFieldSetElement* m_fieldSetAncestor;
+    mutable HTMLLegendElement* m_legendAncestor;
     OwnPtr<ValidationMessage> m_validationMessage;
+    mutable bool m_fieldSetAncestorValid : 1;
     bool m_disabled : 1;
     bool m_readOnly : 1;
     bool m_required : 1;

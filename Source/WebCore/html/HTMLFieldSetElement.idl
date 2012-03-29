@@ -20,6 +20,7 @@
 module html {
 
     interface HTMLFieldSetElement : HTMLElement {
+        attribute [Reflect] boolean disabled;
         readonly attribute HTMLFormElement form;
         attribute [Reflect] DOMString name;
 

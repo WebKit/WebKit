@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "HTMLFieldSetElement.h"
+#include "HTMLLegendElement.h"
 
 #include "HTMLNames.h"
 #include "RenderFieldset.h"
@@ -44,6 +45,18 @@ PassRefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName&
     return adoptRef(new HTMLFieldSetElement(tagName, document, form));
 }
 
+void HTMLFieldSetElement::disabledAttributeChanged()
+{
+    // This element must be updated before the style of nodes in its subtree gets recalculated.
+    HTMLFormControlElement::disabledAttributeChanged();
+
+    for (Node* currentNode = this; currentNode; currentNode = currentNode->traverseNextNode(this)) {
+        HTMLElement* element = toHTMLElement(currentNode);
+        if (element && element->isFormControlElement())
+            static_cast<HTMLFormControlElement*>(element)->setNeedsStyleRecalc();
+    }
+}
+
 bool HTMLFieldSetElement::supportsFocus() const
 {
     return HTMLElement::supportsFocus();
@@ -58,6 +71,15 @@ const AtomicString& HTMLFieldSetElement::formControlType() const
 RenderObject* HTMLFieldSetElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderFieldset(this);
+}
+
+HTMLLegendElement* HTMLFieldSetElement::legend() const
+{
+    for (Element* node = firstElementChild(); node; node = node->nextElementSibling()) {
+        if (node->hasTagName(legendTag))
+            return static_cast<HTMLLegendElement*>(node);
+    }
+    return 0;
 }
 
 } // namespace
