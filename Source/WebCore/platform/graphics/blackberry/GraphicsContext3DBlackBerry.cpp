@@ -203,6 +203,10 @@ void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)
 {
 }
 
+void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>)
+{
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)
