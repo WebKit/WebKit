@@ -27,38 +27,17 @@
 #include "WebKitCSSKeyframeRule.h"
 
 #include "StylePropertySet.h"
+#include "WebKitCSSKeyframesRule.h"
 
 namespace WebCore {
-
-WebKitCSSKeyframeRule::WebKitCSSKeyframeRule(CSSStyleSheet* parent)
-    : CSSRule(parent, CSSRule::WEBKIT_KEYFRAME_RULE)
+    
+void StyleKeyframe::setProperties(PassRefPtr<StylePropertySet> properties)
 {
-}
-
-WebKitCSSKeyframeRule::~WebKitCSSKeyframeRule()
-{
-    if (m_style)
-        m_style->clearParentRule(this);
-}
-
-String WebKitCSSKeyframeRule::cssText() const
-{
-    String result = m_key;
-
-    result += " { ";
-    result += m_style->asText();
-    result += "}";
-
-    return result;
-}
-
-void WebKitCSSKeyframeRule::setDeclaration(PassRefPtr<StylePropertySet> style)
-{
-    m_style = style;
+    m_properties = properties;
 }
 
 /* static */
-void WebKitCSSKeyframeRule::parseKeyString(const String& s, Vector<float>& keys)
+void StyleKeyframe::parseKeyString(const String& s, Vector<float>& keys)
 {
     keys.clear();
     Vector<String> strings;
@@ -67,7 +46,7 @@ void WebKitCSSKeyframeRule::parseKeyString(const String& s, Vector<float>& keys)
     for (size_t i = 0; i < strings.size(); ++i) {
         float key = -1;
         String cur = strings[i].stripWhiteSpace();
-
+        
         // For now the syntax MUST be 'xxx%' or 'from' or 'to', where xxx is a legal floating point number
         if (cur == "from")
             key = 0;
@@ -78,7 +57,6 @@ void WebKitCSSKeyframeRule::parseKeyString(const String& s, Vector<float>& keys)
             if (k >= 0 && k <= 100)
                 key = k/100;
         }
-
         if (key < 0) {
             keys.clear();
             return;
@@ -86,6 +64,34 @@ void WebKitCSSKeyframeRule::parseKeyString(const String& s, Vector<float>& keys)
         else
             keys.append(key);
     }
+}
+
+String StyleKeyframe::cssText() const
+{
+    String result = keyText();
+
+    result += " { ";
+    result += m_properties->asText();
+    result += "}";
+
+    return result;
+}
+
+WebKitCSSKeyframeRule::WebKitCSSKeyframeRule(StyleKeyframe* keyframe, WebKitCSSKeyframesRule* parent)
+    : CSSRule(0, CSSRule::WEBKIT_KEYFRAME_RULE)
+    , m_keyframe(keyframe)
+{
+    setParentRule(parent);
+}
+
+WebKitCSSKeyframeRule::~WebKitCSSKeyframeRule()
+{
+    m_keyframe->properties()->clearParentRule(this);
+}
+
+CSSStyleDeclaration* WebKitCSSKeyframeRule::style() const 
+{ 
+    return m_keyframe->properties() ? m_keyframe->properties()->ensureRuleCSSStyleDeclaration(this) : 0; 
 }
 
 } // namespace WebCore

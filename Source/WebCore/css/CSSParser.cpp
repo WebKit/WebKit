@@ -319,7 +319,7 @@ PassRefPtr<CSSRule> CSSParser::parseRule(CSSStyleSheet* sheet, const String& str
     return m_rule.release();
 }
 
-PassRefPtr<WebKitCSSKeyframeRule> CSSParser::parseKeyframeRule(CSSStyleSheet *sheet, const String &string)
+PassRefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(CSSStyleSheet *sheet, const String &string)
 {
     setStyleSheet(sheet);
     setupParser("@-webkit-keyframe-rule{ ", string, "} ");
@@ -9265,7 +9265,7 @@ void CSSParser::deleteFontFaceOnlyValues()
     }
 }
 
-WebKitCSSKeyframeRule* CSSParser::createKeyframeRule(CSSParserValueList* keys)
+StyleKeyframe* CSSParser::createKeyframe(CSSParserValueList* keys)
 {
     // Create a key string from the passed keys
     String keyString;
@@ -9277,14 +9277,14 @@ WebKitCSSKeyframeRule* CSSParser::createKeyframeRule(CSSParserValueList* keys)
         keyString += "%";
     }
 
-    RefPtr<WebKitCSSKeyframeRule> keyframe = WebKitCSSKeyframeRule::create(m_styleSheet);
+    RefPtr<StyleKeyframe> keyframe = StyleKeyframe::create();
     keyframe->setKeyText(keyString);
-    keyframe->setDeclaration(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), inStrictMode()));
+    keyframe->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), inStrictMode()));
 
     clearProperties();
 
-    WebKitCSSKeyframeRule* keyframePtr = keyframe.get();
-    m_parsedRules.append(keyframe.release());
+    StyleKeyframe* keyframePtr = keyframe.get();
+    m_parsedKeyframes.append(keyframe.release());
     return keyframePtr;
 }
 

@@ -82,8 +82,8 @@ public:
     virtual void deref() { m_rule->deref(); }
     
 private:
-    virtual unsigned length() const { return m_rule->ruleCount(); }
-    virtual CSSRule* item(unsigned index) const  { return index < m_rule->ruleCount() ? m_rule->ruleAt(index) : 0; }
+    virtual unsigned length() const { return m_rule->length(); }
+    virtual CSSRule* item(unsigned index) const  { return m_rule->item(index); }
     virtual CSSStyleSheet* styleSheet() const { return m_rule->parentStyleSheet(); }
     
     Rule* m_rule;

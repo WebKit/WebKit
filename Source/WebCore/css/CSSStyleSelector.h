@@ -70,6 +70,7 @@ class RuleSet;
 class Settings;
 class StaticCSSRuleList;
 class StyleImage;
+class StyleKeyframe;
 class StylePendingImage;
 class StylePropertySet;
 class StyleRule;
@@ -77,7 +78,6 @@ class StyleShader;
 class StyleSheet;
 class StyleSheetList;
 class StyledElement;
-class WebKitCSSKeyframeRule;
 class WebKitCSSKeyframesRule;
 class WebKitCSSFilterValue;
 class WebKitCSSRegionRule;
@@ -151,7 +151,7 @@ private:
     StyledElement* findSiblingForStyleSharing(Node*, unsigned& count) const;
     bool canShareStyleWithElement(StyledElement*) const;
 
-    PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const WebKitCSSKeyframeRule*, KeyframeValue&);
+    PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const StyleKeyframe*, KeyframeValue&);
 
 #if ENABLE(STYLE_SCOPED)
     void pushScope(const ContainerNode* scope, const ContainerNode* scopeParent);

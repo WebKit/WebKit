@@ -59,8 +59,8 @@ class Document;
 class MediaQueryExp;
 class MediaQuerySet;
 class StylePropertySet;
+class StyleKeyframe;
 class StyledElement;
-class WebKitCSSKeyframeRule;
 class WebKitCSSKeyframesRule;
 
 class CSSParser {
@@ -74,7 +74,7 @@ public:
 
     void parseSheet(CSSStyleSheet*, const String&, int startLineNumber = 0, StyleRuleRangeMap* ruleRangeMap = 0);
     PassRefPtr<CSSRule> parseRule(CSSStyleSheet*, const String&);
-    PassRefPtr<WebKitCSSKeyframeRule> parseKeyframeRule(CSSStyleSheet*, const String&);
+    PassRefPtr<StyleKeyframe> parseKeyframeRule(CSSStyleSheet*, const String&);
     static bool parseValue(StylePropertySet*, int propId, const String&, bool important, bool strict, CSSStyleSheet* contextStyleSheet);
     static bool parseColor(RGBA32& color, const String&, bool strict = false);
     static bool parseSystemColor(RGBA32& color, const String&, Document*);
@@ -249,7 +249,7 @@ public:
 
     MediaQuerySet* createMediaQuerySet();
     CSSRule* createImportRule(const CSSParserString&, MediaQuerySet*);
-    WebKitCSSKeyframeRule* createKeyframeRule(CSSParserValueList*);
+    StyleKeyframe* createKeyframe(CSSParserValueList*);
     WebKitCSSKeyframesRule* createKeyframesRule();
 
     typedef Vector<RefPtr<CSSRule> > RuleList;
@@ -292,7 +292,7 @@ public:
     int m_id;
     CSSStyleSheet* m_styleSheet;
     RefPtr<CSSRule> m_rule;
-    RefPtr<WebKitCSSKeyframeRule> m_keyframe;
+    RefPtr<StyleKeyframe> m_keyframe;
     OwnPtr<MediaQuery> m_mediaQuery;
     OwnPtr<CSSParserValueList> m_valueList;
     Vector<CSSProperty, 256> m_parsedProperties;
@@ -411,6 +411,7 @@ private:
     bool m_allowNamespaceDeclarations;
 
     Vector<RefPtr<CSSRule> > m_parsedRules;
+    Vector<RefPtr<StyleKeyframe> > m_parsedKeyframes;
     Vector<RefPtr<MediaQuerySet> > m_parsedMediaQuerySets;
     Vector<OwnPtr<RuleList> > m_parsedRuleLists;
     HashSet<CSSParserSelector*> m_floatingSelectors;

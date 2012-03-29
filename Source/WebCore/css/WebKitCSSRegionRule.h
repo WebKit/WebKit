@@ -57,7 +57,11 @@ public:
 
     // Not part of the CSSOM.
     unsigned ruleCount() const { return m_childRules.size(); }
-    CSSRule* ruleAt(unsigned index) { return m_childRules[index].get(); }
+    CSSRule* ruleAt(unsigned index) const { return m_childRules[index].get(); }
+    
+    // For CSSRuleList
+    unsigned length() const { return ruleCount(); }
+    CSSRule* item(unsigned index) const { return index < ruleCount() ? ruleAt(index) : 0; }
 
 private:
     WebKitCSSRegionRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<CSSRule> >&);

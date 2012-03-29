@@ -1629,11 +1629,11 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, Rend
     return m_style.release();
 }
 
-PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* elementStyle, const WebKitCSSKeyframeRule* keyframeRule, KeyframeValue& keyframe)
+PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* elementStyle, const StyleKeyframe* keyframe, KeyframeValue& keyframeValue)
 {
     MatchResult result;
-    if (keyframeRule->declaration())
-        addMatchedProperties(result, keyframeRule->declaration());
+    if (keyframe->properties())
+        addMatchedProperties(result, keyframe->properties());
 
     ASSERT(!m_style);
 
@@ -1645,7 +1645,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* el
     // We don't need to bother with !important. Since there is only ever one
     // decl, there's nothing to override. So just add the first properties.
     bool inheritedOnly = false;
-    if (keyframeRule->style())
+    if (keyframe->properties())
         applyMatchedProperties<true>(result, false, 0, result.matchedProperties.size() - 1, inheritedOnly);
 
     // If our font got dirtied, go ahead and update it now.
@@ -1656,7 +1656,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* el
         applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
 
     // Now do rest of the properties.
-    if (keyframeRule->style())
+    if (keyframe->properties())
         applyMatchedProperties<false>(result, false, 0, result.matchedProperties.size() - 1, inheritedOnly);
 
     // If our font got dirtied by one of the non-essential font props,
@@ -1672,14 +1672,14 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* el
 #endif
 
     // Add all the animating properties to the keyframe.
-    if (StylePropertySet* styleDeclaration = keyframeRule->declaration()) {
+    if (StylePropertySet* styleDeclaration = keyframe->properties()) {
         unsigned propertyCount = styleDeclaration->propertyCount();
         for (unsigned i = 0; i < propertyCount; ++i) {
             int property = styleDeclaration->propertyAt(i).id();
             // Timing-function within keyframes is special, because it is not animated; it just
             // describes the timing function between this keyframe and the next.
             if (property != CSSPropertyWebkitAnimationTimingFunction)
-                keyframe.addProperty(property);
+                keyframeValue.addProperty(property);
         }
     }
 
@@ -1703,42 +1703,49 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
     const WebKitCSSKeyframesRule* keyframesRule = it->second.get();
 
     // Construct and populate the style for each keyframe
-    for (unsigned i = 0; i < keyframesRule->ruleCount(); ++i) {
+    const Vector<RefPtr<StyleKeyframe> >& keyframes = keyframesRule->keyframes();
+    for (unsigned i = 0; i < keyframes.size(); ++i) {
         // Apply the declaration to the style. This is a simplified version of the logic in styleForElement
         initElement(e);
         initForStyleResolve(e);
 
-        const WebKitCSSKeyframeRule* keyframeRule = keyframesRule->ruleAt(i);
+        const StyleKeyframe* keyframe = keyframes[i].get();
 
-        KeyframeValue keyframe(0, 0);
-        keyframe.setStyle(styleForKeyframe(elementStyle, keyframeRule, keyframe));
+        KeyframeValue keyframeValue(0, 0);
+        keyframeValue.setStyle(styleForKeyframe(elementStyle, keyframe, keyframeValue));
 
         // Add this keyframe style to all the indicated key times
         Vector<float> keys;
-        keyframeRule->getKeys(keys);
+        keyframe->getKeys(keys);
         for (size_t keyIndex = 0; keyIndex < keys.size(); ++keyIndex) {
-            keyframe.setKey(keys[keyIndex]);
-            list.insert(keyframe);
+            keyframeValue.setKey(keys[keyIndex]);
+            list.insert(keyframeValue);
         }
     }
 
     // If the 0% keyframe is missing, create it (but only if there is at least one other keyframe)
     int initialListSize = list.size();
     if (initialListSize > 0 && list[0].key() != 0) {
-        RefPtr<WebKitCSSKeyframeRule> keyframeRule = WebKitCSSKeyframeRule::create();
-        keyframeRule->setKeyText("0%");
-        KeyframeValue keyframe(0, 0);
-        keyframe.setStyle(styleForKeyframe(elementStyle, keyframeRule.get(), keyframe));
-        list.insert(keyframe);
+        static StyleKeyframe* zeroPercentKeyframe;
+        if (!zeroPercentKeyframe) {
+            zeroPercentKeyframe = StyleKeyframe::create().leakRef();
+            zeroPercentKeyframe->setKeyText("0%");
+        }
+        KeyframeValue keyframeValue(0, 0);
+        keyframeValue.setStyle(styleForKeyframe(elementStyle, zeroPercentKeyframe, keyframeValue));
+        list.insert(keyframeValue);
     }
 
     // If the 100% keyframe is missing, create it (but only if there is at least one other keyframe)
     if (initialListSize > 0 && (list[list.size() - 1].key() != 1)) {
-        RefPtr<WebKitCSSKeyframeRule> keyframeRule = WebKitCSSKeyframeRule::create();
-        keyframeRule->setKeyText("100%");
-        KeyframeValue keyframe(1, 0);
-        keyframe.setStyle(styleForKeyframe(elementStyle, keyframeRule.get(), keyframe));
-        list.insert(keyframe);
+        static StyleKeyframe* hundredPercentKeyframe;
+        if (!hundredPercentKeyframe) {
+            hundredPercentKeyframe = StyleKeyframe::create().leakRef();
+            hundredPercentKeyframe->setKeyText("100%");
+        }
+        KeyframeValue keyframeValue(1, 0);
+        keyframeValue.setStyle(styleForKeyframe(elementStyle, hundredPercentKeyframe, keyframeValue));
+        list.insert(keyframeValue);
     }
 }
 

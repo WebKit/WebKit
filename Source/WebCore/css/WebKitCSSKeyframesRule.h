@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class CSSRuleList;
+class StyleKeyframe;
 class WebKitCSSKeyframeRule;
 
 typedef int ExceptionCode;
@@ -71,24 +72,24 @@ public:
     String cssText() const;
 
     // Not part of the CSSOM.
-    unsigned ruleCount() const { return m_childRules.size(); }
-    WebKitCSSKeyframeRule* ruleAt(unsigned index) const { return m_childRules[index].get(); }
+    const Vector<RefPtr<StyleKeyframe> >& keyframes() const { return m_keyframes; }
 
-    void append(WebKitCSSKeyframeRule*);
+    void parserAppendKeyframe(PassRefPtr<StyleKeyframe>);
     
-    // For IndexedGetter.
-    unsigned length() const { return ruleCount(); }
-    WebKitCSSKeyframeRule* item(unsigned index) const { return index < ruleCount() ? ruleAt(index) : 0; }
+    // For IndexedGetter and CSSRuleList.
+    unsigned length() const { return m_keyframes.size(); }
+    WebKitCSSKeyframeRule* item(unsigned index) const;
 
 private:
     WebKitCSSKeyframesRule(CSSStyleSheet* parent);
 
-    int findRuleIndex(const String& key) const;
+    int findKeyframeIndex(const String& key) const;
 
-    Vector<RefPtr<WebKitCSSKeyframeRule> > m_childRules;
+    Vector<RefPtr<StyleKeyframe> > m_keyframes;
     AtomicString m_name;
-    
-    OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
+
+    mutable OwnPtr<Vector<RefPtr<WebKitCSSKeyframeRule> > > m_childRuleCSSOMWrappers;
+    mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 
 } // namespace WebCore

@@ -81,7 +81,7 @@ using namespace HTMLNames;
     CSSParserValue value;
     CSSParserValueList* valueList;
     Vector<OwnPtr<MediaQueryExp> >* mediaQueryExpList;
-    WebKitCSSKeyframeRule* keyframeRule;
+    StyleKeyframe* keyframe;
     WebKitCSSKeyframesRule* keyframesRule;
     float val;
 }
@@ -245,7 +245,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <mediaQueryExpList> maybe_and_media_query_exp_list
 
 %type <string> keyframe_name
-%type <keyframeRule> keyframe_rule
+%type <keyframe> keyframe_rule
 %type <keyframesRule> keyframes_rule
 %type <valueList> key_list
 %type <value> key
@@ -627,13 +627,13 @@ keyframes_rule:
     | keyframes_rule keyframe_rule maybe_space {
         $$ = $1;
         if ($2)
-            $$->append($2);
+            $$->parserAppendKeyframe($2);
     }
     ;
 
 keyframe_rule:
     key_list maybe_space '{' maybe_space declaration_list '}' {
-        $$ = static_cast<CSSParser*>(parser)->createKeyframeRule($1);
+        $$ = static_cast<CSSParser*>(parser)->createKeyframe($1);
     }
     ;
 
