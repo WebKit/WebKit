@@ -55,8 +55,6 @@ class Tester(object):
                           help='run quietly (errors, warnings, and progress only)'),
         parser.add_option('-t', '--timing', action='store_true', default=False,
                           help='display per-test execution time (implies --verbose)'),
-        parser.add_option('-x', '--xml', action='store_true', default=False,
-                          help='output xUnit-style XML output')
         parser.add_option('-v', '--verbose', action='count', default=0,
                           help='verbose output (specify once for individual test results, twice for debug messages)')
         parser.add_option('--skip-integrationtests', action='store_true', default=False,
@@ -171,11 +169,7 @@ class Tester(object):
             suites.append(loader.loadTestsFromName(name, None))
 
         test_suite = unittest.TestSuite(suites)
-        if self._options.xml:
-            from webkitpy.thirdparty.autoinstalled.xmlrunner import XMLTestRunner
-            test_runner = XMLTestRunner(output='test-webkitpy-xml-reports')
-        else:
-            test_runner = TestRunner(self.stream, self._options, loader)
+        test_runner = TestRunner(self.stream, self._options, loader)
 
         _log.debug("Running the tests.")
         result = test_runner.run(test_suite)

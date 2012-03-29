@@ -1,5 +1,21 @@
 2012-03-29  Dirk Pranke  <dpranke@chromium.org>
 
+        remove support for junit-style xml output from test-webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=82279
+
+        Reviewed by Eric Seidel.
+
+        This was added when we were looking into integrating w/ Jenkins
+        rather than buildbot, but I believe that project got shelved, so
+        this is unused. We can always add it back in later as necessary.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._parse_args):
+        (Tester._run_tests):
+        * Scritps/webkitpy/thirdparty/__init__.py:
+
+2012-03-29  Dirk Pranke  <dpranke@chromium.org>
+
         new-run-webkit-tests: crashes when it fails to decode a stack trace
         https://bugs.webkit.org/show_bug.cgi?id=82673
 
