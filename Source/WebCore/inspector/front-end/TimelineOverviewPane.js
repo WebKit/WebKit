@@ -800,10 +800,28 @@ WebInspector.HeapGraph.prototype = {
  */
 WebInspector.TimelineVerticalOverview = function(model) {
     WebInspector.View.call(this);
-    this.element = document.createElement("div");
+    this.element = document.createElement("canvas");
     this.element.className = "timeline-vertical-overview-bars fill";
-    this.reset();
     this._model = model;
+    this.reset();
+
+    this._maxInnerBarWidth = 10;
+    this._context = this.element.getContext("2d");
+    this._fillStyles = {};
+    this._fillStyles.loading = this._context.createLinearGradient(0, 0, this._maxInnerBarWidth, 0);
+    this._fillStyles.loading.addColorStop(0, "rgb(201, 220, 245)");
+    this._fillStyles.loading.addColorStop(1, "rgb(109, 157, 222)");
+    this._fillStyles.scripting = this._context.createLinearGradient(0, 0, this._maxInnerBarWidth, 0);
+    this._fillStyles.scripting.addColorStop(0, "rgb(251, 222, 168)");
+    this._fillStyles.scripting.addColorStop(1, "rgb(234, 182, 77)");
+    this._fillStyles.rendering = this._context.createLinearGradient(0, 0, this._maxInnerBarWidth, 0);
+    this._fillStyles.rendering.addColorStop(0, "rgb(213, 185, 236)");
+    this._fillStyles.rendering.addColorStop(1, "rgb(137, 62, 200)");
+
+    this._borderStyles = {};
+    this._borderStyles.loading = "rgb(106, 152, 213)";
+    this._borderStyles.scripting = "rgb(223, 175, 77)";
+    this._borderStyles.rendering = "rgb(130, 59, 190)";
 }
 
 WebInspector.TimelineVerticalOverview.prototype = {
@@ -834,18 +852,14 @@ WebInspector.TimelineVerticalOverview.prototype = {
         const minBarWidth = 4;
         this._recordsPerBar = Math.max(1, recordCount * minBarWidth / this.element.clientWidth);
         var numberOfBars = Math.ceil(recordCount / this._recordsPerBar);
-
         this._barTimes = [];
         this._longestBarTime = 0;
-        this.element.removeChildren();
-        var padding = this.element.createChild("div", "padding");
+        var barHeights = frameCount ? this._aggregateFrames(records, numberOfBars) : this._aggregateRecords(records, numberOfBars);
 
-        var statistics = frameCount ? this._aggregateFrames(records, numberOfBars) : this._aggregateRecords(records, numberOfBars);
         const paddingTop = 4;
         var scale = (this.element.clientHeight - paddingTop) / this._longestBarTime;
 
-        for (var i = 0; i < statistics.length; ++i)
-            this.element.insertBefore(this._buildBar(statistics[i], scale), padding);
+        this._renderBars(barHeights, scale);
     },
 
     wasShown: function()
@@ -952,20 +966,44 @@ WebInspector.TimelineVerticalOverview.prototype = {
         return statistics;
     },
 
-    _buildBar: function(statistics, scale)
+    _renderBars: function(allBarHeights, scale)
     {
-        var outer = document.createElement("div");
-        outer.className = "timeline-bar-vertical";
-        var categories = Object.keys(statistics);
-        for (var i = 0; i < categories.length; ++i) {
+        // Use real world, 1:1 coordinates in canvas. This will also take care of clearing it.
+        this.element.width = this.element.clientWidth;
+        this.element.height = this.element.clientHeight;
+
+        const maxPadding = 5;
+        this._actualBarWidth = Math.min((this.element.width - 2 * maxPadding) / allBarHeights.length, this._maxInnerBarWidth + maxPadding);
+        var padding = Math.min(Math.floor(this._actualBarWidth / 3), maxPadding);
+
+        for (var i = 0; i < allBarHeights.length; ++i)
+            this._renderBar(maxPadding + this._actualBarWidth * i, this._actualBarWidth - padding , allBarHeights[i], scale);
+    },
+
+    _renderBar: function(left, width, barHeights, scale)
+    {
+        var categories = Object.keys(barHeights);
+        if (!categories.length)
+            return;
+        for (var i = 0, bottomOffset = this.element.height; i < categories.length; ++i) {
             var category = categories[i];
-            var duration = statistics[category];
+            var duration = barHeights[category];
+
             if (!duration)
                 continue;
-            var bar = outer.createChild("div", "timeline-" + category);
-            bar.style.height = (statistics[category] * scale) + "px";
+            var height = duration * scale;
+
+            this._context.save();
+            this._context.translate(Math.floor(left) + 0.5, 0);
+            this._context.scale(width / this._maxInnerBarWidth, 1);
+            this._context.fillStyle = this._fillStyles[category];
+            this._context.fillRect(0, bottomOffset - height, this._maxInnerBarWidth, height);
+            this._context.restore();
+
+            this._context.strokeStyle = this._borderStyles[category];
+            this._context.strokeRect(Math.floor(left) + 0.5, Math.floor(bottomOffset - height) + 0.5, Math.floor(width), Math.floor(height));
+            bottomOffset -= height - 1;
         }
-        return outer;
     },
 
     getWindowTimes: function(windowLeft, windowRight)
@@ -974,14 +1012,8 @@ WebInspector.TimelineVerticalOverview.prototype = {
         var leftOffset = windowLeft * windowSpan;
         var rightOffset = windowRight * windowSpan;
         var bars = this.element.children;
-        var offset0 = bars[0] ? bars[0].offsetLeft : 4;
-        var barWidth = 9;
-        if (bars.length > 2) {
-            var offset1 = bars[bars.length - 2].offsetLeft;
-            barWidth = (offset1 - offset0) / (bars.length - 2);
-        }
-        var firstBar = Math.floor(Math.max(leftOffset - offset0, 0) / barWidth);
-        var lastBar = Math.min(Math.ceil((rightOffset - offset0 - 2) / barWidth), this._barTimes.length - 1);
+        var firstBar = Math.floor(Math.max(leftOffset, 0) / this._actualBarWidth);
+        var lastBar = Math.min(Math.ceil((rightOffset - 2) / this._actualBarWidth), this._barTimes.length - 1);
         const snapToRightTolerancePixels = 3;
         return {
             startTime: firstBar >= this._barTimes.length ? Infinity : this._barTimes[firstBar].startTime,

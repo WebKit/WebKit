@@ -586,46 +586,10 @@
 }
 
 .timeline-vertical-overview-bars {
-    display: -webkit-box;
-    -webkit-box-align: end;
-    background-color: white;
-    padding-left: 4px;
-    padding-right: 4px;
     z-index: 200;
     background-color: rgba(255, 255, 255, 0.8);
-}
-
-.timeline-vertical-overview-bars .padding {
-    -webkit-box-flex: 100000;
-}
-
-.timeline-vertical-overview-bars .timeline-bar-vertical {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-box-pack: end;
-    width: 12px;
-    padding-right: 2px;
-    -webkit-box-flex: 1;
-}
-
-.timeline-bar-vertical div:first-child {
-    -webkit-border-top-left-radius: 2px;
-    -webkit-border-top-right-radius: 2px;
-}
-
-.timeline-bar-vertical .timeline-loading {
-    background: -webkit-linear-gradient(left, rgb(201, 220, 245), rgb(109, 157, 222));
-    border: solid 1px rgb(106, 152, 213);
-}
-
-.timeline-bar-vertical .timeline-scripting {
-    background: -webkit-linear-gradient(left, rgb(251, 222, 168), rgb(234, 182, 77));
-    border: solid 1px rgb(223, 175, 77);
-}
-
-.timeline-bar-vertical .timeline-rendering {
-    background: -webkit-linear-gradient(left, rgb(213, 185, 236), rgb(137, 62, 200));
-    border: solid 1px rgb(130, 59, 190);
+    width: 100%;
+    height: 100%;
 }
 
 .timeline .resources-event-divider {
