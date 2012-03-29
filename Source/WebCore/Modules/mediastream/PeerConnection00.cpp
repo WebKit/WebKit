@@ -123,7 +123,7 @@ PassRefPtr<SessionDescription> PeerConnection00::createOffer(const String& media
     if (!descriptor)
         return 0;
 
-    return SessionDescription::create(descriptor);
+    return SessionDescription::create(descriptor.release());
 }
 
 PassRefPtr<SessionDescription> PeerConnection00::createAnswer(const String& offer)
@@ -138,7 +138,7 @@ PassRefPtr<SessionDescription> PeerConnection00::createAnswer(const String& offe
     if (!descriptor)
         return 0;
 
-    return SessionDescription::create(descriptor);
+    return SessionDescription::create(descriptor.release());
 }
 
 void PeerConnection00::setLocalDescription(int action, PassRefPtr<SessionDescription> sessionDescription, ExceptionCode& ec)
