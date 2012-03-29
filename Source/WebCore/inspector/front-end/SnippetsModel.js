@@ -325,9 +325,7 @@ WebInspector.SnippetsScriptMapping.prototype = {
      */
     uiSourceCodeList: function()
     {
-        var result = [];
-        for (var uiSourceCode in this._uiSourceCodeForSnippet.values())
-            result.push(uiSourceCode);
+        var result = this._uiSourceCodeForSnippet.values();
         result = result.concat(this._releasedUISourceCodes());
         return result;
     },

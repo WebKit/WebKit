@@ -6,16 +6,29 @@ Dumping ScriptsNavigator 'Scripts' tab:
   bar.js
   baz.js
   foo.js
+  foobar.js
 Dumping ScriptsNavigator 'Content scripts' tab:
 Source requested for baz.js
 
 Running: testInitialLoadWithComboBoxFileSelector
-Source requested for foo.js
+Source requested for foobar.js
 Dump files select:
     bar.js
     baz.js
     foo.js
+    foobar.js
 Source requested for baz.js
+
+Running: testReset
+Source requested for baz.js
+Dumping ScriptsNavigator 'Scripts' tab:
+  bar.js
+  baz.js
+  foo.js
+Dumping ScriptsNavigator 'Content scripts' tab:
+Dumping ScriptsNavigator 'Scripts' tab:
+  bar.js
+Dumping ScriptsNavigator 'Content scripts' tab:
 
 Running: testSourceReplaced
 Dumping ScriptsNavigator 'Scripts' tab:

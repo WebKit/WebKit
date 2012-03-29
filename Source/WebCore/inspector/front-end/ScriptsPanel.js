@@ -167,12 +167,13 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     this._debuggerEnabled = !Capabilities.debuggerCausesRecompilation;
 
+    this._sourceFramesByUISourceCode = new Map();
     this._reset(false);
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasEnabled, this._debuggerWasEnabled, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasDisabled, this._debuggerWasDisabled, this);
 
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, this._uiSourceCodeAdded, this)
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, this._debuggerPaused, this);
@@ -187,8 +188,6 @@ WebInspector.ScriptsPanel = function(presentationModel)
         WebInspector.debuggerModel.enableDebugger();
 
     WebInspector.advancedSearchController.registerSearchScope(new WebInspector.ScriptsSearchScope());
-
-    this._sourceFramesByUISourceCode = new Map();
 }
 
 // Keep these in sync with WebCore::ScriptDebugServer
@@ -251,10 +250,27 @@ WebInspector.ScriptsPanel.prototype = {
         }
     },
 
-    _uiSourceCodeAdded: function(event)
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _handleUISourceCodeAdded: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        this._uiSourceCodeAdded(uiSourceCode);
+    },
 
+    _loadUISourceCodes: function()
+    {
+        var uiSourceCodes = this._presentationModel.uiSourceCodes();
+        for (var i = 0; i < uiSourceCodes.length; ++i)
+            this._uiSourceCodeAdded(uiSourceCodes[i]);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _uiSourceCodeAdded: function(uiSourceCode)
+    {
         var breakpoints = uiSourceCode.breakpoints();
         for (var lineNumber in breakpoints)
             this._uiBreakpointAdded({ data: breakpoints[lineNumber] });
@@ -430,6 +446,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.reset();
         if (!preserveItems && this.sidebarPanes.workers)
             this.sidebarPanes.workers.reset();
+        this._loadUISourceCodes();
     },
 
     get visibleView()
