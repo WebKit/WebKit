@@ -35,10 +35,6 @@ body {
 .flexbox :nth-child(7) {
     background-color: lime;
 }
-@font-face {
-    font-family: test;
-    src: url(../../resources/Ahem.ttf);
-}
 </style>
 <script>
 if (window.layoutTestController)
@@ -229,7 +225,7 @@ if (window.layoutTestController)
   <div data-expected-height="20" data-offset-y="0" style="width: -webkit-flex(1 0 0);"></div>
 </div>
 
-<div class="flexbox" style="font-family: test;">
+<div class="flexbox">
   <div id="baseline1" style="width: -webkit-flex(1 0 0); -webkit-flex-item-align: baseline;">ahem</div>
   <div id="baseline2" data-offset-y="0" style="width: -webkit-flex(1 0 0); -webkit-flex-item-align: baseline;"><img src="../../fast/replaced/resources/1x1-blue.png" style="height: 50px;"></div>
   <div data-expected-height="50" data-offset-y="25" style="width: -webkit-flex(1 0 0); -webkit-flex-item-align: center;"><img src="../../fast/replaced/resources/1x1-blue.png" style="height: 50px; vertical-align: middle"></div>
@@ -237,7 +233,7 @@ if (window.layoutTestController)
   <div data-expected-height="100" data-offset-y="0" style="width: -webkit-flex(1 0 0); height: 100px;"></div>
 </div>
 
-<div class="flexbox" style="font-family: test;">
+<div class="flexbox">
   <div id="baseline4" style="width: -webkit-flex(1 0 0); -webkit-flex-item-align: baseline;">ahem</div>
   <div id="baseline5" style="width: -webkit-flex(1 0 0); -webkit-flex-item-align: baseline;"><br><img src="../../fast/replaced/resources/1x1-blue.png" style="height: 50px;"></div>
   <div data-expected-height="50" data-offset-y="0" style="width: -webkit-flex(1 0 0); -webkit-flex-item-align: baseline;"><img src="../../fast/replaced/resources/1x1-blue.png" style="height: 50px; vertical-align: middle"></div>
