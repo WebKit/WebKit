@@ -132,7 +132,7 @@ WebInspector.TimelinePresentationModel.prototype = {
         var recordTypes = WebInspector.TimelineModel.RecordType;
 
         if (this._minimumRecordTime === -1 || record.startTime < this._minimumRecordTime)
-            this._minimumRecordTime = record.startTime;
+            this._minimumRecordTime = WebInspector.TimelineModel.startTimeInSeconds(record);
 
         if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad)
             parentRecord = null; // No bar entry for load events.
