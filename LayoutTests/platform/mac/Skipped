@@ -652,3 +652,8 @@ http/tests/webarchive/test-css-url-encoding-utf-8.html
 http/tests/webarchive/test-css-url-encoding.html
 webarchive/test-css-url-resources-in-stylesheets.html
 webarchive/test-css-url-resources-inline-styles.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82668
+plugins/mouse-events.html
+plugins/mouse-move-over-plugin-in-frame.html
+
