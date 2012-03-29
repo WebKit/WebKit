@@ -66,6 +66,7 @@ typedef struct HFONT__* HFONT;
 
 namespace WebCore {
 
+class AsyncFileSystem;
 class Clipboard;
 class Color;
 class Cursor;
@@ -146,6 +147,11 @@ public:
     static bool truncateFile(PlatformFileHandle, long long offset);
     static int readFromFile(PlatformFileHandle, char* data, int length);
     static int writeToFile(PlatformFileHandle, const char* data, int length);
+
+#if ENABLE(FILE_SYSTEM)
+    static String createIsolatedFileSystemName(const String& storageIdentifier, const String& filesystemId);
+    static PassOwnPtr<AsyncFileSystem> createIsolatedFileSystem(const String& originString, const String& filesystemId);
+#endif
 
     // Font ---------------------------------------------------------------
 #if OS(WINDOWS)

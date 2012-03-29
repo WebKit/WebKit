@@ -1,3 +1,37 @@
+2012-03-28  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [chromium] Add isolated filesystem type and WebDragData::filesystem_id for drag-and-drop using File/DirectoryEntry.
+        https://bugs.webkit.org/show_bug.cgi?id=76826
+
+        As proposed on whatwg (http://lists.whatwg.org/pipermail/whatwg-whatwg.org/2011-November/033814.html)
+        we are implementing better drag-and-drop support using File/Directory
+        Entry objects in FileSystem API, and for the purpose this patch adds
+        a new filesystem type: Isolated filesystem.
+
+        Each filesystem can be distinguished by a filesystem ID that is given
+        by chromium platform code via WebDragData when set of
+        files/directories are dropped.
+
+        This is all platform-specific implementation detail and all the changes
+        are in chromium directory.
+
+        Reviewed by David Levin.
+
+        * public/platform/WebDragData.h:
+        (WebDragData):
+        * public/platform/WebFileSystem.h: Added Isolated type.
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::AsyncFileSystemChromium::createIsolatedFileSystemName): Added.
+        (WebCore::AsyncFileSystemChromium::createIsolatedFileSystem): Added.
+        (WebCore::AsyncFileSystemChromium::toURL): Made it not to return URL
+        for isolated filesystem (as we do not support it for now).
+        * src/AsyncFileSystemChromium.h:
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::createIsolatedFileSystem): Added.
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::filesystemId): Added.
+        (WebKit::WebDragData::setFilesystemId): Added.
+
 2012-03-29  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed; rolling chromium deps to 129583.

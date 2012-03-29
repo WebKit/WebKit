@@ -51,7 +51,11 @@ namespace WebCore {
 
 namespace {
 
-// ChromeOS-specific filesystem type.
+// For isolated filesystem.
+const AsyncFileSystem::Type isolatedType = static_cast<AsyncFileSystem::Type>(WebKit::WebFileSystem::TypeIsolated);
+const char isolatedPathPrefix[] = "isolated";
+
+// For external filesystem.
 const AsyncFileSystem::Type externalType = static_cast<AsyncFileSystem::Type>(WebKit::WebFileSystem::TypeExternal);
 const char externalPathPrefix[] = "external";
 const size_t externalPathPrefixLength = sizeof(externalPathPrefix) - 1;
@@ -161,6 +165,35 @@ AsyncFileSystemChromium::AsyncFileSystemChromium(AsyncFileSystem::Type type, con
     ASSERT(m_webFileSystem);
 }
 
+// static
+String AsyncFileSystemChromium::createIsolatedFileSystemName(const String& storageIdentifier, const String& filesystemId)
+{
+    StringBuilder filesystemName;
+    filesystemName.append(storageIdentifier);
+    filesystemName.append(":");
+    filesystemName.append(isolatedPathPrefix);
+    filesystemName.append("_");
+    filesystemName.append(filesystemId);
+    return filesystemName.toString();
+}
+
+// static
+PassOwnPtr<AsyncFileSystem> AsyncFileSystemChromium::createIsolatedFileSystem(const String& originString, const String& filesystemId)
+{
+    // The rootURL is used in succeeding filesystem requests sent to the
+    // chromium and is validated each time in the browser process.
+    StringBuilder rootURL;
+    rootURL.append("filesystem:");
+    rootURL.append(originString);
+    rootURL.append("/");
+    rootURL.append(isolatedPathPrefix);
+    rootURL.append("/");
+    rootURL.append(filesystemId);
+    rootURL.append("/");
+
+    return AsyncFileSystemChromium::create(isolatedType, KURL(ParsedURLString, rootURL.toString()));
+}
+
 AsyncFileSystemChromium::~AsyncFileSystemChromium()
 {
 }
@@ -169,6 +202,10 @@ String AsyncFileSystemChromium::toURL(const String& originString, const String& 
 {
     ASSERT(!originString.isEmpty());
     if (originString == "null")
+        return String();
+
+    // For now we don't support toURL for isolated filesystem (until we resolve the isolated filesystem lifetime issue).
+    if (type() == isolatedType)
         return String();
 
     if (type() == externalType) {

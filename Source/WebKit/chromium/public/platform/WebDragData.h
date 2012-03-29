@@ -102,6 +102,9 @@ public:
     WEBKIT_EXPORT void setItems(const WebVector<Item>&);
     WEBKIT_EXPORT void addItem(const Item&);
 
+    WEBKIT_EXPORT WebString filesystemId() const;
+    WEBKIT_EXPORT void setFilesystemId(const WebString&);
+
 #if WEBKIT_IMPLEMENTATION
     WebDragData(const WTF::PassRefPtr<WebCore::ChromiumDataObject>&);
     WebDragData& operator=(const WTF::PassRefPtr<WebCore::ChromiumDataObject>&);

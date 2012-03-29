@@ -46,6 +46,11 @@ public:
     enum Type {
         TypeTemporary,
         TypePersistent,
+
+        // Indicates an isolated filesystem which only exposes a set of files.
+        TypeIsolated,
+
+        // Indicates a non-sandboxed filesystem.
         TypeExternal,
     };
 

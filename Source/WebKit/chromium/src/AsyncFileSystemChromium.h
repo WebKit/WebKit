@@ -52,6 +52,9 @@ public:
         return adoptPtr(new AsyncFileSystemChromium(type, rootURL));
     }
 
+    static String createIsolatedFileSystemName(const String& storageIdentifier, const String& filesystemId);
+    static PassOwnPtr<AsyncFileSystem> createIsolatedFileSystem(const String& originString, const String& filesystemId);
+
     virtual ~AsyncFileSystemChromium();
 
     virtual String toURL(const String& originString, const String& fullPath);

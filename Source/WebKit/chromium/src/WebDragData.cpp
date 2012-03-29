@@ -128,6 +128,20 @@ void WebDragData::addItem(const Item& item)
     }
 }
 
+WebString WebDragData::filesystemId() const
+{
+    // FIXME: Should return the ID set by setFileSystemId().
+    return WebString();
+}
+
+void WebDragData::setFilesystemId(const WebString& filesystemId)
+{
+    // FIXME: The given value should be stored internally and is to be used
+    // to instantiate an isolated filesystem for providing FileSystem Entry
+    // access to the dragged files/directories.
+    // The ID is an opaque string, given by and validated by chromium port.
+}
+
 WebDragData::WebDragData(const WTF::PassRefPtr<WebCore::ChromiumDataObject>& data)
     : m_private(static_cast<WebDragDataPrivate*>(data.leakRef()))
 {
