@@ -1,3 +1,12 @@
+2012-03-29  David Kilzer  <ddkilzer@apple.com>
+
+        Don't use a flattened framework path when building on OS X
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/ToolExecutable.xcconfig: Use REAL_PLATFORM_NAME
+        to select different INSTALL_PATH values.
+
 2012-03-29  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix, add Win-specific sources
