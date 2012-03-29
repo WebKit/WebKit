@@ -69,6 +69,29 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+struct SameSizeAsRenderBlock : public RenderBox {
+    void* pointers[3];
+    RenderObjectChildList children;
+    RenderLineBoxList lineBoxes;
+    uint32_t bitfields;
+};
+
+COMPILE_ASSERT(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), RenderBlock_should_stay_small);
+
+struct SameSizeAsFloatingObject {
+    void* pointers[2];
+    LayoutRect rect;
+    int paginationStrut;
+    uint32_t bitfields : 8;
+};
+
+COMPILE_ASSERT(sizeof(RenderBlock::MarginValues) == sizeof(LayoutUnit[4]), MarginValues_should_stay_small);
+
+struct SameSizeAsMarginInfo {
+    uint32_t bitfields : 16;
+    LayoutUnit margins[2];
+};
+
 typedef WTF::HashMap<const RenderBox*, ColumnInfo*> ColumnInfoMap;
 static ColumnInfoMap* gColumnInfoMap = 0;
 
@@ -181,6 +204,8 @@ RenderBlock::RenderBlock(Node* node)
       , m_hasMarkupTruncation(false)
 {
     setChildrenInline(true);
+    COMPILE_ASSERT(sizeof(RenderBlock::FloatingObject) == sizeof(SameSizeAsFloatingObject), FloatingObject_should_stay_small);
+    COMPILE_ASSERT(sizeof(RenderBlock::MarginInfo) == sizeof(SameSizeAsMarginInfo), MarginInfo_should_stay_small);
 }
 
 RenderBlock::~RenderBlock()
@@ -1721,7 +1746,7 @@ void RenderBlock::addOverflowFromFloats()
     FloatingObjectSetIterator end = floatingObjectSet.end();
     for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
-        if (r->m_isDescendant && !r->m_renderer->isPositioned())
+        if (r->isDescendant() && !r->m_renderer->isPositioned())
             addOverflowFromChild(r->m_renderer, IntSize(xPositionForFloatIncludingMargin(r), yPositionForFloatIncludingMargin(r)));
     }
     return;
@@ -2628,7 +2653,7 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
         // Only repaint the object if it is overhanging, is not in its own layer, and
         // is our responsibility to paint (m_shouldPaint is set). When paintAllDescendants is true, the latter
         // condition is replaced with being a descendant of us.
-        if (logicalBottomForFloat(r) > logicalHeight() && ((paintAllDescendants && r->m_renderer->isDescendantOf(this)) || r->m_shouldPaint) && !r->m_renderer->hasSelfPaintingLayer()) {
+        if (logicalBottomForFloat(r) > logicalHeight() && ((paintAllDescendants && r->m_renderer->isDescendantOf(this)) || r->shouldPaint()) && !r->m_renderer->hasSelfPaintingLayer()) {
             r->m_renderer->repaint();
             r->m_renderer->repaintOverhangingFloats();
         }
@@ -2987,7 +3012,7 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
         // Only paint the object if our m_shouldPaint flag is set.
-        if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
+        if (r->shouldPaint() && !r->m_renderer->hasSelfPaintingLayer()) {
             PaintInfo currentPaintInfo(paintInfo);
             currentPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
             LayoutPoint childPoint = flipFloatForWritingModeForChild(r, LayoutPoint(paintOffset.x() + xPositionForFloatIncludingMargin(r) - r->m_renderer->x(), paintOffset.y() + yPositionForFloatIncludingMargin(r) - r->m_renderer->y()));
@@ -3581,8 +3606,8 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
     }
     setLogicalWidthForFloat(newObj, logicalWidthForChild(o) + marginStartForChild(o) + marginEndForChild(o));
 
-    newObj->m_shouldPaint = !o->hasSelfPaintingLayer(); // If a layer exists, the float will paint itself.  Otherwise someone else will.
-    newObj->m_isDescendant = true;
+    newObj->setShouldPaint(!o->hasSelfPaintingLayer()); // If a layer exists, the float will paint itself. Otherwise someone else will.
+    newObj->setIsDescendant(true);
     newObj->m_renderer = o;
 
     m_floatingObjects->add(newObj);
@@ -4238,7 +4263,7 @@ void RenderBlock::clearFloats(BlockLayoutPass layoutPass)
         RendererToFloatInfoMap::iterator end = floatMap.end();
         for (RendererToFloatInfoMap::iterator it = floatMap.begin(); it != end; ++it) {
             FloatingObject* floatingObject = (*it).second;
-            if (!floatingObject->m_isDescendant) {
+            if (!floatingObject->isDescendant()) {
                 changeLogicalTop = 0;
                 changeLogicalBottom = max(changeLogicalBottom, logicalBottomForFloat(floatingObject));
             }
@@ -4281,11 +4306,11 @@ LayoutUnit RenderBlock::addOverhangingFloats(RenderBlock* child, bool makeChildP
                 // far out as we can, to the outermost block that overlaps the float, stopping only
                 // if we hit a self-painting layer boundary.
                 if (r->m_renderer->enclosingFloatPaintingLayer() == enclosingFloatPaintingLayer())
-                    r->m_shouldPaint = false;
+                    r->setShouldPaint(false);
                 else
-                    floatingObj->m_shouldPaint = false;
-                
-                floatingObj->m_isDescendant = true;
+                    floatingObj->setShouldPaint(false);
+
+                floatingObj->setIsDescendant(true);
 
                 // We create the floating object list lazily.
                 if (!m_floatingObjects)
@@ -4294,19 +4319,19 @@ LayoutUnit RenderBlock::addOverhangingFloats(RenderBlock* child, bool makeChildP
                 m_floatingObjects->add(floatingObj);
             }
         } else {
-            if (makeChildPaintOtherFloats && !r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer() &&
-                r->m_renderer->isDescendantOf(child) && r->m_renderer->enclosingFloatPaintingLayer() == child->enclosingFloatPaintingLayer()) {
+            if (makeChildPaintOtherFloats && !r->shouldPaint() && !r->m_renderer->hasSelfPaintingLayer()
+                && r->m_renderer->isDescendantOf(child) && r->m_renderer->enclosingFloatPaintingLayer() == child->enclosingFloatPaintingLayer()) {
                 // The float is not overhanging from this block, so if it is a descendant of the child, the child should
                 // paint it (the other case is that it is intruding into the child), unless it has its own layer or enclosing
                 // layer.
                 // If makeChildPaintOtherFloats is false, it means that the child must already know about all the floats
                 // it should paint.
-                r->m_shouldPaint = true;
+                r->setShouldPaint(true);
             }
             
             // Since the float doesn't overhang, it didn't get put into our list.  We need to go ahead and add its overflow in to the
             // child now.
-            if (r->m_isDescendant)
+            if (r->isDescendant())
                 child->addOverflowFromChild(r->m_renderer, LayoutSize(xPositionForFloatIncludingMargin(r), yPositionForFloatIncludingMargin(r)));
         }
     }
@@ -4357,7 +4382,7 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, LayoutUnit logicalLeftOf
                         floatingObj->setY(floatingObj->y() + prev->marginTop());
                 }
                
-                floatingObj->m_shouldPaint = false;  // We are not in the direct inheritance chain for this float. We will never paint it.
+                floatingObj->setShouldPaint(false); // We are not in the direct inheritance chain for this float. We will never paint it.
                 floatingObj->m_renderer = r->m_renderer;
                 
                 // We create the floating object list lazily.
@@ -4575,7 +4600,7 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
     for (FloatingObjectSetIterator it = floatingObjectSet.end(); it != begin;) {
         --it;
         FloatingObject* floatingObject = *it;
-        if (floatingObject->m_shouldPaint && !floatingObject->m_renderer->hasSelfPaintingLayer()) {
+        if (floatingObject->shouldPaint() && !floatingObject->m_renderer->hasSelfPaintingLayer()) {
             LayoutUnit xOffset = xPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->x();
             LayoutUnit yOffset = yPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->y();
             LayoutPoint childPoint = flipFloatForWritingModeForChild(floatingObject, adjustedLocation + LayoutSize(xOffset, yOffset));
@@ -6306,7 +6331,7 @@ void RenderBlock::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit&
             for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
                 FloatingObject* r = *it;
                 // Only examine the object if our m_shouldPaint flag is set.
-                if (r->m_shouldPaint) {
+                if (r->shouldPaint()) {
                     LayoutUnit floatLeft = xPositionForFloatIncludingMargin(r) - r->m_renderer->x();
                     LayoutUnit floatRight = floatLeft + r->m_renderer->width();
                     left = min(left, floatLeft);
