@@ -35,7 +35,7 @@
 #include "BlackBerryPlatformGraphics.h"
 #include "PlatformContextSkia.h"
 #if USE(ACCELERATED_COMPOSITING)
-#include "LayerWebKitThread.h"
+#include "CanvasLayerWebKitThread.h"
 #endif
 
 namespace WebCore {
@@ -46,9 +46,8 @@ public:
 
     OwnPtr<SkCanvas> m_canvas;
     PlatformContextSkia m_platformContext;
-    BlackBerry::Platform::Graphics::Buffer* m_buffer;
 #if USE(ACCELERATED_COMPOSITING)
-    RefPtr<LayerWebKitThread> m_platformLayer;
+    RefPtr<CanvasLayerWebKitThread> m_platformLayer;
 #endif
 };
 
