@@ -34,7 +34,6 @@ module threads {
 
         attribute [V8EnabledAtRuntime] IDBCursorConstructor webkitIDBCursor;
         attribute [V8EnabledAtRuntime] IDBDatabaseConstructor webkitIDBDatabase;
-        attribute [V8EnabledAtRuntime] IDBDatabaseErrorConstructor webkitIDBDatabaseError;
         attribute [V8EnabledAtRuntime] IDBDatabaseExceptionConstructor webkitIDBDatabaseException;
         attribute [V8EnabledAtRuntime] IDBFactoryConstructor webkitIDBFactory;
         attribute [V8EnabledAtRuntime] IDBIndexConstructor webkitIDBIndex;

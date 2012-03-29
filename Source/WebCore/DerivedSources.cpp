@@ -213,7 +213,6 @@
 #include "JSIDBAny.cpp"
 #include "JSIDBCursor.cpp"
 #include "JSIDBDatabase.cpp"
-#include "JSIDBDatabaseError.cpp"
 #include "JSIDBDatabaseException.cpp"
 #include "JSIDBFactory.cpp"
 #include "JSIDBIndex.cpp"

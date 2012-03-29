@@ -1570,7 +1570,6 @@ IF (ENABLE_INDEXED_DATABASE)
         Modules/indexeddb/DOMWindowIndexedDatabase.idl
         Modules/indexeddb/IDBAny.idl
         Modules/indexeddb/IDBCursor.idl
-        Modules/indexeddb/IDBDatabaseError.idl
         Modules/indexeddb/IDBDatabaseException.idl
         Modules/indexeddb/IDBDatabase.idl
         Modules/indexeddb/IDBFactory.idl

@@ -34,7 +34,6 @@ module window {
 
         attribute IDBCursorConstructor webkitIDBCursor;
         attribute IDBDatabaseConstructor webkitIDBDatabase;
-        attribute IDBDatabaseErrorConstructor webkitIDBDatabaseError;
         attribute IDBDatabaseExceptionConstructor webkitIDBDatabaseException;
         attribute IDBFactoryConstructor webkitIDBFactory;
         attribute IDBIndexConstructor webkitIDBIndex;

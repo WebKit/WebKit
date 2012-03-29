@@ -1,0 +1,12 @@
+Ensure that some obsolete IndexedDB features are gone.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+PASS self.webkitIDBDatabaseError is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
