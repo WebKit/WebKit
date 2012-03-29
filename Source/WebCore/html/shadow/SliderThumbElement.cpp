@@ -278,6 +278,7 @@ void SliderThumbElement::defaultEventHandler(Event* event)
     // Missing this kind of check is likely to occur elsewhere if adding it in each shadow element.
     HTMLInputElement* input = hostInput();
     if (!input || input->isReadOnlyFormControl() || !input->isEnabledFormControl()) {
+        stopDragging();
         HTMLDivElement::defaultEventHandler(event);
         return;
     }
