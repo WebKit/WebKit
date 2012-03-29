@@ -1371,20 +1371,15 @@ void InspectorDOMAgent::loadEventFired(Document* document)
     if (!frameOwnerId)
         return;
 
-    if (!m_childrenRequested.contains(frameOwnerId)) {
-        // No children are mapped yet -> only notify on changes of hasChildren.
-        m_frontend->childNodeCountUpdated(frameOwnerId, innerChildNodeCount(frameOwner));
-    } else {
-        // Re-add frame owner element together with its new children.
-        int parentId = m_documentNodeToIdMap.get(innerParentNode(frameOwner));
-        m_frontend->childNodeRemoved(parentId, frameOwnerId);
-        RefPtr<TypeBuilder::DOM::Node> value = buildObjectForNode(frameOwner, 0, &m_documentNodeToIdMap);
-        Node* previousSibling = innerPreviousSibling(frameOwner);
-        int prevId = previousSibling ? m_documentNodeToIdMap.get(previousSibling) : 0;
-        m_frontend->childNodeInserted(parentId, prevId, value.release());
-        // Invalidate children requested flag for the element.
-        m_childrenRequested.remove(m_childrenRequested.find(frameOwnerId));
-    }
+    // Re-add frame owner element together with its new children.
+    int parentId = m_documentNodeToIdMap.get(innerParentNode(frameOwner));
+    m_frontend->childNodeRemoved(parentId, frameOwnerId);
+    unbind(frameOwner, &m_documentNodeToIdMap);
+
+    RefPtr<TypeBuilder::DOM::Node> value = buildObjectForNode(frameOwner, 0, &m_documentNodeToIdMap);
+    Node* previousSibling = innerPreviousSibling(frameOwner);
+    int prevId = previousSibling ? m_documentNodeToIdMap.get(previousSibling) : 0;
+    m_frontend->childNodeInserted(parentId, prevId, value.release());
 }
 
 void InspectorDOMAgent::didInsertDOMNode(Node* node)
