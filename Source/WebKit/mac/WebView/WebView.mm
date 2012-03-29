@@ -736,10 +736,10 @@ static NSString *leakOutlookQuirksUserScriptContents()
     pageClients.editorClient = new WebEditorClient(self);
     pageClients.dragClient = new WebDragClient(self);
     pageClients.inspectorClient = new WebInspectorClient(self);
-    _private->page = new Page(pageClients);
 #if ENABLE(GEOLOCATION)
-    WebCore::provideGeolocationTo(_private->page, new WebGeolocationClient(self));
+    pageClients.geolocationClient = new WebGeolocationClient(self);
 #endif
+    _private->page = new Page(pageClients);
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(_private->page, new WebNotificationClient(self));
 #endif
@@ -6382,7 +6382,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 {
 #if ENABLE(GEOLOCATION)
     if (_private && _private->page)
-        WebCore::GeolocationController::from(_private->page)->positionChanged(core(position));
+        _private->page->geolocationController()->positionChanged(core(position));
 #endif // ENABLE(GEOLOCATION)
 }
 
@@ -6391,7 +6391,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 #if ENABLE(GEOLOCATION)
     if (_private && _private->page) {
         RefPtr<GeolocationError> geolocatioError = GeolocationError::create(GeolocationError::PositionUnavailable, [error localizedDescription]);
-        WebCore::GeolocationController::from(_private->page)->errorOccurred(geolocatioError.get());
+        _private->page->geolocationController()->errorOccurred(geolocatioError.get());
     }
 #endif // ENABLE(GEOLOCATION)
 }

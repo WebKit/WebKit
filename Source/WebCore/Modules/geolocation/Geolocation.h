@@ -41,9 +41,8 @@ namespace WebCore {
 
 class Document;
 class Frame;
-class GeolocationController;
-class GeolocationError;
 class GeolocationPosition;
+class GeolocationError;
 class Page;
 class ScriptExecutionContext;
 

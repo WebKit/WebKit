@@ -275,7 +275,7 @@ void Geolocation::stop()
 {
     Page* page = this->page();
     if (page && m_allowGeolocation == InProgress)
-        GeolocationController::from(page)->cancelPermissionRequest(this);
+        page->geolocationController()->cancelPermissionRequest(this);
     // The frame may be moving to a new page and we want to get the permissions from the new page's client.
     m_allowGeolocation = Unknown;
     cancelAllRequests();
@@ -291,7 +291,7 @@ Geoposition* Geolocation::lastPosition()
     if (!page)
         return 0;
 
-    m_lastPosition = createGeoposition(GeolocationController::from(page)->lastPosition());
+    m_lastPosition = createGeoposition(page->geolocationController()->lastPosition());
 
     return m_lastPosition.get();
 }
@@ -614,7 +614,7 @@ void Geolocation::requestPermission()
     m_allowGeolocation = InProgress;
 
     // Ask the embedder: it maintains the geolocation challenge policy itself.
-    GeolocationController::from(page)->requestPermission(this);
+    page->geolocationController()->requestPermission(this);
 }
 
 void Geolocation::positionChangedInternal()
@@ -676,7 +676,7 @@ bool Geolocation::startUpdating(GeoNotifier* notifier)
     if (!page)
         return false;
 
-    GeolocationController::from(page)->addObserver(this, notifier->options()->enableHighAccuracy());
+    page->geolocationController()->addObserver(this, notifier->options()->enableHighAccuracy());
     return true;
 }
 
@@ -686,7 +686,7 @@ void Geolocation::stopUpdating()
     if (!page)
         return;
 
-    GeolocationController::from(page)->removeObserver(this);
+    page->geolocationController()->removeObserver(this);
 }
 
 #if USE(PREEMPT_GEOLOCATION_PERMISSION)

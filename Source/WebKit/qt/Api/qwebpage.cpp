@@ -67,7 +67,6 @@
 #if ENABLE(GEOLOCATION)
 #include "GeolocationClientMock.h"
 #include "GeolocationClientQt.h"
-#include "GeolocationController.h"
 #endif
 #include "GeolocationPermissionClientQt.h"
 #include "HTMLFormElement.h"
@@ -327,16 +326,13 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     pageClients.editorClient = new EditorClientQt(q);
     pageClients.dragClient = new DragClientQt(q);
     pageClients.inspectorClient = new InspectorClientQt(q);
-    page = new Page(pageClients);
 #if ENABLE(GEOLOCATION)
-    if (useMock) {
-        // In case running in DumpRenderTree mode set the controller to mock provider.
-        GeolocationClientMock* mock = new GeolocationClientMock;
-        WebCore::provideGeolocationTo(page, mock);
-        mock->setController(WebCore::GeolocationController::from(page));
-    } else
-        WebCore::provideGeolocationTo(page, new GeolocationClientQt(q));
+    if (useMock)
+        pageClients.geolocationClient = new GeolocationClientMock;
+    else
+        pageClients.geolocationClient = new GeolocationClientQt(q);
 #endif
+    page = new Page(pageClients);
 #if ENABLE(DEVICE_ORIENTATION)
     if (useMock)
         WebCore::provideDeviceOrientationTo(page, new DeviceOrientationClientMock);
@@ -355,6 +351,11 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     // as expected out of the box, we use a default group similar to what other ports are doing.
     page->setGroupName("Default Group");
 
+    // In case running in DumpRenderTree mode set the controller to mock provider.
+#if ENABLE(GEOLOCATION)
+    if (QWebPagePrivate::drtRun)
+        static_cast<GeolocationClientMock*>(pageClients.geolocationClient)->setController(page->geolocationController());
+#endif
     settings = new QWebSettings(page->settings());
 
 #if ENABLE(WEB_SOCKETS)

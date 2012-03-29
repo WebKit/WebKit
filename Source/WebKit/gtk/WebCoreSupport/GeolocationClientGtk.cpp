@@ -175,13 +175,13 @@ void GeolocationClient::updatePosition()
 {
     m_lastPosition = WebCore::GeolocationPosition::create(static_cast<double>(m_timestamp), m_latitude, m_longitude, m_accuracy,
                                                           true, m_altitude, true, m_altitudeAccuracy, false, 0, false, 0);
-    WebCore::GeolocationController::from(core(m_webView))->positionChanged(m_lastPosition.get());
+    core(m_webView)->geolocationController()->positionChanged(m_lastPosition.get());
 }
 
 void GeolocationClient::errorOccured(const char* message)
 {
     RefPtr<WebCore::GeolocationError> error = WebCore::GeolocationError::create(WebCore::GeolocationError::PositionUnavailable, message);
-    WebCore::GeolocationController::from(core(m_webView))->errorOccurred(error.get());
+    core(m_webView)->geolocationController()->errorOccurred(error.get());
 }
 
 }

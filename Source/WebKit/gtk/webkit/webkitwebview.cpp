@@ -59,10 +59,9 @@
 #include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
-#include "GOwnPtrGtk.h"
 #include "GeolocationClientGtk.h"
 #include "GeolocationClientMock.h"
-#include "GeolocationController.h"
+#include "GOwnPtrGtk.h"
 #include "GraphicsContext.h"
 #include "GtkUtilities.h"
 #include "GtkVersioning.h"
@@ -3568,17 +3567,15 @@ static void webkit_web_view_init(WebKitWebView* webView)
     pageClients.editorClient = new WebKit::EditorClient(webView);
     pageClients.dragClient = new WebKit::DragClient(webView);
     pageClients.inspectorClient = new WebKit::InspectorClient(webView);
+#if ENABLE(GEOLOCATION)
+    if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled())
+        pageClients.geolocationClient = new GeolocationClientMock;
+    else
+        pageClients.geolocationClient = new WebKit::GeolocationClient(webView);
+#endif
 
     priv->corePage = new Page(pageClients);
 
-#if ENABLE(GEOLOCATION)
-    if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {
-        GeolocationClientMock* mock = new GeolocationClientMock;
-        WebCore::provideGeolocationTo(priv->corePage, mock);
-        mock->setController(GeolocationController::from(priv->corePage));
-    } else
-        WebCore::provideGeolocationTo(priv->corePage, new WebKit::GeolocationClient(webView));
-#endif
 #if ENABLE(DEVICE_ORIENTATION)
     WebCore::provideDeviceMotionTo(priv->corePage, new DeviceMotionClientGtk);
     WebCore::provideDeviceOrientationTo(priv->corePage, new DeviceOrientationClientGtk);
@@ -3589,6 +3586,9 @@ static void webkit_web_view_init(WebKitWebView* webView)
 #endif
 
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {
+#if ENABLE(GEOLOCATION)
+        static_cast<GeolocationClientMock*>(pageClients.geolocationClient)->setController(priv->corePage->geolocationController());
+#endif
         // Set some testing-specific settings
         priv->corePage->settings()->setInteractiveFormValidationEnabled(true);
         priv->corePage->settings()->setValidationMessageTimerMagnification(-1);

@@ -43,6 +43,7 @@
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "GeolocationController.h"
 #include "HTMLElement.h"
 #include "HistoryItem.h"
 #include "InspectorController.h"
@@ -120,6 +121,9 @@ Page::Page(PageClients& pageClients)
 #endif
 #if ENABLE(INSPECTOR)
     , m_inspectorController(InspectorController::create(this, pageClients.inspectorClient))
+#endif
+#if ENABLE(GEOLOCATION)
+    , m_geolocationController(GeolocationController::create(this, pageClients.geolocationClient))
 #endif
 #if ENABLE(POINTER_LOCK)
     , m_pointerLockController(PointerLockController::create(this))
@@ -1116,6 +1120,7 @@ Page::PageClients::PageClients()
     , editorClient(0)
     , dragClient(0)
     , inspectorClient(0)
+    , geolocationClient(0)
 {
 }
 

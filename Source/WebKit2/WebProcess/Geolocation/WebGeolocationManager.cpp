@@ -81,7 +81,7 @@ void WebGeolocationManager::didChangePosition(const WebGeolocationPosition::Data
     for (; it != end; ++it) {
         WebPage* page = *it;
         if (page->corePage())
-            GeolocationController::from(page->corePage())->positionChanged(position.get());
+            page->corePage()->geolocationController()->positionChanged(position.get());
     }
 #endif // ENABLE(GEOLOCATION)
 }
@@ -97,7 +97,7 @@ void WebGeolocationManager::didFailToDeterminePosition()
     for (; it != end; ++it) {
         WebPage* page = *it;
         if (page->corePage())
-            GeolocationController::from(page->corePage())->errorOccurred(error.get());
+            page->corePage()->geolocationController()->errorOccurred(error.get());
     }
 #endif // ENABLE(GEOLOCATION)
 }

@@ -232,7 +232,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.dragClient = new WebDragClient(this);
     pageClients.backForwardClient = WebBackForwardListProxy::create(this);
 #if ENABLE(GEOLOCATION)
-    WebCore::provideGeolocationTo(m_page.get(), new WebGeolocationClient(this));
+    pageClients.geolocationClient = new WebGeolocationClient(this);
 #endif
 #if ENABLE(INSPECTOR)
     pageClients.inspectorClient = new WebInspectorClient(this);
