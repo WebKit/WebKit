@@ -1,57 +1,34 @@
-CONSOLE MESSAGE: line 104: Uncaught ReferenceError: log is not defined
-This tests that pressing Tab key should traverse into iframe and shadow tree, and pressing Shift-Tab should reverse the order.
+This tests that pressing Tab key should traverse into iframe and shadow tree, and pressing Shift-Tab should reverse the order. Makes sure that a shadow host element should act like a iframe element.
 
-Should move from input-01 to input-13 in forward
-PASS
-Should move from input-13 to input-15 in forward
-PASS
-Should move from input-15 to input-02 in forward
-PASS
-Should move from input-02 to host-01/input-03 in forward
-PASS
-Should move from host-01/input-03 to input-04 in forward
-PASS
-Should move from input-04 to iframe/input-06 in forward
-PASS
-Should move from iframe/input-06 to iframe/host-02 in forward
-PASS
-Should move from iframe/host-02 to iframe/host-02/input-09 in forward
-PASS
-Should move from iframe/host-02/input-09 to iframe/host-02/input-08 in forward
-PASS
-Should move from iframe/host-02/input-08 to iframe/input-12 in forward
-PASS
-Should move from iframe/input-12 to iframe/input-11 in forward
-PASS
-Should move from iframe/input-11 to iframe/input-05 in forward
-PASS
-Should move from iframe/input-05 to input-14 in forward
-PASS
-Should move from input-14 to iframe/input-05 in backward
-PASS
-Should move from iframe/input-05 to iframe/input-11 in backward
-PASS
-Should move from iframe/input-11 to iframe/input-12 in backward
-PASS
-Should move from iframe/input-12 to iframe/host-02/input-08 in backward
-PASS
-Should move from iframe/host-02/input-08 to iframe/host-02/input-09 in backward
-PASS
-Should move from iframe/host-02/input-09 to iframe/host-02 in backward
-PASS
-Should move from iframe/host-02 to iframe/input-06 in backward
-PASS
-Should move from iframe/input-06 to input-04 in backward
-PASS
-Should move from input-04 to host-01/input-03 in backward
-PASS
-Should move from host-01/input-03 to input-02 in backward
-PASS
-Should move from input-02 to input-15 in backward
-PASS
-Should move from input-15 to input-13 in backward
-PASS
-Should move from input-13 to input-01 in backward
-PASS
+Focus input-01.
+id:input-01(tabIndex=1) is focused.
+
+Press Tab 11 times.
+id:input-13(tabIndex=1) is focused.
+id:input-15(tabIndex=2) is focused.
+id:input-02(tabIndex=0) is focused.
+id:input-04(tabIndex=0) is focused.
+id:iframe-input-06(tabIndex=1) is focused.
+id:iframe-shadow-input-09(tabIndex=1) is focused.
+id:iframe-shadow-input-08(tabIndex=0) is focused.
+id:iframe-input-12(tabIndex=1) is focused.
+id:iframe-input-11(tabIndex=2) is focused.
+id:iframe-input-05(tabIndex=0) is focused.
+id:input-14(tabIndex=0) is focused.
+
+Press Shift-Tab 11 times.
+id:iframe-input-05(tabIndex=0) is focused.
+id:iframe-input-11(tabIndex=2) is focused.
+id:iframe-input-12(tabIndex=1) is focused.
+id:iframe-shadow-input-08(tabIndex=0) is focused.
+id:iframe-shadow-input-09(tabIndex=1) is focused.
+id:iframe-input-06(tabIndex=1) is focused.
+id:input-04(tabIndex=0) is focused.
+id:input-02(tabIndex=0) is focused.
+id:input-15(tabIndex=2) is focused.
+id:input-13(tabIndex=1) is focused.
+id:input-01(tabIndex=1) is focused.
+
+Test finished.
 
 
