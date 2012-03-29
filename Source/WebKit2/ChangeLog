@@ -1,3 +1,18 @@
+2012-03-28  Anders Carlsson  <andersca@apple.com>
+
+        Fix a crash and an assertion when recovering from a web process crash
+        https://bugs.webkit.org/show_bug.cgi?id=82559
+        <rdar://problem/10902574>
+
+        Reviewed by Mark Rowe.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _processDidCrash]):
+        If we're currently in accelerated compositing mode, exit.
+
+        (-[WKView updateLayer]):
+        Guard against a null drawing area.
+
 2012-03-28  Nate Chapin  <japhet@chromium.org>
 
         Remove dispatchDidLoadMainResource callback, since no

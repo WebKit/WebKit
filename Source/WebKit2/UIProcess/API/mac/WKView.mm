@@ -2216,6 +2216,9 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_processDidCrash
 {
+    if (_data->_layerHostingView)
+        [self _exitAcceleratedCompositingMode];
+
     [self _updateRemoteAccessibilityRegistration:NO];
 }
 
@@ -2924,7 +2927,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)updateLayer
 {
     self.layer.backgroundColor = CGColorGetConstantColor(kCGColorWhite);
-    _data->_page->drawingArea()->waitForPossibleGeometryUpdate();
+
+    if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea())
+        drawingArea->waitForPossibleGeometryUpdate();
 }
 #endif
 
