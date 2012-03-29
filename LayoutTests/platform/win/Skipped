@@ -1878,3 +1878,10 @@ fast/table/cell-pref-width-invalidation.html
 
 # The inner <input> should now grow to take the full cell's height.
 fast/table/colspanMinWidth-vertical.html
+
+# This should only be a layer change.
+# http://webkit.org/b/82129
+fast/box-shadow/shadow-buffer-partial.html
+fast/block/lineboxcontain/block-font.html
+fast/block/lineboxcontain/block-glyphs.html
+fast/block/lineboxcontain/font.html

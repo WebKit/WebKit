@@ -653,3 +653,10 @@ fast/layers/video-layer.html
 media/video-empty-source.html
 media/video-playing-and-pause.html
 media/controls-after-reload.html
+
+# This should only be a layer change.
+# http://webkit.org/b/82129
+fast/box-shadow/shadow-buffer-partial.html
+fast/block/lineboxcontain/block-font.html
+fast/block/lineboxcontain/block-glyphs.html
+fast/block/lineboxcontain/font.html

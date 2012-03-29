@@ -3724,6 +3724,12 @@ void RenderBox::addLayoutOverflow(const LayoutRect& rect)
     if (clientBox.contains(rect) || rect.isEmpty())
         return;
     
+    // Lazily allocate our layer as we will need it to hold our scroll information
+    // and for the clipping logic to work properly. Note that we *do* need a layer
+    // if we have some left overflow on an horizontal writing mode with ltr direction.
+    if (hasOverflowClip())
+        ensureLayer();
+
     // For overflow clip objects, we don't want to propagate overflow into unreachable areas.
     LayoutRect overflowRect(rect);
     if (hasOverflowClip() || isRenderView()) {
@@ -3758,10 +3764,6 @@ void RenderBox::addLayoutOverflow(const LayoutRect& rect)
     if (!m_overflow)
         m_overflow = adoptPtr(new RenderOverflow(clientBox, borderBoxRect()));
     
-    // Lazily allocate our layer as we will need it to hold our scroll information.
-    if (hasOverflowClip())
-        ensureLayer();
-
     m_overflow->addLayoutOverflow(overflowRect);
 }
 

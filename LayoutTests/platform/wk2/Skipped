@@ -1108,6 +1108,13 @@ fast/events/wheelevent-direction-inverted-from-device.html
 # eventSender.clearKillRing() is unimplemented
 editing/pasteboard/emacs-cntl-y-001.html
 
+# This should only be a layer change.
+# http://webkit.org/b/82129
+fast/box-shadow/shadow-buffer-partial.html
+fast/block/lineboxcontain/block-font.html
+fast/block/lineboxcontain/block-glyphs.html
+fast/block/lineboxcontain/font.html
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

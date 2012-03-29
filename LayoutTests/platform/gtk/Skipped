@@ -1644,3 +1644,10 @@ fast/table/colspanMinWidth-vertical.html
 # https://bugs.webkit.org/show_bug.cgi?id=82309
 http/tests/xmlhttprequest/basic-auth-default.html
 http/tests/xmlhttprequest/re-login-async.html
+
+# This should only be a layer change.
+# http://webkit.org/b/82129
+fast/box-shadow/shadow-buffer-partial.html
+fast/block/lineboxcontain/block-font.html
+fast/block/lineboxcontain/block-glyphs.html
+fast/block/lineboxcontain/font.html

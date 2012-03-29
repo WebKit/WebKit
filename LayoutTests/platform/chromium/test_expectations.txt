@@ -4311,3 +4311,9 @@ BUGWK82508 LINUX DEBUG : http/tests/media/video-cancel-load.html = PASS TEXT
 BUGWK82509 LINUX : svg/text/append-text-node-to-tspan.html = PASS IMAGE
 
 BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = PASS IMAGE
+
+// This should only be a layer change.
+BUGWK82129 WIN MAC : fast/box-shadow/shadow-buffer-partial.html = TEXT
+BUGWK82129 MAC : fast/block/lineboxcontain/block-font.html = TEXT
+BUGWK82129 MAC : fast/block/lineboxcontain/block-glyphs.html = TEXT
+BUGWK82129 MAC : fast/block/lineboxcontain/font.html = TEXT

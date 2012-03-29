@@ -2705,3 +2705,10 @@ fast/table/colspanMinWidth-vertical.html
 
 # Transparent image being produced
 fast/frames/transparent-scrollbar.html
+
+# This should only be a layer change.
+# http://webkit.org/b/82129
+fast/box-shadow/shadow-buffer-partial.html
+fast/block/lineboxcontain/block-font.html
+fast/block/lineboxcontain/block-glyphs.html
+fast/block/lineboxcontain/font.html
