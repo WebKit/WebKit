@@ -1,3 +1,10 @@
+2012-03-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for !ENABLE(YARR_JIT) after r112454.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::invalidateCode):
+
 2012-03-28  Filip Pizlo  <fpizlo@apple.com>
 
         DFG object equality speculations should be simplified

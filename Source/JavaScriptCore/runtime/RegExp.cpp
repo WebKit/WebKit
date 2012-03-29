@@ -487,7 +487,9 @@ void RegExp::invalidateCode()
     if (!hasCode())
         return;
     m_state = NotCompiled;
+#if ENABLE(YARR_JIT)
     m_regExpJITCode.clear();
+#endif
     m_regExpBytecode.clear();
 }
 
