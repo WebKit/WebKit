@@ -662,3 +662,5 @@ http/tests/inspector/console-cross-origin-iframe-logging.html
 http/tests/inspector/inspect-element.html
 http/tests/inspector/resource-har-conversion.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=82672
+http/tests/xmlhttprequest/range-test.html
