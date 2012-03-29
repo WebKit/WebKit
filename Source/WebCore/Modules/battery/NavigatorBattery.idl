@@ -20,7 +20,6 @@
 module window {
 
     interface [
-        CallWith=ScriptExecutionContext,
         Conditional=BATTERY_STATUS,
         Supplemental=Navigator
     ] NavigatorBattery {

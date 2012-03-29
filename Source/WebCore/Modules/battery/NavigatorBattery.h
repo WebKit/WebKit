@@ -36,7 +36,7 @@ public:
 
     static NavigatorBattery* from(Navigator*);
 
-    static BatteryManager* webkitBattery(ScriptExecutionContext*, Navigator*);
+    static BatteryManager* webkitBattery(Navigator*);
     BatteryManager* batteryManager();
 
  private:

@@ -35,7 +35,7 @@ class ScriptExecutionContext;
 class BatteryManager : public ActiveDOMObject, public RefCounted<BatteryManager>, public EventTarget {
 public:
     virtual ~BatteryManager();
-    static PassRefPtr<BatteryManager> create(ScriptExecutionContext*, Navigator*);
+    static PassRefPtr<BatteryManager> create(Navigator*);
 
     // EventTarget implementation.
     virtual const WTF::AtomicString& interfaceName() const { return eventNames().interfaceForBatteryManager; }
@@ -68,7 +68,7 @@ protected:
     virtual EventTargetData* ensureEventTargetData() { return &m_eventTargetData; }
 
 private:
-    BatteryManager(ScriptExecutionContext*, Navigator*);
+    explicit BatteryManager(Navigator*);
 
     // EventTarget implementation.
     virtual void refEventTarget() { ref(); }

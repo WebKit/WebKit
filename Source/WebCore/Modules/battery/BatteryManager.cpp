@@ -31,9 +31,9 @@
 
 namespace WebCore {
 
-PassRefPtr<BatteryManager> BatteryManager::create(ScriptExecutionContext* context, Navigator* navigator)
+PassRefPtr<BatteryManager> BatteryManager::create(Navigator* navigator)
 {
-    RefPtr<BatteryManager> batteryManager(adoptRef(new BatteryManager(context, navigator)));
+    RefPtr<BatteryManager> batteryManager(adoptRef(new BatteryManager(navigator)));
     batteryManager->suspendIfNeeded();
     return batteryManager.release();
 }
@@ -42,8 +42,8 @@ BatteryManager::~BatteryManager()
 {
 }
 
-BatteryManager::BatteryManager(ScriptExecutionContext* context, Navigator* navigator)
-    : ActiveDOMObject(context, this)
+BatteryManager::BatteryManager(Navigator* navigator)
+    : ActiveDOMObject(navigator->frame()->document(), this)
     , m_batteryController(BatteryController::from(navigator->frame()->page()))
     , m_batteryStatus(0)
 {
