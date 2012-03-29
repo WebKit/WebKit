@@ -1,3 +1,14 @@
+2012-03-28  Dave Tharp  <dtharp@codeaurora.org>
+
+        Add dtharp to contributors list
+        https://bugs.webkit.org/show_bug.cgi?id=82545
+
+        Reviewed by Adam Barth.
+
+        Adding dtharp as Contributor.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-03-28  Stuart Eichert  <stuart.eichert@palm.com>
 
         build-webkit : the word "pass" is spelled incorrectly as "passs"

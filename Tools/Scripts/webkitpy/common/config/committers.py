@@ -120,6 +120,7 @@ contributors_who_are_not_committers = [
     Contributor("Dana Jansens", "danakj@chromium.org", "danakj"),
     Contributor("Daniel Sievers", "sievers@chromium.org"),
     Contributor("Dave Barton", "dbarton@mathscribe.com"),
+    Contributor("Dave Tharp", "dtharp@codeaurora.org", "dtharp"),
     Contributor("David Barr", "davidbarr@chromium.org", "barrbrain"),
     Contributor("David Dorwin", "ddorwin@chromium.org", "ddorwin"),
     Contributor("David Reveman", "reveman@chromium.org", "reveman"),
