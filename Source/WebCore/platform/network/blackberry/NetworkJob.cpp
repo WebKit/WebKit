@@ -306,6 +306,11 @@ void NetworkJob::handleNotifyHeaderReceived(const String& key, const String& val
         if (m_frame && m_frame->page() && m_frame->loader() && m_frame->loader()->client()
             && static_cast<FrameLoaderClientBlackBerry*>(m_frame->loader()->client())->cookiesEnabled())
             handleSetCookieHeader(value);
+
+        if (m_response.httpHeaderFields().contains("Set-Cookie")) {
+            m_response.setHTTPHeaderField(key, m_response.httpHeaderField(key) + "\r\n" + value);
+            return;
+        }
     }
 
     if (lowerKey == "www-authenticate")
