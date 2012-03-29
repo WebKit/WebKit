@@ -539,7 +539,7 @@ WebInspector.ConsoleView.prototype = {
 
         var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("Console"));
         var keys = WebInspector.isMac() ? [ shortcutK.name, shortcutL.name ] : [ shortcutL.name ];
-        section.addAlternateKeys(keys, WebInspector.UIString("Clear Console"));
+        section.addAlternateKeys(keys, WebInspector.UIString("Clear console"));
 
         keys = [
             shortcut.shortcutToString(shortcut.Keys.Tab),

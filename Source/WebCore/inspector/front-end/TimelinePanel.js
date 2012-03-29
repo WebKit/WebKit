@@ -271,11 +271,11 @@ WebInspector.TimelinePanel.prototype = {
 
         if (InspectorFrontendHost.canSaveAs()) {
             this._shortcuts[shortcut.makeKey("s", modifiers.CtrlOrMeta)] = this._saveToFile.bind(this);
-            section.addKey(shortcut.shortcutToString("s", modifiers.CtrlOrMeta), WebInspector.UIString("Save Timeline data\u2026"));
+            section.addKey(shortcut.shortcutToString("s", modifiers.CtrlOrMeta), WebInspector.UIString("Save timeline data"));
         }
 
         this._shortcuts[shortcut.makeKey("o", modifiers.CtrlOrMeta)] = this._fileSelectorElement.click.bind(this._fileSelectorElement);
-        section.addKey(shortcut.shortcutToString("o", modifiers.CtrlOrMeta), WebInspector.UIString("Load Timeline data\u2026"));
+        section.addKey(shortcut.shortcutToString("o", modifiers.CtrlOrMeta), WebInspector.UIString("Load timeline data"));
     },
 
     _createFileSelector: function()
@@ -296,8 +296,8 @@ WebInspector.TimelinePanel.prototype = {
     {
         var contextMenu = new WebInspector.ContextMenu();
         if (InspectorFrontendHost.canSaveAs())
-            contextMenu.appendItem(WebInspector.UIString("&Save Timeline data\u2026"), this._saveToFile.bind(this));
-        contextMenu.appendItem(WebInspector.UIString("L&oad Timeline data\u2026"), this._fileSelectorElement.click.bind(this._fileSelectorElement));
+            contextMenu.appendItem(WebInspector.UIString("Save Timeline data\u2026"), this._saveToFile.bind(this));
+        contextMenu.appendItem(WebInspector.UIString("Load Timeline data\u2026"), this._fileSelectorElement.click.bind(this._fileSelectorElement));
         contextMenu.show(event);
     },
 

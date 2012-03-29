@@ -652,7 +652,14 @@ WebInspector._registerShortcuts = function()
         shortcut.shortcutToString("]", shortcut.Modifiers.CtrlOrMeta),
         shortcut.shortcutToString("[", shortcut.Modifiers.CtrlOrMeta)
     ];
-    section.addRelatedKeys(keys, WebInspector.UIString("Next/previous panel"));
+    section.addRelatedKeys(keys, WebInspector.UIString("Go to the panel to the left/right"));
+
+    var keys = [
+        shortcut.shortcutToString("[", shortcut.Modifiers.CtrlOrMeta | shortcut.Modifiers.Alt),
+        shortcut.shortcutToString("]", shortcut.Modifiers.CtrlOrMeta | shortcut.Modifiers.Alt)
+    ];
+    section.addRelatedKeys(keys, WebInspector.UIString("Go back/forward in panel history"));
+
     section.addKey(shortcut.shortcutToString(shortcut.Keys.Esc), WebInspector.UIString("Toggle console"));
     section.addKey(shortcut.shortcutToString("f", shortcut.Modifiers.CtrlOrMeta), WebInspector.UIString("Search"));
     
@@ -668,7 +675,7 @@ WebInspector._registerShortcuts = function()
     }
 
     var goToShortcut = WebInspector.GoToLineDialog.createShortcut();
-    section.addKey(goToShortcut.name, WebInspector.UIString("Go to Line"));
+    section.addKey(goToShortcut.name, WebInspector.UIString("Go to line"));
 }
 
 WebInspector.documentKeyDown = function(event)

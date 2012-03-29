@@ -88,22 +88,6 @@ WebInspector.InspectorView.prototype = {
     _keyDown: function(event)
     {
         switch (event.keyIdentifier) {
-            case "Left":
-                var isBackKey = !event.shiftKey && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !WebInspector.isBeingEdited(event.target);
-                if (isBackKey && this._canGoBackInHistory()) {
-                    this._goBackInHistory();
-                    event.preventDefault();
-                }
-                break;
-
-            case "Right":
-                var isForwardKey = !event.shiftKey && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !WebInspector.isBeingEdited(event.target);
-                if (isForwardKey && this._canGoForwardInHistory()) {
-                    this._goForwardInHistory();
-                    event.preventDefault();
-                }
-                break;
-
             // Windows and Mac have two different definitions of [, so accept both.
             case "U+005B":
             case "U+00DB": // [ key
@@ -112,7 +96,14 @@ WebInspector.InspectorView.prototype = {
                     var index = this._panelOrder.indexOf(this.currentPanel());
                     index = (index === 0) ? this._panelOrder.length - 1 : index - 1;
                     this._panelOrder[index].toolbarItem.click();
-                    event.preventDefault();
+                    event.consume();
+                    return;
+                }
+
+                var isGoBack = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.altKey;
+                if (isGoBack && this._canGoBackInHistory()) {
+                    this._goBackInHistory();
+                    event.consume();
                 }
                 break;
 
@@ -124,9 +115,15 @@ WebInspector.InspectorView.prototype = {
                     var index = this._panelOrder.indexOf(this.currentPanel());
                     index = (index + 1) % this._panelOrder.length;
                     this._panelOrder[index].toolbarItem.click();
-                    event.preventDefault();
+                    event.consume();
+                    return;
                 }
-    
+
+                var isGoForward = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.altKey;
+                if (isGoForward && this._canGoForwardInHistory()) {
+                    this._goForwardInHistory();
+                    event.consume();
+                }
                 break;
         }
     },
