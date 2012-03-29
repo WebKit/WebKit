@@ -223,7 +223,7 @@ RenderLayer::~RenderLayer()
     delete m_marquee;
 
 #if USE(ACCELERATED_COMPOSITING)
-    clearBacking();
+    clearBacking(true);
 #endif
     
     // Make sure we have no lingering clip rects.
@@ -3984,16 +3984,18 @@ RenderLayerBacking* RenderLayer::ensureBacking()
     return m_backing.get();
 }
 
-void RenderLayer::clearBacking()
+void RenderLayer::clearBacking(bool layerBeingDestroyed)
 {
     if (m_backing && !renderer()->documentBeingDestroyed())
         compositor()->layerBecameNonComposited(this);
     m_backing.clear();
 
 #if ENABLE(CSS_FILTERS)
-    updateOrRemoveFilterEffect();
+    if (!layerBeingDestroyed)
+        updateOrRemoveFilterEffect();
+#else
+    UNUSED_PARAM(layerBeingDestroyed);
 #endif
-    
 }
 
 bool RenderLayer::hasCompositedMask() const
