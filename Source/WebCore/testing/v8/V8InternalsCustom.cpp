@@ -35,8 +35,6 @@ v8::Handle<v8::Value> V8Internals::userPreferredLanguagesAccessorGetter(v8::Loca
 {
     Internals* internals = V8Internals::toNative(info.Holder());
     const Vector<String> languages = internals->userPreferredLanguages();
-    if (languages.isEmpty())
-        return v8::Null();
 
     v8::Local<v8::Array> array = v8::Array::New(languages.size());
     Vector<String>::const_iterator end = languages.end();

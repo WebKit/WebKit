@@ -36,8 +36,6 @@ JSValue JSInternals::userPreferredLanguages(ExecState* exec) const
 {
     Internals* imp = static_cast<Internals*>(impl());
     const Vector<String> languages = imp->userPreferredLanguages();
-    if (languages.isEmpty())
-        return jsNull();
     
     MarkedArgumentBuffer array;
     Vector<String>::const_iterator end = languages.end();
