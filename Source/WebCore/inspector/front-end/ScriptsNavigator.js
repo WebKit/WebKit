@@ -356,6 +356,7 @@ WebInspector.ScriptsNavigator.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {function()=} callback
      */
     rename: function(uiSourceCode, callback)
     {
@@ -383,7 +384,8 @@ WebInspector.ScriptsNavigator.prototype = {
         function afterEditing()
         {
             WebInspector.markBeingEdited(scriptTreeElement.treeOutline.element, false);
-            callback();
+            if (callback)
+                callback();
         }
 
         var editingConfig = new WebInspector.EditingConfig(commitHandler.bind(this), cancelHandler.bind(this));
