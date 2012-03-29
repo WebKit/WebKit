@@ -174,8 +174,10 @@ fast/dom/shadow/content-element-outside-shadow.html
 fast/dom/shadow/content-element-outside-shadow-style.html
 fast/dom/shadow/content-element-in-media-element.html
 fast/dom/shadow/content-element-in-meter-element.html
+fast/dom/shadow/focus-navigation.html
 fast/dom/shadow/get-element-by-id-in-shadow-root.html
 fast/dom/shadow/iframe-shadow.html
+fast/dom/shadow/link-in-shadow-tree.html
 fast/dom/shadow/multiple-shadowroot.html
 fast/dom/shadow/multiple-shadowroot-rendering.html
 fast/dom/shadow/multiple-shadowroot-adopt.html
@@ -194,6 +196,7 @@ fast/dom/shadow/shadow-root-innerHTML.html
 fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-root-new.html
 fast/dom/shadow/shadow-ul-li.html
+fast/dom/shadow/tab-order-iframe-and-shadow.html
 
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
 fast/regions
