@@ -1855,10 +1855,6 @@ BUGCR117799 : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = I
 BUGCR117799 : svg/W3C-SVG-1.1/pservers-grad-06-b.svg = IMAGE
 BUGCR117799 : svg/custom/pattern-skew-transformed.svg = IMAGE
 
-// New tests or failures from WebKit merge 42324:42364. Re-baselined on
-// Windows. Probably just need the same on other platforms.
-BUGCR9962 MAC : fast/js/function-apply-aliased.html = FAIL
-
 // New failures from WebKit merge 42725:42805
 // WebKit change http://trac.webkit.org/changeset/42785
 // added a test which submits a form and then uses history.back()
@@ -1911,7 +1907,6 @@ BUGCR25616 WIN : fast/overflow/overflow-float-stacking.html = FAIL
 BUGCR21958 MAC : svg/hixie/error/012.xml = FAIL
 
 // WebKit merge 48500:48585, newly implemented Object.defineProperty.
-BUGCR22526 MAC WIN : fast/js/Object-create.html = FAIL
 BUGCR22526 : fast/js/Object-defineProperties.html = CRASH FAIL
 BUGCR22526 : fast/js/Object-defineProperty.html = CRASH FAIL
 
@@ -2699,8 +2694,6 @@ BUG_ABARTH : svg/text/caret-in-svg-text.xhtml = TEXT
 BUGCR69181 : fast/js/exception-codegen-crash.html = FAIL
 BUGCR69181 : fast/js/kde/parse.html = FAIL
 BUGCR69181 LINUX WIN DEBUG : fast/js/large-expressions.html = TIMEOUT TEXT
-BUGCR69181 LINUX WIN RELEASE : fast/js/large-expressions.html = TEXT
-BUGCR69181 MAC : fast/js/large-expressions.html = TEXT
 
 // New test added in r75720
 BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH TEXT
