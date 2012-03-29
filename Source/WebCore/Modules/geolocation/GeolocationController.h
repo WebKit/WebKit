@@ -29,6 +29,7 @@
 #if ENABLE(GEOLOCATION)
 
 #include "Geolocation.h"
+#include "Page.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -40,7 +41,7 @@ class GeolocationError;
 class GeolocationPosition;
 class Page;
 
-class GeolocationController {
+class GeolocationController : public Supplement<Page> {
     WTF_MAKE_NONCOPYABLE(GeolocationController);
 public:
     ~GeolocationController();
@@ -59,6 +60,9 @@ public:
     GeolocationPosition* lastPosition();
 
     GeolocationClient* client() { return m_client; }
+
+    static const AtomicString& supplementName();
+    static GeolocationController* from(Page* page) { return static_cast<GeolocationController*>(Supplement<Page>::from(page, supplementName())); }
 
 private:
     GeolocationController(Page*, GeolocationClient*);

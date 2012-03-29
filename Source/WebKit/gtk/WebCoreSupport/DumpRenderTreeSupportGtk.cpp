@@ -794,7 +794,7 @@ void DumpRenderTreeSupportGtk::scalePageBy(WebKitWebView* webView, float scaleFa
 void DumpRenderTreeSupportGtk::resetGeolocationClientMock(WebKitWebView* webView)
 {
 #if ENABLE(GEOLOCATION)
-    GeolocationClientMock* mock = static_cast<GeolocationClientMock*>(core(webView)->geolocationController()->client());
+    GeolocationClientMock* mock = static_cast<GeolocationClientMock*>(GeolocationController::from(core(webView))->client());
     mock->reset();
 #endif
 }
@@ -802,7 +802,7 @@ void DumpRenderTreeSupportGtk::resetGeolocationClientMock(WebKitWebView* webView
 void DumpRenderTreeSupportGtk::setMockGeolocationPermission(WebKitWebView* webView, bool allowed)
 {
 #if ENABLE(GEOLOCATION)
-    GeolocationClientMock* mock = static_cast<GeolocationClientMock*>(core(webView)->geolocationController()->client());
+    GeolocationClientMock* mock = static_cast<GeolocationClientMock*>(GeolocationController::from(core(webView))->client());
     mock->setPermission(allowed);
 #endif
 }
@@ -810,7 +810,7 @@ void DumpRenderTreeSupportGtk::setMockGeolocationPermission(WebKitWebView* webVi
 void DumpRenderTreeSupportGtk::setMockGeolocationPosition(WebKitWebView* webView, double latitude, double longitude, double accuracy)
 {
 #if ENABLE(GEOLOCATION)
-    GeolocationClientMock* mock = static_cast<GeolocationClientMock*>(core(webView)->geolocationController()->client());
+    GeolocationClientMock* mock = static_cast<GeolocationClientMock*>(GeolocationController::from(core(webView))->client());
 
     double timestamp = g_get_real_time() / 1000000.0;
     mock->setPosition(GeolocationPosition::create(timestamp, latitude, longitude, accuracy));
@@ -820,7 +820,7 @@ void DumpRenderTreeSupportGtk::setMockGeolocationPosition(WebKitWebView* webView
 void DumpRenderTreeSupportGtk::setMockGeolocationError(WebKitWebView* webView, int errorCode, const gchar* errorMessage)
 {
 #if ENABLE(GEOLOCATION)
-    GeolocationClientMock* mock = static_cast<GeolocationClientMock*>(core(webView)->geolocationController()->client());
+    GeolocationClientMock* mock = static_cast<GeolocationClientMock*>(GeolocationController::from(core(webView))->client());
 
     GeolocationError::ErrorCode code;
     switch (errorCode) {
@@ -840,7 +840,7 @@ void DumpRenderTreeSupportGtk::setMockGeolocationError(WebKitWebView* webView, i
 int DumpRenderTreeSupportGtk::numberOfPendingGeolocationPermissionRequests(WebKitWebView* webView)
 {
 #if ENABLE(GEOLOCATION)
-    GeolocationClientMock* mock = static_cast<GeolocationClientMock*>(core(webView)->geolocationController()->client());
+    GeolocationClientMock* mock = static_cast<GeolocationClientMock*>(GeolocationController::from(core(webView))->client());
     return mock->numberOfPendingPermissionRequests();
 #endif
 }

@@ -96,13 +96,13 @@ void DumpRenderTreeSupport::dumpConfigurationForViewport(Frame* mainFrame, int d
 
 int DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests(WebPage* webPage)
 {
-    GeolocationClientMock* mockClient = toGeolocationClientMock(corePage(webPage)->geolocationController()->client());
+    GeolocationClientMock* mockClient = toGeolocationClientMock(GeolocationController(corePage(webPage))->client());
     return mockClient->numberOfPendingPermissionRequests();
 }
 
 void DumpRenderTreeSupport::resetGeolocationMock(WebPage* webPage)
 {
-    GeolocationClientMock* mockClient = toGeolocationClientMock(corePage(webPage)->geolocationController()->client());
+    GeolocationClientMock* mockClient = toGeolocationClientMock(GeolocationController::from(corePage(webPage))->client());
     mockClient->reset();
 }
 
@@ -118,19 +118,19 @@ void DumpRenderTreeSupport::setMockGeolocationError(WebPage* webPage, int errorC
         break;
     }
 
-    GeolocationClientMock* mockClient = static_cast<GeolocationClientMock*>(corePage(webPage)->geolocationController()->client());
+    GeolocationClientMock* mockClient = static_cast<GeolocationClientMock*>(GeolocationController::from(corePage(webPage))->client());
     mockClient->setError(GeolocationError::create(code, message));
 }
 
 void DumpRenderTreeSupport::setMockGeolocationPermission(WebPage* webPage, bool allowed)
 {
-    GeolocationClientMock* mockClient = toGeolocationClientMock(corePage(webPage)->geolocationController()->client());
+    GeolocationClientMock* mockClient = toGeolocationClientMock(GeolocationController::from(corePage(webPage))->client());
     mockClient->setPermission(allowed);
 }
 
 void DumpRenderTreeSupport::setMockGeolocationPosition(WebPage* webPage, double latitude, double longitude, double accuracy)
 {
-    GeolocationClientMock* mockClient = toGeolocationClientMock(corePage(webPage)->geolocationController()->client());
+    GeolocationClientMock* mockClient = toGeolocationClientMock(GeolocationController::from(corePage(webPage))->client());
     mockClient->setPosition(GeolocationPosition::create(currentTime(), latitude, longitude, accuracy));
 }
 
