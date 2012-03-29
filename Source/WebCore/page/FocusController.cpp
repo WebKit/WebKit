@@ -48,6 +48,7 @@
 #include "KeyboardEvent.h"
 #include "Page.h"
 #include "Range.h"
+#include "ReifiedTreeTraversal.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderWidget.h"
@@ -64,6 +65,54 @@ namespace WebCore {
 
 using namespace HTMLNames;
 using namespace std;
+
+static inline bool isShadowHost(const Node* node)
+{
+    return node && node->isElementNode() && toElement(node)->hasShadowRoot();
+}
+
+FocusScope::FocusScope(TreeScope* treeScope)
+    : m_rootTreeScope(treeScope)
+{
+    ASSERT(treeScope);
+    ASSERT(!treeScope->rootNode()->isShadowRoot() || toShadowRoot(treeScope->rootNode())->isYoungest());
+}
+
+Node* FocusScope::rootNode() const
+{
+    return m_rootTreeScope->rootNode();
+}
+
+Element* FocusScope::owner() const
+{
+    Node* root = rootNode();
+    if (root->isShadowRoot())
+        return root->shadowHost();
+    if (Frame* frame = root->document()->frame())
+        return frame->ownerElement();
+    return 0;
+}
+
+FocusScope FocusScope::focusScopeOf(Node* node)
+{
+    ASSERT(node);
+    TreeScope* scope = node->treeScope();
+    if (scope->rootNode()->isShadowRoot())
+        return FocusScope(toShadowRoot(scope->rootNode())->tree()->youngestShadowRoot());
+    return FocusScope(scope);
+}
+
+FocusScope FocusScope::focusScopeOwnedByShadowHost(Node* node)
+{
+    ASSERT(isShadowHost(node));
+    return FocusScope(toElement(node)->shadowTree()->youngestShadowRoot());
+}
+
+FocusScope FocusScope::focusScopeOwnedByIFrame(HTMLFrameOwnerElement* frame)
+{
+    ASSERT(frame && frame->contentFrame());
+    return FocusScope(frame->contentFrame()->document());
+}
 
 static inline void dispatchEventsOnWindowAndFocusedNode(Document* document, bool focused)
 {
@@ -82,6 +131,35 @@ static inline void dispatchEventsOnWindowAndFocusedNode(Document* document, bool
     document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, false, false));
     if (focused && document->focusedNode())
         document->focusedNode()->dispatchFocusEvent(0);
+}
+
+static inline bool hasCustomFocusLogic(Node* node)
+{
+    return node->hasTagName(inputTag) || node->hasTagName(textareaTag) || node->hasTagName(videoTag) || node->hasTagName(audioTag);
+}
+
+static inline bool isNonFocusableShadowHost(Node* node, KeyboardEvent* event)
+{
+    ASSERT(node);
+    return !node->isKeyboardFocusable(event) && isShadowHost(node) && !hasCustomFocusLogic(node);
+}
+
+static inline bool isFocusableShadowHost(Node* node, KeyboardEvent* event)
+{
+    ASSERT(node);
+    return node->isKeyboardFocusable(event) && isShadowHost(node) && !hasCustomFocusLogic(node);
+}
+
+static inline int adjustedTabIndex(Node* node, KeyboardEvent* event)
+{
+    ASSERT(node);
+    return isNonFocusableShadowHost(node, event) ? 0 : node->tabIndex();
+}
+
+static inline bool shouldVisit(Node* node, KeyboardEvent* event)
+{
+    ASSERT(node);
+    return node->isKeyboardFocusable(event) || isNonFocusableShadowHost(node, event);
 }
 
 FocusController::FocusController(Page* page)
@@ -153,52 +231,16 @@ void FocusController::setFocused(bool focused)
     }
 }
 
-static inline ShadowRoot* shadowRoot(Node* node)
+Node* FocusController::findFocusableNodeDecendingDownIntoFrameDocument(FocusDirection direction, Node* node, KeyboardEvent* event)
 {
-    return node->isElementNode() && toElement(node)->hasShadowRoot() ? toElement(node)->shadowTree()->youngestShadowRoot() : 0;
-}
-
-static inline bool isTreeScopeOwner(Node* node)
-{
-    return node && (node->isFrameOwnerElement() || shadowRoot(node));
-}
-
-bool FocusController::transferFocusToElementInShadowRoot(Element* shadowHost, bool restorePreviousSelection)
-{
-    ASSERT(shadowRoot(shadowHost));
-    Node* node = findFocusableNodeDecendingDownIntoFrameDocumentOrShadowRoot(FocusDirectionForward, shadowHost, 0);
-    if (shadowHost == node)
-        return false;
-    toElement(node)->focus(restorePreviousSelection);
-    return true;
-}
-
-static inline bool hasCustomFocusLogic(Node* node)
-{
-    return node->hasTagName(inputTag) || node->hasTagName(textareaTag) || node->hasTagName(videoTag) || node->hasTagName(audioTag);
-}
-
-Node* FocusController::findFocusableNodeDecendingDownIntoFrameDocumentOrShadowRoot(FocusDirection direction, Node* node, KeyboardEvent* event)
-{
-    // The node we found might be a HTMLFrameOwnerElement or a shadow host, so descend down the tree until we find either:
+    // The node we found might be a HTMLFrameOwnerElement, so descend down the tree until we find either:
     // 1) a focusable node, or
-    // 2) the deepest-nested HTMLFrameOwnerElement or shadow host.
-    while (isTreeScopeOwner(node)) {
-        Node* foundNode;
-        if (node->isFrameOwnerElement()) {
-            HTMLFrameOwnerElement* owner = static_cast<HTMLFrameOwnerElement*>(node);
-            if (!owner->contentFrame())
-                break;
-            Document* document = owner->contentFrame()->document();
-            foundNode = findFocusableNode(direction, document, 0, event);
-        } else {
-            // FIXME: Until a focus re-targeting (bug 61421) is implemented,
-            // skipping these elements is the safest way to keep a compatibility.
-            if (hasCustomFocusLogic(node))
-                break;
-            ASSERT(shadowRoot(node));
-            foundNode = findFocusableNode(direction, shadowRoot(node), 0, event);
-        }
+    // 2) the deepest-nested HTMLFrameOwnerElement.
+    while (node && node->isFrameOwnerElement()) {
+        HTMLFrameOwnerElement* owner = static_cast<HTMLFrameOwnerElement*>(node);
+        if (!owner->contentFrame())
+            break;
+        Node* foundNode = findFocusableNode(direction, FocusScope::focusScopeOwnedByIFrame(owner), 0, event);
         if (!foundNode)
             break;
         ASSERT(node != foundNode);
@@ -253,7 +295,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
     document->updateLayoutIgnorePendingStylesheets();
 
-    RefPtr<Node> node = findFocusableNodeAcrossTreeScope(direction, currentNode ? currentNode->treeScope() : document, currentNode, event);
+    RefPtr<Node> node = findFocusableNodeAcrossFocusScope(direction, FocusScope::focusScopeOf(currentNode ? currentNode : document), currentNode, event);
 
     if (!node) {
         // We didn't find a node to focus, so we should try to pass focus to Chrome.
@@ -265,8 +307,8 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         }
 
         // Chrome doesn't want focus, so we should wrap focus.
-        node = findFocusableNode(direction, m_page->mainFrame()->document(), 0, event);
-        node = findFocusableNodeDecendingDownIntoFrameDocumentOrShadowRoot(direction, node.get(), event);
+        node = findFocusableNodeRecursively(direction, FocusScope::focusScopeOf(m_page->mainFrame()->document()), 0, event);
+        node = findFocusableNodeDecendingDownIntoFrameDocument(direction, node.get(), event);
 
         if (!node)
             return false;
@@ -318,56 +360,70 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
     return true;
 }
 
-static inline Node* ownerOfTreeScope(TreeScope* scope)
+Node* FocusController::findFocusableNodeAcrossFocusScope(FocusDirection direction, FocusScope scope, Node* currentNode, KeyboardEvent* event)
 {
-    ASSERT(scope);
-    if (scope->rootNode()->isShadowRoot())
-        return scope->rootNode()->shadowHost();
-    if (scope->rootNode()->document()->frame())
-        return scope->rootNode()->document()->frame()->ownerElement();
-    return 0;
-}
+    ASSERT(!currentNode || !isNonFocusableShadowHost(currentNode, event));
+    Node* found;
+    if (currentNode && direction == FocusDirectionForward && isFocusableShadowHost(currentNode, event)) {
+        Node* foundInInnerFocusScope = findFocusableNodeRecursively(direction, FocusScope::focusScopeOwnedByShadowHost(currentNode), 0, event);
+        found = foundInInnerFocusScope ? foundInInnerFocusScope : findFocusableNodeRecursively(direction, scope, currentNode, event);
+    } else
+        found = findFocusableNodeRecursively(direction, scope, currentNode, event);
 
-Node* FocusController::findFocusableNodeAcrossTreeScope(FocusDirection direction, TreeScope* scope, Node* currentNode, KeyboardEvent* event)
-{
-    Node* node = findFocusableNode(direction, scope, currentNode, event);
-    // If there's no focusable node to advance to, move up the tree scopes until we find one.
-    while (!node && scope) {
-        Node* owner = ownerOfTreeScope(scope);
+    // If there's no focusable node to advance to, move up the focus scopes until we find one.
+    while (!found) {
+        Node* owner = scope.owner();
         if (!owner)
             break;
-        node = findFocusableNode(direction, owner->treeScope(), owner, event);
-        scope = owner->treeScope();
+        scope = FocusScope::focusScopeOf(owner);
+        if (direction == FocusDirectionBackward && isFocusableShadowHost(owner, event)) {
+            found = owner;
+            break;
+        }
+        found = findFocusableNodeRecursively(direction, scope, owner, event);
     }
-    node = findFocusableNodeDecendingDownIntoFrameDocumentOrShadowRoot(direction, node, event);
-    return node;
+    found = findFocusableNodeDecendingDownIntoFrameDocument(direction, found, event);
+    return found;
 }
 
+Node* FocusController::findFocusableNodeRecursively(FocusDirection direction, FocusScope scope, Node* start, KeyboardEvent* event)
+{
+    // Starting node is exclusive.
+    Node* found = findFocusableNode(direction, scope, start, event);
+    if (!found)
+        return 0;
+    if (direction == FocusDirectionForward) {
+        if (!isNonFocusableShadowHost(found, event))
+            return found;
+        Node* foundInInnerFocusScope = findFocusableNodeRecursively(direction, FocusScope::focusScopeOwnedByShadowHost(found), 0, event);
+        return foundInInnerFocusScope ? foundInInnerFocusScope : findFocusableNodeRecursively(direction, scope, found, event);
+    }
+    ASSERT(direction == FocusDirectionBackward);
+    if (isFocusableShadowHost(found, event)) {
+        Node* foundInInnerFocusScope = findFocusableNodeRecursively(direction, FocusScope::focusScopeOwnedByShadowHost(found), 0, event);
+        return foundInInnerFocusScope ? foundInInnerFocusScope : found;
+    }
+    if (isNonFocusableShadowHost(found, event)) {
+        Node* foundInInnerFocusScope = findFocusableNodeRecursively(direction, FocusScope::focusScopeOwnedByShadowHost(found), 0, event);
+        return foundInInnerFocusScope ? foundInInnerFocusScope :findFocusableNodeRecursively(direction, scope, found, event);
+    }
+    return found;
+}
 
-Node* FocusController::findFocusableNode(FocusDirection direction, TreeScope* scope, Node* node, KeyboardEvent* event)
+Node* FocusController::findFocusableNode(FocusDirection direction, FocusScope scope, Node* node, KeyboardEvent* event)
 {
     return (direction == FocusDirectionForward)
         ? nextFocusableNode(scope, node, event)
         : previousFocusableNode(scope, node, event);
 }
 
-static Node* nextNodeWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
+Node* FocusController::findNodeWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent* event, FocusDirection direction)
 {
     // Search is inclusive of start
-    for (Node* node = start; node; node = node->traverseNextNode())
-        if (node->isKeyboardFocusable(event) && node->tabIndex() == tabIndex)
+    for (Node* node = start; node; node = (direction == FocusDirectionForward ? ReifiedTreeTraversal::traverseNextNodeWithoutCrossingUpperBoundary(node): ReifiedTreeTraversal::traversePreviousNodeWithoutCrossingUpperBoundary(node))) {
+        if (shouldVisit(node, event) && adjustedTabIndex(node, event) == tabIndex)
             return node;
-
-    return 0;
-}
-
-static Node* previousNodeWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
-{
-    // Search is inclusive of start
-    for (Node* n = start; n; n = n->traversePreviousNode())
-        if (n->isKeyboardFocusable(event) && n->tabIndex() == tabIndex)
-            return n;
-
+    }
     return 0;
 }
 
@@ -376,8 +432,8 @@ static Node* nextNodeWithGreaterTabIndex(Node* start, int tabIndex, KeyboardEven
     // Search is inclusive of start
     int winningTabIndex = std::numeric_limits<short>::max() + 1;
     Node* winner = 0;
-    for (Node* n = start; n; n = n->traverseNextNode())
-        if (n->isKeyboardFocusable(event) && n->tabIndex() > tabIndex && n->tabIndex() < winningTabIndex) {
+    for (Node* n = start; n; n = ReifiedTreeTraversal::traverseNextNodeWithoutCrossingUpperBoundary(n))
+        if (shouldVisit(n, event) && n->tabIndex() > tabIndex && n->tabIndex() < winningTabIndex) {
             winner = n;
             winningTabIndex = n->tabIndex();
         }
@@ -390,30 +446,33 @@ static Node* previousNodeWithLowerTabIndex(Node* start, int tabIndex, KeyboardEv
     // Search is inclusive of start
     int winningTabIndex = 0;
     Node* winner = 0;
-    for (Node* n = start; n; n = n->traversePreviousNode())
-        if (n->isKeyboardFocusable(event) && n->tabIndex() < tabIndex && n->tabIndex() > winningTabIndex) {
+    for (Node* n = start; n; n = ReifiedTreeTraversal::traversePreviousNodeWithoutCrossingUpperBoundary(n)) {
+        int currentTabIndex = adjustedTabIndex(n, event);
+        if ((shouldVisit(n, event) || isNonFocusableShadowHost(n, event)) && currentTabIndex < tabIndex && currentTabIndex > winningTabIndex) {
             winner = n;
-            winningTabIndex = n->tabIndex();
+            winningTabIndex = currentTabIndex;
         }
-
+    }
     return winner;
 }
 
-Node* FocusController::nextFocusableNode(TreeScope* scope, Node* start, KeyboardEvent* event)
+Node* FocusController::nextFocusableNode(FocusScope scope, Node* start, KeyboardEvent* event)
 {
     if (start) {
+        int tabIndex = adjustedTabIndex(start, event);
         // If a node is excluded from the normal tabbing cycle, the next focusable node is determined by tree order
-        if (start->tabIndex() < 0) {
-            for (Node* n = start->traverseNextNode(); n; n = n->traverseNextNode())
-                if (n->isKeyboardFocusable(event) && n->tabIndex() >= 0)
+        if (tabIndex < 0) {
+            for (Node* n = ReifiedTreeTraversal::traverseNextNodeWithoutCrossingUpperBoundary(start); n; n = ReifiedTreeTraversal::traverseNextNodeWithoutCrossingUpperBoundary(n)) {
+                if (shouldVisit(n, event) && adjustedTabIndex(n, event) >= 0)
                     return n;
+            }
         }
 
         // First try to find a node with the same tabindex as start that comes after start in the scope.
-        if (Node* winner = nextNodeWithExactTabIndex(start->traverseNextNode(), start->tabIndex(), event))
+        if (Node* winner = findNodeWithExactTabIndex(ReifiedTreeTraversal::traverseNextNodeWithoutCrossingUpperBoundary(start), tabIndex, event, FocusDirectionForward))
             return winner;
 
-        if (!start->tabIndex())
+        if (!tabIndex)
             // We've reached the last node in the document with a tabindex of 0. This is the end of the tabbing order.
             return 0;
     }
@@ -421,26 +480,26 @@ Node* FocusController::nextFocusableNode(TreeScope* scope, Node* start, Keyboard
     // Look for the first node in the scope that:
     // 1) has the lowest tabindex that is higher than start's tabindex (or 0, if start is null), and
     // 2) comes first in the scope, if there's a tie.
-    if (Node* winner = nextNodeWithGreaterTabIndex(scope->rootNode(), start ? start->tabIndex() : 0, event))
+    if (Node* winner = nextNodeWithGreaterTabIndex(scope.rootNode(), start ? adjustedTabIndex(start, event) : 0, event))
         return winner;
 
     // There are no nodes with a tabindex greater than start's tabindex,
     // so find the first node with a tabindex of 0.
-    return nextNodeWithExactTabIndex(scope->rootNode(), 0, event);
+    return findNodeWithExactTabIndex(scope.rootNode(), 0, event, FocusDirectionForward);
 }
 
-Node* FocusController::previousFocusableNode(TreeScope* scope, Node* start, KeyboardEvent* event)
+Node* FocusController::previousFocusableNode(FocusScope scope, Node* start, KeyboardEvent* event)
 {
     Node* last;
-    for (last = scope->rootNode(); last->lastChild(); last = last->lastChild()) { }
+    for (last = scope.rootNode(); ReifiedTreeTraversal::lastChildWithoutCrossingUpperBoundary(last); last = ReifiedTreeTraversal::lastChildWithoutCrossingUpperBoundary(last)) { }
 
     // First try to find the last node in the scope that comes before start and has the same tabindex as start.
     // If start is null, find the last node in the scope with a tabindex of 0.
     Node* startingNode;
     int startingTabIndex;
     if (start) {
-        startingNode = start->traversePreviousNode();
-        startingTabIndex = start->tabIndex();
+        startingNode = ReifiedTreeTraversal::traversePreviousNodeWithoutCrossingUpperBoundary(start);
+        startingTabIndex = adjustedTabIndex(start, event);
     } else {
         startingNode = last;
         startingTabIndex = 0;
@@ -448,18 +507,19 @@ Node* FocusController::previousFocusableNode(TreeScope* scope, Node* start, Keyb
 
     // However, if a node is excluded from the normal tabbing cycle, the previous focusable node is determined by tree order
     if (startingTabIndex < 0) {
-        for (Node* n = startingNode; n; n = n->traversePreviousNode())
-            if (n->isKeyboardFocusable(event) && n->tabIndex() >= 0)
+        for (Node* n = startingNode; n; n = ReifiedTreeTraversal::traversePreviousNodeWithoutCrossingUpperBoundary(n)) {
+            if (shouldVisit(n, event) && adjustedTabIndex(n, event) >= 0)
                 return n;
+        }
     }
 
-    if (Node* winner = previousNodeWithExactTabIndex(startingNode, startingTabIndex, event))
+    if (Node* winner = findNodeWithExactTabIndex(startingNode, startingTabIndex, event, FocusDirectionBackward))
         return winner;
 
     // There are no nodes before start with the same tabindex as start, so look for a node that:
     // 1) has the highest non-zero tabindex (that is less than start's tabindex), and
     // 2) comes last in the scope, if there's a tie.
-    startingTabIndex = (start && start->tabIndex()) ? start->tabIndex() : std::numeric_limits<short>::max();
+    startingTabIndex = (start && startingTabIndex) ? startingTabIndex : std::numeric_limits<short>::max();
     return previousNodeWithLowerTabIndex(last, startingTabIndex, event);
 }
 

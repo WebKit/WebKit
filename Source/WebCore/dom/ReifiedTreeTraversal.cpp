@@ -210,7 +210,7 @@ Node* ReifiedTreeTraversal::parentNodeWithoutCrossingUpperBoundary(const Node* n
     // https://bugs.webkit.org/show_bug.cgi?id=82010
     // ASSERT(!isInsertionPoint(node) || !toInsertionPoint(node)->isActive());
     CrossedUpperBoundary crossed;
-    Node* parent = parentNodeOrBackToInsertionPoint(node, crossed);
+    Node* parent = parentNode(node, crossed);
     if (crossed == Crossed)
         return 0;
     return parent;
