@@ -771,11 +771,11 @@ void HTMLInputElement::parseAttribute(Attribute* attr)
     } else if (attr->name() == patternAttr || attr->name() == precisionAttr)
         setNeedsValidityCheck();
     else if (attr->name() == disabledAttr) {
+        HTMLTextFormControlElement::parseAttribute(attr);
         m_inputType->disabledAttributeChanged();
-        HTMLTextFormControlElement::parseAttribute(attr);
     } else if (attr->name() == readonlyAttr) {
-        m_inputType->readonlyAttributeChanged();
         HTMLTextFormControlElement::parseAttribute(attr);
+        m_inputType->readonlyAttributeChanged();
     }
 #if ENABLE(DATALIST)
     else if (attr->name() == listAttr)
