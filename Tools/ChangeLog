@@ -1,3 +1,14 @@
+2012-03-28  Mark Rowe  <mrowe@apple.com>
+
+        Fix --no-saved-state.
+
+        Ignore the flag before Lion, rather than making it specific to Lion.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * Scripts/webkitdirs.pm:
+        (argumentsForRunAndDebugMacWebKitApp):
+
 2012-03-28  Dave Tharp  <dtharp@codeaurora.org>
 
         Add dtharp to contributors list

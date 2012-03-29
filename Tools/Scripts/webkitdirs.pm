@@ -2479,7 +2479,7 @@ EOF
 sub argumentsForRunAndDebugMacWebKitApp()
 {
     my @args = @ARGV;
-    push @args, ("-ApplePersistenceIgnoreState", "YES") if isLion() && checkForArgumentAndRemoveFromArrayRef("--no-saved-state", \@args);
+    push @args, ("-ApplePersistenceIgnoreState", "YES") if !isLeopard() && !isSnowLeopard() && checkForArgumentAndRemoveFromArrayRef("--no-saved-state", \@args);
     return @args;
 }
 
