@@ -631,3 +631,25 @@ fast/table/colspanMinWidth-vertical.html
 
 # Has failed since its introduction in r105826. Skipped everywhere but chromium.
 fast/events/dropzone-005.html
+
+# Spelling tests that are flakey. https://bugs.webkit.org/show_bug.cgi?id=82555
+editing/spelling/spellcheck-async-mutation.html
+
+# Need rebaselining after http://trac.webkit.org/changeset/112484
+# https://bugs.webkit.org/show_bug.cgi?id=82626 Rebaseline media elements tests after r112484
+media/media-document-audio-repaint.html
+media/video-no-audio.html
+media/controls-strict.html
+media/video-volume-slider.html
+media/controls-styling.html
+media/video-display-toggle.html
+media/audio-repaint.html
+media/audio-controls-rendering.html
+media/video-zoom-controls.html
+media/video-controls-rendering.html
+media/controls-without-preload.html
+media/media-controls-clone.html
+fast/layers/video-layer.html
+media/video-empty-source.html
+media/video-playing-and-pause.html
+media/controls-after-reload.html
