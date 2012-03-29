@@ -2594,20 +2594,17 @@ const ResourceRequest& FrameLoader::originalRequest() const
     return activeDocumentLoader()->originalRequestCopy();
 }
 
-void FrameLoader::receivedMainResourceError(const ResourceError& error, bool isComplete)
+void FrameLoader::receivedMainResourceError(const ResourceError& error)
 {
     // Retain because the stop may release the last reference to it.
     RefPtr<Frame> protect(m_frame);
 
     RefPtr<DocumentLoader> loader = activeDocumentLoader();
-
-    if (isComplete) {
-        // FIXME: Don't want to do this if an entirely new load is going, so should check
-        // that both data sources on the frame are either this or nil.
-        stop();
-        if (m_client->shouldFallBack(error))
-            handleFallbackContent();
-    }
+    // FIXME: Don't want to do this if an entirely new load is going, so should check
+    // that both data sources on the frame are either this or nil.
+    stop();
+    if (m_client->shouldFallBack(error))
+        handleFallbackContent();
 
     if (m_state == FrameStateProvisional && m_provisionalDocumentLoader) {
         if (m_submittedFormURL == m_provisionalDocumentLoader->originalRequestCopy().url())
@@ -2627,7 +2624,9 @@ void FrameLoader::receivedMainResourceError(const ResourceError& error, bool isC
             clientRedirectCancelledOrFinished(false);
     }
 
-    loader->mainReceivedError(error, isComplete);
+    checkCompleted();
+    if (m_frame->page())
+        checkLoadComplete();
 }
 
 void FrameLoader::callContinueFragmentScrollAfterNavigationPolicy(void* argument,
@@ -3079,14 +3078,6 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
         loadSameDocumentItem(item);
     else
         loadDifferentDocumentItem(item, loadType);
-}
-
-void FrameLoader::mainReceivedCompleteError(DocumentLoader* loader, const ResourceError&)
-{
-    loader->setPrimaryLoadComplete(true);
-    checkCompleted();
-    if (m_frame->page())
-        checkLoadComplete();
 }
 
 ResourceError FrameLoader::cancelledError(const ResourceRequest& request) const

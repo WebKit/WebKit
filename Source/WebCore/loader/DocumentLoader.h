@@ -116,7 +116,7 @@ namespace WebCore {
         void finishedLoading();
         const ResourceResponse& response() const { return m_response; }
         const ResourceError& mainDocumentError() const { return m_mainDocumentError; }
-        void mainReceivedError(const ResourceError&, bool isComplete);
+        void mainReceivedError(const ResourceError&);
         void setResponse(const ResourceResponse& response) { m_response = response; }
         void prepareForLoadStart();
         bool isClientRedirect() const { return m_isClientRedirect; }

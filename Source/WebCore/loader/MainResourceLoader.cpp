@@ -90,11 +90,11 @@ void MainResourceLoader::receivedError(const ResourceError& error)
     RefPtr<MainResourceLoader> protect(this);
     RefPtr<Frame> protectFrame(m_frame);
 
-    // It is important that we call FrameLoader::receivedMainResourceError before calling 
-    // FrameLoader::didFailToLoad because receivedMainResourceError clears out the relevant
-    // document loaders. Also, receivedMainResourceError ends up calling a FrameLoadDelegate method
+    // It is important that we call DocumentLoader::mainReceivedError before calling 
+    // ResourceLoadNotifier::didFailToLoad because mainReceivedError clears out the relevant
+    // document loaders. Also, mainReceivedError ends up calling a FrameLoadDelegate method
     // and didFailToLoad calls a ResourceLoadDelegate method and they need to be in the correct order.
-    frameLoader()->receivedMainResourceError(error, true);
+    documentLoader()->mainReceivedError(error);
 
     if (!cancelled()) {
         ASSERT(!reachedTerminalState());
@@ -122,7 +122,7 @@ void MainResourceLoader::didCancel(const ResourceError& error)
 {
     // We should notify the frame loader after fully canceling the load, because it can do complicated work
     // like calling DOMWindow::print(), during which a half-canceled load could try to finish.
-    frameLoader()->receivedMainResourceError(error, true);
+    documentLoader()->mainReceivedError(error);
 }
 
 ResourceError MainResourceLoader::interruptedForPolicyChangeError() const

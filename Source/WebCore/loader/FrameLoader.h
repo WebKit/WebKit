@@ -150,7 +150,7 @@ public:
 
     const ResourceRequest& originalRequest() const;
     const ResourceRequest& initialRequest() const;
-    void receivedMainResourceError(const ResourceError&, bool isComplete);
+    void receivedMainResourceError(const ResourceError&);
 
     bool willLoadMediaElementURL(KURL&);
 
@@ -166,7 +166,6 @@ public:
     void finishedLoadingDocument(DocumentLoader*);
     bool isReplacing() const;
     void setReplacing();
-    void mainReceivedCompleteError(DocumentLoader*, const ResourceError&);
     bool subframeIsLoading() const;
     void willChangeTitle(DocumentLoader*);
     void didChangeTitle(DocumentLoader*);

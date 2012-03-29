@@ -193,7 +193,7 @@ void DocumentLoader::clearErrors()
     m_mainDocumentError = ResourceError();
 }
 
-void DocumentLoader::mainReceivedError(const ResourceError& error, bool isComplete)
+void DocumentLoader::mainReceivedError(const ResourceError& error)
 {
     ASSERT(!error.isNull());
 
@@ -202,8 +202,8 @@ void DocumentLoader::mainReceivedError(const ResourceError& error, bool isComple
     if (!frameLoader())
         return;
     setMainDocumentError(error);
-    if (isComplete)
-        frameLoader()->mainReceivedCompleteError(this, error);
+    setPrimaryLoadComplete(true);
+    frameLoader()->receivedMainResourceError(error);
 }
 
 // Cancels the data source's pending loads.  Conceptually, a data source only loads
@@ -262,7 +262,7 @@ void DocumentLoader::stopLoading()
     else
         // If there are no resource loaders, we need to manufacture a cancelled message.
         // (A back/forward navigation has no resource loaders because its resources are cached.)
-        mainReceivedError(frameLoader->cancelledError(m_request), true);
+        mainReceivedError(frameLoader->cancelledError(m_request));
     
     stopLoadingSubresources();
     stopLoadingPlugIns();
