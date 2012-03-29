@@ -122,10 +122,11 @@ private:
     void prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset);
     void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, WTF::Vector<LineContext>&);
     void layoutColumnReverse(const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace);
+    void packFlexLines(FlexOrderIterator&, WTF::Vector<LineContext>&);
     void alignChildren(FlexOrderIterator&, const WTF::Vector<LineContext>&);
     void applyStretchAlignmentToChild(RenderBox*, LayoutUnit lineCrossAxisExtent);
     void flipForRightToLeftColumn(FlexOrderIterator&);
-    void flipForWrapReverse(FlexOrderIterator&, const WTF::Vector<LineContext>&);
+    void flipForWrapReverse(FlexOrderIterator&, const WTF::Vector<LineContext>&, LayoutUnit crossAxisStartEdge);
 };
 
 } // namespace WebCore

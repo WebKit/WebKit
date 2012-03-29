@@ -296,6 +296,9 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit, BlockLayo
 
 void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(FlexOrderIterator& iterator, WTF::Vector<LineContext>& lineContexts, LayoutUnit& oldClientAfterEdge)
 {
+    LayoutUnit crossAxisStartEdge = lineContexts.isEmpty() ? 0 : lineContexts[0].crossAxisOffset;
+    packFlexLines(iterator, lineContexts);
+
     // If we have a single line flexbox, the line height is all the available space.
     // For flex-direction: row, this means we need to use the height, so we do this after calling computeLogicalHeight.
     if (!isMultiline() && lineContexts.size() == 1)
@@ -305,7 +308,7 @@ void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(FlexOrderItera
     if (style()->flexWrap() == FlexWrapReverse) {
         if (isHorizontalFlow())
             oldClientAfterEdge = clientLogicalBottom();
-        flipForWrapReverse(iterator, lineContexts);
+        flipForWrapReverse(iterator, lineContexts, crossAxisStartEdge);
     }
 
     // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
@@ -973,6 +976,55 @@ void RenderFlexibleBox::layoutColumnReverse(const OrderedFlexItemList& children,
     }
 }
 
+static LayoutUnit initialLinePackingOffset(LayoutUnit availableFreeSpace, EFlexLinePack linePack, size_t numberOfLines)
+{
+    if (linePack == LinePackEnd)
+        return availableFreeSpace;
+    if (linePack == LinePackCenter)
+        return availableFreeSpace / 2;
+    if (linePack == LinePackDistribute) {
+        if (availableFreeSpace > 0 && numberOfLines)
+            return availableFreeSpace / (2 * numberOfLines);
+        if (availableFreeSpace < 0)
+            return availableFreeSpace / 2;
+    }
+    return 0;
+}
+
+static LayoutUnit linePackingSpaceBetweenChildren(LayoutUnit availableFreeSpace, EFlexLinePack linePack, size_t numberOfLines)
+{
+    if (availableFreeSpace > 0 && numberOfLines > 1) {
+        if (linePack == LinePackJustify)
+            return availableFreeSpace / (numberOfLines - 1);
+        if (linePack == LinePackDistribute || linePack == LinePackStretch)
+            return availableFreeSpace / numberOfLines;
+    }
+    return 0;
+}
+
+void RenderFlexibleBox::packFlexLines(FlexOrderIterator& iterator, WTF::Vector<LineContext>& lineContexts)
+{
+    if (!isMultiline() || style()->flexLinePack() == LinePackStart)
+        return;
+
+    LayoutUnit availableCrossAxisSpace = crossAxisContentExtent();
+    for (size_t i = 0; i < lineContexts.size(); ++i)
+        availableCrossAxisSpace -= lineContexts[i].crossAxisExtent;
+
+    RenderBox* child = iterator.first();
+    LayoutUnit lineOffset = initialLinePackingOffset(availableCrossAxisSpace, style()->flexLinePack(), lineContexts.size());
+    for (size_t lineNumber = 0; lineNumber < lineContexts.size(); ++lineNumber) {
+        lineContexts[lineNumber].crossAxisOffset += lineOffset;
+        for (size_t childNumber = 0; childNumber < lineContexts[lineNumber].numberOfChildren; ++childNumber, child = iterator.next())
+            adjustAlignmentForChild(child, lineOffset);
+
+        if (style()->flexLinePack() == LinePackStretch && availableCrossAxisSpace > 0)
+            lineContexts[lineNumber].crossAxisExtent += availableCrossAxisSpace / lineContexts.size();
+
+        lineOffset += linePackingSpaceBetweenChildren(availableCrossAxisSpace, style()->flexLinePack(), lineContexts.size());
+    }
+}
+
 void RenderFlexibleBox::adjustAlignmentForChild(RenderBox* child, LayoutUnit delta)
 {
     LayoutRect oldRect = child->frameRect();
@@ -1087,7 +1139,7 @@ void RenderFlexibleBox::flipForRightToLeftColumn(FlexOrderIterator& iterator)
     }
 }
 
-void RenderFlexibleBox::flipForWrapReverse(FlexOrderIterator& iterator, const WTF::Vector<LineContext>& lineContexts)
+void RenderFlexibleBox::flipForWrapReverse(FlexOrderIterator& iterator, const WTF::Vector<LineContext>& lineContexts, LayoutUnit crossAxisStartEdge)
 {
     LayoutUnit contentExtent = crossAxisContentExtent();
     RenderBox* child = iterator.first();
@@ -1096,7 +1148,7 @@ void RenderFlexibleBox::flipForWrapReverse(FlexOrderIterator& iterator, const WT
             ASSERT(child);
             LayoutPoint location = flowAwareLocationForChild(child);
             LayoutUnit lineCrossAxisExtent = lineContexts[lineNumber].crossAxisExtent;
-            LayoutUnit originalOffset = lineContexts[lineNumber].crossAxisOffset - lineContexts[0].crossAxisOffset;
+            LayoutUnit originalOffset = lineContexts[lineNumber].crossAxisOffset - crossAxisStartEdge;
             LayoutUnit newOffset = contentExtent - originalOffset - lineCrossAxisExtent;
             location.setY(location.y() + newOffset - originalOffset);
 
