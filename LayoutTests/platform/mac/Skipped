@@ -645,3 +645,10 @@ fast/box-shadow/shadow-buffer-partial.html
 fast/block/lineboxcontain/block-font.html
 fast/block/lineboxcontain/block-glyphs.html
 fast/block/lineboxcontain/font.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82665
+http/tests/webarchive/test-css-url-encoding-shift-jis.html
+http/tests/webarchive/test-css-url-encoding-utf-8.html
+http/tests/webarchive/test-css-url-encoding.html
+webarchive/test-css-url-resources-in-stylesheets.html
+webarchive/test-css-url-resources-inline-styles.html
