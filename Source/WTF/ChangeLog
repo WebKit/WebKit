@@ -1,3 +1,12 @@
+2012-03-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Add WTF_EXPORT_PRIVATE_NO_RTTI
+        so that ports not using RTTI can add symbol exports to
+        classes that RTTI ports export with WTF_EXPORT_PRIVATE_RTTI.
+
+        * wtf/ArrayBufferView.h:
+        * wtf/ExportMacros.h:
+
 2012-03-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         HashMap<>::add should return a more descriptive object

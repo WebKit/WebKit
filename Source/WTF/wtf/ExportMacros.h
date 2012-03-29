@@ -49,9 +49,14 @@
 #define WTF_HIDDEN
 #endif
 
+// Currently WTF is embedded statically in JSCore, which exports 
+// WTF symbols in the JSCore shared library.
+// Because of this, we need to make sure that we use WTF_EXPORT
+// when building JavaScriptCore as well as WTF.
+
 // FIXME: When all ports are using the export macros, we should replace
 // WTF_EXPORTDATA with WTF_EXPORT_PRIVATE macros.
-#if defined(BUILDING_WTF)
+#if defined(BUILDING_WTF)  || defined(BUILDING_JavaScriptCore)
 #define WTF_EXPORTDATA WTF_EXPORT
 #else
 #define WTF_EXPORTDATA WTF_IMPORT
@@ -60,7 +65,7 @@
 #else // !USE(EXPORT_MACROS)
 
 #if !PLATFORM(CHROMIUM) && OS(WINDOWS) && !COMPILER(GCC)
-#if defined(BUILDING_WTF)
+#if defined(BUILDING_WTF) || defined(BUILDING_JavaScriptCore)
 #define WTF_EXPORTDATA __declspec(dllexport)
 #else
 #define WTF_EXPORTDATA __declspec(dllimport)
@@ -77,7 +82,7 @@
 
 #endif // USE(EXPORT_MACROS)
 
-#if defined(BUILDING_WTF)
+#if defined(BUILDING_WTF)  || defined(BUILDING_JavaScriptCore)
 #define WTF_EXPORT_PRIVATE WTF_EXPORT
 #else
 #define WTF_EXPORT_PRIVATE WTF_IMPORT
@@ -87,8 +92,10 @@
 // extra exports it needs.
 #if PLATFORM(WX)
 #define WTF_EXPORT_PRIVATE_RTTI WTF_EXPORT_PRIVATE
+#define WTF_EXPORT_PRIVATE_NO_RTTI
 #else
 #define WTF_EXPORT_PRIVATE_RTTI
+#define WTF_EXPORT_PRIVATE_NO_RTTI WTF_EXPORT_PRIVATE
 #endif
 
 #define WTF_EXPORT_HIDDEN WTF_HIDDEN
