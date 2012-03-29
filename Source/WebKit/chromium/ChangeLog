@@ -1,5 +1,69 @@
 2012-03-29  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Split off tiled layer constructs for unit tests into a common header
+        https://bugs.webkit.org/show_bug.cgi?id=82425
+
+        Reviewed by Adrienne Walker.
+
+        * WebKit.gypi:
+        * tests/CCTiledLayerTestCommon.cpp: Added.
+        (WebKitTests):
+        (WebKitTests::FakeLayerTextureUpdater::Texture::Texture):
+        (WebKitTests::FakeLayerTextureUpdater::Texture::~Texture):
+        (WebKitTests::FakeLayerTextureUpdater::Texture::updateRect):
+        (WebKitTests::FakeLayerTextureUpdater::Texture::prepareRect):
+        (WebKitTests::FakeLayerTextureUpdater::FakeLayerTextureUpdater):
+        (WebKitTests::FakeLayerTextureUpdater::~FakeLayerTextureUpdater):
+        (WebKitTests::FakeLayerTextureUpdater::prepareToUpdate):
+        (WebKitTests::FakeLayerTextureUpdater::setRectToInvalidate):
+        (WebKitTests::FakeLayerTextureUpdater::createTexture):
+        (WebKitTests::FakeCCTiledLayerImpl::FakeCCTiledLayerImpl):
+        (WebKitTests::FakeCCTiledLayerImpl::~FakeCCTiledLayerImpl):
+        (WebKitTests::FakeTiledLayerChromium::FakeTiledLayerChromium):
+        (WebKitTests::FakeTiledLayerChromium::~FakeTiledLayerChromium):
+        (WebKitTests::FakeTiledLayerChromium::setNeedsDisplayRect):
+        (WebKitTests::FakeTiledLayerChromium::paintContentsIfDirty):
+        (WebKitTests::FakeTiledLayerWithScaledBounds::FakeTiledLayerWithScaledBounds):
+        (WebKitTests::FakeCCTextureUpdater::FakeCCTextureUpdater):
+        * tests/CCTiledLayerTestCommon.h: Added.
+        (WebKitTests):
+        (FakeLayerTextureUpdater):
+        (Texture):
+        (WebKitTests::FakeLayerTextureUpdater::sampledTexelFormat):
+        (WebKitTests::FakeLayerTextureUpdater::lastUpdateRect):
+        (WebKitTests::FakeLayerTextureUpdater::prepareCount):
+        (WebKitTests::FakeLayerTextureUpdater::clearPrepareCount):
+        (WebKitTests::FakeLayerTextureUpdater::updateCount):
+        (WebKitTests::FakeLayerTextureUpdater::clearUpdateCount):
+        (WebKitTests::FakeLayerTextureUpdater::updateRect):
+        (WebKitTests::FakeLayerTextureUpdater::prepareRectCount):
+        (WebKitTests::FakeLayerTextureUpdater::clearPrepareRectCount):
+        (WebKitTests::FakeLayerTextureUpdater::prepareRect):
+        (WebKitTests::FakeLayerTextureUpdater::setOpaquePaintRect):
+        (FakeCCTiledLayerImpl):
+        (FakeTiledLayerChromium):
+        (WebKitTests::FakeTiledLayerChromium::tileSize):
+        (WebKitTests::FakeTiledLayerChromium::lastNeedsDisplayRect):
+        (WebKitTests::FakeTiledLayerChromium::textureManager):
+        (WebKitTests::FakeTiledLayerChromium::fakeLayerTextureUpdater):
+        (WebKitTests::FakeTiledLayerChromium::updateRect):
+        (WebKitTests::FakeTiledLayerChromium::textureUpdater):
+        (WebKitTests::FakeTiledLayerChromium::createTextureUpdaterIfNeeded):
+        (FakeTiledLayerWithScaledBounds):
+        (WebKitTests::FakeTiledLayerWithScaledBounds::setContentBounds):
+        (WebKitTests::FakeTiledLayerWithScaledBounds::contentBounds):
+        (FakeTextureAllocator):
+        (WebKitTests::FakeTextureAllocator::createTexture):
+        (WebKitTests::FakeTextureAllocator::deleteTexture):
+        (FakeTextureCopier):
+        (WebKitTests::FakeTextureCopier::copyTexture):
+        (FakeCCTextureUpdater):
+        (WebKitTests::FakeCCTextureUpdater::textureAllocator):
+        * tests/TextureManagerTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+
+2012-03-29  Dana Jansens  <danakj@chromium.org>
+
         [chromium] Remove unneeded code+fixmes from CCOcclusionTracker
         https://bugs.webkit.org/show_bug.cgi?id=82380
 

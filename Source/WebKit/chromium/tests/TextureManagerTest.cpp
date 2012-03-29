@@ -24,22 +24,17 @@
 
 #include "config.h"
 
+#include "CCTiledLayerTestCommon.h"
 #include "ManagedTexture.h"
 #include "TextureManager.h"
 
 #include <gtest/gtest.h>
 
 using namespace WebCore;
+using namespace WebKitTests;
 using namespace WTF;
 
 namespace {
-
-class FakeTextureAllocator : public TextureAllocator {
-public:
-    virtual ~FakeTextureAllocator() { }
-    virtual unsigned createTexture(const IntSize&, GC3Denum) { return 1; }
-    virtual void deleteTexture(unsigned, const IntSize&, GC3Denum) { }
-};
 
 class TextureManagerTest : public testing::Test {
 public:

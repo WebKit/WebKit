@@ -87,6 +87,8 @@
             'tests/CCSchedulerTest.cpp',
             'tests/CCSolidColorLayerImplTest.cpp',
             'tests/CCTiledLayerImplTest.cpp',
+            'tests/CCTiledLayerTestCommon.h',
+            'tests/CCTiledLayerTestCommon.cpp',
             'tests/CCThreadTaskTest.cpp',
             'tests/CCTimerTest.cpp',
             'tests/ClipboardChromiumTest.cpp',
