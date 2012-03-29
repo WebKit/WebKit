@@ -48,11 +48,11 @@ const double lowFrequencyAnimationInterval = 1;
 void didVisibilityChange(WebCore::CCLayerTreeHostImpl* id, bool visible)
 {
     if (visible) {
-        TRACE_EVENT_START1("webkit", "CCLayerTreeHostImpl::setVisible", id, "CCLayerTreeHostImpl", id);
+        TRACE_EVENT_ASYNC_BEGIN1("webkit", "CCLayerTreeHostImpl::setVisible", id, "CCLayerTreeHostImpl", id);
         return;
     }
 
-    TRACE_EVENT_FINISH0("webkit", "CCLayerTreeHostImpl::setVisible", id);
+    TRACE_EVENT_ASYNC_END0("webkit", "CCLayerTreeHostImpl::setVisible", id);
 }
 
 } // namespace

@@ -42,12 +42,12 @@ CCActiveGestureAnimation::CCActiveGestureAnimation(PassOwnPtr<CCGestureCurve> cu
     , m_gestureCurve(curve)
     , m_gestureCurveTarget(target)
 {
-    TRACE_EVENT_START1("input", "GestureAnimation", this, "curve", m_gestureCurve->debugName());
+    TRACE_EVENT_ASYNC_BEGIN1("input", "GestureAnimation", this, "curve", m_gestureCurve->debugName());
 }
 
 CCActiveGestureAnimation::~CCActiveGestureAnimation()
 {
-    TRACE_EVENT_FINISH0("input", "GestureAnimation", this);
+    TRACE_EVENT_ASYNC_END0("input", "GestureAnimation", this);
 }
 
 bool CCActiveGestureAnimation::animate(double monotonicTime)
