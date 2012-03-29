@@ -223,7 +223,7 @@ struct Scope {
     bool declareParameter(const Identifier* ident)
     {
         bool isArguments = m_globalData->propertyNames->arguments == *ident;
-        bool isValidStrictMode = m_declaredVariables.add(ident->ustring().impl()).second && m_globalData->propertyNames->eval != *ident && !isArguments;
+        bool isValidStrictMode = m_declaredVariables.add(ident->ustring().impl()).isNewEntry && m_globalData->propertyNames->eval != *ident && !isArguments;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         if (isArguments)
             setFlags(ShadowsArgumentsFlag);

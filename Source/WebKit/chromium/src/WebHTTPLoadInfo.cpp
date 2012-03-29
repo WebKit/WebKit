@@ -103,9 +103,9 @@ void WebHTTPLoadInfo::setEncodedDataLength(long long encodedDataLength)
 
 static void addHeader(HTTPHeaderMap* map, const WebString& name, const WebString& value)
 {
-    pair<HTTPHeaderMap::iterator, bool> result = map->add(name, value);
-    if (!result.second)
-        result.first->second += ", " + String(value);
+    HTTPHeaderMap::AddResult result = map->add(name, value);
+    if (!result.isNewEntry)
+        result.iterator->second += ", " + String(value);
 }
 
 void WebHTTPLoadInfo::addRequestHeader(const WebString& name, const WebString& value)

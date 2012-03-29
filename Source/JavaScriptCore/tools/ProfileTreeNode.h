@@ -50,8 +50,8 @@ public:
             m_children = new Map();
     
         ProfileTreeNode newEntry;
-        pair<Map::iterator, bool> result = m_children->add(String(name), newEntry);
-        ProfileTreeNode* childInMap = &result.first->second;
+        Map::AddResult result = m_children->add(String(name), newEntry);
+        ProfileTreeNode* childInMap = &result.iterator->second;
         ++childInMap->m_count;
         return childInMap;
     }

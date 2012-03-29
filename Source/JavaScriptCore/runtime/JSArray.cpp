@@ -195,10 +195,10 @@ void JSArray::finalize(JSCell* cell)
     thisObject->deallocateSparseMap();
 }
 
-inline std::pair<SparseArrayValueMap::iterator, bool> SparseArrayValueMap::add(JSArray* array, unsigned i)
+inline SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSArray* array, unsigned i)
 {
     SparseArrayEntry entry;
-    std::pair<iterator, bool> result = m_map.add(i, entry);
+    AddResult result = m_map.add(i, entry);
     size_t capacity = m_map.capacity();
     if (capacity != m_reportedCapacity) {
         Heap::heap(array)->reportExtraMemoryCost((capacity - m_reportedCapacity) * (sizeof(unsigned) + sizeof(WriteBarrier<Unknown>)));
@@ -209,14 +209,14 @@ inline std::pair<SparseArrayValueMap::iterator, bool> SparseArrayValueMap::add(J
 
 inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i, JSValue value, bool shouldThrow)
 {
-    std::pair<SparseArrayValueMap::iterator, bool> result = add(array, i);
-    SparseArrayEntry& entry = result.first->second;
+    AddResult result = add(array, i);
+    SparseArrayEntry& entry = result.iterator->second;
 
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
     // extensible, this is not the right thing to have done - so remove again.
-    if (result.second && !array->isExtensible()) {
-        remove(result.first);
+    if (result.isNewEntry && !array->isExtensible()) {
+        remove(result.iterator);
         if (shouldThrow)
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return;
@@ -252,14 +252,14 @@ inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i
 
 inline bool SparseArrayValueMap::putDirect(ExecState* exec, JSArray* array, unsigned i, JSValue value, bool shouldThrow)
 {
-    std::pair<SparseArrayValueMap::iterator, bool> result = add(array, i);
-    SparseArrayEntry& entry = result.first->second;
+    AddResult result = add(array, i);
+    SparseArrayEntry& entry = result.iterator->second;
 
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
     // extensible, this is not the right thing to have done - so remove again.
-    if (result.second && !array->isExtensible()) {
-        remove(result.first);
+    if (result.isNewEntry && !array->isExtensible()) {
+        remove(result.iterator);
         return reject(exec, shouldThrow, "Attempting to define property on object that is not extensible.");
     }
 
@@ -355,7 +355,7 @@ void JSArray::enterDictionaryMode(JSGlobalData& globalData)
         // This will always be a new entry in the map, so no need to check we can write,
         // and attributes are default so no need to set them.
         if (value)
-            map->add(this, i).first->second.set(globalData, this, value);
+            map->add(this, i).iterator->second.set(globalData, this, value);
     }
 
     void* newRawStorage = 0;
@@ -430,15 +430,15 @@ bool JSArray::defineOwnNumericProperty(ExecState* exec, unsigned index, Property
     ASSERT(map);
 
     // 1. Let current be the result of calling the [[GetOwnProperty]] internal method of O with property name P.
-    std::pair<SparseArrayValueMap::iterator, bool> result = map->add(this, index);
-    SparseArrayEntry* entryInMap = &result.first->second;
+    SparseArrayValueMap::AddResult result = map->add(this, index);
+    SparseArrayEntry* entryInMap = &result.iterator->second;
 
     // 2. Let extensible be the value of the [[Extensible]] internal property of O.
     // 3. If current is undefined and extensible is false, then Reject.
     // 4. If current is undefined and extensible is true, then
-    if (result.second) {
+    if (result.isNewEntry) {
         if (!isExtensible()) {
-            map->remove(result.first);
+            map->remove(result.iterator);
             return reject(exec, throwException, "Attempting to define property on object that is not extensible.");
         }
 

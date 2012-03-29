@@ -1,3 +1,17 @@
+2012-03-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        HashMap<>::add should return a more descriptive object
+        https://bugs.webkit.org/show_bug.cgi?id=71063
+
+        Reviewed by Ryosuke Niwa.
+
+        Update code to use AddResult instead of a pair.
+
+        * src/WebHTTPLoadInfo.cpp:
+        (WebKit::addHeader):
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::addHTTPHeaderField):
+
 2012-03-29  Mark Pilgrim  <pilgrim@chromium.org>
 
         GEOLOCATION should be implemented as Page Supplement

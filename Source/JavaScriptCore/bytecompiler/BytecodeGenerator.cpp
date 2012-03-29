@@ -200,10 +200,10 @@ bool BytecodeGenerator::addVar(const Identifier& ident, bool isConstant, Registe
 {
     int index = m_calleeRegisters.size();
     SymbolTableEntry newEntry(index, isConstant ? ReadOnly : 0);
-    pair<SymbolTable::iterator, bool> result = symbolTable().add(ident.impl(), newEntry);
+    SymbolTable::AddResult result = symbolTable().add(ident.impl(), newEntry);
 
-    if (!result.second) {
-        r0 = &registerFor(result.first->second.getIndex());
+    if (!result.isNewEntry) {
+        r0 = &registerFor(result.iterator->second.getIndex());
         return false;
     }
 
@@ -215,9 +215,9 @@ int BytecodeGenerator::addGlobalVar(const Identifier& ident, bool isConstant)
 {
     int index = symbolTable().size();
     SymbolTableEntry newEntry(index, isConstant ? ReadOnly : 0);
-    pair<SymbolTable::iterator, bool> result = symbolTable().add(ident.impl(), newEntry);
-    if (!result.second)
-        index = result.first->second.getIndex();
+    SymbolTable::AddResult result = symbolTable().add(ident.impl(), newEntry);
+    if (!result.isNewEntry)
+        index = result.iterator->second.getIndex();
     return index;
 }
 
@@ -968,24 +968,24 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond
 unsigned BytecodeGenerator::addConstant(const Identifier& ident)
 {
     StringImpl* rep = ident.impl();
-    pair<IdentifierMap::iterator, bool> result = m_identifierMap.add(rep, m_codeBlock->numberOfIdentifiers());
-    if (result.second) // new entry
+    IdentifierMap::AddResult result = m_identifierMap.add(rep, m_codeBlock->numberOfIdentifiers());
+    if (result.isNewEntry)
         m_codeBlock->addIdentifier(Identifier(m_globalData, rep));
 
-    return result.first->second;
+    return result.iterator->second;
 }
 
 RegisterID* BytecodeGenerator::addConstantValue(JSValue v)
 {
     int index = m_nextConstantOffset;
 
-    pair<JSValueMap::iterator, bool> result = m_jsValueMap.add(JSValue::encode(v), m_nextConstantOffset);
-    if (result.second) {
+    JSValueMap::AddResult result = m_jsValueMap.add(JSValue::encode(v), m_nextConstantOffset);
+    if (result.isNewEntry) {
         m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
         ++m_nextConstantOffset;
         m_codeBlock->addConstant(JSValue(v));
     } else
-        index = result.first->second;
+        index = result.iterator->second;
 
     return &m_constantPoolRegisters[index];
 }
@@ -1132,7 +1132,7 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, double number)
     // work correctly with NaN as a key.
     if (isnan(number) || number == HashTraits<double>::emptyValue() || HashTraits<double>::isDeletedValue(number))
         return emitLoad(dst, jsNumber(number));
-    JSValue& valueInMap = m_numberMap.add(number, JSValue()).first->second;
+    JSValue& valueInMap = m_numberMap.add(number, JSValue()).iterator->second;
     if (!valueInMap)
         valueInMap = jsNumber(number);
     return emitLoad(dst, valueInMap);
@@ -1140,7 +1140,7 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, double number)
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, const Identifier& identifier)
 {
-    JSString*& stringInMap = m_stringMap.add(identifier.impl(), 0).first->second;
+    JSString*& stringInMap = m_stringMap.add(identifier.impl(), 0).iterator->second;
     if (!stringInMap)
         stringInMap = jsOwnedString(globalData(), identifier.ustring());
     return emitLoad(dst, JSValue(stringInMap));
@@ -1648,7 +1648,7 @@ unsigned BytecodeGenerator::addConstantBuffer(unsigned length)
 
 JSString* BytecodeGenerator::addStringConstant(const Identifier& identifier)
 {
-    JSString*& stringInMap = m_stringMap.add(identifier.impl(), 0).first->second;
+    JSString*& stringInMap = m_stringMap.add(identifier.impl(), 0).iterator->second;
     if (!stringInMap) {
         stringInMap = jsString(globalData(), identifier.ustring());
         addConstantValue(stringInMap);
@@ -1718,10 +1718,10 @@ RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionBodyNode
 
 RegisterID* BytecodeGenerator::emitLazyNewFunction(RegisterID* dst, FunctionBodyNode* function)
 {
-    std::pair<FunctionOffsetMap::iterator, bool> ptr = m_functionOffsets.add(function, 0);
-    if (ptr.second)
-        ptr.first->second = m_codeBlock->addFunctionDecl(makeFunction(m_globalData, function));
-    return emitNewFunctionInternal(dst, ptr.first->second, true);
+    FunctionOffsetMap::AddResult ptr = m_functionOffsets.add(function, 0);
+    if (ptr.isNewEntry)
+        ptr.iterator->second = m_codeBlock->addFunctionDecl(makeFunction(m_globalData, function));
+    return emitNewFunctionInternal(dst, ptr.iterator->second, true);
 }
 
 RegisterID* BytecodeGenerator::emitNewFunctionInternal(RegisterID* dst, unsigned index, bool doNullCheck)

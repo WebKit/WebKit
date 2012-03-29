@@ -504,7 +504,7 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(JSContextRef context, u
     if (!worldID)
         world.adopt(WKBundleScriptWorldCreateWorld());
     else {
-        WKRetainPtr<WKBundleScriptWorldRef>& worldSlot = worldMap().add(worldID, 0).first->second;
+        WKRetainPtr<WKBundleScriptWorldRef>& worldSlot = worldMap().add(worldID, 0).iterator->second;
         if (!worldSlot)
             worldSlot.adopt(WKBundleScriptWorldCreateWorld());
         world = worldSlot;

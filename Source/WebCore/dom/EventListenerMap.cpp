@@ -134,11 +134,11 @@ bool EventListenerMap::add(const AtomicString& eventType, PassRefPtr<EventListen
     }
 
     if (m_hashMap) {
-        pair<EventListenerHashMap::iterator, bool> result = m_hashMap->add(eventType, nullptr);
-        if (result.second)
-            result.first->second = adoptPtr(new EventListenerVector);
+        EventListenerHashMap::AddResult result = m_hashMap->add(eventType, nullptr);
+        if (result.isNewEntry)
+            result.iterator->second = adoptPtr(new EventListenerVector);
 
-        return addListenerToVector(result.first->second.get(), listener, useCapture);
+        return addListenerToVector(result.iterator->second.get(), listener, useCapture);
     }
 
     if (!m_singleEventListenerVector) {

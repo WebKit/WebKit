@@ -48,7 +48,7 @@ bool CommandLine::parse(int argc, char** argv)
         if (value.isEmpty())
             return false;
         
-        if (!m_args.add(key, value).second)
+        if (!m_args.add(key, value).isNewEntry)
             return false;
     }
 

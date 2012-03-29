@@ -228,8 +228,8 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
             ASSERT([view _isPrintingPreview]);
 
             if (data) {
-                pair<HashMap<WebCore::IntRect, Vector<uint8_t> >::iterator, bool> entry = view->_pagePreviews.add(iter->second, Vector<uint8_t>());
-                entry.first->second.append(data->bytes(), data->size());
+                HashMap<WebCore::IntRect, Vector<uint8_t> >::AddResult entry = view->_pagePreviews.add(iter->second, Vector<uint8_t>());
+                entry.iterator->second.append(data->bytes(), data->size());
             }
             view->_expectedPreviewCallbacks.remove(context->callbackID);
             bool receivedResponseToLatestRequest = view->_latestExpectedPreviewCallback == context->callbackID;

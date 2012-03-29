@@ -163,7 +163,7 @@ NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, DOMWind
             }
         }
     } else {
-        iter = staticV8NPObjectMap()->set(v8ObjectHash, V8NPObjectVector()).first; 
+        iter = staticV8NPObjectMap()->set(v8ObjectHash, V8NPObjectVector()).iterator;
     }
 
     V8NPObject* v8npObject = reinterpret_cast<V8NPObject*>(_NPN_CreateObject(npp, &V8NPObjectClass));

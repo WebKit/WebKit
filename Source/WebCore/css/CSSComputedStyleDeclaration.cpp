@@ -1247,7 +1247,7 @@ static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, int prop
 static void logUnimplementedPropertyID(int propertyID)
 {
     DEFINE_STATIC_LOCAL(HashSet<int>, propertyIDSet, ());
-    if (!propertyIDSet.add(propertyID).second)
+    if (!propertyIDSet.add(propertyID).isNewEntry)
         return;
 
     LOG_ERROR("WebKit does not yet implement getComputedStyle for '%s'.", getPropertyName(static_cast<CSSPropertyID>(propertyID)));

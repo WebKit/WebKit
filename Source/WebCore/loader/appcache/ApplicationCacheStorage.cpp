@@ -134,11 +134,11 @@ ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const KUR
 {
     ASSERT(!manifestURL.hasFragmentIdentifier());
 
-    std::pair<CacheGroupMap::iterator, bool> result = m_cachesInMemory.add(manifestURL, 0);
+    CacheGroupMap::AddResult result = m_cachesInMemory.add(manifestURL, 0);
     
-    if (!result.second) {
-        ASSERT(result.first->second);
-        return result.first->second;
+    if (!result.isNewEntry) {
+        ASSERT(result.iterator->second);
+        return result.iterator->second;
     }
 
     // Look up the group in the database
@@ -150,7 +150,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const KUR
         m_cacheHostSet.add(urlHostHash(manifestURL));
     }
     
-    result.first->second = group;
+    result.iterator->second = group;
     
     return group;
 }

@@ -256,9 +256,9 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 continue;
 
             GetterSetterPair pair(node, static_cast<PropertyNode*>(0));
-            std::pair<GetterSetterMap::iterator, bool> result = map.add(node->name().impl(), pair);
-            if (!result.second)
-                result.first->second.second = node;
+            GetterSetterMap::AddResult result = map.add(node->name().impl(), pair);
+            if (!result.isNewEntry)
+                result.iterator->second.second = node;
         }
 
         // Iterate over the remaining properties in the list.

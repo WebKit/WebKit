@@ -75,7 +75,7 @@ void SQLTransactionCoordinator::acquireLock(SQLTransaction* transaction)
     CoordinationInfoMap::iterator coordinationInfoIterator = m_coordinationInfoMap.find(dbIdentifier);
     if (coordinationInfoIterator == m_coordinationInfoMap.end()) {
         // No pending transactions for this DB
-        coordinationInfoIterator = m_coordinationInfoMap.add(dbIdentifier, CoordinationInfo()).first;
+        coordinationInfoIterator = m_coordinationInfoMap.add(dbIdentifier, CoordinationInfo()).iterator;
     }
 
     CoordinationInfo& info = coordinationInfoIterator->second;

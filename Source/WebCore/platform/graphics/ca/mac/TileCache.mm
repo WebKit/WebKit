@@ -364,7 +364,7 @@ void TileCache::revalidateTiles()
             TileIndex tileIndex(x, y);
 
             IntRect tileRect = rectForTileIndex(tileIndex);
-            RetainPtr<WebTileLayer>& tileLayer = m_tiles.add(tileIndex, 0).first->second;
+            RetainPtr<WebTileLayer>& tileLayer = m_tiles.add(tileIndex, 0).iterator->second;
             if (!tileLayer) {
                 tileLayer = createTileLayer(tileRect);
                 [m_tileContainerLayer.get() addSublayer:tileLayer.get()];

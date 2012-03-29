@@ -67,12 +67,12 @@ PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node*
     if (!node)
         return 0;
 
-    std::pair<DOMHandleCache::iterator, bool> result = domHandleCache().add(node, 0);
-    if (!result.second)
-        return PassRefPtr<InjectedBundleNodeHandle>(result.first->second);
+    DOMHandleCache::AddResult result = domHandleCache().add(node, 0);
+    if (!result.isNewEntry)
+        return PassRefPtr<InjectedBundleNodeHandle>(result.iterator->second);
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::create(node);
-    result.first->second = nodeHandle.get();
+    result.iterator->second = nodeHandle.get();
     return nodeHandle.release();
 }
 

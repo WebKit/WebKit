@@ -79,6 +79,8 @@ public:
         map_iterator m_iterator;
     };
 
+    typedef WTF::HashTableAddResult<iterator> AddResult;
+
     WeakGCMap()
     {
     }
@@ -121,17 +123,18 @@ public:
         return m_map.get(key);
     }
 
-    pair<iterator, bool> add(JSGlobalData& globalData, const KeyType& key, ExternalType value)
+    AddResult add(JSGlobalData& globalData, const KeyType& key, ExternalType value)
     {
-        pair<typename MapType::iterator, bool> iter = m_map.add(key, 0);
-        if (iter.second) {
+        typename MapType::AddResult result = m_map.add(key, 0);
+        if (result.isNewEntry) {
             HandleSlot slot = globalData.heap.handleHeap()->allocate();
-            iter.first->second = slot;
+            result.iterator->second = slot;
             HandleHeap::heapFor(slot)->makeWeak(slot, this, FinalizerCallback::finalizerContextFor(key));
             HandleHeap::heapFor(slot)->writeBarrier(slot, value);
             *slot = value;
         }
-        return iter;
+        // WeakGCMap exposes a different iterator, so we need to wrap it and create our own AddResult.
+        return AddResult(iterator(result.iterator), result.isNewEntry);
     }
     
     void set(iterator iter, ExternalType value)
@@ -144,12 +147,12 @@ public:
 
     void set(JSGlobalData& globalData, const KeyType& key, ExternalType value)
     {
-        pair<typename MapType::iterator, bool> iter = m_map.add(key, 0);
-        HandleSlot slot = iter.first->second;
-        if (iter.second) {
+        typename MapType::AddResult result = m_map.add(key, 0);
+        HandleSlot slot = result.iterator->second;
+        if (result.isNewEntry) {
             slot = globalData.heap.handleHeap()->allocate();
             HandleHeap::heapFor(slot)->makeWeak(slot, this, key);
-            iter.first->second = slot;
+            result.iterator->second = slot;
         }
         HandleHeap::heapFor(slot)->writeBarrier(slot, value);
         *slot = value;

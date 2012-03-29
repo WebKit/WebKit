@@ -311,7 +311,7 @@ void CCLayerAnimationController::startAnimationsWaitingForTargetAvailability(dou
             // of blocked properties.
             bool nullIntersection = true;
             for (TargetProperties::iterator pIter = enqueuedProperties.begin(); pIter != enqueuedProperties.end(); ++pIter) {
-                if (!blockedProperties.add(*pIter).second)
+                if (!blockedProperties.add(*pIter).isNewEntry)
                     nullIntersection = false;
             }
 

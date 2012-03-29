@@ -72,7 +72,7 @@ String HTTPHeaderMap::get(const AtomicString& name) const
     return HashMap<AtomicString, String, CaseFoldingHash>::get(name);
 }
 
-pair<HTTPHeaderMap::iterator, bool> HTTPHeaderMap::add(const AtomicString& name, const String& value)
+HTTPHeaderMap::AddResult HTTPHeaderMap::add(const AtomicString& name, const String& value)
 {
     return HashMap<AtomicString, String, CaseFoldingHash>::add(name, value);
 }
@@ -108,7 +108,7 @@ bool HTTPHeaderMap::contains(const char* name) const
     return find<const char*, CaseFoldingCStringTranslator>(name) != end();
 }
 
-pair<HTTPHeaderMap::iterator, bool> HTTPHeaderMap::add(const char* name, const String& value)
+HTTPHeaderMap::AddResult HTTPHeaderMap::add(const char* name, const String& value)
 {
     return HashMap<AtomicString, String, CaseFoldingHash>::add<const char*, CaseFoldingCStringTranslator>(name, value);
 }

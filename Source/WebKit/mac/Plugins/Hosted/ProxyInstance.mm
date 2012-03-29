@@ -376,13 +376,13 @@ MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
         return MethodList();
 
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
-    pair<MethodMap::iterator, bool> mapAddResult = m_methods.add(identifier.impl(), 0);
-    if (mapAddResult.second && reply->m_result)
-        mapAddResult.first->second = new ProxyMethod(methodName);
+    MethodMap::AddResult mapAddResult = m_methods.add(identifier.impl(), 0);
+    if (mapAddResult.isNewEntry && reply->m_result)
+        mapAddResult.iterator->second = new ProxyMethod(methodName);
 
     MethodList methodList;
-    if (mapAddResult.first->second)
-        methodList.append(mapAddResult.first->second);
+    if (mapAddResult.iterator->second)
+        methodList.append(mapAddResult.iterator->second);
     return methodList;
 }
 
@@ -412,10 +412,10 @@ Field* ProxyInstance::fieldNamed(const Identifier& identifier)
         return 0;
     
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
-    pair<FieldMap::iterator, bool> mapAddResult = m_fields.add(identifier.impl(), 0);
-    if (mapAddResult.second && reply->m_result)
-        mapAddResult.first->second = new ProxyField(propertyName);
-    return mapAddResult.first->second;
+    FieldMap::AddResult mapAddResult = m_fields.add(identifier.impl(), 0);
+    if (mapAddResult.isNewEntry && reply->m_result)
+        mapAddResult.iterator->second = new ProxyField(propertyName);
+    return mapAddResult.iterator->second;
 }
 
 JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) const

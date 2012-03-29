@@ -258,7 +258,7 @@ Structure* cacheDOMStructure(JSDOMGlobalObject* globalObject, Structure* structu
 {
     JSDOMStructureMap& structures = globalObject->structures();
     ASSERT(!structures.contains(classInfo));
-    return structures.set(classInfo, WriteBarrier<Structure>(globalObject->globalData(), globalObject, structure)).first->second.get();
+    return structures.set(classInfo, WriteBarrier<Structure>(globalObject->globalData(), globalObject, structure)).iterator->second.get();
 }
 
 JSC::JSObject* toJSSequence(ExecState* exec, JSValue value, unsigned& length)

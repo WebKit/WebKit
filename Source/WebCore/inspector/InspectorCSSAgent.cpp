@@ -181,12 +181,12 @@ inline void SelectorProfile::commitSelector(bool matched)
     double matchTimeMs = WTF::currentTimeMS() - m_currentMatchData.startTime;
     m_totalMatchingTimeMs += matchTimeMs;
 
-    pair<RuleMatchingStatsMap::iterator, bool> result = m_ruleMatchingStats.add(makeKey(), RuleMatchingStats(m_currentMatchData, matchTimeMs, 1, matched ? 1 : 0));
-    if (!result.second) {
-        result.first->second.totalTime += matchTimeMs;
-        result.first->second.hits += 1;
+    RuleMatchingStatsMap::AddResult result = m_ruleMatchingStats.add(makeKey(), RuleMatchingStats(m_currentMatchData, matchTimeMs, 1, matched ? 1 : 0));
+    if (!result.isNewEntry) {
+        result.iterator->second.totalTime += matchTimeMs;
+        result.iterator->second.hits += 1;
         if (matched)
-            result.first->second.matches += 1;
+            result.iterator->second.matches += 1;
     }
 }
 

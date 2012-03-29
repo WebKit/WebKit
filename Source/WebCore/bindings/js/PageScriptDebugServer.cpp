@@ -82,11 +82,11 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
     ASSERT_ARG(listener, listener);
     ASSERT_ARG(page, page);
 
-    pair<PageListenersMap::iterator, bool> result = m_pageListenersMap.add(page, 0);
-    if (result.second)
-        result.first->second = new ListenerSet;
+    PageListenersMap::AddResult result = m_pageListenersMap.add(page, 0);
+    if (result.isNewEntry)
+        result.iterator->second = new ListenerSet;
 
-    ListenerSet* listeners = result.first->second;
+    ListenerSet* listeners = result.iterator->second;
     listeners->add(listener);
 
     recompileAllJSFunctionsSoon();

@@ -323,7 +323,7 @@ bool PluginDatabase::add(PassRefPtr<PluginPackage> prpPackage)
 
     RefPtr<PluginPackage> package = prpPackage;
 
-    if (!m_plugins.add(package).second)
+    if (!m_plugins.add(package).isNewEntry)
         return false;
 
     m_pluginsByPath.add(package->path(), package);
@@ -574,7 +574,7 @@ void PluginDatabase::loadPersistentMetadataCache()
 
         RefPtr<PluginPackage> package = PluginPackage::createPackageFromCache(path, lastModified, name, desc, mimeDesc);
 
-        if (package && cachedPlugins.add(package).second) {
+        if (package && cachedPlugins.add(package).isNewEntry) {
             cachedPluginPathsWithTimes.add(package->path(), package->lastModified());
             cachedPluginsByPath.add(package->path(), package);
         }

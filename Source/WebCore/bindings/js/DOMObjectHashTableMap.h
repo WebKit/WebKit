@@ -47,7 +47,7 @@ public:
         HashMap<const JSC::HashTable*, JSC::HashTable>::iterator iter = m_map.find(staticTable);
         if (iter != m_map.end())
             return &iter->second;
-        return &m_map.set(staticTable, JSC::HashTable(*staticTable)).first->second;
+        return &m_map.set(staticTable, JSC::HashTable(*staticTable)).iterator->second;
     }
 
 private:

@@ -721,9 +721,9 @@ static void validateCommandCallback(WKStringRef commandName, bool isEnabled, int
         return YES;
 
     // Add this item to the vector of items for a given command that are awaiting validation.
-    pair<ValidationMap::iterator, bool> addResult = _data->_validationMap.add(commandName, ValidationVector());
-    addResult.first->second.append(item);
-    if (addResult.second) {
+    ValidationMap::AddResult addResult = _data->_validationMap.add(commandName, ValidationVector());
+    addResult.iterator->second.append(item);
+    if (addResult.isNewEntry) {
         // If we are not already awaiting validation for this command, start the asynchronous validation process.
         // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time
         // we asked for the same command; there is no guarantee the answer is still valid.

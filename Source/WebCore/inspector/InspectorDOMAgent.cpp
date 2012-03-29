@@ -881,7 +881,7 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
     }
 
     *searchId = IdentifiersFactory::createIdentifier();
-    SearchResults::iterator resultsIt = m_searchResults.add(*searchId, Vector<RefPtr<Node> >()).first;
+    SearchResults::iterator resultsIt = m_searchResults.add(*searchId, Vector<RefPtr<Node> >()).iterator;
 
     for (ListHashSet<Node*>::iterator it = resultCollector.begin(); it != resultCollector.end(); ++it)
         resultsIt->second.append(*it);

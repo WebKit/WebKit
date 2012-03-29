@@ -42,9 +42,9 @@ namespace WebCore {
 CFDictionaryRef SimpleFontData::getCFStringAttributes(TypesettingFeatures typesettingFeatures, FontOrientation orientation) const
 {
     unsigned key = typesettingFeatures + 1;
-    pair<HashMap<unsigned, RetainPtr<CFDictionaryRef> >::iterator, bool> addResult = m_CFStringAttributes.add(key, RetainPtr<CFDictionaryRef>());
-    RetainPtr<CFDictionaryRef>& attributesDictionary = addResult.first->second;
-    if (!addResult.second)
+    HashMap<unsigned, RetainPtr<CFDictionaryRef> >::AddResult addResult = m_CFStringAttributes.add(key, RetainPtr<CFDictionaryRef>());
+    RetainPtr<CFDictionaryRef>& attributesDictionary = addResult.iterator->second;
+    if (!addResult.isNewEntry)
         return attributesDictionary.get();
     
     bool treatLineAsVertical = orientation == Vertical;

@@ -414,8 +414,8 @@ bool getDerivedFontData(const UChar* family,
         // a font even if there's no font matching the name. Need to
         // check it against what we actually want (as is done in
         // FontCacheWin.cpp)
-        pair<FontDataCache::iterator, bool> entry = fontDataCache.add(fontKey, FontData());
-        derived = &entry.first->second;
+        FontDataCache::AddResult entry = fontDataCache.add(fontKey, FontData());
+        derived = &entry.iterator->second;
         derived->hfont = CreateFontIndirect(logfont);
         // GetAscent may return kUndefinedAscent, but we still want to
         // cache it so that we won't have to call CreateFontIndirect once

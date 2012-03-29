@@ -359,7 +359,7 @@ PassRefPtr<NodeList> HTMLCollection::tags(const String& name)
 
 void HTMLCollection::append(NodeCacheMap& map, const AtomicString& key, Element* element)
 {
-    OwnPtr<Vector<Element*> >& vector = map.add(key.impl(), nullptr).first->second;
+    OwnPtr<Vector<Element*> >& vector = map.add(key.impl(), nullptr).iterator->second;
     if (!vector)
         vector = adoptPtr(new Vector<Element*>);
     vector->append(element);

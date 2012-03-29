@@ -71,7 +71,7 @@ bool WebNotificationClient::show(Notification* notification)
     RetainPtr<WebNotification> webNotification = adoptNS([[WebNotification alloc] initWithCoreNotification:notification notificationID:notificationID]);
     m_notificationMap.set(notification, webNotification);
 
-    NotificationContextMap::iterator it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<RetainPtr<WebNotification> >()).first;
+    NotificationContextMap::iterator it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<RetainPtr<WebNotification> >()).iterator;
     it->second.append(webNotification);
 
     [[m_webView _notificationProvider] showNotification:webNotification.get() fromWebView:m_webView];

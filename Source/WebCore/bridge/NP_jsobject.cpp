@@ -63,7 +63,7 @@ public:
         HashMap<RootObject*, JSToNPObjectMap>::iterator iter = m_map.find(rootObject);
         if (iter == m_map.end()) {
             rootObject->addInvalidationCallback(&m_invalidationCallback);
-            iter = m_map.add(rootObject, JSToNPObjectMap()).first;
+            iter = m_map.add(rootObject, JSToNPObjectMap()).iterator;
         }
 
         ASSERT(iter->second.find(jsObject) == iter->second.end());

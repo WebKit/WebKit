@@ -55,10 +55,10 @@ PassRefPtr<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(int ident)
         return CSSPrimitiveValue::createIdentifier(ident);
 
     RefPtr<CSSPrimitiveValue> dummyValue;
-    pair<IdentifierValueCache::iterator, bool> entry = m_identifierValueCache.add(ident, dummyValue);
-    if (entry.second)
-        entry.first->second = CSSPrimitiveValue::createIdentifier(ident);
-    return entry.first->second;
+    IdentifierValueCache::AddResult entry = m_identifierValueCache.add(ident, dummyValue);
+    if (entry.isNewEntry)
+        entry.iterator->second = CSSPrimitiveValue::createIdentifier(ident);
+    return entry.iterator->second;
 }
 
 PassRefPtr<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
@@ -78,10 +78,10 @@ PassRefPtr<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
         m_colorValueCache.clear();
 
     RefPtr<CSSPrimitiveValue> dummyValue;
-    pair<ColorValueCache::iterator, bool> entry = m_colorValueCache.add(rgbValue, dummyValue);
-    if (entry.second)
-        entry.first->second = CSSPrimitiveValue::createColor(rgbValue);
-    return entry.first->second;
+    ColorValueCache::AddResult entry = m_colorValueCache.add(rgbValue, dummyValue);
+    if (entry.isNewEntry)
+        entry.iterator->second = CSSPrimitiveValue::createColor(rgbValue);
+    return entry.iterator->second;
 }
 
 PassRefPtr<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue::UnitTypes type)
@@ -117,15 +117,15 @@ PassRefPtr<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimiti
     }
 
     RefPtr<CSSPrimitiveValue> dummyValue;
-    pair<IntegerValueCache::iterator, bool> entry = cache->add(intValue, dummyValue);
-    if (entry.second)
-        entry.first->second = CSSPrimitiveValue::create(value, type);
-    return entry.first->second;
+    IntegerValueCache::AddResult entry = cache->add(intValue, dummyValue);
+    if (entry.isNewEntry)
+        entry.iterator->second = CSSPrimitiveValue::create(value, type);
+    return entry.iterator->second;
 }
 
 PassRefPtr<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const String& familyName)
 {
-    RefPtr<CSSPrimitiveValue>& value = m_fontFamilyValueCache.add(familyName, 0).first->second;
+    RefPtr<CSSPrimitiveValue>& value = m_fontFamilyValueCache.add(familyName, 0).iterator->second;
     if (!value)
         value = CSSPrimitiveValue::create(familyName, CSSPrimitiveValue::CSS_STRING);
     return value;
@@ -138,7 +138,7 @@ PassRefPtr<CSSValueList> CSSValuePool::createFontFaceValue(const AtomicString& s
     if (m_fontFaceValueCache.size() > maximumFontFaceCacheSize)
         m_fontFaceValueCache.clear();
 
-    RefPtr<CSSValueList>& value = m_fontFaceValueCache.add(string, 0).first->second;
+    RefPtr<CSSValueList>& value = m_fontFaceValueCache.add(string, 0).iterator->second;
     if (!value)
         value = CSSParser::parseFontFaceValue(string, contextStyleSheet);
     return value;

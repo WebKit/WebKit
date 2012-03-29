@@ -178,11 +178,11 @@ namespace JSC {
         if (!length)
             return StringImpl::empty();
         CharBuffer<T> buf = {s, length}; 
-        pair<HashSet<StringImpl*>::iterator, bool> addResult = globalData->identifierTable->add<CharBuffer<T>, IdentifierCharBufferTranslator<T> >(buf);
+        HashSet<StringImpl*>::AddResult addResult = globalData->identifierTable->add<CharBuffer<T>, IdentifierCharBufferTranslator<T> >(buf);
         
         // If the string is newly-translated, then we need to adopt it.
         // The boolean in the pair tells us if that is so.
-        return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+        return addResult.isNewEntry ? adoptRef(*addResult.iterator) : *addResult.iterator;
     }
 
     inline bool operator==(const Identifier& a, const Identifier& b)
@@ -246,10 +246,10 @@ namespace JSC {
     typedef HashMap<RefPtr<StringImpl>, int, IdentifierRepHash, HashTraits<RefPtr<StringImpl> >, IdentifierMapIndexHashTraits> IdentifierMap;
 
     template<typename U, typename V>
-    std::pair<HashSet<StringImpl*>::iterator, bool> IdentifierTable::add(U value)
+    HashSet<StringImpl*>::AddResult IdentifierTable::add(U value)
     {
-        std::pair<HashSet<StringImpl*>::iterator, bool> result = m_table.add<U, V>(value);
-        (*result.first)->setIsIdentifier(true);
+        HashSet<StringImpl*>::AddResult result = m_table.add<U, V>(value);
+        (*result.iterator)->setIsIdentifier(true);
         return result;
     }
 

@@ -285,8 +285,8 @@ public:
                 if (!decoder->decode(messageCoder))
                     return false;
 
-                std::pair<ImmutableDictionary::MapType::iterator, bool> result = map.set(key, element.release());
-                if (!result.second)
+                ImmutableDictionary::MapType::AddResult result = map.set(key, element.release());
+                if (!result.isNewEntry)
                     return false;
             }
 

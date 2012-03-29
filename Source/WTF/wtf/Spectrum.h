@@ -42,9 +42,9 @@ public:
     
     void add(const T& key, unsigned long count = 1)
     {
-        std::pair<iterator, bool> result = m_map.add(key, count);
-        if (!result.second)
-            result.first->second += count;
+        typename HashMap<T, unsigned long>::AddResult result = m_map.add(key, count);
+        if (!result.isNewEntry)
+            result.iterator->second += count;
     }
     
     unsigned long get(const T& key) const

@@ -246,7 +246,7 @@ RenderBoxRegionInfo* RenderRegion::setRenderBoxRegionInfo(const RenderBox* box, 
     if (!m_isValid || !m_flowThread)
         return 0;
 
-    OwnPtr<RenderBoxRegionInfo>& boxInfo = m_renderBoxRegionInfo.add(box, nullptr).first->second;
+    OwnPtr<RenderBoxRegionInfo>& boxInfo = m_renderBoxRegionInfo.add(box, nullptr).iterator->second;
     if (boxInfo)
         *boxInfo = RenderBoxRegionInfo(logicalLeftInset, logicalRightInset, containingBlockChainIsInset);
     else

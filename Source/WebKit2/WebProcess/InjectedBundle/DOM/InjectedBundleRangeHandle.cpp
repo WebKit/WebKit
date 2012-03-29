@@ -46,12 +46,12 @@ PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Ran
     if (!range)
         return 0;
 
-    std::pair<DOMHandleCache::iterator, bool> result = domHandleCache().add(range, 0);
-    if (!result.second)
-        return PassRefPtr<InjectedBundleRangeHandle>(result.first->second);
+    DOMHandleCache::AddResult result = domHandleCache().add(range, 0);
+    if (!result.isNewEntry)
+        return PassRefPtr<InjectedBundleRangeHandle>(result.iterator->second);
 
     RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::create(range);
-    result.first->second = rangeHandle.get();
+    result.iterator->second = rangeHandle.get();
     return rangeHandle.release();
 }
 

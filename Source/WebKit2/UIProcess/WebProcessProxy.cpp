@@ -271,18 +271,17 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& original
     MESSAGE_CHECK_URL(originalURL);
     MESSAGE_CHECK_URL(url);
 
-    std::pair<WebBackForwardListItemMap::iterator, bool> result = m_backForwardListItemMap.add(itemID, 0);
-    if (result.second) {
-        // New item.
-        result.first->second = WebBackForwardListItem::create(originalURL, url, title, backForwardData.data(), backForwardData.size(), itemID);
+    WebBackForwardListItemMap::AddResult result = m_backForwardListItemMap.add(itemID, 0);
+    if (result.isNewEntry) {
+        result.iterator->second = WebBackForwardListItem::create(originalURL, url, title, backForwardData.data(), backForwardData.size(), itemID);
         return;
     }
 
     // Update existing item.
-    result.first->second->setOriginalURL(originalURL);
-    result.first->second->setURL(url);
-    result.first->second->setTitle(title);
-    result.first->second->setBackForwardData(backForwardData.data(), backForwardData.size());
+    result.iterator->second->setOriginalURL(originalURL);
+    result.iterator->second->setURL(url);
+    result.iterator->second->setTitle(title);
+    result.iterator->second->setBackForwardData(backForwardData.data(), backForwardData.size());
 }
 
 #if ENABLE(PLUGIN_PROCESS)

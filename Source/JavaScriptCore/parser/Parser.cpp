@@ -1323,12 +1323,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
         property = parseProperty<true>(context);
         failIfFalse(property);
         if (!m_syntaxAlreadyValidated) {
-            std::pair<ObjectValidationMap::iterator, bool> propertyEntryIter = objectValidator.add(context.getName(property).impl(), context.getType(property));
-            if (!propertyEntryIter.second) {
-                failIfTrue(propertyEntryIter.first->second == PropertyNode::Constant);
+            ObjectValidationMap::AddResult propertyEntry = objectValidator.add(context.getName(property).impl(), context.getType(property));
+            if (!propertyEntry.isNewEntry) {
+                failIfTrue(propertyEntry.iterator->second == PropertyNode::Constant);
                 failIfTrue(context.getType(property) == PropertyNode::Constant);
-                failIfTrue(context.getType(property) & propertyEntryIter.first->second);
-                propertyEntryIter.first->second |= context.getType(property);
+                failIfTrue(context.getType(property) & propertyEntry.iterator->second);
+                propertyEntry.iterator->second |= context.getType(property);
             }
         }
         tail = context.createPropertyList(m_lexer->lastLineNumber(), property, tail);

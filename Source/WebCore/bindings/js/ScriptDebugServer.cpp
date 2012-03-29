@@ -75,7 +75,7 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
         return "";
     SourceIdToBreakpointsMap::iterator it = m_sourceIdToBreakpoints.find(sourceIDValue);
     if (it == m_sourceIdToBreakpoints.end())
-        it = m_sourceIdToBreakpoints.set(sourceIDValue, LineToBreakpointMap()).first;
+        it = m_sourceIdToBreakpoints.set(sourceIDValue, LineToBreakpointMap()).iterator;
     if (it->second.contains(scriptBreakpoint.lineNumber + 1))
         return "";
     it->second.set(scriptBreakpoint.lineNumber + 1, scriptBreakpoint);

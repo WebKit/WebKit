@@ -48,7 +48,7 @@ inline JSValue StringRecursionChecker::performCheck()
     int size = m_exec->globalData().stringRecursionCheckVisitedObjects.size();
     if (size >= MaxSmallThreadReentryDepth && size >= m_exec->globalData().maxReentryDepth)
         return throwStackOverflowError();
-    bool alreadyVisited = !m_exec->globalData().stringRecursionCheckVisitedObjects.add(m_thisObject).second;
+    bool alreadyVisited = !m_exec->globalData().stringRecursionCheckVisitedObjects.add(m_thisObject).isNewEntry;
     if (alreadyVisited)
         return emptyString(); // Return empty string to avoid infinite recursion.
     return JSValue(); // Indicate success.

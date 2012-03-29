@@ -49,7 +49,7 @@ LayerChangesFlusher::LayerChangesFlusher()
 
 void LayerChangesFlusher::flushPendingLayerChangesSoon(AbstractCACFLayerTreeHost* host)
 {
-    if (!m_hostsWithChangesToFlush.add(host).second || m_hook)
+    if (!m_hostsWithChangesToFlush.add(host).isNewEntry || m_hook)
         return;
 
     setHook();

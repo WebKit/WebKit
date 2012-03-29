@@ -142,8 +142,8 @@ enum ParameterDefaultPolicy {
         if (setInlineCachedWrapper(world, domObject, wrapper))
             return;
         JSC::PassWeak<JSDOMWrapper> passWeak(*world->globalData(), wrapper, wrapperOwner(world, domObject), wrapperContext(world, domObject));
-        pair<DOMObjectWrapperMap::iterator, bool> result = world->m_wrappers.add(domObject, passWeak);
-        ASSERT_UNUSED(result, result.second);
+        DOMObjectWrapperMap::AddResult result = world->m_wrappers.add(domObject, passWeak);
+        ASSERT_UNUSED(result, result.isNewEntry);
     }
 
     template <typename DOMClass> inline void uncacheWrapper(DOMWrapperWorld* world, DOMClass* domObject, JSDOMWrapper* wrapper)

@@ -67,15 +67,15 @@ IdentifierRep* IdentifierRep::get(int intID)
         return identifier;
     }
     
-    pair<IntIdentifierMap::iterator, bool> result = intIdentifierMap().add(intID, 0); 
-    if (result.second) {
-        ASSERT(!result.first->second);
-        result.first->second = new IdentifierRep(intID);
+    IntIdentifierMap::AddResult result = intIdentifierMap().add(intID, 0);
+    if (result.isNewEntry) {
+        ASSERT(!result.iterator->second);
+        result.iterator->second = new IdentifierRep(intID);
         
-        identifierSet().add(result.first->second);
+        identifierSet().add(result.iterator->second);
     }
     
-    return result.first->second;
+    return result.iterator->second;
 }
 
 typedef HashMap<RefPtr<StringImpl>, IdentifierRep*> StringIdentifierMap;
@@ -93,15 +93,15 @@ IdentifierRep* IdentifierRep::get(const char* name)
         return 0;
   
     UString string = stringToUString(String::fromUTF8WithLatin1Fallback(name, strlen(name)));
-    pair<StringIdentifierMap::iterator, bool> result = stringIdentifierMap().add(string.impl(), 0);
-    if (result.second) {
-        ASSERT(!result.first->second);
-        result.first->second = new IdentifierRep(name);
+    StringIdentifierMap::AddResult result = stringIdentifierMap().add(string.impl(), 0);
+    if (result.isNewEntry) {
+        ASSERT(!result.iterator->second);
+        result.iterator->second = new IdentifierRep(name);
         
-        identifierSet().add(result.first->second);
+        identifierSet().add(result.iterator->second);
     }
     
-    return result.first->second;
+    return result.iterator->second;
 }
 
 bool IdentifierRep::isValid(IdentifierRep* identifier)

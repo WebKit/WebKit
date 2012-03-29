@@ -551,11 +551,11 @@ private:
     
     NodeIndex cellConstant(JSCell* cell)
     {
-        pair<HashMap<JSCell*, NodeIndex>::iterator, bool> iter = m_cellConstantNodes.add(cell, NoNode);
-        if (iter.second)
-            iter.first->second = addToGraph(WeakJSConstant, OpInfo(cell));
+        HashMap<JSCell*, NodeIndex>::AddResult result = m_cellConstantNodes.add(cell, NoNode);
+        if (result.isNewEntry)
+            result.iterator->second = addToGraph(WeakJSConstant, OpInfo(cell));
         
-        return iter.first->second;
+        return result.iterator->second;
     }
     
     CodeOrigin currentCodeOrigin()
@@ -2595,10 +2595,10 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
 
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i) {
             StringImpl* rep = codeBlock->identifier(i).impl();
-            pair<IdentifierMap::iterator, bool> result = byteCodeParser->m_identifierMap.add(rep, byteCodeParser->m_codeBlock->numberOfIdentifiers());
-            if (result.second)
+            IdentifierMap::AddResult result = byteCodeParser->m_identifierMap.add(rep, byteCodeParser->m_codeBlock->numberOfIdentifiers());
+            if (result.isNewEntry)
                 byteCodeParser->m_codeBlock->addIdentifier(Identifier(byteCodeParser->m_globalData, rep));
-            m_identifierRemap[i] = result.first->second;
+            m_identifierRemap[i] = result.iterator->second;
         }
         for (size_t i = 0; i < codeBlock->numberOfConstantRegisters(); ++i) {
             JSValue value = codeBlock->getConstant(i + FirstConstantRegisterIndex);
@@ -2611,12 +2611,12 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
                 m_constantRemap[i] = byteCodeParser->m_emptyJSValueIndex;
                 continue;
             }
-            pair<JSValueMap::iterator, bool> result = byteCodeParser->m_jsValueMap.add(JSValue::encode(value), byteCodeParser->m_codeBlock->numberOfConstantRegisters() + FirstConstantRegisterIndex);
-            if (result.second) {
+            JSValueMap::AddResult result = byteCodeParser->m_jsValueMap.add(JSValue::encode(value), byteCodeParser->m_codeBlock->numberOfConstantRegisters() + FirstConstantRegisterIndex);
+            if (result.isNewEntry) {
                 byteCodeParser->m_codeBlock->addConstant(value);
                 byteCodeParser->m_constants.append(ConstantRecord());
             }
-            m_constantRemap[i] = result.first->second;
+            m_constantRemap[i] = result.iterator->second;
         }
         
         m_callsiteBlockHeadNeedsLinking = true;

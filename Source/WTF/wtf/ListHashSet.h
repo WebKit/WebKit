@@ -81,6 +81,8 @@ namespace WTF {
         typedef ListHashSetConstReverseIterator<ValueType, inlineCapacity, HashArg> const_reverse_iterator;
         friend class ListHashSetConstReverseIterator<ValueType, inlineCapacity, HashArg>;
 
+        typedef HashTableAddResult<iterator> AddResult;
+
         ListHashSet();
         ListHashSet(const ListHashSet&);
         ListHashSet& operator=(const ListHashSet&);
@@ -124,10 +126,10 @@ namespace WTF {
 
         // The return value of add is a pair of an iterator to the new value's location, 
         // and a bool that is true if an new entry was added.
-        pair<iterator, bool> add(const ValueType&);
+        AddResult add(const ValueType&);
 
-        pair<iterator, bool> insertBefore(const ValueType& beforeValue, const ValueType& newValue);
-        pair<iterator, bool> insertBefore(iterator it, const ValueType&);
+        AddResult insertBefore(const ValueType& beforeValue, const ValueType& newValue);
+        AddResult insertBefore(iterator, const ValueType&);
 
         void remove(const ValueType&);
         void remove(iterator);
@@ -695,26 +697,25 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity, typename U>
-    pair<typename ListHashSet<T, inlineCapacity, U>::iterator, bool> ListHashSet<T, inlineCapacity, U>::add(const ValueType &value)
+    typename ListHashSet<T, inlineCapacity, U>::AddResult ListHashSet<T, inlineCapacity, U>::add(const ValueType &value)
     {
-        pair<typename ImplType::iterator, bool> result = m_impl.template add<BaseTranslator>(value, m_allocator.get());
-        if (result.second)
-            appendNode(*result.first);
-        return std::make_pair(makeIterator(*result.first), result.second);
+        typename ImplType::AddResult result = m_impl.template add<BaseTranslator>(value, m_allocator.get());
+        if (result.isNewEntry)
+            appendNode(*result.iterator);
+        return AddResult(makeIterator(*result.iterator), result.isNewEntry);
     }
 
     template<typename T, size_t inlineCapacity, typename U>
-    pair<typename ListHashSet<T, inlineCapacity, U>::iterator, bool> ListHashSet<T, inlineCapacity, U>::insertBefore(iterator it, const ValueType& newValue)
+    typename ListHashSet<T, inlineCapacity, U>::AddResult ListHashSet<T, inlineCapacity, U>::insertBefore(iterator it, const ValueType& newValue)
     {
-        pair<typename ImplType::iterator, bool> result = m_impl.template add<BaseTranslator>(newValue, m_allocator.get());
-        if (result.second)
-            insertNodeBefore(it.node(), *result.first);
-        return std::make_pair(makeIterator(*result.first), result.second);
-
+        typename ImplType::AddResult result = m_impl.template add<BaseTranslator>(newValue, m_allocator.get());
+        if (result.isNewEntry)
+            insertNodeBefore(it.node(), *result.iterator);
+        return AddResult(makeIterator(*result.iterator), result.isNewEntry);
     }
 
     template<typename T, size_t inlineCapacity, typename U>
-    pair<typename ListHashSet<T, inlineCapacity, U>::iterator, bool> ListHashSet<T, inlineCapacity, U>::insertBefore(const ValueType& beforeValue, const ValueType& newValue)
+    typename ListHashSet<T, inlineCapacity, U>::AddResult ListHashSet<T, inlineCapacity, U>::insertBefore(const ValueType& beforeValue, const ValueType& newValue)
     {
         return insertBefore(find(beforeValue), newValue); 
     }

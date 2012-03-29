@@ -51,6 +51,7 @@ namespace WTF {
     public:
         typedef HashTableConstIteratorAdapter<HashTableType, ValueType> iterator;
         typedef HashTableConstIteratorAdapter<HashTableType, ValueType> const_iterator;
+        typedef typename HashTableType::AddResult AddResult;
 
         void swap(HashSet&);
 
@@ -76,7 +77,7 @@ namespace WTF {
 
         // The return value is a pair of an interator to the new value's location, 
         // and a bool that is true if an new entry was added.
-        pair<iterator, bool> add(const ValueType&);
+        AddResult add(const ValueType&);
 
         // An alternate version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
@@ -86,7 +87,7 @@ namespace WTF {
         //   static translate(ValueType&, const T&, unsigned hashCode);
         // FIXME: We should reverse the order of the template arguments so that callers
         // can just pass the translator and let the compiler deduce T.
-        template<typename T, typename HashTranslator> pair<iterator, bool> add(const T&);
+        template<typename T, typename HashTranslator> AddResult add(const T&);
 
         void remove(const ValueType&);
         void remove(iterator);
@@ -177,14 +178,14 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V>
-    inline pair<typename HashSet<T, U, V>::iterator, bool> HashSet<T, U, V>::add(const ValueType& value)
+    inline typename HashSet<T, U, V>::AddResult HashSet<T, U, V>::add(const ValueType& value)
     {
         return m_impl.add(value);
     }
 
     template<typename Value, typename HashFunctions, typename Traits>
     template<typename T, typename HashTranslator>
-    inline pair<typename HashSet<Value, HashFunctions, Traits>::iterator, bool>
+    inline typename HashSet<Value, HashFunctions, Traits>::AddResult
     HashSet<Value, HashFunctions, Traits>::add(const T& value)
     {
         return m_impl.template addPassingHashCode<HashSetTranslatorAdapter<HashTranslator> >(value, value);

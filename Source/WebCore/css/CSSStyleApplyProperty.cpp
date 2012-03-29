@@ -1004,7 +1004,7 @@ public:
         typedef CounterDirectiveMap::iterator Iterator;
         Iterator end = parentMap.end();
         for (Iterator it = parentMap.begin(); it != end; ++it) {
-            CounterDirectives& directives = map.add(it->first, CounterDirectives()).first->second;
+            CounterDirectives& directives = map.add(it->first, CounterDirectives()).iterator->second;
             if (counterBehavior == Reset) {
                 directives.m_reset = it->second.m_reset;
                 directives.m_resetValue = it->second.m_resetValue;
@@ -1052,7 +1052,7 @@ public:
 
             AtomicString identifier = static_cast<CSSPrimitiveValue*>(pair->first())->getStringValue();
             int value = static_cast<CSSPrimitiveValue*>(pair->second())->getIntValue();
-            CounterDirectives& directives = map.add(identifier.impl(), CounterDirectives()).first->second;
+            CounterDirectives& directives = map.add(identifier.impl(), CounterDirectives()).iterator->second;
             if (counterBehavior == Reset) {
                 directives.m_reset = true;
                 directives.m_resetValue = value;

@@ -164,7 +164,7 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::JSGlobalData&, OpaqueJSC
 
 OpaqueJSClassContextData& OpaqueJSClass::contextData(ExecState* exec)
 {
-    OwnPtr<OpaqueJSClassContextData>& contextData = exec->globalData().opaqueJSClassData.add(this, nullptr).first->second;
+    OwnPtr<OpaqueJSClassContextData>& contextData = exec->globalData().opaqueJSClassData.add(this, nullptr).iterator->second;
     if (!contextData)
         contextData = adoptPtr(new OpaqueJSClassContextData(exec->globalData(), this));
     return *contextData;

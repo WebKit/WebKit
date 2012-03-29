@@ -55,6 +55,7 @@ namespace JSC {
     public:
         typedef Map::iterator iterator;
         typedef Map::const_iterator const_iterator;
+        typedef Map::AddResult AddResult;
 
         SparseArrayValueMap()
             : m_flags(Normal)
@@ -87,7 +88,7 @@ namespace JSC {
         // These methods may mutate the contents of the map
         void put(ExecState*, JSArray*, unsigned, JSValue, bool shouldThrow);
         bool putDirect(ExecState*, JSArray*, unsigned, JSValue, bool shouldThrow);
-        std::pair<iterator, bool> add(JSArray*, unsigned);
+        AddResult add(JSArray*, unsigned);
         iterator find(unsigned i) { return m_map.find(i); }
         // This should ASSERT the remove is valid (check the result of the find).
         void remove(iterator it) { m_map.remove(it); }

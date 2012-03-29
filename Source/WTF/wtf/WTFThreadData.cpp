@@ -63,10 +63,10 @@ IdentifierTable::~IdentifierTable()
         (*iter)->setIsIdentifier(false);
 }
 
-std::pair<HashSet<StringImpl*>::iterator, bool> IdentifierTable::add(StringImpl* value)
+HashSet<StringImpl*>::AddResult IdentifierTable::add(StringImpl* value)
 {
-    std::pair<HashSet<StringImpl*>::iterator, bool> result = m_table.add(value);
-    (*result.first)->setIsIdentifier(true);
+    HashSet<StringImpl*>::AddResult result = m_table.add(value);
+    (*result.iterator)->setIsIdentifier(true);
     return result;
 }
 

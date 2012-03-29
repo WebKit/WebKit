@@ -69,15 +69,15 @@ NetscapePluginHostManager::~NetscapePluginHostManager()
 
 NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier)
 {
-    pair<PluginHostMap::iterator, bool> result = m_pluginHosts.add(pluginPath, 0);
+    PluginHostMap::AddResult result = m_pluginHosts.add(pluginPath, 0);
     
     // The package was already in the map, just return it.
-    if (!result.second)
-        return result.first->second;
+    if (!result.isNewEntry)
+        return result.iterator->second;
         
     mach_port_t clientPort;
     if (mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &clientPort) != KERN_SUCCESS) {
-        m_pluginHosts.remove(result.first);
+        m_pluginHosts.remove(result.iterator);
         return 0;
     }
     
@@ -85,7 +85,7 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::Str
     ProcessSerialNumber pluginHostPSN;
     if (!spawnPluginHost(pluginPath, pluginArchitecture, clientPort, pluginHostPort, pluginHostPSN)) {
         mach_port_destroy(mach_task_self(), clientPort);
-        m_pluginHosts.remove(result.first);
+        m_pluginHosts.remove(result.iterator);
         return 0;
     }
     
@@ -95,7 +95,7 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::Str
     
     NetscapePluginHostProxy* hostProxy = new NetscapePluginHostProxy(clientPort, pluginHostPort, pluginHostPSN, shouldCacheMissingPropertiesAndMethods);
     
-    result.first->second = hostProxy;
+    result.iterator->second = hostProxy;
     
     return hostProxy;
 }

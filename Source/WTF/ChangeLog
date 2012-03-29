@@ -1,3 +1,50 @@
+2012-03-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        HashMap<>::add should return a more descriptive object
+        https://bugs.webkit.org/show_bug.cgi?id=71063
+
+        Reviewed by Ryosuke Niwa.
+
+        Make HashTable<>::add() and derivate functions return an AddResult struct instead
+        of a pair. This struct contains contains 'iterator' and 'isNewEntry' members, that are
+        more readable at callsites than previous 'first' and 'second'.
+
+        * wtf/HashCountedSet.h:
+        (HashCountedSet):
+        (WTF::::add):
+        * wtf/HashMap.h:
+        (HashMap):
+        (WTF):
+        (WTF::::set):
+        * wtf/HashSet.h:
+        (HashSet):
+        (WTF::::add):
+        (WTF):
+        * wtf/HashTable.h:
+        (WTF::HashTableAddResult::HashTableAddResult):
+        (HashTableAddResult):
+        (WTF):
+        (HashTable):
+        (WTF::HashTable::add):
+        (WTF::::add):
+        (WTF::::addPassingHashCode):
+        * wtf/ListHashSet.h:
+        (ListHashSet):
+        (WTF::::add):
+        (WTF::::insertBefore):
+        * wtf/RefPtrHashMap.h:
+        (WTF):
+        (WTF::::set):
+        * wtf/Spectrum.h:
+        (WTF::Spectrum::add):
+        * wtf/WTFThreadData.cpp:
+        (JSC::IdentifierTable::add):
+        * wtf/WTFThreadData.h:
+        (IdentifierTable):
+        * wtf/text/AtomicString.cpp:
+        (WTF::addToStringTable):
+        (WTF::AtomicString::addSlowCase):
+
 2012-03-29  Andreas Kling  <kling@webkit.org>
 
         String: Subscript operator shouldn't force conversion to 16-bit characters.

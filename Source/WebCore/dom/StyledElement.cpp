@@ -236,7 +236,7 @@ void StyledElement::updateAttributeStyle()
 
     PresentationAttributeCache::iterator cacheIterator;
     if (cacheHash) {
-        cacheIterator = presentationAttributeCache().add(cacheHash, nullptr).first;
+        cacheIterator = presentationAttributeCache().add(cacheHash, nullptr).iterator;
         if (cacheIterator->second && cacheIterator->second->key != cacheKey)
             cacheHash = 0;
     } else

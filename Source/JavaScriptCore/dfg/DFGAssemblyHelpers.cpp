@@ -38,12 +38,12 @@ Vector<BytecodeAndMachineOffset>& AssemblyHelpers::decodedCodeMapFor(CodeBlock* 
     ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
     ASSERT(codeBlock->jitCodeMap());
     
-    std::pair<HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset> >::iterator, bool> result = m_decodedCodeMaps.add(codeBlock, Vector<BytecodeAndMachineOffset>());
+    HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset> >::AddResult result = m_decodedCodeMaps.add(codeBlock, Vector<BytecodeAndMachineOffset>());
     
-    if (result.second)
-        codeBlock->jitCodeMap()->decode(result.first->second);
+    if (result.isNewEntry)
+        codeBlock->jitCodeMap()->decode(result.iterator->second);
     
-    return result.first->second;
+    return result.iterator->second;
 }
 
 #if ENABLE(SAMPLING_FLAGS)

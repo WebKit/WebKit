@@ -51,12 +51,12 @@ namespace WebCore {
         
         String get(const AtomicString& name) const;
 
-        pair<iterator, bool> add(const AtomicString& name, const String& value);
+        AddResult add(const AtomicString& name, const String& value);
 
         // Alternate accessors that are faster than converting the char* to AtomicString first.
         bool contains(const char*) const;
         String get(const char*) const;
-        pair<iterator, bool> add(const char* name, const String& value);
+        AddResult add(const char* name, const String& value);
         
     };
 

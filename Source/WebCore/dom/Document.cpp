@@ -4519,7 +4519,7 @@ HTMLAllCollection* Document::all()
 
 HTMLCollection* Document::windowNamedItems(const AtomicString& name)
 {
-    OwnPtr<HTMLNameCollection>& collection = m_windowNamedItemCollections.add(name.impl(), nullptr).first->second;
+    OwnPtr<HTMLNameCollection>& collection = m_windowNamedItemCollections.add(name.impl(), nullptr).iterator->second;
     if (!collection)
         collection = HTMLNameCollection::create(this, WindowNamedItems, name);
     return collection.get();
@@ -4527,7 +4527,7 @@ HTMLCollection* Document::windowNamedItems(const AtomicString& name)
 
 HTMLCollection* Document::documentNamedItems(const AtomicString& name)
 {
-    OwnPtr<HTMLNameCollection>& collection = m_documentNamedItemCollections.add(name.impl(), nullptr).first->second;
+    OwnPtr<HTMLNameCollection>& collection = m_documentNamedItemCollections.add(name.impl(), nullptr).iterator->second;
     if (!collection)
         collection = HTMLNameCollection::create(this, DocumentNamedItems, name);
     return collection.get();
@@ -4920,7 +4920,7 @@ CanvasRenderingContext* Document::getCSSCanvasContext(const String& type, const 
 
 HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
 {
-    RefPtr<HTMLCanvasElement>& element = m_cssCanvasElements.add(name, 0).first->second;
+    RefPtr<HTMLCanvasElement>& element = m_cssCanvasElements.add(name, 0).iterator->second;
     if (!element)
         element = HTMLCanvasElement::create(this);
     return element.get();
@@ -5723,12 +5723,12 @@ PassRefPtr<NodeList> Document::getItems(const String& typeNames)
     // In this case we need to create an unique string identifier to map such request in the cache.
     String localTypeNames = typeNames.isNull() ? String("http://webkit.org/microdata/undefinedItemType") : typeNames;
 
-    pair<NodeListsNodeData::MicroDataItemListCache::iterator, bool> result = nodeLists->m_microDataItemListCache.add(localTypeNames, 0);
-    if (!result.second)
-        return PassRefPtr<NodeList>(result.first->second);
+    NodeListsNodeData::MicroDataItemListCache::AddResult result = nodeLists->m_microDataItemListCache.add(localTypeNames, 0);
+    if (!result.isNewEntry)
+        return PassRefPtr<NodeList>(result.iterator->second);
 
     RefPtr<MicroDataItemList> list = MicroDataItemList::create(this, typeNames);
-    result.first->second = list.get();
+    result.iterator->second = list.get();
     return list.release();
 }
 

@@ -392,13 +392,13 @@ private:
     bool startObjectInternal(JSObject* object)
     {
         // Record object for graph reconstruction
-        pair<ObjectPool::iterator, bool> iter = m_objectPool.add(object, m_objectPool.size());
+        ObjectPool::AddResult addResult = m_objectPool.add(object, m_objectPool.size());
         
         // Handle duplicate references
-        if (!iter.second) {
+        if (!addResult.isNewEntry) {
             write(ObjectReferenceTag);
-            ASSERT(static_cast<int32_t>(iter.first->second) < m_objectPool.size());
-            writeObjectIndex(iter.first->second);
+            ASSERT(static_cast<int32_t>(addResult.iterator->second) < m_objectPool.size());
+            writeObjectIndex(addResult.iterator->second);
             return false;
         }
         
@@ -726,10 +726,10 @@ private:
     void write(const Identifier& ident)
     {
         UString str = ident.ustring();
-        pair<StringConstantPool::iterator, bool> iter = m_constantPool.add(str.impl(), m_constantPool.size());
-        if (!iter.second) {
+        StringConstantPool::AddResult addResult = m_constantPool.add(str.impl(), m_constantPool.size());
+        if (!addResult.isNewEntry) {
             write(StringPoolTag);
-            writeStringIndex(iter.first->second);
+            writeStringIndex(addResult.iterator->second);
             return;
         }
 

@@ -250,10 +250,10 @@ void WebURLResponse::addHTTPHeaderField(const WebString& name, const WebString& 
     // FIXME: Add an addHTTPHeaderField method to ResourceResponse.
     const HTTPHeaderMap& map = m_private->m_resourceResponse->httpHeaderFields();
     String valueStr(value);
-    pair<HTTPHeaderMap::iterator, bool> result =
+    HTTPHeaderMap::AddResult result =
         const_cast<HTTPHeaderMap*>(&map)->add(name, valueStr);
-    if (!result.second)
-        result.first->second += ", " + valueStr;
+    if (!result.isNewEntry)
+        result.iterator->second += ", " + valueStr;
 }
 
 void WebURLResponse::clearHTTPHeaderField(const WebString& name)

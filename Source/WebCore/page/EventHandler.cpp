@@ -3516,7 +3516,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         // Ensure this target's touch list exists, even if it ends up empty, so it can always be passed to TouchEvent::Create below.
         TargetTouchesMap::iterator targetTouchesIterator = touchesByTarget.find(touchTarget.get());
         if (targetTouchesIterator == touchesByTarget.end())
-            targetTouchesIterator = touchesByTarget.set(touchTarget.get(), TouchList::create()).first;
+            targetTouchesIterator = touchesByTarget.set(touchTarget.get(), TouchList::create()).iterator;
 
         // touches and targetTouches should only contain information about touches still on the screen, so if this point is
         // released or cancelled it will only appear in the changedTouches list.

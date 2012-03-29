@@ -518,16 +518,16 @@ void WebProcess::createWebPage(uint64_t pageID, const WebPageCreationParameters&
 {
     // It is necessary to check for page existence here since during a window.open() (or targeted
     // link) the WebPage gets created both in the synchronous handler and through the normal way. 
-    std::pair<HashMap<uint64_t, RefPtr<WebPage> >::iterator, bool> result = m_pageMap.add(pageID, 0);
-    if (result.second) {
-        ASSERT(!result.first->second);
-        result.first->second = WebPage::create(pageID, parameters);
+    HashMap<uint64_t, RefPtr<WebPage> >::AddResult result = m_pageMap.add(pageID, 0);
+    if (result.isNewEntry) {
+        ASSERT(!result.iterator->second);
+        result.iterator->second = WebPage::create(pageID, parameters);
 
         // Balanced by an enableTermination in removeWebPage.
         disableTermination();
     }
 
-    ASSERT(result.first->second);
+    ASSERT(result.iterator->second);
 }
 
 void WebProcess::removeWebPage(uint64_t pageID)
@@ -739,13 +739,13 @@ WebPageGroupProxy* WebProcess::webPageGroup(uint64_t pageGroupID)
 
 WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupData)
 {
-    std::pair<HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::iterator, bool> result = m_pageGroupMap.add(pageGroupData.pageGroupID, 0);
-    if (result.second) {
-        ASSERT(!result.first->second);
-        result.first->second = WebPageGroupProxy::create(pageGroupData);
+    HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::AddResult result = m_pageGroupMap.add(pageGroupData.pageGroupID, 0);
+    if (result.isNewEntry) {
+        ASSERT(!result.iterator->second);
+        result.iterator->second = WebPageGroupProxy::create(pageGroupData);
     }
 
-    return result.first->second.get();
+    return result.iterator->second.get();
 }
 
 static bool canPluginHandleResponse(const ResourceResponse& response)

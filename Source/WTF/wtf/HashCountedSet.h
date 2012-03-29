@@ -36,6 +36,7 @@ namespace WTF {
         typedef Value ValueType;
         typedef typename ImplType::iterator iterator;
         typedef typename ImplType::const_iterator const_iterator;
+        typedef typename ImplType::AddResult AddResult;
         
         HashCountedSet() {}
         
@@ -57,7 +58,7 @@ namespace WTF {
         // Increases the count if an equal value is already present
         // the return value is a pair of an interator to the new value's 
         // location, and a bool that is true if an new entry was added.
-        std::pair<iterator, bool> add(const ValueType&);
+        AddResult add(const ValueType&);
         
         // Reduces the count of the value, and removes it if count
         // goes down to zero, returns true if the value is removed.
@@ -142,10 +143,10 @@ namespace WTF {
     }
     
     template<typename Value, typename HashFunctions, typename Traits>
-    inline std::pair<typename HashCountedSet<Value, HashFunctions, Traits>::iterator, bool> HashCountedSet<Value, HashFunctions, Traits>::add(const ValueType &value)
+    inline typename HashCountedSet<Value, HashFunctions, Traits>::AddResult HashCountedSet<Value, HashFunctions, Traits>::add(const ValueType &value)
     {
-        pair<iterator, bool> result = m_impl.add(value, 0); 
-        ++result.first->second;
+        AddResult result = m_impl.add(value, 0);
+        ++result.iterator->second;
         return result;
     }
     

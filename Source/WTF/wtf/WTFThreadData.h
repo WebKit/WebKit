@@ -46,9 +46,9 @@ class IdentifierTable {
 public:
     ~IdentifierTable();
 
-    std::pair<HashSet<StringImpl*>::iterator, bool> add(StringImpl* value);
+    HashSet<StringImpl*>::AddResult add(StringImpl* value);
     template<typename U, typename V>
-    std::pair<HashSet<StringImpl*>::iterator, bool> add(U value);
+    HashSet<StringImpl*>::AddResult add(U value);
 
     bool remove(StringImpl* r)
     {

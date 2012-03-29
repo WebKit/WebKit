@@ -3833,7 +3833,7 @@ void RenderBlock::addPercentHeightDescendant(RenderBox* descendant)
         descendantSet = new HashSet<RenderBox*>;
         gPercentHeightDescendantsMap->set(this, descendantSet);
     }
-    bool added = descendantSet->add(descendant).second;
+    bool added = descendantSet->add(descendant).isNewEntry;
     if (!added) {
         ASSERT(gPercentHeightContainerMap->get(descendant));
         ASSERT(gPercentHeightContainerMap->get(descendant)->contains(this));

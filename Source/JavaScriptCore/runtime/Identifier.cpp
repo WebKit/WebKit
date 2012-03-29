@@ -110,11 +110,11 @@ PassRefPtr<StringImpl> Identifier::add(JSGlobalData* globalData, const char* c)
     if (iter != literalIdentifierTable.end())
         return iter->second;
 
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = identifierTable.add<const LChar*, IdentifierCStringTranslator>(reinterpret_cast<const LChar*>(c));
+    HashSet<StringImpl*>::AddResult addResult = identifierTable.add<const LChar*, IdentifierCStringTranslator>(reinterpret_cast<const LChar*>(c));
 
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
-    RefPtr<StringImpl> addedString = addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+    RefPtr<StringImpl> addedString = addResult.isNewEntry ? adoptRef(*addResult.iterator) : *addResult.iterator;
 
     literalIdentifierTable.add(c, addedString.get());
 
@@ -138,11 +138,11 @@ PassRefPtr<StringImpl> Identifier::add8(JSGlobalData* globalData, const UChar* s
     if (!length)
         return StringImpl::empty();
     CharBuffer<UChar> buf = {s, length}; 
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = globalData->identifierTable->add<CharBuffer<UChar>, IdentifierLCharFromUCharTranslator >(buf);
+    HashSet<StringImpl*>::AddResult addResult = globalData->identifierTable->add<CharBuffer<UChar>, IdentifierLCharFromUCharTranslator >(buf);
     
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
-    return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+    return addResult.isNewEntry ? adoptRef(*addResult.iterator) : *addResult.iterator;
 }
 
 template <typename CharType>
@@ -210,7 +210,7 @@ PassRefPtr<StringImpl> Identifier::addSlowCase(JSGlobalData* globalData, StringI
                 return r;
     }
 
-    return *globalData->identifierTable->add(r).first;
+    return *globalData->identifierTable->add(r).iterator;
 }
 
 PassRefPtr<StringImpl> Identifier::addSlowCase(ExecState* exec, StringImpl* r)

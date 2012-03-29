@@ -963,7 +963,7 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObj
     if (!worldID)
         world = [WebScriptWorld world];
     else {
-        RetainPtr<WebScriptWorld>& worldSlot = worldMap().add(worldID, 0).first->second;
+        RetainPtr<WebScriptWorld>& worldSlot = worldMap().add(worldID, 0).iterator->second;
         if (!worldSlot)
             worldSlot.adoptNS([[WebScriptWorld alloc] init]);
         world = worldSlot.get();

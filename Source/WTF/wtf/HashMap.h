@@ -66,6 +66,7 @@ namespace WTF {
     public:
         typedef HashTableIteratorAdapter<HashTableType, ValueType> iterator;
         typedef HashTableConstIteratorAdapter<HashTableType, ValueType> const_iterator;
+        typedef typename HashTableType::AddResult AddResult;
 
     public:
         void swap(HashMap&);
@@ -94,12 +95,12 @@ namespace WTF {
         // replaces value but not key if key is already present
         // return value is a pair of the iterator to the key location, 
         // and a boolean that's true if a new value was actually added
-        pair<iterator, bool> set(const KeyType&, MappedPassInType); 
+        AddResult set(const KeyType&, MappedPassInType);
 
         // does nothing if key is already present
         // return value is a pair of the iterator to the key location, 
         // and a boolean that's true if a new value was actually added
-        pair<iterator, bool> add(const KeyType&, MappedPassInType); 
+        AddResult add(const KeyType&, MappedPassInType);
 
         void remove(const KeyType&);
         void remove(iterator);
@@ -122,12 +123,12 @@ namespace WTF {
         //   static unsigned hash(const T&);
         //   static bool equal(const ValueType&, const T&);
         //   static translate(ValueType&, const T&, unsigned hashCode);
-        template<typename T, typename HashTranslator> pair<iterator, bool> add(const T&, MappedPassInType);
+        template<typename T, typename HashTranslator> AddResult add(const T&, MappedPassInType);
 
         void checkConsistency() const;
 
     private:
-        pair<iterator, bool> inlineAdd(const KeyType&, MappedPassInReferenceType);
+        AddResult inlineAdd(const KeyType&, MappedPassInReferenceType);
 
         class HashMapKeysProxy : private HashMap {
         public:
@@ -319,34 +320,34 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
-    inline pair<typename HashMap<T, U, V, W, X>::iterator, bool>
+    typename HashMap<T, U, V, W, X>::AddResult
     HashMap<T, U, V, W, X>::inlineAdd(const KeyType& key, MappedPassInReferenceType mapped) 
     {
         return m_impl.template add<HashMapTranslator<ValueTraits, HashFunctions> >(key, mapped);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
-    pair<typename HashMap<T, U, V, W, X>::iterator, bool>
+    typename HashMap<T, U, V, W, X>::AddResult
     HashMap<T, U, V, W, X>::set(const KeyType& key, MappedPassInType mapped) 
     {
-        pair<iterator, bool> result = inlineAdd(key, mapped);
-        if (!result.second) {
+        AddResult result = inlineAdd(key, mapped);
+        if (!result.isNewEntry) {
             // The inlineAdd call above found an existing hash table entry; we need to set the mapped value.
-            MappedTraits::store(mapped, result.first->second);
+            MappedTraits::store(mapped, result.iterator->second);
         }
         return result;
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
     template<typename TYPE, typename HashTranslator>
-    pair<typename HashMap<T, U, V, W, X>::iterator, bool>
+    typename HashMap<T, U, V, W, X>::AddResult
     HashMap<T, U, V, W, X>::add(const TYPE& key, MappedPassInType value)
     {
         return m_impl.template addPassingHashCode<HashMapTranslatorAdapter<ValueTraits, HashTranslator> >(key, value);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
-    pair<typename HashMap<T, U, V, W, X>::iterator, bool>
+    typename HashMap<T, U, V, W, X>::AddResult
     HashMap<T, U, V, W, X>::add(const KeyType& key, MappedPassInType mapped)
     {
         return inlineAdd(key, mapped);

@@ -233,12 +233,12 @@ DOMPatchSupport::diff(const Vector<OwnPtr<Digest> >& oldList, const Vector<OwnPt
     DiffTable oldTable;
 
     for (size_t i = 0; i < newList.size(); ++i) {
-        DiffTable::iterator it = newTable.add(newList[i]->m_sha1, Vector<size_t>()).first;
+        DiffTable::iterator it = newTable.add(newList[i]->m_sha1, Vector<size_t>()).iterator;
         it->second.append(i);
     }
 
     for (size_t i = 0; i < oldList.size(); ++i) {
-        DiffTable::iterator it = oldTable.add(oldList[i]->m_sha1, Vector<size_t>()).first;
+        DiffTable::iterator it = oldTable.add(oldList[i]->m_sha1, Vector<size_t>()).iterator;
         it->second.append(i);
     }
 

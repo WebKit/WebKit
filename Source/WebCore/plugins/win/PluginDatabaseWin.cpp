@@ -142,7 +142,7 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
                 continue;
 
             String fullPath = *it + "\\" + filename;
-            if (!uniqueFilenames.add(fullPath).second)
+            if (!uniqueFilenames.add(fullPath).isNewEntry)
                 continue;
 
             paths.add(fullPath);

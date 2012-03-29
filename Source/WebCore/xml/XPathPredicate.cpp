@@ -240,7 +240,7 @@ Value Union::evaluate() const
     
     for (size_t i = 0; i < rhsNodes.size(); ++i) {
         Node* node = rhsNodes[i];
-        if (nodes.add(node).second)
+        if (nodes.add(node).isNewEntry)
             resultSet.append(node);
     }
 

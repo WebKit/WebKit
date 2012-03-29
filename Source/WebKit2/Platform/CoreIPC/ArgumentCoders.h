@@ -161,7 +161,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             if (!decoder->decode(value))
                 return false;
 
-            if (!tempHashMap.add(key, value).second) {
+            if (!tempHashMap.add(key, value).isNewEntry) {
                 // The hash map already has the specified key, bail.
                 decoder->markInvalid();
                 return false;

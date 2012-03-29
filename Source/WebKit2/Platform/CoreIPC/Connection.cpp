@@ -100,15 +100,15 @@ private:
 PassRefPtr<Connection::SyncMessageState> Connection::SyncMessageState::getOrCreate(RunLoop* runLoop)
 {
     MutexLocker locker(syncMessageStateMapMutex());
-    pair<SyncMessageStateMap::iterator, bool> result = syncMessageStateMap().add(runLoop, 0);
+    SyncMessageStateMap::AddResult result = syncMessageStateMap().add(runLoop, 0);
 
-    if (!result.second) {
-        ASSERT(result.first->second);
-        return result.first->second;
+    if (!result.isNewEntry) {
+        ASSERT(result.iterator->second);
+        return result.iterator->second;
     }
 
     RefPtr<SyncMessageState> syncMessageState = adoptRef(new SyncMessageState(runLoop));
-    result.first->second = syncMessageState.get();
+    result.iterator->second = syncMessageState.get();
 
     return syncMessageState.release();
 }

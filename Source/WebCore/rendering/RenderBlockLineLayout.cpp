@@ -662,14 +662,14 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     run->m_box->setLogicalWidth(renderer->width(run->m_start, run->m_stop - run->m_start, xPos, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow) + hyphenWidth);
     if (!fallbackFonts.isEmpty()) {
         ASSERT(run->m_box->isText());
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).iterator;
         ASSERT(it->second.first.isEmpty());
         copyToVector(fallbackFonts, it->second.first);
         run->m_box->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
     }
     if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)) {
         ASSERT(run->m_box->isText());
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).iterator;
         it->second.second = glyphOverflow;
         run->m_box->clearKnownToHaveNoOverflow();
     }

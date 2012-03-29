@@ -38,14 +38,14 @@ MutableDictionary::~MutableDictionary()
 
 bool MutableDictionary::add(const String& key, APIObject* item)
 {
-    std::pair<MapType::iterator, bool> result = m_map.add(key, item);
-    return result.second;
+    MapType::AddResult result = m_map.add(key, item);
+    return result.isNewEntry;
 }
 
 bool MutableDictionary::set(const String& key, APIObject* item)
 {
-    std::pair<MapType::iterator, bool> result = m_map.set(key, item);
-    return result.second;
+    MapType::AddResult result = m_map.set(key, item);
+    return result.isNewEntry;
 }
 
 void MutableDictionary::remove(const String& key)

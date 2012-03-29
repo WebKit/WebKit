@@ -77,7 +77,7 @@ void RadioButtonGroup::setCheckedButton(HTMLInputElement* button)
 void RadioButtonGroup::add(HTMLInputElement* button)
 {
     ASSERT(button->isRadioButton());
-    if (!m_members.add(button).second)
+    if (!m_members.add(button).isNewEntry)
         return;
     bool groupWasValid = isValid();
     if (button->required())
@@ -185,7 +185,7 @@ void CheckedRadioButtons::addButton(HTMLInputElement* element)
     if (!m_nameToGroupMap)
         m_nameToGroupMap = adoptPtr(new NameToGroupMap);
 
-    OwnPtr<RadioButtonGroup>& group = m_nameToGroupMap->add(element->name().impl(), PassOwnPtr<RadioButtonGroup>()).first->second;
+    OwnPtr<RadioButtonGroup>& group = m_nameToGroupMap->add(element->name().impl(), PassOwnPtr<RadioButtonGroup>()).iterator->second;
     if (!group)
         group = RadioButtonGroup::create();
     group->add(element);

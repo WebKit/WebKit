@@ -496,10 +496,10 @@ void CSSStyleSelector::appendAuthorStylesheets(unsigned firstNew, const Vector<R
 #if ENABLE(STYLE_SCOPED)
         const ContainerNode* scope = determineScope(cssSheet);
         if (scope) {
-            pair<ScopedRuleSetMap::iterator, bool> addResult = m_scopedAuthorStyles.add(scope, nullptr);
-            if (addResult.second)
-                addResult.first->second = adoptPtr(new RuleSet());
-            addResult.first->second->addRulesFromSheet(cssSheet, *m_medium, this, scope);
+            ScopedRuleSetMap::AddResult addResult = m_scopedAuthorStyles.add(scope, nullptr);
+            if (addResult.isNewEntry)
+                addResult.iterator->second = adoptPtr(new RuleSet());
+            addResult.iterator->second->addRulesFromSheet(cssSheet, *m_medium, this, scope);
             continue;
         }
 #endif
@@ -2380,7 +2380,7 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
 {
     if (!key)
         return;
-    OwnPtr<Vector<RuleData> >& rules = map.add(key, nullptr).first->second;
+    OwnPtr<Vector<RuleData> >& rules = map.add(key, nullptr).iterator->second;
     if (!rules)
         rules = adoptPtr(new Vector<RuleData>);
     rules->append(ruleData);

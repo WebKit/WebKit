@@ -217,8 +217,8 @@ void RenderNamedFlowThread::checkInvalidRegions()
 
 void RenderNamedFlowThread::addDependencyOnFlowThread(RenderNamedFlowThread* otherFlowThread)
 {
-    std::pair<RenderNamedFlowThreadCountedSet::iterator, bool> result = m_layoutBeforeThreadsSet.add(otherFlowThread);
-    if (result.second) {
+    RenderNamedFlowThreadCountedSet::AddResult result = m_layoutBeforeThreadsSet.add(otherFlowThread);
+    if (result.isNewEntry) {
         // This is the first time we see this dependency. Make sure we recalculate all the dependencies.
         view()->setIsRenderNamedFlowThreadOrderDirty(true);
     }

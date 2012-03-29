@@ -78,11 +78,11 @@ static inline HashSet<StringImpl*>& stringTable()
 template<typename T, typename HashTranslator>
 static inline PassRefPtr<StringImpl> addToStringTable(const T& value)
 {
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable().add<T, HashTranslator>(value);
+    HashSet<StringImpl*>::AddResult addResult = stringTable().add<T, HashTranslator>(value);
 
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
-    return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+    return addResult.isNewEntry ? adoptRef(*addResult.iterator) : *addResult.iterator;
 }
 
 struct CStringTranslator {
@@ -300,7 +300,7 @@ PassRefPtr<StringImpl> AtomicString::addSlowCase(StringImpl* r)
     if (!r->length())
         return StringImpl::empty();
 
-    StringImpl* result = *stringTable().add(r).first;
+    StringImpl* result = *stringTable().add(r).iterator;
     if (result == r)
         r->setIsAtomic(true);
     return result;

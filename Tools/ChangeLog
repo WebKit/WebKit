@@ -1,3 +1,19 @@
+2012-03-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        HashMap<>::add should return a more descriptive object
+        https://bugs.webkit.org/show_bug.cgi?id=71063
+
+        Reviewed by Ryosuke Niwa.
+
+        Update code to use AddResult instead of a pair.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::evaluateScriptInIsolatedWorld):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::evaluateScriptInIsolatedWorld):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::evaluateScriptInIsolatedWorld):
+
 2012-03-29  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: chromium: DRT --no-timeout option doesn't work.

@@ -83,7 +83,7 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
     if (m_attributes.patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
         return false;
 
-    OwnPtr<PatternData>& patternData = m_patternMap.add(object, nullptr).first->second;
+    OwnPtr<PatternData>& patternData = m_patternMap.add(object, nullptr).iterator->second;
     if (!patternData)
         patternData = adoptPtr(new PatternData);
 

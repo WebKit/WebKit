@@ -132,8 +132,8 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
                 respondingNode = visitedNode;
                 // Continue the iteration to collect the ancestors of the responder, which we will need later.
                 for (visitedNode = visitedNode->parentOrHostNode(); visitedNode; visitedNode = visitedNode->parentOrHostNode()) {
-                    pair<HashSet<Node*>::iterator, bool> addResult = ancestorsToRespondersSet.add(visitedNode);
-                    if (!addResult.second)
+                    HashSet<Node*>::AddResult addResult = ancestorsToRespondersSet.add(visitedNode);
+                    if (!addResult.isNewEntry)
                         break;
                 }
                 break;

@@ -1062,10 +1062,10 @@ void ApplicationCacheGroup::addEntry(const String& url, unsigned type)
         return;
     }
     
-    pair<EntryMap::iterator, bool> result = m_pendingEntries.add(url, type);
+    EntryMap::AddResult result = m_pendingEntries.add(url, type);
     
-    if (!result.second)
-        result.first->second |= type;
+    if (!result.isNewEntry)
+        result.iterator->second |= type;
 }
 
 void ApplicationCacheGroup::associateDocumentLoaderWithCache(DocumentLoader* loader, ApplicationCache* cache)

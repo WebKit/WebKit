@@ -69,14 +69,14 @@ void DocumentOrderedMap::add(AtomicStringImpl* key, Element* element)
     if (!m_duplicateCounts.contains(key)) {
         // Fast path. The key is not already in m_duplicateCounts, so we assume that it's
         // also not already in m_map and try to add it. If that add succeeds, we're done.
-        pair<Map::iterator, bool> addResult = m_map.add(key, element);
-        if (addResult.second)
+        Map::AddResult addResult = m_map.add(key, element);
+        if (addResult.isNewEntry)
             return;
 
         // The add failed, so this key was already cached in m_map.
         // There are multiple elements with this key. Remove the m_map
         // cache for this key so get searches for it next time it is called.
-        m_map.remove(addResult.first);
+        m_map.remove(addResult.iterator);
         m_duplicateCounts.add(key);
     } else {
         // There are multiple elements with this key. Remove the m_map

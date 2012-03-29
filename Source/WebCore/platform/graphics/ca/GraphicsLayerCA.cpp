@@ -2488,16 +2488,16 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Pl
     // Add with a dummy value to get an iterator for the insertion position, and a boolean that tells
     // us whether there's an item there. This technique avoids two hash lookups.
     RefPtr<PlatformCALayer> dummy;
-    pair<LayerMap::iterator, bool> addResult = clones->add(cloneID, dummy);
-    if (!addResult.second) {
+    LayerMap::AddResult addResult = clones->add(cloneID, dummy);
+    if (!addResult.isNewEntry) {
         // Value was not added, so it exists already.
-        resultLayer = addResult.first->second.get();
+        resultLayer = addResult.iterator->second.get();
     } else {
         resultLayer = cloneLayer(sourceLayer, cloneLevel);
 #ifndef NDEBUG
         resultLayer->setName(String::format("Clone %d of layer %p", cloneID[0U], sourceLayer->platformLayer()));
 #endif
-        addResult.first->second = resultLayer;
+        addResult.iterator->second = resultLayer;
     }
 
     return resultLayer;
