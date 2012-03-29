@@ -29,12 +29,12 @@
  */
 
 #include "config.h"
-#include "platform/WebHTTPLoadInfo.h"
+#include <public/WebHTTPLoadInfo.h>
 
 #include "ResourceLoadInfo.h"
 #include "ResourceResponse.h"
-#include "platform/WebHTTPHeaderVisitor.h"
-#include "platform/WebString.h"
+#include <public/WebHTTPHeaderVisitor.h>
+#include <public/WebString.h>
 
 using namespace WebCore;
 
