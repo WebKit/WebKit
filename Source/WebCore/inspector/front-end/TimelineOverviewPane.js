@@ -368,7 +368,6 @@ WebInspector.TimelineOverviewWindow = function(parentElement)
     this._parentElement.addEventListener("mousedown", this._dragWindow.bind(this), true);
     this._parentElement.addEventListener("mousewheel", this.scrollWindow.bind(this), true);
     this._parentElement.addEventListener("dblclick", this._resizeWindowMaximum.bind(this), true);
-    this._parentElement.addEventListener("click", this._resizeWindowMinimum.bind(this), true);
 
     this._overviewWindowElement = document.createElement("div");
     this._overviewWindowElement.className = "timeline-overview-window";
@@ -510,15 +509,6 @@ WebInspector.TimelineOverviewWindow.prototype = {
     _resizeWindowMaximum: function()
     {
         this._setWindowPosition(0, this._parentElement.clientWidth);
-    },
-
-    _resizeWindowMinimum: function(event)
-    {
-        WebInspector.elementDragEnd(event);
-        var middle = event.pageX - this._parentElement.offsetLeft;
-        var start = Math.max(middle - WebInspector.TimelineOverviewPane.MinSelectableSize / 2, 0);
-        var end = Math.min(middle + WebInspector.TimelineOverviewPane.MinSelectableSize / 2, this._parentElement.clientWidth);
-        this._setWindowPosition(start, end);
     },
 
     _setWindowPosition: function(start, end)
