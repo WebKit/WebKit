@@ -2263,9 +2263,9 @@ void SpeculativeJIT::compileSoftModulo(Node& node)
     // In the fast path, the dividend value could be the final result
     // (in case of |dividend| < |divisor|), so we speculate it as strict int32.
     SpeculateStrictInt32Operand op1(this, node.child1());
+#if CPU(X86) || CPU(X86_64)
     if (isInt32Constant(node.child2().index())) {
         int32_t divisor = valueOfInt32Constant(node.child2().index());
-#if CPU(X86) || CPU(X86_64)
         if (divisor) {
             GPRReg op1Gpr = op1.gpr();
 
@@ -2302,8 +2302,8 @@ void SpeculativeJIT::compileSoftModulo(Node& node)
             integerResult(edx.gpr(), m_compileIndex);
             return;
         }
-#endif
     }
+#endif
 
     SpeculateIntegerOperand op2(this, node.child2());
 #if CPU(X86) || CPU(X86_64)

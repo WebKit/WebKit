@@ -1255,6 +1255,11 @@ private:
         m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(D_DFGOperation_ZZ operation, FPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArguments(arg1, arg2);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)
     {
         m_jit.setupArguments(arg1, arg2);
@@ -1440,6 +1445,11 @@ private:
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
 
+    JITCompiler::Call callOperation(D_DFGOperation_ZZ operation, FPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArguments(arg1, arg2);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)
     {
         m_jit.setupArguments(arg1, arg2);

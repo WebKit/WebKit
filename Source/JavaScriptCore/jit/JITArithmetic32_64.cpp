@@ -1250,7 +1250,9 @@ void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>
 #else
     UNUSED_PARAM(currentInstruction);
     UNUSED_PARAM(iter);
-    ASSERT_NOT_REACHED();
+    // We would have really useful assertions here if it wasn't for the compiler's
+    // insistence on attribute noreturn.
+    // ASSERT_NOT_REACHED();
 #endif
 }
 
