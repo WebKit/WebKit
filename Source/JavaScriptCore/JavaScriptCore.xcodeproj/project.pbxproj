@@ -3189,25 +3189,22 @@
 		};
 		1412113A0A48798400480255 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = minidom;
-				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
 		1412113B0A48798400480255 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = minidom;
-				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
 		1412113C0A48798400480255 /* Production */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = minidom;
-				SKIP_INSTALL = YES;
 			};
 			name = Production;
 		};
@@ -3405,9 +3402,8 @@
 		};
 		A76148410E6402F700E357FA /* Profiling */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = minidom;
-				SKIP_INSTALL = YES;
 			};
 			name = Profiling;
 		};

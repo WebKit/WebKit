@@ -1,3 +1,18 @@
+2012-03-28  David Kilzer  <ddkilzer@apple.com>
+
+        minidom configurations should be based on ToolExecutable.xcconfig
+        <http://webkit.org/b/82513>
+
+        Reviewed by Mark Rowe.
+
+        Note that this patch changes minidom from being installed in
+        /usr/local/bin to JavaScriptCore.framework/Resources.
+
+        * Configurations/ToolExecutable.xcconfig: Add semi-colon.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Base minidom
+        configurations on ToolExecutable.xcconfig.  Remove redundant
+        PRODUCT_NAME and SKIP_INSTALL variables.
+
 2012-03-28  Gavin Barraclough  <barraclough@apple.com>
 
         Build fix - some compiles generating NORETURN related warnings.
