@@ -111,7 +111,7 @@ WebInspector.TimelineOverviewPane = function(model)
     this._overviewCalculator = new WebInspector.TimelineOverviewCalculator();
 
     model.addEventListener(WebInspector.TimelineModel.Events.RecordAdded, this._scheduleRefresh, this);
-    model.addEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this._update, this);
+    model.addEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this._reset, this);
 }
 
 WebInspector.TimelineOverviewPane.MinSelectableSize = 12;
@@ -277,7 +277,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._topPaneSidebarElement.style.width = width + "px";
     },
 
-    reset: function()
+    _reset: function()
     {
         this._windowStartTime = 0;
         this._windowEndTime = Infinity;
@@ -286,6 +286,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._overviewGrid.updateDividers(true, this._overviewCalculator);
         if (this._verticalOverview)
             this._verticalOverview.reset();
+        this._update();
     },
 
     scrollWindow: function(event)
