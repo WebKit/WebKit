@@ -1,3 +1,16 @@
+2012-03-29  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Move ResourceHandle to WebCore/platform/network/chromium
+        https://bugs.webkit.org/show_bug.cgi?id=82657
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * src/ResourceHandle.cpp: Removed.
+        * src/ResourceHandleInternal.h: Removed.
+        * src/WrappedResourceRequest.h: Removed.
+        * src/WrappedResourceResponse.h: Removed.
+
 2012-03-29  Dmitry Lomov  <dslomov@google.com>
 
         [Chromium] WorkerFileSystemContextObserver can reference a deleted WorkerFileSystemCallbacksBridge.
