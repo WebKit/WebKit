@@ -4232,7 +4232,13 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 - (void)setMainFrameURL:(NSString *)URLString
 {
-    [[self mainFrame] loadRequest: [NSURLRequest requestWithURL: [NSURL _web_URLWithDataAsString: URLString]]];
+    NSURL *url;
+    if ([URLString hasPrefix:@"/"])
+        url = [NSURL fileURLWithPath:URLString];
+    else
+        url = [NSURL _web_URLWithDataAsString:URLString];
+
+    [[self mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
 - (NSString *)mainFrameURL

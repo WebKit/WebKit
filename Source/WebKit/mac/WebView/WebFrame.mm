@@ -1400,7 +1400,14 @@ static bool needsMicrosoftMessengerDOMDocumentWorkaround()
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return;
-    coreFrame->loader()->load(request, false);
+
+    ResourceRequest resourceRequest(request);
+    // Modifying the original request here breaks -[WebDataSource initialRequest], but we don't want
+    // to implement this "path as URL" quirk anywhere except for API boundary.
+    if (!resourceRequest.url().isValid())
+        resourceRequest.setURL([NSURL fileURLWithPath:[[request URL] absoluteString]]);
+
+    coreFrame->loader()->load(resourceRequest, false);
 }
 
 static NSURL *createUniqueWebDataURL()
@@ -1454,14 +1461,14 @@ static NSURL *createUniqueWebDataURL()
 {
     WebCoreThreadViolationCheckRoundTwo();
 
-    [self _loadHTMLString:string baseURL:baseURL unreachableURL:nil];
+    [self _loadHTMLString:string baseURL:[baseURL _webkit_URLFromURLOrPath] unreachableURL:nil];
 }
 
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
 {
     WebCoreThreadViolationCheckRoundTwo();
 
-    [self _loadHTMLString:string baseURL:baseURL unreachableURL:unreachableURL];
+    [self _loadHTMLString:string baseURL:[baseURL _webkit_URLFromURLOrPath] unreachableURL:[unreachableURL _webkit_URLFromURLOrPath]];
 }
 
 - (void)loadArchive:(WebArchive *)archive
