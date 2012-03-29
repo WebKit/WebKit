@@ -1,3 +1,24 @@
+2012-03-29  Dmitry Lomov  <dslomov@google.com>
+
+        [Chromium] WorkerFileSystemContextObserver can reference a deleted WorkerFileSystemCallbacksBridge.
+        https://bugs.webkit.org/show_bug.cgi?id=82565
+        
+        WorkerFileSystemCallbacksBridge relies on a cleanUpAfterCallback being called
+        prior to the disposal of the bridge to ensure that WorkerFileSystemContextObserver
+        is unsubscribed and deleted. However cleanUpAfterCallback will only execute if the bridge's
+        callback has executed on the worker thread, and this might not be the case if the worker
+        terminates.
+
+        This patch fixes this by maintaining a RefPtr from WorkerFileSystemContextObserver to
+        WorkerFileSystemCallbacksBridge. This ensures that bridge is not deleted while observer is alive.
+
+        Reviewed by David Levin.
+
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (WebKit::WorkerFileSystemContextObserver::create):
+        (WebKit::WorkerFileSystemContextObserver::WorkerFileSystemContextObserver):
+        (WorkerFileSystemContextObserver):
+
 2012-03-29  Adam Barth  <abarth@webkit.org>
 
         Move CPP files related to ResourceHandle to WebCore/platform
