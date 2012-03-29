@@ -1041,7 +1041,12 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, c
     
     if (m_uncommittedChanges & AnimationChanged)
         updateLayerAnimations();
-    
+
+    // Updating the contents scale can cause parts of the layer to be invalidated,
+    // so make sure to update the contents scale before updating the dirty rects.
+    if (m_uncommittedChanges & ContentsScaleChanged)
+        updateContentsScale(pageScaleFactor, positionRelativeToBase);
+
     if (m_uncommittedChanges & DirtyRectsChanged)
         repaintLayerDirtyRects();
     
@@ -1056,9 +1061,6 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, c
     
     if (m_uncommittedChanges & AcceleratesDrawingChanged)
         updateAcceleratesDrawing();
-    
-    if (m_uncommittedChanges & ContentsScaleChanged)
-        updateContentsScale(pageScaleFactor, positionRelativeToBase);
 }
 
 void GraphicsLayerCA::commitLayerChangesAfterSublayers()
