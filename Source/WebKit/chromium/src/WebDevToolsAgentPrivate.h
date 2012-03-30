@@ -35,14 +35,22 @@
 
 namespace WebKit {
 class WebFrameImpl;
+class WebSize;
 
 class WebDevToolsAgentPrivate : public WebDevToolsAgent {
 public:
-    // Notifications from FrameLoaderClientImpl:
 
+    // Notification from FrameLoaderClientImpl:
     // The window object for the frame has been cleared of any extra properties
     // that may have been set by script from the previously loaded document.
     virtual void didClearWindowObject(WebFrameImpl*) = 0;
+
+    // A new FrameView has been created for the specified WebFrame using
+    // the Frame::createView() call.
+    virtual void mainFrameViewCreated(WebFrameImpl*) = 0;
+
+    // Returns true if the device metrics override mode is enabled.
+    virtual bool metricsOverridden() = 0;
 };
 
 } // namespace WebKit

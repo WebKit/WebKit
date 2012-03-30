@@ -128,6 +128,23 @@ void InspectorClientImpl::clearBrowserCookies()
         agent->clearBrowserCookies();
 }
 
+bool InspectorClientImpl::canOverrideDeviceMetrics()
+{
+    return true;
+}
+
+void InspectorClientImpl::overrideDeviceMetrics(int width, int height, float fontScaleFactor)
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->overrideDeviceMetrics(width, height, fontScaleFactor);
+}
+
+void InspectorClientImpl::autoZoomPageToFitWidth()
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->autoZoomPageToFitWidth();
+}
+
 WebDevToolsAgentImpl* InspectorClientImpl::devToolsAgent()
 {
     return static_cast<WebDevToolsAgentImpl*>(m_inspectedWebView->devToolsAgent());

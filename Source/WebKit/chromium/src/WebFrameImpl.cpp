@@ -142,6 +142,7 @@
 #include "WebDOMEvent.h"
 #include "WebDOMEventListener.h"
 #include "WebDataSourceImpl.h"
+#include "WebDevToolsAgentPrivate.h"
 #include "WebDocument.h"
 #include "WebFindOptions.h"
 #include "WebFormElement.h"
@@ -2083,6 +2084,9 @@ void WebFrameImpl::createFrameView()
     m_frame->createView(webView->size(), Color::white, webView->isTransparent(),  webView->fixedLayoutSize(), isMainFrame ? webView->isFixedLayoutModeEnabled() : 0);
     if (webView->shouldAutoResize() && isMainFrame)
         m_frame->view()->enableAutoSizeMode(true, webView->minAutoSize(), webView->maxAutoSize());
+
+    if (isMainFrame && webView->devToolsAgentPrivate())
+        webView->devToolsAgentPrivate()->mainFrameViewCreated(this);
 }
 
 WebFrameImpl* WebFrameImpl::fromFrame(Frame* frame)

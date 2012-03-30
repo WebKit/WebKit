@@ -400,6 +400,17 @@ public:
         return m_initialNavigationPolicy;
     }
 
+    // Sets the emulated text zoom factor
+    // (may not be 1 in the device metrics emulation mode).
+    void setEmulatedTextZoomFactor(float);
+
+    // Returns the emulated text zoom factor
+    // (which may not be 1 in the device metrics emulation mode).
+    float emulatedTextZoomFactor() const
+    {
+        return m_emulatedTextZoomFactor;
+    }
+
     // Determines whether a page should e.g. be opened in a background tab.
     // Returns false if it has no opinion, in which case it doesn't set *policy.
     static bool navigationPolicyFromMouseEvent(
@@ -492,6 +503,9 @@ public:
     void enterFullScreenForElement(WebCore::Element*);
     void exitFullScreenForElement(WebCore::Element*);
 
+    // Exposed for the purpose of overriding device metrics.
+    void sendResizeEventAndRepaint();
+
     // Exposed for testing purposes.
     bool hasHorizontalScrollbar();
     bool hasVerticalScrollbar();
@@ -547,7 +561,6 @@ private:
                                                const WebPoint& screenPoint,
                                                DragAction);
 
-    void sendResizeEventAndRepaint();
     void configureAutoResizeMode();
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -724,6 +737,8 @@ private:
     OwnPtr<WebGraphicsContext3D> m_temporaryOnscreenGraphicsContext3D;
     OwnPtr<DeviceOrientationClientProxy> m_deviceOrientationClientProxy;
     OwnPtr<GeolocationClientProxy> m_geolocationClientProxy;
+
+    float m_emulatedTextZoomFactor;
 
 #if ENABLE(MEDIA_STREAM)
     UserMediaClientImpl m_userMediaClientImpl;

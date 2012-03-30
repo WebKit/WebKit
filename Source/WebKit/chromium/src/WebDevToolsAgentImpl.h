@@ -35,6 +35,7 @@
 
 #include "WebDevToolsAgentPrivate.h"
 #include "WebPageOverlay.h"
+#include "platform/WebSize.h"
 
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
@@ -42,6 +43,7 @@
 namespace WebCore {
 class Document;
 class Frame;
+class FrameView;
 class GraphicsContext;
 class InspectorClient;
 class InspectorController;
@@ -50,6 +52,7 @@ class Node;
 
 namespace WebKit {
 
+class DeviceMetricsSupport;
 class WebDevToolsAgentClient;
 class WebFrame;
 class WebFrameImpl;
@@ -68,7 +71,9 @@ public:
     virtual ~WebDevToolsAgentImpl();
 
     // WebDevToolsAgentPrivate implementation.
-    virtual void didClearWindowObject(WebFrameImpl* frame);
+    virtual void didClearWindowObject(WebFrameImpl*);
+    virtual void mainFrameViewCreated(WebFrameImpl*);
+    virtual bool metricsOverridden();
 
     // WebDevToolsAgent implementation.
     virtual void attach();
@@ -95,6 +100,9 @@ public:
     virtual void clearBrowserCache();
     virtual void clearBrowserCookies();
 
+    virtual void overrideDeviceMetrics(int width, int height, float fontScaleFactor);
+    virtual void autoZoomPageToFitWidth();
+
     int hostId() { return m_hostId; }
 
     // WebPageOverlay
@@ -108,6 +116,7 @@ private:
     WebDevToolsAgentClient* m_client;
     WebViewImpl* m_webViewImpl;
     bool m_attached;
+    OwnPtr<DeviceMetricsSupport> m_metricsSupport;
 };
 
 } // namespace WebKit

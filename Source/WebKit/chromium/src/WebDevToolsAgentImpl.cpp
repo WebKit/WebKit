@@ -32,6 +32,8 @@
 #include "WebDevToolsAgentImpl.h"
 
 #include "ExceptionCode.h"
+#include "Frame.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "InjectedScriptHost.h"
 #include "InspectorBackendDispatcher.h"
@@ -67,6 +69,13 @@
 #include <wtf/OwnPtr.h>
 
 using namespace WebCore;
+
+namespace OverlayZOrders {
+static const int viewportGutter = 97;
+
+// Use 99 as a big z-order number so that highlight is above other overlays.
+static const int highlight = 99;
+}
 
 namespace WebKit {
 
@@ -173,6 +182,110 @@ private:
     OwnPtr<WebDevToolsAgent::MessageDescriptor> m_descriptor;
 };
 
+class DeviceMetricsSupport : public WebPageOverlay {
+public:
+    DeviceMetricsSupport(WebViewImpl* webView)
+        : m_webView(webView)
+    {
+        m_webView->addPageOverlay(this, OverlayZOrders::viewportGutter);
+    }
+
+    ~DeviceMetricsSupport()
+    {
+        restore();
+        m_webView->removePageOverlay(this);
+    }
+
+    void setDeviceMetrics(int width, int height, float textZoomFactor)
+    {
+        WebCore::FrameView* view = frameView();
+        if (!view)
+            return;
+
+        m_emulatedFrameSize = WebSize(width, height);
+        m_webView->setEmulatedTextZoomFactor(textZoomFactor);
+        applySizeOverrideInternal(view, width, height);
+        autoZoomPageToFitWidth(view->frame());
+
+        m_webView->sendResizeEventAndRepaint();
+    }
+
+    void autoZoomPageToFitWidth(Frame* frame)
+    {
+        if (!frame)
+            return;
+
+        m_webView->setZoomLevel(false, 0);
+
+        float zoomFactor = static_cast<float>(m_emulatedFrameSize.width) / frame->view()->contentsWidth();
+        frame->setPageAndTextZoomFactors(zoomFactor, m_webView->emulatedTextZoomFactor());
+    }
+
+    void applySizeOverrideIfNecessary()
+    {
+        FrameView* view = frameView();
+        if (!view)
+            return;
+
+        applySizeOverrideInternal(view, m_emulatedFrameSize.width, m_emulatedFrameSize.height);
+    }
+
+private:
+    void restore()
+    {
+        m_webView->setZoomLevel(false, 0);
+        m_webView->sendResizeEventAndRepaint();
+        m_webView->setEmulatedTextZoomFactor(1);
+
+        WebCore::FrameView* view = frameView();
+        if (!view)
+            return;
+
+        view->setHorizontalScrollbarLock(false);
+        view->setVerticalScrollbarLock(false);
+        view->setScrollbarModes(ScrollbarAuto, ScrollbarAuto, false, false);
+        view->resize(IntSize(m_webView->size()));
+    }
+
+    void applySizeOverrideInternal(FrameView* frameView, int overrideWidth, int overrideHeight)
+    {
+        frameView->setScrollbarModes(ScrollbarAlwaysOn, ScrollbarAlwaysOn, true, true);
+        if (Scrollbar* verticalBar = frameView->verticalScrollbar())
+            overrideWidth += !verticalBar->isOverlayScrollbar() ? verticalBar->width() : 0;
+        if (Scrollbar* horizontalBar = frameView->horizontalScrollbar())
+            overrideHeight += !horizontalBar->isOverlayScrollbar() ? horizontalBar->height() : 0;
+
+        if (IntSize(overrideWidth, overrideHeight) != frameView->size())
+            frameView->resize(overrideWidth, overrideHeight);
+
+        Document* doc = frameView->frame()->document();
+        doc->recalcStyle(Node::Force);
+        doc->updateLayout();
+    }
+
+    virtual void paintPageOverlay(WebCanvas* canvas)
+    {
+        FrameView* frameView = this->frameView();
+        if (!frameView)
+            return;
+
+        GraphicsContextBuilder builder(canvas);
+        GraphicsContext& gc = builder.context();
+        gc.clipOut(IntRect(IntPoint(), frameView->size()));
+        gc.setFillColor(Color::darkGray, ColorSpaceDeviceRGB);
+        gc.drawRect(IntRect(IntPoint(), m_webView->size()));
+    }
+
+    WebCore::FrameView* frameView()
+    {
+        return m_webView->mainFrameImpl() ? m_webView->mainFrameImpl()->frameView() : 0;
+    }
+
+    WebViewImpl* m_webView;
+    WebSize m_emulatedFrameSize;
+};
+
+
 WebDevToolsAgentImpl::WebDevToolsAgentImpl(
     WebViewImpl* webViewImpl,
     WebDevToolsAgentClient* client)
@@ -231,6 +344,36 @@ void WebDevToolsAgentImpl::didClearWindowObject(WebFrameImpl* webframe)
         proxy->setContextDebugId(m_hostId);
 }
 
+void WebDevToolsAgentImpl::mainFrameViewCreated(WebFrameImpl* webFrame)
+{
+    if (m_metricsSupport)
+        m_metricsSupport->applySizeOverrideIfNecessary();
+}
+
+bool WebDevToolsAgentImpl::metricsOverridden()
+{
+    return !!m_metricsSupport;
+}
+
+void WebDevToolsAgentImpl::overrideDeviceMetrics(int width, int height, float fontScaleFactor)
+{
+    if (!width && !height && fontScaleFactor == 1) {
+        if (m_metricsSupport)
+            m_metricsSupport.clear();
+        return;
+    }
+
+    if (!m_metricsSupport)
+        m_metricsSupport = adoptPtr(new DeviceMetricsSupport(m_webViewImpl));
+    m_metricsSupport->setDeviceMetrics(width, height, fontScaleFactor);
+}
+
+void WebDevToolsAgentImpl::autoZoomPageToFitWidth()
+{
+    if (m_metricsSupport)
+        m_metricsSupport->autoZoomPageToFitWidth(m_webViewImpl->mainFrameImpl()->frame());
+}
+
 void WebDevToolsAgentImpl::dispatchOnInspectorBackend(const WebString& message)
 {
     inspectorController()->dispatchMessageFromFrontend(message);
@@ -282,8 +425,7 @@ void WebDevToolsAgentImpl::paintPageOverlay(WebCanvas* canvas)
 
 void WebDevToolsAgentImpl::highlight()
 {
-    // Use 99 as a big z-order number so that highlight is above other overlays.
-    m_webViewImpl->addPageOverlay(this, 99);
+    m_webViewImpl->addPageOverlay(this, OverlayZOrders::highlight);
 }
 
 void WebDevToolsAgentImpl::hideHighlight()

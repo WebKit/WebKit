@@ -136,6 +136,7 @@
 #include "WebViewClient.h"
 #include "WheelEvent.h"
 #include "cc/CCProxy.h"
+#include "painting/GraphicsContextBuilder.h"
 #include "platform/WebDragData.h"
 #include "platform/WebImage.h"
 #include "platform/WebKitPlatformSupport.h"
@@ -365,6 +366,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #endif
     , m_deviceOrientationClientProxy(adoptPtr(new DeviceOrientationClientProxy(client ? client->deviceOrientationClient() : 0)))
     , m_geolocationClientProxy(adoptPtr(new GeolocationClientProxy(client ? client->geolocationClient() : 0)))
+    , m_emulatedTextZoomFactor(1)
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaClientImpl(this)
 #endif
@@ -1260,8 +1262,11 @@ void WebViewImpl::resize(const WebSize& newSize)
         return;
     m_size = newSize;
 
-    if (mainFrameImpl()->frameView())
-        mainFrameImpl()->frameView()->resize(m_size.width, m_size.height);
+    if (!devToolsAgentPrivate() || !devToolsAgentPrivate()->metricsOverridden()) {
+        WebFrameImpl* webFrame = mainFrameImpl();
+        if (webFrame->frameView())
+            webFrame->frameView()->resize(newSize.width, newSize.height);
+    }
 
     sendResizeEventAndRepaint();
 }
@@ -2218,9 +2223,9 @@ double WebViewImpl::setZoomLevel(bool textOnly, double zoomLevel)
     else {
         float zoomFactor = static_cast<float>(zoomLevelToZoomFactor(m_zoomLevel));
         if (textOnly)
-            frame->setPageAndTextZoomFactors(1, zoomFactor);
+            frame->setPageAndTextZoomFactors(1, zoomFactor * m_emulatedTextZoomFactor);
         else
-            frame->setPageAndTextZoomFactors(zoomFactor, 1);
+            frame->setPageAndTextZoomFactors(zoomFactor, m_emulatedTextZoomFactor);
     }
     return m_zoomLevel;
 }
@@ -2990,6 +2995,14 @@ bool WebViewImpl::useExternalPopupMenus()
     return shouldUseExternalPopupMenus;
 }
 
+void WebViewImpl::setEmulatedTextZoomFactor(float textZoomFactor)
+{
+    m_emulatedTextZoomFactor = textZoomFactor;
+    Frame* frame = mainFrameImpl()->frame();
+    if (frame)
+        frame->setPageAndTextZoomFactors(frame->pageZoomFactor(), m_emulatedTextZoomFactor);
+}
+
 bool WebViewImpl::navigationPolicyFromMouseEvent(unsigned short button,
                                                  bool ctrl, bool shift,
                                                  bool alt, bool meta,
@@ -3431,7 +3444,7 @@ void WebViewImpl::updateLayerTreeViewport()
         layerAdjustX = -view->contentsSize().width() + view->visibleContentRect(false).width();
     }
     m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, pageScaleFactor(), layerAdjustX);
-    m_layerTreeView.setViewportSize(visibleRect.size());
+    m_layerTreeView.setViewportSize(size());
     m_layerTreeView.setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 }
 
