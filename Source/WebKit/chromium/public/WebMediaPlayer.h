@@ -116,7 +116,7 @@ public:
 
     virtual void setSize(const WebSize&) = 0;
 
-    virtual void paint(WebCanvas*, const WebRect&) = 0;
+    virtual void paint(WebCanvas*, const WebRect&, uint8_t alpha) = 0;
 
     // True if the loaded media has a playable video/audio track.
     virtual bool hasVideo() const = 0;

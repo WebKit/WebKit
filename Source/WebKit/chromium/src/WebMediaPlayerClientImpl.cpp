@@ -16,6 +16,7 @@
 #include "KURL.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
+#include "PlatformContextSkia.h"
 #include "RenderView.h"
 #include "TimeRanges.h"
 #include "VideoFrameChromium.h"
@@ -39,11 +40,6 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
-#endif
-
-// WebCommon.h defines WEBKIT_USING_SKIA so this has to be included last.
-#if WEBKIT_USING_SKIA
-#include "PlatformContextSkia.h"
 #endif
 
 #include <wtf/Assertions.h>
@@ -495,20 +491,9 @@ void WebMediaPlayerClientImpl::paintCurrentFrameInContext(GraphicsContext* conte
     // Since we're accessing platformContext() directly we have to manually
     // check.
     if (m_webMediaPlayer && !context->paintingDisabled()) {
-#if WEBKIT_USING_SKIA
         PlatformGraphicsContext* platformContext = context->platformContext();
         WebCanvas* canvas = platformContext->canvas();
-
-        canvas->saveLayerAlpha(0, platformContext->getNormalizedAlpha());
-
-        m_webMediaPlayer->paint(canvas, rect);
-
-        canvas->restore();
-#elif WEBKIT_USING_CG
-        m_webMediaPlayer->paint(context->platformContext(), rect);
-#else
-        notImplemented();
-#endif
+        m_webMediaPlayer->paint(canvas, rect, platformContext->getNormalizedAlpha());
     }
 }
 

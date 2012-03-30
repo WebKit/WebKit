@@ -1,3 +1,17 @@
+2012-03-30  Mike Reed  <reed@google.com>
+
+        pass alpha directly to player, rather than creating a layer (for performance)
+        https://bugs.webkit.org/show_bug.cgi?id=82360
+
+        Reviewed by Stephen White.
+
+        Performance change, existing webkit tests apply.
+
+        * public/WebMediaPlayer.h:
+        (WebMediaPlayer):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::paintCurrentFrameInContext):
+
 2012-03-30  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Add a "preview" state to Page Visibility API implementation
