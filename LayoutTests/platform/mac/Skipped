@@ -689,6 +689,7 @@ fast/frames/flattening/frameset-flattening-subframesets.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82749
 http/tests/cookies/simple-cookies-expired.html
+http/tests/cookies/simple-cookies-max-age.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82750
 http/tests/navigation/javascriptlink-frames.html
