@@ -23,20 +23,15 @@
 
 namespace WebCore {
 
-PlatformMouseEvent::PlatformMouseEvent(const IntPoint& eventPos, const IntPoint& globalPos, const MouseEventType type, int clickCount, MouseButton button, MouseInputMethod method)
-    : m_position(eventPos)
-    , m_globalPosition(globalPos)
+PlatformMouseEvent::PlatformMouseEvent(const IntPoint& eventPosition, const IntPoint& globalPosition, const PlatformEvent::Type type, int clickCount, MouseButton button, MouseInputMethod method)
+    : PlatformEvent(type, false, false, false, false, currentTime())
+    , m_position(eventPosition)
+    , m_globalPosition(globalPosition)
     , m_button(button)
-    , m_eventType(type)
     , m_clickCount(clickCount)
-    , m_shiftKey(false)
-    , m_ctrlKey(false)
-    , m_altKey(false)
-    , m_metaKey(false)
-    , m_timestamp(currentTime())
     , m_inputMethod(method)
 {
-    ASSERT(type != MouseEventScroll);
+    ASSERT(type != MouseScroll);
 }
 
 } // namespace WebCore

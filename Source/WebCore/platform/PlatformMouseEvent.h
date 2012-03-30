@@ -55,6 +55,10 @@ namespace WebCore {
     
     // These button numbers match the ones used in the DOM API, 0 through 2, except for NoButton which isn't specified.
     enum MouseButton { NoButton = -1, LeftButton, MiddleButton, RightButton };
+
+#if PLATFORM(BLACKBERRY)
+    enum MouseInputMethod { PointingDevice, TouchScreen };
+#endif
     
     class PlatformMouseEvent : public PlatformEvent {
     public:
@@ -125,6 +129,10 @@ namespace WebCore {
         PlatformMouseEvent(const wxMouseEvent&, const wxPoint& globalPoint, int clickCount);
 #endif
 
+#if PLATFORM(BLACKBERRY)
+        PlatformMouseEvent(const IntPoint& eventPosition, const IntPoint& globalPosition, const PlatformEvent::Type, int clickCount, MouseButton, MouseInputMethod = PointingDevice);
+        MouseInputMethod inputMethod() const { return m_inputMethod; }
+#endif
     protected:
         IntPoint m_position;
         IntPoint m_globalPosition;
@@ -139,6 +147,8 @@ namespace WebCore {
         int m_eventNumber;
 #elif PLATFORM(WIN)
         bool m_didActivateWebView;
+#elif PLATFORM(BLACKBERRY)
+        MouseInputMethod m_inputMethod;
 #endif
     };
 
