@@ -74,7 +74,7 @@ namespace WebCore {
     class GraphicsLayer;
 #endif
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
     class ColorChooser;
     class ColorChooserClient;
 #endif
@@ -215,7 +215,7 @@ namespace WebCore {
 
         virtual bool paintCustomOverhangArea(GraphicsContext*, const IntRect&, const IntRect&, const IntRect&);
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
         virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) = 0;
 #endif
 

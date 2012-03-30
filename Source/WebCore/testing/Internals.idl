@@ -63,7 +63,7 @@ module window {
 
         boolean attached(in Node node) raises(DOMException);
 
-#if defined(ENABLE_INPUT_COLOR) && ENABLE_INPUT_COLOR
+#if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
         void selectColorInColorChooser(in Element element, in DOMString colorValue);
 #endif
 

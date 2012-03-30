@@ -625,7 +625,7 @@ input[type="radio"] {
     -webkit-box-sizing: border-box;
 }
 
-#if defined(ENABLE_INPUT_COLOR) && ENABLE_INPUT_COLOR
+#if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
 
 input[type="color"] {
     -webkit-appearance: square-button;
@@ -666,7 +666,7 @@ input[type="color"][list]::-webkit-color-swatch {
 
 #endif // defined(ENABLE_DATALIST) && ENABLE_DATALIST
 
-#endif // defined(ENABLE_INPUT_COLOR) && ENABLE_INPUT_COLOR
+#endif // defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
 
 select {
     -webkit-appearance: menulist;

@@ -50,7 +50,7 @@
 #include <v8.h>
 #endif
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"
 #endif
 
@@ -200,7 +200,7 @@ public:
     virtual void enumerateChosenDirectory(FileChooser*) { }
 #endif
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
     virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) { return nullptr; }
 #endif
 

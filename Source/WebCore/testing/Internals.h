@@ -90,7 +90,7 @@ public:
     Node* traverseNextNodeInReifiedTree(Node*, ExceptionCode&);
     Node* traversePreviousNodeInReifiedTree(Node*, ExceptionCode&);
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
     void selectColorInColorChooser(Element*, const String& colorValue);
 #endif
 

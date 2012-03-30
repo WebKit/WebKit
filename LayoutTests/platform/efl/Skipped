@@ -299,7 +299,7 @@ fast/media/print-restores-previous-mediatype.html
 # ENABLE(SHADOW_DOM) is disabled
 fast/dom/shadow
 
-# defined(ENABLE_INPUT_COLOR) is disabled
+# defined(ENABLE_INPUT_TYPE_COLOR) is disabled
 fast/forms/color/input-color-onchange-event.html
 
 # EFL's LayoutTestController does not implement copy{Encoded,Decoded}HostName

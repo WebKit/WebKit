@@ -34,7 +34,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"
 #include "ColorChooserClient.h"
 #include "ColorChooserProxy.h"
@@ -72,7 +72,7 @@
 #include "V8Proxy.h"
 #endif
 #include "WebAccessibilityObject.h"
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
 #include "WebColorChooser.h"
 #include "WebColorChooserClientImpl.h"
 #endif
@@ -698,7 +698,7 @@ void ChromeClientImpl::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64
     ASSERT_NOT_REACHED();
 }
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
 PassOwnPtr<ColorChooser> ChromeClientImpl::createColorChooser(ColorChooserClient* chooserClient, const Color& initialColor)
 {
     WebViewClient* client = m_webView->client();

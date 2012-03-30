@@ -67,7 +67,7 @@ canvas/philip/tests/2d.drawImage.outsidesource.html
 #       Disabled features.                                                    #
 # =========================================================================== #
 
-# ENABLE(INPUT_COLOR) is disabled.
+# ENABLE_INPUT_TYPE_COLOR is disabled.
 fast/forms/color
 
 # ENABLE(INPUT_TYPE_*) are not enabled.

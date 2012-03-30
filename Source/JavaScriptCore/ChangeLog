@@ -1,3 +1,12 @@
+2012-03-30  Keishi Hattori  <keishi@webkit.org>
+
+        Change ENABLE_INPUT_COLOR to ENABLE_INPUT_TYPE_COLOR and enable it for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=80972
+
+        Reviewed by Kent Tamura.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-03-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Refactor recompileAllJSFunctions() to be less expensive

@@ -682,11 +682,11 @@ AC_MSG_RESULT([$enable_indexed_database])
 
 # check whether to enable the color input
 AC_MSG_CHECKING([whether to enable the color input])
-AC_ARG_ENABLE(input_color,
-              AC_HELP_STRING([--enable-input-color],
+AC_ARG_ENABLE(input_type_color,
+              AC_HELP_STRING([--enable-input-type-color],
                              [enable the color input [default=no]]),
-              [],[enable_input_color="no"])
-AC_MSG_RESULT([$enable_input_color])
+              [],[enable_input_type_color="no"])
+AC_MSG_RESULT([$enable_input_type_color])
 
 # check whether to enable the speech input API
 AC_MSG_CHECKING([whether to enable the speech input API])
@@ -1352,7 +1352,7 @@ AM_CONDITIONAL([ENABLE_QUOTA],[test "$enable_quota" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_IMAGE_RESIZER],[test "$enable_image_resizer" = "yes"])
 AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
-AM_CONDITIONAL([ENABLE_INPUT_COLOR],[test "$enable_input_color" = "yes"])
+AM_CONDITIONAL([ENABLE_INPUT_TYPE_COLOR],[test "$enable_input_type_color" = "yes"])
 AM_CONDITIONAL([ENABLE_INPUT_SPEECH],[test "$enable_input_speech" = "yes"])
 AM_CONDITIONAL([ENABLE_SCRIPTED_SPEECH],[test "$enable_scripted_speech" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
@@ -1475,7 +1475,7 @@ Features:
  Opcode stats                                             : $enable_opcode_stats
  Shadow DOM support                                       : $enable_shadow_dom
  SharedWorkers support                                    : $enable_shared_workers
- Color input support                                      : $enable_input_color
+ Color input support                                      : $enable_input_type_color
  Speech input support                                     : $enable_input_speech
  Scripted speech support                                  : $enable_scripted_speech
  SVG support                                              : $enable_svg

@@ -2122,7 +2122,7 @@ __ZN7WebCore14ResourceHandle24setDefaultStorageSessionEP21__CFURLStorageSession
 __ZN7WebCore14ResourceHandle24setDefaultStorageSessionEPK21__CFURLStorageSession
 #endif
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
 __ZN7WebCore5ColorC1ERKN3WTF6StringE
 __ZN7WebCore16HTMLInputElement25selectColorInColorChooserERKNS_5ColorE
 #endif

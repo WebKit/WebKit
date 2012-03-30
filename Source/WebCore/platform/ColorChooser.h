@@ -30,7 +30,7 @@
 #ifndef ColorChooser_h
 #define ColorChooser_h
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
 
 namespace WebCore {
 
@@ -46,6 +46,6 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(INPUT_COLOR)
+#endif // ENABLE(INPUT_TYPE_COLOR)
 
 #endif // ColorChooser_h

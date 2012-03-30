@@ -31,7 +31,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
 
 namespace WebKit {
 
@@ -49,6 +49,6 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(INPUT_COLOR)
+#endif // ENABLE(INPUT_TYPE_COLOR)
 
 #endif // ColorChooserProxy_h

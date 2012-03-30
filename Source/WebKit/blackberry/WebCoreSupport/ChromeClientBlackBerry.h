@@ -103,7 +103,7 @@ public:
     virtual void needTouchEvents(bool);
 #endif
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
     virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&);
     void openColorChooser(ColorChooser*, const Color&) { }
     void cleanupColorChooser(ColorChooser*) { }

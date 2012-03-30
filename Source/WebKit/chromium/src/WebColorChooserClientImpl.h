@@ -28,7 +28,7 @@
 
 #include "WebColorChooserClient.h"
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
 
 namespace WebCore {
 class ColorChooserClient;
@@ -50,6 +50,6 @@ private:
 
 }
 
-#endif // ENABLE(INPUT_COLOR)
+#endif // ENABLE(INPUT_TYPE_COLOR)
 
 #endif // WebColorChooserClientImpl_h

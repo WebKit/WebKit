@@ -36,7 +36,7 @@ class NSView;
 namespace WebCore {
 
     class ChromeClient;
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
     class ColorChooser;
     class ColorChooserClient;
 #endif
@@ -149,7 +149,7 @@ namespace WebCore {
 
         void print(Frame*);
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
         PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color& initialColor);
 #endif
 

@@ -92,7 +92,7 @@ public:
     // inflexible because it's harder to add new input types if there is
     // scattered code with special cases for various types.
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
     virtual bool isColorControl() const;
 #endif
     virtual bool isCheckbox() const;
@@ -283,7 +283,7 @@ namespace InputTypeNames {
 
 const AtomicString& button();
 const AtomicString& checkbox();
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
 const AtomicString& color();
 #endif
 const AtomicString& date();

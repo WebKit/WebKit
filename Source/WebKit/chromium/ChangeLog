@@ -1,3 +1,21 @@
+2012-03-30  Keishi Hattori  <keishi@webkit.org>
+
+        Change ENABLE_INPUT_COLOR to ENABLE_INPUT_TYPE_COLOR and enable it for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=80972
+
+        Reviewed by Kent Tamura.
+
+        * features.gypi:
+        * src/ChromeClientImpl.cpp:
+        (WebKit):
+        * src/ChromeClientImpl.h:
+        (WebCore):
+        (ChromeClientImpl):
+        * src/ColorChooserProxy.cpp:
+        * src/ColorChooserProxy.h:
+        * src/WebColorChooserClientImpl.cpp:
+        * src/WebColorChooserClientImpl.h:
+
 2012-03-29  Adam Barth  <abarth@webkit.org>
 
         Unreviewed, rolling out r112572.

@@ -38,7 +38,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"
 #endif
 

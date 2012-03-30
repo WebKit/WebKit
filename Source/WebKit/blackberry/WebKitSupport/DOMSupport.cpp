@@ -165,7 +165,7 @@ bool isColorInputField(const Element* element)
 
     const HTMLInputElement* inputElement = static_cast<const HTMLInputElement*>(element);
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
     if (inputElement->isColorControl())
         return true;
 #endif

@@ -93,7 +93,7 @@ my (
     $iconDatabaseSupport,
     $imageResizerSupport,
     $indexedDatabaseSupport,
-    $inputColorSupport,
+    $inputTypeColorSupport,
     $inputSpeechSupport,
     $scriptedSpeechSupport,
     $inputTypeDateSupport,
@@ -224,14 +224,14 @@ my @features = (
     { option => "indexed-database", desc => "Toggle Indexed Database API support",
       define => "ENABLE_INDEXED_DATABASE", default => 0, value => \$indexedDatabaseSupport },
 
-    { option => "input-color", desc => "Color Input support",
-      define => "ENABLE_INPUT_COLOR", default => isBlackBerry(), value => \$inputColorSupport },
-
     { option => "input-speech", desc => "Speech Input API support",
       define => "ENABLE_INPUT_SPEECH", default => 0, value => \$inputSpeechSupport },
 
     { option => "scripted-speech", desc => "Scripted Speech API support",
       define => "ENABLE_SCRIPTED_SPEECH", default => 0, value => \$scriptedSpeechSupport },
+
+    { option => "input-type-color", desc => "Toggle color type <input> support",
+      define => "ENABLE_INPUT_TYPE_COLOR", default => isBlackBerry(), value => \$inputTypeColorSupport },
 
     { option => "input-type-date", desc => "Toggle date type <input> support",
       define => "ENABLE_INPUT_TYPE_DATE", default => 0, value => \$inputTypeDateSupport },

@@ -141,7 +141,7 @@ static BlackBerryInputType convertInputType(const HTMLInputElement* inputElement
         return InputTypeTelephone;
     if (inputElement->isURLField())
         return InputTypeURL;
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
     if (inputElement->isColorControl())
         return InputTypeColor;
 #endif

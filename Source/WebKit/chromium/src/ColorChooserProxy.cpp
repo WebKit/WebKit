@@ -30,7 +30,7 @@
 #include "WebColorChooser.h"
 #include "platform/WebColor.h"
 
-#if ENABLE(INPUT_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
 
 namespace WebKit {
 
@@ -59,4 +59,4 @@ void ColorChooserProxy::endChooser()
 
 }
 
-#endif // ENABLE(INPUT_COLOR)
+#endif // ENABLE(INPUT_TYPE_COLOR)
