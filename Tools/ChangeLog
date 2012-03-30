@@ -1,3 +1,17 @@
+2012-03-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Disable run-api-tests on release mac builds
+        https://bugs.webkit.org/show_bug.cgi?id=82788
+
+        Reviewed by Ryosuke Niwa.
+        
+        TestWebKitAPI crashes every time in release builds currently
+        (https://bugs.webkit.org/show_bug.cgi?id=82652) so disable
+        run-api-tests on mac release builders.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (unitTestsSupported):
+
 2012-03-30  Chang Shu  <cshu@webkit.org>
 
         Unreviewed. Update my email.
