@@ -1,3 +1,9 @@
+2012-03-30  Chang Shu  <cshu@webkit.org>
+
+        Unreviewed. Update my email.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-03-30  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash at WebCore::renderObjectContainsPosition(WebCore::RenderObject*, WebCore::Position const&)

@@ -398,7 +398,7 @@ reviewers_list = [
     Reviewer("Brent Fulgham", "bfulgham@webkit.org", "bfulgham"),
     Reviewer("Brian Weinstein", "bweinstein@apple.com", "bweinstein"),
     Reviewer("Cameron Zwarich", ["zwarich@apple.com", "cwzwarich@apple.com", "cwzwarich@webkit.org"]),
-    Reviewer("Chang Shu", ["cshu@webkit.org", "Chang.Shu@nokia.com"], "cshu"),
+    Reviewer("Chang Shu", ["cshu@webkit.org", "c.shu@sisa.samsung.com"], "cshu"),
     Reviewer("Chris Blumenberg", "cblu@apple.com", "cblu"),
     Reviewer("Chris Marrin", "cmarrin@apple.com", "cmarrin"),
     Reviewer("Chris Fleizach", "cfleizach@apple.com", "cfleizach"),
