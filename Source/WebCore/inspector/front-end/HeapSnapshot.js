@@ -861,24 +861,35 @@ WebInspector.HeapSnapshot.prototype = {
     _createContainmentEdgesArray: function()
     {
         // Copy edges to their own array.
-        this._containmentEdges = new Uint32Array(this._edgeCount * this._edgeFieldsCount);
+        var containmentEdges = this._containmentEdges = new Uint32Array(this._edgeCount * this._edgeFieldsCount);
+
+        // Peload fields into local variables for better performance.
+        var nodes = this._nodes;
+        var onlyNodes = this._onlyNodes;
+        var firstEdgeIndexOffset = this._firstEdgeIndexOffset;
+        var edgeFieldsCount = this._edgeFieldsCount;
+        var edgeToNodeOffset = this._edgeToNodeOffset;
+        var edgesCountOffset = this._edgesCountOffset;
+        var nodeTypeOffset = this._nodeTypeOffset;
+        var firstEdgeOffset = this._firstEdgeOffset;
+
         var edgeArrayIndex = 0;
         var srcIndex = this._rootNodeIndex;
-        while (srcIndex < this._nodes.length) {
-            var srcNodeNewIndex = this._nodes[srcIndex + this._nodeTypeOffset];
+        while (srcIndex < nodes.length) {
+            var srcNodeNewIndex = nodes[srcIndex + nodeTypeOffset];
             // Set index of first outgoing egde in the _containmentEdges array.
-            this._onlyNodes[srcNodeNewIndex + this._firstEdgeIndexOffset] = edgeArrayIndex;
+            onlyNodes[srcNodeNewIndex + firstEdgeIndexOffset] = edgeArrayIndex;
 
             // Now copy all edge information.
-            var edgesCount = this._nodes[srcIndex + this._edgesCountOffset];
-            srcIndex += this._firstEdgeOffset;
-            var nextNodeIndex = srcIndex + edgesCount * this._edgeFieldsCount;
+            var edgesCount = nodes[srcIndex + edgesCountOffset];
+            srcIndex += firstEdgeOffset;
+            var nextNodeIndex = srcIndex + edgesCount * edgeFieldsCount;
             while (srcIndex < nextNodeIndex) {
-                this._containmentEdges[edgeArrayIndex] = this._nodes[srcIndex];
+                containmentEdges[edgeArrayIndex] = nodes[srcIndex];
                 // Translate destination node indexes for the copied edges.
-                if (edgeArrayIndex % this._edgeFieldsCount === this._edgeToNodeOffset) {
-                    var toNodeIndex = this._containmentEdges[edgeArrayIndex];
-                    this._containmentEdges[edgeArrayIndex] = this._nodes[toNodeIndex + this._nodeTypeOffset];
+                if (edgeArrayIndex % edgeFieldsCount === edgeToNodeOffset) {
+                    var toNodeIndex = containmentEdges[edgeArrayIndex];
+                    containmentEdges[edgeArrayIndex] = nodes[toNodeIndex + nodeTypeOffset];
                 }
                 ++edgeArrayIndex;
                 ++srcIndex;
@@ -888,42 +899,50 @@ WebInspector.HeapSnapshot.prototype = {
 
     _buildRetainers: function()
     {
-        this._retainingNodes = new Uint32Array(this._edgeCount);
-        this._retainingEdges = new Uint32Array(this._edgeCount);
+        var retainingNodes = this._retainingNodes = new Uint32Array(this._edgeCount);
+        var retainingEdges = this._retainingEdges = new Uint32Array(this._edgeCount);
         // Index of the first retainer in the _retainingNodes and _retainingEdges
         // arrays. Addressed by retained node index.
-        this._firstRetainerIndex = new Uint32Array(this.nodeCount + 1);
+        var firstRetainerIndex = this._firstRetainerIndex = new Uint32Array(this.nodeCount + 1);
 
-        for (var toNodeFieldIndex = this._edgeToNodeOffset; toNodeFieldIndex < this._containmentEdges.length; toNodeFieldIndex += this._edgeFieldsCount) {
-            var toNodeIndex = this._containmentEdges[toNodeFieldIndex];
-            if (toNodeIndex % this._nodeFieldCount)
+        var containmentEdges = this._containmentEdges;
+        var edgeFieldsCount = this._edgeFieldsCount;
+        var nodeFieldCount = this._nodeFieldCount;
+        var edgeToNodeOffset = this._edgeToNodeOffset;
+        var onlyNodes = this._onlyNodes;
+        var firstEdgeIndexOffset = this._firstEdgeIndexOffset;
+
+        for (var toNodeFieldIndex = edgeToNodeOffset, l = containmentEdges.length; toNodeFieldIndex < l; toNodeFieldIndex += edgeFieldsCount) {
+            var toNodeIndex = containmentEdges[toNodeFieldIndex];
+            if (toNodeIndex % nodeFieldCount)
                 throw new Error("Invalid toNodeIndex " + toNodeIndex);
-            ++this._firstRetainerIndex[toNodeIndex / this._nodeFieldCount];
+            ++firstRetainerIndex[toNodeIndex / nodeFieldCount];
         }
-        for (var i = 0, firstUnusedRetainerSlot = 0; i < this.nodeCount; i++) {
-            var retainersCount = this._firstRetainerIndex[i];
-            this._firstRetainerIndex[i] = firstUnusedRetainerSlot;
-            this._retainingNodes[firstUnusedRetainerSlot] = retainersCount;
+        for (var i = 0, firstUnusedRetainerSlot = 0, l = this.nodeCount; i < l; i++) {
+            var retainersCount = firstRetainerIndex[i];
+            firstRetainerIndex[i] = firstUnusedRetainerSlot;
+            retainingNodes[firstUnusedRetainerSlot] = retainersCount;
             firstUnusedRetainerSlot += retainersCount;
         }
-        this._firstRetainerIndex[this.nodeCount] = this._retainingNodes.length;
+        firstRetainerIndex[this.nodeCount] = retainingNodes.length;
 
         var srcNodeIndex = 0;
-        var nextNodeFirstEdgeIndex = this._onlyNodes[this._firstEdgeIndexOffset];
-        while (srcNodeIndex < this._onlyNodes.length) {
+        var nextNodeFirstEdgeIndex = onlyNodes[firstEdgeIndexOffset];
+        var onlyNodesLength = onlyNodes.length;
+        while (srcNodeIndex < onlyNodesLength) {
             var firstEdgeIndex = nextNodeFirstEdgeIndex;
-            var nextNodeIndex = srcNodeIndex + this._nodeFieldCount;
-            var nextNodeFirstEdgeIndex = nextNodeIndex < this._onlyNodes.length
-                                       ? this._onlyNodes[nextNodeIndex + this._firstEdgeIndexOffset]
-                                       : this._containmentEdges.length;
-            for (var edgeIndex = firstEdgeIndex; edgeIndex < nextNodeFirstEdgeIndex; edgeIndex += this._edgeFieldsCount) {
-                var toNodeIndex = this._containmentEdges[edgeIndex + this._edgeToNodeOffset];
-                if (toNodeIndex % this._nodeFieldCount)
+            var nextNodeIndex = srcNodeIndex + nodeFieldCount;
+            var nextNodeFirstEdgeIndex = nextNodeIndex < onlyNodesLength
+                                       ? onlyNodes[nextNodeIndex + firstEdgeIndexOffset]
+                                       : containmentEdges.length;
+            for (var edgeIndex = firstEdgeIndex; edgeIndex < nextNodeFirstEdgeIndex; edgeIndex += edgeFieldsCount) {
+                var toNodeIndex = containmentEdges[edgeIndex + edgeToNodeOffset];
+                if (toNodeIndex % nodeFieldCount)
                     throw new Error("Invalid toNodeIndex " + toNodeIndex);
-                var firstRetainerSlotIndex = this._firstRetainerIndex[toNodeIndex / this._nodeFieldCount];
-                var nextUnusedRetainerSlotIndex = firstRetainerSlotIndex + (--this._retainingNodes[firstRetainerSlotIndex]);
-                this._retainingNodes[nextUnusedRetainerSlotIndex] = srcNodeIndex;
-                this._retainingEdges[nextUnusedRetainerSlotIndex] = edgeIndex;
+                var firstRetainerSlotIndex = firstRetainerIndex[toNodeIndex / nodeFieldCount];
+                var nextUnusedRetainerSlotIndex = firstRetainerSlotIndex + (--retainingNodes[firstRetainerSlotIndex]);
+                retainingNodes[nextUnusedRetainerSlotIndex] = srcNodeIndex;
+                retainingEdges[nextUnusedRetainerSlotIndex] = edgeIndex;
             }
             srcNodeIndex = nextNodeIndex;
         }
@@ -1060,26 +1079,35 @@ WebInspector.HeapSnapshot.prototype = {
 
     _bfs: function(list)
     {
+        // Peload fields into local variables for better performance.
+        var edgeFieldsCount = this._edgeFieldsCount;
+        var containmentEdges = this._containmentEdges;
+        var nodeFieldCount = this._nodeFieldCount;
+        var firstEdgeIndexOffset = this._firstEdgeIndexOffset;
+        var edgeToNodeOffset = this._edgeToNodeOffset;
+        var distancesToWindow = this._distancesToWindow;
+        var onlyNodes = this._onlyNodes;
+
         var index = 0;
-        var node = new WebInspector.HeapSnapshotNode(this);
         while (index < list.length) {
             var nodeIndex = list[index++]; // shift generates too much garbage.
             if (index > 100000) {
                 list = list.slice(index);
                 index = 0;
             }
-            var distance = this._distancesToWindow[nodeIndex] + 1;
-            node.nodeIndex = nodeIndex;
-            var edgesCount = node.edgesCount;
-            var edgeToNodeIndex = node._edgeIndexesStart() + this._edgeToNodeOffset;
-            for (var i = 0; i < edgesCount; ++i) {
-                var childNodeIndex = this._containmentEdges[edgeToNodeIndex];
-                if (childNodeIndex % this._nodeFieldCount)
+            var distance = distancesToWindow[nodeIndex] + 1;
+
+            var firstEdgeIndex = onlyNodes[nodeIndex + firstEdgeIndexOffset];
+            var edgesEnd = nodeIndex < onlyNodes.length
+                         ? onlyNodes[nodeIndex + nodeFieldCount + firstEdgeIndexOffset]
+                         : containmentEdges.length;
+            for (var edgeToNodeIndex = firstEdgeIndex + edgeToNodeOffset; edgeToNodeIndex < edgesEnd; edgeToNodeIndex += edgeFieldsCount) {
+                var childNodeIndex = containmentEdges[edgeToNodeIndex];
+                if (childNodeIndex % nodeFieldCount)
                     throw new Error("Invalid childNodeIndex: " + childNodeIndex);
-                edgeToNodeIndex += this._edgeFieldsCount;
-                if (childNodeIndex in this._distancesToWindow)
+                if (childNodeIndex in distancesToWindow)
                     continue;
-                this._distancesToWindow[childNodeIndex] = distance;
+                distancesToWindow[childNodeIndex] = distance;
                 list.push(childNodeIndex);
             }
         }
