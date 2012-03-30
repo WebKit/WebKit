@@ -194,6 +194,7 @@ public:
     // Parameterized attributes
     int lineForIndex(int);
     JSRetainPtr<JSStringRef> rangeForLine(int);
+    JSRetainPtr<JSStringRef> rangeForPosition(int x, int y);
     JSRetainPtr<JSStringRef> boundsForRange(unsigned location, unsigned length);
     void setSelectedTextRange(unsigned location, unsigned length);
     JSRetainPtr<JSStringRef> stringForRange(unsigned location, unsigned length);

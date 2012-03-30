@@ -835,13 +835,24 @@ JSStringRef AccessibilityUIElement::rangeForLine(int line)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityRangeForLineParameterizedAttribute forParameter:[NSNumber numberWithInt:line]];
-    if ([value isKindOfClass:[NSValue class]]) {
+    if ([value isKindOfClass:[NSValue class]])
         return [NSStringFromRange([value rangeValue]) createJSStringRef];
-    }
     END_AX_OBJC_EXCEPTIONS
     
     return 0;
 }
+
+JSStringRef AccessibilityUIElement::rangeForPosition(int x, int y)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityRangeForPositionParameterizedAttribute forParameter:[NSValue valueWithPoint:NSMakePoint(x, y)]];
+    if ([value isKindOfClass:[NSValue class]])
+        return [NSStringFromRange([value rangeValue]) createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
 
 JSStringRef AccessibilityUIElement::boundsForRange(unsigned location, unsigned length)
 {

@@ -191,6 +191,7 @@ public:
     // Parameterized attributes
     int lineForIndex(int);
     JSStringRef rangeForLine(int);
+    JSStringRef rangeForPosition(int x, int y);
     JSStringRef boundsForRange(unsigned location, unsigned length);
     void setSelectedTextRange(unsigned location, unsigned length);
     JSStringRef stringForRange(unsigned location, unsigned length);

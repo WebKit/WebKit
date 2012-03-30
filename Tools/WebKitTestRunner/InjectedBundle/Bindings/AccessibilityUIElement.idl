@@ -132,6 +132,7 @@ module WTR {
         DOMString parameterizedAttributeNames();
         int lineForIndex(in int index);
         DOMString rangeForLine(in int index);
+        DOMString rangeForPosition(in int x, in int y);
         DOMString boundsForRange(in unsigned long location, in unsigned long length);
         DOMString stringForRange(in unsigned long location, in unsigned long length);
         DOMString attributedStringForRange(in unsigned long location, in unsigned long length);

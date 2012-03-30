@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="text" value="Hello Text" id="text"><br>
+<img src="asdf" width="500" height="500" usemap="#map">
+<map name="map">
+<area shape="rect" coords="0, 0, 500, 500" href="asdf" role="textbox">
+</map>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that an invalid position for rangeForPosition will not crash.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("text").focus();
+        var textField = accessibilityController.focusedElement;
+
+        // Generate a hit test onto a node that will not have a renderer (the image map).
+        // This will create an invalidate VisiblePosition and lead to a crash/assert.
+        shouldBe("textField.rangeForPosition(textField.x + 5, textField.y - 25)", "'{0, 0}'");
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,27 @@
+2012-03-30  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at WebCore::renderObjectContainsPosition(WebCore::RenderObject*, WebCore::Position const&)
+        https://bugs.webkit.org/show_bug.cgi?id=82745
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (rangeForPositionCallback):
+        (AccessibilityUIElement::rangeForPosition):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::rangeForPosition):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::rangeForPosition):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::rangeForPosition):
+        (WTR):
+
 2012-03-30  David Barr  <davidbarr@chromium.org>
 
         Split up top-level .gitignore and .gitattributes
