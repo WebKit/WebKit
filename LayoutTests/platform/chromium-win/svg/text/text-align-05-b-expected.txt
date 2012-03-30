@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (251,78) size 198x459
         RenderSVGContainer {g} at (251,78) size 198x459 [transform={m=((1.00,0.00)(0.00,1.00)) t=(160.00,150.00)}]
           RenderSVGContainer {g} at (251,245) size 31x292
-            RenderSVGPath {circle} at (261,245) size 11x10 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
+            RenderSVGEllipse {circle} at (261,245) size 11x10 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
             RenderSVGText {text} at (-9,0) size 17x172 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 17x172
                 chunk 1 (vertical) text run 1 at (-10.50,0.00) startOffset 0 endOffset 1 height 34.20: "s"
@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
                 chunk 1 (vertical) text run 4 at (-10.50,102.60) startOffset 3 endOffset 4 height 34.20: "r"
                 chunk 1 (vertical) text run 5 at (-10.50,136.80) startOffset 4 endOffset 5 height 34.20: "t"
           RenderSVGContainer {g} at (330,78) size 40x344 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
-            RenderSVGPath {circle} at (345,245) size 10x10 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
+            RenderSVGEllipse {circle} at (345,245) size 10x10 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
             RenderSVGText {text} at (-12,-103) size 24x206 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 24x206
                 chunk 1 (middle anchor, vertical) text run 1 at (-10.50,-102.60) startOffset 0 endOffset 1 height 34.20: "m"
@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
                 chunk 1 (middle anchor, vertical) text run 5 at (-10.50,34.20) startOffset 4 endOffset 5 height 34.20: "l"
                 chunk 1 (middle anchor, vertical) text run 6 at (-10.50,68.40) startOffset 5 endOffset 6 height 34.20: "e"
           RenderSVGContainer {g} at (418,78) size 31x177 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
-            RenderSVGPath {circle} at (428,245) size 11x10 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
+            RenderSVGEllipse {circle} at (428,245) size 11x10 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
             RenderSVGText {text} at (-9,-103) size 17x103 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 17x103
                 chunk 1 (end anchor, vertical) text run 1 at (-10.50,-102.60) startOffset 0 endOffset 1 height 34.20: "e"
