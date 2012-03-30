@@ -1,3 +1,16 @@
+2012-03-30  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Add more ENABLERS to cmakeconfig.h.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=82594
+
+        Reviewed by Rob Buis.
+
+        Upstreaming feature enablers in cmakeconfig.h.cmake for BlackBerry porting,
+        and clean up obsolete MACROs in OptionsBlackBerry.cmake.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2012-03-29  Dave Tu  <dtu@chromium.org>
 
         Add new chrome.webkit GPU bot to flakiness dashboard.
