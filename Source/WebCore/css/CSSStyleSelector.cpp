@@ -4516,17 +4516,14 @@ void CSSStyleSelector::mapAnimationTimingFunction(Animation* animation, CSSValue
         return;
     }
 
-    if (value->isTimingFunctionValue()) {
-        CSSTimingFunctionValue* timingFunction = static_cast<CSSTimingFunctionValue*>(value);
-        if (timingFunction->isCubicBezierTimingFunctionValue()) {
-            CSSCubicBezierTimingFunctionValue* cubicTimingFunction = static_cast<CSSCubicBezierTimingFunctionValue*>(value);
-            animation->setTimingFunction(CubicBezierTimingFunction::create(cubicTimingFunction->x1(), cubicTimingFunction->y1(), cubicTimingFunction->x2(), cubicTimingFunction->y2()));
-        } else if (timingFunction->isStepsTimingFunctionValue()) {
-            CSSStepsTimingFunctionValue* stepsTimingFunction = static_cast<CSSStepsTimingFunctionValue*>(value);
-            animation->setTimingFunction(StepsTimingFunction::create(stepsTimingFunction->numberOfSteps(), stepsTimingFunction->stepAtStart()));
-        } else
-            animation->setTimingFunction(LinearTimingFunction::create());
-    }
+    if (value->isCubicBezierTimingFunctionValue()) {
+        CSSCubicBezierTimingFunctionValue* cubicTimingFunction = static_cast<CSSCubicBezierTimingFunctionValue*>(value);
+        animation->setTimingFunction(CubicBezierTimingFunction::create(cubicTimingFunction->x1(), cubicTimingFunction->y1(), cubicTimingFunction->x2(), cubicTimingFunction->y2()));
+    } else if (value->isStepsTimingFunctionValue()) {
+        CSSStepsTimingFunctionValue* stepsTimingFunction = static_cast<CSSStepsTimingFunctionValue*>(value);
+        animation->setTimingFunction(StepsTimingFunction::create(stepsTimingFunction->numberOfSteps(), stepsTimingFunction->stepAtStart()));
+    } else if (value->isLinearTimingFunctionValue())
+        animation->setTimingFunction(LinearTimingFunction::create());
 }
 
 void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value, NinePieceImage& image)
