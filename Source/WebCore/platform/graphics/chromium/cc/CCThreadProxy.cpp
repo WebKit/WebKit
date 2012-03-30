@@ -47,7 +47,7 @@ namespace {
 
 // Number of textures to update with each call to
 // scheduledActionUpdateMoreResources().
-static const size_t textureUpdatesPerFrame = 32;
+static const size_t textureUpdatesPerFrame = 48;
 
 // Measured in seconds.
 static const double contextRecreationTickRate = 0.03;
