@@ -254,7 +254,7 @@ messages -> WebPage {
     GestureDidEnd()
 #endif
 #if PLATFORM(QT)
-    FindZoomableAreaForPoint(WebCore::IntPoint point)
+    FindZoomableAreaForPoint(WebCore::IntPoint point, WebCore::IntSize area)
 #endif
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)

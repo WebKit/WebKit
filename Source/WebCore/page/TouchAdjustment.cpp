@@ -91,6 +91,15 @@ bool nodeRespondsToTapGesture(Node* node)
     return false;
 }
 
+bool nodeIsZoomTarget(Node* node)
+{
+    if (node->isTextNode() || node->isShadowRoot())
+        return false;
+
+    ASSERT(node->renderer());
+    return node->renderer()->isBox();
+}
+
 static inline void appendSubtargetsForNodeToList(Node* node, SubtargetGeometryList& subtargets)
 {
     // Since the node is a result of a hit test, we are already ensured it has a renderer.
@@ -98,6 +107,25 @@ static inline void appendSubtargetsForNodeToList(Node* node, SubtargetGeometryLi
 
     Vector<FloatQuad> quads;
     node->renderer()->absoluteQuads(quads);
+
+    Vector<FloatQuad>::const_iterator it = quads.begin();
+    const Vector<FloatQuad>::const_iterator end = quads.end();
+    for (; it != end; ++it)
+        subtargets.append(SubtargetGeometry(node, *it));
+}
+
+static inline void appendZoomableSubtargets(Node* node, SubtargetGeometryList& subtargets)
+{
+    RenderBox* renderer = toRenderBox(node->renderer());
+    ASSERT(renderer);
+
+    Vector<FloatQuad> quads;
+    FloatRect borderBoxRect = renderer->borderBoxRect();
+    FloatRect contentBoxRect = renderer->contentBoxRect();
+    quads.append(renderer->localToAbsoluteQuad(borderBoxRect));
+    if (borderBoxRect != contentBoxRect)
+        quads.append(renderer->localToAbsoluteQuad(contentBoxRect));
+    // FIXME: For RenderBlocks, add column boxes and content boxes cleared for floats.
 
     Vector<FloatQuad>::const_iterator it = quads.begin();
     const Vector<FloatQuad>::const_iterator end = quads.end();
@@ -163,6 +191,18 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
     }
 }
 
+// Compiles a list of zoomable subtargets.
+void compileZoomableSubtargets(const NodeList& intersectedNodes, SubtargetGeometryList& subtargets)
+{
+    unsigned length = intersectedNodes.length();
+    for (unsigned i = 0; i < length; ++i) {
+        Node* const candidate = intersectedNodes.item(i);
+        if (nodeIsZoomTarget(candidate))
+            appendZoomableSubtargets(candidate, subtargets);
+    }
+}
+
+
 float distanceSquaredToTargetCenterLine(const IntPoint& touchHotspot, const IntRect& touchArea, const SubtargetGeometry& subtarget)
 {
     UNUSED_PARAM(touchArea);
@@ -178,6 +218,19 @@ float distanceSquaredToTargetCenterLine(const IntPoint& touchHotspot, const IntR
 
     return rect.distanceSquaredFromCenterLineToPoint(touchHotspot);
 }
+
+float areaOfIntersection(const IntPoint& touchHotspot, const IntRect& touchArea, const SubtargetGeometry& subtarget)
+{
+    UNUSED_PARAM(touchHotspot);
+    IntRect rect = subtarget.boundingBox();
+
+    // Convert from frame coordinates to window coordinates.
+    rect = subtarget.node()->document()->view()->contentsToWindow(rect);
+    rect.intersect(touchArea);
+
+    return rect.size().area();
+}
+
 
 // A generic function for finding the target node with the lowest distance metric. A distance metric here is the result
 // of a distance-like function, that computes how well the touch hits the node.
@@ -205,6 +258,36 @@ bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, 
     return (targetNode);
 }
 
+// Similar generic function as findNodeWithLowestDistanceMetric, except this finds the innermost area with the largest intersection.
+bool findAreaWithLargestIntersection(Node*& targetNode, IntRect& targetArea, const IntPoint& touchHotspot, const IntRect& touchArea, SubtargetGeometryList& subtargets)
+{
+    targetNode = 0;
+    float bestDistanceMetric = 0.;
+    SubtargetGeometryList::const_iterator it = subtargets.begin();
+    const SubtargetGeometryList::const_iterator end = subtargets.end();
+    for (; it != end; ++it) {
+        Node* node = it->node();
+        float distanceMetric = areaOfIntersection(touchHotspot, touchArea, *it);
+        if (distanceMetric > bestDistanceMetric) {
+            targetArea = it->boundingBox();
+            targetNode = node;
+            bestDistanceMetric = distanceMetric;
+        } else if (distanceMetric == bestDistanceMetric) {
+            // Try to return the smallest inner-most subtarget.
+            if (node == targetNode) {
+                if (it->boundingBox().size().area() < targetArea.size().area())
+                    targetArea = it->boundingBox();
+            } else if (node->isDescendantOf(targetNode)) {
+                targetArea = it->boundingBox();
+                targetNode = node;
+            }
+        }
+    }
+
+    return (targetNode);
+}
+
+
 } // namespace TouchAdjustment
 
 bool findBestClickableCandidate(Node*& targetNode, IntPoint &targetPoint, const IntPoint &touchHotspot, const IntRect &touchArea, const NodeList& nodeList)
@@ -212,6 +295,13 @@ bool findBestClickableCandidate(Node*& targetNode, IntPoint &targetPoint, const 
     TouchAdjustment::SubtargetGeometryList subtargets;
     TouchAdjustment::compileSubtargetList(nodeList, subtargets, TouchAdjustment::nodeRespondsToTapGesture);
     return TouchAdjustment::findNodeWithLowestDistanceMetric(targetNode, targetPoint, touchHotspot, touchArea, subtargets, TouchAdjustment::distanceSquaredToTargetCenterLine);
+}
+
+bool findBestZoomableArea(Node*& targetNode, IntRect& targetArea, const IntPoint& touchHotspot, const IntRect& touchArea, const NodeList& nodeList)
+{
+    TouchAdjustment::SubtargetGeometryList subtargets;
+    TouchAdjustment::compileZoomableSubtargets(nodeList, subtargets);
+    return TouchAdjustment::findAreaWithLargestIntersection(targetNode, targetArea, touchHotspot, touchArea, subtargets);
 }
 
 } // namespace WebCore

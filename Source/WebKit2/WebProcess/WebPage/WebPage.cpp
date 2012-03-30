@@ -2510,8 +2510,27 @@ InjectedBundleBackForwardList* WebPage::backForwardList()
 }
 
 #if PLATFORM(QT)
-void WebPage::findZoomableAreaForPoint(const WebCore::IntPoint& point)
+#if ENABLE(TOUCH_ADJUSTMENT)
+void WebPage::findZoomableAreaForPoint(const WebCore::IntPoint& point, const WebCore::IntSize& area)
 {
+    Frame* mainframe = m_mainFrame->coreFrame();
+    Node* node = 0;
+    IntRect zoomableArea;
+    mainframe->eventHandler()->bestZoomableAreaForTouchPoint(point, area, zoomableArea, node);
+
+    ASSERT(node);
+    if (node->document() && node->document()->frame() && node->document()->frame()->view()) {
+        const ScrollView* view = node->document()->frame()->view();
+        zoomableArea = view->contentsToWindow(zoomableArea);
+    }
+
+    send(Messages::WebPageProxy::DidFindZoomableArea(point, zoomableArea));
+}
+
+#else
+void WebPage::findZoomableAreaForPoint(const WebCore::IntPoint& point, const WebCore::IntSize& area)
+{
+    UNUSED_PARAM(area);
     Frame* mainframe = m_mainFrame->coreFrame();
     HitTestResult result = mainframe->eventHandler()->hitTestResultAtPoint(mainframe->view()->windowToContents(point), /*allowShadowContent*/ false, /*ignoreClipping*/ true);
 
@@ -2546,6 +2565,7 @@ void WebPage::findZoomableAreaForPoint(const WebCore::IntPoint& point)
 
     send(Messages::WebPageProxy::DidFindZoomableArea(point, zoomableArea));
 }
+#endif
 #endif
 
 WebPage::SandboxExtensionTracker::~SandboxExtensionTracker()

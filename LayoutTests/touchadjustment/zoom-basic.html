@@ -1,0 +1,72 @@
+<html>
+<head>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <style>
+        #div0 { position: absolute; left: 50px; top: 50px; width: 300px; height: 300px; box-sizing: border-box; }
+        #div1 { position: absolute; left: 50px; top: 50
+px; width: 200px; height: 100px; box-sizing: border-box; }
+        #div2 { position: absolute; left: 50px; top: 150px; width: 200px; height: 100px; padding: 10px; box-sizing: border-box; }
+    </style>
+</head>
+<body onload="runTests()">
+
+<div id=div0>
+    <div id=div1></div>
+    <div id=div2></div>
+</div>
+
+<p id='description'></p>
+<div id='console'></div>
+
+<script>
+    function testRoundTouch(x, y, radius)
+    {
+        var x = x - radius;
+        var y = y - radius;
+        var width = radius * 2;
+        var height = radius * 2;
+        var zoomableRect = internals.bestZoomableAreaForTouchPoint(x, y, width, height, document);
+        return zoomableRect;
+    }
+
+    function testDirectTouches()
+    {
+        zoomableArea = testRoundTouch(130, 130, 10);
+        shouldEvaluateTo('zoomableArea.top', 100);
+        shouldEvaluateTo('zoomableArea.left', 100);
+        shouldEvaluateTo('zoomableArea.width', 200);
+        shouldEvaluateTo('zoomableArea.height', 100);
+
+        zoomableArea = testRoundTouch(130, 230, 10);
+        shouldEvaluateTo('zoomableArea.top', 210);
+        shouldEvaluateTo('zoomableArea.left', 110);
+        shouldEvaluateTo('zoomableArea.width', 180);
+        shouldEvaluateTo('zoomableArea.height', 80);
+
+        zoomableArea = testRoundTouch(120, 220, 20);
+        shouldEvaluateTo('zoomableArea.top', 200);
+        shouldEvaluateTo('zoomableArea.left', 100);
+        shouldEvaluateTo('zoomableArea.width', 200);
+        shouldEvaluateTo('zoomableArea.height', 100);
+
+        zoomableArea = testRoundTouch(80, 100, 20);
+        shouldEvaluateTo('zoomableArea.top', 50);
+        shouldEvaluateTo('zoomableArea.left', 50);
+        shouldEvaluateTo('zoomableArea.width', 300);
+        shouldEvaluateTo('zoomableArea.height',300);
+    }
+
+    function runTests()
+    {
+        if (window.layoutTestController && window.internals && internals.bestZoomableAreaForTouchPoint) {
+            description('Test basic cases of tap-to-zoom mechanics.');
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            testDirectTouches();
+            isSuccessfullyParsed();
+            layoutTestController.notifyDone();
+        }
+    }
+</script>
+</body>
+</html>

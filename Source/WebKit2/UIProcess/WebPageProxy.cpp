@@ -2435,12 +2435,12 @@ void WebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& ar
     m_pageClient->didFindZoomableArea(target, area);
 }
 
-void WebPageProxy::findZoomableAreaForPoint(const IntPoint& point)
+void WebPageProxy::findZoomableAreaForPoint(const IntPoint& point, const IntSize& area)
 {
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::FindZoomableAreaForPoint(point), m_pageID);
+    process()->send(Messages::WebPage::FindZoomableAreaForPoint(point, area), m_pageID);
 }
 
 void WebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& contents)

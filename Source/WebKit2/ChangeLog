@@ -1,3 +1,26 @@
+2012-03-30  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Find zoomable area using area-based hit-testing
+        https://bugs.webkit.org/show_bug.cgi?id=82609
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add area to findZoomableAreaForPoint and use new TOUCH_ADJUSTMENT
+        code-path to find the best zoomable area.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findZoomableAreaForPoint):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handleDoubleTapEvent):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit):
+        (WebKit::WebPage::findZoomableAreaForPoint):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2012-03-30  Keishi Hattori  <keishi@webkit.org>
 
         Change ENABLE_INPUT_COLOR to ENABLE_INPUT_TYPE_COLOR and enable it for chromium

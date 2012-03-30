@@ -576,7 +576,7 @@ public:
     WebPageCreationParameters creationParameters() const;
 
 #if PLATFORM(QT)
-    void findZoomableAreaForPoint(const WebCore::IntPoint&);
+    void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize&);
     void didReceiveMessageFromNavigatorQtObject(const String&);
     void handleDownloadRequest(DownloadProxy*);
 #endif

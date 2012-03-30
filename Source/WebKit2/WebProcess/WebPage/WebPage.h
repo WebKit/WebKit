@@ -627,7 +627,7 @@ private:
     void countStringMatches(const String&, uint32_t findOptions, uint32_t maxMatchCount);
 
 #if PLATFORM(QT)
-    void findZoomableAreaForPoint(const WebCore::IntPoint&);
+    void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize& area);
 #endif
 
     void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);

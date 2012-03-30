@@ -2475,6 +2475,16 @@ void EventHandler::bestClickableNodeForTouchPoint(const IntPoint& touchCenter, c
         targetNode = result.innerNonSharedNode();
     }
 }
+
+void EventHandler::bestZoomableAreaForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntRect& targetArea, Node*& targetNode)
+{
+    HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
+    HitTestResult result = hitTestResultAtPoint(touchCenter, /*allowShadowContent*/ false, /*ignoreClipping*/ false, DontHitTestScrollbars, hitType, touchRadius);
+
+    IntRect touchRect = result.rectForPoint(touchCenter);
+    RefPtr<StaticHashSetNodeList> nodeList = StaticHashSetNodeList::adopt(result.rectBasedTestResult());
+    findBestZoomableArea(targetNode, targetArea, touchCenter, touchRect, *nodeList.get());
+}
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
