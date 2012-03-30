@@ -1298,7 +1298,8 @@ BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-path-and-image-based-clip
 BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg = IMAGE
 BUGWK53378 MAC : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 BUGWK53378 MAC : svg/clip-path/clip-path-pixelation.svg = IMAGE
-BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
+// The CRASH comes from BUGWK82505
+BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE CRASH
 
 // Since r89233. May need a new baseline.
 // NOTE that this revision was rolled out, but it isn't clear whether we should remove these
@@ -1979,13 +1980,17 @@ BUGCR22700 LINUX WIN : fast/canvas/canvas-shadow.html = TEXT
 BUGCR27850 : fast/history/back-forward-reset-after-error-handling.html = TEXT
 
 BUGWK82505 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT CRASH
-BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD LEOPARD LINUX DEBUG : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT CRASH
 
-BUGWK82505 LINUX DEBUG : http/tests/media/media-can-load-when-hidden.html = PASS TEXT CRASH
-BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html = PASS TEXT CRASH
-BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/upload-onprogress-event.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD LEOPARD LINUX DEBUG : http/tests/media/media-can-load-when-hidden.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD LEOPARD LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onprogress-event.html = PASS TEXT CRASH
 BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-sync-requests.html = PASS TEXT CRASH
-BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/uri-resolution-opera-open-004.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/uri-resolution-opera-open-004.html = PASS TEXT CRASH
+
+BUGWK82505 SNOWLEOPARD DEBUG : fast/writing-mode/body-writing-mode-propagation-blocked.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD DEBUG : svg/css/background-image-svg.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD DEBUG : transitions/remove-transition-style.html = PASS TEXT CRASH
 
 // Started failing with move from Lighttpd to Apache.
 // Since we have some bots on Lighttpd and some on Apache, mark it as flaky for
