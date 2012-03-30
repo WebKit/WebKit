@@ -9086,11 +9086,9 @@ CSSRule* CSSParser::createFontFaceRule()
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     for (unsigned i = 0; i < m_parsedProperties.size(); ++i) {
         CSSProperty& property = m_parsedProperties[i];
-        if (property.id() == CSSPropertyFontVariant && property.value()->isPrimitiveValue()) {
-            RefPtr<CSSValue> value = property.m_value.release();
-            property.m_value = CSSValueList::createCommaSeparated();
-            static_cast<CSSValueList*>(property.value())->append(value.release());
-        } else if (property.id() == CSSPropertyFontFamily && (!property.value()->isValueList() || static_cast<CSSValueList*>(property.value())->length() != 1)) {
+        if (property.id() == CSSPropertyFontVariant && property.value()->isPrimitiveValue())
+            property.wrapValueInCommaSeparatedList();
+        else if (property.id() == CSSPropertyFontFamily && (!property.value()->isValueList() || static_cast<CSSValueList*>(property.value())->length() != 1)) {
             // Unlike font-family property, font-family descriptor in @font-face rule
             // has to be a value list with exactly one family name. It cannot have a
             // have 'initial' value and cannot 'inherit' from parent.

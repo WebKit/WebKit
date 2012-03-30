@@ -23,14 +23,29 @@
 
 #include "CSSPropertyLonghand.h"
 #include "CSSPropertyNames.h"
+#include "CSSValueList.h"
 #include "PlatformString.h"
 #include "RenderStyleConstants.h"
 
 namespace WebCore {
 
+struct SameSizeAsCSSProperty {
+    uint32_t bitfields;
+    void* value;
+};
+
+COMPILE_ASSERT(sizeof(CSSProperty) == sizeof(SameSizeAsCSSProperty), CSSProperty_should_stay_small);
+
 String CSSProperty::cssText() const
 {
     return String(getPropertyName(static_cast<CSSPropertyID>(id()))) + ": " + m_value->cssText() + (isImportant() ? " !important" : "") + "; ";
+}
+
+void CSSProperty::wrapValueInCommaSeparatedList()
+{
+    RefPtr<CSSValue> value = m_value.release();
+    m_value = CSSValueList::createCommaSeparated();
+    static_cast<CSSValueList*>(m_value.get())->append(value.release());
 }
 
 enum LogicalBoxSide { BeforeSide, EndSide, AfterSide, StartSide };

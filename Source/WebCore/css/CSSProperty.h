@@ -52,15 +52,18 @@ public:
 
     String cssText() const;
 
+    void wrapValueInCommaSeparatedList();
+
     static int resolveDirectionAwareProperty(int propertyID, TextDirection, WritingMode);
     static bool isInheritedProperty(unsigned propertyID);
 
+private:
     // Make sure the following fits in 4 bytes. Really.
     unsigned m_id : 14;
     unsigned m_shorthandID : 14; // If this property was set as part of a shorthand, gives the shorthand.
-    bool m_important : 1;
-    bool m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
-    bool m_inherited : 1;
+    unsigned m_important : 1;
+    unsigned m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
+    unsigned m_inherited : 1;
 
     RefPtr<CSSValue> m_value;
 };
