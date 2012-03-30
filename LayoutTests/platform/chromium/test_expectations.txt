@@ -4093,10 +4093,6 @@ BUGWK78412 MAC WIN : fast/repaint/scroll-inside-table-cell.html = IMAGE
 BUGWK78412 MAC WIN : fast/repaint/scroll-relative-table-inside-table-cell.html = IMAGE
 BUGWK78412 MAC WIN : fast/table/cell-pref-width-invalidation.html = TEXT
 
-// Needs rebaselining after https://bugs.webkit.org/show_bug.cgi?id=74147.
-// It is correct for the reflected text to be visible.
-BUGWK74147 : compositing/reflections/nested-reflection-on-overflow.html = IMAGE
-
 // Need rebaselining.
 BUGWK37244 : tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
 BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
