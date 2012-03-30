@@ -138,6 +138,8 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingTreeState> scrollingT
     }
 
     m_rootNode->update(scrollingTreeState.get());
+
+    updateDebugRootLayer();
 }
 
 void ScrollingTree::setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight)

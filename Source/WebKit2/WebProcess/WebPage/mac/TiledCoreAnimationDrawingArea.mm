@@ -42,6 +42,7 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/ScrollingCoordinator.h>
 #import <WebCore/ScrollingThread.h>
+#import <WebCore/ScrollingTree.h>
 #import <WebCore/Settings.h>
 #import <wtf/MainThread.h>
 
@@ -87,6 +88,8 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     LayerTreeContext layerTreeContext;
     layerTreeContext.contextID = m_layerHostingContext->contextID();
     m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
+
+    updatePreferences();
 }
 
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
@@ -213,6 +216,24 @@ void TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay(const IntRect& re
     ASSERT(m_pageOverlayLayer);
     m_pageOverlayLayer->setNeedsDisplayInRect(rect);
     scheduleCompositingLayerSync();
+}
+
+void TiledCoreAnimationDrawingArea::updatePreferences()
+{
+    bool showDebugBorders = m_webPage->corePage()->settings()->showDebugBorders();
+
+    if (showDebugBorders == !!m_debugInfoLayer)
+        return;
+
+    if (showDebugBorders) {
+        m_debugInfoLayer = [CALayer layer];
+        [m_rootLayer.get() addSublayer:m_debugInfoLayer.get()];
+    } else {
+        [m_debugInfoLayer.get() removeFromSuperlayer];
+        m_debugInfoLayer = nullptr;
+    }
+
+    ScrollingThread::dispatch(bind(&ScrollingTree::setDebugRootLayer, m_webPage->corePage()->scrollingCoordinator()->scrollingTree(), m_debugInfoLayer));
 }
 
 void TiledCoreAnimationDrawingArea::notifyAnimationStarted(const GraphicsLayer*, double)
@@ -344,6 +365,9 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
 
     if (m_pageOverlayLayer)
         [m_rootLayer.get() addSublayer:m_pageOverlayLayer->platformLayer()];
+
+    if (m_debugInfoLayer)
+        [m_rootLayer.get() addSublayer:m_debugInfoLayer.get()];
 
     [CATransaction commit];
 }

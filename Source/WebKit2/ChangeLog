@@ -1,3 +1,29 @@
+2012-03-30  Anders Carlsson  <andersca@apple.com>
+
+        Show a scrolling indicator light when compositing borders are turned on
+        https://bugs.webkit.org/show_bug.cgi?id=82758
+        <rdar://problem/11143892>
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::updatePreferences):
+        Add a hook for letting drawing area subclasses know when preferences change.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        Call DrawingArea::updatePreferences.
+
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        Call updatePreferences.
+
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+        If compositing borders are enabled, create a debug root layer and tell the scrolling tree about it.
+    
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+        If we have a debug root layer, make sure it's in front.
+
 2012-03-30  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Find zoomable area using area-based hit-testing

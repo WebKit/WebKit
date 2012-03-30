@@ -387,6 +387,7 @@
 		1A2E6E7A0CC556D5004A2062 /* SQLiteAuthorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */; };
 		1A3417C90CECFF250049CBDE /* JSCustomVoidCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */; };
 		1A3417CA0CECFF250049CBDE /* JSCustomVoidCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3417C80CECFF250049CBDE /* JSCustomVoidCallback.cpp */; };
+		1A35862C152522540022A659 /* ScrollingTreeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A35862A152522540022A659 /* ScrollingTreeMac.mm */; };
 		1A494BFA0A122F4400FDAFC1 /* JSHTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */; };
 		1A494BFB0A122F4400FDAFC1 /* JSHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A494E340A12358B00FDAFC1 /* JSHTMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A494E320A12358A00FDAFC1 /* JSHTMLDocument.cpp */; };
@@ -7214,6 +7215,7 @@
 		1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteAuthorizer.cpp; path = sql/SQLiteAuthorizer.cpp; sourceTree = "<group>"; };
 		1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomVoidCallback.h; sourceTree = "<group>"; };
 		1A3417C80CECFF250049CBDE /* JSCustomVoidCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomVoidCallback.cpp; sourceTree = "<group>"; };
+		1A35862A152522540022A659 /* ScrollingTreeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeMac.mm; sourceTree = "<group>"; };
 		1A494BBB0A122DCD00FDAFC1 /* HTMLElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLElement.idl; sourceTree = "<group>"; };
 		1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElement.cpp; sourceTree = "<group>"; };
 		1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLElement.h; sourceTree = "<group>"; };
@@ -14112,6 +14114,7 @@
 				1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */,
 				1AAADDE714DC8DF800AF64B3 /* ScrollingTreeNodeMac.h */,
 				1AAADDE614DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm */,
+				1A35862A152522540022A659 /* ScrollingTreeMac.mm */,
 				1AAADDD814DC74EC00AF64B3 /* ScrollingTreeStateMac.mm */,
 			);
 			path = mac;
@@ -27647,6 +27650,10 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				BCE93F531517E0B0008CCF74 /* RenderMultiColumnFlowThread.cpp in Sources */,
+				BC85F23F1519187300BC17BE /* RenderNamedFlowThread.cpp in Sources */,
+				71E623D0151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.cpp in Sources */,
+				1A35862C152522540022A659 /* ScrollingTreeMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

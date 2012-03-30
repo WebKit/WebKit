@@ -1971,6 +1971,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
     platformPreferencesDidChange(store);
+
+    if (m_drawingArea)
+        m_drawingArea->updatePreferences();
 }
 
 #if ENABLE(INSPECTOR)

@@ -47,6 +47,8 @@ public:
     virtual void handleWheelEvent(const PlatformWheelEvent&) = 0;
     virtual void setScrollPosition(const IntPoint&) = 0;
 
+    bool shouldUpdateScrollLayerPositionOnMainThread() const { return m_shouldUpdateScrollLayerPositionOnMainThread; }
+
 protected:
     explicit ScrollingTreeNode(ScrollingTree*);
 
@@ -54,8 +56,6 @@ protected:
 
     const IntRect& viewportRect() const { return m_viewportRect; }
     const IntSize& contentsSize() const { return m_contentsSize; }
-
-    bool shouldUpdateScrollLayerPositionOnMainThread() const { return m_shouldUpdateScrollLayerPositionOnMainThread; }
 
     ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
     ScrollElasticity verticalScrollElasticity() const { return m_verticalScrollElasticity; }

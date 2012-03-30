@@ -62,6 +62,7 @@ private:
     virtual void didInstallPageOverlay() OVERRIDE;
     virtual void didUninstallPageOverlay() OVERRIDE;
     virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
+    virtual void updatePreferences() OVERRIDE;
 
     // WebCore::GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) OVERRIDE;
@@ -92,6 +93,8 @@ private:
     
     RetainPtr<CALayer> m_rootLayer;
     RetainPtr<CALayer> m_pendingRootCompositingLayer;
+
+    RetainPtr<CALayer> m_debugInfoLayer;
 
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
     WebCore::FloatPoint m_mainFrameScrollLayerPosition;

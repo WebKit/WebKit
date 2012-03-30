@@ -37,6 +37,11 @@
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+OBJC_CLASS CALayer;
+#endif
+
 namespace WebCore {
 
 class IntPoint;
@@ -90,8 +95,14 @@ public:
 
     bool willWheelEventStartSwipeGesture(const PlatformWheelEvent&);
 
+#if PLATFORM(MAC)
+    void setDebugRootLayer(CALayer *);
+#endif
+
 private:
     explicit ScrollingTree(ScrollingCoordinator*);
+
+    void updateDebugRootLayer();
 
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
     OwnPtr<ScrollingTreeNode> m_rootNode;
@@ -106,6 +117,10 @@ private:
     bool m_canGoForward;
     bool m_mainFramePinnedToTheLeft;
     bool m_mainFramePinnedToTheRight;
+
+#if PLATFORM(MAC)
+    RetainPtr<CALayer> m_debugInfoLayer;
+#endif
 };
 
 } // namespace WebCore
