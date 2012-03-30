@@ -5,7 +5,7 @@ layer at (0,0) size 800x360
     RenderBody {body} at (8,8) size 784x344
       RenderBlock (anonymous) at (0,0) size 784x307
         RenderSVGRoot {svg} at (195,195) size 78x78
-          RenderSVGPath {circle} at (196,196) size 76x76 [fill={[type=SOLID] [color=#FF0000]}] [cx=300.00] [cy=300.00] [r=50.00]
+          RenderSVGEllipse {circle} at (196,196) size 76x76 [fill={[type=SOLID] [color=#FF0000]}] [cx=300.00] [cy=300.00] [r=50.00]
         RenderText {#text} at (302,286) size 4x21
           text run at (302,286) width 4: " "
         RenderBR {br} at (306,286) size 0x21

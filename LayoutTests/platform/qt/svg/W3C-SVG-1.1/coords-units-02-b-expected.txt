@@ -7,14 +7,14 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 351x22
           chunk 1 text run 1 at (60.00,35.00) startOffset 0 endOffset 45 width 351.00: "CSS pixel coordinate to user space conversion"
       RenderSVGContainer {g} at (25,20) size 20x20 [transform={m=((4.00,0.00)(0.00,4.00)) t=(5.00,0.00)}]
-        RenderSVGPath {circle} at (25,20) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=7.50] [cy=7.50] [r=2.50]
-        RenderSVGPath {circle} at (29,24) size 12x12 [fill={[type=SOLID] [color=#FF0000]}] [cx=7.50] [cy=7.50] [r=1.50]
+        RenderSVGEllipse {circle} at (25,20) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=7.50] [cy=7.50] [r=2.50]
+        RenderSVGEllipse {circle} at (29,24) size 12x12 [fill={[type=SOLID] [color=#FF0000]}] [cx=7.50] [cy=7.50] [r=1.50]
       RenderSVGText {text} at (60,68) size 371x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 371x22
           chunk 1 text run 1 at (60.00,85.00) startOffset 0 endOffset 47 width 371.00: "Percentage coordinates to user space conversion"
       RenderSVGContainer {g} at (25,70) size 20x20 [transform={m=((4.00,0.00)(0.00,4.00)) t=(5.00,50.00)}]
-        RenderSVGPath {circle} at (25,70) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=7.50] [cy=7.50] [r=2.50]
-        RenderSVGPath {circle} at (29,73) size 13x13 [fill={[type=SOLID] [color=#FF0000]}] [cx=7.50] [cy=7.50] [r=1.50]
+        RenderSVGEllipse {circle} at (25,70) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=7.50] [cy=7.50] [r=2.50]
+        RenderSVGEllipse {circle} at (29,73) size 13x13 [fill={[type=SOLID] [color=#FF0000]}] [cx=7.50] [cy=7.50] [r=1.50]
       RenderSVGText {text} at (60,123) size 322x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 322x22
           chunk 1 text run 1 at (60.00,140.00) startOffset 0 endOffset 41 width 322.00: "CSS width/height to user space conversion"
@@ -31,9 +31,9 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 291x22
           chunk 1 text run 1 at (140.00,265.00) startOffset 0 endOffset 36 width 291.00: "CSS and percentage length conversion"
       RenderSVGContainer {g} at (0,244) size 146x32 [transform={m=((4.00,0.00)(4.00,4.00)) t=(30.00,260.00)}]
-        RenderSVGPath {circle} at (1,245) size 58x30 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.54]
-        RenderSVGPath {circle} at (41,245) size 58x30 [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=0.00] [r=3.54]
-        RenderSVGPath {circle} at (81,245) size 58x30 [fill={[type=SOLID] [color=#008000]}] [cx=20.00] [cy=0.00] [r=3.54]
+        RenderSVGEllipse {circle} at (1,245) size 58x30 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.54]
+        RenderSVGEllipse {circle} at (41,245) size 58x30 [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=0.00] [r=3.54]
+        RenderSVGEllipse {circle} at (81,245) size 58x30 [fill={[type=SOLID] [color=#008000]}] [cx=20.00] [cy=0.00] [r=3.54]
         RenderSVGPath {line} at (0,244) size 117x3 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=0.50]}] [x1=-3.54] [y1=-3.54] [x2=25.00] [y2=-3.54]
         RenderSVGPath {line} at (29,273) size 117x3 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=0.50]}] [x1=-3.54] [y1=3.54] [x2=25.00] [y2=3.54]
     RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)

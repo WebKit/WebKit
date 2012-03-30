@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (25,4) size 250x296
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceClipper {clipPath} [id="clip-circle"] [clipPathUnits=objectBoundingBox]
-        RenderSVGPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [cx=0.25] [cy=0.25] [r=0.25]
-        RenderSVGPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [cx=0.75] [cy=0.75] [r=0.25]
+        RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [cx=0.25] [cy=0.25] [r=0.25]
+        RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [cx=0.75] [cy=0.75] [r=0.25]
     RenderSVGText {text} at (44,4) size 212x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 212x21
         chunk 1 (middle anchor) text run 1 at (44.00,20.00) startOffset 0 endOffset 30 width 212.00: "This should not look pixelated"

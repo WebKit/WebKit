@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,55) size 520x328
-    RenderSVGPath {ellipse} at (0,55) size 509x328 [stroke={[type=SOLID] [color=#000000] [stroke width=0.10]}] [cx=12.43] [cy=13.65] [rx=4.34] [ry=2.68]
+    RenderSVGEllipse {ellipse} at (0,55) size 509x328 [stroke={[type=SOLID] [color=#000000] [stroke width=0.10]}] [cx=12.43] [cy=13.65] [rx=4.34] [ry=2.68]
     RenderSVGText {text} at (11,11) size 3x1 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 3x1
         chunk 1 (middle anchor) text run 1 at (11.34,12.43) startOffset 0 endOffset 6 width 2.17: "Passes"

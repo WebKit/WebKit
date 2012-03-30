@@ -13,5 +13,5 @@ layer at (0,0) size 800x484
             RenderSVGResourceRadialGradient {radialGradient} [id="grad"] [gradientUnits=userSpaceOnUse] [center=(200,200)] [focal=(200,200)] [radius=160.00]
               RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
               RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF]
-          RenderSVGPath {circle} at (48,114) size 322x322 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=RADIAL-GRADIENT] [id="grad"]}] [cx=200.00] [cy=200.00] [r=160.00]
+          RenderSVGEllipse {circle} at (48,114) size 322x322 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=RADIAL-GRADIENT] [id="grad"]}] [cx=200.00] [cy=200.00] [r=160.00]
         RenderText {#text} at (0,0) size 0x0
