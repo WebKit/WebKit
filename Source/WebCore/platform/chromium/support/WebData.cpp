@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "platform/WebData.h"
+#include <public/WebData.h>
 
 #include "SharedBuffer.h"
 

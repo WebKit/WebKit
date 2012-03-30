@@ -525,7 +525,6 @@
                 'src/WebDOMMouseEvent.cpp',
                 'src/WebDOMMutationEvent.cpp',
                 'src/WebDOMStringList.cpp',
-                'src/WebData.cpp',
                 'src/WebDatabase.cpp',
                 'src/WebDataSourceImpl.cpp',
                 'src/WebDataSourceImpl.h',

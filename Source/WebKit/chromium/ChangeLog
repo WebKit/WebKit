@@ -1,3 +1,13 @@
+2012-03-30  Adam Barth  <abarth@webkit.org>
+
+        Move CPP files related to ResourceHandle to WebCore/platform
+        https://bugs.webkit.org/show_bug.cgi?id=82582
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * src/WebData.cpp: Removed.
+
 2012-03-30  Mark Pilgrim  <pilgrim@chromium.org>
 
         GEOLOCATION should be implemented as Page Supplement

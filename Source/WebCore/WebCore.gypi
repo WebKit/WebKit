@@ -3271,6 +3271,7 @@
             'platform/chromium/ThemeChromiumMac.mm',
             'platform/chromium/TraceEvent.h',
             'platform/chromium/WidgetChromium.cpp',
+            'platform/chromium/support/WebData.cpp',
             'platform/cocoa/KeyEventCocoa.h',
             'platform/cocoa/KeyEventCocoa.mm',
             'platform/efl/ClipboardEfl.cpp',
