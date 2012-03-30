@@ -52,10 +52,8 @@ WebInspector.ResourcesPanel = function(database)
     this.databasesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Databases"), "Databases", ["database-storage-tree-item"]);
     this.sidebarTree.appendChild(this.databasesListTreeElement);
 
-    if (WebInspector.experimentsSettings.showIndexedDB.isEnabled()) {
-        this.indexedDBListTreeElement = new WebInspector.IndexedDBTreeElement(this);
-        this.sidebarTree.appendChild(this.indexedDBListTreeElement);
-    }
+    this.indexedDBListTreeElement = new WebInspector.IndexedDBTreeElement(this);
+    this.sidebarTree.appendChild(this.indexedDBListTreeElement);
 
     this.localStorageListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Local Storage"), "LocalStorage", ["domstorage-storage-tree-item", "local-storage"]);
     this.sidebarTree.appendChild(this.localStorageListTreeElement);
