@@ -1,3 +1,10 @@
+2012-03-30  Anders Carlsson  <andersca@apple.com>
+
+        Fix Lion build.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+
 2012-03-30  Mark Pilgrim  <pilgrim@chromium.org>
 
         GEOLOCATION should be implemented as Page Supplement

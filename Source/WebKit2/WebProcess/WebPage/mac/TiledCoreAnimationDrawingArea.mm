@@ -233,7 +233,9 @@ void TiledCoreAnimationDrawingArea::updatePreferences()
         m_debugInfoLayer = nullptr;
     }
 
+#if ENABLE(THREADED_SCROLLING)
     ScrollingThread::dispatch(bind(&ScrollingTree::setDebugRootLayer, m_webPage->corePage()->scrollingCoordinator()->scrollingTree(), m_debugInfoLayer));
+#endif
 }
 
 void TiledCoreAnimationDrawingArea::notifyAnimationStarted(const GraphicsLayer*, double)
