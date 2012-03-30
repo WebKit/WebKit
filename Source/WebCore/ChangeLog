@@ -1,3 +1,42 @@
+2012-03-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/11008998> Branch: Shadow inside text field is blurry/blocky in 
+        HiDPI
+
+        This patch merges the following changes to the branch:
+        http://trac.webkit.org/changeset/97032
+        http://trac.webkit.org/changeset/98520
+
+        This patch also adds branch-specific code that makes it so the regression tracked 
+        by <rdar://problem/11115221> only affects the branch in HiDPI mode.
+
+        Essentially, this is a workaround for <rdar://problem/11150452>. With this 
+        workaround, when the deviceScaleFactor is 1, we have an old-school gradient bezel 
+        in text fields whether they are styled or not. This is good and matches shipping 
+        Safari. When the deviceScaleFactor is greater than 1, text fields will have newer, 
+        AppKit-matching gradients that look much more appropriate at the higher 
+        resolutions. However, if the text field is styled  in any way, we'll revert to the 
+        old-school bezel, which doesn't look great in HiDPI, but it looks better than the 
+        CSS border, which is the only alternative until 11150452 is resolved.
+
+        This is the merging of the changes listed above. 
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::ensuredView):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSliderThumb):
+
+        isControlStyled() should treat text fields like it used to in order to avoid the 
+        regression tracked by 11115221.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::isControlStyled):
+
+        Use the old gradient always unless we are an unstyled text field in HiDPI.
+        (WebCore::RenderThemeMac::paintTextField):
+        (WebCore::RenderThemeMac::textField):
+
 2012-03-16  Lucas Forschler  <lforschler@apple.com>
 
     Merge 107102
