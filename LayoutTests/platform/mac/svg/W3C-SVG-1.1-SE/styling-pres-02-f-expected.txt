@@ -17,8 +17,8 @@ layer at (0,0) size 480x360
         RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0"]
         RenderSVGImage {image} at (0,0) size 10x10
         RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
-        RenderSVGPath {circle} at (0,0) size 10x10 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=10.00]
-        RenderSVGPath {ellipse} at (0,0) size 10x5 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=10.00] [ry=5.00]
+        RenderSVGEllipse {circle} at (0,0) size 10x10 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=10.00]
+        RenderSVGEllipse {ellipse} at (0,0) size 10x5 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=10.00] [ry=5.00]
         RenderSVGPath {polyline} at (0,0) size 10x10 [fill={[type=SOLID] [color=#000000]}] [points="0 0 10 10"]
         RenderSVGText {text} at (0,-15) size 40x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 11x18

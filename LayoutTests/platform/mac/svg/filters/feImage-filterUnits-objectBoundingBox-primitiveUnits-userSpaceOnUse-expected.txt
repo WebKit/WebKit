@@ -3,8 +3,8 @@ layer at (0,0) size 800x800
 layer at (0,0) size 800x800
   RenderSVGRoot {svg} at (0,0) size 650x520
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGPath {circle} at (200,200) size 400x400 [fill={[type=SOLID] [color=#008000]}] [cx=400.00] [cy=400.00] [r=200.00]
-      RenderSVGPath {circle} at (50,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=100.00] [cy=100.00] [r=50.00]
+      RenderSVGEllipse {circle} at (200,200) size 400x400 [fill={[type=SOLID] [color=#008000]}] [cx=400.00] [cy=400.00] [r=200.00]
+      RenderSVGEllipse {circle} at (50,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=100.00] [cy=100.00] [r=50.00]
       RenderSVGResourceFilter {filter} [id="filter1a-rel"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
         [feImage image-size="400x400"]
       RenderSVGResourceFilter {filter} [id="filter1b-rel"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]

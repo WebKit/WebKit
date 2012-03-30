@@ -3936,6 +3936,8 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/RenderSVGBlock.h \
 	Source/WebCore/rendering/svg/RenderSVGContainer.cpp \
 	Source/WebCore/rendering/svg/RenderSVGContainer.h \
+	Source/WebCore/rendering/svg/RenderSVGEllipse.cpp \
+	Source/WebCore/rendering/svg/RenderSVGEllipse.h \
 	Source/WebCore/rendering/svg/RenderSVGForeignObject.cpp \
 	Source/WebCore/rendering/svg/RenderSVGForeignObject.h \
 	Source/WebCore/rendering/svg/RenderSVGGradientStop.cpp \

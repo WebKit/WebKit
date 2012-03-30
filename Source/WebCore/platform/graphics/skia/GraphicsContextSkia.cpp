@@ -1269,4 +1269,34 @@ CGColorSpaceRef deviceRGBColorSpaceRef()
 }
 #endif
 
+void GraphicsContext::platformFillEllipse(const FloatRect& ellipse)
+{
+    if (paintingDisabled())
+        return;
+
+    SkRect rect = ellipse;
+    if (!isRectSkiaSafe(getCTM(), rect))
+        return;
+
+    SkPaint paint;
+    platformContext()->setupPaintForFilling(&paint);
+    platformContext()->canvas()->drawOval(rect, paint);
+    platformContext()->didDrawBounded(rect, paint);
+}
+
+void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
+{
+    if (paintingDisabled())
+        return;
+
+    SkRect rect(ellipse);
+    if (!isRectSkiaSafe(getCTM(), rect))
+        return;
+
+    SkPaint paint;
+    platformContext()->setupPaintForStroking(&paint, 0, 0);
+    platformContext()->canvas()->drawOval(rect, paint);
+    platformContext()->didDrawBounded(rect, paint);
+}
+
 }  // namespace WebCore

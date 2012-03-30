@@ -5718,6 +5718,8 @@
             'rendering/svg/RenderSVGBlock.h',
             'rendering/svg/RenderSVGContainer.cpp',
             'rendering/svg/RenderSVGContainer.h',
+            'rendering/svg/RenderSVGEllipse.cpp',
+            'rendering/svg/RenderSVGEllipse.h',
             'rendering/svg/RenderSVGForeignObject.cpp',
             'rendering/svg/RenderSVGForeignObject.h',
             'rendering/svg/RenderSVGGradientStop.cpp',

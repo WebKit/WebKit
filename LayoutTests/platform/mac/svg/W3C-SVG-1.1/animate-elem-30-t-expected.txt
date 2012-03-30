@@ -15,8 +15,8 @@ layer at (0,0) size 480x360
       RenderSVGRect {rect} at (31,76) size 82x30 [stroke={[type=SOLID] [color=#B4B4B4] [stroke width=2.00]}] [fill={[type=SOLID] [color=#B4B4B4]}] [x=10.00] [y=60.00] [width=60.00] [height=20.00]
       RenderSVGRect {rect} at (207,76) size 42x56 [stroke={[type=SOLID] [color=#B4B4B4] [stroke width=2.00]}] [fill={[type=SOLID] [color=#B4B4B4]}] [x=145.00] [y=60.00] [width=30.00] [height=40.00]
       RenderSVGPath {path} at (195,87) size 14x8 [fill={[type=SOLID] [color=#B4B4B4]}] [data="M 145 70 L 135 73 L 135 67 Z"]
-      RenderSVGPath {circle} at (45,116) size 28x28 [stroke={[type=SOLID] [color=#B4B4B4]}] [fill={[type=SOLID] [color=#B4B4B4]}] [cx=30.00] [cy=100.00] [r=10.00]
-      RenderSVGPath {circle} at (129,233) size 42x41 [stroke={[type=SOLID] [color=#B4B4B4]}] [fill={[type=SOLID] [color=#B4B4B4]}] [cx=100.00] [cy=195.00] [r=15.00]
+      RenderSVGEllipse {circle} at (45,116) size 28x28 [stroke={[type=SOLID] [color=#B4B4B4]}] [fill={[type=SOLID] [color=#B4B4B4]}] [cx=30.00] [cy=100.00] [r=10.00]
+      RenderSVGEllipse {circle} at (129,233) size 42x41 [stroke={[type=SOLID] [color=#B4B4B4]}] [fill={[type=SOLID] [color=#B4B4B4]}] [cx=100.00] [cy=195.00] [r=15.00]
       RenderSVGPath {line} at (67,138) size 70x102 [stroke={[type=SOLID] [color=#B4B4B4]}] [fill={[type=SOLID] [color=#000000]}] [x1=37.00] [y1=107.00] [x2=89.00] [y2=184.00]
       RenderSVGPath {path} at (125,224) size 12x17 [fill={[type=SOLID] [color=#B4B4B4]}] [data="M 90 185 L 87 173 L 81 178 Z"]
       RenderSVGRect {rect} at (408,11) size 30x30 [stroke={[type=SOLID] [color=#B4B4B4] [stroke width=2.00]}] [fill={[type=SOLID] [color=#B4B4B4]}] [x=300.00] [y=10.00] [width=20.00] [height=20.00]
@@ -32,7 +32,7 @@ layer at (0,0) size 480x360
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGRect {rect} at (31,76) size 82x30 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=10.00] [y=60.00] [width=60.00] [height=20.00]
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGPath {circle} at (32,116) size 28x28 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#105D8C]}] [cx=20.00] [cy=100.00] [r=10.00]
+        RenderSVGEllipse {circle} at (32,116) size 28x28 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#105D8C]}] [cx=20.00] [cy=100.00] [r=10.00]
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGPath {polyline} at (278,26) size 30x52 [stroke={[type=SOLID] [color=#105D8C] [stroke width=2.00]}] [points="200 20 200 40 220 40 220 60"]
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -44,7 +44,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {use} at (31,76) size 82x30
         RenderSVGRect {rect} at (31,76) size 82x30 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=10.00] [y=60.00] [width=60.00] [height=20.00]
       RenderSVGContainer {use} at (45,116) size 28x28 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
-        RenderSVGPath {circle} at (45,116) size 28x28 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#105D8C]}] [cx=20.00] [cy=100.00] [r=10.00]
+        RenderSVGEllipse {circle} at (45,116) size 28x28 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#105D8C]}] [cx=20.00] [cy=100.00] [r=10.00]
       RenderSVGContainer {use} at (278,26) size 30x52
         RenderSVGPath {polyline} at (278,26) size 30x52 [stroke={[type=SOLID] [color=#105D8C] [stroke width=2.00]}] [points="200 20 200 40 220 40 220 60"]
       RenderSVGContainer {use} at (408,11) size 30x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,-10.00)}]

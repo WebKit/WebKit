@@ -1636,4 +1636,34 @@ void GraphicsContext::platformApplyDeviceScaleFactor()
     wkSetBaseCTM(platformContext(), getCTM());
 }
 
+void GraphicsContext::platformFillEllipse(const FloatRect& ellipse)
+{
+    if (paintingDisabled())
+        return;
+
+    // CGContextFillEllipseInRect only supports solid colors.
+    if (m_state.fillGradient || m_state.fillPattern) {
+        fillEllipseAsPath(ellipse);
+        return;
+    }
+
+    CGContextRef context = platformContext();
+    CGContextFillEllipseInRect(context, ellipse);
+}
+
+void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
+{
+    if (paintingDisabled())
+        return;
+
+    // CGContextStrokeEllipseInRect only supports solid colors.
+    if (m_state.fillGradient || m_state.fillPattern) {
+        strokeEllipseAsPath(ellipse);
+        return;
+    }
+
+    CGContextRef context = platformContext();
+    CGContextStrokeEllipseInRect(context, ellipse);
+}
+
 }

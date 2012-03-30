@@ -26,6 +26,7 @@
 #include "Attribute.h"
 #include "ExceptionCode.h"
 #include "FloatPoint.h"
+#include "RenderSVGEllipse.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
@@ -119,7 +120,7 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
-    RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
+    RenderSVGEllipse* renderer = static_cast<RenderSVGEllipse*>(this->renderer());
     if (!renderer)
         return;
 
@@ -143,7 +144,12 @@ bool SVGCircleElement::selfHasRelativeLengths() const
         || cy().isRelative()
         || r().isRelative();
 }
- 
+
+RenderObject* SVGCircleElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderSVGEllipse(this);
+}
+
 }
 
 #endif // ENABLE(SVG)

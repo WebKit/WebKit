@@ -10,7 +10,7 @@ layer at (0,0) size 480x360
       RenderSVGResourceMarker {marker} [id="markerStart"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
         RenderSVGRect {rect} at (0,0) size 2x2 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
       RenderSVGResourceMarker {marker} [id="markerMiddle"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
-        RenderSVGPath {circle} at (0,0) size 2x2 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=5.00]
+        RenderSVGEllipse {circle} at (0,0) size 2x2 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=5.00]
       RenderSVGResourceMarker {marker} [id="markerEnd"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
         RenderSVGPath {path} at (0,0) size 2x2 [fill={[type=SOLID] [color=#0000FF]}] [data="M 5 0 L 10 10 L 0 10 Z"]
       RenderSVGText {text} at (170,17) size 90x16 contains 1 chunk(s)
@@ -34,7 +34,7 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (242,127) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(122.00,127.00)}]
           RenderSVGRect {rect} at (242,127) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
         RenderSVGContainer {g} at (292,127) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(172.00,127.00)}]
-          RenderSVGPath {circle} at (292,127) size 16x16 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=5.00]
+          RenderSVGEllipse {circle} at (292,127) size 16x16 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=5.00]
         RenderSVGContainer {g} at (292,177) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(172.00,177.00)}]
           RenderSVGPath {path} at (292,177) size 16x16 [fill={[type=SOLID] [color=#0000FF]}] [data="M 5 0 L 10 10 L 0 10 Z"]
       RenderSVGText {text} at (145,207) size 137x16 contains 1 chunk(s)

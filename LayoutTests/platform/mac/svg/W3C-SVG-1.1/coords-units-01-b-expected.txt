@@ -56,13 +56,13 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 72x18
             chunk 1 text run 1 at (122.00,70.00) startOffset 0 endOffset 10 width 72.00: "User Space"
       RenderSVGResourcePattern {pattern} [id="patternBoundingBoxPercentage"] [patternUnits=objectBoundingBox] [patternContentUnits=objectBoundingBox]
-        RenderSVGPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.50] [cy=0.50] [r=0.25]
+        RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.50] [cy=0.50] [r=0.25]
         RenderSVGRect {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#0000FF]}] [x=0.40] [y=0.40] [width=0.20] [height=0.20]
       RenderSVGResourcePattern {pattern} [id="patternBoundingBoxFraction"] [patternUnits=objectBoundingBox] [patternContentUnits=objectBoundingBox]
-        RenderSVGPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.50] [cy=0.50] [r=0.25]
+        RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.50] [cy=0.50] [r=0.25]
         RenderSVGRect {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#0000FF]}] [x=0.40] [y=0.40] [width=0.20] [height=0.20]
       RenderSVGResourcePattern {pattern} [id="patternUserSpace"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
-        RenderSVGPath {circle} at (15,5) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=25.00] [cy=15.00] [r=10.00]
+        RenderSVGEllipse {circle} at (15,5) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=25.00] [cy=15.00] [r=10.00]
         RenderSVGRect {rect} at (20,12) size 10x6 [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=12.00] [width=10.00] [height=6.00]
       RenderSVGText {text} at (30,226) size 385x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 385x18

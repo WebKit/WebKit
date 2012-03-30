@@ -1709,6 +1709,7 @@ IF (ENABLE_SVG)
         rendering/style/SVGRenderStyleDefs.cpp
         rendering/svg/RenderSVGBlock.cpp
         rendering/svg/RenderSVGContainer.cpp
+        rendering/svg/RenderSVGEllipse.cpp
         rendering/svg/RenderSVGGradientStop.cpp
         rendering/svg/RenderSVGForeignObject.cpp
         rendering/svg/RenderSVGHiddenContainer.cpp

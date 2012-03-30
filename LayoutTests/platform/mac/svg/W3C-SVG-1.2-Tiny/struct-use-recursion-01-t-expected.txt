@@ -5,10 +5,10 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (150,25) size 500x452
       RenderSVGContainer {g} at (150,25) size 34x34
-        RenderSVGPath {circle} at (150,25) size 34x34 [fill={[type=SOLID] [color=#FF7F00]}] [cx=100.00] [cy=25.00] [r=10.00]
+        RenderSVGEllipse {circle} at (150,25) size 34x34 [fill={[type=SOLID] [color=#FF7F00]}] [cx=100.00] [cy=25.00] [r=10.00]
         RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,25.00)}]
       RenderSVGContainer {g} at (616,25) size 34x34
-        RenderSVGPath {circle} at (616,25) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=380.00] [cy=25.00] [r=10.00]
+        RenderSVGEllipse {circle} at (616,25) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=380.00] [cy=25.00] [r=10.00]
         RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,25.00)}]
       RenderSVGText {text} at (100,257) size 280x28 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 280x28

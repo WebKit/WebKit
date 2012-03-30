@@ -25,6 +25,7 @@
 
 #include "Attribute.h"
 #include "FloatPoint.h"
+#include "RenderSVGEllipse.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
@@ -124,7 +125,7 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
-    RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
+    RenderSVGEllipse* renderer = static_cast<RenderSVGEllipse*>(this->renderer());
     if (!renderer)
         return;
 
@@ -148,6 +149,11 @@ bool SVGEllipseElement::selfHasRelativeLengths() const
         || cy().isRelative()
         || rx().isRelative()
         || ry().isRelative();
+}
+
+RenderObject* SVGEllipseElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderSVGEllipse(this);
 }
 
 }

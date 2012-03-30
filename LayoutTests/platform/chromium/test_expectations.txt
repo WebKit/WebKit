@@ -4277,6 +4277,8 @@ BUGWK80531 MAC : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 // Flaky on Windows since at least r112042
 BUGWK82227 WIN : media/video-src-source.html = PASS TIMEOUT
 
+BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
+
 // Flaky/crashing on a single platform every 30 tries or so
 BUGWK82230 LINUX DEBUG : http/tests/cache/post-redirect-get.php = PASS CRASH
 BUGWK82231 WIN DEBUG : fast/canvas/webgl/program-test.html = PASS CRASH

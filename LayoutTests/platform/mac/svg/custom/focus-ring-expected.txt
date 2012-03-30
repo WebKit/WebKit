@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (10,10) size 437x527
-    RenderSVGPath {circle} at (10,5) size 110x110 [fill={[type=SOLID] [color=#FFA500]}] [cx=65.00] [cy=60.00] [r=50.00]
+    RenderSVGEllipse {circle} at (10,5) size 110x110 [fill={[type=SOLID] [color=#FFA500]}] [cx=65.00] [cy=60.00] [r=50.00]
     RenderSVGPath {path} at (135,5) size 110x110 [fill={[type=SOLID] [color=#FFA500]}] [data="M 140 10 L 190 110 L 240 60 L 220 60 L 200 30 Z"]
     RenderSVGContainer {g} at (265,5) size 110x110
       RenderSVGRect {rect} at (265,5) size 110x110 [fill={[type=SOLID] [color=#FFA500]}] [x=270.00] [y=10.00] [width=100.00] [height=100.00]

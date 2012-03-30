@@ -27,6 +27,7 @@
 
 #include "RenderSVGBlock.cpp"
 #include "RenderSVGContainer.cpp"
+#include "RenderSVGEllipse.cpp"
 #include "RenderSVGForeignObject.cpp"
 #include "RenderSVGGradientStop.cpp"
 #include "RenderSVGHiddenContainer.cpp"

@@ -41,7 +41,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (302,120) size 116x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 116x12
           chunk 1 text run 1 at (302.00,130.00) startOffset 0 endOffset 29 width 116.00: "No view attributes except id."
-      RenderSVGPath {ellipse} at (298,219) size 144x64 [fill={[type=SOLID] [color=#0000FF]}] [cx=370.00] [cy=251.00] [rx=72.00] [ry=32.00]
+      RenderSVGEllipse {ellipse} at (298,219) size 144x64 [fill={[type=SOLID] [color=#0000FF]}] [cx=370.00] [cy=251.00] [rx=72.00] [ry=32.00]
       RenderSVGText {text} at (355,281) size 43x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 43x18
           chunk 1 text run 1 at (355.00,295.00) startOffset 0 endOffset 7 width 43.00: "Ellipse"
@@ -49,7 +49,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (315,204) size 112x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 112x12
           chunk 1 text run 1 at (315.00,214.00) startOffset 0 endOffset 27 width 112.00: "viewBox, should fill frame."
-      RenderSVGPath {circle} at (49,32) size 72x72 [fill={[type=SOLID] [color=#FFFF00]}] [cx=85.00] [cy=68.00] [r=36.00]
+      RenderSVGEllipse {circle} at (49,32) size 72x72 [fill={[type=SOLID] [color=#FFFF00]}] [cx=85.00] [cy=68.00] [r=36.00]
       RenderSVGText {text} at (70,102) size 38x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 38x18
           chunk 1 text run 1 at (70.00,116.00) startOffset 0 endOffset 6 width 38.00: "Circle"

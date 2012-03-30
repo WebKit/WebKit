@@ -8,7 +8,7 @@ layer at (0,0) size 800x420
           text run at (0,0) width 36: "FAIL"
       RenderBlock (anonymous) at (0,200) size 784x204
         RenderSVGRoot {svg} at (8,208) size 150x200
-          RenderSVGPath {circle} at (58,258) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=100.00] [cy=100.00] [r=50.00]
+          RenderSVGEllipse {circle} at (58,258) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=100.00] [cy=100.00] [r=50.00]
           RenderSVGForeignObject {foreignObject} at (0,0) size 200x200
         RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 200x200
