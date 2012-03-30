@@ -872,7 +872,7 @@ bool StylePropertySet::removePropertiesInSet(const int* set, unsigned length)
 const CSSProperty* StylePropertySet::findPropertyWithId(int propertyID) const
 {
     for (int n = m_properties.size() - 1 ; n >= 0; --n) {
-        if (propertyID == m_properties[n].m_id)
+        if (propertyID == m_properties[n].id())
             return &m_properties[n];
     }
     return 0;
@@ -881,7 +881,7 @@ const CSSProperty* StylePropertySet::findPropertyWithId(int propertyID) const
 CSSProperty* StylePropertySet::findPropertyWithId(int propertyID)
 {
     for (int n = m_properties.size() - 1 ; n >= 0; --n) {
-        if (propertyID == m_properties[n].m_id)
+        if (propertyID == m_properties[n].id())
             return &m_properties[n];
     }
     return 0;
