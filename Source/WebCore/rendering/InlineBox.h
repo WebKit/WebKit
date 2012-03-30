@@ -342,7 +342,7 @@ public:
         ADD_BOOLEAN_BITFIELD(constructed, Constructed);
 
     private:
-        unsigned m_bidiEmbeddingLevel : 6;
+        unsigned m_bidiEmbeddingLevel : 6; // The maximium bidi level is 62: http://unicode.org/reports/tr9/#Explicit_Levels_and_Directions
 
     public:
         unsigned char bidiEmbeddingLevel() const { return m_bidiEmbeddingLevel; }

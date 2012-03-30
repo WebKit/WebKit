@@ -27,6 +27,13 @@ namespace WebCore {
 
 using namespace WTF::Unicode;
 
+struct SameSizeAsBidiContext : public RefCounted<SameSizeAsBidiContext> {
+    uint32_t bitfields : 16;
+    void* parent;
+};
+
+COMPILE_ASSERT(sizeof(BidiContext) == sizeof(SameSizeAsBidiContext), BidiContext_should_stay_small);
+
 inline PassRefPtr<BidiContext> BidiContext::createUncached(unsigned char level, Direction direction, bool override, BidiEmbeddingSource source, BidiContext* parent)
 {
     return adoptRef(new BidiContext(level, direction, override, source, parent));

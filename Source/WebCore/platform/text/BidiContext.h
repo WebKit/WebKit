@@ -59,9 +59,9 @@ private:
 
     static PassRefPtr<BidiContext> createUncached(unsigned char level, WTF::Unicode::Direction, bool override, BidiEmbeddingSource, BidiContext* parent);
 
-    unsigned char m_level;
+    unsigned m_level : 6; // The maximium bidi level is 62: http://unicode.org/reports/tr9/#Explicit_Levels_and_Directions
     unsigned m_direction : 5; // Direction
-    bool m_override : 1;
+    unsigned m_override : 1;
     unsigned m_source : 1; // BidiEmbeddingSource
     RefPtr<BidiContext> m_parent;
 };
