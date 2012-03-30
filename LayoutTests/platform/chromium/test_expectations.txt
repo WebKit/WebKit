@@ -1315,9 +1315,6 @@ BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
 BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
 
 // These tests will need rebaseline after landing 12499.
-BUGWK12499 LINUX : svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg = IMAGE+TEXT IMAGE TEXT PASS
-BUGWK12499 LINUX : svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t.svg = IMAGE+TEXT IMAGE TEXT PASS
-BUGWK12499 LINUX : svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t.svg = IMAGE+TEXT IMAGE TEXT PASS
 
 // -----------------------------------------------------------------
 // End SVG Regressions
@@ -3919,10 +3916,7 @@ BUGWK81145 LION : compositing/plugins/composited-plugin.html = IMAGE+TEXT
 BUGWK81145 LION : fast/repaint/transform-absolute-in-positioned-container.html = IMAGE+TEXT
 BUGWK81145 LION : fast/text/international/bidi-AN-after-empty-run.html = IMAGE+TEXT
 BUGWK81145 LION : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
-BUGWK81145 LION : svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t.svg = IMAGE+TEXT
-BUGWK81145 LION : svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t.svg = IMAGE+TEXT
 BUGWK81145 LION : svg/batik/text/longTextOnPath.svg = IMAGE+TEXT
-BUGWK81145 LION : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK81145 LION : animations/cross-fade-webkit-mask-box-image.html = IMAGE
 BUGWK81145 LION : compositing/iframes/iframe-content-flipping.html = IMAGE
 BUGWK81145 LION : fast/box-shadow/single-pixel-shadow.html = IMAGE
@@ -4076,28 +4070,28 @@ BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
 BUGWK82097 : editing/selection/move-by-word-visually-crash-test-5.html = PASS TIMEOUT
 
 // Need rebaselining (?)
-BUGWK82150 : media/media-document-audio-repaint.html = IMAGE+TEXT 
-BUGWK82150 : media/video-no-audio.html = IMAGE+TEXT 
-BUGWK82150 : media/controls-strict.html = IMAGE+TEXT 
-BUGWK82150 : media/video-volume-slider.html = IMAGE+TEXT 
-BUGWK82150 : media/controls-styling.html = IMAGE+TEXT 
-BUGWK82150 : media/video-display-toggle.html = IMAGE+TEXT 
-BUGWK82150 : media/audio-repaint.html = IMAGE+TEXT 
-BUGWK82150 : media/audio-controls-rendering.html = IMAGE+TEXT 
-BUGWK82150 : media/video-zoom-controls.html = IMAGE+TEXT 
-BUGWK82150 : media/video-controls-rendering.html = IMAGE+TEXT 
-BUGWK82150 : media/controls-without-preload.html = IMAGE+TEXT 
-BUGWK82150 : media/media-controls-clone.html = IMAGE+TEXT 
-BUGWK82150 : fast/layers/video-layer.html = IMAGE+TEXT 
-BUGWK82150 : media/video-empty-source.html = IMAGE+TEXT 
-BUGWK82150 : media/video-playing-and-pause.html = IMAGE+TEXT 
-BUGWK82150 : media/controls-after-reload.html = IMAGE+TEXT 
+BUGWK82150 : media/media-document-audio-repaint.html = IMAGE+TEXT
+BUGWK82150 : media/video-no-audio.html = IMAGE+TEXT
+BUGWK82150 : media/controls-strict.html = IMAGE+TEXT
+BUGWK82150 : media/video-volume-slider.html = IMAGE+TEXT
+BUGWK82150 : media/controls-styling.html = IMAGE+TEXT
+BUGWK82150 : media/video-display-toggle.html = IMAGE+TEXT
+BUGWK82150 : media/audio-repaint.html = IMAGE+TEXT
+BUGWK82150 : media/audio-controls-rendering.html = IMAGE+TEXT
+BUGWK82150 : media/video-zoom-controls.html = IMAGE+TEXT
+BUGWK82150 : media/video-controls-rendering.html = IMAGE+TEXT
+BUGWK82150 : media/controls-without-preload.html = IMAGE+TEXT
+BUGWK82150 : media/media-controls-clone.html = IMAGE+TEXT
+BUGWK82150 : fast/layers/video-layer.html = IMAGE+TEXT
+BUGWK82150 : media/video-empty-source.html = IMAGE+TEXT
+BUGWK82150 : media/video-playing-and-pause.html = IMAGE+TEXT
+BUGWK82150 : media/controls-after-reload.html = IMAGE+TEXT
 
 // Just needs a rebaseline. The iframe size is now 600x300, before it was 300x150 - as we properly zoom the default intrinsic size now.
 BUGWK81631 : fast/table/quote-text-around-iframe.html = IMAGE IMAGE+TEXT PASS
 // Size should be 100 now, instead of 101 - if so, only needs a rebaseline.
 // CRASH is from BUGWK82505.
-BUGWK81631 : svg/as-image/svg-non-integer-scaled-image.html  = IMAGE IMAGE+TEXT CRASH PASS
+BUGWK81631 : svg/as-image/svg-non-integer-scaled-image.html = IMAGE IMAGE+TEXT CRASH PASS
 // Size changed from 93 to 92 due rounding, just needs a rebaseline.
 BUGWK81631 : fast/repaint/block-layout-inline-children-replaced.html = IMAGE IMAGE+TEXT PASS
 // Just needs a rebaseline, no visible changes.
@@ -4279,10 +4273,10 @@ BUGWK82300 SNOWLEOPARD : compositing/images/direct-pdf-image.html = IMAGE
 BUGWK82372 LINUX X86_64 DEBUG : css3/filters/custom/effect-custom-parameters.html = IMAGE
 BUGWK82372 LINUX X86 RELEASE : css3/filters/custom/effect-custom-parameters.html = IMAGE
 
-BUGWK82269 DEBUG: media/track/track-delete-during-setup.html = CRASH
+BUGWK82269 DEBUG : media/track/track-delete-during-setup.html = CRASH
 
 // this test appears to consistently fail during the main run but usually passes on a retry.
-BUGWK82404 LINUX MAC : plugins/netscape-dom-access-and-reload.html = PASS TEXT 
+BUGWK82404 LINUX MAC : plugins/netscape-dom-access-and-reload.html = PASS TEXT
 
 BUGWK82409 LINUX RELEASE : inspector/styles/css-live-edit.html = PASS TIMEOUT
 
