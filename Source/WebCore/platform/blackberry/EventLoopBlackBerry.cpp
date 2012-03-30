@@ -24,10 +24,6 @@
 
 namespace WebCore {
 
-void EventLoop::platformInit()
-{
-}
-
 void EventLoop::cycle()
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient());
