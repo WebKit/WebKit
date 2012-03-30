@@ -4092,19 +4092,6 @@ BUGWK81631 : fast/writing-mode/block-level-images.html = IMAGE IMAGE+TEXT PASS
 // Slight change in image size due to rounding - just needs a rebaseline.
 BUGWK81631 : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE IMAGE+TEXT PASS
 
-// Temporary: generate platform specific IETestCenter results, then
-// remove when bots produce reference.
-BUGWK81936 : ietestcenter/css3/text/textshadow-001.htm = FAIL MISSING
-BUGWK81936 : ietestcenter/css3/text/textshadow-002.htm = FAIL MISSING
-BUGWK81936 : ietestcenter/css3/text/textshadow-003.htm = FAIL MISSING
-BUGWK81936 : ietestcenter/css3/text/textshadow-004.htm = FAIL MISSING
-BUGWK81936 : ietestcenter/css3/text/textshadow-005.htm = FAIL MISSING
-BUGWK81936 : ietestcenter/css3/text/textshadow-006.htm = FAIL MISSING
-BUGWK81936 : ietestcenter/css3/text/textshadow-007.htm = FAIL MISSING
-BUGWK81936 : ietestcenter/css3/text/textshadow-008.htm = FAIL MISSING
-BUGWK81936 : ietestcenter/css3/text/textshadow-009.htm = FAIL MISSING
-BUGWK81936 : ietestcenter/css3/text/textshadow-010.htm = FAIL MISSING
-
 BUGWK82122 LEOPARD SNOWLEOPARD : css3/selectors3/xml/css3-modsel-100.xml = TEXT PASS
 BUGWK82122 LEOPARD SNOWLEOPARD : css3/selectors3/xml/css3-modsel-100b.xml = TEXT PASS
 BUGWK82122 LEOPARD SNOWLEOPARD : css3/selectors3/xml/css3-modsel-101.xml = TEXT PASS
