@@ -676,3 +676,6 @@ http/tests/local/link-stylesheet-load-order.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82743
 http/tests/misc/object-embedding-svg-delayed-size-negotiation-pretty-diff.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82744
+fast/css/font-face-data-uri.html
