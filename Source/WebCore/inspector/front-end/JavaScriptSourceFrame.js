@@ -431,8 +431,10 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     setExecutionLine: function(lineNumber)
     {
         this._executionLineNumber = lineNumber;
-        if (this.loaded)
+        if (this.loaded) {
             this.textViewer.addDecoration(lineNumber, "webkit-execution-line");
+            this.revealLine(this._executionLineNumber);
+        }
     },
 
     clearExecutionLine: function()
