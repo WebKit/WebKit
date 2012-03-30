@@ -182,6 +182,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_progressEventTimer(this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(this, &HTMLMediaElement::playbackProgressTimerFired)
     , m_playedTimeRanges()
+    , m_asyncEventQueue(GenericEventQueue::create(this))
     , m_playbackRate(1.0f)
     , m_defaultPlaybackRate(1.0f)
     , m_webkitPreservesPitch(true)
@@ -550,7 +551,7 @@ void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
     RefPtr<Event> event = Event::create(eventName, false, true);
     event->setTarget(this);
 
-    m_asyncEventQueue.enqueueEvent(event.release());
+    m_asyncEventQueue->enqueueEvent(event.release());
 }
 
 void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
@@ -1149,7 +1150,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
             event = Event::create(eventNames().exitEvent, false, false);
 
         event->setTarget(eventTasks[i].second);
-        m_asyncEventQueue.enqueueEvent(event.release());
+        m_asyncEventQueue->enqueueEvent(event.release());
     }
 
     // 14 - Sort affected tracks in the same order as the text tracks appear in
@@ -1164,7 +1165,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
         RefPtr<Event> event = Event::create(eventNames().cuechangeEvent, false, false);
         event->setTarget(affectedTracks[i]);
 
-        m_asyncEventQueue.enqueueEvent(event.release());
+        m_asyncEventQueue->enqueueEvent(event.release());
 
         // Fire syncronous cue change event for track elements.
         if (affectedTracks[i]->trackType() == TextTrack::TrackElement)
@@ -1399,7 +1400,7 @@ void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
 void HTMLMediaElement::cancelPendingEventsAndCallbacks()
 {
     LOG(Media, "HTMLMediaElement::cancelPendingEventsAndCallbacks");
-    m_asyncEventQueue.cancelAllEvents();
+    m_asyncEventQueue->cancelAllEvents();
 
     for (Node* node = firstChild(); node; node = node->nextSibling()) {
         if (node->hasTagName(sourceTag))
@@ -3466,7 +3467,7 @@ void HTMLMediaElement::resume()
 
 bool HTMLMediaElement::hasPendingActivity() const
 {
-    return m_asyncEventQueue.hasPendingEvents();
+    return m_asyncEventQueue->hasPendingEvents();
 }
 
 void HTMLMediaElement::mediaVolumeDidChange()
