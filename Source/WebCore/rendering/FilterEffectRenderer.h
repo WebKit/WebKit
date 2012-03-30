@@ -67,13 +67,15 @@ public:
     bool haveFilterEffect() const { return m_haveFilterEffect; }
     bool hasStartedFilterEffect() const { return m_savedGraphicsContext; }
 
-    GraphicsContext* beginFilterEffect(RenderLayer*, GraphicsContext* oldContext, const LayoutRect& filterRect);
+    const LayoutRect& prepareFilterEffect(RenderLayer*, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect);
+    GraphicsContext* beginFilterEffect(GraphicsContext* oldContext);
     GraphicsContext* applyFilterEffect();
 
 private:
     GraphicsContext* m_savedGraphicsContext;
     RenderLayer* m_renderLayer;
     LayoutPoint m_paintOffset;
+    LayoutRect m_dirtyRect;
     bool m_haveFilterEffect;
 };
 
@@ -105,11 +107,13 @@ public:
     ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }
 
     void build(Document*, const FilterOperations&);
-    void updateBackingStore(const FloatRect& filterRect);
+    bool updateBackingStore(const FloatRect& filterRect);
     void prepare();
     void apply();
     
     IntRect outputRect() const { return lastEffect()->hasResult() ? lastEffect()->requestedRegionOfInputImageData(IntRect(m_filterRegion)) : IntRect(); }
+
+    bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }
 
 private:
 #if ENABLE(CSS_SHADERS)
@@ -149,6 +153,7 @@ private:
 #endif
     
     bool m_graphicsBufferAttached;
+    bool m_hasFilterThatMovesPixels;
 };
 
 } // namespace WebCore

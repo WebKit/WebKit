@@ -119,10 +119,10 @@ void FilterOperations::getOutsets(int& top, int& right, int& bottom, int& left) 
         case FilterOperation::DROP_SHADOW: {
             DropShadowFilterOperation* dropShadowOperation = static_cast<DropShadowFilterOperation*>(filterOperation);
             IntSize outset = outsetSizeForBlur(dropShadowOperation->stdDeviation());
-            top += outset.height() - dropShadowOperation->y();
-            right += outset.width() + dropShadowOperation->x();
-            bottom += outset.height() + dropShadowOperation->y();
-            left += outset.width() - dropShadowOperation->x();
+            top += std::max(0, outset.height() - dropShadowOperation->y());
+            right += std::max(0, outset.width() + dropShadowOperation->x());
+            bottom += std::max(0, outset.height() + dropShadowOperation->y());
+            left += std::max(0, outset.width() - dropShadowOperation->x());
             break;
         }
 #if ENABLE(CSS_SHADERS)

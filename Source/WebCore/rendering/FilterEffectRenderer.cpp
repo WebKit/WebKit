@@ -80,6 +80,7 @@ static bool isCSSCustomFilterEnabled(Document* document)
 FilterEffectRenderer::FilterEffectRenderer(FilterEffectObserver* observer)
     : m_observer(observer)
     , m_graphicsBufferAttached(false)
+    , m_hasFilterThatMovesPixels(false)
 {
     setFilterResolution(FloatSize(1, 1));
     m_sourceGraphic = SourceGraphic::create(this);
@@ -105,6 +106,7 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
     CustomFilterProgramList cachedCustomFilterPrograms;
 #endif
 
+    m_hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     m_effects.clear();
 
     RefPtr<FilterEffect> previousEffect;
@@ -295,13 +297,16 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
 #endif
 }
 
-void FilterEffectRenderer::updateBackingStore(const FloatRect& filterRect)
+bool FilterEffectRenderer::updateBackingStore(const FloatRect& filterRect)
 {
     if (!filterRect.isZero()) {
         FloatRect currentSourceRect = sourceImageRect();
-        if (filterRect != currentSourceRect)
+        if (filterRect != currentSourceRect) {
             setSourceImageRect(filterRect);
+            return true;
+        }
     }
+    return false;
 }
 
 #if ENABLE(CSS_SHADERS)
@@ -337,32 +342,51 @@ void FilterEffectRenderer::apply()
     lastEffect()->apply();
 }
 
-
-GraphicsContext* FilterEffectRendererHelper::beginFilterEffect(RenderLayer* renderLayer, GraphicsContext* oldContext, const LayoutRect& filterRect)
+const LayoutRect& FilterEffectRendererHelper::prepareFilterEffect(RenderLayer* renderLayer, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect)
 {
     ASSERT(m_haveFilterEffect && renderLayer->filter());
-    m_savedGraphicsContext = oldContext;
     m_renderLayer = renderLayer;
-    m_paintOffset = filterRect.location();
-    
-    FloatRect filterSourceRect = filterRect;
-    filterSourceRect.setLocation(LayoutPoint());
-    
+    m_dirtyRect = dirtyRect;
+
     FilterEffectRenderer* filter = renderLayer->filter();
-    filter->updateBackingStore(filterSourceRect);
+
+    // Some filters need the whole original area in order to recalculate correctly.
+    // Such filters include blur, drop-shadow and shaders. For that reason,
+    // we keep the whole image buffer in memory and repaint only dirty areas.
+    bool hasFilterThatMovesPixels = filter->hasFilterThatMovesPixels();
+    LayoutRect filterSourceRect = hasFilterThatMovesPixels ? filterBoxRect : dirtyRect;
+    m_paintOffset = filterSourceRect.location();
+    filterSourceRect.setLocation(LayoutPoint());
+
+    bool hasUpdatedBackingStore = filter->updateBackingStore(filterSourceRect);
+    if (hasFilterThatMovesPixels)
+        m_dirtyRect.unite(hasUpdatedBackingStore ? filterBoxRect : layerRepaintRect);
+    
     filter->prepare();
     
+    return m_dirtyRect;
+}
+   
+GraphicsContext* FilterEffectRendererHelper::beginFilterEffect(GraphicsContext* oldContext)
+{
+    ASSERT(m_renderLayer);
+    
+    FilterEffectRenderer* filter = m_renderLayer->filter();
     // Paint into the context that represents the SourceGraphic of the filter.
     GraphicsContext* sourceGraphicsContext = filter->inputContext();
     if (!sourceGraphicsContext) {
         // Could not allocate a new graphics context. Disable the filters and continue.
         m_haveFilterEffect = false;
-        return m_savedGraphicsContext;
+        return oldContext;
     }
     
+    m_savedGraphicsContext = oldContext;
+    
+    // Translate the context so that the contents of the layer is captuterd in the offscreen memory buffer.
     sourceGraphicsContext->save();
-    sourceGraphicsContext->translate(-filterRect.x(), -filterRect.y());
-    sourceGraphicsContext->clearRect(filterRect);
+    sourceGraphicsContext->translate(-m_paintOffset.x(), -m_paintOffset.y());
+    sourceGraphicsContext->clearRect(m_dirtyRect);
+    sourceGraphicsContext->clip(m_dirtyRect);
     
     return sourceGraphicsContext;
 }
@@ -371,12 +395,12 @@ GraphicsContext* FilterEffectRendererHelper::applyFilterEffect()
 {
     ASSERT(m_haveFilterEffect && m_renderLayer->filter());
     FilterEffectRenderer* filter = m_renderLayer->filter();
+    filter->inputContext()->restore();
+
     filter->apply();
     
-    filter->inputContext()->restore();
-    
     // Get the filtered output and draw it in place.
-    IntRect destRect = filter->outputRect();
+    LayoutRect destRect = filter->outputRect();
     destRect.move(m_paintOffset.x(), m_paintOffset.y());
     
     m_savedGraphicsContext->drawImageBuffer(filter->output(), m_renderLayer->renderer()->style()->colorSpace(), destRect, CompositeSourceOver);

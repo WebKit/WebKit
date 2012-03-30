@@ -1643,18 +1643,6 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
     if (isWritingModeRoot() && !isPositioned())
         flipForWritingMode(rect);
 
-#if ENABLE(CSS_FILTERS)
-    if (styleToUse->hasFilterOutsets()) {
-        int topOutset;
-        int rightOutset;
-        int bottomOutset;
-        int leftOutset;
-        styleToUse->filter().getOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
-        rect.move(-leftOutset, -topOutset);
-        rect.expand(leftOutset + rightOutset, topOutset + bottomOutset);
-    }
-#endif
-
     LayoutPoint topLeft = rect.location();
     topLeft.move(locationOffset());
 
@@ -3637,7 +3625,7 @@ bool RenderBox::avoidsFloats() const
 
 void RenderBox::addVisualEffectOverflow()
 {
-    if (!style()->boxShadow() && !style()->hasBorderImageOutsets() && !style()->hasFilterOutsets())
+    if (!style()->boxShadow() && !style()->hasBorderImageOutsets())
         return;
 
     bool isFlipped = style()->isFlippedBlocksWritingMode();
@@ -3680,21 +3668,6 @@ void RenderBox::addVisualEffectOverflow()
         overflowMaxY = max(overflowMaxY, borderBox.maxY() + ((!isFlipped || !isHorizontal) ? borderOutsetBottom : borderOutsetTop));
     }
 
-#if ENABLE(CSS_FILTERS)
-    // Compute any filter outset overflow.
-    if (style()->hasFilterOutsets()) {
-        int filterOutsetLeft;
-        int filterOutsetRight;
-        int filterOutsetTop;
-        int filterOutsetBottom;
-        style()->getFilterOutsets(filterOutsetTop, filterOutsetRight, filterOutsetBottom, filterOutsetLeft);
-        
-        overflowMinX = min(overflowMinX, borderBox.x() - filterOutsetLeft);
-        overflowMaxX = max(overflowMaxX, borderBox.maxX() + filterOutsetRight);
-        overflowMinY = min(overflowMinY, borderBox.y() - filterOutsetTop);
-        overflowMaxY = max(overflowMaxY, borderBox.maxY() + filterOutsetBottom);
-    }
-#endif
     // Add in the final overflow with shadows and outsets combined.
     addVisualOverflow(LayoutRect(overflowMinX, overflowMinY, overflowMaxX - overflowMinX, overflowMaxY - overflowMinY));
 }

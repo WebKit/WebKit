@@ -286,6 +286,13 @@ bool RenderLayer::paintsWithFilters() const
 
     return false;
 }
+    
+bool RenderLayer::requiresFullLayerImageForFilters() const 
+{
+    // FIXME: This can be optimized to enlarge the repaint rect exactly with the amount that is going to be used.
+    // https://bugs.webkit.org/show_bug.cgi?id=81263
+    return paintsWithFilters() && filter() && filter()->hasFilterThatMovesPixels();
+}
 #endif
 
 LayoutPoint RenderLayer::computeOffsetFromRoot(bool& hasLayerOffset) const
@@ -936,6 +943,80 @@ RenderLayer* RenderLayer::enclosingCompositingLayer(bool includeSelf) const
 }
 #endif
 
+#if ENABLE(CSS_FILTERS)
+RenderLayer* RenderLayer::enclosingFilterLayer(bool includeSelf) const
+{
+    const RenderLayer* curr = includeSelf ? this : parent();
+    for (; curr; curr = curr->parent()) {
+        if (curr->requiresFullLayerImageForFilters())
+            return const_cast<RenderLayer*>(curr);
+    }
+    
+    return 0;
+}
+
+RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
+{
+    for (const RenderLayer* curr = this; curr; curr = curr->parent()) {
+        if ((curr != this && curr->requiresFullLayerImageForFilters()) || curr->isComposited() || curr->isRootLayer())
+            return const_cast<RenderLayer*>(curr);
+    }
+    return 0;
+}
+
+void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, bool immediate)
+{
+    if (rect.isEmpty())
+        return;
+    
+    LayoutRect rectForRepaint = rect;
+    
+#if ENABLE(CSS_FILTERS)
+    if (renderer()->style()->hasFilterOutsets()) {
+        LayoutUnit topOutset;
+        LayoutUnit rightOutset;
+        LayoutUnit bottomOutset;
+        LayoutUnit leftOutset;
+        renderer()->style()->getFilterOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
+        rectForRepaint.move(-leftOutset, -topOutset);
+        rectForRepaint.expand(leftOutset + rightOutset, topOutset + bottomOutset);
+    }
+#endif
+    
+    m_filterRepaintRect.unite(rectForRepaint);
+    
+    RenderLayer* parentLayer = enclosingFilterRepaintLayer();
+    ASSERT(parentLayer);
+    FloatQuad repaintQuad(rectForRepaint);
+    LayoutRect parentLayerRect = renderer()->localToContainerQuad(repaintQuad, parentLayer->renderer()).enclosingBoundingBox();
+    
+#if USE(ACCELERATED_COMPOSITING)
+    if (parentLayer->isComposited()) {
+        if (!parentLayer->backing()->paintingGoesToWindow()) {
+            parentLayer->setBackingNeedsRepaintInRect(parentLayerRect);
+            return;
+        }
+        // If the painting goes to window, redirect the painting to the parent RenderView.
+        parentLayer = renderer()->view()->layer();
+        parentLayerRect = renderer()->localToContainerQuad(repaintQuad, parentLayer->renderer()).enclosingBoundingBox();
+    }
+#endif
+
+    if (parentLayer->paintsWithFilters()) {
+        parentLayer->setFilterBackendNeedsRepaintingInRect(parentLayerRect, immediate);
+        return;        
+    }
+    
+    if (parentLayer->isRootLayer()) {
+        RenderView* view = toRenderView(parentLayer->renderer());
+        view->repaintViewRectangle(parentLayerRect, immediate);
+        return;
+    }
+    
+    ASSERT_NOT_REACHED();
+}
+#endif
+    
 RenderLayer* RenderLayer::clippingRoot() const
 {
 #if USE(ACCELERATED_COMPOSITING)
@@ -2840,7 +2921,7 @@ void RenderLayer::paintLayerContentsAndReflection(RenderLayer* rootLayer, Graphi
 }
 
 void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* context, 
-                        const LayoutRect& paintDirtyRect, PaintBehavior paintBehavior,
+                        const LayoutRect& parentPaintDirtyRect, PaintBehavior paintBehavior,
                         RenderObject* paintingRoot, RenderRegion* region, OverlapTestRequestMap* overlapTestRequests,
                         PaintLayerFlags paintFlags)
 {
@@ -2856,13 +2937,43 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
     LayoutRect layerBounds;
     ClipRect damageRect, clipRectToApply, outlineRect;
     LayoutPoint paintOffset;
+    LayoutRect paintDirtyRect = parentPaintDirtyRect;
+    
+    bool useClipRect = true;
+    GraphicsContext* transparencyLayerContext = context;
+    
+    // Ensure our lists are up-to-date.
+    updateLayerListsIfNeeded();
+
+#if ENABLE(CSS_FILTERS)
+    FilterEffectRendererHelper filterPainter(filter() && paintsWithFilters());
+    if (filterPainter.haveFilterEffect() && !context->paintingDisabled()) {
+        LayoutPoint rootLayerOffset;
+        convertToLayerCoords(rootLayer, rootLayerOffset);
+        m_filterRepaintRect.move(rootLayerOffset.x(), rootLayerOffset.y());
+        LayoutRect filterPaintDirtyRect = filterPainter.prepareFilterEffect(this, calculateLayerBounds(this, rootLayer, false, false), parentPaintDirtyRect, m_filterRepaintRect);
+        m_filterRepaintRect = IntRect();
+        // Rewire the old context to a memory buffer, so that we can capture the contents of the layer.
+        // NOTE: We saved the old context in the "transparencyLayerContext" local variable, to be able to start a transparency layer
+        // on the original context and avoid duplicating "beginFilterEffect" after each transpareny layer call. Also, note that 
+        // beginTransparencyLayers will only create a single lazy transparency layer, even though it is called twice in this method.
+        context = filterPainter.beginFilterEffect(context);
+        
+        // Check that we didn't fail to allocate the graphics context for the offscreen buffer.
+        if (filterPainter.hasStartedFilterEffect()) {
+            paintDirtyRect = filterPaintDirtyRect;
+            // If the filter needs the full source image, we need to avoid using the clip rectangles.
+            // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
+            // Note that we will still apply the clipping on the final rendering of the filter.
+            useClipRect = !filter()->hasFilterThatMovesPixels();
+        }
+    }
+#endif
+    
     if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars) {
         calculateRects(rootLayer, region, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, localPaintFlags & PaintLayerTemporaryClipRects);
         paintOffset = toPoint(layerBounds.location() - renderBoxLocation());
     }
-
-    // Ensure our lists are up-to-date.
-    updateLayerListsIfNeeded();
 
     bool forceBlackText = paintBehavior & PaintBehaviorForceBlackText;
     bool selectionOnly  = paintBehavior & PaintBehaviorSelectionOnly;
@@ -2878,10 +2989,6 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
     if (overlapTestRequests && isSelfPaintingLayer)
         performOverlapTests(*overlapTestRequests, rootLayer, this);
 
-#if ENABLE(CSS_FILTERS)
-    FilterEffectRendererHelper filterPainter(paintsWithFilters());
-#endif
-
     // We want to paint our layer, but only if we intersect the damage rect.
     shouldPaintContent &= intersectsDamageRect(layerBounds, damageRect.rect(), rootLayer);
     
@@ -2889,23 +2996,22 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
         if (shouldPaintContent && !selectionOnly) {
             // Begin transparency layers lazily now that we know we have to paint something.
             if (haveTransparency)
-                beginTransparencyLayers(context, rootLayer, paintDirtyRect, paintBehavior);
+                beginTransparencyLayers(transparencyLayerContext, rootLayer, paintDirtyRect, paintBehavior);
         
-#if ENABLE(CSS_FILTERS)
-            if (filterPainter.haveFilterEffect() && !context->paintingDisabled())
-                context = filterPainter.beginFilterEffect(this, context, paintingExtent(rootLayer, paintDirtyRect, paintBehavior));
-#endif
-        
-            // Paint our background first, before painting any child layers.
-            // Establish the clip used to paint our background.
-            clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Background painting will handle clipping to self.
-
+            if (useClipRect) {
+                // Paint our background first, before painting any child layers.
+                // Establish the clip used to paint our background.
+                clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Background painting will handle clipping to self.
+            }
+            
             // Paint the background.
             PaintInfo paintInfo(context, damageRect.rect(), PaintPhaseBlockBackground, false, paintingRootForRenderer, region, 0);
             renderer()->paint(paintInfo, paintOffset);
 
-            // Restore the clip.
-            restoreClip(context, paintDirtyRect, damageRect);
+            if (useClipRect) {
+                // Restore the clip.
+                restoreClip(context, paintDirtyRect, damageRect);
+            }
         }
 
         // Now walk the sorted list of children with negative z-indices.
@@ -2917,15 +3023,13 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
         if (shouldPaintContent && !clipRectToApply.isEmpty()) {
             // Begin transparency layers lazily now that we know we have to paint something.
             if (haveTransparency)
-                beginTransparencyLayers(context, rootLayer, paintDirtyRect, paintBehavior);
+                beginTransparencyLayers(transparencyLayerContext, rootLayer, paintDirtyRect, paintBehavior);
 
-#if ENABLE(CSS_FILTERS)
-            // If the filter was not started yet, start it now, after the transparency layer was lazily created.
-            if (filterPainter.haveFilterEffect() && !filterPainter.hasStartedFilterEffect() && !context->paintingDisabled())
-                context = filterPainter.beginFilterEffect(this, context, paintingExtent(rootLayer, paintDirtyRect, paintBehavior));
-#endif
-            // Set up the clip used when painting our children.
-            clipToRect(rootLayer, context, paintDirtyRect, clipRectToApply);
+            if (useClipRect) {
+                // Set up the clip used when painting our children.
+                clipToRect(rootLayer, context, paintDirtyRect, clipRectToApply);
+            }
+            
             PaintInfo paintInfo(context, clipRectToApply.rect(), 
                                 selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
                                 forceBlackText, paintingRootForRenderer, region, 0);
@@ -2940,8 +3044,10 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
                 renderer()->paint(paintInfo, paintOffset);
             }
 
-            // Now restore our clip.
-            restoreClip(context, paintDirtyRect, clipRectToApply);
+            if (useClipRect) {
+                // Now restore our clip.
+                restoreClip(context, paintDirtyRect, clipRectToApply);
+            }
         }
 
         if (shouldPaintOutline && !outlineRect.isEmpty()) {
@@ -2960,14 +3066,17 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
     }
     
     if ((localPaintFlags & PaintLayerPaintingCompositingMaskPhase) && shouldPaintContent && renderer()->hasMask() && !selectionOnly) {
-        clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
+        if (useClipRect)
+            clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
 
         // Paint the mask.
         PaintInfo paintInfo(context, damageRect.rect(), PaintPhaseMask, false, paintingRootForRenderer, region, 0);
         renderer()->paint(paintInfo, paintOffset);
         
-        // Restore the clip.
-        restoreClip(context, paintDirtyRect, damageRect);
+        if (useClipRect) {
+            // Restore the clip.
+            restoreClip(context, paintDirtyRect, damageRect);
+        }
     }
 
     if (isPaintingOverlayScrollbars) {
@@ -2977,10 +3086,17 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
     }
 
 #if ENABLE(CSS_FILTERS)
-    if (filterPainter.hasStartedFilterEffect())
+    if (filterPainter.hasStartedFilterEffect()) {
+        // Apply the correct clipping (ie. overflow: hidden).
+        clipToRect(rootLayer, transparencyLayerContext, paintDirtyRect, damageRect);
         context = filterPainter.applyFilterEffect();
+        restoreClip(transparencyLayerContext, paintDirtyRect, damageRect);
+    }
 #endif
 
+    // Make sure that we now use the original transparency context.
+    ASSERT(transparencyLayerContext == context);
+    
     // End our transparency layer
     if (haveTransparency && m_usedTransparency && !m_paintingInsideReflection) {
         context->endTransparencyLayer();
@@ -3948,6 +4064,107 @@ IntRect RenderLayer::absoluteBoundingBox() const
     return pixelSnappedIntRect(boundingBox(root()));
 }
 
+IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer, bool includeSelfTransform, bool includeLayerFilterOutsets)
+{
+    if (!layer->isSelfPaintingLayer())
+        return IntRect();
+    
+    LayoutRect boundingBoxRect = layer->localBoundingBox();
+    if (layer->renderer()->isRoot()) {
+        // If the root layer becomes composited (e.g. because some descendant with negative z-index is composited),
+        // then it has to be big enough to cover the viewport in order to display the background. This is akin
+        // to the code in RenderBox::paintRootBoxFillLayers().
+        if (FrameView* frameView = layer->renderer()->view()->frameView()) {
+            LayoutUnit contentsWidth = frameView->contentsWidth();
+            LayoutUnit contentsHeight = frameView->contentsHeight();
+        
+            boundingBoxRect.setWidth(max(boundingBoxRect.width(), contentsWidth - boundingBoxRect.x()));
+            boundingBoxRect.setHeight(max(boundingBoxRect.height(), contentsHeight - boundingBoxRect.y()));
+        }
+    }
+
+    LayoutRect unionBounds = boundingBoxRect;
+
+    LayoutRect localClipRect = layer->localClipRect();
+    if (localClipRect != PaintInfo::infiniteRect()) {
+        LayoutPoint ancestorRelOffset;
+        layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
+        localClipRect.moveBy(ancestorRelOffset);
+        return pixelSnappedIntRect(localClipRect);
+    }
+
+    if (RenderLayer* reflection = layer->reflectionLayer()) {
+        if (!reflection->isComposited()) {
+            LayoutRect childUnionBounds = calculateLayerBounds(reflection, layer);
+            unionBounds.unite(childUnionBounds);
+        }
+    }
+    
+    ASSERT(layer->isStackingContext() || (!layer->m_posZOrderList || !layer->m_posZOrderList->size()));
+
+    if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
+        size_t listSize = negZOrderList->size();
+        for (size_t i = 0; i < listSize; ++i) {
+            RenderLayer* curLayer = negZOrderList->at(i);
+            if (!curLayer->isComposited()) {
+                LayoutRect childUnionBounds = calculateLayerBounds(curLayer, layer);
+                unionBounds.unite(childUnionBounds);
+            }
+        }
+    }
+
+    if (Vector<RenderLayer*>* posZOrderList = layer->posZOrderList()) {
+        size_t listSize = posZOrderList->size();
+        for (size_t i = 0; i < listSize; ++i) {
+            RenderLayer* curLayer = posZOrderList->at(i);
+            if (!curLayer->isComposited()) {
+                LayoutRect childUnionBounds = calculateLayerBounds(curLayer, layer);
+                unionBounds.unite(childUnionBounds);
+            }
+        }
+    }
+
+    if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
+        size_t listSize = normalFlowList->size();
+        for (size_t i = 0; i < listSize; ++i) {
+            RenderLayer* curLayer = normalFlowList->at(i);
+            if (!curLayer->isComposited()) {
+                LayoutRect curAbsBounds = calculateLayerBounds(curLayer, layer);
+                unionBounds.unite(curAbsBounds);
+            }
+        }
+    }
+    
+#if ENABLE(CSS_FILTERS)
+    // FIXME: We can optimize the size of the composited layers, by not enlarging
+    // filtered areas with the outsets if we know that the filter is going to render in hardware.
+    // https://bugs.webkit.org/show_bug.cgi?id=81239
+    if (includeLayerFilterOutsets && layer->renderer()->style()->hasFilterOutsets()) {
+        LayoutUnit topOutset;
+        LayoutUnit rightOutset;
+        LayoutUnit bottomOutset;
+        LayoutUnit leftOutset;
+        layer->renderer()->style()->getFilterOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
+        unionBounds.move(-leftOutset, -topOutset);
+        unionBounds.expand(leftOutset + rightOutset, topOutset + bottomOutset);
+    }
+#else
+    UNUSED_PARAM(includeLayerFilterOutsets);
+#endif
+
+    if (includeSelfTransform && layer->paintsWithTransform(PaintBehaviorNormal)) {
+        TransformationMatrix* affineTrans = layer->transform();
+        boundingBoxRect = affineTrans->mapRect(boundingBoxRect);
+        unionBounds = affineTrans->mapRect(unionBounds);
+    }
+
+    LayoutPoint ancestorRelOffset;
+    layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
+    unionBounds.moveBy(ancestorRelOffset);
+    
+    return pixelSnappedIntRect(unionBounds);
+}
+
 void RenderLayer::clearClipRectsIncludingDescendants()
 {
     if (!m_clipRects)
@@ -4537,7 +4754,7 @@ void RenderLayer::updateReflectionStyle()
 #if ENABLE(CSS_FILTERS)
 void RenderLayer::updateOrRemoveFilterEffect()
 {
-    if (paintsWithFilters()) {
+    if (paintsWithFilters() && renderer()->style()->filter().size()) {
         if (!m_filter) {
             m_filter = FilterEffectRenderer::create(this);
             RenderingMode renderingMode = renderer()->frame()->page()->settings()->acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;

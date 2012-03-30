@@ -421,6 +421,12 @@ public:
     RenderLayer* ancestorCompositingLayer() const { return enclosingCompositingLayer(false); }
 #endif
 
+#if ENABLE(CSS_FILTERS)
+    RenderLayer* enclosingFilterLayer(bool includeSelf = true) const;
+    RenderLayer* enclosingFilterRepaintLayer() const;
+    void setFilterBackendNeedsRepaintingInRect(const LayoutRect&, bool immediate);
+#endif
+
     void convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLayer, IntPoint& location) const;
     void convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLayer, IntRect&) const;
     void convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutPoint& location) const;
@@ -479,6 +485,8 @@ public:
     // Pixel snapped bounding box relative to the root.
     IntRect absoluteBoundingBox() const;
 
+    static IntRect calculateLayerBounds(const RenderLayer*, const RenderLayer* ancestorLayer, bool includeSelfTransform = true, bool includeLayerFilterOutsets = true);
+    
     void updateHoverActiveState(const HitTestRequest&, HitTestResult&);
 
     // WARNING: This method returns the offset for the parent as this is what updateLayerPositions expects.
@@ -561,6 +569,7 @@ public:
 
 #if ENABLE(CSS_FILTERS)
     bool paintsWithFilters() const;
+    bool requiresFullLayerImageForFilters() const;
     FilterEffectRenderer* filter() const { return m_filter.get(); }
 #endif
 
@@ -859,6 +868,7 @@ protected:
   
 #if ENABLE(CSS_FILTERS)
     RefPtr<FilterEffectRenderer> m_filter;
+    LayoutRect m_filterRepaintRect;
 #endif
         
     // Renderers to hold our custom scroll corner and resizer.

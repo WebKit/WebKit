@@ -2968,8 +2968,25 @@ BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds.html = PASS 
 // CSS custom() filters are not currently supported
 BUGWK71392 WIN : css3/filters/custom = FAIL
 
-BUGWK82521 SKIP : css3/filters/filter-change-repaint-composited.html = FAIL
-BUGWK82521 SKIP : css3/filters/filter-change-repaint.html = FAIL
+BUGWK82783 SKIP : css3/filters/filter-change-repaint-composited.html = FAIL
+BUGWK82783 SKIP : css3/filters/filter-change-repaint.html = FAIL
+BUGWK82783 SKIP : css3/filters/filter-repaint-blur.html = FAIL
+BUGWK82783 SKIP : css3/filters/filter-repaint-child-layers.html = FAIL
+BUGWK82783 SKIP : css3/filters/filter-repaint-composited-fallback-crash.html = FAIL
+BUGWK82783 SKIP : css3/filters/filter-repaint-composited-fallback.html = FAIL
+BUGWK82783 SKIP : css3/filters/filter-repaint-shadow-clipped.html = FAIL
+BUGWK82783 SKIP : css3/filters/filter-repaint-shadow-rotated.html = FAIL
+BUGWK82783 SKIP : css3/filters/filter-repaint-shadow.html = FAIL
+BUGWK82783 SKIP : css3/filters/filter-repaint.html = FAIL
+BUGWK82783 SKIP : css3/filters/filter-with-transform.html = FAIL
+BUGWK82783 SKIP : css3/filters/filter-repaint-sepia.html = FAIL
+BUGWK82783 SKIP : css3/filters/nested-filter.html = FAIL
+
+// Custom filters painting is broken for now: https://bugs.webkit.org/show_bug.cgi?id=82803
+BUGWK82803 SKIP : css3/filters/custom/effect-custom-combined-missing.html = FAIL
+BUGWK82803 SKIP : css3/filters/custom/effect-custom.html = FAIL
+BUGWK82803 SKIP : css3/filters/custom/effect-custom-parameters.html = FAIL
+BUGWK82803 SKIP : css3/filters/custom/custom-filter-shader-cache.html = FAIL
 
 // <style scoped> not yet enabled.
 BUGWK49142 SKIP : fast/css/style-scoped = PASS

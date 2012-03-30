@@ -1280,6 +1280,14 @@ RenderBoxModelObject* RenderObject::containerForRepaint() const
             repaintContainer = compLayer->renderer();
     }
 #endif
+    
+#if ENABLE(CSS_FILTERS)
+    if (RenderLayer* parentLayer = enclosingLayer()) {
+        RenderLayer* enclosingFilterLayer = parentLayer->enclosingFilterLayer();
+        if (enclosingFilterLayer)
+            return enclosingFilterLayer->renderer();
+    }
+#endif
 
     // If we have a flow thread, then we need to do individual repaints within the RenderRegions instead.
     // Return the flow thread as a repaint container in order to create a chokepoint that allows us to change
@@ -1302,6 +1310,13 @@ void RenderObject::repaintUsingContainer(RenderBoxModelObject* repaintContainer,
         toRenderFlowThread(repaintContainer)->repaintRectangleInRegions(r, immediate);
         return;
     }
+
+#if ENABLE(CSS_FILTERS)
+    if (repaintContainer->hasFilter() && repaintContainer->layer() && repaintContainer->layer()->requiresFullLayerImageForFilters()) {
+        repaintContainer->layer()->setFilterBackendNeedsRepaintingInRect(r, immediate);
+        return;
+    }
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     RenderView* v = view();
