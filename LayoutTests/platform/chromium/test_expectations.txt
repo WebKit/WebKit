@@ -1982,7 +1982,7 @@ BUGWK82505 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PAS
 BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT CRASH
 
 BUGWK82505 LINUX DEBUG : http/tests/media/media-can-load-when-hidden.html = PASS TEXT CRASH
-BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html = PASS TEXT
+BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html = PASS TEXT CRASH
 BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/upload-onprogress-event.html = PASS TEXT CRASH
 BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-sync-requests.html = PASS TEXT CRASH
 BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/uri-resolution-opera-open-004.html = PASS TEXT CRASH
@@ -4311,10 +4311,11 @@ BUGWK82509 LINUX : svg/text/append-text-node-to-tspan.html = PASS IMAGE
 BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = PASS IMAGE
 
 // This should only be a layer change.
-BUGWK82129 WIN MAC : fast/box-shadow/shadow-buffer-partial.html = TEXT
+BUGWK82129 : fast/box-shadow/shadow-buffer-partial.html = TEXT
 BUGWK82129 MAC : fast/block/lineboxcontain/block-font.html = TEXT
 BUGWK82129 MAC : fast/block/lineboxcontain/block-glyphs.html = TEXT
 BUGWK82129 MAC : fast/block/lineboxcontain/font.html = TEXT
 
 BUGWK82669 LINUX DEBUG : fast/text/international/spaces-combined-in-vertical-text.html = CRASH
 BUGWK82669 LINUX RELEASE : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
+BUGWK82669 WIN : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
