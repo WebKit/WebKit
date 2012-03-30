@@ -288,10 +288,14 @@ void DocumentLoader::finishedLoading()
 {
     m_gotFirstByte = true;   
     commitIfReady();
-    if (FrameLoader* loader = frameLoader()) {
-        loader->finishedLoadingDocument(this);
-        m_writer.end();
-    }
+    if (!frameLoader())
+        return;
+    frameLoader()->finishedLoadingDocument(this);
+    m_writer.end();
+    if (!m_mainDocumentError.isNull() || frameLoader()->stateMachine()->creatingInitialEmptyDocument())
+        return;
+    setPrimaryLoadComplete(true);
+    frameLoader()->checkLoadComplete();
 }
 
 void DocumentLoader::commitLoad(const char* data, int length)

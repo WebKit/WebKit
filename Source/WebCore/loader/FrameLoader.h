@@ -156,8 +156,6 @@ public:
 
     void handleFallbackContent();
 
-    void finishedLoading();
-
     ResourceError cancelledError(const ResourceRequest&) const;
 
     bool isHostedByObjectElement() const;

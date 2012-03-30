@@ -477,7 +477,7 @@ void MainResourceLoader::didFinishLoading(double finishTime)
         dl->maybeFinishLoadingMultipartContent();
 
     documentLoader()->timing()->setResponseEnd(finishTime ? finishTime : (m_timeOfLastDataReceived ? m_timeOfLastDataReceived : monotonicallyIncreasingTime()));
-    frameLoader()->finishedLoading();
+    documentLoader()->finishedLoading();
     ResourceLoader::didFinishLoading(finishTime);
 
     dl->applicationCacheHost()->finishedLoadingMainResource();

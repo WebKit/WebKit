@@ -1973,19 +1973,6 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     cachedFrame.restore();
 }
 
-void FrameLoader::finishedLoading()
-{
-    // Retain because the stop may release the last reference to it.
-    RefPtr<Frame> protect(m_frame);
-
-    RefPtr<DocumentLoader> dl = activeDocumentLoader();
-    dl->finishedLoading();
-    if (!dl->mainDocumentError().isNull() || !dl->frameLoader())
-        return;
-    dl->setPrimaryLoadComplete(true);
-    checkLoadComplete();
-}
-
 bool FrameLoader::isHostedByObjectElement() const
 {
     HTMLFrameOwnerElement* owner = m_frame->ownerElement();
