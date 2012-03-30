@@ -35,7 +35,7 @@
 
 namespace WebKit {
 class WebFrameImpl;
-class WebSize;
+struct WebSize;
 
 class WebDevToolsAgentPrivate : public WebDevToolsAgent {
 public:

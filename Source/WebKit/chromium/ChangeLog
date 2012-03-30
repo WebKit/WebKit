@@ -1,5 +1,12 @@
 2012-03-30  Alexander Pavlov  <apavlov@chromium.org>
 
+        [Chromium] Unreviewed Chromium Mac build fix.
+
+        * src/WebDevToolsAgentPrivate.h:
+        (WebKit):
+
+2012-03-30  Alexander Pavlov  <apavlov@chromium.org>
+
         Web Inspector: [Chromium] Implement Chromium-specific part of the device metrics emulation
         https://bugs.webkit.org/show_bug.cgi?id=82612
 
