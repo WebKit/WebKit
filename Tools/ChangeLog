@@ -1,3 +1,13 @@
+2012-03-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Update ChromiumOS bot names in builders.js to reflect changes made by
+        http://crrev.com/129835
+        
+        Also removes the ChromiumOS GTK builder, which was removed by
+        http://crrev.com/129835
+
+        * TestResultServer/static-dashboards/builders.js:
+
 2012-03-30  Vineet Chaudhary  <rgf748@motorola.com>
 
         [GTK] Disable introspection build in the at-spi2-core module.

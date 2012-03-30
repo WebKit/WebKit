@@ -237,8 +237,8 @@ var CHROMIUM_GTESTS_DEPS_BUILDERS = [
 associateBuildersWithMaster(CHROMIUM_GTESTS_DEPS_BUILDERS, CHROMIUM_BUILDER_MASTER);
 
 var CHROMIUMOS_GTESTS_DEPS_BUILDERS = [
-    ['Linux ChromiumOS Tester (1)', BuilderGroup.DEFAULT_BUILDER],
-    ['Linux ChromiumOS Tester (2)'],
+    ['Linux ChromiumOS Tests (1)', BuilderGroup.DEFAULT_BUILDER],
+    ['Linux ChromiumOS Tests (2)'],
     ['Linux ChromiumOS GTK'],
     ['Linux ChromiumOS Tests (dbg)(1)'],
     ['Linux ChromiumOS Tests (dbg)(2)'],
