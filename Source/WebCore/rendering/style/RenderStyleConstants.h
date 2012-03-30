@@ -63,7 +63,8 @@ enum StyleDifference {
 enum StyleDifferenceContextSensitiveProperty {
     ContextSensitivePropertyNone = 0,
     ContextSensitivePropertyTransform = (1 << 0),
-    ContextSensitivePropertyOpacity = (1 << 1)
+    ContextSensitivePropertyOpacity = (1 << 1),
+    ContextSensitivePropertyFilter = (1 << 2)
 };
 
 // Static pseudo styles. Dynamic ones are produced on the fly.

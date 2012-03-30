@@ -419,12 +419,6 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
 #endif
         }
 
-#if ENABLE(CSS_FILTERS)
-        if (rareNonInheritedData->m_filter.get() != other->rareNonInheritedData->m_filter.get()
-            && *rareNonInheritedData->m_filter.get() != *other->rareNonInheritedData->m_filter.get()) {
-            return StyleDifferenceLayout;
-        }
-#endif
 #if ENABLE(CSS_GRID_LAYOUT)
         if (rareNonInheritedData->m_grid.get() != other->rareNonInheritedData->m_grid.get()
             && rareNonInheritedData->m_gridItem.get() != other->rareNonInheritedData->m_gridItem.get())
@@ -605,6 +599,18 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         return StyleDifferenceRepaintLayer;
 #endif
     }
+
+#if ENABLE(CSS_FILTERS)
+    if (rareNonInheritedData->m_filter.get() != other->rareNonInheritedData->m_filter.get()
+        && *rareNonInheritedData->m_filter.get() != *other->rareNonInheritedData->m_filter.get()) {
+#if USE(ACCELERATED_COMPOSITING)
+        changedContextSensitiveProperties |= ContextSensitivePropertyFilter;
+        // Don't return; keep looking for another change.
+#else
+        return StyleDifferenceRepaintLayer;
+#endif
+    }
+#endif
 
     if (rareNonInheritedData->m_mask != other->rareNonInheritedData->m_mask
         || rareNonInheritedData->m_maskBoxImage != other->rareNonInheritedData->m_maskBoxImage)

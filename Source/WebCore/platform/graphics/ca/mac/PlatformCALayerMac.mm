@@ -709,7 +709,13 @@ void PlatformCALayer::setOpacity(float value)
 void PlatformCALayer::setFilters(const FilterOperations& filters)
 {
     if (!filters.size()) {
-        [m_layer.get() setFilters:0];
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [m_layer.get() setFilters:nil];
+        [m_layer.get() setShadowOffset:CGSizeZero];
+        [m_layer.get() setShadowColor:nil];
+        [m_layer.get() setShadowRadius:0];
+        [m_layer.get() setShadowOpacity:0];
+        END_BLOCK_OBJC_EXCEPTIONS
         return;
     }
     

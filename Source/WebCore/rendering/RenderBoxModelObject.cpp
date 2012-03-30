@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderBoxModelObject.h"
 
+#include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
@@ -329,9 +330,13 @@ void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderSty
                     || !(oldStyle->clip() == newStyle->clip())
                     || oldStyle->hasClip() != newStyle->hasClip()
                     || oldStyle->opacity() != newStyle->opacity()
-                    || oldStyle->transform() != newStyle->transform())
+                    || oldStyle->transform() != newStyle->transform()
+#if ENABLE(CSS_FILTERS)
+                    || oldStyle->filter() != newStyle->filter()
+#endif
+                    )
                 layer()->repaintIncludingDescendants();
-            } else if (newStyle->hasTransform() || newStyle->opacity() < 1) {
+            } else if (newStyle->hasTransform() || newStyle->opacity() < 1 || newStyle->hasFilter()) {
                 // If we don't have a layer yet, but we are going to get one because of transform or opacity,
                 //  then we need to repaint the old position of the object.
                 repaint();

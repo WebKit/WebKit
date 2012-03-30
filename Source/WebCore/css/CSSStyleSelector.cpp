@@ -5524,10 +5524,19 @@ PassRefPtr<CustomFilterOperation> CSSStyleSelector::createCustomFilterOperation(
 
 bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* style, RenderStyle* rootStyle, FilterOperations& outOperations)
 {
-    if (!inValue || !inValue->isValueList()) {
-        outOperations.clear();
+    ASSERT(outOperations.isEmpty());
+    
+    if (!inValue)
         return false;
+    
+    if (inValue->isPrimitiveValue()) {
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(inValue);
+        if (primitiveValue->getIdent() == CSSValueNone)
+            return true;
     }
+    
+    if (!inValue->isValueList())
+        return false;
 
     float zoomFactor = style ? style->effectiveZoom() : 1;
     FilterOperations operations;

@@ -4398,10 +4398,6 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
         updateReflectionStyle();
     }
     
-#if ENABLE(CSS_FILTERS)
-    updateOrRemoveFilterEffect();
-#endif
-
     if (Frame* frame = renderer()->frame()) {
         if (FrameView* frameView = frame->view()) {
             if (scrollsOverflow())
@@ -4420,6 +4416,10 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
     updateScrollCornerStyle();
     updateResizerStyle();
 
+#if ENABLE(CSS_FILTERS)
+    bool backingDidCompositeLayers = isComposited() && backing()->canCompositeFilters();
+#endif
+
 #if USE(ACCELERATED_COMPOSITING)
     updateTransform();
 
@@ -4430,6 +4430,15 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
     else if (oldStyle && oldStyle->overflowX() != renderer()->style()->overflowX()) {
         if (stackingContext()->hasCompositingDescendant())
             compositor()->setCompositingLayersNeedRebuild();
+    }
+#endif
+
+#if ENABLE(CSS_FILTERS)
+    updateOrRemoveFilterEffect();
+    if (isComposited() && backingDidCompositeLayers && !backing()->canCompositeFilters()) {
+        // The filters used to be drawn by platform code, but now the platform cannot draw them anymore.
+        // Fallback to drawing them in software.
+        setBackingNeedsRepaint();
     }
 #endif
 }

@@ -1718,6 +1718,16 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
             diff = StyleDifferenceRecompositeLayer;
     }
     
+#if ENABLE(CSS_FILTERS)
+    if ((contextSensitiveProperties & ContextSensitivePropertyFilter) && hasLayer()) {
+        RenderLayer* layer = toRenderBoxModelObject(this)->layer();
+        if (!layer->isComposited() || layer->paintsWithFilters())
+            diff = StyleDifferenceRepaintLayer;
+        else if (diff < StyleDifferenceRecompositeLayer)
+            diff = StyleDifferenceRecompositeLayer;
+    }
+#endif
+    
     // The answer to requiresLayer() for plugins and iframes can change outside of the style system,
     // since it depends on whether we decide to composite these elements. When the layer status of
     // one of these elements changes, we need to force a layout.
