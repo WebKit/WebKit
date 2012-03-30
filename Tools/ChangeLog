@@ -1,3 +1,16 @@
+2012-03-30  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Implement LayoutTestController::setMinimumTimerInterval
+        https://bugs.webkit.org/show_bug.cgi?id=81220
+
+        Add missing implementation setMinimumTimerInterval to EFL's
+        LayoutTestController so that we can unskip related tests from the skip list.
+
+        Reviewed by Philippe Normand.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setMinimumTimerInterval):
+
 2012-03-29  Dan Bernstein  <mitz@apple.com>
 
         Removed “Intel” from the Lion builders’ names.

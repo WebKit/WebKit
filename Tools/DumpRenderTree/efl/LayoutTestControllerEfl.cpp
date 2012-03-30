@@ -757,9 +757,9 @@ void LayoutTestController::setSerializeHTTPLoads(bool)
     notImplemented();
 }
 
-void LayoutTestController::setMinimumTimerInterval(double)
+void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
 {
-    notImplemented();
+    ewk_view_setting_minimum_timer_interval_set(browser->mainView(), minimumTimerInterval);
 }
 
 void LayoutTestController::setTextDirection(JSStringRef)

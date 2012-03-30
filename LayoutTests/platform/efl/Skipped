@@ -749,13 +749,6 @@ fast/preloader/document-write.html
 http/tests/local/link-stylesheet-load-order-preload.html
 http/tests/local/link-stylesheet-load-order.html
 
-# EFL's LayoutTestController does not implement setMinimumTimerInterval
-fast/dom/timer-increase-min-interval-and-reset-part-1.html
-fast/dom/timer-increase-min-interval-repeating.html
-fast/dom/timer-increase-min-interval.html
-fast/dom/timer-increase-then-decrease-min-interval-repeating.html
-fast/dom/timer-increase-then-decrease-min-interval.html
-
 # EFL's LayoutTestController does not implement setTextDirection
 fast/html/set-text-direction.html
 
