@@ -1681,7 +1681,6 @@ BUGCR9798 SLOW LINUX RELEASE : transitions/transition-timing-function.html = PAS
 BUGCR9798 WIN RELEASE : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
 
 // Rebaseline once fixed sampling matrixproc lands in Skia
-BUGCR117799 WIN LINUX : fast/gradients/background-clipped.html = IMAGE
 BUGCR117799 MAC : fast/gradients/background-clipped.html = TEXT
 BUGCR117799 : fast/repaint/background-misaligned.html = IMAGE
 BUGCR117799 : fast/repaint/backgroundSizeRepaint.html = IMAGE
@@ -1689,7 +1688,7 @@ BUGCR117799 : platform/chromium/virtual/gpu/fast/canvas/canvas-bg-zoom.html = IM
 // CRASH is from BUGWK82505
 BUGCR117799 : svg/as-border-image/svg-as-border-image.html = IMAGE CRASH
 BUGCR117799 : svg/custom/pattern-in-defs.svg = IMAGE
-BUGCR117799 : svg/custom/pattern-rotate.svg = IMAGE
+BUGCR117799 MAC : svg/custom/pattern-rotate.svg = IMAGE
 BUGCR117799 : svg/custom/pattern-with-transformation.svg = IMAGE
 BUGCR117799 : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE
 BUGCR117799 : svg/W3C-SVG-1.1/pservers-grad-06-b.svg = IMAGE
@@ -1745,7 +1744,6 @@ BUGCR20345 : fast/dom/Window/window-property-descriptors.html = TEXT
 BUGCR21958 MAC : svg/hixie/error/012.xml = FAIL
 
 // WebKit merge 48500:48585, newly implemented Object.defineProperty.
-BUGCR22526 : fast/js/Object-defineProperties.html = CRASH FAIL
 BUGCR22526 : fast/js/Object-defineProperty.html = CRASH FAIL
 
 // WebKit merge 48500:48585, due to newly added support for MathML.
@@ -1797,8 +1795,8 @@ BUGCR118411 WIN LINUX : fast/repaint/focus-ring.html = IMAGE
 BUGCR118411 : fast/repaint/list-marker.html = IMAGE
 BUGCR118411 : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE
 BUGCR118411 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE
-BUGCR118411 : svg/hixie/perf/001.xml = IMAGE
-BUGCR118411 : svg/hixie/perf/002.xml = IMAGE
+BUGCR118411 LEOPARD SNOWLEOPARD : svg/hixie/perf/001.xml = IMAGE PASS
+BUGCR118411 LEOPARD SNOWLEOPARD : svg/hixie/perf/002.xml = IMAGE PASS
 BUGCR118411 SLOW : svg/hixie/perf/007.xml = IMAGE
 
 // WebKit merge 50756:50820, possibly due to WebKit r50808/r50786 and Chromium r31715
@@ -2163,9 +2161,6 @@ BUGCR47083 : fast/text/hyphenate-limit-lines.html = IMAGE IMAGE+TEXT
 // it was CR75019 for unknown reason.
 BUGCR47083 : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
-// First noticed on trybots after r61836, now in the tree.
-BUG_MNAGANOV LINUX : fast/js/Object-create.html = CRASH FAIL
-
 // Produces different results on Mac dbg.
 BUGCR47826 SKIP MAC : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = FAIL
 BUGCR47826 SKIP MAC : fast/dom/HTMLMeterElement/meter-element.html = FAIL
@@ -2181,14 +2176,9 @@ BUGCR48239 : fast/js/function-apply.html = TEXT
 BUGCR48239 LINUX WIN : fast/js/function-apply-aliased.html = PASS TEXT
 BUGCR48239 : fast/js/function-apply-many-args.html = TIMEOUT TEXT
 
-BUGCR49029 : fast/js/object-literal-syntax.html = TEXT
-
 BUGCR48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 
 BUGCR32682 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
-
-// Needs V8 change.
-BUGCR49343 : fast/js/reserved-words-as-property.html = TEXT
 
 BUGWK42598 : http/tests/misc/401-alternative-content.php = TEXT
 BUGWK42598 : http/tests/xmlhttprequest/failed-auth.html = TIMEOUT TEXT
@@ -2391,8 +2381,6 @@ BUGCR63921 : platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.ht
 // Mainly flaky with mac debug, but also intermittent crashes seen on linux and windows
 BUGCR64129 : fast/files/revoke-blob-url.html = PASS CRASH
 
-BUGCR64672 : fast/regex/invalid-range-in-class.html = TEXT
-
 // FIXME: Need to add tooling support for V8 bugs.
 BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
 
@@ -2432,7 +2420,6 @@ BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = PASS CRASH TIMEOU
 // Occasionally times out with, only under the DRT for Linux
 BUGCR58212 LINUX : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT
 
-BUG_DRT : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT DEBUG : fast/frames/calculate-round.html = PASS TIMEOUT
 BUGCR43890 SLOW DEBUG : fast/forms/implicit-submission.html = PASS TEXT
 // Rebaseline needed after BUGWK75568
@@ -2516,8 +2503,6 @@ BUGWK52061 DEBUG : transitions/transition-timing-function.html = PASS TEXT
 BUG_ABARTH : svg/text/caret-in-svg-text.xhtml = TEXT
 
 // V8 test failures introduced by r75408
-BUGCR69181 : fast/js/exception-codegen-crash.html = FAIL
-BUGCR69181 : fast/js/kde/parse.html = FAIL
 BUGCR69181 LINUX WIN DEBUG : fast/js/large-expressions.html = TIMEOUT TEXT
 
 // New test added in r75720
@@ -2526,9 +2511,6 @@ BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH TEXT
 // Failing after r75768, times out after r89503
 BUGCR69639 BUGWK63227 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TIMEOUT TEXT
 
-// Behavior changed in http://trac.webkit.org/changeset/76180,
-// need to investigate
-BUGDIMICH : fast/regex/cross-frame-callable.html = TEXT
 
 BUGCR75238 WIN : fast/text/large-text-composed-char.html = FAIL
 // started to time out under Linux Debug at some point after WK r80582
@@ -2643,8 +2625,6 @@ BUGCR75561 LEOPARD : fast/writing-mode/text-orientation-basic.html = IMAGE IMAGE
 
 BUGWK56060 LINUX : fast/images/favicon-as-image.html = IMAGE+TEXT
 
-// Test changed in Wk r80743, throws an exception rather than returning 'true'
-BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 
 // Skip an overly restrictive cross-origin HTTPS test
 BUGCR69594 SKIP : http/tests/appcache/different-https-origin-resource-main.html = FAIL
@@ -2830,8 +2810,6 @@ BUGWK78544 LINUX : fast/text/international/thai-baht-space.html = PASS IMAGE IMA
 
 BUGWK60133 DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = PASS TIMEOUT
 
-BUGWK59673 : fast/dom/Window/get-set-properties.html = TEXT
-BUGWK59673 : fast/dom/Window/window-property-shadowing.html = TEXT
 BUGWK59673 : http/tests/history/cross-origin-replace-history-object-child.html = TIMEOUT
 
 // Flakiness on canaries (noted ~ r85140)
@@ -3196,7 +3174,6 @@ BUGWK68270 MAC DEBUG : fast/css/only-of-type-pseudo-class.html = IMAGE IMAGE+TEX
 
 BUG_EPOGER SNOWLEOPARD DEBUG : fast/js/try-catch-crash.html = PASS TIMEOUT
 
-BUGWK68674 : fast/js/function-bind.html = TEXT
 
 BUGWK68705 MAC WIN : fast/loader/document-destruction-within-unload.html = PASS CRASH
 
@@ -3308,7 +3285,6 @@ BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
 
 BUGRICOW : fast/js/array-functions-non-arrays.html = TEXT
 BUGRICOW : fast/js/eval-cross-window.html = TEXT
-BUGRICOW : fast/js/regexp-caching.html = TEXT
 BUGRICOW : fast/js/toString-overrides.html = TEXT
 
 BUGWK72053 MAC DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = PASS CRASH
@@ -3498,7 +3474,6 @@ BUGWK77061 XP DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE
 
 BUGWK77188 MAC : platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
 
-BUGWK77303 : fast/js/reserved-words-strict.html = TEXT
 BUGWK77303 : fast/js/keywords-and-reserved_words.html = TEXT
 
 BUGWK77310 : fast/js/navigator-language.html = PASS TEXT
@@ -3843,22 +3818,6 @@ BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
 // New test, flaky since added in r110965.
 BUGWK82097 : editing/selection/move-by-word-visually-crash-test-5.html = PASS TIMEOUT
 
-BUGWK82150 : media/media-document-audio-repaint.html = IMAGE+TEXT
-BUGWK82150 : media/video-no-audio.html = IMAGE+TEXT
-BUGWK82150 : media/controls-strict.html = IMAGE+TEXT
-BUGWK82150 : media/video-volume-slider.html = IMAGE+TEXT
-BUGWK82150 : media/controls-styling.html = IMAGE+TEXT
-BUGWK82150 : media/video-display-toggle.html = IMAGE+TEXT
-BUGWK82150 : media/audio-repaint.html = IMAGE+TEXT
-BUGWK82150 : media/audio-controls-rendering.html = IMAGE+TEXT
-BUGWK82150 : media/video-zoom-controls.html = IMAGE+TEXT
-BUGWK82150 : media/video-controls-rendering.html = IMAGE+TEXT
-BUGWK82150 : media/controls-without-preload.html = IMAGE+TEXT
-BUGWK82150 : media/media-controls-clone.html = IMAGE+TEXT
-BUGWK82150 : fast/layers/video-layer.html = IMAGE+TEXT
-BUGWK82150 : media/video-empty-source.html = IMAGE+TEXT
-BUGWK82150 : media/video-playing-and-pause.html = IMAGE+TEXT
-BUGWK82150 : media/controls-after-reload.html = IMAGE+TEXT
 
 // Just needs a rebaseline. The iframe size is now 600x300, before it was 300x150 - as we properly zoom the default intrinsic size now.
 BUGWK81631 : fast/table/quote-text-around-iframe.html = IMAGE IMAGE+TEXT PASS
