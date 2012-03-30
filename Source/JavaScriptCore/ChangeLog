@@ -1,3 +1,9 @@
+2012-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows (make based) build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make: Copy WTF header files into a place where JavaScriptCore build can see them.
+
 2012-03-30  Keishi Hattori  <keishi@webkit.org>
 
         Change ENABLE_INPUT_COLOR to ENABLE_INPUT_TYPE_COLOR and enable it for chromium

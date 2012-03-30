@@ -10,6 +10,8 @@ install:
     set WebKitOutputDir=$(OBJROOT)
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
     set WebKitVSPropsRedirectionDir=$(SRCROOT)\AppleInternal\tools\vsprops\OpenSource\1\2\3\4\ 
+    -mkdir "%ConfigurationBuildDir%\include\private"
+    xcopy "%WebKitLibrariesDir%\include\private\*" "%ConfigurationBuildDir%\include\private" /e/v/i/h/y
 !IF "$(BUILDSTYLE)"=="Release_PGO"
     devenv "JavaScriptCoreSubmit.sln" /clean $(BUILDSTYLE)
     devenv "JavaScriptCoreSubmit.sln" /build $(BUILDSTYLE)
