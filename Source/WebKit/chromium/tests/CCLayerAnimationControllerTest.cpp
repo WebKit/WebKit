@@ -141,6 +141,36 @@ TEST(CCLayerAnimationControllerTest, syncNewAnimation)
     EXPECT_EQ(CCActiveAnimation::WaitingForTargetAvailability, controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity)->runState());
 }
 
+TEST(CCLayerAnimationControllerTest, doNotSyncFinishedAnimation)
+{
+    FakeLayerAnimationControllerClient dummyImpl;
+    OwnPtr<CCLayerAnimationController> controllerImpl(CCLayerAnimationController::create(&dummyImpl));
+    FakeLayerAnimationControllerClient dummy;
+    OwnPtr<CCLayerAnimationController> controller(CCLayerAnimationController::create(&dummy));
+
+    EXPECT_FALSE(controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity));
+
+    addOpacityTransitionToController(*controller, 1, 0, 1, false);
+
+    controller->pushAnimationUpdatesTo(controllerImpl.get());
+
+    EXPECT_TRUE(controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity));
+    EXPECT_EQ(CCActiveAnimation::WaitingForTargetAvailability, controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity)->runState());
+
+    // Notify main thread controller that the animation has started.
+    controller->notifyAnimationStarted(CCAnimationStartedEvent(0, 0, CCActiveAnimation::Opacity, 0));
+
+    // Force animation to complete on impl thread.
+    controllerImpl->removeAnimation(0);
+
+    EXPECT_FALSE(controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity));
+
+    controller->pushAnimationUpdatesTo(controllerImpl.get());
+
+    // Even though the main thread has a 'new' animation, it should not be pushed because the animation has already completed on the impl thread.
+    EXPECT_FALSE(controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity));
+}
+
 // Tests that transitioning opacity from 0 to 1 works as expected.
 TEST(CCLayerAnimationControllerTest, TrivialTransition)
 {

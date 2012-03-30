@@ -239,14 +239,22 @@ void CCLayerAnimationController::pushNewAnimationsToImplThread(CCLayerAnimationC
 {
     // Any new animations owned by the main thread's controller are cloned and adde to the impl thread's controller.
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
-        if (!controllerImpl->getActiveAnimation(m_activeAnimations[i]->group(), m_activeAnimations[i]->targetProperty())) {
-            OwnPtr<CCActiveAnimation> toAdd(m_activeAnimations[i]->cloneForImplThread());
-            ASSERT(m_activeAnimations[i]->needsSynchronizedStartTime());
-            ASSERT(!toAdd->needsSynchronizedStartTime());
-            // The new animation should be set to run as soon as possible.
-            toAdd->setRunState(CCActiveAnimation::WaitingForTargetAvailability, 0);
-            controllerImpl->add(toAdd.release());
-        }
+        // If the animation is already running on the impl thread, there is no need to copy it over.
+        if (controllerImpl->getActiveAnimation(m_activeAnimations[i]->group(), m_activeAnimations[i]->targetProperty()))
+            continue;
+
+        // If the animation is not running on the impl thread, it does not necessarily mean that it needs
+        // to be copied over and started; it may have already finished. In this case, the impl thread animation
+        // will have already notified that it has started and the main thread animation will no longer need
+        // a synchronized start time.
+        if (!m_activeAnimations[i]->needsSynchronizedStartTime())
+            continue;
+
+        OwnPtr<CCActiveAnimation> toAdd(m_activeAnimations[i]->cloneForImplThread());
+        ASSERT(!toAdd->needsSynchronizedStartTime());
+        // The new animation should be set to run as soon as possible.
+        toAdd->setRunState(CCActiveAnimation::WaitingForTargetAvailability, 0);
+        controllerImpl->add(toAdd.release());
     }
 }
 
