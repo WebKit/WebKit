@@ -231,11 +231,14 @@ WebInspector.ScriptsNavigator.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {boolean} focusSource
      */
-    scriptSelected: function(uiSourceCode)
+    _scriptSelected: function(uiSourceCode, focusSource)
     {
         this._lastSelectedUISourceCode = uiSourceCode;
         this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.FileSelected, uiSourceCode);
+        if (focusSource)
+            this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.ReleasedFocusAfterSelection, uiSourceCode);
     },
 
     /**
@@ -721,17 +724,24 @@ WebInspector.NavigatorScriptTreeElement.prototype = {
             this.listItemElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
     },
 
+    onspace: function()
+    {
+        this._navigator._scriptSelected(this.uiSourceCode, true);
+        return true;
+    },
+
     /**
      * @param {Event} event
      */
     _onclick: function(event)
     {
-        this._navigator.scriptSelected(this.uiSourceCode);
+        this._navigator._scriptSelected(this.uiSourceCode, false);
     },
 
     onenter: function()
     {
-        this._navigator.scriptSelected(this.uiSourceCode);
+        this._navigator._scriptSelected(this.uiSourceCode, true);
+        return true;
     },
 
     /**

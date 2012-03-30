@@ -409,6 +409,9 @@ TreeOutline.prototype._treeKeyDown = function(event)
     } else if (isEnterKey(event)) {
         if (this.selectedTreeElement.onenter)
             handled = this.selectedTreeElement.onenter();
+    } else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Space.code) {
+        if (this.selectedTreeElement.onspace)
+            handled = this.selectedTreeElement.onspace();
     }
 
     if (nextSelectedElement) {

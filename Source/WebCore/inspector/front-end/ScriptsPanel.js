@@ -670,16 +670,16 @@ WebInspector.ScriptsPanel.prototype = {
 
     _editorSelected: function(event)
     {
-        this._hideNavigatorOverlay();
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
         this._showFile(uiSourceCode);
+        this._hideNavigatorOverlay();
     },
 
     _fileSelected: function(event)
     {
-        this._hideNavigatorOverlay();
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
         this._showFile(uiSourceCode);
+        this._hideNavigatorOverlay();
     },
 
     _fileSelectorReleasedFocus: function(event)
@@ -1046,6 +1046,8 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         this._sidebarOverlay.hide();
+        if (this.visibleView)
+            this.visibleView.focus();
     },
 
     _navigatorOverlayWasShown: function(event)
