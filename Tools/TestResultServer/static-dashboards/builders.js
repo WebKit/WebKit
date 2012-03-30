@@ -172,6 +172,7 @@ var CHROMIUM_GPU_GTESTS_TOT_BUILDERS = [
     ['GPU Win7 (dbg) (NVIDIA)'],
     ['GPU Mac'],
     ['GPU Mac (dbg)'],
+    ['GPU Linux (NVIDIA)'],
     ['GPU Linux (dbg) (NVIDIA)'],
 ];
 associateBuildersWithMaster(CHROMIUM_GPU_GTESTS_TOT_BUILDERS, CHROMIUM_WEBKIT_BUILDER_MASTER);
