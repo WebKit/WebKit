@@ -70,7 +70,7 @@ layer at (0,0) size 480x360
             chunk 1 (middle anchor) text run 6 at (387.68,132.00) startOffset 20 endOffset 21 width 5.00: "x"
             chunk 1 (middle anchor) text run 7 at (392.45,132.00) startOffset 21 endOffset 24 width 16.12: "cep"
             chunk 1 (middle anchor) text run 8 at (408.53,132.00) startOffset 24 endOffset 29 width 16.12: "t id."
-        RenderSVGPath {ellipse} at (298,219) size 144x64 [fill={[type=SOLID] [color=#0000FF]}] [cx=370.00] [cy=251.00] [rx=72.00] [ry=32.00]
+        RenderSVGEllipse {ellipse} at (298,219) size 144x64 [fill={[type=SOLID] [color=#0000FF]}] [cx=370.00] [cy=251.00] [rx=72.00] [ry=32.00]
         RenderSVGText {text} at (349,283) size 42x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 42x15
             chunk 1 (middle anchor) text run 1 at (349.39,295.00) startOffset 0 endOffset 7 width 41.23: "Ellipse"
@@ -82,7 +82,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 3 at (346.87,212.00) startOffset 6 endOffset 17 width 45.58: "x, should f"
             chunk 1 text run 4 at (392.43,212.00) startOffset 17 endOffset 23 width 15.55: "ill fr"
             chunk 1 text run 5 at (407.93,212.00) startOffset 23 endOffset 27 width 22.23: "ame."
-        RenderSVGPath {circle} at (49,32) size 72x72 [fill={[type=SOLID] [color=#FFFF00]}] [cx=85.00] [cy=68.00] [r=36.00]
+        RenderSVGEllipse {circle} at (49,32) size 72x72 [fill={[type=SOLID] [color=#FFFF00]}] [cx=85.00] [cy=68.00] [r=36.00]
         RenderSVGText {text} at (67,104) size 36x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 36x14
             chunk 1 (middle anchor) text run 1 at (67.16,116.00) startOffset 0 endOffset 3 width 17.88: "Cir"

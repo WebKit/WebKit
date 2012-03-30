@@ -250,4 +250,4 @@ layer at (0,0) size 800x600
       RenderSVGPath {path} at (251,527) size 11x12 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M -39 331 C -39 331 -39.5 327.5 -48.5 338"]
       RenderSVGPath {path} at (261,529) size 8x8 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M -33.5 336 C -33.5 336 -31.5 329.5 -38 334"]
       RenderSVGPath {path} at (310,533) size 12x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20.5 344.5 C 20.5 344.5 22 333.5 10.5 346.5"]
-    RenderSVGPath {circle} at (430,50) size 100x100 [fill={[type=SOLID] [color=#FFFF00] [opacity=0.50]}] [cx=180.00] [cy=-100.00] [r=50.00]
+    RenderSVGEllipse {circle} at (430,50) size 100x100 [fill={[type=SOLID] [color=#FFFF00] [opacity=0.50]}] [cx=180.00] [cy=-100.00] [r=50.00]

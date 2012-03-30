@@ -14,7 +14,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 294x27
             chunk 1 text run 1 at (60.00,7.00) startOffset 0 endOffset 32 width 294.00: "Use the target to trigger events"
         RenderSVGContainer {g} at (29,109) size 62x62
-          RenderSVGPath {circle} at (29,109) size 62x62 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=0.00] [cy=0.00] [r=30.00]
+          RenderSVGEllipse {circle} at (29,109) size 62x62 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=0.00] [cy=0.00] [r=30.00]
           RenderSVGPath {line} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x1=-30.00] [y1=0.00] [x2=30.00] [y2=0.00]
           RenderSVGPath {line} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-30.00] [x2=0.00] [y2=30.00]
       RenderSVGContainer {g} at (50,182) size 205x96

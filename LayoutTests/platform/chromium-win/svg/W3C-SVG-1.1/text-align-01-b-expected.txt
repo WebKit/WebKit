@@ -9,25 +9,25 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (25,102) size 426x185
         RenderSVGContainer {g} at (227,102) size 224x35 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,130.00)}]
           RenderSVGPath {line} at (230,129) size 50x2 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=50.00] [y2=0.00]
-          RenderSVGPath {circle} at (227,127) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
+          RenderSVGEllipse {circle} at (227,127) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
           RenderSVGText {text} at (0,-28) size 221x35 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 221x35
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 16 width 221.00: "text-anchor:none"
         RenderSVGContainer {g} at (227,152) size 215x35 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,180.00)}]
           RenderSVGPath {line} at (230,179) size 50x2 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=50.00] [y2=0.00]
-          RenderSVGPath {circle} at (227,177) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
+          RenderSVGEllipse {circle} at (227,177) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
           RenderSVGText {text} at (0,-28) size 212x35 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 212x35
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 17 width 212.00: "text-anchor:start"
         RenderSVGContainer {g} at (108,202) size 244x35 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,230.00)}]
           RenderSVGPath {line} at (205,229) size 50x2 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=-25.00] [y1=0.00] [x2=25.00] [y2=0.00]
-          RenderSVGPath {circle} at (227,227) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
+          RenderSVGEllipse {circle} at (227,227) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
           RenderSVGText {text} at (-122,-28) size 244x35 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 244x35
               chunk 1 (middle anchor) text run 1 at (-122.00,0.00) startOffset 0 endOffset 18 width 244.00: "text-anchor:middle"
         RenderSVGContainer {g} at (25,252) size 208x35 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,280.00)}]
           RenderSVGPath {line} at (180,279) size 50x2 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=-50.00] [y1=0.00] [x2=0.00] [y2=0.00]
-          RenderSVGPath {circle} at (227,277) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
+          RenderSVGEllipse {circle} at (227,277) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
           RenderSVGText {text} at (-205,-28) size 205x35 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 205x35
               chunk 1 (end anchor) text run 1 at (-205.00,0.00) startOffset 0 endOffset 15 width 205.00: "text-anchor:end"

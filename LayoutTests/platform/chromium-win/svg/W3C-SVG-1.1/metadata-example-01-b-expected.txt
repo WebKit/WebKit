@@ -43,9 +43,9 @@ layer at (0,0) size 480x360
             RenderSVGPath {path} at (73,43) size 14x11 [fill={[type=SOLID] [color=#000000]}] [data="M 66.386 44.677 C 68.511 42.927 71.761 40.427 71.511 37.427 L 70.261 36.802 L 70.136 36.052 C 65.011 39.302 62.386 40.427 61.636 41.052 C 62.511 42.927 64.136 42.427 64.136 42.427 C 66.261 41.302 68.136 40.052 68.136 40.052 C 66.261 42.177 65.636 43.177 65.636 43.177 C 65.636 43.177 65.511 44.052 66.386 44.677 Z"]
       RenderSVGContainer {g} at (194,31) size 82x53 [transform={m=((0.04,-0.02)(0.02,0.04)) t=(153.00,58.00)}]
         RenderSVGContainer {g} at (194,50) size 43x28
-          RenderSVGPath {ellipse} at (197,73) size 5x5 [stroke={[type=SOLID] [color=#426942]}] [fill={[type=SOLID] [color=#73BF73]}] [cx=195.00] [cy=210.00] [rx=27.00] [ry=18.00]
-          RenderSVGPath {ellipse} at (208,50) size 26x15 [stroke={[type=SOLID] [color=#426942]}] [fill={[type=SOLID] [color=#73BF73]}] [cx=645.00] [cy=102.00] [rx=225.00] [ry=18.00]
-          RenderSVGPath {ellipse} at (209,53) size 27x15 [stroke={[type=SOLID] [color=#426942]}] [fill={[type=SOLID] [color=#73BF73]}] [cx=645.00] [cy=156.00] [rx=230.00] [ry=18.00]
+          RenderSVGEllipse {ellipse} at (197,73) size 5x5 [stroke={[type=SOLID] [color=#426942]}] [fill={[type=SOLID] [color=#73BF73]}] [cx=195.00] [cy=210.00] [rx=27.00] [ry=18.00]
+          RenderSVGEllipse {ellipse} at (208,50) size 26x15 [stroke={[type=SOLID] [color=#426942]}] [fill={[type=SOLID] [color=#73BF73]}] [cx=645.00] [cy=102.00] [rx=225.00] [ry=18.00]
+          RenderSVGEllipse {ellipse} at (209,53) size 27x15 [stroke={[type=SOLID] [color=#426942]}] [fill={[type=SOLID] [color=#73BF73]}] [cx=645.00] [cy=156.00] [rx=230.00] [ry=18.00]
         RenderSVGContainer {g} at (215,58) size 20x16
           RenderSVGRect {rect} at (220,60) size 8x6 [stroke={[type=SOLID] [color=#847542]}] [fill={[type=SOLID] [color=#FFDF7B]}] [x=595.00] [y=192.00] [width=100.00] [height=36.00]
           RenderSVGRect {rect} at (217,61) size 17x10 [stroke={[type=SOLID] [color=#847542]}] [fill={[type=SOLID] [color=#FFDF7B]}] [x=507.00] [y=246.00] [width=276.00] [height=36.00]

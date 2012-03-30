@@ -63,12 +63,12 @@ layer at (0,0) size 480x360
         RenderSVGPath {polygon} at (212,35) size 54x29 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#990000]}] [points="240 36 264 63.3 214 63.3"]
         RenderSVGPath {polygon} at (212,252) size 54x29 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#990000]}] [points="240 280 264 252.7 214 252.7"]
       RenderSVGContainer {g} at (370,295) size 40x40
-        RenderSVGPath {circle} at (374,299) size 32x32 [fill={[type=SOLID] [color=#FFFFCC]}] [cx=390.00] [cy=315.00] [r=16.00]
+        RenderSVGEllipse {circle} at (374,299) size 32x32 [fill={[type=SOLID] [color=#FFFFCC]}] [cx=390.00] [cy=315.00] [r=16.00]
         RenderSVGPath {polyline} at (389,295) size 2x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [points="390 295 390 335"]
         RenderSVGPath {polyline} at (370,314) size 40x2 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [points="370 315 410 315"]
-        RenderSVGPath {circle} at (384,309) size 12x12 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=390.00] [cy=315.00] [r=6.00]
+        RenderSVGEllipse {circle} at (384,309) size 12x12 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=390.00] [cy=315.00] [r=6.00]
         RenderSVGContainer {a} at (388,313) size 4x4
-          RenderSVGPath {circle} at (388,313) size 4x4 [fill={[type=SOLID] [color=#000000]}] [cx=390.00] [cy=315.00] [r=2.00]
+          RenderSVGEllipse {circle} at (388,313) size 4x4 [fill={[type=SOLID] [color=#000000]}] [cx=390.00] [cy=315.00] [r=2.00]
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.1 $"

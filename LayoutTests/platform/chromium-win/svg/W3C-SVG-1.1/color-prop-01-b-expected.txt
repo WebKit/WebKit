@@ -10,8 +10,8 @@ layer at (0,0) size 480x360
           RenderSVGGradientStop {stop} [offset=0.95] [color=#FFFF66]
       RenderSVGContainer {g} at (70,18) size 342x124
         RenderSVGContainer {g} at (70,18) size 342x124
-          RenderSVGPath {circle} at (70,20) size 120x120 [fill={[type=SOLID] [color=#FF0000]}] [cx=130.00] [cy=80.00] [r=60.00]
-          RenderSVGPath {circle} at (288,18) size 124x124 [stroke={[type=SOLID] [color=#FF0000] [stroke width=4.00]}] [cx=350.00] [cy=80.00] [r=60.00]
+          RenderSVGEllipse {circle} at (70,20) size 120x120 [fill={[type=SOLID] [color=#FF0000]}] [cx=130.00] [cy=80.00] [r=60.00]
+          RenderSVGEllipse {circle} at (288,18) size 124x124 [stroke={[type=SOLID] [color=#FF0000] [stroke width=4.00]}] [cx=350.00] [cy=80.00] [r=60.00]
       RenderSVGContainer {g} at (60,215) size 360x80
         RenderSVGContainer {g} at (60,215) size 360x80
           RenderSVGRect {rect} at (60,215) size 360x80 [fill={[type=LINEAR-GRADIENT] [id="grad"]}] [x=60.00] [y=215.00] [width=360.00] [height=80.00]

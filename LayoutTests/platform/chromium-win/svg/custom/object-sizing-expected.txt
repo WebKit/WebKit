@@ -9,7 +9,7 @@ layer at (0,0) size 800x398
             RenderView at (0,0) size 208x208
           layer at (0,0) size 208x208
             RenderSVGRoot {svg} at (20,20) size 168x168
-              RenderSVGPath {circle} at (20,20) size 168x168 [fill={[type=SOLID] [color=#FF0000]}] [cx=25.00] [cy=25.00] [r=20.00]
+              RenderSVGEllipse {circle} at (20,20) size 168x168 [fill={[type=SOLID] [color=#FF0000]}] [cx=25.00] [cy=25.00] [r=20.00]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,229) size 208x20 [bgcolor=#0000FF]
         RenderText {#text} at (0,0) size 10x19
