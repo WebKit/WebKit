@@ -463,9 +463,10 @@ namespace JSC {
         OwnPtr<ProgramCodeBlock> m_programCodeBlock;
     };
 
-    class FunctionExecutable : public ScriptExecutable {
+    class FunctionExecutable : public ScriptExecutable, public DoublyLinkedListNode<FunctionExecutable> {
         friend class JIT;
         friend class LLIntOffsetsExtractor;
+        friend class WTF::DoublyLinkedListNode<FunctionExecutable>;
     public:
         typedef ScriptExecutable Base;
 
@@ -473,6 +474,7 @@ namespace JSC {
         {
             FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(*exec->heap())) FunctionExecutable(exec, name, inferredName, source, forceUsesArguments, parameters, isInStrictContext);
             executable->finishCreation(exec->globalData(), name, firstLine, lastLine);
+            exec->globalData().heap.addFunctionExecutable(executable);
             exec->globalData().heap.addFinalizer(executable, &finalize);
             return executable;
         }
@@ -481,6 +483,7 @@ namespace JSC {
         {
             FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(globalData.heap)) FunctionExecutable(globalData, name, inferredName, source, forceUsesArguments, parameters, isInStrictContext);
             executable->finishCreation(globalData, name, firstLine, lastLine);
+            globalData.heap.addFunctionExecutable(executable);
             globalData.heap.addFinalizer(executable, &finalize);
             return executable;
         }
@@ -688,6 +691,8 @@ namespace JSC {
         Identifier m_inferredName;
         WriteBarrier<JSString> m_nameValue;
         SharedSymbolTable* m_symbolTable;
+        FunctionExecutable* m_next;
+        FunctionExecutable* m_prev;
     };
 
     inline FunctionExecutable* JSFunction::jsExecutable() const

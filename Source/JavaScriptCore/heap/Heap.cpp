@@ -765,12 +765,22 @@ PassOwnPtr<TypeCountSet> Heap::objectTypeCounts()
     return m_objectSpace.forEachCell<RecordType>();
 }
 
+void Heap::discardAllCompiledCode()
+{
+    // If JavaScript is running, it's not safe to recompile, since we'll end
+    // up throwing away code that is live on the stack.
+    ASSERT(!m_globalData->dynamicGlobalObject);
+    
+    for (FunctionExecutable* current = m_functions.head(); current; current = current->next())
+        current->discardCode();
+}
+
 void Heap::collectAllGarbage()
 {
     if (!m_isSafeToCollect)
         return;
     if (!m_globalData->dynamicGlobalObject)
-        m_globalData->recompileAllJSFunctions();
+        discardAllCompiledCode();
 
     collect(DoSweep);
 }
@@ -923,6 +933,16 @@ void Heap::FinalizerOwner::finalize(Handle<Unknown> handle, void* context)
     Weak<JSCell> weak(Weak<JSCell>::Adopt, handle);
     Finalizer finalizer = reinterpret_cast<Finalizer>(context);
     finalizer(weak.get());
+}
+
+void Heap::addFunctionExecutable(FunctionExecutable* executable)
+{
+    m_functions.append(executable);
+}
+
+void Heap::removeFunctionExecutable(FunctionExecutable* executable)
+{
+    m_functions.remove(executable);
 }
 
 } // namespace JSC

@@ -1,3 +1,38 @@
+2012-03-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Refactor recompileAllJSFunctions() to be less expensive
+        https://bugs.webkit.org/show_bug.cgi?id=80330
+
+        Reviewed by Filip Pizlo.
+
+        This change is performance neutral on the JS benchmarks we track. It's mostly to improve page 
+        load performance, which currently does at least a couple full GCs per navigation.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::discardAllCompiledCode): Rename recompileAllJSFunctions to discardAllCompiledCode 
+        because the function doesn't actually recompile anything (and never did); it simply throws code
+        away for it to be recompiled later if we determine we should do so.
+        (JSC):
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::addFunctionExecutable): Adds a newly created FunctionExecutable to the Heap's list.
+        (JSC::Heap::removeFunctionExecutable): Removes the specified FunctionExecutable from the Heap's list.
+        * heap/Heap.h:
+        (JSC):
+        (Heap):
+        * runtime/Executable.cpp: Added next and prev fields to FunctionExecutables so that they can 
+        be used in DoublyLinkedLists.
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::finalize): Removes the FunctionExecutable from the Heap's list.
+        * runtime/Executable.h:
+        (FunctionExecutable):
+        (JSC::FunctionExecutable::create): Adds the FunctionExecutable to the Heap's list.
+        * runtime/JSGlobalData.cpp: Remove recompileAllJSFunctions, as it's the Heap's job to own and manage 
+        the list of FunctionExecutables.
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::DynamicGlobalObjectScope::DynamicGlobalObjectScope): Use the new discardAllCompiledCode.
+
 2012-03-29  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed build fix for non-x86 platforms.
