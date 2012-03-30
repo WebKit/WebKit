@@ -24,6 +24,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "FatFingers.h"
+#include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -47,6 +48,8 @@
 
 #include <sys/keycodes.h>
 
+// Note: This generates a lot of logs when dumping rects lists. It will seriously
+// impact performance. Do not enable this during performance tests.
 #define SHOWDEBUG_SELECTIONHANDLER 0
 
 using namespace BlackBerry::Platform;
@@ -91,17 +94,31 @@ WebString SelectionHandler::selectedText() const
     return m_webPage->focusedOrMainFrame()->editor()->selectedText();
 }
 
-void SelectionHandler::getConsolidatedRegionOfTextQuadsForSelection(const VisibleSelection& selection, IntRectRegion& region) const
+WebCore::IntRect SelectionHandler::clippingRectForVisibleContent() const
+{
+    // Get the containing content rect for the frame.
+    Frame* frame = m_webPage->focusedOrMainFrame();
+    WebCore::IntRect clipRect = WebCore::IntRect(-1, -1, 0, 0);
+    if (frame != m_webPage->mainFrame()) {
+        clipRect = m_webPage->getRecursiveVisibleWindowRect(frame->view(), true /* no clip to main frame window */);
+        clipRect = m_webPage->m_mainFrame->view()->windowToContents(clipRect);
+    }
+
+    // Get the input field containing box.
+    if (m_webPage->m_inputHandler->isInputMode()
+        && frame->document()->focusedNode()
+        && frame->document()->focusedNode()->renderer()) {
+
+        // Adjust the bounding box to the frame offset.
+        clipRect = frame->document()->focusedNode()->renderer()->absoluteBoundingBoxRect();
+        clipRect = m_webPage->mainFrame()->view()->windowToContents(frame->view()->contentsToWindow(clipRect));
+    }
+    return clipRect;
+}
+
+void SelectionHandler::regionForTextQuads(Vector<FloatQuad> &quadList, IntRectRegion& region, bool shouldClipToVisibleContent) const
 {
     ASSERT(region.isEmpty());
-
-    if (!selection.isRange())
-        return;
-
-    ASSERT(selection.firstRange());
-
-    Vector<FloatQuad> quadList;
-    DOMSupport::visibleTextQuads(*(selection.firstRange()), quadList, true /* use selection height */);
 
     if (!quadList.isEmpty()) {
         FrameView* frameView = m_webPage->focusedOrMainFrame()->view();
@@ -112,14 +129,24 @@ void SelectionHandler::getConsolidatedRegionOfTextQuadsForSelection(const Visibl
         // framePosition is in main frame coordinates.
         WebCore::IntPoint framePosition = m_webPage->frameOffset(m_webPage->focusedOrMainFrame());
 
-        // The ranges rect list is based on render elements and may include multiple adjacent rects.
-        // Use IntRectRegion to consolidate these rects into bands as well as a container to pass
-        // to the client.
+        // Get the visibile content rect.
+        WebCore::IntRect clippingRect = shouldClipToVisibleContent ? clippingRectForVisibleContent() : WebCore::IntRect(-1, -1, 0, 0);
+
+        // Convert the text quads into a more platform friendy
+        // IntRectRegion and adjust for subframes.
+        std::vector<Platform::IntRect> adjustedIntRects;
+        Platform::IntRect selectionBoundingBox;
         for (unsigned i = 0; i < quadList.size(); i++) {
             WebCore::IntRect enclosingRect = quadList[i].enclosingBoundingBox();
             enclosingRect.intersect(frameRect);
             enclosingRect.move(framePosition.x(), framePosition.y());
-            region = unionRegions(region, IntRectRegion(enclosingRect));
+            adjustedIntRects.push_back(enclosingRect);
+
+            // Clip to the visible content.
+            if (clippingRect.location() != DOMSupport::InvalidPoint)
+                enclosingRect.intersect(clippingRect);
+
+            selectionBoundingBox = unionOfRects(enclosingRect, selectionBoundingBox);
         }
     }
 }
@@ -489,22 +516,24 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
     // If the selection size is reduce to less than a character, selection type becomes
     // Caret. As long as it is still a range, it's a valid selection. Selection cannot
     // be cancelled through this function.
-    IntRectRegion region;
-    getConsolidatedRegionOfTextQuadsForSelection(newSelection, region);
-    clipRegionToVisibleContainer(region);
-    if (!region.isEmpty()) {
+    Vector<FloatQuad> quads;
+    DOMSupport::visibleTextQuads(newSelection, quads);
+
+    IntRectRegion unclippedRegion;
+    regionForTextQuads(quads, unclippedRegion, false /* shouldClipToVisibleContent */);
+    if (!unclippedRegion.isEmpty()) {
         // Check if the handles reversed position.
         if (m_selectionActive && !newSelection.isBaseFirst())
             m_webPage->m_client->notifySelectionHandlesReversed();
 
         controller->setSelection(newSelection);
 
-        DEBUG_SELECTION(LogLevelInfo, "SelectionHandler::setSelection selection points valid, selection updated");
+        DEBUG_SELECTION(LogLevelInfo, "SelectionHandler::setSelection selection points valid, selection updated\n");
     } else {
         // Requested selection results in an empty selection, skip this change.
         selectionPositionChanged();
 
-        DEBUG_SELECTION(LogLevelWarn, "SelectionHandler::setSelection selection points invalid, selection not updated");
+        DEBUG_SELECTION(LogLevelWarn, "SelectionHandler::setSelection selection points invalid, selection not updated\n");
     }
 }
 
@@ -741,33 +770,6 @@ static void adjustCaretRects(WebCore::IntRect& startCaret, bool isStartCaretClip
     }
 }
 
-void SelectionHandler::clipRegionToVisibleContainer(IntRectRegion& region)
-{
-    ASSERT(m_webPage->m_mainFrame && m_webPage->m_mainFrame->view());
-
-    Frame* frame = m_webPage->focusedOrMainFrame();
-
-    // Don't allow the region to extend outside of the all its ancestor frames' visible area.
-    if (frame != m_webPage->mainFrame()) {
-        WebCore::IntRect containingContentRect;
-        containingContentRect = m_webPage->getRecursiveVisibleWindowRect(frame->view(), true /* no clip to main frame window */);
-        containingContentRect = m_webPage->m_mainFrame->view()->windowToContents(containingContentRect);
-        region = intersectRegions(IntRectRegion(containingContentRect), region);
-    }
-
-    // Don't allow the region to extend outside of the input field.
-    if (m_webPage->m_inputHandler->isInputMode()
-        && frame->document()->focusedNode()
-        && frame->document()->focusedNode()->renderer()) {
-
-        // Adjust the bounding box to the frame offset.
-        WebCore::IntRect boundingBox(frame->document()->focusedNode()->renderer()->absoluteBoundingBoxRect());
-        boundingBox = m_webPage->mainFrame()->view()->windowToContents(frame->view()->contentsToWindow(boundingBox));
-
-        region = intersectRegions(IntRectRegion(boundingBox), region);
-    }
-}
-
 WebCore::IntPoint SelectionHandler::clipPointToVisibleContainer(const WebCore::IntPoint& point) const
 {
     ASSERT(m_webPage->m_mainFrame && m_webPage->m_mainFrame->view());
@@ -799,6 +801,21 @@ static WebCore::IntPoint referencePoint(const VisiblePosition& position, const W
         startCaretBounds.move(framePosition.x(), framePosition.y());
 
     return caretComparisonPointForRect(startCaretBounds, isStartCaret, isRTL);
+}
+
+// Check all rects in the region for a point match. The region is non-banded
+// and non-sorted so all must be checked.
+static bool regionRectListContainsPoint(IntRectRegion& region, WebCore::IntPoint point)
+{
+    if (!region.extents().contains(point))
+        return false;
+
+    std::vector<Platform::IntRect> rectList = region.rects();
+    for (unsigned int i = 0; i < rectList.size(); i++) {
+        if (rectList[i].contains(point))
+            return true;
+    }
+    return false;
 }
 
 // Note: This is the only function in SelectionHandler in which the coordinate
@@ -838,51 +855,52 @@ void SelectionHandler::selectionPositionChanged(bool visualChangeOnly)
     WebCore::IntRect endCaret;
 
     // Get the text rects from the selections range.
-    IntRectRegion region;
-    getConsolidatedRegionOfTextQuadsForSelection(frame->selection()->selection(), region);
+    Vector<FloatQuad> quads;
+    DOMSupport::visibleTextQuads(frame->selection()->selection(), quads);
+
+    IntRectRegion unclippedRegion;
+    regionForTextQuads(quads, unclippedRegion, false /* shouldClipToVisibleContent */);
 
     // If there is no change in selected text and the visual rects
     // have not changed then don't bother notifying anything.
-    if (visualChangeOnly && m_lastSelectionRegion.isEqual(region))
+    if (visualChangeOnly && m_lastSelectionRegion.isEqual(unclippedRegion))
         return;
 
-    m_lastSelectionRegion = region;
+    m_lastSelectionRegion = unclippedRegion;
 
-    if (!region.isEmpty()) {
+    IntRectRegion visibleSelectionRegion;
+    if (!unclippedRegion.isEmpty()) {
         WebCore::IntRect unclippedStartCaret;
         WebCore::IntRect unclippedEndCaret;
 
         bool isRTL = directionOfEnclosingBlock(frame->selection()) == RTL;
 
-        std::vector<Platform::IntRect> rectList = region.rects();
+        WebCore::IntPoint startCaretReferencePoint = referencePoint(frame->selection()->selection().visibleStart(), unclippedRegion.extents(), framePos, true /* isStartCaret */, isRTL);
+        WebCore::IntPoint endCaretReferencePoint = referencePoint(frame->selection()->selection().visibleEnd(), unclippedRegion.extents(), framePos, false /* isStartCaret */, isRTL);
 
-        WebCore::IntPoint startCaretReferencePoint = referencePoint(frame->selection()->selection().visibleStart(), region.extents(), framePos, true /* isStartCaret */, isRTL);
-        WebCore::IntPoint endCaretReferencePoint = referencePoint(frame->selection()->selection().visibleEnd(), region.extents(), framePos, false /* isStartCaret */, isRTL);
+        adjustCaretRects(unclippedStartCaret, false /* unclipped */, unclippedEndCaret, false /* unclipped */, unclippedRegion.rects(), startCaretReferencePoint, endCaretReferencePoint, isRTL);
 
-        adjustCaretRects(unclippedStartCaret, false /* unclipped */, unclippedEndCaret, false /* unclipped */, rectList, startCaretReferencePoint, endCaretReferencePoint, isRTL);
-
-        clipRegionToVisibleContainer(region);
+        regionForTextQuads(quads, visibleSelectionRegion);
 
 #if SHOWDEBUG_SELECTIONHANDLER // Don't rely just on DEBUG_SELECTION to avoid loop.
-        for (unsigned int i = 0; i < rectList.size(); i++)
-            DEBUG_SELECTION(LogLevelCritical, "Rect list - Unmodified #%d, (%d, %d) (%d x %d)", i, rectList[i].x(), rectList[i].y(), rectList[i].width(), rectList[i].height());
-        for (unsigned int i = 0; i < region.numRects(); i++)
-            DEBUG_SELECTION(LogLevelCritical, "Rect list  - Consolidated #%d, (%d, %d) (%d x %d)", i, region.rects()[i].x(), region.rects()[i].y(), region.rects()[i].width(), region.rects()[i].height());
+        for (unsigned int i = 0; i < unclippedRegion.numRects(); i++)
+            DEBUG_SELECTION(LogLevelCritical, "Rect list - Unmodified #%d, (%d, %d) (%d x %d)", i, unclippedRegion.rects()[i].x(), unclippedRegion.rects()[i].y(), unclippedRegion.rects()[i].width(), unclippedRegion.rects()[i].height());
+        for (unsigned int i = 0; i < visibleSelectionRegion.numRects(); i++)
+            DEBUG_SELECTION(LogLevelCritical, "Rect list  - Clipped to Visible #%d, (%d, %d) (%d x %d)", i, visibleSelectionRegion.rects()[i].x(), visibleSelectionRegion.rects()[i].y(), visibleSelectionRegion.rects()[i].width(), visibleSelectionRegion.rects()[i].height());
 #endif
 
         bool shouldCareAboutPossibleClippedOutSelection = frame != m_webPage->mainFrame() || m_webPage->m_inputHandler->isInputMode();
 
-        if (!region.isEmpty() || shouldCareAboutPossibleClippedOutSelection) {
+        if (!visibleSelectionRegion.isEmpty() || shouldCareAboutPossibleClippedOutSelection) {
             // Adjust the handle markers to be at the end of the painted rect. When selecting links
             // and other elements that may have a larger visible area than needs to be rendered a gap
             // can exist between the handle and overlay region.
 
-            bool shouldClipStartCaret = !region.isRectInRegion(unclippedStartCaret);
-            bool shouldClipEndCaret = !region.isRectInRegion(unclippedEndCaret);
+            bool shouldClipStartCaret = !regionRectListContainsPoint(visibleSelectionRegion, unclippedStartCaret.location());
+            bool shouldClipEndCaret = !regionRectListContainsPoint(visibleSelectionRegion, unclippedEndCaret.location());
 
             // Find the top corner and bottom corner.
-            std::vector<Platform::IntRect> clippedRectList = region.rects();
-            adjustCaretRects(startCaret, shouldClipStartCaret, endCaret, shouldClipEndCaret, clippedRectList, startCaretReferencePoint, endCaretReferencePoint, isRTL);
+            adjustCaretRects(startCaret, shouldClipStartCaret, endCaret, shouldClipEndCaret, visibleSelectionRegion.rects(), startCaretReferencePoint, endCaretReferencePoint, isRTL);
 
             // Translate the caret values as they must be in transformed coordinates.
             if (!shouldClipStartCaret) {
@@ -901,7 +919,7 @@ void SelectionHandler::selectionPositionChanged(bool visualChangeOnly)
                     startCaret.x(), startCaret.y(), startCaret.width(), startCaret.height(), endCaret.x(), endCaret.y(), endCaret.width(), endCaret.height());
 
 
-    m_webPage->m_client->notifySelectionDetailsChanged(startCaret, endCaret, region);
+    m_webPage->m_client->notifySelectionDetailsChanged(startCaret, endCaret, visibleSelectionRegion);
 }
 
 // NOTE: This function is not in WebKit coordinates.
@@ -930,9 +948,7 @@ void SelectionHandler::caretPositionChanged()
         caretLocation.move(frameOffset.x(), frameOffset.y());
 
         // Clip against the containing frame and node boundaries.
-        IntRectRegion region(caretLocation);
-        clipRegionToVisibleContainer(region);
-        caretLocation = region.extents();
+        caretLocation.intersect(clippingRectForVisibleContent());
     }
 
     m_caretActive = !caretLocation.isEmpty();

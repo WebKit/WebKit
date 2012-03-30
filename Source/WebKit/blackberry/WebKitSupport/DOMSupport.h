@@ -67,6 +67,7 @@ WebCore::HTMLTextFormControlElement* toTextControlElement(WebCore::Node*);
 
 WebCore::IntRect transformedBoundingBoxForRange(const WebCore::Range&);
 void visibleTextQuads(const WebCore::Range&, WTF::Vector<WebCore::FloatQuad>& quads, bool useSelectionHeight = false);
+void visibleTextQuads(const WebCore::VisibleSelection&, WTF::Vector<WebCore::FloatQuad>& quads);
 
 WebCore::VisibleSelection visibleSelectionForRangeInputElement(WebCore::Element*, int start, int end);
 WebCore::VisibleSelection visibleSelectionForInputElement(WebCore::Element*);

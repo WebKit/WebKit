@@ -1,3 +1,39 @@
+2012-03-30  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Speed up processing of Selection region generation.
+        https://bugs.webkit.org/show_bug.cgi?id=82766
+
+        Reviewed by Rob Buis.
+
+        PR 136593.
+
+        Refactor generation of Selection IntRectRegion to avoid
+        the need for IntRectRegion's helper functions which were
+        not available when using it as a container without
+        unioning the rects.
+
+        This greatly speeds up rendering by maintaining the distinct
+        rects as the union operation was length with large numbers of
+        rects.
+
+        Reviewed Internally by Gen Mak, Mike Lattanzio and Tyler Abbott.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::visibleTextQuads):
+        (DOMSupport):
+        * WebKitSupport/DOMSupport.h:
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::clippingRectForVisibleContent):
+        (BlackBerry::WebKit::SelectionHandler::regionForTextQuads):
+        (BlackBerry::WebKit::SelectionHandler::setSelection):
+        (WebKit):
+        (BlackBerry::WebKit::regionRectListContainsPoint):
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+        (BlackBerry::WebKit::SelectionHandler::caretPositionChanged):
+        * WebKitSupport/SelectionHandler.h:
+        (WebCore):
+        (SelectionHandler):
+
 2012-03-30  Mark Pilgrim  <pilgrim@chromium.org>
 
         GEOLOCATION should be implemented as Page Supplement

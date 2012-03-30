@@ -23,11 +23,14 @@
 #include "BlackBerryPlatformPrimitives.h"
 #include "TextGranularity.h"
 
+#include <wtf/Vector.h>
+
 namespace WTF {
 class String;
 }
 
 namespace WebCore {
+class FloatQuad;
 class IntPoint;
 class IntRect;
 class Node;
@@ -69,8 +72,8 @@ public:
 
 private:
     void caretPositionChanged();
-    void getConsolidatedRegionOfTextQuadsForSelection(const WebCore::VisibleSelection&, BlackBerry::Platform::IntRectRegion&) const;
-    void clipRegionToVisibleContainer(BlackBerry::Platform::IntRectRegion&);
+    void regionForTextQuads(WTF::Vector<WebCore::FloatQuad>&, BlackBerry::Platform::IntRectRegion&, bool shouldClipToVisibleContent = true) const;
+    WebCore::IntRect clippingRectForVisibleContent() const;
     bool updateOrHandleInputSelection(WebCore::VisibleSelection& newSelection, const WebCore::IntPoint& relativeStart
                                       , const WebCore::IntPoint& relativeEnd);
     WebCore::Node* DOMContainerNodeForVisiblePosition(const WebCore::VisiblePosition&) const;
