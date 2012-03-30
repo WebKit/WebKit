@@ -1100,7 +1100,7 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         // Restore location post-repaint.
         if (range)
-            this._setCaretLocation(range.endLine, range.endColumn, true);
+            this._restoreSelection(range, true);
 
         return true;
     },
@@ -1120,19 +1120,20 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._enterTextChangeMode();
 
         var newRange;
+        var rangeWasEmpty = range.isEmpty();
         if (shiftKey)
             newRange = this._unindentLines(range);
         else {
-            if (range.isEmpty()) {
+            if (rangeWasEmpty)
                 newRange = this._editRange(range, WebInspector.settings.textEditorIndent.get());
-                newRange.startColumn = newRange.endColumn;
-            } else
+            else
                 newRange = this._indentLines(range);
-
         }
 
         this._exitTextChangeMode(range, newRange);
         this.endUpdates();
+        if (rangeWasEmpty)
+            newRange.startColumn = newRange.endColumn;
         this._restoreSelection(newRange, true);
         return true;
     },

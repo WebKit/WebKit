@@ -1,0 +1,25 @@
+Tests undo/redo operations in the editor model.
+
+
+Running: testUndoRedoTab
+Text before edit:
+1
+2
+3
+
+Text after edit:
+1
+	2
+3
+
+Text after undo:
+1
+2
+3
+
+Text after redo:
+1
+	2
+3
+
+

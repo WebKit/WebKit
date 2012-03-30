@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    InspectorTest.runTestSuite([
+        function testUndoRedoTab(next)
+        {
+            var textModel = new WebInspector.TextEditorModel();
+            textModel.setText("1\n2\n3\n");
+            InspectorTest.addResult("Text before edit:\n" + textModel.text);
+            textModel.editRange(new WebInspector.TextRange(1, 0, 1, 0), "\t");
+            InspectorTest.addResult("Text after edit:\n" + textModel.text);
+            textModel.undo();
+            InspectorTest.addResult("Text after undo:\n" + textModel.text);
+            textModel.redo();
+            InspectorTest.addResult("Text after redo:\n" + textModel.text);
+            next();
+        }
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests undo/redo operations in the editor model.
+</p>
+
+</body>
+</html>

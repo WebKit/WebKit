@@ -386,7 +386,7 @@ WebInspector.TextEditorModel.prototype = {
      */
     _pushUndoableCommand: function(newRange, originalText)
     {
-        var command = new WebInspector.TextEditorCommand(newRange, originalText);
+        var command = new WebInspector.TextEditorCommand(newRange.clone(), originalText);
         if (this._inUndo)
             this._redoStack.push(command);
         else {
