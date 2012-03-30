@@ -716,6 +716,7 @@ WebInspector.NavigatorScriptTreeElement.prototype = {
     onattach: function()
     {
         WebInspector.BaseNavigatorTreeElement.prototype.onattach.call(this);
+        this.listItemElement.addEventListener("click", this._onclick.bind(this), false);
         if (this._uiSourceCode.isSnippet)
             this.listItemElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
     },
@@ -723,7 +724,7 @@ WebInspector.NavigatorScriptTreeElement.prototype = {
     /**
      * @param {Event} event
      */
-    ondblclick: function(event)
+    _onclick: function(event)
     {
         this._navigator.scriptSelected(this.uiSourceCode);
     },
