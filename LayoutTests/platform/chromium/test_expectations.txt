@@ -1849,7 +1849,8 @@ BUGCR117799 MAC : fast/gradients/background-clipped.html = TEXT
 BUGCR117799 : fast/repaint/background-misaligned.html = IMAGE
 BUGCR117799 : fast/repaint/backgroundSizeRepaint.html = IMAGE
 BUGCR117799 : platform/chromium/virtual/gpu/fast/canvas/canvas-bg-zoom.html = IMAGE
-BUGCR117799 : svg/as-border-image/svg-as-border-image.html = IMAGE
+// CRASH is from BUGWK82505
+BUGCR117799 : svg/as-border-image/svg-as-border-image.html = IMAGE CRASH
 BUGCR117799 : svg/custom/pattern-in-defs.svg = IMAGE
 BUGCR117799 : svg/custom/pattern-rotate.svg = IMAGE
 BUGCR117799 : svg/custom/pattern-with-transformation.svg = IMAGE
@@ -1988,8 +1989,12 @@ BUGWK82505 SNOWLEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onprogr
 BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-sync-requests.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/uri-resolution-opera-open-004.html = PASS TEXT CRASH
 
+// These are due to an assertion in FrameView::paintContents().
 BUGWK82505 SNOWLEOPARD DEBUG : fast/writing-mode/body-writing-mode-propagation-blocked.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD DEBUG : fast/writing-mode/borders.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD DEBUG : svg/css/background-image-svg.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-foreign-content.svg = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-svg-as-image.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD DEBUG : transitions/remove-transition-style.html = PASS TEXT CRASH
 
 // Started failing with move from Lighttpd to Apache.
@@ -3630,7 +3635,8 @@ BUGWK77136 WIN RELEASE : fast/workers/storage/interrupt-database.html = PASS TIM
 BUGWK75161 : media/video-poster-blocked-by-willsendrequest.html = TEXT
 
 BUGWK75367 : svg/css/composite-shadow-example.html = PASS TEXT
-BUGWK75367 : svg/css/composite-shadow-with-opacity.html = PASS TEXT
+// CRASH is from BUGWK82505
+BUGWK75367 : svg/css/composite-shadow-with-opacity.html = PASS TEXT CRASH
 
 // Crashes due to an OOM error on V8.
 BUGCR108832 SKIP : fast/js/array-splice.html = CRASH
@@ -4063,7 +4069,7 @@ BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/interactive-validation-remove-node-in-
 BUGWK81814 SNOWLEOPARD DEBUG : fast/parser/fragment-parser.html = PASS TIMEOUT
 BUGWK81815 SNOWLEOPARD DEBUG : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS TIMEOUT
 BUGWK81816 SNOWLEOPARD DEBUG : fast/dom/DOMImplementation/createDocumentType-err.html = PASS TIMEOUT
-BUGWK81857 SNOWLEOPARD DEBUG : fast/frames/valid.html = PASS TIMEOUT
+BUGWK81857 SNOWLEOPARD : fast/frames/valid.html = PASS IMAGE TIMEOUT
 BUGWK81857 SNOWLEOPARD DEBUG : fast/frames/calculate-order.html = PASS TIMEOUT
 BUGWK81931 SNOWLEOPARD DEBUG : fast/images/destroyed-image-load-event.html = PASS TIMEOUT
 
@@ -4329,3 +4335,7 @@ BUGWK82129 MAC : fast/block/lineboxcontain/glyphs.html = TEXT
 BUGWK82669 LINUX DEBUG : fast/text/international/spaces-combined-in-vertical-text.html = CRASH
 BUGWK82669 LINUX RELEASE : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 BUGWK82669 MAC WIN : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
+
+BUGWK82717 SNOWLEOPARD : storage/quota-tracking.html = PASS TIMEOUT
+BUGWK82717 SNOWLEOPARD : storage/executesql-accepts-only-one-statement.html = PASS TIMEOUT
+BUGWK82717 SNOWLEOPARD : storage/database-lock-after-reload.html = PASS TIMEOUT
