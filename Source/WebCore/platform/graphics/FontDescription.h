@@ -182,11 +182,11 @@ private:
 
     unsigned m_italic : 1; // FontItalic
     unsigned m_smallCaps : 1; // FontSmallCaps
-    bool m_isAbsoluteSize : 1;   // Whether or not CSS specified an explicit size
-                                 // (logical sizes like "medium" don't count).
+    unsigned m_isAbsoluteSize : 1; // Whether or not CSS specified an explicit size
+                                  // (logical sizes like "medium" don't count).
     unsigned m_weight : 8; // FontWeight
     unsigned m_genericFamily : 3; // GenericFamilyType
-    bool m_usePrinterFont : 1;
+    unsigned m_usePrinterFont : 1;
 
     unsigned m_renderingMode : 1;  // Used to switch between CG and GDI text on Windows.
     unsigned m_kerning : 2; // Kerning
@@ -201,7 +201,7 @@ private:
 
     unsigned m_fontSmoothing : 2; // FontSmoothingMode
     unsigned m_textRendering : 2; // TextRenderingMode
-    bool m_isSpecifiedFont : 1; // True if a web page specifies a non-generic font family as the first font family.
+    unsigned m_isSpecifiedFont : 1; // True if a web page specifies a non-generic font family as the first font family.
     UScriptCode m_script; // Used to help choose an appropriate font for generic font families.
 };
 
