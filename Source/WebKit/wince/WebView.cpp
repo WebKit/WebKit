@@ -39,7 +39,6 @@
 #include "InitializeThreading.h"
 #include "InspectorClientWinCE.h"
 #include "IntSize.h"
-#include "MainThread.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
@@ -50,6 +49,7 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "WebCoreInstanceHandle.h"
+#include <wtf/MainThread.h>
 
 using namespace WebCore;
 

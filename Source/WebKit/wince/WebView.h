@@ -26,8 +26,8 @@
 #define WebView_h
 
 #include "IntRect.h"
-#include "OwnPtr.h"
-#include "PassRefPtr.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WTF {
 class String;
