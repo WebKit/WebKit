@@ -922,7 +922,6 @@ BUGCR8630 LINUX WIN : fast/repaint/body-background-image.html = FAIL
 // Relies on text metrics to pass. Rework to be meaningful for ports other than platform/mac.
 BUGCR8630 LINUX WIN : fast/repaint/overflow-outline-repaint.html = FAIL
 BUGCR8630 LINUX WIN : fast/backgrounds/solid-color-context-restore.html = FAIL
-BUGCR8630 LINUX WIN : fast/overflow/hidden-scrollbar-resize.html = FAIL
 BUGCR8630 LINUX WIN RELEASE : fast/reflections/inline-crash.html = FAIL
 BUGCR8630 LINUX WIN DEBUG : fast/reflections/inline-crash.html = FAIL
 BUGCR8630 LINUX WIN : fast/text/font-initial.html = FAIL
@@ -1591,7 +1590,6 @@ BUGCR10384 SLOW MAC : fast/dom/Window/new-window-opener.html = TEXT PASS
 BUGCR10399 MAC : fast/encoding/char-decoding-mac.html = FAIL
 BUGCR10399 MAC : fast/encoding/char-encoding-mac.html = FAIL
 
-BUGCR23496 MAC : fast/parser/bad-xml-slash.html = IMAGE
 BUGCR23496 MAC : fast/text/whitespace/normal-after-nowrap-breaking.html = IMAGE
 BUGCR23496 MAC : tables/mozilla_expected_failures/core/captions1.html = IMAGE+TEXT
 BUGCR23496 MAC : tables/mozilla_expected_failures/core/captions2.html = IMAGE+TEXT
@@ -1617,10 +1615,6 @@ BUGCR23488 SLOW LEOPARD DEBUG : fast/backgrounds/size/backgroundSize15.html = IM
 BUGCR23488 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = IMAGE
 BUGCR23488 LEOPARD : fast/frames/content-opacity-1.html = IMAGE
 BUGCR23488 LEOPARD : fast/frames/content-opacity-2.html = IMAGE
-BUGCR23488 MAC : fast/layers/inline-dirty-z-order-lists.html = IMAGE
-BUGCR23488 MAC : fast/layers/layer-content-visibility-change.html = IMAGE
-BUGCR23488 LEOPARD : fast/lists/ol-start-parsing.html = IMAGE
-BUGCR23488 LEOPARD : fast/multicol/positioned-with-constrained-height.html = IMAGE
 
 // Looks the same to me... huh. Variation of above?
 BUGCR23489 MAC : fast/table/empty-section-crash.html = IMAGE
@@ -1755,9 +1749,6 @@ BUGCR104128 : transitions/svg-text-shadow-transition.html = IMAGE
 BUGCR7482 MAC : http/tests/misc/timer-vs-loading.html = PASS TIMEOUT TEXT
 BUGCR7482 LINUX WIN : http/tests/misc/timer-vs-loading.html = PASS TIMEOUT
 
-// Selection highlight colors are wrong.
-BUGCR10426 LINUX : fast/lists/drag-into-marker.html = FAIL
-
 // It's not clear that the test isn't wrong here. It believes that middle
 // aligning 15px Ahem should end up in a certain spot. But we have the
 // x-height correct and we're still one px off.
@@ -1783,7 +1774,6 @@ BUGCR9798 SLOW WIN DEBUG : fast/dom/Window/slow-unload-handler.html = PASS
 // SKIA_TEXT results - differ only in low-bits of shadow, or positioning
 // when GDI integralizes its positions before applying the CTM
 // rebaseline when SKIA_TEXT is on by default
-BUGCR99500 WIN : fast/reflections/reflection-overflow-hidden.html = IMAGE
 BUGCR99500 WIN : fast/repaint/reflection-redraw.html = IMAGE
 BUGCR99500 WIN : printing/width-overflow.html = IMAGE
 // BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
@@ -1904,7 +1894,6 @@ BUGCR19766 LINUX : fast/replaced/width100percent-menulist.html = FAIL
 BUGCR20345 : fast/js/getOwnPropertyDescriptor.html = FAIL
 BUGCR20345 : fast/dom/Window/window-property-descriptors.html = TEXT
 
-BUGCR25616 WIN : fast/overflow/overflow-float-stacking.html = FAIL
 
 // Flaky. The width of containing RenderBlocks sometimes becomes larger
 BUGCR21958 MAC : svg/hixie/error/012.xml = FAIL
@@ -1936,8 +1925,6 @@ BUGCR28409 : http/tests/xmlhttprequest/logout.html = FAIL
 // FIXME: Make this just be IMAGE after we move over to the new bots.
 BUGCR26344 LINUX DEBUG : fast/text/atsui-partial-selection.html = CRASH IMAGE
 
-BUGWK45957 LINUX WIN : fast/multicol/column-rules-stacking.html = IMAGE+TEXT
-BUGWK45957 LEOPARD : fast/multicol/column-rules-stacking.html = IMAGE
 
 // ==== WebKit roll 50258:50313 ====
 //BUGCR26291 LEOPARD : fast/text/atsui-multiple-renderers.html = IMAGE
@@ -2685,10 +2672,6 @@ BUGWK51720 DEBUG : http/tests/incremental/split-hex-entities.pl = PASS CRASH
 BUGCR68436 LINUX DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
 BUGCR68436 MAC WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT TEXT
 
-// Disabled scrollbars are rendered differently
-BUGWK52414 MAC : fast/overflow/006.html = IMAGE
-BUGWK52414 MAC : fast/overflow/overflow-x-y.html = IMAGE
-
 // This was introduced by r75077.
 BUGWK52082 LEOPARD : fast/text/basic/014.html = IMAGE
 BUGWK52082 LEOPARD : fast/text/midword-break-after-breakable-char.html = IMAGE
@@ -2880,7 +2863,6 @@ BUGCR77468 : fast/forms/file/input-file-directory-upload.html = TIMEOUT
 // Temprary bug holding to deal with many changed tests due to
 // http://build.chromium.org/p/chromium.webkit/builders/Webkit%20Linux/builds/4837
 // http://trac.webkit.org/changeset/81992
-BUGCR77494 LINUX WIN : fast/layers/layer-visibility.html = FAIL
 BUGCR77494 LINUX WIN : fast/repaint/layout-state-scrolloffset.html = FAIL
 BUGCR77494 LINUX WIN : fast/repaint/layout-state-scrolloffset2.html = FAIL
 BUGCR77494 LINUX WIN : fast/repaint/layout-state-scrolloffset3.html = FAIL
@@ -3257,7 +3239,6 @@ BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-1.html = PASS
 BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-2.html = PASS
 
 BUGCR88911 LEOPARD : fast/forms/number/input-number-unacceptable-style.html = TEXT
-BUGCR88911 LEOPARD : fast/parser/external-entities.xml = TEXT
 BUGCR88911 LEOPARD : fast/text/find-kana.html = TEXT
 BUGCR88911 LEOPARD : fast/xsl/mozilla-tests.xml = TEXT
 BUGCR88911 LEOPARD : svg/custom/use-invalid-pattern.svg = TEXT
@@ -3887,18 +3868,12 @@ BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.fontface.repeat.html = CRASH P
 BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.space.basic.html = CRASH PASS
 BUGWK80481 MAC : http/tests/css/font-face-src-loading.html = CRASH PASS
 
-// worker-multi-startup.html is flaky on win
 BUGWK80498 WIN : fast/workers/worker-multi-startup.html = CRASH PASS
 
-// flaky
 BUGSENORBLANCO : platform/chromium/fast/events/rtl-scrollbar.html = TEXT PASS
 
 // Need text rebaseline after lazily allocating layers.
 // The difference should be only layer removal, no size or position should change.
-
-// Those tests have other entries in our expectations filed and may not totally covers
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/layers/add-layer-with-nested-stacking.html = IMAGE
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/layers/remove-layer-with-nested-stacking.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/inline-relative-positioned.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/lines-with-layout-delta.html = IMAGE
 BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/overflow-clip-subtree-layout.html = IMAGE

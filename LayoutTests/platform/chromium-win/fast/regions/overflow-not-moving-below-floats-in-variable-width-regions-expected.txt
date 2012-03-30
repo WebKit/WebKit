@@ -1,0 +1,47 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x486
+  RenderBlock {HTML} at (0,0) size 800x486
+    RenderBody {BODY} at (8,16) size 784x462
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 761x39
+          text run at (0,0) width 761: "The first and last lines of text in the regions below should be clipped to the green box. The overflow section sizes itself and clips"
+          text run at (0,20) width 620: "differently in each region. The green box should be even with the lime floats at the top of the first region."
+      RenderBlock {DIV} at (0,56) size 784x406
+        RenderRegion {DIV} at (0,0) size 302x102 [border: (1px solid #000000)]
+        RenderRegion {DIV} at (0,102) size 402x182 [border: (1px solid #000000)]
+        RenderRegion {DIV} at (0,284) size 222x122 [border: (1px solid #000000)]
+Flow Threads
+  Thread with flow-name 'flow1'
+    layer at (0,0) size 400x400
+      RenderNamedFlowThread at (0,0) size 400x400
+        RenderBlock {DIV} at (0,0) size 400x307
+          RenderBlock {DIV} at (5,5) size 390x297 [border: (1px solid #0000FF)]
+            RenderBlock (floating) {DIV} at (1,1) size 30x50 [bgcolor=#00FF00]
+            RenderBlock (floating) {DIV} at (259,1) size 30x50 [bgcolor=#00FF00]
+    layer at (53,6) size 293x295 clip at (54,7) size 291x293 scrollWidth 500
+      RenderBlock {DIV} at (48,1) size 293x295 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (1,1) size 500x20
+          RenderText {#text} at (-12,0) size 270x19
+            text run at (-12,0) width 270: "Clipped line of text that should not be visible."
+        RenderBlock {P} at (1,37) size 291x117
+          RenderText {#text} at (-12,0) size 303x116
+            text run at (-12,0) width 216: "These lines will not spill out of the"
+            text run at (-12,20) width 216: "regions. These lines will not spill out"
+            text run at (0,57) width 89: "of the regions. "
+            text run at (89,57) width 202: "These lines will not spill out of the"
+            text run at (0,77) width 291: "regions. These lines will not spill out of the"
+            text run at (0,97) width 47: "regions."
+        RenderBlock {P} at (1,170) size 291x80
+          RenderText {#text} at (0,0) size 291x79
+            text run at (0,0) width 291: "These lines will not spill out of the regions."
+            text run at (0,20) width 291: "These lines will not spill out of the regions."
+            text run at (0,40) width 291: "These lines will not spill out of the regions."
+            text run at (0,60) width 252: "These lines will not spill out of the regions."
+        RenderBlock {DIV} at (1,274) size 500x20
+          RenderText {#text} at (-22,0) size 270x19
+            text run at (-22,0) width 270: "Clipped line of text that should not be visible."
+  Regions for flow 'flow1'
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
+    RenderRegion {DIV} #region3
