@@ -3739,7 +3739,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSSPropertyWebkitWrapShapeInside:
+    case CSSPropertyWebkitShapeInside:
         HANDLE_INHERIT_AND_INITIAL(wrapShapeInside, WrapShapeInside);
         if (!primitiveValue)
             return;
@@ -3749,7 +3749,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setWrapShapeInside(primitiveValue->getShapeValue());
         return;
 
-    case CSSPropertyWebkitWrapShapeOutside:
+    case CSSPropertyWebkitShapeOutside:
         HANDLE_INHERIT_AND_INITIAL(wrapShapeOutside, WrapShapeOutside);
         if (!primitiveValue)
             return;

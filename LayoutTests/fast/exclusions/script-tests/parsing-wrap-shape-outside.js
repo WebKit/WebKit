@@ -1,19 +1,19 @@
-description('Testing the parsing of the -webkit-wrap-shape-outside property.');
+description('Testing the parsing of the -webkit-shape-outside property.');
 
 function testCSSText(declaration, expected)
 {
     var element = document.createElement("div");
-    element.style.cssText = "-webkit-wrap-shape-outside: " + declaration;
-    return element.style.webkitWrapShapeOutside;
+    element.style.cssText = "-webkit-shape-outside: " + declaration;
+    return element.style.webkitShapeOutside;
 }
 
 function testComputedStyle(value, expected) {
     var element = document.createElement("div");
     document.body.appendChild(element);
-    element.style.setProperty("-webkit-wrap-shape-outside", value);
+    element.style.setProperty("-webkit-shape-outside", value);
 
     var computedStyle = getComputedStyle(element);
-    var actualValue = computedStyle.getPropertyValue("-webkit-wrap-shape-outside");
+    var actualValue = computedStyle.getPropertyValue("-webkit-shape-outside");
     document.body.removeChild(element);
 
     return actualValue;
@@ -22,17 +22,17 @@ function testComputedStyle(value, expected) {
 function testNotInherited(parentValue, childValue) {
    var parentElement = document.createElement("div");
    document.body.appendChild(parentElement);
-   parentElement.style.setProperty("-webkit-wrap-shape-outside", parentValue);
+   parentElement.style.setProperty("-webkit-shape-outside", parentValue);
 
    var childElement = document.createElement("div");
    parentElement.appendChild(childElement);
-   childElement.style.setProperty("-webkit-wrap-shape-outside", childValue);
+   childElement.style.setProperty("-webkit-shape-outside", childValue);
 
    var parentComputedStyle = getComputedStyle(parentElement);
-   var parentActual = parentComputedStyle.getPropertyValue('-webkit-wrap-shape-outside')
+   var parentActual = parentComputedStyle.getPropertyValue('-webkit-shape-outside')
 
    var childComputedStyle = getComputedStyle(childElement);
-   var childActual = childComputedStyle.getPropertyValue('-webkit-wrap-shape-outside')
+   var childActual = childComputedStyle.getPropertyValue('-webkit-shape-outside')
 
    parentElement.removeChild(childElement);
    document.body.removeChild(parentElement);

@@ -2322,11 +2322,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return cssValuePool->createValue(style->wrapMargin());
         case CSSPropertyWebkitWrapPadding:
             return cssValuePool->createValue(style->wrapPadding());
-        case CSSPropertyWebkitWrapShapeInside:
+        case CSSPropertyWebkitShapeInside:
             if (!style->wrapShapeInside())
                 return cssValuePool->createIdentifierValue(CSSValueAuto);
             return cssValuePool->createValue(style->wrapShapeInside());
-        case CSSPropertyWebkitWrapShapeOutside:
+        case CSSPropertyWebkitShapeOutside:
             if (!style->wrapShapeOutside())
                 return cssValuePool->createIdentifierValue(CSSValueAuto);
             return cssValuePool->createValue(style->wrapShapeOutside());

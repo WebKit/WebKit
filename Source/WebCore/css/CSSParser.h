@@ -138,13 +138,13 @@ public:
 
     bool parseDashboardRegions(int propId, bool important);
 
-    bool parseShape(int propId, bool important);
+    bool parseClipShape(int propId, bool important);
 
-    bool parseWrapShape(bool shapeInside, bool important);
-    PassRefPtr<CSSWrapShape> parseWrapShapeRect(CSSParserValueList* args);
-    PassRefPtr<CSSWrapShape> parseWrapShapeCircle(CSSParserValueList* args);
-    PassRefPtr<CSSWrapShape> parseWrapShapeEllipse(CSSParserValueList* args);
-    PassRefPtr<CSSWrapShape> parseWrapShapePolygon(CSSParserValueList* args);
+    bool parseExclusionShape(bool shapeInside, bool important);
+    PassRefPtr<CSSWrapShape> parseExclusionShapeRect(CSSParserValueList* args);
+    PassRefPtr<CSSWrapShape> parseExclusionShapeCircle(CSSParserValueList* args);
+    PassRefPtr<CSSWrapShape> parseExclusionShapeEllipse(CSSParserValueList* args);
+    PassRefPtr<CSSWrapShape> parseExclusionShapePolygon(CSSParserValueList* args);
 
     bool parseFont(bool important);
     PassRefPtr<CSSValueList> parseFontFamily();

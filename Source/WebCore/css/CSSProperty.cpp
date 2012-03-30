@@ -610,8 +610,8 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
     case CSSPropertyWebkitWrapFlow:
     case CSSPropertyWebkitWrapMargin:
     case CSSPropertyWebkitWrapPadding:
-    case CSSPropertyWebkitWrapShapeInside:
-    case CSSPropertyWebkitWrapShapeOutside:
+    case CSSPropertyWebkitShapeInside:
+    case CSSPropertyWebkitShapeOutside:
     case CSSPropertyWebkitWrapThrough:
 #if ENABLE(SVG)
     case CSSPropertyClipPath:

@@ -1481,7 +1481,7 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSSValueAuto)
             validPrimitive = true;
         else if (value->unit == CSSParserValue::Function)
-            return parseShape(propId, important);
+            return parseClipShape(propId, important);
         break;
 
     /* Start of supported CSS properties with validation. This is needed for parseShorthand to work
@@ -2399,12 +2399,12 @@ bool CSSParser::parseValue(int propId, bool important)
             return parseFontVariantLigatures(important);
         break;
 
-    case CSSPropertyWebkitWrapShapeInside:
-    case CSSPropertyWebkitWrapShapeOutside:
+    case CSSPropertyWebkitShapeInside:
+    case CSSPropertyWebkitShapeOutside:
         if (id == CSSValueAuto)
             validPrimitive = true;
         else if (value->unit == CSSParserValue::Function)
-            return parseWrapShape((propId == CSSPropertyWebkitWrapShapeInside), important);
+            return parseExclusionShape((propId == CSSPropertyWebkitShapeInside), important);
         break;
     case CSSPropertyWebkitWrapMargin:
     case CSSPropertyWebkitWrapPadding:
@@ -4037,7 +4037,7 @@ PassRefPtr<CSSValue> CSSParser::parseCounterContent(CSSParserValueList* args, bo
     return cssValuePool()->createValue(Counter::create(identifier.release(), listStyle.release(), separator.release()));
 }
 
-bool CSSParser::parseShape(int propId, bool important)
+bool CSSParser::parseClipShape(int propId, bool important)
 {
     CSSParserValue* value = m_valueList->current();
     CSSParserValueList* args = value->function->args.get();
@@ -4086,7 +4086,7 @@ bool CSSParser::parseShape(int propId, bool important)
     return false;
 }
 
-PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeRect(CSSParserValueList* args)
+PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeRect(CSSParserValueList* args)
 {
     ASSERT(args);
 
@@ -4139,7 +4139,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeRect(CSSParserValueList* args)
     return shape;
 }
 
-PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeCircle(CSSParserValueList* args)
+PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeCircle(CSSParserValueList* args)
 {
     ASSERT(args);
 
@@ -4183,7 +4183,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeCircle(CSSParserValueList* arg
     return shape;
 }
 
-PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeEllipse(CSSParserValueList* args)
+PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeEllipse(CSSParserValueList* args)
 {
     ASSERT(args);
 
@@ -4229,7 +4229,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeEllipse(CSSParserValueList* ar
     return shape;
 }
 
-PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapePolygon(CSSParserValueList* args)
+PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapePolygon(CSSParserValueList* args)
 {
     ASSERT(args);
 
@@ -4279,7 +4279,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapePolygon(CSSParserValueList* ar
     return shape;
 }
 
-bool CSSParser::parseWrapShape(bool shapeInside, bool important)
+bool CSSParser::parseExclusionShape(bool shapeInside, bool important)
 {
     CSSParserValue* value = m_valueList->current();
     CSSParserValueList* args = value->function->args.get();
@@ -4290,16 +4290,16 @@ bool CSSParser::parseWrapShape(bool shapeInside, bool important)
     RefPtr<CSSWrapShape> shape;
 
     if (equalIgnoringCase(value->function->name, "rect("))
-        shape = parseWrapShapeRect(args);
+        shape = parseExclusionShapeRect(args);
     else if (equalIgnoringCase(value->function->name, "circle("))
-        shape = parseWrapShapeCircle(args);
+        shape = parseExclusionShapeCircle(args);
     else if (equalIgnoringCase(value->function->name, "ellipse("))
-        shape = parseWrapShapeEllipse(args);
+        shape = parseExclusionShapeEllipse(args);
     else if (equalIgnoringCase(value->function->name, "polygon("))
-        shape = parseWrapShapePolygon(args);
+        shape = parseExclusionShapePolygon(args);
 
     if (shape) {
-        addProperty(shapeInside ? CSSPropertyWebkitWrapShapeInside : CSSPropertyWebkitWrapShapeOutside, cssValuePool()->createValue(shape.release()), important);
+        addProperty(shapeInside ? CSSPropertyWebkitShapeInside : CSSPropertyWebkitShapeOutside, cssValuePool()->createValue(shape.release()), important);
         m_valueList->next();
         return true;
     }

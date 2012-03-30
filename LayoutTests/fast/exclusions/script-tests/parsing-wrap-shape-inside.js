@@ -1,19 +1,19 @@
-description('Testing the parsing of the -webkit-wrap-shape-inside property.');
+description('Testing the parsing of the -webkit-shape-inside property.');
 
 function testCSSText(declaration, expected)
 {
     var element = document.createElement("div");
-    element.style.cssText = "-webkit-wrap-shape-inside: " + declaration;
-    return element.style.webkitWrapShapeInside;
+    element.style.cssText = "-webkit-shape-inside: " + declaration;
+    return element.style.webkitShapeInside;
 }
 
 function testComputedStyle(value, expected) {
     var element = document.createElement("div");
     document.body.appendChild(element);
-    element.style.setProperty("-webkit-wrap-shape-inside", value);
+    element.style.setProperty("-webkit-shape-inside", value);
 
     var computedStyle = getComputedStyle(element);
-    var actualValue = computedStyle.getPropertyValue("-webkit-wrap-shape-inside");
+    var actualValue = computedStyle.getPropertyValue("-webkit-shape-inside");
     document.body.removeChild(element);
 
     return actualValue;
@@ -22,17 +22,17 @@ function testComputedStyle(value, expected) {
 function testNotInherited(parentValue, childValue) {
    var parentElement = document.createElement("div");
    document.body.appendChild(parentElement);
-   parentElement.style.setProperty("-webkit-wrap-shape-inside", parentValue);
+   parentElement.style.setProperty("-webkit-shape-inside", parentValue);
 
    var childElement = document.createElement("div");
    parentElement.appendChild(childElement);
-   childElement.style.setProperty("-webkit-wrap-shape-inside", childValue);
+   childElement.style.setProperty("-webkit-shape-inside", childValue);
 
    var parentComputedStyle = getComputedStyle(parentElement);
-   var parentActual = parentComputedStyle.getPropertyValue('-webkit-wrap-shape-inside')
+   var parentActual = parentComputedStyle.getPropertyValue('-webkit-shape-inside')
 
    var childComputedStyle = getComputedStyle(childElement);
-   var childActual = childComputedStyle.getPropertyValue('-webkit-wrap-shape-inside')
+   var childActual = childComputedStyle.getPropertyValue('-webkit-shape-inside')
 
    parentElement.removeChild(childElement);
    document.body.removeChild(parentElement);
