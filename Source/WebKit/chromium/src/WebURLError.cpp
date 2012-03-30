@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include <public/WebURLError.h>
+#include "platform/WebURLError.h"
 
 #include "KURL.h"
 #include "ResourceError.h"

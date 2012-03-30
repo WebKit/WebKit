@@ -1,5 +1,201 @@
 2012-03-29  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed, rolling out r112572.
+        http://trac.webkit.org/changeset/112572
+        https://bugs.webkit.org/show_bug.cgi?id=82582
+
+        Does not compile in Windows component build
+
+        * WebKit.gyp:
+        * src/WebData.cpp: Renamed from Source/WebCore/platform/chromium/support/WebData.cpp.
+        (WebKit):
+        (WebKit::WebData::reset):
+        (WebKit::WebData::assign):
+        (WebKit::WebData::size):
+        (WebKit::WebData::data):
+        (WebKit::WebData::WebData):
+        (WebKit::WebData::operator=):
+        (WebKit::WebData::operator PassRefPtr<SharedBuffer>):
+        * src/WebHTTPBody.cpp: Renamed from Source/WebCore/platform/chromium/support/WebHTTPBody.cpp.
+        (WebKit):
+        (WebKit::WebHTTPBody::initialize):
+        (WebKit::WebHTTPBody::reset):
+        (WebKit::WebHTTPBody::assign):
+        (WebKit::WebHTTPBody::elementCount):
+        (WebKit::WebHTTPBody::elementAt):
+        (WebKit::WebHTTPBody::appendData):
+        (WebKit::WebHTTPBody::appendFile):
+        (WebKit::WebHTTPBody::appendFileRange):
+        (WebKit::WebHTTPBody::appendBlob):
+        (WebKit::WebHTTPBody::identifier):
+        (WebKit::WebHTTPBody::setIdentifier):
+        (WebKit::WebHTTPBody::containsPasswordData):
+        (WebKit::WebHTTPBody::setContainsPasswordData):
+        (WebKit::WebHTTPBody::WebHTTPBody):
+        (WebKit::WebHTTPBody::operator=):
+        (WebKit::WebHTTPBody::operator PassRefPtr<FormData>):
+        (WebKit::WebHTTPBody::ensureMutable):
+        * src/WebHTTPLoadInfo.cpp: Renamed from Source/WebCore/platform/chromium/support/WebHTTPLoadInfo.cpp.
+        (WebKit):
+        (WebKit::WebHTTPLoadInfo::initialize):
+        (WebKit::WebHTTPLoadInfo::reset):
+        (WebKit::WebHTTPLoadInfo::assign):
+        (WebKit::WebHTTPLoadInfo::WebHTTPLoadInfo):
+        (WebKit::WebHTTPLoadInfo::operator WTF::PassRefPtr<WebCore::ResourceLoadInfo>):
+        (WebKit::WebHTTPLoadInfo::httpStatusCode):
+        (WebKit::WebHTTPLoadInfo::setHTTPStatusCode):
+        (WebKit::WebHTTPLoadInfo::httpStatusText):
+        (WebKit::WebHTTPLoadInfo::setHTTPStatusText):
+        (WebKit::WebHTTPLoadInfo::encodedDataLength):
+        (WebKit::WebHTTPLoadInfo::setEncodedDataLength):
+        (WebKit::addHeader):
+        (WebKit::WebHTTPLoadInfo::addRequestHeader):
+        (WebKit::WebHTTPLoadInfo::addResponseHeader):
+        (WebKit::WebHTTPLoadInfo::requestHeadersText):
+        (WebKit::WebHTTPLoadInfo::setRequestHeadersText):
+        (WebKit::WebHTTPLoadInfo::responseHeadersText):
+        (WebKit::WebHTTPLoadInfo::setResponseHeadersText):
+        * src/WebURL.cpp: Renamed from Source/WebCore/platform/chromium/support/WebURL.cpp.
+        (WebKit):
+        (WebKit::WebURL::WebURL):
+        (WebKit::WebURL::operator=):
+        (WebKit::WebURL::operator WebCore::KURL):
+        * src/WebURLError.cpp: Renamed from Source/WebCore/platform/chromium/support/WebURLError.cpp.
+        (WebKit):
+        (WebKit::WebURLError::WebURLError):
+        (WebKit::WebURLError::operator=):
+        (WebKit::WebURLError::operator ResourceError):
+        * src/WebURLRequest.cpp: Renamed from Source/WebCore/platform/chromium/support/WebURLRequest.cpp.
+        (WebURLRequestPrivateImpl):
+        (WebKit::WebURLRequestPrivateImpl::WebURLRequestPrivateImpl):
+        (WebKit::WebURLRequestPrivateImpl::dispose):
+        (WebKit::WebURLRequestPrivateImpl::~WebURLRequestPrivateImpl):
+        (WebKit):
+        (WebKit::WebURLRequest::initialize):
+        (WebKit::WebURLRequest::reset):
+        (WebKit::WebURLRequest::assign):
+        (WebKit::WebURLRequest::isNull):
+        (WebKit::WebURLRequest::url):
+        (WebKit::WebURLRequest::setURL):
+        (WebKit::WebURLRequest::firstPartyForCookies):
+        (WebKit::WebURLRequest::setFirstPartyForCookies):
+        (WebKit::WebURLRequest::allowCookies):
+        (WebKit::WebURLRequest::setAllowCookies):
+        (WebKit::WebURLRequest::allowStoredCredentials):
+        (WebKit::WebURLRequest::setAllowStoredCredentials):
+        (WebKit::WebURLRequest::cachePolicy):
+        (WebKit::WebURLRequest::setCachePolicy):
+        (WebKit::WebURLRequest::httpMethod):
+        (WebKit::WebURLRequest::setHTTPMethod):
+        (WebKit::WebURLRequest::httpHeaderField):
+        (WebKit::WebURLRequest::setHTTPHeaderField):
+        (WebKit::WebURLRequest::addHTTPHeaderField):
+        (WebKit::WebURLRequest::clearHTTPHeaderField):
+        (WebKit::WebURLRequest::visitHTTPHeaderFields):
+        (WebKit::WebURLRequest::httpBody):
+        (WebKit::WebURLRequest::setHTTPBody):
+        (WebKit::WebURLRequest::reportUploadProgress):
+        (WebKit::WebURLRequest::setReportUploadProgress):
+        (WebKit::WebURLRequest::reportLoadTiming):
+        (WebKit::WebURLRequest::setReportRawHeaders):
+        (WebKit::WebURLRequest::reportRawHeaders):
+        (WebKit::WebURLRequest::setReportLoadTiming):
+        (WebKit::WebURLRequest::targetType):
+        (WebKit::WebURLRequest::hasUserGesture):
+        (WebKit::WebURLRequest::setHasUserGesture):
+        (WebKit::WebURLRequest::setTargetType):
+        (WebKit::WebURLRequest::requestorID):
+        (WebKit::WebURLRequest::setRequestorID):
+        (WebKit::WebURLRequest::requestorProcessID):
+        (WebKit::WebURLRequest::setRequestorProcessID):
+        (WebKit::WebURLRequest::appCacheHostID):
+        (WebKit::WebURLRequest::setAppCacheHostID):
+        (WebKit::WebURLRequest::downloadToFile):
+        (WebKit::WebURLRequest::setDownloadToFile):
+        (WebKit::WebURLRequest::extraData):
+        (WebKit::WebURLRequest::setExtraData):
+        (WebKit::WebURLRequest::toMutableResourceRequest):
+        (WebKit::WebURLRequest::toResourceRequest):
+        * src/WebURLRequestPrivate.h: Renamed from Source/WebCore/platform/chromium/support/WebURLRequestPrivate.h.
+        (WebKit):
+        (WebURLRequestPrivate):
+        (WebKit::WebURLRequestPrivate::WebURLRequestPrivate):
+        * src/WebURLResponse.cpp: Renamed from Source/WebCore/platform/chromium/support/WebURLResponse.cpp.
+        (WebURLResponsePrivateImpl):
+        (WebKit::WebURLResponsePrivateImpl::WebURLResponsePrivateImpl):
+        (WebKit::WebURLResponsePrivateImpl::dispose):
+        (WebKit::WebURLResponsePrivateImpl::~WebURLResponsePrivateImpl):
+        (WebKit):
+        (WebKit::WebURLResponse::initialize):
+        (WebKit::WebURLResponse::reset):
+        (WebKit::WebURLResponse::assign):
+        (WebKit::WebURLResponse::isNull):
+        (WebKit::WebURLResponse::url):
+        (WebKit::WebURLResponse::setURL):
+        (WebKit::WebURLResponse::connectionID):
+        (WebKit::WebURLResponse::setConnectionID):
+        (WebKit::WebURLResponse::connectionReused):
+        (WebKit::WebURLResponse::setConnectionReused):
+        (WebKit::WebURLResponse::loadTiming):
+        (WebKit::WebURLResponse::setLoadTiming):
+        (WebKit::WebURLResponse::httpLoadInfo):
+        (WebKit::WebURLResponse::setHTTPLoadInfo):
+        (WebKit::WebURLResponse::responseTime):
+        (WebKit::WebURLResponse::setResponseTime):
+        (WebKit::WebURLResponse::mimeType):
+        (WebKit::WebURLResponse::setMIMEType):
+        (WebKit::WebURLResponse::expectedContentLength):
+        (WebKit::WebURLResponse::setExpectedContentLength):
+        (WebKit::WebURLResponse::textEncodingName):
+        (WebKit::WebURLResponse::setTextEncodingName):
+        (WebKit::WebURLResponse::suggestedFileName):
+        (WebKit::WebURLResponse::setSuggestedFileName):
+        (WebKit::WebURLResponse::httpStatusCode):
+        (WebKit::WebURLResponse::setHTTPStatusCode):
+        (WebKit::WebURLResponse::httpStatusText):
+        (WebKit::WebURLResponse::setHTTPStatusText):
+        (WebKit::WebURLResponse::httpHeaderField):
+        (WebKit::WebURLResponse::setHTTPHeaderField):
+        (WebKit::WebURLResponse::addHTTPHeaderField):
+        (WebKit::WebURLResponse::clearHTTPHeaderField):
+        (WebKit::WebURLResponse::visitHTTPHeaderFields):
+        (WebKit::WebURLResponse::lastModifiedDate):
+        (WebKit::WebURLResponse::setLastModifiedDate):
+        (WebKit::WebURLResponse::appCacheID):
+        (WebKit::WebURLResponse::setAppCacheID):
+        (WebKit::WebURLResponse::appCacheManifestURL):
+        (WebKit::WebURLResponse::setAppCacheManifestURL):
+        (WebKit::WebURLResponse::securityInfo):
+        (WebKit::WebURLResponse::setSecurityInfo):
+        (WebKit::WebURLResponse::toMutableResourceResponse):
+        (WebKit::WebURLResponse::toResourceResponse):
+        (WebKit::WebURLResponse::wasCached):
+        (WebKit::WebURLResponse::setWasCached):
+        (WebKit::WebURLResponse::wasFetchedViaSPDY):
+        (WebKit::WebURLResponse::setWasFetchedViaSPDY):
+        (WebKit::WebURLResponse::wasNpnNegotiated):
+        (WebKit::WebURLResponse::setWasNpnNegotiated):
+        (WebKit::WebURLResponse::wasAlternateProtocolAvailable):
+        (WebKit::WebURLResponse::setWasAlternateProtocolAvailable):
+        (WebKit::WebURLResponse::wasFetchedViaProxy):
+        (WebKit::WebURLResponse::setWasFetchedViaProxy):
+        (WebKit::WebURLResponse::isMultipartPayload):
+        (WebKit::WebURLResponse::setIsMultipartPayload):
+        (WebKit::WebURLResponse::downloadFilePath):
+        (WebKit::WebURLResponse::setDownloadFilePath):
+        (WebKit::WebURLResponse::remoteIPAddress):
+        (WebKit::WebURLResponse::setRemoteIPAddress):
+        (WebKit::WebURLResponse::remotePort):
+        (WebKit::WebURLResponse::setRemotePort):
+        (WebKit::WebURLResponse::extraData):
+        (WebKit::WebURLResponse::setExtraData):
+        * src/WebURLResponsePrivate.h: Renamed from Source/WebCore/platform/chromium/support/WebURLResponsePrivate.h.
+        (WebKit):
+        (WebURLResponsePrivate):
+        (WebKit::WebURLResponsePrivate::WebURLResponsePrivate):
+
+2012-03-29  Adam Barth  <abarth@webkit.org>
+
         Unreviewed, rolling out r112579.
         http://trac.webkit.org/changeset/112579
         https://bugs.webkit.org/show_bug.cgi?id=82657
