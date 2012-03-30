@@ -1983,8 +1983,8 @@ BUGCR27850 : fast/history/back-forward-reset-after-error-handling.html = TEXT
 BUGWK82505 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD LEOPARD LINUX DEBUG : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT CRASH
 
-BUGWK82505 SNOWLEOPARD LEOPARD LINUX DEBUG : http/tests/media/media-can-load-when-hidden.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD LEOPARD LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/media/media-can-load-when-hidden.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onprogress-event.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-sync-requests.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/uri-resolution-opera-open-004.html = PASS TEXT CRASH
