@@ -155,13 +155,30 @@ GstFlowReturn AudioFileReader::handleBuffer(GstAppSink* sink)
         return GST_FLOW_ERROR;
     }
 
+    gint sampleRate = 0;
+    if (!gst_structure_get_int(structure, "rate", &sampleRate) || !sampleRate) {
+        gst_caps_unref(caps);
+        gst_buffer_unref(buffer);
+        return GST_FLOW_ERROR;
+    }
+
+    gint width = 0;
+    if (!gst_structure_get_int(structure, "width", &width) || !width) {
+        gst_caps_unref(caps);
+        gst_buffer_unref(buffer);
+        return GST_FLOW_ERROR;
+    }
+
+    GstClockTime duration = (static_cast<guint64>(GST_BUFFER_SIZE(buffer)) * 8 * GST_SECOND) / (sampleRate * channels * width);
+    int frames = GST_CLOCK_TIME_TO_FRAMES(duration, sampleRate);
+
     // Check the first audio channel. The buffer is supposed to store
     // data of a single channel anyway.
     GstAudioChannelPosition* positions = gst_audio_get_channel_positions(structure);
     switch (positions[0]) {
     case GST_AUDIO_CHANNEL_POSITION_FRONT_LEFT:
         gst_buffer_list_iterator_add(m_frontLeftBuffersIterator, buffer);
-        m_channelSize += GST_BUFFER_OFFSET_END(buffer) - GST_BUFFER_OFFSET(buffer);
+        m_channelSize += frames;
         break;
     case GST_AUDIO_CHANNEL_POSITION_FRONT_RIGHT:
         gst_buffer_list_iterator_add(m_frontRightBuffersIterator, buffer);
