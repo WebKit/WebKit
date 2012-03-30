@@ -1,5 +1,18 @@
 2012-03-30  Simon Fraser  <simon.fraser@apple.com>
 
+        run-webkit-tests needs to set DYLD_LIBRARY_PATH as well
+        as DYLD_FRAMEWORK_PATH, so that libWebCoreTestSupport.dylib
+        is found.
+
+        <rdar://problem/11158581>
+        
+        Reviewed by Mark Rowe.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver._start):
+
+2012-03-30  Simon Fraser  <simon.fraser@apple.com>
+
         Disable run-api-tests on release mac builds
         https://bugs.webkit.org/show_bug.cgi?id=82788
 
