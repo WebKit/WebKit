@@ -31,8 +31,8 @@
 #ifndef WrappedResourceResponse_h
 #define WrappedResourceResponse_h
 
+#include "platform/WebURLResponse.h"
 #include "WebURLResponsePrivate.h"
-#include <public/WebURLResponse.h>
 
 namespace WebKit {
 

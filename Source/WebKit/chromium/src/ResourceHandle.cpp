@@ -36,14 +36,16 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 #include "SharedBuffer.h"
+
+#include "WebKit.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebURLError.h"
+#include "platform/WebURLLoader.h"
+#include "platform/WebURLLoaderClient.h"
+#include "platform/WebURLRequest.h"
+#include "platform/WebURLResponse.h"
 #include "WrappedResourceRequest.h"
 #include "WrappedResourceResponse.h"
-#include <public/Platform.h>
-#include <public/WebURLError.h>
-#include <public/WebURLLoader.h>
-#include <public/WebURLLoaderClient.h>
-#include <public/WebURLRequest.h>
-#include <public/WebURLResponse.h>
 
 using namespace WebKit;
 
@@ -55,8 +57,7 @@ ResourceHandleInternal::ResourceHandleInternal(const ResourceRequest& request, R
     , m_owner(0)
     , m_client(client)
     , m_state(ConnectionStateNew)
-{
-}
+{ }
 
 void ResourceHandleInternal::start()
 {
@@ -64,7 +65,7 @@ void ResourceHandleInternal::start()
         CRASH();
     m_state = ConnectionStateStarted;
 
-    m_loader = adoptPtr(Platform::current()->createURLLoader());
+    m_loader = adoptPtr(webKitPlatformSupport()->createURLLoader());
     ASSERT(m_loader);
 
     WrappedResourceRequest wrappedRequest(m_request);
@@ -244,7 +245,7 @@ ResourceHandle::~ResourceHandle()
 
 bool ResourceHandle::loadsBlocked()
 {
-    return false; // This seems to be related to sync XMLHttpRequest...
+    return false;  // This seems to be related to sync XMLHttpRequest...
 }
 
 // static
@@ -255,7 +256,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context,
                                                ResourceResponse& response,
                                                Vector<char>& data)
 {
-    OwnPtr<WebURLLoader> loader = adoptPtr(Platform::current()->createURLLoader());
+    OwnPtr<WebURLLoader> loader = adoptPtr(webKitPlatformSupport()->createURLLoader());
     ASSERT(loader);
 
     WrappedResourceRequest requestIn(request);
@@ -276,11 +277,11 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
 {
     // This method is used to determine if a POST request can be repeated from
     // cache, but you cannot really know until you actually try to read from the
-    // cache. Even if we checked now, something else could come along and wipe
+    // cache.  Even if we checked now, something else could come along and wipe
     // out the cache entry by the time we fetch it.
     //
     // So, we always say yes here, to prevent the FrameLoader from initiating a
-    // reload. Then in FrameLoaderClientImpl::dispatchWillSendRequest, we
+    // reload.  Then in FrameLoaderClientImpl::dispatchWillSendRequest, we
     // fix-up the cache policy of the request to force a load from the cache.
     //
     ASSERT(request.httpMethod() == "POST");
@@ -290,7 +291,6 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
 // static
 void ResourceHandle::cacheMetadata(const ResourceResponse& response, const Vector<char>& data)
 {
-    // FIXME: This should use Platform::current() directly.
     PlatformSupport::cacheMetadata(response.url(), response.responseTime(), data);
 }
 

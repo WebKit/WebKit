@@ -1,5 +1,71 @@
 2012-03-29  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed, rolling out r112579.
+        http://trac.webkit.org/changeset/112579
+        https://bugs.webkit.org/show_bug.cgi?id=82657
+
+        Does not compile in Windows component build
+
+        * WebKit.gyp:
+        * src/ResourceHandle.cpp: Renamed from Source/WebCore/platform/network/chromium/ResourceHandle.cpp.
+        (WebCore):
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        (WebCore::ResourceHandleInternal::start):
+        (WebCore::ResourceHandleInternal::cancel):
+        (WebCore::ResourceHandleInternal::setDefersLoading):
+        (WebCore::ResourceHandleInternal::allowStoredCredentials):
+        (WebCore::ResourceHandleInternal::willSendRequest):
+        (WebCore::ResourceHandleInternal::didSendData):
+        (WebCore::ResourceHandleInternal::didReceiveResponse):
+        (WebCore::ResourceHandleInternal::didDownloadData):
+        (WebCore::ResourceHandleInternal::didReceiveData):
+        (WebCore::ResourceHandleInternal::didReceiveCachedMetadata):
+        (WebCore::ResourceHandleInternal::didFinishLoading):
+        (WebCore::ResourceHandleInternal::didFail):
+        (WebCore::ResourceHandleInternal::FromResourceHandle):
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::create):
+        (WebCore::ResourceHandle::firstRequest):
+        (WebCore::ResourceHandle::client):
+        (WebCore::ResourceHandle::setClient):
+        (WebCore::ResourceHandle::setDefersLoading):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::hasAuthenticationChallenge):
+        (WebCore::ResourceHandle::clearAuthentication):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::loadsBlocked):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        (WebCore::ResourceHandle::willLoadFromCache):
+        (WebCore::ResourceHandle::cacheMetadata):
+        * src/ResourceHandleInternal.h: Renamed from Source/WebCore/platform/network/chromium/ResourceHandleInternal.h.
+        (WebCore):
+        (ResourceHandleInternal):
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandleInternal::setOwner):
+        (WebCore::ResourceHandleInternal::request):
+        (WebCore::ResourceHandleInternal::client):
+        (WebCore::ResourceHandleInternal::setClient):
+        (WebCore::ResourceHandleInternal::loader):
+        * src/WrappedResourceRequest.h: Renamed from Source/WebCore/platform/chromium/support/WrappedResourceRequest.h.
+        (WebKit):
+        (WrappedResourceRequest):
+        (WebKit::WrappedResourceRequest::~WrappedResourceRequest):
+        (WebKit::WrappedResourceRequest::WrappedResourceRequest):
+        (WebKit::WrappedResourceRequest::bind):
+        (Handle):
+        (WebKit::WrappedResourceRequest::Handle::dispose):
+        * src/WrappedResourceResponse.h: Renamed from Source/WebCore/platform/chromium/support/WrappedResourceResponse.h.
+        (WebKit):
+        (WrappedResourceResponse):
+        (WebKit::WrappedResourceResponse::~WrappedResourceResponse):
+        (WebKit::WrappedResourceResponse::WrappedResourceResponse):
+        (WebKit::WrappedResourceResponse::bind):
+        (Handle):
+        (WebKit::WrappedResourceResponse::Handle::dispose):
+
+2012-03-29  Adam Barth  <abarth@webkit.org>
+
         [Chromium] Move ResourceHandle to WebCore/platform/network/chromium
         https://bugs.webkit.org/show_bug.cgi?id=82657
 
