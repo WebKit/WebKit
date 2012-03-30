@@ -388,6 +388,11 @@ storage/storageinfo-no-callbacks.html
 storage/storageinfo-query-usage.html
 storage/storageinfo-request-quota.html
 
+# flaky storage tests https://bugs.webkit.org/show_bug.cgi?id=82679
+storage/statement-success-callback-isolated-world.html
+storage/transaction-callback-isolated-world.html
+storage/transaction-error-callback-isolated-world.html
+
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
 fast/dom/HTMLAnchorElement/anchor-nodownload.html
 fast/dom/HTMLAnchorElement/anchor-download.html
