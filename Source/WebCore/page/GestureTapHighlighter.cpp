@@ -143,12 +143,19 @@ Path pathForRenderer(RenderObject* o)
     Vector<IntRect> rects;
     o->addFocusRingRects(rects, /* acc. offset */ ownerFrameToMainFrameOffset(o));
 
+    if (rects.isEmpty())
+        return path;
+
     // The basic idea is to allow up to three different boxes in order to highlight
     // text with line breaks more nicer than using a bounding box.
 
     // Merge all center boxes (all but the first and the last).
     LayoutRect mid;
-    for (size_t i = 1; i < rects.size() - 1; ++i)
+
+    // Set the end value to integer. It ensures that no unsigned int overflow occurs
+    // in the test expression, in case of empty rects vector.
+    int end = rects.size() - 1;
+    for (int i = 1; i < end; ++i)
         mid.uniteIfNonZero(rects.at(i));
 
     Vector<LayoutRect> drawableRects;
