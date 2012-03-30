@@ -27,24 +27,81 @@
 #include "Gradient.h"
 
 #include "CSSParser.h"
+#include "GraphicsContext.h"
 #include "NotImplemented.h"
+
+#include <algorithm>
+
+#include <wx/dc.h>
+#include <wx/dcgraph.h>
+#include <wx/graphics.h>
+
+using namespace std;
 
 namespace WebCore {
 
 void Gradient::platformDestroy()
 {
-    notImplemented();
+    delete m_gradient;
 }
 
 PlatformGradient Gradient::platformGradient()
 {
-    notImplemented();
-    return 0;
+    if (m_gradient)
+        return m_gradient;
+
+#if wxCHECK_VERSION(2, 9, 1)
+    sortStopsIfNecessary();
+    
+    wxGraphicsRenderer* renderer = 0;
+#if wxUSE_CAIRO
+    renderer = wxGraphicsRenderer::GetCairoRenderer();
+#else
+    renderer = wxGraphicsRenderer::GetDefaultRenderer();
+#endif
+    if (renderer) {
+        wxGraphicsGradientStops stops;
+        Vector<ColorStop>::iterator stopIterator = m_stops.begin();
+        int numStops = 0;
+        stops.SetStartColour(wxColour(255*stopIterator->red, 255*stopIterator->green, 255*stopIterator->blue, 255*stopIterator->alpha));
+        
+        while (stopIterator != m_stops.end()) {
+            double position = stopIterator->stop;
+            if (m_radial && m_r0)
+                position = min((m_r0 / m_r1+position*(1.0f-m_r0 / m_r1)), 1.0);
+            stops.Add(wxGraphicsGradientStop(wxColour(255*stopIterator->red, 255*stopIterator->green, 255*stopIterator->blue, 255*stopIterator->alpha), position));
+            stopIterator++;
+            numStops++;
+        }
+        stopIterator--;
+        stops.SetEndColour(wxColour(255*stopIterator->red, 255*stopIterator->green, 255*stopIterator->blue, 255*stopIterator->alpha));
+        
+        wxGraphicsBrush gradient;
+        if (numStops >= 2) {
+            if (m_radial)
+                gradient = renderer->CreateRadialGradientBrush(m_p1.x(), m_p1.y(), m_p0.x(), m_p0.y(), m_r1, stops);
+            else
+                gradient = renderer->CreateLinearGradientBrush(m_p0.x(), m_p0.y(), m_p1.x(), m_p1.y(), stops);
+        }
+        m_gradient = new wxGraphicsBrush(gradient);
+    }
+#endif
+    return m_gradient;
 }
 
-void Gradient::fill(GraphicsContext*, const FloatRect&)
-{
-    notImplemented();
+void Gradient::fill(GraphicsContext* c, const FloatRect& r)
+{    
+#if wxCHECK_VERSION(2, 9, 1)
+    wxGCDC* context = dynamic_cast<wxGCDC*>(c->platformContext());
+
+    if (!context)
+        return;
+    wxGraphicsContext* gradientContext = context->GetGraphicsContext();
+
+    gradientContext->SetPen(*wxTRANSPARENT_PEN);
+    gradientContext->SetBrush(*platformGradient());
+    gradientContext->DrawRectangle(r.x(), r.y(), r.width(), r.height());
+#endif
 }
 
 } //namespace

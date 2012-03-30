@@ -23,19 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef LocalDC_h
+#define LocalDC_h
+
 #include "IntRect.h"
 
 #include <wtf/Assertions.h>
 
 #include <wx/defs.h>
 
+#include <wx/bitmap.h>
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/rawbmp.h>
 
 namespace WebCore {
-
-wxBitmap* transparentBitmap(int width, int height);
 
 class LocalDC {
 
@@ -102,3 +104,4 @@ private:
 
 }
 
+#endif // LocalDC_h

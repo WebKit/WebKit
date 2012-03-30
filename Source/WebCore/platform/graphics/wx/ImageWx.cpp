@@ -85,13 +85,51 @@ void BitmapImage::initPlatformData()
     // FIXME: NYI
 }
 
+BitmapImage::BitmapImage(const wxBitmap& bitmap)
+    : Image(0)
+    , m_currentFrame(0)
+    , m_frames(0)
+    , m_frameTimer(0)
+    , m_repetitionCount(cAnimationNone)
+    , m_repetitionCountStatus(Unknown)
+    , m_repetitionsComplete(0)
+    , m_isSolidColor(false)
+    , m_checkedForSolidColor(false)
+    , m_animationFinished(true)
+    , m_allDataReceived(true)
+    , m_haveSize(true)
+    , m_sizeAvailable(true)
+    , m_decodedSize(0)
+    , m_haveFrameCount(true)
+    , m_frameCount(1)
+{
+    initPlatformData();
+    
+    m_decodedSize = bitmap.GetWidth() * bitmap.GetHeight() * 4;
+    m_size = IntSize(bitmap.GetWidth(), bitmap.GetHeight());
+
+    wxGraphicsRenderer* renderer = 0;
+#if wxUSE_CAIRO
+    renderer = wxGraphicsRenderer::GetCairoRenderer();
+#else
+    renderer = wxGraphicsRenderer::GetDefaultRenderer();
+#endif
+    if (renderer) {
+        wxGraphicsBitmap* gbmp = new wxGraphicsBitmap(renderer->CreateBitmap(bitmap));
+        ASSERT(!gbmp->IsNull());
+    
+        m_frames.grow(1);
+        m_frames[0].m_frame = gbmp;
+        m_frames[0].m_haveMetadata = true;
+        checkForSolidColor();
+    }
+}
+
+
 // Drawing Routines
 
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op)
 {
-    if (!m_source.initialized())
-        return;
-
     if (mayFillWithSolidColor()) {
         fillWithSolidColor(ctxt, dst, solidColor(), styleColorSpace, op);
         return;
