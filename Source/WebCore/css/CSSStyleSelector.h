@@ -238,10 +238,16 @@ public:
 #endif
 #endif // ENABLE(CSS_FILTERS)
 
-    struct RuleSelectorPair {
-        RuleSelectorPair(StyleRule* rule, CSSSelector* selector) : rule(rule), selector(selector) { }
+    struct RuleFeature {
+        RuleFeature(StyleRule* rule, CSSSelector* selector, bool hasDocumentSecurityOrigin)
+            : rule(rule)
+            , selector(selector)
+            , hasDocumentSecurityOrigin(hasDocumentSecurityOrigin) 
+        { 
+        }
         StyleRule* rule;
         CSSSelector* selector;
+        bool hasDocumentSecurityOrigin;
     };
     struct Features {
         Features();
@@ -250,8 +256,8 @@ public:
         void clear();
         HashSet<AtomicStringImpl*> idsInRules;
         HashSet<AtomicStringImpl*> attrsInRules;
-        Vector<RuleSelectorPair> siblingRules;
-        Vector<RuleSelectorPair> uncommonAttributeRules;
+        Vector<RuleFeature> siblingRules;
+        Vector<RuleFeature> uncommonAttributeRules;
         bool usesFirstLineRules;
         bool usesBeforeAfterRules;
         bool usesLinkRules;

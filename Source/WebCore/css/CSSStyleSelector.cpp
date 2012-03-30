@@ -181,7 +181,7 @@ if (primitiveValue) \
 
 class RuleData {
 public:
-    RuleData(StyleRule*, CSSSelector*, unsigned position, bool canUseFastCheckSelector, bool inRegionRule);
+    RuleData(StyleRule*, CSSSelector*, unsigned position, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool inRegionRule);
 
     unsigned position() const { return m_position; }
     StyleRule* rule() const { return m_rule; }
@@ -193,6 +193,7 @@ public:
     bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
     unsigned specificity() const { return m_specificity; }
     unsigned linkMatchType() const { return m_linkMatchType; }
+    bool hasDocumentSecurityOrigin() const { return m_hasDocumentSecurityOrigin; }
     bool isInRegionRule() const { return m_isInRegionRule; }
 
     // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
@@ -205,12 +206,13 @@ private:
     unsigned m_specificity;
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
     // Some simple testing showed <100,000 RuleData's on large sites.
-    unsigned m_position : 25;
+    unsigned m_position : 24;
     unsigned m_hasFastCheckableSelector : 1;
     unsigned m_hasMultipartSelector : 1;
     unsigned m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
+    unsigned m_hasDocumentSecurityOrigin : 1;
     unsigned m_isInRegionRule : 1;
     // Use plain array instead of a Vector to minimize memory overhead.
     unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
@@ -235,11 +237,11 @@ public:
 
     void addRulesFromSheet(CSSStyleSheet*, const MediaQueryEvaluator&, CSSStyleSelector* = 0, const ContainerNode* = 0);
 
-    void addStyleRule(StyleRule*, bool canUseFastCheckSelector = true, bool isInRegionRule = false);
-    void addRule(StyleRule*, CSSSelector*, bool canUseFastCheckSelector = true, bool isInRegionRule = false);
+    void addStyleRule(StyleRule*, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool isInRegionRule = false);
+    void addRule(StyleRule*, CSSSelector*, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool isInRegionRule = false);
     void addPageRule(CSSPageRule*);
     void addToRuleSet(AtomicStringImpl* key, AtomRuleMap&, const RuleData&);
-    void addRegionRule(WebKitCSSRegionRule*);
+    void addRegionRule(WebKitCSSRegionRule*, bool hasDocumentSecurityOrigin);
     void shrinkToFit();
     void disableAutoShrinkToFit() { m_autoShrinkToFitEnabled = false; }
 
@@ -422,14 +424,14 @@ CSSStyleSelector::CSSStyleSelector(Document* document, bool matchAuthorAndUserSt
     appendAuthorStylesheets(0, document->styleSheets()->vector());
 }
     
-static PassOwnPtr<RuleSet> makeRuleSet(const Vector<CSSStyleSelector::RuleSelectorPair>& rules)
+static PassOwnPtr<RuleSet> makeRuleSet(const Vector<CSSStyleSelector::RuleFeature>& rules)
 {
     size_t size = rules.size();
     if (!size)
         return nullptr;
     OwnPtr<RuleSet> ruleSet = adoptPtr(new RuleSet);
     for (size_t i = 0; i < size; ++i)
-        ruleSet->addRule(rules[i].rule, rules[i].selector);
+        ruleSet->addRule(rules[i].rule, rules[i].selector, rules[i].hasDocumentSecurityOrigin, false);
     return ruleSet.release();
 }
 
@@ -1024,8 +1026,8 @@ void CSSStyleSelector::collectMatchingRulesForList(const Vector<RuleData>* rules
                 InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
             }
-            // FIXME: Exposing getMatchedCSSRules as a web facing API is forcing us to have a way to get the base URL per-rule.
-            if (m_sameOriginOnly && !m_checker.document()->securityOrigin()->canRequest(rule->ensureCSSStyleRule()->baseURL())) {
+            // FIXME: Exposing the non-standard getMatchedCSSRules API to web is the only reason this is needed.
+            if (m_sameOriginOnly && !ruleData.hasDocumentSecurityOrigin()) {
                 InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
             }
@@ -2311,7 +2313,7 @@ static inline bool containsUncommonAttributeSelector(const CSSSelector* selector
     return false;
 }
 
-RuleData::RuleData(StyleRule* rule, CSSSelector* selector, unsigned position, bool canUseFastCheckSelector, bool inRegionRule)
+RuleData::RuleData(StyleRule* rule, CSSSelector* selector, unsigned position, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool inRegionRule)
     : m_rule(rule)
     , m_selector(selector)
     , m_specificity(selector->specificity())
@@ -2321,6 +2323,7 @@ RuleData::RuleData(StyleRule* rule, CSSSelector* selector, unsigned position, bo
     , m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector))
     , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(selector))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector))
+    , m_hasDocumentSecurityOrigin(hasDocumentSecurityOrigin)
     , m_isInRegionRule(inRegionRule)
 {
     SelectorChecker::collectIdentifierHashes(m_selector, m_descendantSelectorIdentifierHashes, maximumIdentifierCount);
@@ -2371,9 +2374,9 @@ static void collectFeaturesFromRuleData(CSSStyleSelector::Features& features, co
             foundSiblingSelector = true;
     }
     if (foundSiblingSelector)
-        features.siblingRules.append(CSSStyleSelector::RuleSelectorPair(ruleData.rule(), ruleData.selector()));
+        features.siblingRules.append(CSSStyleSelector::RuleFeature(ruleData.rule(), ruleData.selector(), ruleData.hasDocumentSecurityOrigin()));
     if (ruleData.containsUncommonAttributeSelector())
-        features.uncommonAttributeRules.append(CSSStyleSelector::RuleSelectorPair(ruleData.rule(), ruleData.selector()));
+        features.uncommonAttributeRules.append(CSSStyleSelector::RuleFeature(ruleData.rule(), ruleData.selector(), ruleData.hasDocumentSecurityOrigin()));
 }
     
 void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleData& ruleData)
@@ -2386,9 +2389,9 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
     rules->append(ruleData);
 }
 
-void RuleSet::addRule(StyleRule* rule, CSSSelector* selector, bool canUseFastCheckSelector, bool inRegionRule)
+void RuleSet::addRule(StyleRule* rule, CSSSelector* selector, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool inRegionRule)
 {
-    RuleData ruleData(rule, selector, m_ruleCount++, canUseFastCheckSelector, inRegionRule);
+    RuleData ruleData(rule, selector, m_ruleCount++, hasDocumentSecurityOrigin, canUseFastCheckSelector, inRegionRule);
     collectFeaturesFromRuleData(m_features, ruleData);
 
     if (selector->m_match == CSSSelector::Id) {
@@ -2431,7 +2434,7 @@ void RuleSet::addPageRule(CSSPageRule* rule)
     m_pageRules.append(rule);
 }
 
-void RuleSet::addRegionRule(WebKitCSSRegionRule* regionRule)
+void RuleSet::addRegionRule(WebKitCSSRegionRule* regionRule, bool hasDocumentSecurityOrigin)
 {
     RuleSet* regionRuleSet = new RuleSet;
     // The region rule set should take into account the position inside the parent rule set.
@@ -2444,7 +2447,7 @@ void RuleSet::addRegionRule(WebKitCSSRegionRule* regionRule)
     for (unsigned i = 0; i < rulesSize; ++i) {
         CSSRule* regionStylingRule = regionRule->ruleAt(i);
         if (regionStylingRule->isStyleRule())
-            regionRuleSet->addStyleRule(static_cast<CSSStyleRule*>(regionStylingRule)->styleRule(), true, true);
+            regionRuleSet->addStyleRule(static_cast<CSSStyleRule*>(regionStylingRule)->styleRule(), hasDocumentSecurityOrigin, true, true);
     }
     // Update the "global" rule count so that proper order is maintained
     m_ruleCount = regionRuleSet->m_ruleCount;
@@ -2467,6 +2470,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
         if (importRule->styleSheet() && (!importRule->mediaQueries() || medium.eval(importRule->mediaQueries(), styleSelector)))
             addRulesFromSheet(importRule->styleSheet(), medium, styleSelector, scope);
     }
+    bool hasDocumentSecurityOrigin = styleSelector && styleSelector->document()->securityOrigin()->canRequest(sheet->baseURL());
 
     const Vector<RefPtr<CSSRule> >& rules = sheet->childRules();
     for (unsigned i = 0; i < rules.size(); ++i) {
@@ -2474,7 +2478,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
 
         ASSERT(!rule->isImportRule());
         if (rule->isStyleRule())
-            addStyleRule(static_cast<CSSStyleRule*>(rule)->styleRule(), !scope);
+            addStyleRule(static_cast<CSSStyleRule*>(rule)->styleRule(), hasDocumentSecurityOrigin, !scope);
         else if (rule->isPageRule())
             addPageRule(static_cast<CSSPageRule*>(rule));
         else if (rule->isMediaRule()) {
@@ -2485,7 +2489,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
                 for (unsigned j = 0; j < mediaRule->ruleCount(); j++) {
                     CSSRule* childRule = mediaRule->ruleAt(j);
                     if (childRule->isStyleRule())
-                        addStyleRule(static_cast<CSSStyleRule*>(childRule)->styleRule(), !scope);
+                        addStyleRule(static_cast<CSSStyleRule*>(childRule)->styleRule(), hasDocumentSecurityOrigin, !scope);
                     else if (childRule->isPageRule())
                         addPageRule(static_cast<CSSPageRule*>(childRule));
                     else if (childRule->isFontFaceRule() && styleSelector) {
@@ -2522,17 +2526,17 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
             // FIXME (BUG 72472): We don't add @-webkit-region rules of scoped style sheets for the moment.
             if (scope)
                 continue;
-            addRegionRule(static_cast<WebKitCSSRegionRule*>(rule));
+            addRegionRule(static_cast<WebKitCSSRegionRule*>(rule), hasDocumentSecurityOrigin);
         }
     }
     if (m_autoShrinkToFitEnabled)
         shrinkToFit();
 }
 
-void RuleSet::addStyleRule(StyleRule* rule, bool canUseFastCheckSelector, bool isInRegionRule)
+void RuleSet::addStyleRule(StyleRule* rule, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool isInRegionRule)
 {
     for (CSSSelector* s = rule->selectorList().first(); s; s = CSSSelectorList::next(s))
-        addRule(rule, s, canUseFastCheckSelector, isInRegionRule);
+        addRule(rule, s, hasDocumentSecurityOrigin, canUseFastCheckSelector, isInRegionRule);
 }
 
 static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)
