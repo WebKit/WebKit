@@ -357,7 +357,6 @@ void WebGraphicsLayer::setContentsToImage(Image* image)
 
     m_layerInfo.imageBackingStoreID = newID;
     m_image = image;
-    m_layerInfo.imageIsUpdated = true;
     GraphicsLayer::setContentsToImage(image);
 }
 
@@ -431,12 +430,8 @@ WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer* layer)
 void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
 {
     // The remote image might have been released by purgeBackingStores.
-    if (m_image) {
-        if (!m_layerInfo.imageBackingStoreID) {
-            m_layerInfo.imageBackingStoreID = m_webGraphicsLayerClient->adoptImageBackingStore(m_image.get());
-            m_layerInfo.imageIsUpdated = true;
-        }
-    }
+    if (m_image && !m_layerInfo.imageBackingStoreID)
+        m_layerInfo.imageBackingStoreID = m_webGraphicsLayerClient->adoptImageBackingStore(m_image.get());
 
     if (m_modified) {
         computeTransformedVisibleRect();
@@ -469,7 +464,6 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
     updateContentBuffers();
 
     m_modified = false;
-    m_layerInfo.imageIsUpdated = false;
     if (m_hasPendingAnimations)
         notifyAnimationStarted(WTF::currentTime());
     m_layerInfo.animations.clear();

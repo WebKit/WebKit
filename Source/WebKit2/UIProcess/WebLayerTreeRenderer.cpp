@@ -173,7 +173,6 @@ void WebLayerTreeRenderer::syncLayerParameters(const WebLayerInfo& layerInfo)
     ensureLayer(id);
     LayerMap::iterator it = m_layers.find(id);
     GraphicsLayer* layer = it->second;
-    bool needsToUpdateImageTiles = layerInfo.imageIsUpdated || (layerInfo.contentsRect != layer->contentsRect() && layerInfo.imageBackingStoreID);
 
     layer->setName(layerInfo.name);
 
@@ -190,8 +189,7 @@ void WebLayerTreeRenderer::syncLayerParameters(const WebLayerInfo& layerInfo)
     layer->setContentsRect(layerInfo.contentsRect);
     layer->setDrawsContent(layerInfo.drawsContent);
 
-    if (needsToUpdateImageTiles)
-        assignImageToLayer(layer, layerInfo.imageBackingStoreID);
+    assignImageToLayer(layer, layerInfo.imageBackingStoreID);
 
     // Never make the root layer clip.
     layer->setMasksToBounds(layerInfo.isRootLayer ? false : layerInfo.masksToBounds);
@@ -318,6 +316,11 @@ void WebLayerTreeRenderer::destroyImage(int64_t imageID)
 
 void WebLayerTreeRenderer::assignImageToLayer(GraphicsLayer* layer, int64_t imageID)
 {
+    if (!imageID) {
+        layer->setContentsToMedia(0);
+        return;
+    }
+
     HashMap<int64_t, RefPtr<TextureMapperBackingStore> >::iterator it = m_directlyCompositedImages.find(imageID);
     ASSERT(it != m_directlyCompositedImages.end());
     layer->setContentsToMedia(it->second.get());

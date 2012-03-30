@@ -107,7 +107,6 @@ struct WebLayerInfo {
             bool masksToBounds : 1;
             bool preserves3D : 1;
             bool contentNeedsDisplay : 1;
-            bool imageIsUpdated: 1;
             bool isRootLayer: 1;
         };
         unsigned int flags;
