@@ -39,7 +39,7 @@ WebInspector.TextViewer = function(textModel, platform, url, delegate)
     this.registerRequiredCSS("textViewer.css");
 
     this._textModel = textModel;
-    this._textModel.changeListener = this._textChanged.bind(this);
+    this._textModel.addEventListener(WebInspector.TextEditorModel.Events.TextChanged, this._textChanged, this);
     this._textModel.resetUndoStack();
     this._delegate = delegate;
 
@@ -176,13 +176,12 @@ WebInspector.TextViewer.prototype = {
         this._updatePanelOffsets();
     },
 
-    // WebInspector.TextModel listener
-    _textChanged: function(oldRange, newRange, oldText, newText)
+    _textChanged: function(event)
     {
         if (!this._internalTextChangeMode)
             this._textModel.resetUndoStack();
-        this._mainPanel.textChanged(oldRange, newRange);
-        this._gutterPanel.textChanged(oldRange, newRange);
+        this._mainPanel.textChanged(event.data.oldRange, event.data.newRange);
+        this._gutterPanel.textChanged(event.data.oldRange, event.data.newRange);
         this._updatePanelOffsets();
     },
 
@@ -1125,7 +1124,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             newRange = this._unindentLines(range);
         else {
             if (range.isEmpty()) {
-                newRange = this._setText(range, WebInspector.settings.textEditorIndent.get());
+                newRange = this._editRange(range, WebInspector.settings.textEditorIndent.get());
                 newRange.startColumn = newRange.endColumn;
             } else
                 newRange = this._indentLines(range);
@@ -1158,7 +1157,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             indentEndLine--;
 
         for (var lineNumber = range.startLine; lineNumber <= indentEndLine; lineNumber++)
-            this._textModel.setText(new WebInspector.TextRange(lineNumber, 0, lineNumber, 0), indent);
+            this._textModel.editRange(new WebInspector.TextRange(lineNumber, 0, lineNumber, 0), indent);
 
         this._lastEditedRange = newRange;
 
@@ -1191,7 +1190,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             else
                 continue;
 
-            this._textModel.setText(new WebInspector.TextRange(lineNumber, 0, lineNumber, lineIndentLength), "");
+            this._textModel.editRange(new WebInspector.TextRange(lineNumber, 0, lineNumber, lineIndentLength), "");
 
             if (lineNumber === range.startLine)
                 newRange.startColumn = Math.max(0, newRange.startColumn - lineIndentLength);
@@ -1241,11 +1240,11 @@ WebInspector.TextEditorMainPanel.prototype = {
             // {
             //     |
             // }
-            newRange = this._setText(range, lineBreak + indent + lineBreak + currentIndent);
+            newRange = this._editRange(range, lineBreak + indent + lineBreak + currentIndent);
             newRange.endLine--;
             newRange.endColumn += textEditorIndent.length;
         } else
-            newRange = this._setText(range, lineBreak + indent);
+            newRange = this._editRange(range, lineBreak + indent);
 
         this._exitTextChangeMode(range, newRange);
         this.endUpdates();
@@ -1862,7 +1861,7 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         delete this._dirtyLines;
 
-        var newRange = this._setText(oldRange, newContent);
+        var newRange = this._editRange(oldRange, newContent);
 
         this._paintScheduledLines(true);
         this._restoreSelection(selection);
@@ -1879,12 +1878,12 @@ WebInspector.TextEditorMainPanel.prototype = {
         this.endDomUpdates();
     },
 
-    _setText: function(range, text)
+    _editRange: function(range, text)
     {
         if (this._lastEditedRange && (!text || text.indexOf("\n") !== -1 || this._lastEditedRange.endLine !== range.startLine || this._lastEditedRange.endColumn !== range.startColumn))
             this._textModel.markUndoableState();
 
-        var newRange = this._textModel.setText(range, text);
+        var newRange = this._textModel.editRange(range, text);
         this._lastEditedRange = newRange;
 
         return newRange;

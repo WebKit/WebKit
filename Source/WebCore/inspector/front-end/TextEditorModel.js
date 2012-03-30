@@ -30,6 +30,10 @@
 
 /**
  * @constructor
+ * @param {number} startLine
+ * @param {number} startColumn
+ * @param {number} endLine
+ * @param {number} endColumn
  */
 WebInspector.TextRange = function(startLine, startColumn, endLine, endColumn)
 {
@@ -40,11 +44,17 @@ WebInspector.TextRange = function(startLine, startColumn, endLine, endColumn)
 }
 
 WebInspector.TextRange.prototype = {
+    /**
+     * @return {boolean}
+     */
     isEmpty: function()
     {
         return this.startLine === this.endLine && this.startColumn === this.endColumn;
     },
 
+    /**
+     * @type {number}
+     */
     get linesCount()
     {
         return this.endLine - this.startLine;
@@ -55,6 +65,9 @@ WebInspector.TextRange.prototype = {
         return new WebInspector.TextRange(this.endLine, this.endColumn, this.endLine, this.endColumn);
     },
 
+    /**
+     * @return {WebInspector.TextRange}
+     */
     normalize: function()
     {
         if (this.startLine > this.endLine || (this.startLine === this.endLine && this.startColumn > this.endColumn))
@@ -63,6 +76,9 @@ WebInspector.TextRange.prototype = {
             return this;
     },
 
+    /**
+     * @return {WebInspector.TextRange}
+     */
     clone: function()
     {
         return new WebInspector.TextRange(this.startLine, this.startColumn, this.endLine, this.endColumn);
@@ -71,11 +87,24 @@ WebInspector.TextRange.prototype = {
 
 /**
  * @constructor
+ * @param {WebInspector.TextRange} newRange
+ * @param {string} originalText
+ */
+WebInspector.TextEditorCommand = function(newRange, originalText)
+{
+    this.newRange = newRange;
+    this.originalText = originalText;
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
  */
 WebInspector.TextEditorModel = function()
 {
     this._lines = [""];
     this._attributes = [];
+    /** @type {Array.<WebInspector.TextEditorCommand>} */
     this._undoStack = [];
     this._noPunctuationRegex = /[^ !%&()*+,-.:;<=>?\[\]\^{|}~]+/;
     this._lineBreak = "\n";
@@ -88,29 +117,41 @@ WebInspector.TextEditorModel.Indent = {
     TabCharacter: "\t"
 }
 
+WebInspector.TextEditorModel.Events = {
+    TextChanged: "TextChanged"
+}
+
 WebInspector.TextEditorModel.endsWithBracketRegex = /[{(\[]\s*$/;
 
 WebInspector.TextEditorModel.prototype = {
-    set changeListener(changeListener)
-    {
-        this._changeListener = changeListener;
-    },
-
+    /**
+     * @type {number}
+     */
     get linesCount()
     {
         return this._lines.length;
     },
 
+    /**
+     * @type {string}
+     */
     get text()
     {
         return this._lines.join(this._lineBreak);
     },
 
+    /**
+     * @type {string}
+     */
     get lineBreak()
     {
         return this._lineBreak;
     },
 
+    /**
+     * @param {number} lineNumber
+     * @return {string}
+     */
     line: function(lineNumber)
     {
         if (lineNumber >= this._lines.length)
@@ -118,30 +159,49 @@ WebInspector.TextEditorModel.prototype = {
         return this._lines[lineNumber];
     },
 
+    /**
+     * @param {number} lineNumber
+     * @return {number}
+     */
     lineLength: function(lineNumber)
     {
         return this._lines[lineNumber].length;
     },
 
-    setText: function(range, text)
+    /**
+     * @param {string} text 
+     */
+    setText: function(text)
     {
         text = text || "";
-        if (!range) {
-            range = new WebInspector.TextRange(0, 0, this._lines.length - 1, this._lines[this._lines.length - 1].length);
-            this._lineBreak = /\r\n/.test(text) ? "\r\n" : "\n";
-        }
-        var command = this._pushUndoableCommand(range, text);
-        if (!command)
+        var range = new WebInspector.TextRange(0, 0, this._lines.length - 1, this._lines[this._lines.length - 1].length);
+        this._lineBreak = /\r\n/.test(text) ? "\r\n" : "\n";
+        var newRange = this._innerSetText(range, text);
+        this.dispatchEventToListeners(WebInspector.TextEditorModel.Events.TextChanged, { oldRange: range, newRange: newRange});
+    },
+
+    /**
+     * @param {WebInspector.TextRange} range
+     * @param {string} text
+     * @return {WebInspector.TextRange}
+     */
+    editRange: function(range, text)
+    {
+        var originalText = this.copyRange(range);
+        if (text === originalText)
             return range; // Noop
 
         var newRange = this._innerSetText(range, text);
-        command.range = newRange.clone();
-
-        if (this._changeListener)
-            this._changeListener(range, newRange, command.text, text);
+        this._pushUndoableCommand(newRange, originalText);
+        this.dispatchEventToListeners(WebInspector.TextEditorModel.Events.TextChanged, { oldRange: range, newRange: newRange });
         return newRange;
     },
 
+    /**
+     * @param {WebInspector.TextRange} range
+     * @param {string} text
+     * @return {WebInspector.TextRange}
+     */
     _innerSetText: function(range, text)
     {
         this._eraseRange(range);
@@ -169,6 +229,10 @@ WebInspector.TextEditorModel.prototype = {
                                           range.startLine + newLines.length - 1, postCaret);
     },
 
+    /**
+     * @param {WebInspector.TextRange} range
+     * @param {Array.<string>} newLines
+     */
     _insertLines: function(range, newLines)
     {
         var lines = new Array(this._lines.length + newLines.length - 1);
@@ -191,6 +255,9 @@ WebInspector.TextEditorModel.prototype = {
         this._attributes = attributes;
     },
 
+    /**
+     * @param {WebInspector.TextRange} range
+     */
     _eraseRange: function(range)
     {
         if (range.isEmpty())
@@ -207,16 +274,31 @@ WebInspector.TextEditorModel.prototype = {
         this._setLine(range.startLine, prefix + suffix);
     },
 
+    /**
+     * @param {number} lineNumber
+     * @param {string} text
+     */
     _setLine: function(lineNumber, text)
     {
         this._lines[lineNumber] = text;
     },
 
+    /**
+     * @param {number} lineNumber
+     * @param {number} column
+     * @return {WebInspector.TextRange}
+     */
     wordRange: function(lineNumber, column)
     {
         return new WebInspector.TextRange(lineNumber, this.wordStart(lineNumber, column, true), lineNumber, this.wordEnd(lineNumber, column, true));
     },
 
+    /**
+     * @param {number} lineNumber
+     * @param {number} column
+     * @param {boolean} gapless
+     * @return {number}
+     */
     wordStart: function(lineNumber, column, gapless)
     {
         var line = this._lines[lineNumber];
@@ -225,6 +307,12 @@ WebInspector.TextEditorModel.prototype = {
         return prefixMatch && (!gapless || prefixMatch.index === 0) ? column - prefixMatch.index - prefixMatch[0].length : column;
     },
 
+    /**
+     * @param {number} lineNumber
+     * @param {number} column
+     * @param {boolean} gapless
+     * @return {number}
+     */
     wordEnd: function(lineNumber, column, gapless)
     {
         var line = this._lines[lineNumber];
@@ -233,6 +321,10 @@ WebInspector.TextEditorModel.prototype = {
         return suffixMatch && (!gapless || suffixMatch.index === 0) ? column + suffixMatch.index + suffixMatch[0].length : column;
     },
 
+    /**
+     * @param {WebInspector.TextRange} range
+     * @return {string}  
+     */
     copyRange: function(range)
     {
         if (!range)
@@ -250,6 +342,11 @@ WebInspector.TextEditorModel.prototype = {
         return clip.join(this._lineBreak);
     },
 
+    /**
+     * @param {number} line
+     * @param {string} name  
+     * @param {Object?} value  
+     */
     setAttribute: function(line, name, value)
     {
         var attrs = this._attributes[line];
@@ -260,12 +357,21 @@ WebInspector.TextEditorModel.prototype = {
         attrs[name] = value;
     },
 
+    /**
+     * @param {number} line
+     * @param {string} name  
+     * @return {Object|null} value  
+     */
     getAttribute: function(line, name)
     {
         var attrs = this._attributes[line];
         return attrs ? attrs[name] : null;
     },
 
+    /**
+     * @param {number} line
+     * @param {string} name
+     */
     removeAttribute: function(line, name)
     {
         var attrs = this._attributes[line];
@@ -273,18 +379,14 @@ WebInspector.TextEditorModel.prototype = {
             delete attrs[name];
     },
 
-    _pushUndoableCommand: function(range, text)
+    /**
+     * @param {WebInspector.TextRange} newRange
+     * @param {string} originalText
+     * @return {WebInspector.TextEditorCommand}
+     */
+    _pushUndoableCommand: function(newRange, originalText)
     {
-        var command = {
-            text: this.copyRange(range),
-            startLine: range.startLine,
-            startColumn: range.startColumn,
-            endLine: range.startLine,
-            endColumn: range.startColumn
-        };
-        if (text === command.text)
-            return null;
-
+        var command = new WebInspector.TextEditorCommand(newRange, originalText);
         if (this._inUndo)
             this._redoStack.push(command);
         else {
@@ -295,6 +397,11 @@ WebInspector.TextEditorModel.prototype = {
         return command;
     },
 
+    /**
+     * @param {function()=} beforeCallback
+     * @param {function(WebInspector.TextRange, WebInspector.TextRange)=} afterCallback
+     * @return {WebInspector.TextRange}
+     */
     undo: function(beforeCallback, afterCallback)
     {
         this._markRedoableState();
@@ -306,6 +413,11 @@ WebInspector.TextEditorModel.prototype = {
         return range;
     },
 
+    /**
+     * @param {function()=} beforeCallback
+     * @param {function(WebInspector.TextRange, WebInspector.TextRange)=} afterCallback
+     * @return {WebInspector.TextRange}
+     */
     redo: function(beforeCallback, afterCallback)
     {
         this.markUndoableState();
@@ -317,6 +429,12 @@ WebInspector.TextEditorModel.prototype = {
         return range;
     },
 
+    /**
+     * @param {Array.<WebInspector.TextEditorCommand>} stack
+     * @param {function()=} beforeCallback
+     * @param {function(WebInspector.TextRange, WebInspector.TextRange)=} afterCallback
+     * @return {WebInspector.TextRange}
+     */
     _doUndo: function(stack, beforeCallback, afterCallback)
     {
         var range = null;
@@ -327,10 +445,10 @@ WebInspector.TextEditorModel.prototype = {
             if (beforeCallback)
                 beforeCallback();
 
-            range = this.setText(command.range, command.text);
+            range = this.editRange(command.newRange, command.originalText);
 
             if (afterCallback)
-                afterCallback(command.range, range);
+                afterCallback(command.newRange, range);
 
             if (i > 0 && stack[i - 1].explicit)
                 return range;
@@ -355,5 +473,7 @@ WebInspector.TextEditorModel.prototype = {
         this._undoStack = [];
     }
 }
+
+WebInspector.TextEditorModel.prototype.__proto__ = WebInspector.Object.prototype;
 
 WebInspector.settings.textEditorIndent = WebInspector.settings.createSetting("textEditorIndent", WebInspector.TextEditorModel.Indent.FourSpaces);

@@ -10,7 +10,7 @@ function test()
         " */";
 
     var model = new WebInspector.TextEditorModel();
-    model.setText(null, src);
+    model.setText(src);
     function noop() {}
     var textEditorMainPanel = new WebInspector.TextEditorMainPanel(model, '', noop, noop, noop, noop);
 

@@ -18,7 +18,7 @@ function test()
         src += src;
         comments *= 2;
     }
-    textModel.setText(null, src);
+    textModel.setText(src);
 
     function checkHighlights()
     {
@@ -47,7 +47,7 @@ function test()
     // Insert a caret return in the middle of the long line.
     var halfLength = Math.floor(src.length / 2);
     var range = new WebInspector.TextRange(0, halfLength, 0, halfLength);
-    var newRange = textModel.setText(range, "\n");
+    var newRange = textModel.editRange(range, "\n");
     highlighter.updateHighlight(newRange.startLine, newRange.endLine + 1);
     checkHighlights();
 

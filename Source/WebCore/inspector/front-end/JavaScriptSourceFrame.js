@@ -160,7 +160,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     afterTextChanged: function(oldRange, newRange)
     {
-        var isDirty = this.textModel.copyRange() !== this._originalContent;
+        var isDirty = this.textModel.text !== this._originalContent;
         if (isDirty)
             this._scriptsPanel.setScriptSourceIsDirty(this._uiSourceCode, true);
         else

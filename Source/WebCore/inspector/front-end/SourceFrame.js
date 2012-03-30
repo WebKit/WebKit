@@ -216,7 +216,7 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.mimeType = mimeType;
 
         this._loaded = true;
-        this._textModel.setText(null, content);
+        this._textModel.setText(content);
 
         this._textViewer.beginUpdates();
 

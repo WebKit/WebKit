@@ -8,7 +8,7 @@ function test()
     function createAndDumpTextModel(text)
     {
         var textModel = new WebInspector.TextEditorModel();
-        textModel.setText(null, text);
+        textModel.setText(text);
         InspectorTest.addResult("Lines:" + textModel.linesCount + ", length:" + textModel.text.length + ", input equals output:" + (textModel.text === text));
     }
 
