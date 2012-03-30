@@ -48,6 +48,7 @@ class PurgeableBuffer;
 class SharedBuffer : public RefCounted<SharedBuffer> {
 public:
     static PassRefPtr<SharedBuffer> create() { return adoptRef(new SharedBuffer); }
+    static PassRefPtr<SharedBuffer> create(size_t size) { return adoptRef(new SharedBuffer(size)); }
     static PassRefPtr<SharedBuffer> create(const char* c, int i) { return adoptRef(new SharedBuffer(c, i)); }
     static PassRefPtr<SharedBuffer> create(const unsigned char* c, int i) { return adoptRef(new SharedBuffer(c, i)); }
 
@@ -115,6 +116,7 @@ public:
 
 private:
     SharedBuffer();
+    SharedBuffer(size_t);
     SharedBuffer(const char*, int);
     SharedBuffer(const unsigned char*, int);
     

@@ -118,6 +118,7 @@ public:
 
     FontMetrics& fontMetrics() { return m_fontMetrics; }
     const FontMetrics& fontMetrics() const { return m_fontMetrics; }
+    float sizePerUnit() const { return platformData().size() / (fontMetrics().unitsPerEm() ? fontMetrics().unitsPerEm() : 1); }
     
     float maxCharWidth() const { return m_maxCharWidth; }
     void setMaxCharWidth(float maxCharWidth) { m_maxCharWidth = maxCharWidth; }

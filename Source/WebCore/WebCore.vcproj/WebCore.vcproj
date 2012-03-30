@@ -29260,11 +29260,23 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\opentype\OpenTypeTypes.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\opentype\OpenTypeUtilities.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\opentype\OpenTypeUtilities.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\opentype\OpenTypeVerticalData.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\opentype\OpenTypeVerticalData.h"
 						>
 					</File>
 					<File

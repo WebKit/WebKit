@@ -62,6 +62,12 @@ SharedBuffer::SharedBuffer()
 {
 }
 
+SharedBuffer::SharedBuffer(size_t size)
+    : m_size(size)
+    , m_buffer(size)
+{
+}
+
 SharedBuffer::SharedBuffer(const char* data, int size)
     : m_size(0)
 {

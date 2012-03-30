@@ -91,6 +91,7 @@ typedef UInt32 ATSFontRef;
 namespace WebCore {
 
 class FontDescription;
+class SharedBuffer;
 
 #if OS(DARWIN)
 inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef>(nsFont); }
@@ -276,6 +277,9 @@ public:
 #endif
     }
 
+#if PLATFORM(WIN) && USE(CG)
+    PassRefPtr<SharedBuffer> openTypeTable(uint32_t table) const;
+#endif
 
 #ifndef NDEBUG
     String description() const;

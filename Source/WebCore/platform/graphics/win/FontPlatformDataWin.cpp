@@ -27,6 +27,7 @@
 
 #include "HWndDC.h"
 #include "PlatformString.h"
+#include "SharedBuffer.h"
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -73,6 +74,25 @@ FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool obliq
 
     RestoreDC(hdc, -1);
 }
+
+#if USE(CG)
+PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
+{
+    HWndDC hdc(0);
+    HGDIOBJ oldFont = SelectObject(hdc, hfont());
+
+    DWORD size = GetFontData(hdc, table, 0, 0, 0);
+    RefPtr<SharedBuffer> buffer;
+    if (size != GDI_ERROR) {
+        buffer = SharedBuffer::create(size);
+        DWORD result = GetFontData(hdc, table, 0, (PVOID)buffer->data(), size);
+        ASSERT(result == size);
+    }
+
+    SelectObject(hdc, oldFont);
+    return buffer.release();
+}
+#endif
 
 #ifndef NDEBUG
 String FontPlatformData::description() const
