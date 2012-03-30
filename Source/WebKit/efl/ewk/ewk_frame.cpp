@@ -24,7 +24,6 @@
 #include "config.h"
 #include "ewk_frame.h"
 
-#include "Assertions.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "EventHandler.h"
@@ -46,7 +45,6 @@
 #include "PlatformTouchEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ProgressTracker.h"
-#include "RefPtr.h"
 #include "ResourceRequest.h"
 #include "ScriptValue.h"
 #include "SharedBuffer.h"
@@ -57,6 +55,8 @@
 #include <Eina.h>
 #include <Evas.h>
 #include <eina_safety_checks.h>
+#include <wtf/Assertions.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
 
 static const char EWK_FRAME_TYPE_STR[] = "EWK_Frame";

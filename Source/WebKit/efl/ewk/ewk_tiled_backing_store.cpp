@@ -26,14 +26,14 @@
 #include "ewk_tiled_private.h"
 #include <Ecore.h>
 #include <Eina.h>
-#include <OwnPtr.h>
-#include <PassOwnPtr.h>
 #include <algorithm>
 #include <errno.h>
 #include <math.h>
 #include <stdio.h> // XXX REMOVE ME LATER
 #include <stdlib.h>
 #include <string.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 #define IDX(column, row, rowspan) (column + (row * rowspan))
 

@@ -25,14 +25,14 @@
 #include "ewk_tiled_backing_store.h"
 #include "ewk_tiled_private.h"
 #include <Eina.h>
-#include <OwnPtr.h>
-#include <PassOwnPtr.h>
 #include <errno.h>
 #include <inttypes.h>
 #include <math.h>
 #include <stdio.h> // XXX remove me later
 #include <stdlib.h>
 #include <string.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 struct _Ewk_Tile_Matrix_Entry {
     EINA_INLIST;
