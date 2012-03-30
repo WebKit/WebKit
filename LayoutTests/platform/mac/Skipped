@@ -644,10 +644,13 @@ fast/workers/shared-worker-constructor.html
 
 # This should only be a layer change.
 # http://webkit.org/b/82129
+# https://bugs.webkit.org/show_bug.cgi?id=82742
 fast/box-shadow/shadow-buffer-partial.html
 fast/block/lineboxcontain/block-font.html
 fast/block/lineboxcontain/block-glyphs.html
 fast/block/lineboxcontain/font.html
+fast/block/lineboxcontain/block-glyphs-replaced.html
+fast/block/lineboxcontain/glyphs.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82665
 http/tests/webarchive/test-css-url-encoding-shift-jis.html
@@ -670,3 +673,4 @@ http/tests/xmlhttprequest/range-test.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82675
 http/tests/local/link-stylesheet-load-order.html
+
