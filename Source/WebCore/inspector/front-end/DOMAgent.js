@@ -404,13 +404,28 @@ WebInspector.DOMNode.prototype = {
 
     /**
      * @param {Array.<string>} attrs
+     * @return {boolean}
      */
     _setAttributesPayload: function(attrs)
     {
+        var attributesChanged = !this._attributes || attrs.length !== this._attributes.length * 2;
+        var oldAttributesMap = this._attributesMap || {};
+
         this._attributes = [];
         this._attributesMap = {};
-        for (var i = 0; i < attrs.length; i += 2)
-            this._addAttribute(attrs[i], attrs[i + 1]);
+
+        for (var i = 0; i < attrs.length; i += 2) {
+            var name = attrs[i];
+            var value = attrs[i + 1];
+            this._addAttribute(name, value);
+
+            if (attributesChanged)
+                continue;
+
+            if (!oldAttributesMap[name] || oldAttributesMap[name].value !== value)
+              attributesChanged = true;
+        }
+        return attributesChanged;
     },
 
     /**
@@ -768,8 +783,7 @@ WebInspector.DOMAgent.prototype = {
             return;
         return function(error, result)
         {
-            if (error)
-                console.error("Error during DOMAgent operation: " + error);
+            // Caller is responsible for handling the actual error.
             callback(error ? null : result);
         }
     },
@@ -804,8 +818,12 @@ WebInspector.DOMAgent.prototype = {
         var node = this._idToDOMNode[nodeId];
         if (!node)
             return;
+        var issueStyleInvalidated = name === "style" && value !== node.getAttribute("style");
+
         node._setAttribute(name, value);
         this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, { node: node, name: name });
+        if (issueStyleInvalidated)
+          this.dispatchEventToListeners(WebInspector.DOMAgent.Events.StyleInvalidated, node)
     },
 
     /**
@@ -844,14 +862,15 @@ WebInspector.DOMAgent.prototype = {
         function callback(nodeId, error, attributes)
         {
             if (error) {
-                console.error("Error during DOMAgent operation: " + error);
+                // We are calling _loadNodeAttributes asynchronously, it is ok if node is not found.
                 return;
             }
             var node = this._idToDOMNode[nodeId];
             if (node) {
-                node._setAttributesPayload(attributes);
-                this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, { node: node, name: "style" });
-                this.dispatchEventToListeners(WebInspector.DOMAgent.Events.StyleInvalidated, node);                
+                if (node._setAttributesPayload(attributes)) {
+                    this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, { node: node, name: "style" });
+                    this.dispatchEventToListeners(WebInspector.DOMAgent.Events.StyleInvalidated, node);
+                }
             }
         }
 
