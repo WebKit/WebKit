@@ -40,6 +40,7 @@ String pageVisibilityStateString(PageVisibilityState state)
     DEFINE_STATIC_LOCAL(const String, visible, ("visible"));
     DEFINE_STATIC_LOCAL(const String, hidden, ("hidden"));
     DEFINE_STATIC_LOCAL(const String, prerender, ("prerender"));
+    DEFINE_STATIC_LOCAL(const String, preview, ("preview"));
 
     switch (state) {
     case PageVisibilityStateVisible:
@@ -48,6 +49,8 @@ String pageVisibilityStateString(PageVisibilityState state)
         return hidden;
     case PageVisibilityStatePrerender:
         return prerender;
+    case PageVisibilityStatePreview:
+        return preview;
     }
 
     ASSERT_NOT_REACHED();

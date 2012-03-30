@@ -3475,7 +3475,8 @@ void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
 #if ENABLE(PAGE_VISIBILITY_API)
     ASSERT(visibilityState == WebPageVisibilityStateVisible
            || visibilityState == WebPageVisibilityStateHidden
-           || visibilityState == WebPageVisibilityStatePrerender);
+           || visibilityState == WebPageVisibilityStatePrerender
+           || visibilityState == WebPageVisibilityStatePreview);
     m_page->setVisibilityState(static_cast<PageVisibilityState>(static_cast<int>(visibilityState)), isInitialState);
 #endif
 

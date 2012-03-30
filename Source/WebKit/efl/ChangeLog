@@ -1,3 +1,15 @@
+2012-03-30  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Add a "preview" state to Page Visibility API implementation
+        https://bugs.webkit.org/show_bug.cgi?id=81355
+
+        Reviewed by Adam Barth.
+
+        Updating the Page Visibility API implementation to the current spec version.
+
+        * WebCoreSupport/AssertMatchingEnums.cpp:
+        * ewk/ewk_view.h:
+
 2012-03-28  Nate Chapin  <japhet@chromium.org>
 
         Remove dispatchDidLoadMainResource callback, since no

@@ -13,6 +13,10 @@ PASS document.webkitVisibilityState is "prerender"
 PASS document.webkitHidden is true
 PASS document.webkitVisibilityState is "visible"
 PASS document.webkitHidden is false
+PASS document.webkitVisibilityState is "preview"
+PASS document.webkitHidden is true
+PASS document.webkitVisibilityState is "visible"
+PASS document.webkitHidden is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

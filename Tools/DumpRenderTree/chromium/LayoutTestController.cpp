@@ -2187,6 +2187,8 @@ void LayoutTestController::setPageVisibility(const CppArgumentList& arguments, C
             m_shell->webView()->setVisibilityState(WebPageVisibilityStateHidden, false);
         else if (newVisibility == "prerender")
             m_shell->webView()->setVisibilityState(WebPageVisibilityStatePrerender, false);
+        else if (newVisibility == "preview")
+            m_shell->webView()->setVisibilityState(WebPageVisibilityStatePreview, false);
     }
 }
 

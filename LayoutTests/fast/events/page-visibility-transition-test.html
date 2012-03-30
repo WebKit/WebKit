@@ -24,6 +24,11 @@ function makePagePrerender() {
         layoutTestController.setPageVisibility("prerender");
 }
 
+function makePagePreview() {
+    if (window.layoutTestController)
+        layoutTestController.setPageVisibility("preview");
+}
+
 function checkIsPageVisible() {
     shouldBeEqualToString("document.webkitVisibilityState", "visible");
     shouldBeFalse("document.webkitHidden");
@@ -39,12 +44,19 @@ function checkIsPagePrerendering() {
     shouldBeTrue("document.webkitHidden");
 }
 
+function checkIsPageInPreview() {
+    shouldBeEqualToString("document.webkitVisibilityState", "preview");
+    shouldBeTrue("document.webkitHidden");
+}
+
 // We will try to change the visibility states as:
 //  0 - visible. (Initial - i.e. on load).
 //  1 - hidden (should fire event).
 //  2 - hidden (no event).
 //  3 - prerender (should fire event).
 //  4 - visible (should fire event).
+//  5 - preview (should fire event).
+//  6 - visible (should fire event).
 var numVisibilityChanges = 0;
 
 function startTest() {
@@ -81,6 +93,16 @@ function onVisibilityChange() {
         makePageVisible();
         return;
     } else if (numVisibilityChanges == 4) {
+        checkIsPageVisible();
+        numVisibilityChanges++;
+        makePagePreview();
+        return;
+    } else if (numVisibilityChanges == 5) {
+        checkIsPageInPreview();
+        numVisibilityChanges++;
+        makePageVisible();
+        return;
+    } else if (numVisibilityChanges == 6) {
         checkIsPageVisible();
         numVisibilityChanges++;
         finishTest();

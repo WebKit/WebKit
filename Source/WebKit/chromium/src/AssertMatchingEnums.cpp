@@ -504,6 +504,7 @@ COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarParentRenderLayer, Platfor
 COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStateVisible, PageVisibilityStateVisible);
 COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStateHidden, PageVisibilityStateHidden);
 COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStatePrerender, PageVisibilityStatePrerender);
+COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStatePreview, PageVisibilityStatePreview);
 
 #if ENABLE(MEDIA_STREAM)
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::TypeAudio, MediaStreamSource::TypeAudio);

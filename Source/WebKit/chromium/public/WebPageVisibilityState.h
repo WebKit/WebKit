@@ -38,7 +38,8 @@ namespace WebKit {
 enum WebPageVisibilityState {
     WebPageVisibilityStateVisible,
     WebPageVisibilityStateHidden,
-    WebPageVisibilityStatePrerender
+    WebPageVisibilityStatePrerender,
+    WebPageVisibilityStatePreview
 };
 
 } // namespace WebKit
