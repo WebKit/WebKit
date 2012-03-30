@@ -45,6 +45,13 @@ using namespace std;
 
 namespace WebCore {
 
+class SameSizeAsInlineFlowBox : public InlineBox {
+    void* pointers[5];
+    uint32_t bitfields : 24;
+};
+
+COMPILE_ASSERT(sizeof(InlineFlowBox) == sizeof(SameSizeAsInlineFlowBox), InlineFlowBox_should_stay_small);
+
 #ifndef NDEBUG
 
 InlineFlowBox::~InlineFlowBox()

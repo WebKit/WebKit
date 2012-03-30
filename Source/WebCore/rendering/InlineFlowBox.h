@@ -297,20 +297,22 @@ protected:
     InlineFlowBox* m_prevLineBox; // The previous box that also uses our RenderObject
     InlineFlowBox* m_nextLineBox; // The next box that also uses our RenderObject
 
-    bool m_includeLogicalLeftEdge : 1;
-    bool m_includeLogicalRightEdge : 1;
-    bool m_hasTextChildren : 1;
-    bool m_hasTextDescendants : 1;
-    bool m_descendantsHaveSameLineHeightAndBaseline : 1;
+private:
+    unsigned m_includeLogicalLeftEdge : 1;
+    unsigned m_includeLogicalRightEdge : 1;
+    unsigned m_hasTextChildren : 1;
+    unsigned m_hasTextDescendants : 1;
+    unsigned m_descendantsHaveSameLineHeightAndBaseline : 1;
 
+protected:
     // The following members are only used by RootInlineBox but moved here to keep the bits packed.
 
     // Whether or not this line uses alphabetic or ideographic baselines by default.
     unsigned m_baselineType : 1; // FontBaseline
 
     // If the line contains any ruby runs, then this will be true.
-    bool m_hasAnnotationsBefore : 1;
-    bool m_hasAnnotationsAfter : 1;
+    unsigned m_hasAnnotationsBefore : 1;
+    unsigned m_hasAnnotationsAfter : 1;
 
     unsigned m_lineBreakBidiStatusEor : 5; // WTF::Unicode::Direction
     unsigned m_lineBreakBidiStatusLastStrong : 5; // WTF::Unicode::Direction
@@ -320,7 +322,7 @@ protected:
 
 #ifndef NDEBUG
 private:
-    bool m_hasBadChildList;
+    unsigned m_hasBadChildList : 1;
 #endif
 };
 
