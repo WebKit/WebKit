@@ -239,7 +239,6 @@ associateBuildersWithMaster(CHROMIUM_GTESTS_DEPS_BUILDERS, CHROMIUM_BUILDER_MAST
 var CHROMIUMOS_GTESTS_DEPS_BUILDERS = [
     ['Linux ChromiumOS Tests (1)', BuilderGroup.DEFAULT_BUILDER],
     ['Linux ChromiumOS Tests (2)'],
-    ['Linux ChromiumOS GTK'],
     ['Linux ChromiumOS Tests (dbg)(1)'],
     ['Linux ChromiumOS Tests (dbg)(2)'],
     ['Linux ChromiumOS Tests (dbg)(3)'],

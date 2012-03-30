@@ -1,5 +1,11 @@
 2012-03-30  Mihai Parparita  <mihaip@chromium.org>
 
+        Actually remove the ChromiumOS GTK builder, like r112673 said it would.
+
+        * TestResultServer/static-dashboards/builders.js:
+
+2012-03-30  Mihai Parparita  <mihaip@chromium.org>
+
         Update ChromiumOS bot names in builders.js to reflect changes made by
         http://crrev.com/129835
         
