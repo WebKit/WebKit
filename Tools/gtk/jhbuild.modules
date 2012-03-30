@@ -172,7 +172,8 @@
     </branch>
   </autotools>
 
-  <autotools id="at-spi2-core">
+  <autotools id="at-spi2-core" 
+             autogenargs="--disable-introspection">
     <branch module="pub/GNOME/sources/at-spi2-core/2.2/at-spi2-core-2.2.1.tar.xz" version="2.2.1"
             repo="ftp.gnome.org"
             hash="sha256:2a4129420decca3657e163a4dbb1a3cb28acafe32ea1292417fdd81084d48fac"

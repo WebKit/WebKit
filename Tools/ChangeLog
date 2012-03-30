@@ -1,3 +1,14 @@
+2012-03-30  Vineet Chaudhary  <rgf748@motorola.com>
+
+        [GTK] Disable introspection build in the at-spi2-core module.
+        https://bugs.webkit.org/show_bug.cgi?id=82729
+
+        Reviewed by Philippe Normand.
+
+        This change is a follow-up of bug 82395 which initially disabled for other modules of the set.
+
+        * gtk/jhbuild.modules: Disable introspection.
+
 2012-03-30  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Add a "preview" state to Page Visibility API implementation
