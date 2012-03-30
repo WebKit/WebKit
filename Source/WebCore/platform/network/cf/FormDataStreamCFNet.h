@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 
 typedef struct _CFURLRequest* CFMutableURLRequestRef;
+typedef struct __CFReadStream* CFReadStreamRef;
 typedef const struct _CFURLRequest* CFURLRequestRef;
 
 namespace WebCore {
