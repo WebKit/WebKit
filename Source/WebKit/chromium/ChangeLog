@@ -1,5 +1,18 @@
 2012-03-30  Ian Vollick  <vollick@chromium.org>
 
+        [chromium] Flaky animation unit test CCLayerTreeHostTestSynchronizeAnimationStartTimes
+        https://bugs.webkit.org/show_bug.cgi?id=82731
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestSynchronizeAnimationStartTimes::CCLayerTreeHostTestSynchronizeAnimationStartTimes):
+        (WTF::CCLayerTreeHostTestSynchronizeAnimationStartTimes::animateLayers):
+        (CCLayerTreeHostTestSynchronizeAnimationStartTimes):
+        (WTF::CCLayerTreeHostTestSynchronizeAnimationStartTimes::notifyAnimationStarted):
+
+2012-03-30  Ian Vollick  <vollick@chromium.org>
+
         [chromium] assertion being hit in CCLayerAnimationController
         https://bugs.webkit.org/show_bug.cgi?id=82237
 

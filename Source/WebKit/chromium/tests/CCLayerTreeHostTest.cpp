@@ -1066,6 +1066,7 @@ class CCLayerTreeHostTestSynchronizeAnimationStartTimes : public CCLayerTreeHost
 public:
     CCLayerTreeHostTestSynchronizeAnimationStartTimes()
         : m_numAnimates(0)
+        , m_layerTreeHostImpl(0)
     {
     }
 
@@ -1074,14 +1075,22 @@ public:
         postAddAnimationToMainThread();
     }
 
-    virtual void animateLayers(CCLayerTreeHostImpl* layerTreeHostImpl, double monotonicTime)
+    virtual void animateLayers(CCLayerTreeHostImpl* layerTreeHostImpl, double)
     {
+        m_layerTreeHostImpl = layerTreeHostImpl;
+
         if (!m_numAnimates) {
             m_numAnimates++;
             return;
         }
+    }
 
-        CCLayerAnimationController* controllerImpl = layerTreeHostImpl->rootLayer()->layerAnimationController();
+    virtual void notifyAnimationStarted(double time)
+    {
+        if (!m_numAnimates)
+            return;
+
+        CCLayerAnimationController* controllerImpl = m_layerTreeHostImpl->rootLayer()->layerAnimationController();
         CCLayerAnimationController* controller = m_layerTreeHost->rootLayer()->layerAnimationController();
         CCActiveAnimation* animationImpl = controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity);
         CCActiveAnimation* animation = controller->getActiveAnimation(0, CCActiveAnimation::Opacity);
@@ -1097,6 +1106,7 @@ public:
 
 private:
     int m_numAnimates;
+    CCLayerTreeHostImpl* m_layerTreeHostImpl;
 };
 
 TEST_F(CCLayerTreeHostTestSynchronizeAnimationStartTimes, runMultiThread)
