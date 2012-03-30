@@ -90,7 +90,7 @@
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-xserve-8"]
                     },
-                    { "name": "Lion Intel Leaks", "type": "BuildAndTestLeaks", "builddir": "lion-intel-leaks",
+                    { "name": "Lion Leaks", "type": "BuildAndTestLeaks", "builddir": "lion-intel-leaks",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-3"]
                     },
@@ -102,34 +102,34 @@
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-7"]
                     },
-                    { "name": "Lion Intel Debug (Build)", "type": "Build", "builddir": "lion-intel-debug",
+                    { "name": "Lion Debug (Build)", "type": "Build", "builddir": "lion-intel-debug",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["lion-intel-debug-tests", "lion-intel-debug-tests-wk2"],
                       "slavenames": ["apple-xserve-2"]
                     },
-                    { "name": "Lion Intel Release (Build)", "type": "Build", "builddir": "lion-intel-release",
+                    { "name": "Lion Release (Build)", "type": "Build", "builddir": "lion-intel-release",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["lion-intel-release-tests", "lion-intel-release-tests-wk2", "lion-intel-release-perf"],
                       "slavenames": ["apple-xserve-3"]
                     },
-                    { "name": "Lion Intel Debug (Tests)", "type": "Test", "builddir": "lion-intel-debug-tests",
+                    { "name": "Lion Debug (Tests)", "type": "Test", "builddir": "lion-intel-debug-tests",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-4"]
                     },
-                    { "name": "Lion Intel Debug (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "lion-intel-debug-tests-wk2",
+                    { "name": "Lion Debug (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "lion-intel-debug-tests-wk2",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-8", "apple-xserve-1"]
                     },
-                    { "name": "Lion Intel Release (Tests)", "type": "Test", "builddir": "lion-intel-release-tests",
+                    { "name": "Lion Release (Tests)", "type": "Test", "builddir": "lion-intel-release-tests",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-5", "apple-xserve-10"]
                     },
-                    { "name": "Lion Intel Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "lion-intel-release-tests-wk2",
+                    { "name": "Lion Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "lion-intel-release-tests-wk2",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-6"]
                     },
                     {
-                      "name": "Lion Intel Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "lion-release-perf-tests",
+                      "name": "Lion Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "lion-release-perf-tests",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-xserve-11"]
                     },
@@ -312,25 +312,25 @@
                       "builderNames": ["SnowLeopard Intel Release (Build)", "SnowLeopard Intel Debug (Build)"] 
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-lion", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Lion Intel Release (Build)", "Lion Intel Debug (Build)", "Lion Intel Leaks"]
+                      "builderNames": ["Lion Release (Build)", "Lion Debug (Build)", "Lion Leaks"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Windows Release (Build)", "Windows Debug (Build)"]
                     },
                     { "type": "Triggerable", "name": "lion-intel-release-tests",
-                      "builderNames": ["Lion Intel Release (Tests)"]
+                      "builderNames": ["Lion Release (Tests)"]
                     },
                     { "type": "Triggerable", "name": "lion-intel-release-tests-wk2",
-                      "builderNames": ["Lion Intel Release (WebKit2 Tests)"]
+                      "builderNames": ["Lion Release (WebKit2 Tests)"]
                     },
                     { "type": "Triggerable", "name": "lion-intel-release-perf",
-                      "builderNames": ["Lion Intel Release (Perf)"]
+                      "builderNames": ["Lion Release (Perf)"]
                     },
                     { "type": "Triggerable", "name": "lion-intel-debug-tests",
-                      "builderNames": ["Lion Intel Debug (Tests)"]
+                      "builderNames": ["Lion Debug (Tests)"]
                     },
                     { "type": "Triggerable", "name": "lion-intel-debug-tests-wk2",
-                      "builderNames": ["Lion Intel Debug (WebKit2 Tests)"]
+                      "builderNames": ["Lion Debug (WebKit2 Tests)"]
                     },
                     { "type": "Triggerable", "name": "snowleopard-intel-release-tests",
                       "builderNames": ["SnowLeopard Intel Release (Tests)"]
