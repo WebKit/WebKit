@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ScrollingTree.h"
 
+#if ENABLE(THREADED_SCROLLING)
+
 #import "AutodrainedPool.h"
 #import "ScrollingTreeNodeMac.h"
 #import <QuartzCore/CATextLayer.h>
@@ -78,3 +80,5 @@ void ScrollingTree::updateDebugRootLayer()
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(THREADED_SCROLLING)
