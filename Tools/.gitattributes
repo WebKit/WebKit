@@ -1,0 +1,8 @@
+WebKitLauncher/*.h diff=objcppheader
+BuildSlaveSupport/win/kill-old-processes -crlf
+DumpRenderTree/cairo/PixelDumpSupportCairo.cpp -crlf
+FindSafari/Safari.exe.manifest -crlf
+MiniBrowser/win/MiniBrowser.rc -crlf
+TestResultServer/index.yaml -crlf
+WinLauncher/WinLauncher.h -crlf
+record-memory-win/main.cpp -crlf

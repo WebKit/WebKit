@@ -1,0 +1,7 @@
+*.Makefile
+*.mk
+*.rules
+*.sln
+*.tmp
+*.vcproj*
+WebCore.xcodeproj

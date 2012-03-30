@@ -1,3 +1,20 @@
+2012-03-30  David Barr  <davidbarr@chromium.org>
+
+        Split up top-level .gitignore and .gitattributes
+        https://bugs.webkit.org/show_bug.cgi?id=82687
+
+        Reviewed by Tor Arne Vestbø.
+
+        Jeff King <peff@peff.net> suggested this on the git mailing list.
+        http://article.gmane.org/gmane.comp.version-control.git/194294
+        He reported a 1.6 times speed up for 'git status'.
+
+        * .gitattributes:
+        * .gitignore:
+        * ManualTests/.gitattributes: Added.
+        * Source/.gitignore: Added.
+        * Websites/.gitattributes: Added.
+
 2012-03-30  Keishi Hattori  <keishi@webkit.org>
 
         Change ENABLE_INPUT_COLOR to ENABLE_INPUT_TYPE_COLOR and enable it for chromium

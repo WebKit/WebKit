@@ -1,3 +1,12 @@
+2012-03-30  David Barr  <davidbarr@chromium.org>
+
+        Split up top-level .gitignore and .gitattributes
+        https://bugs.webkit.org/show_bug.cgi?id=82687
+
+        Reviewed by Tor Arne Vestbø.
+
+        * JavaScriptCore.gyp/.gitignore: Added.
+
 2012-03-30  Steve Falkenburg  <sfalken@apple.com>
 
         Windows (make based) build fix.

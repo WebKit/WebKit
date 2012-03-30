@@ -1,3 +1,12 @@
+2012-03-30  David Barr  <davidbarr@chromium.org>
+
+        Split up top-level .gitignore and .gitattributes
+        https://bugs.webkit.org/show_bug.cgi?id=82687
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WTF.gyp/.gitignore: Added.
+
 2012-03-29  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Add export symbols needed to

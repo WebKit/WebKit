@@ -1,3 +1,15 @@
+2012-03-30  David Barr  <davidbarr@chromium.org>
+
+        Split up top-level .gitignore and .gitattributes
+        https://bugs.webkit.org/show_bug.cgi?id=82687
+
+        Reviewed by Tor Arne Vestbø.
+
+        * .gitattributes: Added.
+        * .gitignore: Added.
+        * DumpRenderTree/DumpRenderTree.gyp/.gitignore: Added.
+        * TestWebKitAPI/TestWebKitAPI.gyp/.gitignore: Added.
+
 2012-03-30  Mihai Parparita  <mihaip@chromium.org>
 
         Actually remove the ChromiumOS GTK builder, like r112673 said it would.
