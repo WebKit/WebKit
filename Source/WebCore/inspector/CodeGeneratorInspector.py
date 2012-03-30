@@ -59,7 +59,8 @@ TYPE_NAME_FIX_MAP = {
 TYPES_WITH_RUNTIME_CAST_SET = frozenset(["Runtime.RemoteObject", "Runtime.PropertyDescriptor",
                                          "Debugger.FunctionDetails", "Debugger.CallFrame"])
 
-STRICT_ENABLED_DOMAINS = ["CSS", "Debugger", "DOM", "Network", "Page", "Runtime"]
+STRICT_ENABLED_DOMAINS = ["Console", "DOMDebugger",
+                          "CSS", "Debugger", "DOM", "Network", "Page", "Runtime"]
 
 
 cmdline_parser = optparse.OptionParser()
@@ -237,9 +238,7 @@ class RawTypes(object):
             params = cls.get_validate_method_params()
             writer.newline("static void assert%s(InspectorValue* value)\n" % params.name)
             writer.newline("{\n")
-            writer.newline("    %s v;\n" % params.var_type)
-            writer.newline("    bool castRes = value->as%s(&v);\n" % params.as_method_name)
-            writer.newline("    ASSERT_UNUSED(castRes, castRes);\n")
+            writer.newline("    ASSERT(value->type() == InspectorValue::Type%s);\n" % params.as_method_name)
             writer.newline("}\n\n\n")
 
         @classmethod
@@ -274,7 +273,6 @@ class RawTypes(object):
         def get_validate_method_params():
             class ValidateMethodParams:
                 name = "String"
-                var_type = "String"
                 as_method_name = "String"
             return ValidateMethodParams
 
@@ -311,13 +309,19 @@ class RawTypes(object):
         def get_js_bind_type():
             return "number"
 
-        @staticmethod
-        def get_validate_method_params():
-            class ValidateMethodParams:
-                name = "Int"
-                var_type = "int"
-                as_method_name = "Number"
-            return ValidateMethodParams
+        @classmethod
+        def generate_validate_method(cls, writer):
+            writer.newline("static void assertInt(InspectorValue* value)\n")
+            writer.newline("{\n")
+            writer.newline("    double v;\n")
+            writer.newline("    bool castRes = value->asNumber(&v);\n")
+            writer.newline("    ASSERT_UNUSED(castRes, castRes);\n")
+            writer.newline("    ASSERT(static_cast<double>(static_cast<int>(v)) == v);\n")
+            writer.newline("}\n\n\n")
+
+        @classmethod
+        def get_raw_validator_call_text(cls):
+            return "assertInt"
 
         @staticmethod
         def get_output_pass_model():
@@ -356,7 +360,6 @@ class RawTypes(object):
         def get_validate_method_params():
             class ValidateMethodParams:
                 name = "Double"
-                var_type = "double"
                 as_method_name = "Number"
             return ValidateMethodParams
 
@@ -395,7 +398,6 @@ class RawTypes(object):
         def get_validate_method_params():
             class ValidateMethodParams:
                 name = "Boolean"
-                var_type = "bool"
                 as_method_name = "Boolean"
             return ValidateMethodParams
 
@@ -436,7 +438,10 @@ class RawTypes(object):
 
         @staticmethod
         def get_validate_method_params():
-            raise Exception("TODO")
+            class ValidateMethodParams:
+                name = "Object"
+                as_method_name = "Object"
+            return ValidateMethodParams
 
         @staticmethod
         def get_output_pass_model():
@@ -1120,6 +1125,8 @@ class TypeBindings:
 
                     @classmethod
                     def request_internal_runtime_cast(cls):
+                        if cls.need_internal_runtime_cast_:
+                            return
                         cls.need_internal_runtime_cast_ = True
                         for p in cls.resolve_data_.main_properties:
                             p.param_type_binding.request_internal_runtime_cast()
@@ -1386,7 +1393,7 @@ class TypeBindings:
 
                     @staticmethod
                     def request_internal_runtime_cast():
-                        pass
+                        RawTypes.Object.request_raw_internal_runtime_cast()
 
                     @staticmethod
                     def get_code_generator():
@@ -1394,7 +1401,7 @@ class TypeBindings:
 
                     @staticmethod
                     def get_validator_call_text():
-                        raise Exception("Unsupported")
+                        return "assertObject"
 
                     @classmethod
                     def get_array_item_c_type_text(cls):
@@ -1456,6 +1463,8 @@ class TypeBindings:
 
                     @classmethod
                     def request_internal_runtime_cast(cls):
+                        if cls.need_internal_runtime_cast_:
+                            return
                         cls.need_internal_runtime_cast_ = True
                         cls.resolve_data_.item_type_binding.request_internal_runtime_cast()
 
