@@ -1,3 +1,11 @@
+2012-03-30  Dirk Pranke  <dpranke@chromium.org>
+
+        Roll chromium DEPS from 129593 to 129574.
+
+        Unreviewed.
+
+        * DEPS:
+
 2012-03-30  Adam Barth  <abarth@webkit.org>
 
         Move CPP files related to ResourceHandle to WebCore/platform
