@@ -5551,7 +5551,6 @@
 		BCE93F451517C567008CCF74 /* RenderRegionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE93F441517C567008CCF74 /* RenderRegionSet.h */; };
 		BCE93F471517C6D5008CCF74 /* RenderRegionSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE93F461517C6D5008CCF74 /* RenderRegionSet.cpp */; };
 		BCE93F511517DDCD008CCF74 /* RenderMultiColumnFlowThread.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE93F501517DDCD008CCF74 /* RenderMultiColumnFlowThread.h */; };
-		BCE93F531517E0B0008CCF74 /* RenderMultiColumnFlowThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE93F521517E0B0008CCF74 /* RenderMultiColumnFlowThread.cpp */; };
 		BCEA478F097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */; };
 		BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA4852097D93020094C9E4 /* RenderBlockLineLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4813097D93020094C9E4 /* RenderBlockLineLayout.cpp */; };
@@ -27000,7 +26999,6 @@
 				ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */,
 				A454424E119B3687009BE912 /* RenderMeter.cpp in Sources */,
 				BC45827F151299C10061A556 /* RenderMultiColumnBlock.cpp in Sources */,
-				BCE93F531517E0B0008CCF74 /* RenderMultiColumnFlowThread.cpp in Sources */,
 				BCE32B9E1517C22700F542EC /* RenderMultiColumnSet.cpp in Sources */,
 				BC85F23F1519187300BC17BE /* RenderNamedFlowThread.cpp in Sources */,
 				BCEA487F097D93020094C9E4 /* RenderObject.cpp in Sources */,
@@ -27650,7 +27648,6 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
-				BCE93F531517E0B0008CCF74 /* RenderMultiColumnFlowThread.cpp in Sources */,
 				BC85F23F1519187300BC17BE /* RenderNamedFlowThread.cpp in Sources */,
 				71E623D0151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.cpp in Sources */,
 				1A35862C152522540022A659 /* ScrollingTreeMac.mm in Sources */,
