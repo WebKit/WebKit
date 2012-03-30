@@ -378,7 +378,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     if (cursorToNotify)
         cursorToNotify->postSuccessHandlerCallback();
 
-    if (m_transaction) {
+    if (m_transaction && event->type() != eventNames().blockedEvent) {
         // If an error event and the default wasn't prevented...
         if (dontPreventDefault && event->type() == eventNames().errorEvent)
             m_transaction->backend()->abort();

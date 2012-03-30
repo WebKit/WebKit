@@ -4093,3 +4093,6 @@ BUGWK82669 MAC WIN : fast/text/international/spaces-combined-in-vertical-text.ht
 BUGWK82717 SNOWLEOPARD : storage/quota-tracking.html = PASS TIMEOUT
 BUGWK82717 SNOWLEOPARD : storage/executesql-accepts-only-one-statement.html = PASS TIMEOUT
 BUGWK82717 SNOWLEOPARD : storage/database-lock-after-reload.html = PASS TIMEOUT
+
+// This test depends on Worker behavior that is broken in DRT
+BUGWK82776 : storage/indexeddb/dont-commit-on-blocked.html = PASS FAIL
