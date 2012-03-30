@@ -61,9 +61,9 @@
 
 namespace WebCore {
 
-wxWebKitWindowFeatures wkFeaturesforWindowFeatures(const WindowFeatures& features)
+WebKitWindowFeatures wkFeaturesforWindowFeatures(const WindowFeatures& features)
 {
-    wxWebKitWindowFeatures wkFeatures;
+    WebKitWindowFeatures wkFeatures;
     wkFeatures.menuBarVisible = features.menuBarVisible;
     wkFeatures.statusBarVisible = features.statusBarVisible;
     wkFeatures.toolBarVisible = features.toolBarVisible;
@@ -76,7 +76,7 @@ wxWebKitWindowFeatures wkFeaturesforWindowFeatures(const WindowFeatures& feature
     return wkFeatures;
 }
 
-ChromeClientWx::ChromeClientWx(wxWebView* webView)
+ChromeClientWx::ChromeClientWx(WebView* webView)
 {
     m_webView = webView;
 }
@@ -139,13 +139,13 @@ void ChromeClientWx::focusedFrameChanged(Frame*)
 Page* ChromeClientWx::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures& features, const NavigationAction&)
 {
     Page* myPage = 0;
-    wxWebViewNewWindowEvent wkEvent(m_webView);
+    WebViewNewWindowEvent wkEvent(m_webView);
     
-    wxWebKitWindowFeatures wkFeatures = wkFeaturesforWindowFeatures(features);
+    WebKitWindowFeatures wkFeatures = wkFeaturesforWindowFeatures(features);
     wkEvent.SetWindowFeatures(wkFeatures);
     
     if (m_webView->GetEventHandler()->ProcessEvent(wkEvent)) {
-        if (wxWebView* webView = wkEvent.GetWebView()) {
+        if (WebView* webView = wkEvent.GetWebView()) {
             WebViewPrivate* impl = webView->m_impl;
             if (impl)
                 myPage = impl->page;
@@ -234,11 +234,11 @@ void ChromeClientWx::addMessageToConsole(MessageSource source,
                                           const String& sourceID)
 {
     if (m_webView) {
-        wxWebViewConsoleMessageEvent wkEvent(m_webView);
+        WebViewConsoleMessageEvent wkEvent(m_webView);
         wkEvent.SetMessage(message);
         wkEvent.SetLineNumber(lineNumber);
         wkEvent.SetSourceID(sourceID);
-        wkEvent.SetLevel(static_cast<wxWebViewConsoleMessageLevel>(level));
+        wkEvent.SetLevel(static_cast<WebViewConsoleMessageLevel>(level));
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }
@@ -271,7 +271,7 @@ void ChromeClientWx::closeWindowSoon()
 void ChromeClientWx::runJavaScriptAlert(Frame* frame, const String& string)
 {
     if (m_webView) {
-        wxWebViewAlertEvent wkEvent(m_webView);
+        WebViewAlertEvent wkEvent(m_webView);
         wkEvent.SetMessage(string);
         if (!m_webView->GetEventHandler()->ProcessEvent(wkEvent))
             wxMessageBox(string, wxT("JavaScript Alert"), wxOK);
@@ -282,7 +282,7 @@ bool ChromeClientWx::runJavaScriptConfirm(Frame* frame, const String& string)
 {
     bool result = false;
     if (m_webView) {
-        wxWebViewConfirmEvent wkEvent(m_webView);
+        WebViewConfirmEvent wkEvent(m_webView);
         wkEvent.SetMessage(string);
         if (m_webView->GetEventHandler()->ProcessEvent(wkEvent))
             result = wkEvent.GetReturnCode() == wxID_YES;
@@ -298,7 +298,7 @@ bool ChromeClientWx::runJavaScriptConfirm(Frame* frame, const String& string)
 bool ChromeClientWx::runJavaScriptPrompt(Frame* frame, const String& message, const String& defaultValue, String& result)
 {
     if (m_webView) {
-        wxWebViewPromptEvent wkEvent(m_webView);
+        WebViewPromptEvent wkEvent(m_webView);
         wkEvent.SetMessage(message);
         wkEvent.SetResponse(defaultValue);
         if (m_webView->GetEventHandler()->ProcessEvent(wkEvent)) {
@@ -411,9 +411,9 @@ void ChromeClientWx::setToolTip(const String& tip, TextDirection)
 
 void ChromeClientWx::print(Frame* frame)
 {
-    wxWebFrame* webFrame = kit(frame);
+    WebFrame* webFrame = kit(frame);
     if (webFrame) {
-        wxWebViewPrintFrameEvent event(m_webView);
+        WebViewPrintFrameEvent event(m_webView);
         event.SetWebFrame(webFrame);
         if (!m_webView->GetEventHandler()->ProcessEvent(event))
             webFrame->Print(true);
@@ -425,7 +425,7 @@ void ChromeClientWx::exceededDatabaseQuota(Frame*, const String&)
 {
     unsigned long long quota = 5 * 1024 * 1024;
 
-    if (wxWebFrame* webFrame = m_webView->GetMainFrame())
+    if (WebFrame* webFrame = m_webView->GetMainFrame())
         if (Frame* frame = webFrame->GetFrame())
             if (Document* document = frame->document())
                 if (!DatabaseTracker::tracker().hasEntryForOrigin(document->securityOrigin()))

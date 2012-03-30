@@ -34,6 +34,8 @@ public:
 
 }
 
+namespace WebKit {
+
 class WebCoreEditCommandPrivate {
 public:
     WebCoreEditCommandPrivate()
@@ -51,7 +53,7 @@ public:
     RefPtr<WebCore::WebCoreEditCommand> m_ptr;
 };
 
-wxWebEditCommand::wxWebEditCommand(wxWebFrame* webframe)
+WebEditCommand::WebEditCommand(WebFrame* webframe)
 {
     if (webframe) {
         WebCore::Frame* frame = webframe->GetFrame();
@@ -60,21 +62,23 @@ wxWebEditCommand::wxWebEditCommand(wxWebFrame* webframe)
     }
 }
 
-wxWebEditCommand::~wxWebEditCommand()
+WebEditCommand::~WebEditCommand()
 {
     // the impl. is ref-counted, so don't delete it as it may be in an undo/redo stack
     delete m_impl;
     m_impl = 0;
 }
 
-void wxWebEditCommand::SetNodeAttribute(WebDOMElement* element, const wxString& name, const wxString& value)
+void WebEditCommand::SetNodeAttribute(WebDOMElement* element, const wxString& name, const wxString& value)
 {
     if (m_impl && m_impl->command())
         m_impl->command()->setElementAttribute(element->impl(), WebCore::QualifiedName(WTF::nullAtom, WTF::String(name), WTF::nullAtom), WTF::String(value));
 }
 
-void wxWebEditCommand::Apply()
+void WebEditCommand::Apply()
 {
     if (m_impl && m_impl->command())
         m_impl->command()->apply();
+}
+
 }

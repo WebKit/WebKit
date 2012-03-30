@@ -55,11 +55,12 @@ static int dumpTree = 1;
 time_t startTime; // to detect timeouts / failed tests
 
 using namespace std;
+using namespace WebKit;
 
 FILE* logOutput;
 
 RefPtr<LayoutTestController> gLayoutTestController;
-static wxWebView* webView;
+static WebView* webView;
 static wxTimer* idleTimer;
 
 const unsigned timeOut = 10;
@@ -69,29 +70,29 @@ const unsigned maxViewWidth = 800;
 class LayoutWebViewEventHandler : public wxEvtHandler {
 
 public:
-    LayoutWebViewEventHandler(wxWebView* webView)
+    LayoutWebViewEventHandler(WebView* webView)
         : m_webView(webView)
     {
     }
     
     void bindEvents() 
     {
-        m_webView->Connect(wxEVT_WEBVIEW_LOAD, wxWebViewLoadEventHandler(LayoutWebViewEventHandler::OnLoadEvent), NULL, this);
-        m_webView->Connect(wxEVT_WEBVIEW_JS_ALERT, wxWebViewAlertEventHandler(LayoutWebViewEventHandler::OnAlertEvent), NULL, this);
-        m_webView->Connect(wxEVT_WEBVIEW_JS_CONFIRM, wxWebViewConfirmEventHandler(LayoutWebViewEventHandler::OnConfirmEvent), NULL, this);
-        m_webView->Connect(wxEVT_WEBVIEW_JS_PROMPT, wxWebViewPromptEventHandler(LayoutWebViewEventHandler::OnPromptEvent), NULL, this);
-        m_webView->Connect(wxEVT_WEBVIEW_CONSOLE_MESSAGE, wxWebViewConsoleMessageEventHandler(LayoutWebViewEventHandler::OnConsoleMessageEvent), NULL, this);
-        m_webView->Connect(wxEVT_WEBVIEW_RECEIVED_TITLE, wxWebViewReceivedTitleEventHandler(LayoutWebViewEventHandler::OnReceivedTitleEvent), NULL, this);
-        m_webView->Connect(wxEVT_WEBVIEW_WINDOW_OBJECT_CLEARED, wxWebViewWindowObjectClearedEventHandler(LayoutWebViewEventHandler::OnWindowObjectClearedEvent), NULL, this);
+        m_webView->Connect(wxEVT_WEBVIEW_LOAD, WebViewLoadEventHandler(LayoutWebViewEventHandler::OnLoadEvent), 0, this);
+        m_webView->Connect(wxEVT_WEBVIEW_JS_ALERT, WebViewAlertEventHandler(LayoutWebViewEventHandler::OnAlertEvent), 0, this);
+        m_webView->Connect(wxEVT_WEBVIEW_JS_CONFIRM, WebViewConfirmEventHandler(LayoutWebViewEventHandler::OnConfirmEvent), 0, this);
+        m_webView->Connect(wxEVT_WEBVIEW_JS_PROMPT, WebViewPromptEventHandler(LayoutWebViewEventHandler::OnPromptEvent), 0, this);
+        m_webView->Connect(wxEVT_WEBVIEW_CONSOLE_MESSAGE, WebViewConsoleMessageEventHandler(LayoutWebViewEventHandler::OnConsoleMessageEvent), 0, this);
+        m_webView->Connect(wxEVT_WEBVIEW_RECEIVED_TITLE, WebViewReceivedTitleEventHandler(LayoutWebViewEventHandler::OnReceivedTitleEvent), 0, this);
+        m_webView->Connect(wxEVT_WEBVIEW_WINDOW_OBJECT_CLEARED, WebViewWindowObjectClearedEventHandler(LayoutWebViewEventHandler::OnWindowObjectClearedEvent), 0, this);
     }
     
-    void OnLoadEvent(wxWebViewLoadEvent& event) 
+    void OnLoadEvent(WebViewLoadEvent& event) 
     {
 
-        if (event.GetState() == wxWEBVIEW_LOAD_FAILED || event.GetState() == wxWEBVIEW_LOAD_STOPPED)
+        if (event.GetState() == WEBVIEW_LOAD_FAILED || event.GetState() == WEBVIEW_LOAD_STOPPED)
             done = true; 
         
-        if (event.GetState() == wxWEBVIEW_LOAD_ONLOAD_HANDLED) {
+        if (event.GetState() == WEBVIEW_LOAD_ONLOAD_HANDLED) {
             done = true;
             
             if (!gLayoutTestController->waitToDump() || notified) {
@@ -100,24 +101,24 @@ public:
         }
     }
     
-    void OnAlertEvent(wxWebViewAlertEvent& event)
+    void OnAlertEvent(WebViewAlertEvent& event)
     {
         fprintf(stdout, "ALERT: %S\n", event.GetMessage().c_str());
     }
     
-    void OnConfirmEvent(wxWebViewConfirmEvent& event)
+    void OnConfirmEvent(WebViewConfirmEvent& event)
     {
         fprintf(stdout, "CONFIRM: %S\n", event.GetMessage().c_str());
         event.SetReturnCode(1);
     }
     
-    void OnPromptEvent(wxWebViewPromptEvent& event)
+    void OnPromptEvent(WebViewPromptEvent& event)
     {
         fprintf(stdout, "PROMPT: %S, default text: %S\n", event.GetMessage().c_str(), event.GetResponse().c_str());
         event.SetReturnCode(1);
     }
     
-    void OnConsoleMessageEvent(wxWebViewConsoleMessageEvent& event)
+    void OnConsoleMessageEvent(WebViewConsoleMessageEvent& event)
     {
         fprintf(stdout, "CONSOLE MESSAGE: ");
         if (event.GetLineNumber())
@@ -125,7 +126,7 @@ public:
         fprintf(stdout, "%S\n", event.GetMessage().c_str());
     }
     
-    void OnReceivedTitleEvent(wxWebViewReceivedTitleEvent& event)
+    void OnReceivedTitleEvent(WebViewReceivedTitleEvent& event)
     {
         if (gLayoutTestController->dumpTitleChanges() && !done) {
             const char* title = event.GetTitle().mb_str(wxConvUTF8);
@@ -133,14 +134,14 @@ public:
         }
     }
     
-    void OnWindowObjectClearedEvent(wxWebViewWindowObjectClearedEvent& event)
+    void OnWindowObjectClearedEvent(WebViewWindowObjectClearedEvent& event)
     {
         JSValueRef exception = 0;
         gLayoutTestController->makeWindowObject(event.GetJSContext(), event.GetWindowObject(), &exception);
     }
     
 private:
-    wxWebView* m_webView;
+    WebView* m_webView;
 
 };
 
@@ -151,9 +152,9 @@ void notifyDoneFired()
         dump();
 }
 
-LayoutWebViewEventHandler* eventHandler = NULL;
+LayoutWebViewEventHandler* eventHandler = 0;
 
-static wxString dumpFramesAsText(wxWebFrame* frame)
+static wxString dumpFramesAsText(WebFrame* frame)
 {
     // TODO: implement this. leaving this here so we don't forget this case.
     if (gLayoutTestController->dumpChildFramesAsText()) {
@@ -187,7 +188,7 @@ void dump()
                 errorMessage = "WebFrame::GetInnerText";
             else
                 errorMessage = "WebFrame::GetExternalRepresentation";
-            printf("ERROR: NULL result from %s", errorMessage);
+            printf("ERROR: 0 result from %s", errorMessage);
         } else {
             printf("%s\n", result);
         }
@@ -296,7 +297,7 @@ bool MyApp::OnInit()
     wxInitAllImageHandlers();
         
     // create the main application window
-    wxWebBrowserShell* webFrame = new wxWebBrowserShell(_T("wxWebKit DumpRenderTree App"), "about:blank");
+    WebBrowserShell* webFrame = new WebBrowserShell(_T("wxWebKit DumpRenderTree App"), "about:blank");
     SetTopWindow(webFrame);
     webView = webFrame->webview;
     webView->SetSize(wxSize(maxViewWidth, maxViewHeight));
@@ -333,7 +334,7 @@ bool MyApp::OnInit()
     webFrame->Close();
     delete eventHandler;
 
-    wxLog::SetActiveTarget(NULL);
+    wxLog::SetActiveTarget(0);
     delete logger;
     fclose(logOutput);
     

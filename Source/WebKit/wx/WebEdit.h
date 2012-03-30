@@ -35,23 +35,26 @@
 
 #include "WebKitDefines.h"
 
+class WebDOMElement;
+
 namespace WebCore {
     class CompositeEditCommand;
     class WebCoreEditCommand;
 }
 
-class WebDOMElement;
-class WebCoreEditCommandPrivate;
-class wxWebFrame;
+namespace WebKit {
 
-class WXDLLIMPEXP_WEBKIT wxWebEditCommand
+class WebCoreEditCommandPrivate;
+class WebFrame;
+
+class WXDLLIMPEXP_WEBKIT WebEditCommand
 {
     friend class WebCore::CompositeEditCommand;
     friend class WebCore::WebCoreEditCommand;
 
 public:
-    wxWebEditCommand(wxWebFrame*);
-    ~wxWebEditCommand();
+    WebEditCommand(WebFrame*);
+    ~WebEditCommand();
     
     void SetNodeAttribute(WebDOMElement*, const wxString&, const wxString&);
     void Apply();
@@ -59,5 +62,7 @@ public:
 private:
     WebCoreEditCommandPrivate* m_impl;
 };
+
+}
 
 #endif

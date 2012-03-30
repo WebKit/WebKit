@@ -51,6 +51,10 @@
 #include "WebDOMRange.h"
 #include "WebDOMWebKitAnimationList.h"
 
+using namespace WebKit;
+
+static const wxString wxPyWebViewNameStr(WebViewNameStr);
+
 #ifndef __WXMSW__
 PyObject* createDOMNodeSubtype(WebDOMNode* ptr, bool setThisOwn, bool isValueObject)
 {
@@ -136,11 +140,9 @@ WebDOMString* createWebDOMString(PyObject* source)
 %typemap(out) WebDOMString&           { $result = PyUnicode_DecodeUTF8($1.utf8().data(), $1.utf8().length(), NULL); }
 #endif
 
-MAKE_CONST_WXSTRING(WebViewNameStr);
-
-MustHaveApp(wxWebBrowserShell);
-MustHaveApp(wxWebFrame);
-MustHaveApp(wxWebView);
+MustHaveApp(WebBrowserShell);
+MustHaveApp(WebFrame);
+MustHaveApp(WebView);
 
 %include WebKitDefines.h
 
@@ -162,7 +164,7 @@ MustHaveApp(wxWebView);
 %include WebSettings.h
 %include WebView.h
 
-%extend wxWebFrame {
+%extend WebKit::WebFrame {
     %pythoncode {
         def __eq__(self, other):
             return self.this == other.this

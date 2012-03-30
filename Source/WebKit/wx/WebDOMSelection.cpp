@@ -40,14 +40,16 @@
     #include "wx/wx.h"
 #endif
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebKitSelection, wxObject)
+namespace WebKit {
 
-wxWebKitSelection::wxWebKitSelection(const wxWebKitSelection& other)
+IMPLEMENT_DYNAMIC_CLASS(WebKitSelection, wxObject)
+
+WebKitSelection::WebKitSelection(const WebKitSelection& other)
 {
     m_selection = other.m_selection;
 }
 
-WebDOMElement* wxWebKitSelection::GetRootEditableElement() const
+WebDOMElement* WebKitSelection::GetRootEditableElement() const
 {
     if (m_selection)
         return new WebDOMElement(m_selection->rootEditableElement());
@@ -55,11 +57,11 @@ WebDOMElement* wxWebKitSelection::GetRootEditableElement() const
     return 0;
 }
 
-WebDOMRange* wxWebKitSelection::GetAsRange()
+WebDOMRange* WebKitSelection::GetAsRange()
 {
     if (m_selection) {
         WTF::RefPtr<WebCore::Range> range = m_selection->toNormalizedRange();
-        // keep it alive until it reaches wxWebKitDOMRange, which takes ownership
+        // keep it alive until it reaches WebKitDOMRange, which takes ownership
         
         if (range) {
             range->ref();
@@ -68,4 +70,6 @@ WebDOMRange* wxWebKitSelection::GetAsRange()
     }
         
     return 0;
+}
+
 }

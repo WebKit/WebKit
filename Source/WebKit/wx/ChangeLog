@@ -1,3 +1,261 @@
+2012-03-30  Malcolm MacLeod  <malcolm.macleod@tshwanedje.com>
+
+        [wx] Move wxWebKit API into WebKit namespace.
+        https://bugs.webkit.org/show_bug.cgi?id=82740
+
+        Reviewed by Kevin Ollivier.
+
+        * WebBrowserShell.cpp:
+        (WebKit):
+        (WebKit::PageSourceViewFrame::PageSourceViewFrame):
+        (WebKit::WebBrowserShell::WebBrowserShell):
+        (WebKit::WebBrowserShell::~WebBrowserShell):
+        (WebKit::WebBrowserShell::ShowDebugMenu):
+        (WebKit::WebBrowserShell::OnQuit):
+        (WebKit::WebBrowserShell::OnAbout):
+        (WebKit::WebBrowserShell::OnLoadFile):
+        (WebKit::WebBrowserShell::OnLoadEvent):
+        (WebKit::WebBrowserShell::OnBeforeLoad):
+        (WebKit::WebBrowserShell::OnAddressBarEnter):
+        (WebKit::WebBrowserShell::OnSearchCtrlEnter):
+        (WebKit::WebBrowserShell::OnCut):
+        (WebKit::WebBrowserShell::OnCopy):
+        (WebKit::WebBrowserShell::OnPaste):
+        (WebKit::WebBrowserShell::OnBack):
+        (WebKit::WebBrowserShell::OnForward):
+        (WebKit::WebBrowserShell::OnStop):
+        (WebKit::WebBrowserShell::OnReload):
+        (WebKit::WebBrowserShell::OnMakeTextLarger):
+        (WebKit::WebBrowserShell::OnMakeTextSmaller):
+        (WebKit::WebBrowserShell::OnGetSource):
+        (WebKit::WebBrowserShell::OnSetSource):
+        (WebKit::WebBrowserShell::OnBrowse):
+        (WebKit::WebBrowserShell::OnEdit):
+        (WebKit::WebBrowserShell::OnRunScript):
+        (WebKit::WebBrowserShell::OnEditCommand):
+        (WebKit::WebBrowserShell::OnGetEditCommandState):
+        (WebKit::WebBrowserShell::OnPrint):
+        * WebBrowserShell.h:
+        (WebKit):
+        * WebDOMSelection.cpp:
+        (WebKit):
+        (WebKit::WebKitSelection::WebKitSelection):
+        (WebKit::WebKitSelection::GetRootEditableElement):
+        (WebKit::WebKitSelection::GetAsRange):
+        * WebDOMSelection.h:
+        (WebKit):
+        * WebEdit.cpp:
+        (WebKit):
+        (WebKit::WebEditCommand::WebEditCommand):
+        (WebKit::WebEditCommand::~WebEditCommand):
+        (WebKit::WebEditCommand::SetNodeAttribute):
+        (WebKit::WebEditCommand::Apply):
+        * WebEdit.h:
+        (WebKit):
+        * WebFrame.cpp:
+        (WebKit):
+        (WebKit::kit):
+        (WebKit::WebFrame::WebFrame):
+        (WebKit::WebFrame::~WebFrame):
+        (WebKit::WebFrame::GetName):
+        (WebKit::WebFrame::GetFrame):
+        (WebKit::WebFrame::Stop):
+        (WebKit::WebFrame::Reload):
+        (WebKit::WebFrame::GetPageSource):
+        (WebKit::WebFrame::SetPageSource):
+        (WebKit::WebFrame::GetInnerText):
+        (WebKit::WebFrame::GetAsMarkup):
+        (WebKit::WebFrame::GetExternalRepresentation):
+        (WebKit::WebFrame::GetSelectionAsHTML):
+        (WebKit::WebFrame::GetSelectionAsText):
+        (WebKit::WebFrame::GetSelection):
+        (WebKit::WebFrame::RunScript):
+        (WebKit::WebFrame::ExecuteEditCommand):
+        (WebKit::WebFrame::GetEditCommandState):
+        (WebKit::WebFrame::GetEditCommandValue):
+        (WebKit::WebFrame::FindString):
+        (WebKit::WebFrame::LoadURL):
+        (WebKit::WebFrame::GetURL):
+        (WebKit::WebFrame::GoBack):
+        (WebKit::WebFrame::GoForward):
+        (WebKit::WebFrame::CanGoBack):
+        (WebKit::WebFrame::CanGoForward):
+        (WebKit::WebFrame::Undo):
+        (WebKit::WebFrame::Redo):
+        (WebKit::WebFrame::CanUndo):
+        (WebKit::WebFrame::CanRedo):
+        (WebKit::WebFrame::CanIncreaseTextSize):
+        (WebKit::WebFrame::IncreaseTextSize):
+        (WebKit::WebFrame::CanDecreaseTextSize):
+        (WebKit::WebFrame::DecreaseTextSize):
+        (WebKit::WebFrame::ResetTextSize):
+        (WebKit::WebFrame::MakeEditable):
+        (WebKit::WebFrame::IsEditable):
+        (WebKit::WebFrame::CanCopy):
+        (WebKit::WebFrame::Copy):
+        (WebKit::WebFrame::CanCut):
+        (WebKit::WebFrame::Cut):
+        (WebKit::WebFrame::CanPaste):
+        (WebKit::WebFrame::Paste):
+        (WebKit::WebFrame::Print):
+        (WebKit::WebFrame::HitTest):
+        (WebKit::WebFrame::ShouldClose):
+        (WebKit::WebFrame::GetCompatibilityMode):
+        (WebKit::WebFrame::GrantUniversalAccess):
+        * WebFrame.h:
+        (WebKit):
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::wkFeaturesforWindowFeatures):
+        (WebCore::ChromeClientWx::ChromeClientWx):
+        (WebCore::ChromeClientWx::createWindow):
+        (WebCore::ChromeClientWx::addMessageToConsole):
+        (WebCore::ChromeClientWx::runJavaScriptAlert):
+        (WebCore::ChromeClientWx::runJavaScriptConfirm):
+        (WebCore::ChromeClientWx::runJavaScriptPrompt):
+        (WebCore::ChromeClientWx::print):
+        (WebCore::ChromeClientWx::exceededDatabaseQuota):
+        * WebKitSupport/ChromeClientWx.h:
+        (ChromeClientWx):
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::EditorClientWx::respondToChangedContents):
+        (WebCore::EditorClientWx::registerUndoStep):
+        (WebCore::EditorClientWx::registerRedoStep):
+        (WebCore::EditorClientWx::clearUndoRedoOperations):
+        (WebCore::EditorClientWx::canUndo):
+        (WebCore::EditorClientWx::canRedo):
+        (WebCore::EditorClientWx::undo):
+        (WebCore::EditorClientWx::redo):
+        (WebCore::EditorClientWx::respondToChangedSelection):
+        * WebKitSupport/EditorClientWx.h:
+        (EditorClientWx):
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::wxNavTypeFromWebNavType):
+        (WebCore::FrameLoaderClientWx::setFrame):
+        (WebCore::FrameLoaderClientWx::setWebView):
+        (WebCore::FrameLoaderClientWx::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientWx::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientWx::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientWx::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientWx::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientWx::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientWx::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientWx::createFrame):
+        (WebCore::FrameLoaderClientWx::dispatchDidClearWindowObjectInWorld):
+        * WebKitSupport/FrameLoaderClientWx.h:
+        (WebKit):
+        (WebCore::FrameLoaderClientWx::webFrame):
+        (FrameLoaderClientWx):
+        (WebCore::FrameLoaderClientWx::webView):
+        * WebSettings.cpp:
+        (WebKit):
+        (WebKit::WebSettings::SetDefaultFixedFontSize):
+        (WebKit::WebSettings::GetDefaultFixedFontSize):
+        (WebKit::WebSettings::SetDefaultFontSize):
+        (WebKit::WebSettings::GetDefaultFontSize):
+        (WebKit::WebSettings::SetMinimumFontSize):
+        (WebKit::WebSettings::GetMinimumFontSize):
+        (WebKit::WebSettings::SetLoadsImagesAutomatically):
+        (WebKit::WebSettings::LoadsImagesAutomatically):
+        (WebKit::WebSettings::SetJavaScriptEnabled):
+        (WebKit::WebSettings::IsJavaScriptEnabled):
+        (WebKit::WebSettings::SetLocalStoragePath):
+        (WebKit::WebSettings::GetLocalStoragePath):
+        (WebKit::WebSettings::SetEditableLinkBehavior):
+        (WebKit::WebSettings::GetEditableLinkBehavior):
+        (WebKit::WebSettings::SetPluginsEnabled):
+        (WebKit::WebSettings::ArePluginsEnabled):
+        (WebKit::WebSettings::SetPrivateBrowsingEnabled):
+        (WebKit::WebSettings::PrivateBrowsingEnabled):
+        (WebKit::WebSettings::SetUsesPageCache):
+        (WebKit::WebSettings::UsesPageCache):
+        (WebKit::WebSettings::SetOfflineWebApplicationCacheEnabled):
+        (WebKit::WebSettings::OfflineWebApplicationCacheEnabled):
+        * WebSettings.h:
+        (WebKit):
+        * WebView.cpp:
+        (WebKit):
+        (WebKit::WebViewLoadEvent::WebViewLoadEvent):
+        (WebKit::WebViewBeforeLoadEvent::WebViewBeforeLoadEvent):
+        (WebKit::WebViewNewWindowEvent::WebViewNewWindowEvent):
+        (WebKit::WebViewRightClickEvent::WebViewRightClickEvent):
+        (WebKit::WebViewConsoleMessageEvent::WebViewConsoleMessageEvent):
+        (WebKit::WebViewAlertEvent::WebViewAlertEvent):
+        (WebKit::WebViewConfirmEvent::WebViewConfirmEvent):
+        (WebKit::WebViewPromptEvent::WebViewPromptEvent):
+        (WebKit::WebViewReceivedTitleEvent::WebViewReceivedTitleEvent):
+        (WebKit::WebViewWindowObjectClearedEvent::WebViewWindowObjectClearedEvent):
+        (WebKit::WebViewContentsChangedEvent::WebViewContentsChangedEvent):
+        (WebKit::WebViewSelectionChangedEvent::WebViewSelectionChangedEvent):
+        (WebKit::WebViewPrintFrameEvent::WebViewPrintFrameEvent):
+        (WebKit::WebViewDOMElementInfo::WebViewDOMElementInfo):
+        (WebKit::WebView::SetCachePolicy):
+        (WebKit::WebView::GetCachePolicy):
+        (WebKit::WebViewDOMElementInfo::~WebViewDOMElementInfo):
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::Create):
+        (WebKit::WebView::~WebView):
+        (WebKit::WebView::OnTLWActivated):
+        (WebKit::WebView::Stop):
+        (WebKit::WebView::Reload):
+        (WebKit::WebView::GetPageSource):
+        (WebKit::WebView::SetPageSource):
+        (WebKit::WebView::GetInnerText):
+        (WebKit::WebView::GetAsMarkup):
+        (WebKit::WebView::GetExternalRepresentation):
+        (WebKit::WebView::GetSelection):
+        (WebKit::WebView::GetSelectionAsHTML):
+        (WebKit::WebView::GetSelectionAsText):
+        (WebKit::WebView::SetTransparent):
+        (WebKit::WebView::IsTransparent):
+        (WebKit::WebView::RunScript):
+        (WebKit::WebView::ExecuteEditCommand):
+        (WebKit::WebView::GetEditCommandState):
+        (WebKit::WebView::GetEditCommandValue):
+        (WebKit::WebView::LoadURL):
+        (WebKit::WebView::GetMainFrameURL):
+        (WebKit::WebView::GoBack):
+        (WebKit::WebView::GoForward):
+        (WebKit::WebView::CanGoBack):
+        (WebKit::WebView::CanGoForward):
+        (WebKit::WebView::CanIncreaseTextSize):
+        (WebKit::WebView::IncreaseTextSize):
+        (WebKit::WebView::CanDecreaseTextSize):
+        (WebKit::WebView::DecreaseTextSize):
+        (WebKit::WebView::ResetTextSize):
+        (WebKit::WebView::MakeEditable):
+        (WebKit::WebView::IsEditable):
+        (WebKit::WebView::OnPaint):
+        (WebKit::WebView::FindString):
+        (WebKit::WebView::OnSize):
+        (WebKit::WebView::OnMouseEvents):
+        (WebKit::WebView::OnContextMenuEvents):
+        (WebKit::WebView::OnMenuSelectEvents):
+        (WebKit::WebView::OnMouseCaptureLost):
+        (WebKit::WebView::CanCopy):
+        (WebKit::WebView::Copy):
+        (WebKit::WebView::CanCut):
+        (WebKit::WebView::Cut):
+        (WebKit::WebView::CanPaste):
+        (WebKit::WebView::Paste):
+        (WebKit::WebView::OnKeyEvents):
+        (WebKit::WebView::OnSetFocus):
+        (WebKit::WebView::OnKillFocus):
+        (WebKit::WebView::HitTest):
+        (WebKit::WebView::ShouldClose):
+        (WebKit::WebView::SetDatabaseDirectory):
+        (WebKit::WebView::GetDatabaseDirectory):
+        (WebKit::WebView::SetDatabasesEnabled):
+        (WebKit::WebView::AreDatabasesEnabled):
+        (WebKit::WebView::SetProxyInfo):
+        (WebKit::WebView::GetWebSettings):
+        (WebKit::WebView::GetCompatibilityMode):
+        (WebKit::WebView::GrantUniversalAccess):
+        * WebView.h:
+        (WebKit):
+        * bindings/python/webview.i:
+
 2012-03-28  Nate Chapin  <japhet@chromium.org>
 
         Remove dispatchDidLoadMainResource callback, since no

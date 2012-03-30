@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef WXWEBFRAME_H
-#define WXWEBFRAME_H
+#ifndef WebFrame_h
+#define WebFrame_h
 
 #include "wx/wxprec.h"
 #ifndef WX_PRECOMP
@@ -44,7 +44,6 @@ class Element;
 
 class WebFramePrivate;
 class WebViewFrameData;
-class wxWebView;
 
 namespace WebCore {
     class ChromeClientWx;
@@ -53,13 +52,17 @@ namespace WebCore {
     class Frame;    
 }
 
-class WXDLLIMPEXP_WEBKIT wxWebViewDOMElementInfo
+namespace WebKit {
+
+class WebView;
+
+class WXDLLIMPEXP_WEBKIT WebViewDOMElementInfo
 {
 public:
-    wxWebViewDOMElementInfo();
-    wxWebViewDOMElementInfo(const wxWebViewDOMElementInfo& other);
+    WebViewDOMElementInfo();
+    WebViewDOMElementInfo(const WebViewDOMElementInfo& other);
 
-    ~wxWebViewDOMElementInfo();
+    ~WebViewDOMElementInfo();
 
     wxString GetTagName() const { return m_tagName; }
     void SetTagName(const wxString& name) { m_tagName = name; }
@@ -93,22 +96,22 @@ private:
 };
 
 // based on enums in WebCore/dom/Document.h
-enum wxWebKitCompatibilityMode { QuirksMode, LimitedQuirksMode, NoQuirksMode };
+enum WebKitCompatibilityMode { QuirksMode, LimitedQuirksMode, NoQuirksMode };
 
-class WXDLLIMPEXP_WEBKIT wxWebFrame
+class WXDLLIMPEXP_WEBKIT WebFrame
 {
 public:
-    // ChromeClientWx needs to get the Page* stored by the wxWebView
+    // ChromeClientWx needs to get the Page* stored by the WebView
     // for the createWindow function. 
     friend class WebCore::ChromeClientWx;
     friend class WebCore::FrameLoaderClientWx;
     friend class WebCore::EditorClientWx;
-    friend class wxWebView;
+    friend class WebView;
 
 public:
-    wxWebFrame(wxWebView* container, wxWebFrame* parent = NULL, WebViewFrameData* data = NULL);
+    WebFrame(WebView* container, WebFrame* parent = 0, WebViewFrameData* data = 0);
     
-    ~wxWebFrame();
+    ~WebFrame();
     
     void LoadURL(const wxString& url);
     wxString GetURL() const;
@@ -144,7 +147,7 @@ public:
     wxString GetAsMarkup();
     wxString GetExternalRepresentation();
     
-    wxWebKitSelection GetSelection();
+    WebKitSelection GetSelection();
     wxString GetSelectionAsHTML();
     wxString GetSelectionAsText();
     
@@ -167,11 +170,11 @@ public:
     
     WebCore::Frame* GetFrame();
 
-    wxWebViewDOMElementInfo HitTest(const wxPoint& post) const;
+    WebViewDOMElementInfo HitTest(const wxPoint& post) const;
     
     bool ShouldClose() const;
     
-    wxWebKitCompatibilityMode GetCompatibilityMode() const;
+    WebKitCompatibilityMode GetCompatibilityMode() const;
     
     void GrantUniversalAccess();
     
@@ -184,7 +187,9 @@ private:
 };
 
 #ifndef SWIG
-wxWebFrame* kit(WebCore::Frame*);
+WebFrame* kit(WebCore::Frame*);
 #endif
 
-#endif // ifndef WXWEBFRAME_H
+}
+
+#endif // ifndef WebFrame_h

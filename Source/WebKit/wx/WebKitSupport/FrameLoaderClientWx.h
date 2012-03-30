@@ -37,8 +37,12 @@
 #include "HTMLPlugInElement.h"
 #include <wtf/Forward.h>
 
-class wxWebFrame;
-class wxWebView;
+namespace WebKit {
+
+class WebFrame;
+class WebView;
+
+}
 
 namespace WebCore {
 
@@ -56,10 +60,10 @@ namespace WebCore {
         FrameLoaderClientWx();
         ~FrameLoaderClientWx();
         
-        wxWebFrame* webFrame() { return m_webFrame; }
-        void setFrame(wxWebFrame *frame);
-        wxWebView* webView() { return m_webView; }
-        void setWebView(wxWebView *webview);
+        WebKit::WebFrame* webFrame() { return m_webFrame; }
+        void setFrame(WebKit::WebFrame *frame);
+        WebKit::WebView* webView() { return m_webView; }
+        void setWebView(WebKit::WebView *webview);
 
         virtual bool hasWebView() const; // mainly for assertions
 
@@ -231,9 +235,9 @@ namespace WebCore {
         virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext();
 
     private:
-        wxWebFrame *m_webFrame;
+        WebKit::WebFrame *m_webFrame;
         Frame* m_frame;
-        wxWebView *m_webView;
+        WebKit::WebView *m_webView;
         PluginView* m_pluginView;
         bool m_hasSentResponseToPlugin;
         ResourceResponse m_response;

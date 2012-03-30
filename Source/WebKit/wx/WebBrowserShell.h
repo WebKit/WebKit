@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef WXWEBBROWSERSHELL_H
-#define WXWEBBROWSERSHELL_H
+#ifndef WebBrowserShell_h
+#define WebBrowserShell_h
 
 #include "wx/wxprec.h"
 #ifndef WX_PRECOMP
@@ -37,52 +37,54 @@
 #include "WebView.h"
 #include <wx/srchctrl.h>
 
-class WXDLLIMPEXP_WEBKIT wxWebBrowserShell : public wxFrame
+namespace WebKit {
+
+class WXDLLIMPEXP_WEBKIT WebBrowserShell : public wxFrame
 {
 public:
     // ctor(s)
 #if SWIG
-    %pythonAppend wxWebBrowserShell "self._setOORInfo(self)"
+    %pythonAppend WebBrowserShell "self._setOORInfo(self)"
 #endif
-    wxWebBrowserShell(const wxString& title, const wxString& url = "about:blank");
+    WebBrowserShell(const wxString& title, const wxString& url = "about:blank");
 
 #ifndef SWIG
-    ~wxWebBrowserShell();
+    ~WebBrowserShell();
 #endif
 
     void ShowDebugMenu(bool show = true);
-    wxWebView* webview;
+    WebView* webview;
 
 protected:
 
     // event handlers (these functions should _not_ be virtual)
-    void OnCut(wxCommandEvent& event);
-    void OnCopy(wxCommandEvent& event);
-    void OnPaste(wxCommandEvent& event);
-    void OnQuit(wxCommandEvent& event);
-    void OnAbout(wxCommandEvent& event);
-    void OnLoadFile(wxCommandEvent& event);
-    void OnAddressBarEnter(wxCommandEvent& event);
-    void OnSearchCtrlEnter(wxCommandEvent& event);
-    void OnLoadEvent(wxWebViewLoadEvent& event);
-    void OnBeforeLoad(wxWebViewBeforeLoadEvent& event);
-    void OnBack(wxCommandEvent& event);
-    void OnForward(wxCommandEvent& event);
-    void OnStop(wxCommandEvent& event);
-    void OnReload(wxCommandEvent& event);
-    void OnBrowse(wxCommandEvent& event);
-    void OnEdit(wxCommandEvent& event);
+    void OnCut(wxCommandEvent&);
+    void OnCopy(wxCommandEvent&);
+    void OnPaste(wxCommandEvent&);
+    void OnQuit(wxCommandEvent&);
+    void OnAbout(wxCommandEvent&);
+    void OnLoadFile(wxCommandEvent&);
+    void OnAddressBarEnter(wxCommandEvent&);
+    void OnSearchCtrlEnter(wxCommandEvent&);
+    void OnLoadEvent(WebViewLoadEvent& event);
+    void OnBeforeLoad(WebViewBeforeLoadEvent& event);
+    void OnBack(wxCommandEvent&);
+    void OnForward(wxCommandEvent&);
+    void OnStop(wxCommandEvent&);
+    void OnReload(wxCommandEvent&);
+    void OnBrowse(wxCommandEvent&);
+    void OnEdit(wxCommandEvent&);
     void OnPrint(wxCommandEvent& myEvent);
     
-    void OnMakeTextLarger(wxCommandEvent& event);
-    void OnMakeTextSmaller(wxCommandEvent& event);
-    void OnGetSource(wxCommandEvent& event);
+    void OnMakeTextLarger(wxCommandEvent&);
+    void OnMakeTextSmaller(wxCommandEvent&);
+    void OnGetSource(wxCommandEvent&);
     
     // debug menu items
-    void OnSetSource(wxCommandEvent& event);
-    void OnRunScript(wxCommandEvent& myEvent);
-    void OnEditCommand(wxCommandEvent& myEvent);
-    void OnGetEditCommandState(wxCommandEvent& myEvent);
+    void OnSetSource(wxCommandEvent&);
+    void OnRunScript(wxCommandEvent&);
+    void OnEditCommand(wxCommandEvent&);
+    void OnGetEditCommandState(wxCommandEvent&);
 
 private:
     wxTextCtrl* addressBar;
@@ -96,10 +98,12 @@ private:
 #endif
 };
 
-class WXDLLIMPEXP_WEBKIT wxPageSourceViewFrame : public wxFrame
+class WXDLLIMPEXP_WEBKIT PageSourceViewFrame : public wxFrame
 {
 public:
-    wxPageSourceViewFrame(const wxString& source);
+    PageSourceViewFrame(const wxString& source);
 };
 
-#endif // ifndef WXWEBBROWSERSHELL_H
+}
+
+#endif // ifndef WebBrowserShell_h

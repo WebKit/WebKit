@@ -38,8 +38,8 @@
 namespace WebCore {
 
 class EditorClientWx : public EditorClient, public TextCheckerClient {
-friend class ::wxWebView;
-friend class ::wxWebFrame;
+friend class WebKit::WebView;
+friend class WebKit::WebFrame;
 
 public:
     virtual ~EditorClientWx();

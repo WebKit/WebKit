@@ -1,3 +1,27 @@
+2012-03-30  Malcolm MacLeod  <malcolm.macleod@tshwanedje.com>
+
+        [wx] Move wxWebKit API into WebKit namespace.
+        https://bugs.webkit.org/show_bug.cgi?id=82740
+
+        Reviewed by Kevin Ollivier.
+
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        (LayoutWebViewEventHandler::LayoutWebViewEventHandler):
+        (LayoutWebViewEventHandler::bindEvents):
+        (LayoutWebViewEventHandler::OnLoadEvent):
+        (LayoutWebViewEventHandler::OnAlertEvent):
+        (LayoutWebViewEventHandler::OnConfirmEvent):
+        (LayoutWebViewEventHandler::OnPromptEvent):
+        (LayoutWebViewEventHandler::OnConsoleMessageEvent):
+        (LayoutWebViewEventHandler::OnReceivedTitleEvent):
+        (LayoutWebViewEventHandler::OnWindowObjectClearedEvent):
+        (LayoutWebViewEventHandler):
+        (dumpFramesAsText):
+        (dump):
+        (MyApp::OnInit):
+        * wx/browser/browser.cpp:
+        (MyApp::OnInit):
+
 2012-03-30  Eli Fidler  <efidler@rim.com>
 
         Enable OpenType Sanitizer for BlackBerry port.

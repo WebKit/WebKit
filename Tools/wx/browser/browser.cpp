@@ -35,6 +35,8 @@
     #include "wx/wx.h"
 #endif
 
+using namespace WebKit;
+
 class MyApp : public wxApp
 {
 public:
@@ -51,13 +53,13 @@ bool MyApp::OnInit()
         
     // create the main application window
     // see WebKit/wx/WebFrame.cpp for how to write a shell around wxWebView.
-    wxWebBrowserShell *frame = new wxWebBrowserShell(_T("wxWebKit Test App"), "http://www.webkit.org");
+    WebBrowserShell* frame = new WebBrowserShell(_T("wxWebKit Test App"), "http://www.webkit.org");
 
 #ifndef NDEBUG
     frame->ShowDebugMenu(true);
 #endif
 
-    wxWebSettings settings = frame->webview->GetWebSettings();
+    WebSettings settings = frame->webview->GetWebSettings();
 #if __WXMSW__ || __WXMAC__
     settings.SetPluginsEnabled(true);
 #endif

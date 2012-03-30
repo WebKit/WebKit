@@ -103,15 +103,22 @@ int rint(double val)
 }
 #endif
 
+#if OS(DARWIN)
+// prototype - function is in WebSystemInterface.mm
+void InitWebCoreSystemInterface(void);
+#endif
+
 // ----------------------------------------------------------------------------
-// wxWebView Events
+// WebView Events
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewLoadEvent, wxCommandEvent)
+namespace WebKit {
+
+IMPLEMENT_DYNAMIC_CLASS(WebViewLoadEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_LOAD)
 
-wxWebViewLoadEvent::wxWebViewLoadEvent(wxWindow* win)
+WebViewLoadEvent::WebViewLoadEvent(wxWindow* win)
 {
     SetEventType( wxEVT_WEBVIEW_LOAD);
     SetEventObject( win );
@@ -119,11 +126,11 @@ wxWebViewLoadEvent::wxWebViewLoadEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewBeforeLoadEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(WebViewBeforeLoadEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_BEFORE_LOAD)
 
-wxWebViewBeforeLoadEvent::wxWebViewBeforeLoadEvent(wxWindow* win)
+WebViewBeforeLoadEvent::WebViewBeforeLoadEvent(wxWindow* win)
 {
     m_cancelled = false;
     SetEventType(wxEVT_WEBVIEW_BEFORE_LOAD);
@@ -132,11 +139,11 @@ wxWebViewBeforeLoadEvent::wxWebViewBeforeLoadEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewNewWindowEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(WebViewNewWindowEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_NEW_WINDOW)
 
-wxWebViewNewWindowEvent::wxWebViewNewWindowEvent(wxWindow* win)
+WebViewNewWindowEvent::WebViewNewWindowEvent(wxWindow* win)
 {
     SetEventType(wxEVT_WEBVIEW_NEW_WINDOW);
     SetEventObject(win);
@@ -144,11 +151,11 @@ wxWebViewNewWindowEvent::wxWebViewNewWindowEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewRightClickEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(WebViewRightClickEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_RIGHT_CLICK)
 
-wxWebViewRightClickEvent::wxWebViewRightClickEvent(wxWindow* win)
+WebViewRightClickEvent::WebViewRightClickEvent(wxWindow* win)
 {
     SetEventType(wxEVT_WEBVIEW_RIGHT_CLICK);
     SetEventObject(win);
@@ -156,11 +163,11 @@ wxWebViewRightClickEvent::wxWebViewRightClickEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewConsoleMessageEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(WebViewConsoleMessageEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_CONSOLE_MESSAGE)
 
-wxWebViewConsoleMessageEvent::wxWebViewConsoleMessageEvent(wxWindow* win)
+WebViewConsoleMessageEvent::WebViewConsoleMessageEvent(wxWindow* win)
 {
     SetEventType(wxEVT_WEBVIEW_CONSOLE_MESSAGE);
     SetEventObject(win);
@@ -168,11 +175,11 @@ wxWebViewConsoleMessageEvent::wxWebViewConsoleMessageEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewAlertEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(WebViewAlertEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_JS_ALERT)
 
-wxWebViewAlertEvent::wxWebViewAlertEvent(wxWindow* win)
+WebViewAlertEvent::WebViewAlertEvent(wxWindow* win)
 {
     SetEventType(wxEVT_WEBVIEW_JS_ALERT);
     SetEventObject(win);
@@ -180,11 +187,11 @@ wxWebViewAlertEvent::wxWebViewAlertEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewConfirmEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(WebViewConfirmEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_JS_CONFIRM)
 
-wxWebViewConfirmEvent::wxWebViewConfirmEvent(wxWindow* win)
+WebViewConfirmEvent::WebViewConfirmEvent(wxWindow* win)
 {
     SetEventType(wxEVT_WEBVIEW_JS_CONFIRM);
     SetEventObject(win);
@@ -192,11 +199,11 @@ wxWebViewConfirmEvent::wxWebViewConfirmEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewPromptEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(WebViewPromptEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_JS_PROMPT)
 
-wxWebViewPromptEvent::wxWebViewPromptEvent(wxWindow* win)
+WebViewPromptEvent::WebViewPromptEvent(wxWindow* win)
 {
     SetEventType(wxEVT_WEBVIEW_JS_PROMPT);
     SetEventObject(win);
@@ -204,11 +211,11 @@ wxWebViewPromptEvent::wxWebViewPromptEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewReceivedTitleEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(WebViewReceivedTitleEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_RECEIVED_TITLE)
 
-wxWebViewReceivedTitleEvent::wxWebViewReceivedTitleEvent(wxWindow* win)
+WebViewReceivedTitleEvent::WebViewReceivedTitleEvent(wxWindow* win)
 {
     SetEventType(wxEVT_WEBVIEW_RECEIVED_TITLE);
     SetEventObject(win);
@@ -216,11 +223,11 @@ wxWebViewReceivedTitleEvent::wxWebViewReceivedTitleEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewWindowObjectClearedEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(WebViewWindowObjectClearedEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_WINDOW_OBJECT_CLEARED)
 
-wxWebViewWindowObjectClearedEvent::wxWebViewWindowObjectClearedEvent(wxWindow* win)
+WebViewWindowObjectClearedEvent::WebViewWindowObjectClearedEvent(wxWindow* win)
 {
     SetEventType(wxEVT_WEBVIEW_WINDOW_OBJECT_CLEARED);
     SetEventObject(win);
@@ -228,11 +235,11 @@ wxWebViewWindowObjectClearedEvent::wxWebViewWindowObjectClearedEvent(wxWindow* w
         SetId(win->GetId());
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewContentsChangedEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(WebViewContentsChangedEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_CONTENTS_CHANGED)
 
-wxWebViewContentsChangedEvent::wxWebViewContentsChangedEvent(wxWindow* win)
+WebViewContentsChangedEvent::WebViewContentsChangedEvent(wxWindow* win)
 {
     SetEventType(wxEVT_WEBVIEW_CONTENTS_CHANGED);
     SetEventObject(win);
@@ -240,11 +247,11 @@ wxWebViewContentsChangedEvent::wxWebViewContentsChangedEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewSelectionChangedEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(WebViewSelectionChangedEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_SELECTION_CHANGED)
 
-wxWebViewSelectionChangedEvent::wxWebViewSelectionChangedEvent(wxWindow* win)
+WebViewSelectionChangedEvent::WebViewSelectionChangedEvent(wxWindow* win)
 {
     SetEventType(wxEVT_WEBVIEW_SELECTION_CHANGED);
     SetEventObject(win);
@@ -252,11 +259,11 @@ wxWebViewSelectionChangedEvent::wxWebViewSelectionChangedEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewPrintFrameEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(WebViewPrintFrameEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_PRINT_FRAME)
 
-wxWebViewPrintFrameEvent::wxWebViewPrintFrameEvent(wxWindow* win)
+WebViewPrintFrameEvent::WebViewPrintFrameEvent(wxWindow* win)
 {
     SetEventType(wxEVT_WEBVIEW_PRINT_FRAME);
     SetEventObject(win);
@@ -268,20 +275,20 @@ wxWebViewPrintFrameEvent::wxWebViewPrintFrameEvent(wxWindow* win)
 // DOM Element info data type
 //---------------------------------------------------------
 
-wxWebViewDOMElementInfo::wxWebViewDOMElementInfo() :
+WebViewDOMElementInfo::WebViewDOMElementInfo() :
     m_isSelected(false),
     m_text(wxEmptyString),
     m_imageSrc(wxEmptyString),
     m_link(wxEmptyString),
-    m_urlElement(NULL),
-    m_innerNode(NULL)
+    m_urlElement(0),
+    m_innerNode(0)
 {
 }
 
-static wxWebViewCachePolicy gs_cachePolicy;
+static WebViewCachePolicy gs_cachePolicy;
 
 /* static */
-void wxWebView::SetCachePolicy(const wxWebViewCachePolicy& cachePolicy)
+void WebView::SetCachePolicy(const WebViewCachePolicy& cachePolicy)
 {
     WebCore::MemoryCache* globalCache = WebCore::memoryCache();
     globalCache->setCapacities(cachePolicy.GetMinDeadCapacity(),
@@ -293,12 +300,12 @@ void wxWebView::SetCachePolicy(const wxWebViewCachePolicy& cachePolicy)
 }
 
 /* static */
-wxWebViewCachePolicy wxWebView::GetCachePolicy()
+WebViewCachePolicy WebView::GetCachePolicy()
 {
     return gs_cachePolicy;
 }
 
-wxWebViewDOMElementInfo::wxWebViewDOMElementInfo(const wxWebViewDOMElementInfo& other)
+WebViewDOMElementInfo::WebViewDOMElementInfo(const WebViewDOMElementInfo& other)
 {
     m_isSelected = other.m_isSelected;
     m_text = other.m_text;
@@ -308,7 +315,7 @@ wxWebViewDOMElementInfo::wxWebViewDOMElementInfo(const wxWebViewDOMElementInfo& 
     m_urlElement = other.m_urlElement;
 }
 
-wxWebViewDOMElementInfo::~wxWebViewDOMElementInfo() 
+WebViewDOMElementInfo::~WebViewDOMElementInfo() 
 {
     if (m_innerNode)
         delete m_innerNode;
@@ -317,29 +324,24 @@ wxWebViewDOMElementInfo::~wxWebViewDOMElementInfo()
         delete m_urlElement;
 }
 
-#if OS(DARWIN)
-// prototype - function is in WebSystemInterface.mm
-void InitWebCoreSystemInterface(void);
-#endif
-
-BEGIN_EVENT_TABLE(wxWebView, wxWindow)
-    EVT_PAINT(wxWebView::OnPaint)
-    EVT_SIZE(wxWebView::OnSize)
-    EVT_MOUSE_EVENTS(wxWebView::OnMouseEvents)
-    EVT_CONTEXT_MENU(wxWebView::OnContextMenuEvents)
-    EVT_KEY_DOWN(wxWebView::OnKeyEvents)
-    EVT_KEY_UP(wxWebView::OnKeyEvents)
-    EVT_CHAR(wxWebView::OnKeyEvents)
-    EVT_SET_FOCUS(wxWebView::OnSetFocus)
-    EVT_KILL_FOCUS(wxWebView::OnKillFocus)
-    EVT_MOUSE_CAPTURE_LOST(wxWebView::OnMouseCaptureLost)
+BEGIN_EVENT_TABLE(WebView, wxWindow)
+    EVT_PAINT(WebView::OnPaint)
+    EVT_SIZE(WebView::OnSize)
+    EVT_MOUSE_EVENTS(WebView::OnMouseEvents)
+    EVT_CONTEXT_MENU(WebView::OnContextMenuEvents)
+    EVT_KEY_DOWN(WebView::OnKeyEvents)
+    EVT_KEY_UP(WebView::OnKeyEvents)
+    EVT_CHAR(WebView::OnKeyEvents)
+    EVT_SET_FOCUS(WebView::OnSetFocus)
+    EVT_KILL_FOCUS(WebView::OnKillFocus)
+    EVT_MOUSE_CAPTURE_LOST(WebView::OnMouseCaptureLost)
 END_EVENT_TABLE()
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebView, wxWindow)
+IMPLEMENT_DYNAMIC_CLASS(WebView, wxWindow)
 
-const wxChar* wxWebViewNameStr = wxT("webView");
+const wxChar* WebViewNameStr = wxT("webView");
 
-wxWebView::wxWebView() :
+WebView::WebView() :
     m_textMagnifier(1.0),
     m_isInitialized(false),
     m_beingDestroyed(false),
@@ -348,7 +350,7 @@ wxWebView::wxWebView() :
 {
 }
 
-wxWebView::wxWebView(wxWindow* parent, const wxString& url, int id, const wxPoint& position, 
+WebView::WebView(wxWindow* parent, const wxString& url, int id, const wxPoint& position, 
                      const wxSize& size, long style, const wxString& name) :
     m_textMagnifier(1.0),
     m_isInitialized(false),
@@ -359,7 +361,7 @@ wxWebView::wxWebView(wxWindow* parent, const wxString& url, int id, const wxPoin
     Create(parent, url, id, position, size, style, name);
 }
 
-bool wxWebView::Create(wxWindow* parent, const wxString& url, int id, const wxPoint& position, 
+bool WebView::Create(wxWindow* parent, const wxString& url, int id, const wxPoint& position, 
                        const wxSize& size, long style, const wxString& name)
 {
 #if OS(DARWIN)
@@ -401,9 +403,9 @@ bool wxWebView::Create(wxWindow* parent, const wxString& url, int id, const wxPo
     m_impl->page = new WebCore::Page(pageClients);
     editorClient->setPage(m_impl->page);
     
-    m_mainFrame = new wxWebFrame(this);
+    m_mainFrame = new WebFrame(this);
 
-    // Default settings - we should have wxWebViewSettings class for this
+    // Default settings - we should have WebViewSettings class for this
     // eventually
     WebCore::Settings* settings = m_impl->page->settings();
     settings->setLoadsImagesAutomatically(true);
@@ -428,7 +430,7 @@ bool wxWebView::Create(wxWindow* parent, const wxString& url, int id, const wxPo
     return true;
 }
 
-wxWebView::~wxWebView()
+WebView::~WebView()
 {
     m_beingDestroyed = true;
     
@@ -442,10 +444,10 @@ wxWebView::~wxWebView()
     m_impl->page = 0;   
 }
 
-// NOTE: binding to this event in the wxWebView constructor is too early in 
+// NOTE: binding to this event in the WebView constructor is too early in 
 // some cases, but leave the event handler here so that users can bind to it
 // at a later time if they have activation state problems.
-void wxWebView::OnTLWActivated(wxActivateEvent& event)
+void WebView::OnTLWActivated(wxActivateEvent& event)
 {        
     if (m_impl && m_impl->page && m_impl->page->focusController())
         m_impl->page->focusController()->setActive(event.GetActive());
@@ -454,19 +456,19 @@ void wxWebView::OnTLWActivated(wxActivateEvent& event)
     
 }
 
-void wxWebView::Stop()
+void WebView::Stop()
 {
     if (m_mainFrame)
         m_mainFrame->Stop();
 }
 
-void wxWebView::Reload()
+void WebView::Reload()
 {
     if (m_mainFrame)
         m_mainFrame->Reload();
 }
 
-wxString wxWebView::GetPageSource()
+wxString WebView::GetPageSource()
 {
     if (m_mainFrame)
         return m_mainFrame->GetPageSource();
@@ -474,13 +476,13 @@ wxString wxWebView::GetPageSource()
     return wxEmptyString;
 }
 
-void wxWebView::SetPageSource(const wxString& source, const wxString& baseUrl, const wxString& mimetype)
+void WebView::SetPageSource(const wxString& source, const wxString& baseUrl, const wxString& mimetype)
 {
     if (m_mainFrame)
         m_mainFrame->SetPageSource(source, baseUrl, mimetype);
 }
 
-wxString wxWebView::GetInnerText()
+wxString WebView::GetInnerText()
 {
     if (m_mainFrame)
         return m_mainFrame->GetInnerText();
@@ -488,7 +490,7 @@ wxString wxWebView::GetInnerText()
     return wxEmptyString;
 }
 
-wxString wxWebView::GetAsMarkup()
+wxString WebView::GetAsMarkup()
 {
     if (m_mainFrame)
         return m_mainFrame->GetAsMarkup();
@@ -496,7 +498,7 @@ wxString wxWebView::GetAsMarkup()
     return wxEmptyString;
 }
 
-wxString wxWebView::GetExternalRepresentation()
+wxString WebView::GetExternalRepresentation()
 {
     if (m_mainFrame)
         return m_mainFrame->GetExternalRepresentation();
@@ -504,7 +506,7 @@ wxString wxWebView::GetExternalRepresentation()
     return wxEmptyString;
 }
 
-wxWebKitSelection wxWebView::GetSelection()
+WebKitSelection WebView::GetSelection()
 {
     if (m_mainFrame)
         return m_mainFrame->GetSelection();
@@ -512,7 +514,7 @@ wxWebKitSelection wxWebView::GetSelection()
     return 0;
 }
 
-wxString wxWebView::GetSelectionAsHTML()
+wxString WebView::GetSelectionAsHTML()
 {
     if (m_mainFrame)
         return m_mainFrame->GetSelectionAsHTML();
@@ -520,7 +522,7 @@ wxString wxWebView::GetSelectionAsHTML()
     return wxEmptyString;
 }
 
-wxString wxWebView::GetSelectionAsText()
+wxString WebView::GetSelectionAsText()
 {
     if (m_mainFrame)
         return m_mainFrame->GetSelectionAsText();
@@ -528,7 +530,7 @@ wxString wxWebView::GetSelectionAsText()
     return wxEmptyString;
 }
 
-void wxWebView::SetTransparent(bool transparent)
+void WebView::SetTransparent(bool transparent)
 {
     WebCore::Frame* frame = 0;
     if (m_mainFrame)
@@ -540,7 +542,7 @@ void wxWebView::SetTransparent(bool transparent)
     frame->view()->setTransparent(transparent);
 }
 
-bool wxWebView::IsTransparent() const
+bool WebView::IsTransparent() const
 {
     WebCore::Frame* frame = 0;
     if (m_mainFrame)
@@ -552,7 +554,7 @@ bool wxWebView::IsTransparent() const
     return frame->view()->isTransparent();
 }
 
-wxString wxWebView::RunScript(const wxString& javascript)
+wxString WebView::RunScript(const wxString& javascript)
 {
     if (m_mainFrame)
         return m_mainFrame->RunScript(javascript);
@@ -560,19 +562,19 @@ wxString wxWebView::RunScript(const wxString& javascript)
     return wxEmptyString;
 }
 
-bool wxWebView::ExecuteEditCommand(const wxString& command, const wxString& parameter)
+bool WebView::ExecuteEditCommand(const wxString& command, const wxString& parameter)
 {
     if (m_mainFrame)
         return m_mainFrame->ExecuteEditCommand(command, parameter);
 }
 
-EditState wxWebView::GetEditCommandState(const wxString& command) const
+EditState WebView::GetEditCommandState(const wxString& command) const
 {
     if (m_mainFrame)
         return m_mainFrame->GetEditCommandState(command);
 }
 
-wxString wxWebView::GetEditCommandValue(const wxString& command) const
+wxString WebView::GetEditCommandValue(const wxString& command) const
 {
     if (m_mainFrame)
         return m_mainFrame->GetEditCommandValue(command);
@@ -580,13 +582,13 @@ wxString wxWebView::GetEditCommandValue(const wxString& command) const
     return wxEmptyString;
 }
 
-void wxWebView::LoadURL(const wxString& url)
+void WebView::LoadURL(const wxString& url)
 {
     if (m_mainFrame)
         m_mainFrame->LoadURL(url);
 }
 
-wxString wxWebView::GetMainFrameURL() const
+wxString WebView::GetMainFrameURL() const
 {
     if (m_mainFrame)
         return m_mainFrame->GetURL();
@@ -594,7 +596,7 @@ wxString wxWebView::GetMainFrameURL() const
     return wxEmptyString;
 }
 
-bool wxWebView::GoBack()
+bool WebView::GoBack()
 {
     if (m_mainFrame)
         return m_mainFrame->GoBack();
@@ -602,7 +604,7 @@ bool wxWebView::GoBack()
     return false;
 }
 
-bool wxWebView::GoForward()
+bool WebView::GoForward()
 {
     if (m_mainFrame)
         return m_mainFrame->GoForward();
@@ -610,7 +612,7 @@ bool wxWebView::GoForward()
     return false;
 }
 
-bool wxWebView::CanGoBack()
+bool WebView::CanGoBack()
 {
     if (m_mainFrame)
         return m_mainFrame->CanGoBack();
@@ -618,7 +620,7 @@ bool wxWebView::CanGoBack()
     return false;
 }
 
-bool wxWebView::CanGoForward()
+bool WebView::CanGoForward()
 {
     if (m_mainFrame)
         return m_mainFrame->CanGoForward();
@@ -626,7 +628,7 @@ bool wxWebView::CanGoForward()
     return false;
 }
 
-bool wxWebView::CanIncreaseTextSize() const
+bool WebView::CanIncreaseTextSize() const
 {
     if (m_mainFrame)
         return m_mainFrame->CanIncreaseTextSize();
@@ -634,13 +636,13 @@ bool wxWebView::CanIncreaseTextSize() const
     return false;
 }
 
-void wxWebView::IncreaseTextSize()
+void WebView::IncreaseTextSize()
 {
     if (m_mainFrame)
         m_mainFrame->IncreaseTextSize();
 }
 
-bool wxWebView::CanDecreaseTextSize() const
+bool WebView::CanDecreaseTextSize() const
 {
     if (m_mainFrame)
         m_mainFrame->CanDecreaseTextSize();
@@ -648,25 +650,25 @@ bool wxWebView::CanDecreaseTextSize() const
     return false;
 }
 
-void wxWebView::DecreaseTextSize()
+void WebView::DecreaseTextSize()
 {        
     if (m_mainFrame)
         m_mainFrame->DecreaseTextSize();
 }
 
-void wxWebView::ResetTextSize()
+void WebView::ResetTextSize()
 {
     if (m_mainFrame)
         m_mainFrame->ResetTextSize();    
 }
 
-void wxWebView::MakeEditable(bool enable)
+void WebView::MakeEditable(bool enable)
 {
     if (m_mainFrame)
         m_mainFrame->MakeEditable(enable);
 }
 
-bool wxWebView::IsEditable() const
+bool WebView::IsEditable() const
 {
     if (m_mainFrame)
         return m_mainFrame->IsEditable();
@@ -680,7 +682,7 @@ bool wxWebView::IsEditable() const
  * Event forwarding functions to send events down to WebCore.
  */
 
-void wxWebView::OnPaint(wxPaintEvent& event)
+void WebView::OnPaint(wxPaintEvent& event)
 {
     if (m_beingDestroyed || !m_mainFrame)
         return;
@@ -720,7 +722,7 @@ void wxWebView::OnPaint(wxPaintEvent& event)
     }
 }
 
-bool wxWebView::FindString(const wxString& string, bool forward, bool caseSensitive, bool wrapSelection, bool startInSelection)
+bool WebView::FindString(const wxString& string, bool forward, bool caseSensitive, bool wrapSelection, bool startInSelection)
 {
     if (m_mainFrame)
         return m_mainFrame->FindString(string, forward, caseSensitive, wrapSelection, startInSelection);
@@ -728,7 +730,7 @@ bool wxWebView::FindString(const wxString& string, bool forward, bool caseSensit
     return false;
 }
 
-void wxWebView::OnSize(wxSizeEvent& event)
+void WebView::OnSize(wxSizeEvent& event)
 { 
     if (m_isInitialized && m_mainFrame) {
         WebCore::Frame* frame = m_mainFrame->GetFrame();
@@ -748,7 +750,7 @@ static int getDoubleClickTime()
 #endif
 }
 
-void wxWebView::OnMouseEvents(wxMouseEvent& event)
+void WebView::OnMouseEvents(wxMouseEvent& event)
 {
     event.Skip();
     
@@ -820,9 +822,9 @@ void wxWebView::OnMouseEvents(wxMouseEvent& event)
         frame->eventHandler()->mouseMoved(wkEvent);
 }
 
-void wxWebView::OnContextMenuEvents(wxContextMenuEvent& event)
+void WebView::OnContextMenuEvents(wxContextMenuEvent& event)
 {
-    Connect(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxWebView::OnMenuSelectEvents), NULL, this);
+    Connect(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WebView::OnMenuSelectEvents), 0, this);
     m_impl->page->contextMenuController()->clearContextMenu();
     wxPoint localEventPoint = ScreenToClient(event.GetPosition());
 
@@ -853,10 +855,10 @@ void wxWebView::OnContextMenuEvents(wxContextMenuEvent& event)
 
     PopupMenu(menuWx, localEventPoint);
     
-    Disconnect(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxWebView::OnMenuSelectEvents), NULL, this);
+    Disconnect(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WebView::OnMenuSelectEvents), 0, this);
 }
 
-void wxWebView::OnMenuSelectEvents(wxCommandEvent& event)
+void WebView::OnMenuSelectEvents(wxCommandEvent& event)
 {
     // we shouldn't hit this unless there's a context menu showing
     WebCore::ContextMenu* coreMenu = m_impl->page->contextMenuController()->contextMenu();
@@ -872,13 +874,13 @@ void wxWebView::OnMenuSelectEvents(wxCommandEvent& event)
     delete item;
 }
 
-void wxWebView::OnMouseCaptureLost(wxMouseCaptureLostEvent& event)
+void WebView::OnMouseCaptureLost(wxMouseCaptureLostEvent& event)
 {
     // do nothing - unfortunately, we MUST handle this event due to wxWidgets rules,
     // otherwise we will assert, even though there is nothing for us to do here.
 }
 
-bool wxWebView::CanCopy()
+bool WebView::CanCopy()
 {
     if (m_mainFrame)
         return m_mainFrame->CanCopy();
@@ -886,13 +888,13 @@ bool wxWebView::CanCopy()
     return false;
 }
 
-void wxWebView::Copy()
+void WebView::Copy()
 {
     if (m_mainFrame)
         m_mainFrame->Copy();
 }
 
-bool wxWebView::CanCut()
+bool WebView::CanCut()
 {
     if (m_mainFrame)
         return m_mainFrame->CanCut();
@@ -900,13 +902,13 @@ bool wxWebView::CanCut()
     return false;
 }
 
-void wxWebView::Cut()
+void WebView::Cut()
 {
     if (m_mainFrame)
         m_mainFrame->Cut();
 }
 
-bool wxWebView::CanPaste()
+bool WebView::CanPaste()
 {
     if (m_mainFrame)
         return m_mainFrame->CanPaste();
@@ -914,13 +916,13 @@ bool wxWebView::CanPaste()
     return false;
 }
 
-void wxWebView::Paste()
+void WebView::Paste()
 {
     if (m_mainFrame)
         m_mainFrame->Paste();
 }
 
-void wxWebView::OnKeyEvents(wxKeyEvent& event)
+void WebView::OnKeyEvents(wxKeyEvent& event)
 {
     WebCore::Frame* frame = 0;
     if (m_impl->page)
@@ -1055,7 +1057,7 @@ void wxWebView::OnKeyEvents(wxKeyEvent& event)
     event.Skip();
 }
 
-void wxWebView::OnSetFocus(wxFocusEvent& event)
+void WebView::OnSetFocus(wxFocusEvent& event)
 {
     if (m_impl && m_impl->page && m_impl->page->focusController()) {
         m_impl->page->focusController()->setFocused(true);
@@ -1068,7 +1070,7 @@ void wxWebView::OnSetFocus(wxFocusEvent& event)
     event.Skip();
 }
 
-void wxWebView::OnKillFocus(wxFocusEvent& event)
+void WebView::OnKillFocus(wxFocusEvent& event)
 {
     if (m_impl && m_impl->page && m_impl->page->focusController()) {
         m_impl->page->focusController()->setFocused(false);
@@ -1089,15 +1091,15 @@ void wxWebView::OnKillFocus(wxFocusEvent& event)
     event.Skip();
 }
 
-wxWebViewDOMElementInfo wxWebView::HitTest(const wxPoint& pos) const
+WebViewDOMElementInfo WebView::HitTest(const wxPoint& pos) const
 {
     if (m_mainFrame)
         return m_mainFrame->HitTest(pos);
 
-    return wxWebViewDOMElementInfo();
+    return WebViewDOMElementInfo();
 }
 
-bool wxWebView::ShouldClose() const
+bool WebView::ShouldClose() const
 {
     if (m_mainFrame)
         return m_mainFrame->ShouldClose();
@@ -1106,7 +1108,7 @@ bool wxWebView::ShouldClose() const
 }
 
 /* static */
-void wxWebView::SetDatabaseDirectory(const wxString& databaseDirectory)
+void WebView::SetDatabaseDirectory(const wxString& databaseDirectory)
 {
 #if ENABLE(SQL_DATABASE)
     WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(databaseDirectory);
@@ -1114,7 +1116,7 @@ void wxWebView::SetDatabaseDirectory(const wxString& databaseDirectory)
 }
 
 /* static */
-wxString wxWebView::GetDatabaseDirectory()
+wxString WebView::GetDatabaseDirectory()
 {
 #if ENABLE(SQL_DATABASE)
     return WebCore::DatabaseTracker::tracker().databaseDirectoryPath();
@@ -1124,7 +1126,7 @@ wxString wxWebView::GetDatabaseDirectory()
 }
 
 /* static */
-void wxWebView::SetDatabasesEnabled(bool enabled)
+void WebView::SetDatabasesEnabled(bool enabled)
 {
 #if ENABLE(SQL_DATABASE)
     WebCore::AbstractDatabase::setIsAvailable(enabled);
@@ -1132,7 +1134,7 @@ void wxWebView::SetDatabasesEnabled(bool enabled)
 }
 
 /* static */
-bool wxWebView::AreDatabasesEnabled()
+bool WebView::AreDatabasesEnabled()
 {
 #if ENABLE(SQL_DATABASE)
     return WebCore::AbstractDatabase::isAvailable();
@@ -1155,7 +1157,7 @@ static WebCore::ResourceHandleManager::ProxyType curlProxyType(wxProxyType type)
 }
 
 /* static */
-void wxWebView::SetProxyInfo(const wxString& host,
+void WebView::SetProxyInfo(const wxString& host,
                              unsigned long port,
                              wxProxyType type,
                              const wxString& username,
@@ -1166,16 +1168,16 @@ void wxWebView::SetProxyInfo(const wxString& host,
         mgr->setProxyInfo(host, port, curlProxyType(type), username, password);
 }
 
-wxWebSettings wxWebView::GetWebSettings()
+WebSettings WebView::GetWebSettings()
 {
     ASSERT(m_impl->page);
     if (m_impl->page)
-        return wxWebSettings(m_impl->page->settings());
+        return WebSettings(m_impl->page->settings());
     
-    return wxWebSettings();
+    return WebSettings();
 }
 
-wxWebKitCompatibilityMode wxWebView::GetCompatibilityMode() const
+WebKitCompatibilityMode WebView::GetCompatibilityMode() const
 {
     if (m_mainFrame)
         return m_mainFrame->GetCompatibilityMode();
@@ -1183,8 +1185,10 @@ wxWebKitCompatibilityMode wxWebView::GetCompatibilityMode() const
     return QuirksMode;
 }
 
-void wxWebView::GrantUniversalAccess()
+void WebView::GrantUniversalAccess()
 {
     if (m_mainFrame)
         m_mainFrame->GrantUniversalAccess();
+}
+
 }

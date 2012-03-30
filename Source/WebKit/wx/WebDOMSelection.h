@@ -44,19 +44,21 @@ class FrameSelection;
 
 }
 
-class WXDLLIMPEXP_WEBKIT wxWebKitSelection : public wxObject {
+namespace WebKit {
+
+class WXDLLIMPEXP_WEBKIT WebKitSelection : public wxObject {
 #ifndef SWIG
-DECLARE_DYNAMIC_CLASS(wxWebKitDOMSelection)
+DECLARE_DYNAMIC_CLASS(WebKitDOMSelection)
 #endif
 
 public:
-    wxWebKitSelection() {}
-    wxWebKitSelection(WebCore::FrameSelection* selection)
+    WebKitSelection() { }
+    WebKitSelection(WebCore::FrameSelection* selection)
         : m_selection(selection) 
         { }
         
-    wxWebKitSelection(const wxWebKitSelection&);
-    ~wxWebKitSelection() { m_selection = 0; }
+    WebKitSelection(const WebKitSelection&);
+    ~WebKitSelection() { m_selection = 0; }
 
     WebDOMElement* GetRootEditableElement() const;
     WebDOMRange* GetAsRange();
@@ -65,5 +67,7 @@ private:
     WebCore::FrameSelection* m_selection;
 
 };
+
+}
 
 #endif

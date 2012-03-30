@@ -86,6 +86,8 @@
 #define MaximumTextSizeMultiplier       3.0f
 #define TextSizeMultiplierRatio         1.2f
 
+namespace WebKit {
+
 using namespace std;
 
 // we need wxGraphicsContext and wxPrinterDC to work together, 
@@ -207,7 +209,7 @@ private:
 };
 #endif
 
-wxWebFrame* kit(WebCore::Frame* frame)
+WebFrame* kit(WebCore::Frame* frame)
 {
     if (!frame)
         return 0;
@@ -221,7 +223,7 @@ wxWebFrame* kit(WebCore::Frame* frame)
     return 0;
 }
 
-wxWebFrame::wxWebFrame(wxWebView* container, wxWebFrame* parent, WebViewFrameData* data) :
+WebFrame::WebFrame(WebView* container, WebFrame* parent, WebViewFrameData* data) :
     m_textMagnifier(1.0),
     m_isInitialized(false),
     m_beingDestroyed(false)
@@ -258,20 +260,20 @@ wxWebFrame::wxWebFrame(wxWebView* container, wxWebFrame* parent, WebViewFrameDat
     m_isInitialized = true;
 }
 
-wxWebFrame::~wxWebFrame()
+WebFrame::~WebFrame()
 {
     if (m_impl)
         delete m_impl;
 }
 
-wxString wxWebFrame::GetName()
+wxString WebFrame::GetName()
 {
     if (m_impl && m_impl->frame && m_impl->frame->tree())
         return m_impl->frame->tree()->name().string();
     return wxEmptyString;
 }
 
-WebCore::Frame* wxWebFrame::GetFrame()
+WebCore::Frame* WebFrame::GetFrame()
 {
     if (m_impl)
         return m_impl->frame;
@@ -279,19 +281,19 @@ WebCore::Frame* wxWebFrame::GetFrame()
     return 0;
 }
 
-void wxWebFrame::Stop()
+void WebFrame::Stop()
 {
     if (m_impl->frame && m_impl->frame->loader())
         m_impl->frame->loader()->stop();
 }
 
-void wxWebFrame::Reload()
+void WebFrame::Reload()
 {
     if (m_impl->frame && m_impl->frame->loader())
         m_impl->frame->loader()->reload();
 }
 
-wxString wxWebFrame::GetPageSource()
+wxString WebFrame::GetPageSource()
 {
     if (m_impl->frame) {
         if (m_impl->frame->view() && m_impl->frame->view()->layoutPending())
@@ -307,7 +309,7 @@ wxString wxWebFrame::GetPageSource()
     return wxEmptyString;
 }
 
-void wxWebFrame::SetPageSource(const wxString& source, const wxString& baseUrl, const wxString& mimetype)
+void WebFrame::SetPageSource(const wxString& source, const wxString& baseUrl, const wxString& mimetype)
 {
     if (m_impl->frame && m_impl->frame->loader()) {
         WebCore::KURL url(WebCore::KURL(), baseUrl);
@@ -323,7 +325,7 @@ void wxWebFrame::SetPageSource(const wxString& source, const wxString& baseUrl, 
     }
 }
 
-wxString wxWebFrame::GetInnerText()
+wxString WebFrame::GetInnerText()
 {
     if (m_impl->frame->view() && m_impl->frame->view()->layoutPending())
         m_impl->frame->view()->layout();
@@ -332,7 +334,7 @@ wxString wxWebFrame::GetInnerText()
     return documentElement->innerText();
 }
 
-wxString wxWebFrame::GetAsMarkup()
+wxString WebFrame::GetAsMarkup()
 {
     if (!m_impl->frame || !m_impl->frame->document())
         return wxEmptyString;
@@ -340,7 +342,7 @@ wxString wxWebFrame::GetAsMarkup()
     return createMarkup(m_impl->frame->document());
 }
 
-wxString wxWebFrame::GetExternalRepresentation()
+wxString WebFrame::GetExternalRepresentation()
 {
     if (m_impl->frame->view() && m_impl->frame->view()->layoutPending())
         m_impl->frame->view()->layout();
@@ -348,7 +350,7 @@ wxString wxWebFrame::GetExternalRepresentation()
     return externalRepresentation(m_impl->frame);
 }
 
-wxString wxWebFrame::GetSelectionAsHTML()
+wxString WebFrame::GetSelectionAsHTML()
 {
     if (m_impl->frame)
         return m_impl->frame->selection()->toNormalizedRange()->toHTML();
@@ -356,7 +358,7 @@ wxString wxWebFrame::GetSelectionAsHTML()
     return wxEmptyString;
 }
 
-wxString wxWebFrame::GetSelectionAsText()
+wxString WebFrame::GetSelectionAsText()
 {
     if (m_impl->frame)
         return m_impl->frame->selection()->toNormalizedRange()->text();
@@ -364,15 +366,15 @@ wxString wxWebFrame::GetSelectionAsText()
     return wxEmptyString;
 }
 
-wxWebKitSelection wxWebFrame::GetSelection()
+WebKitSelection WebFrame::GetSelection()
 {
     if (m_impl->frame)
-        return wxWebKitSelection(m_impl->frame->selection());
+        return WebKitSelection(m_impl->frame->selection());
         
     return 0;
 }
 
-wxString wxWebFrame::RunScript(const wxString& javascript)
+wxString WebFrame::RunScript(const wxString& javascript)
 {
     wxString returnValue = wxEmptyString;
     if (m_impl->frame && m_impl->frame->loader()) {
@@ -394,13 +396,13 @@ wxString wxWebFrame::RunScript(const wxString& javascript)
     return returnValue;
 }
 
-bool wxWebFrame::ExecuteEditCommand(const wxString& command, const wxString& parameter)
+bool WebFrame::ExecuteEditCommand(const wxString& command, const wxString& parameter)
 {
     if (m_impl->frame && IsEditable())
         return m_impl->frame->editor()->command(command).execute(parameter);
 }
 
-EditState wxWebFrame::GetEditCommandState(const wxString& command) const
+EditState WebFrame::GetEditCommandState(const wxString& command) const
 {
     if (m_impl->frame && IsEditable()) { 
         WebCore::TriState state = m_impl->frame->editor()->command(command).state();
@@ -415,7 +417,7 @@ EditState wxWebFrame::GetEditCommandState(const wxString& command) const
     return EditStateFalse;
 }
 
-wxString wxWebFrame::GetEditCommandValue(const wxString& command) const
+wxString WebFrame::GetEditCommandValue(const wxString& command) const
 {
     if (m_impl->frame && IsEditable())
         return m_impl->frame->editor()->command(command).value();
@@ -424,7 +426,7 @@ wxString wxWebFrame::GetEditCommandValue(const wxString& command) const
 }
 
 
-bool wxWebFrame::FindString(const wxString& string, bool forward, bool caseSensitive, bool wrapSelection, bool startInSelection)
+bool WebFrame::FindString(const wxString& string, bool forward, bool caseSensitive, bool wrapSelection, bool startInSelection)
 {
     if (m_impl->frame)
         return m_impl->frame->editor()->findString(string, forward, caseSensitive, wrapSelection, startInSelection);
@@ -432,7 +434,7 @@ bool wxWebFrame::FindString(const wxString& string, bool forward, bool caseSensi
     return false;
 }
 
-void wxWebFrame::LoadURL(const wxString& url)
+void WebFrame::LoadURL(const wxString& url)
 {
     if (m_impl->frame && m_impl->frame->loader()) {
         WebCore::KURL kurl = WebCore::KURL(WebCore::KURL(), url, WebCore::UTF8Encoding());
@@ -454,7 +456,7 @@ void wxWebFrame::LoadURL(const wxString& url)
     }
 }
 
-wxString wxWebFrame::GetURL() const
+wxString WebFrame::GetURL() const
 {
     if (m_impl->frame && m_impl->frame->document())
         return m_impl->frame->document()->url().string();
@@ -463,7 +465,7 @@ wxString wxWebFrame::GetURL() const
 }
 
 
-bool wxWebFrame::GoBack()
+bool WebFrame::GoBack()
 {
     if (m_impl->frame && m_impl->frame->page())
         return m_impl->frame->page()->goBack();
@@ -471,7 +473,7 @@ bool wxWebFrame::GoBack()
     return false;
 }
 
-bool wxWebFrame::GoForward()
+bool WebFrame::GoForward()
 {
     if (m_impl->frame && m_impl->frame->page())
         return m_impl->frame->page()->goForward();
@@ -479,7 +481,7 @@ bool wxWebFrame::GoForward()
     return false;
 }
 
-bool wxWebFrame::CanGoBack()
+bool WebFrame::CanGoBack()
 {
     if (m_impl->frame && m_impl->frame->page())
         return m_impl->frame->page()->canGoBackOrForward(-1);
@@ -487,7 +489,7 @@ bool wxWebFrame::CanGoBack()
     return false;
 }
 
-bool wxWebFrame::CanGoForward()
+bool WebFrame::CanGoForward()
 {
     if (m_impl->frame && m_impl->frame->page())
         return m_impl->frame->page()->canGoBackOrForward(1);
@@ -495,19 +497,19 @@ bool wxWebFrame::CanGoForward()
     return false;
 }
 
-void wxWebFrame::Undo()
+void WebFrame::Undo()
 {
     if (m_impl->frame && m_impl->frame->editor() && CanUndo())
         return m_impl->frame->editor()->undo();
 }
 
-void wxWebFrame::Redo()
+void WebFrame::Redo()
 {
     if (m_impl->frame && m_impl->frame->editor() && CanRedo())
         return m_impl->frame->editor()->redo();
 }
 
-bool wxWebFrame::CanUndo()
+bool WebFrame::CanUndo()
 {
     if (m_impl->frame && m_impl->frame->editor())
         return m_impl->frame->editor()->canUndo();
@@ -515,7 +517,7 @@ bool wxWebFrame::CanUndo()
     return false;
 }
 
-bool wxWebFrame::CanRedo()
+bool WebFrame::CanRedo()
 {
     if (m_impl->frame && m_impl->frame->editor())
         return m_impl->frame->editor()->canRedo();
@@ -523,7 +525,7 @@ bool wxWebFrame::CanRedo()
     return false;
 }
 
-bool wxWebFrame::CanIncreaseTextSize() const
+bool WebFrame::CanIncreaseTextSize() const
 {
     if (m_impl->frame && m_impl->frame->view()) {
         if (m_textMagnifier*TextSizeMultiplierRatio <= MaximumTextSizeMultiplier)
@@ -532,7 +534,7 @@ bool wxWebFrame::CanIncreaseTextSize() const
     return false;
 }
 
-void wxWebFrame::IncreaseTextSize()
+void WebFrame::IncreaseTextSize()
 {
     if (CanIncreaseTextSize()) {
         m_textMagnifier = m_textMagnifier*TextSizeMultiplierRatio;
@@ -540,7 +542,7 @@ void wxWebFrame::IncreaseTextSize()
     }
 }
 
-bool wxWebFrame::CanDecreaseTextSize() const
+bool WebFrame::CanDecreaseTextSize() const
 {
     if (m_impl->frame && m_impl->frame->view()) {
         if (m_textMagnifier/TextSizeMultiplierRatio >= MinimumTextSizeMultiplier)
@@ -549,7 +551,7 @@ bool wxWebFrame::CanDecreaseTextSize() const
     return false;
 }
 
-void wxWebFrame::DecreaseTextSize()
+void WebFrame::DecreaseTextSize()
 {        
     if (CanDecreaseTextSize()) {
         m_textMagnifier = m_textMagnifier/TextSizeMultiplierRatio;
@@ -557,27 +559,27 @@ void wxWebFrame::DecreaseTextSize()
     }
 }
 
-void wxWebFrame::ResetTextSize()
+void WebFrame::ResetTextSize()
 {
     m_textMagnifier = 1.0;
     if (m_impl->frame)
         m_impl->frame->setTextZoomFactor(m_textMagnifier);
 }
 
-void wxWebFrame::MakeEditable(bool enable)
+void WebFrame::MakeEditable(bool enable)
 {
     if (enable != IsEditable() && m_impl->frame && m_impl->frame->page())
         m_impl->frame->page()->setEditable(enable);
 }
 
-bool wxWebFrame::IsEditable() const
+bool WebFrame::IsEditable() const
 {
     if (m_impl->frame && m_impl->frame->page())
         return m_impl->frame->page()->isEditable();
     return false;
 }
 
-bool wxWebFrame::CanCopy()
+bool WebFrame::CanCopy()
 {
     if (m_impl->frame && m_impl->frame->view())
         return (m_impl->frame->editor()->canCopy() || m_impl->frame->editor()->canDHTMLCopy());
@@ -585,13 +587,13 @@ bool wxWebFrame::CanCopy()
     return false;
 }
 
-void wxWebFrame::Copy()
+void WebFrame::Copy()
 {
     if (CanCopy())
         m_impl->frame->editor()->copy();
 }
 
-bool wxWebFrame::CanCut()
+bool WebFrame::CanCut()
 {
     if (m_impl->frame && m_impl->frame->view())
         return (m_impl->frame->editor()->canCut() || m_impl->frame->editor()->canDHTMLCut());
@@ -599,13 +601,13 @@ bool wxWebFrame::CanCut()
     return false;
 }
 
-void wxWebFrame::Cut()
+void WebFrame::Cut()
 {
     if (CanCut())
         m_impl->frame->editor()->cut();
 }
 
-bool wxWebFrame::CanPaste()
+bool WebFrame::CanPaste()
 {
     if (m_impl->frame && m_impl->frame->view())
         return (m_impl->frame->editor()->canPaste() || m_impl->frame->editor()->canDHTMLPaste());
@@ -613,14 +615,14 @@ bool wxWebFrame::CanPaste()
     return false;
 }
 
-void wxWebFrame::Paste()
+void WebFrame::Paste()
 {
     if (CanPaste())
         m_impl->frame->editor()->paste();
 
 }
 
-void wxWebFrame::Print(bool showDialog)
+void WebFrame::Print(bool showDialog)
 {
 #if wxCHECK_VERSION(2, 9, 1)
     if (!m_impl->frame)
@@ -681,9 +683,9 @@ void wxWebFrame::Print(bool showDialog)
 #endif
 }
 
-wxWebViewDOMElementInfo wxWebFrame::HitTest(const wxPoint& pos) const
+WebViewDOMElementInfo WebFrame::HitTest(const wxPoint& pos) const
 {
-    wxWebViewDOMElementInfo domInfo;
+    WebViewDOMElementInfo domInfo;
 
     if (m_impl->frame->view()) {
         WebCore::HitTestResult result = m_impl->frame->eventHandler()->hitTestResultAtPoint(m_impl->frame->view()->windowToContents(pos), false);
@@ -698,7 +700,7 @@ wxWebViewDOMElementInfo wxWebFrame::HitTest(const wxPoint& pos) const
     return domInfo;
 }
 
-bool wxWebFrame::ShouldClose() const
+bool WebFrame::ShouldClose() const
 {
     if (m_impl->frame)
         return m_impl->frame->loader()->shouldClose();
@@ -706,16 +708,18 @@ bool wxWebFrame::ShouldClose() const
     return true;
 }
 
-wxWebKitCompatibilityMode wxWebFrame::GetCompatibilityMode() const
+WebKitCompatibilityMode WebFrame::GetCompatibilityMode() const
 {
     if (m_impl->frame && m_impl->frame->document())
-        return (wxWebKitCompatibilityMode)m_impl->frame->document()->compatibilityMode();
+        return (WebKitCompatibilityMode)m_impl->frame->document()->compatibilityMode();
 
     return QuirksMode;
 }
 
-void wxWebFrame::GrantUniversalAccess()
+void WebFrame::GrantUniversalAccess()
 {
     if (m_impl->frame && m_impl->frame->document())
         m_impl->frame->document()->securityOrigin()->grantUniversalAccess();
+}
+
 }
