@@ -20,8 +20,8 @@
 #include "../testwindow.h"
 #include "../util.h"
 
-#include <QDeclarativeEngine>
 #include <QScopedPointer>
+#include <QtQml/QQmlEngine>
 #include <QtTest/QtTest>
 #include <private/qquickwebpage_p.h>
 #include <private/qquickwebview_p.h>

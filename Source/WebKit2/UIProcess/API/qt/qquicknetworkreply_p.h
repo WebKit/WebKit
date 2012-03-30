@@ -29,7 +29,7 @@
 #include <QNetworkAccessManager>
 #include <QObject>
 #include <QWeakPointer>
-#include <QtDeclarative/qdeclarativelist.h>
+#include <QtQml/qqmllist.h>
 #include <QtQuick/qquickitem.h>
 
 class QWEBKIT_EXPORT QQuickNetworkReply : public QObject {

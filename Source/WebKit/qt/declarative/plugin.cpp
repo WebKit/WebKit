@@ -17,12 +17,19 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include "qglobal.h"
+
 #if defined(HAVE_QQUICK1)
 #include "qdeclarativewebview_p.h"
 #endif
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#include <QtQml/qqml.h>
+#include <QtQml/qqmlextensionplugin.h>
+#else
 #include <QtDeclarative/qdeclarative.h>
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
+#endif
 
 #if defined(HAVE_WEBKIT2)
 #include "private/qquickwebpage_p.h"
@@ -31,8 +38,8 @@
 #include "private/qwebloadrequest_p.h"
 #include "private/qwebnavigationrequest_p.h"
 
-#include <QtDeclarative/qdeclarativeengine.h>
 #include <QtNetwork/qnetworkreply.h>
+#include <QtQml/qqmlengine.h>
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -41,7 +48,7 @@ class WebKitQmlPlugin : public QDeclarativeExtensionPlugin {
     Q_OBJECT
 public:
 #if defined(HAVE_WEBKIT2)
-    virtual void initializeEngine(QDeclarativeEngine* engine, const char* uri)
+    virtual void initializeEngine(QQmlEngine* engine, const char* uri)
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtWebKit"));
         engine->addImageProvider(QLatin1String("webicon"), new QWebIconImageProvider);

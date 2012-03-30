@@ -1,3 +1,17 @@
+2012-03-29  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Build fix by renameing QtDeclarative to QtQml in header calls.
+        https://bugs.webkit.org/show_bug.cgi?id=82195
+
+        Reviewed by Simon Hausmann.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::updateVisualMockTouchPoints):
+        * MiniBrowser/qt/main.cpp:
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WrapperWindow::handleStatusChanged):
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-03-30  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Implement LayoutTestController::setMinimumTimerInterval
