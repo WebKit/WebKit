@@ -4609,7 +4609,6 @@
             'plugins/PluginViewNone.cpp',
             'plugins/chromium/PluginDataChromium.cpp',
             'plugins/chromium/PluginDataChromium.h',
-            'plugins/gtk/PluginDataGtk.cpp',
             'plugins/gtk/PluginPackageGtk.cpp',
             'plugins/gtk/PluginViewGtk.cpp',
             'plugins/gtk/gtk2xtbin.h',
