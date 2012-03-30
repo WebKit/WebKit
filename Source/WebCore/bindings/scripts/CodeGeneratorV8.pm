@@ -3601,8 +3601,13 @@ sub CreateCustomSignature
                 $result .= "v8::Handle<v8::FunctionTemplate>()";
             } else {
                 my $type = $parameter->type;
-                my $header = GetV8HeaderName($type);
-                AddToImplIncludes($header);
+                my $arrayType = $codeGenerator->GetArrayType($type);
+                if ($arrayType) {
+                    AddToImplIncludes("$arrayType.h");
+                } else {
+                    my $header = GetV8HeaderName($type);
+                    AddToImplIncludes($header);
+                }
                 $result .= "V8${type}::GetRawTemplate()";
             }
         } else {

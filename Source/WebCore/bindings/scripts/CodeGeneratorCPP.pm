@@ -187,24 +187,45 @@ sub GetParent
     return $parent;
 }
 
-sub ShouldSkipType
+sub SkipFunction
 {
-    my $typeInfo = shift;
+    my $function = shift;
 
-    return 1 if $typeInfo->signature->extendedAttributes->{"Custom"}
-                or $typeInfo->signature->extendedAttributes->{"CustomGetter"};
+    return 1 if $function->signature->extendedAttributes->{"Custom"};
 
     # FIXME: We don't generate bindings for SVG related interfaces yet
-    return 1 if $typeInfo->signature->name =~ /getSVGDocument/;
+    return 1 if $function->signature->name =~ /getSVGDocument/;
 
-    return 1 if $typeInfo->signature->type =~ /Constructor$/;
-    
-    return 1 if $codeGenerator->GetArrayType($typeInfo->signature->type);
-    
+    if ($codeGenerator->GetArrayType($function->signature->type)) {
+        return 1;
+    }
+
+    foreach my $param (@{$function->parameters}) {
+        return 1 if $codeGenerator->GetArrayType($param->type);
+    }
+
     # FIXME: This is typically used to add script execution state arguments to the method.
     # These functions will not compile with the C++ bindings as is, so disable them
     # to restore compilation until a proper implementation can be developed.
-    return 1 if $typeInfo->signature->extendedAttributes->{"CallWith"};
+    return 1 if $function->signature->extendedAttributes->{"CallWith"};
+}
+
+sub SkipAttribute
+{
+    my $attribute = shift;
+
+    return 1 if $attribute->signature->extendedAttributes->{"Custom"}
+                or $attribute->signature->extendedAttributes->{"CustomGetter"};
+
+    return 1 if $attribute->signature->type =~ /Constructor$/;
+
+    return 1 if $codeGenerator->GetArrayType($attribute->signature->type);
+
+    # FIXME: This is typically used to add script execution state arguments to the method.
+    # These functions will not compile with the C++ bindings as is, so disable them
+    # to restore compilation until a proper implementation can be developed.
+    return 1 if $attribute->signature->extendedAttributes->{"CallWith"};
+
     return 0;
 }
 
@@ -264,6 +285,7 @@ sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
 
+    return if $codeGenerator->GetArrayType($type);
     return if $codeGenerator->IsNonPointerType($type);
     return if $type =~ /Constructor/;
 
@@ -415,7 +437,7 @@ sub GenerateHeader
     # - Add attribute getters/setters.
     if ($numAttributes > 0) {
         foreach my $attribute (@{$dataNode->attributes}) {
-            next if ShouldSkipType($attribute);
+            next if SkipAttribute($attribute);
 
             my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             my $attributeName = $attribute->signature->name;
@@ -454,7 +476,7 @@ sub GenerateHeader
     # - Add functions.
     if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
-            next if ShouldSkipType($function);
+            next if SkipFunction($function);
             my $functionName = $function->signature->extendedAttributes->{"ImplementedAs"} || $function->signature->name;
 
             my $returnType = GetCPPType($function->signature->type, 0);
@@ -669,7 +691,7 @@ sub GenerateImplementation
     # - Attributes
     if ($numAttributes > 0) {
         foreach my $attribute (@{$dataNode->attributes}) {
-            next if ShouldSkipType($attribute);
+            next if SkipAttribute($attribute);
             AddIncludesForType($attribute->signature->type);
 
             my $idlType = $codeGenerator->StripModule($attribute->signature->type);
@@ -775,7 +797,7 @@ sub GenerateImplementation
     if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
             # Treat CPPPureInterface as Custom as well, since the WebCore versions will take a script context as well
-            next if ShouldSkipType($function) || $dataNode->extendedAttributes->{"CPPPureInterface"};
+            next if SkipFunction($function) || $dataNode->extendedAttributes->{"CPPPureInterface"};
             AddIncludesForType($function->signature->type);
 
             my $functionName = $function->signature->name;

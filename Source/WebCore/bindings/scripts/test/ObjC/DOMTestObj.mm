@@ -50,8 +50,6 @@
 #import "DOMcInternal.h"
 #import "DOMdInternal.h"
 #import "DOMeInternal.h"
-#import "DOMsequence<ScriptProfile>Internal.h"
-#import "DOMsequenceInternal.h"
 #import "Dictionary.h"
 #import "Document.h"
 #import "EventListener.h"
@@ -77,8 +75,6 @@
 #import "c.h"
 #import "d.h"
 #import "e.h"
-#import "sequence.h"
-#import "sequence<ScriptProfile>.h"
 #import <wtf/GetPtr.h>
 
 #define IMPL reinterpret_cast<WebCore::TestObj*>(_internal)
@@ -204,20 +200,6 @@
     ASSERT(newTestObjAttr);
 
     IMPL->setTestObjAttr(core(newTestObjAttr));
-}
-
-- (DOMsequence<ScriptProfile> *)sequenceAttr
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->sequenceAttr()));
-}
-
-- (void)setSequenceAttr:(DOMsequence<ScriptProfile> *)newSequenceAttr
-{
-    WebCore::JSMainThreadNullState state;
-    ASSERT(newSequenceAttr);
-
-    IMPL->setSequenceAttr(core(newSequenceAttr));
 }
 
 - (DOMTestObj *)XMLObjAttr
@@ -759,18 +741,6 @@
 {
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->objMethodWithArgs(intArg, strArg, core(objArg))));
-}
-
-- (void)methodWithSequenceArg:(DOMsequence *)
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->methodWithSequenceArg(core());
-}
-
-- (DOMsequence<ScriptProfile> *)methodReturningSequence:(int)intArg
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->methodReturningSequence(intArg)));
 }
 
 - (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg

@@ -43,7 +43,6 @@ class WebDOMbool;
 class WebDOMc;
 class WebDOMd;
 class WebDOMe;
-class WebDOMsequence;
 
 class WebDOMTestObj : public WebDOMObject {
 public:
@@ -150,7 +149,6 @@ public:
     int intMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
     WebDOMTestObj objMethod();
     WebDOMTestObj objMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
-    void methodWithSequenceArg(const WebDOMsequence& );
     WebDOMTestObj methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg);
     void serializedValue(const WebDOMString& serializedArg);
     void idbKey(const WebDOMIDBKey& key);

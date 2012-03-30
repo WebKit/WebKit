@@ -43,7 +43,6 @@
 #include "JSd.h"
 #include "JSe.h"
 #include "JSint.h"
-#include "JSsequence.h"
 #include "KURL.h"
 #include "SVGDocument.h"
 #include "SVGStaticPropertyTearOff.h"
@@ -1429,10 +1428,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithSequenceArg(Exe
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
-    sequence* (tosequence(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
+    sequence<ScriptProfile>* sequenceArg(toNativeArray<ScriptProfile>(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    impl->methodWithSequenceArg();
+    impl->methodWithSequenceArg(sequenceArg);
     return JSValue::encode(jsUndefined());
 }
 

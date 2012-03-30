@@ -447,6 +447,29 @@ sub IsNativeObjCType
     return 0;
 }
 
+sub SkipFunction
+{
+    my $function = shift;
+
+    return 1 if $codeGenerator->GetArrayType($function->signature->type);
+
+    foreach my $param (@{$function->parameters}) {
+        return 1 if $codeGenerator->GetArrayType($param->type);
+    }
+
+    return 0;
+}
+
+sub SkipAttribute
+{
+    my $attribute = shift;
+
+    return 1 if $codeGenerator->GetArrayType($attribute->signature->type);
+
+    return 0;
+}
+
+
 sub GetObjCType
 {
     my $type = shift;
@@ -511,7 +534,8 @@ sub AddForwardDeclarationsForType
     my $type = $codeGenerator->StripModule(shift);
     my $public = shift;
 
-    return if $codeGenerator->IsNonPointerType($type) ;
+    return if $codeGenerator->IsNonPointerType($type);
+    return if $codeGenerator->GetArrayType($type);
 
     my $class = GetClassName($type);
 
@@ -533,6 +557,7 @@ sub AddIncludesForType
     my $type = $codeGenerator->StripModule(shift);
 
     return if $codeGenerator->IsNonPointerType($type);
+    return if $codeGenerator->GetArrayType($type);
 
     if (IsNativeObjCType($type)) {
         if ($type eq "Color") {
@@ -843,6 +868,7 @@ sub GenerateHeader
     # - Add functions.
     if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
+            next if SkipFunction($function);
             my $functionName = $function->signature->name;
 
             my $returnType = GetObjCType($function->signature->type);
@@ -1165,6 +1191,7 @@ sub GenerateImplementation
     # - Attributes
     if ($numAttributes > 0) {
         foreach my $attribute (@{$dataNode->attributes}) {
+            next if SkipAttribute($attribute);
             AddIncludesForType($attribute->signature->type);
 
             my $idlType = $codeGenerator->StripModule($attribute->signature->type);
@@ -1461,6 +1488,7 @@ sub GenerateImplementation
     # - Functions
     if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
+            next if SkipFunction($function);
             AddIncludesForType($function->signature->type);
 
             my $functionName = $function->signature->name;

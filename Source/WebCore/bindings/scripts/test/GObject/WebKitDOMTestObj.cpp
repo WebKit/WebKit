@@ -57,8 +57,6 @@
 #include "webkit/WebKitDOMdPrivate.h"
 #include "webkit/WebKitDOMe.h"
 #include "webkit/WebKitDOMePrivate.h"
-#include "webkit/WebKitDOMsequence.h"
-#include "webkit/WebKitDOMsequencePrivate.h"
 #include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
@@ -1032,21 +1030,6 @@ webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* self, glong int_arg, 
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->objMethodWithArgs(int_arg, converted_str_arg, converted_obj_arg));
     WebKitDOMTestObj* res = WebKit::kit(g_res.get());
     return res;
-}
-
-void
-webkit_dom_test_obj_method_with_sequence_arg(WebKitDOMTestObj* self, WebKitDOMsequence* )
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj * item = WebKit::core(self);
-    g_return_if_fail();
-    WebCore::sequence * converted_ = NULL;
-    if ( != NULL) {
-        converted_ = WebKit::core();
-        g_return_if_fail(converted_);
-    }
-    item->methodWithSequenceArg(converted_);
 }
 
 WebKitDOMTestObj*

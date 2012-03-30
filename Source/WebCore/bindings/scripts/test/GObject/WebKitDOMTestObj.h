@@ -116,17 +116,6 @@ WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* self, glong int_arg, const gchar* str_arg, WebKitDOMTestObj* obj_arg);
 
 /**
- * webkit_dom_test_obj_method_with_sequence_arg:
- * @self: A #WebKitDOMTestObj
- * @: A #WebKitDOMsequence
- *
- * Returns:
- *
-**/
-WEBKIT_API void
-webkit_dom_test_obj_method_with_sequence_arg(WebKitDOMTestObj* self, WebKitDOMsequence* );
-
-/**
  * webkit_dom_test_obj_method_that_requires_all_args_and_throws:
  * @self: A #WebKitDOMTestObj
  * @str_arg: A #gchar

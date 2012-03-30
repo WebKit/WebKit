@@ -40,7 +40,6 @@
 #include "WebDOMc.h"
 #include "WebDOMd.h"
 #include "WebDOMe.h"
-#include "WebDOMsequence.h"
 #include "WebExceptionHandler.h"
 #include "WebNativeEventListener.h"
 #include "a.h"
@@ -49,7 +48,6 @@
 #include "c.h"
 #include "d.h"
 #include "e.h"
-#include "sequence.h"
 #include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -693,14 +691,6 @@ WebDOMTestObj WebDOMTestObj::objMethodWithArgs(int intArg, const WebDOMString& s
         return WebDOMTestObj();
 
     return toWebKit(WTF::getPtr(impl()->objMethodWithArgs(intArg, strArg, toWebCore(objArg))));
-}
-
-void WebDOMTestObj::methodWithSequenceArg(const WebDOMsequence& )
-{
-    if (!impl())
-        return;
-
-    impl()->methodWithSequenceArg(toWebCore());
 }
 
 WebDOMTestObj WebDOMTestObj::methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg)
