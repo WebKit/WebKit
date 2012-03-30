@@ -4069,7 +4069,7 @@ BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/interactive-validation-remove-node-in-
 BUGWK81814 SNOWLEOPARD DEBUG : fast/parser/fragment-parser.html = PASS TIMEOUT
 BUGWK81815 SNOWLEOPARD DEBUG : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS TIMEOUT
 BUGWK81816 SNOWLEOPARD DEBUG : fast/dom/DOMImplementation/createDocumentType-err.html = PASS TIMEOUT
-BUGWK81857 SNOWLEOPARD : fast/frames/valid.html = PASS IMAGE TIMEOUT
+BUGWK81857 SNOWLEOPARD LEOPARD : fast/frames/valid.html = PASS IMAGE TIMEOUT
 BUGWK81857 SNOWLEOPARD DEBUG : fast/frames/calculate-order.html = PASS TIMEOUT
 BUGWK81931 SNOWLEOPARD DEBUG : fast/images/destroyed-image-load-event.html = PASS TIMEOUT
 
