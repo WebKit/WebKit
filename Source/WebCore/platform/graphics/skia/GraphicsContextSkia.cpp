@@ -395,7 +395,8 @@ void GraphicsContext::clipOut(const Path& p)
     if (paintingDisabled())
         return;
 
-    SkPath path = *p.platformPath();
+    // We must make a copy of the path, to mark it as inverse-filled.
+    SkPath path(*p.platformPath());
     if (!isPathSkiaSafe(getCTM(), path))
         return;
 
@@ -408,12 +409,18 @@ void GraphicsContext::clipPath(const Path& pathToClip, WindRule clipRule)
     if (paintingDisabled())
         return;
 
-    SkPath path = *pathToClip.platformPath();
-    if (!isPathSkiaSafe(getCTM(), path))
+    const SkPath* path = pathToClip.platformPath();
+    if (!isPathSkiaSafe(getCTM(), *path))
         return;
 
-    path.setFillType(clipRule == RULE_EVENODD ? SkPath::kEvenOdd_FillType : SkPath::kWinding_FillType);
-    platformContext()->clipPathAntiAliased(path);
+    SkPath::FillType ftype = (clipRule == RULE_EVENODD) ? SkPath::kEvenOdd_FillType : SkPath::kWinding_FillType;
+    SkPath storage;
+    if (path->getFillType() != ftype) {
+        storage = *path;
+        storage.setFillType(ftype);
+        path = &storage;
+    }
+    platformContext()->clipPathAntiAliased(*path);
 }
 
 void GraphicsContext::concatCTM(const AffineTransform& affine)
@@ -802,19 +809,26 @@ void GraphicsContext::fillPath(const Path& pathToFill)
     if (paintingDisabled())
         return;
 
-    SkPath path = *pathToFill.platformPath();
-    if (!isPathSkiaSafe(getCTM(), path))
+    const SkPath* path = pathToFill.platformPath();
+    if (!isPathSkiaSafe(getCTM(), *path))
       return;
 
     const GraphicsContextState& state = m_state;
-    path.setFillType(state.fillRule == RULE_EVENODD ?
-        SkPath::kEvenOdd_FillType : SkPath::kWinding_FillType);
+    SkPath::FillType ftype = state.fillRule == RULE_EVENODD ?
+        SkPath::kEvenOdd_FillType : SkPath::kWinding_FillType;
+
+    SkPath storage;
+    if (path->getFillType() != ftype) {
+        storage = *path;
+        storage.setFillType(ftype);
+        path = &storage;
+    }
 
     SkPaint paint;
     platformContext()->setupPaintForFilling(&paint);
 
-    platformContext()->canvas()->drawPath(path, paint);
-    platformContext()->didDrawPath(path, paint);
+    platformContext()->canvas()->drawPath(*path, paint);
+    platformContext()->didDrawPath(*path, paint);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -828,14 +842,10 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         ClipRectToCanvas(*platformContext()->canvas(), r, &r);
     }
 
-    platformContext()->save();
-
     SkPaint paint;
     platformContext()->setupPaintForFilling(&paint);
     platformContext()->canvas()->drawRect(r, paint);
     platformContext()->didDrawRect(r, paint);
-
-    platformContext()->restore();
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
@@ -1195,7 +1205,7 @@ void GraphicsContext::strokePath(const Path& pathToStroke)
     if (paintingDisabled())
         return;
 
-    SkPath path = *pathToStroke.platformPath();
+    const SkPath& path = *pathToStroke.platformPath();
     if (!isPathSkiaSafe(getCTM(), path))
         return;
 
