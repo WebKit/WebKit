@@ -1,3 +1,15 @@
+2012-03-29  Mihai Parparita  <mihaip@chromium.org>
+
+        [Chromium] Add sharded ChromiumOS debug bots to builders.js
+        https://bugs.webkit.org/show_bug.cgi?id=82639
+
+        Reviewed by Eric Seidel.
+
+        The bots were sharded by http://crrev.com/129613, update builders.js
+        to reflect this.
+
+        * TestResultServer/static-dashboards/builders.js:
+
 2012-03-29  Dirk Pranke  <dpranke@chromium.org>
 
         remove support for junit-style xml output from test-webkitpy
