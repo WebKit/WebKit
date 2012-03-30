@@ -1,3 +1,13 @@
+2012-03-30  Eli Fidler  <efidler@rim.com>
+
+        Enable OpenType Sanitizer for BlackBerry port.
+        https://bugs.webkit.org/show_bug.cgi?id=82782
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitdirs.pm:
+        (blackberryCMakeArguments): add OTS to include path
+
 2012-03-30  Simon Fraser  <simon.fraser@apple.com>
 
         run-webkit-tests needs to set DYLD_LIBRARY_PATH as well

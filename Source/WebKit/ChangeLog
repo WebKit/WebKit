@@ -1,3 +1,12 @@
+2012-03-30  Eli Fidler  <efidler@rim.com>
+
+        Enable OpenType Sanitizer for BlackBerry port.
+        https://bugs.webkit.org/show_bug.cgi?id=82782
+
+        Reviewed by Eric Seidel.
+
+        * PlatformBlackBerry.cmake: add libots to link
+
 2012-03-22  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         [CMake] Unreviewed build fix after r111778.

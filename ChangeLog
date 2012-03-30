@@ -1,3 +1,12 @@
+2012-03-30  Eli Fidler  <efidler@rim.com>
+
+        Enable OpenType Sanitizer for BlackBerry port.
+        https://bugs.webkit.org/show_bug.cgi?id=82782
+
+        Reviewed by Eric Seidel.
+
+        * Source/cmake/OptionsBlackBerry.cmake: define USE(OPENTYPE_SANITIZER)
+
 2012-03-30  Zalan Bujtas  <zbujtas@gmail.com>
 
         Fix defective size_t overflow in GestureTapHighlighter.
