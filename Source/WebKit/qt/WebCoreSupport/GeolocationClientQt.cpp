@@ -94,7 +94,7 @@ void GeolocationClientQt::positionUpdated(const QGeoPositionInfo& geoPosition)
                                                  providesHeading, heading, providesSpeed, speed);
 
     WebCore::Page* page = QWebPagePrivate::core(m_page);
-    page->geolocationController()->positionChanged(m_lastPosition.get());
+    GeolocationController::from(page)->positionChanged(m_lastPosition.get());
 }
 
 void GeolocationClientQt::startUpdating()
@@ -105,7 +105,7 @@ void GeolocationClientQt::startUpdating()
     if (!m_location) {
         WebCore::Page* page = QWebPagePrivate::core(m_page);
         RefPtr<WebCore::GeolocationError> error = GeolocationError::create(GeolocationError::PositionUnavailable, failedToStartServiceErrorMessage);
-        page->geolocationController()->errorOccurred(error.get());
+        GeolocationController::from(page)->errorOccurred(error.get());
         return;
     }
 

@@ -2666,8 +2666,8 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     pageClients.editorClient = new WebEditorClient(this);
     pageClients.dragClient = new WebDragClient(this);
     pageClients.inspectorClient = m_inspectorClient;
-    pageClients.geolocationClient = new WebGeolocationClient(this);
     m_page = new Page(pageClients);
+    provideGeolocationTo(m_page, new WebGeolocationClient(this));
 
     BSTR localStoragePath;
     if (SUCCEEDED(m_preferences->localStorageDatabasePath(&localStoragePath))) {
@@ -6566,7 +6566,7 @@ HRESULT WebView::geolocationDidChangePosition(IWebGeolocationPosition* position)
 {
     if (!m_page)
         return E_FAIL;
-    m_page->geolocationController()->positionChanged(core(position));
+    GeolocationController::from(m_page)->positionChanged(core(position));
     return S_OK;
 }
 
@@ -6584,7 +6584,7 @@ HRESULT WebView::geolocationDidFailWithError(IWebError* error)
     SysFreeString(descriptionBSTR);
 
     RefPtr<GeolocationError> geolocationError = GeolocationError::create(GeolocationError::PositionUnavailable, descriptionString);
-    m_page->geolocationController()->errorOccurred(geolocationError.get());
+    GeolocationController::from(m_page)->errorOccurred(geolocationError.get());
     return S_OK;
 }
 

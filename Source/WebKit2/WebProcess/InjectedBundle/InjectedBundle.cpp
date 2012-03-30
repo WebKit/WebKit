@@ -198,7 +198,7 @@ void InjectedBundle::setGeoLocationPermission(WebPageGroupProxy* pageGroup, bool
 #if ENABLE(GEOLOCATION)
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
-        static_cast<GeolocationClientMock*>((*iter)->geolocationController()->client())->setPermission(enabled);
+        static_cast<GeolocationClientMock*>(GeolocationController::from(*iter)->client())->setPermission(enabled);
 #endif // ENABLE(GEOLOCATION)
 }
 

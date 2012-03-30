@@ -63,8 +63,6 @@ namespace WebCore {
     class FocusController;
     class Frame;
     class FrameSelection;
-    class GeolocationClient;
-    class GeolocationController;
     class HaltablePlugin;
     class HistoryItem;
     class InspectorClient;
@@ -108,7 +106,6 @@ namespace WebCore {
             EditorClient* editorClient;
             DragClient* dragClient;
             InspectorClient* inspectorClient;
-            GeolocationClient* geolocationClient;
             RefPtr<BackForwardList> backForwardClient;
         };
 
@@ -166,9 +163,6 @@ namespace WebCore {
 #endif
 #if ENABLE(INSPECTOR)
         InspectorController* inspectorController() const { return m_inspectorController.get(); }
-#endif
-#if ENABLE(GEOLOCATION)
-        GeolocationController* geolocationController() const { return m_geolocationController.get(); }
 #endif
 #if ENABLE(POINTER_LOCK)
         PointerLockController* pointerLockController() const { return m_pointerLockController.get(); }
@@ -361,9 +355,6 @@ namespace WebCore {
 #endif
 #if ENABLE(INSPECTOR)
         OwnPtr<InspectorController> m_inspectorController;
-#endif
-#if ENABLE(GEOLOCATION)
-        OwnPtr<GeolocationController> m_geolocationController;
 #endif
 #if ENABLE(POINTER_LOCK)
         OwnPtr<PointerLockController> m_pointerLockController;

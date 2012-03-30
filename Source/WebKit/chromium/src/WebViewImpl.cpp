@@ -63,6 +63,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GeolocationClientProxy.h"
+#include "GeolocationController.h"
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
@@ -387,7 +388,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     pageClients.editorClient = &m_editorClientImpl;
     pageClients.dragClient = &m_dragClientImpl;
     pageClients.inspectorClient = &m_inspectorClientImpl;
-    pageClients.geolocationClient = m_geolocationClientProxy.get();
     pageClients.backForwardClient = BackForwardListChromium::create(this);
 
     m_page = adoptPtr(new Page(pageClients));
@@ -405,8 +405,9 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #endif
 
     provideDeviceOrientationTo(m_page.get(), m_deviceOrientationClientProxy.get());
-    m_geolocationClientProxy->setController(m_page->geolocationController());
-
+    provideGeolocationTo(m_page.get(), m_geolocationClientProxy.get());
+    m_geolocationClientProxy->setController(GeolocationController::from(m_page.get()));
+    
     m_page->setGroupName(pageGroupName);
 
 #if ENABLE(PAGE_VISIBILITY_API)

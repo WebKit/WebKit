@@ -231,15 +231,15 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.editorClient = new WebEditorClient(this);
     pageClients.dragClient = new WebDragClient(this);
     pageClients.backForwardClient = WebBackForwardListProxy::create(this);
-#if ENABLE(GEOLOCATION)
-    pageClients.geolocationClient = new WebGeolocationClient(this);
-#endif
 #if ENABLE(INSPECTOR)
     pageClients.inspectorClient = new WebInspectorClient(this);
 #endif
     
     m_page = adoptPtr(new Page(pageClients));
 
+#if ENABLE(GEOLOCATION)
+    WebCore::provideGeolocationTo(m_page.get(), new WebGeolocationClient(this));
+#endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(m_page.get(), new WebNotificationClient(this));
 #endif

@@ -325,7 +325,6 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_lastUserEventTimestamp(0.0)
     , m_pluginMouseButtonPressed(false)
     , m_pluginMayOpenNewTab(false)
-    , m_geolocationClient(0)
     , m_inRegionScrollStartingNode(0)
 #if USE(ACCELERATED_COMPOSITING)
     , m_rootLayerCommitTimer(adoptPtr(new Timer<WebPagePrivate>(this, &WebPagePrivate::rootLayerCommitTimerFired)))
@@ -428,28 +427,22 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     pageClients.dragClient = dragClient;
     pageClients.inspectorClient = inspectorClient;
 
-    // Note the object will be destroyed when the page is destroyed.
-#if ENABLE_DRT
-    if (getenv("drtRun"))
-        pageClients.geolocationClient = new GeolocationClientMock();
-    else
-#endif
-        pageClients.geolocationClient = m_geolocationClient = new GeolocationControllerClientBlackBerry(this);
-#else
-    pageClients.geolocationClient = m_geolocationClient;
-
     m_page = new Page(pageClients);
+#if ENABLE_DRT
+    if (getenv("drtRun")) {
+        // In case running in DumpRenderTree mode set the controller to mock provider.
+        GeolocationClientMock* mock = new GeolocationClientMock();
+        WebCore::provideGeolocationTo(m_page, mock);
+        mock->setController(WebCore::GeolocationController::from(m_page));
+    } else
+#else
+        WebCore::provideGeolocationTo(m_page, new GeolocationControllerClientBlackBerry(this));
+#endif
     WebCore::provideDeviceOrientationTo(m_page, new DeviceOrientationClientBlackBerry(this));
     WebCore::provideDeviceMotionTo(m_page, new DeviceMotionClientBlackBerry(this));
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(m_page, NotificationPresenterImpl::instance());
-#endif
-
-#if ENABLE_DRT
-    // In case running in DumpRenderTree mode set the controller to mock provider.
-    if (getenv("drtRun"))
-        static_cast<GeolocationClientMock*>(pageClients.geolocationClient)->setController(m_page->geolocationController());
 #endif
 
     m_page->setCustomHTMLTokenizerChunkSize(256);

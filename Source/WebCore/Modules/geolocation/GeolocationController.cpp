@@ -125,6 +125,17 @@ GeolocationPosition* GeolocationController::lastPosition()
     return m_client->lastPosition();
 }
 
+const AtomicString& GeolocationController::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("GeolocationController"));
+    return name;
+}
+
+void provideGeolocationTo(Page* page, GeolocationClient* client)
+{
+    Supplement<Page>::provideTo(page, GeolocationController::supplementName(), GeolocationController::create(page, client));
+}
+    
 } // namespace WebCore
 
 #endif // ENABLE(GEOLOCATION)
