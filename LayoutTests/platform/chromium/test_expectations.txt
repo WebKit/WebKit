@@ -1986,16 +1986,24 @@ BUGWK82505 SNOWLEOPARD LEOPARD LINUX DEBUG : http/tests/xmlhttprequest/redirect-
 BUGWK82505 SNOWLEOPARD LEOPARD LINUX DEBUG : http/tests/media/media-can-load-when-hidden.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD LEOPARD LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onprogress-event.html = PASS TEXT CRASH
-BUGWK82505 LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-sync-requests.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-sync-requests.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/uri-resolution-opera-open-004.html = PASS TEXT CRASH
+BUGWK82505 LEOPARD DEBUG : http/tests/xmlhttprequest/upload-progress-events.html = PASS CRASH
 
 // These are due to an assertion in FrameView::paintContents().
 BUGWK82505 SNOWLEOPARD DEBUG : fast/writing-mode/body-writing-mode-propagation-blocked.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD DEBUG : fast/writing-mode/body-direction-propagation.html = PASS CRASH
 BUGWK82505 SNOWLEOPARD DEBUG : fast/writing-mode/borders.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD DEBUG : fast/writing-mode/broken-ideographic-font.html = CRASH PASS
+BUGWK82505 SNOWLEOPARD DEBUG : fast/writing-mode/japanese-ruby-horizontal-bt.html = PASS CRASH
+BUGWK82505 SNOWLEOPARD DEBUG : svg/as-background-image/svg-as-background-3.html = PASS CRASH
+BUGWK82505 SNOWLEOPARD DEBUG : svg/as-background-image/svg-as-background-with-relative-size.html = PASS CRASH
 BUGWK82505 SNOWLEOPARD DEBUG : svg/css/background-image-svg.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-foreign-content.svg = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-svg-as-background-with-relative-size.html = PASS CRASH
 BUGWK82505 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-svg-as-image.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD DEBUG : transitions/remove-transition-style.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD DEBUG : traversal/node-iterator-prototype.html = PASS CRASH
 
 // Started failing with move from Lighttpd to Apache.
 // Since we have some bots on Lighttpd and some on Apache, mark it as flaky for
@@ -3819,7 +3827,8 @@ BUGWK79454 LINUX : svg/text/text-rescale.html = IMAGE PASS
 BUGWK79454 MAC WIN : svg/text/text-viewbox-rescale.html = IMAGE
 
 // Flaky for DEBUG since r108585
-BUGWK79455 DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS IMAGE+TEXT
+// CRASH is from BUGWK82505.
+BUGWK79455 DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS IMAGE+TEXT CRASH
 
 // Flaky for DEBUG
 BUGWK79456 DEBUG : svg/repaint/image-with-clip-path.svg = PASS IMAGE
@@ -4116,7 +4125,8 @@ BUGWK82150 : media/controls-after-reload.html = IMAGE+TEXT
 // Just needs a rebaseline. The iframe size is now 600x300, before it was 300x150 - as we properly zoom the default intrinsic size now.
 BUGWK81631 : fast/table/quote-text-around-iframe.html = IMAGE IMAGE+TEXT PASS
 // Size should be 100 now, instead of 101 - if so, only needs a rebaseline.
-BUGWK81631 : svg/as-image/svg-non-integer-scaled-image.html  = IMAGE IMAGE+TEXT PASS
+// CRASH is from BUGWK82505.
+BUGWK81631 : svg/as-image/svg-non-integer-scaled-image.html  = IMAGE IMAGE+TEXT CRASH PASS
 // Size changed from 93 to 92 due rounding, just needs a rebaseline.
 BUGWK81631 : fast/repaint/block-layout-inline-children-replaced.html = IMAGE IMAGE+TEXT PASS
 // Just needs a rebaseline, no visible changes.
