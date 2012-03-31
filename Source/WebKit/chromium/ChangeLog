@@ -1,5 +1,12 @@
 2012-03-30  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fix the Windows component build.  It seems we're just
+        missing GURL now.
+
+        * WebKitUnitTests.gyp:
+
+2012-03-30  Adam Barth  <abarth@webkit.org>
+
         Attempt to fix the Windows component build.  The way we link the unit
         tests in the component build is kind of nutty.  Hopefully this approach
         will eliminate the duplicate symbols we've been seeing.
