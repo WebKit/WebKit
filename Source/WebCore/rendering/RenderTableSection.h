@@ -110,7 +110,7 @@ public:
 
         Row row;
         RenderTableRow* rowRenderer;
-        LayoutUnit baseline;
+        int baseline;
         Length logicalHeight;
     };
 

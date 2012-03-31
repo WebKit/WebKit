@@ -271,11 +271,11 @@ void RenderTable::computeLogicalWidth()
 LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& styleLogicalWidth, LayoutUnit availableWidth)
 {
     // HTML tables' width styles already include borders and paddings, but CSS tables' width styles do not.
-    int borders = 0;
+    LayoutUnit borders = 0;
     bool isCSSTable = !node() || !node()->hasTagName(tableTag);
     if (isCSSTable && styleLogicalWidth.isFixed() && styleLogicalWidth.isPositive()) {
         recalcBordersInRowDirection();
-        borders = borderStart() + borderEnd() + (collapseBorders() ? 0 : paddingStart() + paddingEnd());
+        borders = borderStart() + borderEnd() + (collapseBorders() ? zeroLayoutUnit : paddingStart() + paddingEnd());
     }
     return minimumValueForLength(styleLogicalWidth, availableWidth, view()) + borders;
 }

@@ -45,7 +45,7 @@ public:
     explicit RenderTable(Node*);
     virtual ~RenderTable();
 
-    LayoutUnit getColumnPos(unsigned col) const { return m_columnPos[col]; }
+    int getColumnPos(unsigned col) const { return m_columnPos[col]; }
 
     int hBorderSpacing() const { return m_hSpacing; }
     int vBorderSpacing() const { return m_vSpacing; }
@@ -136,7 +136,7 @@ public:
     };
 
     Vector<ColumnStruct>& columns() { return m_columns; }
-    Vector<LayoutUnit>& columnPositions() { return m_columnPos; }
+    Vector<int>& columnPositions() { return m_columnPos; }
     RenderTableSection* header() const { return m_head; }
     RenderTableSection* footer() const { return m_foot; }
     RenderTableSection* firstBody() const { return m_firstBody; }
@@ -172,7 +172,7 @@ public:
     LayoutUnit bordersPaddingAndSpacingInRowDirection() const
     {
         return borderStart() + borderEnd() +
-               (collapseBorders() ? zeroLayoutUnit : (paddingStart() + paddingEnd() + (numEffCols() + 1) * hBorderSpacing()));
+               (collapseBorders() ? zeroLayoutUnit : (paddingStart() + paddingEnd() + static_cast<LayoutUnit>(numEffCols() + 1) * hBorderSpacing()));
     }
 
     RenderTableCol* colElement(unsigned col, bool* startEdge = 0, bool* endEdge = 0) const;
@@ -254,7 +254,7 @@ private:
 
     void distributeExtraLogicalHeight(int extraLogicalHeight);
 
-    mutable Vector<LayoutUnit> m_columnPos;
+    mutable Vector<int> m_columnPos;
     mutable Vector<ColumnStruct> m_columns;
     mutable Vector<RenderTableCaption*> m_captions;
 

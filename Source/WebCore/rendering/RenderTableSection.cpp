@@ -336,7 +336,7 @@ int RenderTableSection::calcRowLogicalHeight()
 
     for (unsigned r = 0; r < m_grid.size(); r++) {
         m_grid[r].baseline = 0;
-        LayoutUnit baselineDescent = 0;
+        int baselineDescent = 0;
 
         // Our base size is the biggest logical height from our cells' styles (excluding row spanning cells).
         m_rowPos[r + 1] = max(m_rowPos[r] + minimumValueForLength(m_grid[r].logicalHeight, 0, viewRenderer), 0);
@@ -620,7 +620,7 @@ void RenderTableSection::layoutRows()
                 // If the baseline moved, we may have to update the data for our row. Find out the new baseline.
                 EVerticalAlign va = cell->style()->verticalAlign();
                 if (va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB) {
-                    LayoutUnit baseline = cell->cellBaselinePosition();
+                    int baseline = cell->cellBaselinePosition();
                     if (baseline > cell->borderBefore() + cell->paddingBefore())
                         m_grid[r].baseline = max(m_grid[r].baseline, baseline);
                 }
