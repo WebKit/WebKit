@@ -1797,7 +1797,7 @@ BUGCR118411 : svg/as-background-image/background-image-preserveaspectRatio-suppo
 BUGCR118411 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE
 BUGCR118411 LEOPARD SNOWLEOPARD : svg/hixie/perf/001.xml = IMAGE PASS
 BUGCR118411 LEOPARD SNOWLEOPARD : svg/hixie/perf/002.xml = IMAGE PASS
-BUGCR118411 SLOW : svg/hixie/perf/007.xml = IMAGE
+BUGCR118411 SLOW : svg/hixie/perf/007.xml = PASS
 
 // WebKit merge 50756:50820, possibly due to WebKit r50808/r50786 and Chromium r31715
 BUGCR27553 WIN : fast/text/atsui-partial-selection.html = IMAGE
@@ -1808,15 +1808,14 @@ BUGCR22700 LINUX WIN : fast/canvas/canvas-shadow.html = TEXT
 // The test requires DRT/Test Shell to support error page handling.
 BUGCR27850 : fast/history/back-forward-reset-after-error-handling.html = TEXT
 
-BUGWK82505 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD LEOPARD LINUX DEBUG : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT CRASH
-
+BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/media/media-can-load-when-hidden.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onprogress-event.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD LEOPARD XP DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-load.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onprogress-event.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-sync-requests.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/uri-resolution-opera-open-004.html = PASS TEXT CRASH
-BUGWK82505 LEOPARD DEBUG : http/tests/xmlhttprequest/upload-progress-events.html = PASS CRASH
+BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/uri-resolution-opera-open-004.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD LEOPARD XP DEBUG : http/tests/xmlhttprequest/upload-progress-events.html = PASS CRASH
 
 // These are due to an assertion in FrameView::paintContents().
 BUGWK82505 SNOWLEOPARD DEBUG : fast/writing-mode/body-writing-mode-propagation-blocked.html = PASS TEXT CRASH
@@ -3057,8 +3056,6 @@ BUGCR89474 LEOPARD WIN LINUX : fast/js/call-base-resolution.html = PASS TEXT
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
 BUGCR75424 LEOPARD : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE+TEXT IMAGE
 
-BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
-
 BUGWK70888 MAC DEBUG : animations/dynamic-stylesheet-loading.html = PASS TEXT
 BUGWK70887 DEBUG : jquery/css.html = PASS TIMEOUT
 
@@ -3291,7 +3288,7 @@ BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 BUGWK71211 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/shadow-offset-3.html = PASS CRASH
 
 BUGWK71673 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = TEXT IMAGE IMAGE+TEXT
-BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
+BUGWK71673 WIN LINUX DEBUG : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
 
 BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 
@@ -4004,9 +4001,6 @@ BUGCR120356 : fast/regex/unicodeCaseInsensitive.html = TEXT
 
 BUGWK82300 SNOWLEOPARD : compositing/images/direct-pdf-image.html = IMAGE
 
-BUGWK82372 LINUX X86_64 DEBUG : css3/filters/custom/effect-custom-parameters.html = IMAGE
-BUGWK82372 LINUX X86 RELEASE : css3/filters/custom/effect-custom-parameters.html = IMAGE
-
 BUGWK82269 DEBUG : media/track/track-delete-during-setup.html = CRASH
 
 // this test appears to consistently fail during the main run but usually passes on a retry.
@@ -4072,3 +4066,5 @@ BUGWK82717 SNOWLEOPARD : storage/database-lock-after-reload.html = PASS TIMEOUT
 
 // This test depends on Worker behavior that is broken in DRT
 BUGWK82776 : storage/indexeddb/dont-commit-on-blocked.html = PASS FAIL
+
+BUGWK WIN RELEASE : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT
