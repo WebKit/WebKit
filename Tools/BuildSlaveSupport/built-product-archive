@@ -75,7 +75,7 @@ def removeDirectoryIfExists(thinDirectory):
 
 def copyBuildFiles(source, destination):
     shutil.copytree(source, destination,
-        ignore=shutil.ignore_patterns('.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.obj', '*.pdb'))
+        ignore=shutil.ignore_patterns('.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.idb', 'BuildLog.htm', '*.obj', '*.pdb'))
 
 
 def createZipManually(directoryToZip, archiveFile):

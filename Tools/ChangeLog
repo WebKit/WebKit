@@ -1,5 +1,13 @@
 2012-03-31  Ryosuke Niwa  <rniwa@webkit.org>
 
+        One more build fix after r112781 for Chromium Windows.
+        Don't copy zip .idb files.
+
+        * BuildSlaveSupport/built-product-archive:
+        (copyBuildFiles):
+
+2012-03-31  Ryosuke Niwa  <rniwa@webkit.org>
+
         Yet another build fix after r112781 for Chromium Windows.
         Run webkit-build-directory by perl explicitly.
 
