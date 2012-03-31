@@ -82,4 +82,3 @@ layer at (179,228) size 161x47 clip at (180,229) size 159x30
     RenderBlock {DIV} at (3,3) size 155x13
       RenderText {#text} at (0,0) size 93x13
         text run at (0,0) width 93: "Textarea x-scroll"
-
