@@ -1,5 +1,18 @@
 2012-03-30  Adam Barth  <abarth@webkit.org>
 
+        [Chromium] Move ResourceHandle to WebCore/platform/network/chromium
+        https://bugs.webkit.org/show_bug.cgi?id=82657
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * src/ResourceHandle.cpp: Removed.
+        * src/ResourceHandleInternal.h: Removed.
+        * src/WrappedResourceRequest.h: Removed.
+        * src/WrappedResourceResponse.h: Removed.
+
+2012-03-30  Adam Barth  <abarth@webkit.org>
+
         Two more link errors.  This time it's v8 we're missing.
 
         * WebKitUnitTests.gyp:
