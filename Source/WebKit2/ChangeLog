@@ -1,3 +1,18 @@
+2012-03-30  Timothy Hatcher  <timothy@apple.com>
+
+        Stop creating the Web Inspector's NSWindow when detaching on close.
+
+        This fixes a UI process crash that would happen when detaching because of a Web Process crash.
+
+        https://webkit.org/b/82820
+        rdar://problem/11085467
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformDetach): Moved the creation and showing code to the end
+        and added an early return if we are not visible in the middle.
+
 2012-03-30  Emil A Eklund  <eae@chromium.org>
 
         Change WebKit/WebKit2 platform code to use pixel snapped values
