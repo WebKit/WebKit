@@ -24,6 +24,8 @@
 
 #include <BlackBerryPlatformTouchEvent.h>
 
+#include <wtf/CurrentTime.h>
+
 #if ENABLE(TOUCH_EVENTS)
 
 namespace WebCore {
@@ -48,13 +50,12 @@ static PlatformEvent::Type touchEventType(BlackBerry::Platform::TouchEvent* even
 }
 
 PlatformTouchEvent::PlatformTouchEvent(BlackBerry::Platform::TouchEvent* event)
-    : PlatformEvent(touchEventType(event), false, event->m_altKey, event->m_shiftKey, false)
+    : PlatformEvent(touchEventType(event), false, event->m_altKey, event->m_shiftKey, false, currentTime())
     , m_rotation(0)
     , m_scale(1)
     , m_doubleTap(false)
     , m_touchHold(false)
 {
-
     for (unsigned i = 0; i < event->m_points.size(); ++i)
         m_touchPoints.append(PlatformTouchPoint(event->m_points[i]));
 

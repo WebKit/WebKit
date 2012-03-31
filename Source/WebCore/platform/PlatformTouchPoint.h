@@ -29,6 +29,14 @@
 #include <QTouchEvent>
 #endif
 
+#if PLATFORM(BLACKBERRY)
+namespace BlackBerry {
+namespace Platform {
+class TouchPoint;
+};
+};
+#endif
+
 namespace WebCore {
 
 class PlatformTouchEvent;
@@ -51,6 +59,8 @@ public:
     PlatformTouchPoint(const QTouchEvent::TouchPoint&, State);
 #elif PLATFORM(EFL)
     PlatformTouchPoint(unsigned id, const IntPoint& windowPos, State);
+#elif PLATFORM(BLACKBERRY)
+    PlatformTouchPoint(const BlackBerry::Platform::TouchPoint&);
 #endif
 
     unsigned id() const { return m_id; }
