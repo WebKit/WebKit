@@ -152,7 +152,7 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
         for (HTTPHeaderMap::const_iterator it = httpHeaderFields().begin(); it != httpHeaderFields().end(); ++it) {
             String key = it->first;
             String value = it->second;
-            if (!key.isEmpty() && !value.isEmpty()) {
+            if (!key.isEmpty()) {
                 // We need to check the encoding and encode the cookie's value using latin1 or utf8 to support unicode characters.
                 // We wo't use the old cookies of resourceRequest for new location because these cookies may be changed by redirection.
                 if (!equalIgnoringCase(key, "Cookie"))
