@@ -205,6 +205,8 @@ function testPlatformAndBuildType()
     runPlatformAndBuildTypeTest('Chromium Mac Release (Tests)', 'SNOWLEOPARD', 'RELEASE');
     
     // FIXME: These platforms should match whatever we use in the test_expectations.txt format.
+    runPlatformAndBuildTypeTest('Lion Release (Tests)', 'APPLE_LION', 'RELEASE');
+    runPlatformAndBuildTypeTest('Lion Debug (Tests)', 'APPLE_LION', 'DEBUG');
     runPlatformAndBuildTypeTest('Leopard Intel Release (Tests)', 'APPLE_LEOPARD', 'RELEASE');
     runPlatformAndBuildTypeTest('Leopard Intel Debug (Tests)', 'APPLE_LEOPARD', 'DEBUG');
     runPlatformAndBuildTypeTest('SnowLeopard Intel Release (Tests)', 'APPLE_SNOWLEOPARD', 'RELEASE');
@@ -385,6 +387,31 @@ function testBaseTest()
 {
     self.assertEquals(baseTest('fast/canvas/foo.html', ''), 'fast/canvas/foo.html');
     self.assertEquals(baseTest('platform/chromium/virtual/gpu/fast/canvas/foo.html', 'platform/chromium/virtual/gpu/fast/canvas'), 'fast/canvas/foo.html');
+}
+
+// FIXME: Create builders_tests.js and move this there.
+function testGenerateWebkitBuildersFromBuilderList()
+{
+    var builderList = ["Chromium Android Release", "Chromium Linux Release", "Chromium Linux Release (Grid Layout)", "Chromium Linux Release (Perf)", "Chromium Linux Release (Tests)",
+        "Chromium Mac Release", "Chromium Mac Release (Perf)", "Chromium Mac Release (Tests)", "Chromium Win Release", "Chromium Win Release (Perf)", "Chromium Win Release (Tests)",
+        "EFL Linux Release", "GTK Linux 32-bit Release", "GTK Linux 64-bit Debug", "GTK Linux 64-bit Release", "Lion Debug (Build)", "Lion Debug (Tests)", "Lion Debug (WebKit2 Tests)",
+        "Lion Leaks", "Lion Release (Build)", "Lion Release (Perf)", "Lion Release (Tests)", "Lion Release (WebKit2 Tests)", "Qt Linux 64-bit Release (Perf)",
+        "Qt Linux 64-bit Release (WebKit2 Perf)", "Qt Linux ARMv7 Release", "Qt Linux MIPS Release", "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux SH4 Release",
+        "Qt SnowLeopard Release", "Qt Windows 32-bit Debug", "Qt Windows 32-bit Release", "SnowLeopard Intel Debug (Build)", "SnowLeopard Intel Debug (Tests)",
+        "SnowLeopard Intel Debug (WebKit2 Tests)", "SnowLeopard Intel Release (Build)", "SnowLeopard Intel Release (Tests)", "SnowLeopard Intel Release (WebKit2 Tests)",
+        "WinCE Release (Build)", "WinCairo Release", "Windows 7 Release (Tests)", "Windows 7 Release (WebKit2 Tests)", "Windows Debug (Build)", "Windows Release (Build)", "Windows XP Debug (Tests)"];
+    var builders = generateWebkitBuildersFromBuilderList(builderList);
+    var expectedBuilders = [["Chromium Linux Release (Tests)", 6], ["Chromium Mac Release (Tests)"], ["Chromium Win Release (Tests)"], ["GTK Linux 32-bit Release"], ["GTK Linux 64-bit Debug"],
+        ["GTK Linux 64-bit Release"], ["Lion Debug (Tests)"], ["Lion Debug (WebKit2 Tests)"], ["Lion Release (Tests)"], ["Lion Release (WebKit2 Tests)"], ["Qt Linux Release"],
+        ["SnowLeopard Intel Debug (Tests)"], ["SnowLeopard Intel Debug (WebKit2 Tests)"], ["SnowLeopard Intel Release (Tests)"], ["SnowLeopard Intel Release (WebKit2 Tests)"]];
+
+    self.assertEquals(builders.length, expectedBuilders.length);
+    builders.forEach(function(builder, index) {
+        var expected = expectedBuilders[index];
+        self.assertEquals(builder.length, expected.length);
+        for (var i = 0; i < builder.length; i++)
+            self.assertEquals(builder[i], expected[i]);
+    })
 }
 
 function runTests()

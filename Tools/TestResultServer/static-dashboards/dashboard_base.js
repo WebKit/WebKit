@@ -339,6 +339,7 @@ function parseParameters(parameterStr)
 
     fillMissingValues(g_currentState, g_defaultCrossDashboardStateValues);
     fillMissingValues(g_currentState, g_defaultStateValues);
+    fillMissingValues(g_currentState, {'builder': g_defaultBuilderName});
 
     // Some parameters require loading different JSON files when the value changes. Do a reload.
     if (g_oldState) {
@@ -507,7 +508,6 @@ function initBuilders(state)
         currentBuilderGroup(state).setup();
     }
 }
-initBuilders(g_currentState);
 
 // Append JSON script elements.
 var g_resultsByBuilder = {};
@@ -722,6 +722,9 @@ function showErrors()
 // @return {boolean} Whether the json files have all completed loading.
 function haveJsonFilesLoaded()
 {
+    if (!g_buildersListLoaded)
+        return false;
+
     if (g_waitingOnExpectations)
         return false;
 
@@ -1081,8 +1084,13 @@ function decompressResults(builderResults)
     };
 }
 
+var g_buildersListLoaded = false;
 
-appendJSONScriptElements();
+function g_handleBuildersListLoaded() {
+    g_buildersListLoaded = true;
+    initBuilders(g_currentState);
+    appendJSONScriptElements();
+}
 
 document.addEventListener('mousedown', function(e) {
     // Clear the open popup, unless the click was inside the popup.

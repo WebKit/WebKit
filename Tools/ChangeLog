@@ -1,5 +1,36 @@
 2012-03-31  Ojan Vafai  <ojan@chromium.org>
 
+        Generate the flakiness dashboard's list of webkit.org builders from the buildbot JSON
+        https://bugs.webkit.org/show_bug.cgi?id=82839
+
+        Reviewed by Adam Barth.
+
+        Also, update various hard-coded lists for WIN7 and Lion ports.
+        This is necessary since the new list of builders grabbed off the
+        buildbot includes Lion.
+
+        * TestResultServer/static-dashboards/builders.js:
+        (generateWebkitBuildersFromBuilderList):
+        (xhr.onreadystatechange):
+        Don't use dashboard_base's request method to avoid layering violation.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (parseParameters):
+        (initBuilders):
+        (haveJsonFilesLoaded):
+        (g_handleBuildersListLoaded):
+        Block loading the JSON files for each builder until we actually have a list of builders.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        (testPlatformAndBuildType):
+        (testGenerateWebkitBuildersFromBuilderList):
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+        * TestResultServer/static-dashboards/treemap.html:
+        Delay generating the page until the builder list has loaded.
+
+2012-03-31  Ojan Vafai  <ojan@chromium.org>
+
         If NRWT gets killed halfway through a run, it incorrectly reports tests that weren't run as passes
         https://bugs.webkit.org/show_bug.cgi?id=82799
 

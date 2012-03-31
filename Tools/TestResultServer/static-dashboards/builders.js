@@ -125,23 +125,52 @@ var CHROMIUM_LAYOUT_TOT_BUILDERS = [
 ];
 associateBuildersWithMaster(CHROMIUM_LAYOUT_TOT_BUILDERS, CHROMIUM_WEBKIT_BUILDER_MASTER);
 
-var WEBKIT_TOT_BUILDERS = [
-    ['Chromium Win Release (Tests)', BuilderGroup.DEFAULT_BUILDER],
-    ['Chromium Linux Release (Tests)', BuilderGroup.EXPECTATIONS_BUILDER],
-    ['Chromium Mac Release (Tests)'],
-    ['SnowLeopard Intel Release (Tests)'],
-    ['SnowLeopard Intel Debug (Tests)'],
-    ['GTK Linux 32-bit Release'],
-    ['GTK Linux 32-bit Debug'],
-    ['GTK Linux 64-bit Debug'],
-    ['Qt Linux Release']
-];
-associateBuildersWithMaster(WEBKIT_TOT_BUILDERS, WEBKIT_BUILDER_MASTER);
+function generateWebkitBuildersFromBuilderList(builderList)
+{
+    return builderList.filter(function(tester) {
+        if (tester.indexOf('Tests') != -1) {
+            // Apple Windows bots still run old-run-webkit-tests, so they don't upload data.
+            return tester.indexOf('Windows') == -1 || (tester.indexOf('Qt') != -1 && tester.indexOf('Chromium') != -1);
+        }
+        return tester.indexOf('GTK') != -1 || tester == 'Qt Linux Release';
+    }).map(function(tester, index) {
+        var builder = [tester];
+        if (!index)
+            builder.push(BuilderGroup.DEFAULT_BUILDER);
+        if (tester.indexOf('Chromium Linux') != -1) {
+            if (builder.length == 1)
+                builder.push(BuilderGroup.EXPECTATIONS_BUILDER);
+            else
+                builder[1] |= BuilderGroup.EXPECTATIONS_BUILDER;
+        }
+        return builder;
+    });
+}
+
+// FIXME: Automatically grab all the builder lists from the buildbot json.
+var WEBKIT_DOT_ORG_BUILDER_JSON_URL = 'http://build.webkit.org/json/builders';
+var WEBKIT_TOT_BUILDERS = [];
+// FIXME: Move dashboard_base.js's request method into a base.js file that builders.js can depend on without a layer violation.
+var xhr = new XMLHttpRequest();
+xhr.open('GET', WEBKIT_DOT_ORG_BUILDER_JSON_URL, true);
+xhr.onload = function() {
+    if (xhr.status != 200) {
+        alert('Could not load list of builders from ' + WEBKIT_DOT_ORG_BUILDER_JSON_URL + '. Try reloading.');
+        return;
+    }
+
+    var builders = generateWebkitBuildersFromBuilderList(Object.keys(JSON.parse(xhr.response)));
+    associateBuildersWithMaster(builders, WEBKIT_BUILDER_MASTER);
+    LAYOUT_TESTS_BUILDER_GROUPS['@ToT - webkit.org'] = new BuilderGroup(BuilderGroup.TOT_WEBKIT, builders);
+    g_handleBuildersListLoaded();
+};
+xhr.onerror = function() { alert('Could not load list of builders from ' + WEBKIT_DOT_ORG_BUILDER_JSON_URL + '. Try reloading.'); }
+xhr.send();
 
 var LAYOUT_TESTS_BUILDER_GROUPS = {
     '@DEPS - chromium.org': new BuilderGroup(BuilderGroup.DEPS_WEBKIT, CHROMIUM_LAYOUT_DEPS_BUILDERS),
     '@ToT - chromium.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, CHROMIUM_LAYOUT_TOT_BUILDERS),
-    '@ToT - webkit.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, WEBKIT_TOT_BUILDERS),
+    '@ToT - webkit.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, []),
 };
 
 var CHROMIUM_GPU_GTESTS_DEPS_BUILDERS = [

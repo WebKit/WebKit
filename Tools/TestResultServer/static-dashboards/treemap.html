@@ -116,8 +116,6 @@ td {
 <div id='map'></div>
 
 <script>
-$('header-container').innerHTML = htmlForTestTypeSwitcher();
-
 var TEST_URL_BASE_PATH = "http://svn.webkit.org/repository/webkit/trunk/";
 
 function humanReadableTime(milliseconds)
@@ -237,6 +235,14 @@ function ADD_RESULTS(data)
     handleLocationChange();
 }
 
+function g_handleBuildersListLoaded() {
+    g_buildersListLoaded = true;
+    initBuilders(g_currentState);
+    $('header-container').innerHTML = htmlForTestTypeSwitcher();
+    parseParameters();
+    appendJSONScriptElementFor(g_currentState.builder);
+}
+
 var g_isGeneratingPage = false;
 var g_webTree;
 
@@ -307,12 +313,11 @@ function handleValidHashParameter(key, value)
     }
 }
 
-g_defaultStateValues = {
-    builder: g_defaultBuilderName
-};
-
 function handleQueryParameterChange(params)
 {
+    if (!g_buildersListLoaded)
+        return false;
+
     if (!g_resultsByBuilder[g_currentState.builder])
         appendJSONScriptElementFor(g_currentState.builder);
 
@@ -380,7 +385,4 @@ function handleFocus(tree)
     if (!g_isGeneratingPage)
         setQueryParameter('treemapfocus', name);
 }
-
-parseParameters();
-appendJSONScriptElementFor(g_currentState.builder);
 </script>
