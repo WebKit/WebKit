@@ -702,7 +702,7 @@ static LayoutUnit computeMargin(const RenderInline* renderer, const Length& marg
         return margin.value();
     if (margin.isPercent())
         return minimumValueForLength(margin, max<LayoutUnit>(0, renderer->containingBlock()->availableLogicalWidth()));
-    if (margin.isViewportRelative())
+    if (margin.isViewportPercentage())
         return valueForLength(margin, 0, renderer->view());
     return 0;
 }

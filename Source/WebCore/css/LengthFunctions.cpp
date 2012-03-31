@@ -41,18 +41,18 @@ int minimumValueForLength(const Length& length, int maximumValue, RenderView* re
         return static_cast<int>(static_cast<float>(maximumValue * length.percent() / 100.0f));
     case Calculated:
         return length.nonNanCalculatedValue(maximumValue);
-    case ViewportRelativeWidth:
+    case ViewportPercentageWidth:
         if (renderView)
-            return static_cast<int>(renderView->viewportSize().width() * length.viewportRelativeLength() / 100.0f);
+            return static_cast<int>(renderView->viewportSize().width() * length.viewportPercentageLength() / 100.0f);
         return 0;
-    case ViewportRelativeHeight:
+    case ViewportPercentageHeight:
         if (renderView)
-            return static_cast<int>(renderView->viewportSize().height() * length.viewportRelativeLength() / 100.0f);
+            return static_cast<int>(renderView->viewportSize().height() * length.viewportPercentageLength() / 100.0f);
         return 0;
-    case ViewportRelativeMin:
+    case ViewportPercentageMin:
         if (renderView) {
             IntSize viewportSize = renderView->viewportSize();
-            return static_cast<int>(std::min(viewportSize.width(), viewportSize.height()) * length.viewportRelativeLength() / 100.0f);
+            return static_cast<int>(std::min(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
         }
         return 0;
     case Auto:
@@ -74,9 +74,9 @@ int valueForLength(const Length& length, int maximumValue, RenderView* renderVie
     case Fixed:
     case Percent:
     case Calculated:
-    case ViewportRelativeWidth:
-    case ViewportRelativeHeight:
-    case ViewportRelativeMin:
+    case ViewportPercentageWidth:
+    case ViewportPercentageHeight:
+    case ViewportPercentageMin:
         return minimumValueForLength(length, maximumValue, renderView, roundPercentages);
     case Auto:
         return maximumValue;
@@ -107,18 +107,18 @@ float floatValueForLength(const Length& length, int maximumValue, RenderView* re
         return static_cast<float>(maximumValue);
     case Calculated:
         return length.nonNanCalculatedValue(maximumValue);                
-    case ViewportRelativeWidth:
+    case ViewportPercentageWidth:
         if (renderView)
-            return static_cast<int>(renderView->viewportSize().width() * length.viewportRelativeLength() / 100.0f);
+            return static_cast<int>(renderView->viewportSize().width() * length.viewportPercentageLength() / 100.0f);
         return 0;
-    case ViewportRelativeHeight:
+    case ViewportPercentageHeight:
         if (renderView)
-            return static_cast<int>(renderView->viewportSize().height() * length.viewportRelativeLength() / 100.0f);
+            return static_cast<int>(renderView->viewportSize().height() * length.viewportPercentageLength() / 100.0f);
         return 0;
-    case ViewportRelativeMin:
+    case ViewportPercentageMin:
         if (renderView) {
             IntSize viewportSize = renderView->viewportSize();
-            return static_cast<int>(std::min(viewportSize.width(), viewportSize.height()) * length.viewportRelativeLength() / 100.0f);
+            return static_cast<int>(std::min(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
         }
         return 0;
     case Relative:
@@ -143,18 +143,18 @@ float floatValueForLength(const Length& length, float maximumValue, RenderView* 
         return static_cast<float>(maximumValue);
     case Calculated:
         return length.nonNanCalculatedValue(maximumValue);
-    case ViewportRelativeWidth:
+    case ViewportPercentageWidth:
         if (renderView)
-            return static_cast<int>(renderView->viewportSize().width() * length.viewportRelativeLength() / 100.0f);
+            return static_cast<int>(renderView->viewportSize().width() * length.viewportPercentageLength() / 100.0f);
         return 0;
-    case ViewportRelativeHeight:
+    case ViewportPercentageHeight:
         if (renderView)
-            return static_cast<int>(renderView->viewportSize().height() * length.viewportRelativeLength() / 100.0f);
+            return static_cast<int>(renderView->viewportSize().height() * length.viewportPercentageLength() / 100.0f);
         return 0;
-    case ViewportRelativeMin:
+    case ViewportPercentageMin:
         if (renderView) {
             IntSize viewportSize = renderView->viewportSize();
-            return static_cast<int>(std::min(viewportSize.width(), viewportSize.height()) * length.viewportRelativeLength() / 100.0f);
+            return static_cast<int>(std::min(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
         }
         return 0;
     case Relative:

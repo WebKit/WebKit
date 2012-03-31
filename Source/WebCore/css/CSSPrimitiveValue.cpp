@@ -136,7 +136,7 @@ static CSSPrimitiveValue::UnitCategory unitCategory(CSSPrimitiveValue::UnitTypes
     case CSSPrimitiveValue::CSS_VW:
     case CSSPrimitiveValue::CSS_VH:
     case CSSPrimitiveValue::CSS_VMIN:
-        return CSSPrimitiveValue::UViewportRelativeLength;
+        return CSSPrimitiveValue::UViewportPercentageLength;
     default:
         return CSSPrimitiveValue::UOther;
     }
@@ -253,17 +253,17 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
             ASSERT(isfinite(length.percent()));
             m_value.num = length.percent();
             break;
-        case ViewportRelativeWidth:
+        case ViewportPercentageWidth:
             m_primitiveUnitType = CSS_VW;
-            m_value.num = length.viewportRelativeLength();
+            m_value.num = length.viewportPercentageLength();
             break;
-        case ViewportRelativeHeight:
+        case ViewportPercentageHeight:
             m_primitiveUnitType = CSS_VH;
-            m_value.num = length.viewportRelativeLength();
+            m_value.num = length.viewportPercentageLength();
             break;
-        case ViewportRelativeMin:
+        case ViewportPercentageMin:
             m_primitiveUnitType = CSS_VMIN;
-            m_value.num = length.viewportRelativeLength();
+            m_value.num = length.viewportPercentageLength();
             break;
         case Calculated:
         case Relative:
@@ -593,7 +593,7 @@ CSSPrimitiveValue::UnitTypes CSSPrimitiveValue::canonicalUnitTypeForCategory(Uni
         return CSS_DEG;
     case UFrequency:
         return CSS_HZ;
-    case UViewportRelativeLength:
+    case UViewportPercentageLength:
         return CSS_UNKNOWN; // Cannot convert between numbers and relative lengths.
     default:
         return CSS_UNKNOWN;
@@ -1038,19 +1038,19 @@ void CSSPrimitiveValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const C
         addSubresourceURL(urls, styleSheet->completeURL(m_value.string));
 }
 
-Length CSSPrimitiveValue::viewportRelativeLength()
+Length CSSPrimitiveValue::viewportPercentageLength()
 {
-    ASSERT(isViewportRelativeLength());
+    ASSERT(isViewportPercentageLength());
     Length viewportLength;
     switch (m_primitiveUnitType) {
     case CSS_VW:
-        viewportLength = Length(getDoubleValue(), ViewportRelativeWidth);
+        viewportLength = Length(getDoubleValue(), ViewportPercentageWidth);
         break;
     case CSS_VH:
-        viewportLength = Length(getDoubleValue(), ViewportRelativeHeight);
+        viewportLength = Length(getDoubleValue(), ViewportPercentageHeight);
         break;
     case CSS_VMIN:
-        viewportLength = Length(getDoubleValue(), ViewportRelativeMin);
+        viewportLength = Length(getDoubleValue(), ViewportPercentageMin);
         break;
     default:
         break;

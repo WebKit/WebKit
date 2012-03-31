@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-enum LengthType { Auto, Relative, Percent, Fixed, Intrinsic, MinIntrinsic, Calculated, ViewportRelativeWidth, ViewportRelativeHeight, ViewportRelativeMin, Undefined };
+enum LengthType { Auto, Relative, Percent, Fixed, Intrinsic, MinIntrinsic, Calculated, ViewportPercentageWidth, ViewportPercentageHeight, ViewportPercentageMin, Undefined };
  
 class CalculationValue;    
     
@@ -226,14 +226,14 @@ public:
     }
     float nonNanCalculatedValue(int maxValue) const;
 
-    bool isViewportRelative() const
+    bool isViewportPercentage() const
     {
         LengthType lengthType = type();
-        return lengthType >= ViewportRelativeWidth && lengthType <= ViewportRelativeMin;
+        return lengthType >= ViewportPercentageWidth && lengthType <= ViewportPercentageMin;
     }
-    float viewportRelativeLength() const
+    float viewportPercentageLength() const
     {
-        ASSERT(isViewportRelative());
+        ASSERT(isViewportPercentage());
         return getFloatValue();
     }
 private:

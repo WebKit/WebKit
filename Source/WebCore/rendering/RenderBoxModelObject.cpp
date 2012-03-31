@@ -562,7 +562,7 @@ LayoutUnit RenderBoxModelObject::paddingTop(PaddingOptions) const
     Length padding = style()->paddingTop();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    else if (padding.isViewportRelative())
+    else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
 }
@@ -574,7 +574,7 @@ LayoutUnit RenderBoxModelObject::paddingBottom(PaddingOptions) const
     Length padding = style()->paddingBottom();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    else if (padding.isViewportRelative())
+    else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
 }
@@ -586,7 +586,7 @@ LayoutUnit RenderBoxModelObject::paddingLeft(PaddingOptions) const
     Length padding = style()->paddingLeft();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    else if (padding.isViewportRelative())
+    else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
 }
@@ -598,7 +598,7 @@ LayoutUnit RenderBoxModelObject::paddingRight(PaddingOptions) const
     Length padding = style()->paddingRight();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    else if (padding.isViewportRelative())
+    else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
 }
@@ -610,7 +610,7 @@ LayoutUnit RenderBoxModelObject::paddingBefore(PaddingOptions) const
     Length padding = style()->paddingBefore();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    else if (padding.isViewportRelative())
+    else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
 }
@@ -622,7 +622,7 @@ LayoutUnit RenderBoxModelObject::paddingAfter(PaddingOptions) const
     Length padding = style()->paddingAfter();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    else if (padding.isViewportRelative())
+    else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
 }
@@ -634,7 +634,7 @@ LayoutUnit RenderBoxModelObject::paddingStart(PaddingOptions) const
     Length padding = style()->paddingStart();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    else if (padding.isViewportRelative())
+    else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
 }
@@ -646,7 +646,7 @@ LayoutUnit RenderBoxModelObject::paddingEnd(PaddingOptions) const
     Length padding = style()->paddingEnd();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    else if (padding.isViewportRelative())
+    else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
 }
@@ -1027,12 +1027,12 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
 
             if (layerWidth.isFixed())
                 w = layerWidth.value();
-            else if (layerWidth.isPercent() || layerHeight.isViewportRelative())
+            else if (layerWidth.isPercent() || layerHeight.isViewportPercentage())
                 w = valueForLength(layerWidth, positioningAreaSize.width(), renderView);
             
             if (layerHeight.isFixed())
                 h = layerHeight.value();
-            else if (layerHeight.isPercent() || layerHeight.isViewportRelative())
+            else if (layerHeight.isPercent() || layerHeight.isViewportPercentage())
                 h = valueForLength(layerHeight, positioningAreaSize.height(), renderView);
             
             // If one of the values is auto we have to use the appropriate

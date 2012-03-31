@@ -572,7 +572,7 @@ static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, int prope
     if (style->position() == AbsolutePosition || style->position() == FixedPosition) {
         if (l.type() == WebCore::Fixed)
             return zoomAdjustedPixelValue(l.value(), style, cssValuePool);
-        else if (l.isViewportRelative())
+        else if (l.isViewportPercentage())
             return zoomAdjustedPixelValue(valueForLength(l, 0, renderView), style, cssValuePool);
         return cssValuePool->createValue(l);
     }
@@ -1777,7 +1777,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (marginRight.isFixed() || !renderer || !renderer->isBox())
                 return zoomAdjustedPixelValueForLength(marginRight, style.get(), cssValuePool);
             int value;
-            if (marginRight.isPercent() || marginRight.isViewportRelative())
+            if (marginRight.isPercent() || marginRight.isViewportPercentage())
                 // RenderBox gives a marginRight() that is the distance between the right-edge of the child box
                 // and the right-edge of the containing box, when display == BLOCK. Let's calculate the absolute
                 // value of the specified margin-right % instead of relying on RenderBox's marginRight() value.

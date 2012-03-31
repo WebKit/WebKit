@@ -633,7 +633,7 @@ public:
         if (lh.isPercent())
             return minimumValueForLength(lh, fontSize());
 
-        if (lh.isViewportRelative())
+        if (lh.isViewportPercentage())
             return valueForLength(lh, 0, renderView);
 
         return lh.value();

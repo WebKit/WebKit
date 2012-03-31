@@ -3947,7 +3947,7 @@ LayoutUnit RenderBlock::textIndentOffset() const
     RenderView* renderView = 0;
     if (style()->textIndent().isPercent())
         cw = containingBlock()->availableLogicalWidth();
-    else if (style()->textIndent().isViewportRelative())
+    else if (style()->textIndent().isViewportPercentage())
         renderView = view();
     return minimumValueForLength(style()->textIndent(), cw, renderView);
 }

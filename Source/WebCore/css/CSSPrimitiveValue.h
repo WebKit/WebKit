@@ -80,7 +80,7 @@ public:
         CSS_COUNTER = 23,
         CSS_RECT = 24,
         CSS_RGBCOLOR = 25,
-        // From CSS Values and Units. Viewport Relative Lengths (vw/vh/vmin).
+        // From CSS Values and Units. Viewport-percentage Lengths (vw/vh/vmin).
         CSS_VW = 26,
         CSS_VH = 27,
         CSS_VMIN = 28,
@@ -122,7 +122,7 @@ public:
         UAngle,
         UTime,
         UFrequency,
-        UViewportRelativeLength,
+        UViewportPercentageLength,
         UOther
     };
 
@@ -158,7 +158,7 @@ public:
     bool isCalculated() const { return m_primitiveUnitType == CSS_CALC; }
     bool isCalculatedPercentageWithNumber() const { return primitiveType() == CSS_CALC_PERCENTAGE_WITH_NUMBER; }
     bool isCalculatedPercentageWithLength() const { return primitiveType() == CSS_CALC_PERCENTAGE_WITH_LENGTH; }
-    bool isViewportRelativeLength() const { return m_primitiveUnitType >= CSS_VW && m_primitiveUnitType <= CSS_VMIN; }
+    bool isViewportPercentageLength() const { return m_primitiveUnitType >= CSS_VW && m_primitiveUnitType <= CSS_VMIN; }
 
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(int identifier) { return adoptRef(new CSSPrimitiveValue(identifier)); }
     static PassRefPtr<CSSPrimitiveValue> createColor(unsigned rgbValue) { return adoptRef(new CSSPrimitiveValue(rgbValue)); }
@@ -274,7 +274,7 @@ public:
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
-    Length viewportRelativeLength();
+    Length viewportPercentageLength();
 
 private:
     // FIXME: int vs. unsigned overloading is too subtle to distinguish the color and identifier cases.

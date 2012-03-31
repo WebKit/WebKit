@@ -2164,7 +2164,7 @@ LayoutUnit RenderBox::computeContentLogicalHeightUsing(const Length& height)
             logicalHeight = height.value();
         else if (height.isPercent())
             logicalHeight = computePercentageLogicalHeight(height);
-        else if (height.isViewportRelative())
+        else if (height.isViewportPercentage())
             logicalHeight = valueForLength(height, 0, view());
     }
     return logicalHeight;
@@ -2351,9 +2351,9 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
             }
             return computeContentBoxLogicalHeight(valueForLength(logicalHeight, availableHeight));
         }
-        case ViewportRelativeWidth:
-        case ViewportRelativeHeight:
-        case ViewportRelativeMin:
+        case ViewportPercentageWidth:
+        case ViewportPercentageHeight:
+        case ViewportPercentageMin:
             return computeContentBoxLogicalHeight(valueForLength(logicalHeight, 0, view()));
         default:
             return intrinsicLogicalHeight();
