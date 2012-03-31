@@ -124,7 +124,7 @@ namespace JSC {
         
         static void sample();
         
-        static void dump();
+        JS_EXPORT_PRIVATE static void dump();
         
     private:
         const char* m_name;

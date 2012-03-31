@@ -713,6 +713,9 @@ void SpeculativeJIT::nonSpeculativePeepholeBranch(Node& node, NodeIndex branchNo
     }
 
     jump(notTaken);
+
+    m_indexInBlock = m_jit.graph().m_blocks[m_block]->size() - 1;
+    m_compileIndex = branchNodeIndex;
 }
 
 void SpeculativeJIT::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembler::RelationalCondition cond, S_DFGOperation_EJJ helperFunction)
@@ -1483,6 +1486,145 @@ void SpeculativeJIT::compileObjectEquality(Node& node, const ClassInfo* classInf
     done.link(&m_jit);
 
     jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean);
+}
+
+void SpeculativeJIT::compileObjectToObjectOrOtherEquality(
+    Edge leftChild, Edge rightChild,
+    const ClassInfo* classInfo, PredictionChecker predictionCheck)
+{
+    SpeculateCellOperand op1(this, leftChild);
+    JSValueOperand op2(this, rightChild);
+    GPRTemporary result(this);
+    
+    GPRReg op1GPR = op1.gpr();
+    GPRReg op2GPR = op2.gpr();
+    GPRReg resultGPR = result.gpr();
+    
+    if (!predictionCheck(m_state.forNode(leftChild).m_type)) {
+        speculationCheck(
+            BadType, JSValueRegs(op1GPR), leftChild.index(),
+            m_jit.branchPtr(
+                MacroAssembler::NotEqual,
+                MacroAssembler::Address(op1GPR, JSCell::classInfoOffset()),
+                MacroAssembler::TrustedImmPtr(classInfo)));
+    }
+    
+    // It seems that most of the time when programs do a == b where b may be either null/undefined
+    // or an object, b is usually an object. Balance the branches to make that case fast.
+    MacroAssembler::Jump rightNotCell =
+        m_jit.branchTestPtr(MacroAssembler::NonZero, op2GPR, GPRInfo::tagMaskRegister);
+    
+    // We know that within this branch, rightChild must be a cell. If the CFA can tell us that the
+    // proof, when filtered on cell, demonstrates that we have an object of the desired type
+    // (predictionCheck() will test for FinalObject or Array, currently), then we can skip the
+    // speculation.
+    if (!predictionCheck(m_state.forNode(rightChild).m_type & PredictCell)) {
+        speculationCheck(
+            BadType, JSValueRegs(op2GPR), rightChild.index(),
+            m_jit.branchPtr(
+                MacroAssembler::NotEqual,
+                MacroAssembler::Address(op2GPR, JSCell::classInfoOffset()),
+                MacroAssembler::TrustedImmPtr(classInfo)));
+    }
+    
+    // At this point we know that we can perform a straight-forward equality comparison on pointer
+    // values because both left and right are pointers to objects that have no special equality
+    // protocols.
+    MacroAssembler::Jump falseCase = m_jit.branchPtr(MacroAssembler::NotEqual, op1GPR, op2GPR);
+    MacroAssembler::Jump trueCase = m_jit.jump();
+    
+    rightNotCell.link(&m_jit);
+    
+    // We know that within this branch, rightChild must not be a cell. Check if that is enough to
+    // prove that it is either null or undefined.
+    if (!isOtherPrediction(m_state.forNode(rightChild).m_type & ~PredictCell)) {
+        m_jit.move(op2GPR, resultGPR);
+        m_jit.andPtr(MacroAssembler::TrustedImm32(~TagBitUndefined), resultGPR);
+        
+        speculationCheck(
+            BadType, JSValueRegs(op2GPR), rightChild.index(),
+            m_jit.branchPtr(
+                MacroAssembler::NotEqual, resultGPR,
+                MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(ValueNull))));
+    }
+    
+    falseCase.link(&m_jit);
+    m_jit.move(TrustedImm32(ValueFalse), resultGPR);
+    MacroAssembler::Jump done = m_jit.jump();
+    trueCase.link(&m_jit);
+    m_jit.move(TrustedImm32(ValueTrue), resultGPR);
+    done.link(&m_jit);
+    
+    jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean);
+}
+
+void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(
+    Edge leftChild, Edge rightChild, NodeIndex branchNodeIndex,
+    const ClassInfo* classInfo, PredictionChecker predictionCheck)
+{
+    Node& branchNode = at(branchNodeIndex);
+    BlockIndex taken = branchNode.takenBlockIndex();
+    BlockIndex notTaken = branchNode.notTakenBlockIndex();
+    
+    SpeculateCellOperand op1(this, leftChild);
+    JSValueOperand op2(this, rightChild);
+    GPRTemporary result(this);
+    
+    GPRReg op1GPR = op1.gpr();
+    GPRReg op2GPR = op2.gpr();
+    GPRReg resultGPR = result.gpr();
+    
+    if (!predictionCheck(m_state.forNode(leftChild).m_type)) {
+        speculationCheck(
+            BadType, JSValueRegs(op1GPR), leftChild.index(),
+            m_jit.branchPtr(
+                MacroAssembler::NotEqual,
+                MacroAssembler::Address(op1GPR, JSCell::classInfoOffset()),
+                MacroAssembler::TrustedImmPtr(classInfo)));
+    }
+    
+    // It seems that most of the time when programs do a == b where b may be either null/undefined
+    // or an object, b is usually an object. Balance the branches to make that case fast.
+    MacroAssembler::Jump rightNotCell =
+        m_jit.branchTestPtr(MacroAssembler::NonZero, op2GPR, GPRInfo::tagMaskRegister);
+    
+    // We know that within this branch, rightChild must be a cell. If the CFA can tell us that the
+    // proof, when filtered on cell, demonstrates that we have an object of the desired type
+    // (predictionCheck() will test for FinalObject or Array, currently), then we can skip the
+    // speculation.
+    if (!predictionCheck(m_state.forNode(rightChild).m_type & PredictCell)) {
+        speculationCheck(
+            BadType, JSValueRegs(op2GPR), rightChild.index(),
+            m_jit.branchPtr(
+                MacroAssembler::NotEqual,
+                MacroAssembler::Address(op2GPR, JSCell::classInfoOffset()),
+                MacroAssembler::TrustedImmPtr(classInfo)));
+    }
+    
+    // At this point we know that we can perform a straight-forward equality comparison on pointer
+    // values because both left and right are pointers to objects that have no special equality
+    // protocols.
+    branchPtr(MacroAssembler::Equal, op1GPR, op2GPR, taken);
+    
+    // We know that within this branch, rightChild must not be a cell. Check if that is enough to
+    // prove that it is either null or undefined.
+    if (isOtherPrediction(m_state.forNode(rightChild).m_type & ~PredictCell))
+        rightNotCell.link(&m_jit);
+    else {
+        jump(notTaken, ForceJump);
+        
+        rightNotCell.link(&m_jit);
+        m_jit.move(op2GPR, resultGPR);
+        m_jit.andPtr(MacroAssembler::TrustedImm32(~TagBitUndefined), resultGPR);
+        
+        speculationCheck(
+            BadType, JSValueRegs(op2GPR), rightChild.index(),
+            m_jit.branchPtr(
+                MacroAssembler::NotEqual, resultGPR,
+                MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(ValueNull))));
+    }
+    
+    jump(notTaken);
 }
 
 void SpeculativeJIT::compileIntegerCompare(Node& node, MacroAssembler::RelationalCondition condition)

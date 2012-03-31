@@ -409,6 +409,8 @@ bool AbstractState::execute(unsigned indexInBlock)
     case CompareGreater:
     case CompareGreaterEq:
     case CompareEq: {
+        forNode(nodeIndex).set(PredictBoolean);
+        
         Node& left = m_graph[node.child1()];
         Node& right = m_graph[node.child2()];
         PredictedType filter;
@@ -416,17 +418,45 @@ bool AbstractState::execute(unsigned indexInBlock)
             filter = PredictInt32;
         else if (Node::shouldSpeculateNumber(left, right))
             filter = PredictNumber;
-        else if (node.op() == CompareEq && Node::shouldSpeculateFinalObject(left, right))
-            filter = PredictFinalObject;
-        else if (node.op() == CompareEq && Node::shouldSpeculateArray(left, right))
-            filter = PredictArray;
-        else {
+        else if (node.op() == CompareEq) {
+            if ((m_graph.isConstant(node.child1().index())
+                 && m_graph.valueOfJSConstant(node.child1().index()).isNull())
+                || (m_graph.isConstant(node.child2().index())
+                    && m_graph.valueOfJSConstant(node.child2().index()).isNull())) {
+                // We know that this won't clobber the world. But that's all we know.
+                break;
+            }
+            
+            if (Node::shouldSpeculateFinalObject(left, right))
+                filter = PredictFinalObject;
+            else if (Node::shouldSpeculateArray(left, right))
+                filter = PredictArray;
+            else if (left.shouldSpeculateFinalObject() && right.shouldSpeculateFinalObjectOrOther()) {
+                forNode(node.child1()).filter(PredictFinalObject);
+                forNode(node.child2()).filter(PredictFinalObject | PredictOther);
+                break;
+            } else if (right.shouldSpeculateFinalObject() && left.shouldSpeculateFinalObjectOrOther()) {
+                forNode(node.child1()).filter(PredictFinalObject | PredictOther);
+                forNode(node.child2()).filter(PredictFinalObject);
+                break;
+            } else if (left.shouldSpeculateArray() && right.shouldSpeculateArrayOrOther()) {
+                forNode(node.child1()).filter(PredictFinalObject);
+                forNode(node.child2()).filter(PredictFinalObject | PredictOther);
+                break;
+            } else if (right.shouldSpeculateArray() && left.shouldSpeculateArrayOrOther()) {
+                forNode(node.child1()).filter(PredictFinalObject | PredictOther);
+                forNode(node.child2()).filter(PredictFinalObject);
+                break;
+            } else {
+                filter = PredictTop;
+                clobberStructures(indexInBlock);
+            }
+        } else {
             filter = PredictTop;
             clobberStructures(indexInBlock);
         }
         forNode(node.child1()).filter(filter);
         forNode(node.child2()).filter(filter);
-        forNode(nodeIndex).set(PredictBoolean);
         break;
     }
             

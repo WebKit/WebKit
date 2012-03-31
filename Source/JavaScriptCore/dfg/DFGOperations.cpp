@@ -364,9 +364,6 @@ EncodedJSValue DFG_OPERATION operationGetById(ExecState* exec, EncodedJSValue ba
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
-    if (false)
-        dataLog("getById(%s, %s)\n", JSValue::decode(base).description(), propertyName->ascii().data());
-    
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue);
     return JSValue::encode(baseValue.get(exec, *propertyName, slot));
@@ -746,28 +743,11 @@ size_t DFG_OPERATION operationCompareGreaterEq(ExecState* exec, EncodedJSValue e
     return jsLessEq<false>(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1));
 }
 
-static const char *classNameSpace(JSValue value)
-{
-    return value.isCell() ? " " : "";
-}
-
-static const char* className(JSValue value)
-{
-    if (!value.isCell())
-        return "";
-    return value.asCell()->classInfo()->className;
-}
-
 size_t DFG_OPERATION operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
-    if (false) {
-        dataLog("compareEq(%s%s%s, ", JSValue::decode(encodedOp1).description(), classNameSpace(JSValue::decode(encodedOp1)), className(JSValue::decode(encodedOp1)));
-        dataLog("%s%s%s)\n", JSValue::decode(encodedOp2).description(), classNameSpace(JSValue::decode(encodedOp2)), className(JSValue::decode(encodedOp2)));
-    }
-        
     return JSValue::equalSlowCaseInline(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
