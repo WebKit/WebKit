@@ -982,12 +982,21 @@ class Manager(object):
 
             self._update_summary_with_result(result_summary, result)
 
+    def _mark_interrupted_tests_as_skipped(self, result_summary):
+        for test_name in self._test_files:
+            if test_name not in result_summary.results:
+                result = test_results.TestResult(test_name)
+                result.type = test_expectations.SKIP
+                # FIXME: We probably need to loop here if there are multiple iterations.
+                result_summary.add(result, expected=True)
+
     def _interrupt_if_at_failure_limits(self, result_summary):
         # Note: The messages in this method are constructed to match old-run-webkit-tests
         # so that existing buildbot grep rules work.
         def interrupt_if_at_failure_limit(limit, failure_count, result_summary, message):
             if limit and failure_count >= limit:
                 message += " %d tests run." % (result_summary.expected + result_summary.unexpected)
+                self._mark_interrupted_tests_as_skipped(result_summary)
                 raise TestRunInterruptedException(message)
 
         interrupt_if_at_failure_limit(

@@ -1,3 +1,18 @@
+2012-03-31  Ojan Vafai  <ojan@chromium.org>
+
+        If NRWT gets killed halfway through a run, it incorrectly reports tests that weren't run as passes
+        https://bugs.webkit.org/show_bug.cgi?id=82799
+
+        Reviewed by Eric Seidel.
+
+        If we don't run a test, mark it as skipped.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._mark_interrupted_tests_as_skipped):
+        (Manager._interrupt_if_at_failure_limits.interrupt_if_at_failure_limit):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_interrupt_if_at_failure_limits):
+
 2012-03-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         One more build fix after r112781 for Chromium Windows.
