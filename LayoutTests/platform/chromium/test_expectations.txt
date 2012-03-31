@@ -3704,7 +3704,6 @@ BUGWK81145 LION : svg/W3C-SVG-1.1/filters-image-01-b.svg = IMAGE
 BUGWK81145 LION : svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg = IMAGE
 BUGWK81145 LION : svg/batik/filters/feTile.svg = IMAGE
 BUGWK81145 LION : svg/batik/filters/filterRegions.svg = IMAGE
-BUGWK81145 LION : svg/batik/masking/maskRegions.svg = IMAGE
 BUGWK81145 LION : svg/batik/paints/gradientLimit.svg = IMAGE
 BUGWK81145 LION : svg/batik/paints/patternPreserveAspectRatioA.svg = IMAGE
 BUGWK81145 LION : svg/batik/paints/patternRegionA.svg = IMAGE
