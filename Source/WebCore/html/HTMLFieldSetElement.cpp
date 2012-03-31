@@ -51,9 +51,8 @@ void HTMLFieldSetElement::disabledAttributeChanged()
     HTMLFormControlElement::disabledAttributeChanged();
 
     for (Node* currentNode = this; currentNode; currentNode = currentNode->traverseNextNode(this)) {
-        HTMLElement* element = toHTMLElement(currentNode);
-        if (element && element->isFormControlElement())
-            static_cast<HTMLFormControlElement*>(element)->setNeedsStyleRecalc();
+        if (currentNode && currentNode->isElementNode() && toElement(currentNode)->isFormControlElement())
+            static_cast<HTMLFormControlElement*>(currentNode)->setNeedsStyleRecalc();
     }
 }
 
