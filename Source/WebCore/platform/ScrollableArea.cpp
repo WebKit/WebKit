@@ -42,6 +42,15 @@
 
 namespace WebCore {
 
+struct SameSizeAsScrollableArea {
+    virtual ~SameSizeAsScrollableArea();
+    void* pointer;
+    unsigned bitfields : 16;
+    IntPoint origin;
+};
+
+COMPILE_ASSERT(sizeof(ScrollableArea) == sizeof(SameSizeAsScrollableArea), ScrollableArea_should_stay_small);
+
 ScrollableArea::ScrollableArea()
     : m_constrainsScrollingToContentEdge(true)
     , m_inLiveResize(false)
