@@ -164,6 +164,10 @@ public:
     virtual String description() const;
 #endif
 
+#if PLATFORM(MAC)
+    const SimpleFontData* getCompositeFontReferenceFontData(NSFont *key) const;
+#endif
+    
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
     NSFont* getNSFont() const { return m_platformData.font(); }
 #elif (PLATFORM(WX) && OS(DARWIN)) 
@@ -263,7 +267,10 @@ private:
         OwnPtr<SimpleFontData> brokenIdeograph;
         OwnPtr<SimpleFontData> verticalRightOrientation;
         OwnPtr<SimpleFontData> uprightOrientation;
-
+#if PLATFORM(MAC)
+        mutable RetainPtr<CFMutableDictionaryRef> compositeFontReferences;
+#endif
+        
     private:
         DerivedFontData(bool custom)
             : forCustomFont(custom)

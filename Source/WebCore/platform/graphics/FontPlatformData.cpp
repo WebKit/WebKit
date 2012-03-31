@@ -39,6 +39,10 @@ FontPlatformData::FontPlatformData(const FontPlatformData& source)
     , m_size(source.m_size)
     , m_widthVariant(source.m_widthVariant)
     , m_isColorBitmapFont(source.m_isColorBitmapFont)
+    , m_isCompositeFontReference(source.m_isCompositeFontReference)
+#if OS(DARWIN)
+    , m_isPrinterFont(source.m_isPrinterFont)
+#endif
 {
     platformDataInit(source);
 }
@@ -56,6 +60,10 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& othe
     m_size = other.m_size;
     m_widthVariant = other.m_widthVariant;
     m_isColorBitmapFont = other.m_isColorBitmapFont;
+    m_isCompositeFontReference = other.m_isCompositeFontReference;
+#if OS(DARWIN)
+    m_isPrinterFont = other.m_isPrinterFont;
+#endif
 
     return platformDataAssign(other);
 }
