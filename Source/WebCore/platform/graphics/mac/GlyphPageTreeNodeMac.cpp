@@ -38,8 +38,6 @@ namespace WebCore {
 
 static bool shouldUseCoreText(UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
-    if (fontData->platformData().isCompositeFontReference())
-        return true;
     if (fontData->platformData().widthVariant() != RegularWidth || fontData->hasVerticalGlyphs()) {
         // Ideographs don't have a vertical variant or width variants.
         for (unsigned i = 0; i < bufferLength; ++i) {
@@ -66,8 +64,8 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
                 haveGlyphs = true;
             }
         }
-    } else if (!fontData->platformData().isCompositeFontReference() && ((fontData->platformData().widthVariant() == RegularWidth) ? wkGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength)
-               : CTFontGetGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength))) {
+    } else if ((fontData->platformData().widthVariant() == RegularWidth) ? wkGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength)
+        : CTFontGetGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength)) {
         for (unsigned i = 0; i < length; ++i) {
             if (!glyphs[i])
                 setGlyphDataForIndex(offset + i, 0, 0);
@@ -107,8 +105,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
             CTFontRef runFont = static_cast<CTFontRef>(CFDictionaryGetValue(attributes, kCTFontAttributeName));
             RetainPtr<CGFontRef> runCGFont(AdoptCF, CTFontCopyGraphicsFont(runFont, 0));
             // Use CGFont here as CFEqual for CTFont counts all attributes for font.
-            bool gotBaseFont = CFEqual(cgFont.get(), runCGFont.get());
-            if (gotBaseFont || fontData->platformData().isCompositeFontReference()) {
+            if (CFEqual(cgFont.get(), runCGFont.get())) {
                 // This run uses the font we want. Extract glyphs.
                 CFIndex glyphCount = CTRunGetGlyphCount(ctRun);
                 const CGGlyph* glyphs = CTRunGetGlyphsPtr(ctRun);
@@ -124,30 +121,14 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
                     stringIndices = indexVector.data();
                 }
 
-                if (gotBaseFont) {
-                    for (CFIndex i = 0; i < glyphCount; ++i) {
-                        if (stringIndices[i] >= static_cast<CFIndex>(length)) {
-                            done = true;
-                            break;
-                        }
-                        if (glyphs[i]) {
-                            setGlyphDataForIndex(offset + stringIndices[i], glyphs[i], fontData);
-                            haveGlyphs = true;
-                        }
+                for (CFIndex i = 0; i < glyphCount; ++i) {
+                    if (stringIndices[i] >= static_cast<CFIndex>(length)) {
+                        done = true;
+                        break;
                     }
-                } else {
-                    const SimpleFontData* runSimple = fontData->getCompositeFontReferenceFontData((NSFont *)runFont);
-                    if (runSimple) {
-                        for (CFIndex i = 0; i < glyphCount; ++i) {
-                            if (stringIndices[i] >= static_cast<CFIndex>(length)) {
-                                done = true;
-                                break;
-                            }
-                            if (glyphs[i]) {
-                                setGlyphDataForIndex(offset + stringIndices[i], glyphs[i], runSimple);
-                                haveGlyphs = true;
-                            }
-                        }
+                    if (glyphs[i]) {
+                        setGlyphDataForIndex(offset + stringIndices[i], glyphs[i], fontData);
+                        haveGlyphs = true;
                     }
                 }
             }

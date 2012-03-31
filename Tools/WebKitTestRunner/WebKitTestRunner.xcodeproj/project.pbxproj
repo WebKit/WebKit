@@ -52,7 +52,6 @@
 		65EB85A011EC67CC0034D300 /* ActivateFonts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65EB859F11EC67CC0034D300 /* ActivateFonts.mm */; };
 		8034C6621487636400AC32E9 /* AccessibilityControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8034C6611487636400AC32E9 /* AccessibilityControllerMac.mm */; };
 		8097338A14874A5A008156D9 /* AccessibilityNotificationHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8097338914874A5A008156D9 /* AccessibilityNotificationHandler.mm */; };
-		8CCDA823151A570B0003F937 /* SampleFont.sfont in Resources */ = {isa = PBXBuildFile; fileRef = 8CCDA822151A570B0003F937 /* SampleFont.sfont */; };
 		A664BC7613A5F3A9009A7B25 /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */; };
 		BC14E4DB120E02D000826C0C /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14E4D9120E02D000826C0C /* GCController.cpp */; };
 		BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14E4E8120E03D800826C0C /* JSGCController.cpp */; };
@@ -151,7 +150,6 @@
 		8034C6611487636400AC32E9 /* AccessibilityControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityControllerMac.mm; path = mac/AccessibilityControllerMac.mm; sourceTree = "<group>"; };
 		8097338814874A5A008156D9 /* AccessibilityNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AccessibilityNotificationHandler.h; path = mac/AccessibilityNotificationHandler.h; sourceTree = "<group>"; };
 		8097338914874A5A008156D9 /* AccessibilityNotificationHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityNotificationHandler.mm; path = mac/AccessibilityNotificationHandler.mm; sourceTree = "<group>"; };
-		8CCDA822151A570B0003F937 /* SampleFont.sfont */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = SampleFont.sfont; path = fonts/SampleFont.sfont; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* WebKitTestRunner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebKitTestRunner; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC14E4D8120E02D000826C0C /* GCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCController.h; sourceTree = "<group>"; };
 		BC14E4D9120E02D000826C0C /* GCController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCController.cpp; sourceTree = "<group>"; };
@@ -364,7 +362,6 @@
 				6510A77F11EC643800410867 /* WebKitWeightWatcher700.ttf */,
 				6510A78011EC643800410867 /* WebKitWeightWatcher800.ttf */,
 				6510A78111EC643800410867 /* WebKitWeightWatcher900.ttf */,
-				8CCDA822151A570B0003F937 /* SampleFont.sfont */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -530,7 +527,6 @@
 				6510A78A11EC643800410867 /* WebKitWeightWatcher700.ttf in Resources */,
 				6510A78B11EC643800410867 /* WebKitWeightWatcher800.ttf in Resources */,
 				6510A78C11EC643800410867 /* WebKitWeightWatcher900.ttf in Resources */,
-				8CCDA823151A570B0003F937 /* SampleFont.sfont in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

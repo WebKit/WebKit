@@ -41,7 +41,7 @@ void FontPlatformData::loadFont(NSFont* nsFont, float, NSFont*& outNSFont, CGFon
 }
 #endif  // PLATFORM(MAC)
 
-FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool isPrinterFont, bool syntheticBold, bool syntheticOblique, FontOrientation orientation,
+FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation,
                                    TextOrientation textOrientation, FontWidthVariant widthVariant)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
@@ -50,26 +50,18 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool isPrinterFon
     , m_size(size)
     , m_widthVariant(widthVariant)
     , m_font(nsFont)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    // FIXME: Chromium: The following code isn't correct for the Chromium port since the sandbox might
+    // have blocked font loading, in which case we'll only have the real loaded font file after the call to loadFont().
+    , m_isColorBitmapFont(CTFontGetSymbolicTraits(toCTFontRef(nsFont)) & kCTFontColorGlyphsTrait)
+#else
     , m_isColorBitmapFont(false)
-    , m_isCompositeFontReference(false)
-    , m_isPrinterFont(isPrinterFont)
+#endif
 {
     ASSERT_ARG(nsFont, nsFont);
 
     CGFontRef cgFont = 0;
     loadFont(nsFont, size, m_font, cgFont);
-    
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    // FIXME: Chromium: The following code isn't correct for the Chromium port since the sandbox might
-    // have blocked font loading, in which case we'll only have the real loaded font file after the call to loadFont().
-    {
-        CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(toCTFontRef(m_font));
-        m_isColorBitmapFont = traits & kCTFontColorGlyphsTrait;
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
-        m_isCompositeFontReference = traits & kCTFontCompositeTrait;
-#endif
-    }
-#endif
 
     if (m_font)
         CFRetain(m_font);
@@ -149,13 +141,7 @@ void FontPlatformData::setFont(NSFont *font)
     
     m_cgFont.adoptCF(cgFont);
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    {
-        CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(toCTFontRef(m_font));
-        m_isColorBitmapFont = traits & kCTFontColorGlyphsTrait;
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
-        m_isCompositeFontReference = traits & kCTFontCompositeTrait;
-#endif
-    }
+    m_isColorBitmapFont = CTFontGetSymbolicTraits(toCTFontRef(m_font)) & kCTFontColorGlyphsTrait;
 #endif
     m_CTFont = 0;
 }
