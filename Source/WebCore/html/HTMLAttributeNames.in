@@ -317,5 +317,6 @@ vlink
 vspace
 webkitallowfullscreen
 webkitdirectory
+webkitseamless
 width
 wrap
