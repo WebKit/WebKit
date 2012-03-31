@@ -1038,7 +1038,7 @@ PassRefPtr<RenderStyle> Element::styleForRenderer()
 {
     if (hasCustomStyleForRenderer())
         return customStyleForRenderer();
-    return document()->styleSelector()->styleForElement(static_cast<Element*>(this), 0, true/*allowSharing*/);
+    return document()->styleSelector()->styleForElement(static_cast<Element*>(this));
 }
 
 void Element::recalcStyle(StyleChange change)

@@ -375,7 +375,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, bool matchAuthorAndUserSt
         m_medium = adoptPtr(new MediaQueryEvaluator("all"));
 
     if (root)
-        m_rootDefaultStyle = styleForElement(root, 0, false, true); // don't ref, because the RenderStyle is allocated from global heap
+        m_rootDefaultStyle = styleForElement(root, 0, DisallowStyleSharing, MatchOnlyUserAgentRules);
 
     if (m_rootDefaultStyle && view)
         m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType(), view->frame(), m_rootDefaultStyle.get()));
@@ -1567,14 +1567,12 @@ static inline bool isAtShadowBoundary(Element* element)
     return parentNode && parentNode->isShadowRoot();
 }
 
-// If resolveForRootDefault is true, style based on user agent style sheet only. This is used in media queries, where
-// relative units are interpreted according to document root element style, styled only with UA stylesheet
-
-PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault, RenderRegion* regionForStyling)
+PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, RenderStyle* defaultParent,
+    StyleSharingBehavior sharingBehavior, RuleMatchingBehavior matchingBehavior, RenderRegion* regionForStyling)
 {
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
     // will vanish if a style recalc happens during loading.
-    if (allowSharing && !element->document()->haveStylesheetsLoaded() && !element->renderer()) {
+    if (sharingBehavior == AllowStyleSharing && !element->document()->haveStylesheetsLoaded() && !element->renderer()) {
         if (!s_styleNotYetAvailable) {
             s_styleNotYetAvailable = RenderStyle::create().leakRef();
             s_styleNotYetAvailable->setDisplay(NONE);
@@ -1587,7 +1585,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, Rend
     initElement(element);
     initForStyleResolve(element, defaultParent);
     m_regionForStyling = regionForStyling;
-    if (allowSharing) {
+    if (sharingBehavior == AllowStyleSharing) {
         RenderStyle* sharedStyle = locateSharedStyle();
         if (sharedStyle)
             return sharedStyle;
@@ -1615,7 +1613,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, Rend
     ensureDefaultStyleSheetsForElement(element);
 
     MatchResult matchResult;
-    if (resolveForRootDefault)
+    if (matchingBehavior == MatchOnlyUserAgentRules)
         matchUARules(matchResult);
     else
         matchAllRules(matchResult);

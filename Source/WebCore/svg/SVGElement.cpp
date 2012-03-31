@@ -478,7 +478,7 @@ void SVGElement::synchronizeSystemLanguage(void* contextElement)
 PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
 {
     if (!correspondingElement())
-        return document()->styleSelector()->styleForElement(static_cast<Element*>(this), 0, true);
+        return document()->styleSelector()->styleForElement(this);
 
     RenderStyle* style = 0;
     if (Element* parent = parentOrHostElement()) {
@@ -486,7 +486,7 @@ PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
             style = renderer->style();
     }
 
-    return document()->styleSelector()->styleForElement(correspondingElement(), style, false /*allowSharing*/);
+    return document()->styleSelector()->styleForElement(correspondingElement(), style, DisallowStyleSharing);
 }
 
 StylePropertySet* SVGElement::animatedSMILStyleProperties() const

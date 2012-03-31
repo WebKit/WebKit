@@ -100,6 +100,20 @@ public:
     bool m_result;
 };
 
+enum StyleSharingBehavior {
+    AllowStyleSharing,
+    DisallowStyleSharing,
+};
+
+// MatchOnlyUserAgentRules is used in media queries, where relative units
+// are interpreted according to the document root element style, and styled only
+// from the User Agent Stylesheet rules.
+
+enum RuleMatchingBehavior {
+    MatchAllRules,
+    MatchOnlyUserAgentRules,
+};
+
 // This class selects a RenderStyle for a given element based on a collection of stylesheets.
 class CSSStyleSelector {
     WTF_MAKE_NONCOPYABLE(CSSStyleSelector); WTF_MAKE_FAST_ALLOCATED;
@@ -113,7 +127,8 @@ public:
     void pushParentShadowRoot(const ShadowRoot*);
     void popParentShadowRoot(const ShadowRoot*);
 
-    PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false, RenderRegion* regionForStyling = 0);
+    PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, StyleSharingBehavior = AllowStyleSharing,
+        RuleMatchingBehavior = MatchAllRules, RenderRegion* regionForStyling = 0);
 
     void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList&);
 

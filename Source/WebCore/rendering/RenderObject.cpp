@@ -2560,19 +2560,20 @@ PassRefPtr<RenderStyle> RenderObject::getUncachedPseudoStyle(PseudoId pseudo, Re
         parentStyle = style();
     }
 
+    // FIXME: This "find nearest element parent" should be a helper function.
     Node* n = node();
     while (n && !n->isElementNode())
         n = n->parentNode();
     if (!n)
         return 0;
+    Element* element = toElement(n);
 
-    RefPtr<RenderStyle> result;
     if (pseudo == FIRST_LINE_INHERITED) {
-        result = document()->styleSelector()->styleForElement(static_cast<Element*>(n), parentStyle, false);
+        RefPtr<RenderStyle> result = document()->styleSelector()->styleForElement(element, parentStyle, DisallowStyleSharing);
         result->setStyleType(FIRST_LINE_INHERITED);
-    } else
-        result = document()->styleSelector()->pseudoStyleForElement(pseudo, static_cast<Element*>(n), parentStyle);
-    return result.release();
+        return result.release();
+    }
+    return document()->styleSelector()->pseudoStyleForElement(pseudo, element, parentStyle);
 }
 
 static Color decorationColor(RenderObject* renderer)

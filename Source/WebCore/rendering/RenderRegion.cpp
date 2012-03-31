@@ -300,7 +300,7 @@ PassRefPtr<RenderStyle> RenderRegion::computeStyleInRegion(const RenderBox* box)
     ASSERT(box->node() && box->node()->isElementNode());
 
     Element* element = toElement(box->node());
-    RefPtr<RenderStyle> renderBoxRegionStyle = box->view()->document()->styleSelector()->styleForElement(element, 0, false, false, this);
+    RefPtr<RenderStyle> renderBoxRegionStyle = box->view()->document()->styleSelector()->styleForElement(element, 0, DisallowStyleSharing, MatchAllRules, this);
     m_renderBoxRegionStyle.add(box, renderBoxRegionStyle);
 
     if (!box->hasBoxDecorations()) {
