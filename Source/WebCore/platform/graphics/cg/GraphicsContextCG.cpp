@@ -1657,7 +1657,7 @@ void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
         return;
 
     // CGContextStrokeEllipseInRect only supports solid colors.
-    if (m_state.fillGradient || m_state.fillPattern) {
+    if (m_state.strokeGradient || m_state.strokePattern) {
         strokeEllipseAsPath(ellipse);
         return;
     }
