@@ -77,7 +77,7 @@ public:
     virtual bool requiresLayer() const { return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasTransform() || hasHiddenBackface() || hasMask() || hasReflection() || hasFilter() || style()->specifiesColumns(); }
 
     // This will work on inlines to return the bounding box of all of the lines' border boxes.
-    virtual LayoutRect borderBoundingBox() const = 0;
+    virtual IntRect borderBoundingBox() const = 0;
 
     // Virtual since table cells override
     virtual LayoutUnit paddingTop(PaddingOptions = IncludeIntrinsicPadding) const;

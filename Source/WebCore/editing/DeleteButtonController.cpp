@@ -92,7 +92,7 @@ static bool isDeletableElement(const Node* node)
         return false;
 
     RenderBox* box = toRenderBox(renderer);
-    LayoutRect borderBoundingBox = box->borderBoundingBox();
+    IntRect borderBoundingBox = box->borderBoundingBox();
     if (borderBoundingBox.width() < minimumWidth || borderBoundingBox.height() < minimumHeight)
         return false;
 

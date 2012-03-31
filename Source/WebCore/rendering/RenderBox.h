@@ -132,10 +132,8 @@ public:
     LayoutRect frameRect() const { return m_frameRect; }
     void setFrameRect(const LayoutRect& rect) { m_frameRect = rect; }
 
-    // FIXME: We shouldn't be returning this as a LayoutRect, since it loses its position and won't properly pixel snap.
-    LayoutRect borderBoxRect() const { return LayoutRect(LayoutPoint(), size()); }
-    IntRect pixelSnappedBorderBoxRect() const { return IntRect(IntPoint(), IntSize(m_frameRect.pixelSnappedWidth(), m_frameRect.pixelSnappedHeight())); }
-    virtual IntRect borderBoundingBox() const { return pixelSnappedBorderBoxRect(); }
+    IntRect borderBoxRect() const { return IntRect(IntPoint(), IntSize(m_frameRect.pixelSnappedWidth(), m_frameRect.pixelSnappedHeight())); }
+    virtual IntRect borderBoundingBox() const { return borderBoxRect(); } 
 
     // The content area of the box (excludes padding and border).
     LayoutRect contentBoxRect(PaddingOptions paddingOption = ExcludeIntrinsicPadding) const { return LayoutRect(borderLeft() + paddingLeft(paddingOption), borderTop() + paddingTop(paddingOption), contentWidth(paddingOption), contentHeight(paddingOption)); }

@@ -134,10 +134,10 @@ private:
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&);
 
-    virtual LayoutRect borderBoundingBox() const
+    virtual IntRect borderBoundingBox() const
     {
-        LayoutRect boundingBox = linesBoundingBox();
-        return LayoutRect(0, 0, boundingBox.width(), boundingBox.height());
+        IntRect boundingBox = linesBoundingBox();
+        return IntRect(0, 0, boundingBox.width(), boundingBox.height());
     }
 
     virtual InlineFlowBox* createInlineFlowBox(); // Subclassed by SVG and Ruby
