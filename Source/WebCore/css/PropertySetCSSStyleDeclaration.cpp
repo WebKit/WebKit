@@ -118,7 +118,7 @@ bool StyleAttributeMutationScope::s_shouldDeliver = false;
 #endif
 
 } // namespace
-    
+
 void PropertySetCSSStyleDeclaration::ref()
 { 
     m_propertySet->ref();
@@ -289,8 +289,33 @@ bool PropertySetCSSStyleDeclaration::cssPropertyMatches(const CSSProperty* prope
 {
     return m_propertySet->propertyMatches(property);
 }
+    
+StyleRuleCSSStyleDeclaration::StyleRuleCSSStyleDeclaration(StylePropertySet* propertySet, CSSRule* parentRule)
+    : PropertySetCSSStyleDeclaration(propertySet)
+    , m_refCount(1)
+    , m_parentRule(parentRule) 
+{
+    m_propertySet->ref();
+}
 
-void RuleCSSStyleDeclaration::setNeedsStyleRecalc()
+StyleRuleCSSStyleDeclaration::~StyleRuleCSSStyleDeclaration()
+{
+    m_propertySet->deref();
+}
+
+void StyleRuleCSSStyleDeclaration::ref()
+{ 
+    ++m_refCount;
+}
+
+void StyleRuleCSSStyleDeclaration::deref()
+{ 
+    ASSERT(m_refCount);
+    if (!--m_refCount)
+        delete this;
+}
+
+void StyleRuleCSSStyleDeclaration::setNeedsStyleRecalc()
 {
     if (CSSStyleSheet* styleSheet = contextStyleSheet()) {
         if (Document* document = styleSheet->findDocument())
@@ -298,7 +323,7 @@ void RuleCSSStyleDeclaration::setNeedsStyleRecalc()
     }
 }
     
-CSSStyleSheet* RuleCSSStyleDeclaration::contextStyleSheet() const
+CSSStyleSheet* StyleRuleCSSStyleDeclaration::contextStyleSheet() const
 {
     return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
 }

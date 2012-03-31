@@ -103,15 +103,15 @@ public:
     
     String asText() const;
     
-    void clearParentRule(CSSRule*);
     void clearParentElement(StyledElement*);
 
     CSSStyleDeclaration* ensureCSSStyleDeclaration() const;
-    CSSStyleDeclaration* ensureRuleCSSStyleDeclaration(const CSSRule* parentRule) const;
     CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(const StyledElement* parentElement) const;
     
-    bool hasCSSOMWrapper() const { return m_hasCSSOMWrapper; }
+    // FIXME: Expand the concept of mutable/immutable StylePropertySet.
+    bool isMutable() const { return m_ownsCSSOMWrapper; }
 
+    
 private:
     StylePropertySet(CSSParserMode);
     StylePropertySet(const Vector<CSSProperty>&);
@@ -136,7 +136,7 @@ private:
     Vector<CSSProperty, 4> m_properties;
 
     unsigned m_cssParserMode : 2;
-    mutable unsigned m_hasCSSOMWrapper : 1;
+    mutable unsigned m_ownsCSSOMWrapper : 1;
     
     friend class PropertySetCSSStyleDeclaration;
 };

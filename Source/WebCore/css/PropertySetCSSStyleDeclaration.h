@@ -42,14 +42,13 @@ public:
     PropertySetCSSStyleDeclaration(StylePropertySet* propertySet) : m_propertySet(propertySet) { }
     
     virtual StyledElement* parentElement() const { return 0; }
-    virtual void clearParentRule() { ASSERT_NOT_REACHED(); }
     virtual void clearParentElement() { ASSERT_NOT_REACHED(); }
     virtual CSSStyleSheet* contextStyleSheet() const { return 0; }
     
-private:
     virtual void ref() OVERRIDE;
     virtual void deref() OVERRIDE;
-    
+
+private:
     virtual CSSRule* parentRule() const OVERRIDE { return 0; };
     virtual unsigned length() const OVERRIDE;
     virtual String item(unsigned index) const OVERRIDE;
@@ -76,21 +75,28 @@ protected:
     StylePropertySet* m_propertySet;
 };
 
-class RuleCSSStyleDeclaration : public PropertySetCSSStyleDeclaration
+class StyleRuleCSSStyleDeclaration : public PropertySetCSSStyleDeclaration
 {
 public:
-    RuleCSSStyleDeclaration(StylePropertySet* propertySet, CSSRule* parentRule)
-        : PropertySetCSSStyleDeclaration(propertySet)
-        , m_parentRule(parentRule) 
+    static PassRefPtr<StyleRuleCSSStyleDeclaration> create(StylePropertySet* propertySet, CSSRule* parentRule)
     {
+        return adoptRef(new StyleRuleCSSStyleDeclaration(propertySet, parentRule));
     }
+
+    void clearParentRule() { m_parentRule = 0; }
     
-private:    
-    virtual CSSRule* parentRule() const { return m_parentRule; };
-    virtual void clearParentRule() { m_parentRule = 0; }
-    virtual void setNeedsStyleRecalc();
-    virtual CSSStyleSheet* contextStyleSheet() const;
+    virtual void ref() OVERRIDE;
+    virtual void deref() OVERRIDE;
+
+private:
+    StyleRuleCSSStyleDeclaration(StylePropertySet*, CSSRule*);
+    virtual ~StyleRuleCSSStyleDeclaration();
+
+    virtual CSSRule* parentRule() const OVERRIDE { return m_parentRule;  }
+    virtual void setNeedsStyleRecalc() OVERRIDE;
+    virtual CSSStyleSheet* contextStyleSheet() const OVERRIDE;
     
+    unsigned m_refCount;
     CSSRule* m_parentRule;
 };
 
@@ -104,10 +110,10 @@ public:
     }
     
 private:
-    virtual StyledElement* parentElement() const { return m_parentElement; }
-    virtual void clearParentElement() { m_parentElement = 0; }
-    virtual void setNeedsStyleRecalc();
-    virtual CSSStyleSheet* contextStyleSheet() const;
+    virtual StyledElement* parentElement() const OVERRIDE { return m_parentElement; }
+    virtual void clearParentElement() OVERRIDE { m_parentElement = 0; }
+    virtual void setNeedsStyleRecalc() OVERRIDE;
+    virtual CSSStyleSheet* contextStyleSheet() const OVERRIDE;
     
     StyledElement* m_parentElement;
 };

@@ -64,7 +64,7 @@ StylePropertySet* ElementAttributeData::ensureInlineStyle(StyledElement* element
 
 StylePropertySet* ElementAttributeData::ensureMutableInlineStyle(StyledElement* element)
 {
-    if (m_inlineStyleDecl && !m_inlineStyleDecl->hasCSSOMWrapper()) {
+    if (m_inlineStyleDecl && !m_inlineStyleDecl->isMutable()) {
         m_inlineStyleDecl = m_inlineStyleDecl->copy();
         m_inlineStyleDecl->setCSSParserMode(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
         return m_inlineStyleDecl.get();
@@ -76,7 +76,7 @@ void ElementAttributeData::updateInlineStyleAvoidingMutation(StyledElement* elem
 {
     // We reconstruct the property set instead of mutating if there is no CSSOM wrapper.
     // This makes wrapperless property sets immutable and so cacheable.
-    if (m_inlineStyleDecl && !m_inlineStyleDecl->hasCSSOMWrapper())
+    if (m_inlineStyleDecl && !m_inlineStyleDecl->isMutable())
         m_inlineStyleDecl.clear();
     if (!m_inlineStyleDecl) {
         m_inlineStyleDecl = StylePropertySet::create();

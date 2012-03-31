@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebKitCSSKeyframeRule.h"
 
+#include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertySet.h"
 #include "WebKitCSSKeyframesRule.h"
 
@@ -86,12 +87,15 @@ WebKitCSSKeyframeRule::WebKitCSSKeyframeRule(StyleKeyframe* keyframe, WebKitCSSK
 
 WebKitCSSKeyframeRule::~WebKitCSSKeyframeRule()
 {
-    m_keyframe->properties()->clearParentRule(this);
+    if (m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper->clearParentRule();
 }
 
-CSSStyleDeclaration* WebKitCSSKeyframeRule::style() const 
-{ 
-    return m_keyframe->properties() ? m_keyframe->properties()->ensureRuleCSSStyleDeclaration(this) : 0; 
+CSSStyleDeclaration* WebKitCSSKeyframeRule::style() const
+{
+    if (!m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_keyframe->properties(), const_cast<WebKitCSSKeyframeRule*>(this));
+    return m_propertiesCSSOMWrapper.get();
 }
 
 } // namespace WebCore

@@ -24,6 +24,7 @@
 
 #include "CSSRule.h"
 #include "CSSSelectorList.h"
+#include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertySet.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -32,6 +33,7 @@ namespace WebCore {
 
 class CSSSelector;
 class CSSSelectorList;
+class StyleRuleCSSStyleDeclaration;
 
 class CSSPageRule : public CSSRule {
 public:
@@ -41,7 +43,7 @@ public:
     }
     ~CSSPageRule();
 
-    CSSStyleDeclaration* style() const { return m_style->ensureRuleCSSStyleDeclaration(this); }
+    CSSStyleDeclaration* style() const;
 
     String selectorText() const;
     void setSelectorText(const String&);
@@ -59,6 +61,8 @@ private:
 
     RefPtr<StylePropertySet> m_style;
     CSSSelectorList m_selectorList;
+
+    mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore

@@ -1101,7 +1101,7 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
     if (m_matchAuthorAndUserStyles && m_styledElement && m_styledElement->inlineStyle()) {
         // Inline style is immutable as long as there is no CSSOM wrapper.
         // FIXME: Media control shadow trees seem to have problems with caching.
-        bool isInlineStyleCacheable = !m_styledElement->inlineStyle()->hasCSSOMWrapper() && !m_styledElement->isInShadowTree();
+        bool isInlineStyleCacheable = !m_styledElement->inlineStyle()->isMutable() && !m_styledElement->isInShadowTree();
         // FIXME: Constify.
         addElementStyleProperties(result, const_cast<StylePropertySet*>(m_styledElement->inlineStyle()), isInlineStyleCacheable);
     }

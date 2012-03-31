@@ -26,6 +26,7 @@
 #include "CSSSelector.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
+#include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
@@ -40,14 +41,16 @@ CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int line)
 
 CSSStyleRule::~CSSStyleRule()
 {
-    if (m_styleRule->properties())
-        m_styleRule->properties()->clearParentRule(this);
     cleanup();
+    if (m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper->clearParentRule();
 }
 
 CSSStyleDeclaration* CSSStyleRule::style() const
 {
-    return m_styleRule->properties()->ensureRuleCSSStyleDeclaration(this);
+    if (!m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_styleRule->properties(), const_cast<CSSStyleRule*>(this));
+    return m_propertiesCSSOMWrapper.get();
 }
 
 typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;

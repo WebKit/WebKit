@@ -46,21 +46,21 @@ static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
 
 StylePropertySet::StylePropertySet(CSSParserMode cssParserMode)
     : m_cssParserMode(cssParserMode)
-    , m_hasCSSOMWrapper(false)
+    , m_ownsCSSOMWrapper(false)
 {
 }
 
 StylePropertySet::StylePropertySet(const Vector<CSSProperty>& properties)
     : m_properties(properties)
     , m_cssParserMode(CSSStrictMode)
-    , m_hasCSSOMWrapper(false)
+    , m_ownsCSSOMWrapper(false)
 {
     m_properties.shrinkToFit();
 }
 
 StylePropertySet::StylePropertySet(const CSSProperty* properties, int numProperties, CSSParserMode cssParserMode)
     : m_cssParserMode(cssParserMode)
-    , m_hasCSSOMWrapper(false)
+    , m_ownsCSSOMWrapper(false)
 {
     // FIXME: This logic belongs in CSSParser.
 
@@ -84,8 +84,8 @@ StylePropertySet::StylePropertySet(const CSSProperty* properties, int numPropert
 
 StylePropertySet::~StylePropertySet()
 {
-    ASSERT(!m_hasCSSOMWrapper || propertySetCSSOMWrapperMap().contains(this));
-    if (m_hasCSSOMWrapper)
+    ASSERT(!m_ownsCSSOMWrapper || propertySetCSSOMWrapperMap().contains(this));
+    if (m_ownsCSSOMWrapper)
         propertySetCSSOMWrapperMap().remove(this);
 }
 
@@ -940,52 +940,32 @@ PassRefPtr<StylePropertySet> StylePropertySet::copyPropertiesInSet(const int* se
 
 CSSStyleDeclaration* StylePropertySet::ensureCSSStyleDeclaration() const
 {
-    if (m_hasCSSOMWrapper) {
+    if (m_ownsCSSOMWrapper) {
         ASSERT(!static_cast<CSSStyleDeclaration*>(propertySetCSSOMWrapperMap().get(this))->parentRule());
         ASSERT(!propertySetCSSOMWrapperMap().get(this)->parentElement());
         return propertySetCSSOMWrapperMap().get(this);
     }
-    m_hasCSSOMWrapper = true;
+    m_ownsCSSOMWrapper = true;
     PropertySetCSSStyleDeclaration* cssomWrapper = new PropertySetCSSStyleDeclaration(const_cast<StylePropertySet*>(this));
-    propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
-    return cssomWrapper;
-}
-
-CSSStyleDeclaration* StylePropertySet::ensureRuleCSSStyleDeclaration(const CSSRule* parentRule) const
-{
-    if (m_hasCSSOMWrapper) {
-        ASSERT(static_cast<CSSStyleDeclaration*>(propertySetCSSOMWrapperMap().get(this))->parentRule() == parentRule);
-        return propertySetCSSOMWrapperMap().get(this);
-    }
-    m_hasCSSOMWrapper = true;
-    PropertySetCSSStyleDeclaration* cssomWrapper = new RuleCSSStyleDeclaration(const_cast<StylePropertySet*>(this), const_cast<CSSRule*>(parentRule));
     propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
     return cssomWrapper;
 }
 
 CSSStyleDeclaration* StylePropertySet::ensureInlineCSSStyleDeclaration(const StyledElement* parentElement) const
 {
-    if (m_hasCSSOMWrapper) {
+    if (m_ownsCSSOMWrapper) {
         ASSERT(propertySetCSSOMWrapperMap().get(this)->parentElement() == parentElement);
         return propertySetCSSOMWrapperMap().get(this);
     }
-    m_hasCSSOMWrapper = true;
+    m_ownsCSSOMWrapper = true;
     PropertySetCSSStyleDeclaration* cssomWrapper = new InlineCSSStyleDeclaration(const_cast<StylePropertySet*>(this), const_cast<StyledElement*>(parentElement));
     propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
     return cssomWrapper;
 }
 
-void StylePropertySet::clearParentRule(CSSRule* rule)
-{
-    if (!m_hasCSSOMWrapper)
-        return;
-    ASSERT_UNUSED(rule, static_cast<CSSStyleDeclaration*>(propertySetCSSOMWrapperMap().get(this))->parentRule() == rule);
-    propertySetCSSOMWrapperMap().get(this)->clearParentRule();
-}
-
 void StylePropertySet::clearParentElement(StyledElement* element)
 {
-    if (!m_hasCSSOMWrapper)
+    if (!m_ownsCSSOMWrapper)
         return;
     ASSERT_UNUSED(element, propertySetCSSOMWrapperMap().get(this)->parentElement() == element);
     propertySetCSSOMWrapperMap().get(this)->clearParentElement();

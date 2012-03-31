@@ -23,11 +23,14 @@
 #define CSSFontFaceRule_h
 
 #include "CSSRule.h"
+#include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertySet.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+    
+class StyleRuleCSSStyleDeclaration;
 
 class CSSFontFaceRule : public CSSRule {
 public:
@@ -42,7 +45,7 @@ public:
 
     ~CSSFontFaceRule();
 
-    CSSStyleDeclaration* style() const { return m_style->ensureRuleCSSStyleDeclaration(this); }
+    CSSStyleDeclaration* style() const;
 
     String cssText() const;
 
@@ -55,6 +58,8 @@ private:
     CSSFontFaceRule(CSSStyleSheet* parent);
 
     RefPtr<StylePropertySet> m_style;
+    
+    mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore

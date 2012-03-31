@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class StyleRuleCSSStyleDeclaration;
 class WebKitCSSKeyframesRule;
 
 class StyleKeyframe : public RefCounted<StyleKeyframe> {
@@ -79,6 +80,8 @@ private:
     WebKitCSSKeyframeRule(StyleKeyframe*, WebKitCSSKeyframesRule* parent);
 
     RefPtr<StyleKeyframe> m_keyframe;
+    
+    mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
     
     friend class WebKitCSSKeyframesRule;
 };

@@ -37,7 +37,15 @@ CSSPageRule::CSSPageRule(CSSStyleSheet* parent)
 
 CSSPageRule::~CSSPageRule()
 {
-    m_style->clearParentRule(this);
+    if (m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper->clearParentRule();
+}
+
+CSSStyleDeclaration* CSSPageRule::style() const
+{
+    if (!m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_style.get(), const_cast<CSSPageRule*>(this));
+    return m_propertiesCSSOMWrapper.get();
 }
 
 String CSSPageRule::selectorText() const

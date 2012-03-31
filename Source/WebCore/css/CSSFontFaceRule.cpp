@@ -33,8 +33,15 @@ CSSFontFaceRule::CSSFontFaceRule(CSSStyleSheet* parent)
 
 CSSFontFaceRule::~CSSFontFaceRule()
 {
-    if (m_style)
-        m_style->clearParentRule(this);
+    if (m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper->clearParentRule();
+}
+
+CSSStyleDeclaration* CSSFontFaceRule::style() const
+{
+    if (!m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_style.get(), const_cast<CSSFontFaceRule*>(this));
+    return m_propertiesCSSOMWrapper.get();
 }
 
 String CSSFontFaceRule::cssText() const

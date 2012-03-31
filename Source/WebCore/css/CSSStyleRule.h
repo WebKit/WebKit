@@ -30,6 +30,7 @@ namespace WebCore {
 
 class CSSSelector;
 class CSSStyleDeclaration;
+class StyleRuleCSSStyleDeclaration;
 class StyleRule;
 
 class CSSStyleRule : public CSSRule {
@@ -56,6 +57,8 @@ private:
     String generateSelectorText() const;
 
     OwnPtr<StyleRule> m_styleRule;
+
+    mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore
