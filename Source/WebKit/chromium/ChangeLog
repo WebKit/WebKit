@@ -1,3 +1,51 @@
+2012-03-29  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Delete WebKit/chromium/bridge
+        https://bugs.webkit.org/show_bug.cgi?id=82677
+
+        Reviewed by James Robinson.
+
+        Delete WebKit/chromium/bridge.  This was a directory we were
+        experimenting with storing WebCore-namespaced code. Now we're able to
+        actually keep that code in WebCore itself, which is much more sensible.
+
+        * WebKit.gyp:
+        * bridge: Removed.
+        * bridge/DeprecatedPeerConnectionHandler.cpp: Removed.
+        * bridge/DeprecatedPeerConnectionHandlerInternal.cpp: Removed.
+        * bridge/DeprecatedPeerConnectionHandlerInternal.h: Removed.
+        * bridge/MediaStreamCenter.cpp: Removed.
+        * bridge/MediaStreamCenterInternal.cpp: Removed.
+        * bridge/MediaStreamCenterInternal.h: Removed.
+        * bridge/PeerConnection00Handler.cpp: Removed.
+        * bridge/PeerConnection00HandlerInternal.cpp: Removed.
+        * bridge/PeerConnection00HandlerInternal.h: Removed.
+        * public/platform/WebICECandidateDescriptor.h: Replaced.
+        * public/platform/WebICEOptions.h: Replaced.
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKit):
+        (WebKitPlatformSupport):
+        * public/platform/WebMediaHints.h: Replaced.
+        * public/platform/WebMediaStreamCenter.h: Replaced.
+        * public/platform/WebMediaStreamCenterClient.h: Replaced.
+        * public/platform/WebMediaStreamComponent.h: Replaced.
+        * public/platform/WebMediaStreamDescriptor.h: Replaced.
+        * public/platform/WebMediaStreamSource.h: Replaced.
+        * public/platform/WebMediaStreamSourcesRequest.h: Replaced.
+        * public/platform/WebPeerConnection00Handler.h: Replaced.
+        * public/platform/WebPeerConnection00HandlerClient.h: Replaced.
+        * public/platform/WebPeerConnectionHandler.h: Replaced.
+        * public/platform/WebPeerConnectionHandlerClient.h: Replaced.
+        * public/platform/WebSessionDescriptionDescriptor.h: Replaced.
+        * public/platform/WebVector.h: Replaced.
+        * src/WebICECandidateDescriptor.cpp: Removed.
+        * src/WebICEOptions.cpp: Removed.
+        * src/WebMediaHints.cpp: Removed.
+        * src/WebMediaStreamComponent.cpp: Removed.
+        * src/WebMediaStreamDescriptor.cpp: Removed.
+        * src/WebMediaStreamSource.cpp: Removed.
+        * src/WebMediaStreamSourcesRequest.cpp: Removed.
+
 2012-03-30  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Move ResourceHandle to WebCore/platform/network/chromium

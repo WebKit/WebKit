@@ -1,3 +1,39 @@
+2012-03-29  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Delete WebKit/chromium/bridge
+        https://bugs.webkit.org/show_bug.cgi?id=82677
+
+        Reviewed by James Robinson.
+
+        This patch moves all the MediaStream-related platform APIs from
+        WebKit/chromium/public/platform into Platform/chromium/public. This is
+        part of a larger project to more clearly separate the platform and
+        client portions of the Chromium WebKit API.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        (WebKit::Platform::createPeerConnectionHandler):
+        (WebKit::Platform::createPeerConnection00Handler):
+        (WebKit::Platform::createMediaStreamCenter):
+        * chromium/public/WebICECandidateDescriptor.h: Copied from Source/WebKit/chromium/public/platform/WebICECandidateDescriptor.h.
+        * chromium/public/WebICEOptions.h: Copied from Source/WebKit/chromium/public/platform/WebICEOptions.h.
+        * chromium/public/WebMediaHints.h: Copied from Source/WebKit/chromium/public/platform/WebMediaHints.h.
+        * chromium/public/WebMediaStreamCenter.h: Copied from Source/WebKit/chromium/public/platform/WebMediaStreamCenter.h.
+        * chromium/public/WebMediaStreamCenterClient.h: Copied from Source/WebKit/chromium/public/platform/WebMediaStreamCenterClient.h.
+        * chromium/public/WebMediaStreamComponent.h: Copied from Source/WebKit/chromium/public/platform/WebMediaStreamComponent.h.
+        * chromium/public/WebMediaStreamDescriptor.h: Copied from Source/WebKit/chromium/public/platform/WebMediaStreamDescriptor.h.
+        * chromium/public/WebMediaStreamSource.h: Copied from Source/WebKit/chromium/public/platform/WebMediaStreamSource.h.
+        * chromium/public/WebMediaStreamSourcesRequest.h: Copied from Source/WebKit/chromium/public/platform/WebMediaStreamSourcesRequest.h.
+        * chromium/public/WebPeerConnection00Handler.h: Copied from Source/WebKit/chromium/public/platform/WebPeerConnection00Handler.h.
+        * chromium/public/WebPeerConnection00HandlerClient.h: Copied from Source/WebKit/chromium/public/platform/WebPeerConnection00HandlerClient.h.
+        * chromium/public/WebPeerConnectionHandler.h: Copied from Source/WebKit/chromium/public/platform/WebPeerConnectionHandler.h.
+        (WebPeerConnectionHandler):
+        * chromium/public/WebPeerConnectionHandlerClient.h: Copied from Source/WebKit/chromium/public/platform/WebPeerConnectionHandlerClient.h.
+        * chromium/public/WebSessionDescriptionDescriptor.h: Copied from Source/WebKit/chromium/public/platform/WebSessionDescriptionDescriptor.h.
+        * chromium/public/WebVector.h: Copied from Source/WebKit/chromium/public/platform/WebVector.h.
+
 2012-03-30  David Barr  <davidbarr@chromium.org>
 
         Split up top-level .gitignore and .gitattributes

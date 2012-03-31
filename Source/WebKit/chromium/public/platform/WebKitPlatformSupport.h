@@ -60,14 +60,9 @@ class WebFileSystem;
 class WebFileUtilities;
 class WebIDBFactory; // FIXME: Does this belong in platform?
 class WebIDBKey; // FIXME: Does this belong in platform?
-class WebPeerConnection00Handler;
-class WebPeerConnection00HandlerClient;
-class WebMediaStreamCenter;
-class WebMediaStreamCenterClient;
 class WebMessagePortChannel; // FIXME: Does this belong in platform?
 class WebMimeRegistry;
 class WebPeerConnectionHandler;
-class WebPeerConnectionHandlerClient;
 class WebPluginListBuilder; // FIXME: Does this belong in platform?
 class WebSandboxSupport;
 class WebSharedWorkerRepository; // FIXME: Does this belong in platform?
@@ -402,21 +397,6 @@ public:
 
     // Must return non-null.
     virtual WebFileSystem* fileSystem() { return 0; }
-
-    // WebRTC ----------------------------------------------------------
-
-    // DEPRECATED
-    // Creates an WebPeerConnectionHandler for DeprecatedPeerConnection.
-    // May return null if WebRTC functionality is not avaliable or out of resources.
-    virtual WebPeerConnectionHandler* createPeerConnectionHandler(WebPeerConnectionHandlerClient*) { return 0; }
-
-    // Creates an WebPeerConnection00Handler for PeerConnection00.
-    // This is an highly experimental feature not yet in the WebRTC standard.
-    // May return null if WebRTC functionality is not avaliable or out of resources.
-    virtual WebPeerConnection00Handler* createPeerConnection00Handler(WebPeerConnection00HandlerClient*) { return 0; }
-
-    // May return null if WebRTC functionality is not avaliable or out of resources.
-    virtual WebMediaStreamCenter* createMediaStreamCenter(WebMediaStreamCenterClient*) { return 0; }
 
     // WebWorker ----------------------------------------------------------
 
