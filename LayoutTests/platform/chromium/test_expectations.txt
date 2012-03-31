@@ -1138,9 +1138,8 @@ BUGCR14885 : fast/js/JSON-parse-reviver.html = FAIL
 BUGCR23270 LINUX WIN : fast/css/font-smoothing.html = FAIL
 
 // Make canvas shadow work with drawImage.
-// CRASH and TIMEOUT are due to BUGCR121270
-BUGCR11153 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = FAIL CRASH TIMEOUT
-BUGCR11153 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html = FAIL CRASH TIMEOUT
+BUGCR11153 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = FAIL
+BUGCR11153 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html = FAIL
 
 // test_shell, DRT do not correctly schedule paints when invalidating.
 BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
@@ -2552,10 +2551,9 @@ BUGCR71783 MAC : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 BUGWK77550 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
 
 // These will have slight differences on the edges of antialiased paths and need rebaseling
-// CRASH and TIMEOUT are due to BUGCR121270
-BUGBSALOMON WIN LINUX : platform/chromium/virtual/gpu/fast/canvas/arc360.html = IMAGE CRASH TIMEOUT
-BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite-transformclip.html = IMAGE CRASH TIMEOUT
-BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite.html = IMAGE CRASH TIMEOUT
+BUGBSALOMON WIN LINUX : platform/chromium/virtual/gpu/fast/canvas/arc360.html = IMAGE
+BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite-transformclip.html = IMAGE
+BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite.html = IMAGE
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-transform-skewed.html = IMAGE
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas.html = IMAGE
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate.html = IMAGE
@@ -4068,39 +4066,3 @@ BUGWK82717 SNOWLEOPARD : storage/database-lock-after-reload.html = PASS TIMEOUT
 BUGWK82776 : storage/indexeddb/dont-commit-on-blocked.html = PASS FAIL
 
 BUGWK WIN RELEASE : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT
-
-// Failing after http://crrev.com/130034
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/culling/filter-occlusion-alpha-large.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/culling/filter-occlusion-alpha.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/culling/filter-occlusion-blur-large.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/culling/filter-occlusion-blur.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/visibility/visibility-simple-canvas2d-layer.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/visibility/visibility-simple-webgl-layer.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/webgl/webgl-background-color.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/webgl/webgl-no-alpha.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/webgl/webgl-reflection.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-blur-hw.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-brightness-hw.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-combined-hw.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-contrast-hw.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-drop-shadow-hw.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-grayscale-hw.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-hue-rotate-hw.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-invert-hw.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-opacity-hw.html = CRASH TIMEOUT
-BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-saturate-hw.html = CRASH TIMEOUT
-BUGCR121270 LINUX DEBUG : css3/filters/effect-sepia-hw.html = CRASH
-BUGCR121270 LINUX DEBUG : css3/filters/filtered-compositing-descendant.html = CRASH
-BUGCR121270 LINUX XP DEBUG : platform/chromium/compositing/plugins/webplugin-alpha.html = CRASH TIMEOUT
-BUGCR121270 LINUX XP DEBUG : platform/chromium/compositing/plugins/webplugin-no-alpha.html = CRASH TIMEOUT
-BUGCR121270 LINUX XP DEBUG : platform/chromium/compositing/plugins/webplugin-reflection.html = CRASH TIMEOUT
-BUGCR121270 LINUX XP DEBUG : platform/chromium/compositing/webgl-loses-compositor-context.html = CRASH TIMEOUT
-BUGCR121270 LINUX XP DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-before-css.html = CRASH TIMEOUT
-BUGCR121270 LINUX XP DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-composite-fill-repaint.html = CRASH TIMEOUT
-BUGCR121270 LINUX XP DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-empty-image-pattern.html = CRASH TIMEOUT
-BUGCR121270 LINUX XP DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-resize-after-paint-without-layout.html = CRASH TIMEOUT
-BUGCR121270 LINUX XP DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-resize-reset.html = CRASH TIMEOUT
-BUGCR121270 LINUX XP DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment.html = CRASH TIMEOUT
-BUGCR121270 LINUX XP DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-text-baseline.html = CRASH TIMEOUT
-BUGCR121270 LINUX XP DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-transform-identity.html = CRASH TIMEOUT
