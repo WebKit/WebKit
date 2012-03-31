@@ -190,6 +190,8 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-perspective-origin: 50% 50%
     -webkit-print-color-adjust: economy
     -webkit-rtl-ordering: logical
+    -webkit-shape-inside: auto
+    -webkit-shape-outside: auto
     -webkit-text-combine: none
     -webkit-text-decorations-in-effect: none
     -webkit-text-emphasis-color: rgb(0, 0, 0)

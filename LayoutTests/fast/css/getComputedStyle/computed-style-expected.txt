@@ -191,6 +191,8 @@ zoom: 1;
 -webkit-perspective-origin: 392px 288px;
 -webkit-print-color-adjust: economy;
 -webkit-rtl-ordering: logical;
+-webkit-shape-inside: auto;
+-webkit-shape-outside: auto;
 -webkit-text-combine: none;
 -webkit-text-decorations-in-effect: none;
 -webkit-text-emphasis-color: rgb(0, 0, 0);

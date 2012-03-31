@@ -380,6 +380,10 @@ rect: style.getPropertyValue(-webkit-print-color-adjust) : economy
 rect: style.getPropertyCSSValue(-webkit-print-color-adjust) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-rtl-ordering) : logical
 rect: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-shape-inside) : auto
+rect: style.getPropertyCSSValue(-webkit-shape-inside) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-shape-outside) : auto
+rect: style.getPropertyCSSValue(-webkit-shape-outside) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-combine) : none
 rect: style.getPropertyCSSValue(-webkit-text-combine) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
@@ -898,6 +902,10 @@ g: style.getPropertyValue(-webkit-print-color-adjust) : economy
 g: style.getPropertyCSSValue(-webkit-print-color-adjust) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-rtl-ordering) : logical
 g: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-shape-inside) : auto
+g: style.getPropertyCSSValue(-webkit-shape-inside) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-shape-outside) : auto
+g: style.getPropertyCSSValue(-webkit-shape-outside) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-combine) : none
 g: style.getPropertyCSSValue(-webkit-text-combine) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
