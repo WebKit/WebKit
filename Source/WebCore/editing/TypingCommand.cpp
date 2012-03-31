@@ -54,10 +54,11 @@ static bool canAppendNewLineFeed(const VisibleSelection& selection)
     if (!node)
         return false;
 
-    RefPtr<BeforeTextInsertedEvent> event = BeforeTextInsertedEvent::create(String("\n"));
+    String lineFeed("\n");
+    RefPtr<BeforeTextInsertedEvent> event = BeforeTextInsertedEvent::create(lineFeed);
     ExceptionCode ec = 0;
     node->dispatchEvent(event, ec);
-    return event->text().length();
+    return event->text() == lineFeed;
 }
 
 TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, const String &textToInsert, Options options, TextGranularity granularity, TextCompositionType compositionType)
