@@ -1908,6 +1908,7 @@ void Editor::markBadGrammar(const VisibleSelection& selection)
 
 void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textCheckingOptions, Range* spellingRange, Range* grammarRange)
 {
+    ASSERT(m_frame);
     ASSERT(unifiedTextCheckerEnabled());
 
     // There shouldn't be pending autocorrection at this moment.
