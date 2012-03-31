@@ -294,11 +294,9 @@ void NetworkJob::handleNotifyHeaderReceived(const String& key, const String& val
     String lowerKey = key.lower();
     if (lowerKey == "content-type")
         m_contentType = value.lower();
-
-    if (lowerKey == "content-disposition")
+    else if (lowerKey == "content-disposition")
         m_contentDisposition = value;
-
-    if (lowerKey == "set-cookie") {
+    else if (lowerKey == "set-cookie") {
         // FIXME: If a tab is closed, sometimes network data will come in after the frame has been detached from its page but before it is deleted.
         // If this happens, m_frame->page() will return 0, and m_frame->loader()->client() will be in a bad state and calling into it will crash.
         // For now we check for this explicitly by checking m_frame->page(). But we should find out why the network job hasn't been cancelled when the frame was detached.
@@ -311,14 +309,11 @@ void NetworkJob::handleNotifyHeaderReceived(const String& key, const String& val
             m_response.setHTTPHeaderField(key, m_response.httpHeaderField(key) + "\r\n" + value);
             return;
         }
-    }
-
-    if (lowerKey == "www-authenticate")
+    } else if (lowerKey == "www-authenticate")
         handleAuthHeader(ProtectionSpaceServerHTTP, value);
     else if (lowerKey == "proxy-authenticate" && !BlackBerry::Platform::Client::get()->getProxyAddress().empty())
         handleAuthHeader(ProtectionSpaceProxyHTTP, value);
-
-    if (equalIgnoringCase(key, BlackBerry::Platform::NetworkRequest::HEADER_BLACKBERRY_FTP))
+    else if (equalIgnoringCase(key, BlackBerry::Platform::NetworkRequest::HEADER_BLACKBERRY_FTP))
         handleFTPHeader(value);
 
     m_response.setHTTPHeaderField(key, value);
