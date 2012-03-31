@@ -717,3 +717,10 @@ fast/canvas/webgl/object-deletion-behaviour.html
 # https://bugs.webkit.org/show_bug.cgi?id=82815
 svg/custom/animate-disallowed-use-element.svg
 svg/dom/animated-tearoff-equality.xhtml
+
+# https://bugs.webkit.org/show_bug.cgi?id=82817
+storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82818
+fast/forms/listbox-clear-restore.html
