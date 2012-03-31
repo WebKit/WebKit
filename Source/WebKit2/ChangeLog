@@ -1,3 +1,14 @@
+2012-03-31  Anders Carlsson  <andersca@apple.com>
+
+        32-bit plug-ins need to opt into magnified mode
+        https://bugs.webkit.org/show_bug.cgi?id=82837
+        <rdar://problem/9104840>
+
+        Reviewed by Simon Fraser.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain):
+
 2012-03-30  Timothy Hatcher  <timothy@apple.com>
 
         Stop creating the Web Inspector's NSWindow when detaching on close.

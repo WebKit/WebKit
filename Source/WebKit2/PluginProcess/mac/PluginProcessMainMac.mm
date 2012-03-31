@@ -32,6 +32,7 @@
 #import "EnvironmentUtilities.h"
 #import "NetscapePluginModule.h"
 #import "PluginProcess.h"
+#import <Foundation/NSUserDefaults.h>
 #import <WebCore/RunLoop.h>
 #import <WebKitSystemInterface.h>
 #import <mach/mach_error.h>
@@ -86,6 +87,11 @@ int PluginProcessMain(const CommandLine& commandLine)
     RetainPtr<CFStringRef> cfLocalization(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(localization.characters()), localization.length()));
     if (cfLocalization)
         WKSetDefaultLocalization(cfLocalization.get());
+
+#if defined(__i386__)
+    NSDictionary *defaults = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"AppleMagnifiedMode"];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+#endif
 
 #if !SHOW_CRASH_REPORTER
     // Installs signal handlers that exit on a crash so that CrashReporter does not show up.
