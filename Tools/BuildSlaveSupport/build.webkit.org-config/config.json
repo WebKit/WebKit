@@ -227,6 +227,7 @@
                     {
                       "name": "Chromium Win Release", "type": "Build", "builddir": "chromium-win-release",
                       "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
+                      "upload": true,
                       "slavenames": ["google-windows-1"]
                     },
                     {
@@ -242,6 +243,7 @@
                     {
                       "name": "Chromium Mac Release", "type": "Build", "builddir": "chromium-mac-release",
                       "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
+                      "upload": true,
                       "slavenames": ["google-mac-1", "google-mac-3"]
                     },
                     {
@@ -257,6 +259,7 @@
                     {
                       "name": "Chromium Linux Release", "type": "Build", "builddir": "chromium-linux-release",
                       "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
+                      "upload": true,
                       "slavenames": ["google-linux-1"]
                     },
                     {

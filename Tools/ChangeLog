@@ -1,3 +1,23 @@
+2012-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium bots should upload archived built files
+        https://bugs.webkit.org/show_bug.cgi?id=82666
+
+        Reviewed by Tony Chang.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/built-product-archive:
+        (main):
+        (determineWebKitBuildDirectory): Instead of hard-coding WebKitBuild as the build outout directory,
+        call out to webkit-build-directory.
+        (removeDirectoryIfExists): Extracted.
+        (copyBuildFiles): Added to avoid archiving useless intermedinate files.
+        (createZipManually): Used in Chromium Windows where we don't execute python scripts inside cygwin.
+        (createZipManually.addToArchive):
+        (createZip): Extracted. Calls out to appropraite command line scripts or createZipManually.
+        (archiveBuiltProduct): Add support for Chromium port.
+        * Scripts/webkit-build-directory: Add support for --platform options.
+
 2012-03-30  Dan Bernstein  <mitz@apple.com>
 
         Reverted r112767, because it caused many vertical text tests to fail.

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 # Copyright (C) 2009 Apple Inc.  All rights reserved.
+# Copyright (C) 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,9 +24,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import optparse, os, shutil, subprocess, sys
+import optparse
+import os
+import shutil
+import subprocess
+import sys
+import zipfile
 
-buildDirectory = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
+_buildDirectory = None
+
 
 def main():
     parser = optparse.OptionParser("usage: %prog [options] [action]")
@@ -44,16 +51,52 @@ def main():
         parser.error("Action is required")
         return 1
 
+    if not determineWebKitBuildDirectory(options.platform, options.configuration):
+        print >> sys.stderr, "Could not determine build directory"
+        return 1
+
     if action == 'archive':
         return archiveBuiltProduct(options.configuration, options.platform)
     else:
         return extractBuiltProduct(options.configuration, options.platform)
 
 
-def archiveBuiltProduct(configuration, platform):
-    assert platform in ('mac', 'win', 'qt', 'gtk', 'efl')
+def determineWebKitBuildDirectory(platform, configuration):
+    global _buildDirectory
+    _buildDirectory = subprocess.Popen([os.path.join(os.path.dirname(__file__), "..", "Scripts", "webkit-build-directory"),
+        "--" + platform, "--" + configuration, '--top-level'], stdout=subprocess.PIPE).communicate()[0].strip()
+    return _buildDirectory
 
-    archiveFile = os.path.join(buildDirectory, configuration + ".zip")
+
+def removeDirectoryIfExists(thinDirectory):
+    if os.path.isdir(thinDirectory):
+        shutil.rmtree(thinDirectory)
+
+
+def copyBuildFiles(source, destination):
+    shutil.copytree(source, destination,
+        ignore=shutil.ignore_patterns('.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.obj', '*.pdb'))
+
+
+def createZipManually(directoryToZip, archiveFile):
+    archiveZip = zipfile.ZipFile(archiveFile, "w")
+
+    for path, dirNames, fileNames in os.walk(directoryToZip):
+        relativePath = os.path.relpath(path, directoryToZip)
+        for dirName in dirNames:
+            archiveZip.write(os.path.join(path, dirName), os.path.join(relativePath, dirName))
+
+    archiveZip.close()
+
+
+def createZip(directoryToZip, configuration):
+    archiveDir = os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild")
+
+    # Chromium bots may not have this directory
+    if not os.path.isdir(archiveDir):
+        os.mkdir(archiveDir)
+
+    archiveFile = os.path.join(archiveDir, configuration + ".zip")
 
     try:
         os.unlink(archiveFile)
@@ -61,26 +104,35 @@ def archiveBuiltProduct(configuration, platform):
         if e.errno != 2:
             raise
 
-    configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
+    createZipManually(directoryToZip, archiveFile)
+    return 0
+
+    if sys.platform == 'darwin':
+        return subprocess.call(["ditto", "-c", "-k", "--keepParent", "--sequesterRsrc", directoryToZip, archiveFile])
+    elif sys.platform == 'cygwin':
+        return subprocess.call(["zip", "-r", archiveFile, "bin"], cwd=directoryToZip)
+    elif sys.platform == 'win32':
+        createZipManually(directoryToZip, archiveFile)
+        return 0
+    elif sys.platform.startswith('linux'):
+        return subprocess.call(["zip", "-y", "-r", archiveFile, "."], cwd=directoryToZip)
+
+
+def archiveBuiltProduct(configuration, platform):
+    assert platform in ('mac', 'win', 'qt', 'gtk', 'efl', 'chromium')
+
+    configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
 
     if platform == 'mac':
-        return subprocess.call(["ditto", "-c", "-k", "--keepParent", "--sequesterRsrc", configurationBuildDirectory, archiveFile])
+        return createZip(configurationBuildDirectory, configuration)
     elif platform == 'win':
         binDirectory = os.path.join(configurationBuildDirectory, "bin")
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")
         thinBinDirectory = os.path.join(thinDirectory, "bin")
 
-        if os.path.isdir(thinDirectory):
-            shutil.rmtree(thinDirectory)
-        os.mkdir(thinDirectory)
-
-        if subprocess.call(["cp", "-R", binDirectory, thinBinDirectory]):
-            return 1
-
-        if subprocess.call("rm -f %s" % os.path.join(thinBinDirectory, "*.ilk"), shell=True):
-            return 1
-
-        if subprocess.call(["zip", "-r", archiveFile, "bin"], cwd=thinDirectory):
+        removeDirectoryIfExists(thinDirectory)
+        copyBuildFiles(binDirectory, thinBinDirectory)
+        if createZip(thinDirectory, configuration):
             return 1
 
         shutil.rmtree(thinDirectory)
@@ -88,8 +140,7 @@ def archiveBuiltProduct(configuration, platform):
     elif platform == 'qt' or platform == 'gtk' or platform == 'efl':
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")
 
-        if os.path.isdir(thinDirectory):
-            shutil.rmtree(thinDirectory)
+        removeDirectoryIfExists(thinDirectory)
         os.mkdir(thinDirectory)
 
         if platform == 'qt' or platform == 'efl':
@@ -109,20 +160,29 @@ def archiveBuiltProduct(configuration, platform):
                 if name.endswith(".o"):
                     os.remove(os.path.join(root, name))
 
-        if subprocess.call(["zip", "-y", "-r", archiveFile, "."], cwd=thinDirectory):
+        if createZip(thinDirectory, configuration):
             return 1
+
+    elif platform == 'chromium':
+        thinDirectory = os.path.join(configurationBuildDirectory, "thin")
+
+        removeDirectoryIfExists(thinDirectory)
+        copyBuildFiles(configurationBuildDirectory, thinDirectory)
+        if createZip(thinDirectory, configuration):
+            return 1
+        
 
 def extractBuiltProduct(configuration, platform):
     assert platform in ('mac', 'win', 'qt', 'gtk', 'efl')
 
-    archiveFile = os.path.join(buildDirectory, configuration + ".zip")
-    configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
+    archiveFile = os.path.join(_buildDirectory, configuration + ".zip")
+    configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
 
     if platform == 'mac':
         if os.path.isdir(configurationBuildDirectory):
             shutil.rmtree(configurationBuildDirectory)
 
-        if subprocess.call(["ditto", "-x", "-k", archiveFile, buildDirectory]):
+        if subprocess.call(["ditto", "-x", "-k", archiveFile, _buildDirectory]):
             return 1
         os.unlink(archiveFile)
 
@@ -146,7 +206,7 @@ def extractBuiltProduct(configuration, platform):
         if os.path.isdir(configurationBuildDirectory):
             shutil.rmtree(configurationBuildDirectory)
 
-        if subprocess.call(["unzip", "-o", archiveFile, "-d", configurationBuildDirectory], cwd=buildDirectory):
+        if subprocess.call(["unzip", "-o", archiveFile, "-d", configurationBuildDirectory], cwd=_buildDirectory):
             return 1
         os.unlink(archiveFile)
 
