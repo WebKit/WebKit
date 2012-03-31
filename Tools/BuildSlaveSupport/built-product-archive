@@ -90,7 +90,7 @@ def createZipManually(directoryToZip, archiveFile):
 
 
 def createZip(directoryToZip, configuration):
-    archiveDir = os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild")
+    archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
 
     # Chromium bots may not have this directory
     if not os.path.isdir(archiveDir):

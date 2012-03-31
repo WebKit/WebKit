@@ -1,5 +1,12 @@
 2012-03-31  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another build fix after r112781.
+
+        * BuildSlaveSupport/built-product-archive:
+        (createZip):
+
+2012-03-31  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r112781.
 
         * BuildSlaveSupport/built-product-archive:
