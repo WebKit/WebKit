@@ -1,3 +1,11 @@
+2012-03-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r112781.
+
+        * BuildSlaveSupport/built-product-archive:
+        (createZipManually):
+        (createZip):
+
 2012-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium bots should upload archived built files

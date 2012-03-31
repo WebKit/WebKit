@@ -83,8 +83,8 @@ def createZipManually(directoryToZip, archiveFile):
 
     for path, dirNames, fileNames in os.walk(directoryToZip):
         relativePath = os.path.relpath(path, directoryToZip)
-        for dirName in dirNames:
-            archiveZip.write(os.path.join(path, dirName), os.path.join(relativePath, dirName))
+        for fileName in fileNames:
+            archiveZip.write(os.path.join(path, fileName), os.path.join(relativePath, fileName))
 
     archiveZip.close()
 
@@ -103,9 +103,6 @@ def createZip(directoryToZip, configuration):
     except OSError, e:
         if e.errno != 2:
             raise
-
-    createZipManually(directoryToZip, archiveFile)
-    return 0
 
     if sys.platform == 'darwin':
         return subprocess.call(["ditto", "-c", "-k", "--keepParent", "--sequesterRsrc", directoryToZip, archiveFile])
