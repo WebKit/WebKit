@@ -1,3 +1,11 @@
+2012-03-30  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix the Windows component build.  The way we link the unit
+        tests in the component build is kind of nutty.  Hopefully this approach
+        will eliminate the duplicate symbols we've been seeing.
+
+        * WebKitUnitTests.gyp:
+
 2012-03-30  Emil A Eklund  <eae@chromium.org>
 
         Change WebKit/WebKit2 platform code to use pixel snapped values
