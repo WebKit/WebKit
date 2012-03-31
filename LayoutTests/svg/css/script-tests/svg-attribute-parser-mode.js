@@ -1,3 +1,6 @@
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 description("Test strict color parsing on SVG presentation attributes.")
 createSVGTestCase();
 

@@ -1,3 +1,6 @@
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 description("Test CSS <length> parsing on SVG presentation attributes.")
 createSVGTestCase();
 
