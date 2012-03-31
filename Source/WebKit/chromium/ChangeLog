@@ -1,5 +1,11 @@
 2012-03-30  Adam Barth  <abarth@webkit.org>
 
+        Two more link errors.  This time it's v8 we're missing.
+
+        * WebKitUnitTests.gyp:
+
+2012-03-30  Adam Barth  <abarth@webkit.org>
+
         Attempt to fix the Windows component build.  It seems we're just
         missing GURL now.
 

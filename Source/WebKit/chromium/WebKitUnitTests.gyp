@@ -56,6 +56,7 @@
             'dependencies': [
                 'WebKit.gyp:webkit',
                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
+                '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
                 '<(chromium_src_dir)/testing/gtest.gyp:gtest',
                 '<(chromium_src_dir)/testing/gmock.gyp:gmock',
                 '<(chromium_src_dir)/base/base.gyp:base',
