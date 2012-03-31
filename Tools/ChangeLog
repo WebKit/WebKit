@@ -1,5 +1,13 @@
 2012-03-31  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Yet another build fix after r112781 for Chromium Windows.
+        Run webkit-build-directory by perl explicitly.
+
+        * BuildSlaveSupport/built-product-archive:
+        (determineWebKitBuildDirectory):
+
+2012-03-31  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix the syntax error in master.cfg after r112734.
 
         * BuildSlaveSupport/build.webkit.org-config/master.cfg:

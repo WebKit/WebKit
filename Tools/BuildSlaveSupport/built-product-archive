@@ -63,7 +63,7 @@ def main():
 
 def determineWebKitBuildDirectory(platform, configuration):
     global _buildDirectory
-    _buildDirectory = subprocess.Popen([os.path.join(os.path.dirname(__file__), "..", "Scripts", "webkit-build-directory"),
+    _buildDirectory = subprocess.Popen(['perl', os.path.join(os.path.dirname(__file__), "..", "Scripts", "webkit-build-directory"),
         "--" + platform, "--" + configuration, '--top-level'], stdout=subprocess.PIPE).communicate()[0].strip()
     return _buildDirectory
 
