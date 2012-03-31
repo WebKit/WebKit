@@ -53,18 +53,20 @@ static void webkit_geolocation_policy_decision_init(WebKitGeolocationPolicyDecis
     decision->priv = G_TYPE_INSTANCE_GET_PRIVATE(decision, WEBKIT_TYPE_GEOLOCATION_POLICY_DECISION, WebKitGeolocationPolicyDecisionPrivate);
 }
 
-#if ENABLE(GEOLOCATION)
 WebKitGeolocationPolicyDecision* webkit_geolocation_policy_decision_new(WebKitWebFrame* frame, WebCore::Geolocation* geolocation)
 {
-    g_return_val_if_fail(frame, NULL);
+#if ENABLE(GEOLOCATION)
+    g_return_val_if_fail(frame, 0);
     WebKitGeolocationPolicyDecision* decision = WEBKIT_GEOLOCATION_POLICY_DECISION(g_object_new(WEBKIT_TYPE_GEOLOCATION_POLICY_DECISION, NULL));
     WebKitGeolocationPolicyDecisionPrivate* priv = decision->priv;
 
     priv->frame = frame;
     priv->geolocation = geolocation;
     return decision;
-}
+#else
+    return 0;
 #endif
+}
 
 /**
  * webkit_geolocation_policy_allow

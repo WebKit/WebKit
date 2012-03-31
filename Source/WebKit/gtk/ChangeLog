@@ -1,3 +1,17 @@
+2012-03-31  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [Stable] --disable geolocation broken after recent merges
+        https://bugs.webkit.org/show_bug.cgi?id=82452
+
+        No review, as this is just a build fix.
+
+        Fix the geolocation build.
+
+        * webkit/webkitgeolocationpolicydecision.cpp:
+        (webkit_geolocation_policy_decision_new): When gelocation is off, just return null.
+        * webkit/webkitgeolocationpolicydecisionprivate.h: Activate webkit_geolocation_policy_decision_new
+        for non-Geolocation builds.
+
 2012-03-27  Martin Robinson  <mrobinson@igalia.com>
 
         Update the NEWS and version for the impending 1.8.0 release.
