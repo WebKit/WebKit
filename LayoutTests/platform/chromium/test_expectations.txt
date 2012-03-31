@@ -4066,3 +4066,25 @@ BUGWK82717 SNOWLEOPARD : storage/database-lock-after-reload.html = PASS TIMEOUT
 BUGWK82776 : storage/indexeddb/dont-commit-on-blocked.html = PASS FAIL
 
 BUGWK WIN RELEASE : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT
+
+// Failing after http://crrev.com/130034
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/culling/filter-occlusion-alpha-large.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/culling/filter-occlusion-alpha.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/culling/filter-occlusion-blur-large.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/culling/filter-occlusion-blur.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/visibility/visibility-simple-canvas2d-layer.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/visibility/visibility-simple-webgl-layer.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/webgl/webgl-background-color.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/webgl/webgl-no-alpha.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : compositing/webgl/webgl-reflection.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-blur-hw.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-brightness-hw.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-combined-hw.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-contrast-hw.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-drop-shadow-hw.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-grayscale-hw.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-hue-rotate-hw.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-invert-hw.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-opacity-hw.html = CRASH TIMEOUT
+BUGCR121270 SNOWLEOPARD LINUX XP DEBUG : css3/filters/effect-saturate-hw.html = CRASH TIMEOUT
