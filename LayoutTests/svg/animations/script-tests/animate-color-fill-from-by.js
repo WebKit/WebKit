@@ -7,7 +7,7 @@ rect.setAttribute("id", "rect");
 rect.setAttribute("width", "100px");
 rect.setAttribute("height", "100px");
 rect.setAttribute("fill", "currentColor");
-rect.setAttribute("color", "d00000");
+rect.setAttribute("color", "#d00000");
 rect.setAttribute("onclick", "executeTest()");
 
 var animateColor = createSVGElement("animateColor");

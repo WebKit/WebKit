@@ -420,8 +420,7 @@ PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& na
     if (!attr)
         return 0;
 
-    RefPtr<StylePropertySet> style = StylePropertySet::create();
-    style->setCSSParserMode(SVGAttributeMode);
+    RefPtr<StylePropertySet> style = StylePropertySet::create(SVGAttributeMode);
     int propertyID = SVGStyledElement::cssPropertyIdForSVGAttributeName(attr->name());
     style->setProperty(propertyID, attr->value());
     return style->getPropertyCSSValue(propertyID);

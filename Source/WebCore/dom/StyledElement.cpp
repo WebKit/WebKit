@@ -246,7 +246,7 @@ void StyledElement::updateAttributeStyle()
     if (cacheHash && cacheIterator->second) 
         style = cacheIterator->second->value;
     else {
-        style = StylePropertySet::create();
+        style = StylePropertySet::create(isSVGElement() ? SVGAttributeMode : CSSQuirksMode);
         unsigned size = attributeCount();
         for (unsigned i = 0; i < size; ++i) {
             Attribute* attribute = attributeItem(i);

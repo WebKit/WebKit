@@ -79,8 +79,7 @@ public:
     StylePropertySet* ensureAnimatedSMILStyleProperties()
     {
         if (!m_animatedSMILStyleProperties) {
-            m_animatedSMILStyleProperties = StylePropertySet::create();
-            m_animatedSMILStyleProperties->setCSSParserMode(SVGAttributeMode);
+            m_animatedSMILStyleProperties = StylePropertySet::create(SVGAttributeMode);
         }
         return m_animatedSMILStyleProperties.get();
     }

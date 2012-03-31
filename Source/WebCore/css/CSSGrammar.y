@@ -1026,7 +1026,7 @@ specifier:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->setMatch(CSSSelector::Id);
-        if (p->m_cssParserMode == CSSQuirksMode || p->m_cssParserMode == SVGAttributeMode)
+        if (p->m_cssParserMode == CSSQuirksMode)
             $1.lower();
         $$->setValue($1);
     }
@@ -1037,7 +1037,7 @@ specifier:
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = p->createFloatingSelector();
             $$->setMatch(CSSSelector::Id);
-            if (p->m_cssParserMode == CSSQuirksMode || p->m_cssParserMode == SVGAttributeMode)
+            if (p->m_cssParserMode == CSSQuirksMode)
                 $1.lower();
             $$->setValue($1);
         }
@@ -1052,7 +1052,7 @@ class:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->setMatch(CSSSelector::Class);
-        if (p->m_cssParserMode == CSSQuirksMode || p->m_cssParserMode == SVGAttributeMode)
+        if (p->m_cssParserMode == CSSQuirksMode)
             $2.lower();
         $$->setValue($2);
     }

@@ -44,8 +44,7 @@ inline CSSParserMode strictToCSSParserMode(bool inStrictMode)
 
 inline bool isStrictParserMode(CSSParserMode cssParserMode)
 {
-    // FIXME: SVG presnetation attribute values should be parsed in strict mode as well.
-    return cssParserMode == CSSStrictMode;
+    return cssParserMode == CSSStrictMode || cssParserMode == SVGAttributeMode;
 }
 
 #endif // CSSParserMode_h

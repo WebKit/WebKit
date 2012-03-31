@@ -1,0 +1,69 @@
+Test strict color parsing on SVG presentation attributes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.defaultView.getComputedStyle(rect, null).fill is "#000000"
+PASS document.defaultView.getComputedStyle(rect, null).fill is "#008000"
+PASS document.defaultView.getComputedStyle(rect, null).fill is null
+PASS document.defaultView.getComputedStyle(rect, null).fill is "#008000"
+PASS document.defaultView.getComputedStyle(rect, null).fill is null
+PASS document.defaultView.getComputedStyle(rect, null).fill is "#008000"
+PASS document.defaultView.getComputedStyle(rect, null).fill is null
+PASS document.defaultView.getComputedStyle(rect, null).fill is "#008000"
+PASS document.defaultView.getComputedStyle(rect, null).fill is null
+PASS document.defaultView.getComputedStyle(rect, null).fill is "#008000"
+PASS document.defaultView.getComputedStyle(rect, null).fill is "#000000"
+PASS document.defaultView.getComputedStyle(rect, null).fill is "#008000"
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "none"
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "#008000"
+PASS document.defaultView.getComputedStyle(rect, null).stroke is null
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "#008000"
+PASS document.defaultView.getComputedStyle(rect, null).stroke is null
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "#008000"
+PASS document.defaultView.getComputedStyle(rect, null).stroke is null
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "#008000"
+PASS document.defaultView.getComputedStyle(rect, null).stroke is null
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "#008000"
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "none"
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "#008000"
+PASS document.defaultView.getComputedStyle(rect, null).color is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).color is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).color is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).color is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).color is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).color is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).color is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).color is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).color is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).color is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).color is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).color is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).stopColor is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).stopColor is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).stopColor is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).stopColor is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).stopColor is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).stopColor is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).stopColor is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).stopColor is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).stopColor is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).stopColor is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).stopColor is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).stopColor is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).floodColor is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).floodColor is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).floodColor is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).floodColor is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).floodColor is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).floodColor is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).floodColor is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).floodColor is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).floodColor is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).floodColor is "rgb(0, 128, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).floodColor is "rgb(0, 0, 0)"
+PASS document.defaultView.getComputedStyle(rect, null).floodColor is "rgb(0, 128, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

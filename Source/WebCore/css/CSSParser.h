@@ -350,13 +350,8 @@ private:
     void setStyleSheet(CSSStyleSheet*);
     void ensureCSSValuePool();
 
-    inline bool inStrictMode() const { return m_cssParserMode == CSSStrictMode; }
-    inline bool inQuirksMode() const
-    {
-        // FIXME: Move SVGAttributeMode to inStrictMode() once StylePropertySet and CSSStyleSheet
-        // use CSSParserMode instead of a boolean.
-        return m_cssParserMode == CSSQuirksMode || m_cssParserMode == SVGAttributeMode;
-    }
+    inline bool inStrictMode() const { return m_cssParserMode == CSSStrictMode || m_cssParserMode == SVGAttributeMode; }
+    inline bool inQuirksMode() const { return m_cssParserMode == CSSQuirksMode; }
 
     void recheckAtKeyword(const UChar* str, int len);
 
