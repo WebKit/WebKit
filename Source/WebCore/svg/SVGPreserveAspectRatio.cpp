@@ -66,9 +66,6 @@ void SVGPreserveAspectRatio::parse(const String& value)
 
 bool SVGPreserveAspectRatio::parse(const UChar*& currParam, const UChar* end, bool validate)
 {
-    m_align = SVG_PRESERVEASPECTRATIO_NONE;
-    m_meetOrSlice = SVG_MEETORSLICE_MEET;
-
     // FIXME: Rewrite this parser, without gotos!
     if (!skipOptionalSVGSpaces(currParam, end))
         goto bailOut;
@@ -76,7 +73,11 @@ bool SVGPreserveAspectRatio::parse(const UChar*& currParam, const UChar* end, bo
     if (*currParam == 'd') {
         if (!skipString(currParam, end, "defer"))
             goto bailOut;
+
         // FIXME: We just ignore the "defer" here.
+        if (currParam == end)
+            return true;
+
         if (!skipOptionalSVGSpaces(currParam, end))
             goto bailOut;
     }
@@ -84,6 +85,7 @@ bool SVGPreserveAspectRatio::parse(const UChar*& currParam, const UChar* end, bo
     if (*currParam == 'n') {
         if (!skipString(currParam, end, "none"))
             goto bailOut;
+        m_align = SVG_PRESERVEASPECTRATIO_NONE;
         skipOptionalSVGSpaces(currParam, end);
     } else if (*currParam == 'x') {
         if ((end - currParam) < 8)
@@ -152,8 +154,8 @@ bool SVGPreserveAspectRatio::parse(const UChar*& currParam, const UChar* end, bo
 
     if (end != currParam && validate) {
 bailOut:
-        m_align = SVG_PRESERVEASPECTRATIO_UNKNOWN;
-        m_meetOrSlice = SVG_MEETORSLICE_UNKNOWN;
+        m_align = SVG_PRESERVEASPECTRATIO_XMIDYMID;
+        m_meetOrSlice = SVG_MEETORSLICE_MEET;
         return false;
     }
     return true;

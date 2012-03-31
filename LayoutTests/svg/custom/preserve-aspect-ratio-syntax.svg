@@ -16,25 +16,22 @@ fill='none' stroke='blue'/>">
 	<g id="test-body-content" transform="translate(0, 0)">
 		<g font-size="9">
 			<text x="0" y="30">All svgs below should look the same, since all have preserveAspectRatio with syntax errors and default should be chosen.</text>
-		<g id="meet-group-2" transform="translate(0, 50)">
-         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 30 40" width="30" height="60">&Smile;</svg>
-			</g>
-			<g transform="translate(50, 50)">
+			<g transform="translate(0, 50)">
          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="defer" viewBox="0 0 30 40" width="30" height="60">&Smile;</svg>
 			</g>
-			<g transform="translate(100, 50)">
+			<g transform="translate(50, 50)">
          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="defer meet" viewBox="0 0 30 40" width="30" height="60">&Smile;</svg>
 			</g>
-			<g transform="translate(150, 50)">
+			<g transform="translate(100, 50)">
          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="defer xMidYMid meet a" viewBox="0 0 30 40" width="30" height="60">&Smile;</svg>
 			</g>
-			<g transform="translate(200, 50)">
+			<g transform="translate(150, 50)">
          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="defer 1 xMidYMid meet" viewBox="0 0 30 40" width="30" height="60">&Smile;</svg>
 			</g>
-			<g transform="translate(250, 50)">
+			<g transform="translate(200, 50)">
          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="defer , xMidYMid meet" viewBox="0 0 30 40" width="30" height="60">&Smile;</svg>
 			</g>
-			<g transform="translate(300, 50)">
+			<g transform="translate(250, 50)">
          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="" viewBox="0 0 30 40" width="30" height="60">&Smile;</svg>
 			</g>
 			<text x="0" y="190">All svgs below should look the same, all have valid preserveAspectRatio.</text>

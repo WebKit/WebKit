@@ -1417,10 +1417,6 @@ svg/zoom/page/zoom-mask-with-percentages.svg
 # https://bugs.webkit.org/show_bug.cgi?id=80703
 svg/animations/animate-elem-08-t-drt.html
 
-# [Qt] REGRESSION(112391) It made svg/custom/preserve-aspect-ratio-syntax.svg test fail.
-# https://bugs.webkit.org/show_bug.cgi?id=82326
-svg/custom/preserve-aspect-ratio-syntax.svg
-
 # [Qt] Diverging test results on 32/64 bit architectures
 # https://bugs.webkit.org/show_bug.cgi?id=82601
 fast/repaint/moving-shadow-on-container.html
