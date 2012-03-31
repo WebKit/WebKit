@@ -1,0 +1,24 @@
+<html>
+  <body>
+    <p>To run this test, both http-auth-challenge.html and http-auth-challenge.php must be served over http.</p>
+    <p>This test case is to test the behavior of http authentication challenge dialog. This is for <a href="https://bugs.webkit.org/show_bug.cgi?id=80135">https://bugs.webkit.org/show_bug.cgi?id=80135</a></p>
+    <p>
+      Please follow the following test procedure:
+      <ol>
+        <li>Test dialog behavior when press Cancel button</li>
+        <ol>
+          <li>Start test case, then press Cancel button when authentication dialog pops up;</li>
+        </ol>
+        <li>Test dialog behavior when press OK button</li>
+        <ol>
+          <li>Navigate back to the privious page;</li>
+          <li>Start test case again, then press Ok button without input anything when authentication dialog pops up;</li>
+          <li>When dialog pops up again, enter fake credential and press Ok button: username:"qqqq", password:"qqqq"</li>
+          <li>When dialog pops up agian, enter real credential and press Ok button: username:"aaaa", password:"aaaa"</li>
+        </ol>
+      </ol>
+      <a href="http-auth-challenge.php">Start test here</a>
+    </p>
+    
+  </body>
+</html>

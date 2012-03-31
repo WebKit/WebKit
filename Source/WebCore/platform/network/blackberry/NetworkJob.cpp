@@ -849,9 +849,6 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         String username;
         String password;
 
-        if (!m_frame || !m_frame->loader() || !m_frame->loader()->client())
-            return false;
-
         // Before asking the user for credentials, we check if the URL contains that.
         if (!m_handle->getInternal()->m_user.isEmpty() && !m_handle->getInternal()->m_pass.isEmpty()) {
             username = m_handle->getInternal()->m_user.utf8().data();
@@ -863,12 +860,12 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
             m_handle->getInternal()->m_pass = "";
         } else {
             Credential inputCredential;
-            bool isConfirmed = false;
-            do {
-                isConfirmed = m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace, inputCredential);
-                username = inputCredential.user();
-                password = inputCredential.password();
-            } while (isConfirmed && username.isEmpty() && password.isEmpty());
+            bool isConfirmed = m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace, inputCredential);
+            username = inputCredential.user();
+            password = inputCredential.password();
+
+            if (!isConfirmed)
+                return false;
         }
 
         credential = Credential(username, password, CredentialPersistenceForSession);

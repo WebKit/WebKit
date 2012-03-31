@@ -1,3 +1,17 @@
+2012-03-31  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] http authenticate dialog popup only once no matter authentication pass or fail
+        https://bugs.webkit.org/show_bug.cgi?id=80135
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 145660
+        Added manual test for testing the behavior of http authentication
+        challenge dialog. Both of these two files should be served over http.
+
+        * ManualTests/blackberry/http-auth-challenge.html: Added.
+        * ManualTests/blackberry/http-auth-challenge.php: Added.
+
 2012-03-30  Eli Fidler  <efidler@rim.com>
 
         Enable OpenType Sanitizer for BlackBerry port.

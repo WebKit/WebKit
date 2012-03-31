@@ -1,3 +1,17 @@
+2012-03-31  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] http authenticate dialog popup only once no matter authentication pass or fail
+        https://bugs.webkit.org/show_bug.cgi?id=80135
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 145660
+        Fixed a regression introduced by r111810, which used the wrong
+        credential object.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::authenticationChallenge):
+
 2012-03-30  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Speed up processing of Selection region generation.
