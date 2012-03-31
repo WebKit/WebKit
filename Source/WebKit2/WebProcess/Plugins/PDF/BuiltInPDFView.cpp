@@ -710,7 +710,7 @@ bool BuiltInPDFView::isActive() const
     return false;
 }
 
-void BuiltInPDFView::invalidateScrollbarRect(Scrollbar* scrollbar, const LayoutRect& rect)
+void BuiltInPDFView::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
 {
     IntRect dirtyRect = rect;
     dirtyRect.moveBy(scrollbar->location());

@@ -1190,7 +1190,7 @@ size_t WebFrameImpl::characterIndexForPoint(const WebPoint& webPoint) const
 
     IntPoint point = frame()->view()->windowToContents(webPoint);
     HitTestResult result = frame()->eventHandler()->hitTestResultAtPoint(point, false);
-    RefPtr<Range> range = frame()->rangeForPoint(result.point());
+    RefPtr<Range> range = frame()->rangeForPoint(result.roundedPoint());
     if (!range)
         return notFound;
 

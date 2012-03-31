@@ -401,7 +401,7 @@ void WebPopupMenuProxyWin::calculatePositionAndSize(const IntRect& rect)
     MONITORINFOEX monitorInfo;
     monitorInfo.cbSize = sizeof(MONITORINFOEX);
     ::GetMonitorInfo(monitor, &monitorInfo);
-    FloatRect screen = monitorInfo.rcWork;
+    FloatRect screen = static_cast<IntRect>(monitorInfo.rcWork);
 
     // Check that we don't go off the screen vertically
     if (popupRect.maxY() > screen.height()) {

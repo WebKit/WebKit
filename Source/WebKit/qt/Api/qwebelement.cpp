@@ -552,7 +552,7 @@ QRect QWebElement::geometry() const
 {
     if (!m_element)
         return QRect();
-    return m_element->getRect();
+    return m_element->getPixelSnappedRect();
 }
 
 /*!

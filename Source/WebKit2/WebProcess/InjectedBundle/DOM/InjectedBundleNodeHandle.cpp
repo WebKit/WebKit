@@ -114,7 +114,7 @@ IntRect InjectedBundleNodeHandle::elementBounds() const
     
 IntRect InjectedBundleNodeHandle::renderRect(bool* isReplaced) const
 {
-    return m_node.get()->renderRect(isReplaced);
+    return m_node.get()->pixelSnappedRenderRect(isReplaced);
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& value)

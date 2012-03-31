@@ -131,7 +131,7 @@ bool WebFrameFilter::shouldIncludeSubframe(Frame* frame) const
 
 - (NSRect)_renderRect:(bool *)isReplaced
 {
-    return NSRect(core(self)->renderRect(isReplaced));
+    return NSRect(core(self)->pixelSnappedRenderRect(isReplaced));
 }
 
 @end

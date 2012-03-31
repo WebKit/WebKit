@@ -1,3 +1,17 @@
+2012-03-30  Emil A Eklund  <eae@chromium.org>
+
+        Change WebKit/WebKit2 platform code to use pixel snapped values
+        https://bugs.webkit.org/show_bug.cgi?id=82549
+
+        Change WebKit and WebKit2 platform code to use rounded locations and
+        pixel snapped rects and sizes. This largely avoids having to expose the
+        fractional layout types to the platform code.
+
+        Reviewed by Eric Seidel.
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMNode _renderRect:]):
+
 2012-03-30  Mark Pilgrim  <pilgrim@chromium.org>
 
         GEOLOCATION should be implemented as Page Supplement

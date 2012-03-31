@@ -1,3 +1,20 @@
+2012-03-30  Emil A Eklund  <eae@chromium.org>
+
+        Change WebKit/WebKit2 platform code to use pixel snapped values
+        https://bugs.webkit.org/show_bug.cgi?id=82549
+
+        Reviewed by Eric Seidel.
+
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::boundingBoxRect):
+        Use pixelSnappedBoundingBoxRect instead of boundingBoxRect which returns
+        a LayoutRect.
+        
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::characterIndexForPoint):
+        Use roundedPoint instead of point for hit testing as ranges use screen
+        cordinates which are represented with pixel accuracy.
+
 2012-03-30  Adam Barth  <abarth@webkit.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=82582

@@ -1,3 +1,26 @@
+2012-03-30  Emil A Eklund  <eae@chromium.org>
+
+        Change WebKit/WebKit2 platform code to use pixel snapped values
+        https://bugs.webkit.org/show_bug.cgi?id=82549
+
+        Reviewed by Eric Seidel.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::geometry):
+        Replace getRect with getPixelSnappedRect to avoid having to expose
+        subpixel types to the platform layer.
+        
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::TouchAdjuster::findCandidatePointForTouch):
+        Use pixel snapped element rect when comparing with the touch rect as the
+        touch rect use screen cordinates which are represented with pixel
+        accuracy.
+        
+        * WebCoreSupport/ChromeClientQt.h:
+        (WebCore::ChromeClientQt::scrollRectIntoView):
+        Change scrollRectIntoView to take a LayoutRect to match base class
+        interface.
+
 2012-03-30  Mark Pilgrim  <pilgrim@chromium.org>
 
         GEOLOCATION should be implemented as Page Supplement

@@ -493,7 +493,7 @@ WebRect WebAccessibilityObject::boundingBoxRect() const
         return WebRect();
 
     m_private->updateBackingStore();
-    return m_private->boundingBoxRect();
+    return m_private->pixelSnappedBoundingBoxRect();
 }
 
 double WebAccessibilityObject::estimatedLoadingProgress() const

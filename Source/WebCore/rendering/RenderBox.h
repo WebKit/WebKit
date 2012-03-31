@@ -130,6 +130,7 @@ public:
     void move(LayoutUnit dx, LayoutUnit dy) { m_frameRect.move(dx, dy); }
 
     LayoutRect frameRect() const { return m_frameRect; }
+    IntRect pixelSnappedFrameRect() const { return pixelSnappedIntRect(m_frameRect); }
     void setFrameRect(const LayoutRect& rect) { m_frameRect = rect; }
 
     IntRect borderBoxRect() const { return IntRect(IntPoint(), IntSize(m_frameRect.pixelSnappedWidth(), m_frameRect.pixelSnappedHeight())); }

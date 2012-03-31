@@ -1,3 +1,25 @@
+2012-03-30  Emil A Eklund  <eae@chromium.org>
+
+        Change WebKit/WebKit2 platform code to use pixel snapped values
+        https://bugs.webkit.org/show_bug.cgi?id=82549
+
+        Change WebKit and WebKit2 platform code to use rounded locations and
+        pixel snapped rects and sizes. This largely avoids having to expose the
+        fractional layout types to the platform code.
+
+        Reviewed by Eric Seidel.
+
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::WebRenderObject):
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::calculatePositionAndSize):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::renderRect):
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::invalidateScrollbarRect):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::characterIndexForPoint):
+
 2012-03-30  Anders Carlsson  <andersca@apple.com>
 
         Fix Lion build.

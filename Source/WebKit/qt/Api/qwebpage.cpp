@@ -1587,7 +1587,7 @@ IntPoint QWebPagePrivate::TouchAdjuster::findCandidatePointForTouch(const IntPoi
         if (!currentElement || (!isClickableElement(currentElement, 0) && !isValidFrameOwner(currentElement)))
             continue;
 
-        IntRect currentElementBoundingRect = currentElement->getRect();
+        IntRect currentElementBoundingRect = currentElement->getPixelSnappedRect();
         currentElementBoundingRect.intersect(touchRect);
 
         if (currentElementBoundingRect.isEmpty())
