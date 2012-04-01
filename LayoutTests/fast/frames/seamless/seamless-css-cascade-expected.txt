@@ -1,5 +1,0 @@
-FAIL window.getComputedStyle(one).color should be rgb(255, 0, 0). Was rgb(0, 0, 0).
-PASS window.getComputedStyle(two).color is "rgb(128, 0, 128)"
-FAIL window.getComputedStyle(three).color should be rgb(255, 255, 255). Was rgb(0, 0, 0).
-FAIL window.getComputedStyle(rootElement).color should be rgb(255, 128, 64). Was rgb(0, 0, 0).
-

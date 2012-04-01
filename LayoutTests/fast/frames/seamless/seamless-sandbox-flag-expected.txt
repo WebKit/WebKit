@@ -1,5 +1,0 @@
-PASS iframe.webkitseamless is true
-PASS nestedFrame.webkitseamless is true
-FAIL window.getComputedStyle(iframe).width should be 200px. Was 300px.
-PASS window.getComputedStyle(iframe).height is "150px"
-
