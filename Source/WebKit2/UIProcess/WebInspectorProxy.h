@@ -119,6 +119,10 @@ public:
 
     static bool isInspectorPage(WebPageProxy*);
 
+    // Implemented the platform WebInspectorProxy file
+    String inspectorPageURL() const;
+    String inspectorBaseURL() const;
+
 private:
     WebInspectorProxy(WebPageProxy* page);
 
@@ -134,10 +138,6 @@ private:
     void platformAttach();
     void platformDetach();
     void platformSetAttachedWindowHeight(unsigned);
-
-    // Implemented the platform WebInspectorProxy file
-    String inspectorPageURL() const;
-    String inspectorBaseURL() const;
 
     // Called by WebInspectorProxy messages
     void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);

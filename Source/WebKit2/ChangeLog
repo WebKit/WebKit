@@ -1,3 +1,20 @@
+2012-03-31  Timothy Hatcher  <timothy@apple.com>
+
+        Prevent opening external URLs in the Web Inspector's WebView.
+
+        All URLs not handled by the Inspector's JavaScript are now opened in the inspected WebView.
+
+        https://webkit.org/b/82812
+        rdar://problem/9488558
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::decidePolicyForNavigationAction): Added. Only allow non-main frame and the inspector page. All other URLs
+        will be opened in the inspected page.
+        (WebKit::WebInspectorProxy::createInspectorPage): Set the policy client and use decidePolicyForNavigationAction.
+        * UIProcess/WebInspectorProxy.h: Made inspectorPageURL and inspectorBaseURL public for decidePolicyForNavigationAction.
+
 2012-03-31  Anders Carlsson  <andersca@apple.com>
 
         32-bit plug-ins need to opt into magnified mode

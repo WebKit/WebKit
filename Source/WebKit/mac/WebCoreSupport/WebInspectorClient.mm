@@ -38,6 +38,7 @@
 #import "WebLocalizableStringsInternal.h"
 #import "WebNodeHighlighter.h"
 #import "WebUIDelegate.h"
+#import "WebPolicyDelegate.h"
 #import "WebViewInternal.h"
 #import <WebCore/InspectorController.h>
 #import <WebCore/Page.h>
@@ -62,6 +63,7 @@ using namespace WebCore;
     BOOL _destroyingInspectorView;
 }
 - (id)initWithInspectedWebView:(WebView *)webView;
+- (NSString *)inspectorPagePath;
 - (WebView *)webView;
 - (void)attach;
 - (void)detach;
@@ -268,18 +270,11 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     [_webView setDrawsBackground:NO];
     [_webView setProhibitsMainFrameScrolling:YES];
     [_webView setUIDelegate:self];
+    [_webView setPolicyDelegate:self];
 
     [preferences release];
 
-    NSString *path;
-    if (useWebKitWebInspector())
-        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
-    else
-        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"];
-
-    ASSERT([path length]);
-
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:path]];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:[self inspectorPagePath]]];
     [[_webView mainFrame] loadRequest:request];
     [request release];
 
@@ -300,6 +295,20 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 {
     [_webView release];
     [super dealloc];
+}
+
+// MARK: -
+
+- (NSString *)inspectorPagePath
+{
+    NSString *path;
+    if (useWebKitWebInspector())
+        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
+    else
+        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"];
+
+    ASSERT([path length]);
+    return path;
 }
 
 // MARK: -
@@ -504,6 +513,30 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 - (NSUInteger)webView:(WebView *)sender dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     return WebDragDestinationActionNone;
+}
+
+// MARK: -
+// MARK: Policy delegate
+
+- (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener
+{
+    // Allow non-main frames to navigate anywhere.
+    if (frame != [webView mainFrame]) {
+        [listener use];
+        return;
+    }
+
+    // Allow loading of the main inspector file.
+    if ([[request URL] isFileURL] && [[[request URL] path] isEqualToString:[self inspectorPagePath]]) {
+        [listener use];
+        return;
+    }
+
+    // Prevent everything else from loading in the inspector's page.
+    [listener ignore];
+
+    // And instead load it in the inspected page.
+    [[_inspectedWebView.get() mainFrame] loadRequest:request];
 }
 
 // MARK: -

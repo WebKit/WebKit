@@ -1,3 +1,20 @@
+2012-03-31  Timothy Hatcher  <timothy@apple.com>
+
+        Prevent opening external URLs in the Web Inspector's WebView.
+
+        All URLs not handled by the Inspector's JavaScript are now opened in the inspected WebView.
+
+        https://webkit.org/b/82812
+        rdar://problem/9488558
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController init]): Factored the URL code out of here into inspectorPagePath.
+        (-[WebInspectorWindowController inspectorPagePath]): Added.
+        (-[WebInspectorWindowController webView:decidePolicyForNavigationAction:request:frame:decisionListener:]): Added.
+        Only allow non-main frame and the inspector page. All other URLs will be opened in the inspected page.
+
 2012-03-30  Emil A Eklund  <eae@chromium.org>
 
         Change WebKit/WebKit2 platform code to use pixel snapped values

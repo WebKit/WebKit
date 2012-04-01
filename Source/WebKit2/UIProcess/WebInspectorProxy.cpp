@@ -29,6 +29,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
 #include "WebInspectorMessages.h"
 #include "WebPageCreationParameters.h"
@@ -36,6 +37,7 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
+#include "WebURLRequest.h"
 
 #if PLATFORM(WIN)
 #include "WebView.h"
@@ -224,6 +226,36 @@ bool WebInspectorProxy::isInspectorPage(WebPageProxy* page)
     return page->pageGroup() == inspectorPageGroup();
 }
 
+static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef requestRef, WKFramePolicyListenerRef listenerRef, WKTypeRef, const void* clientInfo)
+{
+    // Allow non-main frames to navigate anywhere.
+    if (!toImpl(frameRef)->isMainFrame()) {
+        toImpl(listenerRef)->use();
+        return;
+    }
+
+    const WebInspectorProxy* webInspectorProxy = static_cast<const WebInspectorProxy*>(clientInfo);
+    ASSERT(webInspectorProxy);
+
+    // Use KURL so we can compare just the fileSystemPaths.
+    KURL inspectorURL(KURL(), webInspectorProxy->inspectorPageURL());
+    KURL requestURL(KURL(), toImpl(requestRef)->url());
+
+    ASSERT(inspectorURL.isLocalFile());
+
+    // Allow loading of the main inspector file.
+    if (requestURL.isLocalFile() && requestURL.fileSystemPath() == inspectorURL.fileSystemPath()) {
+        toImpl(listenerRef)->use();
+        return;
+    }
+
+    // Prevent everything else from loading in the inspector's page.
+    toImpl(listenerRef)->ignore();
+
+    // And instead load it in the inspected page.
+    webInspectorProxy->page()->loadURLRequest(toImpl(requestRef));
+}
+
 // Called by WebInspectorProxy messages
 void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters& inspectorPageParameters)
 {
@@ -242,10 +274,23 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
     inspectorPageID = inspectorPage->pageID();
     inspectorPageParameters = inspectorPage->creationParameters();
 
+    WKPagePolicyClient policyClient = {
+        kWKPagePolicyClientCurrentVersion,
+        this, /* clientInfo */
+        decidePolicyForNavigationAction,
+        0, /* decidePolicyForNewWindowAction */
+        0, /* decidePolicyForResponse */
+        0 /* unableToImplementPolicy */
+    };
+
+    inspectorPage->initializePolicyClient(&policyClient);
+
     String url = inspectorPageURL();
     if (m_isAttached)
         url += "?docked=true";
+
     m_page->process()->assumeReadAccessToBaseURL(inspectorBaseURL());
+
     inspectorPage->loadURL(url);
 }
 
