@@ -175,7 +175,7 @@ bool NotificationPresenterClientQt::show(Notification* notification)
     if (notification->scriptExecutionContext()->isWorkerContext())
         return false;
     notification->setPendingActivity(notification);
-    if (!notification->replaceId().isEmpty())
+    if (!notification->tag().isEmpty())
         removeReplacedNotificationFromQueue(notification);
     if (dumpNotification)
         dumpShowText(notification);
@@ -398,7 +398,7 @@ void NotificationPresenterClientQt::removeReplacedNotificationFromQueue(Notifica
 
     while (iter != end) {
         Notification* existingNotification = iter.key();
-        if (existingNotification->replaceId() == notification->replaceId() && existingNotification->url().protocol() == notification->url().protocol() && existingNotification->url().host() == notification->url().host()) {
+        if (existingNotification->tag() == notification->tag() && existingNotification->url().protocol() == notification->url().protocol() && existingNotification->url().host() == notification->url().host()) {
             oldNotification = iter.key();
             break;
         }

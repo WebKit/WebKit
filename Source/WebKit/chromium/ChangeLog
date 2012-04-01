@@ -1,3 +1,14 @@
+2012-04-01  Jon Lee  <jonlee@apple.com>
+
+        Rename notification properties and functions
+        https://bugs.webkit.org/show_bug.cgi?id=80482
+        <rdar://problem/10912432>
+
+        Reviewed by Kentaro Hara.
+
+        * src/WebNotification.cpp:
+        (WebKit::WebNotification::replaceId): Refactor to call tag().
+
 2012-03-29  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Delete WebKit/chromium/bridge

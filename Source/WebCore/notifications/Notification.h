@@ -66,7 +66,10 @@ public:
     virtual ~Notification();
 
     void show();
-    void cancel();
+#if ENABLE(LEGACY_NOTIFICATIONS)
+    void cancel() { close(); }
+#endif
+    void close();
 
     bool isHTML() const { return m_isHTML; }
     void setHTML(bool isHTML) { m_isHTML = isHTML; }
@@ -80,9 +83,14 @@ public:
 
     String dir() const { return m_direction; }
     void setDir(const String& dir) { m_direction = dir; }
-    
-    String replaceId() const { return m_replaceId; }
-    void setReplaceId(const String& replaceId) { m_replaceId = replaceId; }
+
+#if ENABLE(LEGACY_NOTIFICATIONS)
+    String replaceId() const { return tag(); }
+    void setReplaceId(const String& replaceId) { setTag(replaceId); }
+#endif
+
+    String tag() const { return m_tag; }
+    void setTag(const String& tag) { m_tag = tag; }
 
     TextDirection direction() const { return dir() == "rtl" ? RTL : LTR; }
 
@@ -146,7 +154,7 @@ private:
     KURL m_notificationURL;
 
     String m_direction;
-    String m_replaceId;
+    String m_tag;
 
     enum NotificationState {
         Idle = 0,

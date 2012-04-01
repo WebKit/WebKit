@@ -101,11 +101,11 @@ Notification* core(WebNotification *notification)
 #endif
 }
 
-- (NSString *)replaceID
+- (NSString *)tag
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     ASSERT(core(self));
-    return core(self)->replaceId();
+    return core(self)->tag();
 #else
     return nil;
 #endif

@@ -106,7 +106,7 @@ WebTextDirection WebNotification::direction() const
 
 WebString WebNotification::replaceId() const
 {
-    return m_private->replaceId();
+    return m_private->tag();
 }
 
 void WebNotification::detachPresenter()

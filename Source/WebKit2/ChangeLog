@@ -1,3 +1,33 @@
+2012-04-01  Jon Lee  <jonlee@apple.com>
+
+        Rename notification properties and functions
+        https://bugs.webkit.org/show_bug.cgi?id=80482
+        <rdar://problem/10912432>
+
+        Reviewed by Kentaro Hara.
+
+        Rename APIs to use tag.
+        * UIProcess/API/C/WKNotification.cpp:
+        (WKNotificationCopyTag):
+        * UIProcess/API/C/WKNotification.h:
+        * UIProcess/Notifications/WebNotification.cpp:
+        (WebKit::WebNotification::WebNotification):
+        * UIProcess/Notifications/WebNotification.h:
+        (WebKit::WebNotification::create):
+        (WebKit::WebNotification::tag):
+        (WebNotification):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::show):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        (WebNotificationManagerProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showNotification):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show):
+
 2012-03-31  Timothy Hatcher  <timothy@apple.com>
 
         Prevent opening external URLs in the Web Inspector's WebView.

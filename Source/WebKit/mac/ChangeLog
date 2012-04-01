@@ -1,3 +1,15 @@
+2012-04-01  Jon Lee  <jonlee@apple.com>
+
+        Rename notification properties and functions
+        https://bugs.webkit.org/show_bug.cgi?id=80482
+        <rdar://problem/10912432>
+
+        Reviewed by Kentaro Hara.
+
+        * WebView/WebNotification.h: Rename replaceID to tag.
+        * WebView/WebNotification.mm:
+        (-[WebNotification tag]):
+
 2012-03-31  Timothy Hatcher  <timothy@apple.com>
 
         Prevent opening external URLs in the Web Inspector's WebView.

@@ -52,9 +52,9 @@ WKStringRef WKNotificationCopyIconURL(WKNotificationRef notification)
     return toCopiedAPI(toImpl(notification)->iconURL());
 }
 
-WKStringRef WKNotificationCopyReplaceID(WKNotificationRef notification)
+WKStringRef WKNotificationCopyTag(WKNotificationRef notification)
 {
-    return toCopiedAPI(toImpl(notification)->replaceID());
+    return toCopiedAPI(toImpl(notification)->tag());
 }
 
 WKSecurityOriginRef WKNotificationGetSecurityOrigin(WKNotificationRef notification)

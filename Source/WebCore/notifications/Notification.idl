@@ -38,7 +38,12 @@ module threads {
         OmitConstructor
     ] Notification {
         void show();
+#if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
         void cancel();
+#endif
+#if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
+        void close();
+#endif
 
         attribute EventListener onshow;
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
@@ -49,7 +54,12 @@ module threads {
         attribute EventListener onclick;
 
         attribute DOMString dir;
+#if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
         attribute DOMString replaceId;
+#endif
+#if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
+        attribute DOMString tag;
+#endif
 
         // EventTarget interface
         void addEventListener(in DOMString type, 

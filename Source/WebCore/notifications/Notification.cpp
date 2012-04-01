@@ -95,7 +95,7 @@ Notification::~Notification()
 {
     if (m_state == Loading) {
         ASSERT_NOT_REACHED();
-        cancel();
+        close();
     }
 }
 
@@ -143,7 +143,7 @@ void Notification::show()
 #endif
 }
 
-void Notification::cancel() 
+void Notification::close()
 {
     switch (m_state) {
     case Idle:
