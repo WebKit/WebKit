@@ -23,6 +23,7 @@
 
 #include "CSSValueKeywords.h"
 #include "Frame.h"
+#include "HTMLMediaElement.h"
 #include "MediaControlElements.h"
 #include "MediaPlayerPrivateBlackBerry.h"
 #include "PaintInfo.h"
@@ -256,7 +257,8 @@ bool RenderThemeBlackBerry::paintTextFieldOrTextAreaOrSearchField(RenderObject* 
     if (object->style()->appearance() == SearchFieldPart) {
         // We force the fill color to White so as to match the background color of the search cancel button graphic.
         context->setFillColor(Color::white, ColorSpaceDeviceRGB);
-        context->drawPath(textFieldRoundedRectangle);
+        context->fillPath(textFieldRoundedRectangle);
+        context->strokePath(textFieldRoundedRectangle);
     } else
         context->strokePath(textFieldRoundedRectangle);
     context->restore();
@@ -405,7 +407,8 @@ bool RenderThemeBlackBerry::paintButton(RenderObject* object, const PaintInfo& i
         FloatSize smallCorner(smallRadius, smallRadius);
         Path path;
         path.addRoundedRect(rect, smallCorner);
-        info.context->drawPath(path);
+        info.context->fillPath(path);
+        info.context->strokePath(path);
 
         if (isChecked(object)) {
             Path checkPath;
@@ -417,7 +420,8 @@ bool RenderThemeBlackBerry::paintButton(RenderObject* object, const PaintInfo& i
             info.context->setLineCap(RoundCap);
             info.context->setStrokeColor(blackPen, ColorSpaceDeviceRGB);
             info.context->setStrokeThickness(rect2.width() / checkboxStrokeThickness);
-            info.context->drawPath(checkPath);
+            info.context->fillPath(checkPath);
+            info.context->strokePath(checkPath);
         }
         break;
     }
@@ -436,13 +440,15 @@ bool RenderThemeBlackBerry::paintButton(RenderObject* object, const PaintInfo& i
         FloatSize largeCorner(largeRadius, largeRadius);
         Path path;
         path.addRoundedRect(rect, largeCorner);
-        info.context->drawPath(path);
+        info.context->fillPath(path);
+        info.context->strokePath(path);
         break;
     }
     case SquareButtonPart: {
         Path path;
         path.addRect(rect);
-        info.context->drawPath(path);
+        info.context->fillPath(path);
+        info.context->strokePath(path);
         break;
     }
     default:
