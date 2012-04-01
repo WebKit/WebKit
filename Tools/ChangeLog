@@ -1,3 +1,39 @@
+2012-04-01  Tony Tseung  <tseung@apple.com>
+
+        Composite Font References is a new established standard (ISO/IEC 14496-28:2012) for specifying
+        composite fonts from existing physical fonts.
+        <rdar://problem/10717370>
+        https://bugs.webkit.org/show_bug.cgi?id=82810
+            
+        A new test font of this kind as been added to the test tools for running the webkit-tests
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Added new dependency SampleFont.sfont
+        
+        * DumpRenderTree/fonts/SampleFont.sfont: Added.
+        
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet):
+        Added the Composite Font Referene sample font "Hiragino Maru Gothic Monospaced" entry to the fonts white-list
+        
+        (activateTestingFonts):
+        Added the registration of the Composite Font Referene sample font
+        
+        * WebKitTestRunner/InjectedBundle/mac/ActivateFonts.mm:
+        (WTR::allowedFontFamilySet):
+        Added the Composite Font Referene sample font "Hiragino Maru Gothic Monospaced" entry to the fonts white-list
+
+        (WTR::activateFonts):
+        Added the registration of the Composite Font Referene sample font
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        Added new dependency SampleFont.sfont
+
+        * WebKitTestRunner/fonts/SampleFont.sfont: Added.
+
 2012-04-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Support the Network Information API

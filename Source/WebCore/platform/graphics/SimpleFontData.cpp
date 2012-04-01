@@ -217,6 +217,21 @@ SimpleFontData::DerivedFontData::~DerivedFontData()
         GlyphPageTreeNode::pruneTreeCustomFontData(verticalRightOrientation.get());
     if (uprightOrientation)
         GlyphPageTreeNode::pruneTreeCustomFontData(uprightOrientation.get());
+#if PLATFORM(MAC)
+    if (compositeFontReferences) {
+        CFDictionaryRef dictionary = CFDictionaryRef(compositeFontReferences.get());
+        CFIndex count = CFDictionaryGetCount(dictionary);
+        if (count > 0) {
+            Vector<SimpleFontData*, 2> stash(count);
+            SimpleFontData** fonts = stash.data();
+            CFDictionaryGetKeysAndValues(dictionary, 0, (const void **)fonts);
+            while (count-- > 0 && *fonts) {
+                OwnPtr<SimpleFontData> afont = adoptPtr(*fonts++);
+                GlyphPageTreeNode::pruneTreeCustomFontData(afont.get());
+            }
+        }
+    }
+#endif
 }
 
 } // namespace WebCore
