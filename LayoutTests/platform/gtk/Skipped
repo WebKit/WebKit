@@ -435,6 +435,9 @@ pointer-lock/
 #Battery Status API support not yet. http://webkit.org/b/62698
 batterystatus
 
+#Network Information API support not yet. http://webkit.org/b/73528
+networkinformation
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################

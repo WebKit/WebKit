@@ -1627,6 +1627,24 @@ IF (ENABLE_NETSCAPE_PLUGIN_API)
     )
 ENDIF ()
 
+IF (ENABLE_NETWORK_INFO)
+    LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+         ${WEBCORE_DIR}/Modules/networkinfo
+    )
+
+    LIST(APPEND WebCore_SOURCES
+        Modules/networkinfo/NavigatorNetworkInfoConnection.cpp
+        Modules/networkinfo/NetworkInfo.cpp
+        Modules/networkinfo/NetworkInfoConnection.cpp
+        Modules/networkinfo/NetworkInfoController.cpp
+    )
+ 
+    LIST(APPEND WebCore_IDL_FILES
+        Modules/networkinfo/NavigatorNetworkInfoConnection.idl
+        Modules/networkinfo/NetworkInfoConnection.idl
+    )
+ENDIF ()
+
 IF (ENABLE_NOTIFICATIONS)
     LIST(APPEND WebCore_SOURCES
         notifications/DOMWindowNotifications.cpp

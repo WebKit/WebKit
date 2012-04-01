@@ -60,6 +60,15 @@ IF (WTF_USE_PANGO)
   )
 ENDIF ()
 
+IF (ENABLE_NETWORK_INFO)
+  LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/Modules/networkinfo"
+  )
+  LIST(APPEND WebKit_SOURCES
+    efl/WebCoreSupport/NetworkInfoClientEfl.cpp
+  )
+ENDIF ()
+
 IF (ENABLE_NOTIFICATIONS)
   LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/notifications"

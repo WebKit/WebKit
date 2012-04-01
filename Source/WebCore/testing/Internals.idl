@@ -129,6 +129,10 @@ module window {
         void setBatteryStatus(in Document document, in DOMString eventType, in boolean charging, in double chargingTime, in double dischargingTime, in double level) raises (DOMException);
 #endif 
 
+#if defined(ENABLE_NETWORK_INFO) && ENABLE_NETWORK_INFO
+        void setNetworkInformation(in Document document, in DOMString eventType, in long bandwidth, in boolean metered) raises (DOMException);
+#endif
+
         [Conditional=INSPECTOR] unsigned long numberOfLiveNodes();
         [Conditional=INSPECTOR] unsigned long numberOfLiveDocuments();
     };

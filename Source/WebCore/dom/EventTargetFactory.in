@@ -18,6 +18,7 @@ LocalMediaStream conditional=MEDIA_STREAM
 MediaController conditional=VIDEO
 MediaStream conditional=MEDIA_STREAM
 MessagePort
+NetworkInfoConnection conditional=NETWORK_INFO
 Node
 Notification conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS
 PeerConnection00 conditional=MEDIA_STREAM

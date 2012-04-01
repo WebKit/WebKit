@@ -383,6 +383,9 @@ fast/dom/navigator-vibration.html
 #Battery Status API is not implemented.
 batterystatus
 
+# Network Information API is not supported yet. http://webkit.org/b/73528
+networkinformation
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

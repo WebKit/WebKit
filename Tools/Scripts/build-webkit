@@ -114,6 +114,7 @@ my (
     $microdataSupport,
     $mutationObserversSupport,
     $netscapePluginSupport,
+    $networkInfoSupport,
     $notificationsSupport,
     $orientationEventsSupport,
     $pageVisibilityApiSupport,
@@ -289,6 +290,9 @@ my @features = (
 
     { option => "netscape-plugin", desc => "Netscape Plugin support",
       define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isEfl(), value => \$netscapePluginSupport },
+
+    { option => "network-info", desc => "Network Information API support",
+      define => "ENABLE_NETWORK_INFO", default => isEfl(), value => \$networkInfoSupport },
 
     { option => "notifications", desc => "Toggle Desktop Notifications Support",
       define => "ENABLE_NOTIFICATIONS", default => isBlackBerry(), value => \$notificationsSupport },

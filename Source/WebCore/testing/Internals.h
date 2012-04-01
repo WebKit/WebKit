@@ -153,6 +153,8 @@ public:
 
     void setBatteryStatus(Document*, const String& eventType, bool charging, double chargingTime, double dischargingTime, double level, ExceptionCode&);
 
+    void setNetworkInformation(Document*, const String& eventType, long bandwidth, bool metered, ExceptionCode&);
+
 #if ENABLE(INSPECTOR)
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;

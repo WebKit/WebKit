@@ -218,6 +218,8 @@ namespace WebCore {
     \
     macro(webkitRegionLayoutUpdate) \
     \
+    macro(webkitnetworkinfochange) \
+    \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 

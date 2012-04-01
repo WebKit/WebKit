@@ -140,6 +140,9 @@ BUGWK62698 SKIP : batterystatus = PASS FAIL
 // Touch Adjustment is not supported yet in the chromium port.
 BUGWK78801 SKIP : touchadjustment/ = FAIL
 
+// Network Information API is not supported yet in the chromium port.
+BUGWK73528 SKIP : networkinformation = PASS FAIL
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------
