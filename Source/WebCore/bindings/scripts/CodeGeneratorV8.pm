@@ -3632,6 +3632,9 @@ sub RequiresCustomSignature
     if (@{$function->{overloads}} > 1) {
         return 0;
     }
+    if ($function->isStatic) {
+        return 0;
+    }
     # Type checking is performed in the generated code
     if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
       return 0;
