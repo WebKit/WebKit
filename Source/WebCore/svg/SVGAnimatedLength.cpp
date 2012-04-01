@@ -49,17 +49,17 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthAnimator::constructFromString(const
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    return SVGAnimatedType::createLength(constructFromOneBaseValue<SVGLength, SVGAnimatedLength>(properties));
+    return SVGAnimatedType::createLength(constructFromBaseValue<SVGAnimatedLength>(properties));
 }
 
 void SVGAnimatedLengthAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedLength>(properties);
+    stopAnimValAnimationForType<SVGAnimatedLength>(properties);
 }
 
 void SVGAnimatedLengthAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
 {
-    resetFromOneBaseValue<SVGLength, SVGAnimatedLength>(properties, type, &SVGAnimatedType::length);
+    resetFromBaseValue<SVGAnimatedLength>(properties, type, &SVGAnimatedType::length);
 }
 
 void SVGAnimatedLengthAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)

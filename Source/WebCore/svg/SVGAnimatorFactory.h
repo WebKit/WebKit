@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2011, 2012. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,6 +24,7 @@
 #include "SVGAnimatedAngle.h"
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedColor.h"
+#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedInteger.h"
 #include "SVGAnimatedIntegerOptionalInteger.h"
 #include "SVGAnimatedLength.h"
@@ -56,6 +57,8 @@ public:
             return adoptPtr(new SVGAnimatedBooleanAnimator(animationElement, contextElement));
         case AnimatedColor:
             return adoptPtr(new SVGAnimatedColorAnimator(animationElement, contextElement));
+        case AnimatedEnumeration:
+            return adoptPtr(new SVGAnimatedEnumerationAnimator(animationElement, contextElement));
         case AnimatedInteger:
             return adoptPtr(new SVGAnimatedIntegerAnimator(animationElement, contextElement));
         case AnimatedIntegerOptionalInteger:
@@ -82,7 +85,6 @@ public:
             return adoptPtr(new SVGAnimatedStringAnimator(animationElement, contextElement));
         case AnimatedTransformList:
             return adoptPtr(new SVGAnimatedTransformListAnimator(animationElement, contextElement));
-        case AnimatedEnumeration: // FIXME: Implementation needed.
         case AnimatedUnknown:
             break;
         }

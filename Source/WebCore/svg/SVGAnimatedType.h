@@ -41,9 +41,10 @@ class SVGAnimatedType {
 public:
     virtual ~SVGAnimatedType();
 
-    static PassOwnPtr<SVGAnimatedType> createAngle(SVGAngle*);
+    static PassOwnPtr<SVGAnimatedType> createAngleAndEnumeration(std::pair<SVGAngle, unsigned short>*);
     static PassOwnPtr<SVGAnimatedType> createBoolean(bool*);
     static PassOwnPtr<SVGAnimatedType> createColor(Color*);
+    static PassOwnPtr<SVGAnimatedType> createEnumeration(unsigned short*);
     static PassOwnPtr<SVGAnimatedType> createInteger(int*);
     static PassOwnPtr<SVGAnimatedType> createIntegerOptionalInteger(std::pair<int, int>*);
     static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
@@ -61,9 +62,10 @@ public:
 
     AnimatedPropertyType type() const { return m_type; }
 
-    SVGAngle& angle();
+    std::pair<SVGAngle, unsigned short>& angleAndEnumeration();
     bool& boolean();
     Color& color();
+    unsigned short& enumeration();
     int& integer();
     std::pair<int, int>& integerOptionalInteger();
     SVGLength& length();
@@ -81,9 +83,6 @@ public:
     String valueAsString();
     bool setValueAsString(const QualifiedName&, const String&);
     
-    // Used for parsing a String to a SVGPreserveAspectRatio object.
-    void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatio&);
-
 private:
     SVGAnimatedType(AnimatedPropertyType);
 
@@ -95,9 +94,10 @@ private:
         {
         }
 
-        SVGAngle* angle;
+        std::pair<SVGAngle, unsigned short>* angleAndEnumeration;
         bool* boolean;
         Color* color;
+        unsigned short* enumeration;
         int* integer;
         std::pair<int, int>* integerOptionalInteger;
         SVGLength* length;

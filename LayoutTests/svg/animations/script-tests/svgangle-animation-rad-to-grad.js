@@ -45,16 +45,25 @@ function sample1() {
     // Check initial/end conditions
     shouldBeCloseEnough("marker.orientAngle.animVal.value", "0");
     shouldBe("marker.orientAngle.baseVal.value", "0");
+
+	shouldBe("marker.orientType.animVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+	shouldBe("marker.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
 }
 
 function sample2() {
     shouldBeCloseEnough("marker.orientAngle.animVal.value", "90");
     shouldBe("marker.orientAngle.baseVal.value", "0");
+
+	shouldBe("marker.orientType.animVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+	shouldBe("marker.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
 }
 
 function sample3() {
     shouldBeCloseEnough("marker.orientAngle.animVal.value", "180");
     shouldBe("marker.orientAngle.baseVal.value", "0");
+
+	shouldBe("marker.orientType.animVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+	shouldBe("marker.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
 }
 
 function executeTest() {

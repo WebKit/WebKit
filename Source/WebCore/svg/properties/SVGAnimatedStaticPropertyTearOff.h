@@ -28,6 +28,8 @@ namespace WebCore {
 template<typename PropertyType>
 class SVGAnimatedStaticPropertyTearOff : public SVGAnimatedProperty {
 public:
+    typedef PropertyType ContentType;
+
     PropertyType& baseVal()
     {
         return m_property;

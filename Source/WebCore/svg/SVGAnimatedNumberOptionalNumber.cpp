@@ -48,27 +48,27 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberOptionalNumberAnimator::constructFr
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberOptionalNumberAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    return SVGAnimatedType::createNumberOptionalNumber(constructFromTwoBaseValues<pair<float, float>, float, SVGAnimatedNumber>(properties));
+    return SVGAnimatedType::createNumberOptionalNumber(constructFromBaseValues<SVGAnimatedNumber, SVGAnimatedNumber>(properties));
 }
 
 void SVGAnimatedNumberOptionalNumberAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedNumber>(properties);
+    stopAnimValAnimationForTypes<SVGAnimatedNumber, SVGAnimatedNumber>(properties);
 }
 
 void SVGAnimatedNumberOptionalNumberAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
 {
-    resetFromTwoBaseValues<pair<float, float>, float, SVGAnimatedNumber>(properties, type, &SVGAnimatedType::numberOptionalNumber);
+    resetFromBaseValues<SVGAnimatedNumber, SVGAnimatedNumber>(properties, type, &SVGAnimatedType::numberOptionalNumber);
 }
 
 void SVGAnimatedNumberOptionalNumberAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
 {
-    animValWillChangeForType<SVGAnimatedNumber>(properties);
+    animValWillChangeForTypes<SVGAnimatedNumber, SVGAnimatedNumber>(properties);
 }
 
 void SVGAnimatedNumberOptionalNumberAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
 {
-    animValDidChangeForType<SVGAnimatedNumber>(properties);
+    animValDidChangeForTypes<SVGAnimatedNumber, SVGAnimatedNumber>(properties);
 }
 
 void SVGAnimatedNumberOptionalNumberAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
