@@ -5181,28 +5181,8 @@ void WebPagePrivate::drawLayersOnCommit()
         return;
     }
 
-    if (m_backingStore->d->isOpenGLCompositing()) {
+    if (!m_backingStore->d->shouldDirectRenderingToWindow())
         m_backingStore->d->blitVisibleContents();
-        return; // blitVisibleContents() includes drawSubLayers() in this case.
-    }
-
-    if (!m_backingStore->d->drawSubLayers())
-        return;
-
-    // If we use the compositing surface, we need to re-blit the
-    // backingstore and blend the compositing surface on top of that
-    // in order to get the newly drawn layers on screen.
-    if (!SurfacePool::globalSurfacePool()->compositingSurface())
-        return;
-
-    // If there are no visible layers, return early.
-    if (lastCompositingResults().isEmpty() && lastCompositingResults().wasEmpty)
-        return;
-
-    if (m_backingStore->d->shouldDirectRenderingToWindow())
-        return;
-
-    m_backingStore->d->blitVisibleContents();
 }
 
 void WebPagePrivate::scheduleRootLayerCommit()

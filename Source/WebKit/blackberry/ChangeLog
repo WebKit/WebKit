@@ -1,3 +1,40 @@
+2012-04-01  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Simplify the code that gets accelerated compositing output onto the screen
+        https://bugs.webkit.org/show_bug.cgi?id=82845
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 136381
+        The code accounted for a now obsolete setup where we used one OpenGL
+        window for accelerated compositing and one native window for backing
+        store output, and let the windowing system composite those two. In that
+        setup an optimization to try and only update the window that had
+        changed was viable.
+
+        Nowadays, we either use an offscreen surface for accelerated
+        compositing output, which we blend onto the window containing the
+        backing store output, or render both backing store and accelerated
+        compositing output directly to one OpenGL window. We always have to
+        blit the backingstore contents and draw the accelerated compositing
+        output every frame with these code paths, so don't try to be clever
+        about it.
+
+        Even when we use an OpenGL window, the compositing surface can be non-
+        null, so don't try to glFinish() and swap the compositing surface when
+        the GLES2Context is tied to a window.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+        (WebKit):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::drawLayersOnCommit):
+        * WebKitSupport/GLES2Context.cpp:
+        (BlackBerry::WebKit::GLES2Context::swapBuffers):
+
 2012-03-31  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] http authenticate dialog popup only once no matter authentication pass or fail

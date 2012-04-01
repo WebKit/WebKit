@@ -1135,7 +1135,7 @@ void BackingStorePrivate::blitVisibleContents(bool force)
 
     if (!BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread()) {
 #if USE(ACCELERATED_COMPOSITING)
-        // The blit will call drawSubLayers if necessary
+        // The blit will draw accelerated compositing layers if necessary
         m_needsDrawLayersOnCommit = false;
 #endif
 
@@ -1231,7 +1231,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 
     if (!BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread()) {
 #if USE(ACCELERATED_COMPOSITING)
-        // The blit will call drawSubLayers if necessary
+        // The blit will draw accelerated compositing layers if necessary
         m_needsDrawLayersOnCommit = false;
 #endif
 
@@ -1284,13 +1284,6 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
         transformation = TransformationMatrix::rectToRect(FloatRect(FloatPoint(0.0, 0.0), WebCore::IntSize(contents.size())), WebCore::IntRect(dstRect));
 
     bool blittingDirectlyToCompositingWindow = isOpenGLCompositing();
-#if USE(ACCELERATED_COMPOSITING)
-    BackingStoreCompositingSurface* compositingSurface =
-        SurfacePool::globalSurfacePool()->compositingSurface();
-
-    if (!blittingDirectlyToCompositingWindow)
-        drawSubLayers();
-#endif
 
 #if DEBUG_BACKINGSTORE
     BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical,
@@ -1454,14 +1447,13 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (blittingDirectlyToCompositingWindow) {
-        WebCore::FloatRect contentsRect = m_webPage->d->mapFromTransformedFloatRect(
-            WebCore::FloatRect(WebCore::IntRect(contents)));
-        if (WebPageCompositorPrivate* compositor = m_webPage->d->compositor())
-            compositor->drawLayers(dstRect, contentsRect);
-    } else if (compositingSurface)
-        blendCompositingSurface(dstRect);
+    if (WebPageCompositorPrivate* compositor = m_webPage->d->compositor()) {
+        WebCore::FloatRect contentsRect = m_webPage->d->mapFromTransformedFloatRect(WebCore::FloatRect(WebCore::IntRect(contents)));
+        compositor->drawLayers(dstRect, contentsRect);
+    }
 
+    if (!blittingDirectlyToCompositingWindow)
+        blendCompositingSurface(dstRect);
 #endif
 
 #if ENABLE_SCROLLBARS
@@ -2523,28 +2515,6 @@ BackingStoreWindowBufferState* BackingStorePrivate::windowBackBufferState() cons
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-bool BackingStorePrivate::drawSubLayers()
-{
-    ASSERT(BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread());
-    if (!BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread())
-        return false;
-
-    if (m_suspendBackingStoreUpdates && !isOpenGLCompositing())
-        return false;
-
-    if (!m_webPage->d->compositor())
-        return false;
-
-    Platform::IntRect dst = m_webPage->client()->userInterfaceBlittedDestinationRect();
-    if (dst.isEmpty())
-        return false;
-
-    Platform::IntRect src = m_webPage->client()->userInterfaceBlittedVisibleContentsRect();
-    WebCore::FloatRect contentsRect = m_webPage->d->mapFromTransformedFloatRect(
-        WebCore::FloatRect(WebCore::IntRect(src)));
-    return m_webPage->d->compositor()->drawLayers(dst, contentsRect);
-}
-
 bool BackingStorePrivate::drawLayersOnCommitIfNeeded()
 {
     // Check if rendering caused a commit and we need to redraw the layers

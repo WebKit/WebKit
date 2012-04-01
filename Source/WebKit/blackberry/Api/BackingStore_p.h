@@ -200,7 +200,6 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     void blendCompositingSurface(const Platform::IntRect& dstRect);
     void clearCompositingSurface();
-    bool drawSubLayers();
     bool drawLayersOnCommitIfNeeded();
     void drawAndBlendLayersForDirectRendering(const Platform::IntRect& dirtyRect);
     // WebPage will call this when drawing layers to tell us we don't need to

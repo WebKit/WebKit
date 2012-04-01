@@ -108,14 +108,19 @@ bool GLES2Context::swapBuffers()
 {
     ASSERT(glGetError() == GL_NO_ERROR);
 
-#if ENABLE_COMPOSITING_SURFACE
-    // Because we are rendering compositing contents into an off-screen pixmap and
-    // we need to blend the pixmap with the web page window surface we have to call
-    // glFinish() here.
-    glFinish();
+    // If there's a window the backing store will swap it when the time is right.
+    // Return early because there might be an unused but non-null compositing surface
+    if (m_window)
+        return true;
 
-    if (BackingStoreCompositingSurface* surface = compositingSurface())
+#if ENABLE_COMPOSITING_SURFACE
+    if (BackingStoreCompositingSurface* surface = compositingSurface()) {
+        // Because we are rendering compositing contents into an off-screen pixmap and
+        // we need to blend the pixmap with the web page window surface we have to call
+        // glFinish() here.
+        glFinish();
         surface->swapBuffers();
+    }
 #endif
 
     return true;
