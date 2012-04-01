@@ -9,8 +9,8 @@ install:
 	set WebKitOutputDir=$(OBJROOT)
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
 	set WebKitVSPropsRedirectionDir=$(SRCROOT)\AppleInternal\tools\vsprops\OpenSource\1\2\3\ 
-	-mkdir 2>NUL "%ConfigurationBuildDir%\include\private\JavaScriptCore"
-	xcopy "%WebKitLibrariesDir%\include\private\JavaScriptCore\*" "%ConfigurationBuildDir%\include\private\JavaScriptCore" /e/v/i/h/y
+	-mkdir 2>NUL "%ConfigurationBuildDir%\include\private"
+	xcopy "%WebKitLibrariesDir%\include\private\*" "%ConfigurationBuildDir%\include\private" /e/v/i/h/y
 	devenv "WebCore.submit.sln" /rebuild $(BUILDSTYLE)
 	xcopy "%ConfigurationBuildDir%\include\*" "$(DSTROOT)\AppleInternal\include\" /e/v/i/h/y	
 	xcopy "%ConfigurationBuildDir%\lib\*" "$(DSTROOT)\AppleInternal\lib\" /e/v/i/h/y	
