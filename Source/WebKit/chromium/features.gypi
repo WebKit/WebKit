@@ -53,7 +53,6 @@
       'ENABLE_ICONDATABASE=0',
       'ENABLE_INDEXED_DATABASE=1',
       'ENABLE_INPUT_SPEECH=1',
-      'ENABLE_INPUT_TYPE_COLOR=1',
       'ENABLE_INPUT_TYPE_DATE=0',
       'ENABLE_INPUT_TYPE_DATETIME=0',
       'ENABLE_INPUT_TYPE_DATETIMELOCAL=0',
@@ -137,6 +136,15 @@
         'feature_defines': [
           'ENABLE_CALENDAR_PICKER=1',
           'ENABLE_WEB_AUDIO=1',
+        ],
+      }],
+      ['OS=="android" or use_aura==1', {
+        'feature_defines': [
+          'ENABLE_INPUT_TYPE_COLOR=0',
+        ],
+      }, {
+        'feature_defines': [
+          'ENABLE_INPUT_TYPE_COLOR=1',
         ],
       }],
       ['use_accelerated_compositing==1', {
