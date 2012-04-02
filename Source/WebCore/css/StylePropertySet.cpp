@@ -24,7 +24,6 @@
 
 #include "CSSParser.h"
 #include "CSSPropertyLonghand.h"
-#include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -103,15 +102,15 @@ String StylePropertySet::getPropertyValue(int propertyID) const
     // Shorthand and 4-values properties
     switch (propertyID) {
     case CSSPropertyBorderSpacing:
-        return borderSpacingValue(borderSpacingLonghand());
+        return borderSpacingValue(borderSpacingShorthand());
     case CSSPropertyBackgroundPosition:
-        return getLayeredShorthandValue(backgroundPositionLonghand());
+        return getLayeredShorthandValue(backgroundPositionShorthand());
     case CSSPropertyBackgroundRepeat:
-        return getLayeredShorthandValue(backgroundRepeatLonghand());
+        return getLayeredShorthandValue(backgroundRepeatShorthand());
     case CSSPropertyBackground:
-        return getLayeredShorthandValue(backgroundLonghand());
+        return getLayeredShorthandValue(backgroundShorthand());
     case CSSPropertyBorder: {
-        const CSSPropertyLonghand properties[3] = { borderWidthLonghand(), borderStyleLonghand(), borderColorLonghand() };
+        const StylePropertyShorthand properties[3] = { borderWidthShorthand(), borderStyleShorthand(), borderColorShorthand() };
         String res;
         for (size_t i = 0; i < WTF_ARRAY_LENGTH(properties); ++i) {
             String value = getCommonValue(properties[i]);
@@ -124,47 +123,47 @@ String StylePropertySet::getPropertyValue(int propertyID) const
         return res;
     }
     case CSSPropertyBorderTop:
-        return getShorthandValue(borderTopLonghand());
+        return getShorthandValue(borderTopShorthand());
     case CSSPropertyBorderRight:
-        return getShorthandValue(borderRightLonghand());
+        return getShorthandValue(borderRightShorthand());
     case CSSPropertyBorderBottom:
-        return getShorthandValue(borderBottomLonghand());
+        return getShorthandValue(borderBottomShorthand());
     case CSSPropertyBorderLeft:
-        return getShorthandValue(borderLeftLonghand());
+        return getShorthandValue(borderLeftShorthand());
     case CSSPropertyOutline:
-        return getShorthandValue(outlineLonghand());
+        return getShorthandValue(outlineShorthand());
     case CSSPropertyBorderColor:
-        return get4Values(borderColorLonghand());
+        return get4Values(borderColorShorthand());
     case CSSPropertyBorderWidth:
-        return get4Values(borderWidthLonghand());
+        return get4Values(borderWidthShorthand());
     case CSSPropertyBorderStyle:
-        return get4Values(borderStyleLonghand());
+        return get4Values(borderStyleShorthand());
     case CSSPropertyWebkitFlexFlow:
-        return getShorthandValue(webkitFlexFlowLonghand());
+        return getShorthandValue(webkitFlexFlowShorthand());
     case CSSPropertyFont:
         return fontValue();
     case CSSPropertyMargin:
-        return get4Values(marginLonghand());
+        return get4Values(marginShorthand());
     case CSSPropertyOverflow:
-        return getCommonValue(overflowLonghand());
+        return getCommonValue(overflowShorthand());
     case CSSPropertyPadding:
-        return get4Values(paddingLonghand());
+        return get4Values(paddingShorthand());
     case CSSPropertyListStyle:
-        return getShorthandValue(listStyleLonghand());
+        return getShorthandValue(listStyleShorthand());
     case CSSPropertyWebkitMaskPosition:
-        return getLayeredShorthandValue(webkitMaskPositionLonghand());
+        return getLayeredShorthandValue(webkitMaskPositionShorthand());
     case CSSPropertyWebkitMaskRepeat:
-        return getLayeredShorthandValue(webkitMaskRepeatLonghand());
+        return getLayeredShorthandValue(webkitMaskRepeatShorthand());
     case CSSPropertyWebkitMask:
-        return getLayeredShorthandValue(webkitMaskLonghand());
+        return getLayeredShorthandValue(webkitMaskShorthand());
     case CSSPropertyWebkitTransformOrigin:
-        return getShorthandValue(webkitTransformOriginLonghand());
+        return getShorthandValue(webkitTransformOriginShorthand());
     case CSSPropertyWebkitTransition:
-        return getLayeredShorthandValue(webkitTransitionLonghand());
+        return getLayeredShorthandValue(webkitTransitionShorthand());
     case CSSPropertyWebkitAnimation:
-        return getLayeredShorthandValue(webkitAnimationLonghand());
+        return getLayeredShorthandValue(webkitAnimationShorthand());
     case CSSPropertyWebkitWrap:
-        return getShorthandValue(webkitWrapLonghand());
+        return getShorthandValue(webkitWrapShorthand());
 #if ENABLE(SVG)
     case CSSPropertyMarker: {
         RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyMarkerStart);
@@ -176,10 +175,10 @@ String StylePropertySet::getPropertyValue(int propertyID) const
     return String();
 }
 
-String StylePropertySet::borderSpacingValue(const CSSPropertyLonghand& longhand) const
+String StylePropertySet::borderSpacingValue(const StylePropertyShorthand& shorthand) const
 {
-    RefPtr<CSSValue> horizontalValue = getPropertyCSSValue(longhand.properties()[0]);
-    RefPtr<CSSValue> verticalValue = getPropertyCSSValue(longhand.properties()[1]);
+    RefPtr<CSSValue> horizontalValue = getPropertyCSSValue(shorthand.properties()[0]);
+    RefPtr<CSSValue> verticalValue = getPropertyCSSValue(shorthand.properties()[1]);
 
     if (!horizontalValue)
         return String();
@@ -248,13 +247,13 @@ String StylePropertySet::fontValue() const
     return result.toString();
 }
 
-String StylePropertySet::get4Values(const CSSPropertyLonghand& longhand) const
+String StylePropertySet::get4Values(const StylePropertyShorthand& shorthand) const
 {
     // Assume the properties are in the usual order top, right, bottom, left.
-    RefPtr<CSSValue> topValue = getPropertyCSSValue(longhand.properties()[0]);
-    RefPtr<CSSValue> rightValue = getPropertyCSSValue(longhand.properties()[1]);
-    RefPtr<CSSValue> bottomValue = getPropertyCSSValue(longhand.properties()[2]);
-    RefPtr<CSSValue> leftValue = getPropertyCSSValue(longhand.properties()[3]);
+    RefPtr<CSSValue> topValue = getPropertyCSSValue(shorthand.properties()[0]);
+    RefPtr<CSSValue> rightValue = getPropertyCSSValue(shorthand.properties()[1]);
+    RefPtr<CSSValue> bottomValue = getPropertyCSSValue(shorthand.properties()[2]);
+    RefPtr<CSSValue> leftValue = getPropertyCSSValue(shorthand.properties()[3]);
 
     // All 4 properties must be specified.
     if (!topValue || !rightValue || !bottomValue || !leftValue)
@@ -275,17 +274,17 @@ String StylePropertySet::get4Values(const CSSPropertyLonghand& longhand) const
     return res;
 }
 
-String StylePropertySet::getLayeredShorthandValue(const CSSPropertyLonghand& longhand) const
+String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& shorthand) const
 {
     String res;
 
-    const unsigned size = longhand.length();
+    const unsigned size = shorthand.length();
     // Begin by collecting the properties into an array.
     Vector< RefPtr<CSSValue> > values(size);
     size_t numLayers = 0;
 
     for (unsigned i = 0; i < size; ++i) {
-        values[i] = getPropertyCSSValue(longhand.properties()[i]);
+        values[i] = getPropertyCSSValue(shorthand.properties()[i]);
         if (values[i]) {
             if (values[i]->isValueList()) {
                 CSSValueList* valueList = static_cast<CSSValueList*>(values[i].get());
@@ -311,7 +310,7 @@ String StylePropertySet::getLayeredShorthandValue(const CSSPropertyLonghand& lon
                     value = values[j];
 
                     // Color only belongs in the last layer.
-                    if (longhand.properties()[j] == CSSPropertyBackgroundColor) {
+                    if (shorthand.properties()[j] == CSSPropertyBackgroundColor) {
                         if (i != numLayers - 1)
                             value = 0;
                     } else if (i != 0) // Other singletons only belong in the first layer.
@@ -322,10 +321,10 @@ String StylePropertySet::getLayeredShorthandValue(const CSSPropertyLonghand& lon
             // We need to report background-repeat as it was written in the CSS. If the property is implicit,
             // then it was written with only one value. Here we figure out which value that was so we can
             // report back correctly.
-            if (longhand.properties()[j] == CSSPropertyBackgroundRepeatX && isPropertyImplicit(longhand.properties()[j])) {
+            if (shorthand.properties()[j] == CSSPropertyBackgroundRepeatX && isPropertyImplicit(shorthand.properties()[j])) {
 
                 // BUG 49055: make sure the value was not reset in the layer check just above.
-                if (j < size - 1 && longhand.properties()[j + 1] == CSSPropertyBackgroundRepeatY && value) {
+                if (j < size - 1 && shorthand.properties()[j + 1] == CSSPropertyBackgroundRepeatY && value) {
                     RefPtr<CSSValue> yValue;
                     RefPtr<CSSValue> nextValue = values[j + 1];
                     if (nextValue->isValueList())
@@ -376,12 +375,12 @@ String StylePropertySet::getLayeredShorthandValue(const CSSPropertyLonghand& lon
     return res;
 }
 
-String StylePropertySet::getShorthandValue(const CSSPropertyLonghand& longhand) const
+String StylePropertySet::getShorthandValue(const StylePropertyShorthand& shorthand) const
 {
     String res;
-    for (unsigned i = 0; i < longhand.length(); ++i) {
-        if (!isPropertyImplicit(longhand.properties()[i])) {
-            RefPtr<CSSValue> value = getPropertyCSSValue(longhand.properties()[i]);
+    for (unsigned i = 0; i < shorthand.length(); ++i) {
+        if (!isPropertyImplicit(shorthand.properties()[i])) {
+            RefPtr<CSSValue> value = getPropertyCSSValue(shorthand.properties()[i]);
             // FIXME: provide default value if !value or value is initial value
             if (value && !value->isInitialValue()) {
                 if (!res.isNull())
@@ -394,11 +393,11 @@ String StylePropertySet::getShorthandValue(const CSSPropertyLonghand& longhand) 
 }
 
 // only returns a non-null value if all properties have the same, non-null value
-String StylePropertySet::getCommonValue(const CSSPropertyLonghand& longhand) const
+String StylePropertySet::getCommonValue(const StylePropertyShorthand& shorthand) const
 {
     String res;
-    for (unsigned i = 0; i < longhand.length(); ++i) {
-        RefPtr<CSSValue> value = getPropertyCSSValue(longhand.properties()[i]);
+    for (unsigned i = 0; i < shorthand.length(); ++i) {
+        RefPtr<CSSValue> value = getPropertyCSSValue(shorthand.properties()[i]);
         // FIXME: CSSInitialValue::cssText should generate the right value.
         if (!value || value->isInitialValue())
             return String();
@@ -421,10 +420,10 @@ PassRefPtr<CSSValue> StylePropertySet::getPropertyCSSValue(int propertyID) const
 
 bool StylePropertySet::removeShorthandProperty(int propertyID)
 {
-    CSSPropertyLonghand longhand = longhandForProperty(propertyID);
-    if (!longhand.length())
+    StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
+    if (!shorthand.length())
         return false;
-    return removePropertiesInSet(longhand.properties(), longhand.length());
+    return removePropertiesInSet(shorthand.properties(), shorthand.length());
 }
 
 bool StylePropertySet::removeProperty(int propertyID, String* returnText)
@@ -459,12 +458,12 @@ bool StylePropertySet::propertyIsImportant(int propertyID) const
     if (property)
         return property->isImportant();
 
-    CSSPropertyLonghand longhands = longhandForProperty(propertyID);
-    if (!longhands.length())
+    StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
+    if (!shorthand.length())
         return false;
 
-    for (unsigned i = 0; i < longhands.length(); ++i) {
-        if (!propertyIsImportant(longhands.properties()[i]))
+    for (unsigned i = 0; i < shorthand.length(); ++i) {
+        if (!propertyIsImportant(shorthand.properties()[i]))
             return false;
     }
     return true;
@@ -498,17 +497,17 @@ bool StylePropertySet::setProperty(int propertyID, const String& value, bool imp
 
 void StylePropertySet::setProperty(int propertyID, PassRefPtr<CSSValue> prpValue, bool important)
 {
-    CSSPropertyLonghand longhand = longhandForProperty(propertyID);
-    if (!longhand.length()) {
+    StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
+    if (!shorthand.length()) {
         setProperty(CSSProperty(propertyID, prpValue, important));
         return;
     }
 
-    removePropertiesInSet(longhand.properties(), longhand.length());
+    removePropertiesInSet(shorthand.properties(), shorthand.length());
 
     RefPtr<CSSValue> value = prpValue;
-    for (unsigned i = 0; i < longhand.length(); ++i)
-        m_properties.append(CSSProperty(longhand.properties()[i], value, important));
+    for (unsigned i = 0; i < shorthand.length(); ++i)
+        m_properties.append(CSSProperty(shorthand.properties()[i], value, important));
 }
 
 void StylePropertySet::setProperty(const CSSProperty& property, CSSProperty* slot)
@@ -607,12 +606,12 @@ String StylePropertySet::asText() const
             shorthandPropertyID = CSSPropertyBorder;
             if (shorthandPropertyAppeared.get(CSSPropertyBorder - firstCSSProperty))
                 break;
-            for (unsigned i = 0; i < borderAbridgedLonghand().length() && shorthandPropertyID; i++) {
-                const CSSPropertyLonghand& longhand = *(borderAbridgedLonghand().longhandsForInitialization()[i]);
+            for (unsigned i = 0; i < borderAbridgedShorthand().length() && shorthandPropertyID; i++) {
+                const StylePropertyShorthand& shorthand = *(borderAbridgedShorthand().propertiesForInitialization()[i]);
                 String commonValue;
                 bool commonImportance = false;
-                for (size_t j = 0; j < longhand.length(); ++j) {
-                    int id = longhand.properties()[j];
+                for (size_t j = 0; j < shorthand.length(); ++j) {
+                    int id = shorthand.properties()[j];
                     RefPtr<CSSValue> value = getPropertyCSSValue(id);
                     String currentValue = value ? value->cssText() : String();
                     bool isImportant = propertyIsImportant(id);
@@ -741,7 +740,7 @@ String StylePropertySet::asText() const
     if (positionXProp && positionYProp && positionXProp->isImportant() == positionYProp->isImportant()) {
         result.append("background-position: ");
         if (positionXProp->value()->isValueList() || positionYProp->value()->isValueList())
-            result.append(getLayeredShorthandValue(backgroundPositionLonghand()));
+            result.append(getLayeredShorthandValue(backgroundPositionShorthand()));
         else {
             result.append(positionXProp->value()->cssText());
             result.append(" ");
@@ -761,7 +760,7 @@ String StylePropertySet::asText() const
     if (repeatXProp && repeatYProp && repeatXProp->isImportant() == repeatYProp->isImportant()) {
         result.append("background-repeat: ");
         if (repeatXProp->value()->isValueList() || repeatYProp->value()->isValueList())
-            result.append(getLayeredShorthandValue(backgroundRepeatLonghand()));
+            result.append(getLayeredShorthandValue(backgroundRepeatShorthand()));
         else {
             result.append(repeatXProp->value()->cssText());
             result.append(" ");
@@ -804,7 +803,7 @@ void StylePropertySet::addSubresourceStyleURLs(ListHashSet<KURL>& urls, CSSStyle
 
 // This is the list of properties we want to copy in the copyBlockProperties() function.
 // It is the list of CSS properties that apply specially to block-level elements.
-static const int blockProperties[] = {
+static const CSSPropertyID blockProperties[] = {
     CSSPropertyOrphans,
     CSSPropertyOverflow, // This can be also be applied to replaced elements
     CSSPropertyWebkitAspectRatio,
@@ -840,7 +839,7 @@ void StylePropertySet::removeBlockProperties()
     removePropertiesInSet(blockProperties, numBlockProperties);
 }
 
-bool StylePropertySet::removePropertiesInSet(const int* set, unsigned length)
+bool StylePropertySet::removePropertiesInSet(const CSSPropertyID* set, unsigned length)
 {
     if (m_properties.isEmpty())
         return false;
@@ -926,7 +925,7 @@ PassRefPtr<StylePropertySet> StylePropertySet::copy() const
     return adoptRef(new StylePropertySet(m_properties));
 }
 
-PassRefPtr<StylePropertySet> StylePropertySet::copyPropertiesInSet(const int* set, unsigned length) const
+PassRefPtr<StylePropertySet> StylePropertySet::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const
 {
     Vector<CSSProperty> list;
     list.reserveInitialCapacity(length);

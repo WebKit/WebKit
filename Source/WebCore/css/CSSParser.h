@@ -28,6 +28,7 @@
 #include "CSSParserMode.h"
 #include "CSSParserValues.h"
 #include "CSSProperty.h"
+#include "CSSPropertyNames.h"
 #include "CSSPropertySourceData.h"
 #include "CSSSelector.h"
 #include "Color.h"
@@ -46,7 +47,6 @@ namespace WebCore {
 
 class CSSBorderImageSliceValue;
 class CSSPrimitiveValue;
-class CSSPropertyLonghand;
 class CSSValuePool;
 class CSSProperty;
 class CSSRule;
@@ -59,6 +59,7 @@ class Document;
 class MediaQueryExp;
 class MediaQuerySet;
 class StylePropertySet;
+class StylePropertyShorthand;
 class StyleKeyframe;
 class StyledElement;
 class WebKitCSSKeyframesRule;
@@ -89,8 +90,8 @@ public:
     bool hasProperties() const { return !m_parsedProperties.isEmpty(); }
 
     bool parseValue(int propId, bool important);
-    bool parseShorthand(int, const CSSPropertyLonghand&, bool);
-    bool parse4Values(int propId, const int* properties, bool important);
+    bool parseShorthand(int, const StylePropertyShorthand&, bool);
+    bool parse4Values(int propId, const CSSPropertyID* properties, bool important);
     bool parseContent(int propId, bool important);
     bool parseQuotes(int propId, bool important);
 
@@ -110,7 +111,7 @@ public:
     PassRefPtr<CSSValue> parseFillSize(int propId, bool &allowComma);
 
     bool parseFillProperty(int propId, int& propId1, int& propId2, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
-    bool parseFillShorthand(int propId, const int* properties, int numProperties, bool important);
+    bool parseFillShorthand(int propId, const CSSPropertyID* properties, int numProperties, bool important);
 
     void addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval);
 

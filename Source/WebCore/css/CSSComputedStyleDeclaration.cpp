@@ -74,7 +74,7 @@
 namespace WebCore {
 
 // List of all properties we know how to compute, omitting shorthands.
-static const int computedProperties[] = {
+static const CSSPropertyID computedProperties[] = {
     CSSPropertyBackgroundAttachment,
     CSSPropertyBackgroundClip,
     CSSPropertyBackgroundColor,
@@ -2339,10 +2339,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return valueForFilter(style.get());
 #endif
         case CSSPropertyBackground: {
-            const int properties[5] = { CSSPropertyBackgroundColor, CSSPropertyBackgroundImage,
+            const CSSPropertyID properties[5] = { CSSPropertyBackgroundColor, CSSPropertyBackgroundImage,
                                         CSSPropertyBackgroundRepeat, CSSPropertyBackgroundAttachment,
                                         CSSPropertyBackgroundPosition };
-            return getCSSPropertyValuesForShorthandProperties(CSSPropertyLonghand(properties, WTF_ARRAY_LENGTH(properties)));
+            return getCSSPropertyValuesForShorthandProperties(StylePropertyShorthand(properties, WTF_ARRAY_LENGTH(properties)));
         }
         case CSSPropertyBorder: {
             RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyBorderTop, DoNotUpdateLayout);
@@ -2355,31 +2355,31 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return value.release();
         }
         case CSSPropertyBorderBottom:
-            return getCSSPropertyValuesForShorthandProperties(borderBottomLonghand());
+            return getCSSPropertyValuesForShorthandProperties(borderBottomShorthand());
         case CSSPropertyBorderColor:
-            return getCSSPropertyValuesForSidesShorthand(borderColorLonghand());
+            return getCSSPropertyValuesForSidesShorthand(borderColorShorthand());
         case CSSPropertyBorderLeft:
-            return getCSSPropertyValuesForShorthandProperties(borderLeftLonghand());
+            return getCSSPropertyValuesForShorthandProperties(borderLeftShorthand());
         case CSSPropertyBorderImage:
             return valueForNinePieceImage(style->borderImage(), cssValuePool);
         case CSSPropertyBorderRadius:
             return getBorderRadiusShorthandValue(style.get(), cssValuePool, m_node->document()->renderView());
         case CSSPropertyBorderRight:
-            return getCSSPropertyValuesForShorthandProperties(borderRightLonghand());
+            return getCSSPropertyValuesForShorthandProperties(borderRightShorthand());
         case CSSPropertyBorderStyle:
-            return getCSSPropertyValuesForSidesShorthand(borderStyleLonghand());
+            return getCSSPropertyValuesForSidesShorthand(borderStyleShorthand());
         case CSSPropertyBorderTop:
-            return getCSSPropertyValuesForShorthandProperties(borderTopLonghand());
+            return getCSSPropertyValuesForShorthandProperties(borderTopShorthand());
         case CSSPropertyBorderWidth:
-            return getCSSPropertyValuesForSidesShorthand(borderWidthLonghand());
+            return getCSSPropertyValuesForSidesShorthand(borderWidthShorthand());
         case CSSPropertyListStyle:
-            return getCSSPropertyValuesForShorthandProperties(listStyleLonghand());
+            return getCSSPropertyValuesForShorthandProperties(listStyleShorthand());
         case CSSPropertyMargin:
-            return getCSSPropertyValuesForSidesShorthand(marginLonghand());
+            return getCSSPropertyValuesForSidesShorthand(marginShorthand());
         case CSSPropertyOutline:
-            return getCSSPropertyValuesForShorthandProperties(outlineLonghand());
+            return getCSSPropertyValuesForShorthandProperties(outlineShorthand());
         case CSSPropertyPadding:
-            return getCSSPropertyValuesForSidesShorthand(paddingLonghand());
+            return getCSSPropertyValuesForSidesShorthand(paddingShorthand());
         /* Individual properties not part of the spec */
         case CSSPropertyBackgroundRepeatX:
         case CSSPropertyBackgroundRepeatY:
@@ -2576,24 +2576,24 @@ PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::makeMutable()
     return copy();
 }
 
-PassRefPtr<CSSValueList> CSSComputedStyleDeclaration::getCSSPropertyValuesForShorthandProperties(const CSSPropertyLonghand& longhand) const
+PassRefPtr<CSSValueList> CSSComputedStyleDeclaration::getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand& shorthand) const
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    for (size_t i = 0; i < longhand.length(); ++i) {
-        RefPtr<CSSValue> value = getPropertyCSSValue(longhand.properties()[i], DoNotUpdateLayout);
+    for (size_t i = 0; i < shorthand.length(); ++i) {
+        RefPtr<CSSValue> value = getPropertyCSSValue(shorthand.properties()[i], DoNotUpdateLayout);
         list->append(value);
     }
     return list.release();
 }
 
-PassRefPtr<CSSValueList> CSSComputedStyleDeclaration::getCSSPropertyValuesForSidesShorthand(const CSSPropertyLonghand& longhand) const
+PassRefPtr<CSSValueList> CSSComputedStyleDeclaration::getCSSPropertyValuesForSidesShorthand(const StylePropertyShorthand& shorthand) const
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     // Assume the properties are in the usual order top, right, bottom, left.
-    RefPtr<CSSValue> topValue = getPropertyCSSValue(longhand.properties()[0], DoNotUpdateLayout);
-    RefPtr<CSSValue> rightValue = getPropertyCSSValue(longhand.properties()[1], DoNotUpdateLayout);
-    RefPtr<CSSValue> bottomValue = getPropertyCSSValue(longhand.properties()[2], DoNotUpdateLayout);
-    RefPtr<CSSValue> leftValue = getPropertyCSSValue(longhand.properties()[3], DoNotUpdateLayout);
+    RefPtr<CSSValue> topValue = getPropertyCSSValue(shorthand.properties()[0], DoNotUpdateLayout);
+    RefPtr<CSSValue> rightValue = getPropertyCSSValue(shorthand.properties()[1], DoNotUpdateLayout);
+    RefPtr<CSSValue> bottomValue = getPropertyCSSValue(shorthand.properties()[2], DoNotUpdateLayout);
+    RefPtr<CSSValue> leftValue = getPropertyCSSValue(shorthand.properties()[3], DoNotUpdateLayout);
 
     // All 4 properties must be specified.
     if (!topValue || !rightValue || !bottomValue || !leftValue)
@@ -2614,7 +2614,7 @@ PassRefPtr<CSSValueList> CSSComputedStyleDeclaration::getCSSPropertyValuesForSid
     return list.release();
 }
 
-PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::copyPropertiesInSet(const int* set, unsigned length) const
+PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const
 {
     Vector<CSSProperty> list;
     list.reserveInitialCapacity(length);

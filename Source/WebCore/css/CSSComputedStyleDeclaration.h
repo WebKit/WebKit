@@ -29,7 +29,6 @@
 namespace WebCore {
 
 class CSSPrimitiveValue;
-class CSSPropertyLonghand;
 class CSSValueList;
 class CSSValuePool;
 class Color;
@@ -38,6 +37,7 @@ class RenderStyle;
 class SVGPaint;
 class ShadowData;
 class StylePropertySet;
+class StylePropertyShorthand;
 
 #if ENABLE(CSS_SHADERS)
 class CustomFilterNumberParameter;
@@ -71,7 +71,7 @@ public:
     PassRefPtr<CSSValue> getSVGPropertyCSSValue(int propertyID, EUpdateLayout) const;
 #endif
 
-    PassRefPtr<StylePropertySet> copyPropertiesInSet(const int* set, unsigned length) const;
+    PassRefPtr<StylePropertySet> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
 
 private:
     CSSComputedStyleDeclaration(PassRefPtr<Node>, bool allowVisitedStyle, const String&);
@@ -110,8 +110,8 @@ private:
     PassRefPtr<CSSValue> valueForFilter(RenderStyle*) const;
 #endif
 
-    PassRefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const CSSPropertyLonghand&) const;
-    PassRefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const CSSPropertyLonghand&) const;
+    PassRefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&) const;
+    PassRefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const StylePropertyShorthand&) const;
 
     RefPtr<Node> m_node;
     PseudoId m_pseudoElementSpecifier;

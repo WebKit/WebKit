@@ -24,6 +24,7 @@
 #include "CSSParserMode.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
+#include "CSSPropertyNames.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -31,11 +32,11 @@
 namespace WebCore {
 
 class CSSRule;
-class CSSPropertyLonghand;
 class CSSStyleDeclaration;
 class KURL;
 class PropertySetCSSStyleDeclaration;
 class StyledElement;
+class StylePropertyShorthand;
 
 class StylePropertySet : public RefCounted<StylePropertySet> {
 public:
@@ -83,7 +84,7 @@ public:
 
     PassRefPtr<StylePropertySet> copyBlockProperties() const;
     void removeBlockProperties();
-    bool removePropertiesInSet(const int* set, unsigned length);
+    bool removePropertiesInSet(const CSSPropertyID* set, unsigned length);
 
     void merge(const StylePropertySet*, bool argOverridesOnConflict = true);
 
@@ -99,7 +100,7 @@ public:
     void removeEquivalentProperties(const StylePropertySet*);
     void removeEquivalentProperties(const CSSStyleDeclaration*);
 
-    PassRefPtr<StylePropertySet> copyPropertiesInSet(const int* set, unsigned length) const;
+    PassRefPtr<StylePropertySet> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
     
     String asText() const;
     
@@ -119,11 +120,11 @@ private:
 
     void setNeedsStyleRecalc();
 
-    String getShorthandValue(const CSSPropertyLonghand&) const;
-    String getCommonValue(const CSSPropertyLonghand&) const;
-    String getLayeredShorthandValue(const CSSPropertyLonghand&) const;
-    String get4Values(const CSSPropertyLonghand&) const;
-    String borderSpacingValue(const CSSPropertyLonghand&) const;
+    String getShorthandValue(const StylePropertyShorthand&) const;
+    String getCommonValue(const StylePropertyShorthand&) const;
+    String getLayeredShorthandValue(const StylePropertyShorthand&) const;
+    String get4Values(const StylePropertyShorthand&) const;
+    String borderSpacingValue(const StylePropertyShorthand&) const;
     String fontValue() const;
     bool appendFontLonghandValueIfExplicit(int propertyID, StringBuilder& result) const;
 

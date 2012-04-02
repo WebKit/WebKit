@@ -55,7 +55,7 @@ namespace WebCore {
 
 // Editing style properties must be preserved during editing operation.
 // e.g. when a user inserts a new paragraph, all properties listed here must be copied to the new paragraph.
-static const int editingProperties[] = {
+static const CSSPropertyID editingProperties[] = {
     CSSPropertyBackgroundColor,
     CSSPropertyTextDecoration,
 
@@ -603,7 +603,7 @@ void EditingStyle::collapseTextDecorationProperties()
 }
 
 // CSS properties that create a visual difference only when applied to text.
-static const int textOnlyProperties[] = {
+static const CSSPropertyID textOnlyProperties[] = {
     CSSPropertyTextDecoration,
     CSSPropertyWebkitTextDecorationsInEffect,
     CSSPropertyFontStyle,
@@ -1084,9 +1084,9 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
 static void removePropertiesInStyle(StylePropertySet* styleToRemovePropertiesFrom, StylePropertySet* style)
 {
     unsigned propertyCount = style->propertyCount();
-    Vector<int> propertiesToRemove(propertyCount);
+    Vector<CSSPropertyID> propertiesToRemove(propertyCount);
     for (unsigned i = 0; i < propertyCount; ++i)
-        propertiesToRemove[i] = style->propertyAt(i).id();
+        propertiesToRemove[i] = static_cast<CSSPropertyID>(style->propertyAt(i).id());
 
     styleToRemovePropertiesFrom->removePropertiesInSet(propertiesToRemove.data(), propertiesToRemove.size());
 }

@@ -21,83 +21,85 @@
 #ifndef CSSPropertyLonghand_h
 #define CSSPropertyLonghand_h
 
+#include "CSSPropertyNames.h"
+
 namespace WebCore {
 
-class CSSPropertyLonghand {
+class StylePropertyShorthand {
 public:
-    CSSPropertyLonghand()
+    StylePropertyShorthand()
         : m_properties(0)
-        , m_longhandsForInitialization(0)
+        , m_propertiesForInitialization(0)
         , m_length(0)
     {
     }
 
-    CSSPropertyLonghand(const int* properties, unsigned numProperties)
+    StylePropertyShorthand(const CSSPropertyID* properties, unsigned numProperties)
         : m_properties(properties)
-        , m_longhandsForInitialization(0)
+        , m_propertiesForInitialization(0)
         , m_length(numProperties)
     {
     }
 
-    CSSPropertyLonghand(const int* properties, const CSSPropertyLonghand** longhandsForInitialization, unsigned numProperties)
+    StylePropertyShorthand(const CSSPropertyID* properties, const StylePropertyShorthand** propertiesForInitialization, unsigned numProperties)
         : m_properties(properties)
-        , m_longhandsForInitialization(longhandsForInitialization)
+        , m_propertiesForInitialization(propertiesForInitialization)
         , m_length(numProperties)
     {
     }
 
-    const int* properties() const { return m_properties; }
-    const CSSPropertyLonghand** longhandsForInitialization() const { return m_longhandsForInitialization; }
+    const CSSPropertyID* properties() const { return m_properties; }
+    const StylePropertyShorthand** propertiesForInitialization() const { return m_propertiesForInitialization; }
     unsigned length() const { return m_length; }
 
 private:
-    const int* m_properties;
-    const CSSPropertyLonghand** m_longhandsForInitialization;
+    const CSSPropertyID* m_properties;
+    const StylePropertyShorthand** m_propertiesForInitialization;
     unsigned m_length;
 };
 
-const CSSPropertyLonghand& backgroundLonghand();
-const CSSPropertyLonghand& backgroundPositionLonghand();
-const CSSPropertyLonghand& backgroundRepeatLonghand();
-const CSSPropertyLonghand& borderLonghand();
-const CSSPropertyLonghand& borderAbridgedLonghand();
-const CSSPropertyLonghand& borderBottomLonghand();
-const CSSPropertyLonghand& borderColorLonghand();
-const CSSPropertyLonghand& borderImageLonghand();
-const CSSPropertyLonghand& borderLeftLonghand();
-const CSSPropertyLonghand& borderRadiusLonghand();
-const CSSPropertyLonghand& borderRightLonghand();
-const CSSPropertyLonghand& borderSpacingLonghand();
-const CSSPropertyLonghand& borderStyleLonghand();
-const CSSPropertyLonghand& borderTopLonghand();
-const CSSPropertyLonghand& borderWidthLonghand();
-const CSSPropertyLonghand& listStyleLonghand();
-const CSSPropertyLonghand& fontLonghand();
-const CSSPropertyLonghand& marginLonghand();
-const CSSPropertyLonghand& outlineLonghand();
-const CSSPropertyLonghand& overflowLonghand();
-const CSSPropertyLonghand& paddingLonghand();
-const CSSPropertyLonghand& webkitAnimationLonghand();
-const CSSPropertyLonghand& webkitBorderAfterLonghand();
-const CSSPropertyLonghand& webkitBorderBeforeLonghand();
-const CSSPropertyLonghand& webkitBorderEndLonghand();
-const CSSPropertyLonghand& webkitBorderStartLonghand();
-const CSSPropertyLonghand& webkitColumnsLonghand();
-const CSSPropertyLonghand& webkitColumnRuleLonghand();
-const CSSPropertyLonghand& webkitFlexFlowLonghand();
-const CSSPropertyLonghand& webkitMarginCollapseLonghand();
-const CSSPropertyLonghand& webkitMarqueeLonghand();
-const CSSPropertyLonghand& webkitMaskLonghand();
-const CSSPropertyLonghand& webkitMaskPositionLonghand();
-const CSSPropertyLonghand& webkitMaskRepeatLonghand();
-const CSSPropertyLonghand& webkitTextEmphasisLonghand();
-const CSSPropertyLonghand& webkitTextStrokeLonghand();
-const CSSPropertyLonghand& webkitTransitionLonghand();
-const CSSPropertyLonghand& webkitTransformOriginLonghand();
-const CSSPropertyLonghand& webkitWrapLonghand();
+const StylePropertyShorthand& backgroundShorthand();
+const StylePropertyShorthand& backgroundPositionShorthand();
+const StylePropertyShorthand& backgroundRepeatShorthand();
+const StylePropertyShorthand& borderShorthand();
+const StylePropertyShorthand& borderAbridgedShorthand();
+const StylePropertyShorthand& borderBottomShorthand();
+const StylePropertyShorthand& borderColorShorthand();
+const StylePropertyShorthand& borderImageShorthand();
+const StylePropertyShorthand& borderLeftShorthand();
+const StylePropertyShorthand& borderRadiusShorthand();
+const StylePropertyShorthand& borderRightShorthand();
+const StylePropertyShorthand& borderSpacingShorthand();
+const StylePropertyShorthand& borderStyleShorthand();
+const StylePropertyShorthand& borderTopShorthand();
+const StylePropertyShorthand& borderWidthShorthand();
+const StylePropertyShorthand& listStyleShorthand();
+const StylePropertyShorthand& fontShorthand();
+const StylePropertyShorthand& marginShorthand();
+const StylePropertyShorthand& outlineShorthand();
+const StylePropertyShorthand& overflowShorthand();
+const StylePropertyShorthand& paddingShorthand();
+const StylePropertyShorthand& webkitAnimationShorthand();
+const StylePropertyShorthand& webkitBorderAfterShorthand();
+const StylePropertyShorthand& webkitBorderBeforeShorthand();
+const StylePropertyShorthand& webkitBorderEndShorthand();
+const StylePropertyShorthand& webkitBorderStartShorthand();
+const StylePropertyShorthand& webkitColumnsShorthand();
+const StylePropertyShorthand& webkitColumnRuleShorthand();
+const StylePropertyShorthand& webkitFlexFlowShorthand();
+const StylePropertyShorthand& webkitMarginCollapseShorthand();
+const StylePropertyShorthand& webkitMarqueeShorthand();
+const StylePropertyShorthand& webkitMaskShorthand();
+const StylePropertyShorthand& webkitMaskPositionShorthand();
+const StylePropertyShorthand& webkitMaskRepeatShorthand();
+const StylePropertyShorthand& webkitTextEmphasisShorthand();
+const StylePropertyShorthand& webkitTextStrokeShorthand();
+const StylePropertyShorthand& webkitTransitionShorthand();
+const StylePropertyShorthand& webkitTransformOriginShorthand();
+const StylePropertyShorthand& webkitWrapShorthand();
 
 // Returns an empty list if the property is not a shorthand
-const CSSPropertyLonghand& longhandForProperty(int);
+const StylePropertyShorthand& shorthandForProperty(int);
 
 } // namespace WebCore
 

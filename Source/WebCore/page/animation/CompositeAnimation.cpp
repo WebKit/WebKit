@@ -30,7 +30,6 @@
 #include "CompositeAnimation.h"
 
 #include "AnimationControllerPrivate.h"
-#include "CSSPropertyLonghand.h"
 #include "CSSPropertyNames.h"
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"

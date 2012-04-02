@@ -21,15 +21,14 @@
 #include "config.h"
 #include "CSSPropertyLonghand.h"
 
-#include "CSSPropertyNames.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 // FIXME: Add CSSPropertyBackgroundSize to the shorthand.
-const CSSPropertyLonghand& backgroundLonghand()
+const StylePropertyShorthand& backgroundShorthand()
 {
-    static const int backgroundProperties[] = {
+    static const CSSPropertyID backgroundProperties[] = {
         CSSPropertyBackgroundColor,
         CSSPropertyBackgroundImage,
         CSSPropertyBackgroundRepeatX,
@@ -40,160 +39,160 @@ const CSSPropertyLonghand& backgroundLonghand()
         CSSPropertyBackgroundClip,
         CSSPropertyBackgroundOrigin
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, backgroundLonghand, (backgroundProperties, WTF_ARRAY_LENGTH(backgroundProperties)));
-    return backgroundLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, backgroundShorthand, (backgroundProperties, WTF_ARRAY_LENGTH(backgroundProperties)));
+    return backgroundShorthand;
 }
 
-const CSSPropertyLonghand& backgroundPositionLonghand()
+const StylePropertyShorthand& backgroundPositionShorthand()
 {
-    static const int backgroundPositionProperties[] = { CSSPropertyBackgroundPositionX, CSSPropertyBackgroundPositionY };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, backgroundPositionLonghand, (backgroundPositionProperties, WTF_ARRAY_LENGTH(backgroundPositionProperties)));
-    return backgroundPositionLonghand;
+    static const CSSPropertyID backgroundPositionProperties[] = { CSSPropertyBackgroundPositionX, CSSPropertyBackgroundPositionY };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, backgroundPositionLonghands, (backgroundPositionProperties, WTF_ARRAY_LENGTH(backgroundPositionProperties)));
+    return backgroundPositionLonghands;
 }
 
-const CSSPropertyLonghand& backgroundRepeatLonghand()
+const StylePropertyShorthand& backgroundRepeatShorthand()
 {
-    static const int backgroundRepeatProperties[] = { CSSPropertyBackgroundRepeatX, CSSPropertyBackgroundRepeatY };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, backgroundRepeatLonghand, (backgroundRepeatProperties, WTF_ARRAY_LENGTH(backgroundRepeatProperties)));
-    return backgroundRepeatLonghand;
+    static const CSSPropertyID backgroundRepeatProperties[] = { CSSPropertyBackgroundRepeatX, CSSPropertyBackgroundRepeatY };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, backgroundRepeatLonghands, (backgroundRepeatProperties, WTF_ARRAY_LENGTH(backgroundRepeatProperties)));
+    return backgroundRepeatLonghands;
 }
 
-const CSSPropertyLonghand& borderLonghand()
+const StylePropertyShorthand& borderShorthand()
 {
     // Do not change the order of the following four shorthands, and keep them together.
-    static const int borderProperties[4][3] = {
+    static const CSSPropertyID borderProperties[4][3] = {
         { CSSPropertyBorderTopColor, CSSPropertyBorderTopStyle, CSSPropertyBorderTopWidth },
         { CSSPropertyBorderRightColor, CSSPropertyBorderRightStyle, CSSPropertyBorderRightWidth },
         { CSSPropertyBorderBottomColor, CSSPropertyBorderBottomStyle, CSSPropertyBorderBottomWidth },
         { CSSPropertyBorderLeftColor, CSSPropertyBorderLeftStyle, CSSPropertyBorderLeftWidth }
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderLonghand, (borderProperties[0], sizeof(borderProperties) / sizeof(borderProperties[0][0])));
-    return borderLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderLonghands, (borderProperties[0], sizeof(borderProperties) / sizeof(borderProperties[0][0])));
+    return borderLonghands;
 }
 
-const CSSPropertyLonghand& borderAbridgedLonghand()
+const StylePropertyShorthand& borderAbridgedShorthand()
 {
-    static const int borderAbridgedProperties[] = { CSSPropertyBorderWidth, CSSPropertyBorderStyle, CSSPropertyBorderColor };
-    static const CSSPropertyLonghand* propertiesForInitialization[] = {
-        &borderWidthLonghand(),
-        &borderStyleLonghand(),
-        &borderColorLonghand(),
+    static const CSSPropertyID borderAbridgedProperties[] = { CSSPropertyBorderWidth, CSSPropertyBorderStyle, CSSPropertyBorderColor };
+    static const StylePropertyShorthand* propertiesForInitialization[] = {
+        &borderWidthShorthand(),
+        &borderStyleShorthand(),
+        &borderColorShorthand(),
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderAbridgedLonghand,
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderAbridgedLonghands,
         (borderAbridgedProperties, propertiesForInitialization, WTF_ARRAY_LENGTH(borderAbridgedProperties)));
-    return borderAbridgedLonghand;
+    return borderAbridgedLonghands;
 }
 
-const CSSPropertyLonghand& borderBottomLonghand()
+const StylePropertyShorthand& borderBottomShorthand()
 {
-    static const int borderBottomProperties[] = { CSSPropertyBorderBottomWidth, CSSPropertyBorderBottomStyle, CSSPropertyBorderBottomColor };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderBottomLonghand, (borderBottomProperties, WTF_ARRAY_LENGTH(borderBottomProperties)));
-    return borderBottomLonghand;
+    static const CSSPropertyID borderBottomProperties[] = { CSSPropertyBorderBottomWidth, CSSPropertyBorderBottomStyle, CSSPropertyBorderBottomColor };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderBottomLonghands, (borderBottomProperties, WTF_ARRAY_LENGTH(borderBottomProperties)));
+    return borderBottomLonghands;
 }
 
-const CSSPropertyLonghand& borderColorLonghand()
+const StylePropertyShorthand& borderColorShorthand()
 {
-    static const int borderColorProperties[] = {
+    static const CSSPropertyID borderColorProperties[] = {
         CSSPropertyBorderTopColor,
         CSSPropertyBorderRightColor,
         CSSPropertyBorderBottomColor,
         CSSPropertyBorderLeftColor
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderColorLonghand, (borderColorProperties, WTF_ARRAY_LENGTH(borderColorProperties)));
-    return borderColorLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderColorLonghands, (borderColorProperties, WTF_ARRAY_LENGTH(borderColorProperties)));
+    return borderColorLonghands;
 }
 
-const CSSPropertyLonghand& borderImageLonghand()
+const StylePropertyShorthand& borderImageShorthand()
 {
-    static const int borderImageProperties[] = {
+    static const CSSPropertyID borderImageProperties[] = {
         CSSPropertyBorderImageSource,
         CSSPropertyBorderImageSlice,
         CSSPropertyBorderImageWidth,
         CSSPropertyBorderImageOutset,
         CSSPropertyBorderImageRepeat
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderImageLonghand, (borderImageProperties, WTF_ARRAY_LENGTH(borderImageProperties)));
-    return borderImageLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderImageLonghands, (borderImageProperties, WTF_ARRAY_LENGTH(borderImageProperties)));
+    return borderImageLonghands;
 }
 
-const CSSPropertyLonghand& borderLeftLonghand()
+const StylePropertyShorthand& borderLeftShorthand()
 {
-    static const int borderLeftProperties[] = { CSSPropertyBorderLeftWidth, CSSPropertyBorderLeftStyle, CSSPropertyBorderLeftColor };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderLeftLonghand, (borderLeftProperties, WTF_ARRAY_LENGTH(borderLeftProperties)));
-    return borderLeftLonghand;
+    static const CSSPropertyID borderLeftProperties[] = { CSSPropertyBorderLeftWidth, CSSPropertyBorderLeftStyle, CSSPropertyBorderLeftColor };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderLeftLonghands, (borderLeftProperties, WTF_ARRAY_LENGTH(borderLeftProperties)));
+    return borderLeftLonghands;
 }
 
-const CSSPropertyLonghand& borderRadiusLonghand()
+const StylePropertyShorthand& borderRadiusShorthand()
 {
-    static const int borderRadiusProperties[] = {
+    static const CSSPropertyID borderRadiusProperties[] = {
         CSSPropertyBorderTopRightRadius,
         CSSPropertyBorderTopLeftRadius,
         CSSPropertyBorderBottomLeftRadius,
         CSSPropertyBorderBottomRightRadius
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderRadiusLonghand, (borderRadiusProperties, WTF_ARRAY_LENGTH(borderRadiusProperties)));
-    return borderRadiusLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderRadiusLonghands, (borderRadiusProperties, WTF_ARRAY_LENGTH(borderRadiusProperties)));
+    return borderRadiusLonghands;
 }
 
-const CSSPropertyLonghand& borderRightLonghand()
+const StylePropertyShorthand& borderRightShorthand()
 {
-    static const int borderRightProperties[] = { CSSPropertyBorderRightWidth, CSSPropertyBorderRightStyle, CSSPropertyBorderRightColor };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderRightLonghand, (borderRightProperties, WTF_ARRAY_LENGTH(borderRightProperties)));
-    return borderRightLonghand;
+    static const CSSPropertyID borderRightProperties[] = { CSSPropertyBorderRightWidth, CSSPropertyBorderRightStyle, CSSPropertyBorderRightColor };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderRightLonghands, (borderRightProperties, WTF_ARRAY_LENGTH(borderRightProperties)));
+    return borderRightLonghands;
 }
 
-const CSSPropertyLonghand& borderSpacingLonghand()
+const StylePropertyShorthand& borderSpacingShorthand()
 {
-    static const int borderSpacingProperties[] = { CSSPropertyWebkitBorderHorizontalSpacing, CSSPropertyWebkitBorderVerticalSpacing };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderSpacingLonghand, (borderSpacingProperties, WTF_ARRAY_LENGTH(borderSpacingProperties)));
-    return borderSpacingLonghand;
+    static const CSSPropertyID borderSpacingProperties[] = { CSSPropertyWebkitBorderHorizontalSpacing, CSSPropertyWebkitBorderVerticalSpacing };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderSpacingLonghands, (borderSpacingProperties, WTF_ARRAY_LENGTH(borderSpacingProperties)));
+    return borderSpacingLonghands;
 }
 
-const CSSPropertyLonghand& borderStyleLonghand()
+const StylePropertyShorthand& borderStyleShorthand()
 {
-    static const int borderStyleProperties[] = {
+    static const CSSPropertyID borderStyleProperties[] = {
         CSSPropertyBorderTopStyle,
         CSSPropertyBorderRightStyle,
         CSSPropertyBorderBottomStyle,
         CSSPropertyBorderLeftStyle
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderStyleLonghand, (borderStyleProperties, WTF_ARRAY_LENGTH(borderStyleProperties)));
-    return borderStyleLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderStyleLonghands, (borderStyleProperties, WTF_ARRAY_LENGTH(borderStyleProperties)));
+    return borderStyleLonghands;
 }
 
-const CSSPropertyLonghand& borderTopLonghand()
+const StylePropertyShorthand& borderTopShorthand()
 {
-    static const int borderTopProperties[] = { CSSPropertyBorderTopWidth, CSSPropertyBorderTopStyle, CSSPropertyBorderTopColor };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderTopLonghand, (borderTopProperties, WTF_ARRAY_LENGTH(borderTopProperties)));
-    return borderTopLonghand;
+    static const CSSPropertyID borderTopProperties[] = { CSSPropertyBorderTopWidth, CSSPropertyBorderTopStyle, CSSPropertyBorderTopColor };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderTopLonghands, (borderTopProperties, WTF_ARRAY_LENGTH(borderTopProperties)));
+    return borderTopLonghands;
 }
 
-const CSSPropertyLonghand& borderWidthLonghand()
+const StylePropertyShorthand& borderWidthShorthand()
 {
-    static const int borderWidthProperties[] = {
+    static const CSSPropertyID borderWidthProperties[] = {
         CSSPropertyBorderTopWidth,
         CSSPropertyBorderRightWidth,
         CSSPropertyBorderBottomWidth,
         CSSPropertyBorderLeftWidth
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, borderWidthLonghand, (borderWidthProperties, WTF_ARRAY_LENGTH(borderWidthProperties)));
-    return borderWidthLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderWidthLonghands, (borderWidthProperties, WTF_ARRAY_LENGTH(borderWidthProperties)));
+    return borderWidthLonghands;
 }
 
-const CSSPropertyLonghand& listStyleLonghand()
+const StylePropertyShorthand& listStyleShorthand()
 {
-    static const int listStyleProperties[] = {
+    static const CSSPropertyID listStyleProperties[] = {
         CSSPropertyListStyleType,
         CSSPropertyListStylePosition,
         CSSPropertyListStyleImage
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, listStyleLonghand, (listStyleProperties, WTF_ARRAY_LENGTH(listStyleProperties)));
-    return listStyleLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, listStyleLonghands, (listStyleProperties, WTF_ARRAY_LENGTH(listStyleProperties)));
+    return listStyleLonghands;
 }
 
-const CSSPropertyLonghand& fontLonghand()
+const StylePropertyShorthand& fontShorthand()
 {
-    static const int fontProperties[] = {
+    static const CSSPropertyID fontProperties[] = {
         CSSPropertyFontFamily,
         CSSPropertyFontSize,
         CSSPropertyFontStyle,
@@ -201,55 +200,55 @@ const CSSPropertyLonghand& fontLonghand()
         CSSPropertyFontWeight,
         CSSPropertyLineHeight
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, fontLonghand, (fontProperties, WTF_ARRAY_LENGTH(fontProperties)));
-    return fontLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, fontLonghands, (fontProperties, WTF_ARRAY_LENGTH(fontProperties)));
+    return fontLonghands;
 }
 
-const CSSPropertyLonghand& marginLonghand()
+const StylePropertyShorthand& marginShorthand()
 {
-    static const int marginProperties[] = {
+    static const CSSPropertyID marginProperties[] = {
         CSSPropertyMarginTop,
         CSSPropertyMarginRight,
         CSSPropertyMarginBottom,
         CSSPropertyMarginLeft
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, marginLonghand, (marginProperties, WTF_ARRAY_LENGTH(marginProperties)));
-    return marginLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, marginLonghands, (marginProperties, WTF_ARRAY_LENGTH(marginProperties)));
+    return marginLonghands;
 }
 
-const CSSPropertyLonghand& outlineLonghand()
+const StylePropertyShorthand& outlineShorthand()
 {
-    static const int outlineProperties[] = {
+    static const CSSPropertyID outlineProperties[] = {
         CSSPropertyOutlineColor,
         CSSPropertyOutlineStyle,
         CSSPropertyOutlineWidth
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, outlineLonghand, (outlineProperties, WTF_ARRAY_LENGTH(outlineProperties)));
-    return outlineLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, outlineLonghands, (outlineProperties, WTF_ARRAY_LENGTH(outlineProperties)));
+    return outlineLonghands;
 }
 
-const CSSPropertyLonghand& overflowLonghand()
+const StylePropertyShorthand& overflowShorthand()
 {
-    static const int overflowProperties[] = { CSSPropertyOverflowX, CSSPropertyOverflowY };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, overflowLonghand, (overflowProperties, WTF_ARRAY_LENGTH(overflowProperties)));
-    return overflowLonghand;
+    static const CSSPropertyID overflowProperties[] = { CSSPropertyOverflowX, CSSPropertyOverflowY };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, overflowLonghands, (overflowProperties, WTF_ARRAY_LENGTH(overflowProperties)));
+    return overflowLonghands;
 }
 
-const CSSPropertyLonghand& paddingLonghand()
+const StylePropertyShorthand& paddingShorthand()
 {
-    static const int paddingProperties[] = {
+    static const CSSPropertyID paddingProperties[] = {
         CSSPropertyPaddingTop,
         CSSPropertyPaddingRight,
         CSSPropertyPaddingBottom,
         CSSPropertyPaddingLeft
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, paddingLonghand, (paddingProperties, WTF_ARRAY_LENGTH(paddingProperties)));
-    return paddingLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, paddingLonghands, (paddingProperties, WTF_ARRAY_LENGTH(paddingProperties)));
+    return paddingLonghands;
 }
 
-const CSSPropertyLonghand& webkitAnimationLonghand()
+const StylePropertyShorthand& webkitAnimationShorthand()
 {
-    static const int animationProperties[] = {
+    static const CSSPropertyID animationProperties[] = {
         CSSPropertyWebkitAnimationName,
         CSSPropertyWebkitAnimationDuration,
         CSSPropertyWebkitAnimationTimingFunction,
@@ -258,86 +257,86 @@ const CSSPropertyLonghand& webkitAnimationLonghand()
         CSSPropertyWebkitAnimationDirection,
         CSSPropertyWebkitAnimationFillMode
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitAnimationLonghand, (animationProperties, WTF_ARRAY_LENGTH(animationProperties)));
-    return webkitAnimationLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitAnimationLonghands, (animationProperties, WTF_ARRAY_LENGTH(animationProperties)));
+    return webkitAnimationLonghands;
 }
 
-const CSSPropertyLonghand& webkitBorderAfterLonghand()
+const StylePropertyShorthand& webkitBorderAfterShorthand()
 {
-    static const int borderAfterProperties[] = { CSSPropertyWebkitBorderAfterWidth, CSSPropertyWebkitBorderAfterStyle, CSSPropertyWebkitBorderAfterColor  };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitBorderAfterLonghand, (borderAfterProperties, WTF_ARRAY_LENGTH(borderAfterProperties)));
-    return webkitBorderAfterLonghand;
+    static const CSSPropertyID borderAfterProperties[] = { CSSPropertyWebkitBorderAfterWidth, CSSPropertyWebkitBorderAfterStyle, CSSPropertyWebkitBorderAfterColor  };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitBorderAfterLonghands, (borderAfterProperties, WTF_ARRAY_LENGTH(borderAfterProperties)));
+    return webkitBorderAfterLonghands;
 }
 
-const CSSPropertyLonghand& webkitBorderBeforeLonghand()
+const StylePropertyShorthand& webkitBorderBeforeShorthand()
 {
-    static const int borderBeforeProperties[] = { CSSPropertyWebkitBorderBeforeWidth, CSSPropertyWebkitBorderBeforeStyle, CSSPropertyWebkitBorderBeforeColor  };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitBorderBeforeLonghand, (borderBeforeProperties, WTF_ARRAY_LENGTH(borderBeforeProperties)));
-    return webkitBorderBeforeLonghand;
+    static const CSSPropertyID borderBeforeProperties[] = { CSSPropertyWebkitBorderBeforeWidth, CSSPropertyWebkitBorderBeforeStyle, CSSPropertyWebkitBorderBeforeColor  };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitBorderBeforeLonghands, (borderBeforeProperties, WTF_ARRAY_LENGTH(borderBeforeProperties)));
+    return webkitBorderBeforeLonghands;
 }
 
-const CSSPropertyLonghand& webkitBorderEndLonghand()
+const StylePropertyShorthand& webkitBorderEndShorthand()
 {
-    static const int borderEndProperties[] = { CSSPropertyWebkitBorderEndWidth, CSSPropertyWebkitBorderEndStyle, CSSPropertyWebkitBorderEndColor };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitBorderEndLonghand, (borderEndProperties, WTF_ARRAY_LENGTH(borderEndProperties)));
-    return webkitBorderEndLonghand;
+    static const CSSPropertyID borderEndProperties[] = { CSSPropertyWebkitBorderEndWidth, CSSPropertyWebkitBorderEndStyle, CSSPropertyWebkitBorderEndColor };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitBorderEndLonghands, (borderEndProperties, WTF_ARRAY_LENGTH(borderEndProperties)));
+    return webkitBorderEndLonghands;
 }
 
-const CSSPropertyLonghand& webkitBorderStartLonghand()
+const StylePropertyShorthand& webkitBorderStartShorthand()
 {
-    static const int borderStartProperties[] = { CSSPropertyWebkitBorderStartWidth, CSSPropertyWebkitBorderStartStyle, CSSPropertyWebkitBorderStartColor };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitBorderStartLonghand, (borderStartProperties, WTF_ARRAY_LENGTH(borderStartProperties)));
-    return webkitBorderStartLonghand;
+    static const CSSPropertyID borderStartProperties[] = { CSSPropertyWebkitBorderStartWidth, CSSPropertyWebkitBorderStartStyle, CSSPropertyWebkitBorderStartColor };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitBorderStartLonghands, (borderStartProperties, WTF_ARRAY_LENGTH(borderStartProperties)));
+    return webkitBorderStartLonghands;
 }
 
-const CSSPropertyLonghand& webkitColumnsLonghand()
+const StylePropertyShorthand& webkitColumnsShorthand()
 {
-    static const int columnsProperties[] = { CSSPropertyWebkitColumnWidth, CSSPropertyWebkitColumnCount };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitColumnsLonghand, (columnsProperties, WTF_ARRAY_LENGTH(columnsProperties)));
-    return webkitColumnsLonghand;
+    static const CSSPropertyID columnsProperties[] = { CSSPropertyWebkitColumnWidth, CSSPropertyWebkitColumnCount };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitColumnsLonghands, (columnsProperties, WTF_ARRAY_LENGTH(columnsProperties)));
+    return webkitColumnsLonghands;
 }
 
-const CSSPropertyLonghand& webkitColumnRuleLonghand()
+const StylePropertyShorthand& webkitColumnRuleShorthand()
 {
-    static const int columnRuleProperties[] = {
+    static const CSSPropertyID columnRuleProperties[] = {
         CSSPropertyWebkitColumnRuleWidth,
         CSSPropertyWebkitColumnRuleStyle,
         CSSPropertyWebkitColumnRuleColor,
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitColumnRuleLonghand, (columnRuleProperties, WTF_ARRAY_LENGTH(columnRuleProperties)));
-    return webkitColumnRuleLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitColumnRuleLonghands, (columnRuleProperties, WTF_ARRAY_LENGTH(columnRuleProperties)));
+    return webkitColumnRuleLonghands;
 }
 
-const CSSPropertyLonghand& webkitFlexFlowLonghand()
+const StylePropertyShorthand& webkitFlexFlowShorthand()
 {
-    static const int flexFlowProperties[] = { CSSPropertyWebkitFlexDirection, CSSPropertyWebkitFlexWrap };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitFlexFlowLonghand, (flexFlowProperties, WTF_ARRAY_LENGTH(flexFlowProperties)));
-    return webkitFlexFlowLonghand;
+    static const CSSPropertyID flexFlowProperties[] = { CSSPropertyWebkitFlexDirection, CSSPropertyWebkitFlexWrap };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitFlexFlowLonghands, (flexFlowProperties, WTF_ARRAY_LENGTH(flexFlowProperties)));
+    return webkitFlexFlowLonghands;
 }
 
-const CSSPropertyLonghand& webkitMarginCollapseLonghand()
+const StylePropertyShorthand& webkitMarginCollapseShorthand()
 {
-    static const int marginCollapseProperties[] = { CSSPropertyWebkitMarginBeforeCollapse, CSSPropertyWebkitMarginAfterCollapse };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitMarginCollapseLonghand, (marginCollapseProperties, WTF_ARRAY_LENGTH(marginCollapseProperties)));
-    return webkitMarginCollapseLonghand;
+    static const CSSPropertyID marginCollapseProperties[] = { CSSPropertyWebkitMarginBeforeCollapse, CSSPropertyWebkitMarginAfterCollapse };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitMarginCollapseLonghands, (marginCollapseProperties, WTF_ARRAY_LENGTH(marginCollapseProperties)));
+    return webkitMarginCollapseLonghands;
 }
 
-const CSSPropertyLonghand& webkitMarqueeLonghand()
+const StylePropertyShorthand& webkitMarqueeShorthand()
 {
-    static const int marqueeProperties[] = {
+    static const CSSPropertyID marqueeProperties[] = {
         CSSPropertyWebkitMarqueeDirection,
         CSSPropertyWebkitMarqueeIncrement,
         CSSPropertyWebkitMarqueeRepetition,
         CSSPropertyWebkitMarqueeStyle,
         CSSPropertyWebkitMarqueeSpeed
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitMarqueeLonghand, (marqueeProperties, WTF_ARRAY_LENGTH(marqueeProperties)));
-    return webkitMarqueeLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitMarqueeLonghands, (marqueeProperties, WTF_ARRAY_LENGTH(marqueeProperties)));
+    return webkitMarqueeLonghands;
 }
 
-const CSSPropertyLonghand& webkitMaskLonghand()
+const StylePropertyShorthand& webkitMaskShorthand()
 {
-    static const int maskProperties[] = {
+    static const CSSPropertyID maskProperties[] = {
         CSSPropertyWebkitMaskImage,
         CSSPropertyWebkitMaskRepeatX,
         CSSPropertyWebkitMaskRepeatY,
@@ -347,160 +346,160 @@ const CSSPropertyLonghand& webkitMaskLonghand()
         CSSPropertyWebkitMaskClip,
         CSSPropertyWebkitMaskOrigin
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitMaskLonghand, (maskProperties, WTF_ARRAY_LENGTH(maskProperties)));
-    return webkitMaskLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitMaskLonghands, (maskProperties, WTF_ARRAY_LENGTH(maskProperties)));
+    return webkitMaskLonghands;
 }
 
-const CSSPropertyLonghand& webkitMaskPositionLonghand()
+const StylePropertyShorthand& webkitMaskPositionShorthand()
 {
-    static const int maskPositionProperties[] = { CSSPropertyWebkitMaskPositionX, CSSPropertyWebkitMaskPositionY };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitMaskPositionLonghand, (maskPositionProperties, WTF_ARRAY_LENGTH(maskPositionProperties)));
-    return webkitMaskPositionLonghand;
+    static const CSSPropertyID maskPositionProperties[] = { CSSPropertyWebkitMaskPositionX, CSSPropertyWebkitMaskPositionY };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitMaskPositionLonghands, (maskPositionProperties, WTF_ARRAY_LENGTH(maskPositionProperties)));
+    return webkitMaskPositionLonghands;
 }
 
-const CSSPropertyLonghand& webkitMaskRepeatLonghand()
+const StylePropertyShorthand& webkitMaskRepeatShorthand()
 {
-    static const int maskRepeatProperties[] = { CSSPropertyWebkitMaskRepeatX, CSSPropertyWebkitMaskRepeatY };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitMaskRepeatLonghand, (maskRepeatProperties, WTF_ARRAY_LENGTH(maskRepeatProperties)));
-    return webkitMaskRepeatLonghand;
+    static const CSSPropertyID maskRepeatProperties[] = { CSSPropertyWebkitMaskRepeatX, CSSPropertyWebkitMaskRepeatY };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitMaskRepeatLonghands, (maskRepeatProperties, WTF_ARRAY_LENGTH(maskRepeatProperties)));
+    return webkitMaskRepeatLonghands;
 }
 
-const CSSPropertyLonghand& webkitTextEmphasisLonghand()
+const StylePropertyShorthand& webkitTextEmphasisShorthand()
 {
-    static const int textEmphasisProperties[] = {
+    static const CSSPropertyID textEmphasisProperties[] = {
         CSSPropertyWebkitTextEmphasisStyle,
         CSSPropertyWebkitTextEmphasisColor
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitTextEmphasisLonghand, (textEmphasisProperties, WTF_ARRAY_LENGTH(textEmphasisProperties)));
-    return webkitTextEmphasisLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitTextEmphasisLonghands, (textEmphasisProperties, WTF_ARRAY_LENGTH(textEmphasisProperties)));
+    return webkitTextEmphasisLonghands;
 }
 
-const CSSPropertyLonghand& webkitTextStrokeLonghand()
+const StylePropertyShorthand& webkitTextStrokeShorthand()
 {
-    static const int textStrokeProperties[] = { CSSPropertyWebkitTextStrokeWidth, CSSPropertyWebkitTextStrokeColor };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitTextStrokeLonghand, (textStrokeProperties, WTF_ARRAY_LENGTH(textStrokeProperties)));
-    return webkitTextStrokeLonghand;
+    static const CSSPropertyID textStrokeProperties[] = { CSSPropertyWebkitTextStrokeWidth, CSSPropertyWebkitTextStrokeColor };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitTextStrokeLonghands, (textStrokeProperties, WTF_ARRAY_LENGTH(textStrokeProperties)));
+    return webkitTextStrokeLonghands;
 }
 
-const CSSPropertyLonghand& webkitTransitionLonghand()
+const StylePropertyShorthand& webkitTransitionShorthand()
 {
-    static const int transitionProperties[] = {
+    static const CSSPropertyID transitionProperties[] = {
         CSSPropertyWebkitTransitionProperty,
         CSSPropertyWebkitTransitionDuration,
         CSSPropertyWebkitTransitionTimingFunction,
         CSSPropertyWebkitTransitionDelay
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitTransitionLonghand, (transitionProperties, WTF_ARRAY_LENGTH(transitionProperties)));
-    return webkitTransitionLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitTransitionLonghands, (transitionProperties, WTF_ARRAY_LENGTH(transitionProperties)));
+    return webkitTransitionLonghands;
 }
 
-const CSSPropertyLonghand& webkitTransformOriginLonghand()
+const StylePropertyShorthand& webkitTransformOriginShorthand()
 {
-    static const int transformOriginProperties[] = {
+    static const CSSPropertyID transformOriginProperties[] = {
         CSSPropertyWebkitTransformOriginX,
         CSSPropertyWebkitTransformOriginY,
         CSSPropertyWebkitTransformOriginZ
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitTransformOriginLonghand, (transformOriginProperties, WTF_ARRAY_LENGTH(transformOriginProperties)));
-    return webkitTransformOriginLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitTransformOriginLonghands, (transformOriginProperties, WTF_ARRAY_LENGTH(transformOriginProperties)));
+    return webkitTransformOriginLonghands;
 }
 
-const CSSPropertyLonghand& webkitWrapLonghand()
+const StylePropertyShorthand& webkitWrapShorthand()
 {
-    static const int webkitWrapProperties[] = {
+    static const CSSPropertyID webkitWrapProperties[] = {
         CSSPropertyWebkitWrapFlow,
         CSSPropertyWebkitWrapMargin,
         CSSPropertyWebkitWrapPadding
     };
-    DEFINE_STATIC_LOCAL(CSSPropertyLonghand, webkitWrapLonghand, (webkitWrapProperties, WTF_ARRAY_LENGTH(webkitWrapProperties)));
-    return webkitWrapLonghand;
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitWrapLonghands, (webkitWrapProperties, WTF_ARRAY_LENGTH(webkitWrapProperties)));
+    return webkitWrapLonghands;
 }
 
 // Returns an empty list if the property is not a shorthand
-const CSSPropertyLonghand& longhandForProperty(int propertyID)
+const StylePropertyShorthand& shorthandForProperty(int propertyID)
 {
     switch (propertyID) {
     case CSSPropertyBackground:
-        return backgroundLonghand();
+        return backgroundShorthand();
     case CSSPropertyBackgroundPosition:
-        return backgroundPositionLonghand();
+        return backgroundPositionShorthand();
     case CSSPropertyBackgroundRepeat:
-        return backgroundRepeatLonghand();
+        return backgroundRepeatShorthand();
     case CSSPropertyBorder:
-        return borderLonghand();
+        return borderShorthand();
     case CSSPropertyBorderBottom:
-        return borderBottomLonghand();
+        return borderBottomShorthand();
     case CSSPropertyBorderColor:
-        return borderColorLonghand();
+        return borderColorShorthand();
     case CSSPropertyBorderImage:
-        return borderImageLonghand();
+        return borderImageShorthand();
     case CSSPropertyBorderLeft:
-        return borderLeftLonghand();
+        return borderLeftShorthand();
     case CSSPropertyBorderRadius:
-        return borderRadiusLonghand();
+        return borderRadiusShorthand();
     case CSSPropertyBorderRight:
-        return borderRightLonghand();
+        return borderRightShorthand();
     case CSSPropertyBorderSpacing:
-        return borderSpacingLonghand();
+        return borderSpacingShorthand();
     case CSSPropertyBorderStyle:
-        return borderStyleLonghand();
+        return borderStyleShorthand();
     case CSSPropertyBorderTop:
-        return borderTopLonghand();
+        return borderTopShorthand();
     case CSSPropertyBorderWidth:
-        return borderWidthLonghand();
+        return borderWidthShorthand();
     case CSSPropertyListStyle:
-        return listStyleLonghand();
+        return listStyleShorthand();
     case CSSPropertyFont:
-        return fontLonghand();
+        return fontShorthand();
     case CSSPropertyMargin:
-        return marginLonghand();
+        return marginShorthand();
     case CSSPropertyOutline:
-        return outlineLonghand();
+        return outlineShorthand();
     case CSSPropertyOverflow:
-        return overflowLonghand();
+        return overflowShorthand();
     case CSSPropertyPadding:
-        return paddingLonghand();
+        return paddingShorthand();
     case CSSPropertyWebkitAnimation:
-        return webkitAnimationLonghand();
+        return webkitAnimationShorthand();
     case CSSPropertyWebkitBorderAfter:
-        return webkitBorderAfterLonghand();
+        return webkitBorderAfterShorthand();
     case CSSPropertyWebkitBorderBefore:
-        return webkitBorderBeforeLonghand();
+        return webkitBorderBeforeShorthand();
     case CSSPropertyWebkitBorderEnd:
-        return webkitBorderEndLonghand();
+        return webkitBorderEndShorthand();
     case CSSPropertyWebkitBorderStart:
-        return webkitBorderStartLonghand();
+        return webkitBorderStartShorthand();
     case CSSPropertyWebkitBorderRadius:
-        return borderRadiusLonghand();
+        return borderRadiusShorthand();
     case CSSPropertyWebkitColumns:
-        return webkitColumnsLonghand();
+        return webkitColumnsShorthand();
     case CSSPropertyWebkitColumnRule:
-        return webkitColumnRuleLonghand();
+        return webkitColumnRuleShorthand();
     case CSSPropertyWebkitFlexFlow:
-        return webkitFlexFlowLonghand();
+        return webkitFlexFlowShorthand();
     case CSSPropertyWebkitMarginCollapse:
-        return webkitMarginCollapseLonghand();
+        return webkitMarginCollapseShorthand();
     case CSSPropertyWebkitMarquee:
-        return webkitMarqueeLonghand();
+        return webkitMarqueeShorthand();
     case CSSPropertyWebkitMask:
-        return webkitMaskLonghand();
+        return webkitMaskShorthand();
     case CSSPropertyWebkitMaskPosition:
-        return webkitMaskPositionLonghand();
+        return webkitMaskPositionShorthand();
     case CSSPropertyWebkitMaskRepeat:
-        return webkitMaskRepeatLonghand();
+        return webkitMaskRepeatShorthand();
     case CSSPropertyWebkitTextEmphasis:
-        return webkitTextEmphasisLonghand();
+        return webkitTextEmphasisShorthand();
     case CSSPropertyWebkitTextStroke:
-        return webkitTextStrokeLonghand();
+        return webkitTextStrokeShorthand();
     case CSSPropertyWebkitTransition:
-        return webkitTransitionLonghand();
+        return webkitTransitionShorthand();
     case CSSPropertyWebkitTransformOrigin:
-        return webkitTransformOriginLonghand();
+        return webkitTransformOriginShorthand();
     case CSSPropertyWebkitWrap:
-        return webkitWrapLonghand();
+        return webkitWrapShorthand();
     default: {
-        DEFINE_STATIC_LOCAL(CSSPropertyLonghand, defaultLonghand, ());
-        return defaultLonghand;
+        DEFINE_STATIC_LOCAL(StylePropertyShorthand, emptyShorthand, ());
+        return emptyShorthand;
     }
     }
 }

@@ -866,11 +866,11 @@ private:
 
 class ShorthandPropertyWrapper : public PropertyWrapperBase {
 public:
-    ShorthandPropertyWrapper(int property, const CSSPropertyLonghand& longhand)
+    ShorthandPropertyWrapper(int property, const StylePropertyShorthand& shorthand)
         : PropertyWrapperBase(property)
     {
-        for (unsigned i = 0; i < longhand.length(); ++i) {
-            PropertyWrapperBase* wrapper = wrapperForProperty(longhand.properties()[i]);
+        for (unsigned i = 0; i < shorthand.length(); ++i) {
+            PropertyWrapperBase* wrapper = wrapperForProperty(shorthand.properties()[i]);
             if (wrapper)
                 m_propertyWrappers.append(wrapper);
         }
@@ -1169,9 +1169,9 @@ static void addShorthandProperties()
 
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(animatableShorthandProperties); ++i) {
         int propertyID = animatableShorthandProperties[i];
-        CSSPropertyLonghand longhand = longhandForProperty(propertyID);
-        if (longhand.length() > 0)
-            addPropertyWrapper(propertyID, new ShorthandPropertyWrapper(propertyID, longhand));
+        StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
+        if (shorthand.length() > 0)
+            addPropertyWrapper(propertyID, new ShorthandPropertyWrapper(propertyID, shorthand));
     }
 }
 
