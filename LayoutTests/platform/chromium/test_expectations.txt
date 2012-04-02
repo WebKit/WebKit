@@ -4027,8 +4027,6 @@ BUGWK82413 MAC DEBUG : fast/filesystem/workers/async-operations.html = PASS TIME
 
 BUGWK82417 LINUX SLOW : fast/frames/set-unloaded-frame-location.html = PASS
 
-BUGWK82469 : svg/custom/preserve-aspect-ratio-syntax.svg = IMAGE+TEXT
-
 BUGWK82507 LEOPARD SNOWLEOPARD DEBUG : media/W3C/video/events/event_order_canplay_canplaythrough.html = PASS CRASH
 
 BUGWK82508 LINUX DEBUG : http/tests/media/video-cancel-load.html = PASS TEXT
