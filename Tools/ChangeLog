@@ -1,3 +1,10 @@
+2012-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Skip flaky unit tests.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2012-04-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         webkitpy rebaseline.

@@ -58,7 +58,19 @@ class TestRunner:
         SkippedTest("unittests/testwebresource",
                     "Test fails in GTK Linux 64-bit Release bot",
                     82330,
-                    ["/webkit/webresource/sub_resource_loading"])
+                    ["/webkit/webresource/sub_resource_loading"]),
+        SkippedTest("unittests/testwebinspector",
+                    "Test is flaky in GTK Linux 32-bit Release bot",
+                    82869,
+                    ["/webkit/webinspector/close-and-inspect"]),
+        SkippedTest("WebKit2APITests/TestWebKitWebView",
+                    "Test is flaky in GTK Linux 32-bit Release bot",
+                    82866,
+                    ["/webkit2/WebKitWebView/mouse-target"]),
+        SkippedTest("WebKit2APITests/TestResources",
+                    "Test is flaky in GTK Linux 32-bit Release bot",
+                    82868,
+                    ["/webkit2/WebKitWebView/resources"])
     ]
 
     def __init__(self, options, tests=[]):
