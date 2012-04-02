@@ -171,7 +171,7 @@ PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const 
     IntSize size;
 
     if (renderer)
-        size = IntSize(renderer->contentWidth(), renderer->contentHeight());
+        size = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
     else if (mediaElement->isVideo())
         size = RenderVideo::defaultSize();
 
@@ -224,7 +224,7 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const LayoutSize& size
 
     RefPtr<Widget> widget;
     if (allowPlugins(AboutToInstantiatePlugin))
-        widget = m_frame->loader()->client()->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
+        widget = m_frame->loader()->client()->createJavaAppletWidget(roundedIntSize(size), element, baseURL, paramNames, paramValues);
     if (!widget)
         return 0;
 
@@ -360,7 +360,7 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KUR
     if (!frameLoader->checkIfRunInsecureContent(document()->securityOrigin(), url))
         return false;
 
-    IntSize contentSize(renderer->contentWidth(), renderer->contentHeight());
+    IntSize contentSize = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
     bool loadManually = document()->isPluginDocument() && !m_containsPlugins && toPluginDocument(document())->shouldLoadPluginManually();
     RefPtr<Widget> widget = frameLoader->client()->createPlugin(contentSize,
         pluginElement, url, paramNames, paramValues, mimeType, loadManually);
