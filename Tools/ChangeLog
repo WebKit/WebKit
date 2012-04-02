@@ -1,3 +1,9 @@
+2012-04-02  Andreas Kling  <kling@webkit.org>
+
+        Adding Zalan Bujtas to committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-04-02  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Set up plugin process on Unix
