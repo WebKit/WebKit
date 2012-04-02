@@ -181,6 +181,7 @@ WebInspector.TimelinePresentationModel.prototype = {
             record = formattedRecord;
             do {
                 var parent = record.parent;
+                parent._cpuTime += formattedRecord._cpuTime;
                 if (parent.lastChildEndTime < record.lastChildEndTime)
                     parent.lastChildEndTime = record.lastChildEndTime;
                 for (var category in formattedRecord.aggregatedStats)
