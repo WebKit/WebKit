@@ -811,9 +811,7 @@ void WebPage::setFixedVisibleContentRect(const IntRect& rect)
 {
     ASSERT(m_useFixedLayout);
 
-    Frame* frame = m_page->mainFrame();
-
-    frame->view()->setFixedVisibleContentRect(rect);
+    m_page->mainFrame()->view()->setFixedVisibleContentRect(rect);
 }
 
 void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSize)
@@ -849,12 +847,13 @@ void WebPage::resizeToContentsIfNeeded()
     if (!view->useFixedLayout())
         return;
 
-    IntSize contentSize = view->contentsSize();
-    if (contentSize == m_viewSize)
+    IntSize newSize = view->contentsSize().expandedTo(view->fixedLayoutSize());
+
+    if (newSize == m_viewSize)
         return;
 
-    m_viewSize = contentSize.expandedTo(view->fixedLayoutSize());
-    view->resize(m_viewSize);
+    m_viewSize = newSize;
+    view->resize(newSize);
     view->setNeedsLayout();
 }
 

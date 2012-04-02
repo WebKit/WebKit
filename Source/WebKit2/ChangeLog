@@ -1,3 +1,16 @@
+2012-04-02  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Call resize on frameview in WebPage::resizeToContentsIfNeeded only when the size changes.
+        https://bugs.webkit.org/show_bug.cgi?id=82892
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Check against the expanded size before calling resize on frameview.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setFixedVisibleContentRect):
+        (WebKit::WebPage::resizeToContentsIfNeeded):
+
 2012-04-02  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Set up plugin process on Unix
