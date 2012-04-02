@@ -145,7 +145,7 @@ private:
     InspectorStyleSheet* assertStyleSheetForId(ErrorString*, const String&);
     String detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument);
 
-    PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > buildArrayForRuleList(CSSRuleList*);
+    PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > buildArrayForRuleList(CSSRuleList*, CSSStyleSelector*);
     PassRefPtr<TypeBuilder::CSS::CSSStyle> buildObjectForAttributesStyle(Element*);
 
     // InspectorDOMAgent::DOMListener implementation

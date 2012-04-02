@@ -286,11 +286,19 @@ static RuleSet* defaultQuirksStyle;
 static RuleSet* defaultPrintStyle;
 static RuleSet* defaultViewSourceStyle;
 static CSSStyleSheet* simpleDefaultStyleSheet;
+static CSSStyleSheet* defaultStyleSheet;
+static CSSStyleSheet* quirksStyleSheet;
+static CSSStyleSheet* svgStyleSheet;
+static CSSStyleSheet* mathMLStyleSheet;
+static CSSStyleSheet* mediaControlsStyleSheet;
+static CSSStyleSheet* fullscreenStyleSheet;
 
 RenderStyle* CSSStyleSelector::s_styleNotYetAvailable;
 
 static void loadFullDefaultStyle();
 static void loadSimpleDefaultStyle();
+static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >&, CSSStyleSheet*);
+
 // FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
 static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}head{display:none}body{margin:8px}div:focus,span:focus{outline:auto 5px -webkit-focus-ring-color}a:-webkit-any-link{color:-webkit-link;text-decoration:underline}a:-webkit-any-link:active{color:-webkit-activelink}";
 
@@ -508,6 +516,8 @@ void CSSStyleSelector::appendAuthorStylesheets(unsigned firstNew, const Vector<R
         }
 #endif
         m_authorStyle->addRulesFromSheet(cssSheet, *m_medium, this);
+        if (!m_styleRuleToCSSOMWrapperMap.isEmpty())
+            collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, cssSheet);
     }
     m_authorStyle->shrinkToFit();
     collectFeatures();
@@ -702,14 +712,14 @@ static void loadFullDefaultStyle()
 
     // Strict-mode rules.
     String defaultRules = String(htmlUserAgentStyleSheet, sizeof(htmlUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraDefaultStyleSheet();
-    CSSStyleSheet* defaultSheet = parseUASheet(defaultRules);
-    defaultStyle->addRulesFromSheet(defaultSheet, screenEval());
-    defaultPrintStyle->addRulesFromSheet(defaultSheet, printEval());
+    defaultStyleSheet = parseUASheet(defaultRules);
+    defaultStyle->addRulesFromSheet(defaultStyleSheet, screenEval());
+    defaultPrintStyle->addRulesFromSheet(defaultStyleSheet, printEval());
 
     // Quirks-mode rules.
     String quirksRules = String(quirksUserAgentStyleSheet, sizeof(quirksUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraQuirksStyleSheet();
-    CSSStyleSheet* quirksSheet = parseUASheet(quirksRules);
-    defaultQuirksStyle->addRulesFromSheet(quirksSheet, screenEval());
+    quirksStyleSheet = parseUASheet(quirksRules);
+    defaultQuirksStyle->addRulesFromSheet(quirksStyleSheet, screenEval());
 }
 
 static void loadSimpleDefaultStyle()
@@ -741,51 +751,43 @@ static void ensureDefaultStyleSheetsForElement(Element* element)
         loadFullDefaultStyle();
 
 #if ENABLE(SVG)
-    static bool loadedSVGUserAgentSheet;
-    if (element->isSVGElement() && !loadedSVGUserAgentSheet) {
+    if (element->isSVGElement() && !svgStyleSheet) {
         // SVG rules.
-        loadedSVGUserAgentSheet = true;
-        CSSStyleSheet* svgSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
-        defaultStyle->addRulesFromSheet(svgSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(svgSheet, printEval());
+        svgStyleSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
+        defaultStyle->addRulesFromSheet(svgStyleSheet, screenEval());
+        defaultPrintStyle->addRulesFromSheet(svgStyleSheet, printEval());
     }
 #endif
 
-    static bool loadedMathMLUserAgentSheet;
 #if ENABLE(MATHML)
-    if (element->isMathMLElement() && !loadedMathMLUserAgentSheet) {
+    if (element->isMathMLElement() && !mathMLStyleSheet) {
         // MathML rules.
-        loadedMathMLUserAgentSheet = true;
-        CSSStyleSheet* mathMLSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
-        defaultStyle->addRulesFromSheet(mathMLSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(mathMLSheet, printEval());
+        mathMLStyleSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
+        defaultStyle->addRulesFromSheet(mathMLStyleSheet, screenEval());
+        defaultPrintStyle->addRulesFromSheet(mathMLStyleSheet, printEval());
     }
 #endif
 
 #if ENABLE(VIDEO)
-    static bool loadedMediaStyleSheet;
-    if (!loadedMediaStyleSheet && (element->hasTagName(videoTag) || element->hasTagName(audioTag))) {
-        loadedMediaStyleSheet = true;
+    if (!mediaControlsStyleSheet && (element->hasTagName(videoTag) || element->hasTagName(audioTag))) {
         String mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::themeForPage(element->document()->page())->extraMediaControlsStyleSheet();
-        CSSStyleSheet* mediaControlsSheet = parseUASheet(mediaRules);
-        defaultStyle->addRulesFromSheet(mediaControlsSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(mediaControlsSheet, printEval());
+        mediaControlsStyleSheet = parseUASheet(mediaRules);
+        defaultStyle->addRulesFromSheet(mediaControlsStyleSheet, screenEval());
+        defaultPrintStyle->addRulesFromSheet(mediaControlsStyleSheet, printEval());
     }
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    static bool loadedFullScreenStyleSheet;
-    if (!loadedFullScreenStyleSheet && element->document()->webkitIsFullScreen()) {
-        loadedFullScreenStyleSheet = true;
+    if (!fullscreenStyleSheet && element->document()->webkitIsFullScreen()) {
         String fullscreenRules = String(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraFullScreenStyleSheet();
-        CSSStyleSheet* fullscreenSheet = parseUASheet(fullscreenRules);
-        defaultStyle->addRulesFromSheet(fullscreenSheet, screenEval());
-        defaultQuirksStyle->addRulesFromSheet(fullscreenSheet, screenEval());
+        fullscreenStyleSheet = parseUASheet(fullscreenRules);
+        defaultStyle->addRulesFromSheet(fullscreenStyleSheet, screenEval());
+        defaultQuirksStyle->addRulesFromSheet(fullscreenStyleSheet, screenEval());
     }
 #endif
 
     ASSERT(defaultStyle->features().idsInRules.isEmpty());
-    ASSERT_UNUSED(loadedMathMLUserAgentSheet, loadedMathMLUserAgentSheet || defaultStyle->features().siblingRules.isEmpty());
+    ASSERT(mathMLStyleSheet || defaultStyle->features().siblingRules.isEmpty());
 }
 
 void CSSStyleSelector::addMatchedProperties(MatchResult& matchResult, StylePropertySet* properties, StyleRule* rule, unsigned linkMatchType, bool inRegionRule)
@@ -2872,6 +2874,59 @@ String CSSStyleSelector::pageName(int /* pageIndex */) const
 {
     // FIXME: Implement page index to page name mapping.
     return "";
+}
+
+static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, CSSRuleList* ruleList)
+{
+    unsigned size = ruleList->length();
+    for (unsigned i = 0; i < size; ++i) {
+        CSSRule* cssRule = ruleList->item(i);
+        if (cssRule->isImportRule())
+            collectCSSOMWrappers(wrapperMap, static_cast<CSSImportRule*>(cssRule)->styleSheet());
+        else if (cssRule->isMediaRule())
+            collectCSSOMWrappers(wrapperMap, static_cast<CSSMediaRule*>(cssRule)->cssRules());
+        else if (cssRule->isRegionRule())
+            collectCSSOMWrappers(wrapperMap, static_cast<WebKitCSSRegionRule*>(cssRule)->cssRules());
+        else if (cssRule->isStyleRule()) {
+            CSSStyleRule* cssStyleRule = static_cast<CSSStyleRule*>(cssRule);
+            wrapperMap.add(cssStyleRule->styleRule(), cssStyleRule);
+        }
+    }
+}
+
+static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, CSSStyleSheet* styleSheet)
+{
+    if (!styleSheet)
+        return;
+    collectCSSOMWrappers(wrapperMap, styleSheet->cssRules().get());
+}
+
+static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, Document* document)
+{
+    const Vector<RefPtr<StyleSheet> >& styleSheets = document->styleSheets()->vector();
+    for (unsigned i = 0; i < styleSheets.size(); ++i) {
+        StyleSheet* styleSheet = styleSheets[i].get();
+        if (!styleSheet->isCSSStyleSheet())
+            continue;
+        collectCSSOMWrappers(wrapperMap, static_cast<CSSStyleSheet*>(styleSheet));
+    }
+    collectCSSOMWrappers(wrapperMap, document->pageUserSheet());
+}
+
+CSSStyleRule* CSSStyleSelector::ensureFullCSSOMWrapperForInspector(StyleRule* rule)
+{
+    if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, simpleDefaultStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, defaultStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, quirksStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, svgStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, mathMLStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, mediaControlsStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, fullscreenStyleSheet);
+
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, document());
+    }
+    return m_styleRuleToCSSOMWrapperMap.get(rule).get();
 }
 
 void CSSStyleSelector::applyPropertyToStyle(int id, CSSValue* value, RenderStyle* style)

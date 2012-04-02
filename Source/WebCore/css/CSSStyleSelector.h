@@ -50,6 +50,7 @@ class CSSImageSetValue;
 class CSSImageValue;
 class CSSSelector;
 class CSSStyleApplyProperty;
+class CSSStyleRule;
 class CSSStyleSheet;
 class CSSValue;
 class ContainerNode;
@@ -240,6 +241,10 @@ public:
     static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
     
     void invalidateMatchedPropertiesCache();
+    
+    // WARNING. This will construct CSSOM wrappers for all style rules and cache then in a map for significant memory cost.
+    // It is here to support inspector. Don't use for any regular engine functions.
+    CSSStyleRule* ensureFullCSSOMWrapperForInspector(StyleRule*);
 
 #if ENABLE(CSS_FILTERS)
     bool createFilterOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, FilterOperations& outOperations);
@@ -486,6 +491,8 @@ private:
     bool m_applyPropertyToRegularStyle;
     bool m_applyPropertyToVisitedLinkStyle;
     const CSSStyleApplyProperty& m_applyProperty;
+    
+    HashMap<StyleRule*, RefPtr<CSSStyleRule> > m_styleRuleToCSSOMWrapperMap;
 
 #if ENABLE(CSS_SHADERS)
     bool m_hasPendingShaders;
