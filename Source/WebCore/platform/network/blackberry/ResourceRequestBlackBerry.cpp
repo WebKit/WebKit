@@ -46,7 +46,6 @@ static inline NetworkRequest::CachePolicy platformCachePolicyForRequest(const Re
     case WebCore::ReturnCacheDataDontLoad:
         return NetworkRequest::ReturnCacheDataDontLoad;
     default:
-        ASSERT_NOT_REACHED();
         return NetworkRequest::UseProtocolCachePolicy;
     }
 }

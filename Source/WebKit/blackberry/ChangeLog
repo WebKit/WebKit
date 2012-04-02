@@ -1,3 +1,24 @@
+2012-04-02  Lianghui Chen  <liachen@rim.com>
+
+        [BlackBerry] Set ResourceRequest TargetType in WebPagePrivate::load()
+        https://bugs.webkit.org/show_bug.cgi?id=80519
+
+        Set the right TargetType for main loads if they are not already set in
+        dispatchWillSendRequest().
+
+        Also adjust NetworkRequest TargetType for decidePolicyForExternalLoad()
+        and dispatchDecidePolicyForNavigationAction() as they are called before
+        dispatchWillSendRequest() is called. Patch to change ResourceRequest
+        TargetType earlier has been rejected as in WebKit bug
+        https://bugs.webkit.org/show_bug.cgi?id=80713
+
+        Reviewed by Rob Buis.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientBlackBerry::decidePolicyForExternalLoad):
+
 2012-04-01  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Simplify the code that gets accelerated compositing output onto the screen

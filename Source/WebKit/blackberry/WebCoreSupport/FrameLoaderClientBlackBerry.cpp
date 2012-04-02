@@ -72,6 +72,7 @@
 using WTF::String;
 using namespace WebCore;
 using namespace BlackBerry::WebKit;
+using BlackBerry::Platform::NetworkRequest;
 
 // This was copied from file "WebKit/Source/WebKit/mac/Misc/WebKitErrors.h".
 enum {
@@ -209,8 +210,11 @@ void FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction(FrameP
 
         // Let the client have a chance to say whether this navigation should
         // be ignored or not.
-        BlackBerry::Platform::NetworkRequest platformRequest;
+        NetworkRequest platformRequest;
         request.initializePlatformRequest(platformRequest, cookiesEnabled());
+        if (platformRequest.getTargetType() == NetworkRequest::TargetIsUnknown)
+            platformRequest.setTargetType(isMainFrame() ? NetworkRequest::TargetIsMainFrame : NetworkRequest::TargetIsSubframe);
+
         if (isMainFrame() && !m_webPagePrivate->m_client->acceptNavigationRequest(
             platformRequest, BlackBerry::Platform::NavigationType(action.type()))) {
             if (action.type() == NavigationTypeFormSubmitted
@@ -931,12 +935,16 @@ void FrameLoaderClientBlackBerry::dispatchWillSendRequest(DocumentLoader* docLoa
     // it is a new top level request which has not been commited.
     bool isMainResourceLoad = docLoader && docLoader == docLoader->frameLoader()->provisionalDocumentLoader();
 
+    // TargetType for subresource loads should have been set in CachedResource::load().
+    if (isMainResourceLoad && request.targetType() == ResourceRequest::TargetIsUnspecified)
+        request.setTargetType(isMainFrame() ? ResourceRequest::TargetIsMainFrame : ResourceRequest::TargetIsSubframe);
+
     // Any processing which is done for all loads (both main and subresource) should go here.
-    BlackBerry::Platform::NetworkRequest platformRequest;
+    NetworkRequest platformRequest;
     request.initializePlatformRequest(platformRequest, cookiesEnabled());
     m_webPagePrivate->m_client->populateCustomHeaders(platformRequest);
-    const BlackBerry::Platform::NetworkRequest::HeaderList& headerLists = platformRequest.getHeaderListRef();
-    for (BlackBerry::Platform::NetworkRequest::HeaderList::const_iterator it = headerLists.begin(); it != headerLists.end(); ++it) {
+    const NetworkRequest::HeaderList& headerLists = platformRequest.getHeaderListRef();
+    for (NetworkRequest::HeaderList::const_iterator it = headerLists.begin(); it != headerLists.end(); ++it) {
         std::string headerString = it->first;
         std::string headerValueString = it->second;
         request.setHTTPHeaderField(String::fromUTF8WithLatin1Fallback(headerString.data(), headerString.length()), String::fromUTF8WithLatin1Fallback(headerValueString.data(), headerValueString.length()));
@@ -1091,8 +1099,11 @@ PolicyAction FrameLoaderClientBlackBerry::decidePolicyForExternalLoad(const Reso
             && isMainFrame()
             && !request.mustHandleInternally()
             && !isFragmentScroll) {
-        BlackBerry::Platform::NetworkRequest platformRequest;
+        NetworkRequest platformRequest;
         request.initializePlatformRequest(platformRequest, cookiesEnabled());
+        if (platformRequest.getTargetType() == NetworkRequest::TargetIsUnknown)
+            platformRequest.setTargetType(isMainFrame() ? NetworkRequest::TargetIsMainFrame : NetworkRequest::TargetIsSubframe);
+
         m_webPagePrivate->m_client->handleExternalLink(platformRequest, request.anchorText().characters(), request.anchorText().length(), m_clientRedirectIsPending);
         return PolicyIgnore;
     }
@@ -1159,7 +1170,7 @@ PassRefPtr<FrameNetworkingContext> FrameLoaderClientBlackBerry::createNetworking
 void FrameLoaderClientBlackBerry::startDownload(const ResourceRequest& request, const String& /*suggestedName*/)
 {
     // FIXME: use the suggestedName?
-    m_webPagePrivate->load(request.url().string().utf8().data(), 0, "GET", BlackBerry::Platform::NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, false, false, true, "");
+    m_webPagePrivate->load(request.url().string().utf8().data(), 0, "GET", NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, false, false, true, "");
 }
 
 void FrameLoaderClientBlackBerry::download(ResourceHandle* handle, const ResourceRequest&, const ResourceRequest&, const ResourceResponse& r)
