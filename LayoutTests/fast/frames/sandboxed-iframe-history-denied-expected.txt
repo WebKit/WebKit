@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate a navigation change for frame with URL script>.
+
 ALERT: PASS
 This test verifies that a sandboxed IFrame cannot navigate the top-level frame using the history API.
 

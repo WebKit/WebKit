@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate a navigation change for frame with URL about:blank from frame with URL sandboxed-iframe-navigation-targetlink.html.
+
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate a navigation change for frame with URL about:blank from frame with URL sandboxed-iframe-navigation-targetlink.html.
+
 This test verifies that a sandboxed IFrame cannot open a link in another frame using the target attribute of a link.
 
 This is done by loading ten non-sandboxed IFrames, and a single sandboxed one. In addition each of these frames have a target frame (so, 22 frames in total). Expect ten frames to be able to open a link in their corresponding target frame, but the sandboxed one to not be one of them.

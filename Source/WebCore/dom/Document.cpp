@@ -374,6 +374,16 @@ static bool canAccessAncestor(const SecurityOrigin* activeSecurityOrigin, Frame*
     return false;
 }
 
+static void printNavigationErrorMessage(Frame* frame, const KURL& activeURL)
+{
+    // FIXME: this error message should contain more specifics of why the navigation change is not allowed.
+    String message = "Unsafe JavaScript attempt to initiate a navigation change for frame with URL " +
+                     frame->document()->url().string() + " from frame with URL " + activeURL.string() + ".\n";
+
+    // FIXME: should we print to the console of the document performing the navigation instead?
+    frame->domWindow()->printErrorMessage(message);
+}
+
 static HashSet<Document*>* documentsThatNeedStyleRecalc = 0;
 
 class DocumentWeakReference : public ThreadSafeRefCounted<DocumentWeakReference> {
@@ -2617,56 +2627,57 @@ void Document::disableEval()
 
 bool Document::canNavigate(Frame* targetFrame)
 {
-    // The navigation change is safe if the active document is:
-    //   - in the same security origin as the target or one of the target's
-    //     ancestors.
-    //
-    // Or the target frame is:
-    //   - a top-level frame in the frame hierarchy and the active frame can
-    //     navigate the target frame's opener per above or it is the opener of
-    //     the target frame.
-
     if (!m_frame)
         return false;
 
-    // FIXME: Do we actually ever call this function without a targetFrame?
+    // FIXME: We shouldn't call this function without a target frame, but
+    // fast/forms/submit-to-blank-multiple-times.html depends on this function
+    // returning true when supplied with a 0 targetFrame.
     if (!targetFrame)
         return true;
 
-    // Performance optimization.
-    // FIXME: Delete this code. It seems very unlikely that this affects performance.
-    if (m_frame == targetFrame)
-        return true;
-
-    // Let a document navigate window.top so that it can framebust.
+    // Frame-busting is generally allowed (unless we're sandboxed and prevent from frame-busting).
     if (!isSandboxed(SandboxTopNavigation) && targetFrame == m_frame->tree()->top())
         return true;
 
-    // A sandboxed frame can only navigate itself and its descendants.
-    if (isSandboxed(SandboxNavigation) && !targetFrame->tree()->isDescendantOf(m_frame))
+    if (isSandboxed(SandboxNavigation)) {
+        if (targetFrame->tree()->isDescendantOf(m_frame))
+            return true;
+
+        printNavigationErrorMessage(targetFrame, url());
         return false;
+    }
 
-    // Let a frame navigate its opener if the opener is a top-level window.
-    if (!targetFrame->tree()->parent() && m_frame->loader()->opener() == targetFrame)
-        return true;
-
-    // For top-level windows, check the opener.
-    // FIXME: Can this check be combined with the previous check?
-    if (!targetFrame->tree()->parent() && canAccessAncestor(securityOrigin(), targetFrame->loader()->opener()))
-        return true;
-
-    // In general, check the frame's ancestors.
+    // This is the normal case. A document can navigate its decendant frames,
+    // or, more generally, a document can navigate a frame if the document is
+    // in the same origin as any of that frame's ancestors (in the frame
+    // hierarchy).
+    //
+    // See http://www.adambarth.com/papers/2008/barth-jackson-mitchell.pdf for
+    // historical information about this security check.
     if (canAccessAncestor(securityOrigin(), targetFrame))
         return true;
 
-    Document* targetDocument = targetFrame->document();
-    // FIXME: this error message should contain more specifics of why the navigation change is not allowed.
-    String message = "Unsafe JavaScript attempt to initiate a navigation change for frame with URL " +
-                     targetDocument->url().string() + " from frame with URL " + url().string() + ".\n";
+    // Top-level frames are easier to navigate than other frames because they
+    // display their URLs in the address bar (in most browsers). However, there
+    // are still some restrictions on navigation to avoid nuisance attacks.
+    // Specifically, a document can navigate a top-level frame if that frame
+    // opened the document or if the document is the same-origin with any of
+    // the top-level frame's opener's ancestors (in the frame hierarchy).
+    //
+    // In both of these cases, the document performing the navigation is in
+    // some way related to the frame being navigate (e.g., by the "opener"
+    // and/or "parent" relation). Requiring some sort of relation prevents a
+    // document from navigating arbitrary, unrelated top-level frames.
+    if (!targetFrame->tree()->parent()) {
+        if (targetFrame == m_frame->loader()->opener())
+            return true;
 
-    // FIXME: should we print to the console of the activeFrame as well?
-    targetFrame->domWindow()->printErrorMessage(message);
+        if (canAccessAncestor(securityOrigin(), targetFrame->loader()->opener()))
+            return true;
+    }
 
+    printNavigationErrorMessage(targetFrame, url());
     return false;
 }
 

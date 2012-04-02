@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate a navigation change for frame with URL http://127.0.0.1:8000/security/sandboxed-iframe-form-top.html from frame with URL http://127.0.0.1:8000/security/resources/sandboxed-iframe-form-top.html.
+
 This tests passes if the sandboxed frame cannot navigate the top frame.
 
 PASS
