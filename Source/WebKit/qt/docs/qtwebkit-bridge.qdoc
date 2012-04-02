@@ -132,7 +132,7 @@
 
     \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 10
 
-    The call to \c{connect() establishes a connection between the signal
+    The call to \c{connect()} establishes a connection between the signal
     \c{somethingChanged} and the slot \c{function}. Whenever the object
     \c{myObject} emits the signal \c{somethingChanged}, the slot \c{function}
     of the object \c{thisObject} gets called automatically. Let's illustrate

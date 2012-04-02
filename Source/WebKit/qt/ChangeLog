@@ -1,3 +1,15 @@
+2012-04-02  Casper van Donderen  <casper.vandonderen@nokia.com>
+
+        Qt: Doc: Fix typo which marks document to be printed in console font.
+        https://bugs.webkit.org/show_bug.cgi?id=82893
+
+        Reviewed by Simon Hausmann.
+
+        The qtwebkit-bridge.qdoc file contained a typo where a \c {} was
+        missing its closing curly bracket, this marked the rest of the page as
+        text to be printed using the code/console font.
+        * docs/qtwebkit-bridge.qdoc:
+
 2012-04-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r112651.
