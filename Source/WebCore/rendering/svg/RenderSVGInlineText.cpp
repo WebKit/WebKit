@@ -87,7 +87,8 @@ void RenderSVGInlineText::willBeDestroyed()
     if (affectedAttributes.isEmpty())
         return;
 
-    textRenderer->rebuildLayoutAttributes(affectedAttributes);
+    if (!documentBeingDestroyed())
+        textRenderer->rebuildLayoutAttributes(affectedAttributes);
 }
 
 void RenderSVGInlineText::setTextInternal(PassRefPtr<StringImpl> text)
