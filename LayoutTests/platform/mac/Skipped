@@ -740,3 +740,7 @@ inspector/profiler/cpu-profiler-profiling.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82934
 storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82943
+inspector/debugger/copy-stack-trace.html
+inspector/debugger/callstack-placards-discarded.html
