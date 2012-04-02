@@ -1,3 +1,37 @@
+2012-04-02  Anders Carlsson  <andersca@apple.com>
+
+        Call NPP_SetValue with WKNVCALayerRenderServerPort when a WKView is moved from a buffered to an unbuffered window, or vice versa
+        https://bugs.webkit.org/show_bug.cgi?id=82951
+        <rdar://problem/10589308>
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::setLayerHostingMode):
+        Call Plugin::setLayerHostingMode).
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.h:
+        Move WKNVCALayerRenderServerPort to the header file.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize m_layerHostingMode.
+
+        (WebKit::NetscapePlugin::initialize):
+        Set m_layerHostingMode from the parameters struct.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::compositingRenderServerPort):
+        Return MACH_PORT_NULL when hosted in the window server.
+
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        Move the code that gets the layer out into a separate function, updatePluginLayer.
+
+        (WebKit::NetscapePlugin::setLayerHostingMode):
+        Let the plug-in know that the layer hosting mode changed and update the plug-in layer if
+        setting the new compositing port was successful.
+
 2012-04-02  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] ResourceError::isCancellation() is always returning false

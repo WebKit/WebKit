@@ -209,6 +209,8 @@ private:
 
     void pluginFocusOrWindowFocusChanged();
     void setComplexTextInputEnabled(bool);
+
+    void updatePluginLayer();
 #endif
 
     virtual void contentsScaleFactorChanged(float);
@@ -302,6 +304,7 @@ private:
 
     RetainPtr<PlatformLayer> m_pluginLayer;
     bool m_pluginReturnsNonretainedLayer;
+    LayerHostingMode m_layerHostingMode;
 
     NPCocoaEvent* m_currentMouseEvent;
 

@@ -111,6 +111,8 @@ void PluginControllerProxy::sendComplexTextInput(const String& textInput)
 void PluginControllerProxy::setLayerHostingMode(uint32_t opaqueLayerHostingMode)
 {
     LayerHostingMode layerHostingMode = static_cast<LayerHostingMode>(opaqueLayerHostingMode);
+
+    m_plugin->setLayerHostingMode(layerHostingMode);
     updateLayerHostingContext(layerHostingMode);
 
     m_connection->connection()->send(Messages::PluginProxy::SetLayerHostingContextID(m_layerHostingContext->contextID()), m_pluginInstanceID);

@@ -417,9 +417,6 @@ static const unsigned WKNVAllowedToEnterSandbox = 74658;
 
 // WKNVSandboxFunctions = 74659 is defined in NetscapeSandboxFunctions.h
 
-// The Core Animation render server port.
-static const unsigned WKNVCALayerRenderServerPort = 71879;
-
 #endif
 
 static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "NetscapePlugin.h"
 
+#import "NetscapeBrowserFuncs.h"
 #import "PluginController.h"
 #import "WebEvent.h"
 #import <Carbon/Carbon.h>
@@ -167,6 +168,11 @@ NPError NetscapePlugin::popUpContextMenu(NPMenu* npMenu)
 
 mach_port_t NetscapePlugin::compositingRenderServerPort()
 {
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    if (m_layerHostingMode == LayerHostingModeInWindowServer)
+        return MACH_PORT_NULL;
+#endif
+
     return controller()->compositingRenderServerPort();
 }
 
@@ -219,27 +225,7 @@ bool NetscapePlugin::platformPostInitialize()
         return false;
 #endif
 
-    if (m_drawingModel == NPDrawingModelCoreAnimation) {
-        void* value = 0;
-        // Get the Core Animation layer.
-        if (NPP_GetValue(NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
-            ASSERT(!m_pluginLayer);
-
-            // The original Core Animation drawing model required that plug-ins pass a retained layer
-            // to the browser, which the browser would then adopt. However, the final spec changed this
-            // (See https://wiki.mozilla.org/NPAPI:CoreAnimationDrawingModel for more information)
-            // after a version of WebKit1 with the original implementation had shipped, but that now means
-            // that any plug-ins that expect the WebKit1 behavior would leak the CALayer.
-            // For plug-ins that we know return retained layers, we have the ReturnsRetainedCoreAnimationLayer 
-            // plug-in quirk. Plug-ins can also check for whether the browser expects a non-retained layer to
-            // be returned by using NPN_GetValue and pass the WKNVExpectsNonretainedLayer parameter.
-            // https://bugs.webkit.org/show_bug.cgi?id=58282 describes the bug where WebKit expects retained layers.
-            if (m_pluginReturnsNonretainedLayer)
-                m_pluginLayer = reinterpret_cast<CALayer *>(value);
-            else
-                m_pluginLayer.adoptNS(reinterpret_cast<CALayer *>(value));
-        }
-    }
+    updatePluginLayer();
 
 #ifndef NP_NO_CARBON
     if (m_eventModel == NPEventModelCarbon) {
@@ -1022,8 +1008,17 @@ void NetscapePlugin::sendComplexTextInput(const String& textInput)
     }
 }
 
-void NetscapePlugin::setLayerHostingMode(LayerHostingMode)
+void NetscapePlugin::setLayerHostingMode(LayerHostingMode layerHostingMode)
 {
+    m_layerHostingMode = layerHostingMode;
+
+    // Tell the plug-in about the new compositing render server port. If it returns OK we'll ask it again for a new layer.
+    mach_port_t port = NetscapePlugin::compositingRenderServerPort();
+    if (NPP_SetValue(static_cast<NPNVariable>(WKNVCALayerRenderServerPort), &port) != NPERR_NO_ERROR)
+        return;
+
+    m_pluginLayer = nullptr;
+    updatePluginLayer();
 }
 
 void NetscapePlugin::pluginFocusOrWindowFocusChanged()
@@ -1058,6 +1053,37 @@ void NetscapePlugin::setComplexTextInputEnabled(bool complexTextInputEnabled)
 PlatformLayer* NetscapePlugin::pluginLayer()
 {
     return static_cast<PlatformLayer*>(m_pluginLayer.get());
+}
+
+void NetscapePlugin::updatePluginLayer()
+{
+    if (m_drawingModel != NPDrawingModelCoreAnimation)
+        return;
+
+    void* value = 0;
+
+    // Get the Core Animation layer.
+    if (NPP_GetValue(NPPVpluginCoreAnimationLayer, &value) != NPERR_NO_ERROR)
+        return;
+
+    if (!value)
+        return;
+
+    ASSERT(!m_pluginLayer);
+
+    // The original Core Animation drawing model required that plug-ins pass a retained layer
+    // to the browser, which the browser would then adopt. However, the final spec changed this
+    // (See https://wiki.mozilla.org/NPAPI:CoreAnimationDrawingModel for more information)
+    // after a version of WebKit1 with the original implementation had shipped, but that now means
+    // that any plug-ins that expect the WebKit1 behavior would leak the CALayer.
+    // For plug-ins that we know return retained layers, we have the ReturnsRetainedCoreAnimationLayer
+    // plug-in quirk. Plug-ins can also check for whether the browser expects a non-retained layer to
+    // be returned by using NPN_GetValue and pass the WKNVExpectsNonretainedLayer parameter.
+    // https://bugs.webkit.org/show_bug.cgi?id=58282 describes the bug where WebKit expects retained layers.
+    if (m_pluginReturnsNonretainedLayer)
+        m_pluginLayer = reinterpret_cast<CALayer *>(value);
+    else
+        m_pluginLayer.adoptNS(reinterpret_cast<CALayer *>(value));
 }
 
 #ifndef NP_NO_CARBON
