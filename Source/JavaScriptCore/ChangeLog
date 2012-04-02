@@ -1,3 +1,20 @@
+2012-04-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Activation tear-off neglects to copy the callee and scope chain, leading to crashes if we
+        try to create an arguments object from the activation
+        https://bugs.webkit.org/show_bug.cgi?id=82947
+        <rdar://problem/11058598>
+
+        Reviewed by Gavin Barraclough.
+        
+        We now copy the entire call frame header just to be sure. This is mostly perf-netural,
+        except for a 3.7% slow-down in V8/earley.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::visitChildren):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::tearOff):
+
 2012-04-02  Daniel Bates  <dbates@webkit.org>
 
         Remove Source/JavaScriptCore/wtf and its empty subdirectories

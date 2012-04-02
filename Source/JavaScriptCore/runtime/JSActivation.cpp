@@ -78,11 +78,15 @@ void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
     WriteBarrier<Unknown>* registerArray = thisObject->m_registerArray.get();
     if (!registerArray)
         return;
-
+    
     visitor.appendValues(registerArray, thisObject->m_numCapturedArgs);
 
-    // Skip 'this' and call frame.
-    visitor.appendValues(registerArray + CallFrame::offsetFor(thisObject->m_numCapturedArgs + 1), thisObject->m_numCapturedVars);
+    // Skip 'this' and call frame, except for callee and scope chain.
+    int offset = CallFrame::offsetFor(thisObject->m_numCapturedArgs + 1);
+    visitor.append(registerArray + offset + RegisterFile::ScopeChain);
+    visitor.append(registerArray + offset + RegisterFile::Callee);
+    
+    visitor.appendValues(registerArray + offset, thisObject->m_numCapturedVars);
 }
 
 inline bool JSActivation::symbolTableGet(const Identifier& propertyName, PropertySlot& slot)
