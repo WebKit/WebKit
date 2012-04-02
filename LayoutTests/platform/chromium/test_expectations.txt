@@ -3559,10 +3559,9 @@ BUGWK81217 : svg/custom/use-detach.svg = FAIL
 BUGWK81217 : svg/hixie/perf/003.xml = FAIL
 
 // Failing since added by r108699
-BUGWK79454 WIN : svg/text/text-rescale.html = IMAGE+TEXT
-BUGWK79454 MAC : svg/text/text-rescale.html = IMAGE
-BUGWK79454 LINUX : svg/text/text-rescale.html = IMAGE PASS
-BUGWK79454 MAC WIN : svg/text/text-viewbox-rescale.html = IMAGE
+BUGWK79454 MAC DEBUG : svg/text/text-rescale.html = IMAGE PASS
+BUGWK79454 LINUX DEBUG : svg/text/text-rescale.html = IMAGE PASS
+BUGWK79454 LINUX MAC : svg/text/text-viewbox-rescale.html = IMAGE PASS
 
 BUGWK79456 DEBUG : svg/repaint/image-with-clip-path.svg = PASS IMAGE
 
