@@ -1,3 +1,19 @@
+2012-04-02  Dirk Pranke  <dpranke@chromium.org>
+
+        NRWT is not printing out the builder it's uploading JSON files for
+        https://bugs.webkit.org/show_bug.cgi?id=82834
+
+        Reviewed by Ojan Vafai.
+
+        Handle log messages of the form log.info("%s", arg) properly ...
+        I didn't even know you could do that :).
+
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (_LogHandler.emit):
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+        (RegularTest.test_log_args):
+        (VerboseTest.test_log_args):
+
 2012-04-02  Tim Horton  <timothy_horton@apple.com>
 
         [mac] LayoutTestHelper crashes if there is no main display

@@ -104,6 +104,9 @@ class RegularTest(unittest.TestCase):
         buflist = self._log_after_update()
         self.assertEquals(buflist, ['foo\n', 'bar\n'])
 
+    def test_log_args(self):
+        self.logger.info('foo %s %d', 'bar', 2)
+        self.assertEquals(self.buflist, ['foo bar 2\n'])
 
 class TtyTest(RegularTest):
     verbose = False
@@ -137,6 +140,11 @@ class VerboseTest(RegularTest):
         # The second argument should have a real timestamp and pid, so we just check the format.
         self.assertEquals(len(buflist), 2)
         self.assertTrue(re.match('\d\d:\d\d:\d\d.\d\d\d \d+ bar\n', buflist[1]))
+
+    def test_log_args(self):
+        self.logger.info('foo %s %d', 'bar', 2)
+        self.assertEquals(len(self.buflist), 1)
+        self.assertTrue(self.buflist[0].endswith('foo bar 2\n'))
 
 
 if __name__ == '__main__':

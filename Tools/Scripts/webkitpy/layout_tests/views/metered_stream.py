@@ -122,4 +122,4 @@ class _LogHandler(logging.Handler):
         self.name = LOG_HANDLER_NAME
 
     def emit(self, record):
-        self._meter.writeln(record.msg, record.created)
+        self._meter.writeln(record.getMessage(), record.created)
