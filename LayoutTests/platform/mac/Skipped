@@ -744,3 +744,27 @@ storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
 # https://bugs.webkit.org/show_bug.cgi?id=82943
 inspector/debugger/copy-stack-trace.html
 inspector/debugger/callstack-placards-discarded.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82972
+plugins/mouse-events-fixedpos.html
+plugins/multiple-plugins.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82976
+media/W3C/video/networkState/networkState_during_progress.html
+media/video-poster-blocked-by-willsendrequest.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82978
+inspector/styles/svg-style.xhtml
+
+# https://bugs.webkit.org/show_bug.cgi?id=82979
+fast/canvas/2d.text.draw.fill.maxWidth.gradient.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82980
+fast/events/drop-handler-should-not-stop-navigate.html
+http/tests/navigation/back-twice-without-commit.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82981
+http/tests/misc/favicon-loads-with-icon-loading-override.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82982
+fast/dom/jsDevicePixelRatio.html
