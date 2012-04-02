@@ -1,3 +1,11 @@
+2012-04-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkitpy rebaseline.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_test_set_with_json_output):
+        (test_run_test_set_with_json_source):
+
 2012-04-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         perf-o-matic should store test results' units
