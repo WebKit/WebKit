@@ -231,7 +231,7 @@ COMPILE_ASSERT(sizeof(RuleData) == sizeof(SameSizeAsRuleData), RuleData_should_s
 class RuleSet {
     WTF_MAKE_NONCOPYABLE(RuleSet);
 public:
-    RuleSet();
+    static PassOwnPtr<RuleSet> create() { return adoptPtr(new RuleSet); }
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<RuleData> > > AtomRuleMap;
 
@@ -257,6 +257,8 @@ public:
     const Vector<CSSPageRule*>& pageRules() const { return m_pageRules; }
 
 public:
+    RuleSet();
+
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;
     AtomRuleMap m_tagRules;
@@ -270,7 +272,7 @@ public:
     CSSStyleSelector::Features m_features;
 
     struct RuleSetSelectorPair {
-        RuleSetSelectorPair(CSSSelector* selector, RuleSet* ruleSet) : selector(selector), ruleSet(adoptPtr(ruleSet)) { }
+        RuleSetSelectorPair(CSSSelector* selector, PassOwnPtr<RuleSet> ruleSet) : selector(selector), ruleSet(ruleSet) { }
         RuleSetSelectorPair(const RuleSetSelectorPair& rs) : selector(rs.selector), ruleSet(const_cast<RuleSetSelectorPair*>(&rs)->ruleSet.release()) { }
         CSSSelector* selector;
         OwnPtr<RuleSet> ruleSet;
@@ -380,14 +382,14 @@ CSSStyleSelector::CSSStyleSelector(Document* document, bool matchAuthorAndUserSt
     if (m_rootDefaultStyle && view)
         m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType(), view->frame(), m_rootDefaultStyle.get()));
 
-    m_authorStyle = adoptPtr(new RuleSet);
+    m_authorStyle = RuleSet::create();
     // Adding rules from multiple sheets, shrink at the end.
     // Adding global rules from multiple sheets, shrink at the end.
     // Note that there usually is only 1 sheet for scoped rules, so auto-shrink-to-fit is fine.
     m_authorStyle->disableAutoShrinkToFit();
 
     // FIXME: This sucks! The user sheet is reparsed every time!
-    OwnPtr<RuleSet> tempUserStyle = adoptPtr(new RuleSet);
+    OwnPtr<RuleSet> tempUserStyle = RuleSet::create();
     if (CSSStyleSheet* pageUserSheet = document->pageUserSheet())
         tempUserStyle->addRulesFromSheet(pageUserSheet, *m_medium, this);
     if (const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets = document->pageGroupUserSheets()) {
@@ -429,7 +431,7 @@ static PassOwnPtr<RuleSet> makeRuleSet(const Vector<CSSStyleSelector::RuleFeatur
     size_t size = rules.size();
     if (!size)
         return nullptr;
-    OwnPtr<RuleSet> ruleSet = adoptPtr(new RuleSet);
+    OwnPtr<RuleSet> ruleSet = RuleSet::create();
     for (size_t i = 0; i < size; ++i)
         ruleSet->addRule(rules[i].rule, rules[i].selector, rules[i].hasDocumentSecurityOrigin, false);
     return ruleSet.release();
@@ -500,7 +502,7 @@ void CSSStyleSelector::appendAuthorStylesheets(unsigned firstNew, const Vector<R
         if (scope) {
             ScopedRuleSetMap::AddResult addResult = m_scopedAuthorStyles.add(scope, nullptr);
             if (addResult.isNewEntry)
-                addResult.iterator->second = adoptPtr(new RuleSet());
+                addResult.iterator->second = RuleSet::create();
             addResult.iterator->second->addRulesFromSheet(cssSheet, *m_medium, this, scope);
             continue;
         }
@@ -688,14 +690,14 @@ static void loadFullDefaultStyle()
         ASSERT(defaultPrintStyle == defaultStyle);
         delete defaultStyle;
         simpleDefaultStyleSheet->deref();
-        defaultStyle = new RuleSet;
-        defaultPrintStyle = new RuleSet;
+        defaultStyle = RuleSet::create().leakPtr();
+        defaultPrintStyle = RuleSet::create().leakPtr();
         simpleDefaultStyleSheet = 0;
     } else {
         ASSERT(!defaultStyle);
-        defaultStyle = new RuleSet;
-        defaultPrintStyle = new RuleSet;
-        defaultQuirksStyle = new RuleSet;
+        defaultStyle = RuleSet::create().leakPtr();
+        defaultPrintStyle = RuleSet::create().leakPtr();
+        defaultQuirksStyle = RuleSet::create().leakPtr();
     }
 
     // Strict-mode rules.
@@ -715,10 +717,10 @@ static void loadSimpleDefaultStyle()
     ASSERT(!defaultStyle);
     ASSERT(!simpleDefaultStyleSheet);
 
-    defaultStyle = new RuleSet;
+    defaultStyle = RuleSet::create().leakPtr();
     // There are no media-specific rules in the simple default style.
     defaultPrintStyle = defaultStyle;
-    defaultQuirksStyle = new RuleSet;
+    defaultQuirksStyle = RuleSet::create().leakPtr();
 
     simpleDefaultStyleSheet = parseUASheet(simpleUserAgentStyleSheet, strlen(simpleUserAgentStyleSheet));
     defaultStyle->addRulesFromSheet(simpleDefaultStyleSheet, screenEval());
@@ -729,7 +731,7 @@ static void loadSimpleDefaultStyle()
 static void loadViewSourceStyle()
 {
     ASSERT(!defaultViewSourceStyle);
-    defaultViewSourceStyle = new RuleSet;
+    defaultViewSourceStyle = RuleSet::create().leakPtr();
     defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet)), screenEval());
 }
 
@@ -2434,7 +2436,7 @@ void RuleSet::addPageRule(CSSPageRule* rule)
 
 void RuleSet::addRegionRule(WebKitCSSRegionRule* regionRule, bool hasDocumentSecurityOrigin)
 {
-    RuleSet* regionRuleSet = new RuleSet;
+    OwnPtr<RuleSet> regionRuleSet = RuleSet::create();
     // The region rule set should take into account the position inside the parent rule set.
     // Otherwise, the rules inside region block might be incorrectly positioned before other similar rules from
     // the stylesheet that contains the region block.
@@ -2450,7 +2452,7 @@ void RuleSet::addRegionRule(WebKitCSSRegionRule* regionRule, bool hasDocumentSec
     // Update the "global" rule count so that proper order is maintained
     m_ruleCount = regionRuleSet->m_ruleCount;
 
-    m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(regionRule->selectorList().first(), regionRuleSet));
+    m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(regionRule->selectorList().first(), regionRuleSet.release()));
 }
 
 void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector, const ContainerNode* scope)
