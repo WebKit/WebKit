@@ -1,5 +1,11 @@
 2012-04-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Revert an inadvertently committed change.
+
+        * Websites/webkit-perf.appspot.com/app.yaml:
+
+2012-04-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         perf-o-matic should have a way to hide some platforms and tests
         https://bugs.webkit.org/show_bug.cgi?id=82842
 
