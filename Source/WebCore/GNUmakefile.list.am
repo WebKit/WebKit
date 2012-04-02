@@ -904,7 +904,6 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/WebGLUniformLocation.idl \
 	$(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
 	$(WebCore)/html/shadow/HTMLContentElement.idl \
-	$(WebCore)/html/shadow/HTMLShadowElement.idl \
 	$(WebCore)/html/track/TextTrack.idl \
 	$(WebCore)/html/track/TextTrackCue.idl \
 	$(WebCore)/html/track/TextTrackCueList.idl \
@@ -2478,8 +2477,6 @@ webcore_sources += \
 	Source/WebCore/html/shadow/HTMLContentElement.h \
 	Source/WebCore/html/shadow/HTMLContentSelector.cpp \
 	Source/WebCore/html/shadow/HTMLContentSelector.h \
-	Source/WebCore/html/shadow/HTMLShadowElement.cpp \
-	Source/WebCore/html/shadow/HTMLShadowElement.h \
 	Source/WebCore/html/shadow/InsertionPoint.cpp \
 	Source/WebCore/html/shadow/InsertionPoint.h \
 	Source/WebCore/html/shadow/MediaControls.cpp \
@@ -3477,6 +3474,7 @@ webcore_sources += \
 	Source/WebCore/platform/PlatformKeyboardEvent.h \
 	Source/WebCore/platform/PlatformMenuDescription.h \
 	Source/WebCore/platform/PlatformMouseEvent.h \
+	Source/WebCore/platform/PlatformPasteboard.h \
 	Source/WebCore/platform/PlatformScreen.h \
 	Source/WebCore/platform/PlatformStrategies.cpp \
 	Source/WebCore/platform/PlatformStrategies.h \
