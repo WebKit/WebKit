@@ -22,29 +22,166 @@
 #include "config.h"
 #include "StyleRule.h"
 
+#include "CSSCharsetRule.h"
+#include "CSSFontFaceRule.h"
+#include "CSSImportRule.h"
+#include "CSSMediaRule.h"
+#include "CSSPageRule.h"
+#include "CSSStyleRule.h"
+#include "WebKitCSSKeyframeRule.h"
+#include "WebKitCSSKeyframesRule.h"
+#include "WebKitCSSRegionRule.h"
+
 namespace WebCore {
 
-StyleRule::StyleRule(int line, CSSStyleRule* wrapper)
-    : m_sourceLine(line)
-    , m_cssomWrapper(wrapper)
+PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet) const
+{
+    return createCSSOMWrapper(parentSheet, 0);
+}
+
+PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSRule* parentRule) const
+{ 
+    return createCSSOMWrapper(0, parentRule);
+}
+
+void StyleRuleBase::destroy()
+{
+    switch (type()) {
+    case Style:
+        delete static_cast<StyleRule*>(this);
+        return;
+    case Page:
+        delete static_cast<StyleRulePage*>(this);
+        return;
+    case FontFace:
+        delete static_cast<StyleRuleFontFace*>(this);
+        return;
+    case Media:
+        delete static_cast<StyleRuleMedia*>(this);
+        return;
+    case Region:
+        delete static_cast<StyleRuleRegion*>(this);
+        return;
+    case Import:
+        delete static_cast<StyleRuleImport*>(this);
+        return;
+    case Keyframes:
+        delete static_cast<StyleRuleKeyframes*>(this);
+        return;
+    case Unknown:
+    case Charset:
+    case Keyframe:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    ASSERT_NOT_REACHED();
+}
+
+PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const
+{
+    RefPtr<CSSRule> rule;
+    StyleRuleBase* self = const_cast<StyleRuleBase*>(this);
+    switch (type()) {
+    case Style:
+        rule = CSSStyleRule::create(static_cast<StyleRule*>(self), parentSheet);
+        break;
+    case Page:
+        rule = CSSPageRule::create(static_cast<StyleRulePage*>(self), parentSheet);
+        break;
+    case FontFace:
+        rule = CSSFontFaceRule::create(static_cast<StyleRuleFontFace*>(self), parentSheet);
+        break;
+    case Media:
+        rule = CSSMediaRule::create(static_cast<StyleRuleMedia*>(self), parentSheet);
+        break;
+    case Region:
+        rule = WebKitCSSRegionRule::create(static_cast<StyleRuleRegion*>(self), parentSheet);
+        break;
+    case Import:
+        rule = CSSImportRule::create(static_cast<StyleRuleImport*>(self), parentSheet);
+        break;
+    case Keyframes:
+        rule = WebKitCSSKeyframesRule::create(static_cast<StyleRuleKeyframes*>(self), parentSheet);
+        break;
+    case Unknown:
+    case Charset:
+    case Keyframe:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+    if (parentRule)
+        rule->setParentRule(parentRule);
+    return rule.release();
+}
+
+StyleRule::StyleRule(int sourceLine)
+    : StyleRuleBase(Style, sourceLine)
 {
 }
-    
+
 StyleRule::~StyleRule()
 {
 }
-    
-void StyleRule::addSubresourceStyleURLs(ListHashSet<KURL>& urls, CSSStyleSheet* styleSheet) 
+
+void StyleRule::setProperties(PassRefPtr<StylePropertySet> properties)
+{ 
+    m_properties = properties;
+}
+
+StyleRulePage::StyleRulePage()
+    : StyleRuleBase(Page)
 {
-    if (!m_properties)
-        return;
-    m_properties->addSubresourceStyleURLs(urls, styleSheet);
+}
+
+StyleRulePage::~StyleRulePage()
+{
+}
+
+void StyleRulePage::setProperties(PassRefPtr<StylePropertySet> properties)
+{ 
+    m_properties = properties;
+}
+
+StyleRuleFontFace::StyleRuleFontFace()
+    : StyleRuleBase(FontFace, 0)
+{
+}
+
+StyleRuleFontFace::~StyleRuleFontFace()
+{
+}
+
+void StyleRuleFontFace::setProperties(PassRefPtr<StylePropertySet> properties)
+{ 
+    m_properties = properties;
+}
+
+StyleRuleBlock::StyleRuleBlock(Type type, Vector<RefPtr<StyleRuleBase> >& adoptRule)
+    : StyleRuleBase(type, 0)
+{
+    m_childRules.swap(adoptRule);
+}
+
+void StyleRuleBlock::wrapperInsertRule(unsigned index, PassRefPtr<StyleRuleBase> rule)
+{
+    m_childRules.insert(index, rule);
 }
     
-CSSStyleRule* StyleRule::ensureCSSStyleRule() const
+void StyleRuleBlock::wrapperRemoveRule(unsigned index)
 {
-    ASSERT(m_cssomWrapper);
-    return m_cssomWrapper;
+    m_childRules.remove(index);
+}
+
+StyleRuleMedia::StyleRuleMedia(PassRefPtr<MediaQuerySet> media, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+    : StyleRuleBlock(Media, adoptRules)
+    , m_mediaQueries(media)
+{
+}
+
+StyleRuleRegion::StyleRuleRegion(Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+    : StyleRuleBlock(Region, adoptRules)
+{
+    m_selectorList.adoptSelectorVector(*selectors);
 }
 
 } // namespace WebCore

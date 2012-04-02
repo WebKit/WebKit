@@ -28,17 +28,14 @@
 
 namespace WebCore {
 
-class CSSSelector;
 class CSSStyleDeclaration;
 class StyleRuleCSSStyleDeclaration;
 class StyleRule;
 
 class CSSStyleRule : public CSSRule {
 public:
-    static PassRefPtr<CSSStyleRule> create(CSSStyleSheet* parent, int line)
-    {
-        return adoptRef(new CSSStyleRule(parent, line));
-    }
+    static PassRefPtr<CSSStyleRule> create(StyleRule* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSStyleRule(rule, sheet)); }
+
     ~CSSStyleRule();
 
     String selectorText() const;
@@ -48,15 +45,15 @@ public:
 
     String cssText() const;
     
+    // FIXME: Not CSSOM. Remove.
     StyleRule* styleRule() const { return m_styleRule.get(); }
 
 private:
-    CSSStyleRule(CSSStyleSheet* parent, int sourceLine);
+    CSSStyleRule(StyleRule*, CSSStyleSheet*);
 
-    void cleanup();
     String generateSelectorText() const;
 
-    OwnPtr<StyleRule> m_styleRule;
+    RefPtr<StyleRule> m_styleRule;    
 
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };

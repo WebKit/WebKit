@@ -75,13 +75,14 @@ class StyleKeyframe;
 class StylePendingImage;
 class StylePropertySet;
 class StyleRule;
+class StyleRuleKeyframes;
+class StyleRulePage;
+class StyleRuleRegion;
 class StyleShader;
 class StyleSheet;
 class StyleSheetList;
 class StyledElement;
-class WebKitCSSKeyframesRule;
 class WebKitCSSFilterValue;
-class WebKitCSSRegionRule;
 class WebKitCSSShaderValue;
 
 #if ENABLE(CSS_SHADERS)
@@ -229,7 +230,7 @@ public:
     void allVisitedStateChanged() { m_checker.allVisitedStateChanged(); }
     void visitedStateChanged(LinkHash visitedHash) { m_checker.visitedStateChanged(visitedHash); }
 
-    void addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule>);
+    void addKeyframeStyle(PassRefPtr<StyleRuleKeyframes>);
 
     bool checkRegionStyle(Element* regionElement);
 
@@ -358,7 +359,7 @@ private:
     static bool isValidRegionStyleProperty(int id);
 
     void matchPageRules(MatchResult&, RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
-    void matchPageRulesForList(Vector<CSSPageRule*>& matchedRules, const Vector<CSSPageRule*>&, bool isLeftPage, bool isFirstPage, const String& pageName);
+    void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>&, bool isLeftPage, bool isFirstPage, const String& pageName);
     bool isLeftPage(int pageIndex) const;
     bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
     bool isFirstPage(int pageIndex) const;
@@ -376,7 +377,7 @@ private:
     FillLayer m_backgroundData;
     Color m_backgroundColor;
 
-    typedef HashMap<AtomicStringImpl*, RefPtr<WebKitCSSKeyframesRule> > KeyframesRuleMap;
+    typedef HashMap<AtomicStringImpl*, RefPtr<StyleRuleKeyframes> > KeyframesRuleMap;
     KeyframesRuleMap m_keyframesRuleMap;
 
 public:

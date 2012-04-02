@@ -26,6 +26,7 @@
 #include "CachedResourceHandle.h"
 #include "CachedStyleSheetClient.h"
 #include "PlatformString.h"
+#include "StyleRule.h"
 
 namespace WebCore {
 
@@ -33,45 +34,46 @@ class CachedCSSStyleSheet;
 class MediaList;
 class MediaQuerySet;
 
-class CSSImportRule : public CSSRule {
+class StyleRuleImport : public StyleRuleBase {
 public:
-    static PassRefPtr<CSSImportRule> create(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaQuerySet>);
+    static PassRefPtr<StyleRuleImport> create(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaQuerySet>);
 
-    ~CSSImportRule();
+    ~StyleRuleImport();
+    
+    CSSStyleSheet* parentStyleSheet() const { return m_parentStyleSheet; }
+    void clearParentStyleSheet() { m_parentStyleSheet = 0; }
 
     String href() const { return m_strHref; }
-    MediaList* media();
     CSSStyleSheet* styleSheet() const { return m_styleSheet.get(); }
-
-    String cssText() const;
 
     // Not part of the CSSOM.
     bool isLoading() const;
     MediaQuerySet* mediaQueries() { return m_mediaQueries.get(); }
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>& urls);
-
     void requestStyleSheet();
 
 private:
     // NOTE: We put the CachedStyleSheetClient in a member instead of inheriting from it
-    // to avoid adding a vptr to CSSImportRule.
+    // to avoid adding a vptr to StyleRuleImport.
     class ImportedStyleSheetClient : public CachedStyleSheetClient {
     public:
-        ImportedStyleSheetClient(CSSImportRule* ownerRule) : m_ownerRule(ownerRule) { }
+        ImportedStyleSheetClient(StyleRuleImport* ownerRule) : m_ownerRule(ownerRule) { }
         virtual ~ImportedStyleSheetClient() { }
         virtual void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
         {
             m_ownerRule->setCSSStyleSheet(href, baseURL, charset, sheet);
         }
     private:
-        CSSImportRule* m_ownerRule;
+        StyleRuleImport* m_ownerRule;
     };
 
     void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet*);
     friend class ImportedStyleSheetClient;
 
-    CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaQuerySet>);
+    StyleRuleImport(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaQuerySet>);
+
+    // FXIME: This needs to go away.
+    CSSStyleSheet* m_parentStyleSheet;
 
     ImportedStyleSheetClient m_styleSheetClient;
     String m_strHref;
@@ -79,6 +81,22 @@ private:
     RefPtr<CSSStyleSheet> m_styleSheet;
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     bool m_loading;
+};
+
+class CSSImportRule : public CSSRule {
+public:
+    static PassRefPtr<CSSImportRule> create(StyleRuleImport* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSImportRule(rule, sheet)); }
+
+    String href() const { return m_importRule->href(); }
+    MediaList* media();
+    CSSStyleSheet* styleSheet() const { return m_importRule->styleSheet(); }
+    
+    String cssText() const;
+
+private:
+    CSSImportRule(StyleRuleImport*, CSSStyleSheet*);
+
+    RefPtr<StyleRuleImport> m_importRule;
 };
 
 } // namespace WebCore

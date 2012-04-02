@@ -45,6 +45,7 @@ namespace WebCore {
 
 class CSSRuleList;
 class CSSStyleDeclaration;
+class CSSStyleRule;
 class CSSStyleSheet;
 class Document;
 class Element;

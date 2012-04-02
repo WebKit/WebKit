@@ -26,16 +26,18 @@
 
 namespace WebCore {
 
-struct CSSNamespace;
-class CSSParser;
 class CSSCharsetRule;
 class CSSImportRule;
+class CSSParser;
 class CSSRule;
 class CSSRuleList;
 class CachedCSSStyleSheet;
 class CachedResourceLoader;
 class Document;
 class MediaQuerySet;
+class StyleRuleBase;
+class StyleRuleImport;
+struct CSSNamespace;
 
 typedef int ExceptionCode;
 
@@ -43,7 +45,7 @@ class CSSStyleSheet : public StyleSheet {
 public:
     static PassRefPtr<CSSStyleSheet> create()
     {
-        return adoptRef(new CSSStyleSheet(static_cast<CSSImportRule*>(0), String(), KURL(), String()));
+        return adoptRef(new CSSStyleSheet(static_cast<StyleRuleImport*>(0), String(), KURL(), String()));
     }
     static PassRefPtr<CSSStyleSheet> create(Node* ownerNode)
     {
@@ -53,7 +55,7 @@ public:
     {
         return adoptRef(new CSSStyleSheet(ownerNode, originalURL, finalURL, charset));
     }
-    static PassRefPtr<CSSStyleSheet> create(CSSImportRule* ownerRule, const String& originalURL, const KURL& finalURL, const String& charset)
+    static PassRefPtr<CSSStyleSheet> create(StyleRuleImport* ownerRule, const String& originalURL, const KURL& finalURL, const String& charset)
     {
         return adoptRef(new CSSStyleSheet(ownerRule, originalURL, finalURL, charset));
     }
@@ -64,12 +66,7 @@ public:
 
     virtual ~CSSStyleSheet();
 
-    CSSStyleSheet* parentStyleSheet() const
-    {
-        StyleSheet* parentSheet = StyleSheet::parentStyleSheet();
-        ASSERT(!parentSheet || parentSheet->isCSSStyleSheet());
-        return static_cast<CSSStyleSheet*>(parentSheet);
-    }
+    virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
 
     PassRefPtr<CSSRuleList> cssRules();
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
@@ -113,7 +110,7 @@ public:
     void setHasSyntacticallyValidCSSHeader(bool b) { m_hasSyntacticallyValidCSSHeader = b; }
     bool hasSyntacticallyValidCSSHeader() const { return m_hasSyntacticallyValidCSSHeader; }
 
-    void parserAppendRule(PassRefPtr<CSSRule>);
+    void parserAppendRule(PassRefPtr<StyleRuleBase>);
     void parserSetEncodingFromCharsetRule(const String& encoding); 
 
     void clearRules();
@@ -122,8 +119,8 @@ public:
     CSSRule* item(unsigned index);
 
     // Rules other than @charset and @import.
-    const Vector<RefPtr<CSSRule> >& childRules() const { return m_childRules; }
-    const Vector<RefPtr<CSSImportRule> >& importRules() const { return m_importRules; }
+    const Vector<RefPtr<StyleRuleBase> >& childRules() const { return m_childRules; }
+    const Vector<RefPtr<StyleRuleImport> >& importRules() const { return m_importRules; }
 
     virtual MediaList* media() const OVERRIDE;
 
@@ -131,22 +128,28 @@ public:
     void setMediaQueries(PassRefPtr<MediaQuerySet>);
 
     void notifyLoadedSheet(const CachedCSSStyleSheet*);
+    
+    virtual CSSImportRule* ownerRule() const OVERRIDE;
+    void clearOwnerRule() { m_ownerRule = 0; }
+    
+    CSSImportRule* ensureCSSOMWrapper(StyleRuleImport*);
 
 private:
     CSSStyleSheet(Node* ownerNode, const String& originalURL, const KURL& finalURL, const String& charset);
-    CSSStyleSheet(CSSImportRule* ownerRule, const String& originalURL, const KURL& finalURL, const String& charset);
+    CSSStyleSheet(StyleRuleImport* ownerRule, const String& originalURL, const KURL& finalURL, const String& charset);
 
     virtual bool isCSSStyleSheet() const { return true; }
     virtual String type() const { return "text/css"; }
     
     void clearCharsetRule();
-    bool hasCharsetRule() const { return !m_encodingFromCharsetRule.isNull() || m_charsetRuleCSSOMWrapper; }
-    CSSCharsetRule* ensureCharsetRule();
+    bool hasCharsetRule() const { return !m_encodingFromCharsetRule.isNull(); }
 
+    PassRefPtr<CSSRule> createChildRuleCSSOMWrapper(unsigned index);
+
+    StyleRuleImport* m_ownerRule;
     String m_encodingFromCharsetRule;
-    RefPtr<CSSCharsetRule> m_charsetRuleCSSOMWrapper;
-    Vector<RefPtr<CSSImportRule> > m_importRules;
-    Vector<RefPtr<CSSRule> > m_childRules;
+    Vector<RefPtr<StyleRuleImport> > m_importRules;
+    Vector<RefPtr<StyleRuleBase> > m_childRules;
     OwnPtr<CSSNamespace> m_namespaces;
     String m_charset;
     RefPtr<MediaQuerySet> m_mediaQueries;
@@ -156,8 +159,9 @@ private:
     bool m_isUserStyleSheet : 1;
     bool m_hasSyntacticallyValidCSSHeader : 1;
     bool m_didLoadErrorOccur : 1;
-    
-    OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
+
+    mutable Vector<RefPtr<CSSRule> > m_childRuleCSSOMWrappers;
+    mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 
 } // namespace

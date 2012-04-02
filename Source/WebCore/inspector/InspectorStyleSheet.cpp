@@ -1097,7 +1097,7 @@ bool InspectorStyleSheet::ensureSourceData()
     RefPtr<CSSRuleList> ruleList = asCSSRuleList(newStyleSheet.get());
     collectFlatRules(ruleList, &rules);
     for (unsigned i = 0, size = rules.size(); i < size; ++i) {
-        StyleRuleRangeMap::iterator it = ruleRangeMap.find(rules.at(i));
+        StyleRuleRangeMap::iterator it = ruleRangeMap.find(rules.at(i)->styleRule());
         if (it != ruleRangeMap.end()) {
             fixUnparsedPropertyRanges(it->second.get(), m_parsedStyleSheet->text());
             rangesVector->append(it->second);

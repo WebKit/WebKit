@@ -30,46 +30,38 @@
 #ifndef WebKitCSSRegionRule_h
 #define WebKitCSSRegionRule_h
 
-#include "CSSSelectorList.h"
-#include "CSSStyleRule.h"
-
+#include "CSSRule.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class CSSParserSelector;
 class CSSRuleList;
+class StyleRuleRegion;
 
-class WebKitCSSRegionRule: public CSSRule {
+class WebKitCSSRegionRule : public CSSRule {
 public:
-    static PassRefPtr<WebKitCSSRegionRule> create(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<CSSRule> >& rules)
-    {
-        return adoptRef(new WebKitCSSRegionRule(parent, selectors, rules));
-    }
+    static PassRefPtr<WebKitCSSRegionRule> create(StyleRuleRegion* rule, CSSStyleSheet* sheet) { return adoptRef(new WebKitCSSRegionRule(rule, sheet)); }
 
     ~WebKitCSSRegionRule();
 
     String cssText() const;
-    const CSSSelectorList& selectorList() const { return m_selectorList; }
-    CSSRuleList* cssRules();
-
-    // Not part of the CSSOM.
-    unsigned ruleCount() const { return m_childRules.size(); }
-    CSSRule* ruleAt(unsigned index) const { return m_childRules[index].get(); }
+    CSSRuleList* cssRules() const;
     
     // For CSSRuleList
-    unsigned length() const { return ruleCount(); }
-    CSSRule* item(unsigned index) const { return index < ruleCount() ? ruleAt(index) : 0; }
+    unsigned length() const;
+    CSSRule* item(unsigned index) const;
 
 private:
-    WebKitCSSRegionRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<CSSRule> >&);
+    WebKitCSSRegionRule(StyleRuleRegion*, CSSStyleSheet* parent);
 
-    CSSSelectorList m_selectorList;
-    Vector<RefPtr<CSSRule> > m_childRules;
+    RefPtr<StyleRuleRegion> m_regionRule;
     
-    OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
+    mutable Vector<RefPtr<CSSRule> > m_childRuleCSSOMWrappers;
+    mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
+    
+    friend class StyleRuleBlock;
 };
 
 }

@@ -43,6 +43,7 @@ class CSSSegmentedFontFace;
 class CachedFont;
 class Document;
 class FontDescription;
+class StyleRuleFontFace;
 
 class CSSFontSelector : public FontSelector {
 public:
@@ -58,7 +59,7 @@ public:
 
     void clearDocument();
 
-    void addFontFaceRule(const CSSFontFaceRule*);
+    void addFontFaceRule(const StyleRuleFontFace*);
 
     void fontLoaded();
     virtual void fontCacheInvalidated();

@@ -49,7 +49,6 @@ class CSSBorderImageSliceValue;
 class CSSPrimitiveValue;
 class CSSValuePool;
 class CSSProperty;
-class CSSRule;
 class CSSSelectorList;
 class CSSStyleSheet;
 class CSSValue;
@@ -58,11 +57,13 @@ class CSSWrapShape;
 class Document;
 class MediaQueryExp;
 class MediaQuerySet;
+class StyleKeyframe;
 class StylePropertySet;
 class StylePropertyShorthand;
+class StyleRuleBase;
+class StyleRuleKeyframes;
 class StyleKeyframe;
 class StyledElement;
-class WebKitCSSKeyframesRule;
 
 class CSSParser {
 public:
@@ -71,7 +72,7 @@ public:
     ~CSSParser();
 
     void parseSheet(CSSStyleSheet*, const String&, int startLineNumber = 0, StyleRuleRangeMap* ruleRangeMap = 0);
-    PassRefPtr<CSSRule> parseRule(CSSStyleSheet*, const String&);
+    PassRefPtr<StyleRuleBase> parseRule(CSSStyleSheet*, const String&);
     PassRefPtr<StyleKeyframe> parseKeyframeRule(CSSStyleSheet*, const String&);
     static bool parseValue(StylePropertySet*, int propId, const String&, bool important, CSSParserMode, CSSStyleSheet* contextStyleSheet);
     static bool parseColor(RGBA32& color, const String&, bool strict = false);
@@ -246,18 +247,18 @@ public:
     CSSParserValue& sinkFloatingValue(CSSParserValue&);
 
     MediaQuerySet* createMediaQuerySet();
-    CSSRule* createImportRule(const CSSParserString&, MediaQuerySet*);
+    StyleRuleBase* createImportRule(const CSSParserString&, MediaQuerySet*);
     StyleKeyframe* createKeyframe(CSSParserValueList*);
-    WebKitCSSKeyframesRule* createKeyframesRule();
+    StyleRuleKeyframes* createKeyframesRule();
 
-    typedef Vector<RefPtr<CSSRule> > RuleList;
-    CSSRule* createMediaRule(MediaQuerySet*, RuleList*);
+    typedef Vector<RefPtr<StyleRuleBase> > RuleList;
+    StyleRuleBase* createMediaRule(MediaQuerySet*, RuleList*);
     RuleList* createRuleList();
-    CSSRule* createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selectors);
-    CSSRule* createFontFaceRule();
-    CSSRule* createPageRule(PassOwnPtr<CSSParserSelector> pageSelector);
-    CSSRule* createRegionRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, RuleList* rules);
-    CSSRule* createMarginAtRule(CSSSelector::MarginBoxType marginBox);
+    StyleRuleBase* createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selectors);
+    StyleRuleBase* createFontFaceRule();
+    StyleRuleBase* createPageRule(PassOwnPtr<CSSParserSelector> pageSelector);
+    StyleRuleBase* createRegionRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, RuleList* rules);
+    StyleRuleBase* createMarginAtRule(CSSSelector::MarginBoxType);
     void startDeclarationsForMarginBox();
     void endDeclarationsForMarginBox();
 
@@ -289,7 +290,7 @@ public:
     bool m_important;
     int m_id;
     CSSStyleSheet* m_styleSheet;
-    RefPtr<CSSRule> m_rule;
+    RefPtr<StyleRuleBase> m_rule;
     RefPtr<StyleKeyframe> m_keyframe;
     OwnPtr<MediaQuery> m_mediaQuery;
     OwnPtr<CSSParserValueList> m_valueList;
@@ -403,7 +404,7 @@ private:
     bool m_allowImportRules;
     bool m_allowNamespaceDeclarations;
 
-    Vector<RefPtr<CSSRule> > m_parsedRules;
+    Vector<RefPtr<StyleRuleBase> > m_parsedRules;
     Vector<RefPtr<StyleKeyframe> > m_parsedKeyframes;
     Vector<RefPtr<MediaQuerySet> > m_parsedMediaQuerySets;
     Vector<OwnPtr<RuleList> > m_parsedRuleLists;

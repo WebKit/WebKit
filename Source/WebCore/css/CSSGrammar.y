@@ -24,7 +24,6 @@
 
 #include "config.h"
 
-#include "CSSMediaRule.h"
 #include "CSSParser.h"
 #include "CSSParserMode.h"
 #include "CSSPrimitiveValue.h"
@@ -36,6 +35,7 @@
 #include "HTMLNames.h"
 #include "MediaList.h"
 #include "MediaQueryExp.h"
+#include "StyleRule.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include <wtf/FastMalloc.h>
@@ -68,8 +68,8 @@ using namespace HTMLNames;
     double number;
     CSSParserString string;
 
-    CSSRule* rule;
-    Vector<RefPtr<CSSRule> >* ruleList;
+    StyleRuleBase* rule;
+    Vector<RefPtr<StyleRuleBase> >* ruleList;
     CSSParserSelector* selector;
     Vector<OwnPtr<CSSParserSelector> >* selectorList;
     CSSSelector::MarginBoxType marginBox;
@@ -82,7 +82,7 @@ using namespace HTMLNames;
     CSSParserValueList* valueList;
     Vector<OwnPtr<MediaQueryExp> >* mediaQueryExpList;
     StyleKeyframe* keyframe;
-    WebKitCSSKeyframesRule* keyframesRule;
+    StyleRuleKeyframes* keyframesRule;
     float val;
 }
 
@@ -613,7 +613,7 @@ medium:
 keyframes:
     WEBKIT_KEYFRAMES_SYM maybe_space keyframe_name maybe_space '{' maybe_space keyframes_rule '}' {
         $$ = $7;
-        $7->setNameInternal($3);
+        $7->setName($3);
     }
     ;
   

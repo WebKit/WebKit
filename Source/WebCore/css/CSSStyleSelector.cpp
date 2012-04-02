@@ -239,9 +239,9 @@ public:
 
     void addStyleRule(StyleRule*, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool isInRegionRule = false);
     void addRule(StyleRule*, CSSSelector*, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool isInRegionRule = false);
-    void addPageRule(CSSPageRule*);
+    void addPageRule(StyleRulePage*);
     void addToRuleSet(AtomicStringImpl* key, AtomRuleMap&, const RuleData&);
-    void addRegionRule(WebKitCSSRegionRule*, bool hasDocumentSecurityOrigin);
+    void addRegionRule(StyleRuleRegion*, bool hasDocumentSecurityOrigin);
     void shrinkToFit();
     void disableAutoShrinkToFit() { m_autoShrinkToFitEnabled = false; }
 
@@ -254,7 +254,7 @@ public:
     const Vector<RuleData>* linkPseudoClassRules() const { return &m_linkPseudoClassRules; }
     const Vector<RuleData>* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
     const Vector<RuleData>* universalRules() const { return &m_universalRules; }
-    const Vector<CSSPageRule*>& pageRules() const { return m_pageRules; }
+    const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
 
 public:
     RuleSet();
@@ -266,7 +266,7 @@ public:
     Vector<RuleData> m_linkPseudoClassRules;
     Vector<RuleData> m_focusPseudoClassRules;
     Vector<RuleData> m_universalRules;
-    Vector<CSSPageRule*> m_pageRules;
+    Vector<StyleRulePage*> m_pageRules;
     unsigned m_ruleCount;
     bool m_autoShrinkToFitEnabled;
     CSSStyleSelector::Features m_features;
@@ -297,7 +297,8 @@ RenderStyle* CSSStyleSelector::s_styleNotYetAvailable;
 
 static void loadFullDefaultStyle();
 static void loadSimpleDefaultStyle();
-static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >&, CSSStyleSheet*);
+template <class ListType>
+static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >&, ListType*);
 
 // FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
 static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}head{display:none}body{margin:8px}div:focus,span:focus{outline:auto 5px -webkit-focus-ring-color}a:-webkit-any-link{color:-webkit-link;text-decoration:underline}a:-webkit-any-link:active{color:-webkit-activelink}";
@@ -612,7 +613,7 @@ void CSSStyleSelector::popParentShadowRoot(const ShadowRoot* shadowRoot)
 }
 
 // This is a simplified style setting function for keyframe styles
-void CSSStyleSelector::addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule> rule)
+void CSSStyleSelector::addKeyframeStyle(PassRefPtr<StyleRuleKeyframes> rule)
 {
     AtomicString s(rule->name());
     m_keyframesRuleMap.set(s.impl(), rule);
@@ -868,7 +869,7 @@ void CSSStyleSelector::sortAndTransferMatchedRules(MatchResult& result)
         if (!m_ruleList)
             m_ruleList = StaticCSSRuleList::create();
         for (unsigned i = 0; i < m_matchedRules.size(); ++i)
-            m_ruleList->rules().append(m_matchedRules[i]->rule()->ensureCSSStyleRule());
+            m_ruleList->rules().append(m_matchedRules[i]->rule()->createCSSOMWrapper());
         return;
     }
 
@@ -1704,7 +1705,7 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
     if (it == m_keyframesRuleMap.end())
         return;
 
-    const WebKitCSSKeyframesRule* keyframesRule = it->second.get();
+    const StyleRuleKeyframes* keyframesRule = it->second.get();
 
     // Construct and populate the style for each keyframe
     const Vector<RefPtr<StyleKeyframe> >& keyframes = keyframesRule->keyframes();
@@ -2236,7 +2237,7 @@ bool CSSStyleSelector::determineStylesheetSelectorScopes(CSSStyleSheet* styleshe
 {
     ASSERT(!stylesheet->isLoading());
 
-    const Vector<RefPtr<CSSImportRule> >& importRules = stylesheet->importRules();
+    const Vector<RefPtr<StyleRuleImport> >& importRules = stylesheet->importRules();
     for (unsigned i = 0; i < importRules.size(); ++i) {
         if (!importRules[i]->styleSheet())
             continue;
@@ -2244,11 +2245,11 @@ bool CSSStyleSelector::determineStylesheetSelectorScopes(CSSStyleSheet* styleshe
             return false;
     }
 
-    const Vector<RefPtr<CSSRule> >& rules = stylesheet->childRules();
+    const Vector<RefPtr<StyleRuleBase> >& rules = stylesheet->childRules();
     for (unsigned i = 0; i < rules.size(); i++) {
-        CSSRule* rule = rules[i].get();
+        StyleRuleBase* rule = rules[i].get();
         if (rule->isStyleRule()) {
-            StyleRule* styleRule = static_cast<CSSStyleRule*>(rule)->styleRule();
+            StyleRule* styleRule = static_cast<StyleRule*>(rule);
             if (!SelectorChecker::determineSelectorScopes(styleRule->selectorList(), idScopes, classScopes))
                 return false;
             continue;
@@ -2431,12 +2432,12 @@ void RuleSet::addRule(StyleRule* rule, CSSSelector* selector, bool hasDocumentSe
     m_universalRules.append(ruleData);
 }
 
-void RuleSet::addPageRule(CSSPageRule* rule)
+void RuleSet::addPageRule(StyleRulePage* rule)
 {
     m_pageRules.append(rule);
 }
 
-void RuleSet::addRegionRule(WebKitCSSRegionRule* regionRule, bool hasDocumentSecurityOrigin)
+void RuleSet::addRegionRule(StyleRuleRegion* regionRule, bool hasDocumentSecurityOrigin)
 {
     OwnPtr<RuleSet> regionRuleSet = RuleSet::create();
     // The region rule set should take into account the position inside the parent rule set.
@@ -2445,11 +2446,11 @@ void RuleSet::addRegionRule(WebKitCSSRegionRule* regionRule, bool hasDocumentSec
     regionRuleSet->m_ruleCount = m_ruleCount;
 
     // Collect the region rules into a rule set
-    unsigned rulesSize = regionRule->ruleCount();
-    for (unsigned i = 0; i < rulesSize; ++i) {
-        CSSRule* regionStylingRule = regionRule->ruleAt(i);
+    const Vector<RefPtr<StyleRuleBase> >& childRules = regionRule->childRules();
+    for (unsigned i = 0; i < childRules.size(); ++i) {
+        StyleRuleBase* regionStylingRule = childRules[i].get();
         if (regionStylingRule->isStyleRule())
-            regionRuleSet->addStyleRule(static_cast<CSSStyleRule*>(regionStylingRule)->styleRule(), hasDocumentSecurityOrigin, true, true);
+            regionRuleSet->addStyleRule(static_cast<StyleRule*>(regionStylingRule), hasDocumentSecurityOrigin, true, true);
     }
     // Update the "global" rule count so that proper order is maintained
     m_ruleCount = regionRuleSet->m_ruleCount;
@@ -2466,40 +2467,41 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
     if (sheet->mediaQueries() && !medium.eval(sheet->mediaQueries(), styleSelector))
         return; // the style sheet doesn't apply
     
-    const Vector<RefPtr<CSSImportRule> >& importRules = sheet->importRules();
+    const Vector<RefPtr<StyleRuleImport> >& importRules = sheet->importRules();
     for (unsigned i = 0; i < importRules.size(); ++i) {
-        CSSImportRule* importRule = importRules[i].get();
+        StyleRuleImport* importRule = importRules[i].get();
         if (importRule->styleSheet() && (!importRule->mediaQueries() || medium.eval(importRule->mediaQueries(), styleSelector)))
             addRulesFromSheet(importRule->styleSheet(), medium, styleSelector, scope);
     }
     bool hasDocumentSecurityOrigin = styleSelector && styleSelector->document()->securityOrigin()->canRequest(sheet->baseURL());
 
-    const Vector<RefPtr<CSSRule> >& rules = sheet->childRules();
+    const Vector<RefPtr<StyleRuleBase> >& rules = sheet->childRules();
     for (unsigned i = 0; i < rules.size(); ++i) {
-        CSSRule* rule = rules[i].get();
+        StyleRuleBase* rule = rules[i].get();
 
         ASSERT(!rule->isImportRule());
         if (rule->isStyleRule())
-            addStyleRule(static_cast<CSSStyleRule*>(rule)->styleRule(), hasDocumentSecurityOrigin, !scope);
+            addStyleRule(static_cast<StyleRule*>(rule), hasDocumentSecurityOrigin, !scope);
         else if (rule->isPageRule())
-            addPageRule(static_cast<CSSPageRule*>(rule));
+            addPageRule(static_cast<StyleRulePage*>(rule));
         else if (rule->isMediaRule()) {
-            CSSMediaRule* mediaRule = static_cast<CSSMediaRule*>(rule);
+            StyleRuleMedia* mediaRule = static_cast<StyleRuleMedia*>(rule);
 
-            if ((!mediaRule->mediaQueries() || medium.eval(mediaRule->mediaQueries(), styleSelector)) && mediaRule->ruleCount()) {
+            if ((!mediaRule->mediaQueries() || medium.eval(mediaRule->mediaQueries(), styleSelector))) {
                 // Traverse child elements of the @media rule.
-                for (unsigned j = 0; j < mediaRule->ruleCount(); j++) {
-                    CSSRule* childRule = mediaRule->ruleAt(j);
+                const Vector<RefPtr<StyleRuleBase> >& childRules = mediaRule->childRules();
+                for (unsigned j = 0; j < childRules.size(); ++j) {
+                    StyleRuleBase* childRule = childRules[j].get();
                     if (childRule->isStyleRule())
-                        addStyleRule(static_cast<CSSStyleRule*>(childRule)->styleRule(), hasDocumentSecurityOrigin, !scope);
+                        addStyleRule(static_cast<StyleRule*>(childRule), hasDocumentSecurityOrigin, !scope);
                     else if (childRule->isPageRule())
-                        addPageRule(static_cast<CSSPageRule*>(childRule));
+                        addPageRule(static_cast<StyleRulePage*>(childRule));
                     else if (childRule->isFontFaceRule() && styleSelector) {
                         // Add this font face to our set.
                         // FIXME(BUG 72461): We don't add @font-face rules of scoped style sheets for the moment.
                         if (scope)
                             continue;
-                        const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(childRule);
+                        const StyleRuleFontFace* fontFaceRule = static_cast<StyleRuleFontFace*>(childRule);
                         styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
                         styleSelector->invalidateMatchedPropertiesCache();
                     } else if (childRule->isKeyframesRule() && styleSelector) {
@@ -2507,7 +2509,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
                         // FIXME(BUG 72462): We don't add @keyframe rules of scoped style sheets for the moment.
                         if (scope)
                             continue;
-                        styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(childRule));
+                        styleSelector->addKeyframeStyle(static_cast<StyleRuleKeyframes*>(childRule));
                     }
                 }   // for rules
             }   // if rules
@@ -2516,19 +2518,19 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
             // FIXME(BUG 72461): We don't add @font-face rules of scoped style sheets for the moment.
             if (scope)
                 continue;
-            const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(rule);
+            const StyleRuleFontFace* fontFaceRule = static_cast<StyleRuleFontFace*>(rule);
             styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
             styleSelector->invalidateMatchedPropertiesCache();
         } else if (rule->isKeyframesRule()) {
             // FIXME (BUG 72462): We don't add @keyframe rules of scoped style sheets for the moment.
             if (scope)
                 continue;
-            styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(rule));
+            styleSelector->addKeyframeStyle(static_cast<StyleRuleKeyframes*>(rule));
         } else if (rule->isRegionRule() && styleSelector) {
             // FIXME (BUG 72472): We don't add @-webkit-region rules of scoped style sheets for the moment.
             if (scope)
                 continue;
-            addRegionRule(static_cast<WebKitCSSRegionRule*>(rule), hasDocumentSecurityOrigin);
+            addRegionRule(static_cast<StyleRuleRegion*>(rule), hasDocumentSecurityOrigin);
         }
     }
     if (m_autoShrinkToFitEnabled)
@@ -2810,7 +2812,7 @@ void CSSStyleSelector::applyMatchedProperties(const MatchResult& matchResult)
     addToMatchedPropertiesCache(m_style.get(), m_parentStyle, cacheHash, matchResult);
 }
 
-static inline bool comparePageRules(const CSSPageRule* r1, const CSSPageRule* r2)
+static inline bool comparePageRules(const StyleRulePage* r1, const StyleRulePage* r2)
 {
     return r1->selector()->specificity() < r2->selector()->specificity();
 }
@@ -2820,7 +2822,7 @@ void CSSStyleSelector::matchPageRules(MatchResult& result, RuleSet* rules, bool 
     if (!rules)
         return;
 
-    Vector<CSSPageRule*> matchedPageRules;
+    Vector<StyleRulePage*> matchedPageRules;
     matchPageRulesForList(matchedPageRules, rules->pageRules(), isLeftPage, isFirstPage, pageName);
     if (matchedPageRules.isEmpty())
         return;
@@ -2831,11 +2833,11 @@ void CSSStyleSelector::matchPageRules(MatchResult& result, RuleSet* rules, bool 
         addMatchedProperties(result, matchedPageRules[i]->properties());
 }
 
-void CSSStyleSelector::matchPageRulesForList(Vector<CSSPageRule*>& matchedRules, const Vector<CSSPageRule*>& rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+void CSSStyleSelector::matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const String& pageName)
 {
     unsigned size = rules.size();
     for (unsigned i = 0; i < size; ++i) {
-        CSSPageRule* rule = rules[i];
+        StyleRulePage* rule = rules[i];
         const AtomicString& selectorLocalName = rule->selector()->tag().localName();
         if (selectorLocalName != starAtom && selectorLocalName != pageName)
             continue;
@@ -2876,29 +2878,25 @@ String CSSStyleSelector::pageName(int /* pageIndex */) const
     return "";
 }
 
-static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, CSSRuleList* ruleList)
+template <class ListType>
+static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, ListType* listType)
 {
-    unsigned size = ruleList->length();
+    if (!listType)
+        return;
+    unsigned size = listType->length();
     for (unsigned i = 0; i < size; ++i) {
-        CSSRule* cssRule = ruleList->item(i);
+        CSSRule* cssRule = listType->item(i);
         if (cssRule->isImportRule())
             collectCSSOMWrappers(wrapperMap, static_cast<CSSImportRule*>(cssRule)->styleSheet());
         else if (cssRule->isMediaRule())
-            collectCSSOMWrappers(wrapperMap, static_cast<CSSMediaRule*>(cssRule)->cssRules());
+            collectCSSOMWrappers(wrapperMap, static_cast<CSSMediaRule*>(cssRule));
         else if (cssRule->isRegionRule())
-            collectCSSOMWrappers(wrapperMap, static_cast<WebKitCSSRegionRule*>(cssRule)->cssRules());
+            collectCSSOMWrappers(wrapperMap, static_cast<WebKitCSSRegionRule*>(cssRule));
         else if (cssRule->isStyleRule()) {
             CSSStyleRule* cssStyleRule = static_cast<CSSStyleRule*>(cssRule);
             wrapperMap.add(cssStyleRule->styleRule(), cssStyleRule);
         }
     }
-}
-
-static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, CSSStyleSheet* styleSheet)
-{
-    if (!styleSheet)
-        return;
-    collectCSSOMWrappers(wrapperMap, styleSheet->cssRules().get());
 }
 
 static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, Document* document)

@@ -29,16 +29,14 @@ namespace WebCore {
 
 StyleSheet::StyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL)
     : m_disabled(false)
-    , m_ownerRule(0)
     , m_ownerNode(parentNode)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
 {
 }
 
-StyleSheet::StyleSheet(CSSImportRule* parentRule, const String& originalURL, const KURL& finalURL)
+StyleSheet::StyleSheet(const String& originalURL, const KURL& finalURL)
     : m_disabled(false)
-    , m_ownerRule(parentRule)
     , m_ownerNode(0)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
@@ -47,12 +45,6 @@ StyleSheet::StyleSheet(CSSImportRule* parentRule, const String& originalURL, con
 
 StyleSheet::~StyleSheet()
 {
-}
-
-StyleSheet* StyleSheet::parentStyleSheet() const
-{
-    ASSERT(isCSSStyleSheet());
-    return m_ownerRule ? m_ownerRule->parentStyleSheet() : 0;
 }
 
 KURL StyleSheet::baseURL() const

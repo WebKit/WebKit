@@ -25,13 +25,16 @@
 #include "CSSParser.h"
 #include "CSSSelector.h"
 #include "Document.h"
+#include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertySet.h"
+#include "StyleRule.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-CSSPageRule::CSSPageRule(CSSStyleSheet* parent)
+CSSPageRule::CSSPageRule(StyleRulePage* pageRule, CSSStyleSheet* parent)
     : CSSRule(parent, CSSRule::PAGE_RULE)
+    , m_pageRule(pageRule)
 {
 }
 
@@ -44,14 +47,14 @@ CSSPageRule::~CSSPageRule()
 CSSStyleDeclaration* CSSPageRule::style() const
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_style.get(), const_cast<CSSPageRule*>(this));
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_pageRule->properties(), const_cast<CSSPageRule*>(this));
     return m_propertiesCSSOMWrapper.get();
 }
 
 String CSSPageRule::selectorText() const
 {
     String text = "@page";
-    const CSSSelector* selector = this->selector();
+    const CSSSelector* selector = m_pageRule->selector();
     if (selector) {
         String pageSpecification = selector->selectorText();
         if (!pageSpecification.isEmpty() && pageSpecification != starAtom)
@@ -75,7 +78,7 @@ void CSSPageRule::setSelectorText(const String& selectorText)
         return;
     
     String oldSelectorText = this->selectorText();
-    m_selectorList.adopt(selectorList);
+    m_pageRule->wrapperAdoptSelectorList(selectorList);
     
     if (this->selectorText() == oldSelectorText)
         return;
@@ -86,7 +89,7 @@ String CSSPageRule::cssText() const
 {
     String result = selectorText();
     result += " { ";
-    result += m_style->asText();
+    result += m_pageRule->properties()->asText();
     result += "}";
     return result;
 }

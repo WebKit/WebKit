@@ -27,8 +27,8 @@
 
 namespace WebCore {
 
-class CSSFontFaceRule;
 class SVGFontElement;
+class StyleRuleFontFace;
 
 class SVGFontFaceElement : public SVGElement {
 public:
@@ -49,7 +49,7 @@ public:
     SVGFontElement* associatedFontElement() const;
     void rebuildFontFace();
     
-    CSSFontFaceRule* fontFaceRule() const { return m_fontFaceRule.get(); }
+    StyleRuleFontFace* fontFaceRule() const { return m_fontFaceRule.get(); }
 
 private:
     SVGFontFaceElement(const QualifiedName&, Document*);
@@ -60,7 +60,7 @@ private:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 
-    RefPtr<CSSFontFaceRule> m_fontFaceRule;
+    RefPtr<StyleRuleFontFace> m_fontFaceRule;
     RefPtr<SVGFontElement> m_fontElement;
 };
 

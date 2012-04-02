@@ -29,7 +29,6 @@
 
 #include "CachedFont.h"
 #include "CSSFontFace.h"
-#include "CSSFontFaceRule.h"
 #include "CSSFontFaceSource.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSPrimitiveValue.h"
@@ -47,6 +46,7 @@
 #include "Settings.h"
 #include "SimpleFontData.h"
 #include "StylePropertySet.h"
+#include "StyleRule.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/text/AtomicString.h>
 
@@ -83,10 +83,10 @@ bool CSSFontSelector::isEmpty() const
     return m_fonts.isEmpty();
 }
 
-void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
+void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
 {
     // Obtain the font-family property and the src property.  Both must be defined.
-    const StylePropertySet* style = fontFaceRule->declaration();
+    const StylePropertySet* style = fontFaceRule->properties();
     RefPtr<CSSValue> fontFamily = style->getPropertyCSSValue(CSSPropertyFontFamily);
     RefPtr<CSSValue> src = style->getPropertyCSSValue(CSSPropertySrc);
     RefPtr<CSSValue> unicodeRange = style->getPropertyCSSValue(CSSPropertyUnicodeRange);

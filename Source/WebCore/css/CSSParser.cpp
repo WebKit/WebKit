@@ -277,7 +277,7 @@ void CSSParser::parseSheet(CSSStyleSheet* sheet, const String& string, int start
     m_rule = 0;
 }
 
-PassRefPtr<CSSRule> CSSParser::parseRule(CSSStyleSheet* sheet, const String& string)
+PassRefPtr<StyleRuleBase> CSSParser::parseRule(CSSStyleSheet* sheet, const String& string)
 {
     setStyleSheet(sheet);
     m_allowNamespaceDeclarations = false;
@@ -9012,23 +9012,23 @@ MediaQuerySet* CSSParser::createMediaQuerySet()
     return result;
 }
 
-CSSRule* CSSParser::createImportRule(const CSSParserString& url, MediaQuerySet* media)
+StyleRuleBase* CSSParser::createImportRule(const CSSParserString& url, MediaQuerySet* media)
 {
     if (!media || !m_styleSheet || !m_allowImportRules)
         return 0;
-    RefPtr<CSSImportRule> rule = CSSImportRule::create(m_styleSheet, url, media);
-    CSSImportRule* result = rule.get();
+    RefPtr<StyleRuleImport> rule = StyleRuleImport::create(m_styleSheet, url, media);
+    StyleRuleImport* result = rule.get();
     m_parsedRules.append(rule.release());
     return result;
 }
 
-CSSRule* CSSParser::createMediaRule(MediaQuerySet* media, RuleList* rules)
+StyleRuleBase* CSSParser::createMediaRule(MediaQuerySet* media, RuleList* rules)
 {
     if (!media || !rules || !m_styleSheet)
         return 0;
     m_allowImportRules = m_allowNamespaceDeclarations = false;
-    RefPtr<CSSMediaRule> rule = CSSMediaRule::create(m_styleSheet, media, *rules);
-    CSSMediaRule* result = rule.get();
+    RefPtr<StyleRuleMedia> rule = StyleRuleMedia::create(media, *rules);
+    StyleRuleMedia* result = rule.get();
     m_parsedRules.append(rule.release());
     return result;
 }
@@ -9042,26 +9042,26 @@ CSSParser::RuleList* CSSParser::createRuleList()
     return listPtr;
 }
 
-WebKitCSSKeyframesRule* CSSParser::createKeyframesRule()
+StyleRuleKeyframes* CSSParser::createKeyframesRule()
 {
     m_allowImportRules = m_allowNamespaceDeclarations = false;
-    RefPtr<WebKitCSSKeyframesRule> rule = WebKitCSSKeyframesRule::create(m_styleSheet);
-    WebKitCSSKeyframesRule* rulePtr = rule.get();
+    RefPtr<StyleRuleKeyframes> rule = StyleRuleKeyframes::create();
+    StyleRuleKeyframes* rulePtr = rule.get();
     m_parsedRules.append(rule.release());
     return rulePtr;
 }
 
-CSSRule* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selectors)
+StyleRuleBase* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selectors)
 {
-    CSSStyleRule* result = 0;
+    StyleRule* result = 0;
     markRuleBodyEnd();
     if (selectors) {
         m_allowImportRules = m_allowNamespaceDeclarations = false;
-        RefPtr<CSSStyleRule> rule = CSSStyleRule::create(m_styleSheet, m_lastSelectorLineNumber);
-        rule->styleRule()->adoptSelectorVector(*selectors);
+        RefPtr<StyleRule> rule = StyleRule::create(m_lastSelectorLineNumber);
+        rule->parserAdoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
-        rule->styleRule()->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
+        rule->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
         result = rule.get();
         m_parsedRules.append(rule.release());
         if (m_ruleRangeMap) {
@@ -9080,7 +9080,7 @@ CSSRule* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selector
     return result;
 }
 
-CSSRule* CSSParser::createFontFaceRule()
+StyleRuleBase* CSSParser::createFontFaceRule()
 {
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     for (unsigned i = 0; i < m_parsedProperties.size(); ++i) {
@@ -9096,10 +9096,10 @@ CSSRule* CSSParser::createFontFaceRule()
             return 0;
         }
     }
-    RefPtr<CSSFontFaceRule> rule = CSSFontFaceRule::create(m_styleSheet);
-    rule->setDeclaration(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
+    RefPtr<StyleRuleFontFace> rule = StyleRuleFontFace::create();
+    rule->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
     clearProperties();
-    CSSFontFaceRule* result = rule.get();
+    StyleRuleFontFace* result = rule.get();
     m_parsedRules.append(rule.release());
     return result;
 }
@@ -9158,17 +9158,17 @@ CSSParserSelector* CSSParser::updateSpecifiers(CSSParserSelector* specifiers, CS
     return specifiers;
 }
 
-CSSRule* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelector)
+StyleRuleBase* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelector)
 {
     // FIXME: Margin at-rules are ignored.
     m_allowImportRules = m_allowNamespaceDeclarations = false;
-    CSSPageRule* pageRule = 0;
+    StyleRulePage* pageRule = 0;
     if (pageSelector) {
-        RefPtr<CSSPageRule> rule = CSSPageRule::create(m_styleSheet);
+        RefPtr<StyleRulePage> rule = StyleRulePage::create();
         Vector<OwnPtr<CSSParserSelector> > selectorVector;
         selectorVector.append(pageSelector);
-        rule->adoptSelectorVector(selectorVector);
-        rule->setDeclaration(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
+        rule->parserAdoptSelectorVector(selectorVector);
+        rule->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
         pageRule = rule.get();
         m_parsedRules.append(rule.release());
     }
@@ -9182,22 +9182,22 @@ void CSSParser::setReusableRegionSelectorVector(Vector<OwnPtr<CSSParserSelector>
         m_reusableRegionSelectorVector.swap(*selectors);
 }
 
-CSSRule* CSSParser::createRegionRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, RuleList* rules)
+StyleRuleBase* CSSParser::createRegionRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, RuleList* rules)
 {
     if (!cssRegionsEnabled() || !regionSelector || !rules)
         return 0;
 
     m_allowImportRules = m_allowNamespaceDeclarations = false;
 
-    RefPtr<WebKitCSSRegionRule> regionRule = WebKitCSSRegionRule::create(m_styleSheet, regionSelector, *rules);
+    RefPtr<StyleRuleRegion> regionRule = StyleRuleRegion::create(regionSelector, *rules);
 
-    WebKitCSSRegionRule* result = regionRule.get();
+    StyleRuleRegion* result = regionRule.get();
     m_parsedRules.append(regionRule.release());
 
     return result;
 }
 
-CSSRule* CSSParser::createMarginAtRule(CSSSelector::MarginBoxType /* marginBox */)
+StyleRuleBase* CSSParser::createMarginAtRule(CSSSelector::MarginBoxType /* marginBox */)
 {
     // FIXME: Implement margin at-rule here, using:
     //        - marginBox: margin box

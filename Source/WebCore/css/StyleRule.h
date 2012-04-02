@@ -23,39 +23,164 @@
 #define StyleRule_h
 
 #include "CSSSelectorList.h"
-#include "StylePropertySet.h"
-#include <wtf/PassRefPtr.h>
+#include "MediaList.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class CSSRule;
 class CSSStyleRule;
+class CSSStyleSheet;
+class StylePropertySet;
 
-class StyleRule {
-    WTF_MAKE_NONCOPYABLE(StyleRule); WTF_MAKE_FAST_ALLOCATED;
+class StyleRuleBase : public WTF::RefCountedBase {
 public:
-    StyleRule(int sourceLine, CSSStyleRule*);
+    enum Type {
+        Unknown, // Not used.
+        Style,
+        Charset, // Not used. These are internally strings owned by the style sheet.
+        Import,
+        Media,
+        FontFace,
+        Page,
+        Keyframes,
+        Keyframe, // Not used. These are internally non-rule StyleKeyframe objects.
+        Region
+    };
+    Type type() const { return static_cast<Type>(m_type); }
+    
+    bool isCharsetRule() const { return type() == Charset; }
+    bool isFontFaceRule() const { return type() == FontFace; }
+    bool isKeyframesRule() const { return type() == Keyframes; }
+    bool isMediaRule() const { return type() == Media; }
+    bool isPageRule() const { return type() == Page; }
+    bool isStyleRule() const { return type() == Style; }
+    bool isRegionRule() const { return type() == Region; }
+    bool isImportRule() const { return type() == Import; }
+    
+    int sourceLine() const { return m_sourceLine; }
+
+    void deref()
+    {
+        if (derefBase())
+            destroy();
+    }
+
+    // FIXME: There shouldn't be any need for the null parent version.
+    PassRefPtr<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet = 0) const;
+    PassRefPtr<CSSRule> createCSSOMWrapper(CSSRule* parentRule) const;
+
+protected:
+    StyleRuleBase(Type type, signed sourceLine = 0) : m_type(type), m_sourceLine(sourceLine) { }
+    ~StyleRuleBase() { }
+
+private:
+    void destroy();
+    
+    PassRefPtr<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const;
+
+    unsigned m_type : 4;
+    signed m_sourceLine : 28;
+};
+
+class StyleRule : public StyleRuleBase {
+public:
+    static PassRefPtr<StyleRule> create(int sourceLine) { return adoptRef(new StyleRule(sourceLine)); }
+    
     ~StyleRule();
-            
+
     const CSSSelectorList& selectorList() const { return m_selectorList; }
     StylePropertySet* properties() const { return m_properties.get(); }
     
-    void addSubresourceStyleURLs(ListHashSet<KURL>& urls, CSSStyleSheet*);
+    void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
+    void setProperties(PassRefPtr<StylePropertySet>);
 
-    int sourceLine() const { return m_sourceLine; }
-    
-    CSSStyleRule* ensureCSSStyleRule() const;
-    
-    void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
-    void adoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
-    void setProperties(PassRefPtr<StylePropertySet> properties) { m_properties = properties; }
-    
 private:
+    StyleRule(int sourceLine);
+
     RefPtr<StylePropertySet> m_properties;
     CSSSelectorList m_selectorList;
-    signed m_sourceLine;
+};
 
-    CSSStyleRule* m_cssomWrapper;
+class StyleRuleFontFace : public StyleRuleBase {
+public:
+    static PassRefPtr<StyleRuleFontFace> create() { return adoptRef(new StyleRuleFontFace); }
+    
+    ~StyleRuleFontFace();
+
+    StylePropertySet* properties() const { return m_properties.get(); }
+
+    void setProperties(PassRefPtr<StylePropertySet>);
+
+private:
+    StyleRuleFontFace();
+
+    RefPtr<StylePropertySet> m_properties;
+};
+
+class StyleRulePage : public StyleRuleBase {
+public:
+    static PassRefPtr<StyleRulePage> create() { return adoptRef(new StyleRulePage); }
+
+    ~StyleRulePage();
+
+    const CSSSelector* selector() const { return m_selectorList.first(); }    
+    StylePropertySet* properties() const { return m_properties.get(); }
+
+    void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
+    void setProperties(PassRefPtr<StylePropertySet>);
+
+private:
+    StyleRulePage();
+    
+    RefPtr<StylePropertySet> m_properties;
+    CSSSelectorList m_selectorList;
+};
+
+class StyleRuleBlock : public StyleRuleBase {
+public:
+    const Vector<RefPtr<StyleRuleBase> >& childRules() const { return m_childRules; }
+    
+    void wrapperInsertRule(unsigned, PassRefPtr<StyleRuleBase>);
+    void wrapperRemoveRule(unsigned);
+    
+protected:
+    StyleRuleBlock(Type, Vector<RefPtr<StyleRuleBase> >& adoptRule);
+    
+private:
+    Vector<RefPtr<StyleRuleBase> > m_childRules;
+};
+
+class StyleRuleMedia : public StyleRuleBlock {
+public:
+    static PassRefPtr<StyleRuleMedia> create(PassRefPtr<MediaQuerySet> media, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+    {
+        return adoptRef(new StyleRuleMedia(media, adoptRules));
+    }
+
+    const MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
+
+private:
+    StyleRuleMedia(PassRefPtr<MediaQuerySet>, Vector<RefPtr<StyleRuleBase> >& adoptRules);
+
+    RefPtr<MediaQuerySet> m_mediaQueries;
+};
+
+class StyleRuleRegion : public StyleRuleBlock {
+public:
+    static PassRefPtr<StyleRuleRegion> create(Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+    {
+        return adoptRef(new StyleRuleRegion(selectors, adoptRules));
+    }
+
+    const CSSSelectorList& selectorList() const { return m_selectorList; }
+
+private:
+    StyleRuleRegion(Vector<OwnPtr<CSSParserSelector> >*, Vector<RefPtr<StyleRuleBase> >& adoptRules);
+    
+    CSSSelectorList m_selectorList;
 };
 
 } // namespace WebCore

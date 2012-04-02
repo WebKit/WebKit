@@ -5975,9 +5975,9 @@
 		E4BBED0E14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4BBED0C14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.cpp */; };
 		E4BBED0F14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = E4BBED0D14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.h */; };
 		E4BBED4C14FCDBA1003F0B98 /* StyleRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4BBED4A14FCDBA1003F0B98 /* StyleRule.cpp */; };
-		E4BBED4D14FCDBA1003F0B98 /* StyleRule.h in Headers */ = {isa = PBXBuildFile; fileRef = E4BBED4B14FCDBA1003F0B98 /* StyleRule.h */; };
+		E4BBED4D14FCDBA1003F0B98 /* StyleRule.h in Headers */ = {isa = PBXBuildFile; fileRef = E4BBED4B14FCDBA1003F0B98 /* StyleRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4C1789A0EE6903800824D69 /* CSSSelectorList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C178950EE6903800824D69 /* CSSSelectorList.cpp */; };
-		E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C178960EE6903800824D69 /* CSSSelectorList.h */; };
+		E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C178960EE6903800824D69 /* CSSSelectorList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4C279580CF9741900E97B98 /* RenderMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C279560CF9741900E97B98 /* RenderMedia.cpp */; };
 		E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C279570CF9741900E97B98 /* RenderMedia.h */; };
 		E4D687770ED7AE3D006EA978 /* PurgeableBufferMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */; };
@@ -21491,6 +21491,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */,
+				E4BBED4D14FCDBA1003F0B98 /* StyleRule.h in Headers */,
 				97BC69DB1505F076001B74AC /* AbstractDatabase.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
@@ -21787,7 +21789,6 @@
 				A80E6CF20A1989CA007FB8C5 /* CSSRuleList.h in Headers */,
 				371F51A10D262FA000ECE0D5 /* CSSSegmentedFontFace.h in Headers */,
 				A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */,
-				E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */,
 				809DD1E0130DE2AD00CAE3ED /* CSSStyleApplyProperty.h in Headers */,
 				A80E6E0F0A19911C007FB8C5 /* CSSStyleDeclaration.h in Headers */,
 				A80E6D0C0A1989CA007FB8C5 /* CSSStyleRule.h in Headers */,
@@ -24152,7 +24153,6 @@
 				BC2272E40E82EE9B00E7F975 /* StyleRareInheritedData.h in Headers */,
 				BC2272BD0E82EAAE00E7F975 /* StyleRareNonInheritedData.h in Headers */,
 				BC2272870E82E70700E7F975 /* StyleReflection.h in Headers */,
-				E4BBED4D14FCDBA1003F0B98 /* StyleRule.h in Headers */,
 				3138A9E51474434600B0ED12 /* StyleShader.h in Headers */,
 				A8EA800C0A19516E00A8EF5F /* StyleSheet.h in Headers */,
 				A8EA800A0A19516E00A8EF5F /* StyleSheetList.h in Headers */,

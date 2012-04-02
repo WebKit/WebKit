@@ -33,26 +33,6 @@
 
 namespace WebCore {
 
-CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int line)
-    : CSSRule(parent, CSSRule::STYLE_RULE)
-    , m_styleRule(adoptPtr(new StyleRule(line, this)))
-{
-}
-
-CSSStyleRule::~CSSStyleRule()
-{
-    cleanup();
-    if (m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper->clearParentRule();
-}
-
-CSSStyleDeclaration* CSSStyleRule::style() const
-{
-    if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_styleRule->properties(), const_cast<CSSStyleRule*>(this));
-    return m_propertiesCSSOMWrapper.get();
-}
-
 typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;
 static SelectorTextCache& selectorTextCache()
 {
@@ -60,12 +40,28 @@ static SelectorTextCache& selectorTextCache()
     return cache;
 }
 
-inline void CSSStyleRule::cleanup()
+CSSStyleRule::CSSStyleRule(StyleRule* styleRule, CSSStyleSheet* parent)
+    : CSSRule(parent, CSSRule::STYLE_RULE)
+    , m_styleRule(styleRule)
 {
+}
+
+CSSStyleRule::~CSSStyleRule()
+{
+    if (m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper->clearParentRule();
+
     if (hasCachedSelectorText()) {
         selectorTextCache().remove(this);
         setHasCachedSelectorText(false);
     }
+}
+
+CSSStyleDeclaration* CSSStyleRule::style() const
+{
+    if (!m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_styleRule->properties(), const_cast<CSSStyleRule*>(this));
+    return m_propertiesCSSOMWrapper.get();
 }
 
 String CSSStyleRule::generateSelectorText() const
@@ -108,7 +104,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
         return;
 
     String oldSelectorText = this->selectorText();
-    m_styleRule->adoptSelectorList(selectorList);
+    m_styleRule->wrapperAdoptSelectorList(selectorList);
 
     if (hasCachedSelectorText()) {
         ASSERT(selectorTextCache().contains(this));

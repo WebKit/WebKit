@@ -24,24 +24,18 @@
 
 #include "CSSRule.h"
 #include "PropertySetCSSStyleDeclaration.h"
-#include "StylePropertySet.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-    
+
+class CSSStyleDeclaration;
+class StyleRuleFontFace;
 class StyleRuleCSSStyleDeclaration;
 
 class CSSFontFaceRule : public CSSRule {
 public:
-    static PassRefPtr<CSSFontFaceRule> create()
-    {
-        return adoptRef(new CSSFontFaceRule(0));
-    }
-    static PassRefPtr<CSSFontFaceRule> create(CSSStyleSheet* parent)
-    {
-        return adoptRef(new CSSFontFaceRule(parent));
-    }
+    static PassRefPtr<CSSFontFaceRule> create(StyleRuleFontFace* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSFontFaceRule(rule, sheet)); }
 
     ~CSSFontFaceRule();
 
@@ -49,15 +43,10 @@ public:
 
     String cssText() const;
 
-    StylePropertySet* declaration() const { return m_style.get(); }
-    void setDeclaration(PassRefPtr<StylePropertySet> style) { m_style = style; }
-
-    void addSubresourceStyleURLs(ListHashSet<KURL>& urls);
-
 private:
-    CSSFontFaceRule(CSSStyleSheet* parent);
+    CSSFontFaceRule(StyleRuleFontFace*, CSSStyleSheet* parent);
 
-    RefPtr<StylePropertySet> m_style;
+    RefPtr<StyleRuleFontFace> m_fontFaceRule;
     
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };

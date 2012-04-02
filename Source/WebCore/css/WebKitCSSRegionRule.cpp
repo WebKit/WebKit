@@ -32,27 +32,24 @@
 #include "WebKitCSSRegionRule.h"
 
 #include "CSSParser.h"
-#include "CSSParserValues.h"
 #include "CSSRuleList.h"
-#include "Document.h"
-#include "ExceptionCode.h"
+#include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-WebKitCSSRegionRule::WebKitCSSRegionRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<CSSRule> >& rules)
+WebKitCSSRegionRule::WebKitCSSRegionRule(StyleRuleRegion* regionRule, CSSStyleSheet* parent)
     : CSSRule(parent, CSSRule::WEBKIT_REGION_RULE)
+    , m_regionRule(regionRule)
+    , m_childRuleCSSOMWrappers(regionRule->childRules().size())
 {
-    m_selectorList.adoptSelectorVector(*selectors);
-    m_childRules.swap(rules);
-    
-    for (unsigned i = 0; i < m_childRules.size(); ++i)
-        m_childRules[i]->setParentRule(this);
 }
 
 WebKitCSSRegionRule::~WebKitCSSRegionRule()
 {
-    for (unsigned i = 0; i < m_childRules.size(); ++i)
-        m_childRules[i]->setParentRule(0);
+    for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
+        if (m_childRuleCSSOMWrappers[i])
+            m_childRuleCSSOMWrappers[i]->setParentRule(0);
+    }
 }
 
 String WebKitCSSRegionRule::cssText() const
@@ -61,25 +58,43 @@ String WebKitCSSRegionRule::cssText() const
     result.append("@-webkit-region ");
 
     // First add the selectors.
-    result.append(m_selectorList.selectorsText());
+    result.append(m_regionRule->selectorList().selectorsText());
 
     // Then add the rules.
     result.append(" { \n");
 
-    for (unsigned i = 0; i < m_childRules.size(); ++i) {
+    unsigned size = length();
+    for (unsigned i = 0; i < size; ++i) {
         result.append("  ");
-        result.append(m_childRules[i]->cssText());
+        result.append(item(i)->cssText());
         result.append("\n");
     }
     result.append("}");
     return result.toString();
 }
 
-CSSRuleList* WebKitCSSRegionRule::cssRules()
+unsigned WebKitCSSRegionRule::length() const
+{ 
+    return m_regionRule->childRules().size(); 
+}
+
+CSSRule* WebKitCSSRegionRule::item(unsigned index) const
+{ 
+    if (index >= length())
+        return 0;
+    ASSERT(m_childRuleCSSOMWrappers.size() == m_regionRule->childRules().size());
+    RefPtr<CSSRule>& rule = m_childRuleCSSOMWrappers[index];
+    if (!rule)
+        rule = m_regionRule->childRules()[index]->createCSSOMWrapper(const_cast<WebKitCSSRegionRule*>(this));
+    return rule.get();
+}
+
+CSSRuleList* WebKitCSSRegionRule::cssRules() const
 {
     if (!m_ruleListCSSOMWrapper)
-        m_ruleListCSSOMWrapper = adoptPtr(new LiveCSSRuleList<WebKitCSSRegionRule>(this));
+        m_ruleListCSSOMWrapper = adoptPtr(new LiveCSSRuleList<WebKitCSSRegionRule>(const_cast<WebKitCSSRegionRule*>(this)));
     return m_ruleListCSSOMWrapper.get();
 }
+
 
 } // namespace WebCore
