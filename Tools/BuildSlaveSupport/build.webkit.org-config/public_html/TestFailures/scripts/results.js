@@ -79,7 +79,7 @@ results.kUnknownKind = 'unknown';
 
 // Types of tests.
 results.kImageType = 'image'
-results.kTextType = 'audio'
+results.kAudioType = 'audio'
 results.kTextType = 'text'
 // FIXME: There are more types of tests.
 

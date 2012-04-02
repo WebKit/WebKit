@@ -78,9 +78,22 @@ ui.results.ImageResult = base.extends('img', {
     }
 });
 
+ui.results.AudioResult = base.extends('audio', {
+    init: function(url)
+    {
+        this.className = 'audio-result';
+        this.src = url;
+        this.controls = 'controls';
+    }
+});
+
 function constructorForResultType(type)
 {
-    return (type == results.kImageType) ? ui.results.ImageResult : ui.results.TextResult;
+    if (type == results.kImageType)
+        return ui.results.ImageResult;
+    if (type == results.kAudioType)
+        return ui.results.AudioResult;
+    return ui.results.TextResult;
 }
 
 ui.results.ResultsGrid = base.extends('div', {
@@ -119,6 +132,7 @@ ui.results.ResultsGrid = base.extends('div', {
         var resultsURLsByTypeAndKind = {};
 
         resultsURLsByTypeAndKind[results.kImageType] = {};
+        resultsURLsByTypeAndKind[results.kAudioType] = {};
         resultsURLsByTypeAndKind[results.kTextType] = {};
 
         resultsURLs.forEach(function(url) {
