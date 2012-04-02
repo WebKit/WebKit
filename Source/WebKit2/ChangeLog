@@ -1,5 +1,14 @@
 2012-04-02  Balazs Kelemen  <kbalazs@webkit.org>
 
+        One more try to fix Qt build after r112868.
+
+        It's a misery why I don't have these build failures
+        locally.
+
+        * PluginProcess.pro:
+
+2012-04-02  Balazs Kelemen  <kbalazs@webkit.org>
+
         Fix Qt build after r112868.
 
         * PluginProcess.pro: Add WTF into includepath.

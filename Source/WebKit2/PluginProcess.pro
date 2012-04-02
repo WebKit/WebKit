@@ -14,6 +14,7 @@ DESTDIR = $${ROOT_BUILD_DIR}/bin
 SOURCES += qt/PluginMainQt.cpp
 
 INCLUDEPATH = $$PWD/../WTF \
+              $$PWD/../JavaSciptCore \
               $$INCLUDEPATH
 
 INSTALLS += target
