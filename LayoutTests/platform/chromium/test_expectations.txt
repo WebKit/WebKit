@@ -937,7 +937,9 @@ BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-object-constructor-n
 BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-log-before-inspector-open.html = PASS
 BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-tests.html = PASS
 BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-clear.html = PASS
-BUGWK82894 SLOW RELEASE : inspector/profiler/heap-snapshot-inspect-dom-wrapper.html = PASS
+
+// Was SLOW, added TIMEOUT due to an assertion in V8 (tentatively manifests as timouts on release builds).
+BUGWK82894 RELEASE : inspector/profiler/heap-snapshot-inspect-dom-wrapper.html = PASS TIMEOUT
 BUGWK82900 SKIP DEBUG : inspector/profiler/heap-snapshot-inspect-dom-wrapper.html = PASS CRASH
 
 BUGWK60109 WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
@@ -3500,7 +3502,8 @@ BUGWK77310 : fast/js/navigator-language.html = PASS TEXT
 BUGWK77314 WIN MAC : fast/events/touch/send-oncancel-event.html = PASS TEXT
 BUGWK77324 WIN MAC DEBUG SLOW : fast/js/dfg-int32array.html = PASS
 
-BUGWK77397 : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT TEXT
+// CRASH comes from BUGCR121442
+BUGWK77397 : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT TEXT CRASH
 
 // Started failing at WK r106383 or r106384.
 // FIXME_JCHAFFRAIX:  Restore to just IMAGE after WK75568 text rebaselines land
@@ -4072,3 +4075,5 @@ BUGWK82717 SNOWLEOPARD : storage/database-lock-after-reload.html = PASS TIMEOUT
 BUGWK82776 : storage/indexeddb/dont-commit-on-blocked.html = PASS FAIL
 
 BUGWK WIN RELEASE : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT
+
+BUGCR121442 LINUX DEBUG : plugins/iframe-shims.html = CRASH TEXT PASS
