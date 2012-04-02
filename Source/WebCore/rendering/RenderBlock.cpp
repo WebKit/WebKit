@@ -4153,6 +4153,17 @@ void RenderBlock::clearFloats(BlockLayoutPass layoutPass)
     // Clear our positioned floats boolean.
     m_hasPositionedFloats = false;
 
+    HashSet<RenderBox*> oldIntrudingFloatSet;
+    if (!childrenInline() && m_floatingObjects) {
+        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        FloatingObjectSetIterator end = floatingObjectSet.end();
+        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
+            FloatingObject* floatingObject = *it;
+            if (!floatingObject->isDescendant())
+                oldIntrudingFloatSet.add(floatingObject->m_renderer);
+        }
+    }
+
     // Inline blocks are covered by the isReplaced() check in the avoidFloats method.
     if (avoidsFloats() || isRoot() || isRenderView() || isFloatingOrPositioned() || isTableCell()) {
         if (m_floatingObjects) {
@@ -4161,6 +4172,8 @@ void RenderBlock::clearFloats(BlockLayoutPass layoutPass)
         }
         if (layoutPass == PositionedFloatLayoutPass)
             addPositionedFloats();
+        if (!oldIntrudingFloatSet.isEmpty())
+            markAllDescendantsWithFloatsForLayout();
         return;
     }
 
@@ -4271,6 +4284,15 @@ void RenderBlock::clearFloats(BlockLayoutPass layoutPass)
         deleteAllValues(floatMap);
 
         markLinesDirtyInBlockRange(changeLogicalTop, changeLogicalBottom);
+    } else if (!oldIntrudingFloatSet.isEmpty()) {
+        // If there are previously intruding floats that no longer intrude, then children with floats
+        // should also get layout because they might need their floating object lists cleared.
+        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        FloatingObjectSetIterator end = floatingObjectSet.end();
+        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it)
+            oldIntrudingFloatSet.remove((*it)->m_renderer);
+        if (!oldIntrudingFloatSet.isEmpty())
+            markAllDescendantsWithFloatsForLayout();
     }
 }
 
