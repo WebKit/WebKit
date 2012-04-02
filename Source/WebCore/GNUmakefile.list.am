@@ -434,6 +434,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSOESVertexArrayObject.h \
 	DerivedSources/WebCore/JSOperationNotAllowedException.cpp \
 	DerivedSources/WebCore/JSOperationNotAllowedException.h \
+	DerivedSources/WebCore/JSOscillator.cpp \
+	DerivedSources/WebCore/JSOscillator.h \
 	DerivedSources/WebCore/JSOverflowEvent.cpp \
 	DerivedSources/WebCore/JSOverflowEvent.h \
 	DerivedSources/WebCore/JSPageTransitionEvent.cpp \
@@ -551,6 +553,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSVoidCallback.h \
 	DerivedSources/WebCore/JSWaveShaperNode.cpp \
 	DerivedSources/WebCore/JSWaveShaperNode.h \
+	DerivedSources/WebCore/JSWaveTable.cpp \
+	DerivedSources/WebCore/JSWaveTable.h \
 	DerivedSources/WebCore/JSWebGLActiveInfo.cpp \
 	DerivedSources/WebCore/JSWebGLActiveInfo.h \
 	DerivedSources/WebCore/JSWebGLBuffer.cpp \
@@ -5481,6 +5485,8 @@ webcore_sources += \
 	Source/WebCore/Modules/webaudio/OfflineAudioDestinationNode.cpp \
 	Source/WebCore/Modules/webaudio/OfflineAudioCompletionEvent.h \
 	Source/WebCore/Modules/webaudio/OfflineAudioCompletionEvent.cpp \
+	Source/WebCore/Modules/webaudio/Oscillator.h \
+	Source/WebCore/Modules/webaudio/Oscillator.cpp \
 	Source/WebCore/Modules/webaudio/RealtimeAnalyser.cpp \
 	Source/WebCore/Modules/webaudio/RealtimeAnalyser.h \
 	Source/WebCore/Modules/webaudio/RealtimeAnalyserNode.cpp \
@@ -5491,6 +5497,8 @@ webcore_sources += \
 	Source/WebCore/Modules/webaudio/WaveShaperDSPKernel.h \
 	Source/WebCore/Modules/webaudio/WaveShaperProcessor.cpp \
 	Source/WebCore/Modules/webaudio/WaveShaperNode.h \
+	Source/WebCore/Modules/webaudio/WaveTable.cpp \
+	Source/WebCore/Modules/webaudio/WaveTable.h \
 	Source/WebCore/bindings/js/JSAudioBufferSourceNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSAudioContextCustom.cpp \
 	Source/WebCore/bindings/js/JSConvolverNodeCustom.cpp \
@@ -5635,7 +5643,9 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webaudio/JavaScriptAudioNode.idl \
 	$(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
 	$(WebCore)/Modules/webaudio/OfflineAudioCompletionEvent.idl \
-	$(WebCore)/Modules/webaudio/RealtimeAnalyserNode.idl
+    $(WebCore)/Modules/webaudio/Oscillator.idl \
+	$(WebCore)/Modules/webaudio/RealtimeAnalyserNode.idl \
+    $(WebCore)/Modules/webaudio/WaveTable.idl
 endif
 
 

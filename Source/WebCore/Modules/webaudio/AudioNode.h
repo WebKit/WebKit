@@ -58,6 +58,7 @@ public:
     enum NodeType {
         NodeTypeUnknown,
         NodeTypeDestination,
+        NodeTypeOscillator,
         NodeTypeAudioBufferSource,
         NodeTypeMediaElementAudioSource,
         NodeTypeJavaScript,

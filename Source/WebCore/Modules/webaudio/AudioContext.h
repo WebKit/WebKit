@@ -63,6 +63,8 @@ class DynamicsCompressorNode;
 class RealtimeAnalyserNode;
 class WaveShaperNode;
 class JavaScriptAudioNode;
+class Oscillator;
+class WaveTable;
 
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
@@ -124,6 +126,8 @@ public:
     PassRefPtr<JavaScriptAudioNode> createJavaScriptNode(size_t bufferSize);
     PassRefPtr<AudioChannelSplitter> createChannelSplitter();
     PassRefPtr<AudioChannelMerger> createChannelMerger();
+    PassRefPtr<Oscillator> createOscillator();
+    PassRefPtr<WaveTable> createWaveTable(Float32Array* real, Float32Array* imag, ExceptionCode&);
 
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
     void notifyNodeFinishedProcessing(AudioNode*);

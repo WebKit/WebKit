@@ -52,10 +52,12 @@
 #include "JavaScriptAudioNode.h"
 #include "OfflineAudioCompletionEvent.h"
 #include "OfflineAudioDestinationNode.h"
+#include "Oscillator.h"
 #include "PlatformString.h"
 #include "RealtimeAnalyserNode.h"
-#include "WaveShaperNode.h"
 #include "ScriptCallStack.h"
+#include "WaveShaperNode.h"
+#include "WaveTable.h"
 
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
@@ -451,6 +453,26 @@ PassRefPtr<AudioChannelMerger> AudioContext::createChannelMerger()
     ASSERT(isMainThread());
     lazyInitialize();
     return AudioChannelMerger::create(this, m_destinationNode->sampleRate());
+}
+
+PassRefPtr<Oscillator> AudioContext::createOscillator()
+{
+    ASSERT(isMainThread());
+    lazyInitialize();
+    return Oscillator::create(this, m_destinationNode->sampleRate());
+}
+
+PassRefPtr<WaveTable> AudioContext::createWaveTable(Float32Array* real, Float32Array* imag, ExceptionCode& ec)
+{
+    ASSERT(isMainThread());
+    
+    if (!real || !imag || (real->length() != imag->length())) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+    
+    lazyInitialize();
+    return WaveTable::create(sampleRate(), real, imag);
 }
 
 void AudioContext::notifyNodeFinishedProcessing(AudioNode* node)

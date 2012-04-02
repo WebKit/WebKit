@@ -125,9 +125,11 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/DynamicsCompressorNode.idl \
     $(WebCore)/Modules/webaudio/JavaScriptAudioNode.idl \
     $(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
+    $(WebCore)/Modules/webaudio/Oscillator.idl \
     $(WebCore)/Modules/webaudio/OfflineAudioCompletionEvent.idl \
     $(WebCore)/Modules/webaudio/RealtimeAnalyserNode.idl \
     $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
+    $(WebCore)/Modules/webaudio/WaveTable.idl \
     $(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
     $(WebCore)/Modules/webdatabase/Database.idl \
     $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \

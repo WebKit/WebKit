@@ -6252,6 +6252,10 @@
 		FD5686C913AC180200B69C68 /* AsyncAudioDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD5686C713AC180200B69C68 /* AsyncAudioDecoder.cpp */; };
 		FD5686CA13AC180200B69C68 /* AsyncAudioDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = FD5686C813AC180200B69C68 /* AsyncAudioDecoder.h */; };
 		FD5686CC13AC181400B69C68 /* AudioBufferCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FD5686CB13AC181400B69C68 /* AudioBufferCallback.h */; };
+		FD581FAE1520F91F003A7A75 /* Oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD581FAB1520F91F003A7A75 /* Oscillator.cpp */; };
+		FD581FAF1520F91F003A7A75 /* Oscillator.h in Headers */ = {isa = PBXBuildFile; fileRef = FD581FAC1520F91F003A7A75 /* Oscillator.h */; };
+		FD581FB41520F93B003A7A75 /* WaveTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD581FB11520F93B003A7A75 /* WaveTable.cpp */; };
+		FD581FB51520F93B003A7A75 /* WaveTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FD581FB21520F93B003A7A75 /* WaveTable.h */; };
 		FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = FD62F52D145898D80094B0ED /* AudioSourceProviderClient.h */; };
 		FD6ED2C3136B8E42003CF072 /* DynamicsCompressorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */; };
 		FD6ED2C4136B8E42003CF072 /* DynamicsCompressorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */; };
@@ -6316,6 +6320,10 @@
 		FDB1700614A2BAB200A2B5D9 /* MultiChannelResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB1700414A2BAB200A2B5D9 /* MultiChannelResampler.h */; };
 		FDC54F041399B0DA008D9117 /* BiquadFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */; };
 		FDC54F051399B0DA008D9117 /* BiquadFilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */; };
+		FDEA6242152102E200479DF0 /* JSOscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEA6240152102E200479DF0 /* JSOscillator.cpp */; };
+		FDEA6243152102E200479DF0 /* JSOscillator.h in Headers */ = {isa = PBXBuildFile; fileRef = FDEA6241152102E200479DF0 /* JSOscillator.h */; };
+		FDEA6246152102FC00479DF0 /* JSWaveTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEA6244152102FC00479DF0 /* JSWaveTable.cpp */; };
+		FDEA6247152102FC00479DF0 /* JSWaveTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FDEA6245152102FC00479DF0 /* JSWaveTable.h */; };
 		FDEAAAF312B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */; };
 		FDEAAAF412B02EE400DCF33B /* JSAudioContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */; };
 		FDEAAAF612B02EE400DCF33B /* JSConvolverNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAF212B02EE400DCF33B /* JSConvolverNodeCustom.cpp */; };
@@ -13429,6 +13437,12 @@
 		FD5686C813AC180200B69C68 /* AsyncAudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncAudioDecoder.h; sourceTree = "<group>"; };
 		FD5686CB13AC181400B69C68 /* AudioBufferCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBufferCallback.h; sourceTree = "<group>"; };
 		FD5686CD13AC183E00B69C68 /* AudioBufferCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioBufferCallback.idl; sourceTree = "<group>"; };
+		FD581FAB1520F91F003A7A75 /* Oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Oscillator.cpp; sourceTree = "<group>"; };
+		FD581FAC1520F91F003A7A75 /* Oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Oscillator.h; sourceTree = "<group>"; };
+		FD581FAD1520F91F003A7A75 /* Oscillator.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Oscillator.idl; sourceTree = "<group>"; };
+		FD581FB11520F93B003A7A75 /* WaveTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveTable.cpp; sourceTree = "<group>"; };
+		FD581FB21520F93B003A7A75 /* WaveTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveTable.h; sourceTree = "<group>"; };
+		FD581FB31520F93B003A7A75 /* WaveTable.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WaveTable.idl; sourceTree = "<group>"; };
 		FD62F52D145898D80094B0ED /* AudioSourceProviderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSourceProviderClient.h; sourceTree = "<group>"; };
 		FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicsCompressorNode.cpp; sourceTree = "<group>"; };
 		FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicsCompressorNode.h; sourceTree = "<group>"; };
@@ -13498,6 +13512,10 @@
 		FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BiquadFilterNode.cpp; sourceTree = "<group>"; };
 		FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiquadFilterNode.h; sourceTree = "<group>"; };
 		FDC54F031399B0DA008D9117 /* BiquadFilterNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BiquadFilterNode.idl; sourceTree = "<group>"; };
+		FDEA6240152102E200479DF0 /* JSOscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOscillator.cpp; sourceTree = "<group>"; };
+		FDEA6241152102E200479DF0 /* JSOscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOscillator.h; sourceTree = "<group>"; };
+		FDEA6244152102FC00479DF0 /* JSWaveTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWaveTable.cpp; sourceTree = "<group>"; };
+		FDEA6245152102FC00479DF0 /* JSWaveTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWaveTable.h; sourceTree = "<group>"; };
 		FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferSourceNodeCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioContextCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAF212B02EE400DCF33B /* JSConvolverNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConvolverNodeCustom.cpp; sourceTree = "<group>"; };
@@ -21312,6 +21330,9 @@
 				FDA3E95D134A49FF008D4B5A /* OfflineAudioCompletionEvent.idl */,
 				FDA3E957134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp */,
 				FDA3E958134A49EF008D4B5A /* OfflineAudioDestinationNode.h */,
+				FD581FAB1520F91F003A7A75 /* Oscillator.cpp */,
+				FD581FAC1520F91F003A7A75 /* Oscillator.h */,
+				FD581FAD1520F91F003A7A75 /* Oscillator.idl */,
 				FD315FF112B0267600C1A359 /* RealtimeAnalyser.cpp */,
 				FD315FF212B0267600C1A359 /* RealtimeAnalyser.h */,
 				FD315FF312B0267600C1A359 /* RealtimeAnalyserNode.cpp */,
@@ -21324,6 +21345,9 @@
 				FD7F298E13D4C0CB00AD9535 /* WaveShaperNode.idl */,
 				FD7F298F13D4C0CB00AD9535 /* WaveShaperProcessor.cpp */,
 				FD7F299013D4C0CB00AD9535 /* WaveShaperProcessor.h */,
+				FD581FB11520F93B003A7A75 /* WaveTable.cpp */,
+				FD581FB21520F93B003A7A75 /* WaveTable.h */,
+				FD581FB31520F93B003A7A75 /* WaveTable.idl */,
 			);
 			path = Modules/webaudio;
 			sourceTree = "<group>";
@@ -21464,10 +21488,14 @@
 				FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */,
 				FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */,
 				FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */,
+				FDEA6240152102E200479DF0 /* JSOscillator.cpp */,
+				FDEA6241152102E200479DF0 /* JSOscillator.h */,
 				FDA15EC712B03F50003A583A /* JSRealtimeAnalyserNode.cpp */,
 				FDA15EC812B03F50003A583A /* JSRealtimeAnalyserNode.h */,
 				FD82D7F513D4C8BD004E4372 /* JSWaveShaperNode.cpp */,
 				FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */,
+				FDEA6244152102FC00479DF0 /* JSWaveTable.cpp */,
+				FDEA6245152102FC00479DF0 /* JSWaveTable.h */,
 			);
 			name = WebAudio;
 			sourceTree = "<group>";
@@ -24665,6 +24693,10 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
+                FD581FAF1520F91F003A7A75 /* Oscillator.h in Headers */,
+                FD581FB51520F93B003A7A75 /* WaveTable.h in Headers */,
+                FDEA6243152102E200479DF0 /* JSOscillator.h in Headers */,
+                FDEA6247152102FC00479DF0 /* JSWaveTable.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				1A3586E015264C450022A659 /* RenderMultiColumnFlowThread.h in Headers */,
 				E1B25107152A0BB00069B779 /* StylePropertyShorthand.h in Headers */,
@@ -27653,6 +27685,10 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
+				FD581FAE1520F91F003A7A75 /* Oscillator.cpp in Sources */,
+				FD581FB41520F93B003A7A75 /* WaveTable.cpp in Sources */,
+				FDEA6242152102E200479DF0 /* JSOscillator.cpp in Sources */,
+				FDEA6246152102FC00479DF0 /* JSWaveTable.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				1A35862C152522540022A659 /* ScrollingTreeMac.mm in Sources */,
 				1A3586DF15264C450022A659 /* RenderMultiColumnFlowThread.cpp in Sources */,
