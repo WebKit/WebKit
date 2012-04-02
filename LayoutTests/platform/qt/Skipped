@@ -168,6 +168,7 @@ fast/regions/style-scoped-in-flow.html
 
 # ENABLE(SHADOW_DOM) is disabled.
 fast/dom/shadow/access-key.html
+fast/dom/shadow/composed-shadow-tree-walker.html
 fast/dom/shadow/content-element-api.html
 fast/dom/shadow/content-element-move.html
 fast/dom/shadow/content-element-outside-shadow.html
