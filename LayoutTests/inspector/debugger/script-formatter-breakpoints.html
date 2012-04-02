@@ -39,6 +39,7 @@ var test = function()
             function pausedInF1(callFrames)
             {
                 InspectorTest.assertEquals("f1", callFrames[0].functionName);
+                dumpBreakpointSidebarPane();
                 InspectorTest.resumeExecution(resumed);
             }
 
@@ -62,6 +63,7 @@ var test = function()
             function didNavigateBack()
             {
                 InspectorTest.addResult("Navigated back to test page.");
+                dumpBreakpointSidebarPane();
                 InspectorTest.showScriptSource("script-formatter-breakpoints.html", didShowFormattedScriptSource);
             }
 
@@ -77,11 +79,26 @@ var test = function()
             function pausedInF2(callFrames)
             {
                 InspectorTest.assertEquals("f2", callFrames[0].functionName);
+                dumpBreakpointSidebarPane();
                 panel._toggleFormatSource();
-                InspectorTest.resumeExecution(next);
+                InspectorTest.resumeExecution(resumedF2);
+            }
+
+            function resumedF2()
+            {
+                dumpBreakpointSidebarPane();
+                next();
             }
         }
     ]);
+
+    function dumpBreakpointSidebarPane()
+    {
+        var paneElement = WebInspector.panels.scripts.sidebarPanes.jsBreakpoints.listElement
+        InspectorTest.addResult("");
+        InspectorTest.addResult("Dump breakpoint sidebar pane:");
+        InspectorTest.addResult(InspectorTest.textContentWithLineBreaks(paneElement));
+    }
 }
 
 </script>

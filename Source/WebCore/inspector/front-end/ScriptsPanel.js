@@ -597,8 +597,13 @@ WebInspector.ScriptsPanel.prototype = {
 
         for (var i = 0; i < oldUISourceCodeList.length; ++i)
             this._removeBreakpointListeners(oldUISourceCodeList[i]);
-        for (var i = 0; i < uiSourceCodeList.length; ++i)
-            this._addBreakpointListeners(uiSourceCodeList[i]);
+        for (var i = 0; i < uiSourceCodeList.length; ++i) {
+            var uiSourceCode = uiSourceCodeList[i];
+            var breakpoints = uiSourceCode.breakpoints();
+            for (var lineNumber in breakpoints)
+                this._uiBreakpointAdded({ data: breakpoints[lineNumber] });
+            this._addBreakpointListeners(uiSourceCode);
+        }
     },
 
     _sourceFrameLoaded: function(event)
