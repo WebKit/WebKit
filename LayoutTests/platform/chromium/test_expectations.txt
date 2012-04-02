@@ -1189,7 +1189,7 @@ BUGWK75968 LION : svg/css/group-with-shadow.svg = IMAGE
 BUGWK75968 LEOPARD SNOWLEOPARD : svg/text/text-text-05-t.svg = TEXT
 
 // Flaky on MAC
-BUGWK82911 MAC : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT PASS
+BUGWK82911 MAC : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT IMAGE+TEXT IMAGE PASS
 
 // Flaky on Linux after http://trac.webkit.org/changeset/112022
 BUGWK82217 LINUX : svg/zoom/text/zoom-foreignObject.svg = IMAGE PASS
