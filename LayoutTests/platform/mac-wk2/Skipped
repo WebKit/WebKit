@@ -314,14 +314,6 @@ fast/canvas/webgl/texture-color-profile.html
 # All tests that crashed more than once on the Lion WebKit2 bots between r111865 and r111885
 accessibility/adjacent-continuations-cause-assertion-failure.html
 accessibility/contenteditable-hidden-div.html
-compositing/absolute-position-changed-in-composited-layer.html
-compositing/animation/animation-compositing.html
-compositing/culling/clear-fixed-iframe.html
-compositing/framesets/composited-frame-alignment.html
-compositing/iframes/become-composited-nested-iframes.html
-compositing/overflow/overflow-positioning.html
-compositing/self-painting-layers.html
-compositing/video/video-poster.html
 css3/filters/custom/effect-custom-combined-missing.html
 fast/workers/empty-worker-nocrash.html
 svg/custom/font-face-name-without-name-attr.svg
