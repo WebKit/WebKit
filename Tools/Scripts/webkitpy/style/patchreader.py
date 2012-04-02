@@ -52,8 +52,9 @@ class PatchReader(object):
         """
         self._text_file_reader = text_file_reader
 
-    def check(self, patch_string):
+    def check(self, patch_string, fs=None):
         """Check style in the given patch."""
+        fs = fs or FileSystem()
         patch_files = DiffParser(patch_string.splitlines()).files
 
         # If the user uses git, checking subversion config file only once is enough.
@@ -65,11 +66,11 @@ class PatchReader(object):
 
             if not line_numbers:
                 match = re.search("\s*png$", path)
-                if match:
+                if match and fs.exists(path):
                     if call_only_once:
                         self._text_file_reader.process_file(file_path=path, line_numbers=None)
                         cwd = FileSystem().getcwd()
-                        detection = SCMDetector(FileSystem(), Executive()).detect_scm_system(cwd)
+                        detection = SCMDetector(fs, Executive()).detect_scm_system(cwd)
                         if detection.display_name() == "git":
                             call_only_once = False
                     continue

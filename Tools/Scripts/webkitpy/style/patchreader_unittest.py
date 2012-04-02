@@ -33,6 +33,7 @@
 
 import unittest
 
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.style.patchreader import PatchReader
 
 
@@ -89,4 +90,14 @@ index ef65bee..e3db70e 100644
 -foobar
 """)
         # _mock_check_file should not be called for the deletion patch.
+        self._assert_checked([], 1)
+
+    def test_check_patch_with_png_deletion(self):
+        fs = MockFileSystem()
+        diff_text = """Index: LayoutTests/platform/mac/foo-expected.png
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = image/png
+"""
+        self._patch_checker.check(diff_text, fs)
         self._assert_checked([], 1)

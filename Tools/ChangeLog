@@ -1,3 +1,15 @@
+2012-04-02  Tony Chang  <tony@chromium.org>
+
+        check-webkit-style errors when removing .png files
+        https://bugs.webkit.org/show_bug.cgi?id=82933
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/style/patchreader.py:
+        (PatchReader.check): Make sure the file exists and pass in a FileSystem() object (for mocking).
+        * Scripts/webkitpy/style/patchreader_unittest.py:
+        (test_check_patch_with_png_deletion):
+
 2012-04-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r112948.
