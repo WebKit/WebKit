@@ -737,3 +737,6 @@ inspector/styles/override-screen-size.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82932
 inspector/profiler/cpu-profiler-profiling.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82934
+storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
