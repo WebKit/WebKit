@@ -277,7 +277,7 @@ class TestRunner:
             self._tear_down_testing_environment()
 
         if failed_tests:
-            names = [test.lstrip(self._programs_path) for test in failed_tests]
+            names = [test.replace(self._programs_path, '', 1) for test in failed_tests]
             sys.stdout.write("Tests failed: %s\n" % ", ".join(names))
             sys.stdout.flush()
 
