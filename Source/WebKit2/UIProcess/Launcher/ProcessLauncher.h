@@ -68,6 +68,7 @@ public:
     void invalidate();
 
     static bool getProcessTypeFromString(const char*, ProcessType&);
+
 private:
     ProcessLauncher(Client*, const LaunchOptions& launchOptions);
 

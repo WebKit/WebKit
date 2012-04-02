@@ -197,6 +197,10 @@ bool NetscapePluginModule::load()
 
 bool NetscapePluginModule::tryLoad()
 {
+#if PLUGIN_ARCHITECTURE(X11)
+    applyX11QuirksBeforeLoad();
+#endif
+
     m_module = adoptPtr(new Module(m_pluginPath));
     if (!m_module->load())
         return false;

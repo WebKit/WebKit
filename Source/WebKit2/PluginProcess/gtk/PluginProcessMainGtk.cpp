@@ -26,7 +26,6 @@
 #include "config.h"
 #include "PluginProcessMainGtk.h"
 
-#include "NetscapePlugin.h"
 #include "PluginProcess.h"
 #include <WebCore/RunLoop.h>
 #include <gdk/gdkx.h>
@@ -54,22 +53,12 @@ static int webkitgtkXError(Display* xdisplay, XErrorEvent* error)
 
 WK_EXPORT int PluginProcessMainGtk(int argc, char* argv[])
 {
-    ASSERT(argc == 2 || argc == 3);
-    bool scanPlugin = !strcmp(argv[1], "-scanPlugin");
-    ASSERT(argc == 2 || (argc == 3 && scanPlugin));
+    ASSERT(argc == 2);
 
     gtk_init(&argc, &argv);
 
     JSC::initializeThreading();
     WTF::initializeMainThread();
-
-    if (scanPlugin) {
-        String pluginPath(argv[2]);
-        if (!NetscapePluginModule::scanPlugin(pluginPath))
-            return EXIT_FAILURE;
-        return EXIT_SUCCESS;
-    }
-
     RunLoop::initializeMainRunLoop();
 
     // Plugins can produce X errors that are handled by the GDK X error handler, which

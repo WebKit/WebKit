@@ -1,3 +1,59 @@
+2012-04-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r112868, r112879, and r112881.
+        http://trac.webkit.org/changeset/112868
+        http://trac.webkit.org/changeset/112879
+        http://trac.webkit.org/changeset/112881
+        https://bugs.webkit.org/show_bug.cgi?id=82901
+
+        "Build fail on bots." (Requested by kbalazs on #webkit).
+
+        * GNUmakefile.am:
+        * PluginProcess.pro: Removed.
+        * PluginProcess/gtk/PluginProcessMainGtk.cpp:
+        (WebKit::PluginProcessMainGtk):
+        * PluginProcess/qt/PluginProcessMainQt.cpp:
+        (WebKit::PluginProcessMain):
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+        * Shared/Plugins/Netscape/NetscapePluginModule.h:
+        (NetscapePluginModule):
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (StdoutDevNullRedirector):
+        (WebKit):
+        (WebKit::StdoutDevNullRedirector::StdoutDevNullRedirector):
+        (WebKit::StdoutDevNullRedirector::~StdoutDevNullRedirector):
+        (WebKit::initializeGTK):
+        (WebKit::NetscapePluginModule::applyX11QuirksBeforeLoad):
+        (WebKit::NetscapePluginModule::setMIMEDescription):
+        (WebKit::NetscapePluginModule::getPluginInfoForLoadedPlugin):
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        (WebKit::NetscapePluginModule::determineQuirks):
+        * Shared/ProcessExecutablePath.h: Removed.
+        * Shared/gtk/ProcessExecutablePathGtk.cpp: Removed.
+        * Shared/qt/ProcessExecutablePathQt.cpp: Removed.
+        * Shared/qt/ShareableBitmapQt.cpp:
+        (WebKit::ShareableBitmap::paint):
+        * Target.pri:
+        * UIProcess/Launcher/ProcessLauncher.h:
+        (ProcessLauncher):
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit):
+        (WebKit::findWebKitProcess):
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        (WebKit):
+        (PluginProcessProxy):
+        * UIProcess/Plugins/gtk/PluginProcessProxyGtk.cpp:
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        * UIProcess/Plugins/qt/PluginProcessProxyQt.cpp:
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        * qt/PluginMainQt.cpp: Removed.
+
 2012-04-02  Balazs Kelemen  <kbalazs@webkit.org>
 
         One more try to fix Qt build after r112868.

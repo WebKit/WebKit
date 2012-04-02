@@ -28,7 +28,6 @@
 
 #include <QImage>
 #include <QPainter>
-#include <QtGlobal>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/NotImplemented.h>
@@ -72,13 +71,8 @@ void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, 
     painter->drawImage(dstPoint, image, QRect(srcRect));
 }
 
-void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const IntPoint& dstPoint, const IntRect& srcRect)
+void ShareableBitmap::paint(GraphicsContext& /*context*/, float /*scaleFactor*/, const IntPoint& /*dstPoint*/, const IntRect& /*srcRect*/)
 {
-    if (qFuzzyCompare(scaleFactor, 1)) {
-        paint(context, dstPoint, srcRect);
-        return;
-    }
-
     // See <https://bugs.webkit.org/show_bug.cgi?id=64663>.
     notImplemented();
 }

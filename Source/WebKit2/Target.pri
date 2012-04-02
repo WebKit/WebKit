@@ -34,7 +34,6 @@ HEADERS += \
     Platform/SharedMemory.h \
     Platform/WorkQueue.h \
     PluginProcess/PluginControllerProxy.h \
-    PluginProcess/PluginCreationParameters.h \
     PluginProcess/PluginProcess.h \
     PluginProcess/WebProcessConnection.h \
     Shared/API/c/WKBase.h \
@@ -82,7 +81,6 @@ HEADERS += \
     Shared/OriginAndDatabases.h \
     Shared/PlatformPopupMenuData.h \
     Shared/PrintInfo.h \
-    Shared/ProcessExecutablePath.h \
     Shared/SameDocumentNavigationType.h \
     Shared/SecurityOriginData.h \
     Shared/SessionState.h \
@@ -384,7 +382,6 @@ SOURCES += \
     Platform/WorkQueue.cpp \
     Platform/qt/ModuleQt.cpp \
     PluginProcess/PluginControllerProxy.cpp \
-    PluginProcess/PluginCreationParameters.cpp \
     PluginProcess/PluginProcess.cpp \
     PluginProcess/WebProcessConnection.cpp \
     PluginProcess/qt/PluginControllerProxyQt.cpp \
@@ -477,7 +474,6 @@ SOURCES += \
     Shared/qt/NativeWebKeyboardEventQt.cpp \
     Shared/qt/NativeWebMouseEventQt.cpp \
     Shared/qt/NativeWebWheelEventQt.cpp \
-    Shared/qt/ProcessExecutablePathQt.cpp \
     Shared/qt/WebCoreArgumentCodersQt.cpp \
     Shared/qt/WebEventFactoryQt.cpp \
     Shared/qt/QtNetworkReplyData.cpp \
@@ -773,7 +769,6 @@ contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location
 
 plugin_backend_xlib {
     DEFINES += XP_UNIX
-    PKGCONFIG += x11
 }
 
 include(DerivedSources.pri)

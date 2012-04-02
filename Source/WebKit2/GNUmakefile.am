@@ -331,7 +331,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/EditorState.cpp \
 	Source/WebKit2/Shared/EditorState.h \
 	Source/WebKit2/Shared/FontSmoothingLevel.h \
-	Source/WebKit2/Shared/ProcessExecutablePath.h \
 	Source/WebKit2/Shared/cairo/LayerTreeContextCairo.cpp \
 	Source/WebKit2/Shared/cairo/ShareableBitmapCairo.cpp \
 	Source/WebKit2/Shared/gtk/ArgumentCodersGtk.h \
@@ -341,7 +340,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/gtk/NativeWebWheelEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/PlatformCertificateInfo.h \
 	Source/WebKit2/Shared/gtk/PrintInfoGtk.cpp \
-	Source/WebKit2/Shared/gtk/ProcessExecutablePathGtk.cpp \
 	Source/WebKit2/Shared/gtk/WebCoreArgumentCodersGtk.cpp \
 	Source/WebKit2/Shared/gtk/WebEventFactory.cpp \
 	Source/WebKit2/Shared/gtk/WebEventFactory.h \
@@ -1371,7 +1369,6 @@ Programs_WebKitPluginProcess_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/Shared/Plugins \
 	-I$(srcdir)/Source/WebKit2/Shared/Plugins/Netscape/ \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Plugins/ \
-	-I$(srcdir)/Source/WebKit2/UIProcess/Launcher \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Plugins/ \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Plugins/Netscape/ \
 	-I$(top_builddir)/DerivedSources/WebKit2 \
@@ -1382,7 +1379,6 @@ Programs_WebKitPluginProcess_CPPFLAGS = \
 	-DBUILDING_WEBKIT \
 	-DGTK_API_VERSION_2=1 \
 	-DENABLE_PLUGIN_PROCESS=1 \
-	-DLIBEXECDIR=\""$(libexecdir)"\" \
 	$(global_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
@@ -1465,7 +1461,6 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/PluginProcess/gtk/PluginProcessMainGtk.cpp \
 	Source/WebKit2/Shared/ChildProcess.cpp \
 	Source/WebKit2/Shared/ChildProcess.h \
-	Source/WebKit2/Shared/ProcessExecutablePath.h \
 	Source/WebKit2/Shared/Plugins/NPIdentifierData.cpp \
 	Source/WebKit2/Shared/Plugins/NPIdentifierData.h \
 	Source/WebKit2/Shared/Plugins/NPObjectMessageReceiver.cpp \
@@ -1492,10 +1487,8 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/Shared/gtk/NativeWebKeyboardEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebWheelEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebMouseEventGtk.cpp \
-	Source/WebKit2/Shared/gtk/ProcessExecutablePathGtk.cpp \
 	Source/WebKit2/Shared/gtk/WebEventFactory.cpp \
 	Source/WebKit2/Shared/cairo/ShareableBitmapCairo.cpp \
-	Source/WebKit2/UIProcess/Plugins/gtk/PluginProcessProxyGtk.cpp \
 	Source/WebKit2/WebProcess/Plugins/Plugin.cpp \
 	Source/WebKit2/WebProcess/Plugins/Plugin.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp \
