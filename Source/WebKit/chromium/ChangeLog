@@ -1,5 +1,15 @@
 2012-04-02  Alexander Pavlov  <apavlov@chromium.org>
 
+        [Chromium] Unreviewed, CCLayerTreeHost runMultiThread is flaky.
+        Related bug: https://bugs.webkit.org/show_bug.cgi?id=80811
+
+        Disabled CCLayerTreeHostTestAddAnimationWithTimingFunction.runMultiThread.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TEST_F):
+
+2012-04-02  Alexander Pavlov  <apavlov@chromium.org>
+
         Web Inspector: Device metrics emulation should turn off when zero width and height are passed in
         https://bugs.webkit.org/show_bug.cgi?id=82907
 

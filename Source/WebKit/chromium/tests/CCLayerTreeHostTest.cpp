@@ -1027,7 +1027,7 @@ public:
 private:
 };
 
-TEST_F(CCLayerTreeHostTestAddAnimationWithTimingFunction, runMultiThread)
+TEST_F(CCLayerTreeHostTestAddAnimationWithTimingFunction, DISABLED_runMultiThread)
 {
     runTestThreaded();
 }
