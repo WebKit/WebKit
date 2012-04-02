@@ -3764,11 +3764,8 @@ BUGWK81145 LION : fast/events/platform-wheelevent-paging-y-in-scrolling-page.htm
 BUGWK81145 LION : fast/events/scrollbar-double-click.html = TEXT
 
 BUGYANGGUO MAC : fast/repaint/moving-shadow-on-container.html = TEXT
-BUGYANGGUO LEOPARD SNOWLEOPARD : fast/repaint/moving-shadow-on-path.html = TEXT
-BUGYANGGUO LION : svg/css/stars-with-shadow.html = TEXT
 BUGYANGGUO WIN : fast/repaint/moving-shadow-on-container.html = TEXT
 BUGYANGGUO WIN : fast/repaint/moving-shadow-on-path.html = TEXT
-BUGYANGGUO WIN : svg/css/stars-with-shadow.html = TEXT
 
 BUGWK81493 LINUX : svg/custom/js-late-gradient-creation.svg = PASS IMAGE
 
