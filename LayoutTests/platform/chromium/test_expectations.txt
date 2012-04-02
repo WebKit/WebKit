@@ -3839,17 +3839,14 @@ BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
 // New test, flaky since added in r110965.
 BUGWK82097 : editing/selection/move-by-word-visually-crash-test-5.html = PASS TIMEOUT
 
-
-// Just needs a rebaseline. The iframe size is now 600x300, before it was 300x150 - as we properly zoom the default intrinsic size now.
-BUGWK81631 : fast/table/quote-text-around-iframe.html = IMAGE IMAGE+TEXT PASS
-// Size should be 100 now, instead of 101 - if so, only needs a rebaseline.
-// CRASH is from BUGWK82505.
-BUGWK81631 : svg/as-image/svg-non-integer-scaled-image.html = IMAGE IMAGE+TEXT CRASH PASS
-// Size changed from 93 to 92 due rounding, just needs a rebaseline.
-BUGWK81631 : fast/repaint/block-layout-inline-children-replaced.html = IMAGE IMAGE+TEXT PASS
-BUGWK81631 : fast/writing-mode/block-level-images.html = IMAGE IMAGE+TEXT PASS
-// Slight change in image size due to rounding - just needs a rebaseline.
-BUGWK81631 : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE IMAGE+TEXT PASS
+// Tests still flaky on the given platforms. They may not actually be flaky, but prior to
+// a rebaselining they were showing inconsistent results.
+BUGWK81631 WIN LINUX DEBUG : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE PASS
+BUGWK81631 WIN LINUX DEBUG : fast/writing-mode/block-level-images.html = IMAGE PASS
+BUGWK81631 MAC : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE PASS
+BUGWK81631 MAC : fast/repaint/block-layout-inline-children-replaced.html = IMAGE PASS
+BUGWK81631 MAC : fast/writing-mode/block-level-images.html = IMAGE PASS
+BUGWK81631 MAC : fast/table/quote-text-around-iframe.html = IMAGE PASS
 
 BUGWK82122 LEOPARD SNOWLEOPARD : css3/selectors3/xml/css3-modsel-100.xml = TEXT PASS
 BUGWK82122 LEOPARD SNOWLEOPARD : css3/selectors3/xml/css3-modsel-100b.xml = TEXT PASS
@@ -3989,7 +3986,8 @@ BUGWK82231 WIN DEBUG : fast/canvas/webgl/program-test.html = PASS CRASH
 
 BUGWK82232 SNOWLEOPARD LINUX : svg/as-image/animated-svg-as-image-same-image.html = PASS IMAGE CRASH
 BUGWK82232 SNOWLEOPARD DEBUG : svg/as-background-image/background-image-tiled.html = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/svg-as-image.html = CRASH
+BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/svg-as-image.html = CRASH PASS
+BUGWK81631 SNOWLEOPARD DEBUG : svg/as-image/svg-non-integer-scaled-image.html = CRASH PASS
 
 // Flaky since at least r111670
 BUGWK82258 DEBUG : svg/custom/circular-marker-reference-4.svg = TEXT PASS
