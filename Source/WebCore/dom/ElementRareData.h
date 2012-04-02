@@ -74,6 +74,8 @@ public:
 
     bool m_styleAffectedByEmpty;
 
+    IntSize m_savedLayerScrollOffset;
+
 #if ENABLE(FULLSCREEN_API)
     bool m_containsFullScreenElement;
 #endif

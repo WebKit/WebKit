@@ -903,6 +903,8 @@ void Element::insertedIntoDocument()
 
 void Element::removedFromDocument()
 {
+    setSavedLayerScrollOffset(IntSize());
+
     if (m_attributeData) {
         if (hasID()) {
             Attribute* idItem = getAttributeItem(document()->idAttributeName());
@@ -2064,6 +2066,18 @@ void Element::updateExtraNamedItemRegistration(const AtomicString& oldId, const 
 HTMLCollection* Element::ensureCachedHTMLCollection(CollectionType type)
 {
     return ensureRareData()->ensureCachedHTMLCollection(this, type);
+}
+
+IntSize Element::savedLayerScrollOffset() const
+{
+    return hasRareData() ? rareData()->m_savedLayerScrollOffset : IntSize();
+}
+
+void Element::setSavedLayerScrollOffset(const IntSize& size)
+{
+    if (size.isZero() && !hasRareData())
+        return;
+    ensureRareData()->m_savedLayerScrollOffset = size;
 }
 
 } // namespace WebCore

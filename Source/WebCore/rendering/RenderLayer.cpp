@@ -194,6 +194,14 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
         m_visibleContentStatusDirty = false;
         m_hasVisibleContent = renderer->style()->visibility() == VISIBLE;
     }
+
+    Node* node = renderer->node();
+    if (node && node->isElementNode()) {
+        // We save and restore only the scrollOffset as the other scroll values are recalculated.
+        Element* element = toElement(node);
+        m_scrollOffset = element->savedLayerScrollOffset();
+        element->setSavedLayerScrollOffset(IntSize());
+    }
 }
 
 RenderLayer::~RenderLayer()
@@ -206,6 +214,12 @@ RenderLayer::~RenderLayer()
     if (Frame* frame = renderer()->frame()) {
         if (FrameView* frameView = frame->view())
             frameView->removeScrollableArea(this);
+    }
+
+    if (!m_renderer->documentBeingDestroyed()) {
+        Node* node = m_renderer->node();
+        if (node && node->isElementNode())
+            toElement(node)->setSavedLayerScrollOffset(m_scrollOffset);
     }
 
     destroyScrollbar(HorizontalScrollbar);

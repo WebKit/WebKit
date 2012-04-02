@@ -402,6 +402,9 @@ public:
     bool hasID() const;
     bool hasClass() const;
 
+    IntSize savedLayerScrollOffset() const;
+    void setSavedLayerScrollOffset(const IntSize&);
+
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
         : ContainerNode(document, type)
