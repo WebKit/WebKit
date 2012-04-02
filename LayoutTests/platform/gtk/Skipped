@@ -1666,3 +1666,6 @@ fast/box-shadow/shadow-buffer-partial.html
 fast/block/lineboxcontain/block-font.html
 fast/block/lineboxcontain/block-glyphs.html
 fast/block/lineboxcontain/font.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82886
+inspector/styles/override-screen-size.html
