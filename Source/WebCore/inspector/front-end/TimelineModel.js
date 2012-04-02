@@ -100,6 +100,23 @@ WebInspector.TimelineModel.durationInSeconds = function(record)
     return WebInspector.TimelineModel.endTimeInSeconds(record) - WebInspector.TimelineModel.startTimeInSeconds(record);
 }
 
+/**
+ * @param {Object} total
+ * @param {Object} rawRecord
+ */
+WebInspector.TimelineModel.aggregateTimeForRecord = function(total, rawRecord)
+{
+    var childrenTime = 0;
+    var children = rawRecord["children"] || [];
+    for (var i = 0; i < children.length; ++i)  {
+        WebInspector.TimelineModel.aggregateTimeForRecord(total, children[i]);
+        childrenTime += WebInspector.TimelineModel.durationInSeconds(children[i]);
+    }
+    var categoryName = WebInspector.TimelinePresentationModel.recordStyle(rawRecord).category.name;
+    var ownTime = WebInspector.TimelineModel.durationInSeconds(rawRecord) - childrenTime;
+    total[categoryName] = (total[categoryName] || 0) + ownTime;
+}
+
 WebInspector.TimelineModel.prototype = {
     startRecord: function()
     {

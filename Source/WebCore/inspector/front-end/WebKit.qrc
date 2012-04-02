@@ -150,6 +150,7 @@
     <file>TextEditorModel.js</file>
     <file>TextPrompt.js</file>
     <file>TextViewer.js</file>
+    <file>TimelineFrameController.js</file>
     <file>TimelineManager.js</file>
     <file>TimelineModel.js</file>
     <file>TimelinePresentationModel.js</file>

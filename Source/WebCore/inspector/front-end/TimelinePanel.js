@@ -381,10 +381,14 @@ WebInspector.TimelinePanel.prototype = {
         if (verticalOverview !== this._verticalOverview) {
             this._verticalOverview = verticalOverview;
             this._glueParentButton.disabled = verticalOverview;
-            if (verticalOverview)
+            if (verticalOverview) {
                 this.element.addStyleClass("timeline-vertical-overview");
-            else
+                this._frameController = new WebInspector.TimelineFrameController(this._model, this._overviewPane);
+            } else {
+                this._frameController.dispose();
+                this._frameController = null;
                 this.element.removeStyleClass("timeline-vertical-overview");
+            }
             this._presentationModel.setGlueRecords(this._glueParentButton.toggled && !verticalOverview);
             this._repopulateRecords();
         }

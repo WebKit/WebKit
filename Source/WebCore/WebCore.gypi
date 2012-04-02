@@ -6383,6 +6383,7 @@
             'inspector/front-end/TextEditorModel.js',
             'inspector/front-end/TextPrompt.js',
             'inspector/front-end/TextViewer.js',
+            'inspector/front-end/TimelineFrameController.js',
             'inspector/front-end/TimelineManager.js',
             'inspector/front-end/TimelineModel.js',
             'inspector/front-end/TimelinePresentationModel.js',

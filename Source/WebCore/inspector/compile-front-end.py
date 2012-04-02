@@ -84,7 +84,6 @@ modules = [
             "SnippetsModel.js",
             "TimelineManager.js",
             "TimelineModel.js",
-            "TimelinePresentationModel.js",
             "RawSourceCode.js",
             "RemoteObject.js",
             "Resource.js",
@@ -229,6 +228,8 @@ modules = [
             "MemoryStatistics.js",
             "TimelineOverviewPane.js",
             "TimelinePanel.js",
+            "TimelinePresentationModel.js",
+            "TimelineFrameController.js"
         ]
     },
     {

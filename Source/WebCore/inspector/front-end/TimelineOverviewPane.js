@@ -147,7 +147,6 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._heapGraph.hide();
         this._setVerticalOverview(this._currentMode === WebInspector.TimelineOverviewPane.Mode.EventsVertical);
         this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
-        this._updateCategoryStrips();
         this.dispatchEventToListeners(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._currentMode);
     },
 
@@ -173,6 +172,7 @@ WebInspector.TimelineOverviewPane.prototype = {
             this._verticalOverview.detach();
             this._verticalOverview = null;
             this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
+            this._updateCategoryStrips();
         }
     },
 
@@ -279,6 +279,15 @@ WebInspector.TimelineOverviewPane.prototype = {
     {
         this._overviewContainer.style.left = width + "px";
         this._topPaneSidebarElement.style.width = width + "px";
+    },
+
+    /**
+     * @param {WebInspector.TimelineFrame} frame
+     */
+    addFrame: function(frame)
+    {
+        this._verticalOverview.addFrame(frame);
+        this._scheduleRefresh();
     },
 
     _reset: function()
@@ -840,33 +849,18 @@ WebInspector.TimelineVerticalOverview.prototype = {
     reset: function()
     {
         this._recordsPerBar = 1;
-        this._frameMode = false;
         this._barTimes = [];
         this._longestBarTime = 0;
-        this._aggregatedRecords = [];
+        this._frames = [];
     },
 
     update: function()
     {
-        var records = [];
-        var frameCount = 0;
-        for (var i = 0; i < this._aggregatedRecords.length; ++i) {
-            var record = this._aggregatedRecords[i];
-            if (record.category.hidden)
-                continue;
-            if (record.type === WebInspector.TimelineModel.RecordType.BeginFrame || (frameCount && (i + 1 === records.length)))
-                ++frameCount;
-            records.push(record);
-        }
-        // If we have frames, aggregate by frames; otherwise, just show top-level records.
-        var recordCount = frameCount || records.length;
-
         const minBarWidth = 4;
-        this._recordsPerBar = Math.max(1, recordCount * minBarWidth / this.element.clientWidth);
-        var numberOfBars = Math.ceil(recordCount / this._recordsPerBar);
+        var framesPerBar = Math.max(1, this._frames.length * minBarWidth / this.element.clientWidth);
         this._barTimes = [];
         this._longestBarTime = 0;
-        var barHeights = frameCount ? this._aggregateFrames(records, numberOfBars) : this._aggregateRecords(records, numberOfBars);
+        var barHeights = this._aggregateFrames(framesPerBar);
 
         const paddingTop = 4;
         var scale = (this.element.clientHeight - paddingTop) / this._longestBarTime;
@@ -874,106 +868,35 @@ WebInspector.TimelineVerticalOverview.prototype = {
         this._renderBars(barHeights, scale);
     },
 
-    wasShown: function()
+    /**
+     * @param {WebInspector.TimelineFrame} frame
+     */
+    addFrame: function(frame)
     {
-        this._aggregatedRecords = [];
-        var records = this._model.records;
-        for (var i = 0; i < records.length; ++i)
-            this._aggregatedRecords.push(new WebInspector.TimelineAggregatedRecord(records[i]));
-
-        this.update();
-        this._model.addEventListener(WebInspector.TimelineModel.Events.RecordAdded, this._onRecordAdded, this);
-        this._model.addEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this.reset, this);
-    },
-
-    willHide: function()
-    {
-        this._model.removeEventListener(WebInspector.TimelineModel.Events.RecordAdded, this._onRecordAdded, this);
-        this._model.removeEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this.reset, this);
+        this._frames.push(frame);
     },
 
     /**
-     * @param {Array.<WebInspector.TimelineAggregatedRecord>} records
-     * @param {number} numberOfBars
+     * @param {number} framesPerBar
      */
-    _aggregateFrames: function(records, numberOfBars)
+    _aggregateFrames: function(framesPerBar)
     {
         var statistics = [];
-        for (var barNumber = 0, currentRecord = 0, currentFrame = 0;
-             barNumber < numberOfBars && currentRecord < records.length; ++barNumber) {
-            var lastFrame = Math.floor((barNumber + 1) * this._recordsPerBar);
-            var barStartTime = records[currentRecord].startTime;
-            var longestFrameStatistics;
-            var longestFrameTime = 0;
+        for (var barNumber = 0, currentFrame = 0; currentFrame < this._frames.length; ++barNumber) {
+            var barStartTime = this._frames[currentFrame].startTime;
+            var longestFrame = null;
 
-            for (; currentFrame < lastFrame && currentRecord < records.length; ++currentFrame) {
-                if (records[currentRecord].type === WebInspector.TimelineModel.RecordType.BeginFrame)
-                    currentRecord++;
-                var frameStatistics = {};
-                var frameInfo = this._aggregateFrameStatistics(records, currentRecord, frameStatistics);
-                currentRecord += frameInfo.recordCount;
-                if (frameInfo.totalTime > longestFrameTime) {
-                    longestFrameStatistics = frameStatistics;
-                    longestFrameTime = frameInfo.totalTime;
-                }
+            for (var lastFrame = Math.min(Math.floor((barNumber + 1) * framesPerBar), this._frames.length);
+                 currentFrame < lastFrame; ++currentFrame) {
+                if (!longestFrame || longestFrame.cpuTime < this._frames[currentFrame].cpuTime)
+                    longestFrame = this._frames[currentFrame];
             }
-            var barEndTime = records[currentRecord - 1].endTime;
-            if (longestFrameStatistics) {
-                this._longestBarTime = Math.max(this._longestBarTime, longestFrameTime);
-                statistics.push(longestFrameStatistics);
+            var barEndTime = this._frames[currentFrame - 1].endTime;
+            if (longestFrame) {
+                this._longestBarTime = Math.max(this._longestBarTime, longestFrame.cpuTime);
+                statistics.push(longestFrame.timeByCategory);
                 this._barTimes.push({ startTime: barStartTime, endTime: barEndTime });
             }
-        }
-        return statistics;
-    },
-
-    /**
-     * @param {Array.<WebInspector.TimelineAggregatedRecord>} records
-     * @param {number} startIndex
-     * @param {Object} statistics
-     */
-    _aggregateFrameStatistics: function(records, startIndex, statistics)
-    {
-        var totalTime = 0;
-        for (var index = startIndex; index < records.length; ++index) {
-            var record = records[index];
-            if (record.type === WebInspector.TimelineModel.RecordType.BeginFrame)
-                break;
-            var categories = Object.keys(record.timeByCategory);
-            for (var i = 0; i < categories.length; ++i) {
-                var category = categories[i];
-                var value = statistics[category] || 0;
-                value += record.timeByCategory[category];
-                totalTime += record.timeByCategory[category];
-                statistics[category] = value;
-            }
-        }
-        return {
-            totalTime: totalTime,
-            recordCount: index - startIndex
-        }
-    },
-
-    /**
-     * @param {Array.<WebInspector.TimelineAggregatedRecord>} records
-     * @param {number} numberOfBars
-     */
-    _aggregateRecords: function(records, numberOfBars)
-    {
-        var statistics = [];
-        for (var barNumber = 0, currentRecord = 0; barNumber < numberOfBars && currentRecord < records.length; ++barNumber) {
-            var barStartTime = records[currentRecord].startTime;
-            var longestRecord = records[currentRecord];
-            var lastIndex = Math.min(Math.floor((barNumber + 1) * this._recordsPerBar), records.length);
-            for (++currentRecord; currentRecord < lastIndex; ++currentRecord) {
-                var record = records[currentRecord];
-                if (longestRecord.duration < record.duration)
-                    longestRecord = record;
-            }
-            var barEndTime = records[currentRecord - 1].endTime;
-            statistics.push(longestRecord.timeByCategory);
-            this._longestBarTime = Math.max(this._longestBarTime, longestRecord.duration);
-            this._barTimes.push({ startTime: barStartTime, endTime: barEndTime });
         }
         return statistics;
     },
@@ -1031,48 +954,10 @@ WebInspector.TimelineVerticalOverview.prototype = {
             startTime: firstBar >= this._barTimes.length ? Infinity : this._barTimes[firstBar].startTime,
             endTime: rightOffset + snapToRightTolerancePixels > windowSpan ? Infinity : this._barTimes[lastBar].endTime
         }
-    },
-
-    _onRecordAdded: function(event)
-    {
-        this._aggregatedRecords.push(new WebInspector.TimelineAggregatedRecord(event.data));
     }
 }
 
 WebInspector.TimelineVerticalOverview.prototype.__proto__ = WebInspector.View.prototype;
-
-/**
- * @constructor
- * @param {Object} rawRecord
- */
-WebInspector.TimelineAggregatedRecord = function(rawRecord)
-{
-    this.timeByCategory = {};
-    this.category = WebInspector.TimelinePresentationModel.categoryForRecord(rawRecord);
-    this.type = rawRecord.type;
-    this._aggregateStatistics(rawRecord);
-    this.startTime = WebInspector.TimelineModel.startTimeInSeconds(rawRecord);
-    this.endTime = WebInspector.TimelineModel.endTimeInSeconds(rawRecord);
-    this.duration = this.endTime - this.startTime;
-}
-
-WebInspector.TimelineAggregatedRecord.prototype = {
-    /**
-     * @param {Object} rawRecord
-     */
-    _aggregateStatistics: function(rawRecord)
-    {
-        var childrenTime = 0;
-        var children = rawRecord.children || [];
-        for (var i = 0; i < children.length; ++i)  {
-            this._aggregateStatistics(children[i]);
-            childrenTime += WebInspector.TimelineModel.durationInSeconds(children[i]);
-        }
-        var categoryName = WebInspector.TimelinePresentationModel.recordStyle(rawRecord).category.name;
-        var ownTime = WebInspector.TimelineModel.durationInSeconds(rawRecord) - childrenTime;
-        this.timeByCategory[categoryName] = (this.timeByCategory[categoryName] || 0) + ownTime;
-    }
-}
 
 /**
  * @constructor

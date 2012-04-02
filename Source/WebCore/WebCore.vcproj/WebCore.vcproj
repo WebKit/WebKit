@@ -74225,6 +74225,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\TimelineFrameController.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\TimelineManager.js"
 					>
 				</File>
