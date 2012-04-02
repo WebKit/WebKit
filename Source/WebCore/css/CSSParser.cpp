@@ -48,7 +48,6 @@
 #include "CSSPageRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
-#include "CSSPropertyLonghand.h"
 #include "CSSPropertySourceData.h"
 #include "CSSReflectValue.h"
 #include "CSSSelector.h"
@@ -76,6 +75,7 @@
 #include "Settings.h"
 #include "ShadowValue.h"
 #include "StylePropertySet.h"
+#include "StylePropertyShorthand.h"
 #include "StyleRule.h"
 #if ENABLE(CSS_FILTERS)
 #include "WebKitCSSFilterValue.h"

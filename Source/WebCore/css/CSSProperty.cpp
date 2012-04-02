@@ -21,11 +21,11 @@
 #include "config.h"
 #include "CSSProperty.h"
 
-#include "CSSPropertyLonghand.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueList.h"
 #include "PlatformString.h"
 #include "RenderStyleConstants.h"
+#include "StylePropertyShorthand.h"
 
 namespace WebCore {
 

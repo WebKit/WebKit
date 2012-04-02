@@ -23,12 +23,12 @@
 #include "StylePropertySet.h"
 
 #include "CSSParser.h"
-#include "CSSPropertyLonghand.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
+#include "StylePropertyShorthand.h"
 #include <wtf/BitVector.h>
 #include <wtf/text/StringBuilder.h>
 

@@ -34,7 +34,6 @@
 #include "CSSImageGeneratorValue.h"
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSPropertyLonghand.h"
 #include "CSSPropertyNames.h"
 #include "CompositeAnimation.h"
 #include "Document.h"
@@ -49,6 +48,7 @@
 #include "RenderStyle.h"
 #include "StyleCachedImage.h"
 #include "StyleGeneratedImage.h"
+#include "StylePropertyShorthand.h"
 #include "UnitBezier.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>

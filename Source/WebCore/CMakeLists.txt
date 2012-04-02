@@ -477,7 +477,6 @@ SET(WebCore_SOURCES
     css/CSSParserValues.cpp
     css/CSSPrimitiveValue.cpp
     css/CSSProperty.cpp
-    css/CSSPropertyLonghand.cpp
     css/CSSPropertySourceData.cpp
     css/CSSReflectValue.cpp
     css/CSSRule.cpp
@@ -513,6 +512,7 @@ SET(WebCore_SOURCES
     css/ShadowValue.cpp
     css/StyleMedia.cpp
     css/StylePropertySet.cpp
+    css/StylePropertyShorthand.cpp
     css/StyleRule.cpp
     css/StyleSheet.cpp
     css/StyleSheetList.cpp

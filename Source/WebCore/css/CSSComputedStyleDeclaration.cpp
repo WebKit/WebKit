@@ -32,7 +32,6 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSProperty.h"
-#include "CSSPropertyLonghand.h"
 #include "CSSPropertyNames.h"
 #include "CSSReflectValue.h"
 #include "CSSSelector.h"
@@ -60,6 +59,7 @@
 #include "RenderView.h"
 #include "ShadowValue.h"
 #include "StylePropertySet.h"
+#include "StylePropertyShorthand.h"
 #if ENABLE(CSS_FILTERS)
 #include "StyleCustomFilterProgram.h"
 #include "WebKitCSSFilterValue.h"

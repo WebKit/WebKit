@@ -52,7 +52,6 @@
 #include "CSSPageRule.cpp"
 #include "CSSParser.cpp"
 #include "CSSParserValues.cpp"
-#include "CSSPropertyLonghand.cpp"
 #include "CSSPropertySourceData.cpp"
 #include "CSSReflectValue.cpp"
 #include "CSSRule.cpp"
@@ -72,3 +71,4 @@
 #include "CSSValuePool.cpp"
 #include "CSSWrapShapes.cpp"
 #include "StylePropertySet.cpp"
+#include "StylePropertyShorthand.cpp"

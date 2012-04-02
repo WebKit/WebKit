@@ -452,7 +452,6 @@ SOURCES += \
     css/CSSParserValues.cpp \
     css/CSSPrimitiveValue.cpp \
     css/CSSProperty.cpp \
-    css/CSSPropertyLonghand.cpp \
     css/CSSPropertySourceData.cpp \
     css/CSSReflectValue.cpp \
     css/CSSRule.cpp \
@@ -488,6 +487,7 @@ SOURCES += \
     css/ShadowValue.cpp \
     css/StyleMedia.cpp \
     css/StylePropertySet.cpp \
+    css/StylePropertyShorthand.cpp \
     css/StyleRule.cpp \
     css/StyleSheet.cpp \
     css/StyleSheetList.cpp \
@@ -1596,7 +1596,6 @@ HEADERS += \
     css/CSSParserValues.h \
     css/CSSPrimitiveValue.h \
     css/CSSProperty.h \
-    css/CSSPropertyLonghand.h \
     css/CSSReflectValue.h \
     css/CSSRule.h \
     css/CSSRuleList.h \
@@ -1631,6 +1630,7 @@ HEADERS += \
     css/ShadowValue.h \
     css/StyleMedia.h \
     css/StylePropertySet.h \
+    css/StylePropertyShorthand.h \
     css/StyleRule.h \
     css/StyleSheet.h \
     css/StyleSheetList.h \

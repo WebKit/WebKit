@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "CSSPropertyLonghand.h"
+#include "StylePropertyShorthand.h"
 
 #include <wtf/StdLibExtras.h>
 

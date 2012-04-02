@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSPropertyLonghand_h
-#define CSSPropertyLonghand_h
+#ifndef StylePropertyShorthand_h
+#define StylePropertyShorthand_h
 
 #include "CSSPropertyNames.h"
 
@@ -103,4 +103,4 @@ const StylePropertyShorthand& shorthandForProperty(int);
 
 } // namespace WebCore
 
-#endif // CSSPropertyLonghand_h
+#endif // StylePropertyShorthand_h

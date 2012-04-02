@@ -1614,8 +1614,6 @@ webcore_sources += \
 	Source/WebCore/css/CSSPrimitiveValueMappings.h \
 	Source/WebCore/css/CSSProperty.cpp \
 	Source/WebCore/css/CSSProperty.h \
-	Source/WebCore/css/CSSPropertyLonghand.cpp \
-	Source/WebCore/css/CSSPropertyLonghand.h \
 	Source/WebCore/css/CSSPropertySourceData.cpp \
 	Source/WebCore/css/CSSPropertySourceData.h \
 	Source/WebCore/css/CSSReflectionDirection.h \
@@ -1691,6 +1689,8 @@ webcore_sources += \
 	Source/WebCore/css/StyleMedia.h \
 	Source/WebCore/css/StylePropertySet.cpp \
 	Source/WebCore/css/StylePropertySet.h \
+	Source/WebCore/css/StylePropertyShorthand.cpp \
+	Source/WebCore/css/StylePropertyShorthand.h \
 	Source/WebCore/css/StyleRule.cpp \
 	Source/WebCore/css/StyleRule.h \
 	Source/WebCore/css/StyleSheet.cpp \
