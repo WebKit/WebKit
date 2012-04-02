@@ -1823,7 +1823,7 @@ BUGWK82505 SNOWLEOPARD LEOPARD XP DEBUG : http/tests/xmlhttprequest/upload-onloa
 BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onprogress-event.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-sync-requests.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/uri-resolution-opera-open-004.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD LEOPARD XP DEBUG : http/tests/xmlhttprequest/upload-progress-events.html = PASS CRASH
+BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-progress-events.html = PASS CRASH
 
 // These are due to an assertion in FrameView::paintContents().
 BUGWK82505 SNOWLEOPARD DEBUG : fast/writing-mode/body-writing-mode-propagation-blocked.html = PASS TEXT CRASH
