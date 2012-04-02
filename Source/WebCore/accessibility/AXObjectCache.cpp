@@ -54,7 +54,6 @@
 #include "Document.h"
 #include "FocusController.h"
 #include "Frame.h"
-#include "FrameSelection.h"
 #include "HTMLAreaElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -72,8 +71,7 @@
 #include "RenderTableRow.h"
 #include "RenderView.h"
 #include "ScrollView.h"
-#include "TextAffinity.h"
-#include "htmlediting.h"
+
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -157,31 +155,6 @@ AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
 
     return obj;
 }
-
-#if HAVE(ACCESSIBILITY) && (PLATFORM(MAC) || PLATFORM(GTK))
-void AXObjectCache::handleScrolledToAnchor(const Node* node)
-{
-    ASSERT(node);
-
-    Document* document = node->document();
-    if (!document)
-        return;
-
-    RefPtr<Node> refNode = const_cast<Node*>(node);
-    document->setFocusedNode(refNode);
-
-    Frame* frame = document->frame();
-    if (!frame)
-        return;
-
-    FrameSelection* selection = frame->selection();
-    if (!selection)
-        return;
-
-    Position targetPosition = firstPositionInOrBeforeNode(refNode.get());
-    selection->moveTo(targetPosition, DOWNSTREAM);
-}
-#endif
 
 AccessibilityObject* AXObjectCache::get(Widget* widget)
 {
