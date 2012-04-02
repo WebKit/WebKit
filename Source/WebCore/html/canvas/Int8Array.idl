@@ -35,7 +35,7 @@ module html {
         CustomToJSObject,
         DoNotCheckConstants
     ] Int8Array : ArrayBufferView {
-        const unsigned int BYTES_PER_ELEMENT = 1;
+        const unsigned long BYTES_PER_ELEMENT = 1;
 
         readonly attribute unsigned long length;
         Int8Array subarray(in [Optional=DefaultIsUndefined] long start, 

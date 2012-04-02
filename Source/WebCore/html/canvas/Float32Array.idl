@@ -35,7 +35,7 @@ module html {
         CustomToJSObject,
         DoNotCheckConstants
     ] Float32Array : ArrayBufferView {
-        const unsigned int BYTES_PER_ELEMENT = 4;
+        const unsigned long BYTES_PER_ELEMENT = 4;
 
         readonly attribute unsigned long length;
         Float32Array subarray(in [Optional=DefaultIsUndefined] long start, 

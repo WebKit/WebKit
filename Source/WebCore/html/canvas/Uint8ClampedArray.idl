@@ -35,7 +35,7 @@ module html {
         CustomToJSObject,
         DoNotCheckConstants
     ] Uint8ClampedArray : Uint8Array {
-        const unsigned int BYTES_PER_ELEMENT = 1;
+        const unsigned long BYTES_PER_ELEMENT = 1;
 
         readonly attribute unsigned long length;
         Uint8ClampedArray subarray(in [Optional=DefaultIsUndefined] long start, in [Optional] long end);
