@@ -3987,16 +3987,12 @@ BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
 BUGWK82230 LINUX DEBUG : http/tests/cache/post-redirect-get.php = PASS CRASH
 BUGWK82231 WIN DEBUG : fast/canvas/webgl/program-test.html = PASS CRASH
 
-BUGWK82232 SNOWLEOPARD DEBUG : svg/custom/empty-merge.svg = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/clip-path/clip-in-mask-objectBoundingBox.svg = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/clip-path/clip-path-css-transform-1.svg = CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/animated-svg-as-image-same-image.html = PASS IMAGE CRASH
+BUGWK82232 SNOWLEOPARD LINUX : svg/as-image/animated-svg-as-image-same-image.html = PASS IMAGE CRASH
 BUGWK82232 SNOWLEOPARD DEBUG : svg/as-background-image/background-image-tiled.html = PASS CRASH
 BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/svg-as-image.html = CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : traversal/hixie-node-iterator/002.xml = CRASH
 
 // Flaky since at least r111670
-BUGWK82258 : svg/custom/circular-marker-reference-4.svg = TEXT PASS
+BUGWK82258 DEBUG : svg/custom/circular-marker-reference-4.svg = TEXT PASS
 BUGWK82260 : media/video-beforeload-remove-source.html = TIMEOUT PASS
 
 BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-x-in-scrolling-page.html = TEXT PASS
