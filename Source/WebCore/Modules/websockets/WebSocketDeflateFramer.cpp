@@ -217,11 +217,15 @@ void WebSocketDeflateFramer::resetDeflateContext()
 
 PassOwnPtr<InflateResultHolder> WebSocketDeflateFramer::inflate(WebSocketFrame& frame)
 {
-#if USE(ZLIB)
     OwnPtr<InflateResultHolder> result = InflateResultHolder::create(this);
+    if (!enabled() && frame.compress) {
+        result->fail("Compressed bit must be 0 if no negotiated deflate-frame extension");
+        return result.release();
+    }
+#if USE(ZLIB)
     if (!frame.compress)
         return result.release();
-    if (!enabled() || !WebSocketFrame::isNonControlOpCode(frame.opCode)) {
+    if (!WebSocketFrame::isNonControlOpCode(frame.opCode)) {
         result->fail("Received unexpected compressed frame");
         return result.release();
     }
@@ -234,7 +238,7 @@ PassOwnPtr<InflateResultHolder> WebSocketDeflateFramer::inflate(WebSocketFrame& 
     frame.payloadLength = m_inflater->size();
     return result.release();
 #else
-    return InflateResultHolder::create(this);
+    return result.release();
 #endif
 }
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Received unexpected compressed frame
+CONSOLE MESSAGE: Compressed bit must be 0 if no negotiated deflate-frame extension
 CONSOLE MESSAGE: One or more reserved bits are on: reserved2 = 1, reserved3 = 0
 CONSOLE MESSAGE: One or more reserved bits are on: reserved2 = 0, reserved3 = 1
 CONSOLE MESSAGE: One or more reserved bits are on: reserved2 = 1, reserved3 = 0
