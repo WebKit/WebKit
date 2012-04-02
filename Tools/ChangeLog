@@ -1,5 +1,19 @@
 2012-04-02  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic isn't able to rebaseline audio failures
+        https://bugs.webkit.org/show_bug.cgi?id=82957
+
+        Reviewed by Chris Rogers.
+
+        This patch just adds "wav" to the list of test suffixes and updates the
+        unit tests to show that we're rebaselining audio tests results now too.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_updates_expectations_file):
+
+2012-04-02  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should let you listen to audio failures
         https://bugs.webkit.org/show_bug.cgi?id=82953
 

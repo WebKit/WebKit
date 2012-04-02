@@ -47,7 +47,7 @@ from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 
 
-_baseline_suffix_list = ['png', 'txt']
+_baseline_suffix_list = ['png', 'wav', 'txt']
 
 
 # FIXME: Should TestResultWriter know how to compute this string?
