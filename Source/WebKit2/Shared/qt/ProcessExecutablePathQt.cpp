@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Nokia Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,57 +25,30 @@
  */
 
 #include "config.h"
-#include "PluginProcessProxy.h"
-
-#if ENABLE(PLUGIN_PROCESS)
-
 #include "ProcessExecutablePath.h"
-#include <QByteArray>
+
 #include <QCoreApplication>
 #include <QDir>
-#include <QEventLoop>
-#include <QProcess>
-#include <QString>
+#include <QFile>
 
 namespace WebKit {
 
-class PluginProcessCreationParameters;
-
-void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters&)
+static String executablePath(QLatin1String baseName)
 {
+    QString expectedPath = QCoreApplication::applicationDirPath() + QDir::separator() + baseName;
+    if (QFile::exists(expectedPath))
+        return String(expectedPath);
+    return String(QString(baseName));
 }
 
-bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData& result)
+String executablePathOfWebProcess()
 {
-    QString commandLine = QLatin1String("%1 %2 %3");
-    commandLine = commandLine.arg(executablePathOfPluginProcess());
-    commandLine = commandLine.arg(QStringLiteral("-scanPlugin")).arg(static_cast<QString>(pluginPath));
+    return executablePath(QStringLiteral("QtWebProcess"));
+}
 
-    QProcess process;
-    process.setReadChannel(QProcess::StandardOutput);
-    process.start(commandLine);
-
-    if (!process.waitForFinished()
-        || process.exitStatus() != QProcess::NormalExit
-        || process.exitCode() != EXIT_SUCCESS) {
-        process.kill();
-        return false;
-    }
-
-    QByteArray outputBytes = process.readAll();
-    ASSERT(!(outputBytes.size() % sizeof(UChar)));
-
-    String output(reinterpret_cast<const UChar*>(outputBytes.constData()), outputBytes.size() / sizeof(UChar));
-    Vector<String> lines;
-    output.split(UChar('\n'), lines);
-    ASSERT(lines.size() == 3);
-
-    result.name.swap(lines[0]);
-    result.description.swap(lines[1]);
-    result.mimeDescription.swap(lines[2]);
-    return !result.mimeDescription.isEmpty();
+String executablePathOfPluginProcess()
+{
+    return executablePath(QStringLiteral("QtWebPluginProcess"));
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(PLUGIN_PROCESS)

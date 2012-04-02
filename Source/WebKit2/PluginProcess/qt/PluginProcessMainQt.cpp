@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, 2011 Nokia Inc. All rights reserved.
+ * Copyright (C) 2011 University of Szeged. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,43 +25,82 @@
  */
 
 #include "config.h"
-#include "PluginProcessMain.h"
 
 #if ENABLE(PLUGIN_PROCESS)
+#include "PluginProcessMain.h"
 
-#include "CommandLine.h"
+#include "NetscapePluginModule.h"
 #include "PluginProcess.h"
-#include <WebCore/NotImplemented.h>
+#include <QDebug>
+#include <QGuiApplication>
+#include <QStringList>
 #include <WebCore/RunLoop.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
-
-#define SHOW_CRASH_REPORTER 1
+#include <wtf/Threading.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-int PluginProcessMain(const CommandLine& commandLine)
+static void messageHandler(QtMsgType type, const char* message)
 {
-    String serviceName = commandLine["servicename"];
-    if (serviceName.isEmpty())
-        return EXIT_FAILURE;
+    if (type == QtCriticalMsg) {
+        fprintf(stderr, "%s\n", message);
+        return;
+    }
 
-#if !SHOW_CRASH_REPORTER
-    // Installs signal handlers that exit on a crash so that CrashReporter does not show up.
-    signal(SIGILL, _exit);
-    signal(SIGFPE, _exit);
-    signal(SIGBUS, _exit);
-    signal(SIGSEGV, _exit);
-#endif
+    // Do nothing
+}
+
+static bool initializeGtk()
+{
+    QLibrary gtkLibrary(QLatin1String("libgtk-x11-2.0"), 0);
+    if (!gtkLibrary.load())
+        return false;
+    typedef void* (*gtk_init_ptr)(void*, void*);
+    gtk_init_ptr gtkInit = reinterpret_cast<gtk_init_ptr>(gtkLibrary.resolve("gtk_init"));
+    if (!gtkInit)
+        return false;
+    gtkInit(0, 0);
+    return true;
+}
+
+int PluginProcessMain(int argc, char** argv)
+{
+    QByteArray suppressOutput = qgetenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT");
+    if (!suppressOutput.isEmpty() && suppressOutput != "0")
+        qInstallMsgHandler(messageHandler);
+
+    QGuiApplication app(argc, argv);
+
+    // Workaround the issue that some versions of flash does not initialize Gtk properly.
+    if (!initializeGtk())
+        return EXIT_FAILURE;
 
     JSC::initializeThreading();
     WTF::initializeMainThread();
+
+    if (argc <= 1)
+        return EXIT_FAILURE;
+
+    if (app.arguments().at(1) == QLatin1String("-scanPlugin")) {
+        if (argc != 3)
+            return EXIT_FAILURE;
+        String pluginPath(app.arguments().at(2));
+        if (!NetscapePluginModule::scanPlugin(pluginPath))
+            return EXIT_FAILURE;
+        return EXIT_SUCCESS;
+    }
+
     RunLoop::initializeMainRunLoop();
+
+    // Create the connection.
+    bool isNumber = false;
+    int identifier = app.arguments().at(1).toInt(&isNumber, 10);
+    if (!isNumber)
+        return EXIT_FAILURE;
+    WebKit::PluginProcess::shared().initialize(identifier, RunLoop::main());
 
     RunLoop::run();
 

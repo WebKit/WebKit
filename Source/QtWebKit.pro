@@ -4,6 +4,8 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
+load(features)
+
 TEMPLATE = subdirs
 CONFIG += ordered
 
@@ -13,6 +15,10 @@ SUBDIRS += api
 !no_webkit2 {
     webprocess.file = WebKit2/WebProcess.pro
     SUBDIRS += webprocess
+    contains(DEFINES, ENABLE_PLUGIN_PROCESS=1) {
+        pluginprocess.file = WebKit2/PluginProcess.pro
+        SUBDIRS += pluginprocess
+    }
 }
 
 include(WebKit/qt/docs/docs.pri)

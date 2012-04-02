@@ -32,7 +32,8 @@ nodist_Programs_MiniBrowser_SOURCES = \
 Programs_MiniBrowser_LDADD = \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(GLIB_LIBS) \
-	$(GTK_LIBS)
+	$(GTK_LIBS) \
+	$(LIBSOUP_LIBS)
 
 Programs_MiniBrowser_LDFLAGS = \
 	-no-fast-install \
