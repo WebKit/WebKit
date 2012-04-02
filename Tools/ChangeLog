@@ -1,3 +1,12 @@
+2012-04-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Enable shadow-dom in build-webkit.
+
+        Rubber-stamped by Gustavo Noronha Silva.
+
+        * Scripts/build-webkit: Enable shadow-dom build, this is need to
+        have a working build currently.
+
 2012-04-02  Andreas Kling  <kling@webkit.org>
 
         Adding Zalan Bujtas to committers list.
