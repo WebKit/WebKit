@@ -23,10 +23,11 @@ function removeNonFormListItems(list) {
 
 function createKeyNameReloader(name, visibilityAction, callback) {
     return function () {
-        $.getJSON(name, function (platforms) {
+        $.getJSON(name, function (entries) {
             var list = $('#' + name + ' ul');
-            removeNonFormListItems(list);
-            $.each(platforms, function (key, values) {
+            entries = sortProperties(entries);
+
+            $.each(entries, function (key, values) {
                 var label = key == values['name'] ? key : key + ' : ' + values['name'];
                 list.append('<li><h3 id="' + key + '">' + label + '</h3></li>');
                 var item = list[0].lastChild;

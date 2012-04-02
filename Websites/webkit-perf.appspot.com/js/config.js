@@ -79,6 +79,14 @@ function urlForChangesetList(branch, changesetList, repository)
                '&verbose=on';
 }
 
+function sortProperties(object) {
+    var tests = Object.keys(object).sort();
+    var sortedObject = {};
+    for (var i = 0; i < tests.length; i++)
+        sortedObject[tests[i]] = object[tests[i]];
+    return sortedObject;
+}
+
 // FIXME move this back to dashboard.js once the bug 718925 is fixed
 function fetchDashboardManifest(callback)
 {
@@ -90,12 +98,7 @@ function fetchDashboardManifest(callback)
     });
 
     $.getJSON(SERVER + '/api/test/dashboard', function (dashboardManifest) {
-        var testToId = dashboardManifest['testToId'];
-        var tests = Object.keys(testToId).sort();
-        var sortedTestToId = {};
-        for (var i = 0; i < tests.length; i++)
-            sortedTestToId[tests[i]] = testToId[tests[i]];
-        dashboardManifest['testToId'] = sortedTestToId;
+        dashboardManifest['testToId'] = sortProperties(dashboardManifest['testToId']);
         callback(dashboardManifest);
     });
 }

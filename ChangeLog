@@ -1,5 +1,17 @@
 2012-04-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Admin page should lexicologically sort tests
+        https://bugs.webkit.org/show_bug.cgi?id=82849
+
+        Rubber-stamped by Hajime Morita.
+
+        * Websites/webkit-perf.appspot.com/js/admin.js:
+        * Websites/webkit-perf.appspot.com/js/config.js:
+        (sortProperties):
+        (fetchDashboardManifest):
+
+2012-04-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         Revert an inadvertently committed change.
 
         * Websites/webkit-perf.appspot.com/app.yaml:
