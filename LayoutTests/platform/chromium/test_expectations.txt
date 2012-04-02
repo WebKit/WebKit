@@ -1791,7 +1791,8 @@ BUGCR118411 : svg/as-background-image/background-image-preserveaspectRatio-suppo
 BUGCR118411 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE
 BUGCR118411 LEOPARD SNOWLEOPARD : svg/hixie/perf/001.xml = IMAGE PASS
 BUGCR118411 LEOPARD SNOWLEOPARD : svg/hixie/perf/002.xml = IMAGE PASS
-BUGCR118411 SLOW : svg/hixie/perf/007.xml = PASS
+// Fails on Snow Leopard - see BUGWK82954
+BUGCR118411 SLOW : svg/hixie/perf/007.xml = PASS FAIL
 
 // WebKit merge 50756:50820, possibly due to WebKit r50808/r50786 and Chromium r31715
 BUGCR27553 WIN : fast/text/atsui-partial-selection.html = IMAGE
@@ -3925,6 +3926,11 @@ BUGWK82232 SNOWLEOPARD DEBUG : fast/writing-mode/japanese-ruby-horizontal-bt.htm
 BUGWK82232 SNOWLEOPARD DEBUG : transitions/remove-transition-style.html = PASS TEXT CRASH
 BUGWK82232 SNOWLEOPARD DEBUG : traversal/node-iterator-prototype.html = PASS CRASH
 BUGWK82232 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS CRASH
+BUGWK82232 SNOWLEOPARD DEBUG : fast/writing-mode/border-image-vertical-lr.html = PASS CRASH
+BUGWK82232 SNOWLEOPARD DEBUG : svg/as-background-image/animated-svg-as-background.html = PASS CRASH
+BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/same-image-two-instances.html = PASS IMAGE CRASH
+BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/svg-image-change-content-size.xhtml = PASS IMAGE CRASH
+BUGWK82232 SNOWLEOPARD DEBUG : svg/custom/circular-marker-reference-2.svg = PASS CRASH
 
 // Flaky since at least r111670
 BUGWK82258 DEBUG : svg/custom/circular-marker-reference-4.svg = TEXT PASS
