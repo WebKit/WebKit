@@ -212,7 +212,7 @@ bool DragController::performDrag(DragData* dragData)
             preventedDefault = mainFrame->eventHandler()->performDragAndDrop(createMouseEvent(dragData), clipboard.get());
             clipboard->setAccessPolicy(ClipboardNumb); // Invalidate clipboard here for security
         }
-        if (m_isHandlingDrag || preventedDefault) {
+        if (preventedDefault) {
             m_documentUnderMouse = 0;
             return true;
         }
