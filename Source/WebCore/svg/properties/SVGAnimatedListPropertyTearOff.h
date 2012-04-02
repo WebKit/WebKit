@@ -37,7 +37,6 @@ public:
     typedef SVGPropertyTearOff<ListItemType> ListItemTearOff;
     typedef Vector<RefPtr<ListItemTearOff> > ListWrapperCache;
     typedef SVGListPropertyTearOff<PropertyType> ListPropertyTearOff;
-    typedef PropertyType ContentType;
 
     ListPropertyTearOff* baseVal()
     {

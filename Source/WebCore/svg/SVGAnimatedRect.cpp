@@ -41,17 +41,17 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedRectAnimator::constructFromString(const S
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedRectAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    return SVGAnimatedType::createRect(constructFromBaseValue<SVGAnimatedRect>(properties));
+    return SVGAnimatedType::createRect(constructFromOneBaseValue<FloatRect, SVGAnimatedRect>(properties));
 }
 
 void SVGAnimatedRectAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    stopAnimValAnimationForType<SVGAnimatedRect>(properties);
+    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedRect>(properties);
 }
 
 void SVGAnimatedRectAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
 {
-    resetFromBaseValue<SVGAnimatedRect>(properties, type, &SVGAnimatedType::rect);
+    resetFromOneBaseValue<FloatRect, SVGAnimatedRect>(properties, type, &SVGAnimatedType::rect);
 }
 
 void SVGAnimatedRectAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)

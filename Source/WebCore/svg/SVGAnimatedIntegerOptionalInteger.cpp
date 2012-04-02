@@ -51,27 +51,27 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedIntegerOptionalIntegerAnimator::construct
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedIntegerOptionalIntegerAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    return SVGAnimatedType::createIntegerOptionalInteger(constructFromBaseValues<SVGAnimatedInteger, SVGAnimatedInteger>(properties));
+    return SVGAnimatedType::createIntegerOptionalInteger(constructFromTwoBaseValues<pair<int, int>, int, SVGAnimatedInteger>(properties));
 }
 
 void SVGAnimatedIntegerOptionalIntegerAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    stopAnimValAnimationForTypes<SVGAnimatedInteger, SVGAnimatedInteger>(properties);
+    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedInteger>(properties);
 }
 
 void SVGAnimatedIntegerOptionalIntegerAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
 {
-    resetFromBaseValues<SVGAnimatedInteger, SVGAnimatedInteger>(properties, type, &SVGAnimatedType::integerOptionalInteger);
+    resetFromTwoBaseValues<pair<int, int>, int, SVGAnimatedInteger>(properties, type, &SVGAnimatedType::integerOptionalInteger);
 }
 
 void SVGAnimatedIntegerOptionalIntegerAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
 {
-    animValWillChangeForTypes<SVGAnimatedInteger, SVGAnimatedInteger>(properties);
+    animValWillChangeForType<SVGAnimatedInteger>(properties);
 }
 
 void SVGAnimatedIntegerOptionalIntegerAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
 {
-    animValDidChangeForTypes<SVGAnimatedInteger, SVGAnimatedInteger>(properties);
+    animValDidChangeForType<SVGAnimatedInteger>(properties);
 }
 
 void SVGAnimatedIntegerOptionalIntegerAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)

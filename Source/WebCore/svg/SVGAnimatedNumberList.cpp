@@ -41,17 +41,17 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberListAnimator::constructFromString(c
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberListAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    return SVGAnimatedType::createNumberList(constructFromBaseValue<SVGAnimatedNumberList>(properties));
+    return SVGAnimatedType::createNumberList(constructFromOneBaseValue<SVGNumberList, SVGAnimatedNumberList>(properties));
 }
 
 void SVGAnimatedNumberListAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    stopAnimValAnimationForType<SVGAnimatedNumberList>(properties);
+    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedNumberList>(properties);
 }
 
 void SVGAnimatedNumberListAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
 {
-    resetFromBaseValue<SVGAnimatedNumberList>(properties, type, &SVGAnimatedType::numberList);
+    resetFromOneBaseValue<SVGNumberList, SVGAnimatedNumberList>(properties, type, &SVGAnimatedType::numberList);
 }
 
 void SVGAnimatedNumberListAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
