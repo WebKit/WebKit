@@ -9343,19 +9343,19 @@ void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
     resetPropertyMarks();
 }
 
-static int cssPropertyID(const UChar* propertyName, unsigned length)
+static CSSPropertyID cssPropertyID(const UChar* propertyName, unsigned length)
 {
     if (!length)
-        return 0;
+        return CSSPropertyInvalid;
     if (length > maxCSSPropertyNameLength)
-        return 0;
+        return CSSPropertyInvalid;
 
     char buffer[maxCSSPropertyNameLength + 1 + 1]; // 1 to turn "apple"/"khtml" into "webkit", 1 for null character
 
     for (unsigned i = 0; i != length; ++i) {
         UChar c = propertyName[i];
         if (c == 0 || c >= 0x7F)
-            return 0; // illegal character
+            return CSSPropertyInvalid; // illegal character
         buffer[i] = toASCIILower(c);
     }
     buffer[length] = '\0';
@@ -9375,15 +9375,15 @@ static int cssPropertyID(const UChar* propertyName, unsigned length)
     }
 
     const Property* hashTableEntry = findProperty(name, length);
-    return hashTableEntry ? hashTableEntry->id : 0;
+    return hashTableEntry ? static_cast<CSSPropertyID>(hashTableEntry->id) : CSSPropertyInvalid;
 }
 
-int cssPropertyID(const String& string)
+CSSPropertyID cssPropertyID(const String& string)
 {
     return cssPropertyID(string.characters(), string.length());
 }
 
-int cssPropertyID(const CSSParserString& string)
+CSSPropertyID cssPropertyID(const CSSParserString& string)
 {
     return cssPropertyID(string.characters, string.length);
 }

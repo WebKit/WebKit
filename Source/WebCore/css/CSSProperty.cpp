@@ -21,7 +21,6 @@
 #include "config.h"
 #include "CSSProperty.h"
 
-#include "CSSPropertyNames.h"
 #include "CSSValueList.h"
 #include "PlatformString.h"
 #include "RenderStyleConstants.h"
@@ -38,7 +37,7 @@ COMPILE_ASSERT(sizeof(CSSProperty) == sizeof(SameSizeAsCSSProperty), CSSProperty
 
 String CSSProperty::cssText() const
 {
-    return String(getPropertyName(static_cast<CSSPropertyID>(id()))) + ": " + m_value->cssText() + (isImportant() ? " !important" : "") + "; ";
+    return String(getPropertyName(id())) + ": " + m_value->cssText() + (isImportant() ? " !important" : "") + "; ";
 }
 
 void CSSProperty::wrapValueInCommaSeparatedList()

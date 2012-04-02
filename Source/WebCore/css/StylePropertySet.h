@@ -62,10 +62,10 @@ public:
     void shrinkToFit() { m_properties.shrinkToFit(); }
 
     PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID) const;
-    String getPropertyValue(int propertyID) const;
-    bool propertyIsImportant(int propertyID) const;
-    int getPropertyShorthand(int propertyID) const;
-    bool isPropertyImplicit(int propertyID) const;
+    String getPropertyValue(CSSPropertyID) const;
+    bool propertyIsImportant(CSSPropertyID) const;
+    CSSPropertyID getPropertyShorthand(CSSPropertyID) const;
+    bool isPropertyImplicit(CSSPropertyID) const;
 
     // These expand shorthand properties into multiple properties.
     bool setProperty(int propertyID, const String& value, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
@@ -126,7 +126,7 @@ private:
     String get4Values(const StylePropertyShorthand&) const;
     String borderSpacingValue(const StylePropertyShorthand&) const;
     String fontValue() const;
-    bool appendFontLonghandValueIfExplicit(int propertyID, StringBuilder& result) const;
+    bool appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder&) const;
 
     bool removeShorthandProperty(int propertyID);
     bool propertyMatches(const CSSProperty*) const;

@@ -138,7 +138,7 @@ public:
 
     bool selectionStartHasStyle(int propertyID, const String& value) const;
     TriState selectionHasStyle(int propertyID, const String& value) const;
-    String selectionStartCSSPropertyValue(int propertyID);
+    String selectionStartCSSPropertyValue(CSSPropertyID);
     
     TriState selectionUnorderedListState() const;
     TriState selectionOrderedListState() const;

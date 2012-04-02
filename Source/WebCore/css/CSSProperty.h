@@ -21,6 +21,7 @@
 #ifndef CSSProperty_h
 #define CSSProperty_h
 
+#include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "RenderStyleConstants.h"
 #include "TextDirection.h"
@@ -41,8 +42,8 @@ public:
     {
     }
 
-    int id() const { return m_id; }
-    int shorthandID() const { return m_shorthandID; }
+    CSSPropertyID id() const { return static_cast<CSSPropertyID>(m_id); }
+    CSSPropertyID shorthandID() const { return static_cast<CSSPropertyID>(m_shorthandID); }
 
     bool isImportant() const { return m_important; }
     bool isImplicit() const { return m_implicit; }

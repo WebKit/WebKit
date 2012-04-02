@@ -1,3 +1,21 @@
+2012-04-02  Alexis Menard  <alexis.menard@openbossa.org>
+
+        We should use CSSPropertyID rather than integers when manipulating CSS property ids.
+        https://bugs.webkit.org/show_bug.cgi?id=82941
+
+        Reviewed by Andreas Kling.
+
+        CSSPropertyID enum holds all the CSS property ids but many parts of WebKit treat the ids
+        as integers. While it's not incorrect it is nicer to use the enum as a parameter of
+        functions manipulating property ids, as we ensure that the value passed will be an
+        existing value. It will also feel more correct after this patch that CSSProperty::id()
+        return a value of the enum rather than an integer. As this modification is quite big this
+        is the first part only so it will be easier to review.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty): Adapt to the API change and also remove an unecessary name->id
+        conversion.
+
 2012-04-02  Casper van Donderen  <casper.vandonderen@nokia.com>
 
         Qt: Doc: Fix typo which marks document to be printed in console font.

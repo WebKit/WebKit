@@ -231,7 +231,7 @@ static TriState stateStyle(Frame* frame, int propertyID, const char* desiredValu
     return frame->editor()->selectionHasStyle(propertyID, desiredValue);
 }
 
-static String valueStyle(Frame* frame, int propertyID)
+static String valueStyle(Frame* frame, CSSPropertyID propertyID)
 {
     // FIXME: Rather than retrieving the style at the start of the current selection,
     // we should retrieve the style present throughout the selection for non-Mac platforms.

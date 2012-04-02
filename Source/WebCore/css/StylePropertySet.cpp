@@ -93,7 +93,7 @@ void StylePropertySet::copyPropertiesFrom(const StylePropertySet& other)
     m_properties = other.m_properties;
 }
 
-String StylePropertySet::getPropertyValue(int propertyID) const
+String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const
 {
     RefPtr<CSSValue> value = getPropertyCSSValue(propertyID);
     if (value)
@@ -171,8 +171,9 @@ String StylePropertySet::getPropertyValue(int propertyID) const
             return value->cssText();
     }
 #endif
+    default:
+          return String();
     }
-    return String();
 }
 
 String StylePropertySet::borderSpacingValue(const StylePropertyShorthand& shorthand) const
@@ -191,7 +192,7 @@ String StylePropertySet::borderSpacingValue(const StylePropertyShorthand& shorth
     return horizontalValueCSSText + ' ' + verticalValueCSSText;
 }
 
-bool StylePropertySet::appendFontLonghandValueIfExplicit(int propertyId, StringBuilder& result) const
+bool StylePropertySet::appendFontLonghandValueIfExplicit(CSSPropertyID propertyId, StringBuilder& result) const
 {
     const CSSProperty* property = findPropertyWithId(propertyId);
     if (!property)
@@ -452,7 +453,7 @@ bool StylePropertySet::removeProperty(int propertyID, String* returnText)
     return true;
 }
 
-bool StylePropertySet::propertyIsImportant(int propertyID) const
+bool StylePropertySet::propertyIsImportant(CSSPropertyID propertyID) const
 {
     const CSSProperty* property = findPropertyWithId(propertyID);
     if (property)
@@ -469,13 +470,13 @@ bool StylePropertySet::propertyIsImportant(int propertyID) const
     return true;
 }
 
-int StylePropertySet::getPropertyShorthand(int propertyID) const
+CSSPropertyID StylePropertySet::getPropertyShorthand(CSSPropertyID propertyID) const
 {
     const CSSProperty* property = findPropertyWithId(propertyID);
-    return property ? property->shorthandID() : 0;
+    return property ? property->shorthandID() : CSSPropertyInvalid;
 }
 
-bool StylePropertySet::isPropertyImplicit(int propertyID) const
+bool StylePropertySet::isPropertyImplicit(CSSPropertyID propertyID) const
 {
     const CSSProperty* property = findPropertyWithId(propertyID);
     return property ? property->isImplicit() : false;
@@ -571,8 +572,8 @@ String StylePropertySet::asText() const
     unsigned size = m_properties.size();
     for (unsigned n = 0; n < size; ++n) {
         const CSSProperty& prop = m_properties[n];
-        int propertyID = prop.id();
-        int shorthandPropertyID = 0;
+        CSSPropertyID propertyID = prop.id();
+        CSSPropertyID shorthandPropertyID = CSSPropertyInvalid;
 
         switch (propertyID) {
         case CSSPropertyBackgroundPositionX:
@@ -611,12 +612,12 @@ String StylePropertySet::asText() const
                 String commonValue;
                 bool commonImportance = false;
                 for (size_t j = 0; j < shorthand.length(); ++j) {
-                    int id = shorthand.properties()[j];
+                    CSSPropertyID id = shorthand.properties()[j];
                     RefPtr<CSSValue> value = getPropertyCSSValue(id);
                     String currentValue = value ? value->cssText() : String();
                     bool isImportant = propertyIsImportant(id);
                     if (j && (currentValue != commonValue || commonImportance != isImportant)) {
-                        shorthandPropertyID = 0;
+                        shorthandPropertyID = CSSPropertyInvalid;
                         break;
                     }
                     if (!j) {
@@ -704,6 +705,8 @@ String StylePropertySet::asText() const
         case CSSPropertyWebkitWrapMargin:
         case CSSPropertyWebkitWrapPadding:
             shorthandPropertyID = CSSPropertyWebkitWrap;
+            break;
+        default:
             break;
         }
 

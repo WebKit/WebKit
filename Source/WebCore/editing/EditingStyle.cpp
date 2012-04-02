@@ -671,7 +671,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Edi
 
     unsigned propertyCount = m_mutableStyle->propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {
-        CSSPropertyID propertyID = static_cast<CSSPropertyID>(m_mutableStyle->propertyAt(i).id());
+        CSSPropertyID propertyID = m_mutableStyle->propertyAt(i).id();
 
         // We don't override whitespace property of a tab span because that would collapse the tab into a space.
         if (propertyID == CSSPropertyWhiteSpace && isTabSpanNode(element))
@@ -1086,7 +1086,7 @@ static void removePropertiesInStyle(StylePropertySet* styleToRemovePropertiesFro
     unsigned propertyCount = style->propertyCount();
     Vector<CSSPropertyID> propertiesToRemove(propertyCount);
     for (unsigned i = 0; i < propertyCount; ++i)
-        propertiesToRemove[i] = static_cast<CSSPropertyID>(style->propertyAt(i).id());
+        propertiesToRemove[i] = style->propertyAt(i).id();
 
     styleToRemovePropertiesFrom->removePropertiesInSet(propertiesToRemove.data(), propertiesToRemove.size());
 }
@@ -1319,7 +1319,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
     m_cssStyle = mutableStyle->asText().stripWhiteSpace();
 }
 
-static void setTextDecorationProperty(StylePropertySet* style, const CSSValueList* newTextDecoration, int propertyID)
+static void setTextDecorationProperty(StylePropertySet* style, const CSSValueList* newTextDecoration, CSSPropertyID propertyID)
 {
     if (newTextDecoration->length())
         style->setProperty(propertyID, newTextDecoration->cssText(), style->propertyIsImportant(propertyID));
@@ -1395,7 +1395,7 @@ void StyleChange::extractTextStyles(Document* document, StylePropertySet* style,
     }
 }
 
-static void diffTextDecorations(StylePropertySet* style, int propertID, CSSValue* refTextDecoration)
+static void diffTextDecorations(StylePropertySet* style, CSSPropertyID propertID, CSSValue* refTextDecoration)
 {
     RefPtr<CSSValue> textDecoration = style->getPropertyCSSValue(propertID);
     if (!textDecoration || !textDecoration->isValueList() || !refTextDecoration || !refTextDecoration->isValueList())

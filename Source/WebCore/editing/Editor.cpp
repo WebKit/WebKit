@@ -742,7 +742,7 @@ TriState Editor::selectionHasStyle(int propertyID, const String& value) const
     return EditingStyle::create(propertyID, value)->triStateOfStyle(m_frame->selection()->selection());
 }
 
-String Editor::selectionStartCSSPropertyValue(int propertyID)
+String Editor::selectionStartCSSPropertyValue(CSSPropertyID propertyID)
 {
     RefPtr<EditingStyle> selectionStyle = EditingStyle::styleAtSelectionStart(m_frame->selection()->selection(),
         propertyID == CSSPropertyBackgroundColor);

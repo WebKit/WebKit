@@ -839,7 +839,7 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
     if (!m_element || !m_element->isStyledElement())
         return QString();
 
-    int propID = cssPropertyID(name);
+    CSSPropertyID propID = cssPropertyID(name);
 
     if (!propID)
         return QString();
@@ -880,8 +880,6 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
     if (strategy == ComputedStyle) {
         if (!m_element || !m_element->isStyledElement())
             return QString();
-
-        int propID = cssPropertyID(name);
 
         RefPtr<CSSComputedStyleDeclaration> style = CSSComputedStyleDeclaration::create(m_element, true);
         if (!propID || !style)

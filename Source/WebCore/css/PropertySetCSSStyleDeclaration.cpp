@@ -138,7 +138,7 @@ String PropertySetCSSStyleDeclaration::item(unsigned i) const
 {
     if (i >= m_propertySet->propertyCount())
         return "";
-    return getPropertyName(static_cast<CSSPropertyID>(m_propertySet->propertyAt(i).id()));
+    return getPropertyName(m_propertySet->propertyAt(i).id());
 }
 
 String PropertySetCSSStyleDeclaration::cssText() const
@@ -163,7 +163,7 @@ void PropertySetCSSStyleDeclaration::setCssText(const String& text, ExceptionCod
 
 PassRefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValue(const String& propertyName)
 {
-    int propertyID = cssPropertyID(propertyName);
+    CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return 0;
     return m_propertySet->getPropertyCSSValue(propertyID);
@@ -171,7 +171,7 @@ PassRefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValue(const S
 
 String PropertySetCSSStyleDeclaration::getPropertyValue(const String &propertyName)
 {
-    int propertyID = cssPropertyID(propertyName);
+    CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();
     return m_propertySet->getPropertyValue(propertyID);
@@ -179,7 +179,7 @@ String PropertySetCSSStyleDeclaration::getPropertyValue(const String &propertyNa
 
 String PropertySetCSSStyleDeclaration::getPropertyPriority(const String& propertyName)
 {
-    int propertyID = cssPropertyID(propertyName);
+    CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();
     return m_propertySet->propertyIsImportant(propertyID) ? "important" : "";
@@ -187,18 +187,18 @@ String PropertySetCSSStyleDeclaration::getPropertyPriority(const String& propert
 
 String PropertySetCSSStyleDeclaration::getPropertyShorthand(const String& propertyName)
 {
-    int propertyID = cssPropertyID(propertyName);
+    CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();
-    int shorthandID = m_propertySet->getPropertyShorthand(propertyID);
+    CSSPropertyID shorthandID = m_propertySet->getPropertyShorthand(propertyID);
     if (!shorthandID)
         return String();
-    return getPropertyName(static_cast<CSSPropertyID>(shorthandID));
+    return getPropertyName(shorthandID);
 }
 
 bool PropertySetCSSStyleDeclaration::isPropertyImplicit(const String& propertyName)
 {
-    int propertyID = cssPropertyID(propertyName);
+    CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return false;
     return m_propertySet->isPropertyImplicit(propertyID);
