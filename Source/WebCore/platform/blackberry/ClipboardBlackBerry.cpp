@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,11 +26,6 @@
 
 namespace WebCore {
 
-PassRefPtr<ClipboardBlackBerry> ClipboardBlackBerry::create(ClipboardAccessPolicy policy, ClipboardType clipboardType)
-{
-    return adoptRef(new ClipboardBlackBerry(policy, clipboardType));
-}
-
 PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData*, Frame*)
 {
     return ClipboardBlackBerry::create(policy, DragAndDrop);
@@ -47,21 +42,33 @@ ClipboardBlackBerry::~ClipboardBlackBerry()
 
 void ClipboardBlackBerry::clearData(const String& type)
 {
+    if (policy() != ClipboardWritable)
+        return;
+
     BlackBerry::Platform::Clipboard::clearClipboardByType(type.utf8().data());
 }
 
 void ClipboardBlackBerry::clearAllData()
 {
+    if (policy() != ClipboardWritable)
+        return;
+
     BlackBerry::Platform::Clipboard::clearClipboard();
 }
 
 String ClipboardBlackBerry::getData(const String& type) const
 {
+    if (policy() != ClipboardReadable)
+        return String();
+
     return String::fromUTF8(BlackBerry::Platform::Clipboard::readClipboardByType(type.utf8().data()).c_str());
 }
 
 bool ClipboardBlackBerry::setData(const String& type, const String& text)
 {
+    if (policy() != ClipboardWritable)
+        return false;
+
     if (type == "text/plain")
         BlackBerry::Platform::Clipboard::writePlainText(text.utf8().data());
     else if (type == "text/html")
@@ -73,6 +80,9 @@ bool ClipboardBlackBerry::setData(const String& type, const String& text)
 
 HashSet<String> ClipboardBlackBerry::types() const
 {
+    if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
+        return HashSet<String>();
+
     // We use hardcoded list here since there seems to be no API to get the list.
     HashSet<String> ret;
     ret.add("text/plain");
