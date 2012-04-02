@@ -357,7 +357,7 @@ bool WebDevToolsAgentImpl::metricsOverridden()
 
 void WebDevToolsAgentImpl::overrideDeviceMetrics(int width, int height, float fontScaleFactor)
 {
-    if (!width && !height && fontScaleFactor == 1) {
+    if (!width && !height) {
         if (m_metricsSupport)
             m_metricsSupport.clear();
         return;

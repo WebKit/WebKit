@@ -1,3 +1,16 @@
+2012-04-02  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Device metrics emulation should turn off when zero width and height are passed in
+        https://bugs.webkit.org/show_bug.cgi?id=82907
+
+        Currently this also requires the fontScaleFactor of 1 to be passed in, too. However, it results in
+        downsizing the FrameView to (0x0) on navigation with the open Inspector when the emulation is disabled.
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::overrideDeviceMetrics):
+
 2012-04-02  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed, rolling chromium DEPS.
