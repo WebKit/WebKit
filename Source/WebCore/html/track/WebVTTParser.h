@@ -80,6 +80,12 @@ public:
         // WebVTT space characters are U+0020 SPACE, U+0009 CHARACTER TABULATION (tab), U+000A LINE FEED (LF), U+000C FORM FEED (FF), and U+000D CARRIAGE RETURN    (CR).
         return c == ' ' || c == '\t' || c == '\n' || c == '\f' || c == '\r';
     }
+    static inline bool isValidSettingDelimiter(char c)
+    {
+        // ... a WebVTT cue consists of zero or more of the following components, in any order, separated from each other by one or more 
+        // U+0020 SPACE characters or U+0009 CHARACTER TABULATION (tab) characters.
+        return c == ' ' || c == '\t';
+    }
     static String collectDigits(const String&, unsigned*);
     static String collectWord(const String&, unsigned*);
 

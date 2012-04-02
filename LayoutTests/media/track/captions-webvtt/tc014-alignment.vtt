@@ -2,17 +2,17 @@ WEBVTT
 Cue alignment may be start, middle, or end (default is middle).
 
 1
-00:00:00.000 --> 00:00:30.500 A:start
+00:00:00.000 --> 00:00:30.500 align:start
 Bear is Coming!!!!!
 Start align.
 
 2
-00:00:31.000 --> 00:01:00.500 A:middle
+00:00:31.000 --> 00:01:00.500 align:middle
 I said Bear is coming!!!!
 Middle align.
 
 3
-00:01:01.000 --> 00:02:00.500 A:end
+00:01:01.000 --> 00:02:00.500 align:end
 I said Bear is coming now!!!!
 End align.
 

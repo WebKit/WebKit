@@ -128,6 +128,9 @@ private:
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
 
+    enum CueSetting { None, Vertical, Line, Position, Size, Align };
+    CueSetting settingName(const String&);
+
     String m_id;
     double m_startTime;
     double m_endTime;

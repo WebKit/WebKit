@@ -8,7 +8,7 @@ STYLE-->
 ::cue(.narration) { color: blue; }
 
 DEFAULTS -->
-L:-1 A:middle S:50%
+line:-1 align:middle size:50%
 
 1
 00:00:00.000 --> 00:00:30.500

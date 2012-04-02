@@ -75,8 +75,8 @@ static const String& horizontalKeyword()
 
 static const String& verticalGrowingLeftKeyword()
 {
-    DEFINE_STATIC_LOCAL(const String, vertical, ("rl"));
-    return vertical;
+    DEFINE_STATIC_LOCAL(const String, verticalrl, ("rl"));
+    return verticalrl;
 }
 
 static const String& verticalGrowingRightKeyword()
@@ -84,21 +84,6 @@ static const String& verticalGrowingRightKeyword()
     DEFINE_STATIC_LOCAL(const String, verticallr, ("lr"));
     return verticallr;
 }
-
-// FIXME: remove this once https://bugs.webkit.org/show_bug.cgi?id=78706 has been fixed.
-static const String& verticalKeywordOLD()
-{
-    DEFINE_STATIC_LOCAL(const String, vertical, ("vertical"));
-    return vertical;
-}
-
-// FIXME: remove this once https://bugs.webkit.org/show_bug.cgi?id=78706 has been fixed.
-static const String& verticallrKeywordOLD()
-{
-    DEFINE_STATIC_LOCAL(const String, verticallr, ("vertical-lr"));
-    return verticallr;
-}
-    
 
 TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit)
     : m_id(id)
@@ -462,68 +447,119 @@ PassRefPtr<HTMLDivElement> TextTrackCue::getDisplayTree()
     return m_displayTree;
 }
 
+TextTrackCue::CueSetting TextTrackCue::settingName(const String& name)
+{
+    DEFINE_STATIC_LOCAL(const String, verticalKeyword, ("vertical"));
+    DEFINE_STATIC_LOCAL(const String, lineKeyword, ("line"));
+    DEFINE_STATIC_LOCAL(const String, positionKeyword, ("position"));
+    DEFINE_STATIC_LOCAL(const String, sizeKeyword, ("size"));
+    DEFINE_STATIC_LOCAL(const String, alignKeyword, ("align"));
+
+    if (name == verticalKeyword)
+        return Vertical;
+    else if (name == lineKeyword)
+        return Line;
+    else if (name == positionKeyword)
+        return Position;
+    else if (name == sizeKeyword)
+        return Size;
+    else if (name == alignKeyword)
+        return Align;
+
+    return None;
+}
+
 void TextTrackCue::parseSettings(const String& input)
 {
-    // 4.8.10.13.3 Parse the WebVTT settings.
-    // 1 - Initial setup.
     unsigned position = 0;
+
     while (position < input.length()) {
-        // Discard any space characters between or after settings (not in the spec, but we think it should be).
-        while (position < input.length() && WebVTTParser::isASpace(input[position]))
+
+        // The WebVTT cue settings part of a WebVTT cue consists of zero or more of the following components, in any order, 
+        // separated from each other by one or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION (tab) characters. 
+        while (position < input.length() && WebVTTParser::isValidSettingDelimiter(input[position]))
             position++;
-
-        // 2-4 Settings - get the next character representing a settings.
-        char setting = input[position++];
         if (position >= input.length())
-            return;
+            break;
 
-        // 5-7 - If the character at position is not ':', set setting to empty string.
-        if (input[position++] != ':')
-            setting = '\0';
+        // When the user agent is to parse the WebVTT settings given by a string input for a text track cue cue, 
+        // the user agent must run the following steps:
+        // 1. Let settings be the result of splitting input on spaces.
+        // 2. For each token setting in the list settings, run the following substeps:
+        //    1. If setting does not contain a U+003A COLON character (:), or if the first U+003A COLON character (:) 
+        //       in setting is either the first or last character of setting, then jump to the step labeled next setting.
+        unsigned endOfSetting = position;
+        String setting = WebVTTParser::collectWord(input, &endOfSetting);
+        CueSetting name;
+        size_t colonOffset = setting.find(':', 1);
+        if (colonOffset == notFound || colonOffset == 0 || colonOffset == setting.length() - 1)
+            goto NextSetting;
+
+        // 2. Let name be the leading substring of setting up to and excluding the first U+003A COLON character (:) in that string.
+        name = settingName(setting.substring(0, colonOffset));
+
+        // 3. Let value be the trailing substring of setting starting from the character immediately after the first U+003A COLON character (:) in that string.
+        position += colonOffset + 1;
         if (position >= input.length())
-            return;
+            break;
 
-        // 8 - Gather settings based on value of setting.
-        switch (setting) {
-        case 'D':
+        // 4. Run the appropriate substeps that apply for the value of name, as follows:
+        switch (name) {
+        case Vertical:
             {
-            // 1-3 - Collect the next word and set the writing direction accordingly.
+            // If name is a case-sensitive match for "vertical"
+            // 1. If value is a case-sensitive match for the string "rl", then let cue's text track cue writing direction 
+            //    be vertical growing left.
             String writingDirection = WebVTTParser::collectWord(input, &position);
-            if (writingDirection == verticalKeywordOLD())
+            if (writingDirection == verticalGrowingLeftKeyword())
                 m_writingDirection = VerticalGrowingLeft;
-            else if (writingDirection == verticallrKeywordOLD())
+            
+            // 2. Otherwise, if value is a case-sensitive match for the string "lr", then let cue's text track cue writing 
+            //    direction be vertical growing right.
+            else if (writingDirection == verticalGrowingRightKeyword())
                 m_writingDirection = VerticalGrowingRight;
             }
             break;
-        case 'L':
+        case Line:
             {
             // 1-2 - Collect chars that are either '-', '%', or a digit.
+            // 1. If value contains any characters other than U+002D HYPHEN-MINUS characters (-), U+0025 PERCENT SIGN 
+            //    characters (%), and characters in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump
+            //    to the step labeled next setting.
             StringBuilder linePositionBuilder;
             while (position < input.length() && (input[position] == '-' || input[position] == '%' || isASCIIDigit(input[position])))
                 linePositionBuilder.append(input[position++]);
-            if (position < input.length() && !WebVTTParser::isASpace(input[position]))
-                goto Otherwise;
-            String linePosition = linePositionBuilder.toString();
+            if (position < input.length() && !WebVTTParser::isValidSettingDelimiter(input[position]))
+                break;
 
-            // 3-5 - If there is not at least one digit character,
-            //       a '-' occurs anywhere other than the front, or
-            //       a '%' occurs anywhere other than the end, then
-            //       ignore this setting and keep looking.
+            // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT 
+            //    NINE (9), then jump to the step labeled next setting.
+            // 3. If any character in value other than the first character is a U+002D HYPHEN-MINUS character (-), then 
+            //    jump to the step labeled next setting.
+            // 4. If any character in value other than the last character is a U+0025 PERCENT SIGN character (%), then
+            //    jump to the step labeled next setting.
+            String linePosition = linePositionBuilder.toString();
             if (linePosition.find('-', 1) != notFound || linePosition.reverseFind("%", linePosition.length() - 2) != notFound)
                 break;
 
-            // 6 - If the first char is a '-' and the last char is a '%', ignore and keep looking.
+            // 5. If the first character in value is a U+002D HYPHEN-MINUS character (-) and the last character in value is a 
+            //    U+0025 PERCENT SIGN character (%), then jump to the step labeled next setting.
             if (linePosition[0] == '-' && linePosition[linePosition.length() - 1] == '%')
                 break;
 
-            // 7 - Interpret as number (toInt ignores trailing non-digit characters,
-            //     such as a possible '%').
+            // 6. Ignoring the trailing percent sign, if any, interpret value as a (potentially signed) integer, and 
+            //    let number be that number. 
+            // NOTE: toInt ignores trailing non-digit characters, such as '%'.
             bool validNumber;
             int number = linePosition.toInt(&validNumber);
             if (!validNumber)
                 break;
 
-            // 8 - If the last char is a '%' and the value is not between 0 and 100, ignore and keep looking.
+            // 7. If the last character in value is a U+0025 PERCENT SIGN character (%), but number is not in the range 
+            //    0 ≤ number ≤ 100, then jump to the step labeled next setting.
+            // 8. Let cue's text track cue line position be number.
+            // 9. If the last character in value is a U+0025 PERCENT SIGN character (%), then let cue's text track cue 
+            //    snap-to-lines flag be false. Otherwise, let it be true.
             if (linePosition[linePosition.length() - 1] == '%') {
                 if (number < 0 || number > 100)
                     break;
@@ -532,29 +568,33 @@ void TextTrackCue::parseSettings(const String& input)
                 m_snapToLines = false;
             }
 
-            // 9 - Set cue line position to the number found.
             m_linePosition = number;
             }
             break;
-        case 'T':
+        case Position:
             {
-            // 1-2 - Collect characters that are digits.
+            // 1. If value contains any characters other than U+0025 PERCENT SIGN characters (%) and characters in the range 
+            //    U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump to the step labeled next setting.
+            // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9),
+            //    then jump to the step labeled next setting.
             String textPosition = WebVTTParser::collectDigits(input, &position);
+            if (textPosition.isEmpty())
+                break;
             if (position >= input.length())
                 break;
 
-            // 3 - Character at end must be '%', otherwise ignore and keep looking.
+            // 3. If any character in value other than the last character is a U+0025 PERCENT SIGN character (%), then jump
+            //    to the step labeled next setting.
+            // 4. If the last character in value is not a U+0025 PERCENT SIGN character (%), then jump to the step labeled
+            //    next setting.
             if (input[position++] != '%')
-                goto Otherwise;
-
-            // 4-6 - Ensure no other chars in this setting and setting is not empty.
-            if (position < input.length() && !WebVTTParser::isASpace(input[position]))
-                goto Otherwise;
-            if (textPosition.isEmpty())
+                break;
+            if (position < input.length() && !WebVTTParser::isValidSettingDelimiter(input[position]))
                 break;
 
-            // 7-8 - Interpret as number and make sure it is between 0 and 100
-            // (toInt ignores trailing non-digit characters, such as a possible '%').
+            // 5. Ignoring the trailing percent sign, interpret value as an integer, and let number be that number.
+            // 6. If number is not in the range 0 ≤ number ≤ 100, then jump to the step labeled next setting.
+            // NOTE: toInt ignores trailing non-digit characters, such as '%'.
             bool validNumber;
             int number = textPosition.toInt(&validNumber);
             if (!validNumber)
@@ -562,28 +602,33 @@ void TextTrackCue::parseSettings(const String& input)
             if (number < 0 || number > 100)
               break;
 
-            // 9 - Set cue text position to the number found.
+            // 7. Let cue's text track cue text position be number.
             m_textPosition = number;
             }
             break;
-        case 'S':
+        case Size:
             {
-            // 1-2 - Collect characters that are digits.
+            // 1. If value contains any characters other than U+0025 PERCENT SIGN characters (%) and characters in the
+            //    range U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump to the step labeled next setting.
+            // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT 
+            //    NINE (9), then jump to the step labeled next setting.
             String cueSize = WebVTTParser::collectDigits(input, &position);
+            if (cueSize.isEmpty())
+                break;
             if (position >= input.length())
                 break;
 
-            // 3 - Character at end must be '%', otherwise ignore and keep looking.
+            // 3. If any character in value other than the last character is a U+0025 PERCENT SIGN character (%),
+            //    then jump to the step labeled next setting.
+            // 4. If the last character in value is not a U+0025 PERCENT SIGN character (%), then jump to the step
+            //    labeled next setting.
             if (input[position++] != '%')
-                goto Otherwise;
-
-            // 4-6 - Ensure no other chars in this setting and setting is not empty.
-            if (position < input.length() && !WebVTTParser::isASpace(input[position]))
-                goto Otherwise;
-            if (cueSize.isEmpty())
+                break;
+            if (position < input.length() && !WebVTTParser::isValidSettingDelimiter(input[position]))
                 break;
 
-            // 7-8 - Interpret as number and make sure it is between 0 and 100.
+            // 5. Ignoring the trailing percent sign, interpret value as an integer, and let number be that number.
+            // 6. If number is not in the range 0 ≤ number ≤ 100, then jump to the step labeled next setting.
             bool validNumber;
             int number = cueSize.toInt(&validNumber);
             if (!validNumber)
@@ -591,29 +636,33 @@ void TextTrackCue::parseSettings(const String& input)
             if (number < 0 || number > 100)
                 break;
 
-            // 9 - Set cue size to the number found.
+            // 7. Let cue's text track cue size be number.
             m_cueSize = number;
             }
             break;
-        case 'A':
+        case Align:
             {
-            // 1-4 - Collect the next word and set the cue alignment accordingly.
             String cueAlignment = WebVTTParser::collectWord(input, &position);
+
+            // 1. If value is a case-sensitive match for the string "start", then let cue's text track cue alignment be start alignment.
             if (cueAlignment == startKeyword())
                 m_cueAlignment = Start;
+
+            // 2. If value is a case-sensitive match for the string "middle", then let cue's text track cue alignment be middle alignment.
             else if (cueAlignment == middleKeyword())
                 m_cueAlignment = Middle;
+
+            // 3. If value is a case-sensitive match for the string "end", then let cue's text track cue alignment be end alignment.
             else if (cueAlignment == endKeyword())
                 m_cueAlignment = End;
             }
             break;
+        case None:
+            break;
         }
 
-        continue;
-
-Otherwise:
-        // Collect a sequence of characters that are not space characters and discard them.
-        WebVTTParser::collectWord(input, &position);
+NextSetting:
+        position = endOfSetting;
     }
 }
 
