@@ -341,6 +341,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitCSSRegionRule') is 'o
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitCSSTransformValue') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitMutationObserver') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitPoint') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitShadowRoot') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitTransitionEvent') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebSocket') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WheelEvent') is 'object'

@@ -449,6 +449,7 @@ Never found SVGVKernElement
 Never found SVGViewElement
 Never found Selection
 Never found SessionDescription
+Never found ShadowRoot
 Never found SharedWorker
 Never found StyleSheet
 Never found TextMetrics
