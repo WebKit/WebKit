@@ -59,6 +59,7 @@ protected:
 
 protected:
     virtual bool needsContainer() const;
+    virtual bool shouldHaveSpinButton() const;
     virtual void createShadowSubtree() OVERRIDE;
     virtual void destroyShadowSubtree() OVERRIDE;
     virtual void disabledAttributeChanged() OVERRIDE;

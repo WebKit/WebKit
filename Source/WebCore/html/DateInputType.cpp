@@ -31,6 +31,7 @@
 #include "config.h"
 #include "DateInputType.h"
 
+#include "CalendarPickerElement.h"
 #include "DateComponents.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -97,6 +98,24 @@ bool DateInputType::setMillisecondToDateComponents(double value, DateComponents*
     ASSERT(date);
     return date->setMillisecondsSinceEpochForDate(value);
 }
+
+#if ENABLE(CALENDAR_PICKER)
+void DateInputType::createShadowSubtree()
+{
+    BaseDateAndTimeInputType::createShadowSubtree();
+    containerElement()->insertBefore(CalendarPickerElement::create(element()->document()), innerBlockElement()->nextSibling(), ASSERT_NO_EXCEPTION);
+}
+
+bool DateInputType::needsContainer() const
+{
+    return true;
+}
+
+bool DateInputType::shouldHaveSpinButton() const
+{
+    return false;
+}
+#endif // ENABLE(CALENDAR_PICKER)
 
 } // namespace WebCore
 

@@ -130,10 +130,12 @@
     'conditions': [
       ['OS=="android"', {
         'feature_defines': [
+          'ENABLE_CALENDAR_PICKER=0',
           'ENABLE_WEB_AUDIO=0',
         ],
       }, {
         'feature_defines': [
+          'ENABLE_CALENDAR_PICKER=1',
           'ENABLE_WEB_AUDIO=1',
         ],
       }],

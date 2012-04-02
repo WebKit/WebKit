@@ -1,3 +1,13 @@
+2012-04-02  Kent Tamura  <tkent@chromium.org>
+
+        Add a calendar picker indicator to date-type input fields
+        https://bugs.webkit.org/show_bug.cgi?id=80478
+
+        Reviewed by Hajime Morita.
+
+        * features.gypi: Enable CALENDAR_PICKER for non-Android platforms. This
+        doesn't affect any bahevior because INPUT_TYPE_DATE is disabled.
+
 2012-04-02  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Move another block of headers from WebKit/chromium/public/platform to Platform/chromium/public

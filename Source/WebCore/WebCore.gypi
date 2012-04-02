@@ -5697,6 +5697,8 @@
             'html/parser/TextViewSourceParser.h',
             'html/parser/XSSAuditor.cpp',
             'html/parser/XSSAuditor.h',
+            'html/shadow/CalendarPickerElement.cpp',
+            'html/shadow/CalendarPickerElement.h',
             'html/shadow/ContentSelectorQuery.cpp',
             'html/shadow/ContentSelectorQuery.h',
             'html/shadow/DetailsMarkerControl.cpp',

@@ -21,7 +21,7 @@
 #ifndef RenderDetailsMarker_h
 #define RenderDetailsMarker_h
 
-#if ENABLE(DETAILS)
+#if ENABLE(DETAILS) || ENABLE(CALENDAR_PICKER)
 
 #include "RenderBlock.h"
 

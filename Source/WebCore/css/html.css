@@ -668,6 +668,15 @@ input[type="color"][list]::-webkit-color-swatch {
 
 #endif // defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
 
+#if defined(ENABLE_CALENDAR_PICKER) && ENABLE_CALENDAR_PICKER
+input::-webkit-calendar-picker-indicator {
+    display: inline-block;
+    width: 0.66em;
+    height: 0.66em;
+    -webkit-margin-end: 0.2em;
+}
+#endif // ENABLE_CALENDAR_PICKER
+
 select {
     -webkit-appearance: menulist;
     -webkit-box-sizing: border-box;

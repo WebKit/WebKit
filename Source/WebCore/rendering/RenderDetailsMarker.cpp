@@ -21,7 +21,7 @@
 #include "config.h"
 #include "RenderDetailsMarker.h"
 
-#if ENABLE(DETAILS)
+#if ENABLE(DETAILS) || ENABLE(CALENDAR_PICKER)
 
 #include "Element.h"
 #include "GraphicsContext.h"
@@ -140,8 +140,12 @@ void RenderDetailsMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
 bool RenderDetailsMarker::isOpen() const
 {
     for (RenderObject* renderer = parent(); renderer; renderer = renderer->parent()) {
-        if (renderer->node() && renderer->node()->hasTagName(detailsTag))
+        if (!renderer->node())
+            continue;
+        if (renderer->node()->hasTagName(detailsTag))
             return !toElement(renderer->node())->getAttribute(openAttr).isNull();
+        if (renderer->node()->hasTagName(inputTag))
+            return true;
     }
 
     return false;
