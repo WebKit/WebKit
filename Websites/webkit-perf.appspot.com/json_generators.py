@@ -62,10 +62,12 @@ class DashboardJSONGenerator(JSONGeneratorBase):
         }
 
         for platform in Platform.all():
-            self._dashboard['platformToId'][platform.name] = platform.id
+            if not platform.hidden:
+                self._dashboard['platformToId'][platform.name] = platform.id
 
         for test in Test.all():
-            self._dashboard['testToId'][test.name] = test.id
+            if not test.hidden:
+                self._dashboard['testToId'][test.name] = test.id
 
     def value(self):
         return self._dashboard
@@ -78,6 +80,9 @@ class ManifestJSONGenerator(JSONGeneratorBase):
         platform_id_map = {}
         branch_id_map = {}
         for test in Test.all():
+            if test.hidden:
+                continue
+
             branch_ids = [Branch.get(branch_key).id for branch_key in test.branches]
             platform_ids = [Platform.get(platform_key).id for platform_key in test.platforms]
             self._test_map[test.id] = {
@@ -100,6 +105,14 @@ class ManifestJSONGenerator(JSONGeneratorBase):
         for platform in Platform.all():
             if platform.id not in platform_id_map:
                 continue
+
+            if platform.hidden:
+                for test_id in platform_id_map[platform.id]['tests']:
+                    self._test_map[test_id]['platformIds'].remove(platform.id)
+                for branch_id in platform_id_map[platform.id]['branches']:
+                    branch_id_map[branch_id]['platforms'].remove(platform.id)
+                continue
+
             self._platform_map[platform.id] = {
                 'name': platform.name,
                 'testIds': list(set(platform_id_map[platform.id]['tests'])),

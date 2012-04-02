@@ -95,6 +95,7 @@ class Branch(db.Model):
 class Platform(db.Model):
     id = db.IntegerProperty(required=True)
     name = db.StringProperty(required=True)
+    hidden = db.BooleanProperty()
 
     @staticmethod
     def create_if_possible(key, name):
@@ -140,7 +141,6 @@ class Build(db.Model):
             revision=log.webkit_revision(), chromiumRevision=log.chromium_revision())
 
 
-# Used to generate TestMap in the manifest efficiently
 class Test(db.Model):
     id = db.IntegerProperty(required=True)
     name = db.StringProperty(required=True)
@@ -148,6 +148,7 @@ class Test(db.Model):
     # one platform but only on some branch and vice versa.
     branches = db.ListProperty(db.Key)
     platforms = db.ListProperty(db.Key)
+    hidden = db.BooleanProperty()
 
     @staticmethod
     def update_or_insert(test_name, branch, platform):

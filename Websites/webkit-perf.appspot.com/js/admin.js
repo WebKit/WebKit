@@ -1,3 +1,19 @@
+function submitXHR(method, action, payload, callback) {
+    var xhr = new XMLHttpRequest;
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState != 4)
+            return;
+        if (xhr.status != 200)
+            error('HTTP status: ' + xhr.status);
+        else if (xhr.responseText != 'OK')
+            error(xhr.responseText);
+        if (callback)
+            callback()
+    }
+    xhr.open(method, action, true);
+    xhr.send(payload);
+}
+
 function removeNonFormListItems(list) {
     list.children().each(function () {
         if ($.inArray('form', this.classList))
@@ -5,13 +21,32 @@ function removeNonFormListItems(list) {
     });
 }
 
-function createKeyNameReloader(name) {
+function createKeyNameReloader(name, visibilityAction, callback) {
     return function () {
         $.getJSON(name, function (platforms) {
             var list = $('#' + name + ' ul');
             removeNonFormListItems(list);
-            $.each(platforms, function (key, name) {
-                list.append('<li>' + key + ' : ' + name + '</li>');
+            $.each(platforms, function (key, values) {
+                var label = key == values['name'] ? key : key + ' : ' + values['name'];
+                list.append('<li><h3 id="' + key + '">' + label + '</h3></li>');
+                var item = list[0].lastChild;
+
+                if (values['hidden'])
+                    item.className = 'hidden';
+
+                if (visibilityAction) {
+                    $(item).append(' <a class="hide"></a>');
+                    $(item.lastChild).click(function () {
+                        var json = {'hide': !this.parentNode.classList.contains('hidden')}
+                        json[visibilityAction] = this.parentNode.firstChild.id;
+
+                        submitXHR('POST', 'change-visibility', JSON.stringify(json));
+                        list.find('form').trigger('reload');
+                    });
+                }
+
+                if (callback)
+                    callback.call(item, values['hidden']);
             });
             list.append($('#' + name + ' ul .form'));
         });
@@ -19,7 +54,7 @@ function createKeyNameReloader(name) {
 }
 
 $('#branches form').bind('reload', createKeyNameReloader('branches'));
-$('#platforms form').bind('reload', createKeyNameReloader('platforms'));
+$('#platforms form').bind('reload', createKeyNameReloader('platforms', 'platform'));
 
 $('#builders form').bind('reload', function () {
     $.getJSON('builders', function (builders) {
@@ -27,26 +62,20 @@ $('#builders form').bind('reload', function () {
         removeNonFormListItems(list);
         builders = builders.sort();
         for (var i = 0; i < builders.length; i++)
-            list.append('<li><a href="http://build.webkit.org/builders/' + builders[i] + '">' + builders[i] + '</a></li>');
+            list.append('<li><h3><a href="http://build.webkit.org/builders/' + builders[i] + '">' + builders[i] + '</a></h3></li>');
         list.append($('#builders ul .form'));
     });
 });
 
+var testReloader = createKeyNameReloader('tests', 'test', function (hidden) {
+    var testName = this.firstChild.id;
+    $('#tests select').append('<option value="' + testName + '">' + testName + '</option>');
+
+});
 $('#tests form').bind('reload', function () {
-    $.getJSON('tests', function (tests) {
-        var list = $('#tests ul');
-        removeNonFormListItems(list);
-        var select = $('#tests select');
-        select.children().remove();
-
-        tests = tests.sort();
-        for (var i = 0; i < tests.length; i++) {
-            list.append('<li>' + tests[i] + '</li>'); // FIXME: Add a link to trac page.
-            select.append('<option value="' + tests[i] + '">' + tests[i] + '</option>');
-        }
-
-        list.append($('#tests ul .form'));
-    });
+    var select = $('#tests select');
+    select.children().remove();
+    testReloader();
 });
 
 $.ajaxSetup({
@@ -69,19 +98,9 @@ $('form').bind('submit', function (event) {
         payload = JSON.stringify(contents);
     }
 
-    var xhr = new XMLHttpRequest;
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState != 4)
-            return;
-        if (xhr.status != 200)
-            error('HTTP status: ' + xhr.status);
-        else if (xhr.responseText != 'OK\n')
-            error(xhr.responseText);
-    }
-    xhr.open(this.method, this.action, true);
-    xhr.send(payload);
-
-    $(this).trigger('reload');
+    submitXHR(this.method, this.action, payload, function () {
+        $(this).trigger('reload');
+    })
 });
 
 $('#manual-submission textarea').val(JSON.stringify({

@@ -31,12 +31,60 @@ h2 {
     border-bottom: solid 1px lightgrey;
 }
 
-dl, section > ul > li {
+dl {
     padding: 0 10px;
 }
 
+section > ul {
+}
+
+section > ul > li {
+    width: 100%;
+    display: table;
+}
+
+section > p {
+    border-top: solid 1px lightgrey;
+    margin: 0px;
+    padding: 0 10px;
+    text-align: center;
+}
+
+section > ul > li > h3 {
+    font-size: 1em;
+    font-weight: normal;
+    display: table-cell;
+    padding: 10px;
+}
+
+section .hidden {
+    color: #ccc;
+}
+
+section .hide {
+    display: table-cell;
+    padding: 0 10px;
+    width: 16px;
+    height: 16px;
+    background-image: url('visible.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+section .hide:hover {
+    background-image: url('visible-hover.png');
+}
+
+section .hidden .hide {
+    background-image: url('hidden.png');
+}
+
+section .hidden .hide:hover {
+    background-image: url('hidden-hover.png');
+}
+
 dt, dd {
-    float: left;
+    display: table-cell;
 }
 
 dt {

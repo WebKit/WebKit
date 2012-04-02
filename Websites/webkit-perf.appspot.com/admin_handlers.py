@@ -67,24 +67,58 @@ class AdminDashboardHandler(webapp2.RequestHandler):
     def get_branches(self):
         self.response.headers['Content-Type'] = 'application/json'
         result = {}
-        for branch in Branch.all().fetch(limit=100):
-            result[branch.key().name()] = branch.name
+        for branch in Branch.all():
+            result[branch.key().name()] = {'name': branch.name}
         self.response.out.write(json.dumps(result))
 
     def get_platforms(self):
         self.response.headers['Content-Type'] = 'application/json'
         result = {}
-        for platform in Platform.all().fetch(limit=100):
-            result[platform.key().name()] = platform.name
+        for platform in Platform.all():
+            result[platform.key().name()] = {'name': platform.name, 'hidden': platform.hidden}
         self.response.out.write(json.dumps(result))
 
     def get_builders(self):
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.out.write(json.dumps([builder.name for builder in Builder.all().fetch(limit=100)]))
+        self.response.out.write(json.dumps([builder.name for builder in Builder.all()]))
 
     def get_tests(self):
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.out.write(json.dumps([test.name for test in Test.all().fetch(limit=200)]))
+        result = {}
+        for test in Test.all():
+            result[test.key().name()] = {'name': test.name, 'hidden': test.hidden}
+        self.response.out.write(json.dumps(result))
+
+
+class ChangeVisibilityHandler(webapp2.RequestHandler):
+    def post(self):
+        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+
+        try:
+            payload = json.loads(self.request.body)
+            hide = payload['hide']
+        except:
+            self.response.out.write("Failed to parse the payload: %s" % self.request.body)
+            return
+
+        if 'platform' in payload:
+            model = Platform.get_by_key_name(payload['platform'])
+        elif 'test' in payload:
+            model = Test.get_by_key_name(payload['test'])
+        else:
+            self.response.out.write('Not supported')
+            return
+
+        if not model:
+            self.response.out.write('Could not find the model')
+            return
+
+        model.hidden = hide
+        model.put()
+        schedule_dashboard_update()
+        schedule_manifest_update()
+
+        self.response.out.write('OK')
 
 
 class MergeTestsHandler(webapp2.RequestHandler):

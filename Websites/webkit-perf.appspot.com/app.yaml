@@ -1,6 +1,6 @@
 application: webkit-perf
 version: 17
-runtime: python27
+runtime: python
 api_version: 1
 threadsafe: false
 
@@ -30,7 +30,7 @@ handlers:
   script: main.py
   secure: always
 
-- url: /admin/
+- url: /admin/.*
   script: main.py
   secure: always
   login: admin

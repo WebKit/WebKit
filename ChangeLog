@@ -1,3 +1,40 @@
+2012-04-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        perf-o-matic should have a way to hide some platforms and tests
+        https://bugs.webkit.org/show_bug.cgi?id=82842
+
+        Reviewed by Hajime Morita.
+
+        * Websites/webkit-perf.appspot.com/admin.html:
+        * Websites/webkit-perf.appspot.com/admin_handlers.py:
+        (AdminDashboardHandler.get_branches): Change the json format to allow platforms and tests to have
+        "hidden" boolean states.
+        (AdminDashboardHandler.get_platforms): Ditto.
+        (AdminDashboardHandler.get_builders): Just a cleanup. There is no clean for it to have a limit.
+        (AdminDashboardHandler.get_tests): Change the json format to add "hidden" boolean states.
+        (ChangeVisibilityHandler): Added.
+        (ChangeVisibilityHandler.post): Added. Changes the hidden-state (visibility) of a platform and a test.
+        * Websites/webkit-perf.appspot.com/app.yaml: Make sure everything under /admin/ requires admin privilege.
+        * Websites/webkit-perf.appspot.com/create_handler.py:
+        (CreateHandler.post): Don't emit LF after 'OK'.
+        * Websites/webkit-perf.appspot.com/css/admin.css: Added a bunch of rules for hide/show button.
+        * Websites/webkit-perf.appspot.com/js/admin.js:
+        (submitXHR): Extracted.
+        (createKeyNameReloader): Added hide/show button on each item and the corresponding ajax request.
+        * Websites/webkit-perf.appspot.com/json_generators.py:
+        (DashboardJSONGenerator.__init__): Skip hidden tests and platforms.
+        (ManifestJSONGenerator.__init__): Ditto.
+        * Websites/webkit-perf.appspot.com/json_generators_unittest.py: Added tests to ensure perf-o-matic
+        doesn't include hidden tests and platforms in dashboard and manifest json responses.
+        (DashboardJSONGeneratorTest.test_value_with_hidden_platform_and_tesst):
+        (ManifestJSONGeneratorTest.test_value_two_tests):
+        (ManifestJSONGeneratorTest.test_value_with_hidden_platform_and_test):
+        * Websites/webkit-perf.appspot.com/main.py:
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Platform): Added the "hidden" property.
+        (Test): Ditto. Also removed the comment about this class only exists for efficiency purposes since that's
+        no longer true.
+
 2012-04-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Support the Network Information API

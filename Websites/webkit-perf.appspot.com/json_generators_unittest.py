@@ -115,6 +115,25 @@ class DashboardJSONGeneratorTest(DataStoreTestsBase):
             'testToId': {'some-test': Test.get_by_key_name('some-test').id},
         })
 
+    def test_value_with_hidden_platform_and_tesst(self):
+        webkit_trunk = Branch.create_if_possible('webkit-trunk', 'WebKit trunk')
+        some_platform = Platform.create_if_possible('some-platform', 'Some Platform')
+        hidden_platform = Platform.create_if_possible('hidden-platform', 'Hidden Platform')
+        hidden_platform.hidden = True
+        hidden_platform.put()
+        Test.update_or_insert('some-test', webkit_trunk, some_platform)
+        Test.update_or_insert('some-test', webkit_trunk, hidden_platform)
+        Test.update_or_insert('other-test', webkit_trunk, some_platform)
+        Test.update_or_insert('other-test', webkit_trunk, hidden_platform)
+        Test.update_or_insert('hidden-test', webkit_trunk, some_platform)
+        Test.update_or_insert('hidden-test', webkit_trunk, hidden_platform)
+        hidden_test = Test.get_by_key_name('hidden-test')
+        hidden_test.hidden = True
+        hidden_test.put()
+        self.assertEqual(DashboardJSONGenerator().value()['platformToId'], {'Some Platform': some_platform.id})
+        self.assertEqual(DashboardJSONGenerator().value()['testToId'],
+            {'some-test': Test.get_by_key_name('some-test').id, 'other-test': Test.get_by_key_name('other-test').id})
+
 
 class ManifestJSONGeneratorTest(DataStoreTestsBase):
     def test_value_no_branch(self):
@@ -176,13 +195,38 @@ class ManifestJSONGeneratorTest(DataStoreTestsBase):
         value = ManifestJSONGenerator().value()
         expected_test_ids = [some_test.id, other_test.id]
         self.assertEqualUnorderedList(value.keys(), ['branchMap', 'platformMap', 'testMap'])
-        self.assertEqualUnorderedList(value['branchMap'],
+        self.assertEqual(value['branchMap'],
             {some_branch.id: {'name': some_branch.name, 'testIds': expected_test_ids, 'platformIds': [some_platform.id]}})
         self.assertEqual(value['platformMap'],
             {some_platform.id: {'name': some_platform.name, 'branchIds': [some_branch.id], 'testIds': expected_test_ids}})
         self.assertEqual(value['testMap'],
             {some_test.id: {'name': some_test.name, 'branchIds': [some_branch.id], 'platformIds': [some_platform.id]},
             other_test.id: {'name': other_test.name, 'branchIds': [some_branch.id], 'platformIds': [some_platform.id]}})
+
+    def test_value_with_hidden_platform_and_test(self):
+        some_branch = Branch.create_if_possible('some-branch', 'Some Branch')
+        some_platform = Platform.create_if_possible('some-platform', 'Some Platform')
+        hidden_platform = Platform.create_if_possible('hidden-platform', 'Hidden Platform')
+        hidden_platform.hidden = True
+        hidden_platform.put()
+
+        Test.update_or_insert('some-test', some_branch, some_platform)
+        some_test = Test.update_or_insert('some-test', some_branch, hidden_platform)
+
+        Test.update_or_insert('hidden-test', some_branch, some_platform)
+        hidden_test = Test.update_or_insert('hidden-test', some_branch, hidden_platform)
+        hidden_test.hidden = True
+        hidden_test.put()
+
+        value = ManifestJSONGenerator().value()
+        expected_test_ids = []
+        self.assertEqualUnorderedList(value.keys(), ['branchMap', 'platformMap', 'testMap'])
+        self.assertEqual(value['branchMap'],
+            {some_branch.id: {'name': some_branch.name, 'testIds': [some_test.id], 'platformIds': [some_platform.id]}})
+        self.assertEqual(value['platformMap'],
+            {some_platform.id: {'name': some_platform.name, 'branchIds': [some_branch.id], 'testIds': [some_test.id]}})
+        self.assertEqual(value['testMap'],
+            {some_test.id: {'name': some_test.name, 'branchIds': [some_branch.id], 'platformIds': [some_platform.id]}})
 
 
 if __name__ == '__main__':

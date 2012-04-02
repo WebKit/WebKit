@@ -64,7 +64,7 @@ class CreateHandler(webapp2.RequestHandler):
 
         # No need to clear manifest or runs since they only contain ones with test results
         schedule_dashboard_update()
-        self.response.out.write(error + '\n' if error else 'OK\n')
+        self.response.out.write(error if error else 'OK')
 
     def _create_builder(self, name, password):
         if not name or not password:
