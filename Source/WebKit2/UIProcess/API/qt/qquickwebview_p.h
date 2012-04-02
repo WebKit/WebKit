@@ -23,7 +23,7 @@
 
 #include "qquickurlschemedelegate_p.h"
 #include "qwebkitglobal.h"
-#include <QtQml/qqmllist.h>
+#include <QtDeclarative/qdeclarativelist.h>
 #include <QtQuick/qquickitem.h>
 
 class QWebNavigationRequest;

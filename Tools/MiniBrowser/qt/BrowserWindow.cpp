@@ -32,7 +32,7 @@
 #include "private/qquickwebview_p.h"
 #include "utils.h"
 
-#include <QQmlEngine>
+#include <QDeclarativeEngine>
 #include <QDir>
 #include <QPointF>
 
@@ -108,7 +108,7 @@ void BrowserWindow::updateVisualMockTouchPoints(const QList<QTouchEvent::TouchPo
         QQuickItem* mockTouchPointItem = rootObject()->findChild<QQuickItem*>(mockTouchPointIdentifier, Qt::FindDirectChildrenOnly);
 
         if (!mockTouchPointItem) {
-            QQmlComponent touchMockPointComponent(engine(), QUrl("qrc:/qml/MockTouchPoint.qml"));
+            QDeclarativeComponent touchMockPointComponent(engine(), QUrl("qrc:/qml/MockTouchPoint.qml"));
             mockTouchPointItem = qobject_cast<QQuickItem*>(touchMockPointComponent.create());
             mockTouchPointItem->setObjectName(mockTouchPointIdentifier);
             mockTouchPointItem->setProperty("pointId", QVariant(touchPoint.id()));

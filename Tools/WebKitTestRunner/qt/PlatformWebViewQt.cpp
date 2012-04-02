@@ -31,8 +31,8 @@
 #include "qquickwebview_p.h"
 
 #include <QCoreApplication>
+#include <QDeclarativeProperty>
 #include <QEventLoop>
-#include <QQmlProperty>
 #include <QtQuick/QQuickView>
 #include <qwindowsysteminterface_qpa.h>
 
@@ -58,7 +58,7 @@ private slots:
 
         setResizeMode(QQuickView::SizeRootObjectToView);
         m_view->setParentItem(rootObject());
-        QQmlProperty::write(m_view, "anchors.fill", qVariantFromValue(rootObject()));
+        QDeclarativeProperty::write(m_view, "anchors.fill", qVariantFromValue(rootObject()));
 
         QWindowSystemInterface::handleWindowActivated(this);
         m_view->page()->setFocus(true);

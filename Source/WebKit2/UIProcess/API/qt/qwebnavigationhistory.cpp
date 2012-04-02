@@ -33,9 +33,9 @@
 #include "WebBackForwardList.h"
 
 #include "qwebnavigationhistory_p_p.h"
+#include <QDeclarativeEngine>
 #include <QString>
 #include <QUrl>
-#include <QtQml/QQmlEngine>
 #include <WebKit2/WKArray.h>
 #include <WebKit2/WKBackForwardListItem.h>
 #include <WebKit2/WKBase.h>

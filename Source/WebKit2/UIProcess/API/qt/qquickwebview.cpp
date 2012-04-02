@@ -46,7 +46,7 @@
 
 #include <private/qquickflickable_p.h>
 #include <JavaScriptCore/InitializeThreading.h>
-#include <QtQml/QQmlEngine>
+#include <QDeclarativeEngine>
 #include <QtQuick/QQuickCanvas>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>

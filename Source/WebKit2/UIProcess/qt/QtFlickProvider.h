@@ -21,10 +21,10 @@
 #ifndef QtFlickProvider_h
 #define QtFlickProvider_h
 
+#include <QDeclarativeListProperty>
 #include <QMetaMethod>
 #include <QMetaProperty>
 #include <QObject>
-#include <QQmlListProperty>
 
 QT_BEGIN_NAMESPACE
 class QPointF;
@@ -43,7 +43,7 @@ public:
     void handleTouchFlickEvent(QTouchEvent*);
 
     QQuickItem* contentItem();
-    QQmlListProperty<QObject> flickableData();
+    QDeclarativeListProperty<QObject> flickableData();
 
     QPointF contentPos() const;
     void setContentPos(const QPointF&);

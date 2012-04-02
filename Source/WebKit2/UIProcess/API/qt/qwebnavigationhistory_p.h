@@ -31,7 +31,7 @@
 #include <QObject>
 #include <QUrl>
 #include <QVariant>
-#include <qqml.h>
+#include <qdeclarative.h>
 
 class QAbstractListModel;
 class QWebNavigationHistoryPrivate;

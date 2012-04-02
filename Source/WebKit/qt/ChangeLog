@@ -1,3 +1,15 @@
+2012-04-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r112651.
+        http://trac.webkit.org/changeset/112651
+        https://bugs.webkit.org/show_bug.cgi?id=82887
+
+        It doesn't work with older Qt5 (Requested by Ossy on #webkit).
+
+        * declarative/experimental/plugin.cpp:
+        * declarative/plugin.cpp:
+        (WebKitQmlPlugin::initializeEngine):
+
 2012-04-01  Jon Lee  <jonlee@apple.com>
 
         Rename notification properties and functions

@@ -25,12 +25,12 @@
 #include "qquickwebview_p.h"
 
 #include <QCoreApplication>
+#include <QDeclarativeEngine>
 #include <QMouseEvent>
 #include <QPointF>
 #include <QQuickCanvas>
 #include <QQuickItem>
 #include <QTouchEvent>
-#include <QtQml/QQmlEngine>
 #include <wtf/Assertions.h>
 
 namespace {

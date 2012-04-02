@@ -31,7 +31,7 @@
 #include "MiniBrowserApplication.h"
 #include "UrlLoader.h"
 
-#include <qqml.h>
+#include <qdeclarative.h>
 
 #include <QDir>
 #include <QLatin1String>

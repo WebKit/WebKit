@@ -32,8 +32,8 @@
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
 #include <QtCore/QAbstractListModel>
-#include <QtQml/QQmlContext>
-#include <QtQml/QQmlEngine>
+#include <QtDeclarative/QDeclarativeContext>
+#include <QtDeclarative/QDeclarativeEngine>
 
 using namespace WebCore;
 
@@ -257,7 +257,7 @@ void WebPopupMenuProxyQt::selectIndex(int index)
 
 void WebPopupMenuProxyQt::createItem(QObject* contextObject)
 {
-    QQmlComponent* component = m_webView->experimental()->itemSelector();
+    QDeclarativeComponent* component = m_webView->experimental()->itemSelector();
     if (!component) {
         delete contextObject;
         return;
@@ -289,12 +289,12 @@ void WebPopupMenuProxyQt::createItem(QObject* contextObject)
     m_itemSelector->setParentItem(m_webView);
 }
 
-void WebPopupMenuProxyQt::createContext(QQmlComponent* component, QObject* contextObject)
+void WebPopupMenuProxyQt::createContext(QDeclarativeComponent* component, QObject* contextObject)
 {
-    QQmlContext* baseContext = component->creationContext();
+    QDeclarativeContext* baseContext = component->creationContext();
     if (!baseContext)
-        baseContext = QQmlEngine::contextForObject(m_webView);
-    m_context = adoptPtr(new QQmlContext(baseContext));
+        baseContext = QDeclarativeEngine::contextForObject(m_webView);
+    m_context = adoptPtr(new QDeclarativeContext(baseContext));
 
     contextObject->setParent(m_context.get());
     m_context->setContextProperty(QLatin1String("model"), contextObject);

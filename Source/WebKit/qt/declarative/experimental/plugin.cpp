@@ -30,8 +30,8 @@
 #include "private/qwebpreferences_p.h"
 #include "private/qwebviewportinfo_p.h"
 
-#include <QtQml/qqml.h>
-#include <QtQml/qqmlextensionplugin.h>
+#include <QtDeclarative/qdeclarative.h>
+#include <QtDeclarative/qdeclarativeextensionplugin.h>
 
 QT_BEGIN_NAMESPACE
 
