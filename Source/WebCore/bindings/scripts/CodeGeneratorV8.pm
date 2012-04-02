@@ -1752,7 +1752,13 @@ END
         push(@implContent, "        goto fail;\n");
     }
 
-    my $DOMObject = GetDomWrapperMapName($dataNode, $implClassName);
+    my $DOMObject = "DOMObject";
+    if (IsNodeSubType($dataNode)) {
+        $DOMObject = "DOMNode";
+    } elsif ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
+        $DOMObject = "ActiveDOMObject";
+    }
+
     push(@implContent, <<END);
 
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
@@ -1926,7 +1932,14 @@ END
         push(@implContent, "        goto fail;\n");
     }
 
-    my $DOMObject = GetDomWrapperMapName($dataNode, $implClassName);
+    my $DOMObject = "DOMObject";
+    # A DOMObject that is an ActiveDOMObject and also a DOMNode should be treated as an DOMNode here.
+    # setJSWrapperForDOMNode() will look if node is active and choose correct map to add node to.
+    if (IsNodeSubType($dataNode)) {
+        $DOMObject = "DOMNode";
+    } elsif ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
+        $DOMObject = "ActiveDOMObject";
+    }
     push(@implContent, <<END);
 
     V8DOMWrapper::setDOMWrapper(wrapper, &V8${implClassName}Constructor::info, impl.get());
@@ -3080,7 +3093,7 @@ sub GenerateToV8Converters
     my $className = shift;
     my $nativeType = shift;
 
-    my $domMapName = GetDomWrapperMapName($dataNode, $interfaceName);
+    my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
     my $forceNewObjectInput = IsDOMNodeType($interfaceName) ? ", bool forceNewObject" : "";
     my $forceNewObjectCall = IsDOMNodeType($interfaceName) ? ", forceNewObject" : "";
     my $wrapSlowArgumentType = GetPassRefPtrType($nativeType);
@@ -3169,7 +3182,7 @@ END
 END
     }
     push(@implContent, <<END);
-    V8DOMWrapper::setJSWrapperFor${domMapName}(impl, wrapperHandle);
+    ${domMapFunction}.set(impl.leakRef(), wrapperHandle);
     return wrapper;
 }
 END
@@ -3177,19 +3190,13 @@ END
 
 sub GetDomMapFunction
 {
-    my $mapName = GetDomWrapperMapName(@_);
-    return "get${mapName}Map()";
-}
-
-sub GetDomWrapperMapName
-{
     my $dataNode = shift;
     my $type = shift;
-    return "DOMSVGElementInstance" if $type eq "SVGElementInstance";
-    return "ActiveDOMNode" if (IsNodeSubType($dataNode) && $dataNode->extendedAttributes->{"ActiveDOMObject"});
-    return "DOMNode" if (IsNodeSubType($dataNode));
-    return "ActiveDOMObject" if $dataNode->extendedAttributes->{"ActiveDOMObject"};
-    return "DOMObject";
+    return "getDOMSVGElementInstanceMap()" if $type eq "SVGElementInstance";
+    return "getActiveDOMNodeMap()" if (IsNodeSubType($dataNode) && $dataNode->extendedAttributes->{"ActiveDOMObject"});
+    return "getDOMNodeMap()" if (IsNodeSubType($dataNode));
+    return "getActiveDOMObjectMap()" if $dataNode->extendedAttributes->{"ActiveDOMObject"};
+    return "getDOMObjectMap()";
 }
 
 sub GetNativeTypeForConversions

@@ -317,7 +317,7 @@ v8::Handle<v8::Object> V8TestInterface::wrapSlow(PassRefPtr<TestInterface> impl)
 
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
-    V8DOMWrapper::setJSWrapperForActiveDOMObject(impl, wrapperHandle);
+    getActiveDOMObjectMap().set(impl.leakRef(), wrapperHandle);
     return wrapper;
 }
 
