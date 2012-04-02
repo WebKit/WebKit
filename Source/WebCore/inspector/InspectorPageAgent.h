@@ -102,7 +102,8 @@ public:
     virtual void searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch> >&);
     virtual void searchInResources(ErrorString*, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchResult> >&);
     virtual void setDocumentContent(ErrorString*, const String& frameId, const String& html);
-    virtual void setScreenSizeOverride(ErrorString*, int width, int height);
+    virtual void canOverrideDeviceMetrics(ErrorString*, bool*);
+    virtual void setDeviceMetricsOverride(ErrorString*, int width, int height, double fontScaleFactor);
     virtual void setShowPaintRects(ErrorString*, bool show);
 
     // InspectorInstrumentation API
@@ -116,6 +117,7 @@ public:
     void applyScreenHeightOverride(long*);
     void willPaint(GraphicsContext*, const LayoutRect&);
     void didPaint();
+    void didLayout();
 
     // Inspector Controller API
     virtual void setFrontend(InspectorFrontend*);
@@ -133,9 +135,7 @@ public:
 
 private:
     InspectorPageAgent(InstrumentingAgents*, Page*, InspectorState*, InjectedScriptManager*, InspectorClient*);
-    void updateFrameViewFixedLayout(int, int);
-    void setFrameViewFixedLayout(int, int);
-    void clearFrameViewFixedLayout();
+    void updateViewMetrics(int, int, double);
 
     PassRefPtr<TypeBuilder::Page::Frame> buildObjectForFrame(Frame*);
     PassRefPtr<TypeBuilder::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
@@ -149,10 +149,9 @@ private:
     HashMap<Frame*, String> m_frameToIdentifier;
     HashMap<String, Frame*> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
-    OwnPtr<IntSize> m_originalFixedLayoutSize;
-    bool m_originalUseFixedLayout;
     GraphicsContext* m_lastPaintContext;
     LayoutRect m_lastPaintRect;
+    bool m_didLoadEventFire;
 };
 
 

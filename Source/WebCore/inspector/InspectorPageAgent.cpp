@@ -84,6 +84,7 @@ static const char pageAgentEnabled[] = "pageAgentEnabled";
 static const char pageAgentScriptsToEvaluateOnLoad[] = "pageAgentScriptsToEvaluateOnLoad";
 static const char pageAgentScreenWidthOverride[] = "pageAgentScreenWidthOverride";
 static const char pageAgentScreenHeightOverride[] = "pageAgentScreenHeightOverride";
+static const char pageAgentFontScaleFactorOverride[] = "pageAgentFontScaleFactorOverride";
 static const char showPaintRects[] = "showPaintRects";
 }
 
@@ -310,8 +311,8 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
     , m_client(client)
     , m_frontend(0)
     , m_lastScriptIdentifier(0)
-    , m_originalUseFixedLayout(false)
     , m_lastPaintContext(0)
+    , m_didLoadEventFire(false)
 {
 }
 
@@ -336,7 +337,8 @@ void InspectorPageAgent::restore()
         // When restoring the agent, override values are restored into the FrameView.
         int width = static_cast<int>(m_state->getLong(PageAgentState::pageAgentScreenWidthOverride));
         int height = static_cast<int>(m_state->getLong(PageAgentState::pageAgentScreenHeightOverride));
-        updateFrameViewFixedLayout(width, height);
+        double fontScaleFactor = m_state->getDouble(PageAgentState::pageAgentFontScaleFactorOverride);
+        updateViewMetrics(width, height, fontScaleFactor);
     }
 }
 
@@ -354,7 +356,8 @@ void InspectorPageAgent::disable(ErrorString*)
     // When disabling the agent, reset the override values.
     m_state->setLong(PageAgentState::pageAgentScreenWidthOverride, 0);
     m_state->setLong(PageAgentState::pageAgentScreenHeightOverride, 0);
-    updateFrameViewFixedLayout(0, 0);
+    m_state->setDouble(PageAgentState::pageAgentFontScaleFactorOverride, 1);
+    updateViewMetrics(0, 0, 1);
 }
 
 void InspectorPageAgent::addScriptToEvaluateOnLoad(ErrorString*, const String& source, String* identifier)
@@ -636,7 +639,12 @@ void InspectorPageAgent::setDocumentContent(ErrorString* errorString, const Stri
     DOMPatchSupport::patchDocument(document, html);
 }
 
-void InspectorPageAgent::setScreenSizeOverride(ErrorString* errorString, const int width, const int height)
+void InspectorPageAgent::canOverrideDeviceMetrics(ErrorString*, bool* result)
+{
+    *result = m_client->canOverrideDeviceMetrics();
+}
+
+void InspectorPageAgent::setDeviceMetricsOverride(ErrorString* errorString, const int width, const int height, double fontScaleFactor)
 {
     const static long maxDimension = 10000000;
 
@@ -645,17 +653,29 @@ void InspectorPageAgent::setScreenSizeOverride(ErrorString* errorString, const i
         return;
     }
 
+    if (!width ^ !height) {
+        *errorString = "Both width and height must be either zero or non-zero at once";
+        return;
+    }
+
+    if (fontScaleFactor <= 0) {
+        *errorString = "fontScaleFactor must be positive";
+        return;
+    }
+
     // These two always fit an int.
     int currentWidth = static_cast<int>(m_state->getLong(PageAgentState::pageAgentScreenWidthOverride));
     int currentHeight = static_cast<int>(m_state->getLong(PageAgentState::pageAgentScreenHeightOverride));
+    double currentFontScaleFactor = m_state->getDouble(PageAgentState::pageAgentFontScaleFactorOverride);
 
-    if (width == currentWidth && height == currentHeight)
+    if (width == currentWidth && height == currentHeight && fontScaleFactor == currentFontScaleFactor)
         return;
 
     m_state->setLong(PageAgentState::pageAgentScreenWidthOverride, width);
     m_state->setLong(PageAgentState::pageAgentScreenHeightOverride, height);
+    m_state->setDouble(PageAgentState::pageAgentFontScaleFactorOverride, fontScaleFactor);
 
-    updateFrameViewFixedLayout(width, height);
+    updateViewMetrics(width, height, fontScaleFactor);
 }
 
 void InspectorPageAgent::setShowPaintRects(ErrorString*, bool show)
@@ -691,12 +711,13 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
 
 void InspectorPageAgent::domContentEventFired()
 {
-     m_frontend->domContentEventFired(currentTime());
+    m_didLoadEventFire = true;
+    m_frontend->domContentEventFired(currentTime());
 }
 
 void InspectorPageAgent::loadEventFired()
 {
-     m_frontend->loadEventFired(currentTime());
+    m_frontend->loadEventFired(currentTime());
 }
 
 void InspectorPageAgent::frameNavigated(DocumentLoader* loader)
@@ -820,6 +841,19 @@ void InspectorPageAgent::didPaint()
     m_lastPaintContext = 0;
 }
 
+void InspectorPageAgent::didLayout()
+{
+    if (!m_didLoadEventFire)
+        return;
+
+    m_didLoadEventFire = false;
+    int currentWidth = static_cast<int>(m_state->getLong(PageAgentState::pageAgentScreenWidthOverride));
+    int currentHeight = static_cast<int>(m_state->getLong(PageAgentState::pageAgentScreenHeightOverride));
+
+    if (currentWidth && currentHeight)
+        m_client->autoZoomPageToFitWidth();
+}
+
 PassRefPtr<TypeBuilder::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
 {
     RefPtr<TypeBuilder::Page::Frame> frameObject = TypeBuilder::Page::Frame::create()
@@ -875,38 +909,13 @@ PassRefPtr<TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::buildObject
     return result;
 }
 
-void InspectorPageAgent::updateFrameViewFixedLayout(int width, int height)
+void InspectorPageAgent::updateViewMetrics(int width, int height, double fontScaleFactor)
 {
-    if (!width && !height)
-        clearFrameViewFixedLayout();
-    else
-        setFrameViewFixedLayout(width, height);
+    m_client->overrideDeviceMetrics(width, height, static_cast<float>(fontScaleFactor));
 
     Document* document = mainFrame()->document();
     document->styleSelectorChanged(RecalcStyleImmediately);
     InspectorInstrumentation::mediaQueryResultChanged(document);
-}
-
-void InspectorPageAgent::clearFrameViewFixedLayout()
-{
-    if (m_originalFixedLayoutSize) {
-        // Turning off existing overrides (no-op otherwise) - revert the affected FrameView to the remembered fixed layout settings.
-        mainFrame()->view()->setFixedLayoutSize(*m_originalFixedLayoutSize);
-        m_originalFixedLayoutSize.clear();
-        mainFrame()->view()->setUseFixedLayout(m_originalUseFixedLayout);
-    }
-}
-
-void InspectorPageAgent::setFrameViewFixedLayout(int width, int height)
-{
-    if (!m_originalFixedLayoutSize) {
-        // Turning on the overrides (none currently exist) - remember existing fixed layout for the affected FrameView.
-        m_originalFixedLayoutSize = adoptPtr(new IntSize(mainFrame()->view()->fixedLayoutSize()));
-        m_originalUseFixedLayout = mainFrame()->view()->useFixedLayout();
-    }
-
-    mainFrame()->view()->setFixedLayoutSize(IntSize(width, height));
-    mainFrame()->view()->setUseFixedLayout(true);
 }
 
 } // namespace WebCore

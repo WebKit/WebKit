@@ -77,7 +77,7 @@ function test()
         }
 
         // Disable overrides.
-        PageAgent.setScreenSizeOverride(0, 0, overrideCallback);
+        PageAgent.setDeviceMetricsOverride(0, 0, 1, overrideCallback);
     }
 
     function step2()
@@ -153,7 +153,7 @@ function test()
                 InspectorTest.addResult("Override: " + width + "x" + height + " => ERROR");
             userCallback();
         }
-        PageAgent.setScreenSizeOverride(width, height, callback);
+        PageAgent.setDeviceMetricsOverride(width, height, 1, callback);
     }
 
     function overrideAndDumpData(width, height, callback)

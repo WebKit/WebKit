@@ -310,11 +310,20 @@
                 "hidden": true
             },
             {
-                "name": "setScreenSizeOverride",
-                "description": "Overrides the values of window.screen.width, window.screen.height, window.innerWidth, window.innerHeight, and \"device-width\"/\"device-height\"-related CSS media query results",
+                "name": "canOverrideDeviceMetrics",
+                "description": "Checks whether <code>setDeviceMetricsOverride</code> can be invoked.",
+                "returns": [
+                    { "name": "result", "type": "boolean", "description": "If true, <code>setDeviceMetricsOverride</code> can safely be invoked on the agent." }
+                ],
+                "hidden": true
+            },
+            {
+                "name": "setDeviceMetricsOverride",
+                "description": "Overrides the values of device screen dimensions (window.screen.width, window.screen.height, window.innerWidth, window.innerHeight, and \"device-width\"/\"device-height\"-related CSS media query results) and the font scale factor.",
                 "parameters": [
                     { "name": "width", "type": "integer", "description": "Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override." },
-                    { "name": "height", "type": "integer", "description": "Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override." }
+                    { "name": "height", "type": "integer", "description": "Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override." },
+                    { "name": "fontScaleFactor", "type": "number", "description": "Overriding font scale factor value (must be positive). 1 disables the override." }
                 ],
                 "hidden": true
             },

@@ -407,8 +407,14 @@ InspectorInstrumentationCookie InspectorInstrumentation::willLayoutImpl(Instrume
 
 void InspectorInstrumentation::didLayoutImpl(const InspectorInstrumentationCookie& cookie)
 {
+    if (!cookie.first)
+        return;
+
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didLayout();
+
+    if (InspectorPageAgent* pageAgent = cookie.first->inspectorPageAgent())
+        pageAgent->didLayout();
 }
 
 InspectorInstrumentationCookie InspectorInstrumentation::willLoadXHRImpl(InstrumentingAgents* instrumentingAgents, XMLHttpRequest* request)

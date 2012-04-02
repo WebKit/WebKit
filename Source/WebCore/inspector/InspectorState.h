@@ -56,11 +56,13 @@ public:
     bool getBoolean(const String& propertyName);
     String getString(const String& propertyName);
     long getLong(const String& propertyName);
+    double getDouble(const String& propertyName);
     PassRefPtr<InspectorObject> getObject(const String& propertyName);
 
     void setBoolean(const String& propertyName, bool value) { setValue(propertyName, InspectorBasicValue::create(value)); }
     void setString(const String& propertyName, const String& value) { setValue(propertyName, InspectorString::create(value)); }
     void setLong(const String& propertyName, long value) { setValue(propertyName, InspectorBasicValue::create((double)value)); }
+    void setDouble(const String& propertyName, double value) { setValue(propertyName, InspectorBasicValue::create(value)); }
     void setObject(const String& propertyName, PassRefPtr<InspectorObject> value) { setValue(propertyName, value); }
 
 private:

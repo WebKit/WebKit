@@ -102,6 +102,15 @@ long InspectorState::getLong(const String& propertyName)
     return value;
 }
 
+double InspectorState::getDouble(const String& propertyName)
+{
+    InspectorObject::iterator it = m_properties->find(propertyName);
+    double value = 0;
+    if (it != m_properties->end())
+        it->second->asNumber(&value);
+    return value;
+}
+
 PassRefPtr<InspectorObject> InspectorState::getObject(const String& propertyName)
 {
     InspectorObject::iterator it = m_properties->find(propertyName);
