@@ -1173,17 +1173,11 @@ BUGWK81253 LINUX : svg/text/text-tselect-02-f.svg = IMAGE
 // Still require rebaselining after r109097.
 BUGWK79568 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = FAIL
 BUGWK79568 : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
-BUGWK79568 WIN LINUX : svg/clip-path/clip-path-text-and-shape.svg = TEXT
-BUGWK79568 WIN LINUX : svg/clip-path/clip-path-with-text-clipped.svg = TEXT
-BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = TEXT
 BUGWK75968 WIN LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-39-t.svg = TEXT
-BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-40-t.svg = TEXT
-BUGWK75968 WIN : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE+TEXT
 BUGWK75968 WIN LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE+TEXT TEXT
 BUGWK79568 LINUX : svg/W3C-SVG-1.1/animate-elem-77-t.svg = IMAGE
 BUGWK79568 LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-77-t.svg = TEXT
 BUGWK75968 : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE+TEXT IMAGE
-BUGWK75968 WIN : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE+TEXT
 BUGWK75968 WIN LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE+TEXT TEXT
 BUGWK75968 LION : svg/css/group-with-shadow.svg = IMAGE
 BUGWK75968 LEOPARD SNOWLEOPARD : svg/text/text-text-05-t.svg = TEXT
