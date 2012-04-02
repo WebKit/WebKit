@@ -6,8 +6,8 @@ layer at (0,0) size 480x360
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (0,0) size 33x22
           RenderSVGRect {rect} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
-          RenderSVGPath {circle} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=10.00] [r=10.00]
-          RenderSVGPath {ellipse} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=10.00] [rx=10.00] [ry=10.00]
+          RenderSVGEllipse {circle} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=10.00] [r=10.00]
+          RenderSVGEllipse {ellipse} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=10.00] [rx=10.00] [ry=10.00]
           RenderSVGPath {line} at (0,8) size 20x4 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x1=0.00] [y1=10.00] [x2=20.00] [y2=10.00]
           RenderSVGPath {path} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 20 0 L 20 20 L 0 20 Z"]
           RenderSVGPath {polygon} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [points="0 0 20 0 20 20 0 20 0 0"]
@@ -61,9 +61,9 @@ layer at (0,0) size 480x360
         RenderSVGContainer {use} at (150,25) size 20x20
           RenderSVGRect {rect} at (150,25) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
         RenderSVGContainer {use} at (150,55) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
-          RenderSVGPath {circle} at (150,55) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [cx=10.00] [cy=10.00] [r=10.00]
+          RenderSVGEllipse {circle} at (150,55) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [cx=10.00] [cy=10.00] [r=10.00]
         RenderSVGContainer {use} at (150,85) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
-          RenderSVGPath {ellipse} at (150,85) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [cx=10.00] [cy=10.00] [rx=10.00] [ry=10.00]
+          RenderSVGEllipse {ellipse} at (150,85) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [cx=10.00] [cy=10.00] [rx=10.00] [ry=10.00]
         RenderSVGContainer {use} at (150,124) size 20x2 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
           RenderSVGPath {line} at (150,124) size 20x2 [stroke={[type=SOLID] [color=#00FF00] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=10.00] [x2=20.00] [y2=10.00]
         RenderSVGContainer {use} at (150,144) size 21x21 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]

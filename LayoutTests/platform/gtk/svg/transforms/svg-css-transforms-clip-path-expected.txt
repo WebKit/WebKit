@@ -24,10 +24,10 @@ layer at (28,83) size 200x200
   RenderBlock (relative positioned) {div} at (10,65) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
     RenderSVGRoot {svg} at (39,94) size 140x140
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGPath {circle} at (29,84) size 150x150 [transform={m=((5.00,0.00)(0.00,5.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
+        RenderSVGEllipse {circle} at (29,84) size 150x150 [transform={m=((5.00,0.00)(0.00,5.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
         RenderSVGResourceClipper {clipPath} [id="clip-circle1"] [clipPathUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (29,84) size 150x150
-            RenderSVGPath {circle} at (29,84) size 150x150 [transform={m=((5.00,0.00)(0.00,5.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
+            RenderSVGEllipse {circle} at (29,84) size 150x150 [transform={m=((5.00,0.00)(0.00,5.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
       RenderSVGRect {rect} at (39,94) size 140x140 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
         [clipPath="clip-circle1"] RenderSVGResourceClipper {clipPath} at (-50,-50) size 200x200
     RenderText {#text} at (0,0) size 0x0
@@ -35,10 +35,10 @@ layer at (28,348) size 200x200
   RenderBlock (relative positioned) {div} at (10,330) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
     RenderSVGRoot {svg} at (39,359) size 140x140
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGPath {circle} at (29,349) size 150x150 [transform={m=((5.00,0.00)(0.00,5.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
+        RenderSVGEllipse {circle} at (29,349) size 150x150 [transform={m=((5.00,0.00)(0.00,5.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
         RenderSVGResourceClipper {clipPath} [id="clip-circle2"] [clipPathUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (29,349) size 150x150
-            RenderSVGPath {circle} at (29,349) size 150x150 [transform={m=((5.00,0.00)(0.00,5.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
+            RenderSVGEllipse {circle} at (29,349) size 150x150 [transform={m=((5.00,0.00)(0.00,5.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
       RenderSVGRect {rect} at (39,359) size 140x140 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
         [clipPath="clip-circle2"] RenderSVGResourceClipper {clipPath} at (-50,-50) size 200x200
     RenderText {#text} at (0,0) size 0x0

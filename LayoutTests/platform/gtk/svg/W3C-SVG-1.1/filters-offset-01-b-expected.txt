@@ -19,7 +19,7 @@ layer at (0,0) size 480x360
               [feOffset dx="40.00" dy="30.00"]
                 [SourceGraphic]
             [SourceGraphic]
-      RenderSVGPath {circle} at (120,10) size 200x320 [fill={[type=SOLID] [color=#000000]}] [cx=160.00] [cy=50.00] [r=40.00]
+      RenderSVGEllipse {circle} at (120,10) size 200x320 [fill={[type=SOLID] [color=#000000]}] [cx=160.00] [cy=50.00] [r=40.00]
         [filter="FOMTest"] RenderSVGResourceFilter {filter} at (120,10) size 200x320
       RenderSVGPath {path} at (109,79) size 22x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,90.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M -1 -11 L 1 -11 L 1 -1 L 11 -1 L 11 1 L 1 1 L 1 11 L -1 11 L -1 1 L -11 1 L -11 -1 L -1 -1 L -1 -11"]
       RenderSVGPath {path} at (149,109) size 22x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(160.00,120.00)}] [fill={[type=SOLID] [color=#408000] [opacity=0.80]}] [data="M -1 -11 L 1 -11 L 1 -1 L 11 -1 L 11 1 L 1 1 L 1 11 L -1 11 L -1 1 L -11 1 L -11 -1 L -1 -1 L -1 -11"]
