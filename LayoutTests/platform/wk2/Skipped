@@ -334,6 +334,7 @@ webarchive/adopt-attribute-styled-node-webarchive.html
 webarchive/adopt-inline-styled-node-webarchive.html
 webarchive/archive-empty-frame-dom.html
 webarchive/archive-with-unencoded-url.html
+webarchive/css-page-rule-crash.html
 webarchive/test-body-background.html
 webarchive/test-css-import.html
 webarchive/test-css-url-resources-in-stylesheets.html
