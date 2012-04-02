@@ -128,7 +128,16 @@ bool HTMLAppletElement::canEmbedJava() const
         return false;
 
     Settings* settings = document()->settings();
-    return settings && settings->isJavaEnabled();
+    if (!settings)
+        return false;
+
+    if (!settings->isJavaEnabled())
+        return false;
+
+    if (document()->securityOrigin()->isLocal() && !settings->isJavaEnabledForLocalFiles())
+        return false;
+
+    return true;
 }
 
 void HTMLAppletElement::finishParsingChildren()

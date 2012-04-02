@@ -1,3 +1,19 @@
+2012-03-29  Sam Weinig  <sam@webkit.org>
+
+        Add setting to disable Java for local files even if it is otherwise enabled
+        https://bugs.webkit.org/show_bug.cgi?id=82685
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetJavaEnabledForLocalFiles):
+        (WKPreferencesGetJavaEnabledForLocalFiles):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Add pref as SPI and forward to WebCore.
+
 2012-04-02  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Set up plugin process on Unix

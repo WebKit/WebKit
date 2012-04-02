@@ -158,6 +158,16 @@ bool WKPreferencesGetJavaEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->javaEnabled();
 }
 
+void WKPreferencesSetJavaEnabledForLocalFiles(WKPreferencesRef preferencesRef, bool javaEnabledForLocalFiles)
+{
+    toImpl(preferencesRef)->setJavaEnabledForLocalFiles(javaEnabledForLocalFiles);
+}
+
+bool WKPreferencesGetJavaEnabledForLocalFiles(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->javaEnabledForLocalFiles();
+}
+
 void WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(WKPreferencesRef preferencesRef, bool javaScriptCanOpenWindowsAutomatically)
 {
     toImpl(preferencesRef)->setJavaScriptCanOpenWindowsAutomatically(javaScriptCanOpenWindowsAutomatically);

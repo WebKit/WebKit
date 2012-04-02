@@ -134,6 +134,7 @@ Settings::Settings(Page* page)
     , m_maximumHTMLParserDOMTreeDepth(defaultMaximumHTMLParserDOMTreeDepth)
     , m_isSpatialNavigationEnabled(false)
     , m_isJavaEnabled(false)
+    , m_isJavaEnabledForLocalFiles(true)
     , m_loadsImagesAutomatically(false)
     , m_loadsSiteIconsIgnoringImageLoadingSetting(false)
     , m_privateBrowsingEnabled(false)
@@ -428,6 +429,11 @@ void Settings::setSpatialNavigationEnabled(bool isSpatialNavigationEnabled)
 void Settings::setJavaEnabled(bool isJavaEnabled)
 {
     m_isJavaEnabled = isJavaEnabled;
+}
+
+void Settings::setJavaEnabledForLocalFiles(bool isJavaEnabledForLocalFiles)
+{
+    m_isJavaEnabledForLocalFiles = isJavaEnabledForLocalFiles;
 }
 
 void Settings::setImagesEnabled(bool areImagesEnabled)

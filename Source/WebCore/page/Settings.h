@@ -143,6 +143,10 @@ namespace WebCore {
         void setJavaEnabled(bool);
         bool isJavaEnabled() const { return m_isJavaEnabled; }
 
+        // This settings is only consulted if isJavaEnabled() returns true;
+        void setJavaEnabledForLocalFiles(bool);
+        bool isJavaEnabledForLocalFiles() const { return m_isJavaEnabledForLocalFiles; }
+
         void setImagesEnabled(bool);
         bool areImagesEnabled() const { return m_areImagesEnabled; }
 
@@ -581,6 +585,7 @@ namespace WebCore {
         unsigned m_maximumHTMLParserDOMTreeDepth;
         bool m_isSpatialNavigationEnabled : 1;
         bool m_isJavaEnabled : 1;
+        bool m_isJavaEnabledForLocalFiles : 1;
         bool m_loadsImagesAutomatically : 1;
         bool m_loadsSiteIconsIgnoringImageLoadingSetting : 1;
         bool m_privateBrowsingEnabled : 1;

@@ -31,10 +31,11 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "Geolocation.h"
-#include "Page.h"
-#include "PointerLock.h"
 #include "Language.h"
+#include "Page.h"
 #include "PluginData.h"
+#include "PointerLock.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
 #include <wtf/HashSet.h>
@@ -126,7 +127,12 @@ bool Navigator::javaEnabled() const
     if (!m_frame || !m_frame->settings())
         return false;
 
-    return m_frame->settings()->isJavaEnabled();
+    if (!m_frame->settings()->isJavaEnabled())
+        return false;
+    if (m_frame->document()->securityOrigin()->isLocal() && !m_frame->settings()->isJavaEnabledForLocalFiles())
+        return false;
+
+    return true;
 }
 
 #if ENABLE(POINTER_LOCK)

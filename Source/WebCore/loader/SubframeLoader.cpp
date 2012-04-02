@@ -104,13 +104,21 @@ bool SubframeLoader::resourceWillUsePlugin(const String& url, const String& mime
 bool SubframeLoader::requestPlugin(HTMLPlugInImageElement* ownerElement, const KURL& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
 {
     Settings* settings = m_frame->settings();
-    if ((!allowPlugins(AboutToInstantiatePlugin)
-         // Application plug-ins are plug-ins implemented by the user agent, for example Qt plug-ins,
-         // as opposed to third-party code such as Flash. The user agent decides whether or not they are
-         // permitted, rather than WebKit.
-         && !MIMETypeRegistry::isApplicationPluginMIMEType(mimeType))
-        || ((!settings || !settings->isJavaEnabled()) && MIMETypeRegistry::isJavaAppletMIMEType(mimeType)))
+    if (!settings)
         return false;
+
+    // Application plug-ins are plug-ins implemented by the user agent, for example Qt plug-ins,
+    // as opposed to third-party code such as Flash. The user agent decides whether or not they are
+    // permitted, rather than WebKit.
+    if ((!allowPlugins(AboutToInstantiatePlugin) && !MIMETypeRegistry::isApplicationPluginMIMEType(mimeType)))
+        return false;
+
+    if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
+        if (!settings->isJavaEnabled())
+            return false;
+        if (m_frame->document() && m_frame->document()->securityOrigin()->isLocal() && !settings->isJavaEnabledForLocalFiles())
+            return false;
+    }
 
     if (m_frame->document()) {
         if (m_frame->document()->isSandboxed(SandboxPlugins))
