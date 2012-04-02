@@ -461,7 +461,7 @@ void CSSStyleSheet::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
             CSSRule* rule = styleSheet->m_childRules[i].get();
             if (rule->isFontFaceRule())
                 static_cast<CSSFontFaceRule*>(rule)->addSubresourceStyleURLs(urls);
-            else if (rule->isStyleRule() || rule->isPageRule())
+            else if (rule->isStyleRule())
                 static_cast<CSSStyleRule*>(rule)->styleRule()->addSubresourceStyleURLs(urls, this);
         }
     }
