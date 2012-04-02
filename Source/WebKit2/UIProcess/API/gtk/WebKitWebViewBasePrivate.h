@@ -50,6 +50,9 @@ void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);
 
 void webkitWebViewBaseStartDrag(WebKitWebViewBase*, const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
 
+void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase*);
+void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
+
 G_END_DECLS
 
 #endif // WebKitWebViewBasePrivate_h

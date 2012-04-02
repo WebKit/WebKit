@@ -52,9 +52,15 @@
 #include <WebCore/PasteboardHelper.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/Region.h>
+#include <gdk/gdk.h>
+#include <gdk/gdkkeysyms.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
+
+#if ENABLE(FULLSCREEN_API)
+#include "WebFullScreenManagerProxy.h"
+#endif
 
 using namespace WebKit;
 using namespace WebCore;
@@ -72,6 +78,9 @@ struct _WebKitWebViewBasePrivate {
     IntSize resizerSize;
     GRefPtr<AtkObject> accessible;
     bool needsResizeOnMap;
+#if ENABLE(FULLSCREEN_API)
+    bool fullScreenModeActive;
+#endif
 };
 
 G_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
@@ -276,6 +285,22 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* e
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
+
+#if ENABLE(FULLSCREEN_API)
+    if (priv->fullScreenModeActive) {
+        switch (event->keyval) {
+        case GDK_KEY_Escape:
+        case GDK_KEY_f:
+        case GDK_KEY_F:
+            webkitWebViewBaseExitFullScreen(webViewBase);
+            break;
+        default:
+            break;
+        }
+
+        return TRUE;
+    }
+#endif
 
     // Since WebProcess key event handling is not synchronous, handle the event in two passes.
     // When WebProcess processes the input event, it will call PageClientImpl::doneWithKeyEvent
@@ -529,6 +554,10 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WKCont
 
     priv->pageProxy = toImpl(context)->createWebPage(priv->pageClient.get(), toImpl(pageGroup));
     priv->pageProxy->initializeWebPage();
+
+#if ENABLE(FULLSCREEN_API)
+    priv->pageProxy->fullScreenManager()->setWebView(webkitWebViewBase);
+#endif
 }
 
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char* tooltip)
@@ -575,4 +604,41 @@ void webkitWebViewBaseStartDrag(WebKitWebViewBase* webViewBase, const DragData& 
 void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase* webkitWebViewBase)
 {
     webkitWebViewBase->priv->shouldForwardNextKeyEvent = TRUE;
+}
+
+void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase* webkitWebViewBase)
+{
+#if ENABLE(FULLSCREEN_API)
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    if (priv->fullScreenModeActive)
+        return;
+
+    WebFullScreenManagerProxy* fullScreenManagerProxy = priv->pageProxy->fullScreenManager();
+
+    fullScreenManagerProxy->willEnterFullScreen();
+
+    GtkWidget* topLevelWindow = gtk_widget_get_toplevel(GTK_WIDGET(webkitWebViewBase));
+    if (gtk_widget_is_toplevel(topLevelWindow))
+        gtk_window_fullscreen(GTK_WINDOW(topLevelWindow));
+    fullScreenManagerProxy->didEnterFullScreen();
+    priv->fullScreenModeActive = true;
+#endif
+}
+
+void webkitWebViewBaseExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
+{
+#if ENABLE(FULLSCREEN_API)
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    if (!priv->fullScreenModeActive)
+        return;
+
+    WebFullScreenManagerProxy* fullScreenManagerProxy = priv->pageProxy->fullScreenManager();
+    fullScreenManagerProxy->willExitFullScreen();
+
+    GtkWidget* topLevelWindow = gtk_widget_get_toplevel(GTK_WIDGET(webkitWebViewBase));
+    if (gtk_widget_is_toplevel(topLevelWindow))
+        gtk_window_unfullscreen(GTK_WINDOW(topLevelWindow));
+    fullScreenManagerProxy->didExitFullScreen();
+    priv->fullScreenModeActive = false;
+#endif
 }

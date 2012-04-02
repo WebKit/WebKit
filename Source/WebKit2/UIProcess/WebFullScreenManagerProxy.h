@@ -44,6 +44,8 @@ class IntRect;
 
 #if PLATFORM(MAC)
 OBJC_CLASS WKView;
+#elif PLATFORM(GTK)
+typedef struct _WebKitWebViewBase WebKitWebViewBase;
 #endif
 
 namespace WebKit {
@@ -57,8 +59,7 @@ typedef WebView PlatformWebView;
 // FIXME: We need to investigate how to abstract QDesktopWebView/QTouchWebView here.
 typedef QObject PlatformWebView;
 #elif PLATFORM(GTK)
-class WebView;
-typedef WebView PlatformWebView;
+typedef WebKitWebViewBase PlatformWebView;
 #endif
 
 class WebPageProxy;

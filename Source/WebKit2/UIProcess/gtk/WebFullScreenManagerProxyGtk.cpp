@@ -25,8 +25,8 @@
 #include "WebContext.h"
 #include "WebFullScreenManagerMessages.h"
 #include "WebFullScreenManagerProxyMessages.h"
+#include "WebKitWebViewBasePrivate.h"
 #include "WebProcess.h"
-
 #include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
@@ -40,12 +40,18 @@ void WebFullScreenManagerProxy::invalidate()
 
 void WebFullScreenManagerProxy::enterFullScreen()
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    webkitWebViewBaseEnterFullScreen(m_webView);
 }
 
 void WebFullScreenManagerProxy::exitFullScreen()
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    webkitWebViewBaseExitFullScreen(m_webView);
 }
 
 void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)

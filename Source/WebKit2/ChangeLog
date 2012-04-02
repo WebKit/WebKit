@@ -1,3 +1,28 @@
+2012-03-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WK2] Initial FullScreen support
+        https://bugs.webkit.org/show_bug.cgi?id=75553
+
+        Reviewed by Martin Robinson.
+
+        Full screen display support in WebKitWebViewBase. Two functions
+        have been added to handle this. They're called by the
+        WebFullScreenManagerProxy when full screen display needs to be
+        managed for an HTML element.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (_WebKitWebViewBasePrivate):
+        (webkitWebViewBaseCreateWebPage):
+        (onFullscreenGtkKeyPressEvent):
+        (webkitWebViewBaseEnterFullScreen):
+        (webkitWebViewBaseExitFullScreen):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/WebFullScreenManagerProxy.h:
+        (WebKit):
+        * UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp:
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen):
+
 2012-04-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r112651.
