@@ -102,8 +102,9 @@ void ArgumentCoder<ResourceError>::encode(ArgumentEncoder* encoder, const Resour
 {
     encoder->encode(resourceError.domain());
     encoder->encode(resourceError.errorCode());
-    encoder->encode(resourceError.failingURL()); 
+    encoder->encode(resourceError.failingURL());
     encoder->encode(resourceError.localizedDescription());
+    encoder->encode(resourceError.isCancellation());
 }
 
 bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder* decoder, ResourceError& resourceError)
@@ -123,8 +124,13 @@ bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder* decoder, ResourceErro
     String localizedDescription;
     if (!decoder->decode(localizedDescription))
         return false;
-    
+
+    bool isCancellation;
+    if (!decoder->decode(isCancellation))
+        return false;
+
     resourceError = ResourceError(domain, errorCode, failingURL, localizedDescription);
+    resourceError.setIsCancellation(isCancellation);
     return true;
 }
 

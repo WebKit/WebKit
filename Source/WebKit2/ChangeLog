@@ -1,3 +1,18 @@
+2012-04-02  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] ResourceError::isCancellation() is always returning false
+        https://bugs.webkit.org/show_bug.cgi?id=82917
+
+        Reviewed by Noam Rosenthal.
+
+        We were missing the encoding of a boolean in ArgumentCoder<ResourceError>
+        and, therefore, we were getting always "false" for ResourceError::isCancellation()
+        for errors being sent through the IPC.
+
+        * Shared/qt/WebCoreArgumentCodersQt.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+
 2012-03-29  Sam Weinig  <sam@webkit.org>
 
         Add setting to disable Java for local files even if it is otherwise enabled
