@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <body onload="load()">
+        <p>Test that a video element scales decoded frames to match the initial size
+        as opposed to changing the size of the element.</p>
+        <video></video>
+        <video width="320"></video>
+
+        <script src="../../../media/video-test.js"></script>
+        <script>
+            function load() {
+                var video = document.getElementsByTagName("video")[0];
+                var video_fixed_size = document.getElementsByTagName("video")[1];
+                video.src = "resources/frame_size_change.webm";
+                video_fixed_size.src = "resources/frame_size_change.webm";
+
+                var canplayCount = 0;
+                function oncanplay() {
+                    consoleWrite("canplay");
+                    if (++canplayCount < 2) {
+                        return;
+                    }
+
+                    testExpected(video.clientWidth, 1920);
+                    testExpected(video.clientHeight, 1080);
+                    testExpected(video.videoWidth, 1920);
+                    testExpected(video.videoHeight, 1080);
+                    video.play();
+
+                    testExpected(video_fixed_size.clientWidth, 320);
+                    testExpected(video_fixed_size.clientHeight, 180);
+                    testExpected(video_fixed_size.videoWidth, 1920);
+                    testExpected(video_fixed_size.videoHeight, 1080);
+                    video_fixed_size.play();
+                };
+                video.addEventListener('canplay', oncanplay);
+                video_fixed_size.addEventListener('canplay', oncanplay);
+
+                var playingCount = 0;
+                function onplaying() {
+                    consoleWrite("playing");
+                    if (++playingCount < 2) {
+                        return;
+                    }
+
+                    // Make sure both videos play for a bit.
+                    function ontimeupdate(e) {
+                        if (e.target.currentTime > 0.5) {
+                            e.target.pause();
+                        }
+                    };
+                    video.addEventListener('timeupdate', ontimeupdate);
+                    video_fixed_size.addEventListener('timeupdate', ontimeupdate);
+                };
+                video.addEventListener('playing', onplaying);
+                video_fixed_size.addEventListener('playing', onplaying);
+
+                var pauseCount = 0;
+                function onpause() {
+                    consoleWrite("pause");
+                    if (++pauseCount < 2) {
+                        return;
+                    }
+
+                    testExpected(video.clientWidth, 1920);
+                    testExpected(video.clientHeight, 1080);
+                    testExpected(video.videoWidth, 1920);
+                    testExpected(video.videoHeight, 1080);
+
+                    testExpected(video_fixed_size.clientWidth, 320);
+                    testExpected(video_fixed_size.clientHeight, 180);
+                    testExpected(video_fixed_size.videoWidth, 1920);
+                    testExpected(video_fixed_size.videoHeight, 1080);
+
+                    endTest();
+                };
+                video.addEventListener('pause', onpause);
+                video_fixed_size.addEventListener('pause', onpause);
+            }
+        </script>
+   </body>
+</html>
