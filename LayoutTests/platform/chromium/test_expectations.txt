@@ -3564,10 +3564,6 @@ BUGWK79454 MAC : svg/text/text-rescale.html = IMAGE
 BUGWK79454 LINUX : svg/text/text-rescale.html = IMAGE PASS
 BUGWK79454 MAC WIN : svg/text/text-viewbox-rescale.html = IMAGE
 
-// Flaky for DEBUG since r108585
-// CRASH is from BUGWK82505.
-BUGWK79455 DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS IMAGE+TEXT CRASH
-
 BUGWK79456 DEBUG : svg/repaint/image-with-clip-path.svg = PASS IMAGE
 
 BUGWK79540 : fast/files/workers/worker-apply-blob-url-to-xhr.html = PASS CRASH
@@ -3936,6 +3932,7 @@ BUGWK82232 SNOWLEOPARD DEBUG : fast/writing-mode/broken-ideographic-font.html = 
 BUGWK82232 SNOWLEOPARD DEBUG : fast/writing-mode/japanese-ruby-horizontal-bt.html = PASS CRASH
 BUGWK82232 SNOWLEOPARD DEBUG : transitions/remove-transition-style.html = PASS TEXT CRASH
 BUGWK82232 SNOWLEOPARD DEBUG : traversal/node-iterator-prototype.html = PASS CRASH
+BUGWK82232 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS CRASH
 
 // Flaky since at least r111670
 BUGWK82258 DEBUG : svg/custom/circular-marker-reference-4.svg = TEXT PASS
