@@ -94,7 +94,7 @@ void GraphicsContext3D::validateAttributes()
         // Currently in Mac we only turn on antialias if vendor is NVIDIA,
         // or if ATI and on 10.7.2 and above.
         const char* vendor = reinterpret_cast<const char*>(::glGetString(GL_VENDOR));
-        if (!std::strstr(vendor, "NVIDIA") && !(std::strstr(vendor, "ATI") && systemAllowsMultisamplingOnATICards()))
+        if (!vendor || (!std::strstr(vendor, "NVIDIA") && !(std::strstr(vendor, "ATI") && systemAllowsMultisamplingOnATICards())))
             isValidVendor = false;
         if (!isValidVendor || !extensions->supports("GL_ANGLE_framebuffer_multisample") || isGLES2Compliant())
             m_attrs.antialias = false;
