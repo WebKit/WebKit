@@ -84,6 +84,13 @@ public:
 
     bool attached(Node*, ExceptionCode&);
 
+    // FIXME: Rename these functions if walker is prefered.
+    Node* nextSiblingByWalker(Node*, ExceptionCode&);
+    Node* firstChildByWalker(Node*, ExceptionCode&);
+    Node* lastChildByWalker(Node*, ExceptionCode&);
+    Node* nextNodeByWalker(Node*, ExceptionCode&);
+    Node* previousNodeByWalker(Node*, ExceptionCode&);
+
     Node* nextSiblingInReifiedTree(Node*, ExceptionCode&);
     Node* firstChildInReifiedTree(Node*, ExceptionCode&);
     Node* lastChildInReifiedTree(Node*, ExceptionCode&);

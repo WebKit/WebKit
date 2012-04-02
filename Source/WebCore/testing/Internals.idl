@@ -55,6 +55,12 @@ module window {
         Element getElementByIdInShadowRoot(in Node shadowRoot, in DOMString id) raises(DOMException);
         boolean isValidContentSelect(in Element contentElement) raises(DOMException);
 
+        Node nextSiblingByWalker(in Node node) raises(DOMException);
+        Node firstChildByWalker(in Node node) raises(DOMException);
+        Node lastChildByWalker(in Node node) raises(DOMException);
+        Node nextNodeByWalker(in Node node) raises(DOMException);
+        Node previousNodeByWalker(in Node node) raises(DOMException);
+
         Node nextSiblingInReifiedTree(in Node node) raises(DOMException);
         Node firstChildInReifiedTree(in Node node) raises(DOMException);
         Node lastChildInReifiedTree(in Node node) raises(DOMException);
@@ -127,7 +133,7 @@ module window {
 
 #if defined(ENABLE_BATTERY_STATUS) && ENABLE_BATTERY_STATUS
         void setBatteryStatus(in Document document, in DOMString eventType, in boolean charging, in double chargingTime, in double dischargingTime, in double level) raises (DOMException);
-#endif 
+#endif
 
 #if defined(ENABLE_NETWORK_INFO) && ENABLE_NETWORK_INFO
         void setNetworkInformation(in Document document, in DOMString eventType, in long bandwidth, in boolean metered) raises (DOMException);

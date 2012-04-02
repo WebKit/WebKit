@@ -180,6 +180,12 @@ EXPORTS
         ?number@String@WTF@@SA?AV12@H@Z
         ?observeFrame@FrameDestructionObserver@WebCore@@IAEXPAVFrame@2@@Z
         ?overrideUserPreferredLanguages@WebCore@@YAXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z
+        ?nextSibling@ComposedShadowTreeWalker@WebCore@@QAEXXZ
+        ??0ComposedShadowTreeWalker@WebCore@@QAE@PBVNode@1@W4Policy@01@@Z
+        ?firstChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
+        ?lastChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
+        ?next@ComposedShadowTreeWalker@WebCore@@QAEXXZ
+        ?previous@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?nextSibling@ReifiedTreeTraversal@WebCore@@SAPAVNode@2@PBV32@@Z
         ?numberOfScopedHTMLStyleChildren@Node@WebCore@@QBEIXZ
         ?page@Document@WebCore@@QBEPAVPage@2@XZ

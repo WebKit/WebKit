@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/shadow-dom.js"></script>
+</head>
+<body>
+<div id="console"></div>
+<script>
+description("Tests for Composed Shadow DOM Tree Traversal APIs. Can only run within DRT");
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function dumpNode(node)
+{
+    var output = node.nodeName + "\t";
+    if (node.id)
+        output += ' id=' + node.id;
+    if (node.className)
+        output += ' class=' + node.className;
+    return output;
+}
+
+function dumpComposedShadowTree(node, indent)
+{
+    indent = indent || "";
+    var output = indent + dumpNode(node) + "\n";
+    var child;
+    for (child = internals.firstChildByWalker(node); child; child = internals.nextSiblingByWalker(child))
+         output += dumpComposedShadowTree(child, indent + "\t");
+    return output;
+}
+
+function lastNodeByWalker(root)
+{
+    var lastNode = root;
+    while (internals.lastChildByWalker(lastNode))
+        lastNode = internals.lastChildByWalker(lastNode);
+    return lastNode;
+}
+
+function showComposedShadowTreeByTraversingInForward(root)
+{
+    var node = root;
+    var last = lastNodeByWalker(root);
+    while (node) {
+        debug(dumpNode(node));
+        if (node == last)
+            break;
+        node = internals.nextNodeByWalker(node);
+    }
+}
+
+function showComposedShadowTreeByTraversingInBackward(root)
+{
+    var node = lastNodeByWalker(root);
+    while (node) {
+        debug(dumpNode(node));
+        if (node == root)
+            break;
+        node = internals.previousNodeByWalker(node);
+    }
+}
+
+function showComposedShadowTree(node)
+{
+    document.body.appendChild(node);
+    document.body.offsetLeft;
+
+    debug('Composed Shadow Tree:');
+    debug(dumpComposedShadowTree(node));
+
+    debug('Traverse in forward.');
+    showComposedShadowTreeByTraversingInForward(node);
+
+    debug('Traverse in backward.');
+    showComposedShadowTreeByTraversingInBackward(node);
+
+    debug('');
+}
+
+debug('ShadowRoot should be used.');
+showComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(createDOM('div', {'id': 'b'})),
+              createDOM('div', {'id': 'c'})));
+
+debug('A content element should select light children');
+showComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(createDOM('div', {'id': 'b'}),
+                               createDOM('content')),
+              createDOM('div', {'id': 'c'}),
+              createDOM('div', {'id': 'd'})));
+
+debug('Test for content element selector.');
+showComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(createDOM('div', {'id': 'b'}),
+                               createDOM('content', {'select': '.d'})),
+              createDOM('div', {'id': 'c'}),
+              createDOM('div', {'id': 'd'}),
+              createDOM('div', {'id': 'e'})));
+
+debug('Light children should be selected only at once.');
+showComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(createDOM('div', {'id': 'b'}),
+                               createDOM('content', {'select': '.d'}),
+                               createDOM('content')),
+              createDOM('div', {'id': 'c'}),
+              createDOM('div', {'id': 'd'}),
+              createDOM('div', {'id': 'e'})));
+
+debug('A content element can have fallback elements.');
+showComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(createDOM('div', {'id': 'b'}),
+                               createDOM('content', {'select': '.z'},
+                                         createDOM('div', {'id': 'f1'}),
+                                         createDOM('div', {'id': 'f2'}))),
+              createDOM('div', {'id': 'c'})));
+
+debug('Fallback elements should not be used if <content> element selects any elements.');
+showComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(createDOM('div', {'id': 'b'}),
+                               createDOM('content', {'select': '.c'},
+                                         createDOM('div', {'id': 'f1'}),
+                                         createDOM('div', {'id': 'f2'}))),
+              createDOM('div', {'id': 'c'})));
+
+debug('Test for Nested ShadowRoots.');
+showComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(createDOM('div', {'id': 'b'},
+                                         createShadowRoot(createDOM('div', {'id': 'c'}),
+                                                          createDOM('content'),
+                                                          createDOM('div', {'id': 'd'})),
+                                         createDOM('div', {'id': 'e'})),
+                               createDOM('div', {'id': 'f'}),
+                               createDOM('content'),
+                               createDOM('div', {'id': 'g'})),
+              createDOM('div', {'id': 'h'}),
+              createDOM('div', {'id': 'i'})));
+
+debug('Test for Multiple ShadowRoots.');
+showComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(createDOM('div', {'id': 'b'}),
+                               createDOM('content'),
+                               createDOM('div', {'id': 'c'})),
+              createShadowRoot(createDOM('div', {'id': 'd'}),
+                               createDOM('shadow'),
+                               createDOM('div', {'id': 'e'})),
+              createDOM('div', {'id': 'f'})));
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

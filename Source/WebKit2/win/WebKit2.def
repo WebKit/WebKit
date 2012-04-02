@@ -183,6 +183,12 @@ EXPORTS
         ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?lastChild@ReifiedTreeTraversal@WebCore@@SAPAVNode@2@PBV32@@Z
         ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@VMarkerTypes@DocumentMarker@2@@Z
+        ?nextSibling@ComposedShadowTreeWalker@WebCore@@QAEXXZ
+        ??0ComposedShadowTreeWalker@WebCore@@QAE@PBVNode@1@W4Policy@01@@Z
+        ?firstChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
+        ?lastChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
+        ?next@ComposedShadowTreeWalker@WebCore@@QAEXXZ
+        ?previous@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?nextSibling@ReifiedTreeTraversal@WebCore@@SAPAVNode@2@PBV32@@Z
         ?number@String@WTF@@SA?AV12@I@Z
         ?number@String@WTF@@SA?AV12@H@Z

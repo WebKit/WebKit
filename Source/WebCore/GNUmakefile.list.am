@@ -1749,6 +1749,8 @@ webcore_sources += \
 	Source/WebCore/dom/Clipboard.h \
 	Source/WebCore/dom/Comment.cpp \
 	Source/WebCore/dom/Comment.h \
+	Source/WebCore/dom/ComposedShadowTreeWalker.cpp \
+	Source/WebCore/dom/ComposedShadowTreeWalker.h \
 	Source/WebCore/dom/CompositionEvent.cpp \
 	Source/WebCore/dom/CompositionEvent.h \
 	Source/WebCore/dom/ContainerNodeAlgorithms.h \

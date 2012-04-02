@@ -1,0 +1,156 @@
+Tests for Composed Shadow DOM Tree Traversal APIs. Can only run within DRT
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+ShadowRoot should be used.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+Traverse in backward.
+DIV	 id=b
+DIV	 id=a
+
+A content element should select light children
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+	DIV	 id=c
+	DIV	 id=d
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+DIV	 id=c
+DIV	 id=d
+Traverse in backward.
+DIV	 id=d
+DIV	 id=c
+DIV	 id=b
+DIV	 id=a
+
+Test for content element selector.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+
+Traverse in forward.
+DIV	 id=a
+Traverse in backward.
+DIV	 id=a
+
+Light children should be selected only at once.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+Traverse in backward.
+DIV	 id=e
+DIV	 id=d
+DIV	 id=c
+DIV	 id=a
+
+A content element can have fallback elements.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+	DIV	 id=f1
+	DIV	 id=f2
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+DIV	 id=f1
+DIV	 id=f2
+Traverse in backward.
+DIV	 id=f2
+DIV	 id=f1
+DIV	 id=b
+DIV	 id=a
+
+Fallback elements should not be used if  element selects any elements.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+	DIV	 id=f1
+	DIV	 id=f2
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+DIV	 id=f1
+DIV	 id=f2
+Traverse in backward.
+DIV	 id=f2
+DIV	 id=f1
+DIV	 id=b
+DIV	 id=a
+
+Test for Nested ShadowRoots.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+		DIV	 id=c
+		DIV	 id=e
+		DIV	 id=d
+	DIV	 id=f
+	DIV	 id=h
+	DIV	 id=i
+	DIV	 id=g
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+DIV	 id=c
+DIV	 id=e
+DIV	 id=d
+DIV	 id=f
+DIV	 id=h
+DIV	 id=i
+DIV	 id=g
+Traverse in backward.
+DIV	 id=g
+DIV	 id=i
+DIV	 id=h
+DIV	 id=f
+DIV	 id=d
+DIV	 id=e
+DIV	 id=c
+DIV	 id=b
+DIV	 id=a
+
+Test for Multiple ShadowRoots.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=d
+	DIV	 id=b
+	DIV	 id=f
+	DIV	 id=c
+	DIV	 id=e
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=d
+DIV	 id=b
+DIV	 id=f
+DIV	 id=c
+DIV	 id=e
+Traverse in backward.
+DIV	 id=e
+DIV	 id=c
+DIV	 id=f
+DIV	 id=b
+DIV	 id=d
+DIV	 id=a
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

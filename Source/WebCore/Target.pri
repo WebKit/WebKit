@@ -514,6 +514,7 @@ SOURCES += \
     dom/Clipboard.cpp \
     dom/ClipboardEvent.cpp \
     dom/Comment.cpp \
+    dom/ComposedShadowTreeWalker.cpp \
     dom/CompositionEvent.cpp \
     dom/ContainerNode.cpp \
     dom/ContextDestructionObserver.cpp \
@@ -1655,6 +1656,7 @@ HEADERS += \
     dom/ClipboardEvent.h \
     dom/Clipboard.h \
     dom/Comment.h \
+    dom/ComposedShadowTreeWalker.h \
     dom/ContainerNode.h \
     dom/CustomEvent.h \
     dom/default/PlatformMessagePortChannel.h \

@@ -47994,6 +47994,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\ComposedShadowTreeWalker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ComposedShadowTreeWalker.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\CompositionEvent.cpp"
 				>
 				<FileConfiguration
