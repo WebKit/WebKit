@@ -144,10 +144,6 @@ void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*)
     wkAccessibilityHandleFocusChanged();
 }
 
-void AXObjectCache::handleScrolledToAnchor(const Node*)
-{
-}
-
 }
 
 #endif // HAVE(ACCESSIBILITY)

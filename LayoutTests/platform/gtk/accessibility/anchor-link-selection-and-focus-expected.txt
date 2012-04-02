@@ -1,0 +1,19 @@
+A link pointing to an anchor at the end of the document
+
+A paragraph with a some text in the middle
+
+The Anchor
+
+This tests that the caret position is properly updated when following anchor links.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+axLink.role is: 'AXRole: link'
+axAnchor.role is: 'AXRole: link'
+PASS axLink.isFocused is true
+PASS axAnchor.isFocused is false
+PASS getSelection().anchorNode.nodeValue is 'The Anchor'
+PASS axLink.isFocused is false
+PASS axAnchor.isFocused is true
+

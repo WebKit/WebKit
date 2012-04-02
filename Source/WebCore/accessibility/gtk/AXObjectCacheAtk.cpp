@@ -231,8 +231,4 @@ void AXObjectCache::handleFocusedUIElementChanged(RenderObject* oldFocusedRender
     }
 }
 
-void AXObjectCache::handleScrolledToAnchor(const Node*)
-{
-}
-
 } // namespace WebCore
