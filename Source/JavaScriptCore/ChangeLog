@@ -1,3 +1,40 @@
+2012-04-02  Daniel Bates  <dbates@webkit.org>
+
+        Remove Source/JavaScriptCore/wtf and its empty subdirectories
+
+        Rubber-stamped by Eric Seidel.
+
+        Following the move of WTF from Source/JavaScriptCore/wtf to Source/WTF
+        (https://bugs.webkit.org/show_bug.cgi?id=75673), remove directory
+        Source/JavaScriptCore/wtf and its empty subdirectories.
+
+        * wtf: Removed.
+        * wtf/android: Removed.
+        * wtf/blackberry: Removed.
+        * wtf/chromium: Removed.
+        * wtf/dtoa: Removed.
+        * wtf/efl: Removed.
+        * wtf/gobject: Removed.
+        * wtf/gtk: Removed.
+        * wtf/mac: Removed.
+        * wtf/qt: Removed.
+        * wtf/qt/compat: Removed.
+        * wtf/tests: Removed.
+        * wtf/text: Removed.
+        * wtf/threads: Removed.
+        * wtf/threads/win: Removed.
+        * wtf/unicode: Removed.
+        * wtf/unicode/glib: Removed.
+        * wtf/unicode/icu: Removed.
+        * wtf/unicode/qt4: Removed.
+        * wtf/unicode/wince: Removed.
+        * wtf/url: Removed.
+        * wtf/url/api: Removed.
+        * wtf/url/src: Removed.
+        * wtf/win: Removed.
+        * wtf/wince: Removed.
+        * wtf/wx: Removed.
+
 2012-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck issues.
