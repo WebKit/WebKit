@@ -1,3 +1,11 @@
+2012-04-01  Darin Adler  <darin@apple.com>
+
+        Fix incorrect path for libWTF.a in Mac project file.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Removed the "../Release" prefix that
+        would cause other configurations to try to link with the "Release" version of
+        libWTF.a instead of the correct version.
+
 2012-03-29  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should optimize a==b for a being an object and b being either an object or
