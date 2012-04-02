@@ -352,10 +352,11 @@ namespace WebCore {
 
     template <class T> inline v8::Handle<v8::Object> toV8(PassRefPtr<T> object, v8::Local<v8::Object> holder, IndependentMode independent = DoNotMarkIndependent)
     {
+        object->ref();
         v8::Persistent<v8::Object> handle = v8::Persistent<v8::Object>::New(holder);
         if (independent == MarkIndependent)
             handle.MarkIndependent();
-        V8DOMWrapper::setJSWrapperForDOMObject(object, handle);
+        V8DOMWrapper::setJSWrapperForDOMObject(object.get(), handle);
         return holder;
     }
 

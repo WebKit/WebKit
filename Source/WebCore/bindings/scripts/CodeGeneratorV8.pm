@@ -1762,7 +1762,8 @@ END
     push(@implContent, <<END);
 
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
-    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.release(), v8::Persistent<v8::Object>::New(wrapper));
+    impl->ref();
+    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
 END
 
@@ -1943,7 +1944,8 @@ END
     push(@implContent, <<END);
 
     V8DOMWrapper::setDOMWrapper(wrapper, &V8${implClassName}Constructor::info, impl.get());
-    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.release(), v8::Persistent<v8::Object>::New(wrapper));
+    impl->ref();
+    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
 END
 

@@ -75,7 +75,8 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::constructorCallback(const v8::Ar
     RefPtr<WebKitMutationObserver> observer = WebKitMutationObserver::create(callback.release());
 
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, observer.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(observer.release(), v8::Persistent<v8::Object>::New(args.Holder()));
+    observer->ref();
+    V8DOMWrapper::setJSWrapperForDOMObject(observer.get(), v8::Persistent<v8::Object>::New(args.Holder()));
     return args.Holder();
 }
 

@@ -66,13 +66,30 @@
 
 namespace WebCore {
 
-void V8DOMWrapper::setJSWrapperForDOMNode(PassRefPtr<Node> node, v8::Persistent<v8::Object> wrapper)
+// The caller must have increased obj's ref count.
+void V8DOMWrapper::setJSWrapperForDOMObject(void* object, v8::Persistent<v8::Object> wrapper)
 {
-    ASSERT(maybeDOMWrapper(wrapper));
+    ASSERT(V8DOMWrapper::maybeDOMWrapper(wrapper));
+    ASSERT(!domWrapperType(wrapper)->toActiveDOMObjectFunction);
+    getDOMObjectMap().set(object, wrapper);
+}
+
+// The caller must have increased obj's ref count.
+void V8DOMWrapper::setJSWrapperForActiveDOMObject(void* object, v8::Persistent<v8::Object> wrapper)
+{
+    ASSERT(V8DOMWrapper::maybeDOMWrapper(wrapper));
+    ASSERT(domWrapperType(wrapper)->toActiveDOMObjectFunction);
+    getActiveDOMObjectMap().set(object, wrapper);
+}
+
+// The caller must have increased node's ref count.
+void V8DOMWrapper::setJSWrapperForDOMNode(Node* node, v8::Persistent<v8::Object> wrapper)
+{
+    ASSERT(V8DOMWrapper::maybeDOMWrapper(wrapper));
     if (node->isActiveNode())
-        getActiveDOMNodeMap().set(node.leakRef(), wrapper);
+        getActiveDOMNodeMap().set(node, wrapper);
     else
-        getDOMNodeMap().set(node.leakRef(), wrapper);
+        getDOMNodeMap().set(node, wrapper);
 }
 
 v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, v8::Handle<v8::Value> objectPrototype)

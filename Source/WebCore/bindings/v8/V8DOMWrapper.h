@@ -38,7 +38,6 @@
 #include "NodeFilter.h"
 #include "PlatformString.h"
 #include "V8CustomXPathNSResolver.h"
-#include "V8DOMMap.h"
 #include "V8Event.h"
 #include "V8IsolatedContext.h"
 #include "V8Utilities.h"
@@ -47,7 +46,6 @@
 #include "XPathNSResolver.h"
 #include <v8.h>
 #include <wtf/MainThread.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -107,9 +105,10 @@ namespace WebCore {
         static v8::Local<v8::Function> getConstructor(WrapperTypeInfo*, WorkerContext*);
 #endif
 
-        template<typename T> static void setJSWrapperForDOMObject(PassRefPtr<T>, v8::Persistent<v8::Object>);
-        template<typename T> static void setJSWrapperForActiveDOMObject(PassRefPtr<T>, v8::Persistent<v8::Object>);
-        static void setJSWrapperForDOMNode(PassRefPtr<Node>, v8::Persistent<v8::Object>);
+        // Set JS wrapper of a DOM object, the caller in charge of increase ref.
+        static void setJSWrapperForDOMObject(void*, v8::Persistent<v8::Object>);
+        static void setJSWrapperForActiveDOMObject(void*, v8::Persistent<v8::Object>);
+        static void setJSWrapperForDOMNode(Node*, v8::Persistent<v8::Object>);
 
         static bool isValidDOMObject(v8::Handle<v8::Value>);
 
@@ -149,21 +148,6 @@ namespace WebCore {
         }
     };
 
-    template<typename T>
-    void V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<T> object, v8::Persistent<v8::Object> wrapper)
-    {
-        ASSERT(maybeDOMWrapper(wrapper));
-        ASSERT(!domWrapperType(wrapper)->toActiveDOMObjectFunction);
-        getDOMObjectMap().set(object.leakRef(), wrapper);
-    }
-
-    template<typename T>
-    void V8DOMWrapper::setJSWrapperForActiveDOMObject(PassRefPtr<T> object, v8::Persistent<v8::Object> wrapper)
-    {
-        ASSERT(maybeDOMWrapper(wrapper));
-        ASSERT(domWrapperType(wrapper)->toActiveDOMObjectFunction);
-        getActiveDOMObjectMap().set(object.leakRef(), wrapper);
-    }
-} // namespace WebCore
+}
 
 #endif // V8DOMWrapper_h
