@@ -32,6 +32,8 @@
     'variables': {
         'platform_files': [
             'chromium/public/Platform.h',
+            'chromium/public/WebAudioBus.h',
+            'chromium/public/WebAudioDevice.h',
             'chromium/public/WebCString.h',
             'chromium/public/WebCanvas.h',
             'chromium/public/WebColor.h',
@@ -43,6 +45,8 @@
             'chromium/public/WebFloatPoint.h',
             'chromium/public/WebFloatQuad.h',
             'chromium/public/WebFloatRect.h',
+            'chromium/public/WebGamepad.h',
+            'chromium/public/WebGamepads.h',
             'chromium/public/WebGraphicsContext3D.h',
             'chromium/public/WebHTTPBody.h',
             'chromium/public/WebHTTPHeaderVisitor.h',
@@ -71,6 +75,9 @@
             'chromium/public/WebRect.h',
             'chromium/public/WebSessionDescriptionDescriptor.h',
             'chromium/public/WebSize.h',
+            'chromium/public/WebSocketStreamError.h',
+            'chromium/public/WebSocketStreamHandle.h',
+            'chromium/public/WebSocketStreamHandleClient.h',
             'chromium/public/WebSolidColorLayer.h',
             'chromium/public/WebString.h',
             'chromium/public/WebThread.h',

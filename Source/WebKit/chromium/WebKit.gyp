@@ -476,7 +476,6 @@
                 'src/WebArrayBuffer.cpp',
                 'src/WebArrayBufferView.cpp',
                 'src/WebAttribute.cpp',
-                'src/WebAudioBus.cpp',
                 'src/WebBindings.cpp',
                 'src/WebBlob.cpp',
                 'src/WebBlobData.cpp',

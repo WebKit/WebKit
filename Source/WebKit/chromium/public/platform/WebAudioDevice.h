@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,9 +10,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,31 +23,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebAudioDevice_h
-#define WebAudioDevice_h
-
-#include "WebVector.h"
-
-namespace WebKit {
-
-// Abstract interface to the Chromium audio system.
-
-class WebAudioDevice {
-public:
-    class RenderCallback {
-    public:
-        virtual void render(const WebVector<float*>& audioData, size_t numberOfFrames) = 0;
-    protected:
-        virtual ~RenderCallback() { }
-    };
-  
-    virtual ~WebAudioDevice() { }
-
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    virtual double sampleRate() = 0;
-};
-
-} // namespace WebKit
-
-#endif // WebAudioDevice_h
+#include "../../../../Platform/chromium/public/WebAudioDevice.h"

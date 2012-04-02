@@ -3280,6 +3280,7 @@
             'platform/chromium/ThemeChromiumMac.mm',
             'platform/chromium/TraceEvent.h',
             'platform/chromium/WidgetChromium.cpp',
+            'platform/chromium/support/WebAudioBus.cpp',
             'platform/chromium/support/WebData.cpp',
             'platform/chromium/support/WebHTTPBody.cpp',
             'platform/chromium/support/WebHTTPLoadInfo.cpp',

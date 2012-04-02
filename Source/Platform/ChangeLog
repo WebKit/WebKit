@@ -1,3 +1,19 @@
+2012-04-02  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Move another block of headers from WebKit/chromium/public/platform to Platform/chromium/public
+        https://bugs.webkit.org/show_bug.cgi?id=82862
+
+        Rubber-stamped by Eric Seidel.
+
+        * Platform.gypi:
+        * chromium/public/WebAudioBus.h: Copied from Source/WebKit/chromium/public/platform/WebAudioBus.h.
+        * chromium/public/WebAudioDevice.h: Copied from Source/WebKit/chromium/public/platform/WebAudioDevice.h.
+        * chromium/public/WebGamepad.h: Copied from Source/WebKit/chromium/public/platform/WebGamepad.h.
+        * chromium/public/WebGamepads.h: Copied from Source/WebKit/chromium/public/platform/WebGamepads.h.
+        * chromium/public/WebSocketStreamError.h: Copied from Source/WebKit/chromium/public/platform/WebSocketStreamError.h.
+        * chromium/public/WebSocketStreamHandle.h: Copied from Source/WebKit/chromium/public/platform/WebSocketStreamHandle.h.
+        * chromium/public/WebSocketStreamHandleClient.h: Copied from Source/WebKit/chromium/public/platform/WebSocketStreamHandleClient.h.
+
 2012-04-01  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Move thread-related APIs from WebKit into Platform
