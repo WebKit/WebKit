@@ -66,16 +66,35 @@ PassRefPtr<TextFieldDecorationElement> TextFieldDecorationElement::create(Docume
     return adoptRef(new TextFieldDecorationElement(document, decorator));
 }
 
+static inline void getDecorationRootAndDecoratedRoot(HTMLInputElement* input, ShadowRoot*& decorationRoot, ShadowRoot*& decoratedRoot)
+{
+    ShadowRoot* existingRoot = input->shadowTree()->youngestShadowRoot();
+    ShadowRoot* newRoot = 0;
+    while (existingRoot->childNodeCount() == 1 && existingRoot->firstChild()->hasTagName(shadowTag)) {
+        newRoot = existingRoot;
+        existingRoot = existingRoot->olderShadowRoot();
+        ASSERT(existingRoot);
+    }
+    if (newRoot)
+        newRoot->removeChild(newRoot->firstChild());
+    else
+        newRoot = ShadowRoot::create(input, ShadowRoot::CreatingUserAgentShadowRoot, ASSERT_NO_EXCEPTION).get();
+    decorationRoot = newRoot;
+    decoratedRoot = existingRoot;
+}
+
 void TextFieldDecorationElement::decorate(HTMLInputElement* input)
 {
     ASSERT(input);
-    ShadowRoot* existingRoot = input->shadowTree()->youngestShadowRoot();
-    RefPtr<ShadowRoot> newRoot = ShadowRoot::create(input, ShadowRoot::CreatingUserAgentShadowRoot, ASSERT_NO_EXCEPTION);
+    ShadowRoot* existingRoot;
+    ShadowRoot* decorationRoot;
+    getDecorationRootAndDecoratedRoot(input, decorationRoot, existingRoot);
+    ASSERT(decorationRoot);
+    ASSERT(existingRoot);
     RefPtr<HTMLDivElement> box = HTMLDivElement::create(input->document());
-    newRoot->appendChild(box);
+    decorationRoot->appendChild(box);
     box->setInlineStyleProperty(CSSPropertyDisplay, CSSValueWebkitBox);
     box->setInlineStyleProperty(CSSPropertyWebkitBoxAlign, CSSValueCenter);
-    ASSERT(existingRoot);
     ASSERT(existingRoot->childNodeCount() == 1);
     toHTMLElement(existingRoot->firstChild())->setInlineStyleProperty(CSSPropertyWebkitBoxFlex, 1.0, CSSPrimitiveValue::CSS_NUMBER);
     box->appendChild(HTMLShadowElement::create(HTMLNames::shadowTag, input->document()));

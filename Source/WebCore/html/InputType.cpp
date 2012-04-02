@@ -41,6 +41,7 @@
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLShadowElement.h"
 #include "HiddenInputType.h"
 #include "ImageInputType.h"
 #include "KeyboardEvent.h"
@@ -70,6 +71,7 @@
 
 namespace WebCore {
 
+using namespace HTMLNames;
 using namespace std;
 
 typedef PassOwnPtr<InputType> (*InputTypeFactoryFunction)(HTMLInputElement*);
@@ -382,8 +384,17 @@ void InputType::destroyShadowSubtree()
     if (!element()->hasShadowRoot())
         return;
 
-    if (ShadowRoot* root = element()->shadowTree()->oldestShadowRoot())
+    ShadowRoot* root = element()->shadowTree()->oldestShadowRoot();
+    ASSERT(root);
+    root->removeAllChildren();
+
+    // It's ok to clear contents of all other ShadowRoots because they must have
+    // been created by TextFieldDecorationElement, and we don't allow adding
+    // AuthorShadowRoot to HTMLInputElement.
+    while ((root = root->youngerShadowRoot())) {
         root->removeAllChildren();
+        root->appendChild(HTMLShadowElement::create(shadowTag, element()->document()));
+    }
 }
 
 double InputType::parseToDouble(const String&, double defaultValue) const
