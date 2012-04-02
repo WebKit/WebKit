@@ -3542,15 +3542,14 @@ BUGCR115073 SLOW LINUX DEBUG : inspector/debugger/script-formatter-breakpoints.h
 BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 BUGWK79224 VISTA WIN7 : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 
-// Need rebaselining after bug 75091
-BUGWK81217 : svg/carto.net/tabgroup.svg = FAIL
-BUGWK81217 : svg/carto.net/window.svg = FAIL
-BUGWK81217 : svg/custom/js-late-clipPath-and-object-creation.svg = FAIL PASS
+// Flakiness dashboard says they're flaky, but it seems unlikely.
+BUGWK81217 SNOWLEOPARD DEBUG : svg/custom/js-late-clipPath-and-object-creation.svg = CRASH PASS
 BUGWK81217 : svg/custom/js-late-gradient-and-object-creation.svg = FAIL PASS
 BUGWK81217 : svg/custom/js-late-pattern-and-object-creation.svg = FAIL PASS
-BUGWK81217 WIN LINUX : svg/custom/text-ctm.svg = FAIL
-BUGWK81217 : svg/custom/use-detach.svg = FAIL
-BUGWK81217 : svg/hixie/perf/003.xml = FAIL
+BUGWK81217 : svg/custom/use-detach.svg = PASS FAIL
+BUGWK81217 : svg/carto.net/window.svg = PASS FAIL
+BUGWK81217 : svg/carto.net/tabgroup.svg = PASS FAIL
+BUGWK81217 : svg/hixie/perf/003.xml = PASS FAIL
 
 // Failing since added by r108699
 BUGWK79454 MAC DEBUG : svg/text/text-rescale.html = IMAGE PASS
