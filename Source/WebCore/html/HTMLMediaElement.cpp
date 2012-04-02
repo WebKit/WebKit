@@ -528,7 +528,7 @@ void HTMLMediaElement::scheduleLoad(LoadType loadType)
     }
 
 #if ENABLE(VIDEO_TRACK)
-    if (loadType & TextTrackResource)
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled() && (loadType & TextTrackResource))
         m_pendingLoadFlags |= TextTrackResource;
 #endif
 
@@ -559,7 +559,7 @@ void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
     RefPtr<HTMLMediaElement> protect(this); // loadNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
 
 #if ENABLE(VIDEO_TRACK)
-    if (m_pendingLoadFlags & TextTrackResource)
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled() && (m_pendingLoadFlags & TextTrackResource))
         configureNewTextTracks();
 #endif
 
@@ -683,7 +683,8 @@ void HTMLMediaElement::prepareForLoad()
         scheduleEvent(eventNames().emptiedEvent);
         updateMediaController();
 #if ENABLE(VIDEO_TRACK)
-        updateActiveTextTrackCues(0);
+        if (RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+            updateActiveTextTrackCues(0);
 #endif
     }
 
@@ -741,12 +742,14 @@ void HTMLMediaElement::loadInternal()
 #if ENABLE(VIDEO_TRACK)
     // HTMLMediaElement::textTracksAreReady will need "... the text tracks whose mode was not in the
     // disabled state when the element's resource selection algorithm last started".
-    m_textTracksWhenResourceSelectionBegan.clear();
-    if (m_textTracks) {
-        for (unsigned i = 0; i < m_textTracks->length(); ++i) {
-            TextTrack* track = m_textTracks->item(i);
-            if (track->mode() != TextTrack::DISABLED)
-                m_textTracksWhenResourceSelectionBegan.append(track);
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled()) {
+        m_textTracksWhenResourceSelectionBegan.clear();
+        if (m_textTracks) {
+            for (unsigned i = 0; i < m_textTracks->length(); ++i) {
+                TextTrack* track = m_textTracks->item(i);
+                if (track->mode() != TextTrack::DISABLED)
+                    m_textTracksWhenResourceSelectionBegan.append(track);
+            }
         }
     }
 #endif
@@ -1536,7 +1539,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     ReadyState newState = static_cast<ReadyState>(state);
 
 #if ENABLE(VIDEO_TRACK)
-    bool tracksAreReady = textTracksAreReady();
+    bool tracksAreReady = !RuntimeEnabledFeatures::webkitVideoTrackEnabled() || textTracksAreReady();
 
     if (newState == oldState && m_tracksAreReady == tracksAreReady)
         return;
@@ -1637,7 +1640,8 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     updatePlayState();
     updateMediaController();
 #if ENABLE(VIDEO_TRACK)
-    updateActiveTextTrackCues(currentTime());
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        updateActiveTextTrackCues(currentTime());
 #endif
 }
 
@@ -2393,7 +2397,8 @@ void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>*)
         mediaControls()->playbackProgressed();
     
 #if ENABLE(VIDEO_TRACK)
-    updateActiveTextTrackCues(currentTime());
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        updateActiveTextTrackCues(currentTime());
 #endif
 }
 
@@ -2936,7 +2941,8 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
     LOG(Media, "HTMLMediaElement::mediaPlayerTimeChanged");
 
 #if ENABLE(VIDEO_TRACK)
-    updateActiveTextTrackCues(currentTime());
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        updateActiveTextTrackCues(currentTime());
 #endif
 
     beginProcessingMediaPlayerCallback();
@@ -3400,7 +3406,8 @@ void HTMLMediaElement::userCancelledLoad()
     m_readyState = HAVE_NOTHING;
     updateMediaController();
 #if ENABLE(VIDEO_TRACK)
-    updateActiveTextTrackCues(0);
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        updateActiveTextTrackCues(0);
 #endif
 }
 
