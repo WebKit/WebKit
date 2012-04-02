@@ -38,6 +38,8 @@
 #import <notify.h>
 #endif
 
+using std::max;
+
 namespace WebCore {
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
@@ -53,8 +55,8 @@ static int _notifyToken;
 // this is 1 / s_holdOffMultiplier percent of the time.
 // These value seems reasonable and testing verifies that it throttles frequent
 // low memory events, greatly reducing CPU usage.
-static const time_t s_minimumHoldOffTime = 5;
-static const time_t s_holdOffMultiplier = 20;
+static const unsigned s_minimumHoldOffTime = 5;
+static const unsigned s_holdOffMultiplier = 20;
 
 void MemoryPressureHandler::install()
 {
@@ -116,23 +118,15 @@ void MemoryPressureHandler::holdOff(unsigned seconds)
 
 void MemoryPressureHandler::respondToMemoryPressure()
 {
-    double startTime, endTime;
-    unsigned holdOffTime;
-
     uninstall();
 
-    startTime = monotonicallyIncreasingTime();
+    double startTime = monotonicallyIncreasingTime();
 
     releaseMemory(false);
 
-    endTime = monotonicallyIncreasingTime();
+    unsigned holdOffTime = (monotonicallyIncreasingTime() - startTime) * s_holdOffMultiplier;
 
-    holdOffTime = (unsigned)((endTime - startTime) * (double)s_holdOffMultiplier);
-
-    if (holdOffTime < s_minimumHoldOffTime)
-        holdOffTime = s_minimumHoldOffTime;
-
-    holdOff(holdOffTime);
+    holdOff(max(holdOffTime, s_minimumHoldOffTime));
 }
 #endif // !PLATFORM(IOS)
 
