@@ -1,3 +1,14 @@
+2012-04-01  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Move thread-related APIs from WebKit into Platform
+        https://bugs.webkit.org/show_bug.cgi?id=82858
+
+        Reviewed by Eric Seidel.
+
+        * Platform.gypi:
+        * chromium/public/WebThread.h: Copied from Source/WebKit/chromium/public/platform/WebThread.h.
+        * chromium/public/WebThreadSafeData.h: Copied from Source/WebKit/chromium/public/platform/WebThreadSafeData.h.
+
 2012-03-29  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Delete WebKit/chromium/bridge

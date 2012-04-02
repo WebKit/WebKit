@@ -643,7 +643,6 @@
                 'src/WebStorageQuotaCallbacksImpl.cpp',
                 'src/WebStorageQuotaCallbacksImpl.h',
                 'src/WebTextRun.cpp',
-                'src/WebThreadSafeData.cpp',
                 'src/WebURLLoadTiming.cpp',
                 'src/WebScopedUserGesture.cpp',
                 'src/WebUserMediaRequest.cpp',

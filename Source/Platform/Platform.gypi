@@ -73,6 +73,8 @@
             'chromium/public/WebSize.h',
             'chromium/public/WebSolidColorLayer.h',
             'chromium/public/WebString.h',
+            'chromium/public/WebThread.h',
+            'chromium/public/WebThreadSafeData.h',
             'chromium/public/WebURL.h',
             'chromium/public/WebURLError.h',
             'chromium/public/WebURLLoadTiming.h',
