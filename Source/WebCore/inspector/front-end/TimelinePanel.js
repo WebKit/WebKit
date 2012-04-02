@@ -43,8 +43,8 @@ WebInspector.TimelinePanel = function()
     this._overviewPane = new WebInspector.TimelineOverviewPane(this._model);
     this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.WindowChanged, this._scheduleRefresh.bind(this, false));
     this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._timelinesOverviewModeChanged, this);
+    this._overviewPane.show(this.element);
 
-    this.element.appendChild(this._overviewPane.element);
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
     this.element.tabIndex = 0;
 

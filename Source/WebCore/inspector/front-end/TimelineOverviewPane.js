@@ -30,13 +30,13 @@
 
 /**
  * @constructor
- * @extends {WebInspector.Object}
+ * @extends {WebInspector.View}
  * @implements {WebInspector.TimelinePresentationModel.Filter}
  * @param {WebInspector.TimelineModel} model
  */
 WebInspector.TimelineOverviewPane = function(model)
 {
-    this.element = document.createElement("div");
+    WebInspector.View.call(this);
     this.element.id = "timeline-overview-panel";
 
     this._windowStartTime = 0;
@@ -132,6 +132,11 @@ WebInspector.TimelineOverviewPane.Events = {
 };
 
 WebInspector.TimelineOverviewPane.prototype = {
+    wasShown: function()
+    {
+        this._update();
+    },
+
     _showTimelines: function()
     {
         var newMode = this._overviewModeSelector ? this._overviewModeSelector.value : WebInspector.TimelineOverviewPane.Mode.EventsHorizontal;
@@ -249,7 +254,6 @@ WebInspector.TimelineOverviewPane.prototype = {
                 chunkStart = -1;
             }
         }
-
     },
 
     updateEventDividers: function(records, dividerConstructor)
@@ -347,11 +351,13 @@ WebInspector.TimelineOverviewPane.prototype = {
     {
         if (this._refreshTimeout)
             return;
+        if (!this.isShowing())
+            return;
         this._refreshTimeout = setTimeout(this._update.bind(this), 100);
     }
 }
 
-WebInspector.TimelineOverviewPane.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.TimelineOverviewPane.prototype.__proto__ = WebInspector.View.prototype;
 
 /**
  * @constructor
