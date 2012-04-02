@@ -28,13 +28,10 @@
 
 #include "NetscapePluginModule.h"
 
+#include "PluginProcessProxy.h"
 #include "NetscapeBrowserFuncs.h"
 #include <WebCore/FileSystem.h>
-
-#if PLATFORM(QT)
-#include <QLibrary>
-#endif
-
+#include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -44,60 +41,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-class StdoutDevNullRedirector {
-public:
-    StdoutDevNullRedirector();
-    ~StdoutDevNullRedirector();
-
-private:
-    int m_savedStdout;
-};
-
-StdoutDevNullRedirector::StdoutDevNullRedirector()
-    : m_savedStdout(-1)
+static void parseMIMEDescription(const String& mimeDescription, Vector<MimeClassInfo>& result)
 {
-    int newStdout = open("/dev/null", O_WRONLY);
-    if (newStdout == -1)
-        return;
-    m_savedStdout = dup(STDOUT_FILENO);
-    dup2(newStdout, STDOUT_FILENO);
-}
+    ASSERT_ARG(result, result.isEmpty());
 
-StdoutDevNullRedirector::~StdoutDevNullRedirector()
-{
-    if (m_savedStdout != -1)
-        dup2(m_savedStdout, STDOUT_FILENO);
-}
-
-#if PLATFORM(QT)
-static void initializeGTK()
-{
-    QLibrary library(QLatin1String("libgtk-x11-2.0.so.0"));
-    if (library.load()) {
-        typedef void *(*gtk_init_check_ptr)(int*, char***);
-        gtk_init_check_ptr gtkInitCheck = reinterpret_cast<gtk_init_check_ptr>(library.resolve("gtk_init_check"));
-        // NOTE: We're using gtk_init_check() since gtk_init() calls exit() on failure.
-        if (gtkInitCheck)
-            (void) gtkInitCheck(0, 0);
-    }
-}
-#endif
-
-void NetscapePluginModule::applyX11QuirksBeforeLoad()
-{
-#if PLATFORM(QT)
-    if (m_pluginPath.contains("npwrapper") || m_pluginPath.contains("flashplayer")) {
-        initializeGTK();
-        m_pluginQuirks.add(PluginQuirks::RequiresGTKToolKit);
-    }
-#endif
-}
-
-void NetscapePluginModule::setMIMEDescription(const String& mimeDescription, PluginModuleInfo& plugin)
-{
     Vector<String> types;
     mimeDescription.lower().split(UChar(';'), false, types);
-    plugin.info.mimes.reserveCapacity(types.size());
+    result.reserveInitialCapacity(types.size());
 
     size_t mimeInfoCount = 0;
     for (size_t i = 0; i < types.size(); ++i) {
@@ -106,8 +56,8 @@ void NetscapePluginModule::setMIMEDescription(const String& mimeDescription, Plu
         if (mimeTypeParts.size() <= 0)
             continue;
 
-        plugin.info.mimes.uncheckedAppend(MimeClassInfo());
-        MimeClassInfo& mimeInfo = plugin.info.mimes[mimeInfoCount++];
+        result.uncheckedAppend(MimeClassInfo());
+        MimeClassInfo& mimeInfo = result[mimeInfoCount++];
         mimeInfo.type = mimeTypeParts[0];
 
         if (mimeTypeParts.size() > 1)
@@ -118,12 +68,9 @@ void NetscapePluginModule::setMIMEDescription(const String& mimeDescription, Plu
     }
 }
 
-bool NetscapePluginModule::getPluginInfoForLoadedPlugin(PluginModuleInfo& plugin)
+bool NetscapePluginModule::getPluginInfoForLoadedPlugin(RawPluginMetaData& metaData)
 {
     ASSERT(m_isInitialized);
-
-    plugin.path = m_pluginPath;
-    plugin.info.file = pathGetFileName(m_pluginPath);
 
     Module* module = m_module.get();
     NPP_GetValueProcPtr NPP_GetValue = module->functionPointer<NPP_GetValueProcPtr>("NP_GetValue");
@@ -137,47 +84,45 @@ bool NetscapePluginModule::getPluginInfoForLoadedPlugin(PluginModuleInfo& plugin
     char* buffer;
     NPError error = NPP_GetValue(0, NPPVpluginNameString, &buffer);
     if (error == NPERR_NO_ERROR)
-        plugin.info.name = String::fromUTF8(buffer);
+        metaData.name = String::fromUTF8(buffer);
 
     error = NPP_GetValue(0, NPPVpluginDescriptionString, &buffer);
     if (error == NPERR_NO_ERROR)
-        plugin.info.desc = String::fromUTF8(buffer);
+        metaData.description = String::fromUTF8(buffer);
 
     String mimeDescription = String::fromUTF8(NP_GetMIMEDescription());
     if (mimeDescription.isNull())
         return false;
 
-    setMIMEDescription(mimeDescription, plugin);
+    metaData.mimeDescription = mimeDescription;
 
     return true;
 }
+
 bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
-    // Tempararily suppress stdout in this function as plugins will be loaded and shutdown and debug info
-    // is leaked to layout test output.
-    StdoutDevNullRedirector stdoutDevNullRedirector;
-
-    // We are loading the plugin here since it does not seem to be a standardized way to
-    // get the needed informations from a UNIX plugin without loading it.
-    RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
-    if (!pluginModule)
+    RawPluginMetaData metaData;
+    if (!PluginProcessProxy::scanPlugin(pluginPath, metaData))
         return false;
 
-    pluginModule->incrementLoadCount();
-    bool returnValue = pluginModule->getPluginInfoForLoadedPlugin(plugin);
-    pluginModule->decrementLoadCount();
+    plugin.path = pluginPath;
+    plugin.info.file = pathGetFileName(pluginPath);
+    plugin.info.name = metaData.name;
+    plugin.info.desc = metaData.description;
+    parseMIMEDescription(metaData.mimeDescription, plugin.info.mimes);
 
-    return returnValue;
+    return true;
 }
 
 void NetscapePluginModule::determineQuirks()
 {
 #if CPU(X86_64)
-    PluginModuleInfo plugin;
-    if (!getPluginInfoForLoadedPlugin(plugin))
+    RawPluginMetaData metaData;
+    if (!getPluginInfoForLoadedPlugin(metaData))
         return;
 
-    Vector<MimeClassInfo> mimeTypes = plugin.info.mimes;
+    Vector<MimeClassInfo> mimeTypes;
+    parseMIMEDescription(metaData.mimeDescription, mimeTypes);
     for (size_t i = 0; i < mimeTypes.size(); ++i) {
         if (mimeTypes[i].type == "application/x-shockwave-flash") {
             m_pluginQuirks.add(PluginQuirks::IgnoreRightClickInWindowlessMode);
@@ -185,6 +130,65 @@ void NetscapePluginModule::determineQuirks()
         }
     }
 #endif
+}
+
+static String truncateToSingleLine(const String& string)
+{
+    ASSERT_ARG(string, !string.is8Bit());
+
+    unsigned oldLength = string.length();
+    UChar* buffer;
+    String stringBuffer(StringImpl::createUninitialized(oldLength + 1, buffer));
+
+    unsigned newLength = 0;
+    for (const UChar* c = string.characters16(); c < string.characters16() + oldLength; ++c) {
+        if (*c != UChar('\n'))
+            buffer[newLength++] = *c;
+    }
+    buffer[newLength++] = UChar('\n');
+
+    if (newLength == oldLength + 1)
+        return stringBuffer;
+    return String(stringBuffer.characters16(), newLength);
+}
+
+bool NetscapePluginModule::scanPlugin(const String& pluginPath)
+{
+    // We are loading the plugin here since it does not seem to be a standardized way to
+    // get the needed informations from a UNIX plugin without loading it.
+    RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
+    if (!pluginModule)
+        return false;
+
+    pluginModule->incrementLoadCount();
+    RawPluginMetaData metaData;
+    bool success = pluginModule->getPluginInfoForLoadedPlugin(metaData);
+    pluginModule->decrementLoadCount();
+
+    if (!success)
+        return false;
+
+    // Write data to standard output for the UI process.
+    String output[3] = {
+        truncateToSingleLine(metaData.name),
+        truncateToSingleLine(metaData.description),
+        truncateToSingleLine(metaData.mimeDescription)
+    };
+    for (unsigned i = 0; i < 3; ++i) {
+        const String& line = output[i];
+        const char* current = reinterpret_cast<const char*>(line.characters16());
+        const char* end = reinterpret_cast<const char*>(line.characters16()) + (line.length() * sizeof(UChar));
+        while (current < end) {
+            int result;
+            while ((result = fputc(*current, stdout)) == EOF && errno == EINTR) { }
+            ASSERT(result != EOF);
+            ++current;
+        }
+    }
+
+    fflush(stdout);
+
+    return true;
 }
 
 } // namespace WebKit

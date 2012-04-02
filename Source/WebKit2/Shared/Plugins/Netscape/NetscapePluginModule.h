@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+class RawPluginMetaData;
+
 class NetscapePluginModule : public RefCounted<NetscapePluginModule> {
 public:
     static PassRefPtr<NetscapePluginModule> getOrCreate(const String& pluginPath);
@@ -61,15 +63,17 @@ public:
     static bool createPluginMIMETypesPreferences(const String& pluginPath);
 #endif
 
+#if PLUGIN_ARCHITECTURE(X11)
+    static bool scanPlugin(const String& pluginPath);
+#endif
+
 private:
     explicit NetscapePluginModule(const String& pluginPath);
 
     void determineQuirks();
 
 #if PLUGIN_ARCHITECTURE(X11)
-    void applyX11QuirksBeforeLoad();
-    static void setMIMEDescription(const String& mimeDescription, PluginModuleInfo&);
-    bool getPluginInfoForLoadedPlugin(PluginModuleInfo&);
+    bool getPluginInfoForLoadedPlugin(RawPluginMetaData&);
 #endif
 
     bool tryGetSitesWithData(Vector<String>&);

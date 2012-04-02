@@ -29,13 +29,51 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "PluginProcessCreationParameters.h"
-#include <WebCore/NotImplemented.h>
+#include "ProcessExecutablePath.h"
+#include <WebCore/FileSystem.h>
+#include <glib.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters& parameters)
+void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters&)
 {
-    notImplemented();
+}
+
+bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData& result)
+{
+    CString binaryPath = fileSystemRepresentation(executablePathOfPluginProcess());
+    CString pluginPathCString = fileSystemRepresentation(pluginPath);
+    char* argv[4];
+    argv[0] = const_cast<char*>(binaryPath.data());
+    argv[1] = const_cast<char*>("-scanPlugin");
+    argv[2] = const_cast<char*>(pluginPathCString.data());
+    argv[3] = 0;
+
+    gint status;
+    gchar* stdOut;
+    if (!g_spawn_sync(0, argv, 0, G_SPAWN_STDERR_TO_DEV_NULL, 0, 0, &stdOut, 0, &status, 0))
+        return false;
+    if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS)
+        return false;
+
+    const unsigned kNumLinesExpected = 3;
+    String lines[kNumLinesExpected];
+    unsigned lineIndex = 0;
+    const UChar* current = reinterpret_cast<const UChar*>(stdOut);
+    while (lineIndex < kNumLinesExpected) {
+        const UChar* start = current;
+        while (*current++ != UChar('\n')) { }
+        lines[lineIndex++] = String(start, current - start - 1);
+    }
+
+    result.name.swap(lines[0]);
+    result.description.swap(lines[1]);
+    result.mimeDescription.swap(lines[2]);
+    return !result.mimeDescription.isEmpty();
 }
 
 } // namespace WebKit

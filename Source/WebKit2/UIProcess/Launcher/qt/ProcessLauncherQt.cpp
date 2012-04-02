@@ -28,10 +28,9 @@
 #include "ProcessLauncher.h"
 
 #include "Connection.h"
+#include "ProcessExecutablePath.h"
 #include "WebProcess.h"
-#include <QCoreApplication>
 #include <QDebug>
-#include <QFile>
 #include <QLocalServer>
 #include <QMetaType>
 #include <QProcess>
@@ -102,13 +101,9 @@ void QtWebProcess::setupChildProcess()
 
 void ProcessLauncher::launchProcess()
 {
-    QString applicationPath = QLatin1String("%1 %2");
-
-    if (QFile::exists(QCoreApplication::applicationDirPath() + QLatin1String("/QtWebProcess"))) {
-        applicationPath = applicationPath.arg(QCoreApplication::applicationDirPath() + QLatin1String("/QtWebProcess"));
-    } else {
-        applicationPath = applicationPath.arg(QLatin1String("QtWebProcess"));
-    }
+    QString commandLine = QLatin1String("%1 %2");
+    commandLine = commandLine.arg(m_launchOptions.processType == WebProcess ?
+                                  executablePathOfWebProcess() : executablePathOfPluginProcess());
 
 #if OS(DARWIN)
     // Create the listening port.
@@ -124,7 +119,7 @@ void ProcessLauncher::launchProcess()
     kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.toUtf8().data()), connector, 0);
     ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
 
-    QString program(applicationPath.arg(serviceName));
+    commandLine = commandLine.arg(serviceName);
 #else
     int sockets[2];
     if (socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) == -1) {
@@ -144,12 +139,12 @@ void ProcessLauncher::launchProcess()
     }
 
     int connector = sockets[1];
-    QString program(applicationPath.arg(sockets[0]));
+    commandLine = commandLine.arg(sockets[0]);
 #endif
 
     QProcess* webProcess = new QtWebProcess();
     webProcess->setProcessChannelMode(QProcess::ForwardedChannels);
-    webProcess->start(program);
+    webProcess->start(commandLine);
 
 #if !OS(DARWIN)
     // Don't expose the web socket to possible future web processes
@@ -163,7 +158,7 @@ void ProcessLauncher::launchProcess()
 #endif
 
     if (!webProcess->waitForStarted()) {
-        qDebug() << "Failed to start" << program;
+        qDebug() << "Failed to start" << commandLine;
         ASSERT_NOT_REACHED();
 #if OS(DARWIN)
         mach_port_deallocate(mach_task_self(), connector);

@@ -1,3 +1,107 @@
+2012-04-02  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Set up plugin process on Unix
+        https://bugs.webkit.org/show_bug.cgi?id=72121
+
+        Reviewed by Simon Hausmann.
+
+        Setup plugin process for Qt and move the task of querying the plugins
+        to this process in order to avoid crashes due to plugin bugs or library
+        incompatibility.
+
+        * GNUmakefile.am:
+        * PluginProcess.pro: Added.
+
+        * PluginProcess/gtk/PluginProcessMainGtk.cpp:
+        (WebKit::PluginProcessMainGtk):
+        * PluginProcess/qt/PluginProcessMainQt.cpp:
+        (WebKit::messageHandler):
+        (WebKit::initializeGtk):
+        (WebKit):
+        (WebKit::PluginProcessMain):
+        Implement entry point of the plugin process.
+        Handle -scanPlugin command line switch: produce meta data
+        of plugin on standard output and terminate. Move Gtk initialization
+        hack to there.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+        Get rid of the Gtk initialization hack. We do not nead it here anymore.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.h:
+        (WebKit):
+        (NetscapePluginModule):
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::parseMIMEDescription):
+        (WebKit::NetscapePluginModule::getPluginInfoForLoadedPlugin):
+        (WebKit):
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        Get plugin meta data via PluginProcessproxy. If a failure
+        happened we ignore to use the plugin. Remove the concept
+        of stdout redirection since we can control it when launching
+        the process.
+
+        (WebKit::NetscapePluginModule::determineQuirks):
+        (WebKit::truncateToSingleLine):
+        (WebKit::NetscapePluginModule::scanPlugin):
+        Produce plugin meta data on standard output.
+
+        * Shared/ProcessExecutablePath.h: Added.
+        (WebKit):
+        * Shared/gtk/ProcessExecutablePathGtk.cpp: Added.
+        (findWebKitProcess):
+        (executablePathOfWebProcess):
+        (executablePathOfPluginProcess):
+        * Shared/qt/ProcessExecutablePathQt.cpp: Copied from Source/WebKit2/UIProcess/Plugins/qt/PluginProcessProxyQt.cpp.
+        (WebKit):
+        (WebKit::executablePath):
+        (WebKit::executablePathOfWebProcess):
+        (WebKit::executablePathOfPluginProcess):
+        Factored the executable path determination into free functions
+        to avoid code duplication.
+
+        * Shared/qt/ShareableBitmapQt.cpp:
+        (WebKit::ShareableBitmap::paint):
+        Added implementation for the override with the scale factor because
+        it is called from PluginProxy. It does not actually handle the case
+        when the scale factor is not 1. However it's ok because it can only
+        happen on Mac in the moment.
+
+        * Target.pri:
+        * UIProcess/Launcher/ProcessLauncher.h:
+        (ProcessLauncher):
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        Use the new functions to determine the executable path.
+
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        (WebKit):
+        (RawPluginMetaData):
+        (PluginProcessProxy):
+        * UIProcess/Plugins/gtk/PluginProcessProxyGtk.cpp:
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        (WebKit):
+        (WebKit::PluginProcessProxy::scanPlugin):
+        * UIProcess/Plugins/qt/PluginProcessProxyQt.cpp:
+        (WebKit):
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        (WebKit::PluginProcessProxy::scanPlugin):
+        Launch plugin process and parse it's output to get the meta data
+        for the plugin.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        Changed according to the removing of the flash hack. Do not try
+        to decide whether the plugin needs Gtk by it's name but instead
+        always get back the expected Gtk version (2). Only Gtk plugins
+        should ask for this anyway.
+
+        * qt/PluginMainQt.cpp: Copied from Source/WebKit2/UIProcess/Plugins/gtk/PluginProcessProxyGtk.cpp.
+        (WebKit):
+        (main):
+
 2012-03-16  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WK2] Initial FullScreen support
