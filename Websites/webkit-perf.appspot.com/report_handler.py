@@ -69,7 +69,7 @@ class ReportHandler(webapp2.RequestHandler):
         if builder and not (self.bypass_authentication() or builder.authenticate(password)):
             self._output('Authentication failed')
 
-        if not self._results_are_valid(log):
+        if not log.results_are_well_formed():
             self._output("The payload doesn't contain results or results are malformed")
 
         if self._encountered_error:
@@ -86,33 +86,6 @@ class ReportHandler(webapp2.RequestHandler):
 
     def bypass_authentication(self):
         return False
-
-    def _results_are_valid(self, log):
-
-        def _is_float_convertible(value):
-            try:
-                float(value)
-                return True
-            except TypeError:
-                return False
-            except ValueError:
-                return False
-
-        if not isinstance(log.results(), dict):
-            return False
-
-        for testResult in log.results().values():
-            if isinstance(testResult, dict):
-                for value in testResult.values():
-                    if not _is_float_convertible(value):
-                        return False
-                if 'avg' not in testResult:
-                    return False
-                continue
-            if not _is_float_convertible(testResult):
-                return False
-
-        return True
 
 
 class AdminReportHandler(ReportHandler):

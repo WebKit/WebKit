@@ -58,7 +58,7 @@ class ReportProcessHandler(webapp2.RequestHandler):
         build = Build.get_or_insert_from_log(log)
 
         for test_name, result_value in log.results().iteritems():
-            test = Test.update_or_insert(test_name, branch, platform)
+            test = Test.update_or_insert(test_name, branch, platform, result_value.get('unit'))
             result = TestResult.get_or_insert_from_parsed_json(test_name, build, result_value)
             runs = Runs.get_by_objects(branch, platform, test)
             regenerate_runs = True

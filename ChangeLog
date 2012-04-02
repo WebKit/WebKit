@@ -1,5 +1,28 @@
 2012-04-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        perf-o-matic should store test results' units
+        https://bugs.webkit.org/show_bug.cgi?id=82852
+
+        Reviewed by Kentaro Hara.
+
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Test):
+        (Test.update_or_insert): Added "unit" to the argument list.
+        (Test.update_or_insert.execute): Store the unit.
+        (ReportLog.results_are_well_formed): Moved from ReportHandler.
+        (ReportLog.results_are_well_formed._is_float_convertible): Ditto.
+        * Websites/webkit-perf.appspot.com/models_unittest.py:
+        (TestModelTests.test_update_or_insert): Added a test case for "unit" argument.
+        (TestModelTests.test_update_or_insert_to_update): Ditto.
+        (ReportLogTests.test_results_are_well_formed): Added.
+        (ReportLogTests.test_results_are_well_formed.assert_results_are_well_formed): Added.
+        * Websites/webkit-perf.appspot.com/report_handler.py:
+        (ReportHandler.post): Calls ReportLog.results_are_well_formed.
+        * Websites/webkit-perf.appspot.com/report_process_handler.py:
+        (ReportProcessHandler.post): Passes results['unit'] to Test.update_or_insert.
+
+2012-04-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         Admin page should lexicologically sort tests
         https://bugs.webkit.org/show_bug.cgi?id=82849
 

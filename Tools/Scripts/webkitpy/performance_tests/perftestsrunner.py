@@ -250,6 +250,7 @@ class PerfTestsRunner(object):
         for line in re.split('\n', output.text):
             resultLine = self._inspector_result_regex.match(line)
             if resultLine:
+                # FIXME: Store the unit
                 self._results[resultLine.group('name').replace(' ', '')] = float(resultLine.group('value'))
                 self._buildbot_output.write("%s\n" % line)
                 got_a_result = True
@@ -286,6 +287,7 @@ class PerfTestsRunner(object):
         keys = ['avg', 'median', 'stdev', 'min', 'max']
         score_regex = re.compile(r'^(?P<key>' + r'|'.join(keys) + r')\s+(?P<value>[0-9\.]+)\s*(?P<unit>.*)')
         unit = "ms"
+
         for line in re.split('\n', output.text):
             score = score_regex.match(line)
             if score:
@@ -300,6 +302,9 @@ class PerfTestsRunner(object):
 
         if test_failed or set(keys) != set(results.keys()):
             return True
+
+        results['unit'] = unit
+
         self._results[filesystem.join(category, test_name).replace('\\', '/')] = results
         self._buildbot_output.write('RESULT %s: %s= %s %s\n' % (category, test_name, results['avg'], unit))
         self._buildbot_output.write(', '.join(['%s= %s %s' % (key, results[key], unit) for key in keys[1:]]) + '\n')

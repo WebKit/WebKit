@@ -265,6 +265,7 @@ class TestModelTests(DataStoreTestsBase):
         self.assertTrue(test)
         self.assertEqual(test.branches, [branch.key()])
         self.assertEqual(test.platforms, [platform.key()])
+        self.assertEqual(test.unit, None)
         self.assertOnlyInstance(test)
 
     def test_update_or_insert_to_update(self):
@@ -275,14 +276,11 @@ class TestModelTests(DataStoreTestsBase):
 
         other_branch = Branch.create_if_possible('other-branch', 'Other Branch')
         other_platform = Platform.create_if_possible('other-platform', 'Other Platform')
-        test = Test.update_or_insert('some-test', other_branch, other_platform)
+        test = Test.update_or_insert('some-test', other_branch, other_platform, 'ms')
         self.assertOnlyInstance(test)
         self.assertEqualUnorderedList(test.branches, [branch.key(), other_branch.key()])
         self.assertEqualUnorderedList(test.platforms, [platform.key(), other_platform.key()])
-
-        test = Test.get(test.key())
-        self.assertEqualUnorderedList(test.branches, [branch.key(), other_branch.key()])
-        self.assertEqualUnorderedList(test.platforms, [platform.key(), other_platform.key()])
+        self.assertEqualUnorderedList(test.unit, 'ms')
 
     def test_merge(self):
         branch, platform, builder = _create_some_builder()
@@ -432,6 +430,20 @@ class ReportLogTests(DataStoreTestsBase):
 
         log = self._create_log_with_payload('{"key": "value"}')
         self.assertEqual(log.results(), None)
+
+    def test_results_are_well_formed(self):
+
+        def assert_results_are_well_formed(json, expected):
+            self.assertEqual(self._create_log_with_payload(json).results_are_well_formed(), expected)
+
+        assert_results_are_well_formed('{"results": 123}', False)
+        assert_results_are_well_formed('{"results": {"test": 123}}', True)
+        assert_results_are_well_formed('{"results": {"test": 123, "other-test": 456}}', True)
+        assert_results_are_well_formed('{"results": {"test": 123, "other-test": 456, "bad-test": "hi"}}', False)
+        assert_results_are_well_formed('{"results": {"test": {"avg": 456}}}', True)
+        assert_results_are_well_formed('{"results": {"test": {"avg": 456, "median": "hello"}}}', False)
+        assert_results_are_well_formed('{"results": {"test": {"avg": 456, "median": 789}}}', True)
+        assert_results_are_well_formed('{"results": {"test": {"avg": 456, "unit": "bytes"}}}', True)
 
     def test_builder(self):
         log = self._create_log_with_payload('{"key": "value"}')
