@@ -347,6 +347,10 @@ http/tests/media/video-error-abort.html
 platform/mac/accessibility/attributed-string-includes-misspelled-with-selection.html
 svg/transforms/change-transform-origin-css.xhtml
 
+# Intermittent crashes
+# https://bugs.webkit.org/show_bug.cgi?id=82939
+sputnik/Unicode/Unicode_218/S7.6_A2.4.html
+sputnik/Unicode/Unicode_218/S7.6_A5.2_T1.html
 
 ### END OF (3) Unclassified failures
 ########################################
