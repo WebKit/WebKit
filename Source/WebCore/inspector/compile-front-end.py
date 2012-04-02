@@ -93,6 +93,7 @@ modules = [
             "ResourceUtils.js",
             "NetworkManager.js",
             "UISourceCode.js",
+            "UserAgentSupport.js",
         ]
     },
     {

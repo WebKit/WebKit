@@ -121,13 +121,13 @@ body:not(.platform-mac) .help-close-button {
     -webkit-user-select: auto;
 }
 
-.help-table th {
+.help-table > tr > th {
     padding-top: 6px;
     text-align: left;
     color: yellow;
 }
 
-.help-table td {
+.help-table > tr > td {
     white-space: nowrap;
     vertical-align: top;
     width: 50%;
@@ -194,6 +194,10 @@ body.platform-mac .help-key {
 
 .settings-experiments-warning-subsection-message {
     color: rgb(150, 150, 150);
+}
+
+#resolution-override-section {
+    margin-left: 13px;
 }
 
 .help-content input[type=checkbox] {

@@ -39,6 +39,10 @@ input[type="search"]:focus, input[type="text"]:focus {
     bottom: 0;
 }
 
+.hidden {
+    display: none;
+}
+
 #toolbar {
     position: absolute;
     top: 0;
@@ -923,6 +927,10 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 
 .error-message {
     color: red;
+}
+
+.error-input {
+    background-color: rgb(220, 130, 130);
 }
 
 .auto-complete-text, .editing .auto-complete-text {

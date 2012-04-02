@@ -52,7 +52,8 @@ var Capabilities = {
     debuggerCausesRecompilation: true,
     profilerCausesRecompilation: true,
     nativeInstrumentationEnabled: false,
-    heapProfilerPresent: false
+    heapProfilerPresent: false,
+    canOverrideDeviceMetrics: false
 }
 
 /**
@@ -86,6 +87,7 @@ WebInspector.Settings = function()
     this.cacheDisabled = this.createSetting("cacheDisabled", false);
     this.overrideUserAgent = this.createSetting("overrideUserAgent", "");
     this.userAgent = this.createSetting("userAgent", "");
+    this.deviceMetrics = this.createSetting("deviceMetrics", "");
     this.showScriptFolders = this.createSetting("showScriptFolders", true);
     this.dockToRight = this.createSetting("dockToRight", false);
     this.emulateTouchEvents = this.createSetting("emulateTouchEvents", false);

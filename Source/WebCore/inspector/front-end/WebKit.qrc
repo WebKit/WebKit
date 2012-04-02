@@ -162,6 +162,7 @@
     <file>treeoutline.js</file>
     <file>UISourceCode.js</file>
     <file>UIUtils.js</file>
+    <file>UserAgentSupport.js</file>
     <file>UserMetrics.js</file>
     <file>utilities.js</file>
     <file>View.js</file>

@@ -378,7 +378,8 @@ WebInspector.doLoadedDone = function()
     DebuggerAgent.supportsNativeBreakpoints(WebInspector._initializeCapability.bind(WebInspector, "nativeInstrumentationEnabled", null));
     ProfilerAgent.causesRecompilation(WebInspector._initializeCapability.bind(WebInspector, "profilerCausesRecompilation", null));
     ProfilerAgent.isSampling(WebInspector._initializeCapability.bind(WebInspector, "samplingCPUProfiler", null));
-    ProfilerAgent.hasHeapProfiler(WebInspector._initializeCapability.bind(WebInspector, "heapProfilerPresent", WebInspector._doLoadedDoneWithCapabilities.bind(WebInspector)));
+    ProfilerAgent.hasHeapProfiler(WebInspector._initializeCapability.bind(WebInspector, "heapProfilerPresent", null));
+    PageAgent.canOverrideDeviceMetrics(WebInspector._initializeCapability.bind(WebInspector, "canOverrideDeviceMetrics", WebInspector._doLoadedDoneWithCapabilities.bind(WebInspector)));
 }
 
 WebInspector._doLoadedDoneWithCapabilities = function()
@@ -412,6 +413,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     this.cssModel = new WebInspector.CSSStyleModel();
     this.timelineManager = new WebInspector.TimelineManager();
+    this.userAgentSupport = new WebInspector.UserAgentSupport();
     InspectorBackend.registerDatabaseDispatcher(new WebInspector.DatabaseDispatcher());
     InspectorBackend.registerDOMStorageDispatcher(new WebInspector.DOMStorageDispatcher());
 

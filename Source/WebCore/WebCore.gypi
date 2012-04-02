@@ -6395,6 +6395,7 @@
             'inspector/front-end/treeoutline.js',
             'inspector/front-end/UISourceCode.js',
             'inspector/front-end/UIUtils.js',
+            'inspector/front-end/UserAgentSupport.js',
             'inspector/front-end/UserMetrics.js',
             'inspector/front-end/utilities.js',
             'inspector/front-end/View.js',

@@ -74273,6 +74273,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\UserAgentSupport.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\UserMetrics.js"
 					>
 				</File>
