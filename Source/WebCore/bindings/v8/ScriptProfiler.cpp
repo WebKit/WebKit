@@ -37,6 +37,7 @@
 #include "V8Binding.h"
 #include "V8DOMMap.h"
 #include "V8Node.h"
+#include "WrapperTypeInfo.h"
 
 #include <v8-profiler.h>
 
@@ -109,6 +110,13 @@ ScriptObject ScriptProfiler::objectByHeapObjectId(unsigned id)
         return ScriptObject();
 
     v8::Handle<v8::Object> object = value.As<v8::Object>();
+    if (object->InternalFieldCount() >= v8DefaultWrapperInternalFieldCount) {
+        v8::Handle<v8::Value> wrapper = object->GetInternalField(v8DOMWrapperObjectIndex);
+        // Skip wrapper boilerplates which are like regular wrappers but don't have
+        // native object.
+        if (!wrapper.IsEmpty() && wrapper->IsUndefined())
+            return ScriptObject();
+    }
     ScriptState* scriptState = ScriptState::forContext(object->CreationContext());
     return ScriptObject(scriptState, object);
 }

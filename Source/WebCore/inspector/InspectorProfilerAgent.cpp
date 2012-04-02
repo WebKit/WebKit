@@ -430,17 +430,17 @@ void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, int id,
 {
     ScriptObject heapObject = ScriptProfiler::objectByHeapObjectId(id);
     if (heapObject.hasNoValue()) {
-        *error = "Object is not available.";
+        *error = "Object is not available";
         return;
     }
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(heapObject.scriptState());
     if (injectedScript.hasNoValue()) {
-        *error = "Object is not available. Inspected context is gone.";
+        *error = "Object is not available. Inspected context is gone";
         return;
     }
     result = injectedScript.wrapObject(heapObject, objectGroup ? *objectGroup : "");
     if (!result)
-        *error = "Failed to wrap object.";
+        *error = "Failed to wrap object";
 }
 
 } // namespace WebCore
