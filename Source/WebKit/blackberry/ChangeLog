@@ -1,3 +1,17 @@
+2012-04-02  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Adapt WebPagePrivate::webContext to the API change of r109570
+        https://bugs.webkit.org/show_bug.cgi?id=82945
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 147163
+        Adapt WebPagePrivate::webContext to the API change of the security
+        cherry-pick of r109570 and r112023.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+
 2012-04-02  Lianghui Chen  <liachen@rim.com>
 
         [BlackBerry] Set ResourceRequest TargetType in WebPagePrivate::load()
