@@ -1,5 +1,12 @@
 2012-04-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf-o-matic build fix after 112829 for Chromium-style tests.
+
+        * Websites/webkit-perf.appspot.com/report_process_handler.py:
+        (ReportProcessHandler.post):
+
+2012-04-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         perf-o-matic should store test results' units
         https://bugs.webkit.org/show_bug.cgi?id=82852
 
