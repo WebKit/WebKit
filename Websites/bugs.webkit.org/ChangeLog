@@ -1,3 +1,15 @@
+2012-04-01  Adam Barth  <abarth@webkit.org>
+
+        Code review tool no longer needs to work around position:fixed handling on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=82850
+
+        Reviewed by Eric Seidel.
+
+        We no longer need to avoid position:fixed on iPad because Mobile Safari
+        now does something reasonable with position:fixed elements.
+
+        * code-review.js:
+
 2012-03-09  Ashod Nakashian  <ashodnakashian@yahoo.com>
 
         Bash scripts should support LF endings only

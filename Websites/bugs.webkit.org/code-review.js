@@ -1063,11 +1063,6 @@ var CODE_REVIEW_UNITTEST;
   }
 
   function updateToolbarAnchorState() {
-    // For iPad, we always leave the toolbar at the bottom of the document
-    // because of the iPad's handling of position:fixed and scrolling.
-    if (navigator.platform.indexOf("iPad") != -1)
-      return;
-
     var toolbar = $('#toolbar');
     // Unanchor the toolbar and then see if it's bottom is below the body's bottom.
     toolbar.toggleClass('anchored', false);
