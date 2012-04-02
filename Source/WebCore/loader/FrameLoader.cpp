@@ -1732,8 +1732,6 @@ void FrameLoader::commitProvisionalLoad()
         
         pageCache()->remove(history()->currentItem());
 
-        m_documentLoader->setPrimaryLoadComplete(true);
-
         // FIXME: Why only this frame and not parent frames?
         checkLoadCompleteForThisFrame();
     }
@@ -2199,8 +2197,7 @@ void FrameLoader::continueLoadAfterWillSubmitForm()
     if (!m_provisionalDocumentLoader)
         return;
 
-    // DocumentLoader calls back to our prepareForLoadStart
-    m_provisionalDocumentLoader->prepareForLoadStart();
+    prepareForLoadStart();
     
     // The load might be cancelled inside of prepareForLoadStart(), nulling out the m_provisionalDocumentLoader, 
     // so we need to null check it again.
@@ -2914,7 +2911,7 @@ void FrameLoader::loadProvisionalItemFromCachedPage()
     DocumentLoader* provisionalLoader = provisionalDocumentLoader();
     LOG(PageCache, "WebCorePageCache: Loading provisional DocumentLoader %p with URL '%s' from CachedPage", provisionalDocumentLoader(), provisionalDocumentLoader()->url().string().utf8().data());
 
-    provisionalLoader->prepareForLoadStart();
+    prepareForLoadStart();
 
     m_loadingFromCachedPage = true;
 

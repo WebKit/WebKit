@@ -94,7 +94,6 @@ public:
     IconController* icon() const { return &m_icon; }
 
     void prepareForHistoryNavigation();
-    void prepareForLoadStart();
     void setupForReplace();
 
     // FIXME: These are all functions which start loads. We have too many.
@@ -357,6 +356,7 @@ private:
 
     void loadInSameDocument(const KURL&, SerializedScriptValue* stateObject, bool isNewNavigation);
 
+    void prepareForLoadStart();
     void provisionalLoadStarted();
 
     bool didOpenURL();

@@ -91,7 +91,6 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_committed(false)
     , m_isStopping(false)
     , m_gotFirstByte(false)
-    , m_primaryLoadComplete(false)
     , m_isClientRedirect(false)
     , m_wasOnloadHandled(false)
     , m_stopRecordingResponses(false)
@@ -188,11 +187,6 @@ void DocumentLoader::setMainDocumentError(const ResourceError& error)
     frameLoader()->client()->setMainDocumentError(this, error);
 }
 
-void DocumentLoader::clearErrors()
-{
-    m_mainDocumentError = ResourceError();
-}
-
 void DocumentLoader::mainReceivedError(const ResourceError& error)
 {
     ASSERT(!error.isNull());
@@ -202,7 +196,7 @@ void DocumentLoader::mainReceivedError(const ResourceError& error)
     if (!frameLoader())
         return;
     setMainDocumentError(error);
-    setPrimaryLoadComplete(true);
+    clearMainResourceLoader();
     frameLoader()->receivedMainResourceError(error);
 }
 
@@ -294,7 +288,7 @@ void DocumentLoader::finishedLoading()
     m_writer.end();
     if (!m_mainDocumentError.isNull() || frameLoader()->stateMachine()->creatingInitialEmptyDocument())
         return;
-    setPrimaryLoadComplete(true);
+    clearMainResourceLoader();
     frameLoader()->checkLoadComplete();
 }
 
@@ -414,27 +408,15 @@ void DocumentLoader::detachFromFrame()
     m_frame = 0;
 }
 
-void DocumentLoader::prepareForLoadStart()
+void DocumentLoader::clearMainResourceLoader()
 {
-    ASSERT(!m_isStopping);
-    setPrimaryLoadComplete(false);
-    ASSERT(frameLoader());
-    clearErrors();
-    frameLoader()->prepareForLoadStart();
-}
-
-void DocumentLoader::setPrimaryLoadComplete(bool flag)
-{
-    m_primaryLoadComplete = flag;
-    if (flag) {
-        if (m_mainResourceLoader) {
-            m_mainResourceData = m_mainResourceLoader->resourceData();
-            m_mainResourceLoader = 0;
-        }
-
-        if (this == frameLoader()->activeDocumentLoader())
-            checkLoadComplete();
+    if (m_mainResourceLoader) {
+        m_mainResourceData = m_mainResourceLoader->resourceData();
+        m_mainResourceLoader = 0;
     }
+
+    if (this == frameLoader()->activeDocumentLoader())
+        checkLoadComplete();
 }
 
 bool DocumentLoader::isLoadingInAPISense() const
@@ -446,7 +428,7 @@ bool DocumentLoader::isLoadingInAPISense() const
             return true;
     
         Document* doc = m_frame->document();
-        if ((!m_primaryLoadComplete || !m_frame->document()->loadEventFinished()) && isLoading())
+        if ((m_mainResourceLoader || !m_frame->document()->loadEventFinished()) && isLoading())
             return true;
         if (doc->cachedResourceLoader()->requestCount())
             return true;
@@ -797,6 +779,7 @@ bool DocumentLoader::isLoadingMultipartContent() const
 
 void DocumentLoader::startLoadingMainResource()
 {
+    m_mainDocumentError = ResourceError();
     timing()->markNavigationStart(m_frame);
     ASSERT(!m_mainResourceLoader);
     m_mainResourceLoader = MainResourceLoader::create(m_frame);
@@ -805,7 +788,7 @@ void DocumentLoader::startLoadingMainResource()
     // If not, it would be great to remove this line of code.
     frameLoader()->addExtraFieldsToMainResourceRequest(m_request);
     
-    // Protect MainResourceLoader::load() method chain from setPrimaryLoadComplete() stomping m_mainResourceLoader.
+    // Protect MainResourceLoader::load() method chain from clearMainResourceLoader() stomping m_mainResourceLoader.
     RefPtr<MainResourceLoader> protectedMainResourceLoader(m_mainResourceLoader);
     if (!protectedMainResourceLoader->load(m_request, m_substituteData)) {
         // FIXME: If this should really be caught, we should just ASSERT this doesn't happen;

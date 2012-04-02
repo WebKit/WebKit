@@ -118,13 +118,11 @@ namespace WebCore {
         const ResourceError& mainDocumentError() const { return m_mainDocumentError; }
         void mainReceivedError(const ResourceError&);
         void setResponse(const ResourceResponse& response) { m_response = response; }
-        void prepareForLoadStart();
         bool isClientRedirect() const { return m_isClientRedirect; }
         void setIsClientRedirect(bool isClientRedirect) { m_isClientRedirect = isClientRedirect; }
         void handledOnloadEvents();
         bool wasOnloadHandled() { return m_wasOnloadHandled; }
         bool isLoadingInAPISense() const;
-        void setPrimaryLoadComplete(bool);
         void setTitle(const StringWithDirection&);
         const String& overrideEncoding() const { return m_overrideEncoding; }
 
@@ -254,11 +252,11 @@ namespace WebCore {
     private:
         void setupForReplace();
         void commitIfReady();
-        void clearErrors();
         void setMainDocumentError(const ResourceError&);
         void commitLoad(const char*, int);
         bool doesProgressiveLoad(const String& MIMEType) const;
         void checkLoadComplete();
+        void clearMainResourceLoader();
 
         void deliverSubstituteResourcesAfterDelay();
         void substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*);
@@ -298,7 +296,6 @@ namespace WebCore {
         bool m_committed;
         bool m_isStopping;
         bool m_gotFirstByte;
-        bool m_primaryLoadComplete;
         bool m_isClientRedirect;
 
         // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadHandled are roughly the same
