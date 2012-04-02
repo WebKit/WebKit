@@ -1,3 +1,17 @@
+2012-04-02  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] LayoutTestHelper crashes if there is no main display
+        https://bugs.webkit.org/show_bug.cgi?id=82944
+        <rdar://problem/11162954>
+
+        Reviewed by Simon Fraser.
+
+        If there's no main display attached, ColorSyncDeviceCopyDeviceInfo returns
+        a null dictionary, so we shouldn't go ahead and try to read from it.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (installLayoutTestColorProfile):
+
 2012-04-02  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Set up plugin process on Unix
