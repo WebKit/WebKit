@@ -296,7 +296,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit, BlockLayo
 
 void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(FlexOrderIterator& iterator, WTF::Vector<LineContext>& lineContexts, LayoutUnit& oldClientAfterEdge)
 {
-    LayoutUnit crossAxisStartEdge = lineContexts.isEmpty() ? 0 : lineContexts[0].crossAxisOffset;
+    LayoutUnit crossAxisStartEdge = lineContexts.isEmpty() ? zeroLayoutUnit : lineContexts[0].crossAxisOffset;
     packFlexLines(iterator, lineContexts);
 
     // If we have a single line flexbox, the line height is all the available space.
@@ -1120,7 +1120,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox* child, LayoutUni
     } else if (isColumnFlow() && child->style()->logicalWidth().isAuto() && isMultiline()) {
         // FIXME: Handle min-width and max-width.
         LayoutUnit childWidth = lineCrossAxisExtent - crossAxisMarginExtentForChild(child);
-        child->setOverrideWidth(std::max(0, childWidth));
+        child->setOverrideWidth(std::max(zeroLayoutUnit, childWidth));
         child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
     }

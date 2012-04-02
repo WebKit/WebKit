@@ -161,7 +161,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (drawSelectionTint) {
         LayoutRect selectionPaintingRect = localSelectionRect();
         selectionPaintingRect.moveBy(adjustedPaintOffset);
-        paintInfo.context->fillRect(selectionPaintingRect, selectionBackgroundColor(), style()->colorSpace());
+        paintInfo.context->fillRect(pixelSnappedIntRect(selectionPaintingRect), selectionBackgroundColor(), style()->colorSpace());
     }
 }
 
@@ -360,7 +360,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) con
                 // This solves above equation for 'width' (== logicalWidth).
                 LayoutUnit marginStart = minimumValueForLength(style()->marginStart(), logicalWidth);
                 LayoutUnit marginEnd = minimumValueForLength(style()->marginEnd(), logicalWidth);
-                logicalWidth = max(0, logicalWidth - (marginStart + marginEnd + (width() - clientWidth())));
+                logicalWidth = max(zeroLayoutUnit, logicalWidth - (marginStart + marginEnd + (width() - clientWidth())));
                 if (isPercentageIntrinsicSize)
                     logicalWidth = roundToInt(logicalWidth * intrinsicSize.width() / 100);
                 return computeReplacedLogicalWidthRespectingMinMaxWidth(logicalWidth, includeMaxWidth);
@@ -425,7 +425,7 @@ void RenderReplaced::computePreferredLogicalWidths()
     m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(false) + borderAndPadding;
 
     if (style()->maxWidth().isFixed())
-        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : zeroLayoutUnit));
+        m_maxPreferredLogicalWidth = min<LayoutUnit>(m_maxPreferredLogicalWidth, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : zeroLayoutUnit));
 
     if (hasRelativeDimensions())
         m_minPreferredLogicalWidth = 0;
