@@ -1,3 +1,9 @@
+2012-04-02  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Fix Qt build after r112868.
+
+        * PluginProcess.pro: Add WTF into includepath.
+
 2012-04-02  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Call resize on frameview in WebPage::resizeToContentsIfNeeded only when the size changes.
