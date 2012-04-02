@@ -2538,8 +2538,16 @@ void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String
             targetFrame->loader()->loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, formState.release());
         else
             policyChecker()->checkNewWindowPolicy(action, FrameLoader::callContinueLoadAfterNewWindowPolicy, workingResourceRequest, formState.release(), frameName, this);
-    } else
+    } else {
+        // must grab this now, since this load may stop the previous load and clear this flag
+        bool isRedirect = m_quickRedirectComing;
         loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, formState.release());    
+        if (isRedirect) {
+            m_quickRedirectComing = false;
+            if (m_provisionalDocumentLoader)
+                m_provisionalDocumentLoader->setIsClientRedirect(true);
+        }
+    }
 }
 
 unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
