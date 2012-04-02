@@ -20,14 +20,14 @@ function test()
             function didShowScriptSource(sourceFrame)
             {
                 InspectorTest.addResult("Script source was shown.");
-                InspectorTest.addSniffer(WebInspector.JavaScriptSourceFrame.prototype, "addBreakpoint", didAddBreakpoint);
+                InspectorTest.addSniffer(WebInspector.JavaScriptSourceFrame.prototype, "_addBreakpointDecoration", didAddBreakpoint);
                 InspectorTest.setBreakpoint(sourceFrame, 17, "", true);
             }
 
             function didAddBreakpoint(lineNumber)
             {
-              InspectorTest.addResult("Breakpoint added to source frame at line " + lineNumber);
-              next();
+                InspectorTest.addResult("Breakpoint added to source frame at line " + lineNumber);
+                next();
             }
         },
 

@@ -163,7 +163,7 @@ InspectorTest.showScriptSourceOnScriptsPanel = function(panel, scriptName, callb
             if (sourceFrame.loaded)
                 callback(sourceFrame);
             else
-                sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, callback.bind(null, sourceFrame));
+                InspectorTest.addSniffer(sourceFrame, "onTextViewerContentLoaded", callback.bind(null, sourceFrame));
             return;
         }
     }

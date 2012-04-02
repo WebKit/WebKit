@@ -342,19 +342,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
-     * @return {Array.<WebInspector.Breakpoint>}
-     */
-    breakpointsForUISourceCode: function(uiSourceCode)
-    {
-        var breakpointsMap = uiSourceCode.breakpoints();
-        var breakpointsList = [];
-        for (var lineNumber in breakpointsMap)
-            breakpointsList.push(breakpointsMap[lineNumber]);
-        return breakpointsList;
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {number} lineNumber
      * @param {string} condition
      * @param {boolean} enabled
@@ -413,7 +400,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     findBreakpoint: function(uiSourceCode, lineNumber)
     {
-        return uiSourceCode.breakpoints()[lineNumber];
+        return uiSourceCode.breakpoints()[String(lineNumber)];
     },
 
     _debuggerPaused: function()
@@ -570,8 +557,8 @@ WebInspector.UISourceCodeImpl.prototype = {
      */
     breakpointAdded: function(lineNumber, breakpoint)
     {
-        console.assert(!this._breakpoints[lineNumber]);
-        this._breakpoints[lineNumber] = breakpoint;
+        console.assert(!this._breakpoints[String(lineNumber)]);
+        this._breakpoints[String(lineNumber)] = breakpoint;
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.BreakpointAdded, breakpoint);
     },
 
@@ -580,8 +567,8 @@ WebInspector.UISourceCodeImpl.prototype = {
      */
     breakpointRemoved: function(lineNumber)
     {
-        var breakpoint = this._breakpoints[lineNumber];
-        delete this._breakpoints[lineNumber];
+        var breakpoint = this._breakpoints[String(lineNumber)];
+        delete this._breakpoints[String(lineNumber)];
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.BreakpointRemoved, breakpoint);
     },
 

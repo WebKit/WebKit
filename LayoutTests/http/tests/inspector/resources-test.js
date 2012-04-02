@@ -81,7 +81,7 @@ InspectorTest.showResource = function(resourceURL, callback)
                 if (sourceFrame.loaded)
                     callbackWrapper(sourceFrame);
                 else
-                    sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, callbackWrapper.bind(null, sourceFrame));
+                    InspectorTest.addSniffer(sourceFrame, "onTextViewerContentLoaded", callbackWrapper.bind(null, sourceFrame));
                 return true;
             }
         }

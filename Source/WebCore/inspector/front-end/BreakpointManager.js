@@ -96,7 +96,7 @@ WebInspector.BreakpointManager.prototype = {
      */
     setBreakpoint: function(uiSourceCode, lineNumber, condition, enabled)
     {
-        if (uiSourceCode.breakpoints()[lineNumber])
+        if (uiSourceCode.breakpoints()[String(lineNumber)])
             return;
         var breakpoint = new WebInspector.Breakpoint(uiSourceCode.id, lineNumber, condition, enabled, !!uiSourceCode.url);
         this._addBreakpointToModel(breakpoint);
@@ -110,7 +110,7 @@ WebInspector.BreakpointManager.prototype = {
      */
     removeBreakpoint: function(uiSourceCode, lineNumber)
     {
-        var uiBreakpoint = uiSourceCode.breakpoints()[lineNumber];
+        var uiBreakpoint = uiSourceCode.breakpoints()[String(lineNumber)];
         if (!uiBreakpoint)
             return;
         this._innerRemoveBreakpoint(uiBreakpoint.breakpoint);

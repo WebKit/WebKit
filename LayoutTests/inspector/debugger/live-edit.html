@@ -90,7 +90,7 @@ function test()
 
             function didShowScriptSource(sourceFrame)
             {
-                InspectorTest.addSniffer(sourceFrame, "addBreakpoint", breakpointAdded);
+                InspectorTest.addSniffer(sourceFrame, "_addBreakpointDecoration", breakpointAdded);
                 InspectorTest.setBreakpoint(sourceFrame, 2, "", true);
             }
 

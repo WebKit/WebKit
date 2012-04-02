@@ -54,10 +54,6 @@ WebInspector.SourceFrame = function(url)
     this._textViewer.readOnly = !this.canEditSource();
 }
 
-WebInspector.SourceFrame.Events = {
-    Loaded: "loaded"
-}
-
 WebInspector.SourceFrame.createSearchRegex = function(query)
 {
     var regex;
@@ -237,10 +233,12 @@ WebInspector.SourceFrame.prototype = {
             delete this._delayedFindSearchMatches;
         }
 
-        this.dispatchEventToListeners(WebInspector.SourceFrame.Events.Loaded);
+        this.onTextViewerContentLoaded();
 
         this._textViewer.endUpdates();
     },
+
+    onTextViewerContentLoaded: function() {},
 
     _setTextViewerDecorations: function()
     {

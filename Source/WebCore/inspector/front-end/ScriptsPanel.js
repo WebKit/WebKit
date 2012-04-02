@@ -331,22 +331,12 @@ WebInspector.ScriptsPanel.prototype = {
     _uiBreakpointAdded: function(event)
     {
         var uiBreakpoint = /** @type {WebInspector.UIBreakpoint} */ event.data;
-
-        var sourceFrame = this._sourceFramesByUISourceCode.get(uiBreakpoint.uiSourceCode)
-        if (sourceFrame && sourceFrame.loaded)
-            sourceFrame.addBreakpoint(uiBreakpoint.lineNumber, uiBreakpoint.resolved, uiBreakpoint.condition, uiBreakpoint.enabled);
-
         this.sidebarPanes.jsBreakpoints.addBreakpoint(uiBreakpoint);
     },
 
     _uiBreakpointRemoved: function(event)
     {
         var uiBreakpoint = /** @type {WebInspector.UIBreakpoint} */ event.data;
-
-        var sourceFrame = this._sourceFramesByUISourceCode.get(uiBreakpoint.uiSourceCode)
-        if (sourceFrame && sourceFrame.loaded)
-            sourceFrame.removeBreakpoint(uiBreakpoint.lineNumber);
-
         this.sidebarPanes.jsBreakpoints.removeBreakpoint(uiBreakpoint.uiSourceCode, uiBreakpoint.lineNumber);
     },
 
@@ -546,7 +536,6 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFrame = new WebInspector.JavaScriptSourceFrame(this, this._presentationModel, uiSourceCode);
 
         sourceFrame._uiSourceCode = uiSourceCode;
-        sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
         this._sourceFramesByUISourceCode.put(uiSourceCode, sourceFrame);
         return sourceFrame;
     },
@@ -579,7 +568,6 @@ WebInspector.ScriptsPanel.prototype = {
             return;
         this._sourceFramesByUISourceCode.remove(uiSourceCode);
         sourceFrame.detach();
-        sourceFrame.removeEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
     },
 
     /**
@@ -603,18 +591,6 @@ WebInspector.ScriptsPanel.prototype = {
             for (var lineNumber in breakpoints)
                 this._uiBreakpointAdded({ data: breakpoints[lineNumber] });
             this._addBreakpointListeners(uiSourceCode);
-        }
-    },
-
-    _sourceFrameLoaded: function(event)
-    {
-        var sourceFrame = /** @type {WebInspector.JavaScriptSourceFrame} */ event.target;
-        var uiSourceCode = sourceFrame._uiSourceCode;
-
-        var breakpoints = this._presentationModel.breakpointsForUISourceCode(uiSourceCode);
-        for (var i = 0; i < breakpoints.length; ++i) {
-            var breakpoint = breakpoints[i];
-            sourceFrame.addBreakpoint(breakpoint.lineNumber, breakpoint.resolved, breakpoint.condition, breakpoint.enabled);
         }
     },
 
