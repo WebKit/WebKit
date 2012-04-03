@@ -1,3 +1,17 @@
+2012-04-03  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL] LayoutTestController needs implementation of pageSizeAndMarginsInPixels
+        https://bugs.webkit.org/show_bug.cgi?id=82589
+
+        Add missing implementation for pageSizeAndMarginsInPixels to EFL's
+        DumpRenderTreeSupport.
+
+        Reviewed by Philippe Normand.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::pageSizeAndMarginsInPixels):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2012-04-02  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] LayoutTestController needs implementation of isPageBoxVisible

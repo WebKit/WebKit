@@ -54,6 +54,7 @@ public:
     static void layoutFrame(Evas_Object* ewkFrame);
     static int numberOfPages(const Evas_Object* ewkFrame, float pageWidth, float pageHeight);
     static int numberOfPagesForElementId(const Evas_Object* ewkFrame, const char* elementId, float pageWidth, float pageHeight);
+    static String pageSizeAndMarginsInPixels(const Evas_Object* ewkFrame, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
     static bool pauseAnimation(Evas_Object* ewkFrame, const char* name, const char* elementId, double time);
     static bool pauseTransition(Evas_Object* ewkFrame, const char* name, const char* elementId, double time);
     static unsigned pendingUnloadEventCount(const Evas_Object* ewkFrame);

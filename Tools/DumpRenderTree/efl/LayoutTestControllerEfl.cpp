@@ -144,10 +144,15 @@ bool LayoutTestController::isPageBoxVisible(int pageIndex) const
     return DumpRenderTreeSupportEfl::isPageBoxVisible(browser->mainFrame(), pageIndex);
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int, int, int, int, int, int, int) const
+JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
 {
-    notImplemented();
-    return 0;
+    String pageSizeAndMargins = DumpRenderTreeSupportEfl::pageSizeAndMarginsInPixels(browser->mainFrame(), pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft);
+
+    if (pageSizeAndMargins.isEmpty())
+        return 0;
+
+    JSRetainPtr<JSStringRef> returnValue(Adopt, JSStringCreateWithUTF8CString(pageSizeAndMargins.utf8().data()));
+    return returnValue;
 }
 
 size_t LayoutTestController::webHistoryItemCount()
