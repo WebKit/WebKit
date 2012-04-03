@@ -1,3 +1,13 @@
+2012-04-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: [chromium] add provisional save method into the frontend client.
+        https://bugs.webkit.org/show_bug.cgi?id=83022
+
+        Reviewed by Yury Semikhatsky.
+
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::save):
+
 2012-04-03  Bill Budge  <bbudge@chromium.org>
 
         WebViewImpl doesn't notify the page that the user has canceled fullscreen.
