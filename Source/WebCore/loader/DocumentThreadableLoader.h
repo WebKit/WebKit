@@ -89,7 +89,7 @@ namespace WebCore {
         void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
         void didFinishLoading(unsigned long identifier, double finishTime);
         void didFail(const ResourceError&);
-        void makeRequest(const ResourceRequest&);
+        void makeCrossOriginAccessRequest(const ResourceRequest&);
         void makeSimpleCrossOriginAccessRequest(const ResourceRequest& request);
         void makeCrossOriginAccessRequestWithPreflight(const ResourceRequest& request);
         void preflightSuccess();

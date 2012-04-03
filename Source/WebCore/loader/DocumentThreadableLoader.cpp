@@ -85,11 +85,6 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document* document, Threadabl
     // Setting an outgoing referer is only supported in the async code path.
     ASSERT(m_async || request.httpReferrer().isEmpty());
 
-    makeRequest(request);
-}
-
-void DocumentThreadableLoader::makeRequest(const ResourceRequest& request)
-{
     if (m_sameOriginRequest || m_options.crossOriginRequestPolicy == AllowCrossOriginRequests) {
         loadRequest(request, DoSecurityCheck);
         return;
@@ -100,6 +95,11 @@ void DocumentThreadableLoader::makeRequest(const ResourceRequest& request)
         return;
     }
 
+    makeCrossOriginAccessRequest(request);
+}
+
+void DocumentThreadableLoader::makeCrossOriginAccessRequest(const ResourceRequest& request)
+{
     ASSERT(m_options.crossOriginRequestPolicy == UseAccessControl);
 
     OwnPtr<ResourceRequest> crossOriginRequest = adoptPtr(new ResourceRequest(request));
@@ -175,10 +175,17 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
     ASSERT_UNUSED(resource, resource == m_resource);
 
     RefPtr<DocumentThreadableLoader> protect(this);
-    bool allowRedirect = false;
+    // Allow same origin requests to continue after allowing clients to audit the redirect.
+    if (isAllowedRedirect(request.url())) {
+        if (m_client->isDocumentThreadableLoaderClient())
+            static_cast<DocumentThreadableLoaderClient*>(m_client)->willSendRequest(request, redirectResponse);
+        return;
+    }
+
+    // When using access control, only simple cross origin requests are allowed to redirect. The new request URL must have a supported
+    // scheme and not contain the userinfo production. In addition, the redirect response must pass the access control check.
     if (m_options.crossOriginRequestPolicy == UseAccessControl) {
-        // When using access control, only simple cross origin requests are allowed to redirect. The new request URL must have a supported
-        // scheme and not contain the userinfo production. In addition, the redirect response must pass the access control check.
+        bool allowRedirect = false;
         if (m_simpleRequest) {
             String accessControlErrorDescription;
             allowRedirect = SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(request.url().protocol())
@@ -186,11 +193,8 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
                             && request.url().pass().isEmpty()
                             && passesAccessControlCheck(redirectResponse, m_options.allowCredentials, securityOrigin(), accessControlErrorDescription);
         }
-    } else
-        allowRedirect = isAllowedRedirect(request.url());
 
-    if (allowRedirect) {
-        if (m_options.crossOriginRequestPolicy == UseAccessControl) {
+        if (allowRedirect) {
             if (m_resource)
                 clearResource();
 
@@ -199,7 +203,8 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
             // If the request URL origin is not same origin with the original URL origin, set source origin to a globally unique identifier.
             if (!originalOrigin->isSameSchemeHostPort(requestOrigin.get()))
                 m_options.securityOrigin = SecurityOrigin::createUnique();
-            m_sameOriginRequest = securityOrigin()->canRequest(request.url());
+            // Force any subsequent requests to use these checks.
+            m_sameOriginRequest = false;
 
             // Remove any headers that may have been added by the network layer that cause access control to fail.
             request.clearHTTPContentType();
@@ -207,16 +212,13 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
             request.clearHTTPOrigin();
             request.clearHTTPUserAgent();
             request.clearHTTPAccept();
-            makeRequest(request);
-        } else {
-            // If not using access control, allow clients to audit the redirect.
-            if (m_client->isDocumentThreadableLoaderClient())
-                static_cast<DocumentThreadableLoaderClient*>(m_client)->willSendRequest(request, redirectResponse);
+            makeCrossOriginAccessRequest(request);
+            return;
         }
-    } else {
-        m_client->didFailRedirectCheck();
-        request = ResourceRequest();
     }
+
+    m_client->didFailRedirectCheck();
+    request = ResourceRequest();
 }
 
 void DocumentThreadableLoader::dataSent(CachedResource* resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
