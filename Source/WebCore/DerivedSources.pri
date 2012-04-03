@@ -294,6 +294,7 @@ IDL_BINDINGS += \
     $$PWD/html/canvas/WebGLRenderbuffer.idl \
     $$PWD/html/canvas/WebGLRenderingContext.idl \
     $$PWD/html/canvas/WebGLShader.idl \
+    $$PWD/html/canvas/WebGLShaderPrecisionFormat.idl \
     $$PWD/html/canvas/Int16Array.idl \
     $$PWD/html/canvas/WebGLTexture.idl \
     $$PWD/html/canvas/WebGLUniformLocation.idl \

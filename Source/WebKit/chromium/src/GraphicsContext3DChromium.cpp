@@ -612,6 +612,8 @@ String GraphicsContext3DPrivate::getShaderInfoLog(Platform3DObject shader)
     return m_impl->getShaderInfoLog(shader);
 }
 
+DELEGATE_TO_IMPL_4(getShaderPrecisionFormat, GC3Denum, GC3Denum, GC3Dint*, GC3Dint*)
+
 String GraphicsContext3DPrivate::getShaderSource(Platform3DObject shader)
 {
     return m_impl->getShaderSource(shader);
@@ -1155,6 +1157,7 @@ DELEGATE_TO_INTERNAL_1R(getProgramInfoLog, Platform3DObject, String)
 DELEGATE_TO_INTERNAL_3(getRenderbufferParameteriv, GC3Denum, GC3Denum, GC3Dint*)
 DELEGATE_TO_INTERNAL_3(getShaderiv, Platform3DObject, GC3Denum, GC3Dint*)
 DELEGATE_TO_INTERNAL_1R(getShaderInfoLog, Platform3DObject, String)
+DELEGATE_TO_INTERNAL_4(getShaderPrecisionFormat, GC3Denum, GC3Denum, GC3Dint*, GC3Dint*)
 DELEGATE_TO_INTERNAL_1R(getShaderSource, Platform3DObject, String)
 DELEGATE_TO_INTERNAL_1R(getString, GC3Denum, String)
 DELEGATE_TO_INTERNAL_3(getTexParameterfv, GC3Denum, GC3Denum, GC3Dfloat*)

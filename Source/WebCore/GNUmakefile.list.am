@@ -577,6 +577,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebGLRenderingContext.h \
 	DerivedSources/WebCore/JSWebGLShader.cpp \
 	DerivedSources/WebCore/JSWebGLShader.h \
+	DerivedSources/WebCore/JSWebGLShaderPrecisionFormat.cpp \
+	DerivedSources/WebCore/JSWebGLShaderPrecisionFormat.h \
 	DerivedSources/WebCore/JSWebGLTexture.cpp \
 	DerivedSources/WebCore/JSWebGLTexture.h \
 	DerivedSources/WebCore/JSWebGLUniformLocation.cpp \
@@ -904,6 +906,7 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/WebGLRenderbuffer.idl \
 	$(WebCore)/html/canvas/WebGLRenderingContext.idl \
 	$(WebCore)/html/canvas/WebGLShader.idl \
+	$(WebCore)/html/canvas/WebGLShaderPrecisionFormat.idl \
 	$(WebCore)/html/canvas/WebGLTexture.idl \
 	$(WebCore)/html/canvas/WebGLUniformLocation.idl \
 	$(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
@@ -5805,6 +5808,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLRenderingContext.h \
 	Source/WebCore/html/canvas/WebGLShader.cpp \
 	Source/WebCore/html/canvas/WebGLShader.h \
+	Source/WebCore/html/canvas/WebGLShaderPrecisionFormat.cpp \
+	Source/WebCore/html/canvas/WebGLShaderPrecisionFormat.h \
 	Source/WebCore/html/canvas/WebGLSharedObject.cpp \
 	Source/WebCore/html/canvas/WebGLSharedObject.h \
 	Source/WebCore/html/canvas/WebGLTexture.cpp \

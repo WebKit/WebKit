@@ -496,6 +496,7 @@ module window {
         attribute [Conditional=WEBGL] WebGLRenderbufferConstructor WebGLRenderbuffer;
         attribute [Conditional=WEBGL] WebGLRenderingContextConstructor WebGLRenderingContext;
         attribute [Conditional=WEBGL] WebGLShaderConstructor WebGLShader;
+        attribute [Conditional=WEBGL] WebGLShaderPrecisionFormatConstructor WebGLShaderPrecisionFormat;
         attribute [Conditional=WEBGL] WebGLTextureConstructor WebGLTexture;
         attribute [Conditional=WEBGL] WebGLUniformLocationConstructor WebGLUniformLocation;
 

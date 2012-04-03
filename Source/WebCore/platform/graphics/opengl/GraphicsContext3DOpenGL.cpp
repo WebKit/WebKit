@@ -189,6 +189,37 @@ void GraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)
     }
 }
 
+void GraphicsContext3D::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision)
+{
+    UNUSED_PARAM(shaderType);
+    ASSERT(range);
+    ASSERT(precision);
+
+    makeContextCurrent();
+
+    // These constants came from the Chromium port; we believe they originally
+    // came from making the actual API call on a representative desktop system.
+    switch (precisionType) {
+    case GraphicsContext3D::LOW_INT:
+    case GraphicsContext3D::MEDIUM_INT:
+    case GraphicsContext3D::HIGH_INT:
+        range[0] = -31;
+        range[1] = 31;
+        precision[0] = 0;
+        break;
+    case GraphicsContext3D::LOW_FLOAT:
+    case GraphicsContext3D::MEDIUM_FLOAT:
+    case GraphicsContext3D::HIGH_FLOAT:
+        range[0] = -62;
+        range[1] = 62;
+        precision[0] = -16;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
 bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
 {
     if (width && height && !pixels) {

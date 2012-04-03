@@ -158,7 +158,7 @@ public:
     }
 
     virtual WebString getShaderInfoLog(WebGLId shader) { return WebString(); }
-
+    virtual void getShaderPrecisionFormat(WGC3Denum shadertype, WGC3Denum precisiontype, WGC3Dint* range, WGC3Dint* precision) { }
     virtual WebString getShaderSource(WebGLId shader) { return WebString(); }
     virtual WebString getString(WGC3Denum name) { return WebString(); }
     virtual void getTexParameterfv(WGC3Denum target, WGC3Denum pname, WGC3Dfloat* value) { }

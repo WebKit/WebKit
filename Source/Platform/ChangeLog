@@ -1,3 +1,13 @@
+2012-04-02  Zhenyao Mo  <zmo@google.com>
+
+        Implement WebGLShaderPrecisionFormat
+        https://bugs.webkit.org/show_bug.cgi?id=75925
+
+        Reviewed by Kenneth Russell.
+
+        * chromium/public/WebGraphicsContext3D.h: Add getShaderPrecisionFormat().
+        (WebGraphicsContext3D):
+
 2012-04-03  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix the Windows component build by including these headers

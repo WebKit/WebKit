@@ -24,6 +24,7 @@ for (var x in constructorNames) {
         name == "WebGLProgram" ||
         name == "WebGLRenderbuffer" ||
         name == "WebGLShader" ||
+        name == "WebGLShaderPrecisionFormat" ||
         name == "WebGLTexture" ||
         name == "WebGLUniformLocation" ||
         name == "ArrayBuffer" ||

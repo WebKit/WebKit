@@ -550,8 +550,7 @@ module html {
 
         [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString    getShaderInfoLog(in WebGLShader shader) raises(DOMException);
 
-        // TBD
-        // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
+        [StrictTypeChecking] WebGLShaderPrecisionFormat getShaderPrecisionFormat(in unsigned long shadertype, in unsigned long precisiontype) raises(DOMException);
 
         [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString    getShaderSource(in WebGLShader shader) raises(DOMException);
 

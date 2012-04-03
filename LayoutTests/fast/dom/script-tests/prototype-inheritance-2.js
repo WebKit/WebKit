@@ -80,6 +80,7 @@ function constructorNamesForWindow(globalObject)
             type == "WebGLProgramConstructor" ||
             type == "WebGLRenderbufferConstructor" ||
             type == "WebGLShaderConstructor" ||
+            type == "WebGLShaderPrecisionFormatConstructor" ||
             type == "WebGLTextureConstructor" ||
             type == "WebGLUniformLocationConstructor" ||
             type == "ArrayBufferConstructor" ||

@@ -1360,6 +1360,39 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
     return result;
 }
 
+void GraphicsContext3D::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision)
+{
+    // FIXME: this should be retargeted at the real getShaderPrecisionFormat()
+    // call on true ES 2.0 hardware.
+    UNUSED_PARAM(shaderType);
+    ASSERT(range);
+    ASSERT(precision);
+
+    makeContextCurrent();
+
+    // These constants came from the Chromium port; we believe they originally
+    // came from making the actual API call on a representative desktop system.
+    switch (precisionType) {
+    case GraphicsContext3D::LOW_INT:
+    case GraphicsContext3D::MEDIUM_INT:
+    case GraphicsContext3D::HIGH_INT:
+        range[0] = -31;
+        range[1] = 31;
+        precision[0] = 0;
+        break;
+    case GraphicsContext3D::LOW_FLOAT:
+    case GraphicsContext3D::MEDIUM_FLOAT:
+    case GraphicsContext3D::HIGH_FLOAT:
+        range[0] = -62;
+        range[1] = 62;
+        precision[0] = -16;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
 String GraphicsContext3D::getShaderSource(Platform3DObject shader)
 {
     makeContextCurrent();

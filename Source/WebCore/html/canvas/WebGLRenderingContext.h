@@ -65,6 +65,7 @@ class WebGLProgram;
 class WebGLRenderbuffer;
 class WebGLShader;
 class WebGLSharedObject;
+class WebGLShaderPrecisionFormat;
 class WebGLTexture;
 class WebGLUniformLocation;
 class WebGLVertexArrayObjectOES;
@@ -166,10 +167,7 @@ public:
     WebGLGetInfo getRenderbufferParameter(GC3Denum target, GC3Denum pname, ExceptionCode&);
     WebGLGetInfo getShaderParameter(WebGLShader*, GC3Denum pname, ExceptionCode&);
     String getShaderInfoLog(WebGLShader*, ExceptionCode&);
-
-    // TBD
-    // void glGetShaderPrecisionFormat (GC3Denum shadertype, GC3Denum precisiontype, GC3Dint* range, GC3Dint* precision);
-
+    PassRefPtr<WebGLShaderPrecisionFormat> getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, ExceptionCode&);
     String getShaderSource(WebGLShader*, ExceptionCode&);
     Vector<String> getSupportedExtensions();
     WebGLGetInfo getTexParameter(GC3Denum target, GC3Denum pname, ExceptionCode&);

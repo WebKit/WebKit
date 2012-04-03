@@ -44,6 +44,7 @@ var __skip__ = {
     "WebGLRenderbuffer" : 1,
     "WebGLRenderingContext" : 1,
     "WebGLShader" : 1,
+    "WebGLShaderPrecisionFormat" : 1,
     "WebGLTexture" : 1,
     "WebGLUniformLocation" : 1,
     "WebKitBlobBuilder" : 1,

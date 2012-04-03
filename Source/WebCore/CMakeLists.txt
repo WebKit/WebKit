@@ -2290,6 +2290,7 @@ IF (ENABLE_WEBGL)
         html/canvas/WebGLRenderbuffer.cpp
         html/canvas/WebGLRenderingContext.cpp
         html/canvas/WebGLShader.cpp
+        html/canvas/WebGLShaderPrecisionFormat.cpp
         html/canvas/WebGLSharedObject.cpp
         html/canvas/WebGLTexture.cpp
         html/canvas/WebGLUniformLocation.cpp
@@ -2321,6 +2322,7 @@ IF (ENABLE_WEBGL)
         html/canvas/WebGLRenderbuffer.idl
         html/canvas/WebGLRenderingContext.idl
         html/canvas/WebGLShader.idl
+        html/canvas/WebGLShaderPrecisionFormat.idl
         html/canvas/WebGLTexture.idl
         html/canvas/WebGLUniformLocation.idl
         html/canvas/WebGLVertexArrayObjectOES.idl

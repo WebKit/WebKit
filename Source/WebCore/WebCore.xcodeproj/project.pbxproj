@@ -3637,6 +3637,10 @@
 		9FFE3EA511B5A4390037874E /* JSMemoryInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE3EA311B5A4390037874E /* JSMemoryInfo.cpp */; };
 		9FFE3EA611B5A4390037874E /* JSMemoryInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFE3EA411B5A4390037874E /* JSMemoryInfo.h */; };
 		A00B721A11DE6428008AB9FF /* CheckedInt.h in Headers */ = {isa = PBXBuildFile; fileRef = A00B721911DE6427008AB9FF /* CheckedInt.h */; };
+		A07D3355152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A07D3353152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp */; };
+		A07D3356152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = A07D3354152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h */; };
+		A07D3358152B632D001B6393 /* WebGLShaderPrecisionFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = A07D3357152B632D001B6393 /* WebGLShaderPrecisionFormat.h */; };
+		A08CF154152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08CF153152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp */; };
 		A0EE0DF5144F825500F80B0D /* WebGLDebugRendererInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0EE0DF1144F825500F80B0D /* WebGLDebugRendererInfo.cpp */; };
 		A0EE0DF6144F825500F80B0D /* WebGLDebugRendererInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0EE0DF2144F825500F80B0D /* WebGLDebugRendererInfo.h */; };
 		A0EE0DF7144F825500F80B0D /* WebGLDebugShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0EE0DF3144F825500F80B0D /* WebGLDebugShaders.cpp */; };
@@ -10643,6 +10647,11 @@
 		9FFE3EA311B5A4390037874E /* JSMemoryInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMemoryInfo.cpp; sourceTree = "<group>"; };
 		9FFE3EA411B5A4390037874E /* JSMemoryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMemoryInfo.h; sourceTree = "<group>"; };
 		A00B721911DE6427008AB9FF /* CheckedInt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CheckedInt.h; path = canvas/CheckedInt.h; sourceTree = "<group>"; };
+		A07D3353152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLShaderPrecisionFormat.cpp; sourceTree = "<group>"; };
+		A07D3354152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLShaderPrecisionFormat.h; sourceTree = "<group>"; };
+		A07D3357152B632D001B6393 /* WebGLShaderPrecisionFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLShaderPrecisionFormat.h; path = canvas/WebGLShaderPrecisionFormat.h; sourceTree = "<group>"; };
+		A07D3359152B633E001B6393 /* WebGLShaderPrecisionFormat.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLShaderPrecisionFormat.idl; path = canvas/WebGLShaderPrecisionFormat.idl; sourceTree = "<group>"; };
+		A08CF153152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLShaderPrecisionFormat.cpp; path = canvas/WebGLShaderPrecisionFormat.cpp; sourceTree = "<group>"; };
 		A0EE0DEF144F823200F80B0D /* WebGLDebugShaders.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLDebugShaders.idl; path = canvas/WebGLDebugShaders.idl; sourceTree = "<group>"; };
 		A0EE0DF0144F824300F80B0D /* WebGLDebugRendererInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLDebugRendererInfo.idl; path = canvas/WebGLDebugRendererInfo.idl; sourceTree = "<group>"; };
 		A0EE0DF1144F825500F80B0D /* WebGLDebugRendererInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLDebugRendererInfo.cpp; path = canvas/WebGLDebugRendererInfo.cpp; sourceTree = "<group>"; };
@@ -14618,6 +14627,9 @@
 		49484FAE102CF01E00187DD3 /* canvas */ = {
 			isa = PBXGroup;
 			children = (
+				A08CF153152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp */,
+				A07D3359152B633E001B6393 /* WebGLShaderPrecisionFormat.idl */,
+				A07D3357152B632D001B6393 /* WebGLShaderPrecisionFormat.h */,
 				49EECDCC10503C2300099FAB /* ArrayBuffer.idl */,
 				49EECDC910503C2300099FAB /* ArrayBufferView.idl */,
 				6E4E91A710F7FB3100A2779C /* CanvasContextAttributes.cpp */,
@@ -17910,6 +17922,8 @@
 				49EED1411051969400099FAB /* JSWebGLRenderingContext.h */,
 				49C7B98F1042D2D30009D447 /* JSWebGLShader.cpp */,
 				49C7B9901042D2D30009D447 /* JSWebGLShader.h */,
+				A07D3353152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp */,
+				A07D3354152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h */,
 				49C7B9911042D2D30009D447 /* JSWebGLTexture.cpp */,
 				49C7B9921042D2D30009D447 /* JSWebGLTexture.h */,
 				0C45342510CDBBFA00869157 /* JSWebGLUniformLocation.cpp */,
@@ -24706,13 +24720,15 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
-                FD581FAF1520F91F003A7A75 /* Oscillator.h in Headers */,
-                FD581FB51520F93B003A7A75 /* WaveTable.h in Headers */,
-                FDEA6243152102E200479DF0 /* JSOscillator.h in Headers */,
-                FDEA6247152102FC00479DF0 /* JSWaveTable.h in Headers */,
+				FD581FAF1520F91F003A7A75 /* Oscillator.h in Headers */,
+				FD581FB51520F93B003A7A75 /* WaveTable.h in Headers */,
+				FDEA6243152102E200479DF0 /* JSOscillator.h in Headers */,
+				FDEA6247152102FC00479DF0 /* JSWaveTable.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				1A3586E015264C450022A659 /* RenderMultiColumnFlowThread.h in Headers */,
 				E1B25107152A0BB00069B779 /* StylePropertyShorthand.h in Headers */,
+				A07D3356152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h in Headers */,
+				A07D3358152B632D001B6393 /* WebGLShaderPrecisionFormat.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27711,6 +27727,8 @@
 				1A3FF9C315265359002288A1 /* RenderNamedFlowThread.cpp in Sources */,
 				E1B25106152A0BAF0069B779 /* StylePropertyShorthand.cpp in Sources */,
 				71CC7A20152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp in Sources */,
+				A07D3355152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp in Sources */,
+				A08CF154152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

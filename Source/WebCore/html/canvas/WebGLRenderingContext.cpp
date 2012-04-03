@@ -66,6 +66,7 @@
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLShader.h"
+#include "WebGLShaderPrecisionFormat.h"
 #include "WebGLTexture.h"
 #include "WebGLUniformLocation.h"
 
@@ -2684,6 +2685,38 @@ String WebGLRenderingContext::getShaderInfoLog(WebGLShader* shader, ExceptionCod
         return "";
     WebGLStateRestorer(this, false);
     return ensureNotNull(m_context->getShaderInfoLog(objectOrZero(shader)));
+}
+
+PassRefPtr<WebGLShaderPrecisionFormat> WebGLRenderingContext::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, ExceptionCode& ec)
+{
+    UNUSED_PARAM(ec);
+    if (isContextLost())
+        return 0;
+    switch (shaderType) {
+    case GraphicsContext3D::VERTEX_SHADER:
+    case GraphicsContext3D::FRAGMENT_SHADER:
+        break;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getShaderPrecisionFormat", "invalid shader type");
+        return 0;
+    }
+    switch (precisionType) {
+    case GraphicsContext3D::LOW_FLOAT:
+    case GraphicsContext3D::MEDIUM_FLOAT:
+    case GraphicsContext3D::HIGH_FLOAT:
+    case GraphicsContext3D::LOW_INT:
+    case GraphicsContext3D::MEDIUM_INT:
+    case GraphicsContext3D::HIGH_INT:
+        break;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getShaderPrecisionFormat", "invalid precision type");
+        return 0;
+    }
+
+    GC3Dint range[2] = {0, 0};
+    GC3Dint precision = 0;
+    m_context->getShaderPrecisionFormat(shaderType, precisionType, range, &precision);
+    return WebGLShaderPrecisionFormat::create(range[0], range[1], precision);
 }
 
 String WebGLRenderingContext::getShaderSource(WebGLShader* shader, ExceptionCode& ec)

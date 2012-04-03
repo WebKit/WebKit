@@ -127,6 +127,15 @@ void GraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)
     ::glGetIntegerv(pname, value);
 }
 
+void GraphicsContext3D::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision)
+{
+    ASSERT(range);
+    ASSERT(precision);
+
+    makeContextCurrent();
+    ::glGetShaderPrecisionFormat(shaderType, precisionType, range, precision);
+}
+
 bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
 {
     if (width && height && !pixels) {

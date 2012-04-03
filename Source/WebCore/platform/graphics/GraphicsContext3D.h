@@ -709,10 +709,7 @@ public:
     void getRenderbufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value);
     void getShaderiv(Platform3DObject, GC3Denum pname, GC3Dint* value);
     String getShaderInfoLog(Platform3DObject);
-
-    // TBD
-    // void glGetShaderPrecisionFormat (GC3Denum shadertype, GC3Denum precisiontype, GC3Dint* range, GC3Dint* precision);
-
+    void getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision);
     String getShaderSource(Platform3DObject);
     String getString(GC3Denum name);
     void getTexParameterfv(GC3Denum target, GC3Denum pname, GC3Dfloat* value);

@@ -286,10 +286,7 @@ public:
     virtual void getRenderbufferParameteriv(WGC3Denum target, WGC3Denum pname, WGC3Dint* value) = 0;
     virtual void getShaderiv(WebGLId shader, WGC3Denum pname, WGC3Dint* value) = 0;
     virtual WebString getShaderInfoLog(WebGLId shader) = 0;
-
-    // TBD
-    // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
-
+    virtual void getShaderPrecisionFormat(WGC3Denum shadertype, WGC3Denum precisiontype, WGC3Dint* range, WGC3Dint* precision) = 0;
     virtual WebString getShaderSource(WebGLId shader) = 0;
     virtual WebString getString(WGC3Denum name) = 0;
     virtual void getTexParameterfv(WGC3Denum target, WGC3Denum pname, WGC3Dfloat* value) = 0;
