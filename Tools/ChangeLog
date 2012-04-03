@@ -1,3 +1,10 @@
+2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another build fix after r113067. Close the zipfile after extracting all files so that we can remove it.
+
+        * BuildSlaveSupport/built-product-archive:
+        (unzipArchive):
+
 2012-04-03  Ojan Vafai  <ojan@chromium.org>
 
         Give more human friendly error message when builders fail to load or have stale data.

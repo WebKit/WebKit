@@ -185,6 +185,7 @@ def unzipArchive(directoryToExtractTo, configuration):
     elif sys.platform == 'win32':
         archive = zipfile.ZipFile(archiveFile, "r")
         archive.extractall(directoryToExtractTo)
+        archive.close()
 
     os.unlink(archiveFile)
 
