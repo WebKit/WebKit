@@ -355,12 +355,13 @@ namespace WebCore {
         FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides);
 
         void drawLineForText(const FloatPoint&, float width, bool printing);
-        enum TextCheckingLineStyle {
-            TextCheckingSpellingLineStyle,
-            TextCheckingGrammarLineStyle,
-            TextCheckingReplacementLineStyle
+        enum DocumentMarkerLineStyle {
+            DocumentMarkerSpellingLineStyle,
+            DocumentMarkerGrammarLineStyle,
+            DocumentMarkerAutocorrectionReplacementLineStyle,
+            DocumentMarkerDictationAlternativesLineStyle
         };
-        void drawLineForTextChecking(const FloatPoint&, float width, TextCheckingLineStyle);
+        void drawLineForDocumentMarker(const FloatPoint&, float width, DocumentMarkerLineStyle);
 
         bool paintingDisabled() const;
         void setPaintingDisabled(bool);

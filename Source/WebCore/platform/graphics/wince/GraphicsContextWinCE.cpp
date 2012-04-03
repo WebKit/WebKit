@@ -1032,7 +1032,7 @@ void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, boo
     setStrokeStyle(oldStyle);
 }
 
-void GraphicsContext::drawLineForTextChecking(const FloatPoint&, float width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForDocumentMarker(const FloatPoint&, float width, DocumentMarkerLineStyle style)
 {
     notImplemented();
 }

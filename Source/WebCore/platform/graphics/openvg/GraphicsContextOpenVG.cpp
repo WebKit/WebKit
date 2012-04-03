@@ -246,7 +246,7 @@ void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool pr
     UNUSED_PARAM(printing);
 }
 
-void GraphicsContext::drawLineForTextChecking(const IntPoint& origin, int width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForDocumentMarker(const IntPoint& origin, int width, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())
         return;

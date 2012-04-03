@@ -983,18 +983,18 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
         context->clearShadow();
 }
 
-static GraphicsContext::TextCheckingLineStyle textCheckingLineStyleForMarkerType(DocumentMarker::MarkerType markerType)
+static GraphicsContext::DocumentMarkerLineStyle lineStyleForMarkerType(DocumentMarker::MarkerType markerType)
 {
     switch (markerType) {
     case DocumentMarker::Spelling:
-        return GraphicsContext::TextCheckingSpellingLineStyle;
+        return GraphicsContext::DocumentMarkerSpellingLineStyle;
     case DocumentMarker::Grammar:
-        return GraphicsContext::TextCheckingGrammarLineStyle;
+        return GraphicsContext::DocumentMarkerGrammarLineStyle;
     case DocumentMarker::CorrectionIndicator:
-        return GraphicsContext::TextCheckingReplacementLineStyle;
+        return GraphicsContext::DocumentMarkerAutocorrectionReplacementLineStyle;
     default:
         ASSERT_NOT_REACHED();
-        return GraphicsContext::TextCheckingSpellingLineStyle;
+        return GraphicsContext::DocumentMarkerSpellingLineStyle;
     }
 }
 
@@ -1063,7 +1063,7 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, const Floa
         // In larger fonts, though, place the underline up near the baseline to prevent a big gap.
         underlineOffset = baseline + 2;
     }
-    pt->drawLineForTextChecking(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, textCheckingLineStyleForMarkerType(marker->type()));
+    pt->drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForMarkerType(marker->type()));
 }
 
 void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& boxOrigin, DocumentMarker* marker, RenderStyle* style, const Font& font)

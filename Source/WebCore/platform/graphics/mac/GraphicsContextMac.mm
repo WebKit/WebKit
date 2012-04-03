@@ -99,7 +99,7 @@ static NSColor* createPatternColor(NSString* firstChoiceName, NSString* secondCh
 }
 
 // WebKit on Mac is a standard platform component, so it must use the standard platform artwork for underline.
-void GraphicsContext::drawLineForTextChecking(const FloatPoint& point, float width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float width, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())
         return;
@@ -111,7 +111,7 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& point, float wid
     bool usingDot;
     NSColor *patternColor;
     switch (style) {
-        case TextCheckingSpellingLineStyle:
+        case DocumentMarkerSpellingLineStyle:
         {
             // Constants for spelling pattern color.
             static bool usingDotForSpelling = false;
@@ -120,7 +120,7 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& point, float wid
             patternColor = spellingPatternColor.get();
             break;
         }
-        case TextCheckingGrammarLineStyle:
+        case DocumentMarkerGrammarLineStyle:
         {
             // Constants for grammar pattern color.
             static bool usingDotForGrammar = false;
@@ -131,7 +131,8 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& point, float wid
         }
 #if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         // To support correction panel.
-        case TextCheckingReplacementLineStyle:
+        case DocumentMarkerAutocorrectionReplacementLineStyle:
+        case DocumentMarkerDictationAlternativesLineStyle:
         {
             // Constants for spelling pattern color.
             static bool usingDotForSpelling = false;

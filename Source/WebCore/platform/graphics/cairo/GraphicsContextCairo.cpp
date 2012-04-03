@@ -682,7 +682,7 @@ void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, boo
 #include "DrawErrorUnderline.h"
 #endif
 
-void GraphicsContext::drawLineForTextChecking(const FloatPoint& origin, float width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())
         return;
@@ -691,10 +691,10 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& origin, float wi
     cairo_save(cr);
 
     switch (style) {
-    case TextCheckingSpellingLineStyle:
+    case DocumentMarkerSpellingLineStyle:
         cairo_set_source_rgb(cr, 1, 0, 0);
         break;
-    case TextCheckingGrammarLineStyle:
+    case DocumentMarkerGrammarLineStyle:
         cairo_set_source_rgb(cr, 0, 1, 0);
         break;
     default:

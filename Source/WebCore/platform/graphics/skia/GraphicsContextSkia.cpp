@@ -507,7 +507,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     platformContext()->didDrawPoints(SkCanvas::kLines_PointMode, 2, pts, paint);
 }
 
-void GraphicsContext::drawLineForTextChecking(const FloatPoint& pt, float width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float width, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())
         return;

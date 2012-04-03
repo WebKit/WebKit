@@ -975,7 +975,7 @@ static void drawErrorUnderline(QPainter *painter, qreal x, qreal y, qreal width,
 }
 
 
-void GraphicsContext::drawLineForTextChecking(const FloatPoint& origin, float width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())
         return;
@@ -984,10 +984,10 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& origin, float wi
     const QPen originalPen = painter->pen();
 
     switch (style) {
-    case TextCheckingSpellingLineStyle:
+    case DocumentMarkerSpellingLineStyle:
         painter->setPen(Qt::red);
         break;
-    case TextCheckingGrammarLineStyle:
+    case DocumentMarkerGrammarLineStyle:
         painter->setPen(Qt::green);
         break;
     default:

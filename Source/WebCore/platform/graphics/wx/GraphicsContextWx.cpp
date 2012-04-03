@@ -442,13 +442,13 @@ void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, boo
     restore();
 }
 
-void GraphicsContext::drawLineForTextChecking(const FloatPoint& origin, float width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
 {
     switch (style) {
-    case TextCheckingSpellingLineStyle:
+    case DocumentMarkerSpellingLineStyle:
         m_data->context->SetPen(wxPen(*wxRED, 2, wxLONG_DASH));
         break;
-    case TextCheckingGrammarLineStyle:
+    case DocumentMarkerGrammarLineStyle:
         m_data->context->SetPen(wxPen(*wxGREEN, 2, wxLONG_DASH));
         break;
     default:
