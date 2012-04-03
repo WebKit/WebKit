@@ -305,9 +305,9 @@
                                        "Qt Linux 64-bit Release (WebKit2 Perf)", "Qt Linux ARMv7 Release",
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release",
                                        "Qt Linux MIPS Release", "Qt Linux SH4 Release",
-                                       "Chromium Win Release", "Chromium Win Release (Tests)", "Chromium Win Release (Perf)",
-                                       "Chromium Mac Release", "Chromium Mac Release (Tests)", "Chromium Mac Release (Perf)",
-                                       "Chromium Linux Release", "Chromium Linux Release (Tests)", "Chromium Linux Release (Perf)",
+                                       "Chromium Win Release", "Chromium Win Release (Perf)",
+                                       "Chromium Mac Release", "Chromium Mac Release (Perf)",
+                                       "Chromium Linux Release", "Chromium Linux Release (Perf)",
                                        "Chromium Linux Release (Grid Layout)", "Chromium Android Release",
                                        "WinCairo Release", "WinCE Release (Build)", "EFL Linux Release"]
                     },

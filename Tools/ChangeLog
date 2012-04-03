@@ -1,5 +1,12 @@
 2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Yet another build fix after r113067. Don't trigger Chromium testers right away
+        since they're now triggered by builders.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Another build fix after r113067 for Mac port.
         It turned out that archiving the entire build directory doesn't work.
 
