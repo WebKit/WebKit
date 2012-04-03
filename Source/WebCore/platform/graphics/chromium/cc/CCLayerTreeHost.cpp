@@ -89,13 +89,9 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
 bool CCLayerTreeHost::initialize()
 {
     TRACE_EVENT("CCLayerTreeHost::initialize", this, 0);
-    if (CCProxy::hasImplThread()) {
-        // The HUD does not work in threaded mode. Turn it off.
-        m_settings.showFPSCounter = false;
-        m_settings.showPlatformLayerTree = false;
-
+    if (CCProxy::hasImplThread())
         m_proxy = CCThreadProxy::create(this);
-    } else
+    else
         m_proxy = CCSingleThreadProxy::create(this);
     m_proxy->start();
 

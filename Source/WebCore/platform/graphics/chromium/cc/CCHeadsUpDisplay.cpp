@@ -59,6 +59,19 @@ CCHeadsUpDisplay::CCHeadsUpDisplay(LayerRendererChromium* owner)
     for (int i = 2; i < kBeginFrameHistorySize; i++)
         m_beginTimeHistoryInSec[i] = 0;
 
+    // We can't draw text in threaded mode with the current mechanism.
+    // FIXME: Figure out a way to draw text in threaded mode.
+    if (!CCProxy::implThread())
+        initializeFonts();
+}
+
+CCHeadsUpDisplay::~CCHeadsUpDisplay()
+{
+}
+
+void CCHeadsUpDisplay::initializeFonts()
+{
+    ASSERT(!CCProxy::implThread());
     FontDescription mediumFontDesc;
     mediumFontDesc.setGenericFamily(FontDescription::MonospaceFamily);
     mediumFontDesc.setComputedSize(20);
@@ -74,10 +87,6 @@ CCHeadsUpDisplay::CCHeadsUpDisplay(LayerRendererChromium* owner)
     m_smallFont->update(0);
 }
 
-CCHeadsUpDisplay::~CCHeadsUpDisplay()
-{
-}
-
 void CCHeadsUpDisplay::onFrameBegin(double timestamp)
 {
     m_beginTimeHistoryInSec[m_currentFrameNumber % kBeginFrameHistorySize] = timestamp;
@@ -90,10 +99,12 @@ void CCHeadsUpDisplay::onSwapBuffers()
 
 bool CCHeadsUpDisplay::enabled() const
 {
-    // FIXME: HUD does not work in compositor thread mode.
-    if (CCProxy::hasImplThread())
-        return false;
-    return settings().showPlatformLayerTree || settings().showFPSCounter;
+    return showPlatformLayerTree() || settings().showFPSCounter;
+}
+
+bool CCHeadsUpDisplay::showPlatformLayerTree() const
+{
+    return settings().showPlatformLayerTree && !CCProxy::implThread();
 }
 
 void CCHeadsUpDisplay::draw()
@@ -104,7 +115,7 @@ void CCHeadsUpDisplay::draw()
 
     // Use a fullscreen texture only if we need to...
     IntSize hudSize;
-    if (settings().showPlatformLayerTree) {
+    if (showPlatformLayerTree()) {
         hudSize.setWidth(min(2048, m_layerRenderer->viewportWidth()));
         hudSize.setHeight(min(2048, m_layerRenderer->viewportHeight()));
     } else {
@@ -163,16 +174,14 @@ void CCHeadsUpDisplay::draw()
     m_hudTexture->unreserve();
 }
 
-void CCHeadsUpDisplay::drawHudContents(GraphicsContext* ctx, const IntSize& hudSize)
+void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, const IntSize& hudSize)
 {
-    FontCachePurgePreventer fontCachePurgePreventer;
-
-    if (settings().showPlatformLayerTree) {
-        ctx->setFillColor(Color(0, 0, 0, 192), ColorSpaceDeviceRGB);
-        ctx->fillRect(FloatRect(0, 0, hudSize.width(), hudSize.height()));
+    if (showPlatformLayerTree()) {
+        context->setFillColor(Color(0, 0, 0, 192), ColorSpaceDeviceRGB);
+        context->fillRect(FloatRect(0, 0, hudSize.width(), hudSize.height()));
     }
 
-    int fpsCounterHeight = m_mediumFont->fontMetrics().floatHeight() + 2;
+    int fpsCounterHeight = 25;
     int fpsCounterTop = 2;
     int platformLayerTreeTop;
     if (settings().showFPSCounter)
@@ -181,13 +190,13 @@ void CCHeadsUpDisplay::drawHudContents(GraphicsContext* ctx, const IntSize& hudS
         platformLayerTreeTop = 0;
 
     if (settings().showFPSCounter)
-        drawFPSCounter(ctx, fpsCounterTop, fpsCounterHeight);
+        drawFPSCounter(context, fpsCounterTop, fpsCounterHeight);
 
-    if (settings().showPlatformLayerTree)
-        drawPlatformLayerTree(ctx, platformLayerTreeTop);
+    if (showPlatformLayerTree())
+        drawPlatformLayerTree(context, platformLayerTreeTop);
 }
 
-void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* ctx, int top, int height)
+void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* context, int top, int height)
 {
     // Note that since we haven't finished the current frame, the FPS counter
     // actually reports the last frame's time.
@@ -202,27 +211,21 @@ void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* ctx, int top, int height)
     } else
         m_filteredFrameTime = ((1.0 - alpha) * m_filteredFrameTime) + (alpha * secForLastFrame);
 
-    // Create & measure FPS text.
-    String text(String::format("FPS: %5.1f", 1.0 / m_filteredFrameTime));
-    TextRun run(text);
-    float textWidth = m_mediumFont->width(run) + 2.0f;
+    float textWidth = 0;
+    if (!CCProxy::implThread())
+        textWidth = drawFPSCounterText(context, top, height);
+
     float graphWidth = kBeginFrameHistorySize;
 
-    // Draw background.
-    ctx->setFillColor(Color(0, 0, 0, 255), ColorSpaceDeviceRGB);
-    ctx->fillRect(FloatRect(2, top, textWidth + graphWidth, height));
-
-    // Draw FPS text.
-    if (m_filteredFrameTime) {
-        ctx->setFillColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
-        ctx->drawText(*m_mediumFont, run, IntPoint(3, top + height - 6));
-    }
+    // Draw background for graph
+    context->setFillColor(Color(0, 0, 0, 255), ColorSpaceDeviceRGB);
+    context->fillRect(FloatRect(2 + textWidth, top, graphWidth, height));
 
     // Draw FPS graph.
     const double loFPS = 0.0;
     const double hiFPS = 120.0;
-    ctx->setStrokeStyle(SolidStroke);
-    ctx->setStrokeColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
+    context->setStrokeStyle(SolidStroke);
+    context->setStrokeColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
     int graphLeft = static_cast<int>(textWidth + 3);
     IntPoint prev(-1, 0);
     int x = 0;
@@ -237,21 +240,49 @@ void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* ctx, int top, int height)
             p = 1;
         IntPoint cur(graphLeft + x, 1 + top + p*h);
         if (prev.x() != -1)
-            ctx->drawLine(prev, cur);
+            context->drawLine(prev, cur);
         prev = cur;
         x += 1;
     }
 }
 
-void CCHeadsUpDisplay::drawPlatformLayerTree(GraphicsContext* ctx, int top)
+float CCHeadsUpDisplay::drawFPSCounterText(GraphicsContext* context, int top, int height)
 {
+    ASSERT(!CCProxy::implThread());
+
+    FontCachePurgePreventer fontCachePurgePreventer;
+
+    // Create & measure FPS text.
+    String text(String::format("FPS: %5.1f", 1.0 / m_filteredFrameTime));
+    TextRun run(text);
+    float textWidth = m_mediumFont->width(run) + 2.0f;
+
+    // Draw background.
+    context->setFillColor(Color(0, 0, 0, 255), ColorSpaceDeviceRGB);
+    context->fillRect(FloatRect(2, top, textWidth, height));
+
+    // Draw FPS text.
+    if (m_filteredFrameTime) {
+        context->setFillColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
+        context->drawText(*m_mediumFont, run, IntPoint(3, top + height - 6));
+    }
+
+    return textWidth;
+}
+
+void CCHeadsUpDisplay::drawPlatformLayerTree(GraphicsContext* context, int top)
+{
+    ASSERT(!CCProxy::implThread());
+
+    FontCachePurgePreventer fontCachePurgePreventer;
+
     float smallFontHeight = m_smallFont->fontMetrics().floatHeight();
     int y = top + smallFontHeight - 4;
-    ctx->setFillColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
+    context->setFillColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
     Vector<String> lines;
     m_layerRenderer->layerTreeAsText().split('\n', lines);
     for (size_t i = 0; i < lines.size(); ++i) {
-        ctx->drawText(*m_smallFont, TextRun(lines[i]), IntPoint(2, y));
+        context->drawText(*m_smallFont, TextRun(lines[i]), IntPoint(2, y));
         y += smallFontHeight;
     }
 }

@@ -64,8 +64,13 @@ private:
     explicit CCHeadsUpDisplay(LayerRendererChromium* owner);
     void drawHudContents(GraphicsContext*, const IntSize& hudSize);
     void drawFPSCounter(GraphicsContext*, int top, int height);
+    float drawFPSCounterText(GraphicsContext*, int top, int height);
     void drawPlatformLayerTree(GraphicsContext*, int top);
     const CCSettings& settings() const;
+
+    bool showPlatformLayerTree() const;
+
+    void initializeFonts();
 
     int m_currentFrameNumber;
 
