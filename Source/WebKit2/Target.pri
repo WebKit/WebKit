@@ -16,6 +16,8 @@ QT += declarative quick quick-private
 
 CONFIG += staticlib
 
+RESOURCES += $$PWD/WebKit2.qrc
+
 HEADERS += \
     Platform/CoreIPC/ArgumentDecoder.h \
     Platform/CoreIPC/ArgumentEncoder.h \
@@ -204,6 +206,7 @@ HEADERS += \
     UIProcess/GenericCallback.h \
     UIProcess/GeolocationPermissionRequestManagerProxy.h \
     UIProcess/GeolocationPermissionRequestProxy.h \
+    UIProcess/InspectorServer/WebInspectorServer.h \
     UIProcess/InspectorServer/WebSocketServer.h \
     UIProcess/InspectorServer/WebSocketServerClient.h \
     UIProcess/InspectorServer/WebSocketServerConnection.h \
@@ -545,8 +548,10 @@ SOURCES += \
     UIProcess/FindIndicator.cpp \
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp \
     UIProcess/GeolocationPermissionRequestProxy.cpp \
+    UIProcess/InspectorServer/WebInspectorServer.cpp \
     UIProcess/InspectorServer/WebSocketServer.cpp \
     UIProcess/InspectorServer/WebSocketServerConnection.cpp \
+    UIProcess/InspectorServer/qt/WebInspectorServerQt.cpp \
     UIProcess/InspectorServer/qt/WebSocketServerQt.cpp \
     UIProcess/Launcher/ProcessLauncher.cpp \
     UIProcess/Launcher/ThreadLauncher.cpp \

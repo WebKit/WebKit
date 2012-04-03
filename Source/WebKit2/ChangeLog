@@ -1,5 +1,48 @@
 2012-03-29  Joseph Pecoraro  <joepeck@webkit.org> and Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        WebInspectorServer for WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=73855
+
+        Reviewed by Simon Hausmann.
+
+        The server uses WebSocket for communication with the remote client and
+        normal HTTP requests are handled to optionally send the frontend on the
+        wire. Those decision are handled per platform and Qt currently maps:
+
+          - "/" to a static listing page.
+          - "/pagelist.json" to the page list for the listing page or tools.
+          - anything else, for example "/inspector.js" to the file with the
+            same name in the dynamic libraries built resources.
+            Invalid files should return a 404.
+
+        * Target.pri:
+        * UIProcess/InspectorServer/WebInspectorServer.cpp: Added.
+        (WebKit):
+        (WebKit::pageIdFromRequestPath):
+        (WebKit::WebInspectorServer::server):
+        (WebKit::WebInspectorServer::WebInspectorServer):
+        (WebKit::WebInspectorServer::~WebInspectorServer):
+        (WebKit::WebInspectorServer::registerPage):
+        (WebKit::WebInspectorServer::unregisterPage):
+        (WebKit::WebInspectorServer::sendMessageOverConnection):
+        (WebKit::WebInspectorServer::didReceiveUnrecognizedHTTPRequest):
+        (WebKit::WebInspectorServer::didReceiveWebSocketUpgradeHTTPRequest):
+        (WebKit::WebInspectorServer::didEstablishWebSocketConnection):
+        (WebKit::WebInspectorServer::didReceiveWebSocketMessage):
+        (WebKit::WebInspectorServer::didCloseWebSocketConnection):
+        (WebKit::WebInspectorServer::closeConnection):
+        * UIProcess/InspectorServer/WebInspectorServer.h: Added.
+        (WebKit):
+        (WebInspectorServer):
+        * UIProcess/InspectorServer/qt/WebInspectorServerQt.cpp: Added.
+        (WebKit):
+        (WebKit::WebInspectorServer::platformResourceForPath):
+        (WebKit::WebInspectorServer::buildPageList):
+        * WebKit2.qrc: Added.
+        * qt/Resources/inspectorPageIndex.html: Added.
+
+2012-03-29  Joseph Pecoraro  <joepeck@webkit.org> and Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         Add a Generic WebSocket Server.
         https://bugs.webkit.org/show_bug.cgi?id=73093
 

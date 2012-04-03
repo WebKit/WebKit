@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><head>
+<script type="text/javascript">
+function createPageList() {
+    var xhr = new XMLHttpRequest;
+    xhr.open("GET", "/pagelist.json");
+    xhr.onload = function(e) {
+        if (xhr.status == 200) {
+            var pages = JSON.parse(xhr.responseText);
+            if (pages.length)
+                document.getElementById("noPageNotice").style.display = "none";
+            for (var i in pages) {
+                var link = document.createElement("a");
+                var description = pages[i].description ? pages[i].description : ("Page " + (Number(i)+1));
+                var url = pages[i].url;
+                link.appendChild(document.createTextNode(description + (url ? (" [" + url + "]") : "" )));
+                link.setAttribute("href", pages[i].inspectorLocation);
+                document.body.appendChild(link);
+                document.body.appendChild(document.createElement("br"));
+            }
+        }
+    };
+    xhr.send();
+}
+
+document.addEventListener("DOMContentLoaded", createPageList, false);
+</script>
+</head><body>
+<h1>Inspectable web views</h1>
+<p id="noPageNotice" style="color:grey">None found, make sure that you have set the developerExtrasEnabled preference property on your WebView.</p>
+</body></html>
