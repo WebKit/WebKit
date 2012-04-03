@@ -111,9 +111,6 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
         selectorTextCache().set(this, generateSelectorText());
     }
 
-    if (this->selectorText() == oldSelectorText)
-        return;
-
     doc->styleSelectorChanged(DeferRecalcStyle);
 }
 
