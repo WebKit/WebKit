@@ -1,3 +1,38 @@
+2012-04-02  Ojan Vafai  <ojan@chromium.org>
+
+        Load all builder lists from the buildbot json
+        https://bugs.webkit.org/show_bug.cgi?id=82998
+
+        Reviewed by Adam Barth.
+
+        Also, remove an unnecessary list of test types. Now we don't hard-code
+        builder names anywhere and we only have a single hard-coded list of
+        test types.
+
+        * TestResultServer/static-dashboards/builders.js:
+        (BuilderMaster.prototype.logPath):
+        (BuilderMaster.prototype.builderJsonPath):
+        (requestBuilderList.xhr.onload):
+        (requestBuilderList.xhr.onerror):
+        (isChromiumDepsFyiGpuTestRunner):
+        (isChromiumTipOfTreeGpuTestRunner):
+        (isChromiumDepsGTestRunner):
+        (isChromiumDepsCrosGTestRunner):
+        (isChromiumTipOfTreeGTestRunner):
+        (onBuilderListLoad):
+        (loadBuildersList):
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (parseCrossDashboardParameters):
+        (currentBuilderGroupCategory):
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        (testHtmlForTestsWithExpectationsButNoFailures):
+        (testGenerateChromiumTipOfTreeGpuBuildersFromBuilderList):
+        (testGenerateChromiumDepsGTestBuildersFromBuilderList):
+        (testGenerateChromiumDepsCrosGTestBuildersFromBuilderList):
+        (testGenerateChromiumTipOfTreeGTestBuildersFromBuilderList):
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+
 2012-04-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium testers should extract builds instead of building on their own

@@ -107,7 +107,7 @@ var WEBKIT_REVISIONS_KEY = 'webkitRevision';
 var TIMESTAMPS_KEY = 'secondsSinceEpoch';
 var BUILD_NUMBERS_KEY = 'buildNumbers';
 var TESTS_KEY = 'tests';
-var TWO_WEEKS_SECONDS = 60 * 60 * 24 * 14;
+var ONE_WEEK_SECONDS = 60 * 60 * 24 * 7;
 
 // These should match the testtype uploaded to test-results.appspot.com.
 // See http://test-results.appspot.com/testfile.
@@ -330,6 +330,8 @@ function parseCrossDashboardParameters()
         parseParameter(parameters, parameterName);
 
     fillMissingValues(g_crossDashboardState, g_defaultCrossDashboardStateValues);
+    if (currentBuilderGroup() === undefined)
+        g_crossDashboardState.group = g_defaultCrossDashboardStateValues.group;
 }
 
 function parseDashboardSpecificParameters()
@@ -347,14 +349,19 @@ function parseParameters()
 
     parseCrossDashboardParameters();
     parseDashboardSpecificParameters();
+    parseParameter(queryHashAsMap(), 'builder');
 
     var crossDashboardDiffState = diffStates(oldCrossDashboardState, g_crossDashboardState);
     var dashboardSpecificDiffState = diffStates(oldDashboardSpecificState, g_currentState);
 
     fillMissingValues(g_currentState, g_defaultDashboardSpecificStateValues);
-
-    parseParameter(queryHashAsMap(), 'builder');
     fillMissingValues(g_currentState, {'builder': g_defaultBuilderName});
+
+    // FIXME: dashboard_base shouldn't know anything about specific dashboard specific keys.
+    if (dashboardSpecificDiffState.builder)
+        delete g_currentState.tests;
+    if (g_currentState.tests)
+        delete g_currentState.builder;
 
     // Some parameters require loading different JSON files when the value changes. Do a reload.
     if (Object.keys(oldCrossDashboardState).length) {
@@ -440,45 +447,11 @@ function isGPUTestResults()
 
 function currentBuilderGroupCategory()
 {
-    switch (g_crossDashboardState.testType) {
-    case 'layout-tests':
-        return LAYOUT_TESTS_BUILDER_GROUPS
-    case 'gpu_tests':
-        return CHROMIUM_GPU_TESTS_BUILDER_GROUPS
-    case 'aura_unittests':
-    case 'aura_shell_unittests':
-    case 'base_unittests':
-    case 'browser_tests':
-    case 'cacheinvalidation_unittests':
-    case 'compositor_unittests':
-    case 'content_unittests':
-    case 'courgette_unittests':
-    case 'crypto_unittests':
-    case 'googleurl_unittests':
-    case 'gfx_unittests':
-    case 'gpu_unittests':
-    case 'installer_util_unittests':
-    case 'interactive_ui_tests':
-    case 'ipc_tests':
-    case 'jingle_unittests':
-    case 'media_unittests':
-    case 'mini_installer_test':
-    case 'nacl_ui_tests':
-    case 'net_unittests':
-    case 'printing_unittests':
-    case 'remoting_unittests':
-    case 'safe_browsing_tests':
-    case 'sql_unittests':
-    case 'sync_unit_tests':
-    case 'sync_integration_tests':
-    case 'test_shell_tests':
-    case 'ui_tests':
-    case 'unit_tests':
-    case 'views_unittests':
-        return CHROMIUM_GTESTS_BUILDER_GROUPS
-    default:
-        console.log('invalid testType parameter: ' + g_crossDashboardState.testType);
-    }
+    if (g_crossDashboardState.testType == 'layout-tests')
+        return LAYOUT_TESTS_BUILDER_GROUPS;
+    if (g_crossDashboardState.testType == 'gpu_tests')
+        return CHROMIUM_GPU_TESTS_BUILDER_GROUPS;
+    return CHROMIUM_GTESTS_BUILDER_GROUPS;
 }
 
 function currentBuilderGroup()
@@ -524,7 +497,7 @@ function ADD_RESULTS(builds)
         // running that suite anymore.
         // FIXME: Grab which bots run which tests directly from the buildbot JSON instead.
         var lastRunSeconds = builds[builderName].secondsSinceEpoch[0];
-        if ((Date.now() / 1000) - lastRunSeconds > TWO_WEEKS_SECONDS)
+        if ((Date.now() / 1000) - lastRunSeconds > ONE_WEEK_SECONDS)
             continue;
 
         if (json_version >= 4)

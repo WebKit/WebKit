@@ -335,6 +335,9 @@ function testHtmlForTestsWithExpectationsButNoFailures()
 
     g_currentState.showUnexpectedPasses = true;
     g_currentState.showSkipped = true;
+
+    g_crossDashboardState.group = '@ToT - chromium.org';
+    g_crossDashboardState.testType = 'layout-tests';
     
     var container = document.createElement('div');
     container.innerHTML = htmlForTestsWithExpectationsButNoFailures(builder);
@@ -403,6 +406,24 @@ function generateBuildersFromBuilderListHelper(builderList, expectedBuilders, bu
     })
 }
 
+function testGenerateChromiumDepsFyiGpuBuildersFromBuilderList()
+{
+    var builderList = ["Linux Audio", "Linux Release (ATI)", "Linux Release (Intel)", "Mac Release (ATI)", "Win7 Audio", "Win7 Release (ATI)", "Win7 Release (Intel)", "WinXP Debug (NVIDIA)", "WinXP Release (NVIDIA)"];
+    var expectedBuilders = [["Linux Release (ATI)", 2], ["Linux Release (Intel)"], ["Mac Release (ATI)"], ["Win7 Release (ATI)"], ["Win7 Release (Intel)"], ["WinXP Debug (NVIDIA)"], ["WinXP Release (NVIDIA)"] ];
+    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumDepsFyiGpuTestRunner);
+}
+
+function testGenerateChromiumTipOfTreeGpuBuildersFromBuilderList()
+{
+    var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf",
+        "Linux Tests", "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "Webkit Linux", "Webkit Linux (dbg)", "Webkit Linux (deps)",
+        "Webkit Linux 32", "Webkit Mac Builder", "Webkit Mac Builder (dbg)", "Webkit Mac Builder (deps)", "Webkit Mac10.5", "Webkit Mac10.5 (dbg)(1)", "Webkit Mac10.5 (dbg)(2)",
+        "Webkit Mac10.6", "Webkit Mac10.6 (dbg)", "Webkit Mac10.6 (deps)", "Webkit Mac10.7", "Webkit Vista", "Webkit Win", "Webkit Win (dbg)(1)", "Webkit Win (dbg)(2)",
+        "Webkit Win (deps)", "Webkit Win Builder", "Webkit Win Builder (dbg)", "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder"];
+    var expectedBuilders = [["GPU Linux (NVIDIA)", 2], ["GPU Linux (dbg) (NVIDIA)"], ["GPU Mac"], ["GPU Mac (dbg)"], ["GPU Win7 (NVIDIA)"], ["GPU Win7 (dbg) (NVIDIA)"]];
+    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumTipOfTreeGpuTestRunner);
+}
+
 function testGenerateWebkitBuildersFromBuilderList()
 {
     var builderList = ["Chromium Android Release", "Chromium Linux Release", "Chromium Linux Release (Grid Layout)", "Chromium Linux Release (Perf)", "Chromium Linux Release (Tests)",
@@ -440,6 +461,44 @@ function testGenerateChromiumWebkitDepsBuildersFromBuilderList()
         "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder"];
     var expectedBuilders = [["Webkit Linux (deps)", 2], ["Webkit Mac10.6 (deps)"], ["Webkit Win (deps)"]];
     generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumWebkitDepsTestRunner);
+}
+
+function testGenerateChromiumDepsGTestBuildersFromBuilderList()
+{
+    var builderList = ["Android Builder", "Chrome Frame Tests (ie6)", "Chrome Frame Tests (ie7)", "Chrome Frame Tests (ie8)", "Interactive Tests (dbg)", "Linux", "Linux Builder (dbg)",
+        "Linux Builder (dbg)(shared)", "Linux Builder x64", "Linux Clang (dbg)", "Linux Sync", "Linux Tests (dbg)(1)", "Linux Tests (dbg)(2)", "Linux Tests (dbg)(shared)", "Linux Tests x64",
+        "Linux x64", "Mac", "Mac 10.5 Tests (dbg)(1)", "Mac 10.5 Tests (dbg)(2)", "Mac 10.5 Tests (dbg)(3)", "Mac 10.5 Tests (dbg)(4)", "Mac 10.6 Tests (dbg)(1)", "Mac 10.6 Tests (dbg)(2)",
+        "Mac 10.6 Tests (dbg)(3)", "Mac 10.6 Tests (dbg)(4)", "Mac Builder", "Mac Builder (dbg)", "Mac10.5 Tests (1)", "Mac10.5 Tests (2)", "Mac10.5 Tests (3)", "Mac10.6 Sync",
+        "Mac10.6 Tests (1)", "Mac10.6 Tests (2)", "Mac10.6 Tests (3)", "NACL Tests", "NACL Tests (x64)", "Vista Tests (1)", "Vista Tests (2)", "Vista Tests (3)", "Win", "Win Aura",
+        "Win Builder", "Win Builder (dbg)", "Win Builder 2010 (dbg)", "Win7 Sync", "Win7 Tests (1)", "Win7 Tests (2)", "Win7 Tests (3)", "Win7 Tests (dbg)(1)", "Win7 Tests (dbg)(2)",
+        "Win7 Tests (dbg)(3)", "Win7 Tests (dbg)(4)", "Win7 Tests (dbg)(5)", "Win7 Tests (dbg)(6)", "XP Tests (1)", "XP Tests (2)", "XP Tests (3)", "XP Tests (dbg)(1)", "XP Tests (dbg)(2)",
+        "XP Tests (dbg)(3)", "XP Tests (dbg)(4)", "XP Tests (dbg)(5)", "XP Tests (dbg)(6)"];
+    var expectedBuilders = [["Interactive Tests (dbg)", 2], ["Linux Tests (dbg)(1)"], ["Linux Tests (dbg)(2)"], ["Linux Tests (dbg)(shared)"], ["Linux Tests x64"], ["Mac 10.5 Tests (dbg)(1)"],
+        ["Mac 10.5 Tests (dbg)(2)"], ["Mac 10.5 Tests (dbg)(3)"], ["Mac 10.5 Tests (dbg)(4)"], ["Mac 10.6 Tests (dbg)(1)"], ["Mac 10.6 Tests (dbg)(2)"], ["Mac 10.6 Tests (dbg)(3)"],
+        ["Mac 10.6 Tests (dbg)(4)"], ["Mac10.5 Tests (1)"], ["Mac10.5 Tests (2)"], ["Mac10.5 Tests (3)"], ["Mac10.6 Tests (1)"], ["Mac10.6 Tests (2)"], ["Mac10.6 Tests (3)"], ["NACL Tests"],
+        ["NACL Tests (x64)"], ["Vista Tests (1)"], ["Vista Tests (2)"], ["Vista Tests (3)"], ["Win7 Tests (1)"], ["Win7 Tests (2)"], ["Win7 Tests (3)"], ["Win7 Tests (dbg)(1)"],
+        ["Win7 Tests (dbg)(2)"], ["Win7 Tests (dbg)(3)"], ["Win7 Tests (dbg)(4)"], ["Win7 Tests (dbg)(5)"], ["Win7 Tests (dbg)(6)"], ["XP Tests (1)"], ["XP Tests (2)"], ["XP Tests (3)"],
+        ["XP Tests (dbg)(1)"], ["XP Tests (dbg)(2)"], ["XP Tests (dbg)(3)"], ["XP Tests (dbg)(4)"], ["XP Tests (dbg)(5)"], ["XP Tests (dbg)(6)"]];
+    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumDepsGTestRunner);
+}
+
+function testGenerateChromiumDepsCrosGTestBuildersFromBuilderList()
+{
+    var builderList = ["ChromiumOS (amd64)", "ChromiumOS (arm)", "ChromiumOS (tegra2)", "ChromiumOS (x86)", "Linux ChromiumOS (Clang dbg)", "Linux ChromiumOS Builder", "Linux ChromiumOS Builder (dbg)",
+        "Linux ChromiumOS Tests (1)", "Linux ChromiumOS Tests (2)", "Linux ChromiumOS Tests (dbg)(1)", "Linux ChromiumOS Tests (dbg)(2)", "Linux ChromiumOS Tests (dbg)(3)"];
+    var expectedBuilders = [["Linux ChromiumOS Tests (1)", 2], ["Linux ChromiumOS Tests (2)"], ["Linux ChromiumOS Tests (dbg)(1)"], ["Linux ChromiumOS Tests (dbg)(2)"], ["Linux ChromiumOS Tests (dbg)(3)"]];
+    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumDepsCrosGTestRunner);
+}
+
+function testGenerateChromiumTipOfTreeGTestBuildersFromBuilderList()
+{
+    var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf",
+        "Linux Tests", "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "Webkit Linux", "Webkit Linux (dbg)", "Webkit Linux (deps)",
+        "Webkit Linux 32", "Webkit Mac Builder", "Webkit Mac Builder (dbg)", "Webkit Mac Builder (deps)", "Webkit Mac10.5", "Webkit Mac10.5 (dbg)(1)", "Webkit Mac10.5 (dbg)(2)",
+        "Webkit Mac10.6", "Webkit Mac10.6 (dbg)", "Webkit Mac10.6 (deps)", "Webkit Mac10.7", "Webkit Vista", "Webkit Win", "Webkit Win (dbg)(1)", "Webkit Win (dbg)(2)",
+        "Webkit Win (deps)", "Webkit Win Builder", "Webkit Win Builder (dbg)", "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder"];
+    var expectedBuilders = [['Linux Tests', BuilderGroup.DEFAULT_BUILDER], ['Mac10.6 Tests'], ['Vista Tests'], ['Win (dbg)']];
+    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumTipOfTreeGTestRunner);
 }
 
 function assertObjectsDeepEqual(a, b)

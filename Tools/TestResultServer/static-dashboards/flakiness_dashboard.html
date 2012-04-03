@@ -1260,7 +1260,7 @@ function showPopupForBuild(e, builder, index, opt_testName)
 
     var buildNumber = g_resultsByBuilder[builder].buildNumbers[index];
     var master = builderMaster(builder);
-    var buildBasePath = master.getLogPath(builder, buildNumber);
+    var buildBasePath = master.logPath(builder, buildNumber);
 
     html += '<ul><li>' + linkHTMLToOpenWindow(buildBasePath, 'Build log') +
         '</li><li>' +
@@ -2150,7 +2150,7 @@ function loadGPUResultsForBuilder(builder, test, expectationsContainer)
     var failureIndex = indexesForFailures(builder, test)[0];
 
     var buildNumber = g_resultsByBuilder[builder].buildNumbers[failureIndex];
-    var pathToLog = builderMaster(builder).getLogPath(builder, buildNumber) + pathToFailureLog(test);
+    var pathToLog = builderMaster(builder).logPath(builder, buildNumber) + pathToFailureLog(test);
 
     var chromeRevision = g_resultsByBuilder[builder].chromeRevision[failureIndex];
     var builderName = builder.replace(/[^A-Za-z0-9 ]/g, '').replace(/ /g, '_');
@@ -2173,7 +2173,7 @@ function loadNonWebKitResultsForBuilder(builder, test, expectationsContainer)
         // FIXME: This doesn't seem to work anymore. Did the paths change?
         // Once that's resolved, see if we need to try each GTEST_MODIFIERS prefix as well.
         var buildNumber = g_resultsByBuilder[builder].buildNumbers[failureIndexes[i]];
-        var pathToLog = builderMaster(builder).getLogPath(builder, buildNumber) + pathToFailureLog(test);
+        var pathToLog = builderMaster(builder).logPath(builder, buildNumber) + pathToFailureLog(test);
         appendNonWebKitResults(container, pathToLog, 'non-webkit-results');
     }
 }
