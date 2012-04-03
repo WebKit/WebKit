@@ -27,7 +27,6 @@
 
 #include "FloatPoint.h"
 #include "PlatformGestureCurve.h"
-#include "UnitBezier.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -42,19 +41,23 @@ class PlatformGestureCurveTarget;
 class TouchpadFlingPlatformGestureCurve : public PlatformGestureCurve {
 public:
     static PassOwnPtr<PlatformGestureCurve> create(const FloatPoint& velocity, IntPoint cumulativeScroll = IntPoint());
-    static PassOwnPtr<PlatformGestureCurve> create(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2, IntPoint cumulativeScroll = IntPoint());
+    static PassOwnPtr<PlatformGestureCurve> create(const FloatPoint& velocity, float p0, float p1, float p2, float p3, float p4, float curveDuration, IntPoint cumulativeScroll = IntPoint());
     virtual ~TouchpadFlingPlatformGestureCurve();
 
     virtual const char* debugName() const { return "TouchpadFling"; }
     virtual bool apply(double monotonicTime, PlatformGestureCurveTarget*);
 
 private:
-    TouchpadFlingPlatformGestureCurve(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2, const IntPoint& cumulativeScroll);
+    TouchpadFlingPlatformGestureCurve(const FloatPoint& velocity, float p0, float p1, float p2, float p3, float p4, float curveDuration, const IntPoint& cumulativeScroll);
 
-    FloatPoint m_velocity;
-    float m_timeScaleFactor;
+    FloatPoint m_displacementRatio;
     IntPoint m_cumulativeScroll;
-    UnitBezier m_flingBezier;
+    float m_coeffs[5];
+    float m_timeOffset;
+    float m_curveDuration;
+    float m_positionOffset;
+
+    static const int m_maxSearchIterations;
 };
 
 } // namespace WebCore

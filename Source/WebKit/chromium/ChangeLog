@@ -1,3 +1,12 @@
+2012-04-03  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Switch touchpad fling curve physics to absolute (not scaled) curve.
+        https://bugs.webkit.org/show_bug.cgi?id=83061
+
+        Reviewed by James Robinson.
+
+        * tests/PlatformGestureCurveTest.cpp:
+
 2012-04-02  Zhenyao Mo  <zmo@google.com>
 
         Implement WebGLShaderPrecisionFormat

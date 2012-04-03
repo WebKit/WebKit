@@ -99,21 +99,18 @@ TEST(PlatformGestureCurve, flingCurve)
 
 TEST(PlatformGestureCurve, flingCurveTouch)
 {
-    double initialVelocity = 1000;
-    const double touchFlingCurveAreaFactor = 1; // Depends on parameterization in TouchpadFlingPlatformGestureCurve.
+    double initialVelocity = 5000;
     MockPlatformGestureCurveTarget target;
     OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(TouchpadFlingPlatformGestureCurve::create(FloatPoint(initialVelocity, 0)), &target);
 
-    // Note: the expectations below are dependent on the value of sigma hard-coded in the Rayleigh
-    //       curve. If sigma changes, these test expectations will also change.
+    // Note: the expectations below are dependent on the value of sigma hard-coded in the curve parameters.
+    //       If the parameters change, then the tests values/expectations will need to be updated.
     EXPECT_TRUE(animation->animate(0));
     EXPECT_TRUE(animation->animate(0.25));
     EXPECT_TRUE(animation->animate(0.45)); // Use non-uniform tick spacing.
-    EXPECT_TRUE(animation->animate(0.75));
-    EXPECT_TRUE(animation->animate(0.9));
-    EXPECT_TRUE(animation->animate(1000));
-    EXPECT_FALSE(animation->animate(1001));
-    EXPECT_NEAR(target.cumulativeDelta().x(), initialVelocity * touchFlingCurveAreaFactor, 1);
+    EXPECT_TRUE(animation->animate(1));
+    EXPECT_FALSE(animation->animate(1.5));
+    EXPECT_NEAR(target.cumulativeDelta().x(), 1094, 1);
     EXPECT_EQ(target.cumulativeDelta().y(), 0);
 }
 

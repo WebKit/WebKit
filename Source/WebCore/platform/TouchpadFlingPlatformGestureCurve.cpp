@@ -33,23 +33,93 @@ namespace WebCore {
 
 using namespace std;
 
+// This curve implementation is based on the notion of a single, absolute curve, which starts at
+// a large velocity and smoothly decreases to zero. For a given input velocity, we find where on
+// the curve this velocity occurs, and start the animation at this point---denoted by (m_timeOffset,
+// m_positionOffset).
+//
+// This has the effect of automatically determining an animation duration that scales with input
+// velocity, as faster initial velocities start earlier on the curve and thus take longer to reach the end.
+// No complicated time scaling is required.
+//
+// Since the starting velocity is implicitly determined by our starting point, we only store the
+// relative magnitude and direction of both initial x- and y-velocities, and use this to scale the
+// computed displacement at any point in time. This guarantees that fling trajectories are straight
+// lines when viewed in x-y space. Initial velocities that lie outside the max velocity are constrained
+// to start at zero (and thus are implicitly scaled).
+//
+// The curve is modelled as a 4th order polynomial, starting at t = 0, and ending at t = m_curveDuration.
+// Attempts to generate position/velocity estimates outside this range are undefined.
+
+const int TouchpadFlingPlatformGestureCurve::m_maxSearchIterations = 40;
+
 PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity, IntPoint cumulativeScroll)
 {
-    return create(velocity, 3, FloatPoint(0.3333, 0.6666), FloatPoint(0.6666, 1), cumulativeScroll);
+    // The default parameters listed below are a matched set, and should not be changed independently of one another.
+    return create(velocity, 1.5395e+01, 2.0466e+04, -2.9899e+04, 2.0577e+04, -5.4966e+03, 1.128445, cumulativeScroll);
 }
 
-PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2, IntPoint cumulativeScroll)
+PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity, float p0, float p1, float p2, float p3, float p4, float curveDuration, IntPoint cumulativeScroll)
 {
-    return adoptPtr(new TouchpadFlingPlatformGestureCurve(velocity, unitTimeScaleLog10, bezierP1, bezierP2, cumulativeScroll));
+    return adoptPtr(new TouchpadFlingPlatformGestureCurve(velocity, p0, p1, p2, p3, p4, curveDuration, cumulativeScroll));
 }
 
-TouchpadFlingPlatformGestureCurve::TouchpadFlingPlatformGestureCurve(const FloatPoint& velocity, const float unitTimeScaleLog10, const FloatPoint& bezierP1, const FloatPoint& bezierP2, const IntPoint& cumulativeScroll)
-    : m_velocity(velocity)
-    , m_timeScaleFactor(unitTimeScaleLog10 / log10(max(10.f, max(fabs(velocity.x()), fabs(velocity.y())))))
-    , m_cumulativeScroll(cumulativeScroll)
-    , m_flingBezier(bezierP1.x(), bezierP1.y(), bezierP2.x(), bezierP2.y())
+inline double position(double t, float* p)
 {
-    ASSERT(velocity != FloatPoint::zero());
+    return p[0] + t * (p[1] + t * (p[2] + t * (p[3] + t * p[4])));
+}
+
+inline double velocity(double t, float* p)
+{
+    return p[1] + t * (2 * p[2] + t * (3 * p[3] + t * 4 * p[4]));
+}
+
+TouchpadFlingPlatformGestureCurve::TouchpadFlingPlatformGestureCurve(const FloatPoint& initialVelocity, float p0, float p1, float p2, float p3, float p4, float curveDuration, const IntPoint& cumulativeScroll)
+    : m_cumulativeScroll(cumulativeScroll)
+    , m_curveDuration(curveDuration)
+{
+    ASSERT(initialVelocity != FloatPoint::zero());
+    m_coeffs[0] = p0;
+    m_coeffs[1] = p1;
+    m_coeffs[2] = p2;
+    m_coeffs[3] = p3;
+    m_coeffs[4] = p4;
+
+    float maxInitialVelocity = max(fabs(initialVelocity.x()), fabs(initialVelocity.y()));
+
+    // Force maxInitialVelocity to lie in the range v(0) to v(curveDuration), and assume that
+    // the curve parameters define a monotonically decreasing velocity, or else bisection search may
+    // fail.
+    if (maxInitialVelocity > m_coeffs[1])
+        maxInitialVelocity = m_coeffs[1];
+
+    if (maxInitialVelocity < velocity(m_curveDuration, m_coeffs))
+        maxInitialVelocity = velocity(m_curveDuration, m_coeffs);
+
+    // We keep track of relative magnitudes and directions of the velocity/displacement components here.
+    m_displacementRatio = FloatPoint(initialVelocity.x() / maxInitialVelocity, initialVelocity.y() / maxInitialVelocity);
+
+    // Use basic bisection to estimate where we should start on the curve.
+    // FIXME: Would Newton's method be better?
+    const double epsilon = 1; // It is probably good enough to get the start point to within 1 pixel/sec.
+    double t0 = 0;
+    double t1 = curveDuration;
+    int numIterations = 0;
+    while (t0 < t1 && numIterations < m_maxSearchIterations) {
+        numIterations++;
+        m_timeOffset = (t0 + t1) * 0.5;
+        double vOffset = velocity(m_timeOffset, m_coeffs);
+        if (fabs(maxInitialVelocity - vOffset) < epsilon)
+            break;
+
+        if (vOffset > maxInitialVelocity)
+            t0 = m_timeOffset;
+        else
+            t1 = m_timeOffset;
+    }
+
+    // Compute curve position at offset time
+    m_positionOffset = position(m_timeOffset, m_coeffs);
 }
 
 TouchpadFlingPlatformGestureCurve::~TouchpadFlingPlatformGestureCurve()
@@ -58,26 +128,20 @@ TouchpadFlingPlatformGestureCurve::~TouchpadFlingPlatformGestureCurve()
 
 bool TouchpadFlingPlatformGestureCurve::apply(double time, PlatformGestureCurveTarget* target)
 {
-    // Use 2-D Bezier curve with a "stretched-italic-s" curve.
-    // We scale time logarithmically as this (subjectively) feels better.
-    time *= m_timeScaleFactor;
-
     float displacement;
     if (time < 0)
         displacement = 0;
-    else if (time < 1) {
-        // Below, s is the curve parameter for the 2-D Bezier curve (time(s), displacement(s)).
-        double s = m_flingBezier.solveCurveX(time, 1.e-3);
-        displacement = m_flingBezier.sampleCurveY(s);
-    } else
-        displacement = 1;
+    else if (time + m_timeOffset < m_curveDuration)
+        displacement = position(time + m_timeOffset, m_coeffs) - m_positionOffset;
+    else
+        displacement = position(m_curveDuration, m_coeffs) - m_positionOffset;
 
     // Keep track of integer portion of scroll thus far, and prepare increment.
-    IntPoint scroll(displacement * m_velocity.x(), displacement * m_velocity.y());
+    IntPoint scroll(displacement * m_displacementRatio.x(), displacement * m_displacementRatio.y());
     IntPoint scrollIncrement(scroll - m_cumulativeScroll);
     m_cumulativeScroll = scroll;
 
-    if (time < 1 || scrollIncrement != IntPoint::zero()) {
+    if (time + m_timeOffset < m_curveDuration || scrollIncrement != IntPoint::zero()) {
         target->scrollBy(scrollIncrement);
         return true;
     }
