@@ -369,6 +369,11 @@ WebInspector.HeapSnapshotProxy.prototype = {
         return !!this._objectId;
     },
 
+    get maxNodeId()
+    {
+        return this._staticData.maxNodeId;
+    },
+
     get nodeCount()
     {
         return this._staticData.nodeCount;
