@@ -719,6 +719,7 @@ private:
 
     // If set, the WebView is in fullscreen mode for an element in this frame.
     RefPtr<WebCore::Frame> m_fullScreenFrame;
+    bool m_isCancelingFullScreen;
 
 #if USE(ACCELERATED_COMPOSITING)
     WebCore::IntRect m_rootLayerScrollDamage;

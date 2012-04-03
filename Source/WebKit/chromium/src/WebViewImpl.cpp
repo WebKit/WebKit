@@ -369,6 +369,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_isTransparent(false)
     , m_tabsToLinks(false)
     , m_dragScrollTimer(adoptPtr(new DragScrollTimer))
+    , m_isCancelingFullScreen(false)
 #if USE(ACCELERATED_COMPOSITING)
     , m_rootGraphicsLayer(0)
     , m_isAcceleratedCompositingActive(false)
@@ -1332,8 +1333,14 @@ void WebViewImpl::willExitFullScreen()
         return;
 
     if (Document* doc = m_fullScreenFrame->document()) {
-        if (doc->webkitIsFullScreen())
+        if (doc->webkitIsFullScreen()) {
+            // When the client exits from full screen we have to call webkitCancelFullScreen to
+            // notify the document. While doing that, suppress notifications back to the client.
+            m_isCancelingFullScreen = true;
+            doc->webkitCancelFullScreen();
+            m_isCancelingFullScreen = false;
             doc->webkitWillExitFullScreenForElement(0);
+        }
     }
 #endif
 }
@@ -1568,6 +1575,9 @@ void WebViewImpl::enterFullScreenForElement(WebCore::Element* element)
 
 void WebViewImpl::exitFullScreenForElement(WebCore::Element* element)
 {
+    // The client is exiting full screen, so don't send a notification.
+    if (m_isCancelingFullScreen)
+        return;
     if (m_client)
         m_client->exitFullScreen();
 }
