@@ -1,3 +1,24 @@
+2012-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        run-webkit-tests with a relative --root causes tests to fail because DYLD_LIBRARY_PATH is not set
+        https://bugs.webkit.org/show_bug.cgi?id=82962
+
+        Reviewed by Dirk Pranke.
+
+        Ensure that _build_path() returns an absolute path.
+
+        Eric Seidel also had to deploy MockConfig in a bunch of places
+        in order to correct previous testing errors where we were
+        pretending that "Mock Output from child process" (returned by MockExecutive.run_command)
+        was a real path.  The real Config object calls run_command("webkit-build-directory")
+        to read the WebKit build directory from the webkitdirs.pm perl code.
+        MockConfig abstracts this away and always returns "/mock-build" during
+        testing.  This change is much larger than one would think necessary
+        because of needing to deploy this MockConfig class.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._build_path):
+
 2012-04-02  Ojan Vafai  <ojan@chromium.org>
 
         Fix snafu in r112971. We were never calling parseParameter for builder.

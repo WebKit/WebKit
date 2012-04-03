@@ -81,7 +81,7 @@ class QtPortTest(port_testcase.PortTestCase):
     def test_setup_environ_for_server(self):
         port = self.make_port()
         env = port.setup_environ_for_server(port.driver_name())
-        self.assertEquals(env['QTWEBKIT_PLUGIN_PATH'], 'MOCK output of child process/lib/plugins')
+        self.assertEquals(env['QTWEBKIT_PLUGIN_PATH'], '/mock-build/lib/plugins')
 
     def test_operating_system(self):
         self.assertEqual('linux', self.make_port(port_name='qt-linux', os_name='linux').operating_system())

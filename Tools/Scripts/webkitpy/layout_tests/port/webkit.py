@@ -374,7 +374,7 @@ class WebKitPort(Port):
             # Set --build-directory here Since this modifies the options object used by the worker subprocesses,
             # it avoids the slow call out to build_directory in each subprocess.
             self.set_option_default('build_directory', build_directory)
-        return self._filesystem.join(build_directory, *comps)
+        return self._filesystem.join(self._filesystem.abspath(build_directory), *comps)
 
     def _path_to_driver(self):
         return self._build_path(self.driver_name())

@@ -29,13 +29,24 @@
 
 """Wrapper objects for WebKit-specific utility routines."""
 
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+
 
 class MockConfig(object):
-    def __init__(self, default_configuration='Release'):
+    _FLAGS_FROM_CONFIGURATIONS = {
+        "Debug": "--debug",
+        "Release": "--release",
+    }
+
+    def __init__(self, filesystem=None, default_configuration='Release'):
+        self._filesystem = filesystem or MockFileSystem()
         self._default_configuration = default_configuration
 
+    def flag_for_configuration(self, configuration):
+        return self._FLAGS_FROM_CONFIGURATIONS[configuration]
+
     def build_directory(self, configuration):
-        return "/build"
+        return "/mock-build"
 
     def build_dumprendertree(self, configuration):
         return True
@@ -44,7 +55,12 @@ class MockConfig(object):
         return self._default_configuration
 
     def path_from_webkit_base(self, *comps):
-        return "/" + "/".join(list(comps))
+        # FIXME: This could use self._filesystem.join, but that doesn't handle empty lists.
+        return self.webkit_base_dir() + "/" + "/".join(list(comps))
+
+    def script_path(self, script_name):
+        # This is intentionally relative. Callers should pass the checkout_root/webkit_base_dir to run_command as the cwd.
+        return self._filesystem.join("Tools", "Scripts", script_name)
 
     def webkit_base_dir(self):
-        return "/"
+        return "/mock-checkout"

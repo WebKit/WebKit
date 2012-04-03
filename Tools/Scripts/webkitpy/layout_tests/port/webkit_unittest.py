@@ -35,6 +35,7 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port import port_testcase
 from webkitpy.layout_tests.port.webkit import WebKitPort, WebKitDriver
+from webkitpy.layout_tests.port.config_mock import MockConfig
 from webkitpy.tool.mocktool import MockOptions
 
 
@@ -42,11 +43,12 @@ class TestWebKitPort(WebKitPort):
     port_name = "testwebkitport"
 
     def __init__(self, symbols_string=None,
-                 expectations_file=None, skips_file=None, host=None,
+                 expectations_file=None, skips_file=None, host=None, config=None,
                  **kwargs):
         self.symbols_string = symbols_string  # Passing "" disables all staticly-detectable features.
         host = host or MockSystemHost()
-        WebKitPort.__init__(self, host=host, **kwargs)
+        config = config or MockConfig()
+        WebKitPort.__init__(self, host=host, config=config, **kwargs)
 
     def all_test_configurations(self):
         return [self.test_configuration()]
@@ -295,7 +297,7 @@ class WebKitDriverTest(unittest.TestCase):
     def test_no_timeout(self):
         port = TestWebKitPort()
         driver = WebKitDriver(port, 0, pixel_tests=True, no_timeout=True)
-        self.assertEquals(driver.cmd_line(True, []), ['MOCK output of child process/DumpRenderTree', '--no-timeout', '--pixel-tests', '-'])
+        self.assertEquals(driver.cmd_line(True, []), ['/mock-build/DumpRenderTree', '--no-timeout', '--pixel-tests', '-'])
 
     def test_check_for_driver_crash(self):
         port = TestWebKitPort()
