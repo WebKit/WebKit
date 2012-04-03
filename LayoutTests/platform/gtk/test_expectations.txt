@@ -132,3 +132,4 @@ BUGWK81936 : ietestcenter/css3/text/textshadow-008.htm = FAIL MISSING
 BUGWK81936 : ietestcenter/css3/text/textshadow-009.htm = FAIL MISSING
 BUGWK81936 : ietestcenter/css3/text/textshadow-010.htm = FAIL MISSING
 
+BUGWK82886 : inspector/styles/override-screen-size.html = TEXT

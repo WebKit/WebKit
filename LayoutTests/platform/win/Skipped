@@ -1892,3 +1892,6 @@ fast/box-shadow/shadow-buffer-partial.html
 fast/block/lineboxcontain/block-font.html
 fast/block/lineboxcontain/block-glyphs.html
 fast/block/lineboxcontain/font.html
+
+# http://webkit.org/b/82886
+inspector/styles/override-screen-size.html

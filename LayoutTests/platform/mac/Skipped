@@ -768,3 +768,6 @@ http/tests/misc/favicon-loads-with-icon-loading-override.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82982
 fast/dom/jsDevicePixelRatio.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82886
+inspector/styles/override-screen-size.html

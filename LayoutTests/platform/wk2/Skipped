@@ -845,6 +845,10 @@ http/tests/multipart/multipart-wait-before-boundary.html
 fast/events/blur-focus-window-should-blur-focus-element.html
 fast/selectors/selection-window-inactive.html
 
+# WebKit2 needs an implementation of InspectorClient::overrideDeviceMetrics() and
+# autoZoomPageToFitWidth().
+inspector/styles/override-screen-size.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
