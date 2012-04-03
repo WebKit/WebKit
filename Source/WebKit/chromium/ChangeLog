@@ -1,3 +1,48 @@
+2012-04-02  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Add WebKit API for WebCore::TextFieldDecorator
+        https://bugs.webkit.org/show_bug.cgi?id=82143
+
+        Reviewed by Dimitri Glazkov.
+
+        Expose WebCore::TextFieldDecorator as
+        WebKit::WebTextFieldDecoratorClient. This change add capability to add
+        decoration buttons to text field <input> elements.
+
+        * WebKit.gyp: Add new files.
+        * public/WebTextFieldDecoratorClient.h: Added.
+        * public/WebView.h:
+        (WebKit): Add addTextFieldDecoratorClient().
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::willAddTextFieldDecorationsTo):
+        Calls willAddDecorationTo() of TextFieldDecorator objects owned by WebViewImpl.
+        (WebKit::ChromeClientImpl::addTextFieldDecorationsTo):
+        Apply TextFieldDecorationElement::decorate() for the specified input element.
+        * src/ChromeClientImpl.h:
+        (ChromeClientImpl): Add new function declarations.
+        * src/TextFieldDecoratorImpl.cpp:
+        Added. This is a bridge of WebCore::TextFieldDecorator and
+        WebKit::WebTextFieldDecoratorClient. This owns CachedImage objects
+        specfied by WebTextFieldDecoratorClient.
+        (WebKit::TextFieldDecoratorImpl::TextFieldDecoratorImpl):
+        (WebKit::TextFieldDecoratorImpl::create):
+        (WebKit::TextFieldDecoratorImpl::~TextFieldDecoratorImpl):
+        (WebKit::TextFieldDecoratorImpl::willAddDecorationTo):
+        (WebKit::TextFieldDecoratorImpl::imageForNormalState):
+        (WebKit::TextFieldDecoratorImpl::imageForDisabledState):
+        (WebKit::TextFieldDecoratorImpl::imageForReadonlyState):
+        (WebKit::TextFieldDecoratorImpl::handleClick):
+        (WebKit::TextFieldDecoratorImpl::willDetach):
+        * src/TextFieldDecoratorImpl.h: Added.
+        (TextFieldDecoratorImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::addTextFieldDecoratorClient):
+        Add implementation of WebView::addTextFieldDecoratorClient().
+        * src/WebViewImpl.h:
+        WebViewImpl owns a vector of TextFieldDecoratorImpl.
+        (WebViewImpl):
+        (WebKit::WebViewImpl::textFieldDecorators):
+
 2012-04-02  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove SkCanvas::LayerIter use from OpaqueRegionSkia

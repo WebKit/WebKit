@@ -53,6 +53,7 @@ class WebPermissionClient;
 class WebSettings;
 class WebSpellCheckClient;
 class WebString;
+class WebTextFieldDecoratorClient;
 class WebViewClient;
 struct WebActiveWheelFlingParameters;
 struct WebMediaPlayerAction;
@@ -104,6 +105,7 @@ public:
     virtual void setDevToolsAgentClient(WebDevToolsAgentClient*) = 0;
     virtual void setPermissionClient(WebPermissionClient*) = 0;
     virtual void setSpellCheckClient(WebSpellCheckClient*) = 0;
+    virtual void addTextFieldDecoratorClient(WebTextFieldDecoratorClient*) = 0;
 
 
     // Options -------------------------------------------------------------

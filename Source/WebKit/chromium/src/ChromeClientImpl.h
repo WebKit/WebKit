@@ -195,6 +195,8 @@ public:
     virtual bool hasOpenedPopup() const OVERRIDE;
     virtual PassRefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const;
     virtual PassRefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const;
+    virtual bool willAddTextFieldDecorationsTo(WebCore::HTMLInputElement*) OVERRIDE;
+    virtual void addTextFieldDecorationsTo(WebCore::HTMLInputElement*) OVERRIDE;
 
     virtual bool shouldRunModalDialogDuringPageDismissal(const DialogType&, const String& dialogMessage, WebCore::FrameLoader::PageDismissalType) const;
 

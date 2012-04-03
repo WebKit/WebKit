@@ -108,6 +108,7 @@
 #include "SharedGraphicsContext3D.h"
 #include "SpeechInputClientImpl.h"
 #include "SpeechRecognitionClient.h"
+#include "TextFieldDecoratorImpl.h"
 #include "TextIterator.h"
 #include "Timer.h"
 #include "TouchpadFlingPlatformGestureCurve.h"
@@ -318,6 +319,18 @@ void WebViewImpl::setPermissionClient(WebPermissionClient* permissionClient)
 void WebViewImpl::setSpellCheckClient(WebSpellCheckClient* spellCheckClient)
 {
     m_spellCheckClient = spellCheckClient;
+}
+
+void WebViewImpl::addTextFieldDecoratorClient(WebTextFieldDecoratorClient* client)
+{
+    ASSERT(client);
+    // We limit the number of decorators because it affects performance of text
+    // field creation. If you'd like to add more decorators, consider moving
+    // your decorator or existing decorators to WebCore.
+    const unsigned maximumNumberOfDecorators = 8;
+    if (m_textFieldDecorators.size() >= maximumNumberOfDecorators)
+        CRASH();
+    m_textFieldDecorators.append(TextFieldDecoratorImpl::create(client));
 }
 
 WebViewImpl::WebViewImpl(WebViewClient* client)

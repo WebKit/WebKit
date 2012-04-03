@@ -52,6 +52,7 @@
 #include "FrameView.h"
 #include "Geolocation.h"
 #include "GraphicsLayer.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "Icon.h"
@@ -68,6 +69,7 @@
 #include "SearchPopupMenuChromium.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "TextFieldDecorationElement.h"
 #if USE(V8)
 #include "V8Proxy.h"
 #endif
@@ -983,6 +985,29 @@ PassRefPtr<PopupMenu> ChromeClientImpl::createPopupMenu(PopupMenuClient* client)
 PassRefPtr<SearchPopupMenu> ChromeClientImpl::createSearchPopupMenu(PopupMenuClient* client) const
 {
     return adoptRef(new SearchPopupMenuChromium(client));
+}
+
+bool ChromeClientImpl::willAddTextFieldDecorationsTo(HTMLInputElement* input)
+{
+    ASSERT(input);
+    const Vector<OwnPtr<TextFieldDecorator> >& decorators = m_webView->textFieldDecorators();
+    for (unsigned i = 0; i < decorators.size(); ++i) {
+        if (decorators[i]->willAddDecorationTo(input))
+            return true;
+    }
+    return false;
+}
+
+void ChromeClientImpl::addTextFieldDecorationsTo(HTMLInputElement* input)
+{
+    ASSERT(willAddTextFieldDecorationsTo(input));
+    const Vector<OwnPtr<TextFieldDecorator> >& decorators = m_webView->textFieldDecorators();
+    for (unsigned i = 0; i < decorators.size(); ++i) {
+        if (!decorators[i]->willAddDecorationTo(input))
+            continue;
+        RefPtr<TextFieldDecorationElement> decoration = TextFieldDecorationElement::create(input->document(), decorators[i].get());
+        decoration->decorate(input);
+    }
 }
 
 bool ChromeClientImpl::shouldRunModalDialogDuringPageDismissal(const DialogType& dialogType, const String& dialogMessage, FrameLoader::PageDismissalType dismissalType) const
