@@ -193,8 +193,8 @@ def extractBuiltProduct(configuration, platform):
     archiveFile = os.path.join(_buildDirectory, configuration + ".zip")
     configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
 
-    removeDirectoryIfExists(_buildDirectory)
-    os.makedirs(_buildDirectory)
+    removeDirectoryIfExists(configurationBuildDirectory)
+    os.makedirs(configurationBuildDirectory)
 
     if platform == 'mac':
         return unzipArchive(_buildDirectory, configuration)

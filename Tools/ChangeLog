@@ -1,3 +1,10 @@
+2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r113067. Don't delete the build directory.
+
+        * BuildSlaveSupport/built-product-archive:
+        (extractBuiltProduct):
+
 2012-04-02  Ojan Vafai  <ojan@chromium.org>
 
         Load all builder lists from the buildbot json
