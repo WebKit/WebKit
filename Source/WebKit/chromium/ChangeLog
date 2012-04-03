@@ -1,3 +1,16 @@
+2012-04-03  Dirk Pranke  <dpranke@chromium.org>
+
+        disable incremental linking for debug of webkit
+        https://bugs.webkit.org/show_bug.cgi?id=83068
+
+        Reviewed by Adam Barth.
+
+        Now that we need to export symbols from webkit.dll that are
+        defined in webcore_platform, we have to enable ULDI in order for
+        incremental linking to work (which is used in debug mode).
+
+        * WebKit.gyp:
+
 2012-04-03  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Fix incorrect comment in CCDamageTrackerTest

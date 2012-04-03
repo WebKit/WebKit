@@ -747,11 +747,7 @@
                             ],
                             'msvs_settings': {
                               'VCLinkerTool': {
-                                'conditions': [
-                                  ['incremental_chrome_dll==1', {
-                                    'UseLibraryDependencyInputs': "true",
-                                  }],
-                                ],
+                                'UseLibraryDependencyInputs': "true",
                               },
                             },
                         }],
