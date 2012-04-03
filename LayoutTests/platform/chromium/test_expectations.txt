@@ -1171,12 +1171,7 @@ BUGWK78631 : svg/dom/SVGLocatable-getCTM-svg-root.html = IMAGE
 BUGWK81253 LINUX : svg/text/text-tselect-02-f.svg = IMAGE
 
 // Still require rebaselining after r109097.
-BUGWK79568 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = FAIL
-BUGWK79568 : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
-BUGWK75968 WIN LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-39-t.svg = TEXT
-BUGWK75968 WIN LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE+TEXT TEXT
 BUGWK75968 : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE+TEXT IMAGE
-BUGWK75968 LION : svg/css/group-with-shadow.svg = IMAGE
 
 // Flaky on MAC
 BUGWK82911 MAC : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT IMAGE+TEXT IMAGE PASS
@@ -1191,6 +1186,8 @@ BUGWK82594 SNOWLEOPARD : svg/text/ems-display-none.svg = IMAGE PASS
 // Flaky on Linux after http://trac.webkit.org/changeset/112022
 BUGWK82217 LINUX : svg/zoom/text/zoom-foreignObject.svg = IMAGE PASS
 
+// Failing on Skia platforms
+BUGWK83051 WIN LINUX LION : svg/css/group-with-shadow.svg = IMAGE PASS
 
 // Windows and Mac need rebaselining after 53378 patch.
 BUGWK53378 WIN MAC : svg/clip-path/clip-in-mask.svg = IMAGE
