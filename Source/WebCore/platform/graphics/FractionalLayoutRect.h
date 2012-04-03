@@ -55,6 +55,9 @@ public:
     FractionalLayoutPoint location() const { return m_location; }
     FractionalLayoutSize size() const { return m_size; }
 
+    IntPoint pixelSnappedLocation() const { return roundedIntPoint(m_location); }
+    IntSize pixelSnappedSize() const { return pixelSnappedIntSize(m_size, m_location); }
+
     void setLocation(const FractionalLayoutPoint& location) { m_location = location; }
     void setSize(const FractionalLayoutSize& size) { m_size = size; }
 

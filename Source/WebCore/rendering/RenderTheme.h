@@ -77,7 +77,7 @@ public:
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself.  The boolean return value indicates
     // whether the CSS border/background should also be painted.
-    bool paint(RenderObject*, const PaintInfo&, const LayoutRect&);
+    bool paint(RenderObject*, const PaintInfo&, const IntRect&);
     bool paintBorderOnly(RenderObject*, const PaintInfo&, const IntRect&);
     bool paintDecorations(RenderObject*, const PaintInfo&, const IntRect&);
 
@@ -115,7 +115,7 @@ public:
 
     // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,
     // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.
-    virtual void adjustRepaintRect(const RenderObject*, LayoutRect&);
+    virtual void adjustRepaintRect(const RenderObject*, IntRect&);
 
     // This method is called whenever a relevant state changes on a particular themed object, e.g., the mouse becomes pressed
     // or a control becomes disabled.
@@ -177,7 +177,7 @@ public:
     virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) { return RegularScrollbar; }
 
     // Method for painting the caps lock indicator
-    virtual bool paintCapsLockIndicator(RenderObject*, const PaintInfo&, const LayoutRect&) { return 0; };
+    virtual bool paintCapsLockIndicator(RenderObject*, const PaintInfo&, const IntRect&) { return 0; };
 
 #if ENABLE(PROGRESS_TAG)
     // Returns the repeat interval of the animation for the progress bar.
@@ -199,11 +199,11 @@ public:
     virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
     
     // Returns the media volume slider container's offset from the mute button.
-    virtual LayoutPoint volumeSliderOffsetFromMuteButton(RenderBox*, const LayoutSize&) const;
+    virtual IntPoint volumeSliderOffsetFromMuteButton(RenderBox*, const IntSize&) const;
 #endif
 
 #if ENABLE(METER_TAG)
-    virtual LayoutSize meterSizeForBounds(const RenderMeter*, const LayoutRect&) const;
+    virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const;
     virtual bool supportsMeter(ControlPart) const;
 #endif
     

@@ -876,14 +876,14 @@ void RenderThemeWin::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderSt
 
 bool RenderThemeWin::paintSearchFieldCancelButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    LayoutRect bounds = r;
+    IntRect bounds = r;
     ASSERT(o->parent());
     if (!o->parent() || !o->parent()->isBox())
         return false;
     
     RenderBox* parentRenderBox = toRenderBox(o->parent());
 
-    LayoutRect parentBox = parentRenderBox->absoluteContentBox();
+    IntRect parentBox = parentRenderBox->absoluteContentBox();
     
     // Make sure the scaled button stays square and will fit in its parent's box
     bounds.setHeight(min(parentBox.width(), min(parentBox.height(), bounds.height())));
@@ -927,13 +927,13 @@ void RenderThemeWin::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* s
 
 bool RenderThemeWin::paintSearchFieldResultsDecoration(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    LayoutRect bounds = r;
+    IntRect bounds = r;
     ASSERT(o->parent());
     if (!o->parent() || !o->parent()->isBox())
         return false;
     
     RenderBox* parentRenderBox = toRenderBox(o->parent());
-    LayoutRect parentBox = parentRenderBox->absoluteContentBox();
+    IntRect parentBox = parentRenderBox->absoluteContentBox();
     
     // Make sure the scaled decoration stays square and will fit in its parent's box
     bounds.setHeight(min(parentBox.width(), min(parentBox.height(), bounds.height())));
@@ -961,7 +961,7 @@ void RenderThemeWin::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selec
 
 bool RenderThemeWin::paintSearchFieldResultsButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    LayoutRect bounds = r;
+    IntRect bounds = r;
     ASSERT(o->parent());
     if (!o->parent())
         return false;
@@ -969,11 +969,11 @@ bool RenderThemeWin::paintSearchFieldResultsButton(RenderObject* o, const PaintI
         return false;
     
     RenderBox* parentRenderBox = toRenderBox(o->parent());
-    LayoutRect parentBox = parentRenderBox->absoluteContentBox();
+    IntRect parentBox = parentRenderBox->absoluteContentBox();
     
     // Make sure the scaled decoration will fit in its parent's box
     bounds.setHeight(min(parentBox.height(), bounds.height()));
-    bounds.setWidth(min<LayoutUnit>(parentBox.width(), bounds.height() * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize));
+    bounds.setWidth(min<int>(parentBox.width(), bounds.height() * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize));
 
     // Center the button vertically.  Round up though, so if it has to be one pixel off-center, it will
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.
@@ -1119,7 +1119,7 @@ bool RenderThemeWin::paintMediaVolumeSliderThumb(RenderObject* o, const PaintInf
     return RenderMediaControls::paintMediaControlsPart(MediaVolumeSliderThumb, o, paintInfo, r);
 }
 
-LayoutPoint RenderThemeWin::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonBox, const LayoutSize& size) const
+IntPoint RenderThemeWin::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonBox, const IntSize& size) const
 {
     return RenderMediaControls::volumeSliderOffsetFromMuteButton(muteButtonBox, size);
 }

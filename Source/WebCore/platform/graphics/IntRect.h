@@ -111,6 +111,8 @@ public:
     int pixelSnappedMaxY() const { return y() + height(); }
     int pixelSnappedWidth() const { return m_size.width(); }
     int pixelSnappedHeight() const { return m_size.height(); }
+    IntPoint pixelSnappedLocation() const { return location(); }
+    IntSize pixelSnappedSize() const { return size(); }
 
     void setX(int x) { m_location.setX(x); }
     void setY(int y) { m_location.setY(y); }

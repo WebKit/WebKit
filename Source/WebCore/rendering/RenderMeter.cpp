@@ -46,13 +46,13 @@ RenderMeter::~RenderMeter()
 void RenderMeter::computeLogicalWidth()
 {
     RenderBox::computeLogicalWidth();
-    setWidth(theme()->meterSizeForBounds(this, frameRect()).width());
+    setWidth(theme()->meterSizeForBounds(this, pixelSnappedIntRect(frameRect())).width());
 }
 
 void RenderMeter::computeLogicalHeight()
 {
     RenderBox::computeLogicalHeight();
-    setHeight(theme()->meterSizeForBounds(this, frameRect()).height());
+    setHeight(theme()->meterSizeForBounds(this, pixelSnappedIntRect(frameRect())).height());
 }
 
 double RenderMeter::valueRatio() const

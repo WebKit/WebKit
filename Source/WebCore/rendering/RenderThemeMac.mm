@@ -502,7 +502,7 @@ bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData&
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
 }
 
-void RenderThemeMac::adjustRepaintRect(const RenderObject* o, LayoutRect& r)
+void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
 {
     ControlPart part = o->style()->appearance();
     
@@ -533,13 +533,13 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, LayoutRect& r)
     }
 }
 
-LayoutRect RenderThemeMac::inflateRect(const LayoutRect& r, const IntSize& size, const int* margins, float zoomLevel) const
+IntRect RenderThemeMac::inflateRect(const IntRect& r, const IntSize& size, const int* margins, float zoomLevel) const
 {
     // Only do the inflation if the available width/height are too small.  Otherwise try to
     // fit the glow/check space into the available box's width/height.
-    LayoutUnit widthDelta = r.width() - (size.width() + margins[leftMargin] * zoomLevel + margins[rightMargin] * zoomLevel);
-    LayoutUnit heightDelta = r.height() - (size.height() + margins[topMargin] * zoomLevel + margins[bottomMargin] * zoomLevel);
-    LayoutRect result(r);
+    int widthDelta = r.width() - (size.width() + margins[leftMargin] * zoomLevel + margins[rightMargin] * zoomLevel);
+    int heightDelta = r.height() - (size.height() + margins[topMargin] * zoomLevel + margins[bottomMargin] * zoomLevel);
+    IntRect result(r);
     if (widthDelta < 0) {
         result.setX(result.x() - margins[leftMargin] * zoomLevel);
         result.setWidth(result.width() - widthDelta);
@@ -560,7 +560,7 @@ FloatRect RenderThemeMac::convertToPaintingRect(const RenderObject* inputRendere
     const RenderObject* renderer = partRenderer;
     while (renderer && renderer != inputRenderer) {
         RenderObject* containingRenderer = renderer->container();
-        offsetFromInputRenderer -= renderer->offsetFromContainer(containingRenderer, LayoutPoint());
+        offsetFromInputRenderer -= roundedIntSize(renderer->offsetFromContainer(containingRenderer, LayoutPoint()));
         renderer = containingRenderer;
     }
     // If the input renderer was not a container, something went wrong
@@ -641,14 +641,14 @@ NSControlSize RenderThemeMac::controlSizeForFont(RenderStyle* style) const
     return NSMiniControlSize;
 }
 
-void RenderThemeMac::setControlSize(NSCell* cell, const IntSize* sizes, const LayoutSize& minSize, float zoomLevel)
+void RenderThemeMac::setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minSize, float zoomLevel)
 {
     NSControlSize size;
-    if (minSize.width() >= static_cast<LayoutUnit>(sizes[NSRegularControlSize].width() * zoomLevel) &&
-        minSize.height() >= static_cast<LayoutUnit>(sizes[NSRegularControlSize].height() * zoomLevel))
+    if (minSize.width() >= static_cast<int>(sizes[NSRegularControlSize].width() * zoomLevel) &&
+        minSize.height() >= static_cast<int>(sizes[NSRegularControlSize].height() * zoomLevel))
         size = NSRegularControlSize;
-    else if (minSize.width() >= static_cast<LayoutUnit>(sizes[NSSmallControlSize].width() * zoomLevel) &&
-             minSize.height() >= static_cast<LayoutUnit>(sizes[NSSmallControlSize].height() * zoomLevel))
+    else if (minSize.width() >= static_cast<int>(sizes[NSSmallControlSize].width() * zoomLevel) &&
+             minSize.height() >= static_cast<int>(sizes[NSSmallControlSize].height() * zoomLevel))
         size = NSSmallControlSize;
     else
         size = NSMiniControlSize;
@@ -731,7 +731,7 @@ void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Eleme
 {
 }
 
-bool RenderThemeMac::paintCapsLockIndicator(RenderObject*, const PaintInfo& paintInfo, const LayoutRect& r)
+bool RenderThemeMac::paintCapsLockIndicator(RenderObject*, const PaintInfo& paintInfo, const IntRect& r)
 {
     if (paintInfo.context->paintingDisabled())
         return true;
@@ -794,7 +794,7 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, 
     size.setWidth(r.width());
 
     // Now inflate it to account for the shadow.
-    LayoutRect inflatedRect = r;
+    IntRect inflatedRect = r;
     if (r.width() >= minimumMenuListSize(o->style()))
         inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins(), zoomLevel);
 
@@ -819,16 +819,16 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, 
 
 #if ENABLE(METER_TAG)
 
-LayoutSize RenderThemeMac::meterSizeForBounds(const RenderMeter* renderMeter, const LayoutRect& bounds) const
+IntSize RenderThemeMac::meterSizeForBounds(const RenderMeter* renderMeter, const IntRect& bounds) const
 {
     if (NoControlPart == renderMeter->style()->appearance())
         return bounds.size();
 
     NSLevelIndicatorCell* cell = levelIndicatorFor(renderMeter);
     // Makes enough room for cell's intrinsic size.
-    NSSize cellSize = [cell cellSizeForBounds:LayoutRect(LayoutPoint(), bounds.size())];
-    return LayoutSize(bounds.width() < cellSize.width ? cellSize.width : bounds.width(),
-                      bounds.height() < cellSize.height ? cellSize.height : bounds.height());
+    NSSize cellSize = [cell cellSizeForBounds:IntRect(IntPoint(), bounds.size())];
+    return IntSize(bounds.width() < cellSize.width ? cellSize.width : bounds.width(),
+                   bounds.height() < cellSize.height ? cellSize.height : bounds.height());
 }
 
 bool RenderThemeMac::paintMeter(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
@@ -1278,7 +1278,7 @@ void RenderThemeMac::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle* s
     style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
-void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const LayoutRect& r)
+void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRect& r)
 {
     NSPopUpButtonCell* popupButton = this->popupButton();
 
@@ -1540,9 +1540,9 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const PaintIn
 #if ENABLE(INPUT_SPEECH)
     // Take care of cases where the cancel button was not aligned with the right border of the input element (for e.g.
     // when speech input is enabled for the input element.
-    LayoutRect absBoundingBox = input->renderer()->absoluteBoundingBoxRect();
-    LayoutUnit absRight = absBoundingBox.x() + absBoundingBox.width() - input->renderBox()->paddingRight() - input->renderBox()->borderRight();
-    LayoutUnit spaceToRightOfCancelButton = absRight - (r.x() + r.width());
+    IntRect absBoundingBox = input->renderer()->absoluteBoundingBoxRect();
+    int absRight = absBoundingBox.x() + absBoundingBox.width() - input->renderBox()->paddingRight() - input->renderBox()->borderRight();
+    int spaceToRightOfCancelButton = absRight - (r.x() + r.width());
     localBounds.setX(localBounds.x() - spaceToRightOfCancelButton);
 #endif
 
@@ -2060,7 +2060,7 @@ bool RenderThemeMac::usesMediaControlVolumeSlider() const
     return mediaControllerTheme() == MediaControllerThemeQuickTime;
 }
 
-LayoutPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonBox, const LayoutSize& size) const
+IntPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonBox, const IntSize& size) const
 {
     return RenderMediaControls::volumeSliderOffsetFromMuteButton(muteButtonBox, size);
 }
