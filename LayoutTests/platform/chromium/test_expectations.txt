@@ -1185,6 +1185,8 @@ BUGWK82911 MAC : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT IMAGE+TEXT IMAGE P
 BUGWK82954 SNOWLEOPARD : svg/text/text-text-05-t.svg = TEXT PASS
 BUGWK82954 SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-77-t.svg = TEXT PASS
 BUGWK82954 SNOWLEOPARD : svg/W3C-SVG-1.1/text-text-05-t.svg = TEXT PASS
+BUGWK82594 SNOWLEOPARD : svg/text/exs-display-none.svg = IMAGE PASS
+BUGWK82594 SNOWLEOPARD : svg/text/ems-display-none.svg = IMAGE PASS
 
 // Flaky on Linux after http://trac.webkit.org/changeset/112022
 BUGWK82217 LINUX : svg/zoom/text/zoom-foreignObject.svg = IMAGE PASS
@@ -3523,9 +3525,6 @@ BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.h
 BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
 BUGWK80517 DEBUG : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE PASS
 
-BUGWK65072 : svg/text/exs-display-none.svg = IMAGE IMAGE+TEXT
-BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
-
 BUGWK69210 LEOPARD SNOWLEOPARD : fast/inline/continuation-outlines-with-layers-2.html = TEXT
 BUGWK69210 MAC : fast/inline/continuation-outlines-with-layers.html = IMAGE+TEXT
 
@@ -3554,8 +3553,7 @@ BUGWK81217 : svg/carto.net/tabgroup.svg = PASS FAIL
 BUGWK81217 : svg/hixie/perf/003.xml = PASS FAIL
 
 // Failing since added by r108699
-BUGWK79454 MAC DEBUG : svg/text/text-rescale.html = IMAGE PASS
-BUGWK79454 LINUX DEBUG : svg/text/text-rescale.html = IMAGE PASS
+BUGWK79454 LINUX MAC DEBUG : svg/text/text-rescale.html = IMAGE PASS
 BUGWK79454 LINUX MAC : svg/text/text-viewbox-rescale.html = IMAGE PASS
 
 BUGWK79456 DEBUG : svg/repaint/image-with-clip-path.svg = PASS IMAGE
