@@ -39,7 +39,7 @@ public:
     InPageSearchManager(WebPagePrivate*);
     ~InPageSearchManager();
 
-    bool findNextString(const String& text, bool forward);
+    bool findNextString(const String&, WebCore::FindOptions, bool wrap, bool highlightAllMatches);
     void frameUnloaded(const WebCore::Frame*);
 
 private:
@@ -47,7 +47,7 @@ private:
     friend class DeferredScopeStringMatches;
 
     void clearTextMatches();
-    void setMarkerActive(WebCore::Range*, bool);
+    void setActiveMatchAndMarker(PassRefPtr<WebCore::Range>);
     bool findAndMarkText(const String&, WebCore::Range*, WebCore::Frame*, const WebCore::FindOptions&, bool);
     bool shouldSearchForText(const String&);
     void scopeStringMatches(const String& text, bool reset, WebCore::Frame* scopingFrame = 0);
@@ -62,7 +62,9 @@ private:
     String m_activeSearchString;
     int m_activeMatchCount;
     bool m_scopingComplete;
+    bool m_scopingCaseInsensitive;
     bool m_locatingActiveMatch;
+    bool m_highlightAllMatches;
     int m_activeMatchIndex;
 };
 

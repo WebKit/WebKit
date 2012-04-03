@@ -197,11 +197,9 @@ public:
 
     void runLayoutTests();
 
-     // Finds and selects the next utf8 string that is a case sensitive
-     // match in the web page. It will wrap the web page if it reaches
-     // the end. An empty string will result in no match and no selection.
-     // Returns true if the string matched and false if not.
-    bool findNextString(const char*, bool forward = true);
+    // Find the next utf8 string in the given direction.
+    // Case sensitivity, wrapping, and highlighting all matches are also toggleable.
+    bool findNextString(const char*, bool forward, bool caseSensitive, bool wrap, bool highlightAllMatches);
 
     // JavaScriptDebugger interface.
     bool enableScriptDebugger();

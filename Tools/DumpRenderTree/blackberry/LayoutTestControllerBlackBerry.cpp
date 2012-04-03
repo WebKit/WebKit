@@ -805,13 +805,16 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
     WebCore::FindOptions options = 0;
 
     JSRetainPtr<JSStringRef> lengthPropertyName(Adopt, JSStringCreateWithUTF8CString("length"));
-    JSValueRef lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), 0);
-    if (!JSValueIsNumber(context, lengthValue))
-        return false;
+    JSValueRef lengthValue;
+    if (optionsArray) {
+        lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), 0);
+        if (!JSValueIsNumber(context, lengthValue))
+            return false;
+    }
 
     WTF::String nameStr = jsStringRefToWebCoreString(target);
 
-    size_t length = static_cast<size_t>(JSValueToNumber(context, lengthValue, 0));
+    size_t length = optionsArray ? static_cast<size_t>(JSValueToNumber(context, lengthValue, 0)) : 0;
     for (size_t i = 0; i < length; ++i) {
         JSValueRef value = JSObjectGetPropertyAtIndex(context, optionsArray, i, 0);
         if (!JSValueIsString(context, value))
@@ -832,7 +835,10 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
         else if (JSStringIsEqualToUTF8CString(optionName.get(), "StartInSelection"))
             options |= WebCore::StartInSelection;
     }
-    return BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->findNextString(nameStr.utf8().data(), !(options | WebCore::Backwards));
+
+    // Our layout tests assume find will wrap and highlight all matches.
+    return BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->findNextString(nameStr.utf8().data(),
+        !(options & WebCore::Backwards), !(options & WebCore::CaseInsensitive), true /* wrap */, true /* highlightAllMatches */);
 }
 
 void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)

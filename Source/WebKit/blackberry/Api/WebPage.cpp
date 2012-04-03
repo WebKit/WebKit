@@ -4655,9 +4655,18 @@ void WebPage::setFocused(bool focused)
     focusController->setFocused(focused);
 }
 
-bool WebPage::findNextString(const char* text, bool forward)
+bool WebPage::findNextString(const char* text, bool forward, bool caseSensitive, bool wrap, bool highlightAllMatches)
 {
-    return d->m_inPageSearchManager->findNextString(String::fromUTF8(text), forward);
+    WebCore::FindOptions findOptions = WebCore::StartInSelection;
+    if (!forward)
+        findOptions |= WebCore::Backwards;
+    if (!caseSensitive)
+        findOptions |= WebCore::CaseInsensitive;
+
+    // The WebCore::FindOptions::WrapAround boolean actually wraps the search
+    // within the current frame as opposed to the entire Document, so we have to
+    // provide our own wrapping code to wrap at the whole Document level.
+    return d->m_inPageSearchManager->findNextString(String::fromUTF8(text), findOptions, wrap, highlightAllMatches);
 }
 
 void WebPage::runLayoutTests()

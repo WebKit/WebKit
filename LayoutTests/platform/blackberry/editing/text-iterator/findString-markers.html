@@ -33,44 +33,55 @@ function createPlainTextElement(id, text, parent) {
     return e;
 }
 
-function occurrences(string, substring) {
+function occurrences(string, substring, caseSensitive) {
     var n=0;
     var pos=0;
 
+    var haystack = caseSensitive ? string : string.toLowerCase();
+    var needle = caseSensitive ? substring : substring.toLowerCase();
+
     while (true) {
-        pos = string.toLowerCase().indexOf(substring.toLowerCase(),pos);
+        pos = haystack.indexOf(needle,pos);
         if (pos!=-1) {
             ++n;
-            pos+=substring.length;
+            pos+=needle.length;
         } else
             break;
     }
     return n;
 }
 
-function checkTextMatchMarker(index) {
-    if (index > 26) {
-        layoutTestController.notifyDone();
-        return;
+function checkTextMatchMarker(index, findOptions) {
+    if (index > 12) {
+        if (findOptions.length == 0) {
+            index = 0;
+            findOptions.push("CaseInsensitive");
+        } else {
+            layoutTestController.notifyDone();
+            return;
+        }
     }
-    var str = 'abcdefghijklmnopqrstuvwxyz.';
+    var str = 'ABCdefTUVxyz.';
     var char = str.charAt(index);
-    layoutTestController.findString(str.charAt(index), []);
+    var caseSensitive = findOptions.indexOf("CaseInsensitive") == -1;
+    layoutTestController.findString(char, findOptions);
     // Start the function later to allow marking process to finish.
     setTimeout(function() {
-        var count = occurrences(text, char);
+        var count = occurrences(text, char, caseSensitive);
+
         // The number of markers should match to the occurrences of the charactor.
         shouldBe('internals.markerCountForNode(e.firstChild, "textmatch")', count.toString());
         var searchStartIndex = 0;
         // Get the char from text and compare with the marker range content.
         for (var i = 0; i < count ; ++i) {
             var range = internals.markerRangeForNode(e.firstChild, "textmatch", i);
-            var pos = text.toLowerCase().indexOf(char.toLowerCase(), searchStartIndex);
+            var pos = caseSensitive ? text.indexOf(char, searchStartIndex)
+                                    : text.toLowerCase().indexOf(char.toLowerCase(), searchStartIndex);
             searchStartIndex = pos + 1;
             var expectStr = text.charAt(pos);
             shouldBe('"' + range + '"', '"' + expectStr + '"');
         }
-        checkTextMatchMarker(++index);
+        checkTextMatchMarker(index + 1, findOptions);
     }, 850);
 }
 
@@ -81,7 +92,7 @@ var text = 'The quick brown fox jumps over the lazy dog.';
 var e = createPlainTextElement(id, text, container);
 
 if (window.internals && window.layoutTestController)
-    checkTextMatchMarker(0);
+    checkTextMatchMarker(0, []);
 
 var successfullyParsed = true;
 </script>

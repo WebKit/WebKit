@@ -1,3 +1,35 @@
+2012-04-03  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] Expose CaseSensitive, Wrap, and HighlightAllMatches in WebPage::findNextString()
+        https://bugs.webkit.org/show_bug.cgi?id=82643
+
+        Enhance BlackBerry::WebKit::WebPage::findNextString()
+
+        This patch adds support for toggling case sensitivity,
+        search wrapping, and whether or not to highlight all matches
+        in addition to the next found match.
+
+        I refactored and renamed the new setActiveMatchAndMarker() method
+        to move the active match from one range to another. This was
+        required because in the case of a non wrapped search we do not
+        want to adjust the m_activeMatch if another match is not found.
+
+        Internal Review by Andy Chen.
+
+        Reviewed by Rob Buis.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::findNextString):
+        * Api/WebPage.h:
+        * WebKitSupport/InPageSearchManager.cpp:
+        (BlackBerry::WebKit::InPageSearchManager::InPageSearchManager):
+        (BlackBerry::WebKit::InPageSearchManager::findNextString):
+        (BlackBerry::WebKit::InPageSearchManager::findAndMarkText):
+        (BlackBerry::WebKit::InPageSearchManager::setActiveMatchAndMarker):
+        (BlackBerry::WebKit::InPageSearchManager::scopeStringMatches):
+        * WebKitSupport/InPageSearchManager.h:
+        (InPageSearchManager):
+
 2012-04-02  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Adapt WebPagePrivate::webContext to the API change of r109570

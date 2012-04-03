@@ -1,6 +1,29 @@
 PASS successfullyParsed is true
 
 TEST COMPLETE
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 0
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 0
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 0
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
+PASS "d" is "d"
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 3
+PASS "e" is "e"
+PASS "e" is "e"
+PASS "e" is "e"
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
+PASS "f" is "f"
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
+PASS "T" is "T"
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 0
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 0
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
+PASS "x" is "x"
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
+PASS "y" is "y"
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
+PASS "z" is "z"
+PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
+PASS "." is "."
 PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
 PASS "a" is "a"
 PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
@@ -15,37 +38,6 @@ PASS "e" is "e"
 PASS "e" is "e"
 PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
 PASS "f" is "f"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
-PASS "g" is "g"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 2
-PASS "h" is "h"
-PASS "h" is "h"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
-PASS "i" is "i"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
-PASS "j" is "j"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
-PASS "k" is "k"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
-PASS "l" is "l"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
-PASS "m" is "m"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
-PASS "n" is "n"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 4
-PASS "o" is "o"
-PASS "o" is "o"
-PASS "o" is "o"
-PASS "o" is "o"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
-PASS "p" is "p"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
-PASS "q" is "q"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 2
-PASS "r" is "r"
-PASS "r" is "r"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
-PASS "s" is "s"
 PASS internals.markerCountForNode(e.firstChild, "textmatch") is 2
 PASS "T" is "T"
 PASS "t" is "t"
@@ -54,8 +46,6 @@ PASS "u" is "u"
 PASS "u" is "u"
 PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
 PASS "v" is "v"
-PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
-PASS "w" is "w"
 PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
 PASS "x" is "x"
 PASS internals.markerCountForNode(e.firstChild, "textmatch") is 1
