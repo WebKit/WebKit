@@ -1,3 +1,16 @@
+2012-04-03  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Remove #if !USE(TILED_BACKING_STORE) from WebFrameLoaderClient::transitionToCommittedForNewPage()
+        https://bugs.webkit.org/show_bug.cgi?id=83070
+
+        Reviewed by Andreas Kling.
+
+        It is preventing m_frameHasCustomRepresentation to be set properly and not in sync with
+        WebFrameLoaderClient::transitionToCommittedFromCachedFrame()
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+
 2012-04-03  Jer Noble  <jer.noble@apple.com>
 
         ESC key in full screen does not result in webkitFullScreenChange event.
