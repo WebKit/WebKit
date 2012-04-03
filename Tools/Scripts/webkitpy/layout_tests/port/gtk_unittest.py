@@ -27,19 +27,48 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
+import sys
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.port.gtk import GtkPort
 from webkitpy.layout_tests.port import port_testcase
 from webkitpy.common.system.executive_mock import MockExecutive
-
+from webkitpy.thirdparty.mock import Mock
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.tool.mocktool import MockOptions
 
 class GtkPortTest(port_testcase.PortTestCase):
     port_name = 'gtk'
     port_maker = GtkPort
+    _mock_crash_log = """\
+Crash log for DumpRenderTree (pid 28529):
+
+Coredump core-pid_28529-_-process_DumpRenderTree not found. To enable crash logs:
+
+- run this command as super-user: echo "/path/to/coredumps/core-pid_%p-_-process_%e" > /proc/sys/kernel/core_pattern
+- enable core dumps: ulimit -c unlimited
+- set the WEBKIT_CORE_DUMPS_DIRECTORY environment variable: export WEBKIT_CORE_DUMPS_DIRECTORY=/path/to/coredumps
+
+
+STDERR: <empty>"""
 
     def test_show_results_html_file(self):
         port = self.make_port()
         port._executive = MockExecutive(should_log=True)
         expected_stderr = "MOCK run_command: ['Tools/Scripts/run-launcher', '--release', '--gtk', 'file://test.html'], cwd=/mock-checkout\n"
         OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_stderr=expected_stderr)
+
+    def assertLinesEqual(self, a, b):
+        if hasattr(self, 'assertMultiLineEqual'):
+            self.assertMultiLineEqual(a, b)
+        else:
+            self.assertEqual(a.splitlines(), b.splitlines())
+
+    def _mock_gdb_output(self, coredump_path):
+        return (self._mock_crash_log, [])
+
+    def test_get_crash_log(self):
+        port = self.make_port()
+        port._get_gdb_output = self._mock_gdb_output
+        log = port._get_crash_log("DumpRenderTree", 28529, "", "")
+        self.assertLinesEqual(log, self._mock_crash_log)

@@ -1,3 +1,39 @@
+2012-04-03  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] crash log reports support
+        https://bugs.webkit.org/show_bug.cgi?id=81659
+
+        Reviewed by Martin Robinson.
+
+        Removed the daemontools crashmon/xvfb scripts and implemented the crash
+        log reporting in the NRWT Gtk port. To get proper crash logs one
+        needs to set the core pattern like this:
+        echo "/path/to/cores/core-pid_%p-_-process_%e" > /proc/sys/kernel/core_pattern
+        Then enable coredumps with "ulimit -c unlimited" and set the WEBKIT_CORE_DUMPS_DIRECTORY
+        environment variable.
+
+        * BuildSlaveSupport/gtk/README:
+        * BuildSlaveSupport/gtk/crashmon/crashmon: Removed.
+        * BuildSlaveSupport/gtk/crashmon/log/run: Removed.
+        * BuildSlaveSupport/gtk/crashmon/run: Removed.
+        * BuildSlaveSupport/gtk/daemontools-buildbot.conf:
+        * BuildSlaveSupport/gtk/xvfb/log/run: Removed.
+        * BuildSlaveSupport/gtk/xvfb/run: Removed.
+        * Scripts/new-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkDriver.stop):
+        (GtkPort.show_results_html_file):
+        (GtkPort):
+        (GtkPort._get_gdb_output):
+        (GtkPort._get_crash_log):
+        (GtkPort._get_crash_log.match_filename):
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        (GtkPortTest):
+        (test_show_results_html_file):
+        (assertLinesEqual):
+        (_mock_gdb_output):
+        (test_get_crash_log):
+
 2012-04-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Enable and connect the WebInspectorServer with WebKit2 pages.
