@@ -352,6 +352,8 @@ function parseParameters()
     var dashboardSpecificDiffState = diffStates(oldDashboardSpecificState, g_currentState);
 
     fillMissingValues(g_currentState, g_defaultDashboardSpecificStateValues);
+
+    parseParameter(queryHashAsMap(), 'builder');
     fillMissingValues(g_currentState, {'builder': g_defaultBuilderName});
 
     // Some parameters require loading different JSON files when the value changes. Do a reload.

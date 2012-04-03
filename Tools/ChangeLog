@@ -1,5 +1,11 @@
 2012-04-02  Ojan Vafai  <ojan@chromium.org>
 
+        Fix snafu in r112971. We were never calling parseParameter for builder.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+
+2012-04-02  Ojan Vafai  <ojan@chromium.org>
+
         Generate the lists of all layout test builders from the buildbot json
         https://bugs.webkit.org/show_bug.cgi?id=82924
 
