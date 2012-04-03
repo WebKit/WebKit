@@ -1159,9 +1159,6 @@ BUGWK79068 : svg/transforms/transform-origin-css-property.xhtml = FAIL
 
 BUGWK78613 : svg/custom/circle-move-invalidation.svg = IMAGE IMAGE+TEXT
 
-// Needs a rebaseline after https://bugs.webkit.org/show_bug.cgi?id=82085
-BUGWK82085 : svg/filters/filterRes.svg = IMAGE
-
 BUGWK34714 : svg/text/select-textLength-spacing-squeeze-2.svg = IMAGE IMAGE+TEXT
 
 BUGWK78631 : svg/dom/SVGLocatable-getCTM-svg-root.html = IMAGE
