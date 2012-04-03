@@ -1,3 +1,13 @@
+2012-04-03  Tony Chang  <tony@chromium.org>
+
+        run the same test steps on test only bots as on build-and-test bots
+        https://bugs.webkit.org/show_bug.cgi?id=83090
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (TestFactory.__init__):
+
 2012-04-03  Ami Fischman  <fischman@chromium.org>
 
         Add a Media watchlist.
