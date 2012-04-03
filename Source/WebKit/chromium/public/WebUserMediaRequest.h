@@ -31,6 +31,7 @@
 #ifndef WebUserMediaRequest_h
 #define WebUserMediaRequest_h
 
+#include "WebSecurityOrigin.h"
 #include "platform/WebCommon.h"
 #include "platform/WebPrivatePtr.h"
 
@@ -41,7 +42,6 @@ class UserMediaRequest;
 namespace WebKit {
 
 class WebMediaStreamSource;
-class WebSecurityOrigin;
 class WebString;
 template <typename T> class WebVector;
 

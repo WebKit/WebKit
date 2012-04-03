@@ -1,3 +1,11 @@
+2012-04-03  Adam Barth  <abarth@webkit.org>
+
+        Another attempt to fix the Windows build.  This uses WebSecurityOrigin
+        has a value type but doesn't include the header.
+
+        * public/WebUserMediaRequest.h:
+        (WebKit):
+
 2012-04-03  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Not reviewed. Follow up to inspector's r113032: change provisional method signature a bit.
