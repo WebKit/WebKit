@@ -74,6 +74,50 @@ static PresentationAttributeCache& presentationAttributeCache()
     return cache;
 }
 
+class PresentationAttributeCacheCleaner {
+    WTF_MAKE_NONCOPYABLE(PresentationAttributeCacheCleaner);
+public:
+    PresentationAttributeCacheCleaner()
+        : m_cleanTimer(this, &PresentationAttributeCacheCleaner::cleanCache)
+    {
+    }
+
+    void didHitPresentationAttributeCache()
+    {
+        if (presentationAttributeCache().size() < minimumPresentationAttributeCacheSizeForCleaning)
+            return;
+
+        m_hitCount++;
+
+        if (!m_cleanTimer.isActive())
+            m_cleanTimer.startOneShot(presentationAttributeCacheCleanTimeInSeconds);
+     }
+
+private:
+    static const unsigned presentationAttributeCacheCleanTimeInSeconds = 60;
+    static const int minimumPresentationAttributeCacheSizeForCleaning = 100;
+    static const unsigned minimumPresentationAttributeCacheHitCountPerMinute = (100 * presentationAttributeCacheCleanTimeInSeconds) / 60;
+
+    void cleanCache(Timer<PresentationAttributeCacheCleaner>* timer)
+    {
+        ASSERT_UNUSED(timer, timer == &m_cleanTimer);
+        unsigned hitCount = m_hitCount;
+        m_hitCount = 0;
+        if (hitCount > minimumPresentationAttributeCacheHitCountPerMinute)
+            return;
+        presentationAttributeCache().clear();
+    }
+
+    unsigned m_hitCount;
+    Timer<PresentationAttributeCacheCleaner> m_cleanTimer;
+};
+
+static PresentationAttributeCacheCleaner& presentationAttributeCacheCleaner()
+{
+    DEFINE_STATIC_LOCAL(PresentationAttributeCacheCleaner, cleaner, ());
+    return cleaner;
+}
+
 void StyledElement::updateStyleAttribute() const
 {
     ASSERT(!isStyleAttributeValid());
@@ -244,9 +288,10 @@ void StyledElement::updateAttributeStyle()
         cacheIterator = presentationAttributeCache().end();
 
     RefPtr<StylePropertySet> style;
-    if (cacheHash && cacheIterator->second) 
+    if (cacheHash && cacheIterator->second) {
         style = cacheIterator->second->value;
-    else {
+        presentationAttributeCacheCleaner().didHitPresentationAttributeCache();
+    } else {
         style = StylePropertySet::create(isSVGElement() ? SVGAttributeMode : CSSQuirksMode);
         unsigned size = attributeCount();
         for (unsigned i = 0; i < size; ++i) {
@@ -270,7 +315,7 @@ void StyledElement::updateAttributeStyle()
     newEntry->key = cacheKey;
     newEntry->value = style.release();
 
-    static const int presentationAttributeCacheMaximumSize = 128;
+    static const int presentationAttributeCacheMaximumSize = 4096;
     if (presentationAttributeCache().size() > presentationAttributeCacheMaximumSize) {
         // Start building from scratch if the cache ever gets big.
         presentationAttributeCache().clear();
