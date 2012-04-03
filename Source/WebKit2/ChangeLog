@@ -1,3 +1,16 @@
+2012-04-03  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Tap highlight still showing when tap gesture has timed out
+        https://bugs.webkit.org/show_bug.cgi?id=82902
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Disable highlight of potential tap, when tap-and-hold state
+        replaces potential tap state.
+
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::tapAndHoldTimeout):
+
 2012-04-02  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Set viewport size back, when WebProcess is relaunched.
