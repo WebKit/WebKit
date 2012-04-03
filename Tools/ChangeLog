@@ -1,5 +1,15 @@
 2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another build fix after r113067. CreateWebKitBuildDirectory step is no longer needed
+        because download-built-product creates the build directory as needed.
+
+        This step fails on Chromium Windows due to -p option not supported by Windows' native mkdir.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (TestFactory.__init__):
+
+2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r113067. Don't delete the build directory.
 
         * BuildSlaveSupport/built-product-archive:
