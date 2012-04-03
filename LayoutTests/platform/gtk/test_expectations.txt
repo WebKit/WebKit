@@ -19,10 +19,6 @@ BUGWK54637 : media/video-controls-in-media-document.html = PASS TEXT
 BUGWK54637 : media/controls-after-reload.html = PASS TEXT
 BUGWK55126 : media/video-aspect-ratio.html = PASS TEXT
 
-BUGWK68523 : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = PASS TEXT
-BUGWK68523 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = PASS TEXT
-BUGWK68523 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS TEXT
-BUGWK68523 : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = PASS TEXT
 BUGWK61914 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = PASS TEXT
 BUGWK61914 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = PASS TEXT
 
