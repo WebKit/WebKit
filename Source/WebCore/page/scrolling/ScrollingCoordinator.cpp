@@ -216,7 +216,7 @@ void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
     ASSERT(isMainThread());
     ASSERT(m_page);
 
-    if (frameView->frame() != m_page->mainFrame())
+    if (!coordinatesScrollingForFrameView(frameView))
         return;
 
     frameViewLayoutUpdated(frameView);
@@ -238,7 +238,14 @@ bool ScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView, con
     // since FrameView expects scroll position updates to happen synchronously.
     updateMainFrameScrollPosition(scrollPosition);
 
-    ScrollingThread::dispatch(bind(&ScrollingTree::setMainFrameScrollPosition, m_scrollingTree.get(), scrollPosition));
+    if (frameView->frame()->document()->inPageCache()) {
+        // If this frame view's document is being put into the page cache, we don't want to update our
+        // main frame scroll position.
+        return true;
+    }
+
+    m_scrollingTreeState->setRequestedScrollPosition(scrollPosition);
+    scheduleTreeStateCommit();
     return true;
 #else
     UNUSED_PARAM(scrollPosition);

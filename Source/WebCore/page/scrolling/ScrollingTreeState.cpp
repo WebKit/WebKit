@@ -131,6 +131,12 @@ void ScrollingTreeState::setHasEnabledVerticalScrollbar(bool hasEnabledVerticalS
     m_changedProperties |= HasEnabledVerticalScrollbar;
 }
 
+void ScrollingTreeState::setRequestedScrollPosition(const IntPoint& requestedScrollPosition)
+{
+    m_requestedScrollPosition = requestedScrollPosition;
+    m_changedProperties |= RequestedScrollPosition;
+}
+
 PassOwnPtr<ScrollingTreeState> ScrollingTreeState::commit()
 {
     OwnPtr<ScrollingTreeState> treeState = adoptPtr(new ScrollingTreeState(*this));

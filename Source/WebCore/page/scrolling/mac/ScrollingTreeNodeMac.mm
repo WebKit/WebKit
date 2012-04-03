@@ -58,6 +58,9 @@ void ScrollingTreeNodeMac::update(ScrollingTreeState* state)
     if (state->changedProperties() & ScrollingTreeState::ScrollLayer)
         m_scrollLayer = state->platformScrollLayer();
 
+    if (state->changedProperties() & ScrollingTreeState::RequestedScrollPosition)
+        setScrollPosition(state->requestedScrollPosition());
+
     if (state->changedProperties() & (ScrollingTreeState::ScrollLayer | ScrollingTreeState::ContentsSize | ScrollingTreeState::ViewportRect))
         updateMainFramePinState(scrollPosition());
 
