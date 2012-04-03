@@ -35,6 +35,7 @@ class AbstractLocalServerCommand(AbstractDeclarativeCommand):
     def __init__(self):
         options = [
             make_option("--httpd-port", action="store", type="int", default=8127, help="Port to use for the HTTP server"),
+            make_option("--no-show-results", action="store_false", default=True, dest="show_results", help="Don't launch a browser with the rebaseline server"),
         ]
         AbstractDeclarativeCommand.__init__(self, options=options)
 
@@ -48,8 +49,9 @@ class AbstractLocalServerCommand(AbstractDeclarativeCommand):
         print "Starting server at %s" % server_url
         print "Use the 'Exit' link in the UI, %squitquitquit or Ctrl-C to stop" % server_url
 
-        # FIXME: This seems racy.
-        threading.Timer(0.1, lambda: self._tool.user.open_url(server_url)).start()
+        if options.show_results:
+            # FIXME: This seems racy.
+            threading.Timer(0.1, lambda: self._tool.user.open_url(server_url)).start()
 
         httpd = self.server(httpd_port=options.httpd_port, config=config)
         httpd.serve_forever()

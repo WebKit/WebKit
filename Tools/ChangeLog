@@ -1,3 +1,19 @@
+2012-04-03  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        rebaseline-server: Make it possible to not launch a browser with the server.
+        https://bugs.webkit.org/show_bug.cgi?id=82999
+
+        Reviewed by Adam Barth.
+
+        Add the `--no-show-results' option, which lets one decide not to
+        launch a web browser when running the rebaseline server.  This is
+        especially useful if the default browser is not the wanted one, or
+        if the rebaseline server page is already open.
+
+        * Scripts/webkitpy/tool/commands/abstractlocalservercommand.py:
+        (AbstractLocalServerCommand.__init__):
+        (AbstractLocalServerCommand.execute):
+
 2012-04-02  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         EFL's LayoutTestController disableImageLoading implementation.
