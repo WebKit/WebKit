@@ -401,25 +401,8 @@ CSSStyleSelector::CSSStyleSelector(Document* document, bool matchAuthorAndUserSt
     OwnPtr<RuleSet> tempUserStyle = RuleSet::create();
     if (CSSStyleSheet* pageUserSheet = document->pageUserSheet())
         tempUserStyle->addRulesFromSheet(pageUserSheet, *m_medium, this);
-    if (const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets = document->pageGroupUserSheets()) {
-        unsigned length = pageGroupUserSheets->size();
-        for (unsigned i = 0; i < length; i++) {
-            if (pageGroupUserSheets->at(i)->isUserStyleSheet())
-                tempUserStyle->addRulesFromSheet(pageGroupUserSheets->at(i).get(), *m_medium, this);
-            else
-                m_authorStyle->addRulesFromSheet(pageGroupUserSheets->at(i).get(), *m_medium, this);
-        }
-    }
-    if (const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets = document->documentUserSheets()) {
-        unsigned length = documentUserSheets->size();
-        for (unsigned i = 0; i < length; i++) {
-            if (documentUserSheets->at(i)->isUserStyleSheet())
-                tempUserStyle->addRulesFromSheet(documentUserSheets->at(i).get(), *m_medium, this);
-            else
-                m_authorStyle->addRulesFromSheet(documentUserSheets->at(i).get(), *m_medium, this);
-        }
-    }
-
+    addAuthorRulesAndCollectUserRulesFromSheets(document->pageGroupUserSheets(), *tempUserStyle);
+    addAuthorRulesAndCollectUserRulesFromSheets(document->documentUserSheets(), *tempUserStyle);
     if (tempUserStyle->m_ruleCount > 0 || tempUserStyle->m_pageRules.size() > 0)
         m_userStyle = tempUserStyle.release();
 
@@ -434,7 +417,22 @@ CSSStyleSelector::CSSStyleSelector(Document* document, bool matchAuthorAndUserSt
 
     appendAuthorStylesheets(0, document->styleSheets()->vector());
 }
-    
+
+void CSSStyleSelector::addAuthorRulesAndCollectUserRulesFromSheets(const Vector<RefPtr<CSSStyleSheet> >* userSheets, RuleSet& userStyle)
+{
+    if (!userSheets)
+        return;
+
+    unsigned length = userSheets->size();
+    for (unsigned i = 0; i < length; i++) {
+        const RefPtr<CSSStyleSheet>& sheet = userSheets->at(i);
+        if (sheet->isUserStyleSheet())
+            userStyle.addRulesFromSheet(sheet.get(), *m_medium, this);
+        else
+            m_authorStyle->addRulesFromSheet(sheet.get(), *m_medium, this);
+    }
+}
+
 static PassOwnPtr<RuleSet> makeRuleSet(const Vector<CSSStyleSelector::RuleFeature>& rules)
 {
     size_t size = rules.size();
