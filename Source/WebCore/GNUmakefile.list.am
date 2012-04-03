@@ -4146,6 +4146,7 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAnimatedBoolean.h \
 	Source/WebCore/svg/SVGAnimatedColor.cpp \
 	Source/WebCore/svg/SVGAnimatedColor.h \
+	Source/WebCore/svg/SVGAnimatedEnumeration.cpp \
 	Source/WebCore/svg/SVGAnimatedEnumeration.h \
 	Source/WebCore/svg/SVGAnimatedInteger.cpp \
 	Source/WebCore/svg/SVGAnimatedInteger.h \

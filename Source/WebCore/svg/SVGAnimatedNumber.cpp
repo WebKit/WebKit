@@ -45,17 +45,17 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromString(const
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    return SVGAnimatedType::createNumber(constructFromOneBaseValue<float, SVGAnimatedNumber>(properties));
+    return SVGAnimatedType::createNumber(constructFromBaseValue<SVGAnimatedNumber>(properties));
 }
 
 void SVGAnimatedNumberAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedNumber>(properties);
+    stopAnimValAnimationForType<SVGAnimatedNumber>(properties);
 }
 
 void SVGAnimatedNumberAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
 {
-    resetFromOneBaseValue<float, SVGAnimatedNumber>(properties, type, &SVGAnimatedType::number);
+    resetFromBaseValue<SVGAnimatedNumber>(properties, type, &SVGAnimatedType::number);
 }
 
 void SVGAnimatedNumberAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)

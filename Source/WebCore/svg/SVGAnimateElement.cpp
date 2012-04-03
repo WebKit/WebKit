@@ -119,18 +119,25 @@ AnimatedPropertyType SVGAnimateElement::determineAnimatedPropertyType(SVGElement
     if (propertyTypes.isEmpty())
         return AnimatedUnknown;
 
+    ASSERT(propertyTypes.size() <= 2);
     AnimatedPropertyType type = propertyTypes[0];
     if (hasTagName(SVGNames::animateColorTag) && type != AnimatedColor)
         return AnimatedUnknown;
-
-    // FIXME: Animator for AnimatedEnumeration missing. Falling back to String animation.
-    if (type == AnimatedEnumeration)
-        return AnimatedString;
 
     // Animations of transform lists are not allowed for <animate> or <set>
     // http://www.w3.org/TR/SVG/animate.html#AnimationAttributesAndProperties
     if (type == AnimatedTransformList && !hasTagName(SVGNames::animateTransformTag))
         return AnimatedUnknown;
+
+    // Fortunately there's just one special case needed here: SVGMarkerElements orientAttr, which
+    // corresponds to SVGAnimatedAngle orientAngle and SVGAnimatedEnumeration orientType. We have to
+    // figure out whose value to change here.
+    if (targetElement->hasTagName(SVGNames::markerTag) && type == AnimatedAngle) {
+        ASSERT(propertyTypes.size() == 2);
+        ASSERT(propertyTypes[0] == AnimatedAngle);
+        ASSERT(propertyTypes[1] == AnimatedEnumeration);
+    } else if (propertyTypes.size() == 2)
+        ASSERT(propertyTypes[0] == propertyTypes[1]);
 
     return type;
 }
@@ -164,7 +171,6 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     ASSERT(m_animatedPropertyType == determineAnimatedPropertyType(targetElement));
 
     ASSERT(percentage >= 0 && percentage <= 1);
-    ASSERT(m_animatedPropertyType != AnimatedEnumeration);
     ASSERT(m_animatedPropertyType != AnimatedTransformList || hasTagName(SVGNames::animateTransformTag));
     ASSERT(m_animatedPropertyType != AnimatedUnknown);
     ASSERT(m_animator);
@@ -192,7 +198,8 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     // if after calculateAnimatedValue() ran the cached pointers in the list propery tear
     // offs would point nowhere, and we couldn't create copies of those values anymore,
     // while detaching. This is covered by assertions, moving this down would fire them.
-    m_animator->animValWillChange(m_animatedProperties);
+    if (!m_animatedProperties.isEmpty())
+        m_animator->animValWillChange(m_animatedProperties);
     m_animator->calculateAnimatedValue(percentage, repeat, m_fromType, m_toType, resultAnimationElement->m_animatedType);
 }
 
@@ -224,8 +231,12 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
 static inline bool propertyTypesAreConsistent(AnimatedPropertyType expectedPropertyType, const Vector<SVGAnimatedProperty*>& properties)
 {
     for (size_t i = 0; i < properties.size(); ++i) {
-        if (expectedPropertyType != properties[i]->animatedPropertyType())
+        if (expectedPropertyType != properties[i]->animatedPropertyType()) {
+            // This is the only allowed inconsistency. SVGAnimatedAngleAnimator handles both SVGAnimatedAngle & SVGAnimatedEnumeration for markers orient attribute.
+            if (expectedPropertyType == AnimatedAngle && properties[i]->animatedPropertyType() == AnimatedEnumeration)
+                return true;
             return false;
+        }
     }
     return true;
 }
@@ -265,7 +276,6 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
 
 void SVGAnimateElement::applyResultsToTarget()
 {
-    ASSERT(m_animatedPropertyType != AnimatedEnumeration);
     ASSERT(m_animatedPropertyType != AnimatedTransformList || hasTagName(SVGNames::animateTransformTag));
     ASSERT(m_animatedPropertyType != AnimatedUnknown);
     ASSERT(m_animatedType);

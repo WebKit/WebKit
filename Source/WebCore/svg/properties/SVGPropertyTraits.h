@@ -36,9 +36,9 @@ struct SVGPropertyTraits<bool> {
 };
 
 template<>
-struct SVGPropertyTraits<unsigned short> {
-    static unsigned short initialValue() { return 0; }
-    static String toString(unsigned short type) { return String::number(type); }
+struct SVGPropertyTraits<unsigned> {
+    static unsigned initialValue() { return 0; }
+    static String toString(unsigned type) { return String::number(type); }
 };
 
 template<>

@@ -50,12 +50,12 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromStrin
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    return SVGAnimatedType::createTransformList(constructFromOneBaseValue<SVGTransformList, SVGAnimatedTransformList>(properties));
+    return SVGAnimatedType::createTransformList(constructFromBaseValue<SVGAnimatedTransformList>(properties));
 }
 
 void SVGAnimatedTransformListAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedTransformList>(properties);
+    stopAnimValAnimationForType<SVGAnimatedTransformList>(properties);
 }
 
 inline PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromString(SVGAnimateTransformElement* animateTransformElement, const String& string)
@@ -66,7 +66,7 @@ inline PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFr
 
 void SVGAnimatedTransformListAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
 {
-    resetFromOneBaseValue<SVGTransformList, SVGAnimatedTransformList>(properties, type, &SVGAnimatedType::transformList);
+    resetFromBaseValue<SVGAnimatedTransformList>(properties, type, &SVGAnimatedType::transformList);
 }
 
 void SVGAnimatedTransformListAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)

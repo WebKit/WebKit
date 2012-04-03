@@ -28,29 +28,34 @@
 namespace WebCore {
 
 template<typename EnumType>
-class SVGAnimatedEnumerationPropertyTearOff : public SVGAnimatedStaticPropertyTearOff<unsigned short> {
+class SVGAnimatedEnumerationPropertyTearOff : public SVGAnimatedStaticPropertyTearOff<unsigned> {
 public:
-    virtual void setBaseVal(const unsigned short& property, ExceptionCode& ec)
+    virtual void setBaseVal(const unsigned& property, ExceptionCode& ec)
     {
         // All SVG enumeration values, that are allowed to be set via SVG DOM start with 1, 0 corresponds to unknown and is not settable through SVG DOM.
         if (property <= 0 || property > SVGPropertyTraits<EnumType>::highestEnumValue()) {
             ec = SVGException::SVG_INVALID_VALUE_ERR;
             return;
         }
-        SVGAnimatedStaticPropertyTearOff<unsigned short>::setBaseVal(property, ec);
+        SVGAnimatedStaticPropertyTearOff<unsigned>::setBaseVal(property, ec);
     }
 
     static PassRefPtr<SVGAnimatedEnumerationPropertyTearOff<EnumType> > create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, EnumType& property)
     {
         ASSERT(contextElement);
-        return adoptRef(new SVGAnimatedEnumerationPropertyTearOff<EnumType>(contextElement, attributeName, animatedPropertyType, reinterpret_cast<unsigned short&>(property)));
+        return adoptRef(new SVGAnimatedEnumerationPropertyTearOff<EnumType>(contextElement, attributeName, animatedPropertyType, reinterpret_cast<unsigned&>(property)));
     }
 
-    EnumType& currentAnimatedValue() { return reinterpret_cast<EnumType&>(SVGAnimatedStaticPropertyTearOff<unsigned short>::currentAnimatedValue()); }
+    EnumType& currentAnimatedValue()
+    {
+        unsigned& animatedValue = SVGAnimatedStaticPropertyTearOff<unsigned>::currentAnimatedValue();
+        ASSERT(animatedValue <= SVGPropertyTraits<EnumType>::highestEnumValue());
+        return reinterpret_cast<EnumType&>(animatedValue);
+    }
 
 private:
-    SVGAnimatedEnumerationPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, unsigned short& property)
-        : SVGAnimatedStaticPropertyTearOff<unsigned short>(contextElement, attributeName, animatedPropertyType, property)
+    SVGAnimatedEnumerationPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, unsigned& property)
+        : SVGAnimatedStaticPropertyTearOff<unsigned>(contextElement, attributeName, animatedPropertyType, property)
     {
     }
 };

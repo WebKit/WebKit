@@ -166,11 +166,6 @@ media/media-blocked-by-willsendrequest.html
 media/media-controls-clone-crash.html
 media/audio-repaint.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=82876
-svg/animations/svgenum-animation-8.html
-svg/animations/svgenum-animation-13.html
-svg/animations/svgenum-animation-11.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=83005
 fast/events/ondrop-text-html.html
 editing/pasteboard/get-data-text-plain-drop.html

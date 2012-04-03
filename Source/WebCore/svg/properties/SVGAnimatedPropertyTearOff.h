@@ -30,6 +30,7 @@ template<typename PropertyType>
 class SVGAnimatedPropertyTearOff : public SVGAnimatedProperty {
 public:
     typedef SVGPropertyTearOff<PropertyType> PropertyTearOff;
+    typedef PropertyType ContentType;
 
     PropertyTearOff* baseVal()
     {

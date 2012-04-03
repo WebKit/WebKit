@@ -40,17 +40,17 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedPreserveAspectRatioAnimator::constructFro
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedPreserveAspectRatioAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    return SVGAnimatedType::createPreserveAspectRatio(constructFromOneBaseValue<SVGPreserveAspectRatio, SVGAnimatedPreserveAspectRatio>(properties));
+    return SVGAnimatedType::createPreserveAspectRatio(constructFromBaseValue<SVGAnimatedPreserveAspectRatio>(properties));
 }
 
 void SVGAnimatedPreserveAspectRatioAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedPreserveAspectRatio>(properties);
+    stopAnimValAnimationForType<SVGAnimatedPreserveAspectRatio>(properties);
 }
 
 void SVGAnimatedPreserveAspectRatioAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
 {
-    resetFromOneBaseValue<SVGPreserveAspectRatio, SVGAnimatedPreserveAspectRatio>(properties, type, &SVGAnimatedType::preserveAspectRatio);
+    resetFromBaseValue<SVGAnimatedPreserveAspectRatio>(properties, type, &SVGAnimatedType::preserveAspectRatio);
 }
 
 void SVGAnimatedPreserveAspectRatioAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
