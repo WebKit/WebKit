@@ -1,3 +1,12 @@
+2012-04-03  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Canvas2DLayerChromium::updateCompositorResources should flush after copying
+        https://bugs.webkit.org/show_bug.cgi?id=83013
+
+        Reviewed by Stephen White.
+
+        * tests/Canvas2DLayerChromiumTest.cpp: Make sure context is flushed after copying.
+
 2012-04-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: [chromium] add provisional save method into the frontend client.
