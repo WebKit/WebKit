@@ -419,6 +419,7 @@ private:
     FrameView* parentFrameView() const;
 
     bool isInChildFrameWithFrameFlattening();
+    bool doLayoutWithFrameFlattening(bool allowSubtree);
 
     virtual AXObjectCache* axObjectCache() const;
     void notifyWidgetsInAllFrames(WidgetNotification);
