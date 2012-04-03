@@ -4019,3 +4019,5 @@ BUGWK WIN RELEASE : http/tests/xmlhttprequest/redirect-cross-origin-post.html = 
 BUGCR121442 LINUX DEBUG : plugins/iframe-shims.html = CRASH TEXT PASS
 
 BUGWK82994 : compositing/reflections/backface-hidden-reflection.html = PASS CRASH
+
+BUGWK83019 WIN DEBUG : compositing/reflections/nested-reflection-transformed2.html = PASS CRASH
