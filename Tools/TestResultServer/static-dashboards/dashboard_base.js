@@ -107,7 +107,8 @@ var WEBKIT_REVISIONS_KEY = 'webkitRevision';
 var TIMESTAMPS_KEY = 'secondsSinceEpoch';
 var BUILD_NUMBERS_KEY = 'buildNumbers';
 var TESTS_KEY = 'tests';
-var ONE_WEEK_SECONDS = 60 * 60 * 24 * 7;
+var ONE_DAY_SECONDS = 60 * 60 * 24;
+var ONE_WEEK_SECONDS = ONE_DAY_SECONDS * 7;
 
 // These should match the testtype uploaded to test-results.appspot.com.
 // See http://test-results.appspot.com/testfile.
@@ -482,9 +483,11 @@ function initBuilders()
         currentBuilderGroup().setup();
 }
 
-// Append JSON script elements.
 var g_resultsByBuilder = {};
 var g_expectations;
+var g_staleBuilders = [];
+var g_buildersThatFailedToLoad = [];
+
 function ADD_RESULTS(builds)
 {
     var json_version = builds['version'];
@@ -499,6 +502,9 @@ function ADD_RESULTS(builds)
         var lastRunSeconds = builds[builderName].secondsSinceEpoch[0];
         if ((Date.now() / 1000) - lastRunSeconds > ONE_WEEK_SECONDS)
             continue;
+
+        if ((Date.now() / 1000) - lastRunSeconds > ONE_DAY_SECONDS)
+            g_staleBuilders.push(builderName);
 
         if (json_version >= 4)
             builds[builderName][TESTS_KEY] = flattenTrie(builds[builderName][TESTS_KEY]);
@@ -626,7 +632,7 @@ function handleResourceLoadError(builderName, e)
 
     if (isLayoutTestResults()) {
         console.error(error);
-        addError(error);
+        g_buildersThatFailedToLoad.push(builderName);
     } else {
         // Avoid to show error/warning messages for non-layout tests. We may be
         // checking the builders that are not running the tests.
@@ -661,7 +667,7 @@ function handleResourceLoadError(builderName, e)
 // @param {string} errorMsg The message to show to the user.
 function addError(errorMsg)
 {
-    g_errorMessages += errorMsg + '<br />';
+    g_errorMessages += errorMsg + '<br>';
 }
 
 // Clear out error and warning messages.
@@ -710,11 +716,24 @@ function haveJsonFilesLoaded()
     return true;
 }
 
+function addBuilderLoadErrors()
+{
+    if (g_hasDoneInitialPageGeneration)
+        return;
+
+    if (g_buildersThatFailedToLoad.length)
+        addError('ERROR: Failed to get data from ' + g_buildersThatFailedToLoad.toString() + '.');
+
+    if (g_staleBuilders.length)
+        addError('ERROR: Data from ' + g_staleBuilders.toString() + ' is more than 1 day stale.');
+}
+
 function handleLocationChange()
 {
     if(!haveJsonFilesLoaded())
         return;
 
+    addBuilderLoadErrors();
     g_hasDoneInitialPageGeneration = true;
 
     var params = parseParameters();

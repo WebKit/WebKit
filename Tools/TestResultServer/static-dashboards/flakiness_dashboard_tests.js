@@ -546,6 +546,17 @@ function testDiffStates()
     assertObjectsDeepEqual(diffStates(oldState, newState), {a: 1, b: 2});
 }
 
+function testAddBuilderLoadErrors()
+{
+    clearErrors();
+    g_hasDoneInitialPageGeneration = false;
+    g_buildersThatFailedToLoad = ['builder1', 'builder2'];
+    g_staleBuilders = ['staleBuilder1'];
+    addBuilderLoadErrors();
+    console.log(g_errorMessages);
+    assertEquals(g_errorMessages, 'ERROR: Failed to get data from builder1,builder2.<br>ERROR: Data from staleBuilder1 is more than 1 day stale.<br>');
+}
+
 function runTests()
 {
     document.body.innerHTML = '<pre id=unittest-results></pre>';

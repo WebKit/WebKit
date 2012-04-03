@@ -1,3 +1,16 @@
+2012-04-03  Ojan Vafai  <ojan@chromium.org>
+
+        Give more human friendly error message when builders fail to load or have stale data.
+        https://bugs.webkit.org/show_bug.cgi?id=83058
+
+        Reviewed by Eric Seidel.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (addError):
+        (addBuilderLoadErrors):
+        (handleLocationChange):
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+
 2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Again, a build fix after r113067. Don't call r113067 twice on the configuration build directory.
