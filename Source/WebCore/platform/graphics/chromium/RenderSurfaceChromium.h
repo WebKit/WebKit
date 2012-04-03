@@ -50,10 +50,6 @@ public:
     explicit RenderSurfaceChromium(LayerChromium*);
     ~RenderSurfaceChromium();
 
-    bool prepareContentsTexture();
-    void releaseContentsTexture();
-    void draw(const IntRect& targetSurfaceRect);
-
     // Returns the rect that encloses the RenderSurface including any reflection.
     FloatRect drawableContentRect() const;
 
