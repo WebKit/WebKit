@@ -139,18 +139,6 @@ inline ShadowRoot* toShadowRoot(Node* node)
     return const_cast<ShadowRoot*>(toShadowRoot(static_cast<const Node*>(node)));
 }
 
-inline ShadowRoot* toShadowRoot(TreeScope* scope)
-{
-    ASSERT(!scope || scope->isShadowRoot());
-    return static_cast<ShadowRoot*>(scope);
-}
-
-// Put this TreeScope method here to inline it.
-inline bool TreeScope::isShadowRoot() const
-{
-    return m_rootNode->isShadowRoot();
-}
-
 } // namespace
 
 #endif

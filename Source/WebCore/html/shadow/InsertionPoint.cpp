@@ -49,8 +49,8 @@ InsertionPoint::~InsertionPoint()
 void InsertionPoint::attach()
 {
     TreeScope* scope = treeScope();
-    if (scope->isShadowRoot()) {
-        ShadowRoot* root = toShadowRoot(scope);
+    if (scope->rootNode()->isShadowRoot()) {
+        ShadowRoot* root = toShadowRoot(scope->rootNode());
         if (doesSelectFromHostChildren()) {
             distributeHostChildren(root->tree());
             attachDistributedNode();
@@ -85,11 +85,11 @@ void InsertionPoint::detach()
 
 ShadowRoot* InsertionPoint::assignedFrom() const
 {
-    TreeScope* scope = treeScope();
-    if (!scope->isShadowRoot())
+    Node* treeScopeRoot = treeScope()->rootNode();
+    if (!treeScopeRoot->isShadowRoot())
         return 0;
 
-    ShadowRoot* olderShadowRoot = toShadowRoot(scope)->olderShadowRoot();
+    ShadowRoot* olderShadowRoot = toShadowRoot(treeScopeRoot)->olderShadowRoot();
     if (olderShadowRoot && olderShadowRoot->assignedTo() == this)
         return olderShadowRoot;
     return 0;
@@ -97,9 +97,7 @@ ShadowRoot* InsertionPoint::assignedFrom() const
 
 bool InsertionPoint::isShadowBoundary() const
 {
-    if (TreeScope* scope = treeScope())
-        return scope->isShadowRoot();
-    return false;
+    return treeScope()->rootNode()->isShadowRoot();
 }
 
 bool InsertionPoint::rendererIsNeeded(const NodeRenderingContext& context)

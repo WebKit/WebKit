@@ -63,8 +63,8 @@ bool HTMLShadowElement::doesSelectFromHostChildren() const
 {
     TreeScope* scope = treeScope();
 
-    if (scope->isShadowRoot())
-        return toShadowRoot(scope)->isOldest();
+    if (scope->rootNode()->isShadowRoot())
+        return toShadowRoot(scope->rootNode())->isOldest();
     return false;
 }
 

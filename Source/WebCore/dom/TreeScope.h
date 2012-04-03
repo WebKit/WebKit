@@ -61,7 +61,6 @@ public:
     void addNodeListCache() { ++m_numNodeListCaches; }
     void removeNodeListCache() { ASSERT(m_numNodeListCaches > 0); --m_numNodeListCaches; }
     bool hasNodeListCaches() const { return m_numNodeListCaches; }
-    bool isShadowRoot() const;
 
     // Find first anchor with the given name.
     // First searches for an element with the given ID, but if that fails, then looks
@@ -107,4 +106,3 @@ inline bool TreeScope::containsMultipleElementsWithId(const AtomicString& id) co
 } // namespace WebCore
 
 #endif // TreeScope_h
-
