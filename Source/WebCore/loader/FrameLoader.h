@@ -168,8 +168,6 @@ public:
     void didChangeTitle(DocumentLoader*);
     void didChangeIcons(IconType);
 
-    bool shouldTreatURLAsSrcdocDocument(const KURL&) const;
-
     FrameLoadType loadType() const;
 
     CachePolicy subresourceCachePolicy() const;
@@ -308,8 +306,6 @@ private:
     void clearProvisionalLoad();
     void transitionToCommitted(PassRefPtr<CachedPage>);
     void frameLoadCompleted();
-
-    SubstituteData defaultSubstituteDataForURL(const KURL&);
 
     static void callContinueLoadAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
     static void callContinueLoadAfterNewWindowPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, bool shouldContinue);

@@ -442,9 +442,7 @@ public:
     virtual bool isPluginDocument() const { return false; }
     virtual bool isMediaDocument() const { return false; }
     virtual bool isFrameSet() const { return false; }
-
-    bool isSrcdocDocument() const { return m_isSrcdocDocument; }
-
+    
     PassRefPtr<CSSValuePool> cssValuePool() const;
     
     CSSStyleSelector* styleSelectorIfExists() const { return m_styleSelector.get(); }
@@ -1428,7 +1426,6 @@ private:
 
     bool m_isViewSource;
     bool m_sawElementsInKnownNamespaces;
-    bool m_isSrcdocDocument;
 
     RefPtr<DocumentEventQueue> m_eventQueue;
 
