@@ -36,7 +36,8 @@ public:
         XSSAuditingEnabled,
         FrameFlatteningEnabled,
         PrivateBrowsingEnabled,
-        DnsPrefetchEnabled
+        DnsPrefetchEnabled,
+        DeveloperExtrasEnabled
     };
 
     enum FontFamily {

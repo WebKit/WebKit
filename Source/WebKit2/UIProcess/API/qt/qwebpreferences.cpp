@@ -57,6 +57,8 @@ bool QWebPreferencesPrivate::testAttribute(QWebPreferencesPrivate::WebAttribute 
         return WKPreferencesGetDNSPrefetchingEnabled(preferencesRef());
     case FrameFlatteningEnabled:
         return WKPreferencesGetFrameFlatteningEnabled(preferencesRef());
+    case DeveloperExtrasEnabled:
+        return WKPreferencesGetDeveloperExtrasEnabled(preferencesRef());
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -92,6 +94,8 @@ void QWebPreferencesPrivate::setAttribute(QWebPreferencesPrivate::WebAttribute a
         break;
     case FrameFlatteningEnabled:
         WKPreferencesSetFrameFlatteningEnabled(preferencesRef(), enable);
+    case DeveloperExtrasEnabled:
+        WKPreferencesSetDeveloperExtrasEnabled(preferencesRef(), enable);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -308,6 +312,17 @@ void QWebPreferences::setDnsPrefetchEnabled(bool enable)
 {
     d->setAttribute(QWebPreferencesPrivate::DnsPrefetchEnabled, enable);
     emit dnsPrefetchEnabledChanged();
+}
+
+bool QWebPreferences::developerExtrasEnabled() const
+{
+    return d->testAttribute(QWebPreferencesPrivate::DeveloperExtrasEnabled);
+}
+
+void QWebPreferences::setDeveloperExtrasEnabled(bool enable)
+{
+    d->setAttribute(QWebPreferencesPrivate::DeveloperExtrasEnabled, enable);
+    emit developerExtrasEnabledChanged();
 }
 
 bool QWebPreferences::navigatorQtObjectEnabled() const

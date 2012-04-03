@@ -1,3 +1,20 @@
+2012-04-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Add developerExtrasEnabled to QWebPreferences.
+        https://bugs.webkit.org/show_bug.cgi?id=83018
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This is required to allow inspecting pages.
+
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferences::developerExtrasEnabled):
+        (QWebPreferences::setDeveloperExtrasEnabled):
+        * UIProcess/API/qt/qwebpreferences_p.h:
+        * UIProcess/API/qt/qwebpreferences_p_p.h:
+
 2012-04-03  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Tap highlight attempted hidden several times
