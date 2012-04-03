@@ -458,10 +458,6 @@ fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 # EFL's LayoutTestController does not implement setAuthorAndUserStylesEnabled
 fast/css/disabled-author-styles.html
 
-# EFL's LayoutTestController does not implement disableImageLoading
-http/tests/misc/favicon-loads-with-icon-loading-override.html
-http/tests/misc/favicon-loads-with-images-disabled.html
-
 # EFL's LayoutTestController does not implement setJavaScriptProfilingEnabled
 fast/profiler
 
