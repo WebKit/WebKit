@@ -28,6 +28,7 @@
 
 import unittest
 import sys
+import os
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.port.gtk import GtkPort
@@ -45,12 +46,12 @@ Crash log for DumpRenderTree (pid 28529):
 
 Coredump core-pid_28529-_-process_DumpRenderTree not found. To enable crash logs:
 
-- run this command as super-user: echo "/path/to/coredumps/core-pid_%p-_-process_%e" > /proc/sys/kernel/core_pattern
+- run this command as super-user: echo "%(core_directory)s/core-pid_%%p-_-process_%%e" > /proc/sys/kernel/core_pattern
 - enable core dumps: ulimit -c unlimited
-- set the WEBKIT_CORE_DUMPS_DIRECTORY environment variable: export WEBKIT_CORE_DUMPS_DIRECTORY=/path/to/coredumps
+- set the WEBKIT_CORE_DUMPS_DIRECTORY environment variable: export WEBKIT_CORE_DUMPS_DIRECTORY=%(core_directory)s
 
 
-STDERR: <empty>"""
+STDERR: <empty>""" % {'core_directory': os.environ.get('WEBKIT_CORE_DUMPS_DIRECTORY', '/path/to/coredumps')}
 
     def test_show_results_html_file(self):
         port = self.make_port()

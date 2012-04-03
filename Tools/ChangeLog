@@ -1,5 +1,12 @@
 2012-04-03  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, another test-webkitpy fix-up after r113037.
+
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py: Adapt mock
+        crash dump depending on current environment.
+
+2012-04-03  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, test-webkitpy build fix after r113037.
 
         * Scripts/webkitpy/layout_tests/port/gtk.py:
