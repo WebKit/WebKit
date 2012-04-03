@@ -895,7 +895,7 @@ WebInspector.DataGrid.prototype = {
         }
 
         if (handled)
-            event.consume();
+            event.consume(true);
     },
 
     expand: function()

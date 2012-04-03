@@ -119,7 +119,7 @@ WebInspector.DatabaseQueryView.prototype = {
 
     _enterKeyPressed: function(event)
     {
-        event.consume();
+        event.consume(true);
 
         this.prompt.clearAutoComplete(true);
 

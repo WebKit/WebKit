@@ -376,7 +376,7 @@ WebInspector.SearchView.prototype = {
             break;
         case WebInspector.KeyboardShortcut.Keys.Esc.code:
             this._controller.close();
-            event.consume();
+            event.consume(true);
             break;
         }        
     },

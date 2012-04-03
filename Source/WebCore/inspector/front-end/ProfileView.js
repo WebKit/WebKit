@@ -540,7 +540,7 @@ WebInspector.CPUProfileView.prototype = {
 
         this.refreshShowAsPercents();
 
-        event.consume();
+        event.consume(true);
     },
 
     _assignParentsInProfile: function()

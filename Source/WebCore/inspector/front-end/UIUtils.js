@@ -355,10 +355,10 @@ WebInspector.startEditing = function(element, config)
     {
         if (result === "commit") {
             editingCommitted.call(element);
-            event.consume();
+            event.consume(true);
         } else if (result === "cancel") {
             editingCancelled.call(element);
-            event.consume();
+            event.consume(true);
         } else if (result && result.indexOf("move-") === 0) {
             moveDirection = result.substring(5);
             if (event.keyIdentifier !== "U+0009")

@@ -590,7 +590,7 @@ WebInspector.documentClick = function(event)
         return;
 
     // Prevent the link from navigating, since we don't do any navigation by following links normally.
-    event.consume();
+    event.consume(true);
 
     function followLink()
     {
@@ -687,14 +687,14 @@ WebInspector.documentKeyDown = function(event)
     if (event.keyIdentifier === "F1" ||
         (event.keyIdentifier === helpKey && event.shiftKey && (!WebInspector.isBeingEdited(event.target) || event.metaKey))) {
         WebInspector.shortcutsScreen.show();
-        event.consume();
+        event.consume(true);
         return;
     }
 
     if (WebInspector.currentFocusElement() && WebInspector.currentFocusElement().handleKeyEvent) {
         WebInspector.currentFocusElement().handleKeyEvent(event);
         if (event.handled) {
-            event.consume();
+            event.consume(true);
             return;
         }
     }
@@ -702,7 +702,7 @@ WebInspector.documentKeyDown = function(event)
     if (WebInspector.inspectorView.currentPanel()) {
         WebInspector.inspectorView.currentPanel().handleShortcut(event);
         if (event.handled) {
-            event.consume();
+            event.consume(true);
             return;
         }
     }
@@ -710,7 +710,7 @@ WebInspector.documentKeyDown = function(event)
     WebInspector.searchController.handleShortcut(event);
     WebInspector.advancedSearchController.handleShortcut(event);
     if (event.handled) {
-        event.consume();
+        event.consume(true);
         return;
     }
 
@@ -719,13 +719,13 @@ WebInspector.documentKeyDown = function(event)
         case "U+0052": // R key
             if ((event.metaKey && isMac) || (event.ctrlKey && !isMac)) {
                 PageAgent.reload(event.shiftKey);
-                event.consume();
+                event.consume(true);
             }
             break;
         case "F5":
             if (!isMac) {
                 PageAgent.reload(event.ctrlKey || event.shiftKey);
-                event.consume();
+                event.consume(true);
             }
             break;
     }
@@ -739,20 +739,20 @@ WebInspector.documentKeyDown = function(event)
         case 187: // +
             if (isValidZoomShortcut) {
                 WebInspector._zoomIn();
-                event.consume();
+                event.consume(true);
             }
             break;
         case 109: // -
         case 189: // -
             if (isValidZoomShortcut) {
                 WebInspector._zoomOut();
-                event.consume();
+                event.consume(true);
             }
             break;
         case 48: // 0
             if (isValidZoomShortcut) {
                 WebInspector._resetZoom();
-                event.consume();
+                event.consume(true);
             }
             break;
     }

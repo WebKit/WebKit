@@ -386,7 +386,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
     _promptKeyDown: function(context, event)
     {
         if (isEnterKey(event)) {
-            event.consume();
+            event.consume(true);
             return this.editingCommitted(null, context.elementToEdit.textContent, context.previousContent, context);
         }
         if (event.keyIdentifier === "U+001B") { // Esc

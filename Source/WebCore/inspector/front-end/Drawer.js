@@ -265,7 +265,7 @@ WebInspector.Drawer.prototype = {
             WebInspector.inspectorView.currentPanel().doResize();
         this._view.doResize();
 
-        event.consume();
+        event.consume(true);
     },
 
     _endStatusBarDragging: function(event)

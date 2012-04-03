@@ -188,7 +188,7 @@ WebInspector.Spectrum.draggable = function(element, onmove, onstart, onstop) {
 
     function consume(e)
     {
-        e.consume();
+        e.consume(true);
     }
 
     function move(e)
@@ -428,7 +428,7 @@ WebInspector.Spectrum.prototype = {
     {
         if (event.keyIdentifier === "Enter" || event.keyIdentifier === "U+001B") { // Escape key
             this.hide();
-            event.consume();
+            event.consume(true);
         }
     }
 }

@@ -132,7 +132,7 @@ WebInspector.Dialog.prototype = {
 
         if (this._closeKeys.indexOf(event.keyCode) >= 0) {
             this._hide();
-            event.consume();
+            event.consume(true);
         }
     }
 };

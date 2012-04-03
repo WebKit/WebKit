@@ -877,7 +877,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         if (!cell || (!cell.hasStyleClass("count-column") && !cell.hasStyleClass("shallowSize-column") && !cell.hasStyleClass("retainedSize-column")))
             return;
 
-        event.consume();
+        event.consume(true);
     },
 
     _mouseClickInRetainmentGrid: function(event)
@@ -1059,7 +1059,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         height += this._previousDragPosition - event.pageY;
         this._previousDragPosition = event.pageY;
         this._updateRetainmentViewHeight(height);
-        event.consume();
+        event.consume(true);
     },
 
     _endRetainersHeaderDragging: function(event)

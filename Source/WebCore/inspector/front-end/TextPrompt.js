@@ -278,7 +278,7 @@ WebInspector.TextPrompt.prototype = {
             handled = this.defaultKeyHandler(event);
 
         if (handled)
-            event.consume();
+            event.consume(true);
 
         return handled;
     },
@@ -880,7 +880,7 @@ WebInspector.TextPromptWithHistory.prototype = {
         }
 
         if (newText !== undefined) {
-            event.consume();
+            event.consume(true);
             this.text = newText;
 
             if (isPrevious) {
@@ -1133,7 +1133,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
     _onItemMouseDown: function(text, event)
     {
         this.acceptSuggestion(text);
-        event.consume();
+        event.consume(true);
     },
 
     _createItemElement: function(prefix, text)

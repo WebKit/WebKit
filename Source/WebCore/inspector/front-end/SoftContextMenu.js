@@ -81,7 +81,7 @@ WebInspector.SoftContextMenu.prototype = {
         if (document.body.offsetHeight < this._contextMenuElement.offsetTop + this._contextMenuElement.offsetHeight)
             this._contextMenuElement.style.top = (document.body.offsetHeight - this._contextMenuElement.offsetHeight) + "px";
 
-        event.consume();
+        event.consume(true);
     },
 
     _createMenuItem: function(item)
@@ -123,7 +123,7 @@ WebInspector.SoftContextMenu.prototype = {
     _menuItemMouseDown: function(event)
     {
         // Do not let separator's mouse down hit menu's handler - we need to receive mouse up!
-        event.consume();
+        event.consume(true);
     },
 
     _menuItemMouseUp: function(event)
@@ -195,7 +195,7 @@ WebInspector.SoftContextMenu.prototype = {
                 this._triggerAction(this._highlightedMenuItemElement, event);
             break;
         }
-        event.consume();
+        event.consume(true);
     },
 
     _glassPaneMouseUp: function(event)
@@ -214,7 +214,7 @@ WebInspector.SoftContextMenu.prototype = {
             // This can re-enter discardMenu due to blur.
             document.body.removeChild(glassPane);
 
-            event.consume();
+            event.consume(true);
         }
     }
 }

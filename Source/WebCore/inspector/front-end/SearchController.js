@@ -203,7 +203,7 @@ WebInspector.SearchController.prototype = {
             if (event.target.value === "")
                 return;
 
-            event.consume();
+            event.consume(true);
 
             this.cancelSearch();
             WebInspector.setCurrentFocusElement(WebInspector.previousFocusElement());

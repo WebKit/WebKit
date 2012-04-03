@@ -345,7 +345,7 @@ TreeOutline.prototype._treeKeyPress = function(event)
         return;
 
     this._startSearch(searchText);
-    event.consume();
+    event.consume(true);
 }
 
 TreeOutline.prototype._treeKeyDown = function(event)
@@ -420,7 +420,7 @@ TreeOutline.prototype._treeKeyDown = function(event)
     }
 
     if (handled)
-        event.consume();
+        event.consume(true);
 }
 
 TreeOutline.prototype.expand = function()
@@ -541,7 +541,7 @@ TreeOutline.prototype._searchInputKeyDown = function(event)
         this._showSearchMatchElement(nextSelectedElement);
         
     if (handled)
-        event.consume();
+        event.consume(true);
     else
        window.setTimeout(this._boundSearchTextChanged, 0); 
 }
@@ -1009,7 +1009,7 @@ TreeElement.prototype.revealed = function()
 TreeElement.prototype.selectOnMouseDown = function(event)
 {
     if (this.select(false, true))
-        event.consume();
+        event.consume(true);
 }
 
 /**

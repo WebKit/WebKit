@@ -376,10 +376,14 @@ KeyboardEvent.prototype.__defineGetter__("data", function()
     }
 });
 
-Event.prototype.consume = function()
+/**
+ * @param {boolean=} preventDefault
+ */
+Event.prototype.consume = function(preventDefault)
 {
     this.stopImmediatePropagation();
-    this.preventDefault();
+    if (preventDefault)
+        this.preventDefault();
     this.handled = true;
 }
 

@@ -59,7 +59,7 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     this.settingsSelectElement.appendChild(option);
 
     // Prevent section from collapsing.
-    var muteEventListener = function(event) { event.consume(); };
+    var muteEventListener = function(event) { event.consume(true); };
 
     this.settingsSelectElement.addEventListener("click", muteEventListener, true);
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
@@ -1257,7 +1257,7 @@ WebInspector.StylePropertiesSection.prototype = {
     _handleSelectorClick: function(event)
     {
         this._startEditingOnMouseEvent();
-        event.consume();
+        event.consume(true);
     },
 
     _startEditingOnMouseEvent: function()
@@ -1805,7 +1805,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                             scrollerElement.addEventListener("scroll", repositionSpectrum, false);
                         }
                     }
-                    e.consume();
+                    e.consume(true);
                 }
 
                 function getFormat()
@@ -2025,7 +2025,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     _mouseClick: function(event)
     {
-        event.consume();
+        event.consume(true);
 
         if (event.target === this.listItemElement) {
             if (!this.section.editable) 

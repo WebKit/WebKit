@@ -277,7 +277,7 @@ WebInspector.TextViewer.prototype = {
         var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(e);
         var handler = this._shortcuts[shortcutKey];
         if (handler && handler())
-            e.consume();
+            e.consume(true);
     },
 
     _contextMenu: function(event)
