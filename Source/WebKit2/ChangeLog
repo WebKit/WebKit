@@ -1,5 +1,19 @@
 2012-04-03  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        [Qt] Tap highlight attempted hidden several times
+        https://bugs.webkit.org/show_bug.cgi?id=82903
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Do not reset GestureRecognizer if already reset, and do not
+        disable tap-highlight on touch-end if already reset.
+
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::recognize):
+        (WebKit::QtTapGestureRecognizer::reset):
+
+2012-04-03  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         [Qt] Tap highlight still showing when tap gesture has timed out
         https://bugs.webkit.org/show_bug.cgi?id=82902
 

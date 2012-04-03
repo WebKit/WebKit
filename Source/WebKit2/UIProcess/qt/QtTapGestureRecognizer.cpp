@@ -86,7 +86,8 @@ bool QtTapGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTim
         break;
     case QEvent::TouchEnd:
         m_tapAndHoldTimer.stop();
-        m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
+        if (m_tapState != NoTap)
+            m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
 
         switch (m_tapState) {
         case DoubleTapCandidate:
@@ -147,6 +148,9 @@ void QtTapGestureRecognizer::tapAndHoldTimeout()
 
 void QtTapGestureRecognizer::reset()
 {
+    if (m_tapState == NoTap)
+        return;
+
     m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
 
     m_tapState = NoTap;
