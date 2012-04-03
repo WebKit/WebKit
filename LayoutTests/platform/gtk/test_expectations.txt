@@ -96,6 +96,7 @@ BUGWK78344 : fast/text/international/inline-plaintext-relayout-with-leading-neut
 BUGWK80246 DEBUG : fast/css/hover-update.html = PASS TEXT
 
 BUGWK72434 : inspector/styles/svg-style.xhtml = PASS TEXT
+BUGWK55751 : inspector/timeline/timeline-network-resource.html = PASS TEXT
 
 // End of Flaky tests
 
