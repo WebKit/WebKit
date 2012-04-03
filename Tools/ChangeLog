@@ -1,3 +1,81 @@
+2012-04-02  Ojan Vafai  <ojan@chromium.org>
+
+        Generate the lists of all layout test builders from the buildbot json
+        https://bugs.webkit.org/show_bug.cgi?id=82924
+
+        Reviewed by Mihai Parparita.
+
+        In order to make this work, cleaned up a lot of existing technical debt.
+        -Got rid of expectations builder. This concept is outdated and just dead code.
+        -Split hash parameter parsing into two functions. One for dashboard_base
+        (crossDashboardParameters) and one for the specific dashboard html file
+        (dashboardSpecificParameters). In the old world, parseParameters needed to
+        be called twice and depended on it's own output the first time through.
+        Now we only need to parse crossDashboardParameters first and crossDashboardParameters
+        doesn't depend on the output of crossDashboardParameters.
+        -Lots of variable/method renames due to the above.
+        -g_defaultDashboardSpecificStateValues now has to list all possible hash parameters
+        for that dashboard.
+
+        * TestResultServer/static-dashboards/aggregate_results.html:
+        * TestResultServer/static-dashboards/builders.js:
+        (BuilderGroup):
+        (BuilderGroup.prototype.setup):
+        (jsonRequest.xhr.onload):
+        (jsonRequest.xhr.onerror):
+        (isWebkitTestRunner):
+        (isChromiumWebkitTipOfTreeTestRunner):
+        (isChromiumWebkitDepsTestRunner):
+        (generateBuildersFromBuilderList):
+        (onLayoutTestBuilderListLoad):
+        (onErrorLoadingBuilderList):
+        (loadBuildersList):
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (handleValidHashParameterWrapper):
+        (queryHashAsMap):
+        (parseParameter):
+        (parseCrossDashboardParameters):
+        (parseDashboardSpecificParameters):
+        (parseParameters):
+        (diffStates):
+        (defaultValue):
+        (isLayoutTestResults):
+        (isGPUTestResults):
+        (currentBuilderGroupCategory):
+        (currentBuilderGroup):
+        (initBuilders):
+        Now that we've split parameter parseing, these methods no longer need
+        to take an optional state. They can always just use the global cross-dashboard state.
+
+        (pathToBuilderResultsFile):
+        (appendJSONScriptElementFor):
+        (appendJSONScriptElements):
+        (handleResourceLoadError):
+        (haveJsonFilesLoaded):
+        (combinedDashboardState):
+        (setQueryParameter):
+        (permaLinkURLHash):
+        (toggleQueryParameter):
+        (queryParameterValue):
+        (selectHTML):
+        (htmlForTestTypeSwitcher):
+        (g_handleBuildersListLoaded):
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        (testPlatformAndBuildType):
+        (testSubstringList):
+        (testHtmlForTestTypeSwitcherGroup):
+        (testLookupVirtualTestSuite):
+        (testBaseTest):
+        (generateBuildersFromBuilderListHelper):
+        (testGenerateChromiumWebkitTipOfTreeBuildersFromBuilderList):
+        (testGenerateChromiumWebkitDepsBuildersFromBuilderList):
+        (assertObjectsDeepEqual):
+        (testQueryHashAsMap):
+        (testDiffStates):
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+        * TestResultServer/static-dashboards/treemap.html:
+
 2012-04-02  Tony Chang  <tony@chromium.org>
 
         check-webkit-style errors when removing .png files

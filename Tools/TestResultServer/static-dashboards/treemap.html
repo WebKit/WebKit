@@ -313,6 +313,10 @@ function handleValidHashParameter(key, value)
     }
 }
 
+g_defaultDashboardSpecificStateValues = {
+    treemapfocus: '',
+}
+
 function handleQueryParameterChange(params)
 {
     if (!g_buildersListLoaded)
@@ -335,7 +339,7 @@ function handleResourceLoadError(builderName, e)
 {
     $('map').innerHTML = '<span class=error>Could not load data for ' + builderName + '. ' +
         'Either there was a server-side error or ' + builderName + ' does not run ' +
-        g_currentState.testType + '.</span>';
+        g_crossDashboardState.testType + '.</span>';
 }
 
 function extractName(node)

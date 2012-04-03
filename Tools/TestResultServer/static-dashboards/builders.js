@@ -69,8 +69,6 @@ function BuilderGroup(isToTWebKit, builders)
         this.builders[builder] = builder.replace(/[ .()]/g, '_');
         if (flags & BuilderGroup.DEFAULT_BUILDER)
             this.defaultBuilder = builder;
-        if (flags & BuilderGroup.EXPECTATIONS_BUILDER)
-            this.expectationsBuilder = builder;
     }, this);
 }
 
@@ -79,17 +77,12 @@ BuilderGroup.prototype.setup = function()
     // FIXME: instead of copying these to globals, it would be better if
     // the rest of the code read things from the BuilderGroup instance directly
     g_defaultBuilderName = this.defaultBuilder;
-    g_expectationsBuilder = this.expectationsBuilder;
     g_builders = this.builders;
 };
 
 BuilderGroup.TOT_WEBKIT = true;
 BuilderGroup.DEPS_WEBKIT = false;
-
 BuilderGroup.DEFAULT_BUILDER = 1 << 1;
-// For expectations builder, list the fastest builder so that we always have the
-// most up to date expectations.
-BuilderGroup.EXPECTATIONS_BUILDER = 1 << 2;
 
 var BUILDER_TO_MASTER = {};
 function associateBuildersWithMaster(builders, master)
@@ -100,78 +93,96 @@ function associateBuildersWithMaster(builders, master)
     });
 }
 
-var CHROMIUM_LAYOUT_DEPS_BUILDERS = [
-    ['Webkit Win (deps)', BuilderGroup.DEFAULT_BUILDER],
-    ['Webkit Linux (deps)', BuilderGroup.EXPECTATIONS_BUILDER],
-    ['Webkit Mac10.6 (deps)'],
-];
-associateBuildersWithMaster(CHROMIUM_LAYOUT_DEPS_BUILDERS, CHROMIUM_WEBKIT_BUILDER_MASTER);
-
-var CHROMIUM_LAYOUT_TOT_BUILDERS = [
-    ['Webkit Win', BuilderGroup.DEFAULT_BUILDER],
-    ['Webkit Vista'],
-    ['Webkit Win7'],
-    ['Webkit Win (dbg)(1)'],
-    ['Webkit Win (dbg)(2)'],
-    ['Webkit Linux', BuilderGroup.EXPECTATIONS_BUILDER],
-    ['Webkit Linux 32'],
-    ['Webkit Linux (dbg)'],
-    ['Webkit Mac10.5'],
-    ['Webkit Mac10.5 (dbg)(1)'],
-    ['Webkit Mac10.5 (dbg)(2)'],
-    ['Webkit Mac10.6'],
-    ['Webkit Mac10.6 (dbg)'],
-    ['Webkit Mac10.7'],
-];
-associateBuildersWithMaster(CHROMIUM_LAYOUT_TOT_BUILDERS, CHROMIUM_WEBKIT_BUILDER_MASTER);
-
-function generateWebkitBuildersFromBuilderList(builderList)
+function jsonRequest(url, onload, onerror)
 {
-    return builderList.filter(function(tester) {
-        if (tester.indexOf('Tests') != -1) {
-            // Apple Windows bots still run old-run-webkit-tests, so they don't upload data.
-            return tester.indexOf('Windows') == -1 || (tester.indexOf('Qt') != -1 && tester.indexOf('Chromium') != -1);
-        }
-        return tester.indexOf('GTK') != -1 || tester == 'Qt Linux Release';
-    }).map(function(tester, index) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onload = function() {
+        if (xhr.status == 200)
+            onload(JSON.parse(xhr.response));
+        else
+            onerror(url);
+    };
+    xhr.onerror = function() { onerror(url); };
+    xhr.send();
+}
+
+function isWebkitTestRunner(builder)
+{
+    if (builder.indexOf('Tests') != -1) {
+        // Apple Windows bots still run old-run-webkit-tests, so they don't upload data.
+        return builder.indexOf('Windows') == -1 || (builder.indexOf('Qt') != -1 && builder.indexOf('Chromium') != -1);
+    }
+    return builder.indexOf('GTK') != -1 || builder == 'Qt Linux Release';
+}
+
+function isChromiumWebkitTipOfTreeTestRunner(builder)
+{
+    return builder.indexOf('Webkit') != -1 && builder.indexOf('Builder') == -1 && builder.indexOf('(deps)') == -1;
+}
+
+function isChromiumWebkitDepsTestRunner(builder)
+{
+    return builder.indexOf('Webkit') != -1 && builder.indexOf('Builder') == -1 && builder.indexOf('(deps)') != -1;
+}
+
+function generateBuildersFromBuilderList(builderList, filter)
+{
+    return builderList.filter(filter).map(function(tester, index) {
         var builder = [tester];
         if (!index)
             builder.push(BuilderGroup.DEFAULT_BUILDER);
-        if (tester.indexOf('Chromium Linux') != -1) {
-            if (builder.length == 1)
-                builder.push(BuilderGroup.EXPECTATIONS_BUILDER);
-            else
-                builder[1] |= BuilderGroup.EXPECTATIONS_BUILDER;
-        }
         return builder;
     });
 }
 
-// FIXME: Automatically grab all the builder lists from the buildbot json.
 var WEBKIT_DOT_ORG_BUILDER_JSON_URL = 'http://build.webkit.org/json/builders';
-var WEBKIT_TOT_BUILDERS = [];
-// FIXME: Move dashboard_base.js's request method into a base.js file that builders.js can depend on without a layer violation.
-var xhr = new XMLHttpRequest();
-xhr.open('GET', WEBKIT_DOT_ORG_BUILDER_JSON_URL, true);
-xhr.onload = function() {
-    if (xhr.status != 200) {
-        alert('Could not load list of builders from ' + WEBKIT_DOT_ORG_BUILDER_JSON_URL + '. Try reloading.');
+var CHROMIUM_CANARY_BUILDER_JSON_URL = 'http://build.chromium.org/p/chromium.webkit/json/builders';
+
+function onLayoutTestBuilderListLoad(builderFilter, master, groupName, groupEnum, json)
+{
+    var builders = generateBuildersFromBuilderList(Object.keys(json), builderFilter);
+    associateBuildersWithMaster(builders, master);
+    LAYOUT_TESTS_BUILDER_GROUPS[groupName] = new BuilderGroup(BuilderGroup.groupEnum, builders);
+    g_handleBuildersListLoaded();
+}
+
+function onErrorLoadingBuilderList(url)
+{
+    alert('Could not load list of builders from ' + url + '. Try reloading.');
+}
+
+function loadBuildersList(group, testType) {
+    if (testType != 'layout-tests') {
+        // FIXME: Load builder lists for non-layout-tests dynamically as well.
         return;
     }
+    var onLoad, url;
+    switch(group) {
+    case '@ToT - chromium.org':
+        onLoad = partial(onLayoutTestBuilderListLoad, isChromiumWebkitTipOfTreeTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, group, BuilderGroup.TOT_WEBKIT);
+        url = CHROMIUM_CANARY_BUILDER_JSON_URL;
+        break;
 
-    var builders = generateWebkitBuildersFromBuilderList(Object.keys(JSON.parse(xhr.response)));
-    associateBuildersWithMaster(builders, WEBKIT_BUILDER_MASTER);
-    LAYOUT_TESTS_BUILDER_GROUPS['@ToT - webkit.org'] = new BuilderGroup(BuilderGroup.TOT_WEBKIT, builders);
-    g_handleBuildersListLoaded();
-};
-xhr.onerror = function() { alert('Could not load list of builders from ' + WEBKIT_DOT_ORG_BUILDER_JSON_URL + '. Try reloading.'); }
-xhr.send();
+    case '@ToT - webkit.org':
+        onLoad = partial(onLayoutTestBuilderListLoad, isWebkitTestRunner, WEBKIT_BUILDER_MASTER, group, BuilderGroup.TOT_WEBKIT);
+        url = WEBKIT_DOT_ORG_BUILDER_JSON_URL;
+        break;
+
+    case '@DEPS - chromium.org':
+        onLoad = partial(onLayoutTestBuilderListLoad, isChromiumWebkitDepsTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, group, BuilderGroup.DEPS_WEBKIT);
+        url = CHROMIUM_CANARY_BUILDER_JSON_URL;
+        break;
+    }
+
+    jsonRequest(url, onLoad, onErrorLoadingBuilderList);
+}
 
 var LAYOUT_TESTS_BUILDER_GROUPS = {
-    '@DEPS - chromium.org': new BuilderGroup(BuilderGroup.DEPS_WEBKIT, CHROMIUM_LAYOUT_DEPS_BUILDERS),
-    '@ToT - chromium.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, CHROMIUM_LAYOUT_TOT_BUILDERS),
-    '@ToT - webkit.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, []),
-};
+    '@ToT - chromium.org': null,
+    '@ToT - webkit.org': null,
+    '@DEPS - chromium.org': null,
+}
 
 var CHROMIUM_GPU_GTESTS_DEPS_BUILDERS = [
     ['Win7 Release (NVIDIA)', BuilderGroup.DEFAULT_BUILDER],

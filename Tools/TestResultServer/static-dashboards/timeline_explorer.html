@@ -101,7 +101,6 @@ body {
 <script>
 var FAILING_TESTS_DATASET_NAME = 'Failing tests';
 
-var g_shouldShowWebKitRevisionsOnly = isTipOfTreeWebKitBuilder();
 var g_dygraph;
 var g_buildIndicesByTimestamp = {};
 var g_currentBuildIndex = -1;
@@ -163,10 +162,15 @@ function handleValidHashParameter(key, value)
     }
 }
 
-g_defaultStateValues = {
+g_defaultDashboardSpecificStateValues = {
     buildTimestamp: -1,
     ignoreFlakyTests: true
 };
+
+function shouldShowWebKitRevisionsOnly()
+{
+    return isTipOfTreeWebKitBuilder();
+}
 
 function updateTimelineForBuilder()
 {
@@ -188,7 +192,7 @@ function updateTimelineForBuilder()
 
         graphData.push([buildDate, failureCount]);
 
-        if (!g_shouldShowWebKitRevisionsOnly && (results[WEBKIT_REVISIONS_KEY][i] != results[WEBKIT_REVISIONS_KEY][i + 1])) {
+        if (!shouldShowWebKitRevisionsOnly() && (results[WEBKIT_REVISIONS_KEY][i] != results[WEBKIT_REVISIONS_KEY][i + 1])) {
             annotations.push({
                 series: FAILING_TESTS_DATASET_NAME,
                 x: buildDate,
@@ -292,7 +296,7 @@ function updateBuildInspector(results, builder, dygraph, index)
     addRow('Build:', '<a href="' + buildUrl + '" target="_blank">' + buildNumber + '</a> (<a href="' + resultsUrl + '" target="_blank">results</a>)');
 
     // Revision link(s)
-    if (!g_shouldShowWebKitRevisionsOnly)
+    if (!shouldShowWebKitRevisionsOnly())
         addRow('Chromium change:', chromiumRevisionLink(results, index));
     addRow('WebKit change:', webKitRevisionLink(results, index));
 

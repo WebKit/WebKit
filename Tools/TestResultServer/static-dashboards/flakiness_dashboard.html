@@ -354,7 +354,7 @@ var VIRTUAL_SUITES = {
 //////////////////////////////////////////////////////////////////////////////
 function generatePage()
 {
-    if (g_currentState.useTestData)
+    if (g_crossDashboardState.useTestData)
         return;
 
     updateDefaultBuilderState();
@@ -452,7 +452,7 @@ function handleValidHashParameter(key, value)
     }
 }
 
-g_defaultStateValues = {
+g_defaultDashboardSpecificStateValues = {
     sortOrder: BACKWARD,
     sortColumn: 'flakiness',
     showExpectations: false,
@@ -468,7 +468,9 @@ g_defaultStateValues = {
     expectationsUpdate: false,
     updateIndex: 0,
     resultsHeight: 300,
-    revision: null
+    revision: null,
+    tests: '',
+    result: '',
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -571,7 +573,7 @@ function platformAndBuildType(builderName)
         var builderNameUpperCase = builderName.toUpperCase();
         
         var platform = '';
-        if (isLayoutTestResults() && g_currentState.group == '@ToT - webkit.org' && !stringContains(builderNameUpperCase, 'CHROMIUM'))
+        if (isLayoutTestResults() && g_crossDashboardState.group == '@ToT - webkit.org' && !stringContains(builderNameUpperCase, 'CHROMIUM'))
             platform = nonChromiumPlatform(builderNameUpperCase);
         else
             platform = chromiumPlatform(builderNameUpperCase);
@@ -1243,7 +1245,7 @@ function indexesForFailures(builder, testName)
 // Returns the path to the failure log for this non-webkit test.
 function pathToFailureLog(testName)
 {
-    return '/steps/' + g_currentState.testType + '/logs/' + testName.split('.')[1]
+    return '/steps/' + g_crossDashboardState.testType + '/logs/' + testName.split('.')[1]
 }
 
 function showPopupForBuild(e, builder, index, opt_testName)
@@ -1632,7 +1634,7 @@ function realModifiers(modifierString)
 function generatePageForExpectationsUpdate()
 {
     // Always show all runs when auto-updating expectations.
-    if (!g_currentState.showAllRuns)
+    if (!g_crossDashboardState.showAllRuns)
         setQueryParameter('showAllRuns', true);
 
     processTestRunsForAllBuilders();
@@ -2487,9 +2489,9 @@ function isInvalidKeyForCrossBuilderView(key)
 function updateDefaultBuilderState()
 {
     if (isCrossBuilderView())
-        delete g_defaultStateValues.builder;
+        delete g_defaultDashboardSpecificStateValues.builder;
     else
-        g_defaultStateValues.builder = g_defaultBuilderName;
+        g_defaultDashboardSpecificStateValues.builder = g_defaultBuilderName;
 }
 
 // Sets the page state to regenerate the page.

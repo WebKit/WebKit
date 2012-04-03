@@ -199,7 +199,8 @@ function testPlatformAndBuildType()
     runPlatformAndBuildTypeTest('XP Tests', 'XP', 'RELEASE');
     runPlatformAndBuildTypeTest('Interactive Tests (dbg)', 'XP', 'DEBUG');
     
-    g_currentState.group = '@ToT - webkit.org';
+    g_crossDashboardState.group = '@ToT - webkit.org';
+    g_crossDashboardState.testType = 'layout-tests';
     runPlatformAndBuildTypeTest('Chromium Win Release (Tests)', 'XP', 'RELEASE');
     runPlatformAndBuildTypeTest('Chromium Linux Release (Tests)', 'LUCID', 'RELEASE');
     runPlatformAndBuildTypeTest('Chromium Mac Release (Tests)', 'SNOWLEOPARD', 'RELEASE');
@@ -316,11 +317,11 @@ function testGetExpectations()
 
 function testSubstringList()
 {
-    g_currentState.testType = 'gtest';
+    g_crossDashboardState.testType = 'gtest';
     g_currentState.tests = 'test.FLAKY_foo test.FAILS_foo1 test.DISABLED_foo2 test.MAYBE_foo3 test.foo4';
     assertEquals(substringList().toString(), 'test.foo,test.foo1,test.foo2,test.foo3,test.foo4');
 
-    g_currentState.testType = 'layout-tests';
+    g_crossDashboardState.testType = 'layout-tests';
     g_currentState.tests = 'foo/bar.FLAKY_foo.html';
     assertEquals(substringList().toString(), 'foo/bar.FLAKY_foo.html');
 }
@@ -359,7 +360,7 @@ function testHeaderForTestTableHtml()
 function testHtmlForTestTypeSwitcherGroup()
 {
     var container = document.createElement('div');
-    g_currentState.testType = 'ui_tests';
+    g_crossDashboardState.testType = 'ui_tests';
     container.innerHTML = htmlForTestTypeSwitcher();
     var selects = container.querySelectorAll('select');
     assertEquals(selects.length, 3);
@@ -367,7 +368,7 @@ function testHtmlForTestTypeSwitcherGroup()
     assertEquals(group.parentNode.textContent.indexOf('Group:'), 0);
     assertEquals(group.children.length, 3);
 
-    g_currentState.testType = 'layout-tests';
+    g_crossDashboardState.testType = 'layout-tests';
     container.innerHTML = htmlForTestTypeSwitcher();
     var selects = container.querySelectorAll('select');
     assertEquals(selects.length, 3);
@@ -378,18 +379,30 @@ function testHtmlForTestTypeSwitcherGroup()
 
 function testLookupVirtualTestSuite()
 {
-    self.assertEquals(lookupVirtualTestSuite('fast/canvas/foo.html'), '');
-    self.assertEquals(lookupVirtualTestSuite('platform/chromium/virtual/gpu/fast/canvas/foo.html'),
+    assertEquals(lookupVirtualTestSuite('fast/canvas/foo.html'), '');
+    assertEquals(lookupVirtualTestSuite('platform/chromium/virtual/gpu/fast/canvas/foo.html'),
                       'platform/chromium/virtual/gpu/fast/canvas');
 }
 
 function testBaseTest()
 {
-    self.assertEquals(baseTest('fast/canvas/foo.html', ''), 'fast/canvas/foo.html');
-    self.assertEquals(baseTest('platform/chromium/virtual/gpu/fast/canvas/foo.html', 'platform/chromium/virtual/gpu/fast/canvas'), 'fast/canvas/foo.html');
+    assertEquals(baseTest('fast/canvas/foo.html', ''), 'fast/canvas/foo.html');
+    assertEquals(baseTest('platform/chromium/virtual/gpu/fast/canvas/foo.html', 'platform/chromium/virtual/gpu/fast/canvas'), 'fast/canvas/foo.html');
 }
 
 // FIXME: Create builders_tests.js and move this there.
+function generateBuildersFromBuilderListHelper(builderList, expectedBuilders, builderFilter)
+{
+    var builders = generateBuildersFromBuilderList(builderList, builderFilter);
+    assertEquals(builders.length, expectedBuilders.length);
+    builders.forEach(function(builder, index) {
+        var expected = expectedBuilders[index];
+        assertEquals(builder.length, expected.length);
+        for (var i = 0; i < builder.length; i++)
+            assertEquals(builder[i], expected[i]);
+    })
+}
+
 function testGenerateWebkitBuildersFromBuilderList()
 {
     var builderList = ["Chromium Android Release", "Chromium Linux Release", "Chromium Linux Release (Grid Layout)", "Chromium Linux Release (Perf)", "Chromium Linux Release (Tests)",
@@ -400,18 +413,78 @@ function testGenerateWebkitBuildersFromBuilderList()
         "Qt SnowLeopard Release", "Qt Windows 32-bit Debug", "Qt Windows 32-bit Release", "SnowLeopard Intel Debug (Build)", "SnowLeopard Intel Debug (Tests)",
         "SnowLeopard Intel Debug (WebKit2 Tests)", "SnowLeopard Intel Release (Build)", "SnowLeopard Intel Release (Tests)", "SnowLeopard Intel Release (WebKit2 Tests)",
         "WinCE Release (Build)", "WinCairo Release", "Windows 7 Release (Tests)", "Windows 7 Release (WebKit2 Tests)", "Windows Debug (Build)", "Windows Release (Build)", "Windows XP Debug (Tests)"];
-    var builders = generateWebkitBuildersFromBuilderList(builderList);
-    var expectedBuilders = [["Chromium Linux Release (Tests)", 6], ["Chromium Mac Release (Tests)"], ["Chromium Win Release (Tests)"], ["GTK Linux 32-bit Release"], ["GTK Linux 64-bit Debug"],
+    var expectedBuilders = [["Chromium Linux Release (Tests)", 2], ["Chromium Mac Release (Tests)"], ["Chromium Win Release (Tests)"], ["GTK Linux 32-bit Release"], ["GTK Linux 64-bit Debug"],
         ["GTK Linux 64-bit Release"], ["Lion Debug (Tests)"], ["Lion Debug (WebKit2 Tests)"], ["Lion Release (Tests)"], ["Lion Release (WebKit2 Tests)"], ["Qt Linux Release"],
         ["SnowLeopard Intel Debug (Tests)"], ["SnowLeopard Intel Debug (WebKit2 Tests)"], ["SnowLeopard Intel Release (Tests)"], ["SnowLeopard Intel Release (WebKit2 Tests)"]];
+    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isWebkitTestRunner);
+}
 
-    self.assertEquals(builders.length, expectedBuilders.length);
-    builders.forEach(function(builder, index) {
-        var expected = expectedBuilders[index];
-        self.assertEquals(builder.length, expected.length);
-        for (var i = 0; i < builder.length; i++)
-            self.assertEquals(builder[i], expected[i]);
-    })
+function testGenerateChromiumWebkitTipOfTreeBuildersFromBuilderList()
+{
+    var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf", "Linux Tests",
+        "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "Webkit Linux", "Webkit Linux (dbg)", "Webkit Linux (deps)", "Webkit Linux 32",
+        "Webkit Mac Builder", "Webkit Mac Builder (dbg)", "Webkit Mac Builder (deps)", "Webkit Mac10.5", "Webkit Mac10.5 (dbg)(1)", "Webkit Mac10.5 (dbg)(2)", "Webkit Mac10.6", "Webkit Mac10.6 (dbg)",
+        "Webkit Mac10.6 (deps)", "Webkit Mac10.7", "Webkit Vista", "Webkit Win", "Webkit Win (dbg)(1)", "Webkit Win (dbg)(2)", "Webkit Win (deps)", "Webkit Win Builder", "Webkit Win Builder (dbg)",
+        "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder"];
+    var expectedBuilders = [["Webkit Linux", 2], ["Webkit Linux (dbg)"], ["Webkit Linux 32"], ["Webkit Mac10.5"], ["Webkit Mac10.5 (dbg)(1)"], ["Webkit Mac10.5 (dbg)(2)"], ["Webkit Mac10.6"],
+        ["Webkit Mac10.6 (dbg)"], ["Webkit Mac10.7"], ["Webkit Vista"], ["Webkit Win"], ["Webkit Win (dbg)(1)"], ["Webkit Win (dbg)(2)"], ["Webkit Win7"]];
+    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumWebkitTipOfTreeTestRunner);
+}
+
+function testGenerateChromiumWebkitDepsBuildersFromBuilderList()
+{
+    var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf", "Linux Tests",
+        "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "Webkit Linux", "Webkit Linux (dbg)", "Webkit Linux (deps)", "Webkit Linux 32",
+        "Webkit Mac Builder", "Webkit Mac Builder (dbg)", "Webkit Mac Builder (deps)", "Webkit Mac10.5", "Webkit Mac10.5 (dbg)(1)", "Webkit Mac10.5 (dbg)(2)", "Webkit Mac10.6", "Webkit Mac10.6 (dbg)",
+        "Webkit Mac10.6 (deps)", "Webkit Mac10.7", "Webkit Vista", "Webkit Win", "Webkit Win (dbg)(1)", "Webkit Win (dbg)(2)", "Webkit Win (deps)", "Webkit Win Builder", "Webkit Win Builder (dbg)",
+        "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder"];
+    var expectedBuilders = [["Webkit Linux (deps)", 2], ["Webkit Mac10.6 (deps)"], ["Webkit Win (deps)"]];
+    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumWebkitDepsTestRunner);
+}
+
+function assertObjectsDeepEqual(a, b)
+{
+    assertEquals(Object.keys(a).length, Object.keys(b).length);
+    for (var key in a)
+        assertEquals(a[key], b[key]);
+}
+
+function testQueryHashAsMap()
+{
+    assertEquals(window.location.hash, '#useTestData=true');
+    assertObjectsDeepEqual(queryHashAsMap(), {useTestData: 'true'});
+}
+
+function testParseCrossDashboardParameters()
+{
+    assertEquals(window.location.hash, '#useTestData=true');
+    parseCrossDashboardParameters();
+
+    var expectedParameters = {};
+    for (var key in g_defaultCrossDashboardStateValues)
+        expectedParameters[key] = g_defaultCrossDashboardStateValues[key];
+    expectedParameters.useTestData = true;
+
+    assertObjectsDeepEqual(g_crossDashboardState, expectedParameters);
+}
+
+function testDiffStates()
+{
+    var newState = {a: 1, b: 2};
+    assertObjectsDeepEqual(diffStates(null, newState), newState);
+
+    var oldState = {a: 1};
+    assertObjectsDeepEqual(diffStates(oldState, newState), {b: 2});
+
+    // FIXME: This is kind of weird. I think the existing users of this code work correctly, but it's a confusing result.
+    var oldState = {c: 1};
+    assertObjectsDeepEqual(diffStates(oldState, newState), {a:1, b: 2});
+
+    var oldState = {a: 1, b: 2};
+    assertObjectsDeepEqual(diffStates(oldState, newState), {});
+
+    var oldState = {a: 2, b: 3};
+    assertObjectsDeepEqual(diffStates(oldState, newState), {a: 1, b: 2});
 }
 
 function runTests()
