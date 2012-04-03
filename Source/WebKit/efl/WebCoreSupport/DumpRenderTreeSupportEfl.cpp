@@ -338,6 +338,16 @@ void DumpRenderTreeSupportEfl::setAutofilled(JSContextRef context, JSValueRef no
     inputElement->setAutofilled(autofilled);
 }
 
+void DumpRenderTreeSupportEfl::setDefersLoading(Evas_Object* ewkView, bool defers)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+
+    if (!page)
+        return;
+
+    page->setDefersLoading(defers);
+}
+
 bool DumpRenderTreeSupportEfl::findString(const Evas_Object* ewkView, const char* text, WebCore::FindOptions options)
 {
     WebCore::Page* page = EWKPrivate::corePage(ewkView);

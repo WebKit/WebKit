@@ -1,5 +1,18 @@
 2012-04-03  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] LayoutTestController needs implementation of setDefersLoading
+        https://bugs.webkit.org/show_bug.cgi?id=82890
+
+        Reviewed by Philippe Normand.
+
+        Implement setDefersLoading() in EFL's LayoutTestController so that the
+        corresponding test case can be removed from the skip list.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setDefersLoading):
+
+2012-04-03  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] LayoutTestController needs implementation of goBack
         https://bugs.webkit.org/show_bug.cgi?id=81914
 

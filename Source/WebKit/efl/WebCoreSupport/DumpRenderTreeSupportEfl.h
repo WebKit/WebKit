@@ -66,6 +66,7 @@ public:
     static void suspendAnimations(Evas_Object* ewkFrame);
     static void setValueForUser(JSContextRef, JSValueRef nodeObject, JSStringRef value);
     static void setAutofilled(JSContextRef, JSValueRef nodeObject, bool autofilled);
+    static void setDefersLoading(Evas_Object* ewkView, bool defers);
 
     static bool findString(const Evas_Object* ewkView, const char* text, WebCore::FindOptions);
     static void setSmartInsertDeleteEnabled(Evas_Object* ewkView, bool enabled);

@@ -611,10 +611,9 @@ void LayoutTestController::goBack()
     ewk_frame_back(browser->mainFrame());
 }
 
-void LayoutTestController::setDefersLoading(bool)
+void LayoutTestController::setDefersLoading(bool defers)
 {
-    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
-    notImplemented();
+    DumpRenderTreeSupportEfl::setDefersLoading(browser->mainView(), defers);
 }
 
 void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)

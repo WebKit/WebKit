@@ -587,9 +587,6 @@ storage/domstorage/localstorage/storagetracker
 # EFL's LayoutTestController does not implement setDomainRelaxationForbiddenForURLScheme
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
 
-# EFL's LayoutTestController does not implement setDefersLoading
-loader/navigation-while-deferring-loads.html
-
 # EFL's LayoutTestController does not implement overridePreference
 compositing/webgl/webgl-background-color.html
 compositing/webgl/webgl-no-alpha.html
