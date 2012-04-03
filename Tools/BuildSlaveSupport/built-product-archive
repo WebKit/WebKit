@@ -89,7 +89,7 @@ def createZipManually(directoryToZip, archiveFile):
     archiveZip.close()
 
 
-def createZip(directoryToZip, configuration):
+def createZip(directoryToZip, configuration, archiveConfigurationOnMac=False):
     archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
 
     # Chromium bots may not have this directory
@@ -105,6 +105,8 @@ def createZip(directoryToZip, configuration):
             raise
 
     if sys.platform == 'darwin':
+        if archiveConfigurationOnMac:
+            return subprocess.call(["ditto", "-c", "-k", "--keepParent", "--sequesterRsrc", directoryToZip, archiveFile])
         return subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", directoryToZip, archiveFile])
     elif sys.platform == 'cygwin':
         return subprocess.call(["zip", "-r", archiveFile, "bin"], cwd=directoryToZip)
@@ -121,7 +123,7 @@ def archiveBuiltProduct(configuration, platform):
     configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
 
     if platform == 'mac':
-        return createZip(_buildDirectory, configuration)
+        return createZip(configurationBuildDirectory, configuration, archiveConfigurationOnMac=True)
     elif platform == 'win':
         binDirectory = os.path.join(configurationBuildDirectory, "bin")
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")

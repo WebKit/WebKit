@@ -1,3 +1,13 @@
+2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another build fix after r113067 for Mac port.
+        It turned out that archiving the entire build directory doesn't work.
+
+        * BuildSlaveSupport/built-product-archive:
+        (createZipManually):
+        (createZip):
+        (archiveBuiltProduct):
+
 2012-04-03  Mike Lattanzio  <mlattanzio@rim.com>
 
         [BlackBerry] Expose CaseSensitive, Wrap, and HighlightAllMatches in WebPage::findNextString()
