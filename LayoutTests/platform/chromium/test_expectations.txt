@@ -3925,8 +3925,6 @@ BUGWK82417 LINUX SLOW : fast/frames/set-unloaded-frame-location.html = PASS
 
 BUGWK82507 LEOPARD SNOWLEOPARD DEBUG : media/W3C/video/events/event_order_canplay_canplaythrough.html = PASS CRASH
 
-BUGWK82508 LINUX DEBUG : http/tests/media/video-cancel-load.html = PASS TEXT
-
 BUGWK82509 LINUX : svg/text/append-text-node-to-tspan.html = PASS IMAGE
 
 BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = PASS IMAGE
