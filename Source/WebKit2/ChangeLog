@@ -1,3 +1,21 @@
+2012-04-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] ASSERT(!(outputBytes.size() % sizeof(UChar))) in PluginProcessProxyQt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=83034
+
+        Reviewed by Zoltan Herczeg.
+
+        Don't allow the plugin to pollute the standard output.
+        Reinvent StdOutDevNullRedirector which was removed in
+        r112889 for this purpose.
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (StdoutDevNullRedirector):
+        (WebKit):
+        (WebKit::StdoutDevNullRedirector::StdoutDevNullRedirector):
+        (WebKit::StdoutDevNullRedirector::~StdoutDevNullRedirector):
+        (WebKit::NetscapePluginModule::scanPlugin):
+
 2012-04-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Enable and connect the WebInspectorServer with WebKit2 pages.

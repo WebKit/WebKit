@@ -41,6 +41,32 @@ using namespace WebCore;
 
 namespace WebKit {
 
+class StdoutDevNullRedirector {
+public:
+    StdoutDevNullRedirector();
+    ~StdoutDevNullRedirector();
+
+private:
+    int m_savedStdout;
+};
+
+StdoutDevNullRedirector::StdoutDevNullRedirector()
+    : m_savedStdout(-1)
+{
+    int newStdout = open("/dev/null", O_WRONLY);
+    if (newStdout == -1)
+        return;
+    m_savedStdout = dup(STDOUT_FILENO);
+    dup2(newStdout, STDOUT_FILENO);
+}
+
+StdoutDevNullRedirector::~StdoutDevNullRedirector()
+{
+    if (m_savedStdout != -1)
+        dup2(m_savedStdout, STDOUT_FILENO);
+}
+
+
 static void parseMIMEDescription(const String& mimeDescription, Vector<MimeClassInfo>& result)
 {
     ASSERT_ARG(result, result.isEmpty());
@@ -154,19 +180,25 @@ static String truncateToSingleLine(const String& string)
 
 bool NetscapePluginModule::scanPlugin(const String& pluginPath)
 {
-    // We are loading the plugin here since it does not seem to be a standardized way to
-    // get the needed informations from a UNIX plugin without loading it.
-    RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
-    if (!pluginModule)
-        return false;
-
-    pluginModule->incrementLoadCount();
     RawPluginMetaData metaData;
-    bool success = pluginModule->getPluginInfoForLoadedPlugin(metaData);
-    pluginModule->decrementLoadCount();
 
-    if (!success)
-        return false;
+    {
+        // Don't allow the plugin to pollute the standard output.
+        StdoutDevNullRedirector stdOutRedirector;
+
+        // We are loading the plugin here since it does not seem to be a standardized way to
+        // get the needed informations from a UNIX plugin without loading it.
+        RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
+        if (!pluginModule)
+            return false;
+
+        pluginModule->incrementLoadCount();
+        bool success = pluginModule->getPluginInfoForLoadedPlugin(metaData);
+        pluginModule->decrementLoadCount();
+
+        if (!success)
+            return false;
+    }
 
     // Write data to standard output for the UI process.
     String output[3] = {
