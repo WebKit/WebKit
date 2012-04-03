@@ -21,10 +21,11 @@ body {
     height: 200px;
 }
 .row div {
-    width: -webkit-flex(1);
+    -webkit-flex: 1 auto;
 }
 .noflex .row :nth-child(1) {
     width: 50px;
+    -webkit-flex: none;
 }
 
 .column {
@@ -33,10 +34,11 @@ body {
     height: 200px;
 }
 .column div {
-    height: -webkit-flex(1);
+    -webkit-flex: 1 auto;
 }
 .noflex .column :nth-child(1) {
     height: 50px;
+    -webkit-flex: none;
 }
 
 </style>

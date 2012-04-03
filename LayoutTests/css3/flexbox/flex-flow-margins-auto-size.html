@@ -83,7 +83,7 @@ writingModes.forEach(function(writingMode) {
             container.setAttribute('data-expected-height', 90);
 
             container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" ' + flexboxExpectations + '>\n' +
-                '<div style="width: -webkit-flex(1 20px); height: -webkit-flex(1 20px);" ' + flexItemExpectations + '></div>\n' +
+                '<div style="-webkit-flex: 1 auto; width: 20px; height: 20px;" ' + flexItemExpectations + '></div>\n' +
             '</div>';
 
             document.body.appendChild(container);

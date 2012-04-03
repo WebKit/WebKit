@@ -240,7 +240,7 @@ function mainAxisDirection(writingMode, flexDirection)
 function addChild(flexbox, preferredSize, linePack, expected_x_offset)
 {
     var child = document.createElement('div');
-    child.setAttribute('style', 'height: -webkit-flex(1 ' + preferredSize + 'px);'
+    child.setAttribute('style', '-webkit-flex: 1 ' + preferredSize + 'px;'
         + 'min-width: 100px');
 
     child.setAttribute("data-expected-width", linePack == "stretch" ? "300" : "100");

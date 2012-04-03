@@ -69,7 +69,7 @@ private:
     bool isLeftToRightFlow() const;
     bool isMultiline() const;
     Length crossAxisLength() const;
-    Length mainAxisLengthForChild(RenderBox* child) const;
+    Length preferredLengthForChild(RenderBox* child) const;
     void setCrossAxisExtent(LayoutUnit);
     LayoutUnit crossAxisExtentForChild(RenderBox* child);
     LayoutUnit mainAxisExtentForChild(RenderBox* child);
@@ -102,9 +102,6 @@ private:
 
     void layoutFlexItems(FlexOrderIterator&, WTF::Vector<LineContext>&);
     void repositionLogicalHeightDependentFlexItems(FlexOrderIterator&, WTF::Vector<LineContext>&, LayoutUnit& oldClientAfterEdge);
-
-    float positiveFlexForChild(RenderBox* child) const;
-    float negativeFlexForChild(RenderBox* child) const;
 
     LayoutUnit availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, RenderBox*);
     LayoutUnit marginBoxAscentForChild(RenderBox*);

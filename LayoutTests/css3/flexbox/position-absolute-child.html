@@ -453,7 +453,7 @@ writingModes.forEach(function(writingMode) {
                 setFlexboxSize(flexbox, flexDirection);
                 for (var childIndex = 1; childIndex <= 3; ++childIndex) {
                     var child = document.createElement('div');
-                    child.style[flexDirection] = '-webkit-flex(' + childIndex + ')';
+                    child.style.webkitFlex = childIndex;
                     if (childIndex == absoluteIndex)
                         child.style.position = 'absolute';
 

@@ -345,9 +345,12 @@ bool RenderFlexibleBox::isMultiline() const
     return style()->flexWrap() != FlexWrapNone;
 }
 
-Length RenderFlexibleBox::mainAxisLengthForChild(RenderBox* child) const
+Length RenderFlexibleBox::preferredLengthForChild(RenderBox* child) const
 {
-    return isHorizontalFlow() ? child->style()->width() : child->style()->height();
+    Length flexLength = child->style()->flexPreferredSize();
+    if (flexLength.isAuto())
+        flexLength = isHorizontalFlow() ? child->style()->width() : child->style()->height();
+    return flexLength;
 }
 
 Length RenderFlexibleBox::crossAxisLength() const
@@ -584,7 +587,7 @@ LayoutUnit RenderFlexibleBox::mainAxisScrollbarExtentForChild(RenderBox* child) 
 
 LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* child) const
 {
-    Length mainAxisLength = mainAxisLengthForChild(child);
+    Length mainAxisLength = preferredLengthForChild(child);
     if (mainAxisLength.isAuto()) {
         LayoutUnit mainAxisExtent = hasOrthogonalFlow(child) ? child->logicalHeight() : child->maxPreferredLogicalWidth();
         return mainAxisExtent - mainAxisBorderAndPaddingExtentForChild(child);
@@ -636,16 +639,6 @@ void RenderFlexibleBox::layoutFlexItems(FlexOrderIterator& iterator, WTF::Vector
     }
 }
 
-float RenderFlexibleBox::positiveFlexForChild(RenderBox* child) const
-{
-    return isHorizontalFlow() ? child->style()->flexboxWidthPositiveFlex() : child->style()->flexboxHeightPositiveFlex();
-}
-
-float RenderFlexibleBox::negativeFlexForChild(RenderBox* child) const
-{
-    return isHorizontalFlow() ? child->style()->flexboxWidthNegativeFlex() : child->style()->flexboxHeightNegativeFlex();
-}
-
 LayoutUnit RenderFlexibleBox::availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, RenderBox* child)
 {
     LayoutUnit childCrossExtent = crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child);
@@ -671,7 +664,7 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Fle
             continue;
 
         child->clearOverrideSize();
-        if (mainAxisLengthForChild(child).isAuto()) {
+        if (preferredLengthForChild(child).isAuto()) {
             if (!relayoutChildren)
                 child->setChildNeedsLayout(true);
             child->layoutIfNeeded();
@@ -745,8 +738,8 @@ bool RenderFlexibleBox::computeNextFlexLine(FlexOrderIterator& iterator, Ordered
             break;
         orderedChildren.append(child);
         preferredMainAxisExtent += childMainAxisMarginBoxExtent;
-        totalPositiveFlexibility += positiveFlexForChild(child);
-        totalNegativeFlexibility += negativeFlexForChild(child);
+        totalPositiveFlexibility += child->style()->positiveFlex();
+        totalNegativeFlexibility += child->style()->negativeFlex();
 
         LayoutUnit childMinMaxAppliedMainAxisExtent = adjustChildSizeForMinAndMax(child, childMainAxisExtent, flexboxAvailableContentExtent);
         minMaxAppliedMainAxisExtent += childMinMaxAppliedMainAxisExtent - childMainAxisExtent + childMainAxisMarginBoxExtent;
@@ -760,8 +753,8 @@ void RenderFlexibleBox::freezeViolations(const WTF::Vector<Violation>& violation
         RenderBox* child = violations[i].child;
         LayoutUnit childSize = violations[i].childSize;
         availableFreeSpace -= childSize - preferredMainAxisContentExtentForChild(child);
-        totalPositiveFlexibility -= positiveFlexForChild(child);
-        totalNegativeFlexibility -= negativeFlexForChild(child);
+        totalPositiveFlexibility -= child->style()->positiveFlex();
+        totalNegativeFlexibility -= child->style()->negativeFlex();
         inflexibleItems.set(child, childSize);
     }
 }
@@ -788,9 +781,9 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, const OrderedF
             LayoutUnit preferredChildSize = preferredMainAxisContentExtentForChild(child);
             LayoutUnit childSize = preferredChildSize;
             if (availableFreeSpace > 0 && totalPositiveFlexibility > 0 && flexSign == PositiveFlexibility)
-                childSize += lroundf(availableFreeSpace * positiveFlexForChild(child) / totalPositiveFlexibility);
+                childSize += lroundf(availableFreeSpace * child->style()->positiveFlex() / totalPositiveFlexibility);
             else if (availableFreeSpace < 0 && totalNegativeFlexibility > 0  && flexSign == NegativeFlexibility)
-                childSize += lroundf(availableFreeSpace * negativeFlexForChild(child) / totalNegativeFlexibility);
+                childSize += lroundf(availableFreeSpace * child->style()->negativeFlex() / totalNegativeFlexibility);
 
             LayoutUnit adjustedChildSize = adjustChildSizeForMinAndMax(child, childSize, flexboxAvailableContentExtent);
             childSizes.append(adjustedChildSize);

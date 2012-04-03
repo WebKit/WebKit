@@ -10,13 +10,13 @@
 }
 
 #left {
-  height: -webkit-flex(1);
+  -webkit-flex: 1;
   background-color: yellow;
   width: 100%;
 }
 
 #content {
-  height: -webkit-flex(1);
+  -webkit-flex: 1;
   background-color: grey;
   width: 100%;
 }
@@ -29,7 +29,7 @@
 
 function setFlex(id, animationPercentage, start, end) {
   var flexValue = start + ((end - start) * animationPercentage);
-  document.getElementById(id).style.height = "-webkit-flex(" + flexValue + " 0 0px)";
+  document.getElementById(id).style.webkitFlex = flexValue + " 0 0px";
 }
 
 function step(count) {
