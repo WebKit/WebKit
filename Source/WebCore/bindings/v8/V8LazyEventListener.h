@@ -48,7 +48,7 @@ namespace WebCore {
     // A V8LazyEventListener is either a HTML or SVG event handler.
     class V8LazyEventListener : public V8AbstractEventListener {
     public:
-        static PassRefPtr<V8LazyEventListener> create(const AtomicString& functionName, const AtomicString& eventParameterName, const String& code, const String& sourceURL, const TextPosition& position, PassRefPtr<Node> node, const WorldContextHandle& worldContext)
+        static PassRefPtr<V8LazyEventListener> create(const AtomicString& functionName, const AtomicString& eventParameterName, const String& code, const String& sourceURL, const TextPosition& position, Node* node, const WorldContextHandle& worldContext)
         {
             return adoptRef(new V8LazyEventListener(functionName, eventParameterName, code, sourceURL, position, node, worldContext));
         }
@@ -59,7 +59,7 @@ namespace WebCore {
         virtual void prepareListenerObject(ScriptExecutionContext*);
 
     private:
-        V8LazyEventListener(const AtomicString& functionName, const AtomicString& eventParameterName, const String& code, const String sourceURL, const TextPosition&, PassRefPtr<Node>, const WorldContextHandle&);
+        V8LazyEventListener(const AtomicString& functionName, const AtomicString& eventParameterName, const String& code, const String sourceURL, const TextPosition&, Node*, const WorldContextHandle&);
 
         virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
 
@@ -73,8 +73,7 @@ namespace WebCore {
         AtomicString m_eventParameterName;
         String m_code;
         String m_sourceURL;
-        RefPtr<Node> m_node;
-        RefPtr<HTMLFormElement> m_formElement;
+        Node* m_node;
         TextPosition m_position;
     };
 

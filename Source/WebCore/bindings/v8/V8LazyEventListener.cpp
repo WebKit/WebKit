@@ -50,18 +50,15 @@
 
 namespace WebCore {
 
-V8LazyEventListener::V8LazyEventListener(const AtomicString& functionName, const AtomicString& eventParameterName, const String& code, const String sourceURL, const TextPosition& position, PassRefPtr<Node> node, const WorldContextHandle& worldContext)
+V8LazyEventListener::V8LazyEventListener(const AtomicString& functionName, const AtomicString& eventParameterName, const String& code, const String sourceURL, const TextPosition& position, Node* node, const WorldContextHandle& worldContext)
     : V8AbstractEventListener(true, worldContext)
     , m_functionName(functionName)
     , m_eventParameterName(eventParameterName)
     , m_code(code)
     , m_sourceURL(sourceURL)
     , m_node(node)
-    , m_formElement(0)
     , m_position(position)
 {
-    if (m_node && m_node->isHTMLElement())
-        m_formElement = static_cast<HTMLElement*>(m_node.get())->form();
 }
 
 template<typename T>
@@ -165,12 +162,13 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     ASSERT(value->IsFunction());
     v8::Local<v8::Function> intermediateFunction = value.As<v8::Function>();
 
-    v8::Handle<v8::Object> nodeWrapper = toObjectWrapper<Node>(m_node.get());
-    v8::Handle<v8::Object> formWrapper = toObjectWrapper<HTMLFormElement>(m_formElement.get());
-    v8::Handle<v8::Object> documentWrapper = toObjectWrapper<Document>(m_node ? m_node->ownerDocument() : 0);
+    HTMLFormElement* formElement = 0;
+    if (m_node && m_node->isHTMLElement())
+        formElement = static_cast<HTMLElement*>(m_node)->form();
 
-    m_node.clear();
-    m_formElement.clear();
+    v8::Handle<v8::Object> nodeWrapper = toObjectWrapper<Node>(m_node);
+    v8::Handle<v8::Object> formWrapper = toObjectWrapper<HTMLFormElement>(formElement);
+    v8::Handle<v8::Object> documentWrapper = toObjectWrapper<Document>(m_node ? m_node->ownerDocument() : 0);
 
     v8::Handle<v8::Value> parameters[3] = { nodeWrapper, formWrapper, documentWrapper };
 
@@ -211,6 +209,12 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     }
 
     wrappedFunction->SetName(v8::String::New(fromWebCoreString(m_functionName), m_functionName.length()));
+
+    // Since we only parse once, there's no need to keep data used for parsing around anymore.
+    m_functionName = String();
+    m_code = String();
+    m_eventParameterName = String();
+    m_sourceURL = String();
 
     setListenerObject(wrappedFunction);
 }

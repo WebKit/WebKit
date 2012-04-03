@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+
+description('Tests that we do not hold on to any nodes');
+
+gc();
+
+function numberOfLiveNodes() {
+    return window.internals && window.internals.numberOfLiveNodes && window.internals.numberOfLiveNodes();
+}
+
+var beforeCount = numberOfLiveNodes();
+
+var f = document.createElement('form');
+var i = f.appendChild(document.createElement('input'));
+i.setAttribute('onclick', '');
+f.removeChild(i);
+f = null;
+i = null;
+gc();
+
+var afterCount = numberOfLiveNodes();
+
+shouldBe('afterCount - beforeCount', '0');
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
