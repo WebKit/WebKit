@@ -882,12 +882,18 @@
         "hidden": true,
         "types": [
             {
+                "id": "DatabaseId",
+                "type": "string",
+                "description": "Unique identifier of Database object.",
+                "hidden": true
+            },
+            {
                 "id": "Database",
                 "type": "object",
                 "description": "Database object.",
                 "hidden": true,
                 "properties": [
-                    { "name": "id", "type": "string", "description": "Database ID." },
+                    { "name": "id", "$ref": "DatabaseId", "description": "Database ID." },
                     { "name": "domain", "type": "string", "description": "Database domain." },
                     { "name": "name", "type": "string", "description": "Database name." },
                     { "name": "version", "type": "string", "description": "Database version." }
@@ -911,7 +917,7 @@
             {
                 "name": "getDatabaseTableNames",
                 "parameters": [
-                    { "name": "databaseId", "type": "integer" }
+                    { "name": "databaseId", "$ref": "DatabaseId" }
                 ],
                 "returns": [
                     { "name": "tableNames", "type": "array", "items": { "type": "string" } }
@@ -920,7 +926,7 @@
             {
                 "name": "executeSQL",
                 "parameters": [
-                    { "name": "databaseId", "type": "integer" },
+                    { "name": "databaseId", "$ref": "DatabaseId" },
                     { "name": "query", "type": "string" }
                 ],
                 "returns": [
@@ -1110,6 +1116,12 @@
         "hidden": true,
         "types": [
             {
+                "id": "StorageId",
+                "type": "string",
+                "description": "Unique identifier of DOM storage entry.",
+                "hidden": true
+            },
+            {
                 "id": "Entry",
                 "type": "object",
                 "description": "DOM Storage entry.",
@@ -1117,7 +1129,7 @@
                 "properties": [
                     { "name": "host", "type": "string", "description": "Domain name." },
                     { "name": "isLocalStorage", "type": "boolean", "description": "True for local storage." },
-                    { "name": "id", "type": "number", "description": "Entry id for further reference." }
+                    { "name": "id", "$ref": "StorageId", "description": "Entry id for further reference." }
                 ]
             }
         ],
@@ -1133,7 +1145,7 @@
             {
                 "name": "getDOMStorageEntries",
                 "parameters": [
-                    { "name": "storageId", "type": "integer" }
+                    { "name": "storageId", "$ref": "StorageId" }
                 ],
                 "returns": [
                     { "name": "entries", "type": "array", "items": { "$ref": "Entry"} }
@@ -1142,7 +1154,7 @@
             {
                 "name": "setDOMStorageItem",
                 "parameters": [
-                    { "name": "storageId", "type": "integer" },
+                    { "name": "storageId", "$ref": "StorageId" },
                     { "name": "key", "type": "string" },
                     { "name": "value", "type": "string" }
                 ],
@@ -1153,7 +1165,7 @@
             {
                 "name": "removeDOMStorageItem",
                 "parameters": [
-                    { "name": "storageId", "type": "integer" },
+                    { "name": "storageId", "$ref": "StorageId" },
                     { "name": "key", "type": "string" }
                 ],
                 "returns": [
@@ -1171,7 +1183,7 @@
             {
                 "name": "updateDOMStorage",
                 "parameters": [
-                    { "name": "storageId", "type": "integer" }
+                    { "name": "storageId",  "$ref": "StorageId" }
                 ]
             }
         ]

@@ -45,8 +45,8 @@ module core {
         [Custom] DOMObject functionDetails(in DOMObject object);
         [Custom] Array getEventListeners(in Node node);
 
-        [Custom] int databaseId(in DOMObject database);
-        [Custom] int storageId(in DOMObject storage);
+        [Custom] DOMString databaseId(in DOMObject database);
+        [Custom] DOMString storageId(in DOMObject storage);
 
 #if defined(ENABLE_WORKERS) && ENABLE_WORKERS
         void didCreateWorker(in long id, in DOMString url, in boolean isFakeWorker);

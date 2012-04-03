@@ -66,20 +66,20 @@ public:
     // Called from the front-end.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
-    virtual void getDatabaseTableNames(ErrorString*, int databaseId, RefPtr<InspectorArray>& names);
-    virtual void executeSQL(ErrorString*, int databaseId, const String& query, bool* success, int* transactionId);
+    virtual void getDatabaseTableNames(ErrorString*, const String& databaseId, RefPtr<InspectorArray>& names);
+    virtual void executeSQL(ErrorString*, const String& databaseId, const String& query, bool* success, int* transactionId);
 
     // Called from the injected script.
-    int databaseId(Database*);
+    String databaseId(Database*);
 
     void didOpenDatabase(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 private:
     explicit InspectorDatabaseAgent(InstrumentingAgents*, InspectorState*);
 
-    Database* databaseForId(int databaseId);
+    Database* databaseForId(const String& databaseId);
     InspectorDatabaseResource* findByFileName(const String& fileName);
 
-    typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
+    typedef HashMap<String, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
     DatabaseResourcesMap m_resources;
     RefPtr<FrontendProvider> m_frontendProvider;
     bool m_enabled;

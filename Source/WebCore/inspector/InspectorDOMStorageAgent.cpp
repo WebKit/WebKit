@@ -108,7 +108,7 @@ void InspectorDOMStorageAgent::disable(ErrorString*)
     m_state->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, m_enabled);
 }
 
-void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>& entries)
+void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, const String& storageId, RefPtr<InspectorArray>& entries)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (!storageResource)
@@ -129,7 +129,7 @@ void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, int storageId,
     }
 }
 
-void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString*, int storageId, const String& key, const String& value, bool* success)
+void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString*, const String& storageId, const String& key, const String& value, bool* success)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
@@ -139,7 +139,7 @@ void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString*, int storageId, co
     }
 }
 
-void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString*, int storageId, const String& key, bool* success)
+void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString*, const String& storageId, const String& key, bool* success)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
@@ -148,7 +148,7 @@ void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString*, int storageId,
     }
 }
 
-int InspectorDOMStorageAgent::storageId(Storage* storage)
+String InspectorDOMStorageAgent::storageId(Storage* storage)
 {
     ASSERT(storage);
     Frame* frame = storage->frame();
@@ -159,10 +159,10 @@ int InspectorDOMStorageAgent::storageId(Storage* storage)
         if (it->second->isSameHostAndType(frame, isLocalStorage))
             return it->first;
     }
-    return 0;
+    return String();
 }
 
-InspectorDOMStorageResource* InspectorDOMStorageAgent::getDOMStorageResourceForId(int storageId)
+InspectorDOMStorageResource* InspectorDOMStorageAgent::getDOMStorageResourceForId(const String& storageId)
 {
     DOMStorageResourcesMap::iterator it = m_resources.find(storageId);
     if (it == m_resources.end())

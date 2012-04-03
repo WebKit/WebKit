@@ -146,19 +146,19 @@ InjectedScriptHost::InspectableObject* InjectedScriptHost::inspectedObject(unsig
 }
 
 #if ENABLE(SQL_DATABASE)
-int InjectedScriptHost::databaseIdImpl(Database* database)
+String InjectedScriptHost::databaseIdImpl(Database* database)
 {
     if (m_databaseAgent)
         return m_databaseAgent->databaseId(database);
-    return 0;
+    return String();
 }
 #endif
 
-int InjectedScriptHost::storageIdImpl(Storage* storage)
+String InjectedScriptHost::storageIdImpl(Storage* storage)
 {
     if (m_domStorageAgent)
         return m_domStorageAgent->storageId(storage);
-    return 0;
+    return String();
 }
 
 #if ENABLE(WORKERS)

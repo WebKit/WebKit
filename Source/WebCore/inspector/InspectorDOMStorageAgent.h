@@ -64,12 +64,12 @@ public:
     // Called from the front-end.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
-    virtual void getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>& entries);
-    virtual void setDOMStorageItem(ErrorString*, int storageId, const String& key, const String& value, bool* success);
-    virtual void removeDOMStorageItem(ErrorString*, int storageId, const String& key, bool* success);
+    virtual void getDOMStorageEntries(ErrorString*, const String& storageId, RefPtr<InspectorArray>& entries);
+    virtual void setDOMStorageItem(ErrorString*, const String& storageId, const String& key, const String& value, bool* success);
+    virtual void removeDOMStorageItem(ErrorString*, const String& storageId, const String& key, bool* success);
 
     // Called from the injected script.
-    int storageId(Storage*);
+    String storageId(Storage*);
 
     // Called from InspectorInstrumentation
     void didUseDOMStorage(StorageArea*, bool isLocalStorage, Frame*);
@@ -77,9 +77,9 @@ public:
 private:
     InspectorDOMStorageAgent(InstrumentingAgents*, InspectorState*);
 
-    InspectorDOMStorageResource* getDOMStorageResourceForId(int storageId);
+    InspectorDOMStorageResource* getDOMStorageResourceForId(const String& storageId);
 
-    typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
+    typedef HashMap<String, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
     DOMStorageResourcesMap m_resources;
     InspectorFrontend* m_frontend;
     bool m_enabled;

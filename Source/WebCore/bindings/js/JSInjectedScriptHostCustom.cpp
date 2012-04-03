@@ -256,7 +256,7 @@ JSValue JSInjectedScriptHost::databaseId(ExecState* exec)
 #if ENABLE(SQL_DATABASE)
     Database* database = toDatabase(exec->argument(0));
     if (database)
-        return jsNumber(impl()->databaseIdImpl(database));
+        return jsString(exec, impl()->databaseIdImpl(database));
 #endif
     return jsUndefined();
 }
@@ -267,7 +267,7 @@ JSValue JSInjectedScriptHost::storageId(ExecState* exec)
         return jsUndefined();
     Storage* storage = toStorage(exec->argument(0));
     if (storage)
-        return jsNumber(impl()->storageIdImpl(storage));
+        return jsString(exec, impl()->storageIdImpl(storage));
     return jsUndefined();
 }
 

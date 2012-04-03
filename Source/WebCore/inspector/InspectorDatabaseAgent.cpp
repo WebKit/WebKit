@@ -291,7 +291,7 @@ void InspectorDatabaseAgent::restore()
     m_enabled =  m_state->getBoolean(DatabaseAgentState::databaseAgentEnabled);
 }
 
-void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, int databaseId, RefPtr<InspectorArray>& names)
+void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, const String& databaseId, RefPtr<InspectorArray>& names)
 {
     if (!m_enabled) {
         *error = "Database agent is not enabled";
@@ -307,7 +307,7 @@ void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, int datab
     }
 }
 
-void InspectorDatabaseAgent::executeSQL(ErrorString* error, int databaseId, const String& query, bool* success, int* transactionId)
+void InspectorDatabaseAgent::executeSQL(ErrorString* error, const String& databaseId, const String& query, bool* success, int* transactionId)
 {
     if (!m_enabled) {
         *error = "Database agent is not enabled";
@@ -328,13 +328,13 @@ void InspectorDatabaseAgent::executeSQL(ErrorString* error, int databaseId, cons
     *success = true;
 }
 
-int InspectorDatabaseAgent::databaseId(Database* database)
+String InspectorDatabaseAgent::databaseId(Database* database)
 {
     for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
         if (it->second->database() == database)
             return it->first;
     }
-    return 0;
+    return String();
 }
 
 InspectorDatabaseResource* InspectorDatabaseAgent::findByFileName(const String& fileName)
@@ -346,7 +346,7 @@ InspectorDatabaseResource* InspectorDatabaseAgent::findByFileName(const String& 
     return 0;
 }
 
-Database* InspectorDatabaseAgent::databaseForId(int databaseId)
+Database* InspectorDatabaseAgent::databaseForId(const String& databaseId)
 {
     DatabaseResourcesMap::iterator it = m_resources.find(databaseId);
     if (it == m_resources.end())

@@ -98,9 +98,9 @@ public:
     void clearConsoleMessages();
     void copyText(const String& text);
 #if ENABLE(SQL_DATABASE)
-    int databaseIdImpl(Database*);
+    String databaseIdImpl(Database*);
 #endif
-    int storageIdImpl(Storage*);
+    String storageIdImpl(Storage*);
 #if ENABLE(WORKERS)
     long nextWorkerId();
     void didCreateWorker(long id, const String& url, bool isSharedWorker);
