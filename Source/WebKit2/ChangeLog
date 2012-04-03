@@ -1,3 +1,96 @@
+2012-03-29  Joseph Pecoraro  <joepeck@webkit.org> and Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Add a Generic WebSocket Server.
+        https://bugs.webkit.org/show_bug.cgi?id=73093
+
+        Reviewed by Simon Hausmann.
+
+        The Inspector Server will be a WebSocket Server that also responds to
+        non-WebSocket-Upgrade HTTP Requests. This is a generic WebSocket server
+        that passes on what it doesn't know on to its client for extended
+        functionality. This code is wrapped in a new ENABLE(INSPECTOR_SERVER) flag.
+
+        There are no tests yet for a built-in WebSocket server.
+        This will be covered by API level tests in a later patch.
+
+        * Target.pri:
+
+          WebSocketServer is a simple server. Calling listen, or close,
+          multiple times is safe. Subclassing is expected.
+
+        * UIProcess/InspectorServer/WebSocketServer.cpp: Added.
+        (WebKit):
+        (WebKit::WebSocketServer::WebSocketServer):
+        (WebKit::WebSocketServer::~WebSocketServer):
+        (WebKit::WebSocketServer::listen):
+        (WebKit::WebSocketServer::close):
+        (WebKit::WebSocketServer::didAcceptConnection):
+        (WebKit::WebSocketServer::didCloseWebSocketServerConnection):
+        * UIProcess/InspectorServer/WebSocketServer.h: Added.
+        (WebKit):
+        (WebCore):
+        (WebSocketServer):
+        * UIProcess/InspectorServer/WebSocketServerClient.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebSocketServerClient):
+        (WebKit::WebSocketServerClient::~WebSocketServerClient):
+        (WebKit::WebSocketServerClient::didReceiveUnrecognizedHTTPRequest):
+        (WebKit::WebSocketServerClient::didReceiveWebSocketUpgradeHTTPRequest):
+        (WebKit::WebSocketServerClient::didEstablishWebSocketConnection):
+        (WebKit::WebSocketServerClient::didReceiveWebSocketMessage):
+        (WebKit::WebSocketServerClient::didCloseWebSocketConnection):
+
+          Each WebSocketConnection:
+
+           - Passes unknown HTTP Requests to the server's client.
+           - Handles WebSocket Upgrade Requests.
+             - First ask the client if it is okay.
+             - Later notify the client about a success.
+           - Once upgraded the connection parses and passes WebSocket
+             frames to the client.
+
+        * UIProcess/InspectorServer/WebSocketServerConnection.cpp: Added.
+        (WebKit):
+        (WebKit::WebSocketServerConnection::WebSocketServerConnection):
+        (WebKit::WebSocketServerConnection::~WebSocketServerConnection):
+        (WebKit::WebSocketServerConnection::shutdownNow):
+        (WebKit::WebSocketServerConnection::shutdownAfterSendOrNow): meant to shutdown after an HTTP response. Ensure all platforms work as expected.
+        (WebKit::WebSocketServerConnection::sendWebSocketMessage): send a text message (WebSocket message) over the connection.
+        (WebKit::WebSocketServerConnection::sendHTTPResponseHeader):
+        (WebKit::WebSocketServerConnection::sendRawData): send raw data (HTTP message) over the connection.
+        (WebKit::WebSocketServerConnection::didCloseSocketStream): handle socket closing scenarios.
+        (WebKit::WebSocketServerConnection::didReceiveSocketStreamData): parse the incoming data in HTTP / WebSocket modes.
+        (WebKit::WebSocketServerConnection::didFailSocketStream): log errors.
+        (WebKit::WebSocketServerConnection::readHTTPMessage): when starting, a web socket connection reads an HTTP message.
+        (WebKit::WebSocketServerConnection::upgradeToWebSocketServerConnection):
+        (WebKit::WebSocketServerConnection::readWebSocketFrames): parse our buffer for as many frames as possible.
+        (WebKit::WebSocketServerConnection::readWebSocketFrame): parse an individual frame.
+        * UIProcess/InspectorServer/WebSocketServerConnection.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebSocketServerConnection):
+        (WebKit::WebSocketServerConnection::identifier):
+        (WebKit::WebSocketServerConnection::setIdentifier):
+
+          Qt specific implementation.
+
+        * UIProcess/InspectorServer/qt/WebSocketServerQt.cpp: Added.
+        (WebKit):
+        (WebKit::WebSocketServer::platformInitialize):
+        (WebKit::WebSocketServer::platformListen):
+        (WebKit::WebSocketServer::platformClose):
+        (WebKit::QtTcpServerHandler::QtTcpServerHandler):
+        (WebKit::QtTcpServerHandler::handleNewConnection):
+        (WebKit::QtTcpServerHandler::listen):
+        (WebKit::QtTcpServerHandler::close):
+        * UIProcess/InspectorServer/qt/WebSocketServerQt.h: Added.
+        (WebKit):
+        (QtTcpServerHandler):
+
+        * WebKit2.pri:
+        * config.h: Add ENABLE(INSPECTOR_SERVER) for WebKit2.
+
 2012-04-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Add developerExtrasEnabled to QWebPreferences.

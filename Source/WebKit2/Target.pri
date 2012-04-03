@@ -204,6 +204,10 @@ HEADERS += \
     UIProcess/GenericCallback.h \
     UIProcess/GeolocationPermissionRequestManagerProxy.h \
     UIProcess/GeolocationPermissionRequestProxy.h \
+    UIProcess/InspectorServer/WebSocketServer.h \
+    UIProcess/InspectorServer/WebSocketServerClient.h \
+    UIProcess/InspectorServer/WebSocketServerConnection.h \
+    UIProcess/InspectorServer/qt/WebSocketServerQt.h \
     UIProcess/Launcher/ProcessLauncher.h \
     UIProcess/Launcher/ThreadLauncher.h \
     UIProcess/LayerTreeHostProxy.h \
@@ -541,6 +545,9 @@ SOURCES += \
     UIProcess/FindIndicator.cpp \
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp \
     UIProcess/GeolocationPermissionRequestProxy.cpp \
+    UIProcess/InspectorServer/WebSocketServer.cpp \
+    UIProcess/InspectorServer/WebSocketServerConnection.cpp \
+    UIProcess/InspectorServer/qt/WebSocketServerQt.cpp \
     UIProcess/Launcher/ProcessLauncher.cpp \
     UIProcess/Launcher/ThreadLauncher.cpp \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \

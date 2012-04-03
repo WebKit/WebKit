@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-SocketStreamHandlePrivate::SocketStreamHandlePrivate(SocketStreamHandle* streamHandle, const KURL& url) : QObject()
+SocketStreamHandlePrivate::SocketStreamHandlePrivate(SocketStreamHandle* streamHandle, const KURL& url)
 {
     m_streamHandle = streamHandle;
     m_socket = 0;
@@ -56,12 +56,7 @@ SocketStreamHandlePrivate::SocketStreamHandlePrivate(SocketStreamHandle* streamH
     if (!m_socket)
         return;
 
-    connect(m_socket, SIGNAL(connected()), this, SLOT(socketConnected()));
-    connect(m_socket, SIGNAL(readyRead()), this, SLOT(socketReadyRead()));
-    connect(m_socket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
-    connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError(QAbstractSocket::SocketError)));
-    if (isSecure)
-        connect(m_socket, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(socketSslErrors(const QList<QSslError>&)));
+    initConnections();
 
     unsigned int port = url.hasPort() ? url.port() : (isSecure ? 443 : 80);
 
@@ -74,9 +69,34 @@ SocketStreamHandlePrivate::SocketStreamHandlePrivate(SocketStreamHandle* streamH
         m_socket->connectToHost(host, port);
 }
 
+SocketStreamHandlePrivate::SocketStreamHandlePrivate(SocketStreamHandle* streamHandle, QTcpSocket* socket)
+{
+    m_streamHandle = streamHandle;
+    m_socket = socket;
+    initConnections();
+}
+
 SocketStreamHandlePrivate::~SocketStreamHandlePrivate()
 {
     Q_ASSERT(!(m_socket && m_socket->state() == QAbstractSocket::ConnectedState));
+}
+
+void SocketStreamHandlePrivate::initConnections()
+{
+    connect(m_socket, SIGNAL(connected()), this, SLOT(socketConnected()));
+    connect(m_socket, SIGNAL(readyRead()), this, SLOT(socketReadyRead()));
+    connect(m_socket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
+    connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError(QAbstractSocket::SocketError)));
+#ifndef QT_NO_OPENSSL
+    if (qobject_cast<QSslSocket*>(m_socket))
+        connect(m_socket, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(socketSslErrors(const QList<QSslError>&)));
+#endif
+
+    // Check for missed signals and call the slots asynchronously to allow a client to be set first.
+    if (m_socket->state() >= QAbstractSocket::ConnectedState)
+        QMetaObject::invokeMethod(this, "socketConnected", Qt::QueuedConnection);
+    if (m_socket->bytesAvailable())
+        QMetaObject::invokeMethod(this, "socketReadyRead", Qt::QueuedConnection);
 }
 
 void SocketStreamHandlePrivate::socketConnected()
@@ -106,7 +126,7 @@ int SocketStreamHandlePrivate::send(const char* data, int len)
 
 void SocketStreamHandlePrivate::close()
 {
-    if (m_streamHandle->m_state == SocketStreamHandleBase::Connecting) {
+    if (m_streamHandle && m_streamHandle->m_state == SocketStreamHandleBase::Connecting) {
         m_socket->abort();
         m_streamHandle->client()->didCloseSocketStream(m_streamHandle);
         return;
@@ -164,6 +184,13 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);
     m_p = new SocketStreamHandlePrivate(this, url);
+}
+
+SocketStreamHandle::SocketStreamHandle(QTcpSocket* socket, SocketStreamHandleClient* client)
+    : SocketStreamHandleBase(KURL(), client)
+{
+    LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);
+    m_p = new SocketStreamHandlePrivate(this, socket);
 }
 
 SocketStreamHandle::~SocketStreamHandle()

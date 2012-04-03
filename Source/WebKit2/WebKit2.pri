@@ -27,6 +27,8 @@ INCLUDEPATH += \
     $$SOURCE_DIR/UIProcess/API/qt \
     $$SOURCE_DIR/UIProcess/Authentication \
     $$SOURCE_DIR/UIProcess/Downloads \
+    $$SOURCE_DIR/UIProcess/InspectorServer \
+    $$SOURCE_DIR/UIProcess/InspectorServer/qt \
     $$SOURCE_DIR/UIProcess/Launcher \
     $$SOURCE_DIR/UIProcess/Notifications \
     $$SOURCE_DIR/UIProcess/Plugins \

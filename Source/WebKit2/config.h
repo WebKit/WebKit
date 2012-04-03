@@ -135,3 +135,9 @@ static const type& name() \
 #endif
 
 #define PLUGIN_ARCHITECTURE(ARCH) (defined PLUGIN_ARCHITECTURE_##ARCH && PLUGIN_ARCHITECTURE_##ARCH)
+
+#ifndef ENABLE_INSPECTOR_SERVER
+#if PLATFORM(QT)
+#define ENABLE_INSPECTOR_SERVER 1
+#endif
+#endif

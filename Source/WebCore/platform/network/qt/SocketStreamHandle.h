@@ -42,6 +42,10 @@
 #error This should only be built on Qt
 #endif
 
+QT_BEGIN_NAMESPACE
+class QTcpSocket;
+QT_END_NAMESPACE
+
 namespace WebCore {
 
     class AuthenticationChallenge;
@@ -52,6 +56,7 @@ namespace WebCore {
     class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
     public:
         static PassRefPtr<SocketStreamHandle> create(const KURL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(url, client)); }
+        static PassRefPtr<SocketStreamHandle> create(QTcpSocket* socket, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(socket, client)); }
 
         virtual ~SocketStreamHandle();
 
@@ -61,6 +66,7 @@ namespace WebCore {
 
     private:
         SocketStreamHandle(const KURL&, SocketStreamHandleClient*);
+        SocketStreamHandle(QTcpSocket*, SocketStreamHandleClient*);
 
         // No authentication for streams per se, but proxy may ask for credentials.
         void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
