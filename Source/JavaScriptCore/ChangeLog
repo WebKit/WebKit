@@ -1,3 +1,15 @@
+2012-04-02  Oliver Hunt  <oliver@apple.com>
+
+        Incorrect liveness information when inlining
+        https://bugs.webkit.org/show_bug.cgi?id=82985
+
+        Reviewed by Filip Pizlo.
+
+        Don't remap register numbers that have already been remapped.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+
 2012-04-02  Filip Pizlo  <fpizlo@apple.com>
 
         Activation tear-off neglects to copy the callee and scope chain, leading to crashes if we
