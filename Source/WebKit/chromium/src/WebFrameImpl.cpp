@@ -109,7 +109,6 @@
 #include "Node.h"
 #include "Page.h"
 #include "PageOverlay.h"
-#include "painting/GraphicsContextBuilder.h"
 #include "Performance.h"
 #include "PlatformSupport.h"
 #include "PluginDocument.h"
@@ -154,19 +153,21 @@
 #include "WebPerformance.h"
 #include "WebPlugin.h"
 #include "WebPluginContainerImpl.h"
-#include "platform/WebPoint.h"
 #include "WebRange.h"
-#include "platform/WebRect.h"
 #include "WebScriptSource.h"
 #include "WebSecurityOrigin.h"
-#include "platform/WebSize.h"
-#include "platform/WebURLError.h"
-#include "platform/WebVector.h"
 #include "WebViewImpl.h"
 #include "XPathResult.h"
 #include "markup.h"
+#include "painting/GraphicsContextBuilder.h"
+#include "platform/WebPoint.h"
+#include "platform/WebRect.h"
+#include "platform/WebSize.h"
+#include "platform/WebURLError.h"
+#include "platform/WebVector.h"
 
 #include <algorithm>
+#include <public/Platform.h>
 #include <wtf/CurrentTime.h>
 
 #if USE(V8)
@@ -1981,7 +1982,7 @@ WebFrameImpl::WebFrameImpl(WebFrameClient* client)
 
 WebFrameImpl::~WebFrameImpl()
 {
-    PlatformSupport::decrementStatsCounter(webFrameActiveCount);
+    WebKit::Platform::current()->decrementStatsCounter(webFrameActiveCount);
     frameCount--;
 
     cancelPendingScopingEffort();

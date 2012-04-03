@@ -713,11 +713,6 @@ void PlatformSupport::stopSharedTimer()
 
 // StatsCounters --------------------------------------------------------------
 
-void PlatformSupport::decrementStatsCounter(const char* name)
-{
-    webKitPlatformSupport()->decrementStatsCounter(name);
-}
-
 void PlatformSupport::incrementStatsCounter(const char* name)
 {
     webKitPlatformSupport()->incrementStatsCounter(name);

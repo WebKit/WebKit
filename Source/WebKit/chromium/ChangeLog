@@ -1,3 +1,15 @@
+2012-04-02  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Call decrementStatsCounter directly
+        https://bugs.webkit.org/show_bug.cgi?id=82950
+
+        Reviewed by Adam Barth.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::~WebFrameImpl):
+
 2012-04-02  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, CCLayerTreeHost runMultiThread is flaky.
