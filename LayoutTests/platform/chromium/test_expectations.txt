@@ -4017,3 +4017,5 @@ BUGWK82776 : storage/indexeddb/dont-commit-on-blocked.html = PASS FAIL
 BUGWK WIN RELEASE : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT
 
 BUGCR121442 LINUX DEBUG : plugins/iframe-shims.html = CRASH TEXT PASS
+
+BUGWK82994 : compositing/reflections/backface-hidden-reflection.html = PASS CRASH
