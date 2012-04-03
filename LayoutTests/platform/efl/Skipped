@@ -399,12 +399,6 @@ compositing/video/video-poster.html
 # EFL's LayoutTestController does not implement pageProperty
 printing/page-rule-selection.html
 
-# EFL's LayoutTestController does not implement pageProperty
-printing/page-format-data.html
-
-# EFL's LayoutTestController does not implement pageSizeAndMarginsInPixels
-printing/page-format-data.html
-
 # EFL's LayoutTestController does not implement setCustomPolicyDelegate
 fast/loader/javascript-url-hierarchical-execution.html
 fast/loader/onload-policy-ignore-for-frame.html

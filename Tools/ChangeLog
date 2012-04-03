@@ -1,3 +1,16 @@
+2012-04-02  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL] LayoutTestController needs implementation of isPageBoxVisible
+        https://bugs.webkit.org/show_bug.cgi?id=82591
+
+        Add missing implementation to isPageBoxVisible to EFL's LayoutTestController
+        in order to unskip printing/page-format-data.html
+
+        Reviewed by Hajime Morita.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::isPageBoxVisible):
+
 2012-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         run-webkit-tests with a relative --root causes tests to fail because DYLD_LIBRARY_PATH is not set

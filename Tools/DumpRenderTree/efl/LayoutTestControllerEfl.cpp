@@ -139,10 +139,9 @@ JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char*, int) co
     return 0;
 }
 
-bool LayoutTestController::isPageBoxVisible(int) const
+bool LayoutTestController::isPageBoxVisible(int pageIndex) const
 {
-    notImplemented();
-    return false;
+    return DumpRenderTreeSupportEfl::isPageBoxVisible(browser->mainFrame(), pageIndex);
 }
 
 JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int, int, int, int, int, int, int) const
