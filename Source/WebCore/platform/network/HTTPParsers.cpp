@@ -3,6 +3,7 @@
  * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,12 +32,12 @@
 
 #include "config.h"
 #include "HTTPParsers.h"
-#include "ResourceResponseBase.h"
 
 #include "PlatformString.h"
+#include <wtf/DateMath.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/DateMath.h>
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace WTF;
 
@@ -88,6 +89,15 @@ bool isRFC2616Token(const String& characters)
         return false;
     }
     return true;
+}
+
+static const size_t maxInputSampleSize = 128;
+static String trimInputSample(const char* p, size_t length)
+{
+    String s = String(p, std::min<size_t>(length, maxInputSampleSize));
+    if (length > maxInputSampleSize)
+        s.append(horizontalEllipsis);
+    return s;
 }
 
 ContentDispositionType contentDispositionType(const String& contentDisposition)
@@ -393,6 +403,147 @@ bool parseRange(const String& range, long long& rangeOffset, long long& rangeEnd
     rangeOffset = firstBytePos;
     rangeEnd = lastBytePos;
     return true;
+}
+
+// HTTP/1.1 - RFC 2616
+// http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
+// Request-Line = Method SP Request-URI SP HTTP-Version CRLF
+size_t parseHTTPRequestLine(const char* data, size_t length, String& failureReason, String& method, String& url, HTTPVersion& httpVersion)
+{
+    method = String();
+    url = String();
+    httpVersion = Unknown;
+
+    const char* space1 = 0;
+    const char* space2 = 0;
+    const char* p;
+    size_t consumedLength;
+
+    for (p = data, consumedLength = 0; consumedLength < length; p++, consumedLength++) {
+        if (*p == ' ') {
+            if (!space1)
+                space1 = p;
+            else if (!space2)
+                space2 = p;
+        } else if (*p == '\n')
+            break;
+    }
+
+    // Haven't finished header line.
+    if (consumedLength == length) {
+        failureReason = "Incomplete Request Line";
+        return 0;
+    }
+
+    // RequestLine does not contain 3 parts.
+    if (!space1 || !space2) {
+        failureReason = "Request Line does not appear to contain: <Method> <Url> <HTTPVersion>.";
+        return 0;
+    }
+
+    // The line must end with "\r\n".
+    const char* end = p + 1;
+    if (*(end - 2) != '\r') {
+        failureReason = "Request line does not end with CRLF";
+        return 0;
+    }
+
+    // Request Method.
+    method = String(data, space1 - data); // For length subtract 1 for space, but add 1 for data being the first character.
+
+    // Request URI.
+    url = String(space1 + 1, space2 - space1 - 1); // For length subtract 1 for space.
+
+    // HTTP Version.
+    String httpVersionString(space2 + 1, end - space2 - 3); // For length subtract 1 for space, and 2 for "\r\n".
+    if (httpVersionString.length() != 8 || !httpVersionString.startsWith("HTTP/1."))
+        httpVersion = Unknown;
+    else if (httpVersionString[7] == '0')
+        httpVersion = HTTP_1_0;
+    else if (httpVersionString[7] == '1')
+        httpVersion = HTTP_1_1;
+    else
+        httpVersion = Unknown;
+
+    return end - data;
+}
+
+size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, AtomicString& nameStr, String& valueStr)
+{
+    const char* p = start;
+    const char* end = start + length;
+
+    Vector<char> name;
+    Vector<char> value;
+    nameStr = AtomicString();
+    valueStr = String();
+
+    for (; p < end; p++) {
+        switch (*p) {
+        case '\r':
+            if (name.isEmpty()) {
+                if (p + 1 < end && *(p + 1) == '\n')
+                    return (p + 2) - start;
+                failureReason = "CR doesn't follow LF at " + trimInputSample(p, end - p);
+                return 0;
+            }
+            failureReason = "Unexpected CR in name at " + trimInputSample(name.data(), name.size());
+            return 0;
+        case '\n':
+            failureReason = "Unexpected LF in name at " + trimInputSample(name.data(), name.size());
+            return 0;
+        case ':':
+            break;
+        default:
+            name.append(*p);
+            continue;
+        }
+        if (*p == ':') {
+            ++p;
+            break;
+        }
+    }
+
+    for (; p < end && *p == 0x20; p++) { }
+
+    for (; p < end; p++) {
+        switch (*p) {
+        case '\r':
+            break;
+        case '\n':
+            failureReason = "Unexpected LF in value at " + trimInputSample(value.data(), value.size());
+            return 0;
+        default:
+            value.append(*p);
+        }
+        if (*p == '\r') {
+            ++p;
+            break;
+        }
+    }
+    if (p >= end || *p != '\n') {
+        failureReason = "CR doesn't follow LF after value at " + trimInputSample(p, end - p);
+        return 0;
+    }
+    nameStr = AtomicString::fromUTF8(name.data(), name.size());
+    valueStr = String::fromUTF8(value.data(), value.size());
+    if (nameStr.isNull()) {
+        failureReason = "Invalid UTF-8 sequence in header name";
+        return 0;
+    }
+    if (valueStr.isNull()) {
+        failureReason = "Invalid UTF-8 sequence in header value";
+        return 0;
+    }
+    return p - start;
+}
+
+size_t parseHTTPRequestBody(const char* data, size_t length, Vector<unsigned char>& body)
+{
+    body.clear();
+    body.append(data, length);
+
+    return length;
 }
 
 }

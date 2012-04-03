@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +32,11 @@
 #define HTTPParsers_h
 
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+class HTTPHeaderMap;
 class ResourceResponseBase;
 
 enum XSSProtectionDisposition {
@@ -62,6 +65,12 @@ String extractReasonPhraseFromHTTPStatusLine(const String&);
 
 // -1 could be set to one of the return parameters to indicate the value is not specified.
 bool parseRange(const String&, long long& rangeOffset, long long& rangeEnd, long long& rangeSuffixLength);
+
+// Parsing Complete HTTP Messages.
+enum HTTPVersion { Unknown, HTTP_1_0, HTTP_1_1 };
+size_t parseHTTPRequestLine(const char* data, size_t length, String& failureReason, String& method, String& url, HTTPVersion&);
+size_t parseHTTPHeader(const char* data, size_t length, String& failureReason, AtomicString& nameStr, String& valueStr);
+size_t parseHTTPRequestBody(const char* data, size_t length, Vector<unsigned char>& body);
 
 }
 

@@ -31257,6 +31257,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\HTTPRequest.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\HTTPRequest.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\HTTPValidation.cpp"
 					>
 				</File>

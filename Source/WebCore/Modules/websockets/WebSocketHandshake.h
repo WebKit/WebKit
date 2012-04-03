@@ -67,7 +67,7 @@ public:
     String clientLocation() const;
 
     CString clientHandshakeMessage() const;
-    WebSocketHandshakeRequest clientHandshakeRequest() const;
+    PassRefPtr<WebSocketHandshakeRequest> clientHandshakeRequest() const;
 
     void reset();
     void clearScriptExecutionContext();

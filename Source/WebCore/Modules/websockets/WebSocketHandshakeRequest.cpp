@@ -51,33 +51,12 @@ void WebSocketHandshakeRequest::Key3::set(const unsigned char key3[8])
 }
 
 WebSocketHandshakeRequest::WebSocketHandshakeRequest(const String& requestMethod, const KURL& url)
-    : m_url(url)
-    , m_requestMethod(requestMethod)
+    : HTTPRequest(requestMethod, url, HTTP_1_1)
 {
 }
 
 WebSocketHandshakeRequest::~WebSocketHandshakeRequest()
 {
-}
-
-String WebSocketHandshakeRequest::requestMethod() const
-{
-    return m_requestMethod;
-}
-
-KURL WebSocketHandshakeRequest::url() const
-{
-    return m_url;
-}
-
-void WebSocketHandshakeRequest::addHeaderField(const char* name, const String& value)
-{
-    m_headerFields.add(name, value);
-}
-
-const HTTPHeaderMap& WebSocketHandshakeRequest::headerFields() const
-{
-    return m_headerFields;
 }
 
 WebSocketHandshakeRequest::Key3 WebSocketHandshakeRequest::key3() const

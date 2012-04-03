@@ -33,22 +33,14 @@
 
 #if ENABLE(WEB_SOCKETS)
 
-#include "HTTPHeaderMap.h"
-#include "KURL.h"
-#include "PlatformString.h"
+#include "HTTPRequest.h"
 
 namespace WebCore {
 
-class WebSocketHandshakeRequest {
+class WebSocketHandshakeRequest : public HTTPRequest {
 public:
-    WebSocketHandshakeRequest(const String& requestMethod, const KURL&);
+    static PassRefPtr<WebSocketHandshakeRequest> create(const String& requestMethod, const KURL& url) { return adoptRef(new WebSocketHandshakeRequest(requestMethod, url)); }
     ~WebSocketHandshakeRequest();
-
-    String requestMethod() const;
-    KURL url() const;
-
-    const HTTPHeaderMap& headerFields() const;
-    void addHeaderField(const char* name, const String& value);
 
     struct Key3 {
         unsigned char value[8];
@@ -60,9 +52,7 @@ public:
     void setKey3(const unsigned char key3[8]);
 
 private:
-    KURL m_url;
-    String m_requestMethod;
-    HTTPHeaderMap m_headerFields;
+    WebSocketHandshakeRequest(const String& requestMethod, const KURL&);
     Key3 m_key3;
 };
 

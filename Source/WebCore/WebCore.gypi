@@ -4250,6 +4250,8 @@
             'platform/network/HTTPHeaderMap.cpp',
             'platform/network/HTTPParsers.cpp',
             'platform/network/HTTPParsers.h',
+            'platform/network/HTTPRequest.cpp',
+            'platform/network/HTTPRequest.h',
             'platform/network/HTTPValidation.cpp',
             'platform/network/HTTPValidation.h',
             'platform/network/MIMEHeader.cpp',
