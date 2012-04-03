@@ -208,7 +208,11 @@ void QQuickWebViewPrivate::processDidCrash()
 
 void QQuickWebViewPrivate::didRelaunchProcess()
 {
+    Q_Q(QQuickWebView);
+
     qWarning("WARNING: The web process has been successfully restarted.");
+
+    webPageProxy->setViewportSize(q->boundingRect().size().toSize());
     webPageProxy->drawingArea()->setSize(viewSize(), IntSize());
 }
 
