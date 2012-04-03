@@ -57,11 +57,10 @@ static CGContextRef createCGContextFromImage(WKImageRef wkImage, FlipGraphicsCon
     size_t pixelsWide = CGImageGetWidth(image.get());
     size_t pixelsHigh = CGImageGetHeight(image.get());
     size_t rowBytes = (4 * pixelsWide + 63) & ~63;
-    void* buffer = calloc(pixelsHigh, rowBytes);
 
     // Creating this bitmap in the device color space should prevent any color conversion when the image of the web view is drawn into it.
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+    CGContextRef context = CGBitmapContextCreate(0, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
     
     if (flip == FlipGraphicsContext) {
         CGContextSaveGState(context);

@@ -1,3 +1,19 @@
+2012-04-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix large leak in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=83084
+
+        Reviewed by Beth Dakin.
+        
+        Fix a leak of the bimap backing store created when doing pixel and
+        ref tests. This leak was causing serious thrash on the test bots.
+        
+        We don't need to allocate memory for CGBitmapContextCreate(); if we
+        pass NULL, it will allocate and manage its own backing store.
+
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        (WTR::createCGContextFromImage):
+
 2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix after r113067. Close the zipfile after extracting all files so that we can remove it.
