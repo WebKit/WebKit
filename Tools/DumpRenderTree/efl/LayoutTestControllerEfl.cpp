@@ -608,8 +608,7 @@ void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool, JSStri
 
 void LayoutTestController::goBack()
 {
-    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
-    notImplemented();
+    ewk_frame_back(browser->mainFrame());
 }
 
 void LayoutTestController::setDefersLoading(bool)

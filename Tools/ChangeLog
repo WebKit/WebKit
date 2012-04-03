@@ -1,3 +1,16 @@
+2012-04-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] LayoutTestController needs implementation of goBack
+        https://bugs.webkit.org/show_bug.cgi?id=81914
+
+        Reviewed by Philippe Normand.
+
+        Implement goBack() in EFL's LayoutTestController by calling
+        ewk_frame_back().
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::goBack):
+
 2012-04-03  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] LayoutTestController needs implementation of pageSizeAndMarginsInPixels
