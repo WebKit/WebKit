@@ -132,14 +132,6 @@ private:
     void startClosingHandshake(int code, const String& reason);
     void closingTimerFired(Timer<WebSocketChannel>*);
 
-    enum ParseFrameResult {
-        FrameOK,
-        FrameIncomplete,
-        FrameError
-    };
-
-    ParseFrameResult parseFrame(WebSocketFrame&, const char*& frameEnd);
-
     bool processFrame();
     bool processFrameHixie76();
 

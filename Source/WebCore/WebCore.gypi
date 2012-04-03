@@ -1666,6 +1666,7 @@
             'Modules/websockets/WebSocketExtensionDispatcher.cpp',
             'Modules/websockets/WebSocketExtensionDispatcher.h',
             'Modules/websockets/WebSocketExtensionProcessor.h',
+            'Modules/websockets/WebSocketFrame.cpp',
             'Modules/websockets/WebSocketFrame.h',
             'Modules/websockets/WebSocketHandshake.cpp',
             'Modules/websockets/WebSocketHandshake.h',

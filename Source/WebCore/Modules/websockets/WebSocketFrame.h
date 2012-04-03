@@ -33,6 +33,8 @@
 
 #if ENABLE(WEB_SOCKETS)
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 struct WebSocketFrame {
@@ -47,21 +49,20 @@ struct WebSocketFrame {
         OpCodeInvalid = 0x10
     };
 
+    enum ParseFrameResult {
+        FrameOK,
+        FrameIncomplete,
+        FrameError
+    };
+
     static bool isNonControlOpCode(OpCode opCode) { return opCode == OpCodeContinuation || opCode == OpCodeText || opCode == OpCodeBinary; }
     static bool isControlOpCode(OpCode opCode) { return opCode == OpCodeClose || opCode == OpCodePing || opCode == OpCodePong; }
     static bool isReservedOpCode(OpCode opCode) { return !isNonControlOpCode(opCode) && !isControlOpCode(opCode); }
+    static bool needsExtendedLengthField(size_t payloadLength);
+    static ParseFrameResult parseFrame(char* data, size_t dataLength, WebSocketFrame&, const char*& frameEnd, String& errorString); // May modify part of data to unmask the frame.
 
-    WebSocketFrame(OpCode opCode = OpCodeInvalid, bool final = false, bool compress = false, bool masked = false, const char* payload = 0, size_t payloadLength = 0)
-        : opCode(opCode)
-        , final(final)
-        , compress(compress)
-        , reserved2(false)
-        , reserved3(false)
-        , masked(masked)
-        , payload(payload)
-        , payloadLength(payloadLength)
-    {
-    }
+    WebSocketFrame(OpCode = OpCodeInvalid, bool final = false, bool compress = false, bool masked = false, const char* payload = 0, size_t payloadLength = 0);
+    void makeFrameData(Vector<char>& frameData);
 
     OpCode opCode;
     bool final;

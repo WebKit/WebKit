@@ -1210,6 +1210,7 @@ webcore_sources += \
 	Source/WebCore/Modules/websockets/WebSocketExtensionDispatcher.cpp \
 	Source/WebCore/Modules/websockets/WebSocketExtensionDispatcher.h \
 	Source/WebCore/Modules/websockets/WebSocketExtensionProcessor.h \
+	Source/WebCore/Modules/websockets/WebSocketFrame.cpp \
 	Source/WebCore/Modules/websockets/WebSocketFrame.h \
 	Source/WebCore/Modules/websockets/WebSocketHandshake.cpp \
 	Source/WebCore/Modules/websockets/WebSocketHandshake.h \

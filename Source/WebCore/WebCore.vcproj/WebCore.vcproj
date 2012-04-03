@@ -24761,6 +24761,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\websockets\WebSocketFrame.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\websockets\WebSocketFrame.h"
 					>
 				</File>

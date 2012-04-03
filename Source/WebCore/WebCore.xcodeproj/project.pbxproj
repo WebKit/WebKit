@@ -4413,6 +4413,7 @@
 		AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4C3A740B2B1679002334A2 /* StyleElement.cpp */; };
 		AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4C3A750B2B1679002334A2 /* StyleElement.h */; };
+		AAF5B7B71524B6C50004CB49 /* WebSocketFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF5B7B11524B4BD0004CB49 /* WebSocketFrame.cpp */; };
 		AB23A32709BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */; };
 		AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */; };
 		AB247A6C0AFD6383003FA5FD /* RenderSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */; };
@@ -11314,6 +11315,7 @@
 		AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSCursorImageValue.h; sourceTree = "<group>"; };
 		AA4C3A740B2B1679002334A2 /* StyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleElement.cpp; sourceTree = "<group>"; };
 		AA4C3A750B2B1679002334A2 /* StyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyleElement.h; sourceTree = "<group>"; };
+		AAF5B7B11524B4BD0004CB49 /* WebSocketFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketFrame.cpp; path = Modules/websockets/WebSocketFrame.cpp; sourceTree = "<group>"; };
 		AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BeforeTextInsertedEvent.cpp; sourceTree = "<group>"; };
 		AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BeforeTextInsertedEvent.h; sourceTree = "<group>"; };
 		AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSlider.cpp; sourceTree = "<group>"; };
@@ -17424,6 +17426,7 @@
 				97AABD0714FA09D5007457AE /* WebSocketExtensionDispatcher.cpp */,
 				97AABD0814FA09D5007457AE /* WebSocketExtensionDispatcher.h */,
 				97AABD0914FA09D5007457AE /* WebSocketExtensionProcessor.h */,
+				AAF5B7B11524B4BD0004CB49 /* WebSocketFrame.cpp */,
 				97AABD0A14FA09D5007457AE /* WebSocketFrame.h */,
 				97AABD0B14FA09D5007457AE /* WebSocketHandshake.cpp */,
 				97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */,
@@ -27617,6 +27620,7 @@
 				4A38BF5014FE1C0900612512 /* WebSocketDeflateFramer.cpp in Sources */,
 				97AABD2014FA09D5007457AE /* WebSocketDeflater.cpp in Sources */,
 				97AABD2214FA09D5007457AE /* WebSocketExtensionDispatcher.cpp in Sources */,
+				AAF5B7B71524B6C50004CB49 /* WebSocketFrame.cpp in Sources */,
 				97AABD2614FA09D5007457AE /* WebSocketHandshake.cpp in Sources */,
 				97AABD2814FA09D5007457AE /* WebSocketHandshakeRequest.cpp in Sources */,
 				97AABD2A14FA09D5007457AE /* WebSocketHandshakeResponse.cpp in Sources */,

@@ -171,7 +171,7 @@ static String generateSecWebSocketKey()
     return base64Encode(reinterpret_cast<char*>(key), nonceSize);
 }
 
-static String getExpectedWebSocketAccept(const String& secWebSocketKey)
+String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocketKey)
 {
     static const char* const webSocketKeyGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
     static const size_t sha1HashSize = 20; // FIXME: This should be defined in SHA1.h.

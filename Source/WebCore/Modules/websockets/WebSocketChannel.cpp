@@ -55,7 +55,6 @@
 #include "WebSocketHandshake.h"
 
 #include <wtf/ArrayBuffer.h>
-#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
@@ -70,19 +69,6 @@ using namespace std;
 namespace WebCore {
 
 const double TCPMaximumSegmentLifetime = 2 * 60.0;
-
-// Constants for hybi-10 frame format.
-const unsigned char finalBit = 0x80;
-const unsigned char compressBit = 0x40;
-const unsigned char reserved2Bit = 0x20;
-const unsigned char reserved3Bit = 0x10;
-const unsigned char opCodeMask = 0xF;
-const unsigned char maskBit = 0x80;
-const unsigned char payloadLengthMask = 0x7F;
-const size_t maxPayloadLengthWithoutExtendedLengthField = 125;
-const size_t payloadLengthWithTwoByteExtendedLengthField = 126;
-const size_t payloadLengthWithEightByteExtendedLengthField = 127;
-const size_t maskingKeyWidthInBytes = 4;
 
 WebSocketChannel::WebSocketChannel(Document* document, WebSocketChannelClient* client)
     : m_document(document)
@@ -551,80 +537,6 @@ void WebSocketChannel::closingTimerFired(Timer<WebSocketChannel>* timer)
         m_handle->disconnect();
 }
 
-WebSocketChannel::ParseFrameResult WebSocketChannel::parseFrame(WebSocketFrame& frame, const char*& frameEnd)
-{
-    const char* p = m_buffer;
-    const char* bufferEnd = m_buffer + m_bufferSize;
-
-    if (m_bufferSize < 2)
-        return FrameIncomplete;
-
-    unsigned char firstByte = *p++;
-    unsigned char secondByte = *p++;
-
-    bool final = firstByte & finalBit;
-    bool compress = firstByte & compressBit;
-    bool reserved2 = firstByte & reserved2Bit;
-    bool reserved3 = firstByte & reserved3Bit;
-    unsigned char opCode = firstByte & opCodeMask;
-
-    bool masked = secondByte & maskBit;
-    if (masked) {
-        fail("A server must not mask any frames that it sends to the client.");
-        return FrameError;
-    }
-    uint64_t payloadLength64 = secondByte & payloadLengthMask;
-    if (payloadLength64 > maxPayloadLengthWithoutExtendedLengthField) {
-        int extendedPayloadLengthSize;
-        if (payloadLength64 == payloadLengthWithTwoByteExtendedLengthField)
-            extendedPayloadLengthSize = 2;
-        else {
-            ASSERT(payloadLength64 == payloadLengthWithEightByteExtendedLengthField);
-            extendedPayloadLengthSize = 8;
-        }
-        if (bufferEnd - p < extendedPayloadLengthSize)
-            return FrameIncomplete;
-        payloadLength64 = 0;
-        for (int i = 0; i < extendedPayloadLengthSize; ++i) {
-            payloadLength64 <<= 8;
-            payloadLength64 |= static_cast<unsigned char>(*p++);
-        }
-        if (extendedPayloadLengthSize == 2 && payloadLength64 <= maxPayloadLengthWithoutExtendedLengthField) {
-            fail("The minimal number of bytes MUST be used to encode the length");
-            return FrameError;
-        }
-        if (extendedPayloadLengthSize == 8 && payloadLength64 <= 0xFFFF) {
-            fail("The minimal number of bytes MUST be used to encode the length");
-            return FrameError;
-        }
-    }
-
-    // FIXME: UINT64_C(0x7FFFFFFFFFFFFFFF) should be used but it did not compile on Qt bots.
-#if COMPILER(MSVC)
-    static const uint64_t maxPayloadLength = 0x7FFFFFFFFFFFFFFFui64;
-#else
-    static const uint64_t maxPayloadLength = 0x7FFFFFFFFFFFFFFFull;
-#endif
-    if (payloadLength64 > maxPayloadLength || payloadLength64 > numeric_limits<size_t>::max()) {
-        fail("WebSocket frame length too large: " + String::number(payloadLength64) + " bytes");
-        return FrameError;
-    }
-    size_t payloadLength = static_cast<size_t>(payloadLength64);
-
-    if (static_cast<size_t>(bufferEnd - p) < payloadLength)
-        return FrameIncomplete;
-
-    frame.opCode = static_cast<WebSocketFrame::OpCode>(opCode);
-    frame.final = final;
-    frame.compress = compress;
-    frame.reserved2 = reserved2;
-    frame.reserved3 = reserved3;
-    frame.masked = masked;
-    frame.payload = p;
-    frame.payloadLength = payloadLength;
-    frameEnd = p + payloadLength;
-    return FrameOK;
-}
 
 bool WebSocketChannel::processFrame()
 {
@@ -632,8 +544,14 @@ bool WebSocketChannel::processFrame()
 
     WebSocketFrame frame;
     const char* frameEnd;
-    if (parseFrame(frame, frameEnd) != FrameOK)
+    String errorString;
+    WebSocketFrame::ParseFrameResult result = WebSocketFrame::parseFrame(m_buffer, m_bufferSize, frame, frameEnd, errorString);
+    if (result == WebSocketFrame::FrameIncomplete)
         return false;
+    if (result == WebSocketFrame::FrameError) {
+        fail(errorString);
+        return false;
+    }
 
     ASSERT(m_buffer < frameEnd);
     ASSERT(frameEnd <= m_buffer + m_bufferSize);
@@ -655,6 +573,11 @@ bool WebSocketChannel::processFrame()
         return false;
     }
 
+    if (frame.masked) {
+        fail("A server must not mask any frames that it sends to the client.");
+        return false;
+    }
+
     // All control frames must not be fragmented.
     if (WebSocketFrame::isControlOpCode(frame.opCode) && !frame.final) {
         fail("Received fragmented control frame: opcode = " + String::number(frame.opCode));
@@ -663,7 +586,7 @@ bool WebSocketChannel::processFrame()
 
     // All control frames must have a payload of 125 bytes or less, which means the frame must not contain
     // the "extended payload length" field.
-    if (WebSocketFrame::isControlOpCode(frame.opCode) && frame.payloadLength > maxPayloadLengthWithoutExtendedLengthField) {
+    if (WebSocketFrame::isControlOpCode(frame.opCode) && WebSocketFrame::needsExtendedLengthField(frame.payloadLength)) {
         fail("Received control frame having too long payload: " + String::number(frame.payloadLength) + " bytes");
         return false;
     }
@@ -989,52 +912,11 @@ void WebSocketChannel::abortOutgoingFrameQueue()
 #endif
 }
 
-static void appendMaskedFramePayload(const WebSocketFrame& frame, Vector<char>& frameData)
-{
-    size_t maskingKeyStart = frameData.size();
-    frameData.grow(frameData.size() + maskingKeyWidthInBytes); // Add placeholder for masking key. Will be overwritten.
-    size_t payloadStart = frameData.size();
-    frameData.append(frame.payload, frame.payloadLength);
-
-    cryptographicallyRandomValues(frameData.data() + maskingKeyStart, maskingKeyWidthInBytes);
-    for (size_t i = 0; i < frame.payloadLength; ++i)
-        frameData[payloadStart + i] ^= frameData[maskingKeyStart + i % maskingKeyWidthInBytes];
-}
-
-static void makeFrameData(const WebSocketFrame& frame, Vector<char>& frameData)
-{
-    unsigned char firstByte = (frame.final ? finalBit : 0) | frame.opCode;
-    if (frame.compress)
-        firstByte |= compressBit;
-    frameData.append(firstByte);
-    if (frame.payloadLength <= maxPayloadLengthWithoutExtendedLengthField)
-        frameData.append(maskBit | frame.payloadLength);
-    else if (frame.payloadLength <= 0xFFFF) {
-        frameData.append(maskBit | payloadLengthWithTwoByteExtendedLengthField);
-        frameData.append((frame.payloadLength & 0xFF00) >> 8);
-        frameData.append(frame.payloadLength & 0xFF);
-    } else {
-        frameData.append(maskBit | payloadLengthWithEightByteExtendedLengthField);
-        char extendedPayloadLength[8];
-        size_t remaining = frame.payloadLength;
-        // Fill the length into extendedPayloadLength in the network byte order.
-        for (int i = 0; i < 8; ++i) {
-            extendedPayloadLength[7 - i] = remaining & 0xFF;
-            remaining >>= 8;
-        }
-        ASSERT(!remaining);
-        frameData.append(extendedPayloadLength, 8);
-    }
-
-    appendMaskedFramePayload(frame, frameData);
-}
-
 bool WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data, size_t dataLength)
 {
     ASSERT(m_handle);
     ASSERT(!m_suspended);
 
-    ASSERT(!(opCode & ~opCodeMask)); // Checks whether "opCode" fits in the range of opCodes.
     WebSocketFrame frame(opCode, true, false, true, data, dataLength);
 
     OwnPtr<DeflateResultHolder> deflateResult = m_deflateFramer.deflate(frame);
@@ -1044,7 +926,7 @@ bool WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data
     }
 
     Vector<char> frameData;
-    makeFrameData(frame, frameData);
+    frame.makeFrameData(frameData);
 
     return m_handle->send(frameData.data(), frameData.size());
 }

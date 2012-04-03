@@ -3723,6 +3723,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
         Modules/websockets/WebSocketDeflateFramer.cpp \
         Modules/websockets/WebSocketDeflater.cpp \
         Modules/websockets/WebSocketExtensionDispatcher.cpp \
+        Modules/websockets/WebSocketFrame.cpp \
         Modules/websockets/WebSocketHandshake.cpp \
         Modules/websockets/WebSocketHandshakeRequest.cpp \
         Modules/websockets/WebSocketHandshakeResponse.cpp \

@@ -90,6 +90,8 @@ public:
 
     void addExtensionProcessor(PassOwnPtr<WebSocketExtensionProcessor>);
 
+    static String getExpectedWebSocketAccept(const String& secWebSocketKey);
+
 private:
     KURL httpURLForAuthenticationAndCookies() const;
 
