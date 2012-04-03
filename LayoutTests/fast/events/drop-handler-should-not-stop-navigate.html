@@ -11,8 +11,6 @@ function log(text)
     document.body.appendChild(document.createElement('br'));
     document.body.appendChild(document.createElement('div').appendChild(document.createTextNode(text)));
 }
-if (!window.layoutTestController)
-    return;
 window.addEventListener('beforeunload', function ()
 {
     log('PASS');
@@ -32,14 +30,19 @@ document.body.addEventListener('drop', function (event)
 {
     log('Not preventing default event on drop.');
 });
-layoutTestController.dumpAsText();
-layoutTestController.waitUntilDone();
-log('Starting test');
-eventSender.beginDragWithFiles(['DRTFakeFile']);
-eventSender.mouseMoveTo(document.body.offsetLeft + 10, document.body.offsetTop + 10);
-eventSender.mouseUp();
-log('FAIL');
-layoutTestController.notifyDone();
+(function ()
+{
+    if (!window.layoutTestController)
+        return;
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    log('Starting test');
+    eventSender.beginDragWithFiles(['DRTFakeFile']);
+    eventSender.mouseMoveTo(document.body.offsetLeft + 10, document.body.offsetTop + 10);
+    eventSender.mouseUp();
+    log('FAIL');
+    layoutTestController.notifyDone();
+})();
 </script>
 </body>
 </html>
