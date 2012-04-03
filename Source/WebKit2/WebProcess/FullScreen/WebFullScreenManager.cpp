@@ -140,6 +140,12 @@ void WebFullScreenManager::setAnimatingFullScreen(bool animating)
     m_element->document()->setAnimatingFullScreen(animating);
 }
 
+void WebFullScreenManager::requestExitFullScreen()
+{
+    ASSERT(m_element);
+    m_element->document()->webkitCancelFullScreen();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(FULLSCREEN_API)

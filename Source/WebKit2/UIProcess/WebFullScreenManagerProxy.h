@@ -82,6 +82,7 @@ public:
     void willExitFullScreen();
     void didExitFullScreen();
     void setAnimatingFullScreen(bool);
+    void requestExitFullScreen();
 
 private:
     WebFullScreenManagerProxy(WebPageProxy*);

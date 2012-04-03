@@ -51,6 +51,7 @@ using namespace WebCore;
 static RetainPtr<NSWindow> createBackgroundFullscreenWindow(NSRect frame);
 
 static const CFTimeInterval defaultAnimationDuration = 0.5;
+static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
 @interface WKFullScreenWindowController(Private)<NSAnimationDelegate>
 - (void)_updateMenuAndDockForFullScreen;
@@ -135,7 +136,12 @@ static const CFTimeInterval defaultAnimationDuration = 0.5;
 
 - (void)cancelOperation:(id)sender
 {
-    [self performSelector:@selector(exitFullScreen) withObject:nil afterDelay:0];
+    [self _manager]->requestExitFullScreen();
+
+    // If the page doesn't respond in DefaultWatchdogTimerInterval seconds, it could be because
+    // the WebProcess has hung, so exit anyway.
+    if (!_watchdogTimer)
+        _watchdogTimer = adoptNS([NSTimer scheduledTimerWithTimeInterval:DefaultWatchdogTimerInterval target:self selector:@selector(exitFullScreen) userInfo:nil repeats:NO]);
 }
 
 #pragma mark -
@@ -275,6 +281,11 @@ static const CFTimeInterval defaultAnimationDuration = 0.5;
 
 - (void)exitFullScreen
 {
+    if (_watchdogTimer) {
+        [_watchdogTimer.get() invalidate];
+        _watchdogTimer.clear();
+    }
+
     if (!_isFullScreen)
         return;
     _isFullScreen = NO;

@@ -50,6 +50,7 @@ class IntRect;
     RetainPtr<NSWindow> _backgroundWindow;
     NSRect _initialFrame;
     NSRect _finalFrame;
+    RetainPtr<NSTimer> _watchdogTimer;
     
     BOOL _isEnteringFullScreen;
     BOOL _isExitingFullScreen;

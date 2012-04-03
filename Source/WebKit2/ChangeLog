@@ -1,3 +1,33 @@
+2012-04-03  Jer Noble  <jer.noble@apple.com>
+
+        ESC key in full screen does not result in webkitFullScreenChange event.
+        https://bugs.webkit.org/show_bug.cgi?id=82755
+        <rdar://problem/11093513>
+
+        Reviewed by Eric Carlson.
+
+        Instead of exiting full screen directly, ask the document to initiate exiting full screen. This ensures
+        that the entire full screen element stack is cleared and that webkitFullScreenChange events are sent
+        out correctly.
+
+        Because the WebProcess may be stalled or hung, add a watchdog timer which will force an exit of full
+        screen if the WebProcess does not respond in a timely manner (defaults to 1s).
+
+        Add a new method, requestExitFullScreen, which calls through to the WebProcess and Document:
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::requestExitFullScreen):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::requestExitFullScreen):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        * WebProcess/FullScreen/WebFullScreenManager.messages.in:
+
+        Request that the document exits full screen when the ESC key is pressed:
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController cancelOperation:]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+
 2012-04-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] ASSERT(!(outputBytes.size() % sizeof(UChar))) in PluginProcessProxyQt.cpp
