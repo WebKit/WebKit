@@ -1787,8 +1787,12 @@ bool CSSParser::parseValue(int propId, bool important)
         else if (!id && validUnit(value, FLength | FPercent | FNonNeg))
             // ### handle multilength case where we allow relative units
             validPrimitive = true;
-        else if (value->unit == CSSParserValue::Function)
-            return parseFlex(propId, important);
+        else if (value->unit == CSSParserValue::Function) {
+            // FIXME: Remove -webkit-flex() handling once we finish implementing the -webkit-flex propery.
+            if (!equalIgnoringCase(value->function->name, "-webkit-flex(") || m_valueList->next())
+                return false;
+            parsedValue = parseFlex(value->function->args.get());
+        }
         break;
 
     case CSSPropertyBottom:               // <length> | <percentage> | auto | inherit
@@ -2015,6 +2019,18 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
 #endif
+    case CSSPropertyWebkitFlex: {
+        if (id == CSSValueNone)
+            validPrimitive = true;
+        else if (RefPtr<CSSFlexValue> flexValue = parseFlex(m_valueList.get())) {
+            RefPtr<CSSValueList> flexList = CSSValueList::createSpaceSeparated();
+            flexList->append(cssValuePool()->createValue(flexValue->positiveFlex(), CSSPrimitiveValue::CSS_NUMBER));
+            flexList->append(cssValuePool()->createValue(flexValue->negativeFlex(), CSSPrimitiveValue::CSS_NUMBER));
+            flexList->append(flexValue->preferredSize());
+            parsedValue = flexList;
+        }
+        break;
+    }
     case CSSPropertyWebkitFlexOrder:
         if (validUnit(value, FInteger, CSSStrictMode)) {
             // We restrict the smallest value to int min + 2 because we use int min and int min + 1 as special values in a hash set.
@@ -5496,13 +5512,10 @@ bool CSSParser::parseReflect(int propId, bool important)
     return true;
 }
 
-bool CSSParser::parseFlex(int propId, bool important)
+PassRefPtr<CSSFlexValue> CSSParser::parseFlex(CSSParserValueList* args)
 {
-    CSSParserValue* value = m_valueList->current();
-    CSSParserValueList* args = value->function->args.get();
-    if (!equalIgnoringCase(value->function->name, "-webkit-flex(") || !args || !args->size() || args->size() > 3 || m_valueList->next())
-        return false;
-
+    if (!args || !args->size() || args->size() > 3)
+        return 0;
     static const double unsetValue = -1;
     double positiveFlex = unsetValue;
     double negativeFlex = unsetValue;
@@ -5519,13 +5532,13 @@ bool CSSParser::parseFlex(int propId, bool important)
                 preferredSize = cssValuePool()->createValue(0, CSSPrimitiveValue::CSS_PX);
             } else {
                 // We only allow 3 numbers without units if the last value is 0. E.g., flex(1 1 1) is invalid.
-                return false;
+                return 0;
             }
         } else if (!preferredSize && (arg->id == CSSValueAuto || validUnit(arg, FLength | FPercent | FNonNeg)))
             preferredSize = parseValidPrimitive(arg->id, arg);
         else {
             // Not a valid arg for flex().
-            return false;
+            return 0;
         }
         args->next();
     }
@@ -5538,8 +5551,7 @@ bool CSSParser::parseFlex(int propId, bool important)
         preferredSize = cssValuePool()->createValue(0, CSSPrimitiveValue::CSS_PX);
 
     RefPtr<CSSFlexValue> flex = CSSFlexValue::create(clampToFloat(positiveFlex), clampToFloat(negativeFlex), preferredSize);
-    addProperty(propId, flex.release(), important);
-    return true;
+    return flex;
 }
 
 struct BorderImageParseContext {

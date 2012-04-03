@@ -282,6 +282,8 @@ rect: style.getPropertyValue(-webkit-column-span) : 1
 rect: style.getPropertyCSSValue(-webkit-column-span) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-width) : auto
 rect: style.getPropertyCSSValue(-webkit-column-width) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-flex) : 0 0 auto
+rect: style.getPropertyCSSValue(-webkit-flex) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-flex-order) : 0
 rect: style.getPropertyCSSValue(-webkit-flex-order) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-flex-pack) : start
@@ -804,6 +806,8 @@ g: style.getPropertyValue(-webkit-column-span) : 1
 g: style.getPropertyCSSValue(-webkit-column-span) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-width) : auto
 g: style.getPropertyCSSValue(-webkit-column-width) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-flex) : 0 0 auto
+g: style.getPropertyCSSValue(-webkit-flex) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-flex-order) : 0
 g: style.getPropertyCSSValue(-webkit-flex-order) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-flex-pack) : start

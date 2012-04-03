@@ -283,5 +283,3 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack
 flexbox.style.webkitFlexLinePack = 'foo';
 shouldBeEqualToString('flexbox.style.webkitFlexLinePack', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'stretch');
-
-successfullyParsed = true;

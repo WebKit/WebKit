@@ -536,6 +536,7 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
 #if ENABLE(CSS_FILTERS)
     case CSSPropertyWebkitFilter:
 #endif
+    case CSSPropertyWebkitFlex:
     case CSSPropertyWebkitFlexOrder:
     case CSSPropertyWebkitFlexPack:
     case CSSPropertyWebkitFlexAlign:

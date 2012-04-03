@@ -811,6 +811,9 @@ public:
     float flexboxWidthNegativeFlex() const { return rareNonInheritedData->m_flexibleBox->m_widthNegativeFlex; }
     float flexboxHeightPositiveFlex() const { return rareNonInheritedData->m_flexibleBox->m_heightPositiveFlex; }
     float flexboxHeightNegativeFlex() const { return rareNonInheritedData->m_flexibleBox->m_heightNegativeFlex; }
+    float positiveFlex() const { return rareNonInheritedData->m_flexibleBox->m_positiveFlex; }
+    float negativeFlex() const { return rareNonInheritedData->m_flexibleBox->m_negativeFlex; }
+    Length flexPreferredSize() const { return rareNonInheritedData->m_flexibleBox->m_preferredSize; }
     int flexOrder() const { return rareNonInheritedData->m_flexibleBox->m_flexOrder; }
     EFlexPack flexPack() const { return static_cast<EFlexPack>(rareNonInheritedData->m_flexibleBox->m_flexPack); }
     EFlexAlign flexAlign() const { return static_cast<EFlexAlign>(rareNonInheritedData->m_flexibleBox->m_flexAlign); }
@@ -1251,6 +1254,9 @@ public:
     void setFlexboxWidthNegativeFlex(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_widthNegativeFlex, f); }
     void setFlexboxHeightPositiveFlex(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_heightPositiveFlex, f); }
     void setFlexboxHeightNegativeFlex(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_heightNegativeFlex, f); }
+    void setPositiveFlex(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_positiveFlex, f); }
+    void setNegativeFlex(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_negativeFlex, f); }
+    void setFlexPreferredSize(Length l) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_preferredSize, l); }
     void setFlexOrder(int o) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexOrder, o); }
     void setFlexPack(EFlexPack p) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexPack, p); }
     void setFlexAlign(EFlexAlign a) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexAlign, a); }
@@ -1582,10 +1588,9 @@ public:
     static unsigned int initialBoxOrdinalGroup() { return 1; }
     static EBoxSizing initialBoxSizing() { return CONTENT_BOX; }
     static StyleReflection* initialBoxReflect() { return 0; }
-    static float initialFlexboxWidthPositiveFlex() { return 0; }
-    static float initialFlexboxWidthNegativeFlex() { return 0; }
-    static float initialFlexboxHeightPositiveFlex() { return 0; }
-    static float initialFlexboxHeightNegativeFlex() { return 0; }
+    static float initialPositiveFlex() { return 0; }
+    static float initialNegativeFlex() { return 0; }
+    static Length initialFlexPreferredSize() { return Length(Auto); }
     static int initialFlexOrder() { return 0; }
     static EFlexPack initialFlexPack() { return PackStart; }
     static EFlexAlign initialFlexAlign() { return AlignStretch; }

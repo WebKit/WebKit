@@ -4038,6 +4038,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitColumns:
     case CSSPropertyWebkitColumnSpan:
     case CSSPropertyWebkitColumnWidth:
+    case CSSPropertyWebkitFlex:
     case CSSPropertyWebkitFlexAlign:
     case CSSPropertyWebkitFlexDirection:
     case CSSPropertyWebkitFlexFlow:

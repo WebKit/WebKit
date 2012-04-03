@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="flexbox">
+    <div id="flexitem"></div>
+</div>
+<script>
+description('Tests setting the -webkit-flex propery.');
+
+var flexbox = document.getElementById("flexbox");
+var flexitem = document.getElementById("flexitem");
+
+// Test default value.
+shouldBeEqualToString('flexitem.style.webkitFlex', '');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+// Should not inherit.
+flexbox.style.webkitFlex = '1 2 3px';
+shouldBeEqualToString('flexitem.style.webkitFlex', '');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+// Invalid value.
+flexitem.style.webkitFlex = 'junk';
+shouldBeEqualToString('flexitem.style.webkitFlex', '');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '1';
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 0 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 0 0px');
+
+flexitem.style.webkitFlex = '0';
+shouldBeEqualToString('flexitem.style.webkitFlex', '0 0 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 0px');
+
+flexitem.style.webkitFlex = '1.5';
+shouldBeEqualToString('flexitem.style.webkitFlex', '1.5 0 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1.5 0 0px');
+
+flexitem.style.webkitFlex = 'auto';
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 0 auto');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 0 auto');
+
+flexitem.style.webkitFlex = '1px';
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 0 1px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 0 1px');
+
+flexitem.style.webkitFlex = '2em';
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 0 2em');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 0 32px');
+
+flexitem.style.webkitFlex = '0px';
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 0 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 0 0px');
+
+flexitem.style.webkitFlex = 'none';
+flexitem.style.webkitFlex = '-2'; // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '0 0';
+shouldBeEqualToString('flexitem.style.webkitFlex', '0 0 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 0px');
+
+flexitem.style.webkitFlex = '0 1';
+shouldBeEqualToString('flexitem.style.webkitFlex', '0 1 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 1 0px');
+
+flexitem.style.webkitFlex = '1 0';
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 0 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 0 0px');
+
+flexitem.style.webkitFlex = '2 auto';
+shouldBeEqualToString('flexitem.style.webkitFlex', '2 0 auto');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '2 0 auto');
+
+flexitem.style.webkitFlex = '3 4px';
+shouldBeEqualToString('flexitem.style.webkitFlex', '3 0 4px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '3 0 4px');
+
+flexitem.style.webkitFlex = 'auto 5.25';
+shouldBeEqualToString('flexitem.style.webkitFlex', '5.25 0 auto');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '5.25 0 auto');
+
+flexitem.style.webkitFlex = '6em 4';
+shouldBeEqualToString('flexitem.style.webkitFlex', '4 0 6em');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '4 0 96px');
+
+flexitem.style.webkitFlex = '4 0px';
+shouldBeEqualToString('flexitem.style.webkitFlex', '4 0 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '4 0 0px');
+
+flexitem.style.webkitFlex = '0 0px';
+shouldBeEqualToString('flexitem.style.webkitFlex', '0 0 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 0px');
+
+flexitem.style.webkitFlex = 'none';
+flexitem.style.webkitFlex = '-1 5'; // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '1 -1'; // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '-1 -1'; // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = 'auto 2em'; // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '2px 4px'; // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '0px 0px'; // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '1 2 0';
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 2 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 2 0px');
+
+flexitem.style.webkitFlex = '0 0 0';
+shouldBeEqualToString('flexitem.style.webkitFlex', '0 0 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 0px');
+
+flexitem.style.webkitFlex = '1 2 auto';
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 2 auto');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 2 auto');
+
+flexitem.style.webkitFlex = '1.75 2 3px';
+shouldBeEqualToString('flexitem.style.webkitFlex', '1.75 2 3px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1.75 2 3px');
+
+flexitem.style.webkitFlex = '1 3px 2';
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 2 3px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 2 3px');
+
+flexitem.style.webkitFlex = '3px 1 2';
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 2 3px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 2 3px');
+
+flexitem.style.webkitFlex = 'auto 0 0';
+shouldBeEqualToString('flexitem.style.webkitFlex', '0 0 auto');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '0 0px 0';
+shouldBeEqualToString('flexitem.style.webkitFlex', '0 0 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 0px');
+
+flexitem.style.webkitFlex = 'none';
+flexitem.style.webkitFlex = '1 2 3'; // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '0 2 3'; // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '1 0 3'; // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '0 0 1';  // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '1 -2 3px';  // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '1 2px 3px';  // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '1 2px auto';  // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '0px 0px 0';  // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '0 0 0 0';  // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '0 0 0px 0';  // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '0 0 0px 0px';  // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '0 0 0px 0';  // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '1, 2, 3px';  // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = '1,';  // Invalid, return previous value.
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = 'initial';
+shouldBeEqualToString('flexitem.style.webkitFlex', 'initial');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+
+flexitem.style.webkitFlex = 'none';
+shouldBeEqualToString('flexitem.style.webkitFlex', 'none');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

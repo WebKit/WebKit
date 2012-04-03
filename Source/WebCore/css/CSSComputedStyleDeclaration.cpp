@@ -221,6 +221,7 @@ static const CSSPropertyID computedProperties[] = {
 #if ENABLE(DASHBOARD_SUPPORT)
     CSSPropertyWebkitDashboardRegion,
 #endif
+    CSSPropertyWebkitFlex,
     CSSPropertyWebkitFlexOrder,
     CSSPropertyWebkitFlexPack,
     CSSPropertyWebkitFlexAlign,
@@ -1632,6 +1633,21 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return cssValuePool->createValue(style->display());
         case CSSPropertyEmptyCells:
             return cssValuePool->createValue(style->emptyCells());
+        case CSSPropertyWebkitFlex: {
+            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+            list->append(cssValuePool->createValue(style->positiveFlex()));
+            list->append(cssValuePool->createValue(style->negativeFlex()));
+
+            Length preferredSize = style->flexPreferredSize();
+            if (preferredSize.isAuto())
+                list->append(cssValuePool->createIdentifierValue(CSSValueAuto));
+            else if (preferredSize.isPercent())
+                list->append(cssValuePool->createValue(preferredSize.value(), CSSPrimitiveValue::CSS_PERCENTAGE));
+            else
+                list->append(cssValuePool->createValue(preferredSize.value(), CSSPrimitiveValue::CSS_PX));
+
+            return list.release();
+        }
         case CSSPropertyWebkitFlexOrder:
             return cssValuePool->createValue(style->flexOrder(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitFlexPack:

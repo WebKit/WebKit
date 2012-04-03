@@ -67,4 +67,3 @@ for (var i in attributesToTest) {
     shouldBeEqualToString('testFlex("-webkit-flex(1) foo", "' + attribute + '")', '');
     shouldBeEqualToString('testFlex("10px -webkit-flex(1)", "' + attribute + '")', '');
 }
-successfullyParsed = true;

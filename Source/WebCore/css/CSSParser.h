@@ -53,6 +53,7 @@ class CSSSelectorList;
 class CSSStyleSheet;
 class CSSValue;
 class CSSValueList;
+class CSSFlexValue;
 class CSSWrapShape;
 class Document;
 class MediaQueryExp;
@@ -187,7 +188,7 @@ public:
 
     bool parseReflect(int propId, bool important);
 
-    bool parseFlex(int propId, bool important);
+    PassRefPtr<CSSFlexValue> parseFlex(CSSParserValueList* args);
 
     // Image generators
     bool parseCanvas(CSSParserValueList*, RefPtr<CSSValue>&);
