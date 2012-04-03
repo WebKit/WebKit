@@ -760,7 +760,6 @@ inspector/styles/svg-style.xhtml
 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82980
-fast/events/drop-handler-should-not-stop-navigate.html
 http/tests/navigation/back-twice-without-commit.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82981
@@ -768,3 +767,6 @@ http/tests/misc/favicon-loads-with-icon-loading-override.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82982
 fast/dom/jsDevicePixelRatio.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82984
+fast/events/drop-handler-should-not-stop-navigate.html
