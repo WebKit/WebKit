@@ -765,7 +765,8 @@ void RenderLayer::updateLayerPosition()
         inlineBoundingBoxOffset = toSize(lineBox.location());
         localPoint += inlineBoundingBoxOffset;
     } else if (RenderBox* box = renderBox()) {
-        setSize(box->size());
+        // FIXME: Is snapping the size really needed here for the RenderBox case?
+        setSize(pixelSnappedIntSize(box->size(), box->location()));
         localPoint += box->topLeftLocationOffset();
     }
 
@@ -1856,7 +1857,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
         }
         LayoutUnit baseWidth = renderer->width() - (isBoxSizingBorder ? zeroLayoutUnit : renderer->borderAndPaddingWidth());
         baseWidth = baseWidth / zoomFactor;
-        styledElement->setInlineStyleProperty(CSSPropertyWidth, String::number(baseWidth + difference.width()) + "px", false);
+        styledElement->setInlineStyleProperty(CSSPropertyWidth, String::number(roundToInt(baseWidth + difference.width())) + "px", false);
     }
 
     if (resize != RESIZE_HORIZONTAL && difference.height()) {
@@ -1867,7 +1868,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
         }
         LayoutUnit baseHeight = renderer->height() - (isBoxSizingBorder ? zeroLayoutUnit : renderer->borderAndPaddingHeight());
         baseHeight = baseHeight / zoomFactor;
-        styledElement->setInlineStyleProperty(CSSPropertyHeight, String::number(baseHeight + difference.height()) + "px", false);
+        styledElement->setInlineStyleProperty(CSSPropertyHeight, String::number(roundToInt(baseHeight + difference.height())) + "px", false);
     }
 
     document->updateLayout();
@@ -1977,7 +1978,7 @@ IntRect RenderLayer::scrollCornerRect() const
     bool hasVerticalBar = verticalScrollbar();
     bool hasResizer = renderer()->style()->resize() != RESIZE_NONE;
     if ((hasHorizontalBar && hasVerticalBar) || (hasResizer && (hasHorizontalBar || hasVerticalBar)))
-        return cornerRect(this, pixelSnappedIntRect(renderBox()->borderBoxRect()));
+        return cornerRect(this, renderBox()->borderBoxRect());
     return IntRect();
 }
 
@@ -2301,7 +2302,7 @@ void RenderLayer::positionOverflowControls(const IntSize& offsetFromLayer)
     if (!box)
         return;
 
-    const IntRect borderBox = pixelSnappedIntRect(box->borderBoxRect());
+    const IntRect borderBox = box->borderBoxRect();
     const IntRect& scrollCorner = scrollCornerRect();
     IntRect absBounds(borderBox.location() + offsetFromLayer, borderBox.size());
     if (m_vBar)
@@ -2348,16 +2349,18 @@ void RenderLayer::positionOverflowControls(const IntSize& offsetFromLayer)
 
 int RenderLayer::scrollWidth()
 {
+    ASSERT(renderBox());
     if (m_scrollDimensionsDirty)
         computeScrollDimensions();
-    return m_scrollSize.width();
+    return snapSizeToPixel(m_scrollSize.width(), renderBox()->clientLeft());
 }
 
 int RenderLayer::scrollHeight()
 {
+    ASSERT(renderBox());
     if (m_scrollDimensionsDirty)
         computeScrollDimensions();
-    return m_scrollSize.height();
+    return snapSizeToPixel(m_scrollSize.height(), renderBox()->clientTop());
 }
 
 LayoutUnit RenderLayer::overflowTop() const
@@ -2404,7 +2407,7 @@ void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
 
     m_scrollSize.setWidth(overflowRight() - overflowLeft());
     m_scrollSize.setHeight(overflowBottom() - overflowTop());
-    
+
     setScrollOrigin(IntPoint(-m_scrollOverflow.width(), -m_scrollOverflow.height()));
 
     if (needHBar)
@@ -2633,7 +2636,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, const IntPoint& paintOf
     RenderBox* box = renderBox();
     ASSERT(box);
 
-    IntRect absRect = resizerCornerRect(this, pixelSnappedIntRect(box->borderBoxRect()));
+    IntRect absRect = resizerCornerRect(this, box->borderBoxRect());
     absRect.moveBy(paintOffset);
     if (!absRect.intersects(damageRect))
         return;
@@ -2688,7 +2691,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint&
     
     IntRect resizeControlRect;
     if (renderer()->style()->resize() != RESIZE_NONE) {
-        resizeControlRect = resizerCornerRect(this, pixelSnappedIntRect(box->borderBoxRect()));
+        resizeControlRect = resizerCornerRect(this, box->borderBoxRect());
         if (resizeControlRect.contains(localPoint))
             return true;
     }
@@ -3019,7 +3022,7 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
             }
             
             // Paint the background.
-            PaintInfo paintInfo(context, damageRect.rect(), PaintPhaseBlockBackground, false, paintingRootForRenderer, region, 0);
+            PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseBlockBackground, false, paintingRootForRenderer, region, 0);
             renderer()->paint(paintInfo, paintOffset);
 
             if (useClipRect) {
@@ -3044,7 +3047,7 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
                 clipToRect(rootLayer, context, paintDirtyRect, clipRectToApply);
             }
             
-            PaintInfo paintInfo(context, clipRectToApply.rect(), 
+            PaintInfo paintInfo(context, pixelSnappedIntRect(clipRectToApply.rect()),
                                 selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
                                 forceBlackText, paintingRootForRenderer, region, 0);
             renderer()->paint(paintInfo, paintOffset);
@@ -3066,7 +3069,7 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
 
         if (shouldPaintOutline && !outlineRect.isEmpty()) {
             // Paint our own outline
-            PaintInfo paintInfo(context, outlineRect.rect(), PaintPhaseSelfOutline, false, paintingRootForRenderer, region, 0);
+            PaintInfo paintInfo(context, pixelSnappedIntRect(outlineRect.rect()), PaintPhaseSelfOutline, false, paintingRootForRenderer, region, 0);
             clipToRect(rootLayer, context, paintDirtyRect, outlineRect, DoNotIncludeSelfForBorderRadius);
             renderer()->paint(paintInfo, paintOffset);
             restoreClip(context, paintDirtyRect, outlineRect);
@@ -3084,7 +3087,7 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
             clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
 
         // Paint the mask.
-        PaintInfo paintInfo(context, damageRect.rect(), PaintPhaseMask, false, paintingRootForRenderer, region, 0);
+        PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseMask, false, paintingRootForRenderer, region, 0);
         renderer()->paint(paintInfo, paintOffset);
         
         if (useClipRect) {
@@ -3266,9 +3269,9 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
 {
     renderer()->document()->updateLayout();
     
-    IntRect hitTestArea = renderer()->isRenderFlowThread() ? toRenderFlowThread(renderer())->borderBoxRect() : renderer()->view()->documentRect();
+    LayoutRect hitTestArea = renderer()->isRenderFlowThread() ? toRenderFlowThread(renderer())->borderBoxRect() : renderer()->view()->documentRect();
     if (!request.ignoreClipping())
-        hitTestArea.intersect(pixelSnappedIntRect(frameVisibleRect(renderer())));
+        hitTestArea.intersect(frameVisibleRect(renderer()));
 
     RenderLayer* insideLayer = hitTestLayer(this, 0, request, result, hitTestArea, result.point(), false);
     if (!insideLayer) {
@@ -3558,7 +3561,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& result, const LayoutRect& layerBounds, const LayoutPoint& hitTestPoint, HitTestFilter hitTestFilter) const
 {
     if (!renderer()->hitTest(request, result, hitTestPoint,
-                            toPoint(layerBounds.location() - renderBoxLocation()),
+                            toLayoutPoint(layerBounds.location() - renderBoxLocation()),
                             hitTestFilter)) {
         // It's wrong to set innerNode, but then claim that you didn't hit anything, unless it is
         // a rect-based test.

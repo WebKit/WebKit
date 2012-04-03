@@ -80,6 +80,12 @@ inline int snapSizeToPixel(LayoutUnit size, LayoutUnit location)
     return size;
 }
 
+inline IntSize pixelSnappedIntSize(LayoutSize size, LayoutPoint location)
+{
+    UNUSED_PARAM(location);
+    return size;
+}
+
 inline IntSize roundedIntSize(const LayoutSize& s)
 {
     return s;
