@@ -394,6 +394,9 @@ ignored_charset:
         // Ignore any @charset rule not at the beginning of the style sheet.
         $$ = 0;
     }
+    | CHARSET_SYM maybe_space ';' {
+        $$ = 0;
+    }
 ;
 
 rule_list:
@@ -601,6 +604,9 @@ media:
     }
     | MEDIA_SYM maybe_space '{' maybe_space block_rule_list save_block {
         $$ = static_cast<CSSParser*>(parser)->createMediaRule(0, $5);
+    }
+    | MEDIA_SYM maybe_space ';' {
+        $$ = 0;
     }
     ;
 
