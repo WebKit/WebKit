@@ -496,6 +496,15 @@ static bool startHTTPRequest(ResourceHandle* handle)
     if (!soup_message_headers_get_one(soupMessage->request_headers, "Accept"))
         soup_message_headers_append(soupMessage->request_headers, "Accept", "*/*");
 
+    // In the case of XHR .send() and .send("") explicitly tell libsoup
+    // to send a zero content-lenght header for consistency
+    // with other backends (e.g. Chromium's) and other UA implementations like FF.
+    // It's done in the backend here instead of in XHR code since in XHR CORS checking
+    // prevents us from this kind of late header manipulation.
+    if ((request.httpMethod() == "POST" || request.httpMethod() == "PUT")
+        && (!request.httpBody() || request.httpBody()->isEmpty()))
+        soup_message_headers_set_content_length(soupMessage->request_headers, 0);
+
     // Send the request only if it's not been explicitly deferred.
     if (!d->m_defersLoading) {
         d->m_cancellable = adoptGRef(g_cancellable_new());

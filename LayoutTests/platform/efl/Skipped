@@ -2520,8 +2520,6 @@ http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
 http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/logout.html
-http/tests/xmlhttprequest/methods.html
-http/tests/xmlhttprequest/methods-async.html
 http/tests/xmlhttprequest/origin-whitelisting-all.html
 http/tests/xmlhttprequest/origin-whitelisting-exact-match.html
 http/tests/xmlhttprequest/origin-whitelisting-ip-addresses.html
@@ -2529,10 +2527,6 @@ http/tests/xmlhttprequest/origin-whitelisting-removal.html
 http/tests/xmlhttprequest/origin-whitelisting-subdomains.html
 http/tests/xmlhttprequest/remember-bad-password.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
-http/tests/xmlhttprequest/workers/shared-worker-methods.html
-http/tests/xmlhttprequest/workers/methods.html
-http/tests/xmlhttprequest/workers/methods-async.html
-http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
 http/tests/xmlviewer/extensions-api.html
 
 # These test cases don't have expected result yet.
