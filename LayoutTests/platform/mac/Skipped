@@ -645,10 +645,6 @@ fast/events/dropzone-005.html
 # Spelling tests that are flakey. https://bugs.webkit.org/show_bug.cgi?id=82555
 editing/spelling/spellcheck-async-mutation.html
 
-# Remove from the skipped list when https://bugs.webkit.org/show_bug.cgi?id=82660 is fixed.
-fast/workers/empty-worker-nocrash.html
-fast/workers/shared-worker-constructor.html
-
 # This should only be a layer change.
 # http://webkit.org/b/82129
 # https://bugs.webkit.org/show_bug.cgi?id=82742

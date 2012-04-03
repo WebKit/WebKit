@@ -48,6 +48,7 @@ namespace WebCore {
 
 WorkerScriptLoader::WorkerScriptLoader()
     : m_client(0)
+    , m_script("")
     , m_failed(false)
     , m_identifier(0)
     , m_finishing(false)
