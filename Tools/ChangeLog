@@ -1,3 +1,12 @@
+2012-04-03  Ami Fischman  <fischman@chromium.org>
+
+        Add a Media watchlist.
+        https://bugs.webkit.org/show_bug.cgi?id=83071
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-04-03  Simon Fraser  <simon.fraser@apple.com>
 
         Fix large leak in WebKitTestRunner

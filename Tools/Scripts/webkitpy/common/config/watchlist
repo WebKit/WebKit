@@ -141,6 +141,9 @@
         },
         "WebKitGTKTranslations": {
             "filename": r"Source/WebKit/gtk/po/",
+        },
+        "Media": {
+            "filename": r"(Source|LayoutTests)/.*([Mm]edia|[Aa]udio|[Vv]ideo)",
         }
     },
     "CC_RULES": {
@@ -173,6 +176,7 @@
         "SoupNetwork": [ "rakuco@FreeBSD.org", "gns@gnome.org", "mrobinson@webkit.org" ],
         "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org" ],
+        "Media": [ "fischman@chromium.org", ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from abarth@webkit.org, dglazkov@chromium.org, "
