@@ -1339,10 +1339,10 @@ void CSSParser::checkForOrphanedUnits()
     }
 }
 
-inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int id, CSSParserValue* value)
+inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int identifier, CSSParserValue* value)
 {
-    if (id)
-        return cssValuePool()->createIdentifierValue(id);
+    if (identifier)
+        return cssValuePool()->createIdentifierValue(identifier);
     if (value->unit == CSSPrimitiveValue::CSS_STRING)
         return createPrimitiveStringValue(value);
     if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)

@@ -549,7 +549,7 @@ static PassRefPtr<CSSValue> valueForReflection(const StyleReflection* reflection
     return CSSReflectValue::create(reflection->direction(), offset.release(), valueForNinePieceImage(reflection->mask(), cssValuePool));
 }
 
-static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, int propertyID, CSSValuePool* cssValuePool, RenderView* renderView)
+static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, CSSPropertyID propertyID, CSSValuePool* cssValuePool, RenderView* renderView)
 {
     if (!style)
         return 0;
@@ -1230,7 +1230,7 @@ static PassRefPtr<CSSValue> contentToCSSValue(const RenderStyle* style, CSSValue
     return list.release();
 }
 
-static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, int propertyID, CSSValuePool* cssValuePool)
+static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, CSSPropertyID propertyID, CSSValuePool* cssValuePool)
 {
     const CounterDirectiveMap* map = style->counterDirectives();
     if (!map)

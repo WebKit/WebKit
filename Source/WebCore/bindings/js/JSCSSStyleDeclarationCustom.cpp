@@ -60,7 +60,7 @@ void JSCSSStyleDeclaration::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 class CSSPropertyInfo {
 public:
-    int propertyID;
+    CSSPropertyID propertyID;
     bool hadPixelOrPosPrefix;
 };
 
@@ -169,7 +169,7 @@ static inline void writeEpubPrefix(char*& buffer)
 
 static CSSPropertyInfo cssPropertyIDForJSCSSPropertyName(const Identifier& propertyName)
 {
-    CSSPropertyInfo propertyInfo = {0, false};
+    CSSPropertyInfo propertyInfo = {CSSPropertyInvalid, false};
     bool hadPixelOrPosPrefix = false;
 
     unsigned length = propertyName.length();
@@ -260,7 +260,7 @@ static CSSPropertyInfo cssPropertyIDForJSCSSPropertyName(const Identifier& prope
     int propertyID = hashTableEntry ? hashTableEntry->id : 0;
     if (propertyID) {
         propertyInfo.hadPixelOrPosPrefix = hadPixelOrPosPrefix;
-        propertyInfo.propertyID = propertyID;
+        propertyInfo.propertyID = static_cast<CSSPropertyID>(propertyID);
         propertyInfoCache.add(stringForCache, propertyInfo);
     }
     return propertyInfo;

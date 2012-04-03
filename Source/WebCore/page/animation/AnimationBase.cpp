@@ -1131,7 +1131,7 @@ void AnimationBase::ensurePropertyMap()
     }
 }
 
-static void addPropertyWrapper(int propertyID, PropertyWrapperBase* wrapper)
+static void addPropertyWrapper(CSSPropertyID propertyID, PropertyWrapperBase* wrapper)
 {
     int propIndex = propertyID - firstCSSProperty;
 

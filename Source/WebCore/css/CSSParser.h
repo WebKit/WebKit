@@ -79,7 +79,7 @@ public:
     static bool parseColor(RGBA32& color, const String&, bool strict = false);
     static bool parseSystemColor(RGBA32& color, const String&, Document*);
     static PassRefPtr<CSSValueList> parseFontFaceValue(const AtomicString&, CSSStyleSheet* contextStyleSheet);
-    PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int propId, CSSParserValue*);
+    PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int, CSSParserValue*);
     bool parseDeclaration(StylePropertySet*, const String&, RefPtr<CSSStyleSourceData>*, CSSStyleSheet* contextStyleSheet);
     PassOwnPtr<MediaQuery> parseMediaQuery(const String&);
 

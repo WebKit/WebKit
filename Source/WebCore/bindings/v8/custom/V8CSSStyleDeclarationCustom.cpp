@@ -85,7 +85,7 @@ static bool hasCSSPropertyNamePrefix(const String& propertyName, const char* pre
 
 class CSSPropertyInfo {
 public:
-    int propID;
+    CSSPropertyID propID;
     bool hadPixelOrPosPrefix;
 };
 
@@ -143,7 +143,7 @@ static CSSPropertyInfo* cssPropertyInfo(v8::Handle<v8::String>v8PropertyName)
         }
 
         String propName = builder.toString();
-        int propertyID = cssPropertyID(propName);
+        CSSPropertyID propertyID = cssPropertyID(propName);
         if (propertyID) {
             propInfo = new CSSPropertyInfo();
             propInfo->hadPixelOrPosPrefix = hadPixelOrPosPrefix;
