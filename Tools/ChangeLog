@@ -1,3 +1,16 @@
+2012-04-03  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] DRT support for setInteractiveFormValidationEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=82050
+
+        Enable interactive form validation and unskip tests from the
+        skip list.
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+
 2012-04-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, another test-webkitpy fix-up after r113037.

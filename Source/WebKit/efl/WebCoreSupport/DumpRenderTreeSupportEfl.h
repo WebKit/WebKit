@@ -88,6 +88,7 @@ public:
     static void deliverAllMutationsIfNecessary();
     static void setEditingBehavior(Evas_Object* ewkView, const char* editingBehavior);
     static String markerTextForListItem(JSContextRef, JSValueRef nodeObject);
+    static void setInteractiveFormValidationEnabled(Evas_Object* ewkView, bool enabled);
 };
 
 #endif // DumpRenderTreeSupportEfl_h

@@ -507,3 +507,10 @@ String DumpRenderTreeSupportEfl::markerTextForListItem(JSContextRef context, JSV
 
     return WebCore::markerTextForListItem(element);
 }
+
+void DumpRenderTreeSupportEfl::setInteractiveFormValidationEnabled(Evas_Object* ewkView, bool enabled)
+{
+    WebCore::Page* corePage = EWKPrivate::corePage(ewkView);
+    if (corePage)
+        corePage->settings()->setInteractiveFormValidationEnabled(enabled);
+}
