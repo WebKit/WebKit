@@ -1,5 +1,12 @@
 2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Again, a build fix after r113067. Don't call r113067 twice on the configuration build directory.
+
+        * BuildSlaveSupport/built-product-archive:
+        (extractBuiltProduct):
+
+2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Yet another build fix after r113067. Don't trigger Chromium testers right away
         since they're now triggered by builders.
 
