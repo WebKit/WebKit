@@ -42,7 +42,7 @@ enum SVGSpreadMethodType {
 
 template<>
 struct SVGPropertyTraits<SVGSpreadMethodType> {
-    static SVGSpreadMethodType highestEnumValue() { return SVGSpreadMethodRepeat; }
+    static unsigned highestEnumValue() { return SVGSpreadMethodRepeat; }
 
     static String toString(SVGSpreadMethodType type)
     {

@@ -30,7 +30,7 @@ namespace WebCore {
 
 template<>
 struct SVGPropertyTraits<MorphologyOperatorType> {
-    static MorphologyOperatorType highestEnumValue() { return FEMORPHOLOGY_OPERATOR_DILATE; }
+    static unsigned highestEnumValue() { return FEMORPHOLOGY_OPERATOR_DILATE; }
 
     static String toString(MorphologyOperatorType type)
     {

@@ -31,7 +31,7 @@ namespace WebCore {
 
 template<>
 struct SVGPropertyTraits<CompositeOperationType> {
-    static CompositeOperationType highestEnumValue() { return FECOMPOSITE_OPERATOR_ARITHMETIC; }
+    static unsigned highestEnumValue() { return FECOMPOSITE_OPERATOR_ARITHMETIC; }
 
     static String toString(CompositeOperationType type)
     {

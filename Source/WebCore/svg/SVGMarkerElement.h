@@ -49,7 +49,7 @@ enum SVGMarkerOrientType {
 
 template<>
 struct SVGPropertyTraits<SVGMarkerUnitsType> {
-    static SVGMarkerUnitsType highestEnumValue() { return SVGMarkerUnitsStrokeWidth; }
+    static unsigned highestEnumValue() { return SVGMarkerUnitsStrokeWidth; }
 
     static String toString(SVGMarkerUnitsType type)
     {
@@ -78,7 +78,7 @@ struct SVGPropertyTraits<SVGMarkerUnitsType> {
 
 template<>
 struct SVGPropertyTraits<SVGMarkerOrientType> {
-    static SVGMarkerOrientType highestEnumValue() { return SVGMarkerOrientAngle; }
+    static unsigned highestEnumValue() { return SVGMarkerOrientAngle; }
 
     // toString is not needed, synchronizeOrientType() handles this on its own.
 

@@ -31,7 +31,7 @@ namespace WebCore {
 
 template<>
 struct SVGPropertyTraits<ComponentTransferType> {
-    static ComponentTransferType highestEnumValue() { return FECOMPONENTTRANSFER_TYPE_GAMMA; }
+    static unsigned highestEnumValue() { return FECOMPONENTTRANSFER_TYPE_GAMMA; }
 
     static String toString(ComponentTransferType type)
     {

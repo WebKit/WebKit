@@ -40,7 +40,7 @@ enum SVGLengthAdjustType {
 
 template<>
 struct SVGPropertyTraits<SVGLengthAdjustType> {
-    static SVGLengthAdjustType highestEnumValue() { return SVGLengthAdjustSpacingAndGlyphs; }
+    static unsigned highestEnumValue() { return SVGLengthAdjustSpacingAndGlyphs; }
 
     static String toString(SVGLengthAdjustType type)
     {

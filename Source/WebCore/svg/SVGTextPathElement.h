@@ -41,7 +41,7 @@ enum SVGTextPathSpacingType {
 
 template<>
 struct SVGPropertyTraits<SVGTextPathMethodType> {
-    static SVGTextPathMethodType highestEnumValue() { return SVGTextPathMethodStretch; }
+    static unsigned highestEnumValue() { return SVGTextPathMethodStretch; }
 
     static String toString(SVGTextPathMethodType type)
     {
@@ -70,7 +70,7 @@ struct SVGPropertyTraits<SVGTextPathMethodType> {
 
 template<>
 struct SVGPropertyTraits<SVGTextPathSpacingType> {
-    static SVGTextPathSpacingType highestEnumValue() { return SVGTextPathSpacingExact; }
+    static unsigned highestEnumValue() { return SVGTextPathSpacingExact; }
 
     static String toString(SVGTextPathSpacingType type)
     {

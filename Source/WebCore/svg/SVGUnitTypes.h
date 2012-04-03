@@ -40,7 +40,7 @@ private:
 
 template<>
 struct SVGPropertyTraits<SVGUnitTypes::SVGUnitType> {
-    static SVGUnitTypes::SVGUnitType highestEnumValue() { return SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX; }
+    static unsigned highestEnumValue() { return SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX; }
 
     static String toString(SVGUnitTypes::SVGUnitType type)
     {

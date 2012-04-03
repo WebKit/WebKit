@@ -30,7 +30,7 @@ namespace WebCore {
  
 template<>
 struct SVGPropertyTraits<ChannelSelectorType> {
-    static ChannelSelectorType highestEnumValue() { return CHANNEL_A; }
+    static unsigned highestEnumValue() { return CHANNEL_A; }
 
     static String toString(ChannelSelectorType type)
     {

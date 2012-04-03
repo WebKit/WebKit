@@ -38,7 +38,7 @@ enum SVGStitchOptions {
 
 template<>
 struct SVGPropertyTraits<SVGStitchOptions> {
-    static SVGStitchOptions highestEnumValue() { return SVG_STITCHTYPE_NOSTITCH; }
+    static unsigned highestEnumValue() { return SVG_STITCHTYPE_NOSTITCH; }
 
     static String toString(SVGStitchOptions type)
     {
@@ -67,7 +67,7 @@ struct SVGPropertyTraits<SVGStitchOptions> {
 
 template<>
 struct SVGPropertyTraits<TurbulenceType> {
-    static TurbulenceType highestEnumValue() { return FETURBULENCE_TYPE_TURBULENCE; }
+    static unsigned highestEnumValue() { return FETURBULENCE_TYPE_TURBULENCE; }
 
     static String toString(TurbulenceType type)
     {

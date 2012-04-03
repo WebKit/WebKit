@@ -30,7 +30,7 @@ namespace WebCore {
 
 template<>
 struct SVGPropertyTraits<BlendModeType> {
-    static BlendModeType highestEnumValue() { return FEBLEND_MODE_LIGHTEN; }
+    static unsigned highestEnumValue() { return FEBLEND_MODE_LIGHTEN; }
 
     static String toString(BlendModeType type)
     {
