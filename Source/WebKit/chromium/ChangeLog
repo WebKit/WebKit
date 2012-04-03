@@ -1,3 +1,14 @@
+2012-04-02  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove SkCanvas::LayerIter use from OpaqueRegionSkia
+        https://bugs.webkit.org/show_bug.cgi?id=82564
+
+        Reviewed by Stephen White.
+
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore):
+        (WebCore::TEST):
+
 2012-04-02  Mark Pilgrim  <pilgrim@chromium.org>
 
         Call decrementStatsCounter directly

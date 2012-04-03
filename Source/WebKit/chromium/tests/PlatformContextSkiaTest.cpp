@@ -53,6 +53,17 @@ namespace {
         } \
 }
 
+#define EXPECT_PIXELS_MATCH_EXACT(bitmap, opaqueRect) \
+{ \
+    SkAutoLockPixels locker(bitmap); \
+    for (int y = 0; y < bitmap.height(); ++y) \
+        for (int x = 0; x < bitmap.width(); ++x) {     \
+            int alpha = *bitmap.getAddr32(x, y) >> 24; \
+            bool opaque = opaqueRect.contains(x, y); \
+            EXPECT_EQ(opaque, alpha == 255); \
+        } \
+}
+
 TEST(PlatformContextSkiaTest, trackOpaqueTest)
 {
     SkBitmap bitmap;
@@ -679,6 +690,88 @@ TEST(PlatformContextSkiaTest, contextTransparencyLayerTest)
     context.fillRect(FloatRect(20, 20, 10, 10), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
     context.endTransparencyLayer();
     EXPECT_EQ_RECT(IntRect(), platformContext.opaqueRegion().asRect());
+}
+
+TEST(PlatformContextSkiaTest, PreserveOpaqueOnlyMattersForFirstLayer)
+{
+    SkBitmap bitmap;
+    bitmap.setConfig(SkBitmap::kARGB_8888_Config, 400, 400);
+    bitmap.allocPixels();
+    bitmap.eraseColor(0);
+    SkCanvas canvas(bitmap);
+
+    PlatformContextSkia platformContext(&canvas);
+    platformContext.setTrackOpaqueRegion(true);
+    GraphicsContext context(&platformContext);
+
+    Color opaque(1.0f, 0.0f, 0.0f, 1.0f);
+    Color alpha(0.0f, 0.0f, 0.0f, 0.0f);
+
+    Path path;
+    context.setShouldAntialias(false);
+    context.setMiterLimit(1);
+    context.setStrokeThickness(5);
+    context.setLineCap(SquareCap);
+    context.setStrokeStyle(SolidStroke);
+
+    // Make skia unable to compute fast bounds for our paths.
+    Vector<float> dashArray;
+    dashArray.append(1);
+    dashArray.append(0);
+    context.setLineDash(dashArray, 0);
+
+    // Make the device opaque in 10,10 40x40.
+    context.fillRect(FloatRect(10, 10, 40, 40), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
+    EXPECT_EQ_RECT(IntRect(10, 10, 40, 40), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH_EXACT(bitmap, platformContext.opaqueRegion().asRect());
+
+    // Begin a layer that preserves opaque.
+    context.setCompositeOperation(CompositeSourceOver);
+    context.beginTransparencyLayer(0.5);
+
+    // Begin a layer that does not preserve opaque.
+    context.setCompositeOperation(CompositeSourceOut);
+    context.beginTransparencyLayer(0.5);
+
+    // This should not destroy the device opaqueness.
+    context.fillRect(FloatRect(10, 10, 40, 40), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
+
+    // This should not destroy the device opaqueness either.
+    context.setFillColor(opaque, ColorSpaceDeviceRGB);
+    path.moveTo(FloatPoint(10, 10));
+    path.addLineTo(FloatPoint(40, 40));
+    context.strokePath(path);
+
+    context.endTransparencyLayer();
+    context.endTransparencyLayer();
+    EXPECT_EQ_RECT(IntRect(10, 10, 40, 40), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH_EXACT(bitmap, platformContext.opaqueRegion().asRect());
+
+    // Now begin a layer that does not preserve opaque and draw through it to the device.
+    context.setCompositeOperation(CompositeSourceOut);
+    context.beginTransparencyLayer(0.5);
+
+    // This should destroy the device opaqueness.
+    context.fillRect(FloatRect(10, 10, 40, 40), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
+
+    context.endTransparencyLayer();
+    EXPECT_EQ_RECT(IntRect(), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH_EXACT(bitmap, platformContext.opaqueRegion().asRect());
+
+    // Now we draw with a path for which it cannot compute fast bounds. This should destroy the entire opaque region.
+
+    context.setCompositeOperation(CompositeSourceOut);
+    context.beginTransparencyLayer(0.5);
+
+    // This should nuke the device opaqueness.
+    context.setFillColor(opaque, ColorSpaceDeviceRGB);
+    path.moveTo(FloatPoint(10, 10));
+    path.addLineTo(FloatPoint(40, 40));
+    context.strokePath(path);
+
+    context.endTransparencyLayer();
+    EXPECT_EQ_RECT(IntRect(), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH_EXACT(bitmap, platformContext.opaqueRegion().asRect());
 }
 
 } // namespace

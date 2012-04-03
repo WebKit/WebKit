@@ -166,23 +166,20 @@ void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
     // (the surface of the page) but layers on top may have transparent parts.
     // Without explicitly setting the alpha flag, the layer will inherit the
     // opaque setting of the base and some things won't work properly.
+    SkCanvas::SaveFlags saveFlags = static_cast<SkCanvas::SaveFlags>(SkCanvas::kHasAlphaLayer_SaveFlag | SkCanvas::kFullColorLayer_SaveFlag);
 
     SkPaint layerPaint;
     layerPaint.setAlpha(static_cast<unsigned char>(opacity * 255));
     layerPaint.setXfermodeMode(platformContext()->getXfermodeMode());
 
-    platformContext()->canvas()->saveLayer(
-        0,
-        &layerPaint,
-        static_cast<SkCanvas::SaveFlags>(SkCanvas::kHasAlphaLayer_SaveFlag |
-                                         SkCanvas::kFullColorLayer_SaveFlag));
+    platformContext()->saveLayer(0, &layerPaint, saveFlags);
 }
 
 void GraphicsContext::endPlatformTransparencyLayer()
 {
     if (paintingDisabled())
         return;
-    platformContext()->canvas()->restore();
+    platformContext()->restoreLayer();
 }
 
 bool GraphicsContext::supportsTransparencyLayers()

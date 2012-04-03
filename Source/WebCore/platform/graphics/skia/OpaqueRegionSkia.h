@@ -53,20 +53,41 @@ public:
     // The resulting opaque region as a single rect.
     IntRect asRect() const;
 
-    // FIXME: make all the PlatformContextSkia* into a const pointer when Skia fixes LayerIter's SkCanvas*.
+    void pushCanvasLayer(const SkPaint*);
+    void popCanvasLayer();
 
-    void didDrawRect(PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&, const SkBitmap*);
-    void didDrawPath(PlatformContextSkia*, const AffineTransform&, const SkPath&, const SkPaint&);
-    void didDrawPoints(PlatformContextSkia*, const AffineTransform&, SkCanvas::PointMode, int numPoints, const SkPoint[], const SkPaint&);
-    void didDrawBounded(PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&);
+    void setImageMask(const SkRect& imageOpaqueRect);
+
+    void didDrawRect(const PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&, const SkBitmap* sourceBitmap);
+    void didDrawPath(const PlatformContextSkia*, const AffineTransform&, const SkPath&, const SkPaint&);
+    void didDrawPoints(const PlatformContextSkia*, const AffineTransform&, SkCanvas::PointMode, int numPoints, const SkPoint[], const SkPaint&);
+    void didDrawBounded(const PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&);
 
 private:
-    void didDraw(PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&, bool drawsOpaque, bool fillsBounds);
-    void didDrawUnbounded(const SkPaint&, bool drawsOpaque);
+    enum DrawType {
+        FillOnly,
+        FillOrStroke
+    };
+
+    void didDraw(const PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&, const SkBitmap* sourceBitmap, bool fillsBounds, DrawType);
+    void didDrawUnbounded(const SkPaint&);
     void markRectAsOpaque(const SkRect&);
     void markRectAsNonOpaque(const SkRect&);
 
     SkRect m_opaqueRect;
+
+    struct CanvasLayerState {
+        CanvasLayerState() : hasImageMask(false) { }
+
+        SkPaint paint;
+
+        // An image mask is being applied to the layer.
+        bool hasImageMask;
+        // The opaque area in the image mask.
+        SkRect imageOpaqueRect;
+    };
+
+    Vector<CanvasLayerState, 3> m_canvasLayerStack;
 };
 
 }

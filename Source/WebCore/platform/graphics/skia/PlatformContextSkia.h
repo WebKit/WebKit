@@ -93,6 +93,10 @@ public:
     void save();
     void restore();
 
+    void saveLayer(const SkRect* bounds, const SkPaint*);
+    void saveLayer(const SkRect* bounds, const SkPaint*, SkCanvas::SaveFlags);
+    void restoreLayer();
+
     // Begins a layer that is clipped to the image |imageBuffer| at the location
     // |rect|. This layer is implicitly restored when the next restore is
     // invoked.
