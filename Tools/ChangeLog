@@ -1,3 +1,22 @@
+2012-04-03  Simon Pena  <spena@igalia.com>
+
+        [GTK] DRT missing didRunInsecureContent notification
+        https://bugs.webkit.org/show_bug.cgi?id=59367
+
+        Reviewed by Philippe Normand.
+
+        Connect DumpRenderTree to WebFrame's "insecure-content-run", in both
+        the main WebFrame or any other WebFrame created later. Added
+        "didRunInsecureContent" notification in the callback in order to
+        get the LayoutTests passing.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp: Connect
+        to WebFrame's "insecure-content-run" signal and add
+        didRunInsecureContent notification in the callback to get the
+        LayoutTests passing.
+        (didRunInsecureContent):
+        (createWebView):
+
 2012-04-03  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         rebaseline-server: Make it possible to not launch a browser with the server.

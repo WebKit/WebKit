@@ -635,12 +635,8 @@ http/tests/multipart/invalid-image-data-standalone.html
 
 http/tests/plugins/npapi-response-headers.html
 http/tests/security/feed-urls-from-remote.html
-http/tests/security/mixedContent/insecure-css-in-main-frame.html
 http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
-http/tests/security/mixedContent/insecure-image-in-main-frame.html
-http/tests/security/mixedContent/insecure-script-in-iframe.html
 http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
-http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html
 http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html
@@ -703,7 +699,6 @@ storage/transaction-success-callback-isolated-world.html
 editing/selection/move-left-right.html
 
 # Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
-http/tests/security/mixedContent/insecure-plugin-in-iframe.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html 
 
 # https://bugs.webkit.org/show_bug.cgi?id=30620
@@ -754,10 +749,6 @@ http/tests/misc/will-send-request-returns-null-on-redirect.html
 # Requires willPerformClientRedirectToURL
 # https://bugs.webkit.org/show_bug.cgi?id=58526
 http/tests/loading/onload-vs-immediate-refresh.pl
-
-# https://bugs.webkit.org/show_bug.cgi?id=59367
-# DRT missing didRunInsecureContent notification
-http/tests/security/mixedContent/insecure-css-in-main-frame.html
 
 # GTK+ does not have layoutTestController.setDomainRelaxationForbiddenForURLScheme
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
@@ -1438,11 +1429,6 @@ fast/viewport/viewport-133.html
 # [DRT] didDetectXSS is not implemented
 # https://bugs.webkit.org/show_bug.cgi?id=71465
 http/tests/security/xssAuditor/script-tag-with-callbacks.html
-
-# DRT missing didRunInsecureContent notification
-# https://bugs.webkit.org/show_bug.cgi?id=59367
-http/tests/security/mixedContent/insecure-css-in-iframe.html
-http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
 
 # ASSERT(!needsLayout()) in frame flattening test
 # https://bugs.webkit.org/show_bug.cgi?id=80155

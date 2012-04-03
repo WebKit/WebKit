@@ -99,6 +99,8 @@ const unsigned historyItemIndent = 8;
 
 static void runTest(const string& testPathOrURL);
 
+static void didRunInsecureContent(WebKitWebFrame*, WebKitSecurityOrigin*, const char* url);
+
 static bool shouldLogFrameLoadDelegates(const string& pathOrURL)
 {
     return pathOrURL.find("loading/") != string::npos;
@@ -1063,6 +1065,7 @@ static void webFrameLoadStatusNotified(WebKitWebFrame* frame, gpointer user_data
 static void frameCreatedCallback(WebKitWebView* webView, WebKitWebFrame* webFrame, gpointer user_data)
 {
     g_signal_connect(webFrame, "notify::load-status", G_CALLBACK(webFrameLoadStatusNotified), NULL);
+    g_signal_connect(webFrame, "insecure-content-run", G_CALLBACK(didRunInsecureContent), NULL);
 }
 
 
@@ -1263,6 +1266,12 @@ static void didFailLoadingWithError(WebKitWebView* webView, WebKitWebFrame* webF
     }
 }
 
+static void didRunInsecureContent(WebKitWebFrame*, WebKitSecurityOrigin*, const char* url)
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
+        printf("didRunInsecureContent\n");
+}
+
 static WebKitWebView* createWebView()
 {
     // It is important to declare DRT is running early so when creating
@@ -1315,6 +1324,7 @@ static WebKitWebView* createWebView()
     // frame-created is not issued for main frame. That's why we must do this here
     WebKitWebFrame* frame = webkit_web_view_get_main_frame(view);
     g_signal_connect(frame, "notify::load-status", G_CALLBACK(webFrameLoadStatusNotified), NULL);
+    g_signal_connect(frame, "insecure-content-run", G_CALLBACK(didRunInsecureContent), NULL);
 
     return view;
 }

@@ -1,3 +1,22 @@
+2012-04-03  Simon Pena  <spena@igalia.com>
+
+        [GTK] DRT missing didRunInsecureContent notification
+        https://bugs.webkit.org/show_bug.cgi?id=59367
+
+        Reviewed by Philippe Normand.
+
+        Add a new signal "insecure-content-run" to the WebFrame to notify
+        when insecure HTTP content (such as CSS, an iframe or a script) is
+        run from a secure HTTPS WebFrame. Implement didRunInsecureContent
+        in gtk's FrameLoaderClient by means of emitting that signal.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp: Implement
+        didRunInsecureContent by emitting WebFrame's
+        "insecure-content-run" signal
+        (WebKit::FrameLoaderClient::didRunInsecureContent):
+        * webkit/webkitwebframe.cpp: Add "insecure-content-run" signal
+        (webkit_web_frame_class_init):
+
 2012-03-30  Mark Pilgrim  <pilgrim@chromium.org>
 
         GEOLOCATION should be implemented as Page Supplement
