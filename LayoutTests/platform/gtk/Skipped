@@ -170,6 +170,10 @@ media/audio-repaint.html
 fast/events/ondrop-text-html.html
 editing/pasteboard/get-data-text-plain-drop.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=83046
+inspector/styles/commit-selector.html
+inspector/console/console-eval-global.html
+
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################
