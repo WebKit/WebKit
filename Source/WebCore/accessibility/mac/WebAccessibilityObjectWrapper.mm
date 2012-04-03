@@ -1584,6 +1584,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 {
     if (m_object->isPasswordField())
         return NSAccessibilitySecureTextFieldSubrole;
+    if (m_object->isSearchField())
+        return NSAccessibilitySearchFieldSubrole;
     
     if (m_object->isAttachment()) {
         NSView* attachView = [self attachmentView];

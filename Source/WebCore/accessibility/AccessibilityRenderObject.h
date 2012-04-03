@@ -73,6 +73,7 @@ public:
     virtual bool isNativeImage() const;
     virtual bool isPasswordField() const;
     virtual bool isNativeTextControl() const;
+    virtual bool isSearchField() const;
     virtual bool isWebArea() const;
     virtual bool isFileUploadButton() const;
     virtual bool isInputImage() const;

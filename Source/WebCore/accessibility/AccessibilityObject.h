@@ -331,6 +331,7 @@ public:
     virtual bool isImageButton() const { return false; }
     virtual bool isPasswordField() const { return false; }
     virtual bool isNativeTextControl() const { return false; }
+    virtual bool isSearchField() const { return false; }
     virtual bool isWebArea() const { return false; }
     virtual bool isCheckbox() const { return roleValue() == CheckBoxRole; }
     virtual bool isRadioButton() const { return roleValue() == RadioButtonRole; }

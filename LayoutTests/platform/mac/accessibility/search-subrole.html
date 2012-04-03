@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="search" id="search1"><br>
+
+<input type="text" name="search" id="search2"><br>
+
+<form action="/search">
+<input type="text" id="search3">
+</form>
+
+<form name="searchme" action="/">
+<input type="text" id="search4">
+</form>
+
+<form name="Searchme" action="/">
+<input type="text" id="search5">
+</form>
+
+<form action="/SEARch">
+<input type="text" id="search6">
+</form>
+
+<input type="text" id="search7" name="SEarch">
+
+<form name="/" action="/">
+<input type="text" id="nosearch1">
+</form>
+
+<input type="text" id="nosearch2">
+
+<input type="text" id="nosearch3" name="textonly">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that we can detect a search field based on a few heuristics.");
+
+    if (window.accessibilityController) {
+
+        for (var k = 1; k <= 7; k++) {
+            document.getElementById("search" + k).focus();
+            var search = accessibilityController.focusedElement;
+            shouldBe("search.subrole", "'AXSubrole: AXSearchField'");
+        }
+
+        for (var k = 1; k <= 3; k++) {
+            document.getElementById("nosearch" + k).focus();
+            var nosearch = accessibilityController.focusedElement;
+            shouldBe("nosearch.subrole", "'AXSubrole: '");
+        }
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
