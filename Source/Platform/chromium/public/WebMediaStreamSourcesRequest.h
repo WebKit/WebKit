@@ -32,16 +32,15 @@
 #define WebMediaStreamSourcesRequest_h
 
 #include "WebCommon.h"
+#include "WebMediaStreamSource.h"
 #include "WebPrivatePtr.h"
+#include "WebVector.h"
 
 namespace WebCore {
 class MediaStreamSourcesQueryClient;
 }
 
 namespace WebKit {
-
-class WebMediaStreamSource;
-template <typename T> class WebVector;
 
 class WebMediaStreamSourcesRequest {
 public:

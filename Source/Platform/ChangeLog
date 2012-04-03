@@ -1,3 +1,11 @@
+2012-04-03  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix the Windows component build by including these headers
+        rather than forward declaring these objects.
+
+        * chromium/public/WebMediaStreamSourcesRequest.h:
+        (WebKit):
+
 2012-04-02  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Move a number of virtual functions from WebKitPlatformSupport.h into Platform.h
