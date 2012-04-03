@@ -804,12 +804,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMaskWithAnchor)
     CCLayerImpl* grandChild1 = child1->children()[0].get();
 
     // Verify that the correct replicaOriginTransform is used for the replicaMask; the
-    // incorrect old code did not actually correctly account for the anchor for the
-    // replica.
-    //
-    // Create a reflection about the left edge, but the anchor point is shifted all the
-    // way to the right. this case the reflection should be directly on top (but
-    // horizontally flipped) of grandChild1.
+    // incorrect old code incorrectly accounted for the anchor for the replica. A
+    // non-zero anchor point should not affect the replica reflection.
 
     grandChild1->setAnchorPoint(FloatPoint(1.0, 0.0)); // This is the anchor being tested.
 
