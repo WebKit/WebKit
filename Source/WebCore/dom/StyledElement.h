@@ -44,10 +44,10 @@ public:
     const StylePropertySet* ensureInlineStyle() { return ensureAttributeData()->ensureInlineStyle(this); }
     
     // Unlike StylePropertySet setters, these implement invalidation.
-    bool setInlineStyleProperty(int propertyID, int identifier, bool important = false);
-    bool setInlineStyleProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes, bool important = false);
-    bool setInlineStyleProperty(int propertyID, const String& value, bool important = false);
-    bool removeInlineStyleProperty(int propertyID);
+    bool setInlineStyleProperty(CSSPropertyID, int, bool important = false);
+    bool setInlineStyleProperty(CSSPropertyID, double, CSSPrimitiveValue::UnitTypes, bool important = false);
+    bool setInlineStyleProperty(CSSPropertyID, const String&, bool important = false);
+    bool removeInlineStyleProperty(CSSPropertyID);
     
     virtual CSSStyleDeclaration* style() OVERRIDE;
 
@@ -69,9 +69,9 @@ protected:
 
     virtual bool isPresentationAttribute(const QualifiedName&) const { return false; }
 
-    void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, int identifier);
-    void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, double value, CSSPrimitiveValue::UnitTypes);
-    void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, const String& value);
+    void addPropertyToAttributeStyle(StylePropertySet*, CSSPropertyID, int);
+    void addPropertyToAttributeStyle(StylePropertySet*, CSSPropertyID, double, CSSPrimitiveValue::UnitTypes);
+    void addPropertyToAttributeStyle(StylePropertySet*, CSSPropertyID, const String&);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
@@ -113,7 +113,7 @@ inline StylePropertySet* StyledElement::attributeStyle()
     return attributeData() ? attributeData()->attributeStyle() : 0;
 }
 
-inline void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, int propertyID, const String& value)
+inline void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, const String& value)
 {
     style->setProperty(propertyID, value, false, document()->elementSheet());
 }

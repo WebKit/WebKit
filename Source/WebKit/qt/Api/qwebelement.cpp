@@ -906,7 +906,7 @@ void QWebElement::setStyleProperty(const QString &name, const QString &value)
     if (!m_element || !m_element->isStyledElement())
         return;
 
-    int propID = cssPropertyID(name);
+    CSSPropertyID propID = cssPropertyID(name);
     static_cast<StyledElement*>(m_element)->setInlineStyleProperty(propID, value);
 }
 

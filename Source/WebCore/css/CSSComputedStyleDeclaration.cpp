@@ -1033,7 +1033,7 @@ String CSSComputedStyleDeclaration::cssText() const
     for (unsigned i = 0; i < numComputedProperties; i++) {
         if (i)
             result += " ";
-        result += getPropertyName(static_cast<CSSPropertyID>(computedProperties[i]));
+        result += getPropertyName(computedProperties[i]);
         result += ": ";
         result += getPropertyValue(computedProperties[i]);
         result += ";";
@@ -1086,13 +1086,11 @@ bool CSSComputedStyleDeclaration::useFixedFontDefaultSize() const
     return style->fontDescription().useFixedDefaultSize();
 }
 
-PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForShadow(const ShadowData* shadow, int id, RenderStyle* style) const
+PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForShadow(const ShadowData* shadow, CSSPropertyID propertyID, RenderStyle* style) const
 {
     CSSValuePool* cssValuePool = m_node->document()->cssValuePool().get();
     if (!shadow)
         return cssValuePool->createIdentifierValue(CSSValueNone);
-
-    CSSPropertyID propertyID = static_cast<CSSPropertyID>(id);
 
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     for (const ShadowData* s = shadow; s; s = s->next()) {
@@ -1107,7 +1105,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForShadow(const ShadowDat
     return list.release();
 }
 
-PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int propertyID) const
+PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID) const
 {
     return getPropertyCSSValue(propertyID, UpdateLayout);
 }
@@ -1247,13 +1245,13 @@ static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, int prop
     return list.release();
 }
 
-static void logUnimplementedPropertyID(int propertyID)
+static void logUnimplementedPropertyID(CSSPropertyID propertyID)
 {
     DEFINE_STATIC_LOCAL(HashSet<int>, propertyIDSet, ());
     if (!propertyIDSet.add(propertyID).isNewEntry)
         return;
 
-    LOG_ERROR("WebKit does not yet implement getComputedStyle for '%s'.", getPropertyName(static_cast<CSSPropertyID>(propertyID)));
+    LOG_ERROR("WebKit does not yet implement getComputedStyle for '%s'.", getPropertyName(propertyID));
 }
 
 static PassRefPtr<CSSValueList> fontFamilyFromStyle(RenderStyle* style, CSSValuePool* cssValuePool)
@@ -1324,7 +1322,7 @@ static PassRefPtr<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style, CSS
     return cssValuePool->createIdentifierValue(CSSValueNormal);
 }
 
-PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
+PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
     Node* node = m_node.get();
     if (!node)
@@ -1337,7 +1335,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     RenderObject* renderer = node->renderer();
 
     RefPtr<RenderStyle> style;
-    if (renderer && hasCompositedLayer(renderer) && AnimationController::supportsAcceleratedAnimationOfProperty(static_cast<CSSPropertyID>(propertyID))) {
+    if (renderer && hasCompositedLayer(renderer) && AnimationController::supportsAcceleratedAnimationOfProperty(propertyID)) {
         style = renderer->animation()->getAnimatedStyleForRenderer(renderer);
         if (m_pseudoElementSpecifier) {
             // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
@@ -1360,7 +1358,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
 
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction(), style->writingMode());
 
-    switch (static_cast<CSSPropertyID>(propertyID)) {
+    switch (propertyID) {
         case CSSPropertyInvalid:
             break;
 
@@ -2362,7 +2360,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         case CSSPropertyBorder: {
             RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyBorderTop, DoNotUpdateLayout);
-            const int properties[3] = { CSSPropertyBorderRight, CSSPropertyBorderBottom,
+            const CSSPropertyID properties[3] = { CSSPropertyBorderRight, CSSPropertyBorderBottom,
                                         CSSPropertyBorderLeft };
             for (size_t i = 0; i < WTF_ARRAY_LENGTH(properties); ++i) {
                 if (value->cssText() !=  getPropertyCSSValue(properties[i], DoNotUpdateLayout)->cssText())
@@ -2536,7 +2534,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     return 0;
 }
 
-String CSSComputedStyleDeclaration::getPropertyValue(int propertyID) const
+String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) const
 {
     RefPtr<CSSValue> value = getPropertyCSSValue(propertyID);
     if (value)
@@ -2563,7 +2561,7 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     if (i >= length())
         return "";
 
-    return getPropertyName(static_cast<CSSPropertyID>(computedProperties[i]));
+    return getPropertyName(computedProperties[i]);
 }
 
 bool CSSComputedStyleDeclaration::cssPropertyMatches(const CSSProperty* property) const
@@ -2649,7 +2647,7 @@ CSSRule* CSSComputedStyleDeclaration::parentRule() const
 
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& propertyName)
 {
-    int propertyID = cssPropertyID(propertyName);
+    CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return 0;
     return getPropertyCSSValue(propertyID);
@@ -2657,7 +2655,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const Stri
 
 String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)
 {
-    int propertyID = cssPropertyID(propertyName);
+    CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();
     return getPropertyValue(propertyID);

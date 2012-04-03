@@ -999,7 +999,7 @@ void HTMLElement::setItemValueText(const String& value, ExceptionCode& ec)
 }
 #endif
 
-void HTMLElement::addHTMLLengthToStyle(StylePropertySet* style, int propertyID, const String& value)
+void HTMLElement::addHTMLLengthToStyle(StylePropertySet* style, CSSPropertyID propertyID, const String& value)
 {
     // FIXME: This function should not spin up the CSS parser, but should instead just figure out the correct
     // length unit and make the appropriate parsed value.
@@ -1090,7 +1090,7 @@ static RGBA32 parseColorStringWithCrazyLegacyRules(const String& colorString)
 }
 
 // Color parsing that matches HTML's "rules for parsing a legacy color value"
-void HTMLElement::addHTMLColorToStyle(StylePropertySet* style, int propertyID, const String& attributeValue)
+void HTMLElement::addHTMLColorToStyle(StylePropertySet* style, CSSPropertyID propertyID, const String& attributeValue)
 {
     // An empty string doesn't apply a color. (One containing only whitespace does, which is why this check occurs before stripping.)
     if (attributeValue.isEmpty())

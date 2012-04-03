@@ -70,7 +70,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool propertyMissingOrEqualToNone(StylePropertySet*, int propertyID);
+static bool propertyMissingOrEqualToNone(StylePropertySet*, CSSPropertyID);
 
 class AttributeChange {
 public:
@@ -466,7 +466,7 @@ static inline Node* ancestorToRetainStructureAndAppearanceWithNoRenderer(Node* c
     return ancestorToRetainStructureAndAppearanceForBlock(commonAncestorBlock);
 }
 
-static bool propertyMissingOrEqualToNone(StylePropertySet* style, int propertyID)
+static bool propertyMissingOrEqualToNone(StylePropertySet* style, CSSPropertyID propertyID)
 {
     if (!style)
         return false;

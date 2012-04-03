@@ -61,21 +61,21 @@ public:
 
     void shrinkToFit() { m_properties.shrinkToFit(); }
 
-    PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID) const;
+    PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
     String getPropertyValue(CSSPropertyID) const;
     bool propertyIsImportant(CSSPropertyID) const;
     CSSPropertyID getPropertyShorthand(CSSPropertyID) const;
     bool isPropertyImplicit(CSSPropertyID) const;
 
     // These expand shorthand properties into multiple properties.
-    bool setProperty(int propertyID, const String& value, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
-    void setProperty(int propertyID, PassRefPtr<CSSValue>, bool important = false);
+    bool setProperty(CSSPropertyID, const String&, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
+    void setProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important = false);
 
     // These do not. FIXME: This is too messy, we can do better.
-    bool setProperty(int propertyID, int value, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
+    bool setProperty(CSSPropertyID, int, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
     void setProperty(const CSSProperty&, CSSProperty* slot = 0);
     
-    bool removeProperty(int propertyID, String* returnText = 0);
+    bool removeProperty(CSSPropertyID, String* returnText = 0);
 
     void parseDeclaration(const String& styleDeclaration, CSSStyleSheet* contextStyleSheet);
 
@@ -128,11 +128,11 @@ private:
     String fontValue() const;
     bool appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder&) const;
 
-    bool removeShorthandProperty(int propertyID);
+    bool removeShorthandProperty(CSSPropertyID);
     bool propertyMatches(const CSSProperty*) const;
 
-    const CSSProperty* findPropertyWithId(int propertyID) const;
-    CSSProperty* findPropertyWithId(int propertyID);
+    const CSSProperty* findPropertyWithId(CSSPropertyID) const;
+    CSSProperty* findPropertyWithId(CSSPropertyID);
 
     Vector<CSSProperty, 4> m_properties;
 

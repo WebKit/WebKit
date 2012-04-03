@@ -102,7 +102,7 @@ static Color colorFromSVGColorCSSValue(SVGColor* svgColor, const Color& fgColor)
     return color;
 }
 
-void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
+void CSSStyleSelector::applySVGProperty(CSSPropertyID id, CSSValue* value)
 {
     ASSERT(value);
     CSSPrimitiveValue* primitiveValue = 0;

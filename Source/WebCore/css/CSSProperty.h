@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CSSProperty {
 public:
-    CSSProperty(unsigned propID, PassRefPtr<CSSValue> value, bool important = false, int shorthandID = 0, bool implicit = false)
+    CSSProperty(CSSPropertyID propID, PassRefPtr<CSSValue> value, bool important = false, int shorthandID = 0, bool implicit = false)
         : m_id(propID)
         , m_shorthandID(shorthandID)
         , m_important(important)
@@ -55,8 +55,8 @@ public:
 
     void wrapValueInCommaSeparatedList();
 
-    static int resolveDirectionAwareProperty(int propertyID, TextDirection, WritingMode);
-    static bool isInheritedProperty(unsigned propertyID);
+    static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, TextDirection, WritingMode);
+    static bool isInheritedProperty(CSSPropertyID);
 
 private:
     // Make sure the following fits in 4 bytes. Really.

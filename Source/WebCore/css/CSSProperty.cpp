@@ -50,7 +50,7 @@ void CSSProperty::wrapValueInCommaSeparatedList()
 enum LogicalBoxSide { BeforeSide, EndSide, AfterSide, StartSide };
 enum PhysicalBoxSide { TopSide, RightSide, BottomSide, LeftSide };
 
-static int resolveToPhysicalProperty(TextDirection direction, WritingMode writingMode, LogicalBoxSide logicalSide, const StylePropertyShorthand& shorthand)
+static CSSPropertyID resolveToPhysicalProperty(TextDirection direction, WritingMode writingMode, LogicalBoxSide logicalSide, const StylePropertyShorthand& shorthand)
 {
     if (direction == LTR) {
         if (writingMode == TopToBottomWritingMode) {
@@ -157,7 +157,7 @@ static int resolveToPhysicalProperty(TextDirection direction, WritingMode writin
 
 enum LogicalExtent { LogicalWidth, LogicalHeight };
 
-static int resolveToPhysicalProperty(WritingMode writingMode, LogicalExtent logicalSide, const CSSPropertyID* properties)
+static CSSPropertyID resolveToPhysicalProperty(WritingMode writingMode, LogicalExtent logicalSide, const CSSPropertyID* properties)
 {
     if (writingMode == TopToBottomWritingMode || writingMode == BottomToTopWritingMode)
         return properties[logicalSide];
@@ -171,9 +171,9 @@ static const StylePropertyShorthand& borderDirections()
     return borderDirections;
 }
 
-int CSSProperty::resolveDirectionAwareProperty(int propertyID, TextDirection direction, WritingMode writingMode)
+CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode)
 {
-    switch (static_cast<CSSPropertyID>(propertyID)) {
+    switch (propertyID) {
     case CSSPropertyWebkitMarginEnd:
         return resolveToPhysicalProperty(direction, writingMode, EndSide, marginShorthand());
     case CSSPropertyWebkitMarginStart:
@@ -251,9 +251,9 @@ int CSSProperty::resolveDirectionAwareProperty(int propertyID, TextDirection dir
     }
 }
 
-bool CSSProperty::isInheritedProperty(unsigned propertyID)
+bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
 {
-    switch (static_cast<CSSPropertyID>(propertyID)) {
+    switch (propertyID) {
     case CSSPropertyBorderCollapse:
     case CSSPropertyBorderSpacing:
     case CSSPropertyCaptionSide:

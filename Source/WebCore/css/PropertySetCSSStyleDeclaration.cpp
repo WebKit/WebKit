@@ -209,7 +209,7 @@ void PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, con
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
 #endif
-    int propertyID = cssPropertyID(propertyName);
+    CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return;
     bool important = priority.find("important", 0, false) != notFound;
@@ -230,7 +230,7 @@ String PropertySetCSSStyleDeclaration::removeProperty(const String& propertyName
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
 #endif
-    int propertyID = cssPropertyID(propertyName);
+    CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();
     ec = 0;

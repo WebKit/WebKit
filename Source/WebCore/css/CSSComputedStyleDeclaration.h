@@ -57,18 +57,18 @@ public:
     virtual void ref() OVERRIDE;
     virtual void deref() OVERRIDE;
 
-    PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID) const;
-    String getPropertyValue(int propertyID) const;
-    bool getPropertyPriority(int propertyID) const;
+    PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
+    String getPropertyValue(CSSPropertyID) const;
+    bool getPropertyPriority(CSSPropertyID) const;
 
     virtual PassRefPtr<StylePropertySet> copy() const;
     virtual PassRefPtr<StylePropertySet> makeMutable();
 
-    PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID, EUpdateLayout) const;
+    PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout) const;
     PassRefPtr<CSSValue> getFontSizeCSSValuePreferringKeyword() const;
     bool useFixedFontDefaultSize() const;
 #if ENABLE(SVG)
-    PassRefPtr<CSSValue> getSVGPropertyCSSValue(int propertyID, EUpdateLayout) const;
+    PassRefPtr<CSSValue> getSVGPropertyCSSValue(CSSPropertyID, EUpdateLayout) const;
 #endif
 
     PassRefPtr<StylePropertySet> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
@@ -95,7 +95,7 @@ private:
 
     virtual bool cssPropertyMatches(const CSSProperty*) const;
 
-    PassRefPtr<CSSValue> valueForShadow(const ShadowData*, int, RenderStyle*) const;
+    PassRefPtr<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, RenderStyle*) const;
     PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle*, const Color&) const;
 #if ENABLE(SVG)
     PassRefPtr<SVGPaint> adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint>, RenderStyle*) const;

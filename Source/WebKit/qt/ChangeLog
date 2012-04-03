@@ -1,3 +1,15 @@
+2012-04-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Part 2] We should use CSSPropertyID rather than integers when manipulating CSS property ids.
+        https://bugs.webkit.org/show_bug.cgi?id=82977
+
+        Reviewed by Andreas Kling.
+
+        Update the code to use CSSPropertyID rather than an integer.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::setStyleProperty):
+
 2012-04-02  Alexis Menard  <alexis.menard@openbossa.org>
 
         We should use CSSPropertyID rather than integers when manipulating CSS property ids.

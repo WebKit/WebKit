@@ -22,6 +22,7 @@
 #define SVGStyledElement_h
 
 #if ENABLE(SVG)
+#include "CSSPropertyNames.h"
 #include "SVGAnimatedString.h"
 #include "SVGLocatable.h"
 #include "SVGStylable.h"
@@ -29,7 +30,7 @@
 
 namespace WebCore {
 
-void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToIdMap, const QualifiedName& attrName);
+void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, CSSPropertyID>* propertyNameToIdMap, const QualifiedName& attrName);
 
 class SVGStyledElement : public SVGElement,
                          public SVGStylable {
@@ -75,7 +76,7 @@ protected:
     virtual void removedFromDocument();
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-    static int cssPropertyIdForSVGAttributeName(const QualifiedName&);
+    static CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName&);
     void updateRelativeLengthsInformation() { updateRelativeLengthsInformation(selfHasRelativeLengths(), this); }
     void updateRelativeLengthsInformation(bool hasRelativeLengths, SVGStyledElement*);
 

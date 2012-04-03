@@ -1144,7 +1144,7 @@ static void addPropertyWrapper(int propertyID, PropertyWrapperBase* wrapper)
 
 static void addShorthandProperties()
 {
-    static const int animatableShorthandProperties[] = {
+    static const CSSPropertyID animatableShorthandProperties[] = {
         CSSPropertyBackground, // for background-color, background-position, background-image
         CSSPropertyBackgroundPosition,
         CSSPropertyFont, // for font-size, font-weight
@@ -1168,7 +1168,7 @@ static void addShorthandProperties()
     };
 
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(animatableShorthandProperties); ++i) {
-        int propertyID = animatableShorthandProperties[i];
+        CSSPropertyID propertyID = animatableShorthandProperties[i];
         StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
         if (shorthand.length() > 0)
             addPropertyWrapper(propertyID, new ShorthandPropertyWrapper(propertyID, shorthand));

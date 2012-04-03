@@ -37,7 +37,7 @@ using namespace std;
 
 namespace WebCore {
 
-bool CSSParser::parseSVGValue(int propId, bool important)
+bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
 {
     CSSParserValue* value = m_valueList->current();
     if (!value)

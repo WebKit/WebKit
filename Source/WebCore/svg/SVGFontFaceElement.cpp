@@ -61,14 +61,14 @@ PassRefPtr<SVGFontFaceElement> SVGFontFaceElement::create(const QualifiedName& t
     return adoptRef(new SVGFontFaceElement(tagName, document));
 }
 
-static int cssPropertyIdForSVGAttributeName(const QualifiedName& attrName)
+static CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName& attrName)
 {
     if (!attrName.namespaceURI().isNull())
-        return 0;
+        return CSSPropertyInvalid;
     
-    static HashMap<AtomicStringImpl*, int>* propertyNameToIdMap = 0;
+    static HashMap<AtomicStringImpl*, CSSPropertyID>* propertyNameToIdMap = 0;
     if (!propertyNameToIdMap) {
-        propertyNameToIdMap = new HashMap<AtomicStringImpl*, int>;
+        propertyNameToIdMap = new HashMap<AtomicStringImpl*, CSSPropertyID>;
         // This is a list of all @font-face CSS properties which are exposed as SVG XML attributes
         // Those commented out are not yet supported by WebCore's style system
         // mapAttributeToCSSProperty(propertyNameToIdMap, accent_heightAttr);
@@ -111,7 +111,7 @@ static int cssPropertyIdForSVGAttributeName(const QualifiedName& attrName)
 
 void SVGFontFaceElement::parseAttribute(Attribute* attr)
 {    
-    int propId = cssPropertyIdForSVGAttributeName(attr->name());
+    CSSPropertyID propId = cssPropertyIdForSVGAttributeName(attr->name());
     if (propId > 0) {
         m_fontFaceRule->properties()->setProperty(propId, attr->value(), false);
         rebuildFontFace();

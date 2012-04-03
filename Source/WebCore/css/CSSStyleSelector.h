@@ -201,9 +201,9 @@ public:
 public:
     void setStyle(PassRefPtr<RenderStyle> s) { m_style = s; } // Used by the document when setting up its root style.
 
-    void applyPropertyToStyle(int id, CSSValue*, RenderStyle*);
+    void applyPropertyToStyle(CSSPropertyID, CSSValue*, RenderStyle*);
 
-    void applyPropertyToCurrentStyle(int id, CSSValue*);
+    void applyPropertyToCurrentStyle(CSSPropertyID, CSSValue*);
 
     void updateFont();
 
@@ -356,7 +356,7 @@ private:
     template <bool firstPass>
     void applyProperties(const StylePropertySet* properties, StyleRule*, bool isImportant, bool inheritedOnly, bool filterRegionProperties);
 
-    static bool isValidRegionStyleProperty(int id);
+    static bool isValidRegionStyleProperty(CSSPropertyID);
 
     void matchPageRules(MatchResult&, RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>&, bool isLeftPage, bool isFirstPage, const String& pageName);
@@ -432,10 +432,10 @@ public:
 private:
     bool canShareStyleWithControl(StyledElement*) const;
 
-    void applyProperty(int id, CSSValue*);
+    void applyProperty(CSSPropertyID, CSSValue*);
 
 #if ENABLE(SVG)
-    void applySVGProperty(int id, CSSValue*);
+    void applySVGProperty(CSSPropertyID, CSSValue*);
 #endif
 
     PassRefPtr<StyleImage> loadPendingImage(StylePendingImage*);

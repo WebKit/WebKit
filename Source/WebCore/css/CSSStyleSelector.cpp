@@ -2591,7 +2591,7 @@ void CSSStyleSelector::applyProperties(const StylePropertySet* properties, Style
             ASSERT(!current.value()->isInheritedValue());
             continue;
         }
-        int property = current.id();
+        CSSPropertyID property = current.id();
 
         if (filterRegionProperties && !CSSStyleSelector::isValidRegionStyleProperty(property))
             continue;
@@ -2925,7 +2925,7 @@ CSSStyleRule* CSSStyleSelector::ensureFullCSSOMWrapperForInspector(StyleRule* ru
     return m_styleRuleToCSSOMWrapperMap.get(rule).get();
 }
 
-void CSSStyleSelector::applyPropertyToStyle(int id, CSSValue* value, RenderStyle* style)
+void CSSStyleSelector::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, RenderStyle* style)
 {
     initElement(0);
     initForStyleResolve(0, style);
@@ -2933,15 +2933,15 @@ void CSSStyleSelector::applyPropertyToStyle(int id, CSSValue* value, RenderStyle
     applyPropertyToCurrentStyle(id, value);
 }
 
-void CSSStyleSelector::applyPropertyToCurrentStyle(int id, CSSValue* value)
+void CSSStyleSelector::applyPropertyToCurrentStyle(CSSPropertyID id, CSSValue* value)
 {
     if (value)
         applyProperty(id, value);
 }
 
-inline bool isValidVisitedLinkProperty(int id)
+inline bool isValidVisitedLinkProperty(CSSPropertyID id)
 {
-    switch(static_cast<CSSPropertyID>(id)) {
+    switch (id) {
         case CSSPropertyBackgroundColor:
         case CSSPropertyBorderLeftColor:
         case CSSPropertyBorderRightColor:
@@ -2975,9 +2975,9 @@ inline bool isValidVisitedLinkProperty(int id)
 
 // http://dev.w3.org/csswg/css3-regions/#the-at-region-style-rule
 // FIXME: add incremental support for other region styling properties.
-inline bool CSSStyleSelector::isValidRegionStyleProperty(int id)
+inline bool CSSStyleSelector::isValidRegionStyleProperty(CSSPropertyID id)
 {
-    switch (static_cast<CSSPropertyID>(id)) {
+    switch (id) {
     case CSSPropertyBackgroundColor:
         return true;
     default:
@@ -3062,7 +3062,7 @@ static bool createGridPosition(CSSValue* value, Length& position)
 }
 #endif
 
-void CSSStyleSelector::applyProperty(int id, CSSValue *value)
+void CSSStyleSelector::applyProperty(CSSPropertyID id, CSSValue *value)
 {
     bool isInherit = m_parentNode && value->isInheritedValue();
     bool isInitial = value->isInitialValue() || (!m_parentNode && value->isInheritedValue());
@@ -3074,13 +3074,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    CSSPropertyID property = static_cast<CSSPropertyID>(id);
-
-    if (isInherit && m_parentStyle && !m_parentStyle->hasExplicitlyInheritedProperties() && !CSSProperty::isInheritedProperty(property))
+    if (isInherit && m_parentStyle && !m_parentStyle->hasExplicitlyInheritedProperties() && !CSSProperty::isInheritedProperty(id))
         m_parentStyle->setHasExplicitlyInheritedProperties();
 
     // check lookup table for implementations and use when available
-    const PropertyHandler& handler = m_applyProperty.propertyHandler(property);
+    const PropertyHandler& handler = m_applyProperty.propertyHandler(id);
     if (handler.isValid()) {
         if (isInherit)
             handler.applyInheritValue(this);
@@ -3098,7 +3096,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     // What follows is a list that maps the CSS properties into their corresponding front-end
     // RenderStyle values.  Shorthands (e.g. border, background) occur in this list as well and
     // are only hit when mapping "inherit" or "initial" into front-end values.
-    switch (property) {
+    switch (id) {
 // lists
     case CSSPropertyContent:
         // list of string, uri, counter, attr, i
@@ -3458,7 +3456,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             reflection->setOffset(reflectValue->offset()->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(style(), m_rootElementStyle, zoomFactor));
         NinePieceImage mask;
         mask.setMaskDefaults();
-        mapNinePieceImage(property, reflectValue->mask(), mask);
+        mapNinePieceImage(id, reflectValue->mask(), mask);
         reflection->setMask(mask);
 
         m_style->setBoxReflect(reflection.release());
@@ -3740,7 +3738,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitMaxLogicalWidth:
     case CSSPropertyWebkitMaxLogicalHeight:
     {
-        int newId = CSSProperty::resolveDirectionAwareProperty(id, m_style->direction(), m_style->writingMode());
+        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, m_style->direction(), m_style->writingMode());
         ASSERT(newId != id);
         return applyProperty(newId, value);
     }

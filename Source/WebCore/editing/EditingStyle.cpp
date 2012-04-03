@@ -134,7 +134,7 @@ protected:
     HTMLElementEquivalent(CSSPropertyID);
     HTMLElementEquivalent(CSSPropertyID, const QualifiedName& tagName);
     HTMLElementEquivalent(CSSPropertyID, int primitiveValue, const QualifiedName& tagName);
-    const int m_propertyID;
+    const CSSPropertyID m_propertyID;
     const RefPtr<CSSPrimitiveValue> m_primitiveValue;
     const QualifiedName* m_tagName; // We can store a pointer because HTML tag names are const global.
 };
@@ -332,7 +332,7 @@ EditingStyle::EditingStyle(const CSSStyleDeclaration* style)
     extractFontSizeDelta();
 }
 
-EditingStyle::EditingStyle(int propertyID, const String& value)
+EditingStyle::EditingStyle(CSSPropertyID propertyID, const String& value)
     : m_mutableStyle(0)
     , m_shouldUseFixedDefaultFontSize(false)
     , m_fontSizeDelta(NoFontDelta)
@@ -411,7 +411,7 @@ void EditingStyle::removeTextFillAndStrokeColorsIfNeeded(RenderStyle* renderStyl
         m_mutableStyle->removeProperty(CSSPropertyWebkitTextStrokeColor);
 }
 
-void EditingStyle::setProperty(int propertyID, const String& value, bool important)
+void EditingStyle::setProperty(CSSPropertyID propertyID, const String& value, bool important)
 {
     if (!m_mutableStyle)
         m_mutableStyle = StylePropertySet::create();

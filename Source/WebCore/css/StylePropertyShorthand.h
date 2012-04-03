@@ -99,7 +99,7 @@ const StylePropertyShorthand& webkitTransformOriginShorthand();
 const StylePropertyShorthand& webkitWrapShorthand();
 
 // Returns an empty list if the property is not a shorthand
-const StylePropertyShorthand& shorthandForProperty(int);
+const StylePropertyShorthand& shorthandForProperty(CSSPropertyID);
 
 } // namespace WebCore
 

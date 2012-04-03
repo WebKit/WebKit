@@ -136,8 +136,8 @@ public:
     void respondToChangedSelection(const VisibleSelection& oldSelection);
     void respondToChangedContents(const VisibleSelection& endingSelection);
 
-    bool selectionStartHasStyle(int propertyID, const String& value) const;
-    TriState selectionHasStyle(int propertyID, const String& value) const;
+    bool selectionStartHasStyle(CSSPropertyID, const String&) const;
+    TriState selectionHasStyle(CSSPropertyID, const String&) const;
     String selectionStartCSSPropertyValue(CSSPropertyID);
     
     TriState selectionUnorderedListState() const;

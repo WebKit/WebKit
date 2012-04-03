@@ -1307,7 +1307,7 @@ declaration:
         if ($1 && $4) {
             p->m_valueList = p->sinkFloatingValueList($4);
             int oldParsedProperties = p->m_parsedProperties.size();
-            $$ = p->parseValue($1, $5);
+            $$ = p->parseValue(static_cast<CSSPropertyID>($1), $5);
             if (!$$)
                 p->rollbackLastProperties(p->m_parsedProperties.size() - oldParsedProperties);
             else

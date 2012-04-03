@@ -413,13 +413,13 @@ String StylePropertySet::getCommonValue(const StylePropertyShorthand& shorthand)
     return res;
 }
 
-PassRefPtr<CSSValue> StylePropertySet::getPropertyCSSValue(int propertyID) const
+PassRefPtr<CSSValue> StylePropertySet::getPropertyCSSValue(CSSPropertyID propertyID) const
 {
     const CSSProperty* property = findPropertyWithId(propertyID);
     return property ? property->value() : 0;
 }
 
-bool StylePropertySet::removeShorthandProperty(int propertyID)
+bool StylePropertySet::removeShorthandProperty(CSSPropertyID propertyID)
 {
     StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
     if (!shorthand.length())
@@ -427,7 +427,7 @@ bool StylePropertySet::removeShorthandProperty(int propertyID)
     return removePropertiesInSet(shorthand.properties(), shorthand.length());
 }
 
-bool StylePropertySet::removeProperty(int propertyID, String* returnText)
+bool StylePropertySet::removeProperty(CSSPropertyID propertyID, String* returnText)
 {
     if (removeShorthandProperty(propertyID)) {
         // FIXME: Return an equivalent shorthand when possible.
@@ -482,7 +482,7 @@ bool StylePropertySet::isPropertyImplicit(CSSPropertyID propertyID) const
     return property ? property->isImplicit() : false;
 }
 
-bool StylePropertySet::setProperty(int propertyID, const String& value, bool important, CSSStyleSheet* contextStyleSheet)
+bool StylePropertySet::setProperty(CSSPropertyID propertyID, const String& value, bool important, CSSStyleSheet* contextStyleSheet)
 {
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
@@ -496,7 +496,7 @@ bool StylePropertySet::setProperty(int propertyID, const String& value, bool imp
     return CSSParser::parseValue(this, propertyID, value, important, cssParserMode(), contextStyleSheet);
 }
 
-void StylePropertySet::setProperty(int propertyID, PassRefPtr<CSSValue> prpValue, bool important)
+void StylePropertySet::setProperty(CSSPropertyID propertyID, PassRefPtr<CSSValue> prpValue, bool important)
 {
     StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
     if (!shorthand.length()) {
@@ -523,7 +523,7 @@ void StylePropertySet::setProperty(const CSSProperty& property, CSSProperty* slo
     m_properties.append(property);
 }
 
-bool StylePropertySet::setProperty(int propertyID, int identifier, bool important, CSSStyleSheet* contextStyleSheet)
+bool StylePropertySet::setProperty(CSSPropertyID propertyID, int identifier, bool important, CSSStyleSheet* contextStyleSheet)
 {
     RefPtr<CSSPrimitiveValue> value;    
     if (Document* document = contextStyleSheet ? contextStyleSheet->findDocument() : 0)
@@ -729,7 +729,7 @@ String StylePropertySet::asText() const
         if (value == "initial" && !CSSProperty::isInheritedProperty(propertyID))
             continue;
 
-        result.append(getPropertyName(static_cast<CSSPropertyID>(propertyID)));
+        result.append(getPropertyName(propertyID));
         result.append(": ");
         result.append(value);
         result.append(prop.isImportant() ? " !important" : "");
@@ -871,7 +871,7 @@ bool StylePropertySet::removePropertiesInSet(const CSSPropertyID* set, unsigned 
     return changed;
 }
 
-const CSSProperty* StylePropertySet::findPropertyWithId(int propertyID) const
+const CSSProperty* StylePropertySet::findPropertyWithId(CSSPropertyID propertyID) const
 {
     for (int n = m_properties.size() - 1 ; n >= 0; --n) {
         if (propertyID == m_properties[n].id())
@@ -880,7 +880,7 @@ const CSSProperty* StylePropertySet::findPropertyWithId(int propertyID) const
     return 0;
 }
 
-CSSProperty* StylePropertySet::findPropertyWithId(int propertyID)
+CSSProperty* StylePropertySet::findPropertyWithId(CSSPropertyID propertyID)
 {
     for (int n = m_properties.size() - 1 ; n >= 0; --n) {
         if (propertyID == m_properties[n].id())
@@ -897,7 +897,7 @@ bool StylePropertySet::propertyMatches(const CSSProperty* property) const
     
 void StylePropertySet::removeEquivalentProperties(const StylePropertySet* style)
 {
-    Vector<int> propertiesToRemove;
+    Vector<CSSPropertyID> propertiesToRemove;
     size_t size = m_properties.size();
     for (size_t i = 0; i < size; ++i) {
         const CSSProperty& property = m_properties[i];
@@ -911,7 +911,7 @@ void StylePropertySet::removeEquivalentProperties(const StylePropertySet* style)
 
 void StylePropertySet::removeEquivalentProperties(const CSSStyleDeclaration* style)
 {
-    Vector<int> propertiesToRemove;
+    Vector<CSSPropertyID> propertiesToRemove;
     size_t size = m_properties.size();
     for (size_t i = 0; i < size; ++i) {
         const CSSProperty& property = m_properties[i];

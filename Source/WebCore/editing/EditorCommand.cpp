@@ -114,14 +114,14 @@ static bool applyCommandToFrame(Frame* frame, EditorCommandSource source, EditAc
     return false;
 }
 
-static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, const String& propertyValue)
+static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, const String& propertyValue)
 {
     RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(propertyID, propertyValue);
     return applyCommandToFrame(frame, source, action, style.get());
 }
 
-static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, int propertyValue)
+static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, int propertyValue)
 {
     RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(propertyID, propertyValue);
@@ -131,7 +131,7 @@ static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditActi
 // FIXME: executeToggleStyleInList does not handle complicated cases such as <b><u>hello</u>world</b> properly.
 //        This function must use Editor::selectionHasStyle to determine the current style but we cannot fix this
 //        until https://bugs.webkit.org/show_bug.cgi?id=27818 is resolved.
-static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, CSSValue* value)
+static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, CSSValue* value)
 {
     ExceptionCode ec = 0;
     RefPtr<EditingStyle> selectionStyle = EditingStyle::styleAtSelectionStart(frame->selection()->selection());
@@ -156,7 +156,7 @@ static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, E
     return applyCommandToFrame(frame, source, action, newMutableStyle.get());
 }
 
-static bool executeToggleStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, const char* offValue, const char* onValue)
+static bool executeToggleStyle(Frame* frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, const char* offValue, const char* onValue)
 {
     // Style is considered present when
     // Mac: present at the beginning of selection
@@ -172,7 +172,7 @@ static bool executeToggleStyle(Frame* frame, EditorCommandSource source, EditAct
     return applyCommandToFrame(frame, source, action, style->style());
 }
 
-static bool executeApplyParagraphStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, const String& propertyValue)
+static bool executeApplyParagraphStyle(Frame* frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, const String& propertyValue)
 {
     RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(propertyID, propertyValue);
@@ -224,7 +224,7 @@ static bool expandSelectionToGranularity(Frame* frame, TextGranularity granulari
     return true;
 }
 
-static TriState stateStyle(Frame* frame, int propertyID, const char* desiredValue)
+static TriState stateStyle(Frame* frame, CSSPropertyID propertyID, const char* desiredValue)
 {
     if (frame->editor()->behavior().shouldToggleStyleBasedOnStartOfSelection())
         return frame->editor()->selectionStartHasStyle(propertyID, desiredValue) ? TrueTriState : FalseTriState;

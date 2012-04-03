@@ -26,6 +26,7 @@
 
 #include "Attribute.h"
 #include "CSSImageValue.h"
+#include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -145,21 +146,21 @@ void StyledElement::inlineStyleChanged()
     InspectorInstrumentation::didInvalidateStyleAttr(document(), this);
 }
     
-bool StyledElement::setInlineStyleProperty(int propertyID, int identifier, bool important)
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, int identifier, bool important)
 {
     ensureAttributeData()->ensureMutableInlineStyle(this)->setProperty(propertyID, document()->cssValuePool()->createIdentifierValue(identifier), important);
     inlineStyleChanged();
     return true;
 }
 
-bool StyledElement::setInlineStyleProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important)
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important)
 {
     ensureAttributeData()->ensureMutableInlineStyle(this)->setProperty(propertyID, document()->cssValuePool()->createValue(value, unit), important);
     inlineStyleChanged();
     return true;
 }
 
-bool StyledElement::setInlineStyleProperty(int propertyID, const String& value, bool important)
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const String& value, bool important)
 {
     bool changes = ensureAttributeData()->ensureMutableInlineStyle(this)->setProperty(propertyID, value, important, document()->elementSheet());
     if (changes)
@@ -167,7 +168,7 @@ bool StyledElement::setInlineStyleProperty(int propertyID, const String& value, 
     return changes;
 }
 
-bool StyledElement::removeInlineStyleProperty(int propertyID)
+bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)
 {
     StylePropertySet* inlineStyle = attributeData() ? attributeData()->inlineStyle() : 0;
     if (!inlineStyle)
@@ -278,12 +279,12 @@ void StyledElement::updateAttributeStyle()
         cacheIterator->second = newEntry.release();
 }
 
-void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, int propertyID, int identifier)
+void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, int identifier)
 {
     style->setProperty(propertyID, document()->cssValuePool()->createIdentifierValue(identifier));
 }
 
-void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, int propertyID, double value, CSSPrimitiveValue::UnitTypes unit)
+void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, double value, CSSPrimitiveValue::UnitTypes unit)
 {
     style->setProperty(propertyID, document()->cssValuePool()->createValue(value, unit));
 }

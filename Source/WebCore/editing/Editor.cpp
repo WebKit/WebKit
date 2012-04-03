@@ -731,13 +731,13 @@ void Editor::applyParagraphStyleToSelection(StylePropertySet* style, EditAction 
         applyParagraphStyle(style, editingAction);
 }
 
-bool Editor::selectionStartHasStyle(int propertyID, const String& value) const
+bool Editor::selectionStartHasStyle(CSSPropertyID propertyID, const String& value) const
 {
     return EditingStyle::create(propertyID, value)->triStateOfStyle(
         EditingStyle::styleAtSelectionStart(m_frame->selection()->selection(), propertyID == CSSPropertyBackgroundColor).get());
 }
 
-TriState Editor::selectionHasStyle(int propertyID, const String& value) const
+TriState Editor::selectionHasStyle(CSSPropertyID propertyID, const String& value) const
 {
     return EditingStyle::create(propertyID, value)->triStateOfStyle(m_frame->selection()->selection());
 }
