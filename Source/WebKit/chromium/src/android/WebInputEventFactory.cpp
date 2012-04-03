@@ -70,6 +70,8 @@ WebMouseEvent WebInputEventFactory::mouseEvent(int x, int y,
                                                int windowX, int windowY,
                                                MouseEventType type,
                                                double timeStampSeconds,
+                                               int modifiers,
+                                               int clickCount,
                                                WebMouseEvent::Button button)
 {
     WebMouseEvent result;
@@ -82,7 +84,8 @@ WebMouseEvent WebInputEventFactory::mouseEvent(int x, int y,
     result.globalX = windowX;
     result.globalY = windowY;
     result.timeStampSeconds = timeStampSeconds;
-    result.clickCount = 1;
+    result.clickCount = clickCount;
+    result.modifiers = modifiers;
 
     switch (type) {
     case MouseEventTypeDown:

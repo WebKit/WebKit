@@ -59,6 +59,8 @@ public:
                                                   int windowY,
                                                   MouseEventType,
                                                   double timeStampSeconds,
+                                                  int modifiers,
+                                                  int clickCount,
                                                   WebMouseEvent::Button = WebMouseEvent::ButtonLeft);
 };
 

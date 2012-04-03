@@ -1,3 +1,18 @@
+2012-04-03  Bolin Hsu  <bhsu@google.com>
+
+        [Chromium] Add click count and modifiers to the factory method of mouse event.
+        https://bugs.webkit.org/show_bug.cgi?id=82502
+
+        Modify WebInputEventFactory::mouseEvent() to take click count
+        and modifiers from input parameters. Sample use cases of these
+        are double click, triple click, Ctrl+click, etc.
+
+        Reviewed by Eric Seidel.
+
+        * public/android/WebInputEventFactory.h:
+        * src/android/WebInputEventFactory.cpp:
+        (WebKit::WebInputEventFactory::mouseEvent):
+
 2012-04-03  Mark Pilgrim  <pilgrim@chromium.org>
 
         Call incrementStatsCounter directly
