@@ -1,3 +1,16 @@
+2012-04-03  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Tools/Scripts/run-gtk-tests should not force you to use the WebKit jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=82473
+
+        Reviewed by Philippe Normand.
+
+        Only use jhbuild if WebKitBuild/Dependencies exists (if update-webkitgtk-libs)
+        was ever run.
+
+        * gtk/run-with-jhbuild: Instead of using jhbuild unconditionally, first
+        check if the user has ever run update-gtk-libs and, if so, then use jhbuild.
+
 2012-04-03  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] DRT support for setInteractiveFormValidationEnabled
