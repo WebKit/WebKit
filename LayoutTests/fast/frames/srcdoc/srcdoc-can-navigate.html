@@ -1,0 +1,10 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+    layoutTestController.waitUntilDone();
+}
+</script>
+<iframe srcdoc="FAIL
+<script>
+window.location = 'data:text/html,PASS<script>if (window.layoutTestController) layoutTestController.notifyDone();<\/script>';</script>"></iframe>

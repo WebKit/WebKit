@@ -104,7 +104,9 @@ void HTMLFrameElementBase::openURL(bool lockHistory, bool lockBackForwardList)
 
 void HTMLFrameElementBase::parseAttribute(Attribute* attr)
 {
-    if (attr->name() == srcAttr)
+    if (attr->name() == srcdocAttr)
+        setLocation("about:srcdoc");
+    else if (attr->name() == srcAttr && !fastHasAttribute(srcdocAttr))
         setLocation(stripLeadingAndTrailingHTMLSpaces(attr->value()));
     else if (isIdAttributeName(attr->name())) {
         // Important to call through to base for the id attribute so the hasID bit gets set.
@@ -182,6 +184,8 @@ void HTMLFrameElementBase::attach()
 
 KURL HTMLFrameElementBase::location() const
 {
+    if (fastHasAttribute(srcdocAttr))
+        return KURL(ParsedURLString, "about:srcdoc");
     return document()->completeURL(getAttribute(srcAttr));
 }
 

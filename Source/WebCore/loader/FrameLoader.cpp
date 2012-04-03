@@ -279,7 +279,7 @@ void FrameLoader::urlSelected(const FrameLoadRequest& passedRequest, PassRefPtr<
     if (shouldSendReferrer == NeverSendReferrer)
         m_suppressOpenerInNewFrame = true;
     if (frameRequest.resourceRequest().httpReferrer().isEmpty())
-        frameRequest.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
+        frameRequest.resourceRequest().setHTTPReferrer(outgoingReferrer());
     addHTTPOriginIfNeeded(frameRequest.resourceRequest(), outgoingOrigin());
 
     loadFrameRequest(frameRequest, lockHistory, lockBackForwardList, triggeringEvent, 0, shouldSendReferrer);
@@ -345,7 +345,7 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
     }
 
     submission->data()->generateFiles(m_frame->document());
-    submission->setReferrer(m_outgoingReferrer);
+    submission->setReferrer(outgoingReferrer());
     submission->setOrigin(outgoingOrigin());
 
     targetFrame->navigationScheduler()->scheduleFormSubmission(submission);
@@ -887,7 +887,16 @@ ObjectContentType FrameLoader::defaultObjectContentType(const KURL& url, const S
 
 String FrameLoader::outgoingReferrer() const
 {
-    return m_outgoingReferrer;
+    // See http://www.whatwg.org/specs/web-apps/current-work/#fetching-resources
+    // for why we walk the parent chain for srcdoc documents.
+    Frame* frame = m_frame;
+    while (frame->document()->isSrcdocDocument()) {
+        frame = frame->tree()->parent();
+        // Srcdoc documents cannot be top-level documents, by definition,
+        // because they need to be contained in iframes with the srcdoc.
+        ASSERT(frame);
+    }
+    return frame->loader()->m_outgoingReferrer;
 }
 
 String FrameLoader::outgoingOrigin() const
@@ -1151,7 +1160,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
 
     String argsReferrer = request.resourceRequest().httpReferrer();
     if (argsReferrer.isEmpty())
-        argsReferrer = m_outgoingReferrer;
+        argsReferrer = outgoingReferrer();
 
     String referrer = SecurityPolicy::generateReferrerHeader(m_frame->document()->referrerPolicy(), url, argsReferrer);
     if (shouldSendReferrer == NeverSendReferrer)
@@ -1251,9 +1260,19 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
     }
 }
 
+SubstituteData FrameLoader::defaultSubstituteDataForURL(const KURL& url)
+{
+    if (!shouldTreatURLAsSrcdocDocument(url))
+        return SubstituteData();
+    String srcdoc = m_frame->ownerElement()->fastGetAttribute(srcdocAttr);
+    ASSERT(!srcdoc.isNull());
+    CString encodedSrcdoc = srcdoc.utf8();
+    return SubstituteData(SharedBuffer::create(encodedSrcdoc.data(), encodedSrcdoc.length()), "text/html", "UTF-8", KURL());
+}
+
 void FrameLoader::load(const ResourceRequest& request, bool lockHistory)
 {
-    load(request, SubstituteData(), lockHistory);
+    load(request, defaultSubstituteDataForURL(request.url()), lockHistory);
 }
 
 void FrameLoader::load(const ResourceRequest& request, const SubstituteData& substituteData, bool lockHistory)
@@ -1287,7 +1306,7 @@ void FrameLoader::load(const ResourceRequest& request, const String& frameName, 
 
 void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, const NavigationAction& action, bool lockHistory, FrameLoadType type, PassRefPtr<FormState> formState)
 {
-    RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(request, SubstituteData());
+    RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(request, defaultSubstituteDataForURL(request.url()));
     if (lockHistory && m_documentLoader)
         loader->setClientRedirectSourceForHistory(m_documentLoader->didCreateGlobalHistoryEntry() ? m_documentLoader->urlForHistory().string() : m_documentLoader->clientRedirectSourceForHistory());
 
@@ -1457,7 +1476,7 @@ void FrameLoader::reloadWithOverrideEncoding(const String& encoding)
 
     request.setCachePolicy(ReturnCacheDataElseLoad);
 
-    RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(request, SubstituteData());
+    RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(request, defaultSubstituteDataForURL(request.url()));
     setPolicyDocumentLoader(loader.get());
 
     loader->setOverrideEncoding(encoding);
@@ -1484,7 +1503,7 @@ void FrameLoader::reload(bool endToEndReload)
     
     // Create a new document loader for the reload, this will become m_documentLoader eventually,
     // but first it has to be the "policy" document loader, and then the "provisional" document loader.
-    RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(initialRequest, SubstituteData());
+    RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(initialRequest, defaultSubstituteDataForURL(initialRequest.url()));
 
     ResourceRequest& request = loader->request();
 
@@ -2550,7 +2569,7 @@ void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String
 unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     ASSERT(m_frame->document());
-    String referrer = SecurityPolicy::generateReferrerHeader(m_frame->document()->referrerPolicy(), request.url(), m_outgoingReferrer);
+    String referrer = SecurityPolicy::generateReferrerHeader(m_frame->document()->referrerPolicy(), request.url(), outgoingReferrer());
     
     ResourceRequest initialRequest = request;
     initialRequest.setTimeoutInterval(10);
@@ -2929,6 +2948,18 @@ bool FrameLoader::shouldTreatURLAsSameAsCurrent(const KURL& url) const
     if (!history()->currentItem())
         return false;
     return url == history()->currentItem()->url() || url == history()->currentItem()->originalURL();
+}
+
+bool FrameLoader::shouldTreatURLAsSrcdocDocument(const KURL& url) const
+{
+    if (!equalIgnoringCase(url.string(), "about:srcdoc"))
+        return false;
+    HTMLFrameOwnerElement* ownerElement = m_frame->ownerElement();
+    if (!ownerElement)
+        return false;
+    if (!ownerElement->hasTagName(iframeTag))
+        return false;
+    return ownerElement->fastHasAttribute(srcdocAttr);
 }
 
 void FrameLoader::checkDidPerformFirstNavigation()

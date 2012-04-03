@@ -2529,7 +2529,7 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
 void HTMLTreeBuilder::defaultForInitial()
 {
     notImplemented();
-    if (!m_fragmentContext.fragment())
+    if (!m_fragmentContext.fragment() && !m_document->isSrcdocDocument())
         m_document->setCompatibilityMode(Document::QuirksMode);
     // FIXME: parse error
     setInsertionMode(BeforeHTMLMode);
