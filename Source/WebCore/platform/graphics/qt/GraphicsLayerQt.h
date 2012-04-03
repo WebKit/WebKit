@@ -84,6 +84,8 @@ public:
     virtual void syncCompositingStateForThisLayerOnly();
 
 private:
+    virtual void willBeDestroyed();
+
     OwnPtr<GraphicsLayerQtImpl> m_impl;
 };
 

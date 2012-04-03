@@ -47,6 +47,7 @@ GraphicsLayerClutter::GraphicsLayerClutter(GraphicsLayerClient* client)
 
 GraphicsLayerClutter::~GraphicsLayerClutter()
 {
+    willBeDestroyed();
 }
 
 ClutterActor* GraphicsLayerClutter::platformLayer() const

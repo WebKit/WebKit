@@ -143,6 +143,8 @@ protected:
     virtual void setOpacityInternal(float);
 
 private:
+    virtual void willBeDestroyed();
+
     // PlatformCALayerClient overrides
     virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) { }
     virtual bool platformCALayerRespondsToLayoutChanges() const { return false; }

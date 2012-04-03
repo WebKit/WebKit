@@ -950,6 +950,14 @@ GraphicsLayerQt::GraphicsLayerQt(GraphicsLayerClient* client)
 
 GraphicsLayerQt::~GraphicsLayerQt()
 {
+    // Do cleanup while we can still safely call methods on the derived class.
+    willBeDestroyed();
+}
+
+void GraphicsLayerQt::willBeDestroyed()
+{
+    m_impl = nullptr;
+    GraphicsLayer::willBeDestroyed();
 }
 
 // This is the hook for WebCore compositor to know that Qt implements compositing with GraphicsLayerQt.

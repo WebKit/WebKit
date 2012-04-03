@@ -87,6 +87,12 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
 
 GraphicsLayerChromium::~GraphicsLayerChromium()
 {
+    // Do cleanup while we can still safely call methods on the derived class.
+    willBeDestroyed();
+}
+
+void GraphicsLayerChromium::willBeDestroyed()
+{
     if (m_layer) {
         m_layer->clearDelegate();
         m_layer->clearRenderSurface();
@@ -104,6 +110,8 @@ GraphicsLayerChromium::~GraphicsLayerChromium()
         // Be sure to reset the delegate, just in case.
         m_transformLayer->setLayerAnimationDelegate(0);
     }
+    
+    GraphicsLayer::willBeDestroyed();
 }
 
 void GraphicsLayerChromium::setName(const String& inName)

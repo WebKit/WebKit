@@ -95,6 +95,11 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
 
 GraphicsLayer::~GraphicsLayer()
 {
+    ASSERT(!m_parent); // willBeDestroyed should have been called already.
+}
+
+void GraphicsLayer::willBeDestroyed()
+{
 #ifndef NDEBUG
     if (m_client)
         m_client->verifyNotPainting();

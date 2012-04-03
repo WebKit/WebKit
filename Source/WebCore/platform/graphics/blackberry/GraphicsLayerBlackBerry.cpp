@@ -92,6 +92,12 @@ GraphicsLayerBlackBerry::GraphicsLayerBlackBerry(GraphicsLayerClient* client)
 
 GraphicsLayerBlackBerry::~GraphicsLayerBlackBerry()
 {
+    // Do cleanup while we can still safely call methods on the derived class.
+    willBeDestroyed();
+}
+
+void GraphicsLayerBlackBerry::willBeDestroyed()
+{
     if (m_layer)
         m_layer->setOwner(0);
     if (m_contentsLayer)

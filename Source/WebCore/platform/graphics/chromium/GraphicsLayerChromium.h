@@ -121,6 +121,8 @@ public:
     LayerChromium* contentsLayer() const { return m_contentsLayer.get(); }
 
 private:
+    virtual void willBeDestroyed();
+
     typedef HashMap<String, int> AnimationIdMap;
 
     LayerChromium* primaryLayer() const  { return m_transformLayer.get() ? m_transformLayer.get() : m_layer.get(); }

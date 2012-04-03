@@ -123,6 +123,8 @@ public:
     bool contentsVisible(const IntRect& contentRect) const;
 
 private:
+    virtual void willBeDestroyed();
+
     void updateOpacityOnLayer();
 
     LayerWebKitThread* primaryLayer() const  { return m_transformLayer.get() ? m_transformLayer.get() : m_layer.get(); }

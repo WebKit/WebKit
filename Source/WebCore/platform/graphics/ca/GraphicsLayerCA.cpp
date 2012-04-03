@@ -279,6 +279,12 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
 
 GraphicsLayerCA::~GraphicsLayerCA()
 {
+    // Do cleanup while we can still safely call methods on the derived class.
+    willBeDestroyed();
+}
+
+void GraphicsLayerCA::willBeDestroyed()
+{
     // We release our references to the PlatformCALayers here, but do not actively unparent them,
     // since that will cause a commit and break our batched commit model. The layers will
     // get released when the rootmost modified GraphicsLayerCA rebuilds its child layers.
@@ -294,6 +300,8 @@ GraphicsLayerCA::~GraphicsLayerCA()
         m_structuralLayer->setOwner(0);
     
     removeCloneLayers();
+
+    GraphicsLayer::willBeDestroyed();
 }
 
 void GraphicsLayerCA::setName(const String& name)

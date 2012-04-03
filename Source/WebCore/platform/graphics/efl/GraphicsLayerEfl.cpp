@@ -39,6 +39,7 @@ GraphicsLayerEfl::GraphicsLayerEfl(GraphicsLayerClient* client)
 
 GraphicsLayerEfl::~GraphicsLayerEfl()
 {
+    willBeDestroyed();
 }
 
 void GraphicsLayerEfl::setNeedsDisplay()
