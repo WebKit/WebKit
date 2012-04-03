@@ -131,6 +131,7 @@ function drop(event)
         legacyDrop(event.dataTransfer);
     else if (dropMethod.selectedIndex == 1)
         itemListDrop(event.dataTransfer);
+    event.preventDefault();
 }
 
 function runTest(dragMethodIndex, dropMethodIndex)

@@ -212,7 +212,7 @@ bool DragController::performDrag(DragData* dragData)
             preventedDefault = mainFrame->eventHandler()->performDragAndDrop(createMouseEvent(dragData), clipboard.get());
             clipboard->setAccessPolicy(ClipboardNumb); // Invalidate clipboard here for security
         }
-        if (m_isHandlingDrag || preventedDefault) {
+        if (preventedDefault) {
             m_documentUnderMouse = 0;
             return true;
         }
@@ -422,7 +422,6 @@ bool DragController::dispatchTextInputEventFor(Frame* innerFrame, DragData* drag
 bool DragController::concludeEditDrag(DragData* dragData)
 {
     ASSERT(dragData);
-    ASSERT(!m_isHandlingDrag);
 
     RefPtr<HTMLInputElement> fileInput = m_fileInputElementUnderMouse;
     if (m_fileInputElementUnderMouse) {
