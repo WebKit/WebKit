@@ -63,6 +63,7 @@
             source = document.getElementById('source-1');
             source.src = findMediaFile("video", "content/test");
             testMovieWithSource(document.getElementById('video-3'), false, "<br><em>with &lt;source&gt; element.</em>");
+            document.getElementById('video-3').load();
         </script>
 
     </body>
