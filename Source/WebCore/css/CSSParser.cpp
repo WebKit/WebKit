@@ -3506,8 +3506,7 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                     break;
                 }
                 default:
-                    ASSERT_NOT_REACHED();
-                    return false;
+                    break;
             }
             if (!currValue)
                 return false;
