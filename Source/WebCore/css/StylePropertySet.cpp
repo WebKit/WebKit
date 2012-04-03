@@ -181,9 +181,11 @@ String StylePropertySet::borderSpacingValue(const StylePropertyShorthand& shorth
     RefPtr<CSSValue> horizontalValue = getPropertyCSSValue(shorthand.properties()[0]);
     RefPtr<CSSValue> verticalValue = getPropertyCSSValue(shorthand.properties()[1]);
 
-    if (!horizontalValue)
+    // While standard border-spacing property does not allow specifying border-spacing-vertical without
+    // specifying border-spacing-horizontal <http://www.w3.org/TR/CSS21/tables.html#separated-borders>,
+    // -webkit-border-spacing-vertical can be set without -webkit-border-spacing-horizontal.
+    if (!horizontalValue || !verticalValue)
         return String();
-    ASSERT(verticalValue); // By <http://www.w3.org/TR/CSS21/tables.html#separated-borders>.
 
     String horizontalValueCSSText = horizontalValue->cssText();
     String verticalValueCSSText = verticalValue->cssText();
