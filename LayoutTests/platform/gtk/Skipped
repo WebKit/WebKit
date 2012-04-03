@@ -654,8 +654,6 @@ http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html
 #   Tests failing
 media/video-size-intrinsic-scale.html
 media/video-seek-past-end-playing.html
-# https://bugs.webkit.org/show_bug.cgi?id=30198
-media/video-source-error.html
 media/sources-fallback-codecs.html
 
 # Tests in plugins/ directory
