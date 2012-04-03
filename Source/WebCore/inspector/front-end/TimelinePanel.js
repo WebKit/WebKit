@@ -657,7 +657,7 @@ WebInspector.TimelinePanel.prototype = {
                     this._graphRowsElement.appendChild(graphRowElement);
                 }
 
-                listRowElement.row.update(record, isEven, this._calculator, visibleTop);
+                listRowElement.row.update(record, isEven, visibleTop);
                 graphRowElement.row.update(record, isEven, this._calculator, width, this._expandOffset, i);
 
                 listRowElement = listRowElement.nextSibling;
@@ -743,7 +743,7 @@ WebInspector.TimelinePanel.prototype = {
     _showPopover: function(anchor, popover)
     {
         var record = anchor.row._record;
-        popover.show(record.generatePopupContent(this._calculator), anchor);
+        popover.show(record.generatePopupContent(), anchor);
     },
 
     _closeRecordDetails: function()
@@ -830,10 +830,9 @@ WebInspector.TimelineRecordListRow = function()
 }
 
 WebInspector.TimelineRecordListRow.prototype = {
-    update: function(record, isEven, calculator, offset)
+    update: function(record, isEven, offset)
     {
         this._record = record;
-        this._calculator = calculator;
         this._offset = offset;
 
         this.element.className = "timeline-tree-item timeline-category-" + record.category.name + (isEven ? " even" : "");

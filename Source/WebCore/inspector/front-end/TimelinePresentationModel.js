@@ -412,7 +412,7 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
         return cell;
     },
 
-    generatePopupContent: function(calculator)
+    generatePopupContent: function()
     {
         var contentHelper = new WebInspector.TimelinePresentationModel.PopupContentHelper(this.title);
 
