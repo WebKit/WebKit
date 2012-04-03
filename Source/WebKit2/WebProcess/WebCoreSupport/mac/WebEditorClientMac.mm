@@ -239,17 +239,17 @@ void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, WebCor
 }
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
-void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType type, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
+void WebEditorClient::showCorrectionPanel(WebCore::AlternativeTextType type, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
     m_page->send(Messages::WebPageProxy::ShowCorrectionPanel(type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings));
 }
 
-void WebEditorClient::dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel reason)
+void WebEditorClient::dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText reason)
 {
     m_page->send(Messages::WebPageProxy::DismissCorrectionPanel(reason));
 }
 
-String WebEditorClient::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel reason)
+String WebEditorClient::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText reason)
 {
     String result;
     m_page->sendSync(Messages::WebPageProxy::DismissCorrectionPanelSoon(reason), Messages::WebPageProxy::DismissCorrectionPanelSoon::Reply(result));

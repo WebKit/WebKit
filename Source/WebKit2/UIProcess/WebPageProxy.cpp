@@ -1822,7 +1822,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
     m_pageClient->resetTextInputState();
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     // FIXME: Should this be moved inside resetTextInputState()?
-    dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
+    dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
     m_pageClient->dismissDictionaryLookupPanel();
 #endif
 #endif
@@ -2379,7 +2379,7 @@ void WebPageProxy::pageDidScroll()
 {
     m_uiClient.pageDidScroll(this);
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
+    dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
 #endif
 }
 
@@ -3363,7 +3363,7 @@ void WebPageProxy::processDidCrash()
 #endif
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
+    dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
     m_pageClient->dismissDictionaryLookupPanel();
 #endif
 }
@@ -3699,17 +3699,17 @@ void WebPageProxy::substitutionsPanelIsShowing(bool& isShowing)
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
 void WebPageProxy::showCorrectionPanel(int32_t panelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
-    m_pageClient->showCorrectionPanel((CorrectionPanelInfo::PanelType)panelType, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
+    m_pageClient->showCorrectionPanel((AlternativeTextType)panelType, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
 }
 
 void WebPageProxy::dismissCorrectionPanel(int32_t reason)
 {
-    m_pageClient->dismissCorrectionPanel((ReasonForDismissingCorrectionPanel)reason);
+    m_pageClient->dismissCorrectionPanel((ReasonForDismissingAlternativeText)reason);
 }
 
 void WebPageProxy::dismissCorrectionPanelSoon(int32_t reason, String& result)
 {
-    result = m_pageClient->dismissCorrectionPanelSoon((ReasonForDismissingCorrectionPanel)reason);
+    result = m_pageClient->dismissCorrectionPanelSoon((ReasonForDismissingAlternativeText)reason);
 }
 
 void WebPageProxy::recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString)
@@ -3718,11 +3718,11 @@ void WebPageProxy::recordAutocorrectionResponse(int32_t responseType, const Stri
 }
 #endif // !defined(BUILDING_ON_SNOW_LEOPARD)
 
-void WebPageProxy::handleCorrectionPanelResult(const String& result)
+void WebPageProxy::handleAlternativeTextUIResult(const String& result)
 {
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     if (!isClosed())
-        process()->send(Messages::WebPage::HandleCorrectionPanelResult(result), m_pageID, 0);
+        process()->send(Messages::WebPage::HandleAlternativeTextUIResult(result), m_pageID, 0);
 #endif
 }
 #endif // PLATFORM(MAC)

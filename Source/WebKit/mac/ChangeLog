@@ -1,3 +1,31 @@
+2012-04-02  Jia Pu  <jpu@apple.com>
+
+        Rename SpellingCorrectionController to AlternativeTextController.
+        https://bugs.webkit.org/show_bug.cgi?id=82942
+
+        Reviewed by Enrica Casucci.
+
+        These changes are simply adopting new class names.
+
+        * WebCoreSupport/CorrectionPanel.h:
+        (CorrectionPanel):
+        * WebCoreSupport/CorrectionPanel.mm:
+        (correctionIndicatorType):
+        (CorrectionPanel::CorrectionPanel):
+        (CorrectionPanel::~CorrectionPanel):
+        (CorrectionPanel::show):
+        (CorrectionPanel::dismiss):
+        (CorrectionPanel::dismissInternal):
+        (CorrectionPanel::handleAcceptedReplacement):
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::~WebEditorClient):
+        (WebEditorClient::showCorrectionPanel):
+        (WebEditorClient::dismissCorrectionPanel):
+        (WebEditorClient::dismissCorrectionPanelSoon):
+        * WebView/WebView.mm:
+        (-[WebView handleCorrectionPanelResult:]):
+
 2012-04-03  Jer Noble  <jer.noble@apple.com>
 
         ESC key in full screen does not result in webkitFullScreenChange event.

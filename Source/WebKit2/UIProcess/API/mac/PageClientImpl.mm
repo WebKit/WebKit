@@ -463,7 +463,7 @@ void PageClientImpl::dismissDictionaryLookupPanel()
 #endif
 }
 
-void PageClientImpl::showCorrectionPanel(CorrectionPanelInfo::PanelType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
+void PageClientImpl::showCorrectionPanel(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     if (!isViewVisible() || !isViewInWindow())
@@ -472,14 +472,14 @@ void PageClientImpl::showCorrectionPanel(CorrectionPanelInfo::PanelType type, co
 #endif
 }
 
-void PageClientImpl::dismissCorrectionPanel(ReasonForDismissingCorrectionPanel reason)
+void PageClientImpl::dismissCorrectionPanel(ReasonForDismissingAlternativeText reason)
 {
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     m_correctionPanel.dismiss(reason);
 #endif
 }
 
-String PageClientImpl::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel reason)
+String PageClientImpl::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText reason)
 {
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     return m_correctionPanel.dismiss(reason);

@@ -611,7 +611,7 @@ public:
     void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
 
 #if PLATFORM(MAC)
-    void handleCorrectionPanelResult(const String& result);
+    void handleAlternativeTextUIResult(const String& result);
 #endif
 
     static void setDebugPaintFlags(WKPageDebugPaintFlags flags) { s_debugPaintFlags = flags; }

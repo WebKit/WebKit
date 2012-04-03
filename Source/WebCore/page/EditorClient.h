@@ -27,7 +27,7 @@
 #ifndef EditorClient_h
 #define EditorClient_h
 
-#include "SpellingCorrectionController.h"
+#include "AlternativeTextController.h"
 #include "EditorInsertAction.h"
 #include "FloatRect.h"
 #include "TextAffinity.h"
@@ -152,9 +152,9 @@ public:
     };
 
 #if USE(AUTOCORRECTION_PANEL)
-    virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacmentString, const Vector<String>& alternativeReplacementStrings) = 0;
-    virtual void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel) = 0;
-    virtual String dismissCorrectionPanelSoon(ReasonForDismissingCorrectionPanel) = 0;
+    virtual void showCorrectionPanel(AlternativeTextType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacmentString, const Vector<String>& alternativeReplacementStrings) = 0;
+    virtual void dismissCorrectionPanel(ReasonForDismissingAlternativeText) = 0;
+    virtual String dismissCorrectionPanelSoon(ReasonForDismissingAlternativeText) = 0;
     virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String& replacedString, const String& replacementString) = 0;
 #endif
 

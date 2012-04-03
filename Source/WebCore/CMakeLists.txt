@@ -654,6 +654,7 @@ SET(WebCore_SOURCES
 
     dom/default/PlatformMessagePortChannel.cpp
 
+    editing/AlternativeTextController.cpp
     editing/AppendNodeCommand.cpp
     editing/ApplyBlockElementCommand.cpp
     editing/ApplyStyleCommand.cpp
@@ -693,7 +694,6 @@ SET(WebCore_SOURCES
     editing/SetSelectionCommand.cpp
     editing/SmartReplace.cpp
     editing/SpellChecker.cpp
-    editing/SpellingCorrectionController.cpp
     editing/SpellingCorrectionCommand.cpp
     editing/SplitElementCommand.cpp
     editing/SplitTextNodeCommand.cpp

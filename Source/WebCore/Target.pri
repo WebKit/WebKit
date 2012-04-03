@@ -628,6 +628,7 @@ SOURCES += \
     dom/WheelEvent.cpp \
     dom/WindowEventContext.cpp \
     dom/default/PlatformMessagePortChannel.cpp \
+    editing/AlternativeTextController.cpp \
     editing/AppendNodeCommand.cpp \
     editing/ApplyBlockElementCommand.cpp \
     editing/ApplyStyleCommand.cpp \
@@ -669,7 +670,6 @@ SOURCES += \
     editing/SetSelectionCommand.cpp \
     editing/SpellChecker.cpp \
     editing/SpellingCorrectionCommand.cpp \
-    editing/SpellingCorrectionController.cpp \
     editing/SplitElementCommand.cpp \
     editing/SplitTextNodeCommand.cpp \
     editing/SplitTextNodeContainingElementCommand.cpp \
@@ -1760,6 +1760,7 @@ HEADERS += \
     dom/WebKitNamedFlow.h \
     dom/WebKitTransitionEvent.h \
     dom/WheelEvent.h \
+    editing/AlternativeTextController.h \
     editing/AppendNodeCommand.h \
     editing/ApplyBlockElementCommand.h \
     editing/ApplyStyleCommand.h \
@@ -1801,7 +1802,6 @@ HEADERS += \
     editing/SetNodeAttributeCommand.h \
     editing/SmartReplace.h \
     editing/SpellingCorrectionCommand.h \
-    editing/SpellingCorrectionController.h \
     editing/SplitElementCommand.h \
     editing/SplitTextNodeCommand.h \
     editing/SplitTextNodeContainingElementCommand.h \

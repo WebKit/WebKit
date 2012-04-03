@@ -190,7 +190,7 @@ WebEditorClient::WebEditorClient(WebView *webView)
 WebEditorClient::~WebEditorClient()
 {
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
+    dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
 #endif
 }
 
@@ -867,17 +867,17 @@ void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammar
 }
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-void WebEditorClient::showCorrectionPanel(CorrectionPanelInfo::PanelType panelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
+void WebEditorClient::showCorrectionPanel(AlternativeTextType panelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
     m_correctionPanel.show(m_webView, panelType, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
 }
 
-void WebEditorClient::dismissCorrectionPanel(ReasonForDismissingCorrectionPanel reasonForDismissing)
+void WebEditorClient::dismissCorrectionPanel(ReasonForDismissingAlternativeText reasonForDismissing)
 {
     m_correctionPanel.dismiss(reasonForDismissing);
 }
 
-String WebEditorClient::dismissCorrectionPanelSoon(ReasonForDismissingCorrectionPanel reasonForDismissing)
+String WebEditorClient::dismissCorrectionPanelSoon(ReasonForDismissingAlternativeText reasonForDismissing)
 {
     return m_correctionPanel.dismiss(reasonForDismissing);
 }

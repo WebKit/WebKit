@@ -3020,12 +3020,12 @@ bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
 }
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
-void WebPage::handleCorrectionPanelResult(const String& result)
+void WebPage::handleAlternativeTextUIResult(const String& result)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     if (!frame)
         return;
-    frame->editor()->handleCorrectionPanelResult(result);
+    frame->editor()->handleAlternativeTextUIResult(result);
 }
 #endif
 

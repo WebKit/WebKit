@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "SpellingCorrectionController.h"
+#include "AlternativeTextController.h"
 
 #include "DocumentMarkerController.h"
 #include "EditCommand.h"
@@ -47,6 +47,22 @@ namespace WebCore {
 
 using namespace std;
 using namespace WTF;
+
+class AutocorrectionAlternativeDetails : public AlternativeTextDetails {
+public:
+    static PassRefPtr<AutocorrectionAlternativeDetails> create(const String& replacementString)
+    {
+        return adoptRef(new AutocorrectionAlternativeDetails(replacementString));
+    }
+    
+    const String& replacementString() const { return m_replacementString; }
+private:
+    AutocorrectionAlternativeDetails(const String& replacementString)
+    : m_replacementString(replacementString)
+    { }
+    
+    String m_replacementString;
+};
 
 #if USE(AUTOCORRECTION_PANEL)
 
@@ -85,48 +101,48 @@ static bool markersHaveIdenticalDescription(const Vector<DocumentMarker*>& marke
     return true;
 }
 
-SpellingCorrectionController::SpellingCorrectionController(Frame* frame)
+AlternativeTextController::AlternativeTextController(Frame* frame)
     : m_frame(frame)
-    , m_correctionPanelTimer(this, &SpellingCorrectionController::correctionPanelTimerFired)
+    , m_timer(this, &AlternativeTextController::timerFired)
 {
 }
 
-SpellingCorrectionController::~SpellingCorrectionController()
+AlternativeTextController::~AlternativeTextController()
 {
-    dismiss(ReasonForDismissingCorrectionPanelIgnored);
+    dismiss(ReasonForDismissingAlternativeTextIgnored);
 }
 
-void SpellingCorrectionController::startCorrectionPanelTimer(CorrectionPanelInfo::PanelType type)
+void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType type)
 {
     const double correctionPanelTimerInterval = 0.3;
     if (!isAutomaticSpellingCorrectionEnabled())
         return;
 
     // If type is PanelTypeReversion, then the new range has been set. So we shouldn't clear it.
-    if (type == CorrectionPanelInfo::PanelTypeCorrection)
-        m_correctionPanelInfo.rangeToBeReplaced.clear();
-    m_correctionPanelInfo.panelType = type;
-    m_correctionPanelTimer.startOneShot(correctionPanelTimerInterval);
+    if (type == AlternativeTextTypeCorrection)
+        m_alternativeTextInfo.rangeWithAlternative.clear();
+    m_alternativeTextInfo.type = type;
+    m_timer.startOneShot(correctionPanelTimerInterval);
 }
 
-void SpellingCorrectionController::stopCorrectionPanelTimer()
+void AlternativeTextController::stopAlternativeTextUITimer()
 {
-    m_correctionPanelTimer.stop();
-    m_correctionPanelInfo.rangeToBeReplaced.clear();
+    m_timer.stop();
+    m_alternativeTextInfo.rangeWithAlternative.clear();
 }
 
-void SpellingCorrectionController::stopPendingCorrection(const VisibleSelection& oldSelection)
+void AlternativeTextController::stopPendingCorrection(const VisibleSelection& oldSelection)
 {
     // Make sure there's no pending autocorrection before we call markMisspellingsAndBadGrammar() below.
     VisibleSelection currentSelection(m_frame->selection()->selection());
     if (currentSelection == oldSelection)
         return;
 
-    stopCorrectionPanelTimer();
-    dismiss(ReasonForDismissingCorrectionPanelIgnored);
+    stopAlternativeTextUITimer();
+    dismiss(ReasonForDismissingAlternativeTextIgnored);
 }
 
-void SpellingCorrectionController::applyPendingCorrection(const VisibleSelection& selectionAfterTyping)
+void AlternativeTextController::applyPendingCorrection(const VisibleSelection& selectionAfterTyping)
 {
     // Apply pending autocorrection before next round of spell checking.
     bool doApplyCorrection = true;
@@ -138,87 +154,87 @@ void SpellingCorrectionController::applyPendingCorrection(const VisibleSelection
             doApplyCorrection = false;
     }
     if (doApplyCorrection)
-        handleCorrectionPanelResult(dismissSoon(ReasonForDismissingCorrectionPanelAccepted)); 
+        handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeTextAccepted)); 
     else
-        m_correctionPanelInfo.rangeToBeReplaced.clear();
+        m_alternativeTextInfo.rangeWithAlternative.clear();
 }
 
-bool SpellingCorrectionController::hasPendingCorrection() const
+bool AlternativeTextController::hasPendingCorrection() const
 {
-    return m_correctionPanelInfo.rangeToBeReplaced;
+    return m_alternativeTextInfo.rangeWithAlternative;
 }
 
-bool SpellingCorrectionController::isSpellingMarkerAllowed(PassRefPtr<Range> misspellingRange) const
+bool AlternativeTextController::isSpellingMarkerAllowed(PassRefPtr<Range> misspellingRange) const
 {
     return !m_frame->document()->markers()->hasMarkers(misspellingRange.get(), DocumentMarker::SpellCheckingExemption);
 }
 
-void SpellingCorrectionController::show(PassRefPtr<Range> rangeToReplace, const String& replacement)
+void AlternativeTextController::show(PassRefPtr<Range> rangeToReplace, const String& replacement)
 {
     FloatRect boundingBox = rootViewRectForRange(rangeToReplace.get());
     if (boundingBox.isEmpty())
         return;
-    m_correctionPanelInfo.replacedString = plainText(rangeToReplace.get());
-    m_correctionPanelInfo.rangeToBeReplaced = rangeToReplace;
-    m_correctionPanelInfo.replacementString = replacement;
-    m_correctionPanelInfo.isActive = true;
-    client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBox, m_correctionPanelInfo.replacedString, replacement, Vector<String>());
+    m_alternativeTextInfo.originalText = plainText(rangeToReplace.get());
+    m_alternativeTextInfo.rangeWithAlternative = rangeToReplace;
+    m_alternativeTextInfo.details = AutocorrectionAlternativeDetails::create(replacement);
+    m_alternativeTextInfo.isActive = true;
+    client()->showCorrectionPanel(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, replacement, Vector<String>());
 }
 
-void SpellingCorrectionController::handleCancelOperation()
+void AlternativeTextController::handleCancelOperation()
 {
-    if (!m_correctionPanelInfo.isActive)
+    if (!m_alternativeTextInfo.isActive)
         return;
-    m_correctionPanelInfo.isActive = false;
-    dismiss(ReasonForDismissingCorrectionPanelCancelled);
+    m_alternativeTextInfo.isActive = false;
+    dismiss(ReasonForDismissingAlternativeTextCancelled);
 }
 
-void SpellingCorrectionController::dismiss(ReasonForDismissingCorrectionPanel reasonForDismissing)
+void AlternativeTextController::dismiss(ReasonForDismissingAlternativeText reasonForDismissing)
 {
-    if (!m_correctionPanelInfo.isActive)
+    if (!m_alternativeTextInfo.isActive)
         return;
-    m_correctionPanelInfo.isActive = false;
-    m_correctionPanelIsDismissedByEditor = true;
+    m_alternativeTextInfo.isActive = false;
+    m_isDismissedByEditing = true;
     if (client())
         client()->dismissCorrectionPanel(reasonForDismissing);
 }
 
-String SpellingCorrectionController::dismissSoon(ReasonForDismissingCorrectionPanel reasonForDismissing)
+String AlternativeTextController::dismissSoon(ReasonForDismissingAlternativeText reasonForDismissing)
 {
-    if (!m_correctionPanelInfo.isActive)
+    if (!m_alternativeTextInfo.isActive)
         return String();
-    m_correctionPanelInfo.isActive = false;
-    m_correctionPanelIsDismissedByEditor = true;
+    m_alternativeTextInfo.isActive = false;
+    m_isDismissedByEditing = true;
     if (!client())
         return String();
     return client()->dismissCorrectionPanelSoon(reasonForDismissing);
 }
 
-void SpellingCorrectionController::applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>& markerTypesToAdd)
+void AlternativeTextController::applyAlternativeText(const String& alternative, const Vector<DocumentMarker::MarkerType>& markerTypesToAdd)
 {
-    if (!m_correctionPanelInfo.rangeToBeReplaced)
+    if (!m_alternativeTextInfo.rangeWithAlternative)
         return;
 
     ExceptionCode ec = 0;
-    RefPtr<Range> paragraphRangeContainingCorrection = m_correctionPanelInfo.rangeToBeReplaced->cloneRange(ec);
+    RefPtr<Range> paragraphRangeContainingCorrection = m_alternativeTextInfo.rangeWithAlternative->cloneRange(ec);
     if (ec)
         return;
 
-    setStart(paragraphRangeContainingCorrection.get(), startOfParagraph(m_correctionPanelInfo.rangeToBeReplaced->startPosition()));
-    setEnd(paragraphRangeContainingCorrection.get(), endOfParagraph(m_correctionPanelInfo.rangeToBeReplaced->endPosition()));
+    setStart(paragraphRangeContainingCorrection.get(), startOfParagraph(m_alternativeTextInfo.rangeWithAlternative->startPosition()));
+    setEnd(paragraphRangeContainingCorrection.get(), endOfParagraph(m_alternativeTextInfo.rangeWithAlternative->endPosition()));
 
-    // After we replace the word at range rangeToBeReplaced, we need to add markers to that range.
-    // However, once the replacement took place, the value of rangeToBeReplaced is not valid anymore.
-    // So before we carry out the replacement, we need to store the start position of rangeToBeReplaced
+    // After we replace the word at range rangeWithAlternative, we need to add markers to that range.
+    // However, once the replacement took place, the value of rangeWithAlternative is not valid anymore.
+    // So before we carry out the replacement, we need to store the start position of rangeWithAlternative
     // relative to the start position of the containing paragraph. We use correctionStartOffsetInParagraph
     // to store this value. In order to obtain this offset, we need to first create a range
-    // which spans from the start of paragraph to the start position of rangeToBeReplaced.
+    // which spans from the start of paragraph to the start position of rangeWithAlternative.
     RefPtr<Range> correctionStartOffsetInParagraphAsRange = Range::create(paragraphRangeContainingCorrection->startContainer(ec)->document(), paragraphRangeContainingCorrection->startPosition(), paragraphRangeContainingCorrection->startPosition());
     if (ec)
         return;
 
-    Position startPositionOfRangeToBeReplaced = m_correctionPanelInfo.rangeToBeReplaced->startPosition();
-    correctionStartOffsetInParagraphAsRange->setEnd(startPositionOfRangeToBeReplaced.containerNode(), startPositionOfRangeToBeReplaced.computeOffsetInContainerNode(), ec);
+    Position startPositionOfrangeWithAlternative = m_alternativeTextInfo.rangeWithAlternative->startPosition();
+    correctionStartOffsetInParagraphAsRange->setEnd(startPositionOfrangeWithAlternative.containerNode(), startPositionOfrangeWithAlternative.computeOffsetInContainerNode(), ec);
     if (ec)
         return;
 
@@ -226,14 +242,14 @@ void SpellingCorrectionController::applyCorrectionPanelInfo(const Vector<Documen
     int correctionStartOffsetInParagraph = TextIterator::rangeLength(correctionStartOffsetInParagraphAsRange.get());
 
     // Clone the range, since the caller of this method may want to keep the original range around.
-    RefPtr<Range> rangeToBeReplaced = m_correctionPanelInfo.rangeToBeReplaced->cloneRange(ec);
-    applyCommand(SpellingCorrectionCommand::create(rangeToBeReplaced, m_correctionPanelInfo.replacementString));
+    RefPtr<Range> rangeWithAlternative = m_alternativeTextInfo.rangeWithAlternative->cloneRange(ec);
+    applyCommand(SpellingCorrectionCommand::create(rangeWithAlternative, alternative));
     setEnd(paragraphRangeContainingCorrection.get(), m_frame->selection()->selection().start());
-    RefPtr<Range> replacementRange = TextIterator::subrange(paragraphRangeContainingCorrection.get(), correctionStartOffsetInParagraph,  m_correctionPanelInfo.replacementString.length());
+    RefPtr<Range> replacementRange = TextIterator::subrange(paragraphRangeContainingCorrection.get(), correctionStartOffsetInParagraph, alternative.length());
     String newText = plainText(replacementRange.get());
 
     // Check to see if replacement succeeded.
-    if (newText != m_correctionPanelInfo.replacementString)
+    if (newText != alternative)
         return;
 
     DocumentMarkerController* markers = replacementRange->startContainer()->document()->markers();
@@ -241,34 +257,34 @@ void SpellingCorrectionController::applyCorrectionPanelInfo(const Vector<Documen
     for (size_t i = 0; i < size; ++i) {
         DocumentMarker::MarkerType markerType = markerTypesToAdd[i];
         String description;
-        if (m_correctionPanelInfo.panelType != CorrectionPanelInfo::PanelTypeReversion && (markerType == DocumentMarker::Replacement || markerType == DocumentMarker::Autocorrected))
-            description = m_correctionPanelInfo.replacedString;
+        if (m_alternativeTextInfo.type != AlternativeTextTypeReversion && (markerType == DocumentMarker::Replacement || markerType == DocumentMarker::Autocorrected))
+            description = m_alternativeTextInfo.originalText;
         markers->addMarker(replacementRange.get(), markerType, description);
     }
 }
 
-bool SpellingCorrectionController::applyAutocorrectionBeforeTypingIfAppropriate()
+bool AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate()
 {
-    if (!m_correctionPanelInfo.rangeToBeReplaced || !m_correctionPanelInfo.isActive)
+    if (!m_alternativeTextInfo.rangeWithAlternative || !m_alternativeTextInfo.isActive)
         return false;
 
-    if (m_correctionPanelInfo.panelType != CorrectionPanelInfo::PanelTypeCorrection)
+    if (m_alternativeTextInfo.type != AlternativeTextTypeCorrection)
         return false;
 
     Position caretPosition = m_frame->selection()->selection().start();
 
-    if (m_correctionPanelInfo.rangeToBeReplaced->endPosition() == caretPosition) {
-        handleCorrectionPanelResult(dismissSoon(ReasonForDismissingCorrectionPanelAccepted));
+    if (m_alternativeTextInfo.rangeWithAlternative->endPosition() == caretPosition) {
+        handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeTextAccepted));
         return true;
     } 
     
     // Pending correction should always be where caret is. But in case this is not always true, we still want to dismiss the panel without accepting the correction.
-    ASSERT(m_correctionPanelInfo.rangeToBeReplaced->endPosition() == caretPosition);
-    dismiss(ReasonForDismissingCorrectionPanelIgnored);
+    ASSERT(m_alternativeTextInfo.rangeWithAlternative->endPosition() == caretPosition);
+    dismiss(ReasonForDismissingAlternativeTextIgnored);
     return false;
 }
 
-void SpellingCorrectionController::respondToUnappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction)
+void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction)
 {
     client()->recordAutocorrectionResponse(EditorClient::AutocorrectionReverted, corrected, correction);
     m_frame->document()->updateLayout();
@@ -281,11 +297,11 @@ void SpellingCorrectionController::respondToUnappliedSpellCorrection(const Visib
     markers->addMarker(range.get(), DocumentMarker::SpellCheckingExemption);
 }
 
-void SpellingCorrectionController::correctionPanelTimerFired(Timer<SpellingCorrectionController>*)
+void AlternativeTextController::timerFired(Timer<AlternativeTextController>*)
 {
-    m_correctionPanelIsDismissedByEditor = false;
-    switch (m_correctionPanelInfo.panelType) {
-    case CorrectionPanelInfo::PanelTypeCorrection: {
+    m_isDismissedByEditing = false;
+    switch (m_alternativeTextInfo.type) {
+    case AlternativeTextTypeCorrection: {
         VisibleSelection selection(m_frame->selection()->selection());
         VisiblePosition start(selection.start(), selection.affinity());
         VisiblePosition p = startOfWord(start, LeftWordIfOnBoundary);
@@ -293,76 +309,75 @@ void SpellingCorrectionController::correctionPanelTimerFired(Timer<SpellingCorre
         m_frame->editor()->markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeSpelling | TextCheckingTypeShowCorrectionPanel, adjacentWords.toNormalizedRange().get(), 0);
     }
         break;
-    case CorrectionPanelInfo::PanelTypeReversion: {
-        if (!m_correctionPanelInfo.rangeToBeReplaced)
+    case AlternativeTextTypeReversion: {
+        if (!m_alternativeTextInfo.rangeWithAlternative)
             break;
-        m_correctionPanelInfo.isActive = true;
-        m_correctionPanelInfo.replacedString = plainText(m_correctionPanelInfo.rangeToBeReplaced.get());
-        FloatRect boundingBox = rootViewRectForRange(m_correctionPanelInfo.rangeToBeReplaced.get());
-        if (!boundingBox.isEmpty())
-            client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBox, m_correctionPanelInfo.replacedString, m_correctionPanelInfo.replacementString, Vector<String>());
+        m_alternativeTextInfo.isActive = true;
+        m_alternativeTextInfo.originalText = plainText(m_alternativeTextInfo.rangeWithAlternative.get());
+        FloatRect boundingBox = rootViewRectForRange(m_alternativeTextInfo.rangeWithAlternative.get());
+        if (!boundingBox.isEmpty()) {
+            const AutocorrectionAlternativeDetails* details = static_cast<const AutocorrectionAlternativeDetails*>(m_alternativeTextInfo.details.get());
+            client()->showCorrectionPanel(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, details->replacementString(), Vector<String>());
+        }
     }
         break;
-    case CorrectionPanelInfo::PanelTypeSpellingSuggestions: {
-        if (!m_correctionPanelInfo.rangeToBeReplaced || plainText(m_correctionPanelInfo.rangeToBeReplaced.get()) != m_correctionPanelInfo.replacedString)
+    case AlternativeTextTypeSpellingSuggestions: {
+        if (!m_alternativeTextInfo.rangeWithAlternative || plainText(m_alternativeTextInfo.rangeWithAlternative.get()) != m_alternativeTextInfo.originalText)
             break;
-        String paragraphText = plainText(TextCheckingParagraph(m_correctionPanelInfo.rangeToBeReplaced).paragraphRange().get());
+        String paragraphText = plainText(TextCheckingParagraph(m_alternativeTextInfo.rangeWithAlternative).paragraphRange().get());
         Vector<String> suggestions;
-        textChecker()->getGuessesForWord(m_correctionPanelInfo.replacedString, paragraphText, suggestions);
+        textChecker()->getGuessesForWord(m_alternativeTextInfo.originalText, paragraphText, suggestions);
         if (suggestions.isEmpty()) {
-            m_correctionPanelInfo.rangeToBeReplaced.clear();
+            m_alternativeTextInfo.rangeWithAlternative.clear();
             break;
         }
         String topSuggestion = suggestions.first();
         suggestions.remove(0);
-        m_correctionPanelInfo.isActive = true;
-        FloatRect boundingBox = rootViewRectForRange(m_correctionPanelInfo.rangeToBeReplaced.get());
+        m_alternativeTextInfo.isActive = true;
+        FloatRect boundingBox = rootViewRectForRange(m_alternativeTextInfo.rangeWithAlternative.get());
         if (!boundingBox.isEmpty())
-            client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBox, m_correctionPanelInfo.replacedString, topSuggestion, suggestions);
+            client()->showCorrectionPanel(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, topSuggestion, suggestions);
     }
         break;
     }
 }
 
-void SpellingCorrectionController::handleCorrectionPanelResult(const String& correction)
+void AlternativeTextController::handleAlternativeTextUIResult(const String& result)
 {
-    Range* replacedRange = m_correctionPanelInfo.rangeToBeReplaced.get();
+    Range* replacedRange = m_alternativeTextInfo.rangeWithAlternative.get();
     if (!replacedRange || m_frame->document() != replacedRange->ownerDocument())
         return;
 
-    String currentWord = plainText(m_correctionPanelInfo.rangeToBeReplaced.get());
+    String currentWord = plainText(m_alternativeTextInfo.rangeWithAlternative.get());
     // Check to see if the word we are about to correct has been changed between timer firing and callback being triggered.
-    if (currentWord != m_correctionPanelInfo.replacedString)
+    if (currentWord != m_alternativeTextInfo.originalText)
         return;
 
-    m_correctionPanelInfo.isActive = false;
+    m_alternativeTextInfo.isActive = false;
 
-    switch (m_correctionPanelInfo.panelType) {
-    case CorrectionPanelInfo::PanelTypeCorrection:
-        if (correction.length()) {
-            m_correctionPanelInfo.replacementString = correction;
-            applyCorrectionPanelInfo(markerTypesForAutocorrection());
-        } else if (!m_correctionPanelIsDismissedByEditor)
-            replacedRange->startContainer()->document()->markers()->addMarker(replacedRange, DocumentMarker::RejectedCorrection, m_correctionPanelInfo.replacedString);
+    switch (m_alternativeTextInfo.type) {
+    case AlternativeTextTypeCorrection:
+        if (result.length())
+            applyAlternativeText(result, markerTypesForAutocorrection());
+        else if (!m_isDismissedByEditing)
+            replacedRange->startContainer()->document()->markers()->addMarker(replacedRange, DocumentMarker::RejectedCorrection, m_alternativeTextInfo.originalText);
         break;
-    case CorrectionPanelInfo::PanelTypeReversion:
-    case CorrectionPanelInfo::PanelTypeSpellingSuggestions:
-        if (correction.length()) {
-            m_correctionPanelInfo.replacementString = correction;
-            applyCorrectionPanelInfo(markerTypesForReplacement());
-        }
+    case AlternativeTextTypeReversion:
+    case AlternativeTextTypeSpellingSuggestions:
+        if (result.length())
+            applyAlternativeText(result, markerTypesForReplacement());
         break;
     }
 
-    m_correctionPanelInfo.rangeToBeReplaced.clear();
+    m_alternativeTextInfo.rangeWithAlternative.clear();
 }
 
-bool SpellingCorrectionController::isAutomaticSpellingCorrectionEnabled()
+bool AlternativeTextController::isAutomaticSpellingCorrectionEnabled()
 {
     return client() && client()->isAutomaticSpellingCorrectionEnabled();
 }
 
-FloatRect SpellingCorrectionController::rootViewRectForRange(const Range* range) const
+FloatRect AlternativeTextController::rootViewRectForRange(const Range* range) const
 {
     FrameView* view = m_frame->view();
     if (!view)
@@ -376,7 +391,7 @@ FloatRect SpellingCorrectionController::rootViewRectForRange(const Range* range)
     return view->contentsToRootView(IntRect(boundingRect));
 }        
 
-void SpellingCorrectionController::respondToChangedSelection(const VisibleSelection& oldSelection)
+void AlternativeTextController::respondToChangedSelection(const VisibleSelection& oldSelection)
 {
     VisibleSelection currentSelection(m_frame->selection()->selection());
     // When user moves caret to the end of autocorrected word and pauses, we show the panel
@@ -414,20 +429,20 @@ void SpellingCorrectionController::respondToChangedSelection(const VisibleSelect
         if (!currentWord.length())
             continue;
 
-        m_correctionPanelInfo.rangeToBeReplaced = wordRange;
-        m_correctionPanelInfo.replacedString = currentWord;
+        m_alternativeTextInfo.rangeWithAlternative = wordRange;
+        m_alternativeTextInfo.originalText = currentWord;
         if (marker->type() == DocumentMarker::Spelling)
-            startCorrectionPanelTimer(CorrectionPanelInfo::PanelTypeSpellingSuggestions);
+            startAlternativeTextUITimer(AlternativeTextTypeSpellingSuggestions);
         else {
-            m_correctionPanelInfo.replacementString = marker->description();
-            startCorrectionPanelTimer(CorrectionPanelInfo::PanelTypeReversion);
+            m_alternativeTextInfo.details = AutocorrectionAlternativeDetails::create(marker->description());
+            startAlternativeTextUITimer(AlternativeTextTypeReversion);
         }
 
         break;
     }
 }
 
-void SpellingCorrectionController::respondToAppliedEditing(CompositeEditCommand* command)
+void AlternativeTextController::respondToAppliedEditing(CompositeEditCommand* command)
 {
     if (command->isTopLevelCommand() && !command->shouldRetainAutocorrectionIndicator())
         m_frame->document()->markers()->removeMarkers(DocumentMarker::CorrectionIndicator);
@@ -436,7 +451,7 @@ void SpellingCorrectionController::respondToAppliedEditing(CompositeEditCommand*
     m_originalStringForLastDeletedAutocorrection = String();
 }
 
-void SpellingCorrectionController::respondToUnappliedEditing(EditCommandComposition* command)
+void AlternativeTextController::respondToUnappliedEditing(EditCommandComposition* command)
 {
     if (!command->wasCreateLinkCommand())
         return;
@@ -448,35 +463,35 @@ void SpellingCorrectionController::respondToUnappliedEditing(EditCommandComposit
     markers->addMarker(range.get(), DocumentMarker::SpellCheckingExemption);
 }
 
-EditorClient* SpellingCorrectionController::client()
+EditorClient* AlternativeTextController::client()
 {
     return m_frame->page() ? m_frame->page()->editorClient() : 0;
 }
 
-TextCheckerClient* SpellingCorrectionController::textChecker()
+TextCheckerClient* AlternativeTextController::textChecker()
 {
     if (EditorClient* owner = client())
         return owner->textChecker();
     return 0;
 }
 
-void SpellingCorrectionController::recordAutocorrectionResponseReversed(const String& replacedString, const String& replacementString)
+void AlternativeTextController::recordAutocorrectionResponseReversed(const String& replacedString, const String& replacementString)
 {
     client()->recordAutocorrectionResponse(EditorClient::AutocorrectionReverted, replacedString, replacementString);
 }
 
-void SpellingCorrectionController::recordAutocorrectionResponseReversed(const String& replacedString, PassRefPtr<Range> replacementRange)
+void AlternativeTextController::recordAutocorrectionResponseReversed(const String& replacedString, PassRefPtr<Range> replacementRange)
 {
     recordAutocorrectionResponseReversed(replacedString, plainText(replacementRange.get()));
 }
 
-void SpellingCorrectionController::markReversed(PassRefPtr<Range> changedRange)
+void AlternativeTextController::markReversed(PassRefPtr<Range> changedRange)
 {
     changedRange->startContainer()->document()->markers()->removeMarkers(changedRange.get(), DocumentMarker::Autocorrected, DocumentMarkerController::RemovePartiallyOverlappingMarker);
     changedRange->startContainer()->document()->markers()->addMarker(changedRange.get(), DocumentMarker::SpellCheckingExemption);
 }
 
-void SpellingCorrectionController::markCorrection(PassRefPtr<Range> replacedRange, const String& replacedString)
+void AlternativeTextController::markCorrection(PassRefPtr<Range> replacedRange, const String& replacedString)
 {
     Vector<DocumentMarker::MarkerType> markerTypesToAdd = markerTypesForAutocorrection();
     DocumentMarkerController* markers = replacedRange->startContainer()->document()->markers();
@@ -489,7 +504,7 @@ void SpellingCorrectionController::markCorrection(PassRefPtr<Range> replacedRang
     }
 }
 
-void SpellingCorrectionController::recordSpellcheckerResponseForModifiedCorrection(Range* rangeOfCorrection, const String& corrected, const String& correction)
+void AlternativeTextController::recordSpellcheckerResponseForModifiedCorrection(Range* rangeOfCorrection, const String& corrected, const String& correction)
 {
     if (!rangeOfCorrection)
         return;
@@ -507,13 +522,13 @@ void SpellingCorrectionController::recordSpellcheckerResponseForModifiedCorrecti
     markers->removeMarkers(rangeOfCorrection, DocumentMarker::Autocorrected, DocumentMarkerController::RemovePartiallyOverlappingMarker);
 }
 
-void SpellingCorrectionController::deletedAutocorrectionAtPosition(const Position& position, const String& originalString)
+void AlternativeTextController::deletedAutocorrectionAtPosition(const Position& position, const String& originalString)
 {
     m_originalStringForLastDeletedAutocorrection = originalString;
     m_positionForLastDeletedAutocorrection = position;
 }
 
-void SpellingCorrectionController::markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(EditCommand* command)
+void AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(EditCommand* command)
 {
     Position endOfSelection = command->endingSelection().end();
     if (endOfSelection != m_positionForLastDeletedAutocorrection)
@@ -534,19 +549,19 @@ void SpellingCorrectionController::markPrecedingWhitespaceForDeletedAutocorrecti
     m_frame->document()->markers()->addMarker(precedingCharacterRange.get(), DocumentMarker::DeletedAutocorrection, m_originalStringForLastDeletedAutocorrection);
 }
 
-bool SpellingCorrectionController::processMarkersOnTextToBeReplacedByResult(const TextCheckingResult* result, Range* rangeToBeReplaced, const String& stringToBeReplaced)
+bool AlternativeTextController::processMarkersOnTextToBeReplacedByResult(const TextCheckingResult* result, Range* rangeWithAlternative, const String& stringToBeReplaced)
 {
     DocumentMarkerController* markerController = m_frame->document()->markers();
-    if (markerController->hasMarkers(rangeToBeReplaced, DocumentMarker::Replacement)) {
+    if (markerController->hasMarkers(rangeWithAlternative, DocumentMarker::Replacement)) {
         if (result->type == TextCheckingTypeCorrection)
-            recordSpellcheckerResponseForModifiedCorrection(rangeToBeReplaced, stringToBeReplaced, result->replacement);
+            recordSpellcheckerResponseForModifiedCorrection(rangeWithAlternative, stringToBeReplaced, result->replacement);
         return false;
     }
 
-    if (markerController->hasMarkers(rangeToBeReplaced, DocumentMarker::RejectedCorrection))
+    if (markerController->hasMarkers(rangeWithAlternative, DocumentMarker::RejectedCorrection))
         return false;
 
-    Position beginningOfRange = rangeToBeReplaced->startPosition();
+    Position beginningOfRange = rangeWithAlternative->startPosition();
     Position precedingCharacterPosition = beginningOfRange.previous();
     RefPtr<Range> precedingCharacterRange = Range::create(m_frame->document(), precedingCharacterPosition, beginningOfRange);
 

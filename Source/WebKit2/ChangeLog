@@ -1,3 +1,53 @@
+2012-04-03  Jia Pu  <jpu@apple.com>
+
+        Rename SpellingCorrectionController to AlternativeTextController.
+        https://bugs.webkit.org/show_bug.cgi?id=82942
+
+        Reviewed by Enrica Casucci.
+
+        These changes are simply for adopting new class names.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::showCorrectionPanel):
+        (WebKit::PageClientImpl::dismissCorrectionPanel):
+        (WebKit::PageClientImpl::dismissCorrectionPanelSoon):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView handleCorrectionPanelResult:]):
+        * UIProcess/PageClient.h:
+        (PageClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::pageDidScroll):
+        (WebKit::WebPageProxy::processDidCrash):
+        (WebKit::WebPageProxy::showCorrectionPanel):
+        (WebKit::WebPageProxy::dismissCorrectionPanel):
+        (WebKit::WebPageProxy::dismissCorrectionPanelSoon):
+        (WebKit::WebPageProxy::handleAlternativeTextUIResult):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/mac/CorrectionPanel.h:
+        (CorrectionPanel):
+        * UIProcess/mac/CorrectionPanel.mm:
+        (correctionIndicatorType):
+        (WebKit::CorrectionPanel::CorrectionPanel):
+        (WebKit::CorrectionPanel::~CorrectionPanel):
+        (WebKit::CorrectionPanel::show):
+        (WebKit::CorrectionPanel::dismiss):
+        (WebKit::CorrectionPanel::dismissInternal):
+        (WebKit::CorrectionPanel::handleAcceptedReplacement):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::showCorrectionPanel):
+        (WebKit::WebEditorClient::dismissCorrectionPanel):
+        (WebKit::WebEditorClient::dismissCorrectionPanelSoon):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::handleAlternativeTextUIResult):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2012-04-03  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Remove #if !USE(TILED_BACKING_STORE) from WebFrameLoaderClient::transitionToCommittedForNewPage()

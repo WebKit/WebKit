@@ -487,7 +487,7 @@ public:
     void unmarkAllBadGrammar();
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    void handleCorrectionPanelResult(const String&);
+    void handleAlternativeTextUIResult(const String&);
 #endif
 
     // For testing purpose.

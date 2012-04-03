@@ -2852,7 +2852,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)handleCorrectionPanelResult:(NSString*)result
 {
-    _data->_page->handleCorrectionPanelResult(result);
+    _data->_page->handleAlternativeTextUIResult(result);
 }
 
 @end

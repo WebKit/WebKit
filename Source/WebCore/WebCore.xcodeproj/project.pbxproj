@@ -3708,8 +3708,6 @@
 		A622A8FF122C44A600A785B3 /* GenericBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F9122C44A600A785B3 /* GenericBinding.h */; };
 		A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6D169611346B49B000EB770 /* ShadowRoot.cpp */; };
 		A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = A6D169631346B4C1000EB770 /* ShadowRoot.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A7005CCC1330C4BA000CC0BA /* SpellingCorrectionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7005CCA1330C4BA000CC0BA /* SpellingCorrectionController.cpp */; };
-		A7005CCD1330C4BA000CC0BA /* SpellingCorrectionController.h in Headers */ = {isa = PBXBuildFile; fileRef = A7005CCB1330C4BA000CC0BA /* SpellingCorrectionController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7151BD812F1558F005A0F64 /* TextCheckerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7151BD712F1558F005A0F64 /* TextCheckerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A715E652134BBBEC00D8E713 /* ProgressShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A715E650134BBBEC00D8E713 /* ProgressShadowElement.cpp */; };
 		A715E653134BBBEC00D8E713 /* ProgressShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */; };
@@ -5736,6 +5734,8 @@
 		CE02F0C411E83ADD00C6684A /* ScriptControllerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */; };
 		CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE057FA41220731100A476D5 /* DocumentMarkerController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE08C3D1152B599A0021B8C2 /* AlternativeTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */; };
+		CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEA3949C11D45CDA003094CF /* StaticHashSetNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEA3949A11D45CDA003094CF /* StaticHashSetNodeList.cpp */; };
 		CEA3949D11D45CDA003094CF /* StaticHashSetNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = CEA3949B11D45CDA003094CF /* StaticHashSetNodeList.h */; };
@@ -10724,8 +10724,6 @@
 		A622A8F9122C44A600A785B3 /* GenericBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericBinding.h; path = generic/GenericBinding.h; sourceTree = "<group>"; };
 		A6D169611346B49B000EB770 /* ShadowRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowRoot.cpp; sourceTree = "<group>"; };
 		A6D169631346B4C1000EB770 /* ShadowRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowRoot.h; sourceTree = "<group>"; };
-		A7005CCA1330C4BA000CC0BA /* SpellingCorrectionController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellingCorrectionController.cpp; sourceTree = "<group>"; };
-		A7005CCB1330C4BA000CC0BA /* SpellingCorrectionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellingCorrectionController.h; sourceTree = "<group>"; };
 		A7151BD712F1558F005A0F64 /* TextCheckerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerClient.h; sourceTree = "<group>"; };
 		A715E650134BBBEC00D8E713 /* ProgressShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgressShadowElement.cpp; sourceTree = "<group>"; };
 		A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressShadowElement.h; sourceTree = "<group>"; };
@@ -12840,6 +12838,8 @@
 		CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptControllerBase.h; sourceTree = "<group>"; };
 		CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentMarkerController.cpp; sourceTree = "<group>"; };
 		CE057FA41220731100A476D5 /* DocumentMarkerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarkerController.h; sourceTree = "<group>"; };
+		CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlternativeTextController.cpp; sourceTree = "<group>"; };
+		CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlternativeTextController.h; sourceTree = "<group>"; };
 		CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptSourceProvider.h; sourceTree = "<group>"; };
 		CE5CB1B314EDAB6F00BB2795 /* EventSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSender.h; sourceTree = "<group>"; };
 		CEA3949A11D45CDA003094CF /* StaticHashSetNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticHashSetNodeList.cpp; sourceTree = "<group>"; };
@@ -16615,6 +16615,8 @@
 			isa = PBXGroup;
 			children = (
 				ED501DC90B249F3900AE18D9 /* mac */,
+				CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */,
+				CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */,
 				93309D87099E64910056E581 /* AppendNodeCommand.cpp */,
 				93309D88099E64910056E581 /* AppendNodeCommand.h */,
 				9B417063125662B3006B28FC /* ApplyBlockElementCommand.cpp */,
@@ -16706,8 +16708,6 @@
 				A78FE13A12366B1000ACE8D0 /* SpellChecker.h */,
 				B8DBDB49130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp */,
 				B8DBDB4A130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h */,
-				A7005CCA1330C4BA000CC0BA /* SpellingCorrectionController.cpp */,
-				A7005CCB1330C4BA000CC0BA /* SpellingCorrectionController.h */,
 				93309DC2099E64910056E581 /* SplitElementCommand.cpp */,
 				93309DC3099E64910056E581 /* SplitElementCommand.h */,
 				93309DC4099E64910056E581 /* SplitTextNodeCommand.cpp */,
@@ -24132,7 +24132,6 @@
 				75415B0012958D5E003AD669 /* SpeechInputResultList.h in Headers */,
 				A78FE13C12366B1000ACE8D0 /* SpellChecker.h in Headers */,
 				B8DBDB4E130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h in Headers */,
-				A7005CCD1330C4BA000CC0BA /* SpellingCorrectionController.h in Headers */,
 				93309E12099E64920056E581 /* SplitElementCommand.h in Headers */,
 				93309E14099E64920056E581 /* SplitTextNodeCommand.h in Headers */,
 				93309E16099E64920056E581 /* SplitTextNodeContainingElementCommand.h in Headers */,
@@ -24727,6 +24726,7 @@
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				1A3586E015264C450022A659 /* RenderMultiColumnFlowThread.h in Headers */,
 				E1B25107152A0BB00069B779 /* StylePropertyShorthand.h in Headers */,
+				CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */,
 				A07D3356152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h in Headers */,
 				A07D3358152B632D001B6393 /* WebGLShaderPrecisionFormat.h in Headers */,
 			);
@@ -27252,7 +27252,6 @@
 				75415C29129A9920003AD669 /* SpeechInputResultList.cpp in Sources */,
 				A78FE13B12366B1000ACE8D0 /* SpellChecker.cpp in Sources */,
 				B8DBDB4D130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp in Sources */,
-				A7005CCC1330C4BA000CC0BA /* SpellingCorrectionController.cpp in Sources */,
 				93309E11099E64920056E581 /* SplitElementCommand.cpp in Sources */,
 				93309E13099E64920056E581 /* SplitTextNodeCommand.cpp in Sources */,
 				93309E15099E64920056E581 /* SplitTextNodeContainingElementCommand.cpp in Sources */,
@@ -27727,6 +27726,7 @@
 				1A3FF9C315265359002288A1 /* RenderNamedFlowThread.cpp in Sources */,
 				E1B25106152A0BAF0069B779 /* StylePropertyShorthand.cpp in Sources */,
 				71CC7A20152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp in Sources */,
+				CE08C3D1152B599A0021B8C2 /* AlternativeTextController.cpp in Sources */,
 				A07D3355152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp in Sources */,
 				A08CF154152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp in Sources */,
 			);

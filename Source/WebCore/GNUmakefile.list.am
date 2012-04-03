@@ -2004,6 +2004,8 @@ webcore_sources += \
 	Source/WebCore/dom/WheelEvent.h \
 	Source/WebCore/dom/WindowEventContext.cpp \
 	Source/WebCore/dom/WindowEventContext.h \
+	Source/WebCore/editing/AlternativeTextController.cpp \
+	Source/WebCore/editing/AlternativeTextController.h \
 	Source/WebCore/editing/AppendNodeCommand.cpp \
 	Source/WebCore/editing/AppendNodeCommand.h \
 	Source/WebCore/editing/ApplyBlockElementCommand.cpp \
@@ -2093,8 +2095,6 @@ webcore_sources += \
 	Source/WebCore/editing/SmartReplaceICU.cpp \
 	Source/WebCore/editing/SpellChecker.cpp \
 	Source/WebCore/editing/SpellChecker.h \
-	Source/WebCore/editing/SpellingCorrectionController.cpp \
-	Source/WebCore/editing/SpellingCorrectionController.h \
 	Source/WebCore/editing/SpellingCorrectionCommand.cpp \
 	Source/WebCore/editing/SpellingCorrectionCommand.h \
 	Source/WebCore/editing/SplitElementCommand.cpp \

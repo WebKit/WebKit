@@ -5488,7 +5488,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
     WebFrame *webFrame = [self _selectedOrMainFrame];
     Frame* coreFrame = core(webFrame);
     if (coreFrame)
-        coreFrame->editor()->handleCorrectionPanelResult(result);
+        coreFrame->editor()->handleAlternativeTextUIResult(result);
 }
 #endif
 

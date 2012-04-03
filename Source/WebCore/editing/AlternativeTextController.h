@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SpellingCorrectionController_h
-#define SpellingCorrectionController_h
+#ifndef AlternativeTextController_h
+#define AlternativeTextController_h
 
 #include "DocumentMarker.h"
 #include "Range.h"
@@ -43,48 +43,56 @@ class EditCommandComposition;
 class Frame;
 class TextCheckerClient;
 
-struct CorrectionPanelInfo {
-    enum PanelType {
-        PanelTypeCorrection = 0,
-        PanelTypeReversion,
-        PanelTypeSpellingSuggestions
-    };
+class AlternativeTextDetails : public RefCounted<AlternativeTextDetails> {
+public:
+    AlternativeTextDetails() { }
+    virtual ~AlternativeTextDetails() { }
+};
 
-    RefPtr<Range> rangeToBeReplaced;
-    String replacedString;
-    String replacementString;
-    PanelType panelType;
+enum AlternativeTextType {
+    AlternativeTextTypeCorrection = 0,
+    AlternativeTextTypeReversion,
+    AlternativeTextTypeSpellingSuggestions,
+};
+
+struct AlternativeTextInfo {
+    RefPtr<Range> rangeWithAlternative;
     bool isActive;
+    AlternativeTextType type;
+    String originalText;
+    RefPtr<AlternativeTextDetails> details;
 };
 
 struct TextCheckingResult;
 
-enum ReasonForDismissingCorrectionPanel {
-    ReasonForDismissingCorrectionPanelCancelled = 0,
-    ReasonForDismissingCorrectionPanelIgnored,
-    ReasonForDismissingCorrectionPanelAccepted
+enum ReasonForDismissingAlternativeText {
+    ReasonForDismissingAlternativeTextCancelled = 0,
+    ReasonForDismissingAlternativeTextIgnored,
+    ReasonForDismissingAlternativeTextAccepted
 };
 
 #if USE(AUTOCORRECTION_PANEL)
-#define UNLESS_ENABLED(functionBody) ;
+// These backslashes are for making style checker happy.
+#define UNLESS_ENABLED(functionBody) \
+;\
+
 #else
 #define UNLESS_ENABLED(functionBody) functionBody
 #endif
 
-class SpellingCorrectionController {
-    WTF_MAKE_NONCOPYABLE(SpellingCorrectionController); WTF_MAKE_FAST_ALLOCATED;
+class AlternativeTextController {
+    WTF_MAKE_NONCOPYABLE(AlternativeTextController);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    SpellingCorrectionController(Frame*) UNLESS_ENABLED({})
-    ~SpellingCorrectionController() UNLESS_ENABLED({})
+    AlternativeTextController(Frame*) UNLESS_ENABLED({ })
+    ~AlternativeTextController() UNLESS_ENABLED({ })
 
-    void startCorrectionPanelTimer(CorrectionPanelInfo::PanelType) UNLESS_ENABLED({})
-    void stopCorrectionPanelTimer() UNLESS_ENABLED({})
+    void startAlternativeTextUITimer(AlternativeTextType) UNLESS_ENABLED({ })
+    void stopAlternativeTextUITimer() UNLESS_ENABLED({ })
 
-    void dismiss(ReasonForDismissingCorrectionPanel) UNLESS_ENABLED({})
-    String dismissSoon(ReasonForDismissingCorrectionPanel) UNLESS_ENABLED({ return String(); })
+    void dismiss(ReasonForDismissingAlternativeText) UNLESS_ENABLED({ })
     void show(PassRefPtr<Range> rangeToReplace, const String& replacement) UNLESS_ENABLED({ UNUSED_PARAM(rangeToReplace); UNUSED_PARAM(replacement); })
 
-    void applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>&) UNLESS_ENABLED({})
     // Return true if correction was applied, false otherwise.
     bool applyAutocorrectionBeforeTypingIfAppropriate() UNLESS_ENABLED({ return false; })
 
@@ -96,19 +104,17 @@ public:
     void stopPendingCorrection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
     void applyPendingCorrection(const VisibleSelection& selectionAfterTyping) UNLESS_ENABLED({ UNUSED_PARAM(selectionAfterTyping); })
 
-    void handleCorrectionPanelResult(const String& correction) UNLESS_ENABLED({ UNUSED_PARAM(correction); })
-    void handleCancelOperation() UNLESS_ENABLED({})
+    void handleAlternativeTextUIResult(const String& result) UNLESS_ENABLED({ UNUSED_PARAM(result); })
+    void handleCancelOperation() UNLESS_ENABLED({ })
 
     bool hasPendingCorrection() const UNLESS_ENABLED({ return false; })
     bool isSpellingMarkerAllowed(PassRefPtr<Range> misspellingRange) const UNLESS_ENABLED({ UNUSED_PARAM(misspellingRange); return true; })
     bool isAutomaticSpellingCorrectionEnabled() UNLESS_ENABLED({ return false; })
     bool shouldRemoveMarkersUponEditing();
 
-    void correctionPanelTimerFired(Timer<SpellingCorrectionController>*) UNLESS_ENABLED({})
     void recordAutocorrectionResponseReversed(const String& replacedString, PassRefPtr<Range> replacementRange) UNLESS_ENABLED({ UNUSED_PARAM(replacedString); UNUSED_PARAM(replacementRange); })
     void markReversed(PassRefPtr<Range> changedRange) UNLESS_ENABLED({ UNUSED_PARAM(changedRange); })
     void markCorrection(PassRefPtr<Range> replacedRange, const String& replacedString) UNLESS_ENABLED({ UNUSED_PARAM(replacedRange); UNUSED_PARAM(replacedString); })
-    void recordSpellcheckerResponseForModifiedCorrection(Range* rangeOfCorrection, const String& corrected, const String& correction) UNLESS_ENABLED({ UNUSED_PARAM(rangeOfCorrection); UNUSED_PARAM(corrected); UNUSED_PARAM(correction); })
 
     // This function returns false if the replacement should not be carried out.
     bool processMarkersOnTextToBeReplacedByResult(const TextCheckingResult*, Range* rangeToBeReplaced, const String& stringToBeReplaced) UNLESS_ENABLED({ UNUSED_PARAM(rangeToBeReplaced); UNUSED_PARAM(stringToBeReplaced); return true; });
@@ -116,7 +122,11 @@ public:
 
 #if USE(AUTOCORRECTION_PANEL)
 private:
+    String dismissSoon(ReasonForDismissingAlternativeText);
+    void applyAlternativeText(const String& alternative, const Vector<DocumentMarker::MarkerType>&);
+    void timerFired(Timer<AlternativeTextController>*);
     void recordAutocorrectionResponseReversed(const String& replacedString, const String& replacementString);
+    void recordSpellcheckerResponseForModifiedCorrection(Range* rangeOfCorrection, const String& corrected, const String& correction);
 
     bool shouldStartTimerFor(const DocumentMarker* marker, int endOffset) const
     {
@@ -132,9 +142,9 @@ private:
     EditorClient* m_client;
     Frame* m_frame;
 
-    Timer<SpellingCorrectionController> m_correctionPanelTimer;
-    CorrectionPanelInfo m_correctionPanelInfo;
-    bool m_correctionPanelIsDismissedByEditor;
+    Timer<AlternativeTextController> m_timer;
+    AlternativeTextInfo m_alternativeTextInfo;
+    bool m_isDismissedByEditing;
 
     String m_originalStringForLastDeletedAutocorrection;
     Position m_positionForLastDeletedAutocorrection;
@@ -143,7 +153,7 @@ private:
 
 #undef UNLESS_ENABLED
 
-inline bool SpellingCorrectionController::shouldRemoveMarkersUponEditing()
+inline bool AlternativeTextController::shouldRemoveMarkersUponEditing()
 {
 #if USE(MARKER_REMOVAL_UPON_EDITING)
     return true;
@@ -154,4 +164,4 @@ inline bool SpellingCorrectionController::shouldRemoveMarkersUponEditing()
 
 } // namespace WebCore
 
-#endif // SpellingCorrectionController_h
+#endif // AlternativeTextController_h

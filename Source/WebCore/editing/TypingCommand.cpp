@@ -328,7 +328,7 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
                 strippedPreviousWord = plainText(range.get()).stripWhiteSpace();
             frame->editor()->markMisspellingsAfterTypingToWord(p1, endingSelection(), !strippedPreviousWord.isEmpty());
         } else if (commandType == TypingCommand::InsertText)
-            frame->editor()->startCorrectionPanelTimer();
+            frame->editor()->startAlternativeTextUITimer();
     }
 }
 
