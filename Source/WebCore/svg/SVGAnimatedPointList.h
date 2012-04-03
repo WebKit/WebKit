@@ -21,19 +21,28 @@
 #define SVGAnimatedPointList_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedListPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
+#include "SVGPointList.h"
 
 namespace WebCore {
+
+typedef SVGAnimatedListPropertyTearOff<SVGPointList> SVGAnimatedPointList;
+
 class SVGAnimationElement;
 
 class SVGAnimatedPointListAnimator : public SVGAnimatedTypeAnimator {
-    
 public:
     SVGAnimatedPointListAnimator(SVGAnimationElement*, SVGElement*);
     virtual ~SVGAnimatedPointListAnimator() { }
     
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
-    
+    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
+    virtual void stopAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
+    virtual void resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*);
+    virtual void animValWillChange(const Vector<SVGAnimatedProperty*>&);
+    virtual void animValDidChange(const Vector<SVGAnimatedProperty*>&);
+
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,

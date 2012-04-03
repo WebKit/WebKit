@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2011, 2012. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,6 +38,31 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedPointListAnimator::constructFromString(co
     OwnPtr<SVGAnimatedType> animtedType = SVGAnimatedType::createPointList(new SVGPointList);
     pointsListFromSVGData(animtedType->pointList(), string);
     return animtedType.release();
+}
+
+PassOwnPtr<SVGAnimatedType> SVGAnimatedPointListAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    return SVGAnimatedType::createPointList(constructFromBaseValue<SVGAnimatedPointList>(properties));
+}
+
+void SVGAnimatedPointListAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    stopAnimValAnimationForType<SVGAnimatedPointList>(properties);
+}
+
+void SVGAnimatedPointListAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+{
+    resetFromBaseValue<SVGAnimatedPointList>(properties, type, &SVGAnimatedType::pointList);
+}
+
+void SVGAnimatedPointListAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValWillChangeForType<SVGAnimatedPointList>(properties);
+}
+
+void SVGAnimatedPointListAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValDidChangeForType<SVGAnimatedPointList>(properties);
 }
 
 void SVGAnimatedPointListAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)

@@ -360,9 +360,6 @@ String SVGAnimatedType::valueAsString()
         SVGPathParserFactory::self()->buildStringFromByteStream(m_data.path, result, UnalteredParsing);
         return result;
     }
-    case AnimatedPoints:
-        ASSERT(m_data.pointList);
-        return m_data.pointList->valueAsString();
     case AnimatedRect:
         ASSERT(m_data.rect);
         return String::number(m_data.rect->x()) + ' ' + String::number(m_data.rect->y()) + ' '
@@ -379,6 +376,7 @@ String SVGAnimatedType::valueAsString()
     case AnimatedIntegerOptionalInteger:
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
+    case AnimatedPoints:
     case AnimatedPreserveAspectRatio:
     case AnimatedTransformList:
     case AnimatedUnknown:
@@ -418,11 +416,6 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
         m_data.path = pathByteStream.leakPtr();
         break;
     }
-    case AnimatedPoints:
-        ASSERT(m_data.pointList);
-        m_data.pointList->clear();
-        pointsListFromSVGData(*m_data.pointList, value);
-        break;
     case AnimatedRect:
         ASSERT(m_data.rect);
         parseRect(value, *m_data.rect);
@@ -440,6 +433,7 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     case AnimatedIntegerOptionalInteger:
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
+    case AnimatedPoints:
     case AnimatedPreserveAspectRatio:
     case AnimatedTransformList:
     case AnimatedUnknown:
@@ -463,6 +457,7 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     case AnimatedNumber:
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
+    case AnimatedPoints:
     case AnimatedPreserveAspectRatio:
     case AnimatedRect:
     case AnimatedString:
@@ -475,7 +470,6 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
 
     // FIXME: Handle the remaining types in animVal concept.
     case AnimatedPath:
-    case AnimatedPoints:
     case AnimatedUnknown:
         return false;
     }

@@ -21,26 +21,29 @@ rootSVGElement.appendChild(poly);
 // Setup animation test
 function sample1() {
     // Check initial/end conditions
-    shouldBeCloseEnough("poly.points.getItem(2).x", "200");
-    shouldBeCloseEnough("poly.points.getItem(2).y", "200");
-    // shouldBeCloseEnough("poly.animatedPoints.getItem(2).x", "200");
-    // shouldBeCloseEnough("poly.animatedPoints.getItem(2).y", "200");
+    shouldBeCloseEnough("poly.animatedPoints.getItem(2).x", "200");
+    shouldBeCloseEnough("poly.animatedPoints.getItem(2).y", "200");
+
+    shouldBe("poly.points.getItem(2).x", "200");
+    shouldBe("poly.points.getItem(2).y", "200");
 }
 
 function sample2() {
     // Check half-time conditions
-    shouldBeCloseEnough("poly.points.getItem(2).x", "250");
-    shouldBeCloseEnough("poly.points.getItem(2).y", "250");
-    // shouldBeCloseEnough("poly.animatedPoints.getItem(2).x", "250");
-    // shouldBeCloseEnough("poly.animatedPoints.getItem(2).y", "250");
+    shouldBeCloseEnough("poly.animatedPoints.getItem(2).x", "250");
+    shouldBeCloseEnough("poly.animatedPoints.getItem(2).y", "250");
+
+    shouldBe("poly.points.getItem(2).x", "200");
+    shouldBe("poly.points.getItem(2).y", "200");
 }
 
 function sample3() {
     // Check just before-end conditions
-    shouldBeCloseEnough("poly.points.getItem(2).x", "300");
-    shouldBeCloseEnough("poly.points.getItem(2).y", "300");
-    // shouldBeCloseEnough("poly.animatedPoints.getItem(2).x", "300");
-    // shouldBeCloseEnough("poly.animatedPoints.getItem(2).y", "300");
+    shouldBeCloseEnough("poly.animatedPoints.getItem(2).x", "300");
+    shouldBeCloseEnough("poly.animatedPoints.getItem(2).y", "300");
+
+    shouldBe("poly.points.getItem(2).x", "200");
+    shouldBe("poly.points.getItem(2).y", "200");
 }
 
 function executeTest() {
