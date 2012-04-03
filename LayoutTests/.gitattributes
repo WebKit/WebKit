@@ -84,11 +84,9 @@ fast/css/only-of-type-pseudo-class.html -crlf
 fast/css/text-input-with-webkit-border-radius.html -crlf
 fast/dom/Document/open-with-pending-load.html -crlf
 fast/dom/Element/hostname-host.html -crlf
-fast/dom/StyleSheet/ownerNode-lifetime-2.html -crlf
 fast/dom/Window/window-property-clearing-expected.txt -crlf
 fast/dom/everything-to-string.html -crlf
 fast/dom/insert-span-into-long-text-bug-28245.html -crlf
-fast/dom/resources/TestApplet.java -crlf
 fast/dom/simultaneouslyRegsiteredTimerFireOrder-expected.txt -crlf
 fast/dom/timer-clear-interval-in-handler-and-generate-error.html -crlf
 fast/events/keydown-keypress-focus-change.html -crlf
@@ -158,11 +156,5 @@ svg/custom/xml-stylesheet.svg -crlf
 tables/mozilla/bugs/bug119786.html -crlf
 tables/mozilla/bugs/bug222846.html -crlf
 tables/mozilla/bugs/bug275625.html -crlf
-tables/mozilla/images/aboutHeader.gif -crlf
-tables/mozilla/images/main-horizontal-scroll.gif -crlf
 tables/mozilla_expected_failures/bugs/bug101759.html -crlf
 tables/mozilla_expected_failures/bugs/bug14489.html -crlf
-tables/mozilla_expected_failures/images/aboutHeader.gif -crlf
-tables/mozilla_expected_failures/images/main-horizontal-scroll.gif -crlf
-wml/resources/enter-card-with-events.wml -crlf
-wml/resources/enter-first-card-with-events.wml -crlf
