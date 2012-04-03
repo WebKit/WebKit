@@ -1,3 +1,11 @@
+2012-04-03  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed. This patch adds an ugly, ugly hack to bandaid over the
+        Windows component build. See comments in the code for details.
+
+        * src/WebKit.cpp:
+        (WebKit::shutdown):
+
 2012-04-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r113087.

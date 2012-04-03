@@ -55,6 +55,13 @@ public:
 
     WEBKIT_EXPORT void didCompleteQuery(const WebVector<WebMediaStreamSource>& audioSources, const WebVector<WebMediaStreamSource>& videoSources) const;
 
+    // This function is a temporary hack to make the Windows component build
+    // compile. Without this function, WebMediaStreamSourcesRequest.obj won't
+    // be pulled into webkit.dll and content.dll will fail to link. This
+    // function is not the correct solution to this problem but will let us
+    // fix the build while we work on a correct solution.
+    WEBKIT_EXPORT static void dummy();
+
 #if WEBKIT_IMPLEMENTATION
     WebMediaStreamSourcesRequest(const WTF::PassRefPtr<WebCore::MediaStreamSourcesQueryClient>&);
 #endif
