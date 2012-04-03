@@ -34,6 +34,12 @@ messages -> WebInspector {
     StopJavaScriptProfiling()
     StartPageProfiling()
     StopPageProfiling()
+
+#if ENABLE(INSPECTOR_SERVER)
+    DispatchMessageFromRemoteFrontend(WTF::String message)
+    RemoteFrontendConnected()
+    RemoteFrontendDisconnected()
+#endif
 }
 
 #endif

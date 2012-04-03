@@ -39,6 +39,9 @@
 #include "WebProcessProxy.h"
 #include "WebURLRequest.h"
 
+#if ENABLE(INSPECTOR_SERVER)
+#include "WebInspectorServer.h"
+#endif
 #if PLATFORM(WIN)
 #include "WebView.h"
 #endif
@@ -81,6 +84,9 @@ WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     , m_inspectorView(0)
     , m_inspectorWindow(0)
 #endif
+#if ENABLE(INSPECTOR_SERVER)
+    , m_remoteInspectionPageId(0)
+#endif
 {
 }
 
@@ -90,6 +96,11 @@ WebInspectorProxy::~WebInspectorProxy()
 
 void WebInspectorProxy::invalidate()
 {
+#if ENABLE(INSPECTOR_SERVER)
+    if (m_remoteInspectionPageId)
+        WebInspectorServer::shared().unregisterPage(m_remoteInspectionPageId);
+#endif
+
     m_page->close();
     didClose();
 
@@ -256,6 +267,29 @@ static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFr
     webInspectorProxy->page()->loadURLRequest(toImpl(requestRef));
 }
 
+#if ENABLE(INSPECTOR_SERVER)
+void WebInspectorProxy::enableRemoteInspection()
+{
+    if (!m_remoteInspectionPageId)
+        m_remoteInspectionPageId = WebInspectorServer::shared().registerPage(this);
+}
+
+void WebInspectorProxy::remoteFrontendConnected()
+{
+    m_page->process()->send(Messages::WebInspector::RemoteFrontendConnected(), m_page->pageID());
+}
+
+void WebInspectorProxy::remoteFrontendDisconnected()
+{
+    m_page->process()->send(Messages::WebInspector::RemoteFrontendDisconnected(), m_page->pageID());
+}
+
+void WebInspectorProxy::dispatchMessageFromRemoteFrontend(const String& message)
+{
+    m_page->process()->send(Messages::WebInspector::DispatchMessageFromRemoteFrontend(message), m_page->pageID());
+}
+#endif
+
 // Called by WebInspectorProxy messages
 void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters& inspectorPageParameters)
 {
@@ -347,6 +381,14 @@ bool WebInspectorProxy::shouldOpenAttached()
 {
     return inspectorPageGroup()->preferences()->inspectorStartsAttached() && canAttach();
 }
+
+#if ENABLE(INSPECTOR_SERVER)
+void WebInspectorProxy::sendMessageToRemoteFrontend(const String& message)
+{
+    ASSERT(m_remoteInspectionPageId);
+    WebInspectorServer::shared().sendMessageOverConnection(m_remoteInspectionPageId, message);
+}
+#endif
 
 } // namespace WebKit
 

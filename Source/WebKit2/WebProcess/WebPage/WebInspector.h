@@ -61,6 +61,14 @@ public:
     void startPageProfiling();
     void stopPageProfiling();
 
+#if ENABLE(INSPECTOR_SERVER)
+    bool hasRemoteFrontendConnected() const { return m_remoteFrontendConnected; }
+    void sendMessageToRemoteFrontend(const String& message);
+    void dispatchMessageFromRemoteFrontend(const String& message);
+    void remoteFrontendConnected();
+    void remoteFrontendDisconnected();
+#endif
+
 #if PLATFORM(MAC)
     void setInspectorUsesWebKitUserInterface(bool);
 #endif
@@ -110,6 +118,9 @@ private:
     WebInspectorFrontendClient* m_frontendClient;
 #if PLATFORM(MAC)
     String m_localizedStringsURL;
+#endif
+#if ENABLE(INSPECTOR_SERVER)
+    bool m_remoteFrontendConnected;
 #endif
 };
 

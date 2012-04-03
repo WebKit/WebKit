@@ -89,10 +89,19 @@ bool WebInspectorClient::sendMessageToFrontend(const String& message)
     WebInspector* inspector = m_page->inspector();
     if (!inspector)
         return false;
+
+#if ENABLE(INSPECTOR_SERVER)
+    if (inspector->hasRemoteFrontendConnected()) {
+        inspector->sendMessageToRemoteFrontend(message);
+        return true;
+    }
+#endif
+
     WebPage* inspectorPage = inspector->inspectorPage();
-    if (!inspectorPage)
-        return false;
-    return doDispatchMessageOnFrontendPage(inspectorPage->corePage(), message);
+    if (inspectorPage)
+        return doDispatchMessageOnFrontendPage(inspectorPage->corePage(), message);
+
+    return false;
 }
 
 void WebInspectorClient::pageOverlayDestroyed(PageOverlay*)

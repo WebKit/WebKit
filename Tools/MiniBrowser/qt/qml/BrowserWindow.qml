@@ -314,6 +314,7 @@ Rectangle {
         experimental.authenticationDialog: AuthenticationDialog { }
         experimental.proxyAuthenticationDialog: ProxyAuthenticationDialog { }
         experimental.filePicker: FilePicker { }
+        experimental.preferences.developerExtrasEnabled: true
         experimental.databaseQuotaDialog: Item {
             Timer {
                 interval: 1

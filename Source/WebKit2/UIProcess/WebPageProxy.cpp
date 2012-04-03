@@ -339,6 +339,11 @@ void WebPageProxy::initializeWebPage()
     m_drawingArea = m_pageClient->createDrawingAreaProxy();
     ASSERT(m_drawingArea);
 
+#if ENABLE(INSPECTOR_SERVER)
+    if (m_pageGroup->preferences()->developerExtrasEnabled())
+        inspector()->enableRemoteInspection();
+#endif
+
     process()->send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters()), 0);
 }
 
@@ -1570,6 +1575,11 @@ void WebPageProxy::preferencesDidChange()
 {
     if (!isValid())
         return;
+
+#if ENABLE(INSPECTOR_SERVER)
+    if (m_pageGroup->preferences()->developerExtrasEnabled())
+        inspector()->enableRemoteInspection();
+#endif
 
     // FIXME: It probably makes more sense to send individual preference changes.
     // However, WebKitTestRunner depends on getting a preference change notification

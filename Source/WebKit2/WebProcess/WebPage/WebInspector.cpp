@@ -50,6 +50,9 @@ WebInspector::WebInspector(WebPage* page)
     : m_page(page)
     , m_inspectorPage(0)
     , m_frontendClient(0)
+#if ENABLE(INSPECTOR_SERVER)
+    , m_remoteFrontendConnected(false)
+#endif
 {
 }
 
@@ -235,6 +238,36 @@ void WebInspector::updateDockingAvailability()
     if (m_frontendClient)
         m_frontendClient->setDockingUnavailable(!m_frontendClient->canAttachWindow());
 }
+
+#if ENABLE(INSPECTOR_SERVER)
+void WebInspector::sendMessageToRemoteFrontend(const String& message)
+{
+    ASSERT(m_remoteFrontendConnected);
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::SendMessageToRemoteFrontend(message), m_page->pageID());
+}
+
+void WebInspector::dispatchMessageFromRemoteFrontend(const String& message)
+{
+    m_page->corePage()->inspectorController()->dispatchMessageFromFrontend(message);
+}
+
+void WebInspector::remoteFrontendConnected()
+{
+    ASSERT(!m_remoteFrontendConnected);
+    // Switching between in-process and remote inspectors isn't supported yet.
+    ASSERT(!m_inspectorPage);
+
+    m_page->corePage()->inspectorController()->connectFrontend();
+    m_remoteFrontendConnected = true;
+}
+
+void WebInspector::remoteFrontendDisconnected()
+{
+    ASSERT(m_remoteFrontendConnected);
+    m_page->corePage()->inspectorController()->disconnectFrontend();
+    m_remoteFrontendConnected = false;
+}
+#endif
 
 } // namespace WebKit
 

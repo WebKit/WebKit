@@ -1,3 +1,53 @@
+2012-04-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Enable and connect the WebInspectorServer with WebKit2 pages.
+        https://bugs.webkit.org/show_bug.cgi?id=73094
+
+        Reviewed by Simon Hausmann.
+
+        Pages are registered/unregistered as they are created/destroyed, if they have
+        developer extras enabled. The server is run on the UI process and communicates
+        with the web process through IPC for each message between the inspector
+        controller and the remote frontend.
+
+        Includes the server spawning logic for the Qt port, the server is
+        started through an environment variable specifying the interface and
+        port to bind the server to, by default on 127.0.0.1.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        (WebKit::WebInspectorProxy::invalidate):
+        (WebKit):
+        (WebKit::WebInspectorProxy::enableRemoteInspection):
+        (WebKit::WebInspectorProxy::remoteFrontendConnected):
+        (WebKit::WebInspectorProxy::remoteFrontendDisconnected):
+        (WebKit::WebInspectorProxy::dispatchMessageFromRemoteFrontend):
+        (WebKit::WebInspectorProxy::sendMessageToRemoteFrontend):
+        * UIProcess/WebInspectorProxy.h:
+        (WebInspectorProxy):
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::preferencesDidChange):
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit::initInspectorServer):
+        (WebKit):
+        (WebKit::globalInitialization):
+        (WebKit::QtWebContext::create):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::sendMessageToFrontend):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::WebInspector):
+        (WebKit):
+        (WebKit::WebInspector::sendMessageToRemoteFrontend):
+        (WebKit::WebInspector::dispatchMessageFromRemoteFrontend):
+        (WebKit::WebInspector::remoteFrontendConnected):
+        (WebKit::WebInspector::remoteFrontendDisconnected):
+        * WebProcess/WebPage/WebInspector.h:
+        (WebInspector):
+        (WebKit::WebInspector::hasRemoteFrontendConnected):
+        * WebProcess/WebPage/WebInspector.messages.in:
+
 2012-03-29  Joseph Pecoraro  <joepeck@webkit.org> and Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         WebInspectorServer for WebKit2.

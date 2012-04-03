@@ -32,6 +32,10 @@ messages -> WebInspectorProxy {
     Attach()
     Detach()
     SetAttachedWindowHeight(unsigned height)
+
+#if ENABLE(INSPECTOR_SERVER)
+    SendMessageToRemoteFrontend(WTF::String message)
+#endif
 }
 
 #endif
