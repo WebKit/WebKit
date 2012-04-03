@@ -1976,7 +1976,7 @@ WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     , m_identifier(generateFrameIdentifier())
     , m_inSameDocumentHistoryLoad(false)
 {
-    PlatformSupport::incrementStatsCounter(webFrameActiveCount);
+    WebKit::Platform::current()->incrementStatsCounter(webFrameActiveCount);
     frameCount++;
 }
 

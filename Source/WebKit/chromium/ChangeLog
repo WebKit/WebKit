@@ -1,3 +1,15 @@
+2012-04-03  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Call incrementStatsCounter directly
+        https://bugs.webkit.org/show_bug.cgi?id=83023
+
+        Reviewed by Kentaro Hara.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::WebFrameImpl):
+
 2012-04-03  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Canvas2DLayerChromium::updateCompositorResources should flush after copying

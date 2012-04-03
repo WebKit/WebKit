@@ -713,11 +713,6 @@ void PlatformSupport::stopSharedTimer()
 
 // StatsCounters --------------------------------------------------------------
 
-void PlatformSupport::incrementStatsCounter(const char* name)
-{
-    webKitPlatformSupport()->incrementStatsCounter(name);
-}
-
 void PlatformSupport::histogramCustomCounts(const char* name, int sample, int min, int max, int bucketCount)
 {
     webKitPlatformSupport()->histogramCustomCounts(name, sample, min, max, bucketCount);

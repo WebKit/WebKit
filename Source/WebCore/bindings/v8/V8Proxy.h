@@ -46,7 +46,7 @@
 #include <wtf/text/TextPosition.h>
 
 #if defined(ENABLE_DOM_STATS_COUNTERS) && PLATFORM(CHROMIUM)
-#define INC_STATS(name) PlatformSupport::incrementStatsCounter(name)
+#define INC_STATS(name) webkitPlatformSupport()->incrementStatsCounter(name)
 #else
 #define INC_STATS(name)
 #endif
