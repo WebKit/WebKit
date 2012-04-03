@@ -1,19 +1,13 @@
 <body>
+<video><source></source></video>
 <script src=media-file.js></script>
 <script src=video-test.js></script>
-<div id=panel></div>
 <script>
-    var panel = document.getElementById("panel");
     var mediaFile = findMediaFile("video", "content/test");
-    panel.innerHTML = "<video src=" + mediaFile + " controls><source src=content/error.mpeg></video>";
-</script>
-<script>
-
-    video = mediaElement = document.getElementsByTagName('video')[0];
-
     waitForEvent('loadstart', function () { 
         testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(mediaFile));
         endTest();
     } );
-
+    document.getElementsByTagName('source')[0].src = "content/error.mpeg";
+    mediaElement.src = mediaFile;
 </script>
