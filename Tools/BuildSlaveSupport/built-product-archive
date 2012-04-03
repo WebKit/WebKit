@@ -105,7 +105,7 @@ def createZip(directoryToZip, configuration):
             raise
 
     if sys.platform == 'darwin':
-        return subprocess.call(["ditto", "-c", "-k", "--keepParent", "--sequesterRsrc", directoryToZip, archiveFile])
+        return subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", directoryToZip, archiveFile])
     elif sys.platform == 'cygwin':
         return subprocess.call(["zip", "-r", archiveFile, "bin"], cwd=directoryToZip)
     elif sys.platform == 'win32':
@@ -121,7 +121,7 @@ def archiveBuiltProduct(configuration, platform):
     configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
 
     if platform == 'mac':
-        return createZip(configurationBuildDirectory, configuration)
+        return createZip(_buildDirectory, configuration)
     elif platform == 'win':
         binDirectory = os.path.join(configurationBuildDirectory, "bin")
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")
@@ -167,27 +167,39 @@ def archiveBuiltProduct(configuration, platform):
         copyBuildFiles(configurationBuildDirectory, thinDirectory)
         if createZip(thinDirectory, configuration):
             return 1
-        
+
+
+def unzipArchive(directoryToExtractTo, configuration):
+    archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
+    assert os.path.isdir(archiveDir)
+    archiveFile = os.path.join(archiveDir, configuration + ".zip")
+
+    if sys.platform == 'darwin':
+        if subprocess.call(["ditto", "-x", "-k", archiveFile, directoryToExtractTo]):
+            return 1
+    elif sys.platform == 'cygwin' or sys.platform.startswith('linux'):
+        if subprocess.call(["unzip", "-o", archiveFile], cwd=directoryToExtractTo):
+            return 1
+    elif sys.platform == 'win32':
+        archive = zipfile.ZipFile(archiveFile, "r")
+        archive.extractall(directoryToExtractTo)
+
+    os.unlink(archiveFile)
+
 
 def extractBuiltProduct(configuration, platform):
-    assert platform in ('mac', 'win', 'qt', 'gtk', 'efl')
+    assert platform in ('mac', 'win', 'qt', 'gtk', 'efl', 'chromium')
 
     archiveFile = os.path.join(_buildDirectory, configuration + ".zip")
     configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
 
+    removeDirectoryIfExists(_buildDirectory)
+    os.makedirs(_buildDirectory)
+
     if platform == 'mac':
-        if os.path.isdir(configurationBuildDirectory):
-            shutil.rmtree(configurationBuildDirectory)
-
-        if subprocess.call(["ditto", "-x", "-k", archiveFile, _buildDirectory]):
-            return 1
-        os.unlink(archiveFile)
-
+        return unzipArchive(_buildDirectory, configuration)
     elif platform == 'win':
         binDirectory = os.path.join(configurationBuildDirectory, "bin")
-        if os.path.isdir(binDirectory):
-            shutil.rmtree(binDirectory)
-
         os.makedirs(binDirectory)
 
         safariPath = subprocess.Popen('cygpath -w "$PROGRAMFILES"/Safari',
@@ -196,16 +208,11 @@ def extractBuiltProduct(configuration, platform):
         if subprocess.call('cp -R "%s"/*.dll "%s"/*.resources %s' % (safariPath, safariPath, binDirectory), shell=True):
             return 1
 
-        if subprocess.call(["unzip", "-o", archiveFile], cwd=configurationBuildDirectory):
-            return 1
+        return unzipArchive(configurationBuildDirectory, configuration)
+    elif platform == 'qt' or platform == 'gtk' or platform == 'efl' or platform == 'chromium':
+        os.makedirs(configurationBuildDirectory)
+        return unzipArchive(configurationBuildDirectory, configuration)
 
-    elif platform == 'qt' or platform == 'gtk' or platform == 'efl':
-        if os.path.isdir(configurationBuildDirectory):
-            shutil.rmtree(configurationBuildDirectory)
-
-        if subprocess.call(["unzip", "-o", archiveFile, "-d", configurationBuildDirectory], cwd=_buildDirectory):
-            return 1
-        os.unlink(archiveFile)
 
 if __name__ == '__main__':
     sys.exit(main())

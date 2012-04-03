@@ -1,3 +1,28 @@
+2012-04-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium testers should extract builds instead of building on their own
+        https://bugs.webkit.org/show_bug.cgi?id=82996
+
+        Reviewed by Tony Chang.
+
+        Make Chromium builders triggger Chromium testers and make testers download and extract builds
+        from the buildbot master instead of building binaries on their own.
+
+        Add download-built-product to wrap curl used in the download-built-product step since Windows
+        does not provide "curl" natively.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Add new triggerables for Chromium testers and make
+        Chromium builders trigger them. Also change the type of Chromium testers from NewBuildAndTest to Test.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (DownloadBuiltProduct): Call download-built-product instead of curl.
+        * BuildSlaveSupport/built-product-archive:
+        (createZip): Don't zip the parent configuration build directory like "release" and "debug". While Mac port
+        needs this behavior for compatibility reasons, Chromium Mac port doesn't want this behavior.
+        (archiveBuiltProduct): Zip the configuration build directory on Mac port.
+        (unzipArchive): Extracted. Use ditto on Mac, unzip on linux and cygwin, and zipfile package on Windows.
+        (extractBuiltProduct): Refactor the code to use removeDirectoryIfExists and unzipArchive. Support Chromium.
+        * BuildSlaveSupport/download-built-product: Added to wrap curl which isn't available on Windows.
+
 2012-04-03  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Tools/Scripts/run-gtk-tests should not force you to use the WebKit jhbuild
