@@ -33,7 +33,7 @@ public:
     virtual void setBaseVal(const unsigned& property, ExceptionCode& ec)
     {
         // All SVG enumeration values, that are allowed to be set via SVG DOM start with 1, 0 corresponds to unknown and is not settable through SVG DOM.
-        if (property <= 0 || property > SVGPropertyTraits<EnumType>::highestEnumValue()) {
+        if (!property || property > SVGPropertyTraits<EnumType>::highestEnumValue()) {
             ec = SVGException::SVG_INVALID_VALUE_ERR;
             return;
         }
