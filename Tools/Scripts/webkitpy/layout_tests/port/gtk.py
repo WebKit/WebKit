@@ -170,7 +170,7 @@ class GtkPort(WebKitPort):
                 coredump_path = list(reversed(sorted(dumps)))[0]
                 crash_log, errors = self._get_gdb_output(coredump_path)
 
-        stderr_lines = errors + (stderr or '<empty>').decode('utf8', errors='ignore').splitlines()
+        stderr_lines = errors + (stderr or '<empty>').decode('utf8', 'ignore').splitlines()
         errors_str = '\n'.join(('STDERR: ' + l) for l in stderr_lines)
         if not crash_log:
             if not log_directory:

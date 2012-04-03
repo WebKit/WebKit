@@ -1,5 +1,12 @@
 2012-04-03  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, test-webkitpy build fix after r113037.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort._get_crash_log):
+
+2012-04-03  Philippe Normand  <pnormand@igalia.com>
+
         [GTK] crash log reports support
         https://bugs.webkit.org/show_bug.cgi?id=81659
 
