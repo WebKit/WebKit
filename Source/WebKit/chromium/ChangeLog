@@ -1,3 +1,10 @@
+2012-04-03  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Not reviewed. Follow up to inspector's r113032: change provisional method signature a bit.
+
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::save):
+
 2012-04-03  Bolin Hsu  <bhsu@google.com>
 
         [Chromium] Add click count and modifiers to the factory method of mouse event.
