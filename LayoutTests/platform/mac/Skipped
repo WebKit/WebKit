@@ -758,6 +758,7 @@ inspector/styles/svg-style.xhtml
 
 # https://bugs.webkit.org/show_bug.cgi?id=82979
 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html
+canvas/philip/tests/2d.text.draw.align.center.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82980
 http/tests/navigation/back-twice-without-commit.html
