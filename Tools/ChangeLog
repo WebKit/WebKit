@@ -1,3 +1,26 @@
+2012-04-03  Simon Fraser  <simon.fraser@apple.com>
+
+        WebKitTestRunner's EventSender is leaky
+        https://bugs.webkit.org/show_bug.cgi?id=83099
+
+        Reviewed by Beth Dakin.
+        
+        Fix leaks of WKNumbers by using the adoptWK idiom, and make
+        all the code consistent.
+
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::mouseDown):
+        (WTR::EventSendingController::mouseUp):
+        (WTR::EventSendingController::mouseMoveTo):
+        (WTR::EventSendingController::leapForward):
+        (WTR::EventSendingController::keyDown):
+        (WTR::EventSendingController::mouseScrollBy):
+        (WTR::EventSendingController::addTouchPoint):
+        (WTR::EventSendingController::updateTouchPoint):
+        (WTR::EventSendingController::setTouchModifier):
+        (WTR::EventSendingController::releaseTouchPoint):
+        (WTR::EventSendingController::cancelTouchPoint):
+
 2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix. Don't use old-run-webkit-tests on Chromium Windows bots.

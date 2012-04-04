@@ -111,7 +111,7 @@ JSClassRef EventSendingController::wrapperClass()
     return JSEventSendingController::eventSendingControllerClass();
 }
 
-void EventSendingController::mouseDown(int button, JSValueRef modifierArray)
+void EventSendingController::mouseDown(int button, JSValueRef modifierArray) 
 {
     WKBundlePageRef page = InjectedBundle::shared().page()->page();
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(page);
@@ -130,11 +130,11 @@ void EventSendingController::mouseDown(int button, JSValueRef modifierArray)
     WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
 
     WKRetainPtr<WKStringRef> buttonKey = adoptWK(WKStringCreateWithUTF8CString("Button"));
-    WKRetainPtr<WKUInt64Ref> buttonRef = WKUInt64Create(button);
+    WKRetainPtr<WKUInt64Ref> buttonRef = adoptWK(WKUInt64Create(button));
     WKDictionaryAddItem(EventSenderMessageBody.get(), buttonKey.get(), buttonRef.get());
 
     WKRetainPtr<WKStringRef> modifiersKey = adoptWK(WKStringCreateWithUTF8CString("Modifiers"));
-    WKRetainPtr<WKUInt64Ref> modifiersRef = WKUInt64Create(modifiers);
+    WKRetainPtr<WKUInt64Ref> modifiersRef = adoptWK(WKUInt64Create(modifiers));
     WKDictionaryAddItem(EventSenderMessageBody.get(), modifiersKey.get(), modifiersRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
@@ -159,12 +159,12 @@ void EventSendingController::mouseUp(int button, JSValueRef modifierArray)
     WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("MouseUp"));
     WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
 
-    WKRetainPtr<WKStringRef> buttonKey = adoptWK(WKStringCreateWithUTF8CString("Button"));
-    WKRetainPtr<WKUInt64Ref> buttonRef = WKUInt64Create(button);
+    WKRetainPtr<WKStringRef> buttonKey(AdoptWK, WKStringCreateWithUTF8CString("Button"));
+    WKRetainPtr<WKUInt64Ref> buttonRef(AdoptWK, WKUInt64Create(button));
     WKDictionaryAddItem(EventSenderMessageBody.get(), buttonKey.get(), buttonRef.get());
 
-    WKRetainPtr<WKStringRef> modifiersKey = adoptWK(WKStringCreateWithUTF8CString("Modifiers"));
-    WKRetainPtr<WKUInt64Ref> modifiersRef = WKUInt64Create(modifiers);
+    WKRetainPtr<WKStringRef> modifiersKey(AdoptWK, WKStringCreateWithUTF8CString("Modifiers"));
+    WKRetainPtr<WKUInt64Ref> modifiersRef(AdoptWK, WKUInt64Create(modifiers));
     WKDictionaryAddItem(EventSenderMessageBody.get(), modifiersKey.get(), modifiersRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
@@ -185,12 +185,12 @@ void EventSendingController::mouseMoveTo(int x, int y)
     WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("MouseMoveTo"));
     WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
 
-    WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
-    WKRetainPtr<WKDoubleRef> xRef = WKDoubleCreate(x);
+    WKRetainPtr<WKStringRef> xKey(AdoptWK, WKStringCreateWithUTF8CString("X"));
+    WKRetainPtr<WKDoubleRef> xRef(AdoptWK, WKDoubleCreate(x));
     WKDictionaryAddItem(EventSenderMessageBody.get(), xKey.get(), xRef.get());
 
-    WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
-    WKRetainPtr<WKDoubleRef> yRef = WKDoubleCreate(y);
+    WKRetainPtr<WKStringRef> yKey(AdoptWK, WKStringCreateWithUTF8CString("Y"));
+    WKRetainPtr<WKDoubleRef> yRef(AdoptWK, WKDoubleCreate(y));
     WKDictionaryAddItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
@@ -209,8 +209,8 @@ void EventSendingController::leapForward(int milliseconds)
     WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("LeapForward"));
     WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
 
-    WKRetainPtr<WKStringRef> timeKey = adoptWK(WKStringCreateWithUTF8CString("TimeInMilliseconds"));
-    WKRetainPtr<WKUInt64Ref> timeRef = WKUInt64Create(milliseconds);
+    WKRetainPtr<WKStringRef> timeKey(AdoptWK, WKStringCreateWithUTF8CString("TimeInMilliseconds"));
+    WKRetainPtr<WKUInt64Ref> timeRef(AdoptWK, WKUInt64Create(milliseconds));
     WKDictionaryAddItem(EventSenderMessageBody.get(), timeKey.get(), timeRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
@@ -231,15 +231,15 @@ void EventSendingController::keyDown(JSStringRef key, JSValueRef modifierArray, 
     WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("KeyDown"));
     WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
 
-    WKRetainPtr<WKStringRef> keyKey = adoptWK(WKStringCreateWithUTF8CString("Key"));
+    WKRetainPtr<WKStringRef> keyKey(AdoptWK, WKStringCreateWithUTF8CString("Key"));
     WKDictionaryAddItem(EventSenderMessageBody.get(), keyKey.get(), toWK(key).get());
 
-    WKRetainPtr<WKStringRef> modifiersKey = adoptWK(WKStringCreateWithUTF8CString("Modifiers"));
-    WKRetainPtr<WKUInt64Ref> modifiersRef = WKUInt64Create(modifiers);
+    WKRetainPtr<WKStringRef> modifiersKey(AdoptWK, WKStringCreateWithUTF8CString("Modifiers"));
+    WKRetainPtr<WKUInt64Ref> modifiersRef(AdoptWK, WKUInt64Create(modifiers));
     WKDictionaryAddItem(EventSenderMessageBody.get(), modifiersKey.get(), modifiersRef.get());
 
-    WKRetainPtr<WKStringRef> locationKey = adoptWK(WKStringCreateWithUTF8CString("Location"));
-    WKRetainPtr<WKUInt64Ref> locationRef = WKUInt64Create(location);
+    WKRetainPtr<WKStringRef> locationKey(AdoptWK, WKStringCreateWithUTF8CString("Location"));
+    WKRetainPtr<WKUInt64Ref> locationRef(AdoptWK, WKUInt64Create(location));
     WKDictionaryAddItem(EventSenderMessageBody.get(), locationKey.get(), locationRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
@@ -254,12 +254,12 @@ void EventSendingController::mouseScrollBy(int x, int y)
     WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("MouseScrollBy"));
     WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
 
-    WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
-    WKRetainPtr<WKDoubleRef> xRef = WKDoubleCreate(x);
+    WKRetainPtr<WKStringRef> xKey(AdoptWK, WKStringCreateWithUTF8CString("X"));
+    WKRetainPtr<WKDoubleRef> xRef(AdoptWK, WKDoubleCreate(x));
     WKDictionaryAddItem(EventSenderMessageBody.get(), xKey.get(), xRef.get());
 
-    WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
-    WKRetainPtr<WKDoubleRef> yRef = WKDoubleCreate(y);
+    WKRetainPtr<WKStringRef> yKey(AdoptWK, WKStringCreateWithUTF8CString("Y"));
+    WKRetainPtr<WKDoubleRef> yRef(AdoptWK, WKDoubleCreate(y));
     WKDictionaryAddItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
@@ -333,12 +333,12 @@ void EventSendingController::addTouchPoint(int x, int y)
     WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("AddTouchPoint"));
     WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
 
-    WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
-    WKRetainPtr<WKUInt64Ref> xRef = WKUInt64Create(x);
+    WKRetainPtr<WKStringRef> xKey(AdoptWK, WKStringCreateWithUTF8CString("X"));
+    WKRetainPtr<WKUInt64Ref> xRef(AdoptWK, WKUInt64Create(x));
     WKDictionaryAddItem(EventSenderMessageBody.get(), xKey.get(), xRef.get());
 
-    WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
-    WKRetainPtr<WKUInt64Ref> yRef = WKUInt64Create(y);
+    WKRetainPtr<WKStringRef> yKey(AdoptWK, WKStringCreateWithUTF8CString("Y"));
+    WKRetainPtr<WKUInt64Ref> yRef(AdoptWK, WKUInt64Create(y));
     WKDictionaryAddItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
@@ -353,16 +353,16 @@ void EventSendingController::updateTouchPoint(int index, int x, int y)
     WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("UpdateTouchPoint"));
     WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
 
-    WKRetainPtr<WKStringRef> indexKey = adoptWK(WKStringCreateWithUTF8CString("Index"));
-    WKRetainPtr<WKUInt64Ref> indexRef = WKUInt64Create(index);
+    WKRetainPtr<WKStringRef> indexKey(AdoptWK, WKStringCreateWithUTF8CString("Index"));
+    WKRetainPtr<WKUInt64Ref> indexRef(AdoptWK, WKUInt64Create(index));
     WKDictionaryAddItem(EventSenderMessageBody.get(), indexKey.get(), indexRef.get());
 
-    WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
-    WKRetainPtr<WKUInt64Ref> xRef = WKUInt64Create(x);
+    WKRetainPtr<WKStringRef> xKey(AdoptWK, WKStringCreateWithUTF8CString("X"));
+    WKRetainPtr<WKUInt64Ref> xRef(AdoptWK, WKUInt64Create(x));
     WKDictionaryAddItem(EventSenderMessageBody.get(), xKey.get(), xRef.get());
 
-    WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
-    WKRetainPtr<WKUInt64Ref> yRef = WKUInt64Create(y);
+    WKRetainPtr<WKStringRef> yKey(AdoptWK, WKStringCreateWithUTF8CString("Y"));
+    WKRetainPtr<WKUInt64Ref> yRef(AdoptWK, WKUInt64Create(y));
     WKDictionaryAddItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
@@ -387,12 +387,12 @@ void EventSendingController::setTouchModifier(const JSStringRef &modifier, bool 
     if (JSStringIsEqualToUTF8CString(modifier, "meta"))
         mod = kWKEventModifiersMetaKey;
 
-    WKRetainPtr<WKStringRef> modifierKey = adoptWK(WKStringCreateWithUTF8CString("Modifier"));
-    WKRetainPtr<WKUInt64Ref> modifierRef = WKUInt64Create(mod);
+    WKRetainPtr<WKStringRef> modifierKey(AdoptWK, WKStringCreateWithUTF8CString("Modifier"));
+    WKRetainPtr<WKUInt64Ref> modifierRef(AdoptWK, WKUInt64Create(mod));
     WKDictionaryAddItem(EventSenderMessageBody.get(), modifierKey.get(), modifierRef.get());
 
-    WKRetainPtr<WKStringRef> enableKey = adoptWK(WKStringCreateWithUTF8CString("Enable"));
-    WKRetainPtr<WKUInt64Ref> enableRef = WKUInt64Create(enable);
+    WKRetainPtr<WKStringRef> enableKey(AdoptWK, WKStringCreateWithUTF8CString("Enable"));
+    WKRetainPtr<WKUInt64Ref> enableRef(AdoptWK, WKUInt64Create(enable));
     WKDictionaryAddItem(EventSenderMessageBody.get(), enableKey.get(), enableRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
@@ -467,8 +467,8 @@ void EventSendingController::releaseTouchPoint(int index)
     WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("ReleaseTouchPoint"));
     WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
 
-    WKRetainPtr<WKStringRef> indexKey = adoptWK(WKStringCreateWithUTF8CString("Index"));
-    WKRetainPtr<WKUInt64Ref> indexRef = WKUInt64Create(index);
+    WKRetainPtr<WKStringRef> indexKey(AdoptWK, WKStringCreateWithUTF8CString("Index"));
+    WKRetainPtr<WKUInt64Ref> indexRef(AdoptWK, WKUInt64Create(index));
     WKDictionaryAddItem(EventSenderMessageBody.get(), indexKey.get(), indexRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
@@ -483,8 +483,8 @@ void EventSendingController::cancelTouchPoint(int index)
     WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("CancelTouchPoint"));
     WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
 
-    WKRetainPtr<WKStringRef> indexKey = adoptWK(WKStringCreateWithUTF8CString("Index"));
-    WKRetainPtr<WKUInt64Ref> indexRef = WKUInt64Create(index);
+    WKRetainPtr<WKStringRef> indexKey(AdoptWK, WKStringCreateWithUTF8CString("Index"));
+    WKRetainPtr<WKUInt64Ref> indexRef(AdoptWK, WKUInt64Create(index));
     WKDictionaryAddItem(EventSenderMessageBody.get(), indexKey.get(), indexRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
