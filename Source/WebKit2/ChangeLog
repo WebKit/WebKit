@@ -1,3 +1,15 @@
+2012-04-04  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Unable to zoom to some areas.
+        https://bugs.webkit.org/show_bug.cgi?id=83144
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remember to convert touch-area to touch-point radius.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::findZoomableAreaForPoint):
+
 2012-04-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Improve the tap gesture recognizer

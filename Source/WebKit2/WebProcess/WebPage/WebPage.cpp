@@ -2519,7 +2519,7 @@ void WebPage::findZoomableAreaForPoint(const WebCore::IntPoint& point, const Web
     Frame* mainframe = m_mainFrame->coreFrame();
     Node* node = 0;
     IntRect zoomableArea;
-    mainframe->eventHandler()->bestZoomableAreaForTouchPoint(point, area, zoomableArea, node);
+    mainframe->eventHandler()->bestZoomableAreaForTouchPoint(point, IntSize(area.width() / 2, area.height() / 2), zoomableArea, node);
 
     ASSERT(node);
     if (node->document() && node->document()->frame() && node->document()->frame()->view()) {
