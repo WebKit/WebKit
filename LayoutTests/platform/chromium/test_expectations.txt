@@ -447,6 +447,9 @@ WONTFIX SKIP : fast/profiler = FAIL TIMEOUT
 // is implemented.
 WONTFIX SKIP : storage/domstorage/localstorage/storagetracker = PASS TIMEOUT FAIL
 
+// Different quota model, in Chromium sessionstorage is subject to limits too.
+WONTFIX SKIP: storage/domstorage/quota.html = PASS FAIL
+
 // test_shell does not support shared workers
 WONTFIX SKIP : fast/workers/shared-worker-context-gc.html = TIMEOUT
 WONTFIX SKIP : fast/workers/shared-worker-event-listener.html = TIMEOUT
