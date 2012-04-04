@@ -139,12 +139,10 @@ void TextTrack::setMode(unsigned short mode, ExceptionCode& ec)
     if (m_mode == static_cast<Mode>(mode))
         return;
 
-    // If the new value is 2
     //  ... Note: If the mode had been showing by default, this will change it to showing, 
     // even though the value of mode would appear not to change.
     m_mode = static_cast<Mode>(mode);
-    if (m_mode == TextTrack::SHOWING)
-        setShowingByDefault(false);
+    setShowingByDefault(false);
 
     if (m_client)
         m_client->textTrackModeChanged(this);

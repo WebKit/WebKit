@@ -1,0 +1,30 @@
+Tests that the TextTrack mode attribute is appropriately set.
+
+
+++ Test default attribute value
+EXPECTED (textTrack.mode == '2') OK
+EXPECTED (video.textTracks[0].mode == '2') OK
+
+*** Set to bogus value, should return default
+TEST(textTrack.mode = '37') THROWS(DOMException.INVALID_ACCESS_ERR) OK
+EXPECTED (textTrack.mode == '2') OK
+EXPECTED (video.textTracks[0].mode == '2') OK
+
+*** Set to known values
+++ 'TextTrack.DISABLED'
+RUN(textTrack.mode = '0')
+EXPECTED (textTrack.mode == '0') OK
+EXPECTED (video.textTracks[0].mode == '0') OK
+
+++ 'TextTrack.HIDDEN'
+RUN(textTrack.mode = '1')
+EXPECTED (textTrack.mode == '1') OK
+EXPECTED (video.textTracks[0].mode == '1') OK
+
+++ 'TextTrack.SHOWING'
+RUN(textTrack.mode = '2')
+EXPECTED (textTrack.mode == '2') OK
+EXPECTED (video.textTracks[0].mode == '2') OK
+
+END OF TEST
+

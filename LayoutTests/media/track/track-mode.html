@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var textTrack;
+            function setMode(value)
+            {
+                run("textTrack.mode = '" + value + "'");
+                testExpected("textTrack.mode", value);
+                testExpected("video.textTracks[0].mode", value);
+                consoleWrite("");
+            }
+
+            function start()
+            {
+                findMediaElement();
+                consoleWrite("");
+
+                textTrack = document.getElementById('track_1').track;
+
+                consoleWrite("<b>++ Test default attribute value</b>");
+                testExpected("textTrack.mode", TextTrack.SHOWING);
+                testExpected("video.textTracks[0].mode", TextTrack.SHOWING);
+                consoleWrite("");
+
+                consoleWrite("<b>*** Set to bogus value, should return default</b>");
+                var value = 37;
+                testException("textTrack.mode = '" + value + "'", "DOMException.INVALID_ACCESS_ERR");
+                testExpected("textTrack.mode", TextTrack.SHOWING);
+                testExpected("video.textTracks[0].mode", TextTrack.SHOWING);
+                consoleWrite("");
+
+                consoleWrite("<b>*** Set to known values</b>");
+                consoleWrite("<b>++ 'TextTrack.DISABLED'</b>");
+                setMode(TextTrack.DISABLED);
+
+                consoleWrite("<b>++ 'TextTrack.HIDDEN'</b>");
+                setMode(TextTrack.HIDDEN);
+
+                consoleWrite("<b>++ 'TextTrack.SHOWING'</b>");
+                setMode(TextTrack.SHOWING);
+
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body>
+        <p>Tests that the TextTrack mode attribute is appropriately set.</p>
+        <video>
+            <track id=track_1 src="captions-webvtt/captions.vtt" onload="start()" default>
+        </video>
+    </body>
+</html>
