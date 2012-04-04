@@ -1,3 +1,16 @@
+2012-04-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] DRT support for computedStyleIncludingVisitedInfo
+        https://bugs.webkit.org/show_bug.cgi?id=82190
+
+        Adding missing implementation computedStyleIncludingVisitedInfo to EFL's
+        LayoutTestController so that we can unskip related tests from the skip list.
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::computedStyleIncludingVisitedInfo):
+
 2012-04-04  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         Unreviewed; update my email address once again in the committers

@@ -25,6 +25,7 @@
 #include "ewk_private.h"
 
 #include <AnimationController.h>
+#include <CSSComputedStyleDeclaration.h>
 #include <DocumentLoader.h>
 #include <EditorClientEfl.h>
 #include <Eina.h>
@@ -34,6 +35,7 @@
 #include <FrameView.h>
 #include <HTMLInputElement.h>
 #include <IntRect.h>
+#include <JSCSSStyleDeclaration.h>
 #include <JSElement.h>
 #include <PrintContext.h>
 #include <RenderTreeAsText.h>
@@ -513,4 +515,20 @@ void DumpRenderTreeSupportEfl::setInteractiveFormValidationEnabled(Evas_Object* 
     WebCore::Page* corePage = EWKPrivate::corePage(ewkView);
     if (corePage)
         corePage->settings()->setInteractiveFormValidationEnabled(enabled);
+}
+
+JSValueRef DumpRenderTreeSupportEfl::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
+{
+    if (!value)
+        return JSValueMakeUndefined(context);
+
+    JSC::ExecState* exec = toJS(context);
+    JSC::JSValue jsValue = toJS(exec, value);
+    if (!jsValue.inherits(&WebCore::JSElement::s_info))
+        return JSValueMakeUndefined(context);
+
+    WebCore::JSElement* jsElement = static_cast<WebCore::JSElement*>(asObject(jsValue));
+    WebCore::Element* element = jsElement->impl();
+    RefPtr<WebCore::CSSComputedStyleDeclaration> style = WebCore::CSSComputedStyleDeclaration::create(element, true);
+    return toRef(exec, toJS(exec, jsElement->globalObject(), style.get()));
 }

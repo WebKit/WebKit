@@ -111,10 +111,9 @@ void LayoutTestController::keepWebHistory()
     notImplemented();
 }
 
-JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef)
+JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
 {
-    notImplemented();
-    return JSValueMakeUndefined(context);
+    return DumpRenderTreeSupportEfl::computedStyleIncludingVisitedInfo(context, value);
 }
 
 JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
