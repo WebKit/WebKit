@@ -2132,6 +2132,8 @@
             'bindings/v8/V8AbstractEventListener.h',
             'bindings/v8/V8Binding.cpp',
             'bindings/v8/V8Binding.h',
+            'bindings/v8/V8BindingPerContextData.cpp',
+            'bindings/v8/V8BindingPerContextData.h',
             'bindings/v8/V8Collection.cpp',
             'bindings/v8/V8Collection.h',
             'bindings/v8/V8DOMMap.cpp',

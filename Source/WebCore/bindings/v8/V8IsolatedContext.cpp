@@ -35,8 +35,8 @@
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "SecurityOrigin.h"
+#include "V8BindingPerContextData.h"
 #include "V8DOMWindow.h"
-#include "V8HiddenPropertyName.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -68,7 +68,9 @@ V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup, int wor
 
     getGlobalObject(m_context->get())->SetPointerInInternalField(V8DOMWindow::enteredIsolatedWorldIndex, this);
 
-    V8DOMWindowShell::installHiddenObjectPrototype(m_context->get());
+    m_perContextData = V8BindingPerContextData::create(m_context->get());
+    m_perContextData->init();
+
     // FIXME: This will go away once we have a windowShell for the isolated world.
     proxy->windowShell()->installDOMWindow(m_context->get(), m_frame->domWindow());
 
@@ -85,6 +87,7 @@ V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup, int wor
 
 void V8IsolatedContext::destroy()
 {
+    m_perContextData.clear();
     m_frame->loader()->client()->willReleaseScriptContext(context(), m_world->id());
     m_context->get().MakeWeak(this, &contextWeakReferenceCallback);
     m_frame = 0;

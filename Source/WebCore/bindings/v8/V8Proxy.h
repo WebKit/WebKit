@@ -60,6 +60,7 @@ namespace WebCore {
     class ScriptExecutionContext;
     class ScriptSourceCode;
     class SecurityOrigin;
+    class V8BindingPerContextData;
     class V8EventListener;
     class V8IsolatedContext;
     class WorldContextHandle;
@@ -182,6 +183,7 @@ namespace WebCore {
         // a context.
         static Frame* retrieveFrame(v8::Handle<v8::Context>);
 
+        static V8BindingPerContextData* retrievePerContextData(Frame*);
 
         // The three functions below retrieve WebFrame instances relating the
         // currently executing JavaScript. Since JavaScript can make function calls

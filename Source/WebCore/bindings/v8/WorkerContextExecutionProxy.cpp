@@ -42,7 +42,9 @@
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"
 #include "V8Binding.h"
+#include "V8BindingPerContextData.h"
 #include "V8DOMMap.h"
+#include "V8DOMWindowShell.h"
 #include "V8DedicatedWorkerContext.h"
 #include "V8Proxy.h"
 #include "V8RecursionScope.h"
@@ -102,6 +104,8 @@ void WorkerContextExecutionProxy::dispose()
     }
     m_events.clear();
 
+    m_perContextData.clear();
+
     // Dispose the context.
     if (!m_context.IsEmpty()) {
         m_context.Dispose();
@@ -149,6 +153,12 @@ bool WorkerContextExecutionProxy::initContextIfNeeded()
 
     v8::Context::Scope scope(context);
 
+    m_perContextData = V8BindingPerContextData::create(m_context);
+    if (!m_perContextData->init()) {
+        dispose();
+        return false;
+    }
+
     // Set DebugId for the new context.
     context->SetData(v8::String::New("worker"));
 
@@ -158,7 +168,7 @@ bool WorkerContextExecutionProxy::initContextIfNeeded()
     if (!m_workerContext->isDedicatedWorkerContext())
         contextType = &V8SharedWorkerContext::info;
 #endif
-    v8::Handle<v8::Function> workerContextConstructor = V8DOMWrapper::getConstructorForContext(contextType, context);
+    v8::Handle<v8::Function> workerContextConstructor = m_perContextData->constructorForType(contextType);
     v8::Local<v8::Object> jsWorkerContext = SafeAllocation::newInstance(workerContextConstructor);
     // Bail out if allocation failed.
     if (jsWorkerContext.IsEmpty()) {

@@ -743,11 +743,11 @@ END
     // Get the proxy corresponding to the DOMWindow if possible to
     // make sure that the constructor function is constructed in the
     // context of the DOMWindow and not in the context of the caller.
-    return V8DOMWrapper::getConstructor(type, V8DOMWindow::toNative(info.Holder()));
+    return V8DOMWrapper::constructorForType(type, V8DOMWindow::toNative(info.Holder()));
 END
     } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
         push(@implContentDecls, <<END);
-    return V8DOMWrapper::getConstructor(type, V8WorkerContext::toNative(info.Holder()));
+    return V8DOMWrapper::constructorForType(type, V8WorkerContext::toNative(info.Holder()));
 END
     } else {
         push(@implContentDecls, "    return v8::Handle<v8::Value>();");

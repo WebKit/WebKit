@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class SecurityOrigin;
+class V8BindingPerContextData;
 class V8Proxy;
 
 // V8IsolatedContext
@@ -96,6 +97,8 @@ public:
     SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
     void setSecurityOrigin(PassRefPtr<SecurityOrigin>);
 
+    V8BindingPerContextData* perContextData() { return m_perContextData.get(); }
+
 private:
     static v8::Handle<v8::Object> getGlobalObject(v8::Handle<v8::Context> context)
     {
@@ -117,6 +120,8 @@ private:
     RefPtr<SecurityOrigin> m_securityOrigin;
 
     Frame* m_frame;
+
+    OwnPtr<V8BindingPerContextData> m_perContextData;
 };
 
 } // namespace WebCore

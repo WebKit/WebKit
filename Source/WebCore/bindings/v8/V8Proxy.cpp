@@ -536,6 +536,14 @@ V8Proxy* V8Proxy::retrieve(ScriptExecutionContext* context)
     return retrieve(static_cast<Document*>(context)->frame());
 }
 
+V8BindingPerContextData* V8Proxy::retrievePerContextData(Frame* frame)
+{
+    V8IsolatedContext* isolatedContext;
+    if (UNLIKELY(!!(isolatedContext = V8IsolatedContext::getEntered())))
+        return isolatedContext->perContextData();
+    return V8Proxy::retrieve(frame)->windowShell()->perContextData();
+}
+
 void V8Proxy::resetIsolatedWorlds()
 {
     for (IsolatedWorldMap::iterator iter = m_isolatedWorlds.begin();

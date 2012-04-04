@@ -41,6 +41,7 @@
 #include "StylePropertySet.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
+#include "V8BindingPerContextData.h"
 #include "V8Collection.h"
 #include "V8EventListener.h"
 #include "V8EventListenerList.h"
@@ -94,67 +95,37 @@ void V8DOMWrapper::setJSWrapperForDOMNode(Node* node, v8::Persistent<v8::Object>
         getDOMNodeMap().set(node, wrapper);
 }
 
-v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, v8::Handle<v8::Value> objectPrototype)
-{
-    // A DOM constructor is a function instance created from a DOM constructor
-    // template. There is one instance per context. A DOM constructor is
-    // different from a normal function in two ways:
-    //   1) it cannot be called as constructor (aka, used to create a DOM object)
-    //   2) its __proto__ points to Object.prototype rather than
-    //      Function.prototype.
-    // The reason for 2) is that, in Safari, a DOM constructor is a normal JS
-    // object, but not a function. Hotmail relies on the fact that, in Safari,
-    // HTMLElement.__proto__ == Object.prototype.
-    v8::Handle<v8::FunctionTemplate> functionTemplate = type->getTemplate();
-    // Getting the function might fail if we're running out of
-    // stack or memory.
-    v8::TryCatch tryCatch;
-    v8::Local<v8::Function> value = functionTemplate->GetFunction();
-    if (value.IsEmpty())
-        return v8::Local<v8::Function>();
-    // Hotmail fix, see comments above.
-    if (!objectPrototype.IsEmpty())
-        value->SetPrototype(objectPrototype);
-    return value;
-}
-
-v8::Local<v8::Function> V8DOMWrapper::getConstructorForContext(WrapperTypeInfo* type, v8::Handle<v8::Context> context)
-{
-    // Enter the scope for this context to get the correct constructor.
-    v8::Context::Scope scope(context);
-
-    return getConstructor(type, V8DOMWindowShell::getHiddenObjectPrototype(context));
-}
-
-v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, DOMWindow* window)
+v8::Local<v8::Function> V8DOMWrapper::constructorForType(WrapperTypeInfo* type, DOMWindow* window)
 {
     Frame* frame = window->frame();
     if (!frame)
         return v8::Local<v8::Function>();
-
-    v8::Handle<v8::Context> context = V8Proxy::context(frame);
-    if (context.IsEmpty())
-        return v8::Local<v8::Function>();
-
-    return getConstructorForContext(type, context);
+    return V8Proxy::retrievePerContextData(frame)->constructorForType(type);
 }
 
 #if ENABLE(WORKERS)
-v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, WorkerContext*)
+v8::Local<v8::Function> V8DOMWrapper::constructorForType(WrapperTypeInfo* type, WorkerContext*)
 {
     WorkerScriptController* controller = WorkerScriptController::controllerForContext();
     WorkerContextExecutionProxy* proxy = controller ? controller->proxy() : 0;
-    if (!proxy)
-        return v8::Local<v8::Function>();
-
-    v8::Handle<v8::Context> context = proxy->context();
-    if (context.IsEmpty())
-        return v8::Local<v8::Function>();
-
-    return getConstructorForContext(type, context);
+    return proxy ? proxy->perContextData()->constructorForType(type) : v8::Local<v8::Function>();
 }
 #endif
 
+V8BindingPerContextData* V8DOMWrapper::perContextData(V8Proxy* proxy)
+{
+    V8DOMWindowShell* shell = proxy->windowShell();
+    return shell ? shell->perContextData() : 0;
+}
+
+#if ENABLE(WORKERS)
+V8BindingPerContextData* V8DOMWrapper::perContextData(WorkerContext*)
+{
+    WorkerScriptController* controller = WorkerScriptController::controllerForContext();
+    WorkerContextExecutionProxy* proxy = controller ? controller->proxy() : 0;
+    return proxy ? proxy->perContextData() : 0;
+}
+#endif
 
 void V8DOMWrapper::setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child)
 {
@@ -202,12 +173,10 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, WrapperT
 #if ENABLE(WORKERS)
     WorkerContext* workerContext = 0;
 #endif
-    if (V8IsolatedContext::getEntered()) {
-        // This effectively disables the wrapper cache for isolated worlds.
-        proxy = 0;
-        // FIXME: Do we need a wrapper cache for the isolated world?  We should
-        //        see if the performance gains are worth while.
-        // We'll get one once we give the isolated context a proper window shell.
+    V8BindingPerContextData* contextData = 0;
+    V8IsolatedContext* isolatedContext;
+    if (UNLIKELY(!!(isolatedContext = V8IsolatedContext::getEntered()))) {
+        contextData = isolatedContext->perContextData();
     } else if (!proxy) {
         v8::Handle<v8::Context> context = v8::Context::GetCurrent();
         if (!context.IsEmpty()) {
@@ -225,19 +194,22 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, WrapperT
     }
 
     v8::Local<v8::Object> instance;
-    if (proxy)
-        // FIXME: Fix this to work properly with isolated worlds (see above).
-        instance = proxy->windowShell()->createWrapperFromCache(type);
-    else {
-        v8::Local<v8::Function> function;
+    if (!contextData) {
+        if (proxy)
+            contextData = perContextData(proxy);
 #if ENABLE(WORKERS)
-        if (workerContext)
-            function = getConstructor(type, workerContext);
-        else
+        else if (workerContext)
+            contextData = perContextData(workerContext);
 #endif
-            function = type->getTemplate()->GetFunction();
+    }
+
+    if (contextData)
+        instance = contextData->createWrapperFromCache(type);
+    else {
+        v8::Local<v8::Function> function = type->getTemplate()->GetFunction();
         instance = SafeAllocation::newInstance(function);
     }
+
     if (!instance.IsEmpty()) {
         // Avoid setting the DOM wrapper for failed allocations.
         setDOMWrapper(instance, type, impl);
@@ -332,5 +304,6 @@ RefPtr<XPathNSResolver> V8DOMWrapper::getXPathNSResolver(v8::Handle<v8::Value> v
         resolver = V8CustomXPathNSResolver::create(value->ToObject());
     return resolver;
 }
+
 
 }  // namespace WebCore

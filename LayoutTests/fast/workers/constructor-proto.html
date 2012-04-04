@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/worker-create-common.js"></script>
+<script>
+
+var jsTestIsAsync = true;
+
+description('This tests that setting the proto of a built in constructor is not reset');
+
+var worker = createWorker();
+worker.postMessage("eval proto = new Number(42)");
+worker.postMessage("eval Object.getPrototypeOf(WorkerLocation)");
+worker.postMessage("eval WorkerLocation.__proto__ = proto");
+worker.postMessage("eval Object.getPrototypeOf(WorkerLocation)");
+worker.postMessage("eval DONE");
+
+worker.onmessage = function(evt) {
+    if (!/DONE/.test(evt.data))
+        debug(evt.data.replace(new RegExp("/.*LayoutTests"), "<...>"));
+    else
+        finishJSTest();
+};
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>

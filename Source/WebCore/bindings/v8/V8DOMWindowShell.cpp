@@ -47,6 +47,7 @@
 #include "StorageNamespace.h"
 #include "StylePropertySet.h"
 #include "V8Binding.h"
+#include "V8BindingPerContextData.h"
 #include "V8BindingState.h"
 #include "V8Collection.h"
 #include "V8DOMMap.h"
@@ -185,13 +186,7 @@ void V8DOMWindowShell::disposeContextHandles()
         V8GCForContextDispose::instance().notifyContextDisposed(isMainFrame);
     }
 
-    WrapperBoilerplateMap::iterator it = m_wrapperBoilerplates.begin();
-    for (; it != m_wrapperBoilerplates.end(); ++it) {
-        v8::Persistent<v8::Object> wrapper = it->second;
-        wrapper.Dispose();
-        wrapper.Clear();
-    }
-    m_wrapperBoilerplates.clear();
+    m_perContextData.clear();
 }
 
 void V8DOMWindowShell::destroyGlobal()
@@ -327,7 +322,8 @@ bool V8DOMWindowShell::initContextIfNeeded()
 #endif
     }
 
-    if (!installHiddenObjectPrototype(v8Context)) {
+    m_perContextData = V8BindingPerContextData::create(m_context);
+    if (!m_perContextData->init()) {
         disposeContextHandles();
         return false;
     }
@@ -405,7 +401,7 @@ void V8DOMWindowShell::setContext(v8::Handle<v8::Context> context)
 bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWindow* window)
 {
     // Create a new JS window object and use it as the prototype for the  shadow global object.
-    v8::Handle<v8::Function> windowConstructor = V8DOMWrapper::getConstructor(&V8DOMWindow::info, getHiddenObjectPrototype(context));
+    v8::Handle<v8::Function> windowConstructor = V8DOMWrapper::constructorForType(&V8DOMWindow::info, window);
     v8::Local<v8::Object> jsWindow = SafeAllocation::newInstance(windowConstructor);
     // Bail out if allocation failed.
     if (jsWindow.IsEmpty())
@@ -597,50 +593,6 @@ void V8DOMWindowShell::updateSecurityOrigin()
 {
     v8::HandleScope scope;
     setSecurityToken();
-}
-
-v8::Handle<v8::Value> V8DOMWindowShell::getHiddenObjectPrototype(v8::Handle<v8::Context> context)
-{
-    return context->Global()->GetHiddenValue(V8HiddenPropertyName::objectPrototype());
-}
-
-bool V8DOMWindowShell::installHiddenObjectPrototype(v8::Handle<v8::Context> context)
-{
-    v8::Handle<v8::String> objectString = v8::String::New("Object");
-    v8::Handle<v8::String> prototypeString = v8::String::New("prototype");
-    v8::Handle<v8::String> hiddenObjectPrototypeString = V8HiddenPropertyName::objectPrototype();
-    // Bail out if allocation failed.
-    if (objectString.IsEmpty() || prototypeString.IsEmpty() || hiddenObjectPrototypeString.IsEmpty())
-        return false;
-
-    v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(context->Global()->Get(objectString));
-    // Bail out if fetching failed.
-    if (object.IsEmpty())
-        return false;
-    v8::Handle<v8::Value> objectPrototype = object->Get(prototypeString);
-    // Bail out if fetching failed.
-    if (objectPrototype.IsEmpty())
-        return false;
-
-    context->Global()->SetHiddenValue(hiddenObjectPrototypeString, objectPrototype);
-
-    return true;
-}
-
-v8::Local<v8::Object> V8DOMWindowShell::createWrapperFromCacheSlowCase(WrapperTypeInfo* type)
-{
-    // Not in cache.
-    if (!initContextIfNeeded())
-        return notHandledByInterceptor();
-
-    v8::Context::Scope scope(m_context);
-    v8::Local<v8::Function> function = V8DOMWrapper::getConstructor(type, getHiddenObjectPrototype(m_context));
-    v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
-    if (!instance.IsEmpty()) {
-        m_wrapperBoilerplates.set(type, v8::Persistent<v8::Object>::New(instance));
-        return instance->Clone();
-    }
-    return notHandledByInterceptor();
 }
 
 void V8DOMWindowShell::setLocation(DOMWindow* window, const String& locationString)
