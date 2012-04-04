@@ -99,6 +99,9 @@ BUGWK55751 : inspector/elements/event-listener-sidebar.html = PASS TEXT
 BUGWK55751 : inspector/debugger/debugger-step-over.html = PASS TEXT
 BUGWK55751 : inspector/profiler/detailed-heapshots-summary-sorting.html = PASS TEXT
 BUGWK55751 : inspector/debugger/source-url-comment.html = PASS TEXT
+BUGWK55751 : inspector/console/console-uncaught-exception-in-eval.html = PASS TEXT
+BUGWK55751 : inspector/debugger/error-in-watch-expressions.html = PASS TEXT
+BUGWK55751 : inspector/console/console-log-toString-object.html = PASS TEXT
 
 // End of Flaky tests
 
