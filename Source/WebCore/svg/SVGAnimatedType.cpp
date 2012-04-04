@@ -354,12 +354,6 @@ String SVGAnimatedType::valueAsString()
     case AnimatedNumber:
         ASSERT(m_data.number);
         return String::number(*m_data.number);
-    case AnimatedPath: {
-        ASSERT(m_data.path);
-        String result;
-        SVGPathParserFactory::self()->buildStringFromByteStream(m_data.path, result, UnalteredParsing);
-        return result;
-    }
     case AnimatedRect:
         ASSERT(m_data.rect);
         return String::number(m_data.rect->x()) + ' ' + String::number(m_data.rect->y()) + ' '
@@ -376,6 +370,7 @@ String SVGAnimatedType::valueAsString()
     case AnimatedIntegerOptionalInteger:
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
+    case AnimatedPath:
     case AnimatedPoints:
     case AnimatedPreserveAspectRatio:
     case AnimatedTransformList:
@@ -390,16 +385,17 @@ String SVGAnimatedType::valueAsString()
 
 bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const String& value)
 {
-    ExceptionCode ec = 0;
     switch (m_type) {
     case AnimatedColor:
         ASSERT(m_data.color);
         *m_data.color = value.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(value);
         break;
-    case AnimatedLength:
+    case AnimatedLength: {
         ASSERT(m_data.length);
+        ExceptionCode ec = 0;
         m_data.length->setValueAsString(value, SVGLength::lengthModeForAnimatedLengthAttribute(attrName), ec);
-        break;
+        return !ec;
+    }
     case AnimatedLengthList:
         ASSERT(m_data.lengthList);
         m_data.lengthList->parse(value, SVGLength::lengthModeForAnimatedLengthAttribute(attrName));
@@ -408,14 +404,6 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
         ASSERT(m_data.number);
         parseNumberFromString(value, *m_data.number);
         break;
-    case AnimatedPath: {
-        ASSERT(m_data.path);
-        OwnPtr<SVGPathByteStream> pathByteStream = adoptPtr(m_data.path);
-        if (!SVGPathParserFactory::self()->buildSVGPathByteStreamFromString(value, pathByteStream, UnalteredParsing))
-            ec = 1; // Arbitary value > 0, it doesn't matter as we don't report the exception code.
-        m_data.path = pathByteStream.leakPtr();
-        break;
-    }
     case AnimatedRect:
         ASSERT(m_data.rect);
         parseRect(value, *m_data.rect);
@@ -433,6 +421,7 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     case AnimatedIntegerOptionalInteger:
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
+    case AnimatedPath:
     case AnimatedPoints:
     case AnimatedPreserveAspectRatio:
     case AnimatedTransformList:
@@ -441,41 +430,13 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
         ASSERT_NOT_REACHED();
         break;
     }
-    return !ec;
+    return true;
 }
 
 bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
 {
-    switch (type) {
-    case AnimatedAngle:
-    case AnimatedBoolean:
-    case AnimatedEnumeration:
-    case AnimatedInteger:
-    case AnimatedIntegerOptionalInteger:
-    case AnimatedLength:
-    case AnimatedLengthList:
-    case AnimatedNumber:
-    case AnimatedNumberList:
-    case AnimatedNumberOptionalNumber:
-    case AnimatedPoints:
-    case AnimatedPreserveAspectRatio:
-    case AnimatedRect:
-    case AnimatedString:
-    case AnimatedTransformList:
-        return true;
-
-    // Types only used for CSS property animations.
-    case AnimatedColor:
-        return false;
-
-    // FIXME: Handle the remaining types in animVal concept.
-    case AnimatedPath:
-    case AnimatedUnknown:
-        return false;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
+    // AnimatedColor is only used for CSS property animations.
+    return type != AnimatedUnknown && type != AnimatedColor;
 }
 
 } // namespace WebCore

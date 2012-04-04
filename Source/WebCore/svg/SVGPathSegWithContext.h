@@ -21,7 +21,7 @@
 #define SVGPathSegWithContext_h
 
 #if ENABLE(SVG)
-#include "SVGPathElement.h"
+#include "SVGAnimatedPathSegListPropertyTearOff.h"
 
 namespace WebCore {
 

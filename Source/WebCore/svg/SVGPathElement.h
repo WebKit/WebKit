@@ -24,10 +24,10 @@
 #if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedNumber.h"
-#include "SVGAnimatedPathSegListPropertyTearOff.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGPathByteStream.h"
+#include "SVGPathSegList.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
@@ -52,6 +52,7 @@ class SVGPathSegCurvetoCubicSmoothAbs;
 class SVGPathSegCurvetoCubicSmoothRel;
 class SVGPathSegCurvetoQuadraticSmoothAbs;
 class SVGPathSegCurvetoQuadraticSmoothRel;
+class SVGPathSegListPropertyTearOff;
 
 class SVGPathElement : public SVGStyledTransformableElement,
                        public SVGTests,
@@ -90,13 +91,15 @@ public:
     SVGPathSegListPropertyTearOff* normalizedPathSegList();
     SVGPathSegListPropertyTearOff* animatedNormalizedPathSegList();
 
-    SVGPathByteStream* pathByteStream() const { return m_pathByteStream.get(); }
+    SVGPathByteStream* pathByteStream() const;
 
     void pathSegListChanged(SVGPathSegRole);
 
     static const SVGPropertyInfo* dPropertyInfo();
 
     virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate);
+
+    bool isAnimValObserved() const { return m_isAnimValObserved; }
 
 private:
     SVGPathElement(const QualifiedName&, Document*);
@@ -128,9 +131,9 @@ private:
 private:
     OwnPtr<SVGPathByteStream> m_pathByteStream;
     mutable SVGSynchronizableAnimatedProperty<SVGPathSegList> m_pathSegList;
-    RefPtr<SVGAnimatedPathSegListPropertyTearOff> m_animatablePathSegList;
     FloatRect m_cachedBBoxRect;
     bool m_cachedBBoxRectIsValid;                       
+    bool m_isAnimValObserved;
 };
 
 } // namespace WebCore

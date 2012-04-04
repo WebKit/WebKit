@@ -1,6 +1,5 @@
 description("Test accumulate=sum animation on SVGAnimateTransform.");
 createSVGTestCase();
-// FIXME: We should move to animatePathSegList, once it is implemented.
 
 // Setup test document
 var rect = createSVGElement("rect");

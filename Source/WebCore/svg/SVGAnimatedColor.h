@@ -28,13 +28,17 @@ namespace WebCore {
 class SVGAnimationElement;
 
 class SVGAnimatedColorAnimator : public SVGAnimatedTypeAnimator {
-    
 public:
     SVGAnimatedColorAnimator(SVGAnimationElement*, SVGElement*);
     virtual ~SVGAnimatedColorAnimator() { }
     
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
-    
+    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const Vector<SVGAnimatedProperty*>&) { return PassOwnPtr<SVGAnimatedType>(); }
+    virtual void stopAnimValAnimation(const Vector<SVGAnimatedProperty*>&) { }
+    virtual void resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*) { }
+    virtual void animValWillChange(const Vector<SVGAnimatedProperty*>&) { }
+    virtual void animValDidChange(const Vector<SVGAnimatedProperty*>&) { }
+
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,

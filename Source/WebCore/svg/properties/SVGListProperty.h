@@ -69,15 +69,17 @@ public:
             m_wrappers->clear();
     }
 
-    void setValuesAndWrappers(PropertyType* values, ListWrapperCache* wrappers)
+    void setValuesAndWrappers(PropertyType* values, ListWrapperCache* wrappers, bool shouldOwnValues)
     {
         // This is only used for animVal support, to switch the underlying values & wrappers
         // to the current animated values, once animation for a list starts.
         ASSERT(m_values);
         ASSERT(m_wrappers);
         ASSERT(m_role == AnimValRole);
-
+        if (m_ownsValues)
+            delete m_values;
         m_values = values;
+        m_ownsValues = shouldOwnValues;
         m_wrappers = wrappers;
         ASSERT(m_values->size() == m_wrappers->size());
     }
@@ -430,9 +432,16 @@ public:
 protected:
     SVGListProperty(SVGPropertyRole role, PropertyType& values, ListWrapperCache* wrappers)
         : m_role(role)
+        , m_ownsValues(false)
         , m_values(&values)
         , m_wrappers(wrappers)
     {
+    }
+
+    virtual ~SVGListProperty()
+    {
+        if (m_ownsValues)
+            delete m_values;
     }
 
     virtual void commitChange() = 0;
@@ -440,6 +449,7 @@ protected:
     virtual void processIncomingListItemWrapper(RefPtr<ListItemTearOff>& newItem, unsigned* indexToModify) = 0;
 
     SVGPropertyRole m_role;
+    bool m_ownsValues;
     PropertyType* m_values;
     ListWrapperCache* m_wrappers;
 };

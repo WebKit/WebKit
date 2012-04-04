@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2011, 2012. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +23,7 @@
 #include "SVGAnimatedPath.h"
 
 #include "SVGAnimateElement.h"
+#include "SVGAnimatedPathSegListPropertyTearOff.h"
 #include "SVGPathParserFactory.h"
 
 namespace WebCore {
@@ -41,8 +42,55 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::constructFromString(const S
 PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::constructFromString(const String& string, bool& result)
 {
     OwnPtr<SVGPathByteStream> byteStream = SVGPathByteStream::create();
-    result = SVGPathParserFactory::self()->buildSVGPathByteStreamFromString(string, byteStream, UnalteredParsing);
+    result = SVGPathParserFactory::self()->buildSVGPathByteStreamFromString(string, byteStream.get(), UnalteredParsing);
     return SVGAnimatedType::createPath(byteStream.release());
+}
+
+PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    ASSERT(properties.size() == 1);
+    SVGAnimatedPathSegListPropertyTearOff* property = castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(properties[0]);
+    const SVGPathSegList& baseValue = property->currentBaseValue();
+
+    // Build initial path byte stream.
+    OwnPtr<SVGPathByteStream> byteStream = SVGPathByteStream::create();
+    SVGPathParserFactory::self()->buildSVGPathByteStreamFromSVGPathSegList(baseValue, byteStream.get(), UnalteredParsing);
+
+    Vector<SVGAnimatedPathSegListPropertyTearOff*> result;
+    result.append(property);
+
+    SVGElementInstance::InstanceUpdateBlocker blocker(property->contextElement());
+    collectAnimatedPropertiesFromInstances(result, 0, property->contextElement(), property->attributeName());
+
+    size_t resultSize = result.size();
+    for (size_t i = 0; i < resultSize; ++i)
+        result[i]->animationStarted(byteStream.get(), &baseValue);
+
+    return SVGAnimatedType::createPath(byteStream.release());
+}
+
+void SVGAnimatedPathAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    stopAnimValAnimationForType<SVGAnimatedPathSegListPropertyTearOff>(properties);
+}
+
+void SVGAnimatedPathAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+{
+    ASSERT(properties.size() == 1);
+    ASSERT(type);
+    ASSERT(type->type() == m_type);
+    const SVGPathSegList& baseValue = castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(properties[0])->currentBaseValue();
+    SVGPathParserFactory::self()->buildSVGPathByteStreamFromSVGPathSegList(baseValue, type->path(), UnalteredParsing);
+}
+
+void SVGAnimatedPathAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValWillChangeForType<SVGAnimatedPathSegListPropertyTearOff>(properties);
+}
+
+void SVGAnimatedPathAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValDidChangeForType<SVGAnimatedPathSegListPropertyTearOff>(properties);
 }
 
 void SVGAnimatedPathAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
@@ -105,9 +153,7 @@ void SVGAnimatedPathAnimator::calculateAnimatedValue(float percentage, unsigned,
         return;
     }
 
-    OwnPtr<SVGPathByteStream> newAnimatedPath = adoptPtr(animatedPath);
-    bool success = SVGPathParserFactory::self()->buildAnimatedSVGPathByteStream(fromPath, toPath, newAnimatedPath, percentage);
-    animatedPath = newAnimatedPath.leakPtr();
+    bool success = SVGPathParserFactory::self()->buildAnimatedSVGPathByteStream(fromPath, toPath, animatedPath, percentage);
     if (success)
         return;
 

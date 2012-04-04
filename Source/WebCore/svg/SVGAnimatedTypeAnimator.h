@@ -36,14 +36,11 @@ class SVGAnimatedTypeAnimator {
 public:
     virtual ~SVGAnimatedTypeAnimator() { }
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&) = 0;
-
-    // FIXME: Make these pure once all types implement this.
-    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const Vector<SVGAnimatedProperty*>&) { return PassOwnPtr<SVGAnimatedType>(); }
-    virtual void stopAnimValAnimation(const Vector<SVGAnimatedProperty*>&) { }
-    virtual void resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*) { }
-    virtual void animValWillChange(const Vector<SVGAnimatedProperty*>&) { }
-    virtual void animValDidChange(const Vector<SVGAnimatedProperty*>&) { }
-
+    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const Vector<SVGAnimatedProperty*>&) = 0;
+    virtual void stopAnimValAnimation(const Vector<SVGAnimatedProperty*>&) = 0;
+    virtual void resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*) = 0;
+    virtual void animValWillChange(const Vector<SVGAnimatedProperty*>&) = 0;
+    virtual void animValDidChange(const Vector<SVGAnimatedProperty*>&) = 0;
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString) = 0;
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString) = 0;
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
@@ -61,7 +58,6 @@ public:
         Vector<RefPtr<SVGAnimatedProperty> > properties;
         targetElement->localAttributeToPropertyMap().animatedPropertiesForAttribute(targetElement, attributeName, properties);
 
-        // FIXME: This check can go away once all types support animVal.
         if (!SVGAnimatedType::supportsAnimVal(m_type))
             return Vector<SVGAnimatedProperty*>();
 
@@ -180,11 +176,6 @@ protected:
         executeAction<AnimValType2>(AnimValWillChangeAction, properties, 1);
     }
 
-    AnimatedPropertyType m_type;
-    SVGAnimationElement* m_animationElement;
-    SVGElement* m_contextElement;
-
-private:
     template<typename AnimValType>
     AnimValType* castAnimatedPropertyToActualType(SVGAnimatedProperty* property)
     {
@@ -217,6 +208,11 @@ private:
         }
     }
 
+    AnimatedPropertyType m_type;
+    SVGAnimationElement* m_animationElement;
+    SVGElement* m_contextElement;
+
+private:
     enum AnimationAction {
         StartAnimationAction,
         StopAnimationAction,

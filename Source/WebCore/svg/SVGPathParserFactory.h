@@ -42,8 +42,8 @@ public:
     bool buildPathFromByteStream(SVGPathByteStream*, Path&);
 
     // SVGPathSegList/String -> SVGPathByteStream
-    bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList&, OwnPtr<SVGPathByteStream>&, PathParsingMode);
-    bool buildSVGPathByteStreamFromString(const String&, OwnPtr<SVGPathByteStream>&, PathParsingMode);
+    bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList&, SVGPathByteStream*, PathParsingMode);
+    bool buildSVGPathByteStreamFromString(const String&, SVGPathByteStream*, PathParsingMode);
 
     // SVGPathByteStream/SVGPathSegList -> String
     bool buildStringFromByteStream(SVGPathByteStream*, String&, PathParsingMode);
@@ -52,7 +52,7 @@ public:
     // SVGPathByteStream -> SVGPathSegList
     bool buildSVGPathSegListFromByteStream(SVGPathByteStream*, SVGPathElement*, SVGPathSegList&, PathParsingMode);
 
-    bool buildAnimatedSVGPathByteStream(SVGPathByteStream*, SVGPathByteStream*, OwnPtr<SVGPathByteStream>&, float);
+    bool buildAnimatedSVGPathByteStream(SVGPathByteStream*, SVGPathByteStream*, SVGPathByteStream*, float);
     bool getSVGPathSegAtLengthFromSVGPathByteStream(SVGPathByteStream*, float length, unsigned& pathSeg);
     bool getTotalLengthOfSVGPathByteStream(SVGPathByteStream*, float& totalLength);
     bool getPointAtLengthOfSVGPathByteStream(SVGPathByteStream*, float length, FloatPoint&);
