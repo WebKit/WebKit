@@ -348,6 +348,9 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 
 GraphicsContext3D::~GraphicsContext3D()
 {
+    // If GraphicsContext3D init failed in constructor, m_private set to nullptr and no buffers are allocated.
+    if (!m_private)
+        return;
     makeContextCurrent();
     glDeleteTextures(1, &m_texture);
     glDeleteFramebuffers(1, &m_fbo);
@@ -387,6 +390,8 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 
 bool GraphicsContext3D::makeContextCurrent()
 {
+    if (!m_private)
+        return false;
     return m_private->makeCurrentIfNeeded();
 }
 
