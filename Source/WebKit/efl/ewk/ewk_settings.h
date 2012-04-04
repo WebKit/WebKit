@@ -175,7 +175,7 @@ EAPI Eina_Bool        ewk_settings_icon_database_clear(void);
 EAPI cairo_surface_t *ewk_settings_icon_database_icon_surface_get(const char *url);
 
 /**
- * Creates Evas_Object of type image representing the given URL.
+ * Gets image representing the given URL.
  *
  * This is an utility function that creates an Evas_Object of type
  * image set to have fill always match object size
@@ -184,13 +184,16 @@ EAPI cairo_surface_t *ewk_settings_icon_database_icon_surface_get(const char *ur
  * @note In order to have this working, one must open icon database
  *       with ewk_settings_icon_database_path_set().
  *
+ * @note The "load,finished" signal doesn't guarantee that icons are completely loaded and
+ *        saved to database. Icon can be taken after the "icon,received" signal.
+ *
  * @param url which url to query icon
  * @param canvas evas instance where to add resulting object
  *
  * @return newly allocated Evas_Object instance or @c 0 on
  *         errors. Delete the object with evas_object_del().
  */
-EAPI Evas_Object     *ewk_settings_icon_database_icon_object_add(const char *url, Evas *canvas);
+EAPI Evas_Object     *ewk_settings_icon_database_icon_object_get(const char *url, Evas *canvas);
 
 /**
  * Sets the path where the application cache will be stored.

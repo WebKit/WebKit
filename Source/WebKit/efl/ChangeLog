@@ -1,3 +1,18 @@
+2012-04-04  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Change ewk_settings_icon_database_icon_object_add to proper API name.
+        https://bugs.webkit.org/show_bug.cgi?id=82438
+
+        Reviewed by Andreas Kling.
+
+        The purpose of ewk_settings_icon_database_icon_object_add is to get icon
+        for the given URL. This function doesn't add anything to database.
+        Documentation and API name are adjusted.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_icon_database_icon_object_get):
+        * ewk/ewk_settings.h:
+
 2012-04-03  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] DRT support for setInteractiveFormValidationEnabled

@@ -228,7 +228,7 @@ cairo_surface_t* ewk_settings_icon_database_icon_surface_get(const char* url)
     return icon->nativeImageForCurrentFrame();
 }
 
-Evas_Object* ewk_settings_icon_database_icon_object_add(const char* url, Evas* canvas)
+Evas_Object* ewk_settings_icon_database_icon_object_get(const char* url, Evas* canvas)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(url, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
