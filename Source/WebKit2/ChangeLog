@@ -1,3 +1,16 @@
+2012-04-04  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Animation related classes should use CSSPropertyId rather than integers when manipulating CSS property ids.
+        https://bugs.webkit.org/show_bug.cgi?id=83050
+
+        Reviewed by Simon Fraser.
+
+        The property of the Animation is a CSSPropertyID. It's ok to cast it here as an int for IPC transmission.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+
 2012-04-04  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Entire page highlighted on panning.

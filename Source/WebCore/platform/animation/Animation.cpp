@@ -26,7 +26,8 @@ namespace WebCore {
 
 Animation::Animation()
     : m_name(initialAnimationName())
-    , m_property(initialAnimationProperty())
+    , m_property(CSSPropertyInvalid)
+    , m_mode(AnimateAll)
     , m_iterationCount(initialAnimationIterationCount())
     , m_delay(initialAnimationDelay())
     , m_duration(initialAnimationDuration())
@@ -51,6 +52,7 @@ Animation::Animation(const Animation& o)
     : RefCounted<Animation>()
     , m_name(o.m_name)
     , m_property(o.m_property)
+    , m_mode(o.m_mode)
     , m_iterationCount(o.m_iterationCount)
     , m_delay(o.m_delay)
     , m_duration(o.m_duration)
@@ -75,6 +77,7 @@ Animation& Animation::operator=(const Animation& o)
 {
     m_name = o.m_name;
     m_property = o.m_property;
+    m_mode = o.m_mode;
     m_iterationCount = o.m_iterationCount;
     m_delay = o.m_delay;
     m_duration = o.m_duration;
@@ -108,6 +111,7 @@ bool Animation::animationsMatch(const Animation* o, bool matchPlayStates) const
     
     bool result = m_name == o->m_name
                   && m_property == o->m_property 
+                  && m_mode == o->m_mode
                   && m_iterationCount == o->m_iterationCount
                   && m_delay == o->m_delay
                   && m_duration == o->m_duration

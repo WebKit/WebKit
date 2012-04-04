@@ -2280,14 +2280,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             const AnimationList* t = style->transitions();
             if (t) {
                 for (size_t i = 0; i < t->size(); ++i) {
-                    int prop = t->animation(i)->property();
                     RefPtr<CSSValue> propertyValue;
-                    if (prop == cAnimateNone)
+                    const Animation* animation = t->animation(i);
+                    if (animation->animationMode() == Animation::AnimateNone)
                         propertyValue = cssValuePool->createIdentifierValue(CSSValueNone);
-                    else if (prop == cAnimateAll)
+                    else if (animation->animationMode() == Animation::AnimateAll)
                         propertyValue = cssValuePool->createIdentifierValue(CSSValueAll);
                     else
-                        propertyValue = cssValuePool->createValue(getPropertyName(static_cast<CSSPropertyID>(prop)), CSSPrimitiveValue::CSS_STRING);
+                        propertyValue = cssValuePool->createValue(getPropertyName(animation->property()), CSSPrimitiveValue::CSS_STRING);
                     list->append(propertyValue);
                 }
             } else

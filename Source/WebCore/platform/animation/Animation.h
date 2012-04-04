@@ -25,6 +25,7 @@
 #ifndef Animation_h
 #define Animation_h
 
+#include "CSSPropertyNames.h"
 #include "PlatformString.h"
 #include "RenderStyleConstants.h"
 #include "TimingFunction.h"
@@ -32,9 +33,6 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-
-const int cAnimateNone = 0;
-const int cAnimateAll = -2;
 
 class Animation : public RefCounted<Animation> {
 public:
@@ -96,6 +94,12 @@ public:
 
     double delay() const { return m_delay; }
 
+    enum AnimationMode {
+        AnimateAll,
+        AnimateNone,
+        AnimateSingleProperty
+    };
+
     enum AnimationDirection {
         AnimationDirectionNormal,
         AnimationDirectionAlternate,
@@ -112,8 +116,9 @@ public:
     double iterationCount() const { return m_iterationCount; }
     const String& name() const { return m_name; }
     EAnimPlayState playState() const { return static_cast<EAnimPlayState>(m_playState); }
-    int property() const { return m_property; }
+    CSSPropertyID property() const { return m_property; }
     const PassRefPtr<TimingFunction> timingFunction() const { return m_timingFunction; }
+    AnimationMode animationMode() const { return m_mode; }
 
     void setDelay(double c) { m_delay = c; m_delaySet = true; }
     void setDirection(AnimationDirection d) { m_direction = d; m_directionSet = true; }
@@ -122,8 +127,9 @@ public:
     void setIterationCount(double c) { m_iterationCount = c; m_iterationCountSet = true; }
     void setName(const String& n) { m_name = n; m_nameSet = true; }
     void setPlayState(EAnimPlayState d) { m_playState = d; m_playStateSet = true; }
-    void setProperty(int t) { m_property = t; m_propertySet = true; }
+    void setProperty(CSSPropertyID t) { m_property = t; m_propertySet = true; }
     void setTimingFunction(PassRefPtr<TimingFunction> f) { m_timingFunction = f; m_timingFunctionSet = true; }
+    void setAnimationMode(AnimationMode mode) { m_mode = mode; }
 
     void setIsNoneAnimation(bool n) { m_isNone = n; }
 
@@ -144,7 +150,8 @@ private:
     Animation(const Animation& o);
     
     String m_name;
-    int m_property;
+    CSSPropertyID m_property;
+    AnimationMode m_mode;
     double m_iterationCount;
     double m_delay;
     double m_duration;
@@ -174,7 +181,7 @@ public:
     static double initialAnimationIterationCount() { return 1.0; }
     static const String& initialAnimationName();
     static EAnimPlayState initialAnimationPlayState() { return AnimPlayStatePlaying; }
-    static int initialAnimationProperty() { return cAnimateAll; }
+    static CSSPropertyID initialAnimationProperty() { return CSSPropertyInvalid; }
     static const PassRefPtr<TimingFunction> initialAnimationTimingFunction() { return CubicBezierTimingFunction::create(); }
 };
 

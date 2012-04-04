@@ -78,7 +78,7 @@ public:
     void resumeOverriddenImplicitAnimations(int property);
 
     bool pauseAnimationAtTime(const AtomicString& name, double t);
-    bool pauseTransitionAtTime(int property, double t);
+    bool pauseTransitionAtTime(CSSPropertyID, double);
     unsigned numberOfActiveAnimations() const;
 
     PassRefPtr<WebKitAnimationList> animations() const;

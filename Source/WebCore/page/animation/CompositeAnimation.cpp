@@ -93,12 +93,13 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
             const Animation* anim = targetStyle->transitions()->animation(i);
             bool isActiveTransition = anim->duration() || anim->delay() > 0;
 
-            int prop = anim->property();
-
-            if (prop == cAnimateNone)
+            Animation::AnimationMode mode = anim->animationMode();
+            if (mode == Animation::AnimateNone)
                 continue;
 
-            bool all = prop == cAnimateAll;
+            CSSPropertyID prop = anim->property();
+
+            bool all = mode == Animation::AnimateAll;
 
             // Handle both the 'all' and single property cases. For the single prop case, we make only one pass
             // through the loop.
@@ -111,7 +112,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
                         continue;
                 }
 
-                // ImplicitAnimations are always hashed by actual properties, never cAnimateAll
+                // ImplicitAnimations are always hashed by actual properties, never animateAll.
                 ASSERT(prop >= firstCSSProperty && prop < (firstCSSProperty + numCSSProperties));
 
                 // If there is a running animation for this property, the transition is overridden
@@ -516,7 +517,7 @@ bool CompositeAnimation::pauseAnimationAtTime(const AtomicString& name, double t
     return false;
 }
 
-bool CompositeAnimation::pauseTransitionAtTime(int property, double t)
+bool CompositeAnimation::pauseTransitionAtTime(CSSPropertyID property, double t)
 {
     if ((property < firstCSSProperty) || (property >= firstCSSProperty + numCSSProperties))
         return false;
@@ -529,7 +530,7 @@ bool CompositeAnimation::pauseTransitionAtTime(int property, double t)
         bool anyPaused = false;
         HashSet<int>::const_iterator end = shorthandProperties.end();
         for (HashSet<int>::const_iterator it = shorthandProperties.begin(); it != end; ++it) {
-            if (pauseTransitionAtTime(*it, t))
+            if (pauseTransitionAtTime(static_cast<CSSPropertyID>(*it), t))
                 anyPaused = true;
         }
         return anyPaused;

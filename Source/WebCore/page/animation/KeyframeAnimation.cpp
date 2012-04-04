@@ -180,7 +180,7 @@ void KeyframeAnimation::animate(CompositeAnimation*, RenderObject*, const Render
     // We should cache the last pair or something.
     HashSet<int>::const_iterator endProperties = m_keyframes.endProperties();
     for (HashSet<int>::const_iterator it = m_keyframes.beginProperties(); it != endProperties; ++it) {
-        int property = *it;
+        CSSPropertyID property = static_cast<CSSPropertyID>(*it);
 
         // Get the from/to styles and progress between
         const RenderStyle* fromStyle = 0;
@@ -217,7 +217,7 @@ void KeyframeAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
 
     HashSet<int>::const_iterator endProperties = m_keyframes.endProperties();
     for (HashSet<int>::const_iterator it = m_keyframes.beginProperties(); it != endProperties; ++it) {
-        int property = *it;
+        CSSPropertyID property = static_cast<CSSPropertyID>(*it);
 
         // Get the from/to styles and progress between
         const RenderStyle* fromStyle = 0;
@@ -462,7 +462,7 @@ double KeyframeAnimation::timeToNextService()
     bool acceleratedPropertiesOnly = true;
     
     for (HashSet<int>::const_iterator it = m_keyframes.beginProperties(); it != endProperties; ++it) {
-        if (!animationOfPropertyIsAccelerated(*it) || !isAccelerated()) {
+        if (!animationOfPropertyIsAccelerated(static_cast<CSSPropertyID>(*it)) || !isAccelerated()) {
             acceleratedPropertiesOnly = false;
             break;
         }

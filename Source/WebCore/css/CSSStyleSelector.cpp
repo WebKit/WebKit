@@ -4515,7 +4515,8 @@ void CSSStyleSelector::mapAnimationPlayState(Animation* layer, CSSValue* value)
 void CSSStyleSelector::mapAnimationProperty(Animation* animation, CSSValue* value)
 {
     if (value->isInitialValue()) {
-        animation->setProperty(Animation::initialAnimationProperty());
+        animation->setAnimationMode(Animation::AnimateAll);
+        animation->setProperty(CSSPropertyInvalid);
         return;
     }
 
@@ -4523,12 +4524,16 @@ void CSSStyleSelector::mapAnimationProperty(Animation* animation, CSSValue* valu
         return;
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    if (primitiveValue->getIdent() == CSSValueAll)
-        animation->setProperty(cAnimateAll);
-    else if (primitiveValue->getIdent() == CSSValueNone)
-        animation->setProperty(cAnimateNone);
-    else
+    if (primitiveValue->getIdent() == CSSValueAll) {
+        animation->setAnimationMode(Animation::AnimateAll);
+        animation->setProperty(CSSPropertyInvalid);
+    } else if (primitiveValue->getIdent() == CSSValueNone) {
+        animation->setAnimationMode(Animation::AnimateNone);
+        animation->setProperty(CSSPropertyInvalid);
+    } else {
+        animation->setAnimationMode(Animation::AnimateSingleProperty);
         animation->setProperty(static_cast<CSSPropertyID>(primitiveValue->getIdent()));
+    }
 }
 
 void CSSStyleSelector::mapAnimationTimingFunction(Animation* animation, CSSValue* value)

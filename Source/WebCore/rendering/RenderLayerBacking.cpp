@@ -1311,7 +1311,7 @@ void RenderLayerBacking::animationFinished(const String& animationName)
     m_graphicsLayer->removeAnimation(animationName);
 }
 
-bool RenderLayerBacking::startTransition(double timeOffset, int property, const RenderStyle* fromStyle, const RenderStyle* toStyle)
+bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID property, const RenderStyle* fromStyle, const RenderStyle* toStyle)
 {
     bool didAnimateOpacity = false;
     bool didAnimateTransform = false;
@@ -1319,9 +1319,9 @@ bool RenderLayerBacking::startTransition(double timeOffset, int property, const 
     bool didAnimateFilter = false;
 #endif
 
-    ASSERT(property != cAnimateAll);
+    ASSERT(property != CSSPropertyInvalid);
 
-    if (property == (int)CSSPropertyOpacity) {
+    if (property == CSSPropertyOpacity) {
         const Animation* opacityAnim = toStyle->transitionForProperty(CSSPropertyOpacity);
         if (opacityAnim && !opacityAnim->isEmptyOrZeroDuration()) {
             KeyframeValueList opacityVector(AnimatedPropertyOpacity);
@@ -1336,7 +1336,7 @@ bool RenderLayerBacking::startTransition(double timeOffset, int property, const 
         }
     }
 
-    if (property == (int)CSSPropertyWebkitTransform && m_owningLayer->hasTransform()) {
+    if (property == CSSPropertyWebkitTransform && m_owningLayer->hasTransform()) {
         const Animation* transformAnim = toStyle->transitionForProperty(CSSPropertyWebkitTransform);
         if (transformAnim && !transformAnim->isEmptyOrZeroDuration()) {
             KeyframeValueList transformVector(AnimatedPropertyWebkitTransform);
@@ -1351,7 +1351,7 @@ bool RenderLayerBacking::startTransition(double timeOffset, int property, const 
     }
 
 #if ENABLE(CSS_FILTERS)
-    if (property == (int)CSSPropertyWebkitFilter && m_owningLayer->hasFilter()) {
+    if (property == CSSPropertyWebkitFilter && m_owningLayer->hasFilter()) {
         const Animation* filterAnim = toStyle->transitionForProperty(CSSPropertyWebkitFilter);
         if (filterAnim && !filterAnim->isEmptyOrZeroDuration()) {
             KeyframeValueList filterVector(AnimatedPropertyWebkitFilter);

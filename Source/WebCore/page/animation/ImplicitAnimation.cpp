@@ -30,7 +30,6 @@
 
 #include "AnimationControllerPrivate.h"
 #include "CompositeAnimation.h"
-#include "CSSPropertyNames.h"
 #include "EventNames.h"
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
@@ -40,7 +39,7 @@
 
 namespace WebCore {
 
-ImplicitAnimation::ImplicitAnimation(const Animation* transition, int animatingProperty, RenderObject* renderer, CompositeAnimation* compAnim, RenderStyle* fromStyle)
+ImplicitAnimation::ImplicitAnimation(const Animation* transition, CSSPropertyID animatingProperty, RenderObject* renderer, CompositeAnimation* compAnim, RenderStyle* fromStyle)
     : AnimationBase(transition, renderer, compAnim)
     , m_transitionProperty(transition->property())
     , m_animatingProperty(animatingProperty)
@@ -48,7 +47,7 @@ ImplicitAnimation::ImplicitAnimation(const Animation* transition, int animatingP
     , m_active(true)
     , m_fromStyle(fromStyle)
 {
-    ASSERT(animatingProperty != cAnimateAll);
+    ASSERT(animatingProperty != CSSPropertyInvalid);
 }
 
 ImplicitAnimation::~ImplicitAnimation()
@@ -171,9 +170,7 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
         Document::ListenerType listenerType = Document::TRANSITIONEND_LISTENER;
 
         if (shouldSendEventForListener(listenerType)) {
-            String propertyName;
-            if (m_animatingProperty != cAnimateAll)
-                propertyName = getPropertyName(static_cast<CSSPropertyID>(m_animatingProperty));
+            String propertyName = getPropertyName(m_animatingProperty);
                 
             // Dispatch the event
             RefPtr<Element> element = 0;
@@ -230,7 +227,7 @@ bool ImplicitAnimation::affectsProperty(int property) const
     return (m_animatingProperty == property);
 }
 
-bool ImplicitAnimation::isTargetPropertyEqual(int prop, const RenderStyle* targetStyle)
+bool ImplicitAnimation::isTargetPropertyEqual(CSSPropertyID prop, const RenderStyle* targetStyle)
 {
     // We can get here for a transition that has not started yet. This would make m_toStyle unset and null. 
     // So we check that here (see <https://bugs.webkit.org/show_bug.cgi?id=26706>)
@@ -239,7 +236,7 @@ bool ImplicitAnimation::isTargetPropertyEqual(int prop, const RenderStyle* targe
     return propertiesEqual(prop, m_toStyle.get(), targetStyle);
 }
 
-void ImplicitAnimation::blendPropertyValueInStyle(int prop, RenderStyle* currentStyle)
+void ImplicitAnimation::blendPropertyValueInStyle(CSSPropertyID prop, RenderStyle* currentStyle)
 {
     // We should never add a transition with a 0 duration and delay. But if we ever did
     // it would have a null toStyle. So just in case, let's check that here. (See

@@ -34,7 +34,6 @@
 #include "CSSImageGeneratorValue.h"
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSPropertyNames.h"
 #include "CompositeAnimation.h"
 #include "Document.h"
 #include "EventNames.h"
@@ -310,12 +309,12 @@ static inline NinePieceImage blendFunc(const AnimationBase* anim, const NinePiec
 class PropertyWrapperBase;
 
 static void addShorthandProperties();
-static PropertyWrapperBase* wrapperForProperty(int propertyID);
+static PropertyWrapperBase* wrapperForProperty(CSSPropertyID);
 
 class PropertyWrapperBase {
     WTF_MAKE_NONCOPYABLE(PropertyWrapperBase); WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyWrapperBase(int prop)
+    PropertyWrapperBase(CSSPropertyID prop)
         : m_prop(prop)
     {
     }
@@ -326,20 +325,20 @@ public:
     virtual bool equals(const RenderStyle* a, const RenderStyle* b) const = 0;
     virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const = 0;
 
-    int property() const { return m_prop; }
+    CSSPropertyID property() const { return m_prop; }
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool animationIsAccelerated() const { return false; }
 #endif
 
 private:
-    int m_prop;
+    CSSPropertyID m_prop;
 };
 
 template <typename T>
 class PropertyWrapperGetter : public PropertyWrapperBase {
 public:
-    PropertyWrapperGetter(int prop, T (RenderStyle::*getter)() const)
+    PropertyWrapperGetter(CSSPropertyID prop, T (RenderStyle::*getter)() const)
         : PropertyWrapperBase(prop)
         , m_getter(getter)
     {
@@ -363,7 +362,7 @@ protected:
 template <typename T>
 class PropertyWrapper : public PropertyWrapperGetter<T> {
 public:
-    PropertyWrapper(int prop, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
+    PropertyWrapper(CSSPropertyID prop, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
         : PropertyWrapperGetter<T>(prop, getter)
         , m_setter(setter)
     {
@@ -381,7 +380,7 @@ protected:
 template <typename T>
 class RefCountedPropertyWrapper : public PropertyWrapperGetter<T*> {
 public:
-    RefCountedPropertyWrapper(int prop, T* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<T>))
+    RefCountedPropertyWrapper(CSSPropertyID prop, T* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<T>))
         : PropertyWrapperGetter<T*>(prop, getter)
         , m_setter(setter)
     {
@@ -398,7 +397,7 @@ protected:
 
 class StyleImagePropertyWrapper : public RefCountedPropertyWrapper<StyleImage> {
 public:
-    StyleImagePropertyWrapper(int prop, StyleImage* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<StyleImage>))
+    StyleImagePropertyWrapper(CSSPropertyID prop, StyleImage* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<StyleImage>))
         : RefCountedPropertyWrapper<StyleImage>(prop, getter, setter)
     {
     }
@@ -420,7 +419,7 @@ public:
 
 class PropertyWrapperColor : public PropertyWrapperGetter<Color> {
 public:
-    PropertyWrapperColor(int prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
+    PropertyWrapperColor(CSSPropertyID prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
         : PropertyWrapperGetter<Color>(prop, getter)
         , m_setter(setter)
     {
@@ -514,7 +513,7 @@ static inline const ShadowData* shadowForBlending(const ShadowData* srcShadow, c
 
 class PropertyWrapperShadow : public PropertyWrapperBase {
 public:
-    PropertyWrapperShadow(int prop, const ShadowData* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassOwnPtr<ShadowData>, bool))
+    PropertyWrapperShadow(CSSPropertyID prop, const ShadowData* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassOwnPtr<ShadowData>, bool))
         : PropertyWrapperBase(prop)
         , m_getter(getter)
         , m_setter(setter)
@@ -627,7 +626,7 @@ private:
 
 class PropertyWrapperMaybeInvalidColor : public PropertyWrapperBase {
 public:
-    PropertyWrapperMaybeInvalidColor(int prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
+    PropertyWrapperMaybeInvalidColor(CSSPropertyID prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
         : PropertyWrapperBase(prop)
         , m_getter(getter)
         , m_setter(setter)
@@ -673,14 +672,14 @@ private:
 enum MaybeInvalidColorTag { MaybeInvalidColor };
 class PropertyWrapperVisitedAffectedColor : public PropertyWrapperBase {
 public:
-    PropertyWrapperVisitedAffectedColor(int prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&), 
+    PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&),
                                         Color (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
         : PropertyWrapperBase(prop)
         , m_wrapper(adoptPtr(new PropertyWrapperColor(prop, getter, setter)))
         , m_visitedWrapper(adoptPtr(new PropertyWrapperColor(prop, visitedGetter, visitedSetter)))
     {
     }
-    PropertyWrapperVisitedAffectedColor(int prop, MaybeInvalidColorTag, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&), 
+    PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, MaybeInvalidColorTag, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&),
                                         Color (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
         : PropertyWrapperBase(prop)
         , m_wrapper(adoptPtr(new PropertyWrapperMaybeInvalidColor(prop, getter, setter)))
@@ -802,7 +801,7 @@ public:
     typedef const FillLayer* (RenderStyle::*LayersGetter)() const;
     typedef FillLayer* (RenderStyle::*LayersAccessor)();
     
-    FillLayersPropertyWrapper(int prop, LayersGetter getter, LayersAccessor accessor)
+    FillLayersPropertyWrapper(CSSPropertyID prop, LayersGetter getter, LayersAccessor accessor)
         : PropertyWrapperBase(prop)
         , m_layersGetter(getter)
         , m_layersAccessor(accessor)
@@ -823,6 +822,8 @@ public:
                 break;
             case CSSPropertyBackgroundImage:
                 m_fillLayerPropertyWrapper = new FillLayerStyleImagePropertyWrapper(&FillLayer::image, &FillLayer::setImage);
+                break;
+             default:
                 break;
         }
     }
@@ -866,7 +867,7 @@ private:
 
 class ShorthandPropertyWrapper : public PropertyWrapperBase {
 public:
-    ShorthandPropertyWrapper(int property, const StylePropertyShorthand& shorthand)
+    ShorthandPropertyWrapper(CSSPropertyID property, const StylePropertyShorthand& shorthand)
         : PropertyWrapperBase(property)
     {
         for (unsigned i = 0; i < shorthand.length(); ++i) {
@@ -904,7 +905,7 @@ private:
 #if ENABLE(SVG)
 class PropertyWrapperSVGPaint : public PropertyWrapperBase {
 public:
-    PropertyWrapperSVGPaint(int prop, const SVGPaint::SVGPaintType& (RenderStyle::*paintTypeGetter)() const, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
+    PropertyWrapperSVGPaint(CSSPropertyID prop, const SVGPaint::SVGPaintType& (RenderStyle::*paintTypeGetter)() const, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
         : PropertyWrapperBase(prop)
         , m_paintTypeGetter(paintTypeGetter)
         , m_getter(getter)
@@ -1175,7 +1176,7 @@ static void addShorthandProperties()
     }
 }
 
-static PropertyWrapperBase* wrapperForProperty(int propertyID)
+static PropertyWrapperBase* wrapperForProperty(CSSPropertyID propertyID)
 {
     int propIndex = propertyID - firstCSSProperty;
     if (propIndex >= 0 && propIndex < numCSSProperties) {
@@ -1208,26 +1209,16 @@ AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer
         m_totalDuration = m_animation->duration() * m_animation->iterationCount();
 }
 
-bool AnimationBase::propertiesEqual(int prop, const RenderStyle* a, const RenderStyle* b)
+bool AnimationBase::propertiesEqual(CSSPropertyID prop, const RenderStyle* a, const RenderStyle* b)
 {
     ensurePropertyMap();
-    if (prop == cAnimateAll) {
-        size_t n = gPropertyWrappers->size();
-        for (unsigned int i = 0; i < n; ++i) {
-            PropertyWrapperBase* wrapper = (*gPropertyWrappers)[i];
-            // No point comparing shorthand wrappers for 'all'.
-            if (!wrapper->isShorthandWrapper() && !wrapper->equals(a, b))
-                return false;
-        }
-    } else {
-        PropertyWrapperBase* wrapper = wrapperForProperty(prop);
-        if (wrapper)
-            return wrapper->equals(a, b);
-    }
+    PropertyWrapperBase* wrapper = wrapperForProperty(prop);
+    if (wrapper)
+        return wrapper->equals(a, b);
     return true;
 }
 
-int AnimationBase::getPropertyAtIndex(int i, bool& isShorthand)
+CSSPropertyID AnimationBase::getPropertyAtIndex(int i, bool& isShorthand)
 {
     ensurePropertyMap();
     if (i < 0 || i >= static_cast<int>(gPropertyWrappers->size()))
@@ -1245,9 +1236,9 @@ int AnimationBase::getNumProperties()
 }
 
 // Returns true if we need to start animation timers
-bool AnimationBase::blendProperties(const AnimationBase* anim, int prop, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress)
+bool AnimationBase::blendProperties(const AnimationBase* anim, CSSPropertyID prop, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress)
 {
-    ASSERT(prop != cAnimateAll);
+    ASSERT(prop != CSSPropertyInvalid);
 
     ensurePropertyMap();
     PropertyWrapperBase* wrapper = wrapperForProperty(prop);
@@ -1264,7 +1255,7 @@ bool AnimationBase::blendProperties(const AnimationBase* anim, int prop, RenderS
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-bool AnimationBase::animationOfPropertyIsAccelerated(int prop)
+bool AnimationBase::animationOfPropertyIsAccelerated(CSSPropertyID prop)
 {
     ensurePropertyMap();
     PropertyWrapperBase* wrapper = wrapperForProperty(prop);
@@ -1272,7 +1263,7 @@ bool AnimationBase::animationOfPropertyIsAccelerated(int prop)
 }
 #endif
 
-static bool gatherEnclosingShorthandProperties(int property, PropertyWrapperBase* wrapper, HashSet<int>& propertySet)
+static bool gatherEnclosingShorthandProperties(CSSPropertyID property, PropertyWrapperBase* wrapper, HashSet<int>& propertySet)
 {
     if (!wrapper->isShorthandWrapper())
         return false;
@@ -1294,7 +1285,7 @@ static bool gatherEnclosingShorthandProperties(int property, PropertyWrapperBase
 }
 
 // Note: this is inefficient. It's only called from pauseTransitionAtTime().
-HashSet<int> AnimationBase::animatableShorthandsAffectingProperty(int property)
+HashSet<int> AnimationBase::animatableShorthandsAffectingProperty(CSSPropertyID property)
 {
     ensurePropertyMap();
 

@@ -1133,12 +1133,12 @@ AnimationList* RenderStyle::accessTransitions()
     return rareNonInheritedData->m_transitions.get();
 }
 
-const Animation* RenderStyle::transitionForProperty(int property) const
+const Animation* RenderStyle::transitionForProperty(CSSPropertyID property) const
 {
     if (transitions()) {
         for (size_t i = 0; i < transitions()->size(); ++i) {
             const Animation* p = transitions()->animation(i);
-            if (p->property() == cAnimateAll || p->property() == property) {
+            if (p->animationMode() == Animation::AnimateAll || p->property() == property) {
                 return p;
             }
         }

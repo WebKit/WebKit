@@ -1085,7 +1085,7 @@ void ArgumentCoder<RefPtr<Animation> >::encode(ArgumentEncoder* encoder, const R
     encodeBoolAndValue(encoder, animation->isIterationCountSet(), animation->iterationCount());
     encodeBoolAndValue(encoder, animation->isNameSet(), animation->name());
     encodeBoolAndEnumValue(encoder, animation->isPlayStateSet(), animation->playState());
-    encodeBoolAndValue(encoder, animation->isPropertySet(), animation->property());
+    encodeBoolAndValue(encoder, animation->isPropertySet(), static_cast<int>(animation->property()));
     encodeBoolAndValue<RefPtr<TimingFunction> >(encoder, animation->isTimingFunctionSet(), animation->timingFunction());
     encoder->encodeBool(animation->isNoneAnimation());
 }
@@ -1163,7 +1163,7 @@ bool ArgumentCoder<RefPtr<Animation> >::decode(ArgumentDecoder* decoder, RefPtr<
     if (isPlayStateSet)
         animation->setPlayState(playState);
     if (isPropertySet)
-        animation->setProperty(property);
+        animation->setProperty(static_cast<CSSPropertyID>(property));
     if (isTimingFunctionSet)
         animation->setTimingFunction(timingFunction);
 
