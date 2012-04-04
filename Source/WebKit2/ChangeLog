@@ -1,3 +1,14 @@
+2012-04-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed some WebKit2 crashes seen on the buildbot after my last patch.
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::finalize): Don't try to get our value
+        out of the map, since Weak<T> returns NULL during finalization. Instead,
+        use the handle we've been passed for finalization.
+
 2012-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         First step toward incremental Weak<T> finalization
