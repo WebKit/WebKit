@@ -1,5 +1,20 @@
 2012-04-04  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
+        [Qt][WK2] QtWebKit2 should support Page Visibility API
+        https://bugs.webkit.org/show_bug.cgi?id=81164
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implementing the last bits needed for getting the expected
+        behavior for Page Visibility API, according to its spec.
+        The only missing part in Qt was a way to check whether
+        the view was exposed or not.
+
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::isViewVisible):
+
+2012-04-04  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
         [WK2] Add Page Visibility API support
         https://bugs.webkit.org/show_bug.cgi?id=81154
 
