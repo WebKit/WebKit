@@ -1267,7 +1267,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
     _appendSaveAsAction: function(contextMenu, event)
     {
-        if (!InspectorFrontendHost.canSaveAs())
+        if (!InspectorFrontendHost.canSave())
             return;
 
         if (this._resource.type !== WebInspector.Resource.Type.Document &&
@@ -1275,14 +1275,19 @@ WebInspector.FrameResourceTreeElement.prototype = {
             this._resource.type !== WebInspector.Resource.Type.Script)
             return;
 
-        function save()
+        function doSave(forceSaveAs, content)
         {
-            var fileName = this._resource.displayName;
-            this._resource.requestContent(InspectorFrontendHost.saveAs.bind(InspectorFrontendHost, fileName));
+            InspectorFrontendHost.save(this._resource.url, content, forceSaveAs);
+        }
+
+        function save(forceSaveAs)
+        {
+            this._resource.requestContent(doSave.bind(this, forceSaveAs));
         }
 
         contextMenu.appendSeparator();
-        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), save.bind(this));
+        contextMenu.appendItem(WebInspector.UIString("Save"), save.bind(this, false));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), save.bind(this, true));
     },
 
     _setBubbleText: function(x)
@@ -2054,14 +2059,20 @@ WebInspector.ResourceRevisionTreeElement.prototype = {
         var contextMenu = new WebInspector.ContextMenu();
         contextMenu.appendItem(WebInspector.UIString("Revert to this revision"), this._revision.revertToThis.bind(this._revision));
 
-        if (InspectorFrontendHost.canSaveAs()) {
-            function save()
+        if (InspectorFrontendHost.canSave()) {
+            function doSave(forceSaveAs, content)
             {
-                var fileName = this._revision.resource.displayName;
-                this._revision.requestContent(InspectorFrontendHost.saveAs.bind(InspectorFrontendHost, fileName));
+                InspectorFrontendHost.save(this._revision.resource.url, content, forceSaveAs);
             }
+
+            function save(forceSaveAs)
+            {
+                this._revision.requestContent(doSave.bind(this, forceSaveAs));
+            }
+
             contextMenu.appendSeparator();
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), save.bind(this));
+            contextMenu.appendItem(WebInspector.UIString("Save"), save.bind(this, false));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), save.bind(this, true));
         }
 
         contextMenu.show(event);

@@ -42,7 +42,7 @@ WebInspector.TextViewer = function(textModel, platform, url, delegate)
     this._textModel.addEventListener(WebInspector.TextEditorModel.Events.TextChanged, this._textChanged, this);
     this._textModel.resetUndoStack();
     this._delegate = delegate;
-
+    this._url = url;
     this.element.className = "text-editor monospace";
 
     var enterTextChangeMode = this._enterInternalTextChangeMode.bind(this);
@@ -290,9 +290,10 @@ WebInspector.TextViewer.prototype = {
             target = this._mainPanel._enclosingLineRowOrSelf(event.target);
             this._delegate.populateTextAreaContextMenu(contextMenu, target && target.lineNumber);
         }
-        var fileName = this._delegate.suggestedFileName();
-        if (fileName)
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), InspectorFrontendHost.saveAs.bind(InspectorFrontendHost, fileName, this._textModel.text));
+        if (this._url) {
+            contextMenu.appendItem(WebInspector.UIString("Save"), InspectorFrontendHost.save.bind(InspectorFrontendHost, this._url, this._textModel.text, false));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), InspectorFrontendHost.save.bind(InspectorFrontendHost, this._url, this._textModel.text, true));
+        }
 
         contextMenu.show(event);
     },
@@ -303,6 +304,8 @@ WebInspector.TextViewer.prototype = {
             return false;
 
         this._delegate.commitEditing();
+        if (this._url && WebInspector.isURLSaved(this._url))
+            InspectorFrontendHost.save(this._url, this._textModel.text, false);
         return true;
     },
 
@@ -337,9 +340,7 @@ WebInspector.TextViewerDelegate.prototype = {
 
     populateLineGutterContextMenu: function(contextMenu, lineNumber) { },
 
-    populateTextAreaContextMenu: function(contextMenu, lineNumber) { },
-
-    suggestedFileName: function() { }
+    populateTextAreaContextMenu: function(contextMenu, lineNumber) { }
 }
 
 /**

@@ -118,12 +118,12 @@ WebInspector.InspectorFrontendHostStub.prototype = {
         window.open(url, "_blank");
     },
 
-    canSaveAs: function(fileName, content)
+    canSave: function()
     {
         return true;
     },
 
-    saveAs: function(fileName, content)
+    save: function(url, content, forceSaveAs)
     {
         var builder = new WebKitBlobBuilder();
         builder.append(content);

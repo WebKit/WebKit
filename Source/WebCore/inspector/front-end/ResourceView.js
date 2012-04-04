@@ -116,11 +116,6 @@ WebInspector.ResourceSourceFrame.prototype = {
         this.resource.requestContent(contentLoaded.bind(this));
     },
 
-    suggestedFileName: function()
-    {
-        return this.resource.displayName;
-    },
-
     _contentChanged: function(event)
     {
         this.setContent(WebInspector.ResourceSourceFrame.mimeTypeForResource[this._resource], this._resource.content);

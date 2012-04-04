@@ -232,17 +232,17 @@ void InspectorFrontendHost::openInNewTab(const String& url)
         m_client->openInNewTab(url);
 }
 
-bool InspectorFrontendHost::canSaveAs()
+bool InspectorFrontendHost::canSave()
 {
     if (m_client)
-        return m_client->canSaveAs();
+        return m_client->canSave();
     return false;
 }
 
-void InspectorFrontendHost::saveAs(const String& fileName, const String& content)
+void InspectorFrontendHost::save(const String& url, const String& content, bool forceSaveAs)
 {
     if (m_client)
-        m_client->saveAs(fileName, content);
+        m_client->save(url, content, forceSaveAs);
 }
 
 void InspectorFrontendHost::sendMessageToBackend(const String& message)

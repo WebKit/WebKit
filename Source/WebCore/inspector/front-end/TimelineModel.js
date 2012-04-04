@@ -202,8 +202,8 @@ WebInspector.TimelineModel.prototype = {
         records[records.length - 1] = records[records.length - 1] + "]";
 
         var now = new Date();
-        var suggestedFileName = "TimelineRawData-" + now.toISO8601Compact() + ".json";
-        InspectorFrontendHost.saveAs(suggestedFileName, records.join(",\n"));
+        var fileName = "TimelineRawData-" + now.toISO8601Compact() + ".json";
+        InspectorFrontendHost.save(fileName, records.join(",\n"), true);
     },
 
     reset: function()

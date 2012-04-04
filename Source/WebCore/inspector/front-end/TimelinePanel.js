@@ -269,7 +269,7 @@ WebInspector.TimelinePanel.prototype = {
         this._shortcuts[shortcut.makeKey("e", modifiers.CtrlOrMeta)] = this._toggleTimelineButtonClicked.bind(this);
         section.addKey(shortcut.shortcutToString("e", modifiers.CtrlOrMeta), WebInspector.UIString("Start/stop recording"));
 
-        if (InspectorFrontendHost.canSaveAs()) {
+        if (InspectorFrontendHost.canSave()) {
             this._shortcuts[shortcut.makeKey("s", modifiers.CtrlOrMeta)] = this._saveToFile.bind(this);
             section.addKey(shortcut.shortcutToString("s", modifiers.CtrlOrMeta), WebInspector.UIString("Save timeline data"));
         }
@@ -295,7 +295,7 @@ WebInspector.TimelinePanel.prototype = {
     _contextMenu: function(event)
     {
         var contextMenu = new WebInspector.ContextMenu();
-        if (InspectorFrontendHost.canSaveAs())
+        if (InspectorFrontendHost.canSave())
             contextMenu.appendItem(WebInspector.UIString("Save Timeline data\u2026"), this._saveToFile.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Load Timeline data\u2026"), this._fileSelectorElement.click.bind(this._fileSelectorElement));
         contextMenu.show(event);

@@ -1020,3 +1020,16 @@ WebInspector._toolbarItemClicked = function(event)
     var toolbarItem = event.currentTarget;
     WebInspector.inspectorView.setCurrentPanel(toolbarItem.panel);
 }
+
+WebInspector.savedURL = function(url)
+{
+    var savedURLs = WebInspector.settings.savedURLs.get();
+    savedURLs[url] = true;
+    WebInspector.settings.savedURLs.set(savedURLs);
+}
+
+WebInspector.isURLSaved = function(url)
+{
+    var savedURLs = WebInspector.settings.savedURLs.get();
+    return savedURLs[url];
+}

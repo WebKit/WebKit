@@ -476,10 +476,6 @@ WebInspector.SourceFrame.prototype = {
         WebInspector.populateResourceContextMenu(contextMenu, this._url, lineNumber);
     },
 
-    suggestedFileName: function()
-    {
-    },
-
     inheritScrollPositions: function(sourceFrame)
     {
         this._textViewer.inheritScrollPositions(sourceFrame._textViewer);
@@ -549,11 +545,6 @@ WebInspector.TextViewerDelegateForSourceFrame.prototype = {
     populateTextAreaContextMenu: function(contextMenu, lineNumber)
     {
         this._sourceFrame.populateTextAreaContextMenu(contextMenu, lineNumber);
-    },
-
-    suggestedFileName: function()
-    {
-        return this._sourceFrame.suggestedFileName();
     }
 }
 

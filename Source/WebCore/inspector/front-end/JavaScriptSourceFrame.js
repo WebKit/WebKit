@@ -84,11 +84,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         return this._model.canEditScriptSource(this._uiSourceCode);
     },
 
-    suggestedFileName: function()
-    {
-        return this._uiSourceCode.fileName || "untitled.js";
-    },
-
     editContent: function(newContent, callback)
     {
         this._editingContent = true;

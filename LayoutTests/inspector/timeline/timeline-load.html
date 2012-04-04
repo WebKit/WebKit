@@ -8,7 +8,7 @@ function test()
 {
     WebInspector.showPanel("timeline");
     InspectorTest.addSniffer(WebInspector.TimelineModel.prototype, "_loadNextChunk", loadNextChunk);
-    InspectorFrontendHost.saveAs = saveAs;
+    InspectorFrontendHost.save = save;
     var data = [
         {"startTime":1310749854316.8408,"data":{"requestId":43,"url":"http://www.webkit.org/","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":1819936,"totalHeapSize":7629120},
         {"startTime":1310749855118.9329,"data":{"requestId":43,"statusCode":200,"mimeType":"text/html"},"children":[],"endTime":1310749855118.968,"type":"ResourceReceiveResponse","usedHeapSize":1819936,"totalHeapSize":7629120},
@@ -27,7 +27,7 @@ function test()
         WebInspector.panels.timeline._model.saveToFile();
     }
 
-    function saveAs(name, saveData)
+    function save(name, saveData, saveAs)
     {
         saveData = JSON.parse(saveData);
         saveData.shift(); // strip version info

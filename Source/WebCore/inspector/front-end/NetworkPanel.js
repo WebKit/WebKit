@@ -947,7 +947,7 @@ WebInspector.NetworkLogView.prototype = {
         }
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy all as HAR" : "Copy All as HAR"), this._copyAll.bind(this));
 
-        if (InspectorFrontendHost.canSaveAs()) {
+        if (InspectorFrontendHost.canSave()) {
             contextMenu.appendSeparator();
             if (resource)
                 contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save entry as HAR" : "Save Entry as HAR"), this._exportResource.bind(this, resource));
@@ -999,13 +999,13 @@ WebInspector.NetworkLogView.prototype = {
             log: (new WebInspector.HARLog(this._resources)).build()
         };
         
-        InspectorFrontendHost.saveAs(WebInspector.inspectedPageDomain + ".har", JSON.stringify(harArchive, null, 2));
+        InspectorFrontendHost.save(WebInspector.inspectedPageDomain + ".har", JSON.stringify(harArchive, null, 2), true);
     },
 
     _exportResource: function(resource)
     {
         var har = (new WebInspector.HAREntry(resource)).build();
-        InspectorFrontendHost.saveAs(resource.displayName + ".har", JSON.stringify(har, null, 2));
+        InspectorFrontendHost.save(resource.displayName + ".har", JSON.stringify(har, null, 2), true);
     },
 
     _clearBrowserCache: function(event)

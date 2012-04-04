@@ -129,14 +129,14 @@ void InspectorFrontendClientImpl::openInNewTab(const String& url)
     m_client->openInNewTab(url);
 }
 
-bool InspectorFrontendClientImpl::canSaveAs()
+bool InspectorFrontendClientImpl::canSave()
 {
     return true;
 }
 
-void InspectorFrontendClientImpl::saveAs(const String& fileName, const String& content)
+void InspectorFrontendClientImpl::save(const String& url, const String& content, bool forceSaveAs)
 {
-    m_client->saveAs(fileName, content);
+    m_client->save(url, content, forceSaveAs);
 }
 
 void InspectorFrontendClientImpl::inspectedURLChanged(const String& url)

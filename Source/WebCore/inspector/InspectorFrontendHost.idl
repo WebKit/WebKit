@@ -52,8 +52,8 @@ module core {
 
         void copyText(in DOMString text);
         void openInNewTab(in DOMString url);
-        boolean canSaveAs();
-        void saveAs(in DOMString fileName, in DOMString content);
+        boolean canSave();
+        void save(in DOMString url, in DOMString content, in boolean forceSaveAs);
 
         [Custom] DOMString platform();
         [Custom] DOMString port();

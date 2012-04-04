@@ -68,8 +68,8 @@ public:
     virtual void requestSetDockSide(const String&) { }
     virtual void changeAttachedWindowHeight(unsigned);
     virtual void openInNewTab(const String& url);
-    virtual bool canSaveAs() { return false; }
-    virtual void saveAs(const String&, const String&) { }
+    virtual bool canSave() { return false; }
+    virtual void save(const String&, const String&, bool) { }
 
     virtual void attachWindow() = 0;
     virtual void detachWindow() = 0;

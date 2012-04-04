@@ -93,6 +93,7 @@ WebInspector.Settings = function()
     this.emulateTouchEvents = this.createSetting("emulateTouchEvents", false);
     this.showPaintRects = this.createSetting("showPaintRects", false);
     this.zoomLevel = this.createSetting("zoomLevel", 0);
+    this.savedURLs = this.createSetting("savedURLs", {});
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
     // periodical breakpoints duplication leading to inspector slowness.

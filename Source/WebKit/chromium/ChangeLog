@@ -1,3 +1,17 @@
+2012-04-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: migrate from InspectorFrontendHost.saveAs to InspectorFrontendHost.save.
+        https://bugs.webkit.org/show_bug.cgi?id=83162
+
+        Reviewed by Yury Semikhatsky.
+
+        * public/WebDevToolsFrontendClient.h:
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::canSave):
+        (WebKit::InspectorFrontendClientImpl::save):
+        * src/InspectorFrontendClientImpl.h:
+        (InspectorFrontendClientImpl):
+
 2012-04-04  Hans Wennborg  <hans@chromium.org>
 
         WebSpeechRecognizer.h: add missing forward declaration
