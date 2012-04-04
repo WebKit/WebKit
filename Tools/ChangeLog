@@ -1,3 +1,12 @@
+2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        I really hope this is the last build fix. Apparently exec doesn't quite arguments with
+        double quotations on Windows. Use system instead.
+
+        Hopefully, this won't break anything.
+
+        * Scripts/run-webkit-tests:
+
 2012-04-03  Keishi Hattori  <keishi@webkit.org>
 
         Disable ENABLE_DATALIST for now
