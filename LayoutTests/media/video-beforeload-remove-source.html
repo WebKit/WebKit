@@ -2,6 +2,33 @@
 <html>
     <head>
         <script src=../resources/gc.js></script>
+        <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        function removeNodes(start, end) {
+            var range = document.createRange();
+            range.setStart(start, 0);
+            range.setEnd(end, 0);
+            range.deleteContents();
+        }
+
+        function beforeLoadFunc()
+        {
+            document.removeEventListener("beforeload", beforeLoadFunc, true);
+            var start = document.getElementById("start");
+            var end = document.getElementById("end");
+            removeNodes(start, end);
+
+            gc();
+            if (window.layoutTestController)
+                setTimeout("layoutTestController.notifyDone()", 0);
+        }
+
+        document.addEventListener("beforeload", beforeLoadFunc, true);
+        </script>
     </head>
     <body>
     <video controls autoplay>
@@ -9,34 +36,7 @@
         <source src="content/test.mp4" type="video/mp4">
         <source src="content/test.ogv" type="video/ogg">
         <b id="end"></b>
-    </video> 
+    </video>
     <div>Test passes if it does not crash.</div>
     </body>
-    <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
-        }
-        
-        function removeNodes(start, end) {
-            var range = document.createRange();
-            range.setStart(start, 0);
-            range.setEnd(end, 0);
-            range.deleteContents();
-        }
-        
-        function beforeLoadFunc()
-        {
-            document.removeEventListener("beforeload", beforeLoadFunc, true);
-            var start = document.getElementById("start");
-            var end = document.getElementById("end");
-            removeNodes(start, end);
-        
-            gc();
-            if (window.layoutTestController)
-                setTimeout("layoutTestController.notifyDone()", 0);
-        }
-        
-        document.addEventListener("beforeload", beforeLoadFunc, true);
-    </script>
 </html>

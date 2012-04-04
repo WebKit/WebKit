@@ -3891,7 +3891,6 @@ BUGWK82232 SNOWLEOPARD DEBUG : svg/custom/circular-marker-reference-2.svg = PASS
 
 // Flaky since at least r111670
 BUGWK82258 DEBUG : svg/custom/circular-marker-reference-4.svg = TEXT PASS
-BUGWK82260 : media/video-beforeload-remove-source.html = TIMEOUT PASS
 
 BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-x-in-scrolling-page.html = TEXT PASS
 BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html = TEXT PASS
