@@ -1,3 +1,13 @@
+2012-04-04  Philippe Normand  <pnormand@igalia.com>
+
+        gtk_unittest.GtkPortTest.test_get_crash_log failing on windows
+        https://bugs.webkit.org/show_bug.cgi?id=83176
+
+        Reviewed by Tony Chang.
+
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        (test_get_crash_log): Skip the test on non-linux platforms.
+
 2012-04-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] DRT support for computedStyleIncludingVisitedInfo

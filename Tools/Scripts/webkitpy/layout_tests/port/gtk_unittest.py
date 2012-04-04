@@ -69,6 +69,8 @@ STDERR: <empty>""" % {'core_directory': os.environ.get('WEBKIT_CORE_DUMPS_DIRECT
         return (self._mock_crash_log, [])
 
     def test_get_crash_log(self):
+        if not sys.platform.startswith("linux"):
+            return
         port = self.make_port()
         port._get_gdb_output = self._mock_gdb_output
         log = port._get_crash_log("DumpRenderTree", 28529, "", "")
