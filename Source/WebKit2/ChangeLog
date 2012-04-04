@@ -1,3 +1,12 @@
+2012-04-03  Keishi Hattori  <keishi@webkit.org>
+
+        Disable ENABLE_DATALIST for now
+        https://bugs.webkit.org/show_bug.cgi?id=82871
+
+        Reviewed by Kent Tamura.
+
+        * Configurations/FeatureDefines.xcconfig: Disabled ENABLE_DATALIST.
+
 2012-04-03  Yael Aharon  <yael.aharon@nokia.com>
 
         [Qt][WK2] Assert on startup after r113090

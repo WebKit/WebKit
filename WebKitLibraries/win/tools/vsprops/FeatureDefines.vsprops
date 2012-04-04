@@ -78,7 +78,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_DATALIST"
-		Value="ENABLE_DATALIST"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro

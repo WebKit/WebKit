@@ -209,6 +209,9 @@ fast/events/drag-image-filename.html
 # Hits an assert in FrameLoader.cpp. https://bugs.webkit.org/show_bug.cgi?id=31387
 http/tests/multipart/policy-ignore-crash.php
 
+# Datalist is not yet enabled.
+fast/forms/datalist
+
 # Color input is not yet enabled.
 fast/forms/color
 

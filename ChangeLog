@@ -1,3 +1,16 @@
+2012-04-03  Keishi Hattori  <keishi@webkit.org>
+
+        Disable ENABLE_DATALIST for now
+        https://bugs.webkit.org/show_bug.cgi?id=82871
+
+        Reviewed by Kent Tamura.
+
+        We should disable ENABLE_DATALIST because
+        - We need platform-dependent implementation, and non-BlackBerry platforms don't have it.
+        - We need to hide the content of <datalist>, but it is shown for now.
+
+        * Source/cmake/OptionsEfl.cmake: Disabled ENABLE_DATALIST.
+
 2012-04-02  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Set up plugin process on Unix

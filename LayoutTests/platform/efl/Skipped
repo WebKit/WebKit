@@ -299,6 +299,9 @@ fast/media/print-restores-previous-mediatype.html
 # ENABLE(SHADOW_DOM) is disabled
 fast/dom/shadow
 
+# ENABLE(DATALIST) is disabled
+fast/forms/datalist
+
 # defined(ENABLE_INPUT_TYPE_COLOR) is disabled
 fast/forms/color/input-color-onchange-event.html
 

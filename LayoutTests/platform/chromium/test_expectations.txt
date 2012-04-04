@@ -1083,9 +1083,7 @@ BUGCR27697 SKIP : storage/hash-change-with-xhr.html = PASS
 
 // HTML5 datalist element. We don't enable it because WebKit implementation
 // is incomplete.
-BUGCR20226 : fast/forms/datalist.html = TEXT
-BUGCR20226 : fast/forms/input-list.html = FAIL
-BUGCR20226 : fast/forms/input-selectedoption.html = FAIL
+BUGCR20226 : fast/forms/datalist/ = PASS FAIL
 
 // Implementation of Date/time input types are incomplete and
 // ENABLE_INPUT_TYPE_* flags are not enabled.

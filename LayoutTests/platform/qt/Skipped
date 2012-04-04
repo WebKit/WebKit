@@ -67,6 +67,9 @@ canvas/philip/tests/2d.drawImage.outsidesource.html
 #       Disabled features.                                                    #
 # =========================================================================== #
 
+# ENABLE_DATALIST is not yet enabled.
+fast/forms/datalist
+
 # ENABLE_INPUT_TYPE_COLOR is disabled.
 fast/forms/color
 

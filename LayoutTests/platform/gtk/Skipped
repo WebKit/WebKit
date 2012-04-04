@@ -259,6 +259,9 @@ http/tests/inspector/indexeddb
 # StorageTracker is not enabled.
 storage/domstorage/localstorage/storagetracker
 
+# Datalist is not yet enabled.
+fast/forms/datalist
+
 # Color input is not yet enabled.
 fast/forms/color
 

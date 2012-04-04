@@ -187,7 +187,7 @@ my @features = (
       define => "ENABLE_SQL_DATABASE", default => 1, value => \$sqlDatabaseSupport },
 
     { option => "datalist", desc => "Toggle HTML5 datalist support",
-      define => "ENABLE_DATALIST", default => 1, value => \$datalistSupport },
+      define => "ENABLE_DATALIST", default => 0, value => \$datalistSupport },
 
     { option => "data-transfer-items", desc => "Toggle HTML5 data transfer items support",
       define => "ENABLE_DATA_TRANSFER_ITEMS", default => 0, value => \$dataTransferItemsSupport },
