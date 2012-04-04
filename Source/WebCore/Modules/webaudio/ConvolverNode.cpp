@@ -68,7 +68,8 @@ void ConvolverNode::process(size_t framesToProcess)
     ASSERT(outputBus);
 
     // Synchronize with possible dynamic changes to the impulse response.
-    if (m_processLock.tryLock()) {
+    MutexTryLocker tryLocker(m_processLock);
+    if (tryLocker.locked()) {
         if (!isInitialized() || !m_reverb.get())
             outputBus->zero();
         else {
@@ -78,8 +79,6 @@ void ConvolverNode::process(size_t framesToProcess)
             // we keep getting fed silence.
             m_reverb->process(input(0)->bus(), outputBus, framesToProcess);
         }
-        
-        m_processLock.unlock();
     } else {
         // Too bad - the tryLock() failed.  We must be in the middle of setting a new impulse response.
         outputBus->zero();

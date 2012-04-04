@@ -97,6 +97,23 @@ private:
 
 typedef Locker<Mutex> MutexLocker;
 
+class MutexTryLocker {
+    WTF_MAKE_NONCOPYABLE(MutexTryLocker);
+public:
+    WTF_EXPORT_PRIVATE MutexTryLocker(Mutex& mutex) : m_mutex(mutex), m_locked(mutex.tryLock()) { }
+    WTF_EXPORT_PRIVATE ~MutexTryLocker()
+    {
+        if (m_locked)
+            m_mutex.unlock();
+    }
+
+    WTF_EXPORT_PRIVATE bool locked() const { return m_locked; }
+
+private:
+    Mutex& m_mutex;
+    bool m_locked;
+};
+
 class ReadWriteLock {
     WTF_MAKE_NONCOPYABLE(ReadWriteLock);
 public:
@@ -142,6 +159,7 @@ DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime);
 
 using WTF::Mutex;
 using WTF::MutexLocker;
+using WTF::MutexTryLocker;
 using WTF::ThreadCondition;
 
 #if OS(WINDOWS)

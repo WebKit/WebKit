@@ -114,7 +114,8 @@ void MediaElementAudioSourceNode::process(size_t numberOfFrames)
     // Use a tryLock() to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the HTMLMediaElement must be in the middle of
     // reconfiguring its playback engine, so we output silence in this case.
-    if (m_processLock.tryLock()) {
+    MutexTryLocker tryLocker(m_processLock);
+    if (tryLocker.locked()) {
         if (AudioSourceProvider* provider = mediaElement()->audioSourceProvider()) {
             if (m_multiChannelResampler.get()) {
                 ASSERT(m_sourceSampleRate != sampleRate());
@@ -129,7 +130,6 @@ void MediaElementAudioSourceNode::process(size_t numberOfFrames)
             // or the stream is not yet available.
             outputBus->zero();
         }
-        m_processLock.unlock();
     } else {
         // We failed to acquire the lock.
         outputBus->zero();

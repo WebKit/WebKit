@@ -181,8 +181,8 @@ void Oscillator::process(size_t framesToProcess)
         return;
 
     // The audio thread can't block on this lock, so we call tryLock() instead.
-    // Careful - this is a tryLock() and not an autolocker, so we must unlock() before every return.
-    if (!m_processLock.tryLock()) {
+    MutexTryLocker tryLocker(m_processLock);
+    if (!tryLocker.locked()) {
         // Too bad - the tryLock() failed. We must be in the middle of changing wave-tables.
         outputBus->zero();
         return;
@@ -191,7 +191,6 @@ void Oscillator::process(size_t framesToProcess)
     // We must access m_waveTable only inside the lock.
     if (!m_waveTable.get()) {
         outputBus->zero();
-        m_processLock.unlock();
         return;
     }
 
@@ -263,8 +262,6 @@ void Oscillator::process(size_t framesToProcess)
     }
 
     m_virtualReadIndex = virtualReadIndex;
-
-    m_processLock.unlock();
 }
 
 void Oscillator::reset()

@@ -143,7 +143,8 @@ float AudioParamTimeline::valuesForTimeRange(float startTime,
                                              float controlRate)
 {
     // We can't contend the lock in the realtime audio thread.
-    if (!m_eventsLock.tryLock()) {
+    MutexTryLocker tryLocker(m_eventsLock);
+    if (!tryLocker.locked()) {
         if (values) {
             for (unsigned i = 0; i < numberOfValues; ++i)
                 values[i] = defaultValue;
@@ -152,7 +153,6 @@ float AudioParamTimeline::valuesForTimeRange(float startTime,
     }
 
     float value = valuesForTimeRangeImpl(startTime, endTime, defaultValue, values, numberOfValues, sampleRate, controlRate);
-    m_eventsLock.unlock();
 
     return value;
 }

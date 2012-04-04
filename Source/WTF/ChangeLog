@@ -1,3 +1,21 @@
+2012-04-04  Chris Rogers  <crogers@google.com>
+
+        Web Audio should use MutexTryLocker class
+        https://bugs.webkit.org/show_bug.cgi?id=83194
+
+        Reviewed by Kenneth Russell.
+
+        Add MutexTryLocker class which can be used as a stack-based object wrapping a Mutex.
+        It will automatically unlock the Mutex in its destructor if the tryLock() succeeded.
+
+        * wtf/ThreadingPrimitives.h:
+        (MutexTryLocker):
+        (WTF::MutexTryLocker::MutexTryLocker):
+        (WTF::MutexTryLocker::~MutexTryLocker):
+        (WTF::MutexTryLocker::locked):
+        Check if the tryLock() on the Mutex succeeded.
+        (WTF):
+
 2012-04-04  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
 
         [Coverity] Address some uninit constructor values.

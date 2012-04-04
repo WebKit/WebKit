@@ -98,8 +98,8 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     }
 
     // The audio thread can't block on this lock, so we call tryLock() instead.
-    // Careful - this is a tryLock() and not an autolocker, so we must unlock() before every return.
-    if (m_processLock.tryLock()) {
+    MutexTryLocker tryLocker(m_processLock);
+    if (tryLocker.locked()) {
         // Check if it's time to start playing.
         double sampleRate = this->sampleRate();
         size_t quantumStartFrame = context()->currentSampleFrame();
@@ -117,7 +117,6 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
             || !buffer() || startFrame >= quantumEndFrame) {
             // FIXME: can optimize here by propagating silent hint instead of forcing the whole chain to process silence.
             outputBus->zero();
-            m_processLock.unlock();
             return;
         }
 
@@ -159,8 +158,6 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
 
             finish();
         }
-
-        m_processLock.unlock();
     } else {
         // Too bad - the tryLock() failed.  We must be in the middle of changing buffers and were already outputting silence anyway.
         outputBus->zero();
