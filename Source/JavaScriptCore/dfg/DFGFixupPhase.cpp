@@ -187,11 +187,25 @@ private:
         }
             
         case Branch: {
-            if (m_graph[node.child1()].shouldSpeculateInteger())
-                break;
-            if (!m_graph[node.child1()].shouldSpeculateNumber())
-                break;
-            fixDoubleEdge(0);
+            if (!m_graph[node.child1()].shouldSpeculateInteger()
+                && m_graph[node.child1()].shouldSpeculateNumber())
+                fixDoubleEdge(0);
+
+            Node& myNode = m_graph[m_compileIndex]; // reload because the graph may have changed
+            Edge logicalNotEdge = myNode.child1();
+            Node& logicalNot = m_graph[logicalNotEdge];
+            if (logicalNot.op() == LogicalNot
+                && logicalNot.adjustedRefCount() == 1) {
+                Edge newChildEdge = logicalNot.child1();
+                m_graph.ref(newChildEdge);
+                m_graph.deref(logicalNotEdge);
+                myNode.children.setChild1(newChildEdge);
+                
+                BlockIndex toBeTaken = myNode.notTakenBlockIndex();
+                BlockIndex toBeNotTaken = myNode.takenBlockIndex();
+                myNode.setTakenBlockIndex(toBeTaken);
+                myNode.setNotTakenBlockIndex(toBeNotTaken);
+            }
             break;
         }
             

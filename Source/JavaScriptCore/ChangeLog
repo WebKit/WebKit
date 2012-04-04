@@ -1,3 +1,15 @@
+2012-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should short-circuit Branch(LogicalNot(...))
+        https://bugs.webkit.org/show_bug.cgi?id=83181
+
+        Reviewed by Geoff Garen.
+        
+        Slight (sub 1%) speed-up on V8.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2012-04-04  Geoffrey Garen  <ggaren@apple.com>
 
         [Qt] REGRESSION(r113141): All tests assert on 32 bit debug mode
