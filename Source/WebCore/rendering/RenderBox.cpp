@@ -502,7 +502,7 @@ int RenderBox::scrollWidth() const
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
     if (style()->isLeftToRightDirection())
-        return max(clientWidth(), maxXLayoutOverflow() - borderLeft());
+        return snapSizeToPixel(max(clientWidth(), maxXLayoutOverflow() - borderLeft()), clientLeft());
     return clientWidth() - min(0, minXLayoutOverflow() - borderLeft());
 }
 
@@ -512,7 +512,7 @@ int RenderBox::scrollHeight() const
         return layer()->scrollHeight();
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
-    return max(pixelSnappedClientHeight(), maxYLayoutOverflow() - borderTop());
+    return snapSizeToPixel(max(clientHeight(), maxYLayoutOverflow() - borderTop()), clientTop());
 }
 
 int RenderBox::scrollLeft() const
@@ -764,7 +764,7 @@ IntSize RenderBox::scrolledContentOffset() const
     // If we have no layer, it means that we have no overflowing content as we lazily
     // allocate it on demand. Thus we don't have any scroll offset.
     ASSERT(!requiresLayerForOverflowClip());
-    return LayoutSize();
+    return IntSize();
 }
 
 typedef HashMap<const RenderBox*, LayoutSize> RendererSizeCache;
@@ -774,7 +774,7 @@ static RendererSizeCache& cachedSizeForOverflowClipMap()
     return cachedSizeForOverflowClipMap;
 }
 
-IntSize RenderBox::cachedSizeForOverflowClip() const
+LayoutSize RenderBox::cachedSizeForOverflowClip() const
 {
     ASSERT(hasOverflowClip());
     if (hasLayer())

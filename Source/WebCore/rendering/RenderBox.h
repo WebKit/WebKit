@@ -56,9 +56,8 @@ public:
     LayoutUnit width() const { return m_frameRect.width(); }
     LayoutUnit height() const { return m_frameRect.height(); }
 
-    // FIXME: The implementation for these functions will change once we move to subpixel layout. See bug 60318.
-    int pixelSnappedWidth() const { return m_frameRect.width(); }
-    int pixelSnappedHeight() const { return m_frameRect.height(); }
+    int pixelSnappedWidth() const { return m_frameRect.pixelSnappedWidth(); }
+    int pixelSnappedHeight() const { return m_frameRect.pixelSnappedHeight(); }
 
     // These represent your location relative to your container as a physical offset.
     // In layout related methods you almost always want the logical location (e.g. x() and y()).
@@ -159,10 +158,10 @@ public:
     // but it is on the right in vertical-rl.
     LayoutRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : clientBoxRect(); }
     IntRect pixelSnappedLayoutOverflowRect() const { return pixelSnappedIntRect(layoutOverflowRect()); }
-    LayoutUnit minYLayoutOverflow() const { return m_overflow? m_overflow->minYLayoutOverflow() : borderTop(); }
-    LayoutUnit maxYLayoutOverflow() const { return m_overflow ? m_overflow->maxYLayoutOverflow() : borderTop() + clientHeight(); }
-    LayoutUnit minXLayoutOverflow() const { return m_overflow ? m_overflow->minXLayoutOverflow() : borderLeft(); }
-    LayoutUnit maxXLayoutOverflow() const { return m_overflow ? m_overflow->maxXLayoutOverflow() : borderLeft() + clientWidth(); }
+    LayoutUnit minYLayoutOverflow() const { return m_overflow? m_overflow->minYLayoutOverflow() : static_cast<LayoutUnit>(borderTop()); }
+    LayoutUnit maxYLayoutOverflow() const { return m_overflow ? m_overflow->maxYLayoutOverflow() : static_cast<LayoutUnit>(borderTop()) + clientHeight(); }
+    LayoutUnit minXLayoutOverflow() const { return m_overflow ? m_overflow->minXLayoutOverflow() : static_cast<LayoutUnit>(borderLeft()); }
+    LayoutUnit maxXLayoutOverflow() const { return m_overflow ? m_overflow->maxXLayoutOverflow() : static_cast<LayoutUnit>(borderLeft()) + clientWidth(); }
     LayoutSize maxLayoutOverflow() const { return LayoutSize(maxXLayoutOverflow(), maxYLayoutOverflow()); }
     LayoutUnit logicalLeftLayoutOverflow() const { return style()->isHorizontalWritingMode() ? minXLayoutOverflow() : minYLayoutOverflow(); }
     LayoutUnit logicalRightLayoutOverflow() const { return style()->isHorizontalWritingMode() ? maxXLayoutOverflow() : maxYLayoutOverflow(); }
@@ -450,13 +449,13 @@ public:
     LayoutRect layoutOverflowRectForPropagation(RenderStyle*) const;
 
     RenderOverflow* hasRenderOverflow() const { return m_overflow.get(); }    
-    bool hasVisualOverflow() const { return m_overflow && !borderBoxRect().contains(m_overflow->visualOverflowRect()); }
+    bool hasVisualOverflow() const { return m_overflow && !borderBoxRect().contains(pixelSnappedIntRect(m_overflow->visualOverflowRect())); }
 
     virtual bool needsPreferredWidthsRecalculation() const;
     virtual void computeIntrinsicRatioInformation(FloatSize& /* intrinsicSize */, double& /* intrinsicRatio */, bool& /* isPercentageIntrinsicSize */) const { }
 
     IntSize scrolledContentOffset() const;
-    IntSize cachedSizeForOverflowClip() const;
+    LayoutSize cachedSizeForOverflowClip() const;
     void updateCachedSizeForOverflowClip();
     void clearCachedSizeForOverflowClip();
 
