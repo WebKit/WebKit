@@ -1455,19 +1455,25 @@ void WebPage::highlightPotentialActivation(const IntPoint& point, const IntSize&
     IntPoint adjustedPoint;
 
     if (point != IntPoint::zero()) {
+        Node* adjustedNode = 0;
 #if ENABLE(TOUCH_ADJUSTMENT)
-        mainframe->eventHandler()->bestClickableNodeForTouchPoint(point, IntSize(area.width() / 2, area.height() / 2), adjustedPoint, activationNode);
+        mainframe->eventHandler()->bestClickableNodeForTouchPoint(point, IntSize(area.width() / 2, area.height() / 2), adjustedPoint, adjustedNode);
 #else
         HitTestResult result = mainframe->eventHandler()->hitTestResultAtPoint(mainframe->view()->windowToContents(point), /*allowShadowContent*/ false, /*ignoreClipping*/ true);
-        activationNode = result.innerNode();
+        adjustedNode = result.innerNode();
 #endif
-        if (activationNode && !activationNode->isFocusable()) {
-            for (Node* node = activationNode; node; node = node->parentOrHostNode()) {
-                if (node->isFocusable()) {
-                    activationNode = node;
-                    break;
-                }
+        // Find the node to highlight. This is not the same as the node responding the tap gesture, because many
+        // pages has a global click handler and we do not want to highlight the body.
+        // Instead find the enclosing link or focusable element, or the last enclosing inline element.
+        for (Node* node = adjustedNode; node; node = node->parentOrHostNode()) {
+            if (node->isMouseFocusable() || node->isLink()) {
+                activationNode = node;
+                break;
             }
+            if (node->renderer() && node->renderer()->isInline())
+                activationNode = node;
+            else if (activationNode)
+                break;
         }
     }
 

@@ -1,3 +1,13 @@
+2012-04-04  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Entire page highlighted on panning.
+        https://bugs.webkit.org/show_bug.cgi?id=83158
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::highlightPotentialActivation):
+
 2012-04-04  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] QtWebKit2 should support Page Visibility API
