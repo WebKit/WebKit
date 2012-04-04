@@ -198,6 +198,8 @@ void JSArray::finalize(JSCell* cell)
 inline SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSArray* array, unsigned i)
 {
     SparseArrayEntry entry;
+    entry.setWithoutWriteBarrier(jsUndefined());
+
     AddResult result = m_map.add(i, entry);
     size_t capacity = m_map.capacity();
     if (capacity != m_reportedCapacity) {

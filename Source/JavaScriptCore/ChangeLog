@@ -1,3 +1,20 @@
+2012-04-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Linux crashes during boot
+        https://bugs.webkit.org/show_bug.cgi?id=83096
+
+        Reviewed by Filip Pizlo.
+
+        The bug here is that we add empty JSValues to the sparse map, and then set them
+        - but a GC may occur before doing so (due to a call to reportExtraMemory cost).
+        We may want to consider making it safe to mark empty JSValues, but the simple &
+        contained fix to this specific bug is to just initialize these values to
+        something other than JSValue().
+
+        * runtime/JSArray.cpp:
+        (JSC::SparseArrayValueMap::add):
+            - Initialize sparse map entries.
+
 2012-04-02  Oliver Hunt  <oliver@apple.com>
 
         Incorrect liveness information when inlining
