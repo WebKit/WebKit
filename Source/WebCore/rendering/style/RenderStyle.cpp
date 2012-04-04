@@ -930,7 +930,7 @@ RoundedRect RenderStyle::getRoundedBorderFor(const LayoutRect& borderRect, Rende
     RoundedRect roundedRect(pixelSnappedIntRect(borderRect));
     if (hasBorderRadius()) {
         RoundedRect::Radii radii = calcRadiiFor(surround->border, borderRect.size(), renderView);
-        radii.scale(calcConstraintScaleFor(borderRect, radii));
+        radii.scale(calcConstraintScaleFor(pixelSnappedIntRect(borderRect), radii));
         roundedRect.includeLogicalEdges(radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
     }
     return roundedRect;

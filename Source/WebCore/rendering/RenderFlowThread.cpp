@@ -254,7 +254,7 @@ void RenderFlowThread::computeLogicalWidth()
 
 void RenderFlowThread::computeLogicalHeight()
 {
-    int logicalHeight = 0;
+    LayoutUnit logicalHeight = 0;
 
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;

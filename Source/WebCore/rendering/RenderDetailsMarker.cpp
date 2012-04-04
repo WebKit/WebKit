@@ -105,7 +105,7 @@ Path RenderDetailsMarker::getCanonicalPath() const
     return Path();
 }
 
-Path RenderDetailsMarker::getPath(const IntPoint& origin) const
+Path RenderDetailsMarker::getPath(const LayoutPoint& origin) const
 {
     Path result = getCanonicalPath();
     result.transform(AffineTransform().scale(logicalHeight()));

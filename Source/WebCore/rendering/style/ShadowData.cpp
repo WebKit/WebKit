@@ -68,7 +68,7 @@ static inline void calculateShadowExtent(const ShadowData* shadow, int additiona
     } while (shadow);
 }
 
-void ShadowData::adjustRectForShadow(IntRect& rect, int additionalOutlineSize) const
+void ShadowData::adjustRectForShadow(LayoutRect& rect, int additionalOutlineSize) const
 {
     LayoutUnit shadowLeft = 0;
     LayoutUnit shadowRight = 0;
