@@ -62,58 +62,63 @@ void SpeechRecognition::abort()
     m_controller->abort(this); // FIXME: Spec should say what to do if we are not started.
 }
 
-void SpeechRecognition::audioStartCallback()
+void SpeechRecognition::didStartAudio()
 {
     // FIXME: The spec should specify whether these events can bubble and are cancelable.
     dispatchEvent(Event::create(eventNames().audiostartEvent, /*canBubble=*/false, /*cancelable=*/false));
 }
 
-void SpeechRecognition::soundStartCallback()
+void SpeechRecognition::didStartSound()
 {
     dispatchEvent(Event::create(eventNames().soundstartEvent, /*canBubble=*/false, /*cancelable=*/false));
 }
 
-void SpeechRecognition::speechStartCallback()
+void SpeechRecognition::didStartSpeech()
 {
     dispatchEvent(Event::create(eventNames().speechstartEvent, /*canBubble=*/false, /*cancelable=*/false));
 }
 
-void SpeechRecognition::speechEndCallback()
+void SpeechRecognition::didEndSpeech()
 {
     dispatchEvent(Event::create(eventNames().speechendEvent, /*canBubble=*/false, /*cancelable=*/false));
 }
 
-void SpeechRecognition::audioEndCallback()
+void SpeechRecognition::didEndSound()
+{
+    dispatchEvent(Event::create(eventNames().soundendEvent, /*canBubble=*/false, /*cancelable=*/false));
+}
+
+void SpeechRecognition::didEndAudio()
 {
     dispatchEvent(Event::create(eventNames().audioendEvent, /*canBubble=*/false, /*cancelable=*/false));
 }
 
-void SpeechRecognition::resultCallback(PassRefPtr<SpeechRecognitionResult> result, unsigned long resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory)
+void SpeechRecognition::didReceiveResult(PassRefPtr<SpeechRecognitionResult> result, unsigned long resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory)
 {
     dispatchEvent(SpeechRecognitionEvent::createResult(result, resultIndex, resultHistory));
 }
 
-void SpeechRecognition::noMatchCallback(PassRefPtr<SpeechRecognitionResult> result)
+void SpeechRecognition::didReceiveNoMatch(PassRefPtr<SpeechRecognitionResult> result)
 {
     dispatchEvent(SpeechRecognitionEvent::createNoMatch(result));
 }
 
-void SpeechRecognition::resultDeletedCallback(unsigned resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory)
+void SpeechRecognition::didDeleteResult(unsigned resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory)
 {
     dispatchEvent(SpeechRecognitionEvent::createResultDeleted(resultIndex, resultHistory));
 }
 
-void SpeechRecognition::errorCallback(PassRefPtr<SpeechRecognitionError> error)
+void SpeechRecognition::didReceiveError(PassRefPtr<SpeechRecognitionError> error)
 {
     dispatchEvent(SpeechRecognitionEvent::createError(error));
 }
 
-void SpeechRecognition::startCallback()
+void SpeechRecognition::didStart()
 {
     dispatchEvent(Event::create(eventNames().startEvent, /*canBubble=*/false, /*cancelable=*/false));
 }
 
-void SpeechRecognition::endCallback()
+void SpeechRecognition::didEnd()
 {
     dispatchEvent(Event::create(eventNames().endEvent, /*canBubble=*/false, /*cancelable=*/false));
 }

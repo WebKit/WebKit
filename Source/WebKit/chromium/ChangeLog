@@ -1,3 +1,117 @@
+2012-04-03  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: Plumbing for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=81667
+
+        Reviewed by Darin Fisher.
+
+        Add plumbing for speech recognition.
+
+        The implementer is expected to implement the WebSpeechRecognizer interface.
+        The start(), stop(), and abort() functions of that interface take a
+        WebSpeechRecognitionHandle argument, which identifies the object which has
+        requested the action, and a pointer to a WebSpeechRecognitionClient interface,
+        through which it should send back notifications on progress, errors, etc.
+
+        SpeechRecognitionClientProxy passes data between the WebCore and WebKit layers,
+        implementing the WebCore::SpeechRecognitionClient and WebKit::WebSpeechRecognizerClient
+        interfaces.
+
+        * WebKit.gyp:
+        * public/WebSpeechGrammar.h:
+        (WebCore):
+        (WebKit):
+        (WebSpeechGrammar):
+        (WebKit::WebSpeechGrammar::WebSpeechGrammar):
+        (WebKit::WebSpeechGrammar::~WebSpeechGrammar):
+        * public/WebSpeechRecognitionHandle.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebSpeechRecognitionHandle):
+        (WebKit::WebSpeechRecognitionHandle::~WebSpeechRecognitionHandle):
+        (WebKit::WebSpeechRecognitionHandle::WebSpeechRecognitionHandle):
+        (WebKit::WebSpeechRecognitionHandle::operator=):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        (WebKit::operator<):
+        * public/WebSpeechRecognitionParams.h:
+        (WebKit):
+        (WebSpeechRecognitionParams):
+        (WebKit::WebSpeechRecognitionParams::grammars):
+        (WebKit::WebSpeechRecognitionParams::language):
+        (WebKit::WebSpeechRecognitionParams::continuous):
+        * public/WebSpeechRecognitionResult.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebSpeechRecognitionResult):
+        (WebKit::WebSpeechRecognitionResult::WebSpeechRecognitionResult):
+        (WebKit::WebSpeechRecognitionResult::~WebSpeechRecognitionResult):
+        * public/WebSpeechRecognizer.h:
+        (WebKit):
+        (WebSpeechRecognizer):
+        (WebKit::WebSpeechRecognizer::start):
+        (WebKit::WebSpeechRecognizer::stop):
+        (WebKit::WebSpeechRecognizer::abort):
+        (WebKit::WebSpeechRecognizer::~WebSpeechRecognizer):
+        * public/WebSpeechRecognizerClient.h: Added.
+        (WebKit):
+        (WebSpeechRecognizerClient):
+        * public/WebViewClient.h:
+        (WebKit):
+        (WebViewClient):
+        (WebKit::WebViewClient::speechRecognizer):
+        * src/SpeechRecognitionClientProxy.cpp: Added.
+        (WebKit):
+        (WebKit::SpeechRecognitionClientProxy::~SpeechRecognitionClientProxy):
+        (WebKit::SpeechRecognitionClientProxy::create):
+        (WebKit::SpeechRecognitionClientProxy::start):
+        (WebKit::SpeechRecognitionClientProxy::stop):
+        (WebKit::SpeechRecognitionClientProxy::abort):
+        (WebKit::SpeechRecognitionClientProxy::didStartAudio):
+        (WebKit::SpeechRecognitionClientProxy::didStartSound):
+        (WebKit::SpeechRecognitionClientProxy::didStartSpeech):
+        (WebKit::SpeechRecognitionClientProxy::didEndSpeech):
+        (WebKit::SpeechRecognitionClientProxy::didEndSound):
+        (WebKit::SpeechRecognitionClientProxy::didEndAudio):
+        (WebKit::SpeechRecognitionClientProxy::didReceiveResult):
+        (WebKit::SpeechRecognitionClientProxy::didReceiveNoMatch):
+        (WebKit::SpeechRecognitionClientProxy::didDeleteResult):
+        (WebKit::SpeechRecognitionClientProxy::didReceiveError):
+        (WebKit::SpeechRecognitionClientProxy::didStart):
+        (WebKit::SpeechRecognitionClientProxy::didEnd):
+        (WebKit::SpeechRecognitionClientProxy::SpeechRecognitionClientProxy):
+        * src/SpeechRecognitionClientProxy.h: Added.
+        (WebKit):
+        (SpeechRecognitionClientProxy):
+        * src/WebSpeechGrammar.cpp: Added.
+        (WebKit):
+        (WebKit::WebSpeechGrammar::reset):
+        (WebKit::WebSpeechGrammar::WebSpeechGrammar):
+        (WebKit::WebSpeechGrammar::operator=):
+        (WebKit::WebSpeechGrammar::src):
+        (WebKit::WebSpeechGrammar::weight):
+        * src/WebSpeechRecognitionHandle.cpp: Added.
+        (WebKit):
+        (WebKit::WebSpeechRecognitionHandle::reset):
+        (WebKit::WebSpeechRecognitionHandle::assign):
+        (WebKit::WebSpeechRecognitionHandle::equals):
+        (WebKit::WebSpeechRecognitionHandle::lessThan):
+        (WebKit::WebSpeechRecognitionHandle::WebSpeechRecognitionHandle):
+        (WebKit::WebSpeechRecognitionHandle::operator=):
+        (WebKit::WebSpeechRecognitionHandle::operator PassRefPtr<SpeechRecognition>):
+        * src/WebSpeechRecognitionParams.cpp: Added.
+        (WebKit):
+        (WebKit::WebSpeechRecognitionParams::WebSpeechRecognitionParams):
+        * src/WebSpeechRecognitionResult.cpp: Added.
+        (WebKit):
+        (WebKit::WebSpeechRecognitionResult::assign):
+        (WebKit::WebSpeechRecognitionResult::reset):
+        (WebKit::WebSpeechRecognitionResult::operator PassRefPtr<WebCore::SpeechRecognitionResult>):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+        (WebKit):
+
 2012-04-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r113149.

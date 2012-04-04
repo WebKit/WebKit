@@ -64,17 +64,18 @@ public:
     void abort();
 
     // Called by the SpeechRecognitionClient.
-    void audioStartCallback();
-    void soundStartCallback();
-    void speechStartCallback();
-    void speechEndCallback();
-    void audioEndCallback();
-    void resultCallback(PassRefPtr<SpeechRecognitionResult>, unsigned long resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
-    void noMatchCallback(PassRefPtr<SpeechRecognitionResult>);
-    void resultDeletedCallback(unsigned resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
-    void errorCallback(PassRefPtr<SpeechRecognitionError>);
-    void startCallback();
-    void endCallback();
+    void didStartAudio();
+    void didStartSound();
+    void didStartSpeech();
+    void didEndSpeech();
+    void didEndSound();
+    void didEndAudio();
+    void didReceiveResult(PassRefPtr<SpeechRecognitionResult>, unsigned long resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
+    void didReceiveNoMatch(PassRefPtr<SpeechRecognitionResult>);
+    void didDeleteResult(unsigned resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
+    void didReceiveError(PassRefPtr<SpeechRecognitionError>);
+    void didStart();
+    void didEnd();
 
     // EventTarget
     virtual const AtomicString& interfaceName() const OVERRIDE;
