@@ -261,6 +261,13 @@ CTFontRef FontPlatformData::ctFont() const
     if (m_CTFont)
         return m_CTFont.get();
 
+#if PLATFORM(CHROMIUM)
+    if (m_inMemoryFont) {
+        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_inMemoryFont->cgFont(), m_size, 0, canSetCascadeListForCustomFont() ? cascadeToLastResortFontDescriptor() : 0));
+        return m_CTFont.get();
+    }
+#endif
+
     m_CTFont = toCTFontRef(m_font);
     if (m_CTFont) {
         CTFontDescriptorRef fontDescriptor;

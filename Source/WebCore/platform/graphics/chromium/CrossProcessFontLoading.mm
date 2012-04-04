@@ -190,8 +190,7 @@ MemoryActivatedFont::~MemoryActivatedFont()
 // Parameters:
 // * nsFont - The font we wish to load.
 // * fontSize - point size of the font we wish to load.
-// * outNSFont - The font that was actually loaded, may be different from nsFont
-//   if a fallback font was used.
+// * outNSFont - The font that was actually loaded or null if loading failed.
 // * cgFont - on output this contains the CGFontRef corresponding to the NSFont
 //   that was picked in the end.  The caller is responsible for calling
 //   CFRelease() on this parameter when done with it.
@@ -204,7 +203,7 @@ void FontPlatformData::loadFont(NSFont* nsFont, float fontSize, NSFont*& outNSFo
         // Release old CGFontRef since it points at the LastResort font which we don't want.
         CFRelease(cgFont);
         cgFont = 0;
-        
+
         // Font loading was blocked by the Sandbox.
         m_inMemoryFont = loadFontFromBrowserProcess(outNSFont);
         if (m_inMemoryFont) {
@@ -214,10 +213,8 @@ void FontPlatformData::loadFont(NSFont* nsFont, float fontSize, NSFont*& outNSFo
             // are consistent.
             CFRetain(cgFont);
         } else {
-            // If we still can't load the font, then return Times,
-            // rather than the LastResort font.
-            outNSFont = [NSFont fontWithName:@"Times" size:fontSize];
-            cgFont = CTFontCopyGraphicsFont(toCTFontRef(outNSFont), 0);
+            // If we still can't load the font, set |outNSFont| to null so that FontPlatformData won't be used.
+            outNSFont = 0;
         }
     }
 }
