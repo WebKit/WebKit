@@ -33,10 +33,11 @@
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "File.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class File;
 
 class FileCallback : public RefCounted<FileCallback> {
 public:
