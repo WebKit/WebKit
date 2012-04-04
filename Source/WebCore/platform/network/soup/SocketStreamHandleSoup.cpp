@@ -244,7 +244,8 @@ static void connectedCallback(GSocketClient* client, GAsyncResult* result, void*
     // The SocketStreamHandle has been deactivated, so just close the connection, ignoring errors.
     SocketStreamHandle* handle = getHandleFromId(id);
     if (!handle) {
-        g_io_stream_close(G_IO_STREAM(socketConnection), 0, &error.outPtr());
+        if (socketConnection)
+            g_io_stream_close(G_IO_STREAM(socketConnection), 0, 0);
         return;
     }
 
