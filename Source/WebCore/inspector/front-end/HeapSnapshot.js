@@ -1010,6 +1010,13 @@ WebInspector.HeapSnapshot.prototype = {
         return this.rootNode.retainedSize;
     },
 
+    _getDominatedIndex: function(nodeIndex)
+    {
+        if (nodeIndex % this._nodeFieldCount)
+            throw new Error("Invalid nodeIndex: " + nodeIndex);
+        return this._firstDominatedNodeIndex[nodeIndex / this._nodeFieldCount];
+    },
+
     _dominatedNodesOfNode: function(node)
     {
         var dominatedIndexFrom = this._getDominatedIndex(node.nodeIndex);
@@ -1029,28 +1036,30 @@ WebInspector.HeapSnapshot.prototype = {
             this._aggregatesSortedFlags = {};
         }
 
-        var aggregates = this._aggregates[key];
-        if (aggregates) {
+        var aggregatesByClassName = this._aggregates[key];
+        if (aggregatesByClassName) {
             if (sortedIndexes && !this._aggregatesSortedFlags[key]) {
-                this._sortAggregateIndexes(aggregates);
+                this._sortAggregateIndexes(aggregatesByClassName);
                 this._aggregatesSortedFlags[key] = sortedIndexes;
             }
-            return aggregates;
+            return aggregatesByClassName;
         }
 
         var filter;
         if (filterString)
             filter = this._parseFilter(filterString);
 
-        aggregates = this._buildAggregates(filter);
+        var aggregates = this._buildAggregates(filter);
+        this._calculateClassesRetainedSize(aggregates.aggregatesByClassIndex, filter);
+        aggregatesByClassName = aggregates.aggregatesByClassName;
 
         if (sortedIndexes)
-            this._sortAggregateIndexes(aggregates);
+            this._sortAggregateIndexes(aggregatesByClassName);
 
         this._aggregatesSortedFlags[key] = sortedIndexes;
-        this._aggregates[key] = aggregates;
+        this._aggregates[key] = aggregatesByClassName;
 
-        return aggregates;
+        return aggregatesByClassName;
     },
 
     _calculateObjectToWindowDistance: function()
@@ -1115,19 +1124,23 @@ WebInspector.HeapSnapshot.prototype = {
 
     _buildAggregates: function(filter)
     {
-        function shouldSkip(node)
-        {
-            if (filter && !filter(node))
-                return true;
-            if (!node.selfSize && !node.isNative)
-                return true;
-            return false;
-        }
-
         var aggregates = {};
         var aggregatesByClassName = {};
-        for (var node = new WebInspector.HeapSnapshotNode(this, this._rootNodeIndex); node.nodeIndex < this._onlyNodes.length; node.nodeIndex = node._nextNodeIndex) {
-            if (shouldSkip(node))
+        var onlyNodes = this._onlyNodes;
+        var onlyNodesLength = onlyNodes.length;
+        var nodeNativeType = this._nodeNativeType;
+        var nodeFieldsCount = this._nodeFieldCount;
+        var selfSizeOffset = this._nodeSelfSizeOffset;
+        var nodeTypeOffset = this._nodeTypeOffset;
+        var node = new WebInspector.HeapSnapshotNode(this, this._rootNodeIndex);
+        var distancesToWindow = this._distancesToWindow;
+
+        for (var nodeIndex = this._rootNodeIndex; nodeIndex < onlyNodesLength; nodeIndex += nodeFieldsCount) {
+            node.nodeIndex = nodeIndex;
+            var selfSize = onlyNodes[nodeIndex + selfSizeOffset];
+            if (filter && !filter(node))
+                continue;
+            if (!selfSize && onlyNodes[nodeIndex + nodeTypeOffset] !== nodeNativeType)
                 continue;
             var classIndex = node.classIndex;
             if (!(classIndex in aggregates)) {
@@ -1135,49 +1148,75 @@ WebInspector.HeapSnapshot.prototype = {
                 var nameMatters = nodeType === "object" || nodeType === "native";
                 var value = {
                     count: 1,
-                    distanceToWindow: node.distanceToWindow,
-                    self: node.selfSize,
+                    distanceToWindow: distancesToWindow[nodeIndex],
+                    self: selfSize,
                     maxRet: 0,
                     type: nodeType,
                     name: nameMatters ? node.name : null,
-                    idxs: [node.nodeIndex]
+                    idxs: [nodeIndex]
                 };
                 aggregates[classIndex] = value;
                 aggregatesByClassName[node.className] = value;
             } else {
                 var clss = aggregates[classIndex];
-                clss.distanceToWindow = Math.min(clss.distanceToWindow, node.distanceToWindow);
+                clss.distanceToWindow = Math.min(clss.distanceToWindow, distancesToWindow[nodeIndex]);
                 ++clss.count;
-                clss.self += node.selfSize;
-                clss.idxs.push(node.nodeIndex);
+                clss.self += selfSize;
+                clss.idxs.push(nodeIndex);
             }
         }
-
-        // Recursively visit dominators tree and sum up retained sizes
-        // of topmost objects in each class.
-        // This gives us retained sizes for classes.
-        var seenClassNameIndexes = {};
-        var snapshot = this;
-        function forDominatedNodes(nodeIndex)
-        {
-            var node = new WebInspector.HeapSnapshotNode(snapshot, nodeIndex);
-            var classIndex = node.classIndex;
-            var seen = !!seenClassNameIndexes[classIndex];
-            if (!seen && classIndex in aggregates && !shouldSkip(node)) {
-                aggregates[classIndex].maxRet += node.retainedSize;
-                seenClassNameIndexes[classIndex] = true;
-            }
-            var dominatedNodes = snapshot._dominatedNodesOfNode(node);
-            for (var i = 0; i < dominatedNodes.length; i++)
-                forDominatedNodes(dominatedNodes.item(i));
-            seenClassNameIndexes[classIndex] = seen;
-        }
-        forDominatedNodes(this._rootNodeIndex);
 
         // Shave off provisionally allocated space.
         for (var classIndex in aggregates)
             aggregates[classIndex].idxs = aggregates[classIndex].idxs.slice(0);
-        return aggregatesByClassName;
+        return {aggregatesByClassName: aggregatesByClassName, aggregatesByClassIndex: aggregates};
+    },
+
+    _calculateClassesRetainedSize: function(aggregates, filter)
+    {
+        var rootNodeIndex = this._rootNodeIndex;
+        var node = new WebInspector.HeapSnapshotNode(this, rootNodeIndex);
+        var list = [rootNodeIndex];
+        var sizes = [-1];
+        var classes = [];
+        var seenClassNameIndexes = {};
+        var nodeFieldCount = this._nodeFieldCount;
+        var nodeTypeOffset = this._nodeTypeOffset;
+        var nodeNativeType = this._nodeNativeType;
+        var dominatedNodes = this._dominatedNodes;
+        var onlyNodes = this._onlyNodes;
+        var firstDominatedNodeIndex = this._firstDominatedNodeIndex;
+
+        while (list.length) {
+            var nodeIndex = list.pop();
+            node.nodeIndex = nodeIndex;
+            var classIndex = node.classIndex;
+            var seen = !!seenClassNameIndexes[classIndex];
+            var nodeOrdinal = nodeIndex / nodeFieldCount;
+            var dominatedIndexFrom = firstDominatedNodeIndex[nodeOrdinal];
+            var dominatedIndexTo = firstDominatedNodeIndex[nodeOrdinal + 1];
+
+            if (!seen &&
+                (!filter || filter(node)) &&
+                (node.selfSize || onlyNodes[nodeIndex + nodeTypeOffset] === nodeNativeType)
+               ) {
+                aggregates[classIndex].maxRet += node.retainedSize;
+                if (dominatedIndexFrom !== dominatedIndexTo) {
+                    seenClassNameIndexes[classIndex] = true;
+                    sizes.push(list.length);
+                    classes.push(classIndex);
+                }
+            }
+            for (var i = dominatedIndexFrom; i < dominatedIndexTo; i++)
+                list.push(dominatedNodes[i]);
+
+            var l = list.length;
+            while (sizes[sizes.length - 1] === l) {
+                sizes.pop();
+                classIndex = classes.pop();
+                seenClassNameIndexes[classIndex] = false;
+            }
+        }
     },
 
     _sortAggregateIndexes: function(aggregates)
@@ -1232,13 +1271,6 @@ WebInspector.HeapSnapshot.prototype = {
             dominatedRefIndex += (--dominatedNodes[dominatedRefIndex]);
             dominatedNodes[dominatedRefIndex] = nodeIndex;
         }
-    },
-
-    _getDominatedIndex: function(nodeIndex)
-    {
-        if (nodeIndex % this._nodeFieldCount)
-            throw new Error("Invalid nodeIndex: " + nodeIndex);
-        return this._firstDominatedNodeIndex[nodeIndex / this._nodeFieldCount];
     },
 
     _markInvisibleEdges: function()

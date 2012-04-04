@@ -1,3 +1,14 @@
+2012-04-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: linearise aggregate's retaining size calculation.
+        https://bugs.webkit.org/show_bug.cgi?id=83125
+
+        This version is twice as fast as the original and it is non-recursive.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/detailed-heapshots-smoke-test.html:
+
 2012-03-30  David Barr  <davidbarr@chromium.org>
 
         Split up top-level .gitignore and .gitattributes
