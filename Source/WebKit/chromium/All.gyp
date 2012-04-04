@@ -42,6 +42,7 @@
             'dependencies': [
                 'WebKitUnitTests.gyp:webkit_unit_tests',
                 '../../../Tools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:DumpRenderTree',
+                '../../../Tools/TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:TestWebKitAPI',
             ],
         }
     ],

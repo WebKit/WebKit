@@ -55,7 +55,9 @@
             'type': 'executable', 
             'dependencies': [ 
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit', 
-                '<(source_dir)/WebCore/WebCore.gyp/WebCore.gyp:webcore', 
+                '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf', 
+                '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
+                '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
                 '<(chromium_src_dir)/base/base.gyp:test_support_base', 
                 '<(chromium_src_dir)/testing/gtest.gyp:gtest', 
                 '<(chromium_src_dir)/testing/gmock.gyp:gmock', 

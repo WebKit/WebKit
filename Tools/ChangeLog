@@ -1,3 +1,16 @@
+2012-04-04  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] TestWebKitAPI links in WebCore twice
+        https://bugs.webkit.org/show_bug.cgi?id=83177
+
+        Reviewed by Dimitri Glazkov.
+
+        This is causing link errors in the Windows component build. This patch
+        moves the dependencies a bit lower down in the dependency diagram in
+        the hopes of removing the duplicate symbols.
+
+        * TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:
+
 2012-04-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][DRT] Catch the "resource,request,willsend" signal
