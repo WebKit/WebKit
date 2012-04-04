@@ -1,3 +1,12 @@
+2012-04-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r113144): It made run-webkit-tests always fail
+        https://bugs.webkit.org/show_bug.cgi?id=83142
+
+        Unreviewed trivial fix after r113144.
+
+        * Scripts/run-webkit-tests:
+
 2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         I really hope this is the last build fix. Apparently exec doesn't quite arguments with
