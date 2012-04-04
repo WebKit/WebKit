@@ -346,10 +346,18 @@ WebInspector.Events = {
 WebInspector.loaded = function()
 {
     InspectorBackend.loadFromJSONIfNeeded();
-    if ("page" in WebInspector.queryParamsObject) {
+
+    var ws;
+    if ("ws" in WebInspector.queryParamsObject)
+        ws = "ws://" + WebInspector.queryParamsObject.ws;
+    else if ("page" in WebInspector.queryParamsObject) {
         var page = WebInspector.queryParamsObject.page;
         var host = "host" in WebInspector.queryParamsObject ? WebInspector.queryParamsObject.host : window.location.host;
-        WebInspector.socket = new WebSocket("ws://" + host + "/devtools/page/" + page);
+        ws = "ws://" + host + "/devtools/page/" + page;
+    }
+
+    if (ws) {
+        WebInspector.socket = new WebSocket(ws);
         WebInspector.socket.onmessage = function(message) { InspectorBackend.dispatch(message.data); }
         WebInspector.socket.onerror = function(error) { console.error(error); }
         WebInspector.socket.onopen = function() {
