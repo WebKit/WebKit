@@ -1,3 +1,12 @@
+2012-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Add audit token to PHCheckInWithPluginHost
+        https://bugs.webkit.org/show_bug.cgi?id=83102
+
+        Reviewed by Sam Weinig.
+
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
 2012-04-02  Jia Pu  <jpu@apple.com>
 
         Rename SpellingCorrectionController to AlternativeTextController.

@@ -31,6 +31,7 @@ serverprefix WK;
 userprefix _WK;
 
 routine PHCheckInWithPluginHost(pluginHostPort :mach_port_t;
+                              ServerAuditToken token :audit_token_t;
                               options :plist_bytes_t;
                               clientPort :mach_port_make_send_t;
                               clientPSNHigh :uint32_t;
