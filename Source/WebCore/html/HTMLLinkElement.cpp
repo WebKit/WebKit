@@ -82,10 +82,8 @@ HTMLLinkElement::~HTMLLinkElement()
     if (m_sheet)
         m_sheet->clearOwnerNode();
 
-    if (m_cachedSheet) {
+    if (m_cachedSheet)
         m_cachedSheet->removeClient(this);
-        removePendingSheet();
-    }
 
     if (inDocument())
         document()->removeStyleSheetCandidateNode(this);
@@ -265,6 +263,9 @@ void HTMLLinkElement::removedFromDocument()
         m_sheet->clearOwnerNode();
         m_sheet = 0;
     }
+
+    if (styleSheetIsLoading())
+        removePendingSheet();
 
     if (document()->renderer())
         document()->styleSelectorChanged(DeferRecalcStyle);
