@@ -219,23 +219,31 @@ float distanceSquaredToTargetCenterLine(const IntPoint& touchHotspot, const IntR
     return rect.distanceSquaredFromCenterLineToPoint(touchHotspot);
 }
 
-float areaOfIntersection(const IntPoint& touchHotspot, const IntRect& touchArea, const SubtargetGeometry& subtarget)
+
+// This returns quotient of the target area and its intersection with the touch area.
+// This will prioritize largest intersection and smallest area, while balancing the two against each other.
+float zoomableIntersectionQuotient(const IntPoint& touchHotspot, const IntRect& touchArea, const SubtargetGeometry& subtarget)
 {
-    UNUSED_PARAM(touchHotspot);
     IntRect rect = subtarget.boundingBox();
 
     // Convert from frame coordinates to window coordinates.
     rect = subtarget.node()->document()->view()->contentsToWindow(rect);
-    rect.intersect(touchArea);
 
-    return rect.size().area();
+    // Check the rectangle is meaningful zoom target. It should at least contain the hotspot.
+    if (!rect.contains(touchHotspot))
+        return INFINITY;
+    IntRect intersection = rect;
+    intersection.intersect(touchArea);
+
+    // Return the quotient of the intersection.
+    return rect.size().area() / (float)intersection.size().area();
 }
 
 
 // A generic function for finding the target node with the lowest distance metric. A distance metric here is the result
 // of a distance-like function, that computes how well the touch hits the node.
 // Distance functions could for instance be distance squared or area of intersection.
-bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, const IntPoint& touchHotspot, const IntRect& touchArea, SubtargetGeometryList& subtargets, DistanceFunction distanceFunction)
+bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, IntRect& targetArea, const IntPoint& touchHotspot, const IntRect& touchArea, SubtargetGeometryList& subtargets, DistanceFunction distanceFunction)
 {
     targetNode = 0;
     float bestDistanceMetric = INFINITY;
@@ -246,40 +254,14 @@ bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, 
         float distanceMetric = distanceFunction(touchHotspot, touchArea, *it);
         if (distanceMetric < bestDistanceMetric) {
             targetPoint = roundedIntPoint(it->quad().center());
-            targetNode = node;
-            bestDistanceMetric = distanceMetric;
-        } else if (distanceMetric == bestDistanceMetric) {
-            // Try to always return the inner-most element.
-            if (node->isDescendantOf(targetNode))
-                targetNode = node;
-        }
-    }
-
-    return (targetNode);
-}
-
-// Similar generic function as findNodeWithLowestDistanceMetric, except this finds the innermost area with the largest intersection.
-bool findAreaWithLargestIntersection(Node*& targetNode, IntRect& targetArea, const IntPoint& touchHotspot, const IntRect& touchArea, SubtargetGeometryList& subtargets)
-{
-    targetNode = 0;
-    float bestDistanceMetric = 0.;
-    SubtargetGeometryList::const_iterator it = subtargets.begin();
-    const SubtargetGeometryList::const_iterator end = subtargets.end();
-    for (; it != end; ++it) {
-        Node* node = it->node();
-        float distanceMetric = areaOfIntersection(touchHotspot, touchArea, *it);
-        if (distanceMetric > bestDistanceMetric) {
             targetArea = it->boundingBox();
             targetNode = node;
             bestDistanceMetric = distanceMetric;
         } else if (distanceMetric == bestDistanceMetric) {
-            // Try to return the smallest inner-most subtarget.
-            if (node == targetNode) {
-                if (it->boundingBox().size().area() < targetArea.size().area())
-                    targetArea = it->boundingBox();
-            } else if (node->isDescendantOf(targetNode)) {
-                targetArea = it->boundingBox();
+            // Try to always return the inner-most element.
+            if (node->isDescendantOf(targetNode)) {
                 targetNode = node;
+                targetArea = it->boundingBox();
             }
         }
     }
@@ -287,21 +269,22 @@ bool findAreaWithLargestIntersection(Node*& targetNode, IntRect& targetArea, con
     return (targetNode);
 }
 
-
 } // namespace TouchAdjustment
 
 bool findBestClickableCandidate(Node*& targetNode, IntPoint &targetPoint, const IntPoint &touchHotspot, const IntRect &touchArea, const NodeList& nodeList)
 {
+    IntRect targetArea;
     TouchAdjustment::SubtargetGeometryList subtargets;
     TouchAdjustment::compileSubtargetList(nodeList, subtargets, TouchAdjustment::nodeRespondsToTapGesture);
-    return TouchAdjustment::findNodeWithLowestDistanceMetric(targetNode, targetPoint, touchHotspot, touchArea, subtargets, TouchAdjustment::distanceSquaredToTargetCenterLine);
+    return TouchAdjustment::findNodeWithLowestDistanceMetric(targetNode, targetPoint, targetArea, touchHotspot, touchArea, subtargets, TouchAdjustment::distanceSquaredToTargetCenterLine);
 }
 
 bool findBestZoomableArea(Node*& targetNode, IntRect& targetArea, const IntPoint& touchHotspot, const IntRect& touchArea, const NodeList& nodeList)
 {
+    IntPoint targetPoint;
     TouchAdjustment::SubtargetGeometryList subtargets;
     TouchAdjustment::compileZoomableSubtargets(nodeList, subtargets);
-    return TouchAdjustment::findAreaWithLargestIntersection(targetNode, targetArea, touchHotspot, touchArea, subtargets);
+    return TouchAdjustment::findNodeWithLowestDistanceMetric(targetNode, targetPoint, targetArea, touchHotspot, touchArea, subtargets, TouchAdjustment::zoomableIntersectionQuotient);
 }
 
 } // namespace WebCore

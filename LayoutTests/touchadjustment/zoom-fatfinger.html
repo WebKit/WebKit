@@ -1,0 +1,50 @@
+<html>
+<head>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <style>
+        #div1 { position: absolute; left: 100px; top: 100
+px; width: 200px; height: 20px; }
+    </style>
+</head>
+<body onload="runTests()">
+
+<div id=div1></div>
+
+<p id='description'></p>
+<div id='console'></div>
+
+<script>
+    function testRoundTouch(x, y, radius)
+    {
+        var x = x - radius;
+        var y = y - radius;
+        var width = radius * 2;
+        var height = radius * 2;
+        var zoomableRect = internals.bestZoomableAreaForTouchPoint(x, y, width, height, document);
+        return zoomableRect;
+    }
+
+    function testDirectTouches()
+    {
+        zoomableArea = testRoundTouch(200, 110, 20);
+        shouldEvaluateTo('zoomableArea.top', 100);
+        shouldEvaluateTo('zoomableArea.left', 100);
+        shouldEvaluateTo('zoomableArea.width', 200);
+        shouldEvaluateTo('zoomableArea.height', 20);
+
+    }
+
+    function runTests()
+    {
+        if (window.layoutTestController && window.internals && internals.bestZoomableAreaForTouchPoint) {
+            description('Test that targetted area is picked even if the touch area is not fully contained.');
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            testDirectTouches();
+            isSuccessfullyParsed();
+            layoutTestController.notifyDone();
+        }
+    }
+</script>
+</body>
+</html>
