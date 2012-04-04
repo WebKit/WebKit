@@ -77,7 +77,8 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
         goto fail;
 
     V8DOMWrapper::setDOMWrapper(wrapper, &V8TestNamedConstructorConstructor::info, impl.get());
-    V8DOMWrapper::setJSWrapperForActiveDOMObject(impl.release(), v8::Persistent<v8::Object>::New(wrapper));
+    impl->ref();
+    V8DOMWrapper::setJSWrapperForActiveDOMObject(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
   fail:
     return throwError(ec);
