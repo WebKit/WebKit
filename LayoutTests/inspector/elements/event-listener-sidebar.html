@@ -21,6 +21,10 @@ function setupEventListeners()
     document.removeEventListener("mousedown", f, false);
 
     document.body.addEventListener("custom event", f, true);
+
+    function ObjectHandler() { document.addEventListener("click", this, true); }
+    ObjectHandler.prototype.toString = function() { return "ObjectHandler"; }
+    new ObjectHandler();
 }
 
 function test()

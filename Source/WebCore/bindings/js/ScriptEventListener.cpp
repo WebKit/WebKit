@@ -114,10 +114,11 @@ bool eventListenerHandlerLocation(Document* document, EventListener* eventListen
     ASSERT(jsListener);
     if (!jsListener)
         return false;
+    JSLock lock(SilenceAssertionsOnly);
     JSC::JSObject* jsObject = jsListener->jsFunction(document);
     if (!jsObject)
         return false;
-    JSC::JSFunction* jsFunction = static_cast<JSFunction*>(jsObject);
+    JSC::JSFunction* jsFunction = jsDynamicCast<JSFunction*>(jsObject);
     if (!jsFunction || jsFunction->isHostFunction())
         return false;
     JSC::FunctionExecutable* funcExecutable = jsFunction->jsExecutable();

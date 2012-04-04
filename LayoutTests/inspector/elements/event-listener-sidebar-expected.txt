@@ -11,6 +11,12 @@ Inspect Me
     sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: click
     useCapture: true
+[expanded] document (anonymous function)
+    isAttribute: false
+    listenerBody: ObjectHandler
+    node: HTMLDocument
+    type: click
+    useCapture: true
 [expanded] button#node event-listener-sidebar.html:15
     isAttribute: false
     lineNumber: 15
@@ -79,6 +85,12 @@ Inspect Me
     listenerBody: function (event) { console.log("click - document - capturing"); }
     node: HTMLDocument
     sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
+    type: click
+    useCapture: true
+[expanded] document (anonymous function)
+    isAttribute: false
+    listenerBody: ObjectHandler
+    node: HTMLDocument
     type: click
     useCapture: true
 [expanded] document event-listener-sidebar.html:6
