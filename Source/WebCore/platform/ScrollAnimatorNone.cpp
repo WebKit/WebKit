@@ -381,7 +381,11 @@ ScrollAnimatorNone::ScrollAnimatorNone(ScrollableArea* scrollableArea)
     , m_horizontalData(this, &m_currentPosX, scrollableArea->visibleWidth())
     , m_verticalData(this, &m_currentPosY, scrollableArea->visibleHeight())
     , m_startTime(0)
+#if USE(REQUEST_ANIMATION_FRAME_TIMER)
+    , m_animationTimer(this, &ScrollAnimatorNone::animationTimerFired)
+#else
     , m_animationActive(false)
+#endif
     , m_firstVelocity(0)
     , m_firstVelocitySet(false)
     , m_firstVelocityIsVertical(false)
@@ -398,7 +402,11 @@ void ScrollAnimatorNone::fireUpAnAnimation(FloatPoint fp)
     if (m_gestureAnimation)
         m_gestureAnimation.clear();
     m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchpadFlingPlatformGestureCurve::create(fp), this);
+#if USE(REQUEST_ANIMATION_FRAME_TIMER)
+    startNextTimer(0);
+#else
     startNextTimer();
+#endif
 }
 
 bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
@@ -479,6 +487,7 @@ void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset
     notifyPositionChanged();
 }
 
+#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
 void ScrollAnimatorNone::cancelAnimations()
 {
     m_animationActive = false;
@@ -490,6 +499,7 @@ void ScrollAnimatorNone::serviceScrollAnimations()
     if (m_animationActive)
         animationTimerFired();
 }
+#endif
 
 void ScrollAnimatorNone::willEndLiveResize()
 {
@@ -511,6 +521,13 @@ void ScrollAnimatorNone::updateVisibleLengths()
     m_horizontalData.updateVisibleLength(scrollableArea()->visibleWidth());
     m_verticalData.updateVisibleLength(scrollableArea()->visibleHeight());
 }
+
+#if USE(REQUEST_ANIMATION_FRAME_TIMER)
+void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>* timer)
+{
+    animationTimerFired();
+}
+#endif
 
 void ScrollAnimatorNone::animationTimerFired()
 {
@@ -536,9 +553,13 @@ void ScrollAnimatorNone::animationTimerFired()
     }
 
     if (continueAnimation)
+#if USE(REQUEST_ANIMATION_FRAME_TIMER)
+        startNextTimer(max(kMinimumTimerInterval, deltaToNextFrame));
+#else
         startNextTimer();
     else
         m_animationActive = false;
+#endif
 
 #if PLATFORM(CHROMIUM)
     TRACE_EVENT("ScrollAnimatorNone::notifyPositionChanged", this, 0);
@@ -546,21 +567,36 @@ void ScrollAnimatorNone::animationTimerFired()
     notifyPositionChanged();
 }
 
+#if USE(REQUEST_ANIMATION_FRAME_TIMER)
+void ScrollAnimatorNone::startNextTimer(double delay)
+{
+    m_animationTimer.startOneShot(delay);
+}
+#else
 void ScrollAnimatorNone::startNextTimer()
 {
     if (scrollableArea()->scheduleAnimation())
         m_animationActive = true;
 }
+#endif
 
 bool ScrollAnimatorNone::animationTimerActive()
 {
+#if USE(REQUEST_ANIMATION_FRAME_TIMER)
+    return m_animationTimer.isActive();
+#else
     return m_animationActive;
+#endif
 }
 
 void ScrollAnimatorNone::stopAnimationTimerIfNeeded()
 {
     if (animationTimerActive())
+#if USE(REQUEST_ANIMATION_FRAME_TIMER)
+        m_animationTimer.stop();
+#else
         m_animationActive = false;
+#endif
 }
 
 void ScrollAnimatorNone::scrollBy(const IntPoint& location)

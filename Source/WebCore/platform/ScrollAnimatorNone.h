@@ -59,8 +59,10 @@ public:
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 
+#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
     virtual void cancelAnimations();
     virtual void serviceScrollAnimations();
+#endif
 
     virtual void willEndLiveResize();
     virtual void didAddVerticalScrollbar(Scrollbar*);
@@ -141,7 +143,12 @@ protected:
         int m_visibleLength;
     };
 
+#if USE(REQUEST_ANIMATION_FRAME_TIMER)
+    void animationTimerFired(Timer<ScrollAnimatorNone>*);
+    void startNextTimer(double delay);
+#else
     void startNextTimer();
+#endif
     void animationTimerFired();
 
     void stopAnimationTimerIfNeeded();
@@ -153,7 +160,11 @@ protected:
     PerAxisData m_verticalData;
 
     double m_startTime;
+#if USE(REQUEST_ANIMATION_FRAME_TIMER)
+    Timer<ScrollAnimatorNone> m_animationTimer;
+#else
     bool m_animationActive;
+#endif
 
     float m_firstVelocity;
     bool m_firstVelocitySet;
