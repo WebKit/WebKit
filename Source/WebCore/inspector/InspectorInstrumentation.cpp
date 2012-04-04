@@ -123,11 +123,11 @@ bool InspectorInstrumentation::isDebuggerPausedImpl(InstrumentingAgents* instrum
     return false;
 }
 
-void InspectorInstrumentation::willInsertDOMNodeImpl(InstrumentingAgents* instrumentingAgents, Node* node, Node* parent)
+void InspectorInstrumentation::willInsertDOMNodeImpl(InstrumentingAgents* instrumentingAgents, Node* parent)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents->inspectorDOMDebuggerAgent())
-        domDebuggerAgent->willInsertDOMNode(node, parent);
+        domDebuggerAgent->willInsertDOMNode(parent);
 #endif
 }
 

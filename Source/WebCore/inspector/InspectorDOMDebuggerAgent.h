@@ -72,7 +72,7 @@ public:
     virtual void removeDOMBreakpoint(ErrorString*, int nodeId, const String& type);
 
     // InspectorInstrumentation API
-    void willInsertDOMNode(Node*, Node* parent);
+    void willInsertDOMNode(Node* parent);
     void didInvalidateStyleAttr(Node*);
     void didInsertDOMNode(Node*);
     void willRemoveDOMNode(Node*);

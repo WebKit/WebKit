@@ -44,6 +44,17 @@ function removeElement(elementId)
     element.parentNode.removeChild(element);
 }
 
+function setInnerHTML(elementId, html)
+{
+    var element = document.getElementById(elementId);
+    element.innerHTML = html;
+}
+
+function breakDebugger()
+{
+    debugger;
+}
+
 function test()
 {
     WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.elements);
@@ -80,12 +91,28 @@ function test()
             InspectorTest.addResult("Test that 'Subtree Modified' breakpoint is hit when removing a child.");
             InspectorTest.evaluateInPageWithTimeout("removeElement('grandchildElement')");
             InspectorTest.addResult("Remove grandchildElement.");
+            waitUntilPausedAndDumpStack(next);
+        },
+
+        function testInnerHTML(next)
+        {
+            InspectorTest.addResult("Test that 'Subtree Modified' breakpoint is hit exactly once when setting innerHTML.");
+            InspectorTest.evaluateInPageWithTimeout("setInnerHTML('childElement', '<br><br>')");
+            InspectorTest.addResult("Set childElement.innerHTML.");
             waitUntilPausedAndDumpStack(step2);
 
             function step2()
             {
+                InspectorTest.waitUntilPaused(step3);
+                InspectorTest.evaluateInPageWithTimeout("breakDebugger()");
+                InspectorTest.addResult("Call breakDebugger, expect it to show up in next stack trace.");
+            }
+
+            function step3(frames)
+            {
+                InspectorTest.captureStackTrace(frames);
                 pane._removeBreakpoint(rootElement, pane._breakpointTypes.SubtreeModified);
-                next();
+                InspectorTest.resumeExecution(next);
             }
         },
 

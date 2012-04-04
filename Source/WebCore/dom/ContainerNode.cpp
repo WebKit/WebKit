@@ -152,6 +152,10 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
     if (targets.isEmpty())
         return true;
 
+#if ENABLE(INSPECTOR)
+    InspectorInstrumentation::willInsertDOMNode(document(), this);
+#endif
+
 #if ENABLE(MUTATION_OBSERVERS)
     ChildListMutationScope mutation(this);
 #endif
@@ -167,10 +171,6 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
             break;
         if (child->parentNode())
             break;
-
-#if ENABLE(INSPECTOR)
-        InspectorInstrumentation::willInsertDOMNode(document(), child, this);
-#endif
 
         treeScope()->adoptIfNeeded(child);
 
@@ -278,6 +278,10 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     if (ec)
         return false;
 
+#if ENABLE(INSPECTOR)
+    InspectorInstrumentation::willInsertDOMNode(document(), this);
+#endif
+
     // Add the new child(ren)
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         Node* child = it->get();
@@ -290,10 +294,6 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
             break;
         if (child->parentNode())
             break;
-
-#if ENABLE(INSPECTOR)
-        InspectorInstrumentation::willInsertDOMNode(document(), child, this);
-#endif
 
         treeScope()->adoptIfNeeded(child);
 
@@ -558,6 +558,10 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
     if (targets.isEmpty())
         return true;
 
+#if ENABLE(INSPECTOR)
+    InspectorInstrumentation::willInsertDOMNode(document(), this);
+#endif
+
 #if ENABLE(MUTATION_OBSERVERS)
     ChildListMutationScope mutation(this);
 #endif
@@ -571,10 +575,6 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
         // a child that already has a parent.
         if (child->parentNode())
             break;
-
-#if ENABLE(INSPECTOR)
-        InspectorInstrumentation::willInsertDOMNode(document(), child, this);
-#endif
 
         treeScope()->adoptIfNeeded(child);
 

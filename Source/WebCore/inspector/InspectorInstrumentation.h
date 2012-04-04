@@ -84,7 +84,7 @@ public:
     static void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
     static bool isDebuggerPaused(Frame*);
 
-    static void willInsertDOMNode(Document*, Node*, Node* parent);
+    static void willInsertDOMNode(Document*, Node* parent);
     static void didInsertDOMNode(Document*, Node*);
     static void willRemoveDOMNode(Document*, Node*);
     static void willModifyDOMAttr(Document*, Element*, const AtomicString& oldValue, const AtomicString& newValue);
@@ -237,7 +237,7 @@ private:
     static void didClearWindowObjectInWorldImpl(InstrumentingAgents*, Frame*, DOMWrapperWorld*);
     static bool isDebuggerPausedImpl(InstrumentingAgents*);
 
-    static void willInsertDOMNodeImpl(InstrumentingAgents*, Node*, Node* parent);
+    static void willInsertDOMNodeImpl(InstrumentingAgents*, Node* parent);
     static void didInsertDOMNodeImpl(InstrumentingAgents*, Node*);
     static void willRemoveDOMNodeImpl(InstrumentingAgents*, Node*);
     static void didRemoveDOMNodeImpl(InstrumentingAgents*, Node*);
@@ -406,12 +406,12 @@ inline bool InspectorInstrumentation::isDebuggerPaused(Frame* frame)
     return false;
 }
 
-inline void InspectorInstrumentation::willInsertDOMNode(Document* document, Node* node, Node* parent)
+inline void InspectorInstrumentation::willInsertDOMNode(Document* document, Node* parent)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        willInsertDOMNodeImpl(instrumentingAgents, node, parent);
+        willInsertDOMNodeImpl(instrumentingAgents, parent);
 #endif
 }
 
