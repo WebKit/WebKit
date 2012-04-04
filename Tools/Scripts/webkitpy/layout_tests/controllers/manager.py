@@ -1105,8 +1105,11 @@ class Manager(object):
 
         # Remove these files from the results directory so they don't take up too much space on the buildbot.
         # The tools use the version we uploaded to the results server anyway.
-        self._filesystem.remove(times_json_path)
-        self._filesystem.remove(incremental_results_path)
+
+        # FIXME: Remove after done debugging problems w/ uploads on leopard.
+        if self._port.name() != 'chromium-mac-leopard':
+            self._filesystem.remove(times_json_path)
+            self._filesystem.remove(incremental_results_path)
 
     def print_config(self):
         """Prints the configuration for the test run."""

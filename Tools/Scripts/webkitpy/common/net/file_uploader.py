@@ -82,9 +82,10 @@ def _encode_multipart_form_data(fields, files):
 
 
 class FileUploader(object):
-    def __init__(self, url, timeout_seconds):
+    def __init__(self, url, timeout_seconds, debug=False):
         self._url = url
         self._timeout_seconds = timeout_seconds
+        self._debug = debug
 
     def upload_single_text_file(self, filesystem, content_type, filename):
         return self._upload_data(content_type, filesystem.read_text_file(filename))
@@ -102,6 +103,8 @@ class FileUploader(object):
 
     def _upload_data(self, content_type, data):
         def callback():
+            if self._debug:
+                _log.debug("uploading %d bytes to '%s', content-type '%s'" % len(data), self._url, content_type)
             request = urllib2.Request(self._url, data, {"Content-Type": content_type})
             return urllib2.urlopen(request)
 
