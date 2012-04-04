@@ -196,9 +196,6 @@ WebInspector.TimelineOverviewPane.prototype = {
     {
         delete this._refreshTimeout;
 
-        this._overviewCalculator.setWindow(this._model.minimumRecordTime(), this._model.maximumRecordTime());
-        this._overviewCalculator.setDisplayWindow(0, this._overviewContainer.clientWidth);
-
         if (this._heapGraph.visible)
             this._heapGraph.update();
         else if (this._verticalOverview)
@@ -206,7 +203,8 @@ WebInspector.TimelineOverviewPane.prototype = {
         else
             this._updateCategoryStrips();
 
-        this._overviewGrid.updateDividers(this._overviewCalculator);
+        this._overviewCalculator.setWindow(this._model.minimumRecordTime(), this._model.maximumRecordTime());
+        this._overviewGrid.updateDividers(true, this._overviewCalculator);
         this._updateEventDividers();
     },
 
@@ -219,6 +217,7 @@ WebInspector.TimelineOverviewPane.prototype = {
             timelines[category] = [];
             this._categoryGraphs[category].clearChunks();
         }
+        this._overviewCalculator.setWindow(this._model.minimumRecordTime(), this._model.maximumRecordTime());
 
         // Create sparse arrays with 101 cells each to fill with chunks for a given category.
         function markPercentagesForRecord(record)
@@ -311,8 +310,8 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._windowEndTime = Infinity;
         this._overviewWindow.reset();
         this._overviewCalculator.reset();
+        this._overviewGrid.updateDividers(true, this._overviewCalculator);
         this._eventDividers = [];
-        this._overviewGrid.updateDividers(this._overviewCalculator);
         if (this._verticalOverview)
             this._verticalOverview.reset();
         this._update();
@@ -587,14 +586,6 @@ WebInspector.TimelineOverviewCalculator = function()
 }
 
 WebInspector.TimelineOverviewCalculator.prototype = {
-    /**
-     * @param {number} time
-     */
-    computePosition: function(time)
-    {
-        return (time - this.minimumBoundary) / this.boundarySpan * this._workingArea + this.paddingLeft;
-    },
-
     computeBarGraphPercentages: function(record)
     {
         var start = (WebInspector.TimelineModel.startTimeInSeconds(record) - this.minimumBoundary) / this.boundarySpan * 100;
@@ -611,16 +602,6 @@ WebInspector.TimelineOverviewCalculator.prototype = {
         this.minimumBoundary = minimum >= 0 ? minimum : undefined;
         this.maximumBoundary = maximum >= 0 ? maximum : undefined;
         this.boundarySpan = this.maximumBoundary - this.minimumBoundary;
-    },
-
-    /**
-     * @param {number} paddingLeft
-     * @param {number} clientWidth
-     */
-    setDisplayWindow: function(paddingLeft, clientWidth)
-    {
-        this._workingArea = clientWidth - paddingLeft;
-        this.paddingLeft = paddingLeft;
     },
 
     reset: function()

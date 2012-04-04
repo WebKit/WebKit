@@ -63,19 +63,26 @@ WebInspector.TimelineGrid.prototype = {
         return this._dividersElement;
     },
 
-    updateDividers: function(calculator)
+    /**
+     * @param {number=} paddingLeft
+     */
+    updateDividers: function(force, calculator, paddingLeft)
     {
-        var dividersElementClientWidth = this._dividersElement.clientWidth;
-        var dividerCount = Math.round(dividersElementClientWidth / 64);
+        var dividerCount = Math.round(this._dividersElement.offsetWidth / 64);
         var slice = calculator.boundarySpan / dividerCount;
+        if (!force && this._currentDividerSlice === slice)
+            return false;
 
+        if (typeof paddingLeft !== "number")
+            paddingLeft = 0;
         this._currentDividerSlice = slice;
 
         // Reuse divider elements and labels.
         var divider = this._dividersElement.firstChild;
         var dividerLabelBar = this._dividersLabelBarElement.firstChild;
 
-        var paddingLeft = calculator.paddingLeft;
+        var dividersElementClientWidth = this._dividersElement.clientWidth;
+        var clientWidth = dividersElementClientWidth - paddingLeft;
         for (var i = paddingLeft ? 0 : 1; i <= dividerCount; ++i) {
             if (!divider) {
                 divider = document.createElement("div");
@@ -107,7 +114,7 @@ WebInspector.TimelineGrid.prototype = {
                 dividerLabelBar.removeStyleClass("last");
             }
 
-            var left = calculator.computePosition(calculator.minimumBoundary + slice * i);
+            var left = paddingLeft + clientWidth * (i / dividerCount);
             var percentLeft = 100 * left / dividersElementClientWidth;
             this._setDividerAndBarLeft(divider, dividerLabelBar, percentLeft);
 
@@ -151,10 +158,9 @@ WebInspector.TimelineGrid.prototype = {
     addEventDividers: function(dividers)
     {
         this.element.removeChild(this._eventDividersElement);
-        for (var i = 0; i < dividers.length; ++i) {
+        for (var i = 0; i < dividers.length; ++i)
             if (dividers[i])
                 this._eventDividersElement.appendChild(dividers[i]);
-        }
         this.element.appendChild(this._eventDividersElement);
     },
 
