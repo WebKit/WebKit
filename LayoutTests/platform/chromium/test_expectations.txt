@@ -3953,9 +3953,7 @@ BUGWK82129 MAC : fast/block/lineboxcontain/block-glyphs.html = TEXT
 BUGWK82129 MAC : fast/block/lineboxcontain/font.html = TEXT
 BUGWK82129 MAC : fast/block/lineboxcontain/glyphs.html = TEXT
 
-BUGWK82669 LINUX DEBUG : fast/text/international/spaces-combined-in-vertical-text.html = CRASH
-BUGWK82669 LINUX RELEASE : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
-BUGWK82669 MAC WIN : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
+BUGWK82669 LINUX WIN : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 
 BUGWK82717 SNOWLEOPARD : storage/quota-tracking.html = PASS TIMEOUT
 BUGWK82717 SNOWLEOPARD : storage/executesql-accepts-only-one-statement.html = PASS TIMEOUT
