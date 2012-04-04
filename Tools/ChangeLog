@@ -1,5 +1,11 @@
 2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        I don't know why I'm so sloppy today. Another build fix.
+
+        * Scripts/run-webkit-tests:
+
+2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Hopefully the last build fix for Chromium Windows.
 
         Explicitly execute new-run-webkit-tests and old-run-webkit-tests by python and perl.
