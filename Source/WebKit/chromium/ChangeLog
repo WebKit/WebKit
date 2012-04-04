@@ -1,3 +1,21 @@
+2012-04-03  Yuta Kitamura  <yutak@chromium.org>
+
+        Crash in WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel
+        https://bugs.webkit.org/show_bug.cgi?id=82873
+
+        Reviewed by David Levin.
+
+        Change the function signature of WorkerLoaderProxy::postTaskForModeToWorkerContext().
+
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::WebSharedWorkerImpl::postTaskForModeToWorkerContext):
+        * src/WebSharedWorkerImpl.h:
+        (WebSharedWorkerImpl):
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::postTaskForModeToWorkerContext):
+        * src/WebWorkerClientImpl.h:
+        (WebWorkerClientImpl):
+
 2012-04-03  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Include Image.h in TextFieldDecoratorImpl.cpp

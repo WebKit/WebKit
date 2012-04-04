@@ -77,7 +77,7 @@ public:
 
     // WorkerLoaderProxy
     virtual void postTaskToLoader(PassOwnPtr<ScriptExecutionContext::Task>);
-    virtual void postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task>, const String&);
+    virtual bool postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task>, const String&);
 
     // WorkerReportingProxy
     virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
@@ -151,12 +151,13 @@ void SharedWorkerProxy::postTaskToLoader(PassOwnPtr<ScriptExecutionContext::Task
     document->postTask(task);
 }
 
-void SharedWorkerProxy::postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
+bool SharedWorkerProxy::postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
 {
     if (isClosing())
-        return;
+        return false;
     ASSERT(m_thread);
     m_thread->runLoop().postTaskForMode(task, mode);
+    return true;
 }
 
 static void postExceptionTask(ScriptExecutionContext* context, const String& errorMessage, int lineNumber, const String& sourceURL)

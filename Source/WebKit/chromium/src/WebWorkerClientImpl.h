@@ -86,7 +86,7 @@ public:
 #endif
     // WebCore::WorkerLoaderProxy methods:
     virtual void postTaskToLoader(PassOwnPtr<WebCore::ScriptExecutionContext::Task>) OVERRIDE;
-    virtual void postTaskForModeToWorkerContext(PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const String& mode) OVERRIDE;
+    virtual bool postTaskForModeToWorkerContext(PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const String& mode) OVERRIDE;
 
     // WebCore::WorkerObjectProxy methods:
     virtual void postMessageToWorkerObject(PassRefPtr<WebCore::SerializedScriptValue>, PassOwnPtr<WebCore::MessagePortChannelArray>) OVERRIDE;

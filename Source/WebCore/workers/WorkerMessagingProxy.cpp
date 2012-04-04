@@ -296,13 +296,14 @@ void WorkerMessagingProxy::postMessageToWorkerContext(PassRefPtr<SerializedScrip
         m_queuedEarlyTasks.append(MessageWorkerContextTask::create(message, channels));
 }
 
-void WorkerMessagingProxy::postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
+bool WorkerMessagingProxy::postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
 {
     if (m_askedToTerminate)
-        return;
+        return false;
 
     ASSERT(m_workerThread);
     m_workerThread->runLoop().postTaskForMode(task, mode);
+    return true;
 }
 
 void WorkerMessagingProxy::postTaskToLoader(PassOwnPtr<ScriptExecutionContext::Task> task)

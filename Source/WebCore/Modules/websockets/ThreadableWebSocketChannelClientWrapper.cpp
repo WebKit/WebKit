@@ -44,6 +44,7 @@ namespace WebCore {
 ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper(ScriptExecutionContext* context, WebSocketChannelClient* client)
     : m_context(context)
     , m_client(client)
+    , m_peer(0)
     , m_syncMethodDone(true)
     , m_useHixie76Protocol(true)
     , m_sendRequestResult(ThreadableWebSocketChannel::SendFail)
@@ -72,14 +73,26 @@ bool ThreadableWebSocketChannelClientWrapper::syncMethodDone() const
     return m_syncMethodDone;
 }
 
+WorkerThreadableWebSocketChannel::Peer* ThreadableWebSocketChannelClientWrapper::peer() const
+{
+    return m_peer;
+}
+
+void ThreadableWebSocketChannelClientWrapper::didCreateWebSocketChannel(WorkerThreadableWebSocketChannel::Peer* peer, bool useHixie76Protocol)
+{
+    m_peer = peer;
+    m_useHixie76Protocol = useHixie76Protocol;
+    m_syncMethodDone = true;
+}
+
+void ThreadableWebSocketChannelClientWrapper::clearPeer()
+{
+    m_peer = 0;
+}
+
 bool ThreadableWebSocketChannelClientWrapper::useHixie76Protocol() const
 {
     return m_useHixie76Protocol;
-}
-
-void ThreadableWebSocketChannelClientWrapper::setUseHixie76Protocol(bool useHixie76Protocol)
-{
-    m_useHixie76Protocol = useHixie76Protocol;
 }
 
 String ThreadableWebSocketChannelClientWrapper::subprotocol() const

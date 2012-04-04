@@ -320,10 +320,11 @@ void WebSharedWorkerImpl::postTaskToLoader(PassOwnPtr<ScriptExecutionContext::Ta
     m_loadingDocument->postTask(task);
 }
 
-void WebSharedWorkerImpl::postTaskForModeToWorkerContext(
+bool WebSharedWorkerImpl::postTaskForModeToWorkerContext(
     PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
 {
     m_workerThread->runLoop().postTaskForMode(task, mode);
+    return true;
 }
 
 

@@ -86,7 +86,7 @@ public:
 
     // WebCore::WorkerLoaderProxy methods:
     virtual void postTaskToLoader(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
-    virtual void postTaskForModeToWorkerContext(
+    virtual bool postTaskForModeToWorkerContext(
         PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const WTF::String& mode);
 
     // WebFrameClient methods to support resource loading thru the 'shadow page'.

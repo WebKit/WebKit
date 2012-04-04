@@ -53,7 +53,8 @@ namespace WebCore {
 
         // Posts callbacks from loading code to the WorkerContext. The 'mode' is used to differentiate
         // specific synchronous loading requests so they can be 'nested', per spec.
-        virtual void postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task>, const String& mode) = 0;
+        // Returns true if the task was posted successfully.
+        virtual bool postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task>, const String& mode) = 0;
     };
 
 } // namespace WebCore

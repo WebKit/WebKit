@@ -37,6 +37,7 @@
 #include "ScriptExecutionContext.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannelClient.h"
+#include "WorkerThreadableWebSocketChannel.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -56,10 +57,13 @@ public:
     void setSyncMethodDone();
     bool syncMethodDone() const;
 
+    WorkerThreadableWebSocketChannel::Peer* peer() const;
+    void didCreateWebSocketChannel(WorkerThreadableWebSocketChannel::Peer*, bool useHixie76Protocol);
+    void clearPeer();
+
     // The value of useHixie76Protocol flag is cachable; this value is saved after WebSocketChannel (on the main
     // thread) is constructed.
     bool useHixie76Protocol() const;
-    void setUseHixie76Protocol(bool);
 
     // Subprotocol and extensions are cached too. Will be available when didConnect() callback is invoked.
     String subprotocol() const;
@@ -100,6 +104,7 @@ private:
 
     ScriptExecutionContext* m_context;
     WebSocketChannelClient* m_client;
+    WorkerThreadableWebSocketChannel::Peer* m_peer;
     bool m_syncMethodDone;
     bool m_useHixie76Protocol;
     // ThreadSafeRefCounted must not have String member variables.

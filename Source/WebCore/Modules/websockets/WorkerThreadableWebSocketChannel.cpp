@@ -57,6 +57,7 @@ WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel(WorkerContext
     , m_workerClientWrapper(ThreadableWebSocketChannelClientWrapper::create(context, client))
     , m_bridge(Bridge::create(m_workerClientWrapper, m_workerContext, taskMode))
 {
+    m_bridge->initialize();
 }
 
 WorkerThreadableWebSocketChannel::~WorkerThreadableWebSocketChannel()
@@ -344,28 +345,6 @@ void WorkerThreadableWebSocketChannel::Peer::didClose(unsigned long unhandledBuf
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidClose, m_workerClientWrapper, unhandledBufferedAmount, closingHandshakeCompletion, code, reason), m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::setWebSocketChannel(ScriptExecutionContext* context, Bridge* thisPtr, Peer* peer, PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, bool useHixie76Protocol)
-{
-    ASSERT_UNUSED(context, context->isWorkerContext());
-    thisPtr->m_peer = peer;
-    workerClientWrapper->setUseHixie76Protocol(useHixie76Protocol);
-    workerClientWrapper->setSyncMethodDone();
-}
-
-void WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel(ScriptExecutionContext* context, Bridge* thisPtr, PassRefPtr<ThreadableWebSocketChannelClientWrapper> prpClientWrapper, const String& taskMode)
-{
-    ASSERT(isMainThread());
-    ASSERT_UNUSED(context, context->isDocument());
-
-    RefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper = prpClientWrapper;
-
-    Peer* peer = Peer::create(clientWrapper, thisPtr->m_loaderProxy, context, taskMode);
-    thisPtr->m_loaderProxy.postTaskForModeToWorkerContext(
-        createCallbackTask(&Bridge::setWebSocketChannel,
-                           AllowCrossThreadAccess(thisPtr),
-                           AllowCrossThreadAccess(peer), clientWrapper, peer->useHixie76Protocol()), taskMode);
-}
-
 WorkerThreadableWebSocketChannel::Bridge::Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerContext> workerContext, const String& taskMode)
     : m_workerClientWrapper(workerClientWrapper)
     , m_workerContext(workerContext)
@@ -374,17 +353,72 @@ WorkerThreadableWebSocketChannel::Bridge::Bridge(PassRefPtr<ThreadableWebSocketC
     , m_peer(0)
 {
     ASSERT(m_workerClientWrapper.get());
-    setMethodNotCompleted();
-    m_loaderProxy.postTaskToLoader(
-        createCallbackTask(&Bridge::mainThreadCreateWebSocketChannel,
-                           AllowCrossThreadAccess(this), m_workerClientWrapper, m_taskMode));
-    waitForMethodCompletion();
-    ASSERT(m_peer);
 }
 
 WorkerThreadableWebSocketChannel::Bridge::~Bridge()
 {
     disconnect();
+}
+
+class WorkerContextDidInitializeTask : public ScriptExecutionContext::Task {
+public:
+    static PassOwnPtr<ScriptExecutionContext::Task> create(WorkerThreadableWebSocketChannel::Peer* peer,
+                                                           PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper,
+                                                           bool useHixie76Protocol)
+    {
+        return adoptPtr(new WorkerContextDidInitializeTask(peer, workerClientWrapper, useHixie76Protocol));
+    }
+
+    virtual ~WorkerContextDidInitializeTask() { }
+    virtual void performTask(ScriptExecutionContext* context) OVERRIDE
+    {
+        ASSERT_UNUSED(context, context->isWorkerContext());
+        m_workerClientWrapper->didCreateWebSocketChannel(m_peer, m_useHixie76Protocol);
+    }
+    virtual bool isCleanupTask() const OVERRIDE { return true; }
+
+private:
+    WorkerContextDidInitializeTask(WorkerThreadableWebSocketChannel::Peer* peer,
+                                   PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper,
+                                   bool useHixie76Protocol)
+        : m_peer(peer)
+        , m_workerClientWrapper(workerClientWrapper)
+        , m_useHixie76Protocol(useHixie76Protocol)
+    {
+    }
+
+    WorkerThreadableWebSocketChannel::Peer* m_peer;
+    RefPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
+    bool m_useHixie76Protocol;
+};
+
+void WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecutionContext* context, WorkerLoaderProxy* loaderProxy, PassRefPtr<ThreadableWebSocketChannelClientWrapper> prpClientWrapper, const String& taskMode)
+{
+    ASSERT(isMainThread());
+    ASSERT_UNUSED(context, context->isDocument());
+
+    RefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper = prpClientWrapper;
+
+    Peer* peer = Peer::create(clientWrapper, *loaderProxy, context, taskMode);
+    bool sent = loaderProxy->postTaskForModeToWorkerContext(
+        WorkerContextDidInitializeTask::create(peer, clientWrapper, peer->useHixie76Protocol()), taskMode);
+    if (!sent) {
+        clientWrapper->clearPeer();
+        delete peer;
+    }
+}
+
+void WorkerThreadableWebSocketChannel::Bridge::initialize()
+{
+    ASSERT(!m_peer);
+    setMethodNotCompleted();
+    RefPtr<Bridge> protect(this);
+    m_loaderProxy.postTaskToLoader(
+        createCallbackTask(&Bridge::mainThreadInitialize,
+                           AllowCrossThreadAccess(&m_loaderProxy), m_workerClientWrapper, m_taskMode));
+    waitForMethodCompletion();
+    // m_peer may be null when the nested runloop exited before a peer has created.
+    m_peer = m_workerClientWrapper->peer();
 }
 
 void WorkerThreadableWebSocketChannel::mainThreadConnect(ScriptExecutionContext* context, Peer* peer, const KURL& url, const String& protocol)
@@ -399,7 +433,8 @@ void WorkerThreadableWebSocketChannel::mainThreadConnect(ScriptExecutionContext*
 void WorkerThreadableWebSocketChannel::Bridge::connect(const KURL& url, const String& protocol)
 {
     ASSERT(m_workerClientWrapper);
-    ASSERT(m_peer);
+    if (!m_peer)
+        return;
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadConnect, AllowCrossThreadAccess(m_peer), url, protocol));
 }
 
@@ -434,9 +469,8 @@ void WorkerThreadableWebSocketChannel::mainThreadSendBlob(ScriptExecutionContext
 
 ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge::send(const String& message)
 {
-    if (!m_workerClientWrapper)
+    if (!m_workerClientWrapper || !m_peer)
         return ThreadableWebSocketChannel::SendFail;
-    ASSERT(m_peer);
     setMethodNotCompleted();
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadSend, AllowCrossThreadAccess(m_peer), message));
     RefPtr<Bridge> protect(this);
@@ -449,9 +483,8 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
 
 ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge::send(const ArrayBuffer& binaryData)
 {
-    if (!m_workerClientWrapper)
+    if (!m_workerClientWrapper || !m_peer)
         return ThreadableWebSocketChannel::SendFail;
-    ASSERT(m_peer);
     // ArrayBuffer isn't thread-safe, hence the content of ArrayBuffer is copied into Vector<char>.
     OwnPtr<Vector<char> > data = adoptPtr(new Vector<char>(binaryData.byteLength()));
     if (binaryData.byteLength())
@@ -468,9 +501,8 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
 
 ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge::send(const Blob& binaryData)
 {
-    if (!m_workerClientWrapper)
+    if (!m_workerClientWrapper || !m_peer)
         return ThreadableWebSocketChannel::SendFail;
-    ASSERT(m_peer);
     setMethodNotCompleted();
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadSendBlob, AllowCrossThreadAccess(m_peer), binaryData.url(), binaryData.type(), binaryData.size()));
     RefPtr<Bridge> protect(this);
@@ -492,9 +524,8 @@ void WorkerThreadableWebSocketChannel::mainThreadBufferedAmount(ScriptExecutionC
 
 unsigned long WorkerThreadableWebSocketChannel::Bridge::bufferedAmount()
 {
-    if (!m_workerClientWrapper)
+    if (!m_workerClientWrapper || !m_peer)
         return 0;
-    ASSERT(m_peer);
     setMethodNotCompleted();
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadBufferedAmount, AllowCrossThreadAccess(m_peer)));
     RefPtr<Bridge> protect(this);
@@ -505,7 +536,7 @@ unsigned long WorkerThreadableWebSocketChannel::Bridge::bufferedAmount()
     return 0;
 }
 
-void WorkerThreadableWebSocketChannel::mainThreadClose(ScriptExecutionContext* context, Peer* peer, int code, const String&reason)
+void WorkerThreadableWebSocketChannel::mainThreadClose(ScriptExecutionContext* context, Peer* peer, int code, const String& reason)
 {
     ASSERT(isMainThread());
     ASSERT_UNUSED(context, context->isDocument());
@@ -516,7 +547,8 @@ void WorkerThreadableWebSocketChannel::mainThreadClose(ScriptExecutionContext* c
 
 void WorkerThreadableWebSocketChannel::Bridge::close(int code, const String& reason)
 {
-    ASSERT(m_peer);
+    if (!m_peer)
+        return;
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadClose, AllowCrossThreadAccess(m_peer), code, reason));
 }
 
@@ -531,7 +563,8 @@ void WorkerThreadableWebSocketChannel::mainThreadFail(ScriptExecutionContext* co
 
 void WorkerThreadableWebSocketChannel::Bridge::fail(const String& reason)
 {
-    ASSERT(m_peer);
+    if (!m_peer)
+        return;
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadFail, AllowCrossThreadAccess(m_peer), reason));
 }
 
@@ -566,7 +599,8 @@ void WorkerThreadableWebSocketChannel::mainThreadSuspend(ScriptExecutionContext*
 
 void WorkerThreadableWebSocketChannel::Bridge::suspend()
 {
-    ASSERT(m_peer);
+    if (!m_peer)
+        return;
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadSuspend, AllowCrossThreadAccess(m_peer)));
 }
 
@@ -581,7 +615,8 @@ void WorkerThreadableWebSocketChannel::mainThreadResume(ScriptExecutionContext* 
 
 void WorkerThreadableWebSocketChannel::Bridge::resume()
 {
-    ASSERT(m_peer);
+    if (!m_peer)
+        return;
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadResume, AllowCrossThreadAccess(m_peer)));
 }
 
