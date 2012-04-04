@@ -40,6 +40,8 @@ my @names = ();
 my @aliases = ();
 foreach (@NAMES) {
   next if (m/(^\s*$)/);
+  next if (/^#/);
+
   # Input may use a different EOL sequence than $/, so avoid chomp.
   $_ =~ s/[\r\n]+$//g;
   if (exists $namesHash{$_}) {

@@ -39,6 +39,8 @@ my @duplicates = ();
 my @names = ();
 foreach (@NAMES) {
   next if (m/(^\s*$)/);
+  next if (/^#/);
+
   # Input may use a different EOL sequence than $/, so avoid chomp.
   $_ =~ s/[\r\n]+$//g;
   # CSS values need to be lower case.
