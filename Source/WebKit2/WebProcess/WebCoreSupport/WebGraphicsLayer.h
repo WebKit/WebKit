@@ -142,6 +142,7 @@ public:
 #endif
 
 private:
+    virtual void willBeDestroyed();
     WebKit::WebLayerInfo m_layerInfo;
     RefPtr<Image> m_image;
     GraphicsLayer* m_maskTarget;

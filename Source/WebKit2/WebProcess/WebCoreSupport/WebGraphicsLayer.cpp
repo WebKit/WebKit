@@ -103,6 +103,12 @@ WebGraphicsLayer::~WebGraphicsLayer()
         purgeBackingStores();
         m_webGraphicsLayerClient->detachLayer(this);
     }
+    willBeDestroyed();
+}
+
+void WebGraphicsLayer::willBeDestroyed()
+{
+    GraphicsLayer::willBeDestroyed();
 }
 
 bool WebGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& children)

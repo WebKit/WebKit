@@ -95,6 +95,8 @@ public:
 #endif
 
 private:
+    virtual void willBeDestroyed();
+
     OwnPtr<TextureMapperLayer> m_layer;
     RefPtr<TextureMapperBackingStore> m_compositedImage;
     RefPtr<Image> m_image;

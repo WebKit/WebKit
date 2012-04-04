@@ -1,3 +1,19 @@
+2012-04-03  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt][WK2] Assert on startup after r113090
+        https://bugs.webkit.org/show_bug.cgi?id=83111
+
+        Reviewed by Noam Rosenthal.
+
+        Add willBeDestroyed to to WebGraphicsLayer.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::~WebGraphicsLayer):
+        (WebCore):
+        (WebCore::WebGraphicsLayer::willBeDestroyed):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayer):
+
 2012-04-03  Sam Weinig  <sam@webkit.org>
 
         Allow the old WebKit2 drawing model to host layers in the window server
