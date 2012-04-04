@@ -1,3 +1,21 @@
+2012-04-04  Michael Saboff  <msaboff@apple.com>
+
+        Constant Blinding for add/sub immediate crashes in ArmV7 when dest is SP
+        https://bugs.webkit.org/show_bug.cgi?id=83191
+
+        Reviewed by Oliver Hunt.
+
+        Make are that blinded constant pairs are similarly aligned to the
+        original immediate values so that instructions that expect that
+        alignment work correctly.  One example is ARMv7 add/sub imm to SP.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::add): Added ASSERT that immediate is word aligned.
+        (JSC::ARMv7Assembler::sub): Added ASSERT that immediate is word aligned.
+        (JSC::ARMv7Assembler::sub_S): Added ASSERT that immediate is word aligned.
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::additionBlindedConstant):
+
 2012-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should short-circuit Branch(LogicalNot(...))

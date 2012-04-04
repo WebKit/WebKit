@@ -739,6 +739,7 @@ public:
         ASSERT(imm.isValid());
 
         if (rn == ARMRegisters::sp) {
+            ASSERT(!(imm.getUInt16() & 3));
             if (!(rd & 8) && imm.isUInt10()) {
                 m_formatter.oneWordOp5Reg3Imm8(OP_ADD_SP_imm_T1, rd, static_cast<uint8_t>(imm.getUInt10() >> 2));
                 return;
@@ -1511,6 +1512,7 @@ public:
         ASSERT(imm.isValid());
 
         if ((rn == ARMRegisters::sp) && (rd == ARMRegisters::sp) && imm.isUInt9()) {
+            ASSERT(!(imm.getUInt16() & 3));
             m_formatter.oneWordOp9Imm7(OP_SUB_SP_imm_T1, static_cast<uint8_t>(imm.getUInt9() >> 2));
             return;
         } else if (!((rd | rn) & 8)) {
@@ -1572,6 +1574,7 @@ public:
         ASSERT(imm.isValid());
 
         if ((rn == ARMRegisters::sp) && (rd == ARMRegisters::sp) && imm.isUInt9()) {
+            ASSERT(!(imm.getUInt16() & 3));
             m_formatter.oneWordOp9Imm7(OP_SUB_SP_imm_T1, static_cast<uint8_t>(imm.getUInt9() >> 2));
             return;
         } else if (!((rd | rn) & 8)) {
