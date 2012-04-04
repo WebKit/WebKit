@@ -1,3 +1,15 @@
+2012-04-04  Patrick Gansterer  <paroga@webkit.org>
+
+        [EFL][DRT] Correct <wtf/*.h> include paths.
+        https://bugs.webkit.org/show_bug.cgi?id=83168
+
+        Reviewed by Eric Seidel.
+
+        Modify the #include declarations so that the 
+        wtf types are included using the full path.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+
 2012-04-04  Philippe Normand  <pnormand@igalia.com>
 
         gtk_unittest.GtkPortTest.test_get_crash_log failing on windows

@@ -46,9 +46,9 @@
 #include <fontconfig/fontconfig.h>
 #include <getopt.h>
 #include <stdlib.h>
-#include <text/CString.h>
 #include <unistd.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/CString.h>
 
 OwnPtr<DumpRenderTreeChrome> browser;
 Evas_Object* topLoadingFrame = 0;
