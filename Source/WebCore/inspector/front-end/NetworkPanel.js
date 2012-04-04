@@ -520,7 +520,7 @@ WebInspector.NetworkLogView.prototype = {
             this._refreshTimeout = setTimeout(this.refresh.bind(this), this._defaultRefreshDelay);
     },
 
-    _updateDividersIfNeeded: function(force)
+    _updateDividersIfNeeded: function()
     {
         if (!this._dataGrid)
             return;
@@ -537,9 +537,10 @@ WebInspector.NetworkLogView.prototype = {
         if (!this.isShowing()) {
             this._scheduleRefresh();
             proceed = false;
-        } else
-            proceed = this._timelineGrid.updateDividers(force, this.calculator);
-
+        } else {
+            this.calculator.setDisplayWindow(this._timelineGrid.element.clientWidth);
+            proceed = this._timelineGrid.updateDividers(this.calculator);
+        }
         if (!proceed)
             return;
 
@@ -738,7 +739,7 @@ WebInspector.NetworkLogView.prototype = {
 
         if (this._dataGrid) {
             this._dataGrid.removeChildren();
-            this._updateDividersIfNeeded(true);
+            this._updateDividersIfNeeded();
             this._updateSummaryBar();
         }
 
@@ -1448,6 +1449,11 @@ WebInspector.NetworkBaseCalculator = function()
 }
 
 WebInspector.NetworkBaseCalculator.prototype = {
+    computePosition: function(time)
+    {
+        return (time - this.minimumBoundary) / this.boundarySpan * this._workingArea;
+    },
+
     computeBarGraphPercentages: function(item)
     {
         return {start: 0, middle: 0, end: (this._value(item) / this.boundarySpan) * 100};
@@ -1490,6 +1496,11 @@ WebInspector.NetworkBaseCalculator.prototype = {
     formatTime: function(value)
     {
         return value.toString();
+    },
+
+    setDisplayWindow: function(clientWidth)
+    {
+        this._workingArea = clientWidth;
     }
 }
 
