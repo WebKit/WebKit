@@ -1,3 +1,12 @@
+2012-04-04  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        Unreviewed; update my email address once again in the committers
+        and watch list.
+
+        * Scripts/webkitpy/common/config/committers.py: Prefer my
+        webkit.org email over my FreeBSD.org one.
+        * Scripts/webkitpy/common/config/watchlist: Ditto.
+
 2012-04-04  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] QtWebKit2 should support Page Visibility API
