@@ -79,9 +79,11 @@ sub platformIsReadyForParallelTesting()
     return !isQt();
 }
 
+my $script = "perl";
 my $harnessName = "old-run-webkit-tests";
 
 if (useNewRunWebKitTests()) {
+    $script = "python";
     $harnessName = "new-run-webkit-tests";
 
     if (!grep(/--child-processes/, @ARGV) and !platformIsReadyForParallelTesting()) {
