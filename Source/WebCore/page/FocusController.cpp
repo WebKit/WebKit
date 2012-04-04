@@ -29,6 +29,7 @@
 
 #include "AXObjectCache.h"
 #include "Chrome.h"
+#include "ComposedShadowTreeWalker.h"
 #include "Document.h"
 #include "Editor.h"
 #include "EditorClient.h"
@@ -48,7 +49,6 @@
 #include "KeyboardEvent.h"
 #include "Page.h"
 #include "Range.h"
-#include "ReifiedTreeTraversal.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderWidget.h"
@@ -69,6 +69,35 @@ using namespace std;
 static inline bool isShadowHost(const Node* node)
 {
     return node && node->isElementNode() && toElement(node)->hasShadowRoot();
+}
+
+static inline ComposedShadowTreeWalker walkerFrom(const Node* node)
+{
+    return ComposedShadowTreeWalker(node, ComposedShadowTreeWalker::DoNotCrossUpperBoundary);
+}
+
+static inline ComposedShadowTreeWalker walkerFromNext(const Node* node)
+{
+    ComposedShadowTreeWalker walker = ComposedShadowTreeWalker(node, ComposedShadowTreeWalker::DoNotCrossUpperBoundary);
+    walker.next();
+    return walker;
+}
+
+static inline ComposedShadowTreeWalker walkerFromPrevious(const Node* node)
+{
+    ComposedShadowTreeWalker walker = ComposedShadowTreeWalker(node, ComposedShadowTreeWalker::DoNotCrossUpperBoundary);
+    walker.previous();
+    return walker;
+}
+
+static inline Node* nextNode(const Node* node)
+{
+    return walkerFromNext(node).get();
+}
+
+static inline Node* previousNode(const Node* node)
+{
+    return walkerFromPrevious(node).get();
 }
 
 FocusScope::FocusScope(TreeScope* treeScope)
@@ -420,9 +449,9 @@ Node* FocusController::findFocusableNode(FocusDirection direction, FocusScope sc
 Node* FocusController::findNodeWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent* event, FocusDirection direction)
 {
     // Search is inclusive of start
-    for (Node* node = start; node; node = (direction == FocusDirectionForward ? ReifiedTreeTraversal::traverseNextNodeWithoutCrossingUpperBoundary(node): ReifiedTreeTraversal::traversePreviousNodeWithoutCrossingUpperBoundary(node))) {
-        if (shouldVisit(node, event) && adjustedTabIndex(node, event) == tabIndex)
-            return node;
+    for (ComposedShadowTreeWalker walker = walkerFrom(start); walker.get(); direction == FocusDirectionForward ? walker.next() : walker.previous()) {
+        if (shouldVisit(walker.get(), event) && adjustedTabIndex(walker.get(), event) == tabIndex)
+            return walker.get();
     }
     return 0;
 }
@@ -432,11 +461,13 @@ static Node* nextNodeWithGreaterTabIndex(Node* start, int tabIndex, KeyboardEven
     // Search is inclusive of start
     int winningTabIndex = std::numeric_limits<short>::max() + 1;
     Node* winner = 0;
-    for (Node* n = start; n; n = ReifiedTreeTraversal::traverseNextNodeWithoutCrossingUpperBoundary(n))
-        if (shouldVisit(n, event) && n->tabIndex() > tabIndex && n->tabIndex() < winningTabIndex) {
-            winner = n;
-            winningTabIndex = n->tabIndex();
+    for (ComposedShadowTreeWalker walker = walkerFrom(start); walker.get(); walker.next()) {
+        Node* node = walker.get();
+        if (shouldVisit(node, event) && node->tabIndex() > tabIndex && node->tabIndex() < winningTabIndex) {
+            winner = node;
+            winningTabIndex = node->tabIndex();
         }
+    }
 
     return winner;
 }
@@ -446,10 +477,11 @@ static Node* previousNodeWithLowerTabIndex(Node* start, int tabIndex, KeyboardEv
     // Search is inclusive of start
     int winningTabIndex = 0;
     Node* winner = 0;
-    for (Node* n = start; n; n = ReifiedTreeTraversal::traversePreviousNodeWithoutCrossingUpperBoundary(n)) {
-        int currentTabIndex = adjustedTabIndex(n, event);
-        if ((shouldVisit(n, event) || isNonFocusableShadowHost(n, event)) && currentTabIndex < tabIndex && currentTabIndex > winningTabIndex) {
-            winner = n;
+    for (ComposedShadowTreeWalker walker = walkerFrom(start); walker.get(); walker.previous()) {
+        Node* node = walker.get();
+        int currentTabIndex = adjustedTabIndex(node, event);
+        if ((shouldVisit(node, event) || isNonFocusableShadowHost(node, event)) && currentTabIndex < tabIndex && currentTabIndex > winningTabIndex) {
+            winner = node;
             winningTabIndex = currentTabIndex;
         }
     }
@@ -462,14 +494,14 @@ Node* FocusController::nextFocusableNode(FocusScope scope, Node* start, Keyboard
         int tabIndex = adjustedTabIndex(start, event);
         // If a node is excluded from the normal tabbing cycle, the next focusable node is determined by tree order
         if (tabIndex < 0) {
-            for (Node* n = ReifiedTreeTraversal::traverseNextNodeWithoutCrossingUpperBoundary(start); n; n = ReifiedTreeTraversal::traverseNextNodeWithoutCrossingUpperBoundary(n)) {
-                if (shouldVisit(n, event) && adjustedTabIndex(n, event) >= 0)
-                    return n;
+            for (ComposedShadowTreeWalker walker = walkerFromNext(start); walker.get(); walker.next()) {
+                if (shouldVisit(walker.get(), event) && adjustedTabIndex(walker.get(), event) >= 0)
+                    return walker.get();
             }
         }
 
         // First try to find a node with the same tabindex as start that comes after start in the scope.
-        if (Node* winner = findNodeWithExactTabIndex(ReifiedTreeTraversal::traverseNextNodeWithoutCrossingUpperBoundary(start), tabIndex, event, FocusDirectionForward))
+        if (Node* winner = findNodeWithExactTabIndex(nextNode(start), tabIndex, event, FocusDirectionForward))
             return winner;
 
         if (!tabIndex)
@@ -490,15 +522,17 @@ Node* FocusController::nextFocusableNode(FocusScope scope, Node* start, Keyboard
 
 Node* FocusController::previousFocusableNode(FocusScope scope, Node* start, KeyboardEvent* event)
 {
-    Node* last;
-    for (last = scope.rootNode(); ReifiedTreeTraversal::lastChildWithoutCrossingUpperBoundary(last); last = ReifiedTreeTraversal::lastChildWithoutCrossingUpperBoundary(last)) { }
+    Node* last = 0;
+    for (ComposedShadowTreeWalker walker = walkerFrom(scope.rootNode()); walker.get(); walker.lastChild())
+        last = walker.get();
+    ASSERT(last);
 
     // First try to find the last node in the scope that comes before start and has the same tabindex as start.
     // If start is null, find the last node in the scope with a tabindex of 0.
     Node* startingNode;
     int startingTabIndex;
     if (start) {
-        startingNode = ReifiedTreeTraversal::traversePreviousNodeWithoutCrossingUpperBoundary(start);
+        startingNode = previousNode(start);
         startingTabIndex = adjustedTabIndex(start, event);
     } else {
         startingNode = last;
@@ -507,9 +541,9 @@ Node* FocusController::previousFocusableNode(FocusScope scope, Node* start, Keyb
 
     // However, if a node is excluded from the normal tabbing cycle, the previous focusable node is determined by tree order
     if (startingTabIndex < 0) {
-        for (Node* n = startingNode; n; n = ReifiedTreeTraversal::traversePreviousNodeWithoutCrossingUpperBoundary(n)) {
-            if (shouldVisit(n, event) && adjustedTabIndex(n, event) >= 0)
-                return n;
+        for (ComposedShadowTreeWalker walker = walkerFrom(startingNode); walker.get(); walker.previous()) {
+            if (shouldVisit(walker.get(), event) && adjustedTabIndex(walker.get(), event) >= 0)
+                return walker.get();
         }
     }
 
