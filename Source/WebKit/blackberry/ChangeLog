@@ -1,3 +1,17 @@
+2012-04-04  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Make the switch statement in WebPage::notifyAppActivationStateChange() stronger
+        https://bugs.webkit.org/show_bug.cgi?id=83085
+
+        Reviewed by Antonio Gomes.
+
+        PR 121109
+
+        This way when we add something to the enum and forget to add to the switch we'll get a compile error.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::notifyAppActivationStateChange):
+
 2012-04-03  Mike Lattanzio  <mlattanzio@rim.com>
 
         [BlackBerry] Expose CaseSensitive, Wrap, and HighlightAllMatches in WebPage::findNextString()

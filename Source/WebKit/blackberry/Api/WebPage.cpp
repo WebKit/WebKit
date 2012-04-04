@@ -5083,9 +5083,6 @@ void WebPage::notifyAppActivationStateChange(ActivationStateType activationState
         case ActivationStandby:
             (*it)->handleAppStandbyEvent();
             break;
-        default: // FIXME: Get rid of the default to force a compiler error instead of using a runtime error. See PR #121109.
-            ASSERT_NOT_REACHED();
-            break;
         }
     }
 
