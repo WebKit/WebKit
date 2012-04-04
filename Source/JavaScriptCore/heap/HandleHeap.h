@@ -40,13 +40,6 @@ class JSGlobalData;
 class JSValue;
 class SlotVisitor;
 
-class JS_EXPORT_PRIVATE WeakHandleOwner {
-public:
-    virtual ~WeakHandleOwner();
-    virtual bool isReachableFromOpaqueRoots(Handle<Unknown>, void* context, SlotVisitor&);
-    virtual void finalize(Handle<Unknown>, void* context);
-};
-
 class HandleHeap {
 public:
     static HandleHeap* heapFor(HandleSlot);
@@ -58,19 +51,9 @@ public:
     HandleSlot allocate();
     void deallocate(HandleSlot);
 
-    void makeWeak(HandleSlot, WeakHandleOwner* = 0, void* context = 0);
-    HandleSlot copyWeak(HandleSlot);
-
     void visitStrongHandles(HeapRootVisitor&);
-    void visitWeakHandles(HeapRootVisitor&);
-    void finalizeWeakHandles();
 
     JS_EXPORT_PRIVATE void writeBarrier(HandleSlot, const JSValue&);
-
-#if !ASSERT_DISABLED
-    bool hasWeakOwner(HandleSlot, WeakHandleOwner*);
-    bool hasFinalizer(HandleSlot);
-#endif
 
     unsigned protectedGlobalObjectCount();
 
@@ -85,12 +68,6 @@ private:
         HandleSlot slot();
         HandleHeap* handleHeap();
 
-        void makeWeak(WeakHandleOwner*, void* context);
-        bool isWeak();
-        
-        WeakHandleOwner* weakOwner();
-        void* weakOwnerContext();
-
         void setPrev(Node*);
         Node* prev();
 
@@ -98,12 +75,8 @@ private:
         Node* next();
 
     private:
-        WeakHandleOwner* emptyWeakOwner();
-
         JSValue m_value;
         HandleHeap* m_handleHeap;
-        WeakHandleOwner* m_weakOwner;
-        void* m_weakOwnerContext;
         Node* m_prev;
         Node* m_next;
     };
@@ -114,7 +87,6 @@ private:
     JS_EXPORT_PRIVATE void grow();
     
 #if ENABLE(GC_VALIDATION) || !ASSERT_DISABLED
-    bool isValidWeakNode(Node*);
     bool isLiveNode(Node*);
 #endif
 
@@ -122,7 +94,6 @@ private:
     BlockStack<Node> m_blockStack;
 
     SentinelLinkedList<Node> m_strongList;
-    SentinelLinkedList<Node> m_weakList;
     SentinelLinkedList<Node> m_immediateList;
     SinglyLinkedList<Node> m_freeList;
     Node* m_nextToFinalize;
@@ -175,49 +146,8 @@ inline void HandleHeap::deallocate(HandleSlot handle)
     m_freeList.push(node);
 }
 
-inline HandleSlot HandleHeap::copyWeak(HandleSlot other)
-{
-    Node* node = toNode(allocate());
-    node->makeWeak(toNode(other)->weakOwner(), toNode(other)->weakOwnerContext());
-    writeBarrier(node->slot(), *other);
-    *node->slot() = *other;
-    return toHandle(node);
-}
-
-inline void HandleHeap::makeWeak(HandleSlot handle, WeakHandleOwner* weakOwner, void* context)
-{
-    // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
-    // File a bug with stack trace if you hit this.
-    if (m_nextToFinalize)
-        CRASH();
-    Node* node = toNode(handle);
-    node->makeWeak(weakOwner, context);
-
-    SentinelLinkedList<Node>::remove(node);
-    if (!*handle || !handle->isCell()) {
-        m_immediateList.push(node);
-        return;
-    }
-
-    m_weakList.push(node);
-}
-
-#if !ASSERT_DISABLED
-inline bool HandleHeap::hasWeakOwner(HandleSlot handle, WeakHandleOwner* weakOwner)
-{
-    return toNode(handle)->weakOwner() == weakOwner;
-}
-
-inline bool HandleHeap::hasFinalizer(HandleSlot handle)
-{
-    return toNode(handle)->weakOwner();
-}
-#endif
-
 inline HandleHeap::Node::Node(HandleHeap* handleHeap)
     : m_handleHeap(handleHeap)
-    , m_weakOwner(0)
-    , m_weakOwnerContext(0)
     , m_prev(0)
     , m_next(0)
 {
@@ -225,8 +155,6 @@ inline HandleHeap::Node::Node(HandleHeap* handleHeap)
 
 inline HandleHeap::Node::Node(WTF::SentinelTag)
     : m_handleHeap(0)
-    , m_weakOwner(0)
-    , m_weakOwnerContext(0)
     , m_prev(0)
     , m_next(0)
 {
@@ -240,28 +168,6 @@ inline HandleSlot HandleHeap::Node::slot()
 inline HandleHeap* HandleHeap::Node::handleHeap()
 {
     return m_handleHeap;
-}
-
-inline void HandleHeap::Node::makeWeak(WeakHandleOwner* weakOwner, void* context)
-{
-    m_weakOwner = weakOwner ? weakOwner : emptyWeakOwner();
-    m_weakOwnerContext = context;
-}
-
-inline bool HandleHeap::Node::isWeak()
-{
-    return m_weakOwner; // True for emptyWeakOwner().
-}
-
-inline WeakHandleOwner* HandleHeap::Node::weakOwner()
-{
-    return m_weakOwner == emptyWeakOwner() ? 0 : m_weakOwner; // 0 for emptyWeakOwner().
-}
-
-inline void* HandleHeap::Node::weakOwnerContext()
-{
-    ASSERT(weakOwner());
-    return m_weakOwnerContext;
 }
 
 inline void HandleHeap::Node::setPrev(Node* prev)
@@ -282,13 +188,6 @@ inline void HandleHeap::Node::setNext(Node* next)
 inline HandleHeap::Node* HandleHeap::Node::next()
 {
     return m_next;
-}
-
-// Sentinel to indicate that a node is weak, but its owner has no meaningful
-// callbacks. This allows us to optimize by skipping such nodes.
-inline WeakHandleOwner* HandleHeap::Node::emptyWeakOwner()
-{
-    return reinterpret_cast<WeakHandleOwner*>(-1);
 }
 
 template<typename Functor> void HandleHeap::forEachStrongHandle(Functor& functor, const HashCountedSet<JSCell*>& skipSet)

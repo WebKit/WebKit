@@ -107,7 +107,7 @@ inline void StructureTransitionTable::add(JSGlobalData& globalData, Structure* s
         // There already is an entry! - we should only hit this when despecifying.
         ASSERT(result.iterator.get().second->m_specificValueInPrevious);
         ASSERT(!structure->m_specificValueInPrevious);
-        map()->set(result.iterator, structure);
+        map()->set(globalData, result.iterator.get().first, structure);
     }
 }
 

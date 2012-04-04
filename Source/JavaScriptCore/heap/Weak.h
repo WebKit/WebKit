@@ -27,107 +27,127 @@
 #define Weak_h
 
 #include <wtf/Assertions.h>
-#include "Handle.h"
-#include "HandleHeap.h"
 #include "JSGlobalData.h"
 #include "PassWeak.h"
 
 namespace JSC {
 
-// A weakly referenced handle that becomes 0 when the value it points to is garbage collected.
-template <typename T> class Weak : public Handle<T> {
+template<typename T> class Weak : public WeakImplAccessor<Weak<T>, T> {
     WTF_MAKE_NONCOPYABLE(Weak);
-
-    using Handle<T>::slot;
-    using Handle<T>::setSlot;
-
 public:
-    typedef typename Handle<T>::ExternalType ExternalType;
+    friend class WeakImplAccessor<Weak<T>, T>;
+    typedef typename WeakImplAccessor<Weak<T>, T>::GetType GetType;
 
-    Weak()
-        : Handle<T>()
-    {
-    }
-
-    Weak(std::nullptr_t)
-        : Handle<T>()
-    {
-    }
-
-    Weak(JSGlobalData& globalData, ExternalType externalType = ExternalType(), WeakHandleOwner* weakOwner = 0, void* context = 0)
-        : Handle<T>(globalData.heap.handleHeap()->allocate())
-    {
-        HandleHeap::heapFor(slot())->makeWeak(slot(), weakOwner, context);
-        JSValue value = HandleTypes<T>::toJSValue(externalType);
-        HandleHeap::heapFor(slot())->writeBarrier(slot(), value);
-        *slot() = value;
-    }
-
-    enum AdoptTag { Adopt };
-    template<typename U> Weak(AdoptTag, Handle<U> handle)
-        : Handle<T>(handle.slot())
-    {
-        validateCell(get());
-    }
+    Weak();
+    Weak(std::nullptr_t);
+    Weak(JSGlobalData&, GetType = GetType(), WeakHandleOwner* = 0, void* context = 0);
 
     enum HashTableDeletedValueTag { HashTableDeletedValue };
-    bool isHashTableDeletedValue() const { return slot() == hashTableDeletedValue(); }
-    Weak(HashTableDeletedValueTag)
-        : Handle<T>(hashTableDeletedValue())
-    {
-    }
+    bool isHashTableDeletedValue() const;
+    Weak(HashTableDeletedValueTag);
 
-    template<typename U> Weak(const PassWeak<U>& other)
-        : Handle<T>(other.leakHandle())
-    {
-    }
+    template<typename U> Weak(const PassWeak<U>&);
 
-    ~Weak()
-    {
-        clear();
-    }
+    ~Weak();
 
-    void swap(Weak& other)
-    {
-        Handle<T>::swap(other);
-    }
-
+    void swap(Weak&);
     Weak& operator=(const PassWeak<T>&);
-
-    ExternalType get() const { return  HandleTypes<T>::getFromSlot(slot()); }
     
-    PassWeak<T> release() { PassWeak<T> tmp = adoptWeak<T>(slot()); setSlot(0); return tmp; }
+    bool operator!() const;
 
-    void clear()
-    {
-        if (!slot())
-            return;
-        HandleHeap::heapFor(slot())->deallocate(slot());
-        setSlot(0);
-    }
+    // This conversion operator allows implicit conversion to bool but not to other integer types.
+    typedef JSValue (HandleBase::*UnspecifiedBoolType);
+    operator UnspecifiedBoolType*() const;
+
+    PassWeak<T> release();
+    void clear();
     
-    HandleSlot leakHandle()
-    {
-        ASSERT(HandleHeap::heapFor(slot())->hasFinalizer(slot()));
-        HandleSlot result = slot();
-        setSlot(0);
-        return result;
-    }
-
 private:
-    static HandleSlot hashTableDeletedValue() { return reinterpret_cast<HandleSlot>(-1); }
+    static WeakImpl* hashTableDeletedValue();
+
+    WeakImpl* m_impl;
 };
+
+template<typename T> inline Weak<T>::Weak()
+    : m_impl(0)
+{
+}
+
+template<typename T> inline Weak<T>::Weak(std::nullptr_t)
+    : m_impl(0)
+{
+}
+
+template<typename T> inline Weak<T>::Weak(JSGlobalData& globalData, typename Weak<T>::GetType getType, WeakHandleOwner* weakOwner, void* context)
+    : m_impl(globalData.heap.weakHeap()->allocate(getType, weakOwner, context))
+{
+}
+
+template<typename T> inline bool Weak<T>::isHashTableDeletedValue() const
+{
+    return m_impl == hashTableDeletedValue();
+}
+
+template<typename T> inline Weak<T>::Weak(typename Weak<T>::HashTableDeletedValueTag)
+    : m_impl(hashTableDeletedValue())
+{
+}
+
+template<typename T> template<typename U>  inline Weak<T>::Weak(const PassWeak<U>& other)
+    : m_impl(other.leakImpl())
+{
+}
+
+template<typename T> inline Weak<T>::~Weak()
+{
+    clear();
+}
 
 template<class T> inline void swap(Weak<T>& a, Weak<T>& b)
 {
     a.swap(b);
 }
 
+template<typename T> inline void Weak<T>::swap(Weak& other)
+{
+    std::swap(m_impl, other.m_impl);
+}
+
 template<typename T> inline Weak<T>& Weak<T>::operator=(const PassWeak<T>& o)
 {
     clear();
-    setSlot(o.leakHandle());
+    m_impl = o.leakImpl();
     return *this;
+}
+
+template<typename T> inline bool Weak<T>::operator!() const
+{
+    return !m_impl || !m_impl->jsValue() || m_impl->state() != WeakImpl::Live;
+}
+
+template<typename T> inline Weak<T>::operator UnspecifiedBoolType*() const
+{
+    return reinterpret_cast<UnspecifiedBoolType*>(!!*this);
+}
+
+template<typename T> inline PassWeak<T> Weak<T>::release()
+{
+    PassWeak<T> tmp = adoptWeak<T>(m_impl);
+    m_impl = 0;
+    return tmp;
+}
+
+template<typename T> inline void Weak<T>::clear()
+{
+    if (!m_impl)
+        return;
+    WeakHeap::deallocate(m_impl);
+    m_impl = 0;
+}
+    
+template<typename T> inline WeakImpl* Weak<T>::hashTableDeletedValue()
+{
+    return reinterpret_cast<WeakImpl*>(-1);
 }
 
 } // namespace JSC
@@ -151,7 +171,7 @@ template<typename T> struct HashTraits<JSC::Weak<T> > : SimpleClassHashTraits<JS
     static PassOutType passOut(StorageType& value) { return value.release(); }
     static PassOutType passOut(EmptyValueType) { return PassOutType(); }
 
-    typedef typename StorageType::ExternalType PeekType;
+    typedef typename StorageType::GetType PeekType;
     static PeekType peek(const StorageType& value) { return value.get(); }
     static PeekType peek(EmptyValueType) { return PeekType(); }
 };

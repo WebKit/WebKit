@@ -71,6 +71,9 @@ SOURCES += \
     heap/CopiedSpace.cpp \
     heap/ConservativeRoots.cpp \
     heap/DFGCodeBlocks.cpp \
+    heap/WeakHeap.cpp \
+    heap/WeakHandleOwner.cpp \
+    heap/WeakBlock.cpp \
     heap/HandleHeap.cpp \
     heap/HandleStack.cpp \
     heap/Heap.cpp \

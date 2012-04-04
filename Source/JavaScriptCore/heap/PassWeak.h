@@ -26,8 +26,8 @@
 #ifndef PassWeak_h
 #define PassWeak_h
 
+#include "JSCell.h"
 #include <wtf/Assertions.h>
-#include "Handle.h"
 #include <wtf/NullPtr.h>
 #include <wtf/TypeTraits.h>
 
@@ -35,61 +35,164 @@ namespace JSC {
 
 template<typename T> class Weak;
 template<typename T> class PassWeak;
-template<typename T> PassWeak<T> adoptWeak(HandleSlot);
+template<typename T> PassWeak<T> adoptWeak(WeakImpl*);
 
-template<typename T> class PassWeak : public Handle<T> {
-    using Handle<T>::slot;
-    using Handle<T>::setSlot;
-
+template<typename Base, typename T> class WeakImplAccessor {
 public:
-    typedef typename Handle<T>::ExternalType ExternalType;
+    typedef T* GetType;
 
-    PassWeak() : Handle<T>() { }
-    PassWeak(std::nullptr_t) : Handle<T>() { }
+    T* operator->() const;
+    T& operator*() const;
+    GetType get() const;
 
-    PassWeak(JSGlobalData& globalData, ExternalType externalType = ExternalType(), WeakHandleOwner* weakOwner = 0, void* context = 0)
-        : Handle<T>(globalData.heap.handleHeap()->allocate())
-    {
-        HandleHeap::heapFor(slot())->makeWeak(slot(), weakOwner, context);
-        JSValue value = HandleTypes<T>::toJSValue(externalType);
-        HandleHeap::heapFor(slot())->writeBarrier(slot(), value);
-        *slot() = value;
-    }
+#if !ASSERT_DISABLED
+    bool was(GetType) const;
+#endif
+};
+
+template<typename Base> class WeakImplAccessor<Base, Unknown> {
+public:
+    typedef JSValue GetType;
+
+    const JSValue* operator->() const;
+    const JSValue& operator*() const;
+    GetType get() const;
+};
+
+template<typename T> class PassWeak : public WeakImplAccessor<PassWeak<T>, T> {
+public:
+    friend class WeakImplAccessor<PassWeak<T>, T>;
+    typedef typename WeakImplAccessor<PassWeak<T>, T>::GetType GetType;
+
+    PassWeak();
+    PassWeak(std::nullptr_t);
+    PassWeak(JSGlobalData&, GetType = GetType(), WeakHandleOwner* = 0, void* context = 0);
 
     // It somewhat breaks the type system to allow transfer of ownership out of
     // a const PassWeak. However, it makes it much easier to work with PassWeak
     // temporaries, and we don't have a need to use real const PassWeaks anyway.
-    PassWeak(const PassWeak& o) : Handle<T>(o.leakHandle()) { }
-    template<typename U> PassWeak(const PassWeak<U>& o) : Handle<T>(o.leakHandle()) { }
+    PassWeak(const PassWeak&);
+    template<typename U> PassWeak(const PassWeak<U>&);
 
-    ~PassWeak()
-    {
-        if (!slot())
-            return;
-        HandleHeap::heapFor(slot())->deallocate(slot());
-        setSlot(0);
-    }
+    ~PassWeak();
 
-    ExternalType get() const { return  HandleTypes<T>::getFromSlot(slot()); }
+    bool operator!() const;
 
-    HandleSlot leakHandle() const WARN_UNUSED_RETURN;
+    // This conversion operator allows implicit conversion to bool but not to other integer types.
+    typedef JSValue (PassWeak::*UnspecifiedBoolType);
+    operator UnspecifiedBoolType*() const;
+
+    WeakImpl* leakImpl() const WARN_UNUSED_RETURN;
 
 private:
-    friend PassWeak adoptWeak<T>(HandleSlot);
+    friend PassWeak adoptWeak<T>(WeakImpl*);
+    explicit PassWeak(WeakImpl*);
 
-    explicit PassWeak(HandleSlot slot) : Handle<T>(slot) { }
+    WeakImpl* m_impl;
 };
 
-template<typename T> inline HandleSlot PassWeak<T>::leakHandle() const
+template<typename Base, typename T> inline T* WeakImplAccessor<Base, T>::operator->() const
 {
-    HandleSlot slot = this->slot();
-    const_cast<PassWeak<T>*>(this)->setSlot(0);
-    return slot;
+    ASSERT(static_cast<const Base*>(this)->m_impl && static_cast<const Base*>(this)->m_impl->state() == WeakImpl::Live);
+    return jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell());
 }
 
-template<typename T> PassWeak<T> adoptWeak(HandleSlot slot)
+template<typename Base, typename T> inline T& WeakImplAccessor<Base, T>::operator*() const
 {
-    return PassWeak<T>(slot);
+    ASSERT(static_cast<const Base*>(this)->m_impl && static_cast<const Base*>(this)->m_impl->state() == WeakImpl::Live);
+    return *jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell());
+}
+
+template<typename Base, typename T> inline typename WeakImplAccessor<Base, T>::GetType WeakImplAccessor<Base, T>::get() const
+{
+    if (!static_cast<const Base*>(this)->m_impl || static_cast<const Base*>(this)->m_impl->state() != WeakImpl::Live)
+        return GetType();
+    return jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell());
+}
+
+#if !ASSERT_DISABLED
+template<typename Base, typename T> inline bool WeakImplAccessor<Base, T>::was(typename WeakImplAccessor<Base, T>::GetType other) const
+{
+    return jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell()) == other;
+}
+#endif
+
+template<typename Base> inline const JSValue* WeakImplAccessor<Base, Unknown>::operator->() const
+{
+    ASSERT(static_cast<const Base*>(this)->m_impl && static_cast<const Base*>(this)->m_impl->state() == WeakImpl::Live);
+    return &static_cast<const Base*>(this)->m_impl->jsValue();
+}
+
+template<typename Base> inline const JSValue& WeakImplAccessor<Base, Unknown>::operator*() const
+{
+    ASSERT(static_cast<const Base*>(this)->m_impl && static_cast<const Base*>(this)->m_impl->state() == WeakImpl::Live);
+    return static_cast<const Base*>(this)->m_impl->jsValue();
+}
+
+template<typename Base> inline typename WeakImplAccessor<Base, Unknown>::GetType WeakImplAccessor<Base, Unknown>::get() const
+{
+    if (!static_cast<const Base*>(this)->m_impl || static_cast<const Base*>(this)->m_impl->state() != WeakImpl::Live)
+        return GetType();
+    return static_cast<const Base*>(this)->m_impl->jsValue();
+}
+
+template<typename T> inline PassWeak<T>::PassWeak()
+    : m_impl(0)
+{
+}
+
+template<typename T> inline PassWeak<T>::PassWeak(std::nullptr_t)
+    : m_impl(0)
+{
+}
+
+template<typename T> inline PassWeak<T>::PassWeak(JSGlobalData& globalData, typename PassWeak<T>::GetType getType, WeakHandleOwner* weakOwner, void* context)
+    : m_impl(globalData.heap.weakHeap()->allocate(getType, weakOwner, context))
+{
+}
+
+template<typename T> inline PassWeak<T>::PassWeak(const PassWeak& o)
+    : m_impl(o.leakImpl())
+{
+}
+
+template<typename T> template<typename U> inline PassWeak<T>::PassWeak(const PassWeak<U>& o)
+    : m_impl(o.leakImpl())
+{
+}
+
+template<typename T> inline PassWeak<T>::~PassWeak()
+{
+    if (!m_impl)
+        return;
+    WeakHeap::deallocate(m_impl);
+}
+
+template<typename T> inline bool PassWeak<T>::operator!() const
+{
+    return !m_impl || m_impl->state() != WeakImpl::Live || !m_impl->jsValue();
+}
+
+template<typename T> inline PassWeak<T>::operator UnspecifiedBoolType*() const
+{
+    return reinterpret_cast<UnspecifiedBoolType*>(!!*this);
+}
+
+template<typename T> inline PassWeak<T>::PassWeak(WeakImpl* impl)
+: m_impl(impl)
+{
+}
+
+template<typename T> inline WeakImpl* PassWeak<T>::leakImpl() const
+{
+    WeakImpl* tmp = 0;
+    std::swap(tmp, const_cast<WeakImpl*&>(m_impl));
+    return tmp;
+}
+
+template<typename T> PassWeak<T> inline adoptWeak(WeakImpl* impl)
+{
+    return PassWeak<T>(impl);
 }
 
 template<typename T, typename U> inline bool operator==(const PassWeak<T>& a, const PassWeak<U>& b) 

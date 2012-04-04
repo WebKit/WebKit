@@ -150,7 +150,7 @@ enum ParameterDefaultPolicy {
     {
         if (clearInlineCachedWrapper(world, domObject, wrapper))
             return;
-        ASSERT(world->m_wrappers.find(domObject)->second.get() == wrapper);
+        ASSERT(world->m_wrappers.find(domObject)->second.was(wrapper));
         world->m_wrappers.remove(domObject);
     }
     

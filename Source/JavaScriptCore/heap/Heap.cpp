@@ -313,18 +313,17 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     : m_heapSize(heapSize)
     , m_minBytesPerCycle(heapSizeForHint(heapSize))
     , m_lastFullGCSize(0)
-    , m_waterMark(0)
     , m_highWaterMark(m_minBytesPerCycle)
     , m_operationInProgress(NoOperation)
     , m_objectSpace(this)
     , m_storageSpace(this)
     , m_blockFreeingThreadShouldQuit(false)
-    , m_extraCost(0)
     , m_markListSet(0)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
     , m_machineThreads(this)
     , m_sharedData(globalData)
     , m_slotVisitor(m_sharedData)
+    , m_weakHeap(this)
     , m_handleHeap(globalData)
     , m_isSafeToCollect(false)
     , m_globalData(globalData)
@@ -376,7 +375,7 @@ void Heap::destroy()
     canonicalizeCellLivenessData();
     clearMarks();
 
-    m_handleHeap.finalizeWeakHandles();
+    m_weakHeap.finalizeAll();
     m_globalData->smallStrings.finalizeSmallStrings();
     shrink();
     m_storageSpace.destroy();
@@ -466,9 +465,7 @@ void Heap::reportExtraMemoryCostSlowCase(size_t cost)
     // if a large value survives one garbage collection, there is not much point to
     // collecting more frequently as long as it stays alive.
 
-    if (m_extraCost > maxExtraCost && m_extraCost > highWaterMark() / 2)
-        collectAllGarbage();
-    m_extraCost += cost;
+    addToWaterMark(cost);
 }
 
 void Heap::protect(JSValue k)
@@ -687,12 +684,12 @@ void Heap::markRoots(bool fullGC)
 #endif
     }
 
-    // Weak handles must be marked last, because their owners use the set of
-    // opaque roots to determine reachability.
+    // Weak references must be marked last because their liveness depends on
+    // the liveness of the rest of the object graph.
     {
-        GCPHASE(VisitingWeakHandles);
+        GCPHASE(VisitingLiveWeakHandles);
         while (true) {
-            m_handleHeap.visitWeakHandles(heapRootVisitor);
+            m_weakHeap.visitLiveWeakImpls(heapRootVisitor);
             harvestWeakReferences();
             if (visitor.isEmpty())
                 break;
@@ -705,6 +702,12 @@ void Heap::markRoots(bool fullGC)
             }
         }
     }
+
+    {
+        GCPHASE(VisitingDeadWeakHandles);
+        m_weakHeap.visitDeadWeakImpls(heapRootVisitor);
+    }
+
     GCCOUNTER(VisitedValueCount, visitor.visitCount());
 
     visitor.doneCopying();
@@ -815,7 +818,7 @@ void Heap::collect(SweepToggle sweepToggle)
         
     {
         GCPHASE(FinalizeWeakHandles);
-        m_handleHeap.finalizeWeakHandles();
+        m_weakHeap.sweep();
         m_globalData->smallStrings.finalizeSmallStrings();
     }
     
@@ -846,7 +849,7 @@ void Heap::collect(SweepToggle sweepToggle)
     size_t proportionalBytes = 2 * newSize;
     if (fullGC) {
         m_lastFullGCSize = newSize;
-        setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
+        m_highWaterMark = max(proportionalBytes, m_minBytesPerCycle);
     }
     double lastGCEndTime = WTF::currentTime();
     m_lastGCLength = lastGCEndTime - lastGCStartTime;
@@ -862,8 +865,8 @@ void Heap::canonicalizeCellLivenessData()
 
 void Heap::resetAllocators()
 {
-    m_extraCost = 0;
     m_objectSpace.resetAllocators();
+    m_weakHeap.resetAllocator();
 }
 
 void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
@@ -924,15 +927,15 @@ void Heap::releaseFreeBlocks()
 
 void Heap::addFinalizer(JSCell* cell, Finalizer finalizer)
 {
-    Weak<JSCell> weak(*globalData(), cell, &m_finalizerOwner, reinterpret_cast<void*>(finalizer));
-    weak.leakHandle(); // Balanced by FinalizerOwner::finalize().
+    weakHeap()->allocate(cell, &m_finalizerOwner, reinterpret_cast<void*>(finalizer)); // Balanced by FinalizerOwner::finalize().
 }
 
 void Heap::FinalizerOwner::finalize(Handle<Unknown> handle, void* context)
 {
-    Weak<JSCell> weak(Weak<JSCell>::Adopt, handle);
+    HandleSlot slot = handle.slot();
     Finalizer finalizer = reinterpret_cast<Finalizer>(context);
-    finalizer(weak.get());
+    finalizer(slot->asCell());
+    WeakHeap::deallocate(WeakImpl::asWeakImpl(slot));
 }
 
 void Heap::addFunctionExecutable(FunctionExecutable* executable)

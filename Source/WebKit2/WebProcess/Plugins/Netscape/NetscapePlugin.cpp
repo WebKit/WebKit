@@ -35,6 +35,8 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KURL.h>
+#include <runtime/JSObject.h>
+#include <runtime/ScopeChain.h>
 #include <utility>
 #include <wtf/text/CString.h>
 

@@ -34,6 +34,7 @@
 
 namespace JSC {
 
+class JSCell;
 class Structure;
 
 class StructureTransitionTable {
@@ -83,10 +84,10 @@ public:
             return;
         }
 
-        HandleSlot slot = this->slot();
-        if (!slot)
+        WeakImpl* impl = this->weakImpl();
+        if (!impl)
             return;
-        HandleHeap::heapFor(slot)->deallocate(slot);
+        WeakHeap::deallocate(impl);
     }
 
     inline void add(JSGlobalData&, Structure*);
@@ -105,18 +106,18 @@ private:
         return reinterpret_cast<TransitionMap*>(m_data);
     }
 
-    HandleSlot slot() const
+    WeakImpl* weakImpl() const
     {
         ASSERT(isUsingSingleSlot());
-        return reinterpret_cast<HandleSlot>(m_data & ~UsingSingleSlotFlag);
+        return reinterpret_cast<WeakImpl*>(m_data & ~UsingSingleSlotFlag);
     }
 
     void setMap(TransitionMap* map)
     {
         ASSERT(isUsingSingleSlot());
         
-        if (HandleSlot slot = this->slot())
-            HandleHeap::heapFor(slot)->deallocate(slot);
+        if (WeakImpl* impl = this->weakImpl())
+            WeakHeap::deallocate(impl);
 
         // This implicitly clears the flag that indicates we're using a single transition
         m_data = reinterpret_cast<intptr_t>(map);
@@ -127,9 +128,9 @@ private:
     Structure* singleTransition() const
     {
         ASSERT(isUsingSingleSlot());
-        if (HandleSlot slot = this->slot()) {
-            if (*slot)
-                return reinterpret_cast<Structure*>(slot->asCell());
+        if (WeakImpl* impl = this->weakImpl()) {
+            if (impl->state() == WeakImpl::Live)
+                return reinterpret_cast<Structure*>(impl->jsValue().asCell());
         }
         return 0;
     }
@@ -137,14 +138,10 @@ private:
     void setSingleTransition(JSGlobalData& globalData, Structure* structure)
     {
         ASSERT(isUsingSingleSlot());
-        HandleSlot slot = this->slot();
-        if (!slot) {
-            slot = globalData.heap.handleHeap()->allocate();
-            HandleHeap::heapFor(slot)->makeWeak(slot, 0, 0);
-            m_data = reinterpret_cast<intptr_t>(slot) | UsingSingleSlotFlag;
-        }
-        HandleHeap::heapFor(slot)->writeBarrier(slot, reinterpret_cast<JSCell*>(structure));
-        *slot = reinterpret_cast<JSCell*>(structure);
+        if (WeakImpl* impl = this->weakImpl())
+            WeakHeap::deallocate(impl);
+        WeakImpl* impl = globalData.heap.weakHeap()->allocate(reinterpret_cast<JSCell*>(structure));
+        m_data = reinterpret_cast<intptr_t>(impl) | UsingSingleSlotFlag;
     }
 
     intptr_t m_data;

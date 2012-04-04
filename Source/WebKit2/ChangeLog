@@ -1,3 +1,15 @@
+2012-03-29  Geoffrey Garen  <ggaren@apple.com>
+
+        First step toward incremental Weak<T> finalization
+        https://bugs.webkit.org/show_bug.cgi?id=82670
+
+        Reviewed by Filip Pizlo.
+
+        Updated for API change.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::finalize):
+
 2012-04-03  Keishi Hattori  <keishi@webkit.org>
 
         Disable ENABLE_DATALIST for now

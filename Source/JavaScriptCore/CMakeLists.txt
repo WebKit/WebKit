@@ -86,16 +86,19 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGVirtualRegisterAllocationPhase.cpp
 
     heap/CopiedSpace.cpp
+    heap/ConservativeRoots.cpp
     heap/DFGCodeBlocks.cpp
-    heap/Heap.cpp
     heap/HandleHeap.cpp
     heap/HandleStack.cpp
+    heap/Heap.cpp
     heap/MachineStackMarker.cpp
     heap/MarkedAllocator.cpp
     heap/MarkedBlock.cpp
     heap/MarkedSpace.cpp
-    heap/ConservativeRoots.cpp
     heap/MarkStack.cpp
+    heap/WeakHeap.cpp
+    heap/WeakHandleOwner.cpp
+    heap/WeakBlock.cpp
 
     debugger/Debugger.cpp
     debugger/DebuggerActivation.cpp

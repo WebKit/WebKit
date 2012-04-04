@@ -3575,7 +3575,7 @@ NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFu
 NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function, ThunkGenerator generator, Intrinsic intrinsic)
 {
     HostFunctionStubMap::AddResult entry = m_hostFunctionStubMap->add(function, PassWeak<NativeExecutable>());
-    if (!*entry.iterator->second) {
+    if (!entry.iterator->second) {
         MacroAssemblerCodeRef code;
         if (generator) {
             if (globalData->canUseJIT())

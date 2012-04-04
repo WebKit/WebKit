@@ -45,11 +45,13 @@ public:
 
     void setWrapper(JSC::JSGlobalData& globalData, JSDOMWrapper* wrapper, JSC::WeakHandleOwner* wrapperOwner, void* context)
     {
+        ASSERT(!m_wrapper);
         m_wrapper = JSC::PassWeak<JSDOMWrapper>(globalData, wrapper, wrapperOwner, context);
     }
 
-    void clearWrapper()
+    void clearWrapper(JSDOMWrapper* wrapper)
     {
+        ASSERT_UNUSED(wrapper, m_wrapper.was(wrapper));
         m_wrapper.clear();
     }
 

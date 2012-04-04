@@ -30,6 +30,8 @@
 #include "MarkedBlockSet.h"
 #include "MarkedSpace.h"
 #include "SlotVisitor.h"
+#include "WeakHandleOwner.h"
+#include "WeakHeap.h"
 #include "WriteBarrierSupport.h"
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
@@ -136,10 +138,13 @@ namespace JSC {
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell(Functor&);
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell();
 
+        WeakHeap* weakHeap() { return &m_weakHeap; }
         HandleHeap* handleHeap() { return &m_handleHeap; }
         HandleStack* handleStack() { return &m_handleStack; }
 
         void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
+
+        void addToWaterMark(size_t);
 
         double lastGCLength() { return m_lastGCLength; }
 
@@ -160,7 +165,6 @@ namespace JSC {
 
         size_t waterMark();
         size_t highWaterMark();
-        void setHighWaterMark(size_t);
         bool shouldCollect();
 
         static const size_t minExtraCost = 256;
@@ -204,7 +208,6 @@ namespace JSC {
         const HeapSize m_heapSize;
         const size_t m_minBytesPerCycle;
         size_t m_lastFullGCSize;
-        size_t m_waterMark;
         size_t m_highWaterMark;
         
         OperationInProgress m_operationInProgress;
@@ -223,8 +226,6 @@ namespace JSC {
         VTableSpectrum m_destroyedTypeCounts;
 #endif
 
-        size_t m_extraCost;
-
         ProtectCountSet m_protectedValues;
         Vector<Vector<ValueStringPair>* > m_tempSortingVectors;
         HashSet<MarkedArgumentBuffer*>* m_markListSet;
@@ -236,6 +237,7 @@ namespace JSC {
         MarkStackThreadSharedData m_sharedData;
         SlotVisitor m_slotVisitor;
 
+        WeakHeap m_weakHeap;
         HandleHeap m_handleHeap;
         HandleStack m_handleStack;
         DFGCodeBlocks m_dfgCodeBlocks;
@@ -300,9 +302,11 @@ namespace JSC {
         return m_highWaterMark;
     }
 
-    inline void Heap::setHighWaterMark(size_t newHighWaterMark)
+    inline void Heap::addToWaterMark(size_t size)
     {
-        m_highWaterMark = newHighWaterMark;
+        m_objectSpace.addToWaterMark(size);
+        if (waterMark() > highWaterMark())
+            collect(DoNotSweep);
     }
 
 #if ENABLE(GGC)

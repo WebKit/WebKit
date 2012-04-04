@@ -81,10 +81,18 @@ public:
         clear();
     }
 
+    bool operator!() const { return !slot() || !*slot(); }
+
+    // This conversion operator allows implicit conversion to bool but not to other integer types.
+    typedef JSValue (HandleBase::*UnspecifiedBoolType);
+    operator UnspecifiedBoolType*() const { return !!*this ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
+
     void swap(Strong& other)
     {
         Handle<T>::swap(other);
     }
+
+    ExternalType get() const { return HandleTypes<T>::getFromSlot(this->slot()); }
 
     void set(JSGlobalData&, ExternalType);
 

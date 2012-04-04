@@ -292,7 +292,7 @@ void NPRuntimeObjectMap::finalize(JSC::Handle<JSC::Unknown> handle, void* contex
 {
     HashMap<NPObject*, JSC::Weak<JSNPObject> >::iterator found = m_jsNPObjects.find(static_cast<NPObject*>(context));
     ASSERT(found != m_jsNPObjects.end());
-    ASSERT_UNUSED(handle, asObject(handle.get()) == found->second);
+    ASSERT_UNUSED(handle, asObject(handle.get()) == found->second.get());
     JSNPObject* object = found->second.get();
     m_jsNPObjects.remove(found);
     addToInvalidationQueue(object->leakNPObject());

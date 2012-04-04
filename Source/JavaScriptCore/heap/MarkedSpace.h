@@ -66,7 +66,7 @@ public:
     void canonicalizeCellLivenessData();
 
     size_t waterMark();
-    size_t nurseryWaterMark();
+    void addToWaterMark(size_t);
 
     typedef HashSet<MarkedBlock*>::iterator BlockIterator;
     
@@ -77,6 +77,7 @@ public:
     
     void shrink();
     void freeBlocks(MarkedBlock* head);
+
     void didAddBlock(MarkedBlock*);
     void didConsumeFreeList(MarkedBlock*);
 
@@ -102,7 +103,6 @@ private:
     Subspace m_normalSpace;
 
     size_t m_waterMark;
-    size_t m_nurseryWaterMark;
     Heap* m_heap;
     MarkedBlockSet m_blocks;
 };
@@ -112,9 +112,9 @@ inline size_t MarkedSpace::waterMark()
     return m_waterMark;
 }
 
-inline size_t MarkedSpace::nurseryWaterMark()
+inline void MarkedSpace::addToWaterMark(size_t size)
 {
-    return m_nurseryWaterMark;
+    m_waterMark += size;
 }
 
 template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachCell(Functor& functor)
@@ -199,7 +199,6 @@ inline void MarkedSpace::didAddBlock(MarkedBlock* block)
 
 inline void MarkedSpace::didConsumeFreeList(MarkedBlock* block)
 {
-    m_nurseryWaterMark += block->capacity() - block->size();
     m_waterMark += block->capacity();
 }
 

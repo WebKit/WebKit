@@ -351,7 +351,7 @@ namespace JSC {
     template<typename To, typename From>
     inline To jsCast(From* from)
     {
-        ASSERT(from->inherits(&WTF::RemovePointer<To>::Type::s_info));
+        ASSERT(!from || from->inherits(&WTF::RemovePointer<To>::Type::s_info));
         return static_cast<To>(from);
     }
 

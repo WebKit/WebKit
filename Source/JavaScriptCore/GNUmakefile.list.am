@@ -250,6 +250,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/VTableSpectrum.cpp \
 	Source/JavaScriptCore/heap/VTableSpectrum.h \
 	Source/JavaScriptCore/heap/Weak.h \
+	Source/JavaScriptCore/heap/WeakBlock.cpp \
+	Source/JavaScriptCore/heap/WeakHeap.cpp \
+	Source/JavaScriptCore/heap/WeakHandleOwner.cpp \
 	Source/JavaScriptCore/heap/WeakReferenceHarvester.h \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.cpp \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.h \

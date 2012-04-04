@@ -42,7 +42,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
 {
     JSLock lock(SilenceAssertionsOnly);
 
-    if (!m_filter.isObject())
+    if (!m_filter || !m_filter->isObject())
         return NodeFilter::FILTER_ACCEPT;
 
    // The exec argument here should only be null if this was called from a

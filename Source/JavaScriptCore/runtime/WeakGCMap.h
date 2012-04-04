@@ -51,7 +51,7 @@ class WeakGCMap : private WeakHandleOwner {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WeakGCMap);
 
-    typedef HashMap<KeyType, HandleSlot, HashArg, KeyTraitsArg> MapType;
+    typedef HashMap<KeyType, WeakImpl*, HashArg, KeyTraitsArg> MapType;
     typedef typename HandleTypes<MappedType>::ExternalType ExternalType;
     typedef typename MapType::iterator map_iterator;
 
@@ -64,8 +64,7 @@ public:
         {
         }
         
-        std::pair<KeyType, ExternalType> get() const { return std::make_pair(m_iterator->first, HandleTypes<MappedType>::getFromSlot(m_iterator->second)); }
-        std::pair<KeyType, HandleSlot> getSlot() const { return *m_iterator; }
+        std::pair<KeyType, ExternalType> get() const { return std::make_pair(m_iterator->first, HandleTypes<MappedType>::getFromSlot(const_cast<JSValue*>(&m_iterator->second->jsValue()))); }
         
         iterator& operator++() { ++m_iterator; return *this; }
         
@@ -90,7 +89,7 @@ public:
     {
         map_iterator end = m_map.end();
         for (map_iterator ptr = m_map.begin(); ptr != end; ++ptr)
-            HandleHeap::heapFor(ptr->second)->deallocate(ptr->second);
+            WeakHeap::deallocate(ptr->second);
         m_map.clear();
     }
 
@@ -107,64 +106,42 @@ public:
     void remove(iterator iter)
     {
         ASSERT(iter.m_iterator != m_map.end());
-        HandleSlot slot = iter.m_iterator->second;
-        ASSERT(slot);
-        HandleHeap::heapFor(slot)->deallocate(slot);
+        WeakImpl* impl = iter.m_iterator->second;
+        ASSERT(impl);
+        WeakHeap::deallocate(impl);
         m_map.remove(iter.m_iterator);
     }
 
     ExternalType get(const KeyType& key) const
     {
-        return HandleTypes<MappedType>::getFromSlot(m_map.get(key));
-    }
-
-    HandleSlot getSlot(const KeyType& key) const
-    {
-        return m_map.get(key);
+        return HandleTypes<MappedType>::getFromSlot(const_cast<JSValue*>(&m_map.get(key)->jsValue()));
     }
 
     AddResult add(JSGlobalData& globalData, const KeyType& key, ExternalType value)
     {
         typename MapType::AddResult result = m_map.add(key, 0);
-        if (result.isNewEntry) {
-            HandleSlot slot = globalData.heap.handleHeap()->allocate();
-            result.iterator->second = slot;
-            HandleHeap::heapFor(slot)->makeWeak(slot, this, FinalizerCallback::finalizerContextFor(key));
-            HandleHeap::heapFor(slot)->writeBarrier(slot, value);
-            *slot = value;
-        }
+        if (result.isNewEntry)
+            result.iterator->second = globalData.heap.weakHeap()->allocate(value, this, FinalizerCallback::finalizerContextFor(key));
+
         // WeakGCMap exposes a different iterator, so we need to wrap it and create our own AddResult.
         return AddResult(iterator(result.iterator), result.isNewEntry);
-    }
-    
-    void set(iterator iter, ExternalType value)
-    {
-        HandleSlot slot = iter.m_iterator->second;
-        ASSERT(slot);
-        HandleHeap::heapFor(slot)->writeBarrier(slot, value);
-        *slot = value;
     }
 
     void set(JSGlobalData& globalData, const KeyType& key, ExternalType value)
     {
         typename MapType::AddResult result = m_map.add(key, 0);
-        HandleSlot slot = result.iterator->second;
-        if (result.isNewEntry) {
-            slot = globalData.heap.handleHeap()->allocate();
-            HandleHeap::heapFor(slot)->makeWeak(slot, this, key);
-            result.iterator->second = slot;
-        }
-        HandleHeap::heapFor(slot)->writeBarrier(slot, value);
-        *slot = value;
+        if (!result.isNewEntry)
+            WeakHeap::deallocate(result.iterator->second);
+        result.iterator->second = globalData.heap.weakHeap()->allocate(value, this, FinalizerCallback::finalizerContextFor(key));
     }
 
     ExternalType take(const KeyType& key)
     {
-        HandleSlot slot = m_map.take(key);
-        if (!slot)
+        WeakImpl* impl = m_map.take(key);
+        if (!impl)
             return HashTraits<ExternalType>::emptyValue();
-        ExternalType result = HandleTypes<MappedType>::getFromSlot(slot);
-        HandleHeap::heapFor(slot)->deallocate(slot);
+        ExternalType result = HandleTypes<MappedType>::getFromSlot(const_cast<JSValue*>(&impl->jsValue()));
+        WeakHeap::deallocate(impl);
         return result;
     }
 
@@ -181,9 +158,9 @@ public:
 private:
     virtual void finalize(Handle<Unknown> handle, void* context)
     {
-        HandleSlot slot = m_map.take(FinalizerCallback::keyForFinalizer(context, HandleTypes<MappedType>::getFromSlot(handle.slot())));
-        ASSERT(slot);
-        HandleHeap::heapFor(slot)->deallocate(slot);
+        WeakImpl* impl = m_map.take(FinalizerCallback::keyForFinalizer(context, HandleTypes<MappedType>::getFromSlot(handle.slot())));
+        ASSERT(impl);
+        WeakHeap::deallocate(impl);
     }
 
     MapType m_map;

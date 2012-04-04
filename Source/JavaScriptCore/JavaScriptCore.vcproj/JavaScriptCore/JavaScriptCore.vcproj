@@ -2130,6 +2130,34 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\heap\WeakBlock.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\WeakBlock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\WeakHeap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\WeakHeap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\WeakImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\WeakHandleOwner.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\WeakHandleOwner.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\heap\HandleStack.cpp"
 				>
 			</File>

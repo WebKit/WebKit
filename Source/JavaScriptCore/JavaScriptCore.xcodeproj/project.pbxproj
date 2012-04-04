@@ -323,7 +323,14 @@
 		14C5242B0F5355E900BA3D04 /* JITStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A6581A0F4E36F4000150FD /* JITStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14D2F3DA139F4BE200491031 /* MarkedSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D2F3D8139F4BE200491031 /* MarkedSpace.cpp */; };
 		14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D2F3D9139F4BE200491031 /* MarkedSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14E84F9E14EE1ACC00D6D5D4 /* WeakBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E84F9914EE1ACC00D6D5D4 /* WeakBlock.cpp */; };
+		14E84F9F14EE1ACC00D6D5D4 /* WeakBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E84F9A14EE1ACC00D6D5D4 /* WeakBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14E84FA014EE1ACC00D6D5D4 /* WeakHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E84F9B14EE1ACC00D6D5D4 /* WeakHeap.cpp */; };
+		14E84FA114EE1ACC00D6D5D4 /* WeakHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E84F9C14EE1ACC00D6D5D4 /* WeakHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14E84FA214EE1ACC00D6D5D4 /* WeakImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E84F9D14EE1ACC00D6D5D4 /* WeakImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14E9D17B107EC469004DDA21 /* JSGlobalObjectFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */; };
+		14F7256514EE265E00B1652B /* WeakHandleOwner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F7256314EE265E00B1652B /* WeakHandleOwner.cpp */; };
+		14F7256614EE265E00B1652B /* WeakHandleOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F7256414EE265E00B1652B /* WeakHandleOwner.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14F97447138C853E00DA1C67 /* HeapRootVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F97446138C853E00DA1C67 /* HeapRootVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41359CF30FDD89AD00206180 /* DateConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateConversion.h */; };
 		451539B912DC994500EF7AC4 /* Yarr.h in Headers */ = {isa = PBXBuildFile; fileRef = 451539B812DC994500EF7AC4 /* Yarr.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -943,7 +950,14 @@
 		14DA818E0D99FD2000B0A4FB /* JSActivation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSActivation.h; sourceTree = "<group>"; };
 		14DA818F0D99FD2000B0A4FB /* JSActivation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSActivation.cpp; sourceTree = "<group>"; };
 		14DE0D680D02431400AACCA2 /* JSGlobalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObject.cpp; sourceTree = "<group>"; };
+		14E84F9914EE1ACC00D6D5D4 /* WeakBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakBlock.cpp; sourceTree = "<group>"; };
+		14E84F9A14EE1ACC00D6D5D4 /* WeakBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakBlock.h; sourceTree = "<group>"; };
+		14E84F9B14EE1ACC00D6D5D4 /* WeakHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakHeap.cpp; sourceTree = "<group>"; };
+		14E84F9C14EE1ACC00D6D5D4 /* WeakHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakHeap.h; sourceTree = "<group>"; };
+		14E84F9D14EE1ACC00D6D5D4 /* WeakImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakImpl.h; sourceTree = "<group>"; };
 		14F252560D08DD8D004ECFFF /* JSVariableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVariableObject.h; sourceTree = "<group>"; };
+		14F7256314EE265E00B1652B /* WeakHandleOwner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakHandleOwner.cpp; sourceTree = "<group>"; };
+		14F7256414EE265E00B1652B /* WeakHandleOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakHandleOwner.h; sourceTree = "<group>"; };
 		14F97446138C853E00DA1C67 /* HeapRootVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapRootVisitor.h; sourceTree = "<group>"; };
 		1C9051420BA9E8A70081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = JavaScriptCore.xcconfig; sourceTree = "<group>"; };
@@ -1586,6 +1600,13 @@
 				0FC815121405118600CFA603 /* VTableSpectrum.cpp */,
 				0FC815141405118D00CFA603 /* VTableSpectrum.h */,
 				142E3133134FF0A600AFADB5 /* Weak.h */,
+				14E84F9914EE1ACC00D6D5D4 /* WeakBlock.cpp */,
+				14E84F9A14EE1ACC00D6D5D4 /* WeakBlock.h */,
+				14F7256314EE265E00B1652B /* WeakHandleOwner.cpp */,
+				14F7256414EE265E00B1652B /* WeakHandleOwner.h */,
+				14E84F9B14EE1ACC00D6D5D4 /* WeakHeap.cpp */,
+				14E84F9C14EE1ACC00D6D5D4 /* WeakHeap.h */,
+				14E84F9D14EE1ACC00D6D5D4 /* WeakImpl.h */,
 				0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */,
 				0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */,
 				0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */,
@@ -2523,6 +2544,10 @@
 				0FFFC95E14EF90B700C72532 /* DFGPredictionPropagationPhase.h in Headers */,
 				0FFFC96014EF90BD00C72532 /* DFGVirtualRegisterAllocationPhase.h in Headers */,
 				1497209114EB831500FEB1B7 /* PassWeak.h in Headers */,
+				14E84F9F14EE1ACC00D6D5D4 /* WeakBlock.h in Headers */,
+				14E84FA114EE1ACC00D6D5D4 /* WeakHeap.h in Headers */,
+				14E84FA214EE1ACC00D6D5D4 /* WeakImpl.h in Headers */,
+				14F7256614EE265E00B1652B /* WeakHandleOwner.h in Headers */,
 				0FB5467714F59B5C002C2989 /* LazyOperandValueProfile.h in Headers */,
 				0FB5467B14F5C7E1002C2989 /* MethodOfGettingAValueProfile.h in Headers */,
 				0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */,
@@ -3079,6 +3104,9 @@
 				86B5826914D2797000A9C306 /* CodeProfiling.cpp in Sources */,
 				C2B916C514DA040C00CBAC86 /* MarkedAllocator.cpp in Sources */,
 				0F9FC8C314E1B5FE00D52AE0 /* PolymorphicPutByIdList.cpp in Sources */,
+				14E84F9E14EE1ACC00D6D5D4 /* WeakBlock.cpp in Sources */,
+				14E84FA014EE1ACC00D6D5D4 /* WeakHeap.cpp in Sources */,
+				14F7256514EE265E00B1652B /* WeakHandleOwner.cpp in Sources */,
 				0FFFC95714EF90A000C72532 /* DFGCFAPhase.cpp in Sources */,
 				0FFFC95914EF90A600C72532 /* DFGCSEPhase.cpp in Sources */,
 				0FFFC95B14EF90AD00C72532 /* DFGPhase.cpp in Sources */,

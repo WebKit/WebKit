@@ -1,3 +1,172 @@
+2012-03-29  Geoffrey Garen  <ggaren@apple.com>
+
+        First step toward incremental Weak<T> finalization
+        https://bugs.webkit.org/show_bug.cgi?id=82670
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements a Weak<T> heap that is compatible with incremental
+        finalization, while making as few behavior changes as possible. The behavior
+        changes it makes are:
+
+        (*) Weak<T>'s raw JSValue no longer reverts to JSValue() automatically --
+        instead, a separate flag indicates that the JSValue is no longer valid.
+        (This is required so that the JSValue can be preserved for later finalization.)
+        Objects dealing with WeakImpls directly must change to check the flag.
+
+        (*) Weak<T> is no longer a subclass of Handle<T>.
+
+        (*) DOM GC performance is different -- 9% faster in the geometric mean,
+        but 15% slower in one specific case:
+                gc-dom1.html: 6%  faster
+                gc-dom2.html: 23% faster
+                gc-dom3.html: 17% faster
+                gc-dom4.html: 15% *slower*
+
+        The key features of this new heap are:
+
+        (*) Each block knows its own state, independent of any other blocks.
+
+        (*) Each block caches its own sweep result.
+
+        (*) The heap visits dead Weak<T>s at the end of GC. (It doesn't
+        mark them yet, since that would be a behavior change.)
+
+        * API/JSCallbackObject.cpp:
+        (JSC::JSCallbackObjectData::finalize):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::init): Updated to use the new WeakHeap API.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri: Paid the build system tax since I added some new files.
+
+        * heap/Handle.h: Made WeakBlock a friend and exposed slot() as public,
+        so we can keep passing a Handle<T> to finalizers, to avoid more surface
+        area change in this patch. A follow-up patch should change the type we
+        pass to finalizers.
+
+        * heap/HandleHeap.cpp:
+        (JSC):
+        (JSC::HandleHeap::writeBarrier):
+        (JSC::HandleHeap::isLiveNode):
+        * heap/HandleHeap.h:
+        (JSC):
+        (HandleHeap):
+        (Node):
+        (JSC::HandleHeap::Node::Node): Removed all code related to Weak<T>, since
+        we have a separate WeakHeap now.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap): Removed m_extraCost because extra cost is accounted
+        for through our watermark now. Removed m_waterMark because it was unused.
+
+        (JSC::Heap::destroy): Updated for addition of WeakHeap.
+
+        (JSC::Heap::reportExtraMemoryCostSlowCase): Changed from using its own
+        variable to participating in the watermark strategy. I wanted to standardize
+        WeakHeap and all other Heap clients on this strategy, to make sure it's
+        accurate.
+ 
+        (JSC::Heap::markRoots): Updated for addition of WeakHeap. Added WeakHeap
+        dead visit pass, as explained above.
+
+        (JSC::Heap::collect):
+        (JSC::Heap::resetAllocators): Updated for addition of WeakHeap.
+
+        (JSC::Heap::addFinalizer):
+        (JSC::Heap::FinalizerOwner::finalize): Updated for new Weak<T> API.
+
+        * heap/Heap.h:
+        (JSC::Heap::weakHeap):
+        (Heap):
+        (JSC::Heap::addToWaterMark): Added a way to participate in the watermarking
+        strategy, since this is the best way for WeakHeap to report its memory
+        cost. (I plan to update this in a follow-up patch to make it more accurate,
+        but for now it is not less accurate than it used to be.)
+
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::resetAllocators):
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        (JSC::MarkedSpace::addToWaterMark):
+        (JSC::MarkedSpace::didConsumeFreeList): Removed m_nurseryWaterMark because
+        it was unused, and I didn't want to update WeakHeap to keep an usused
+        variable working. Added API for above.
+
+        * heap/PassWeak.h:
+        (JSC):
+        (WeakImplAccessor):
+        (PassWeak):
+        (JSC::::operator):
+        (JSC::::get):
+        (JSC::::was):
+        (JSC::::PassWeak):
+        (JSC::::~PassWeak):
+        (JSC::UnspecifiedBoolType):
+        (JSC::::leakImpl):
+        (JSC::adoptWeak):
+        * heap/Strong.h:
+        (JSC::Strong::operator!):
+        (Strong):
+        (JSC::Strong::operator UnspecifiedBoolType*):
+        (JSC::Strong::get):
+        * heap/Weak.h:
+        (Weak):
+        (JSC::::Weak):
+        (JSC):
+        (JSC::::isHashTableDeletedValue):
+        (JSC::::~Weak):
+        (JSC::::swap):
+        (JSC::=):
+        (JSC::::operator):
+        (JSC::UnspecifiedBoolType):
+        (JSC::::release):
+        (JSC::::clear):
+        (JSC::::hashTableDeletedValue): Lots of code changes here, but they boil
+        down to two things:
+
+        (*) Allocate WeakImpls from the WeakHeap instead of Handles from the HandleHeap.
+
+        (*) Explicitly check WeakImpl::state() for non-liveness before returning
+        a value (explained above).
+
+        These files implement the new Weak<T> heap behavior described above:
+
+        * heap/WeakBlock.cpp: Added.
+        * heap/WeakBlock.h: Added.
+        * heap/WeakHandleOwner.cpp: Added.
+        * heap/WeakHandleOwner.h: Added.
+        * heap/WeakHeap.cpp: Added.
+        * heap/WeakHeap.h: Added.
+        * heap/WeakImpl.h: Added.
+
+        One interesting difference from the old heap is that we don't allow
+        clients to overwrite a WeakImpl after allocating it, and we don't recycle
+        WeakImpls prior to garbage collection. This is required for lazy finalization,
+        but it will also help us esablish a useful invariant in the future: allocating
+        a WeakImpl will be a binding contract to run a finalizer at some point in the
+        future, even if the WeakImpl is later deallocated.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::hostFunctionStub): Check the Weak<T> for ! instead of
+        its JSValue, since that's our API contract now, and the JSValue might
+        be stale.
+
+        * runtime/JSCell.h:
+        (JSC::jsCast): Allow casting NULL pointers because it's useful and harmless.
+
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::add): I can't remember why I did this.
+
+        * runtime/StructureTransitionTable.h:
+        * runtime/WeakGCMap.h: I had to update these classes because they allocate
+        and deallocate weak pointers manually. They should probably stop doing that.
+
 2012-04-03  Keishi Hattori  <keishi@webkit.org>
 
         Disable ENABLE_DATALIST for now

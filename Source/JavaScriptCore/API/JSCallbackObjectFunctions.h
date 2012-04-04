@@ -102,14 +102,11 @@ void JSCallbackObject<Parent>::init(ExecState* exec)
         initialize(toRef(exec), toRef(this));
     }
 
-    bool needsFinalizer = false;
-    for (JSClassRef jsClassPtr = classRef(); jsClassPtr && !needsFinalizer; jsClassPtr = jsClassPtr->parentClass)
-        needsFinalizer = jsClassPtr->finalize;
-    if (needsFinalizer) {
-        HandleSlot slot = exec->globalData().heap.handleHeap()->allocate();
-        HandleHeap::heapFor(slot)->makeWeak(slot, m_callbackObjectData.get(), classRef());
-        HandleHeap::heapFor(slot)->writeBarrier(slot, this);
-        *slot = this;
+    for (JSClassRef jsClassPtr = classRef(); jsClassPtr; jsClassPtr = jsClassPtr->parentClass) {
+        if (jsClassPtr->finalize) {
+            exec->globalData().heap.weakHeap()->allocate(this, m_callbackObjectData.get(), classRef());
+            break;
+        }
     }
 }
 
