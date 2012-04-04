@@ -138,6 +138,8 @@ public:
     bool cellWidthChanged() const { return m_cellWidthChanged; }
     void setCellWidthChanged(bool b = true) { m_cellWidthChanged = b; }
 
+    static RenderTableCell* createAnonymousWithParentRenderer(const RenderObject*);
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

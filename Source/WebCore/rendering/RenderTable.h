@@ -211,6 +211,8 @@ public:
             recalcSections();
     }
 
+    static RenderTable* createAnonymousWithParentRenderer(const RenderObject*);
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

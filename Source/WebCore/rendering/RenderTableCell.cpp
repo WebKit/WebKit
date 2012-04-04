@@ -1117,4 +1117,14 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
         setIntrinsicPaddingAfter(intrinsicPaddingAfter() - scrollbarHeight);
 }
 
+RenderTableCell* RenderTableCell::createAnonymousWithParentRenderer(const RenderObject* parent)
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(parent->style());
+    newStyle->setDisplay(TABLE_CELL);
+
+    RenderTableCell* newCell = new (parent->renderArena()) RenderTableCell(parent->document() /* is anonymous */);
+    newCell->setStyle(newStyle.release());
+    return newCell;
+}
+
 } // namespace WebCore

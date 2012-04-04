@@ -162,6 +162,8 @@ public:
     // FIXME: We may want to introduce a structure holding the in-flux layout information.
     int distributeExtraLogicalHeightToRows(int extraLogicalHeight);
 
+    static RenderTableSection* createAnonymousWithParentRenderer(const RenderObject*);
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

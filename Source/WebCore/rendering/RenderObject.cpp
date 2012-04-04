@@ -269,16 +269,6 @@ static bool isBeforeAfterContentGeneratedByAncestor(RenderObject* renderer, Rend
     return false;
 }
 
-RenderTable* RenderObject::createAnonymousTable() const
-{
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
-    newStyle->setDisplay(TABLE);
-
-    RenderTable* table = new (renderArena()) RenderTable(document() /* is anonymous */);
-    table->setStyle(newStyle.release());
-    return table;
-}
-
 void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     RenderObjectChildList* children = virtualChildren();
@@ -323,7 +313,7 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
         if (afterChild && afterChild->isAnonymous() && afterChild->isTable() && !afterChild->isBeforeContent())
             table = toRenderTable(afterChild);
         else {
-            table = createAnonymousTable();
+            table = RenderTable::createAnonymousWithParentRenderer(this);
             addChild(table, beforeChild);
         }
         table->addChild(newChild);

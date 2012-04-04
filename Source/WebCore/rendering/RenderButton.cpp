@@ -49,8 +49,7 @@ void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)
     if (!m_inner) {
         // Create an anonymous block.
         ASSERT(!firstChild());
-        bool isFlexibleBox = style()->display() == BOX || style()->display() == INLINE_BOX;
-        m_inner = createAnonymousBlock(isFlexibleBox);
+        m_inner = createAnonymousBlock(style()->display());
         setupInnerStyle(m_inner->style());
         RenderDeprecatedFlexibleBox::addChild(m_inner);
     }

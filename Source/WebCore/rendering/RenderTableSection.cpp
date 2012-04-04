@@ -161,11 +161,7 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
             return;
         }
 
-        RenderObject* row = new (renderArena()) RenderTableRow(document() /* anonymous table row */);
-        RefPtr<RenderStyle> newStyle = RenderStyle::create();
-        newStyle->inheritFrom(style());
-        newStyle->setDisplay(TABLE_ROW);
-        row->setStyle(newStyle.release());
+        RenderObject* row = RenderTableRow::createAnonymousWithParentRenderer(this);
         addChild(row, beforeChild);
         row->addChild(child);
         return;
@@ -1415,6 +1411,16 @@ CollapsedBorderValue& RenderTableSection::cachedCollapsedBorder(const RenderTabl
     HashMap<pair<const RenderTableCell*, int>, CollapsedBorderValue>::iterator it = m_cellsCollapsedBorders.find(make_pair(cell, side));
     ASSERT(it != m_cellsCollapsedBorders.end());
     return it->second;
+}
+
+RenderTableSection* RenderTableSection::createAnonymousWithParentRenderer(const RenderObject* parent)
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(parent->style());
+    newStyle->setDisplay(TABLE_ROW_GROUP);
+
+    RenderTableSection* newSection = new (parent->renderArena()) RenderTableSection(parent->document() /* is anonymous */);
+    newSection->setStyle(newStyle.release());
+    return newSection;
 }
 
 } // namespace WebCore

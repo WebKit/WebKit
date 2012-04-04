@@ -233,11 +233,13 @@ public:
     using RenderBoxModelObject::continuation;
     using RenderBoxModelObject::setContinuation;
 
-    // This function is a convenience helper for creating an anonymous block that inherits its
-    // style from this RenderBlock.
-    RenderBlock* createAnonymousBlock(bool isFlexibleBox = false) const;
-    RenderBlock* createAnonymousColumnsBlock() const;
-    RenderBlock* createAnonymousColumnSpanBlock() const;
+    static RenderBlock* createAnonymousWithParentRendererAndDisplay(const RenderObject*, EDisplay = BLOCK);
+    static RenderBlock* createAnonymousColumnsWithParentRenderer(const RenderObject*);
+    static RenderBlock* createAnonymousColumnSpanWithParentRenderer(const RenderObject*);
+    RenderBlock* createAnonymousBlock(EDisplay display = BLOCK) const { return createAnonymousWithParentRendererAndDisplay(this, display); }
+    RenderBlock* createAnonymousColumnsBlock() const { return createAnonymousColumnsWithParentRenderer(this); }
+    RenderBlock* createAnonymousColumnSpanBlock() const { return createAnonymousColumnSpanWithParentRenderer(this); }
+
     RenderBlock* createAnonymousBlockWithSameTypeAs(RenderBlock* otherAnonymousBlock) const;
     
     static void appendRunsForObject(BidiRunList<BidiRun>&, int start, int end, RenderObject*, InlineBidiResolver&);

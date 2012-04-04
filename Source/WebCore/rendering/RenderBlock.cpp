@@ -781,7 +781,7 @@ RenderObject* RenderBlock::splitTablePartsAroundChild(RenderObject* beforeChild)
 
             // Create an anonymous table container next to our table container.
             RenderBlock* parentBlock = toRenderBlock(table->parent());
-            RenderTable* postTable = parentBlock->createAnonymousTable();
+            RenderTable* postTable = RenderTable::createAnonymousWithParentRenderer(parentBlock);
             parentBlock->children()->insertChildNode(parentBlock, postTable, table->nextSibling());
             
             // Move all the children from beforeChild to the newly created anonymous table container.
@@ -6675,52 +6675,13 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& a
         inlineElementContinuation()->addFocusRingRects(rects, flooredLayoutPoint(additionalOffset + inlineElementContinuation()->containingBlock()->location() - location()));
 }
 
-RenderBlock* RenderBlock::createAnonymousBlock(bool isFlexibleBox) const
-{
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
-
-    RenderBlock* newBox = 0;
-    if (isFlexibleBox) {
-        newStyle->setDisplay(BOX);
-        newBox = new (renderArena()) RenderDeprecatedFlexibleBox(document() /* anonymous box */);
-    } else {
-        newStyle->setDisplay(BLOCK);
-        newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
-    }
-
-    newBox->setStyle(newStyle.release());
-    return newBox;
-}
-
 RenderBlock* RenderBlock::createAnonymousBlockWithSameTypeAs(RenderBlock* otherAnonymousBlock) const
 {
     if (otherAnonymousBlock->isAnonymousColumnsBlock())
         return createAnonymousColumnsBlock();
     if (otherAnonymousBlock->isAnonymousColumnSpanBlock())
         return createAnonymousColumnSpanBlock();
-    return createAnonymousBlock(otherAnonymousBlock->style()->display() == BOX);
-}
-
-RenderBlock* RenderBlock::createAnonymousColumnsBlock() const
-{
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
-    newStyle->inheritColumnPropertiesFrom(style());
-    newStyle->setDisplay(BLOCK);
-
-    RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
-    newBox->setStyle(newStyle.release());
-    return newBox;
-}
-
-RenderBlock* RenderBlock::createAnonymousColumnSpanBlock() const
-{
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
-    newStyle->setColumnSpan(ColumnSpanAll);
-    newStyle->setDisplay(BLOCK);
-
-    RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
-    newBox->setStyle(newStyle.release());
-    return newBox;
+    return createAnonymousBlock(otherAnonymousBlock->style()->display());
 }
 
 bool RenderBlock::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pageBoundaryRule) const
@@ -7451,6 +7412,47 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, c
 TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, const String& string, RenderStyle* style, TextRun::ExpansionBehavior expansion, TextRunFlags flags)
 {
     return constructTextRun(context, font, string.characters(), string.length(), style, expansion, flags);
+}
+
+RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const RenderObject* parent, EDisplay display)
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(parent->style());
+
+    // FIXME: Do we need to cover the new flex box here ?
+    // FIXME: Do we need to convert all our inline displays to block-type in the anonymous logic ?
+    RenderBlock* newBox = 0;
+    if (display == BOX || display == INLINE_BOX) {
+        newStyle->setDisplay(BOX);
+        newBox = new (parent->renderArena()) RenderDeprecatedFlexibleBox(parent->document() /* anonymous box */);
+    } else {
+        newStyle->setDisplay(BLOCK);
+        newBox = new (parent->renderArena()) RenderBlock(parent->document() /* anonymous box */);
+    }
+
+    newBox->setStyle(newStyle.release());
+    return newBox;
+}
+
+RenderBlock* RenderBlock::createAnonymousColumnsWithParentRenderer(const RenderObject* parent)
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(parent->style());
+    newStyle->inheritColumnPropertiesFrom(parent->style());
+    newStyle->setDisplay(BLOCK);
+
+    RenderBlock* newBox = new (parent->renderArena()) RenderBlock(parent->document() /* anonymous box */);
+    newBox->setStyle(newStyle.release());
+    return newBox;
+}
+
+RenderBlock* RenderBlock::createAnonymousColumnSpanWithParentRenderer(const RenderObject* parent)
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(parent->style());
+    newStyle->setColumnSpan(ColumnSpanAll);
+    newStyle->setDisplay(BLOCK);
+
+    RenderBlock* newBox = new (parent->renderArena()) RenderBlock(parent->document() /* anonymous box */);
+    newBox->setStyle(newStyle.release());
+    return newBox;
 }
 
 #ifndef NDEBUG

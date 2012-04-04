@@ -226,8 +226,6 @@ public:
     // normal flow object.
     void handleDynamicFloatPositionChange();
     
-    RenderTable* createAnonymousTable() const;
-    
     // RenderObject tree manipulation
     //////////////////////////////////////////
     virtual bool canHaveChildren() const { return virtualChildren(); }

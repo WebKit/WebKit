@@ -192,11 +192,8 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
 
     if (beforeChild && !beforeChild->isTableSection() && beforeChild->style()->display() != TABLE_CAPTION && beforeChild->style()->display() != TABLE_COLUMN_GROUP)
         beforeChild = 0;
-    RenderTableSection* section = new (renderArena()) RenderTableSection(document() /* anonymous */);
-    RefPtr<RenderStyle> newStyle = RenderStyle::create();
-    newStyle->inheritFrom(style());
-    newStyle->setDisplay(TABLE_ROW_GROUP);
-    section->setStyle(newStyle.release());
+
+    RenderTableSection* section = RenderTableSection::createAnonymousWithParentRenderer(this);
     addChild(section, beforeChild);
     section->addChild(child);
 }
@@ -1278,6 +1275,16 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     }
 
     return false;
+}
+
+RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* parent)
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(parent->style());
+    newStyle->setDisplay(TABLE);
+
+    RenderTable* newTable = new (parent->renderArena()) RenderTable(parent->document() /* is anonymous */);
+    newTable->setStyle(newStyle.release());
+    return newTable;
 }
 
 }
