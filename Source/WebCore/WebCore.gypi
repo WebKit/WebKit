@@ -4437,6 +4437,8 @@
             'platform/text/LocaleToScriptMapping.h',
             'platform/text/LocaleToScriptMappingDefault.cpp',
             'platform/text/LocaleToScriptMappingICU.cpp',
+            'platform/text/LocalizedCalendar.h',
+            'platform/text/LocalizedCalendarICU.cpp',
             'platform/text/LocalizedDate.h',
             'platform/text/LocalizedDateNone.cpp',
             'platform/text/LocalizedNumber.h',
