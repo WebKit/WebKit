@@ -1,3 +1,11 @@
+2012-04-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Updated JSC expected test results to reflect recent bug fixes <disapproving look>.
+
+        Reviewed by Sam Weinig.
+
+        * tests/mozilla/expected.html:
+
 2012-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         First step toward incremental Weak<T> finalization
