@@ -816,6 +816,7 @@ editing/spelling/spelling-attribute-at-child.html
 
 # EditorClient::requestCheckingOfString() is not implemented
 editing/spelling/spellcheck-paste.html
+editing/spelling/spellcheck-paste-disabled.html
 editing/spelling/spellcheck-queue.html
 editing/spelling/spellcheck-sequencenum.html
 editing/spelling/spellcheck-async-mutation.html

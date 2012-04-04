@@ -1072,6 +1072,8 @@ editing/spelling/markers.html
 
 # EditorClient::requestCheckingOfString() is not implemented
 editing/spelling/spellcheck-paste.html
+editing/spelling/spellcheck-paste-disabled.html
+
 # Replacement text for misspelling is not given.
 # https://bugs.webkit.org/show_bug.cgi?id=77934
 editing/spelling/spelling-marker-description.html

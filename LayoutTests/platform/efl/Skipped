@@ -643,6 +643,7 @@ printing/page-rule-selection.html
 
 # EFL's LayoutTestController does not implement setAsynchronousSpellCheckingEnabled
 editing/spelling/spellcheck-paste.html
+editing/spelling/spellcheck-paste-disabled.html
 
 # EFL's LayoutTestController does not implement evaluateScriptInIsolatedWorld
 http/tests/security/isolatedWorld

@@ -1592,6 +1592,7 @@ editing/spelling/markers.html
 
 # EditorClient::requestCheckingOfString() is not implemented
 editing/spelling/spellcheck-paste.html
+editing/spelling/spellcheck-paste-disabled.html
 
 # IndexedDB is not yet enabled.
 storage/indexeddb

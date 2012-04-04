@@ -155,6 +155,7 @@ editing/selection/user-drag-element-and-user-select-none.html
 editing/selection/word-granularity.html
 editing/spelling/context-menu-suggestions.html
 editing/spelling/spellcheck-paste.html
+editing/spelling/spellcheck-paste-disabled.html
 editing/undo/undo-deleteWord.html
 editing/undo/undo-smart-delete-reversed-selection.html
 editing/undo/undo-smart-delete-word.html
