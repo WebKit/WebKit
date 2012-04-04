@@ -107,14 +107,16 @@ WebInspector.TimelineGrid.prototype = {
                 dividerLabelBar.removeStyleClass("last");
             }
 
-            var left = calculator.computePosition(calculator.minimumBoundary + slice * i);
+            var left;
+            if (!slice) {
+                left = dividersElementClientWidth / dividerCount * i + paddingLeft;
+                dividerLabelBar._labelElement.textContent = "";
+            } else {
+                left = calculator.computePosition(calculator.minimumBoundary + slice * i);
+                dividerLabelBar._labelElement.textContent = calculator.formatTime(slice * i);
+            }
             var percentLeft = 100 * left / dividersElementClientWidth;
             this._setDividerAndBarLeft(divider, dividerLabelBar, percentLeft);
-
-            if (!isNaN(slice))
-                dividerLabelBar._labelElement.textContent = calculator.formatTime(slice * i);
-            else
-                dividerLabelBar._labelElement.textContent = "";
 
             divider = divider.nextSibling;
             dividerLabelBar = dividerLabelBar.nextSibling;
