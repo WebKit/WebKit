@@ -95,6 +95,7 @@ BUGWK72434 : inspector/styles/svg-style.xhtml = PASS TEXT
 BUGWK55751 : inspector/timeline/timeline-network-resource.html = PASS TEXT
 BUGWK55751 : http/tests/inspector/resource-har-headers.html = PASS TEXT
 BUGWK55751 : inspector/styles/media-queries.html = PASS TEXT
+BUGWK55751 : inspector/elements/event-listener-sidebar.html = PASS TEXT
 
 // End of Flaky tests
 

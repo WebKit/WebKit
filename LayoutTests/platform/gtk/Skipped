@@ -1659,3 +1659,9 @@ inspector/styles/override-screen-size.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=83006
 fast/events/drop-handler-should-not-stop-navigate.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=83136
+http/tests/inspector/network/network-sidebar-width.html
+http/tests/inspector/network/network-initiator-from-console.html
+inspector/network-status-non-http.html
+inspector/debugger/watch-expressions-panel-switch.html
