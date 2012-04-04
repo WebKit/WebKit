@@ -1,3 +1,23 @@
+2012-04-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Further improvements of the tap gesture recognizer
+        https://bugs.webkit.org/show_bug.cgi?id=83149
+
+        Reviewed by Zoltan Herczeg.
+
+        Ignore single tap while finger is still pressed.
+        Some renaming to make the states more clear.
+        A pan further than the maxPanDistance can now invalidate
+        double-taps as well.
+
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::QtTapGestureRecognizer):
+        (WebKit::QtTapGestureRecognizer::recognize):
+        (WebKit::QtTapGestureRecognizer::singleTapTimeout):
+        (WebKit::QtTapGestureRecognizer::tapAndHoldTimeout):
+        (WebKit::QtTapGestureRecognizer::reset):
+        * UIProcess/qt/QtTapGestureRecognizer.h:
+
 2012-04-04  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Make the WebView a subclass of Flickable

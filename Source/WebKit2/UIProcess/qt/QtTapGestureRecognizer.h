@@ -63,11 +63,10 @@ private:
     OwnPtr<QTouchEvent> m_lastTouchEvent;
 
     enum {
-        NoTap,
-        SingleTapStarted,
+        Invalid,
+        SingleTapCandidate,
         DoubleTapCandidate,
-        TapAndHold
-    } m_tapState;
+    } m_candidate;
 };
 
 } // namespace WebKit
