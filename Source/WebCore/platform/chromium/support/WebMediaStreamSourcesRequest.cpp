@@ -82,10 +82,6 @@ void WebMediaStreamSourcesRequest::didCompleteQuery(const WebVector<WebMediaStre
     m_private->didCompleteQuery(audio, video);
 }
 
-void WebMediaStreamSourcesRequest::dummy()
-{
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(MEDIA_STREAM)

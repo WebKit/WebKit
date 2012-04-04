@@ -91,6 +91,7 @@
                 'WEBKIT_IMPLEMENTATION=1',
             ],
             'sources': [
+                '<@(webcore_platform_support_files)',
                 'public/WebAccessibilityNotification.h',
                 'public/WebAccessibilityObject.h',
                 'public/WebAccessibilityRole.h',

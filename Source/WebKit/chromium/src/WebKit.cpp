@@ -46,7 +46,6 @@
 #include "platform/WebThread.h"
 #include "v8.h"
 #include <public/Platform.h>
-#include <public/WebMediaStreamSourcesRequest.h>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
@@ -165,14 +164,6 @@ void shutdown()
 #endif
     s_webKitPlatformSupport = 0;
     Platform::shutdown();
-
-    // This function call exists to make sure WebMediaStreamSourcesRequest.obj
-    // gets pulled into the Windows component build. (See comment in
-    // WebMediaStreamSourcesRequest.h.)
-    //
-    // FIXME: Remove this call once we figure out the right way to fix these
-    // link errors.
-    WebMediaStreamSourcesRequest::dummy();
 }
 
 WebKitPlatformSupport* webKitPlatformSupport()

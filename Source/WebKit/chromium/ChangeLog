@@ -1,3 +1,20 @@
+2012-04-04  Adam Barth  <abarth@webkit.org>
+
+        figure out how to export webcore symbols from webkit.dll properly
+        https://bugs.webkit.org/show_bug.cgi?id=83105
+
+        Reviewed by Dimitri Glazkov.
+
+        * WebKit.gyp:
+            - We now compile the platform support files as part of webkit.dll
+              to make sure the lib contains the obj files and therefore exports
+              the necessary symbols. In principle, we could use a defs file to
+              achieve the same thing, but those files are a pain to maintain.
+        * src/WebKit.cpp:
+        (WebKit::shutdown):
+            - Unwind our ugly, ugly hack to make the Windows component build
+              work.
+
 2012-04-04  Mark Pilgrim  <pilgrim@chromium.org>
 
         Call sandboxEnabled directly

@@ -1,3 +1,15 @@
+2012-04-04  Adam Barth  <abarth@webkit.org>
+
+        figure out how to export webcore symbols from webkit.dll properly
+        https://bugs.webkit.org/show_bug.cgi?id=83105
+
+        Reviewed by Dimitri Glazkov.
+
+        Unwind our ugly, ugly hack to make the Windows component build work.
+
+        * chromium/public/WebMediaStreamSourcesRequest.h:
+        (WebMediaStreamSourcesRequest):
+
 2012-04-03  Adam Barth  <abarth@webkit.org>
 
         Unreviewed. This patch adds an ugly, ugly hack to bandaid over the
