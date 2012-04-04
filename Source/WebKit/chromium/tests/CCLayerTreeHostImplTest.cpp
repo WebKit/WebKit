@@ -248,6 +248,7 @@ TEST_F(CCLayerTreeHostImplTest, nonFastScrollableRegionWithOffset)
     m_hostImpl->initializeLayerRenderer(createContext());
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+    root->setBounds(IntSize(1, 1));
     root->setScrollable(true);
     root->setScrollPosition(IntPoint(0, 0));
     root->setMaxScrollPosition(IntSize(100, 100));

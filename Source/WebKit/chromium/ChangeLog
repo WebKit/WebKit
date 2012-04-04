@@ -1,3 +1,32 @@
+2012-04-04  Daniel Sievers  <sievers@chromium.org>
+
+        [Chromium] Always skip draw and readback if there is nothing
+        to draw.
+        https://bugs.webkit.org/show_bug.cgi?id=82680
+
+        This avoids corruption from pushing frames that have no valid
+        content drawn into them.
+        Also in addition to checking for non-existing root layers, check
+        for root layers with no content bounds. It's possible to see those
+        with kForceCompositing mode for empty documents.
+
+        Reviewed by James Robinson.
+
+        Added CCLayerTreeHostTestEmptyContentsShouldNotDraw.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::TEST_F):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::doBeginTest):
+        (WTF):
+        (CCLayerTreeHostTestEmptyContentsShouldNotDraw):
+        (WTF::CCLayerTreeHostTestEmptyContentsShouldNotDraw::CCLayerTreeHostTestEmptyContentsShouldNotDraw):
+        (WTF::CCLayerTreeHostTestEmptyContentsShouldNotDraw::beginTest):
+        (WTF::CCLayerTreeHostTestEmptyContentsShouldNotDraw::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestEmptyContentsShouldNotDraw::didCommitAndDrawFrame):
+        (WTF::CCLayerTreeHostTestEmptyContentsShouldNotDraw::afterTest):
+        (WTF::TEST_F):
+
 2012-04-04  Mark Pilgrim  <pilgrim@chromium.org>
 
         Call histogramCustomCounts directly

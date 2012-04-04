@@ -88,7 +88,7 @@ public:
     virtual void beginCommit();
     virtual void commitComplete();
     virtual void animate(double monotonicTime, double wallClockTime);
-    // Returns false if problems occured preparing the frame, and we should try to avoid displaying the frame.
+    // Returns false if we should try to avoid displaying the frame, because it has visible checkerboard during an animation.
     virtual bool prepareToDraw(FrameData&);
     virtual void drawLayers(const FrameData&);
 
@@ -102,6 +102,8 @@ public:
     virtual void setFullRootLayerDamage();
 
     // Implementation
+
+    // Returns false if there is no valid root layer and thus no content that can be drawn.
     bool canDraw();
     GraphicsContext3D* context();
 

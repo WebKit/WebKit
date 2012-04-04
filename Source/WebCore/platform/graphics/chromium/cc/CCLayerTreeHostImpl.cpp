@@ -141,7 +141,7 @@ void CCLayerTreeHostImpl::commitComplete()
 
 bool CCLayerTreeHostImpl::canDraw()
 {
-    if (!rootLayer())
+    if (!rootLayer() || rootLayer()->bounds().isEmpty())
         return false;
     if (viewportSize().isEmpty())
         return false;
@@ -375,9 +375,6 @@ bool CCLayerTreeHostImpl::prepareToDraw(FrameData& frame)
 
     frame.renderPasses.clear();
     frame.renderSurfaceLayerList.clear();
-
-    if (!rootLayer())
-        return false;
 
     if (!calculateRenderPasses(frame.renderPasses, frame.renderSurfaceLayerList))
         return false;
