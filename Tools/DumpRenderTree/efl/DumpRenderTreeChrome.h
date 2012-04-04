@@ -75,6 +75,8 @@ private:
     static void onTitleChanged(void*, Evas_Object*, void*);
 
     static void onDocumentLoadFinished(void*, Evas_Object*, void*);
+
+    static void onWillSendRequest(void*, Evas_Object*, void*);
 };
 
 #endif // DumpRenderTreeChrome_h

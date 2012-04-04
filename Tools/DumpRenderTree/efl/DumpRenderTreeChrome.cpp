@@ -45,6 +45,8 @@
 #include <cstdio>
 #include <wtf/NotFound.h>
 
+using namespace WebCore;
+
 PassOwnPtr<DumpRenderTreeChrome> DumpRenderTreeChrome::create(Evas* evas)
 {
     OwnPtr<DumpRenderTreeChrome> chrome = adoptPtr(new DumpRenderTreeChrome(evas));
@@ -93,6 +95,7 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     evas_object_smart_callback_add(view, "window,object,cleared", onWindowObjectCleared, m_gcController.get());
     evas_object_smart_callback_add(view, "statusbar,text,set", onStatusbarTextSet, 0);
     evas_object_smart_callback_add(view, "load,document,finished", onDocumentLoadFinished, 0);
+    evas_object_smart_callback_add(view, "resource,request,willsend", onWillSendRequest, 0);
 
     return view;
 }
@@ -283,5 +286,21 @@ void DumpRenderTreeChrome::onDocumentLoadFinished(void*, Evas_Object*, void* eve
         const unsigned pendingFrameUnloadEvents = DumpRenderTreeSupportEfl::pendingUnloadEventCount(frame);
         if (pendingFrameUnloadEvents)
             printf("%s - has %u onunload handler(s)\n", frameName.utf8().data(), pendingFrameUnloadEvents);
+    }
+}
+
+void DumpRenderTreeChrome::onWillSendRequest(void*, Evas_Object*, void* eventInfo)
+{
+    Ewk_Frame_Resource_Request* request = static_cast<Ewk_Frame_Resource_Request*>(eventInfo);
+
+    KURL url = KURL(ParsedURLString, request->url);
+
+    if (url.isValid()
+        && url.protocolIsInHTTPFamily()
+        && url.host() != "127.0.0.1"
+        && url.host() != "255.255.255.255"
+        && url.host().lower() != "localhost") {
+        printf("Blocked access to external URL %s\n", request->url);
+        request->url = 0;
     }
 }

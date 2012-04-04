@@ -172,21 +172,22 @@ void FrameLoaderClientEfl::dispatchWillSendRequest(DocumentLoader* loader, unsig
     CString url = coreRequest.url().string().utf8();
     DBG("Resource url=%s", url.data());
 
-    Ewk_Frame_Resource_Request request = { 0, identifier };
+    // We want to distinguish between a request for a document to be loaded into
+    // the main frame, a sub-frame, or the sub-objects in that document.
+    bool isMainFrameRequest = false;
+    if (loader) {
+            const FrameLoader* frameLoader = loader->frameLoader();
+            isMainFrameRequest = (loader == frameLoader->provisionalDocumentLoader() && frameLoader->isLoadingMainFrame());
+    }
+
+    Ewk_Frame_Resource_Request request = { 0, identifier, m_frame, isMainFrameRequest };
     Ewk_Frame_Resource_Request orig = request; /* Initialize const fields. */
 
     orig.url = request.url = url.data();
 
     ewk_frame_request_will_send(m_frame, &request);
 
-    // We want to distinguish between a request for a document to be loaded into
-    // the main frame, a sub-frame, or the sub-objects in that document (via Chromium).
-    if (loader) {
-        const FrameLoader* frameLoader = loader->frameLoader();
-        const bool isMainFrameRequest = (loader == frameLoader->provisionalDocumentLoader() && frameLoader->isLoadingMainFrame());
-        if (isMainFrameRequest)
-            evas_object_smart_callback_call(m_view, "resource,request,willsend", &request);
-    }
+    evas_object_smart_callback_call(m_view, "resource,request,willsend", &request);
 
     if (request.url != orig.url) {
         coreRequest.setURL(KURL(KURL(), request.url));
@@ -203,12 +204,18 @@ bool FrameLoaderClientEfl::shouldUseCredentialStorage(DocumentLoader*, unsigned 
     return false;
 }
 
-void FrameLoaderClientEfl::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest& coreRequest)
+void FrameLoaderClientEfl::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& coreRequest)
 {
     CString url = coreRequest.url().string().utf8();
     DBG("Resource url=%s", url.data());
 
-    Ewk_Frame_Resource_Request request = { 0, identifier };
+    bool isMainFrameRequest = false;
+    if (loader) {
+            const FrameLoader* frameLoader = loader->frameLoader();
+            isMainFrameRequest = (loader == frameLoader->provisionalDocumentLoader() && frameLoader->isLoadingMainFrame());
+    }
+
+    Ewk_Frame_Resource_Request request = { 0, identifier, m_frame, isMainFrameRequest };
     ewk_frame_request_assign_identifier(m_frame, &request);
 }
 
@@ -301,7 +308,7 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     // if not acceptNavigationRequest - look at Qt -> PolicyIgnore;
     // FIXME: do proper check and only reset forms when on PolicyIgnore
     char* url = strdup(resourceRequest.url().string().utf8().data());
-    Ewk_Frame_Resource_Request request = { url, 0 };
+    Ewk_Frame_Resource_Request request = { url, 0, m_frame, false };
     bool ret = ewk_view_navigation_policy_decision(m_view, &request);
     free(url);
 

@@ -61,7 +61,8 @@
  *  - "mixedcontent,displayed", void: any of the containing frames has loaded and displayed mixed content.
  *  - "mixedcontent,run", void: any of the containing frames has loaded and run mixed content.
  *  - "ready", void: page is fully loaded.
- *  - "resource,request,willsend", Ewk_Frame_Resource_Request*: the network request for the main frame will be sent.
+ *  - "resource,request,willsend", Ewk_Frame_Resource_Request*: a resource will
+ *    be requested.
  *  - "scrollbars,visible,get", Eina_Bool *: expects a @c EINA_TRUE if scrollbars
  *    are visible; @c EINA_FALSE, otherwise.
  *  - "scrollbars,visible,set", Eina_Bool: sets scrollbars visibility.

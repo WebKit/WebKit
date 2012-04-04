@@ -106,6 +106,8 @@ typedef struct _Ewk_Frame_Resource_Request Ewk_Frame_Resource_Request;
 struct _Ewk_Frame_Resource_Request {
     const char *url; /**< url of the resource */
     const unsigned long identifier; /**< identifier of resource, can not be changed */
+    Evas_Object *frame; /**< frame where the resource is requested */
+    Eina_Bool is_main_frame_request; /** < indicates if the request is for the main frame */
 };
 
 /// Enum containing hit test data types

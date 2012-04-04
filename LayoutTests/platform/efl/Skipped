@@ -777,12 +777,6 @@ fast/forms/mailto/post-text-plain.html
 fast/dom/title-text-property.html
 fast/dom/title-text-property-2.html
 
-# EFL's DRT (DumpRenderTreeChrome) needs to catch the "resource,request,willsend" signal
-fast/ruby/before-block-doesnt-crash.html
-fast/ruby/before-table-doesnt-crash.html
-fast/ruby/generated-before-counter-doesnt-crash.html
-fast/workers/worker-crash-with-invalid-location.html
-
 # Need to call Settings::setValidationMessageTimerMagnification(-1) in DRT.
 fast/forms/validation-message-appearance.html
 
