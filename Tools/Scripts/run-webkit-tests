@@ -117,4 +117,5 @@ if (isQt()) {
 }
 
 my $harnessPath = File::Spec->catfile(relativeScriptsDir(), $harnessName);
-exec $script ($harnessPath, $harnessPath, @ARGV) or die "Failed to execute $harnessPath";
+unshift(@ARGV, $harnessPath);
+exec $script ($script, @ARGV) or die "Failed to execute $harnessPath";

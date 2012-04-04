@@ -1,5 +1,12 @@
 2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Sigh... this isn't going well. I can't even reproduce this issue locally.
+        Another speculative fix.
+
+        * Scripts/run-webkit-tests:
+
+2012-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         I don't know why I'm so sloppy today. Another build fix.
 
         * Scripts/run-webkit-tests:
