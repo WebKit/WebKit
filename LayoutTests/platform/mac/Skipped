@@ -211,6 +211,7 @@ http/tests/multipart/policy-ignore-crash.php
 
 # Datalist is not yet enabled.
 fast/forms/datalist
+platform/mac/fast/forms/input-list-button-size.html
 
 # Color input is not yet enabled.
 fast/forms/color
