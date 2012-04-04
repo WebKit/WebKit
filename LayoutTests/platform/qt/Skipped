@@ -1601,7 +1601,6 @@ fast/events/keypress-insert-tab.html
 fast/events/ondragenter.html
 fast/events/standalone-image-drag-to-editable.html
 fast/events/updateLayoutForHitTest.html
-fast/forms/input-selectedoption.html
 fast/forms/drag-into-textarea.html
 fast/forms/input-readonly-autoscroll.html
 fast/forms/input-text-click-outside.html
@@ -2646,3 +2645,7 @@ fast/box-shadow/shadow-buffer-partial.html
 fast/block/lineboxcontain/block-font.html
 fast/block/lineboxcontain/block-glyphs.html
 fast/block/lineboxcontain/font.html
+
+# [Qt] REGRESSION(r113138 ): It made fast/workers/worker-multi-startup.html crash on 32 bit
+# https://bugs.webkit.org/show_bug.cgi?id=83133
+fast/workers/worker-multi-startup.html
