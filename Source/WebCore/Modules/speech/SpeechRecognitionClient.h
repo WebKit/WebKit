@@ -41,8 +41,6 @@ public:
     virtual void start(SpeechRecognition*, const SpeechGrammarList*, const String& lang, bool continuous) = 0;
     virtual void stop(SpeechRecognition*) = 0;
     virtual void abort(SpeechRecognition*) = 0;
-    virtual void visibilityHidden() = 0;
-    virtual void unregisterSpeechRecognition(SpeechRecognition*) = 0;
 
     virtual ~SpeechRecognitionClient() { }
 };

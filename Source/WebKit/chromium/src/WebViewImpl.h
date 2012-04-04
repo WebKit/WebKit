@@ -86,6 +86,7 @@ class DragScrollTimer;
 class GeolocationClientProxy;
 class NonCompositedContentHost;
 class SpeechInputClientImpl;
+class SpeechRecognitionClientProxy;
 class UserMediaClientImpl;
 class WebAccessibilityObject;
 class WebCompositorImpl;
@@ -737,6 +738,10 @@ private:
 #if ENABLE(INPUT_SPEECH)
     OwnPtr<SpeechInputClientImpl> m_speechInputClient;
 #endif
+#if ENABLE(SCRIPTED_SPEECH)
+    OwnPtr<SpeechRecognitionClientProxy> m_speechRecognitionClient;
+#endif
+
     // If we attempt to fetch the on-screen GraphicsContext3D before
     // the compositor has been turned on, we need to instantiate it
     // early. This member holds on to the GC3D in this case.

@@ -41,8 +41,6 @@ public:
     void start(SpeechRecognition* recognition, const SpeechGrammarList* grammars, const String& lang, bool continuous) { m_client->start(recognition, grammars, lang, continuous); }
     void stop(SpeechRecognition* recognition) { m_client->stop(recognition); }
     void abort(SpeechRecognition* recognition) { m_client->abort(recognition); }
-    void visibilityHidden() { m_client->visibilityHidden(); }
-    void unregisterSpeechRecognition(SpeechRecognition* recognition) { m_client->unregisterSpeechRecognition(recognition); }
 
     static PassOwnPtr<SpeechRecognitionController> create(SpeechRecognitionClient*);
     static const AtomicString& supplementName();
