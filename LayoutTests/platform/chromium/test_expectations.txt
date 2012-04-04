@@ -3295,7 +3295,8 @@ BUGWK73872 LINUX : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
 BUGWK73514 WIN : platform/chromium/compositing/lost-compositor-context-permanently.html = PASS TIMEOUT
 BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT IMAGE TEXT PASS
 
-BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
+BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overloads-strokeText.html = PASS CRASH
+BUGWK73607 LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = PASS CRASH
 
 // Tests needing rebaseline after bug 73643 patch
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
