@@ -28,20 +28,17 @@
 
 #include "QtGestureRecognizer.h"
 
+#include <QTouchEvent>
 #include <QtCore/QBasicTimer>
 #include <QtCore/QObject>
 #include <QtCore/QtGlobal>
 #include <wtf/OwnPtr.h>
 
-QT_BEGIN_NAMESPACE
-class QTouchEvent;
-QT_END_NAMESPACE
-
 // FIXME: These constants should possibly depend on DPI.
-const qreal initialTriggerDistanceThreshold = 5;
-const qreal maxDoubleTapDistance = 120;
+const int maxPanDistance = 5;
+const int maxDoubleTapDistance = 120;
 const int tapAndHoldTime = 800;
-const int doubleClickInterval = 400;
+const int maxDoubleTapInterval = 400;
 
 class QtWebPageEventHandler;
 
@@ -55,13 +52,15 @@ public:
 
 protected:
     void timerEvent(QTimerEvent*);
-    void tapTimeout();
+    void singleTapTimeout();
     void tapAndHoldTimeout();
 
 private:
+    bool withinDistance(const QTouchEvent::TouchPoint&, int distance);
+
     QBasicTimer m_doubleTapTimer;
     QBasicTimer m_tapAndHoldTimer;
-    OwnPtr<QTouchEvent> m_touchBeginEventForTap;
+    OwnPtr<QTouchEvent> m_lastTouchEvent;
 
     enum {
         NoTap,

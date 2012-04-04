@@ -37,83 +37,59 @@ QtTapGestureRecognizer::QtTapGestureRecognizer(QtWebPageEventHandler* eventHandl
 {
 }
 
+bool QtTapGestureRecognizer::withinDistance(const QTouchEvent::TouchPoint& touchPoint, int distance)
+{
+    return QLineF(touchPoint.screenPos(), m_lastTouchEvent->touchPoints().first().screenPos()).length() < distance;
+}
+
 bool QtTapGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTimestampMillis)
 {
+    ASSERT(m_eventHandler);
+
     if (event->touchPoints().size() != 1) {
         reset();
         return false;
     }
 
+    const QTouchEvent::TouchPoint& touchPoint = event->touchPoints().first();
+
     switch (event->type()) {
     case QEvent::TouchBegin:
         ASSERT(m_tapState == NoTap);
-        ASSERT(!m_tapAndHoldTimer.isActive());
+        m_doubleTapTimer.stop(); // Cancel other pending single tap event.
 
+        ASSERT(!m_tapAndHoldTimer.isActive());
         m_tapAndHoldTimer.start(tapAndHoldTime, this);
 
-        if (m_doubleTapTimer.isActive()) {
-            // Might be double tap.
-            ASSERT(m_touchBeginEventForTap);
-            m_doubleTapTimer.stop();
-            QPointF lastPosition = m_touchBeginEventForTap->touchPoints().first().screenPos();
-            QPointF newPosition = event->touchPoints().first().screenPos();
-            if (QLineF(lastPosition, newPosition).length() < maxDoubleTapDistance)
-                m_tapState = DoubleTapCandidate;
-            else {
-                // Received a new tap, that is unrelated to the previous one.
-                tapTimeout();
-                m_tapState = SingleTapStarted;
-            }
-        } else
+        if (m_lastTouchEvent && withinDistance(touchPoint, maxDoubleTapDistance))
+            m_tapState = DoubleTapCandidate;
+        else {
             m_tapState = SingleTapStarted;
-        m_touchBeginEventForTap = adoptPtr(new QTouchEvent(*event));
-
-        if (m_tapState == SingleTapStarted) {
-            const QTouchEvent::TouchPoint& touchPoint = event->touchPoints().first();
+            // The below in facts resets any previous single tap event.
             m_eventHandler->handlePotentialSingleTapEvent(touchPoint);
+            m_lastTouchEvent = adoptPtr(new QTouchEvent(*event));
+            m_doubleTapTimer.start(maxDoubleTapInterval, this);
         }
         break;
+
     case QEvent::TouchUpdate:
         // If the touch point moves further than the threshold, we cancel the tap gesture.
-        if (m_tapState == SingleTapStarted) {
-            const QTouchEvent::TouchPoint& touchPoint = event->touchPoints().first();
-            QPointF offset(touchPoint.scenePos() - m_touchBeginEventForTap->touchPoints().first().scenePos());
-            const qreal distX = qAbs(offset.x());
-            const qreal distY = qAbs(offset.y());
-            if (distX > initialTriggerDistanceThreshold || distY > initialTriggerDistanceThreshold)
-                reset();
-        }
+        if (m_tapState == SingleTapStarted && !withinDistance(touchPoint, maxPanDistance))
+            reset();
         break;
+
     case QEvent::TouchEnd:
         m_tapAndHoldTimer.stop();
+
+        if (m_tapState == DoubleTapCandidate && withinDistance(touchPoint, maxDoubleTapDistance))
+            m_eventHandler->handleDoubleTapEvent(touchPoint);
+
         if (m_tapState != NoTap)
             m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
 
-        switch (m_tapState) {
-        case DoubleTapCandidate:
-            {
-                ASSERT(!m_doubleTapTimer.isActive());
-                m_tapState = NoTap;
-
-                const QTouchEvent::TouchPoint& touchPoint = event->touchPoints().first();
-                QPointF startPosition = touchPoint.startScreenPos();
-                QPointF endPosition = touchPoint.screenPos();
-                if (QLineF(endPosition, startPosition).length() < maxDoubleTapDistance && m_eventHandler)
-                    m_eventHandler->handleDoubleTapEvent(touchPoint);
-                break;
-            }
-        case SingleTapStarted:
-            ASSERT(!m_doubleTapTimer.isActive());
-            m_doubleTapTimer.start(doubleClickInterval, this);
-            m_tapState = NoTap;
-            break;
-        case TapAndHold:
-            m_tapState = NoTap;
-            break;
-        default:
-            break;
-        }
+        m_tapState = NoTap;
         break;
+
     default:
         break;
     }
@@ -121,41 +97,38 @@ bool QtTapGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTim
     return false;
 }
 
-void QtTapGestureRecognizer::tapTimeout()
+void QtTapGestureRecognizer::singleTapTimeout()
 {
-    m_doubleTapTimer.stop();
-    m_eventHandler->handleSingleTapEvent(m_touchBeginEventForTap->touchPoints().at(0));
-    m_touchBeginEventForTap.clear();
+    ASSERT(m_lastTouchEvent);
+
+    m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
+    m_eventHandler->handleSingleTapEvent(m_lastTouchEvent->touchPoints().first());
+    reset();
 }
 
 void QtTapGestureRecognizer::tapAndHoldTimeout()
 {
-    ASSERT(m_touchBeginEventForTap);
-    m_tapAndHoldTimer.stop();
-    m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
-#if 0 // No support for synthetic context menus in WK2 yet.
-    QTouchEvent::TouchPoint tapPoint = m_touchBeginEventForTap->touchPoints().at(0);
-    WebGestureEvent gesture(WebEvent::GestureTapAndHold, tapPoint.pos().toPoint(), tapPoint.screenPos().toPoint(), WebEvent::Modifiers(0), 0);
-    if (m_webPageProxy)
-        m_webPageProxy->handleGestureEvent(gesture);
-#endif
-    m_touchBeginEventForTap.clear();
-    m_tapState = TapAndHold;
+    ASSERT(m_lastTouchEvent);
 
-    ASSERT(!m_doubleTapTimer.isActive());
-    m_doubleTapTimer.stop();
+    m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
+    reset();
+
+#if 0 // No support for synthetic context menus in WK2 yet.
+    const QTouchEvent::TouchPoint& touchPoint = m_lastTouchEvent->touchPoints().first();
+    WebGestureEvent event(WebEvent::GestureTapAndHold, touchPoint.pos().toPoint(), touchPoint.screenPos().toPoint(), WebEvent::Modifiers(0), 0);
+    m_eventHandler->handleGestureEvent(event);
+#endif
 }
 
 void QtTapGestureRecognizer::reset()
 {
-    if (m_tapState == NoTap)
-        return;
-
-    m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
+    if (m_tapState != NoTap)
+        m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
 
     m_tapState = NoTap;
-    m_touchBeginEventForTap.clear();
     m_tapAndHoldTimer.stop();
+    m_doubleTapTimer.stop();
+    m_lastTouchEvent.clear();
 
     QtGestureRecognizer::reset();
 }
@@ -164,7 +137,7 @@ void QtTapGestureRecognizer::timerEvent(QTimerEvent* ev)
 {
     int timerId = ev->timerId();
     if (timerId == m_doubleTapTimer.timerId())
-        tapTimeout();
+        singleTapTimeout();
     else if (timerId == m_tapAndHoldTimer.timerId())
         tapAndHoldTimeout();
     else

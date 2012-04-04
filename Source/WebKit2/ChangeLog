@@ -1,3 +1,23 @@
+2012-04-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Improve the tap gesture recognizer
+        https://bugs.webkit.org/show_bug.cgi?id=83135
+
+        Reviewed by Simon Hausmann.
+
+        Clean up the code and make sure that the first single tap
+        event, as part of a double tap gesture, is ignored.
+
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::withinDistance):
+        (WebKit):
+        (WebKit::QtTapGestureRecognizer::recognize):
+        (WebKit::QtTapGestureRecognizer::singleTapTimeout):
+        (WebKit::QtTapGestureRecognizer::tapAndHoldTimeout):
+        (WebKit::QtTapGestureRecognizer::reset):
+        * UIProcess/qt/QtTapGestureRecognizer.h:
+        (QtTapGestureRecognizer):
+
 2012-04-03  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed some WebKit2 crashes seen on the buildbot after my last patch.
