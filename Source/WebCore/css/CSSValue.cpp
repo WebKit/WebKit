@@ -33,7 +33,6 @@
 #include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
-#include "CSSFlexValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
@@ -146,8 +145,6 @@ String CSSValue::cssText() const
         return static_cast<const WebKitCSSTransformValue*>(this)->customCssText();
     case LineBoxContainClass:
         return static_cast<const CSSLineBoxContainValue*>(this)->customCssText();
-    case FlexClass:
-        return static_cast<const CSSFlexValue*>(this)->customCssText();
     case CalculationClass:
         return static_cast<const CSSCalcValue*>(this)->customCssText();
 #if ENABLE(CSS_IMAGE_SET)
@@ -247,9 +244,6 @@ void CSSValue::destroy()
         return;
     case LineBoxContainClass:
         delete static_cast<CSSLineBoxContainValue*>(this);
-        return;
-    case FlexClass:
-        delete static_cast<CSSFlexValue*>(this);
         return;
     case CalculationClass:
         delete static_cast<CSSCalcValue*>(this);

@@ -33,7 +33,6 @@
 #include "CSSComputedStyleDeclaration.cpp"
 #include "CSSCrossfadeValue.cpp"
 #include "CSSCursorImageValue.cpp"
-#include "CSSFlexValue.cpp"
 #include "CSSFontFace.cpp"
 #include "CSSFontFaceRule.cpp"
 #include "CSSFontFaceSource.cpp"

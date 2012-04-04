@@ -44,12 +44,6 @@ public:
         return !(*this == o);
     }
 
-    // FIXME: Remove these once we finish implementing the -webkit-flex property.
-    float m_widthPositiveFlex;
-    float m_widthNegativeFlex;
-    float m_heightPositiveFlex;
-    float m_heightNegativeFlex;
-
     float m_positiveFlex;
     float m_negativeFlex;
     Length m_preferredSize;

@@ -31,7 +31,6 @@
 #include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
-#include "CSSFlexValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFunctionValue.h"
@@ -1787,12 +1786,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         else if (!id && validUnit(value, FLength | FPercent | FNonNeg))
             // ### handle multilength case where we allow relative units
             validPrimitive = true;
-        else if (value->unit == CSSParserValue::Function) {
-            // FIXME: Remove -webkit-flex() handling once we finish implementing the -webkit-flex propery.
-            if (!equalIgnoringCase(value->function->name, "-webkit-flex(") || m_valueList->next())
-                return false;
-            parsedValue = parseFlex(value->function->args.get());
-        }
         break;
 
     case CSSPropertyBottom:               // <length> | <percentage> | auto | inherit
@@ -2019,18 +2012,12 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         }
         break;
 #endif
-    case CSSPropertyWebkitFlex: {
+    case CSSPropertyWebkitFlex:
         if (id == CSSValueNone)
             validPrimitive = true;
-        else if (RefPtr<CSSFlexValue> flexValue = parseFlex(m_valueList.get())) {
-            RefPtr<CSSValueList> flexList = CSSValueList::createSpaceSeparated();
-            flexList->append(cssValuePool()->createValue(flexValue->positiveFlex(), CSSPrimitiveValue::CSS_NUMBER));
-            flexList->append(cssValuePool()->createValue(flexValue->negativeFlex(), CSSPrimitiveValue::CSS_NUMBER));
-            flexList->append(flexValue->preferredSize());
-            parsedValue = flexList;
-        }
+        else
+            parsedValue = parseFlex(m_valueList.get());
         break;
-    }
     case CSSPropertyWebkitFlexOrder:
         if (validUnit(value, FInteger, CSSStrictMode)) {
             // We restrict the smallest value to int min + 2 because we use int min and int min + 1 as special values in a hash set.
@@ -5516,7 +5503,7 @@ bool CSSParser::parseReflect(CSSPropertyID propId, bool important)
     return true;
 }
 
-PassRefPtr<CSSFlexValue> CSSParser::parseFlex(CSSParserValueList* args)
+PassRefPtr<CSSValue> CSSParser::parseFlex(CSSParserValueList* args)
 {
     if (!args || !args->size() || args->size() > 3)
         return 0;
@@ -5554,7 +5541,10 @@ PassRefPtr<CSSFlexValue> CSSParser::parseFlex(CSSParserValueList* args)
     if (!preferredSize)
         preferredSize = cssValuePool()->createValue(0, CSSPrimitiveValue::CSS_PX);
 
-    RefPtr<CSSFlexValue> flex = CSSFlexValue::create(clampToFloat(positiveFlex), clampToFloat(negativeFlex), preferredSize);
+    RefPtr<CSSValueList> flex = CSSValueList::createSpaceSeparated();
+    flex->append(cssValuePool()->createValue(clampToFloat(positiveFlex), CSSPrimitiveValue::CSS_NUMBER));
+    flex->append(cssValuePool()->createValue(clampToFloat(negativeFlex), CSSPrimitiveValue::CSS_NUMBER));
+    flex->append(preferredSize);
     return flex;
 }
 
