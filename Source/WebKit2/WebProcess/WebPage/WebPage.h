@@ -512,7 +512,11 @@ public:
     void recomputeShortCircuitHorizontalWheelEventsState();
 
     bool willGoToBackForwardItemCallbackEnabled() const { return m_willGoToBackForwardItemCallbackEnabled; }
-    
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    void setVisibilityState(int visibilityState, bool isInitialState);
+#endif
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

@@ -204,6 +204,9 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_renderTreeSize(0)
     , m_shouldSendEventsSynchronously(false)
     , m_mediaVolume(1)
+#if ENABLE(PAGE_VISIBILITY_API)
+    , m_visibilityState(PageVisibilityStateVisible)
+#endif
 {
 #ifndef NDEBUG
     webPageProxyCounter.increment();
@@ -345,6 +348,10 @@ void WebPageProxy::initializeWebPage()
 #endif
 
     process()->send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters()), 0);
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    process()->send(Messages::WebPage::SetVisibilityState(m_visibilityState, /* isInitialState */ true), m_pageID);
+#endif
 }
 
 void WebPageProxy::close()
@@ -791,6 +798,18 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
             }
         }
     }
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    PageVisibilityState visibilityState = PageVisibilityStateHidden;
+
+    if (m_pageClient->isViewVisible())
+        visibilityState = PageVisibilityStateVisible;
+
+    if (visibilityState != m_visibilityState) {
+        m_visibilityState = visibilityState;
+        process()->send(Messages::WebPage::SetVisibilityState(visibilityState, false), m_pageID);
+    }
+#endif
 
     updateBackingStoreDiscardableState();
 }

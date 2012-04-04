@@ -1056,6 +1056,10 @@ private:
 #if PLATFORM(QT)
     WTF::HashSet<RefPtr<QtRefCountedNetworkRequestData> > m_applicationSchemeRequests;
 #endif
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    WebCore::PageVisibilityState m_visibilityState;
+#endif
 };
 
 } // namespace WebKit

@@ -1,3 +1,26 @@
+2012-04-04  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [WK2] Add Page Visibility API support
+        https://bugs.webkit.org/show_bug.cgi?id=81154
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use WebPageProxy::viewStateDidChange to correctly define the page's
+        visibilityState and then set it to the WebProcess. The WebKit2's based
+        ports just need to implement the related PageClient functions in order
+        to get this API enabled and working properly.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::viewStateDidChange):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit):
+        (WebKit::WebPage::setVisibilityState):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2012-04-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Further improvements of the tap gesture recognizer

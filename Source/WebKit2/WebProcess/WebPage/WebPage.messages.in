@@ -260,4 +260,8 @@ messages -> WebPage {
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
     HandleAlternativeTextUIResult(String result)
 #endif
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    SetVisibilityState(int visibilityState, bool isInitialState);
+#endif
 }

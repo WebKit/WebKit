@@ -3157,4 +3157,13 @@ FrameView* WebPage::mainFrameView() const
     return 0;
 }
 
+#if ENABLE(PAGE_VISIBILITY_API)
+void WebPage::setVisibilityState(int visibilityState, bool isInitialState)
+{
+    if (!m_page)
+        return;
+    m_page->setVisibilityState(static_cast<WebCore::PageVisibilityState>(visibilityState), isInitialState);
+}
+#endif
+
 } // namespace WebKit
