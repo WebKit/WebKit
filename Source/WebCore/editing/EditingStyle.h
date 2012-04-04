@@ -152,10 +152,10 @@ private:
     EditingStyle(const Position&, PropertiesToInclude);
     EditingStyle(const StylePropertySet*);
     EditingStyle(const CSSStyleDeclaration*);
-    EditingStyle(CSSPropertyID, const String&);
+    EditingStyle(CSSPropertyID, const String& value);
     void init(Node*, PropertiesToInclude);
     void removeTextFillAndStrokeColorsIfNeeded(RenderStyle*);
-    void setProperty(CSSPropertyID, const String&, bool important = false);
+    void setProperty(CSSPropertyID, const String& value, bool important = false);
     void replaceFontSizeByKeywordIfPossible(RenderStyle*, CSSComputedStyleDeclaration*);
     void extractFontSizeDelta();
     TriState triStateOfStyle(CSSStyleDeclaration* styleToCompare, ShouldIgnoreTextOnlyProperties) const;

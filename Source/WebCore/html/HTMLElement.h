@@ -108,8 +108,8 @@ public:
 protected:
     HTMLElement(const QualifiedName& tagName, Document*);
 
-    void addHTMLLengthToStyle(StylePropertySet*, CSSPropertyID, const String&);
-    void addHTMLColorToStyle(StylePropertySet*, CSSPropertyID, const String&);
+    void addHTMLLengthToStyle(StylePropertySet*, CSSPropertyID, const String& value);
+    void addHTMLColorToStyle(StylePropertySet*, CSSPropertyID, const String& color);
 
     void applyAlignmentAttributeToStyle(Attribute*, StylePropertySet*);
     void applyBorderAttributeToStyle(Attribute*, StylePropertySet*);

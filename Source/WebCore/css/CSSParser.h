@@ -75,11 +75,11 @@ public:
     void parseSheet(CSSStyleSheet*, const String&, int startLineNumber = 0, StyleRuleRangeMap* ruleRangeMap = 0);
     PassRefPtr<StyleRuleBase> parseRule(CSSStyleSheet*, const String&);
     PassRefPtr<StyleKeyframe> parseKeyframeRule(CSSStyleSheet*, const String&);
-    static bool parseValue(StylePropertySet*, CSSPropertyID, const String&, bool, CSSParserMode, CSSStyleSheet*);
+    static bool parseValue(StylePropertySet*, CSSPropertyID, const String&, bool important, CSSParserMode, CSSStyleSheet*);
     static bool parseColor(RGBA32& color, const String&, bool strict = false);
     static bool parseSystemColor(RGBA32& color, const String&, Document*);
     static PassRefPtr<CSSValueList> parseFontFaceValue(const AtomicString&, CSSStyleSheet* contextStyleSheet);
-    PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int, CSSParserValue*);
+    PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int ident, CSSParserValue*);
     bool parseDeclaration(StylePropertySet*, const String&, RefPtr<CSSStyleSourceData>*, CSSStyleSheet* contextStyleSheet);
     PassOwnPtr<MediaQuery> parseMediaQuery(const String&);
 
@@ -87,15 +87,15 @@ public:
 
     CSSValuePool* cssValuePool() const { return m_cssValuePool.get(); }
 
-    void addProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool, bool implicit = false);
+    void addProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important, bool implicit = false);
     void rollbackLastProperties(int num);
     bool hasProperties() const { return !m_parsedProperties.isEmpty(); }
 
-    bool parseValue(CSSPropertyID, bool);
-    bool parseShorthand(CSSPropertyID, const StylePropertyShorthand&, bool);
-    bool parse4Values(CSSPropertyID, const CSSPropertyID*, bool);
-    bool parseContent(CSSPropertyID, bool);
-    bool parseQuotes(CSSPropertyID, bool);
+    bool parseValue(CSSPropertyID, bool important);
+    bool parseShorthand(CSSPropertyID, const StylePropertyShorthand&, bool important);
+    bool parse4Values(CSSPropertyID, const CSSPropertyID* properties, bool important);
+    bool parseContent(CSSPropertyID, bool important);
+    bool parseQuotes(CSSPropertyID, bool important);
 
     PassRefPtr<CSSValue> parseAttr(CSSParserValueList* args);
 
@@ -112,8 +112,8 @@ public:
     void parseFillRepeat(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
     PassRefPtr<CSSValue> parseFillSize(CSSPropertyID propId, bool &allowComma);
 
-    bool parseFillProperty(CSSPropertyID, CSSPropertyID&, CSSPropertyID&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
-    bool parseFillShorthand(CSSPropertyID, const CSSPropertyID*, int, bool);
+    bool parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
+    bool parseFillShorthand(CSSPropertyID, const CSSPropertyID* properties, int numProperties, bool important);
 
     void addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval);
 
@@ -136,12 +136,12 @@ public:
     bool parseAnimationShorthand(bool important);
 
 #if ENABLE(CSS_GRID_LAYOUT)
-    bool parseGridTrackList(CSSPropertyID, bool);
+    bool parseGridTrackList(CSSPropertyID, bool important);
 #endif
 
-    bool parseDashboardRegions(CSSPropertyID, bool);
+    bool parseDashboardRegions(CSSPropertyID, bool important);
 
-    bool parseClipShape(CSSPropertyID, bool);
+    bool parseClipShape(CSSPropertyID, bool important);
 
     bool parseExclusionShape(bool shapeInside, bool important);
     PassRefPtr<CSSWrapShape> parseExclusionShapeRect(CSSParserValueList* args);
@@ -152,7 +152,7 @@ public:
     bool parseFont(bool important);
     PassRefPtr<CSSValueList> parseFontFamily();
 
-    bool parseCounter(CSSPropertyID, int, bool);
+    bool parseCounter(CSSPropertyID, int defaultValue, bool important);
     PassRefPtr<CSSValue> parseCounterContent(CSSParserValueList* args, bool counters);
 
     bool parseColorParameters(CSSParserValue*, int* colorValues, bool parseAlpha);
@@ -226,8 +226,8 @@ public:
 
     bool cssRegionsEnabled() const;
     bool parseFlowThread(const String& flowName, Document*);
-    bool parseFlowThread(CSSPropertyID, bool);
-    bool parseRegionThread(CSSPropertyID, bool);
+    bool parseFlowThread(CSSPropertyID, bool important);
+    bool parseRegionThread(CSSPropertyID, bool important);
 
     bool parseFontVariantLigatures(bool important);
 
@@ -369,7 +369,7 @@ private:
     bool isGeneratedImageValue(CSSParserValue*) const;
     bool parseGeneratedImage(CSSParserValueList*, RefPtr<CSSValue>&);
 
-    bool parseValue(StylePropertySet*, CSSPropertyID, const String&, bool important, CSSStyleSheet*);
+    bool parseValue(StylePropertySet*, CSSPropertyID, const String&, bool important, CSSStyleSheet* contextStyleSheet);
 
     enum SizeParameterType {
         None,
