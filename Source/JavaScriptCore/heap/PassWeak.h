@@ -105,7 +105,7 @@ template<typename Base, typename T> inline T& WeakImplAccessor<Base, T>::operato
 
 template<typename Base, typename T> inline typename WeakImplAccessor<Base, T>::GetType WeakImplAccessor<Base, T>::get() const
 {
-    if (!static_cast<const Base*>(this)->m_impl || static_cast<const Base*>(this)->m_impl->state() != WeakImpl::Live)
+    if (!static_cast<const Base*>(this)->m_impl || static_cast<const Base*>(this)->m_impl->state() != WeakImpl::Live || !static_cast<const Base*>(this)->m_impl->jsValue())
         return GetType();
     return jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell());
 }

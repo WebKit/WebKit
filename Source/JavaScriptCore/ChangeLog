@@ -1,3 +1,15 @@
+2012-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        [Qt] REGRESSION(r113141): All tests assert on 32 bit debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=83139
+
+        Reviewed by Sam Weinig.
+
+        * heap/PassWeak.h:
+        (JSC::::get): 32-bit JSValue treats JSValue(nullptr).asCell() as an error,
+        so work around that here. (Long-term, we should make 32-bit and 64-bit
+        agree on the right behavior.)
+
 2012-04-03  Geoffrey Garen  <ggaren@apple.com>
 
         Updated JSC expected test results to reflect recent bug fixes <disapproving look>.
