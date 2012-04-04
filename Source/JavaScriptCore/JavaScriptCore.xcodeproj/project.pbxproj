@@ -16,6 +16,19 @@
 			name = "LLInt Offsets";
 			productName = "Derived Sources";
 		};
+		5D6B2A47152B9E17005231DE /* Test Tools */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5D6B2A4C152B9E17005231DE /* Build configuration list for PBXAggregateTarget "Test Tools" */;
+			buildPhases = (
+			);
+			dependencies = (
+				5D6B2A4F152B9E23005231DE /* PBXTargetDependency */,
+				5D6B2A51152B9E23005231DE /* PBXTargetDependency */,
+				5D6B2A55152B9E23005231DE /* PBXTargetDependency */,
+			);
+			name = "Test Tools";
+			productName = "Test Tools";
+		};
 		65FB3F6609D11E9100F49DEB /* Derived Sources */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 65FB3F7709D11EBD00F49DEB /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
@@ -36,10 +49,8 @@
 			);
 			dependencies = (
 				932F5BE70822A1C700736975 /* PBXTargetDependency */,
-				141214BF0A49190E00480255 /* PBXTargetDependency */,
-				932F5BE90822A1C700736975 /* PBXTargetDependency */,
-				14BD59C70A3E8FA400BAF59C /* PBXTargetDependency */,
-				651123091404768B002B101D /* PBXTargetDependency */,
+				5D69E912152BE5470028D720 /* PBXTargetDependency */,
+				5D6B2A57152B9E2E005231DE /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = All;
@@ -629,26 +640,40 @@
 			remoteGlobalIDString = 0FF922C314F46B130041A24E;
 			remoteInfo = JSCLLIntOffsetsExtractor;
 		};
-		141214BE0A49190E00480255 /* PBXContainerItemProxy */ = {
+		5D69E911152BE5470028D720 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 932F5BDA0822A1C700736975;
+			remoteInfo = jsc;
+		};
+		5D6B2A4E152B9E23005231DE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 1412111F0A48793C00480255;
 			remoteInfo = minidom;
 		};
-		14BD59C60A3E8FA400BAF59C /* PBXContainerItemProxy */ = {
+		5D6B2A50152B9E23005231DE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 14BD59BE0A3E8F9000BAF59C;
 			remoteInfo = testapi;
 		};
-		651123081404768B002B101D /* PBXContainerItemProxy */ = {
+		5D6B2A54152B9E23005231DE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 651122F714046A4C002B101D;
 			remoteInfo = testRegExp;
+		};
+		5D6B2A56152B9E2E005231DE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5D6B2A47152B9E17005231DE;
+			remoteInfo = "Test Tools";
 		};
 		65FB3F7D09D11EF300F49DEB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -663,13 +688,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 932F5B3E0822A1C700736975;
 			remoteInfo = "JavaScriptCore (Upgraded)";
-		};
-		932F5BE80822A1C700736975 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 932F5BDA0822A1C700736975;
-			remoteInfo = "jsc (Upgraded)";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1154,7 +1172,7 @@
 		A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSONObject.cpp; sourceTree = "<group>"; };
 		A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyDescriptor.h; sourceTree = "<group>"; };
 		A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyDescriptor.cpp; sourceTree = "<group>"; };
-		A8A4748D151A8306004123FF /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libWTF.a; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8A4748D151A8306004123FF /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
 		BC021BF1136900C300FC5467 /* CompilerVersion.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CompilerVersion.xcconfig; sourceTree = "<group>"; };
@@ -2668,6 +2686,7 @@
 				651122F714046A4C002B101D /* testRegExp */,
 				0F4680A914BA7FD900BFE272 /* LLInt Offsets */,
 				0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */,
+				5D6B2A47152B9E17005231DE /* Test Tools */,
 			);
 		};
 /* End PBXProject section */
@@ -2776,11 +2795,11 @@
 			);
 			name = "Install Support Script";
 			outputPaths = (
-				"$(DSTROOT)$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/Resources/testapi.js",
+				"$(DSTROOT)$(INSTALL_PATH)/testapi.js",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${SKIP_INSTALL}\" == \"NO\" ]]; then\n    cp \"${SRCROOT}/API/tests/testapi.js\" \"${DSTROOT}${JAVASCRIPTCORE_FRAMEWORKS_DIR}/JavaScriptCore.framework/Resources\"\nfi\n";
+			shellScript = "if [[ \"${SKIP_INSTALL}\" == \"NO\" ]]; then\n    cp \"${SRCROOT}/API/tests/testapi.js\" \"${DSTROOT}${INSTALL_PATH}/testapi.js\"\nfi\n";
 		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3098,20 +3117,30 @@
 			target = 0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */;
 			targetProxy = 0FF922D514F46B600041A24E /* PBXContainerItemProxy */;
 		};
-		141214BF0A49190E00480255 /* PBXTargetDependency */ = {
+		5D69E912152BE5470028D720 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 932F5BDA0822A1C700736975 /* jsc */;
+			targetProxy = 5D69E911152BE5470028D720 /* PBXContainerItemProxy */;
+		};
+		5D6B2A4F152B9E23005231DE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1412111F0A48793C00480255 /* minidom */;
-			targetProxy = 141214BE0A49190E00480255 /* PBXContainerItemProxy */;
+			targetProxy = 5D6B2A4E152B9E23005231DE /* PBXContainerItemProxy */;
 		};
-		14BD59C70A3E8FA400BAF59C /* PBXTargetDependency */ = {
+		5D6B2A51152B9E23005231DE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 14BD59BE0A3E8F9000BAF59C /* testapi */;
-			targetProxy = 14BD59C60A3E8FA400BAF59C /* PBXContainerItemProxy */;
+			targetProxy = 5D6B2A50152B9E23005231DE /* PBXContainerItemProxy */;
 		};
-		651123091404768B002B101D /* PBXTargetDependency */ = {
+		5D6B2A55152B9E23005231DE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 651122F714046A4C002B101D /* testRegExp */;
-			targetProxy = 651123081404768B002B101D /* PBXContainerItemProxy */;
+			targetProxy = 5D6B2A54152B9E23005231DE /* PBXContainerItemProxy */;
+		};
+		5D6B2A57152B9E2E005231DE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5D6B2A47152B9E17005231DE /* Test Tools */;
+			targetProxy = 5D6B2A56152B9E2E005231DE /* PBXContainerItemProxy */;
 		};
 		65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3122,11 +3151,6 @@
 			isa = PBXTargetDependency;
 			target = 932F5B3E0822A1C700736975 /* JavaScriptCore */;
 			targetProxy = 932F5BE60822A1C700736975 /* PBXContainerItemProxy */;
-		};
-		932F5BE90822A1C700736975 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 932F5BDA0822A1C700736975 /* jsc */;
-			targetProxy = 932F5BE80822A1C700736975 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3321,6 +3345,34 @@
 			};
 			name = Production;
 		};
+		5D6B2A48152B9E17005231DE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5D6B2A49152B9E17005231DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5D6B2A4A152B9E17005231DE /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Profiling;
+		};
+		5D6B2A4B152B9E17005231DE /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 		6511230114046A4C002B101D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
@@ -3508,6 +3560,17 @@
 				14BD59D80A3E8FC900BAF59C /* Release */,
 				A76148420E6402F700E357FA /* Profiling */,
 				14BD59D90A3E8FC900BAF59C /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		5D6B2A4C152B9E17005231DE /* Build configuration list for PBXAggregateTarget "Test Tools" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D6B2A48152B9E17005231DE /* Debug */,
+				5D6B2A49152B9E17005231DE /* Release */,
+				5D6B2A4A152B9E17005231DE /* Profiling */,
+				5D6B2A4B152B9E17005231DE /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

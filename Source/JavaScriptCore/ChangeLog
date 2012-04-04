@@ -1,3 +1,15 @@
+2012-04-03  Mark Rowe  <mrowe@apple.com>
+
+        Make it possible to install the JavaScriptCore test tools.
+
+        Part of <rdar://problem/11158607>.
+        
+        Reviewed by Filip Pizlo.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Introduce an aggregate target named
+        Test Tools that builds testapi, minidom and testRegExp. Switch All from depending on
+        those targets individually to depending on the new aggregate target.
+
 2012-04-03  Filip Pizlo  <fpizlo@apple.com>
 
         Offlineasm ARM backend has a very convoluted way of saying it wants to emit a
