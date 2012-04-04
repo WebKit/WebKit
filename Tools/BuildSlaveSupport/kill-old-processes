@@ -55,11 +55,13 @@ def main():
     ]
 
     tasksToKillMac = [
+        "apache2",
         "cc1plus",
         "cc1objplus",
         "clang",
         "clang++",
         "gcc-4.2",
+        "httpd",
         "i686-apple-darwin10-gcc-4.2.1",
         "jsc",
         "make",
@@ -82,9 +84,11 @@ def main():
     ]
 
     taskToKillUnix = [
+        "apache2",
         "cc1plus",
         "DumpRenderTree",
         "gold",
+        "httpd",
         "ld",
         "make",
         "ruby",
