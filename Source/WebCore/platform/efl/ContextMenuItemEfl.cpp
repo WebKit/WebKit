@@ -28,6 +28,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenuItem.h"
 
 #include "NotImplemented.h"
@@ -129,3 +132,4 @@ PlatformMenuDescription ContextMenuItem::platformSubMenu() const
 }  
 #endif
 }
+#endif // ENABLE(CONTEXT_MENUS)

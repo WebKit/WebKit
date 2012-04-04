@@ -402,6 +402,7 @@ void webkit_set_text_checker(GObject* checker)
  */
 WebKitContextMenuAction webkit_context_menu_item_get_action(GtkMenuItem* item)
 {
+#if ENABLE(CONTEXT_MENUS)
     g_return_val_if_fail(GTK_IS_MENU_ITEM(item), WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION);
 
     ContextMenuItem menuItem(item);
@@ -485,6 +486,9 @@ WebKitContextMenuAction webkit_context_menu_item_get_action(GtkMenuItem* item)
     default:
         g_assert_not_reached();
     }
+#else
+    return WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION;
+#endif
 }
 
 void webkitInit()

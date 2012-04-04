@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenuItem.h"
 
 #include "ContextMenu.h"
@@ -271,3 +273,5 @@ GtkAction* ContextMenuItem::gtkAction() const
 }
 
 }
+
+#endif // ENABLE(CONTEXT_MENUS)

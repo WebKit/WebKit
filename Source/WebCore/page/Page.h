@@ -53,8 +53,10 @@ namespace WebCore {
     class BackForwardList;
     class Chrome;
     class ChromeClient;
+#if ENABLE(CONTEXT_MENUS)
     class ContextMenuClient;
     class ContextMenuController;
+#endif
     class Document;
     class DragCaretController;
     class DragClient;
@@ -102,7 +104,9 @@ namespace WebCore {
             ~PageClients();
 
             ChromeClient* chromeClient;
+#if ENABLE(CONTEXT_MENUS)
             ContextMenuClient* contextMenuClient;
+#endif
             EditorClient* editorClient;
             DragClient* dragClient;
             InspectorClient* inspectorClient;

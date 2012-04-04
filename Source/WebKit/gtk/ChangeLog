@@ -1,3 +1,21 @@
+2012-04-04  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
+
+        Fix build break when CONTEXT_MENUS is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=82342
+
+        Reviewed by Andreas Kling.
+
+        Fixes build break in WebKit-Gtk, and WebKit-EFL ports when CONTEXT_MENUS macro is disabled.
+
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        * WebCoreSupport/ContextMenuClientGtk.h:
+        * webkit/webkitglobals.cpp:
+        (webkit_context_menu_item_get_action):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_button_press_event):
+        (webkit_web_view_class_init):
+        (webkit_web_view_init):
+
 2012-04-03  Simon Pena  <spena@igalia.com>
 
         [GTK] DRT missing didRunInsecureContent notification

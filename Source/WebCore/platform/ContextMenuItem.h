@@ -27,6 +27,8 @@
 #ifndef ContextMenuItem_h
 #define ContextMenuItem_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "PlatformMenuDescription.h"
 #include "PlatformString.h"
 #include <wtf/OwnPtr.h>
@@ -303,4 +305,5 @@ namespace WebCore {
 
 }
 
+#endif // ENABLE(CONTEXT_MENUS)
 #endif // ContextMenuItem_h

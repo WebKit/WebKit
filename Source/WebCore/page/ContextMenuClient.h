@@ -26,6 +26,8 @@
 #ifndef ContextMenuClient_h
 #define ContextMenuClient_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenu.h"
 #include "PlatformMenuDescription.h"
 #include <wtf/Forward.h>
@@ -67,4 +69,5 @@ namespace WebCore {
     };
 }
 
+#endif // ENABLE(CONTEXT_MENUS)
 #endif

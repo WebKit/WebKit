@@ -18,6 +18,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenu.h"
 
 #include <wtf/gobject/GOwnPtr.h>
@@ -113,3 +116,5 @@ PlatformMenuDescription platformMenuDescription(Vector<ContextMenuItem>& subMenu
 }
 
 }
+
+#endif // ENABLE(CONTEXT_MENUS)

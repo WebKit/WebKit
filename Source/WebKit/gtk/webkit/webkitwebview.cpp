@@ -275,6 +275,7 @@ static void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWe
 
 static GtkIMContext* webkit_web_view_get_im_context(WebKitWebView*);
 
+#if ENABLE(CONTEXT_MENUS)
 static void PopupMenuPositionFunc(GtkMenu* menu, gint *x, gint *y, gboolean *pushIn, gpointer userData)
 {
     WebKitWebView* view = WEBKIT_WEB_VIEW(userData);
@@ -298,6 +299,7 @@ static void PopupMenuPositionFunc(GtkMenu* menu, gint *x, gint *y, gboolean *pus
 
     *pushIn = FALSE;
 }
+#endif
 
 static Node* getFocusedNode(Frame* frame)
 {
@@ -306,6 +308,7 @@ static Node* getFocusedNode(Frame* frame)
     return 0;
 }
 
+#if ENABLE(CONTEXT_MENUS)
 static void contextMenuItemActivated(GtkMenuItem* item, ContextMenuController* controller)
 {
     ContextMenuItem contextItem(item);
@@ -462,6 +465,7 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
     PlatformMouseEvent event(location, globalPoint, RightButton, PlatformEvent::MousePressed, 0, false, false, false, false, gtk_get_current_event_time());
     return webkit_web_view_forward_context_menu_event(WEBKIT_WEB_VIEW(widget), event, true);
 }
+#endif // ENABLE(CONTEXT_MENUS)
 
 static void setHorizontalAdjustment(WebKitWebView* webView, GtkAdjustment* adjustment)
 {
@@ -760,8 +764,10 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
     int count = priv->clickCounter.clickCountForGdkButtonEvent(widget, event);
     platformEvent.setClickCount(count);
 
+#if ENABLE(CONTEXT_MENUS)
     if (event->button == 3)
         return webkit_web_view_forward_context_menu_event(webView, PlatformMouseEvent(event), false);
+#endif
 
     Frame* frame = core(webView)->mainFrame();
     if (!frame->view())
@@ -2933,7 +2939,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     widgetClass->get_preferred_width = webkit_web_view_get_preferred_width;
     widgetClass->get_preferred_height = webkit_web_view_get_preferred_height;
 #endif
+#if ENABLE(CONTEXT_MENUS)
     widgetClass->popup_menu = webkit_web_view_popup_menu_handler;
+#else
+    widgetClass->popup_menu = NULL;
+#endif
     widgetClass->grab_focus = webkit_web_view_grab_focus;
     widgetClass->focus_in_event = webkit_web_view_focus_in_event;
     widgetClass->focus_out_event = webkit_web_view_focus_out_event;
@@ -3564,7 +3574,9 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     Page::PageClients pageClients;
     pageClients.chromeClient = new WebKit::ChromeClient(webView);
+#if ENABLE(CONTEXT_MENUS)
     pageClients.contextMenuClient = new WebKit::ContextMenuClient(webView);
+#endif
     pageClients.editorClient = new WebKit::EditorClient(webView);
     pageClients.dragClient = new WebKit::DragClient(webView);
     pageClients.inspectorClient = new WebKit::InspectorClient(webView);

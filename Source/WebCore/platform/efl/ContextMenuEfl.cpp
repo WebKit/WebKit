@@ -20,6 +20,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenu.h"
 
 #include "NotImplemented.h"
@@ -101,3 +104,4 @@ Vector<ContextMenuItem> contextMenuItemVector(const Vector<ContextMenuItem>* ite
 #endif
 
 }
+#endif // ENABLE(CONTEXT_MENUS)

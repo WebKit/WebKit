@@ -18,6 +18,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenuClientGtk.h"
 
 #include "ContextMenu.h"
@@ -160,4 +163,6 @@ bool ContextMenuClient::isSpeaking()
 }
 
 }
+
+#endif // ENABLE(CONTEXT_MENUS)
 

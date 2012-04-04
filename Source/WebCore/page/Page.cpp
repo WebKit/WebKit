@@ -1112,7 +1112,9 @@ void Page::resumeActiveDOMObjectsAndAnimations()
 
 Page::PageClients::PageClients()
     : chromeClient(0)
+#if ENABLE(CONTEXT_MENUS)
     , contextMenuClient(0)
+#endif
     , editorClient(0)
     , dragClient(0)
     , inspectorClient(0)

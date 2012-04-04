@@ -26,6 +26,8 @@
 #ifndef ContextMenuClientGtk_h
 #define ContextMenuClientGtk_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenuClient.h"
 
 typedef struct _WebKitWebView WebKitWebView;
@@ -59,4 +61,5 @@ namespace WebKit {
     };
 }
 
+#endif // ENABLE(CONTEXT_MENUS)
 #endif

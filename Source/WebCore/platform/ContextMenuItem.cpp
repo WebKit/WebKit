@@ -28,7 +28,7 @@
 
 #include "ContextMenu.h"
 
-#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+#if ENABLE(CONTEXT_MENUS) && USE(CROSS_PLATFORM_CONTEXT_MENUS)
 
 namespace WebCore {
 
@@ -119,4 +119,4 @@ bool ContextMenuItem::enabled() const
 
 } // namespace WebCore
 
-#endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)
+#endif // ENABLE(CONTEXT_MENUS) && USE(CROSS_PLATFORM_CONTEXT_MENUS)
