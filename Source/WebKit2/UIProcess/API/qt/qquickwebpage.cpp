@@ -31,7 +31,7 @@
 #include <QtQuick/QQuickCanvas>
 
 QQuickWebPage::QQuickWebPage(QQuickWebView* viewportItem)
-    : QQuickItem(viewportItem)
+    : QQuickItem(viewportItem->contentItem())
     , d(new QQuickWebPagePrivate(this, viewportItem))
 {
     setFlag(ItemHasContents);

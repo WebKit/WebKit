@@ -23,7 +23,6 @@
 #include "QtViewportInteractionEngine.h"
 
 #include "PassOwnPtr.h"
-#include "QtFlickProvider.h"
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
 #include <QPointF>
@@ -120,10 +119,9 @@ inline QRectF QtViewportInteractionEngine::itemRectFromCSS(const QRectF& cssRect
     return itemRect;
 }
 
-QtViewportInteractionEngine::QtViewportInteractionEngine(QQuickWebView* viewport, QQuickWebPage* content, QtFlickProvider* flickProvider)
+QtViewportInteractionEngine::QtViewportInteractionEngine(QQuickWebView* viewport, QQuickWebPage* content)
     : m_viewport(viewport)
     , m_content(content)
-    , m_flickProvider(flickProvider)
     , m_suspendCount(0)
     , m_hasSuspendedContent(false)
     , m_hadUserInteraction(false)
@@ -134,8 +132,8 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(QQuickWebView* viewport
 
     connect(m_content, SIGNAL(widthChanged()), SLOT(itemSizeChanged()), Qt::DirectConnection);
     connect(m_content, SIGNAL(heightChanged()), SLOT(itemSizeChanged()), Qt::DirectConnection);
-    connect(m_flickProvider, SIGNAL(movementStarted()), SLOT(flickableMoveStarted()), Qt::DirectConnection);
-    connect(m_flickProvider, SIGNAL(movementEnded()), SLOT(flickableMoveEnded()), Qt::DirectConnection);
+    connect(m_viewport, SIGNAL(movementStarted()), SLOT(flickableMoveStarted()), Qt::DirectConnection);
+    connect(m_viewport, SIGNAL(movementEnded()), SLOT(flickableMoveEnded()), Qt::DirectConnection);
 
     connect(m_scaleAnimation, SIGNAL(valueChanged(QVariant)),
             SLOT(scaleAnimationValueChanged(QVariant)), Qt::DirectConnection);
@@ -178,7 +176,7 @@ void QtViewportInteractionEngine::setItemRectVisible(const QRectF& itemRect)
     // and add it to the page position (displacement on the flickable contentItem because of additional items).
     QPointF newPosition(m_content->pos() + (itemRect.topLeft() * itemScale));
 
-    m_flickProvider->setContentPos(newPosition);
+    m_viewport->setContentPos(newPosition);
 }
 
 bool QtViewportInteractionEngine::animateItemRectVisible(const QRectF& itemRect)
@@ -199,28 +197,28 @@ bool QtViewportInteractionEngine::animateItemRectVisible(const QRectF& itemRect)
 
 void QtViewportInteractionEngine::flickableMoveStarted()
 {
-    Q_ASSERT(m_flickProvider->isMoving());
+    Q_ASSERT(m_viewport->isMoving());
     m_scrollUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
 
-    m_lastScrollPosition = m_flickProvider->contentPos();
-    connect(m_flickProvider, SIGNAL(contentXChanged()), SLOT(flickableMovingPositionUpdate()));
-    connect(m_flickProvider, SIGNAL(contentYChanged()), SLOT(flickableMovingPositionUpdate()));
+    m_lastScrollPosition = m_viewport->contentPos();
+    connect(m_viewport, SIGNAL(contentXChanged()), SLOT(flickableMovingPositionUpdate()));
+    connect(m_viewport, SIGNAL(contentYChanged()), SLOT(flickableMovingPositionUpdate()));
 }
 
 void QtViewportInteractionEngine::flickableMoveEnded()
 {
-    Q_ASSERT(!m_flickProvider->isMoving());
+    Q_ASSERT(!m_viewport->isMoving());
     // This method is called on the end of the pan or pan kinetic animation.
     m_scrollUpdateDeferrer.clear();
 
     m_lastScrollPosition = QPointF();
-    disconnect(m_flickProvider, SIGNAL(contentXChanged()), this, SLOT(flickableMovingPositionUpdate()));
-    disconnect(m_flickProvider, SIGNAL(contentYChanged()), this, SLOT(flickableMovingPositionUpdate()));
+    disconnect(m_viewport, SIGNAL(contentXChanged()), this, SLOT(flickableMovingPositionUpdate()));
+    disconnect(m_viewport, SIGNAL(contentYChanged()), this, SLOT(flickableMovingPositionUpdate()));
 }
 
 void QtViewportInteractionEngine::flickableMovingPositionUpdate()
 {
-    QPointF newPosition = m_flickProvider->contentPos();
+    QPointF newPosition = m_viewport->contentPos();
 
     emit contentViewportChanged(m_lastScrollPosition - newPosition);
 
@@ -231,13 +229,12 @@ void QtViewportInteractionEngine::scaleAnimationStateChanged(QAbstractAnimation:
 {
     switch (newState) {
     case QAbstractAnimation::Running:
-        m_flickProvider->cancelFlick();
+        m_viewport->cancelFlick();
         if (!m_scaleUpdateDeferrer)
             m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
         break;
     case QAbstractAnimation::Stopped:
         m_scaleUpdateDeferrer.clear();
-        m_flickProvider->contentItem()->parentItem()->setProperty("interactive", true);
         break;
     default:
         break;
@@ -256,7 +253,6 @@ void QtViewportInteractionEngine::wheelEvent(QWheelEvent* ev)
         return; // Ignore.
 
     int delta = ev->delta();
-    QPointF newPos = -m_content->pos();
 
     // A delta that is not mod 120 indicates a device that is sending
     // fine-resolution scroll events, so use the delta as number of wheel ticks
@@ -270,16 +266,18 @@ void QtViewportInteractionEngine::wheelEvent(QWheelEvent* ev)
     delta = (fullTick) ? delta / 120.0f : delta;
     delta *= scrollLines;
 
+    QPointF newPosition = m_viewport->contentPos();
+
     if (ev->orientation() == Qt::Horizontal)
-        newPos.rx() += delta;
+        newPosition.rx() += delta;
     else
-        newPos.ry() += delta;
+        newPosition.ry() += delta;
 
     QRectF endPosRange = computePosRangeForItemAtScale(m_content->contentsScale());
 
-    QPointF currentPosition = m_flickProvider->contentPos();
-    QPointF newPosition = -boundPosition(endPosRange.topLeft(), newPos, endPosRange.bottomRight());
-    m_flickProvider->setContentPos(newPosition);
+    QPointF currentPosition = m_viewport->contentPos();
+    newPosition = boundPosition(endPosRange.topLeft(), newPosition, endPosRange.bottomRight());
+    m_viewport->setContentPos(newPosition);
 
     emit contentViewportChanged(currentPosition - newPosition);
 }
@@ -421,7 +419,7 @@ void QtViewportInteractionEngine::reset()
 
     m_hadUserInteraction = false;
 
-    m_flickProvider->cancelFlick();
+    m_viewport->cancelFlick();
     m_scaleAnimation->stop();
     m_scaleUpdateDeferrer.clear();
     m_scrollUpdateDeferrer.clear();
@@ -455,30 +453,31 @@ qreal QtViewportInteractionEngine::currentCSSScale()
 
 bool QtViewportInteractionEngine::scrollAnimationActive() const
 {
-    return m_flickProvider->isFlicking();
+    return m_viewport->isFlicking();
 }
 
 bool QtViewportInteractionEngine::panGestureActive() const
 {
-    return m_flickProvider->isDragging();
+    return m_viewport->isDragging();
 }
 
-void QtViewportInteractionEngine::panGestureStarted(const QTouchEvent* event)
+void QtViewportInteractionEngine::panGestureStarted(const QPointF& position, qint64 eventTimestampMillis)
 {
     m_hadUserInteraction = true;
-
-    ASSERT(event->type() == QEvent::TouchBegin);
-
-    m_flickProvider->handleTouchFlickEvent(const_cast<QTouchEvent*>(event));
-    m_lastPinchCenterInViewportCoordinates = event->touchPoints().first().pos();
+    m_viewport->handleFlickableMousePress(position, eventTimestampMillis);
+    m_lastPinchCenterInViewportCoordinates = position;
 }
 
-void QtViewportInteractionEngine::panGestureRequestUpdate(const QTouchEvent* event)
+void QtViewportInteractionEngine::panGestureRequestUpdate(const QPointF& position, qint64 eventTimestampMillis)
 {
-    ASSERT(event->type() == QEvent::TouchUpdate);
+    m_viewport->handleFlickableMouseMove(position, eventTimestampMillis);
+    m_lastPinchCenterInViewportCoordinates = position;
+}
 
-    m_flickProvider->handleTouchFlickEvent(const_cast<QTouchEvent*>(event));
-    m_lastPinchCenterInViewportCoordinates = event->touchPoints().first().pos();
+void QtViewportInteractionEngine::panGestureEnded(const QPointF& position, qint64 eventTimestampMillis)
+{
+    m_viewport->handleFlickableMouseRelease(position, eventTimestampMillis);
+    m_lastPinchCenterInViewportCoordinates = position;
 }
 
 void QtViewportInteractionEngine::panGestureCancelled()
@@ -490,14 +489,7 @@ void QtViewportInteractionEngine::panGestureCancelled()
     // back inside valid bounds.
     // When the pinch gesture ends, the content is positioned and scaled
     // back to valid boundaries.
-    m_flickProvider->cancelFlick();
-}
-
-void QtViewportInteractionEngine::panGestureEnded(const QTouchEvent* event)
-{
-    ASSERT(event->type() == QEvent::TouchEnd);
-    m_flickProvider->handleTouchFlickEvent(const_cast<QTouchEvent*>(event));
-    m_lastPinchCenterInViewportCoordinates = event->touchPoints().first().pos();
+    m_viewport->cancelFlick();
 }
 
 bool QtViewportInteractionEngine::scaleAnimationActive() const
@@ -514,7 +506,7 @@ void QtViewportInteractionEngine::cancelScrollAnimation()
     // pan gesture, the animation is stopped and the content is
     // immediately positioned back to valid boundaries.
 
-    m_flickProvider->cancelFlick();
+    m_viewport->cancelFlick();
     ensureContentWithinViewportBoundary(/*immediate*/ true);
 }
 
@@ -535,9 +527,6 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
         return;
 
     m_hadUserInteraction = true;
-
-    m_flickProvider->cancelFlick();
-    m_flickProvider->contentItem()->parentItem()->setProperty("interactive", false);
 
     m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
 
@@ -567,7 +556,7 @@ void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinch
     const QPointF positionDiff = pinchCenterInViewportCoordinates - m_lastPinchCenterInViewportCoordinates;
     m_lastPinchCenterInViewportCoordinates = pinchCenterInViewportCoordinates;
 
-    m_flickProvider->setContentPos(m_flickProvider->contentPos() - positionDiff);
+    m_viewport->setContentPos(m_viewport->contentPos() - positionDiff);
 }
 
 void QtViewportInteractionEngine::pinchGestureEnded()
@@ -579,11 +568,8 @@ void QtViewportInteractionEngine::pinchGestureEnded()
 
     m_pinchStartScale = -1;
     // Clear the update deferrer now if we're in our final position and there won't be any animation to clear it later.
-    if (ensureContentWithinViewportBoundary()) {
+    if (ensureContentWithinViewportBoundary())
         m_scaleUpdateDeferrer.clear();
-        m_flickProvider->cancelFlick();
-        m_flickProvider->contentItem()->parentItem()->setProperty("interactive", true);
-    }
 }
 
 void QtViewportInteractionEngine::itemSizeChanged()
@@ -602,7 +588,7 @@ void QtViewportInteractionEngine::scaleContent(const QPointF& centerInCSSCoordin
     m_content->setContentsScale(itemScaleFromCSS(cssScale));
     QPointF newPinchCenterOnViewport = m_viewport->mapFromWebContent(centerInCSSCoordinates);
 
-    m_flickProvider->setContentPos(m_flickProvider->contentPos() + (newPinchCenterOnViewport - oldPinchCenterOnViewport));
+    m_viewport->setContentPos(m_viewport->contentPos() + (newPinchCenterOnViewport - oldPinchCenterOnViewport));
 }
 
 #include "moc_QtViewportInteractionEngine.cpp"

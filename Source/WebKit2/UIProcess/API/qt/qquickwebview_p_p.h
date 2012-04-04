@@ -23,7 +23,6 @@
 
 #include "DrawingAreaProxy.h"
 #include "QtDialogRunner.h"
-#include "QtFlickProvider.h"
 #include "QtPageClient.h"
 #include "QtViewportInteractionEngine.h"
 #include "QtWebPageLoadClient.h"
@@ -117,6 +116,9 @@ public:
     bool transparentBackground() const;
     void setNavigatorQtObjectEnabled(bool);
 
+    QPointF contentPos() const;
+    void setContentPos(const QPointF&);
+
     QRect visibleContentsRect() const;
 
     void setDialogActive(bool active) { m_dialogActive = active; }
@@ -147,7 +149,6 @@ protected:
 
     QScopedPointer<QQuickWebPage> pageView;
     QQuickWebView* q_ptr;
-    QtFlickProvider* flickProvider;
 
     QDeclarativeComponent* alertDialog;
     QDeclarativeComponent* confirmDialog;
@@ -161,8 +162,7 @@ protected:
 
     WebCore::ViewportArguments viewportArguments;
 
-    bool userDidOverrideContentWidth;
-    bool userDidOverrideContentHeight;
+    bool m_useDefaultContentItemSize;
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;
     bool m_loadStartedSignalSent;

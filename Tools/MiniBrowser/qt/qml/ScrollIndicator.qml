@@ -29,14 +29,13 @@ import QtQuick 2.0
 
 Item {
     id: root
-    z: 1
-
-    anchors {
-        fill: parent
-        margins: 5
-    }
 
     property Flickable flickableItem
+
+    anchors {
+        fill: flickableItem
+        margins: 5
+    }
 
     property bool __movingHorizontally: flickableItem ? flickableItem.movingHorizontally : false
     property bool __movingVertically: flickableItem ? flickableItem.movingVertically : false

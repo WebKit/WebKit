@@ -453,7 +453,7 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
         // The interaction engine might still be animating kinetic scrolling or a scale animation
         // such as double-tap to zoom or the bounce back effect. A touch stops the kinetic scrolling
         // where as it does not stop the scale animation.
-        // Sending the event to the flickProvider will stop the kinetic scrolling animation.
+        // The gesture recognizer stops the kinetic scrolling animation if needed.
         break;
     case QEvent::TouchUpdate:
         // The scale animation can only be interrupted by a pinch gesture, which will then take over.

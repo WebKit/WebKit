@@ -33,7 +33,6 @@
 QT_BEGIN_NAMESPACE
 class QPointF;
 class QQuickItem;
-class QtFlickProvider;
 class QQuickWebPage;
 class QQuickWebView;
 class QWheelEvent;
@@ -47,7 +46,7 @@ class QtViewportInteractionEngine : public QObject {
     Q_OBJECT
 
 public:
-    QtViewportInteractionEngine(QQuickWebView*, QQuickWebPage*, QtFlickProvider*);
+    QtViewportInteractionEngine(QQuickWebView*, QQuickWebPage*);
     ~QtViewportInteractionEngine();
 
     struct Constraints {
@@ -83,10 +82,10 @@ public:
     void cancelScrollAnimation();
 
     bool panGestureActive() const;
-    void panGestureStarted(const QTouchEvent*);
-    void panGestureRequestUpdate(const QTouchEvent*);
+    void panGestureStarted(const QPointF& position, qint64 eventTimestampMillis);
+    void panGestureRequestUpdate(const QPointF& position, qint64 eventTimestampMillis);
+    void panGestureEnded(const QPointF& position, qint64 eventTimestampMillis);
     void panGestureCancelled();
-    void panGestureEnded(const QTouchEvent*);
 
     bool scaleAnimationActive() const;
     void interruptScaleAnimation();
@@ -141,8 +140,6 @@ private:
 
     QQuickWebView* const m_viewport;
     QQuickWebPage* const m_content;
-
-    QtFlickProvider* const m_flickProvider;
 
     Constraints m_constraints;
 

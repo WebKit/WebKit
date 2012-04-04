@@ -76,16 +76,16 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event)
 
             m_state = GestureRecognized;
             ASSERT(m_touchBegin);
-            interactionEngine()->panGestureStarted(m_touchBegin.data());
+            interactionEngine()->panGestureStarted(touchPoint.pos(), event->timestamp());
         }
 
         ASSERT(m_state == GestureRecognized);
-        interactionEngine()->panGestureRequestUpdate(event);
+        interactionEngine()->panGestureRequestUpdate(touchPoint.pos(), event->timestamp());
         return true;
     }
     case QEvent::TouchEnd:
         if (m_state == GestureRecognized) {
-            interactionEngine()->panGestureEnded(event);
+            interactionEngine()->panGestureEnded(touchPoint.pos(), event->timestamp());
             reset();
             return true;
         }

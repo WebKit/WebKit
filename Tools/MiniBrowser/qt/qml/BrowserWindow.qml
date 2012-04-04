@@ -326,10 +326,10 @@ Rectangle {
                 }
             }
         }
+    }
 
-        ScrollIndicator {
-            flickableItem: webView.experimental.flickable
-        }
+    ScrollIndicator {
+        flickableItem: webView
     }
 
     ViewportInfoItem {

@@ -1,3 +1,92 @@
+2012-04-04  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Make the WebView a subclass of Flickable
+        https://bugs.webkit.org/show_bug.cgi?id=83033
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Hitherto, the experiment of a QML WebView with an internal Flickable
+        instance showed that the approach of hiding the Flickable raises more
+        problems than it solves.
+
+        One set of problems arose because the internal Flickable was a separate
+        item which received and reacted on automatically synthesized mouse events
+        send by the canvas, this interfered with the gesture recognizers of the
+        WebView.
+
+        Other issues were related to orientation and the integration of the
+        WebView item with other QML items and components (like scroll indicators)
+        which require a larger set of the Flickable API or the Flickable object
+        itself (e.g. ScrollDecorator).
+
+        These disadvantages of an internal Flickable instance outweigh the
+        benefits of controlling the exposed API, therefore the experiment had
+        the conclusion that there is no way around the public inheritance from
+        QQuickFlickable.
+
+        This patch removes the QtFlickProvider class, inherits QQuickWebView
+        from QQuickFlickable and adjusts the viewport interaction engine and
+        the gesture recognizers to use the Flickable API of the WebView to
+        keep the same behaviour as before.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::QQuickWebPage):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewFlickablePrivate::initialize):
+        (QQuickWebViewFlickablePrivate::pageItemPos):
+        (QQuickWebViewFlickablePrivate::updateContentsSize):
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        (QQuickWebViewExperimental::useDefaultContentItemSize):
+        (QQuickWebViewExperimental::setUseDefaultContentItemSize):
+        (QQuickWebView::QQuickWebView):
+        (QQuickWebView::inputMethodQuery):
+        (QQuickWebView::geometryChanged):
+        (QQuickWebView::componentComplete):
+        (QQuickWebView::event):
+        (QQuickWebView::contentPos):
+        (QQuickWebView::setContentPos):
+        (QQuickWebView::handlePress):
+        (QQuickWebView::handleMove):
+        (QQuickWebView::handleRelease):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::scrollRequest):
+        * UIProcess/API/qt/tests/tests.pri:
+        * UIProcess/qt/QtFlickProvider.cpp: Removed.
+        * UIProcess/qt/QtFlickProvider.h: Removed.
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::recognize):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::setItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::flickableMoveStarted):
+        (WebKit::QtViewportInteractionEngine::flickableMoveEnded):
+        (WebKit::QtViewportInteractionEngine::flickableMovingPositionUpdate):
+        (WebKit::QtViewportInteractionEngine::scaleAnimationStateChanged):
+        (WebKit::QtViewportInteractionEngine::wheelEvent):
+        (WebKit::QtViewportInteractionEngine::reset):
+        (WebKit::QtViewportInteractionEngine::scrollAnimationActive):
+        (WebKit::QtViewportInteractionEngine::panGestureActive):
+        (WebKit::QtViewportInteractionEngine::panGestureStarted):
+        (WebKit::QtViewportInteractionEngine::panGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::panGestureEnded):
+        (WebKit::QtViewportInteractionEngine::panGestureCancelled):
+        (WebKit::QtViewportInteractionEngine::cancelScrollAnimation):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::QtViewportInteractionEngine::pinchGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::pinchGestureEnded):
+        (WebKit::QtViewportInteractionEngine::scaleContent):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::doneWithTouchEvent):
+
 2012-04-04  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Unable to zoom to some areas.
