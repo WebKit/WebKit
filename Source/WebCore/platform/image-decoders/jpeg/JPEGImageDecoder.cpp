@@ -83,6 +83,14 @@ inline J_DCT_METHOD dctMethod() { return JDCT_ISLOW; }
 inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_RGB; }
 #endif
 
+#if OS(ANDROID)
+inline J_DITHER_MODE ditherMode() { return JDITHER_NONE; }
+inline bool doFancyUpsampling() { return false; }
+#else
+inline J_DITHER_MODE ditherMode() { return JDITHER_FS; }
+inline bool doFancyUpsampling() { return true; }
+#endif
+
 namespace WebCore {
 
 struct decoder_error_mgr {
@@ -306,8 +314,8 @@ public:
             // FIXME -- Should reset dct_method and dither mode for final pass
             // of progressive JPEG.
             m_info.dct_method = dctMethod();
-            m_info.dither_mode = JDITHER_FS;
-            m_info.do_fancy_upsampling = true;
+            m_info.dither_mode = ditherMode();
+            m_info.do_fancy_upsampling = doFancyUpsampling();
             m_info.enable_2pass_quant = false;
             m_info.do_block_smoothing = true;
 
