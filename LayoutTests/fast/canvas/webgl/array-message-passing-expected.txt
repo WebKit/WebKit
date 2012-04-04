@@ -23,6 +23,30 @@ PASS DataView1: buffer lengths are 1
 PASS DataView1: buffers have the same contents
 PASS DataView1: offset is 0
 PASS DataView1: length is 1
+PASS DataView1-dup: classes are [object DataView]
+PASS DataView1-dup: classes are [object ArrayBuffer]
+PASS DataView1-dup: buffer lengths are 1
+PASS DataView1-dup: buffers have the same contents
+PASS DataView1-dup: offset is 0
+PASS DataView1-dup: length is 1
+PASS DataView1-dup: classes are [object DataView]
+PASS DataView1-dup: classes are [object ArrayBuffer]
+PASS DataView1-dup: buffer lengths are 1
+PASS DataView1-dup: buffers have the same contents
+PASS DataView1-dup: offset is 0
+PASS DataView1-dup: length is 1
+PASS DataView1-dup2: classes are [object DataView]
+PASS DataView1-dup2: classes are [object ArrayBuffer]
+PASS DataView1-dup2: buffer lengths are 1
+PASS DataView1-dup2: buffers have the same contents
+PASS DataView1-dup2: offset is 0
+PASS DataView1-dup2: length is 1
+PASS DataView1-dup2: classes are [object DataView]
+PASS DataView1-dup2: classes are [object ArrayBuffer]
+PASS DataView1-dup2: buffer lengths are 1
+PASS DataView1-dup2: buffers have the same contents
+PASS DataView1-dup2: offset is 0
+PASS DataView1-dup2: length is 1
 PASS DataView128: classes are [object DataView]
 PASS DataView128: classes are [object ArrayBuffer]
 PASS DataView128: buffer lengths are 128

@@ -69,13 +69,42 @@ function typedArrayCompare(testName, got, sent) {
         testFailed(testName + ": expected BYTES_PER_ELEMENT " + sent.BYTES_PER_ELEMENT + ", saw " + got.BYTES_PER_ELEMENT);
         return false;
     }
+    return true;
 }
 
 function dataViewCompare(testName, got, sent) {
-    if (!viewCompare(testName, got, sent)) {
+    return viewCompare(testName, got, sent);
+}
+
+function dataViewCompare2(testName, got, sent) {
+    for (var i = 0; i < 2; ++i) {
+        if (!dataViewCompare(testName, got[i], sent[i])) {
+            return false;
+        }
+    }
+    if (got[0].buffer !== got[1].buffer) {
+        testFailed(testName + ": expected the same ArrayBuffer for both views");
         return false;
     }
+    return true;
 }
+function dataViewCompare3(testName, got, sent) {
+    for (var i = 0; i < 3; i += 2) {
+        if (!dataViewCompare(testName, got[i], sent[i])) {
+            return false;
+        }
+    }
+    if (got[1].x !== sent[1].x || got[1].y !== sent[1].y) {
+        testFailed(testName + ": {x:1, y:1} was not transferred properly");
+        return false;
+    }
+    if (got[0].buffer !== got[2].buffer) {
+        testFailed(testName + ": expected the same ArrayBuffer for both views");
+        return false;
+    }
+    return false;
+}
+
 
 function createBuffer(length) {
     var buffer = new ArrayBuffer(length);
@@ -115,12 +144,16 @@ var basicBufferTypes = [
     ["Float64", Float64Array, 8]
 ];
 
+var arrayBuffer1 = createBuffer(1);
+
 var testList = [
     ['ArrayBuffer0', new ArrayBuffer(0), bufferCompare],
     ['ArrayBuffer1', createBuffer(1), bufferCompare],
     ['ArrayBuffer128', createBuffer(128), bufferCompare],
     ['DataView0', new DataView(new ArrayBuffer(0)), dataViewCompare],
     ['DataView1', new DataView(createBuffer(1)), dataViewCompare],
+    ['DataView1-dup', [new DataView(arrayBuffer1), new DataView(arrayBuffer1)], dataViewCompare2],
+    ['DataView1-dup2', [new DataView(arrayBuffer1), {x:1, y:1}, new DataView(arrayBuffer1)], dataViewCompare3],
     ['DataView128', new DataView(createBuffer(128)), dataViewCompare],
     ['DataView1_offset_at_end', new DataView(createBuffer(1), 1, 0), dataViewCompare],
     ['DataView128_offset_at_end', new DataView(createBuffer(128), 128, 0), dataViewCompare],
