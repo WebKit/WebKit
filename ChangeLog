@@ -1,3 +1,13 @@
+2012-04-03  Tony Chang  <tony@chromium.org>
+
+        remove WebKit files from .gitattributes
+        https://bugs.webkit.org/show_bug.cgi?id=82966
+
+        Reviewed by Adam Barth.
+
+        * .gitattributes: These entries were never updated from the move to
+        Source/WebKit so they're probably not needed.
+
 2012-04-03  Keishi Hattori  <keishi@webkit.org>
 
         Disable ENABLE_DATALIST for now

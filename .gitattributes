@@ -21,22 +21,3 @@ objc/*.h diff=objcppheader
 # For best performance, place rules for deep paths in the parent directory.
 # For example: instead of "Source/WebCore/inspector/Inspector.json -crlf" here,
 # place "Inspector.json -crlf" in Source/WebCore/inspector/.gitattributes
-
-WebKit/chromium/src/EventListenerWrapper.cpp -crlf
-WebKit/chromium/src/EventListenerWrapper.h -crlf
-WebKit/chromium/src/WebEventListener.cpp -crlf
-WebKit/chromium/src/WebEventListenerPrivate.cpp -crlf
-WebKit/chromium/src/WebEventListenerPrivate.h -crlf
-WebKit/gtk/po/sr.po -crlf
-WebKit/gtk/po/sr@latin.po -crlf
-WebKit/qt/tests/qwebframe/resources/testiframe.html -crlf
-WebKit/qt/tests/qwebframe/resources/testiframe2.html -crlf
-WebKit/win/COMPropertyBag.h -crlf
-WebKit/win/COMVariantSetter.h -crlf
-WebKit/win/Interfaces/IWebEmbeddedView.idl -crlf
-WebKit/win/Interfaces/JavaScriptCoreAPITypes.idl -crlf
-WebKit/win/WebCoreSupport/EmbeddedWidget.cpp -crlf
-WebKit/win/WebCoreSupport/EmbeddedWidget.h -crlf
-WebKit/win/WebCoreSupport/WebInspectorDelegate.h -crlf
-WebKit/win/WebIconFetcher.cpp -crlf
-WebKit/win/WebIconFetcher.h -crlf
