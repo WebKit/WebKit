@@ -33,6 +33,7 @@ namespace WebCore {
 
 WheelEvent::WheelEvent()
     : m_granularity(Pixel)
+    , m_directionInvertedFromDevice(false)
 {
 }
 

@@ -413,6 +413,7 @@ public:
     AtomicMarkupTokenBase(typename Token::Type::Type type, AtomicString name, PassOwnPtr<AttributeVector> attributes = nullptr)
         : m_type(type)
         , m_name(name)
+        , m_externalCharacters(0)
         , m_attributes(attributes)
     {
         ASSERT(usesName());

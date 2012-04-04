@@ -33,6 +33,8 @@
 namespace WebCore {
 
 Gamepad::Gamepad()
+    : m_index(0)
+    , m_timestamp(0)
 {
 }
 

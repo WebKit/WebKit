@@ -108,7 +108,8 @@ public:
 
 private:
     AllowFileSystemMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const String& mode, WebCommonWorkerClient* commonClient)
-        : m_workerLoaderProxy(workerLoaderProxy)
+        : m_result(false)
+        , m_workerLoaderProxy(workerLoaderProxy)
     {
         WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&allowFileSystemTask, mode, AllowCrossThreadAccess(commonClient), this));
     }

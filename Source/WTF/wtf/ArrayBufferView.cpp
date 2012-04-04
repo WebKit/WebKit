@@ -34,6 +34,8 @@ ArrayBufferView::ArrayBufferView(PassRefPtr<ArrayBuffer> buffer,
                        unsigned byteOffset)
         : m_byteOffset(byteOffset)
         , m_buffer(buffer)
+        , m_prevView(0)
+        , m_nextView(0)
 {
     m_baseAddress = m_buffer ? (static_cast<char*>(m_buffer->data()) + m_byteOffset) : 0;
     if (m_buffer) 

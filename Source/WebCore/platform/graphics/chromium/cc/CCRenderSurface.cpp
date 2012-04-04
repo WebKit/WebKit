@@ -56,6 +56,8 @@ CCRenderSurface::CCRenderSurface(CCLayerImpl* owningLayer)
     , m_targetSurfaceTransformsAreAnimating(false)
     , m_screenSpaceTransformsAreAnimating(false)
     , m_nearestAncestorThatMovesPixels(0)
+    , m_targetRenderSurfaceLayerIndexHistory(0)
+    , m_currentLayerIndexHistory(0)
 {
     m_damageTracker = CCDamageTracker::create();
 }

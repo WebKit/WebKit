@@ -105,6 +105,7 @@ void AccessibilitySpinButton::step(int amount)
 // AccessibilitySpinButtonPart 
 
 AccessibilitySpinButtonPart::AccessibilitySpinButtonPart()
+    : m_isIncrementor(false)
 {
 }
     

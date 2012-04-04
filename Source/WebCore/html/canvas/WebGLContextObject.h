@@ -60,7 +60,6 @@ protected:
     virtual GraphicsContext3D* getAGraphicsContext3D() const;
 
 private:
-    Platform3DObject m_object;
     WebGLRenderingContext* m_context;
 };
 

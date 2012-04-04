@@ -51,6 +51,7 @@ CCPageScaleAnimation::CCPageScaleAnimation(const IntSize& scrollStart, float pag
     , m_scrollEnd(scrollStart)
     , m_pageScaleEnd(pageScaleStart)
     , m_startTime(startTime)
+    , m_duration(0)
 {
 }
 

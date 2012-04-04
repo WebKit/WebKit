@@ -92,7 +92,8 @@ public:
 
 private:
     AllowDatabaseMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const String& mode, WebCommonWorkerClient* commonClient, WebFrame* frame, const String& name, const String& displayName, unsigned long estimatedSize)
-        : m_workerLoaderProxy(workerLoaderProxy)
+        : m_result(false)
+        , m_workerLoaderProxy(workerLoaderProxy)
     {
         WebWorkerBase::dispatchTaskToMainThread(
             createCallbackTask(&allowDatabaseTask, mode, WebCore::AllowCrossThreadAccess(commonClient),
