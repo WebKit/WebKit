@@ -101,6 +101,7 @@
 #include "WebWindowFeatures.h"
 #include "WindowFeatures.h"
 #include "WrappedResourceRequest.h"
+#include <public/Platform.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -1020,7 +1021,7 @@ bool ChromeClientImpl::shouldRunModalDialogDuringPageDismissal(const DialogType&
     int dismissal = static_cast<int>(dismissalType) - 1; // Exclude NoDismissal.
     ASSERT(0 <= dismissal && dismissal < static_cast<int>(arraysize(kDismissals)));
 
-    PlatformSupport::histogramEnumeration("Renderer.ModalDialogsDuringPageDismissal", dismissal * arraysize(kDialogs) + dialog, arraysize(kDialogs) * arraysize(kDismissals));
+    WebKit::Platform::current()->histogramEnumeration("Renderer.ModalDialogsDuringPageDismissal", dismissal * arraysize(kDialogs) + dialog, arraysize(kDialogs) * arraysize(kDismissals));
 
     m_webView->mainFrame()->addMessageToConsole(WebConsoleMessage(WebConsoleMessage::LevelError, makeString("Blocked ", kDialogs[dialog], "('", dialogMessage, "') during ", kDismissals[dismissal], ".")));
 

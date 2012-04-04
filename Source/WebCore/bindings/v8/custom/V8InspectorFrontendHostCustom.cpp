@@ -32,12 +32,10 @@
 #if ENABLE(INSPECTOR)
 #include "V8InspectorFrontendHost.h"
 
+#include "HistogramSupport.h"
 #include "InspectorController.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorFrontendHost.h"
-#if !PLATFORM(QT)
-#include "PlatformSupport.h"
-#endif
 #include "PlatformString.h"
 
 #include "V8Binding.h"
@@ -125,7 +123,7 @@ static v8::Handle<v8::Value> histogramEnumeration(const char* name, const v8::Ar
 
     int sample = args[0]->ToInt32()->Value();
     if (sample < boundaryValue)
-        PlatformSupport::histogramEnumeration(name, sample, boundaryValue);
+        HistogramSupport::histogramEnumeration(name, sample, boundaryValue);
 
     return v8::Undefined();
 }

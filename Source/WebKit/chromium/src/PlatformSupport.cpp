@@ -704,13 +704,6 @@ void PlatformSupport::stopSharedTimer()
     webKitPlatformSupport()->stopSharedTimer();
 }
 
-// StatsCounters --------------------------------------------------------------
-
-void PlatformSupport::histogramEnumeration(const char* name, int sample, int boundaryValue)
-{
-    webKitPlatformSupport()->histogramEnumeration(name, sample, boundaryValue);
-}
-
 // Theming --------------------------------------------------------------------
 
 #if OS(WINDOWS)

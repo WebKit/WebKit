@@ -256,9 +256,6 @@ public:
     static void setSharedTimerFireInterval(double);
     static void stopSharedTimer();
 
-    // StatsCounters ------------------------------------------------------
-    static void histogramEnumeration(const char* name, int sample, int boundaryValue);
-
     // Theming ------------------------------------------------------------
 #if OS(WINDOWS)
     static void paintButton(
