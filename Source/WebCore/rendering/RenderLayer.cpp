@@ -988,10 +988,10 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, 
     
 #if ENABLE(CSS_FILTERS)
     if (renderer()->style()->hasFilterOutsets()) {
-        LayoutUnit topOutset;
-        LayoutUnit rightOutset;
-        LayoutUnit bottomOutset;
-        LayoutUnit leftOutset;
+        int topOutset;
+        int rightOutset;
+        int bottomOutset;
+        int leftOutset;
         renderer()->style()->getFilterOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
         rectForRepaint.move(-leftOutset, -topOutset);
         rectForRepaint.expand(leftOutset + rightOutset, topOutset + bottomOutset);
@@ -4112,7 +4112,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
 
     if (RenderLayer* reflection = layer->reflectionLayer()) {
         if (!reflection->isComposited()) {
-            LayoutRect childUnionBounds = calculateLayerBounds(reflection, layer);
+            IntRect childUnionBounds = calculateLayerBounds(reflection, layer);
             unionBounds.unite(childUnionBounds);
         }
     }
@@ -4124,7 +4124,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = negZOrderList->at(i);
             if (!curLayer->isComposited()) {
-                LayoutRect childUnionBounds = calculateLayerBounds(curLayer, layer);
+                IntRect childUnionBounds = calculateLayerBounds(curLayer, layer);
                 unionBounds.unite(childUnionBounds);
             }
         }
@@ -4135,7 +4135,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = posZOrderList->at(i);
             if (!curLayer->isComposited()) {
-                LayoutRect childUnionBounds = calculateLayerBounds(curLayer, layer);
+                IntRect childUnionBounds = calculateLayerBounds(curLayer, layer);
                 unionBounds.unite(childUnionBounds);
             }
         }
@@ -4146,7 +4146,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
             if (!curLayer->isComposited()) {
-                LayoutRect curAbsBounds = calculateLayerBounds(curLayer, layer);
+                IntRect curAbsBounds = calculateLayerBounds(curLayer, layer);
                 unionBounds.unite(curAbsBounds);
             }
         }
@@ -4157,10 +4157,10 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
     // filtered areas with the outsets if we know that the filter is going to render in hardware.
     // https://bugs.webkit.org/show_bug.cgi?id=81239
     if (includeLayerFilterOutsets && layer->renderer()->style()->hasFilterOutsets()) {
-        LayoutUnit topOutset;
-        LayoutUnit rightOutset;
-        LayoutUnit bottomOutset;
-        LayoutUnit leftOutset;
+        int topOutset;
+        int rightOutset;
+        int bottomOutset;
+        int leftOutset;
         layer->renderer()->style()->getFilterOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
         unionBounds.move(-leftOutset, -topOutset);
         unionBounds.expand(leftOutset + rightOutset, topOutset + bottomOutset);
