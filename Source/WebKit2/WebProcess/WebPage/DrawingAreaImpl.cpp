@@ -677,5 +677,17 @@ void DrawingAreaImpl::didReceiveLayerTreeHostMessage(CoreIPC::Connection* connec
 }
 #endif
 
+#if PLATFORM(MAC)
+void DrawingAreaImpl::setLayerHostingMode(uint32_t opaqueLayerHostingMode)
+{
+    LayerHostingMode layerHostingMode = static_cast<LayerHostingMode>(opaqueLayerHostingMode);
+    m_webPage->setLayerHostingMode(layerHostingMode);
+
+    if (!m_layerTreeHost)
+        return;
+
+    m_layerTreeHost->setLayerHostingMode(layerHostingMode);
+}
+#endif
 
 } // namespace WebKit

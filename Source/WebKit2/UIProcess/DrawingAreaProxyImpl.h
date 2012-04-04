@@ -54,6 +54,8 @@ private:
     // DrawingAreaProxy
     virtual void sizeDidChange();
     virtual void deviceScaleFactorDidChange();
+    virtual void layerHostingModeDidChange() OVERRIDE;
+
     virtual void visibilityDidChange();
     virtual void setBackingStoreIsDiscardable(bool);
     virtual void waitForBackingStoreUpdateOnNextPaint();

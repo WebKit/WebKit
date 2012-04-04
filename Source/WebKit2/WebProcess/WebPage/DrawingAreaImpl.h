@@ -71,6 +71,10 @@ private:
     virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&);
 #endif
 
+#if PLATFORM(MAC)
+    virtual void setLayerHostingMode(uint32_t) OVERRIDE;
+#endif
+
 #if USE(UI_SIDE_COMPOSITING)
     virtual void didReceiveLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 #endif

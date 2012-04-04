@@ -51,6 +51,8 @@ private:
     virtual void pauseRendering();
     virtual void resumeRendering();
 
+    virtual void setLayerHostingMode(LayerHostingMode) OVERRIDE;
+
     // LayerTreeHostCA
     virtual void platformInitialize(LayerTreeContext&);
     virtual void didPerformScheduledLayerFlush();

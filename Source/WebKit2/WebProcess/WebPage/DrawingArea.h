@@ -106,12 +106,12 @@ private:
     virtual void didUpdate() { }
     virtual void suspendPainting() { }
     virtual void resumePainting() { }
+    virtual void setLayerHostingMode(uint32_t) { }
 
 #if PLATFORM(MAC)
     // Used by TiledCoreAnimationDrawingArea.
     virtual void updateGeometry(const WebCore::IntSize& viewSize) { }
     virtual void setDeviceScaleFactor(float) { }
-    virtual void setLayerHostingMode(uint32_t) { }
 #endif
 };
 

@@ -1,3 +1,31 @@
+2012-04-03  Sam Weinig  <sam@webkit.org>
+
+        Allow the old WebKit2 drawing model to host layers in the window server
+        <rdar://problem/11170525>
+        https://bugs.webkit.org/show_bug.cgi?id=83101
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::layerHostingModeDidChange):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (DrawingAreaProxyImpl):
+        * WebProcess/WebPage/DrawingArea.h:
+        (DrawingArea):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setLayerHostingMode):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (DrawingAreaImpl):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (LayerTreeHost):
+        (WebKit::LayerTreeHost::setLayerHostingMode):
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.h:
+        (LayerTreeHostCAMac):
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.mm:
+        (WebKit::LayerTreeHostCAMac::platformInitialize):
+        (WebKit::LayerTreeHostCAMac::setLayerHostingMode):
+        Pipe layer hosting mode to the old drawing area.
+
 2012-04-03  Jia Pu  <jpu@apple.com>
 
         Rename SpellingCorrectionController to AlternativeTextController.

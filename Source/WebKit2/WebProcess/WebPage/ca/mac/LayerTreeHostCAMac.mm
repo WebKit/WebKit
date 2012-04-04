@@ -27,6 +27,7 @@
 #import "LayerTreeHostCAMac.h"
 
 #import "LayerHostingContext.h"
+#import "WebPage.h"
 #import "WebProcess.h"
 #import <QuartzCore/CATransaction.h>
 #import <WebCore/GraphicsLayer.h>
@@ -59,7 +60,16 @@ LayerTreeHostCAMac::~LayerTreeHostCAMac()
 
 void LayerTreeHostCAMac::platformInitialize(LayerTreeContext& layerTreeContext)
 {
-    m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::shared().compositingRenderServerPort());
+    switch (m_webPage->layerHostingMode()) {
+    case LayerHostingModeDefault:
+        m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::shared().compositingRenderServerPort());
+        break;
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    case LayerHostingModeInWindowServer:
+        m_layerHostingContext = LayerHostingContext::createForWindowServer();        
+        break;
+#endif
+    }
     m_layerHostingContext->setRootLayer(rootLayer()->platformLayer());
 
     layerTreeContext.contextID = m_layerHostingContext->contextID();
@@ -137,6 +147,34 @@ bool LayerTreeHostCAMac::flushPendingLayerChanges()
         return false;
 
     return LayerTreeHostCA::flushPendingLayerChanges();
+}
+
+void LayerTreeHostCAMac::setLayerHostingMode(LayerHostingMode layerHostingMode)
+{
+    if (layerHostingMode == m_layerHostingContext->layerHostingMode())
+        return;
+
+    // The mode has changed.
+
+    // First, invalidate the old hosting context.
+    m_layerHostingContext->invalidate();
+    m_layerHostingContext = nullptr;
+
+    // Create a new context and set it up.
+    switch (layerHostingMode) {
+    case LayerHostingModeDefault:
+        m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::shared().compositingRenderServerPort());
+        break;
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    case LayerHostingModeInWindowServer:
+        m_layerHostingContext = LayerHostingContext::createForWindowServer();        
+        break;
+#endif
+    }
+
+    m_layerHostingContext->setRootLayer(rootLayer()->platformLayer());
+
+    scheduleLayerFlush();
 }
 
 } // namespace WebKit

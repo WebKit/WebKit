@@ -26,6 +26,7 @@
 #ifndef LayerTreeHost_h
 #define LayerTreeHost_h
 
+#include "LayerTreeContext.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -44,7 +45,6 @@ class GraphicsLayer;
 
 namespace WebKit {
 
-class LayerTreeContext;
 class UpdateInfo;
 class WebPage;
 
@@ -89,6 +89,10 @@ public:
 
 #if PLATFORM(WIN)
     virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&) = 0;
+#endif
+
+#if PLATFORM(MAC)
+    virtual void setLayerHostingMode(LayerHostingMode) { }
 #endif
 
 protected:
