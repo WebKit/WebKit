@@ -108,8 +108,11 @@ void InspectorDOMStorageAgent::disable(ErrorString*)
     m_state->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, m_enabled);
 }
 
-void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, const String& storageId, RefPtr<InspectorArray>& entries)
+void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, const String& storageId, RefPtr<TypeBuilder::Array<TypeBuilder::Array<String> > >& entries)
 {
+    // FIXME: consider initializing this array after 2 checks below. The checks should return error messages in this case.
+    entries = TypeBuilder::Array<TypeBuilder::Array<String> >::create();
+
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (!storageResource)
         return;
@@ -122,10 +125,10 @@ void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, const String& 
     for (unsigned i = 0; i < storageArea->length(frame); ++i) {
         String name(storageArea->key(i, frame));
         String value(storageArea->getItem(name, frame));
-        RefPtr<InspectorArray> entry = InspectorArray::create();
-        entry->pushString(name);
-        entry->pushString(value);
-        entries->pushArray(entry);
+        RefPtr<TypeBuilder::Array<String> > entry = TypeBuilder::Array<String>::create();
+        entry->addItem(name);
+        entry->addItem(value);
+        entries->addItem(entry);
     }
 }
 
@@ -136,7 +139,8 @@ void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString*, const String& sto
         ExceptionCode exception = 0;
         storageResource->storageArea()->setItem(key, value, exception, storageResource->frame());
         *success = !exception;
-    }
+    } else
+        *success = false;
 }
 
 void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString*, const String& storageId, const String& key, bool* success)
@@ -145,7 +149,8 @@ void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString*, const String& 
     if (storageResource) {
         storageResource->storageArea()->removeItem(key, storageResource->frame());
         *success = true;
-    }
+    } else
+        *success = false;
 }
 
 String InspectorDOMStorageAgent::storageId(Storage* storage)

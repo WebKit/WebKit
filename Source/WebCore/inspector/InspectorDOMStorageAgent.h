@@ -64,7 +64,7 @@ public:
     // Called from the front-end.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
-    virtual void getDOMStorageEntries(ErrorString*, const String& storageId, RefPtr<InspectorArray>& entries);
+    virtual void getDOMStorageEntries(ErrorString*, const String& storageId, RefPtr<TypeBuilder::Array<TypeBuilder::Array<String> > >& entries);
     virtual void setDOMStorageItem(ErrorString*, const String& storageId, const String& key, const String& value, bool* success);
     virtual void removeDOMStorageItem(ErrorString*, const String& storageId, const String& key, bool* success);
 

@@ -1131,6 +1131,13 @@
                     { "name": "isLocalStorage", "type": "boolean", "description": "True for local storage." },
                     { "name": "id", "$ref": "StorageId", "description": "Entry id for further reference." }
                 ]
+            },
+            {
+                "id": "Item",
+                "type": "array",
+                "description": "DOM Storage item.",
+                "hidden": true,
+                "items": { "type": "string" }
             }
         ],
         "commands": [
@@ -1148,7 +1155,7 @@
                     { "name": "storageId", "$ref": "StorageId" }
                 ],
                 "returns": [
-                    { "name": "entries", "type": "array", "items": { "$ref": "Entry"} }
+                    { "name": "entries", "type": "array", "items": { "$ref": "Item" } }
                 ]
             },
             {

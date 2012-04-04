@@ -104,9 +104,9 @@ void InspectorApplicationCacheAgent::networkStateChanged()
     m_frontend->networkStateUpdated(isNowOnline);
 }
 
-void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString*, RefPtr<InspectorArray>& result)
+void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::ApplicationCache::FrameWithManifest> >& result)
 {
-    result = InspectorArray::create();
+    result = TypeBuilder::Array<TypeBuilder::ApplicationCache::FrameWithManifest>::create();
 
     Frame* mainFrame = m_pageAgent->mainFrame();
     for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext(mainFrame)) {
@@ -118,11 +118,11 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString*, RefPtr
         ApplicationCacheHost::CacheInfo info = host->applicationCacheInfo();
         String manifestURL = info.m_manifest.string();
         if (!manifestURL.isEmpty()) {
-            RefPtr<InspectorObject> value = InspectorObject::create();
-            value->setString("frameId", m_pageAgent->frameId(frame));
-            value->setString("manifestURL", manifestURL);
-            value->setNumber("status", host->status());
-            result->pushObject(value);
+            RefPtr<TypeBuilder::ApplicationCache::FrameWithManifest> value = TypeBuilder::ApplicationCache::FrameWithManifest::create()
+                .setFrameId(m_pageAgent->frameId(frame))
+                .setManifestURL(manifestURL)
+                .setStatus(host->status());
+            result->addItem(value);
         }
     }
 }
@@ -146,7 +146,7 @@ void InspectorApplicationCacheAgent::getManifestForFrame(ErrorString* errorStrin
     *manifestURL = info.m_manifest.string();
 }
 
-void InspectorApplicationCacheAgent::getApplicationCacheForFrame(ErrorString* errorString, const String& frameId, RefPtr<InspectorObject>& applicationCache)
+void InspectorApplicationCacheAgent::getApplicationCacheForFrame(ErrorString* errorString, const String& frameId, RefPtr<TypeBuilder::ApplicationCache::ApplicationCache>& applicationCache)
 {
     DocumentLoader* documentLoader = assertFrameWithDocumentLoader(errorString, frameId);
     if (!documentLoader)
@@ -161,15 +161,14 @@ void InspectorApplicationCacheAgent::getApplicationCacheForFrame(ErrorString* er
     applicationCache = buildObjectForApplicationCache(resources, info);
 }
 
-PassRefPtr<InspectorObject> InspectorApplicationCacheAgent::buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources, const ApplicationCacheHost::CacheInfo& applicationCacheInfo)
+PassRefPtr<TypeBuilder::ApplicationCache::ApplicationCache> InspectorApplicationCacheAgent::buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources, const ApplicationCacheHost::CacheInfo& applicationCacheInfo)
 {
-    RefPtr<InspectorObject> value = InspectorObject::create();
-    value->setNumber("size", applicationCacheInfo.m_size);
-    value->setString("manifestURL", applicationCacheInfo.m_manifest.string());
-    value->setNumber("creationTime", applicationCacheInfo.m_creationTime);
-    value->setNumber("updateTime", applicationCacheInfo.m_updateTime);
-    value->setArray("resources", buildArrayForApplicationCacheResources(applicationCacheResources));
-    return value;
+    return TypeBuilder::ApplicationCache::ApplicationCache::create()
+        .setManifestURL(applicationCacheInfo.m_manifest.string())
+        .setSize(applicationCacheInfo.m_size)
+        .setCreationTime(applicationCacheInfo.m_creationTime)
+        .setUpdateTime(applicationCacheInfo.m_updateTime)
+        .setResources(buildArrayForApplicationCacheResources(applicationCacheResources));
 }
 
 PassRefPtr<InspectorArray> InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources)

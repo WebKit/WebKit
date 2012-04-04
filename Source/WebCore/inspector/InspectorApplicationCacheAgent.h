@@ -69,13 +69,13 @@ public:
 
     // ApplicationCache API for InspectorFrontend
     virtual void enable(ErrorString*);
-    virtual void getFramesWithManifests(ErrorString*, RefPtr<InspectorArray>& result);
+    virtual void getFramesWithManifests(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::ApplicationCache::FrameWithManifest> >& result);
     virtual void getManifestForFrame(ErrorString*, const String& frameId, String* manifestURL);
-    virtual void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<InspectorObject>& applicationCache);
+    virtual void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<TypeBuilder::ApplicationCache::ApplicationCache>&);
 
 private:
     InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorState*, InspectorPageAgent*);
-    PassRefPtr<InspectorObject> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);
+    PassRefPtr<TypeBuilder::ApplicationCache::ApplicationCache> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);
     PassRefPtr<InspectorArray> buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
     PassRefPtr<InspectorObject> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
 
