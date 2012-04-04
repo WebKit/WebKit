@@ -100,6 +100,21 @@ InspectorFrontendAPI = {
         WebInspector.setDockingUnavailable(unavailable);
     },
 
+    enterInspectElementMode: function()
+    {
+        WebInspector.toggleSearchingForNode();
+    },
+
+    savedURL: function(url)
+    {
+        WebInspector.savedURL(url);
+    },
+
+    setToolbarColors: function(backgroundColor, color)
+    {
+        WebInspector.setToolbarColors(backgroundColor, color);
+    },
+
     dispatch: function(signature)
     {
         if (WebInspector.panels) {
