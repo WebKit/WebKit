@@ -778,10 +778,10 @@ class Instruction
             emitArmV7Compact("lsrs", "lsrs", operands)
         when "muli", "mulp"
             if operands.size == 2 or operands[0] == operands[2] or operands[1] == operands[2]
-                emitArmV7("muls", operands)
+                emitArmV7("mul", operands)
             else
                 $asm.puts "mov #{operands[2].armV7Operand}, #{operands[0].armV7Operand}"
-                $asm.puts "muls #{operands[2].armV7Operand}, #{operands[2].armV7Operand}, #{operands[1].armV7Operand}"
+                $asm.puts "mul #{operands[2].armV7Operand}, #{operands[2].armV7Operand}, #{operands[1].armV7Operand}"
             end
         when "subi", "subp", "subis"
             emitArmV7Compact("subs", "subs", operands)

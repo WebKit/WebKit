@@ -1,3 +1,15 @@
+2012-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Offlineasm ARM backend uses the wrong mnemonic for multiply
+        https://bugs.webkit.org/show_bug.cgi?id=83098
+        <rdar://problem/11168744>
+
+        Reviewed by Gavin Barraclough.
+        
+        Use "mul" instead of "muls" since we're passing three operands, not two.
+
+        * offlineasm/armv7.rb:
+
 2012-04-03  Gavin Barraclough  <barraclough@apple.com>
 
         Linux crashes during boot
