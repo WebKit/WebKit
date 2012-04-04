@@ -291,6 +291,7 @@ x-webkit-speech
 x-webkit-grammar
 spellcheck
 src
+srcdoc
 srclang
 standby
 start

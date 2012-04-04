@@ -366,12 +366,15 @@ SecurityOrigin::Policy SecurityOrigin::canShowNotifications() const
 
 void SecurityOrigin::grantLoadLocalResources()
 {
-    // This function exists only to support backwards compatibility with older
-    // versions of WebKit. Granting privileges to some, but not all, documents
-    // in a SecurityOrigin is a security hazard because the documents without
-    // the privilege can obtain the privilege by injecting script into the
-    // documents that have been granted the privilege.
-    ASSERT(SecurityPolicy::allowSubstituteDataAccessToLocal());
+    // Granting privileges to some, but not all, documents in a SecurityOrigin
+    // is a security hazard because the documents without the privilege can
+    // obtain the privilege by injecting script into the documents that have
+    // been granted the privilege.
+    //
+    // To be backwards compatible with older versions of WebKit, we also use
+    // this function to grant the ability to load local resources to documents
+    // loaded with SubstituteData.
+    ASSERT(isUnique() || SecurityPolicy::allowSubstituteDataAccessToLocal());
     m_canLoadLocalResources = true;
 }
 
