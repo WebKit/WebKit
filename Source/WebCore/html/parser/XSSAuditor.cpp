@@ -326,7 +326,7 @@ bool XSSAuditor::filterScriptToken(HTMLToken& token)
     ASSERT(token.type() == HTMLTokenTypes::StartTag);
     ASSERT(hasName(token, scriptTag));
 
-    m_cachedDecodedSnippet = stripLeadingAndTrailingHTMLSpaces(decodedSnippetForToken(token));
+    m_cachedDecodedSnippet = decodedSnippetForName(token);
     m_shouldAllowCDATA = m_parser->tokenizer()->shouldAllowCDATA();
 
     if (isContainedInRequest(decodedSnippetForName(token)))
@@ -492,17 +492,10 @@ bool XSSAuditor::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName&
     return false;
 }
 
-String XSSAuditor::decodedSnippetForToken(const HTMLToken& token)
-{
-    String snippet = m_parser->sourceForToken(token);
-    return fullyDecodeString(snippet, m_parser->document()->decoder());
-}
-
 String XSSAuditor::decodedSnippetForName(const HTMLToken& token)
 {
-    // Grab a fixed number of characters equal to the length of the token's
-    // name plus one (to account for the "<").
-    return decodedSnippetForToken(token).substring(0, token.name().size() + 1);
+    // Grab a fixed number of characters equal to the length of the token's name plus one (to account for the "<").
+    return fullyDecodeString(m_parser->sourceForToken(token), m_parser->document()->decoder()).substring(0, token.name().size() + 1);
 }
 
 String XSSAuditor::decodedSnippetForAttribute(const HTMLToken& token, const HTMLToken::Attribute& attribute, AttributeKind treatment)
@@ -570,12 +563,13 @@ String XSSAuditor::decodedSnippetForJavaScript(const HTMLToken& token)
             break;
     }
 
-    // Stop at next comment (using the same rules as above for SVG/XML vs HTML), or when
-    // we exceed the maximum length target. After hitting the length target, we can only
-    // stop at a point where we know we are not in the middle of a %-escape sequence. For
-    // the sake of simplicity, approximate not stopping inside a (possibly multiply encoded)
-    // %-esacpe sequence by breaking on whitespace only. We should have enough text in
-    // these cases to avoid false positives.
+    // Stop at next comment (using the same rules as above for SVG/XML vs HTML), when we 
+    // encounter a comma, or when we  exceed the maximum length target. The comma rule
+    // covers a common parameter concatenation case performed by some webservers.
+    // After hitting the length target, we can only stop at a point where we know we are
+    // not in the middle of a %-escape sequence. For the sake of simplicity, approximate
+    // not stopping inside a (possibly multiply encoded) %-esacpe sequence by breaking on
+    // whitespace only. We should have enough text in these cases to avoid false positives.
     for (foundPosition = startPosition; foundPosition < endPosition; foundPosition++) {
         if (!m_shouldAllowCDATA) {
             if (startsSingleLineCommentAt(string, foundPosition) || startsMultiLineCommentAt(string, foundPosition)) {
@@ -587,7 +581,7 @@ String XSSAuditor::decodedSnippetForJavaScript(const HTMLToken& token)
                 break;
             }
         }
-        if (foundPosition > startPosition + kMaximumFragmentLengthTarget && isHTMLSpace(string[foundPosition])) {
+        if (string[foundPosition] == ',' || (foundPosition > startPosition + kMaximumFragmentLengthTarget && isHTMLSpace(string[foundPosition]))) {
             endPosition = foundPosition;
             break;
         }
