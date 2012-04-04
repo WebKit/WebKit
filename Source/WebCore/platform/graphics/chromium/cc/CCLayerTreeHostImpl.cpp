@@ -124,8 +124,9 @@ CCLayerTreeHostImpl::~CCLayerTreeHostImpl()
 {
     ASSERT(CCProxy::isImplThread());
     TRACE_EVENT("CCLayerTreeHostImpl::~CCLayerTreeHostImpl()", this, 0);
-    if (m_layerRenderer)
-        m_layerRenderer->close();
+
+    if (rootLayer())
+        clearRenderSurfacesOnCCLayerImplRecursive(rootLayer());
 }
 
 void CCLayerTreeHostImpl::beginCommit()
@@ -499,9 +500,11 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> 
     OwnPtr<LayerRendererChromium> layerRenderer;
     layerRenderer = LayerRendererChromium::create(this, context);
 
-    if (m_layerRenderer) {
-        m_layerRenderer->close();
-        sendDidLoseContextRecursive(m_rootLayerImpl.get());
+    // Since we now have a new context/layerRenderer, we cannot continue to use the old
+    // resources (i.e. renderSurfaces and texture IDs).
+    if (rootLayer()) {
+        clearRenderSurfacesOnCCLayerImplRecursive(rootLayer());
+        sendDidLoseContextRecursive(rootLayer());
     }
 
     m_layerRenderer = layerRenderer.release();
@@ -820,14 +823,22 @@ void CCLayerTreeHostImpl::animateLayers(double monotonicTime, double wallClockTi
 
 void CCLayerTreeHostImpl::sendDidLoseContextRecursive(CCLayerImpl* current)
 {
-    if (!current)
-        return;
-
+    ASSERT(current);
     current->didLoseContext();
-    sendDidLoseContextRecursive(current->maskLayer());
-    sendDidLoseContextRecursive(current->replicaLayer());
+    if (current->maskLayer())
+        sendDidLoseContextRecursive(current->maskLayer());
+    if (current->replicaLayer())
+        sendDidLoseContextRecursive(current->replicaLayer());
     for (size_t i = 0; i < current->children().size(); ++i)
         sendDidLoseContextRecursive(current->children()[i].get());
+}
+
+void CCLayerTreeHostImpl::clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl* current)
+{
+    ASSERT(current);
+    for (size_t i = 0; i < current->children().size(); ++i)
+        clearRenderSurfacesOnCCLayerImplRecursive(current->children()[i].get());
+    current->clearRenderSurface();
 }
 
 void CCLayerTreeHostImpl::animateGestures(double monotonicTime)

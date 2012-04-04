@@ -81,9 +81,6 @@ class LayerRendererChromium {
 public:
     static PassOwnPtr<LayerRendererChromium> create(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>);
 
-    // Must be called in order to allow the LayerRendererChromium to destruct
-    void close();
-
     ~LayerRendererChromium();
 
     const CCSettings& settings() const { return m_client->settings(); }
@@ -208,8 +205,6 @@ private:
 
     bool initializeSharedObjects();
     void cleanupSharedObjects();
-
-    void clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl*);
 
     friend class LayerRendererSwapBuffersCompleteCallbackAdapter;
     void onSwapBuffersComplete();

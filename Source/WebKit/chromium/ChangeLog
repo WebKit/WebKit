@@ -1,3 +1,13 @@
+2012-04-04  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Move recursive renderSurface clearing to CCLayerTreeHostImpl
+        https://bugs.webkit.org/show_bug.cgi?id=82091
+
+        Reviewed by James Robinson.
+
+        * tests/LayerRendererChromiumTest.cpp:
+        (FakeLayerRendererChromiumClient::FakeLayerRendererChromiumClient):
+
 2012-04-04  Daniel Sievers  <sievers@chromium.org>
 
         [Chromium] Always skip draw and readback if there is nothing

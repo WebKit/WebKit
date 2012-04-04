@@ -320,19 +320,6 @@ LayerRendererChromium::~LayerRendererChromium()
     cleanupSharedObjects();
 }
 
-void LayerRendererChromium::clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl* layer)
-{
-    for (size_t i = 0; i < layer->children().size(); ++i)
-        clearRenderSurfacesOnCCLayerImplRecursive(layer->children()[i].get());
-    layer->clearRenderSurface();
-}
-
-void LayerRendererChromium::close()
-{
-    if (rootLayer())
-        clearRenderSurfacesOnCCLayerImplRecursive(rootLayer());
-}
-
 GraphicsContext3D* LayerRendererChromium::context()
 {
     return m_context.get();
@@ -407,6 +394,7 @@ void LayerRendererChromium::beginDrawingFrame()
     ensureFramebuffer();
 
     m_defaultRenderSurface = rootLayer()->renderSurface();
+    ASSERT(m_defaultRenderSurface);
 
     // FIXME: use the frame begin time from the overall compositor scheduler.
     // This value is currently inaccessible because it is up in Chromium's

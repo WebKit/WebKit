@@ -67,6 +67,7 @@ public:
         : m_setFullRootLayerDamageCount(0)
         , m_rootLayer(CCLayerImpl::create(1))
     {
+        m_rootLayer->createRenderSurface();
     }
 
     // LayerRendererChromiumClient methods.
