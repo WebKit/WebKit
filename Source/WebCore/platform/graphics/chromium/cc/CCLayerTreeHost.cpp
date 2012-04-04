@@ -658,7 +658,7 @@ void CCLayerTreeHost::deleteTextureAfterCommit(PassOwnPtr<ManagedTexture> textur
 
 void CCLayerTreeHost::animateLayers(double monotonicTime)
 {
-    if (!m_settings.threadedAnimationEnabled || !m_needsAnimateLayers || !m_rootLayer)
+    if (!m_settings.threadedAnimationEnabled || !m_needsAnimateLayers)
         return;
 
     TRACE_EVENT("CCLayerTreeHostImpl::animateLayers", this, 0);
@@ -667,6 +667,9 @@ void CCLayerTreeHost::animateLayers(double monotonicTime)
 
 bool CCLayerTreeHost::animateLayersRecursive(LayerChromium* current, double monotonicTime)
 {
+    if (!current)
+        return false;
+
     bool subtreeNeedsAnimateLayers = false;
     CCLayerAnimationController* currentController = current->layerAnimationController();
     currentController->animate(monotonicTime, 0);
@@ -685,6 +688,9 @@ bool CCLayerTreeHost::animateLayersRecursive(LayerChromium* current, double mono
 
 void CCLayerTreeHost::setAnimationEventsRecursive(const CCAnimationEventsVector& events, LayerChromium* layer, double wallClockTime)
 {
+    if (!layer)
+        return;
+
     for (size_t eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
         if (layer->id() == events[eventIndex].layerId)
             layer->notifyAnimationStarted(events[eventIndex], wallClockTime);
