@@ -107,7 +107,7 @@
 #include "Settings.h"
 #include "SharedGraphicsContext3D.h"
 #include "SpeechInputClientImpl.h"
-#include "SpeechRecognitionClientProxy.h"
+#include "SpeechRecognitionClient.h"
 #include "TextFieldDecoratorImpl.h"
 #include "TextIterator.h"
 #include "Timer.h"
@@ -379,9 +379,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(SpeechInputClientImpl::create(client))
 #endif
-#if ENABLE(SCRIPTED_SPEECH)
-    , m_speechRecognitionClient(SpeechRecognitionClientProxy::create(client ? client->speechRecognizer() : 0))
-#endif
     , m_deviceOrientationClientProxy(adoptPtr(new DeviceOrientationClientProxy(client ? client->deviceOrientationClient() : 0)))
     , m_geolocationClientProxy(adoptPtr(new GeolocationClientProxy(client ? client->geolocationClient() : 0)))
     , m_emulatedTextZoomFactor(1)
@@ -415,7 +412,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     provideSpeechInputTo(m_page.get(), m_speechInputClient.get());
 #endif
 #if ENABLE(SCRIPTED_SPEECH)
-    provideSpeechRecognitionTo(m_page.get(), m_speechRecognitionClient.get());
+    provideSpeechRecognitionTo(m_page.get(), 0); // FIXME: Provide a real implementation.
 #endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     provideNotification(m_page.get(), notificationPresenterImpl());

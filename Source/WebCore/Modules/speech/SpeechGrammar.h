@@ -42,7 +42,6 @@ public:
     static PassRefPtr<SpeechGrammar> create(const KURL& src, double weight);
 
     const KURL& src(ScriptExecutionContext*) const { return m_src; }
-    const KURL& src() const { return m_src; }
     void setSrc(ScriptExecutionContext*, const String& src);
 
     double weight() const { return m_weight; }

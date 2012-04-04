@@ -1,3 +1,31 @@
+2012-04-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r113149.
+        http://trac.webkit.org/changeset/113149
+        https://bugs.webkit.org/show_bug.cgi?id=83126
+
+        for breaking Chromium builders (Requested by pfeldman on
+        #webkit).
+
+        * WebKit.gyp:
+        * public/WebSpeechGrammar.h: Removed.
+        * public/WebSpeechRecognitionHandle.h: Removed.
+        * public/WebSpeechRecognitionParams.h: Removed.
+        * public/WebSpeechRecognitionResult.h: Removed.
+        * public/WebSpeechRecognizer.h: Removed.
+        * public/WebSpeechRecognizerClient.h: Removed.
+        * public/WebViewClient.h:
+        (WebKit):
+        * src/SpeechRecognitionClientProxy.cpp: Removed.
+        * src/SpeechRecognitionClientProxy.h: Removed.
+        * src/WebSpeechGrammar.cpp: Removed.
+        * src/WebSpeechRecognitionHandle.cpp: Removed.
+        * src/WebSpeechRecognitionResult.cpp: Removed.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+        (WebKit):
+
 2012-04-03  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Plumbing for Chromium

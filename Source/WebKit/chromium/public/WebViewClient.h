@@ -68,7 +68,6 @@ class WebNotificationPresenter;
 class WebRange;
 class WebSpeechInputController;
 class WebSpeechInputListener;
-class WebSpeechRecognizer;
 class WebStorageNamespace;
 class WebURL;
 class WebURLRequest;
@@ -316,9 +315,6 @@ public:
     // Access the embedder API for speech input services.
     virtual WebSpeechInputController* speechInputController(
         WebSpeechInputListener*) { return 0; }
-
-    // Access the embedder API for speech recognition services.
-    virtual WebSpeechRecognizer* speechRecognizer() { return 0; }
 
     // Device Orientation --------------------------------------------------
 
