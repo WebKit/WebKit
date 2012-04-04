@@ -37,6 +37,7 @@
 
 #include "DedicatedWorkerContext.h"
 #include "Event.h"
+#include "SafeAllocation.h"
 #include "ScriptCallStack.h"
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"

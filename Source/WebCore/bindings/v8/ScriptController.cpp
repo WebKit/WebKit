@@ -62,6 +62,7 @@
 #include "V8IsolatedContext.h"
 #include "V8NPObject.h"
 #include "V8Proxy.h"
+#include "V8RecursionScope.h"
 #include "Widget.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -161,6 +162,12 @@ bool ScriptController::processingUserGesture()
     return UserGestureIndicator::processingUserGesture();
 }
 
+ScriptValue ScriptController::callFunctionEvenIfScriptDisabled(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> argv[])
+{
+    // FIXME: This should probably perform the same isPaused check that happens in ScriptController::executeScript.
+    return ScriptValue(m_proxy->callFunction(function, receiver, argc, argv));
+}
+
 void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources)
 {
     m_proxy->evaluateInIsolatedWorld(worldID, sources, 0);
@@ -245,8 +252,10 @@ void ScriptController::collectGarbage()
         v8::Local<v8::String> source = v8::String::New("if (gc) gc();");
         v8::Local<v8::String> name = v8::String::New("gc");
         v8::Handle<v8::Script> script = v8::Script::Compile(source, name);
-        if (!script.IsEmpty())
+        if (!script.IsEmpty()) {
+            V8RecursionScope::MicrotaskSuppression scope;
             script->Run();
+        }
     }
     v8Context.Dispose();
 }

@@ -896,6 +896,15 @@ v8::Handle<v8::Value> WebFrameImpl::executeScriptAndReturnValue(const WebScriptS
     return m_frame->script()->executeScript(ScriptSourceCode(source.code, source.url, position)).v8Value();
 }
 
+// Call the function with the given receiver and arguments, bypassing canExecuteScripts.
+v8::Handle<v8::Value> WebFrameImpl::callFunctionEvenIfScriptDisabled(v8::Handle<v8::Function> function,
+                                                                     v8::Handle<v8::Object> receiver,
+                                                                     int argc,
+                                                                     v8::Handle<v8::Value> argv[])
+{
+    return m_frame->script()->callFunctionEvenIfScriptDisabled(function, receiver, argc, argv).v8Value();
+}
+
 // Returns the V8 context for this frame, or an empty handle if there is none.
 v8::Local<v8::Context> WebFrameImpl::mainWorldScriptContext() const
 {

@@ -44,6 +44,7 @@
 #include "V8IsolatedContext.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
+#include "V8RecursionScope.h"
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -66,7 +67,11 @@ v8::Local<v8::Object> V8HTMLDocument::WrapInShadowObject(v8::Local<v8::Object> w
     if (shadowConstructor.IsEmpty())
         return v8::Local<v8::Object>();
 
-    v8::Local<v8::Object> shadow = shadowConstructor->NewInstance();
+    v8::Local<v8::Object> shadow;
+    {
+        V8RecursionScope::MicrotaskSuppression scope;
+        shadow = shadowConstructor->NewInstance();
+    }
     if (shadow.IsEmpty())
         return v8::Local<v8::Object>();
     V8DOMWrapper::setDOMWrapper(shadow, &V8HTMLDocument::info, impl);

@@ -1,3 +1,25 @@
+2012-04-03  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Use V8 completion callback API to assert that V8RecursionScope is on the stack whenever invoking script
+        https://bugs.webkit.org/show_bug.cgi?id=79131
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gyp:
+        * public/WebFrame.h:
+        (v8):
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        (WebKit):
+        (WebKit::WebFrameImpl::callFunctionEvenIfScriptDisabled):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+        * src/WebKit.cpp:
+        (WebKit):
+        (WebKit::assertV8RecursionScope):
+        (WebKit::initialize):
+        (WebKit::shutdown):
+
 2012-04-03  Adam Barth  <abarth@webkit.org>
 
         Unreviewed. This patch adds an ugly, ugly hack to bandaid over the

@@ -113,7 +113,9 @@ protected:
     void dispatchDidParseSource(ScriptDebugListener* listener, v8::Handle<v8::Object> sourceObject);
 
     void ensureDebuggerScriptCompiled();
-    
+
+    v8::Local<v8::Value> callDebuggerMethod(const char* functionName, int argc, v8::Handle<v8::Value> argv[]);
+
     PauseOnExceptionsState m_pauseOnExceptionsState;
     OwnHandle<v8::Object> m_debuggerScript;
     OwnHandle<v8::Object> m_executionState;

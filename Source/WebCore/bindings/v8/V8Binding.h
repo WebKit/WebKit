@@ -153,6 +153,10 @@ namespace WebCore {
 
 #ifndef NDEBUG
         GlobalHandleMap& globalHandleMap() { return m_globalHandleMap; }
+
+        int internalScriptRecursionLevel() const { return m_internalScriptRecursionLevel; }
+        int incrementInternalScriptRecursionLevel() { return ++m_internalScriptRecursionLevel; }
+        int decrementInternalScriptRecursionLevel() { return --m_internalScriptRecursionLevel; }
 #endif
 
     private:
@@ -179,6 +183,7 @@ namespace WebCore {
 
 #ifndef NDEBUG
         GlobalHandleMap m_globalHandleMap;
+        int m_internalScriptRecursionLevel;
 #endif
     };
 
@@ -207,38 +212,6 @@ namespace WebCore {
     private:
         bool m_previous;
     };
-
-    class SafeAllocation {
-    public:
-        static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>);
-        static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::ObjectTemplate>);
-        static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
-    };
-
-    v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::Function> function)
-    {
-        if (function.IsEmpty())
-            return v8::Local<v8::Object>();
-        ConstructorMode constructorMode;
-        return function->NewInstance();
-    }
-
-    v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::ObjectTemplate> objectTemplate)
-    {
-        if (objectTemplate.IsEmpty())
-            return v8::Local<v8::Object>();
-        ConstructorMode constructorMode;
-        return objectTemplate->NewInstance();
-    }
-
-    v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::Function> function, int argc, v8::Handle<v8::Value> argv[])
-    {
-        if (function.IsEmpty())
-            return v8::Local<v8::Object>();
-        ConstructorMode constructorMode;
-        return function->NewInstance(argc, argv);
-    }
-
 
 
     enum ExternalMode {

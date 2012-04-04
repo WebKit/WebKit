@@ -44,6 +44,7 @@
 #include "V8HiddenPropertyName.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
+#include "V8RecursionScope.h"
 #include "WorldContextHandle.h"
 
 #include <wtf/StdLibExtras.h>
@@ -152,9 +153,12 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     if (script.IsEmpty())
         return;
 
-    // Call v8::Script::Run() directly to avoid an erroneous call to V8RecursionScope::didLeaveScriptContext().
     // FIXME: Remove this code when we stop doing the 'with' hack above.
-    v8::Local<v8::Value> value = script->Run();
+    v8::Local<v8::Value> value;
+    {
+        V8RecursionScope::MicrotaskSuppression scope;
+        value = script->Run();
+    }
     if (value.IsEmpty())
         return;
 
@@ -172,10 +176,12 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
 
     v8::Handle<v8::Value> parameters[3] = { nodeWrapper, formWrapper, documentWrapper };
 
-    // Use Call directly to avoid an erroneous call to V8RecursionScope::didLeaveScriptContext().
     // FIXME: Remove this code when we stop doing the 'with' hack above.
-    v8::Local<v8::Value> innerValue = intermediateFunction->Call(v8Context->Global(), 3, parameters);
-
+    v8::Local<v8::Value> innerValue;
+    {
+        V8RecursionScope::MicrotaskSuppression scope;
+        innerValue = intermediateFunction->Call(v8Context->Global(), 3, parameters);
+    }
     if (innerValue.IsEmpty() || !innerValue->IsFunction())
         return;
 

@@ -36,6 +36,8 @@
 #include "EventTargetHeaders.h"
 #include "EventTargetInterfaces.h"
 #include "FrameLoaderClient.h"
+#include "SVGElementInstance.h"
+#include "SafeAllocation.h"
 #include "StylePropertySet.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"

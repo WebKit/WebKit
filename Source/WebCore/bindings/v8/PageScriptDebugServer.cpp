@@ -39,6 +39,7 @@
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
 #include "V8Proxy.h"
+#include "V8RecursionScope.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -100,7 +101,11 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
     v8::Handle<v8::Context> context = shell->context();
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("getScripts")));
     v8::Handle<v8::Value> argv[] = { context->GetData() };
-    v8::Handle<v8::Value> value = getScriptsFunction->Call(m_debuggerScript.get(), 1, argv);
+    v8::Handle<v8::Value> value;
+    {
+        V8RecursionScope::MicrotaskSuppression scope;
+        value = getScriptsFunction->Call(m_debuggerScript.get(), 1, argv);
+    }
     if (value.IsEmpty())
         return;
     ASSERT(!value->IsUndefined() && value->IsArray());

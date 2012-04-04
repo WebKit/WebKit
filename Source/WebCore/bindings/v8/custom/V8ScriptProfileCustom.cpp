@@ -32,6 +32,7 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 #include "V8ScriptProfile.h"
 
+#include "SafeAllocation.h"
 #include "ScriptProfile.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"

@@ -56,6 +56,9 @@ V8BindingPerIsolateData::V8BindingPerIsolateData(v8::Isolate* isolate)
     : m_domDataStore(0)
     , m_constructorMode(ConstructorMode::CreateNewObject)
     , m_recursionLevel(0)
+#ifndef NDEBUG
+    , m_internalScriptRecursionLevel(0)
+#endif
 {
 }
 

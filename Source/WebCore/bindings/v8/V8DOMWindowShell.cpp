@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SafeAllocation.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include "ScriptProfiler.h"

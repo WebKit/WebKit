@@ -37,6 +37,7 @@
 #include "Settings.h"
 #include "TextEncoding.h"
 #include "V8Binding.h"
+#include "V8RecursionScope.h"
 #include "WebKitMutationObserver.h"
 #include "WebMediaPlayerClientImpl.h"
 #include "WebSocket.h"
@@ -89,6 +90,14 @@ static bool generateEntropy(unsigned char* buffer, size_t length)
     return false;
 }
 
+#ifndef NDEBUG
+static void assertV8RecursionScope()
+{
+    // FIXME: Enable when chromium usage of WebScriptInvocation has landed.
+    // ASSERT(!isMainThread() || WebCore::V8RecursionScope::properlyUsed());
+}
+#endif
+
 void initialize(WebKitPlatformSupport* webKitPlatformSupport)
 {
     initializeWithoutV8(webKitPlatformSupport);
@@ -98,6 +107,10 @@ void initialize(WebKitPlatformSupport* webKitPlatformSupport)
     WebCore::V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 
 #if ENABLE(MUTATION_OBSERVERS)
+#ifndef NDEBUG
+    v8::V8::AddCallCompletedCallback(&assertV8RecursionScope);
+#endif
+
     // currentThread will always be non-null in production, but can be null in Chromium unit tests.
     if (WebThread* currentThread = webKitPlatformSupport->currentThread()) {
         ASSERT(!s_endOfTaskRunner);
@@ -139,6 +152,10 @@ void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
 void shutdown()
 {
 #if ENABLE(MUTATION_OBSERVERS)
+#ifndef NDEBUG
+    v8::V8::RemoveCallCompletedCallback(&assertV8RecursionScope);
+#endif
+
     if (s_endOfTaskRunner) {
         ASSERT(s_webKitPlatformSupport->currentThread());
         s_webKitPlatformSupport->currentThread()->removeTaskObserver(s_endOfTaskRunner);

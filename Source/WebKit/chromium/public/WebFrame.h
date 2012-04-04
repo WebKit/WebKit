@@ -44,6 +44,8 @@ struct NPObject;
 #if WEBKIT_USING_V8
 namespace v8 {
 class Context;
+class Function;
+class Object;
 class Value;
 template <class T> class Handle;
 template <class T> class Local;
@@ -273,6 +275,14 @@ public:
     // that the script evaluated to.
     virtual v8::Handle<v8::Value> executeScriptAndReturnValue(
         const WebScriptSource&) = 0;
+
+    // Call the function with the given receiver and arguments, bypassing
+    // canExecute().
+    virtual v8::Handle<v8::Value> callFunctionEvenIfScriptDisabled(
+        v8::Handle<v8::Function>,
+        v8::Handle<v8::Object>,
+        int argc,
+        v8::Handle<v8::Value> argv[]) = 0;
 
     // Returns the V8 context for this frame, or an empty handle if there
     // is none.

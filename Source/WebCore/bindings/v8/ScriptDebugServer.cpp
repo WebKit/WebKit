@@ -39,6 +39,7 @@
 #include "ScriptObject.h"
 #include "V8Binding.h"
 #include "V8JavaScriptCallFrame.h"
+#include "V8RecursionScope.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -55,6 +56,13 @@ private:
     OwnPtr<ScriptDebugServer::Task> m_task;
 };
 
+}
+
+v8::Local<v8::Value> ScriptDebugServer::callDebuggerMethod(const char* functionName, int argc, v8::Handle<v8::Value> argv[])
+{
+    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New(functionName)));
+    V8RecursionScope::MicrotaskSuppression scope;
+    return function->Call(m_debuggerScript.get(), argc, argv);
 }
 
 ScriptDebugServer::ScriptDebugServer()
@@ -129,9 +137,8 @@ ScriptDebugServer::PauseOnExceptionsState ScriptDebugServer::pauseOnExceptionsSt
     v8::HandleScope scope;
     v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
 
-    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("pauseOnExceptionsState")));
     v8::Handle<v8::Value> argv[] = { v8::Handle<v8::Value>() };
-    v8::Handle<v8::Value> result = function->Call(m_debuggerScript.get(), 0, argv);
+    v8::Handle<v8::Value> result = callDebuggerMethod("pauseOnExceptionsState", 0, argv);
     return static_cast<ScriptDebugServer::PauseOnExceptionsState>(result->Int32Value());
 }
 
@@ -141,9 +148,8 @@ void ScriptDebugServer::setPauseOnExceptionsState(PauseOnExceptionsState pauseOn
     v8::HandleScope scope;
     v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
 
-    v8::Handle<v8::Function> setPauseOnExceptionsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setPauseOnExceptionsState")));
     v8::Handle<v8::Value> argv[] = { v8::Int32::New(pauseOnExceptionsState) };
-    setPauseOnExceptionsFunction->Call(m_debuggerScript.get(), 1, argv);
+    callDebuggerMethod("setPauseOnExceptionsState", 1, argv);
 }
 
 void ScriptDebugServer::setPauseOnNextStatement(bool pause)
@@ -190,27 +196,24 @@ void ScriptDebugServer::continueProgram()
 void ScriptDebugServer::stepIntoStatement()
 {
     ASSERT(isPaused());
-    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("stepIntoStatement")));
     v8::Handle<v8::Value> argv[] = { m_executionState.get() };
-    function->Call(m_debuggerScript.get(), 1, argv);
+    callDebuggerMethod("stepIntoStatement", 1, argv);
     continueProgram();
 }
 
 void ScriptDebugServer::stepOverStatement()
 {
     ASSERT(isPaused());
-    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("stepOverStatement")));
     v8::Handle<v8::Value> argv[] = { m_executionState.get() };
-    function->Call(m_debuggerScript.get(), 1, argv);
+    callDebuggerMethod("stepOverStatement", 1, argv);
     continueProgram();
 }
 
 void ScriptDebugServer::stepOutOfFunction()
 {
     ASSERT(isPaused());
-    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("stepOutOfFunction")));
     v8::Handle<v8::Value> argv[] = { m_executionState.get() };
-    function->Call(m_debuggerScript.get(), 1, argv);
+    callDebuggerMethod("stepOutOfFunction", 1, argv);
     continueProgram();
 }
 
@@ -228,12 +231,11 @@ bool ScriptDebugServer::setScriptSource(const String& sourceID, const String& ne
     if (!isPaused())
         contextScope = adoptPtr(new v8::Context::Scope(v8::Debug::GetDebugContext()));
 
-    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setScriptSource")));
     v8::Handle<v8::Value> argv[] = { v8String(sourceID), v8String(newContent), v8Boolean(preview) };
 
     v8::TryCatch tryCatch;
     tryCatch.SetVerbose(false);
-    v8::Handle<v8::Value> v8result = function->Call(m_debuggerScript.get(), 3, argv);
+    v8::Local<v8::Value> v8result = callDebuggerMethod("setScriptSource", 3, argv);
     if (tryCatch.HasCaught()) {
         v8::Local<v8::Message> message = tryCatch.Message();
         if (!message.IsEmpty())
@@ -255,9 +257,8 @@ bool ScriptDebugServer::setScriptSource(const String& sourceID, const String& ne
 ScriptValue ScriptDebugServer::currentCallFrame()
 {
     ASSERT(isPaused());
-    v8::Handle<v8::Function> currentCallFrameFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("currentCallFrame")));
     v8::Handle<v8::Value> argv[] = { m_executionState.get() };
-    v8::Handle<v8::Value> currentCallFrameV8 = currentCallFrameFunction->Call(m_debuggerScript.get(), 1, argv);
+    v8::Handle<v8::Value> currentCallFrameV8 = callDebuggerMethod("currentCallFrame", 1, argv);
 
     ASSERT(!currentCallFrameV8.IsEmpty());
     if (!currentCallFrameV8->IsObject())
@@ -355,6 +356,7 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
                 v8::Handle<v8::Value> exceptionGetterValue = eventData->Get(v8::String::New("exception"));
                 ASSERT(!exceptionGetterValue.IsEmpty() && exceptionGetterValue->IsFunction());
                 v8::Handle<v8::Value> argv[] = { v8::Handle<v8::Value>() };
+                V8RecursionScope::MicrotaskSuppression scope;
                 exception = v8::Handle<v8::Function>::Cast(exceptionGetterValue)->Call(eventData, 0, argv);
             }
 
@@ -389,6 +391,7 @@ void ScriptDebugServer::ensureDebuggerScriptCompiled()
         v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
         v8::Context::Scope contextScope(debuggerContext);
         String debuggerScriptSource(reinterpret_cast<const char*>(DebuggerScriptSource_js), sizeof(DebuggerScriptSource_js));
+        V8RecursionScope::MicrotaskSuppression recursionScope;
         m_debuggerScript.set(v8::Handle<v8::Object>::Cast(v8::Script::Compile(v8String(debuggerScriptSource))->Run()));
     }
 }

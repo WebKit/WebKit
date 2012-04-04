@@ -2083,6 +2083,7 @@
             'bindings/v8/RetainedDOMInfo.cpp',
             'bindings/v8/RetainedDOMInfo.h',
             'bindings/v8/RetainedObjectInfo.h',
+            'bindings/v8/SafeAllocation.h',
             'bindings/v8/ScheduledAction.cpp',
             'bindings/v8/ScheduledAction.h',
             'bindings/v8/ScopedDOMDataStore.cpp',

@@ -110,6 +110,11 @@ public:
 #if WEBKIT_USING_V8
     virtual v8::Handle<v8::Value> executeScriptAndReturnValue(
         const WebScriptSource&);
+    virtual v8::Handle<v8::Value> callFunctionEvenIfScriptDisabled(
+        v8::Handle<v8::Function>,
+        v8::Handle<v8::Object>,
+        int argc,
+        v8::Handle<v8::Value> argv[]);
     virtual v8::Local<v8::Context> mainWorldScriptContext() const;
     virtual v8::Handle<v8::Value> createFileSystem(WebFileSystem::Type,
                                                    const WebString& name,

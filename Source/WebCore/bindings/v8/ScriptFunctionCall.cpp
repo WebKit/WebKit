@@ -31,12 +31,13 @@
 #include "config.h"
 #include "ScriptFunctionCall.h"
 
+#include "SafeAllocation.h"
 #include "ScriptScope.h"
 #include "ScriptState.h"
 #include "ScriptValue.h"
-
 #include "V8Binding.h"
 #include "V8Proxy.h"
+#include "V8RecursionScope.h"
 #include "V8Utilities.h"
 
 #include <v8.h>
@@ -130,7 +131,11 @@ ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
     for (size_t i = 0; i < m_arguments.size(); ++i)
         args[i] = m_arguments[i].v8Value();
 
-    v8::Local<v8::Value> result = function->Call(thisObject, m_arguments.size(), args.get());
+    v8::Local<v8::Value> result;
+    {
+        V8RecursionScope scope(getScriptExecutionContext());
+        result = function->Call(thisObject, m_arguments.size(), args.get());
+    }
     if (!scope.success()) {
         hadException = true;
         return ScriptValue();
