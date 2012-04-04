@@ -107,7 +107,15 @@ class MacPort(ApplePort):
         if self.is_snowleopard():
             _log.warn("Cannot run tests in parallel on Snow Leopard due to rdar://problem/10621525.")
             return 1
-        return super(MacPort, self).default_child_processes()
+
+        # FIXME: As a temporary workaround while we figure out what's going
+        # on with https://bugs.webkit.org/show_bug.cgi?id=83076, reduce by
+        # half the # of workers we run by default on bigger machines.
+        default_count = super(MacPort, self).default_child_processes()
+        if default_count >= 8:
+            cpu_count = self._executive.cpu_count()
+            return max(1, min(default_count, int(cpu_count / 2)))
+        return default_count
 
     def _build_java_test_support(self):
         java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")

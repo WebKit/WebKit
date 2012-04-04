@@ -1,3 +1,25 @@
+2012-04-03  Dirk Pranke  <dpranke@chromium.org>
+
+        [Chromium] Lots of timeouts causing Mac10.6 to exit early.
+        https://bugs.webkit.org/show_bug.cgi?id=83076
+
+        Unreviewed, build fix (slightly reviewed by Simon Fraser and Eric Seidel, but not approved).
+
+        Add logic to the apple mac and chromium mac code to not use
+        too many workers; it looks like the xserves (and possibly mac
+        pros) count hyperthreaded cores when they really shouldn't and
+        we end up using too many workers at a time; this leads to tests
+        thrashing and timing out.
+
+        This change is a temporary fix to make the bots happy while I
+        look into more profiling and other fixes.
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (ChromiumMacPort.default_child_processes):
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort.default_child_processes):
+
 2012-04-03  Simon Fraser  <simon.fraser@apple.com>
 
         WebKitTestRunner's EventSender is leaky
