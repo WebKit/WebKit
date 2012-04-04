@@ -1,5 +1,14 @@
 2012-04-04  Michael Saboff  <msaboff@apple.com>
 
+        Fixed minor error: "& 3" should be "& 2".
+
+        Rubber-stamped by Oliver Hunt.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::additionBlindedConstant):
+
+2012-04-04  Michael Saboff  <msaboff@apple.com>
+
         Constant Blinding for add/sub immediate crashes in ArmV7 when dest is SP
         https://bugs.webkit.org/show_bug.cgi?id=83191
 
