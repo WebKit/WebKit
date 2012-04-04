@@ -242,9 +242,6 @@ public:
     static PassOwnPtr<AudioBus> decodeAudioFileData(const char* data, size_t, double sampleRate);
 #endif
 
-    // Sandbox ------------------------------------------------------------
-    static bool sandboxEnabled();
-
     // Screen -------------------------------------------------------------
     static int screenHorizontalDPI(Widget*);
     static int screenVerticalDPI(Widget*);

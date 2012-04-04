@@ -687,13 +687,6 @@ PassOwnPtr<AudioBus> PlatformSupport::decodeAudioFileData(const char* data, size
 
 #endif // ENABLE(WEB_AUDIO)
 
-// Sandbox --------------------------------------------------------------------
-
-bool PlatformSupport::sandboxEnabled()
-{
-    return webKitPlatformSupport()->sandboxEnabled();
-}
-
 // SharedTimers ---------------------------------------------------------------
 
 void PlatformSupport::setSharedTimerFiredFunction(void (*func)())
