@@ -1,3 +1,9 @@
+2012-04-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, temporary dirty hack to make Win Debug work again.
+
+        * All.gyp: Temporarily removed TestWebKitAPI target.
+
 2012-04-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: migrate from InspectorFrontendHost.saveAs to InspectorFrontendHost.save.
