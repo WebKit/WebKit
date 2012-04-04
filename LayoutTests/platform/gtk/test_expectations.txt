@@ -97,6 +97,8 @@ BUGWK55751 : http/tests/inspector/resource-har-headers.html = PASS TEXT
 BUGWK55751 : inspector/styles/media-queries.html = PASS TEXT
 BUGWK55751 : inspector/elements/event-listener-sidebar.html = PASS TEXT
 BUGWK55751 : inspector/debugger/debugger-step-over.html = PASS TEXT
+BUGWK55751 : inspector/profiler/detailed-heapshots-summary-sorting.html = PASS TEXT
+BUGWK55751 : inspector/debugger/source-url-comment.html = PASS TEXT
 
 // End of Flaky tests
 
