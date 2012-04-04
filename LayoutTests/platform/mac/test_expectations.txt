@@ -336,27 +336,6 @@ BUGWK75568 : fast/table/spanOverlapRepaint.html = TEXT
 BUGWK75568 : fast/table/text-field-baseline.html = TEXT
 BUGWK75568 : tables/mozilla/bugs/bug1188.html = TEXT
 
-// Need pixel rebaselines after https://bugs.webkit.org/show_bug.cgi?id=80571 is fixed
-// Changes should be limited to color space changes
-BUGWK80630: css3/filters/add-filter-rendering.html = IMAGE
-BUGWK80630: css3/filters/crash-filter-change.html = IMAGE
-BUGWK80630: css3/filters/effect-blur.html = IMAGE
-BUGWK80630: css3/filters/effect-brightness.html = IMAGE
-BUGWK80630: css3/filters/effect-combined.html = IMAGE
-BUGWK80630: css3/filters/effect-contrast.html = IMAGE
-BUGWK80630: css3/filters/effect-drop-shadow.html = IMAGE
-BUGWK80630: css3/filters/effect-grayscale.html = IMAGE
-BUGWK80630: css3/filters/effect-hue-rotate.html = IMAGE
-BUGWK80630: css3/filters/effect-invert.html = IMAGE
-BUGWK80630: css3/filters/effect-opacity.html = IMAGE
-BUGWK80630: css3/filters/effect-saturate.html = IMAGE
-BUGWK80630: css3/filters/effect-sepia.html = IMAGE
-BUGWK80630: css3/filters/filter-repaint.html = IMAGE
-BUGWK80630: css3/filters/filter-with-transform.html = IMAGE
-BUGWK80630: css3/filters/nested-filter.html = IMAGE
-BUGWK80630: css3/filters/regions-expanding.html = IMAGE
-BUGWK80630: css3/filters/simple-filter-rendering.html = IMAGE
-
 // Temporary: generate platform specific IETestCenter results, then
 // remove when bots produce reference.
 BUGWK81936 : ietestcenter/css3/text/textshadow-001.htm = FAIL MISSING
