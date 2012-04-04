@@ -342,36 +342,12 @@ WebInspector.TimelinePanel.prototype = {
             var dividerPosition = Math.round(positions.left);
             if (dividerPosition < 0 || dividerPosition >= clientWidth || dividers[dividerPosition])
                 continue;
-            var divider = this._createEventDivider(record);
+            var divider = WebInspector.TimelinePresentationModel.createEventDivider(record);
+            divider.title = record.title;
             divider.style.left = (dividerPosition + this._expandOffset) + "px";
             dividers[dividerPosition] = divider;
         }
         this._timelineGrid.addEventDividers(dividers);
-        this._overviewPane.updateEventDividers(this._timeStampRecords, this._createEventDivider.bind(this));
-    },
-
-    _createEventDivider: function(record)
-    {
-        var eventDivider = document.createElement("div");
-        eventDivider.className = "resources-event-divider";
-        var recordTypes = WebInspector.TimelineModel.RecordType;
-
-        var eventDividerPadding = document.createElement("div");
-        eventDividerPadding.className = "resources-event-divider-padding";
-        eventDividerPadding.title = record.title;
-
-        if (record.type === recordTypes.MarkDOMContent)
-            eventDivider.className += " resources-blue-divider";
-        else if (record.type === recordTypes.MarkLoad)
-            eventDivider.className += " resources-red-divider";
-        else if (record.type === recordTypes.TimeStamp) {
-            eventDivider.className += " resources-orange-divider";
-            eventDividerPadding.title = record.data["message"];
-        } else if (record.type === recordTypes.BeginFrame)
-            eventDivider.className += " timeline-frame-divider";
-
-        eventDividerPadding.appendChild(eventDivider);
-        return eventDividerPadding;
     },
 
     _timelinesOverviewModeChanged: function(event)
@@ -466,12 +442,10 @@ WebInspector.TimelinePanel.prototype = {
         var timeStampRecords = this._timeStampRecords;
         function addTimestampRecords(record)
         {
-            if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad ||
-                record.type === recordTypes.TimeStamp || record.type === recordTypes.BeginFrame) {
+            if (WebInspector.TimelinePresentationModel.isEventDivider(record) || record.type === recordTypes.BeginFrame)
                 timeStampRecords.push(record);
-            }
         }
-        WebInspector.TimelinePanel.forAllRecords([ formattedRecord ], addTimestampRecords);
+        WebInspector.TimelinePresentationModel.forAllRecords([ formattedRecord ], addTimestampRecords);
     },
 
     sidebarResized: function(event)
@@ -916,26 +890,6 @@ WebInspector.TimelineRecordGraphRow.prototype = {
     {
         this.element.parentElement.removeChild(this.element);
         this._expandElement._dispose();
-    }
-}
-
-WebInspector.TimelinePanel.forAllRecords = function(recordsArray, callback)
-{
-    if (!recordsArray)
-        return;
-    var stack = [{array: recordsArray, index: 0}];
-    while (stack.length) {
-        var entry = stack[stack.length - 1];
-        var records = entry.array;
-        if (entry.index < records.length) {
-             var record = records[entry.index];
-             if (callback(record))
-                 return;
-             if (record.children)
-                 stack.push({array: record.children, index: 0});
-             ++entry.index;
-        } else
-            stack.pop();
     }
 }
 

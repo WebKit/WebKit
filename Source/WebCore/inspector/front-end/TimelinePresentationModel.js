@@ -101,6 +101,55 @@ WebInspector.TimelinePresentationModel.categoryForRecord = function(record)
         return WebInspector.TimelinePresentationModel.recordStyle(record).category;
 }
 
+WebInspector.TimelinePresentationModel.isEventDivider = function(record)
+{
+    var recordTypes = WebInspector.TimelineModel.RecordType;
+    return record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad || record.type === recordTypes.TimeStamp;
+}
+
+WebInspector.TimelinePresentationModel.forAllRecords = function(recordsArray, callback)
+{
+    if (!recordsArray)
+        return;
+    var stack = [{array: recordsArray, index: 0}];
+    while (stack.length) {
+        var entry = stack[stack.length - 1];
+        var records = entry.array;
+        if (entry.index < records.length) {
+             var record = records[entry.index];
+             if (callback(record))
+                 return;
+             if (record.children)
+                 stack.push({array: record.children, index: 0});
+             ++entry.index;
+        } else
+            stack.pop();
+    }
+}
+
+WebInspector.TimelinePresentationModel.createEventDivider = function(record)
+{
+    var eventDivider = document.createElement("div");
+    eventDivider.className = "resources-event-divider";
+    var recordTypes = WebInspector.TimelineModel.RecordType;
+
+    var eventDividerPadding = document.createElement("div");
+    eventDividerPadding.className = "resources-event-divider-padding";
+
+    if (record.type === recordTypes.MarkDOMContent)
+        eventDivider.className += " resources-blue-divider";
+    else if (record.type === recordTypes.MarkLoad)
+        eventDivider.className += " resources-red-divider";
+    else if (record.type === recordTypes.TimeStamp) {
+        eventDivider.className += " resources-orange-divider";
+        eventDividerPadding.title = record.data["message"];
+    } else if (record.type === recordTypes.BeginFrame)
+        eventDivider.className += " timeline-frame-divider";
+
+    eventDividerPadding.appendChild(eventDivider);
+    return eventDividerPadding;
+}
+
 WebInspector.TimelinePresentationModel.prototype = {
     /**
      * @param {WebInspector.TimelinePresentationModel.Filter} filter

@@ -41,6 +41,7 @@ WebInspector.TimelineOverviewPane = function(model)
 
     this._windowStartTime = 0;
     this._windowEndTime = Infinity;
+    this._eventDividers = [];
 
     this._model = model;
 
@@ -110,7 +111,7 @@ WebInspector.TimelineOverviewPane = function(model)
     this._overviewGrid.setScrollAndDividerTop(0, 0);
     this._overviewCalculator = new WebInspector.TimelineOverviewCalculator();
 
-    model.addEventListener(WebInspector.TimelineModel.Events.RecordAdded, this._scheduleRefresh, this);
+    model.addEventListener(WebInspector.TimelineModel.Events.RecordAdded, this._onRecordAdded, this);
     model.addEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this._reset, this);
 }
 
@@ -204,6 +205,7 @@ WebInspector.TimelineOverviewPane.prototype = {
 
         this._overviewCalculator.setWindow(this._model.minimumRecordTime(), this._model.maximumRecordTime());
         this._overviewGrid.updateDividers(true, this._overviewCalculator);
+        this._updateEventDividers();
     },
 
     _updateCategoryStrips: function()
@@ -231,7 +233,7 @@ WebInspector.TimelineOverviewPane.prototype = {
                 timelines[categoryName][j] = true;
         }
         var records = this._model.records;
-        WebInspector.TimelinePanel.forAllRecords(records, markPercentagesForRecord.bind(this));
+        WebInspector.TimelinePresentationModel.forAllRecords(records, markPercentagesForRecord.bind(this));
 
         // Convert sparse arrays to continuous segments, render graphs for each.
         for (var category in categories) {
@@ -256,19 +258,18 @@ WebInspector.TimelineOverviewPane.prototype = {
         }
     },
 
-    updateEventDividers: function(records, dividerConstructor)
+    _updateEventDividers: function()
     {
+        var records = this._eventDividers;
         this._overviewGrid.removeEventDividers();
         var dividers = [];
         for (var i = 0; i < records.length; ++i) {
             var record = records[i];
-            if (record.type === WebInspector.TimelineModel.RecordType.BeginFrame)
-                continue;
             var positions = this._overviewCalculator.computeBarGraphPercentages(record);
             var dividerPosition = Math.round(positions.start * 10);
             if (dividers[dividerPosition])
                 continue;
-            var divider = dividerConstructor(record);
+            var divider = WebInspector.TimelinePresentationModel.createEventDivider(record);
             divider.style.left = positions.start + "%";
             dividers[dividerPosition] = divider;
         }
@@ -290,6 +291,19 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._scheduleRefresh();
     },
 
+    _onRecordAdded: function(event)
+    {
+        var record = event.data;
+        var eventDividers = this._eventDividers;
+        function addEventDividers(record)
+        {
+            if (WebInspector.TimelinePresentationModel.isEventDivider(record))
+                eventDividers.push(record);
+        }
+        WebInspector.TimelinePresentationModel.forAllRecords([record], addEventDividers);
+        this._scheduleRefresh();
+    },
+
     _reset: function()
     {
         this._windowStartTime = 0;
@@ -297,6 +311,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._overviewWindow.reset();
         this._overviewCalculator.reset();
         this._overviewGrid.updateDividers(true, this._overviewCalculator);
+        this._eventDividers = [];
         if (this._verticalOverview)
             this._verticalOverview.reset();
         this._update();
@@ -745,7 +760,7 @@ WebInspector.HeapGraph.prototype = {
         var minUsedHeapSize = 100000000000;
         var minTime = this._model.minimumRecordTime();
         var maxTime = this._model.maximumRecordTime();;
-        WebInspector.TimelinePanel.forAllRecords(records, function(r) {
+        WebInspector.TimelinePresentationModel.forAllRecords(records, function(r) {
             maxUsedHeapSize = Math.max(maxUsedHeapSize, r.usedHeapSize || maxUsedHeapSize);
             minUsedHeapSize = Math.min(minUsedHeapSize, r.usedHeapSize || minUsedHeapSize);
         });
@@ -757,7 +772,7 @@ WebInspector.HeapGraph.prototype = {
         var yFactor = height / (maxUsedHeapSize - minUsedHeapSize);
 
         var histogram = new Array(width);
-        WebInspector.TimelinePanel.forAllRecords(records, function(r) {
+        WebInspector.TimelinePresentationModel.forAllRecords(records, function(r) {
             if (!r.usedHeapSize)
                 return;
             var x = Math.round((WebInspector.TimelineModel.endTimeInSeconds(r) - minTime) * xFactor);
