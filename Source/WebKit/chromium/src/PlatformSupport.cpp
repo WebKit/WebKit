@@ -716,13 +716,6 @@ void PlatformSupport::histogramEnumeration(const char* name, int sample, int bou
     webKitPlatformSupport()->histogramEnumeration(name, sample, boundaryValue);
 }
 
-// Sudden Termination ---------------------------------------------------------
-
-void PlatformSupport::suddenTerminationChanged(bool enabled)
-{
-    webKitPlatformSupport()->suddenTerminationChanged(enabled);
-}
-
 // Theming --------------------------------------------------------------------
 
 #if OS(WINDOWS)
