@@ -1,5 +1,18 @@
 2012-04-03  Filip Pizlo  <fpizlo@apple.com>
 
+        Offlineasm ARM backend has a very convoluted way of saying it wants to emit a
+        three-operand multiply instruction
+        https://bugs.webkit.org/show_bug.cgi?id=83100
+
+        Reviewed by Darin Adler.
+        
+        Changed the "muli"/"mulp" case to call emitArmV7() since that helper method was
+        already smart enough to do the Right Thing for multiply.
+
+        * offlineasm/armv7.rb:
+
+2012-04-03  Filip Pizlo  <fpizlo@apple.com>
+
         Offlineasm ARM backend uses the wrong mnemonic for multiply
         https://bugs.webkit.org/show_bug.cgi?id=83098
         <rdar://problem/11168744>
