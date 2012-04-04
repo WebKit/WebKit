@@ -33,6 +33,7 @@
 
 #include "CachedImage.h"
 #include "HTMLInputElement.h"
+#include "Image.h"
 #include "WebInputElement.h"
 #include "WebTextFieldDecoratorClient.h"
 

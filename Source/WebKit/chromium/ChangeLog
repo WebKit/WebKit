@@ -1,3 +1,12 @@
+2012-04-03  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Include Image.h in TextFieldDecoratorImpl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=83066
+
+        Reviewed by James Robinson.
+
+        * src/TextFieldDecoratorImpl.cpp:
+
 2012-04-03  Rafael Weinstein  <rafaelw@chromium.org>
 
         Use V8 completion callback API to assert that V8RecursionScope is on the stack whenever invoking script
