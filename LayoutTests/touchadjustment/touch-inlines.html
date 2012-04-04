@@ -26,7 +26,7 @@ hi there <a id="6" href="#6">some link that is breaking multiple lines just for 
         var width = radius * 2;
         var height = radius * 2;
         var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
-        if (adjustedNode.nodeType == 3) // TEXT node
+        if (adjustedNode && adjustedNode.nodeType == 3) // TEXT node
             adjustedNode = adjustedNode.parentNode;
         return adjustedNode;
     }
@@ -53,10 +53,10 @@ hi there <a id="6" href="#6">some link that is breaking multiple lines just for 
         debug('Test a few direct misses.');
 
         adjustedNode = testRoundTouch(56, 60, 8)
-        shouldBeEqualToString('adjustedNode.id', '');
+        shouldEvaluateTo('adjustedNode', 'null');
 
         adjustedNode = testRoundTouch(20, 160, 4)
-        shouldBeEqualToString('adjustedNode.id', '');
+        shouldEvaluateTo('adjustedNode', 'null');
 
     }
 

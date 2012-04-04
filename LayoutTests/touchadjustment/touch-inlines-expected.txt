@@ -15,8 +15,8 @@ PASS adjustedNode.id is "2"
 PASS adjustedNode.id is "4"
 PASS adjustedNode.id is "6"
 Test a few direct misses.
-PASS adjustedNode.id is ""
-PASS adjustedNode.id is ""
+PASS adjustedNode is null
+PASS adjustedNode is null
 Test some in-direct hits.
 PASS adjustedNode.id is "2"
 PASS adjustedNode.id is "3"

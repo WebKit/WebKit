@@ -2469,11 +2469,7 @@ void EventHandler::bestClickableNodeForTouchPoint(const IntPoint& touchCenter, c
 
     IntRect touchRect = result.rectForPoint(touchCenter);
     RefPtr<StaticHashSetNodeList> nodeList = StaticHashSetNodeList::adopt(result.rectBasedTestResult());
-    if (!findBestClickableCandidate(targetNode, targetPoint, touchCenter, touchRect, *nodeList.get())) {
-        // Default to just returning innerNonSharedNode.
-        targetPoint = touchCenter;
-        targetNode = result.innerNonSharedNode();
-    }
+    findBestClickableCandidate(targetNode, targetPoint, touchCenter, touchRect, *nodeList.get());
 }
 
 void EventHandler::bestZoomableAreaForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntRect& targetArea, Node*& targetNode)
