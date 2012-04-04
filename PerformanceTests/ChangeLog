@@ -1,5 +1,13 @@
 2012-04-04  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Web Inspector: Unreviewed. temporary disable broken inspector tests.
+
+        * inspector/first-open-scripts.html.broken: Renamed from PerformanceTests/inspector/first-open-scripts.html.
+        * inspector/network-append-30-requests.html.broken: Renamed from PerformanceTests/inspector/network-append-30-requests.html.
+        * inspector/show-panel.html.broken: Renamed from PerformanceTests/inspector/show-panel.html.
+
+2012-04-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Web Inspector: linearise aggregate's retaining size calculation.
         https://bugs.webkit.org/show_bug.cgi?id=83125
 
