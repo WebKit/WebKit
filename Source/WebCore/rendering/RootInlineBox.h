@@ -184,7 +184,7 @@ private:
 
     LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0) const;
 
-    int beforeAnnotationsAdjustment() const;
+    LayoutUnit beforeAnnotationsAdjustment() const;
 
     // This folds into the padding at the end of InlineFlowBox on 64-bit.
     unsigned m_lineBreakPos;

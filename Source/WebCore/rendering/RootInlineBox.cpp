@@ -288,7 +288,7 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
     setLineTopBottomPositions(lineTop, lineBottom, heightOfBlock, heightOfBlock + maxHeight);
     setPaginatedLineWidth(block()->availableLogicalWidthForContent(heightOfBlock));
 
-    int annotationsAdjustment = beforeAnnotationsAdjustment();
+    LayoutUnit annotationsAdjustment = beforeAnnotationsAdjustment();
     if (annotationsAdjustment) {
         // FIXME: Need to handle pagination here. We might have to move to the next page/column as a result of the
         // ruby expansion.
@@ -305,9 +305,9 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
     return heightOfBlock + maxHeight;
 }
 
-int RootInlineBox::beforeAnnotationsAdjustment() const
+LayoutUnit RootInlineBox::beforeAnnotationsAdjustment() const
 {
-    int result = 0;
+    LayoutUnit result = 0;
 
     if (!renderer()->style()->isFlippedLinesWritingMode()) {
         // Annotations under the previous line may push us down.
@@ -318,18 +318,18 @@ int RootInlineBox::beforeAnnotationsAdjustment() const
             return result;
 
         // Annotations over this line may push us further down.
-        int highestAllowedPosition = prevRootBox() ? min(prevRootBox()->lineBottom(), lineTop()) + result : block()->borderBefore();
+        LayoutUnit highestAllowedPosition = prevRootBox() ? min(prevRootBox()->lineBottom(), lineTop()) + result : static_cast<LayoutUnit>(block()->borderBefore());
         result = computeOverAnnotationAdjustment(highestAllowedPosition);
     } else {
         // Annotations under this line may push us up.
         if (hasAnnotationsBefore())
-            result = computeUnderAnnotationAdjustment(prevRootBox() ? prevRootBox()->lineBottom() : block()->borderBefore());
+            result = computeUnderAnnotationAdjustment(prevRootBox() ? prevRootBox()->lineBottom() : static_cast<LayoutUnit>(block()->borderBefore()));
 
         if (!prevRootBox() || !prevRootBox()->hasAnnotationsAfter())
             return result;
 
         // We have to compute the expansion for annotations over the previous line to see how much we should move.
-        int lowestAllowedPosition = max(prevRootBox()->lineBottom(), lineTop()) - result;
+        LayoutUnit lowestAllowedPosition = max(prevRootBox()->lineBottom(), lineTop()) - result;
         result = prevRootBox()->computeOverAnnotationAdjustment(lowestAllowedPosition);
     }
 
@@ -409,7 +409,7 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
 
     // Otherwise we're in the middle of the grid somewhere. Just push to the next line.
     LayoutUnit baselineOffset = currentBaselinePosition - firstBaselinePosition;
-    LayoutUnit remainder = baselineOffset % gridLineHeight;
+    LayoutUnit remainder = roundToInt(baselineOffset) % roundToInt(gridLineHeight);
     LayoutUnit result = delta;
     if (remainder)
         result += gridLineHeight - remainder;
@@ -756,8 +756,8 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
 
     // If leading is included for the box, then we compute that box.
     if (includeLeading && !setUsedFontWithLeading) {
-        int ascentWithLeading = box->baselinePosition(baselineType());
-        int descentWithLeading = box->lineHeight() - ascentWithLeading;
+        LayoutUnit ascentWithLeading = box->baselinePosition(baselineType());
+        LayoutUnit descentWithLeading = box->lineHeight() - ascentWithLeading;
         setAscentAndDescent(ascent, descent, ascentWithLeading, descentWithLeading, ascentDescentSet);
         
         // Examine the font box for inline flows and text boxes to see if any part of it is above the baseline.
@@ -769,8 +769,8 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
     }
     
     if (includeFontForBox(box) && !setUsedFont) {
-        int fontAscent = box->renderer()->style(isFirstLineStyle())->fontMetrics().ascent();
-        int fontDescent = box->renderer()->style(isFirstLineStyle())->fontMetrics().descent();
+        LayoutUnit fontAscent = box->renderer()->style(isFirstLineStyle())->fontMetrics().ascent();
+        LayoutUnit fontDescent = box->renderer()->style(isFirstLineStyle())->fontMetrics().descent();
         setAscentAndDescent(ascent, descent, fontAscent, fontDescent, ascentDescentSet);
         affectsAscent = fontAscent - box->logicalTop() > 0;
         affectsDescent = fontDescent + box->logicalTop() > 0; 
@@ -785,8 +785,8 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
     }
 
     if (includeMarginForBox(box)) {
-        int ascentWithMargin = box->renderer()->style(isFirstLineStyle())->fontMetrics().ascent();
-        int descentWithMargin = box->renderer()->style(isFirstLineStyle())->fontMetrics().descent();
+        LayoutUnit ascentWithMargin = box->renderer()->style(isFirstLineStyle())->fontMetrics().ascent();
+        LayoutUnit descentWithMargin = box->renderer()->style(isFirstLineStyle())->fontMetrics().descent();
         if (box->parent() && !box->renderer()->isText()) {
             ascentWithMargin += box->boxModelObject()->borderBefore() + box->boxModelObject()->paddingBefore() + box->boxModelObject()->marginBefore();
             descentWithMargin += box->boxModelObject()->borderAfter() + box->boxModelObject()->paddingAfter() + box->boxModelObject()->marginAfter();
@@ -822,7 +822,7 @@ LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositio
             return verticalPosition;
     }
 
-    int verticalPosition = 0;
+    LayoutUnit verticalPosition = 0;
     EVerticalAlign verticalAlign = renderer->style()->verticalAlign();
     if (verticalAlign == TOP || verticalAlign == BOTTOM)
         return 0;
