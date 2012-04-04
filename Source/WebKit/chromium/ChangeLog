@@ -1,3 +1,15 @@
+2012-04-04  Hans Wennborg  <hans@chromium.org>
+
+        WebSpeechRecognizer.h: add missing forward declaration
+        https://bugs.webkit.org/show_bug.cgi?id=83150
+
+        Reviewed by Tony Gentilcore.
+
+        Add missing forward declaration of WebSpeechRecognitionParams.
+
+        * public/WebSpeechRecognizer.h:
+        (WebKit):
+
 2012-04-03  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Plumbing for Chromium

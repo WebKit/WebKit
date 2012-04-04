@@ -32,6 +32,7 @@
 namespace WebKit {
 
 class WebSpeechGrammar;
+class WebSpeechRecognitionParams;
 class WebSpeechRecognizerClient;
 
 // Interface for speech recognition, to be implemented by the embedder.
