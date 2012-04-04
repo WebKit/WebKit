@@ -1,3 +1,25 @@
+2012-04-04  Anders Carlsson  <andersca@apple.com>
+
+        Text input doesn't work for some Flash forms
+        https://bugs.webkit.org/show_bug.cgi?id=83232
+        <rdar://problem/11186162>
+
+        Reviewed by Alexey Proskuryakov.
+
+        If a plug-in is instantiated when the WKView is not focused, text input wouldn't work. The reason for this
+        is that WebPage::windowIsFocused() would only return true if the window and the WKView are both focused. Rename
+        this member function to windowAndWebPageAreFocused, add a new windowIsFocused member function that does the right thing
+        and change WebPage::focusedWebPage to use windowAndWebPageAreFocused.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowIsFocused):
+        (WebKit):
+        (WebKit::WebPage::windowAndWebPageAreFocused):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::focusedWebPage):
+
 2012-03-15  Jer Noble  <jer.noble@apple.com>
 
         Full Screen mode should cancel before navigation.

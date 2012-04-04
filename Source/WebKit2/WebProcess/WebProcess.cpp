@@ -503,7 +503,7 @@ WebPage* WebProcess::focusedWebPage() const
     HashMap<uint64_t, RefPtr<WebPage> >::const_iterator end = m_pageMap.end();
     for (HashMap<uint64_t, RefPtr<WebPage> >::const_iterator it = m_pageMap.begin(); it != end; ++it) {
         WebPage* page = (*it).second.get();
-        if (page->windowIsFocused())
+        if (page->windowAndWebPageAreFocused())
             return page;
     }
     return 0;

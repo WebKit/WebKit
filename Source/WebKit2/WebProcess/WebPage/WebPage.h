@@ -304,6 +304,7 @@ public:
     void setLayerHostingMode(LayerHostingMode);
 
     bool windowIsVisible() const { return m_windowIsVisible; }
+    void updatePluginsActiveAndFocusedState();
     const WebCore::IntRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }
     const WebCore::IntRect& viewFrameInWindowCoordinates() const { return m_viewFrameInWindowCoordinates; }
 #elif PLATFORM(WIN)
@@ -311,6 +312,7 @@ public:
 #endif
 
     bool windowIsFocused() const;
+    bool windowAndWebPageAreFocused() const;
     void installPageOverlay(PassRefPtr<PageOverlay>);
     void uninstallPageOverlay(PageOverlay*, bool fadeOut);
     bool hasPageOverlay() const { return m_pageOverlay; }

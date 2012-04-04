@@ -2465,12 +2465,17 @@ void WebPage::windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInSc
 
 bool WebPage::windowIsFocused() const
 {
+    return m_page->focusController()->isActive();
+}
+
+bool WebPage::windowAndWebPageAreFocused() const
+{
 #if PLATFORM(MAC)
     if (!m_windowIsVisible)
         return false;
 #endif
     return m_page->focusController()->isFocused() && m_page->focusController()->isActive();
-}    
+}
 
 void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
