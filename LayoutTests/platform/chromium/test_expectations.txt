@@ -3541,7 +3541,6 @@ BUGCR116252 LINUX : platform/chromium-linux/fast/text/chromium-linux-fontconfig-
 BUGWK80058 WIN RELEASE : fast/workers/stress-js-execution.html = CRASH PASS
 
 BUGWK80067 DEBUG : media/track/track-cues-pause-on-exit.html = PASS TEXT
-BUGWK80068 WIN DEBUG : media/video-source-error.html = PASS TEXT
 
 BUGV8_1973 : fast/js/caller-property.html = TEXT
 
