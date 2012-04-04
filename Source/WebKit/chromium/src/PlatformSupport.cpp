@@ -706,11 +706,6 @@ void PlatformSupport::stopSharedTimer()
 
 // StatsCounters --------------------------------------------------------------
 
-void PlatformSupport::histogramCustomCounts(const char* name, int sample, int min, int max, int bucketCount)
-{
-    webKitPlatformSupport()->histogramCustomCounts(name, sample, min, max, bucketCount);
-}
-
 void PlatformSupport::histogramEnumeration(const char* name, int sample, int boundaryValue)
 {
     webKitPlatformSupport()->histogramEnumeration(name, sample, boundaryValue);

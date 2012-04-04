@@ -34,6 +34,7 @@
 #include "TransformationMatrix.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostImpl.h"
+#include <public/Platform.h>
 
 namespace WebCore {
 
@@ -137,11 +138,11 @@ void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const Lay
     ASSERT(histogramOpaqueName);
 
     float normalization = 1000.f / (layerTreeHost->viewportSize().width() * layerTreeHost->viewportSize().height());
-    PlatformSupport::histogramCustomCounts(histogramOpaqueName, static_cast<int>(normalization * m_pixelsDrawnOpaque), 100, 1000000, 50);
-    PlatformSupport::histogramCustomCounts(histogramTranslucentName, static_cast<int>(normalization * m_pixelsDrawnTranslucent), 100, 1000000, 50);
-    PlatformSupport::histogramCustomCounts(histogramCulledName, static_cast<int>(normalization * m_pixelsCulled), 100, 1000000, 50);
+    WebKit::Platform::current()->histogramCustomCounts(histogramOpaqueName, static_cast<int>(normalization * m_pixelsDrawnOpaque), 100, 1000000, 50);
+    WebKit::Platform::current()->histogramCustomCounts(histogramTranslucentName, static_cast<int>(normalization * m_pixelsDrawnTranslucent), 100, 1000000, 50);
+    WebKit::Platform::current()->histogramCustomCounts(histogramCulledName, static_cast<int>(normalization * m_pixelsCulled), 100, 1000000, 50);
     if (paintedCounterName)
-        PlatformSupport::histogramCustomCounts(histogramPaintedName, static_cast<int>(normalization * m_pixelsPainted), 100, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts(histogramPaintedName, static_cast<int>(normalization * m_pixelsPainted), 100, 1000000, 50);
 
     TRACE_COUNTER_ID1("webkit", cullCounterName, layerTreeHost, m_pixelsCulled);
     TRACE_EVENT2("webkit", "CCOverdrawMetrics", opaqueCounterName, m_pixelsDrawnOpaque, translucentCounterName, m_pixelsDrawnTranslucent);

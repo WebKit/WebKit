@@ -1,5 +1,20 @@
 2012-04-04  Mark Pilgrim  <pilgrim@chromium.org>
 
+        Call histogramCustomCounts directly
+        https://bugs.webkit.org/show_bug.cgi?id=83112
+
+        Reviewed by Adam Barth.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImplContentPainter::paint):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/painting/PaintAggregator.cpp:
+
+2012-04-04  Mark Pilgrim  <pilgrim@chromium.org>
+
         Call suddenTerminationChanged directly
         https://bugs.webkit.org/show_bug.cgi?id=83114
 
