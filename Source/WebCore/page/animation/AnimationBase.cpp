@@ -346,11 +346,11 @@ public:
 
     virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
     {
-       // If the style pointers are the same, don't bother doing the test.
-       // If either is null, return false. If both are null, return true.
-       if ((!a && !b) || a == b)
-           return true;
-       if (!a || !b)
+        // If the style pointers are the same, don't bother doing the test.
+        // If either is null, return false. If both are null, return true.
+        if ((!a && !b) || a == b)
+            return true;
+        if (!a || !b)
             return false;
         return (a->*m_getter)() == (b->*m_getter)();
     }
@@ -865,6 +865,32 @@ private:
     LayersAccessor m_layersAccessor;
 };
 
+class PropertyWrapperFlex : public PropertyWrapperBase {
+public:
+    PropertyWrapperFlex() : PropertyWrapperBase(CSSPropertyWebkitFlex)
+    {
+    }
+
+    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    {
+        // If the style pointers are the same, don't bother doing the test.
+        // If either is null, return false. If both are null, return true.
+        if ((!a && !b) || a == b)
+            return true;
+        if (!a || !b)
+            return false;
+
+        return a->flexPreferredSize() == b->flexPreferredSize() && a->positiveFlex() == b->positiveFlex() && a->negativeFlex() == b->negativeFlex();
+    }
+
+    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    {
+        dst->setFlexPreferredSize(blendFunc(anim, a->flexPreferredSize(), b->flexPreferredSize(), progress));
+        dst->setPositiveFlex(blendFunc(anim, a->positiveFlex(), b->positiveFlex(), progress));
+        dst->setNegativeFlex(blendFunc(anim, a->negativeFlex(), b->negativeFlex(), progress));
+    }
+};
+
 class ShorthandPropertyWrapper : public PropertyWrapperBase {
 public:
     ShorthandPropertyWrapper(CSSPropertyID property, const StylePropertyShorthand& shorthand)
@@ -989,6 +1015,8 @@ void AnimationBase::ensurePropertyMap()
         gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyHeight, &RenderStyle::height, &RenderStyle::setHeight));
         gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyMinHeight, &RenderStyle::minHeight, &RenderStyle::setMinHeight));
         gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyMaxHeight, &RenderStyle::maxHeight, &RenderStyle::setMaxHeight));
+
+        gPropertyWrappers->append(new PropertyWrapperFlex());
 
         gPropertyWrappers->append(new PropertyWrapper<unsigned>(CSSPropertyBorderLeftWidth, &RenderStyle::borderLeftWidth, &RenderStyle::setBorderLeftWidth));
         gPropertyWrappers->append(new PropertyWrapper<unsigned>(CSSPropertyBorderRightWidth, &RenderStyle::borderRightWidth, &RenderStyle::setBorderRightWidth));
