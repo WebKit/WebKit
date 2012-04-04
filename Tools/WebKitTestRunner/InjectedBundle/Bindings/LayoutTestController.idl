@@ -139,6 +139,10 @@ module WTR {
         // FIXME: handle non-boolean preferences.
         void overridePreference(in DOMString preference, in boolean value);
 
+        // Page Visibility API
+        void setPageVisibility(in DOMString state);
+        void resetPageVisibility();
+
         readonly attribute DOMString platformName;
     };
 

@@ -197,7 +197,10 @@ public:
     void overridePreference(JSStringRef preference, bool value);
 
     JSRetainPtr<JSStringRef> platformName();
-    
+
+    void setPageVisibility(JSStringRef state);
+    void resetPageVisibility();
+
 private:
     static const double waitToDumpWatchdogTimerInterval;
 

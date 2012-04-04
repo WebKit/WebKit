@@ -1,3 +1,22 @@
+2012-04-04  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        WKTR needs to implement layoutTestController.setPageVisibility()
+        https://bugs.webkit.org/show_bug.cgi?id=69554
+
+        Reviewed by Simon Fraser.
+
+        This patch implements the layoutTestController.setPageVisibility
+        so WKTR supports the Page Visibility API implementation by using InjectedBundle
+        to set the visibility state directly to Page.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::setPageVisibility):
+        (WTR):
+        (WTR::LayoutTestController::resetPageVisibility):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (LayoutTestController):
+
 2012-04-04  Adam Barth  <abarth@webkit.org>
 
         [Chromium] TestWebKitAPI links in WebCore twice

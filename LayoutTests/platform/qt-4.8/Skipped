@@ -71,3 +71,10 @@ compositing
 # [Qt] soft hyphen does not break the line, instead causes content to overlap
 # https://bugs.webkit.org/show_bug.cgi?id=76932
 fast/text/soft-hyphen-5.html
+
+# This platform does not support the Page Visibility API.
+fast/events/page-visibility-iframe-delete-test.html
+fast/events/page-visibility-iframe-move-test.html
+fast/events/page-visibility-iframe-propagation-test.html
+fast/events/page-visibility-transition-test.html
+

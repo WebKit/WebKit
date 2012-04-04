@@ -368,12 +368,6 @@ fast/dom/HTMLAnchorElement/anchor-download.html
 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
 fast/dom/HTMLAnchorElement/anchor-download-unset.html
 
-# This platform does not support the Page Visibility API.
-fast/events/page-visibility-iframe-delete-test.html
-fast/events/page-visibility-iframe-move-test.html
-fast/events/page-visibility-iframe-propagation-test.html
-fast/events/page-visibility-transition-test.html
-
 # For now, Web Audio API is disabled
 webaudio/
 

@@ -1,3 +1,23 @@
+2012-04-04  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        WKTR needs to implement layoutTestController.setPageVisibility()
+        https://bugs.webkit.org/show_bug.cgi?id=69554
+
+        Reviewed by Simon Fraser.
+
+        This patch implements the setPageVisibilityState through InjectedBundle
+        so WKTR supports the Page Visibility API and can set the visibility state
+        directly to Page.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetPageVisibilityState):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit):
+        (WebKit::InjectedBundle::setPageVisibilityState):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
 2012-04-04  Alexis Menard  <alexis.menard@openbossa.org>
 
         Animation related classes should use CSSPropertyId rather than integers when manipulating CSS property ids.

@@ -32,6 +32,7 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestController.h"
+#include <WebCore/PageVisibilityState.h>
 #include <WebKit2/WKBundleBackForwardList.h>
 #include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundleFramePrivate.h>
@@ -534,6 +535,24 @@ void LayoutTestController::setTextDirection(JSStringRef direction)
 void LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload(bool shouldStayOnPage)
 {
     InjectedBundle::shared().postNewBeforeUnloadReturnValue(!shouldStayOnPage);
+}
+
+void LayoutTestController::setPageVisibility(JSStringRef state)
+{
+    WKStringRef visibilityStateKey = toWK(state).get();
+    WebCore::PageVisibilityState visibilityState = WebCore::PageVisibilityStateVisible;
+
+    if (WKStringIsEqualToUTF8CString(visibilityStateKey, "hidden"))
+        visibilityState = WebCore::PageVisibilityStateHidden;
+    else if (WKStringIsEqualToUTF8CString(visibilityStateKey, "prerender"))
+        visibilityState = WebCore::PageVisibilityStatePrerender;
+
+    WKBundleSetPageVisibilityState(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), visibilityState, /* isInitialState */ false);
+}
+
+void LayoutTestController::resetPageVisibility()
+{
+    WKBundleSetPageVisibilityState(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), WebCore::PageVisibilityStateVisible, /* isInitialState */ true);
 }
 
 void LayoutTestController::dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)

@@ -240,3 +240,8 @@ bool WKBundleIsProcessingUserGesture(WKBundleRef)
 {
     return InjectedBundle::isProcessingUserGesture();
 }
+
+void WKBundleSetPageVisibilityState(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, int state, bool isInitialState)
+{
+    toImpl(bundleRef)->setPageVisibilityState(toImpl(pageGroupRef), state, isInitialState);
+}
