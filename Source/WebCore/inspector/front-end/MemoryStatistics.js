@@ -420,7 +420,7 @@ WebInspector.MemoryStatistics.prototype = {
 
     _refreshDividers: function()
     {
-        this._timelineGrid.updateDividers(true, this._timelinePanel.calculator, this._timelinePanel.timelinePaddingLeft);
+        this._timelineGrid.updateDividers(this._timelinePanel.calculator);
     },
 
     _setVerticalClip: function(originY, height)
