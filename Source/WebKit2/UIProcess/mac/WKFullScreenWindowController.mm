@@ -131,6 +131,11 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
     _webView = webView;
 }
 
+- (BOOL)isFullScreen
+{
+    return _isFullScreen;
+}
+
 #pragma mark -
 #pragma mark NSWindowController overrides
 

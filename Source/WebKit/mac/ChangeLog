@@ -1,3 +1,20 @@
+2012-03-15  Jer Noble  <jer.noble@apple.com>
+
+        Full Screen mode should cancel before navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=81295
+
+        Reviewed by Anders Carlsson.
+
+        When a provisional load is started, if the page is currently in full screen mode, instruct
+        the full screen controller to close the full screen window immediately.
+
+        * WebView/WebFullScreenController.h:
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController isFullScreen]): Added.
+        * WebView/WebView.mm:
+        (-[WebView _didStartProvisionalLoadForFrame:]): Close the full screen window controller, if
+            present and in full screen mode.
+
 2012-04-03  Keishi Hattori  <keishi@webkit.org>
 
         Disable ENABLE_DATALIST for now

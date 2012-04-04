@@ -1,3 +1,27 @@
+2012-03-15  Jer Noble  <jer.noble@apple.com>
+
+        Full Screen mode should cancel before navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=81295
+
+        Reviewed by Anders Carlsson.
+
+        When a provisional load is started, if the page is currently in full screen mode, instruct
+        the full screen controller to close the full screen window immediately.
+
+        Close the full screen window controller, if present and in full screen mode:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame): 
+
+        Add boilerplate to support passing through isFullScreen() and close() methods from the WebPageProxy
+        to the WKFullScreenWindowController:
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController isFullScreen]): Added simple accessor.
+        * UIProcess/mac/WebFullScreenManagerProxyMac.mm:
+        (WebKit::WebFullScreenManagerProxy::close): Pass through to the WKFullScreenWindowController.
+        (WebKit::WebFullScreenManagerProxy::isFullScreen): Ditto.
+
 2012-04-04  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         WKTR needs to implement layoutTestController.setPageVisibility()

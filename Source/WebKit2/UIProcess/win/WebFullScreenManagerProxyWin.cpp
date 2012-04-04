@@ -45,6 +45,18 @@ void WebFullScreenManagerProxy::invalidate()
     m_webView = 0;
 }
 
+void WebFullScreenManagerProxy::close()
+{
+    if (!m_webView)
+        return;
+    m_webView->fullScreenController()->close();
+}
+
+bool WebFullScreenManagerProxy::isFullScreen()
+{
+    return m_webView->fullScreenController()->isFullScreen();
+}
+
 void WebFullScreenManagerProxy::enterFullScreen()
 {
     if (!m_webView)

@@ -150,6 +150,11 @@ static IntRect screenRectOfContents(Element* element)
     _element = element;
 }
 
+- (BOOL)isFullScreen
+{
+    return _isFullScreen;
+}
+
 #pragma mark -
 #pragma mark NSWindowController overrides
 

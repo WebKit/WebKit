@@ -73,6 +73,8 @@ public:
     void invalidate();
 
     void setWebView(PlatformWebView*);
+    bool isFullScreen();
+    void close();
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply);

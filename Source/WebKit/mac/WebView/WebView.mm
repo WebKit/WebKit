@@ -1831,6 +1831,11 @@ static inline IMP getMethod(id o, SEL s)
     }
 
     [NSApp setWindowsNeedUpdate:YES];
+
+#if ENABLE(FULLSCREEN_API)
+    if (_private->newFullscreenController && [_private->newFullscreenController isFullScreen])
+        [_private->newFullscreenController close];
+#endif
 }
 
 - (void)_didCommitLoadForFrame:(WebFrame *)frame

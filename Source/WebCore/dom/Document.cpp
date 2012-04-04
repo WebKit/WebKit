@@ -5378,6 +5378,9 @@ bool Document::webkitFullscreenEnabled() const
 
 void Document::webkitWillEnterFullScreenForElement(Element* element)
 {
+    if (!attached() || inPageCache())
+        return;
+
     ASSERT(element);
 
     // Protect against being called after the document has been removed from the page.
@@ -5414,7 +5417,10 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
 {
     if (!m_fullScreenElement)
         return;
-    
+
+    if (!attached() || inPageCache())
+        return;
+
     m_fullScreenElement->didBecomeFullscreenElement();
 
     m_fullScreenChangeDelayTimer.startOneShot(0);
@@ -5425,6 +5431,9 @@ void Document::webkitWillExitFullScreenForElement(Element*)
     if (!m_fullScreenElement)
         return;
 
+    if (!attached() || inPageCache())
+        return;
+
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
     
     m_fullScreenElement->willStopBeingFullscreenElement();
@@ -5432,6 +5441,9 @@ void Document::webkitWillExitFullScreenForElement(Element*)
 
 void Document::webkitDidExitFullScreenForElement(Element*)
 {
+    if (!attached() || inPageCache())
+        return;
+
     m_areKeysEnabledInFullScreen = false;
     
     if (m_fullScreenRenderer)
