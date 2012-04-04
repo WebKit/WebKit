@@ -198,13 +198,13 @@ class CounterVisitor : public DOMWrapperVisitor {
 public:
     CounterVisitor(Page* page)
         : m_page(page)
-        , m_domGroups(InspectorArray::create())
+        , m_domGroups(TypeBuilder::Array<TypeBuilder::Memory::DOMGroup>::create())
         , m_jsExternalStringSize(0)
         , m_sharedStringSize(0) { }
 
-    InspectorArray* domGroups() { return m_domGroups.get(); }
+    TypeBuilder::Array<TypeBuilder::Memory::DOMGroup>* domGroups() { return m_domGroups.get(); }
 
-    PassRefPtr<InspectorObject> strings()
+    PassRefPtr<StringStatistics> strings()
     {
         RefPtr<StringStatistics> stringStatistics = StringStatistics::create()
             .setDom(m_characterDataStatistics.characterDataSize())
@@ -236,7 +236,7 @@ public:
         if (rootNode->nodeType() == Node::DOCUMENT_NODE)
             domGroup->setDocumentURI(static_cast<Document*>(rootNode)->documentURI());
 
-        m_domGroups->pushObject(domGroup);
+        m_domGroups->addItem(domGroup);
     }
 
     virtual void visitJSExternalString(StringImpl* string)
@@ -278,7 +278,7 @@ private:
 
     HashSet<Node*> m_roots;
     Page* m_page;
-    RefPtr<InspectorArray> m_domGroups;
+    RefPtr<TypeBuilder::Array<TypeBuilder::Memory::DOMGroup> > m_domGroups;
     CharacterDataStatistics m_characterDataStatistics;
     int m_jsExternalStringSize;
     int m_sharedStringSize;
@@ -290,7 +290,7 @@ InspectorMemoryAgent::~InspectorMemoryAgent()
 {
 }
 
-void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<InspectorArray>& domGroups, RefPtr<InspectorObject>& strings)
+void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Memory::DOMGroup> >& domGroups, RefPtr<TypeBuilder::Memory::StringStatistics>& strings)
 {
     CounterVisitor counterVisitor(m_page);
     ScriptProfiler::visitJSDOMWrappers(&counterVisitor);

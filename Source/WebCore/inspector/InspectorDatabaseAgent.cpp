@@ -103,19 +103,19 @@ public:
 
         SQLResultSetRowList* rowList = resultSet->rows();
 
-        RefPtr<InspectorArray> columnNames = InspectorArray::create();
+        RefPtr<TypeBuilder::Array<String> > columnNames = TypeBuilder::Array<String>::create();
         const Vector<String>& columns = rowList->columnNames();
         for (size_t i = 0; i < columns.size(); ++i)
-            columnNames->pushString(columns[i]);
+            columnNames->addItem(columns[i]);
 
-        RefPtr<InspectorArray> values = InspectorArray::create();
+        RefPtr<TypeBuilder::Array<InspectorValue> > values = TypeBuilder::Array<InspectorValue>::create();
         const Vector<SQLValue>& data = rowList->values();
         for (size_t i = 0; i < data.size(); ++i) {
             const SQLValue& value = rowList->values()[i];
             switch (value.type()) {
-                case SQLValue::StringValue: values->pushString(value.string()); break;
-                case SQLValue::NumberValue: values->pushNumber(value.number()); break;
-                case SQLValue::NullValue: values->pushValue(InspectorValue::null()); break;
+            case SQLValue::StringValue: values->addItem(InspectorString::create(value.string())); break;
+            case SQLValue::NumberValue: values->addItem(InspectorBasicValue::create(value.number())); break;
+            case SQLValue::NullValue: values->addItem(InspectorValue::null()); break;
             }
         }
         m_frontendProvider->frontend()->sqlTransactionSucceeded(m_transactionId, columnNames, values);
@@ -291,19 +291,21 @@ void InspectorDatabaseAgent::restore()
     m_enabled =  m_state->getBoolean(DatabaseAgentState::databaseAgentEnabled);
 }
 
-void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, const String& databaseId, RefPtr<InspectorArray>& names)
+void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, const String& databaseId, RefPtr<TypeBuilder::Array<String> >& names)
 {
     if (!m_enabled) {
         *error = "Database agent is not enabled";
         return;
     }
 
+    names = TypeBuilder::Array<String>::create();
+
     Database* database = databaseForId(databaseId);
     if (database) {
         Vector<String> tableNames = database->tableNames();
         unsigned length = tableNames.size();
         for (unsigned i = 0; i < length; ++i)
-            names->pushString(tableNames[i]);
+            names->addItem(tableNames[i]);
     }
 }
 

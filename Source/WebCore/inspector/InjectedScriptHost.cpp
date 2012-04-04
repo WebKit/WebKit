@@ -98,8 +98,10 @@ void InjectedScriptHost::disconnect()
 
 void InjectedScriptHost::inspectImpl(PassRefPtr<InspectorValue> object, PassRefPtr<InspectorValue> hints)
 {
-    if (m_inspectorAgent)
-        m_inspectorAgent->inspect(object->asObject(), hints->asObject());
+    if (m_inspectorAgent) {
+        RefPtr<TypeBuilder::Runtime::RemoteObject> remoteObject = TypeBuilder::Runtime::RemoteObject::runtimeCast(object);
+        m_inspectorAgent->inspect(remoteObject, hints->asObject());
+    }
 }
 
 void InjectedScriptHost::getEventListenersImpl(Node* node, Vector<EventListenerInfo>& listenersArray)

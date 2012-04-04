@@ -60,7 +60,8 @@ TYPES_WITH_RUNTIME_CAST_SET = frozenset(["Runtime.RemoteObject", "Runtime.Proper
                                          "Debugger.FunctionDetails", "Debugger.CallFrame"])
 
 STRICT_ENABLED_DOMAINS = ["Console", "DOMDebugger",
-                          "CSS", "Debugger", "DOM", "Network", "Page", "Runtime"]
+                          "CSS", "Debugger", "DOM", "Network", "Page", "Runtime",
+                          "Inspector", "Memory", "Database"]
 
 
 cmdline_parser = optparse.OptionParser()
@@ -2277,14 +2278,12 @@ struct ArrayItemHelper<int> {
     };
 };
 
-
-
 template<>
-struct ArrayItemHelper<InspectorObject> {
+struct ArrayItemHelper<InspectorValue> {
     struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorObject> value)
+        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorValue> value)
         {
-            array->pushObject(value);
+            array->pushValue(value);
         }
     };
 };

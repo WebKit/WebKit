@@ -57,7 +57,7 @@ public:
         return adoptPtr(new InspectorMemoryAgent(instrumentingAgents, state, page, domAgent));
     }
 
-    void getDOMNodeCount(ErrorString*, RefPtr<InspectorArray>& domGroups, RefPtr<InspectorObject>& strings);
+    void getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Memory::DOMGroup> >& domGroups, RefPtr<TypeBuilder::Memory::StringStatistics>& strings);
 
     ~InspectorMemoryAgent();
 

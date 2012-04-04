@@ -202,7 +202,7 @@ void InspectorAgent::setInjectedScriptForOrigin(const String& origin, const Stri
     m_injectedScriptForOrigin.set(origin, source);
 }
 
-void InspectorAgent::inspect(PassRefPtr<InspectorObject> objectToInspect, PassRefPtr<InspectorObject> hints)
+void InspectorAgent::inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints)
 {
     if (m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled) && m_frontend) {
         m_frontend->inspector()->inspect(objectToInspect, hints);

@@ -66,7 +66,7 @@ public:
     // Called from the front-end.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
-    virtual void getDatabaseTableNames(ErrorString*, const String& databaseId, RefPtr<InspectorArray>& names);
+    virtual void getDatabaseTableNames(ErrorString*, const String& databaseId, RefPtr<TypeBuilder::Array<String> >& names);
     virtual void executeSQL(ErrorString*, const String& databaseId, const String& query, bool* success, int* transactionId);
 
     // Called from the injected script.
