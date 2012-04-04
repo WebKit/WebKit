@@ -1322,7 +1322,7 @@ BUGCR10322 SKIP : accessibility/visible-elements.html = TEXT
 BUGWK73912 SKIP : accessibility/aria-checkbox-text.html = TIMEOUT PASS
 
 BUGWK73912 LEOPARD : accessibility/aria-checkbox-sends-notification.html = CRASH TEXT PASS
-BUGWK73912 SNOWLEOPARD : accessibility/aria-checkbox-sends-notification.html = TEXT PASS
+BUGWK73912 LINUX WIN SNOWLEOPARD : accessibility/aria-checkbox-sends-notification.html = TEXT PASS
 
 // -----------------------------------------------------------------
 // Test failures with Skia GPU rendering of canvas 2D
