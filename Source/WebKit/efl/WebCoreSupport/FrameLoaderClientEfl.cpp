@@ -50,6 +50,7 @@
 #include "ProgressTracker.h"
 #include "RenderPart.h"
 #include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "Settings.h"
 #include "WebKitVersion.h"
 #include "ewk_logging.h"
@@ -122,8 +123,14 @@ void FrameLoaderClientEfl::dispatchWillSubmitForm(FramePolicyFunction function, 
 
 void FrameLoaderClientEfl::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
-    if (!m_pluginView)
+    if (!m_pluginView) {
         loader->commitData(data, length);
+
+        // Let the media document handle the rest of loading itself, cancel here.
+        Frame* coreFrame = loader->frame();
+        if (coreFrame && coreFrame->document()->isMediaDocument())
+            loader->cancelMainResourceLoad(pluginWillHandleLoadError(loader->response()));
+    }
 
     // We re-check here as the plugin can have been created
     if (m_pluginView) {
@@ -657,10 +664,9 @@ bool FrameLoaderClientEfl::canShowMIMETypeAsHTML(const String& MIMEType) const
 
 bool FrameLoaderClientEfl::canShowMIMEType(const String& MIMEType) const
 {
-    if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType))
-        return true;
-
-    if (MIMETypeRegistry::isSupportedNonImageMIMEType(MIMEType))
+    if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType)
+        || MIMETypeRegistry::isSupportedNonImageMIMEType(MIMEType)
+        || MIMETypeRegistry::isSupportedMediaMIMEType(MIMEType))
         return true;
 
 #if 0 // PluginDatabase is disabled until we have Plugin system done.
@@ -780,6 +786,7 @@ enum {
     WebKitErrorCannotFindPlugIn = 200,
     WebKitErrorCannotLoadPlugIn = 201,
     WebKitErrorJavaUnavailable = 202,
+    WebKitErrorPluginWillHandleLoad = 204
 };
 
 ResourceError FrameLoaderClientEfl::cancelledError(const ResourceRequest& request)
@@ -820,15 +827,15 @@ ResourceError FrameLoaderClientEfl::fileDoesNotExistError(const ResourceResponse
                          "File does not exist");
 }
 
-ResourceError FrameLoaderClientEfl::pluginWillHandleLoadError(const ResourceResponse&)
+ResourceError FrameLoaderClientEfl::pluginWillHandleLoadError(const ResourceResponse& response)
 {
-    notImplemented();
-    return ResourceError("Error", 0, "", "");
+    return ResourceError("Error", WebKitErrorPluginWillHandleLoad, response.url().string(),
+                         "Plugin will handle load");
 }
 
 bool FrameLoaderClientEfl::shouldFallBack(const ResourceError& error)
 {
-    return !(error.isCancellation() || (error.errorCode() == WebKitErrorFrameLoadInterruptedByPolicyChange));
+    return !(error.isCancellation() || error.errorCode() == WebKitErrorFrameLoadInterruptedByPolicyChange || error.errorCode() == WebKitErrorPluginWillHandleLoad);
 }
 
 bool FrameLoaderClientEfl::canCachePage() const

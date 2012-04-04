@@ -1,3 +1,20 @@
+2012-04-04  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [EFL][DRT] FrameloaderClientEfl needs to handle media content correctly
+        https://bugs.webkit.org/show_bug.cgi?id=83020
+
+        Reviewed by Hajime Morita.
+
+        Implementing handling of media content type and media documents
+        in the respective FrameLoaderClientEfl callbacks.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::committedLoad): Cancel loading for media documents.
+        (WebCore::FrameLoaderClientEfl::canShowMIMEType): Let media content types through.
+        (WebCore):
+        (WebCore::FrameLoaderClientEfl::pluginWillHandleLoadError): Returning appropriate error type.
+        (WebCore::FrameLoaderClientEfl::shouldFallBack): Falling back as well for media handled by media player.
+
 2012-04-04  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Change ewk_settings_icon_database_icon_object_add to proper API name.
