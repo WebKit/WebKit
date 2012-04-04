@@ -1248,17 +1248,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             dataLog("[%4d] throw_reference_error\t %s\n", location, constantName(exec, k0, getConstant(k0)).data());
             break;
         }
-        case op_jsr: {
-            int retAddrDst = (++it)->u.operand;
-            int offset = (++it)->u.operand;
-            dataLog("[%4d] jsr\t\t %s, %d(->%d)\n", location, registerName(exec, retAddrDst).data(), offset, location + offset);
-            break;
-        }
-        case op_sret: {
-            int retAddrSrc = (++it)->u.operand;
-            dataLog("[%4d] sret\t\t %s\n", location, registerName(exec, retAddrSrc).data());
-            break;
-        }
         case op_debug: {
             int debugHookID = (++it)->u.operand;
             int firstLine = (++it)->u.operand;

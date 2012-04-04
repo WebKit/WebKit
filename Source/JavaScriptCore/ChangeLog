@@ -1,3 +1,41 @@
+2012-04-02  Filip Pizlo  <fpizlo@apple.com>
+
+        jsr/sret should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=82986
+        <rdar://problem/11017015>
+
+        Reviewed by Sam Weinig and Geoff Garen.
+        
+        Replaces jsr/sret with finally block inlining.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::pushFinallyContext):
+        (JSC::BytecodeGenerator::emitComplexJumpScopes):
+        (JSC):
+        * bytecompiler/BytecodeGenerator.h:
+        (FinallyContext):
+        (BytecodeGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITOpcodes.cpp:
+        (JSC):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2012-04-03  Mark Rowe  <mrowe@apple.com>
 
         Make it possible to install the JavaScriptCore test tools.

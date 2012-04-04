@@ -5186,30 +5186,6 @@ skip_id_custom_self:
         vPC++;
         NEXT_INSTRUCTION();
     }
-    DEFINE_OPCODE(op_jsr) {
-        /* jsr retAddrDst(r) target(offset)
-
-           Places the address of the next instruction into the retAddrDst
-           register and jumps to offset target from the current instruction.
-        */
-        int retAddrDst = vPC[1].u.operand;
-        int target = vPC[2].u.operand;
-        callFrame->r(retAddrDst) = vPC + OPCODE_LENGTH(op_jsr);
-
-        vPC += target;
-        NEXT_INSTRUCTION();
-    }
-    DEFINE_OPCODE(op_sret) {
-        /* sret retAddrSrc(r)
-
-         Jumps to the address stored in the retAddrSrc register. This
-         differs from op_jmp because the target address is stored in a
-         register, not as an immediate.
-        */
-        int retAddrSrc = vPC[1].u.operand;
-        vPC = callFrame->r(retAddrSrc).vPC();
-        NEXT_INSTRUCTION();
-    }
     DEFINE_OPCODE(op_debug) {
         /* debug debugHookID(n) firstLine(n) lastLine(n)
 

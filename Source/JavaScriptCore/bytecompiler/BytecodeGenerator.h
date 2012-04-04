@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -71,8 +71,13 @@ namespace JSC {
     };
 
     struct FinallyContext {
-        Label* finallyAddr;
-        RegisterID* retAddrDst;
+        StatementNode* finallyBlock;
+        unsigned scopeContextStackSize;
+        unsigned switchContextStackSize;
+        unsigned forInContextStackSize;
+        unsigned labelScopesSize;
+        int finallyDepth;
+        int dynamicScopeDepth;
     };
 
     struct ControlFlowContext {
@@ -479,9 +484,6 @@ namespace JSC {
         PassRefPtr<Label> emitJumpIfNotFunctionApply(RegisterID* cond, Label* target);
         PassRefPtr<Label> emitJumpScopes(Label* target, int targetScopeDepth);
 
-        PassRefPtr<Label> emitJumpSubroutine(RegisterID* retAddrDst, Label*);
-        void emitSubroutineReturn(RegisterID* retAddrSrc);
-
         RegisterID* emitGetPropertyNames(RegisterID* dst, RegisterID* base, RegisterID* i, RegisterID* size, Label* breakTarget);
         RegisterID* emitNextPropertyName(RegisterID* dst, RegisterID* base, RegisterID* i, RegisterID* size, RegisterID* iter, Label* target);
 
@@ -504,7 +506,7 @@ namespace JSC {
         int scopeDepth() { return m_dynamicScopeDepth + m_finallyDepth; }
         bool hasFinaliser() { return m_finallyDepth != 0; }
 
-        void pushFinallyContext(Label* target, RegisterID* returnAddrDst);
+        void pushFinallyContext(StatementNode* finallyBlock);
         void popFinallyContext();
 
         void pushOptimisedForIn(RegisterID* expectedBase, RegisterID* iter, RegisterID* index, RegisterID* propertyRegister)

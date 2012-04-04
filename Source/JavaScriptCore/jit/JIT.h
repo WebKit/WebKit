@@ -280,17 +280,6 @@ namespace JSC {
         static void linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, JSGlobalData*, CodeSpecializationKind);
 
     private:
-        struct JSRInfo {
-            DataLabelPtr storeLocation;
-            Label target;
-
-            JSRInfo(DataLabelPtr storeLocation, Label targetLocation)
-                : storeLocation(storeLocation)
-                , target(targetLocation)
-            {
-            }
-        };
-
         JIT(JSGlobalData*, CodeBlock* = 0);
 
         void privateCompileMainPass();
@@ -829,7 +818,6 @@ namespace JSC {
         void emit_op_jnlesseq(Instruction*);
         void emit_op_jngreater(Instruction*);
         void emit_op_jngreatereq(Instruction*);
-        void emit_op_jsr(Instruction*);
         void emit_op_jtrue(Instruction*);
         void emit_op_loop(Instruction*);
         void emit_op_loop_hint(Instruction*);
@@ -883,7 +871,6 @@ namespace JSC {
         void emit_op_ret(Instruction*);
         void emit_op_ret_object_or_this(Instruction*);
         void emit_op_rshift(Instruction*);
-        void emit_op_sret(Instruction*);
         void emit_op_strcat(Instruction*);
         void emit_op_stricteq(Instruction*);
         void emit_op_sub(Instruction*);
@@ -1066,7 +1053,6 @@ namespace JSC {
         Vector<JumpTable> m_jmpTable;
 
         unsigned m_bytecodeOffset;
-        Vector<JSRInfo> m_jsrSites;
         Vector<SlowCaseEntry> m_slowCases;
         Vector<SwitchRecord> m_switches;
 

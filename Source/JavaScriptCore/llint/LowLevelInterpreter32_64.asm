@@ -1571,21 +1571,6 @@ _llint_op_catch:
     dispatch(2)
 
 
-_llint_op_jsr:
-    traceExecution()
-    loadi 4[PC], t0
-    addi 3 * 4, PC, t1
-    storei t1, [cfr, t0, 8]
-    dispatchBranch(8[PC])
-
-
-_llint_op_sret:
-    traceExecution()
-    loadi 4[PC], t0
-    loadp [cfr, t0, 8], PC
-    dispatch(0)
-
-
 _llint_op_end:
     traceExecution()
     checkSwitchToJITForEpilogue()

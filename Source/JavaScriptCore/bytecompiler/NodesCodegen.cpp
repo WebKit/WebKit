@@ -1,7 +1,7 @@
 /*
 *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
 *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
-*  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+*  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
 *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
 *  Copyright (C) 2007 Maks Orlovich
 *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -1727,7 +1727,7 @@ RegisterID* ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
     RefPtr<RegisterID> returnRegister;
     if (generator.scopeDepth()) {
         RefPtr<Label> l0 = generator.newLabel();
-        if (generator.hasFinaliser() && !r0->isTemporary()) {
+        if (generator.hasFinaliser()) {
             returnRegister = generator.emitMove(generator.newTemporary(), r0);
             r0 = returnRegister.get();
         }
@@ -1957,13 +1957,8 @@ RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
 
     RefPtr<Label> tryStartLabel = generator.newLabel();
-    RefPtr<Label> finallyStart;
-    RefPtr<RegisterID> finallyReturnAddr;
-    if (m_finallyBlock) {
-        finallyStart = generator.newLabel();
-        finallyReturnAddr = generator.newTemporary();
-        generator.pushFinallyContext(finallyStart.get(), finallyReturnAddr.get());
-    }
+    if (m_finallyBlock)
+        generator.pushFinallyContext(m_finallyBlock);
 
     generator.emitLabel(tryStartLabel.get());
     generator.emitNode(dst, m_tryBlock);
@@ -1985,27 +1980,18 @@ RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     if (m_finallyBlock) {
         generator.popFinallyContext();
-        // there may be important registers live at the time we jump
-        // to a finally block (such as for a return or throw) so we
-        // ref the highest register ever used as a conservative
-        // approach to not clobbering anything important
-        RefPtr<RegisterID> highestUsedRegister = generator.highestUsedRegister();
+
         RefPtr<Label> finallyEndLabel = generator.newLabel();
 
-        // Normal path: invoke the finally block, then jump over it.
-        generator.emitJumpSubroutine(finallyReturnAddr.get(), finallyStart.get());
+        // Normal path: run the finally code, and jump to the end.
+        generator.emitNode(dst, m_finallyBlock);
         generator.emitJump(finallyEndLabel.get());
 
         // Uncaught exception path: invoke the finally block, then re-throw the exception.
         RefPtr<Label> here = generator.emitLabel(generator.newLabel().get());
         RefPtr<RegisterID> tempExceptionRegister = generator.emitCatch(generator.newTemporary(), tryStartLabel.get(), here.get());
-        generator.emitJumpSubroutine(finallyReturnAddr.get(), finallyStart.get());
-        generator.emitThrow(tempExceptionRegister.get());
-
-        // The finally block.
-        generator.emitLabel(finallyStart.get());
         generator.emitNode(dst, m_finallyBlock);
-        generator.emitSubroutineReturn(finallyReturnAddr.get());
+        generator.emitThrow(tempExceptionRegister.get());
 
         generator.emitLabel(finallyEndLabel.get());
     }

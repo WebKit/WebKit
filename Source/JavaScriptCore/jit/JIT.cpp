@@ -283,7 +283,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_jnlesseq)
         DEFINE_OP(op_jngreater)
         DEFINE_OP(op_jngreatereq)
-        DEFINE_OP(op_jsr)
         DEFINE_OP(op_jtrue)
         DEFINE_OP(op_loop)
         DEFINE_OP(op_loop_hint)
@@ -340,7 +339,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_ret_object_or_this)
         DEFINE_OP(op_rshift)
         DEFINE_OP(op_urshift)
-        DEFINE_OP(op_sret)
         DEFINE_OP(op_strcat)
         DEFINE_OP(op_stricteq)
         DEFINE_OP(op_sub)
@@ -664,10 +662,6 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter)
             m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(patchBuffer.returnAddressOffset(iter->from), iter->bytecodeOffset));
     }
-
-    // Link absolute addresses for jsr
-    for (Vector<JSRInfo>::iterator iter = m_jsrSites.begin(); iter != m_jsrSites.end(); ++iter)
-        patchBuffer.patch(iter->storeLocation, patchBuffer.locationOf(iter->target).executableAddress());
 
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccessCompilationInfo.size());
     for (unsigned i = 0; i < m_propertyAccessCompilationInfo.size(); ++i) {

@@ -921,20 +921,6 @@ void JIT::emit_op_jneq_ptr(Instruction* currentInstruction)
     addJump(branchPtr(NotEqual, regT0, TrustedImmPtr(ptr)), target);
 }
 
-void JIT::emit_op_jsr(Instruction* currentInstruction)
-{
-    int retAddrDst = currentInstruction[1].u.operand;
-    int target = currentInstruction[2].u.operand;
-    DataLabelPtr storeLocation = storePtrWithPatch(TrustedImmPtr(0), Address(callFrameRegister, sizeof(Register) * retAddrDst));
-    addJump(jump(), target);
-    m_jsrSites.append(JSRInfo(storeLocation, label()));
-}
-
-void JIT::emit_op_sret(Instruction* currentInstruction)
-{
-    jump(Address(callFrameRegister, sizeof(Register) * currentInstruction[1].u.operand));
-}
-
 void JIT::emit_op_eq(Instruction* currentInstruction)
 {
     unsigned dst = currentInstruction[1].u.operand;
