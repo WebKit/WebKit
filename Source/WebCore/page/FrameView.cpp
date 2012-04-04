@@ -2973,6 +2973,10 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
         p->fillRect(rect, Color(0xFF, 0, 0), ColorSpaceDeviceRGB);
 #endif
 
+    Page* page = m_frame->page();
+    if (page->mainFrame() == m_frame && page->pagination().mode != Page::Pagination::Unpaginated)
+        p->fillRect(rect, baseBackgroundColor(), ColorSpaceDeviceRGB);
+
     bool isTopLevelPainter = !sCurrentPaintTimeStamp;
     if (isTopLevelPainter)
         sCurrentPaintTimeStamp = currentTime();
