@@ -86,7 +86,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(CSSProp
     if (!svgStyle)
         return 0;
 
-    switch (static_cast<CSSPropertyID>(propertyID)) {
+    switch (propertyID) {
         case CSSPropertyClipRule:
             return CSSPrimitiveValue::create(svgStyle->clipRule());
         case CSSPropertyFloodOpacity:

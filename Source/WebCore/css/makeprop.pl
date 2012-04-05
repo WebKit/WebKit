@@ -153,6 +153,8 @@ print HEADER << "EOF";
 #define CSSPropertyNames_h
 
 #include <string.h>
+#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
 
 namespace WTF {
 class String;
@@ -177,10 +179,12 @@ foreach my $name (@names) {
   }
 }
 my $num = $i - $first;
+my $last = $i - 1;
 
 print HEADER "};\n\n";
 print HEADER "const int firstCSSProperty = $first;\n";
 print HEADER "const int numCSSProperties = $num;\n";
+print HEADER "const int lastCSSProperty = $last;\n";
 print HEADER "const size_t maxCSSPropertyNameLength = $maxLen;\n";
 
 print HEADER "const char* const propertyNameStrings[$num] = {\n";
@@ -194,7 +198,23 @@ print HEADER << "EOF";
 const char* getPropertyName(CSSPropertyID);
 WTF::String getJSPropertyName(CSSPropertyID);
 
+inline CSSPropertyID convertToCSSPropertyID(int value)
+{
+    ASSERT((value >= firstCSSProperty && value <= lastCSSProperty) || value == CSSPropertyInvalid);
+    return static_cast<CSSPropertyID>(value);
+}
+
 } // namespace WebCore
+
+namespace WTF {
+template<> struct DefaultHash<WebCore::CSSPropertyID> { typedef IntHash<unsigned> Hash; };
+template<> struct HashTraits<WebCore::CSSPropertyID> : GenericHashTraits<WebCore::CSSPropertyID> {
+    static const bool emptyValueIsZero = true;
+    static const bool needsDestruction = false;
+    static void constructDeletedValue(WebCore::CSSPropertyID& slot) { slot = static_cast<WebCore::CSSPropertyID>(WebCore::lastCSSProperty + 1); }
+    static bool isDeletedValue(WebCore::CSSPropertyID value) { return value == (WebCore::lastCSSProperty + 1); }
+};
+}
 
 #endif // CSSPropertyNames_h
 

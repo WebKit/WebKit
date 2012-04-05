@@ -109,7 +109,7 @@ public:
     void parseFillPosition(CSSParserValueList*, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
 
     void parseFillRepeat(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
-    PassRefPtr<CSSValue> parseFillSize(CSSPropertyID propId, bool &allowComma);
+    PassRefPtr<CSSValue> parseFillSize(CSSPropertyID, bool &allowComma);
 
     bool parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
     bool parseFillShorthand(CSSPropertyID, const CSSPropertyID* properties, int numProperties, bool important);
@@ -130,7 +130,7 @@ public:
 
     bool parseTransformOriginShorthand(RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
     bool parseCubicBezierTimingFunctionValue(CSSParserValueList*& args, double& result);
-    bool parseAnimationProperty(CSSPropertyID propId, RefPtr<CSSValue>&);
+    bool parseAnimationProperty(CSSPropertyID, RefPtr<CSSValue>&);
     bool parseTransitionShorthand(bool important);
     bool parseAnimationShorthand(bool important);
 
@@ -181,7 +181,7 @@ public:
     bool parseBorderImageSlice(CSSPropertyID, RefPtr<CSSBorderImageSliceValue>&);
     bool parseBorderImageWidth(RefPtr<CSSPrimitiveValue>&);
     bool parseBorderImageOutset(RefPtr<CSSPrimitiveValue>&);
-    bool parseBorderRadius(CSSPropertyID, bool);
+    bool parseBorderRadius(CSSPropertyID, bool important);
 
     bool parseAspectRatio(bool important);
 
@@ -301,7 +301,7 @@ public:
     unsigned m_numParsedPropertiesBeforeMarginBox;
 
     int m_inParseShorthand;
-    int m_currentShorthand;
+    CSSPropertyID m_currentShorthand;
     bool m_implicitShorthand;
 
     bool m_hasFontFaceOnlyValues;
@@ -482,7 +482,7 @@ public:
     ~ShorthandScope()
     {
         if (!(--m_parser->m_inParseShorthand))
-            m_parser->m_currentShorthand = 0;
+            m_parser->m_currentShorthand = CSSPropertyInvalid;
     }
 
 private:

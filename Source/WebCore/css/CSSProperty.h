@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CSSProperty {
 public:
-    CSSProperty(CSSPropertyID propID, PassRefPtr<CSSValue> value, bool important = false, int shorthandID = 0, bool implicit = false)
+    CSSProperty(CSSPropertyID propID, PassRefPtr<CSSValue> value, bool important = false, CSSPropertyID shorthandID = CSSPropertyInvalid, bool implicit = false)
         : m_id(propID)
         , m_shorthandID(shorthandID)
         , m_important(important)

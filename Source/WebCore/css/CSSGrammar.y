@@ -84,6 +84,7 @@ using namespace HTMLNames;
     StyleKeyframe* keyframe;
     StyleRuleKeyframes* keyframesRule;
     float val;
+    CSSPropertyID id;
 }
 
 %{
@@ -250,7 +251,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <valueList> key_list
 %type <value> key
 
-%type <integer> property
+%type <id> property
 
 %type <selector> specifier
 %type <selector> specifier_list
