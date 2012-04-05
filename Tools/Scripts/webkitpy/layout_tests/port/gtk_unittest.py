@@ -41,17 +41,6 @@ from webkitpy.tool.mocktool import MockOptions
 class GtkPortTest(port_testcase.PortTestCase):
     port_name = 'gtk'
     port_maker = GtkPort
-    _mock_crash_log = """\
-Crash log for DumpRenderTree (pid 28529):
-
-Coredump core-pid_28529-_-process_DumpRenderTree not found. To enable crash logs:
-
-- run this command as super-user: echo "%(core_directory)s/core-pid_%%p-_-process_%%e" > /proc/sys/kernel/core_pattern
-- enable core dumps: ulimit -c unlimited
-- set the WEBKIT_CORE_DUMPS_DIRECTORY environment variable: export WEBKIT_CORE_DUMPS_DIRECTORY=%(core_directory)s
-
-
-STDERR: <empty>""" % {'core_directory': os.environ.get('WEBKIT_CORE_DUMPS_DIRECTORY', '/path/to/coredumps')}
 
     def test_show_results_html_file(self):
         port = self.make_port()
@@ -65,13 +54,26 @@ STDERR: <empty>""" % {'core_directory': os.environ.get('WEBKIT_CORE_DUMPS_DIRECT
         else:
             self.assertEqual(a.splitlines(), b.splitlines())
 
-    def _mock_gdb_output(self, coredump_path):
-        return (self._mock_crash_log, [])
 
     def test_get_crash_log(self):
-        if not sys.platform.startswith("linux"):
-            return
+        core_directory = os.environ.get('WEBKIT_CORE_DUMPS_DIRECTORY', '/path/to/coredumps')
+        core_pattern = os.path.join(core_directory, "core-pid_%p-_-process_%e")
+        mock_empty_crash_log = """\
+Crash log for DumpRenderTree (pid 28529):
+
+Coredump core-pid_28529-_-process_DumpRenderTree not found. To enable crash logs:
+
+- run this command as super-user: echo "%(core_pattern)s" > /proc/sys/kernel/core_pattern
+- enable core dumps: ulimit -c unlimited
+- set the WEBKIT_CORE_DUMPS_DIRECTORY environment variable: export WEBKIT_CORE_DUMPS_DIRECTORY=%(core_directory)s
+
+
+STDERR: <empty>""" % locals()
+
+        def _mock_gdb_output(coredump_path):
+            return (mock_empty_crash_log, [])
+
         port = self.make_port()
-        port._get_gdb_output = self._mock_gdb_output
+        port._get_gdb_output = mock_empty_crash_log
         log = port._get_crash_log("DumpRenderTree", 28529, "", "")
-        self.assertLinesEqual(log, self._mock_crash_log)
+        self.assertLinesEqual(log, mock_empty_crash_log)

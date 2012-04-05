@@ -1,3 +1,19 @@
+2012-04-05  Philippe Normand  <pnormand@igalia.com>
+
+        gtk_unittest.GtkPortTest.test_get_crash_log failing on windows
+        https://bugs.webkit.org/show_bug.cgi?id=83176
+
+        Reviewed by Tony Chang.
+
+        Refactored the test to use os.path.join() to specify the
+        core_pattern value of the empty crash log mock.
+
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        (GtkPortTest):
+        (GtkPortTest.assertLinesEqual):
+        (GtkPortTest.test_get_crash_log):
+        (_mock_gdb_output):
+
 2012-04-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Fix includes after QtDeclarative -> QtQML renaming
