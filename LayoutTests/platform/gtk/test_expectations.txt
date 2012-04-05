@@ -182,5 +182,3 @@ BUGWK82734 : ietestcenter/css3/bordersbackgrounds/box-shadow-004.htm = FAIL MISS
 BUGWK82734 : ietestcenter/css3/bordersbackgrounds/color-behind-images.htm = FAIL MISSING
 BUGWK82734 : ietestcenter/css3/bordersbackgrounds/none-as-image-layer.htm = FAIL MISSING
 BUGWK82734 : ietestcenter/css3/bordersbackgrounds/order-of-images.htm = FAIL MISSING
-
-BUGWK83123 BUGWK83124 : http/tests/websocket/tests/hybi/workers/worker-reload.html = FAIL CRASH
