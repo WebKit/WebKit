@@ -638,8 +638,12 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
         m_dirtyRegion.unite(movedDirtyRegionInScrollRect);
     }
 
-    // Compute the scroll repaint region.
-    Region scrollRepaintRegion = subtract(rectToScroll, translate(rectToScroll, delta));
+    // Compute the scroll repaint region. We ensure that we are not subtracting areas
+    // that we've scrolled from outside the viewport from the repaint region.
+    IntRect onScreenScrollRect = rectToScroll;
+    onScreenScrollRect.intersect(IntRect(IntPoint(), enclosingIntRect(pageRect()).size()));
+    Region scrollRepaintRegion = subtract(rectToScroll, translate(onScreenScrollRect, delta));
+
     m_dirtyRegion.unite(scrollRepaintRegion);
     m_displayTimer.startOneShot(0);
 

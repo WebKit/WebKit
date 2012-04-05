@@ -1,3 +1,18 @@
+2012-04-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Scrolling some iframes that are partially out of the viewport leads to repaint errors
+        https://bugs.webkit.org/show_bug.cgi?id=83309
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Instead of only updating scrollRect - preservedRegion, update
+        scrollRect - (preservedRegion - offscreenPreservedRegion). This ensures that
+        when part of the scroll rect is moved onscreen from offscreen that part is
+        queued for a redraw.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::scroll): Properly calculate the area to repaint.
+
 2012-04-04  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
 
         Fix build break when CONTEXT_MENUS is disabled.

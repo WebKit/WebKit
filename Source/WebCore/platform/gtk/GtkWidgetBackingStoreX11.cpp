@@ -94,15 +94,18 @@ void WidgetBackingStore::scroll(const IntRect& scrollRect, const IntSize& scroll
 {
     IntRect targetRect(scrollRect);
     targetRect.move(scrollOffset);
-    targetRect.shiftMaxXEdgeTo(targetRect.maxX() - scrollOffset.width());
-    targetRect.shiftMaxYEdgeTo(targetRect.maxY() - scrollOffset.height());
+    targetRect.intersect(scrollRect);
     if (targetRect.isEmpty())
         return;
 
+    cairo_surface_flush(m_private->m_surface.get());
     XCopyArea(m_private->m_display, m_private->m_pixmap, m_private->m_pixmap, m_private->m_gc, 
               targetRect.x() - scrollOffset.width(), targetRect.y() - scrollOffset.height(),
               targetRect.width(), targetRect.height(),
               targetRect.x(), targetRect.y());
+    cairo_surface_mark_dirty_rectangle(m_private->m_surface.get(),
+                                       targetRect.x(), targetRect.y(),
+                                       targetRect.width(), targetRect.height());
 }
 
 } // namespace WebCore
