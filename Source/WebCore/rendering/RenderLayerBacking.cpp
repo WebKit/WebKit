@@ -1077,8 +1077,14 @@ bool RenderLayerBacking::paintingGoesToWindow() const
     if (m_usingTiledCacheLayer)
         return false;
 
-    if (m_owningLayer->isRootLayer())
+    if (m_owningLayer->isRootLayer()) {
+#if PLATFORM(BLACKBERRY)
+        if (compositor()->inForcedCompositingMode())
+            return false;
+#endif
+
         return compositor()->rootLayerAttachment() != RenderLayerCompositor::RootLayerAttachedViaEnclosingFrame;
+    }
     
     return false;
 }

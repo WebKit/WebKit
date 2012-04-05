@@ -66,7 +66,9 @@ public:
     // This will make a compositing layer at the root automatically, and hook up to
     // the native view/window system.
     void enableCompositingMode(bool enable = true);
-    
+
+    bool inForcedCompositingMode() const { return m_forceCompositingMode; }
+
     // Returns true if the accelerated compositing is enabled
     bool hasAcceleratedCompositing() const { return m_hasAcceleratedCompositing; }
 
