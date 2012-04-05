@@ -100,6 +100,9 @@ WaveTable::WaveTable(float sampleRate)
 
 void WaveTable::waveDataForFundamentalFrequency(float fundamentalFrequency, float* &lowerWaveData, float* &higherWaveData, float& tableInterpolationFactor)
 {
+    // Negative frequencies are allowed, in which case we alias to the positive frequency.
+    fundamentalFrequency = fabsf(fundamentalFrequency);
+
     // Calculate the pitch range.
     float ratio = fundamentalFrequency > 0 ? fundamentalFrequency / m_lowestFundamentalFrequency : 0.5;
     float centsAboveLowestFrequency = log2f(ratio) * 1200;
