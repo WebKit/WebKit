@@ -84,9 +84,8 @@ void SVGImageCache::imageContentChanged()
 
     // If we're in the middle of layout, start redrawing dirty
     // images on a timer; otherwise it's safe to draw immediately.
-
     FrameView* frameView = m_svgImage->frameView();
-    if (frameView && frameView->needsLayout()) {
+    if (frameView && (frameView->needsLayout() || frameView->isInLayout())) {
         if (!m_redrawTimer.isActive())
             m_redrawTimer.startOneShot(0);
     } else
@@ -113,7 +112,14 @@ void SVGImageCache::redraw()
 
 void SVGImageCache::redrawTimerFired(Timer<SVGImageCache>*)
 {
-    redraw();
+    // We have no guarantee that the frame does not require layout when the timer fired.
+    // So be sure to check again in case it is still not safe to run redraw.
+    FrameView* frameView = m_svgImage->frameView();
+    if (frameView && (frameView->needsLayout() || frameView->isInLayout())) {
+        if (!m_redrawTimer.isActive())
+            m_redrawTimer.startOneShot(0);
+    } else
+       redraw();
 }
 
 Image* SVGImageCache::lookupOrCreateBitmapImageForRenderer(const RenderObject* renderer)
