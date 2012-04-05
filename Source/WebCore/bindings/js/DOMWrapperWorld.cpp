@@ -32,7 +32,7 @@ namespace WebCore {
 
 void JSStringOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSString* jsString = static_cast<JSString*>(handle.get().asCell());
+    JSString* jsString = jsCast<JSString*>(handle.get().asCell());
     StringImpl* stringImpl = static_cast<StringImpl*>(context);
     ASSERT_UNUSED(jsString, m_world->m_stringCache.find(stringImpl)->second.was(jsString));
     m_world->m_stringCache.remove(stringImpl);

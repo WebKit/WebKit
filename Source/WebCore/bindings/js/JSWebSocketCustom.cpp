@@ -52,7 +52,7 @@ namespace WebCore {
 
 EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecState* exec)
 {
-    JSWebSocketConstructor* jsConstructor = static_cast<JSWebSocketConstructor*>(exec->callee());
+    JSWebSocketConstructor* jsConstructor = jsCast<JSWebSocketConstructor*>(exec->callee());
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
         return throwVMError(exec, createReferenceError(exec, "WebSocket constructor associated document is unavailable"));

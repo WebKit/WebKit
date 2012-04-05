@@ -33,7 +33,7 @@ class JSDOMWrapper : public JSC::JSNonFinalObject {
 public:
     JSDOMGlobalObject* globalObject() const
     {
-        return static_cast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::globalObject());
+        return JSC::jsCast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::globalObject());
     }
 
     ScriptExecutionContext* scriptExecutionContext() const

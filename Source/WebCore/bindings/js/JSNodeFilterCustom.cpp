@@ -49,7 +49,7 @@ void JSNodeFilter::visitChildren(JSCell* cell, SlotVisitor& visitor)
 PassRefPtr<NodeFilter> toNodeFilter(JSGlobalData& globalData, JSValue value)
 {
     if (value.inherits(&JSNodeFilter::s_info))
-        return static_cast<JSNodeFilter*>(asObject(value))->impl();
+        return jsCast<JSNodeFilter*>(asObject(value))->impl();
 
     RefPtr<NodeFilter> result = NodeFilter::create();
     result->setCondition(JSNodeFilterCondition::create(globalData, result.get(), value));

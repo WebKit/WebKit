@@ -50,7 +50,7 @@ JSC::JSValue JSUint8ClampedArray::set(JSC::ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL JSUint8ClampedArrayConstructor::constructJSUint8ClampedArray(ExecState* exec)
 {
-    JSUint8ClampedArrayConstructor* jsConstructor = static_cast<JSUint8ClampedArrayConstructor*>(exec->callee());
+    JSUint8ClampedArrayConstructor* jsConstructor = jsCast<JSUint8ClampedArrayConstructor*>(exec->callee());
     RefPtr<Uint8ClampedArray> array = constructArrayBufferView<Uint8ClampedArray, unsigned char>(exec);
     if (!array.get())
         // Exception has already been thrown.

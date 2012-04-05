@@ -28,7 +28,7 @@ namespace WebCore {
 
 inline JSDOMWindow* asJSDOMWindow(JSC::JSGlobalObject* globalObject)
 {
-    return static_cast<JSDOMWindow*>(globalObject);
+    return JSC::jsCast<JSDOMWindow*>(globalObject);
 }
  
 inline const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject* globalObject)

@@ -34,7 +34,7 @@ bool JSDOMPlugin::canGetItemsForName(ExecState*, DOMPlugin* plugin, const Identi
 
 JSValue JSDOMPlugin::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
-    JSDOMPlugin* thisObj = static_cast<JSDOMPlugin*>(asObject(slotBase));
+    JSDOMPlugin* thisObj = jsCast<JSDOMPlugin*>(asObject(slotBase));
     return toJS(exec, thisObj->globalObject(), thisObj->impl()->namedItem(identifierToAtomicString(propertyName)));
 }
 

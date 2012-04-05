@@ -38,7 +38,7 @@ namespace WebCore {
 
 bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSNodeList* jsNodeList = static_cast<JSNodeList*>(handle.get().asCell());
+    JSNodeList* jsNodeList = jsCast<JSNodeList*>(handle.get().asCell());
     if (!jsNodeList->hasCustomProperties())
         return false;
     if (!jsNodeList->impl()->isDynamicNodeList())
@@ -53,7 +53,7 @@ bool JSNodeList::canGetItemsForName(ExecState*, NodeList* impl, const Identifier
 
 JSValue JSNodeList::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
-    JSNodeList* thisObj = static_cast<JSNodeList*>(asObject(slotBase));
+    JSNodeList* thisObj = jsCast<JSNodeList*>(asObject(slotBase));
     return toJS(exec, thisObj->globalObject(), thisObj->impl()->itemWithName(identifierToAtomicString(propertyName)));
 }
 

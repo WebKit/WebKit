@@ -57,7 +57,7 @@ void JSSharedWorker::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 EncodedJSValue JSC_HOST_CALL JSSharedWorkerConstructor::constructJSSharedWorker(ExecState* exec)
 {
-    JSSharedWorkerConstructor* jsConstructor = static_cast<JSSharedWorkerConstructor*>(exec->callee());
+    JSSharedWorkerConstructor* jsConstructor = jsCast<JSSharedWorkerConstructor*>(exec->callee());
 
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));

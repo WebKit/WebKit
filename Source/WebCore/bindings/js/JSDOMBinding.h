@@ -104,7 +104,7 @@ enum ParameterDefaultPolicy {
         // FIXME: Callers to this function should be using the global object
         // from which the object is being created, instead of assuming the lexical one.
         // e.g. subframe.document.body should use the subframe's global object, not the lexical one.
-        return static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
+        return JSC::jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     }
 
     template<class WrapperClass> inline JSC::Structure* getDOMStructure(JSC::ExecState* exec, JSDOMGlobalObject* globalObject)
@@ -122,7 +122,7 @@ enum ParameterDefaultPolicy {
 
     template<class WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject)
     {
-        return static_cast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(exec, static_cast<JSDOMGlobalObject*>(globalObject))->storedPrototype()));
+        return JSC::jsCast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(exec, JSC::jsCast<JSDOMGlobalObject*>(globalObject))->storedPrototype()));
     }
 
     // Overload these functions to provide a fast path for wrapper access.

@@ -221,7 +221,7 @@ static void _didExecute(WebScriptObject *obj)
     if (!_private->originRootObject->isValid())
         return false;
 
-    return static_cast<JSDOMWindowBase*>(root->globalObject())->allowsAccessFrom(_private->originRootObject->globalObject());
+    return jsCast<JSDOMWindowBase*>(root->globalObject())->allowsAccessFrom(_private->originRootObject->globalObject());
 }
 
 - (void)dealloc
@@ -519,7 +519,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
         if (object->inherits(&JSHTMLElement::s_info)) {
             // Plugin elements cache the instance internally.
-            HTMLElement* el = static_cast<JSHTMLElement*>(object)->impl();
+            HTMLElement* el = jsCast<JSHTMLElement*>(object)->impl();
             ObjcInstance* instance = static_cast<ObjcInstance*>(pluginInstance(el));
             if (instance)
                 return instance->getObject();

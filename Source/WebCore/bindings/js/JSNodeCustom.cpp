@@ -132,13 +132,13 @@ static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, SlotVisitor& v
 
 bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSNode* jsNode = static_cast<JSNode*>(handle.get().asCell());
+    JSNode* jsNode = jsCast<JSNode*>(handle.get().asCell());
     return isReachableFromDOM(jsNode, jsNode->impl(), visitor);
 }
 
 void JSNodeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSNode* jsNode = static_cast<JSNode*>(handle.get().asCell());
+    JSNode* jsNode = jsCast<JSNode*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsNode->impl(), jsNode);
     jsNode->releaseImpl();

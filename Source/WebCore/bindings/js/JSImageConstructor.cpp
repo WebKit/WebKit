@@ -49,7 +49,7 @@ void JSImageConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* glob
 
 static EncodedJSValue JSC_HOST_CALL constructImage(ExecState* exec)
 {
-    JSImageConstructor* jsConstructor = static_cast<JSImageConstructor*>(exec->callee());
+    JSImageConstructor* jsConstructor = jsCast<JSImageConstructor*>(exec->callee());
     Document* document = jsConstructor->document();
     if (!document)
         return throwVMError(exec, createReferenceError(exec, "Image constructor associated document is unavailable"));

@@ -59,7 +59,7 @@ EncodedJSValue JSC_HOST_CALL JSWebKitMutationObserverConstructor::constructJSWeb
         return JSValue::encode(jsUndefined());
     }
 
-    JSWebKitMutationObserverConstructor* jsConstructor = static_cast<JSWebKitMutationObserverConstructor*>(exec->callee());
+    JSWebKitMutationObserverConstructor* jsConstructor = jsCast<JSWebKitMutationObserverConstructor*>(exec->callee());
     RefPtr<MutationCallback> callback = JSMutationCallback::create(object, jsConstructor->globalObject());
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), WebKitMutationObserver::create(callback.release()))));
 }

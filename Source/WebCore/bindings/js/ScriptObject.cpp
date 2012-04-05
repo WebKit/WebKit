@@ -70,7 +70,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const S
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InspectorFrontendHost* value)
 {
     JSLock lock(SilenceAssertionsOnly);
-    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     globalObject->putDirect(scriptState->globalData(), Identifier(scriptState, name), toJS(scriptState, globalObject, value));
     return handleException(scriptState);
 }
@@ -78,7 +78,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, Inspect
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InjectedScriptHost* value)
 {
     JSLock lock(SilenceAssertionsOnly);
-    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     globalObject->putDirect(scriptState->globalData(), Identifier(scriptState, name), toJS(scriptState, globalObject, value));
     return handleException(scriptState);
 }

@@ -292,7 +292,7 @@ static inline JSValue cssPropertyGetterPixelOrPosPrefix(ExecState* exec, JSCSSSt
 
 static JSValue cssPropertyGetterPixelOrPosPrefixCallback(ExecState* exec, JSValue slotBase, unsigned propertyID)
 {
-    return cssPropertyGetterPixelOrPosPrefix(exec, static_cast<JSCSSStyleDeclaration*>(asObject(slotBase)), propertyID);
+    return cssPropertyGetterPixelOrPosPrefix(exec, jsCast<JSCSSStyleDeclaration*>(asObject(slotBase)), propertyID);
 }
 
 static inline JSValue cssPropertyGetter(ExecState* exec, JSCSSStyleDeclaration* thisObj, unsigned propertyID)
@@ -306,7 +306,7 @@ static inline JSValue cssPropertyGetter(ExecState* exec, JSCSSStyleDeclaration* 
 
 static JSValue cssPropertyGetterCallback(ExecState* exec, JSValue slotBase, unsigned propertyID)
 {
-    return cssPropertyGetter(exec, static_cast<JSCSSStyleDeclaration*>(asObject(slotBase)), propertyID);
+    return cssPropertyGetter(exec, jsCast<JSCSSStyleDeclaration*>(asObject(slotBase)), propertyID);
 }
 
 bool JSCSSStyleDeclaration::getOwnPropertySlotDelegate(ExecState*, const Identifier& propertyIdentifier, PropertySlot& slot)

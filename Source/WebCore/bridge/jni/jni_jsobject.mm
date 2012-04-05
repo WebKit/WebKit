@@ -576,7 +576,7 @@ JSValue JavaJSObject::convertJObjectToValue(ExecState* exec, jobject theObject) 
     jlong nativeHandle = env->GetLongField(theObject, fieldID);
     if (nativeHandle == UndefinedHandle)
         return jsUndefined();
-    JSObject *imp = static_cast<JSObject*>(jlong_to_impptr(nativeHandle));
+    JSObject *imp = jsCast<JSObject*>(jlong_to_impptr(nativeHandle));
     return imp;
 }
 

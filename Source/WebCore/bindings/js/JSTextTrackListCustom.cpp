@@ -36,7 +36,7 @@ namespace WebCore {
 
 bool JSTextTrackListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSTextTrackList* jsTextTrackList = static_cast<JSTextTrackList*>(handle.get().asCell());
+    JSTextTrackList* jsTextTrackList = jsCast<JSTextTrackList*>(handle.get().asCell());
     TextTrackList* textTrackList = static_cast<TextTrackList*>(jsTextTrackList->impl());
 
     // If the list is firing event listeners, its wrapper is reachable because

@@ -90,7 +90,7 @@ PassRefPtr<ScriptCallStack> createScriptCallStackForInspector(JSC::ExecState* ex
 {
     size_t maxStackSize = 1;
     if (InspectorInstrumentation::hasFrontends()) {
-        ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+        ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
         if (InspectorInstrumentation::hasFrontendForScriptContext(scriptExecutionContext))
             maxStackSize = ScriptCallStack::maxCallStackSizeToCapture;
     }

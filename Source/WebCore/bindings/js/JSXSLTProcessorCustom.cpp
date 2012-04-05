@@ -50,7 +50,7 @@ JSValue JSXSLTProcessor::importStylesheet(ExecState* exec)
 {
     JSValue nodeVal = exec->argument(0);
     if (nodeVal.inherits(&JSNode::s_info)) {
-        JSNode* node = static_cast<JSNode*>(asObject(nodeVal));
+        JSNode* node = jsCast<JSNode*>(asObject(nodeVal));
         impl()->importStylesheet(node->impl());
         return jsUndefined();
     }
@@ -63,8 +63,8 @@ JSValue JSXSLTProcessor::transformToFragment(ExecState* exec)
     JSValue nodeVal = exec->argument(0);
     JSValue docVal = exec->argument(1);
     if (nodeVal.inherits(&JSNode::s_info) && docVal.inherits(&JSDocument::s_info)) {
-        WebCore::Node* node = static_cast<JSNode*>(asObject(nodeVal))->impl();
-        Document* doc = static_cast<Document*>(static_cast<JSDocument*>(asObject(docVal))->impl());
+        WebCore::Node* node = jsCast<JSNode*>(asObject(nodeVal))->impl();
+        Document* doc = static_cast<Document*>(jsCast<JSDocument*>(asObject(docVal))->impl());
         return toJS(exec, globalObject(), impl()->transformToFragment(node, doc).get());
     }
     // Throw exception?
@@ -75,7 +75,7 @@ JSValue JSXSLTProcessor::transformToDocument(ExecState* exec)
 {
     JSValue nodeVal = exec->argument(0);
     if (nodeVal.inherits(&JSNode::s_info)) {
-        JSNode* node = static_cast<JSNode*>(asObject(nodeVal));
+        JSNode* node = jsCast<JSNode*>(asObject(nodeVal));
         RefPtr<Document> resultDocument = impl()->transformToDocument(node->impl());
         if (resultDocument)
             return toJS(exec, globalObject(), resultDocument.get());

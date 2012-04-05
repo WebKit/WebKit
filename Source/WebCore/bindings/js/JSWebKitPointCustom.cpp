@@ -34,7 +34,7 @@ namespace WebCore {
 
 EncodedJSValue JSC_HOST_CALL JSWebKitPointConstructor::constructJSWebKitPoint(ExecState* exec)
 {
-    JSWebKitPointConstructor* jsConstructor = static_cast<JSWebKitPointConstructor*>(exec->callee());
+    JSWebKitPointConstructor* jsConstructor = jsCast<JSWebKitPointConstructor*>(exec->callee());
 
     float x = 0;
     float y = 0;

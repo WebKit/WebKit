@@ -87,7 +87,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
 
     Frame* frame = 0;
     if (scriptExecutionContext->isDocument()) {
-        JSDOMWindow* window = static_cast<JSDOMWindow*>(globalObject);
+        JSDOMWindow* window = jsCast<JSDOMWindow*>(globalObject);
         frame = window->impl()->frame();
         if (!frame)
             return;

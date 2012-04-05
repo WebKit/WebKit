@@ -54,7 +54,7 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& source, S
     JSLock lock(SilenceAssertionsOnly);
 
     SourceCode sourceCode = makeSource(stringToUString(source));
-    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     JSValue globalThisValue = scriptState->globalThisValue();
 
     JSValue evaluationException;
@@ -80,14 +80,14 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& source, S
 
 void InjectedScriptManager::discardInjectedScript(ScriptState* scriptState)
 {
-    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     globalObject->setInjectedScript(0);
 }
 
 InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* scriptState)
 {
     JSLock lock(SilenceAssertionsOnly);
-    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     JSObject* injectedScript = globalObject->injectedScript();
     if (injectedScript)
         return InjectedScript(ScriptObject(scriptState, injectedScript), m_inspectedStateAccessCheck);

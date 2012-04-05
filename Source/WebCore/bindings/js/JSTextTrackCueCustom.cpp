@@ -36,7 +36,7 @@ namespace WebCore {
 
 bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSTextTrackCue* jsTextTrackCue = static_cast<JSTextTrackCue*>(handle.get().asCell());
+    JSTextTrackCue* jsTextTrackCue = jsCast<JSTextTrackCue*>(handle.get().asCell());
     TextTrackCue* textTrackCue = static_cast<TextTrackCue*>(jsTextTrackCue->impl());
 
     // If the cue is firing event listeners, its wrapper is reachable because

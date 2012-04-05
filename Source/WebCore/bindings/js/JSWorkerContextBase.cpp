@@ -93,7 +93,7 @@ JSDedicatedWorkerContext* toJSDedicatedWorkerContext(JSValue value)
         return 0;
     const ClassInfo* classInfo = asObject(value)->classInfo();
     if (classInfo == &JSDedicatedWorkerContext::s_info)
-        return static_cast<JSDedicatedWorkerContext*>(asObject(value));
+        return jsCast<JSDedicatedWorkerContext*>(asObject(value));
     return 0;
 }
 
@@ -104,7 +104,7 @@ JSSharedWorkerContext* toJSSharedWorkerContext(JSValue value)
         return 0;
     const ClassInfo* classInfo = asObject(value)->classInfo();
     if (classInfo == &JSSharedWorkerContext::s_info)
-        return static_cast<JSSharedWorkerContext*>(asObject(value));
+        return jsCast<JSSharedWorkerContext*>(asObject(value));
     return 0;
 }
 #endif

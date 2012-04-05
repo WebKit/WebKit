@@ -51,7 +51,7 @@ void JSAudioContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(ExecState* exec)
 {
-    JSAudioContextConstructor* jsConstructor = static_cast<JSAudioContextConstructor*>(exec->callee());
+    JSAudioContextConstructor* jsConstructor = jsCast<JSAudioContextConstructor*>(exec->callee());
     if (!jsConstructor)
         return throwVMError(exec, createReferenceError(exec, "AudioContext constructor callee is unavailable"));
 

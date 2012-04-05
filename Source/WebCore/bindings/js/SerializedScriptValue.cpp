@@ -370,7 +370,7 @@ private:
     {
         if (!input)
             return;
-        JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject());
+        JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject());
         for (size_t i = 0; i < input->size(); i++) {
             JSC::JSValue value = toJS(m_exec, globalObject, input->at(i).get());
             JSC::JSObject* obj = value.getObject();
@@ -539,7 +539,7 @@ private:
             code = ValidationError;
             return true;
         }
-        JSValue bufferObj = toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject()), arrayBuffer.get());
+        JSValue bufferObj = toJS(m_exec, jsCast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject()), arrayBuffer.get());
         return dumpIfTerminal(bufferObj, code);
     }
 
@@ -1350,7 +1350,7 @@ private:
     template<class T>
     JSValue getJSValue(T* nativeObj)
     {
-        return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), nativeObj);
+        return toJS(m_exec, jsCast<JSDOMGlobalObject*>(m_globalObject), nativeObj);
     }
 
     JSValue readTerminal()
@@ -1393,7 +1393,7 @@ private:
                 return JSValue();
             if (!m_isDOMGlobalObject)
                 return jsNull();
-            return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), file.get());
+            return toJS(m_exec, jsCast<JSDOMGlobalObject*>(m_globalObject), file.get());
         }
         case FileListTag: {
             unsigned length = 0;

@@ -392,7 +392,7 @@ sub GenerateGetOwnPropertySlotBody
 
     if ($interfaceName eq "NamedNodeMap" or $interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection") {
         push(@getOwnPropertySlotImpl, "    ${namespaceMaybe}JSValue proto = thisObject->prototype();\n");
-        push(@getOwnPropertySlotImpl, "    if (proto.isObject() && static_cast<${namespaceMaybe}JSObject*>(asObject(proto))->hasProperty(exec, propertyName))\n");
+        push(@getOwnPropertySlotImpl, "    if (proto.isObject() && jsCast<${namespaceMaybe}JSObject*>(asObject(proto))->hasProperty(exec, propertyName))\n");
         push(@getOwnPropertySlotImpl, "        return false;\n\n");
     }
 
@@ -484,7 +484,7 @@ sub GenerateGetOwnPropertyDescriptorBody
     
     if ($interfaceName eq "NamedNodeMap" or $interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection") {
         push(@getOwnPropertyDescriptorImpl, "    ${namespaceMaybe}JSValue proto = thisObject->prototype();\n");
-        push(@getOwnPropertyDescriptorImpl, "    if (proto.isObject() && static_cast<${namespaceMaybe}JSObject*>(asObject(proto))->hasProperty(exec, propertyName))\n");
+        push(@getOwnPropertyDescriptorImpl, "    if (proto.isObject() && jsCast<${namespaceMaybe}JSObject*>(asObject(proto))->hasProperty(exec, propertyName))\n");
         push(@getOwnPropertyDescriptorImpl, "        return false;\n\n");
     }
     
@@ -1676,7 +1676,7 @@ sub GenerateImplementation
 
                 push(@implContent, "JSValue ${getFunctionName}(ExecState* exec, JSValue slotBase, const Identifier&)\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    ${className}* castedThis = static_cast<$className*>(asObject(slotBase));\n");
+                push(@implContent, "    ${className}* castedThis = jsCast<$className*>(asObject(slotBase));\n");
 
                 if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
                     $needsMarkChildren = 1;
@@ -1795,7 +1795,7 @@ sub GenerateImplementation
 
                 push(@implContent, "JSValue ${constructorFunctionName}(ExecState* exec, JSValue slotBase, const Identifier&)\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    ${className}* domObject = static_cast<$className*>(asObject(slotBase));\n");
+                push(@implContent, "    ${className}* domObject = jsCast<$className*>(asObject(slotBase));\n");
 
                 if ($dataNode->extendedAttributes->{"CheckSecurity"}) {
                     push(@implContent, "    if (!domObject->allowsAccessFrom(exec))\n");
@@ -1870,19 +1870,19 @@ sub GenerateImplementation
 
                         if ($dataNode->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
                             if ($interfaceName eq "DOMWindow") {
-                                push(@implContent, "    if (!static_cast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
+                                push(@implContent, "    if (!jsCast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
                             } else {
-                                push(@implContent, "    if (!shouldAllowAccessToFrame(exec, static_cast<$className*>(thisObject)->impl()->frame()))\n");
+                                push(@implContent, "    if (!shouldAllowAccessToFrame(exec, jsCast<$className*>(thisObject)->impl()->frame()))\n");
                             }
                             push(@implContent, "        return;\n");
                         }
 
                         if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCustom"} || $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCustomSetter"}) {
-                            push(@implContent, "    static_cast<$className*>(thisObject)->set$implSetterFunctionName(exec, value);\n");
+                            push(@implContent, "    jsCast<$className*>(thisObject)->set$implSetterFunctionName(exec, value);\n");
                         } elsif ($type eq "EventListener") {
                             $implIncludes{"JSEventListener.h"} = 1;
                             push(@implContent, "    UNUSED_PARAM(exec);\n");
-                            push(@implContent, "    ${className}* castedThis = static_cast<${className}*>(thisObject);\n");
+                            push(@implContent, "    ${className}* castedThis = jsCast<${className}*>(thisObject);\n");
                             my $windowEventListener = $attribute->signature->extendedAttributes->{"JSWindowEventListener"};
                             if ($windowEventListener) {
                                 push(@implContent, "    JSDOMGlobalObject* globalObject = castedThis->globalObject();\n");
@@ -1906,15 +1906,15 @@ sub GenerateImplementation
                             push(@implContent, "    // Shadowing a built-in constructor\n");
                             if ($interfaceName eq "DOMWindow" && $className eq "JSblah") {
                                 # FIXME: This branch never executes and should be removed.
-                                push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), exec->propertyNames().constructor, value);\n");
+                                push(@implContent, "    jsCast<$className*>(thisObject)->putDirect(exec->globalData(), exec->propertyNames().constructor, value);\n");
                             } else {
-                                push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, \"$name\"), value);\n");
+                                push(@implContent, "    jsCast<$className*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, \"$name\"), value);\n");
                             }
                         } elsif ($attribute->signature->extendedAttributes->{"Replaceable"}) {
                             push(@implContent, "    // Shadowing a built-in object\n");
-                            push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, \"$name\"), value);\n");
+                            push(@implContent, "    jsCast<$className*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, \"$name\"), value);\n");
                         } else {
-                            push(@implContent, "    $className* castedThis = static_cast<$className*>(thisObject);\n");
+                            push(@implContent, "    $className* castedThis = jsCast<$className*>(thisObject);\n");
                             push(@implContent, "    $implType* impl = static_cast<$implType*>(castedThis->impl());\n");
                             push(@implContent, "    ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
 
@@ -1995,9 +1995,9 @@ sub GenerateImplementation
                 push(@implContent, "{\n");
                 if ($dataNode->extendedAttributes->{"CheckSecurity"}) {
                     if ($interfaceName eq "DOMWindow") {
-                        push(@implContent, "    if (!static_cast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
+                        push(@implContent, "    if (!jsCast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
                     } else {
-                        push(@implContent, "    if (!shouldAllowAccessToFrame(exec, static_cast<$className*>(thisObject)->impl()->frame()))\n");
+                        push(@implContent, "    if (!shouldAllowAccessToFrame(exec, jsCast<$className*>(thisObject)->impl()->frame()))\n");
                     }
                     push(@implContent, "        return;\n");
                 }
@@ -2005,7 +2005,7 @@ sub GenerateImplementation
                 push(@implContent, "    // Shadowing a built-in constructor\n");
 
                 if ($interfaceName eq "DOMWindow") {
-                    push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), exec->propertyNames().constructor, value);\n");
+                    push(@implContent, "    jsCast<$className*>(thisObject)->putDirect(exec->globalData(), exec->propertyNames().constructor, value);\n");
                 } else {
                     die "No way to handle interface with ReplaceableConstructor extended attribute: $interfaceName";
                 }
@@ -2029,7 +2029,7 @@ sub GenerateImplementation
 
     if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
         push(@implContent, "JSValue ${className}::getConstructor(ExecState* exec, JSGlobalObject* globalObject)\n{\n");
-        push(@implContent, "    return getDOMConstructor<${className}Constructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));\n");
+        push(@implContent, "    return getDOMConstructor<${className}Constructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));\n");
         push(@implContent, "}\n\n");
     }
 
@@ -2095,7 +2095,7 @@ sub GenerateImplementation
                     push(@implContent, "    JSValue thisValue = exec->hostThisValue();\n");
                     push(@implContent, "    if (!thisValue.inherits(&${className}::s_info))\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
-                    push(@implContent, "    $className* castedThis = static_cast<$className*>(asObject(thisValue));\n");
+                    push(@implContent, "    $className* castedThis = jsCast<$className*>(asObject(thisValue));\n");
                 }
 
                 push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, &${className}::s_info);\n");
@@ -2213,7 +2213,7 @@ sub GenerateImplementation
     if ($dataNode->extendedAttributes->{"IndexedGetter"}) {
         push(@implContent, "\nJSValue ${className}::indexGetter(ExecState* exec, JSValue slotBase, unsigned index)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    ${className}* thisObj = static_cast<$className*>(asObject(slotBase));\n");
+        push(@implContent, "    ${className}* thisObj = jsCast<$className*>(asObject(slotBase));\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObj, &s_info);\n");
         if (IndexGetterReturnsStrings($implClassName)) {
             $implIncludes{"KURL.h"} = 1;
@@ -2252,7 +2252,7 @@ sub GenerateImplementation
             push(@implContent, "}\n\n");
             push(@implContent, "JSValue ${className}::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    ${className}* thisObj = static_cast<$className*>(asObject(slotBase));\n");
+            push(@implContent, "    ${className}* thisObj = jsCast<$className*>(asObject(slotBase));\n");
             push(@implContent, "    return toJS(exec, thisObj->globalObject(), static_cast<$implClassName*>(thisObj->impl())->namedItem(identifierToAtomicString(propertyName)));\n");
             push(@implContent, "}\n\n");
         }
@@ -2272,7 +2272,7 @@ sub GenerateImplementation
 
         push(@implContent, "bool JS${implClassName}Owner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    JS${implClassName}* js${implClassName} = static_cast<JS${implClassName}*>(handle.get().asCell());\n");
+        push(@implContent, "    JS${implClassName}* js${implClassName} = jsCast<JS${implClassName}*>(handle.get().asCell());\n");
         # All ActiveDOMObjects implement hasPendingActivity(), but not all of them
         # increment their C++ reference counts when hasPendingActivity() becomes
         # true. As a result, ActiveDOMObjects can be prematurely destroyed before
@@ -2329,7 +2329,7 @@ sub GenerateImplementation
          $dataNode->extendedAttributes->{"ActiveDOMObject"})) {
         push(@implContent, "void JS${implClassName}Owner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    JS${implClassName}* js${implClassName} = static_cast<JS${implClassName}*>(handle.get().asCell());\n");
+        push(@implContent, "    JS${implClassName}* js${implClassName} = jsCast<JS${implClassName}*>(handle.get().asCell());\n");
         push(@implContent, "    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);\n");
         push(@implContent, "    uncacheWrapper(world, js${implClassName}->impl(), js${implClassName});\n");
         push(@implContent, "    js${implClassName}->releaseImpl();\n");
@@ -2350,7 +2350,7 @@ sub GenerateImplementation
     if ((!$hasParent or $dataNode->extendedAttributes->{"JSGenerateToNativeObject"}) and !$dataNode->extendedAttributes->{"JSCustomToNativeObject"}) {
         push(@implContent, "$implType* to${interfaceName}(JSC::JSValue value)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return value.inherits(&${className}::s_info) ? static_cast<$className*>(asObject(value))->impl() : 0");
+        push(@implContent, "    return value.inherits(&${className}::s_info) ? jsCast<$className*>(asObject(value))->impl() : 0");
         push(@implContent, ";\n}\n");
     }
 
@@ -2373,7 +2373,7 @@ sub GenerateCallWith
         push(@callWithArgs, "exec");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptExecutionContext")) {
-        push(@$outputArray, "    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();\n");
+        push(@$outputArray, "    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();\n");
         push(@$outputArray, "    if (!scriptContext)\n");
         push(@$outputArray, "        return" . ($returnValue ? " " . $returnValue : "") . ";\n");
         push(@callWithArgs, "scriptContext");
@@ -3081,7 +3081,7 @@ sub NativeToJSValue
     if ($globalObject) {
         return "toJS(exec, $globalObject, WTF::getPtr($value))";
     } else {
-        return "toJS(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), WTF::getPtr($value))";
+        return "toJS(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), WTF::getPtr($value))";
     }
 }
 
@@ -3483,12 +3483,12 @@ sub GenerateConstructorDefinition
 
         push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
         push(@$outputArray, "{\n");
-        push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, static_cast<${constructorClassName}*>(cell), propertyName, slot);\n");
+        push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, jsCast<${constructorClassName}*>(cell), propertyName, slot);\n");
         push(@$outputArray, "}\n\n");
 
         push(@$outputArray, "bool ${constructorClassName}::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)\n");
         push(@$outputArray, "{\n");
-        push(@$outputArray, "    return getStatic${kind}Descriptor<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, static_cast<${constructorClassName}*>(object), propertyName, descriptor);\n");
+        push(@$outputArray, "    return getStatic${kind}Descriptor<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, jsCast<${constructorClassName}*>(object), propertyName, descriptor);\n");
         push(@$outputArray, "}\n\n");
     }
 
@@ -3500,7 +3500,7 @@ sub GenerateConstructorDefinition
             push(@$outputArray, <<END);
 EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)
 {
-    ${constructorClassName}* jsConstructor = static_cast<${constructorClassName}*>(exec->callee());
+    ${constructorClassName}* jsConstructor = jsCast<${constructorClassName}*>(exec->callee());
 
     ScriptExecutionContext* executionContext = jsConstructor->scriptExecutionContext();
     if (!executionContext)
@@ -3561,7 +3561,7 @@ END
             push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
             push(@$outputArray, "{\n");
 
-            push(@$outputArray, "    ${constructorClassName}* castedThis = static_cast<${constructorClassName}*>(exec->callee());\n");
+            push(@$outputArray, "    ${constructorClassName}* castedThis = jsCast<${constructorClassName}*>(exec->callee());\n");
 
             my $function = $dataNode->constructor;
             my @constructorArgList;

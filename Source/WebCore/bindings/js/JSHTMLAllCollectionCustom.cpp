@@ -64,7 +64,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
-    JSHTMLAllCollection* jsCollection = static_cast<JSHTMLAllCollection*>(exec->callee());
+    JSHTMLAllCollection* jsCollection = jsCast<JSHTMLAllCollection*>(exec->callee());
     HTMLAllCollection* collection = static_cast<HTMLAllCollection*>(jsCollection->impl());
 
     // Also, do we need the TypeError test here ?
@@ -106,7 +106,7 @@ bool JSHTMLAllCollection::canGetItemsForName(ExecState*, HTMLAllCollection* coll
 
 JSValue JSHTMLAllCollection::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
-    JSHTMLAllCollection* thisObj = static_cast<JSHTMLAllCollection*>(asObject(slotBase));
+    JSHTMLAllCollection* thisObj = jsCast<JSHTMLAllCollection*>(asObject(slotBase));
     return getNamedItems(exec, thisObj, propertyName);
 }
 

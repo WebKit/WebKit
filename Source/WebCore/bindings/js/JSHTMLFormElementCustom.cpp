@@ -46,7 +46,7 @@ bool JSHTMLFormElement::canGetItemsForName(ExecState*, HTMLFormElement* form, co
 
 JSValue JSHTMLFormElement::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
-    JSHTMLElement* jsForm = static_cast<JSHTMLFormElement*>(asObject(slotBase));
+    JSHTMLElement* jsForm = jsCast<JSHTMLFormElement*>(asObject(slotBase));
     HTMLFormElement* form = static_cast<HTMLFormElement*>(jsForm->impl());
 
     Vector<RefPtr<Node> > namedItems;

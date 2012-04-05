@@ -148,7 +148,7 @@ static void updateStyleIfNeededForBindings(JSC::ExecState*, JSC::JSObject* rootO
     if (!rootObject)
         return;
 
-    JSDOMWindow* window = static_cast<JSDOMWindow*>(rootObject);
+    JSDOMWindow* window = JSC::jsCast<JSDOMWindow*>(rootObject);
     if (!window)
         return;
 

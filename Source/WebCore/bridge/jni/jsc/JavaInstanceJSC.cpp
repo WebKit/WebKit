@@ -245,7 +245,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
                         // and so it does between different versions of LiveConnect spec. There should not be multiple code paths to do the same work.
                         if (nativeHandle == 1 /* UndefinedHandle */)
                             return jsUndefined();
-                        return static_cast<JSObject*>(jlong_to_ptr(nativeHandle));
+                        return jlong_to_impptr(nativeHandle);
                     } else
                         return JavaInstance::create(result.l, rootObject)->createRuntimeObject(exec);
                 }

@@ -237,9 +237,9 @@ JSDOMWindow* toJSDOMWindow(JSValue value)
         return 0;
     const ClassInfo* classInfo = asObject(value)->classInfo();
     if (classInfo == &JSDOMWindow::s_info)
-        return static_cast<JSDOMWindow*>(asObject(value));
+        return jsCast<JSDOMWindow*>(asObject(value));
     if (classInfo == &JSDOMWindowShell::s_info)
-        return static_cast<JSDOMWindowShell*>(asObject(value))->window();
+        return jsCast<JSDOMWindowShell*>(asObject(value))->window();
     return 0;
 }
 

@@ -143,7 +143,7 @@ ObjcValue convertValueToObjcValue(ExecState* exec, JSValue value, ObjcValueType 
 
             JSGlobalObject* globalObject = 0;
             if (value.isObject() && asObject(value)->isGlobalObject())
-                globalObject = static_cast<JSGlobalObject*>(asObject(value));
+                globalObject = jsCast<JSGlobalObject*>(asObject(value));
 
             if (!globalObject)
                 globalObject = originGlobalObject;

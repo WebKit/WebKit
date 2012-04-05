@@ -59,7 +59,7 @@ bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* document, cons
 
 JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
-    JSHTMLDocument* thisObj = static_cast<JSHTMLDocument*>(asObject(slotBase));
+    JSHTMLDocument* thisObj = jsCast<JSHTMLDocument*>(asObject(slotBase));
     HTMLDocument* document = static_cast<HTMLDocument*>(thisObj->impl());
 
     HTMLCollection* collection = document->documentNamedItems(identifierToAtomicString(propertyName));

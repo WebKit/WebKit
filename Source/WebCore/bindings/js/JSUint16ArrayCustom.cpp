@@ -50,7 +50,7 @@ JSC::JSValue JSUint16Array::set(JSC::ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL JSUint16ArrayConstructor::constructJSUint16Array(ExecState* exec)
 {
-    JSUint16ArrayConstructor* jsConstructor = static_cast<JSUint16ArrayConstructor*>(exec->callee());
+    JSUint16ArrayConstructor* jsConstructor = jsCast<JSUint16ArrayConstructor*>(exec->callee());
     RefPtr<Uint16Array> array = constructArrayBufferView<Uint16Array, unsigned short>(exec);
     if (!array.get())
         // Exception has already been thrown.

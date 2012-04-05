@@ -42,7 +42,7 @@ bool JSDOMStringMap::canGetItemsForName(ExecState*, DOMStringMap* impl, const Id
 
 JSValue JSDOMStringMap::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
-    JSDOMStringMap* thisObj = static_cast<JSDOMStringMap*>(asObject(slotBase));
+    JSDOMStringMap* thisObj = jsCast<JSDOMStringMap*>(asObject(slotBase));
     return jsString(exec, thisObj->impl()->item(identifierToAtomicString(propertyName)));
 }
 

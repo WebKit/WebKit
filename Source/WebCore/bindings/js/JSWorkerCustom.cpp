@@ -52,7 +52,7 @@ JSC::JSValue JSWorker::webkitPostMessage(JSC::ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL JSWorkerConstructor::constructJSWorker(ExecState* exec)
 {
-    JSWorkerConstructor* jsConstructor = static_cast<JSWorkerConstructor*>(exec->callee());
+    JSWorkerConstructor* jsConstructor = jsCast<JSWorkerConstructor*>(exec->callee());
 
     if (!exec->argumentCount())
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));

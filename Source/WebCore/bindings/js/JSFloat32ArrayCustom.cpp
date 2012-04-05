@@ -50,7 +50,7 @@ JSC::JSValue JSFloat32Array::set(JSC::ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL JSFloat32ArrayConstructor::constructJSFloat32Array(ExecState* exec)
 {
-    JSFloat32ArrayConstructor* jsConstructor = static_cast<JSFloat32ArrayConstructor*>(exec->callee());
+    JSFloat32ArrayConstructor* jsConstructor = jsCast<JSFloat32ArrayConstructor*>(exec->callee());
     RefPtr<Float32Array> array = constructArrayBufferView<Float32Array, float>(exec);
     if (!array.get())
         // Exception has already been thrown.

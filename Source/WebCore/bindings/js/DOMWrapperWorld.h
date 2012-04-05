@@ -91,7 +91,7 @@ inline DOMWrapperWorld* pluginWorld() { return mainThreadNormalWorld(); }
 
 inline DOMWrapperWorld* currentWorld(JSC::ExecState* exec)
 {
-    return static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world();
+    return JSC::jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world();
 }
 
 } // namespace WebCore

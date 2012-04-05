@@ -211,7 +211,7 @@ void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
     JSValue jsCallFrame;
     {
         if (m_currentCallFrame->isValid() && globalObject->inherits(&JSDOMGlobalObject::s_info)) {
-            JSDOMGlobalObject* domGlobalObject = static_cast<JSDOMGlobalObject*>(globalObject);
+            JSDOMGlobalObject* domGlobalObject = jsCast<JSDOMGlobalObject*>(globalObject);
             JSLock lock(SilenceAssertionsOnly);
             jsCallFrame = toJS(state, domGlobalObject, m_currentCallFrame.get());
         } else
