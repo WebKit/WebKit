@@ -1567,7 +1567,7 @@ IntPoint QWebPagePrivate::TouchAdjuster::findCandidatePointForTouch(const IntPoi
     int x = touchPoint.x();
     int y = touchPoint.y();
 
-    RefPtr<NodeList> intersectedNodes = document->nodesFromRect(x, y, m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding, false);
+    RefPtr<NodeList> intersectedNodes = document->nodesFromRect(x, y, m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding, false /*ignoreClipping*/, false /*allowShadowContent*/);
     if (!intersectedNodes)
         return IntPoint();
 

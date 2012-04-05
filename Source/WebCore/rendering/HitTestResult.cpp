@@ -54,6 +54,7 @@ HitTestResult::HitTestResult()
     , m_rightPadding(0)
     , m_bottomPadding(0)
     , m_leftPadding(0)
+    , m_shadowContentFilterPolicy(DoNotAllowShadowContent)
     , m_region(0)
 {
 }
@@ -66,17 +67,19 @@ HitTestResult::HitTestResult(const LayoutPoint& point)
     , m_rightPadding(0)
     , m_bottomPadding(0)
     , m_leftPadding(0)
+    , m_shadowContentFilterPolicy(DoNotAllowShadowContent)
     , m_region(0)
 {
 }
 
-HitTestResult::HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
+HitTestResult::HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding, ShadowContentFilterPolicy allowShadowContent)
     : m_point(centerPoint)
     , m_isOverWidget(false)
     , m_topPadding(topPadding)
     , m_rightPadding(rightPadding)
     , m_bottomPadding(bottomPadding)
     , m_leftPadding(leftPadding)
+    , m_shadowContentFilterPolicy(allowShadowContent)
     , m_region(0)
 {
     // If all padding values passed in are zero then it is not a rect based hit test.
@@ -95,6 +98,7 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     , m_innerURLElement(other.URLElement())
     , m_scrollbar(other.scrollbar())
     , m_isOverWidget(other.isOverWidget())
+    , m_shadowContentFilterPolicy(other.shadowContentFilterPolicy())
     , m_region(other.region())
 {
     // Only copy the padding and NodeSet in case of rect hit test.
@@ -572,7 +576,9 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const LayoutPoint& 
     if (!node)
         return true;
 
-    node = node->shadowAncestorNode();
+    if (m_shadowContentFilterPolicy == DoNotAllowShadowContent)
+        node = node->shadowAncestorNode();
+
     mutableRectBasedTestResult().add(node);
 
     if (node->renderer()->isInline()) {
@@ -603,7 +609,9 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const LayoutPoint& 
     if (!node)
         return true;
 
-    node = node->shadowAncestorNode();
+    if (m_shadowContentFilterPolicy == DoNotAllowShadowContent)
+        node = node->shadowAncestorNode();
+
     mutableRectBasedTestResult().add(node);
 
     if (node->renderer()->isInline()) {

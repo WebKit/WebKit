@@ -11,7 +11,7 @@ function check(x, y, topPadding, rightPadding, bottomPadding, leftPadding, list,
   if (!doc)
     doc = document;
 
-  var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */);
+  var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, false /* allow shadow content */);
   if (!nodes)
     return;
 
@@ -30,6 +30,36 @@ function check(x, y, topPadding, rightPadding, bottomPadding, leftPadding, list,
                 "[" + x + "," + y + "], " +
                 "[" + topPadding + "," + rightPadding +
                 "," + bottomPadding + "," + leftPadding + "]" + " - " + nodes[i]);
+      return;
+    }
+  }
+
+  testPassed("All correct nodes found for rect");
+}
+
+function checkShadowContent(x, y, topPadding, rightPadding, bottomPadding, leftPadding, shadowContent, doc)
+{
+  if (!window.internals)
+    return;
+
+  if (!doc)
+    doc = document;
+
+  var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, true /* allowShadowContent */);
+  if (!nodes)
+    return;
+
+  for (var j = 0; j < shadowContent.length; j++) {
+    var found = false;
+    for (var i = 0; i < nodes.length; i++) {
+      if (internals.shadowPseudoId(nodes[i]) == shadowContent[j]) {
+          found = true;
+          break;
+      }
+    }
+
+    if (!found) {
+      testFailed("Pseudo Id not found: " + shadowContent[j]);
       return;
     }
   }

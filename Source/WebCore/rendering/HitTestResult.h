@@ -42,6 +42,8 @@ class Node;
 class RenderRegion;
 class Scrollbar;
 
+enum ShadowContentFilterPolicy { DoNotAllowShadowContent, AllowShadowContent };
+
 class HitTestResult {
 public:
     typedef ListHashSet<RefPtr<Node> > NodeSet;
@@ -49,7 +51,7 @@ public:
     HitTestResult();
     HitTestResult(const LayoutPoint&);
     // Pass non-negative padding values to perform a rect-based hit test.
-    HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
+    HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding, ShadowContentFilterPolicy);
     HitTestResult(const HitTestResult&);
     ~HitTestResult();
     HitTestResult& operator=(const HitTestResult&);
@@ -67,6 +69,8 @@ public:
     void setRegion(RenderRegion* region) { m_region = region; }
 
     void setToNonShadowAncestor();
+
+    ShadowContentFilterPolicy shadowContentFilterPolicy() const { return m_shadowContentFilterPolicy; }
 
     void setInnerNode(Node*);
     void setInnerNonSharedNode(Node*);
@@ -146,6 +150,7 @@ private:
     int m_rightPadding;
     int m_bottomPadding;
     int m_leftPadding;
+    ShadowContentFilterPolicy m_shadowContentFilterPolicy;
     
     RenderRegion* m_region; // The region we're inside.
 

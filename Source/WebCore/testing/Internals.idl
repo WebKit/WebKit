@@ -116,7 +116,7 @@ module window {
 
         NodeList nodesFromRect(in Document document, in long x, in long y,
             in unsigned long topPadding, in unsigned long rightPadding, in unsigned long bottomPadding, in unsigned long leftPadding,
-            in boolean ignoreClipping) raises (DOMException);
+            in boolean ignoreClipping, in boolean allowShadowContent) raises (DOMException);
 
         void emitInspectorDidBeginFrame();
         void emitInspectorDidCancelFrame();
