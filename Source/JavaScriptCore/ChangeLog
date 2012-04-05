@@ -1,3 +1,13 @@
+2012-04-05  Michael Saboff  <msaboff@apple.com>
+
+        Rolling out http://trac.webkit.org/changeset/113262.
+        Original code was fine.
+
+        Rubber-stamped by Oliver Hunt.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::additionBlindedConstant):
+
 2012-04-05  Patrick Gansterer  <paroga@webkit.org>
 
         [WinCE] Remove unnecessary function decleration

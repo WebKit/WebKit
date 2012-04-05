@@ -703,7 +703,7 @@ public:
         static uint32_t maskTable[4] = { 0xfffffffc, 0xffffffff, 0xfffffffe, 0xffffffff };
 
         uint32_t baseValue = imm.asTrustedImm32().m_value;
-        uint32_t key = keyForConstant(baseValue) & maskTable[baseValue & 2];
+        uint32_t key = keyForConstant(baseValue) & maskTable[baseValue & 3];
         if (key > baseValue)
             key = key - baseValue;
         return BlindedImm32(baseValue - key, key);
