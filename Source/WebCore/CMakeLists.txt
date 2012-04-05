@@ -613,7 +613,6 @@ SET(WebCore_SOURCES
     dom/Range.cpp
     dom/RangeException.cpp
     dom/RegisteredEventListener.cpp
-    dom/ReifiedTreeTraversal.cpp
     dom/ScopedEventQueue.cpp
     dom/ScriptableDocumentParser.cpp
     dom/ScriptElement.cpp

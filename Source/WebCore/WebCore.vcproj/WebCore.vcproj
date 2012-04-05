@@ -51966,14 +51966,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\ReifiedTreeTraversal.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\ReifiedTreeTraversal.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\RegisteredEventListener.cpp"
 				>
 				<FileConfiguration

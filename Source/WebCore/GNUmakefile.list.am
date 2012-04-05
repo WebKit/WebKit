@@ -1930,8 +1930,6 @@ webcore_sources += \
 	Source/WebCore/dom/RawDataDocumentParser.h \
 	Source/WebCore/dom/RegisteredEventListener.cpp \
 	Source/WebCore/dom/RegisteredEventListener.h \
-	Source/WebCore/dom/ReifiedTreeTraversal.cpp \
-	Source/WebCore/dom/ReifiedTreeTraversal.h \
 	Source/WebCore/dom/RenderedDocumentMarker.h \
 	Source/WebCore/dom/ScopedEventQueue.cpp \
 	Source/WebCore/dom/ScopedEventQueue.h \

@@ -1358,8 +1358,6 @@
 		49FFBF1D11C8550E006A7118 /* GraphicsContext3DMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */; };
 		49FFBF3F11C93EE3006A7118 /* WebGLLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */; };
 		49FFBF4011C93EE3006A7118 /* WebGLLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */; };
-		4A013D291512FD7700E1E613 /* ReifiedTreeTraversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A013D271512FD7700E1E613 /* ReifiedTreeTraversal.cpp */; };
-		4A013D2A1512FD7700E1E613 /* ReifiedTreeTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A013D281512FD7700E1E613 /* ReifiedTreeTraversal.h */; };
 		4A0DA2FE129B241900AB61E1 /* FormAssociatedElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0DA2FC129B241900AB61E1 /* FormAssociatedElement.cpp */; };
 		4A0DA2FF129B241900AB61E1 /* FormAssociatedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A0DA2FD129B241900AB61E1 /* FormAssociatedElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A1E719014E101E400626F9D /* JSHTMLContentElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E718E14E101E400626F9D /* JSHTMLContentElement.cpp */; };
@@ -8319,8 +8317,6 @@
 		49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsContext3DMac.mm; sourceTree = "<group>"; };
 		49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLLayer.h; sourceTree = "<group>"; };
 		49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGLLayer.mm; sourceTree = "<group>"; };
-		4A013D271512FD7700E1E613 /* ReifiedTreeTraversal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReifiedTreeTraversal.cpp; sourceTree = "<group>"; };
-		4A013D281512FD7700E1E613 /* ReifiedTreeTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReifiedTreeTraversal.h; sourceTree = "<group>"; };
 		4A0DA2FC129B241900AB61E1 /* FormAssociatedElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormAssociatedElement.cpp; sourceTree = "<group>"; };
 		4A0DA2FD129B241900AB61E1 /* FormAssociatedElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormAssociatedElement.h; sourceTree = "<group>"; };
 		4A1E718E14E101E400626F9D /* JSHTMLContentElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLContentElement.cpp; sourceTree = "<group>"; };
@@ -21140,8 +21136,6 @@
 				A84D827B11D333ED00972990 /* RawDataDocumentParser.h */,
 				85031B350A44EFC700F992E0 /* RegisteredEventListener.cpp */,
 				85031B360A44EFC700F992E0 /* RegisteredEventListener.h */,
-				4A013D271512FD7700E1E613 /* ReifiedTreeTraversal.cpp */,
-				4A013D281512FD7700E1E613 /* ReifiedTreeTraversal.h */,
 				A76E5F7E135E0DCF00A69837 /* RenderedDocumentMarker.h */,
 				4998AEC413F9D0EA0090B1AA /* RequestAnimationFrameCallback.h */,
 				4998AEC513F9D0EA0090B1AA /* RequestAnimationFrameCallback.idl */,
@@ -23845,7 +23839,6 @@
 				BCAB418213E356E800D8AAF3 /* Region.h in Headers */,
 				85031B4C0A44EFC700F992E0 /* RegisteredEventListener.h in Headers */,
 				B2C3DA2D0D006C1D00EF6F26 /* RegularExpression.h in Headers */,
-				4A013D2A1512FD7700E1E613 /* ReifiedTreeTraversal.h in Headers */,
 				93309E01099E64920056E581 /* RemoveCSSPropertyCommand.h in Headers */,
 				D06C0D8F0CFD11460065F43F /* RemoveFormatCommand.h in Headers */,
 				93309E05099E64920056E581 /* RemoveNodeCommand.h in Headers */,
@@ -27004,7 +26997,6 @@
 				BCAB418113E356E800D8AAF3 /* Region.cpp in Sources */,
 				85031B4B0A44EFC700F992E0 /* RegisteredEventListener.cpp in Sources */,
 				B2C3DA2C0D006C1D00EF6F26 /* RegularExpression.cpp in Sources */,
-				4A013D291512FD7700E1E613 /* ReifiedTreeTraversal.cpp in Sources */,
 				93309E00099E64920056E581 /* RemoveCSSPropertyCommand.cpp in Sources */,
 				D06C0D900CFD11460065F43F /* RemoveFormatCommand.cpp in Sources */,
 				93309E04099E64920056E581 /* RemoveNodeCommand.cpp in Sources */,

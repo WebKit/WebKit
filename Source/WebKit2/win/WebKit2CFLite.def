@@ -161,7 +161,6 @@ EXPORTS
         ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z
         ?externalRepresentation@WebCore@@YA?AVString@WTF@@PAVElement@1@I@Z
         ?find@StringImpl@WTF@@QAEIPAV12@I@Z
-        ?firstChild@ReifiedTreeTraversal@WebCore@@SAPAVNode@2@PBV32@@Z
         ?frameDestroyed@FrameDestructionObserver@WebCore@@UAEXXZ
         ?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PBEI@Z
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
@@ -174,7 +173,6 @@ EXPORTS
         ?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z
         ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@UStringHash@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
         ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ
-        ?lastChild@ReifiedTreeTraversal@WebCore@@SAPAVNode@2@PBV32@@Z
         ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@VMarkerTypes@DocumentMarker@2@@Z
         ?number@String@WTF@@SA?AV12@I@Z
         ?number@String@WTF@@SA?AV12@H@Z
@@ -186,7 +184,6 @@ EXPORTS
         ?lastChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?next@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?previous@ComposedShadowTreeWalker@WebCore@@QAEXXZ
-        ?nextSibling@ReifiedTreeTraversal@WebCore@@SAPAVNode@2@PBV32@@Z
         ?numberOfScopedHTMLStyleChildren@Node@WebCore@@QBEIXZ
         ?page@Document@WebCore@@QBEPAVPage@2@XZ
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
@@ -229,8 +226,6 @@ EXPORTS
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVRange@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNodeList@1@@Z
         ?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z
-        ?traverseNextNode@ReifiedTreeTraversal@WebCore@@SAPAVNode@2@PBV32@@Z
-        ?traversePreviousNode@ReifiedTreeTraversal@WebCore@@SAPAVNode@2@PBV32@@Z
         ?treeScope@Node@WebCore@@QBEPAVTreeScope@2@XZ
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@@WTF@@XZ
