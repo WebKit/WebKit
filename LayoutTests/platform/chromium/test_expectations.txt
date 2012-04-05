@@ -897,6 +897,9 @@ BUGCR8630 LINUX WIN : fast/text/font-initial.html = FAIL
 // error in the header of the following test.
 BUGCR24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 
+// Test itself passes, but causes subsequent tests to fail.
+BUGWK83260 SKIP : fast/text/international/embed-bidi-style-in-isolate-crash.html = PASS
+
 // -----------------------------------------------------------------
 // Inspector tests
 // -----------------------------------------------------------------
@@ -3293,7 +3296,6 @@ BUGWK73494 : svg/text/non-bmp-positioning-lists.svg = IMAGE+TEXT IMAGE
 BUGWK73872 LINUX : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
 
 BUGWK73514 WIN : platform/chromium/compositing/lost-compositor-context-permanently.html = PASS TIMEOUT
-BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT IMAGE TEXT PASS
 
 BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overloads-strokeText.html = PASS CRASH
 BUGWK73607 LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = PASS CRASH
@@ -3658,8 +3660,6 @@ BUGWK81493 LINUX : svg/custom/js-late-gradient-creation.svg = PASS IMAGE
 BUGWK77368 WIN : css3/flexbox/child-overflow.html = IMAGE
 
 BUGWK81537 : fast/events/touch/gesture/pad-gesture-fling.html = TEXT PASS
-
-BUGWK81544 : fast/text/international/font-fallback-to-common-script.html = IMAGE PASS
 
 BUGWK81638 SNOWLEOPARD DEBUG : editing/selection/iframe.html = IMAGE PASS
 
