@@ -842,6 +842,25 @@
           ],
         },
         {
+          'action_name': 'CalendarPicker',
+          'inputs': [
+            '../Resources/calendarPicker.css',
+            '../Resources/calendarPicker.js',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPicker.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPicker.cpp',
+          ],
+          'action': [
+            'python',
+            '../make-file-arrays.py',
+            '--condition=ENABLE(CALENDAR_PICKER)',
+            '--out-h=<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPicker.h',
+            '--out-cpp=<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPicker.cpp',
+            '<@(_inputs)',
+          ],
+        },
+        {
           'action_name': 'XLinkNames',
           'inputs': [
             '../dom/make_names.pl',
@@ -1078,6 +1097,7 @@
         # Additional .cpp files from webcore_bindings_sources actions.
         '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLElementFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLNames.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPicker.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/EventFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/EventHeaders.h',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/EventInterfaces.h',

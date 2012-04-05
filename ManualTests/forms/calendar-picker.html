@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<title>Calendar Picker test</title>
+<style>
+body {
+    background-color: #eeffff;
+}
+iframe {
+    z-index: 2147483647;
+    width: 290px;
+    height: 256px;
+    border: 0;
+    overflow: hidden;
+}
+</style>
+</head>
+<body>
+
+<p>This is a testbed for a calendar picker.</p>
+
+<div><input type="text" id="date"></div>
+<iframe></iframe>
+
+<ol id="console" style="font-family:monospace;">
+</ol>
+
+<script>
+var frame = document.getElementsByTagName('iframe')[0];
+var doc = frame.contentDocument;
+doc.documentElement.innerHTML = '<head></head><body><div id=main>Loading...</div></body>';
+var link = doc.createElement('link');
+link.rel = 'stylesheet';
+link.href = '../../Source/WebCore/Resources/calendarPicker.css?' + (new Date()).getTime();
+doc.head.appendChild(link);
+var script = doc.createElement('script');
+script.src = '../../Source/WebCore/Resources/calendarPicker.js?' + (new Date()).getTime();
+doc.body.appendChild(script);
+
+var englishArguments = {
+    locale: 'en-US',
+    monthLabels : ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'],
+    dayLabels : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    todayLabel : 'Today',
+    clearLabel : 'Clear',
+    cancelLabel : 'Cancel',
+    weekStartDay : 0,
+    step : 1,
+    max : '2099-12-31',
+};
+var japaneseArguments = {
+    locale: 'ja-JP',
+    monthLabels : ['1月', '2月', '3月', '4月', '5月', '6月',
+    '7月', '8月', '9月', '10月', '11月', '12月'],
+    dayLabels : ['日', '月', '火', '水', '木', '金', '土'],
+    todayLabel : '今日',
+    clearLabel : 'クリア',
+    cancelLabel : '取り消し',
+    weekStartDay : 0,
+    step : 1,
+    max : '2099-03-15',
+};
+setTimeout(function() {
+    frame.contentWindow.postMessage(JSON.stringify(englishArguments), "*");
+    frame.contentWindow.setValueAndClosePopup = function(numValue, stringValue) {
+        window.log('number=' + numValue + ', string="' + stringValue + '"');
+        if (numValue == 0)
+            window.document.getElementById('date').value = stringValue;
+    };
+}, 100);
+
+
+function log(str) {
+    var entry = document.createElement('li');
+    entry.innerText = str;
+    document.getElementById('console').appendChild(entry);
+}
+</script>
+</body>
+</html>

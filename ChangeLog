@@ -1,3 +1,12 @@
+2012-04-04  Kent Tamura  <tkent@chromium.org>
+
+        Add JavaScript and CSS code for the calendar picker implementation
+        https://bugs.webkit.org/show_bug.cgi?id=83011
+
+        Reviewed by Hajime Morita.
+
+        * ManualTests/forms/calendar-picker.html: Added.
+
 2012-04-04  Hayato Ito  <hayato@chromium.org>
 
         Remove ReifiedTreeTraversal.
