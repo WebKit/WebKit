@@ -67,6 +67,7 @@ public:
     virtual void prepareToDrawOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void animateLayers(CCLayerTreeHostImpl*, double monotonicTime) { }
+    virtual void willAnimateLayers(CCLayerTreeHostImpl*, double monotonicTime) { }
     virtual void applyScrollAndScale(const IntSize&, float) { }
     virtual void updateAnimations(double monotonicTime) { }
     virtual void layout() { }
@@ -113,6 +114,7 @@ public:
 protected:
     virtual void animateLayers(double monotonicTime, double wallClockTime)
     {
+        m_testHooks->willAnimateLayers(this, monotonicTime);
         CCLayerTreeHostImpl::animateLayers(monotonicTime, wallClockTime);
         m_testHooks->animateLayers(this, monotonicTime);
     }
@@ -1081,7 +1083,7 @@ public:
 private:
 };
 
-TEST_F(CCLayerTreeHostTestAddAnimationWithTimingFunction, DISABLED_runMultiThread)
+TEST_F(CCLayerTreeHostTestAddAnimationWithTimingFunction, runMultiThread)
 {
     runTestThreaded();
 }
@@ -1119,8 +1121,7 @@ public:
 class CCLayerTreeHostTestSynchronizeAnimationStartTimes : public CCLayerTreeHostTestThreadOnly {
 public:
     CCLayerTreeHostTestSynchronizeAnimationStartTimes()
-        : m_numAnimates(0)
-        , m_layerTreeHostImpl(0)
+        : m_layerTreeHostImpl(0)
     {
     }
 
@@ -1129,20 +1130,15 @@ public:
         postAddAnimationToMainThread();
     }
 
-    virtual void animateLayers(CCLayerTreeHostImpl* layerTreeHostImpl, double)
+    // This is guaranteed to be called before CCLayerTreeHostImpl::animateLayers.
+    virtual void willAnimateLayers(CCLayerTreeHostImpl* layerTreeHostImpl, double monotonicTime)
     {
         m_layerTreeHostImpl = layerTreeHostImpl;
-
-        if (!m_numAnimates) {
-            m_numAnimates++;
-            return;
-        }
     }
 
     virtual void notifyAnimationStarted(double time)
     {
-        if (!m_numAnimates)
-            return;
+        EXPECT_TRUE(m_layerTreeHostImpl);
 
         CCLayerAnimationController* controllerImpl = m_layerTreeHostImpl->rootLayer()->layerAnimationController();
         CCLayerAnimationController* controller = m_layerTreeHost->rootLayer()->layerAnimationController();
@@ -1159,7 +1155,6 @@ public:
     }
 
 private:
-    int m_numAnimates;
     CCLayerTreeHostImpl* m_layerTreeHostImpl;
 };
 
