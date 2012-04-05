@@ -43,6 +43,38 @@ using namespace WebCore;
 
 namespace WebKit {
 
+class SameSizeAsWebInputEvent {
+    int inputData[5];
+};
+
+class SameSizeAsWebKeyboardEvent : public SameSizeAsWebInputEvent {
+    int keyboardData[12];
+};
+
+class SameSizeAsWebMouseEvent : public SameSizeAsWebInputEvent {
+    int mouseData[10];
+};
+
+class SameSizeAsWebMouseWheelEvent : public SameSizeAsWebMouseEvent {
+    int mousewheelData[8];
+};
+
+class SameSizeAsWebGestureEvent : public SameSizeAsWebInputEvent {
+    int gestureData[6];
+};
+
+class SameSizeAsWebTouchEvent : public SameSizeAsWebInputEvent {
+    WebTouchPoint touchPoints[3 * WebTouchEvent::touchesLengthCap];
+    int touchData[3];
+};
+
+COMPILE_ASSERT(sizeof(WebInputEvent) == sizeof(SameSizeAsWebInputEvent), WebInputEvent_has_gaps);
+COMPILE_ASSERT(sizeof(WebKeyboardEvent) == sizeof(SameSizeAsWebKeyboardEvent), WebKeyboardEvent_has_gaps);
+COMPILE_ASSERT(sizeof(WebMouseEvent) == sizeof(SameSizeAsWebMouseEvent), WebMouseEvent_has_gaps);
+COMPILE_ASSERT(sizeof(WebMouseWheelEvent) == sizeof(SameSizeAsWebMouseWheelEvent), WebMouseWheelEvent_has_gaps);
+COMPILE_ASSERT(sizeof(WebGestureEvent) == sizeof(SameSizeAsWebGestureEvent), WebGestureEvent_has_gaps);
+COMPILE_ASSERT(sizeof(WebTouchEvent) == sizeof(SameSizeAsWebTouchEvent), WebTouchEvent_has_gaps);
+
 static const char* staticKeyIdentifiers(unsigned short keyCode)
 {
     switch (keyCode) {
