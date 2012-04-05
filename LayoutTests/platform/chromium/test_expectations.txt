@@ -1639,29 +1639,10 @@ BUGCR9786 : fast/dom/Window/dom-access-from-closure-window.html = FAIL
 
 BUGCR9798 SLOW WIN DEBUG : fast/dom/Window/slow-unload-handler.html = PASS
 
-// SKIA_TEXT results - differ only in low-bits of shadow, or positioning
-// when GDI integralizes its positions before applying the CTM
-// rebaseline when SKIA_TEXT is on by default
-BUGCR99500 WIN : fast/repaint/reflection-redraw.html = IMAGE
-BUGCR99500 WIN : printing/width-overflow.html = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-60-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-62-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/pservers-grad-07-b.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/text-align-04-b.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/text-align-06-b.svg = IMAGE
-BUGCR99500 WIN : svg/as-background-image/svg-as-background-4.html = IMAGE
-BUGCR99500 WIN : svg/as-image/animated-svg-as-image-same-image.html = IMAGE
-BUGCR99500 WIN : svg/as-image/animated-svg-as-image.html = IMAGE
-BUGCR99500 WIN : svg/carto.net/textbox.svg = IMAGE
-BUGCR99500 WIN : svg/css/text-shadow-multiple.xhtml = IMAGE
-BUGCR99500 WIN : svg/custom/js-late-clipPath-creation.svg = IMAGE
-BUGCR99500 WIN : svg/hixie/mixed/009.xml = IMAGE
-BUGCR99500 WIN : svg/text/foreignObject-text-clipping-bug.xml = IMAGE
-BUGCR99500 WIN : svg/text/scaling-font-with-geometric-precision.html = IMAGE
-BUGCR99500 WIN : svg/text/text-align-05-b.svg = IMAGE
-BUGCR99500 WIN : svg/text/textPathBoundsBug.svg = IMAGE
-BUGCR99500 WIN : svg/zoom/page/zoom-hixie-mixed-009.xml = IMAGE
-BUGCR99500 WIN : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE
+BUGCR83306 WIN : svg/text/foreignObject-text-clipping-bug.xml = IMAGE
+BUGWK83306 WIN : svg/hixie/mixed/009.xml = IMAGE
+BUGWK83306 WIN : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE
+BUGWK83306 WIN : svg/zoom/page/zoom-hixie-mixed-009.xml = IMAGE
 
 BUGCR9798 WIN DEBUG : http/tests/local/style-access-before-stylesheet-loaded.html = PASS FAIL
 BUGCR9798 WIN DEBUG : http/tests/misc/redirect-with-quotes.php = PASS TIMEOUT
