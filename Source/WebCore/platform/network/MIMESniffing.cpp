@@ -23,6 +23,8 @@
 #include <cstring>
 #include <stdint.h>
 
+using namespace std;
+
 // MIME type sniffing implementation based on http://tools.ietf.org/html/draft-abarth-mime-sniff-06
 
 namespace {
