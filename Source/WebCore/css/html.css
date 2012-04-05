@@ -453,6 +453,10 @@ input[type="search"]::-webkit-search-results-button {
 }
 
 #if defined(ENABLE_DATALIST) && ENABLE_DATALIST
+datalist {
+    display: none;
+}
+
 input::-webkit-input-list-button {
     -webkit-appearance: list-button;
     display: inline-block;
