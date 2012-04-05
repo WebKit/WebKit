@@ -28,7 +28,7 @@
 #include "CodeBlock.h"
 #include "Interpreter.h"
 #include "JIT.h"
-#include "JSStringBuilder.h"
+#include "JSStringJoiner.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
@@ -343,11 +343,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
-    JSStringBuilder strBuffer;
+    UString separator(",");
+    JSStringJoiner stringJoiner(separator, length);
     for (unsigned k = 0; k < length; k++) {
-        if (k >= 1)
-            strBuffer.append(',');
-
         JSValue element = thisObj->get(exec, k);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
@@ -365,11 +363,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
                 str = element.toString(exec)->value(exec);
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
-            strBuffer.append(str);
+            stringJoiner.append(str);
         }
     }
 
-    return JSValue::encode(strBuffer.build(exec));
+    return JSValue::encode(stringJoiner.build(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
@@ -383,60 +381,39 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
-    JSStringBuilder strBuffer;
-
     UString separator;
     if (!exec->argument(0).isUndefined())
         separator = exec->argument(0).toString(exec)->value(exec);
+    if (separator.isNull())
+        separator = UString(",");
+
+    JSStringJoiner stringJoiner(separator, length);
 
     unsigned k = 0;
     if (isJSArray(thisObj)) {
         JSArray* array = asArray(thisObj);
 
-        if (length) {
-            if (!array->canGetIndex(k)) 
-                goto skipFirstLoop;
+        for (; k < length; k++) {
+            if (!array->canGetIndex(k))
+                break;
+
             JSValue element = array->getIndex(k);
             if (!element.isUndefinedOrNull())
-                strBuffer.append(element.toString(exec)->value(exec));
-            k++;
-        }
-
-        if (separator.isNull()) {
-            for (; k < length; k++) {
-                if (!array->canGetIndex(k))
-                    break;
-                strBuffer.append(',');
-                JSValue element = array->getIndex(k);
-                if (!element.isUndefinedOrNull())
-                    strBuffer.append(element.toString(exec)->value(exec));
-            }
-        } else {
-            for (; k < length; k++) {
-                if (!array->canGetIndex(k))
-                    break;
-                strBuffer.append(separator);
-                JSValue element = array->getIndex(k);
-                if (!element.isUndefinedOrNull())
-                    strBuffer.append(element.toString(exec)->value(exec));
-            }
+                stringJoiner.append(element.toString(exec)->value(exec));
+            else
+                stringJoiner.append(UString());
         }
     }
- skipFirstLoop:
-    for (; k < length; k++) {
-        if (k >= 1) {
-            if (separator.isNull())
-                strBuffer.append(',');
-            else
-                strBuffer.append(separator);
-        }
 
+    for (; k < length; k++) {
         JSValue element = thisObj->get(exec, k);
         if (!element.isUndefinedOrNull())
-            strBuffer.append(element.toString(exec)->value(exec));
+            stringJoiner.append(element.toString(exec)->value(exec));
+        else
+            stringJoiner.append(UString());
     }
 
-    return JSValue::encode(strBuffer.build(exec));
+    return JSValue::encode(stringJoiner.build(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)

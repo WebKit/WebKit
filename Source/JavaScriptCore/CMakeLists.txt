@@ -182,6 +182,7 @@ SET(JavaScriptCore_SOURCES
     runtime/JSPropertyNameIterator.cpp
     runtime/JSStaticScopeObject.cpp
     runtime/JSString.cpp
+    runtime/JSStringJoiner.cpp
     runtime/JSValue.cpp
     runtime/JSVariableObject.cpp
     runtime/JSWrapperObject.cpp

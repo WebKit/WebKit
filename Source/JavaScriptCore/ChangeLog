@@ -1,3 +1,42 @@
+2012-04-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Make something faster than JSStringBuilder for joining an array of JSValue
+        https://bugs.webkit.org/show_bug.cgi?id=83180
+
+        Reviewed by Geoffrey Garen.
+
+        This patch add the class JSStringJoiner optimized for join() operations.
+
+        This class makes stricter constraints than JSStringBuilder in order avoid
+        memory allocations.
+
+        In the best case, the class allocate memory only twice:
+        -Allocate an array to keep a list of UString to join.
+        -Allocate the final string.
+
+        We also avoid the conversion from 8bits strings to 16bits strings since
+        they are costly and unlikly to help for subsequent calls.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        * runtime/JSStringJoiner.cpp: Added.
+        (JSC):
+        (JSC::appendStringToData):
+        (JSC::joinStrings):
+        (JSC::JSStringJoiner::build):
+        * runtime/JSStringJoiner.h: Added.
+        (JSC):
+        (JSStringJoiner):
+        (JSC::JSStringJoiner::JSStringJoiner):
+        (JSC::JSStringJoiner::append):
+
 2012-04-05  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77293

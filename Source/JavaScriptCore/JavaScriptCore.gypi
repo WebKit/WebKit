@@ -388,6 +388,8 @@
             'runtime/JSStaticScopeObject.h',
             'runtime/JSString.cpp',
             'runtime/JSStringBuilder.h',
+            'runtime/JSStringJoiner.cpp',
+            'runtime/JSStringJoiner.h',
             'runtime/JSValue.cpp',
             'runtime/JSVariableObject.cpp',
             'runtime/JSWrapperObject.cpp',

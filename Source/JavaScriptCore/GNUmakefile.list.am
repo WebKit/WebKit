@@ -477,6 +477,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSStaticScopeObject.cpp \
 	Source/JavaScriptCore/runtime/JSStaticScopeObject.h \
 	Source/JavaScriptCore/runtime/JSStringBuilder.h \
+	Source/JavaScriptCore/runtime/JSStringJoiner.cpp \
+	Source/JavaScriptCore/runtime/JSStringJoiner.h \
 	Source/JavaScriptCore/runtime/JSString.cpp \
 	Source/JavaScriptCore/runtime/JSString.h \
 	Source/JavaScriptCore/runtime/JSType.h \

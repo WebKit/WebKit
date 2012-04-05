@@ -897,6 +897,14 @@
 				RelativePath="..\..\runtime\JSString.h"
 				>
 			</File>
+                        <File
+                                RelativePath="..\..\runtime\JSStringJoiner.cpp"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\..\runtime\JSStringJoiner.h"
+                                >
+                        </File>
 			<File
 				RelativePath="..\..\runtime\JSType.h"
 				>
