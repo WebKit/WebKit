@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1107,6 +1108,17 @@ void KURL::parse(const char* url, const String* originalString)
         && isLetterMatchIgnoringCase(url[2], 'l')
         && isLetterMatchIgnoringCase(url[3], 'e');
 
+#if PLATFORM(BLACKBERRY)
+    // Parse local: urls the same as file: urls.
+    if (!isFile)
+        isFile = schemeEnd == 5
+            && isLetterMatchIgnoringCase(url[0], 'l')
+            && isLetterMatchIgnoringCase(url[1], 'o')
+            && isLetterMatchIgnoringCase(url[2], 'c')
+            && isLetterMatchIgnoringCase(url[3], 'a')
+            && isLetterMatchIgnoringCase(url[4], 'l');
+#endif
+
     m_protocolIsInHTTPFamily = isLetterMatchIgnoringCase(url[0], 'h')
         && isLetterMatchIgnoringCase(url[1], 't')
         && isLetterMatchIgnoringCase(url[2], 't')
@@ -1870,6 +1882,11 @@ bool portAllowed(const KURL& url)
     // Allow any port number in a file URL, since the port number is ignored.
     if (url.protocolIs("file"))
         return true;
+
+#if PLATFORM(BLACKBERRY)
+    if (url.protocolIs("local"))
+        return true;
+#endif
 
     return false;
 }
