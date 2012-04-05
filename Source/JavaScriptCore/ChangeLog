@@ -1,5 +1,12 @@
 2012-04-05  Oliver Hunt  <oliver@apple.com>
 
+        Fix 32-bit build.
+
+        * API/APICast.h:
+        (toJS):
+
+2012-04-05  Oliver Hunt  <oliver@apple.com>
+
         Replace static_cast with jsCast when casting JSCell subclasses in JSC
         https://bugs.webkit.org/show_bug.cgi?id=83307
 

@@ -69,7 +69,7 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSValueRef v)
     if (!jsCell)
         return JSC::JSValue();
     if (jsCell->isAPIValueWrapper())
-        return jsCast<JSC::JSAPIValueWrapper*>(jsCell)->value();
+        return JSC::jsCast<JSC::JSAPIValueWrapper*>(jsCell)->value();
     return jsCell;
 #else
     return JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
