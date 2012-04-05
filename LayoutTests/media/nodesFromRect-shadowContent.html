@@ -6,10 +6,10 @@
       margin: 50px;
     }
   </style>
-  <script src=../../media/media-file.js></script>
-  <script src=../../media/media-controls.js></script>
-  <script src="../js/resources/js-test-pre.js"></script>
-  <script src="resources/nodesFromRect.js"></script>
+  <script src=media-file.js></script>
+  <script src=media-controls.js></script>
+  <script src="../fast/js/resources/js-test-pre.js"></script>
+  <script src="../fast/dom/resources/nodesFromRect.js"></script>
   <script type="text/javascript" charset="utf-8">
     function runTest()
     {
@@ -53,9 +53,12 @@
 <body id="body">
     <video id="v1" controls></video>
     <p>This test only runs in DRT!</p>
-    <script src=../../media/video-test.js></script>
+    <script src=video-test.js></script>
     <script>
         testExpected("video.controls", null, '!=');
+        waitForEvent('canplaythrough', function () {
+            runTest();
+        } );
         video.src = findMediaFile("video", "content/test");
     </script>
 </body>
