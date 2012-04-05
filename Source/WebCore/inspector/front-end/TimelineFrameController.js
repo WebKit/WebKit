@@ -32,12 +32,14 @@
  * @constructor
  * @param {WebInspector.TimelineModel} model
  * @param {WebInspector.TimelineOverviewPane} overviewPane
+ * @param {WebInspector.TimelinePresentationModel} presentationModel
  */
-WebInspector.TimelineFrameController = function(model, overviewPane)
+WebInspector.TimelineFrameController = function(model, overviewPane, presentationModel)
 {
     this._lastFrame = null;
     this._model = model;
     this._overviewPane = overviewPane;
+    this._presentationModel = presentationModel;
     this._model.addEventListener(WebInspector.TimelineModel.Events.RecordAdded, this._onRecordAdded, this);
     this._model.addEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this._onRecordsCleared, this);
 
@@ -77,6 +79,7 @@ WebInspector.TimelineFrameController.prototype = {
         if (this._lastFrame) {
             this._lastFrame.endTime = frameBeginTime;
             this._overviewPane.addFrame(this._lastFrame);
+            this._presentationModel.addFrame(this._lastFrame);
         }
         this._lastFrame = new WebInspector.TimelineFrame();
         this._lastFrame.startTime = frameBeginTime;

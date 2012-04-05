@@ -270,7 +270,7 @@ WebInspector.TimelineOverviewPane.prototype = {
             var dividerPosition = Math.round(positions.start * 10);
             if (dividers[dividerPosition])
                 continue;
-            var divider = WebInspector.TimelinePresentationModel.createEventDivider(record);
+            var divider = WebInspector.TimelinePresentationModel.createEventDivider(record.type);
             divider.style.left = positions.start + "%";
             dividers[dividerPosition] = divider;
         }

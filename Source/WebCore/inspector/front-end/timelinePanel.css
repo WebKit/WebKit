@@ -665,3 +665,13 @@
 .timeline-mode-horizontal-bars .glyph {
     -webkit-mask-position: -192px -48px;
 }
+
+.timeline-frame-strip {
+    position: absolute;
+    height: 19px;
+    background-color: rgb(220, 220, 220);
+    opacity: 0.6;
+    color: black;
+    text-align: center;
+    padding-top: 3px;
+}

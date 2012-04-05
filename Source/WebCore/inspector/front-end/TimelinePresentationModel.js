@@ -127,7 +127,11 @@ WebInspector.TimelinePresentationModel.forAllRecords = function(recordsArray, ca
     }
 }
 
-WebInspector.TimelinePresentationModel.createEventDivider = function(record)
+/**
+ * @param {string} recordType
+ * @param {string=} title
+ */
+WebInspector.TimelinePresentationModel.createEventDivider = function(recordType, title)
 {
     var eventDivider = document.createElement("div");
     eventDivider.className = "resources-event-divider";
@@ -136,15 +140,17 @@ WebInspector.TimelinePresentationModel.createEventDivider = function(record)
     var eventDividerPadding = document.createElement("div");
     eventDividerPadding.className = "resources-event-divider-padding";
 
-    if (record.type === recordTypes.MarkDOMContent)
+    if (recordType === recordTypes.MarkDOMContent)
         eventDivider.className += " resources-blue-divider";
-    else if (record.type === recordTypes.MarkLoad)
+    else if (recordType === recordTypes.MarkLoad)
         eventDivider.className += " resources-red-divider";
-    else if (record.type === recordTypes.TimeStamp) {
+    else if (recordType === recordTypes.TimeStamp)
         eventDivider.className += " resources-orange-divider";
-        eventDividerPadding.title = record.data["message"];
-    } else if (record.type === recordTypes.BeginFrame)
+    else if (recordType === recordTypes.BeginFrame)
         eventDivider.className += " timeline-frame-divider";
+
+    if (title)
+        eventDividerPadding.title = title;
 
     eventDividerPadding.appendChild(eventDivider);
     return eventDividerPadding;
@@ -164,6 +170,11 @@ WebInspector.TimelinePresentationModel.prototype = {
         return this._rootRecord;
     },
 
+    frames: function()
+    {
+        return this._frames;
+    },
+
     reset: function()
     {
         this._linkifier.reset();
@@ -172,7 +183,13 @@ WebInspector.TimelinePresentationModel.prototype = {
         this._scheduledResourceRequests = {};
         this._timerRecords = {};
         this._requestAnimationFrameRecords = {};
+        this._frames = [];
         this._minimumRecordTime = -1;
+    },
+
+    addFrame: function(frame)
+    {
+        this._frames.push(frame);
     },
 
     addRecord: function(record, parentRecord)
@@ -333,7 +350,7 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
     if (parentRecord)
         parentRecord.children.push(this);
     this.category = style.category;
-    this.title = style.title;
+    this.title = record.type === recordTypes.TimeStamp ? record.data["message"] : style.title;
     this.startTime = WebInspector.TimelineModel.startTimeInSeconds(record);
     this.data = record.data;
     this.type = record.type;

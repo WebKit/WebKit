@@ -63,6 +63,12 @@ WebInspector.TimelineGrid.prototype = {
         return this._dividersElement;
     },
 
+    removeDividers: function()
+    {
+        this._dividersElement.removeChildren();
+        this._dividersLabelBarElement.removeChildren();
+    },
+
     updateDividers: function(calculator)
     {
         var dividersElementClientWidth = this._dividersElement.clientWidth;
