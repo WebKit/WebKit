@@ -1,3 +1,13 @@
+2012-04-04  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Shadow DOM is exposed in JS.
+        https://bugs.webkit.org/show_bug.cgi?id=82607
+
+        Reviewed by Hajime Morita.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-04-04  Anders Carlsson  <andersca@apple.com>
 
         Text input doesn't work for some Flash forms

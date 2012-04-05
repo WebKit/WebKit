@@ -54,6 +54,7 @@ module window {
         Element createContentElement(in Document document) raises(DOMException);
         Element getElementByIdInShadowRoot(in Node shadowRoot, in DOMString id) raises(DOMException);
         boolean isValidContentSelect(in Element contentElement) raises(DOMException);
+        Node treeScopeRootNode(in Node node) raises (DOMException);
 
         Node nextSiblingByWalker(in Node node) raises(DOMException);
         Node firstChildByWalker(in Node node) raises(DOMException);

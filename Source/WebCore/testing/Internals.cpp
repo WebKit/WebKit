@@ -59,6 +59,7 @@
 #include "ShadowTree.h"
 #include "SpellChecker.h"
 #include "TextIterator.h"
+#include "TreeScope.h"
 
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"
@@ -176,6 +177,16 @@ bool Internals::isValidContentSelect(Element* insertionPoint, ExceptionCode& ec)
     }
 
     return toInsertionPoint(insertionPoint)->isSelectValid();
+}
+
+Node* Internals::treeScopeRootNode(Node* node, ExceptionCode& ec)
+{
+    if (!node) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return node->treeScope()->rootNode();
 }
 
 bool Internals::attached(Node* node, ExceptionCode& ec)

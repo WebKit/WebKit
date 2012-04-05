@@ -231,6 +231,7 @@ EXPORTS
         ?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z
         ?traverseNextNode@ReifiedTreeTraversal@WebCore@@SAPAVNode@2@PBV32@@Z
         ?traversePreviousNode@ReifiedTreeTraversal@WebCore@@SAPAVNode@2@PBV32@@Z
+        ?treeScope@Node@WebCore@@QBEPAVTreeScope@2@XZ
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@@WTF@@XZ
         ?utf8@String@WTF@@QBE?AVCString@2@_N@Z

@@ -38,6 +38,7 @@
 #include "PlatformString.h"
 #include "Range.h"
 #include "TextIterator.h"
+#include "TreeScope.h"
 #include "htmlediting.h"
 
 namespace WebCore {
@@ -47,9 +48,13 @@ static Node* selectionShadowAncestor(Frame* frame)
     Node* node = frame->selection()->selection().base().anchorNode();
     if (!node)
         return 0;
-    Node* shadowAncestor = node->shadowAncestorNode();
-    if (shadowAncestor == node)
+
+    if (!node->isInShadowTree())
         return 0;
+
+    Node* shadowAncestor = node->shadowAncestorNode();
+    while (shadowAncestor->isInShadowTree())
+        shadowAncestor = shadowAncestor->shadowAncestorNode();
     return shadowAncestor;
 }
 
