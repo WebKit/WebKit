@@ -179,8 +179,7 @@ bool WorkerContextExecutionProxy::initContextIfNeeded()
     // Wrap the object.
     V8DOMWrapper::setDOMWrapper(jsWorkerContext, contextType, m_workerContext);
 
-    V8DOMWrapper::setJSWrapperForDOMObject(m_workerContext, v8::Persistent<v8::Object>::New(jsWorkerContext));
-    m_workerContext->ref();
+    V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<WorkerContext>(m_workerContext), v8::Persistent<v8::Object>::New(jsWorkerContext));
 
     // Insert the object instance as the prototype of the shadow object.
     v8::Handle<v8::Object> globalObject = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());

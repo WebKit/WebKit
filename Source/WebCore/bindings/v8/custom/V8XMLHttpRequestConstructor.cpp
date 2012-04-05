@@ -64,10 +64,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::constructorCallback(const v8::Arguments&
         securityOrigin = isolatedContext->securityOrigin();
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context, securityOrigin);
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, xmlHttpRequest.get());
-
-    // Add object to the wrapper map.
-    xmlHttpRequest->ref();
-    V8DOMWrapper::setJSWrapperForActiveDOMObject(xmlHttpRequest.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    V8DOMWrapper::setJSWrapperForActiveDOMObject(xmlHttpRequest.release(), v8::Persistent<v8::Object>::New(args.Holder()));
     return args.Holder();
 }
 
