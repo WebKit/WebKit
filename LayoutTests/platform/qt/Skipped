@@ -391,6 +391,9 @@ batterystatus
 # Network Information API is not supported yet. http://webkit.org/b/73528
 networkinformation
 
+# V8 not used on Qt bots
+fast/dom/shadow/selection-shouldnt-expose-shadow-dom.html
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #
