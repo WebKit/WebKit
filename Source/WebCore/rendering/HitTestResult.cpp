@@ -138,7 +138,8 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
         m_topPadding = m_rightPadding = m_bottomPadding = m_leftPadding = 0;
 
     m_rectBasedTestResult = adoptPtr(other.m_rectBasedTestResult ? new NodeSet(*other.m_rectBasedTestResult) : 0);
-    
+    m_shadowContentFilterPolicy = other.shadowContentFilterPolicy();
+
     m_region = other.m_region;
 
     return *this;
