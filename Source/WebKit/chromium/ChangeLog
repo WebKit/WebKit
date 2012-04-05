@@ -1,3 +1,14 @@
+2012-04-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r113341.
+        http://trac.webkit.org/changeset/113341
+        https://bugs.webkit.org/show_bug.cgi?id=83299
+
+        bots caught some build errors (Requested by shawnsingh on
+        #webkit).
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+
 2012-04-05  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Race condition in CCLayerTreeHostTestSynchronizeAnimationStartTimes

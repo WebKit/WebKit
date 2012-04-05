@@ -3607,8 +3607,6 @@
             'platform/graphics/chromium/cc/CCLayerTreeHostCommon.h',
             'platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp',
             'platform/graphics/chromium/cc/CCLayerTreeHostImpl.h',
-            'platform/graphics/chromium/cc/CCMathUtil.cpp',
-            'platform/graphics/chromium/cc/CCMathUtil.h',
             'platform/graphics/chromium/cc/CCOcclusionTracker.cpp',
             'platform/graphics/chromium/cc/CCOcclusionTracker.h',
             'platform/graphics/chromium/cc/CCOverdrawMetrics.cpp',

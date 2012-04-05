@@ -37,7 +37,6 @@
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerSorter.h"
-#include "cc/CCMathUtil.h"
 #include "cc/CCRenderSurface.h"
 
 namespace WebCore {
@@ -45,7 +44,7 @@ namespace WebCore {
 IntRect CCLayerTreeHostCommon::calculateVisibleRect(const IntRect& targetSurfaceRect, const IntRect& layerBoundRect, const TransformationMatrix& transform)
 {
     // Is this layer fully contained within the target surface?
-    IntRect layerInSurfaceSpace = CCMathUtil::mapClippedRect(transform, layerBoundRect);
+    IntRect layerInSurfaceSpace = transform.mapRect(layerBoundRect);
     if (targetSurfaceRect.contains(layerInSurfaceSpace))
         return layerBoundRect;
 
@@ -60,7 +59,7 @@ IntRect CCLayerTreeHostCommon::calculateVisibleRect(const IntRect& targetSurface
     // axis-aligned), but is a reasonable filter on the space to consider.
     // Non-invertible transforms will create an empty rect here.
     const TransformationMatrix surfaceToLayer = transform.inverse();
-    IntRect layerRect = enclosingIntRect(CCMathUtil::projectClippedRect(surfaceToLayer, FloatRect(minimalSurfaceRect)));
+    IntRect layerRect = surfaceToLayer.projectQuad(FloatQuad(FloatRect(minimalSurfaceRect))).enclosingBoundingBox();
     layerRect.intersect(layerBoundRect);
     return layerRect;
 }
@@ -71,6 +70,7 @@ static bool isScaleOrTranslation(const TransformationMatrix& m)
            && !m.m21() && !m.m23() && !m.m24()
            && !m.m31() && !m.m32() && !m.m43()
            && m.m44();
+
 }
 
 template<typename LayerType>
@@ -409,7 +409,7 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         layer->setDrawTransform(combinedTransform);
         layer->setDrawTransformIsAnimating(animatingTransformToTarget);
         layer->setScreenSpaceTransformIsAnimating(animatingTransformToScreen);
-        transformedLayerRect = enclosingIntRect(CCMathUtil::mapClippedRect(layer->drawTransform(), layerRect));
+        transformedLayerRect = enclosingIntRect(layer->drawTransform().mapRect(layerRect));
 
         layer->setDrawOpacity(drawOpacity);
         layer->setDrawOpacityIsAnimating(drawOpacityIsAnimating);
