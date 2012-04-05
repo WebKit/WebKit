@@ -51,7 +51,7 @@ using namespace std;
 // The curve is modelled as a 4th order polynomial, starting at t = 0, and ending at t = m_curveDuration.
 // Attempts to generate position/velocity estimates outside this range are undefined.
 
-const int TouchpadFlingPlatformGestureCurve::m_maxSearchIterations = 40;
+const int TouchpadFlingPlatformGestureCurve::m_maxSearchIterations = 20;
 
 PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity, IntPoint cumulativeScroll)
 {
