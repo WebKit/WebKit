@@ -161,7 +161,7 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
 
 
 video::-webkit-media-controls-fullscreen-button {
-    -webkit-appearance: media-fullscreen-button;
+    -webkit-appearance: media-enter-fullscreen-button;
     position: absolute;
     top: auto;
     bottom: 0;
@@ -173,7 +173,6 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 audio::-webkit-media-controls-fullscreen-button {
-    -webkit-appearance: media-fullscreen-button;
     display: none;
 }
 
