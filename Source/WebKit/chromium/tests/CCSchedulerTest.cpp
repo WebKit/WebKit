@@ -389,21 +389,10 @@ TEST(CCSchedulerTest, NoBeginFrameWhenDrawFails)
     EXPECT_TRUE(scheduler->redrawPending());
     EXPECT_TRUE(timeSource->active());
 
-    // Draw successfully, this starts another frame.
-    timeSource->tick();
-    EXPECT_EQ(2, client.numDraws());
-    EXPECT_EQ(1, controllerPtr->numFramesPending());
-    scheduler->didSwapBuffersComplete();
-    EXPECT_EQ(0, controllerPtr->numFramesPending());
-
-    scheduler->setNeedsRedraw();
-    EXPECT_TRUE(scheduler->redrawPending());
-    EXPECT_TRUE(timeSource->active());
-
     // Fail to draw, this should not start a frame.
     client.setDrawWillHappen(false);
     timeSource->tick();
-    EXPECT_EQ(3, client.numDraws());
+    EXPECT_EQ(2, client.numDraws());
     EXPECT_EQ(0, controllerPtr->numFramesPending());
 }
 
