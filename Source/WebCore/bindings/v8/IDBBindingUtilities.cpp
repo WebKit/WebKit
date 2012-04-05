@@ -106,6 +106,11 @@ bool setValue(v8::Handle<v8::Value>& v8Object, T indexOrName, const v8::Handle<v
 
 bool get(v8::Handle<v8::Value>& object, const String& keyPathElement)
 {
+    if (object->IsString() && keyPathElement == "length") {
+        int32_t length = v8::Handle<v8::String>::Cast(object)->Length();
+        object = v8::Number::New(length);
+        return true;
+    }
     return object->IsObject() && getValueFrom(v8String(keyPathElement), object);
 }
 
