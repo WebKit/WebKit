@@ -379,7 +379,7 @@ double CompositeAnimation::timeToNextService() const
     return minT;
 }
 
-PassRefPtr<KeyframeAnimation> CompositeAnimation::getAnimationForProperty(int property) const
+PassRefPtr<KeyframeAnimation> CompositeAnimation::getAnimationForProperty(CSSPropertyID property) const
 {
     RefPtr<KeyframeAnimation> retval;
     
@@ -450,7 +450,7 @@ void CompositeAnimation::resumeAnimations()
     }
 }
 
-void CompositeAnimation::overrideImplicitAnimations(int property)
+void CompositeAnimation::overrideImplicitAnimations(CSSPropertyID property)
 {
     CSSPropertyTransitionsMap::const_iterator end = m_transitions.end();
     if (!m_transitions.isEmpty()) {
@@ -462,7 +462,7 @@ void CompositeAnimation::overrideImplicitAnimations(int property)
     }
 }
 
-void CompositeAnimation::resumeOverriddenImplicitAnimations(int property)
+void CompositeAnimation::resumeOverriddenImplicitAnimations(CSSPropertyID property)
 {
     if (!m_transitions.isEmpty()) {
         CSSPropertyTransitionsMap::const_iterator end = m_transitions.end();
@@ -474,7 +474,7 @@ void CompositeAnimation::resumeOverriddenImplicitAnimations(int property)
     }
 }
 
-bool CompositeAnimation::isAnimatingProperty(int property, bool acceleratedOnly, bool isRunningNow) const
+bool CompositeAnimation::isAnimatingProperty(CSSPropertyID property, bool acceleratedOnly, bool isRunningNow) const
 {
     if (!m_keyframeAnimations.isEmpty()) {
         m_keyframeAnimations.checkConsistency();

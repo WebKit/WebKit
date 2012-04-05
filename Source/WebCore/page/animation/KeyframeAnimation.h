@@ -53,7 +53,7 @@ public:
     int index() const { return m_index; }
     void setIndex(int i) { m_index = i; }
 
-    bool hasAnimationForProperty(int property) const;
+    bool hasAnimationForProperty(CSSPropertyID) const;
     
     void setUnanimatedStyle(PassRefPtr<RenderStyle> style) { m_unanimatedStyle = style; }
     RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
@@ -74,7 +74,7 @@ protected:
     bool shouldSendEventForListener(Document::ListenerType inListenerType) const;
     bool sendAnimationEvent(const AtomicString&, double elapsedTime);
 
-    virtual bool affectsProperty(int) const;
+    virtual bool affectsProperty(CSSPropertyID) const;
 
     void validateTransformFunctionList();
 #if ENABLE(CSS_FILTERS)
@@ -86,7 +86,7 @@ private:
     virtual ~KeyframeAnimation();
     
     // Get the styles for the given property surrounding the current animation time and the progress between them.
-    void fetchIntervalEndpointsForProperty(int property, const RenderStyle*& fromStyle, const RenderStyle*& toStyle, double& progress) const;
+    void fetchIntervalEndpointsForProperty(CSSPropertyID, const RenderStyle*& fromStyle, const RenderStyle*& toStyle, double& progress) const;
 
     // The keyframes that we are blending.
     KeyframeList m_keyframes;

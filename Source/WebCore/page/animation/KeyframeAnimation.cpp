@@ -81,7 +81,7 @@ static const Animation* getAnimationFromStyleByName(const RenderStyle* style, co
     return 0;
 }
 
-void KeyframeAnimation::fetchIntervalEndpointsForProperty(int property, const RenderStyle*& fromStyle, const RenderStyle*& toStyle, double& prog) const
+void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property, const RenderStyle*& fromStyle, const RenderStyle*& toStyle, double& prog) const
 {
     // Find the first key
     double elapsedTime = getElapsedTime();
@@ -229,7 +229,7 @@ void KeyframeAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
     }
 }
 
-bool KeyframeAnimation::hasAnimationForProperty(int property) const
+bool KeyframeAnimation::hasAnimationForProperty(CSSPropertyID property) const
 {
     return m_keyframes.containsProperty(property);
 }
@@ -351,7 +351,7 @@ void KeyframeAnimation::overrideAnimations()
     // This will override implicit animations that match the properties in the keyframe animation
     HashSet<int>::const_iterator end = m_keyframes.endProperties();
     for (HashSet<int>::const_iterator it = m_keyframes.beginProperties(); it != end; ++it)
-        compositeAnimation()->overrideImplicitAnimations(*it);
+        compositeAnimation()->overrideImplicitAnimations(static_cast<CSSPropertyID>(*it));
 }
 
 void KeyframeAnimation::resumeOverriddenAnimations()
@@ -359,10 +359,10 @@ void KeyframeAnimation::resumeOverriddenAnimations()
     // This will resume overridden implicit animations
     HashSet<int>::const_iterator end = m_keyframes.endProperties();
     for (HashSet<int>::const_iterator it = m_keyframes.beginProperties(); it != end; ++it)
-        compositeAnimation()->resumeOverriddenImplicitAnimations(*it);
+        compositeAnimation()->resumeOverriddenImplicitAnimations(static_cast<CSSPropertyID>(*it));
 }
 
-bool KeyframeAnimation::affectsProperty(int property) const
+bool KeyframeAnimation::affectsProperty(CSSPropertyID property) const
 {
     return m_keyframes.containsProperty(property);
 }

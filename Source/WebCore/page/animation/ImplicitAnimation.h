@@ -44,8 +44,8 @@ public:
         return adoptRef(new ImplicitAnimation(animation, animatingProperty, renderer, compositeAnimation, fromStyle));
     };
     
-    int transitionProperty() const { return m_transitionProperty; }
-    int animatingProperty() const { return m_animatingProperty; }
+    CSSPropertyID transitionProperty() const { return m_transitionProperty; }
+    CSSPropertyID animatingProperty() const { return m_animatingProperty; }
 
     virtual void onAnimationEnd(double elapsedTime);
     virtual bool startAnimation(double timeOffset);
@@ -59,7 +59,7 @@ public:
     void setOverridden(bool);
     virtual bool overridden() const { return m_overridden; }
 
-    virtual bool affectsProperty(int) const;
+    virtual bool affectsProperty(CSSPropertyID) const;
 
     bool hasStyle() const { return m_fromStyle && m_toStyle; }
 

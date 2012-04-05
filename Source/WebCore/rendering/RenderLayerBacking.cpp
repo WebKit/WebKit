@@ -1384,14 +1384,14 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
 #endif
 }
 
-void RenderLayerBacking::transitionPaused(double timeOffset, int property)
+void RenderLayerBacking::transitionPaused(double timeOffset, CSSPropertyID property)
 {
     AnimatedPropertyID animatedProperty = cssToGraphicsLayerProperty(property);
     if (animatedProperty != AnimatedPropertyInvalid)
         m_graphicsLayer->pauseAnimation(GraphicsLayer::animationNameForTransition(animatedProperty), timeOffset);
 }
 
-void RenderLayerBacking::transitionFinished(int property)
+void RenderLayerBacking::transitionFinished(CSSPropertyID property)
 {
     AnimatedPropertyID animatedProperty = cssToGraphicsLayerProperty(property);
     if (animatedProperty != AnimatedPropertyInvalid)
@@ -1430,9 +1430,9 @@ void RenderLayerBacking::setCompositedBounds(const IntRect& bounds)
     m_compositedBounds = bounds;
 
 }
-int RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID property)
+CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID property)
 {
-    int cssProperty = CSSPropertyInvalid;
+    CSSPropertyID cssProperty = CSSPropertyInvalid;
     switch (property) {
         case AnimatedPropertyWebkitTransform:
             cssProperty = CSSPropertyWebkitTransform;
@@ -1456,7 +1456,7 @@ int RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID property)
     return cssProperty;
 }
 
-AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(int cssProperty)
+AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID cssProperty)
 {
     switch (cssProperty) {
         case CSSPropertyWebkitTransform:
@@ -1469,7 +1469,9 @@ AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(int cssPropert
         case CSSPropertyWebkitFilter:
             return AnimatedPropertyWebkitFilter;
 #endif
-        // It's fine if we see other css properties here; they are just not accelerated.
+        default:
+            // It's fine if we see other css properties here; they are just not accelerated.
+            break;
     }
     return AnimatedPropertyInvalid;
 }

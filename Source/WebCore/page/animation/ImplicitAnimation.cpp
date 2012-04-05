@@ -222,7 +222,7 @@ void ImplicitAnimation::setOverridden(bool b)
     updateStateMachine(m_overridden ? AnimationStateInputPauseOverride : AnimationStateInputResumeOverride, -1);
 }
 
-bool ImplicitAnimation::affectsProperty(int property) const
+bool ImplicitAnimation::affectsProperty(CSSPropertyID property) const
 {
     return (m_animatingProperty == property);
 }

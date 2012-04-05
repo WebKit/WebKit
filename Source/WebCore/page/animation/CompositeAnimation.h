@@ -70,12 +70,12 @@ public:
     bool hasAnimations() const  { return !m_transitions.isEmpty() || !m_keyframeAnimations.isEmpty(); }
 
     void setAnimating(bool);
-    bool isAnimatingProperty(int property, bool acceleratedOnly, bool isRunningNow) const;
+    bool isAnimatingProperty(CSSPropertyID, bool acceleratedOnly, bool isRunningNow) const;
 
-    PassRefPtr<KeyframeAnimation> getAnimationForProperty(int property) const;
+    PassRefPtr<KeyframeAnimation> getAnimationForProperty(CSSPropertyID) const;
 
-    void overrideImplicitAnimations(int property);
-    void resumeOverriddenImplicitAnimations(int property);
+    void overrideImplicitAnimations(CSSPropertyID);
+    void resumeOverriddenImplicitAnimations(CSSPropertyID);
 
     bool pauseAnimationAtTime(const AtomicString& name, double t);
     bool pauseTransitionAtTime(CSSPropertyID, double);
