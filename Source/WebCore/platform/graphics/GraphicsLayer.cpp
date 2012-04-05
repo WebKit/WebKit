@@ -105,6 +105,9 @@ void GraphicsLayer::willBeDestroyed()
         m_client->verifyNotPainting();
 #endif
 
+    if (m_replicaLayer)
+        m_replicaLayer->setReplicatedLayer(0);
+
     if (m_replicatedLayer)
         m_replicatedLayer->setReplicatedByLayer(0);
 
