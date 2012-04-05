@@ -144,6 +144,8 @@ bool CCLayerTreeHostImpl::canDraw()
 {
     // FIXME: Reenable after figuring out why this causes the gpu_test
     // ThreadedCompositorTest.ThreadedCompositor to fail.
+    // Also reenable CCLayerTreeHostTestEmptyContentsShouldNotDraw.runMultiThread
+    // in webkit_unit_tests.
     if (!rootLayer())  // || rootLayer()->bounds().isEmpty())
         return false;
     if (viewportSize().isEmpty())
