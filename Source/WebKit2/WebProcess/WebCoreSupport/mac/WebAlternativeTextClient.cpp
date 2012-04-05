@@ -41,29 +41,39 @@ WebAlternativeTextClient::WebAlternativeTextClient(WebPage* webPage)
 
 WebAlternativeTextClient::~WebAlternativeTextClient()
 {
+#if USE(AUTOCORRECTION_PANEL)
     m_page->send(Messages::WebPageProxy::DismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored));
+#endif
 }
 
 void WebAlternativeTextClient::showCorrectionAlternative(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
+#if USE(AUTOCORRECTION_PANEL)
     m_page->send(Messages::WebPageProxy::ShowCorrectionPanel(type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings));
+#endif
 }
 
 void WebAlternativeTextClient::dismissAlternative(ReasonForDismissingAlternativeText reason)
 {
+#if USE(AUTOCORRECTION_PANEL)
     m_page->send(Messages::WebPageProxy::DismissCorrectionPanel(reason));
+#endif
 }
 
 String WebAlternativeTextClient::dismissAlternativeSoon(ReasonForDismissingAlternativeText reason)
 {
     String result;
+#if USE(AUTOCORRECTION_PANEL)
     m_page->sendSync(Messages::WebPageProxy::DismissCorrectionPanelSoon(reason), Messages::WebPageProxy::DismissCorrectionPanelSoon::Reply(result));
+#endif
     return result;
 }
 
 void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
 {
+#if USE(AUTOCORRECTION_PANEL)
     m_page->send(Messages::WebPageProxy::RecordAutocorrectionResponse(responseType, replacedString, replacementString));
+#endif
 }
 
 }
