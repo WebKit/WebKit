@@ -46,9 +46,17 @@ Should move from input-B-0 to input-C-0 in forward
 PASS
 Should move from input-C-0 to input-D-0 in forward
 PASS
-Should move from input-D-0 to input-A-1 in forward
+Should move from input-D-0 to host-D in forward
 PASS
-Should move from input-A-1 to input-D-0 in backward
+Should move from host-D to input-E-0 in forward
+PASS
+Should move from input-E-0 to input-A-1 in forward
+PASS
+Should move from input-A-1 to input-E-0 in backward
+PASS
+Should move from input-E-0 to host-D in backward
+PASS
+Should move from host-D to input-D-0 in backward
 PASS
 Should move from input-D-0 to input-C-0 in backward
 PASS
@@ -96,9 +104,10 @@ Should move from input-C-1 to input-B-1 in backward
 PASS
 Should move from input-B-1 to input-A-1 in backward
 PASS
-Should move from input-A-1 to input-D-0 in backward
+Should move from input-A-1 to input-E-0 in backward
 PASS
 Test finished.
+
 
 
 

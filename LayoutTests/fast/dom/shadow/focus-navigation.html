@@ -50,8 +50,11 @@ function prepareDOMTree(parent)
                   createDOM('div', {'id': 'host-C', 'tabindex': -1},
                             createShadowRoot(
                                 createDOM('input', {'tabindex': -1}))),
-                  createDOM('input', {'id': 'input-D-0', 'tabindex': 0})));
-
+                  createDOM('input', {'id': 'input-D-0', 'tabindex': 0}),
+                  createDOM('div', {},
+                            createDOM('div', {'id': 'host-D', 'tabindex': 0},
+                                      createShadowRoot())),
+                  createDOM('input', {'id': 'input-E-0', 'tabindex': 0})));
     parent.offsetLeft;
 }
 
@@ -117,6 +120,8 @@ function test() {
 
         // A non-focusable shadow host (id=host-C), which does not have focusable elements, should be skipped entirely.
         'input-D-0',
+        'host-D',
+        'input-E-0',
 
         // Wraps to the first element in the outermost focus scope.
         'input-A-1',
@@ -125,6 +130,8 @@ function test() {
 
     elementsNavigatedInBackward = [
         'input-A-1',
+        'input-E-0',
+        'host-D',
         'input-D-0',
         'input-C-0',
         'input-B-0',
@@ -163,7 +170,7 @@ function test() {
         'input-A-1',
 
         // Wraps to the last element in the outermost focus scope.
-        'input-D-0',
+        'input-E-0',
     ];
 
     testFocusNavigationFowrad(elementsNavigatedInForward);
