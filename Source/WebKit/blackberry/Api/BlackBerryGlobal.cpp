@@ -136,10 +136,6 @@ void clearAppCache(const WebString& pageGroupName)
     cacheStorage().empty();
 }
 
-void clearLocalStorage(const WebString& pageGroupName)
-{
-}
-
 void clearDatabase(const WebString& pageGroupName)
 {
 }

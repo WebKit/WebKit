@@ -37,8 +37,6 @@ BLACKBERRY_EXPORT void clearMemoryCaches();
 void clearAppCache(const WebString& pageGroupName);
 void reopenAllAppCaches();
 void closeAllAppCaches();
-void clearLocalStorage(const WebString& pageGroupName);
-void closeAllLocalStorages();
 void clearDatabase(const WebString& pageGroupName);
 void reopenAllTrackerDatabases();
 void closeAllTrackerDatabases();

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>This test case is used to test the function of clear local storage by clicking "Clear Local Storage" button
+    from Settings -> Privacy & Security. This is for <a href="https://bugs.webkit.org/show_bug.cgi?id=83253">https://bugs.webkit.org/show_bug.cgi?id=83253</a></p>
+    <div>
+    <script type="text/javascript">
+      if (!sessionStorage.getItem("key")) {
+        // initialize test case
+        document.write("Status: <span style='color:yellow'>Initial</span>");
+        sessionStorage.setItem("key", "value");
+        localStorage.setItem("key", "value");
+
+        // notify to clear the local storage and refresh the page.
+        document.write("<p>Please clear the local storage from Settings -> Privacy & Security by pressing \"Clear Local Storage\" button, then reload this page to see the result.</p>");
+      } else {
+        document.write("Result: ");
+        if (!localStorage.getItem("key")) {
+          // success
+          document.write("<span style='color:green'>PASS</span>");
+        } else {
+          // fail
+          document.write("<span style='color:red'>FAIL</span>");
+        }
+        document.write("<p>If you want to run this test case again, please restart the browser.</p>");
+      }
+    </script>
+    </div>
+  </body>
+</html>

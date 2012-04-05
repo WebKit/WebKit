@@ -4871,8 +4871,10 @@ void WebPage::clearCookies()
 
 void WebPage::clearLocalStorage()
 {
-    BlackBerry::WebKit::clearLocalStorage(d->m_page->groupName());
-    clearDatabase(d->m_page->groupName());
+    if (PageGroup* group = d->m_page->groupPtr()) {
+        if (StorageNamespace* storage = group->localStorage())
+            storage->clearAllOriginsForDeletion();
+    }
 }
 
 void WebPage::clearCredentials()

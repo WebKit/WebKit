@@ -1,3 +1,21 @@
+2012-04-05  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Clear local storage won't take effect until browser exit and relaunch
+        https://bugs.webkit.org/show_bug.cgi?id=83253
+
+        Reviewed by Rob Buis.
+
+        RIM PR: #146871
+        Cleared the local storage namespace of a WebPage's PageGroup
+        when WebPage::clearLocalStorage() get called.
+        Also deleted unused global function clearLocalStorage().
+
+        * Api/BlackBerryGlobal.cpp:
+        * Api/BlackBerryGlobal.h:
+        (WebKit):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::clearLocalStorage):
+
 2012-04-04  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Make the switch statement in WebPage::notifyAppActivationStateChange() stronger
