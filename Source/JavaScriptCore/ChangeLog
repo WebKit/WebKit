@@ -1,3 +1,12 @@
+2012-04-05  Patrick Gansterer  <paroga@webkit.org>
+
+        [WinCE] Remove unnecessary function decleration
+        https://bugs.webkit.org/show_bug.cgi?id=83155
+
+        Reviewed by Kentaro Hara.
+
+        * runtime/JSDateMath.cpp:
+
 2012-04-04  Patrick Gansterer  <paroga@webkit.org>
 
         Add WTF::getCurrentLocalTime()

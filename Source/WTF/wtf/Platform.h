@@ -498,7 +498,6 @@
 
 
 #if OS(WINCE)
-#include <ce_time.h>
 #define WTF_USE_MERSENNE_TWISTER_19937 1
 #endif
 
