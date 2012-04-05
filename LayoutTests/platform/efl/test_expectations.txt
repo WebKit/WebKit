@@ -189,3 +189,30 @@ BUGWK82734 : ietestcenter/css3/bordersbackgrounds/box-shadow-004.htm = FAIL MISS
 BUGWK82734 : ietestcenter/css3/bordersbackgrounds/color-behind-images.htm = FAIL MISSING
 BUGWK82734 : ietestcenter/css3/bordersbackgrounds/none-as-image-layer.htm = FAIL MISSING
 BUGWK82734 : ietestcenter/css3/bordersbackgrounds/order-of-images.htm = FAIL MISSING
+
+// @font-face not working. Once working, need to generate results for
+BUGWK83264 : fast/css/font-face-synthetic-bold-italic.html = FAIL MISSING
+BUGWK83264 : fast/css/font-face-weight-matching.html = FAIL MISSING
+
+BUGWK83265 : fast/css/min-width-with-spanned-cell-fixed.html = FAIL MISSING
+BUGWK83265 : fast/css/min-width-with-spanned-cell.html = FAIL MISSING
+
+BUGWK83265 : fast/css/caption-width-absolute-position-offset-top.htm = FAIL MISSING
+BUGWK83265 : fast/css/caption-width-absolute-position.htm = FAIL MISSING
+BUGWK83265 : fast/css/caption-width-fixed-position-offset-top.htm = FAIL MISSING
+BUGWK83265 : fast/css/caption-width-fixed-position.htm = FAIL MISSING
+BUGWK83265 : fast/css/caption-width-relative-position-offset-top.htm = FAIL MISSING
+BUGWK83265 : fast/css/caption-width-relative-position.htm = FAIL MISSING
+
+BUGWK83007 : fast/repaint/region-painting-invalidation.html = FAIL MISSING
+
+// Needs to have PNG generated, which currently fails for this case.
+BUGWK83274 : fast/repaint/transform-rotate-and-remove.html = PASS
+
+// Not able to generate a meaningful expected result, since complex font rendering fails.
+BUGWK83275 : fast/text/international/text-spliced-font.html = FAIL MISSING
+
+// Keydown event fails, needs png and txt rebaseline after fixing bug 83277.
+BUGWK83277 : editing/input/caret-at-the-edge-of-contenteditable.html = FAIL MISSING
+BUGWK83277 : editing/input/reveal-caret-of-multiline-contenteditable.html = FAIL MISSING
+BUGWK83277 : editing/input/reveal-caret-of-multiline-input.html = FAIL MISSING
