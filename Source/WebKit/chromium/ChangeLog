@@ -1,3 +1,14 @@
+2012-04-05  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Need to clip to homogeneous w=0 plane when applying transforms.
+        https://bugs.webkit.org/show_bug.cgi?id=80806
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebKitTests::TEST):
+        (WebKitTests):
+
 2012-04-05  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Cleanup test, redundant code in CCSchedulerTest.NoBeginFrameWhenDrawFails
