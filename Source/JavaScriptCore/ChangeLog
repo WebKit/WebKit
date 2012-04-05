@@ -1,3 +1,16 @@
+2012-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG InstanceOf should not uselessly speculate cell
+        https://bugs.webkit.org/show_bug.cgi?id=83234
+
+        Reviewed by Oliver Hunt.
+        
+        If InstanceOf is the only user of its child then don't speculate cell, since
+        the not-cell case is super easy to handle.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+
 2012-04-04  Michael Saboff  <msaboff@apple.com>
 
         Fixed minor error: "& 3" should be "& 2".

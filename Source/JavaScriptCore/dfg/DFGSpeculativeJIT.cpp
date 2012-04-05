@@ -2229,8 +2229,12 @@ void SpeculativeJIT::compileInstanceOfForObject(Node&, GPRReg valueReg, GPRReg p
 
 void SpeculativeJIT::compileInstanceOf(Node& node)
 {
-    if (!!(at(node.child1()).prediction() & ~PredictCell) && !!(m_state.forNode(node.child1()).m_type & ~PredictCell)) {
+    if ((!!(at(node.child1()).prediction() & ~PredictCell)
+         && !!(m_state.forNode(node.child1()).m_type & ~PredictCell))
+        || at(node.child1()).adjustedRefCount() == 1) {
         // It might not be a cell. Speculate less aggressively.
+        // Or: it might only be used once (i.e. by us), so we get zero benefit
+        // from speculating any more aggressively than we absolutely need to.
         
         JSValueOperand value(this, node.child1());
         SpeculateCellOperand prototype(this, node.child3());
