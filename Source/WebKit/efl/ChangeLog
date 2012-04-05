@@ -1,3 +1,10 @@
+2012-04-04  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        Unreviewed; touch a file to check if the EFL build bot is back to
+        normal.
+
+        * ewk/ewk_cookies.h:
+
 2012-04-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][DRT] Catch the "resource,request,willsend" signal

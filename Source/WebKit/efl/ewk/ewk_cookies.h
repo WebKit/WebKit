@@ -57,7 +57,7 @@ struct _Ewk_Cookie {
     /// @c EINA_TRUE if the cookie should only be tranferred over SSL
     Eina_Bool secure;
     /// @c EINA_TRUE if the cookie should not be exposed to scripts
-    Eina_Bool http_only;    
+    Eina_Bool http_only;
 };
 /// Creates a type name for the _Ewk_Cookie.
 typedef struct _Ewk_Cookie Ewk_Cookie;
