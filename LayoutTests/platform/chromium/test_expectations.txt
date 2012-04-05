@@ -1377,8 +1377,6 @@ BUGCR10318 : platform/chromium/virtual/gpu/fast/canvas/toDataURL-supportedTypes.
 // GURL doesn't handle switching from standard URL to path URL correctly
 BUGWK27914 WIN : fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html = TEXT
 
-BUGWK66467 : fast/dom/HTMLInputElement/input-image-alt-text.html = FAIL
-
 BUGWK80227 : editing/selection/select-line-break-with-opposite-directionality.html = PASS TEXT
 
 // This test isn't hanging, it just takes 12-13 seconds to run.
@@ -1499,8 +1497,6 @@ BUGCR23477 MAC : fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
 // Unexpected gray
 BUGCR23476 MAC : fast/frames/inline-object-inside-frameset.html = IMAGE
 BUGCR23476 MAC : fast/text/font-initial.html = IMAGE
-// Expectation changed at r99653 (IMAGE -> IMAGE+TEXT).
-BUGCR23476 BUGWK70765 MAC : fast/forms/listbox-clip.html = IMAGE IMAGE+TEXT
 
 // Disagreeing XML parsing error messages
 BUGCR88911 LEOPARD : fast/xsl/xslt-extra-content-at-end.xml = IMAGE+TEXT
@@ -2898,7 +2894,7 @@ BUGWK74137 MAC : fast/regions/positioned-objects-inline-static-spanning-regions-
 BUGWK74137 MAC : fast/regions/position-writing-modes-in-variable-width-regions.html = PASS TEXT
 
 // CSS custom() filters are not currently supported
-BUGWK71392 WIN : css3/filters/custom = FAIL
+BUGWK71392 WIN : css3/filters/custom = FAIL PASS
 
 BUGWK82783 SKIP : css3/filters/filter-change-repaint-composited.html = FAIL
 BUGWK82783 SKIP : css3/filters/filter-change-repaint.html = FAIL
