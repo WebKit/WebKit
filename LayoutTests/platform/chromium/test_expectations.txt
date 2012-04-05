@@ -3973,4 +3973,4 @@ BUGWK83019 WIN DEBUG : compositing/reflections/nested-reflection-transformed2.ht
 BUGWK83173 DEBUG : http/tests/websocket/tests/hybi/workers/worker-reload.html = TEXT TIMEOUT
 BUGWK83183 MAC : svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html = PASS IMAGE
 BUGWK83185 MAC DEBUG : fast/writing-mode/relative-positioning-percentages.html = CRASH
-BUGWK83219 LION : fonts/cursive.html = PASS IMAGE
+BUGWK83219 LION : fonts/cursive.html = PASS IMAGE+TEXT
