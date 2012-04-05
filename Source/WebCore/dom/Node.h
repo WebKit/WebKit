@@ -90,7 +90,7 @@ class HTMLPropertiesCollection;
 
 typedef int ExceptionCode;
 
-const int nodeStyleChangeShift = 22;
+const int nodeStyleChangeShift = 21;
 
 // SyntheticStyleChange means that we need to go through the entire style change logic even though
 // no style property has actually changed. It is used to restructure the tree when, for instance,
@@ -212,7 +212,6 @@ public:
     bool isStyledElement() const { return getFlag(IsStyledElementFlag); }
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isAttributeNode() const { return false; }
-    bool isCommentNode() const { return getFlag(IsCommentFlag); }
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
     bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
@@ -629,42 +628,41 @@ public:
 private:
     enum NodeFlags {
         IsTextFlag = 1,
-        IsCommentFlag = 1 << 1,
-        IsContainerFlag = 1 << 2,
-        IsElementFlag = 1 << 3,
-        IsStyledElementFlag = 1 << 4,
-        IsHTMLFlag = 1 << 5,
-        IsSVGFlag = 1 << 6,
-        IsAttachedFlag = 1 << 7,
-        ChildNeedsStyleRecalcFlag = 1 << 8,
-        InDocumentFlag = 1 << 9,
-        IsLinkFlag = 1 << 10,
-        IsActiveFlag = 1 << 11,
-        IsHoveredFlag = 1 << 12,
-        InActiveChainFlag = 1 << 13,
-        InDetachFlag = 1 << 14,
-        HasRareDataFlag = 1 << 15,
-        IsShadowRootFlag = 1 << 16,
+        IsContainerFlag = 1 << 1,
+        IsElementFlag = 1 << 2,
+        IsStyledElementFlag = 1 << 3,
+        IsHTMLFlag = 1 << 4,
+        IsSVGFlag = 1 << 5,
+        IsAttachedFlag = 1 << 6,
+        ChildNeedsStyleRecalcFlag = 1 << 7,
+        InDocumentFlag = 1 << 8,
+        IsLinkFlag = 1 << 9,
+        IsActiveFlag = 1 << 10,
+        IsHoveredFlag = 1 << 11,
+        InActiveChainFlag = 1 << 12,
+        InDetachFlag = 1 << 13,
+        HasRareDataFlag = 1 << 14,
+        IsShadowRootFlag = 1 << 15,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
-        IsParsingChildrenFinishedFlag = 1 << 17, // Element
-        IsStyleAttributeValidFlag = 1 << 18, // StyledElement
+        IsParsingChildrenFinishedFlag = 1 << 16, // Element
+        IsStyleAttributeValidFlag = 1 << 17, // StyledElement
 #if ENABLE(SVG)
-        AreSVGAttributesValidFlag = 1 << 19, // Element
-        IsSynchronizingSVGAttributesFlag = 1 << 20, // SVGElement
-        HasSVGRareDataFlag = 1 << 21, // SVGElement
+        AreSVGAttributesValidFlag = 1 << 18, // Element
+        IsSynchronizingSVGAttributesFlag = 1 << 19, // SVGElement
+        HasSVGRareDataFlag = 1 << 20, // SVGElement
 #endif
 
         StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1),
 
-        SelfOrAncestorHasDirAutoFlag = 1 << 24,
-        HasCustomWillOrDidRecalcStyleFlag = 1 << 25,
-        HasCustomStyleForRendererFlag = 1 << 26,
+        SelfOrAncestorHasDirAutoFlag = 1 << 23,
+        HasCustomWillOrDidRecalcStyleFlag = 1 << 24,
+        HasCustomStyleForRendererFlag = 1 << 25,
 
-        HasNameFlag = 1 << 27,
+        HasNameFlag = 1 << 26,
 
-        AttributeStyleDirtyFlag = 1 << 28,
+        AttributeStyleDirtyFlag = 1 << 27,
 
 #if ENABLE(SVG)
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag
@@ -684,7 +682,6 @@ protected:
     enum ConstructionType { 
         CreateOther = DefaultNodeFlags,
         CreateText = DefaultNodeFlags | IsTextFlag,
-        CreateComment = DefaultNodeFlags | IsCommentFlag,
         CreateContainer = DefaultNodeFlags | IsContainerFlag, 
         CreateElement = CreateContainer | IsElementFlag, 
         CreateShadowRoot = CreateContainer | IsShadowRootFlag,

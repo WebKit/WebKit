@@ -166,7 +166,7 @@ static String getTagName(Node* n)
 {
     if (n->isDocumentNode())
         return "";
-    if (n->isCommentNode())
+    if (n->nodeType() == Node::COMMENT_NODE)
         return "COMMENT";
     return n->nodeName();
 }

@@ -52,7 +52,7 @@ protected:
         : Node(document, type)
         , m_data(!text.isNull() ? text : emptyString())
     {
-        ASSERT(type == CreateComment || type == CreateText);
+        ASSERT(type == CreateOther || type == CreateText);
     }
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&);

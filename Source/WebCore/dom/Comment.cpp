@@ -27,7 +27,7 @@
 namespace WebCore {
 
 inline Comment::Comment(Document* document, const String& text)
-    : CharacterData(document, text, CreateComment)
+    : CharacterData(document, text, CreateOther)
 {
 }
 
