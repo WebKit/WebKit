@@ -2485,7 +2485,8 @@ BUGWK52061 DEBUG : transitions/interrupted-accelerated-transition.html = PASS TE
 BUGWK52061 DEBUG : transitions/transition-timing-function.html = PASS TEXT
 
 // Failing since creation in http://trac.webkit.org/changeset/75308
-BUG_ABARTH : svg/text/caret-in-svg-text.xhtml = TEXT
+// Failing worse maybe since https://bugs.webkit.org/show_bug.cgi?id=53471
+BUGCR122193 : svg/text/caret-in-svg-text.xhtml = TEXT
 
 // V8 test failures introduced by r75408
 BUGCR69181 LINUX WIN DEBUG : fast/js/large-expressions.html = TIMEOUT TEXT
@@ -2495,7 +2496,6 @@ BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH TEXT
 
 // Failing after r75768, times out after r89503
 BUGCR69639 BUGWK63227 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TIMEOUT TEXT
-
 
 BUGCR75238 WIN : fast/text/large-text-composed-char.html = FAIL
 // started to time out under Linux Debug at some point after WK r80582
@@ -3087,8 +3087,8 @@ BUGWK62684 WIN LINUX : fast/ruby/overhang-horizontal.html = FAIL
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
-BUG_ABARTH WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
-BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
+BUGWK83303 WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
+BUGWK83303 WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
 BUGCR102677 MAC DEBUG : fast/reflections/reflection-masks-outset.html = CRASH PASS
 
@@ -3096,8 +3096,6 @@ BUGCR102677 MAC DEBUG : fast/reflections/reflection-masks-outset.html = CRASH PA
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
 
 BUGWK73030 MAC DEBUG : http/tests/loading/307-after-303-after-post.html = PASS TEXT
-
-BUG_LEVIN MAC DEBUG : svg/custom/object-no-size-attributes.xhtml = PASS IMAGE+TEXT
 
 // Tests that are known to fail on Mac10.6 with Skia graphics.
 BUGWK68436 SNOWLEOPARD DEBUG : fast/repaint/background-clip-text.html = TIMEOUT
@@ -3162,14 +3160,10 @@ BUGWK68736 MAC : fast/table/border-collapsing/cached-change-table-border-width.h
 BUGWK68736 MAC : fast/table/border-collapsing/cached-change-tbody-border-color.html = IMAGE
 BUGWK68736 MAC : fast/table/border-collapsing/cached-change-tbody-border-width.html = IMAGE
 
-BUGABARTH WIN LINUX : svg/custom/svg-fonts-word-spacing.html = PASS FAIL
-
 BUGWK68982 : svg/custom/oversized-pattern-scale.svg = IMAGE PASS
 BUGWK68982 : svg/custom/transformed-pattern-clamp-svg-root.svg = IMAGE PASS
 
 BUGWK69060 WIN LINUX : fast/repaint/selection-clear.html = IMAGE+TEXT
-
-BUGABARTH LEOPARD : svg/custom/pattern-excessive-malloc.svg = IMAGE
 
 BUGWK69103 WIN LINUX : fast/text/line-initial-and-final-swashes.html = IMAGE+TEXT
 BUGWK69103 MAC : fast/text/line-initial-and-final-swashes.html = IMAGE
