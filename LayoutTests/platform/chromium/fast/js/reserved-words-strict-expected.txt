@@ -6,6 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 SHOULD BE RESERVED:
 FAIL isReserved('implements') should be true. Was false.
 FAIL isReserved('interface') should be true. Was false.
+FAIL isReserved('let') should be true. Was false.
 FAIL isReserved('package') should be true. Was false.
 FAIL isReserved('private') should be true. Was false.
 FAIL isReserved('protected') should be true. Was false.
