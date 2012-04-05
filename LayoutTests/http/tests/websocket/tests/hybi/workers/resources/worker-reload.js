@@ -1,1 +1,1 @@
-new WebSocket('ws://localhost:12345');
+new WebSocket('ws://localhost:8880/websocket/tests/hybi/workers/resources/echo');
