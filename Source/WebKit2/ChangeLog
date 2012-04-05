@@ -1,3 +1,21 @@
+2012-04-05  Patrick Gansterer  <paroga@webkit.org>
+
+        [Qt] Correct <wtf/*.h> include paths.
+        https://bugs.webkit.org/show_bug.cgi?id=83270
+
+        Reviewed by Eric Seidel.
+
+        Modify the #include declerations so that the
+        wtf types are included using the full path.
+
+        * Shared/qt/QtNetworkReplyData.cpp:
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        * UIProcess/qt/LayerBackingStore.h:
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        * UIProcess/qt/QtWebPageSGNode.h:
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+
 2012-04-05  Jia Pu  <jpu@apple.com>
 
         Move correction panel related functions from EditorClient into separated AlternativeTextClient class.

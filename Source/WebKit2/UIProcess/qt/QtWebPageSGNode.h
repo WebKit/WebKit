@@ -21,8 +21,9 @@
 #ifndef QtWebPageSGNode_h
 #define QtWebPageSGNode_h
 
-#include "PassRefPtr.h"
 #include <QtQuick/QSGTransformNode>
+#include <wtf/PassRefPtr.h>
+
 class QSGSimpleRectNode;
 
 namespace WebKit {

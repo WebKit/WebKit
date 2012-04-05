@@ -1,3 +1,19 @@
+2012-04-05  Patrick Gansterer  <paroga@webkit.org>
+
+        [Qt] Correct <wtf/*.h> include paths.
+        https://bugs.webkit.org/show_bug.cgi?id=83270
+
+        Reviewed by Eric Seidel.
+
+        Modify the #include declerations so that the
+        wtf types are included using the full path.
+
+        * Api/qwebpage.cpp:
+        * WebCoreSupport/ContextMenuClientQt.h:
+        * WebCoreSupport/EditorClientQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.h:
+        * WebCoreSupport/InspectorServerQt.cpp:
+
 2012-04-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Fix includes after QtDeclarative -> QtQML renaming

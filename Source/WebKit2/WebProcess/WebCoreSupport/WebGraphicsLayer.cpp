@@ -33,9 +33,9 @@
 #include "Page.h"
 #include "TiledBackingStoreRemoteTile.h"
 #include "WebPage.h"
-#include "text/CString.h"
-#include <HashMap.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/HashMap.h>
+#include <wtf/text/CString.h>
 
 using namespace WebKit;
 

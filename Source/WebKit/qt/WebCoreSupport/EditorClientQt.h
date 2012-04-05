@@ -31,9 +31,9 @@
 #define EditorClientQt_h
 
 #include "EditorClient.h"
-#include "RefCounted.h"
 #include "TextCheckerClientQt.h"
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 class QWebPage;
 

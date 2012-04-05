@@ -25,14 +25,14 @@
 
 #include "config.h"
 
-#include "Assertions.h"
 #include "TestInvocation.h"
 
 #include <QBuffer>
 #include <QCryptographicHash>
 #include <WebKit2/WKImageQt.h>
 #include <stdio.h>
-#include "UnusedParam.h"
+#include <wtf/Assertions.h>
+#include <wtf/UnusedParam.h>
 
 namespace WTR {
 

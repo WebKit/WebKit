@@ -26,7 +26,6 @@
 #include "GraphicsLayerTextureMapper.h"
 #include "LayerBackingStore.h"
 #include "LayerTreeHostProxy.h"
-#include "MainThread.h"
 #include "MessageID.h"
 #include "ShareableBitmap.h"
 #include "TextureMapper.h"
@@ -35,6 +34,7 @@
 #include "UpdateInfo.h"
 #include <OpenGLShims.h>
 #include <wtf/Atomics.h>
+#include <wtf/MainThread.h>
 
 namespace WebKit {
 

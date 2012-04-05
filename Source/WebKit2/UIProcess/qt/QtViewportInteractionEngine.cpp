@@ -22,13 +22,13 @@
 #include "config.h"
 #include "QtViewportInteractionEngine.h"
 
-#include "PassOwnPtr.h"
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
 #include <QPointF>
 #include <QTransform>
 #include <QWheelEvent>
 #include <QtQuick/qquickitem.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 

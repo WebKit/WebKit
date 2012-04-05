@@ -1,3 +1,15 @@
+2012-04-05  Patrick Gansterer  <paroga@webkit.org>
+
+        [Qt] Correct <wtf/*.h> include paths.
+        https://bugs.webkit.org/show_bug.cgi?id=83270
+
+        Reviewed by Eric Seidel.
+
+        Modify the #include declerations so that the
+        wtf types are included using the full path.
+
+        * WebKitTestRunner/qt/TestInvocationQt.cpp:
+
 2012-04-05  Philippe Normand  <pnormand@igalia.com>
 
         gtk_unittest.GtkPortTest.test_get_crash_log failing on windows

@@ -22,8 +22,8 @@
 
 #if USE(TILED_BACKING_STORE)
 
-#include "PassOwnPtr.h"
 #include "Tile.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

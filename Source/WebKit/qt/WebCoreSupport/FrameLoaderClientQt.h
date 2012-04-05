@@ -35,14 +35,14 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "KURL.h"
-#include <wtf/OwnPtr.h>
 #include "WebCore/plugins/PluginView.h"
-#include "RefCounted.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include <QUrl>
 #include <qobject.h>
 #include <wtf/Forward.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/RefCounted.h>
 
 QT_BEGIN_NAMESPACE
 class QNetworkReply;

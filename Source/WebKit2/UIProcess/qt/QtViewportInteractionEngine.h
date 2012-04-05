@@ -22,13 +22,13 @@
 #ifndef QtViewportInteractionEngine_h
 #define QtViewportInteractionEngine_h
 
-#include "OwnPtr.h"
 #include "qwebkitglobal.h"
 #include <QTouchEvent>
 #include <QtCore/QObject>
 #include <QtCore/QRectF>
 #include <QtCore/QVariant>
 #include <QtCore/QVariantAnimation>
+#include <wtf/OwnPtr.h>
 
 QT_BEGIN_NAMESPACE
 class QPointF;

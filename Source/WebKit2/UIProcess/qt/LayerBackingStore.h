@@ -21,10 +21,11 @@
 #define LayerBackingStore_h
 
 #if USE(UI_SIDE_COMPOSITING)
-#include "HashMap.h"
+
 #include "ShareableBitmap.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 

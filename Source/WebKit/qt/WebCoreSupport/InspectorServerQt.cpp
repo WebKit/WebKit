@@ -22,7 +22,6 @@
 
 #include "InspectorClientQt.h"
 #include "InspectorController.h"
-#include "MD5.h"
 #include "Page.h"
 #include "qhttpheader_p.h"
 #include "qwebpage.h"
@@ -35,6 +34,7 @@
 #include <QUrl>
 #include <QWidget>
 #include <qendian.h>
+#include <wtf/MD5.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
