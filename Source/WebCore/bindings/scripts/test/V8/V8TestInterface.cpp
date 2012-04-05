@@ -229,8 +229,7 @@ v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& 
         goto fail;
 
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
-    impl->ref();
-    V8DOMWrapper::setJSWrapperForActiveDOMObject(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
+    V8DOMWrapper::setJSWrapperForActiveDOMObject(impl.release(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
   fail:
     return throwError(ec);
