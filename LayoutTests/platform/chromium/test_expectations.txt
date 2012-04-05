@@ -2985,7 +2985,7 @@ BUGCR88230 VISTA : fast/dom/dom-parse-serialize-display.html = PASS TIMEOUT
 BUGCR88311 LINUX WIN DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
 
 // Started around WebKit r90233:r90242
-BUGWK64000 SNOWLEOPARD DEBUG : fast/events/click-focus-anchor.html = PASS TEXT
+BUGWK64000 DEBUG : fast/events/click-focus-anchor.html = PASS TEXT
 
 BUGCR88588 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 
@@ -3290,6 +3290,7 @@ BUGWK72631 LINUX WIN : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 MAC DEBUG : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 WIN : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
 BUGWK72631 MAC DEBUG : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
+BUGWK83286 BUGCR122160 DEBUG : fast/filesystem/file-writer-abort-continue.html = CRASH
 
 BUGWK72990 WIN : accessibility/loading-iframe-updates-axtree.html = PASS TIMEOUT
 BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.html = PASS TIMEOUT
@@ -3976,4 +3977,3 @@ BUGWK83173 DEBUG : http/tests/websocket/tests/hybi/workers/worker-reload.html = 
 BUGWK83183 MAC : svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html = PASS IMAGE
 BUGWK83185 MAC DEBUG : fast/writing-mode/relative-positioning-percentages.html = CRASH
 BUGWK83219 LION : fonts/cursive.html = PASS IMAGE
-BUGWK83286 : fast/filesystem/file-writer-abort-continue.html = CRASH PASS
