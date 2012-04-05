@@ -3301,20 +3301,13 @@ BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overlo
 BUGWK73607 LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = PASS CRASH
 
 // Tests needing rebaseline after bug 73643 patch
-BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
-BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE
-BUGWK73643 WIN LEOPARD SNOWLEOPARD : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
-BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/masking-path-01-b.svg = IMAGE
-BUGWK73643 WIN MAC : svg/clip-path/clipper-placement-issue.svg = IMAGE
-BUGWK73643 WIN MAC : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE IMAGE+TEXT
-BUGWK73643 WIN MAC : svg/filters/feDropShadow.svg = IMAGE
-BUGWK73643 SLOW DEBUG WIN MAC : svg/filters/big-sized-filter.svg = IMAGE
-BUGWK73643 SLOW DEBUG LINUX : svg/filters/big-sized-filter.svg = PASS
-BUGWK73643 RELEASE WIN MAC : svg/filters/big-sized-filter.svg = IMAGE
 BUGWK73643 WIN MAC : svg/filters/filter-placement-issue.svg = IMAGE
 BUGWK73643 WIN MAC : svg/filters/filterRes2.svg = IMAGE
 BUGWK73643 WIN : svg/as-background-image/svg-as-background-2.html = IMAGE
 BUGWK73643 MAC : svg/as-background-image/svg-as-background-2.html = PASS CRASH
+
+// Appears to be failing on Skia platforms
+BUGWK83199 : svg/filters/big-sized-filter.svg = IMAGE PASS
 
 BUGWK73692 : media/event-attributes.html = TEXT PASS
 
