@@ -2281,7 +2281,7 @@ BUGWK46600 SKIP : fast/dom/nodesFromRect-inner-documents.html = TEXT
 
 // For some reason it seems to not properly rect hit-tests elements in shadow
 // content of <video> elements.
-BUGWK46600 SKIP : fast/dom/nodesFromRect-shadowContent.html = TEXT
+BUGWK46600 SKIP : media/nodesFromRect-shadowContent.html = TEXT
 
 BUGCR59671 LINUX : svg/custom/convolution-crash.svg = PASS TEXT
 
