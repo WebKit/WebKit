@@ -1905,9 +1905,6 @@ BUGCR37896 MAC DEBUG : fast/text/firstline/001.html = PASS CRASH TIMEOUT IMAGE
 BUGCR37962 MAC DEBUG : fast/dom/HTMLElement/bdo.html = PASS CRASH IMAGE
 BUGCR37962 LINUX DEBUG : fast/forms/multiple-form-submission-protection-mouse.html = PASS CRASH
 
-// WebKit roll r55853 -> 55940
-BUG_JIANLI MAC : fast/forms/select-style.html = PASS IMAGE
-
 // WebKit roll 56197:56239.
 // Needs layoutTestController.setMediaType() (implemented on Qt only)
 BUGCR38656 : fast/media/print-restores-previous-mediatype.html = TEXT
@@ -3937,3 +3934,4 @@ BUGWK83173 DEBUG : http/tests/websocket/tests/hybi/workers/worker-reload.html = 
 BUGWK83183 MAC : svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html = PASS IMAGE
 BUGWK83185 MAC DEBUG : fast/writing-mode/relative-positioning-percentages.html = CRASH
 BUGWK83219 LION : fonts/cursive.html = PASS IMAGE+TEXT
+BUGWK83324 WIN DEBUG : fast/js/cross-global-object-inline-global-var.html = PASS TEXT
