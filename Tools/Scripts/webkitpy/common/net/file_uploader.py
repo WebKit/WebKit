@@ -28,11 +28,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import codecs
+import logging
 import mimetypes
 import socket
 import urllib2
 
 from webkitpy.common.net.networktransaction import NetworkTransaction
+
+
+_log = logging.getLogger(__name__)
 
 
 def get_mime_type(filename):
@@ -112,8 +116,10 @@ class FileUploader(object):
         response = None
         try:
             # FIXME: We shouldn't mutate global static state.
-            socket.setdefaulttimeout(self._timeout_seconds)
-            response = NetworkTransaction(timeout_seconds=self._timeout_seconds).run(callback)
+            # FIXME: clean this up once we understand what's going on on chromium leopard bots.
+            if not self._debug:
+                socket.setdefaulttimeout(self._timeout_seconds)
+            return NetworkTransaction(timeout_seconds=self._timeout_seconds).run(callback)
         finally:
-            socket.setdefaulttimeout(orig_timeout)
-            return response
+            if not self._debug:
+                socket.setdefaulttimeout(orig_timeout)

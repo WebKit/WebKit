@@ -320,7 +320,10 @@ class JSONResultsGeneratorBase(object):
         uploader = FileUploader(url, 120, debug=True)
         try:
             response = uploader.upload_as_multipart_form_data(self._filesystem, files, attrs)
-            _log.debug("Upload returned %d: '%s'" % (response.code, response.read()))
+            if response:
+                _log.debug("Upload returned %d: '%s'" % (response.code, response.read()))
+            else:
+                _log.debug("Upload returned None")
         except Exception, err:
             _log.error("Upload failed: %s" % err)
             return

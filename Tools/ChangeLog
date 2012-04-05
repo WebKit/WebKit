@@ -5,6 +5,23 @@
 
         Reviewed by Ojan Vafai.
 
+        More debugging info and a possible fix - stop messing with the
+        default network timeout, and don't swallow URLErrors.
+
+        * Scripts/webkitpy/common/net/file_uploader.py:
+        (FileUploader._upload_data):
+        * Scripts/webkitpy/common/net/networktransaction.py:
+        (NetworkTransaction.run):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGeneratorBase.upload_json_files):
+
+2012-04-04  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt is failing to upload test results on the chromium-mac-leopard bots
+        https://bugs.webkit.org/show_bug.cgi?id=83230
+
+        Reviewed by Ojan Vafai.
+
         * Scripts/webkitpy/common/net/file_uploader.py:
         (FileUploader.__init__):
         (FileUploader._upload_data.callback):

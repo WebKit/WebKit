@@ -1,9 +1,9 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -59,6 +59,12 @@ class NetworkTransaction(object):
                 self._check_for_timeout()
                 _log.warn("Received HTTP status %s loading \"%s\".  Retrying in %s seconds..." % (e.code, e.filename, self._backoff_seconds))
                 self._sleep()
+            except urllib2.URLError, e:
+                # FIXME: urllib2 seems to convert socket errors to this.
+                self._check_for_timeout()
+                _log.warn("Received URLError %s.  Retrying in %s seconds..." % (str(s), self._backoff_seconds))
+                self._sleep()
+
 
     def _check_for_timeout(self):
         if self._total_sleep + self._backoff_seconds > self._timeout_seconds:
