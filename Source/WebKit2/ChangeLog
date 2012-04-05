@@ -3,6 +3,20 @@
         [mac] requestAnimationFrame sometimes stuck when page loads in a background tab
         https://bugs.webkit.org/show_bug.cgi?id=76105
 
+        Unreviewed build fix for Windows. windowIsVisible() is PLATFORM(MAC) only.
+        This means a Page might start requestAnimationFrame-based animations
+        even when it isn't visible. This should only happen when a Page is
+        opened in the background though. The regular hide and show should still
+        pause animations.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::resumePainting):
+
+2012-04-05  Dean Jackson  <dino@apple.com>
+
+        [mac] requestAnimationFrame sometimes stuck when page loads in a background tab
+        https://bugs.webkit.org/show_bug.cgi?id=76105
+
         Reviewed by Simon Fraser.
 
         When we are resuming painting only start the scripted animations
