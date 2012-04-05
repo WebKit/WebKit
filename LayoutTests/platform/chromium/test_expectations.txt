@@ -3452,9 +3452,6 @@ BUGWK77889 WIN DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
 BUGWK77889 LINUX DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
 BUGWK77889 LEOPARD SNOWLEOPARD DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
 
-BUGWK81800 SNOWLEOPARD DEBUG : svg/as-object/embedded-svg-size-changes.html = PASS IMAGE
-BUGWK81817 SNOWLEOPARD DEBUG : svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2.html = PASS IMAGE
-BUGWK77183 : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
 
 BUGWK78159 DEBUG WIN MAC LINUX : compositing/iframes/scrolling-iframe.html = PASS TEXT
 
@@ -3497,7 +3494,9 @@ BUGCR115073 SLOW LINUX DEBUG : inspector/debugger/script-formatter-breakpoints.h
 BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 BUGWK79224 VISTA WIN7 : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 
-// Flakiness dashboard says they're flaky, but it seems unlikely.
+// Flakiness dashboard says they're flaky. Possibly related to 82232 or issues with repaint timer in SVGImageCache not firing.
+BUGWK81217 SNOWLEOPARD DEBUG : svg/as-object/embedded-svg-size-changes.html = PASS IMAGE
+BUGWK81217 SNOWLEOPARD DEBUG : svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2.html = PASS IMAGE
 BUGWK81217 SNOWLEOPARD DEBUG : svg/custom/js-late-clipPath-and-object-creation.svg = CRASH PASS
 BUGWK81217 : svg/custom/js-late-gradient-and-object-creation.svg = FAIL PASS
 BUGWK81217 : svg/custom/js-late-pattern-and-object-creation.svg = FAIL PASS
