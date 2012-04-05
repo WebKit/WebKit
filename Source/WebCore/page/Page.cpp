@@ -160,6 +160,7 @@ Page::Page(PageClients& pageClients)
     , m_isPainting(false)
 #endif
     , m_alternativeTextClient(pageClients.alternativeTextClient)
+    , m_scriptedAnimationsSuspended(false)
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;
@@ -717,6 +718,7 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID)
 
 void Page::suspendScriptedAnimations()
 {
+    m_scriptedAnimationsSuspended = true;
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (frame->document())
             frame->document()->suspendScriptedAnimationControllerCallbacks();
@@ -725,6 +727,7 @@ void Page::suspendScriptedAnimations()
 
 void Page::resumeScriptedAnimations()
 {
+    m_scriptedAnimationsSuspended = false;
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (frame->document())
             frame->document()->resumeScriptedAnimationControllerCallbacks();

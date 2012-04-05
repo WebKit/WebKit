@@ -5638,10 +5638,15 @@ int Document::webkitRequestAnimationFrame(PassRefPtr<RequestAnimationFrameCallba
 {
     if (!m_scriptedAnimationController) {
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-        m_scriptedAnimationController = ScriptedAnimationController::create(this, page()->displayID());
+        m_scriptedAnimationController = ScriptedAnimationController::create(this, page() ? page()->displayID() : 0);
 #else
         m_scriptedAnimationController = ScriptedAnimationController::create(this, 0);
 #endif
+        // It's possible that the Page may have suspended scripted animations before
+        // we were created. We need to make sure that we don't start up the animation
+        // controller on a background tab, for example.
+        if (!page() || page()->scriptedAnimationsSuspended())
+            m_scriptedAnimationController->suspend();
     }
 
     return m_scriptedAnimationController->registerCallback(callback, animationElement);

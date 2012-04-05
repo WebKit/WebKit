@@ -1,3 +1,17 @@
+2012-04-05  Dean Jackson  <dino@apple.com>
+
+        [mac] requestAnimationFrame sometimes stuck when page loads in a background tab
+        https://bugs.webkit.org/show_bug.cgi?id=76105
+
+        Reviewed by Simon Fraser.
+
+        When we are resuming painting only start the scripted animations
+        if we're a visible window. This can happen when tabs are opened
+        in the background.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::resumePainting):
+
 2012-04-05  Patrick Gansterer  <paroga@webkit.org>
 
         [Qt] Correct <wtf/*.h> include paths.

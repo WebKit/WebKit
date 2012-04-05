@@ -436,7 +436,8 @@ void DrawingAreaImpl::resumePainting()
     // FIXME: We shouldn't always repaint everything here.
     setNeedsDisplay(m_webPage->bounds());
 
-    m_webPage->corePage()->resumeScriptedAnimations();
+    if (m_webPage->windowIsVisible())
+        m_webPage->corePage()->resumeScriptedAnimations();
 }
 
 void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)

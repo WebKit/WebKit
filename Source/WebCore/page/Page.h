@@ -273,6 +273,7 @@ namespace WebCore {
         
         void suspendScriptedAnimations();
         void resumeScriptedAnimations();
+        bool scriptedAnimationsSuspended() const { return m_scriptedAnimationsSuspended; }
         
         void userStyleSheetLocationChanged();
         const String& userStyleSheet() const;
@@ -438,6 +439,8 @@ namespace WebCore {
         bool m_isPainting;
 #endif
         AlternativeTextClient* m_alternativeTextClient;
+
+        bool m_scriptedAnimationsSuspended;
     };
 
 } // namespace WebCore
