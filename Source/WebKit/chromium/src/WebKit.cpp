@@ -106,12 +106,11 @@ void initialize(WebKitPlatformSupport* webKitPlatformSupport)
     WebCore::V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 
 #if ENABLE(MUTATION_OBSERVERS)
-#ifndef NDEBUG
-    v8::V8::AddCallCompletedCallback(&assertV8RecursionScope);
-#endif
-
     // currentThread will always be non-null in production, but can be null in Chromium unit tests.
     if (WebThread* currentThread = webKitPlatformSupport->currentThread()) {
+#ifndef NDEBUG
+        v8::V8::AddCallCompletedCallback(&assertV8RecursionScope);
+#endif
         ASSERT(!s_endOfTaskRunner);
         s_endOfTaskRunner = new EndOfTaskRunner;
         currentThread->addTaskObserver(s_endOfTaskRunner);
@@ -150,12 +149,13 @@ void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
 
 void shutdown()
 {
+    // WebKit might have been initialized without V8, so be careful not to invoke
+    // V8 specific functions, if V8 was not properly initialized.
 #if ENABLE(MUTATION_OBSERVERS)
-#ifndef NDEBUG
-    v8::V8::RemoveCallCompletedCallback(&assertV8RecursionScope);
-#endif
-
     if (s_endOfTaskRunner) {
+#ifndef NDEBUG
+        v8::V8::RemoveCallCompletedCallback(&assertV8RecursionScope);
+#endif
         ASSERT(s_webKitPlatformSupport->currentThread());
         s_webKitPlatformSupport->currentThread()->removeTaskObserver(s_endOfTaskRunner);
         delete s_endOfTaskRunner;
