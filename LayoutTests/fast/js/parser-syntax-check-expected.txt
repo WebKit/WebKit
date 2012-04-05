@@ -571,6 +571,10 @@ PASS Valid:   "if (0) new a(b+c).d = 5"
 PASS Valid:   "function f() { if (0) new a(b+c).d = 5 }"
 PASS Valid:   "if (0) new a(b+c) = 5"
 PASS Valid:   "function f() { if (0) new a(b+c) = 5 }"
+PASS Valid:   "([1 || 1].a = 1)"
+PASS Valid:   "function f() { ([1 || 1].a = 1) }"
+PASS Valid:   "({a: 1 || 1}.a = 1)"
+PASS Valid:   "function f() { ({a: 1 || 1}.a = 1) }"
 PASS e.line is 1
 PASS foo is 'PASS'
 PASS bar is 'PASS'

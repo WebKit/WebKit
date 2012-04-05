@@ -363,6 +363,8 @@ valid("if (0) obj.foo_; ")
 valid("if (0) obj.foo\\u03bb; ")
 valid("if (0) new a(b+c).d = 5");
 valid("if (0) new a(b+c) = 5");
+valid("([1 || 1].a = 1)");
+valid("({a: 1 || 1}.a = 1)");
 
 try { eval("a.b.c = {};"); } catch(e1) { e=e1; shouldBe("e.line", "1") }
 foo = 'FAIL';

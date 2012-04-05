@@ -1256,6 +1256,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
     unsigned oldLineNumber = m_lexer->lineNumber();
     consumeOrFailWithFlags(OPENBRACE, TreeBuilder::DontBuildStrings);
     
+    int oldNonLHSCount = m_nonLHSCount;
+    
     if (match(CLOSEBRACE)) {
         next();
         return context.createObjectLiteral(m_lexer->lastLineNumber());
@@ -1291,6 +1293,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
     
     consumeOrFail(CLOSEBRACE);
     
+    m_nonLHSCount = oldNonLHSCount;
+    
     return context.createObjectLiteral(m_lexer->lastLineNumber(), propertyList);
 }
 
@@ -1299,6 +1303,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
 {
     consumeOrFail(OPENBRACE);
     
+    int oldNonLHSCount = m_nonLHSCount;
+
     if (match(CLOSEBRACE)) {
         next();
         return context.createObjectLiteral(m_lexer->lastLineNumber());
@@ -1335,7 +1341,9 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
     }
     
     consumeOrFail(CLOSEBRACE);
-    
+
+    m_nonLHSCount = oldNonLHSCount;
+
     return context.createObjectLiteral(m_lexer->lastLineNumber(), propertyList);
 }
 
@@ -1343,6 +1351,8 @@ template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral(TreeBuilder& context)
 {
     consumeOrFailWithFlags(OPENBRACKET, TreeBuilder::DontBuildStrings);
+    
+    int oldNonLHSCount = m_nonLHSCount;
     
     int elisions = 0;
     while (match(COMMA)) {
@@ -1378,6 +1388,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral
     }
     
     consumeOrFail(CLOSEBRACKET);
+    
+    m_nonLHSCount = oldNonLHSCount;
     
     return context.createArray(m_lexer->lastLineNumber(), elementList);
 }

@@ -1,3 +1,17 @@
+2012-04-04  Oliver Hunt  <oliver@apple.com>
+
+        Parser fails to revert some state after parsing expression and object literals.
+        https://bugs.webkit.org/show_bug.cgi?id=83236
+
+        Reviewed by Gavin Barraclough.
+
+        Reset left hand side counter after parsing the literals.
+
+        * parser/Parser.cpp:
+        (JSC::::parseObjectLiteral):
+        (JSC::::parseStrictObjectLiteral):
+        (JSC::::parseArrayLiteral):
+
 2012-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG InstanceOf should not uselessly speculate cell
