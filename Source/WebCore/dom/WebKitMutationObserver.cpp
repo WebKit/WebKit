@@ -100,6 +100,13 @@ void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options
     node->document()->addMutationObserverTypes(registration->mutationTypes());
 }
 
+Vector<RefPtr<MutationRecord> > WebKitMutationObserver::takeRecords()
+{
+    Vector<RefPtr<MutationRecord> > records;
+    records.swap(m_records);
+    return records;
+}
+
 void WebKitMutationObserver::disconnect()
 {
     m_records.clear();
@@ -140,7 +147,7 @@ void WebKitMutationObserver::deliver()
     if (m_records.isEmpty())
         return;
 
-    MutationRecordArray records;
+    Vector<RefPtr<MutationRecord> > records;
     records.swap(m_records);
 
     for (HashSet<MutationObserverRegistration*>::iterator iter = m_registrations.begin(); iter != m_registrations.end(); ++iter)
