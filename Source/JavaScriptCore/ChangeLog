@@ -1,3 +1,17 @@
+2012-04-04  Patrick Gansterer  <paroga@webkit.org>
+
+        Add WTF::getCurrentLocalTime()
+        https://bugs.webkit.org/show_bug.cgi?id=83164
+
+        Reviewed by Alexey Proskuryakov.
+
+        Replace the calls to WTF::getLocalTime() with time(0) with the new function.
+        This allows us to use Win32 API on windows to get the same result in a next step.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/DateConstructor.cpp:
+        (JSC::callDate):
+
 2012-04-04  Oliver Hunt  <oliver@apple.com>
 
         Parser fails to revert some state after parsing expression and object literals.

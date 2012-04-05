@@ -1,3 +1,22 @@
+2012-04-04  Patrick Gansterer  <paroga@webkit.org>
+
+        Add WTF::getCurrentLocalTime()
+        https://bugs.webkit.org/show_bug.cgi?id=83164
+
+        Reviewed by Alexey Proskuryakov.
+
+        Replace the calls to WTF::getLocalTime() with time(0) with the new function.
+        This allows us to use Win32 API on windows to get the same result in a next step.
+
+        Also remove the inline keyword from WTF::getLocalTime(), since there is no need for
+        it and it will make the later Win32 API changes easier.
+
+        * WTF.gyp/WTF.gyp:
+        * wtf/CurrentTime.cpp:
+        (WTF::getLocalTime):
+        (WTF::getCurrentLocalTime):
+        * wtf/CurrentTime.h:
+
 2012-04-04  Chris Rogers  <crogers@google.com>
 
         Web Audio should use MutexTryLocker class

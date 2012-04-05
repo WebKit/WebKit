@@ -47,16 +47,8 @@ inline double currentTimeMS()
     return currentTime() * 1000.0;
 }
 
-inline void getLocalTime(const time_t* localTime, struct tm* localTM)
-{
-#if COMPILER(MSVC7_OR_LOWER) || COMPILER(MINGW) || OS(WINCE)
-    *localTM = *localtime(localTime);
-#elif COMPILER(MSVC)
-    localtime_s(localTM, localTime);
-#else
-    localtime_r(localTime, localTM);
-#endif
-}
+WTF_EXPORT_PRIVATE void getLocalTime(const time_t* localTime, struct tm* localTM);
+WTF_EXPORT_PRIVATE void getCurrentLocalTime(struct tm* localTM);
 
 // Provides a monotonically increasing time in seconds since an arbitrary point in the past.
 // On unsupported platforms, this function only guarantees the result will be non-decreasing.
@@ -66,6 +58,7 @@ WTF_EXPORT_PRIVATE double monotonicallyIncreasingTime();
 
 using WTF::currentTime;
 using WTF::currentTimeMS;
+using WTF::getCurrentLocalTime;
 using WTF::getLocalTime;
 using WTF::monotonicallyIncreasingTime;
 

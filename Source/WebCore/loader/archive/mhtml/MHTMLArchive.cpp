@@ -143,11 +143,9 @@ PassRefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page, bool useBin
     String boundary = generateRandomBoundary();
     String endOfResourceBoundary = makeString("--", boundary, "\r\n");
 
-    String dateString;
-    time_t localTime = time(0);
     tm localTM;
-    getLocalTime(&localTime, &localTM);
-    dateString = makeRFC2822DateString(localTM.tm_wday, localTM.tm_mday, localTM.tm_mon, 1900 + localTM.tm_year, localTM.tm_hour, localTM.tm_min, localTM.tm_sec, calculateUTCOffset() / (1000 * 60));
+    getCurrentLocalTime(&localTM);
+    String dateString = makeRFC2822DateString(localTM.tm_wday, localTM.tm_mday, localTM.tm_mon, 1900 + localTM.tm_year, localTM.tm_hour, localTM.tm_min, localTM.tm_sec, calculateUTCOffset() / (1000 * 60));
 
     StringBuilder stringBuilder;
     stringBuilder.append("From: <Saved by WebKit>\r\n");

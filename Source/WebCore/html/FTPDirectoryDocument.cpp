@@ -222,8 +222,7 @@ static String processFileDateString(const FTPTime& fileTime)
 
     // If it was today or yesterday, lets just do that - but we have to compare to the current time
     struct tm now;
-    time_t now_t = time(NULL);
-    getLocalTime(&now_t, &now);
+    getCurrentLocalTime(&now);
 
     // localtime does "year = current year - 1900", compensate for that for readability and comparison purposes
     now.tm_year += 1900;

@@ -72,13 +72,11 @@ extern "C" time_t mktime(struct tm *t);
 #include <QElapsedTimer>
 #endif
 
-#if PLATFORM(CHROMIUM)
-#error Chromium uses a different timer implementation
-#endif
-
 namespace WTF {
 
 const double msPerSecond = 1000.0;
+
+#if !PLATFORM(CHROMIUM)
 
 #if OS(WINDOWS)
 
@@ -345,5 +343,24 @@ double monotonicallyIncreasingTime()
 }
 
 #endif
+
+#endif // !PLATFORM(CHROMIUM)
+
+void getLocalTime(const time_t* localTime, struct tm* localTM)
+{
+#if COMPILER(MSVC7_OR_LOWER) || COMPILER(MINGW) || OS(WINCE)
+    *localTM = *localtime(localTime);
+#elif COMPILER(MSVC)
+    localtime_s(localTM, localTime);
+#else
+    localtime_r(localTime, localTM);
+#endif
+}
+
+void getCurrentLocalTime(struct tm* localTM)
+{
+    time_t localTime = time(0);
+    getLocalTime(&localTime, localTM);
+}
 
 } // namespace WTF

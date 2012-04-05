@@ -195,6 +195,7 @@ EXPORTS
     ?getCalculatedDisplayName@JSC@@YA?AVUString@1@PAVExecState@1@PAVJSObject@1@@Z
     ?getCallData@JSCell@JSC@@SA?AW4CallType@2@PAV12@AATCallData@2@@Z
     ?getConstructData@JSCell@JSC@@SA?AW4ConstructType@2@PAV12@AATConstructData@2@@Z
+    ?getCurrentLocalTime@WTF@@YAXPAUtm@@@Z
     ?getObject@JSCell@JSC@@QAEPAVJSObject@2@XZ
     ?getOwnPropertyDescriptor@JSByteArray@JSC@@SA_NPAVJSObject@2@PAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?getOwnPropertyDescriptor@JSGlobalObject@JSC@@SA_NPAVJSObject@2@PAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z

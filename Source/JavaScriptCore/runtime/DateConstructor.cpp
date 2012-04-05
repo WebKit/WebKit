@@ -166,9 +166,8 @@ ConstructType DateConstructor::getConstructData(JSCell*, ConstructData& construc
 // ECMA 15.9.2
 static EncodedJSValue JSC_HOST_CALL callDate(ExecState* exec)
 {
-    time_t localTime = time(0);
     tm localTM;
-    getLocalTime(&localTime, &localTM);
+    getCurrentLocalTime(&localTM);
     GregorianDateTime ts(exec, localTM);
     DateConversionBuffer date;
     DateConversionBuffer time;

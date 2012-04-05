@@ -129,7 +129,6 @@
         # GLib/GTK, even though its name doesn't really indicate.
         ['exclude', '/(gtk|glib|gobject)/.*\\.(cpp|h)$'],
         ['exclude', '(Default|Gtk|Mac|None|Qt|Win|Wx|Efl|Symbian)\\.(cpp|mm)$'],
-        ['exclude', 'wtf/CurrentTime\\.cpp$'],
         ['exclude', 'wtf/OSRandomSource\\.cpp$'],
         ['exclude', 'wtf/MainThread.cpp$'],
         ['exclude', 'wtf/TC.*\\.(cpp|h)$'],
