@@ -8,12 +8,12 @@ var expected = function(e) { expectedCallbacksCount++; };
 var unexpected = function(e) { unexpectedCallbacksCount++; };
 
 var testsList = [
-    'runObjectTest',
-    'cleanupAndRunNext',
-    'runJSONTest',
-    'runJSONTestWithExclusive',
-    'runNullTest',
-    'runNonObjectTest'
+    runObjectTest,
+    cleanupAndRunNext,
+    runJSONTest,
+    runJSONTestWithExclusive,
+    runNullTest,
+    runNonObjectTest
 ];
 var testCounter = 0;
 
@@ -24,7 +24,7 @@ function runNextTest(v) {
         shouldBe('unexpectedCallbacksCount', '0');
         finishJSTest();
     } else
-        this[testsList[testCounter++]]();
+        (testsList[testCounter++])();
 }
 
 function errorCallback(error) {
