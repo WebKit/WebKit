@@ -199,6 +199,14 @@ public:
         SkCanvas::drawBitmapMatrix(bitmap, matrix, paint);
     }
 
+    virtual void drawBitmapNine(const SkBitmap& bitmap, const SkIRect& center,
+                                const SkRect& dst, const SkPaint* paint = 0)
+    {
+        WRAPCANVAS_LOG_ENTRY("");
+        m_isSolidColor = false;
+        SkCanvas::drawBitmapNine(bitmap, center, dst, paint);
+    }
+
     virtual void drawSprite(const SkBitmap& bitmap, int left, int top,
             const SkPaint* paint)
     {
