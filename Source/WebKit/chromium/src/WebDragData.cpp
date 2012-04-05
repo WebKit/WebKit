@@ -34,6 +34,7 @@
 #include "ChromiumDataObject.h"
 #include "ClipboardMimeTypes.h"
 #include "DataTransferItem.h"
+#include "DraggedIsolatedFileSystem.h"
 #include "platform/WebData.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
@@ -130,16 +131,22 @@ void WebDragData::addItem(const Item& item)
 
 WebString WebDragData::filesystemId() const
 {
-    // FIXME: Should return the ID set by setFileSystemId().
+#if ENABLE(FILE_SYSTEM)
+    ASSERT(!isNull());
+    DraggedIsolatedFileSystem* filesystem = DraggedIsolatedFileSystem::from(m_private);
+    if (filesystem)
+        return filesystem->filesystemId();
+#endif
     return WebString();
 }
 
 void WebDragData::setFilesystemId(const WebString& filesystemId)
 {
-    // FIXME: The given value should be stored internally and is to be used
-    // to instantiate an isolated filesystem for providing FileSystem Entry
-    // access to the dragged files/directories.
+#if ENABLE(FILE_SYSTEM)
     // The ID is an opaque string, given by and validated by chromium port.
+    ensureMutable();
+    DraggedIsolatedFileSystem::provideTo(m_private, DraggedIsolatedFileSystem::supplementName(), DraggedIsolatedFileSystem::create(filesystemId));
+#endif
 }
 
 WebDragData::WebDragData(const WTF::PassRefPtr<WebCore::ChromiumDataObject>& data)

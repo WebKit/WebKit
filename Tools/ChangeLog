@@ -1,3 +1,15 @@
+2012-04-05  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Expose DataTransferItem.getAsEntry() to allow users access dropped files as FileEntry
+        https://bugs.webkit.org/show_bug.cgi?id=82592
+
+        Reviewed by David Levin.
+
+        Added filesystem hook support in EventSender.beginDragWithFiles() for DumpRenderTree.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::beginDragWithFiles):
+
 2012-04-04  Tim Horton  <timothy_horton@apple.com>
 
         [mac] WKTR should always keep its windows offscreen

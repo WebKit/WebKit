@@ -33,6 +33,7 @@
 
 #include "ChromiumDataObjectItem.h"
 #include "PlatformString.h"
+#include "Supplementable.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -48,7 +49,7 @@ typedef int ExceptionCode;
 // A data object for holding data that would be in a clipboard or moved
 // during a drag-n-drop operation.  This is the data that WebCore is aware
 // of and is not specific to a platform.
-class ChromiumDataObject : public RefCounted<ChromiumDataObject> {
+class ChromiumDataObject : public RefCounted<ChromiumDataObject>, public Supplementable<ChromiumDataObject> {
 public:
     static PassRefPtr<ChromiumDataObject> createFromPasteboard();
     static PassRefPtr<ChromiumDataObject> create();

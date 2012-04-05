@@ -1,3 +1,14 @@
+2012-04-05  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Expose DataTransferItem.getAsEntry() to allow users access dropped files as FileEntry
+        https://bugs.webkit.org/show_bug.cgi?id=82592
+
+        Reviewed by David Levin.
+
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::filesystemId): Added implementation.
+        (WebKit::WebDragData::setFilesystemId): Added implementation.
+
 2012-04-04  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Calendar Picker: Add localization functions

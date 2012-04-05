@@ -473,6 +473,7 @@ editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
 # See bug https://bugs.webkit.org/show_bug.cgi?id=60068
 editing/pasteboard/data-transfer-items.html
 editing/pasteboard/data-transfer-items-drag-drop-file.html
+editing/pasteboard/data-transfer-items-drag-drop-entry.html
 editing/pasteboard/data-transfer-items-drag-drop-string.html
 fast/events/clipboard-dataTransferItemList.html
 fast/events/drag-dataTransferItemList.html

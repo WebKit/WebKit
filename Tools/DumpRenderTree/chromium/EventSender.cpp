@@ -880,12 +880,15 @@ void EventSender::beginDragWithFiles(const CppArgumentList& arguments, CppVarian
 {
     currentDragData.initialize();
     Vector<string> files = arguments[0].toStringVector();
+    Vector<WebString> absoluteFilenames;
     for (size_t i = 0; i < files.size(); ++i) {
         WebDragData::Item item;
         item.storageType = WebDragData::Item::StorageTypeFilename;
         item.filenameData = webkit_support::GetAbsoluteWebStringFromUTF8Path(files[i]);
         currentDragData.addItem(item);
+        absoluteFilenames.append(item.filenameData);
     }
+    currentDragData.setFilesystemId(webkit_support::RegisterIsolatedFileSystem(absoluteFilenames));
     currentDragEffectsAllowed = WebKit::WebDragOperationCopy;
 
     // Provide a drag source.

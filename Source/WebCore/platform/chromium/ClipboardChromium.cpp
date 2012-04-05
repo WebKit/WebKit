@@ -32,7 +32,6 @@
 #include "ChromiumDataObjectItem.h"
 #include "ClipboardMimeTypes.h"
 #include "ClipboardUtilitiesChromium.h"
-#include "DataTransferItem.h"
 #include "DataTransferItemList.h"
 #include "Document.h"
 #include "DragData.h"
@@ -58,19 +57,18 @@ namespace WebCore {
 
 namespace {
 
-// These wrapper classes invalidate a DataTransferItem/DataTransferItemList when the associated
-// Clipboard object goes out of scope.
+// A wrapper class that invalidates a DataTransferItemList when the associated Clipboard object goes out of scope.
 class DataTransferItemListPolicyWrapper : public DataTransferItemList {
 public:
-    static PassRefPtr<DataTransferItemListPolicyWrapper> create(
-        PassRefPtr<ClipboardChromium>, PassRefPtr<ChromiumDataObject>);
+    static PassRefPtr<DataTransferItemListPolicyWrapper> create(PassRefPtr<ClipboardChromium>, PassRefPtr<ChromiumDataObject>);
+    virtual ~DataTransferItemListPolicyWrapper();
 
     virtual size_t length() const;
-    virtual PassRefPtr<DataTransferItem> item(unsigned long index);
-    virtual void deleteItem(unsigned long index, ExceptionCode&);
-    virtual void clear();
-    virtual void add(const String& data, const String& type, ExceptionCode&);
-    virtual void add(PassRefPtr<File>);
+    virtual PassRefPtr<DataTransferItem> item(unsigned long index) OVERRIDE;
+    virtual void deleteItem(unsigned long index, ExceptionCode&) OVERRIDE;
+    virtual void clear() OVERRIDE;
+    virtual void add(const String& data, const String& type, ExceptionCode&) OVERRIDE;
+    virtual void add(PassRefPtr<File>) OVERRIDE;
 
 private:
     DataTransferItemListPolicyWrapper(PassRefPtr<ClipboardChromium>, PassRefPtr<ChromiumDataObject>);
@@ -79,28 +77,15 @@ private:
     RefPtr<ChromiumDataObject> m_dataObject;
 };
 
-class DataTransferItemPolicyWrapper : public DataTransferItem {
-public:
-    static PassRefPtr<DataTransferItemPolicyWrapper> create(
-        PassRefPtr<ClipboardChromium>, PassRefPtr<ChromiumDataObjectItem>);
-
-    virtual String kind() const;
-    virtual String type() const;
-
-    virtual void getAsString(PassRefPtr<StringCallback>) const;
-    virtual PassRefPtr<Blob> getAsFile() const;
-
-private:
-    DataTransferItemPolicyWrapper(PassRefPtr<ClipboardChromium>, PassRefPtr<ChromiumDataObjectItem>);
-
-    RefPtr<ClipboardChromium> m_clipboard;
-    RefPtr<ChromiumDataObjectItem> m_item;
-};
 
 PassRefPtr<DataTransferItemListPolicyWrapper> DataTransferItemListPolicyWrapper::create(
     PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<ChromiumDataObject> list)
 {
     return adoptRef(new DataTransferItemListPolicyWrapper(clipboard, list));
+}
+
+DataTransferItemListPolicyWrapper::~DataTransferItemListPolicyWrapper()
+{
 }
 
 size_t DataTransferItemListPolicyWrapper::length() const
@@ -117,6 +102,7 @@ PassRefPtr<DataTransferItem> DataTransferItemListPolicyWrapper::item(unsigned lo
     RefPtr<ChromiumDataObjectItem> item = m_dataObject->item(index);
     if (!item)
         return 0;
+
     return DataTransferItemPolicyWrapper::create(m_clipboard, item);
 }
 
@@ -157,10 +143,16 @@ DataTransferItemListPolicyWrapper::DataTransferItemListPolicyWrapper(
 {
 }
 
+} // namespace
+
 PassRefPtr<DataTransferItemPolicyWrapper> DataTransferItemPolicyWrapper::create(
     PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<ChromiumDataObjectItem> item)
 {
     return adoptRef(new DataTransferItemPolicyWrapper(clipboard, item));
+}
+
+DataTransferItemPolicyWrapper::~DataTransferItemPolicyWrapper()
+{
 }
 
 String DataTransferItemPolicyWrapper::kind() const
@@ -199,8 +191,6 @@ DataTransferItemPolicyWrapper::DataTransferItemPolicyWrapper(
     , m_item(item)
 {
 }
-
-} // namespace
 
 using namespace HTMLNames;
 

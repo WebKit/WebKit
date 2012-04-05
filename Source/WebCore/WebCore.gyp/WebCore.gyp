@@ -52,6 +52,7 @@
       '../',
       '../..',
       '../Modules/filesystem',
+      '../Modules/filesystem/chromium',
       '../Modules/gamepad',
       '../Modules/geolocation',
       '../Modules/intents',
