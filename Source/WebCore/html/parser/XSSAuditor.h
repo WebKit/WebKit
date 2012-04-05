@@ -51,7 +51,8 @@ private:
 
     enum AttributeKind {
         NormalAttribute,
-        SrcLikeAttribute
+        SrcLikeAttribute,
+        ScriptLikeAttribute
     };
 
     void init();

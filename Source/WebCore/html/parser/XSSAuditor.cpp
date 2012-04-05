@@ -399,10 +399,12 @@ bool XSSAuditor::filterIframeToken(HTMLToken& token)
     ASSERT(token.type() == HTMLTokenTypes::StartTag);
     ASSERT(hasName(token, iframeTag));
 
-    if (isContainedInRequest(decodedSnippetForName(token)))
-        return eraseAttributeIfInjected(token, srcAttr, String(), SrcLikeAttribute);
-
-    return false;
+    bool didBlockScript = false;
+    if (isContainedInRequest(decodedSnippetForName(token))) {
+        didBlockScript |= eraseAttributeIfInjected(token, srcAttr, String(), SrcLikeAttribute);
+        didBlockScript |= eraseAttributeIfInjected(token, srcdocAttr, String(), ScriptLikeAttribute);
+    }
+    return didBlockScript;
 }
 
 bool XSSAuditor::filterMetaToken(HTMLToken& token)
@@ -440,30 +442,7 @@ bool XSSAuditor::eraseDangerousAttributesIfInjected(HTMLToken& token)
         bool valueContainsJavaScriptURL = !isInlineEventHandler && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(String(attribute.m_value.data(), attribute.m_value.size())));
         if (!isInlineEventHandler && !valueContainsJavaScriptURL)
             continue;
-        // Beware of trailing characters which came from the page itself, not the 
-        // injected vector. Excluding the terminating character covers common cases
-        // where the page immediately ends the attribute, but doesn't cover more
-        // complex cases where there is other page data following the injection. 
-        // Generally, these won't parse as javascript, so the injected vector
-        // typically excludes them from consideration via a single-line comment or
-        // by enclosing them in a string literal terminated later by the page's own
-        // closing punctuation. Since the snippet has not been parsed, the vector
-        // may also try to introduce these via entities. As a result, we'd like to
-        // stop before the first "//", the first <!--, the first entity, or the first
-        // quote not immediately following the first equals sign (taking whitespace
-        // into consideration). To keep things simpler, we don't try to distinguish
-        // between entity-introducing amperands vs. other uses, nor do we bother to
-        // check for a second slash for a comment, nor do we bother to check for
-        // !-- following a less-than sign. We stop instead on any ampersand
-        // slash, or less-than sign.
-        String decodedSnippet = decodedSnippetForAttribute(token, attribute);
-        size_t position;
-        if ((position = decodedSnippet.find("=")) != notFound
-            && (position = decodedSnippet.find(isNotHTMLSpace, position + 1)) != notFound
-            && (position = decodedSnippet.find(isTerminatingCharacter, isHTMLQuote(decodedSnippet[position]) ? position + 1 : position)) != notFound) {
-            decodedSnippet.truncate(position);
-        }
-        if (!isContainedInRequest(decodedSnippet))
+        if (!isContainedInRequest(decodedSnippetForAttribute(token, attribute, ScriptLikeAttribute)))
             continue;
         token.eraseValueOfAttribute(i);
         if (valueContainsJavaScriptURL)
@@ -475,7 +454,7 @@ bool XSSAuditor::eraseDangerousAttributesIfInjected(HTMLToken& token)
 
 bool XSSAuditor::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName& attributeName, const String& replacementValue, AttributeKind treatment)
 {
-    size_t indexOfAttribute;
+    size_t indexOfAttribute = 0;
     if (findAttributeWithName(token, attributeName, indexOfAttribute)) {
         const HTMLToken::Attribute& attribute = token.attributes().at(indexOfAttribute);
         if (isContainedInRequest(decodedSnippetForAttribute(token, attribute, treatment))) {
@@ -526,6 +505,29 @@ String XSSAuditor::decodedSnippetForAttribute(const HTMLToken& token, const HTML
             }
             if (currentChar == ',')
                 commaSeen = true;
+        }
+    } else if (treatment == ScriptLikeAttribute) {
+        // Beware of trailing characters which came from the page itself, not the 
+        // injected vector. Excluding the terminating character covers common cases
+        // where the page immediately ends the attribute, but doesn't cover more
+        // complex cases where there is other page data following the injection. 
+        // Generally, these won't parse as javascript, so the injected vector
+        // typically excludes them from consideration via a single-line comment or
+        // by enclosing them in a string literal terminated later by the page's own
+        // closing punctuation. Since the snippet has not been parsed, the vector
+        // may also try to introduce these via entities. As a result, we'd like to
+        // stop before the first "//", the first <!--, the first entity, or the first
+        // quote not immediately following the first equals sign (taking whitespace
+        // into consideration). To keep things simpler, we don't try to distinguish
+        // between entity-introducing amperands vs. other uses, nor do we bother to
+        // check for a second slash for a comment, nor do we bother to check for
+        // !-- following a less-than sign. We stop instead on any ampersand
+        // slash, or less-than sign.
+        size_t position = 0;
+        if ((position = decodedSnippet.find("=")) != notFound
+            && (position = decodedSnippet.find(isNotHTMLSpace, position + 1)) != notFound
+            && (position = decodedSnippet.find(isTerminatingCharacter, isHTMLQuote(decodedSnippet[position]) ? position + 1 : position)) != notFound) {
+            decodedSnippet.truncate(position);
         }
     }
     return decodedSnippet;
