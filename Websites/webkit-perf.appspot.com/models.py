@@ -167,7 +167,7 @@ class Test(db.Model):
                 existing_test[0] = test
                 return None
 
-            test = Test(id=id, name=test_name, key_name=test_name, branches=[branch.key()], platforms=[platform.key()])
+            test = Test(id=id, name=test_name, key_name=test_name, unit=unit, branches=[branch.key()], platforms=[platform.key()])
             test.put()
             return test
 
@@ -448,8 +448,9 @@ class Runs(db.Model):
 
     def to_json(self):
         # date_range is never used by common.js.
-        return '{"test_runs": [%s], "averages": {%s}, "min": %s, "max": %s, "date_range": null, "stat": "ok"}' % (self.json_runs,
-            self.json_averages, str(self.json_min) if self.json_min else 'null', str(self.json_max) if self.json_max else 'null')
+        return '{"test_runs": [%s], "averages": {%s}, "min": %s, "max": %s, "unit": %s, "date_range": null, "stat": "ok"}' % (self.json_runs,
+            self.json_averages, str(self.json_min) if self.json_min else 'null', str(self.json_max) if self.json_max else 'null',
+            '"%s"' % self.test.unit if self.test.unit else 'null')
 
     def chart_params(self, display_days, now=datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)):
         chart_data_x = []

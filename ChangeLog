@@ -1,3 +1,25 @@
+2012-04-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        perf-o-matic should include unit in runs JSON responses
+        https://bugs.webkit.org/show_bug.cgi?id=83294
+
+        Reviewed by Tony Chang.
+
+        This is a follow up to r112829. Report the unit in /api/test/runs so that the frontend can show it.
+        Fixed a bug in Test.update_or_insert that it didn't store the unit when it first created the Test object.
+
+        Also increment perf-o-matic's version to 18.
+
+        * Websites/webkit-perf.appspot.com/app.yaml: Incremented the version.
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Test.update_or_insert.execute): Store unit when creating a test.
+        (Runs.to_json): Include unit.
+        * Websites/webkit-perf.appspot.com/models_unittest.py: Added tests.
+        (TestModelTests.test_update_or_insert_with_unit):
+        (RunsTest.test_to_json_without_results):
+        (RunsTest.test_to_json_with_results):
+        (RunsTest.test_to_json_with_unit):
+
 2012-03-14  Antonio Gomes  <agomes@rim.com>
 
         Extend HitTestResult to support not "discarding" shadow content in favor of its DOM ancestor

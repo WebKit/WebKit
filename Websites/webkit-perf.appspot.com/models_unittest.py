@@ -268,6 +268,13 @@ class TestModelTests(DataStoreTestsBase):
         self.assertEqual(test.unit, None)
         self.assertOnlyInstance(test)
 
+    def test_update_or_insert_with_unit(self):
+        branch = Branch.create_if_possible('some-branch', 'Some Branch')
+        platform = Platform.create_if_possible('some-platform', 'Some Platform')
+        test = Test.update_or_insert('some-test', branch, platform, 'runs/s')
+        self.assertOnlyInstance(test)
+        self.assertEqualUnorderedList(test.unit, 'runs/s')
+
     def test_update_or_insert_to_update(self):
         branch = Branch.create_if_possible('some-branch', 'Some Branch')
         platform = Platform.create_if_possible('some-platform', 'Some Platform')
@@ -660,6 +667,7 @@ class RunsTest(DataStoreTestsBase):
             'averages': {},
             'min': None,
             'max': None,
+            'unit': None,
             'date_range': None,
             'stat': 'ok'})
 
@@ -671,10 +679,11 @@ class RunsTest(DataStoreTestsBase):
         builds, results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0, 51.0, 52.0, 49.0, 48.0])
 
         value = json.loads(Runs.update_or_insert(some_branch, some_platform, some_test).to_json())
-        self.assertEqualUnorderedList(value.keys(), ['test_runs', 'averages', 'min', 'max', 'date_range', 'stat'])
+        self.assertEqualUnorderedList(value.keys(), ['test_runs', 'averages', 'min', 'max', 'unit', 'date_range', 'stat'])
         self.assertEqual(value['stat'], 'ok')
         self.assertEqual(value['min'], 48.0)
         self.assertEqual(value['max'], 52.0)
+        self.assertEqual(value['unit'], None)
         self.assertEqual(value['date_range'], None)  # date_range is never given
 
         self.assertEqual(len(value['test_runs']), len(results))
@@ -687,6 +696,16 @@ class RunsTest(DataStoreTestsBase):
             self.assertEqual(run[3], result.value)
             self.assertEqual(run[6], some_builder.key().id())
             self.assertEqual(run[7], None)  # Statistics
+
+    def test_to_json_with_unit(self):
+        some_branch = Branch.create_if_possible('some-branch', 'Some Branch')
+        some_platform = Platform.create_if_possible('some-platform', 'Some Platform')
+        some_builder = Builder.get(Builder.create('some-builder', 'Some Builder'))
+        some_test = Test.update_or_insert('some-test', some_branch, some_platform, 'runs/s')
+        builds, results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0, 51.0, 52.0, 49.0, 48.0])
+
+        value = json.loads(Runs.update_or_insert(some_branch, some_platform, some_test).to_json())
+        self.assertEqual(value['unit'], 'runs/s')
 
     def _assert_entry(self, entry, build, result, value, statistics=None, supplementary_revisions=None):
         entry = entry[:]
