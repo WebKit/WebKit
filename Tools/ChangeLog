@@ -1,3 +1,23 @@
+2012-04-04  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] WKTR should always keep its windows offscreen
+        https://bugs.webkit.org/show_bug.cgi?id=83244
+        <rdar://problem/11188764>
+
+        Reviewed by Simon Fraser.
+
+        We don't want to allow windows onto the main display; intercept attempts to
+        change WebKitTestRunnerWindow's frame origin and prevent it from happening.
+
+        Also keep around and respond with a new "fake" origin, in case someone is
+        expecting it to change (I couldn't find any tests that expected this, however).
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (-[WebKitTestRunnerWindow setFrameOrigin:]):
+        (-[WebKitTestRunnerWindow setFrame:display:animate:]):
+        (-[WebKitTestRunnerWindow setFrame:display:]):
+        (-[WebKitTestRunnerWindow frame]):
+
 2012-04-04  Dirk Pranke  <dpranke@chromium.org>
 
         Fix typo introduced in r113271.

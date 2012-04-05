@@ -32,6 +32,8 @@
 
 @interface WebKitTestRunnerWindow : NSWindow {
     WTR::PlatformWebView* _platformWebView;
+    NSPoint _fakeOrigin;
+    bool _shouldUseFakeOrigin;
 }
 @property (nonatomic, assign) WTR::PlatformWebView* platformWebView;
 @end
@@ -42,6 +44,42 @@
 - (BOOL)isKeyWindow
 {
     return _platformWebView ? _platformWebView->windowIsKey() : YES;
+}
+
+- (void)setFrameOrigin:(NSPoint)point
+{
+    _fakeOrigin = point;
+    _shouldUseFakeOrigin = YES;
+}
+
+- (void)setFrame:(NSRect)windowFrame display:(BOOL)displayViews animate:(BOOL)performAnimation
+{
+    NSRect currentFrame = [super frame];
+
+    _fakeOrigin = windowFrame.origin;
+    _shouldUseFakeOrigin = YES;
+
+    [super setFrame:NSMakeRect(currentFrame.origin.x, currentFrame.origin.y, windowFrame.size.width, windowFrame.size.height) display:displayViews animate:performAnimation];
+}
+
+- (void)setFrame:(NSRect)windowFrame display:(BOOL)displayViews
+{
+    NSRect currentFrame = [super frame];
+
+    _fakeOrigin = windowFrame.origin;
+    _shouldUseFakeOrigin = YES;
+
+    [super setFrame:NSMakeRect(currentFrame.origin.x, currentFrame.origin.y, windowFrame.size.width, windowFrame.size.height) display:displayViews];
+}
+
+- (NSRect)frame
+{
+    NSRect currentFrame = [super frame];
+
+    if (_shouldUseFakeOrigin)
+        return NSMakeRect(_fakeOrigin.x, _fakeOrigin.y, currentFrame.size.width, currentFrame.size.height);
+
+    return currentFrame;
 }
 @end
 
