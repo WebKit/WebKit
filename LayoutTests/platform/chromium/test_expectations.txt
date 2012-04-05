@@ -3501,8 +3501,7 @@ BUGWK79013 SNOWLEOPARD LINUX : http/tests/workers/terminate-during-sync-operatio
 
 BUGCR115055 : fast/js/cyclic-prototypes.html = TEXT
 
-BUGCR113063 WIN DEBUG : storage/indexeddb/basics-workers.html = PASS CRASH
-BUGCR113063 LEOPARD DEBUG : storage/indexeddb/basics-workers.html = PASS CRASH
+BUGCR113063 DEBUG : storage/indexeddb/basics-workers.html = PASS CRASH
 BUGCR115073 SLOW LINUX DEBUG : inspector/debugger/script-formatter-breakpoints.html = PASS CRASH
 
 BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
