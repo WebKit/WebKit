@@ -55,14 +55,14 @@ public:
     MutationAccumulator(PassRefPtr<Node>, PassOwnPtr<MutationObserverInterestGroup> observers);
     ~MutationAccumulator();
 
-    void childAdded(PassRefPtr<Node>);
+    void childrenAdded(const NodeVector&);
     void willRemoveChild(PassRefPtr<Node>);
     void enqueueMutationRecord();
 
 private:
     void clear();
     bool isEmpty();
-    bool isAddedNodeInOrder(Node*);
+    bool areAddedNodesInOrder(const NodeVector&);
     bool isRemovedNodeInOrder(Node*);
     RefPtr<Node> m_target;
 
@@ -87,26 +87,27 @@ ChildListMutationScope::MutationAccumulator::~MutationAccumulator()
     ASSERT(isEmpty());
 }
 
-inline bool ChildListMutationScope::MutationAccumulator::isAddedNodeInOrder(Node* child)
+inline bool ChildListMutationScope::MutationAccumulator::areAddedNodesInOrder(const NodeVector& children)
 {
-    return isEmpty() || (m_lastAdded == child->previousSibling() && m_nextSibling == child->nextSibling());
+    return isEmpty() || (m_lastAdded == children.first()->previousSibling() && m_nextSibling == children.last()->nextSibling());
 }
 
-void ChildListMutationScope::MutationAccumulator::childAdded(PassRefPtr<Node> prpChild)
+void ChildListMutationScope::MutationAccumulator::childrenAdded(const NodeVector& children)
 {
-    RefPtr<Node> child = prpChild;
+    ASSERT(!children.isEmpty());
 
-    ASSERT(isAddedNodeInOrder(child.get()));
-    if (!isAddedNodeInOrder(child.get()))
+    if (!areAddedNodesInOrder(children)) {
+        ASSERT_NOT_REACHED();
         enqueueMutationRecord();
-
-    if (isEmpty()) {
-        m_previousSibling = child->previousSibling();
-        m_nextSibling = child->nextSibling();
     }
 
-    m_addedNodes.append(child);
-    m_lastAdded = child;
+    if (isEmpty()) {
+        m_previousSibling = children.first()->previousSibling();
+        m_nextSibling = children.last()->nextSibling();
+    }
+
+    m_addedNodes.append(children);
+    m_lastAdded = children.last();
 }
 
 inline bool ChildListMutationScope::MutationAccumulator::isRemovedNodeInOrder(Node* child)
@@ -189,14 +190,14 @@ ChildListMutationScope::MutationAccumulationRouter* ChildListMutationScope::Muta
     return s_instance;
 }
 
-void ChildListMutationScope::MutationAccumulationRouter::childAdded(Node* target, Node* child)
+void ChildListMutationScope::MutationAccumulationRouter::childrenAdded(Node* target, const NodeVector& children)
 {
     HashMap<Node*, OwnPtr<ChildListMutationScope::MutationAccumulator> >::iterator iter = m_accumulations.find(target);
     ASSERT(iter != m_accumulations.end());
     if (iter == m_accumulations.end() || !iter->second)
         return;
 
-    iter->second->childAdded(child);
+    iter->second->childrenAdded(children);
 }
 
 void ChildListMutationScope::MutationAccumulationRouter::willRemoveChild(Node* target, Node* child)

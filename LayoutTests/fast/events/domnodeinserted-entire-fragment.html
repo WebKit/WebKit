@@ -1,0 +1,16 @@
+<div id=container></div>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+description('DOMNodeInserted events should be fired after all nodes in a DocumentFragment are inserted.');
+
+var fragment = document.createDocumentFragment();
+fragment.appendChild(document.createElement('a'));
+fragment.appendChild(document.createElement('b'));
+fragment.appendChild(document.createElement('i'));
+var container = document.getElementById('container');
+container.addEventListener('DOMNodeInserted', function(evt) {
+    shouldBe('container.childNodes.length', '3');
+});
+container.appendChild(fragment);
+</script>
+<script src="../js/resources/js-test-post.js"></script>

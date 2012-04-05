@@ -33,6 +33,7 @@
 
 #if ENABLE(MUTATION_OBSERVERS)
 
+#include "ContainerNode.h"
 #include "Document.h"
 #include "Node.h"
 #include "WebKitMutationObserver.h"
@@ -58,10 +59,10 @@ public:
             MutationAccumulationRouter::instance()->decrementScopingLevel(m_target);
     }
 
-    void childAdded(Node* child)
+    void childrenAdded(const NodeVector& children)
     {
         if (m_target)
-            MutationAccumulationRouter::instance()->childAdded(m_target, child);
+            MutationAccumulationRouter::instance()->childrenAdded(m_target, children);
     }
 
     void willRemoveChild(Node* child)
@@ -83,7 +84,7 @@ private:
         void incrementScopingLevel(Node*);
         void decrementScopingLevel(Node*);
 
-        void childAdded(Node* target, Node* child);
+        void childrenAdded(Node* target, const NodeVector& children);
         void willRemoveChild(Node* target, Node* child);
 
     private:
