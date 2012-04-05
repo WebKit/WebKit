@@ -1,3 +1,19 @@
+2012-04-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Use QuickSort when sorting primitive values by string representation
+        https://bugs.webkit.org/show_bug.cgi?id=83312
+
+        Reviewed by Gavin Barraclough.
+
+        When the value we are sorting are all primitive values, we do not need to
+        ensure a stable sort as two values with equal string representation are
+        indistinguishable from JavaScript.
+
+        This gives about 16% performance increase when sorting primitive values.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sort):
+
 2012-04-05  Oliver Hunt  <oliver@apple.com>
 
         SIGILL in JavaScriptCore on a Geode processor

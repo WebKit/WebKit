@@ -1475,10 +1475,12 @@ void JSArray::sort(ExecState* exec)
     
     Heap::heap(this)->pushTempSortVector(&values);
 
+    bool isSortingPrimitiveValues = true;
     for (size_t i = 0; i < lengthNotIncludingUndefined; i++) {
         JSValue value = m_storage->m_vector[i].get();
         ASSERT(!value.isUndefined());
         values[i].first = value;
+        isSortingPrimitiveValues = isSortingPrimitiveValues && value.isPrimitive();
     }
 
     // FIXME: The following loop continues to call toString on subsequent values even after
@@ -1496,7 +1498,10 @@ void JSArray::sort(ExecState* exec)
     // than O(N log N).
 
 #if HAVE(MERGESORT)
-    mergesort(values.begin(), values.size(), sizeof(ValueStringPair), compareByStringPairForQSort);
+    if (isSortingPrimitiveValues)
+        qsort(values.begin(), values.size(), sizeof(ValueStringPair), compareByStringPairForQSort);
+    else
+        mergesort(values.begin(), values.size(), sizeof(ValueStringPair), compareByStringPairForQSort);
 #else
     // FIXME: The qsort library function is likely to not be a stable sort.
     // ECMAScript-262 does not specify a stable sort, but in practice, browsers perform a stable sort.
