@@ -84,6 +84,7 @@ public:
     void observationStarted(MutationObserverRegistration*);
     void observationEnded(MutationObserverRegistration*);
     void enqueueMutationRecord(PassRefPtr<MutationRecord>);
+    void setHasTransientRegistration();
 
 private:
     struct ObserverLessThan;
