@@ -1,3 +1,18 @@
+2012-04-05  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] With the skia port, setting LCD text filtering is causing
+        texture cache invalidations of gpu canvas backing store
+        https://bugs.webkit.org/show_bug.cgi?id=74183
+
+        Reviewed by Stephen White.
+
+        Replacing unnecessary usage of SkCanvas::LayerIter with call to
+        SkCanvas::isDrawingToLayer(). Same results, lower overhead, and no
+        GPU texture invalidation.
+
+        * src/WebFontImpl.cpp:
+        (WebKit::WebFontImpl::drawText):
+
 2012-04-05  Lei Zhang  <thestig@chromium.org>
 
         [Chromium] Properly align members in WebInputEvent and subclasses to make Valgrind happy.

@@ -102,18 +102,11 @@ public:
 
 private:
 
-    static bool canvasHasMultipleLayers(const SkCanvas* canvas)
-    {
-        SkCanvas::LayerIter iter(const_cast<SkCanvas*>(canvas), false);
-        iter.next(); // There is always at least one layer.
-        return !iter.done(); // There is > 1 layer if the the iterator can stil advance.
-    }
-
     static TransparencyWin::LayerMode getLayerMode(GraphicsContext* context, TransparencyWin::TransformMode transformMode)
     {
         if (context->platformContext()->isDrawingToImageBuffer()) // Might have transparent background.
             return TransparencyWin::WhiteLayer;
-        if (canvasHasMultipleLayers(context->platformContext()->canvas())) // Needs antialiasing help.
+        if (context->platformContext()->canvas()->isDrawingToLayer()) // Needs antialiasing help.
             return TransparencyWin::OpaqueCompositeLayer;
         // Nothing interesting.
         return transformMode == TransparencyWin::KeepTransform ? TransparencyWin::NoLayer : TransparencyWin::OpaqueCompositeLayer;

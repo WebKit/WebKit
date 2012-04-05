@@ -55,13 +55,6 @@ namespace WebCore {
 #if !USE(SKIA_TEXT)
 namespace {
 
-bool canvasHasMultipleLayers(const SkCanvas* canvas)
-{
-    SkCanvas::LayerIter iter(const_cast<SkCanvas*>(canvas), false);
-    iter.next(); // There is always at least one layer.
-    return !iter.done(); // There is > 1 layer if the the iterator can stil advance.
-}
-
 class TransparencyAwareFontPainter {
 public:
     TransparencyAwareFontPainter(GraphicsContext*, const FloatPoint&);
@@ -147,7 +140,7 @@ void TransparencyAwareFontPainter::initializeForGDI()
         // this mode and it will apply the color.
         m_transparency.setTextCompositeColor(color);
         color = SkColorSetRGB(0, 0, 0);
-    } else if (m_createdTransparencyLayer || canvasHasMultipleLayers(m_platformContext->canvas())) {
+    } else if (m_createdTransparencyLayer || m_platformContext->canvas()->isDrawingToLayer()) {
         // When we're drawing a web page, we know the background is opaque,
         // but if we're drawing to a layer, we still need extra work.
         layerMode = TransparencyWin::OpaqueCompositeLayer;

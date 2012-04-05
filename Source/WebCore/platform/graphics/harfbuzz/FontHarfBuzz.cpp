@@ -60,20 +60,13 @@ bool Font::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-static bool isCanvasMultiLayered(SkCanvas* canvas)
-{
-    SkCanvas::LayerIter layerIterator(canvas, false);
-    layerIterator.next();
-    return !layerIterator.done();
-}
-
 static void adjustTextRenderMode(SkPaint* paint, PlatformContextSkia* skiaContext)
 {
     // Our layers only have a single alpha channel. This means that subpixel
     // rendered text cannot be compositied correctly when the layer is
     // collapsed. Therefore, subpixel text is disabled when we are drawing
     // onto a layer or when the compositor is being used.
-    if (isCanvasMultiLayered(skiaContext->canvas()) || skiaContext->isDrawingToImageBuffer())
+    if (skiaContext->canvas()->isDrawingToLayer() || skiaContext->isDrawingToImageBuffer())
         paint->setLCDRenderText(false);
 }
 
