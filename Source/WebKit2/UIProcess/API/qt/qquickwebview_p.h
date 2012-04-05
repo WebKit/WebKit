@@ -23,7 +23,7 @@
 
 #include "qquickurlschemedelegate_p.h"
 #include "qwebkitglobal.h"
-#include <QtDeclarative/qdeclarativelist.h>
+#include <QtQml/qqmllist.h>
 #include <QtQuick/qquickitem.h>
 #include <private/qquickflickable_p.h>
 

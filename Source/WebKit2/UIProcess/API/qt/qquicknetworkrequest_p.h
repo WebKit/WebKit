@@ -25,7 +25,7 @@
 #include "wtf/RefPtr.h"
 #include "qwebkitglobal.h"
 #include <QObject>
-#include <QtDeclarative/qdeclarativelist.h>
+#include <QtQml/qqmllist.h>
 #include <QtQuick/qquickitem.h>
 
 class QWEBKIT_EXPORT QQuickNetworkRequest : public QObject {

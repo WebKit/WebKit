@@ -24,9 +24,9 @@
 #include "WKStringQt.h"
 #include "qwebpermissionrequest_p.h"
 
-#include <QtDeclarative/QDeclarativeComponent>
-#include <QtDeclarative/QDeclarativeContext>
-#include <QtDeclarative/QDeclarativeEngine>
+#include <QtQml/QQmlComponent>
+#include <QtQml/QQmlContext>
+#include <QtQml/QQmlEngine>
 #include <QtQuick/QQuickItem>
 #include <wtf/PassOwnPtr.h>
 
@@ -250,7 +250,7 @@ private:
     QtWebSecurityOrigin m_securityOrigin;
 };
 
-bool QtDialogRunner::initForAlert(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& message)
+bool QtDialogRunner::initForAlert(QQmlComponent* component, QQuickItem* dialogParent, const QString& message)
 {
     DialogContextObject* contextObject = new DialogContextObject(message);
     if (!createDialog(component, dialogParent, contextObject))
@@ -260,7 +260,7 @@ bool QtDialogRunner::initForAlert(QDeclarativeComponent* component, QQuickItem* 
     return true;
 }
 
-bool QtDialogRunner::initForConfirm(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& message)
+bool QtDialogRunner::initForConfirm(QQmlComponent* component, QQuickItem* dialogParent, const QString& message)
 {
     DialogContextObject* contextObject = new DialogContextObject(message);
     if (!createDialog(component, dialogParent, contextObject))
@@ -272,7 +272,7 @@ bool QtDialogRunner::initForConfirm(QDeclarativeComponent* component, QQuickItem
     return true;
 }
 
-bool QtDialogRunner::initForPrompt(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& message, const QString& defaultValue)
+bool QtDialogRunner::initForPrompt(QQmlComponent* component, QQuickItem* dialogParent, const QString& message, const QString& defaultValue)
 {
     DialogContextObject* contextObject = new DialogContextObject(message, defaultValue);
     if (!createDialog(component, dialogParent, contextObject))
@@ -284,7 +284,7 @@ bool QtDialogRunner::initForPrompt(QDeclarativeComponent* component, QQuickItem*
     return true;
 }
 
-bool QtDialogRunner::initForAuthentication(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& hostname, const QString& realm, const QString& prefilledUsername)
+bool QtDialogRunner::initForAuthentication(QQmlComponent* component, QQuickItem* dialogParent, const QString& hostname, const QString& realm, const QString& prefilledUsername)
 {
     HttpAuthenticationDialogContextObject* contextObject = new HttpAuthenticationDialogContextObject(hostname, realm, prefilledUsername);
     if (!createDialog(component, dialogParent, contextObject))
@@ -297,7 +297,7 @@ bool QtDialogRunner::initForAuthentication(QDeclarativeComponent* component, QQu
     return true;
 }
 
-bool QtDialogRunner::initForProxyAuthentication(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& hostname, uint16_t port, const QString& prefilledUsername)
+bool QtDialogRunner::initForProxyAuthentication(QQmlComponent* component, QQuickItem* dialogParent, const QString& hostname, uint16_t port, const QString& prefilledUsername)
 {
     ProxyAuthenticationDialogContextObject* contextObject = new ProxyAuthenticationDialogContextObject(hostname, port, prefilledUsername);
     if (!createDialog(component, dialogParent, contextObject))
@@ -310,7 +310,7 @@ bool QtDialogRunner::initForProxyAuthentication(QDeclarativeComponent* component
     return true;
 }
 
-bool QtDialogRunner::initForCertificateVerification(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& hostname)
+bool QtDialogRunner::initForCertificateVerification(QQmlComponent* component, QQuickItem* dialogParent, const QString& hostname)
 {
     CertificateVerificationDialogContextObject* contextObject = new CertificateVerificationDialogContextObject(hostname);
     if (!createDialog(component, dialogParent, contextObject))
@@ -323,7 +323,7 @@ bool QtDialogRunner::initForCertificateVerification(QDeclarativeComponent* compo
     return true;
 }
 
-bool QtDialogRunner::initForFilePicker(QDeclarativeComponent* component, QQuickItem* dialogParent, const QStringList& selectedFiles, bool allowMultiple)
+bool QtDialogRunner::initForFilePicker(QQmlComponent* component, QQuickItem* dialogParent, const QStringList& selectedFiles, bool allowMultiple)
 {
     FilePickerContextObject* contextObject = new FilePickerContextObject(selectedFiles, allowMultiple);
     if (!createDialog(component, dialogParent, contextObject))
@@ -336,7 +336,7 @@ bool QtDialogRunner::initForFilePicker(QDeclarativeComponent* component, QQuickI
     return true;
 }
 
-bool QtDialogRunner::initForDatabaseQuotaDialog(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& databaseName, const QString& displayName, WKSecurityOriginRef securityOrigin, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage)
+bool QtDialogRunner::initForDatabaseQuotaDialog(QQmlComponent* component, QQuickItem* dialogParent, const QString& databaseName, const QString& displayName, WKSecurityOriginRef securityOrigin, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage)
 {
     DatabaseQuotaDialogContextObject* contextObject = new DatabaseQuotaDialogContextObject(databaseName, displayName, securityOrigin, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
     if (!createDialog(component, dialogParent, contextObject))
@@ -349,12 +349,12 @@ bool QtDialogRunner::initForDatabaseQuotaDialog(QDeclarativeComponent* component
     return true;
 }
 
-bool QtDialogRunner::createDialog(QDeclarativeComponent* component, QQuickItem* dialogParent, QObject* contextObject)
+bool QtDialogRunner::createDialog(QQmlComponent* component, QQuickItem* dialogParent, QObject* contextObject)
 {
-    QDeclarativeContext* baseContext = component->creationContext();
+    QQmlContext* baseContext = component->creationContext();
     if (!baseContext)
-        baseContext = QDeclarativeEngine::contextForObject(dialogParent);
-    m_dialogContext = adoptPtr(new QDeclarativeContext(baseContext));
+        baseContext = QQmlEngine::contextForObject(dialogParent);
+    m_dialogContext = adoptPtr(new QQmlContext(baseContext));
 
     // This makes both "message" and "model.message" work for the dialog, just like QtQuick's ListView delegates.
     contextObject->setParent(m_dialogContext.get());

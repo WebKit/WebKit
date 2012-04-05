@@ -1,3 +1,17 @@
+2012-04-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Fix includes after QtDeclarative -> QtQML renaming
+        https://bugs.webkit.org/show_bug.cgi?id=82195
+
+        Relanding r112651, because Qt5 is updated everywhere.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::updateVisualMockTouchPoints):
+        * MiniBrowser/qt/main.cpp:
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WrapperWindow::handleStatusChanged):
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-04-05  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] WK1/WK2 layout test results are diverging

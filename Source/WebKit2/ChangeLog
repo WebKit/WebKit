@@ -1,3 +1,32 @@
+2012-04-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Fix includes after QtDeclarative -> QtQML renaming
+        https://bugs.webkit.org/show_bug.cgi?id=82195
+
+        Relanding r112651, because Qt5 is updated everywhere.
+
+        * UIProcess/API/qt/qquicknetworkreply_p.h:
+        * UIProcess/API/qt/qquicknetworkrequest_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qwebiconimageprovider_p.h:
+        * UIProcess/API/qt/qwebnavigationhistory.cpp:
+        * UIProcess/API/qt/qwebnavigationhistory_p.h:
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        * UIProcess/qt/QtDialogRunner.cpp:
+        (QtDialogRunner::initForAlert):
+        (QtDialogRunner::initForConfirm):
+        (QtDialogRunner::initForPrompt):
+        (QtDialogRunner::initForAuthentication):
+        (QtDialogRunner::initForProxyAuthentication):
+        (QtDialogRunner::initForCertificateVerification):
+        (QtDialogRunner::initForFilePicker):
+        (QtDialogRunner::initForDatabaseQuotaDialog):
+        (QtDialogRunner::createDialog):
+        * UIProcess/qt/WebPopupMenuProxyQt.cpp:
+        (WebKit::WebPopupMenuProxyQt::createItem):
+        (WebKit::WebPopupMenuProxyQt::createContext):
+
 2012-04-04  Hayato Ito  <hayato@chromium.org>
 
         Remove ReifiedTreeTraversal.

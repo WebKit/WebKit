@@ -45,7 +45,7 @@
 #include "qwebviewportinfo_p.h"
 
 #include <JavaScriptCore/InitializeThreading.h>
-#include <QDeclarativeEngine>
+#include <QtQml/QQmlEngine>
 #include <QtQuick/QQuickCanvas>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
