@@ -1,43 +1,23 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html lang="en">
- <head>
-  <title>outlineColor not inherit and accepts currentColor</title>
-  <style type="text/css">
-   div { height: 3em; width: 25em; margin-bottom: 3em}
-   body { margin: 2em; }
-   #three { color: blue; }
-  </style>
-  <script>
-    // FIXME: WK75523; re-write this and background-currentcolor.html to use js-test-pre.js
-    function log(message) {
-      var console = document.getElementById("console");
-      console.appendChild(document.createTextNode(message + "\n"));
-    }
-    function runTest(property) {
-      if (window.layoutTestController)
-        layoutTestController.dumpAsText();
-      var div = document.getElementById("two");
-      div.style.color = "green";
-      if (window.getComputedStyle(div)[property] != "rgb(0, 128, 0)") {
-          log("FAIL");
-          return;
-      }
-      div = document.getElementById("three");
-      if (window.getComputedStyle(div).color != "rgb(0, 128, 0)") {
-          log("FAIL");
-          return;
-      }
-      log("PASS");
-    }
-  </script>
- </head>
- <body onload="runTest('outlineColor')">
-  <div>Test that outline-color is non-inherit and currentColor is handled correctly. The test passes if 3 boxes with green outlines followed by the text "PASS" are displayed below.</div>
-  <div id="one" style="color:green; outline: solid 1em currentColor" ></div>
-  <div id="two" style="color:red; outline: solid 1em currentColor" ></div>
+<!DOCTYPE html>
+<style>
+#test3 { color: blue; }
+</style>
+<div id="test-container">
+  <div id="test1" id="one" style="color:green; outline: solid 1em currentColor"></div>
+  <div id="test2" id="two" style="color:red; outline: solid 1em currentColor"></div>
   <div style="color:green">
-    <div id="three" style="color:currentColor; outline: solid 1em currentColor" ></div>
+    <div id="test3" style="color:currentColor; outline: solid 1em currentColor"></div>
   </div>
-  <div id="console"></div>
- </body>
-</html>
+</div>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+description('Test that outline-color is non-inherit and currentColor is handled correctly.');
+var test1 = document.getElementById("test1");
+var test2 = document.getElementById("test2");
+var test3 = document.getElementById("test3");
+test2.style.color = "green";
+shouldBeEqualToString('getComputedStyle(test1).outlineColor', 'rgb(0, 128, 0)');
+shouldBeEqualToString('getComputedStyle(test2).outlineColor', 'rgb(0, 128, 0)');
+shouldBeEqualToString('getComputedStyle(test3).outlineColor', 'rgb(0, 128, 0)');
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>

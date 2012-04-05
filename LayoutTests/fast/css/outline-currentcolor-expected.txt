@@ -1,2 +1,12 @@
-Test that outline-color is non-inherit and currentColor is handled correctly. The test passes if 3 boxes with green outlines followed by the text "PASS" are displayed below.
-PASS
+Test that outline-color is non-inherit and currentColor is handled correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(test1).outlineColor is "rgb(0, 128, 0)"
+PASS getComputedStyle(test2).outlineColor is "rgb(0, 128, 0)"
+PASS getComputedStyle(test3).outlineColor is "rgb(0, 128, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
