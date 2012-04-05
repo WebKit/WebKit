@@ -79,7 +79,7 @@ enum _Ewk_Cookie_Policy {
 typedef enum _Ewk_Cookie_Policy Ewk_Cookie_Policy;
 
 /************************** Exported functions ***********************/
-
+ 
 /**
  * Sets the path where the cookies are going to be stored. 
  *

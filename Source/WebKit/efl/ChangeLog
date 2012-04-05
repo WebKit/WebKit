@@ -1,5 +1,12 @@
 2012-04-04  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        Another unreviewed attempt at getting the EFL build bot to a
+        healthy state by forcing a rebuild.
+
+        * ewk/ewk_cookies.h:
+
+2012-04-04  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         Unreviewed; touch a file to check if the EFL build bot is back to
         normal.
 
