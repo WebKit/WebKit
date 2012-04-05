@@ -73,6 +73,7 @@ private:
     
     // WebVTTParserClient
     virtual void newCuesParsed();
+    virtual void fileFailedToParse();
     
     TextTrackLoader(TextTrackLoaderClient*, ScriptExecutionContext*);
     

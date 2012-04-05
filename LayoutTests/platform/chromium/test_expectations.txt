@@ -3270,8 +3270,6 @@ BUGWK81402 WIN : media/track/track-active-cues.html = PASS TIMEOUT
 BUGWK72271 MAC DEBUG : fast/loader/javascript-url-in-embed.html = PASS CRASH
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
 
-BUGWK72279 : media/track/track-webvtt-tc004-magic-header.html = TIMEOUT TEXT PASS
-
 BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
 
 // Animations tests use an inherently-flaky timer-based design.

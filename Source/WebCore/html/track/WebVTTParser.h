@@ -50,6 +50,7 @@ public:
     virtual ~WebVTTParserClient() { }
     
     virtual void newCuesParsed() = 0;
+    virtual void fileFailedToParse() = 0;
 };
 
 class WebVTTParser {
@@ -63,9 +64,6 @@ public:
         return adoptPtr(new WebVTTParser(client, context));
     }
     
-    static unsigned fileIdentifierMaximumLength();
-    static bool hasRequiredFileIdentifier(const char* data, unsigned length);
-
     static inline bool isRecognizedTag(const AtomicString& tagName)
     {
         return tagName == iTag
@@ -104,6 +102,7 @@ protected:
     ParseState m_state;
 
 private:
+    bool hasRequiredFileIdentifier();
     ParseState collectCueId(const String&);
     ParseState collectTimingsAndSettings(const String&);
     ParseState collectCueText(const String&, unsigned length, unsigned);
@@ -118,6 +117,7 @@ private:
     
     void constructTreeFromToken(Document*);
 
+    Vector<char> m_identifierData;
     String m_currentId;
     double m_currentStartTime;
     double m_currentEndTime;

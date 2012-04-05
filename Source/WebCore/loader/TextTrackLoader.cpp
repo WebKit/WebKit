@@ -89,46 +89,16 @@ void TextTrackLoader::processNewCueData(CachedResource* resource)
     if (m_parseOffset == buffer->size())
         return;
 
+    if (!m_cueParser)
+        m_cueParser = WebVTTParser::create(this, m_scriptExecutionContext);
+
     const char* data;
     unsigned length;
-    
-    if (!m_cueParser) {
-        if (resource->response().mimeType() == "text/vtt")
-            m_cueParser = WebVTTParser::create(this, m_scriptExecutionContext);
-        else {
-            // Don't proceed until we have enough data to check for the WebVTT magic identifier.
-            unsigned identifierLength = WebVTTParser::fileIdentifierMaximumLength();
-            if (buffer->size() < identifierLength)
-                return;
-            
-            Vector<char> identifier;
-            unsigned offset = 0;
-            while (offset < identifierLength && (length = buffer->getSomeData(data, offset))) {
-                if (length > identifierLength)
-                    length = identifierLength;
-                identifier.append(data, length);
-                offset += length;
-            }
-            
-            if (!WebVTTParser::hasRequiredFileIdentifier(identifier.data(), identifier.size())) {
-                LOG(Media, "TextTrackLoader::didReceiveData - file \"%s\" does not have WebVTT magic header", 
-                    resource->response().url().string().utf8().data());
-                m_state = Failed;
-                m_cueLoadTimer.startOneShot(0);
-                return;
-            }
-            
-            m_cueParser = WebVTTParser::create(this, m_scriptExecutionContext);
-        }
-    }
-    
-    ASSERT(m_cueParser);
-    
+
     while ((length = buffer->getSomeData(data, m_parseOffset))) {
         m_cueParser->parseBytes(data, length);
         m_parseOffset += length;
     }
-    
 }
 
 void TextTrackLoader::didReceiveData(CachedResource* resource)
@@ -213,6 +183,18 @@ void TextTrackLoader::newCuesParsed()
 
     m_newCuesAvailable = true;
     m_cueLoadTimer.startOneShot(0);
+}
+
+void TextTrackLoader::fileFailedToParse()
+{
+    LOG(Media, "TextTrackLoader::fileFailedToParse");
+
+    m_state = Failed;
+
+    if (!m_cueLoadTimer.isActive())
+        m_cueLoadTimer.startOneShot(0);
+
+    cancelLoad();
 }
 
 void TextTrackLoader::getNewCues(Vector<RefPtr<TextTrackCue> >& outputCues)
