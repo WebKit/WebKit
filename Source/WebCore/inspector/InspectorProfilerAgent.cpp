@@ -240,14 +240,16 @@ String InspectorProfilerAgent::getCurrentUserInitiatedProfileName(bool increment
     return makeString(UserInitiatedProfileName, '.', String::number(m_currentUserInitiatedProfileNumber));
 }
 
-void InspectorProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<InspectorArray>& headers)
+void InspectorProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<InspectorObject> >& headers)
 {
+    headers = TypeBuilder::Array<InspectorObject>::create();
+
     ProfilesMap::iterator profilesEnd = m_profiles.end();
     for (ProfilesMap::iterator it = m_profiles.begin(); it != profilesEnd; ++it)
-        headers->pushObject(createProfileHeader(*it->second));
+        headers->addItem(createProfileHeader(*it->second));
     HeapSnapshotsMap::iterator snapshotsEnd = m_snapshots.end();
     for (HeapSnapshotsMap::iterator it = m_snapshots.begin(); it != snapshotsEnd; ++it)
-        headers->pushObject(createSnapshotHeader(*it->second));
+        headers->addItem(createSnapshotHeader(*it->second));
 }
 
 namespace {
@@ -426,7 +428,7 @@ void InspectorProfilerAgent::toggleRecordButton(bool isProfiling)
         m_frontend->setRecordingProfile(isProfiling);
 }
 
-void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, int id, const String* objectGroup, RefPtr<InspectorObject>& result)
+void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, int id, const String* objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result)
 {
     ScriptObject heapObject = ScriptProfiler::objectByHeapObjectId(id);
     if (heapObject.hasNoValue()) {

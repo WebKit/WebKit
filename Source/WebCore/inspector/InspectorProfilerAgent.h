@@ -85,7 +85,7 @@ public:
     void enable(bool skipRecompile);
     bool enabled() { return m_enabled; }
     String getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false);
-    virtual void getProfileHeaders(ErrorString*, RefPtr<InspectorArray>& headers);
+    virtual void getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<InspectorObject> >& headers);
     virtual void getProfile(ErrorString*, const String& type, int uid, RefPtr<InspectorObject>& profileObject);
     virtual void removeProfile(ErrorString*, const String& type, int uid);
 
@@ -96,7 +96,7 @@ public:
     virtual void takeHeapSnapshot(ErrorString*);
     void toggleRecordButton(bool isProfiling);
 
-    virtual void getObjectByHeapObjectId(ErrorString*, int id, const String* objectGroup, RefPtr<InspectorObject>& result);
+    virtual void getObjectByHeapObjectId(ErrorString*, int id, const String* objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result);
 
 protected:
     InspectorProfilerAgent(InstrumentingAgents*, InspectorConsoleAgent*, InspectorState*, InjectedScriptManager*);

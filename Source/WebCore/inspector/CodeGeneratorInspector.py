@@ -62,7 +62,8 @@ TYPES_WITH_RUNTIME_CAST_SET = frozenset(["Runtime.RemoteObject", "Runtime.Proper
 STRICT_ENABLED_DOMAINS = ["Console", "DOMDebugger",
                           "CSS", "Debugger", "DOM", "Network", "Page", "Runtime",
                           "Inspector", "Memory", "Database",
-                          "IndexedDB", "DOMStorage", "ApplicationCache"]
+                          "IndexedDB", "DOMStorage", "ApplicationCache",
+                          "FileSystem", "Profiler", "Worker"]
 
 
 cmdline_parser = optparse.OptionParser()
@@ -2285,6 +2286,16 @@ struct ArrayItemHelper<InspectorValue> {
         static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorValue> value)
         {
             array->pushValue(value);
+        }
+    };
+};
+
+template<>
+struct ArrayItemHelper<InspectorObject> {
+    struct Traits {
+        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorObject> value)
+        {
+            array->pushObject(value);
         }
     };
 };
