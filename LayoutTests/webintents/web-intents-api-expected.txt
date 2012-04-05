@@ -1,10 +1,10 @@
-PASS navigator.startActivity is defined.
-PASS var intent = new Intent() threw exception TypeError: Not enough arguments.
-PASS new Intent('a') threw exception TypeError: Not enough arguments.
-PASS new Intent('','','') threw exception Error: SYNTAX_ERR: DOM Exception 12.
-PASS new Intent('','b','c') threw exception Error: SYNTAX_ERR: DOM Exception 12.
-PASS new Intent('','','c') threw exception Error: SYNTAX_ERR: DOM Exception 12.
-PASS new Intent('a','','c') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS navigator.webkitStartActivity is defined.
+PASS var intent = new WebKitIntent() threw exception TypeError: Not enough arguments.
+PASS new WebKitIntent('a') threw exception TypeError: Not enough arguments.
+PASS new WebKitIntent('','','') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent('','b','c') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent('','','c') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent('a','','c') threw exception Error: SYNTAX_ERR: DOM Exception 12.
 PASS intent1.action is "a"
 PASS intent1.type is "b"
 PASS intent1.data is undefined.
@@ -26,7 +26,7 @@ PASS intent6.data is 4.5
 PASS intent7.data is true
 PASS intent8.data is null
 PASS intent9.data == '[object Object]' is true
-PASS navigator.startActivity(intent1) threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
+PASS navigator.webkitStartActivity(intent1) threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
 PASS successfullyParsed is true
 
 TEST COMPLETE

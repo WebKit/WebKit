@@ -10,9 +10,9 @@
 
       function startIntent() {
         debug("* launching intent action/type");
-        var intent = new Intent("action", "type");
+        var intent = new WebKitIntent("action", "type");
         try {
-          navigator.startActivity(intent, onSuccess, onFailure);
+          navigator.webkitStartActivity(intent, onSuccess, onFailure);
         } catch (e) {
           testFailed("startActivity should not throw exception");
         }

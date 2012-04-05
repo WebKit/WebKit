@@ -5,33 +5,33 @@
 </head>
 <body>
 <script type="text/javascript">
-      shouldBeDefined("navigator.startActivity");
+      shouldBeDefined("navigator.webkitStartActivity");
       
-      shouldThrow("var intent = new Intent()", "'TypeError: Not enough arguments'");;
-      shouldThrow("new Intent('a')", "'TypeError: Not enough arguments'");
-      shouldThrow("new Intent('','','')", "'Error: SYNTAX_ERR: DOM Exception 12'");
-      shouldThrow("new Intent('','b','c')", "'Error: SYNTAX_ERR: DOM Exception 12'");
-      shouldThrow("new Intent('','','c')", "'Error: SYNTAX_ERR: DOM Exception 12'");
-      shouldThrow("new Intent('a','','c')", "'Error: SYNTAX_ERR: DOM Exception 12'");
+      shouldThrow("var intent = new WebKitIntent()", "'TypeError: Not enough arguments'");;
+      shouldThrow("new WebKitIntent('a')", "'TypeError: Not enough arguments'");
+      shouldThrow("new WebKitIntent('','','')", "'Error: SYNTAX_ERR: DOM Exception 12'");
+      shouldThrow("new WebKitIntent('','b','c')", "'Error: SYNTAX_ERR: DOM Exception 12'");
+      shouldThrow("new WebKitIntent('','','c')", "'Error: SYNTAX_ERR: DOM Exception 12'");
+      shouldThrow("new WebKitIntent('a','','c')", "'Error: SYNTAX_ERR: DOM Exception 12'");
 
-      var intent1 = new Intent('a', 'b');
+      var intent1 = new WebKitIntent('a', 'b');
       shouldBeEqualToString("intent1.action", "a");
       shouldBeEqualToString("intent1.type", "b");
       shouldBeUndefined("intent1.data");
       intent1.action = "abc";
       shouldBeEqualToString("intent1.action", "a");
 
-      var intent2 = new Intent("a", "b", "c");
+      var intent2 = new WebKitIntent("a", "b", "c");
       shouldBeEqualToString('intent2.action', "a");
       shouldBeEqualToString('intent2.type', "b");
       shouldBeEqualToString('intent2.data', "c");
 
-      var intent3 = new Intent("a", "b", {"c": "d"});
+      var intent3 = new WebKitIntent("a", "b", {"c": "d"});
       shouldBeEqualToString('intent3.action', "a");
       shouldBeEqualToString('intent3.type', "b");
       shouldBeEqualToString('intent3.data.c', "d");
 
-      var intent4 = new Intent("a", "b", ["c", "d"]);
+      var intent4 = new WebKitIntent("a", "b", ["c", "d"]);
       shouldBeEqualToString('intent4.action', "a");
       shouldBeEqualToString('intent4.type', "b");
       shouldBeTrue('intent4.data instanceof Array');
@@ -39,18 +39,18 @@
       shouldBeEqualToString('intent4.data[0]', "c");
       shouldBeEqualToString('intent4.data[1]', "d");
 
-      var intent5 = new Intent("a", "b", 4);
+      var intent5 = new WebKitIntent("a", "b", 4);
       shouldEvaluateTo('intent5.data', 4);
-      var intent6 = new Intent('a', 'b', 4.5);
+      var intent6 = new WebKitIntent('a', 'b', 4.5);
       shouldEvaluateTo('intent6.data', 4.5);
-      var intent7 = new Intent('a', 'b', true);
+      var intent7 = new WebKitIntent('a', 'b', true);
       shouldBeTrue('intent7.data');
-      var intent8 = new Intent('a', 'b', null);
+      var intent8 = new WebKitIntent('a', 'b', null);
       shouldBeNull('intent8.data');
-      var intent9 = new Intent('a', 'b', {});
+      var intent9 = new WebKitIntent('a', 'b', {});
       shouldEvaluateTo('intent9.data', {});
 
-      shouldThrow('navigator.startActivity(intent1)', "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
+      shouldThrow('navigator.webkitStartActivity(intent1)', "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
 </script>
 <script src="../fast/js/resources/js-test-post.js"></script>
 </body>

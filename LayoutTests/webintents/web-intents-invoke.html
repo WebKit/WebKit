@@ -4,7 +4,7 @@
     <script src="resources/web-intents-testing.js"></script>
     <script>
       function buttonClicked() {
-        navigator.startActivity(new Intent("action1", "mime/type1", "test"));
+        navigator.webkitStartActivity(new WebKitIntent("action1", "mime/type1", "test"));
           debug("* sent intent");
       }
     </script>

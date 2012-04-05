@@ -18,7 +18,7 @@ function onFailure(data) {
 
 // Launch a web intent call with callbacks.
 function startIntentWithCallbacks() {
-  navigator.startActivity(new Intent("action1", "mime/type1", "test"), onSuccess, onFailure);
+  navigator.webkitStartActivity(new WebKitIntent("action1", "mime/type1", "test"), onSuccess, onFailure);
   debug("* sent intent");
 
   if (window.layoutTestController) {

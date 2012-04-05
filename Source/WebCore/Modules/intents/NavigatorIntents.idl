@@ -23,9 +23,9 @@ module window {
         Conditional=WEB_INTENTS,
         Supplemental=Navigator
     ] NavigatorIntents {
-        void startActivity(in Intent intent,
-                           in [Callback, Optional] IntentResultCallback successCallback,
-                           in [Callback, Optional] IntentResultCallback failureCallback)
+        void webkitStartActivity(in Intent intent,
+                                 in [Callback, Optional] IntentResultCallback successCallback,
+                                 in [Callback, Optional] IntentResultCallback failureCallback)
             raises(DOMException);
     };
 

@@ -40,7 +40,7 @@ typedef int ExceptionCode;
 
 class NavigatorIntents {
 public:
-    static void startActivity(Navigator*, PassRefPtr<Intent>, PassRefPtr<IntentResultCallback> successCallback, PassRefPtr<IntentResultCallback> errorCallback, ExceptionCode&);
+    static void webkitStartActivity(Navigator*, PassRefPtr<Intent>, PassRefPtr<IntentResultCallback> successCallback, PassRefPtr<IntentResultCallback> errorCallback, ExceptionCode&);
 
 private:
     NavigatorIntents();

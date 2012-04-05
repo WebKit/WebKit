@@ -30,7 +30,7 @@ module window {
         Conditional=WEB_INTENTS,
         Supplemental=DOMWindow
     ] DOMWindowIntents {
-        attribute IntentConstructor Intent;
+        attribute IntentConstructor WebKitIntent;
     };
 
 }
