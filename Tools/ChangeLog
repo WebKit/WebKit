@@ -1,3 +1,18 @@
+2012-04-05  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] WK1/WK2 layout test results are diverging
+        https://bugs.webkit.org/show_bug.cgi?id=82720
+
+        The resolving of default font families was altered in Qt5.
+        This directly affects the font picked by DRT for layout
+        tests. Since we want to keep the Qt4 and Qt5 results in line,
+        we can trick DRT in picking the same font as before for now.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * DumpRenderTree/qt/QtInitializeTestFonts.cpp:
+        (WebKit::initializeTestFonts):
+
 2012-04-05  Kinuko Yasuda  <kinuko@chromium.org>
 
         Expose DataTransferItem.getAsEntry() to allow users access dropped files as FileEntry
