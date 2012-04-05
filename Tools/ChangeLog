@@ -1,3 +1,22 @@
+2012-04-04  Scott Graham  <scottmg@google.com>
+
+        [Chromium, DRT] Bounds check indices on gamepadController
+        https://bugs.webkit.org/show_bug.cgi?id=83192
+
+        Invalid test data would cause bad array accesses. Add simple checks to
+        ignore such invalid data.
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/chromium/GamepadController.cpp:
+        (GamepadController::connect):
+        (GamepadController::disconnect):
+        (GamepadController::setId):
+        (GamepadController::setButtonCount):
+        (GamepadController::setButtonData):
+        (GamepadController::setAxisCount):
+        (GamepadController::setAxisData):
+
 2012-04-04  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt is failing to upload test results on the chromium-mac-leopard bots

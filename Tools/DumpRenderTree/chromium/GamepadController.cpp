@@ -68,6 +68,8 @@ void GamepadController::connect(const CppArgumentList& args, CppVariant* result)
         return;
     }
     int index = args[0].toInt32();
+    if (index < 0 || index >= static_cast<int>(WebKit::WebGamepads::itemsLengthCap))
+        return;
     internalData.items[index].connected = true;
     internalData.length = 0;
     for (unsigned i = 0; i < WebKit::WebGamepads::itemsLengthCap; ++i)
@@ -84,6 +86,8 @@ void GamepadController::disconnect(const CppArgumentList& args, CppVariant* resu
         return;
     }
     int index = args[0].toInt32();
+    if (index < 0 || index >= static_cast<int>(WebKit::WebGamepads::itemsLengthCap))
+        return;
     internalData.items[index].connected = false;
     internalData.length = 0;
     for (unsigned i = 0; i < WebKit::WebGamepads::itemsLengthCap; ++i)
@@ -100,6 +104,8 @@ void GamepadController::setId(const CppArgumentList& args, CppVariant* result)
         return;
     }
     int index = args[0].toInt32();
+    if (index < 0 || index >= static_cast<int>(WebKit::WebGamepads::itemsLengthCap))
+        return;
     std::string src = args[1].toString();
     const char* p = src.c_str();
     memset(internalData.items[index].id, 0, sizeof(internalData.items[index].id));
@@ -116,6 +122,8 @@ void GamepadController::setButtonCount(const CppArgumentList& args, CppVariant* 
         return;
     }
     int index = args[0].toInt32();
+    if (index < 0 || index >= static_cast<int>(WebKit::WebGamepads::itemsLengthCap))
+        return;
     int buttons = args[1].toInt32();
     internalData.items[index].buttonsLength = buttons;
     webkit_support::SetGamepadData(internalData);
@@ -129,6 +137,8 @@ void GamepadController::setButtonData(const CppArgumentList& args, CppVariant* r
         return;
     }
     int index = args[0].toInt32();
+    if (index < 0 || index >= static_cast<int>(WebKit::WebGamepads::itemsLengthCap))
+        return;
     int button = args[1].toInt32();
     double data = args[2].toDouble();
     internalData.items[index].buttons[button] = data;
@@ -143,6 +153,8 @@ void GamepadController::setAxisCount(const CppArgumentList& args, CppVariant* re
         return;
     }
     int index = args[0].toInt32();
+    if (index < 0 || index >= static_cast<int>(WebKit::WebGamepads::itemsLengthCap))
+        return;
     int axes = args[1].toInt32();
     internalData.items[index].axesLength = axes;
     webkit_support::SetGamepadData(internalData);
@@ -156,6 +168,8 @@ void GamepadController::setAxisData(const CppArgumentList& args, CppVariant* res
         return;
     }
     int index = args[0].toInt32();
+    if (index < 0 || index >= static_cast<int>(WebKit::WebGamepads::itemsLengthCap))
+        return;
     int axis = args[1].toInt32();
     double data = args[2].toDouble();
     internalData.items[index].axes[axis] = data;
