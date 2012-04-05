@@ -435,6 +435,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     if (this._zoomLevel)
         this._requestZoom();
 
+    WebInspector.CSSCompletions.requestCSSNameCompletions();
     this._createPanels();
     this._createGlobalStatusBarItems();
 
@@ -474,7 +475,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     if (WebInspector.settings.showPaintRects.get())
         PageAgent.setShowPaintRects(true);
 
-    WebInspector.CSSCompletions.requestCSSNameCompletions();
     WebInspector.WorkerManager.loadCompleted();
     InspectorFrontendAPI.loadCompleted();
 }
