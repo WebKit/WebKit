@@ -295,6 +295,7 @@ fast/mutation/observe-characterdata.html
 fast/mutation/observe-childList.html
 fast/mutation/observe-exceptions.html
 fast/mutation/observe-subtree.html
+fast/mutation/takeRecords.html
 
 # USE(ZLIB) is disabled.
 http/tests/websocket/tests/hybi/compressed-control-frame.html
