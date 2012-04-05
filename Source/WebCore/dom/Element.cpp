@@ -318,7 +318,7 @@ static float localZoomForRenderer(RenderObject* renderer)
     return zoomFactor;
 }
 
-static LayoutUnit adjustForLocalZoom(LayoutUnit value, RenderObject* renderer)
+static int adjustForLocalZoom(LayoutUnit value, RenderObject* renderer)
 {
     float zoomFactor = localZoomForRenderer(renderer);
     if (zoomFactor == 1)
@@ -326,38 +326,38 @@ static LayoutUnit adjustForLocalZoom(LayoutUnit value, RenderObject* renderer)
     // Needed because computeLengthInt truncates (rather than rounds) when scaling up.
     if (zoomFactor > 1)
         value++;
-    return static_cast<LayoutUnit>(value / zoomFactor);
+    return static_cast<int>(value / zoomFactor);
 }
 
 int Element::offsetLeft()
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    if (RenderBoxModelObject* rend = renderBoxModelObject())
-        return adjustForLocalZoom(rend->offsetLeft(), rend);
+    if (RenderBoxModelObject* renderer = renderBoxModelObject())
+        return adjustForLocalZoom(renderer->pixelSnappedOffsetLeft(), renderer);
     return 0;
 }
 
 int Element::offsetTop()
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    if (RenderBoxModelObject* rend = renderBoxModelObject())
-        return adjustForLocalZoom(rend->offsetTop(), rend);
+    if (RenderBoxModelObject* renderer = renderBoxModelObject())
+        return adjustForLocalZoom(renderer->pixelSnappedOffsetTop(), renderer);
     return 0;
 }
 
 int Element::offsetWidth()
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    if (RenderBoxModelObject* rend = renderBoxModelObject())
-        return adjustForAbsoluteZoom(rend->offsetWidth(), rend);
+    if (RenderBoxModelObject* renderer = renderBoxModelObject())
+        return adjustForAbsoluteZoom(renderer->pixelSnappedOffsetWidth(), renderer);
     return 0;
 }
 
 int Element::offsetHeight()
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    if (RenderBoxModelObject* rend = renderBoxModelObject())
-        return adjustForAbsoluteZoom(rend->offsetHeight(), rend);
+    if (RenderBoxModelObject* renderer = renderBoxModelObject())
+        return adjustForAbsoluteZoom(renderer->pixelSnappedOffsetHeight(), renderer);
     return 0;
 }
 
@@ -374,8 +374,8 @@ int Element::clientLeft()
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
-    if (RenderBox* rend = renderBox())
-        return adjustForAbsoluteZoom(rend->clientLeft(), rend);
+    if (RenderBox* renderer = renderBox())
+        return adjustForAbsoluteZoom(roundToInt(renderer->clientLeft()), renderer);
     return 0;
 }
 
@@ -383,8 +383,8 @@ int Element::clientTop()
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
-    if (RenderBox* rend = renderBox())
-        return adjustForAbsoluteZoom(rend->clientTop(), rend);
+    if (RenderBox* renderer = renderBox())
+        return adjustForAbsoluteZoom(roundToInt(renderer->clientTop()), renderer);
     return 0;
 }
 
@@ -403,8 +403,8 @@ int Element::clientWidth()
         }
     }
     
-    if (RenderBox* rend = renderBox())
-        return adjustForAbsoluteZoom(rend->clientWidth(), rend);
+    if (RenderBox* renderer = renderBox())
+        return adjustForAbsoluteZoom(renderer->pixelSnappedClientWidth(), renderer);
     return 0;
 }
 
@@ -424,8 +424,8 @@ int Element::clientHeight()
         }
     }
     
-    if (RenderBox* rend = renderBox())
-        return adjustForAbsoluteZoom(rend->clientHeight(), rend);
+    if (RenderBox* renderer = renderBox())
+        return adjustForAbsoluteZoom(renderer->pixelSnappedClientHeight(), renderer);
     return 0;
 }
 
