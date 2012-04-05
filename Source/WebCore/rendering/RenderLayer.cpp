@@ -2055,7 +2055,7 @@ IntPoint RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scro
 
 IntSize RenderLayer::contentsSize() const
 {
-    return IntSize(const_cast<RenderLayer*>(this)->scrollWidth(), const_cast<RenderLayer*>(this)->scrollHeight());
+    return IntSize(scrollWidth(), scrollHeight());
 }
 
 int RenderLayer::visibleHeight() const
@@ -2208,7 +2208,7 @@ bool RenderLayer::allowsScrolling() const
 
 void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
 {
-    if (hasScrollbar == (m_hBar != 0))
+    if (hasScrollbar == hasHorizontalScrollbar())
         return;
 
     if (hasScrollbar)
@@ -2231,7 +2231,7 @@ void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
 
 void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
 {
-    if (hasScrollbar == (m_vBar != 0))
+    if (hasScrollbar == hasVerticalScrollbar())
         return;
 
     if (hasScrollbar)
@@ -2347,19 +2347,19 @@ void RenderLayer::positionOverflowControls(const IntSize& offsetFromLayer)
         m_resizer->setFrameRect(resizerCornerRect(this, borderBox));
 }
 
-int RenderLayer::scrollWidth()
+int RenderLayer::scrollWidth() const
 {
     ASSERT(renderBox());
     if (m_scrollDimensionsDirty)
-        computeScrollDimensions();
+        const_cast<RenderLayer*>(this)->computeScrollDimensions();
     return snapSizeToPixel(m_scrollSize.width(), renderBox()->clientLeft());
 }
 
-int RenderLayer::scrollHeight()
+int RenderLayer::scrollHeight() const
 {
     ASSERT(renderBox());
     if (m_scrollDimensionsDirty)
-        computeScrollDimensions();
+        const_cast<RenderLayer*>(this)->computeScrollDimensions();
     return snapSizeToPixel(m_scrollSize.height(), renderBox()->clientTop());
 }
 
@@ -2395,7 +2395,7 @@ LayoutUnit RenderLayer::overflowRight() const
     return overflowRect.maxX();
 }
 
-void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
+void RenderLayer::computeScrollDimensions()
 {
     RenderBox* box = renderBox();
     ASSERT(box);
@@ -2409,58 +2409,45 @@ void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
     m_scrollSize.setHeight(overflowBottom() - overflowTop());
 
     setScrollOrigin(IntPoint(-m_scrollOverflow.width(), -m_scrollOverflow.height()));
-
-    if (needHBar)
-        *needHBar = scrollWidth() > box->pixelSnappedClientWidth();
-    if (needVBar)
-        *needVBar = scrollHeight() > box->pixelSnappedClientHeight();
 }
 
-void RenderLayer::updateScrollInfoAfterLayout()
+bool RenderLayer::hasHorizontalOverflow() const
+{
+    ASSERT(!m_scrollDimensionsDirty);
+
+    return scrollWidth() > renderBox()->pixelSnappedClientWidth();
+}
+
+bool RenderLayer::hasVerticalOverflow() const
+{
+    ASSERT(!m_scrollDimensionsDirty);
+
+    return scrollHeight() > renderBox()->pixelSnappedClientHeight();
+}
+
+void RenderLayer::updateScrollbarsAfterLayout()
 {
     RenderBox* box = renderBox();
-    if (!box)
-        return;
+    ASSERT(box);
 
-    m_scrollDimensionsDirty = true;
-    IntSize scrollOffsetOriginal(scrollXOffset(), scrollYOffset());
+    bool hasHorizontalOverflow = this->hasHorizontalOverflow();
+    bool hasVerticalOverflow = this->hasVerticalOverflow();
 
-    bool horizontalOverflow, verticalOverflow;
-    computeScrollDimensions(&horizontalOverflow, &verticalOverflow);
-
-    if (box->style()->overflowX() != OMARQUEE) {
-        // Layout may cause us to be in an invalid scroll position.  In this case we need
-        // to pull our scroll offsets back to the max (or push them up to the min).
-        int newX = max(0, min<int>(scrollXOffset(), scrollWidth() - box->clientWidth()));
-        int newY = max(0, min<int>(scrollYOffset(), scrollHeight() - box->clientHeight()));
-        if (newX != scrollXOffset() || newY != scrollYOffset())
-            scrollToOffset(newX, newY);
-    }
-
-    bool haveHorizontalBar = m_hBar;
-    bool haveVerticalBar = m_vBar;
-    
     // overflow:scroll should just enable/disable.
     if (m_hBar && renderer()->style()->overflowX() == OSCROLL)
-        m_hBar->setEnabled(horizontalOverflow);
+        m_hBar->setEnabled(hasHorizontalOverflow);
     if (m_vBar && renderer()->style()->overflowY() == OSCROLL)
-        m_vBar->setEnabled(verticalOverflow);
+        m_vBar->setEnabled(hasVerticalOverflow);
 
-    // A dynamic change from a scrolling overflow to overflow:hidden means we need to get rid of any
-    // scrollbars that may be present.
-    if (renderer()->style()->overflowX() == OHIDDEN && haveHorizontalBar)
-        setHasHorizontalScrollbar(false);
-    if (renderer()->style()->overflowY() == OHIDDEN && haveVerticalBar)
-        setHasVerticalScrollbar(false);
-    
     // overflow:auto may need to lay out again if scrollbars got added/removed.
-    bool scrollbarsChanged = (box->hasAutoHorizontalScrollbar() && haveHorizontalBar != horizontalOverflow) || 
-                             (box->hasAutoVerticalScrollbar() && haveVerticalBar != verticalOverflow);    
-    if (scrollbarsChanged) {
+    bool autoHorizontalScrollBarChanged = box->hasAutoHorizontalScrollbar() && (hasHorizontalScrollbar() != hasHorizontalOverflow);
+    bool autoVerticalScrollBarChanged = box->hasAutoVerticalScrollbar() && (hasVerticalScrollbar() != hasVerticalOverflow);
+
+    if (autoHorizontalScrollBarChanged || autoVerticalScrollBarChanged) {
         if (box->hasAutoHorizontalScrollbar())
-            setHasHorizontalScrollbar(horizontalOverflow);
+            setHasHorizontalScrollbar(hasHorizontalOverflow);
         if (box->hasAutoVerticalScrollbar())
-            setHasVerticalScrollbar(verticalOverflow);
+            setHasVerticalScrollbar(hasVerticalOverflow);
 
 #if ENABLE(DASHBOARD_SUPPORT)
         // Force an update since we know the scrollbars have changed things.
@@ -2477,8 +2464,7 @@ void RenderLayer::updateScrollInfoAfterLayout()
                 renderer()->setNeedsLayout(true, MarkOnlyThis);
                 if (renderer()->isRenderBlock()) {
                     RenderBlock* block = toRenderBlock(renderer());
-                    block->scrollbarsChanged(box->hasAutoHorizontalScrollbar() && haveHorizontalBar != horizontalOverflow,
-                                             box->hasAutoVerticalScrollbar() && haveVerticalBar != verticalOverflow);
+                    block->scrollbarsChanged(autoHorizontalScrollBarChanged, autoVerticalScrollBarChanged);
                     block->layoutBlock(true); // FIXME: Need to handle positioned floats triggering extra relayouts.
                 } else
                     renderer()->layout();
@@ -2486,12 +2472,6 @@ void RenderLayer::updateScrollInfoAfterLayout()
             }
         }
     }
-    
-    // If overflow:scroll is turned into overflow:auto a bar might still be disabled (Bug 11985).
-    if (m_hBar && box->hasAutoHorizontalScrollbar())
-        m_hBar->setEnabled(true);
-    if (m_vBar && box->hasAutoVerticalScrollbar())
-        m_vBar->setEnabled(true);
 
     // Set up the range (and page step/line step).
     if (m_hBar) {
@@ -2506,6 +2486,29 @@ void RenderLayer::updateScrollInfoAfterLayout()
         m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_vBar->setProportion(clientHeight, m_scrollSize.height());
     }
+}
+
+void RenderLayer::updateScrollInfoAfterLayout()
+{
+    RenderBox* box = renderBox();
+    if (!box)
+        return;
+
+    m_scrollDimensionsDirty = true;
+    IntSize scrollOffsetOriginal(scrollXOffset(), scrollYOffset());
+
+    computeScrollDimensions();
+
+    if (box->style()->overflowX() != OMARQUEE) {
+        // Layout may cause us to be at an invalid scroll position. In this case we need
+        // to pull our scroll offsets back to the max (or push them up to the min).
+        int newX = max(0, min<int>(scrollXOffset(), scrollWidth() - box->clientWidth()));
+        int newY = max(0, min<int>(scrollYOffset(), scrollHeight() - box->clientHeight()));
+        if (newX != scrollXOffset() || newY != scrollYOffset())
+            scrollToOffset(newX, newY);
+    }
+
+    updateScrollbarsAfterLayout();
 
     if (scrollOffsetOriginal != scrollOffset())
         scrollToOffsetWithoutAnimation(IntPoint(scrollXOffset(), scrollYOffset()));
@@ -4603,6 +4606,37 @@ bool RenderLayer::isSelfPaintingLayer() const
         || renderer()->isRenderIFrame();
 }
 
+static bool overflowCanHaveAScrollbar(EOverflow overflow)
+{
+    return overflow == OAUTO || overflow == OSCROLL || overflow == OOVERLAY;
+}
+
+void RenderLayer::updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle)
+{
+    // Overflow are a box concept.
+    if (!renderBox())
+        return;
+
+    EOverflow overflowX = renderBox()->style()->overflowX();
+    EOverflow overflowY = renderBox()->style()->overflowY();
+    if (hasHorizontalScrollbar() && !overflowCanHaveAScrollbar(overflowX))
+        setHasHorizontalScrollbar(false);
+    if (hasVerticalScrollbar() && !overflowCanHaveAScrollbar(overflowY))
+        setHasVerticalScrollbar(false);
+
+    // With overflow: scroll, scrollbars are always visible but may be disabled.
+    // When switching to another value, we need to re-enable them (see bug 11985).
+    if (hasHorizontalScrollbar() && oldStyle->overflowX() == OSCROLL && overflowX != OSCROLL) {
+        ASSERT(overflowCanHaveAScrollbar(overflowX));
+        m_hBar->setEnabled(true);
+    }
+
+    if (hasVerticalScrollbar() && oldStyle->overflowY() == OSCROLL && overflowY != OSCROLL) {
+        ASSERT(overflowCanHaveAScrollbar(overflowY));
+        m_vBar->setEnabled(true);
+    }
+}
+
 void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
 {
     bool isNormalFlowOnly = shouldBeNormalFlowOnly();
@@ -4624,6 +4658,8 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
         m_marquee = 0;
     }
     
+    updateScrollbarsAfterStyleChange(oldStyle);
+
     if (!hasReflection() && m_reflection)
         removeReflection();
     else if (hasReflection()) {

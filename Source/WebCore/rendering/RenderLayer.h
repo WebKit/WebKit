@@ -280,8 +280,8 @@ public:
 
     LayoutRect rect() const { return LayoutRect(location(), size()); }
 
-    int scrollWidth();
-    int scrollHeight();
+    int scrollWidth() const;
+    int scrollHeight() const;
 
     void panScrollFromPoint(const LayoutPoint&);
 
@@ -313,6 +313,9 @@ public:
 
     PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation);
     void destroyScrollbar(ScrollbarOrientation);
+
+    bool hasHorizontalScrollbar() const { return horizontalScrollbar(); }
+    bool hasVerticalScrollbar() const { return verticalScrollbar(); }
 
     // ScrollableArea overrides
     virtual Scrollbar* horizontalScrollbar() const { return m_hBar.get(); }
@@ -585,6 +588,9 @@ private:
 
     bool shouldRepaintAfterLayout() const;
 
+    void updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle);
+    void updateScrollbarsAfterLayout();
+
     friend IntSize RenderBox::scrolledContentOffset() const;
     IntSize scrolledContentOffset() const { return scrollOffset() + m_scrollOverflow; }
 
@@ -649,7 +655,9 @@ private:
     
     bool hitTestContents(const HitTestRequest&, HitTestResult&, const LayoutRect& layerBounds, const LayoutPoint& hitTestPoint, HitTestFilter) const;
     
-    void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
+    void computeScrollDimensions();
+    bool hasHorizontalOverflow() const;
+    bool hasVerticalOverflow() const;
 
     bool shouldBeNormalFlowOnly() const; 
 
