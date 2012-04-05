@@ -400,4 +400,16 @@ String validationMessageStepMismatchText(const String& base, const String& step)
     return query(WebLocalizedString::ValidationStepMismatch, base, step);
 }
 
+#if ENABLE(CALENDAR_PICKER)
+String calendarTodayText()
+{
+    return query(WebLocalizedString::CalendarToday);
+}
+
+String calendarClearText()
+{
+    return query(WebLocalizedString::CalendarClear);
+}
+#endif
+
 } // namespace WebCore

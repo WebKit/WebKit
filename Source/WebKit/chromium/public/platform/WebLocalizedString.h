@@ -46,6 +46,8 @@ struct WebLocalizedString {
         AXTextFieldActionVerb,
         AXUncheckedCheckBoxActionVerb,
         AXWebAreaText,
+        CalendarClear,
+        CalendarToday,
         DetailsLabel,
         FileButtonChooseFileLabel,
         FileButtonChooseMultipleFilesLabel,

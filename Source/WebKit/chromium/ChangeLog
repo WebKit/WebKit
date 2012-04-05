@@ -1,3 +1,19 @@
+2012-04-04  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Calendar Picker: Add localization functions
+        https://bugs.webkit.org/show_bug.cgi?id=83235
+
+        Reviewed by Adam Barth.
+
+        Implement calendarTodayText() and calendarClearText(), which are
+        introduced in http://trac.webkit.org/changeset/113166
+
+        * public/platform/WebLocalizedString.h:
+        Add CalendarClear and CalendarToday.
+        * src/LocalizedStrings.cpp:
+        (WebCore::calendarTodayText): Added.
+        (WebCore::calendarClearText): Added.
+
 2012-04-04  Mark Pilgrim  <pilgrim@chromium.org>
 
         Call histogramEnumeration directly
