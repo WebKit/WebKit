@@ -1,3 +1,12 @@
+2012-04-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: [chromium] clean up WDTFC::saveAs after migration to save()
+        https://bugs.webkit.org/show_bug.cgi?id=83271
+
+        Reviewed by Yury Semikhatsky.
+
+        * public/WebDevToolsFrontendClient.h:
+
 2012-04-05  Hans Wennborg  <hans@chromium.org>
 
         webkit_unit_tests build fix.

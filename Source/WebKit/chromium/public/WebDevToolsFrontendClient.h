@@ -50,7 +50,6 @@ public:
     virtual void requestSetDockSide(const WebString& side) { }
     virtual void moveWindowBy(const WebFloatPoint&) { }
     virtual void openInNewTab(const WebString& side) { }
-    virtual void saveAs(const WebString& fileName, const WebString& content) { }
     virtual void save(const WebString& url, const WebString& content, bool saveAs) { }
 
 protected:
