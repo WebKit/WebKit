@@ -576,6 +576,11 @@ public:
     FilterEffectRenderer* filter() const { return m_filter.get(); }
 #endif
 
+#if !ASSERT_DISABLED
+    bool layerListMutationAllowed() const { return m_layerListMutationAllowed; }
+    void setLayerListMutationAllowed(bool flag) { m_layerListMutationAllowed = flag; }
+#endif
+
 private:
     void updateZOrderListsSlowCase();
 
@@ -807,7 +812,9 @@ protected:
 #endif
 
     bool m_containsDirtyOverlayScrollbars : 1;
-
+#if !ASSERT_DISABLED
+    bool m_layerListMutationAllowed : 1;
+#endif
     // This is an optimization added for <table>.
     // Currently cells do not need to update their repaint rectangles when scrolling. This also
     // saves a lot of time when scrolling on a table.
@@ -897,6 +904,28 @@ inline void RenderLayer::updateZOrderLists()
         return;
     updateZOrderListsSlowCase();
 }
+
+#if !ASSERT_DISABLED
+class LayerListMutationDetector {
+public:
+    LayerListMutationDetector(RenderLayer* layer)
+        : m_layer(layer)
+        , m_previousMutationAllowedState(layer->layerListMutationAllowed())
+    {
+        m_layer->setLayerListMutationAllowed(false);
+    }
+    
+    ~LayerListMutationDetector()
+    {
+        m_layer->setLayerListMutationAllowed(m_previousMutationAllowedState);
+    }
+
+private:
+    RenderLayer* m_layer;
+    bool m_previousMutationAllowedState;
+};
+#endif
+
 
 } // namespace WebCore
 

@@ -584,6 +584,10 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
     bool haveComputedBounds = false;
     addToOverlapMap(overlapMap, layer, bounds, haveComputedBounds);
 
+#if !ASSERT_DISABLED
+    LayerListMutationDetector mutationChecker(layer);
+#endif
+
     if (layer->isStackingContext()) {
         if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
             size_t listSize = negZOrderList->size();
@@ -671,6 +675,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     // when the video element is a stacking context (e.g. due to opacity or transform).
     if (willBeComposited && layer->renderer()->isVideo())
         childState.m_subtreeIsCompositing = true;
+#endif
+
+#if !ASSERT_DISABLED
+    LayerListMutationDetector mutationChecker(layer);
 #endif
 
     if (layer->isStackingContext()) {
@@ -854,6 +862,10 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vect
     Vector<GraphicsLayer*> layerChildren;
     Vector<GraphicsLayer*>& childList = layerBacking ? layerChildren : childLayersOfEnclosingLayer;
 
+#if !ASSERT_DISABLED
+    LayerListMutationDetector mutationChecker(layer);
+#endif
+
     if (layer->isStackingContext()) {
         ASSERT(!layer->m_zOrderListsDirty);
 
@@ -1028,6 +1040,10 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer* layer)
             updateRootLayerPosition();
     }
 
+#if !ASSERT_DISABLED
+    LayerListMutationDetector mutationChecker(layer);
+#endif
+
     if (layer->isStackingContext()) {
         ASSERT(!layer->m_zOrderListsDirty);
 
@@ -1077,6 +1093,10 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer* com
 
     if (!layer->hasCompositingDescendant())
         return;
+
+#if !ASSERT_DISABLED
+    LayerListMutationDetector mutationChecker(layer);
+#endif
     
     if (layer->isStackingContext()) {
         if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
@@ -1112,6 +1132,10 @@ void RenderLayerCompositor::recursiveRepaintLayerRect(RenderLayer* layer, const 
     // FIXME: This method does not work correctly with transforms.
     if (layer->isComposited())
         layer->setBackingNeedsRepaintInRect(rect);
+
+#if !ASSERT_DISABLED
+    LayerListMutationDetector mutationChecker(layer);
+#endif
 
     if (layer->hasCompositingDescendant()) {
         if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
@@ -2054,6 +2078,10 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer* layer) const
          style->hasPerspective() ||
          style->transform().has3DOperation()))
         return true;
+
+#if !ASSERT_DISABLED
+    LayerListMutationDetector mutationChecker(const_cast<RenderLayer*>(layer));
+#endif
 
     if (layer->isStackingContext()) {
         if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {

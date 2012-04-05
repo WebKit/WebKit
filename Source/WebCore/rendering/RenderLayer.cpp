@@ -165,6 +165,9 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_mustOverlapCompositedLayers(false)
 #endif
     , m_containsDirtyOverlayScrollbars(false)
+#if !ASSERT_DISABLED
+    , m_layerListMutationAllowed(true)
+#endif
     , m_canSkipRepaintRectsUpdateOnScroll(renderer->isTableCell())
     , m_renderer(renderer)
     , m_parent(0)
@@ -3132,7 +3135,11 @@ void RenderLayer::paintList(Vector<RenderLayer*>* list, RenderLayer* rootLayer, 
 {
     if (!list)
         return;
-    
+
+#if !ASSERT_DISABLED
+    LayerListMutationDetector mutationChecker(this);
+#endif
+
     for (size_t i = 0; i < list->size(); ++i) {
         RenderLayer* childLayer = list->at(i);
         if (!childLayer->isPaginated())
@@ -4122,6 +4129,10 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
     
     ASSERT(layer->isStackingContext() || (!layer->m_posZOrderList || !layer->m_posZOrderList->size()));
 
+#if !ASSERT_DISABLED
+    LayerListMutationDetector mutationChecker(const_cast<RenderLayer*>(layer));
+#endif
+
     if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
         size_t listSize = negZOrderList->size();
         for (size_t i = 0; i < listSize; ++i) {
@@ -4404,6 +4415,8 @@ static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
 
 void RenderLayer::dirtyZOrderLists()
 {
+    ASSERT(m_layerListMutationAllowed);
+
     if (m_posZOrderList)
         m_posZOrderList->clear();
     if (m_negZOrderList)
@@ -4425,6 +4438,8 @@ void RenderLayer::dirtyStackingContextZOrderLists()
 
 void RenderLayer::dirtyNormalFlowList()
 {
+    ASSERT(m_layerListMutationAllowed);
+
     if (m_normalFlowList)
         m_normalFlowList->clear();
     m_normalFlowListDirty = true;
@@ -4437,6 +4452,8 @@ void RenderLayer::dirtyNormalFlowList()
 
 void RenderLayer::updateZOrderListsSlowCase()
 {
+    ASSERT(m_layerListMutationAllowed);
+
 #if USE(ACCELERATED_COMPOSITING)
     bool includeHiddenLayers = compositor()->inCompositingMode();
 #else
@@ -4460,7 +4477,9 @@ void RenderLayer::updateNormalFlowList()
 {
     if (!m_normalFlowListDirty)
         return;
-        
+
+    ASSERT(m_layerListMutationAllowed);
+
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
         // Ignore non-overflow layers and reflections.
         if (child->isNormalFlowOnly() && (!m_reflection || reflectionLayer() != child)) {
