@@ -163,7 +163,7 @@ static void createWindowsKeyMap()
     // Set F_XX keys to the windowsKeyMap.
     for (unsigned int i = 1; i < 25; i++) {
         String key = "F" + String::number(i);
-        windowsKeyMap().set(key, VK_F1 + i);
+        windowsKeyMap().set(key, VK_F1 + i - 1);
     }
 }
 

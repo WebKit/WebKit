@@ -1319,7 +1319,6 @@ fast/events/event-view-toString.html
 fast/events/js-keyboard-event-creation.html
 fast/events/key-events-in-input-button.html
 fast/events/key-events-in-input-text.html
-fast/events/keydown-function-keys.html
 fast/events/keydown-numpad-keys.html
 fast/events/onsearch-enter.html
 fast/events/option-tab.html
