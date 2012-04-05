@@ -1,3 +1,55 @@
+2012-04-05  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Force compositing mode when backing store is not active
+        https://bugs.webkit.org/show_bug.cgi?id=83131
+
+        Reviewed by George Staikos.
+
+        RIM PR: 136381
+        Normally, the BlackBerry WebKit port resorts to direct rendering when
+        the backing store is not active. However, direct rendering is broken
+        with the OpenGL code path. This prevented multiple web pages from being
+        displayed at once with the new WebPageCompositor API.
+
+        Fixed by using accelerated compositing layer to render the root layer
+        instead of backing store. This will give us a tiled layer backing the
+        root layer, which for some use cases is even better than direct
+        rendering.
+
+        Reviewed internally by Filip Spacek.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::shouldDirectRenderingToWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPage::setVisible):
+        (BlackBerry::WebKit::WebPagePrivate::suspendBackingStore):
+        (BlackBerry::WebKit::WebPagePrivate::resumeBackingStore):
+        (BlackBerry::WebKit::WebPagePrivate::compositorDrawsRootLayer):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::setCompositorDrawsRootLayer):
+        (BlackBerry::WebKit::WebPagePrivate::drawLayersOnCommit):
+        (BlackBerry::WebKit::WebPagePrivate::scheduleRootLayerCommit):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayer):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayerIfNeeded):
+        (BlackBerry::WebKit::WebPagePrivate::rootLayerCommitTimerFired):
+        (BlackBerry::WebKit::WebPagePrivate::setRootLayerCompositingThread):
+        (BlackBerry::WebKit::WebPagePrivate::createCompositor):
+        (BlackBerry::WebKit::WebPagePrivate::suspendRootLayerCommit):
+        (BlackBerry::WebKit::WebPagePrivate::setNeedsOneShotDrawingSynchronization):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::WebPageCompositorPrivate):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::drawsRootLayer):
+        (WebKit):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::drawLayers):
+        * Api/WebPageCompositor_p.h:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::rootLayer):
+        (WebPageCompositorPrivate):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setDrawsRootLayer):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-04-05  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Clear local storage won't take effect until browser exit and relaunch

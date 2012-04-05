@@ -83,6 +83,8 @@
 #include "PlatformWheelEvent.h"
 #include "PluginDatabase.h"
 #include "PluginView.h"
+#include "RenderLayerBacking.h"
+#include "RenderLayerCompositor.h"
 #include "RenderText.h"
 #include "RenderThemeBlackBerry.h"
 #include "RenderTreeAsText.h"
@@ -155,6 +157,7 @@
 #define DEBUG_BLOCK_ZOOM 0
 #define DEBUG_TOUCH_EVENTS 0
 #define DEBUG_WEBPAGE_LOAD 0
+#define DEBUG_AC_COMMIT 0
 
 using namespace std;
 using namespace WebCore;
@@ -805,12 +808,8 @@ void WebPagePrivate::setLoadState(LoadState state)
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-            // FIXME: compositor may only be touched on the compositing thread.
-            // However, it's created/destroyed by a sync command so this is harmless.
-            if (m_compositor) {
-                m_compositor->setLayoutRectForCompositing(IntRect());
-                m_compositor->setContentsSizeForCompositing(IntSize());
-            }
+            if (isAcceleratedCompositingActive() && !compositorDrawsRootLayer())
+                syncDestroyCompositorOnCompositingThread();
 #endif
             m_previousContentsSize = IntSize();
             m_backingStore->d->resetRenderQueue();
@@ -2991,6 +2990,7 @@ void WebPage::setVisible(bool visible)
         // And release layer resources can reduce memory consumption.
         d->suspendRootLayerCommit();
 #endif
+
         return;
     }
 
@@ -3188,6 +3188,15 @@ void WebPage::onInputLocaleChanged(bool isRTL)
 void WebPagePrivate::suspendBackingStore()
 {
 #if USE(ACCELERATED_COMPOSITING)
+    if (m_backingStore->d->isOpenGLCompositing()) {
+        // A visible web page's backing store can be suspended when another web
+        // page is taking over the backing store.
+        if (m_visible)
+            setCompositorDrawsRootLayer(true);
+
+        return;
+    }
+
     resetCompositingSurface();
 #endif
 }
@@ -3196,10 +3205,6 @@ void WebPagePrivate::resumeBackingStore()
 {
     ASSERT(m_webPage->isVisible());
 
-#if USE(ACCELERATED_COMPOSITING)
-    setNeedsOneShotDrawingSynchronization();
-#endif
-
     bool directRendering = m_backingStore->d->shouldDirectRenderingToWindow();
     if (!m_backingStore->d->isActive()
         || shouldResetTilesWhenShown()
@@ -3207,6 +3212,12 @@ void WebPagePrivate::resumeBackingStore()
         // We need to reset all tiles so that we do not show any tiles whose content may
         // have been replaced by another WebPage instance (i.e. another tab).
         BackingStorePrivate::setCurrentBackingStoreOwner(m_webPage);
+
+        // If we're OpenGL compositing, switching to accel comp drawing of the root layer
+        // is a good substitute for backingstore blitting.
+        if (m_backingStore->d->isOpenGLCompositing())
+            setCompositorDrawsRootLayer(!m_backingStore->d->isActive());
+
         m_backingStore->d->orientationChanged(); // Updates tile geometry and creates visible tile buffer.
         m_backingStore->d->resetTiles(true /* resetBackground */);
         m_backingStore->d->updateTiles(false /* updateVisible */, false /* immediate */);
@@ -3215,9 +3226,16 @@ void WebPagePrivate::resumeBackingStore()
         if (m_backingStore->d->renderVisibleContents() && !m_backingStore->d->isSuspended() && !directRendering)
             m_backingStore->d->blitVisibleContents();
     } else {
+        if (m_backingStore->d->isOpenGLCompositing())
+           setCompositorDrawsRootLayer(false);
+
         // Rendering was disabled while we were hidden, so we need to update all tiles.
         m_backingStore->d->updateTiles(true /* updateVisible */, false /* immediate */);
     }
+
+#if USE(ACCELERATED_COMPOSITING)
+    setNeedsOneShotDrawingSynchronization();
+#endif
 
     setShouldResetTilesWhenShown(false);
 }
@@ -5171,6 +5189,37 @@ void WebPage::dispatchInspectorMessage(const std::string& message)
     d->m_page->inspectorController()->dispatchMessageFromFrontend(stringMessage);
 }
 
+bool WebPagePrivate::compositorDrawsRootLayer() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (Platform::userInterfaceThreadMessageClient()->isCurrentThread())
+        return m_compositor && m_compositor->drawsRootLayer();
+
+    // WebKit thread implementation:
+    RenderView* renderView = m_mainFrame->contentRenderer();
+    if (!renderView || !renderView->layer() || !renderView->layer()->backing())
+        return false;
+
+    return !renderView->layer()->backing()->paintingGoesToWindow();
+#else
+    return false;
+#endif
+}
+
+void WebPagePrivate::setCompositorDrawsRootLayer(bool compositorDrawsRootLayer)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_page->settings()->forceCompositingMode() == compositorDrawsRootLayer)
+        return;
+
+    // When the BlackBerry port forces compositing mode, the root layer stops
+    // painting to window and starts painting to layer instead.
+    m_page->settings()->setForceCompositingMode(compositorDrawsRootLayer);
+    if (FrameView* view = m_mainFrame->view())
+        view->updateCompositingLayers();
+#endif
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 void WebPagePrivate::drawLayersOnCommit()
 {
@@ -5179,7 +5228,7 @@ void WebPagePrivate::drawLayersOnCommit()
         // animations. And only if we don't need a one shot drawing sync.
         ASSERT(!needsOneShotDrawingSynchronization());
 
-        if (!m_webPage->isVisible() || !m_backingStore->d->isActive())
+        if (!m_webPage->isVisible())
             return;
 
         m_backingStore->d->willDrawLayersOnCommit();
@@ -5188,6 +5237,10 @@ void WebPagePrivate::drawLayersOnCommit()
             Platform::createMethodCallMessage(&WebPagePrivate::drawLayersOnCommit, this));
         return;
     }
+
+#if DEBUG_AC_COMMIT
+    Platform::log(Platform::LogLevelCritical, "%s", WTF_PRETTY_FUNCTION);
+#endif
 
     if (!m_backingStore->d->shouldDirectRenderingToWindow())
         m_backingStore->d->blitVisibleContents();
@@ -5199,8 +5252,12 @@ void WebPagePrivate::scheduleRootLayerCommit()
         return;
 
     m_needsCommit = true;
-    if (!m_rootLayerCommitTimer->isActive())
+    if (!m_rootLayerCommitTimer->isActive()) {
+#if DEBUG_AC_COMMIT
+        Platform::log(Platform::LogLevelCritical, "%s: m_rootLayerCommitTimer->isActive() = %d", WTF_PRETTY_FUNCTION, m_rootLayerCommitTimer->isActive());
+#endif
         m_rootLayerCommitTimer->startOneShot(0);
+    }
 }
 
 static bool needsLayoutRecursive(FrameView* view)
@@ -5246,18 +5303,38 @@ void WebPagePrivate::setCompositor(PassRefPtr<WebPageCompositorPrivate> composit
 }
 
 void WebPagePrivate::commitRootLayer(const IntRect& layoutRectForCompositing,
-                                     const IntSize& contentsSizeForCompositing)
+                                     const IntSize& contentsSizeForCompositing,
+                                     bool drawsRootLayer)
 {
+#if DEBUG_AC_COMMIT
+    Platform::log(Platform::LogLevelCritical, "%s: m_compositor = 0x%x",
+            WTF_PRETTY_FUNCTION, m_compositor.get());
+#endif
+
     if (!m_frameLayers || !m_compositor)
         return;
 
+    if (m_frameLayers->rootLayer() && m_frameLayers->rootLayer()->layerCompositingThread() != m_compositor->rootLayer())
+        m_compositor->setRootLayer(m_frameLayers->rootLayer()->layerCompositingThread());
+
     m_compositor->setLayoutRectForCompositing(layoutRectForCompositing);
     m_compositor->setContentsSizeForCompositing(contentsSizeForCompositing);
+    m_compositor->setDrawsRootLayer(drawsRootLayer);
     m_compositor->commit(m_frameLayers->rootLayer());
 }
 
 bool WebPagePrivate::commitRootLayerIfNeeded()
 {
+#if DEBUG_AC_COMMIT
+    Platform::log(Platform::LogLevelCritical, "%s: m_suspendRootLayerCommit = %d, m_needsCommit = %d, m_frameLayers = 0x%x, m_frameLayers->hasLayer() = %d, needsLayoutRecursive() = %d",
+            WTF_PRETTY_FUNCTION,
+            m_suspendRootLayerCommit,
+            m_needsCommit,
+            m_frameLayers.get(),
+            m_frameLayers && m_frameLayers->hasLayer(),
+            m_mainFrame && m_mainFrame->view() && needsLayoutRecursive(m_mainFrame->view()));
+#endif
+
     if (m_suspendRootLayerCommit)
         return false;
 
@@ -5297,6 +5374,7 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
     // and that's what the layer renderer wants.
     IntRect layoutRectForCompositing(scrollPosition(), actualVisibleSize());
     IntSize contentsSizeForCompositing = contentsSize();
+    bool drawsRootLayer = compositorDrawsRootLayer();
 
     // Commit changes made to the layers synchronously with the compositing thread.
     Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
@@ -5304,7 +5382,8 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
             &WebPagePrivate::commitRootLayer,
             this,
             layoutRectForCompositing,
-            contentsSizeForCompositing));
+            contentsSizeForCompositing,
+            drawsRootLayer));
 
     return true;
 }
@@ -5314,6 +5393,10 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
     if (m_suspendRootLayerCommit)
         return;
 
+#if DEBUG_AC_COMMIT
+    Platform::log(Platform::LogLevelCritical, "%s", WTF_PRETTY_FUNCTION);
+#endif
+
     // The commit timer may have fired just before the layout timer, or for some
     // other reason we need layout. It's not allowed to commit when a layout is
     // pending, becaues a commit can cause parts of the web page to be rendered
@@ -5322,20 +5405,30 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
     // to handle a one shot drawing synchronization after the layout.
     requestLayoutIfNeeded();
 
-    bool isSingleTargetWindow = SurfacePool::globalSurfacePool()->compositingSurface()
-        || m_backingStore->d->isOpenGLCompositing();
+    // If we transitioned to drawing the root layer using compositor instead of
+    // backing store, doing a one shot drawing synchronization with the
+    // backing store is never necessary, because the backing store draws
+    // nothing.
+    if (compositorDrawsRootLayer()) {
+        bool isSingleTargetWindow = SurfacePool::globalSurfacePool()->compositingSurface()
+            || m_backingStore->d->isOpenGLCompositing();
 
-    // If we are doing direct rendering and have a single rendering target,
-    // committing is equivalent to a one shot drawing synchronization.
-    // We need to re-render the web page, re-render the layers, and
-    // then blit them on top of the re-rendered web page.
-    if (isSingleTargetWindow && m_backingStore->d->shouldDirectRenderingToWindow())
-        setNeedsOneShotDrawingSynchronization();
+        // If we are doing direct rendering and have a single rendering target,
+        // committing is equivalent to a one shot drawing synchronization.
+        // We need to re-render the web page, re-render the layers, and
+        // then blit them on top of the re-rendered web page.
+        if (isSingleTargetWindow && m_backingStore->d->shouldDirectRenderingToWindow())
+            setNeedsOneShotDrawingSynchronization();
 
-    if (needsOneShotDrawingSynchronization()) {
-        const IntRect windowRect = IntRect(IntPoint::zero(), viewportSize());
-        m_backingStore->d->repaint(windowRect, true /*contentChanged*/, true /*immediate*/);
-        return;
+        if (needsOneShotDrawingSynchronization()) {
+#if DEBUG_AC_COMMIT
+            Platform::log(Platform::LogLevelCritical, "%s: OneShotDrawingSynchronization code path!", WTF_PRETTY_FUNCTION);
+#endif
+
+            const IntRect windowRect = IntRect(IntPoint::zero(), viewportSize());
+            m_backingStore->d->repaint(windowRect, true /*contentChanged*/, true /*immediate*/);
+            return;
+        }
     }
 
     // If the web page needs layout, the commit will fail.
@@ -5395,19 +5488,12 @@ void WebPagePrivate::setRootLayerCompositingThread(LayerCompositingThread* layer
         return;
     }
 
-    // Depending on whether we have a root layer or not,
-    // this method will turn on or off accelerated compositing.
     if (!layer) {
-         // Don't ASSERT(m_compositor) here because we may be called in
-         // the process of destruction of WebPage where we have already
-         // called syncDestroyCompositorOnCompositingThread() to destroy
-         // the compositor.
-         destroyCompositor();
-         resetCompositingSurface();
-         return;
-    }
-
-    if (!m_compositor)
+        // Keep the compositor around, a single web page will frequently enter
+        // and leave compositing mode many times. Instead we destroy it when
+        // navigating to a new page.
+        resetCompositingSurface();
+    } else if (!m_compositor)
         createCompositor();
 
     // Don't ASSERT(m_compositor) here because setIsAcceleratedCompositingActive(true)
@@ -5418,6 +5504,10 @@ void WebPagePrivate::setRootLayerCompositingThread(LayerCompositingThread* layer
 
 bool WebPagePrivate::createCompositor()
 {
+    // If there's no window, the compositor will be supplied by the API client
+    if (!m_client->window())
+        return false;
+
     m_ownedContext = GLES2Context::create(this);
     m_compositor = WebPageCompositorPrivate::create(this, 0);
     m_compositor->setContext(m_ownedContext.get());
@@ -5464,7 +5554,7 @@ void WebPagePrivate::suspendRootLayerCommit()
 
     m_suspendRootLayerCommit = true;
 
-    if (!m_frameLayers || !m_frameLayers->hasLayer() || !m_compositor)
+    if (!m_compositor)
         return;
 
     Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
@@ -5490,6 +5580,11 @@ bool WebPagePrivate::needsOneShotDrawingSynchronization()
 
 void WebPagePrivate::setNeedsOneShotDrawingSynchronization()
 {
+    if (compositorDrawsRootLayer()) {
+        scheduleRootLayerCommit();
+        return;
+    }
+
     // This means we have to commit layers on next render, or render on the next commit,
     // whichever happens first.
     m_needsCommit = true;

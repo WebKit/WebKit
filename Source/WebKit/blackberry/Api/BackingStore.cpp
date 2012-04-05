@@ -243,8 +243,20 @@ BackingStorePrivate::~BackingStorePrivate()
 
 bool BackingStorePrivate::shouldDirectRenderingToWindow() const
 {
-    if (m_webPage->settings()->isDirectRenderingToWindowEnabled() || !isActive())
+    // Direct rendering doesn't work with OpenGL compositing code paths due to
+    // a race condition on which thread's EGL context gets to make the surface
+    // current, see PR 105750.
+    // As a workaround, we will be using compositor to draw the root layer.
+    if (isOpenGLCompositing())
+        return false;
+
+    if (m_webPage->settings()->isDirectRenderingToWindowEnabled())
         return true;
+
+    // If the BackingStore is inactive, see if there's a compositor to do the
+    // work of rendering the root layer.
+    if (!isActive())
+        return !m_webPage->d->compositorDrawsRootLayer();
 
     const BackingStoreGeometry* currentState = frontState();
     const unsigned tilesNecessary = minimumNumberOfTilesWide() * minimumNumberOfTilesHigh();
@@ -1222,7 +1234,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
     if (shouldDirectRenderingToWindow())
         return;
 
-    if (!m_webPage->isVisible() || m_suspendScreenUpdates || !isActive()) {
+    if (!m_webPage->isVisible() || m_suspendScreenUpdates) {
         // Avoid client going into busy loop while blit is impossible.
         if (force)
             m_hasBlitJobs = false;
@@ -1258,7 +1270,6 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 
     m_hasBlitJobs = false;
 
-    BackingStoreGeometry* currentState = frontState();
     const Platform::IntRect contentsRect = Platform::IntRect(Platform::IntPoint(0, 0), m_client->transformedContentsSize());
 
 #if DEBUG_VISUALIZE
@@ -1267,7 +1278,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
     // can visualize the entire backingstore and what it is doing when we
     // scroll and zoom!
     // FIXME: This should not explicitely depend on WebCore::.
-    WebCore::IntRect debugRect = currentState->backingStoreRect();
+    WebCore::IntRect debugRect = frontState()->backingStoreRect();
     debugRect.unite(m_webPage->client()->userInterfaceBlittedVisibleContentsRect());
     if (debugRect.width() < debugRect.height())
         debugRect.setWidth(ceil(double(srcRect.width()) * (double(debugRect.height()) / srcRect.height())));
@@ -1283,8 +1294,6 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
     if (!contents.isEmpty())
         transformation = TransformationMatrix::rectToRect(FloatRect(FloatPoint(0.0, 0.0), WebCore::IntSize(contents.size())), WebCore::IntRect(dstRect));
 
-    bool blittingDirectlyToCompositingWindow = isOpenGLCompositing();
-
 #if DEBUG_BACKINGSTORE
     BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical,
                            "BackingStorePrivate::blitContents dstRect=(%d,%d %dx%d) srcRect=(%d,%d %dx%d)",
@@ -1295,126 +1304,87 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
     Platform::IntPoint origin = contents.location();
     Platform::IntRect contentsClipped = contents;
 
-    paintDefaultBackground(contents, transformation, false /*flush*/);
-
-    TileMap currentMap = currentState->tileMap();
-
-#if DEBUG_CHECKERBOARD
-    bool blitCheckered = false;
-#endif
-
-    // Don't clip to contents if it is empty so we can still paint default background.
-    if (!contentsRect.isEmpty()) {
-        contentsClipped.intersect(contentsRect);
-        if (contentsClipped.isEmpty()) {
-            invalidateWindow(dstRect);
-            return;
-        }
-
-        Platform::IntRectRegion contentsRegion = contentsClipped;
-        Platform::IntRectRegion backingStoreRegion = currentState->backingStoreRect();
-        Platform::IntRectRegion checkeredRegion
-            = Platform::IntRectRegion::subtractRegions(contentsRegion, backingStoreRegion);
-
-        // Blit checkered to those parts that are not covered by the backingStoreRect.
-        IntRectList checkeredRects = checkeredRegion.rects();
-        for (size_t i = 0; i < checkeredRects.size(); ++i) {
-            Platform::IntRect dstRect = transformation.mapRect(Platform::IntRect(
-                Platform::IntPoint(checkeredRects.at(i).x() - origin.x(), checkeredRects.at(i).y() - origin.y()),
-                                   checkeredRects.at(i).size()));
-#if DEBUG_CHECKERBOARD
-            blitCheckered = true;
-#endif
-            checkerWindow(dstRect, checkeredRects.at(i).location(), transformation.a());
-        }
-    }
-
     Vector<TileBuffer*> blittedTiles;
 
-    // Get the list of tile rects that makeup the content.
-    TileRectList tileRectList = mapFromTransformedContentsToTiles(contentsClipped, currentState);
-    for (size_t i = 0; i < tileRectList.size(); ++i) {
-        TileRect tileRect = tileRectList[i];
-        TileIndex index = tileRect.first;
-        Platform::IntRect dirtyTileRect = tileRect.second;
-        BackingStoreTile* tile = currentMap.get(index);
-        TileBuffer* tileBuffer = tile->frontBuffer();
+    if (isActive() && !m_webPage->d->compositorDrawsRootLayer()) {
+        paintDefaultBackground(contents, transformation, false /*flush*/);
 
-        // This dirty rect is in tile coordinates, but it needs to be in
-        // transformed contents coordinates.
-        Platform::IntRect dirtyRect
-            = mapFromTilesToTransformedContents(tileRect, currentState->backingStoreRect());
+        BackingStoreGeometry* currentState = frontState();
+        TileMap currentMap = currentState->tileMap();
+
+#if DEBUG_CHECKERBOARD
+        bool blitCheckered = false;
+#endif
 
         // Don't clip to contents if it is empty so we can still paint default background.
         if (!contentsRect.isEmpty()) {
-            // Otherwise we should clip the contents size and blit.
-            dirtyRect.intersect(contentsRect);
-
-            // We probably have extra tiles since the contents size is so small.
-            // Save some cycles here...
-            if (dirtyRect.isEmpty())
-                continue;
-        }
-
-        // Now, this dirty rect is in transformed coordinates relative to the
-        // transformed contents, but ultimately it needs to be transformed
-        // coordinates relative to the viewport.
-        dirtyRect.move(-origin.x(), -origin.y());
-
-        // Save some cycles here...
-        if (dirtyRect.isEmpty() || dirtyTileRect.isEmpty())
-            continue;
-
-        TileRect wholeTileRect;
-        wholeTileRect.first = index;
-        wholeTileRect.second = this->tileRect();
-
-        bool committed = tile->isCommitted();
-        bool rendered = tileBuffer->isRendered(dirtyTileRect);
-        bool paintCheckered = !committed || !rendered;
-
-        if (paintCheckered) {
-            Platform::IntRect dirtyRectT = transformation.mapRect(dirtyRect);
-
-            if (!transformation.isIdentity()) {
-                // Because of rounding it is possible that dirtyRect could be off-by-one larger
-                // than the surface size of the dst buffer. We prevent this here, by clamping
-                // it to ensure that can't happen.
-                dirtyRectT.intersect(Platform::IntRect(Platform::IntPoint(0, 0), surfaceSize()));
+            contentsClipped.intersect(contentsRect);
+            if (contentsClipped.isEmpty()) {
+                invalidateWindow(dstRect);
+                return;
             }
-            const Platform::IntPoint contentsOrigin(dirtyRect.x() + origin.x(), dirtyRect.y() + origin.y());
+
+            Platform::IntRectRegion contentsRegion = contentsClipped;
+            Platform::IntRectRegion backingStoreRegion = currentState->backingStoreRect();
+            Platform::IntRectRegion checkeredRegion
+                = Platform::IntRectRegion::subtractRegions(contentsRegion, backingStoreRegion);
+
+            // Blit checkered to those parts that are not covered by the backingStoreRect.
+            IntRectList checkeredRects = checkeredRegion.rects();
+            for (size_t i = 0; i < checkeredRects.size(); ++i) {
+                Platform::IntRect dstRect = transformation.mapRect(Platform::IntRect(
+                    Platform::IntPoint(checkeredRects.at(i).x() - origin.x(), checkeredRects.at(i).y() - origin.y()),
+                                       checkeredRects.at(i).size()));
 #if DEBUG_CHECKERBOARD
-            blitCheckered = true;
+                blitCheckered = true;
 #endif
-            checkerWindow(dirtyRectT, contentsOrigin, transformation.a());
+                checkerWindow(dstRect, checkeredRects.at(i).location(), transformation.a());
+            }
         }
 
-        // Blit the visible buffer here if we have visible zoom jobs.
-        if (m_renderQueue->hasCurrentVisibleZoomJob()) {
+        // Get the list of tile rects that makeup the content.
+        TileRectList tileRectList = mapFromTransformedContentsToTiles(contentsClipped, currentState);
+        for (size_t i = 0; i < tileRectList.size(); ++i) {
+            TileRect tileRect = tileRectList[i];
+            TileIndex index = tileRect.first;
+            Platform::IntRect dirtyTileRect = tileRect.second;
+            BackingStoreTile* tile = currentMap.get(index);
+            TileBuffer* tileBuffer = tile->frontBuffer();
 
-            // Needs to be in same coordinate system as dirtyRect.
-            Platform::IntRect visibleTileBufferRect = m_visibleTileBufferRect;
-            visibleTileBufferRect.move(-origin.x(), -origin.y());
+            // This dirty rect is in tile coordinates, but it needs to be in
+            // transformed contents coordinates.
+            Platform::IntRect dirtyRect
+                = mapFromTilesToTransformedContents(tileRect, currentState->backingStoreRect());
 
-            // Clip to the visibleTileBufferRect.
-            dirtyRect.intersect(visibleTileBufferRect);
+            // Don't clip to contents if it is empty so we can still paint default background.
+            if (!contentsRect.isEmpty()) {
+                // Otherwise we should clip the contents size and blit.
+                dirtyRect.intersect(contentsRect);
 
-            // Clip to the dirtyRect.
-            visibleTileBufferRect.intersect(dirtyRect);
+                // We probably have extra tiles since the contents size is so small.
+                // Save some cycles here...
+                if (dirtyRect.isEmpty())
+                    continue;
+            }
 
-            if (!dirtyRect.isEmpty() && !visibleTileBufferRect.isEmpty()) {
-                BackingStoreTile* visibleTileBuffer
-                    = SurfacePool::globalSurfacePool()->visibleTileBuffer();
-                ASSERT(visibleTileBuffer->size() == visibleContentsRect().size());
+            // Now, this dirty rect is in transformed coordinates relative to the
+            // transformed contents, but ultimately it needs to be transformed
+            // coordinates relative to the viewport.
+            dirtyRect.move(-origin.x(), -origin.y());
 
-                // The offset of the current viewport with the visble tile buffer.
-                Platform::IntPoint difference = origin - m_visibleTileBufferRect.location();
-                Platform::IntSize offset = Platform::IntSize(difference.x(), difference.y());
+            // Save some cycles here...
+            if (dirtyRect.isEmpty() || dirtyTileRect.isEmpty())
+                continue;
 
-                // Map to the visibleTileBuffer coordinates.
-                Platform::IntRect dirtyTileRect = visibleTileBufferRect;
-                dirtyTileRect.move(offset.width(), offset.height());
+            TileRect wholeTileRect;
+            wholeTileRect.first = index;
+            wholeTileRect.second = this->tileRect();
 
+            bool committed = tile->isCommitted();
+            bool rendered = tileBuffer->isRendered(dirtyTileRect);
+            bool paintCheckered = !committed || !rendered;
+
+            if (paintCheckered) {
                 Platform::IntRect dirtyRectT = transformation.mapRect(dirtyRect);
 
                 if (!transformation.isIdentity()) {
@@ -1423,33 +1393,79 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
                     // it to ensure that can't happen.
                     dirtyRectT.intersect(Platform::IntRect(Platform::IntPoint(0, 0), surfaceSize()));
                 }
+                const Platform::IntPoint contentsOrigin(dirtyRect.x() + origin.x(), dirtyRect.y() + origin.y());
+#if DEBUG_CHECKERBOARD
+                blitCheckered = true;
+#endif
+                checkerWindow(dirtyRectT, contentsOrigin, transformation.a());
+            }
 
-                blitToWindow(dirtyRectT,
-                             visibleTileBuffer->frontBuffer()->nativeBuffer(),
-                             dirtyTileRect,
-                             false /*blend*/, 255);
+            // Blit the visible buffer here if we have visible zoom jobs.
+            if (m_renderQueue->hasCurrentVisibleZoomJob()) {
+
+                // Needs to be in same coordinate system as dirtyRect.
+                Platform::IntRect visibleTileBufferRect = m_visibleTileBufferRect;
+                visibleTileBufferRect.move(-origin.x(), -origin.y());
+
+                // Clip to the visibleTileBufferRect.
+                dirtyRect.intersect(visibleTileBufferRect);
+
+                // Clip to the dirtyRect.
+                visibleTileBufferRect.intersect(dirtyRect);
+
+                if (!dirtyRect.isEmpty() && !visibleTileBufferRect.isEmpty()) {
+                    BackingStoreTile* visibleTileBuffer
+                        = SurfacePool::globalSurfacePool()->visibleTileBuffer();
+                    ASSERT(visibleTileBuffer->size() == visibleContentsRect().size());
+
+                    // The offset of the current viewport with the visble tile buffer.
+                    Platform::IntPoint difference = origin - m_visibleTileBufferRect.location();
+                    Platform::IntSize offset = Platform::IntSize(difference.x(), difference.y());
+
+                    // Map to the visibleTileBuffer coordinates.
+                    Platform::IntRect dirtyTileRect = visibleTileBufferRect;
+                    dirtyTileRect.move(offset.width(), offset.height());
+
+                    Platform::IntRect dirtyRectT = transformation.mapRect(dirtyRect);
+
+                    if (!transformation.isIdentity()) {
+                        // Because of rounding it is possible that dirtyRect could be off-by-one larger
+                        // than the surface size of the dst buffer. We prevent this here, by clamping
+                        // it to ensure that can't happen.
+                        dirtyRectT.intersect(Platform::IntRect(Platform::IntPoint(0, 0), surfaceSize()));
+                    }
+
+                    blitToWindow(dirtyRectT,
+                                 visibleTileBuffer->frontBuffer()->nativeBuffer(),
+                                 dirtyTileRect,
+                                 false /*blend*/, 255);
+                }
+            } else if (committed) {
+                // Intersect the rendered region.
+                Platform::IntRectRegion renderedRegion = tileBuffer->renderedRegion();
+                IntRectList dirtyRenderedRects = renderedRegion.rects();
+                for (size_t i = 0; i < dirtyRenderedRects.size(); ++i) {
+                    TileRect tileRect;
+                    tileRect.first = index;
+                    tileRect.second = intersection(dirtyTileRect, dirtyRenderedRects.at(i));
+                    if (tileRect.second.isEmpty())
+                        continue;
+                    // Blit the rendered parts.
+                    blitTileRect(tileBuffer, tileRect, origin, transformation, currentState);
+                }
+                blittedTiles.append(tileBuffer);
             }
-        } else if (committed) {
-            // Intersect the rendered region.
-            Platform::IntRectRegion renderedRegion = tileBuffer->renderedRegion();
-            IntRectList dirtyRenderedRects = renderedRegion.rects();
-            for (size_t i = 0; i < dirtyRenderedRects.size(); ++i) {
-                TileRect tileRect;
-                tileRect.first = index;
-                tileRect.second = intersection(dirtyTileRect, dirtyRenderedRects.at(i));
-                if (tileRect.second.isEmpty())
-                    continue;
-                // Blit the rendered parts.
-                blitTileRect(tileBuffer, tileRect, origin, transformation, currentState);
-            }
-            blittedTiles.append(tileBuffer);
         }
     }
+
+    bool blittingDirectlyToCompositingWindow = isOpenGLCompositing();
 
 #if USE(ACCELERATED_COMPOSITING)
     if (WebPageCompositorPrivate* compositor = m_webPage->d->compositor()) {
         WebCore::FloatRect contentsRect = m_webPage->d->mapFromTransformedFloatRect(WebCore::FloatRect(WebCore::IntRect(contents)));
         compositor->drawLayers(dstRect, contentsRect);
+        if (compositor->drawsRootLayer())
+            paintDefaultBackground(contents, transformation, false /*flush*/);
     }
 
     if (!blittingDirectlyToCompositingWindow)
@@ -1514,7 +1530,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 
     invalidateWindow(dstRect);
 
-    if (blittingDirectlyToCompositingWindow) {
+    if (blittingDirectlyToCompositingWindow && !blittedTiles.isEmpty()) {
         pthread_mutex_lock(&m_blitGenerationLock);
 
         ++m_blitGeneration;

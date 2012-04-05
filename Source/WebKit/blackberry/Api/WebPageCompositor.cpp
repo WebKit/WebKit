@@ -44,6 +44,7 @@ WebPageCompositorPrivate::WebPageCompositorPrivate(WebPagePrivate* page, WebPage
     : m_client(client)
     , m_webPage(page)
     , m_pendingAnimationFrame(0.0)
+    , m_drawsRootLayer(false)
 {
     setOneShot(true); // one-shot animation client
 }
@@ -107,6 +108,11 @@ void WebPageCompositorPrivate::render(const IntRect& dstRect, const IntRect& tra
     }
 }
 
+bool WebPageCompositorPrivate::drawsRootLayer() const
+{
+    return m_drawsRootLayer;
+}
+
 bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRect& contents)
 {
     if (!m_layerRenderer)
@@ -114,9 +120,9 @@ bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRec
 
     m_pendingAnimationFrame = 0.0;
 
-    bool shouldClear = false;
+    bool shouldClear = drawsRootLayer();
     if (BackingStore* backingStore = m_webPage->m_backingStore)
-        shouldClear = !backingStore->d->isOpenGLCompositing();
+        shouldClear = shouldClear || !backingStore->d->isOpenGLCompositing();
     m_layerRenderer->setClearSurfaceOnDrawLayers(shouldClear);
 
     m_layerRenderer->drawLayers(contents, m_layoutRectForCompositing, m_contentsSizeForCompositing, dstRect);

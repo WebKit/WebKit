@@ -55,6 +55,7 @@ public:
     Platform::Graphics::GLES2Context* context() const { return m_context; }
     void setContext(Platform::Graphics::GLES2Context*);
 
+    WebCore::LayerCompositingThread* rootLayer() const { return m_rootLayer.get(); }
     void setRootLayer(WebCore::LayerCompositingThread*);
 
     void commit(WebCore::LayerWebKitThread* rootLayerProxy);
@@ -62,7 +63,11 @@ public:
     // This is mapped from the public API, thus takes transformed contents
     void render(const WebCore::IntRect& dstRect, const WebCore::IntRect& transformedContents);
 
-    // Render everything but the root layer
+    // Returns true if the WebPageCompositor draws the root layer, false if the BackingStore draws the root layer
+    bool drawsRootLayer() const;
+    void setDrawsRootLayer(bool drawsRootLayer) { m_drawsRootLayer = drawsRootLayer; }
+
+    // Render everything but the root layer, or everything if drawsRootLayer() is true.
     bool drawLayers(const WebCore::IntRect& dstRect, const WebCore::FloatRect& contents);
 
     WebCore::IntRect layoutRectForCompositing() const { return m_layoutRectForCompositing; }
@@ -97,6 +102,7 @@ private:
     WebCore::IntSize m_contentsSizeForCompositing;
     WebCore::LayerRenderingResults m_lastCompositingResults;
     double m_pendingAnimationFrame;
+    bool m_drawsRootLayer;
 };
 
 } // namespace WebKit

@@ -356,6 +356,9 @@ public:
         return m_transformationMatrix;
     }
 
+    bool compositorDrawsRootLayer() const; // Thread safe
+    void setCompositorDrawsRootLayer(bool); // WebKit thread only
+
 #if USE(ACCELERATED_COMPOSITING)
     // WebKit thread.
     bool needsOneShotDrawingSynchronization();
@@ -374,7 +377,7 @@ public:
 
     // Compositing thread.
     void setRootLayerCompositingThread(WebCore::LayerCompositingThread*);
-    void commitRootLayer(const WebCore::IntRect&, const WebCore::IntSize&);
+    void commitRootLayer(const WebCore::IntRect&, const WebCore::IntSize&, bool);
     bool isAcceleratedCompositingActive() const { return m_compositor; }
     WebPageCompositorPrivate* compositor() const { return m_compositor.get(); }
     void setCompositor(PassRefPtr<WebPageCompositorPrivate>);
