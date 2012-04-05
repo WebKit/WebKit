@@ -534,10 +534,6 @@ void CCLayerTreeHostTest::doBeginTest()
     m_client = MockLayerTreeHostClient::create(this);
 
     RefPtr<LayerChromium> rootLayer = LayerChromium::create();
-
-    // Only non-empty root layers will cause drawing to happen.
-    rootLayer->setBounds(IntSize(1, 1));
-
     m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, m_settings);
     ASSERT_TRUE(m_layerTreeHost);
     rootLayer->setLayerTreeHost(m_layerTreeHost.get());
@@ -823,56 +819,6 @@ private:
 };
 
 TEST_F(CCLayerTreeHostTestSetNeedsRedraw, runMultiThread)
-{
-    runTestThreaded();
-}
-
-// If the root layer has no content bounds, we should see a commit, but should not be
-// pushing any frames as the contents will be undefined. Regardless, forced draws need
-// to always signal completion.
-class CCLayerTreeHostTestEmptyContentsShouldNotDraw : public CCLayerTreeHostTestThreadOnly {
-public:
-    CCLayerTreeHostTestEmptyContentsShouldNotDraw()
-        : m_numCommits(0)
-    {
-    }
-
-    virtual void beginTest()
-    {
-    }
-
-    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
-    {
-        // Only the initial draw should bring us here.
-        EXPECT_FALSE(impl->rootLayer()->bounds().isEmpty());
-    }
-
-    virtual void didCommitAndDrawFrame()
-    {
-        m_numCommits++;
-        if (m_numCommits == 1) {
-            // Put an empty root layer.
-            RefPtr<LayerChromium> rootLayer = LayerChromium::create();
-            m_layerTreeHost->setRootLayer(rootLayer);
-
-            OwnArrayPtr<char> pixels(adoptArrayPtr(new char[4]));
-            m_layerTreeHost->compositeAndReadback(static_cast<void*>(pixels.get()), IntRect(0, 0, 1, 1));
-        } else if (m_numCommits == 2) {
-            m_layerTreeHost->setNeedsCommit();
-            m_layerTreeHost->finishAllRendering();
-            endTest();
-        }
-    }
-
-    virtual void afterTest()
-    {
-    }
-
-private:
-    int m_numCommits;
-};
-
-TEST_F(CCLayerTreeHostTestEmptyContentsShouldNotDraw, runMultiThread)
 {
     runTestThreaded();
 }
