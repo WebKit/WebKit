@@ -3414,16 +3414,12 @@ BUGWK76647 WIN LINUX : svg/custom/object-sizing-width-50p-height-75p-on-target-s
 BUGWK76647 WIN LINUX : svg/custom/object-sizing-width-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
 BUGWK76647 WIN LINUX : svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
 
-BUGWK69714 WIN LINUX : svg/clip-path/clip-path-tspan-and-stroke.svg = IMAGE+TEXT
-
 // Need to implement file name logging.
 BUGWK76572 : http/tests/download = FAIL
 
 BUGWK76967 : media/media-fragments/TC0030-TC0039.html = PASS TIMEOUT
 
 BUGABARTH : fast/html/marquee-alternate.html = PASS TEXT
-
-BUGWK77061 XP DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE+TEXT
 
 BUGWK77188 MAC : platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
 
@@ -3444,14 +3440,11 @@ BUGWK77397 : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT 
 // Started crashing at WK r106422.
 BUGWK77508 SKIP : platform/mac/fast/events/non-roman-key-code.html = FAIL
 
-BUGWK77526 WIN LINUX : svg/text/text-align-04-b.svg = PASS IMAGE
-
 BUGWK77534 LINUX : plugins/createScriptableObject-before-start.html = PASS MISSING
 
 BUGWK77889 WIN DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
 BUGWK77889 LINUX DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
 BUGWK77889 LEOPARD SNOWLEOPARD DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
-
 
 BUGWK78159 DEBUG WIN MAC LINUX : compositing/iframes/scrolling-iframe.html = PASS TEXT
 
