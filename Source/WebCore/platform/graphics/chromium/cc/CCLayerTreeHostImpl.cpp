@@ -142,9 +142,7 @@ void CCLayerTreeHostImpl::commitComplete()
 
 bool CCLayerTreeHostImpl::canDraw()
 {
-    // FIXME: Reenable after figuring out why this causes the gpu_test
-    // ThreadedCompositorTest.ThreadedCompositor to fail.
-    if (!rootLayer())  // || rootLayer()->bounds().isEmpty())
+    if (!rootLayer() || rootLayer()->bounds().isEmpty())
         return false;
     if (viewportSize().isEmpty())
         return false;
