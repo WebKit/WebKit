@@ -433,8 +433,6 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
                 IntRect visibleTileRect = intersection(m_tiler->tileBounds(i, j), visibleLayerRect());
                 if (occlusion->occluded(this, visibleTileRect)) {
                     ASSERT(!tile->m_updated);
-                    // Save the area we culled for recording metrics.
-                    tile->m_updateRect = tile->m_dirtyRect;
                     continue;
                 }
             }
@@ -478,6 +476,8 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             UpdatableTile* tile = tileAt(i, j);
             if (tile->m_updated)
                 tile->copyAndClearDirty();
+            else if (!idle && occlusion && tile->isDirty())
+                occlusion->overdrawMetrics().didCullTileForUpload();
         }
     }
 
@@ -510,23 +510,13 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
 
             IntRect tileRect = m_tiler->tileBounds(i, j);
 
+            if (!tile->m_updated)
+                continue;
+
             // Use m_updateRect as the above loop copied the dirty rect for this frame to m_updateRect.
             const IntRect& dirtyRect = tile->m_updateRect;
             if (dirtyRect.isEmpty())
                 continue;
-
-            // sourceRect starts as a full-sized tile with border texels included.
-            IntRect sourceRect = m_tiler->tileRect(tile);
-            sourceRect.intersect(dirtyRect);
-            // Paint rect not guaranteed to line up on tile boundaries, so
-            // make sure that sourceRect doesn't extend outside of it.
-            sourceRect.intersect(m_paintRect);
-
-            if (!tile->m_updated) {
-                if (occlusion)
-                    occlusion->overdrawMetrics().didCull(TransformationMatrix(), sourceRect, IntRect());
-                continue;
-            }
 
             // Save what was painted opaque in the tile. Keep the old area if the paint didn't touch it, and didn't paint some
             // other part of the tile opaque.
@@ -541,13 +531,20 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
                     tile->setOpaqueRect(tilePaintedOpaqueRect);
             }
 
+            // sourceRect starts as a full-sized tile with border texels included.
+            IntRect sourceRect = m_tiler->tileRect(tile);
+            sourceRect.intersect(dirtyRect);
+            // Paint rect not guaranteed to line up on tile boundaries, so
+            // make sure that sourceRect doesn't extend outside of it.
+            sourceRect.intersect(m_paintRect);
+
             tile->m_updateRect = sourceRect;
             if (sourceRect.isEmpty())
                 continue;
 
             tile->texture()->prepareRect(sourceRect);
             if (occlusion)
-                occlusion->overdrawMetrics().didDraw(TransformationMatrix(), sourceRect, tile->opaqueRect());
+                occlusion->overdrawMetrics().didUpload(TransformationMatrix(), sourceRect, tile->opaqueRect());
         }
     }
 }

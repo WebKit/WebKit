@@ -38,12 +38,20 @@ class CCOverdrawMetrics {
 public:
     static PassOwnPtr<CCOverdrawMetrics> create(bool recordMetricsForFrame) { return adoptPtr(new CCOverdrawMetrics(recordMetricsForFrame)); }
 
+    // These methods are used for saving metrics during update/commit.
+
     // Record pixels painted by WebKit into the texture updater, but does not mean the pixels were rasterized in main memory.
     void didPaint(const IntRect& paintedRect);
+    // Records that an invalid tile was culled and did not need to be painted/uploaded, and did not contribute to other tiles needing to be painted.
+    void didCullTileForUpload();
+    // Records pixels that were uploaded to texture memory.
+    void didUpload(const TransformationMatrix& transformToTarget, const IntRect& uploadRect, const IntRect& opaqueRect);
 
-    // Record pixels that were not uploaded/drawn to screen.
-    void didCull(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect);
-    // Record pixels that were uploaded/drawn to screen.
+    // These methods are used for saving metrics during draw.
+
+    // Record pixels that were not drawn to screen.
+    void didCullForDrawing(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect);
+    // Record pixels that were drawn to screen.
     void didDraw(const TransformationMatrix& transformToTarget, const IntRect& afterCullRect, const IntRect& opaqueRect);
 
     void recordMetrics(const CCLayerTreeHost*) const;
@@ -52,31 +60,45 @@ public:
     // Accessors for tests.
     float pixelsDrawnOpaque() const { return m_pixelsDrawnOpaque; }
     float pixelsDrawnTranslucent() const { return m_pixelsDrawnTranslucent; }
-    float pixelsCulled() const { return m_pixelsCulled; }
+    float pixelsCulledForDrawing() const { return m_pixelsCulledForDrawing; }
     float pixelsPainted() const { return m_pixelsPainted; }
+    float pixelsUploadedOpaque() const { return m_pixelsUploadedOpaque; }
+    float pixelsUploadedTranslucent() const { return m_pixelsUploadedTranslucent; }
+    int tilesCulledForUpload() const { return m_tilesCulledForUpload; }
 
 private:
-    explicit CCOverdrawMetrics(bool recordMetricsForFrame);
-
     enum MetricsType {
-        DRAWING,
-        UPLOADING
+        UpdateAndCommit,
+        DrawingToScreen
     };
+
+    explicit CCOverdrawMetrics(bool recordMetricsForFrame);
 
     template<typename LayerTreeHostType>
     void recordMetricsInternal(MetricsType, const LayerTreeHostType*) const;
 
     // When false this class is a giant no-op.
     bool m_recordMetricsForFrame;
-    // Count of pixels that are opaque (and thus occlude). Ideally this is no more
-    // than wiewport width x height.
+
+    // These values are used for saving metrics during update/commit.
+
+    // Count of pixels that were painted due to invalidation.
+    float m_pixelsPainted;
+    // Count of pixels uploaded to textures and known to be opaque.
+    float m_pixelsUploadedOpaque;
+    // Count of pixels uploaded to textures and not known to be opaque.
+    float m_pixelsUploadedTranslucent;
+    // Count of tiles that were invalidated but not uploaded.
+    int m_tilesCulledForUpload;
+
+    // These values are used for saving metrics during draw.
+
+    // Count of pixels that are opaque (and thus occlude). Ideally this is no more than wiewport width x height.
     float m_pixelsDrawnOpaque;
     // Count of pixels that are possibly translucent, and cannot occlude.
     float m_pixelsDrawnTranslucent;
     // Count of pixels not drawn as they are occluded by somthing opaque.
-    float m_pixelsCulled;
-    // Count of pixels that were painted due to invalidation.
-    float m_pixelsPainted;
+    float m_pixelsCulledForDrawing;
 };
 
 } // namespace WebCore

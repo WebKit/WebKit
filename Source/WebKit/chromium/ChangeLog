@@ -1,3 +1,15 @@
+2012-04-05  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Record the number of tiles paint-culled instead of the incorrect number of pixels
+        https://bugs.webkit.org/show_bug.cgi?id=82423
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore::TEST):
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+
 2012-04-05  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Need to clip to homogeneous w=0 plane when applying transforms.

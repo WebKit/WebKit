@@ -110,7 +110,7 @@ TEST(CCQuadCullerTest, verifyNoCulling)
     EXPECT_EQ(quadList.size(), 13u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 130000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullChildLinesUpTopLeft)
@@ -127,7 +127,7 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpTopLeft)
     EXPECT_EQ(quadList.size(), 9u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 40000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 40000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullWhenChildOpacityNotOne)
@@ -144,7 +144,7 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpacityNotOne)
     EXPECT_EQ(quadList.size(), 13u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 40000, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullWhenChildOpaqueFlagFalse)
@@ -161,7 +161,7 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpaqueFlagFalse)
     EXPECT_EQ(quadList.size(), 13u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 40000, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullCenterTileOnly)
@@ -196,7 +196,7 @@ TEST(CCQuadCullerTest, verifyCullCenterTileOnly)
 
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 100000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 30000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 30000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize1)
@@ -224,7 +224,7 @@ TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize1)
 
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 20363, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize2)
@@ -252,7 +252,7 @@ TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize2)
 
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 19643, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullChildLinesUpBottomRight)
@@ -271,7 +271,7 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpBottomRight)
     EXPECT_EQ(quadList.size(), 9u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 40000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 40000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullSubRegion)
@@ -291,7 +291,7 @@ TEST(CCQuadCullerTest, verifyCullSubRegion)
     EXPECT_EQ(quadList.size(), 12u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 30000, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 10000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 10000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullSubRegion2)
@@ -311,7 +311,7 @@ TEST(CCQuadCullerTest, verifyCullSubRegion2)
     EXPECT_EQ(quadList.size(), 12u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 25000, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 15000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 15000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullSubRegionCheckOvercull)
@@ -331,7 +331,7 @@ TEST(CCQuadCullerTest, verifyCullSubRegionCheckOvercull)
     EXPECT_EQ(quadList.size(), 13u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 30000, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 10000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 10000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsDontOcclude)
@@ -351,7 +351,7 @@ TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsDontOcclude)
     EXPECT_EQ(quadList.size(), 13u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 130000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 0, 1);
 }
 
 // This test requires some explanation: here we are rotating the quads to be culled.
@@ -377,7 +377,7 @@ TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsSafelyCulled)
     EXPECT_EQ(quadList.size(), 12u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 100600, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 29400, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 29400, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullOutsideScissorOverTile)
@@ -394,7 +394,7 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverTile)
     EXPECT_EQ(quadList.size(), 1u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 10000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 120000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 120000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullOutsideScissorOverCulledTile)
@@ -411,7 +411,7 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverCulledTile)
     EXPECT_EQ(quadList.size(), 1u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 10000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 120000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 120000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullOutsideScissorOverPartialTiles)
@@ -428,7 +428,7 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverPartialTiles)
     EXPECT_EQ(quadList.size(), 9u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 40000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 90000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 90000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullOutsideScissorOverNoTiles)
@@ -445,7 +445,7 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverNoTiles)
     EXPECT_EQ(quadList.size(), 0u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 130000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 130000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyWithoutMetrics)
@@ -462,7 +462,7 @@ TEST(CCQuadCullerTest, verifyWithoutMetrics)
     EXPECT_EQ(quadList.size(), 9u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 0, 1);
 }
 
 

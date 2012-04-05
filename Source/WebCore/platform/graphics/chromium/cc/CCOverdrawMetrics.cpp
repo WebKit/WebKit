@@ -40,10 +40,13 @@ namespace WebCore {
 
 CCOverdrawMetrics::CCOverdrawMetrics(bool recordMetricsForFrame)
     : m_recordMetricsForFrame(recordMetricsForFrame)
+    , m_pixelsPainted(0)
+    , m_pixelsUploadedOpaque(0)
+    , m_pixelsUploadedTranslucent(0)
+    , m_tilesCulledForUpload(0)
     , m_pixelsDrawnOpaque(0)
     , m_pixelsDrawnTranslucent(0)
-    , m_pixelsCulled(0)
-    , m_pixelsPainted(0)
+    , m_pixelsCulledForDrawing(0)
 {
 }
 
@@ -69,7 +72,25 @@ void CCOverdrawMetrics::didPaint(const IntRect& paintedRect)
     m_pixelsPainted += static_cast<float>(paintedRect.width()) * paintedRect.height();
 }
 
-void CCOverdrawMetrics::didCull(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect)
+void CCOverdrawMetrics::didCullTileForUpload()
+{
+    if (m_recordMetricsForFrame)
+        ++m_tilesCulledForUpload;
+}
+
+void CCOverdrawMetrics::didUpload(const TransformationMatrix& transformToTarget, const IntRect& uploadRect, const IntRect& opaqueRect)
+{
+    if (!m_recordMetricsForFrame)
+        return;
+
+    float uploadArea = quadArea(transformToTarget.mapQuad(FloatQuad(uploadRect)));
+    float uploadOpaqueArea = quadArea(transformToTarget.mapQuad(FloatQuad(intersection(opaqueRect, uploadRect))));
+
+    m_pixelsUploadedOpaque += uploadOpaqueArea;
+    m_pixelsUploadedTranslucent += uploadArea - uploadOpaqueArea;
+}
+
+void CCOverdrawMetrics::didCullForDrawing(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect)
 {
     if (!m_recordMetricsForFrame)
         return;
@@ -77,7 +98,7 @@ void CCOverdrawMetrics::didCull(const TransformationMatrix& transformToTarget, c
     float beforeCullArea = quadArea(transformToTarget.mapQuad(FloatQuad(beforeCullRect)));
     float afterCullArea = quadArea(transformToTarget.mapQuad(FloatQuad(afterCullRect)));
 
-    m_pixelsCulled += beforeCullArea - afterCullArea;
+    m_pixelsCulledForDrawing += beforeCullArea - afterCullArea;
 }
 
 void CCOverdrawMetrics::didDraw(const TransformationMatrix& transformToTarget, const IntRect& afterCullRect, const IntRect& opaqueRect)
@@ -95,60 +116,49 @@ void CCOverdrawMetrics::didDraw(const TransformationMatrix& transformToTarget, c
 void CCOverdrawMetrics::recordMetrics(const CCLayerTreeHost* layerTreeHost) const
 {
     if (m_recordMetricsForFrame)
-        recordMetricsInternal<CCLayerTreeHost>(UPLOADING, layerTreeHost);
+        recordMetricsInternal<CCLayerTreeHost>(UpdateAndCommit, layerTreeHost);
 }
 
 void CCOverdrawMetrics::recordMetrics(const CCLayerTreeHostImpl* layerTreeHost) const
 {
     if (m_recordMetricsForFrame)
-        recordMetricsInternal<CCLayerTreeHostImpl>(DRAWING, layerTreeHost);
+        recordMetricsInternal<CCLayerTreeHostImpl>(DrawingToScreen, layerTreeHost);
 }
 
 template<typename LayerTreeHostType>
 void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const LayerTreeHostType* layerTreeHost) const
 {
-    const char* histogramOpaqueName = 0;
-    const char* histogramTranslucentName = 0;
-    const char* histogramCulledName = 0;
-    const char* histogramPaintedName = 0;
-    const char* cullCounterName = 0;
-    const char* opaqueCounterName = 0;
-    const char* translucentCounterName = 0;
-    const char *paintedCounterName = 0;
-    switch (metricsType) {
-    case DRAWING:
-        histogramOpaqueName = "Renderer4.drawPixelCountOpaque";
-        histogramTranslucentName = "Renderer4.drawPixelCountTranslucent";
-        histogramCulledName = "Renderer4.drawPixelCountCulled";
-        cullCounterName = "DrawPixelsCulled";
-        opaqueCounterName = "PixelsDrawnOpaque";
-        translucentCounterName = "PixelsDrawnTranslucent";
-        break;
-    case UPLOADING:
-        histogramOpaqueName = "Renderer4.uploadPixelCountOpaque";
-        histogramTranslucentName = "Renderer4.uploadPixelCountTranslucent";
-        histogramCulledName = "Renderer4.uploadPixelCountCulled";
-        histogramPaintedName = "Renderer4.pixelCountPainted";
-        cullCounterName = "UploadPixelsCulled";
-        opaqueCounterName = "PixelsUploadedOpaque";
-        translucentCounterName = "PixelsUploadedTranslucent";
-        paintedCounterName = "PixelsPainted";
-        break;
-    }
-    ASSERT(histogramOpaqueName);
-
+    // This gives approximately 10x the percentage of pixels to fill the viewport once.
     float normalization = 1000.f / (layerTreeHost->viewportSize().width() * layerTreeHost->viewportSize().height());
-    WebKit::Platform::current()->histogramCustomCounts(histogramOpaqueName, static_cast<int>(normalization * m_pixelsDrawnOpaque), 100, 1000000, 50);
-    WebKit::Platform::current()->histogramCustomCounts(histogramTranslucentName, static_cast<int>(normalization * m_pixelsDrawnTranslucent), 100, 1000000, 50);
-    WebKit::Platform::current()->histogramCustomCounts(histogramCulledName, static_cast<int>(normalization * m_pixelsCulled), 100, 1000000, 50);
-    if (paintedCounterName)
-        WebKit::Platform::current()->histogramCustomCounts(histogramPaintedName, static_cast<int>(normalization * m_pixelsPainted), 100, 1000000, 50);
+    // This gives approximately 100x the percentage of tiles to fill the viewport once, if all tiles were 256x256.
+    float tileNormalization = 10000.f / (layerTreeHost->viewportSize().width() / 256.f * layerTreeHost->viewportSize().height() / 256.f);
 
-    TRACE_COUNTER_ID1("webkit", cullCounterName, layerTreeHost, m_pixelsCulled);
-    TRACE_EVENT2("webkit", "CCOverdrawMetrics", opaqueCounterName, m_pixelsDrawnOpaque, translucentCounterName, m_pixelsDrawnTranslucent);
-    if (paintedCounterName) {
-        // This must be in a different scope than the TRACE_EVENT2 above.
-        TRACE_EVENT1("webkit", "CCOverdrawPaintMetrics", paintedCounterName, m_pixelsPainted);
+    switch (metricsType) {
+    case DrawingToScreen:
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.drawPixelCountOpaque", static_cast<int>(normalization * m_pixelsDrawnOpaque), 100, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.drawPixelCountTranslucent", static_cast<int>(normalization * m_pixelsDrawnTranslucent), 100, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.drawPixelCountCulled", static_cast<int>(normalization * m_pixelsCulledForDrawing), 100, 1000000, 50);
+
+        {
+            TRACE_COUNTER_ID1("webkit", "DrawPixelsCulled", layerTreeHost, m_pixelsCulledForDrawing);
+            TRACE_EVENT2("webkit", "CCOverdrawMetrics", "PixelsDrawnOpaque", m_pixelsDrawnOpaque, "PixelsDrawnTranslucent", m_pixelsDrawnTranslucent);
+        }
+        break;
+    case UpdateAndCommit:
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.pixelCountPainted", static_cast<int>(normalization * m_pixelsPainted), 100, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.uploadPixelCountOpaque", static_cast<int>(normalization * m_pixelsUploadedOpaque), 100, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.uploadPixelCountTranslucent", static_cast<int>(normalization * m_pixelsUploadedTranslucent), 100, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.uploadTileCountCulled", static_cast<int>(tileNormalization * m_tilesCulledForUpload), 100, 10000000, 50);
+
+        {
+            TRACE_COUNTER_ID1("webkit", "UploadTilesCulled", layerTreeHost, m_tilesCulledForUpload);
+            TRACE_EVENT2("webkit", "CCOverdrawMetrics", "PixelsUploadedOpaque", m_pixelsUploadedOpaque, "PixelsUploadedTranslucent", m_pixelsUploadedTranslucent);
+        }
+        {
+            // This must be in a different scope than the TRACE_EVENT2 above.
+            TRACE_EVENT1("webkit", "CCOverdrawPaintMetrics", "PixelsPainted", m_pixelsPainted);
+        }
+        break;
     }
 }
 

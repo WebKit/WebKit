@@ -55,7 +55,7 @@ bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
     if (keepQuad)
         drawQuad->setQuadVisibleRect(culledRect);
 
-    m_occlusionTracker->overdrawMetrics().didCull(drawQuad->quadTransform(), drawQuad->quadRect(), culledRect);
+    m_occlusionTracker->overdrawMetrics().didCullForDrawing(drawQuad->quadTransform(), drawQuad->quadRect(), culledRect);
     m_occlusionTracker->overdrawMetrics().didDraw(drawQuad->quadTransform(), culledRect, drawQuad->opaqueRect());
 
     // Release the quad after we're done using it.
