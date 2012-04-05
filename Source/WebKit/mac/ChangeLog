@@ -1,3 +1,30 @@
+2012-04-05  Jia Pu  <jpu@apple.com>
+
+        Move correction panel related functions from EditorClient into separated AlternativeTextClient class.
+        https://bugs.webkit.org/show_bug.cgi?id=82970
+
+        Reviewed by Enrica Casucci.
+
+        Move correction panel related functions from WebEditorClient to the new WebAlternativeTextClient.
+        See WebCore/ChangeLog for details.
+
+        * WebCoreSupport/CorrectionPanel.h:
+        * WebCoreSupport/CorrectionPanel.mm:
+        * WebCoreSupport/WebAlternativeTextClient.h: Added.
+        (WebAlternativeTextClient):
+        * WebCoreSupport/WebAlternativeTextClient.mm: Added.
+        (WebAlternativeTextClient::WebAlternativeTextClient):
+        (WebAlternativeTextClient::~WebAlternativeTextClient):
+        (WebAlternativeTextClient::showCorrectionAlternative):
+        (WebAlternativeTextClient::dismissAlternative):
+        (WebAlternativeTextClient::dismissAlternativeSoon):
+        (WebAlternativeTextClient::recordAutocorrectionResponse):
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::~WebEditorClient):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2012-03-15  Jer Noble  <jer.noble@apple.com>
 
         Full Screen mode should cancel before navigation.

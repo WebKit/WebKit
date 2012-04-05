@@ -519,12 +519,6 @@ public:
 #endif
     TextCheckerClient* textChecker() { return &m_textCheckerClient; }
 
-#if USE(AUTOCORRECTION_PANEL)
-    virtual void showCorrectionPanel(AlternativeTextType, const FloatRect&, const String&, const String&, const Vector<String>&) { }
-    virtual void dismissCorrectionPanel(ReasonForDismissingAlternativeText) { }
-    virtual String dismissCorrectionPanelSoon(ReasonForDismissingAlternativeText) { return String(); }
-    virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String&, const String&) { }
-#endif
     virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&) { }
     virtual void updateSpellingUIWithMisspelledWord(const String&) { }
     virtual void showSpellingUI(bool) { }

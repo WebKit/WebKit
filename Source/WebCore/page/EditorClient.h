@@ -27,7 +27,6 @@
 #ifndef EditorClient_h
 #define EditorClient_h
 
-#include "AlternativeTextController.h"
 #include "EditorInsertAction.h"
 #include "FloatRect.h"
 #include "TextAffinity.h"
@@ -145,18 +144,6 @@ public:
 #endif
 
     virtual TextCheckerClient* textChecker() = 0;
-
-    enum AutocorrectionResponseType {
-        AutocorrectionEdited,
-        AutocorrectionReverted
-    };
-
-#if USE(AUTOCORRECTION_PANEL)
-    virtual void showCorrectionPanel(AlternativeTextType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacmentString, const Vector<String>& alternativeReplacementStrings) = 0;
-    virtual void dismissCorrectionPanel(ReasonForDismissingAlternativeText) = 0;
-    virtual String dismissCorrectionPanelSoon(ReasonForDismissingAlternativeText) = 0;
-    virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String& replacedString, const String& replacementString) = 0;
-#endif
 
     virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail& detail) = 0;
     virtual void updateSpellingUIWithMisspelledWord(const String&) = 0;

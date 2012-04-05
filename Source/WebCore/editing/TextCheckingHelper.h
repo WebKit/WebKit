@@ -22,11 +22,15 @@
 #define TextCheckingHelper_h
 
 #include "EditorClient.h"
+#include "ExceptionCode.h"
+#include "TextChecking.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class Range;
 class Position;
+struct TextCheckingResult;
 
 class TextCheckingParagraph {
 public:

@@ -1,3 +1,43 @@
+2012-04-05  Jia Pu  <jpu@apple.com>
+
+        Move correction panel related functions from EditorClient into separated AlternativeTextClient class.
+        https://bugs.webkit.org/show_bug.cgi?id=82970
+
+        Reviewed by Enrica Casucci.
+
+        Move correction panel related functions from WebEditorClient to the new WebAlternativeTextClient.
+        See WebCore/ChangeLog for details.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        * UIProcess/API/mac/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::recordAutocorrectionResponse):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/PageClient.h:
+        (PageClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::recordAutocorrectionResponse):
+        * UIProcess/mac/CorrectionPanel.h:
+        * UIProcess/mac/CorrectionPanel.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/mac/WebAlternativeTextClient.cpp: Added.
+        (WebKit):
+        (WebKit::WebAlternativeTextClient::WebAlternativeTextClient):
+        (WebKit::WebAlternativeTextClient::~WebAlternativeTextClient):
+        (WebKit::WebAlternativeTextClient::showCorrectionAlternative):
+        (WebKit::WebAlternativeTextClient::dismissAlternative):
+        (WebKit::WebAlternativeTextClient::dismissAlternativeSoon):
+        (WebKit::WebAlternativeTextClient::recordAutocorrectionResponse):
+        * WebProcess/WebCoreSupport/WebAlternativeTextClient.h: Added.
+        (WebKit):
+        (WebAlternativeTextClient):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2012-04-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Fix includes after QtDeclarative -> QtQML renaming

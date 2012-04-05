@@ -29,7 +29,7 @@
 #include "ShareableBitmap.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxy.h"
-#include <WebCore/AlternativeTextController.h>
+#include <WebCore/AlternativeTextClient.h>
 #include <WebCore/EditorClient.h>
 #include <wtf/Forward.h>
 
@@ -188,7 +188,7 @@ public:
     virtual void showCorrectionPanel(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) = 0;
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText) = 0;
     virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText) = 0;
-    virtual void recordAutocorrectionResponse(WebCore::EditorClient::AutocorrectionResponseType, const String& replacedString, const String& replacementString) = 0;
+    virtual void recordAutocorrectionResponse(WebCore::AutocorrectionResponseType, const String& replacedString, const String& replacementString) = 0;
     virtual void recommendedScrollbarStyleDidChange(int32_t newStyle) = 0;
     
     virtual WKView* wkView() const = 0;

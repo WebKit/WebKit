@@ -159,6 +159,7 @@ Page::Page(PageClients& pageClients)
 #ifndef NDEBUG
     , m_isPainting(false)
 #endif
+    , m_alternativeTextClient(pageClients.alternativeTextClient)
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;
@@ -1111,7 +1112,8 @@ void Page::resumeActiveDOMObjectsAndAnimations()
 }
 
 Page::PageClients::PageClients()
-    : chromeClient(0)
+    : alternativeTextClient(0)
+    , chromeClient(0)
 #if ENABLE(CONTEXT_MENUS)
     , contextMenuClient(0)
 #endif

@@ -189,9 +189,6 @@ WebEditorClient::WebEditorClient(WebView *webView)
 
 WebEditorClient::~WebEditorClient()
 {
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
-#endif
 }
 
 bool WebEditorClient::isContinuousSpellCheckingEnabled()
@@ -865,29 +862,6 @@ void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammar
     
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetailDict];
 }
-
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-void WebEditorClient::showCorrectionPanel(AlternativeTextType panelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
-{
-    m_correctionPanel.show(m_webView, panelType, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
-}
-
-void WebEditorClient::dismissCorrectionPanel(ReasonForDismissingAlternativeText reasonForDismissing)
-{
-    m_correctionPanel.dismiss(reasonForDismissing);
-}
-
-String WebEditorClient::dismissCorrectionPanelSoon(ReasonForDismissingAlternativeText reasonForDismissing)
-{
-    return m_correctionPanel.dismiss(reasonForDismissing);
-}
-
-void WebEditorClient::recordAutocorrectionResponse(EditorClient::AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
-{
-    NSCorrectionResponse response = responseType == EditorClient::AutocorrectionReverted ? NSCorrectionResponseReverted : NSCorrectionResponseEdited;
-    CorrectionPanel::recordAutocorrectionResponse(m_webView, response, replacedString, replacementString);
-}
-#endif
 
 void WebEditorClient::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
 {

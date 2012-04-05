@@ -238,28 +238,4 @@ void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, WebCor
     m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(String(text, length), checkingTypes), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
 }
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-void WebEditorClient::showCorrectionPanel(WebCore::AlternativeTextType type, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
-{
-    m_page->send(Messages::WebPageProxy::ShowCorrectionPanel(type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings));
-}
-
-void WebEditorClient::dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText reason)
-{
-    m_page->send(Messages::WebPageProxy::DismissCorrectionPanel(reason));
-}
-
-String WebEditorClient::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText reason)
-{
-    String result;
-    m_page->sendSync(Messages::WebPageProxy::DismissCorrectionPanelSoon(reason), Messages::WebPageProxy::DismissCorrectionPanelSoon::Reply(result));
-    return result;
-}
-
-void WebEditorClient::recordAutocorrectionResponse(EditorClient::AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
-{
-    m_page->send(Messages::WebPageProxy::RecordAutocorrectionResponse(responseType, replacedString, replacementString));
-}
-#endif
-
 } // namespace WebKit

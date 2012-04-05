@@ -3738,7 +3738,7 @@ void WebPageProxy::dismissCorrectionPanelSoon(int32_t reason, String& result)
 
 void WebPageProxy::recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString)
 {
-    m_pageClient->recordAutocorrectionResponse((EditorClient::AutocorrectionResponseType)responseType, replacedString, replacementString);
+    m_pageClient->recordAutocorrectionResponse((AutocorrectionResponseType)responseType, replacedString, replacementString);
 }
 #endif // !defined(BUILDING_ON_SNOW_LEOPARD)
 

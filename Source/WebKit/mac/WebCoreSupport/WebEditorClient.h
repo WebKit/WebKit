@@ -27,7 +27,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "CorrectionPanel.h"
 #import <WebCore/EditorClient.h>
 #import <WebCore/TextCheckerClient.h>
 #import <wtf/Forward.h>
@@ -136,12 +135,6 @@ public:
     virtual void willSetInputMethodState() OVERRIDE;
     virtual void setInputMethodState(bool enabled) OVERRIDE;
     virtual void requestCheckingOfString(WebCore::SpellChecker*, const WebCore::TextCheckingRequest&) OVERRIDE;
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    virtual void showCorrectionPanel(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) OVERRIDE;
-    virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText) OVERRIDE;
-    virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText) OVERRIDE;
-    virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String& replacedString, const String& replacementString) OVERRIDE;
-#endif
 private:
     void registerUndoOrRedoStep(PassRefPtr<WebCore::UndoStep>, bool isRedo);
     WebEditorClient();
@@ -149,8 +142,4 @@ private:
     WebView *m_webView;
     RetainPtr<WebEditorUndoTarget> m_undoTarget;
     bool m_haveUndoRedoOperations;
-
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    CorrectionPanel m_correctionPanel;
-#endif
 };

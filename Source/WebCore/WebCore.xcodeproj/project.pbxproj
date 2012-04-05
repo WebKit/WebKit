@@ -5731,11 +5731,12 @@
 		CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */; };
 		CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE057FA41220731100A476D5 /* DocumentMarkerController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE08C3D1152B599A0021B8C2 /* AlternativeTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */; };
-		CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */; settings = {ATTRIBUTES = (); }; };
 		CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEA3949C11D45CDA003094CF /* StaticHashSetNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEA3949A11D45CDA003094CF /* StaticHashSetNodeList.cpp */; };
 		CEA3949D11D45CDA003094CF /* StaticHashSetNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = CEA3949B11D45CDA003094CF /* StaticHashSetNodeList.h */; };
 		CECCFC3B141973D5002A0AC1 /* DecodeEscapeSequences.h in Headers */ = {isa = PBXBuildFile; fileRef = CECCFC3A141973D5002A0AC1 /* DecodeEscapeSequences.h */; };
+		CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12D6152CA1CB00D9E08D /* AlternativeTextClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF418CC1179678C009D112C /* ViewportArguments.cpp */; };
 		CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = CEF418CD1179678C009D112C /* ViewportArguments.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D000EBA211BDAFD400C47726 /* FrameLoaderStateMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D000EBA011BDAFD400C47726 /* FrameLoaderStateMachine.cpp */; };
@@ -12837,6 +12838,7 @@
 		CEA3949A11D45CDA003094CF /* StaticHashSetNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticHashSetNodeList.cpp; sourceTree = "<group>"; };
 		CEA3949B11D45CDA003094CF /* StaticHashSetNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticHashSetNodeList.h; sourceTree = "<group>"; };
 		CECCFC3A141973D5002A0AC1 /* DecodeEscapeSequences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecodeEscapeSequences.h; sourceTree = "<group>"; };
+		CEDA12D6152CA1CB00D9E08D /* AlternativeTextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlternativeTextClient.h; sourceTree = "<group>"; };
 		CEF418CC1179678C009D112C /* ViewportArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportArguments.cpp; sourceTree = "<group>"; };
 		CEF418CD1179678C009D112C /* ViewportArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportArguments.h; sourceTree = "<group>"; };
 		D000EBA011BDAFD400C47726 /* FrameLoaderStateMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoaderStateMachine.cpp; sourceTree = "<group>"; };
@@ -15273,6 +15275,7 @@
 				1AF62EE114DA22A70041556C /* scrolling */,
 				8538F0000AD71770006A81D1 /* AbstractView.idl */,
 				BCF48CE61370D114004E87D6 /* AdjustViewSizeOrNot.h */,
+				CEDA12D6152CA1CB00D9E08D /* AlternativeTextClient.h */,
 				BC124EE40C2641CD009E2349 /* BarInfo.cpp */,
 				BC124EE50C2641CD009E2349 /* BarInfo.h */,
 				BC124EE60C2641CD009E2349 /* BarInfo.idl */,
@@ -24715,6 +24718,7 @@
 				CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */,
 				A07D3356152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h in Headers */,
 				A07D3358152B632D001B6393 /* WebGLShaderPrecisionFormat.h in Headers */,
+				CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

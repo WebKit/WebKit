@@ -123,7 +123,7 @@ private:
     virtual void showCorrectionPanel(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText);
     virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText);
-    virtual void recordAutocorrectionResponse(WebCore::EditorClient::AutocorrectionResponseType, const String& replacedString, const String& replacementString);
+    virtual void recordAutocorrectionResponse(WebCore::AutocorrectionResponseType, const String& replacedString, const String& replacementString);
 
     virtual void recommendedScrollbarStyleDidChange(int32_t newStyle);
 

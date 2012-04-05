@@ -370,6 +370,8 @@
 		CD8EAC7311CAC9A300774075 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD8EAC7211CAC9A300774075 /* IOKit.framework */; };
 		CDA62AE2125F87C2007FD118 /* WebFullScreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */; };
 		CDA62AE3125F87C2007FD118 /* WebFullScreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA62AE1125F87C2007FD118 /* WebFullScreenController.mm */; };
+		CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */; };
+		CEDA12DC152CBE6800D9E08D /* WebAlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12DA152CBE6800D9E08D /* WebAlternativeTextClient.h */; };
 		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
@@ -699,6 +701,8 @@
 		CD8EAC7211CAC9A300774075 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenController.h; sourceTree = "<group>"; };
 		CDA62AE1125F87C2007FD118 /* WebFullScreenController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFullScreenController.mm; sourceTree = "<group>"; };
+		CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAlternativeTextClient.mm; sourceTree = "<group>"; };
+		CEDA12DA152CBE6800D9E08D /* WebAlternativeTextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAlternativeTextClient.h; sourceTree = "<group>"; };
 		DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTypesInternal.h; sourceTree = "<group>"; };
 		DD89681E09AA87240097E7F0 /* WebElementDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebElementDictionary.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebElementDictionary.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1294,6 +1298,8 @@
 			children = (
 				B82958D1132707D0000D0E79 /* CorrectionPanel.h */,
 				B82958D2132707D0000D0E79 /* CorrectionPanel.mm */,
+				CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */,
+				CEDA12DA152CBE6800D9E08D /* WebAlternativeTextClient.h */,
 				B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */,
 				B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */,
 				A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */,
@@ -1643,6 +1649,7 @@
 				41F4484F10338E8C0030E55E /* WebWorkersPrivate.h in Headers */,
 				312E2FE514E48182007CCA18 /* WebNotification.h in Headers */,
 				312E2FE914E48215007CCA18 /* WebNotificationInternal.h in Headers */,
+				CEDA12DC152CBE6800D9E08D /* WebAlternativeTextClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2030,6 +2037,7 @@
 				BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */,
 				41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */,
 				312E2FE614E48182007CCA18 /* WebNotification.mm in Sources */,
+				CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

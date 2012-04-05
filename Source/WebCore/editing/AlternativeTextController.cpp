@@ -178,7 +178,8 @@ void AlternativeTextController::show(PassRefPtr<Range> rangeToReplace, const Str
     m_alternativeTextInfo.rangeWithAlternative = rangeToReplace;
     m_alternativeTextInfo.details = AutocorrectionAlternativeDetails::create(replacement);
     m_alternativeTextInfo.isActive = true;
-    client()->showCorrectionPanel(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, replacement, Vector<String>());
+    if (AlternativeTextClient* client = alternativeTextClient())
+        client->showCorrectionAlternative(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, replacement, Vector<String>());
 }
 
 void AlternativeTextController::handleCancelOperation()
@@ -195,8 +196,8 @@ void AlternativeTextController::dismiss(ReasonForDismissingAlternativeText reaso
         return;
     m_alternativeTextInfo.isActive = false;
     m_isDismissedByEditing = true;
-    if (client())
-        client()->dismissCorrectionPanel(reasonForDismissing);
+    if (AlternativeTextClient* client = alternativeTextClient())
+        client->dismissAlternative(reasonForDismissing);
 }
 
 String AlternativeTextController::dismissSoon(ReasonForDismissingAlternativeText reasonForDismissing)
@@ -205,9 +206,9 @@ String AlternativeTextController::dismissSoon(ReasonForDismissingAlternativeText
         return String();
     m_alternativeTextInfo.isActive = false;
     m_isDismissedByEditing = true;
-    if (!client())
-        return String();
-    return client()->dismissCorrectionPanelSoon(reasonForDismissing);
+    if (AlternativeTextClient* client = alternativeTextClient())
+        return client->dismissAlternativeSoon(reasonForDismissing);
+    return String();
 }
 
 void AlternativeTextController::applyAlternativeText(const String& alternative, const Vector<DocumentMarker::MarkerType>& markerTypesToAdd)
@@ -286,7 +287,8 @@ bool AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate()
 
 void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction)
 {
-    client()->recordAutocorrectionResponse(EditorClient::AutocorrectionReverted, corrected, correction);
+    if (AlternativeTextClient* client = alternativeTextClient())
+        client->recordAutocorrectionResponse(AutocorrectionReverted, corrected, correction);
     m_frame->document()->updateLayout();
     m_frame->selection()->setSelection(selectionOfCorrected, FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle | FrameSelection::SpellCorrectionTriggered);
     RefPtr<Range> range = Range::create(m_frame->document(), m_frame->selection()->selection().start(), m_frame->selection()->selection().end());
@@ -317,7 +319,8 @@ void AlternativeTextController::timerFired(Timer<AlternativeTextController>*)
         FloatRect boundingBox = rootViewRectForRange(m_alternativeTextInfo.rangeWithAlternative.get());
         if (!boundingBox.isEmpty()) {
             const AutocorrectionAlternativeDetails* details = static_cast<const AutocorrectionAlternativeDetails*>(m_alternativeTextInfo.details.get());
-            client()->showCorrectionPanel(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, details->replacementString(), Vector<String>());
+            if (AlternativeTextClient* client = alternativeTextClient())
+                client->showCorrectionAlternative(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, details->replacementString(), Vector<String>());
         }
     }
         break;
@@ -335,8 +338,10 @@ void AlternativeTextController::timerFired(Timer<AlternativeTextController>*)
         suggestions.remove(0);
         m_alternativeTextInfo.isActive = true;
         FloatRect boundingBox = rootViewRectForRange(m_alternativeTextInfo.rangeWithAlternative.get());
-        if (!boundingBox.isEmpty())
-            client()->showCorrectionPanel(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, topSuggestion, suggestions);
+        if (!boundingBox.isEmpty()) {
+            if (AlternativeTextClient* client = alternativeTextClient())
+                client->showCorrectionAlternative(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, topSuggestion, suggestions);
+        }
     }
         break;
     }
@@ -374,7 +379,7 @@ void AlternativeTextController::handleAlternativeTextUIResult(const String& resu
 
 bool AlternativeTextController::isAutomaticSpellingCorrectionEnabled()
 {
-    return client() && client()->isAutomaticSpellingCorrectionEnabled();
+    return editorClient() && editorClient()->isAutomaticSpellingCorrectionEnabled();
 }
 
 FloatRect AlternativeTextController::rootViewRectForRange(const Range* range) const
@@ -463,21 +468,33 @@ void AlternativeTextController::respondToUnappliedEditing(EditCommandComposition
     markers->addMarker(range.get(), DocumentMarker::SpellCheckingExemption);
 }
 
-EditorClient* AlternativeTextController::client()
+AlternativeTextClient* AlternativeTextController::alternativeTextClient()
 {
+    if (!m_frame)
+        return 0;
+
+    return m_frame->page() ? m_frame->page()->alternativeTextClient() : 0;
+}
+
+EditorClient* AlternativeTextController::editorClient()
+{
+    if (!m_frame)
+        return 0;
+
     return m_frame->page() ? m_frame->page()->editorClient() : 0;
 }
 
 TextCheckerClient* AlternativeTextController::textChecker()
 {
-    if (EditorClient* owner = client())
+    if (EditorClient* owner = editorClient())
         return owner->textChecker();
     return 0;
 }
 
 void AlternativeTextController::recordAutocorrectionResponseReversed(const String& replacedString, const String& replacementString)
 {
-    client()->recordAutocorrectionResponse(EditorClient::AutocorrectionReverted, replacedString, replacementString);
+    if (AlternativeTextClient* client = alternativeTextClient())
+        client->recordAutocorrectionResponse(AutocorrectionReverted, replacedString, replacementString);
 }
 
 void AlternativeTextController::recordAutocorrectionResponseReversed(const String& replacedString, PassRefPtr<Range> replacementRange)
@@ -512,13 +529,16 @@ void AlternativeTextController::recordSpellcheckerResponseForModifiedCorrection(
     Vector<DocumentMarker*> correctedOnceMarkers = markers->markersInRange(rangeOfCorrection, DocumentMarker::Autocorrected);
     if (correctedOnceMarkers.isEmpty())
         return;
-    
-    // Spelling corrected text has been edited. We need to determine whether user has reverted it to original text or
-    // edited it to something else, and notify spellchecker accordingly.
-    if (markersHaveIdenticalDescription(correctedOnceMarkers) && correctedOnceMarkers[0]->description() == corrected)
-        client()->recordAutocorrectionResponse(EditorClient::AutocorrectionReverted, corrected, correction);
-    else
-        client()->recordAutocorrectionResponse(EditorClient::AutocorrectionEdited, corrected, correction);
+
+    if (AlternativeTextClient* client = alternativeTextClient()) {
+        // Spelling corrected text has been edited. We need to determine whether user has reverted it to original text or
+        // edited it to something else, and notify spellchecker accordingly.
+        if (markersHaveIdenticalDescription(correctedOnceMarkers) && correctedOnceMarkers[0]->description() == corrected)
+            client->recordAutocorrectionResponse(AutocorrectionReverted, corrected, correction);
+        else
+            client->recordAutocorrectionResponse(AutocorrectionEdited, corrected, correction);
+    }
+
     markers->removeMarkers(rangeOfCorrection, DocumentMarker::Autocorrected, DocumentMarkerController::RemovePartiallyOverlappingMarker);
 }
 

@@ -27,7 +27,7 @@
 #import "WebViewInternal.h"
 #import "WebViewPrivate.h"
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if USE(AUTOCORRECTION_PANEL)
 using namespace WebCore;
 
 static inline NSCorrectionIndicatorType correctionIndicatorType(AlternativeTextType alternativeTextType)
@@ -137,5 +137,5 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
         m_resultForDismissal.adoptNS([acceptedReplacement copy]);
 }
 
-#endif // !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif //USE(AUTOCORRECTION_PANEL)
 

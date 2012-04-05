@@ -26,6 +26,7 @@
 #ifndef AlternativeTextController_h
 #define AlternativeTextController_h
 
+#include "AlternativeTextClient.h"
 #include "DocumentMarker.h"
 #include "Range.h"
 #include "TextChecking.h"
@@ -49,12 +50,6 @@ public:
     virtual ~AlternativeTextDetails() { }
 };
 
-enum AlternativeTextType {
-    AlternativeTextTypeCorrection = 0,
-    AlternativeTextTypeReversion,
-    AlternativeTextTypeSpellingSuggestions,
-};
-
 struct AlternativeTextInfo {
     RefPtr<Range> rangeWithAlternative;
     bool isActive;
@@ -64,12 +59,6 @@ struct AlternativeTextInfo {
 };
 
 struct TextCheckingResult;
-
-enum ReasonForDismissingAlternativeText {
-    ReasonForDismissingAlternativeTextCancelled = 0,
-    ReasonForDismissingAlternativeTextIgnored,
-    ReasonForDismissingAlternativeTextAccepted
-};
 
 #if USE(AUTOCORRECTION_PANEL)
 // These backslashes are for making style checker happy.
@@ -134,12 +123,13 @@ private:
                  || marker->type() == DocumentMarker::Spelling) && static_cast<int>(marker->endOffset()) == endOffset);
     }
 
-    EditorClient* client();
+    AlternativeTextClient* alternativeTextClient();
+    EditorClient* editorClient();
+    
     TextCheckerClient* textChecker();
     FloatRect rootViewRectForRange(const Range*) const;
     void markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(EditCommand*);
 
-    EditorClient* m_client;
     Frame* m_frame;
 
     Timer<AlternativeTextController> m_timer;

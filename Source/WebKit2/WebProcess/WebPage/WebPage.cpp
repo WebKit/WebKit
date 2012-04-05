@@ -42,6 +42,7 @@
 #include "PrintInfo.h"
 #include "SessionState.h"
 #include "ShareableBitmap.h"
+#include "WebAlternativeTextClient.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListProxy.h"
@@ -233,6 +234,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.backForwardClient = WebBackForwardListProxy::create(this);
 #if ENABLE(INSPECTOR)
     pageClients.inspectorClient = new WebInspectorClient(this);
+#endif
+#if USE(AUTOCORRECTION_PANEL)
+    pageClients.alternativeTextClient = new WebAlternativeTextClient(this);
 #endif
     
     m_page = adoptPtr(new Page(pageClients));

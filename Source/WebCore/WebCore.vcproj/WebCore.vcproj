@@ -25994,6 +25994,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\AlternativeTextClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\animation\AnimationBase.cpp"
 				>
 			</File>

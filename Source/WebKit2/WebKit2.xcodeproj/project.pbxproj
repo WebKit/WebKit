@@ -883,6 +883,8 @@
 		CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */; };
 		CDCA85D5132AC2B300E961DF /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCA85D4132AC2B300E961DF /* IOKit.framework */; };
 		CDCA85EE132AD70100E961DF /* WebFullScreenManagerProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCA85DE132AD05300E961DF /* WebFullScreenManagerProxyMac.mm */; };
+		CEDA12E2152CD1AE00D9E08D /* WebAlternativeTextClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */; };
+		CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */; };
 		D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */; };
 		D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484311FF4B6500032B39 /* WebPopupMenu.h */; };
 		D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */; };
@@ -1937,6 +1939,8 @@
 		CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFullScreenWindowController.h; sourceTree = "<group>"; };
 		CDCA85D4132AC2B300E961DF /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		CDCA85DE132AD05300E961DF /* WebFullScreenManagerProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFullScreenManagerProxyMac.mm; sourceTree = "<group>"; };
+		CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAlternativeTextClient.h; sourceTree = "<group>"; };
+		CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAlternativeTextClient.cpp; sourceTree = "<group>"; };
 		D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPopupMenu.cpp; sourceTree = "<group>"; };
 		D3B9484311FF4B6500032B39 /* WebPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPopupMenu.h; sourceTree = "<group>"; };
 		D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSearchPopupMenu.cpp; sourceTree = "<group>"; };
@@ -2769,6 +2773,7 @@
 			isa = PBXGroup;
 			children = (
 				BC111ADE112F5B9A00337BAB /* mac */,
+				CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */,
 				BC111A53112F4FBB00337BAB /* WebChromeClient.cpp */,
 				BC032D6010F4378D0058C15A /* WebChromeClient.h */,
 				BC111A54112F4FBB00337BAB /* WebContextMenuClient.cpp */,
@@ -3088,6 +3093,7 @@
 		BC111ADE112F5B9A00337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */,
 				51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */,
 				C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */,
 				C5237F5F12441CA300780472 /* WebEditorClientMac.mm */,
@@ -4178,6 +4184,7 @@
 				37608823150414F700FC82C7 /* WKRenderObject.h in Headers */,
 				37948404150C350600E52CE9 /* WebRenderLayer.h in Headers */,
 				37948409150C4B9700E52CE9 /* WKRenderLayer.h in Headers */,
+				CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4921,6 +4928,7 @@
 				37608822150414F700FC82C7 /* WKRenderObject.cpp in Sources */,
 				37948403150C350600E52CE9 /* WebRenderLayer.cpp in Sources */,
 				37948408150C4B9700E52CE9 /* WKRenderLayer.cpp in Sources */,
+				CEDA12E2152CD1AE00D9E08D /* WebAlternativeTextClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

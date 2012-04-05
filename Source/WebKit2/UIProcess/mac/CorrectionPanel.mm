@@ -24,9 +24,9 @@
  */
 
 #import "config.h"
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
 #import "CorrectionPanel.h"
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
 #import "WebPageProxy.h"
 #import "WKView.h"
 #import "WKViewInternal.h"
@@ -145,5 +145,5 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
 
 } // namespace WebKit
 
-#endif //!defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // !defined(BUILDING_ON_SNOW_LEOPARD)
 

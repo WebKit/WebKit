@@ -34,6 +34,7 @@
 #import "DOMCSSStyleDeclarationInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "WebAlternativeTextClient.h"
 #import "WebApplicationCache.h"
 #import "WebBackForwardListInternal.h"
 #import "WebBaseNetscapePluginView.h"
@@ -736,6 +737,7 @@ static NSString *leakOutlookQuirksUserScriptContents()
     pageClients.editorClient = new WebEditorClient(self);
     pageClients.dragClient = new WebDragClient(self);
     pageClients.inspectorClient = new WebInspectorClient(self);
+    pageClients.alternativeTextClient = new WebAlternativeTextClient(self);
     _private->page = new Page(pageClients);
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(_private->page, new WebGeolocationClient(self));

@@ -26,10 +26,11 @@
 #ifndef CorrectionPanel_h
 #define CorrectionPanel_h
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 #import <AppKit/NSSpellChecker.h>
-#import <WebCore/AlternativeTextController.h>
+#import <WebCore/AlternativeTextClient.h>
 #import <wtf/RetainPtr.h>
+
+#if USE(AUTOCORRECTION_PANEL)
 
 @class WebView;
 
@@ -53,6 +54,6 @@ private:
     RetainPtr<NSString> m_resultForDismissal;
 };
 
-#endif // !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // USE(AUTOCORRECTION_PANEL)
 
 #endif // CorrectionPanel_h

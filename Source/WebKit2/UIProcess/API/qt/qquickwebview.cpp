@@ -51,6 +51,7 @@
 #include <WebCore/IntRect.h>
 #include <WKOpenPanelResultListener.h>
 #include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
