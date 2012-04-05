@@ -148,6 +148,7 @@ FrameView::FrameView(Frame* frame)
     , m_scrollCorner(0)
     , m_shouldAutoSize(false)
     , m_inAutoSize(false)
+    , m_didRunAutosize(false)
 {
     init();
 
@@ -2411,6 +2412,11 @@ void FrameView::autoSizeIfEnabled()
     if (!documentRenderBox)
         return;
 
+    // If this is the first time we run autosize, start from small height and
+    // allow it to grow.
+    if (!m_didRunAutosize)
+        resize(frameRect().width(), m_minAutoSize.height());
+
     // Do the resizing twice. The first time is basically a rough calculation using the preferred width
     // which may result in a height change during the second iteration.
     for (int i = 0; i < 2; i++) {
@@ -2467,6 +2473,8 @@ void FrameView::autoSizeIfEnabled()
         // during an intermediate state (and then changing back to a bigger size as the load progresses).
         if (!frame()->loader()->isComplete() && (newSize.height() < size.height() || newSize.width() < size.width()))
             break;
+        else if (document->processingLoadEvent())
+            newSize = newSize.expandedTo(size);
         resize(newSize.width(), newSize.height());
         // Force the scrollbar state to avoid the scrollbar code adding them and causing them to be needed. For example,
         // a vertical scrollbar may cause text to wrap and thus increase the height (which is the only reason the scollbar is needed).
@@ -2474,6 +2482,7 @@ void FrameView::autoSizeIfEnabled()
         setHorizontalScrollbarLock(false);
         setScrollbarModes(horizonalScrollbarMode, verticalScrollbarMode, true, true);
     }
+    m_didRunAutosize = true;
 }
 
 void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)
@@ -3141,6 +3150,7 @@ void FrameView::enableAutoSizeMode(bool enable, const IntSize& minSize, const In
     m_shouldAutoSize = enable;
     m_minAutoSize = minSize;
     m_maxAutoSize = maxSize;
+    m_didRunAutosize = false;
 
     setNeedsLayout();
     scheduleRelayout();

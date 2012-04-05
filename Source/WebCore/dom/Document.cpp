@@ -2350,11 +2350,11 @@ void Document::implicitClose()
         printf("onload fired at %d\n", elapsedTime());
 #endif
 
-    m_processingLoadEvent = false;
-
     // An event handler may have removed the frame
-    if (!frame())
+    if (!frame()) {
+        m_processingLoadEvent = false;
         return;
+    }
 
     // Make sure both the initial layout and reflow happen after the onload
     // fires. This will improve onload scores, and other browsers do it.
@@ -2363,6 +2363,7 @@ void Document::implicitClose()
     if (frame()->navigationScheduler()->locationChangePending() && elapsedTime() < cLayoutScheduleThreshold) {
         // Just bail out. Before or during the onload we were shifted to another page.
         // The old i-Bench suite does this. When this happens don't bother painting or laying out.        
+        m_processingLoadEvent = false;
         view()->unscheduleRelayout();
         return;
     }
@@ -2381,6 +2382,8 @@ void Document::implicitClose()
         if (view() && renderObject && (!renderObject->firstChild() || renderObject->needsLayout()))
             view()->layout();
     }
+
+    m_processingLoadEvent = false;
 
     // If painting and compositing layer updates were suppressed pending the load event, do these actions now.
     if (renderer() && settings() && settings()->suppressesIncrementalRendering()) {

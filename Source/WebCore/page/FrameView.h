@@ -509,6 +509,8 @@ private:
     // If true, automatically resize the frame view around its content.
     bool m_shouldAutoSize;
     bool m_inAutoSize;
+    // True if autosize has been run since m_shouldAutoSize was set.
+    bool m_didRunAutosize;
     // The lower bound on the size when autosizing.
     IntSize m_minAutoSize;
     // The upper bound on the size when autosizing.
