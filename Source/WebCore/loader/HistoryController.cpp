@@ -685,7 +685,6 @@ PassRefPtr<HistoryItem> HistoryController::createItemTree(Frame* targetFrame, bo
 void HistoryController::recursiveSetProvisionalItem(HistoryItem* item, HistoryItem* fromItem, FrameLoadType type)
 {
     ASSERT(item);
-    ASSERT(fromItem);
 
     if (itemsAreClones(item, fromItem)) {
         // Set provisional item, which will be committed in recursiveUpdateForCommit.
@@ -711,7 +710,6 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem* item, HistoryIt
 void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromItem, FrameLoadType type)
 {
     ASSERT(item);
-    ASSERT(fromItem);
 
     if (itemsAreClones(item, fromItem)) {
         // Just iterate over the rest, looking for frames to navigate.
@@ -740,7 +738,9 @@ bool HistoryController::itemsAreClones(HistoryItem* item1, HistoryItem* item2) c
     // a reload.  Thus, if item1 and item2 are the same, we need to create a
     // new document and should not consider them clones.
     // (See http://webkit.org/b/35532 for details.)
-    return item1 != item2
+    return item1
+        && item2
+        && item1 != item2
         && item1->itemSequenceNumber() == item2->itemSequenceNumber()
         && currentFramesMatchItem(item1)
         && item2->hasSameFrames(item1);
