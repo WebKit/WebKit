@@ -108,7 +108,7 @@ class FileUploader(object):
     def _upload_data(self, content_type, data):
         def callback():
             if self._debug:
-                _log.debug("uploading %d bytes to '%s', content-type '%s'" % len(data), self._url, content_type)
+                _log.debug("uploading %d bytes to '%s', content-type '%s'" % (len(data), self._url, content_type))
             request = urllib2.Request(self._url, data, {"Content-Type": content_type})
             return urllib2.urlopen(request)
 
