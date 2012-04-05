@@ -63,6 +63,7 @@
 #include <ReplaceSelectionCommand.cpp>
 #include <SetNodeAttributeCommand.cpp>
 #include <SetSelectionCommand.cpp>
+#include <SimplifyMarkupCommand.cpp>
 #include <SmartReplace.cpp>
 #include <SmartReplaceCF.cpp>
 #include <SpellingCorrectionCommand.cpp>

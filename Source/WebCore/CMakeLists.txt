@@ -690,6 +690,7 @@ SET(WebCore_SOURCES
     editing/ReplaceSelectionCommand.cpp
     editing/SetNodeAttributeCommand.cpp
     editing/SetSelectionCommand.cpp
+    editing/SimplifyMarkupCommand.cpp
     editing/SmartReplace.cpp
     editing/SpellChecker.cpp
     editing/SpellingCorrectionCommand.cpp

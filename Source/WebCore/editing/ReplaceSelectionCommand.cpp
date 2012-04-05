@@ -49,6 +49,7 @@
 #include "RenderInline.h"
 #include "RenderObject.h"
 #include "RenderText.h"
+#include "SimplifyMarkupCommand.h"
 #include "SmartReplace.h"
 #include "StylePropertySet.h"
 #include "TextIterator.h"
@@ -550,54 +551,6 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
     }
 }
 
-void ReplaceSelectionCommand::removeRedundantMarkup(InsertedNodes& insertedNodes)
-{
-    Node* pastEndNode = insertedNodes.pastLastLeaf();
-    Node* rootNode = insertedNodes.firstNodeInserted()->parentNode();
-    Vector<Node*> nodesToRemove;
-    
-    // Walk through the inserted nodes, to see if there are elements that could be removed
-    // without affecting the style. The goal is to produce leaner markup even when starting
-    // from a verbose fragment.
-    // We look at inline elements as well as non top level divs that don't have attributes. 
-    for (Node* node = insertedNodes.firstNodeInserted(); node && node != pastEndNode; node = node->traverseNextNode()) {
-        if (node->firstChild() || (node->isTextNode() && node->nextSibling()))
-            continue;
-        
-        Node* startingNode = node->parentNode();
-        RenderStyle* startingStyle = startingNode->renderStyle();
-        if (!startingStyle)
-            continue;
-        Node* currentNode = startingNode;
-        Node* topNodeWithStartingStyle = 0;
-        while (currentNode != rootNode) {
-            if (currentNode->parentNode() != rootNode && isRemovableBlock(currentNode))
-                nodesToRemove.append(currentNode);
-
-            currentNode = currentNode->parentNode();
-            if (!currentNode->renderer() || !currentNode->renderer()->isRenderInline() || toRenderInline(currentNode->renderer())->alwaysCreateLineBoxes())
-                continue;
-
-            if (currentNode && currentNode->firstChild() != currentNode->lastChild()) {
-                topNodeWithStartingStyle = 0;
-                break;
-            }
-            
-            unsigned context;
-            if (currentNode->renderStyle()->diff(startingStyle, context) == StyleDifferenceEqual)
-                topNodeWithStartingStyle = currentNode;
-            
-        }
-        if (topNodeWithStartingStyle) {
-            for (Node* node = startingNode; node != topNodeWithStartingStyle; node = node->parentNode())
-                nodesToRemove.append(node);
-        }
-    }
-    // we perform all the DOM mutations at once.
-    for (size_t i = 0; i < nodesToRemove.size(); ++i)
-        removeNodePreservingChildren(nodesToRemove[i]);
-}
-
 static inline bool nodeHasVisibleRenderText(Text* text)
 {
     return text->renderer() && toRenderText(text->renderer())->renderedTextLength() > 0;
@@ -1067,7 +1020,7 @@ void ReplaceSelectionCommand::doApply()
     removeRedundantStylesAndKeepStyleSpanInline(insertedNodes);
 
     if (m_sanitizeFragment)
-        removeRedundantMarkup(insertedNodes);
+        applyCommandToComposite(SimplifyMarkupCommand::create(document(), insertedNodes.firstNodeInserted(), insertedNodes.pastLastLeaf()));
 
     // Setup m_startOfInsertedContent and m_endOfInsertedContent. This should be the last two lines of code that access insertedNodes.
     m_startOfInsertedContent = firstPositionInOrBeforeNode(insertedNodes.firstNodeInserted());

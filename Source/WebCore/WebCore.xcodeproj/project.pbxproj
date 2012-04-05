@@ -5681,6 +5681,8 @@
 		C598902E14E9B0F800E8D18B /* PlatformPasteboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5F765BA14E1ECF4006C899B /* PlatformPasteboardMac.mm */; };
 		C598905714E9C28000E8D18B /* PasteboardStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F765B414E1D414006C899B /* PasteboardStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C598905814E9C29900E8D18B /* PlatformPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C5A1EA7C152BCF04004D00B6 /* SimplifyMarkupCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5A1EA79152BC486004D00B6 /* SimplifyMarkupCommand.cpp */; };
+		C5A1EA7D152BCF08004D00B6 /* SimplifyMarkupCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = C5A1EA7A152BC486004D00B6 /* SimplifyMarkupCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5B4C24D1509236C00A6EF37 /* WebCoreNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = C5B4C24B1509236C00A6EF37 /* WebCoreNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5B4C24E1509236C00A6EF37 /* WebCoreNSURLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5B4C24C1509236C00A6EF37 /* WebCoreNSURLExtras.mm */; };
 		C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */ = {isa = PBXBuildFile; fileRef = C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12767,6 +12769,8 @@
 		C585A67911D4FB07004C3E4B /* JSIDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBRequest.h; sourceTree = "<group>"; };
 		C585A69411D4FB13004C3E4B /* JSIDBFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBFactory.cpp; sourceTree = "<group>"; };
 		C585A69511D4FB13004C3E4B /* JSIDBFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBFactory.h; sourceTree = "<group>"; };
+		C5A1EA79152BC486004D00B6 /* SimplifyMarkupCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimplifyMarkupCommand.cpp; sourceTree = "<group>"; };
+		C5A1EA7A152BC486004D00B6 /* SimplifyMarkupCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimplifyMarkupCommand.h; sourceTree = "<group>"; };
 		C5B4C24B1509236C00A6EF37 /* WebCoreNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreNSURLExtras.h; sourceTree = "<group>"; };
 		C5B4C24C1509236C00A6EF37 /* WebCoreNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSURLExtras.mm; sourceTree = "<group>"; };
 		C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformPasteboard.h; sourceTree = "<group>"; };
@@ -16695,6 +16699,8 @@
 				93309DC0099E64910056E581 /* SetNodeAttributeCommand.cpp */,
 				93309DC1099E64910056E581 /* SetNodeAttributeCommand.h */,
 				B8DBDB47130B0F8A00F5CDB1 /* SetSelectionCommand.cpp */,
+				C5A1EA79152BC486004D00B6 /* SimplifyMarkupCommand.cpp */,
+				C5A1EA7A152BC486004D00B6 /* SimplifyMarkupCommand.h */,
 				B8DBDB48130B0F8A00F5CDB1 /* SetSelectionCommand.h */,
 				4B6FA6F30C39E48C00087011 /* SmartReplace.cpp */,
 				4B6FA6F20C39E48C00087011 /* SmartReplace.h */,
@@ -24718,6 +24724,7 @@
 				CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */,
 				A07D3356152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h in Headers */,
 				A07D3358152B632D001B6393 /* WebGLShaderPrecisionFormat.h in Headers */,
+				C5A1EA7D152BCF08004D00B6 /* SimplifyMarkupCommand.h in Headers */,
 				CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -27717,6 +27724,7 @@
 				CE08C3D1152B599A0021B8C2 /* AlternativeTextController.cpp in Sources */,
 				A07D3355152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp in Sources */,
 				A08CF154152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp in Sources */,
+				C5A1EA7C152BCF04004D00B6 /* SimplifyMarkupCommand.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

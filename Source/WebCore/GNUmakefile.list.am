@@ -2086,6 +2086,8 @@ webcore_sources += \
 	Source/WebCore/editing/SetNodeAttributeCommand.h \
 	Source/WebCore/editing/SetSelectionCommand.cpp \
 	Source/WebCore/editing/SetSelectionCommand.h \
+	Source/WebCore/editing/SimplifyMarkupCommand.cpp \
+	Source/WebCore/editing/SimplifyMarkupCommand.h \
 	Source/WebCore/editing/SmartReplace.cpp \
 	Source/WebCore/editing/SmartReplace.h \
 	Source/WebCore/editing/SmartReplaceICU.cpp \
