@@ -351,14 +351,14 @@ namespace JSC {
     template<typename To, typename From>
     inline To jsCast(From* from)
     {
-        ASSERT(!from || from->inherits(&WTF::RemovePointer<To>::Type::s_info));
+        ASSERT(!from || from->JSCell::inherits(&WTF::RemovePointer<To>::Type::s_info));
         return static_cast<To>(from);
     }
 
     template<typename To>
     inline To jsCast(JSValue from)
     {
-        ASSERT(from.isCell() && from.asCell()->inherits(&WTF::RemovePointer<To>::Type::s_info));
+        ASSERT(from.isCell() && from.asCell()->JSCell::inherits(&WTF::RemovePointer<To>::Type::s_info));
         return static_cast<To>(from.asCell());
     }
 

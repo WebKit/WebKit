@@ -1,3 +1,81 @@
+2012-04-05  Oliver Hunt  <oliver@apple.com>
+
+        Replace static_cast with jsCast when casting JSCell subclasses in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=83307
+
+        Reviewed by Gavin Barraclough.
+
+        Replace all usage of static_cast<JSCell subtype*> with jsCast<> in JavaScriptCore.
+        This results in assertions when unsafe casts are performed, but simply leaves
+        a static_cast<> in release builds.
+
+        * API/APICast.h:
+        (toJS):
+        * API/JSCallbackConstructor.cpp:
+        (JSC::constructJSCallback):
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::call):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::asCallbackObject):
+        (JSC::::finishCreation):
+        (JSC::::construct):
+        (JSC::::call):
+        * API/JSObjectRef.cpp:
+        (JSObjectGetPrivate):
+        (JSObjectSetPrivate):
+        (JSObjectGetPrivateProperty):
+        (JSObjectSetPrivateProperty):
+        (JSObjectDeletePrivateProperty):
+        * API/JSValueRef.cpp:
+        (JSValueIsObjectOfClass):
+        * API/JSWeakObjectMapRefPrivate.cpp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::resolve):
+        (JSC::BytecodeGenerator::resolveConstDecl):
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::finishCreation):
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Executable.h:
+        (JSC::isHostFunction):
+        * runtime/JSActivation.h:
+        (JSC::asActivation):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        * runtime/JSArray.h:
+        (JSC::asArray):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::boundFunctionCall):
+        (JSC::boundFunctionConstruct):
+        * runtime/JSByteArray.h:
+        (JSC::asByteArray):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::toObject):
+        * runtime/JSCell.h:
+        (JSC::jsCast):
+        * runtime/JSGlobalObject.h:
+        (JSC::asGlobalObject):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        (JSC::JSObject::allowsAccessFrom):
+        (JSC::JSObject::toThisObject):
+        (JSC::JSObject::unwrappedObject):
+        * runtime/JSObject.h:
+        (JSC::asObject):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::Register::propertyNameIterator):
+        * runtime/JSString.h:
+        (JSC::asString):
+        (JSC::JSValue::toString):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncSubstr):
+
 2012-04-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Make something faster than JSStringBuilder for joining an array of JSValue

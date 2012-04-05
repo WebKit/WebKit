@@ -65,7 +65,7 @@ JSObjectRef JSWeakObjectMapGet(JSContextRef ctx, JSWeakObjectMapRef map, void* k
 {
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
-    return toRef(static_cast<JSObject*>(map->map().get(key)));
+    return toRef(jsCast<JSObject*>(map->map().get(key)));
 }
 
 void JSWeakObjectMapRemove(JSContextRef ctx, JSWeakObjectMapRef map, void* key)

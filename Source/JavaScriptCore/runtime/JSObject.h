@@ -474,7 +474,7 @@ inline Structure* createEmptyObjectStructure(JSGlobalData& globalData, JSGlobalO
 inline JSObject* asObject(JSCell* cell)
 {
     ASSERT(cell->isObject());
-    return static_cast<JSObject*>(cell);
+    return jsCast<JSObject*>(cell);
 }
 
 inline JSObject* asObject(JSValue value)

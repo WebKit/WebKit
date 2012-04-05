@@ -2949,20 +2949,20 @@ DEFINE_STUB_FUNCTION(int, op_eq)
 
     if (cell1->isString()) {
         if (src2.isInt32())
-            return jsToNumber(static_cast<JSString*>(cell1)->value(stackFrame.callFrame)) == src2.asInt32();
+            return jsToNumber(jsCast<JSString*>(cell1)->value(stackFrame.callFrame)) == src2.asInt32();
             
         if (src2.isDouble())
-            return jsToNumber(static_cast<JSString*>(cell1)->value(stackFrame.callFrame)) == src2.asDouble();
+            return jsToNumber(jsCast<JSString*>(cell1)->value(stackFrame.callFrame)) == src2.asDouble();
 
         if (src2.isTrue())
-            return jsToNumber(static_cast<JSString*>(cell1)->value(stackFrame.callFrame)) == 1.0;
+            return jsToNumber(jsCast<JSString*>(cell1)->value(stackFrame.callFrame)) == 1.0;
 
         if (src2.isFalse())
-            return jsToNumber(static_cast<JSString*>(cell1)->value(stackFrame.callFrame)) == 0.0;
+            return jsToNumber(jsCast<JSString*>(cell1)->value(stackFrame.callFrame)) == 0.0;
 
         JSCell* cell2 = src2.asCell();
         if (cell2->isString())
-            return static_cast<JSString*>(cell1)->value(stackFrame.callFrame) == static_cast<JSString*>(cell2)->value(stackFrame.callFrame);
+            return jsCast<JSString*>(cell1)->value(stackFrame.callFrame) == jsCast<JSString*>(cell2)->value(stackFrame.callFrame);
 
         src2 = asObject(cell2)->toPrimitive(stackFrame.callFrame);
         CHECK_FOR_EXCEPTION();

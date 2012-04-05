@@ -38,7 +38,7 @@ const ClassInfo JSBoundFunction::s_info = { "Function", &Base::s_info, 0, 0, CRE
 
 EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
 {
-    JSBoundFunction* boundFunction = static_cast<JSBoundFunction*>(exec->callee());
+    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->callee());
 
     ASSERT(isJSArray(boundFunction->boundArgs())); // Currently this is true!
     JSArray* boundArgs = asArray(boundFunction->boundArgs());
@@ -58,7 +58,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
 {
-    JSBoundFunction* boundFunction = static_cast<JSBoundFunction*>(exec->callee());
+    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->callee());
 
     ASSERT(isJSArray(boundFunction->boundArgs())); // Currently this is true!
     JSArray* boundArgs = asArray(boundFunction->boundArgs());

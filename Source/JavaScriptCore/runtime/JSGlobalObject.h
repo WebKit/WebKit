@@ -358,7 +358,7 @@ namespace JSC {
     inline JSGlobalObject* asGlobalObject(JSValue value)
     {
         ASSERT(asObject(value)->isGlobalObject());
-        return static_cast<JSGlobalObject*>(asObject(value));
+        return jsCast<JSGlobalObject*>(asObject(value));
     }
 
     inline void JSGlobalObject::setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray, size_t count)

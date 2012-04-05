@@ -203,7 +203,7 @@ bool JSObject::setPrototypeWithCycleCheck(JSGlobalData& globalData, JSValue prot
 {
     JSValue checkFor = this;
     if (this->isGlobalObject())
-        checkFor = static_cast<JSGlobalObject*>(this)->globalExec()->thisValue();
+        checkFor = jsCast<JSGlobalObject*>(this)->globalExec()->thisValue();
 
     JSValue nextPrototype = prototype;
     while (nextPrototype && nextPrototype.isObject()) {
@@ -217,7 +217,7 @@ bool JSObject::setPrototypeWithCycleCheck(JSGlobalData& globalData, JSValue prot
 
 bool JSObject::allowsAccessFrom(ExecState* exec)
 {
-    JSGlobalObject* globalObject = isGlobalThis() ? static_cast<JSGlobalThis*>(this)->unwrappedObject() : this->globalObject();
+    JSGlobalObject* globalObject = isGlobalThis() ? jsCast<JSGlobalThis*>(this)->unwrappedObject() : this->globalObject();
     return globalObject->globalObjectMethodTable()->allowsAccessFrom(globalObject, exec);
 }
 
@@ -445,13 +445,13 @@ JSString* JSObject::toString(ExecState* exec) const
 
 JSObject* JSObject::toThisObject(JSCell* cell, ExecState*)
 {
-    return static_cast<JSObject*>(cell);
+    return jsCast<JSObject*>(cell);
 }
 
 JSObject* JSObject::unwrappedObject()
 {
     if (isGlobalThis())
-        return static_cast<JSGlobalThis*>(this)->unwrappedObject();
+        return jsCast<JSGlobalThis*>(this)->unwrappedObject();
     return this;
 }
 

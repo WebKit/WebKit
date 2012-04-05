@@ -159,7 +159,7 @@ JSObject* JSCell::toObject(ExecState* exec, JSGlobalObject* globalObject) const
     if (isString())
         return static_cast<const JSString*>(this)->toObject(exec, globalObject);
     ASSERT(isObject());
-    return static_cast<JSObject*>(const_cast<JSCell*>(this));
+    return jsCast<JSObject*>(const_cast<JSCell*>(this));
 }
 
 void slowValidateCell(JSCell* cell)

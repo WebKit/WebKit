@@ -1103,7 +1103,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
     JSString* jsString = 0;
     UString uString;
     if (thisValue.isString()) {
-        jsString = static_cast<JSString*>(thisValue.asCell());
+        jsString = jsCast<JSString*>(thisValue.asCell());
         len = jsString->length();
     } else if (thisValue.isUndefinedOrNull()) {
         // CheckObjectCoercible

@@ -123,7 +123,7 @@ namespace JSC {
     JSByteArray* asByteArray(JSValue value);
     inline JSByteArray* asByteArray(JSValue value)
     {
-        return static_cast<JSByteArray*>(value.asCell());
+        return jsCast<JSByteArray*>(value.asCell());
     }
 
     inline bool isJSByteArray(JSValue v) { return v.isCell() && v.asCell()->classInfo() == &JSByteArray::s_info; }

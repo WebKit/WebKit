@@ -253,7 +253,7 @@ JSCell* DFG_OPERATION operationCreateThisInlined(ExecState* exec, JSCell* protot
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
-    return createThis(exec, prototype, static_cast<JSFunction*>(constructor));
+    return createThis(exec, prototype, jsCast<JSFunction*>(constructor));
 }
 
 JSCell* DFG_OPERATION operationNewObject(ExecState* exec)
@@ -1025,7 +1025,7 @@ void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activatio
 {
     ASSERT(activation);
     ASSERT(activation->inherits(&JSActivation::s_info));
-    static_cast<JSActivation*>(activation)->tearOff(exec->globalData());
+    jsCast<JSActivation*>(activation)->tearOff(exec->globalData());
 }
 
 JSCell* DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)

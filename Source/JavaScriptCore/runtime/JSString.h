@@ -277,7 +277,7 @@ namespace JSC {
     inline JSString* asString(JSValue value)
     {
         ASSERT(value.asCell()->isString());
-        return static_cast<JSString*>(value.asCell());
+        return jsCast<JSString*>(value.asCell());
     }
 
     inline JSString* jsEmptyString(JSGlobalData* globalData)
@@ -458,7 +458,7 @@ namespace JSC {
     inline JSString* JSValue::toString(ExecState* exec) const
     {
         if (isString())
-            return static_cast<JSString*>(asCell());
+            return jsCast<JSString*>(asCell());
         return toStringSlowCase(exec);
     }
 

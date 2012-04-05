@@ -339,7 +339,7 @@ namespace JSC {
     inline JSArray* asArray(JSCell* cell)
     {
         ASSERT(cell->inherits(&JSArray::s_info));
-        return static_cast<JSArray*>(cell);
+        return jsCast<JSArray*>(cell);
     }
 
     inline JSArray* asArray(JSValue value)

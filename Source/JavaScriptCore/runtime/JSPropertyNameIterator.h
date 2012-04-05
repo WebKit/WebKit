@@ -121,7 +121,7 @@ namespace JSC {
 
     ALWAYS_INLINE JSPropertyNameIterator* Register::propertyNameIterator() const
     {
-        return static_cast<JSPropertyNameIterator*>(jsValue().asCell());
+        return jsCast<JSPropertyNameIterator*>(jsValue().asCell());
     }
 
 } // namespace JSC

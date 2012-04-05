@@ -44,7 +44,7 @@ void DebuggerActivation::finishCreation(JSGlobalData& globalData, JSObject* acti
     Base::finishCreation(globalData);
     ASSERT(activation);
     ASSERT(activation->isActivationObject());
-    m_activation.set(globalData, this, static_cast<JSActivation*>(activation));
+    m_activation.set(globalData, this, jsCast<JSActivation*>(activation));
 }
 
 void DebuggerActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)

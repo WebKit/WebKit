@@ -545,7 +545,7 @@ void JSArray::setLengthWritable(ExecState* exec, bool writable)
 // Defined in ES5.1 15.4.5.1
 bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
-    JSArray* array = static_cast<JSArray*>(object);
+    JSArray* array = jsCast<JSArray*>(object);
 
     // 3. If P is "length", then
     if (propertyName == exec->propertyNames().length) {

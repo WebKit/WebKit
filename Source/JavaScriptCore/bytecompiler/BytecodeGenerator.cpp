@@ -1185,7 +1185,7 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
             flags |= ResolveResult::DynamicFlag;
             break;
         }        
-        JSVariableObject* currentVariableObject = static_cast<JSVariableObject*>(currentScope);
+        JSVariableObject* currentVariableObject = jsCast<JSVariableObject*>(currentScope);
         SymbolTableEntry entry = currentVariableObject->symbolTable().get(property.impl());
 
         // Found the property
@@ -1242,7 +1242,7 @@ ResolveResult BytecodeGenerator::resolveConstDecl(const Identifier& property)
         JSObject* currentScope = iter->get();
         if (!currentScope->isVariableObject())
             continue;
-        JSVariableObject* currentVariableObject = static_cast<JSVariableObject*>(currentScope);
+        JSVariableObject* currentVariableObject = jsCast<JSVariableObject*>(currentScope);
         SymbolTableEntry entry = currentVariableObject->symbolTable().get(property.impl());
         if (entry.isNull())
             continue;

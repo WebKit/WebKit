@@ -721,7 +721,7 @@ namespace JSC {
 
     inline bool isHostFunction(JSValue value, NativeFunction nativeFunction)
     {
-        JSFunction* function = static_cast<JSFunction*>(getJSFunction(value));
+        JSFunction* function = jsCast<JSFunction*>(getJSFunction(value));
         if (!function || !function->isHostFunction())
             return false;
         return function->nativeFunction() == nativeFunction;
