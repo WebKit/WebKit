@@ -55,9 +55,9 @@ function negative_test(value) {
 // positive tests
 
 test("auto", "auto");
-test("rect(10px, 20px, 30px, 40px)", "rect(10px, 20px, 30px, 40px)");
-test("rect(10px, 20px, 30px, 40px, 5px)", "rect(10px, 20px, 30px, 40px, 5px)");
-test("rect(10px, 20px, 30px, 40px, 5px, 10px)", "rect(10px, 20px, 30px, 40px, 5px, 10px)");
+test("rectangle(10px, 20px, 30px, 40px)", "rectangle(10px, 20px, 30px, 40px)");
+test("rectangle(10px, 20px, 30px, 40px, 5px)", "rectangle(10px, 20px, 30px, 40px, 5px)");
+test("rectangle(10px, 20px, 30px, 40px, 5px, 10px)", "rectangle(10px, 20px, 30px, 40px, 5px, 10px)");
 
 test("circle(10px, 20px, 30px)", "circle(10px, 20px, 30px)");
 
@@ -67,10 +67,10 @@ test("polygon(10px, 20px 30px, 40px 40px, 50px)", "polygon(nonzero, 10px, 20px 3
 test("polygon(evenodd, 10px, 20px 30px, 40px 40px, 50px)", "polygon(evenodd, 10px, 20px 30px, 40px 40px, 50px)");
 test("polygon(nonzero, 10px, 20px 30px, 40px 40px, 50px)", "polygon(nonzero, 10px, 20px 30px, 40px 40px, 50px)");
 
-shouldBeEqualToString('testNotInherited("auto", "rect(10px, 20px, 30px, 40px)")', "parent: auto, child: rect(10px, 20px, 30px, 40px)");
-shouldBeEqualToString('testNotInherited("rect(10px, 20px, 30px, 40px)", "initial")', "parent: rect(10px, 20px, 30px, 40px), child: auto");
-shouldBeEqualToString('testNotInherited("rect(10px, 20px, 30px, 40px)", "")', "parent: rect(10px, 20px, 30px, 40px), child: auto");
-shouldBeEqualToString('testNotInherited("rect(10px, 20px, 30px, 40px)", "inherit")', "parent: rect(10px, 20px, 30px, 40px), child: rect(10px, 20px, 30px, 40px)");
+shouldBeEqualToString('testNotInherited("auto", "rectangle(10px, 20px, 30px, 40px)")', "parent: auto, child: rectangle(10px, 20px, 30px, 40px)");
+shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "initial")', "parent: rectangle(10px, 20px, 30px, 40px), child: auto");
+shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "")', "parent: rectangle(10px, 20px, 30px, 40px), child: auto");
+shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "inherit")', "parent: rectangle(10px, 20px, 30px, 40px), child: rectangle(10px, 20px, 30px, 40px)");
 shouldBeEqualToString('testNotInherited("", "inherit")', "parent: auto, child: auto");
 shouldBeEqualToString('testNotInherited("auto", "inherit")', "parent: auto, child: auto");
 
@@ -79,12 +79,12 @@ shouldBeEqualToString('testNotInherited("auto", "inherit")', "parent: auto, chil
 negative_test("calc()");
 negative_test("none");
 
-negative_test("rect()");
-negative_test("rect(10px)");
-negative_test("rect(10px, 10px)");
-negative_test("rect(10px, 20px, 30px)");
-negative_test("rect(10px 20px 30px 40px)");
-negative_test("rect(10px, 20px, 30px, 40px, 50px, 60px, 70px)");
+negative_test("rectangle()");
+negative_test("rectangle(10px)");
+negative_test("rectangle(10px, 10px)");
+negative_test("rectangle(10px, 20px, 30px)");
+negative_test("rectangle(10px 20px 30px 40px)");
+negative_test("rectangle(10px, 20px, 30px, 40px, 50px, 60px, 70px)");
 
 negative_test("circle()");
 negative_test("circle(10px)");

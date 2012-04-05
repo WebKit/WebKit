@@ -4092,7 +4092,7 @@ bool CSSParser::parseClipShape(CSSPropertyID propId, bool important)
     return false;
 }
 
-PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeRect(CSSParserValueList* args)
+PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeRectangle(CSSParserValueList* args)
 {
     ASSERT(args);
 
@@ -4100,7 +4100,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeRect(CSSParserValueList* 
     if (args->size() != 7 && args->size() != 9 && args->size() != 11)
         return 0;
 
-    RefPtr<CSSWrapShapeRect> shape = CSSWrapShapeRect::create();
+    RefPtr<CSSWrapShapeRectangle> shape = CSSWrapShapeRectangle::create();
 
     unsigned argumentNumber = 0;
     CSSParserValue* argument = args->current();
@@ -4295,8 +4295,8 @@ bool CSSParser::parseExclusionShape(bool shapeInside, bool important)
 
     RefPtr<CSSWrapShape> shape;
 
-    if (equalIgnoringCase(value->function->name, "rect("))
-        shape = parseExclusionShapeRect(args);
+    if (equalIgnoringCase(value->function->name, "rectangle("))
+        shape = parseExclusionShapeRectangle(args);
     else if (equalIgnoringCase(value->function->name, "circle("))
         shape = parseExclusionShapeCircle(args);
     else if (equalIgnoringCase(value->function->name, "ellipse("))

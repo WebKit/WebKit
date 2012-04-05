@@ -143,7 +143,7 @@ public:
     bool parseClipShape(CSSPropertyID, bool important);
 
     bool parseExclusionShape(bool shapeInside, bool important);
-    PassRefPtr<CSSWrapShape> parseExclusionShapeRect(CSSParserValueList* args);
+    PassRefPtr<CSSWrapShape> parseExclusionShapeRectangle(CSSParserValueList* args);
     PassRefPtr<CSSWrapShape> parseExclusionShapeCircle(CSSParserValueList* args);
     PassRefPtr<CSSWrapShape> parseExclusionShapeEllipse(CSSParserValueList* args);
     PassRefPtr<CSSWrapShape> parseExclusionShapePolygon(CSSParserValueList* args);

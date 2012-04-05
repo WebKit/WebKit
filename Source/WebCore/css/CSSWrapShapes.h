@@ -41,7 +41,7 @@ namespace WebCore {
 class CSSWrapShape : public RefCounted<CSSWrapShape> {
 public:
     enum Type {
-        CSS_WRAP_SHAPE_RECT = 1,
+        CSS_WRAP_SHAPE_RECTANGLE = 1,
         CSS_WRAP_SHAPE_CIRCLE = 2,
         CSS_WRAP_SHAPE_ELLIPSE = 3,
         CSS_WRAP_SHAPE_POLYGON = 4,
@@ -58,9 +58,9 @@ protected:
     CSSWrapShape() { }
 };
 
-class CSSWrapShapeRect : public CSSWrapShape {
+class CSSWrapShapeRectangle : public CSSWrapShape {
 public:
-    static PassRefPtr<CSSWrapShapeRect> create() { return adoptRef(new CSSWrapShapeRect); }
+    static PassRefPtr<CSSWrapShapeRectangle> create() { return adoptRef(new CSSWrapShapeRectangle); }
 
     CSSPrimitiveValue* left() const { return m_left.get(); }
     CSSPrimitiveValue* top() const { return m_top.get(); }
@@ -76,11 +76,11 @@ public:
     void setRadiusX(PassRefPtr<CSSPrimitiveValue> radiusX) { m_radiusX = radiusX; }
     void setRadiusY(PassRefPtr<CSSPrimitiveValue> radiusY) { m_radiusY = radiusY; }
 
-    virtual Type type() { return CSS_WRAP_SHAPE_RECT; }
+    virtual Type type() { return CSS_WRAP_SHAPE_RECTANGLE; }
     virtual String cssText() const;
 
 private:
-    CSSWrapShapeRect() { }
+    CSSWrapShapeRectangle() { }
 
     RefPtr<CSSPrimitiveValue> m_top;
     RefPtr<CSSPrimitiveValue> m_left;

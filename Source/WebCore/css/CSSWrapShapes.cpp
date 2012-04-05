@@ -37,14 +37,14 @@ using namespace WTF;
 
 namespace WebCore {
 
-String CSSWrapShapeRect::cssText() const
+String CSSWrapShapeRectangle::cssText() const
 {
-    DEFINE_STATIC_LOCAL(const String, rectParen, ("rect("));
+    DEFINE_STATIC_LOCAL(const String, rectangleParen, ("rectangle("));
     DEFINE_STATIC_LOCAL(const String, comma, (", "));
 
     StringBuilder result;
     result.reserveCapacity(32);
-    result.append(rectParen);
+    result.append(rectangleParen);
 
     result.append(m_left->cssText());
     result.append(comma);
