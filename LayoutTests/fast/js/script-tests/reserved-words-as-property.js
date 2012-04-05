@@ -6,6 +6,7 @@ var reservedWords = ["true", "false", "null", "break", "case", "catch", "continu
 
 var strictReservedWords = [
     "implements",
+    "let",
     "private",
     "public",
     "yield",

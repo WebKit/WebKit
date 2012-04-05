@@ -1,3 +1,17 @@
+2012-04-05  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77293
+        [Un]Reserve 'let'
+
+        Rubber stamped by Oliver Hunt.
+
+        Revert r106198.
+        This does break the web - e.g. https://bvi.bnc.ca/index/bnc/indexen.html
+        If we're going to reserve let, we're going to have to do so in a more
+        circumspect fashion.
+
+        * parser/Keywords.table:
+
 2012-04-05  Michael Saboff  <msaboff@apple.com>
 
         Rolling out http://trac.webkit.org/changeset/113262.
