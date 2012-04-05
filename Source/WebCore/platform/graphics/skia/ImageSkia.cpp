@@ -479,7 +479,8 @@ PassRefPtr<BitmapImageSingleFrameSkia> BitmapImageSingleFrameSkia::create(const 
 {
     if (copyPixels) {
         SkBitmap temp;
-        bitmap.copyTo(&temp, bitmap.config());
+        if (!bitmap.deepCopyTo(&temp, bitmap.config()))
+            bitmap.copyTo(&temp, bitmap.config());
         return adoptRef(new BitmapImageSingleFrameSkia(temp));
     }
     return adoptRef(new BitmapImageSingleFrameSkia(bitmap));
