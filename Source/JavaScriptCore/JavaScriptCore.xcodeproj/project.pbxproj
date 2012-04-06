@@ -226,8 +226,8 @@
 		142D6F1113539A4100B02E86 /* MarkStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142D6F0E13539A4100B02E86 /* MarkStack.cpp */; };
 		142D6F1213539A4100B02E86 /* MarkStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 142D6F0F13539A4100B02E86 /* MarkStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142E3134134FF0A600AFADB5 /* Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312B134FF0A600AFADB5 /* Handle.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		142E3135134FF0A600AFADB5 /* HandleHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142E312C134FF0A600AFADB5 /* HandleHeap.cpp */; };
-		142E3136134FF0A600AFADB5 /* HandleHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312D134FF0A600AFADB5 /* HandleHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		142E3135134FF0A600AFADB5 /* HandleSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142E312C134FF0A600AFADB5 /* HandleSet.cpp */; };
+		142E3136134FF0A600AFADB5 /* HandleSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312D134FF0A600AFADB5 /* HandleSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142E3137134FF0A600AFADB5 /* HandleStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142E312E134FF0A600AFADB5 /* HandleStack.cpp */; };
 		142E3138134FF0A600AFADB5 /* HandleStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312F134FF0A600AFADB5 /* HandleStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142E3139134FF0A600AFADB5 /* Local.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E3130134FF0A600AFADB5 /* Local.h */; };
@@ -325,8 +325,8 @@
 		14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D2F3D9139F4BE200491031 /* MarkedSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14E84F9E14EE1ACC00D6D5D4 /* WeakBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E84F9914EE1ACC00D6D5D4 /* WeakBlock.cpp */; };
 		14E84F9F14EE1ACC00D6D5D4 /* WeakBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E84F9A14EE1ACC00D6D5D4 /* WeakBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		14E84FA014EE1ACC00D6D5D4 /* WeakHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E84F9B14EE1ACC00D6D5D4 /* WeakHeap.cpp */; };
-		14E84FA114EE1ACC00D6D5D4 /* WeakHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E84F9C14EE1ACC00D6D5D4 /* WeakHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14E84FA014EE1ACC00D6D5D4 /* WeakSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E84F9B14EE1ACC00D6D5D4 /* WeakSet.cpp */; };
+		14E84FA114EE1ACC00D6D5D4 /* WeakSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E84F9C14EE1ACC00D6D5D4 /* WeakSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14E84FA214EE1ACC00D6D5D4 /* WeakImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E84F9D14EE1ACC00D6D5D4 /* WeakImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14E9D17B107EC469004DDA21 /* JSGlobalObjectFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */; };
 		14F7256514EE265E00B1652B /* WeakHandleOwner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F7256314EE265E00B1652B /* WeakHandleOwner.cpp */; };
@@ -881,8 +881,8 @@
 		142D6F0E13539A4100B02E86 /* MarkStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkStack.cpp; sourceTree = "<group>"; };
 		142D6F0F13539A4100B02E86 /* MarkStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkStack.h; sourceTree = "<group>"; };
 		142E312B134FF0A600AFADB5 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
-		142E312C134FF0A600AFADB5 /* HandleHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandleHeap.cpp; sourceTree = "<group>"; };
-		142E312D134FF0A600AFADB5 /* HandleHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleHeap.h; sourceTree = "<group>"; };
+		142E312C134FF0A600AFADB5 /* HandleSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandleSet.cpp; sourceTree = "<group>"; };
+		142E312D134FF0A600AFADB5 /* HandleSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleSet.h; sourceTree = "<group>"; };
 		142E312E134FF0A600AFADB5 /* HandleStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandleStack.cpp; sourceTree = "<group>"; };
 		142E312F134FF0A600AFADB5 /* HandleStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleStack.h; sourceTree = "<group>"; };
 		142E3130134FF0A600AFADB5 /* Local.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Local.h; sourceTree = "<group>"; };
@@ -954,8 +954,8 @@
 		14DE0D680D02431400AACCA2 /* JSGlobalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObject.cpp; sourceTree = "<group>"; };
 		14E84F9914EE1ACC00D6D5D4 /* WeakBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakBlock.cpp; sourceTree = "<group>"; };
 		14E84F9A14EE1ACC00D6D5D4 /* WeakBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakBlock.h; sourceTree = "<group>"; };
-		14E84F9B14EE1ACC00D6D5D4 /* WeakHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakHeap.cpp; sourceTree = "<group>"; };
-		14E84F9C14EE1ACC00D6D5D4 /* WeakHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakHeap.h; sourceTree = "<group>"; };
+		14E84F9B14EE1ACC00D6D5D4 /* WeakSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakSet.cpp; sourceTree = "<group>"; };
+		14E84F9C14EE1ACC00D6D5D4 /* WeakSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakSet.h; sourceTree = "<group>"; };
 		14E84F9D14EE1ACC00D6D5D4 /* WeakImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakImpl.h; sourceTree = "<group>"; };
 		14F252560D08DD8D004ECFFF /* JSVariableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVariableObject.h; sourceTree = "<group>"; };
 		14F7256314EE265E00B1652B /* WeakHandleOwner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakHandleOwner.cpp; sourceTree = "<group>"; };
@@ -1572,8 +1572,8 @@
 				0F2C556E14738F2E00121E4F /* DFGCodeBlocks.h */,
 				BCBE2CAD14E985AA000593AD /* GCAssertions.h */,
 				142E312B134FF0A600AFADB5 /* Handle.h */,
-				142E312C134FF0A600AFADB5 /* HandleHeap.cpp */,
-				142E312D134FF0A600AFADB5 /* HandleHeap.h */,
+				142E312C134FF0A600AFADB5 /* HandleSet.cpp */,
+				142E312D134FF0A600AFADB5 /* HandleSet.h */,
 				142E312E134FF0A600AFADB5 /* HandleStack.cpp */,
 				142E312F134FF0A600AFADB5 /* HandleStack.h */,
 				146FA5A81378F6B0003627A3 /* HandleTypes.h */,
@@ -1608,8 +1608,8 @@
 				14E84F9A14EE1ACC00D6D5D4 /* WeakBlock.h */,
 				14F7256314EE265E00B1652B /* WeakHandleOwner.cpp */,
 				14F7256414EE265E00B1652B /* WeakHandleOwner.h */,
-				14E84F9B14EE1ACC00D6D5D4 /* WeakHeap.cpp */,
-				14E84F9C14EE1ACC00D6D5D4 /* WeakHeap.h */,
+				14E84F9B14EE1ACC00D6D5D4 /* WeakSet.cpp */,
+				14E84F9C14EE1ACC00D6D5D4 /* WeakSet.h */,
 				14E84F9D14EE1ACC00D6D5D4 /* WeakImpl.h */,
 				0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */,
 				0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */,
@@ -2315,7 +2315,7 @@
 				BC18C4050E16F5CD00B34460 /* FunctionPrototype.h in Headers */,
 				DDF7ABD411F60ED200108E36 /* GCActivityCallback.h in Headers */,
 				142E3134134FF0A600AFADB5 /* Handle.h in Headers */,
-				142E3136134FF0A600AFADB5 /* HandleHeap.h in Headers */,
+				142E3136134FF0A600AFADB5 /* HandleSet.h in Headers */,
 				142E3138134FF0A600AFADB5 /* HandleStack.h in Headers */,
 				1478297B1379E8A800A7C2A3 /* HandleTypes.h in Headers */,
 				14BA7A9813AADFF8005B7C2C /* Heap.h in Headers */,
@@ -2552,7 +2552,7 @@
 				0FFFC96014EF90BD00C72532 /* DFGVirtualRegisterAllocationPhase.h in Headers */,
 				1497209114EB831500FEB1B7 /* PassWeak.h in Headers */,
 				14E84F9F14EE1ACC00D6D5D4 /* WeakBlock.h in Headers */,
-				14E84FA114EE1ACC00D6D5D4 /* WeakHeap.h in Headers */,
+				14E84FA114EE1ACC00D6D5D4 /* WeakSet.h in Headers */,
 				14E84FA214EE1ACC00D6D5D4 /* WeakImpl.h in Headers */,
 				14F7256614EE265E00B1652B /* WeakHandleOwner.h in Headers */,
 				0FB5467714F59B5C002C2989 /* LazyOperandValueProfile.h in Headers */,
@@ -2978,7 +2978,7 @@
 				147F39CC107EC37600427A48 /* FunctionPrototype.cpp in Sources */,
 				DDF7ABD511F60ED200108E36 /* GCActivityCallbackCF.cpp in Sources */,
 				14280855107EC0E70013E7B2 /* GetterSetter.cpp in Sources */,
-				142E3135134FF0A600AFADB5 /* HandleHeap.cpp in Sources */,
+				142E3135134FF0A600AFADB5 /* HandleSet.cpp in Sources */,
 				142E3137134FF0A600AFADB5 /* HandleStack.cpp in Sources */,
 				14BA7A9713AADFF8005B7C2C /* Heap.cpp in Sources */,
 				147F39CE107EC37600427A48 /* Identifier.cpp in Sources */,
@@ -3113,7 +3113,7 @@
 				C2B916C514DA040C00CBAC86 /* MarkedAllocator.cpp in Sources */,
 				0F9FC8C314E1B5FE00D52AE0 /* PolymorphicPutByIdList.cpp in Sources */,
 				14E84F9E14EE1ACC00D6D5D4 /* WeakBlock.cpp in Sources */,
-				14E84FA014EE1ACC00D6D5D4 /* WeakHeap.cpp in Sources */,
+				14E84FA014EE1ACC00D6D5D4 /* WeakSet.cpp in Sources */,
 				14F7256514EE265E00B1652B /* WeakHandleOwner.cpp in Sources */,
 				0FFFC95714EF90A000C72532 /* DFGCFAPhase.cpp in Sources */,
 				0FFFC95914EF90A600C72532 /* DFGCSEPhase.cpp in Sources */,

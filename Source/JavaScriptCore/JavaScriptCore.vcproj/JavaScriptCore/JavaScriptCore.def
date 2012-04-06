@@ -180,7 +180,7 @@ EXPORTS
     ?fastZeroedMalloc@WTF@@YAPAXI@Z
     ?fillGetterPropertySlot@JSObject@JSC@@AAEXAAVPropertySlot@2@PAV?$WriteBarrierBase@W4Unknown@JSC@@@2@@Z
     ?finalize@WeakHandleOwner@JSC@@UAEXV?$Handle@W4Unknown@JSC@@@2@PAX@Z
-    ?findAllocator@WeakHeap@JSC@@AAEPAUFreeCell@WeakBlock@2@XZ
+    ?findAllocator@WeakSet@JSC@@AAEPAUFreeCell@WeakBlock@2@XZ
     ?finishCreation@DateInstance@JSC@@IAEXAAVJSGlobalData@2@N@Z
     ?finishCreation@InternalFunction@JSC@@IAEXAAVJSGlobalData@2@ABVIdentifier@2@@Z
     ?finishCreation@JSArray@JSC@@IAEXAAVJSGlobalData@2@I@Z
@@ -218,7 +218,7 @@ EXPORTS
     ?getter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
     ?globalExec@JSGlobalObject@JSC@@QAEPAVExecState@2@XZ
     ?globalObjectCount@Heap@JSC@@QAEIXZ
-    ?grow@HandleHeap@JSC@@AAEXXZ
+    ?grow@HandleSet@JSC@@AAEXXZ
     ?hasInstance@JSObject@JSC@@SA_NPAV12@PAVExecState@2@VJSValue@2@2@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@I@Z
@@ -372,7 +372,7 @@ EXPORTS
     ?waitForThreadCompletion@WTF@@YAHI@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ
-    ?writeBarrier@HandleHeap@JSC@@QAEXPAVJSValue@2@ABV32@@Z
+    ?writeBarrier@HandleSet@JSC@@QAEXPAVJSValue@2@ABV32@@Z
     ?yield@WTF@@YAXXZ
     WTFGetBacktrace
     WTFInvokeCrashHook

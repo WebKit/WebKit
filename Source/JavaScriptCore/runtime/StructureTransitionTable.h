@@ -87,7 +87,7 @@ public:
         WeakImpl* impl = this->weakImpl();
         if (!impl)
             return;
-        WeakHeap::deallocate(impl);
+        WeakSet::deallocate(impl);
     }
 
     inline void add(JSGlobalData&, Structure*);
@@ -117,7 +117,7 @@ private:
         ASSERT(isUsingSingleSlot());
         
         if (WeakImpl* impl = this->weakImpl())
-            WeakHeap::deallocate(impl);
+            WeakSet::deallocate(impl);
 
         // This implicitly clears the flag that indicates we're using a single transition
         m_data = reinterpret_cast<intptr_t>(map);
@@ -139,8 +139,8 @@ private:
     {
         ASSERT(isUsingSingleSlot());
         if (WeakImpl* impl = this->weakImpl())
-            WeakHeap::deallocate(impl);
-        WeakImpl* impl = globalData.heap.weakHeap()->allocate(reinterpret_cast<JSCell*>(structure));
+            WeakSet::deallocate(impl);
+        WeakImpl* impl = globalData.heap.weakSet()->allocate(reinterpret_cast<JSCell*>(structure));
         m_data = reinterpret_cast<intptr_t>(impl) | UsingSingleSlotFlag;
     }
 

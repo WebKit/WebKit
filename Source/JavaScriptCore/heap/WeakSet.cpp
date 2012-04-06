@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
-#include "WeakHeap.h"
+#include "WeakSet.h"
 
 #include "Heap.h"
 
 namespace JSC {
 
-WeakHeap::~WeakHeap()
+WeakSet::~WeakSet()
 {
     WeakBlock* next = 0;
     for (WeakBlock* block = static_cast<WeakBlock*>(m_blocks.head()); block; block = next) {
@@ -40,25 +40,25 @@ WeakHeap::~WeakHeap()
     m_blocks.clear();
 }
 
-void WeakHeap::finalizeAll()
+void WeakSet::finalizeAll()
 {
     for (WeakBlock* block = static_cast<WeakBlock*>(m_blocks.head()); block; block = static_cast<WeakBlock*>(block->next()))
         block->finalizeAll();
 }
 
-void WeakHeap::visitLiveWeakImpls(HeapRootVisitor& visitor)
+void WeakSet::visitLiveWeakImpls(HeapRootVisitor& visitor)
 {
     for (WeakBlock* block = static_cast<WeakBlock*>(m_blocks.head()); block; block = static_cast<WeakBlock*>(block->next()))
         block->visitLiveWeakImpls(visitor);
 }
 
-void WeakHeap::visitDeadWeakImpls(HeapRootVisitor& visitor)
+void WeakSet::visitDeadWeakImpls(HeapRootVisitor& visitor)
 {
     for (WeakBlock* block = static_cast<WeakBlock*>(m_blocks.head()); block; block = static_cast<WeakBlock*>(block->next()))
         block->visitDeadWeakImpls(visitor);
 }
 
-void WeakHeap::sweep()
+void WeakSet::sweep()
 {
     WeakBlock* next;
     for (WeakBlock* block = static_cast<WeakBlock*>(m_blocks.head()); block; block = next) {
@@ -73,13 +73,13 @@ void WeakHeap::sweep()
     }
 }
 
-void WeakHeap::resetAllocator()
+void WeakSet::resetAllocator()
 {
     m_allocator = 0;
     m_nextAllocator = static_cast<WeakBlock*>(m_blocks.head());
 }
 
-WeakBlock::FreeCell* WeakHeap::findAllocator()
+WeakBlock::FreeCell* WeakSet::findAllocator()
 {
     if (WeakBlock::FreeCell* allocator = tryFindAllocator())
         return allocator;
@@ -93,7 +93,7 @@ WeakBlock::FreeCell* WeakHeap::findAllocator()
     return addAllocator();
 }
 
-WeakBlock::FreeCell* WeakHeap::tryFindAllocator()
+WeakBlock::FreeCell* WeakSet::tryFindAllocator()
 {
     while (m_nextAllocator) {
         WeakBlock* block = m_nextAllocator;
@@ -108,7 +108,7 @@ WeakBlock::FreeCell* WeakHeap::tryFindAllocator()
     return 0;
 }
 
-WeakBlock::FreeCell* WeakHeap::addAllocator()
+WeakBlock::FreeCell* WeakSet::addAllocator()
 {
     WeakBlock* block = WeakBlock::create();
     m_blocks.append(block);
@@ -117,7 +117,7 @@ WeakBlock::FreeCell* WeakHeap::addAllocator()
     return sweepResult.freeList;
 }
 
-void WeakHeap::removeAllocator(WeakBlock* block)
+void WeakSet::removeAllocator(WeakBlock* block)
 {
     m_blocks.remove(block);
     WeakBlock::destroy(block);

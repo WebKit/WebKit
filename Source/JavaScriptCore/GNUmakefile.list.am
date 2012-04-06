@@ -218,8 +218,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/DFGCodeBlocks.h \
 	Source/JavaScriptCore/heap/GCAssertions.h \
 	Source/JavaScriptCore/heap/Handle.h \
-	Source/JavaScriptCore/heap/HandleHeap.cpp \
-	Source/JavaScriptCore/heap/HandleHeap.h \
+	Source/JavaScriptCore/heap/HandleSet.cpp \
+	Source/JavaScriptCore/heap/HandleSet.h \
 	Source/JavaScriptCore/heap/HeapBlock.h \
 	Source/JavaScriptCore/heap/SlotVisitor.h \
 	Source/JavaScriptCore/heap/HandleStack.cpp \
@@ -251,7 +251,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/VTableSpectrum.h \
 	Source/JavaScriptCore/heap/Weak.h \
 	Source/JavaScriptCore/heap/WeakBlock.cpp \
-	Source/JavaScriptCore/heap/WeakHeap.cpp \
+	Source/JavaScriptCore/heap/WeakSet.cpp \
 	Source/JavaScriptCore/heap/WeakHandleOwner.cpp \
 	Source/JavaScriptCore/heap/WeakReferenceHarvester.h \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.cpp \

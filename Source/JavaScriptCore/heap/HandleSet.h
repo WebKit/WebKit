@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HandleHeap_h
-#define HandleHeap_h
+#ifndef HandleSet_h
+#define HandleSet_h
 
 #include <wtf/BlockStack.h>
 #include "Handle.h"
@@ -34,17 +34,17 @@
 
 namespace JSC {
 
-class HandleHeap;
+class HandleSet;
 class HeapRootVisitor;
 class JSGlobalData;
 class JSValue;
 class SlotVisitor;
 
-class HandleHeap {
+class HandleSet {
 public:
-    static HandleHeap* heapFor(HandleSlot);
+    static HandleSet* heapFor(HandleSlot);
 
-    HandleHeap(JSGlobalData*);
+    HandleSet(JSGlobalData*);
     
     JSGlobalData* globalData();
 
@@ -63,10 +63,10 @@ private:
     class Node {
     public:
         Node(WTF::SentinelTag);
-        Node(HandleHeap*);
+        Node(HandleSet*);
         
         HandleSlot slot();
-        HandleHeap* handleHeap();
+        HandleSet* handleSet();
 
         void setPrev(Node*);
         Node* prev();
@@ -76,7 +76,7 @@ private:
 
     private:
         JSValue m_value;
-        HandleHeap* m_handleHeap;
+        HandleSet* m_handleSet;
         Node* m_prev;
         Node* m_next;
     };
@@ -99,27 +99,27 @@ private:
     Node* m_nextToFinalize;
 };
 
-inline HandleHeap* HandleHeap::heapFor(HandleSlot handle)
+inline HandleSet* HandleSet::heapFor(HandleSlot handle)
 {
-    return toNode(handle)->handleHeap();
+    return toNode(handle)->handleSet();
 }
 
-inline JSGlobalData* HandleHeap::globalData()
+inline JSGlobalData* HandleSet::globalData()
 {
     return m_globalData;
 }
 
-inline HandleSlot HandleHeap::toHandle(Node* node)
+inline HandleSlot HandleSet::toHandle(Node* node)
 {
     return reinterpret_cast<HandleSlot>(node);
 }
 
-inline HandleHeap::Node* HandleHeap::toNode(HandleSlot handle)
+inline HandleSet::Node* HandleSet::toNode(HandleSlot handle)
 {
     return reinterpret_cast<Node*>(handle);
 }
 
-inline HandleSlot HandleHeap::allocate()
+inline HandleSlot HandleSet::allocate()
 {
     // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
     // File a bug with stack trace if you hit this.
@@ -134,7 +134,7 @@ inline HandleSlot HandleHeap::allocate()
     return toHandle(node);
 }
 
-inline void HandleHeap::deallocate(HandleSlot handle)
+inline void HandleSet::deallocate(HandleSlot handle)
 {
     Node* node = toNode(handle);
     if (node == m_nextToFinalize) {
@@ -146,51 +146,51 @@ inline void HandleHeap::deallocate(HandleSlot handle)
     m_freeList.push(node);
 }
 
-inline HandleHeap::Node::Node(HandleHeap* handleHeap)
-    : m_handleHeap(handleHeap)
+inline HandleSet::Node::Node(HandleSet* handleSet)
+    : m_handleSet(handleSet)
     , m_prev(0)
     , m_next(0)
 {
 }
 
-inline HandleHeap::Node::Node(WTF::SentinelTag)
-    : m_handleHeap(0)
+inline HandleSet::Node::Node(WTF::SentinelTag)
+    : m_handleSet(0)
     , m_prev(0)
     , m_next(0)
 {
 }
 
-inline HandleSlot HandleHeap::Node::slot()
+inline HandleSlot HandleSet::Node::slot()
 {
     return &m_value;
 }
 
-inline HandleHeap* HandleHeap::Node::handleHeap()
+inline HandleSet* HandleSet::Node::handleSet()
 {
-    return m_handleHeap;
+    return m_handleSet;
 }
 
-inline void HandleHeap::Node::setPrev(Node* prev)
+inline void HandleSet::Node::setPrev(Node* prev)
 {
     m_prev = prev;
 }
 
-inline HandleHeap::Node* HandleHeap::Node::prev()
+inline HandleSet::Node* HandleSet::Node::prev()
 {
     return m_prev;
 }
 
-inline void HandleHeap::Node::setNext(Node* next)
+inline void HandleSet::Node::setNext(Node* next)
 {
     m_next = next;
 }
 
-inline HandleHeap::Node* HandleHeap::Node::next()
+inline HandleSet::Node* HandleSet::Node::next()
 {
     return m_next;
 }
 
-template<typename Functor> void HandleHeap::forEachStrongHandle(Functor& functor, const HashCountedSet<JSCell*>& skipSet)
+template<typename Functor> void HandleSet::forEachStrongHandle(Functor& functor, const HashCountedSet<JSCell*>& skipSet)
 {
     Node* end = m_strongList.end();
     for (Node* node = m_strongList.begin(); node != end; node = node->next()) {

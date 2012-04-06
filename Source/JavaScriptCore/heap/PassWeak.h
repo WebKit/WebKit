@@ -147,7 +147,7 @@ template<typename T> inline PassWeak<T>::PassWeak(std::nullptr_t)
 }
 
 template<typename T> inline PassWeak<T>::PassWeak(JSGlobalData& globalData, typename PassWeak<T>::GetType getType, WeakHandleOwner* weakOwner, void* context)
-    : m_impl(globalData.heap.weakHeap()->allocate(getType, weakOwner, context))
+    : m_impl(globalData.heap.weakSet()->allocate(getType, weakOwner, context))
 {
 }
 
@@ -165,7 +165,7 @@ template<typename T> inline PassWeak<T>::~PassWeak()
 {
     if (!m_impl)
         return;
-    WeakHeap::deallocate(m_impl);
+    WeakSet::deallocate(m_impl);
 }
 
 template<typename T> inline bool PassWeak<T>::operator!() const

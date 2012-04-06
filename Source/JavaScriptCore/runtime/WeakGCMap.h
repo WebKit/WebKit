@@ -89,7 +89,7 @@ public:
     {
         map_iterator end = m_map.end();
         for (map_iterator ptr = m_map.begin(); ptr != end; ++ptr)
-            WeakHeap::deallocate(ptr->second);
+            WeakSet::deallocate(ptr->second);
         m_map.clear();
     }
 
@@ -108,7 +108,7 @@ public:
         ASSERT(iter.m_iterator != m_map.end());
         WeakImpl* impl = iter.m_iterator->second;
         ASSERT(impl);
-        WeakHeap::deallocate(impl);
+        WeakSet::deallocate(impl);
         m_map.remove(iter.m_iterator);
     }
 
@@ -121,7 +121,7 @@ public:
     {
         typename MapType::AddResult result = m_map.add(key, 0);
         if (result.isNewEntry)
-            result.iterator->second = globalData.heap.weakHeap()->allocate(value, this, FinalizerCallback::finalizerContextFor(key));
+            result.iterator->second = globalData.heap.weakSet()->allocate(value, this, FinalizerCallback::finalizerContextFor(key));
 
         // WeakGCMap exposes a different iterator, so we need to wrap it and create our own AddResult.
         return AddResult(iterator(result.iterator), result.isNewEntry);
@@ -131,8 +131,8 @@ public:
     {
         typename MapType::AddResult result = m_map.add(key, 0);
         if (!result.isNewEntry)
-            WeakHeap::deallocate(result.iterator->second);
-        result.iterator->second = globalData.heap.weakHeap()->allocate(value, this, FinalizerCallback::finalizerContextFor(key));
+            WeakSet::deallocate(result.iterator->second);
+        result.iterator->second = globalData.heap.weakSet()->allocate(value, this, FinalizerCallback::finalizerContextFor(key));
     }
 
     ExternalType take(const KeyType& key)
@@ -141,7 +141,7 @@ public:
         if (!impl)
             return HashTraits<ExternalType>::emptyValue();
         ExternalType result = HandleTypes<MappedType>::getFromSlot(const_cast<JSValue*>(&impl->jsValue()));
-        WeakHeap::deallocate(impl);
+        WeakSet::deallocate(impl);
         return result;
     }
 
@@ -160,7 +160,7 @@ private:
     {
         WeakImpl* impl = m_map.take(FinalizerCallback::keyForFinalizer(context, HandleTypes<MappedType>::getFromSlot(handle.slot())));
         ASSERT(impl);
-        WeakHeap::deallocate(impl);
+        WeakSet::deallocate(impl);
     }
 
     MapType m_map;

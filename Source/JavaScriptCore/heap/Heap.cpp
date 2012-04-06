@@ -323,8 +323,8 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     , m_machineThreads(this)
     , m_sharedData(globalData)
     , m_slotVisitor(m_sharedData)
-    , m_weakHeap(this)
-    , m_handleHeap(globalData)
+    , m_weakSet(this)
+    , m_handleSet(globalData)
     , m_isSafeToCollect(false)
     , m_globalData(globalData)
     , m_lastGCLength(0)
@@ -375,7 +375,7 @@ void Heap::destroy()
     canonicalizeCellLivenessData();
     clearMarks();
 
-    m_weakHeap.finalizeAll();
+    m_weakSet.finalizeAll();
     m_globalData->smallStrings.finalizeSmallStrings();
     shrink();
     m_storageSpace.destroy();
@@ -660,7 +660,7 @@ void Heap::markRoots(bool fullGC)
     
         {
             GCPHASE(VisitStrongHandles);
-            m_handleHeap.visitStrongHandles(heapRootVisitor);
+            m_handleSet.visitStrongHandles(heapRootVisitor);
             visitor.donateAndDrain();
         }
     
@@ -689,7 +689,7 @@ void Heap::markRoots(bool fullGC)
     {
         GCPHASE(VisitingLiveWeakHandles);
         while (true) {
-            m_weakHeap.visitLiveWeakImpls(heapRootVisitor);
+            m_weakSet.visitLiveWeakImpls(heapRootVisitor);
             harvestWeakReferences();
             if (visitor.isEmpty())
                 break;
@@ -705,7 +705,7 @@ void Heap::markRoots(bool fullGC)
 
     {
         GCPHASE(VisitingDeadWeakHandles);
-        m_weakHeap.visitDeadWeakImpls(heapRootVisitor);
+        m_weakSet.visitDeadWeakImpls(heapRootVisitor);
     }
 
     GCCOUNTER(VisitedValueCount, visitor.visitCount());
@@ -818,7 +818,7 @@ void Heap::collect(SweepToggle sweepToggle)
         
     {
         GCPHASE(FinalizeWeakHandles);
-        m_weakHeap.sweep();
+        m_weakSet.sweep();
         m_globalData->smallStrings.finalizeSmallStrings();
     }
     
@@ -866,7 +866,7 @@ void Heap::canonicalizeCellLivenessData()
 void Heap::resetAllocators()
 {
     m_objectSpace.resetAllocators();
-    m_weakHeap.resetAllocator();
+    m_weakSet.resetAllocator();
 }
 
 void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
@@ -927,7 +927,7 @@ void Heap::releaseFreeBlocks()
 
 void Heap::addFinalizer(JSCell* cell, Finalizer finalizer)
 {
-    weakHeap()->allocate(cell, &m_finalizerOwner, reinterpret_cast<void*>(finalizer)); // Balanced by FinalizerOwner::finalize().
+    weakSet()->allocate(cell, &m_finalizerOwner, reinterpret_cast<void*>(finalizer)); // Balanced by FinalizerOwner::finalize().
 }
 
 void Heap::FinalizerOwner::finalize(Handle<Unknown> handle, void* context)
@@ -935,7 +935,7 @@ void Heap::FinalizerOwner::finalize(Handle<Unknown> handle, void* context)
     HandleSlot slot = handle.slot();
     Finalizer finalizer = reinterpret_cast<Finalizer>(context);
     finalizer(slot->asCell());
-    WeakHeap::deallocate(WeakImpl::asWeakImpl(slot));
+    WeakSet::deallocate(WeakImpl::asWeakImpl(slot));
 }
 
 void Heap::addFunctionExecutable(FunctionExecutable* executable)

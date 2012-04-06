@@ -28,7 +28,7 @@
 
 #include <wtf/Assertions.h>
 #include "Handle.h"
-#include "HandleHeap.h"
+#include "HandleSet.h"
 
 namespace JSC {
 
@@ -56,7 +56,7 @@ public:
     {
         if (!other.slot())
             return;
-        setSlot(HandleHeap::heapFor(other.slot())->allocate());
+        setSlot(HandleSet::heapFor(other.slot())->allocate());
         set(other.get());
     }
 
@@ -65,7 +65,7 @@ public:
     {
         if (!other.slot())
             return;
-        setSlot(HandleHeap::heapFor(other.slot())->allocate());
+        setSlot(HandleSet::heapFor(other.slot())->allocate());
         set(other.get());
     }
     
@@ -103,7 +103,7 @@ public:
             return *this;
         }
 
-        set(*HandleHeap::heapFor(other.slot())->globalData(), other.get());
+        set(*HandleSet::heapFor(other.slot())->globalData(), other.get());
         return *this;
     }
     
@@ -114,7 +114,7 @@ public:
             return *this;
         }
 
-        set(*HandleHeap::heapFor(other.slot())->globalData(), other.get());
+        set(*HandleSet::heapFor(other.slot())->globalData(), other.get());
         return *this;
     }
 
@@ -122,7 +122,7 @@ public:
     {
         if (!slot())
             return;
-        HandleHeap::heapFor(slot())->deallocate(slot());
+        HandleSet::heapFor(slot())->deallocate(slot());
         setSlot(0);
     }
 
@@ -133,7 +133,7 @@ private:
     {
         ASSERT(slot());
         JSValue value = HandleTypes<T>::toJSValue(externalType);
-        HandleHeap::heapFor(slot())->writeBarrier(slot(), value);
+        HandleSet::heapFor(slot())->writeBarrier(slot(), value);
         *slot() = value;
     }
 };

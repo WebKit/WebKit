@@ -23,7 +23,7 @@
 #define Heap_h
 
 #include "DFGCodeBlocks.h"
-#include "HandleHeap.h"
+#include "HandleSet.h"
 #include "HandleStack.h"
 #include "MarkedAllocator.h"
 #include "MarkedBlock.h"
@@ -31,7 +31,7 @@
 #include "MarkedSpace.h"
 #include "SlotVisitor.h"
 #include "WeakHandleOwner.h"
-#include "WeakHeap.h"
+#include "WeakSet.h"
 #include "WriteBarrierSupport.h"
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
@@ -138,8 +138,8 @@ namespace JSC {
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell(Functor&);
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell();
 
-        WeakHeap* weakHeap() { return &m_weakHeap; }
-        HandleHeap* handleHeap() { return &m_handleHeap; }
+        WeakSet* weakSet() { return &m_weakSet; }
+        HandleSet* handleSet() { return &m_handleSet; }
         HandleStack* handleStack() { return &m_handleStack; }
 
         void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
@@ -237,8 +237,8 @@ namespace JSC {
         MarkStackThreadSharedData m_sharedData;
         SlotVisitor m_slotVisitor;
 
-        WeakHeap m_weakHeap;
-        HandleHeap m_handleHeap;
+        WeakSet m_weakSet;
+        HandleSet m_handleSet;
         HandleStack m_handleStack;
         DFGCodeBlocks m_dfgCodeBlocks;
         FinalizerOwner m_finalizerOwner;
@@ -355,7 +355,7 @@ namespace JSC {
         ProtectCountSet::iterator end = m_protectedValues.end();
         for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
             functor(it->first);
-        m_handleHeap.forEachStrongHandle(functor, m_protectedValues);
+        m_handleSet.forEachStrongHandle(functor, m_protectedValues);
 
         return functor.returnValue();
     }

@@ -48,7 +48,7 @@ template<typename KeyType, typename MappedType, typename FinalizerCallback, type
 
 class HandleBase {
     template <typename T> friend class Weak;
-    friend class HandleHeap;
+    friend class HandleSet;
     friend struct JSCallbackObjectData;
     template <typename KeyType, typename MappedType, typename FinalizerCallback, typename HashArg, typename KeyTraitsArg> friend class WeakGCMap;
 
@@ -133,7 +133,7 @@ protected:
     }
     
 private:
-    friend class HandleHeap;
+    friend class HandleSet;
     friend class WeakBlock;
 
     static Handle<T> wrapSlot(HandleSlot slot)

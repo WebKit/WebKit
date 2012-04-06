@@ -24,21 +24,21 @@
  */
 
 #include "config.h"
-#include "HandleHeap.h"
+#include "HandleSet.h"
 
 #include "HeapRootVisitor.h"
 #include "JSObject.h"
 
 namespace JSC {
 
-HandleHeap::HandleHeap(JSGlobalData* globalData)
+HandleSet::HandleSet(JSGlobalData* globalData)
     : m_globalData(globalData)
     , m_nextToFinalize(0)
 {
     grow();
 }
 
-void HandleHeap::grow()
+void HandleSet::grow()
 {
     Node* block = m_blockStack.grow();
     for (int i = m_blockStack.blockLength - 1; i >= 0; --i) {
@@ -48,7 +48,7 @@ void HandleHeap::grow()
     }
 }
 
-void HandleHeap::visitStrongHandles(HeapRootVisitor& heapRootVisitor)
+void HandleSet::visitStrongHandles(HeapRootVisitor& heapRootVisitor)
 {
     Node* end = m_strongList.end();
     for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
@@ -60,7 +60,7 @@ void HandleHeap::visitStrongHandles(HeapRootVisitor& heapRootVisitor)
     }
 }
 
-void HandleHeap::writeBarrier(HandleSlot slot, const JSValue& value)
+void HandleSet::writeBarrier(HandleSlot slot, const JSValue& value)
 {
     // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
     // File a bug with stack trace if you hit this.
@@ -88,7 +88,7 @@ void HandleHeap::writeBarrier(HandleSlot slot, const JSValue& value)
 #endif
 }
 
-unsigned HandleHeap::protectedGlobalObjectCount()
+unsigned HandleSet::protectedGlobalObjectCount()
 {
     unsigned count = 0;
     Node* end = m_strongList.end();
@@ -101,7 +101,7 @@ unsigned HandleHeap::protectedGlobalObjectCount()
 }
 
 #if ENABLE(GC_VALIDATION) || !ASSERT_DISABLED
-bool HandleHeap::isLiveNode(Node* node)
+bool HandleSet::isLiveNode(Node* node)
 {
     if (node->prev()->next() != node)
         return false;

@@ -79,7 +79,7 @@ template<typename T> inline Weak<T>::Weak(std::nullptr_t)
 }
 
 template<typename T> inline Weak<T>::Weak(JSGlobalData& globalData, typename Weak<T>::GetType getType, WeakHandleOwner* weakOwner, void* context)
-    : m_impl(globalData.heap.weakHeap()->allocate(getType, weakOwner, context))
+    : m_impl(globalData.heap.weakSet()->allocate(getType, weakOwner, context))
 {
 }
 
@@ -141,7 +141,7 @@ template<typename T> inline void Weak<T>::clear()
 {
     if (!m_impl)
         return;
-    WeakHeap::deallocate(m_impl);
+    WeakSet::deallocate(m_impl);
     m_impl = 0;
 }
     

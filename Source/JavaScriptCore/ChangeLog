@@ -1,3 +1,25 @@
+2012-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Renamed
+
+                WeakHeap => WeakSet
+                HandleHeap => HandleSet
+
+        Reviewed by Sam Weinig.
+
+        These sets do have internal allocators, but it's confusing to call them
+        heaps because they're sub-objects of an object called "heap".
+
+        * heap/HandleHeap.cpp: Removed.
+        * heap/HandleHeap.h: Removed.
+        * heap/HandleSet.cpp: Copied from JavaScriptCore/heap/HandleHeap.cpp.
+        * heap/WeakHeap.cpp: Removed.
+        * heap/WeakHeap.h: Removed.
+        * heap/WeakSet.cpp: Copied from JavaScriptCore/heap/WeakHeap.cpp.
+        * heap/WeakSet.h: Copied from JavaScriptCore/heap/WeakHeap.h.
+
+        Plus global rename using grep.
+
 2012-04-06  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10912476> HiDPI: Have canvas use a hidpi backing store, but downsample upon access

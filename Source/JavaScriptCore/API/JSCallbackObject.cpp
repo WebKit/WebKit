@@ -65,7 +65,7 @@ void JSCallbackObjectData::finalize(Handle<Unknown> handle, void* context)
     for (; jsClass; jsClass = jsClass->parentClass)
         if (JSObjectFinalizeCallback finalize = jsClass->finalize)
             finalize(thisRef);
-    WeakHeap::deallocate(WeakImpl::asWeakImpl(handle.slot()));
+    WeakSet::deallocate(WeakImpl::asWeakImpl(handle.slot()));
 }
     
 } // namespace JSC

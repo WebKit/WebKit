@@ -2130,11 +2130,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\heap\HandleHeap.cpp"
+				RelativePath="..\..\heap\HandleSet.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\heap\HandleHeap.h"
+				RelativePath="..\..\heap\HandleSet.h"
 				>
 			</File>
 			<File
@@ -2146,11 +2146,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\heap\WeakHeap.cpp"
+				RelativePath="..\..\heap\WeakSet.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\heap\WeakHeap.h"
+				RelativePath="..\..\heap\WeakSet.h"
 				>
 			</File>
 			<File

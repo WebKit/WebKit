@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WeakHeap_h
-#define WeakHeap_h
+#ifndef WeakSet_h
+#define WeakSet_h
 
 #include "WeakBlock.h"
 
@@ -33,11 +33,11 @@ namespace JSC {
 class Heap;
 class WeakImpl;
 
-class WeakHeap {
+class WeakSet {
 public:
-    WeakHeap(Heap*);
+    WeakSet(Heap*);
     void finalizeAll();
-    ~WeakHeap();
+    ~WeakSet();
 
     WeakImpl* allocate(JSValue, WeakHandleOwner* = 0, void* context = 0);
     static void deallocate(WeakImpl*);
@@ -60,14 +60,14 @@ private:
     Heap* m_heap;
 };
 
-inline WeakHeap::WeakHeap(Heap* heap)
+inline WeakSet::WeakSet(Heap* heap)
     : m_allocator(0)
     , m_nextAllocator(0)
     , m_heap(heap)
 {
 }
 
-inline WeakImpl* WeakHeap::allocate(JSValue jsValue, WeakHandleOwner* weakHandleOwner, void* context)
+inline WeakImpl* WeakSet::allocate(JSValue jsValue, WeakHandleOwner* weakHandleOwner, void* context)
 {
     WeakBlock::FreeCell* allocator = m_allocator;
     if (UNLIKELY(!allocator))
@@ -78,11 +78,11 @@ inline WeakImpl* WeakHeap::allocate(JSValue jsValue, WeakHandleOwner* weakHandle
     return new (NotNull, weakImpl) WeakImpl(jsValue, weakHandleOwner, context);
 }
 
-inline void WeakHeap::deallocate(WeakImpl* weakImpl)
+inline void WeakSet::deallocate(WeakImpl* weakImpl)
 {
     WeakBlock::blockFor(weakImpl)->deallocate(weakImpl);
 }
 
 } // namespace JSC
 
-#endif // WeakHeap_h
+#endif // WeakSet_h
