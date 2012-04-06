@@ -2935,14 +2935,6 @@ BUGCR88588 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-1.html = PASS
 BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-2.html = PASS
 
-BUGCR88911 LEOPARD : fast/forms/number/input-number-unacceptable-style.html = TEXT
-BUGCR88911 LEOPARD : fast/text/find-kana.html = TEXT
-BUGCR88911 LEOPARD : fast/xsl/mozilla-tests.xml = TEXT
-BUGCR88911 LEOPARD : svg/custom/use-invalid-pattern.svg = TEXT
-BUGCR88911 LEOPARD : svg/custom/use-invalid-style.svg = TEXT
-BUGCR88911 LEOPARD : fast/text/atsui-multiple-renderers.html = IMAGE
-BUGCR88911 LEOPARD : svg/W3C-SVG-1.1/struct-image-10-t.svg = IMAGE
-
 // V8 now follows spec on toisostring, test needs to be fixed.
 BUGCR88936 : fast/js/date-toisostring.html = TEXT
 
