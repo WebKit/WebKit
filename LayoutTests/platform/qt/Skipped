@@ -1423,12 +1423,6 @@ svg/zoom/page/zoom-svg-as-relative-image.html
 svg/zoom/page/zoom-svg-float-border-padding.xml
 svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
 
-# [Qt] REGRESSION(r111480): It made svg/as-image tests assert
-# https://bugs.webkit.org/show_bug.cgi?id=82052
-svg/as-image
-svg/as-object
-svg/zoom/page/zoom-mask-with-percentages.svg
-
 # [Qt] svg/animations tests are very flaky
 # https://bugs.webkit.org/show_bug.cgi?id=80703
 svg/animations/animate-elem-08-t-drt.html
