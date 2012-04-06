@@ -1,3 +1,16 @@
+2012-04-05  Anders Carlsson  <andersca@apple.com>
+
+        Crash when switching to a tab with plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=83339
+        <rdar://problem/11183338>
+
+        Reviewed by Oliver Hunt.
+
+        Add an additional check so we don't try to call into plug-ins that haven't yet been initialized.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setLayerHostingMode):
+
 2012-04-05  Dean Jackson  <dino@apple.com>
 
         [mac] requestAnimationFrame sometimes stuck when page loads in a background tab
