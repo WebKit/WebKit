@@ -1363,9 +1363,6 @@ BUGCR10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onPr
 // Windows?
 BUGCR10342 SKIP WONTFIX LINUX MAC : fast/loader/file-URL-with-port-number.html = TIMEOUT
 
-// Text doesn't display at all -- maybe we don't have the slow font
-// code enabled?
-BUGCR10343 LINUX RELEASE : fast/text/atsui-partial-selection.html = IMAGE
 
 // Started timing out with agl's complex text change.  Page is verrry slow.
 BUGCR10343 SKIP LINUX : fast/text/large-text-composed-char.html = TIMEOUT FAIL
@@ -1699,10 +1696,6 @@ BUGCR24182 SLOW DEBUG : fast/forms/input-maxlength.html = PASS
 // WebKit roll 49405:49413
 BUGCR28409 : http/tests/xmlhttprequest/logout.html = FAIL
 
-// This only crashes on the old buildbot slave. It fails image, like the other slaves, on the new one.
-// FIXME: Make this just be IMAGE after we move over to the new bots.
-BUGCR26344 LINUX DEBUG : fast/text/atsui-partial-selection.html = CRASH IMAGE
-
 // ==== WebKit roll 50258:50313 ====
 //BUGCR26291 LEOPARD : fast/text/atsui-multiple-renderers.html = IMAGE
 BUGCR26291 : transforms/2d/hindi-rotated.html = IMAGE+TEXT IMAGE
@@ -1736,8 +1729,6 @@ BUGCR118411 LEOPARD SNOWLEOPARD : svg/hixie/perf/002.xml = IMAGE PASS
 // Fails on Snow Leopard - see BUGWK82954
 BUGCR118411 SLOW : svg/hixie/perf/007.xml = PASS FAIL
 
-// WebKit merge 50756:50820, possibly due to WebKit r50808/r50786 and Chromium r31715
-BUGCR27553 WIN : fast/text/atsui-partial-selection.html = IMAGE
 
 BUGCR22700 LINUX WIN : fast/canvas/canvas-shadow.html = TEXT
 
