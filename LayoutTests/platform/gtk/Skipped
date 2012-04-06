@@ -76,10 +76,6 @@ fast/loader/location-port.html
 # This test is crashing when run along with other tests on the release build.
 fast/dynamic/layer-hit-test-crash.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=60931
-# crashes on GTK bots because of a failing ASSERT
-http/tests/security/cookies/cookie-theft-with-javascript-doc.html
-
 # One anonymous crashers with no bug.
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 
@@ -89,13 +85,6 @@ fast/events/tabindex-focus-blur-all.html
 
 # crashes because of a failing ASSERT (see https://bugs.webkit.org/show_bug.cgi?id=54470)
 svg/text/select-textLength-spacing-squeeze-1.svg
-
-# Test crashing on release bot
-# https://bugs.webkit.org/show_bug.cgi?id=31433
-plugins/document-open.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37574
-plugins/window-open.html
 
 # For some reason crashes when run with all tests. Passes individually.
 fast/forms/multiple-form-submission-protection-mouse.html
