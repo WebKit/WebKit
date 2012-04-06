@@ -345,5 +345,4 @@ namespace WebCore {
     };
 
 }
-
 #endif // ChromeClient_h
