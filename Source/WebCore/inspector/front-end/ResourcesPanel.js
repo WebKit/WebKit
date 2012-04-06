@@ -1387,6 +1387,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
     _appendRevision: function(revision)
     {
+        this.subtitleText = "";
         this.insertChild(new WebInspector.ResourceRevisionTreeElement(this._storagePanel, revision), 0);
         if (this._sourceView === this._storagePanel.visibleView)
             this._storagePanel._showResourceView(this._resource);
@@ -1395,35 +1396,20 @@ WebInspector.FrameResourceTreeElement.prototype = {
     sourceView: function()
     {
         if (!this._sourceView) {
-            this._sourceView = this._createSourceView();
+            this._sourceView = new WebInspector.EditableResourceSourceFrame(this._resource);
             if (this._resource.messages) {
                 for (var i = 0; i < this._resource.messages.length; i++)
                     this._sourceView.addMessage(this._resource.messages[i]);
             }
+            this._sourceView.addEventListener(WebInspector.EditableResourceSourceFrame.Events.TextEdited, this._sourceViewTextEdited, this);
         }
         return this._sourceView;
     },
 
-    _createSourceView: function()
+    _sourceViewTextEdited: function(event)
     {
-        return new WebInspector.EditableResourceSourceFrame(this._resource);
-    },
-
-    _recreateSourceView: function()
-    {
-        var oldView = this._sourceView;
-        var newView = this._createSourceView();
-
-        var oldViewParentNode = oldView.isShowing() ? oldView.element.parentNode : null;
-        newView.inheritScrollPositions(oldView);
-
-        this._sourceView.detach();
-        this._sourceView = newView;
-
-        if (oldViewParentNode)
-            newView.show(oldViewParentNode);
-
-        return newView;
+        var sourceFrame = event.data;
+        this.subtitleText = sourceFrame.isDirty() ? "*" : "";
     }
 }
 
