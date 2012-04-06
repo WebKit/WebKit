@@ -171,24 +171,20 @@ PassRefPtr<TypeBuilder::ApplicationCache::ApplicationCache> InspectorApplication
         .setResources(buildArrayForApplicationCacheResources(applicationCacheResources));
 }
 
-PassRefPtr<InspectorArray> InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources)
+PassRefPtr<TypeBuilder::Array<TypeBuilder::ApplicationCache::ApplicationCacheResource> > InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources)
 {
-    RefPtr<InspectorArray> resources = InspectorArray::create();
+    RefPtr<TypeBuilder::Array<TypeBuilder::ApplicationCache::ApplicationCacheResource> > resources = TypeBuilder::Array<TypeBuilder::ApplicationCache::ApplicationCacheResource>::create();
 
     ApplicationCacheHost::ResourceInfoList::const_iterator end = applicationCacheResources.end();
     ApplicationCacheHost::ResourceInfoList::const_iterator it = applicationCacheResources.begin();
     for (int i = 0; it != end; ++it, i++)
-        resources->pushObject(buildObjectForApplicationCacheResource(*it));
+        resources->addItem(buildObjectForApplicationCacheResource(*it));
 
     return resources;
 }
 
-PassRefPtr<InspectorObject> InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo& resourceInfo)
+PassRefPtr<TypeBuilder::ApplicationCache::ApplicationCacheResource> InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo& resourceInfo)
 {
-    RefPtr<InspectorObject> value = InspectorObject::create();
-    value->setString("url", resourceInfo.m_resource.string());
-    value->setNumber("size", resourceInfo.m_size);
-
     String types;
     if (resourceInfo.m_isMaster)
         types.append("Master ");
@@ -205,7 +201,10 @@ PassRefPtr<InspectorObject> InspectorApplicationCacheAgent::buildObjectForApplic
     if (resourceInfo.m_isExplicit)
         types.append("Explicit ");
 
-    value->setString("type", types);
+    RefPtr<TypeBuilder::ApplicationCache::ApplicationCacheResource> value = TypeBuilder::ApplicationCache::ApplicationCacheResource::create()
+        .setUrl(resourceInfo.m_resource.string())
+        .setSize(resourceInfo.m_size)
+        .setType(types);
     return value;
 }
 

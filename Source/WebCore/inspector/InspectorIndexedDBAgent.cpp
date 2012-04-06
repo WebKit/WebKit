@@ -142,9 +142,9 @@ public:
         if (!m_frontendProvider->frontend())
             return;
 
-        RefPtr<InspectorArray> databaseNames = InspectorArray::create();
+        RefPtr<TypeBuilder::Array<String> > databaseNames = TypeBuilder::Array<String>::create();
         for (size_t i = 0; i < databaseNamesList->length(); ++i)
-            databaseNames->pushString(databaseNamesList->item(i));
+            databaseNames->addItem(databaseNamesList->item(i));
 
         RefPtr<SecurityOriginWithDatabaseNames> result = SecurityOriginWithDatabaseNames::create()
             .setSecurityOrigin(m_securityOrigin)
@@ -239,7 +239,7 @@ public:
         if (!m_frontendProvider->frontend())
             return;
 
-        RefPtr<InspectorArray> objectStores = InspectorArray::create();
+        RefPtr<TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStore> > objectStores = TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStore>::create();
 
         RefPtr<DOMStringList> objectStoreNamesList = idbDatabase->objectStoreNames();
         for (size_t i = 0; i < objectStoreNamesList->length(); ++i) {
@@ -251,7 +251,7 @@ public:
             if (!idbObjectStore)
                 continue;
 
-            RefPtr<InspectorArray> indexes = InspectorArray::create();
+            RefPtr<TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStoreIndex> > indexes = TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStoreIndex>::create();
             RefPtr<DOMStringList> indexNamesList = idbObjectStore->indexNames();
             for (size_t j = 0; j < indexNamesList->length(); ++j) {
                 RefPtr<IDBIndexBackendInterface> idbIndex = indexForObjectStore(idbObjectStore.get(), indexNamesList->item(j));
@@ -263,14 +263,14 @@ public:
                     .setKeyPath(idbIndex->keyPath())
                     .setUnique(idbIndex->unique())
                     .setMultiEntry(idbIndex->multiEntry());
-                indexes->pushObject(objectStoreIndex);
+                indexes->addItem(objectStoreIndex);
             }
 
             RefPtr<ObjectStore> objectStore = ObjectStore::create()
                 .setName(idbObjectStore->name())
                 .setKeyPath(idbObjectStore->keyPath())
                 .setIndexes(indexes);
-            objectStores->pushObject(objectStore);
+            objectStores->addItem(objectStore);
         }
         RefPtr<DatabaseWithObjectStores> result = DatabaseWithObjectStores::create()
             .setName(idbDatabase->name())
@@ -390,10 +390,10 @@ static PassRefPtr<Key> keyFromIDBKey(IDBKey* idbKey)
     case IDBKey::ArrayType: {
         RefPtr<Key> tmpKey = Key::create().setType(Key::Type::Array);
         key = tmpKey;
-        RefPtr<InspectorArray> array = InspectorArray::create();
+        RefPtr<TypeBuilder::Array<TypeBuilder::IndexedDB::Key> > array = TypeBuilder::Array<TypeBuilder::IndexedDB::Key>::create();
         IDBKey::KeyArray keyArray = idbKey->array();
         for (size_t i = 0; i < keyArray.size(); ++i)
-            array->pushObject(keyFromIDBKey(keyArray[i].get()));
+            array->addItem(keyFromIDBKey(keyArray[i].get()));
         key->setArray(array);
         break;
     }
@@ -442,7 +442,7 @@ public:
         RefPtr<IDBKey> key = m_idbCursor->key();
         RefPtr<IDBKey> primaryKey = m_idbCursor->primaryKey();
         RefPtr<SerializedScriptValue> value = m_idbCursor->value();
-        RefPtr<InspectorObject> wrappedValue = m_injectedScript.wrapSerializedObject(value.get(), String());
+        RefPtr<TypeBuilder::Runtime::RemoteObject> wrappedValue = m_injectedScript.wrapSerializedObject(value.get(), String());
         RefPtr<DataEntry> dataEntry = DataEntry::create()
             .setKey(keyFromIDBKey(key.get()))
             .setPrimaryKey(keyFromIDBKey(primaryKey.get()))

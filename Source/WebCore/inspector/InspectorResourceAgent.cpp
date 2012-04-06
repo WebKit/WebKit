@@ -104,22 +104,21 @@ static PassRefPtr<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& he
     return headersObject;
 }
 
-static PassRefPtr<InspectorObject> buildObjectForTiming(const ResourceLoadTiming& timing, DocumentLoader* loader)
+static PassRefPtr<TypeBuilder::Network::ResourceTiming> buildObjectForTiming(const ResourceLoadTiming& timing, DocumentLoader* loader)
 {
-    RefPtr<InspectorObject> timingObject = InspectorObject::create();
-    timingObject->setNumber("requestTime", timing.convertResourceLoadTimeToDocumentTime(loader->timing(), 0));
-    timingObject->setNumber("proxyStart", timing.proxyStart);
-    timingObject->setNumber("proxyEnd", timing.proxyEnd);
-    timingObject->setNumber("dnsStart", timing.dnsStart);
-    timingObject->setNumber("dnsEnd", timing.dnsEnd);
-    timingObject->setNumber("connectStart", timing.connectStart);
-    timingObject->setNumber("connectEnd", timing.connectEnd);
-    timingObject->setNumber("sslStart", timing.sslStart);
-    timingObject->setNumber("sslEnd", timing.sslEnd);
-    timingObject->setNumber("sendStart", timing.sendStart);
-    timingObject->setNumber("sendEnd", timing.sendEnd);
-    timingObject->setNumber("receiveHeadersEnd", timing.receiveHeadersEnd);
-    return timingObject;
+    return TypeBuilder::Network::ResourceTiming::create()
+        .setRequestTime(timing.convertResourceLoadTimeToDocumentTime(loader->timing(), 0))
+        .setProxyStart(timing.proxyStart)
+        .setProxyEnd(timing.proxyEnd)
+        .setDnsStart(timing.dnsStart)
+        .setDnsEnd(timing.dnsEnd)
+        .setConnectStart(timing.connectStart)
+        .setConnectEnd(timing.connectEnd)
+        .setSslStart(timing.sslStart)
+        .setSslEnd(timing.sslEnd)
+        .setSendStart(timing.sendStart)
+        .setSendEnd(timing.sendEnd)
+        .setReceiveHeadersEnd(timing.receiveHeadersEnd);
 }
 
 static PassRefPtr<TypeBuilder::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request)
@@ -185,7 +184,7 @@ static PassRefPtr<TypeBuilder::Network::CachedResource> buildObjectForCachedReso
         .setUrl(cachedResource.url())
         .setType(InspectorPageAgent::cachedResourceTypeJson(cachedResource))
         .setBodySize(cachedResource.encodedSize());
-    RefPtr<InspectorObject> resourceResponse = buildObjectForResourceResponse(cachedResource.response(), loader);
+    RefPtr<TypeBuilder::Network::Response> resourceResponse = buildObjectForResourceResponse(cachedResource.response(), loader);
     if (resourceResponse)
         resourceObject->setResponse(resourceResponse);
     return resourceObject;

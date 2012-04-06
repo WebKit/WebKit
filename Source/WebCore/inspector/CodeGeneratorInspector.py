@@ -1202,8 +1202,8 @@ class TypeBindings:
 
                                     param_type_binding = prop_data.param_type_binding
                                     param_raw_type = param_type_binding.reduce_to_raw_type()
-                                    for param_type_opt in MethodGenerateModes.get_modes(param_type_binding):
-                                        writer.newline_multiline("""
+
+                                    writer.newline_multiline("""
         Builder<STATE | %s>& set%s(%s value)
         {
             COMPILE_ASSERT(!(STATE & %s), property_%s_already_set);
@@ -1211,13 +1211,13 @@ class TypeBindings:
             return castState<%s>();
         }
 """
-                                        % (state_enum_items[pos],
-                                           Capitalizer.lower_camel_case_to_upper(prop_name),
-                                           param_type_opt.get_c_param_type_text(param_type_binding),
-                                           state_enum_items[pos], prop_name,
-                                           param_raw_type.get_setter_name(), prop_name,
-                                           param_type_opt.get_setter_value_expression(param_type_binding, "value"),
-                                           state_enum_items[pos]))
+                                    % (state_enum_items[pos],
+                                       Capitalizer.lower_camel_case_to_upper(prop_name),
+                                       param_type_binding.get_type_model().get_input_param_type_text(),
+                                       state_enum_items[pos], prop_name,
+                                       param_raw_type.get_setter_name(), prop_name,
+                                       format_setter_value_expression(param_type_binding, "value"),
+                                       state_enum_items[pos]))
 
                                     pos += 1
 
@@ -1258,14 +1258,13 @@ class TypeBindings:
                                     param_type_binding = prop_data.param_type_binding
                                     setter_name = "set%s" % Capitalizer.lower_camel_case_to_upper(prop_name)
 
-                                    for param_type_opt in MethodGenerateModes.get_modes(param_type_binding):
-                                        writer.append_multiline("\n    void %s" % setter_name)
-                                        writer.append("(%s value)\n" % param_type_opt.get_c_param_type_text(param_type_binding))
-                                        writer.newline("    {\n")
-                                        writer.newline("        this->set%s(\"%s\", %s);\n"
-                                            % (param_type_binding.reduce_to_raw_type().get_setter_name(), prop_data.p["name"],
-                                               param_type_opt.get_setter_value_expression(param_type_binding, "value")))
-                                        writer.newline("    }\n")
+                                    writer.append_multiline("\n    void %s" % setter_name)
+                                    writer.append("(%s value)\n" % param_type_binding.get_type_model().get_input_param_type_text())
+                                    writer.newline("    {\n")
+                                    writer.newline("        this->set%s(\"%s\", %s);\n"
+                                        % (param_type_binding.reduce_to_raw_type().get_setter_name(), prop_data.p["name"],
+                                           format_setter_value_expression(param_type_binding, "value")))
+                                    writer.newline("    }\n")
 
 
                                     if setter_name in INSPECTOR_OBJECT_SETTER_NAMES:
@@ -1430,7 +1429,7 @@ class TypeBindings:
 
                 class AdHocTypeContext:
                     container_full_name_prefix = "<not yet defined>"
-                    container_relative_name_prefix = "<not yet defined>"
+                    container_relative_name_prefix = ""
 
                     @staticmethod
                     def get_type_name_fix():
@@ -2438,57 +2437,12 @@ def get_annotated_type_text(raw_type, annotated_type):
         return raw_type
 
 
-# Chooses method generate modes for a particular type. A particular setter
-# can be generated as one method with a simple parameter type,
-# as one method with a raw type name and commented annotation about expected
-# specialized type name or as overloaded method when raw and specialized
-# parameter types require different behavior.
-class MethodGenerateModes:
-    @classmethod
-    def get_modes(cls, type_binding):
-        if type_binding.get_setter_value_expression_pattern():
-            # In raw and strict modes method code is actually different.
-            return [cls.StrictParameterMode, cls.RawParameterMode]
-        else:
-            # In raw and strict modes method code is the same.
-            # Only put strict parameter type in comments.
-            return [cls.CombinedMode]
-
-    class StrictParameterMode:
-        @staticmethod
-        def get_c_param_type_text(type_binding):
-            return type_binding.get_type_model().get_input_param_type_text()
-
-        @staticmethod
-        def get_setter_value_expression(param_type_binding, value_ref):
-            pattern = param_type_binding.get_setter_value_expression_pattern()
-            if pattern:
-                return pattern % value_ref
-            else:
-                return value_ref
-
-    class RawParameterMode:
-        @staticmethod
-        def get_c_param_type_text(type_binding):
-            return type_binding.reduce_to_raw_type().get_raw_type_model().get_input_param_type_text()
-
-        @staticmethod
-        def get_setter_value_expression(param_type_binding, value_ref):
-            return value_ref
-
-    class CombinedMode:
-        @staticmethod
-        def get_c_param_type_text(type_binding):
-            return get_annotated_type_text(type_binding.reduce_to_raw_type().get_raw_type_model().get_input_param_type_text(),
-                type_binding.get_type_model().get_input_param_type_text())
-
-        @staticmethod
-        def get_setter_value_expression(param_type_binding, value_ref):
-            pattern = param_type_binding.get_setter_value_expression_pattern()
-            if pattern:
-                return pattern % value_ref
-            else:
-                return value_ref
+def format_setter_value_expression(param_type_binding, value_ref):
+    pattern = param_type_binding.get_setter_value_expression_pattern()
+    if pattern:
+        return pattern % value_ref
+    else:
+        return value_ref
 
 class Generator:
     frontend_class_field_lines = []

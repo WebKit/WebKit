@@ -93,44 +93,44 @@ ConsoleMessage::~ConsoleMessage()
 }
 
 // Keep in sync with inspector/front-end/ConsoleView.js
-static String messageSourceValue(MessageSource source)
+static TypeBuilder::Console::ConsoleMessage::Source::Enum messageSourceValue(MessageSource source)
 {
     switch (source) {
-    case HTMLMessageSource: return "html";
-    case XMLMessageSource: return "xml";
-    case JSMessageSource: return "javascript";
-    case NetworkMessageSource: return "network";
-    case ConsoleAPIMessageSource: return "console-api";
-    case OtherMessageSource: return "other";
+    case HTMLMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Html;
+    case XMLMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Xml;
+    case JSMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Javascript;
+    case NetworkMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Network;
+    case ConsoleAPIMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Console_api;
+    case OtherMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Other;
     }
-    return "other";
+    return TypeBuilder::Console::ConsoleMessage::Source::Other;
 }
 
-static String messageTypeValue(MessageType type)
+static TypeBuilder::Console::ConsoleMessage::Type::Enum messageTypeValue(MessageType type)
 {
     switch (type) {
-    case LogMessageType: return "log";
-    case DirMessageType: return "dir";
-    case DirXMLMessageType: return "dirXML";
-    case TraceMessageType: return "trace";
-    case StartGroupMessageType: return "startGroup";
-    case StartGroupCollapsedMessageType: return "startGroupCollapsed";
-    case EndGroupMessageType: return "endGroup";
-    case AssertMessageType: return "assert";
+    case LogMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Log;
+    case DirMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Dir;
+    case DirXMLMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Dirxml;
+    case TraceMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Trace;
+    case StartGroupMessageType: return TypeBuilder::Console::ConsoleMessage::Type::StartGroup;
+    case StartGroupCollapsedMessageType: return TypeBuilder::Console::ConsoleMessage::Type::StartGroupCollapsed;
+    case EndGroupMessageType: return TypeBuilder::Console::ConsoleMessage::Type::EndGroup;
+    case AssertMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Assert;
     }
-    return "log";
+    return TypeBuilder::Console::ConsoleMessage::Type::Log;
 }
 
-static String messageLevelValue(MessageLevel level)
+static TypeBuilder::Console::ConsoleMessage::Level::Enum messageLevelValue(MessageLevel level)
 {
     switch (level) {
-    case TipMessageLevel: return "tip";
-    case LogMessageLevel: return "log";
-    case WarningMessageLevel: return "warning";
-    case ErrorMessageLevel: return "error";
-    case DebugMessageLevel: return "debug";
+    case TipMessageLevel: return TypeBuilder::Console::ConsoleMessage::Level::Tip;
+    case LogMessageLevel: return TypeBuilder::Console::ConsoleMessage::Level::Log;
+    case WarningMessageLevel: return TypeBuilder::Console::ConsoleMessage::Level::Warning;
+    case ErrorMessageLevel: return TypeBuilder::Console::ConsoleMessage::Level::Error;
+    case DebugMessageLevel: return TypeBuilder::Console::ConsoleMessage::Level::Debug;
     }
-    return "log";
+    return TypeBuilder::Console::ConsoleMessage::Level::Log;
 }
 
 void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, InjectedScriptManager* injectedScriptManager)
@@ -149,14 +149,14 @@ void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, Injecte
     if (m_arguments && m_arguments->argumentCount()) {
         InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(m_arguments->globalState());
         if (!injectedScript.hasNoValue()) {
-            RefPtr<InspectorArray> jsonArgs = InspectorArray::create();
+            RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::RemoteObject> > jsonArgs = TypeBuilder::Array<TypeBuilder::Runtime::RemoteObject>::create();
             for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
-                RefPtr<InspectorValue> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console");
+                RefPtr<TypeBuilder::Runtime::RemoteObject> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console");
                 if (!inspectorValue) {
                     ASSERT_NOT_REACHED();
                     return;
                 }
-                jsonArgs->pushValue(inspectorValue);
+                jsonArgs->addItem(inspectorValue);
             }
             jsonObj->setParameters(jsonArgs);
         }

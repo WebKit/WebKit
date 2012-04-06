@@ -116,24 +116,24 @@ public:
 
     int totalNodeCount() { return m_totalNodeCount; }
 
-    PassRefPtr<InspectorArray> nodeCount()
+    PassRefPtr<TypeBuilder::Array<TypeBuilder::Memory::NodeCount> > nodeCount()
     {
-        RefPtr<InspectorArray> childrenStats = InspectorArray::create();
+        RefPtr<TypeBuilder::Array<TypeBuilder::Memory::NodeCount> > childrenStats = TypeBuilder::Array<TypeBuilder::Memory::NodeCount>::create();
         for (HashMap<String, int>::iterator it = m_nodeNameToCount.begin(); it != m_nodeNameToCount.end(); ++it) {
             RefPtr<NodeCount> nodeCount = NodeCount::create().setNodeName(it->first)
                                                              .setCount(it->second);
-            childrenStats->pushObject(nodeCount);
+            childrenStats->addItem(nodeCount);
         }
         return childrenStats.release();
     }
 
-    PassRefPtr<InspectorArray> listenerCount()
+    PassRefPtr<TypeBuilder::Array<TypeBuilder::Memory::ListenerCount> > listenerCount()
     {
-        RefPtr<InspectorArray> listenerStats = InspectorArray::create();
+        RefPtr<TypeBuilder::Array<TypeBuilder::Memory::ListenerCount> > listenerStats = TypeBuilder::Array<TypeBuilder::Memory::ListenerCount>::create();
         for (HashMap<AtomicString, int>::iterator it = m_eventTypeToCount.begin(); it != m_eventTypeToCount.end(); ++it) {
             RefPtr<ListenerCount> listenerCount = ListenerCount::create().setType(it->first)
                                                                          .setCount(it->second);
-            listenerStats->pushObject(listenerCount);
+            listenerStats->addItem(listenerCount);
         }
         return listenerStats.release();
     }
