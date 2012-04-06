@@ -205,7 +205,6 @@ v8 {
         bindings/v8/custom/V8MessageChannelConstructor.cpp \
         bindings/v8/custom/V8MessagePortCustom.cpp \
         bindings/v8/custom/V8MessageEventCustom.cpp \
-        bindings/v8/custom/V8MutationCallbackCustom.cpp \
         bindings/v8/custom/V8NamedNodeMapCustom.cpp \
         bindings/v8/custom/V8NamedNodesCollection.cpp \
         bindings/v8/custom/V8NodeCustom.cpp \
@@ -333,7 +332,6 @@ v8 {
         bindings/js/JSMessageEventCustom.cpp \
         bindings/js/JSMessagePortCustom.cpp \
         bindings/js/JSMessagePortCustom.h \
-        bindings/js/JSMutationCallbackCustom.cpp \
         bindings/js/JSNamedNodeMapCustom.cpp \
         bindings/js/JSNodeCustom.cpp \
         bindings/js/JSNodeFilterCondition.cpp \

@@ -33,6 +33,6 @@ module core {
         Conditional=MUTATION_OBSERVERS,
         Callback
     ] MutationCallback {
-        [Custom] boolean handleEvent(in MutationRecordArray mutations, in WebKitMutationObserver observer);
+        boolean handleEvent(in sequence<MutationRecord> mutations, in WebKitMutationObserver observer);
     };
 }

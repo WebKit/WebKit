@@ -27,6 +27,8 @@
 #include "JSClass1.h"
 #include "JSClass2.h"
 #include "JSDOMStringList.h"
+#include "JSMutationRecord.h"
+#include "JSWebKitMutationObserver.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSLock.h>
 
@@ -143,6 +145,36 @@ bool JSTestCallback::callbackWithBoolean(bool boolParam)
 
     bool raisedException = false;
     m_data->invokeCallback(args, &raisedException);
+    return !raisedException;
+}
+typedef Vector<RefPtr<MutationRecord> > MutationRecordArray;
+
+bool JSTestCallback::handleEvent(MutationRecordArray* mutations, WebKitMutationObserver* observer)
+{
+    ASSERT(mutations);
+    if (!mutations)
+        return true;
+
+    if (!canInvokeCallback())
+        return true;
+
+    RefPtr<JSTestCallback> protect(this);
+
+    JSLock lock(SilenceAssertionsOnly);
+
+    ExecState* exec = m_data->globalObject()->globalExec();
+    MarkedArgumentBuffer args;
+    MarkedArgumentBuffer list;
+    for (size_t i = 0; i < mutations->size(); ++i)
+        list.append(toJS(exec, m_data->globalObject(), mutations->at(i).get()));
+
+    args.append(constructArray(exec, m_data->globalObject(), list));
+    args.append(toJS(exec, m_data->globalObject(), observer));
+
+    bool raisedException = false;
+    JSValue jsObserver = toJS(exec, m_data->globalObject(), observer);
+    m_data->invokeCallback(jsObserver, args, &raisedException);
+
     return !raisedException;
 }
 

@@ -454,6 +454,17 @@ sub GetArrayType
     return "";
 }
 
+sub IsCallbackWithArrayType
+{
+    my ($generator, $dataNode, @mparams) = @_;
+    if ($dataNode->extendedAttributes->{"Callback"}) {
+        foreach my $param (@mparams) {
+            return 1 if $generator->GetArrayType($param->type);
+        }
+    }
+    return 0;
+}
+
 # Uppercase the first letter while respecting WebKit style guidelines.
 # E.g., xmlEncoding becomes XMLEncoding, but xmlllang becomes Xmllang.
 sub WK_ucfirst

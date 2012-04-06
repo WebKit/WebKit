@@ -29,7 +29,9 @@
 #include "V8Class2.h"
 #include "V8CustomVoidCallback.h"
 #include "V8DOMStringList.h"
+#include "V8MutationRecord.h"
 #include "V8Proxy.h"
+#include "V8WebKitMutationObserver.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -189,6 +191,44 @@ bool V8TestCallback::callbackWithBoolean(bool boolParam)
 
     bool callbackReturnValue = false;
     return !invokeCallback(m_callback, 1, argv, callbackReturnValue, scriptExecutionContext());
+}
+typedef Vector<RefPtr<MutationRecord> > MutationRecordArray;
+
+bool V8TestCallback::handleEvent(MutationRecordArray* mutations, WebKitMutationObserver* observer)
+{
+    ASSERT(mutations);
+    if (!mutations)
+        return true;
+
+    if (!canInvokeCallback())
+        return true;
+
+    v8::HandleScope handleScope;
+
+    v8::Handle<v8::Context> v8Context = toV8Context(scriptExecutionContext(), m_worldContext);
+    if (v8Context.IsEmpty())
+        return true;
+
+    v8::Context::Scope scope(v8Context);
+
+    v8::Local<v8::Array> mutationsArray = v8::Array::New(mutations->size());
+    for (size_t i = 0; i < mutations->size(); ++i)
+        mutationsArray->Set(v8::Uint32::New(i), toV8(mutations->at(i).get()));
+
+    v8::Handle<v8::Value> observerHandle = toV8(observer);
+    if (observerHandle.IsEmpty()) {
+        if (!isScriptControllerTerminating())
+            CRASH();
+        return true;
+    }
+
+    v8::Handle<v8::Value> argv[] = {
+        mutationsArray,
+        observerHandle
+    };
+
+    bool callbackReturnValue = false;
+    return !invokeCallback(m_callback, v8::Handle<v8::Object>::Cast(observerHandle), 2, argv, callbackReturnValue, scriptExecutionContext());
 }
 
 } // namespace WebCore

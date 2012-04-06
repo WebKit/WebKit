@@ -132,7 +132,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8MessageChannelConstructor.cpp
     bindings/v8/custom/V8MessageEventCustom.cpp
     bindings/v8/custom/V8MessagePortCustom.cpp
-    bindings/v8/custom/V8MutationCallbackCustom.cpp
     bindings/v8/custom/V8NamedNodeMapCustom.cpp
     bindings/v8/custom/V8NamedNodesCollection.cpp
     bindings/v8/custom/V8NodeCustom.cpp

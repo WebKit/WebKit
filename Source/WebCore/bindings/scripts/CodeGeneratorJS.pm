@@ -209,9 +209,9 @@ sub AddIncludesForTypeInImpl
 {
     my $type = $codeGenerator->StripModule(shift);
     my $isCallback = @_ ? shift : 0;
-    
+
     AddIncludesForType($type, $isCallback, \%implIncludes);
-    
+
     # additional includes (things needed to compile the bindings but not the header)
     if ($type eq "CanvasRenderingContext2D") {
         $implIncludes{"CanvasGradient.h"} = 1;
@@ -2607,7 +2607,12 @@ sub GenerateCallbackHeader
 
             my @args = ();
             foreach my $param (@params) {
-                push(@args, GetNativeType($param->type) . " " . $param->name);
+                my $arrayType = $codeGenerator->GetArrayType($param->type);
+                if ($arrayType) {
+                    push(@args, GetNativeType("${arrayType}Array") . " " . $param->name);
+                } else {
+                    push(@args, GetNativeType($param->type) . " " . $param->name);
+                }
             }
             push(@headerContent, join(", ", @args));
 
@@ -2682,17 +2687,32 @@ sub GenerateCallbackImplementation
             }
 
             AddIncludesForTypeInImpl($function->signature->type);
-            push(@implContent, "\n" . GetNativeType($function->signature->type) . " ${className}::" . $function->signature->name . "(");
 
             my @args = ();
+            my @argsCheck;
             foreach my $param (@params) {
-                AddIncludesForTypeInImpl($param->type, 1);
-                push(@args, GetNativeType($param->type) . " " . $param->name);
+                my $arrayType = $codeGenerator->GetArrayType($param->type);
+                if ($arrayType) {
+                    my $paramName = $param->name;
+                    push(@implContent, "typedef Vector<RefPtr<${arrayType}> > ${arrayType}Array;\n");
+                    AddIncludesForTypeInImpl($arrayType, 1);
+                    push(@args, GetNativeType("${arrayType}Array") . " " . $paramName);
+                    push(@argsCheck, <<END);
+    ASSERT(${paramName});
+    if (!${paramName})
+        return true;
+END
+                } else {
+                    AddIncludesForTypeInImpl($param->type, 1);
+                    push(@args, GetNativeType($param->type) . " " . $param->name);
+                }
             }
+            push(@implContent, "\n" . GetNativeType($function->signature->type) . " ${className}::" . $function->signature->name . "(");
             push(@implContent, join(", ", @args));
             push(@implContent, ")\n");
 
             push(@implContent, "{\n");
+            push(@implContent, "@argsCheck\n") if @argsCheck;
             push(@implContent, "    if (!canInvokeCallback())\n");
             push(@implContent, "        return true;\n\n");
             push(@implContent, "    RefPtr<$className> protect(this);\n\n");
@@ -2706,13 +2726,29 @@ sub GenerateCallbackImplementation
                     push(@implContent, "    args.append(jsString(exec, ${paramName}));\n");
                 } elsif ($param->type eq "boolean") {
                     push(@implContent, "    args.append(jsBoolean(${paramName}));\n");
+                } elsif ($codeGenerator->GetArrayType($param->type)) {
+                    push(@implContent, <<END);
+    MarkedArgumentBuffer list;
+    for (size_t i = 0; i < ${paramName}->size(); ++i)
+        list.append(toJS(exec, m_data->globalObject(), ${paramName}->at(i).get()));
+
+    args.append(constructArray(exec, m_data->globalObject(), list));
+END
                 } else {
                     push(@implContent, "    args.append(toJS(exec, m_data->globalObject(), ${paramName}));\n");
                 }
             }
 
             push(@implContent, "\n    bool raisedException = false;\n");
-            push(@implContent, "    m_data->invokeCallback(args, &raisedException);\n");
+            if ($codeGenerator->IsCallbackWithArrayType($dataNode, @params)) {
+                push(@implContent, <<END);
+    JSValue jsObserver = toJS(exec, m_data->globalObject(), observer);
+    m_data->invokeCallback(jsObserver, args, &raisedException);
+
+END
+            } else {
+                    push(@implContent, "    m_data->invokeCallback(args, &raisedException);\n");
+            }
             push(@implContent, "    return !raisedException;\n");
             push(@implContent, "}\n");
         }
