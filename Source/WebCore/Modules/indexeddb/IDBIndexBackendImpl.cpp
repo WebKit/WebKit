@@ -41,9 +41,8 @@
 
 namespace WebCore {
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique, bool multiEntry)
-    : m_backingStore(backingStore)
-    , m_databaseId(databaseId)
+IDBIndexBackendImpl::IDBIndexBackendImpl(const IDBDatabaseBackendImpl* database, const IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique, bool multiEntry)
+    : m_database(database)
     , m_objectStoreBackend(objectStoreBackend)
     , m_id(id)
     , m_name(name)
@@ -54,9 +53,8 @@ IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t 
 {
 }
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const String& storeName, const String& keyPath, bool unique, bool multiEntry)
-    : m_backingStore(backingStore)
-    , m_databaseId(databaseId)
+IDBIndexBackendImpl::IDBIndexBackendImpl(const IDBDatabaseBackendImpl* database, const IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const String& storeName, const String& keyPath, bool unique, bool multiEntry)
+    : m_database(database)
     , m_objectStoreBackend(objectStoreBackend)
     , m_id(InvalidId)
     , m_name(name)
@@ -80,10 +78,10 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
 
     switch (cursorType) {
     case IDBCursorBackendInterface::IndexKeyCursor:
-        backingStoreCursor = index->m_backingStore->openIndexKeyCursor(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), range.get(), direction);
+        backingStoreCursor = index->backingStore()->openIndexKeyCursor(index->databaseId(), index->m_objectStoreBackend->id(), index->id(), range.get(), direction);
         break;
     case IDBCursorBackendInterface::IndexCursor:
-        backingStoreCursor = index->m_backingStore->openIndexCursor(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), range.get(), direction);
+        backingStoreCursor = index->backingStore()->openIndexCursor(index->databaseId(), index->m_objectStoreBackend->id(), index->id(), range.get(), direction);
         break;
     case IDBCursorBackendInterface::ObjectStoreCursor:
     case IDBCursorBackendInterface::InvalidCursorType:
@@ -131,7 +129,7 @@ void IDBIndexBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBI
     IDB_TRACE("IDBIndexBackendImpl::countInternal");
     uint32_t count = 0;
 
-    RefPtr<IDBBackingStore::Cursor> backingStoreCursor = index->m_backingStore->openIndexKeyCursor(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), range.get(), IDBCursor::NEXT);
+    RefPtr<IDBBackingStore::Cursor> backingStoreCursor = index->backingStore()->openIndexKeyCursor(index->databaseId(), index->m_objectStoreBackend->id(), index->id(), range.get(), IDBCursor::NEXT);
     if (!backingStoreCursor) {
         callbacks->onSuccess(SerializedScriptValue::numberValue(count));
         return;
@@ -156,14 +154,14 @@ void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBInd
     IDB_TRACE("IDBIndexBackendImpl::getInternal");
     // FIXME: Split getInternal into two functions, getting rid off |getObject|.
     if (getObject) {
-        String value = index->m_backingStore->getObjectViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *key);
+        String value = index->backingStore()->getObjectViaIndex(index->databaseId(), index->m_objectStoreBackend->id(), index->id(), *key);
         if (value.isNull()) {
             callbacks->onSuccess(SerializedScriptValue::undefinedValue());
             return;
         }
         callbacks->onSuccess(SerializedScriptValue::createFromWire(value));
     } else {
-        RefPtr<IDBKey> keyResult = index->m_backingStore->getPrimaryKeyViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *key);
+        RefPtr<IDBKey> keyResult = index->backingStore()->getPrimaryKeyViaIndex(index->databaseId(), index->m_objectStoreBackend->id(), index->id(), *key);
         if (!keyResult) {
             callbacks->onSuccess(static_cast<IDBKey*>(0));
             return;
@@ -198,7 +196,7 @@ bool IDBIndexBackendImpl::addingKeyAllowed(const IDBKey* indexKey, const IDBKey*
         return true;
 
     RefPtr<IDBKey> foundPrimaryKey;
-    bool found = m_backingStore->keyExistsInIndex(m_databaseId, m_objectStoreBackend->id(), m_id, *indexKey, foundPrimaryKey);
+    bool found = backingStore()->keyExistsInIndex(databaseId(), m_objectStoreBackend->id(), m_id, *indexKey, foundPrimaryKey);
     if (!found)
         return true;
     if (primaryKey && foundPrimaryKey->isEqual(primaryKey))

@@ -1,3 +1,16 @@
+2012-04-06  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: ObjectStore/Index shouldn't hold reference to backing store
+        https://bugs.webkit.org/show_bug.cgi?id=83074
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gypi:
+        * tests/IDBDatabaseBackendTest.cpp: Added.
+        (WebCore):
+        (MockIDBBackingStore):
+        (WebCore::TEST):
+
 2012-04-06  Kent Tamura  <tkent@chromium.org>
 
         Calendar Picker: Add code to open/close the calendar picker

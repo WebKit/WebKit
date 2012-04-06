@@ -120,7 +120,9 @@ void IDBDatabaseBackendImpl::openInternal()
 
 IDBDatabaseBackendImpl::~IDBDatabaseBackendImpl()
 {
-    m_factory->removeIDBDatabaseBackend(m_identifier);
+    // This check should only be false in tests.
+    if (m_factory)
+        m_factory->removeIDBDatabaseBackend(m_identifier);
 }
 
 PassRefPtr<IDBBackingStore> IDBDatabaseBackendImpl::backingStore() const
@@ -146,7 +148,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectS
         return 0;
     }
 
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(m_backingStore.get(), m_id, name, keyPath, autoIncrement);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, name, keyPath, autoIncrement);
     ASSERT(objectStore->name() == name);
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
@@ -385,7 +387,7 @@ void IDBDatabaseBackendImpl::loadObjectStores()
     ASSERT(autoIncrementFlags.size() == ids.size());
 
     for (size_t i = 0; i < ids.size(); i++)
-        m_objectStores.set(names[i], IDBObjectStoreBackendImpl::create(m_backingStore.get(), m_id, ids[i], names[i], keyPaths[i], autoIncrementFlags[i]));
+        m_objectStores.set(names[i], IDBObjectStoreBackendImpl::create(this, ids[i], names[i], keyPaths[i], autoIncrementFlags[i]));
 }
 
 void IDBDatabaseBackendImpl::removeObjectStoreFromMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore)
