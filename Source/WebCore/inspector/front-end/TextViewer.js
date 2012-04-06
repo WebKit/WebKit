@@ -690,6 +690,9 @@ WebInspector.TextEditorGutterPanel.prototype = {
                 // Do not move decorations before the start position.
                 if (lineNumber < oldRange.startLine)
                     continue;
+                // Decorations follow the first character of line.
+                if (lineNumber === oldRange.startLine && oldRange.startColumn)
+                    continue;
 
                 var lineDecorationsCopy = this._decorations[lineNumber].slice();
                 for (var i = 0; i < lineDecorationsCopy.length; ++i) {

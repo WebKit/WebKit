@@ -175,17 +175,19 @@
     outline: 1px solid rgb(64, 115, 244);
 }
 
-.diff-container .webkit-added-line.webkit-line-content {
-    background-color: rgb(220, 255, 220);
+.diff-container .webkit-added-line.webkit-line-number {
+    background-color: rgb(170, 255, 170);
+    color: #333;
 }
 
-.diff-container .webkit-removed-line.webkit-line-content {
+.diff-container .webkit-removed-line.webkit-line-number {
     background-color: rgb(255, 220, 220);
     text-decoration: line-through;
 }
 
-.diff-container .webkit-changed-line.webkit-line-content {
-    background-color: rgb(220, 220, 255);
+.diff-container .webkit-changed-line.webkit-line-number {
+    background-color: rgb(170, 170, 255);
+    color: #333;
 }
 
 .webkit-highlighted-line.webkit-line-content {
