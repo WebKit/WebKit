@@ -68,14 +68,14 @@ public:
 
     FrameView* frameView() const { return m_frameView; }
 
-    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect&, bool fixed = false) const OVERRIDE;
-    virtual void repaintViewRectangle(const LayoutRect&, bool immediate = false) OVERRIDE;
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false) const;
+    virtual void repaintViewRectangle(const IntRect&, bool immediate = false);
     // Repaint the view, and all composited layers that intersect the given absolute rectangle.
     // FIXME: ideally we'd never have to do this, if all repaints are container-relative.
-    virtual void repaintRectangleInViewAndCompositedLayers(const LayoutRect&, bool immediate = false) OVERRIDE;
+    virtual void repaintRectangleInViewAndCompositedLayers(const IntRect&, bool immediate = false);
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
-    virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
 
     enum SelectionRepaintMode { RepaintNewXOROld, RepaintNewMinusOld, RepaintNothing };
     void setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode = RepaintNewXOROld);
@@ -98,7 +98,7 @@ public:
 #endif
     int maximalOutlineSize() const { return m_maximalOutlineSize; }
 
-    virtual LayoutRect viewRect() const OVERRIDE;
+    virtual IntRect viewRect() const;
 
     void updateWidgetPositions();
     void addWidget(RenderWidget*);
@@ -201,7 +201,7 @@ private:
     virtual void calcColumnWidth() OVERRIDE;
     virtual ColumnInfo::PaginationUnit paginationUnit() const OVERRIDE;
 
-    bool shouldRepaint(const LayoutRect&) const;
+    bool shouldRepaint(const IntRect& r) const;
 
     // These functions may only be accessed by LayoutStateMaintainer.
     void pushLayoutState(RenderFlowThread*, bool regionsChanged);
