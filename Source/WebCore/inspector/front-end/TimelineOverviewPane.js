@@ -487,7 +487,11 @@ WebInspector.TimelineOverviewWindow.prototype = {
         WebInspector.elementDragEnd(event);
         var window = this._overviewWindowSelector._close(event.pageX - this._parentElement.offsetLeft);
         delete this._overviewWindowSelector;
-        if (window.end - window.start < WebInspector.TimelineOverviewPane.MinSelectableSize) {
+        if (window.end === window.start) { // Click, not drag.\
+            var middle = window.end;
+            window.start = Math.max(0, middle - WebInspector.TimelineOverviewPane.MinSelectableSize / 2);
+            window.end = Math.min(this._parentElement.clientWidth, middle + WebInspector.TimelineOverviewPane.MinSelectableSize / 2);
+        } else if (window.end - window.start < WebInspector.TimelineOverviewPane.MinSelectableSize) {
             if (this._parentElement.clientWidth - window.end > WebInspector.TimelineOverviewPane.MinSelectableSize)
                 window.end = window.start + WebInspector.TimelineOverviewPane.MinSelectableSize;
             else
