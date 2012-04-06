@@ -604,6 +604,13 @@ void GraphicsLayerCA::setOpacity(float opacity)
 bool GraphicsLayerCA::setFilters(const FilterOperations& filterOperations)
 {
     bool canCompositeFilters = PlatformCALayer::filtersCanBeComposited(filterOperations);
+
+    if (m_filters == filterOperations)
+        return canCompositeFilters;
+
+    // Filters cause flattening, so we should never have filters on a layer with preserves3D().
+    ASSERT(!filterOperations.size() || !preserves3D());
+
     if (canCompositeFilters) {
         GraphicsLayer::setFilters(filterOperations);
         noteLayerPropertyChanged(FiltersChanged);
