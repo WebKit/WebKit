@@ -111,13 +111,13 @@ class MockDRTTest(unittest.TestCase):
         return mock_drt.MockDRT(options, args, host, stdin, stdout, stderr)
 
     def make_input_output(self, port, test_name, pixel_tests,
-                          expected_checksum, drt_output, drt_input=None):
+                          expected_checksum, drt_output, drt_input=None, expected_text=None):
         if pixel_tests:
             if not expected_checksum:
                 expected_checksum = port.expected_checksum(test_name)
         if not drt_input:
             drt_input = self.input_line(port, test_name, expected_checksum)
-        text_output = port.expected_text(test_name)
+        text_output = expected_text or port.expected_text(test_name) or ''
 
         if not drt_output:
             drt_output = self.expected_output(port, test_name, pixel_tests,
@@ -125,27 +125,24 @@ class MockDRTTest(unittest.TestCase):
         return (drt_input, drt_output)
 
     def expected_output(self, port, test_name, pixel_tests, text_output, expected_checksum):
+        output = ['Content-Type: text/plain\n']
+        if text_output:
+            output.append(text_output)
+        output.append('#EOF\n')
         if pixel_tests and expected_checksum:
-            return ['Content-Type: text/plain\n',
-                    text_output,
-                    '#EOF\n',
-                    '\n',
-                    'ActualHash: %s\n' % expected_checksum,
-                    'ExpectedHash: %s\n' % expected_checksum,
-                    '#EOF\n']
-        else:
-            return ['Content-Type: text/plain\n',
-                    text_output,
-                    '#EOF\n',
-                    '#EOF\n']
+            output.extend(['\n',
+                           'ActualHash: %s\n' % expected_checksum,
+                           'ExpectedHash: %s\n' % expected_checksum])
+        output.append('#EOF\n')
+        return output
 
-    def assertTest(self, test_name, pixel_tests, expected_checksum=None, drt_output=None, host=None):
+    def assertTest(self, test_name, pixel_tests, expected_checksum=None, drt_output=None, host=None, expected_text=None):
         port_name = 'test'
         host = host or MockSystemHost()
         test.add_unit_tests_to_mock_filesystem(host.filesystem)
         port = PortFactory(host).get(port_name)
         drt_input, drt_output = self.make_input_output(port, test_name,
-            pixel_tests, expected_checksum, drt_output)
+            pixel_tests, expected_checksum, drt_output, drt_input=None, expected_text=expected_text)
 
         args = ['--platform', port_name] + self.extra_args(pixel_tests)
         stdin = newstringio.StringIO(drt_input)
@@ -197,6 +194,21 @@ class MockDRTTest(unittest.TestCase):
     def test_checksum_in_png(self):
         self.assertTest('passes/checksum_in_image.html', True)
 
+    def test_missing_image(self):
+        self.assertTest('failures/expected/missing_image.html', True)
+
+    def test_missing_text(self):
+        self.assertTest('failures/expected/missing_text.html', True)
+
+    def test_reftest_match(self):
+        self.assertTest('passes/reftest.html', False, expected_checksum='mock-checksum', expected_text='reference text\n')
+        self.assertTest('passes/reftest.html', True, expected_checksum='mock-checksum', expected_text='reference text\n')
+
+    def test_reftest_mismatch(self):
+        self.assertTest('passes/mismatch.html', False, expected_checksum='mock-checksum', expected_text='reference text\n')
+        self.assertTest('passes/mismatch.html', True, expected_checksum='mock-checksum', expected_text='reference text\n')
+
+
 
 class MockChromiumDRTTest(MockDRTTest):
     def extra_args(self, pixel_tests):
@@ -222,17 +234,15 @@ class MockChromiumDRTTest(MockDRTTest):
 
     def expected_output(self, port, test_name, pixel_tests, text_output, expected_checksum):
         url = port.create_driver(0).test_to_uri(test_name)
-        if pixel_tests and expected_checksum:
-            return ['#URL:%s\n' % url,
-                    '#MD5:%s\n' % expected_checksum,
-                    text_output,
-                    '\n',
-                    '#EOF\n']
-        else:
-            return ['#URL:%s\n' % url,
-                    text_output,
-                    '\n',
-                    '#EOF\n']
+        output = ['#URL:%s\n' % url]
+        if expected_checksum:
+            output.append('#MD5:%s\n' % expected_checksum)
+        if text_output:
+            output.append(text_output)
+            if not text_output.endswith('\n'):
+                output.append('\n')
+        output.append('#EOF\n')
+        return output
 
     def test_pixeltest__fails(self):
         host = MockSystemHost()

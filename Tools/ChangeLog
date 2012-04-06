@@ -1,3 +1,36 @@
+2012-04-06  Dirk Pranke  <dpranke@chromium.org>
+
+        new-run-webkit-tests: fix bugs in 'mock' drt implementation
+        https://bugs.webkit.org/show_bug.cgi?id=83341
+
+        Reviewed by Eric Seidel.
+
+        The current implementation crashed in some circumstances for
+        reference tests and files that were missing expected results.
+        This patch fixes those cases and adds more unit tests; it is a
+        precursor to adding unit tests each port that actually uses this
+        code, in order to get better coverage of the port/*
+        implementations.
+
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        (parse_options):
+        (MockDRT.input_from_line):
+        (MockDRT.output_for_test):
+        (MockDRT.run_one_test):
+        (MockChromiumDRT.input_from_line):
+        (MockChromiumDRT.output_for_test):
+        (MockChromiumDRT.run_one_test):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockDRTTest.make_input_output):
+        (MockDRTTest.expected_output):
+        (MockDRTTest):
+        (MockDRTTest.assertTest):
+        (MockDRTTest.test_missing_image):
+        (MockDRTTest.test_missing_text):
+        (MockDRTTest.test_reftest_match):
+        (MockDRTTest.test_reftest_mismatch):
+        (MockChromiumDRTTest.expected_output):
+
 2012-04-06  James Robinson  <jamesr@chromium.org>
 
         Enable webkit_unit_tests for commit queue and EWS while tracking failures
