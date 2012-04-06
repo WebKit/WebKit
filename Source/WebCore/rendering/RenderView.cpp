@@ -217,6 +217,8 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // If we ever require layout but receive a paint anyway, something has gone horribly wrong.
     ASSERT(!needsLayout());
+    // RenderViews should never be called to paint with an offset not on device pixels.
+    ASSERT(LayoutPoint(IntPoint(paintOffset.x(), paintOffset.y())) == paintOffset);
     paintObject(paintInfo, paintOffset);
 }
 
@@ -294,7 +296,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     }
 }
 
-bool RenderView::shouldRepaint(const IntRect& r) const
+bool RenderView::shouldRepaint(const LayoutRect& r) const
 {
     if (printing() || r.width() == 0 || r.height() == 0)
         return false;
@@ -308,7 +310,7 @@ bool RenderView::shouldRepaint(const IntRect& r) const
     return true;
 }
 
-void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
+void RenderView::repaintViewRectangle(const LayoutRect& ur, bool immediate)
 {
     if (!shouldRepaint(ur))
         return;
@@ -317,23 +319,22 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
     // or even invisible.
     Element* elt = document()->ownerElement();
     if (!elt)
-        m_frameView->repaintContentRectangle(ur, immediate);
+        m_frameView->repaintContentRectangle(pixelSnappedIntRect(ur), immediate);
     else if (RenderBox* obj = elt->renderBox()) {
-        IntRect vr = viewRect();
-        IntRect r = intersection(ur, vr);
+        LayoutRect vr = viewRect();
+        LayoutRect r = intersection(ur, vr);
         
         // Subtract out the contentsX and contentsY offsets to get our coords within the viewing
         // rectangle.
         r.moveBy(-vr.location());
-        
+
         // FIXME: Hardcoded offsets here are not good.
-        r.move(obj->borderLeft() + obj->paddingLeft(),
-               obj->borderTop() + obj->paddingTop());
+        r.moveBy(obj->contentBoxRect().location());
         obj->repaintRectangle(r, immediate);
     }
 }
 
-void RenderView::repaintRectangleInViewAndCompositedLayers(const IntRect& ur, bool immediate)
+void RenderView::repaintRectangleInViewAndCompositedLayers(const LayoutRect& ur, bool immediate)
 {
     if (!shouldRepaint(ur))
         return;
@@ -342,11 +343,11 @@ void RenderView::repaintRectangleInViewAndCompositedLayers(const IntRect& ur, bo
     
 #if USE(ACCELERATED_COMPOSITING)
     if (compositor()->inCompositingMode())
-        compositor()->repaintCompositedLayersAbsoluteRect(ur);
+        compositor()->repaintCompositedLayersAbsoluteRect(pixelSnappedIntRect(ur));
 #endif
 }
 
-void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed) const
+void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
 {
     // If a container was specified, and was not 0 or the RenderView,
     // then we should have found it by now.
@@ -420,12 +421,12 @@ IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
     }
 
     // Now create a single bounding box rect that encloses the whole selection.
-    IntRect selRect;
+    LayoutRect selRect;
     SelectionMap::iterator end = selectedObjects.end();
     for (SelectionMap::iterator i = selectedObjects.begin(); i != end; ++i) {
         RenderSelectionInfo* info = i->second;
         // RenderSelectionInfo::rect() is in the coordinates of the repaintContainer, so map to page coordinates.
-        IntRect currRect = info->rect();
+        LayoutRect currRect = info->rect();
         if (RenderBoxModelObject* repaintContainer = info->repaintContainer()) {
             FloatQuad absQuad = repaintContainer->localToAbsoluteQuad(FloatRect(currRect));
             currRect = absQuad.enclosingBoundingBox(); 
@@ -433,7 +434,7 @@ IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
         selRect.unite(currRect);
         delete info;
     }
-    return selRect;
+    return pixelSnappedIntRect(selRect);
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -706,21 +707,21 @@ void RenderView::notifyWidgets(WidgetNotification notification)
     releaseWidgets(renderWidgets);
 }
 
-IntRect RenderView::viewRect() const
+LayoutRect RenderView::viewRect() const
 {
     if (printing())
-        return IntRect(IntPoint(), size());
+        return LayoutRect(LayoutPoint(), size());
     if (m_frameView)
         return m_frameView->visibleContentRect();
-    return IntRect();
+    return LayoutRect();
 }
 
 
 IntRect RenderView::unscaledDocumentRect() const
 {
-    IntRect overflowRect(layoutOverflowRect());
+    LayoutRect overflowRect(layoutOverflowRect());
     flipForWritingMode(overflowRect);
-    return overflowRect;
+    return pixelSnappedIntRect(overflowRect);
 }
 
 LayoutRect RenderView::backgroundRect(RenderBox* backgroundRenderer) const
