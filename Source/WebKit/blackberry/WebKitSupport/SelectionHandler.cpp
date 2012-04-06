@@ -134,13 +134,12 @@ void SelectionHandler::regionForTextQuads(Vector<FloatQuad> &quadList, IntRectRe
 
         // Convert the text quads into a more platform friendy
         // IntRectRegion and adjust for subframes.
-        std::vector<Platform::IntRect> adjustedIntRects;
         Platform::IntRect selectionBoundingBox;
         for (unsigned i = 0; i < quadList.size(); i++) {
             WebCore::IntRect enclosingRect = quadList[i].enclosingBoundingBox();
             enclosingRect.intersect(frameRect);
             enclosingRect.move(framePosition.x(), framePosition.y());
-            adjustedIntRects.push_back(enclosingRect);
+            region = unionRegions(region, IntRectRegion(enclosingRect));
 
             // Clip to the visible content.
             if (clippingRect.location() != DOMSupport::InvalidPoint)
