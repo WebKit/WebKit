@@ -1205,20 +1205,6 @@ BUGWK53378 MAC : svg/clip-path/clip-path-pixelation.svg = IMAGE
 // The CRASH comes from BUGWK82505
 BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE CRASH
 
-// Since r89233. May need a new baseline.
-// NOTE that this revision was rolled out, but it isn't clear whether we should remove these
-// expectations because it's likely to get checked in again soon.
-BUGWK62974 LINUX WIN : svg/W3C-SVG-1.1/fonts-glyph-03-t.svg = IMAGE+TEXT
-BUGWK62974 LINUX WIN : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE
-BUGWK62974 : svg/text/text-altglyph-01-b.svg = IMAGE
-BUGWK62974 LINUX WIN : svg/text/text-text-04-t.svg = IMAGE
-BUGWK62974 MAC : svg/text/text-text-04-t.svg = IMAGE
-BUGWK62974 LINUX WIN : svg/text/text-text-06-t.svg = IMAGE
-BUGWK62974 MAC : svg/text/text-text-06-t.svg = IMAGE
-BUGWK62974 LINUX WIN : svg/wicd/test-rightsizing-b.xhtml = IMAGE+TEXT
-BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
-BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
-
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------
