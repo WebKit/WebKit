@@ -117,15 +117,6 @@ storage/open-database-set-empty-version.html
 # https://bugs.webkit.org/show_bug.cgi?id=60158
 fast/dom/Geolocation/argument-types.html
 
-# crashing on debug bots because of failing ASSERT in TextIterator.cpp
-# https://bugs.webkit.org/show_bug.cgi?id=63611
-editing/deleting/smart-delete-003.html
-editing/deleting/smart-delete-004.html
-editing/pasteboard/interchange-newline-2.html
-editing/pasteboard/paste-text-008.html
-editing/undo/undo-smart-delete-reversed-selection.html
-editing/selection/directionality-after-undo-replace.html
-
 # EditorClient::checkTextOfParagraph() is not implemented
 editing/spelling/spelling-marker-description.html
 

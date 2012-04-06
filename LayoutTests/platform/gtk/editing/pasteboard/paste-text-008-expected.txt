@@ -101,8 +101,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 12 of #text > DIV > DIV > BODY > HTML > #document to 20 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 20 of #text > DIV > BODY > HTML > #document toDOMRange:range from 20 of #text > DIV > BODY > HTML > #document to 20 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > DIV > BODY > HTML > #document to 20 of #text > DIV > BODY > HTML > #document toDOMRange:range from 20 of #text > DIV > BODY > HTML > #document to 20 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 20 of #text > DIV > BODY > HTML > #document to 20 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
@@ -114,24 +113,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (14,14) size 756x28
-          RenderText {#text} at (0,0) size 351x28
-            text run at (0,0) width 351: "Omitted, all the voyage of their life,"
-        RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 114x28
-            text run at (14,14) width 114: "Is bound in "
-          RenderText {#text} at (128,14) size 243x28
-            text run at (128,14) width 243: "shallows and in miseries."
-        RenderBlock (anonymous) at (14,98) size 756x28
-          RenderText {#text} at (0,0) size 197x28
-            text run at (0,0) width 197: "Upon such a full sea"
-          RenderText {#text} at (197,0) size 243x28
-            text run at (197,0) width 243: "shallows and in miseries."
-      RenderBlock (anonymous) at (0,140) size 784x0
-      RenderBlock {DIV} at (0,140) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 197x28
-          text run at (14,14) width 197: "Upon such a full sea"
-        RenderText {#text} at (211,14) size 185x28
-          text run at (211,14) width 185: " are we now afloat,"
+      RenderBlock {DIV} at (0,0) size 784x137 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (14,14) size 756x27
+          RenderText {#text} at (0,0) size 346x26
+            text run at (0,0) width 346: "Omitted, all the voyage of their life,"
+        RenderBlock {DIV} at (14,41) size 756x55 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 356x26
+            text run at (14,14) width 356: "Is bound in shallows and in miseries."
+        RenderBlock (anonymous) at (14,96) size 756x27
+          RenderText {#text} at (0,0) size 438x26
+            text run at (0,0) width 438: "Upon such a full seashallows and in miseries."
+      RenderBlock (anonymous) at (0,137) size 784x0
+      RenderBlock {DIV} at (0,137) size 784x55 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 196x26
+          text run at (14,14) width 196: "Upon such a full sea"
+        RenderText {#text} at (209,14) size 185x26
+          text run at (209,14) width 185: " are we now afloat,"
 caret: position 20 of child 0 {#text} of child 2 {DIV} of body
