@@ -1,3 +1,9 @@
+2012-04-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ debug build.
+
+        * Source/autotools/symbols.filter: Add a missing symbol to the symbols.list file.
+
 2012-04-05  George Staikos  <staikos@webkit.org>
 
         Compile the vibration module for BlackBerry.
