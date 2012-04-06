@@ -3214,7 +3214,6 @@ BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 
 BUGWK71211 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/shadow-offset-3.html = PASS CRASH
 
-BUGWK71673 : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = TEXT IMAGE IMAGE+TEXT
 
 BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 
