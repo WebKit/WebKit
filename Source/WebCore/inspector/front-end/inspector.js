@@ -1021,6 +1021,16 @@ WebInspector._toolbarItemClicked = function(event)
     WebInspector.inspectorView.setCurrentPanel(toolbarItem.panel);
 }
 
+WebInspector.save = function(url, content, forceSaveAs)
+{
+    // Remove this url from the saved URLs while it is being saved.
+    var savedURLs = WebInspector.settings.savedURLs.get();
+    delete savedURLs[url];
+    WebInspector.settings.savedURLs.set(savedURLs);
+
+    InspectorFrontendHost.save(url, content, forceSaveAs);
+}
+
 WebInspector.savedURL = function(url)
 {
     var savedURLs = WebInspector.settings.savedURLs.get();
