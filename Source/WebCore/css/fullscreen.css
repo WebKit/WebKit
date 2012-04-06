@@ -11,6 +11,13 @@
     z-index: auto !important;
     opacity: 1 !important;
     -webkit-transform: none !important;
+    -webkit-mask: none !important;
+    clip: none !important;
+    -webkit-filter: none !important;
+    -webkit-transition: none !important;
+    -webkit-box-reflect: none !important;
+    -webkit-perspective: none !important;
+    -webkit-transform-style: flat !important;
 }
 
 video:-webkit-full-screen {

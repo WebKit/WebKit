@@ -28,9 +28,17 @@
                 top: 50px;
                 left: 50px;
                 z-index: 1;
+                background-color: red;
+            }
+            #one, #two {
                 opacity: 0.5;
                 -webkit-transform: rotate(180);
-                background-color: red;
+                -webkit-mask: -webkit-linear-gradient(left, alpha 0%, white 100%);
+                -webkit-filter: contrast(100%);
+                clip:rect(0px,100px,100px,0px);
+                -webkit-box-reflect: below;
+                -webkit-transform-style: preserve-3d;
+                -webkit-perspective: 300;
             }
             #zero {
                 position: relative;
