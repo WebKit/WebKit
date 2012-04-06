@@ -1,3 +1,17 @@
+2012-04-06  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Adopt a different method of telling AppKit when inline input isn't supported
+        https://bugs.webkit.org/show_bug.cgi?id=83408
+        <rdar://problem/9205734>
+
+        Reviewed by Adele Peterson.
+
+        * UIProcess/API/mac/WKTextInputWindowController.mm:
+        (-[WKTextInputView validAttributesForMarkedText]):
+        (-[WKTextInputPanel init]):
+        (-[WKTextInputPanel _interpretKeyEvent:usingLegacyCocoaTextInput:string:]): Added a comment
+        about old approach.
+
 2012-04-06  Jer Noble  <jer.noble@apple.com>
 
         WebFullScreenManagerProxy::isFullScreen() will create an empty full screen window; steal focus.

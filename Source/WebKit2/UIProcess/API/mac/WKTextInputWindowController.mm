@@ -28,6 +28,23 @@
 
 #import <WebKitSystemInterface.h>
 
+@interface WKTextInputView : NSTextView {
+}
+@end
+
+@implementation WKTextInputView
+
+- (NSArray *)validAttributesForMarkedText
+{
+    // Let TSM know that a bottom input window would be created for marked text.
+    NSArray *regularAttributes = [super validAttributesForMarkedText];
+    NSMutableArray *floatingWindowAttributes = [NSMutableArray arrayWithArray:regularAttributes];
+    [floatingWindowAttributes addObject:@"__NSUsesFloatingInputWindow"];
+    return floatingWindowAttributes;
+}
+
+@end
+
 @interface WKTextInputPanel : NSPanel {
     NSTextView *_inputTextView;
 }
@@ -65,7 +82,7 @@
      
     [self setFrame:frame display:NO];
         
-    _inputTextView = [[NSTextView alloc] initWithFrame:[(NSView *)self.contentView frame]];        
+    _inputTextView = [[WKTextInputView alloc] initWithFrame:[(NSView *)self.contentView frame]];
     _inputTextView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable | NSViewMaxXMargin | NSViewMinXMargin | NSViewMaxYMargin | NSViewMinYMargin;
         
     NSScrollView* scrollView = [[NSScrollView alloc] initWithFrame:[(NSView *)self.contentView frame]];
@@ -91,6 +108,7 @@
     *string = nil;
 
     // Let TSM know that a bottom input window would be created for marked text.
+    // FIXME: Can be removed once we can rely on __NSUsesFloatingInputWindow (or a better API) being available everywhere.
     EventRef carbonEvent = static_cast<EventRef>(const_cast<void*>([event eventRef]));
     if (carbonEvent) {
         Boolean ignorePAH = true;
