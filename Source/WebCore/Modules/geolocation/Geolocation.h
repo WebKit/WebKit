@@ -150,9 +150,7 @@ private:
     bool startUpdating(GeoNotifier*);
     void stopUpdating();
 
-#if USE(PREEMPT_GEOLOCATION_PERMISSION)
     void handlePendingPermissionNotifiers();
-#endif
 
     PassRefPtr<GeoNotifier> startRequest(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
 
@@ -164,9 +162,7 @@ private:
 
     GeoNotifierSet m_oneShots;
     Watchers m_watchers;
-#if USE(PREEMPT_GEOLOCATION_PERMISSION)
     GeoNotifierSet m_pendingForPermissionNotifiers;
-#endif
     RefPtr<Geoposition> m_lastPosition;
 
     enum {

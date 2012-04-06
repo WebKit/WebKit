@@ -122,10 +122,8 @@ void Geolocation::GeoNotifier::runSuccessCallback(Geoposition* position)
 {
     // If we are here and the Geolocation permission is not approved, something has
     // gone horribly wrong.
-    // We bail out to avoid any privacy issue.
-    ASSERT(m_geolocation->isAllowed());
     if (!m_geolocation->isAllowed())
-        return;
+        CRASH();
 
     m_successCallback->handleEvent(position);
 }
@@ -280,9 +278,7 @@ void Geolocation::stop()
     m_allowGeolocation = Unknown;
     cancelAllRequests();
     stopUpdating();
-#if USE(PREEMPT_GEOLOCATION_PERMISSION)
     m_pendingForPermissionNotifiers.clear();
-#endif
 }
 
 Geoposition* Geolocation::lastPosition()
@@ -335,14 +331,11 @@ PassRefPtr<Geolocation::GeoNotifier> Geolocation::startRequest(PassRefPtr<Positi
         notifier->setUseCachedPosition();
     else if (notifier->hasZeroTimeout())
         notifier->startTimerIfNeeded();
-#if USE(PREEMPT_GEOLOCATION_PERMISSION)
     else if (!isAllowed()) {
         // if we don't yet have permission, request for permission before calling startUpdating()
         m_pendingForPermissionNotifiers.add(notifier);
         requestPermission();
-    }
-#endif
-    else if (startUpdating(notifier.get()))
+    } else if (startUpdating(notifier.get()))
         notifier->startTimerIfNeeded();
     else
         notifier->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, failedToStartServiceErrorMessage));
@@ -435,10 +428,8 @@ void Geolocation::clearWatch(int watchId)
     if (watchId < firstAvailableWatchId)
         return;
 
-#if USE(PREEMPT_GEOLOCATION_PERMISSION)
     if (GeoNotifier* notifier = m_watchers.find(watchId))
         m_pendingForPermissionNotifiers.remove(notifier);
-#endif
     m_watchers.remove(watchId);
     
     if (!hasListeners())
@@ -454,14 +445,12 @@ void Geolocation::setIsAllowed(bool allowed)
     // position.
     m_allowGeolocation = allowed ? Yes : No;
     
-#if USE(PREEMPT_GEOLOCATION_PERMISSION)
     // Permission request was made during the startRequest process
     if (!m_pendingForPermissionNotifiers.isEmpty()) {
         handlePendingPermissionNotifiers();
         m_pendingForPermissionNotifiers.clear();
         return;
     }
-#endif
 
     if (!isAllowed()) {
         RefPtr<PositionError> error = PositionError::create(PositionError::PERMISSION_DENIED, permissionDeniedErrorMessage);
@@ -642,19 +631,12 @@ void Geolocation::makeSuccessCallbacks()
 
 void Geolocation::positionChanged()
 {
+    ASSERT(isAllowed());
+
     m_cachedPosition = lastPosition();
 
     // Stop all currently running timers.
     stopTimers();
-
-    if (!isAllowed()) {
-        // requestPermission() will ask the chrome for permission. This may be
-        // implemented synchronously or asynchronously. In both cases,
-        // makeSuccessCallbacks() will be called if permission is granted, so
-        // there's nothing more to do here.
-        requestPermission();
-        return;
-    }
 
     makeSuccessCallbacks();
 }
@@ -684,7 +666,6 @@ void Geolocation::stopUpdating()
     GeolocationController::from(page)->removeObserver(this);
 }
 
-#if USE(PREEMPT_GEOLOCATION_PERMISSION)
 void Geolocation::handlePendingPermissionNotifiers()
 {
     // While we iterate through the list, we need not worry about list being modified as the permission 
@@ -704,7 +685,6 @@ void Geolocation::handlePendingPermissionNotifiers()
             notifier->setFatalError(PositionError::create(PositionError::PERMISSION_DENIED, permissionDeniedErrorMessage));
     }
 }
-#endif
 
 } // namespace WebCore
                                                         
