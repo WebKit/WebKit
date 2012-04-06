@@ -1190,16 +1190,7 @@ BUGWK82217 LINUX : svg/zoom/text/zoom-foreignObject.svg = IMAGE PASS
 BUGWK83051 WIN LINUX LION : svg/css/group-with-shadow.svg = IMAGE PASS
 
 // Windows and Mac need rebaselining after 53378 patch.
-BUGWK53378 WIN MAC : svg/clip-path/clip-in-mask.svg = IMAGE
-BUGWK53378 WIN : svg/clip-path/deep-nested-clip-in-mask-panning.svg = IMAGE+TEXT
-BUGWK53378 MAC : svg/clip-path/deep-nested-clip-in-mask-panning.svg = IMAGE
-BUGWK53378 WIN : svg/clip-path/deep-nested-clip-in-mask.svg = IMAGE+TEXT
-BUGWK53378 MAC : svg/clip-path/deep-nested-clip-in-mask.svg = IMAGE
-BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-image-based-clipping.svg = IMAGE
-BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping.svg = IMAGE
-BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg = IMAGE
 BUGWK53378 MAC : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
-BUGWK53378 MAC : svg/clip-path/clip-path-pixelation.svg = IMAGE
 // The CRASH comes from BUGWK82505
 BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE CRASH
 
