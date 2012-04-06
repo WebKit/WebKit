@@ -72,7 +72,7 @@ public:
     virtual void repaintViewRectangle(const LayoutRect&, bool immediate = false);
     // Repaint the view, and all composited layers that intersect the given absolute rectangle.
     // FIXME: ideally we'd never have to do this, if all repaints are container-relative.
-    virtual void repaintRectangleInViewAndCompositedLayers(const LayoutRect&, bool immediate = false) OVERRIDE;
+    virtual void repaintRectangleInViewAndCompositedLayers(const LayoutRect&, bool immediate = false);
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&) OVERRIDE;

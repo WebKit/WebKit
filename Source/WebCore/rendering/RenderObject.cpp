@@ -62,6 +62,7 @@
 #include "RenderTableRow.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include "TransformState.h"
 #include "htmlediting.h"
 #include <algorithm>
