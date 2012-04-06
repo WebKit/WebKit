@@ -203,3 +203,13 @@ tables/mozilla/bugs/bug34176.html
 tables/mozilla/bugs/bug44505.html
 tables/mozilla_expected_failures/bugs/bug59252.html
 tables/mozilla_expected_failures/bugs/bug7243.html
+
+# missing element.canPlayType()
+fast/events/media-focus-in-standalone-media-document.html
+
+# missing layoutTestController.setPageVisibility()
+fast/events/page-visibility-iframe-delete-test.html
+fast/events/page-visibility-iframe-move-test.html
+fast/events/page-visibility-iframe-propagation-test.html
+fast/events/page-visibility-transition-test.html
+fast/events/touch/send-oncancel-event.html
