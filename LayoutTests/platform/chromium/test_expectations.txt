@@ -1334,8 +1334,8 @@ BUGCR24207 : fast/events/attempt-scroll-with-no-scrollbars.html = FAIL
 BUGWK79938 : fast/js/kde/RegExp.html = TEXT
 
 // No glyph for U+FFFD (Replacement Character : black diamond with
-// question mark) in them
-BUGCR10315 WIN : fast/encoding/invalid-UTF-8.html = IMAGE+TEXT
+// question mark) in them on Win XP.
+BUGCR10315 XP : fast/encoding/invalid-UTF-8.html = IMAGE+TEXT
 
 // v8: A setter that is added to a prototype after the inline cache is
 // recorded will not be called.
