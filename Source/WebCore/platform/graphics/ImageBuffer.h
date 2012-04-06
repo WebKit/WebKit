@@ -80,17 +80,9 @@ namespace WebCore {
         static PassOwnPtr<ImageBuffer> create(const IntSize& size, float resolutionScale = 1, ColorSpace colorSpace = ColorSpaceDeviceRGB, RenderingMode renderingMode = Unaccelerated, DeferralMode deferralMode = NonDeferred)
         {
             bool success = false;
-            float scaledWidth = ceilf(resolutionScale * size.width());
-            float scaledHeight = ceilf(resolutionScale * size.height());
-            IntSize internalSize(scaledWidth, scaledHeight);
-
-            OwnPtr<ImageBuffer> buf = adoptPtr(new ImageBuffer(internalSize, colorSpace, renderingMode, deferralMode, success));
+            OwnPtr<ImageBuffer> buf = adoptPtr(new ImageBuffer(size, resolutionScale, colorSpace, renderingMode, deferralMode, success));
             if (!success)
                 return nullptr;
-
-            buf->m_logicalSize = size;
-            buf->m_resolutionScale = resolutionScale;
-            buf->context()->scale(FloatSize(resolutionScale, resolutionScale));
             return buf.release();
         }
 
@@ -153,7 +145,7 @@ namespace WebCore {
 
         // This constructor will place its success into the given out-variable
         // so that create() knows when it should return failure.
-        ImageBuffer(const IntSize&, ColorSpace, RenderingMode, DeferralMode, bool& success);
+        ImageBuffer(const IntSize&, float resolutionScale, ColorSpace, RenderingMode, DeferralMode, bool& success);
     };
 
 #if USE(CG) || USE(SKIA)

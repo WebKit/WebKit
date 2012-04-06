@@ -95,10 +95,13 @@ ImageBufferData::~ImageBufferData()
     delete m_memDC;
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace colorSpace, RenderingMode, DeferralMode, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace colorSpace, RenderingMode, DeferralMode, bool& success)
     : m_data(size)
     , m_size(size)
+    , m_logicalSize(size)
 {
+    // FIXME: Respect resoutionScale to support high-DPI canvas.
+    UNUSED_PARAM(resolutionScale);
     // FIXME: colorSpace is not used
     UNUSED_PARAM(colorSpace);
 

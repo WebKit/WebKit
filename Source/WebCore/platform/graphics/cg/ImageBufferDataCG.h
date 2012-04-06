@@ -58,8 +58,8 @@ public:
     mutable double m_lastFlushTime;
 #endif
 
-    PassRefPtr<ByteArray> getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied) const;
-    void putData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering, bool unmultiplied);
+    PassRefPtr<ByteArray> getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale) const;
+    void putData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale);
 };
 
 } // namespace WebCore

@@ -85,7 +85,8 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* doc
     , m_rendererIsCanvas(false)
     , m_ignoreReset(false)
 #if ENABLE(HIGH_DPI_CANVAS)
-      // FIXME: Make this the default once https://bugs.webkit.org/show_bug.cgi?id=73645 has been fixed.
+      // NOTE: High-DPI canvas requires the platform-specific ImageBuffer implementation to respect
+      // the resolutionScale parameter.
     , m_deviceScaleFactor(document->frame() ? document->frame()->page()->deviceScaleFactor() : 1)
 #else
     , m_deviceScaleFactor(1)
@@ -543,10 +544,9 @@ void HTMLCanvasElement::createImageBuffer() const
         Unaccelerated;
 #endif
     DeferralMode deferralMode = shouldDefer() ? Deferred : NonDeferred;
-    m_imageBuffer = ImageBuffer::create(bufferSize, 1, ColorSpaceDeviceRGB, renderingMode, deferralMode);
+    m_imageBuffer = ImageBuffer::create(size(), m_deviceScaleFactor, ColorSpaceDeviceRGB, renderingMode, deferralMode);
     if (!m_imageBuffer)
         return;
-    m_imageBuffer->context()->scale(FloatSize(bufferSize.width() / logicalSize.width(), bufferSize.height() / logicalSize.height()));
     m_imageBuffer->context()->setShadowsIgnoreTransforms(true);
     m_imageBuffer->context()->setImageInterpolationQuality(DefaultInterpolationQuality);
     m_imageBuffer->context()->setStrokeThickness(1);

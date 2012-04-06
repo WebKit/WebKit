@@ -54,9 +54,10 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 {
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode, DeferralMode, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, ColorSpace, RenderingMode, DeferralMode, bool& success)
     : m_data(size)
     , m_size(size)
+    , m_logicalSize(size)
 {
     success = false;  // Make early return mean error.
     m_data.m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,

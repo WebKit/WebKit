@@ -94,9 +94,10 @@ QImage ImageBufferData::toQImage() const
     return image;
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode, DeferralMode, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, ColorSpace, RenderingMode, DeferralMode, bool& success)
     : m_data(size)
     , m_size(size)
+    , m_logicalSize(size)
 {
     success = m_data.m_painter && m_data.m_painter->isActive();
     if (!success)

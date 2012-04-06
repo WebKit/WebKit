@@ -1353,21 +1353,18 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
     sourceCanvas->makeRenderingResultsAvailable();
 #endif
 
-    // drawImageBuffer's srcRect is in buffer pixels (backing store pixels, in our case), dstRect is in canvas pixels.
-    FloatRect bufferSrcRect(sourceCanvas->convertLogicalToDevice(srcRect));
-
     if (rectContainsCanvas(dstRect)) {
-        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, bufferSrcRect, state().m_globalComposite);
+        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(state().m_globalComposite)) {
-        fullCanvasCompositedDrawImage(buffer, ColorSpaceDeviceRGB, dstRect, bufferSrcRect, state().m_globalComposite);
+        fullCanvasCompositedDrawImage(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
         didDrawEntireCanvas();
     } else if (state().m_globalComposite == CompositeCopy) {
         clearCanvas();
-        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, bufferSrcRect, state().m_globalComposite);
+        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
         didDrawEntireCanvas();
     } else {
-        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, bufferSrcRect, state().m_globalComposite);
+        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
         didDraw(dstRect);
     }
 }
@@ -1778,11 +1775,10 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float 
     }
 
     FloatSize logicalSize(fabs(sw), fabs(sh));
-    FloatSize deviceSize = canvas()->convertLogicalToDevice(logicalSize);
-    if (!deviceSize.isExpressibleAsIntSize())
+    if (!logicalSize.isExpressibleAsIntSize())
         return 0;
 
-    IntSize size(deviceSize.width(), deviceSize.height());
+    IntSize size = expandedIntSize(logicalSize);
     if (size.width() < 1)
         size.setWidth(1);
     if (size.height() < 1)
@@ -1818,15 +1814,14 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy,
     }
     
     FloatRect logicalRect(sx, sy, sw, sh);
-    FloatRect deviceRect = canvas()->convertLogicalToDevice(logicalRect);
-    if (deviceRect.width() < 1)
-        deviceRect.setWidth(1);
-    if (deviceRect.height() < 1)
-        deviceRect.setHeight(1);
-    if (!deviceRect.isExpressibleAsIntRect())
+    if (logicalRect.width() < 1)
+        logicalRect.setWidth(1);
+    if (logicalRect.height() < 1)
+        logicalRect.setHeight(1);
+    if (!logicalRect.isExpressibleAsIntRect())
         return 0;
 
-    IntRect imageDataRect(deviceRect);
+    IntRect imageDataRect = enclosingIntRect(logicalRect);
     ImageBuffer* buffer = canvas()->buffer();
     if (!buffer)
         return createEmptyImageData(imageDataRect.size());

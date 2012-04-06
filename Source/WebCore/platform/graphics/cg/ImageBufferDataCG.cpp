@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ImageBufferData.h"
 
+#include <CoreGraphics/CoreGraphics.h>
 #include <wtf/Assertions.h>
 
 #if USE(ACCELERATE)
@@ -36,6 +37,8 @@
 #include <IOSurface/IOSurface.h>
 #include <dispatch/dispatch.h>
 #endif
+
+using namespace std;
 
 #if USE(ACCELERATE)
 struct ScanlineData {
@@ -113,7 +116,7 @@ static void premultitplyScanline(void* data, size_t tileNumber)
 #endif // USE(IOSURFACE_CANVAS_BACKING_STORE)
 #endif // USE(ACCELERATE)
 
-PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied) const
+PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale) const
 {
     float area = 4.0f * rect.width() * rect.height();
     if (area > static_cast<float>(std::numeric_limits<int>::max()))
@@ -122,27 +125,35 @@ PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSiz
     RefPtr<ByteArray> result = ByteArray::create(rect.width() * rect.height() * 4);
     unsigned char* data = result->data();
     
-    if (rect.x() < 0 || rect.y() < 0 || rect.maxX() > size.width() || rect.maxY() > size.height())
+    int endx = ceilf(rect.maxX() * resolutionScale);
+    int endy = ceilf(rect.maxY() * resolutionScale);
+    if (rect.x() < 0 || rect.y() < 0 || endx > size.width() || endy > size.height())
         memset(data, 0, result->length());
     
     int originx = rect.x();
     int destx = 0;
+    int destw = rect.width();
     if (originx < 0) {
+        destw += originx;
         destx = -originx;
         originx = 0;
     }
-    int endx = rect.maxX();
+    destw = min<int>(destw, ceilf(size.width() / resolutionScale) - originx);
+    originx *= resolutionScale;
     if (endx > size.width())
         endx = size.width();
     int width = endx - originx;
     
     int originy = rect.y();
     int desty = 0;
+    int desth = rect.height();
     if (originy < 0) {
+        desth += originy;
         desty = -originy;
         originy = 0;
     }
-    int endy = rect.maxY();
+    desth = min<int>(desth, ceilf(size.height() / resolutionScale) - originy);
+    originy *= resolutionScale;
     if (endy > size.height())
         endy = size.height();
     int height = endy - originy;
@@ -169,15 +180,37 @@ PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSiz
             src.data = srcRows;
             
             vImage_Buffer dst;
-            dst.height = height;
-            dst.width = width;
+            dst.height = desth;
+            dst.width = destw;
             dst.rowBytes = destBytesPerRow;
             dst.data = destRows;
-            
+
+            if (resolutionScale != 1) {
+                vImage_AffineTransform scaleTransform = { 1 / resolutionScale, 0, 0, 1 / resolutionScale, 0, 0 }; // FIXME: Add subpixel translation.
+                Pixel_8888 backgroundColor;
+                vImageAffineWarp_ARGB8888(&src, &dst, 0, &scaleTransform, backgroundColor, kvImageEdgeExtend);
+                // The unpremultiplying will be done in-place.
+                src = dst;
+            }
+
             vImageUnpremultiplyData_RGBA8888(&src, &dst, kvImageNoFlags);
             return result.release();
         }
 #endif
+        if (resolutionScale != 1) {
+            RetainPtr<CGContextRef> sourceContext(AdoptCF, CGBitmapContextCreate(srcRows, width, height, 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGImageRef> sourceImage(AdoptCF, CGBitmapContextCreateImage(sourceContext.get()));
+            RetainPtr<CGContextRef> destinationContext(AdoptCF, CGBitmapContextCreate(destRows, destw, desth, 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
+            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width / resolutionScale, height / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
+            if (!unmultiplied)
+                return result.release();
+
+            srcRows = destRows;
+            srcBytesPerRow = destBytesPerRow;
+            width = destw;
+            height = desth;
+        }
         if (unmultiplied) {
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; x++) {
@@ -210,6 +243,32 @@ PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSiz
         srcRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + originy * srcBytesPerRow + originx * 4;
 
 #if USE(ACCELERATE)
+        vImage_Buffer src;
+        src.height = height;
+        src.width = width;
+        src.rowBytes = srcBytesPerRow;
+        src.data = srcRows;
+
+        vImage_Buffer dest;
+        dest.height = desth;
+        dest.width = destw;
+        dest.rowBytes = destBytesPerRow;
+        dest.data = destRows;
+
+        if (resolutionScale != 1) {
+            vImage_AffineTransform scaleTransform = { 1 / resolutionScale, 0, 0, 1 / resolutionScale, 0, 0 }; // FIXME: Add subpixel translation.
+            Pixel_8888 backgroundColor;
+            vImageAffineWarp_ARGB8888(&src, &dest, 0, &scaleTransform, backgroundColor, kvImageEdgeExtend);
+            // The unpremultiplying and channel-swapping will be done in-place.
+            if (unmultiplied) {
+                srcRows = destRows;
+                width = destw;
+                height = desth;
+                srcBytesPerRow = destBytesPerRow;
+            } else
+                src = dest;
+        }
+
         if (unmultiplied) {
             ScanlineData scanlineData;
             scanlineData.scanlineWidth = width;
@@ -220,37 +279,39 @@ PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSiz
 
             dispatch_apply_f(height, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, unpremultitplyScanline);
         } else {
-            vImage_Buffer src;
-            src.height = height;
-            src.width = width;
-            src.rowBytes = srcBytesPerRow;
-            src.data = srcRows;
-
-            vImage_Buffer dest;
-            dest.height = height;
-            dest.width = width;
-            dest.rowBytes = destBytesPerRow;
-            dest.data = destRows;
-
             // Swap pixel channels from BGRA to RGBA.
             const uint8_t map[4] = { 2, 1, 0, 3 };
             vImagePermuteChannels_ARGB8888(&src, &dest, map, kvImageNoFlags);
         }
 #else
+        if (resolutionScale != 1) {
+            RetainPtr<CGContextRef> sourceContext(AdoptCF, CGBitmapContextCreate(srcRows, width, height, 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGImageRef> sourceImage(AdoptCF, CGBitmapContextCreateImage(sourceContext.get()));
+            RetainPtr<CGContextRef> destinationContext(AdoptCF, CGBitmapContextCreate(destRows, destw, desth, 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
+            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width / resolutionScale, height / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
+
+            srcRows = destRows;
+            srcBytesPerRow = destBytesPerRow;
+            width = destw;
+            height = desth;
+        }
+
         if (unmultiplied) {
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; x++) {
                     int basex = x * 4;
+                    unsigned char b = srcRows[basex];
                     unsigned char alpha = srcRows[basex + 3];
                     if (alpha) {
                         destRows[basex] = (srcRows[basex + 2] * 255) / alpha;
                         destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
-                        destRows[basex + 2] = (srcRows[basex] * 255) / alpha;
+                        destRows[basex + 2] = (b * 255) / alpha;
                         destRows[basex + 3] = alpha;
                     } else {
                         destRows[basex] = srcRows[basex + 2];
                         destRows[basex + 1] = srcRows[basex + 1];
-                        destRows[basex + 2] = srcRows[basex];
+                        destRows[basex + 2] = b;
                         destRows[basex + 3] = srcRows[basex + 3];
                     }
                 }
@@ -261,9 +322,10 @@ PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSiz
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; x++) {
                     int basex = x * 4;
+                    unsigned char b = srcRows[basex];
                     destRows[basex] = srcRows[basex + 2];
                     destRows[basex + 1] = srcRows[basex + 1];
-                    destRows[basex + 2] = srcRows[basex];
+                    destRows[basex + 2] = b;
                     destRows[basex + 3] = srcRows[basex + 3];
                 }
                 srcRows += srcBytesPerRow;
@@ -280,33 +342,36 @@ PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSiz
     return result.release();
 }
 
-void ImageBufferData::putData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering, bool unmultiplied)
+void ImageBufferData::putData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
     
     int originx = sourceRect.x();
-    int destx = destPoint.x() + sourceRect.x();
+    int destx = (destPoint.x() + sourceRect.x()) * resolutionScale;
     ASSERT(destx >= 0);
     ASSERT(destx < size.width());
     ASSERT(originx >= 0);
     ASSERT(originx <= sourceRect.maxX());
     
-    int endx = destPoint.x() + sourceRect.maxX();
+    int endx = (destPoint.x() + sourceRect.maxX()) * resolutionScale;
     ASSERT(endx <= size.width());
     
-    int width = endx - destx;
-    
+    int width = sourceRect.width();
+    int destw = endx - destx;
+
     int originy = sourceRect.y();
-    int desty = destPoint.y() + sourceRect.y();
+    int desty = (destPoint.y() + sourceRect.y()) * resolutionScale;
     ASSERT(desty >= 0);
     ASSERT(desty < size.height());
     ASSERT(originy >= 0);
     ASSERT(originy <= sourceRect.maxY());
     
-    int endy = destPoint.y() + sourceRect.maxY();
+    int endy = (destPoint.y() + sourceRect.maxY()) * resolutionScale;
     ASSERT(endy <= size.height());
-    int height = endy - desty;
+
+    int height = sourceRect.height();
+    int desth = endy - desty;
     
     if (width <= 0 || height <= 0)
         return;
@@ -329,15 +394,38 @@ void ImageBufferData::putData(ByteArray*& source, const IntSize& sourceSize, con
             src.data = srcRows;
             
             vImage_Buffer dst;
-            dst.height = height;
-            dst.width = width;
+            dst.height = desth;
+            dst.width = destw;
             dst.rowBytes = destBytesPerRow;
             dst.data = destRows;
-            
+
+            if (resolutionScale != 1) {
+                vImage_AffineTransform scaleTransform = { resolutionScale, 0, 0, resolutionScale, 0, 0 }; // FIXME: Add subpixel translation.
+                Pixel_8888 backgroundColor;
+                vImageAffineWarp_ARGB8888(&src, &dst, 0, &scaleTransform, backgroundColor, kvImageEdgeExtend);
+                // The premultiplying will be done in-place.
+                src = dst;
+            }
+
             vImagePremultiplyData_RGBA8888(&src, &dst, kvImageNoFlags);
             return;
         }
 #endif
+        if (resolutionScale != 1) {
+            RetainPtr<CGContextRef> sourceContext(AdoptCF, CGBitmapContextCreate(srcRows, width, height, 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGImageRef> sourceImage(AdoptCF, CGBitmapContextCreateImage(sourceContext.get()));
+            RetainPtr<CGContextRef> destinationContext(AdoptCF, CGBitmapContextCreate(destRows, destw, desth, 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
+            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width / resolutionScale, height / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
+            if (!unmultiplied)
+                return;
+
+            srcRows = destRows;
+            srcBytesPerRow = destBytesPerRow;
+            width = destw;
+            height = desth;
+        }
+
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; x++) {
                 int basex = x * 4;
@@ -361,6 +449,32 @@ void ImageBufferData::putData(ByteArray*& source, const IntSize& sourceSize, con
         destRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + desty * destBytesPerRow + destx * 4;
 
 #if USE(ACCELERATE)
+        vImage_Buffer src;
+        src.height = height;
+        src.width = width;
+        src.rowBytes = srcBytesPerRow;
+        src.data = srcRows;
+
+        vImage_Buffer dest;
+        dest.height = desth;
+        dest.width = destw;
+        dest.rowBytes = destBytesPerRow;
+        dest.data = destRows;
+
+        if (resolutionScale != 1) {
+            vImage_AffineTransform scaleTransform = { resolutionScale, 0, 0, resolutionScale, 0, 0 }; // FIXME: Add subpixel translation.
+            Pixel_8888 backgroundColor;
+            vImageAffineWarp_ARGB8888(&src, &dest, 0, &scaleTransform, backgroundColor, kvImageEdgeExtend);
+            // The unpremultiplying and channel-swapping will be done in-place.
+            if (unmultiplied) {
+                srcRows = destRows;
+                width = destw;
+                height = desth;
+                srcBytesPerRow = destBytesPerRow;
+            } else
+                src = dest;
+        }
+
         if (unmultiplied) {
             ScanlineData scanlineData;
             scanlineData.scanlineWidth = width;
@@ -371,36 +485,38 @@ void ImageBufferData::putData(ByteArray*& source, const IntSize& sourceSize, con
 
             dispatch_apply_f(height, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, premultitplyScanline);
         } else {
-            vImage_Buffer src;
-            src.height = height;
-            src.width = width;
-            src.rowBytes = srcBytesPerRow;
-            src.data = srcRows;
-
-            vImage_Buffer dest;
-            dest.height = height;
-            dest.width = width;
-            dest.rowBytes = destBytesPerRow;
-            dest.data = destRows;
-
             // Swap pixel channels from RGBA to BGRA.
             const uint8_t map[4] = { 2, 1, 0, 3 };
             vImagePermuteChannels_ARGB8888(&src, &dest, map, kvImageNoFlags);
         }
 #else
+        if (resolutionScale != 1) {
+            RetainPtr<CGContextRef> sourceContext(AdoptCF, CGBitmapContextCreate(srcRows, width, height, 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGImageRef> sourceImage(AdoptCF, CGBitmapContextCreateImage(sourceContext.get()));
+            RetainPtr<CGContextRef> destinationContext(AdoptCF, CGBitmapContextCreate(destRows, destw, desth, 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
+            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width / resolutionScale, height / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
+
+            srcRows = destRows;
+            srcBytesPerRow = destBytesPerRow;
+            width = destw;
+            height = desth;
+        }
+
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; x++) {
                 int basex = x * 4;
+                unsigned char b = srcRows[basex];
                 unsigned char alpha = srcRows[basex + 3];
                 if (unmultiplied && alpha != 255) {
                     destRows[basex] = (srcRows[basex + 2] * alpha + 254) / 255;
                     destRows[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;
-                    destRows[basex + 2] = (srcRows[basex] * alpha + 254) / 255;
+                    destRows[basex + 2] = (b * alpha + 254) / 255;
                     destRows[basex + 3] = alpha;
                 } else {
                     destRows[basex] = srcRows[basex + 2];
                     destRows[basex + 1] = srcRows[basex + 1];
-                    destRows[basex + 2] = srcRows[basex];
+                    destRows[basex + 2] = b;
                     destRows[basex + 3] = alpha;
                 }
             }
