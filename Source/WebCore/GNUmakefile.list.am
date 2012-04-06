@@ -3238,6 +3238,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/Image.cpp \
 	Source/WebCore/platform/graphics/Image.h \
 	Source/WebCore/platform/graphics/ImageObserver.h \
+	Source/WebCore/platform/graphics/ImageOrientation.cpp \
+	Source/WebCore/platform/graphics/ImageOrientation.h \
 	Source/WebCore/platform/graphics/ImageSource.cpp \
 	Source/WebCore/platform/graphics/ImageSource.h \
 	Source/WebCore/platform/graphics/IntPoint.h \

@@ -197,6 +197,10 @@ WK_EXPORT bool WKPreferencesGetShouldDisplayTextDescriptions(WKPreferencesRef pr
 WK_EXPORT void WKPreferencesSetNotificationsEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetNotificationsEnabled(WKPreferencesRef preferencesRef);
 
+// Defaults to false
+WK_EXPORT void WKPreferencesSetShouldRespectImageOrientation(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetShouldRespectImageOrientation(WKPreferencesRef preferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

@@ -35,6 +35,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
 #include "ImageGStreamer.h"
+#include "ImageOrientation.h"
 #include "IntRect.h"
 #include "KURL.h"
 #include "MIMETypeRegistry.h"
@@ -1497,7 +1498,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext* context, const IntRect&
         return;
 
     context->drawImage(reinterpret_cast<Image*>(gstImage->image().get()), ColorSpaceSRGB,
-                       rect, CompositeCopy, false);
+                       rect, CompositeCopy, DoNotRespectImageOrientation, false);
 }
 
 static HashSet<String> mimeTypeCache()

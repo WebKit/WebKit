@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 
 #include "BidiResolver.h"
+#include "BitmapImage.h"
 #include "Font.h"
 #include "Generator.h"
 #include "ImageBuffer.h"
@@ -437,27 +438,27 @@ void GraphicsContext::drawHighlightForText(const Font& font, const TextRun& run,
     fillRect(font.selectionRectForText(run, point, h, from, to), backgroundColor, colorSpace);
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op)
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation)
 {
-    drawImage(image, styleColorSpace, p, IntRect(0, 0, -1, -1), op);
+    drawImage(image, styleColorSpace, p, IntRect(0, 0, -1, -1), op, shouldRespectImageOrientation);
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntRect& r, CompositeOperator op, bool useLowQualityScale)
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntRect& r, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation, bool useLowQualityScale)
 {
-    drawImage(image, styleColorSpace, r, IntRect(0, 0, -1, -1), op, useLowQualityScale);
+    drawImage(image, styleColorSpace, r, IntRect(0, 0, -1, -1), op, shouldRespectImageOrientation, useLowQualityScale);
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& dest, const IntRect& srcRect, CompositeOperator op)
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& dest, const IntRect& srcRect, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation)
 {
-    drawImage(image, styleColorSpace, IntRect(dest, srcRect.size()), srcRect, op);
+    drawImage(image, styleColorSpace, IntRect(dest, srcRect.size()), srcRect, op, shouldRespectImageOrientation);
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect, CompositeOperator op, bool useLowQualityScale)
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation, bool useLowQualityScale)
 {
-    drawImage(image, styleColorSpace, FloatRect(dest), srcRect, op, useLowQualityScale);
+    drawImage(image, styleColorSpace, FloatRect(dest), srcRect, op, shouldRespectImageOrientation, useLowQualityScale);
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, bool useLowQualityScale)
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation, bool useLowQualityScale)
 {
     if (paintingDisabled() || !image)
         return;
@@ -477,14 +478,21 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
     if (th == -1)
         th = image->height();
 
+    InterpolationQuality previousInterpolationQuality = InterpolationDefault;
+
     if (useLowQualityScale) {
-        InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
-        // FIXME: Should be InterpolationLow
+        previousInterpolationQuality = imageInterpolationQuality();
+        // FIXME (49002): Should be InterpolationLow
         setImageInterpolationQuality(InterpolationNone);
+    }
+
+    if (image->isBitmapImage())
+        static_cast<BitmapImage*>(image)->draw(this, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), styleColorSpace, op, shouldRespectImageOrientation);
+    else
         image->draw(this, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), styleColorSpace, op);
+
+    if (useLowQualityScale)
         setImageInterpolationQuality(previousInterpolationQuality);
-    } else
-        image->draw(this, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), styleColorSpace, op);
 }
 
 void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize, CompositeOperator op, bool useLowQualityScale)
@@ -564,7 +572,7 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorS
 
     if (useLowQualityScale) {
         InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
-        // FIXME: Should be InterpolationLow
+        // FIXME (49002): Should be InterpolationLow
         setImageInterpolationQuality(InterpolationNone);
         image->draw(this, styleColorSpace, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), op, useLowQualityScale);
         setImageInterpolationQuality(previousInterpolationQuality);

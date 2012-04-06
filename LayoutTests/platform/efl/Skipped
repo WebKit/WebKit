@@ -1002,6 +1002,11 @@ editing/pasteboard/drag-files-to-editable-element.html
 # http://webkit.org/b/79604
 fast/mutation/database-callback-delivery.html
 
+# EXIF orientation support has not yet been implemented for this platform
+# http://webkit.org/b/19688
+fast/images/exif-orientation.html
+fast/images/exif-orientation-css.html
+
 # --------------------------------
 # Tests which are expected to fail
 # --------------------------------

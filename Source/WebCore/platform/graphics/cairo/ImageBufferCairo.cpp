@@ -99,7 +99,7 @@ void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, con
 {
     // BitmapImage will release the passed in surface on destruction
     RefPtr<Image> image = BitmapImage::create(cairo_surface_reference(m_data.m_surface));
-    context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
+    context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, DoNotRespectImageOrientation, useLowQualityScale);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,

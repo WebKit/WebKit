@@ -396,6 +396,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitShouldDisplayCaptionsPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldDisplayTextDescriptionsPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitNotificationsEnabledKey,
+        [NSNumber numberWithBool:NO],   WebKitShouldRespectImageOrientationKey,
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1673,6 +1674,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)regionBasedColumnsEnabled
 {
     return [self _boolValueForKey:WebKitRegionBasedColumnsEnabledKey];
+}
+
+- (void)setShouldRespectImageOrientation:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitShouldRespectImageOrientationKey];
+}
+
+- (BOOL)shouldRespectImageOrientation
+{
+    return [self _boolValueForKey:WebKitShouldRespectImageOrientationKey];
 }
 
 @end

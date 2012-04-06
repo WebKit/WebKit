@@ -139,6 +139,7 @@ void BitmapImage::cacheFrame(size_t index)
     if (numFrames == 1 && m_frames[index].m_frame)
         checkForSolidColor();
 
+    m_frames[index].m_orientation = m_source.orientationAtIndex(index);
     m_frames[index].m_haveMetadata = true;
     m_frames[index].m_isComplete = m_source.frameIsCompleteAtIndex(index);
     if (repetitionCount(false) != cAnimationNone)
@@ -182,10 +183,22 @@ IntSize BitmapImage::size() const
 {
     if (m_sizeAvailable && !m_haveSize) {
         m_size = m_source.size();
+        m_sizeRespectingOrientation = m_source.size(RespectImageOrientation);
         m_haveSize = true;
         didDecodeProperties();
     }
     return m_size;
+}
+
+IntSize BitmapImage::sizeRespectingOrientation() const
+{
+    if (m_sizeAvailable && !m_haveSize) {
+        m_size = m_source.size();
+        m_sizeRespectingOrientation = m_source.size(RespectImageOrientation);
+        m_haveSize = true;
+        didDecodeProperties();
+    }
+    return m_sizeRespectingOrientation;
 }
 
 IntSize BitmapImage::currentFrameSize() const
@@ -268,36 +281,34 @@ bool BitmapImage::isSizeAvailable()
     return m_sizeAvailable;
 }
 
-NativeImagePtr BitmapImage::frameAtIndex(size_t index)
+bool BitmapImage::ensureFrameIsCached(size_t index)
 {
     if (index >= frameCount())
-        return 0;
+        return false;
 
     if (index >= m_frames.size() || !m_frames[index].m_frame)
         cacheFrame(index);
+    return true;
+}
 
+NativeImagePtr BitmapImage::frameAtIndex(size_t index)
+{
+    if (!ensureFrameIsCached(index))
+        return 0;
     return m_frames[index].m_frame;
 }
 
 bool BitmapImage::frameIsCompleteAtIndex(size_t index)
 {
-    if (index >= frameCount())
-        return true;
-
-    if (index >= m_frames.size() || !m_frames[index].m_haveMetadata)
-        cacheFrame(index);
-
+    if (!ensureFrameIsCached(index))
+        return true; // Why would an invalid index return true here?
     return m_frames[index].m_isComplete;
 }
 
 float BitmapImage::frameDurationAtIndex(size_t index)
 {
-    if (index >= frameCount())
+    if (!ensureFrameIsCached(index))
         return 0;
-
-    if (index >= m_frames.size() || !m_frames[index].m_haveMetadata)
-        cacheFrame(index);
-
     return m_frames[index].m_duration;
 }
 
@@ -308,18 +319,26 @@ NativeImagePtr BitmapImage::nativeImageForCurrentFrame()
 
 bool BitmapImage::frameHasAlphaAtIndex(size_t index)
 {
-    if (index >= frameCount())
-        return true;
-
-    if (index >= m_frames.size() || !m_frames[index].m_haveMetadata)
-        cacheFrame(index);
-
+    if (!ensureFrameIsCached(index))
+        return true; // Why does an invalid index mean alpha?
     return m_frames[index].m_hasAlpha;
 }
 
 bool BitmapImage::currentFrameHasAlpha()
 {
     return frameHasAlphaAtIndex(currentFrame());
+}
+
+ImageOrientation BitmapImage::currentFrameOrientation()
+{
+    return frameOrientationAtIndex(currentFrame());
+}
+
+ImageOrientation BitmapImage::frameOrientationAtIndex(size_t index)
+{
+    if (!ensureFrameIsCached(index))
+        return DefaultImageOrientation;
+    return m_frames[index].m_orientation;
 }
 
 #if !ASSERT_DISABLED
@@ -538,5 +557,12 @@ Color BitmapImage::solidColor() const
 {
     return m_solidColor;
 }
+
+#if !USE(CG)
+void BitmapImage::draw(GraphicsContext* ctx, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op, RespectImageOrientationEnum)
+{
+    draw(ctx, dstRect, srcRect, styleColorSpace, op);
+}
+#endif
 
 }

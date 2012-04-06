@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-void* createDragImageFromImage(Image*)
+void* createDragImageFromImage(Image*, RespectImageOrientationEnum)
 {
     notImplemented();
     return 0;

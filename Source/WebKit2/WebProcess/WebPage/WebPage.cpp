@@ -1980,6 +1980,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setNotificationsEnabled(store.getBoolValueForKey(WebPreferencesKey::notificationsEnabledKey()));
 #endif
 
+    settings->setShouldRespectImageOrientation(store.getBoolValueForKey(WebPreferencesKey::shouldRespectImageOrientationKey()));
+
     platformPreferencesDidChange(store);
 
     if (m_drawingArea)

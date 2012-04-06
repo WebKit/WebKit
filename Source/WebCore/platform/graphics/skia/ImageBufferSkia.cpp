@@ -195,7 +195,7 @@ void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, con
                        CompositeOperator op, bool useLowQualityScale)
 {
     RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), drawNeedsCopy(m_context.get(), context));
-    context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
+    context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, DoNotRespectImageOrientation, useLowQualityScale);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,

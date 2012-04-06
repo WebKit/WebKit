@@ -396,6 +396,11 @@ batterystatus
 # Network Information API is not supported yet. http://webkit.org/b/73528
 networkinformation
 
+# EXIF orientation support has not yet been implemented for this platform
+# http://webkit.org/b/19688
+fast/images/exif-orientation.html
+fast/images/exif-orientation-css.html
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

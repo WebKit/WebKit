@@ -3865,3 +3865,7 @@ BUGWK83183 MAC : svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html
 BUGWK83185 MAC DEBUG : fast/writing-mode/relative-positioning-percentages.html = CRASH
 BUGWK83219 LION : fonts/cursive.html = PASS IMAGE+TEXT
 BUGWK83324 WIN DEBUG : fast/js/cross-global-object-inline-global-var.html = PASS TEXT
+
+// EXIF orientation support has not yet been implemented for this platform
+BUGWK19688 SKIP : fast/images/exif-orientation.html = FAIL
+BUGWK19688 SKIP : fast/images/exif-orientation-css.html = FAIL

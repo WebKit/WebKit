@@ -296,4 +296,7 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setNotificationsEnabled:(BOOL)flag;
 - (BOOL)notificationsEnabled;
 
+- (void)setShouldRespectImageOrientation:(BOOL)flag;
+- (BOOL)shouldRespectImageOrientation;
+
 @end

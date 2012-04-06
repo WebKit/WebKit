@@ -35,6 +35,9 @@
 #include "ImageDecoder.h"
 #endif
 
+#include "ImageOrientation.h"
+#include "NotImplemented.h"
+
 namespace WebCore {
 
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
@@ -100,13 +103,21 @@ bool ImageSource::isSizeAvailable()
     return m_decoder && m_decoder->isSizeAvailable();
 }
 
-IntSize ImageSource::size() const
+IntSize ImageSource::size(RespectImageOrientationEnum shouldRespectOrientation) const
 {
+    // The JPEG and TIFF decoders need to be taught how to read EXIF, XMP, or IPTC data.
+    if (shouldRespectOrientation == RespectImageOrientation)
+        notImplemented();
+
     return m_decoder ? m_decoder->size() : IntSize();
 }
 
-IntSize ImageSource::frameSizeAtIndex(size_t index) const
+IntSize ImageSource::frameSizeAtIndex(size_t index, RespectImageOrientationEnum shouldRespectOrientation) const
 {
+    // The JPEG and TIFF decoders need to be taught how to read EXIF, XMP, or IPTC data.
+    if (shouldRespectOrientation == RespectImageOrientation)
+        notImplemented();
+
     return m_decoder ? m_decoder->frameSizeAtIndex(index) : IntSize();
 }
 
@@ -166,6 +177,13 @@ float ImageSource::frameDurationAtIndex(size_t index)
     if (duration < 0.011f)
         return 0.100f;
     return duration;
+}
+
+ImageOrientation ImageSource::orientationAtIndex(size_t index) const
+{
+    // The JPEG and TIFF decoders need to be taught how to read EXIF, XMP, or IPTC data.
+    notImplemented();
+    return DefaultImageOrientation;
 }
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)

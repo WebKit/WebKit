@@ -109,6 +109,7 @@ namespace WebKit {
     macro(ShouldDisplayCaptions, shouldDisplayCaptions, Bool, bool, false) \
     macro(ShouldDisplayTextDescriptions, shouldDisplayTextDescriptions, Bool, bool, false) \
     macro(NotificationsEnabled, notificationsEnabled, Bool, bool, true) \
+    macro(ShouldRespectImageOrientation, shouldRespectImageOrientation, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

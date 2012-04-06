@@ -778,6 +778,16 @@ bool WKPreferencesGetNotificationsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->notificationsEnabled();
 }
 
+void WKPreferencesSetShouldRespectImageOrientation(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setShouldRespectImageOrientation(enabled);
+}
+
+bool WKPreferencesGetShouldRespectImageOrientation(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->shouldRespectImageOrientation();
+}
+
 void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preferencesRef)
 {
     // Currently we reset the overrides on the web process when preferencesDidChange() is called. Since WTR preferences

@@ -196,7 +196,7 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imag
     FloatRect dst(0, 0, imageWidth, imageHeight);
 
     RefPtr<BitmapImageSingleFrameSkia> bitmapImage = BitmapImageSingleFrameSkia::create(canvasBitmap, false);
-    context->drawImage(bitmapImage.get(), ColorSpaceDeviceRGB, dst, src, CompositeCopy, false);
+    context->drawImage(bitmapImage.get(), ColorSpaceDeviceRGB, dst, src, CompositeCopy, DoNotRespectImageOrientation, false);
 }
 
 void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)

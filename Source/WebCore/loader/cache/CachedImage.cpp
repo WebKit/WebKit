@@ -241,7 +241,12 @@ IntSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float mu
     if (!m_image)
         return IntSize();
 
-    IntSize imageSize = m_image->size();
+    IntSize imageSize;
+
+    if (m_image->isBitmapImage() && (renderer && renderer->shouldRespectImageOrientation() == RespectImageOrientation))
+        imageSize = static_cast<BitmapImage*>(m_image.get())->sizeRespectingOrientation();
+    else
+        imageSize = m_image->size();
 
 #if ENABLE(SVG)
     if (m_image->isSVGImage()) {
@@ -251,8 +256,6 @@ IntSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float mu
             imageSize.setHeight(sizeAndZoom.size.height() / sizeAndZoom.zoom);
         }
     }
-#else
-    UNUSED_PARAM(renderer);
 #endif
 
     if (multiplier == 1.0f)

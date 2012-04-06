@@ -1093,6 +1093,7 @@ SOURCES += \
     platform/graphics/GraphicsTypes.cpp \
     platform/graphics/Image.cpp \
     platform/graphics/ImageBuffer.cpp \
+    platform/graphics/ImageOrientation.cpp \
     platform/graphics/ImageSource.cpp \
     platform/graphics/IntRect.cpp \
     platform/graphics/Path.cpp \
@@ -2224,6 +2225,7 @@ HEADERS += \
     platform/graphics/GraphicsTypes.h \
     platform/graphics/GraphicsTypes3D.h \
     platform/graphics/Image.h \
+    platform/graphics/ImageOrientation.h \
     platform/graphics/ImageSource.h \
     platform/graphics/IntPoint.h \
     platform/graphics/IntPointHash.h \

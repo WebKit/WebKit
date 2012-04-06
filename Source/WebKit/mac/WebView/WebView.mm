@@ -1517,6 +1517,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setShouldDisplayTextDescriptions([preferences shouldDisplayTextDescriptions]);
 #endif
 
+    settings->setShouldRespectImageOrientation([preferences shouldRespectImageOrientation]);
     settings->setNeedsIsLoadingInAPISenseQuirk([self _needsIsLoadingInAPISenseQuirk]);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.

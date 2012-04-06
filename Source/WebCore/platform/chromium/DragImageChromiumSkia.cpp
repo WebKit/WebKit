@@ -92,7 +92,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float fraction)
     return image;
 }
 
-DragImageRef createDragImageFromImage(Image* image)
+DragImageRef createDragImageFromImage(Image* image, RespectImageOrientationEnum)
 {
     if (!image)
         return 0;

@@ -2200,6 +2200,13 @@ RenderObject* RenderObject::rendererForRootBackground()
     return this;
 }
 
+RespectImageOrientationEnum RenderObject::shouldRespectImageOrientation() const
+{
+    // Respect the image's orientation if it's being used as a full-page image or it's
+    // an <img> and the setting to respect it everywhere is set.
+    return document()->isImageDocument() || (document()->settings() && document()->settings()->shouldRespectImageOrientation() && node() && node()->hasTagName(HTMLNames::imgTag)) ? RespectImageOrientation : DoNotRespectImageOrientation;
+}
+
 bool RenderObject::hasOutlineAnnotation() const
 {
     return node() && node()->isLink() && document()->printing();

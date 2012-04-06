@@ -307,7 +307,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 if (centerY < 0)
                     centerY = 0;
                 imageOffset = LayoutSize(leftBorder + leftPad + centerX + 1, topBorder + topPad + centerY + 1);
-                context->drawImage(image.get(), style()->colorSpace(), IntRect(roundedIntPoint(paintOffset + imageOffset), imageSize));
+                context->drawImage(image.get(), style()->colorSpace(), IntRect(roundedIntPoint(paintOffset + imageOffset), imageSize), CompositeSourceOver, shouldRespectImageOrientation());
                 errorPictureDrawn = true;
             }
 
@@ -429,7 +429,7 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const LayoutRect& rect
     CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
     Image* image = m_imageResource->image().get();
     bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, alignedRect.size());
-    context->drawImage(m_imageResource->image(alignedRect.width(), alignedRect.height()).get(), style()->colorSpace(), alignedRect, compositeOperator, useLowQualityScaling);
+    context->drawImage(m_imageResource->image(alignedRect.width(), alignedRect.height()).get(), style()->colorSpace(), alignedRect, compositeOperator, shouldRespectImageOrientation(), useLowQualityScaling);
 }
 
 bool RenderImage::backgroundIsObscured() const

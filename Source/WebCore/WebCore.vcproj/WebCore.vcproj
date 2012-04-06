@@ -28657,6 +28657,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\ImageOrientation.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\ImageOrientation.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\ImageSource.cpp"
 					>
 					<FileConfiguration

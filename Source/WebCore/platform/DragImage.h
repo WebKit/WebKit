@@ -26,6 +26,7 @@
 #ifndef DragImage_h
 #define DragImage_h
 
+#include "ImageOrientation.h"
 #include "IntSize.h"
 #include "FloatSize.h"
 #include <wtf/Forward.h>
@@ -81,7 +82,7 @@ namespace WebCore {
     DragImageRef scaleDragImage(DragImageRef, FloatSize scale);
     DragImageRef dissolveDragImageToFraction(DragImageRef image, float delta);
     
-    DragImageRef createDragImageFromImage(Image*);
+    DragImageRef createDragImageFromImage(Image*, RespectImageOrientationEnum = DoNotRespectImageOrientation);
     DragImageRef createDragImageForSelection(Frame*);    
     DragImageRef createDragImageIconForCachedImage(CachedImage*);
     DragImageRef createDragImageForLink(KURL&, const String& label, Frame*);

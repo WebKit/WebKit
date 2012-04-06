@@ -27,6 +27,8 @@
 #ifndef ImageSource_h
 #define ImageSource_h
 
+#include "ImageOrientation.h"
+
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -56,6 +58,7 @@ class NativeImageSkia;
 
 namespace WebCore {
 
+class ImageOrientation;
 class IntPoint;
 class IntSize;
 class SharedBuffer;
@@ -172,8 +175,9 @@ public:
     String filenameExtension() const;
 
     bool isSizeAvailable();
-    IntSize size() const;
-    IntSize frameSizeAtIndex(size_t) const;
+    IntSize size(RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
+    IntSize frameSizeAtIndex(size_t, RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
+
     bool getHotSpot(IntPoint&) const;
 
     size_t bytesDecodedToDetermineProperties() const;
@@ -189,6 +193,7 @@ public:
     float frameDurationAtIndex(size_t);
     bool frameHasAlphaAtIndex(size_t); // Whether or not the frame actually used any alpha.
     bool frameIsCompleteAtIndex(size_t); // Whether or not the frame is completely decoded.
+    ImageOrientation orientationAtIndex(size_t) const; // EXIF image orientation
 
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
     static unsigned maxPixelsPerDecodedImage() { return s_maxPixelsPerDecodedImage; }

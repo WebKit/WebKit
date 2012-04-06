@@ -549,6 +549,9 @@ namespace WebCore {
         void setThreadedAnimationEnabled(bool enabled) { m_threadedAnimationEnabled = enabled; }
         bool threadedAnimationEnabled() const { return m_threadedAnimationEnabled; }
 
+        void setShouldRespectImageOrientation(bool enabled) { m_shouldRespectImageOrientation = enabled; }
+        bool shouldRespectImageOrientation() const { return m_shouldRespectImageOrientation; }
+
     private:
         Settings(Page*);
 
@@ -703,6 +706,7 @@ namespace WebCore {
         bool m_touchEventEmulationEnabled : 1;
 #endif
         bool m_threadedAnimationEnabled : 1;
+        bool m_shouldRespectImageOrientation : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

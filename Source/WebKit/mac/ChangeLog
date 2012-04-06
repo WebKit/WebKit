@@ -1,3 +1,24 @@
+2012-04-06  Tim Horton  <timothy_horton@apple.com>
+
+        Add autodetection of image orientation from EXIF information
+        https://bugs.webkit.org/show_bug.cgi?id=19688
+        <rdar://problem/4126979> and <rdar://problem/11091578>
+
+        Original patch by David Carson and Eric Seidel.
+
+        Reviewed by Simon Fraser.
+
+        Add a preference, ShouldRespectImageOrientation, which will cause WebCore to respect EXIF orientation in all images.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setShouldRespectImageOrientation:]):
+        (-[WebPreferences shouldRespectImageOrientation]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2012-04-06  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10912476> HiDPI: Have canvas use a hidpi backing store, but downsample upon access

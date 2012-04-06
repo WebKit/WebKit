@@ -51,6 +51,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Image.h"
+#include "ImageOrientation.h"
 #include "MoveSelectionCommand.h"
 #include "Node.h"
 #include "Page.h"
@@ -851,7 +852,7 @@ void DragController::doImageDrag(Element* element, const IntPoint& dragOrigin, c
 
     Image* image = getImage(element);
     if (image && image->size().height() * image->size().width() <= MaxOriginalImageArea
-        && (dragImage = createDragImageFromImage(image))) {
+        && (dragImage = createDragImageFromImage(image, element->renderer() ? element->renderer()->shouldRespectImageOrientation() : DoNotRespectImageOrientation))) {
         IntSize originalSize = rect.size();
         origin = rect.location();
 
