@@ -46,6 +46,11 @@ using namespace HTMLNames;
 static const double dateDefaultStep = 1.0;
 static const double dateStepScaleFactor = 86400000.0;
 
+inline DateInputType::DateInputType(HTMLInputElement* element)
+    : BaseDateAndTimeInputType(element)
+{
+}
+
 PassOwnPtr<InputType> DateInputType::create(HTMLInputElement* element)
 {
     return adoptPtr(new DateInputType(element));
@@ -103,7 +108,14 @@ bool DateInputType::setMillisecondToDateComponents(double value, DateComponents*
 void DateInputType::createShadowSubtree()
 {
     BaseDateAndTimeInputType::createShadowSubtree();
-    containerElement()->insertBefore(CalendarPickerElement::create(element()->document()), innerBlockElement()->nextSibling(), ASSERT_NO_EXCEPTION);
+    m_pickerElement = CalendarPickerElement::create(element()->document());
+    containerElement()->insertBefore(m_pickerElement.get(), innerBlockElement()->nextSibling(), ASSERT_NO_EXCEPTION);
+}
+
+void DateInputType::destroyShadowSubtree()
+{
+    TextFieldInputType::destroyShadowSubtree();
+    m_pickerElement.clear();
 }
 
 bool DateInputType::needsContainer() const
@@ -114,6 +126,12 @@ bool DateInputType::needsContainer() const
 bool DateInputType::shouldHaveSpinButton() const
 {
     return false;
+}
+
+void DateInputType::handleBlurEvent()
+{
+    if (m_pickerElement)
+        m_pickerElement->closePopup();
 }
 #endif // ENABLE(CALENDAR_PICKER)
 

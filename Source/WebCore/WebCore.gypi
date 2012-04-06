@@ -238,6 +238,8 @@
             'page/MemoryInfo.h',
             'page/Page.h',
             'page/PageGroup.h',
+            'page/PagePopup.h',
+            'page/PagePopupClient.h',
             'page/PageSerializer.h',
             'page/PageVisibilityState.h',
             'page/PrintContext.h',

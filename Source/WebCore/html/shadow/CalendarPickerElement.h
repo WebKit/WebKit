@@ -31,19 +31,38 @@
 #ifndef CalendarPickerElement_h
 #define CalendarPickerElement_h
 
+#if ENABLE(CALENDAR_PICKER)
 #include "HTMLDivElement.h"
+#include "PagePopupClient.h"
 
 namespace WebCore {
 
-class CalendarPickerElement : public HTMLDivElement {
+class HTMLInputElement;
+class PagePopup;
+
+class CalendarPickerElement : public HTMLDivElement, public PagePopupClient {
 public:
     static PassRefPtr<CalendarPickerElement> create(Document*);
+    void closePopup();
 
 private:
     CalendarPickerElement(Document*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
-    // FIXME: add click handling.
+    virtual void defaultEventHandler(Event*) OVERRIDE;
+    virtual void detach() OVERRIDE;
+
+    // PagePopupClient functions:
+    virtual IntSize contentSize() OVERRIDE;
+    virtual void writeDocument(DocumentWriter&) OVERRIDE;
+    virtual void setValueAndClosePopup(int, const String&) OVERRIDE;
+    virtual void didClosePopup() OVERRIDE;
+
+    HTMLInputElement* hostInput();
+    void openPopup();
+
+    PagePopup* m_popup;
 };
 
 }
+#endif
 #endif

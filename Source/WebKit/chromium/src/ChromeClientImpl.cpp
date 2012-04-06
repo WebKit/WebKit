@@ -988,6 +988,19 @@ PassRefPtr<SearchPopupMenu> ChromeClientImpl::createSearchPopupMenu(PopupMenuCli
     return adoptRef(new SearchPopupMenuChromium(client));
 }
 
+#if ENABLE(PAGE_POPUP)
+PagePopup* ChromeClientImpl::openPagePopup(PagePopupClient*, const IntRect&)
+{
+    // FIXME: Impelement this.
+    return 0;
+}
+
+void ChromeClientImpl::closePagePopup(PagePopup*)
+{
+    // FIXME: Implement this.
+}
+#endif
+
 bool ChromeClientImpl::willAddTextFieldDecorationsTo(HTMLInputElement* input)
 {
     ASSERT(input);

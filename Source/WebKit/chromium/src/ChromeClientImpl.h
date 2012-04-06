@@ -195,6 +195,10 @@ public:
     virtual bool hasOpenedPopup() const OVERRIDE;
     virtual PassRefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const;
     virtual PassRefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const;
+#if ENABLE(PAGE_POPUP)
+    virtual WebCore::PagePopup* openPagePopup(WebCore::PagePopupClient*, const WebCore::IntRect&) OVERRIDE;
+    virtual void closePagePopup(WebCore::PagePopup*) OVERRIDE;
+#endif
     virtual bool willAddTextFieldDecorationsTo(WebCore::HTMLInputElement*) OVERRIDE;
     virtual void addTextFieldDecorationsTo(WebCore::HTMLInputElement*) OVERRIDE;
 

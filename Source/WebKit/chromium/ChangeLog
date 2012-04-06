@@ -1,3 +1,18 @@
+2012-04-06  Kent Tamura  <tkent@chromium.org>
+
+        Calendar Picker: Add code to open/close the calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=83258
+
+        Reviewed by Hajime Morita.
+
+        * features.gypi: Enable ENABLE_PAGE_POPUP for non-Android
+        platforms. This is needed because ENABLE_CALENDAR_PICKER now depends on
+        ENABLE_PAGE_POPUP.
+        * src/ChroemClientImpl.cpp: Add stubs.
+        (WebKit::ChromeClientImpl::openPagePopup):
+        (WebKit::ChromeClientImpl::closePagePopup):
+        * src/ChromeClientImpl.h: Add declarations of openPagePopup() and closePagePopup().
+
 2012-04-05  Hironori Bono  <hbono@chromium.org>
 
         [Chromium] moving a cursor on a misspelled word should not remove a misspelled underline

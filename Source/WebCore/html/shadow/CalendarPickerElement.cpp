@@ -33,8 +33,21 @@
 
 #if ENABLE(CALENDAR_PICKER)
 
+#include "CalendarPicker.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "DateComponents.h"
+#include "DocumentWriter.h"
+#include "Event.h"
+#include "FrameView.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "Language.h"
+#include "LocalizedCalendar.h"
+#include "LocalizedStrings.h"
+#include "Page.h"
 #include "RenderDetailsMarker.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -54,6 +67,155 @@ PassRefPtr<CalendarPickerElement> CalendarPickerElement::create(Document* docume
 RenderObject* CalendarPickerElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderDetailsMarker(this);
+}
+
+inline HTMLInputElement* CalendarPickerElement::hostInput()
+{
+    ASSERT(shadowAncestorNode());
+    ASSERT(shadowAncestorNode()->hasTagName(inputTag));
+    return static_cast<HTMLInputElement*>(shadowAncestorNode());
+}
+
+void CalendarPickerElement::defaultEventHandler(Event* event)
+{
+    HTMLInputElement* input = hostInput();
+    if (input->readOnly() || input->disabled())
+        return;
+
+    if (event->type() == eventNames().clickEvent) {
+        openPopup();
+        event->setDefaultHandled();
+    }
+
+    if (!event->defaultHandled())
+        HTMLDivElement::defaultEventHandler(event);
+}
+
+void CalendarPickerElement::openPopup()
+{
+    if (m_popup)
+        return;
+    if (!document()->page())
+        return;
+    Chrome* chrome = document()->page()->chrome();
+    if (!chrome)
+        return;
+    if (!document()->view())
+        return;
+    IntRect elementRectInRootView = document()->view()->contentsToRootView(hostInput()->getRect());
+    m_popup = chrome->client()->openPagePopup(this, elementRectInRootView);
+}
+
+void CalendarPickerElement::closePopup()
+{
+    if (!m_popup)
+        return;
+    if (!document()->page())
+        return;
+    Chrome* chrome = document()->page()->chrome();
+    if (!chrome)
+        return;
+    chrome->client()->closePagePopup(m_popup);
+}
+
+void CalendarPickerElement::detach()
+{
+    closePopup();
+    HTMLDivElement::detach();
+}
+
+IntSize CalendarPickerElement::contentSize()
+{
+    return IntSize(320, 256);
+}
+
+#define addLiteral(literal, writer)    writer.addData(literal, sizeof(literal) - 1)
+
+static inline void addString(const String& str, DocumentWriter& writer)
+{
+    CString str8 = str.utf8();
+    writer.addData(str8.data(), str8.length());
+}
+
+static void addJavaScriptString(const String& str, DocumentWriter& writer)
+{
+    addLiteral("\"", writer);
+    StringBuilder builder;
+    builder.reserveCapacity(str.length());
+    for (unsigned i = 0; i < str.length(); ++i) {
+        if (str[i] == '\\' || str[i] == '"')
+            builder.append('\\');
+        builder.append(str[i]);
+    }
+    addString(builder.toString(), writer);
+    addLiteral("\"", writer);
+}
+
+static void addProperty(const char* name, const String& value, DocumentWriter& writer)
+{
+    writer.addData(name, strlen(name));
+    addLiteral(": ", writer);
+    addJavaScriptString(value, writer);
+    addLiteral(",\n", writer);
+}
+
+static void addProperty(const char* name, const Vector<String>& values, DocumentWriter& writer)
+{
+    writer.addData(name, strlen(name));
+    addLiteral(": [", writer);
+    for (unsigned i = 0; i < values.size(); ++i) {
+        if (i)
+            addLiteral(",", writer);
+        addJavaScriptString(values[i], writer);
+    }
+    addLiteral("],\n", writer);
+}
+
+void CalendarPickerElement::writeDocument(DocumentWriter& writer)
+{
+    HTMLInputElement* input = hostInput();
+    DateComponents date;
+    date.setMillisecondsSinceEpochForDate(input->minimum());
+    String minString = date.toString();
+    date.setMillisecondsSinceEpochForDate(input->maximum());
+    String maxString = date.toString();
+    double step;
+    String stepString = input->fastGetAttribute(stepAttr);
+    if (stepString.isEmpty() || !input->getAllowedValueStep(&step))
+        stepString = "1";
+
+    addLiteral("<!DOCTYPE html><head><meta charset='UTF-8'><style>\n", writer);
+    writer.addData(calendarPickerCss, sizeof(calendarPickerCss));
+    addLiteral("</style></head><body><div id=main>Loading...</div><script>\n"
+               "window.dialogArguments = {\n", writer);
+    addProperty("min", minString, writer);
+    addProperty("max", maxString, writer);
+    addProperty("step", stepString, writer);
+    addProperty("required", input->required() ? "true" : "false", writer);
+    addProperty("currentValue", input->value(), writer);
+    addProperty("locale", defaultLanguage(), writer);
+    addProperty("todayLabel", calendarTodayText(), writer);
+    addProperty("clearLabel", calendarClearText(), writer);
+    addProperty("weekStartDay", String::number(firstDayOfWeek()), writer);
+    addProperty("monthLabels", monthLabels(), writer);
+    addProperty("dayLabels", weekDayShortLabels(), writer);
+    addLiteral("}\n", writer);
+
+    writer.addData(calendarPickerJs, sizeof(calendarPickerJs));
+    addLiteral("</script></body>\n", writer);
+}
+
+void CalendarPickerElement::setValueAndClosePopup(int numValue, const String& stringValue)
+{
+    ASSERT(m_popup);
+    closePopup();
+    if (numValue >= 0)
+        hostInput()->setValue(stringValue, DispatchChangeEvent);
+}
+
+void CalendarPickerElement::didClosePopup()
+{
+    m_popup = 0;
 }
 
 }
