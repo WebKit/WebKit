@@ -254,6 +254,7 @@ Settings::Settings(Page* page)
     , m_touchEventEmulationEnabled(false)
 #endif
     , m_threadedAnimationEnabled(false)
+    , m_shouldRespectImageOrientation(false)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
