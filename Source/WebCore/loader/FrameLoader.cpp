@@ -683,7 +683,7 @@ void FrameLoader::finishedParsing()
     // Check if the scrollbars are really needed for the content.
     // If not, remove them, relayout, and repaint.
     m_frame->view()->restoreScrollbar();
-    m_frame->view()->scrollToFragment(m_frame->document()->url());
+    scrollToFragmentIfAllowed(m_frame->document()->url());
 }
 
 void FrameLoader::loadDone()
@@ -1028,7 +1028,7 @@ void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* sta
         // based on the current request. Must also happen before we openURL and displace the 
         // scroll position, since adding the BF item will save away scroll state.
         
-        // NB2:  If we were loading a long, slow doc, and the user anchor nav'ed before
+        // NB2: If we were loading a long, slow doc, and the user fragment navigated before
         // it was done, currItem is now set the that slow doc, and prevItem is whatever was
         // before it.  Adding the b/f item will bump the slow doc down to prevItem, even
         // though its load is not yet done.  I think this all works out OK, for one because
@@ -1052,16 +1052,15 @@ void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* sta
 
     // We need to scroll to the fragment whether or not a hash change occurred, since
     // the user might have scrolled since the previous navigation.
-    if (FrameView* view = m_frame->view())
-        view->scrollToFragment(url);
+    scrollToFragmentIfAllowed(url);
     
     m_isComplete = false;
     checkCompleted();
 
     if (isNewNavigation) {
         // This will clear previousItem from the rest of the frame tree that didn't
-        // doing any loading. We need to make a pass on this now, since for anchor nav
-        // we'll not go through a real load and reach Completed state.
+        // doing any loading. We need to make a pass on this now, since for fragment
+        // navigation we'll not go through a real load and reach Completed state.
         checkLoadComplete();
     }
 
@@ -1235,10 +1234,10 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
     bool sameURL = shouldTreatURLAsSameAsCurrent(newURL);
     const String& httpMethod = request.httpMethod();
     
-    // Make sure to do scroll to anchor processing even if the URL is
+    // Make sure to do scroll to fragment processing even if the URL is
     // exactly the same so pages with '#' links and DHTML side effects
     // work properly.
-    if (shouldScrollToAnchor(isFormSubmission, httpMethod, newLoadType, newURL)) {
+    if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, newLoadType, newURL)) {
         oldDocumentLoader->setTriggeringAction(action);
         policyChecker()->stopCheck();
         policyChecker()->setLoadType(newLoadType);
@@ -1377,7 +1376,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     const KURL& newURL = loader->request().url();
     const String& httpMethod = loader->request().httpMethod();
 
-    if (shouldScrollToAnchor(isFormSubmission,  httpMethod, policyChecker()->loadType(), newURL)) {
+    if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, policyChecker()->loadType(), newURL)) {
         RefPtr<DocumentLoader> oldDocumentLoader = m_documentLoader;
         NavigationAction action(loader->request(), policyChecker()->loadType(), isFormSubmission);
 
@@ -2664,10 +2663,8 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
     loadInSameDocument(request.url(), 0, !isRedirect);
 }
 
-bool FrameLoader::shouldScrollToAnchor(bool isFormSubmission, const String& httpMethod, FrameLoadType loadType, const KURL& url)
+bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const String& httpMethod, FrameLoadType loadType, const KURL& url)
 {
-    // Should we do anchor navigation within the existing content?
-
     // We don't do this if we are submitting a form with method other than "GET", explicitly reloading,
     // currently displaying a frameset, or if the URL does not have a fragment.
     // These rules were originally based on what KHTML was doing in KHTMLPart::openURL.
@@ -2682,6 +2679,22 @@ bool FrameLoader::shouldScrollToAnchor(bool isFormSubmission, const String& http
         // We don't want to just scroll if a link from within a
         // frameset is trying to reload the frameset into _top.
         && !m_frame->document()->isFrameSet();
+}
+
+void FrameLoader::scrollToFragmentIfAllowed(const KURL& url)
+{
+    FrameView* view = m_frame->view();
+    if (!view)
+        return;
+
+    // Leaking scroll position to a cross-origin ancestor would permit the so-called "framesniffing" attack.
+    if (url.hasFragmentIdentifier() && !m_frame->document()->canBeAccessedByEveryAncestorFrame()) {
+        DEFINE_STATIC_LOCAL(String, consoleMessage, ("Fragment navigation not allowed with cross-origin frames."));
+        m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
+        return;
+    }
+
+    view->scrollToFragment(url);
 }
 
 void FrameLoader::callContinueLoadAfterNavigationPolicy(void* argument,

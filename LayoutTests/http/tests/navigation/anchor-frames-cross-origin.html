@@ -1,0 +1,11 @@
+<html>
+  <!-- See resources/frame-with-anchor-cross-origin.html for description of test -->
+  <script>
+    if (window.layoutTestController)
+        layoutTestController.dumpChildFramesAsText();
+  </script>
+  <frameset rows="90%,10%">
+    <frame src="http://localhost:8000/navigation/resources/frame-with-anchor-cross-origin.html#anchor1" name="main">
+    <frame src="about:blank" name="footer">
+  </frameset>
+</html>

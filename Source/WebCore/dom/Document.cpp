@@ -2686,6 +2686,15 @@ bool Document::canNavigate(Frame* targetFrame)
     return false;
 }
 
+bool Document::canBeAccessedByEveryAncestorFrame()
+{
+    for (Frame* ancestorFrame = m_frame->tree()->parent(); ancestorFrame; ancestorFrame = ancestorFrame->tree()->parent()) {
+        if (!ancestorFrame->document()->securityOrigin()->canAccess(securityOrigin()))
+            return false;
+    }
+    return true;
+}
+
 CSSStyleSheet* Document::pageUserSheet()
 {
     if (m_pageUserSheet)
