@@ -74,33 +74,6 @@ public:
     {
     }
 
-    GregorianDateTime(ExecState* exec, const tm& inTm)
-        : second(inTm.tm_sec)
-        , minute(inTm.tm_min)
-        , hour(inTm.tm_hour)
-        , weekDay(inTm.tm_wday)
-        , monthDay(inTm.tm_mday)
-        , yearDay(inTm.tm_yday)
-        , month(inTm.tm_mon)
-        , year(inTm.tm_year)
-        , isDST(inTm.tm_isdst)
-    {
-        UNUSED_PARAM(exec);
-#if HAVE(TM_GMTOFF)
-        utcOffset = static_cast<int>(inTm.tm_gmtoff);
-#else
-        utcOffset = static_cast<int>(getUTCOffset(exec) / WTF::msPerSecond + (isDST ? WTF::secondsPerHour : 0));
-#endif
-
-#if HAVE(TM_ZONE)
-        int inZoneSize = strlen(inTm.tm_zone) + 1;
-        timeZone = adoptArrayPtr(new char[inZoneSize]);
-        strncpy(timeZone.get(), inTm.tm_zone, inZoneSize);
-#else
-        timeZone = nullptr;
-#endif
-    }
-
     operator tm() const
     {
         tm ret;

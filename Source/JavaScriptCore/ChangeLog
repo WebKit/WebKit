@@ -1,3 +1,16 @@
+2012-04-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove JSC dependency from GregorianDateTime
+        https://bugs.webkit.org/show_bug.cgi?id=83290
+
+        Reviewed by Geoffrey Garen.
+
+        This allows us to move it to WTF later.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::callDate):
+        * runtime/JSDateMath.h:
+
 2012-04-05  Michael Saboff  <msaboff@apple.com>
 
         Call Heap::discardAllCompiledCode() in low memory situations
