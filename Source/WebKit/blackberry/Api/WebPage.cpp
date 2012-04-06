@@ -534,7 +534,7 @@ void WebPagePrivate::load(const char* url, const char* networkToken, const char*
     if (isInitial)
         NetworkManager::instance()->setInitialURL(kurl);
 
-    ResourceRequest request(kurl, "" /* referrer */);
+    ResourceRequest request(kurl);
     request.setToken(networkToken);
     if (isInitial || mustHandleInternally)
         request.setMustHandleInternally(true);
