@@ -3269,18 +3269,10 @@ BUGWK77110 WIN DEBUG : accessibility/loading-iframe-sends-notification.html = PA
 
 BUGWK73494 : svg/text/non-bmp-positioning-lists.svg = IMAGE+TEXT IMAGE
 
-BUGWK73872 LINUX : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
-
 BUGWK73514 WIN : platform/chromium/compositing/lost-compositor-context-permanently.html = PASS TIMEOUT
 
 BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overloads-strokeText.html = PASS CRASH
 BUGWK73607 LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = PASS CRASH
-
-// Tests needing rebaseline after bug 73643 patch
-BUGWK73643 WIN MAC : svg/filters/filter-placement-issue.svg = IMAGE
-BUGWK73643 WIN MAC : svg/filters/filterRes2.svg = IMAGE
-BUGWK73643 WIN : svg/as-background-image/svg-as-background-2.html = IMAGE
-BUGWK73643 MAC : svg/as-background-image/svg-as-background-2.html = PASS CRASH
 
 // Appears to be failing on Skia platforms
 BUGWK83199 : svg/filters/big-sized-filter.svg = IMAGE PASS
