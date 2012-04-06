@@ -2072,6 +2072,12 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
     if (style->hasPseudoStyle(FIRST_LETTER))
         style->setUnique();
 
+    // FIXME: when dropping the -webkit prefix on transform-style, we should also have opacity < 1 cause flattening.
+    if (style->preserves3D() && (style->overflowX() != OVISIBLE
+        || style->overflowY() != OVISIBLE
+        || style->hasFilter()))
+        style->setTransformStyle3D(TransformStyle3DFlat);
+
 #if ENABLE(SVG)
     if (e && e->isSVGElement()) {
         // Spec: http://www.w3.org/TR/SVG/masking.html#OverflowProperty
