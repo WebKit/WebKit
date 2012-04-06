@@ -598,9 +598,6 @@ http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
 http/tests/inspector/network/network-size-chunked.html
 http/tests/inspector/network/network-size-sync.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=64097
-http/tests/inspector/network/network-disable-cache-xhrs.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=65911
 http/tests/inspector/resource-main-cookies.php
 
@@ -638,19 +635,6 @@ http/tests/notifications/icon-exists-show-alert-during-load.html
 # [Qt] new test http/tests/misc/xslt-bad-import.html is failing
 # https://bugs.webkit.org/show_bug.cgi?id=72252
 http/tests/misc/xslt-bad-import.html
-
-# [Qt] http/tests/misc/onload-remove-iframe-crash-2.html crashing after r100311
-# https://bugs.webkit.org/show_bug.cgi?id=72491
-http/tests/misc/onload-remove-iframe-crash-2.html
-
-#[Qt] Should raise SYNTAX_ERR when message contains unpaired surrogates fail
-#https://bugs.webkit.org/show_bug.cgi?id=80103
-http/tests/websocket/tests/hybi/unpaired-surrogates-in-close-reason.html
-http/tests/websocket/tests/hybi/unpaired-surrogates-in-message.html
-
-# [Qt] REGRESSION (112488) It made http/tests/websocket/tests/hybi/reserved-bits.html test fail.
-# https://bugs.webkit.org/show_bug.cgi?id=82100
-http/tests/websocket/tests/hybi/reserved-bits.html
 
 # =========================================================================== #
 #       Failing xmlhttprequest tests                                          #
@@ -1514,7 +1498,6 @@ fast/css/absolute-inline-alignment-2.html
 
 # [Qt] fast/ruby/overhang* tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=57824
-fast/ruby/overhang-horizontal.html
 fast/ruby/overhang-vertical.html
 
 # This test fails because Qt does not support conditionals in unicode special casing.
@@ -1571,10 +1554,6 @@ fast/forms/range/slider-padding.html
 fast/forms/range/slider-thumb-shared-style.html
 fast/forms/range/slider-thumb-stylability.html
 fast/forms/range/slider-zoomed.html
-fast/forms/range/slider-mouse-events.html
-
-# For some reason crashes when run with all tests. Passes individually.
-fast/forms/multiple-form-submission-protection-mouse.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=35973
 fast/multicol/hit-test-above-or-below.html
@@ -1613,7 +1592,6 @@ fast/forms/textAreaLineHeight.html
 fast/forms/textarea-scroll-height.html
 fast/forms/textarea-scrollbar.html
 fast/forms/textarea-scrolled-type.html
-fast/frames/iframe-window-focus.html
 fast/invalid/missing-end-tag.xhtml
 fast/invalid/residual-style.html
 fast/js/string-capitalization.html
@@ -1649,7 +1627,6 @@ fast/text/atsui-rtl-override-selection.html
 fast/text/in-rendered-text-rtl.html
 fast/text/large-text-composed-char-dos.html
 fast/text/international/002.html
-fast/block/positioning/absolute-in-inline-rtl-4.html
 fast/canvas/canvas-gradient-addStop-error.html
 fast/css/zoom-body-scroll.html
 fast/dom/Element/getBoundingClientRect.html
@@ -1796,7 +1773,6 @@ fast/css/apple-prefix.html
 fast/css/ex-after-font-variant.html
 fast/css/font-face-download-error.html
 fast/css/font-face-locally-installed.html
-fast/css/font-face-multiple-ranges-for-unicode-range.html
 fast/css/font-face-unicode-range.html
 fast/css/font-weight-1.html
 fast/css/percentage-non-integer.html
@@ -1916,12 +1892,10 @@ fast/xsl/xslt_unicode.xml
 fast/xsl/import-non-document-node.xhtml
 
 fast/forms/drag-out-of-textarea.html
-fast/frames/frame-src-attribute.html
 fast/overflow/003.xml
 fast/text/international/bidi-menulist.html
 fast/text/international/pop-up-button-text-alignment-and-direction.html
 fast/text/international/wrap-CJK-001.html
-fast/xpath/string-value.html
 
 # --- missing test fonts
 fast/repaint/japanese-rl-selection-clear.html
@@ -1950,17 +1924,6 @@ fast/writing-mode/japanese-ruby-vertical-rl.html
 fast/canvas/canvas-toDataURL-webp.html
 fast/images/webp-image-decoding.html
 
-# [Qt] fast/dom/beforeload/script-before-load-dynamic.html is crashy-flakey
-# https://bugs.webkit.org/show_bug.cgi?id=41452
-fast/dom/beforeload/remove-video-in-beforeload-listener.html
-
-# [Qt] fast/text/bidi-explicit-embedding-past-end.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=41241
-fast/text/bidi-explicit-embedding-past-end.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=45194
-fast/text/decomposed-after-stacked-diacritics.html
-
 # [Qt] fast/text/emphasis-overlap.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=51324
 fast/text/emphasis-overlap.html
@@ -1981,10 +1944,6 @@ fast/viewport/viewport-87.html
 fast/viewport/viewport-126.html
 fast/viewport/viewport-127.html
 
-# viewport meta tag tests that fail on the bot for yet unknown reasons
-fast/viewport/viewport-6.html
-fast/viewport/viewport-58.html
-
 fast/writing-mode/border-styles-vertical-lr.html
 fast/writing-mode/border-styles-vertical-rl.html
 
@@ -1995,6 +1954,7 @@ fast/viewport/viewport-133.html
 # [Qt] fast/dom/shadow/drag-to-meter-in-shadow-crash.html asserts
 # https://bugs.webkit.org/show_bug.cgi?id=82308
 fast/dom/shadow/drag-to-meter-in-shadow-crash.html
+
 
 # ============================================================================= #
 # failing fonts tests
@@ -2312,7 +2272,6 @@ platform/qt/http/tests/cookies/strict-third-party-cookie-blocking.html
 
 # Web Timing related bugs
 # https://bugs.webkit.org/show_bug.cgi?id=51245
-fast/dom/webtiming.html
 http/tests/misc/webtiming-origins.html
 
 # [Qt] REGRESSION(63862): animations/play-state.html fails intermittently
@@ -2427,23 +2386,12 @@ fast/loader/form-submission-after-beforeunload-cancel.html
 # This test verifies that a mismatch reftest will fail as intended if both results are same.
 fast/harness/sample-fail-mismatch-reftest.html
 
-# [Qt] Three tests are failed after r93567
-# https://bugs.webkit.org/show_bug.cgi?id=66749
-fast/frames/iframe-onload-remove-self-no-crash.html
-fast/loader/create-frame-in-DOMContentLoaded.html
-fast/loader/frame-creation-removal.html
-
 # [Qt] REGRESSION(r93937): 4 failing and 3 flaky tests
 # https://bugs.webkit.org/show_bug.cgi?id=67118
 # Flaky
 fast/forms/number/input-number-large-padding.html
 fast/forms/number/input-spinbutton-capturing.html
 fast/forms/number/input-number-events.html
-
-# [Qt] Two tests failed after r94037
-# https://bugs.webkit.org/show_bug.cgi?id=67188
-fast/multicol/initial-column-values.html
-fast/multicol/inherit-column-values.html
 
 # [Qt] Incorrect results for new fast/multicol tests added in r94084
 # https://bugs.webkit.org/show_bug.cgi?id=67293
@@ -2498,10 +2446,6 @@ fast/viewport/viewport-warnings-3.html
 fast/events/constructors/track-event-constructor.html
 http/tests/security/text-track-crossorigin.html
 
-# [Qt] fast/canvas/canvas-lineWidth.html timeouts intermittently on 64 bit
-# https://bugs.webkit.org/show_bug.cgi?id=72694
-fast/canvas/canvas-lineWidth.html
-
 # [Qt] fast/forms/select/listbox-in-multi-column.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=73660
 fast/forms/select/listbox-in-multi-column.html
@@ -2513,10 +2457,6 @@ editing/style/iframe-onload-crash-mac.html
 # [Qt] fails fast/inline/nested-text-descendants.html
 # https://bugs.webkit.org/show_bug.cgi?id=75321
 fast/inline/nested-text-descendants.html
-
-# [Qt] REGRESSION(r104267): fast/js/date-constructor.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=75692
-fast/js/date-constructor.html
 
 # [Qt] new test fast/forms/radio/radio-group.html failing after r104668
 # https://bugs.webkit.org/show_bug.cgi?id=76051
@@ -2554,23 +2494,8 @@ fast/text/international/inline-plaintext-is-isolated.html
 # https://bugs.webkit.org/show_bug.cgi?id=78290
 fast/mutation/end-of-task-delivery.html
 
-# [Qt] REGRESSION(r107518): It broke many tests
-# https://bugs.webkit.org/show_bug.cgi?id=78471
-fast/history/timed-refresh-in-cached-frame.html
-fast/images/animated-gif-restored-from-bfcache.html
-fast/events/suspend-timers.html
-fast/overflow/horizontal-scroll-after-back.html
-fast/media/media-query-list-04.html
-fast/events/pagehide-timeout.html
-fast/events/pageshow-pagehide-on-back-cached.html
-fast/events/pageshow-pagehide-on-back-cached-with-frames.html
-
 # Fails on most platforms, probably failing due to an earlier test.
 http/tests/inspector/inspect-element.html
-
-# [Qt] http/tests/navigation/https-in-page-cache.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=78597
-http/tests/navigation/https-in-page-cache.html
 
 # Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
 # https://bugs.webkit.org/show_bug.cgi?id=76564
@@ -2583,14 +2508,6 @@ sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_dec
 # New test introduced in r108690 fails
 # https://bugs.webkit.org/show_bug.cgi?id=71266
 fast/ruby/text-decoration-in-descendants-ruby.html
-
-# [Qt] transitions/cancel-transition.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=79564
-transitions/cancel-transition.html
-
-# REGRESSION, r109105 made it fail
-# https://bugs.webkit.org/show_bug.cgi?id=79555
-fast/events/dispatch-message-string-data.html
 
 # Still failing tests - no baseline problem
 # https://bugs.webkit.org/show_bug.cgi?id=75568
