@@ -1749,7 +1749,6 @@ BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload
 // Since we have some bots on Lighttpd and some on Apache, mark it as flaky for
 // now. Once we decide on one or the other, then we can address these tests.
 BUG_OJAN LINUX MAC : http/tests/loading/text-content-type-with-binary-extension.html = TEXT
-BUG_OJAN LINUX : http/tests/xmlhttprequest/cache-override.html = TEXT
 
 // These tests time out *and* are slow. The test should be fixed to not timeout,
 // then should be marked as SLOW/PASS.
