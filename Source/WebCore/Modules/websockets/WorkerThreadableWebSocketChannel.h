@@ -177,7 +177,7 @@ private:
     static void mainThreadBufferedAmount(ScriptExecutionContext*, Peer*);
     static void mainThreadClose(ScriptExecutionContext*, Peer*, int code, const String& reason);
     static void mainThreadFail(ScriptExecutionContext*, Peer*, const String& reason);
-    static void mainThreadDestroy(ScriptExecutionContext*, Peer*);
+    static void mainThreadDestroy(ScriptExecutionContext*, PassOwnPtr<Peer>);
     static void mainThreadSuspend(ScriptExecutionContext*, Peer*);
     static void mainThreadResume(ScriptExecutionContext*, Peer*);
 

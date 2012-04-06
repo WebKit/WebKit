@@ -568,22 +568,23 @@ void WorkerThreadableWebSocketChannel::Bridge::fail(const String& reason)
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadFail, AllowCrossThreadAccess(m_peer), reason));
 }
 
-void WorkerThreadableWebSocketChannel::mainThreadDestroy(ScriptExecutionContext* context, Peer* peer)
+void WorkerThreadableWebSocketChannel::mainThreadDestroy(ScriptExecutionContext* context, PassOwnPtr<Peer> peer)
 {
     ASSERT(isMainThread());
     ASSERT_UNUSED(context, context->isDocument());
-    ASSERT(peer);
+    ASSERT_UNUSED(peer, peer);
 
-    delete peer;
+    // Peer object will be deleted even if the task does not run in the main thread's cleanup period, because
+    // the destructor for the task object (created by createCallbackTask()) will automatically delete the peer.
 }
 
 void WorkerThreadableWebSocketChannel::Bridge::disconnect()
 {
     clearClientWrapper();
     if (m_peer) {
-        Peer* peer = m_peer;
+        OwnPtr<Peer> peer = adoptPtr(m_peer);
         m_peer = 0;
-        m_loaderProxy.postTaskToLoader(createCallbackTask(&mainThreadDestroy, AllowCrossThreadAccess(peer)));
+        m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadDestroy, peer.release()));
     }
     m_workerContext = 0;
 }
