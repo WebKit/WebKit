@@ -1783,7 +1783,7 @@ BUGCR22700 LINUX WIN : fast/canvas/canvas-shadow.html = TEXT
 BUGCR27850 : fast/history/back-forward-reset-after-error-handling.html = TEXT
 
 BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/media/media-can-load-when-hidden.html = PASS TEXT CRASH
+BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : media/media-can-load-when-hidden.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD LEOPARD XP DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-load.html = PASS TEXT CRASH
 BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onprogress-event.html = PASS TEXT CRASH
