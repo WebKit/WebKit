@@ -1487,6 +1487,7 @@
         ['exclude', 'platform/network/ResourceHandle\\.cpp$'],
         ['exclude', 'platform/sql/SQLiteFileSystem\\.cpp$'],
         ['exclude', 'platform/text/LocaleToScriptMappingICU\\.cpp$'],
+        ['exclude', 'platform/text/LocalizedDateNone\\.cpp$'],
         ['exclude', 'platform/text/LocalizedNumberNone\\.cpp$'],
         ['exclude', 'platform/text/TextEncodingDetectorNone\\.cpp$'],
       ],

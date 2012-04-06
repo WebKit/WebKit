@@ -4429,6 +4429,7 @@
             'platform/text/LocalizedCalendar.h',
             'platform/text/LocalizedCalendarICU.cpp',
             'platform/text/LocalizedDate.h',
+            'platform/text/LocalizedDateICU.cpp',
             'platform/text/LocalizedDateNone.cpp',
             'platform/text/LocalizedNumber.h',
             'platform/text/LocalizedNumberICU.cpp',
