@@ -1,3 +1,23 @@
+2012-04-05  George Staikos  <staikos@webkit.org>
+
+        Add a vibration client for BlackBerry and enable it.
+        https://bugs.webkit.org/show_bug.cgi?id=83340
+
+        Reviewed by Rob Buis.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init): enable the client
+        * WebCoreSupport/VibrationClientBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::VibrationClientBlackBerry::VibrationClientBlackBerry):
+        (WebCore::VibrationClientBlackBerry::vibrate):
+        (WebCore::VibrationClientBlackBerry::cancelVibration):
+        (WebCore::VibrationClientBlackBerry::vibrationDestroyed):
+        * WebCoreSupport/VibrationClientBlackBerry.h: Added.
+        (WebCore):
+        (VibrationClientBlackBerry):
+        (WebCore::VibrationClientBlackBerry::~VibrationClientBlackBerry):
+
 2012-04-05  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Force compositing mode when backing store is not active

@@ -17,6 +17,7 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/skia"
     "${WEBCORE_DIR}/platform/network/blackberry"
     "${WEBCORE_DIR}/websockets"
+    "${WEBCORE_DIR}/Modules/vibration"
     "${WEBKIT_DIR}/blackberry/Api"
     "${WEBKIT_DIR}/blackberry/WebCoreSupport"
     "${WEBKIT_DIR}/blackberry/WebKitSupport"
@@ -65,6 +66,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/InspectorClientBlackBerry.cpp
     blackberry/WebCoreSupport/JavaScriptDebuggerBlackBerry.cpp
     blackberry/WebCoreSupport/NotificationPresenterImpl.cpp
+    blackberry/WebCoreSupport/VibrationClientBlackBerry.cpp
     blackberry/WebKitSupport/BackingStoreCompositingSurface.cpp
     blackberry/WebKitSupport/BackingStoreTile.cpp
     blackberry/WebKitSupport/BackingStoreClient.cpp

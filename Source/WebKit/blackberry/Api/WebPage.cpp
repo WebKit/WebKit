@@ -102,6 +102,9 @@
 #include "ThreadCheck.h"
 #include "TouchEventHandler.h"
 #include "TransformationMatrix.h"
+#if ENABLE(VIBRATION)
+#include "VibrationClientBlackBerry.h"
+#endif
 #include "VisiblePosition.h"
 #if ENABLE(WEBDOM)
 #include "WebDOMDocument.h"
@@ -443,6 +446,9 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 #endif
     WebCore::provideDeviceOrientationTo(m_page, new DeviceOrientationClientBlackBerry(this));
     WebCore::provideDeviceMotionTo(m_page, new DeviceMotionClientBlackBerry(this));
+#if ENABLE(VIBRATION)
+    WebCore::provideVibrationTo(m_page, new VibrationClientBlackBerry());
+#endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(m_page, NotificationPresenterImpl::instance());
