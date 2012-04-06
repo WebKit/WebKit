@@ -82,7 +82,7 @@ void MediaStreamTrack::setEnabled(bool enabled)
     m_component->setEnabled(enabled);
 
     if (m_streamDescriptor->ended())
-        return;    
+        return;
 
     MediaStreamCenter::instance().didSetMediaStreamTrackEnabled(m_streamDescriptor.get(), m_component.get());
 }

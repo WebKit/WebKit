@@ -35,6 +35,7 @@
 #include "UserMediaRequest.h"
 
 #include "LocalMediaStream.h"
+#include "MediaStreamCenter.h"
 #include "SpaceSplitString.h"
 #include "UserMediaController.h"
 

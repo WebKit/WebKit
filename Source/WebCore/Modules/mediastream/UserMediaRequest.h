@@ -34,8 +34,8 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
-#include "MediaStreamCenter.h"
 #include "MediaStreamSource.h"
+#include "MediaStreamSourcesQueryClient.h"
 #include "NavigatorUserMediaErrorCallback.h"
 #include "NavigatorUserMediaSuccessCallback.h"
 #include <wtf/PassRefPtr.h>

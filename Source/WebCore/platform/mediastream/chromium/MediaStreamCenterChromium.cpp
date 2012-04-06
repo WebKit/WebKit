@@ -32,51 +32,82 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamCenter.h"
+#include "MediaStreamCenterChromium.h"
 
-#include "MediaStreamCenterInternal.h"
+#include "IceCandidateDescriptor.h"
 #include "MediaStreamDescriptor.h"
+#include "MediaStreamSourcesQueryClient.h"
+#include "SessionDescriptionDescriptor.h"
+#include <public/Platform.h>
+#include <public/WebICECandidateDescriptor.h>
+#include <public/WebMediaStreamCenter.h>
+#include <public/WebMediaStreamComponent.h>
+#include <public/WebMediaStreamDescriptor.h>
+#include <public/WebMediaStreamSourcesRequest.h>
+#include <public/WebSessionDescriptionDescriptor.h>
+#include <wtf/MainThread.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-MediaStreamCenter::MediaStreamCenter()
-    : m_private(adoptPtr(new MediaStreamCenterInternal(this)))
+MediaStreamCenter& MediaStreamCenter::instance()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(MediaStreamCenterChromium, center, ());
+    return center;
+}
+
+MediaStreamCenterChromium::MediaStreamCenterChromium()
+    : m_private(adoptPtr(WebKit::Platform::current()->createMediaStreamCenter(this)))
 {
 }
 
-MediaStreamCenter::~MediaStreamCenter()
+MediaStreamCenterChromium::~MediaStreamCenterChromium()
 {
 }
 
-void MediaStreamCenter::queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient> client)
+void MediaStreamCenterChromium::queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient> client)
 {
-    m_private->queryMediaStreamSources(client);
+    // FIXME: Remove this "short-circuit" and forward to m_private when Chrome and DumpRenderTree has implemented WebMediaStreamCenter.
+    MediaStreamSourceVector audioSources, videoSources;
+    client->didCompleteQuery(audioSources, videoSources);
 }
 
-void MediaStreamCenter::didSetMediaStreamTrackEnabled(MediaStreamDescriptor* stream,  MediaStreamComponent* component)
+void MediaStreamCenterChromium::didSetMediaStreamTrackEnabled(MediaStreamDescriptor* stream,  MediaStreamComponent* component)
 {
-    m_private->didSetMediaStreamTrackEnabled(stream, component);
+    if (m_private) {
+        if (component->enabled())
+            m_private->didEnableMediaStreamTrack(stream, component);
+        else
+            m_private->didDisableMediaStreamTrack(stream, component);
+    }
 }
 
-void MediaStreamCenter::didStopLocalMediaStream(MediaStreamDescriptor* stream)
+void MediaStreamCenterChromium::didStopLocalMediaStream(MediaStreamDescriptor* stream)
 {
-    m_private->didStopLocalMediaStream(stream);
+    if (m_private)
+        m_private->didStopLocalMediaStream(stream);
 }
 
-void MediaStreamCenter::didConstructMediaStream(MediaStreamDescriptor* stream)
+void MediaStreamCenterChromium::didConstructMediaStream(MediaStreamDescriptor* stream)
 {
-    m_private->didConstructMediaStream(stream);
+    if (m_private)
+        m_private->didConstructMediaStream(stream);
 }
 
-String MediaStreamCenter::constructSDP(IceCandidateDescriptor* iceCandidate)
+String MediaStreamCenterChromium::constructSDP(IceCandidateDescriptor* iceCandidate)
 {
-    return m_private->constructSDP(iceCandidate);
+    return m_private ? m_private->constructSDP(WebKit::WebICECandidateDescriptor(iceCandidate)) : "";
 }
 
-String MediaStreamCenter::constructSDP(SessionDescriptionDescriptor* sessionDescription)
+String MediaStreamCenterChromium::constructSDP(SessionDescriptionDescriptor* sessionDescription)
 {
-    return m_private->constructSDP(sessionDescription);
+    return m_private ? m_private->constructSDP(WebKit::WebSessionDescriptionDescriptor(sessionDescription)) : "";
+}
+
+void MediaStreamCenterChromium::stopLocalMediaStream(const WebKit::WebMediaStreamDescriptor& stream)
+{
+    endLocalMediaStream(stream);
 }
 
 } // namespace WebCore

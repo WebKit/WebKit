@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,19 +35,16 @@
 
 #include "MediaStreamCenter.h"
 
-#include "IceCandidateDescriptor.h"
 #include "MediaStreamDescriptor.h"
-#include "SessionDescriptionDescriptor.h"
-
-#include <wtf/MainThread.h>
 
 namespace WebCore {
 
-MediaStreamCenter& MediaStreamCenter::instance()
+MediaStreamCenter::MediaStreamCenter()
 {
-    ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(MediaStreamCenter, center, ());
-    return center;
+}
+
+MediaStreamCenter::~MediaStreamCenter()
+{
 }
 
 void MediaStreamCenter::endLocalMediaStream(MediaStreamDescriptor* streamDescriptor)
@@ -57,48 +55,6 @@ void MediaStreamCenter::endLocalMediaStream(MediaStreamDescriptor* streamDescrip
     else
         streamDescriptor->setEnded();
 }
-
-#if !PLATFORM(CHROMIUM)
-
-// Empty implementations for ports that build with MEDIA_STREAM enabled by default, but haven't yet implemented MediaStreamCenter.
-
-MediaStreamCenter::MediaStreamCenter()
-{
-}
-
-MediaStreamCenter::~MediaStreamCenter()
-{
-}
-
-void MediaStreamCenter::queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient> client)
-{
-    MediaStreamSourceVector audioSources, videoSources;
-    client->didCompleteQuery(audioSources, videoSources);
-}
-
-void MediaStreamCenter::didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*)
-{
-}
-
-void MediaStreamCenter::didStopLocalMediaStream(MediaStreamDescriptor*)
-{
-}
-
-void MediaStreamCenter::didConstructMediaStream(MediaStreamDescriptor*)
-{
-}
-
-String MediaStreamCenter::constructSDP(IceCandidateDescriptor*)
-{
-    return "";
-}
-
-String MediaStreamCenter::constructSDP(SessionDescriptionDescriptor*)
-{
-    return "";
-}
-
-#endif // !PLATFORM(CHROMIUM)
 
 } // namespace WebCore
 
