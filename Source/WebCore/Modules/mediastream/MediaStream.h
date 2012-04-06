@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamTrackList.h"
@@ -38,7 +39,7 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-class MediaStream : public RefCounted<MediaStream>, public MediaStreamDescriptorOwner, public EventTarget {
+class MediaStream : public RefCounted<MediaStream>, public MediaStreamDescriptorOwner, public EventTarget, public ActiveDOMObject {
 public:
     // Must match the constants in the .idl file.
     enum ReadyState {
@@ -63,8 +64,8 @@ public:
     MediaStreamDescriptor* descriptor() const { return m_descriptor.get(); }
 
     // EventTarget
-    virtual const AtomicString& interfaceName() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
+    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
     using RefCounted<MediaStream>::ref;
     using RefCounted<MediaStream>::deref;
@@ -72,18 +73,16 @@ public:
 protected:
     MediaStream(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);
 
-    // EventTarget implementation.
-    virtual EventTargetData* eventTargetData();
-    virtual EventTargetData* ensureEventTargetData();
+    // EventTarget
+    virtual EventTargetData* eventTargetData() OVERRIDE;
+    virtual EventTargetData* ensureEventTargetData() OVERRIDE;
 
 private:
-    // EventTarget implementation.
-    virtual void refEventTarget() { ref(); }
-    virtual void derefEventTarget() { deref(); }
+    // EventTarget
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
 
     EventTargetData m_eventTargetData;
-
-    RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
 
     RefPtr<MediaStreamTrackList> m_audioTracks;
     RefPtr<MediaStreamTrackList> m_videoTracks;

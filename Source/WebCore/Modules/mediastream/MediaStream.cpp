@@ -76,16 +76,21 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, Pas
 
     RefPtr<MediaStreamDescriptor> descriptor = MediaStreamDescriptor::create(createCanonicalUUIDString(), audioSources, videoSources);
     MediaStreamCenter::instance().didConstructMediaStream(descriptor.get());
-    return adoptRef(new MediaStream(context, descriptor.release()));
+
+    RefPtr<MediaStream> stream = adoptRef(new MediaStream(context, descriptor.release()));
+    stream->suspendIfNeeded();
+    return stream.release();
 }
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
 {
-    return adoptRef(new MediaStream(context, streamDescriptor));
+    RefPtr<MediaStream> stream = adoptRef(new MediaStream(context, streamDescriptor));
+    stream->suspendIfNeeded();
+    return stream.release();
 }
 
 MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
-    : m_scriptExecutionContext(context)
+    : ActiveDOMObject(context, this)
     , m_descriptor(streamDescriptor)
 {
     m_descriptor->setOwner(this);
@@ -132,7 +137,7 @@ const AtomicString& MediaStream::interfaceName() const
 
 ScriptExecutionContext* MediaStream::scriptExecutionContext() const
 {
-    return m_scriptExecutionContext.get();
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 EventTargetData* MediaStream::eventTargetData()

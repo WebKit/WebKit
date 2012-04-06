@@ -30,7 +30,7 @@ module core {
         EventTarget,
         JSGenerateToJSObject
     ] LocalMediaStream : MediaStream {
-        void stop();
+        [ImplementedAs=stopFunction] void stop();
     };
 
 }
