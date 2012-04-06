@@ -60,6 +60,14 @@
                 videoTag.removeEventListener('webkitsourceended', onFirstSourceEnded);
 
                 expectSourceState(videoTag, videoTag.SOURCE_ENDED);
+                expectReadyState(videoTag, HTMLMediaElement.HAVE_NOTHING);
+
+                videoTag.addEventListener('playing', triggerFirstSeek);
+            }
+
+            function triggerFirstSeek(event) {
+                var videoTag = event.target;
+                videoTag.removeEventListener('playing', triggerFirstSeek);
 
                 // Now that we have appended all of the clusters and ended the stream,
                 // lets do a seek to test the SOURCE_ENDED -> SOURCE_OPEN transition.
@@ -146,6 +154,14 @@
                 videoTag.removeEventListener('webkitsourceended', onSecondSourceEnded);
 
                 expectSourceState(videoTag, HTMLMediaElement.SOURCE_ENDED);
+                expectReadyState(videoTag, HTMLMediaElement.HAVE_NOTHING);
+
+                videoTag.addEventListener('playing', triggerSecondSourceClose);
+            }
+
+            function triggerSecondSourceClose(event) {
+                var videoTag = event.target;
+                videoTag.removeEventListener('playing', triggerSecondSourceClose);
 
                 // Test SOURCE_ENDED -> SOURCE_CLOSED -> SOURCE_OPEN transition path.
                 videoTag.addEventListener('webkitsourceclose', onSecondSourceClose);
@@ -190,7 +206,13 @@
                 video.addEventListener('webkitsourceopen', onFirstSourceOpen);
 
                 logSourceState(video);
-                setSrcToMediaSourceURL(video);
+                loadWebMData(function(success) {
+                    if (!success) {
+                        failTest("Failed to load WebM data");
+                        return;
+                    }
+                    setSrcToMediaSourceURL(video);
+                });
             }
         </script>
     </head>

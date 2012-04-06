@@ -7,34 +7,66 @@ var clusterInfo = [
     { 'ts': 1.9869999885559082  },
     { 'ts': 2.38100004196167 },
     { 'ts': 2.7760000228881836 },
-    { 'ts': 3.1710000038146973 },
-    { 'ts': 3.565999984741211 },
-    { 'ts': 3.9600000381469727 },
-    { 'ts': 4.377999782562256 },
-    { 'ts': 4.7729997634887695 },
-    { 'ts': 5.168000221252441 },
-    { 'ts': 5.563000202178955 },
-    { 'ts': 5.956999778747559 },
 ];
 
-function getData(url)
+var headerData = null;
+var clusterData = [];
+
+function getData(url, callback)
 {
     var request = new XMLHttpRequest();
-    request.open("GET", url, false);
+    request.open("GET", url, true);
     request.responseType = 'arraybuffer';
+    request.onload = function() {
+        if (request.status != 200) {
+            failTest("Unexpected status code " + request.status + " for " + url);
+            callback(null);
+            return;
+        }
+
+        callback(new Uint8Array(request.response));
+    };
     request.send();
+}
 
-    if (request.status != 200) {
-        failTest("Unexpected status code " + request.status + " for " + url);
-        return false;
-    }
+function createClusterGetFunction(clusterIndex, callback) {
+    return function(data) {
+        if (!data) {
+            callback(false);
+            return;
+        }
 
-    return new Uint8Array(request.response);
+        clusterData.push(data);
+
+        if (clusterData.length == getClusterCount()) {
+            callback(true);
+            return;
+        }
+
+        var nextClusterIndex = clusterIndex + 1;
+        getData("/media/resources/media-source/webm/test.webm.cluster-" + nextClusterIndex,
+                createClusterGetFunction(nextClusterIndex, callback));
+    };
+}
+
+function loadWebMData(callback) {
+    getData("/media/resources/media-source/webm/test.webm.headers", function(data) {
+        if (!data) {
+            callback(false);
+            return;
+        }
+
+        headerData = data;
+
+        var clusterIndex = 0;
+        getData("/media/resources/media-source/webm/test.webm.cluster-" + clusterIndex,
+                createClusterGetFunction(clusterIndex, callback));
+    });
 }
 
 function getHeaders()
 {
-    return getData("/media/resources/media-source/webm/test.webm.headers");
+    return headerData;
 }
 
 function getClusterCount()
@@ -44,7 +76,7 @@ function getClusterCount()
 
 function getCluster(clusterIndex)
 {
-    return getData("/media/resources/media-source/webm/test.webm.cluster-" + clusterIndex);
+    return clusterData[clusterIndex];
 }
 
 function getClusterTimeForIndex(clusterIndex)
@@ -98,7 +130,12 @@ function appendCluster(videoTag, clusterIndex)
         return;
     }
 
-    videoTag.webkitSourceAppend(getCluster(clusterIndex));
+    try {
+        var cluster = getCluster(clusterIndex);
+        videoTag.webkitSourceAppend(cluster);
+    } catch (err) {
+        consoleWrite(err);
+    }
 }
 
 function appendUntilEndOfStream(videoTag, startIndex)
@@ -136,11 +173,43 @@ function getSourceStateName(state)
     return stateName;
 }
 
+function getReadyStateName(state)
+{
+    var stateName = "UNKNOWN";
+    switch (state) {
+        case HTMLMediaElement.HAVE_NOTHING:
+            stateName = "HAVE_NOTHING";
+            break;
+        case HTMLMediaElement.HAVE_METADATA:
+            stateName = "HAVE_METADATA";
+            break;
+        case HTMLMediaElement.HAVE_CURRENT_DATA:
+            stateName = "HAVE_CURRENT_DATA";
+            break;
+        case HTMLMediaElement.HAVE_FUTURE_DATA:
+            stateName = "HAVE_FUTURE_DATA";
+            break;
+        case HTMLMediaElement.HAVE_ENOUGH_DATA:
+            stateName = "HAVE_ENOUGH_DATA";
+            break;
+    }
+    return stateName;
+}
+
 function expectSourceState(videoTag, expected)
 {
     if (videoTag.webkitSourceState != expected) {
         failTest("Unexpected source state. Expected " +
                  getSourceStateName(expected) +
                  " got " + getSourceStateName(videoTag.webkitSourceState));
+    }
+}
+
+function expectReadyState(videoTag, expected)
+{
+    if (videoTag.readyState != expected) {
+        failTest("Unexpected ready state. Expected " +
+                 getReadyStateName(expected) +
+                 " got " + getReadyStateName(videoTag.readyState));
     }
 }

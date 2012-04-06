@@ -158,7 +158,14 @@
                 waitForEvent('emptied');
 
                 video.addEventListener('error', onError);
-                runNextTestCase(video);
+
+                loadWebMData(function(success) {
+                    if (!success) {
+                        failTest("Failed to load WebM data");
+                        return;
+                    }
+                    runNextTestCase(video);
+                });
             }
         </script>
     </head>

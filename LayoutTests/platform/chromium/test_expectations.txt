@@ -111,9 +111,6 @@ BUGCR89468 WIN LINUX ANDROID LION : css3/selectors3/xml/css3-modsel-d2.xml = FAI
 BUGCR89468 WIN LINUX ANDROID LION : css3/selectors3/xml/css3-modsel-d3.xml = FAIL
 BUGCR89468 WIN LINUX ANDROID LION : css3/selectors3/xml/css3-modsel-d4.xml = FAIL
 
-// Tests for MediaSource API. Feature is not yet functional.
-BUGWK64731 SKIP : http/tests/media/media-source/ = TIMEOUT
-
 // Chrome does not support WebArchives yet.
 BUGCR10395 SKIP : webarchive = PASS FAIL
 BUGCR10395 SKIP : svg/webarchive = PASS FAIL

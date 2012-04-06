@@ -68,7 +68,13 @@
                 video.addEventListener('seeking', onSeeking);
                 video.addEventListener('seeked', onSeeked);
 
-                setSrcToMediaSourceURL(video);
+                loadWebMData(function(success) {
+                    if (!success) {
+                        failTest("Failed to load WebM data");
+                        return;
+                    }
+                    setSrcToMediaSourceURL(video);
+                });
             }
          </script>
     </head>

@@ -24,7 +24,13 @@
 
                 video.addEventListener('webkitsourceopen', onSourceOpen);
 
-                setSrcToMediaSourceURL(video);
+                loadWebMData(function(success) {
+                    if (!success) {
+                        failTest("Failed to load WebM data");
+                        return;
+                    }
+                    setSrcToMediaSourceURL(video);
+                });
             }
         </script>
     </head>
