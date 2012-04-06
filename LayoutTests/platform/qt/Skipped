@@ -282,6 +282,7 @@ fast/dom/MicroData
 
 # ENABLE(MUTATION_OBSERVERS) is disabled
 fast/mutation/callback-arguments.html
+fast/mutation/clear-transient-without-delivery.html
 fast/mutation/create-during-delivery.html
 fast/mutation/cross-document.html
 fast/mutation/database-callback-delivery.html
@@ -298,6 +299,7 @@ fast/mutation/observe-childList.html
 fast/mutation/observe-exceptions.html
 fast/mutation/observe-subtree.html
 fast/mutation/takeRecords.html
+fast/mutation/transient-gc-crash.html
 
 # USE(ZLIB) is disabled.
 http/tests/websocket/tests/hybi/compressed-control-frame.html
