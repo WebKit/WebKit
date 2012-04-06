@@ -80,6 +80,14 @@ void RenderSVGRect::createShape()
         m_innerStrokeRect.inflate(-strokeWidth / 2);
         m_outerStrokeRect.inflate(strokeWidth / 2);
     }
+
+    m_strokeBoundingRect = m_outerStrokeRect;
+
+#if USE(CG)
+    // CoreGraphics can inflate the stroke by 1px when drawing a rectangle with antialiasing disabled at non-integer coordinates, we need to compensate.
+    if (style()->svgStyle()->shapeRendering() == SR_CRISPEDGES)
+        m_strokeBoundingRect.inflate(1);
+#endif
 }
 
 FloatRect RenderSVGRect::objectBoundingBox() const
@@ -93,7 +101,7 @@ FloatRect RenderSVGRect::strokeBoundingBox() const
 {
     if (isPaintingFallback())
         return RenderSVGShape::strokeBoundingBox();
-    return m_outerStrokeRect;
+    return m_strokeBoundingRect;
 }
 
 void RenderSVGRect::fillShape(GraphicsContext* context) const

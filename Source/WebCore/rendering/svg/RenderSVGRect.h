@@ -56,6 +56,7 @@ private:
     FloatRect m_boundingBox;
     FloatRect m_innerStrokeRect;
     FloatRect m_outerStrokeRect;
+    FloatRect m_strokeBoundingRect;
 };
 
 }
