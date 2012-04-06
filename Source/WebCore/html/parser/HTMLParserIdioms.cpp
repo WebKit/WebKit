@@ -79,7 +79,10 @@ bool parseToDoubleForNumberType(const String& string, double* result)
     double value = string.toDouble(&valid);
     if (!valid)
         return false;
-    ASSERT(isfinite(value));
+
+    // NaN and infinity are considered valid by String::toDouble, but not valid here.
+    if (!isfinite(value))
+        return false;
 
     // Numbers are considered finite IEEE 754 single-precision floating point values.
     // See HTML5 2.5.4.3 `Real numbers.'
