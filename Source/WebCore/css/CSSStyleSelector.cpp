@@ -4243,7 +4243,7 @@ PassRefPtr<StyleImage> CSSStyleSelector::generatedOrPendingFromValue(CSSProperty
 #if ENABLE(CSS_IMAGE_SET)
 PassRefPtr<StyleImage> CSSStyleSelector::setOrPendingFromValue(CSSPropertyID property, CSSImageSetValue* value)
 {
-    RefPtr<StyleImage> image = value->cachedOrPendingImageSet();
+    RefPtr<StyleImage> image = value->cachedOrPendingImageSet(document());
     if (image && image->isPendingImage())
         m_pendingImageProperties.add(property);
     return image.release();

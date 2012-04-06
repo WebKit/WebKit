@@ -41,6 +41,7 @@ namespace WebCore {
 CSSImageSetValue::CSSImageSetValue()
     : CSSValueList(ImageSetClass, CommaSeparator)
     , m_accessedBestFitImage(false)
+    , m_scaleFactor(1)
 {
 }
 
@@ -74,13 +75,13 @@ void CSSImageSetValue::fillImageSet()
     std::sort(m_imagesInSet.begin(), m_imagesInSet.end(), CSSImageSetValue::compareByScaleFactor);
 }
 
-CSSImageSetValue::ImageWithScale CSSImageSetValue::bestImageForScaleFactor(float scaleFactor)
+CSSImageSetValue::ImageWithScale CSSImageSetValue::bestImageForScaleFactor()
 {
     ImageWithScale image;
     size_t numberOfImages = m_imagesInSet.size();
     for (size_t i = 0; i < numberOfImages; ++i) {
         image = m_imagesInSet.at(i);
-        if (image.scaleFactor >= scaleFactor)
+        if (image.scaleFactor >= m_scaleFactor)
             return image;
     }
     return image;
@@ -88,25 +89,22 @@ CSSImageSetValue::ImageWithScale CSSImageSetValue::bestImageForScaleFactor(float
 
 StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* loader)
 {
+    ASSERT(loader);
+
     Document* document = loader->document();
-    float deviceScaleFactor = 1;
     if (Page* page = document->page())
-        deviceScaleFactor = page->deviceScaleFactor();
+        m_scaleFactor = page->deviceScaleFactor();
+    else
+        m_scaleFactor = 1;
 
     if (!m_imagesInSet.size())
         fillImageSet();
 
-    // FIXME: In the future, we want to take much more than deviceScaleFactor into acount here. 
-    // All forms of scale should be included: Page::pageScaleFactor(), Frame::pageZoomFactor(), 
-    // and any CSS transforms. https://bugs.webkit.org/show_bug.cgi?id=81698
-    return cachedImageSet(loader, bestImageForScaleFactor(deviceScaleFactor));
-}
-
-StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* loader, ImageWithScale image)
-{
-    ASSERT(loader);
-
     if (!m_accessedBestFitImage) {
+        // FIXME: In the future, we want to take much more than deviceScaleFactor into acount here. 
+        // All forms of scale should be included: Page::pageScaleFactor(), Frame::pageZoomFactor(),
+        // and any CSS transforms. https://bugs.webkit.org/show_bug.cgi?id=81698
+        ImageWithScale image = bestImageForScaleFactor();
         ResourceRequest request(loader->document()->completeURL(image.imageURL));
         if (CachedImage* cachedImage = loader->requestImage(request)) {
             m_imageSet = StyleCachedImageSet::create(cachedImage, image.scaleFactor, this);
@@ -117,10 +115,21 @@ StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* load
     return (m_imageSet && m_imageSet->isCachedImageSet()) ? static_cast<StyleCachedImageSet*>(m_imageSet.get()) : 0;
 }
 
-StyleImage* CSSImageSetValue::cachedOrPendingImageSet()
+StyleImage* CSSImageSetValue::cachedOrPendingImageSet(Document* document)
 {
     if (!m_imageSet)
         m_imageSet = StylePendingImage::create(this);
+    else if (document && !m_imageSet->isPendingImage()) {
+        float deviceScaleFactor = 1;
+        if (Page* page = document->page())
+            deviceScaleFactor = page->deviceScaleFactor();
+
+        // If the deviceScaleFactor has changed, we may not have the best image loaded, so we have to re-assess.
+        if (deviceScaleFactor != m_scaleFactor) {
+            m_accessedBestFitImage = false;
+            m_imageSet = StylePendingImage::create(this);
+        }
+    }
 
     return m_imageSet.get();
 }

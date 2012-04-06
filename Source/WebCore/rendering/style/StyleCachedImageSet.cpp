@@ -40,6 +40,13 @@ StyleCachedImageSet::StyleCachedImageSet(CachedImage* image, float imageScaleFac
     , m_imageSetValue(value)  
 {
     m_isCachedImageSet = true;
+    m_bestFitImage->addClient(this);
+}
+
+
+StyleCachedImageSet::~StyleCachedImageSet()
+{
+    m_bestFitImage->removeClient(this);
 }
 
 PassRefPtr<CSSValue> StyleCachedImageSet::cssValue() const

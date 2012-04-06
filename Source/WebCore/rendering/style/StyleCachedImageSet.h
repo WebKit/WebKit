@@ -28,6 +28,7 @@
 
 #if ENABLE(CSS_IMAGE_SET)
 
+#include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
 
@@ -38,12 +39,14 @@ class CSSImageSetValue;
 
 // This class keeps one cached image and has access to a set of alternatives.
 
-class StyleCachedImageSet : public StyleImage {
+class StyleCachedImageSet : public StyleImage, private CachedImageClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<StyleCachedImageSet> create(CachedImage* image, float imageScaleFactor, CSSImageSetValue* value)
     {
         return adoptRef(new StyleCachedImageSet(image, imageScaleFactor, value));
     }
+    virtual ~StyleCachedImageSet();
 
     virtual PassRefPtr<CSSValue> cssValue() const;
 

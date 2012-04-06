@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class CachedResourceLoader;
+class Document;
 class StyleCachedImageSet;
 class StyleImage;
 
@@ -48,7 +49,7 @@ public:
     StyleCachedImageSet* cachedImageSet(CachedResourceLoader*);
 
     // Returns a StyleCachedImageSet if the best fit image has been cached already, otherwise a StylePendingImage.
-    StyleImage* cachedOrPendingImageSet();
+    StyleImage* cachedOrPendingImageSet(Document*);
 
     String customCssText() const;
 
@@ -60,8 +61,7 @@ public:
     };
 
 protected:
-    ImageWithScale bestImageForScaleFactor(float);
-    StyleCachedImageSet* cachedImageSet(CachedResourceLoader*, ImageWithScale);
+    ImageWithScale bestImageForScaleFactor();
 
 private:
     CSSImageSetValue();
@@ -71,6 +71,10 @@ private:
 
     RefPtr<StyleImage> m_imageSet;
     bool m_accessedBestFitImage;
+
+    // This represents the scale factor that we used to find the best fit image. It does not necessarily
+    // correspond to the scale factor of the best fit image.
+    float m_scaleFactor;
 
     Vector<ImageWithScale> m_imagesInSet;
 };
