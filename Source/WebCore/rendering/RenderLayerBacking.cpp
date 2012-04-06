@@ -937,7 +937,7 @@ bool RenderLayerBacking::hasVisibleNonCompositingDescendantLayers() const
 
 bool RenderLayerBacking::containsPaintedContent() const
 {
-    if (isSimpleContainerCompositingLayer() || paintingGoesToWindow() || m_artificiallyInflatedBounds || m_owningLayer->isReflection())
+    if (isSimpleContainerCompositingLayer() || paintsIntoWindow() || m_artificiallyInflatedBounds || m_owningLayer->isReflection())
         return false;
 
     if (isDirectlyCompositedImage())
@@ -1076,7 +1076,7 @@ IntRect RenderLayerBacking::contentsBox() const
     return contentsRect;
 }
 
-bool RenderLayerBacking::paintingGoesToWindow() const
+bool RenderLayerBacking::paintsIntoWindow() const
 {
     if (m_usingTiledCacheLayer)
         return false;
@@ -1132,7 +1132,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
                     PaintBehavior paintBehavior, GraphicsLayerPaintingPhase paintingPhase,
                     RenderObject* paintingRoot)
 {
-    if (paintingGoesToWindow()) {
+    if (paintsIntoWindow()) {
         ASSERT_NOT_REACHED();
         return;
     }

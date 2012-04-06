@@ -95,7 +95,7 @@ public:
     // for descendants, but its contents usually render into the window (in which case this returns true).
     // This returns false for other layers, and when the document layer actually needs to paint into its backing store
     // for some reason.
-    bool paintingGoesToWindow() const;
+    bool paintsIntoWindow() const;
 
     void setContentsNeedDisplay();
     // r is in the coordinate space of the layer's render object

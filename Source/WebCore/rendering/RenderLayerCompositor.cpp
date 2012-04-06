@@ -2042,7 +2042,7 @@ void RenderLayerCompositor::updateRootLayerAttachment()
 
 void RenderLayerCompositor::rootLayerAttachmentChanged()
 {
-    // The attachment can affect whether the RenderView layer's paintingGoesToWindow() behavior,
+    // The attachment can affect whether the RenderView layer's paintsIntoWindow() behavior,
     // so call updateGraphicsLayerGeometry() to udpate that.
     RenderLayer* layer = m_renderView->layer();
     if (RenderLayerBacking* backing = layer ? layer->backing() : 0)

@@ -1010,7 +1010,7 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, 
     
 #if USE(ACCELERATED_COMPOSITING)
     if (parentLayer->isComposited()) {
-        if (!parentLayer->backing()->paintingGoesToWindow()) {
+        if (!parentLayer->backing()->paintsIntoWindow()) {
             parentLayer->setBackingNeedsRepaintInRect(parentLayerRect);
             return;
         }
@@ -2855,7 +2855,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* context,
         // but we need to ensure that we don't cache clip rects computed with the wrong root in this case.
         if (context->updatingControlTints() || (paintBehavior & PaintBehaviorFlattenCompositingLayers))
             paintFlags |= PaintLayerTemporaryClipRects;
-        else if (!backing()->paintingGoesToWindow() && !shouldDoSoftwarePaint(this, paintFlags & PaintLayerPaintingReflection)) {
+        else if (!backing()->paintsIntoWindow() && !shouldDoSoftwarePaint(this, paintFlags & PaintLayerPaintingReflection)) {
             // If this RenderLayer should paint into its backing, that will be done via RenderLayerBacking::paintIntoLayer().
             return;
         }
@@ -4270,7 +4270,7 @@ GraphicsLayer* RenderLayer::layerForScrollCorner() const
 bool RenderLayer::paintsWithTransform(PaintBehavior paintBehavior) const
 {
 #if USE(ACCELERATED_COMPOSITING)
-    bool paintsToWindow = !isComposited() || backing()->paintingGoesToWindow();
+    bool paintsToWindow = !isComposited() || backing()->paintsIntoWindow();
 #else
     bool paintsToWindow = true;
 #endif    
@@ -4550,7 +4550,7 @@ void RenderLayer::repaintIncludingDescendants()
 void RenderLayer::setBackingNeedsRepaint()
 {
     ASSERT(isComposited());
-    if (backing()->paintingGoesToWindow()) {
+    if (backing()->paintsIntoWindow()) {
         // If we're trying to repaint the placeholder document layer, propagate the
         // repaint to the native view system.
         RenderView* view = renderer()->view();
@@ -4565,7 +4565,7 @@ void RenderLayer::setBackingNeedsRepaintInRect(const LayoutRect& r)
     // https://bugs.webkit.org/show_bug.cgi?id=61159 describes an unreproducible crash here,
     // so assert but check that the layer is composited.
     ASSERT(isComposited());
-    if (!isComposited() || backing()->paintingGoesToWindow()) {
+    if (!isComposited() || backing()->paintsIntoWindow()) {
         // If we're trying to repaint the placeholder document layer, propagate the
         // repaint to the native view system.
         LayoutRect absRect(r);
