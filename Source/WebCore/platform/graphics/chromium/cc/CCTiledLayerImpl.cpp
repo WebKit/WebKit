@@ -139,9 +139,6 @@ void CCTiledLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
 {
     const IntRect& layerRect = visibleLayerRect();
 
-    if (m_skipsDraw)
-        return;
-
     appendGutterQuads(quadList, sharedQuadState);
 
     if (!m_tiler || m_tiler->hasEmptyBounds() || layerRect.isEmpty())
@@ -157,7 +154,7 @@ void CCTiledLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
                 IntRect tileRect = m_tiler->tileBounds(i, j);
                 Color borderColor;
 
-                if (!tile || !tile->textureId())
+                if (m_skipsDraw || !tile || !tile->textureId())
                     borderColor = Color(debugTileBorderMissingTileColorRed, debugTileBorderMissingTileColorGreen, debugTileBorderMissingTileColorBlue, debugTileBorderAlpha);
                 else
                     borderColor = Color(debugTileBorderColorRed, debugTileBorderColorGreen, debugTileBorderColorBlue, debugTileBorderAlpha);
@@ -165,6 +162,9 @@ void CCTiledLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
             }
         }
     }
+
+    if (m_skipsDraw)
+        return;
 
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
