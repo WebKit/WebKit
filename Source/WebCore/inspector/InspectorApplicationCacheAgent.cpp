@@ -203,7 +203,7 @@ PassRefPtr<TypeBuilder::ApplicationCache::ApplicationCacheResource> InspectorApp
 
     RefPtr<TypeBuilder::ApplicationCache::ApplicationCacheResource> value = TypeBuilder::ApplicationCache::ApplicationCacheResource::create()
         .setUrl(resourceInfo.m_resource.string())
-        .setSize(resourceInfo.m_size)
+        .setSize(static_cast<int>(resourceInfo.m_size))
         .setType(types);
     return value;
 }
