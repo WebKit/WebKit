@@ -435,7 +435,7 @@ void RenderThemeQt::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* selecto
 IntRect RenderThemeQt::convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, IntRect partRect, const IntRect& localOffset) const
 {
     // Compute an offset between the part renderer and the input renderer.
-    IntSize offsetFromInputRenderer = -(partRenderer->offsetFromAncestorContainer(inputRenderer));
+    IntSize offsetFromInputRenderer = -roundedIntSize(partRenderer->offsetFromAncestorContainer(inputRenderer));
     // Move the rect into partRenderer's coords.
     partRect.move(offsetFromInputRenderer);
     // Account for the local drawing offset.
@@ -454,7 +454,7 @@ bool RenderThemeQt::paintSearchFieldCancelButton(RenderObject* o, const PaintInf
     if (!input->renderer()->isBox())
         return false;
     RenderBox* inputRenderBox = toRenderBox(input->renderer());
-    IntRect inputContentBox = inputRenderBox->contentBoxRect();
+    IntRect inputContentBox = pixelSnappedIntRect(inputRenderBox->contentBoxRect());
 
     // Make sure the scaled button stays square and will fit in its parent's box.
     int cancelButtonSize = qMin(inputContentBox.width(), qMin(inputContentBox.height(), r.height()));
