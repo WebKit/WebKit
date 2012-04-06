@@ -205,6 +205,7 @@ WebInspector.PopoverHelper = function(panelElement, getAnchor, showPopover, onHi
     this._disableOnClick = !!disableOnClick;
     panelElement.addEventListener("mousedown", this._mouseDown.bind(this), false);
     panelElement.addEventListener("mousemove", this._mouseMove.bind(this), false);
+    panelElement.addEventListener("mouseout", this._mouseOut.bind(this), false);
     this.setTimeout(1000);
 }
 
@@ -230,18 +231,28 @@ WebInspector.PopoverHelper.prototype = {
         if (event.target.isSelfOrDescendant(this._hoverElement))
             return;
 
-        // User has 500ms (this._timeout / 2) to reach the popup.
-        if (this._popover && !this._hidePopoverTimer) {
-            var self = this;
-            function doHide()
-            {
-                self._hidePopover();
-                delete self._hidePopoverTimer;
-            }
-            this._hidePopoverTimer = setTimeout(doHide, this._timeout / 2);
-        }
-
+        this._startHidePopoverTimer();
         this._handleMouseAction(event, false);
+    },
+
+    _mouseOut: function(event)
+    {
+        if (event.target === this._hoverElement)
+            this._startHidePopoverTimer();
+    },
+
+    _startHidePopoverTimer: function()
+    {
+        // User has 500ms (this._timeout / 2) to reach the popup.
+        if (!this._popover || this._hidePopoverTimer)
+            return;
+
+        function doHide()
+        {
+            this._hidePopover();
+            delete this._hidePopoverTimer;
+        }
+        this._hidePopoverTimer = setTimeout(doHide.bind(this), this._timeout / 2);
     },
 
     _handleMouseAction: function(event, isMouseDown)
@@ -285,6 +296,7 @@ WebInspector.PopoverHelper.prototype = {
 
         this._popover.dispose();
         delete this._popover;
+        this._hoverElement = null;
     },
 
     _mouseHover: function(element)
