@@ -76,6 +76,7 @@
 
 #define JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(macro) \
     macro(null) \
+    macro(undefined) \
     macro(true) \
     macro(false) \
     macro(break) \

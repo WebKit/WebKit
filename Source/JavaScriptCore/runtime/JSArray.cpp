@@ -1487,7 +1487,7 @@ void JSArray::sort(ExecState* exec)
     // a toString call raises an exception.
 
     for (size_t i = 0; i < lengthNotIncludingUndefined; i++)
-        values[i].second = values[i].first.toString(exec)->value(exec);
+        values[i].second = values[i].first.toUStringInline(exec);
 
     if (exec->hadException()) {
         Heap::heap(this)->popTempSortVector(&values);

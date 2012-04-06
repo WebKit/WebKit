@@ -462,6 +462,39 @@ namespace JSC {
         return toStringSlowCase(exec);
     }
 
+    inline UString JSValue::toUString(ExecState* exec) const
+    {
+        if (isString())
+            return static_cast<JSString*>(asCell())->value(exec);
+        return toUStringSlowCase(exec);
+    }
+
+    ALWAYS_INLINE UString inlineJSValueNotStringtoUString(const JSValue& value, ExecState* exec)
+    {
+        JSGlobalData& globalData = exec->globalData();
+        if (value.isInt32())
+            return globalData.numericStrings.add(value.asInt32());
+        if (value.isDouble())
+            return globalData.numericStrings.add(value.asDouble());
+        if (value.isTrue())
+            return globalData.propertyNames->trueKeyword.ustring();
+        if (value.isFalse())
+            return globalData.propertyNames->falseKeyword.ustring();
+        if (value.isNull())
+            return globalData.propertyNames->nullKeyword.ustring();
+        if (value.isUndefined())
+            return globalData.propertyNames->undefinedKeyword.ustring();
+        return value.toString(exec)->value(exec);
+    }
+
+    ALWAYS_INLINE UString JSValue::toUStringInline(ExecState* exec) const
+    {
+        if (isString())
+            return static_cast<JSString*>(asCell())->value(exec);
+
+        return inlineJSValueNotStringtoUString(*this, exec);
+    }
+
 } // namespace JSC
 
 #endif // JSString_h

@@ -203,6 +203,8 @@ namespace JSC {
         // been set in the ExecState already.
         double toNumber(ExecState*) const;
         JSString* toString(ExecState*) const;
+        UString toUString(ExecState*) const;
+        UString toUStringInline(ExecState*) const;
         JSObject* toObject(ExecState*) const;
         JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
@@ -251,6 +253,7 @@ namespace JSC {
         inline const JSValue asValue() const { return *this; }
         JS_EXPORT_PRIVATE double toNumberSlowCase(ExecState*) const;
         JS_EXPORT_PRIVATE JSString* toStringSlowCase(ExecState*) const;
+        JS_EXPORT_PRIVATE UString toUStringSlowCase(ExecState*) const;
         JS_EXPORT_PRIVATE JSObject* toObjectSlowCase(ExecState*, JSGlobalObject*) const;
         JS_EXPORT_PRIVATE JSObject* toThisObjectSlowCase(ExecState*) const;
 

@@ -281,7 +281,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
         if (element.isUndefinedOrNull())
             continue;
         
-        UString str = element.toString(exec)->value(exec);
+        UString str = element.toUString(exec);
         strBuffer[k] = str.impl();
         totalSize += str.length();
         allStrings8Bit = allStrings8Bit && str.is8Bit();
@@ -358,9 +358,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
             CallData callData;
             CallType callType = getCallData(conversionFunction, callData);
             if (callType != CallTypeNone)
-                str = call(exec, conversionFunction, callType, callData, element, exec->emptyList()).toString(exec)->value(exec);
+                str = call(exec, conversionFunction, callType, callData, element, exec->emptyList()).toUString(exec);
             else
-                str = element.toString(exec)->value(exec);
+                str = element.toUString(exec);
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
             stringJoiner.append(str);
@@ -383,7 +383,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 
     UString separator;
     if (!exec->argument(0).isUndefined())
-        separator = exec->argument(0).toString(exec)->value(exec);
+        separator = exec->argument(0).toUString(exec);
     if (separator.isNull())
         separator = UString(",");
 
@@ -399,7 +399,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 
             JSValue element = array->getIndex(k);
             if (!element.isUndefinedOrNull())
-                stringJoiner.append(element.toString(exec)->value(exec));
+                stringJoiner.append(element.toUStringInline(exec));
             else
                 stringJoiner.append(UString());
         }
@@ -408,7 +408,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
     for (; k < length; k++) {
         JSValue element = thisObj->get(exec, k);
         if (!element.isUndefinedOrNull())
-            stringJoiner.append(element.toString(exec)->value(exec));
+            stringJoiner.append(element.toUStringInline(exec));
         else
             stringJoiner.append(UString());
     }
@@ -501,7 +501,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
             thisObj->methodTable()->putByIndex(thisObj, exec, length + n, exec->argument(n), true);
         else {
             PutPropertySlot slot;
-            Identifier propertyName(exec, JSValue(static_cast<int64_t>(length) + static_cast<int64_t>(n)).toString(exec)->value(exec));
+            Identifier propertyName(exec, JSValue(static_cast<int64_t>(length) + static_cast<int64_t>(n)).toUString(exec));
             thisObj->methodTable()->put(thisObj, exec, propertyName, exec->argument(n), slot);
         }
         if (exec->hadException())
@@ -642,7 +642,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
                 l.append(minObj);
                 compareResult = call(exec, function, callType, callData, jsUndefined(), l).toNumber(exec);
             } else
-                compareResult = (jObj.toString(exec)->value(exec) < minObj.toString(exec)->value(exec)) ? -1 : 1;
+                compareResult = (jObj.toUStringInline(exec) < minObj.toUStringInline(exec)) ? -1 : 1;
 
             if (compareResult < 0) {
                 themin = j;
