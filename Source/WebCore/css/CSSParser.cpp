@@ -1307,6 +1307,12 @@ static int unitFromString(CSSParserValue* value)
     return 0;
 }
 
+static inline bool isComma(CSSParserValue* value)
+{ 
+    return value && value->unit == CSSParserValue::Operator && value->iValue == ','; 
+}
+
+
 void CSSParser::checkForOrphanedUnits()
 {
     if (inStrictMode() || inShorthand())
@@ -3262,7 +3268,7 @@ void CSSParser::parseFillPosition(CSSParserValueList* valueList, RefPtr<CSSValue
     value = valueList->next();
 
     // First check for the comma.  If so, we are finished parsing this value or value pair.
-    if (value && value->unit == CSSParserValue::Operator && value->iValue == ',')
+    if (isComma(value))
         value = 0;
 
     if (value) {
@@ -3317,7 +3323,7 @@ void CSSParser::parseFillRepeat(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& valu
     value = m_valueList->next();
 
     // First check for the comma.  If so, we are finished parsing this value or value pair.
-    if (value && value->unit == CSSParserValue::Operator && value->iValue == ',')
+    if (isComma(value))
         value = 0;
 
     if (value)
@@ -3405,7 +3411,7 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
         RefPtr<CSSValue> currValue2;
 
         if (allowComma) {
-            if (val->unit != CSSParserValue::Operator || val->iValue != ',')
+            if (!isComma(val))
                 return false;
             m_valueList->next();
             allowComma = false;
@@ -3644,7 +3650,7 @@ bool CSSParser::parseCubicBezierTimingFunctionValue(CSSParserValueList*& args, d
     if (!v)
         // The last number in the function has no comma after it, so we're done.
         return true;
-    if (v->unit != CSSParserValue::Operator && v->iValue != ',')
+    if (!isComma(v))
         return false;
     v = args->next();
     return true;
@@ -3682,7 +3688,7 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationTimingFunction()
 
         if (v) {
             // There is a comma so we need to parse the second value
-            if (v->unit != CSSParserValue::Operator && v->iValue != ',')
+            if (!isComma(v))
                 return 0;
             v = args->next();
             if (v->id != CSSValueStart && v->id != CSSValueEnd)
@@ -3728,7 +3734,7 @@ bool CSSParser::parseAnimationProperty(CSSPropertyID propId, RefPtr<CSSValue>& r
     while ((val = m_valueList->current())) {
         RefPtr<CSSValue> currValue;
         if (allowComma) {
-            if (val->unit != CSSParserValue::Operator || val->iValue != ',')
+            if (!isComma(val))
                 return false;
             m_valueList->next();
             allowComma = false;
@@ -4249,25 +4255,20 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapePolygon(CSSParserValueLis
     if (argument->id == CSSValueEvenodd || argument->id == CSSValueNonzero) {
         shape->setWindRule(argument->id == CSSValueEvenodd ? RULE_EVENODD : RULE_NONZERO);
 
-        CSSParserValue* comma = args->next();
-        if (!comma || comma->unit != CSSParserValue::Operator || comma->iValue != ',')
+        if (!isComma(args->next()))
             return 0;
 
         argument = args->next();
         size -= 2;
     }
 
-    // <length>, <length> ... <length>, <length> -> each pair has 3 elements
-    if (!size || (size % 3))
+    // <length> <length>, ... <length> <length> -> each pair has 3 elements except the last one
+    if (!size || (size % 3) - 2)
         return 0;
 
     CSSParserValue* argumentX = argument;
     while (argumentX) {
         if (!validUnit(argumentX, FLength))
-            return 0;
-
-        CSSParserValue* comma = args->next();
-        if (!comma || comma->unit != CSSParserValue::Operator || comma->iValue != ',')
             return 0;
 
         CSSParserValue* argumentY = args->next();
@@ -4279,7 +4280,13 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapePolygon(CSSParserValueLis
 
         shape->appendPoint(xLength.release(), yLength.release());
 
-        argumentX = args->next();
+        CSSParserValue* commaOrNull = args->next();
+        if (!commaOrNull)
+            argumentX = 0;
+        else if (!isComma(commaOrNull)) 
+            return 0;
+        else 
+            argumentX = args->next();
     }
 
     return shape;
@@ -6266,7 +6273,7 @@ bool CSSParser::parseDeprecatedGradient(CSSParserValueList* valueList, RefPtr<CS
 
     // Comma.
     a = args->next();
-    if (!a || a->unit != CSSParserValue::Operator || a->iValue != ',')
+    if (!isComma(a))
         return false;
 
     // Next comes the starting point for the gradient as an x y pair.  There is no
@@ -6291,7 +6298,7 @@ bool CSSParser::parseDeprecatedGradient(CSSParserValueList* valueList, RefPtr<CS
 
     // Comma after the first point.
     a = args->next();
-    if (!a || a->unit != CSSParserValue::Operator || a->iValue != ',')
+    if (!isComma(a))
         return false;
 
     // For radial gradients only, we now expect a numeric radius.
@@ -6303,7 +6310,7 @@ bool CSSParser::parseDeprecatedGradient(CSSParserValueList* valueList, RefPtr<CS
 
         // Comma after the first radius.
         a = args->next();
-        if (!a || a->unit != CSSParserValue::Operator || a->iValue != ',')
+        if (!isComma(a))
             return false;
     }
 
@@ -6330,7 +6337,7 @@ bool CSSParser::parseDeprecatedGradient(CSSParserValueList* valueList, RefPtr<CS
     if (gradientType == CSSRadialGradient) {
         // Comma after the second point.
         a = args->next();
-        if (!a || a->unit != CSSParserValue::Operator || a->iValue != ',')
+        if (!isComma(a))
             return false;
 
         a = args->next();
@@ -6343,7 +6350,7 @@ bool CSSParser::parseDeprecatedGradient(CSSParserValueList* valueList, RefPtr<CS
     a = args->next();
     while (a) {
         // Look for the comma before the next stop.
-        if (a->unit != CSSParserValue::Operator || a->iValue != ',')
+        if (!isComma(a))
             return false;
 
         // Now examine the stop itself.
@@ -6490,7 +6497,7 @@ bool CSSParser::parseRadialGradient(CSSParserValueList* valueList, RefPtr<CSSVal
 
     if (centerX || centerY) {
         // Comma
-        if (a->unit != CSSParserValue::Operator || a->iValue != ',')
+        if (!isComma(a))
             return false;
 
         a = args->next();
@@ -6591,7 +6598,7 @@ bool CSSParser::parseGradientColorStops(CSSParserValueList* valueList, CSSGradie
     while (a) {
         // Look for the comma before the next stop.
         if (expectComma) {
-            if (a->unit != CSSParserValue::Operator || a->iValue != ',')
+            if (!isComma(a))
                 return false;
 
             a = valueList->next();
@@ -6684,7 +6691,7 @@ bool CSSParser::parseCrossfade(CSSParserValueList* valueList, RefPtr<CSSValue>& 
     a = args->next();
 
     // Skip a comma
-    if (a->unit != CSSParserValue::Operator || a->iValue != ',')
+    if (!isComma(a))
         return false;
     a = args->next();
 
@@ -6694,7 +6701,7 @@ bool CSSParser::parseCrossfade(CSSParserValueList* valueList, RefPtr<CSSValue>& 
     a = args->next();
 
     // Skip a comma
-    if (a->unit != CSSParserValue::Operator || a->iValue != ',')
+    if (!isComma(a))
         return false;
     a = args->next();
 
@@ -6774,7 +6781,7 @@ PassRefPtr<CSSValue> CSSParser::parseImageSet(CSSParserValueList* valueList)
             break;
 
         // If there are more arguments, they should be after a comma.
-        if (arg->unit != CSSParserValue::Operator || arg->iValue != ',')
+        if (!isComma(arg))
             return 0;
 
         // Skip the comma and move on to the next argument.
@@ -6986,7 +6993,7 @@ static void filterInfoForName(const CSSParserString& name, WebKitCSSFilterValue:
 static bool acceptCommaOperator(CSSParserValueList* argsList)
 {
     if (CSSParserValue* arg = argsList->current()) {
-        if (arg->unit != CSSParserValue::Operator || arg->iValue != ',')
+        if (!isComma(arg))
             return false;
         argsList->next();
     }
@@ -7105,7 +7112,7 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilter(CSSParserValue* va
         RefPtr<CSSValueList> paramValueList = CSSValueList::createSpaceSeparated();
         while ((arg = argsList->current())) {
             // If we hit a comma it means we finished this parameter's values.
-            if (arg->unit == CSSParserValue::Operator && arg->iValue == ',')
+            if (isComma(arg))
                 break;
             if (!validUnit(arg, FNumber, CSSStrictMode))
                 return 0;
@@ -7607,7 +7614,7 @@ bool CSSParser::parseFontFeatureSettings(bool important)
 
         // If the list isn't parsed fully, the current value should be comma.
         value = m_valueList->current();
-        if (value && !(value->unit == CSSParserValue::Operator && value->iValue == ','))
+        if (value && !isComma(value))
             return false;
     }
     if (settings->length()) {

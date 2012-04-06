@@ -122,6 +122,7 @@ String CSSWrapShapePolygon::cssText() const
     DEFINE_STATIC_LOCAL(const String, polygonParenEvenOdd, ("polygon(evenodd, "));
     DEFINE_STATIC_LOCAL(const String, polygonParenNonZero, ("polygon(nonzero, "));
     DEFINE_STATIC_LOCAL(const String, comma, (", "));
+    DEFINE_STATIC_LOCAL(const String, space, (" "));
 
     StringBuilder result;
     result.reserveCapacity(32);
@@ -134,9 +135,9 @@ String CSSWrapShapePolygon::cssText() const
 
     for (unsigned i = 0; i < m_values.size(); i += 2) {
         if (i)
-            result.append(' ');
+            result.append(comma);
         result.append(m_values.at(i)->cssText());
-        result.append(comma);
+        result.append(space);
         result.append(m_values.at(i + 1)->cssText());
     }
 

@@ -63,9 +63,9 @@ test("circle(10px, 20px, 30px)", "circle(10px, 20px, 30px)");
 
 test("ellipse(10px, 20px, 30px, 40px)", "ellipse(10px, 20px, 30px, 40px)");
 
-test("polygon(10px, 20px 30px, 40px 40px, 50px)", "polygon(nonzero, 10px, 20px 30px, 40px 40px, 50px)");
-test("polygon(evenodd, 10px, 20px 30px, 40px 40px, 50px)", "polygon(evenodd, 10px, 20px 30px, 40px 40px, 50px)");
-test("polygon(nonzero, 10px, 20px 30px, 40px 40px, 50px)", "polygon(nonzero, 10px, 20px 30px, 40px 40px, 50px)");
+test("polygon(10px 20px, 30px 40px, 40px 50px)", "polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)");
+test("polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)", "polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)");
+test("polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)", "polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)");
 
 shouldBeEqualToString('testNotInherited("auto", "rectangle(10px, 20px, 30px, 40px)")', "parent: auto, child: rectangle(10px, 20px, 30px, 40px)");
 shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "initial")', "parent: rectangle(10px, 20px, 30px, 40px), child: auto");
@@ -99,8 +99,8 @@ negative_test("ellipse(10px, 20px, 30px)");
 negative_test("ellipse(10px 20px 30px 40px)");
 
 negative_test("polygon()");
-negative_test("polygon(evenodd 10px, 20px 30px, 40px 40px, 50px)");
-negative_test("polygon(nonzero 10px, 20px 30px, 40px 40px, 50px)");
+negative_test("polygon(evenodd 10px 20px, 30px 40px, 40px 50px)");
+negative_test("polygon(nonzero 10px 20px, 30px 40px, 40px 50px)");
 negative_test("polygon(nonzero)");
 negative_test("polygon(evenodd)");
 negative_test("polygon(10px)");
