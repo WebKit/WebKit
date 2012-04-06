@@ -670,7 +670,13 @@ static LayoutRect sizingBox(RenderObject* renderer)
         return LayoutRect();
 
     RenderBox* box = toRenderBox(renderer);
-    return box->style()->boxSizing() == CONTENT_BOX ? box->contentBoxRect() : box->borderBoxRect();
+    if (box->style()->boxSizing() == BORDER_BOX)
+        return box->borderBoxRect();
+    LayoutUnit cssPaddingLeft = box->paddingLeft(ExcludeIntrinsicPadding);
+    LayoutUnit cssPaddingTop = box->paddingTop(ExcludeIntrinsicPadding);
+    LayoutUnit cssWidth = box->clientWidth() - cssPaddingLeft - box->paddingRight(ExcludeIntrinsicPadding);
+    LayoutUnit cssHeight = box->clientHeight() - cssPaddingTop - box->paddingBottom(ExcludeIntrinsicPadding);
+    return LayoutRect(box->borderLeft() + cssPaddingLeft, box->borderTop() + cssPaddingTop, cssWidth, cssHeight);
 }
 
 static inline bool hasCompositedLayer(RenderObject* renderer)

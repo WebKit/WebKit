@@ -137,7 +137,7 @@ public:
     virtual IntRect borderBoundingBox() const { return borderBoxRect(); } 
 
     // The content area of the box (excludes padding and border).
-    LayoutRect contentBoxRect(PaddingOptions paddingOption = ExcludeIntrinsicPadding) const { return LayoutRect(borderLeft() + paddingLeft(paddingOption), borderTop() + paddingTop(paddingOption), contentWidth(paddingOption), contentHeight(paddingOption)); }
+    LayoutRect contentBoxRect() const { return LayoutRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), contentWidth(), contentHeight()); }
     // The content box in absolute coords. Ignores transforms.
     IntRect absoluteContentBox() const;
     // The content box converted to absolute coords (taking transforms into account).
@@ -184,10 +184,10 @@ public:
     
     void updateLayerTransform();
 
-    LayoutUnit contentWidth(PaddingOptions paddingOption = ExcludeIntrinsicPadding) const { return clientWidth() - paddingLeft(paddingOption) - paddingRight(paddingOption); }
-    LayoutUnit contentHeight(PaddingOptions paddingOption = ExcludeIntrinsicPadding) const { return clientHeight() - paddingTop(paddingOption) - paddingBottom(paddingOption); }
-    LayoutUnit contentLogicalWidth(PaddingOptions paddingOption = ExcludeIntrinsicPadding) const { return style()->isHorizontalWritingMode() ? contentWidth(paddingOption) : contentHeight(paddingOption); }
-    LayoutUnit contentLogicalHeight(PaddingOptions paddingOption = ExcludeIntrinsicPadding) const { return style()->isHorizontalWritingMode() ? contentHeight(paddingOption) : contentWidth(paddingOption); }
+    LayoutUnit contentWidth() const { return clientWidth() - paddingLeft() - paddingRight(); }
+    LayoutUnit contentHeight() const { return clientHeight() - paddingTop() - paddingBottom(); }
+    LayoutUnit contentLogicalWidth() const { return style()->isHorizontalWritingMode() ? contentWidth() : contentHeight(); }
+    LayoutUnit contentLogicalHeight() const { return style()->isHorizontalWritingMode() ? contentHeight() : contentWidth(); }
 
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)
     // to return the remaining width on a given line (and the height of a single line).

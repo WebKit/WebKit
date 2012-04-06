@@ -946,7 +946,7 @@ LayoutUnit RenderTableSection::firstLineBoxBaseline() const
         const CellStruct& cs = firstRow.at(i);
         const RenderTableCell* cell = cs.primaryCell();
         if (cell)
-            firstLineBaseline = max(firstLineBaseline, cell->logicalTop() + cell->paddingBefore() + cell->borderBefore() + cell->contentLogicalHeight(IncludeIntrinsicPadding));
+            firstLineBaseline = max(firstLineBaseline, cell->logicalTop() + cell->paddingBefore() + cell->borderBefore() + cell->contentLogicalHeight());
     }
 
     return firstLineBaseline;

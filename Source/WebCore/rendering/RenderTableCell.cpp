@@ -327,7 +327,7 @@ LayoutUnit RenderTableCell::cellBaselinePosition() const
     LayoutUnit firstLineBaseline = firstLineBoxBaseline();
     if (firstLineBaseline != -1)
         return firstLineBaseline;
-    return paddingBefore() + borderBefore() + contentLogicalHeight(IncludeIntrinsicPadding);
+    return paddingBefore() + borderBefore() + contentLogicalHeight();
 }
 
 void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
