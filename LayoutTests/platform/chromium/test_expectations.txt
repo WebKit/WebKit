@@ -3061,7 +3061,7 @@ BUGWK62684 WIN LINUX : fast/ruby/overhang-horizontal.html = FAIL
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
-// Many WIN SVG tests containing text are flaky. It seems differen fonts are used at different times.
+// Many WIN SVG tests containing text are flaky. It seems different fonts are used at different times.
 BUGWK83303 WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
 BUGWK83303 WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container-standalone.svg = IMAGE PASS
@@ -3342,8 +3342,6 @@ BUGCR109276 LINUX : http/tests/appcache/resource-redirect.html = PASS CRASH
 
 BUGWK75633 : fast/media/viewport-media-query.html = PASS IMAGE+TEXT
 
-BUGWK75696 MAC LINUX DEBUG : svg/text/text-style-recalc-crash.html = PASS TIMEOUT
-
 BUGWK75716 : fullscreen/video-controls-drag.html = TEXT
 
 BUGWK75786 SKIP : compositing/tiled-layers-hidpi.html = TIMEOUT
@@ -3368,9 +3366,11 @@ BUGWK76488 : css3/images/cross-fade-background-size.html = IMAGE IMAGE+TEXT
 
 BUGWK81542 SNOWLEOPARD : css3/images/cross-fade-invalidation.html = IMAGE PASS
 
+// Failure: drawing a filled shadow for a fill=transparent rectangle.
 BUGKW76557 : svg/custom/transform-with-shadow-and-gradient.svg = IMAGE
 
-BUGWK76558 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TEXT
+// The test needs fixing. Flakiness is common across all Mac platforms, not just chromium.
+BUGWK25817 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TEXT
 
 // rebaseline when skia 3398 lands
 BUGEPOGER : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
