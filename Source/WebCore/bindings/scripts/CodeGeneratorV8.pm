@@ -2967,12 +2967,7 @@ END
 
             my @args = ();
             foreach my $param (@params) {
-                my $arrayType = $codeGenerator->GetArrayType($param->type);
-                if ($arrayType) {
-                    push(@args, GetNativeTypeForCallbacks("${arrayType}Array") . " " . $param->name);
-                } else {
-                    push(@args, GetNativeTypeForCallbacks($param->type) . " " . $param->name);
-                }
+                push(@args, GetNativeTypeForCallbacks($param->type) . " " . $param->name);
             }
             push(@headerContent, join(", ", @args));
             push(@headerContent, ");\n");
@@ -3040,33 +3035,18 @@ END
                 next;
             }
 
-            AddIncludesForType($function->signature->type); 
+            AddIncludesForType($function->signature->type);
+            push(@implContent, "\n" . GetNativeTypeForCallbacks($function->signature->type) . " ${className}::" . $function->signature->name . "(");
 
             my @args = ();
-            my @argsCheck;
             foreach my $param (@params) {
-                my $arrayType = $codeGenerator->GetArrayType($param->type);
-                if ($arrayType) {
-                    AddIncludesForType($arrayType);
-                    my $paramName = $param->name;
-                    push(@implContent, "typedef Vector<RefPtr<${arrayType}> > ${arrayType}Array;\n");
-                    push(@args, GetNativeTypeForCallbacks("${arrayType}Array") . " " . $paramName);
-                    push(@argsCheck, <<END);
-    ASSERT(${paramName});
-    if (!${paramName})
-        return true;
-END
-                } else {
-                    AddIncludesForType($param->type);
-                    push(@args, GetNativeTypeForCallbacks($param->type) . " " . $param->name);
-                }
+                AddIncludesForType($param->type);
+                push(@args, GetNativeTypeForCallbacks($param->type) . " " . $param->name);
             }
-            push(@implContent, "\n" . GetNativeTypeForCallbacks($function->signature->type) . " ${className}::" . $function->signature->name . "(");
             push(@implContent, join(", ", @args));
 
             push(@implContent, ")\n");
             push(@implContent, "{\n");
-            push(@implContent, "@argsCheck\n") if @argsCheck;
             push(@implContent, "    if (!canInvokeCallback())\n");
             push(@implContent, "        return true;\n\n");
             push(@implContent, "    v8::HandleScope handleScope;\n\n");
@@ -3078,17 +3058,6 @@ END
             @args = ();
             foreach my $param (@params) {
                 my $paramName = $param->name;
-                my @GenerateEventListenerImpl = ();
-                if ($codeGenerator->GetArrayType($param->type)) {
-                    push(@implContent, <<END);
-    v8::Local<v8::Array> ${paramName}Array = v8::Array::New(${paramName}->size());
-    for (size_t i = 0; i < ${paramName}->size(); ++i)
-        ${paramName}Array->Set(v8::Uint32::New(i), toV8(${paramName}->at(i).get()));
-
-END
-                    push(@args, "        ${paramName}Array");
-                    next;
-                }
                 push(@implContent, "    v8::Handle<v8::Value> ${paramName}Handle = " . NativeToJSValue($param, $paramName) . ";\n");
                 push(@implContent, "    if (${paramName}Handle.IsEmpty()) {\n");
                 push(@implContent, "        if (!isScriptControllerTerminating())\n");
@@ -3106,11 +3075,7 @@ END
                 push(@implContent, "\n    v8::Handle<v8::Value> *argv = 0;\n\n");
             }
             push(@implContent, "    bool callbackReturnValue = false;\n");
-            if ($codeGenerator->IsCallbackWithArrayType($dataNode, @params)) {
-                push(@implContent, "    return !invokeCallback(m_callback, v8::Handle<v8::Object>::Cast(observerHandle), " . scalar(@params) . ", argv, callbackReturnValue, scriptExecutionContext());\n");
-            } else {
-                push(@implContent, "    return !invokeCallback(m_callback, " . scalar(@params) . ", argv, callbackReturnValue, scriptExecutionContext());\n");
-            }
+            push(@implContent, "    return !invokeCallback(m_callback, " . scalar(@params) . ", argv, callbackReturnValue, scriptExecutionContext());\n");
             push(@implContent, "}\n");
         }
     }

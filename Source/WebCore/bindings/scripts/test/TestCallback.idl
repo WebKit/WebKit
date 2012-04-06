@@ -40,6 +40,5 @@ module test {
       [Custom] long customCallback(in Class5 class5Param, in Class6 class6Param);
       boolean callbackWithStringList(in DOMStringList listParam);
       boolean callbackWithBoolean(in boolean boolParam);
-      boolean handleEvent(in sequence<MutationRecord> mutations, in WebKitMutationObserver observer);
     };
 }
