@@ -57,7 +57,10 @@ public:
     bool prepareContentsTexture(LayerRendererChromium*);
     void releaseContentsTexture();
 
-    void draw(LayerRendererChromium*, const FloatRect& surfaceDamageRect);
+    void setScissorRect(LayerRendererChromium*, const FloatRect& surfaceDamageRect) const;
+
+    void drawContents(LayerRendererChromium*);
+    void drawReplica(LayerRendererChromium*);
 
     String name() const;
     void dumpSurface(TextStream&, int indent) const;
@@ -127,7 +130,7 @@ public:
 
     int owningLayerId() const;
 
-    bool hasReplica();
+    bool hasReplica() const;
 
     void resetPropertyChangedFlag() { m_surfacePropertyChanged = false; }
     bool surfacePropertyChanged() const;

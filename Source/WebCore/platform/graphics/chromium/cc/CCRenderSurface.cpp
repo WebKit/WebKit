@@ -104,9 +104,34 @@ void CCRenderSurface::releaseContentsTexture()
     m_contentsTexture->unreserve();
 }
 
-void CCRenderSurface::draw(LayerRendererChromium* layerRenderer, const FloatRect& surfaceDamageRect)
+void CCRenderSurface::setScissorRect(LayerRendererChromium* layerRenderer, const FloatRect& surfaceDamageRect) const
+{
+    if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerClipping() && layerRenderer->capabilities().usingPartialSwap) {
+        FloatRect clipAndDamageRect = m_clipRect;
+        clipAndDamageRect.intersect(surfaceDamageRect);
+        layerRenderer->setScissorToRect(enclosingIntRect(clipAndDamageRect));
+    } else if (layerRenderer->capabilities().usingPartialSwap)
+        layerRenderer->setScissorToRect(enclosingIntRect(surfaceDamageRect));
+    else if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerClipping())
+        layerRenderer->setScissorToRect(m_clipRect);
+    else
+        GLC(layerRenderer->context(), layerRenderer->context()->disable(GraphicsContext3D::SCISSOR_TEST));
+}
+
+void CCRenderSurface::drawContents(LayerRendererChromium* layerRenderer)
 {
     if (m_skipsDraw || !m_contentsTexture)
+        return;
+
+    // FIXME: Cache this value so that we don't have to do it for both the surface and its replica.
+    SkBitmap filterBitmap = applyFilters(layerRenderer);
+    drawLayer(layerRenderer, m_maskLayer, m_drawTransform, filterBitmap);
+}
+
+void CCRenderSurface::drawReplica(LayerRendererChromium* layerRenderer)
+{
+    ASSERT(hasReplica());
+    if (!hasReplica() || m_skipsDraw || !m_contentsTexture)
         return;
 
     SkBitmap filterBitmap = applyFilters(layerRenderer);
@@ -120,22 +145,7 @@ void CCRenderSurface::draw(LayerRendererChromium* layerRenderer, const FloatRect
     if (!m_maskLayer && m_owningLayer->replicaLayer())
         replicaMaskLayer = m_owningLayer->replicaLayer()->maskLayer();
 
-    if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerClipping() && layerRenderer->capabilities().usingPartialSwap) {
-        FloatRect clipAndDamageRect = m_clipRect;
-        clipAndDamageRect.intersect(surfaceDamageRect);
-        layerRenderer->setScissorToRect(enclosingIntRect(clipAndDamageRect));
-    } else if (layerRenderer->capabilities().usingPartialSwap)
-        layerRenderer->setScissorToRect(enclosingIntRect(surfaceDamageRect));
-    else if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerClipping())
-        layerRenderer->setScissorToRect(m_clipRect);
-    else
-        GLC(layerRenderer->context(), layerRenderer->context()->disable(GraphicsContext3D::SCISSOR_TEST));
-
-    // Reflection draws before the layer.
-    if (m_owningLayer->replicaLayer())
-        drawLayer(layerRenderer, replicaMaskLayer, m_replicaDrawTransform, filterBitmap);
-
-    drawLayer(layerRenderer, m_maskLayer, m_drawTransform, filterBitmap);
+    drawLayer(layerRenderer, replicaMaskLayer, m_replicaDrawTransform, filterBitmap);
 }
 
 void CCRenderSurface::drawLayer(LayerRendererChromium* layerRenderer, CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform, const SkBitmap& filterBitmap)
@@ -273,7 +283,7 @@ int CCRenderSurface::owningLayerId() const
     return m_owningLayer ? m_owningLayer->id() : 0;
 }
 
-bool CCRenderSurface::hasReplica()
+bool CCRenderSurface::hasReplica() const
 {
     return m_owningLayer->replicaLayer();
 }

@@ -515,7 +515,11 @@ void LayerRendererChromium::drawDebugBorderQuad(const CCDebugBorderDrawQuad* qua
 void LayerRendererChromium::drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad* quad)
 {
     CCLayerImpl* layer = quad->layer();
-    layer->renderSurface()->draw(this, quad->surfaceDamageRect());
+    layer->renderSurface()->setScissorRect(this, quad->surfaceDamageRect());
+    if (quad->isReplica())
+        layer->renderSurface()->drawReplica(this);
+    else
+        layer->renderSurface()->drawContents(this);
     layer->renderSurface()->releaseContentsTexture();
 }
 
@@ -1197,7 +1201,11 @@ void LayerRendererChromium::copyOffscreenTextureToDisplay()
         drawTransform.translate3d(0.5 * m_defaultRenderSurface->contentRect().width(), 0.5 * m_defaultRenderSurface->contentRect().height(), 0);
         m_defaultRenderSurface->setDrawTransform(drawTransform);
         m_defaultRenderSurface->setDrawOpacity(1);
-        m_defaultRenderSurface->draw(this, m_defaultRenderSurface->contentRect());
+
+        m_defaultRenderSurface->setScissorRect(this, m_defaultRenderSurface->contentRect());
+        if (m_defaultRenderSurface->hasReplica())
+            m_defaultRenderSurface->drawReplica(this);
+        m_defaultRenderSurface->drawContents(this);
     }
 }
 

@@ -29,15 +29,16 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCRenderSurfaceDrawQuad> CCRenderSurfaceDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer, const FloatRect& surfaceDamageRect)
+PassOwnPtr<CCRenderSurfaceDrawQuad> CCRenderSurfaceDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer, const FloatRect& surfaceDamageRect, bool isReplica)
 {
-    return adoptPtr(new CCRenderSurfaceDrawQuad(sharedQuadState, quadRect, layer, surfaceDamageRect));
+    return adoptPtr(new CCRenderSurfaceDrawQuad(sharedQuadState, quadRect, layer, surfaceDamageRect, isReplica));
 }
 
-CCRenderSurfaceDrawQuad::CCRenderSurfaceDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer, const FloatRect& surfaceDamageRect)
+CCRenderSurfaceDrawQuad::CCRenderSurfaceDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer, const FloatRect& surfaceDamageRect, bool isReplica)
     : CCDrawQuad(sharedQuadState, CCDrawQuad::RenderSurface, quadRect)
     , m_layer(layer)
     , m_surfaceDamageRect(surfaceDamageRect)
+    , m_isReplica(isReplica)
 {
     ASSERT(m_layer);
 }
