@@ -3057,7 +3057,6 @@ BUGWK73030 MAC DEBUG : http/tests/loading/307-after-303-after-post.html = PASS T
 // Tests that are known to fail on Mac10.6 with Skia graphics.
 BUGWK68436 SNOWLEOPARD DEBUG : fast/repaint/background-clip-text.html = TIMEOUT
 BUGWK68436 SNOWLEOPARD : fast/repaint/text-emphasis-h.html = TIMEOUT IMAGE
-BUGWK68436 SNOWLEOPARD : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia graphics.
 BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD : platform/chromium/virtual/gpu/fast/canvas/set-colors.html = TEXT
