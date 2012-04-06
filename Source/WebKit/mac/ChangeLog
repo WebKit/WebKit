@@ -1,3 +1,11 @@
+2012-04-06  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10912476> HiDPI: Have canvas use a hidpi backing store, but downsample upon access
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig: Added ENABLE_HIGH_DPI_CANVAS.
+
 2012-04-05  Jia Pu  <jpu@apple.com>
 
         Move correction panel related functions from EditorClient into separated AlternativeTextClient class.

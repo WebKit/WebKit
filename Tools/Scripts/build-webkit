@@ -90,6 +90,7 @@ my (
     $fullscreenAPISupport,
     $gamepadSupport,
     $geolocationSupport,
+    $highDPICanvasSupport,
     $iconDatabaseSupport,
     $imageResizerSupport,
     $indexedDatabaseSupport,
@@ -218,6 +219,9 @@ my @features = (
 
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$geolocationSupport },
+
+    { option => "high-dpi-canvas", desc => "Toggle high-DPI canvas backing store support",
+      define => "ENABLE_HIGH_DPI_CANVAS", default => (isAppleWebKit()), value => \$highDPICanvasSupport },
 
     { option => "icon-database", desc => "Toggle Icon database support",
       define => "ENABLE_ICONDATABASE", default => 1, value => \$iconDatabaseSupport },
