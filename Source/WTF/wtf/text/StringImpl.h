@@ -459,8 +459,11 @@ public:
     uint64_t toUInt64(bool* ok = 0); // ignores trailing garbage
     intptr_t toIntPtr(bool* ok = 0); // ignores trailing garbage
 
-    double toDouble(bool* ok = 0, bool* didReadNumber = 0);
-    float toFloat(bool* ok = 0, bool* didReadNumber = 0);
+    // FIXME: Like the strict functions above, these give false for "ok" when there is trailing garbage.
+    // Like the non-strict functions above, these return the value when there is trailing garbage.
+    // It would be better if these were more consistent with the above functions instead.
+    double toDouble(bool* ok = 0);
+    float toFloat(bool* ok = 0);
 
     WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> lower();
     WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> upper();

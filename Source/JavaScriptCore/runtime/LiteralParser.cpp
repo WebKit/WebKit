@@ -529,16 +529,8 @@ TokenType LiteralParser<CharType>::Lexer::lexNumber(LiteralParserToken<CharType>
     
     token.type = TokNumber;
     token.end = m_ptr;
-    Vector<char, 64> buffer(token.end - token.start + 1);
-    int i;
-    for (i = 0; i < token.end - token.start; i++) {
-        ASSERT(static_cast<char>(token.start[i]) == token.start[i]);
-        buffer[i] = static_cast<char>(token.start[i]);
-    }
-    buffer[i] = 0;
-    char* end;
-    token.numberToken = WTF::strtod<WTF::AllowTrailingJunk, WTF::DisallowTrailingSpaces>(buffer.data(), &end);
-    ASSERT(buffer.data() + (token.end - token.start) == end);
+    size_t parsedLength;
+    token.numberToken = parseDouble(token.start, token.end - token.start, parsedLength);
     return TokNumber;
 }
 

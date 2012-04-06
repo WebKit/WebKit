@@ -737,18 +737,18 @@ intptr_t StringImpl::toIntPtr(bool* ok)
     return charactersToIntPtr(characters16(), m_length, ok);
 }
 
-double StringImpl::toDouble(bool* ok, bool* didReadNumber)
+double StringImpl::toDouble(bool* ok)
 {
     if (is8Bit())
-        return charactersToDouble(characters8(), m_length, ok, didReadNumber);
-    return charactersToDouble(characters16(), m_length, ok, didReadNumber);
+        return charactersToDouble(characters8(), m_length, ok);
+    return charactersToDouble(characters16(), m_length, ok);
 }
 
-float StringImpl::toFloat(bool* ok, bool* didReadNumber)
+float StringImpl::toFloat(bool* ok)
 {
     if (is8Bit())
-        return charactersToFloat(characters8(), m_length, ok, didReadNumber);
-    return charactersToFloat(characters16(), m_length, ok, didReadNumber);
+        return charactersToFloat(characters8(), m_length, ok);
+    return charactersToFloat(characters16(), m_length, ok);
 }
 
 bool equalIgnoringCase(const LChar* a, const LChar* b, unsigned length)

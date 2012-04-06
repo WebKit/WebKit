@@ -409,21 +409,6 @@ namespace double_conversion {
     }
     
     
-    // Consumes the given substring from the iterator.
-    // Returns false, if the substring does not match.
-    static bool ConsumeSubString(const char** current,
-                                 const char* end,
-                                 const char* substring) {
-        ASSERT(**current == *substring);
-        for (substring++; *substring != '\0'; substring++) {
-            ++*current;
-            if (*current == end || **current != *substring) return false;
-        }
-        ++*current;
-        return true;
-    }
-    
-    
     // Maximum number of significant digits in decimal representation.
     // The longest possible double in decimal representation is
     // (2^53 - 1) * 2 ^ -1074 that is (2 ^ 53 - 1) * 5 ^ 1074 / 10 ^ 1074
@@ -434,175 +419,28 @@ namespace double_conversion {
     const int kMaxSignificantDigits = 772;
     
     
-    // Returns true if whitespace found and false if the end has reached.
-    static inline bool AdvanceToNonspace(const char** current, const char* end) {
-        while (*current != end) {
-            switch(**current) {
-            case ' ':
-            case '\t':
-            case '\v':
-            case '\r':
-            case '\f':
-            case '\n': ++*current; continue;
-            default: return true;
-            }
-        }
-        return false;
-    }
-    
-    
-    static bool isDigit(int x, int radix) {
-        return (x >= '0' && x <= '9' && x < '0' + radix)
-        || (radix > 10 && x >= 'a' && x < 'a' + radix - 10)
-        || (radix > 10 && x >= 'A' && x < 'A' + radix - 10);
-    }
-    
-    
     static double SignedZero(bool sign) {
         return sign ? -0.0 : 0.0;
     }
     
     
-    // Parsing integers with radix 2, 4, 8, 16, 32. Assumes current != end.
-    template <int radix_log_2>
-    static double RadixStringToDouble(const char* current,
-                                      const char* end,
-                                      bool sign,
-                                      bool allow_trailing_junk,
-                                      double junk_string_value,
-                                      const char** trailing_pointer) {
-        ASSERT(current != end);
-        
-        // Skip leading 0s.
-        while (*current == '0') {
-            ++current;
-            if (current == end) {
-                *trailing_pointer = end;
-                return SignedZero(sign);
-            }
-        }
-        
-        int64_t number = 0;
-        int exponent = 0;
-        const int radix = (1 << radix_log_2);
-        
-        do {
-            int digit;
-            if (*current >= '0' && *current <= '9' && *current < '0' + radix) {
-                digit = static_cast<char>(*current) - '0';
-            } else if (radix > 10 && *current >= 'a' && *current < 'a' + radix - 10) {
-                digit = static_cast<char>(*current) - 'a' + 10;
-            } else if (radix > 10 && *current >= 'A' && *current < 'A' + radix - 10) {
-                digit = static_cast<char>(*current) - 'A' + 10;
-            } else {
-                if (allow_trailing_junk || !AdvanceToNonspace(&current, end)) {
-                    break;
-                } else {
-                    return junk_string_value;
-                }
-            }
-            
-            number = number * radix + digit;
-            int overflow = static_cast<int>(number >> 53);
-            if (overflow != 0) {
-                // Overflow occurred. Need to determine which direction to round the
-                // result.
-                int overflow_bits_count = 1;
-                while (overflow > 1) {
-                    overflow_bits_count++;
-                    overflow >>= 1;
-                }
-                
-                int dropped_bits_mask = ((1 << overflow_bits_count) - 1);
-                int dropped_bits = static_cast<int>(number) & dropped_bits_mask;
-                number >>= overflow_bits_count;
-                exponent = overflow_bits_count;
-                
-                bool zero_tail = true;
-                while (true) {
-                    ++current;
-                    if (current == end || !isDigit(*current, radix)) break;
-                    zero_tail = zero_tail && *current == '0';
-                    exponent += radix_log_2;
-                }
-                
-                if (!allow_trailing_junk && AdvanceToNonspace(&current, end)) {
-                    return junk_string_value;
-                }
-                
-                int middle_value = (1 << (overflow_bits_count - 1));
-                if (dropped_bits > middle_value) {
-                    number++;  // Rounding up.
-                } else if (dropped_bits == middle_value) {
-                    // Rounding to even to consistency with decimals: half-way case rounds
-                    // up if significant part is odd and down otherwise.
-                    if ((number & 1) != 0 || !zero_tail) {
-                        number++;  // Rounding up.
-                    }
-                }
-                
-                // Rounding up may cause overflow.
-                if ((number & ((int64_t)1 << 53)) != 0) {
-                    exponent++;
-                    number >>= 1;
-                }
-                break;
-            }
-            ++current;
-        } while (current != end);
-        
-        ASSERT(number < ((int64_t)1 << 53));
-        ASSERT(static_cast<int64_t>(static_cast<double>(number)) == number);
-        
-        *trailing_pointer = current;
-        
-        if (exponent == 0) {
-            if (sign) {
-                if (number == 0) return -0.0;
-                number = -number;
-            }
-            return static_cast<double>(number);
-        }
-        
-        ASSERT(number != 0);
-        return Double(DiyFp(number, exponent)).value();
-    }
-    
-    
     double StringToDoubleConverter::StringToDouble(
                                                    const char* input,
-                                                   int length,
-                                                   int* processed_characters_count) {
+                                                   size_t length,
+                                                   size_t* processed_characters_count) {
         const char* current = input;
         const char* end = input + length;
         
         *processed_characters_count = 0;
         
-        const bool allow_trailing_junk = (flags_ & ALLOW_TRAILING_JUNK) != 0;
-        const bool allow_leading_spaces = (flags_ & ALLOW_LEADING_SPACES) != 0;
-        const bool allow_trailing_spaces = (flags_ & ALLOW_TRAILING_SPACES) != 0;
-        const bool allow_spaces_after_sign = (flags_ & ALLOW_SPACES_AFTER_SIGN) != 0;
-        
         // To make sure that iterator dereferencing is valid the following
         // convention is used:
         // 1. Each '++current' statement is followed by check for equality to 'end'.
-        // 2. If AdvanceToNonspace returned false then current == end.
         // 3. If 'current' becomes equal to 'end' the function returns or goes to
         // 'parsing_done'.
         // 4. 'current' is not dereferenced after the 'parsing_done' label.
         // 5. Code before 'parsing_done' may rely on 'current != end'.
-        if (current == end) return empty_string_value_;
-        
-        if (allow_leading_spaces || allow_trailing_spaces) {
-            if (!AdvanceToNonspace(&current, end)) {
-                *processed_characters_count = current - input;
-                return empty_string_value_;
-            }
-            if (!allow_leading_spaces && (input != current)) {
-                // No leading spaces allowed, but AdvanceToNonspace moved forward.
-                return junk_string_value_;
-            }
-        }
+        if (current == end) return 0.0;
         
         // The longest form of simplified number is: "-<significant digits>.1eXXX\0".
         const int kBufferSize = kMaxSignificantDigits + 10;
@@ -620,51 +458,7 @@ namespace double_conversion {
         if (*current == '+' || *current == '-') {
             sign = (*current == '-');
             ++current;
-            const char* next_non_space = current;
-            // Skip following spaces (if allowed).
-            if (!AdvanceToNonspace(&next_non_space, end)) return junk_string_value_;
-            if (!allow_spaces_after_sign && (current != next_non_space)) {
-                return junk_string_value_;
-            }
-            current = next_non_space;
-        }
-        
-        if (infinity_symbol_ != NULL) {
-            if (*current == infinity_symbol_[0]) {
-                if (!ConsumeSubString(&current, end, infinity_symbol_)) {
-                    return junk_string_value_;
-                }
-                
-                if (!(allow_trailing_spaces || allow_trailing_junk) && (current != end)) {
-                    return junk_string_value_;
-                }
-                if (!allow_trailing_junk && AdvanceToNonspace(&current, end)) {
-                    return junk_string_value_;
-                }
-                
-                ASSERT(buffer_pos == 0);
-                *processed_characters_count = current - input;
-                return sign ? -Double::Infinity() : Double::Infinity();
-            }
-        }
-        
-        if (nan_symbol_ != NULL) {
-            if (*current == nan_symbol_[0]) {
-                if (!ConsumeSubString(&current, end, nan_symbol_)) {
-                    return junk_string_value_;
-                }
-                
-                if (!(allow_trailing_spaces || allow_trailing_junk) && (current != end)) {
-                    return junk_string_value_;
-                }
-                if (!allow_trailing_junk && AdvanceToNonspace(&current, end)) {
-                    return junk_string_value_;
-                }
-                
-                ASSERT(buffer_pos == 0);
-                *processed_characters_count = current - input;
-                return sign ? -Double::NaN() : Double::NaN();
-            }
+            if (current == end) return 0.0;
         }
         
         bool leading_zero = false;
@@ -677,27 +471,6 @@ namespace double_conversion {
             
             leading_zero = true;
             
-            // It could be hexadecimal value.
-            if ((flags_ & ALLOW_HEX) && (*current == 'x' || *current == 'X')) {
-                ++current;
-                if (current == end || !isDigit(*current, 16)) {
-                    return junk_string_value_;  // "0x".
-                }
-                
-                const char* tail_pointer = NULL;
-                double result = RadixStringToDouble<4>(current,
-                                                       end,
-                                                       sign,
-                                                       allow_trailing_junk,
-                                                       junk_string_value_,
-                                                       &tail_pointer);
-                if (tail_pointer != NULL) {
-                    if (allow_trailing_spaces) AdvanceToNonspace(&tail_pointer, end);
-                    *processed_characters_count = tail_pointer - input;
-                }
-                return result;
-            }
-            
             // Ignore leading zeros in the integer part.
             while (*current == '0') {
                 ++current;
@@ -708,43 +481,31 @@ namespace double_conversion {
             }
         }
         
-        bool octal = leading_zero && (flags_ & ALLOW_OCTALS) != 0;
-        
         // Copy significant digits of the integer part (if any) to the buffer.
         while (*current >= '0' && *current <= '9') {
             if (significant_digits < kMaxSignificantDigits) {
                 ASSERT(buffer_pos < kBufferSize);
                 buffer[buffer_pos++] = static_cast<char>(*current);
                 significant_digits++;
-                // Will later check if it's an octal in the buffer.
             } else {
                 insignificant_digits++;  // Move the digit into the exponential part.
                 nonzero_digit_dropped = nonzero_digit_dropped || *current != '0';
             }
-            octal = octal && *current < '8';
             ++current;
             if (current == end) goto parsing_done;
         }
         
-        if (significant_digits == 0) {
-            octal = false;
-        }
-        
         if (*current == '.') {
-            if (octal && !allow_trailing_junk) return junk_string_value_;
-            if (octal) goto parsing_done;
-            
             ++current;
             if (current == end) {
                 if (significant_digits == 0 && !leading_zero) {
-                    return junk_string_value_;
+                    return 0.0;
                 } else {
                     goto parsing_done;
                 }
             }
             
             if (significant_digits == 0) {
-                // octal = false;
                 // Integer part consists of 0 or is absent. Significant digits start after
                 // leading zeros (if any).
                 while (*current == '0') {
@@ -778,40 +539,31 @@ namespace double_conversion {
             // If exponent < 0 then string was [+-]\.0*...
             // If significant_digits != 0 the string is not equal to 0.
             // Otherwise there are no digits in the string.
-            return junk_string_value_;
+            return 0.0;
         }
         
         // Parse exponential part.
         if (*current == 'e' || *current == 'E') {
-            if (octal && !allow_trailing_junk) return junk_string_value_;
-            if (octal) goto parsing_done;
             ++current;
             if (current == end) {
-                if (allow_trailing_junk) {
-                    goto parsing_done;
-                } else {
-                    return junk_string_value_;
-                }
+                --current;
+                goto parsing_done;
             }
-            char sign = '+';
+            char sign = 0;
             if (*current == '+' || *current == '-') {
                 sign = static_cast<char>(*current);
                 ++current;
                 if (current == end) {
-                    if (allow_trailing_junk) {
-                        goto parsing_done;
-                    } else {
-                        return junk_string_value_;
-                    }
+                    current -= 2;
+                    goto parsing_done;
                 }
             }
             
-            if (current == end || *current < '0' || *current > '9') {
-                if (allow_trailing_junk) {
-                    goto parsing_done;
-                } else {
-                    return junk_string_value_;
-                }
+            if (*current < '0' || *current > '9') {
+                if (sign)
+                    --current;
+                --current;
+                goto parsing_done;
             }
             
             const int max_exponent = INT_MAX / 2;
@@ -832,32 +584,8 @@ namespace double_conversion {
             exponent += (sign == '-' ? -num : num);
         }
         
-        if (!(allow_trailing_spaces || allow_trailing_junk) && (current != end)) {
-            return junk_string_value_;
-        }
-        if (!allow_trailing_junk && AdvanceToNonspace(&current, end)) {
-            return junk_string_value_;
-        }
-        if (allow_trailing_spaces) {
-            AdvanceToNonspace(&current, end);
-        }
-        
     parsing_done:
         exponent += insignificant_digits;
-        
-        if (octal) {
-            double result;
-            const char* tail_pointer = NULL;
-            result = RadixStringToDouble<3>(buffer,
-                                            buffer + buffer_pos,
-                                            sign,
-                                            allow_trailing_junk,
-                                            junk_string_value_,
-                                            &tail_pointer);
-            ASSERT(tail_pointer != NULL);
-            *processed_characters_count = current - input;
-            return result;
-        }
         
         if (nonzero_digit_dropped) {
             buffer[buffer_pos++] = '1';

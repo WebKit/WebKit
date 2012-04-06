@@ -1,3 +1,41 @@
+2012-04-06  Darin Adler  <darin@apple.com>
+
+        Streamline strtod and fix some related problems
+        https://bugs.webkit.org/show_bug.cgi?id=82857
+
+        Reviewed by Geoffrey Garen.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<>::lex): Use parseDouble. Since we have already scanned the number
+        and we know it has only correct characters, leading spaces, trailing junk, and
+        trailing spaces are not a possibility. No need to add a trailing null character.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::parseInt): Changed overflow based 10 case to use parseDouble. No need
+        to allow trailing junk since the code above already allows only numeric digits
+        in the string. This code path is used only in unusual cases, so it's not
+        optimized for 8-bit strings, but easily could be.
+        (JSC::jsStrDecimalLiteral): Removed the allow trailing junk argument to this
+        function template because all the callers are OK with trailing junk. Use the
+        parseDouble function. No need to copy the data into a byte buffer, because
+        parseDouble handles that.
+        (JSC::toDouble): Got rid of the DisallowTrailingJunk argument to the
+        jsStrDecimalLiteral function template. That's OK because this function
+        already checks for trailing junk and handles it appropriately. The old code
+        path was doing it twice.
+        (JSC::parseFloat): Got rid of the AllowTrailingJunk argument to the
+        jsStrDecimalLiteral function template; the template allows junk unconditionally.
+
+        * runtime/LiteralParser.cpp:
+        (JSC::::Lexer::lexNumber): Use parseDouble. Since we have already scanned the number
+        and we know it has only correct characters, leading spaces, trailing junk, and
+        trailing spaces are not a possibility. No need to add a trailing null character.
+        No need to copy the data into a byte buffer, because parseDouble handles that.
+        We could optimize the UChar case even more because we know all the characters
+        are ASCII, but not doing that at this time.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Updated.
+
 2012-04-06  Patrick Gansterer  <paroga@webkit.org>
 
         Remove JSC dependency from GregorianDateTime

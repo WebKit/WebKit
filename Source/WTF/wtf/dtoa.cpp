@@ -3,7 +3,7 @@
  * The author of this software is David M. Gay.
  *
  * Copyright (c) 1991, 2000, 2001 by Lucent Technologies.
- * Copyright (C) 2002, 2005, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2005, 2006, 2007, 2008, 2010, 2012 Apple Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose without fee is hereby granted, provided that this entire notice
@@ -32,55 +32,14 @@
  * file.
  */
 
-/* strtod for IEEE-arithmetic machines.
- *
- * This strtod returns a nearest machine number to the input decimal
- * string (or sets errno to ERANGE).  With IEEE arithmetic, ties are
- * broken by the IEEE round-even rule.  Otherwise ties are broken by
- * biased rounding (add half and chop).
- *
- * Inspired loosely by William D. Clinger's paper "How to Read Floating
- * Point Numbers Accurately" [Proc. ACM SIGPLAN '90, pp. 92-101].
- *
- * Modifications:
- *
- *    1. We only require IEEE double-precision arithmetic (not IEEE double-extended).
- *    2. We get by with floating-point arithmetic in a case that
- *        Clinger missed -- when we're computing d * 10^n
- *        for a small integer d and the integer n is not too
- *        much larger than 22 (the maximum integer k for which
- *        we can represent 10^k exactly), we may be able to
- *        compute (d*10^k) * 10^(e-k) with just one roundoff.
- *    3. Rather than a bit-at-a-time adjustment of the binary
- *        result in the hard case, we use floating-point
- *        arithmetic to determine the adjustment to within
- *        one bit; only in really hard cases do we need to
- *        compute a second residual.
- *    4. Because of 3., we don't need a large table of powers of 10
- *        for ten-to-e (just some small tables, e.g. of 10^k
- *        for 0 <= k <= 22).
- */
-
 #include "config.h"
 #include "dtoa.h"
 
-#if HAVE(ERRNO_H)
-#include <errno.h>
-#endif
-#include <float.h>
-#include <math.h>
-#include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <wtf/AlwaysInline.h>
-#include <wtf/Assertions.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Threading.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
-#include <wtf/dtoa/double-conversion.h>
 
 #if COMPILER(MSVC)
 #pragma warning(disable: 4244)
@@ -647,29 +606,6 @@ static const double tinytens[] = { 1e-16, 1e-32, 1e-64, 1e-128,
 /* flag unnecessarily.  It leads to a song and dance at the end of strtod. */
 #define Scale_Bit 0x10
 #define n_bigtens 5
-
-template<AllowTrailingJunkTag allowTrailingJunk, AllowTrailingSpacesTag allowTrailingSpaces>
-double strtod(const char* s00, char** se)
-{
-    int length = strlen(s00);
-    double_conversion::StringToDoubleConverter converter(
-        (allowTrailingJunk ? double_conversion::StringToDoubleConverter::ALLOW_TRAILING_JUNK : 0) |
-        (allowTrailingSpaces ? double_conversion::StringToDoubleConverter::ALLOW_TRAILING_SPACES : 0) |
-        double_conversion::StringToDoubleConverter::ALLOW_LEADING_SPACES,
-        0.0, 
-        (allowTrailingJunk ? std::numeric_limits<double>::quiet_NaN() : 0.0), 
-        "Infinity", "NaN");
-    int processedCharacterCount = 0;
-    double result = converter.StringToDouble(s00, length, &processedCharacterCount);
-    if (se)
-        *se = const_cast<char*>(s00 + processedCharacterCount);
-    return result;
-}
-
-template double strtod<AllowTrailingJunk, AllowTrailingSpaces>(const char*, char**);
-template double strtod<AllowTrailingJunk, DisallowTrailingSpaces>(const char*, char**);
-template double strtod<DisallowTrailingJunk, AllowTrailingSpaces>(const char*, char**);
-template double strtod<DisallowTrailingJunk, DisallowTrailingSpaces>(const char*, char**);
 
 static ALWAYS_INLINE int quorem(BigInt& b, BigInt& S)
 {
@@ -1362,5 +1298,17 @@ const char* numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToS
     converter.ToFixed(d, decimalPlaces, &builder);
     return builder.Finalize();
 }
+
+namespace Internal {
+
+double parseDoubleFromLongString(const UChar* string, size_t length, size_t& parsedLength)
+{
+    Vector<LChar> conversionBuffer(length);
+    for (size_t i = 0; i < length; ++i)
+        conversionBuffer[i] = isASCII(string[i]) ? string[i] : 0;
+    return parseDouble(conversionBuffer.data(), length, parsedLength);
+}
+
+} // namespace Internal
 
 } // namespace WTF

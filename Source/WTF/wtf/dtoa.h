@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2008, 2012 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -21,13 +21,15 @@
 #ifndef WTF_dtoa_h
 #define WTF_dtoa_h
 
+#include <wtf/ASCIICType.h>
 #include <wtf/dtoa/double-conversion.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WTF {
+
 class Mutex;
 
-extern WTF::Mutex* s_dtoaP5Mutex;
+extern Mutex* s_dtoaP5Mutex;
 
 typedef char DtoaBuffer[80];
 
@@ -35,22 +37,38 @@ WTF_EXPORT_PRIVATE void dtoa(DtoaBuffer result, double dd, bool& sign, int& expo
 WTF_EXPORT_PRIVATE void dtoaRoundSF(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exponent, unsigned& precision);
 WTF_EXPORT_PRIVATE void dtoaRoundDP(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exponent, unsigned& precision);
 
-enum AllowTrailingJunkTag { DisallowTrailingJunk = 0, AllowTrailingJunk };
-enum AllowTrailingSpacesTag { DisallowTrailingSpaces = 0, AllowTrailingSpaces };
-
-// s00: input string. Must not be 0 and must be terminated by 0.
-// se: *se will have the last consumed character position + 1.
-template<AllowTrailingJunkTag allowTrailingJunk, AllowTrailingSpacesTag allowTrailingSpaces>
-double strtod(const char* s00, char** se);
-
 // Size = 80 for sizeof(DtoaBuffer) + some sign bits, decimal point, 'e', exponent digits.
 const unsigned NumberToStringBufferLength = 96;
 typedef char NumberToStringBuffer[NumberToStringBufferLength];
 typedef UChar NumberToUStringBuffer[NumberToStringBufferLength];
+
 WTF_EXPORT_PRIVATE const char* numberToString(double, NumberToStringBuffer);
 const char* numberToFixedPrecisionString(double, unsigned significantFigures, NumberToStringBuffer, bool truncateTrailingZeros = false);
 const char* numberToFixedWidthString(double, unsigned decimalPlaces, NumberToStringBuffer);
 
+double parseDouble(const LChar* string, size_t length, size_t& parsedLength);
+double parseDouble(const UChar* string, size_t length, size_t& parsedLength);
+
+namespace Internal {
+    WTF_EXPORT_PRIVATE double parseDoubleFromLongString(const UChar* string, size_t length, size_t& parsedLength);
+}
+
+inline double parseDouble(const LChar* string, size_t length, size_t& parsedLength)
+{
+    return double_conversion::StringToDoubleConverter::StringToDouble(reinterpret_cast<const char*>(string), length, &parsedLength);
+}
+
+inline double parseDouble(const UChar* string, size_t length, size_t& parsedLength)
+{
+    const size_t conversionBufferSize = 64;
+    if (length > conversionBufferSize)
+        return Internal::parseDoubleFromLongString(string, length, parsedLength);
+    LChar conversionBuffer[conversionBufferSize];
+    for (int i = 0; i < static_cast<int>(length); ++i)
+        conversionBuffer[i] = isASCII(string[i]) ? string[i] : 0;
+    return parseDouble(conversionBuffer, length, parsedLength);
+}
+    
 } // namespace WTF
 
 using WTF::NumberToStringBuffer;
@@ -58,5 +76,6 @@ using WTF::NumberToUStringBuffer;
 using WTF::numberToString;
 using WTF::numberToFixedPrecisionString;
 using WTF::numberToFixedWidthString;
+using WTF::parseDouble;
 
 #endif // WTF_dtoa_h

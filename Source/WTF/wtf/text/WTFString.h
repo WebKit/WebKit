@@ -84,12 +84,15 @@ uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = 0); // ignores trai
 intptr_t charactersToIntPtr(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
 intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 
-WTF_EXPORT_PRIVATE double charactersToDouble(const LChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
-WTF_EXPORT_PRIVATE double charactersToDouble(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
-float charactersToFloat(const LChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
-WTF_EXPORT_PRIVATE float charactersToFloatIgnoringJunk(const LChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
-WTF_EXPORT_PRIVATE float charactersToFloat(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
-WTF_EXPORT_PRIVATE float charactersToFloatIgnoringJunk(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
+// FIXME: Like the strict functions above, these give false for "ok" when there is trailing garbage.
+// Like the non-strict functions above, these return the value when there is trailing garbage.
+// It would be better if these were more consistent with the above functions instead.
+WTF_EXPORT_PRIVATE double charactersToDouble(const LChar*, size_t, bool* ok = 0);
+WTF_EXPORT_PRIVATE double charactersToDouble(const UChar*, size_t, bool* ok = 0);
+float charactersToFloat(const LChar*, size_t, bool* ok = 0);
+WTF_EXPORT_PRIVATE float charactersToFloat(const UChar*, size_t, bool* ok = 0);
+WTF_EXPORT_PRIVATE float charactersToFloat(const LChar*, size_t, size_t& parsedLength);
+WTF_EXPORT_PRIVATE float charactersToFloat(const UChar*, size_t, size_t& parsedLength);
 
 enum FloatConversionFlags {
     ShouldRoundSignificantFigures = 1 << 0,
@@ -311,8 +314,12 @@ public:
     int64_t toInt64(bool* ok = 0) const;
     WTF_EXPORT_PRIVATE uint64_t toUInt64(bool* ok = 0) const;
     WTF_EXPORT_PRIVATE intptr_t toIntPtr(bool* ok = 0) const;
-    WTF_EXPORT_PRIVATE double toDouble(bool* ok = 0, bool* didReadNumber = 0) const;
-    WTF_EXPORT_PRIVATE float toFloat(bool* ok = 0, bool* didReadNumber = 0) const;
+
+    // FIXME: Like the strict functions above, these give false for "ok" when there is trailing garbage.
+    // Like the non-strict functions above, these return the value when there is trailing garbage.
+    // It would be better if these were more consistent with the above functions instead.
+    WTF_EXPORT_PRIVATE double toDouble(bool* ok = 0) const;
+    WTF_EXPORT_PRIVATE float toFloat(bool* ok = 0) const;
 
     bool percentage(int& percentage) const;
 

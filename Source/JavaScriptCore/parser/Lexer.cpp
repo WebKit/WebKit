@@ -1473,14 +1473,14 @@ start:
 inNumberAfterDecimalPoint:
                     parseNumberAfterDecimalPoint();
                 }
-                if ((m_current | 0x20) == 'e')
+                if ((m_current | 0x20) == 'e') {
                     if (!parseNumberAfterExponentIndicator()) {
                         m_lexErrorMessage = "Non-number found after exponent indicator";
                         goto returnError;
                     }
-                // Null-terminate string for strtod.
-                m_buffer8.append('\0');
-                tokenData->doubleValue = WTF::strtod<WTF::AllowTrailingJunk, WTF::DisallowTrailingSpaces>(reinterpret_cast<const char*>(m_buffer8.data()), 0);
+                }
+                size_t parsedLength;
+                tokenData->doubleValue = parseDouble(m_buffer8.data(), m_buffer8.size(), parsedLength);
             }
             token = NUMBER;
         }

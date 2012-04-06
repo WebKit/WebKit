@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -295,16 +295,19 @@ static double parseInt(const UString& s, const CharType* data, int radix)
         number += digit;
         ++p;
     }
-    if (number >= mantissaOverflowLowerBound) {
-        if (radix == 10)
-            number = WTF::strtod<WTF::AllowTrailingJunk, WTF::DisallowTrailingSpaces>(s.substringSharingImpl(firstDigitPosition, p - firstDigitPosition).utf8().data(), 0);
-        else if (radix == 2 || radix == 4 || radix == 8 || radix == 16 || radix == 32)
-            number = parseIntOverflow(s.substringSharingImpl(firstDigitPosition, p - firstDigitPosition).utf8().data(), p - firstDigitPosition, radix);
-    }
 
     // 12. If Z is empty, return NaN.
     if (!sawDigit)
         return std::numeric_limits<double>::quiet_NaN();
+
+    // Alternate code path for certain large numbers.
+    if (number >= mantissaOverflowLowerBound) {
+        if (radix == 10) {
+            size_t parsedLength;
+            number = parseDouble(s.characters() + firstDigitPosition, p - firstDigitPosition, parsedLength);
+        } else if (radix == 2 || radix == 4 || radix == 8 || radix == 16 || radix == 32)
+            number = parseIntOverflow(s.substringSharingImpl(firstDigitPosition, p - firstDigitPosition).utf8().data(), p - firstDigitPosition, radix);
+    }
 
     // 15. Return sign x number.
     return sign * number;
@@ -356,25 +359,15 @@ static double jsHexIntegerLiteral(const CharType*& data, const CharType* end)
 }
 
 // See ecma-262 9.3.1
-template <WTF::AllowTrailingJunkTag allowTrailingJunk, typename CharType>
+template <typename CharType>
 static double jsStrDecimalLiteral(const CharType*& data, const CharType* end)
 {
     ASSERT(data < end);
 
-    // Copy the sting into a null-terminated byte buffer, and call strtod.
-    Vector<char, 32> byteBuffer;
-    for (const CharType* characters = data; characters < end; ++characters) {
-        CharType character = *characters;
-        byteBuffer.append(isASCII(character) ? static_cast<char>(character) : 0);
-    }
-    byteBuffer.append(0);
-    char* endOfNumber;
-    double number = WTF::strtod<allowTrailingJunk, WTF::AllowTrailingSpaces>(byteBuffer.data(), &endOfNumber);
-
-    // Check if strtod found a number; if so return it.
-    ptrdiff_t consumed = endOfNumber - byteBuffer.data();
-    if (consumed) {
-        data += consumed;
+    size_t parsedLength;
+    double number = parseDouble(data, end - data, parsedLength);
+    if (parsedLength) {
+        data += parsedLength;
         return number;
     }
 
@@ -425,7 +418,7 @@ static double toDouble(const CharType* characters, unsigned size)
     if (characters[0] == '0' && characters + 2 < endCharacters && (characters[1] | 0x20) == 'x' && isASCIIHexDigit(characters[2]))
         number = jsHexIntegerLiteral(characters, endCharacters);
     else
-        number = jsStrDecimalLiteral<WTF::DisallowTrailingJunk>(characters, endCharacters);
+        number = jsStrDecimalLiteral(characters, endCharacters);
     
     // Allow trailing white space.
     for (; characters < endCharacters; ++characters) {
@@ -482,7 +475,7 @@ static double parseFloat(const UString& s)
         if (data == end)
             return std::numeric_limits<double>::quiet_NaN();
 
-        return jsStrDecimalLiteral<WTF::AllowTrailingJunk>(data, end);
+        return jsStrDecimalLiteral(data, end);
     }
 
     const UChar* data = s.characters16();
@@ -498,7 +491,7 @@ static double parseFloat(const UString& s)
     if (data == end)
         return std::numeric_limits<double>::quiet_NaN();
 
-    return jsStrDecimalLiteral<WTF::AllowTrailingJunk>(data, end);
+    return jsStrDecimalLiteral(data, end);
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)

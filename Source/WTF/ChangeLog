@@ -1,3 +1,71 @@
+2012-04-06  Darin Adler  <darin@apple.com>
+
+        Streamline strtod and fix some related problems
+        https://bugs.webkit.org/show_bug.cgi?id=82857
+
+        Reviewed by Geoffrey Garen.
+
+        Replaced the strtod function template with a parseDouble function, eliminating
+        the following unneeded features:
+
+        - need for a trailing null character and a call to strlen
+        - needless conversion of string lengths from size_t to int and back that created
+          the possibility of incorrect truncation
+        - one level of function call; use inlining instead
+        - construction of the StringToDoubleConverter object; it was used to pass
+          arguments that are known at compile time
+        - most of the StringToDoubleConverter::StringToDouble function's body; it was
+          code we did not need
+        - parsing of Infinity and NaN at the strtod level; added recently when we moved
+          from the old strtod to the new one, and not needed or helpful at this level
+        - multiple copies of code to narrow to single byte strings; in many cases
+          this was done even when starting with an LChar string that is already
+          single-byte, now we handle this with an overload of parseDouble
+
+        * wtf/dtoa.cpp:
+        Removed a long comment about the original strtod function that no longer
+        applies since we deleted that function long ago. Removed a lot of includes.
+        Removed the strtod function templates and its instantiations, since they
+        are now replaced by the parseDouble function.
+        (WTF::Internal::parseDoubleFromLongString): Added.
+        * wtf/dtoa.h:
+        Added an include of ASCIICType.h so we can use isASCII in a function in this
+        header. Left the heretofore unneeded include of double-conversion.h, since we
+        now want to use it in a function in this header. Removed the AllowTrailingJunkTag
+        and AllowTrailingSpacesTag enumerations and the strtod function template. Added
+        new parseDouble function, and inline implementation of it.
+
+        * wtf/dtoa/double-conversion.cc: Removed quite a bit of unused code, hardcoding
+        all the StringToDouble function arguments that come from data members so it can
+        be a much smaller static member function. Also changed the types of arguments
+        from int to size_t.
+        * wtf/dtoa/double-conversion.h: Removed most of the StringToDoubleConverter
+        class, leaving only the conversion function as a static member function.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::toDouble): Got rid of didReadNumber.
+        (WTF::StringImpl::toFloat): Ditto.
+        * wtf/text/StringImpl.h: Ditto.
+        * wtf/text/WTFString.cpp:
+        (WTF::String::toDouble): Got rid of didReadNumber.
+        (WTF::String::toFloat): Ditto.
+        (WTF::toDoubleType): Rewrote this function to use parseDouble. Moved the code
+        to skip leading spaces here, because other callers of parseDouble don't want
+        to do that. Repurposed the check for an empty string so it's now the same
+        code shared by all the "parsed nothing" cases. Removed the code to convert
+        the buffer to ASCII for two reasons: (1) We don't need that code at all when
+        CharType is LChar, and (2) We now handle this through the two overloads for
+        the parseDouble function. Disallowing trailing junk is now handled here,
+        rather than inside parseDouble.
+        (WTF::charactersToDouble): Updated for changes to toDoubleType. Removed the
+        didReadNumber argument.
+        (WTF::charactersToFloat): Ditto. Also added overloads that return the parsed
+        length. These are a slightly more powerful way to do what didReadNumber was
+        used for before.
+
+        * wtf/text/WTFString.h: Added comments, eliminated didReadNumber, and added
+        overloads of charactersToFloat that replace charactersToFloatIgnoringJunk.
+
 2012-04-05  Patrick Gansterer  <paroga@webkit.org>
 
         [WinCE] Remove unnecessary function decleration

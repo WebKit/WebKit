@@ -204,28 +204,24 @@ void restrictScaleFactorToInitialScaleIfNotUserScalable(ViewportAttributes& resu
         result.maximumScale = result.minimumScale = result.initialScale;
 }
 
-static float numericPrefix(const String& keyString, const String& valueString, Document* document, bool* ok)
+static float numericPrefix(const String& keyString, const String& valueString, Document* document, bool* ok = 0)
 {
-    // If a prefix of property-value can be converted to a number using strtod,
-    // the value will be that number. The remainder of the string is ignored.
-    // So when String::toFloat says there is an error, it may be a false positive,
-    // and we should check if the valueString prefix was a number.
-
-    bool didReadNumber;
+    size_t parsedLength;
     float value;
     if (valueString.is8Bit())
-        value = WTF::charactersToFloatIgnoringJunk(valueString.characters8(), valueString.length(), ok, &didReadNumber);
+        value = charactersToFloat(valueString.characters8(), valueString.length(), parsedLength);
     else
-        value = WTF::charactersToFloatIgnoringJunk(valueString.characters16(), valueString.length(), ok, &didReadNumber);
-    if (!*ok) {
-        if (!didReadNumber) {
-            ASSERT(isnan(value) || !value);
-            reportViewportWarning(document, UnrecognizedViewportArgumentValueError, valueString, keyString);
-            return value;
-        }
-        *ok = true;
-        reportViewportWarning(document, TruncatedViewportArgumentValueError, valueString, keyString);
+        value = charactersToFloat(valueString.characters16(), valueString.length(), parsedLength);
+    if (!parsedLength) {
+        reportViewportWarning(document, UnrecognizedViewportArgumentValueError, valueString, keyString);
+        if (ok)
+            *ok = false;
+        return 0;
     }
+    if (parsedLength < valueString.length())
+        reportViewportWarning(document, TruncatedViewportArgumentValueError, valueString, keyString);
+    if (ok)
+        *ok = true;
     return value;
 }
 
@@ -243,10 +239,7 @@ static float findSizeValue(const String& keyString, const String& valueString, D
     if (equalIgnoringCase(valueString, "device-height"))
         return ViewportArguments::ValueDeviceHeight;
 
-    bool ok;
-    float value = numericPrefix(keyString, valueString, document, &ok);
-    if (!ok)
-        return float(0.0);
+    float value = numericPrefix(keyString, valueString, document);
 
     if (value < 0)
         return ViewportArguments::ValueAuto;
@@ -263,20 +256,17 @@ static float findScaleValue(const String& keyString, const String& valueString, 
     // 5) no and unknown values are translated to 0.0
 
     if (equalIgnoringCase(valueString, "yes"))
-        return float(1.0);
+        return 1;
     if (equalIgnoringCase(valueString, "no"))
-        return float(0.0);
+        return 0;
     if (equalIgnoringCase(valueString, "desktop-width"))
-        return float(10.0);
+        return 10;
     if (equalIgnoringCase(valueString, "device-width"))
-        return float(10.0);
+        return 10;
     if (equalIgnoringCase(valueString, "device-height"))
-        return float(10.0);
+        return 10;
 
-    bool ok;
-    float value = numericPrefix(keyString, valueString, document, &ok);
-    if (!ok)
-        return float(0.0);
+    float value = numericPrefix(keyString, valueString, document);
 
     if (value < 0)
         return ViewportArguments::ValueAuto;
@@ -304,10 +294,7 @@ static float findUserScalableValue(const String& keyString, const String& valueS
     if (equalIgnoringCase(valueString, "device-height"))
         return 1;
 
-    bool ok;
-    float value = numericPrefix(keyString, valueString, document, &ok);
-    if (!ok)
-        return 0;
+    float value = numericPrefix(keyString, valueString, document);
 
     if (fabs(value) < 1)
         return 0;
@@ -331,7 +318,7 @@ static float findTargetDensityDPIValue(const String& keyString, const String& va
     if (!ok)
         return ViewportArguments::ValueAuto;
 
-     if (value < 70 || value > 400) {
+    if (value < 70 || value > 400) {
         reportViewportWarning(document, TargetDensityDpiTooSmallOrLargeError, String(), String());
         return ViewportArguments::ValueAuto;
     }
