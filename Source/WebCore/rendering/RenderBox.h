@@ -484,6 +484,12 @@ public:
         return false;
     }
 
+    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject*) const
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
 protected:
     virtual void willBeDestroyed();
 

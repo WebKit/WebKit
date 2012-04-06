@@ -715,7 +715,7 @@ RenderObject* RenderBlock::splitAnonymousBlocksAroundChild(RenderObject* beforeC
         RenderBlock* blockToSplit = toRenderBlock(beforeChild->parent());
         if (blockToSplit->firstChild() != beforeChild) {
             // We have to split the parentBlock into two blocks.
-            RenderBlock* post = createAnonymousBlockWithSameTypeAs(blockToSplit);
+            RenderBlock* post = toRenderBlock(blockToSplit->createAnonymousBoxWithSameTypeAs(this));
             post->setChildrenInline(blockToSplit->childrenInline());
             RenderBlock* parentBlock = toRenderBlock(blockToSplit->parent());
             parentBlock->children()->insertChildNode(parentBlock, post, blockToSplit->nextSibling());
@@ -6675,13 +6675,13 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& a
         inlineElementContinuation()->addFocusRingRects(rects, flooredLayoutPoint(additionalOffset + inlineElementContinuation()->containingBlock()->location() - location()));
 }
 
-RenderBlock* RenderBlock::createAnonymousBlockWithSameTypeAs(RenderBlock* otherAnonymousBlock) const
+RenderBox* RenderBlock::createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const
 {
-    if (otherAnonymousBlock->isAnonymousColumnsBlock())
-        return createAnonymousColumnsBlock();
-    if (otherAnonymousBlock->isAnonymousColumnSpanBlock())
-        return createAnonymousColumnSpanBlock();
-    return createAnonymousBlock(otherAnonymousBlock->style()->display());
+    if (isAnonymousColumnsBlock())
+        return createAnonymousColumnsWithParentRenderer(parent);
+    if (isAnonymousColumnSpanBlock())
+        return createAnonymousColumnSpanWithParentRenderer(parent);
+    return createAnonymousWithParentRendererAndDisplay(parent, style()->display());
 }
 
 bool RenderBlock::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pageBoundaryRule) const
