@@ -217,6 +217,9 @@ PASS TextConstructor from inner.document.forms.testForm.0.attributes.0.lastChild
 PASS TextPrototype from inner.document.forms.testForm.0.attributes.0.lastChild.__proto__
 PASS TextTrack from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.track
 PASS TextTrackConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.track.constructor
+PASS TextTrackList from inner.document.forms.testForm.0.previousElementSibling.textTracks
+PASS TextTrackListConstructor from inner.document.forms.testForm.0.previousElementSibling.textTracks.constructor
+PASS TextTrackListPrototype from inner.document.forms.testForm.0.previousElementSibling.textTracks.__proto__
 PASS TextTrackPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.track.__proto__
 PASS TimeRanges from inner.document.forms.testForm.0.previousElementSibling.played
 PASS TimeRangesConstructor from inner.document.forms.testForm.0.previousElementSibling.played.constructor
@@ -455,7 +458,6 @@ Never found StyleSheet
 Never found TextMetrics
 Never found TextTrackCue
 Never found TextTrackCueList
-Never found TextTrackList
 Never found URL
 Never found WebKitCSSMatrix
 Never found WebKitCSSRegionRule
