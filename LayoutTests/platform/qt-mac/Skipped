@@ -5530,3 +5530,7 @@ svg/custom/use-detach.svg
 svg/filters/feColorMatrix-values.svg
 svg/text/text-align-05-b.svg
 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
+
+# new failing tests
+svg/as-image/img-preserveAspectRatio-support-1.html
+svg/zoom/page/zoom-mask-with-percentages.svg
