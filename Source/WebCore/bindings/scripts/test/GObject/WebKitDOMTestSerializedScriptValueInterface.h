@@ -21,11 +21,10 @@
 #ifndef WebKitDOMTestSerializedScriptValueInterface_h
 #define WebKitDOMTestSerializedScriptValueInterface_h
 
-#include "webkit/webkitdomdefines.h"
 #include <glib-object.h>
+#include <webkit/WebKitDOMObject.h>
 #include <webkit/webkitdefines.h>
-#include "webkit/WebKitDOMObject.h"
-
+#include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
 #define WEBKIT_TYPE_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE            (webkit_dom_test_serialized_script_value_interface_get_type())
@@ -50,13 +49,13 @@ webkit_dom_test_serialized_script_value_interface_get_type (void);
  * webkit_dom_test_serialized_script_value_interface_accept_transfer_list:
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  * @data: A #WebKitDOMSerializedScriptValue
- * @transfer_list: A #WebKitDOMArray
+ * @transferList: A #WebKitDOMArray
  *
  * Returns:
  *
 **/
 WEBKIT_API void
-webkit_dom_test_serialized_script_value_interface_accept_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* data, WebKitDOMArray* transfer_list);
+webkit_dom_test_serialized_script_value_interface_accept_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* data, WebKitDOMArray* transferList);
 
 /**
  * webkit_dom_test_serialized_script_value_interface_multi_transfer_list:

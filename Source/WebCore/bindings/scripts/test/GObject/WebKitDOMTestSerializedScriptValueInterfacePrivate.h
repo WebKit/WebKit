@@ -18,27 +18,20 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WEB_KIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE_PRIVATE_H
-#define WEB_KIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE_PRIVATE_H
+#ifndef WebKitDOMTestSerializedScriptValueInterfacePrivate_h
+#define WebKitDOMTestSerializedScriptValueInterfacePrivate_h
 
+#include "TestSerializedScriptValueInterface.h"
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
-#include "TestSerializedScriptValueInterface.h"
-
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
 namespace WebKit {
-    WebKitDOMTestSerializedScriptValueInterface *
-    wrapTestSerializedScriptValueInterface(WebCore::TestSerializedScriptValueInterface *coreObject);
-
-    WebCore::TestSerializedScriptValueInterface *
-    core(WebKitDOMTestSerializedScriptValueInterface *request);
-
-    WebKitDOMTestSerializedScriptValueInterface*
-    kit(WebCore::TestSerializedScriptValueInterface* node);
-
+WebKitDOMTestSerializedScriptValueInterface* wrapTestSerializedScriptValueInterface(WebCore::TestSerializedScriptValueInterface*);
+WebCore::TestSerializedScriptValueInterface* core(WebKitDOMTestSerializedScriptValueInterface* request);
+WebKitDOMTestSerializedScriptValueInterface* kit(WebCore::TestSerializedScriptValueInterface* node);
 } // namespace WebKit
 
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 
-#endif /* WEB_KIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE_PRIVATE_H */
+#endif /* WebKitDOMTestSerializedScriptValueInterfacePrivate_h */

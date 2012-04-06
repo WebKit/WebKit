@@ -18,24 +18,17 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WEB_KIT_DOM_TEST_OBJ_PRIVATE_H
-#define WEB_KIT_DOM_TEST_OBJ_PRIVATE_H
+#ifndef WebKitDOMTestObjPrivate_h
+#define WebKitDOMTestObjPrivate_h
 
+#include "TestObj.h"
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
-#include "TestObj.h"
-
 
 namespace WebKit {
-    WebKitDOMTestObj *
-    wrapTestObj(WebCore::TestObj *coreObject);
-
-    WebCore::TestObj *
-    core(WebKitDOMTestObj *request);
-
-    WebKitDOMTestObj*
-    kit(WebCore::TestObj* node);
-
+WebKitDOMTestObj* wrapTestObj(WebCore::TestObj*);
+WebCore::TestObj* core(WebKitDOMTestObj* request);
+WebKitDOMTestObj* kit(WebCore::TestObj* node);
 } // namespace WebKit
 
-#endif /* WEB_KIT_DOM_TEST_OBJ_PRIVATE_H */
+#endif /* WebKitDOMTestObjPrivate_h */

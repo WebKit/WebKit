@@ -21,11 +21,10 @@
 #ifndef WebKitDOMTestCallback_h
 #define WebKitDOMTestCallback_h
 
-#include "webkit/webkitdomdefines.h"
 #include <glib-object.h>
+#include <webkit/WebKitDOMObject.h>
 #include <webkit/webkitdefines.h>
-#include "webkit/WebKitDOMObject.h"
-
+#include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
 #define WEBKIT_TYPE_DOM_TEST_CALLBACK            (webkit_dom_test_callback_get_type())
@@ -59,58 +58,58 @@ webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* self);
 /**
  * webkit_dom_test_callback_callback_with_class1param:
  * @self: A #WebKitDOMTestCallback
- * @class1param: A #WebKitDOMClass1
+ * @class1Param: A #WebKitDOMClass1
  *
  * Returns:
  *
 **/
 WEBKIT_API gboolean
-webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, WebKitDOMClass1* class1param);
+webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, WebKitDOMClass1* class1Param);
 
 /**
  * webkit_dom_test_callback_callback_with_class2param:
  * @self: A #WebKitDOMTestCallback
- * @class2param: A #WebKitDOMClass2
- * @str_arg: A #gchar
+ * @class2Param: A #WebKitDOMClass2
+ * @strArg: A #gchar
  *
  * Returns:
  *
 **/
 WEBKIT_API gboolean
-webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, WebKitDOMClass2* class2param, const gchar* str_arg);
+webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, WebKitDOMClass2* class2Param, const gchar* strArg);
 
 /**
  * webkit_dom_test_callback_callback_with_non_bool_return_type:
  * @self: A #WebKitDOMTestCallback
- * @class3param: A #WebKitDOMClass3
+ * @class3Param: A #WebKitDOMClass3
  *
  * Returns:
  *
 **/
 WEBKIT_API glong
-webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, WebKitDOMClass3* class3param);
+webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, WebKitDOMClass3* class3Param);
 
 /**
  * webkit_dom_test_callback_callback_with_string_list:
  * @self: A #WebKitDOMTestCallback
- * @list_param: A #WebKitDOMDOMStringList
+ * @listParam: A #WebKitDOMDOMStringList
  *
  * Returns:
  *
 **/
 WEBKIT_API gboolean
-webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, WebKitDOMDOMStringList* list_param);
+webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, WebKitDOMDOMStringList* listParam);
 
 /**
  * webkit_dom_test_callback_callback_with_boolean:
  * @self: A #WebKitDOMTestCallback
- * @bool_param: A #gboolean
+ * @boolParam: A #gboolean
  *
  * Returns:
  *
 **/
 WEBKIT_API gboolean
-webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboolean bool_param);
+webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboolean boolParam);
 
 G_END_DECLS
 

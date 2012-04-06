@@ -21,11 +21,10 @@
 #ifndef WebKitDOMFloat64Array_h
 #define WebKitDOMFloat64Array_h
 
-#include "webkit/webkitdomdefines.h"
 #include <glib-object.h>
+#include <webkit/WebKitDOMArrayBufferView.h>
 #include <webkit/webkitdefines.h>
-#include "webkit/WebKitDOMArrayBufferView.h"
-
+#include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
 #define WEBKIT_TYPE_DOM_FLOAT64ARRAY            (webkit_dom_float64array_get_type())

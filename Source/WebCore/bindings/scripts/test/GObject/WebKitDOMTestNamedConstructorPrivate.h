@@ -18,24 +18,17 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WEB_KIT_DOM_TEST_NAMED_CONSTRUCTOR_PRIVATE_H
-#define WEB_KIT_DOM_TEST_NAMED_CONSTRUCTOR_PRIVATE_H
+#ifndef WebKitDOMTestNamedConstructorPrivate_h
+#define WebKitDOMTestNamedConstructorPrivate_h
 
+#include "TestNamedConstructor.h"
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
-#include "TestNamedConstructor.h"
-
 
 namespace WebKit {
-    WebKitDOMTestNamedConstructor *
-    wrapTestNamedConstructor(WebCore::TestNamedConstructor *coreObject);
-
-    WebCore::TestNamedConstructor *
-    core(WebKitDOMTestNamedConstructor *request);
-
-    WebKitDOMTestNamedConstructor*
-    kit(WebCore::TestNamedConstructor* node);
-
+WebKitDOMTestNamedConstructor* wrapTestNamedConstructor(WebCore::TestNamedConstructor*);
+WebCore::TestNamedConstructor* core(WebKitDOMTestNamedConstructor* request);
+WebKitDOMTestNamedConstructor* kit(WebCore::TestNamedConstructor* node);
 } // namespace WebKit
 
-#endif /* WEB_KIT_DOM_TEST_NAMED_CONSTRUCTOR_PRIVATE_H */
+#endif /* WebKitDOMTestNamedConstructorPrivate_h */

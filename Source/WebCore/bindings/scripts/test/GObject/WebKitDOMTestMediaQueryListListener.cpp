@@ -18,22 +18,22 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <glib-object.h>
 #include "config.h"
+#include "WebKitDOMTestMediaQueryListListener.h"
 
-#include <wtf/GetPtr.h>
-#include <wtf/RefPtr.h>
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
 #include "TestMediaQueryListListener.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"
-#include "webkit/WebKitDOMTestMediaQueryListListener.h"
 #include "webkit/WebKitDOMTestMediaQueryListListenerPrivate.h"
 #include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
+#include <glib-object.h>
+#include <wtf/GetPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
@@ -61,14 +61,11 @@ WebKitDOMTestMediaQueryListListener* wrapTestMediaQueryListListener(WebCore::Tes
 {
     g_return_val_if_fail(coreObject, 0);
 
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
+    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
     coreObject->ref();
 
-    return  WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER(g_object_new(WEBKIT_TYPE_DOM_TEST_MEDIA_QUERY_LIST_LISTENER,
-                                               "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER(g_object_new(WEBKIT_TYPE_DOM_TEST_MEDIA_QUERY_LIST_LISTENER, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
@@ -82,38 +79,38 @@ enum {
 static void webkit_dom_test_media_query_list_listener_finalize(GObject* object)
 {
 
-    WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
+    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
     
-    if (dom_object->coreObject) {
-        WebCore::TestMediaQueryListListener* coreObject = static_cast<WebCore::TestMediaQueryListListener *>(dom_object->coreObject);
+    if (domObject->coreObject) {
+        WebCore::TestMediaQueryListListener* coreObject = static_cast<WebCore::TestMediaQueryListListener*>(domObject->coreObject);
 
         WebKit::DOMObjectCache::forget(coreObject);
         coreObject->deref();
 
-        dom_object->coreObject = NULL;
+        domObject->coreObject = 0;
     }
 
 
     G_OBJECT_CLASS(webkit_dom_test_media_query_list_listener_parent_class)->finalize(object);
 }
 
-static void webkit_dom_test_media_query_list_listener_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
+static void webkit_dom_test_media_query_list_listener_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
-    switch (prop_id) {
+    switch (propertyId) {
     default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
     }
 }
 
 
-static void webkit_dom_test_media_query_list_listener_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
+static void webkit_dom_test_media_query_list_listener_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
-    switch (prop_id) {
+    switch (propertyId) {
     default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
     }
 }
@@ -128,7 +125,7 @@ static void webkit_dom_test_media_query_list_listener_constructed(GObject* objec
 
 static void webkit_dom_test_media_query_list_listener_class_init(WebKitDOMTestMediaQueryListListenerClass* requestClass)
 {
-    GObjectClass *gobjectClass = G_OBJECT_CLASS(requestClass);
+    GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = webkit_dom_test_media_query_list_listener_finalize;
     gobjectClass->set_property = webkit_dom_test_media_query_list_listener_set_property;
     gobjectClass->get_property = webkit_dom_test_media_query_list_listener_get_property;

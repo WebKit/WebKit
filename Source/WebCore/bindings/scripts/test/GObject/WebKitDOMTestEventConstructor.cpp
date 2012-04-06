@@ -18,22 +18,22 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <glib-object.h>
 #include "config.h"
+#include "WebKitDOMTestEventConstructor.h"
 
-#include <wtf/GetPtr.h>
-#include <wtf/RefPtr.h>
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
 #include "TestEventConstructor.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"
-#include "webkit/WebKitDOMTestEventConstructor.h"
 #include "webkit/WebKitDOMTestEventConstructorPrivate.h"
 #include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
+#include <glib-object.h>
+#include <wtf/GetPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
@@ -61,14 +61,11 @@ WebKitDOMTestEventConstructor* wrapTestEventConstructor(WebCore::TestEventConstr
 {
     g_return_val_if_fail(coreObject, 0);
 
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
+    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
     coreObject->ref();
 
-    return  WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR,
-                                               "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
@@ -84,50 +81,48 @@ enum {
 static void webkit_dom_test_event_constructor_finalize(GObject* object)
 {
 
-    WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
+    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
     
-    if (dom_object->coreObject) {
-        WebCore::TestEventConstructor* coreObject = static_cast<WebCore::TestEventConstructor *>(dom_object->coreObject);
+    if (domObject->coreObject) {
+        WebCore::TestEventConstructor* coreObject = static_cast<WebCore::TestEventConstructor*>(domObject->coreObject);
 
         WebKit::DOMObjectCache::forget(coreObject);
         coreObject->deref();
 
-        dom_object->coreObject = NULL;
+        domObject->coreObject = 0;
     }
 
 
     G_OBJECT_CLASS(webkit_dom_test_event_constructor_parent_class)->finalize(object);
 }
 
-static void webkit_dom_test_event_constructor_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
+static void webkit_dom_test_event_constructor_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
-    switch (prop_id) {
+    switch (propertyId) {
     default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
     }
 }
 
 
-static void webkit_dom_test_event_constructor_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
+static void webkit_dom_test_event_constructor_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
     WebKitDOMTestEventConstructor* self = WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(object);
     WebCore::TestEventConstructor* coreSelf = WebKit::core(self);
-    switch (prop_id) {
-    case PROP_ATTR1:
-    {
+    switch (propertyId) {
+    case PROP_ATTR1: {
         g_value_take_string(value, convertToUTF8String(coreSelf->attr1()));
         break;
     }
-    case PROP_ATTR2:
-    {
+    case PROP_ATTR2: {
         g_value_take_string(value, convertToUTF8String(coreSelf->attr2()));
         break;
     }
     default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
     }
 }
@@ -142,7 +137,7 @@ static void webkit_dom_test_event_constructor_constructed(GObject* object)
 
 static void webkit_dom_test_event_constructor_class_init(WebKitDOMTestEventConstructorClass* requestClass)
 {
-    GObjectClass *gobjectClass = G_OBJECT_CLASS(requestClass);
+    GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = webkit_dom_test_event_constructor_finalize;
     gobjectClass->set_property = webkit_dom_test_event_constructor_set_property;
     gobjectClass->get_property = webkit_dom_test_event_constructor_get_property;
@@ -175,9 +170,9 @@ webkit_dom_test_event_constructor_get_attr1(WebKitDOMTestEventConstructor* self)
 {
     g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
-    WebCore::TestEventConstructor * item = WebKit::core(self);
-    gchar* res = convertToUTF8String(item->attr1());
-    return res;
+    WebCore::TestEventConstructor* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->attr1());
+    return result;
 }
 
 gchar*
@@ -185,8 +180,8 @@ webkit_dom_test_event_constructor_get_attr2(WebKitDOMTestEventConstructor* self)
 {
     g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
-    WebCore::TestEventConstructor * item = WebKit::core(self);
-    gchar* res = convertToUTF8String(item->attr2());
-    return res;
+    WebCore::TestEventConstructor* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->attr2());
+    return result;
 }
 

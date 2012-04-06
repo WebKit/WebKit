@@ -18,24 +18,17 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WEB_KIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER_PRIVATE_H
-#define WEB_KIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER_PRIVATE_H
+#ifndef WebKitDOMTestMediaQueryListListenerPrivate_h
+#define WebKitDOMTestMediaQueryListListenerPrivate_h
 
+#include "TestMediaQueryListListener.h"
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
-#include "TestMediaQueryListListener.h"
-
 
 namespace WebKit {
-    WebKitDOMTestMediaQueryListListener *
-    wrapTestMediaQueryListListener(WebCore::TestMediaQueryListListener *coreObject);
-
-    WebCore::TestMediaQueryListListener *
-    core(WebKitDOMTestMediaQueryListListener *request);
-
-    WebKitDOMTestMediaQueryListListener*
-    kit(WebCore::TestMediaQueryListListener* node);
-
+WebKitDOMTestMediaQueryListListener* wrapTestMediaQueryListListener(WebCore::TestMediaQueryListListener*);
+WebCore::TestMediaQueryListListener* core(WebKitDOMTestMediaQueryListListener* request);
+WebKitDOMTestMediaQueryListListener* kit(WebCore::TestMediaQueryListListener* node);
 } // namespace WebKit
 
-#endif /* WEB_KIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER_PRIVATE_H */
+#endif /* WebKitDOMTestMediaQueryListListenerPrivate_h */

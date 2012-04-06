@@ -18,11 +18,9 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <glib-object.h>
 #include "config.h"
+#include "WebKitDOMFloat64Array.h"
 
-#include <wtf/GetPtr.h>
-#include <wtf/RefPtr.h>
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "Float64Array.h"
@@ -32,13 +30,15 @@
 #include "gobject/ConvertToUTF8String.h"
 #include "webkit/WebKitDOMFloat32Array.h"
 #include "webkit/WebKitDOMFloat32ArrayPrivate.h"
-#include "webkit/WebKitDOMFloat64Array.h"
 #include "webkit/WebKitDOMFloat64ArrayPrivate.h"
 #include "webkit/WebKitDOMInt32Array.h"
 #include "webkit/WebKitDOMInt32ArrayPrivate.h"
 #include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
+#include <glib-object.h>
+#include <wtf/GetPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
@@ -66,14 +66,11 @@ WebKitDOMFloat64Array* wrapFloat64Array(WebCore::Float64Array* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
 
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
+    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
     coreObject->ref();
 
-    return  WEBKIT_DOM_FLOAT64ARRAY(g_object_new(WEBKIT_TYPE_DOM_FLOAT64ARRAY,
-                                               "core-object", coreObject, NULL));
+    return WEBKIT_DOM_FLOAT64ARRAY(g_object_new(WEBKIT_TYPE_DOM_FLOAT64ARRAY, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
@@ -87,38 +84,38 @@ enum {
 static void webkit_dom_float64array_finalize(GObject* object)
 {
 
-    WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
+    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
     
-    if (dom_object->coreObject) {
-        WebCore::Float64Array* coreObject = static_cast<WebCore::Float64Array *>(dom_object->coreObject);
+    if (domObject->coreObject) {
+        WebCore::Float64Array* coreObject = static_cast<WebCore::Float64Array*>(domObject->coreObject);
 
         WebKit::DOMObjectCache::forget(coreObject);
         coreObject->deref();
 
-        dom_object->coreObject = NULL;
+        domObject->coreObject = 0;
     }
 
 
     G_OBJECT_CLASS(webkit_dom_float64array_parent_class)->finalize(object);
 }
 
-static void webkit_dom_float64array_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
+static void webkit_dom_float64array_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
-    switch (prop_id) {
+    switch (propertyId) {
     default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
     }
 }
 
 
-static void webkit_dom_float64array_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
+static void webkit_dom_float64array_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
-    switch (prop_id) {
+    switch (propertyId) {
     default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
     }
 }
@@ -133,7 +130,7 @@ static void webkit_dom_float64array_constructed(GObject* object)
 
 static void webkit_dom_float64array_class_init(WebKitDOMFloat64ArrayClass* requestClass)
 {
-    GObjectClass *gobjectClass = G_OBJECT_CLASS(requestClass);
+    GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = webkit_dom_float64array_finalize;
     gobjectClass->set_property = webkit_dom_float64array_set_property;
     gobjectClass->get_property = webkit_dom_float64array_get_property;
@@ -152,15 +149,15 @@ webkit_dom_float64array_foo(WebKitDOMFloat64Array* self, WebKitDOMFloat32Array* 
 {
     g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
-    WebCore::Float64Array * item = WebKit::core(self);
+    WebCore::Float64Array* item = WebKit::core(self);
     g_return_val_if_fail(array, 0);
-    WebCore::Float32Array * converted_array = NULL;
-    if (array != NULL) {
-        converted_array = WebKit::core(array);
-        g_return_val_if_fail(converted_array, 0);
+    WebCore::Float32Array* convertedArray = 0;
+    if (array) {
+        convertedArray = WebKit::core(array);
+        g_return_val_if_fail(convertedArray, 0);
     }
-    PassRefPtr<WebCore::Int32Array> g_res = WTF::getPtr(item->foo(converted_array));
-    WebKitDOMInt32Array* res = WebKit::kit(g_res.get());
-    return res;
+    RefPtr<WebCore::Int32Array> gobjectResult = WTF::getPtr(item->foo(convertedArray));
+    WebKitDOMInt32Array* result = WebKit::kit(gobjectResult.get());
+    return result;
 }
 

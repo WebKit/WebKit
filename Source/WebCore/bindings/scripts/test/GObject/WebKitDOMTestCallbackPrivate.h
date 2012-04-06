@@ -18,27 +18,20 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WEB_KIT_DOM_TEST_CALLBACK_PRIVATE_H
-#define WEB_KIT_DOM_TEST_CALLBACK_PRIVATE_H
+#ifndef WebKitDOMTestCallbackPrivate_h
+#define WebKitDOMTestCallbackPrivate_h
 
+#include "TestCallback.h"
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
-#include "TestCallback.h"
-
 #if ENABLE(SQL_DATABASE)
 
 namespace WebKit {
-    WebKitDOMTestCallback *
-    wrapTestCallback(WebCore::TestCallback *coreObject);
-
-    WebCore::TestCallback *
-    core(WebKitDOMTestCallback *request);
-
-    WebKitDOMTestCallback*
-    kit(WebCore::TestCallback* node);
-
+WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback*);
+WebCore::TestCallback* core(WebKitDOMTestCallback* request);
+WebKitDOMTestCallback* kit(WebCore::TestCallback* node);
 } // namespace WebKit
 
 #endif /* ENABLE(SQL_DATABASE) */
 
-#endif /* WEB_KIT_DOM_TEST_CALLBACK_PRIVATE_H */
+#endif /* WebKitDOMTestCallbackPrivate_h */

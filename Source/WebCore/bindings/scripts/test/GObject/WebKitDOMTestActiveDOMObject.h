@@ -21,11 +21,10 @@
 #ifndef WebKitDOMTestActiveDOMObject_h
 #define WebKitDOMTestActiveDOMObject_h
 
-#include "webkit/webkitdomdefines.h"
 #include <glib-object.h>
+#include <webkit/WebKitDOMObject.h>
 #include <webkit/webkitdefines.h>
-#include "webkit/WebKitDOMObject.h"
-
+#include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
 #define WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT            (webkit_dom_test_active_dom_object_get_type())
@@ -49,13 +48,13 @@ webkit_dom_test_active_dom_object_get_type (void);
 /**
  * webkit_dom_test_active_dom_object_exciting_function:
  * @self: A #WebKitDOMTestActiveDOMObject
- * @next_child: A #WebKitDOMNode
+ * @nextChild: A #WebKitDOMNode
  *
  * Returns:
  *
 **/
 WEBKIT_API void
-webkit_dom_test_active_dom_object_exciting_function(WebKitDOMTestActiveDOMObject* self, WebKitDOMNode* next_child);
+webkit_dom_test_active_dom_object_exciting_function(WebKitDOMTestActiveDOMObject* self, WebKitDOMNode* nextChild);
 
 /**
  * webkit_dom_test_active_dom_object_post_message:

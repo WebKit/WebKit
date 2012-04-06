@@ -21,11 +21,10 @@
 #ifndef WebKitDOMTestCustomNamedGetter_h
 #define WebKitDOMTestCustomNamedGetter_h
 
-#include "webkit/webkitdomdefines.h"
 #include <glib-object.h>
+#include <webkit/WebKitDOMObject.h>
 #include <webkit/webkitdefines.h>
-#include "webkit/WebKitDOMObject.h"
-
+#include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
 #define WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER            (webkit_dom_test_custom_named_getter_get_type())

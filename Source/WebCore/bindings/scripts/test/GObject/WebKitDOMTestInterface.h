@@ -21,11 +21,10 @@
 #ifndef WebKitDOMTestInterface_h
 #define WebKitDOMTestInterface_h
 
-#include "webkit/webkitdomdefines.h"
 #include <glib-object.h>
+#include <webkit/WebKitDOMObject.h>
 #include <webkit/webkitdefines.h>
-#include "webkit/WebKitDOMObject.h"
-
+#include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
 #define WEBKIT_TYPE_DOM_TEST_INTERFACE            (webkit_dom_test_interface_get_type())
@@ -59,15 +58,15 @@ webkit_dom_test_interface_supplemental_method1(WebKitDOMTestInterface* self);
 /**
  * webkit_dom_test_interface_supplemental_method2:
  * @self: A #WebKitDOMTestInterface
- * @str_arg: A #gchar
- * @obj_arg: A #WebKitDOMTestObj
+ * @strArg: A #gchar
+ * @objArg: A #WebKitDOMTestObj
  * @error: #GError
  *
  * Returns: (transfer none):
  *
 **/
 WEBKIT_API WebKitDOMTestObj*
-webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, const gchar* str_arg, WebKitDOMTestObj* obj_arg, GError **error);
+webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, const gchar* strArg, WebKitDOMTestObj* objArg, GError** error);
 
 /**
  * webkit_dom_test_interface_supplemental_method4:

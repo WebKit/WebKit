@@ -18,24 +18,17 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WEB_KIT_DOM_FLOAT64ARRAY_PRIVATE_H
-#define WEB_KIT_DOM_FLOAT64ARRAY_PRIVATE_H
+#ifndef WebKitDOMFloat64ArrayPrivate_h
+#define WebKitDOMFloat64ArrayPrivate_h
 
+#include "Float64Array.h"
 #include <glib-object.h>
 #include <webkit/WebKitDOMArrayBufferView.h>
-#include "Float64Array.h"
-
 
 namespace WebKit {
-    WebKitDOMFloat64Array *
-    wrapFloat64Array(WebCore::Float64Array *coreObject);
-
-    WebCore::Float64Array *
-    core(WebKitDOMFloat64Array *request);
-
-    WebKitDOMFloat64Array*
-    kit(WebCore::Float64Array* node);
-
+WebKitDOMFloat64Array* wrapFloat64Array(WebCore::Float64Array*);
+WebCore::Float64Array* core(WebKitDOMFloat64Array* request);
+WebKitDOMFloat64Array* kit(WebCore::Float64Array* node);
 } // namespace WebKit
 
-#endif /* WEB_KIT_DOM_FLOAT64ARRAY_PRIVATE_H */
+#endif /* WebKitDOMFloat64ArrayPrivate_h */

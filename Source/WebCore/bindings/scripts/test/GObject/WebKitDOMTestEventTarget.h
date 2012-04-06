@@ -21,11 +21,10 @@
 #ifndef WebKitDOMTestEventTarget_h
 #define WebKitDOMTestEventTarget_h
 
-#include "webkit/webkitdomdefines.h"
 #include <glib-object.h>
+#include <webkit/WebKitDOMObject.h>
 #include <webkit/webkitdefines.h>
-#include "webkit/WebKitDOMObject.h"
-
+#include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
 #define WEBKIT_TYPE_DOM_TEST_EVENT_TARGET            (webkit_dom_test_event_target_get_type())
@@ -67,7 +66,7 @@ webkit_dom_test_event_target_item(WebKitDOMTestEventTarget* self, gulong index);
  *
 **/
 WEBKIT_API gboolean
-webkit_dom_test_event_target_dispatch_event(WebKitDOMTestEventTarget* self, WebKitDOMEvent* evt, GError **error);
+webkit_dom_test_event_target_dispatch_event(WebKitDOMTestEventTarget* self, WebKitDOMEvent* evt, GError** error);
 
 G_END_DECLS
 

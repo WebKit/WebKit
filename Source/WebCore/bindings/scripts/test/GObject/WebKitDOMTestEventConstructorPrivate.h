@@ -18,24 +18,17 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WEB_KIT_DOM_TEST_EVENT_CONSTRUCTOR_PRIVATE_H
-#define WEB_KIT_DOM_TEST_EVENT_CONSTRUCTOR_PRIVATE_H
+#ifndef WebKitDOMTestEventConstructorPrivate_h
+#define WebKitDOMTestEventConstructorPrivate_h
 
+#include "TestEventConstructor.h"
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
-#include "TestEventConstructor.h"
-
 
 namespace WebKit {
-    WebKitDOMTestEventConstructor *
-    wrapTestEventConstructor(WebCore::TestEventConstructor *coreObject);
-
-    WebCore::TestEventConstructor *
-    core(WebKitDOMTestEventConstructor *request);
-
-    WebKitDOMTestEventConstructor*
-    kit(WebCore::TestEventConstructor* node);
-
+WebKitDOMTestEventConstructor* wrapTestEventConstructor(WebCore::TestEventConstructor*);
+WebCore::TestEventConstructor* core(WebKitDOMTestEventConstructor* request);
+WebKitDOMTestEventConstructor* kit(WebCore::TestEventConstructor* node);
 } // namespace WebKit
 
-#endif /* WEB_KIT_DOM_TEST_EVENT_CONSTRUCTOR_PRIVATE_H */
+#endif /* WebKitDOMTestEventConstructorPrivate_h */

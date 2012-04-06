@@ -18,24 +18,17 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WEB_KIT_DOM_TEST_CUSTOM_NAMED_GETTER_PRIVATE_H
-#define WEB_KIT_DOM_TEST_CUSTOM_NAMED_GETTER_PRIVATE_H
+#ifndef WebKitDOMTestCustomNamedGetterPrivate_h
+#define WebKitDOMTestCustomNamedGetterPrivate_h
 
+#include "TestCustomNamedGetter.h"
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
-#include "TestCustomNamedGetter.h"
-
 
 namespace WebKit {
-    WebKitDOMTestCustomNamedGetter *
-    wrapTestCustomNamedGetter(WebCore::TestCustomNamedGetter *coreObject);
-
-    WebCore::TestCustomNamedGetter *
-    core(WebKitDOMTestCustomNamedGetter *request);
-
-    WebKitDOMTestCustomNamedGetter*
-    kit(WebCore::TestCustomNamedGetter* node);
-
+WebKitDOMTestCustomNamedGetter* wrapTestCustomNamedGetter(WebCore::TestCustomNamedGetter*);
+WebCore::TestCustomNamedGetter* core(WebKitDOMTestCustomNamedGetter* request);
+WebKitDOMTestCustomNamedGetter* kit(WebCore::TestCustomNamedGetter* node);
 } // namespace WebKit
 
-#endif /* WEB_KIT_DOM_TEST_CUSTOM_NAMED_GETTER_PRIVATE_H */
+#endif /* WebKitDOMTestCustomNamedGetterPrivate_h */
