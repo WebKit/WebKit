@@ -3267,8 +3267,6 @@ BUGWK72990 WIN : accessibility/loading-iframe-updates-axtree.html = PASS TIMEOUT
 BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.html = PASS TIMEOUT
 BUGWK77110 WIN DEBUG : accessibility/loading-iframe-sends-notification.html = PASS TEXT
 
-BUGWK73494 : svg/text/non-bmp-positioning-lists.svg = IMAGE+TEXT IMAGE
-
 BUGWK73514 WIN : platform/chromium/compositing/lost-compositor-context-permanently.html = PASS TIMEOUT
 
 BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overloads-strokeText.html = PASS CRASH
