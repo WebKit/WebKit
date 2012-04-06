@@ -83,12 +83,14 @@ WebInspector.TimelineFrameController.prototype = {
         }
         this._lastFrame = new WebInspector.TimelineFrame();
         this._lastFrame.startTime = frameBeginTime;
+        this._lastFrame.startTimeOffset = this._model.recordOffsetInSeconds(record);
     },
 
     _createSyntheticFrame: function(record)
     {
         var frame = new WebInspector.TimelineFrame();
         frame.startTime = WebInspector.TimelineModel.startTimeInSeconds(record);
+        frame.startTimeOffset = this._model.recordOffsetInSeconds(record);
         frame.endTime = WebInspector.TimelineModel.endTimeInSeconds(record);
         frame.cpuTime = WebInspector.TimelineModel.durationInSeconds(record);
         return frame;

@@ -369,6 +369,8 @@ WebInspector.TimelinePanel.prototype = {
             var width = frameEnd - actualStart;
             frameStrip.style.left = actualStart + "px";
             frameStrip.style.width = width + "px";
+            frameStrip._frame = frame;
+
             const minWidthForFrameInfo = 60;
             if (width > minWidthForFrameInfo)
                 frameStrip.textContent = Number.secondsToString(frame.endTime - frame.startTime, true);
@@ -576,7 +578,7 @@ WebInspector.TimelinePanel.prototype = {
         this._calculator.setWindow(this._overviewPane.windowStartTime(), this._overviewPane.windowEndTime());
         this._calculator.setDisplayWindow(!this._overviewPane.windowLeft() ? this._expandOffset : 0, this._graphRowsElement.clientWidth);
 
-        var recordsInWindowCount = this._refreshRecords(!this._boundariesAreValid);
+        var recordsInWindowCount = this._refreshRecords();
         this._updateRecordsCounter(recordsInWindowCount);
         if(!this._boundariesAreValid) {
             this._updateEventDividers();
@@ -711,7 +713,9 @@ WebInspector.TimelinePanel.prototype = {
 
     _getPopoverAnchor: function(element)
     {
-        return element.enclosingNodeOrSelfWithClass("timeline-graph-bar") || element.enclosingNodeOrSelfWithClass("timeline-tree-item");
+        return element.enclosingNodeOrSelfWithClass("timeline-graph-bar") ||
+            element.enclosingNodeOrSelfWithClass("timeline-tree-item") ||
+            element.enclosingNodeOrSelfWithClass("timeline-frame-strip");
     },
 
     _mouseOut: function(e)
@@ -723,7 +727,7 @@ WebInspector.TimelinePanel.prototype = {
     {
         var anchor = this._getPopoverAnchor(e.target);
 
-        if (anchor && anchor.row._record.type === "Paint")
+        if (anchor && anchor.row && anchor.row._record.type === "Paint")
             this._highlightRect(anchor.row._record);
         else
             this._hideRectHighlight();
@@ -751,8 +755,13 @@ WebInspector.TimelinePanel.prototype = {
      */
     _showPopover: function(anchor, popover)
     {
-        var record = anchor.row._record;
-        popover.show(record.generatePopupContent(), anchor);
+        if (anchor.hasStyleClass("timeline-frame-strip")) {
+            var frame = anchor._frame;
+            popover.show(WebInspector.TimelinePresentationModel.generatePopupContentForFrame(frame), anchor);
+        } else {
+            var record = anchor.row._record;
+            popover.show(record.generatePopupContent(), anchor);
+        }
     },
 
     _closeRecordDetails: function()

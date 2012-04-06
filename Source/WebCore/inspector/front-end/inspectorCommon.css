@@ -88,6 +88,7 @@ iframe.view {
     border-bottom: 1px solid rgba(0, 0, 0, 0.3);
     height: 20px;
     z-index: 200;
+    pointer-events: none;
 }
 
 .resources-divider {

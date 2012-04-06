@@ -233,6 +233,14 @@ WebInspector.TimelineModel.prototype = {
             this._minimumRecordTime = startTime;
         if (this._maximumRecordTime === -1 || endTime > this._maximumRecordTime)
             this._maximumRecordTime = endTime;
+    },
+
+    /**
+     * @param {Object} rawRecord
+     */
+    recordOffsetInSeconds: function(rawRecord)
+    {
+        return WebInspector.TimelineModel.startTimeInSeconds(rawRecord) - this._minimumRecordTime;
     }
 }
 
