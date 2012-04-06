@@ -1533,11 +1533,6 @@
             '<(chromium_src_dir)/third_party/harfbuzz/harfbuzz.gyp:harfbuzz',
           ],
         }],
-        ['OS!="win"', {
-          'sources/': [
-            ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
-          ],
-        }],
         ['OS=="mac"', {
           # Necessary for Mac .mm stuff.
           'include_dirs': [
@@ -1625,17 +1620,6 @@
             ['exclude', 'platform/ScrollAnimatorNone\\.cpp$'],
             ['exclude', 'platform/ScrollAnimatorNone\\.h$'],
 
-            ['include', '/chrome/junk\\.txt$'],
-          ],
-        },{ # OS!="mac"
-          'sources/': [
-            # FIXME: We will eventually compile this too, but for now it's
-            # only used on mac.
-            ['exclude', 'platform/graphics/FontPlatformData\\.cpp$'],
-          ],
-        }],
-        ['OS=="mac"', {
-          'sources/': [
             ['include', 'platform/graphics/cg/FloatPointCG\\.cpp$'],
             ['include', 'platform/graphics/cg/FloatRectCG\\.cpp$'],
             ['include', 'platform/graphics/cg/FloatSizeCG\\.cpp$'],
@@ -1649,25 +1633,22 @@
             ['exclude', 'platform/graphics/skia/SimpleFontDataSkia\\.cpp$'],
             ['exclude', 'platform/chromium/DragImageChromiumMac\\.cpp$'],
           ],
-        }],
-        ['use_x11 == 0 and OS != "mac"', {
-          'sources/': [
-            ['exclude', 'VDMX[^/]+\\.(cpp|h)$'],
-          ],
-        }],
-        ['OS!="mac"', {
+        },{ # OS!="mac"
           'sources/': [
             ['exclude', 'Mac\\.(cpp|mm?)$'],
 
             # Linux uses FontLinux; Windows uses FontWin. Additionally, FontSkia
             # is excluded by a rule above if WebKit uses CG instead of Skia.
             ['exclude', 'platform/graphics/skia/FontSkia\\.cpp$'],
+
+            # FIXME: We will eventually compile this too, but for now it's
+            # only used on mac.
+            ['exclude', 'platform/graphics/FontPlatformData\\.cpp$'],
           ],
         }],
-        ['OS!="win"', {
+        ['use_x11 == 0 and OS != "mac"', {
           'sources/': [
-            ['exclude', 'Win\\.cpp$'],
-            ['exclude', '/(Windows|Uniscribe)[^/]*\\.cpp$']
+            ['exclude', 'VDMX[^/]+\\.(cpp|h)$'],
           ],
         }],
         ['OS=="win"', {
@@ -1682,6 +1663,12 @@
 
             # SystemInfo.cpp is useful and we don't want to copy it.
             ['include', 'platform/win/SystemInfo\\.cpp$'],
+          ],
+        },{ # OS!="win"
+          'sources/': [
+            ['exclude', 'Win\\.cpp$'],
+            ['exclude', '/(Windows|Uniscribe)[^/]*\\.cpp$'],
+            ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
           ],
         }],
         ['OS=="android"', {
@@ -1760,6 +1747,10 @@
           'sources/': [
             ['exclude', 'Posix\\.cpp$'],
           ],
+        },{ # OS!="win"
+          'sources/': [
+            ['exclude', 'Win\\.cpp$'],
+          ],
         }],
         ['OS=="mac"', {
           'sources/': [
@@ -1767,6 +1758,8 @@
             # does not reference the Skia code that is used by Windows, Linux and Android.
             ['exclude', 'rendering/RenderThemeChromiumSkia\\.cpp$'],
           ],
+        },{ # OS!="mac"
+          'sources/': [['exclude', 'Mac\\.(cpp|mm?)$']]
         }],
         ['os_posix == 1 and OS != "mac" and OS != "android" and gcc_version == 42', {
           # Due to a bug in gcc 4.2.1 (the current version on hardy), we get
@@ -1783,19 +1776,11 @@
             ['exclude', 'Gtk\\.cpp$'],
           ],
         }],
-        ['OS!="mac"', {
-          'sources/': [['exclude', 'Mac\\.(cpp|mm?)$']]
-        }],
-        ['OS!="win"', {
-          'sources/': [
-            ['exclude', 'Win\\.cpp$'],
-          ],
-        }],
         ['OS=="android"', {
           'sources/': [
             ['include', 'rendering/RenderThemeChromiumLinux\\.cpp$'],
           ],
-        }, {
+        },{ # OS!="android"
           'sources/': [
             ['exclude', 'Android\\.cpp$'],
           ],
@@ -1912,6 +1897,11 @@
             ['include', '/SkiaFontWin\\.cpp$'],
             ['include', '/TransparencyWin\\.cpp$'],
           ],
+        },{ # OS!="win"
+          'sources/': [
+            ['exclude', 'Win\\.cpp$'],
+            ['exclude', '/(Windows|Uniscribe)[^/]*\\.cpp$']
+          ],
         }],
         ['os_posix == 1 and OS != "mac" and OS != "android" and gcc_version == 42', {
           # Due to a bug in gcc 4.2.1 (the current version on hardy), we get
@@ -1930,12 +1920,6 @@
         }],
         ['OS!="mac"', {
           'sources/': [['exclude', 'Mac\\.(cpp|mm?)$']]
-        }],
-        ['OS!="win"', {
-          'sources/': [
-            ['exclude', 'Win\\.cpp$'],
-            ['exclude', '/(Windows|Uniscribe)[^/]*\\.cpp$']
-          ],
         }],
       ],
     },
