@@ -2248,7 +2248,7 @@ PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
     FrameView* frameView = frame->view();
     if (!frameView)
         return 0;
-    LayoutPoint framePoint = frameView->windowToContents(windowPoint);
+    IntPoint framePoint = frameView->windowToContents(windowPoint);
     VisibleSelection selection(frame->visiblePositionForPoint(framePoint));
     return avoidIntersectionWithNode(selection.toNormalizedRange().get(), m_deleteButtonController->containerElement());
 }
@@ -2868,7 +2868,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
 
                 PaintBehavior oldBehavior = m_frame->view()->paintBehavior();
                 m_frame->view()->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
-                m_frame->view()->paintContents(&context, visibleRect);
+                m_frame->view()->paintContents(&context, enclosingIntRect(visibleRect));
                 m_frame->view()->setPaintBehavior(oldBehavior);
             }
         }

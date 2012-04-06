@@ -300,7 +300,7 @@ public:
 
     void setStartNewKillRingSequence(bool);
 
-    PassRefPtr<Range> rangeForPoint(const LayoutPoint& windowPoint);
+    PassRefPtr<Range> rangeForPoint(const IntPoint& windowPoint);
 
     void clear();
 
