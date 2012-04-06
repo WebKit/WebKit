@@ -28,15 +28,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import codecs
-import logging
 import mimetypes
-import socket
+import time
 import urllib2
 
-from webkitpy.common.net.networktransaction import NetworkTransaction
-
-
-_log = logging.getLogger(__name__)
+from webkitpy.common.net.networktransaction import NetworkTransaction, NetworkTimeout
 
 
 def get_mime_type(filename):
@@ -86,10 +82,10 @@ def _encode_multipart_form_data(fields, files):
 
 
 class FileUploader(object):
-    def __init__(self, url, timeout_seconds, debug=False):
+    def __init__(self, url, timeout_seconds):
         self._url = url
         self._timeout_seconds = timeout_seconds
-        self._debug = debug
+        self._deadline = time.time() + self._timeout_seconds
 
     def upload_single_text_file(self, filesystem, content_type, filename):
         return self._upload_data(content_type, filesystem.read_text_file(filename))
@@ -107,19 +103,11 @@ class FileUploader(object):
 
     def _upload_data(self, content_type, data):
         def callback():
-            if self._debug:
-                _log.debug("uploading %d bytes to '%s', content-type '%s'" % (len(data), self._url, content_type))
+            now = time.time()
+            if now > self._deadline:
+                # This shouldn't happen, but just to be safe ...
+                raise NetworkTimeout()
             request = urllib2.Request(self._url, data, {"Content-Type": content_type})
-            return urllib2.urlopen(request)
+            return urllib2.urlopen(request, timeout=(self._deadline - now))
 
-        orig_timeout = socket.getdefaulttimeout()
-        response = None
-        try:
-            # FIXME: We shouldn't mutate global static state.
-            # FIXME: clean this up once we understand what's going on on chromium leopard bots.
-            if not self._debug:
-                socket.setdefaulttimeout(self._timeout_seconds)
-            return NetworkTransaction(timeout_seconds=self._timeout_seconds).run(callback)
-        finally:
-            if not self._debug:
-                socket.setdefaulttimeout(orig_timeout)
+        return NetworkTransaction(timeout_seconds=self._timeout_seconds).run(callback)

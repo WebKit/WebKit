@@ -1,3 +1,26 @@
+2012-04-05  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt is failing to upload test results on the chromium-mac-leopard bots
+        https://bugs.webkit.org/show_bug.cgi?id=83230
+
+        Reviewed by Ojan Vafai.
+
+        This should fix things properly; FileUploader() was setting the
+        socket default timeout value, and apparently that doesn't work
+        properly with urllib. Also, the class had a bad try/finally
+        block that was causing the exceptions to be swallowed :(.
+
+        * Scripts/webkitpy/common/net/file_uploader.py:
+        (FileUploader.__init__):
+        (FileUploader._upload_data.callback):
+        (FileUploader):
+        (FileUploader._upload_data):
+        * Scripts/webkitpy/common/net/networktransaction.py:
+        (NetworkTimeout.__str__):
+        (NetworkTransaction.run):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGeneratorBase.upload_json_files):
+
 2012-04-05  Patrick Gansterer  <paroga@webkit.org>
 
         [Qt] Correct <wtf/*.h> include paths.

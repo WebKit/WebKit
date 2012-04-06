@@ -37,7 +37,8 @@ _log = logging.getLogger(__name__)
 
 
 class NetworkTimeout(Exception):
-    pass
+    def __str__(self):
+        return 'NetworkTimeout'
 
 
 class NetworkTransaction(object):
@@ -59,12 +60,6 @@ class NetworkTransaction(object):
                 self._check_for_timeout()
                 _log.warn("Received HTTP status %s loading \"%s\".  Retrying in %s seconds..." % (e.code, e.filename, self._backoff_seconds))
                 self._sleep()
-            except urllib2.URLError, e:
-                # FIXME: urllib2 seems to convert socket errors to this.
-                self._check_for_timeout()
-                _log.warn("Received URLError %s.  Retrying in %s seconds..." % (str(s), self._backoff_seconds))
-                self._sleep()
-
 
     def _check_for_timeout(self):
         if self._total_sleep + self._backoff_seconds > self._timeout_seconds:
