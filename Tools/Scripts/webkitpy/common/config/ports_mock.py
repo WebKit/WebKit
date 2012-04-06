@@ -36,6 +36,9 @@ class MockPort(object):
     def layout_tests_results_path(self):
         return "/mock-results/full_results.json"
 
+    def unit_tests_results_path(self):
+        return "/mock-results/webkit_unit_tests_output.xml"
+
     def check_webkit_style_command(self):
         return ["mock-check-webkit-style"]
 

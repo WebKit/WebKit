@@ -55,10 +55,10 @@ class PatchAnalysisTaskDelegate(object):
     def expected_failures(self):
         raise NotImplementedError("subclasses must implement")
 
-    def layout_test_results(self):
+    def test_results(self):
         raise NotImplementedError("subclasses must implement")
 
-    def archive_last_layout_test_results(self, patch):
+    def archive_last_test_results(self, patch):
         raise NotImplementedError("subclasses must implement")
 
     def build_style(self):
@@ -145,7 +145,7 @@ class PatchAnalysisTask(object):
         "Passed tests",
         "Patch does not pass tests")
 
-        self._expected_failures.shrink_expected_failures(self._delegate.layout_test_results(), success)
+        self._expected_failures.shrink_expected_failures(self._delegate.test_results(), success)
         return success
 
     def _build_and_test_without_patch(self):
@@ -160,7 +160,7 @@ class PatchAnalysisTask(object):
         "Able to pass tests without patch",
         "Unable to pass tests without patch (tree is red?)")
 
-        self._expected_failures.shrink_expected_failures(self._delegate.layout_test_results(), success)
+        self._expected_failures.shrink_expected_failures(self._delegate.test_results(), success)
         return success
 
     def _land(self):
@@ -187,10 +187,10 @@ class PatchAnalysisTask(object):
         if self._test():
             return True
 
-        # Note: archive_last_layout_test_results deletes the results directory, making these calls order-sensitve.
-        # We could remove this dependency by building the layout_test_results from the archive.
-        first_results = self._delegate.layout_test_results()
-        first_results_archive = self._delegate.archive_last_layout_test_results(self._patch)
+        # Note: archive_last_test_results deletes the results directory, making these calls order-sensitve.
+        # We could remove this dependency by building the test_results from the archive.
+        first_results = self._delegate.test_results()
+        first_results_archive = self._delegate.archive_last_test_results(self._patch)
         first_script_error = self._script_error
 
         if self._expected_failures.failures_were_expected(first_results):
@@ -202,7 +202,7 @@ class PatchAnalysisTask(object):
                 self._report_flaky_tests(first_results.failing_test_results(), first_results_archive)
             return True
 
-        second_results = self._delegate.layout_test_results()
+        second_results = self._delegate.test_results()
         if self._results_failed_different_tests(first_results, second_results):
             # We could report flaky tests here, but we would need to be careful
             # to use similar checks to ExpectedFailures._can_trust_results
@@ -211,15 +211,15 @@ class PatchAnalysisTask(object):
             # See https://bugs.webkit.org/show_bug.cgi?id=51272
             return False
 
-        # Archive (and remove) second results so layout_test_results() after
+        # Archive (and remove) second results so test_results() after
         # build_and_test_without_patch won't use second results instead of the clean-tree results.
-        second_results_archive = self._delegate.archive_last_layout_test_results(self._patch)
+        second_results_archive = self._delegate.archive_last_test_results(self._patch)
 
         if self._build_and_test_without_patch():
             # The error from the previous ._test() run is real, report it.
             return self.report_failure(first_results_archive, first_results, first_script_error)
 
-        clean_tree_results = self._delegate.layout_test_results()
+        clean_tree_results = self._delegate.test_results()
         self._expected_failures.grow_expected_failures(clean_tree_results)
 
         # Re-check if the original results are now to be expected to avoid a full re-try.

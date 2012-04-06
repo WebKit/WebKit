@@ -29,6 +29,7 @@
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 from webkitpy.common.system.deprecated_logging import log
+from webkitpy.common.system.executive import ScriptError
 
 class RunTests(AbstractStep):
     # FIXME: This knowledge really belongs in the commit-queue.
@@ -64,10 +65,16 @@ class RunTests(AbstractStep):
                 log("Running JavaScriptCore tests")
                 self._tool.executive.run_and_throw_if_fail(javascriptcore_tests_command, quiet=True, cwd=self._tool.scm().checkout_root)
 
-            webkit_unit_tests_command = self._tool.port().run_webkit_unit_tests_command()
-            if webkit_unit_tests_command:
-                log("Running WebKit unit tests")
-                self._tool.executive.run_and_throw_if_fail(webkit_unit_tests_command, cwd=self._tool.scm().checkout_root)
+        webkit_unit_tests_command = self._tool.port().run_webkit_unit_tests_command()
+        if webkit_unit_tests_command:
+            log("Running WebKit unit tests")
+            args = webkit_unit_tests_command
+            if self._options.non_interactive:
+                args.append("--gtest_output=xml:%s/webkit_unit_tests_output.xml" % self._tool.port().results_directory)
+            try:
+                self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
+            except ScriptError, e:
+                log("Error running webkit_unit_tests: %s" % e.message_with_output())
 
         log("Running run-webkit-tests")
         args = self._tool.port().run_webkit_tests_command()

@@ -73,7 +73,7 @@ class EarlyWarningSytemTest(QueuesTest):
         self.assert_queue_outputs(ews, expected_stderr=self._default_expected_stderr(ews), options=options)
 
     def _test_testing_ews(self, ews):
-        ews.layout_test_results = lambda: None
+        ews.test_results = lambda: None
         ews.bind_to_tool(MockTool())
         expected_stderr = self._default_expected_stderr(ews)
         expected_stderr["handle_script_error"] = "ScriptError error message\n\nMOCK output\n"

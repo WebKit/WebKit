@@ -52,15 +52,27 @@ class LayoutTestResultsReader(object):
             return None
         return LayoutTestResults.results_from_string(results_html)
 
+    def _create_unit_test_results(self):
+        results_path = self._tool.port().unit_tests_results_path()
+        if not results_path:
+            return None
+        results_xml = self._read_file_contents(results_path)
+        if not results_xml:
+            return None
+        return UnitTestResults.results_from_string(results_xml)
+
     def results(self):
-        results = self._create_layout_test_results()
-        # FIXME: We should not have to set failure_limit_count, but we
-        # do until run-webkit-tests can be updated save off the value
-        # of --exit-after-N-failures in results.html/results.json.
-        # https://bugs.webkit.org/show_bug.cgi?id=58481
-        if results:
-            results.set_failure_limit_count(RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT)
-        return results
+        layout_test_results = self._create_layout_test_results()
+        unit_test_results = self._create_unit_test_results()
+        if layout_test_results:
+            # FIXME: We should not have to set failure_limit_count, but we
+            # do until run-webkit-tests can be updated save off the value
+            # of --exit-after-N-failures in results.html/results.json.
+            # https://bugs.webkit.org/show_bug.cgi?id=58481
+            layout_test_results.set_failure_limit_count(RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT)
+            if unit_test_results:
+                layout_test_results.add_unit_test_failures(unit_test_results)
+        return layout_test_results
 
     def _results_directory(self):
         results_path = self._tool.port().layout_tests_results_path()

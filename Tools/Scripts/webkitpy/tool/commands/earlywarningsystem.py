@@ -112,10 +112,10 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
     def expected_failures(self):
         return self._expected_failures
 
-    def layout_test_results(self):
+    def test_results(self):
         return self._layout_test_results_reader.results()
 
-    def archive_last_layout_test_results(self, patch):
+    def archive_last_test_results(self, patch):
         return self._layout_test_results_reader.archive(patch)
 
     def build_style(self):

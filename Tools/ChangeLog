@@ -1,3 +1,66 @@
+2012-04-06  James Robinson  <jamesr@chromium.org>
+
+        Enable webkit_unit_tests for commit queue and EWS while tracking failures
+        https://bugs.webkit.org/show_bug.cgi?id=83329
+
+        Reviewed by Adam Barth.
+
+        This adds a step to parse XML output from webkit_unit_tests and consider regressions in the PatchAnalysisTask so
+        the commit queue and EWS can reject patches that cause regressions.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (ChromiumPort.run_webkit_unit_tests_command):
+        * Scripts/webkitpy/common/config/ports_mock.py:
+        (MockPort.unit_tests_results_path):
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        (LayoutTestResults.__init__):
+        (LayoutTestResults.failing_tests):
+        (LayoutTestResults):
+        (LayoutTestResults.add_unit_test_failures):
+        * Scripts/webkitpy/common/net/unittestresults.py: Copied from Tools/Scripts/webkitpy/tool/steps/runtests_unittest.py.
+        (UnitTestResults):
+        (UnitTestResults.results_from_string):
+        * Scripts/webkitpy/common/net/unittestresults_unittest.py: Added.
+        (UnitTestResultsTest):
+        (UnitTestResultsTest.test_nostring):
+        (UnitTestResultsTest.test_emptystring):
+        (UnitTestResultsTest.test_nofailures):
+        (test_onefailure):
+        (test_multiple_failures_per_test):
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (MockCommitQueue.test_results):
+        (MockCommitQueue.archive_last_test_results):
+        (FailingTestCommitQueue.test_results):
+        (test_flaky_test_failure):
+        (test_failed_archive):
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader.py:
+        (LayoutTestResultsReader._create_unit_test_results):
+        (LayoutTestResultsReader.results):
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        (LayoutTestResultsReaderTest.test_missing_layout_test_results):
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (PatchAnalysisTaskDelegate.test_results):
+        (PatchAnalysisTaskDelegate.archive_last_test_results):
+        (PatchAnalysisTask._test):
+        (PatchAnalysisTask._build_and_test_without_patch):
+        (PatchAnalysisTask._test_patch):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.test_results):
+        (AbstractEarlyWarningSystem.archive_last_test_results):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (EarlyWarningSytemTest._test_testing_ews):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (CommitQueue.test_results):
+        (CommitQueue.archive_last_test_results):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (CommitQueueTest.test_commit_queue):
+        (test_rollout):
+        (test_manual_reject_during_processing):
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        (RunTestsTest.test_webkit_run_unit_tests):
+
 2012-04-06  Aaron Colwell  <acolwell@chromium.org>
 
         Enable MediaSource feature for DumpRenderTree so

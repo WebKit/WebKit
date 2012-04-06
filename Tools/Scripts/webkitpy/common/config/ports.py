@@ -183,6 +183,9 @@ class ChromiumPort(DeprecatedPort):
         command.append("--skip-failing-tests")
         return command
 
+    def run_webkit_unit_tests_command(self):
+        return self.script_shell_command("run-chromium-webkit-unit-tests")
+
     def run_javascriptcore_tests_command(self):
         return None
 
