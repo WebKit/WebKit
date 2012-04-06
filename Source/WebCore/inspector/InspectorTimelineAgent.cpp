@@ -305,11 +305,13 @@ void InspectorTimelineAgent::didScheduleResourceRequest(const String& url)
 void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, const ResourceRequest& request)
 {
     pushGCEventRecords();
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), m_maxCallStackDepth);
+    RefPtr<InspectorObject> recordRaw = TimelineRecordFactory::createGenericRecord(timestamp(), m_maxCallStackDepth);
     String requestId = IdentifiersFactory::requestId(identifier);
-    record->setObject("data", TimelineRecordFactory::createResourceSendRequestData(requestId, request));
-    record->setString("type", TimelineRecordType::ResourceSendRequest);
-    setHeapSizeStatistic(record.get());
+    recordRaw->setObject("data", TimelineRecordFactory::createResourceSendRequestData(requestId, request));
+    recordRaw->setString("type", TimelineRecordType::ResourceSendRequest);
+    setHeapSizeStatistic(recordRaw.get());
+    // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
+    RefPtr<TypeBuilder::Timeline::TimelineEvent> record = TypeBuilder::Timeline::TimelineEvent::runtimeCast(recordRaw.release());
     m_frontend->eventRecorded(record.release());
 }
 
@@ -391,9 +393,11 @@ void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject
     RefPtr<InspectorObject> record(prpRecord);
     record->setString("type", type);
     setHeapSizeStatistic(record.get());
-    if (m_recordStack.isEmpty())
-        m_frontend->eventRecorded(record.release());
-    else {
+    if (m_recordStack.isEmpty()) {
+        // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
+        RefPtr<TypeBuilder::Timeline::TimelineEvent> recordChecked = TypeBuilder::Timeline::TimelineEvent::runtimeCast(record.release());
+        m_frontend->eventRecorded(recordChecked.release());
+    } else {
         TimelineRecordEntry parent = m_recordStack.last();
         parent.children->pushObject(record.release());
     }
