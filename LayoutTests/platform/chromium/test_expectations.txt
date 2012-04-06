@@ -3061,8 +3061,13 @@ BUGWK62684 WIN LINUX : fast/ruby/overhang-horizontal.html = FAIL
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
+// Many WIN SVG tests containing text are flaky. It seems differen fonts are used at different times.
 BUGWK83303 WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
 BUGWK83303 WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
+BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container-standalone.svg = IMAGE PASS
+BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container.xhtml = IMAGE PASS
+BUGWK83303 WIN : svg/custom/mouse-move-on-svg-root-standalone.svg = IMAGE PASS
+BUGWK83303 WIN : svg/custom/mouse-move-on-svg-root.xhtml = IMAGE PASS
 
 BUGCR102677 MAC DEBUG : fast/reflections/reflection-masks-outset.html = CRASH PASS
 
@@ -3372,15 +3377,6 @@ BUGEPOGER : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMA
 
 BUGWK76727 : fast/multicol/span/span-as-immediate-child-property-removal.html = IMAGE+TEXT TEXT PASS IMAGE
 BUGWK76727 : fast/multicol/span/span-as-immediate-columns-child-removal.html = IMAGE+TEXT TEXT PASS IMAGE
-
-// Selection should have disappeared, a side-effect of moving RenderSVGRoot to RenderReplaced (a progression!)
-BUGWK76446 WIN LINUX : svg/custom/mouse-move-on-svg-container-standalone.svg = IMAGE+TEXT
-BUGWK76446 WIN LINUX : svg/custom/mouse-move-on-svg-container.xhtml = IMAGE+TEXT
-BUGWK76446 WIN LINUX : svg/custom/mouse-move-on-svg-root-standalone.svg = IMAGE+TEXT
-BUGWK76446 WIN LINUX : svg/custom/mouse-move-on-svg-root.xhtml = IMAGE+TEXT
-
-// Caret position reported differently, should start at 0 instead of 18.
-BUGWK76446 WIN LINUX : svg/custom/pointer-events-text-css-transform.svg = TEXT
 
 // Need to implement file name logging.
 BUGWK76572 : http/tests/download = FAIL
