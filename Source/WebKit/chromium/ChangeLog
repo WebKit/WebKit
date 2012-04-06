@@ -1,3 +1,18 @@
+2012-04-05  Hironori Bono  <hbono@chromium.org>
+
+        [Chromium] moving a cursor on a misspelled word should not remove a misspelled underline
+        https://bugs.webkit.org/show_bug.cgi?id=83214
+
+        Reviewed by Ryosuke Niwa.
+
+        When Chrome enables asynchronous spellchecking, it adds Spelling markers in the
+        background. For this case, moving a cursor should not remove these markers
+        because it requires Chrome to spellcheck text again. This change prevents
+        removing Spelling markers added by spellcheckers asynchronously.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems): use marker descriptions instead of spellchecking text when Chrome enables asynchronous spellchecking.
+
 2012-04-05  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Record the number of tiles paint-culled instead of the incorrect number of pixels

@@ -2923,10 +2923,17 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, Fra
         }
 
 #if !PLATFORM(MAC) || (PLATFORM(MAC) && (defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)))
+#if PLATFORM(CHROMIUM)
+        if (!m_frame->settings() || !m_frame->settings()->asynchronousSpellCheckingEnabled()) {
+            if (RefPtr<Range> wordRange = newAdjacentWords.toNormalizedRange())
+                m_frame->document()->markers()->removeMarkers(wordRange.get(), DocumentMarker::Spelling);
+        }
+#else
         // This only erases markers that are in the first unit (word or sentence) of the selection.
         // Perhaps peculiar, but it matches AppKit on these Mac OS X versions.
         if (RefPtr<Range> wordRange = newAdjacentWords.toNormalizedRange())
             m_frame->document()->markers()->removeMarkers(wordRange.get(), DocumentMarker::Spelling);
+#endif
 #endif
         if (RefPtr<Range> sentenceRange = newSelectedSentence.toNormalizedRange())
             m_frame->document()->markers()->removeMarkers(sentenceRange.get(), DocumentMarker::Grammar);

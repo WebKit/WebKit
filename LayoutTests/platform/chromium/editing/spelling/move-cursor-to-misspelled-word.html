@@ -1,0 +1,25 @@
+<html>
+<head>
+<script src=../../../../fast/js/resources/js-test-pre.js language="javascript" type="text/javascript"></script>
+<title>Testing moving cursor to a misspelled word</title> 
+</head> 
+<body>
+<div id="src" contenteditable="true" spellcheck="true"></div><br/>
+<script language="javascript">
+description('Test if Chrome WebKit does not remove a misspelled marker when moving a cursor on a misspelled word.' +
+            'To test manually, type a misspelled word "zz " and type a left-arrow key to move the cursor on it.' +
+            'This test succeeds when "zz" is marked as misspelled.');
+
+layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+var node = document.getElementById('src');
+node.focus();
+document.execCommand("InsertText", false, 'z');
+document.execCommand("InsertText", false, 'z');
+document.execCommand("InsertText", false, ' ');
+window.getSelection().modify('move', 'backward', 'character');
+shouldBeTrue('internals.hasSpellingMarker(document, 0, 2)');
+layoutTestController.setAsynchronousSpellCheckingEnabled(false);
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
