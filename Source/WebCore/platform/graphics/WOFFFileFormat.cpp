@@ -63,7 +63,7 @@ static bool readUInt32(SharedBuffer* buffer, size_t& offset, uint32_t& value)
     if (buffer->size() - offset < sizeof(value))
         return false;
 
-    value = ntohl(*reinterpret_cast<const uint32_t*>(buffer->data() + offset));
+    value = ntohl(*reinterpret_cast_ptr<const uint32_t*>(buffer->data() + offset));
     offset += sizeof(value);
 
     return true;
@@ -75,7 +75,7 @@ static bool readUInt16(SharedBuffer* buffer, size_t& offset, uint16_t& value)
     if (buffer->size() - offset < sizeof(value))
         return false;
 
-    value = ntohs(*reinterpret_cast<const uint16_t*>(buffer->data() + offset));
+    value = ntohs(*reinterpret_cast_ptr<const uint16_t*>(buffer->data() + offset));
     offset += sizeof(value);
 
     return true;

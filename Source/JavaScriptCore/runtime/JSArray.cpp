@@ -1390,7 +1390,7 @@ void JSArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.copyAndAppend(reinterpret_cast<void**>(&baseStorage), storageSize(thisObject->m_vectorLength + thisObject->m_indexBias), storage->m_vector->slot(), thisObject->m_vectorLength);
 
         if (baseStorage != thisObject->m_storage->m_allocBase) {
-            thisObject->m_storage = reinterpret_cast<ArrayStorage*>(static_cast<char*>(baseStorage) + sizeof(JSValue) * thisObject->m_indexBias);
+            thisObject->m_storage = reinterpret_cast_ptr<ArrayStorage*>(static_cast<char*>(baseStorage) + sizeof(JSValue) * thisObject->m_indexBias);
             thisObject->m_storage->m_allocBase = baseStorage;
             ASSERT(thisObject->m_storage->m_allocBase);
         }

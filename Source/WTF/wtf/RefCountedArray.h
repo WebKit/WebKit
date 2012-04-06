@@ -145,7 +145,7 @@ private:
         {
             char* result = reinterpret_cast<char*>(this) + size();
             ASSERT(!(bitwise_cast<uintptr_t>(result) & 7));
-            return reinterpret_cast<T*>(result);
+            return reinterpret_cast_ptr<T*>(result);
         }
         
         static Header* fromPayload(T* payload)

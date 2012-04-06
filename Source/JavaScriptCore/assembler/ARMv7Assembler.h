@@ -1830,29 +1830,29 @@ public:
         
         if (jumpType == JumpCondition) {
             // 2-byte conditional T1
-            const uint16_t* jumpT1Location = reinterpret_cast<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkJumpT1)));
+            const uint16_t* jumpT1Location = reinterpret_cast_ptr<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkJumpT1)));
             if (canBeJumpT1(jumpT1Location, to))
                 return LinkJumpT1;
             // 4-byte conditional T3
-            const uint16_t* jumpT3Location = reinterpret_cast<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkJumpT3)));
+            const uint16_t* jumpT3Location = reinterpret_cast_ptr<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkJumpT3)));
             if (canBeJumpT3(jumpT3Location, to, mayTriggerErrata)) {
                 if (!mayTriggerErrata)
                     return LinkJumpT3;
             }
             // 4-byte conditional T4 with IT
             const uint16_t* conditionalJumpT4Location = 
-            reinterpret_cast<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkConditionalJumpT4)));
+            reinterpret_cast_ptr<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkConditionalJumpT4)));
             if (canBeJumpT4(conditionalJumpT4Location, to, mayTriggerErrata)) {
                 if (!mayTriggerErrata)
                     return LinkConditionalJumpT4;
             }
         } else {
             // 2-byte unconditional T2
-            const uint16_t* jumpT2Location = reinterpret_cast<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkJumpT2)));
+            const uint16_t* jumpT2Location = reinterpret_cast_ptr<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkJumpT2)));
             if (canBeJumpT2(jumpT2Location, to))
                 return LinkJumpT2;
             // 4-byte unconditional T4
-            const uint16_t* jumpT4Location = reinterpret_cast<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkJumpT4)));
+            const uint16_t* jumpT4Location = reinterpret_cast_ptr<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkJumpT4)));
             if (canBeJumpT4(jumpT4Location, to, mayTriggerErrata)) {
                 if (!mayTriggerErrata)
                     return LinkJumpT4;
@@ -1891,25 +1891,25 @@ public:
     {
         switch (record.linkType()) {
         case LinkJumpT1:
-            linkJumpT1(record.condition(), reinterpret_cast<uint16_t*>(from), to);
+            linkJumpT1(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), to);
             break;
         case LinkJumpT2:
-            linkJumpT2(reinterpret_cast<uint16_t*>(from), to);
+            linkJumpT2(reinterpret_cast_ptr<uint16_t*>(from), to);
             break;
         case LinkJumpT3:
-            linkJumpT3(record.condition(), reinterpret_cast<uint16_t*>(from), to);
+            linkJumpT3(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), to);
             break;
         case LinkJumpT4:
-            linkJumpT4(reinterpret_cast<uint16_t*>(from), to);
+            linkJumpT4(reinterpret_cast_ptr<uint16_t*>(from), to);
             break;
         case LinkConditionalJumpT4:
-            linkConditionalJumpT4(record.condition(), reinterpret_cast<uint16_t*>(from), to);
+            linkConditionalJumpT4(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), to);
             break;
         case LinkConditionalBX:
-            linkConditionalBX(record.condition(), reinterpret_cast<uint16_t*>(from), to);
+            linkConditionalBX(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), to);
             break;
         case LinkBX:
-            linkBX(reinterpret_cast<uint16_t*>(from), to);
+            linkBX(reinterpret_cast_ptr<uint16_t*>(from), to);
             break;
         default:
             ASSERT_NOT_REACHED();

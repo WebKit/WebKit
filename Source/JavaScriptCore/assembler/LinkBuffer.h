@@ -260,9 +260,9 @@ private:
             
             // Copy the instructions from the last jump to the current one.
             size_t regionSize = jumpsToLink[i].from() - readPtr;
-            uint16_t* copySource = reinterpret_cast<uint16_t*>(inData + readPtr);
-            uint16_t* copyEnd = reinterpret_cast<uint16_t*>(inData + readPtr + regionSize);
-            uint16_t* copyDst = reinterpret_cast<uint16_t*>(outData + writePtr);
+            uint16_t* copySource = reinterpret_cast_ptr<uint16_t*>(inData + readPtr);
+            uint16_t* copyEnd = reinterpret_cast_ptr<uint16_t*>(inData + readPtr + regionSize);
+            uint16_t* copyDst = reinterpret_cast_ptr<uint16_t*>(outData + writePtr);
             ASSERT(!(regionSize % 2));
             ASSERT(!(readPtr % 2));
             ASSERT(!(writePtr % 2));

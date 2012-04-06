@@ -1,3 +1,22 @@
+2012-04-06  Rob Buis  <rbuis@rim.com>
+
+        Fix cast-align warnings in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=80790
+
+        Reviewed by George Staikos.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::computeJumpType):
+        (JSC::ARMv7Assembler::link):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::linkCode):
+        * heap/MarkStack.cpp:
+        (JSC::SlotVisitor::copyAndAppend):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::visitChildren):
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::Header::payload):
+
 2012-04-06  Darin Adler  <darin@apple.com>
 
         Streamline strtod and fix some related problems

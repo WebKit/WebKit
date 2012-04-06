@@ -81,7 +81,7 @@ static void handleError(j_common_ptr common)
 
 static void preMultipliedBGRAtoRGB(const unsigned char* pixels, unsigned int pixelCount, unsigned char* output)
 {
-    const SkPMColor* input = reinterpret_cast<const SkPMColor*>(pixels);
+    const SkPMColor* input = reinterpret_cast_ptr<const SkPMColor*>(pixels);
     for (; pixelCount-- > 0; ++input) {
         *output++ = SkGetPackedR32(*input);
         *output++ = SkGetPackedG32(*input);

@@ -22,6 +22,7 @@
 
 #include <cstring>
 #include <stdint.h>
+#include <wtf/StdLibExtras.h>
 
 using namespace std;
 
@@ -237,9 +238,9 @@ static inline bool maskedCompare(const MagicNumbers& info, const char* data, siz
     if (dataSize < info.size)
         return false;
 
-    const uint32_t* pattern32 = reinterpret_cast<const uint32_t*>(info.pattern);
-    const uint32_t* mask32 = reinterpret_cast<const uint32_t*>(info.mask);
-    const uint32_t* data32 = reinterpret_cast<const uint32_t*>(data);
+    const uint32_t* pattern32 = reinterpret_cast_ptr<const uint32_t*>(info.pattern);
+    const uint32_t* mask32 = reinterpret_cast_ptr<const uint32_t*>(info.mask);
+    const uint32_t* data32 = reinterpret_cast_ptr<const uint32_t*>(data);
 
     size_t count = info.size >> 2;
 
