@@ -65,9 +65,9 @@
 
 #endif
 
-// Undocumented CGContextSetCTM function, available at least since 10.4.
 extern "C" {
     CG_EXTERN void CGContextSetCTM(CGContextRef, CGAffineTransform);
+    CG_EXTERN CGAffineTransform CGContextGetBaseCTM(CGContextRef);
 };
 
 using namespace std;
@@ -1628,12 +1628,12 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode)
     CGContextSetBlendMode(platformContext(), target);
 }
 
-void GraphicsContext::platformApplyDeviceScaleFactor()
+void GraphicsContext::platformApplyDeviceScaleFactor(float deviceScaleFactor)
 {
     // CoreGraphics expects the base CTM of a HiDPI context to have the scale factor applied to it.
     // Failing to change the base level CTM will cause certain CG features, such as focus rings,
     // to draw with a scale factor of 1 rather than the actual scale factor.
-    wkSetBaseCTM(platformContext(), getCTM());
+    wkSetBaseCTM(platformContext(), CGAffineTransformScale(CGContextGetBaseCTM(platformContext()), deviceScaleFactor, deviceScaleFactor));
 }
 
 void GraphicsContext::platformFillEllipse(const FloatRect& ellipse)

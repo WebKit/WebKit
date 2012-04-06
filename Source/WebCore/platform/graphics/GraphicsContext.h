@@ -427,7 +427,7 @@ namespace WebCore {
         // This function applies the device scale factor to the context, making the context capable of
         // acting as a base-level context for a HiDPI environment.
         void applyDeviceScaleFactor(float);
-        void platformApplyDeviceScaleFactor();
+        void platformApplyDeviceScaleFactor(float);
 
 #if OS(WINCE) && !PLATFORM(QT)
         void setBitmap(PassRefPtr<SharedBitmap>);

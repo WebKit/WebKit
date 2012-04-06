@@ -765,7 +765,7 @@ PassOwnPtr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const IntSize& s
 }
 
 #if !USE(CG)
-void GraphicsContext::platformApplyDeviceScaleFactor()
+void GraphicsContext::platformApplyDeviceScaleFactor(float)
 {
 }
 #endif
@@ -773,7 +773,7 @@ void GraphicsContext::platformApplyDeviceScaleFactor()
 void GraphicsContext::applyDeviceScaleFactor(float deviceScaleFactor)
 {
     scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
-    platformApplyDeviceScaleFactor();
+    platformApplyDeviceScaleFactor(deviceScaleFactor);
 }
 
 void GraphicsContext::fillEllipse(const FloatRect& ellipse)
