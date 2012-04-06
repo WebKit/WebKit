@@ -4278,6 +4278,11 @@ void WebGLRenderingContext::loseContextImpl(WebGLRenderingContext::LostContextMo
 
     detachAndRemoveAllObjects();
 
+    if (m_drawingBuffer) {
+        // Make absolutely sure we do not refer to an already-deleted texture.
+        m_drawingBuffer->setTexture2DBinding(0);
+    }
+
     // There is no direct way to clear errors from a GL implementation and
     // looping until getError() becomes NO_ERROR might cause an infinite loop if
     // the driver or context implementation had a bug. So, loop a reasonably
