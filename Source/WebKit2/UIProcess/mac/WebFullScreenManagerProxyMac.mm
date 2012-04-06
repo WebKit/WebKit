@@ -57,6 +57,9 @@ bool WebFullScreenManagerProxy::isFullScreen()
 {
     if (!m_webView)
         return false;
+    if (![m_webView hasFullScreenWindowController])
+        return false;
+
     return [[m_webView fullScreenWindowController] isFullScreen];
 }
 

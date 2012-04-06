@@ -88,6 +88,7 @@ namespace WebKit {
 - (void)_didChangeScrollbarsForMainFrame;
 
 #if ENABLE(FULLSCREEN_API)
+- (BOOL)hasFullScreenWindowController;
 - (WKFullScreenWindowController*)fullScreenWindowController;
 - (void)closeFullScreenWindowController;
 #endif

@@ -2799,6 +2799,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 }
 
 #if ENABLE(FULLSCREEN_API)
+- (BOOL)hasFullScreenWindowController
+{
+    return (bool)_data->_fullScreenWindowController;
+}
+
 - (WKFullScreenWindowController*)fullScreenWindowController
 {
     if (!_data->_fullScreenWindowController) {
