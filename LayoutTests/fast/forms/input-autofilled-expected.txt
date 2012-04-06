@@ -1,4 +1,15 @@
 This tests that foreground and background colors properly change for autofilled inputs. It can only be run using DumpRenderTree.
-
-PASS 
+    
+PASS computedStyleUnstyled.color == originalForegroundUnstyled is true
+PASS computedStyleUnstyled.backgroundColor == originalBackgroundUnstyled is false
+PASS computedStyleStyled.color == originalForegroundStyled is true
+PASS computedStyleStyled.backgroundColor == originalBackgroundStyled is true
+PASS computedStyleStyledWithSelector.color == originalForegroundStyledWithSelector is false
+PASS computedStyleStyledWithSelector.backgroundColor == originalBackgroundStyledWithSelector is false
+PASS computedStyleUnstyled.color == originalForegroundUnstyled is true
+PASS computedStyleUnstyled.backgroundColor == originalBackgroundUnstyled is true
+PASS computedStyleStyled.color == originalForegroundStyled is true
+PASS computedStyleStyled.backgroundColor == originalBackgroundStyled is true
+PASS computedStyleStyledWithSelector.color == originalForegroundStyledWithSelector is true
+PASS computedStyleStyledWithSelector.backgroundColor == originalBackgroundStyledWithSelector is true
 

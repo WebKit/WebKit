@@ -537,9 +537,9 @@ input[type="file"] {
 }
 
 input:-webkit-autofill {
-    background-color: #FAFFBD !important;
-    background-image:none !important;
-    color: #000000 !important;
+    background-color: #FAFFBD;
+    background-image: none;
+    color: #000000;
 }
 
 input[type="radio"], input[type="checkbox"] {

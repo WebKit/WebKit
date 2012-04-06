@@ -7,58 +7,76 @@
             layoutTestController.dumpAsText();
         }
 
-        var tf = document.getElementById('tf');
-        var computedStyle = document.defaultView.getComputedStyle(tf);
-        var originalForeground = computedStyle.color;
-        var originalBackground = computedStyle.backgroundColor;
+        var unstyled = document.getElementById('unstyled');
+        var styled = document.getElementById('styled');
+        var styledWithSelector = document.getElementById('styledWithSelector');
+        computedStyleUnstyled = document.defaultView.getComputedStyle(unstyled);
+        originalForegroundUnstyled = computedStyleUnstyled.color;
+        originalBackgroundUnstyled = computedStyleUnstyled.backgroundColor;
+        computedStyleStyled = document.defaultView.getComputedStyle(styled);
+        originalForegroundStyled = computedStyleStyled.color;
+        originalBackgroundStyled = computedStyleStyled.backgroundColor;
+        computedStyleStyledWithSelector = document.defaultView.getComputedStyle(styledWithSelector);
+        originalForegroundStyledWithSelector = computedStyleStyledWithSelector.color;
+        originalBackgroundStyledWithSelector = computedStyleStyledWithSelector.backgroundColor;
 
         if (window.layoutTestController) {
-            layoutTestController.setAutofilled(tf, true);
+            layoutTestController.setAutofilled(unstyled, true);
+            layoutTestController.setAutofilled(styled, true);
+            layoutTestController.setAutofilled(styledWithSelector, true);
         }
 
-        // Both the foreground and background colors should change.
-        computedStyle = document.defaultView.getComputedStyle(tf);
-        var autofilledForeground = computedStyle.color;
-        var autofilledBackground = computedStyle.backgroundColor;
-        if (autofilledForeground == originalForeground) {
-            testFailed('Foreground color did not change when autofilled.');
-            return;
-        }
-        if (autofilledBackground == originalBackground) {
-            testFailed('Background color did not change when autofilled.');
-            return;
-        }
+        // For the unstyled element, the background color should change.  The foreground color should not change,
+        // as the default foreground color for an autofilled input is the same as for a non-autofilled input.
+        // For the styled element, the author-specified style should take precedence, so neither color should change.
+        // For the element styled with the :-webkit-autofill selector, both the foreground and the background colors
+        // should change.
+        computedStyleUnstyled = document.defaultView.getComputedStyle(unstyled);
+        computedStyleStyled = document.defaultView.getComputedStyle(styled);
+        computedStyleStyledWithSelector = document.defaultView.getComputedStyle(styledWithSelector);
+        shouldBeTrue("computedStyleUnstyled.color == originalForegroundUnstyled");
+        shouldBeFalse("computedStyleUnstyled.backgroundColor == originalBackgroundUnstyled");
+        shouldBeTrue("computedStyleStyled.color == originalForegroundStyled");
+        shouldBeTrue("computedStyleStyled.backgroundColor == originalBackgroundStyled");
+        shouldBeFalse("computedStyleStyledWithSelector.color == originalForegroundStyledWithSelector");
+        shouldBeFalse("computedStyleStyledWithSelector.backgroundColor == originalBackgroundStyledWithSelector");
 
         if (window.layoutTestController) {
-            layoutTestController.setAutofilled(tf, false);
+            layoutTestController.setAutofilled(unstyled, false);
+            layoutTestController.setAutofilled(styled, false);
+            layoutTestController.setAutofilled(styledWithSelector, false);
         }
 
         // Colors should be restored.
-        computedStyle = document.defaultView.getComputedStyle(tf);
-        if (computedStyle.color != originalForeground) {
-            testFailed('Foreground color did not revert when un-autofilled.');
-            return;
-        }
-        if (computedStyle.backgroundColor != originalBackground) {
-            testFailed('Background color did not revert when un-autofilled.');
-            return;
-        }
-
-        testPassed('');
+        computedStyleUnstyled = document.defaultView.getComputedStyle(unstyled);
+        computedStyleStyled = document.defaultView.getComputedStyle(styled);
+        shouldBeTrue("computedStyleUnstyled.color == originalForegroundUnstyled");
+        shouldBeTrue("computedStyleUnstyled.backgroundColor == originalBackgroundUnstyled");
+        shouldBeTrue("computedStyleStyled.color == originalForegroundStyled");
+        shouldBeTrue("computedStyleStyled.backgroundColor == originalBackgroundStyled");
+        shouldBeTrue("computedStyleStyledWithSelector.color == originalForegroundStyledWithSelector");
+        shouldBeTrue("computedStyleStyledWithSelector.backgroundColor == originalBackgroundStyledWithSelector");
     }
     </script>
 
     <style>
-    #tf {
-      color: #FFFFFF;
-      background-color: #FFFFFF;
+    #styled {
+      color: #00FF00;
+      background-color: #00FF00;
+    }
+    
+    #styledWithSelector:-webkit-autofill {
+      color: #00FF00;
+      background-color: #00FF00;
     }
     </style>
 </head>
 <body onload="test()">
     This tests that foreground and background colors properly change for autofilled inputs.  It can only be run using DumpRenderTree.<br>
     <form name="fm">
-        <input type="text" id="tf" value="Field value" />
+        <input type="text" id="unstyled" value="Field value" />
+        <input type="text" id="styled" value="Field value" />
+        <input type="text" id="styledWithSelector" value="Field value" />
     </form>
     <div id="console"></div>
 </body>
