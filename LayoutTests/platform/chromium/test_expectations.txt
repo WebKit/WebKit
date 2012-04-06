@@ -3326,10 +3326,6 @@ BUGWK77136 WIN RELEASE : fast/workers/storage/interrupt-database.html = PASS TIM
 
 BUGWK75161 : media/video-poster-blocked-by-willsendrequest.html = TEXT
 
-BUGWK75367 : svg/css/composite-shadow-example.html = PASS TEXT
-// CRASH is from BUGWK82505
-BUGWK75367 : svg/css/composite-shadow-with-opacity.html = PASS TEXT CRASH
-
 // Crashes due to an OOM error on V8.
 BUGCR108832 SKIP : fast/js/array-splice.html = CRASH
 
