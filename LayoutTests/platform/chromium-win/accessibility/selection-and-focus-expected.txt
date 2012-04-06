@@ -1,0 +1,84 @@
+  
+This tests that we can adjust focus and selection via accessibility API.
+
+
+FAIL accessibilityController.focusedElement.role should be document. Was client.
+PASS accessibilityController.focusedElement.role is "list"
+
+Option 0 is selected.
+Option 1 is not selected.
+Option 2 is not selected.
+Option 3 is not selected.
+
+Option 0 is not selected.
+Option 1 is selected.
+Option 2 is not selected.
+Option 3 is not selected.
+
+Option 0 is not selected.
+Option 1 is selected.
+Option 2 is selected.
+Option 3 is not selected.
+
+Option 0 is not selected.
+Option 1 is not selected.
+Option 2 is selected.
+Option 3 is not selected.
+
+Option 0 is not selected.
+Option 1 is not selected.
+Option 2 is selected.
+Option 3 is not selected.
+
+Option 0 is selected.
+Option 1 is not selected.
+Option 2 is selected.
+Option 3 is not selected.
+
+Option 0 is selected.
+Option 1 is not selected.
+Option 2 is selected.
+Option 3 is not selected.
+
+Option 0 is not selected.
+Option 1 is not selected.
+Option 2 is selected.
+Option 3 is not selected.
+
+Option 0 is not selected.
+Option 1 is not selected.
+Option 2 is not selected.
+Option 3 is not selected.
+
+Option 0 is not selected.
+Option 1 is not selected.
+Option 2 is not selected.
+Option 3 is not selected.
+
+== single select ==
+Option 0 is selected.
+Option 1 is not selected.
+Option 2 is not selected.
+Option 3 is not selected.
+
+Option 0 is not selected.
+Option 1 is selected.
+Option 2 is not selected.
+Option 3 is not selected.
+
+Option 0 is not selected.
+Option 1 is selected.
+Option 2 is not selected.
+Option 3 is not selected.
+
+Option 0 is not selected.
+Option 1 is selected.
+Option 2 is not selected.
+Option 3 is not selected.
+
+Option 0 is not selected.
+Option 1 is selected.
+Option 2 is not selected.
+Option 3 is not selected.
+
+

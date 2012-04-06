@@ -1,0 +1,33 @@
+
+
+
+
+This is a searchable index. Enter search keywords: 
+This is a searchable index. Enter search keywords: 
+
+
+This test checks that text controls with percentage heights within table cells have the correct height.Text controls are in a different test than other replaced elements because their metrics are platform-specific.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WIN input-password-75 width = 152px. Expects: MAC 128px, WIN 152px
+PASS MAC/WIN input-password-75 height = 8px. Expects: MAC 8px, WIN 8px
+PASS WIN input-password-100 width = 152px. Expects: MAC 128px, WIN 152px
+PASS MAC/WIN input-password-100 height = 13px. Expects: MAC 13px, WIN 13px
+PASS WIN input-text-75 width = 152px. Expects: MAC 128px, WIN 152px
+PASS MAC/WIN input-text-75 height = 8px. Expects: MAC 8px, WIN 8px
+PASS WIN input-text-100 width = 152px. Expects: MAC 128px, WIN 152px
+PASS MAC/WIN input-text-100 height = 13px. Expects: MAC 13px, WIN 13px
+PASS WIN isindex-75 width = 146px. Expects: MAC 122px, WIN 146px
+PASS MAC/WIN isindex-75 height = 35px. Expects: MAC 35px, WIN 35px
+PASS WIN isindex-100 width = 146px. Expects: MAC 122px, WIN 146px
+PASS MAC/WIN isindex-100 height = 49px. Expects: MAC 49px, WIN 49px
+PASS WIN textarea-75 width = 161px. Expects: MAC 129px, WIN 161px
+PASS MAC/WIN textarea-75 height = 19px. Expects: MAC 19px, WIN 19px
+PASS WIN textarea-100 width = 161px. Expects: MAC 129px, WIN 161px
+PASS MAC/WIN textarea-100 height = 28px. Expects: MAC 28px, WIN 28px
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
