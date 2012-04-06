@@ -40,8 +40,10 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
                              const IntSize& size,
                              bool multisampleExtensionSupported,
                              bool packedDepthStencilExtensionSupported,
-                             bool separateBackingTexture)
-    : m_separateBackingTexture(separateBackingTexture)
+                             PreserveDrawingBuffer preserveDrawingBuffer,
+                             AlphaRequirement alpha)
+    : m_preserveDrawingBuffer(preserveDrawingBuffer)
+    , m_alpha(alpha)
     , m_scissorEnabled(false)
     , m_texture2DBinding(0)
     , m_activeTextureUnit(GraphicsContext3D::TEXTURE0)
@@ -51,15 +53,14 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     , m_packedDepthStencilExtensionSupported(packedDepthStencilExtensionSupported)
     , m_fbo(context->createFramebuffer())
     , m_colorBuffer(0)
+    , m_frontColorBuffer(0)
+    , m_separateFrontTexture(false)
     , m_depthStencilBuffer(0)
     , m_depthBuffer(0)
     , m_stencilBuffer(0)
     , m_multisampleFBO(0)
     , m_multisampleColorBuffer(0)
 {
-    // Support for a separate backing texture has only been enabled for
-    // the chromium port.
-    ASSERT(!m_separateBackingTexture);
     ASSERT(m_fbo);
     if (!m_fbo) {
         clear();
@@ -92,15 +93,26 @@ DrawingBuffer::~DrawingBuffer()
     clear();
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* DrawingBuffer::platformLayer()
 {
     return m_platformLayer.get();
 }
 
-Platform3DObject DrawingBuffer::platformColorBuffer() const
+void DrawingBuffer::prepareBackBuffer()
 {
-    return m_colorBuffer;
 }
+
+bool DrawingBuffer::requiresCopyFromBackToFrontBuffer() const
+{
+    return false;
+}
+
+unsigned DrawingBuffer::frontColorBuffer() const
+{
+    return colorBuffer();
+}
+#endif
 
 }
 

@@ -438,7 +438,9 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
 
 #if PLATFORM(CHROMIUM)
     // Create the DrawingBuffer and initialize the platform layer.
-    m_drawingBuffer = DrawingBuffer::create(m_context.get(), IntSize(canvas()->width(), canvas()->height()), !m_attributes.preserveDrawingBuffer);
+    DrawingBuffer::PreserveDrawingBuffer preserve = m_attributes.preserveDrawingBuffer ? DrawingBuffer::Preserve : DrawingBuffer::Discard;
+    DrawingBuffer::AlphaRequirement alpha = m_attributes.alpha ? DrawingBuffer::Alpha : DrawingBuffer::Opaque;
+    m_drawingBuffer = DrawingBuffer::create(m_context.get(), IntSize(canvas()->size()), preserve, alpha);
 #endif
 
     if (m_drawingBuffer)
@@ -624,32 +626,46 @@ bool WebGLRenderingContext::clearIfComposited(GC3Dbitfield mask)
         else
             m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
     }
-    m_context->disable(GraphicsContext3D::SCISSOR_TEST);
-    if (combinedClear && (mask & GraphicsContext3D::COLOR_BUFFER_BIT))
-        m_context->clearColor(m_colorMask[0] ? m_clearColor[0] : 0,
-                              m_colorMask[1] ? m_clearColor[1] : 0,
-                              m_colorMask[2] ? m_clearColor[2] : 0,
-                              m_colorMask[3] ? m_clearColor[3] : 0);
-    else
-        m_context->clearColor(0, 0, 0, 0);
-    m_context->colorMask(true, true, true, true);
-    GC3Dbitfield clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
-    if (contextAttributes->depth()) {
-        if (!combinedClear || !m_depthMask || !(mask & GraphicsContext3D::DEPTH_BUFFER_BIT))
-            m_context->clearDepth(1.0f);
-        clearMask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
-        m_context->depthMask(true);
-    }
-    if (contextAttributes->stencil()) {
-        if (combinedClear && (mask & GraphicsContext3D::STENCIL_BUFFER_BIT))
-            m_context->clearStencil(m_clearStencil & m_stencilMask);
+    if (m_drawingBuffer)
+        m_drawingBuffer->clearFramebuffer();
+    else {
+        m_context->disable(GraphicsContext3D::SCISSOR_TEST);
+        if (combinedClear && (mask & GraphicsContext3D::COLOR_BUFFER_BIT))
+            m_context->clearColor(m_colorMask[0] ? m_clearColor[0] : 0,
+                                  m_colorMask[1] ? m_clearColor[1] : 0,
+                                  m_colorMask[2] ? m_clearColor[2] : 0,
+                                  m_colorMask[3] ? m_clearColor[3] : 0);
         else
-            m_context->clearStencil(0);
-        clearMask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
-        m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, 0xFFFFFFFF);
+            m_context->clearColor(0, 0, 0, 0);
+        m_context->colorMask(true, true, true, true);
+        GC3Dbitfield clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
+        if (contextAttributes->depth()) {
+            if (!combinedClear || !m_depthMask || !(mask & GraphicsContext3D::DEPTH_BUFFER_BIT))
+                m_context->clearDepth(1.0f);
+            clearMask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
+            m_context->depthMask(true);
+        }
+        if (contextAttributes->stencil()) {
+            if (combinedClear && (mask & GraphicsContext3D::STENCIL_BUFFER_BIT))
+                m_context->clearStencil(m_clearStencil & m_stencilMask);
+            else
+                m_context->clearStencil(0);
+            clearMask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
+            m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, 0xFFFFFFFF);
+        }
+        m_context->clear(clearMask);
     }
-    m_context->clear(clearMask);
 
+    restoreStateAfterClear();
+    if (m_framebufferBinding)
+        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, objectOrZero(m_framebufferBinding.get()));
+    m_layerCleared = true;
+
+    return combinedClear;
+}
+
+void WebGLRenderingContext::restoreStateAfterClear()
+{
     // Restore the state that the context set.
     if (m_scissorEnabled)
         m_context->enable(GraphicsContext3D::SCISSOR_TEST);
@@ -661,11 +677,6 @@ bool WebGLRenderingContext::clearIfComposited(GC3Dbitfield mask)
     m_context->clearStencil(m_clearStencil);
     m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, m_stencilMask);
     m_context->depthMask(m_depthMask);
-    if (m_framebufferBinding)
-        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, objectOrZero(m_framebufferBinding.get()));
-    m_layerCleared = true;
-
-    return combinedClear;
 }
 
 void WebGLRenderingContext::markLayerComposited()
@@ -749,9 +760,10 @@ void WebGLRenderingContext::reshape(int width, int height)
 
     // We don't have to mark the canvas as dirty, since the newly created image buffer will also start off
     // clear (and this matches what reshape will do).
-    if (m_drawingBuffer)
+    if (m_drawingBuffer) {
         m_drawingBuffer->reset(IntSize(width, height));
-    else
+        restoreStateAfterClear();
+    } else
         m_context->reshape(width, height);
 
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, objectOrZero(m_textureUnits[m_activeTextureUnit].m_texture2DBinding.get()));
@@ -5385,7 +5397,9 @@ void WebGLRenderingContext::maybeRestoreContext(Timer<WebGLRenderingContext>*)
     // Construct a new drawing buffer with the new GraphicsContext3D.
     if (m_drawingBuffer) {
         m_drawingBuffer->discardResources();
-        m_drawingBuffer = DrawingBuffer::create(context.get(), m_drawingBuffer->size(), !m_attributes.preserveDrawingBuffer);
+        DrawingBuffer::PreserveDrawingBuffer preserve = m_attributes.preserveDrawingBuffer ? DrawingBuffer::Preserve : DrawingBuffer::Discard;
+        DrawingBuffer::AlphaRequirement alpha = m_attributes.alpha ? DrawingBuffer::Alpha : DrawingBuffer::Opaque;
+        m_drawingBuffer = DrawingBuffer::create(context.get(), m_drawingBuffer->size(), preserve, alpha);
         m_drawingBuffer->bind();
     }
 

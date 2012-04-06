@@ -1,3 +1,13 @@
+2012-04-06  James Robinson  <jamesr@chromium.org>
+
+        WebGL content swapped at wrong time in threaded compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=82275
+
+        Reviewed by Kenneth Russell.
+
+        * tests/WebGLLayerChromiumTest.cpp:
+        (WebKit::TEST):
+
 2012-04-06  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: ObjectStore/Index shouldn't hold reference to backing store

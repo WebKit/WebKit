@@ -50,14 +50,14 @@ TEST(WebGLLayerChromiumTest, opaqueFormats)
     RefPtr<GraphicsContext3D> opaqueContext = createCompositorMockGraphicsContext3D(opaqueAttrs);
     EXPECT_TRUE(opaqueContext);
 
-    buffer = DrawingBuffer::create(alphaContext.get(), IntSize(), false);
+    buffer = DrawingBuffer::create(alphaContext.get(), IntSize(), DrawingBuffer::Preserve, DrawingBuffer::Alpha);
     EXPECT_FALSE(buffer->platformLayer()->opaque());
-    buffer = DrawingBuffer::create(alphaContext.get(), IntSize(), true);
+    buffer = DrawingBuffer::create(alphaContext.get(), IntSize(), DrawingBuffer::Discard, DrawingBuffer::Alpha);
     EXPECT_FALSE(buffer->platformLayer()->opaque());
 
-    buffer = DrawingBuffer::create(opaqueContext.get(), IntSize(), false);
+    buffer = DrawingBuffer::create(opaqueContext.get(), IntSize(), DrawingBuffer::Preserve, DrawingBuffer::Opaque);
     EXPECT_TRUE(buffer->platformLayer()->opaque());
-    buffer = DrawingBuffer::create(opaqueContext.get(), IntSize(), true);
+    buffer = DrawingBuffer::create(opaqueContext.get(), IntSize(), DrawingBuffer::Discard, DrawingBuffer::Opaque);
     EXPECT_TRUE(buffer->platformLayer()->opaque());
 }
 

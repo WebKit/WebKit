@@ -37,9 +37,11 @@
 #include "DrawingBuffer.h"
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
+#include "TextureCopier.h"
 #include "TraceEvent.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCTextureLayerImpl.h"
+#include "cc/CCTextureUpdater.h"
 
 namespace WebCore {
 
@@ -52,10 +54,8 @@ WebGLLayerChromium::WebGLLayerChromium()
     : CanvasLayerChromium()
     , m_hasAlpha(true)
     , m_premultipliedAlpha(true)
-    , m_textureId(0)
-    , m_textureChanged(true)
-    , m_textureUpdated(false)
     , m_contextLost(false)
+    , m_textureId(0)
     , m_drawingBuffer(0)
 {
 }
@@ -73,28 +73,25 @@ bool WebGLLayerChromium::drawsContent() const
 
 void WebGLLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* /* occlusion */)
 {
-    if (!drawsContent() || !m_needsDisplay || !m_textureUpdated)
+    if (!drawsContent() || !m_needsDisplay)
         return;
 
-    drawingBuffer()->publishToPlatformLayer();
+    m_drawingBuffer->prepareBackBuffer();
+
+    context()->flush();
     context()->markLayerComposited();
     m_needsDisplay = false;
-    m_textureUpdated = false;
     m_contextLost = context()->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
 }
 
-void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererContext, CCTextureUpdater&)
+void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
 {
-    if (m_textureChanged) {
-        rendererContext->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
-        // Set the min-mag filters to linear and wrap modes to GL_CLAMP_TO_EDGE
-        // to get around NPOT texture limitations of GLES.
-        rendererContext->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
-        rendererContext->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
-        rendererContext->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
-        rendererContext->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
-        m_textureChanged = false;
-    }
+    if (!m_drawingBuffer)
+        return;
+
+    m_textureId = m_drawingBuffer->frontColorBuffer();
+    if (m_drawingBuffer->requiresCopyFromBackToFrontBuffer())
+        updater.copier()->copyTexture(context, m_drawingBuffer->colorBuffer(), m_textureId, bounds());
 }
 
 void WebGLLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
@@ -109,7 +106,7 @@ void WebGLLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 
 bool WebGLLayerChromium::paintRenderedResultsToCanvas(ImageBuffer* imageBuffer)
 {
-    if (m_textureUpdated || !m_drawingBuffer || !drawsContent())
+    if (!m_drawingBuffer || !drawsContent())
         return false;
 
     IntSize framebufferSize = context()->getInternalFramebufferSize();
@@ -136,8 +133,6 @@ void WebGLLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 {
     LayerChromium::setNeedsDisplayRect(dirtyRect);
 
-    m_textureUpdated = true;
-
     // If WebGL commands are issued outside of a the animation callbacks, then use
     // call rateLimitOffscreenContextCHROMIUM() to keep the context from getting too far ahead.
     if (layerTreeHost())
@@ -160,12 +155,6 @@ void WebGLLayerChromium::setDrawingBuffer(DrawingBuffer* drawingBuffer)
     if (!m_drawingBuffer)
         return;
 
-    unsigned int textureId = m_drawingBuffer->platformColorBuffer();
-    if (textureId != m_textureId || drawingBufferChanged) {
-        m_textureChanged = true;
-        m_textureUpdated = true;
-    }
-    m_textureId = textureId;
     GraphicsContext3D::Attributes attributes = context()->getContextAttributes();
     m_hasAlpha = attributes.alpha;
     m_premultipliedAlpha = attributes.premultipliedAlpha;

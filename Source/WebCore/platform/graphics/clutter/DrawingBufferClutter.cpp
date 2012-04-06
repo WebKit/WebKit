@@ -43,7 +43,12 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
                              const IntSize& size,
                              bool multisampleExtensionSupported,
                              bool packedDepthStencilExtensionSupported,
-                             bool separateBackingTexture)
+                             PreserveDrawingBuffer preserveDrawingBuffer,
+                             AlphaRequirement alpha)
+    : m_preserveDrawingBuffer(preserveDrawingBuffer)
+    , m_alpha(alpha)
+    , m_frontColorBuffer(0)
+    , m_separateFrontTexture(false)
 {
 }
 
@@ -51,12 +56,21 @@ DrawingBuffer::~DrawingBuffer()
 {
 }
 
-Platform3DObject DrawingBuffer::platformColorBuffer() const
+#if USE(ACCELERATED_COMPOSITING)
+void DrawingBuffer::prepareBackBuffer()
 {
-    return m_colorBuffer;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
+bool DrawingBuffer::requiresCopyFromBackToFrontBuffer() const
+{
+    return false;
+}
+
+unsigned DrawingBuffer::frontColorBuffer() const
+{
+    return colorBuffer();
+}
+
 void DrawingBuffer::paintCompositedResultsToCanvas(CanvasRenderingContext* context)
 {
 }

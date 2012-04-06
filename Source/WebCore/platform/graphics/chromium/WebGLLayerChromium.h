@@ -49,9 +49,6 @@ public:
 
     virtual ~WebGLLayerChromium();
 
-    unsigned textureId() const { return m_textureId; }
-    void setTextureId(unsigned textureId) { m_textureId = textureId; }
-
     virtual bool drawsContent() const;
     virtual void paintContentsIfDirty(const CCOcclusionTracker*);
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
@@ -69,10 +66,8 @@ private:
 
     bool m_hasAlpha;
     bool m_premultipliedAlpha;
-    unsigned m_textureId;
-    bool m_textureChanged;
-    bool m_textureUpdated;
     bool m_contextLost;
+    unsigned m_textureId;
 
     // The DrawingBuffer holding the WebGL contents for this layer.
     // A reference is not held here, because the DrawingBuffer already holds

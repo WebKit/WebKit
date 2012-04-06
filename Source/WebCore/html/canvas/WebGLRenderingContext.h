@@ -521,6 +521,9 @@ public:
     // and the function returns true if that clear is now unnecessary.
     bool clearIfComposited(GC3Dbitfield clearMask = 0);
 
+    // Helper to restore state that clearing the framebuffer may destroy.
+    void restoreStateAfterClear();
+
     void texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalformat,
                         GC3Dsizei width, GC3Dsizei height, GC3Dint border,
                         GC3Denum format, GC3Denum type, void* pixels, ExceptionCode&);

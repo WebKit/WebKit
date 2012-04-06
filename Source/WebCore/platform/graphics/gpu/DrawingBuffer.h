@@ -55,11 +55,27 @@ class WebGLLayerChromium;
 // results to a PlatformLayer for compositing.
 class DrawingBuffer : public RefCounted<DrawingBuffer> {
 public:
-    static PassRefPtr<DrawingBuffer> create(GraphicsContext3D*, const IntSize&, bool);
+    enum PreserveDrawingBuffer {
+        Preserve,
+        Discard
+    };
+
+    enum AlphaRequirement {
+        Alpha,
+        Opaque
+    };
+
+    static PassRefPtr<DrawingBuffer> create(GraphicsContext3D*, const IntSize&, PreserveDrawingBuffer, AlphaRequirement);
     friend class GraphicsContext3D;
 
     ~DrawingBuffer();
 
+    // Clears the DrawingBuffer's framebuffer(s). Is destructive of the following state:
+    // *) framebuffer binding
+    // *) scissor test
+    // *) stencil mask
+    // *) clear color, depth, and stencil
+    // *) depth and color mask
     void clearFramebuffer();
 
     // Returns true if the buffer was successfully resized.
@@ -95,7 +111,6 @@ public:
 
     bool multisample() const;
 
-    Platform3DObject platformColorBuffer() const;
     Platform3DObject framebuffer() const;
 
     PassRefPtr<ImageData> paintRenderingResultsToImageData();
@@ -106,7 +121,9 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer();
-    void publishToPlatformLayer();
+    void prepareBackBuffer();
+    bool requiresCopyFromBackToFrontBuffer() const;
+    unsigned frontColorBuffer() const;
     void paintCompositedResultsToCanvas(CanvasRenderingContext*);
 #endif
 
@@ -114,11 +131,12 @@ public:
 
 private:
     DrawingBuffer(GraphicsContext3D*, const IntSize&, bool multisampleExtensionSupported,
-                  bool packedDepthStencilExtensionSupported, bool separateBackingTexture);
+                  bool packedDepthStencilExtensionSupported, PreserveDrawingBuffer, AlphaRequirement);
 
     void initialize(const IntSize&);
 
-    bool m_separateBackingTexture;
+    PreserveDrawingBuffer m_preserveDrawingBuffer;
+    AlphaRequirement m_alpha;
     bool m_scissorEnabled;
     Platform3DObject m_texture2DBinding;
     GC3Denum m_activeTextureUnit;
@@ -129,7 +147,8 @@ private:
     bool m_packedDepthStencilExtensionSupported;
     Platform3DObject m_fbo;
     Platform3DObject m_colorBuffer;
-    Platform3DObject m_backingColorBuffer;
+    Platform3DObject m_frontColorBuffer;
+    bool m_separateFrontTexture;
 
     // This is used when we have OES_packed_depth_stencil.
     Platform3DObject m_depthStencilBuffer;

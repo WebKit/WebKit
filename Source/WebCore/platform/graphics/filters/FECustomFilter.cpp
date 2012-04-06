@@ -142,7 +142,7 @@ void FECustomFilter::initializeContext(const IntSize& contextSize)
     
     ASSERT(!m_context.get());
     m_context = GraphicsContext3D::create(attributes, m_hostWindow, GraphicsContext3D::RenderOffscreen);
-    m_drawingBuffer = DrawingBuffer::create(m_context.get(), contextSize, !attributes.preserveDrawingBuffer);
+    m_drawingBuffer = DrawingBuffer::create(m_context.get(), contextSize, DrawingBuffer::Discard, DrawingBuffer::Alpha);
     
     m_shader = m_program->createShaderWithContext(m_context.get());
     m_mesh = CustomFilterMesh::create(m_context.get(), m_meshColumns, m_meshRows, 
