@@ -1,3 +1,11 @@
+2012-04-06  George Staikos  <staikos@webkit.org>
+
+        Turn on vibration support for BlackBerry.
+
+        Reviewed by Rob Buis.
+
+        * Scripts/build-webkit:
+
 2012-04-06  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10912476> HiDPI: Have canvas use a hidpi backing store, but downsample upon access

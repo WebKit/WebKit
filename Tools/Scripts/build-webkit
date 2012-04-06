@@ -347,7 +347,7 @@ my @features = (
       define => "ENABLE_TOUCH_ICON_LOADING", default => 0, value => \$touchIconLoadingSupport },
 
     { option => "vibration", desc => "Toggle Vibration API support",
-      define => "ENABLE_VIBRATION", default => isEfl(), value => \$vibrationSupport },
+      define => "ENABLE_VIBRATION", default => (isEfl() || isBlackBerry()), value => \$vibrationSupport },
 
     { option => "video", desc => "Toggle Video support",
       define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$videoSupport },
