@@ -1,3 +1,12 @@
+2012-04-06  Ami Fischman  <fischman@chromium.org>
+
+        Roll Chromium DEPS
+        https://bugs.webkit.org/show_bug.cgi?id=83389
+
+        Unreviewed, just a DEPS roll (130110:131183)
+
+        * DEPS:
+
 2012-04-06  James Robinson  <jamesr@chromium.org>
 
         WebGL content swapped at wrong time in threaded compositing mode
