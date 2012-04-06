@@ -25,10 +25,6 @@ Starting worker: resources/dont-commit-on-blocked-worker.js
 [Worker] db = request.result
 [Worker] state = 'setversion'
 [Worker] request = db.setVersion(2)
-
-onVersionChange():
-closing connection
-db.close()
 [Worker] request.onblocked = onSetVersionBlocked
 [Worker] request.onsuccess = onSetVersionSuccess
 [Worker] spinning for 100ms to let events be queued but prevent dispatch

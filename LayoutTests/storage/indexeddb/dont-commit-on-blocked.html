@@ -51,10 +51,8 @@ function holdConnection()
 
 function onVersionChange(e)
 {
-    debug("");
-    debug("onVersionChange():");
-    debug("closing connection");
-    evalAndLog("db.close()");
+    // Timing of logging from worker vs. this event is racy, so do not log here.
+    db.close();
 }
 
 test();
