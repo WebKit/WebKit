@@ -74,6 +74,7 @@
 #include "RenderedPosition.h"
 #include "ReplaceSelectionCommand.h"
 #include "Settings.h"
+#include "SimplifyMarkupCommand.h"
 #include "Sound.h"
 #include "SpellChecker.h"
 #include "SpellingCorrectionCommand.h"
@@ -1039,6 +1040,24 @@ void Editor::performDelete()
     // clear the "start new kill ring sequence" setting, because it was set to true
     // when the selection was updated by deleting the range
     setStartNewKillRingSequence(false);
+}
+
+void Editor::simplifyMarkup(Node* startNode, Node* endNode)
+{
+    if (!startNode)
+        return;
+    if (endNode) {
+        if (startNode->document() != endNode->document())
+            return;
+        // check if start node is before endNode
+        Node* node = startNode;
+        while (node && node != endNode)
+            node = node->traverseNextNode();
+        if (!node)
+            return;
+    }
+    
+    applyCommand(SimplifyMarkupCommand::create(m_frame->document(), startNode, (endNode) ? endNode->traverseNextNode() : 0));
 }
 
 void Editor::copyURL(const KURL& url, const String& title)

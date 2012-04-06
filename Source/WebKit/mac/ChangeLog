@@ -1,3 +1,15 @@
+2012-04-06  Enrica Casucci  <enrica@apple.com>
+
+        Provide Obj-C private API to simplify markup.
+        https://bugs.webkit.org/show_bug.cgi?id=83334
+        <rdar://problem/11033861>
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        (-[WebView _simplifyMarkup:endNode:]): Added.
+        * WebView/WebViewPrivate.h:
+
 2012-04-06  Tim Horton  <timothy_horton@apple.com>
 
         Add autodetection of image orientation from EXIF information

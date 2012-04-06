@@ -697,6 +697,8 @@ Could be worth adding to the API.
 - (void)_replaceSelectionWithNode:(DOMNode *)node matchStyle:(BOOL)matchStyle;
 - (BOOL)_selectionIsCaret;
 - (BOOL)_selectionIsAll;
+- (void)_simplifyMarkup:(DOMNode *)startNode endNode:(DOMNode *)endNode;
+
 @end
 
 @interface WebView (WebViewDeviceOrientation)

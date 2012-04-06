@@ -1,3 +1,16 @@
+2012-04-06  Enrica Casucci  <enrica@apple.com>
+
+        Provide Obj-C private API to simplify markup.
+        https://bugs.webkit.org/show_bug.cgi?id=83334
+        <rdar://problem/11033861>
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/SimplifyMarkup.mm: Added.
+        (-[SimplifyMarkupTest webView:didFinishLoadForFrame:]):
+        * TestWebKitAPI/Tests/mac/verboseMarkup.html: Added.
+
 2012-04-06  Dirk Pranke  <dpranke@chromium.org>
 
         new-run-webkit-tests: fix bugs in 'mock' drt implementation

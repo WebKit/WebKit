@@ -132,6 +132,8 @@
 		C0C5D3BE14598B6F00A802A6 /* GetBackingScaleFactor.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */; };
 		C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */; };
 		C507E8A714C6545B005D6B3B /* InspectorBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = C507E8A614C6545B005D6B3B /* InspectorBar.mm */; };
+		C540F776152E4DA000A40C8C /* SimplifyMarkup.mm in Sources */ = {isa = PBXBuildFile; fileRef = C540F775152E4DA000A40C8C /* SimplifyMarkup.mm */; };
+		C540F784152E5A9A00A40C8C /* verboseMarkup.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C540F783152E5A7800A40C8C /* verboseMarkup.html */; };
 		E490296814E2E3A4002BEDD1 /* TypingStyleCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */; };
 		F3FC3EE313678B7300126A65 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
 		F6F3F29113342FEB00A6BF19 /* CookieManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */; };
@@ -187,6 +189,7 @@
 				BC2D006412AA04CE00E732A3 /* file-with-anchor.html in Copy Resources */,
 				37DC6791140D7D7600ABCCDB /* DOMRangeOfString.html in Copy Resources */,
 				1ADBEFE3130C6AA100D61D19 /* simple-accelerated-compositing.html in Copy Resources */,
+				C540F784152E5A9A00A40C8C /* verboseMarkup.html in Copy Resources */,
 			);
 			name = "Copy Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -334,6 +337,8 @@
 		C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor.mm; sourceTree = "<group>"; };
 		C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor_Bundle.mm; sourceTree = "<group>"; };
 		C507E8A614C6545B005D6B3B /* InspectorBar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InspectorBar.mm; sourceTree = "<group>"; };
+		C540F775152E4DA000A40C8C /* SimplifyMarkup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimplifyMarkup.mm; sourceTree = "<group>"; };
+		C540F783152E5A7800A40C8C /* verboseMarkup.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = verboseMarkup.html; sourceTree = "<group>"; };
 		E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TypingStyleCrash.mm; sourceTree = "<group>"; };
 		F3FC3EE213678B7300126A65 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieManager.cpp; sourceTree = "<group>"; };
@@ -615,6 +620,7 @@
 				C507E8A614C6545B005D6B3B /* InspectorBar.mm */,
 				517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */,
 				3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */,
+				C540F775152E4DA000A40C8C /* SimplifyMarkup.mm */,
 				3799AD3914120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm */,
 				37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */,
 				E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */,
@@ -633,6 +639,7 @@
 				37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */,
 				C07E6CB113FD738A0038B22B /* devicePixelRatio.html */,
 				517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */,
+				C540F783152E5A7800A40C8C /* verboseMarkup.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -831,6 +838,7 @@
 				517E7DFC15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm in Sources */,
 				51FBBB4D1513D4E900822738 /* WebViewCanPasteURL.mm in Sources */,
 				5142B2711517C88B00C32B19 /* ContextMenuCanCopyURL.mm in Sources */,
+				C540F776152E4DA000A40C8C /* SimplifyMarkup.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
