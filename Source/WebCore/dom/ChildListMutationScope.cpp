@@ -136,7 +136,6 @@ void ChildListMutationScope::MutationAccumulator::willRemoveChild(PassRefPtr<Nod
 
 void ChildListMutationScope::MutationAccumulator::enqueueMutationRecord()
 {
-    ASSERT(!isEmpty());
     if (isEmpty()) {
         clear();
         return;

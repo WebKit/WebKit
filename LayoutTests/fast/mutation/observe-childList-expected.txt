@@ -85,6 +85,9 @@ PASS mutations[0].addedNodes[0] is addedDiv1
 PASS mutations[0].addedNodes[1] is addedDiv2
 PASS mutations[0].removedNodes.length is 0
 
+Setting an empty childlist to the empty string with innerHTML should not assert.
+PASS mutations is null
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

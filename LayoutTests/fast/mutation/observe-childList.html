@@ -381,7 +381,30 @@ function testAppendChild() {
     start();
 }
 
-var tests = [testBasic, testWrongType, testMultipleRegistration, testMultipleObservers, testInnerHTMLAndInnerText, testReplaceChild, testInsertBefore, testAppendChild];
+function testInnerHTMLEmpty() {
+    function start() {
+        debug('Setting an empty childlist to the empty string with innerHTML should not assert.');
+
+        var div = document.createElement('div');
+        mutations = null;
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+        observer.observe(div, {childList: true});
+        div.innerHTML = '';
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBeNull('mutations');
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+var tests = [testBasic, testWrongType, testMultipleRegistration, testMultipleObservers, testInnerHTMLAndInnerText, testReplaceChild, testInsertBefore, testAppendChild, testInnerHTMLEmpty];
 var testIndex = 0;
  
 function runNextTest() {
