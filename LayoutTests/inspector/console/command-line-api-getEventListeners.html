@@ -86,6 +86,8 @@ function runTestsInPage(getEventListeners)
     output(typeof getEventListeners(null));
     output("- undefined -");
     output(typeof getEventListeners(undefined));
+    output("- window -");
+    output(typeof getEventListeners(window));
 }
 
 </script>

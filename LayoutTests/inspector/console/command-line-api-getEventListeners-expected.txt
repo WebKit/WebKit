@@ -51,4 +51,6 @@ undefined
 undefined
 - undefined -
 undefined
+- window -
+undefined
 

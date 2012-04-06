@@ -219,7 +219,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::getEventListenersCallback(const v8::
     v8::HandleScope handleScope;
 
     v8::Local<v8::Value> value = args[0];
-    if (!value->IsObject())
+    if (!V8Node::HasInstance(value))
         return v8::Undefined();
     Node* node = V8Node::toNative(value->ToObject());
     if (!node)
