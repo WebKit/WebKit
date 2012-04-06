@@ -1,3 +1,22 @@
+2012-04-05  Michael Saboff  <msaboff@apple.com>
+
+        Call Heap::discardAllCompiledCode() in low memory situations
+        https://bugs.webkit.org/show_bug.cgi?id=83335
+
+        Reviewed by Geoffrey Garen.
+
+        Restructured Heap::discardAllCompiledCode() to do the "Is JavaScriptRunning?"
+        check inline so that it can be called directly without this check.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::discardAllCompiledCode):
+        (JSC::Heap::collectAllGarbage):
+        * heap/Heap.h: Added JS_EXPORT_PRIVATE to discardAllCompiledCode() so it can be
+        called from WebCore.
+        (Heap):
+        * runtime/JSGlobalData.h: Removed unused " void discardAllCompiledCode()" declaration.
+        (JSGlobalData):
+
 2012-04-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Speed up the conversion from JSValue to String for bulk operations

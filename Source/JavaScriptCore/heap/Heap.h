@@ -148,7 +148,7 @@ namespace JSC {
 
         double lastGCLength() { return m_lastGCLength; }
 
-        void discardAllCompiledCode();
+        JS_EXPORT_PRIVATE void discardAllCompiledCode();
 
     private:
         friend class CodeBlock;

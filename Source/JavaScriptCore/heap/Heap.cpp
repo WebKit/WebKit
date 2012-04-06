@@ -772,8 +772,9 @@ void Heap::discardAllCompiledCode()
 {
     // If JavaScript is running, it's not safe to recompile, since we'll end
     // up throwing away code that is live on the stack.
-    ASSERT(!m_globalData->dynamicGlobalObject);
-    
+    if (m_globalData->dynamicGlobalObject)
+        return;
+
     for (FunctionExecutable* current = m_functions.head(); current; current = current->next())
         current->discardCode();
 }
@@ -782,8 +783,7 @@ void Heap::collectAllGarbage()
 {
     if (!m_isSafeToCollect)
         return;
-    if (!m_globalData->dynamicGlobalObject)
-        discardAllCompiledCode();
+    discardAllCompiledCode();
 
     collect(DoSweep);
 }

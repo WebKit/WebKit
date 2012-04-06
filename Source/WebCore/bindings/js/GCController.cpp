@@ -83,4 +83,10 @@ void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDon
     detachThread(threadID);
 }
 
+void GCController::discardAllCompiledCode()
+{
+    JSLock lock(SilenceAssertionsOnly);
+    JSDOMWindow::commonJSGlobalData()->heap.discardAllCompiledCode();
+}
+
 } // namespace WebCore

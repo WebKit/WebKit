@@ -40,6 +40,8 @@ namespace WebCore {
 
         void garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone); // Used for stress testing.
 
+        void discardAllCompiledCode();
+
     private:
         GCController(); // Use gcController() instead
         void gcTimerFired(Timer<GCController>*);
