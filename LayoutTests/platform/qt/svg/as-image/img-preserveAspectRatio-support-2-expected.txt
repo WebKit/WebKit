@@ -15,5 +15,5 @@ layer at (0,0) size 800x327
             RenderView at (0,0) size 220x220
           layer at (0,0) size 220x220
             RenderSVGRoot {svg} at (0,0) size 220x220
-              RenderSVGPath {circle} at (0,0) size 220x220 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [cx=110.00] [cy=110.00] [r=110.00]
+              RenderSVGEllipse {circle} at (0,0) size 220x220 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [cx=110.00] [cy=110.00] [r=110.00]
         RenderText {#text} at (0,0) size 0x0
