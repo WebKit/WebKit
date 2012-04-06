@@ -135,6 +135,8 @@ if (!gl) {
   canvas.style.height = "25px";
   var intervalId;
   intervalId = window.setInterval(function() {
+    if (window.layoutTestController)
+      layoutTestController.display();
     if (canvas.clientWidth == 100 &&
         canvas.clientHeight == 25) {
       window.clearInterval(intervalId);

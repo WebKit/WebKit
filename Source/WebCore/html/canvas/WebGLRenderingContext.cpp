@@ -620,39 +620,35 @@ bool WebGLRenderingContext::clearIfComposited(GC3Dbitfield mask)
     // Determine if it's possible to combine the clear the user asked for and this clear.
     bool combinedClear = mask && !m_scissorEnabled;
 
-    if (m_framebufferBinding) {
-        if (m_drawingBuffer)
-            m_drawingBuffer->bind();
+    m_context->disable(GraphicsContext3D::SCISSOR_TEST);
+    if (combinedClear && (mask & GraphicsContext3D::COLOR_BUFFER_BIT))
+        m_context->clearColor(m_colorMask[0] ? m_clearColor[0] : 0,
+                              m_colorMask[1] ? m_clearColor[1] : 0,
+                              m_colorMask[2] ? m_clearColor[2] : 0,
+                              m_colorMask[3] ? m_clearColor[3] : 0);
+    else
+        m_context->clearColor(0, 0, 0, 0);
+    m_context->colorMask(true, true, true, true);
+    GC3Dbitfield clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
+    if (contextAttributes->depth()) {
+        if (!combinedClear || !m_depthMask || !(mask & GraphicsContext3D::DEPTH_BUFFER_BIT))
+            m_context->clearDepth(1.0f);
+        clearMask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
+        m_context->depthMask(true);
+    }
+    if (contextAttributes->stencil()) {
+        if (combinedClear && (mask & GraphicsContext3D::STENCIL_BUFFER_BIT))
+            m_context->clearStencil(m_clearStencil & m_stencilMask);
         else
-            m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
+            m_context->clearStencil(0);
+        clearMask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
+        m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, 0xFFFFFFFF);
     }
     if (m_drawingBuffer)
-        m_drawingBuffer->clearFramebuffer();
+        m_drawingBuffer->clearFramebuffers(clearMask);
     else {
-        m_context->disable(GraphicsContext3D::SCISSOR_TEST);
-        if (combinedClear && (mask & GraphicsContext3D::COLOR_BUFFER_BIT))
-            m_context->clearColor(m_colorMask[0] ? m_clearColor[0] : 0,
-                                  m_colorMask[1] ? m_clearColor[1] : 0,
-                                  m_colorMask[2] ? m_clearColor[2] : 0,
-                                  m_colorMask[3] ? m_clearColor[3] : 0);
-        else
-            m_context->clearColor(0, 0, 0, 0);
-        m_context->colorMask(true, true, true, true);
-        GC3Dbitfield clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
-        if (contextAttributes->depth()) {
-            if (!combinedClear || !m_depthMask || !(mask & GraphicsContext3D::DEPTH_BUFFER_BIT))
-                m_context->clearDepth(1.0f);
-            clearMask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
-            m_context->depthMask(true);
-        }
-        if (contextAttributes->stencil()) {
-            if (combinedClear && (mask & GraphicsContext3D::STENCIL_BUFFER_BIT))
-                m_context->clearStencil(m_clearStencil & m_stencilMask);
-            else
-                m_context->clearStencil(0);
-            clearMask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
-            m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, 0xFFFFFFFF);
-        }
+        if (m_framebufferBinding)
+            m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
         m_context->clear(clearMask);
     }
 

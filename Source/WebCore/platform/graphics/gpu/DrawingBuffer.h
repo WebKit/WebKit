@@ -70,13 +70,9 @@ public:
 
     ~DrawingBuffer();
 
-    // Clears the DrawingBuffer's framebuffer(s). Is destructive of the following state:
-    // *) framebuffer binding
-    // *) scissor test
-    // *) stencil mask
-    // *) clear color, depth, and stencil
-    // *) depth and color mask
-    void clearFramebuffer();
+    // Issues a glClear() on all framebuffers associated with this DrawingBuffer. The caller is responsible for
+    // making the context current and setting the clear values and masks. Modifies the framebuffer binding.
+    void clearFramebuffers(GC3Dbitfield clearMask);
 
     // Returns true if the buffer was successfully resized.
     bool reset(const IntSize&);

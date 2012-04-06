@@ -167,25 +167,10 @@ void DrawingBuffer::resizeDepthStencil(int sampleCount)
     m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
 }
 
-void DrawingBuffer::clearFramebuffer()
+void DrawingBuffer::clearFramebuffers(GC3Dbitfield clearMask)
 {
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO ? m_multisampleFBO : m_fbo);
-    const GraphicsContext3D::Attributes& attributes = m_context->getContextAttributes();
-    unsigned clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
-    if (attributes.depth) {
-        m_context->clearDepth(1);
-        m_context->depthMask(true);
-        clearMask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
-    }
-    if (attributes.stencil) {
-        m_context->clearStencil(0);
-        m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, 0xffffffff);
-        clearMask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
-    }
-    m_context->disable(GraphicsContext3D::SCISSOR_TEST);
 
-    m_context->colorMask(true, true, true, true);
-    m_context->clearColor(0, 0, 0, 0);
     m_context->clear(clearMask);
 
     // The multisample fbo was just cleared, but we also need to clear the non-multisampled buffer too.
@@ -301,7 +286,23 @@ bool DrawingBuffer::reset(const IntSize& newSize)
         }
     }
 
-    clearFramebuffer();
+    m_context->disable(GraphicsContext3D::SCISSOR_TEST);
+    m_context->clearColor(0, 0, 0, 0);
+    m_context->colorMask(true, true, true, true);
+
+    GC3Dbitfield clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
+    if (attributes.depth) {
+        m_context->clearDepth(1.0f);
+        clearMask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
+        m_context->depthMask(true);
+    }
+    if (attributes.stencil) {
+        m_context->clearStencil(0);
+        clearMask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
+        m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, 0xFFFFFFFF);
+    }
+
+    clearFramebuffers(clearMask);
 
     return true;
 }
