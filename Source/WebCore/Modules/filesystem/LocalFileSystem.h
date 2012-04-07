@@ -60,7 +60,7 @@ public:
 
 #if !PLATFORM(CHROMIUM)
     // This call is not thread-safe; must be called before any worker threads are created.
-    void initializeLocalFileSystem(const String&);
+    static void initializeLocalFileSystem(const String&);
 
     String fileSystemBasePath() const;
 #endif
