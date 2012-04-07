@@ -50,13 +50,6 @@ namespace WebCore {
     struct FrameData;
 }
 
-namespace WTF {
-    // FIXME: This declaration gives FrameData a default constructor that zeroes
-    // all its data members, even though FrameData's default constructor defined
-    // below does not zero all its data members. One of these must be wrong!
-    template<> struct VectorTraits<WebCore::FrameData> : public SimpleClassVectorTraits { };
-}
-
 namespace WebCore {
 
 template <typename T> class Timer;
@@ -66,7 +59,6 @@ template <typename T> class Timer;
 // ================================================
 
 struct FrameData {
-    WTF_MAKE_NONCOPYABLE(FrameData);
 public:
     FrameData()
         : m_frame(0)
