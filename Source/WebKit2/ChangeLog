@@ -1,3 +1,9 @@
+2012-04-06  Jon Lee  <jonlee@apple.com>
+
+        Build fix for Windows bots.
+
+        * win/WebKit2.def: Add missing export symbol.
+
 2012-04-06  Hironori Bono  <hbono@chromium.org>
 
         REGRESSION: Cannot write a word with Korean double consonant
