@@ -34,7 +34,7 @@ LIST(APPEND WebCore_SOURCES
     platform/graphics/skia/PlatformContextSkia.cpp
     platform/graphics/skia/SkiaUtils.cpp
     platform/graphics/skia/TransformationMatrixSkia.cpp
-    platform/graphics/skia/VDMXParser.cpp
+    platform/graphics/chromium/VDMXParser.cpp
     platform/image-decoders/skia/ImageDecoderSkia.cpp
     platform/image-encoders/skia/PNGImageEncoder.cpp
 )
