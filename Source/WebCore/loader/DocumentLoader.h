@@ -132,12 +132,14 @@ namespace WebCore {
 #endif
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-        void setArchive(PassRefPtr<Archive>);
         void addAllArchiveResources(Archive*);
         void addArchiveResource(PassRefPtr<ArchiveResource>);
+        
         PassRefPtr<Archive> popArchiveForSubframe(const String& frameName, const KURL&);
+        void clearArchiveResources();
+        void setParsedArchiveData(PassRefPtr<SharedBuffer>);
         SharedBuffer* parsedArchiveData() const;
-
+        
         bool scheduleArchiveLoad(ResourceLoader*, const ResourceRequest&, const KURL&);
 #endif // ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 
@@ -255,11 +257,6 @@ namespace WebCore {
         bool doesProgressiveLoad(const String& MIMEType) const;
         void checkLoadComplete();
         void clearMainResourceLoader();
-        
-        bool maybeCreateArchive();
-#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-        void clearArchiveResources();
-#endif
 
         void deliverSubstituteResourcesAfterDelay();
         void substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*);
@@ -329,7 +326,6 @@ namespace WebCore {
 
         OwnPtr<ArchiveResourceCollection> m_archiveResourceCollection;
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-        RefPtr<Archive> m_archive;
         RefPtr<SharedBuffer> m_parsedArchiveData;
 #endif
 

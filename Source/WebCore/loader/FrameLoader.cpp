@@ -122,6 +122,7 @@
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 #include "Archive.h"
+#include "ArchiveFactory.h"
 #endif
 
 namespace WebCore {
@@ -564,8 +565,24 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
 void FrameLoader::receivedFirstData()
 {
     KURL workingURL = activeDocumentLoader()->documentURL();
+#if ENABLE(WEB_ARCHIVE)
+    // FIXME: The document loader, not the frame loader, should be in charge of loading web archives.
+    // Once this is done, we can just make DocumentLoader::documentURL() return the right URL
+    // based on whether it has a non-null archive or not.
+    if (m_archive && activeDocumentLoader()->parsedArchiveData())
+        workingURL = m_archive->mainResource()->url();
+#endif
+
     activeDocumentLoader()->writer()->begin(workingURL, false);
     activeDocumentLoader()->writer()->setDocumentWasLoadedAsPartOfNavigation();
+
+#if ENABLE(MHTML)
+    if (m_archive) {
+        // The origin is the MHTML file, we need to set the base URL to the document encoded in the MHTML so
+        // relative URLs are resolved properly.
+        m_frame->document()->setBaseURLOverride(m_archive->mainResource()->url());
+    }
+#endif
 
     dispatchDidCommitLoad();
     dispatchDidClearWindowObjectsInAllWorlds();
@@ -812,7 +829,9 @@ void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 void FrameLoader::loadArchive(PassRefPtr<Archive> archive)
 {
-    ArchiveResource* mainResource = archive->mainResource();
+    m_archive = archive;
+    
+    ArchiveResource* mainResource = m_archive->mainResource();
     ASSERT(mainResource);
     if (!mainResource)
         return;
@@ -825,7 +844,7 @@ void FrameLoader::loadArchive(PassRefPtr<Archive> archive)
 #endif
 
     RefPtr<DocumentLoader> documentLoader = m_client->createDocumentLoader(request, substituteData);
-    documentLoader->setArchive(archive.get());
+    documentLoader->addAllArchiveResources(m_archive.get());
     load(documentLoader.get());
 }
 #endif // ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
@@ -1526,6 +1545,11 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
         m_documentLoader->stopLoading();
 
     setProvisionalDocumentLoader(0);
+    
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+    if (m_documentLoader)
+        m_documentLoader->clearArchiveResources();
+#endif
 
     m_checkTimer.stop();
 
@@ -1975,6 +1999,41 @@ bool FrameLoader::isLoadingMainFrame() const
 {
     Page* page = m_frame->page();
     return page && m_frame == page->mainFrame();
+}
+
+void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
+{
+    if (m_stateMachine.creatingInitialEmptyDocument())
+        return;
+
+#if !ENABLE(WEB_ARCHIVE) && !ENABLE(MHTML)
+    m_client->finishedLoading(loader);
+#else
+    // Give archive machinery a crack at this document. If the MIME type is not an archive type, it will return 0.
+    m_archive = ArchiveFactory::create(loader->response().url(), loader->mainResourceData().get(), loader->responseMIMEType());
+    if (!m_archive) {
+        m_client->finishedLoading(loader);
+        return;
+    }
+
+    // FIXME: The remainder of this function should be moved to DocumentLoader.
+
+    loader->addAllArchiveResources(m_archive.get());
+
+    ArchiveResource* mainResource = m_archive->mainResource();
+    loader->setParsedArchiveData(mainResource->data());
+
+    loader->writer()->setMIMEType(mainResource->mimeType());
+
+    closeURL();
+    didOpenURL();
+
+    ASSERT(m_frame->document());
+    String userChosenEncoding = documentLoader()->overrideEncoding();
+    bool encodingIsUserChosen = !userChosenEncoding.isNull();
+    loader->writer()->setEncoding(encodingIsUserChosen ? userChosenEncoding : mainResource->textEncoding(), encodingIsUserChosen);
+    loader->writer()->addData(mainResource->data()->data(), mainResource->data()->size());
+#endif // ENABLE(WEB_ARCHIVE)
 }
 
 bool FrameLoader::isReplacing() const

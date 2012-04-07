@@ -160,6 +160,7 @@ public:
     bool isHostedByObjectElement() const;
     bool isLoadingMainFrame() const;
 
+    void finishedLoadingDocument(DocumentLoader*);
     bool isReplacing() const;
     void setReplacing();
     bool subframeIsLoading() const;
@@ -282,6 +283,10 @@ public:
     PageDismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
 
     NetworkingContext* networkingContext() const;
+
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+    Archive* archive() const { return m_archive.get(); }
+#endif
 
 private:
     bool allChildrenAreComplete() const; // immediate children, not all descendants
@@ -426,6 +431,10 @@ private:
     SandboxFlags m_forcedSandboxFlags;
 
     RefPtr<FrameNetworkingContext> m_networkingContext;
+
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+    RefPtr<Archive> m_archive;
+#endif
 
     KURL m_previousUrl;
     RefPtr<HistoryItem> m_requestedHistoryItem;
