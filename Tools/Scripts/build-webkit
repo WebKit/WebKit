@@ -164,7 +164,7 @@ my @features = (
       define => "ENABLE_ANIMATION_API", default => isBlackBerry(), value => \$animationAPISupport },
 
     { option => "battery-status-api", desc => "Toggle battery status API support",
-      define => "ENABLE_BATTERY_STATUS", default => isEfl(), value => \$batterystatusAPISupport },
+      define => "ENABLE_BATTERY_STATUS", default => (isEfl() || isBlackBerry()), value => \$batterystatusAPISupport },
 
     { option => "blob", desc => "Toggle Blob support",
       define => "ENABLE_BLOB", default => (isAppleMacWebKit() || isGtk() || isChromium() || isBlackBerry()), value => \$blobSupport },

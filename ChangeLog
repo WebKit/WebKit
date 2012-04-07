@@ -1,3 +1,14 @@
+2012-04-07  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Add Battery Status API support
+        https://bugs.webkit.org/show_bug.cgi?id=82615
+
+        Reviewed by George Staikos.
+
+        Enable BATTERY_STATUS.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-04-06  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the GTK+ debug build.

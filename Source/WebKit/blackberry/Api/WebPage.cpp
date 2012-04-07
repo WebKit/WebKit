@@ -25,6 +25,9 @@
 #include "BackingStoreClient.h"
 #include "BackingStoreCompositingSurface.h"
 #include "BackingStore_p.h"
+#if ENABLE(BATTERY_STATUS)
+#include "BatteryClientBlackBerry.h"
+#endif
 #include "CString.h"
 #include "CachedImage.h"
 #include "Chrome.h"
@@ -448,6 +451,10 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     WebCore::provideDeviceMotionTo(m_page, new DeviceMotionClientBlackBerry(this));
 #if ENABLE(VIBRATION)
     WebCore::provideVibrationTo(m_page, new VibrationClientBlackBerry());
+#endif
+
+#if ENABLE(BATTERY_STATUS)
+    WebCore::provideBatteryTo(m_page, new WebCore::BatteryClientBlackBerry);
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
