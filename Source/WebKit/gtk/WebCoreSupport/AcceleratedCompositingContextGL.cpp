@@ -139,7 +139,7 @@ void AcceleratedCompositingContext::resizeRootLayer(const IntSize& size)
     if (!m_rootGraphicsLayer)
         return;
     m_rootGraphicsLayer->setSize(size);
-    m_rootGraphicsLayer->setNeedsDisplay();
+    m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
 }
 
 static gboolean syncLayersTimeoutCallback(AcceleratedCompositingContext* context)

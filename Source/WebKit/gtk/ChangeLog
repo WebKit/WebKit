@@ -1,3 +1,17 @@
+2012-04-06  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Accelerated compositing is broken after recent TextureMapper reorganizations
+        https://bugs.webkit.org/show_bug.cgi?id=83393
+
+        Reviewed by Noam Rosenthal.
+
+        Ensure that the layer tree is synced when the root layer is resized.
+
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        (WebKit::AcceleratedCompositingContext::resizeRootLayer): Ensure that the layer
+        tree is synced when the root layer resizes and remove a call to recomposite
+        the tree, as it happens anyway.
+
 2012-04-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Scrolling some iframes that are partially out of the viewport leads to repaint errors
