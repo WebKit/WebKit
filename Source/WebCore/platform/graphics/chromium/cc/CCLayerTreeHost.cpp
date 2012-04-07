@@ -386,14 +386,6 @@ void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostIm
         contentsTextureManager()->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
     }
 
-    // Ensure that the dropped tiles are propagated to the impl tree.
-    // If the frontbuffer is cached, then clobber the impl tree. Otherwise,
-    // push over the tree changes.
-    if (m_proxy->layerRendererCapabilities().contextHasCachedFrontBuffer) {
-        hostImpl->setRootLayer(nullptr);
-        return;
-    }
-
     hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->releaseRootLayer()));
 
     // We may have added an animation during the tree sync. This will cause both layer tree hosts
