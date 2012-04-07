@@ -225,6 +225,10 @@ void DocumentLoader::stopLoading()
 
     // Appcache uses ResourceHandle directly, DocumentLoader doesn't count these loads.
     m_applicationCacheHost->stopLoadingInFrame(m_frame);
+    
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+    clearArchiveResources();
+#endif
 
     if (!loading) {
         // If something above restarted loading we might run into mysterious crashes like 
@@ -282,11 +286,12 @@ void DocumentLoader::finishedLoading()
 {
     m_gotFirstByte = true;   
     commitIfReady();
-    if (!frameLoader())
+    if (!frameLoader() || frameLoader()->stateMachine()->creatingInitialEmptyDocument())
         return;
-    frameLoader()->finishedLoadingDocument(this);
+    if (!maybeCreateArchive())
+        frameLoader()->client()->finishedLoading(this);
     m_writer.end();
-    if (!m_mainDocumentError.isNull() || frameLoader()->stateMachine()->creatingInitialEmptyDocument())
+    if (!m_mainDocumentError.isNull())
         return;
     clearMainResourceLoader();
     frameLoader()->checkLoadComplete();
@@ -350,7 +355,7 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
         commitLoad(resourceData->data(), resourceData->size());
     }
     
-    frameLoader()->finishedLoadingDocument(this);
+    maybeCreateArchive();
     m_writer.end();
     
     frameLoader()->setReplacing();
@@ -439,7 +444,46 @@ bool DocumentLoader::isLoadingInAPISense() const
     return frameLoader()->subframeIsLoading();
 }
 
+bool DocumentLoader::maybeCreateArchive()
+{
+#if !ENABLE(WEB_ARCHIVE) && !ENABLE(MHTML)
+    return false;
+#else
+    
+    // Give the archive machinery a crack at this document. If the MIME type is not an archive type, it will return 0.
+    m_archive = ArchiveFactory::create(m_response.url(), mainResourceData().get(), m_response.mimeType());
+    if (!m_archive)
+        return false;
+    
+    addAllArchiveResources(m_archive.get());
+    ArchiveResource* mainResource = m_archive->mainResource();
+    m_parsedArchiveData = mainResource->data();
+    m_writer.setMIMEType(mainResource->mimeType());
+    
+    ASSERT(m_frame->document());
+    String userChosenEncoding = overrideEncoding();
+    bool encodingIsUserChosen = !userChosenEncoding.isNull();
+    m_writer.setEncoding(encodingIsUserChosen ? userChosenEncoding : mainResource->textEncoding(), encodingIsUserChosen);
+
+#if ENABLE(MHTML)
+    // The origin is the MHTML file, we need to set the base URL to the document encoded in the MHTML so
+    // relative URLs are resolved properly.
+    if (m_archive->type() == Archive::MHTML)
+        m_frame->document()->setBaseURLOverride(mainResource->url());
+#endif
+
+    m_writer.addData(mainResource->data()->data(), mainResource->data()->size());
+    return true;
+#endif // !ENABLE(WEB_ARCHIVE) && !ENABLE(MHTML)
+}
+
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+void DocumentLoader::setArchive(PassRefPtr<Archive> archive)
+{
+    m_archive = archive;
+    addAllArchiveResources(m_archive.get());
+}
+
 void DocumentLoader::addAllArchiveResources(Archive* archive)
 {
     if (!m_archiveResourceCollection)
@@ -475,11 +519,6 @@ void DocumentLoader::clearArchiveResources()
 {
     m_archiveResourceCollection.clear();
     m_substituteResourceDeliveryTimer.stop();
-}
-
-void DocumentLoader::setParsedArchiveData(PassRefPtr<SharedBuffer> data)
-{
-    m_parsedArchiveData = data;
 }
 
 SharedBuffer* DocumentLoader::parsedArchiveData() const
@@ -627,11 +666,10 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceR
         }
     }
 
-    Archive* archive = frameLoader()->archive();
-    if (!archive)
+    if (!m_archive)
         return false;
 
-    switch (archive->type()) {
+    switch (m_archive->type()) {
 #if ENABLE(WEB_ARCHIVE)
     case Archive::WebArchive:
         // WebArchiveDebugMode means we fail loads instead of trying to fetch them from the network if they're not in the archive.
@@ -704,6 +742,10 @@ const KURL& DocumentLoader::responseURL() const
 KURL DocumentLoader::documentURL() const
 {
     KURL url = substituteData().responseURL();
+#if ENABLE(WEB_ARCHIVE)
+    if (url.isEmpty() && m_archive && m_archive->type() == Archive::WebArchive)
+        url = m_archive->mainResource()->url();
+#endif
     if (url.isEmpty())
         url = requestURL();
     if (url.isEmpty())
