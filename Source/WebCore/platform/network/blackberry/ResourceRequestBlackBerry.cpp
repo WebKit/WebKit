@@ -23,6 +23,7 @@
 #include "CookieManager.h"
 #include <BlackBerryPlatformClient.h>
 #include <network/NetworkRequest.h>
+#include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 
 using BlackBerry::Platform::NetworkRequest;
@@ -98,6 +99,47 @@ static inline NetworkRequest::TargetType platformTargetTypeForRequest(const Reso
         ASSERT_NOT_REACHED();
         return NetworkRequest::TargetIsUnknown;
     }
+}
+
+typedef HashMap<String, ResourceRequest::TargetType> MimeTypeResourceRequestTypeMap;
+
+static const MimeTypeResourceRequestTypeMap& mimeTypeRequestTypeMap()
+{
+    static MimeTypeResourceRequestTypeMap* map = 0;
+    if (!map) {
+        map = new MimeTypeResourceRequestTypeMap;
+
+        if (map) {
+            // The list here should match extensionMap[] in MIMETypeRegistryBlackBerry.cpp
+            map->add(String("text/css"), ResourceRequest::TargetIsStyleSheet);
+            map->add(String("application/x-javascript"), ResourceRequest::TargetIsScript);
+            map->add(String("image/bmp"), ResourceRequest::TargetIsImage);
+            map->add(String("image/gif"), ResourceRequest::TargetIsImage);
+            map->add(String("image/x-icon"), ResourceRequest::TargetIsImage);
+            map->add(String("image/jpeg"), ResourceRequest::TargetIsImage);
+            map->add(String("image/png"), ResourceRequest::TargetIsImage);
+            map->add(String("image/x-portable-bitmap"), ResourceRequest::TargetIsImage);
+            map->add(String("image/x-portable-graymap"), ResourceRequest::TargetIsImage);
+            map->add(String("image/x-portable-pixmap"), ResourceRequest::TargetIsImage);
+            map->add(String("image/svg+xml"), ResourceRequest::TargetIsImage);
+            map->add(String("image/tiff"), ResourceRequest::TargetIsImage);
+            map->add(String("image/x-xbitmap"), ResourceRequest::TargetIsImage);
+            map->add(String("image/x-xpm"), ResourceRequest::TargetIsImage);
+        }
+    }
+
+    return *map;
+}
+
+ResourceRequest::TargetType ResourceRequest::targetTypeFromMimeType(const String& mimeType)
+{
+    const MimeTypeResourceRequestTypeMap& map = mimeTypeRequestTypeMap();
+
+    MimeTypeResourceRequestTypeMap::const_iterator iter = map.find(mimeType);
+    if (iter == map.end())
+        return ResourceRequest::TargetIsUnspecified;
+
+    return iter->second;
 }
 
 void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest, bool cookiesEnabled, bool isInitial, bool isRedirect) const

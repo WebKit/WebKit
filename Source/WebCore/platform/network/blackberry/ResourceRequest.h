@@ -122,6 +122,8 @@ public:
     TargetType targetType() const { return m_targetType; }
     void setTargetType(TargetType type) { m_targetType = type; }
 
+    static TargetType targetTypeFromMimeType(const String& mimeType);
+
 private:
     friend class ResourceRequestBase;
 
