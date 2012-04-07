@@ -1,3 +1,18 @@
+2012-04-06  Hironori Bono  <hbono@chromium.org>
+
+        REGRESSION: Cannot write a word with Korean double consonant
+        https://bugs.webkit.org/show_bug.cgi?id=81186
+
+        Reviewed by Dan Bernstein.
+
+        WebKit change r103859 posts fake mouse-move events when the keyboard status is
+        changed. Unfortunately, these mouse events go to input methods and confuse a
+        Korean input method. This change directly calls handleMouseEvent() instead of
+        -mouseMoved: to prevent sending these fake events to input methods.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _postFakeMouseMovedEventForFlagsChangedEvent:]):
+
 2012-04-06  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Adopt a different method of telling AppKit when inline input isn't supported
