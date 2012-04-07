@@ -1,3 +1,13 @@
+2012-04-06  Ami Fischman  <fischman@chromium.org>
+
+        Subscribe feature-media-reviews@c.o to Media-related changes.
+        https://bugs.webkit.org/show_bug.cgi?id=83397
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-04-06  Adrienne Walker  <enne@google.com>
 
         [chromium] Add virtual test suite for threaded compositing
