@@ -201,17 +201,6 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
         }
         break;
 
-    case CSSPropertyColor:                // <color> | inherit
-        if ((id >= CSSValueAqua && id <= CSSValueWindowtext) ||
-           (id >= CSSValueAliceblue && id <= CSSValueYellowgreen))
-            parsedValue = SVGColor::createFromString(value->string);
-        else
-            parsedValue = parseSVGColor();
-
-        if (parsedValue)
-            m_valueList->next();
-        break;
-
     case CSSPropertyStopColor: // TODO : icccolor
     case CSSPropertyFloodColor:
     case CSSPropertyLightingColor:
