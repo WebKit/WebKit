@@ -83,9 +83,6 @@ SET(DumpRenderTree_INCLUDE_DIRECTORIES
     ${TOOLS_DIR}/DumpRenderTree/cairo
     ${TOOLS_DIR}/DumpRenderTree/efl
     ${WTF_DIR}
-    ${WTF_DIR}/wtf
-    ${WTF_DIR}/wtf/efl
-    ${WTF_DIR}/wtf/gobject
     ${CMAKE_SOURCE_DIR}/Source
     ${CMAKE_BINARY_DIR}
     ${DERIVED_SOURCES_WEBCORE_DIR}

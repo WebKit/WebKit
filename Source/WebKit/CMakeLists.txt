@@ -51,8 +51,6 @@ SET(WebKit_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/profiler"
     "${JAVASCRIPTCORE_DIR}/runtime"
     "${WTF_DIR}"
-    "${WTF_DIR}/wtf"
-    "${WTF_DIR}/wtf/unicode"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
     "${CMAKE_BINARY_DIR}"
 )
