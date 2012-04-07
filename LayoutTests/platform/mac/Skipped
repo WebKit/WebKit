@@ -774,3 +774,6 @@ inspector/styles/override-screen-size.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=83239
 fast/animation/request-animation-frame-during-modal.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=83427
+fast/canvas/webgl/array-message-passing.html
