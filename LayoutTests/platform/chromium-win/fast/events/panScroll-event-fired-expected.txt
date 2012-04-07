@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 14: Mousedown with 1
-Test for bug 32303 This tests that pan scrolling works without event.preventDefault and the middle button mousedown event is fired. To test manually, try to pan scroll inside this div.
-
-Success! Div with overflow was scrolled

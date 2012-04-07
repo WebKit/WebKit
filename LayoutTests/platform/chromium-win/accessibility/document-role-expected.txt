@@ -1,4 +1,0 @@
-Test for role attribute of document 
------------------------------------ 
-role of Document : client 
-
