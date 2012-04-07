@@ -3,34 +3,32 @@
     <body onload="load()">
         <p>Test that a video element scales decoded frames to match the initial size
         as opposed to changing the size of the element.</p>
-        <video></video>
         <video width="320"></video>
+        <video></video>
 
-        <script src="../../../media/video-test.js"></script>
         <script>
+            if (window.layoutTestController) {
+                layoutTestController.waitUntilDone();
+            }
+
             function load() {
-                var video = document.getElementsByTagName("video")[0];
-                var video_fixed_size = document.getElementsByTagName("video")[1];
+                var video = document.getElementsByTagName("video")[1];
+                var video_fixed_size = document.getElementsByTagName("video")[0];
                 video.src = "resources/frame_size_change.webm";
                 video_fixed_size.src = "resources/frame_size_change.webm";
 
                 var canplayCount = 0;
                 function oncanplay() {
-                    consoleWrite("canplay");
                     if (++canplayCount < 2) {
                         return;
                     }
 
-                    testExpected(video.clientWidth, 1920);
-                    testExpected(video.clientHeight, 1080);
-                    testExpected(video.videoWidth, 1920);
-                    testExpected(video.videoHeight, 1080);
-                    video.play();
+                    // Make sure we render the first frame.
+                    if (window.layoutTestController) {
+                        layoutTestController.display();
+                    }
 
-                    testExpected(video_fixed_size.clientWidth, 320);
-                    testExpected(video_fixed_size.clientHeight, 180);
-                    testExpected(video_fixed_size.videoWidth, 1920);
-                    testExpected(video_fixed_size.videoHeight, 1080);
+                    video.play();
                     video_fixed_size.play();
                 };
                 video.addEventListener('canplay', oncanplay);
@@ -38,14 +36,13 @@
 
                 var playingCount = 0;
                 function onplaying() {
-                    consoleWrite("playing");
                     if (++playingCount < 2) {
                         return;
                     }
 
                     // Make sure both videos play for a bit.
                     function ontimeupdate(e) {
-                        if (e.target.currentTime > 0.5) {
+                        if (e.target.currentTime > 1.0) {
                             e.target.pause();
                         }
                     };
@@ -57,22 +54,26 @@
 
                 var pauseCount = 0;
                 function onpause() {
-                    consoleWrite("pause");
                     if (++pauseCount < 2) {
                         return;
                     }
 
-                    testExpected(video.clientWidth, 1920);
-                    testExpected(video.clientHeight, 1080);
-                    testExpected(video.videoWidth, 1920);
-                    testExpected(video.videoHeight, 1080);
+                    var seekedCount = 0;
+                    function onseeked() {
+                        if (++seekedCount < 2) {
+                            return;
+                        }
 
-                    testExpected(video_fixed_size.clientWidth, 320);
-                    testExpected(video_fixed_size.clientHeight, 180);
-                    testExpected(video_fixed_size.videoWidth, 1920);
-                    testExpected(video_fixed_size.videoHeight, 1080);
+                        if (window.layoutTestController) {
+                            layoutTestController.notifyDone();
+                        }
+                    }
 
-                    endTest();
+                    video.addEventListener('seeked', onseeked);
+                    video_fixed_size.addEventListener('seeked', onseeked);
+
+                    video.currentTime = 1.0;
+                    video_fixed_size.currentTime = 0.5;
                 };
                 video.addEventListener('pause', onpause);
                 video_fixed_size.addEventListener('pause', onpause);

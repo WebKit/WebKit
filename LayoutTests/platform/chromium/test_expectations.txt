@@ -3840,3 +3840,6 @@ BUGCR122448 : media/video-seek-past-end-paused.html = PASS TEXT
 BUGWK83391 DEBUG : http/tests/media/media-document.html = PASS CRASH
 
 BUGCR122462 WIN LINUX : http/tests/inspector/inspect-element.html = TEXT
+
+BUGWK83383 : platform/chromium/compositing/video-frame-size-change.html = MISSING
+BUGWK83383 : platform/chromium/media/video-frame-size-change.html = MISSING
