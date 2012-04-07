@@ -853,7 +853,6 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
     return false;
 }
 
-// FIXME: This doesn't work correctly with transforms.
 bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
 {
     if (!renderer())
@@ -862,8 +861,7 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
     RenderObject* o = renderer();
     if (!o->isInline() || o->isReplaced()) {
         RenderBox* box = toRenderBox(o);
-        point = o->localToAbsolute(FloatPoint(), false, true);
-        point.move(box->size());
+        point = o->localToAbsolute(LayoutPoint(box->size()), false, true);
         return true;
     }
 
