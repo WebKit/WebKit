@@ -1,3 +1,40 @@
+2012-04-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        Do not abuse ArrayStorage's m_length for testing array consistency
+        https://bugs.webkit.org/show_bug.cgi?id=83403
+
+        Reviewed by Geoffrey Garen.
+
+        Array creation from a list of values is a 3 steps process:
+        -JSArray::tryCreateUninitialized()
+        -JSArray::initializeIndex() for each values
+        -JSArray::completeInitialization()
+
+        Previously, the attribute m_length was not set to the final size
+        JSArray::tryCreateUninitialized() because it was used to test the array
+        consistency JSArray::initializeIndex().
+
+        This caused the initialization loop using JSArray::initializeIndex() maintain
+        two counters:
+        -index of the loop
+        -storage->m_length++
+
+        This patch fixes this by using the index of the initialization loop for the indinces of
+        JSArray::initializeIndex(). For testing consistency, the variable m_initializationIndex
+        is introduced if CHECK_ARRAY_CONSISTENCY is defined.
+
+        The patch also fixes minor unrelated build issue when CHECK_ARRAY_CONSISTENCY is defined.
+
+        This improves the performance of JSArray creation from literals by 8%.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryFinishCreationUninitialized):
+        (JSC::JSArray::checkConsistency):
+        * runtime/JSArray.h:
+        (ArrayStorage):
+        (JSC::JSArray::initializeIndex):
+        (JSC::JSArray::completeInitialization):
+
 2012-04-06  Jon Lee  <jonlee@apple.com>
 
         Build fix for Windows bots.

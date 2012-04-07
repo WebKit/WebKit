@@ -119,7 +119,9 @@ namespace JSC {
         unsigned m_numValuesInVector;
         void* m_allocBase; // Pointer to base address returned by malloc().  Keeping this pointer does eliminate false positives from the leak detector.
 #if CHECK_ARRAY_CONSISTENCY
-        uintptr_t m_inCompactInitialization; // Needs to be a uintptr_t for alignment purposes.
+        // Needs to be a uintptr_t for alignment purposes.
+        uintptr_t m_initializationIndex;
+        uintptr_t m_inCompactInitialization;
 #else
         uintptr_t m_padding;
 #endif
@@ -219,24 +221,25 @@ namespace JSC {
             ArrayStorage *storage = m_storage;
 #if CHECK_ARRAY_CONSISTENCY
             ASSERT(storage->m_inCompactInitialization);
-#endif
             // Check that we are initializing the next index in sequence.
-            ASSERT_UNUSED(i, i == storage->m_length);
+            ASSERT(i == storage->m_initializationIndex);
             // tryCreateUninitialized set m_numValuesInVector to the initialLength,
             // check we do not try to initialize more than this number of properties.
-            ASSERT(storage->m_length < storage->m_numValuesInVector);
-            // It is improtant that we increment length here, so that all newly added
-            // values in the array still get marked during the initialization phase.
-            storage->m_vector[storage->m_length++].set(globalData, this, v);
+            ASSERT(storage->m_initializationIndex < storage->m_numValuesInVector);
+            storage->m_initializationIndex++;
+#endif
+            ASSERT(i < storage->m_length);
+            ASSERT(i < storage->m_numValuesInVector);
+            storage->m_vector[i].set(globalData, this, v);
         }
 
         inline void completeInitialization(unsigned newLength)
         {
             // Check that we have initialized as meny properties as we think we have.
             ASSERT_UNUSED(newLength, newLength == m_storage->m_length);
-            // Check that the number of propreties initialized matches the initialLength.
-            ASSERT(m_storage->m_length == m_storage->m_numValuesInVector);
 #if CHECK_ARRAY_CONSISTENCY
+            // Check that the number of propreties initialized matches the initialLength.
+            ASSERT(m_storage->m_initializationIndex == m_storage->m_numValuesInVector);
             ASSERT(m_storage->m_inCompactInitialization);
             m_storage->m_inCompactInitialization = false;
 #endif

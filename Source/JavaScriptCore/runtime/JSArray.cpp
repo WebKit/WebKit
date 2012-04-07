@@ -176,11 +176,12 @@ JSArray* JSArray::tryFinishCreationUninitialized(JSGlobalData& globalData, unsig
     
     m_storage = static_cast<ArrayStorage*>(newStorage);
     m_storage->m_allocBase = m_storage;
-    m_storage->m_length = 0;
+    m_storage->m_length = initialLength;
     m_vectorLength = initialVectorLength;
     m_storage->m_numValuesInVector = initialLength;
 
 #if CHECK_ARRAY_CONSISTENCY
+    m_storage->m_initializationIndex = 0;
     m_storage->m_inCompactInitialization = true;
 #endif
 
@@ -1833,7 +1834,7 @@ void JSArray::checkConsistency(ConsistencyCheckType type)
 
     unsigned numValuesInVector = 0;
     for (unsigned i = 0; i < m_vectorLength; ++i) {
-        if (JSValue value = storage->m_vector[i]) {
+        if (JSValue value = storage->m_vector[i].get()) {
             ASSERT(i < storage->m_length);
             if (type != DestructorConsistencyCheck)
                 value.isUndefined(); // Likely to crash if the object was deallocated.
@@ -1847,15 +1848,15 @@ void JSArray::checkConsistency(ConsistencyCheckType type)
     ASSERT(numValuesInVector <= storage->m_length);
 
     if (m_sparseValueMap) {
-        SparseArrayValueMap::iterator end = m_sparseValueMap->end();
-        for (SparseArrayValueMap::iterator it = m_sparseValueMap->begin(); it != end; ++it) {
+        SparseArrayValueMap::const_iterator end = m_sparseValueMap->end();
+        for (SparseArrayValueMap::const_iterator it = m_sparseValueMap->begin(); it != end; ++it) {
             unsigned index = it->first;
             ASSERT(index < storage->m_length);
-            ASSERT(index >= storage->m_vectorLength);
+            ASSERT(index >= m_vectorLength);
             ASSERT(index <= MAX_ARRAY_INDEX);
             ASSERT(it->second);
             if (type != DestructorConsistencyCheck)
-                it->second.isUndefined(); // Likely to crash if the object was deallocated.
+                it->second.getNonSparseMode().isUndefined(); // Likely to crash if the object was deallocated.
         }
     }
 }
