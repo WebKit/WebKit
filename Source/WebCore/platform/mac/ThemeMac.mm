@@ -404,14 +404,6 @@ static const IntSize* buttonSizes()
     return sizes;
 }
 
-#if ENABLE(DATALIST)
-static const IntSize* listButtonSizes()
-{
-    static const IntSize sizes[3] = { IntSize(21, 21), IntSize(19, 18), IntSize(17, 16) };
-    return sizes;
-}
-#endif
-
 static const int* buttonMargins(NSControlSize controlSize)
 {
     static const int margins[3][4] =
@@ -439,12 +431,6 @@ static void setUpButtonCell(NSButtonCell *cell, ControlPart part, ControlStates 
 {
     // Set the control size based off the rectangle we're painting into.
     const IntSize* sizes = buttonSizes();
-#if ENABLE(DATALIST)
-    if (part == ListButtonPart) {
-        [cell setBezelStyle:NSRoundedDisclosureBezelStyle];
-        sizes = listButtonSizes();
-    } else
-#endif
     if (part == SquareButtonPart || zoomedRect.height() > buttonSizes()[NSRegularControlSize].height() * zoomFactor) {
         // Use the square button
         if ([cell bezelStyle] != NSShadowlessSquareBezelStyle)
@@ -481,11 +467,7 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
     LocalCurrentGraphicsContext localContext(context);
 
     NSControlSize controlSize = [buttonCell controlSize];
-#if ENABLE(DATALIST)
-    IntSize zoomedSize = (part == ListButtonPart ? listButtonSizes() : buttonSizes())[controlSize];
-#else
     IntSize zoomedSize = buttonSizes()[controlSize];
-#endif
     zoomedSize.setWidth(zoomedRect.width()); // Buttons don't ever constrain width, so the zoomed width can just be honored.
     zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
     IntRect inflatedRect = zoomedRect;
@@ -641,10 +623,6 @@ LengthSize ThemeMac::controlSize(ControlPart part, const Font& font, const Lengt
         case PushButtonPart:
             // Height is reset to auto so that specified heights can be ignored.
             return sizeFromFont(font, LengthSize(zoomedSize.width(), Length()), zoomFactor, buttonSizes());
-#if ENABLE(DATALIST)
-        case ListButtonPart:
-            return sizeFromFont(font, LengthSize(zoomedSize.width(), Length()), zoomFactor, listButtonSizes());
-#endif
         case InnerSpinButtonPart:
             if (!zoomedSize.width().isIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrAuto())
                 return zoomedSize;
@@ -660,7 +638,6 @@ LengthSize ThemeMac::minimumControlSize(ControlPart part, const Font& font, floa
         case SquareButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
-        case ListButtonPart:
             return LengthSize(Length(0, Fixed), Length(static_cast<int>(15 * zoomFactor), Fixed));
         case InnerSpinButtonPart:{
             IntSize base = stepperSizes()[NSMiniControlSize];
@@ -678,7 +655,6 @@ LengthBox ThemeMac::controlBorder(ControlPart part, const Font& font, const Leng
         case SquareButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
-        case ListButtonPart:
             return LengthBox(0, zoomedBox.right().value(), 0, zoomedBox.left().value());
         default:
             return Theme::controlBorder(part, font, zoomedBox, zoomFactor);
@@ -771,7 +747,6 @@ void ThemeMac::paint(ControlPart part, ControlStates states, GraphicsContext* co
         case DefaultButtonPart:
         case ButtonPart:
         case SquareButtonPart:
-        case ListButtonPart:
             paintButton(part, states, context, zoomedRect, zoomFactor, scrollView);
             break;
         case InnerSpinButtonPart:

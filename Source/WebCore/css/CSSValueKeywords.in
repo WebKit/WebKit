@@ -620,7 +620,6 @@ button-bevel
 default-button
 inner-spin-button
 -webkit-input-speech-button
-list-button
 listbox
 listitem
 media-enter-fullscreen-button

@@ -1538,30 +1538,6 @@ HTMLDataListElement* HTMLInputElement::dataList() const
     return static_cast<HTMLDataListElement*>(element);
 }
 
-HTMLOptionElement* HTMLInputElement::selectedOption() const
-{
-    String value = this->value();
-
-    // The empty string never matches to a datalist option because it
-    // doesn't represent a suggestion according to the standard.
-    if (value.isEmpty())
-        return 0;
-
-    HTMLDataListElement* sourceElement = dataList();
-    if (!sourceElement)
-        return 0;
-    HTMLCollection* options = sourceElement->options();
-    if (!options)
-        return 0;
-    unsigned length = options->length();
-    for (unsigned i = 0; i < length; ++i) {
-        HTMLOptionElement* option = static_cast<HTMLOptionElement*>(options->item(i));
-        if (!option->disabled() && value == option->value())
-            return option;
-    }
-    return 0;
-}
-
 #endif // ENABLE(DATALIST)
 
 bool HTMLInputElement::isSteppable() const

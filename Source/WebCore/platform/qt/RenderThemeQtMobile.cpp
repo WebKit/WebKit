@@ -614,7 +614,6 @@ void RenderThemeQtMobile::computeSizeBasedOnStyle(RenderStyle* renderStyle) cons
     }
     case PushButtonPart:
     case SquareButtonPart:
-    case ListButtonPart:
     case DefaultButtonPart:
     case ButtonPart:
     case MenulistPart: {

@@ -150,11 +150,6 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     case PseudoAnimatingFullScreenTransition:
         return ANIMATING_FULL_SCREEN_TRANSITION;
 #endif
-
-    case PseudoInputListButton:
-#if ENABLE(DATALIST)
-        return INPUT_LIST_BUTTON;
-#endif
     case PseudoUnknown:
     case PseudoEmpty:
     case PseudoFirstChild:
@@ -252,9 +247,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, focus, ("focus"));
     DEFINE_STATIC_LOCAL(AtomicString, hover, ("hover"));
     DEFINE_STATIC_LOCAL(AtomicString, indeterminate, ("indeterminate"));
-#if ENABLE(DATALIST)
-    DEFINE_STATIC_LOCAL(AtomicString, inputListButton, ("-webkit-input-list-button"));
-#endif
     DEFINE_STATIC_LOCAL(AtomicString, lastChild, ("last-child"));
     DEFINE_STATIC_LOCAL(AtomicString, lastOfType, ("last-of-type"));
     DEFINE_STATIC_LOCAL(AtomicString, link, ("link"));
@@ -322,9 +314,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(empty.impl(), CSSSelector::PseudoEmpty);
         nameToPseudoType->set(firstChild.impl(), CSSSelector::PseudoFirstChild);
         nameToPseudoType->set(fullPageMedia.impl(), CSSSelector::PseudoFullPageMedia);
-#if ENABLE(DATALIST)
-        nameToPseudoType->set(inputListButton.impl(), CSSSelector::PseudoInputListButton);
-#endif
         nameToPseudoType->set(lastChild.impl(), CSSSelector::PseudoLastChild);
         nameToPseudoType->set(lastOfType.impl(), CSSSelector::PseudoLastOfType);
         nameToPseudoType->set(onlyChild.impl(), CSSSelector::PseudoOnlyChild);
@@ -413,7 +402,6 @@ void CSSSelector::extractPseudoType() const
     case PseudoFirstLetter:
     case PseudoFirstLine:
         compat = true;
-    case PseudoInputListButton:
     case PseudoResizer:
     case PseudoScrollbar:
     case PseudoScrollbarCorner:

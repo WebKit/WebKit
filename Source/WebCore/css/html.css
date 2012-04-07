@@ -456,11 +456,6 @@ input[type="search"]::-webkit-search-results-button {
 datalist {
     display: none;
 }
-
-input::-webkit-input-list-button {
-    -webkit-appearance: list-button;
-    display: inline-block;
-}
 #endif
 
 input::-webkit-inner-spin-button {

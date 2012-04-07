@@ -101,7 +101,6 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
     
 #if USE(NEW_THEME)
     switch (part) {
-        case ListButtonPart:
         case CheckboxPart:
         case InnerSpinButtonPart:
         case RadioPart:
@@ -189,7 +188,6 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
             return adjustRadioStyle(selector, style, e);
         case PushButtonPart:
         case SquareButtonPart:
-        case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
             return adjustButtonStyle(selector, style, e);
@@ -265,7 +263,6 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
         case RadioPart:
         case PushButtonPart:
         case SquareButtonPart:
-        case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
         case InnerSpinButtonPart:
@@ -285,7 +282,6 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
             return paintRadio(o, paintInfo, r);
         case PushButtonPart:
         case SquareButtonPart:
-        case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
             return paintButton(o, paintInfo, r);
@@ -396,7 +392,6 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const PaintInfo& paintInfo, c
         case RadioPart:
         case PushButtonPart:
         case SquareButtonPart:
-        case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
         case MenulistPart:
@@ -444,7 +439,6 @@ bool RenderTheme::paintDecorations(RenderObject* o, const PaintInfo& paintInfo, 
         case RadioPart:
         case PushButtonPart:
         case SquareButtonPart:
-        case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
         case MenulistPart:

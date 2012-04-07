@@ -218,7 +218,6 @@ public:
 
 #if ENABLE(DATALIST)
     HTMLElement* list() const;
-    HTMLOptionElement* selectedOption() const;
 #endif
 
     HTMLInputElement* checkedRadioButtonForGroup() const;

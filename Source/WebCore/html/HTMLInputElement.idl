@@ -89,7 +89,6 @@ module html {
         attribute [Reflect] DOMString align;
         attribute [Conditional=DIRECTORY_UPLOAD, Reflect] boolean webkitdirectory;
         attribute [Reflect] DOMString useMap;
-        readonly attribute [Conditional=DATALIST] HTMLOptionElement selectedOption;
         attribute [Reflect] boolean incremental;
         attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitSpeech;
         attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitGrammar;
