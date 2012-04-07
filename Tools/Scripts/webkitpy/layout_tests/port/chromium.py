@@ -347,7 +347,11 @@ class ChromiumPort(Port):
                              ['--enable-accelerated-2d-canvas']),
             VirtualTestSuite('platform/chromium/virtual/gpu/canvas/philip',
                              'canvas/philip',
-                             ['--enable-accelerated-2d-canvas'])]
+                             ['--enable-accelerated-2d-canvas']),
+            VirtualTestSuite('platform/chromium/virtual/threaded/compositing/visibility',
+                             'compositing/visibility',
+                             ['--enable-threaded-compositing']),
+        ]
 
     #
     # PROTECTED METHODS

@@ -1,3 +1,23 @@
+2012-04-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] Add virtual test suite for threaded compositing
+        https://bugs.webkit.org/show_bug.cgi?id=82263
+
+        Reviewed by James Robinson.
+
+        Add compositing/visibility as a virtual test suites to test threaded
+        compositing with. This is a reasonable smoke test of 9 tests, none of
+        which have any expectations in the non-threaded case.
+
+        To fix many of the remaining tests in this virtual test suite, there
+        will need to be some serious refactoring to merge the conflict between
+        the way CCScheduler wants to draw frames and the way DRT also wants to
+        control things. So, in the short term, enable a few simple tests that
+        are known to be passing.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.virtual_test_suites):
+
 2012-04-06  Enrica Casucci  <enrica@apple.com>
 
         Provide Obj-C private API to simplify markup.
