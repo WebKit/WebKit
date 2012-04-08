@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x242
+  RenderBlock {HTML} at (0,0) size 800x242
+    RenderBody {BODY} at (8,16) size 784x218
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 484x18
+          text run at (0,0) width 484: "Tests decoding and rendering a video element that has a changing resolution."
+      RenderBlock (anonymous) at (0,34) size 784x184
+        RenderText {#text} at (320,166) size 4x18
+          text run at (320,166) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,50) size 320x180
+  RenderVideo {VIDEO} at (0,0) size 320x180
+layer at (332,50) size 320x180
+  RenderVideo {VIDEO} at (324,0) size 320x180

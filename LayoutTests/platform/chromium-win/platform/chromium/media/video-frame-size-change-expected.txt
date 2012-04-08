@@ -1,0 +1,17 @@
+layer at (0,0) size 1928x1330
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x1330
+  RenderBlock {HTML} at (0,0) size 785x1330
+    RenderBody {BODY} at (8,16) size 769x1306
+      RenderBlock {P} at (0,0) size 769x20
+        RenderText {#text} at (0,0) size 715x19
+          text run at (0,0) width 433: "Test that a video element scales decoded frames to match the initial size "
+          text run at (433,0) width 282: "as opposed to changing the size of the element."
+      RenderBlock (anonymous) at (0,36) size 769x1270
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,52) size 320x180
+  RenderVideo {VIDEO} at (0,0) size 320x180
+layer at (8,237) size 1920x1080
+  RenderVideo {VIDEO} at (0,185) size 1920x1080
