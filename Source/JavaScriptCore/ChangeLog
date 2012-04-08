@@ -1,3 +1,25 @@
+2012-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Command-line jsc's exception handling should be rationalized
+        https://bugs.webkit.org/show_bug.cgi?id=83437
+
+        Reviewed by Dan Bernstein.
+        
+        - If an exception is thrown during run() execution, it is now propagated,
+          so that it will terminate program execution unless it is caught.
+          
+        - If program execution terminates with an exception, the exception is now
+          always printed.
+          
+        - When printing the exception, the backtrace is now also printed if one is
+          available. It will only not be available if you use something akin to my
+          favorite line of code, 'throw "error"', since primitives don't have
+          properties and hence we cannot attach a "stack" property to them.
+
+        * jsc.cpp:
+        (functionRun):
+        (runWithScripts):
+
 2012-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         Forced OSR exits should lead to recompilation based on count, not rate

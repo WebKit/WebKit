@@ -321,11 +321,17 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 
     GlobalObject* globalObject = GlobalObject::create(exec->globalData(), GlobalObject::createStructure(exec->globalData(), jsNull()), Vector<UString>());
 
+    JSValue exception;
     StopWatch stopWatch;
     stopWatch.start();
-    evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(script.data(), fileName));
+    evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(script.data(), fileName), JSValue(), &exception);
     stopWatch.stop();
 
+    if (!!exception) {
+        throwError(globalObject->globalExec(), exception);
+        return JSValue::encode(jsUndefined());
+    }
+    
     return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
 }
 
@@ -522,11 +528,14 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
         JSValue evaluationException;
         JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(script, fileName), JSValue(), &evaluationException);
         success = success && !evaluationException;
-        if (dump) {
-            if (evaluationException)
-                printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
-            else
-                printf("End: %s\n", returnValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
+        if (dump && !evaluationException)
+            printf("End: %s\n", returnValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
+        if (evaluationException) {
+            printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
+            Identifier stackID(globalObject->globalExec(), "stack");
+            JSValue stackValue = evaluationException.get(globalObject->globalExec(), stackID);
+            if (!stackValue.isUndefinedOrNull())
+                printf("%s\n", stackValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
         }
 
         globalData.stopSampling();
