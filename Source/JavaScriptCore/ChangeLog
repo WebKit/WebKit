@@ -1,3 +1,53 @@
+2012-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Forced OSR exits should lead to recompilation based on count, not rate
+        https://bugs.webkit.org/show_bug.cgi?id=83247
+        <rdar://problem/10720925>
+
+        Reviewed by Geoff Garen.
+        
+        Track which OSR exits happen because of inadequate coverage. Count them
+        separately. If the count reaches a threshold, immediately trigger
+        reoptimization.
+        
+        This is in contrast to the recompilation trigger for all other OSR exits.
+        Normally recomp is triggered when the exit rate exceeds a certain ratio.
+        
+        Looks like a slight V8 speedup (sub 1%).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::forcedOSRExitCounter):
+        (JSC::CodeBlock::addressOfForcedOSRExitCounter):
+        (JSC::CodeBlock::offsetOfForcedOSRExitCounter):
+        (JSC::CodeBlock::shouldReoptimizeNow):
+        (JSC::CodeBlock::shouldReoptimizeFromLoopNow):
+        (CodeBlock):
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::exitKindToString):
+        * dfg/DFGOSRExitCompiler.cpp:
+        (JSC::DFG::OSRExitCompiler::handleExitCounts):
+        (DFG):
+        * dfg/DFGOSRExitCompiler.h:
+        (OSRExitCompiler):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/Options.cpp:
+        (Options):
+        (JSC::Options::initializeOptions):
+        * runtime/Options.h:
+        (Options):
+
 2012-04-06  Benjamin Poulain  <bpoulain@apple.com>
 
         Do not abuse ArrayStorage's m_length for testing array consistency

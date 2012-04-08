@@ -2973,7 +2973,7 @@ bool SpeculativeJIT::compileStrictEq(Node& node)
 void SpeculativeJIT::compileGetIndexedPropertyStorage(Node& node)
 {
     if (!node.prediction() || !at(node.child1()).prediction() || !at(node.child2()).prediction()) {
-        terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode);
+        terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), NoNode);
         return;
     }
         

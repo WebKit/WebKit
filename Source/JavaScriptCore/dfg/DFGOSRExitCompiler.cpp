@@ -95,6 +95,64 @@ void compileOSRExit(ExecState* exec)
 
 } // extern "C"
 
+void OSRExitCompiler::handleExitCounts(const OSRExit& exit)
+{
+    m_jit.add32(AssemblyHelpers::TrustedImm32(1), AssemblyHelpers::AbsoluteAddress(&exit.m_count));
+    
+    m_jit.move(AssemblyHelpers::TrustedImmPtr(m_jit.codeBlock()), GPRInfo::regT0);
+    
+    AssemblyHelpers::JumpList tooFewFails;
+    
+    if (exit.m_kind == InadequateCoverage) {
+        // Proceed based on the assumption that we can profitably optimize this code once
+        // it has executed enough times.
+        
+        m_jit.load32(AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfForcedOSRExitCounter()), GPRInfo::regT2);
+        m_jit.load32(AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeSuccessCounter()), GPRInfo::regT1);
+        m_jit.add32(AssemblyHelpers::TrustedImm32(1), GPRInfo::regT2);
+        m_jit.add32(AssemblyHelpers::TrustedImm32(-1), GPRInfo::regT1);
+        m_jit.store32(GPRInfo::regT2, AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfForcedOSRExitCounter()));
+        m_jit.store32(GPRInfo::regT1, AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeSuccessCounter()));
+        
+        tooFewFails.append(m_jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, AssemblyHelpers::TrustedImm32(Options::forcedOSRExitCountForReoptimization)));
+    } else {
+        // Proceed based on the assumption that we can handle these exits so long as they
+        // don't get too frequent.
+        
+        m_jit.load32(AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeFailCounter()), GPRInfo::regT2);
+        m_jit.load32(AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeSuccessCounter()), GPRInfo::regT1);
+        m_jit.add32(AssemblyHelpers::TrustedImm32(1), GPRInfo::regT2);
+        m_jit.add32(AssemblyHelpers::TrustedImm32(-1), GPRInfo::regT1);
+        m_jit.store32(GPRInfo::regT2, AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeFailCounter()));
+        m_jit.store32(GPRInfo::regT1, AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeSuccessCounter()));
+    
+        m_jit.move(AssemblyHelpers::TrustedImmPtr(m_jit.baselineCodeBlock()), GPRInfo::regT0);
+    
+        tooFewFails.append(m_jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, AssemblyHelpers::TrustedImm32(m_jit.codeBlock()->largeFailCountThreshold())));
+        m_jit.mul32(AssemblyHelpers::TrustedImm32(Options::desiredSpeculativeSuccessFailRatio), GPRInfo::regT2, GPRInfo::regT2);
+    
+        tooFewFails.append(m_jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, GPRInfo::regT1));
+    }
+
+    // Reoptimize as soon as possible.
+    m_jit.store32(AssemblyHelpers::TrustedImm32(0), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
+    m_jit.store32(AssemblyHelpers::TrustedImm32(0), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionActiveThreshold()));
+    AssemblyHelpers::Jump doneAdjusting = m_jit.jump();
+    
+    tooFewFails.link(&m_jit);
+    
+    // Adjust the execution counter such that the target is to only optimize after a while.
+    int32_t targetValue =
+        ExecutionCounter::applyMemoryUsageHeuristicsAndConvertToInt(
+            m_jit.baselineCodeBlock()->counterValueForOptimizeAfterLongWarmUp(),
+            m_jit.baselineCodeBlock());
+    m_jit.store32(AssemblyHelpers::TrustedImm32(-targetValue), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
+    m_jit.store32(AssemblyHelpers::TrustedImm32(targetValue), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionActiveThreshold()));
+    m_jit.store32(AssemblyHelpers::TrustedImm32(ExecutionCounter::formattedTotalCount(targetValue)), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionTotalCount()));
+    
+    doneAdjusting.link(&m_jit);
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

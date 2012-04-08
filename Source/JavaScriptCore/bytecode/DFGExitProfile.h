@@ -38,6 +38,7 @@ enum ExitKind {
     BadCache, // We exited because an inline cache was wrong.
     Overflow, // We exited because of overflow.
     NegativeZero, // We exited because we encountered negative zero.
+    InadequateCoverage, // We exited because we ended up in code that didn't have profiling coverage.
     Uncountable, // We exited for none of the above reasons, and we should not count it. Most uses of this should be viewed as a FIXME.
 };
 
@@ -54,6 +55,8 @@ inline const char* exitKindToString(ExitKind kind)
         return "Overflow";
     case NegativeZero:
         return "NegativeZero";
+    case InadequateCoverage:
+        return "InadequateCoverage";
     default:
         return "Unknown";
     }

@@ -1006,12 +1006,15 @@ namespace JSC {
         
         uint32_t speculativeSuccessCounter() const { return m_speculativeSuccessCounter; }
         uint32_t speculativeFailCounter() const { return m_speculativeFailCounter; }
+        uint32_t forcedOSRExitCounter() const { return m_forcedOSRExitCounter; }
         
         uint32_t* addressOfSpeculativeSuccessCounter() { return &m_speculativeSuccessCounter; }
         uint32_t* addressOfSpeculativeFailCounter() { return &m_speculativeFailCounter; }
+        uint32_t* addressOfForcedOSRExitCounter() { return &m_forcedOSRExitCounter; }
         
         static ptrdiff_t offsetOfSpeculativeSuccessCounter() { return OBJECT_OFFSETOF(CodeBlock, m_speculativeSuccessCounter); }
         static ptrdiff_t offsetOfSpeculativeFailCounter() { return OBJECT_OFFSETOF(CodeBlock, m_speculativeFailCounter); }
+        static ptrdiff_t offsetOfForcedOSRExitCounter() { return OBJECT_OFFSETOF(CodeBlock, m_forcedOSRExitCounter); }
 
 #if ENABLE(JIT)
         // The number of failures that triggers the use of the ratio.
@@ -1020,12 +1023,20 @@ namespace JSC {
 
         bool shouldReoptimizeNow()
         {
-            return Options::desiredSpeculativeSuccessFailRatio * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThreshold();
+            return (Options::desiredSpeculativeSuccessFailRatio *
+                        speculativeFailCounter() >= speculativeSuccessCounter()
+                    && speculativeFailCounter() >= largeFailCountThreshold())
+                || forcedOSRExitCounter() >=
+                       Options::forcedOSRExitCountForReoptimization;
         }
 
         bool shouldReoptimizeFromLoopNow()
         {
-            return Options::desiredSpeculativeSuccessFailRatio * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThresholdForLoop();
+            return (Options::desiredSpeculativeSuccessFailRatio *
+                        speculativeFailCounter() >= speculativeSuccessCounter()
+                    && speculativeFailCounter() >= largeFailCountThresholdForLoop())
+                || forcedOSRExitCounter() >=
+                       Options::forcedOSRExitCountForReoptimization;
         }
 #endif
 
@@ -1228,6 +1239,7 @@ namespace JSC {
         int32_t m_totalJITExecutions;
         uint32_t m_speculativeSuccessCounter;
         uint32_t m_speculativeFailCounter;
+        uint32_t m_forcedOSRExitCounter;
         uint16_t m_optimizationDelayCounter;
         uint16_t m_reoptimizationRetryCounter;
         

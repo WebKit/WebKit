@@ -61,6 +61,7 @@ extern double osrExitProminenceForFrequentExitSite;
 
 extern unsigned largeFailCountThresholdBase;
 extern unsigned largeFailCountThresholdBaseForLoop;
+extern unsigned forcedOSRExitCountForReoptimization;
 
 extern unsigned reoptimizationRetryCounterMax;
 extern unsigned reoptimizationRetryCounterStep;

@@ -75,6 +75,7 @@ double osrExitProminenceForFrequentExitSite;
 
 unsigned largeFailCountThresholdBase;
 unsigned largeFailCountThresholdBaseForLoop;
+unsigned forcedOSRExitCountForReoptimization;
 
 unsigned reoptimizationRetryCounterMax;
 unsigned reoptimizationRetryCounterStep;
@@ -174,8 +175,9 @@ void initializeOptions()
     
     SET(osrExitProminenceForFrequentExitSite, 0.3);
 
-    SET(largeFailCountThresholdBase,        20);
-    SET(largeFailCountThresholdBaseForLoop, 1);
+    SET(largeFailCountThresholdBase,         20);
+    SET(largeFailCountThresholdBaseForLoop,  1);
+    SET(forcedOSRExitCountForReoptimization, 250);
 
     SET(reoptimizationRetryCounterStep, 1);
 
