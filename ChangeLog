@@ -1,3 +1,12 @@
+2012-04-09  Martin Robinson  <mrobinson@igalia.com>
+
+        [soup] Crash while loading http://www.jusco.cn
+        https://bugs.webkit.org/show_bug.cgi?id=68238
+
+        Reviewed by Philippe Normand.
+
+        * configure.ac: Bumped the libsoup dependency to 2.37.90.
+
 2012-04-09  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to floats not cleared before starting SVG <text> layout.
