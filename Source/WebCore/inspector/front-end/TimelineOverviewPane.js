@@ -397,7 +397,7 @@ WebInspector.TimelineOverviewWindow = function(parentElement)
     this.windowRight = 1.0;
 
     this._parentElement.addEventListener("mousedown", this._dragWindow.bind(this), true);
-    this._parentElement.addEventListener("mousewheel", this.scrollWindow.bind(this), true);
+    this._parentElement.addEventListener("mousewheel", this._onMouseWheel.bind(this), true);
     this._parentElement.addEventListener("dblclick", this._resizeWindowMaximum.bind(this), true);
 
     this._overviewWindowElement = document.createElement("div");
@@ -487,7 +487,7 @@ WebInspector.TimelineOverviewWindow.prototype = {
         WebInspector.elementDragEnd(event);
         var window = this._overviewWindowSelector._close(event.pageX - this._parentElement.offsetLeft);
         delete this._overviewWindowSelector;
-        if (window.end === window.start) { // Click, not drag.\
+        if (window.end === window.start) { // Click, not drag.
             var middle = window.end;
             window.start = Math.max(0, middle - WebInspector.TimelineOverviewPane.MinSelectableSize / 2);
             window.end = Math.min(this._parentElement.clientWidth, middle + WebInspector.TimelineOverviewPane.MinSelectableSize / 2);
@@ -568,6 +568,34 @@ WebInspector.TimelineOverviewWindow.prototype = {
     _endWindowDragging: function(event)
     {
         WebInspector.elementDragEnd(event);
+    },
+
+    _onMouseWheel: function(event)
+    {
+        const zoomFactor = 1.1;
+        const mouseWheelZoomSpeed = 1 / 120;
+
+        if (typeof event.wheelDeltaY === "number" && event.wheelDeltaY !== 0) {
+            var referencePoint = event.pageX - this._parentElement.offsetLeft;
+            this._zoom(Math.pow(zoomFactor, -event.wheelDeltaY * mouseWheelZoomSpeed), referencePoint);
+        }
+        this.scrollWindow(event);
+    },
+
+    /**
+     * @param {number} factor
+     * @param {number} referencePoint
+     */
+    _zoom: function(factor, referencePoint)
+    {
+        var left = this._leftResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset;
+        var right = this._rightResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset;
+
+        if (factor < 1 && factor * (right - left) < WebInspector.TimelineOverviewPane.MinSelectableSize)
+            return;
+        left = Math.max(0, referencePoint + (left - referencePoint) * factor);
+        right = Math.min(this._parentElement.clientWidth, referencePoint + (right - referencePoint) * factor);
+        this._setWindowPosition(left, right);
     },
 
     scrollWindow: function(event)
