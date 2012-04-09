@@ -18,6 +18,7 @@ layer at (8,76) size 300x32
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x32
 layer at (8,76) size 300x32
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x32 [bgcolor=#00000099]
+    RenderBlock {DIV} at (266,0) size 34x32
 layer at (15,82) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,76) size 236x32
@@ -34,11 +35,12 @@ layer at (215,82) size 58x20 scrollHeight 21
 layer at (122,78) size 9x29
   RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
 layer at (274,76) size 34x32
-  RenderButton {INPUT} at (266,0) size 34x32
+  RenderButton {INPUT} at (0,0) size 34x32
 layer at (8,44) size 300x32
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x32
 layer at (8,44) size 300x32
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x32 [bgcolor=#00000099]
+    RenderBlock {DIV} at (266,0) size 34x32
 layer at (15,50) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,44) size 236x32
@@ -55,13 +57,14 @@ layer at (215,50) size 58x20 scrollHeight 21
 layer at (122,46) size 9x29
   RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
 layer at (274,44) size 34x32
-  RenderButton {INPUT} at (266,0) size 34x32
+  RenderButton {INPUT} at (0,0) size 34x32
 layer at (8,160) size 300x32
   RenderMedia {AUDIO} at (0,116) size 300x32
 layer at (8,160) size 300x32
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x32
 layer at (8,160) size 300x32
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x32 [bgcolor=#00000099]
+    RenderBlock {DIV} at (266,0) size 34x32
 layer at (15,166) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,160) size 236x32
@@ -78,4 +81,4 @@ layer at (215,166) size 58x20 scrollHeight 21
 layer at (122,162) size 9x29
   RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
 layer at (274,160) size 34x32
-  RenderButton {INPUT} at (266,0) size 34x32
+  RenderButton {INPUT} at (0,0) size 34x32

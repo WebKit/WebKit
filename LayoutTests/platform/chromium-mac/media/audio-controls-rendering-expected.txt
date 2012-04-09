@@ -18,6 +18,7 @@ layer at (8,42) size 300x32
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x32
 layer at (8,42) size 300x32
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x32 [bgcolor=#00000099]
+    RenderBlock {DIV} at (266,0) size 34x32
 layer at (15,48) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,42) size 236x32
@@ -34,11 +35,12 @@ layer at (215,48) size 58x20 scrollHeight 21
 layer at (46,44) size 9x29
   RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
 layer at (274,42) size 34x32
-  RenderButton {INPUT} at (266,0) size 34x32
+  RenderButton {INPUT} at (0,0) size 34x32
 layer at (8,92) size 320x32
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x32
 layer at (8,92) size 320x32
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x32 [bgcolor=#00000099]
+    RenderBlock {DIV} at (286,0) size 34x32
 layer at (15,98) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,92) size 256x32
@@ -55,13 +57,14 @@ layer at (235,98) size 58x20 scrollHeight 21
 layer at (46,94) size 9x29
   RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
 layer at (294,92) size 34x32
-  RenderButton {INPUT} at (286,0) size 34x32
+  RenderButton {INPUT} at (0,0) size 34x32
 layer at (8,142) size 320x100
   RenderMedia {AUDIO} at (8,142) size 320x100 [bgcolor=#0000FF]
 layer at (8,142) size 320x100
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x100
 layer at (8,210) size 320x32
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,68) size 320x32 [bgcolor=#00000099]
+    RenderBlock {DIV} at (286,0) size 34x32
 layer at (15,216) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,210) size 256x32
@@ -78,4 +81,4 @@ layer at (235,216) size 58x20 scrollHeight 21
 layer at (46,212) size 9x29
   RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
 layer at (294,210) size 34x32
-  RenderButton {INPUT} at (286,0) size 34x32
+  RenderButton {INPUT} at (0,0) size 34x32

@@ -50,7 +50,8 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/loader/javascript-url-iframe-crash.html
 BUGCR24182 SLOW DEBUG : svg/as-background-image/svg-as-background-5.html = PASS
 
 // V8 roll to 3.9.24.1. Remember to remove WIN LINUX from the line below upon fixing.
-BUGCR119915 MAC SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
+BUGCR119915 MAC RELEASE SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
+BUGCR119915 MAC DEBUG : fast/js/dfg-double-vote-fuzz.html = TEXT
 BUGWK77184 DEBUG WIN LINUX SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
 BUGWK77069 DEBUG SLOW : fast/js/dfg-uint32array-overflow-values.html = PASS
 BUGWK74787 DEBUG SLOW : fast/js/dfg-poison-fuzz.html = PASS
@@ -580,6 +581,7 @@ WONTFIX SKIP LINUX WIN : fast/events/option-tab.html = FAIL
 // We don't ship compositing on Leopard.
 WONTFIX SKIP LEOPARD : compositing = PASS TIMEOUT FAIL
 WONTFIX SKIP LEOPARD : platform/chromium/compositing = PASS TIMEOUT FAIL
+WONTFIX SKIP LEOPARD : platform/chromium/virtual/threaded/compositing = PASS TIMEOUT FAIL
 WONTFIX SKIP LEOPARD : animations/3d = PASS TIMEOUT FAIL
 
 // This is a test to make WebKit behave like AppKit on Mac.
@@ -3141,10 +3143,6 @@ BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 
 BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 
-//Need Rebaselining
-BUGWK71541 : fast/overflow/hidden-scrollbar-resize.html = TEXT
-BUGWK71541 : scrollbars/scrollbars-on-positioned-content.html = IMAGE+TEXT
-
 // Introduced due to BUGWK53512, fails under Skia right now
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
 
@@ -3556,24 +3554,6 @@ BUGWK81931 SNOWLEOPARD DEBUG : fast/images/destroyed-image-load-event.html = PAS
 BUGWK37244 : tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
 BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
 
-// Need rebaselining.
-BUGWK82150 : media/media-document-audio-repaint.html = IMAGE+TEXT
-BUGWK82150 : media/video-no-audio.html = IMAGE+TEXT
-BUGWK82150 : media/controls-strict.html = IMAGE+TEXT
-BUGWK82150 : media/video-volume-slider.html = IMAGE+TEXT
-BUGWK82150 : media/controls-styling.html = IMAGE+TEXT
-BUGWK82150 : media/video-display-toggle.html = IMAGE+TEXT
-BUGWK82150 : media/audio-repaint.html = IMAGE+TEXT
-BUGWK82150 : media/audio-controls-rendering.html = IMAGE+TEXT
-BUGWK82150 : media/video-zoom-controls.html = IMAGE+TEXT
-BUGWK82150 : media/video-controls-rendering.html = IMAGE+TEXT
-BUGWK82150 : media/controls-without-preload.html = IMAGE+TEXT
-BUGWK82150 : media/media-controls-clone.html = IMAGE+TEXT
-BUGWK82150 : fast/layers/video-layer.html = IMAGE+TEXT
-BUGWK82150 : media/video-empty-source.html = IMAGE+TEXT
-BUGWK82150 : media/video-playing-and-pause.html = IMAGE+TEXT
-BUGWK82150 : media/controls-after-reload.html = IMAGE+TEXT
-
 // New test, flaky since added in r110965.
 BUGWK82097 : editing/selection/move-by-word-visually-crash-test-5.html = PASS TIMEOUT
 
@@ -3818,3 +3798,5 @@ BUGWK19688 SKIP : fast/images/exif-orientation-css.html = FAIL
 BUGCR122448 : media/video-seek-past-end-paused.html = PASS TEXT
 
 BUGCR122462 WIN LINUX : http/tests/inspector/inspect-element.html = TEXT
+
+BUGWK83503 LINUX DEBUG : plugins/inner-html-display-none.html = CRASH
