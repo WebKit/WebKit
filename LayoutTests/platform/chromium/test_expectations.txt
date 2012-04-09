@@ -1188,8 +1188,7 @@ BUGWK83051 WIN LINUX LION : svg/css/group-with-shadow.svg = IMAGE PASS
 
 // Windows and Mac need rebaselining after 53378 patch.
 BUGWK53378 MAC : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
-// The CRASH comes from BUGWK82505
-BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE CRASH
+BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 
 // -----------------------------------------------------------------
 // End SVG Regressions
@@ -1624,8 +1623,7 @@ BUGCR117799 MAC : fast/gradients/background-clipped.html = TEXT
 BUGCR117799 : fast/repaint/background-misaligned.html = IMAGE
 BUGCR117799 : fast/repaint/backgroundSizeRepaint.html = IMAGE
 BUGCR117799 : platform/chromium/virtual/gpu/fast/canvas/canvas-bg-zoom.html = IMAGE
-// CRASH is from BUGWK82505
-BUGCR117799 : svg/as-border-image/svg-as-border-image.html = IMAGE CRASH
+BUGCR117799 : svg/as-border-image/svg-as-border-image.html = IMAGE
 BUGCR117799 : svg/custom/pattern-in-defs.svg = IMAGE
 BUGCR117799 MAC : svg/custom/pattern-rotate.svg = IMAGE
 BUGCR117799 : svg/custom/pattern-with-transformation.svg = IMAGE
@@ -1729,21 +1727,11 @@ BUGCR118411 LEOPARD SNOWLEOPARD : svg/hixie/perf/002.xml = IMAGE PASS
 // Fails on Snow Leopard - see BUGWK82954
 BUGCR118411 SLOW : svg/hixie/perf/007.xml = PASS FAIL
 
-
 BUGCR22700 LINUX WIN : fast/canvas/canvas-shadow.html = TEXT
 
 // Failures from merge 50972:51042
 // The test requires DRT/Test Shell to support error page handling.
 BUGCR27850 : fast/history/back-forward-reset-after-error-handling.html = TEXT
-
-BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : media/media-can-load-when-hidden.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD LEOPARD XP DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-load.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onprogress-event.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-onloadend-event-after-sync-requests.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/uri-resolution-opera-open-004.html = PASS TEXT CRASH
-BUGWK82505 SNOWLEOPARD LEOPARD XP LINUX DEBUG : http/tests/xmlhttprequest/upload-progress-events.html = PASS CRASH
 
 // Started failing with move from Lighttpd to Apache.
 // Since we have some bots on Lighttpd and some on Apache, mark it as flaky for
