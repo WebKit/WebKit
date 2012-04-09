@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2012 Samsung Electronics
+ *  Copyright (C) 2012 Google Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -37,6 +38,7 @@ public:
 
     void addListener(BatteryManager*);
     void removeListener(BatteryManager*);
+    void updateBatteryStatus(PassRefPtr<BatteryStatus>);
     void didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus>);
 
     BatteryClient* client() const { return m_client; }
@@ -52,6 +54,8 @@ private:
 
     BatteryClient* m_client;
     ListenerVector m_listeners;
+
+    RefPtr<BatteryStatus> m_batteryStatus;
 };
 
 }

@@ -1,3 +1,53 @@
+2012-04-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Add Battery Status API support.
+
+        The battery-client (BatteryClientChromium) will notify the client (WebBatteryStatusClient) when to start or stop
+        sending battery status updates. The client, in response will send the notifications to WebViewImpl, which sends
+        this update information to the WebCore::BatteryClient, and it triggers the appropriate javascript-callbacks.
+        The spec is at http://www.w3.org/TR/2011/WD-battery-status-20111129/.
+        https://bugs.webkit.org/show_bug.cgi?id=83284
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gyp:
+        * features.gypi:
+        * public/WebBatteryStatus.h: Added.
+        (WebKit):
+        (WebBatteryStatus):
+        (WebKit::WebBatteryStatus::WebBatteryStatus):
+        * public/WebBatteryStatusClient.h: Added.
+        (WebKit):
+        (WebBatteryStatusClient):
+        (WebKit::WebBatteryStatusClient::~WebBatteryStatusClient):
+        * public/WebView.h:
+        (WebKit):
+        (WebView):
+        (WebKit::WebView::updateBatteryStatus):
+        * public/WebViewClient.h:
+        (WebKit):
+        (WebViewClient):
+        (WebKit::WebViewClient::batteryStatusClient):
+        * src/BatteryClientImpl.cpp: Added.
+        (WebKit):
+        (WebKit::BatteryClientImpl::BatteryClientImpl):
+        (WebKit::BatteryClientImpl::updateBatteryStatus):
+        (WebKit::BatteryClientImpl::setController):
+        (WebKit::BatteryClientImpl::startUpdating):
+        (WebKit::BatteryClientImpl::stopUpdating):
+        (WebKit::BatteryClientImpl::batteryControllerDestroyed):
+        * src/BatteryClientImpl.h: Added.
+        (WebKit):
+        (BatteryClientImpl):
+        (WebKit::BatteryClientImpl::~BatteryClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit):
+        (WebKit::WebViewImpl::updateBatteryStatus):
+        * src/WebViewImpl.h:
+        (WebKit):
+        (WebViewImpl):
+
 2012-04-09  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Fix layer sorting perspective w if w becomes negative

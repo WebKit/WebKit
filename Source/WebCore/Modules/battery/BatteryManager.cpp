@@ -24,6 +24,7 @@
 
 #include "BatteryController.h"
 #include "BatteryStatus.h"
+#include "Document.h"
 #include "Event.h"
 #include "Frame.h"
 #include "Navigator.h"
