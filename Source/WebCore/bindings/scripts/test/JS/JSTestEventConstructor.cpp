@@ -69,17 +69,17 @@ void JSTestEventConstructorConstructor::finishCreation(ExecState* exec, JSDOMGlo
 
 bool JSTestEventConstructorConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, &JSTestEventConstructorConstructorTable, static_cast<JSTestEventConstructorConstructor*>(cell), propertyName, slot);
+    return getStaticValueSlot<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, &JSTestEventConstructorConstructorTable, jsCast<JSTestEventConstructorConstructor*>(cell), propertyName, slot);
 }
 
 bool JSTestEventConstructorConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, &JSTestEventConstructorConstructorTable, static_cast<JSTestEventConstructorConstructor*>(object), propertyName, descriptor);
+    return getStaticValueDescriptor<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, &JSTestEventConstructorConstructorTable, jsCast<JSTestEventConstructorConstructor*>(object), propertyName, descriptor);
 }
 
 EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::constructJSTestEventConstructor(ExecState* exec)
 {
-    JSTestEventConstructorConstructor* jsConstructor = static_cast<JSTestEventConstructorConstructor*>(exec->callee());
+    JSTestEventConstructorConstructor* jsConstructor = jsCast<JSTestEventConstructorConstructor*>(exec->callee());
 
     ScriptExecutionContext* executionContext = jsConstructor->scriptExecutionContext();
     if (!executionContext)
@@ -182,7 +182,7 @@ bool JSTestEventConstructor::getOwnPropertyDescriptor(JSObject* object, ExecStat
 
 JSValue jsTestEventConstructorAttr1(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSTestEventConstructor* castedThis = static_cast<JSTestEventConstructor*>(asObject(slotBase));
+    JSTestEventConstructor* castedThis = jsCast<JSTestEventConstructor*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestEventConstructor* impl = static_cast<TestEventConstructor*>(castedThis->impl());
     JSValue result = jsString(exec, impl->attr1());
@@ -192,7 +192,7 @@ JSValue jsTestEventConstructorAttr1(ExecState* exec, JSValue slotBase, const Ide
 
 JSValue jsTestEventConstructorAttr2(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSTestEventConstructor* castedThis = static_cast<JSTestEventConstructor*>(asObject(slotBase));
+    JSTestEventConstructor* castedThis = jsCast<JSTestEventConstructor*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestEventConstructor* impl = static_cast<TestEventConstructor*>(castedThis->impl());
     JSValue result = jsString(exec, impl->attr2());
@@ -202,13 +202,13 @@ JSValue jsTestEventConstructorAttr2(ExecState* exec, JSValue slotBase, const Ide
 
 JSValue jsTestEventConstructorConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSTestEventConstructor* domObject = static_cast<JSTestEventConstructor*>(asObject(slotBase));
+    JSTestEventConstructor* domObject = jsCast<JSTestEventConstructor*>(asObject(slotBase));
     return JSTestEventConstructor::getConstructor(exec, domObject->globalObject());
 }
 
 JSValue JSTestEventConstructor::getConstructor(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEventConstructorConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEventConstructorConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 static inline bool isObservable(JSTestEventConstructor* jsTestEventConstructor)
@@ -220,7 +220,7 @@ static inline bool isObservable(JSTestEventConstructor* jsTestEventConstructor)
 
 bool JSTestEventConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSTestEventConstructor* jsTestEventConstructor = static_cast<JSTestEventConstructor*>(handle.get().asCell());
+    JSTestEventConstructor* jsTestEventConstructor = jsCast<JSTestEventConstructor*>(handle.get().asCell());
     if (!isObservable(jsTestEventConstructor))
         return false;
     UNUSED_PARAM(visitor);
@@ -229,7 +229,7 @@ bool JSTestEventConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Un
 
 void JSTestEventConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSTestEventConstructor* jsTestEventConstructor = static_cast<JSTestEventConstructor*>(handle.get().asCell());
+    JSTestEventConstructor* jsTestEventConstructor = jsCast<JSTestEventConstructor*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestEventConstructor->impl(), jsTestEventConstructor);
     jsTestEventConstructor->releaseImpl();
@@ -242,7 +242,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEve
 
 TestEventConstructor* toTestEventConstructor(JSC::JSValue value)
 {
-    return value.inherits(&JSTestEventConstructor::s_info) ? static_cast<JSTestEventConstructor*>(asObject(value))->impl() : 0;
+    return value.inherits(&JSTestEventConstructor::s_info) ? jsCast<JSTestEventConstructor*>(asObject(value))->impl() : 0;
 }
 
 }

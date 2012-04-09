@@ -67,12 +67,12 @@ void JSTestActiveDOMObjectConstructor::finishCreation(ExecState* exec, JSDOMGlob
 
 bool JSTestActiveDOMObjectConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestActiveDOMObjectConstructor, JSDOMWrapper>(exec, &JSTestActiveDOMObjectConstructorTable, static_cast<JSTestActiveDOMObjectConstructor*>(cell), propertyName, slot);
+    return getStaticValueSlot<JSTestActiveDOMObjectConstructor, JSDOMWrapper>(exec, &JSTestActiveDOMObjectConstructorTable, jsCast<JSTestActiveDOMObjectConstructor*>(cell), propertyName, slot);
 }
 
 bool JSTestActiveDOMObjectConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<JSTestActiveDOMObjectConstructor, JSDOMWrapper>(exec, &JSTestActiveDOMObjectConstructorTable, static_cast<JSTestActiveDOMObjectConstructor*>(object), propertyName, descriptor);
+    return getStaticValueDescriptor<JSTestActiveDOMObjectConstructor, JSDOMWrapper>(exec, &JSTestActiveDOMObjectConstructorTable, jsCast<JSTestActiveDOMObjectConstructor*>(object), propertyName, descriptor);
 }
 
 /* Hash table for prototype */
@@ -152,7 +152,7 @@ bool JSTestActiveDOMObject::getOwnPropertyDescriptor(JSObject* object, ExecState
 
 JSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSTestActiveDOMObject* castedThis = static_cast<JSTestActiveDOMObject*>(asObject(slotBase));
+    JSTestActiveDOMObject* castedThis = jsCast<JSTestActiveDOMObject*>(asObject(slotBase));
     if (!castedThis->allowsAccessFrom(exec))
         return jsUndefined();
     UNUSED_PARAM(exec);
@@ -164,7 +164,7 @@ JSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, JSValue slotBase, con
 
 JSValue jsTestActiveDOMObjectConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSTestActiveDOMObject* domObject = static_cast<JSTestActiveDOMObject*>(asObject(slotBase));
+    JSTestActiveDOMObject* domObject = jsCast<JSTestActiveDOMObject*>(asObject(slotBase));
     if (!domObject->allowsAccessFrom(exec))
         return jsUndefined();
     return JSTestActiveDOMObject::getConstructor(exec, domObject->globalObject());
@@ -172,7 +172,7 @@ JSValue jsTestActiveDOMObjectConstructor(ExecState* exec, JSValue slotBase, cons
 
 JSValue JSTestActiveDOMObject::getConstructor(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestActiveDOMObjectConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestActiveDOMObjectConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(ExecState* exec)
@@ -180,7 +180,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&JSTestActiveDOMObject::s_info))
         return throwVMTypeError(exec);
-    JSTestActiveDOMObject* castedThis = static_cast<JSTestActiveDOMObject*>(asObject(thisValue));
+    JSTestActiveDOMObject* castedThis = jsCast<JSTestActiveDOMObject*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestActiveDOMObject::s_info);
     if (!castedThis->allowsAccessFrom(exec))
         return JSValue::encode(jsUndefined());
@@ -199,7 +199,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(E
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&JSTestActiveDOMObject::s_info))
         return throwVMTypeError(exec);
-    JSTestActiveDOMObject* castedThis = static_cast<JSTestActiveDOMObject*>(asObject(thisValue));
+    JSTestActiveDOMObject* castedThis = jsCast<JSTestActiveDOMObject*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestActiveDOMObject::s_info);
     TestActiveDOMObject* impl = static_cast<TestActiveDOMObject*>(castedThis->impl());
     if (exec->argumentCount() < 1)
@@ -220,7 +220,7 @@ static inline bool isObservable(JSTestActiveDOMObject* jsTestActiveDOMObject)
 
 bool JSTestActiveDOMObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSTestActiveDOMObject* jsTestActiveDOMObject = static_cast<JSTestActiveDOMObject*>(handle.get().asCell());
+    JSTestActiveDOMObject* jsTestActiveDOMObject = jsCast<JSTestActiveDOMObject*>(handle.get().asCell());
     if (!isObservable(jsTestActiveDOMObject))
         return false;
     UNUSED_PARAM(visitor);
@@ -229,7 +229,7 @@ bool JSTestActiveDOMObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unk
 
 void JSTestActiveDOMObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSTestActiveDOMObject* jsTestActiveDOMObject = static_cast<JSTestActiveDOMObject*>(handle.get().asCell());
+    JSTestActiveDOMObject* jsTestActiveDOMObject = jsCast<JSTestActiveDOMObject*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestActiveDOMObject->impl(), jsTestActiveDOMObject);
     jsTestActiveDOMObject->releaseImpl();
@@ -242,7 +242,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestAct
 
 TestActiveDOMObject* toTestActiveDOMObject(JSC::JSValue value)
 {
-    return value.inherits(&JSTestActiveDOMObject::s_info) ? static_cast<JSTestActiveDOMObject*>(asObject(value))->impl() : 0;
+    return value.inherits(&JSTestActiveDOMObject::s_info) ? jsCast<JSTestActiveDOMObject*>(asObject(value))->impl() : 0;
 }
 
 }

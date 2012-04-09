@@ -112,17 +112,17 @@ void JSTestInterfaceConstructor::finishCreation(ExecState* exec, JSDOMGlobalObje
 
 bool JSTestInterfaceConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticPropertySlot<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, static_cast<JSTestInterfaceConstructor*>(cell), propertyName, slot);
+    return getStaticPropertySlot<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, jsCast<JSTestInterfaceConstructor*>(cell), propertyName, slot);
 }
 
 bool JSTestInterfaceConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticPropertyDescriptor<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, static_cast<JSTestInterfaceConstructor*>(object), propertyName, descriptor);
+    return getStaticPropertyDescriptor<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, jsCast<JSTestInterfaceConstructor*>(object), propertyName, descriptor);
 }
 
 EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterface(ExecState* exec)
 {
-    JSTestInterfaceConstructor* castedThis = static_cast<JSTestInterfaceConstructor*>(exec->callee());
+    JSTestInterfaceConstructor* castedThis = jsCast<JSTestInterfaceConstructor*>(exec->callee());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
@@ -238,7 +238,7 @@ bool JSTestInterface::getOwnPropertyDescriptor(JSObject* object, ExecState* exec
 #if ENABLE(Condition11) || ENABLE(Condition12)
 JSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
+    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
     JSValue result = jsString(exec, TestSupplemental::supplementalStr1(impl));
@@ -250,7 +250,7 @@ JSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSValue slotBase, const
 #if ENABLE(Condition11) || ENABLE(Condition12)
 JSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
+    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
     JSValue result = jsString(exec, TestSupplemental::supplementalStr2(impl));
@@ -262,7 +262,7 @@ JSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSValue slotBase, const
 #if ENABLE(Condition11) || ENABLE(Condition12)
 JSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
+    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     return castedThis->supplementalStr3(exec);
 }
 
@@ -271,7 +271,7 @@ JSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSValue slotBase, const
 #if ENABLE(Condition11) || ENABLE(Condition12)
 JSValue jsTestInterfaceSupplementalNode(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
+    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalNode(impl)));
@@ -282,7 +282,7 @@ JSValue jsTestInterfaceSupplementalNode(ExecState* exec, JSValue slotBase, const
 
 JSValue jsTestInterfaceConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSTestInterface* domObject = static_cast<JSTestInterface*>(asObject(slotBase));
+    JSTestInterface* domObject = jsCast<JSTestInterface*>(asObject(slotBase));
     return JSTestInterface::getConstructor(exec, domObject->globalObject());
 }
 
@@ -298,7 +298,7 @@ void JSTestInterface::put(JSCell* cell, ExecState* exec, const Identifier& prope
 #if ENABLE(Condition11) || ENABLE(Condition12)
 void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* thisObject, JSValue value)
 {
-    JSTestInterface* castedThis = static_cast<JSTestInterface*>(thisObject);
+    JSTestInterface* castedThis = jsCast<JSTestInterface*>(thisObject);
     TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
     TestSupplemental::setSupplementalStr2(impl, ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)));
 }
@@ -308,7 +308,7 @@ void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* thisObject, J
 #if ENABLE(Condition11) || ENABLE(Condition12)
 void setJSTestInterfaceSupplementalStr3(ExecState* exec, JSObject* thisObject, JSValue value)
 {
-    static_cast<JSTestInterface*>(thisObject)->setSupplementalStr3(exec, value);
+    jsCast<JSTestInterface*>(thisObject)->setSupplementalStr3(exec, value);
 }
 
 #endif
@@ -316,7 +316,7 @@ void setJSTestInterfaceSupplementalStr3(ExecState* exec, JSObject* thisObject, J
 #if ENABLE(Condition11) || ENABLE(Condition12)
 void setJSTestInterfaceSupplementalNode(ExecState* exec, JSObject* thisObject, JSValue value)
 {
-    JSTestInterface* castedThis = static_cast<JSTestInterface*>(thisObject);
+    JSTestInterface* castedThis = jsCast<JSTestInterface*>(thisObject);
     TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
     TestSupplemental::setSupplementalNode(impl, toNode(value));
 }
@@ -325,7 +325,7 @@ void setJSTestInterfaceSupplementalNode(ExecState* exec, JSObject* thisObject, J
 
 JSValue JSTestInterface::getConstructor(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestInterfaceConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestInterfaceConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
@@ -334,7 +334,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&JSTestInterface::s_info))
         return throwVMTypeError(exec);
-    JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(thisValue));
+    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestInterface::s_info);
     TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
     TestSupplemental::supplementalMethod1(impl);
@@ -349,13 +349,13 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&JSTestInterface::s_info))
         return throwVMTypeError(exec);
-    JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(thisValue));
+    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestInterface::s_info);
     TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
-    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
     const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).toString(exec)->value(exec)));
@@ -378,7 +378,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&JSTestInterface::s_info))
         return throwVMTypeError(exec);
-    JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(thisValue));
+    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestInterface::s_info);
     return JSValue::encode(castedThis->supplementalMethod3(exec));
 }
@@ -421,7 +421,7 @@ static inline bool isObservable(JSTestInterface* jsTestInterface)
 
 bool JSTestInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSTestInterface* jsTestInterface = static_cast<JSTestInterface*>(handle.get().asCell());
+    JSTestInterface* jsTestInterface = jsCast<JSTestInterface*>(handle.get().asCell());
     if (jsTestInterface->impl()->hasPendingActivity())
         return true;
     if (!isObservable(jsTestInterface))
@@ -432,7 +432,7 @@ bool JSTestInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> 
 
 void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSTestInterface* jsTestInterface = static_cast<JSTestInterface*>(handle.get().asCell());
+    JSTestInterface* jsTestInterface = jsCast<JSTestInterface*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestInterface->impl(), jsTestInterface);
     jsTestInterface->releaseImpl();
@@ -445,7 +445,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestInt
 
 TestInterface* toTestInterface(JSC::JSValue value)
 {
-    return value.inherits(&JSTestInterface::s_info) ? static_cast<JSTestInterface*>(asObject(value))->impl() : 0;
+    return value.inherits(&JSTestInterface::s_info) ? jsCast<JSTestInterface*>(asObject(value))->impl() : 0;
 }
 
 }
