@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <style>
+  #first-box {
+       margin:50px 0 0 32px;
+       position:relative;
+  }
+
+  .square {
+       width:80px;
+       height:80px;
+       position:absolute;
+  }
+
+  #topleft { 
+       top:0px;
+	     background-color:#00ff00;
+  }
+	
+    #topright { 
+	     top:0px;
+	     left:176px;
+	     background-color:#00dd00;
+  }
+    
+    #bottomleft { 
+	     top: 320px;
+	     left:0;
+	     background-color:#00bb00;
+	 }
+	
+    #bottomright { 
+	     top: 320px;
+	     left:176px;
+	     background-color:#009900;
+	 }
+   </style>
+</head>
+
+<body>
+You should see four 80x80 green squares below and no red should be visible.
+<div id="first-box">
+  <div class="square" id="topleft"></div>
+  <div class="square" id="topright"></div>
+  <div class="square" id="bottomleft"></div>
+  <div class="square" id="bottomright"></div>
+</div>
+</body>
