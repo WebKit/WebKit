@@ -1,5 +1,25 @@
 2012-04-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
+        [Qt][WK2] Remove all USE(TILED_BACKING_STORE) defines from code that contains UI_SIDE_COMPOSITING
+        https://bugs.webkit.org/show_bug.cgi?id=82533
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No change in behavior, removing some #defines.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::setShouldUpdateVisibleRect):
+        (WebCore::WebGraphicsLayer::adjustContentsScale):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayer):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (LayerTreeHost):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::LayerTreeHostQt):
+        (WebKit::LayerTreeHostQt::detachLayer):
+
+2012-04-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
         [Qt][WK2] Disable the content-scaling and visible contents rect when the layer's transform is not affine
         https://bugs.webkit.org/show_bug.cgi?id=82523
 

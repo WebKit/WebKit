@@ -79,7 +79,7 @@ public:
     virtual void pauseRendering() { }
     virtual void resumeRendering() { }
 
-#if USE(TILED_BACKING_STORE)
+#if USE(UI_SIDE_COMPOSITING)
     virtual void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint&) { }
     virtual void setVisibleContentsRectForLayer(int layerID, const WebCore::IntRect&) { }
     virtual void renderNextFrame() { }
@@ -100,8 +100,7 @@ protected:
 
     WebPage* m_webPage;
 
-
-#if USE(TILED_BACKING_STORE)
+#if USE(UI_SIDE_COMPOSITING)
     bool m_waitingForUIProcess;
 #endif
 };

@@ -118,7 +118,6 @@ public:
 
     static void initFactory();
 
-#if USE(TILED_BACKING_STORE)
     // TiledBackingStoreClient
     virtual void tiledBackingStorePaintBegin();
     virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&);
@@ -139,7 +138,6 @@ public:
     bool isReadyForTileBufferSwap() const;
     void updateContentBuffers();
     void purgeBackingStores();
-#endif
 
 private:
     virtual void willBeDestroyed();
@@ -159,7 +157,6 @@ private:
     void createBackingStore();
     HashSet<String> m_transformAnimations;
 
-#if USE(TILED_BACKING_STORE)
     bool selfOrAncestorHaveNonAffineTransforms();
     bool shouldUseTiledBackingStore();
     void adjustContentsScale();
@@ -170,7 +167,6 @@ private:
     OwnPtr<WebCore::TiledBackingStore> m_mainBackingStore;
     OwnPtr<WebCore::TiledBackingStore> m_previousBackingStore;
     float m_contentsScale;
-#endif
 };
 
 WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer*);

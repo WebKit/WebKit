@@ -85,10 +85,8 @@ WebGraphicsLayer::WebGraphicsLayer(GraphicsLayerClient* client)
     , m_contentNeedsDisplay(false)
     , m_hasPendingAnimations(false)
     , m_inUpdateMode(false)
-#if USE(TILED_BACKING_STORE)
     , m_webGraphicsLayerClient(0)
     , m_contentsScale(1.f)
-#endif
 {
     static WebLayerID nextLayerID = 1;
     m_layerInfo.id = nextLayerID++;
@@ -476,7 +474,6 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
     m_hasPendingAnimations = false;
 }
 
-#if USE(TILED_BACKING_STORE)
 void WebGraphicsLayer::tiledBackingStorePaintBegin()
 {
 }
@@ -675,7 +672,6 @@ void WebGraphicsLayer::computeTransformedVisibleRect()
     adjustVisibleRect();
     adjustContentsScale();
 }
-#endif
 
 static PassOwnPtr<GraphicsLayer> createWebGraphicsLayer(GraphicsLayerClient* client)
 {
