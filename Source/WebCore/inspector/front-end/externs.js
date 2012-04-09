@@ -126,6 +126,8 @@ WebInspector.populateResourceContextMenu = function(contextMenu, url, preferredL
  */
 WebInspector.evaluateInConsole = function(expression, showResultOnly) {}
 
+WebInspector.isURLSaved = function(url) {}
+
 var InjectedFakeWorker = function() {}
 
 WebInspector.queryParamsObject = {}

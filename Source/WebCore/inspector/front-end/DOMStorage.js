@@ -106,7 +106,7 @@ WebInspector.DOMStorageDispatcher.prototype = {
     },
 
     /**
-     * @param {number} storageId
+     * @param {string} storageId
      */
     updateDOMStorage: function(storageId)
     {
