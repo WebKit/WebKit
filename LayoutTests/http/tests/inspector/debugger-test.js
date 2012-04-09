@@ -26,7 +26,7 @@ InspectorTest.completeDebuggerTest = function()
 {
     var scriptsPanel = WebInspector.panels.scripts;
 
-    scriptsPanel.activateBreakpoints();
+    WebInspector.debuggerPresentationModel.setBreakpointsActive(true);
     InspectorTest.resumeExecution(disableDebugger);
 
     function disableDebugger()

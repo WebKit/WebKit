@@ -25,7 +25,7 @@ var test = function()
     {
         InspectorTest.addResult("Main resource was shown.");
         InspectorTest.setBreakpoint(sourceFrame, 8, "", true);
-        WebInspector.panels.scripts.toggleBreakpointsButton.element.click();
+        WebInspector.panels.scripts._toggleBreakpointsButton.element.click();
         InspectorTest.reloadPage(step4);
     }
 
@@ -37,7 +37,7 @@ var test = function()
     function step4()
     {
         InspectorTest.addResult("Main resource was shown.");
-        if (!WebInspector.panels.scripts.breakpointsActivated())
+        if (!WebInspector.debuggerPresentationModel.breakpointsActive())
             InspectorTest.addResult("Breakpoints are deactivated.");
         else
             InspectorTest.addResult("Error: breakpoints are activated.");

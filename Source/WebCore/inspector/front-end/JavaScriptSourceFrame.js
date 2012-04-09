@@ -345,7 +345,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     _setBreakpoint: function(lineNumber, condition, enabled)
     {
         this._model.setBreakpoint(this._uiSourceCode, lineNumber, condition, enabled);
-        this._scriptsPanel.activateBreakpoints();
     },
 
     _onMouseDown: function(event)
