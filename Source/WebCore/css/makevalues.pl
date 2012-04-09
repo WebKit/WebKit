@@ -130,7 +130,8 @@ print HEADER << "EOF";
 
 namespace WebCore {
 
-const int CSSValueInvalid = 0;
+enum CSSValueID {
+    CSSValueInvalid = 0,
 EOF
 
 my $i = 1;
@@ -138,12 +139,14 @@ my $maxLen = 0;
 foreach my $name (@names) {
   my $id = $name;
   $id =~ s/(^[^-])|-(.)/uc($1||$2)/ge;
-  print HEADER "const int CSSValue" . $id . " = " . $i . ";\n";
+  print HEADER "    CSSValue" . $id . " = " . $i . ",\n";
   $i = $i + 1;
   if (length($name) > $maxLen) {
     $maxLen = length($name);
   }
 }
+
+print HEADER "};\n\n";
 print HEADER "const int numCSSValueKeywords = " . $i . ";\n";
 print HEADER "const size_t maxCSSValueKeywordLength = " . $maxLen . ";\n";
 print HEADER << "EOF";
