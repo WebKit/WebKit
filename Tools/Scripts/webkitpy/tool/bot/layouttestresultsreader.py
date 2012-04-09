@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.common.net.layouttestresults import LayoutTestResults
+from webkitpy.common.net.unittestresults import UnitTestResults
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.tool.steps.runtests import RunTests
 

@@ -49,6 +49,21 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
         # layout_test_results shouldn't raise even if the results.html file is missing.
         self.assertEquals(reader.results(), None)
 
+    def test_create_unit_test_results(self):
+        tool = MockTool()
+        reader = LayoutTestResultsReader(tool, "/var/logs")
+        unit_tests_results_path = '/mock-results/webkit_unit_tests_output.xml'
+        no_failures_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="0" disabled="0" errors="0" time="11.35" name="AllTests">
+  <testsuite name="RenderTableCellDeathTest" tests="3" failures="0" disabled="0" errors="0" time="0.677">
+    <testcase name="CanSetColumn" status="run" time="0.168" classname="RenderTableCellDeathTest" />
+    <testcase name="CrashIfSettingUnsetColumnIndex" status="run" time="0.129" classname="RenderTableCellDeathTest" />
+    <testcase name="CrashIfSettingUnsetRowIndex" status="run" time="0.123" classname="RenderTableCellDeathTest" />
+  </testsuite>
+</testsuites>"""
+        tool.filesystem = MockFileSystem({unit_tests_results_path: no_failures_xml})
+        self.assertEquals(reader._create_unit_test_results(), [])
+
     def test_missing_unit_test_results_path(self):
         tool = MockTool()
         tool.port().unit_tests_results_path = lambda: None

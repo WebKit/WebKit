@@ -1,3 +1,18 @@
+2012-04-09  Eric Seidel  <eric@webkit.org>
+
+        Enable webkit_unit_tests for commit queue and EWS while tracking failures
+        https://bugs.webkit.org/show_bug.cgi?id=83329
+
+        Unreviewed.  Add a missing import to unbreak all the Chromium EWS/CQ bots. :)
+
+        line 62, in _create_unit_test_results
+         return UnitTestResults.results_from_string(results_xml)
+         NameError: global name 'UnitTestResults' is not defined
+
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader.py:
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        (LayoutTestResultsReaderTest.test_create_unit_test_results):
+
 2012-04-08  Adam Barth  <abarth@webkit.org>
 
         The port object is missing unit_tests_results_path
