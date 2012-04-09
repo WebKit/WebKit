@@ -218,10 +218,27 @@ static void setToggleSize(GtkStyleContext* context, RenderStyle* style)
         style->setHeight(Length(indicatorSize, Fixed));
 }
 
-static void paintToggle(const RenderThemeGtk* theme, GType widgetType, RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+static void paintToggle(const RenderThemeGtk* theme, GType widgetType, RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& fullRect)
 {
     GtkStyleContext* context = getStyleContext(widgetType);
     gtk_style_context_save(context);
+
+    // Some themes do not render large toggle buttons properly, so we simply
+    // shrink the rectangle back down to the default size and then center it
+    // in the full toggle button region. The reason for not simply forcing toggle
+    // buttons to be a smaller size is that we don't want to break site layouts.
+    gint indicatorSize;
+    gtk_style_context_get_style(context, "indicator-size", &indicatorSize, NULL);
+    IntRect rect(fullRect);
+    if (rect.width() > indicatorSize) {
+        rect.inflateX(-(rect.width() - indicatorSize) / 2);
+        rect.setWidth(indicatorSize); // In case rect.width() was equal to indicatorSize + 1.
+    }
+
+    if (rect.height() > indicatorSize) {
+        rect.inflateY(-(rect.height() - indicatorSize) / 2);
+        rect.setHeight(indicatorSize); // In case rect.height() was equal to indicatorSize + 1.
+    }
 
     gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction())));
     gtk_style_context_add_class(context, widgetType == GTK_TYPE_CHECK_BUTTON ? GTK_STYLE_CLASS_CHECK : GTK_STYLE_CLASS_RADIO);
