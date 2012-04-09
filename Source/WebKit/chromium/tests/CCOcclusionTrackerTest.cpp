@@ -1674,65 +1674,6 @@ protected:
 MAIN_THREAD_TEST(CCOcclusionTrackerTestPerspectiveTransformBehindCamera);
 
 template<class Types, bool opaqueLayers>
-class CCOcclusionTrackerTestLayerBehindCameraDoesNotOcclude : public CCOcclusionTrackerTest<Types, opaqueLayers> {
-protected:
-    void runMyTest()
-    {
-        TransformationMatrix transform;
-        transform.translate(50, 50);
-        transform.applyPerspective(100);
-        transform.translate3d(0, 0, 110);
-        transform.translate(-50, -50);
-
-        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
-        typename Types::ContentLayerType* layer = this->createDrawingLayer(parent, transform, FloatPoint(0, 0), IntSize(100, 100), true);
-        parent->setPreserves3D(true);
-        this->calcDrawEtc(parent);
-
-        TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-
-        // This layer is entirely behind the camera and should not occlude.
-        occlusion.markOccludedBehindLayer(layer);
-        EXPECT_EQ(0u, occlusion.occlusionInTargetSurface().rects().size());
-        EXPECT_EQ(0u, occlusion.occlusionInScreenSpace().rects().size());
-    }
-};
-
-MAIN_THREAD_TEST(CCOcclusionTrackerTestLayerBehindCameraDoesNotOcclude);
-
-template<class Types, bool opaqueLayers>
-class CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect : public CCOcclusionTrackerTest<Types, opaqueLayers> {
-protected:
-    void runMyTest()
-    {
-        TransformationMatrix transform;
-        transform.translate(50, 50);
-        transform.applyPerspective(100);
-        transform.translate3d(0, 0, 99);
-        transform.translate(-50, -50);
-
-        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
-        typename Types::ContentLayerType* layer = this->createDrawingLayer(parent, transform, FloatPoint(0, 0), IntSize(100, 100), true);
-        parent->setPreserves3D(true);
-        this->calcDrawEtc(parent);
-
-        TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-
-        // This is very close to the camera, so pixels in its visibleLayerRect will actually go outside of the layer's clipRect.
-        // Ensure that those pixels don't occlude things outside the clipRect.
-        occlusion.markOccludedBehindLayer(layer);
-        EXPECT_EQ(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
-        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
-        EXPECT_EQ(IntRect(0, 0, 100, 100), occlusion.occlusionInScreenSpace().bounds());
-        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-    }
-};
-
-MAIN_THREAD_TEST(CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect);
-
-template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestAnimationOpacity1OnMainThread : public CCOcclusionTrackerTest<Types, opaqueLayers> {
 protected:
     void runMyTest()

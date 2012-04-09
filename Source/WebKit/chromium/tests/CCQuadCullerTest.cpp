@@ -44,9 +44,8 @@ public:
         : CCOcclusionTrackerImpl(scissorRectInScreen, recordMetricsForFrame)
         , m_scissorRectInScreen(scissorRectInScreen)
     {
-        // Pretend we have visited the root render surface.
+        // Pretend we have visited a render surface.
         m_stack.append(StackObject());
-        m_stack.last().surface = new CCRenderSurface(0);
     }
 
 protected:

@@ -1,3 +1,16 @@
+2012-04-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r113561.
+        http://trac.webkit.org/changeset/113561
+        https://bugs.webkit.org/show_bug.cgi?id=83487
+
+        broke webkit_unit_tests (Requested by simonjam on #webkit).
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests):
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore::TestCCOcclusionTrackerImpl::TestCCOcclusionTrackerImpl):
+
 2012-04-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Make culling work with clipped rects
