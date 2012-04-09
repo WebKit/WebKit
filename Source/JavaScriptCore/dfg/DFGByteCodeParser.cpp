@@ -1881,10 +1881,20 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     addToGraph(ForceOSRExit);
                 
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(getByIdStatus.structureSet())), base);
-                set(currentInstruction[1].u.operand, addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), addToGraph(GetPropertyStorage, base)));
+                NodeIndex propertyStorage;
+                size_t offsetOffset;
+                if (getByIdStatus.structureSet().allAreUsingInlinePropertyStorage()) {
+                    propertyStorage = base;
+                    ASSERT(!(sizeof(JSObject) % sizeof(EncodedJSValue)));
+                    offsetOffset = sizeof(JSObject) / sizeof(EncodedJSValue);
+                } else {
+                    propertyStorage = addToGraph(GetPropertyStorage, base);
+                    offsetOffset = 0;
+                }
+                set(currentInstruction[1].u.operand, addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), propertyStorage));
                 
                 StorageAccessData storageAccessData;
-                storageAccessData.offset = getByIdStatus.offset();
+                storageAccessData.offset = getByIdStatus.offset() + offsetOffset;
                 storageAccessData.identifierNumber = identifierNumber;
                 m_graph.m_storageAccessData.append(storageAccessData);
             } else

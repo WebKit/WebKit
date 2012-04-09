@@ -27,12 +27,11 @@
 #define StructureSet_h
 
 #include "PredictedType.h"
+#include "Structure.h"
 #include <stdio.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
-
-class Structure;
 
 namespace DFG {
 class StructureAbstractValue;
@@ -106,6 +105,15 @@ public:
     }
     
     size_t size() const { return m_structures.size(); }
+    
+    bool allAreUsingInlinePropertyStorage() const
+    {
+        for (size_t i = 0; i < m_structures.size(); ++i) {
+            if (!m_structures[i]->isUsingInlineStorage())
+                return false;
+        }
+        return true;
+    }
     
     Structure* at(size_t i) const { return m_structures.at(i); }
     
