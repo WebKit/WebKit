@@ -29,10 +29,11 @@
 import unittest
 
 from webkitpy.common.net.bugzilla import Bugzilla
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queries import *
-from webkitpy.tool.mocktool import MockTool
+from webkitpy.tool.mocktool import MockTool, MockOptions
 
 
 class MockTestPort1(object):
@@ -115,3 +116,46 @@ class FailureReasonTest(unittest.TestCase):
             raise Exception("MESSAGE")
         tool.checkout().commit_info_for_revision = raising_mock
         self.assertEquals(command._blame_line_for_revision(None), "FAILED to fetch CommitInfo for rNone, exception: MESSAGE")
+
+
+class PrintBaselinesTest(unittest.TestCase):
+    def setUp(self):
+        self.oc = None
+        self.tool = MockTool()
+        self.test_port = self.tool.port_factory.get('test-win-xp')
+        self.tool.port_factory.get = lambda port_name=None: self.test_port
+        self.tool.port_factory.all_port_names = lambda: ['test-win-xp']
+
+    def tearDown(self):
+        if self.oc:
+            self.restore_output()
+
+    def capture_output(self):
+        self.oc = OutputCapture()
+        self.oc.capture_output()
+
+    def restore_output(self):
+        stdout, stderr, logs = self.oc.restore_output()
+        self.oc = None
+        return (stdout, stderr, logs)
+
+    def test_basic(self):
+        command = PrintBaselines()
+        command.bind_to_tool(self.tool)
+        self.capture_output()
+        command.execute(MockOptions(all=False, include_virtual_tests=False, csv=False, platform=None), ['passes/text.html'], self.tool)
+        stdout, _, _ = self.restore_output()
+        self.assertEquals(stdout,
+                          ('// For test-win-xp\n'
+                           'passes/text-expected.png\n'
+                           'passes/text-expected.txt\n'))
+
+    def test_csv(self):
+        command = PrintBaselines()
+        command.bind_to_tool(self.tool)
+        self.capture_output()
+        command.execute(MockOptions(all=False, platform='*xp', csv=True, include_virtual_tests=False), ['passes/text.html'], self.tool)
+        stdout, _, _ = self.restore_output()
+        self.assertEquals(stdout,
+                          ('test-win-xp,passes/text.html,None,png,passes/text-expected.png,None\n'
+                           'test-win-xp,passes/text.html,None,txt,passes/text-expected.txt,None\n'))

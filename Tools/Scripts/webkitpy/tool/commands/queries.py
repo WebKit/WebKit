@@ -4,7 +4,7 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -27,6 +27,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import fnmatch
+import re
 
 from optparse import make_option
 
@@ -397,3 +399,68 @@ out what ports are skipping the test(s). Categories are taken in account too."""
                 print "Ports skipping test %r: %s" % (test_name, ', '.join(ports))
             else:
                 print "Test %r is not skipped by any port." % test_name
+
+
+class PrintBaselines(AbstractDeclarativeCommand):
+    name = 'print-baselines'
+    help_text = 'Prints the baseline locations for given test(s) on the given port(s)'
+
+    def __init__(self):
+        options = [
+            make_option('-p', '--platform', action='store',
+                        help='platform/port(s) to display expectations for. Use glob-style wildcards for multiple ports (note that that will imply --csv)'),
+            make_option('--all', action='store_true', default=False,
+                        help='display the baselines for *all* tests'),
+            make_option('--csv', action='store_true', default=False,
+                        help='Print a CSV-style report that includes the port name, test_name, test platform, baseline type, baseline location, and baseline platform'),
+            make_option('--include-virtual-tests', action='store_true',
+                        help='Include virtual tests'),
+        ]
+        AbstractDeclarativeCommand.__init__(self, options=options)
+        self._platform_regexp = re.compile('platform/([^\/]+)/(.+)')
+
+    def execute(self, options, args, tool):
+        if not args and not options.all:
+            print "You must either specify one or more test paths or --all."
+            return
+
+        default_port = tool.port_factory.get()
+        if options.platform:
+            port_names = fnmatch.filter(tool.port_factory.all_port_names(), options.platform)
+            if not port_names:
+                print "No port names match '%s'" % options.platform
+        else:
+            port_names = [default_port.name()]
+
+        if len(port_names) > 1:
+            options.csv = True
+
+        if options.include_virtual_tests:
+            tests = sorted(default_port.tests(args))
+        else:
+            # FIXME: make real_tests() a public method.
+            tests = sorted(default_port._real_tests(args))
+
+        if not options.csv:
+            print "// For %s" % port_names[0]
+
+        for port_name in port_names:
+            port = tool.port_factory.get(port_name)
+            for test_name in tests:
+                self._print_baselines(options, port_name, test_name, port.expected_baselines_by_extension(test_name))
+
+    def _print_baselines(self, options, port_name, test_name, baselines):
+        for extension in sorted(baselines.keys()):
+            baseline_location = baselines[extension]
+            if baseline_location:
+                if options.csv:
+                    print "%s,%s,%s,%s,%s,%s" % (port_name, test_name, self._platform_for_path(test_name),
+                                                 extension[1:], baseline_location, self._platform_for_path(baseline_location))
+                else:
+                    print baseline_location
+
+    def _platform_for_path(self, relpath):
+        platform_matchobj = self._platform_regexp.match(relpath)
+        if platform_matchobj:
+            return platform_matchobj.group(1)
+        return None

@@ -1,3 +1,38 @@
+2012-04-09  Dirk Pranke  <dpranke@chromium.org>
+
+        add a webkit-patch print-baselines command
+        https://bugs.webkit.org/show_bug.cgi?id=83348
+
+        Reviewed by Adam Barth.
+
+        This adds a simple 'print-baselines' command to webkit-patch
+        that can be used in one of two forms: to print where the
+        baselines for a given test (or set of tests) on a single port
+        will be found, or to generate a report for multiple ports.
+
+        Example of the former:
+
+        $ webkit-patch print-baselines fast/html/keygen.html
+        // For mac-snowleopard
+        platform/mac/fast/html/keygen-expected.txt
+        platform/mac/fast/html/keygen-expected.png
+        $
+
+        The latter is most useful for finding out which fallback dirs are
+        used by which ports for which tests, for example,
+        'chromium-mac-leopard' uses 100 results from 'platform/mac/leopard'.
+        No example output is given because the reports are pretty wordy :).
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.baseline_extensions): Added.
+        (Port.expected_baseline_dict): Added.
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintBaselines):
+        (PrintBaselines.__init__):
+        (PrintBaselines.execute):
+        (PrintBaselines._print_baselines):
+        (PrintBaselines._platform_for_path):
+
 2012-04-09  Florin Malita  <fmalita@chromium.org>
 
         Unreviewed: adding myself to committers.py.
