@@ -2888,7 +2888,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     _private->customDeviceScaleFactor = customScaleFactor;
 
     if (oldScaleFactor != [self _deviceScaleFactor])
-        _private->page->setDeviceScaleFactor(customScaleFactor);
+        _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
 }
 
 - (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit

@@ -1,3 +1,16 @@
+2012-04-08  Dan Bernstein  <mitz@apple.com>
+
+        [mac] REGRESSION (r113467): Some canvas tests are failing in WebKit1 when run after compositing/tiled-layers-hidpi.html
+        https://bugs.webkit.org/show_bug.cgi?id=83453
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        (-[WebView _setCustomBackingScaleFactor:]): When the scale factor parameter was 0, meaning
+        no custom scale factor, this method was setting the Page scale factor to 0, and that value
+        was used by canvas. Changed it to correctly set the Page scale factor back to the device
+        scale factor.
+
 2012-04-06  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Adopt a different method of telling AppKit when inline input isn't supported
