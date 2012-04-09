@@ -106,12 +106,12 @@ void LayoutTestController::display()
     notImplemented();
 }
 
-static WTF::String jsStringRefToWebCoreString(JSStringRef str)
+static String jsStringRefToWebCoreString(JSStringRef str)
 {
     size_t strArrSize = JSStringGetMaximumUTF8CStringSize(str);
     OwnArrayPtr<char> strArr = adoptArrayPtr(new char[strArrSize]);
     JSStringGetUTF8CString(str, strArr.get(), strArrSize);
-    return WTF::String::fromUTF8(strArr.get());
+    return String::fromUTF8(strArr.get());
 }
 
 void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
@@ -119,8 +119,8 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     if (!mainFrame)
         return;
 
-    WTF::String nameStr = jsStringRefToWebCoreString(name);
-    WTF::String valueStr = jsStringRefToWebCoreString(value);
+    String nameStr = jsStringRefToWebCoreString(name);
+    String valueStr = jsStringRefToWebCoreString(value);
 
     mainFrame->editor()->command(nameStr).execute(valueStr);
 }
@@ -130,7 +130,7 @@ bool LayoutTestController::isCommandEnabled(JSStringRef name)
     if (!mainFrame)
         return false;
 
-    WTF::String nameStr = jsStringRefToWebCoreString(name);
+    String nameStr = jsStringRefToWebCoreString(name);
 
     return mainFrame->editor()->command(nameStr).isEnabled();
 }
@@ -301,7 +301,7 @@ void LayoutTestController::setUserStyleSheetEnabled(bool flag)
 
 void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
 {
-    WTF::String pathStr = jsStringRefToWebCoreString(path);
+    String pathStr = jsStringRefToWebCoreString(path);
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setUserStyleSheetLocation(pathStr.utf8().data());
 }
 
@@ -437,7 +437,7 @@ void LayoutTestController::disableImageLoading()
 
 JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
 {
-    WTF::String idStr = jsStringRefToWebCoreString(id);
+    String idStr = jsStringRefToWebCoreString(id);
     WebCore::Element* coreElement = mainFrame->document()->getElementById(AtomicString(idStr));
     if (!coreElement)
         return 0;
@@ -455,8 +455,8 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
     if (!mainFrame)
         return;
 
-    WTF::String keyStr = jsStringRefToWebCoreString(key);
-    WTF::String valueStr = jsStringRefToWebCoreString(value);
+    String keyStr = jsStringRefToWebCoreString(key);
+    String valueStr = jsStringRefToWebCoreString(value);
 
     if (keyStr == "WebKitUsesPageCachePreferenceKey")
         BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setMaximumPagesInCache(1);
@@ -481,7 +481,7 @@ void LayoutTestController::setMockGeolocationPosition(double latitude, double lo
 
 void LayoutTestController::setMockGeolocationError(int code, JSStringRef message)
 {
-    WTF::String messageStr = jsStringRefToWebCoreString(message);
+    String messageStr = jsStringRefToWebCoreString(message);
     DumpRenderTreeSupport::setMockGeolocationError(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), code, messageStr);
 }
 
@@ -804,17 +804,17 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
 {
     WebCore::FindOptions options = 0;
 
+    String nameStr = jsStringRefToWebCoreString(target);
+
     JSRetainPtr<JSStringRef> lengthPropertyName(Adopt, JSStringCreateWithUTF8CString("length"));
-    JSValueRef lengthValue;
+    size_t length = 0;
     if (optionsArray) {
-        lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), 0);
+        JSValueRef lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), 0);
         if (!JSValueIsNumber(context, lengthValue))
             return false;
+        length = static_cast<size_t>(JSValueToNumber(context, lengthValue, 0));
     }
 
-    WTF::String nameStr = jsStringRefToWebCoreString(target);
-
-    size_t length = optionsArray ? static_cast<size_t>(JSValueToNumber(context, lengthValue, 0)) : 0;
     for (size_t i = 0; i < length; ++i) {
         JSValueRef value = JSObjectGetPropertyAtIndex(context, optionsArray, i, 0);
         if (!JSValueIsString(context, value))

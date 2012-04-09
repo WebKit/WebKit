@@ -1,3 +1,22 @@
+2012-04-09  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Cleanup LayoutTestControllerBlackBerry.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=83469
+
+        Reviewed by Dirk Schulze.
+
+        Remove WTF:: prefixes and fix a warning with the length variable.
+
+        * DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp:
+        (jsStringRefToWebCoreString):
+        (LayoutTestController::execCommand):
+        (LayoutTestController::isCommandEnabled):
+        (LayoutTestController::setUserStyleSheetLocation):
+        (LayoutTestController::counterValueForElementById):
+        (LayoutTestController::overridePreference):
+        (LayoutTestController::setMockGeolocationError):
+        (LayoutTestController::findString):
+
 2012-04-09  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r113570.
