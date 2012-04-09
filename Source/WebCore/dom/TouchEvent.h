@@ -1,5 +1,6 @@
 /*
  * Copyright 2008, The Android Open Source Project
+ * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,6 +63,12 @@ public:
     TouchList* touches() const { return m_touches.get(); }
     TouchList* targetTouches() const { return m_targetTouches.get(); }
     TouchList* changedTouches() const { return m_changedTouches.get(); }
+#if PLATFORM(BLACKBERRY)
+    void setDoubleTap(bool doubleTap) { m_doubleTap = doubleTap; }
+    bool isDoubleTap() const { return m_doubleTap; }
+    void setTouchHold(bool touchHold) { m_touchHold = touchHold; }
+    bool isTouchHold() const { return m_touchHold; }
+#endif
 
     virtual const AtomicString& interfaceName() const;
 
@@ -76,6 +83,10 @@ private:
     RefPtr<TouchList> m_touches;
     RefPtr<TouchList> m_targetTouches;
     RefPtr<TouchList> m_changedTouches;
+#if PLATFORM(BLACKBERRY)
+    bool m_touchHold;
+    bool m_doubleTap;
+#endif
 };
 
 } // namespace WebCore
