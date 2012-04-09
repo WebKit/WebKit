@@ -3824,6 +3824,4 @@ BUGWK19688 SKIP : fast/images/exif-orientation-css.html = FAIL
 
 BUGCR122448 : media/video-seek-past-end-paused.html = PASS TEXT
 
-BUGWK83391 DEBUG : http/tests/media/media-document.html = PASS CRASH
-
 BUGCR122462 WIN LINUX : http/tests/inspector/inspect-element.html = TEXT
