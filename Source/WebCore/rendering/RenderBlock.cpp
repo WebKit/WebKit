@@ -2494,9 +2494,17 @@ bool RenderBlock::layoutPositionedObjects(bool relayoutChildren)
                 r->computeLogicalWidth();
             oldLogicalTop = logicalTopForChild(r);
         }
-            
-        r->layoutIfNeeded();
         
+        r->layoutIfNeeded();
+
+        // Adjust the static position of a center-aligned inline positioned object with a block child now that the child's width has been computed.
+        if (!r->parent()->isRenderView() && r->parent()->isRenderBlock() && r->firstChild() && r->style()->position() == AbsolutePosition
+            && r->style()->isOriginalDisplayInlineType() && (r->style()->textAlign() == CENTER || r->style()->textAlign() == WEBKIT_CENTER)) {
+            RenderBlock* block = toRenderBlock(r->parent());
+            LayoutUnit blockHeight = block->logicalHeight();
+            block->setStaticInlinePositionForChild(r, blockHeight, block->startAlignedOffsetForLine(r, blockHeight, false));
+        }
+
         // Lay out again if our estimate was wrong.
         if (needsBlockDirectionLocationSetBeforeLayout && logicalTopForChild(r) != oldLogicalTop) {
             r->setChildNeedsLayout(true, MarkOnlyThis);
