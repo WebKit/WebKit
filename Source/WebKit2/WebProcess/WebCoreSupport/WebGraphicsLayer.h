@@ -146,14 +146,13 @@ private:
     GraphicsLayer* m_maskTarget;
     FloatRect m_needsDisplayRect;
     LayerTransform m_layerTransform;
-    bool m_needsDisplay : 1;
     bool m_modified : 1;
-    bool m_contentNeedsDisplay : 1;
     bool m_hasPendingAnimations : 1;
-    bool m_inUpdateMode : 2;
+    bool m_inUpdateMode : 1;
+    bool m_shouldUpdateVisibleRect: 1;
 
     void notifyChange();
-    void notifyChangeRecursively();
+    void didChangeGeometry();
     void createBackingStore();
     HashSet<String> m_transformAnimations;
 
@@ -161,6 +160,8 @@ private:
     bool shouldUseTiledBackingStore();
     void adjustContentsScale();
     void computeTransformedVisibleRect();
+    void syncLayerParameters();
+    void setShouldUpdateVisibleRect();
     float effectiveContentsScale();
 
     WebKit::WebGraphicsLayerClient* m_webGraphicsLayerClient;

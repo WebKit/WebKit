@@ -1,5 +1,44 @@
 2012-04-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
+        [Qt][WK2] Don't synchronize WebGraphicsLayers to the UI process if the actual layer information wasn't changed
+        https://bugs.webkit.org/show_bug.cgi?id=82522
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Currently we set the m_modified flags for all of the descendants of a layer
+        that has changed its geometry. This causes unnecessary layer sync messages.
+        Instead, we only sync when the actual layer has changed, and add a flag
+        called m_shouldUpdateVisibleRect that applies to descendants of a layer
+        that has a modified geometry.
+
+        * Shared/WebLayerTreeInfo.h:
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::didChangeChildren):
+        (WebCore):
+        (WebCore::WebGraphicsLayer::setShouldUpdateVisibleRect):
+        (WebCore::WebGraphicsLayer::didChangeGeometry):
+        (WebCore::WebGraphicsLayer::WebGraphicsLayer):
+        (WebCore::WebGraphicsLayer::setPosition):
+        (WebCore::WebGraphicsLayer::setAnchorPoint):
+        (WebCore::WebGraphicsLayer::setSize):
+        (WebCore::WebGraphicsLayer::setTransform):
+        (WebCore::WebGraphicsLayer::setChildrenTransform):
+        (WebCore::WebGraphicsLayer::setPreserves3D):
+        (WebCore::WebGraphicsLayer::setContentsToImage):
+        (WebCore::WebGraphicsLayer::setNeedsDisplayInRect):
+        (WebCore::WebGraphicsLayer::syncImageBackingStore):
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        (WebCore::WebGraphicsLayer::tiledBackingStorePaintBegin):
+        (WebCore::WebGraphicsLayer::setRootLayer):
+        (WebCore::WebGraphicsLayer::setVisibleContentRectTrajectoryVector):
+        (WebCore::WebGraphicsLayer::setContentsScale):
+        (WebCore::WebGraphicsLayer::effectiveContentsScale):
+        (WebCore::WebGraphicsLayer::adjustContentsScale):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayer):
+
+2012-04-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
         [Qt][WK2] Remove all USE(TILED_BACKING_STORE) defines from code that contains UI_SIDE_COMPOSITING
         https://bugs.webkit.org/show_bug.cgi?id=82533
 

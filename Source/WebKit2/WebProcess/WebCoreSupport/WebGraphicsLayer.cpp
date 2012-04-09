@@ -68,23 +68,31 @@ void WebGraphicsLayer::notifyChange()
         client()->notifySyncRequired(this);
 }
 
-void WebGraphicsLayer::notifyChangeRecursively()
+void WebGraphicsLayer::setShouldUpdateVisibleRect()
+{
+    if (!transform().isAffine())
+        return;
+
+    m_shouldUpdateVisibleRect = true;
+    for (size_t i = 0; i < children().size(); ++i)
+        toWebGraphicsLayer(children()[i])->setShouldUpdateVisibleRect();
+    if (replicaLayer())
+        toWebGraphicsLayer(replicaLayer())->setShouldUpdateVisibleRect();
+}
+
+void WebGraphicsLayer::didChangeGeometry()
 {
     notifyChange();
-    for (size_t i = 0; i < children().size(); ++i)
-        toWebGraphicsLayer(children()[i])->notifyChangeRecursively();
-    if (replicaLayer())
-        toWebGraphicsLayer(replicaLayer())->notifyChange();
+    setShouldUpdateVisibleRect();
 }
 
 WebGraphicsLayer::WebGraphicsLayer(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_maskTarget(0)
-    , m_needsDisplay(false)
     , m_modified(true)
-    , m_contentNeedsDisplay(false)
     , m_hasPendingAnimations(false)
     , m_inUpdateMode(false)
+    , m_shouldUpdateVisibleRect(true)
     , m_webGraphicsLayerClient(0)
     , m_contentsScale(1.f)
 {
@@ -182,7 +190,7 @@ void WebGraphicsLayer::setPosition(const FloatPoint& p)
         return;
 
     GraphicsLayer::setPosition(p);
-    notifyChangeRecursively();
+    didChangeGeometry();
 }
 
 void WebGraphicsLayer::setAnchorPoint(const FloatPoint3D& p)
@@ -191,7 +199,7 @@ void WebGraphicsLayer::setAnchorPoint(const FloatPoint3D& p)
         return;
 
     GraphicsLayer::setAnchorPoint(p);
-    notifyChangeRecursively();
+    didChangeGeometry();
 }
 
 void WebGraphicsLayer::setSize(const FloatSize& size)
@@ -203,7 +211,7 @@ void WebGraphicsLayer::setSize(const FloatSize& size)
     setNeedsDisplay();
     if (maskLayer())
         maskLayer()->setSize(size);
-    notifyChangeRecursively();
+    didChangeGeometry();
 }
 
 void WebGraphicsLayer::setTransform(const TransformationMatrix& t)
@@ -212,7 +220,7 @@ void WebGraphicsLayer::setTransform(const TransformationMatrix& t)
         return;
 
     GraphicsLayer::setTransform(t);
-    notifyChangeRecursively();
+    didChangeGeometry();
 }
 
 void WebGraphicsLayer::setChildrenTransform(const TransformationMatrix& t)
@@ -221,7 +229,7 @@ void WebGraphicsLayer::setChildrenTransform(const TransformationMatrix& t)
         return;
 
     GraphicsLayer::setChildrenTransform(t);
-    notifyChangeRecursively();
+    didChangeGeometry();
 }
 
 void WebGraphicsLayer::setPreserves3D(bool b)
@@ -230,7 +238,7 @@ void WebGraphicsLayer::setPreserves3D(bool b)
         return;
 
     GraphicsLayer::setPreserves3D(b);
-    notifyChangeRecursively();
+    didChangeGeometry();
 }
 
 void WebGraphicsLayer::setMasksToBounds(bool b)
@@ -238,7 +246,7 @@ void WebGraphicsLayer::setMasksToBounds(bool b)
     if (masksToBounds() == b)
         return;
     GraphicsLayer::setMasksToBounds(b);
-    notifyChangeRecursively();
+    didChangeGeometry();
 }
 
 void WebGraphicsLayer::setDrawsContent(bool b)
@@ -309,7 +317,7 @@ bool WebGraphicsLayer::addAnimation(const KeyframeValueList& valueList, const In
         m_transformAnimations.add(keyframesName);
 
     m_hasPendingAnimations = true;
-    notifyChangeRecursively();
+    didChangeGeometry();
 
     return true;
 }
@@ -431,40 +439,43 @@ WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer* layer)
     return static_cast<WebGraphicsLayer*>(layer);
 }
 
+void WebGraphicsLayer::syncLayerParameters()
+ {
+    if (!m_modified)
+        return;
+
+    m_modified = false;
+    m_layerInfo.name = name();
+    m_layerInfo.anchorPoint = anchorPoint();
+    m_layerInfo.backfaceVisible = backfaceVisibility();
+    m_layerInfo.childrenTransform = childrenTransform();
+    m_layerInfo.contentsOpaque = contentsOpaque();
+    m_layerInfo.contentsRect = contentsRect();
+    m_layerInfo.drawsContent = drawsContent();
+    m_layerInfo.mask = toWebLayerID(maskLayer());
+    m_layerInfo.masksToBounds = masksToBounds();
+    m_layerInfo.opacity = opacity();
+    m_layerInfo.parent = toWebLayerID(parent());
+    m_layerInfo.pos = position();
+    m_layerInfo.preserves3D = preserves3D();
+    m_layerInfo.replica = toWebLayerID(replicaLayer());
+    m_layerInfo.size = size();
+    m_layerInfo.transform = transform();
+    m_layerInfo.children.clear();
+
+    for (size_t i = 0; i < children().size(); ++i)
+        m_layerInfo.children.append(toWebLayerID(children()[i]));
+
+    m_webGraphicsLayerClient->didSyncCompositingStateForLayer(m_layerInfo);
+}
 void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
 {
     // The remote image might have been released by purgeBackingStores.
     if (m_image && !m_layerInfo.imageBackingStoreID)
         m_layerInfo.imageBackingStoreID = m_webGraphicsLayerClient->adoptImageBackingStore(m_image.get());
 
-    if (m_modified) {
-        computeTransformedVisibleRect();
-
-        m_layerInfo.name = name();
-        m_layerInfo.anchorPoint = anchorPoint();
-        m_layerInfo.backfaceVisible = backfaceVisibility();
-        m_layerInfo.childrenTransform = childrenTransform();
-        m_layerInfo.contentsOpaque = contentsOpaque();
-        m_layerInfo.contentsRect = contentsRect();
-        m_layerInfo.drawsContent = drawsContent();
-        m_layerInfo.mask = toWebLayerID(maskLayer());
-        m_layerInfo.masksToBounds = masksToBounds();
-        m_layerInfo.opacity = opacity();
-        m_layerInfo.parent = toWebLayerID(parent());
-        m_layerInfo.pos = position();
-        m_layerInfo.preserves3D = preserves3D();
-        m_layerInfo.replica = toWebLayerID(replicaLayer());
-        m_layerInfo.size = size();
-        m_layerInfo.transform = transform();
-        m_contentNeedsDisplay = false;
-        m_layerInfo.children.clear();
-
-        for (size_t i = 0; i < children().size(); ++i)
-            m_layerInfo.children.append(toWebLayerID(children()[i]));
-
-        m_webGraphicsLayerClient->didSyncCompositingStateForLayer(m_layerInfo);
-    }
-
+    computeTransformedVisibleRect();
+    syncLayerParameters();
     updateContentBuffers();
 
     m_modified = false;
@@ -659,7 +670,9 @@ void WebGraphicsLayer::adjustVisibleRect()
 
 void WebGraphicsLayer::computeTransformedVisibleRect()
 {
-    // FIXME: Consider transform animations in the visible rect calculation.
+    if (!m_shouldUpdateVisibleRect)
+        return;
+    m_shouldUpdateVisibleRect = false;
     m_layerTransform.setLocalTransform(transform());
     m_layerTransform.setPosition(position());
     m_layerTransform.setAnchorPoint(anchorPoint());
