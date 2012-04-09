@@ -42,7 +42,6 @@
 namespace WebCore {
 
 class Document;
-class Element;
 class RequestAnimationFrameCallback;
 
 class ScriptedAnimationController : public RefCounted<ScriptedAnimationController>
@@ -60,7 +59,7 @@ public:
 
     typedef int CallbackId;
 
-    CallbackId registerCallback(PassRefPtr<RequestAnimationFrameCallback>, Element*);
+    CallbackId registerCallback(PassRefPtr<RequestAnimationFrameCallback>);
     void cancelCallback(CallbackId);
     void serviceScriptedAnimations(DOMTimeStamp);
 
