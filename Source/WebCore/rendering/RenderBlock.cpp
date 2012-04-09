@@ -7369,7 +7369,7 @@ String ValueToString<int>::string(const int value)
 
 String ValueToString<RenderBlock::FloatingObject*>::string(const RenderBlock::FloatingObject* floatingObject)
 {
-    return String::format("%p (%dx%d %dx%d)", floatingObject, floatingObject->x(), floatingObject->y(), floatingObject->maxX(), floatingObject->maxY());
+    return String::format("%p (%dx%d %dx%d)", floatingObject, floatingObject->pixelSnappedX(), floatingObject->pixelSnappedY(), floatingObject->pixelSnappedMaxX(), floatingObject->pixelSnappedMaxY());
 }
 
 #endif

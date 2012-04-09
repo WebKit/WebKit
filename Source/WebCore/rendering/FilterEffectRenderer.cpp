@@ -403,7 +403,7 @@ GraphicsContext* FilterEffectRendererHelper::applyFilterEffect()
     LayoutRect destRect = filter->outputRect();
     destRect.move(m_paintOffset.x(), m_paintOffset.y());
     
-    m_savedGraphicsContext->drawImageBuffer(filter->output(), m_renderLayer->renderer()->style()->colorSpace(), destRect, CompositeSourceOver);
+    m_savedGraphicsContext->drawImageBuffer(filter->output(), m_renderLayer->renderer()->style()->colorSpace(), pixelSnappedIntRect(destRect), CompositeSourceOver);
     
     return m_savedGraphicsContext;
 }
