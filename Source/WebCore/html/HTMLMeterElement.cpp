@@ -79,12 +79,6 @@ void HTMLMeterElement::parseAttribute(Attribute* attribute)
         LabelableElement::parseAttribute(attribute);
 }
 
-void HTMLMeterElement::attach()
-{
-    LabelableElement::attach();
-    didElementStateChange();
-}
-
 double HTMLMeterElement::min() const
 {
     double min = 0;
@@ -238,6 +232,7 @@ void HTMLMeterElement::createShadowSubtree()
 
     RefPtr<MeterBarElement> bar = MeterBarElement::create(document());
     m_value = MeterValueElement::create(document());
+    m_value->setWidthPercentage(0);
     ExceptionCode ec = 0;
     bar->appendChild(m_value, ec);
 

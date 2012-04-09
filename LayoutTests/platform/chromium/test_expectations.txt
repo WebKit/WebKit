@@ -2826,7 +2826,6 @@ BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = PASS T
 BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
 
 BUGWK81310 : fast/dom/shadow/content-element-in-media-element.html = TEXT
-BUGWK81311 WIN LINUX : fast/dom/shadow/content-element-in-meter-element.html = TEXT
 
 // CSS Grid Layout is not enabled yet.
 BUGWK60731 SKIP : fast/css-grid-layout = PASS
