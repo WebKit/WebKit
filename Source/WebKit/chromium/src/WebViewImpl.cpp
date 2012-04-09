@@ -35,7 +35,6 @@
 #include "ActivePlatformGestureAnimation.h"
 #include "AutofillPopupMenuClient.h"
 #include "BackForwardListChromium.h"
-#include "BatteryClientImpl.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
@@ -386,9 +385,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #endif
     , m_deviceOrientationClientProxy(adoptPtr(new DeviceOrientationClientProxy(client ? client->deviceOrientationClient() : 0)))
     , m_geolocationClientProxy(adoptPtr(new GeolocationClientProxy(client ? client->geolocationClient() : 0)))
-#if ENABLE(BATTERY_STATUS)
-    , m_batteryClient(adoptPtr(new BatteryClientImpl(client ? client->batteryStatusClient() : 0)))
-#endif
     , m_emulatedTextZoomFactor(1)
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaClientImpl(this)
@@ -429,10 +425,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     provideDeviceOrientationTo(m_page.get(), m_deviceOrientationClientProxy.get());
     provideGeolocationTo(m_page.get(), m_geolocationClientProxy.get());
     m_geolocationClientProxy->setController(GeolocationController::from(m_page.get()));
-
-#if ENABLE(BATTERY_STATUS)
-    provideBatteryTo(m_page.get(), m_batteryClient.get());
-#endif
     
     m_page->setGroupName(pageGroupName);
 
@@ -1381,13 +1373,6 @@ void WebViewImpl::instrumentCancelFrame()
 {
     InspectorInstrumentation::didCancelFrame(m_page.get());
 }
-
-#if ENABLE(BATTERY_STATUS)
-void WebViewImpl::updateBatteryStatus(const WebBatteryStatus& status)
-{
-    m_batteryClient->updateBatteryStatus(status);
-}
-#endif
 
 void WebViewImpl::animate(double)
 {

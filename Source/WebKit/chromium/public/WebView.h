@@ -41,7 +41,6 @@ namespace WebKit {
 
 class WebAccessibilityObject;
 class WebAutofillClient;
-class WebBatteryStatus;
 class WebDevToolsAgent;
 class WebDevToolsAgentClient;
 class WebDragData;
@@ -454,13 +453,6 @@ public:
     // the same z-order number, the later added one will be on top.
     virtual void addPageOverlay(WebPageOverlay*, int /*z-order*/) = 0;
     virtual void removePageOverlay(WebPageOverlay*) = 0;
-
-    // Battery status API support -------------------------------------------
-
-    // Updates the battery status in the BatteryClient. This also triggers the
-    // appropriate JS events (e.g. sends a 'levelchange' event to JS if the
-    // level is changed in this update from the previous update).
-    virtual void updateBatteryStatus(const WebBatteryStatus&) { }
 
     // Testing functionality for LayoutTestController -----------------------
 

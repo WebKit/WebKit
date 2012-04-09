@@ -1,6 +1,5 @@
 /*
  *  Copyright (C) 2012 Samsung Electronics
- *  Copyright (C) 2012 Google Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -62,25 +61,6 @@ void BatteryController::removeListener(BatteryManager* batteryManager)
     m_listeners.remove(pos);
     if (m_listeners.isEmpty())
         m_client->stopUpdating();
-}
-
-void BatteryController::updateBatteryStatus(PassRefPtr<BatteryStatus> batteryStatus)
-{
-    RefPtr<BatteryStatus> status = batteryStatus;
-    if (m_batteryStatus) {
-
-        if (m_batteryStatus->charging() != status->charging())
-            didChangeBatteryStatus(WebCore::eventNames().chargingchangeEvent, status);
-        else if (status->charging() && m_batteryStatus->chargingTime() != status->chargingTime())
-            didChangeBatteryStatus(WebCore::eventNames().chargingtimechangeEvent, status);
-        else if (!status->charging() && m_batteryStatus->dischargingTime() != status->dischargingTime())
-            didChangeBatteryStatus(WebCore::eventNames().dischargingtimechangeEvent, status);
-
-        if (m_batteryStatus->level() != status->level())
-            didChangeBatteryStatus(WebCore::eventNames().levelchangeEvent, status);
-    }
-
-    m_batteryStatus = status.release();
 }
 
 void BatteryController::didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus> batteryStatus)

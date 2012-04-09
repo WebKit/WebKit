@@ -51,7 +51,6 @@
     'webcore_include_dirs': [
       '../',
       '../..',
-      '../Modules/battery',
       '../Modules/filesystem',
       '../Modules/filesystem/chromium',
       '../Modules/gamepad',
