@@ -50,6 +50,12 @@ namespace WebCore {
     struct FrameData;
 }
 
+namespace WTF {
+    template<> struct VectorTraits<WebCore::FrameData> : public SimpleClassVectorTraits {
+        static const bool canInitializeWithMemset = false; // Not all FrameData members initialize to 0.
+    };
+}
+
 namespace WebCore {
 
 template <typename T> class Timer;
@@ -59,6 +65,7 @@ template <typename T> class Timer;
 // ================================================
 
 struct FrameData {
+    WTF_MAKE_NONCOPYABLE(FrameData);
 public:
     FrameData()
         : m_frame(0)
