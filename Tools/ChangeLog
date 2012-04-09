@@ -1,3 +1,16 @@
+2012-04-09  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: use the filesystem object properly in fileuploader
+        https://bugs.webkit.org/show_bug.cgi?id=83326
+
+        Reviewed by Adam Barth.
+
+        We should be using the filesystem object rather than the codecs
+        object.
+
+        * Scripts/webkitpy/common/net/file_uploader.py:
+        (FileUploader.upload_as_multipart_form_data):
+
 2012-04-09  Eric Seidel  <eric@webkit.org>
 
         Enable webkit_unit_tests for commit queue and EWS while tracking failures
