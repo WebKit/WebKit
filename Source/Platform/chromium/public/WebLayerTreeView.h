@@ -27,10 +27,10 @@
 #define WebLayerTreeView_h
 
 #include "WebCommon.h"
-#include "WebPrivatePtr.h"
+#include "WebNonCopyable.h"
+#include "WebPrivateOwnPtr.h"
 
 namespace WebCore {
-class CCLayerTreeHost;
 struct CCSettings;
 }
 
@@ -38,11 +38,12 @@ namespace WebKit {
 class WebGraphicsContext3D;
 class WebLayer;
 class WebLayerTreeViewClient;
+class WebLayerTreeViewImpl;
 struct WebPoint;
 struct WebRect;
 struct WebSize;
 
-class WebLayerTreeView {
+class WebLayerTreeView : public WebNonCopyable {
 public:
     struct Settings {
         Settings()
@@ -71,21 +72,12 @@ public:
     };
 
     WebLayerTreeView() { }
-    WebLayerTreeView(const WebLayerTreeView& layer) { assign(layer); }
     ~WebLayerTreeView() { reset(); }
-    WebLayerTreeView& operator=(const WebLayerTreeView& layer)
-    {
-        assign(layer);
-        return *this;
-    }
 
     WEBKIT_EXPORT void reset();
-    WEBKIT_EXPORT void assign(const WebLayerTreeView&);
-    WEBKIT_EXPORT bool equals(const WebLayerTreeView&) const;
 
-    bool isNull() const { return m_private.isNull(); }
+    bool isNull() const;
 
-#define WEBLAYERTREEVIEW_HAS_INITIALIZE
     // Initialization and lifecycle --------------------------------------
 
     // Attempts to initialize this WebLayerTreeView with the given client, root layer, and settings.
@@ -169,18 +161,8 @@ public:
     WEBKIT_EXPORT void loseCompositorContext(int numTimes);
 
 protected:
-    WebPrivatePtr<WebCore::CCLayerTreeHost> m_private;
+    WebPrivateOwnPtr<WebLayerTreeViewImpl> m_private;
 };
-
-inline bool operator==(const WebLayerTreeView& a, const WebLayerTreeView& b)
-{
-    return a.equals(b);
-}
-
-inline bool operator!=(const WebLayerTreeView& a, const WebLayerTreeView& b)
-{
-    return !(a == b);
-}
 
 } // namespace WebKit
 

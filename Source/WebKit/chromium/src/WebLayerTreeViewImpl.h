@@ -28,7 +28,7 @@
 
 #include "platform/WebLayerTreeView.h"
 #include "cc/CCLayerTreeHost.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 class WebLayer;
@@ -36,11 +36,9 @@ class WebLayerTreeViewClient;
 
 class WebLayerTreeViewImpl : public WebCore::CCLayerTreeHost, public WebCore::CCLayerTreeHostClient {
 public:
-    static PassRefPtr<WebLayerTreeViewImpl> create(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&);
-
-private:
-    WebLayerTreeViewImpl(WebLayerTreeViewClient*, const WebLayerTreeView::Settings&);
+    static PassOwnPtr<WebLayerTreeViewImpl> create(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&);
     virtual ~WebLayerTreeViewImpl();
+
     virtual void willBeginFrame();
     virtual void updateAnimations(double monotonicFrameBeginTime);
     virtual void layout();
@@ -53,6 +51,9 @@ private:
 
     // Only used in the single threaded path.
     virtual void scheduleComposite();
+
+private:
+    WebLayerTreeViewImpl(WebLayerTreeViewClient*, const WebLayerTreeView::Settings&);
 
     WebLayerTreeViewClient* m_client;
 };

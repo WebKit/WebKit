@@ -55,22 +55,18 @@ WebLayerTreeView::Settings::operator CCSettings() const
 
 void WebLayerTreeView::reset()
 {
-    m_private.reset();
+    m_private.reset(0);
 }
 
-void WebLayerTreeView::assign(const WebLayerTreeView& other)
+bool WebLayerTreeView::isNull() const
 {
-    m_private = other.m_private;
-}
-
-bool WebLayerTreeView::equals(const WebLayerTreeView& n) const
-{
-    return (m_private.get() == n.m_private.get());
+    return !m_private.get();
 }
 
 bool WebLayerTreeView::initialize(WebLayerTreeViewClient* client, const WebLayer& root, const WebLayerTreeView::Settings& settings)
 {
-    m_private = WebLayerTreeViewImpl::create(client, root, settings);
+    // We have to leak the pointer here into a WebPrivateOwnPtr. We free this object in reset().
+    m_private.reset(WebLayerTreeViewImpl::create(client, root, settings).leakPtr());
     return !isNull();
 }
 

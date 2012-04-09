@@ -56,12 +56,12 @@ bool CCLayerTreeHost::anyLayerTreeHostInstanceExists()
     return numLayerTreeInstances > 0;
 }
 
-PassRefPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* client, const CCSettings& settings)
+PassOwnPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* client, const CCSettings& settings)
 {
-    RefPtr<CCLayerTreeHost> layerTreeHost = adoptRef(new CCLayerTreeHost(client, settings));
+    OwnPtr<CCLayerTreeHost> layerTreeHost = adoptPtr(new CCLayerTreeHost(client, settings));
     if (!layerTreeHost->initialize())
-        return 0;
-    return layerTreeHost;
+        return nullptr;
+    return layerTreeHost.release();
 }
 
 CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings& settings)

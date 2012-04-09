@@ -36,9 +36,9 @@
 
 #include <limits>
 #include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -122,9 +122,10 @@ struct LayerRendererCapabilities {
     int maxTextureSize;
 };
 
-class CCLayerTreeHost : public RefCounted<CCLayerTreeHost> {
+class CCLayerTreeHost {
+    WTF_MAKE_NONCOPYABLE(CCLayerTreeHost);
 public:
-    static PassRefPtr<CCLayerTreeHost> create(CCLayerTreeHostClient*, const CCSettings&);
+    static PassOwnPtr<CCLayerTreeHost> create(CCLayerTreeHostClient*, const CCSettings&);
     virtual ~CCLayerTreeHost();
 
     // Returns true if any CCLayerTreeHost is alive.

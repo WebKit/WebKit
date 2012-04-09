@@ -132,13 +132,13 @@ private:
 // Adapts CCLayerTreeHost for test. Injects MockLayerTreeHostImpl.
 class MockLayerTreeHost : public CCLayerTreeHost {
 public:
-    static PassRefPtr<MockLayerTreeHost> create(TestHooks* testHooks, CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
+    static PassOwnPtr<MockLayerTreeHost> create(TestHooks* testHooks, CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
     {
         // For these tests, we will enable threaded animations.
         CCSettings settingsCopy = settings;
         settingsCopy.threadedAnimationEnabled = true;
 
-        RefPtr<MockLayerTreeHost> layerTreeHost = adoptRef(new MockLayerTreeHost(testHooks, client, settingsCopy));
+        OwnPtr<MockLayerTreeHost> layerTreeHost = adoptPtr(new MockLayerTreeHost(testHooks, client, settingsCopy));
         bool success = layerTreeHost->initialize();
         EXPECT_TRUE(success);
         layerTreeHost->setRootLayer(rootLayer);
@@ -515,7 +515,7 @@ protected:
 
     CCSettings m_settings;
     OwnPtr<MockLayerTreeHostClient> m_client;
-    RefPtr<CCLayerTreeHost> m_layerTreeHost;
+    OwnPtr<CCLayerTreeHost> m_layerTreeHost;
 
 private:
     bool m_beginning;

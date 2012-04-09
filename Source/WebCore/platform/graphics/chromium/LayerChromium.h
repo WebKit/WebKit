@@ -222,7 +222,7 @@ public:
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantDrawsContent();
 
-    CCLayerTreeHost* layerTreeHost() const { return m_layerTreeHost.get(); }
+    CCLayerTreeHost* layerTreeHost() const { return m_layerTreeHost; }
 
     // Reserve any textures needed for this layer.
     virtual void reserveTextures() { }
@@ -289,7 +289,10 @@ private:
     Vector<RefPtr<LayerChromium> > m_children;
     LayerChromium* m_parent;
 
-    RefPtr<CCLayerTreeHost> m_layerTreeHost;
+    // LayerChromium instances have a weak pointer to their CCLayerTreeHost.
+    // This pointer value is nil when a LayerChromium is not in a tree and is
+    // updated via setLayerTreeHost() if a layer moves between trees.
+    CCLayerTreeHost* m_layerTreeHost;
 
     OwnPtr<CCLayerAnimationController> m_layerAnimationController;
 

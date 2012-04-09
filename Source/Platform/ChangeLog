@@ -1,3 +1,17 @@
+2012-04-09  James Robinson  <jamesr@chromium.org>
+
+        [chromium] CCLayerTreeHost / WebLayerTreeView should be single ownership, not RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=83413
+
+        Reviewed by Adrienne Walker.
+
+        This makes WebLayerTreeView noncopyable to better match the underlying semantics. There is no code currently
+        that attempts to copy WebLayerTreeView instances.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit):
+        (WebLayerTreeView):
+
 2012-04-04  Adam Barth  <abarth@webkit.org>
 
         figure out how to export webcore symbols from webkit.dll properly

@@ -59,6 +59,7 @@ LayerChromium::LayerChromium()
     : m_needsDisplay(false)
     , m_layerId(s_nextLayerId++)
     , m_parent(0)
+    , m_layerTreeHost(0)
     , m_layerAnimationController(CCLayerAnimationController::create(this))
     , m_scrollable(false)
     , m_shouldScrollOnMainThread(false)
@@ -294,7 +295,7 @@ void LayerChromium::setMaskLayer(LayerChromium* maskLayer)
         m_maskLayer->setLayerTreeHost(0);
     m_maskLayer = maskLayer;
     if (m_maskLayer) {
-        m_maskLayer->setLayerTreeHost(m_layerTreeHost.get());
+        m_maskLayer->setLayerTreeHost(m_layerTreeHost);
         m_maskLayer->setIsMask(true);
     }
     setNeedsCommit();
@@ -308,7 +309,7 @@ void LayerChromium::setReplicaLayer(LayerChromium* layer)
         m_replicaLayer->setLayerTreeHost(0);
     m_replicaLayer = layer;
     if (m_replicaLayer)
-        m_replicaLayer->setLayerTreeHost(m_layerTreeHost.get());
+        m_replicaLayer->setLayerTreeHost(m_layerTreeHost);
     setNeedsCommit();
 }
 

@@ -1,3 +1,40 @@
+2012-04-09  James Robinson  <jamesr@chromium.org>
+
+        [chromium] CCLayerTreeHost / WebLayerTreeView should be single ownership, not RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=83413
+
+        Reviewed by Adrienne Walker.
+
+        Updates tests and implementation for RefPtr->OwnPtr switch. One nice benefit is that since WebLayerTreeView is
+        explicitly owned by the user of the API we can safely rely on them managing the lifetime of the client and thus
+        don't have to null check the client all the time.
+
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::reset):
+        (WebKit::WebLayerTreeView::isNull):
+        (WebKit::WebLayerTreeView::initialize):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::create):
+        (WebKit::WebLayerTreeViewImpl::willBeginFrame):
+        (WebKit::WebLayerTreeViewImpl::updateAnimations):
+        (WebKit::WebLayerTreeViewImpl::layout):
+        (WebKit::WebLayerTreeViewImpl::applyScrollAndScale):
+        (WebKit::WebLayerTreeViewImpl::createContext):
+        (WebKit::WebLayerTreeViewImpl::didRecreateContext):
+        (WebKit::WebLayerTreeViewImpl::didCommit):
+        (WebKit::WebLayerTreeViewImpl::didCommitAndDrawFrame):
+        (WebKit::WebLayerTreeViewImpl::didCompleteSwapBuffers):
+        (WebKit::WebLayerTreeViewImpl::scheduleComposite):
+        * src/WebLayerTreeViewImpl.h:
+        (WebLayerTreeViewImpl):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHost::create):
+        (CCLayerTreeHostTest):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        * tests/LayerChromiumTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+
 2012-04-09  Joshua Bell  <jsbell@chromium.org>
 
         Unreviewed, rolling out r113473.

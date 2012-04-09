@@ -56,9 +56,9 @@ namespace {
 
 class FakeCCLayerTreeHost : public CCLayerTreeHost {
 public:
-    static PassRefPtr<FakeCCLayerTreeHost> create()
+    static PassOwnPtr<FakeCCLayerTreeHost> create()
     {
-        RefPtr<FakeCCLayerTreeHost> host = adoptRef(new FakeCCLayerTreeHost);
+        OwnPtr<FakeCCLayerTreeHost> host = adoptPtr(new FakeCCLayerTreeHost);
         host->initialize();
         return host.release();
     }
@@ -111,7 +111,7 @@ protected:
            thread = adoptPtr(webKitPlatformSupport()->createThread("Canvas2DLayerChromiumTest"));
         WebCompositor::initialize(thread.get());
 
-        RefPtr<FakeCCLayerTreeHost> layerTreeHost = FakeCCLayerTreeHost::create();
+        OwnPtr<FakeCCLayerTreeHost> layerTreeHost = FakeCCLayerTreeHost::create();
         // Force an update, so that we get a valid TextureManager.
         layerTreeHost->updateLayers();
 
