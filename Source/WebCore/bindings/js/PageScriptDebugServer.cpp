@@ -69,6 +69,7 @@ PageScriptDebugServer& PageScriptDebugServer::shared()
 
 PageScriptDebugServer::PageScriptDebugServer()
     : ScriptDebugServer()
+    , m_pausedPage(0)
 {
 }
 
