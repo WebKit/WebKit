@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class IntRect;
+class FloatPoint;
 class FloatRect;
 class FloatQuad;
 class TransformationMatrix;
@@ -49,8 +50,15 @@ public:
     static FloatRect mapClippedRect(const TransformationMatrix&, const FloatRect&);
     static FloatRect projectClippedRect(const TransformationMatrix&, const FloatRect&);
 
-    // NOTE: This function does not do correct clipping against w = 0 plane, but it
-    // correctly detects the clipped condition via the boolean clipped.
+    // Returns an array of vertices that represent the clipped polygon. After returning, indexes from
+    // 0 to numVerticesInClippedQuad are valid in the clippedQuad array. Note that
+    // numVerticesInClippedQuad may be zero, which means the entire quad was clipped, and
+    // none of the vertices in the array are valid.
+    static void mapClippedQuad(const TransformationMatrix&, const FloatQuad& srcQuad, FloatPoint clippedQuad[8], int& numVerticesInClippedQuad);
+    static FloatRect computeEnclosingRectOfVertices(FloatPoint vertices[], int numVertices);
+
+    // NOTE: These functions do not do correct clipping against w = 0 plane, but they
+    // correctly detect the clipped condition via the boolean clipped.
     static FloatQuad mapQuad(const TransformationMatrix&, const FloatQuad&, bool& clipped);
     static FloatQuad projectQuad(const TransformationMatrix&, const FloatQuad&, bool& clipped);
 };

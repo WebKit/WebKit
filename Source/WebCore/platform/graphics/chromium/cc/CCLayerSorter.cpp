@@ -27,6 +27,7 @@
 #include "cc/CCLayerSorter.h"
 
 #include "TransformationMatrix.h"
+#include "cc/CCMathUtil.h"
 #include "cc/CCRenderSurface.h"
 #include <limits.h>
 #include <wtf/Deque.h>
@@ -158,8 +159,30 @@ CCLayerSorter::LayerShape::LayerShape(float width, float height, const Transform
                         FloatPoint(-width * 0.5, -height * 0.5));
 
     // Compute the projection of the layer quad onto the z = 0 plane.
-    projectedQuad = drawTransform.mapQuad(layerQuad);
-    projectedBounds = projectedQuad.boundingBox();
+
+    FloatPoint clippedQuad[8];
+    int numVerticesInClippedQuad;
+    CCMathUtil::mapClippedQuad(drawTransform, layerQuad, clippedQuad, numVerticesInClippedQuad);
+
+    if (numVerticesInClippedQuad < 3) {
+        projectedBounds = FloatRect();
+        return;
+    }
+
+    projectedBounds = CCMathUtil::computeEnclosingRectOfVertices(clippedQuad, numVerticesInClippedQuad);
+
+    // NOTE: it will require very significant refactoring and overhead to deal with
+    // generalized polygons or multiple quads per layer here. For the sake of layer
+    // sorting it is equally correct to take a subsection of the polygon that can be made
+    // into a quad. This will only be incorrect in the case of intersecting layers, which
+    // are not supported yet anyway.
+    projectedQuad.setP1(clippedQuad[0]);
+    projectedQuad.setP2(clippedQuad[1]);
+    projectedQuad.setP3(clippedQuad[2]);
+    if (numVerticesInClippedQuad >= 4)
+        projectedQuad.setP4(clippedQuad[3]);
+    else
+        projectedQuad.setP4(clippedQuad[2]); // this will be a degenerate quad that is actually a triangle.
 
     // Compute the normal of the layer's plane.
     FloatPoint3D c1 = drawTransform.mapPoint(FloatPoint3D(0, 0, 0));

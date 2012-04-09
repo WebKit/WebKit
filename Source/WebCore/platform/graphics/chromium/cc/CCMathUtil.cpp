@@ -131,11 +131,22 @@ static inline void expandBoundsToIncludePoint(float& xmin, float& xmax, float& y
     ymax = std::max(p.y(), ymax);
 }
 
-static FloatRect computeEnclosingRectOfClippedQuad(const HomogeneousCoordinate& h1, const HomogeneousCoordinate& h2, const HomogeneousCoordinate& h3, const HomogeneousCoordinate& h4)
+static FloatRect computeEnclosingRect(const HomogeneousCoordinate& h1, const HomogeneousCoordinate& h2, const HomogeneousCoordinate& h3, const HomogeneousCoordinate& h4)
 {
     // This function performs clipping as necessary and computes the enclosing 2d
     // FloatRect of the vertices. Doing these two steps simultaneously allows us to avoid
     // the overhead of storing an unknown number of clipped vertices.
+
+    // If no vertices on the quad are clipped, then we can simply return the enclosing rect directly.
+    bool somethingClipped = h1.shouldBeClipped() || h2.shouldBeClipped() || h3.shouldBeClipped() || h4.shouldBeClipped();
+    if (!somethingClipped) {
+        FloatQuad mappedQuad = FloatQuad(h1.cartesianPoint2d(), h2.cartesianPoint2d(), h3.cartesianPoint2d(), h4.cartesianPoint2d());
+        return mappedQuad.boundingBox();
+    }
+
+    bool everythingClipped = h1.shouldBeClipped() && h2.shouldBeClipped() && h3.shouldBeClipped() && h4.shouldBeClipped();
+    if (everythingClipped)
+        return FloatRect();
 
     float xmin = std::numeric_limits<float>::max();
     float xmax = std::numeric_limits<float>::min();
@@ -169,16 +180,10 @@ static FloatRect computeEnclosingRectOfClippedQuad(const HomogeneousCoordinate& 
     return FloatRect(FloatPoint(xmin, ymin), FloatSize(xmax - xmin, ymax - ymin));
 }
 
-static FloatRect computeEnclosingRect(const HomogeneousCoordinate& h1, const HomogeneousCoordinate& h2, const HomogeneousCoordinate& h3, const HomogeneousCoordinate& h4)
+static inline void addVertexToClippedQuad(const FloatPoint& newVertex, FloatPoint clippedQuad[8], int& numVerticesInClippedQuad)
 {
-    // If no vertices on the quad are clipped, then we can simply return the enclosing rect directly.
-    bool clipped = h1.shouldBeClipped() || h2.shouldBeClipped() || h3.shouldBeClipped() || h4.shouldBeClipped();
-    if (!clipped) {
-        FloatQuad mappedQuad = FloatQuad(h1.cartesianPoint2d(), h2.cartesianPoint2d(), h3.cartesianPoint2d(), h4.cartesianPoint2d());
-        return mappedQuad.boundingBox();
-    }
-
-    return computeEnclosingRectOfClippedQuad(h1, h2, h3, h4);
+    clippedQuad[numVerticesInClippedQuad] = newVertex;
+    numVerticesInClippedQuad++;
 }
 
 IntRect CCMathUtil::mapClippedRect(const TransformationMatrix& transform, const IntRect& srcRect)
@@ -214,6 +219,60 @@ FloatRect CCMathUtil::projectClippedRect(const TransformationMatrix& transform, 
     HomogeneousCoordinate h4 = projectPoint(transform, q.p4());
 
     return computeEnclosingRect(h1, h2, h3, h4);
+}
+
+void CCMathUtil::mapClippedQuad(const TransformationMatrix& transform, const FloatQuad& srcQuad, FloatPoint clippedQuad[8], int& numVerticesInClippedQuad)
+{
+    HomogeneousCoordinate h1 = mapPoint(transform, srcQuad.p1());
+    HomogeneousCoordinate h2 = mapPoint(transform, srcQuad.p2());
+    HomogeneousCoordinate h3 = mapPoint(transform, srcQuad.p3());
+    HomogeneousCoordinate h4 = mapPoint(transform, srcQuad.p4());
+
+    // The order of adding the vertices to the array is chosen so that clockwise / counter-clockwise orientation is retained.
+
+    numVerticesInClippedQuad = 0;
+
+    if (!h1.shouldBeClipped())
+        addVertexToClippedQuad(h1.cartesianPoint2d(), clippedQuad, numVerticesInClippedQuad);
+
+    if (h1.shouldBeClipped() ^ h2.shouldBeClipped())
+        addVertexToClippedQuad(computeClippedPointForEdge(h1, h2).cartesianPoint2d(), clippedQuad, numVerticesInClippedQuad);
+
+    if (!h2.shouldBeClipped())
+        addVertexToClippedQuad(h2.cartesianPoint2d(), clippedQuad, numVerticesInClippedQuad);
+
+    if (h2.shouldBeClipped() ^ h3.shouldBeClipped())
+        addVertexToClippedQuad(computeClippedPointForEdge(h2, h3).cartesianPoint2d(), clippedQuad, numVerticesInClippedQuad);
+
+    if (!h3.shouldBeClipped())
+        addVertexToClippedQuad(h3.cartesianPoint2d(), clippedQuad, numVerticesInClippedQuad);
+
+    if (h3.shouldBeClipped() ^ h4.shouldBeClipped())
+        addVertexToClippedQuad(computeClippedPointForEdge(h3, h4).cartesianPoint2d(), clippedQuad, numVerticesInClippedQuad);
+
+    if (!h4.shouldBeClipped())
+        addVertexToClippedQuad(h4.cartesianPoint2d(), clippedQuad, numVerticesInClippedQuad);
+
+    if (h4.shouldBeClipped() ^ h1.shouldBeClipped())
+        addVertexToClippedQuad(computeClippedPointForEdge(h4, h1).cartesianPoint2d(), clippedQuad, numVerticesInClippedQuad);
+
+    ASSERT(numVerticesInClippedQuad <= 8);
+}
+
+FloatRect CCMathUtil::computeEnclosingRectOfVertices(FloatPoint vertices[], int numVertices)
+{
+    if (numVertices < 2)
+        return FloatRect();
+
+    float xmin = std::numeric_limits<float>::max();
+    float xmax = std::numeric_limits<float>::min();
+    float ymin = std::numeric_limits<float>::max();
+    float ymax = std::numeric_limits<float>::min();
+
+    for (int i = 0; i < numVertices; ++i)
+        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, vertices[i]);
+
+    return FloatRect(FloatPoint(xmin, ymin), FloatSize(xmax - xmin, ymax - ymin));
 }
 
 FloatQuad CCMathUtil::mapQuad(const TransformationMatrix& transform, const FloatQuad& q, bool& clipped)

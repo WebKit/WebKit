@@ -27,6 +27,7 @@
 #include "cc/CCLayerSorter.h"
 
 #include "cc/CCLayerImpl.h"
+#include "cc/CCMathUtil.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
 
@@ -153,6 +154,44 @@ TEST(CCLayerSorterTest, LayersAtAngleOverlap)
     EXPECT_EQ(CCLayerSorter::ABeforeB, overlapResult);
     overlapResult = CCLayerSorter::checkOverlap(&layerA, &layerB, zThreshold, weight);
     EXPECT_EQ(CCLayerSorter::None, overlapResult);
+}
+
+TEST(CCLayerSorterTest, LayersUnderPathologicalPerspectiveTransform)
+{
+    CCLayerSorter::ABCompareResult overlapResult;
+    const float zThreshold = 0.1f;
+    float weight = 0;
+
+    // On perspective projection, if w becomes negative, the re-projected point will be
+    // invalid and un-usable. Correct code needs to clip away portions of the geometry
+    // where w < 0. If the code uses the invalid value, it will think that a layer has
+    // different bounds than it really does, which can cause things to sort incorrectly.
+
+    TransformationMatrix perspectiveMatrix;
+    perspectiveMatrix.applyPerspective(1);
+
+    TransformationMatrix transformA;
+    transformA.translate3d(-15, 0, -2);
+    CCLayerSorter::LayerShape layerA(10, 10, perspectiveMatrix * transformA);
+
+    // With this sequence of transforms, when layer B is correctly clipped, it will be
+    // visible on the left half of the projection plane, in front of layerA. When it is
+    // not clipped, its bounds will actually incorrectly appear much smaller and the
+    // correct sorting dependency will not be found.
+    TransformationMatrix transformB;
+    transformB.translate3d(0, 0, 0.7);
+    transformB.rotate3d(0, 45, 0);
+    CCLayerSorter::LayerShape layerB(10, 10, perspectiveMatrix * transformB);
+
+    // Sanity check that the test case actually covers the intended scenario, where part
+    // of layer B go behind the w = 0 plane.
+    FloatQuad testQuad = FloatQuad(FloatRect(FloatPoint(-0.5, -0.5), FloatSize(1, 1)));
+    bool clipped = false;
+    CCMathUtil::mapQuad(perspectiveMatrix * transformB, testQuad, clipped);
+    ASSERT_TRUE(clipped);
+
+    overlapResult = CCLayerSorter::checkOverlap(&layerA, &layerB, zThreshold, weight);
+    EXPECT_EQ(CCLayerSorter::ABeforeB, overlapResult);
 }
 
 TEST(CCLayerSorterTest, verifyExistingOrderingPreservedWhenNoZDiff)

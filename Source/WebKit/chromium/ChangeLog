@@ -1,3 +1,14 @@
+2012-04-09  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Fix layer sorting perspective w if w becomes negative
+        https://bugs.webkit.org/show_bug.cgi?id=82997
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerSorterTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+
 2012-04-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Flip transition painting delayed with threaded animations
