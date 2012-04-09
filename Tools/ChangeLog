@@ -1,3 +1,12 @@
+2012-04-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Subscribe eric.carlson@apple.com to Media-related changes
+        https://bugs.webkit.org/show_bug.cgi?id=83421
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-04-09  Martin Robinson  <mrobinson@igalia.com>
 
         check-webkit-style should ignore NULL usage in gtk_style_context_get_style
