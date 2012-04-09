@@ -2404,7 +2404,6 @@ http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/state-object-security-exception.html
 http/tests/media/remove-while-loading.html
 http/tests/media/video-buffered.html
-http/tests/media/video-buffering-repaints-controls.html
 http/tests/media/video-cancel-load.html
 http/tests/media/video-cookie.html
 http/tests/media/video-error-abort.html

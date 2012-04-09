@@ -192,6 +192,16 @@ var TESTS = {
     title: 'Audio with no source',
     description: 'Should have "Rewind" and "Play" buttons. Should not blink/twitch if reloaded.',
     html: '<audio controls></audio>'
+},
+'controls-buffer-update': {
+    title: 'Buffer progress bar updates',
+    description: '<p>The buffer progress bar should continue to update prior to video playback.</p>' +
+                 '<p>Verify the progress bar representing the amount of video buffered continues to ' +
+                 'update prior to video playback. Keep the mouse pointer off the progress bar during this check ' +
+                 'as movement over the control will trigger a repaint which invalidates the test.</p><p>' +
+                 'It\'s expected that the video may stop buffering before the entire video is loaded.</p>',
+    html: '<video controls src="http://movies.apple.com/movies/us/apple/ipoditunes/2007/touch/ads/apple_ipodtouch_touch_640x360.mov' +
+          '?prevent_caching=' + new Date().getTime() + '"></video>'
 }
 
 };

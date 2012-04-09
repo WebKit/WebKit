@@ -1,3 +1,15 @@
+2012-04-09  Dale Curtis  <dalecurtis@chromium.org>
+
+        Remove unworkable video-buffering-repaints-controls test.
+        https://bugs.webkit.org/show_bug.cgi?id=83097
+
+        Replaces the automated test for progress bar repaints during buffering
+        with a manual test entry.
+
+        Reviewed by Eric Carlson.
+
+        * ManualTests/media-controls.html:
+
 2012-04-09  Ming Xie  <mxie@rim.com>
 
         [BlackBerry] Allow simulator to use GLES2 acceleration
