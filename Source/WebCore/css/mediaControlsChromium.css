@@ -41,6 +41,7 @@ audio:-webkit-full-page-media, video:-webkit-full-page-media {
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     -webkit-user-select: none;
+    -webkit-box-pack: end;
     position: relative;
     overflow: visible;
     bottom: 0;
@@ -54,9 +55,13 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
     bottom: 0px;
 }
 
+audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
+    -webkit-box-align: end;
+}
+
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
     -webkit-appearance: media-mute-button;
-    position: absolute;
+    position: relative;
     top: auto;
     bottom: 0;
     right: 0;
@@ -149,7 +154,7 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
 
 audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container {
     -webkit-appearance: media-volume-slider-container;
-    position: absolute;
+    position: relative;
 
     width: 34px;
     height: 100px;

@@ -173,11 +173,8 @@ PassRefPtr<MediaControlRootElement> MediaControlRootElement::create(Document* do
     controls->m_fullScreenButton = fullScreenButton.get();
     panel->appendChild(fullScreenButton.release(), ec, true);
 
-    RefPtr<MediaControlPanelMuteButtonElement> panelMuteButton = MediaControlPanelMuteButtonElement::create(document, controls.get());
-    controls->m_panelMuteButton = panelMuteButton.get();
-    panel->appendChild(panelMuteButton.release(), ec, true);
-    if (ec)
-        return 0;
+    // The mute button and the slider element should be in the same div.
+    RefPtr<HTMLDivElement> panelVolumeControlContainer = HTMLDivElement::create(document);
 
     if (document->page()->theme()->usesMediaControlVolumeSlider()) {
         RefPtr<MediaControlVolumeSliderContainerElement> volumeSliderContainer = MediaControlVolumeSliderContainerElement::create(document);
@@ -188,17 +185,21 @@ PassRefPtr<MediaControlRootElement> MediaControlRootElement::create(Document* do
         if (ec)
             return 0;
 
-        RefPtr<MediaControlVolumeSliderMuteButtonElement> volumeSliderMuteButton = MediaControlVolumeSliderMuteButtonElement::create(document);
-        controls->m_volumeSliderMuteButton = volumeSliderMuteButton.get();
-        volumeSliderContainer->appendChild(volumeSliderMuteButton.release(), ec, true);
-        if (ec)
-            return 0;
-
         controls->m_volumeSliderContainer = volumeSliderContainer.get();
-        panel->appendChild(volumeSliderContainer.release(), ec, true);
+        panelVolumeControlContainer->appendChild(volumeSliderContainer.release(), ec, true);
         if (ec)
             return 0;
     }
+
+    RefPtr<MediaControlPanelMuteButtonElement> panelMuteButton = MediaControlPanelMuteButtonElement::create(document, controls.get());
+    controls->m_panelMuteButton = panelMuteButton.get();
+    panelVolumeControlContainer->appendChild(panelMuteButton.release(), ec, true);
+    if (ec)
+        return 0;
+
+    panel->appendChild(panelVolumeControlContainer, ec, true);
+    if (ec)
+        return 0;
 
     // FIXME: Only create when needed <http://webkit.org/b/57163>
     RefPtr<MediaControlFullscreenVolumeMinButtonElement> fullScreenMinVolumeButton = MediaControlFullscreenVolumeMinButtonElement::create(document);
