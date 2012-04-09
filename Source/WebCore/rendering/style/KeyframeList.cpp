@@ -85,11 +85,11 @@ void KeyframeList::insert(const KeyframeValue& keyframe)
         m_properties.clear();
         for (Vector<KeyframeValue>::const_iterator it = m_keyframes.begin(); it != m_keyframes.end(); ++it) {
             const KeyframeValue& currKeyframe = *it;
-            for (HashSet<int>::const_iterator it = currKeyframe.properties().begin(); it != currKeyframe.properties().end(); ++it)
+            for (HashSet<CSSPropertyID>::const_iterator it = currKeyframe.properties().begin(); it != currKeyframe.properties().end(); ++it)
                 m_properties.add(*it);
         }
     } else {
-        for (HashSet<int>::const_iterator it = keyframe.properties().begin(); it != keyframe.properties().end(); ++it)
+        for (HashSet<CSSPropertyID>::const_iterator it = keyframe.properties().begin(); it != keyframe.properties().end(); ++it)
             m_properties.add(*it);
     }
 }

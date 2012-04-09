@@ -466,7 +466,7 @@ private:
 
     RefPtr<StaticCSSRuleList> m_ruleList;
 
-    HashSet<int> m_pendingImageProperties; // Hash of CSSPropertyIDs
+    HashSet<CSSPropertyID> m_pendingImageProperties;
 
     OwnPtr<MediaQueryEvaluator> m_medium;
     RefPtr<RenderStyle> m_rootDefaultStyle;

@@ -1291,7 +1291,7 @@ bool AnimationBase::animationOfPropertyIsAccelerated(CSSPropertyID prop)
 }
 #endif
 
-static bool gatherEnclosingShorthandProperties(CSSPropertyID property, PropertyWrapperBase* wrapper, HashSet<int>& propertySet)
+static bool gatherEnclosingShorthandProperties(CSSPropertyID property, PropertyWrapperBase* wrapper, HashSet<CSSPropertyID>& propertySet)
 {
     if (!wrapper->isShorthandWrapper())
         return false;
@@ -1313,11 +1313,11 @@ static bool gatherEnclosingShorthandProperties(CSSPropertyID property, PropertyW
 }
 
 // Note: this is inefficient. It's only called from pauseTransitionAtTime().
-HashSet<int> AnimationBase::animatableShorthandsAffectingProperty(CSSPropertyID property)
+HashSet<CSSPropertyID> AnimationBase::animatableShorthandsAffectingProperty(CSSPropertyID property)
 {
     ensurePropertyMap();
 
-    HashSet<int> foundProperties;
+    HashSet<CSSPropertyID> foundProperties;
     for (int i = 0; i < getNumProperties(); ++i)
         gatherEnclosingShorthandProperties(property, (*gPropertyWrappers)[i], foundProperties);
 

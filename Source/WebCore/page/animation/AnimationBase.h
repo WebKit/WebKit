@@ -195,7 +195,7 @@ public:
     static bool animationOfPropertyIsAccelerated(CSSPropertyID);
 #endif
 
-    static HashSet<int> animatableShorthandsAffectingProperty(CSSPropertyID);
+    static HashSet<CSSPropertyID> animatableShorthandsAffectingProperty(CSSPropertyID);
 
     const Animation* animation() const { return m_animation.get(); }
 

@@ -25,6 +25,7 @@
 #ifndef KeyframeList_h
 #define KeyframeList_h
 
+#include "CSSPropertyNames.h"
 #include <wtf/Vector.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -43,9 +44,9 @@ public:
     {
     }
 
-    void addProperty(int prop) { m_properties.add(prop); }
-    bool containsProperty(int prop) const { return m_properties.contains(prop); }
-    const HashSet<int>& properties() const { return m_properties; }
+    void addProperty(CSSPropertyID prop) { m_properties.add(prop); }
+    bool containsProperty(CSSPropertyID prop) const { return m_properties.contains(prop); }
+    const HashSet<CSSPropertyID>& properties() const { return m_properties; }
 
     float key() const { return m_key; }
     void setKey(float key) { m_key = key; }
@@ -55,7 +56,7 @@ public:
 
 private:
     float m_key;
-    HashSet<int> m_properties; // The properties specified in this keyframe.
+    HashSet<CSSPropertyID> m_properties; // The properties specified in this keyframe.
     RefPtr<RenderStyle> m_style;
 };
 
@@ -77,10 +78,10 @@ public:
     
     void insert(const KeyframeValue& keyframe);
     
-    void addProperty(int prop) { m_properties.add(prop); }
-    bool containsProperty(int prop) const { return m_properties.contains(prop); }
-    HashSet<int>::const_iterator beginProperties() const { return m_properties.begin(); }
-    HashSet<int>::const_iterator endProperties() const { return m_properties.end(); }
+    void addProperty(CSSPropertyID prop) { m_properties.add(prop); }
+    bool containsProperty(CSSPropertyID prop) const { return m_properties.contains(prop); }
+    HashSet<CSSPropertyID>::const_iterator beginProperties() const { return m_properties.begin(); }
+    HashSet<CSSPropertyID>::const_iterator endProperties() const { return m_properties.end(); }
     
     void clear();
     bool isEmpty() const { return m_keyframes.isEmpty(); }
@@ -89,8 +90,8 @@ public:
 
 private:
     AtomicString m_animationName;
-    Vector<KeyframeValue> m_keyframes; // kept sorted by key
-    HashSet<int> m_properties; // the properties being animated
+    Vector<KeyframeValue> m_keyframes; // Kept sorted by key.
+    HashSet<CSSPropertyID> m_properties; // The properties being animated.
     RenderObject* m_renderer;
 };
 

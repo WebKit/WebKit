@@ -5750,9 +5750,9 @@ void CSSStyleSelector::loadPendingImages()
     if (m_pendingImageProperties.isEmpty())
         return;
 
-    HashSet<int>::const_iterator end = m_pendingImageProperties.end();
-    for (HashSet<int>::const_iterator it = m_pendingImageProperties.begin(); it != end; ++it) {
-        CSSPropertyID currentProperty = static_cast<CSSPropertyID>(*it);
+    HashSet<CSSPropertyID>::const_iterator end = m_pendingImageProperties.end();
+    for (HashSet<CSSPropertyID>::const_iterator it = m_pendingImageProperties.begin(); it != end; ++it) {
+        CSSPropertyID currentProperty = *it;
 
         switch (currentProperty) {
             case CSSPropertyBackgroundImage: {

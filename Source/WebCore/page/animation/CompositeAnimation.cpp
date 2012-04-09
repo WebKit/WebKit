@@ -526,11 +526,11 @@ bool CompositeAnimation::pauseTransitionAtTime(CSSPropertyID property, double t)
     if (!implAnim) {
         // Check to see if this property is being animated via a shorthand.
         // This code is only used for testing, so performance is not critical here.
-        HashSet<int> shorthandProperties = AnimationBase::animatableShorthandsAffectingProperty(property);
+        HashSet<CSSPropertyID> shorthandProperties = AnimationBase::animatableShorthandsAffectingProperty(property);
         bool anyPaused = false;
-        HashSet<int>::const_iterator end = shorthandProperties.end();
-        for (HashSet<int>::const_iterator it = shorthandProperties.begin(); it != end; ++it) {
-            if (pauseTransitionAtTime(static_cast<CSSPropertyID>(*it), t))
+        HashSet<CSSPropertyID>::const_iterator end = shorthandProperties.end();
+        for (HashSet<CSSPropertyID>::const_iterator it = shorthandProperties.begin(); it != end; ++it) {
+            if (pauseTransitionAtTime(*it, t))
                 anyPaused = true;
         }
         return anyPaused;
