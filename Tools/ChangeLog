@@ -1,3 +1,13 @@
+2012-04-09  Ming Xie  <mxie@rim.com>
+
+        [BlackBerry] Allow simulator to use GLES2 acceleration
+        https://bugs.webkit.org/show_bug.cgi?id=81672
+
+        Reviewed by Rob Buis.
+
+        * Scripts/webkitdirs.pm:
+        (blackberryCMakeArguments):
+
 2012-04-09  Dana Jansens  <danakj@chromium.org>
 
         Mark myself as a committer

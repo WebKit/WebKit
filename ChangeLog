@@ -1,3 +1,12 @@
+2012-04-09  Ming Xie  <mxie@rim.com>
+
+        [BlackBerry] Allow simulator to use GLES2 acceleration
+        https://bugs.webkit.org/show_bug.cgi?id=81672
+
+        Reviewed by Rob Buis.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-04-09  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Fail to activate links after double tap gesture.

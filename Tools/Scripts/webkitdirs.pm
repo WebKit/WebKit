@@ -932,6 +932,7 @@ sub blackberryCMakeArguments()
     if ($cpu eq "a9") {
         $cpu = $arch . "v7le";
         push @cmakeExtraOptions, '-DTARGETING_PLAYBOOK=1';
+        push @cmakeExtraOptions, '-DENABLE_GLES2=1';
     }
 
     my $stageDir = $ENV{"STAGE_DIR"};
@@ -958,6 +959,7 @@ sub blackberryCMakeArguments()
 
     push @cmakeExtraOptions, "-DCMAKE_SKIP_RPATH='ON'" if isDarwin();
     push @cmakeExtraOptions, "-DENABLE_DRT=1" if $ENV{"ENABLE_DRT"};
+    push @cmakeExtraOptions, "-DENABLE_GLES2=1" if $ENV{"ENABLE_GLES2"};
 
     my @includeSystemDirectories;
     push @includeSystemDirectories, File::Spec->catdir($stageInc, "grskia", "skia");
