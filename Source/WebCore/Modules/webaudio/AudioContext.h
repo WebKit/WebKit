@@ -123,7 +123,9 @@ public:
     PassRefPtr<ConvolverNode> createConvolver();
     PassRefPtr<DynamicsCompressorNode> createDynamicsCompressor();    
     PassRefPtr<RealtimeAnalyserNode> createAnalyser();
-    PassRefPtr<JavaScriptAudioNode> createJavaScriptNode(size_t bufferSize);
+    PassRefPtr<JavaScriptAudioNode> createJavaScriptNode(size_t bufferSize, ExceptionCode&);
+    PassRefPtr<JavaScriptAudioNode> createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode&);
+    PassRefPtr<JavaScriptAudioNode> createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode&);
     PassRefPtr<AudioChannelSplitter> createChannelSplitter();
     PassRefPtr<AudioChannelMerger> createChannelMerger();
     PassRefPtr<Oscillator> createOscillator();

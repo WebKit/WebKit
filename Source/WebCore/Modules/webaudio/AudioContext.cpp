@@ -369,11 +369,28 @@ PassRefPtr<MediaElementAudioSourceNode> AudioContext::createMediaElementSource(H
 }
 #endif
 
-PassRefPtr<JavaScriptAudioNode> AudioContext::createJavaScriptNode(size_t bufferSize)
+PassRefPtr<JavaScriptAudioNode> AudioContext::createJavaScriptNode(size_t bufferSize, ExceptionCode& ec)
+{
+    // Set number of input/output channels to stereo by default.
+    return createJavaScriptNode(bufferSize, 2, 2, ec);
+}
+
+PassRefPtr<JavaScriptAudioNode> AudioContext::createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode& ec)
+{
+    // Set number of output channels to stereo by default.
+    return createJavaScriptNode(bufferSize, numberOfInputChannels, 2, ec);
+}
+
+PassRefPtr<JavaScriptAudioNode> AudioContext::createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
     lazyInitialize();
-    RefPtr<JavaScriptAudioNode> node = JavaScriptAudioNode::create(this, m_destinationNode->sampleRate(), bufferSize);
+    RefPtr<JavaScriptAudioNode> node = JavaScriptAudioNode::create(this, m_destinationNode->sampleRate(), bufferSize, numberOfInputChannels, numberOfOutputChannels);
+
+    if (!node.get()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
 
     refNode(node.get()); // context keeps reference until we stop making javascript rendering callbacks
     return node;

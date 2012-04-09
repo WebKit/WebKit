@@ -42,18 +42,7 @@ namespace WebCore {
 
 const size_t DefaultBufferSize = 4096;
 
-PassRefPtr<JavaScriptAudioNode> JavaScriptAudioNode::create(AudioContext* context, float sampleRate, size_t bufferSize, unsigned numberOfInputs, unsigned numberOfOutputs)
-{
-    return adoptRef(new JavaScriptAudioNode(context, sampleRate, bufferSize, numberOfInputs, numberOfOutputs));
-}
-
-JavaScriptAudioNode::JavaScriptAudioNode(AudioContext* context, float sampleRate, size_t bufferSize, unsigned numberOfInputs, unsigned numberOfOutputs)
-    : AudioNode(context, sampleRate)
-    , m_doubleBufferIndex(0)
-    , m_doubleBufferIndexForEvent(0)
-    , m_bufferSize(bufferSize)
-    , m_bufferReadWriteIndex(0)
-    , m_isRequestOutstanding(false)
+PassRefPtr<JavaScriptAudioNode> JavaScriptAudioNode::create(AudioContext* context, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
 {
     // Check for valid buffer size.
     switch (bufferSize) {
@@ -64,22 +53,37 @@ JavaScriptAudioNode::JavaScriptAudioNode(AudioContext* context, float sampleRate
     case 4096:
     case 8192:
     case 16384:
-        m_bufferSize = bufferSize;
         break;
     default:
-        m_bufferSize = DefaultBufferSize;
+        return 0;
     }
-        
-    // Regardless of the allowed buffer sizes above, we still need to process at the granularity of the AudioNode.
+
+    // FIXME: We still need to implement numberOfInputChannels.
+    ASSERT_UNUSED(numberOfInputChannels, numberOfInputChannels <= AudioContext::maxNumberOfChannels());
+
+    if (!numberOfOutputChannels || numberOfOutputChannels > AudioContext::maxNumberOfChannels())
+        return 0;
+
+    return adoptRef(new JavaScriptAudioNode(context, sampleRate, bufferSize, numberOfInputChannels, numberOfOutputChannels));
+}
+
+JavaScriptAudioNode::JavaScriptAudioNode(AudioContext* context, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
+    : AudioNode(context, sampleRate)
+    , m_doubleBufferIndex(0)
+    , m_doubleBufferIndexForEvent(0)
+    , m_bufferSize(bufferSize)
+    , m_bufferReadWriteIndex(0)
+    , m_isRequestOutstanding(false)
+{
+    // Regardless of the allowed buffer sizes, we still need to process at the granularity of the AudioNode.
     if (m_bufferSize < AudioNode::ProcessingSizeInFrames)
         m_bufferSize = AudioNode::ProcessingSizeInFrames;
 
-    // FIXME: Right now we're hardcoded to single input and single output.
-    // Although the specification says this is OK for a simple implementation, multiple inputs and outputs would be good.
-    ASSERT_UNUSED(numberOfInputs, numberOfInputs == 1);
-    ASSERT_UNUSED(numberOfOutputs, numberOfOutputs == 1);
+    // FIXME: We still need to implement numberOfInputChannels.
+    ASSERT_UNUSED(numberOfInputChannels, numberOfInputChannels > 0);
+
     addInput(adoptPtr(new AudioNodeInput(this)));
-    addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
+    addOutput(adoptPtr(new AudioNodeOutput(this, numberOfOutputChannels)));
 
     setNodeType(NodeTypeJavaScript);
 
@@ -102,7 +106,7 @@ void JavaScriptAudioNode::initialize()
     // These AudioBuffers will be directly accessed in the main thread by JavaScript.
     for (unsigned i = 0; i < 2; ++i) {
         m_inputBuffers.append(AudioBuffer::create(2, bufferSize(), sampleRate));
-        m_outputBuffers.append(AudioBuffer::create(2, bufferSize(), sampleRate));
+        m_outputBuffers.append(AudioBuffer::create(this->output(0)->numberOfChannels(), bufferSize(), sampleRate));
     }
 
     AudioNode::initialize();
@@ -155,16 +159,15 @@ void JavaScriptAudioNode::process(size_t framesToProcess)
         return;
         
     unsigned numberOfInputChannels = inputBus->numberOfChannels();
+    unsigned numberOfOutputChannels = outputBus->numberOfChannels();
     
-    bool channelsAreGood = (numberOfInputChannels == 1 || numberOfInputChannels == 2) && outputBus->numberOfChannels() == 2;
+    bool channelsAreGood = (numberOfInputChannels == 1 || numberOfInputChannels == 2);
     ASSERT(channelsAreGood);
     if (!channelsAreGood)
         return;
 
     const float* sourceL = inputBus->channel(0)->data();
     const float* sourceR = numberOfInputChannels > 1 ? inputBus->channel(1)->data() : 0;
-    float* destinationL = outputBus->channel(0)->mutableData();
-    float* destinationR = outputBus->channel(1)->mutableData();
 
     // Copy from the input to the input buffer.  See "buffersAreGood" check above for safety.
     size_t bytesToCopy = sizeof(float) * framesToProcess;
@@ -178,9 +181,9 @@ void JavaScriptAudioNode::process(size_t framesToProcess)
         memcpy(inputBuffer->getChannelData(1)->data() + m_bufferReadWriteIndex, sourceL, bytesToCopy);
     }
     
-    // Copy from the output buffer to the output.  See "buffersAreGood" check above for safety.
-    memcpy(destinationL, outputBuffer->getChannelData(0)->data() + m_bufferReadWriteIndex, bytesToCopy);
-    memcpy(destinationR, outputBuffer->getChannelData(1)->data() + m_bufferReadWriteIndex, bytesToCopy);
+    // Copy from the output buffer to the output. 
+    for (unsigned i = 0; i < numberOfOutputChannels; ++i)
+        memcpy(outputBus->channel(i)->mutableData(), outputBuffer->getChannelData(i)->data() + m_bufferReadWriteIndex, bytesToCopy);
 
     // Update the buffering index.
     m_bufferReadWriteIndex = (m_bufferReadWriteIndex + framesToProcess) % bufferSize();
