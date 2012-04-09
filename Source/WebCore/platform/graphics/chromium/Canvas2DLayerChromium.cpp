@@ -135,8 +135,7 @@ void Canvas2DLayerChromium::updateCompositorResources(GraphicsContext3D* context
         return;
 
     m_frontTexture->allocate(updater.allocator());
-    updater.copier()->copyTexture(context, m_backTextureId, m_frontTexture->textureId(), m_size);
-    GLC(context, context->flush());
+    updater.appendCopy(m_backTextureId, m_frontTexture->textureId(), m_size);
 }
 
 void Canvas2DLayerChromium::pushPropertiesTo(CCLayerImpl* layer)

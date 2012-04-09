@@ -84,14 +84,14 @@ void WebGLLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* /* occlu
     m_contextLost = context()->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
 }
 
-void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
+void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTextureUpdater& updater)
 {
     if (!m_drawingBuffer)
         return;
 
     m_textureId = m_drawingBuffer->frontColorBuffer();
     if (m_drawingBuffer->requiresCopyFromBackToFrontBuffer())
-        updater.copier()->copyTexture(context, m_drawingBuffer->colorBuffer(), m_textureId, bounds());
+        updater.appendCopy(m_drawingBuffer->colorBuffer(), m_textureId, bounds());
 }
 
 void WebGLLayerChromium::pushPropertiesTo(CCLayerImpl* layer)

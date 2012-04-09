@@ -232,9 +232,9 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTexture
                 CRASH();
 
             if (tile->m_partialUpdate)
-                updater.appendPartial(tile->texture(), sourceRect, destRect);
+                updater.appendPartialUpdate(tile->texture(), sourceRect, destRect);
             else
-                updater.append(tile->texture(), sourceRect, destRect);
+                updater.appendUpdate(tile->texture(), sourceRect, destRect);
         }
     }
 
