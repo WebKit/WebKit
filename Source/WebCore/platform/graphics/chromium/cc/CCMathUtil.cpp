@@ -280,6 +280,7 @@ FloatQuad CCMathUtil::mapQuad(const TransformationMatrix& transform, const Float
     if (transform.isIdentityOrTranslation()) {
         FloatQuad mappedQuad(q);
         mappedQuad.move(static_cast<float>(transform.m41()), static_cast<float>(transform.m42()));
+        clipped = false;
         return mappedQuad;
     }
 
