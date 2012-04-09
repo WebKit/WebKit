@@ -1,3 +1,9 @@
+2012-04-09  Florin Malita  <fmalita@chromium.org>
+
+        Unreviewed: adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-04-09  Ming Xie  <mxie@rim.com>
 
         [BlackBerry] Allow simulator to use GLES2 acceleration

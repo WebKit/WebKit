@@ -227,6 +227,7 @@ committers_unable_to_review = [
     Committer("Evan Stade", "estade@chromium.org", "estade"),
     Committer("Fady Samuel", "fsamuel@chromium.org", "fsamuel"),
     Committer("Feng Qian", "feng@chromium.org"),
+    Committer("Florin Malita", ["fmalita@chromium.org", "fmalita@google.com"], "fmalita"),
     Committer("Fumitoshi Ukai", "ukai@chromium.org", "ukai"),
     Committer("Gabor Loki", "loki@webkit.org", "loki04"),
     Committer("Gabor Rapcsanyi", ["rgabor@webkit.org", "rgabor@inf.u-szeged.hu"], "rgabor"),
