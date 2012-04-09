@@ -1,5 +1,11 @@
 2012-04-09  Patrick Gansterer  <paroga@webkit.org>
 
+        [CMake] Build fix for USE_SYSTEM_MALLOC after r113570.
+
+        * Source/cmakeconfig.h.cmake:
+
+2012-04-09  Patrick Gansterer  <paroga@webkit.org>
+
         [CMake] Share build system options across ports
         https://bugs.webkit.org/show_bug.cgi?id=72815
 

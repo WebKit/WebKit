@@ -1,5 +1,11 @@
 2012-04-09  Patrick Gansterer  <paroga@webkit.org>
 
+        [CMake] Build fix for USE_SYSTEM_MALLOC after r113570.
+
+        * wtf/CMakeLists.txt:
+
+2012-04-09  Patrick Gansterer  <paroga@webkit.org>
+
         Remove HAVE_STDINT_H
         https://bugs.webkit.org/show_bug.cgi?id=83434
 
