@@ -40,6 +40,14 @@ public:
 
 protected:
     RectBase() { }
+    RectBase(const RectBase& cloneFrom)
+        : m_top(cloneFrom.m_top ? cloneFrom.m_top->cloneForCSSOM() : 0)
+        , m_right(cloneFrom.m_right ? cloneFrom.m_right->cloneForCSSOM() : 0)
+        , m_bottom(cloneFrom.m_bottom ? cloneFrom.m_bottom->cloneForCSSOM() : 0)
+        , m_left(cloneFrom.m_left ? cloneFrom.m_left->cloneForCSSOM() : 0)
+    {
+    }
+
     ~RectBase() { }
 
 private:
@@ -52,17 +60,23 @@ private:
 class Rect : public RectBase, public RefCounted<Rect> {
 public:
     static PassRefPtr<Rect> create() { return adoptRef(new Rect); }
+    
+    PassRefPtr<Rect> cloneForCSSOM() const { return adoptRef(new Rect(*this)); }
 
 private:
     Rect() { }
+    Rect(const Rect& cloneFrom) : RectBase(cloneFrom), RefCounted<Rect>() { }
 };
 
 class Quad : public RectBase, public RefCounted<Quad> {
 public:
     static PassRefPtr<Quad> create() { return adoptRef(new Quad); }
+    
+    PassRefPtr<Quad> cloneForCSSOM() const { return adoptRef(new Quad(*this)); }
 
 private:
     Quad() { }
+    Quad(const Quad& cloneFrom) : RectBase(cloneFrom), RefCounted<Quad>() { }
 };
 
 } // namespace WebCore

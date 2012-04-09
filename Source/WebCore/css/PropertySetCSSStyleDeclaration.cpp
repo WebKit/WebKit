@@ -155,7 +155,7 @@ void PropertySetCSSStyleDeclaration::setCssText(const String& text, ExceptionCod
     // FIXME: Detect syntax errors and set ec.
     m_propertySet->parseDeclaration(text, contextStyleSheet());
 
-    setNeedsStyleRecalc();
+    didMutate();
 #if ENABLE(MUTATION_OBSERVERS)
     mutationScope.enqueueMutationRecord();    
 #endif
@@ -166,7 +166,7 @@ PassRefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValue(const S
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return 0;
-    return m_propertySet->getPropertyCSSValue(propertyID);
+    return cloneAndCacheForCSSOM(m_propertySet->getPropertyCSSValue(propertyID).get());
 }
 
 String PropertySetCSSStyleDeclaration::getPropertyValue(const String &propertyName)
@@ -218,7 +218,7 @@ void PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, con
     if (changed) {
         // CSS DOM requires raising SYNTAX_ERR of parsing failed, but this is too dangerous for compatibility,
         // see <http://bugs.webkit.org/show_bug.cgi?id=7296>.
-        setNeedsStyleRecalc();
+        didMutate();
 #if ENABLE(MUTATION_OBSERVERS)
         mutationScope.enqueueMutationRecord();
 #endif
@@ -237,7 +237,7 @@ String PropertySetCSSStyleDeclaration::removeProperty(const String& propertyName
     String result;
     bool changes = m_propertySet->removeProperty(propertyID, &result);
     if (changes) {
-        setNeedsStyleRecalc();
+        didMutate();
 #if ENABLE(MUTATION_OBSERVERS)
         mutationScope.enqueueMutationRecord();
 #endif
@@ -247,7 +247,7 @@ String PropertySetCSSStyleDeclaration::removeProperty(const String& propertyName
 
 PassRefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal(CSSPropertyID propertyID)
 { 
-    return m_propertySet->getPropertyCSSValue(propertyID); 
+    return cloneAndCacheForCSSOM(m_propertySet->getPropertyCSSValue(propertyID).get());
 }
 
 String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
@@ -263,11 +263,33 @@ void PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyI
     ec = 0;
     bool changed = m_propertySet->setProperty(propertyID, value, important, contextStyleSheet());
     if (changed) {
-        setNeedsStyleRecalc();
+        didMutate();
 #if ENABLE(MUTATION_OBSERVERS)
         mutationScope.enqueueMutationRecord();
 #endif
     }
+}
+
+void PropertySetCSSStyleDeclaration::didMutate()
+{
+    m_cssomCSSValueClones.clear();
+    setNeedsStyleRecalc();
+}
+
+CSSValue* PropertySetCSSStyleDeclaration::cloneAndCacheForCSSOM(CSSValue* internalValue)
+{
+    if (!internalValue)
+        return 0;
+
+    // The map is here to maintain the object identity of the CSSValues over multiple invocations.
+    // FIXME: It is likely that the identity is not important for web compatibility and this code should be removed.
+    if (!m_cssomCSSValueClones)
+        m_cssomCSSValueClones = adoptPtr(new HashMap<CSSValue*, RefPtr<CSSValue> >);
+    
+    RefPtr<CSSValue>& clonedValue = m_cssomCSSValueClones->add(internalValue, RefPtr<CSSValue>()).iterator->second;
+    if (!clonedValue)
+        clonedValue = internalValue->cloneForCSSOM();
+    return clonedValue.get();
 }
 
 CSSStyleSheet* PropertySetCSSStyleDeclaration::parentStyleSheet() const

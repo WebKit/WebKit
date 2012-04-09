@@ -69,10 +69,14 @@ private:
     virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> copy() const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> makeMutable() OVERRIDE;
-    virtual void setNeedsStyleRecalc() { }    
+    virtual void setNeedsStyleRecalc() { }
+    
+    void didMutate();
+    CSSValue* cloneAndCacheForCSSOM(CSSValue*);
     
 protected:
     StylePropertySet* m_propertySet;
+    OwnPtr<HashMap<CSSValue*, RefPtr<CSSValue> > > m_cssomCSSValueClones;
 };
 
 class StyleRuleCSSStyleDeclaration : public PropertySetCSSStyleDeclaration

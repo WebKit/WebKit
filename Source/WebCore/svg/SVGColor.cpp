@@ -92,6 +92,18 @@ String SVGColor::customCssText() const
     return String();
 }
 
+SVGColor::SVGColor(ClassType classType, const SVGColor& cloneFrom)
+    : CSSValue(classType, /*isCSSOMSafe*/ true)
+    , m_color(cloneFrom.m_color)
+    , m_colorType(cloneFrom.m_colorType)
+{
+}
+
+PassRefPtr<SVGColor> SVGColor::cloneForCSSOM() const
+{
+    return adoptRef(new SVGColor(SVGColorClass, *this));
+}
+
 }
 
 #endif // ENABLE(SVG)

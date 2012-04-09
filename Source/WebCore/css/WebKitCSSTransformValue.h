@@ -68,9 +68,12 @@ public:
     String customCssText() const;
 
     TransformOperationType operationType() const { return m_type; }
+    
+    PassRefPtr<WebKitCSSTransformValue> cloneForCSSOM() const;
 
 private:
     WebKitCSSTransformValue(TransformOperationType);
+    WebKitCSSTransformValue(const WebKitCSSTransformValue& cloneFrom);
 
     TransformOperationType m_type;
 };

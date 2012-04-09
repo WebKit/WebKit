@@ -115,4 +115,15 @@ String WebKitCSSTransformValue::customCssText() const
     return result;
 }
 
+WebKitCSSTransformValue::WebKitCSSTransformValue(const WebKitCSSTransformValue& cloneFrom)
+    : CSSValueList(cloneFrom)
+    , m_type(cloneFrom.m_type)
+{
+}
+
+PassRefPtr<WebKitCSSTransformValue> WebKitCSSTransformValue::cloneForCSSOM() const
+{
+    return adoptRef(new WebKitCSSTransformValue(*this));
+}
+
 }

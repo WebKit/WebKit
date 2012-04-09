@@ -332,41 +332,69 @@ CSSPrimitiveValue::~CSSPrimitiveValue()
 void CSSPrimitiveValue::cleanup()
 {
     switch (m_primitiveUnitType) {
-        case CSS_STRING:
-        case CSS_URI:
-        case CSS_ATTR:
-        case CSS_PARSER_HEXCOLOR:
-            if (m_value.string)
-                m_value.string->deref();
-            break;
-        case CSS_COUNTER:
-            m_value.counter->deref();
-            break;
-        case CSS_RECT:
-            m_value.rect->deref();
-            break;
-        case CSS_QUAD:
-            m_value.quad->deref();
-            break;
-        case CSS_PAIR:
-            m_value.pair->deref();
-            break;
+    case CSS_STRING:
+    case CSS_URI:
+    case CSS_ATTR:
+    case CSS_COUNTER_NAME:
+    case CSS_PARSER_HEXCOLOR:
+        if (m_value.string)
+            m_value.string->deref();
+        break;
+    case CSS_COUNTER:
+        m_value.counter->deref();
+        break;
+    case CSS_RECT:
+        m_value.rect->deref();
+        break;
+    case CSS_QUAD:
+        m_value.quad->deref();
+        break;
+    case CSS_PAIR:
+        m_value.pair->deref();
+        break;
 #if ENABLE(DASHBOARD_SUPPORT)
-        case CSS_DASHBOARD_REGION:
-            if (m_value.region)
-                m_value.region->deref();
-            break;
+    case CSS_DASHBOARD_REGION:
+        if (m_value.region)
+            m_value.region->deref();
+        break;
 #endif
-        case CSS_CALC:
-            m_value.calc->deref();
-            break;
-        case CSS_SHAPE:
-            m_value.shape->deref();
-            break;
-        default:
-            break;
+    case CSS_CALC:
+        m_value.calc->deref();
+        break;
+    case CSS_SHAPE:
+        m_value.shape->deref();
+        break;
+    case CSS_NUMBER:
+    case CSS_PARSER_INTEGER:
+    case CSS_PERCENTAGE:
+    case CSS_EMS:
+    case CSS_EXS:
+    case CSS_REMS:
+    case CSS_PX:
+    case CSS_CM:
+    case CSS_MM:
+    case CSS_IN:
+    case CSS_PT:
+    case CSS_PC:
+    case CSS_DEG:
+    case CSS_RAD:
+    case CSS_GRAD:
+    case CSS_MS:
+    case CSS_S:
+    case CSS_HZ:
+    case CSS_KHZ:
+    case CSS_TURN:
+    case CSS_VW:
+    case CSS_VH:
+    case CSS_VMIN:
+    case CSS_IDENT:
+    case CSS_RGBCOLOR:
+    case CSS_DIMENSION:
+    case CSS_UNKNOWN:
+    case CSS_PARSER_OPERATOR:
+    case CSS_PARSER_IDENTIFIER:
+        break;
     }
-
     m_primitiveUnitType = 0;
     if (m_hasCachedCSSText) {
         cssTextCache().remove(this);
@@ -1056,6 +1084,89 @@ Length CSSPrimitiveValue::viewportPercentageLength()
         break;
     }
     return viewportLength;
+}
+
+PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
+{
+    RefPtr<CSSPrimitiveValue> result;
+
+    switch (m_primitiveUnitType) {
+    case CSS_STRING:
+    case CSS_URI:
+    case CSS_ATTR:
+    case CSS_COUNTER_NAME:
+        result = CSSPrimitiveValue::create(m_value.string, static_cast<UnitTypes>(m_primitiveUnitType));
+        break;
+    case CSS_COUNTER:
+        result = CSSPrimitiveValue::create(m_value.counter->cloneForCSSOM());
+        break;
+    case CSS_RECT:
+        result = CSSPrimitiveValue::create(m_value.rect->cloneForCSSOM());
+        break;
+    case CSS_QUAD:
+        result = CSSPrimitiveValue::create(m_value.quad->cloneForCSSOM());
+        break;
+    case CSS_PAIR:
+        // Pair is not exposed to the CSSOM, no need for a deep clone.
+        result = CSSPrimitiveValue::create(m_value.pair);
+        break;
+#if ENABLE(DASHBOARD_SUPPORT)
+    case CSS_DASHBOARD_REGION:
+        // DashboardRegion is not exposed to the CSSOM, no need for a deep clone.
+        result = CSSPrimitiveValue::create(m_value.region);
+        break;
+#endif
+    case CSS_CALC:
+        // CSSCalcValue is not exposed to the CSSOM, no need for a deep clone.
+        result = CSSPrimitiveValue::create(m_value.calc);
+        break;
+    case CSS_SHAPE:
+        // CSSShapeValue is not exposed to the CSSOM, no need for a deep clone.
+        result = CSSPrimitiveValue::create(m_value.shape);
+        break;
+    case CSS_NUMBER:
+    case CSS_PARSER_INTEGER:
+    case CSS_PERCENTAGE:
+    case CSS_EMS:
+    case CSS_EXS:
+    case CSS_REMS:
+    case CSS_PX:
+    case CSS_CM:
+    case CSS_MM:
+    case CSS_IN:
+    case CSS_PT:
+    case CSS_PC:
+    case CSS_DEG:
+    case CSS_RAD:
+    case CSS_GRAD:
+    case CSS_MS:
+    case CSS_S:
+    case CSS_HZ:
+    case CSS_KHZ:
+    case CSS_TURN:
+    case CSS_VW:
+    case CSS_VH:
+    case CSS_VMIN:
+        result = CSSPrimitiveValue::create(m_value.num, static_cast<UnitTypes>(m_primitiveUnitType));
+        break;
+    case CSS_IDENT:
+        result = CSSPrimitiveValue::createIdentifier(m_value.ident);
+        break;
+    case CSS_RGBCOLOR:
+        result = CSSPrimitiveValue::createColor(m_value.rgbcolor);
+        break;
+    case CSS_DIMENSION:
+    case CSS_UNKNOWN:
+    case CSS_PARSER_OPERATOR:
+    case CSS_PARSER_IDENTIFIER:
+    case CSS_PARSER_HEXCOLOR:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    if (result)
+        result->setCSSOMSafe();
+
+    return result;
 }
 
 } // namespace WebCore

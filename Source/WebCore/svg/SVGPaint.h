@@ -93,6 +93,8 @@ public:
 
     String customCssText() const;
 
+    PassRefPtr<SVGPaint> cloneForCSSOM() const;
+
 private:
     friend class CSSComputedStyleDeclaration;
 
@@ -105,6 +107,7 @@ private:
 
 private:
     SVGPaint(const SVGPaintType&, const String& uri = String());
+    SVGPaint(const SVGPaint& cloneFrom);
 
     SVGPaintType m_paintType;
     String m_uri;

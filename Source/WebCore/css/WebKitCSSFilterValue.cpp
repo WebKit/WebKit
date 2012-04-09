@@ -99,6 +99,17 @@ String WebKitCSSFilterValue::customCssText() const
     return result + CSSValueList::customCssText() + ")";
 }
 
+WebKitCSSFilterValue::WebKitCSSFilterValue(const WebKitCSSFilterValue& cloneFrom)
+    : CSSValueList(cloneFrom)
+    , m_type(cloneFrom.m_type)
+{
+}
+
+PassRefPtr<WebKitCSSFilterValue> WebKitCSSFilterValue::cloneForCSSOM() const
+{
+    return adoptRef(new WebKitCSSFilterValue(*this));
+}
+
 }
 
 #endif // ENABLE(CSS_FILTERS)

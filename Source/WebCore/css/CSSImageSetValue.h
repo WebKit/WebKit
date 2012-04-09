@@ -60,11 +60,14 @@ public:
         float scaleFactor;
     };
 
+    PassRefPtr<CSSImageSetValue> cloneForCSSOM() const;
+
 protected:
     ImageWithScale bestImageForScaleFactor();
 
 private:
     CSSImageSetValue();
+    CSSImageSetValue(const CSSImageSetValue& cloneFrom);
 
     void fillImageSet();
     static inline bool compareByScaleFactor(ImageWithScale first, ImageWithScale second) { return first.scaleFactor < second.scaleFactor; }

@@ -139,6 +139,18 @@ String CSSImageSetValue::customCssText() const
     return "-webkit-image-set(" + CSSValueList::customCssText() + ")";
 }
 
+CSSImageSetValue::CSSImageSetValue(const CSSImageSetValue& cloneFrom)
+    : CSSValueList(cloneFrom)
+    , m_accessedBestFitImage(false)
+{
+    // Non-CSSValueList data is not accessible through CSS OM, no need to clone.
+}
+
+PassRefPtr<CSSImageSetValue> CSSImageSetValue::cloneForCSSOM() const
+{
+    return adoptRef(new CSSImageSetValue(*this));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(CSS_IMAGE_SET)

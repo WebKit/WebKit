@@ -2656,7 +2656,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const Stri
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return 0;
-    return getPropertyCSSValue(propertyID);
+    RefPtr<CSSValue> value = getPropertyCSSValue(propertyID);
+    return value ? value->cloneForCSSOM() : 0;
 }
 
 String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)
@@ -2696,7 +2697,8 @@ String CSSComputedStyleDeclaration::removeProperty(const String&, ExceptionCode&
     
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValueInternal(CSSPropertyID propertyID)
 {
-    return getPropertyCSSValue(propertyID);
+    RefPtr<CSSValue> value = getPropertyCSSValue(propertyID);
+    return value ? value->cloneForCSSOM() : 0;
 }
 
 String CSSComputedStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)

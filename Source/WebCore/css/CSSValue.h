@@ -21,6 +21,7 @@
 #ifndef CSSValue_h
 #define CSSValue_h
 
+#include "ExceptionCode.h"
 #include "KURLHash.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
@@ -29,9 +30,12 @@
 namespace WebCore {
 
 class CSSStyleSheet;
+    
+// FIXME: The current CSSValue and subclasses should be turned into internal types (StyleValue).
+// The few subtypes that are actually exposed in CSSOM can be seen in the cloneForCSSOM() function.
+// They should be handled by separate wrapper classes.
 
-typedef int ExceptionCode;
-
+// Please don't expose more CSSValue types to the web.
 class CSSValue : public RefCounted<CSSValue> {
 public:
     enum Type {
@@ -90,6 +94,18 @@ public:
     bool isSVGColor() const { return m_classType == SVGColorClass || m_classType == SVGPaintClass; }
     bool isSVGPaint() const { return m_classType == SVGPaintClass; }
 #endif
+    
+    bool isCSSOMSafe() const { return m_isCSSOMSafe; }
+    bool isSubtypeExposedToCSSOM() const
+    { 
+        return isPrimitiveValue() 
+#if ENABLE(SVG)
+            || isSVGColor()
+#endif
+            || isValueList();
+    }
+
+    PassRefPtr<CSSValue> cloneForCSSOM() const;
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
@@ -159,8 +175,10 @@ protected:
 
     ClassType classType() const { return static_cast<ClassType>(m_classType); }
 
-    explicit CSSValue(ClassType classType)
-        : m_primitiveUnitType(0)
+    explicit CSSValue(ClassType classType, bool isCSSOMSafe = false)
+        : m_isCSSOMSafe(isCSSOMSafe)
+        , m_isTextClone(false)
+        , m_primitiveUnitType(0)
         , m_hasCachedCSSText(false)
         , m_isQuirkValue(false)
         , m_valueListSeparator(SpaceSeparator)
@@ -177,18 +195,20 @@ private:
     void destroy();
 
 protected:
+    unsigned m_isCSSOMSafe : 1;
+    unsigned m_isTextClone : 1;
     // The bits in this section are only used by specific subclasses but kept here
     // to maximize struct packing.
 
     // CSSPrimitiveValue bits:
-    unsigned char m_primitiveUnitType : 7; // CSSPrimitiveValue::UnitTypes
-    mutable bool m_hasCachedCSSText : 1;
-    bool m_isQuirkValue : 1;
+    unsigned m_primitiveUnitType : 7; // CSSPrimitiveValue::UnitTypes
+    mutable unsigned m_hasCachedCSSText : 1;
+    unsigned m_isQuirkValue : 1;
 
-    unsigned char m_valueListSeparator : ValueListSeparatorBits;
+    unsigned m_valueListSeparator : ValueListSeparatorBits;
 
 private:
-    unsigned char m_classType : ClassTypeBits; // ClassType
+    unsigned m_classType : ClassTypeBits; // ClassType
 };
 
 } // namespace WebCore

@@ -143,4 +143,18 @@ void CSSValueList::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSSty
         m_values[i]->addSubresourceStyleURLs(urls, styleSheet);
 }
 
+CSSValueList::CSSValueList(const CSSValueList& cloneFrom)
+    : CSSValue(cloneFrom.classType(), /* isCSSOMSafe */ true)
+{
+    m_valueListSeparator = cloneFrom.m_valueListSeparator;
+    m_values.resize(cloneFrom.m_values.size());
+    for (unsigned i = 0; i < m_values.size(); ++i)
+        m_values[i] = cloneFrom.m_values[i]->cloneForCSSOM();
+}
+
+PassRefPtr<CSSValueList> CSSValueList::cloneForCSSOM() const
+{
+    return adoptRef(new CSSValueList(*this));
+}
+
 } // namespace WebCore

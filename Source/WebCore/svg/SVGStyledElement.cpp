@@ -423,7 +423,8 @@ PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& na
     RefPtr<StylePropertySet> style = StylePropertySet::create(SVGAttributeMode);
     CSSPropertyID propertyID = SVGStyledElement::cssPropertyIdForSVGAttributeName(attr->name());
     style->setProperty(propertyID, attr->value());
-    return style->getPropertyCSSValue(propertyID);
+    RefPtr<CSSValue> cssValue = style->getPropertyCSSValue(propertyID);
+    return cssValue ? cssValue->cloneForCSSOM() : 0;
 }
 
 bool SVGStyledElement::instanceUpdatesBlocked() const

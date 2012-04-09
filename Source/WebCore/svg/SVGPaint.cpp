@@ -99,6 +99,18 @@ String SVGPaint::customCssText() const
     return String();
 }
 
+SVGPaint::SVGPaint(const SVGPaint& cloneFrom)
+    : SVGColor(SVGPaintClass, cloneFrom)
+    , m_paintType(cloneFrom.m_paintType)
+    , m_uri(cloneFrom.m_uri)
+{
+}
+
+PassRefPtr<SVGPaint> SVGPaint::cloneForCSSOM() const
+{
+    return adoptRef(new SVGPaint(*this));
+}
+
 }
 
 #endif // ENABLE(SVG)

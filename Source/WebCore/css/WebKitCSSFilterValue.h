@@ -66,8 +66,11 @@ public:
 
     FilterOperationType operationType() const { return m_type; }
 
+    PassRefPtr<WebKitCSSFilterValue> cloneForCSSOM() const;
+
 private:
     WebKitCSSFilterValue(FilterOperationType);
+    WebKitCSSFilterValue(const WebKitCSSFilterValue& cloneFrom);
 
     FilterOperationType m_type;
 };

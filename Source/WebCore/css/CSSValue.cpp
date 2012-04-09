@@ -59,10 +59,27 @@
 namespace WebCore {
 
 class SameSizeAsCSSValue : public RefCounted<SameSizeAsCSSValue> {
-    unsigned char bitfields[2];
+    uint32_t bitfields;
 };
 
 COMPILE_ASSERT(sizeof(CSSValue) == sizeof(SameSizeAsCSSValue), CSS_value_should_stay_small);
+    
+class TextCloneCSSValue : public CSSValue {
+public:
+    static PassRefPtr<TextCloneCSSValue> create(ClassType classType, const String& text) { return adoptRef(new TextCloneCSSValue(classType, text)); }
+
+    String cssText() const { return m_cssText; }
+
+private:
+    TextCloneCSSValue(ClassType classType, const String& text) 
+        : CSSValue(classType, /*isCSSOMSafe*/ true)
+        , m_cssText(text)
+    {
+        m_isTextClone = true;
+    }
+
+    String m_cssText;
+};
 
 bool CSSValue::isImplicitInitialValue() const
 {
@@ -84,6 +101,9 @@ CSSValue::Type CSSValue::cssValueType() const
 
 void CSSValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSheet* styleSheet)
 {
+    // This should get called for internal instances only.
+    ASSERT(!isCSSOMSafe());
+
     if (isPrimitiveValue())
         static_cast<CSSPrimitiveValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
     else if (isValueList())
@@ -96,6 +116,12 @@ void CSSValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSh
 
 String CSSValue::cssText() const
 {
+    if (m_isTextClone) {
+         ASSERT(isCSSOMSafe());
+        return static_cast<const TextCloneCSSValue*>(this)->cssText();
+    }
+    ASSERT(!isCSSOMSafe() || isSubtypeExposedToCSSOM());
+
     switch (classType()) {
     case AspectRatioClass:
         return static_cast<const CSSAspectRatioValue*>(this)->customCssText();
@@ -172,6 +198,13 @@ String CSSValue::cssText() const
 
 void CSSValue::destroy()
 {
+    if (m_isTextClone) {
+        ASSERT(isCSSOMSafe());
+        delete static_cast<TextCloneCSSValue*>(this);
+        return;
+    }
+    ASSERT(!isCSSOMSafe() || isSubtypeExposedToCSSOM());
+
     switch (classType()) {
     case AspectRatioClass:
         delete static_cast<CSSAspectRatioValue*>(this);
@@ -273,6 +306,35 @@ void CSSValue::destroy()
 #endif
     }
     ASSERT_NOT_REACHED();
+}
+
+PassRefPtr<CSSValue> CSSValue::cloneForCSSOM() const
+{
+    switch (classType()) {
+    case PrimitiveClass:
+        return static_cast<const CSSPrimitiveValue*>(this)->cloneForCSSOM();
+    case ValueListClass:
+        return static_cast<const CSSValueList*>(this)->cloneForCSSOM();
+#if ENABLE(CSS_FILTERS)
+    case WebKitCSSFilterClass:
+        return static_cast<const WebKitCSSFilterValue*>(this)->cloneForCSSOM();
+#endif
+    case WebKitCSSTransformClass:
+        return static_cast<const WebKitCSSTransformValue*>(this)->cloneForCSSOM();
+#if ENABLE(CSS_IMAGE_SET)
+    case ImageSetClass:
+        return static_cast<const CSSImageSetValue*>(this)->cloneForCSSOM();
+#endif
+#if ENABLE(SVG)
+    case SVGColorClass:
+        return static_cast<const SVGColor*>(this)->cloneForCSSOM();
+    case SVGPaintClass:
+        return static_cast<const SVGPaint*>(this)->cloneForCSSOM();
+#endif
+    default:
+        ASSERT(!isSubtypeExposedToCSSOM());
+        return TextCloneCSSValue::create(classType(), cssText());
+    }
 }
 
 }
