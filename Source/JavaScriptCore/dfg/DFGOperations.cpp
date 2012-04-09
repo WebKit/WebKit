@@ -83,7 +83,7 @@
     ".thumb" "\n" \
     ".thumb_func " THUMB_FUNC_PARAM(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
-        "cpy a2, lr" "\n" \
+        "mov a2, lr" "\n" \
         "b " SYMBOL_STRING_RELOCATION(function) "WithReturnAddress" "\n" \
     );
 
@@ -96,7 +96,7 @@
     ".thumb" "\n" \
     ".thumb_func " THUMB_FUNC_PARAM(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
-        "cpy a4, lr" "\n" \
+        "mov a4, lr" "\n" \
         "b " SYMBOL_STRING_RELOCATION(function) "WithReturnAddress" "\n" \
     );
 
@@ -1174,7 +1174,7 @@ HIDE_SYMBOL(getHostCallReturnValue) "\n"
 ".thumb_func " THUMB_FUNC_PARAM(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "ldr r5, [r5, #-40]" "\n"
-    "cpy r0, r5" "\n"
+    "mov r0, r5" "\n"
     "b " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
 );
 #endif

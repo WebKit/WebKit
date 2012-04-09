@@ -945,7 +945,7 @@ class Instruction
                 $asm.puts "blx #{operands[0].armV7Operand}"
             end
         when "break"
-            $asm.puts "bkpt"
+            $asm.puts "bkpt #0"
         when "ret"
             $asm.puts "bx lr"
         when "cieq", "cpeq"

@@ -1,3 +1,11 @@
+2012-04-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, modernize and clean up uses of ARM assembly mnemonics in inline asm blocks.
+
+        * dfg/DFGOperations.cpp:
+        (JSC):
+        * offlineasm/armv7.rb:
+
 2012-04-09  Patrick Gansterer  <paroga@webkit.org>
 
         Remove HAVE_STDINT_H
