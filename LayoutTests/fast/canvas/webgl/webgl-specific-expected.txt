@@ -60,6 +60,10 @@ PASS getError was expected value: NO_ERROR : set/get UNPACK_COLORSPACE_CONVERSIO
 
 Verify that drawingBufferWidth and drawingBufferHeights are implemented
 PASS gl.drawingBufferWidth >= 0 && gl.drawingBufferHeight >= 0 is true
+
+Verify that bindAttribLocation rejects names start with webgl_ or _webgl_
+PASS gl.bindAttribLocation(program, 0, 'webgl_a') generated expected GL error: INVALID_OPERATION.
+PASS gl.bindAttribLocation(program, 0, '_webgl_a') generated expected GL error: INVALID_OPERATION.
 PASS successfullyParsed is true
 
 TEST COMPLETE

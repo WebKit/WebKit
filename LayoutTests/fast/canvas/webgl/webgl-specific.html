@@ -89,6 +89,13 @@ glErrorShouldBe(gl, gl.NO_ERROR, "set/get UNPACK_COLORSPACE_CONVERSION_WEBGL sho
 debug("");
 debug("Verify that drawingBufferWidth and drawingBufferHeights are implemented");
 shouldBeTrue("gl.drawingBufferWidth >= 0 && gl.drawingBufferHeight >= 0");
+
+debug("");
+debug("Verify that bindAttribLocation rejects names start with webgl_ or _webgl_");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.bindAttribLocation(program, 0, 'webgl_a')");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.bindAttribLocation(program, 0, '_webgl_a')");
+
+successfullyParsed = true;
 </script>
 
 <script src="../../js/resources/js-test-post.js"></script>
