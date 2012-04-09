@@ -40,9 +40,15 @@ class FileList;
 class ClipboardMac : public Clipboard, public CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<ClipboardMac> create(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, Frame* frame)
+    enum ClipboardContents {
+        DragAndDropData,
+        DragAndDropFiles,
+        CopyAndPasteGeneric
+    };
+
+    static PassRefPtr<ClipboardMac> create(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents, Frame* frame)
     {
-        return adoptRef(new ClipboardMac(clipboardType, pasteboardName, policy, frame));
+        return adoptRef(new ClipboardMac(clipboardType, pasteboardName, policy, clipboardContents, frame));
     }
 
     virtual ~ClipboardMac();
@@ -74,12 +80,13 @@ public:
     const String& pasteboardName() { return m_pasteboardName; }
 
 private:
-    ClipboardMac(ClipboardType, const String& pasteboardName, ClipboardAccessPolicy, Frame*);
+    ClipboardMac(ClipboardType, const String& pasteboardName, ClipboardAccessPolicy, ClipboardContents, Frame*);
 
     void setDragImage(CachedImage*, Node*, const IntPoint&);
 
     String m_pasteboardName;
     int m_changeCount;
+    ClipboardContents m_clipboardContents;
     Frame* m_frame; // used on the source side to generate dragging images
 };
 

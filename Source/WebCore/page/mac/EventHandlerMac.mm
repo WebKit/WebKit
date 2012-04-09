@@ -673,7 +673,7 @@ PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
     // also done for security, as it erases data from the last drag
     Pasteboard pasteboard(NSDragPboard);
     pasteboard.clear();
-    return ClipboardMac::create(Clipboard::DragAndDrop, String(NSDragPboard), ClipboardWritable, m_frame);
+    return ClipboardMac::create(Clipboard::DragAndDrop, String(NSDragPboard), ClipboardWritable, ClipboardMac::DragAndDropData, m_frame);
 }
 
 #endif

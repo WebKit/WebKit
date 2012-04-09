@@ -48,12 +48,13 @@ namespace WebCore {
 
 PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame* frame)
 {
-    return ClipboardMac::create(DragAndDrop, dragData->pasteboardName(), policy, frame);
+    return ClipboardMac::create(DragAndDrop, dragData->pasteboardName(), policy, dragData->containsFiles() ? ClipboardMac::DragAndDropFiles : ClipboardMac::DragAndDropData, frame);
 }
 
-ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, Frame *frame)
+ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents, Frame *frame)
     : Clipboard(policy, clipboardType)
     , m_pasteboardName(pasteboardName)
+    , m_clipboardContents(clipboardContents)
     , m_frame(frame)
 {
     m_changeCount = platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName);
@@ -212,7 +213,7 @@ static Vector<String> absoluteURLsFromPasteboard(const String& pasteboardName, b
 
 String ClipboardMac::getData(const String& type) const
 {
-    if (policy() != ClipboardReadable)
+    if (policy() != ClipboardReadable || m_clipboardContents == DragAndDropFiles)
         return String();
 
     const String& cocoaType = cocoaTypeFromHTMLClipboardType(type);
@@ -241,7 +242,7 @@ String ClipboardMac::getData(const String& type) const
 
 bool ClipboardMac::setData(const String &type, const String &data)
 {
-    if (policy() != ClipboardWritable)
+    if (policy() != ClipboardWritable || m_clipboardContents == DragAndDropFiles)
         return false;
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
@@ -311,7 +312,7 @@ HashSet<String> ClipboardMac::types() const
 // clipboard are not reflected in any FileList objects the page has accessed and stored
 PassRefPtr<FileList> ClipboardMac::files() const
 {
-    if (policy() != ClipboardReadable)
+    if (policy() != ClipboardReadable || m_clipboardContents == DragAndDropData)
         return FileList::create();
 
     Vector<String> absoluteURLs = absoluteURLsFromPasteboardFilenames(m_pasteboardName);

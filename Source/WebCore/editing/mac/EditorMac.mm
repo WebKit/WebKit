@@ -51,7 +51,7 @@ using namespace HTMLNames;
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
 {
     return ClipboardMac::create(Clipboard::CopyAndPaste,
-        policy == ClipboardWritable ? platformStrategies()->pasteboardStrategy()->uniqueName() : String(NSGeneralPboard), policy, frame);
+        policy == ClipboardWritable ? platformStrategies()->pasteboardStrategy()->uniqueName() : String(NSGeneralPboard), policy, ClipboardMac::CopyAndPasteGeneric, frame);
 }
 
 void Editor::showFontPanel()
