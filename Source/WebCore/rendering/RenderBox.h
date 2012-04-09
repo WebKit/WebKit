@@ -212,6 +212,11 @@ public:
     int pixelSnappedClientWidth() const;
     int pixelSnappedClientHeight() const;
 
+    LayoutUnit paddingBoxWidth() const { return width() - borderLeft() - borderRight(); }
+    LayoutUnit paddingBoxHeight() const { return height() - borderTop() - borderBottom(); }
+    int pixelSnappedPaddingBoxWidth() const { return snapSizeToPixel(paddingBoxWidth(), x() + paddingLeft()); }
+    int pixelSnappedPaddingBoxHeight() const { return snapSizeToPixel(paddingBoxHeight(), y() + paddingTop()); }
+
     // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
     // object has overflow:hidden/scroll/auto specified and also has overflow.
     // scrollLeft/Top return the current scroll position.  These methods are virtual so that objects like

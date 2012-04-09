@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript">
+            function increaseOuterDiv() {
+                var outer = document.getElementById("divId");
+                outer.style.height = "100px";
+                outer.style.width = "100px";
+            }
+
+            window.addEventListener("load", increaseOuterDiv, false);
+        </script>
+    </head>
+    <body>
+        <p> Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=71541">71541</a>: Unnecessary scroll bar after changing the dimensions of a DIV </p>
+        <p> For this test to pass, we should not see any scrollbars once width and height are changed to 100*100 through javascript </p>
+        <div id="divId" style="position:absolute; left:110px; top:140px; width:60px; height:60px; overflow:auto;">
+            <div style="position:absolute; left:0px; top:0px; width:100px; height:100px; background-color:Green">My Width and Height is 100 and 100</div>
+        </div>
+    </body>
+</html>
+
