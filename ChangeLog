@@ -1,3 +1,12 @@
+2012-04-09  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Fail to activate links after double tap gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=83468
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * ManualTests/link-activation-fails-after-double-tap-gesture.html: Added.
+
 2012-04-09  Martin Robinson  <mrobinson@igalia.com>
 
         [soup] Crash while loading http://www.jusco.cn

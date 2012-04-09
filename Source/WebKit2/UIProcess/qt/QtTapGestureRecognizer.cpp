@@ -86,6 +86,7 @@ bool QtTapGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTim
         if (m_candidate == DoubleTapCandidate) {
             m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
             m_eventHandler->handleDoubleTapEvent(touchPoint);
+            reset();
         }
 
         break;

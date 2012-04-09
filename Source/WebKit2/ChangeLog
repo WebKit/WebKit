@@ -1,3 +1,20 @@
+2012-04-09  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Fail to activate links after double tap gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=83468
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        After a recognized double tap gesture, QtTapGestureRecognizer
+        gets stuck in the double-tap state. Only tapping outside of
+        the double tap radius cancels it.
+        Call reset() to set the default state back.
+
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::recognize):
+
+        ManualTests/link-activation-fails-after-double-tap-gesture.html: Added.
+
 2012-04-07  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Cleanup WTF include directories
