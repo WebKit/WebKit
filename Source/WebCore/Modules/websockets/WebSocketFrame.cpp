@@ -129,34 +129,40 @@ WebSocketFrame::ParseFrameResult WebSocketFrame::parseFrame(char* data, size_t d
     return FrameOK;
 }
 
-static void appendMaskedFramePayload(const WebSocketFrame& frame, Vector<char>& frameData)
+static void appendFramePayload(const WebSocketFrame& frame, Vector<char>& frameData)
 {
-    size_t maskingKeyStart = frameData.size();
-    frameData.grow(frameData.size() + maskingKeyWidthInBytes); // Add placeholder for masking key. Will be overwritten.
+    size_t maskingKeyStart = 0;
+    if (frame.masked) {
+        maskingKeyStart = frameData.size();
+        frameData.grow(frameData.size() + maskingKeyWidthInBytes); // Add placeholder for masking key. Will be overwritten.
+    }
+
     size_t payloadStart = frameData.size();
     frameData.append(frame.payload, frame.payloadLength);
 
-    cryptographicallyRandomValues(frameData.data() + maskingKeyStart, maskingKeyWidthInBytes);
-    for (size_t i = 0; i < frame.payloadLength; ++i)
-        frameData[payloadStart + i] ^= frameData[maskingKeyStart + i % maskingKeyWidthInBytes];
+    if (frame.masked) {
+        cryptographicallyRandomValues(frameData.data() + maskingKeyStart, maskingKeyWidthInBytes);
+        for (size_t i = 0; i < frame.payloadLength; ++i)
+            frameData[payloadStart + i] ^= frameData[maskingKeyStart + i % maskingKeyWidthInBytes];
+    }
 }
 
 void WebSocketFrame::makeFrameData(Vector<char>& frameData)
 {
     ASSERT(!(opCode & ~opCodeMask)); // Checks whether "opCode" fits in the range of opCodes.
 
-    unsigned char firstByte = (final ? finalBit : 0) | opCode;
-    if (compress)
-        firstByte |= compressBit;
-    frameData.append(firstByte);
+    frameData.resize(2);
+    frameData.at(0) = (final ? finalBit : 0) | (compress ? compressBit : 0) | opCode;
+    frameData.at(1) = masked ? maskBit : 0;
+
     if (payloadLength <= maxPayloadLengthWithoutExtendedLengthField)
-        frameData.append(maskBit | payloadLength);
+        frameData.at(1) |= payloadLength;
     else if (payloadLength <= 0xFFFF) {
-        frameData.append(maskBit | payloadLengthWithTwoByteExtendedLengthField);
+        frameData.at(1) |= payloadLengthWithTwoByteExtendedLengthField;
         frameData.append((payloadLength & 0xFF00) >> 8);
         frameData.append(payloadLength & 0xFF);
     } else {
-        frameData.append(maskBit | payloadLengthWithEightByteExtendedLengthField);
+        frameData.at(1) |= payloadLengthWithEightByteExtendedLengthField;
         char extendedPayloadLength[8];
         size_t remaining = payloadLength;
         // Fill the length into extendedPayloadLength in the network byte order.
@@ -168,7 +174,7 @@ void WebSocketFrame::makeFrameData(Vector<char>& frameData)
         frameData.append(extendedPayloadLength, 8);
     }
 
-    appendMaskedFramePayload(*this, frameData);
+    appendFramePayload(*this, frameData);
 }
 
 WebSocketFrame::WebSocketFrame(OpCode opCode, bool final, bool compress, bool masked, const char* payload, size_t payloadLength)
