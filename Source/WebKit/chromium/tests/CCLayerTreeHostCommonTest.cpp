@@ -1238,6 +1238,93 @@ TEST(CCLayerTreeHostCommonTest, verifyVisibleRectForPerspectiveUnprojection)
     EXPECT_INT_RECT_EQ(expected, actual);
 }
 
+TEST(CCLayerTreeHostCommonTest, verifyBackFaceCulling)
+{
+    // Verify that layers are appropriately culled when their back face is showing and they are not double sided.
+    //
+    // Layers that are animating do not get culled on the main thread, as their transforms should be
+    // treated as "unknown" so we can not be sure that their back face is really showing.
+    //
+
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> child = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> animatingSurface = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> childOfAnimatingSurface = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> animatingChild = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> child2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+
+    parent->createRenderSurface();
+    parent->addChild(child);
+    parent->addChild(animatingSurface);
+    animatingSurface->addChild(childOfAnimatingSurface);
+    parent->addChild(animatingChild);
+    parent->addChild(child2);
+
+    // Nothing is double-sided
+    child->setDoubleSided(false);
+    child2->setDoubleSided(false);
+    animatingSurface->setDoubleSided(false);
+    childOfAnimatingSurface->setDoubleSided(false);
+    animatingChild->setDoubleSided(false);
+
+    TransformationMatrix backfaceMatrix;
+    backfaceMatrix.translate(50, 50);
+    backfaceMatrix.rotate3d(0, 1, 0, 180);
+    backfaceMatrix.translate(-50, -50);
+
+    // Having a descendent, and animating transforms, will make the animatingSurface own a render surface.
+    addAnimatedTransformToController(*animatingSurface->layerAnimationController(), 10, 30, 0);
+    // This is just an animating layer, not a surface.
+    addAnimatedTransformToController(*animatingChild->layerAnimationController(), 10, 30, 0);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+    setLayerPropertiesForTesting(child.get(), backfaceMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(animatingSurface.get(), backfaceMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(childOfAnimatingSurface.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(animatingChild.get(), backfaceMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(child2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent.get());
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    EXPECT_FALSE(child->renderSurface());
+    EXPECT_TRUE(animatingSurface->renderSurface());
+    EXPECT_FALSE(childOfAnimatingSurface->renderSurface());
+    EXPECT_FALSE(animatingChild->renderSurface());
+    EXPECT_FALSE(child2->renderSurface());
+
+    // Verify that the animatingChild and childOfAnimatingSurface were not culled, but that child was.
+    ASSERT_EQ(2u, renderSurfaceLayerList.size());
+    EXPECT_EQ(parent->id(), renderSurfaceLayerList[0]->id());
+    EXPECT_EQ(animatingSurface->id(), renderSurfaceLayerList[1]->id());
+
+    // The non-animating child be culled from the layer list for the parent render surface.
+    ASSERT_EQ(3u, renderSurfaceLayerList[0]->renderSurface()->layerList().size());
+    EXPECT_EQ(animatingSurface->id(), renderSurfaceLayerList[0]->renderSurface()->layerList()[0]->id());
+    EXPECT_EQ(animatingChild->id(), renderSurfaceLayerList[0]->renderSurface()->layerList()[1]->id());
+    EXPECT_EQ(child2->id(), renderSurfaceLayerList[0]->renderSurface()->layerList()[2]->id());
+
+    ASSERT_EQ(2u, renderSurfaceLayerList[1]->renderSurface()->layerList().size());
+    EXPECT_EQ(animatingSurface->id(), renderSurfaceLayerList[1]->renderSurface()->layerList()[0]->id());
+    EXPECT_EQ(childOfAnimatingSurface->id(), renderSurfaceLayerList[1]->renderSurface()->layerList()[1]->id());
+
+    EXPECT_FALSE(child2->visibleLayerRect().isEmpty());
+
+    // But if the back face is visible, then the visibleLayerRect should be empty.
+    EXPECT_TRUE(animatingChild->visibleLayerRect().isEmpty());
+    EXPECT_TRUE(animatingSurface->visibleLayerRect().isEmpty());
+    // And any layers in the subtree should not be considered visible either.
+    EXPECT_TRUE(childOfAnimatingSurface->visibleLayerRect().isEmpty());
+}
+
 // FIXME:
 // continue working on https://bugs.webkit.org/show_bug.cgi?id=68942
 //  - add a test to verify clipping that changes the "center point"

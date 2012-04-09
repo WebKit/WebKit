@@ -42,6 +42,20 @@
 
 namespace WebCore {
 
+template<typename LayerType>
+static inline bool backFaceIsVisible(LayerType* layer)
+{
+    // This is checked by computing the transformed normal of the layer in screen space.
+    FloatRect layerRect(FloatPoint(0, 0), FloatSize(layer->bounds()));
+    FloatQuad mappedLayer = layer->screenSpaceTransform().mapQuad(FloatQuad(layerRect));
+    FloatSize horizontalDir = mappedLayer.p2() - mappedLayer.p1();
+    FloatSize verticalDir = mappedLayer.p4() - mappedLayer.p1();
+    FloatPoint3D xAxis(horizontalDir.width(), horizontalDir.height(), 0);
+    FloatPoint3D yAxis(verticalDir.width(), verticalDir.height(), 0);
+    FloatPoint3D zAxis = xAxis.cross(yAxis);
+    return zAxis.z() < 0;
+}
+
 IntRect CCLayerTreeHostCommon::calculateVisibleRect(const IntRect& targetSurfaceRect, const IntRect& layerBoundRect, const TransformationMatrix& transform)
 {
     // Is this layer fully contained within the target surface?
@@ -65,65 +79,45 @@ IntRect CCLayerTreeHostCommon::calculateVisibleRect(const IntRect& targetSurface
     return layerRect;
 }
 
+template<typename LayerType>
+static IntRect calculateVisibleLayerRect(LayerType* layer)
+{
+    ASSERT(layer->targetRenderSurface());
+
+    // Animated layers can exist in the render surface tree that are not visible currently
+    // and have their back face showing. In this case, their visible rect should be empty.
+    if (!layer->doubleSided() && backFaceIsVisible(layer))
+        return IntRect();
+
+    IntRect targetSurfaceRect = layer->targetRenderSurface()->contentRect();
+
+    if (layer->usesLayerClipping())
+        targetSurfaceRect.intersect(layer->clipRect());
+
+    if (targetSurfaceRect.isEmpty() || layer->contentBounds().isEmpty())
+        return targetSurfaceRect;
+
+    // Note carefully these are aliases
+    const IntSize& bounds = layer->bounds();
+    const IntSize& contentBounds = layer->contentBounds();
+
+    const IntRect layerBoundRect = IntRect(IntPoint(), contentBounds);
+    TransformationMatrix transform = layer->drawTransform();
+
+    transform.scaleNonUniform(bounds.width() / static_cast<double>(contentBounds.width()),
+                              bounds.height() / static_cast<double>(contentBounds.height()));
+    transform.translate(-contentBounds.width() / 2.0, -contentBounds.height() / 2.0);
+
+    IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleRect(targetSurfaceRect, layerBoundRect, transform);
+    return visibleLayerRect;
+}
+
 static bool isScaleOrTranslation(const TransformationMatrix& m)
 {
     return !m.m12() && !m.m13() && !m.m14()
            && !m.m21() && !m.m23() && !m.m24()
            && !m.m31() && !m.m32() && !m.m43()
            && m.m44();
-}
-
-template<typename LayerType>
-static bool layerShouldBeSkipped(LayerType* layer)
-{
-    // Layers can be skipped if any of these conditions are met.
-    //   - does not draw content.
-    //   - is transparent
-    //   - has empty bounds
-    //   - the layer is not double-sided, but its back face is visible.
-    //
-    // Some additional conditions need to be computed at a later point after the recursion is finished.
-    //   - the intersection of render surface content and layer clipRect is empty
-    //   - the visibleLayerRect is empty
-    //
-    // Note, if the layer should not have been drawn due to being fully transparent,
-    // we would have skipped the entire subtree and never made it into this function,
-    // so it is safe to omit this check here.
-
-    if (!layer->drawsContent() || layer->bounds().isEmpty())
-        return true;
-
-    // The layer should not be drawn if (1) it is not double-sided and (2) the back of the layer is facing the screen.
-    // This second condition is checked by computing the transformed normal of the layer.
-    if (!layer->doubleSided()) {
-        FloatRect layerRect(FloatPoint(0, 0), FloatSize(layer->bounds()));
-        FloatQuad mappedLayer = layer->screenSpaceTransform().mapQuad(FloatQuad(layerRect));
-        FloatSize horizontalDir = mappedLayer.p2() - mappedLayer.p1();
-        FloatSize verticalDir = mappedLayer.p4() - mappedLayer.p1();
-        FloatPoint3D xAxis(horizontalDir.width(), horizontalDir.height(), 0);
-        FloatPoint3D yAxis(verticalDir.width(), verticalDir.height(), 0);
-        FloatPoint3D zAxis = xAxis.cross(yAxis);
-        if (zAxis.z() < 0)
-            return true;
-    }
-
-    return false;
-}
-
-static inline bool subtreeShouldBeSkipped(CCLayerImpl* layer)
-{
-    // The opacity of a layer always applies to its children (either implicitly
-    // via a render surface or explicitly if the parent preserves 3D), so the
-    // entire subtree can be skipped if this layer is fully transparent.
-    return !layer->opacity();
-}
-
-static inline bool subtreeShouldBeSkipped(LayerChromium* layer)
-{
-    // If the opacity is being animated then the opacity on the main thread is unreliable
-    // (since the impl thread may be using a different opacity), so it should not be trusted.
-    // In particular, it should not cause the subtree to be skipped.
-    return !layer->opacity() && !layer->opacityIsAnimating();
 }
 
 static inline bool layerOpacityIsOpaque(CCLayerImpl* layer)
@@ -147,6 +141,59 @@ static inline bool transformToParentIsKnown(CCLayerImpl*)
 static inline bool transformToParentIsKnown(LayerChromium* layer)
 {
     return !layer->transformIsAnimating();
+}
+
+static inline bool transformToScreenIsKnown(CCLayerImpl*)
+{
+    return true;
+}
+
+static inline bool transformToScreenIsKnown(LayerChromium* layer)
+{
+    return !layer->screenSpaceTransformIsAnimating();
+}
+
+template<typename LayerType>
+static bool layerShouldBeSkipped(LayerType* layer)
+{
+    // Layers can be skipped if any of these conditions are met.
+    //   - does not draw content.
+    //   - is transparent
+    //   - has empty bounds
+    //   - the layer is not double-sided, but its back face is visible.
+    //
+    // Some additional conditions need to be computed at a later point after the recursion is finished.
+    //   - the intersection of render surface content and layer clipRect is empty
+    //   - the visibleLayerRect is empty
+    //
+    // Note, if the layer should not have been drawn due to being fully transparent,
+    // we would have skipped the entire subtree and never made it into this function,
+    // so it is safe to omit this check here.
+
+    if (!layer->drawsContent() || layer->bounds().isEmpty())
+        return true;
+
+    // The layer should not be drawn if (1) it is not double-sided and (2) the back of the layer is known to be facing the screen.
+    if (!layer->doubleSided() && transformToScreenIsKnown(layer) && backFaceIsVisible(layer))
+        return true;
+
+    return false;
+}
+
+static inline bool subtreeShouldBeSkipped(CCLayerImpl* layer)
+{
+    // The opacity of a layer always applies to its children (either implicitly
+    // via a render surface or explicitly if the parent preserves 3D), so the
+    // entire subtree can be skipped if this layer is fully transparent.
+    return !layer->opacity();
+}
+
+static inline bool subtreeShouldBeSkipped(LayerChromium* layer)
+{
+    // If the opacity is being animated then the opacity on the main thread is unreliable
+    // (since the impl thread may be using a different opacity), so it should not be trusted.
+    // In particular, it should not cause the subtree to be skipped.
+    return !layer->opacity() && !layer->opacityIsAnimating();
 }
 
 template<typename LayerType>
@@ -615,7 +662,7 @@ static void walkLayersAndCalculateVisibleLayerRects(const LayerList& renderSurfa
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
         if (!it.representsTargetRenderSurface()) {
-            IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect<LayerType>(*it);
+            IntRect visibleLayerRect = calculateVisibleLayerRect(*it);
             it->setVisibleLayerRect(visibleLayerRect);
         }
     }
