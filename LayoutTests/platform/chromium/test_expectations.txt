@@ -1190,6 +1190,9 @@ BUGWK83051 WIN LINUX LION : svg/css/group-with-shadow.svg = IMAGE PASS
 BUGWK53378 MAC : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 
+// This fails image 5-10% of the time. Probably a race condition on timers.
+BUGWK83471 : svg/as-image/animated-svg-as-image-same-image.html = PASS IMAGE
+
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------
@@ -3696,35 +3699,6 @@ BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
 // Flaky/crashing on a single platform every 30 tries or so
 BUGWK82230 LINUX DEBUG : http/tests/cache/post-redirect-get.php = PASS CRASH
 BUGWK82231 WIN DEBUG : fast/canvas/webgl/program-test.html = PASS CRASH
-
-// These all fail with roughly the same stack that passes through SVG code. But it is not entirely clear
-// that it is an SVG issue, as some of the tests do not include any SVG at all.
-BUGWK82232 SNOWLEOPARD LINUX : svg/as-image/animated-svg-as-image-same-image.html = PASS IMAGE CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-background-image/background-image-tiled.html = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/svg-as-image.html = CRASH PASS
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/svg-non-integer-scaled-image.html = CRASH PASS
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/svg-nested.html = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/svg-image-leak-loader.html = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/custom/feComponentTransfer-Gamma.svg = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-background-image/svg-as-background-3.html = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-background-image/svg-as-background-with-relative-size.html = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/css/background-image-svg.html = PASS TEXT CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-foreign-content.svg = PASS TEXT CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-svg-as-background-with-relative-size.html = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-svg-as-image.html = PASS TEXT CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : fast/writing-mode/body-writing-mode-propagation-blocked.html = PASS TEXT CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : fast/writing-mode/body-direction-propagation.html = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : fast/writing-mode/borders.html = PASS TEXT CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : fast/writing-mode/broken-ideographic-font.html = CRASH PASS
-BUGWK82232 SNOWLEOPARD DEBUG : fast/writing-mode/japanese-ruby-horizontal-bt.html = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : transitions/remove-transition-style.html = PASS TEXT CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : traversal/node-iterator-prototype.html = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : fast/writing-mode/border-image-vertical-lr.html = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-background-image/animated-svg-as-background.html = PASS CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/same-image-two-instances.html = PASS IMAGE CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/as-image/svg-image-change-content-size.xhtml = PASS IMAGE CRASH
-BUGWK82232 SNOWLEOPARD DEBUG : svg/custom/circular-marker-reference-2.svg = PASS CRASH
 
 // Flaky since at least r111670
 BUGWK82258 DEBUG : svg/custom/circular-marker-reference-4.svg = TEXT PASS
