@@ -4268,6 +4268,9 @@ class WebKitStyleTest(CppStyleTestBase):
             'gtk_widget_style_get(style, "propertyName", &value, "otherName", &otherValue, NULL);',
             '')
         self.assert_lint(
+            'gtk_style_context_get_style(context, "propertyName", &value, "otherName", &otherValue, NULL);',
+            '')
+        self.assert_lint(
             'gtk_widget_style_get_property(style, NULL, NULL);',
             'Use 0 instead of NULL.  [readability/null] [5]',
             'foo.cpp')

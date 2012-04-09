@@ -1,3 +1,18 @@
+2012-04-09  Martin Robinson  <mrobinson@igalia.com>
+
+        check-webkit-style should ignore NULL usage in gtk_style_context_get_style
+        https://bugs.webkit.org/show_bug.cgi?id=83412
+
+        Reviewed by David Levin.
+
+        Accept NULL as an argument for gtk_style_context_get_style, because it's
+        used as a sentinel in a variable argument list. 
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_for_null): Add an exception.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_null_false_zero): Add a test for the exception.
+
 2012-04-09  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: use the filesystem object properly in fileuploader
