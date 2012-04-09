@@ -4,10 +4,10 @@ GET(""): GET(null bytes), Content-Type: null
 GET(null): GET(null bytes), Content-Type: null
 GET("123"): GET(null bytes), Content-Type: null
 POST(""): POST(0 bytes), Content-Type: application/xml
-POST(null): POST(null bytes), Content-Type: null
+POST(null): POST(0 bytes), Content-Type: null
 POST("123"): POST(3 bytes), Content-Type: application/xml
 PUT(""): PUT(0 bytes), Content-Type: application/xml
-PUT(null): PUT(null bytes), Content-Type: null
+PUT(null): PUT(0 bytes), Content-Type: null
 PUT("123"): PUT(3 bytes), Content-Type: application/xml
 DELETE(""): DELETE(0 bytes), Content-Type: application/xml
 DELETE(null): DELETE(null bytes), Content-Type: null

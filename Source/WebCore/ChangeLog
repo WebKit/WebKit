@@ -1,3 +1,19 @@
+2012-04-03  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        Soup HTTP backend does not send Content-Length in certain cases
+        https://bugs.webkit.org/show_bug.cgi?id=82036
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Telling soup explicitly when to send content-length header
+        in POST & PUT cases in order to align with e.g. Chromium and FF.
+
+        No new tests, already covered by *methods*.html in
+        http/tests/xmlhttprequest/.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::startHTTPRequest): Special handling for POST & PUT.
+
 2012-03-26  Zan Dobersek  <zandobersek@gmail.com>
 
         [GObject bindings] Supplemental interfaces are not disabled with the "Conditional" attribute
