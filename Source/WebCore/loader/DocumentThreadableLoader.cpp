@@ -134,7 +134,7 @@ void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(const Resource
 
 void DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight(const ResourceRequest& request)
 {
-    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, securityOrigin(), m_options.allowCredentials);
+    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, securityOrigin());
     loadRequest(preflightRequest, DoSecurityCheck);
 }
 
