@@ -57,6 +57,42 @@ WebInspector.NetworkManager.EventTypes = {
     ResourceUpdateDropped: "ResourceUpdateDropped"
 }
 
+WebInspector.NetworkManager._MIMETypes = {
+    "text/html":                   {"document": true},
+    "text/xml":                    {"document": true},
+    "text/plain":                  {"document": true},
+    "application/xhtml+xml":       {"document": true},
+    "text/css":                    {"stylesheet": true},
+    "text/xsl":                    {"stylesheet": true},
+    "image/jpeg":                  {"image": true},
+    "image/png":                   {"image": true},
+    "image/gif":                   {"image": true},
+    "image/bmp":                   {"image": true},
+    "image/svg+xml":               {"image": true},
+    "image/vnd.microsoft.icon":    {"image": true},
+    "image/webp":                  {"image": true},
+    "image/x-icon":                {"image": true},
+    "image/x-xbitmap":             {"image": true},
+    "font/ttf":                    {"font": true},
+    "font/opentype":               {"font": true},
+    "font/woff":                   {"font": true},
+    "application/x-font-type1":    {"font": true},
+    "application/x-font-ttf":      {"font": true},
+    "application/x-font-woff":     {"font": true},
+    "application/x-truetype-font": {"font": true},
+    "text/javascript":             {"script": true},
+    "text/ecmascript":             {"script": true},
+    "application/javascript":      {"script": true},
+    "application/ecmascript":      {"script": true},
+    "application/x-javascript":    {"script": true},
+    "application/json":            {"script": true},
+    "text/javascript1.1":          {"script": true},
+    "text/javascript1.2":          {"script": true},
+    "text/javascript1.3":          {"script": true},
+    "text/jscript":                {"script": true},
+    "text/livescript":             {"script": true},
+}
+
 WebInspector.NetworkManager.prototype = {
     /**
      * @param {WebInspector.Resource} resource
@@ -180,7 +216,7 @@ WebInspector.NetworkDispatcher.prototype = {
         if (!this._mimeTypeIsConsistentWithType(resource)) {
             WebInspector.console.addMessage(WebInspector.ConsoleMessage.create(WebInspector.ConsoleMessage.MessageSource.Network,
                 WebInspector.ConsoleMessage.MessageLevel.Warning,
-                WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s: \"%s\".", WebInspector.Resource.Type.toUIString(resource.type), resource.mimeType, resource.url),
+                WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s: \"%s\".", resource.type.title(), resource.mimeType, resource.url),
                 WebInspector.ConsoleMessage.MessageType.Log,
                 "",
                 0,
@@ -207,16 +243,16 @@ WebInspector.NetworkDispatcher.prototype = {
             return true;
 
         if (typeof resource.type === "undefined"
-            || resource.type === WebInspector.Resource.Type.Other
-            || resource.type === WebInspector.Resource.Type.XHR
-            || resource.type === WebInspector.Resource.Type.WebSocket)
+            || resource.type === WebInspector.resourceTypes.Other
+            || resource.type === WebInspector.resourceTypes.XHR
+            || resource.type === WebInspector.resourceTypes.WebSocket)
             return true;
 
         if (!resource.mimeType)
             return true; // Might be not known for cached resources with null responses.
 
-        if (resource.mimeType in WebInspector.MIMETypes)
-            return resource.type in WebInspector.MIMETypes[resource.mimeType];
+        if (resource.mimeType in WebInspector.NetworkManager._MIMETypes)
+            return resource.type.name() in WebInspector.NetworkManager._MIMETypes[resource.mimeType];
 
         return false;
     },
@@ -227,7 +263,7 @@ WebInspector.NetworkDispatcher.prototype = {
      */
     _updateResourceWithCachedResource: function(resource, cachedResource)
     {
-        resource.type = WebInspector.Resource.Type[cachedResource.type];
+        resource.type = WebInspector.resourceTypes[cachedResource.type];
         resource.resourceSize = cachedResource.bodySize;
         this._updateResourceWithResponse(resource, cachedResource.response);
     },
@@ -312,7 +348,7 @@ WebInspector.NetworkDispatcher.prototype = {
         }
 
         resource.responseReceivedTime = time;
-        resource.type = WebInspector.Resource.Type[resourceType];
+        resource.type = WebInspector.resourceTypes[resourceType];
 
         this._updateResourceWithResponse(resource, response);
 
@@ -396,7 +432,7 @@ WebInspector.NetworkDispatcher.prototype = {
     webSocketCreated: function(requestId, requestURL)
     {
         var resource = new WebInspector.Resource(requestId, requestURL, "", null);
-        resource.type = WebInspector.Resource.Type.WebSocket;
+        resource.type = WebInspector.resourceTypes.WebSocket;
         this._startResource(resource);
     },
 

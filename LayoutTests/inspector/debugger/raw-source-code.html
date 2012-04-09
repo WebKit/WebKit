@@ -10,7 +10,7 @@ function test()
     function createResourceMock(type, finished, content)
     {
         var resource = {};
-        resource.type = type === "document" ? WebInspector.Resource.Type.Document : WebInspector.Resource.Type.Script;
+        resource.type = type === "document" ? WebInspector.resourceTypes.Document : WebInspector.resourceTypes.Script;
         resource.finished = finished;
         resource.content = content;
         resource.requestContent = function(callback) { callback(resource.content); };

@@ -74013,10 +74013,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\ResourceCategory.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\ResourceCookiesView.js"
 					>
 				</File>
@@ -74058,6 +74054,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ResourceTreeModel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ResourceType.js"
 					>
 				</File>
 				<File

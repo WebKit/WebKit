@@ -70,13 +70,13 @@ WebInspector.ResourcePreviewView.prototype = {
         if (this.resource.hasErrorStatusCode() && this.resource.content)
             return new WebInspector.ResourceHTMLView(this.resource);
 
-        if (this.resource.category === WebInspector.resourceCategories.xhr && this.resource.content) {
+        if (this.resource.type === WebInspector.resourceTypes.XHR && this.resource.content) {
             var parsedJSON = WebInspector.ResourceJSONView.parseJSON(this.resource.content);
             if (parsedJSON)
                 return new WebInspector.ResourceJSONView(this.resource, parsedJSON);
         }
 
-        if (this.resource.content && this.resource.category === WebInspector.resourceCategories.scripts && this.resource.mimeType === "application/json") {
+        if (this.resource.content && this.resource.type === WebInspector.resourceTypes.Script && this.resource.mimeType === "application/json") {
             var parsedJSONP = WebInspector.ResourceJSONView.parseJSONP(this.resource.content);
             if (parsedJSONP)
                 return new WebInspector.ResourceJSONView(this.resource, parsedJSONP);
@@ -85,7 +85,7 @@ WebInspector.ResourcePreviewView.prototype = {
         if (this._responseView.sourceView)
             return this._responseView.sourceView;
 
-        if (this.resource.category === WebInspector.resourceCategories.other)
+        if (this.resource.type === WebInspector.resourceTypes.Other)
             return this._createEmptyView();
 
         return WebInspector.ResourceView.nonSourceViewForResource(this.resource);

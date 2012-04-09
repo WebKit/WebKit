@@ -102,7 +102,6 @@
     <file>RawSourceCode.js</file>
     <file>RemoteObject.js</file>
     <file>Resource.js</file>
-    <file>ResourceCategory.js</file>
     <file>ResourceCookiesView.js</file>
     <file>ResourceJSONView.js</file>
     <file>ResourceHTMLView.js</file>
@@ -112,6 +111,7 @@
     <file>ResourceScriptMapping.js</file>
     <file>ResourceTimingView.js</file>
     <file>ResourceTreeModel.js</file>
+    <file>ResourceType.js</file>
     <file>ResourceUtils.js</file>
     <file>ResourceView.js</file>
     <file>ResourcesPanel.js</file>

@@ -21,7 +21,7 @@ function test()
     function step2()
     {
         var resource1 = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
-        InspectorTest.addResult(resource1.category.name);
+        InspectorTest.addResult(resource1.type.name());
         InspectorTest.completeTest();
     }
 }

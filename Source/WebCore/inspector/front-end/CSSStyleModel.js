@@ -799,13 +799,13 @@ WebInspector.CSSStyleModelResourceBinding = function(cssModel)
     this._styleSheetIdToURL = {};
     this._cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
-    WebInspector.Resource.registerDomainModelBinding(WebInspector.Resource.Type.Stylesheet, this);
+    WebInspector.Resource.registerDomainModelBinding(WebInspector.resourceTypes.Stylesheet, this);
 }
 
 WebInspector.CSSStyleModelResourceBinding.prototype = {
     setContent: function(resource, content, majorChange, userCallback)
     {
-        if (majorChange && resource.type === WebInspector.Resource.Type.Stylesheet)
+        if (majorChange && resource.type === WebInspector.resourceTypes.Stylesheet)
             resource.addRevision(content);
 
         if (this._urlToStyleSheetId[resource.url]) {
@@ -895,7 +895,7 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
                 return;
 
             var resource = WebInspector.resourceForURL(url);
-            if (resource && resource.type === WebInspector.Resource.Type.Stylesheet)
+            if (resource && resource.type === WebInspector.resourceTypes.Stylesheet)
                 resource.addRevision(content);
         }
 

@@ -113,7 +113,7 @@ WebInspector.AuditRules.GzipRule.prototype = {
 
     _shouldCompress: function(resource)
     {
-        return WebInspector.Resource.Type.isTextType(resource.type) && resource.domain && resource.resourceSize !== undefined && resource.resourceSize > 150;
+        return resource.type.isTextType() && resource.domain && resource.resourceSize !== undefined && resource.resourceSize > 150;
     }
 }
 
@@ -162,7 +162,7 @@ WebInspector.AuditRules.CombineExternalResourcesRule.prototype.__proto__ = WebIn
  * @extends {WebInspector.AuditRules.CombineExternalResourcesRule}
  */
 WebInspector.AuditRules.CombineJsResourcesRule = function(allowedPerDomain) {
-    WebInspector.AuditRules.CombineExternalResourcesRule.call(this, "page-externaljs", "Combine external JavaScript", WebInspector.Resource.Type.Script, "JavaScript", allowedPerDomain);
+    WebInspector.AuditRules.CombineExternalResourcesRule.call(this, "page-externaljs", "Combine external JavaScript", WebInspector.resourceTypes.Script, "JavaScript", allowedPerDomain);
 }
 
 WebInspector.AuditRules.CombineJsResourcesRule.prototype.__proto__ = WebInspector.AuditRules.CombineExternalResourcesRule.prototype;
@@ -172,7 +172,7 @@ WebInspector.AuditRules.CombineJsResourcesRule.prototype.__proto__ = WebInspecto
  * @extends {WebInspector.AuditRules.CombineExternalResourcesRule}
  */
 WebInspector.AuditRules.CombineCssResourcesRule = function(allowedPerDomain) {
-    WebInspector.AuditRules.CombineExternalResourcesRule.call(this, "page-externalcss", "Combine external CSS", WebInspector.Resource.Type.Stylesheet, "CSS", allowedPerDomain);
+    WebInspector.AuditRules.CombineExternalResourcesRule.call(this, "page-externalcss", "Combine external CSS", WebInspector.resourceTypes.Stylesheet, "CSS", allowedPerDomain);
 }
 
 WebInspector.AuditRules.CombineCssResourcesRule.prototype.__proto__ = WebInspector.AuditRules.CombineExternalResourcesRule.prototype;
@@ -236,7 +236,7 @@ WebInspector.AuditRules.ParallelizeDownloadRule.prototype = {
 
         var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(
             resources,
-            [WebInspector.Resource.Type.Stylesheet, WebInspector.Resource.Type.Image],
+            [WebInspector.resourceTypes.Stylesheet, WebInspector.resourceTypes.Image],
             true);
 
         var hosts = [];
@@ -353,7 +353,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                         continue;
 
                     var resource = WebInspector.resourceForURL(styleSheet.sourceURL);
-                    var isInlineBlock = resource && resource.type == WebInspector.Resource.Type.Document;
+                    var isInlineBlock = resource && resource.type == WebInspector.resourceTypes.Document;
                     var url = !isInlineBlock ? WebInspector.AuditRuleResult.linkifyDisplayName(styleSheet.sourceURL) : String.sprintf("Inline block #%d", ++inlineBlockOrdinal);
                     var pctUnused = Math.round(100 * unusedStylesheetSize / stylesheetSize);
                     if (!summary)
@@ -524,7 +524,7 @@ WebInspector.AuditRules.CacheControlRule.prototype = {
 
     isCompressible: function(resource)
     {
-        return WebInspector.Resource.Type.isTextType(resource.type);
+        return resource.type.isTextType();
     },
 
     isPubliclyCacheable: function(resource)
@@ -1301,8 +1301,8 @@ WebInspector.AuditRules.StaticCookielessRule.prototype = {
     processCookies: function(allCookies, resources, result)
     {
         var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources,
-                [WebInspector.Resource.Type.Stylesheet,
-                 WebInspector.Resource.Type.Image],
+                [WebInspector.resourceTypes.Stylesheet,
+                 WebInspector.resourceTypes.Image],
                 true);
         var totalStaticResources = 0;
         for (var domain in domainToResourcesMap)

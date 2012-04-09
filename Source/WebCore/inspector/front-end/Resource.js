@@ -26,47 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This table maps MIME types to the Resource.Types which are valid for them.
-// The following line:
-//    "text/html":                {0: 1},
-// means that text/html is a valid MIME type for resources that have type
-// WebInspector.Resource.Type.Document (which has a value of 0).
-WebInspector.MIMETypes = {
-    "text/html":                   {0: true},
-    "text/xml":                    {0: true},
-    "text/plain":                  {0: true},
-    "application/xhtml+xml":       {0: true},
-    "text/css":                    {1: true},
-    "text/xsl":                    {1: true},
-    "image/jpeg":                  {2: true},
-    "image/png":                   {2: true},
-    "image/gif":                   {2: true},
-    "image/bmp":                   {2: true},
-    "image/svg+xml":               {2: true},
-    "image/vnd.microsoft.icon":    {2: true},
-    "image/webp":                  {2: true},
-    "image/x-icon":                {2: true},
-    "image/x-xbitmap":             {2: true},
-    "font/ttf":                    {3: true},
-    "font/opentype":               {3: true},
-    "font/woff":                   {3: true},
-    "application/x-font-type1":    {3: true},
-    "application/x-font-ttf":      {3: true},
-    "application/x-font-woff":     {3: true},
-    "application/x-truetype-font": {3: true},
-    "text/javascript":             {4: true},
-    "text/ecmascript":             {4: true},
-    "application/javascript":      {4: true},
-    "application/ecmascript":      {4: true},
-    "application/x-javascript":    {4: true},
-    "application/json":            {4: true},
-    "text/javascript1.1":          {4: true},
-    "text/javascript1.2":          {4: true},
-    "text/javascript1.3":          {4: true},
-    "text/jscript":                {4: true},
-    "text/livescript":             {4: true},
-}
-
 /**
  * @constructor
  * @extends {WebInspector.Object}
@@ -84,7 +43,7 @@ WebInspector.Resource = function(requestId, url, frameId, loaderId)
     this.loaderId = loaderId;
     this._startTime = -1;
     this._endTime = -1;
-    this._category = WebInspector.resourceCategories.other;
+    this._type = WebInspector.resourceTypes.Other;
     this._pendingContentCallbacks = [];
     this.history = [];
     /** @type {number} */
@@ -104,92 +63,15 @@ WebInspector.Resource.displayName = function(url)
     return new WebInspector.Resource("fake-transient-resource", url, "", null).displayName;
 }
 
-// Keep these in sync with WebCore::InspectorResource::Type
-WebInspector.Resource.Type = {
-    Document:   0,
-    Stylesheet: 1,
-    Image:      2,
-    Font:       3,
-    Script:     4,
-    XHR:        5,
-    WebSocket:  7,
-    Other:      8,
-
-    /**
-     * @param {number} type
-     * @return {boolean}
-     */
-    isTextType: function(type)
-    {
-        return (type === WebInspector.Resource.Type.Document) || (type === WebInspector.Resource.Type.Stylesheet) || (type === WebInspector.Resource.Type.Script) || (type === WebInspector.Resource.Type.XHR);
-    },
-
-    /**
-     * @param {number} type
-     * @return {string}
-     */
-    toUIString: function(type)
-    {
-        switch (type) {
-            case WebInspector.Resource.Type.Document:
-                return WebInspector.UIString("Document");
-            case WebInspector.Resource.Type.Stylesheet:
-                return WebInspector.UIString("Stylesheet");
-            case WebInspector.Resource.Type.Image:
-                return WebInspector.UIString("Image");
-            case WebInspector.Resource.Type.Font:
-                return WebInspector.UIString("Font");
-            case WebInspector.Resource.Type.Script:
-                return WebInspector.UIString("Script");
-            case WebInspector.Resource.Type.XHR:
-                return WebInspector.UIString("XHR");
-            case WebInspector.Resource.Type.WebSocket:
-                return WebInspector.UIString("WebSocket");
-            case WebInspector.Resource.Type.Other:
-            default:
-                return WebInspector.UIString("Other");
-        }
-    },
-
-    /**
-     * Returns locale-independent string identifier of resource type (primarily for use in extension API).
-     * The IDs need to be kept in sync with webInspector.resoureces.Types object in ExtensionAPI.js.
-     * @param {number} type
-     * @return {string}
-     */
-    toString: function(type)
-    {
-        switch (type) {
-            case WebInspector.Resource.Type.Document:
-                return "document";
-            case WebInspector.Resource.Type.Stylesheet:
-                return "stylesheet";
-            case WebInspector.Resource.Type.Image:
-                return "image";
-            case WebInspector.Resource.Type.Font:
-                return "font";
-            case WebInspector.Resource.Type.Script:
-                return "script";
-            case WebInspector.Resource.Type.XHR:
-                return "xhr";
-            case WebInspector.Resource.Type.WebSocket:
-                return "websocket";
-            case WebInspector.Resource.Type.Other:
-            default:
-                return "other";
-        }
-    }
-}
-
 WebInspector.Resource._domainModelBindings = [];
 
 /**
- * @param {number} type
+ * @param {WebInspector.ResourceType} type
  * @param {WebInspector.ResourceDomainModelBinding} binding
  */
 WebInspector.Resource.registerDomainModelBinding = function(type, binding)
 {
-    WebInspector.Resource._domainModelBindings[type] = binding;
+    WebInspector.Resource._domainModelBindings[type.name()] = binding;
 }
 
 WebInspector.Resource._resourceRevisionRegistry = function()
@@ -279,7 +161,7 @@ WebInspector.Resource.Events = {
 
 WebInspector.Resource.prototype = {
     /**
-     * @return {string}
+     * @type {string}
      */
     get url()
     {
@@ -303,7 +185,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {string}
+     * @type {string}
      */
     get documentURL()
     {
@@ -316,7 +198,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {string}
+     * @type {string}
      */
     get displayName()
     {
@@ -333,7 +215,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {string}
+     * @type {string}
      */
     get folder()
     {
@@ -346,7 +228,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {string}
+     * @type {string}
      */
     get displayDomain()
     {
@@ -357,7 +239,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get startTime()
     {
@@ -370,7 +252,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get responseReceivedTime()
     {
@@ -383,7 +265,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get endTime()
     {
@@ -404,7 +286,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get duration()
     {
@@ -414,7 +296,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get latency()
     {
@@ -424,7 +306,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get receiveDuration()
     {
@@ -434,7 +316,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get resourceSize()
     {
@@ -447,7 +329,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get transferSize()
     {
@@ -480,7 +362,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {boolean}
+     * @type {boolean}
      */
     get finished()
     {
@@ -502,7 +384,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {boolean}
+     * @type {boolean}
      */
     get failed()
     {
@@ -515,7 +397,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {boolean}
+     * @type {boolean}
      */
     get canceled()
     {
@@ -528,20 +410,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {WebInspector.ResourceCategory}
-     */
-    get category()
-    {
-        return this._category;
-    },
-
-    set category(x)
-    {
-        this._category = x;
-    },
-
-    /**
-     * @return {boolean}
+     * @type {boolean}
      */
     get cached()
     {
@@ -556,7 +425,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {NetworkAgent.ResourceTiming|undefined}
+     * @type {NetworkAgent.ResourceTiming|undefined}
      */
     get timing()
     {
@@ -577,7 +446,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {string}
+     * @type {string}
      */
     get mimeType()
     {
@@ -590,7 +459,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {WebInspector.ResourceType}
      */
     get type()
     {
@@ -599,42 +468,11 @@ WebInspector.Resource.prototype = {
 
     set type(x)
     {
-        if (this._type === x)
-            return;
-
         this._type = x;
-
-        switch (x) {
-            case WebInspector.Resource.Type.Document:
-                this.category = WebInspector.resourceCategories.documents;
-                break;
-            case WebInspector.Resource.Type.Stylesheet:
-                this.category = WebInspector.resourceCategories.stylesheets;
-                break;
-            case WebInspector.Resource.Type.Script:
-                this.category = WebInspector.resourceCategories.scripts;
-                break;
-            case WebInspector.Resource.Type.Image:
-                this.category = WebInspector.resourceCategories.images;
-                break;
-            case WebInspector.Resource.Type.Font:
-                this.category = WebInspector.resourceCategories.fonts;
-                break;
-            case WebInspector.Resource.Type.XHR:
-                this.category = WebInspector.resourceCategories.xhr;
-                break;
-            case WebInspector.Resource.Type.WebSocket:
-                this.category = WebInspector.resourceCategories.websockets;
-                break;
-            case WebInspector.Resource.Type.Other:
-            default:
-                this.category = WebInspector.resourceCategories.other;
-                break;
-        }
     },
 
     /**
-     * @return {WebInspector.Resource|undefined}
+     * @type {WebInspector.Resource|undefined}
      */
     get redirectSource()
     {
@@ -649,7 +487,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {Object}
+     * @type {Object}
      */
     get requestHeaders()
     {
@@ -666,7 +504,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {string}
+     * @type {string}
      */
     get requestHeadersText()
     {
@@ -686,7 +524,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get requestHeadersSize()
     {
@@ -694,7 +532,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {Array.<Object>}
+     * @type {Array.<Object>}
      */
     get sortedRequestHeaders()
     {
@@ -994,7 +832,7 @@ WebInspector.Resource.prototype = {
     {
         if (this._actualResource)
             return false;
-        var binding = WebInspector.Resource._domainModelBindings[this.type];
+        var binding = WebInspector.Resource._domainModelBindings[this.type.name()];
         return binding && binding.canSetContent(this);
     },
 
@@ -1010,7 +848,7 @@ WebInspector.Resource.prototype = {
                 callback("Resource is not editable");
             return;
         }
-        var binding = WebInspector.Resource._domainModelBindings[this.type];
+        var binding = WebInspector.Resource._domainModelBindings[this.type.name()];
         binding.setContent(this, newContent, majorChange, callback);
     },
 
@@ -1046,7 +884,7 @@ WebInspector.Resource.prototype = {
         // We do not support content retrieval for WebSockets at the moment.
         // Since WebSockets are potentially long-living, fail requests immediately
         // to prevent caller blocking until resource is marked as finished.
-        if (this.type === WebInspector.Resource.Type.WebSocket) {
+        if (this.type === WebInspector.resourceTypes.WebSocket) {
             callback(null, null);
             return;
         }

@@ -208,7 +208,7 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype.__proto__ = WebInspect
  */
 WebInspector.ResourceContentProvider = function(resource)
 {
-    this._mimeType = resource.type === WebInspector.Resource.Type.Script ? "text/javascript" : "text/html";
+    this._mimeType = resource.type === WebInspector.resourceTypes.Script ? "text/javascript" : "text/html";
     this._resource = resource;
 };
 

@@ -89,7 +89,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         var isInlineScript = false;
         if (script.isInlineScript()) {
             resource = WebInspector.networkManager.inflightResourceForURL(script.sourceURL) || WebInspector.resourceForURL(script.sourceURL);
-            if (resource && resource.type === WebInspector.Resource.Type.Document) {
+            if (resource && resource.type === WebInspector.resourceTypes.Document) {
                 isInlineScript = true;
                 var rawSourceCode = this._rawSourceCodeForDocumentURL[script.sourceURL];
                 if (rawSourceCode) {

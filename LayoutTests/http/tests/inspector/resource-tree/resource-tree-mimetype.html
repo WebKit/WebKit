@@ -15,7 +15,7 @@ function test()
     {
         function format(resource)
         {
-            return WebInspector.Resource.Type.toString(resource.type) + " " + resource.mimeType + " " + resource.url;
+            return resource.type.name() + " " + resource.mimeType + " " + resource.url;
         }
 
         InspectorTest.dumpResources(format);

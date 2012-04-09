@@ -201,7 +201,7 @@ WebInspector.ResourceTreeModel.prototype = {
         var resource = /** @type {WebInspector.Resource} */ event.data;
         this._addPendingConsoleMessagesToResource(resource);
 
-        if (resource.failed || resource.type === WebInspector.Resource.Type.XHR)
+        if (resource.failed || resource.type === WebInspector.resourceTypes.XHR)
             return;
 
         var frame = this._frames[resource.frameId];
@@ -227,7 +227,7 @@ WebInspector.ResourceTreeModel.prototype = {
             return;
 
         var resource = this._createResource(url, frame.url, frameId, event.data.loaderId);
-        resource.type = WebInspector.Resource.Type[event.data.resourceType];
+        resource.type = WebInspector.resourceTypes[event.data.resourceType];
         resource.mimeType = event.data.mimeType;
         resource.finished = true;
         frame._addResource(resource);
@@ -340,7 +340,7 @@ WebInspector.ResourceTreeModel.prototype = {
         // Create frame resource.
         var frameResource = this._createResourceFromFramePayload(framePayload, framePayload.url);
         frameResource.mimeType = framePayload.mimeType;
-        frameResource.type = WebInspector.Resource.Type.Document;
+        frameResource.type = WebInspector.resourceTypes.Document;
         frameResource.finished = true;
 
         if (frame.isMainFrame())
@@ -359,7 +359,7 @@ WebInspector.ResourceTreeModel.prototype = {
         for (var i = 0; i < frameTreePayload.resources.length; ++i) {
             var subresource = frameTreePayload.resources[i];
             var resource = this._createResourceFromFramePayload(framePayload, subresource.url);
-            resource.type = WebInspector.Resource.Type[subresource.type];
+            resource.type = WebInspector.resourceTypes[subresource.type];
             resource.mimeType = subresource.mimeType;
             resource.finished = true;
             frame._addResource(resource);

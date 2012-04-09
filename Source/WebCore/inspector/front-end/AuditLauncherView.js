@@ -73,7 +73,7 @@ WebInspector.AuditLauncherView.prototype = {
     {
         var resource = event.data;
         // Ignore long-living WebSockets for the sake of progress indicator, as we won't be waiting them anyway.
-        if (resource.type === WebInspector.Resource.Type.WebSocket)
+        if (resource.type === WebInspector.resourceTypes.WebSocket)
             return;
         ++this._totalResources;
         this._updateResourceProgress();
@@ -83,7 +83,7 @@ WebInspector.AuditLauncherView.prototype = {
     {
         var resource = event.data;
         // See resorceStarted for details.
-        if (resource.type === WebInspector.Resource.Type.WebSocket)
+        if (resource.type === WebInspector.resourceTypes.WebSocket)
             return;
         ++this._loadedResources;
         this._updateResourceProgress();

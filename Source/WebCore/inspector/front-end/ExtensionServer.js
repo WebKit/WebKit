@@ -417,7 +417,7 @@ WebInspector.ExtensionServer.prototype = {
     {
         return {
             url: resource.url,
-            type: WebInspector.Resource.Type.toString(resource.type)
+            type: resource.type.name()
         };
     },
 

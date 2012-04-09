@@ -3,7 +3,7 @@ Tests that shared worker content is available in network panel.
 
 Bug 65929
 http://127.0.0.1:8000/inspector/network/resources/shared-worker.js
-resource.type: 4
+resource.type: script
 resource.content before requesting content: undefined
 resource.content after requesting content: onconnect = function(event)
 {

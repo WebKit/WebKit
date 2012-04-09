@@ -51,7 +51,7 @@ WebInspector.NetworkLogView = function()
     this._matchedResourcesMap = {};
     this._currentMatchedResourceIndex = -1;
 
-    this._categories = WebInspector.resourceCategories;
+    this._categories = WebInspector.resourceTypes;
 
     this._createStatusbarButtons();
     this._createFilterStatusBarItems();
@@ -356,7 +356,7 @@ WebInspector.NetworkLogView.prototype = {
         filterBarElement.appendChild(dividerElement);
 
         for (var category in this._categories)
-            createFilterElement.call(this, category, this._categories[category].title);
+            createFilterElement.call(this, category, this._categories[category].categoryTitle);
         this._filterBarElement = filterBarElement;
     },
 
@@ -399,7 +399,7 @@ WebInspector.NetworkLogView.prototype = {
             var resource = this._resources[i];
             var resourceTransferSize = (resource.cached || !resource.transferSize) ? 0 : resource.transferSize;
             transferSize += resourceTransferSize;
-            if (!this._hiddenCategories.all || !this._hiddenCategories[resource.category.name]) {
+            if (!this._hiddenCategories.all || !this._hiddenCategories[resource.type.name()]) {
                 selectedRequestsNumber++;
                 selectedTransferSize += resourceTransferSize;
             }
@@ -1719,7 +1719,7 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         if (!this._parentView._hiddenCategories.all)
             return false;
-        return this._resource.category.name in this._parentView._hiddenCategories;
+        return this._resource.type.name() in this._parentView._hiddenCategories;
     },
 
     select: function()
@@ -1809,9 +1809,9 @@ WebInspector.NetworkDataGridNode.prototype = {
             this._graphElement.addStyleClass("resource-cached");
 
         this._element.addStyleClass("network-item");
-        if (!this._element.hasStyleClass("network-category-" + this._resource.category.name)) {
+        if (!this._element.hasStyleClass("network-category-" + this._resource.type.name())) {
             this._element.removeMatchingStyleClasses("network-category-\\w+");
-            this._element.addStyleClass("network-category-" + this._resource.category.name);
+            this._element.addStyleClass("network-category-" + this._resource.type.name());
         }
     },
 
@@ -1819,7 +1819,7 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         this._nameCell.removeChildren();
 
-        if (this._resource.category === WebInspector.resourceCategories.images) {
+        if (this._resource.type === WebInspector.resourceTypes.Image) {
             var previewImage = document.createElement("img");
             previewImage.className = "image-network-icon-preview";
             this._resource.populateImageSource(previewImage);
@@ -1977,9 +1977,9 @@ WebInspector.NetworkDataGridNode.prototype = {
 
         this._barAreaElement.removeStyleClass("hidden");
 
-        if (!this._graphElement.hasStyleClass("network-category-" + this._resource.category.name)) {
+        if (!this._graphElement.hasStyleClass("network-category-" + this._resource.type.name())) {
             this._graphElement.removeMatchingStyleClasses("network-category-\\w+");
-            this._graphElement.addStyleClass("network-category-" + this._resource.category.name);
+            this._graphElement.addStyleClass("network-category-" + this._resource.type.name());
         }
 
         this._barLeftElement.style.setProperty("left", percentages.start + "%");

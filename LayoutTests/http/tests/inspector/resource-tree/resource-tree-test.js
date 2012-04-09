@@ -72,7 +72,7 @@ InspectorTest.dumpResourceTreeEverything = function()
 {
     function format(resource)
     {
-        return WebInspector.Resource.Type.toString(resource.type) + " " + resource.url;
+        return resource.type.name() + " " + resource.url;
     }
 
     InspectorTest.addResult("Resources:");

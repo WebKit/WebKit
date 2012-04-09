@@ -757,7 +757,7 @@ WebInspector.DebuggerPresentationModel.CallFramePlacard.prototype.__proto__ = We
 WebInspector.DebuggerPresentationModelResourceBinding = function(model)
 {
     this._presentationModel = model;
-    WebInspector.Resource.registerDomainModelBinding(WebInspector.Resource.Type.Script, this);
+    WebInspector.Resource.registerDomainModelBinding(WebInspector.resourceTypes.Script, this);
 }
 
 WebInspector.DebuggerPresentationModelResourceBinding.prototype = {

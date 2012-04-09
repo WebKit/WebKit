@@ -349,7 +349,7 @@ WebInspector.ElementsPanel.prototype = {
                 return null;
 
             var resource = WebInspector.resourceTreeModel.resourceForURL(anchor.href);
-            if (!resource || resource.type !== WebInspector.Resource.Type.Image)
+            if (!resource || resource.type !== WebInspector.resourceTypes.Image)
                 return null;
 
             anchor.removeAttribute("title");
