@@ -27,7 +27,6 @@
  */
 
 /**
- * @implements {WebInspector.ScriptsPanel.FileSelector}
  * @extends {WebInspector.Object}
  * @constructor
  */
@@ -78,6 +77,11 @@ WebInspector.ScriptsNavigator = function()
     this._scriptTreeElementsByUISourceCode = new Map();
     
     WebInspector.settings.showScriptFolders.addChangeListener(this._showScriptFoldersSettingChanged.bind(this));
+}
+
+
+WebInspector.ScriptsNavigator.Events = {
+    ScriptSelected: "ScriptSelected"
 }
 
 WebInspector.ScriptsNavigator.ScriptsTab = "scripts";
@@ -236,9 +240,8 @@ WebInspector.ScriptsNavigator.prototype = {
     _scriptSelected: function(uiSourceCode, focusSource)
     {
         this._lastSelectedUISourceCode = uiSourceCode;
-        this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.FileSelected, uiSourceCode);
-        if (focusSource)
-            this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.ReleasedFocusAfterSelection, uiSourceCode);
+        var data = { uiSourceCode: uiSourceCode, focusSource: focusSource};
+        this.dispatchEventToListeners(WebInspector.ScriptsNavigator.Events.ScriptSelected, data);
     },
 
     /**

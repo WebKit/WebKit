@@ -80,42 +80,6 @@ function test()
             next();
         },
 
-        function testInitialLoadWithComboBoxFileSelector(next)
-        {
-            var model = createDebuggerPresentationModelMock();
-            var uiSourceCode = createUISouceCode("foobar.js");
-            var uiSourceCodeFoo = createUISouceCode("foo.js");
-            var uiSourceCodeBar = createUISouceCode("bar.js");
-            var uiSourceCodeBaz = createUISouceCode("baz.js");
-
-            model._addUISourceCode(uiSourceCode);
-
-            WebInspector.settings.useScriptsNavigator.set(false);
-            var panel = new WebInspector.ScriptsPanel(model);
-            WebInspector.settings.useScriptsNavigator.set(true);
-            panel.show();
-
-            model._addUISourceCode(uiSourceCodeFoo);
-            model._addUISourceCode(uiSourceCodeBar);
-            model._addUISourceCode(uiSourceCodeBaz);
-
-            InspectorTest.addResult("Dump files select:");
-            var select = panel._fileSelector._filesSelectElement;
-            for (var i = 0; i < select.length; ++i)
-                InspectorTest.addResult(select[i].text.replace(/\u00a0/g, " "));
-
-            // Selected file should be "foo.js".
-            InspectorTest.assertEquals(3, select.selectedIndex);
-            InspectorTest.assertEquals("foobar.js", select[3].text.replace(/\s/g, ""));
-
-            // Select "baz.js".
-            select.selectedIndex = 1;
-            panel._fileSelector._filesSelectChanged();
-            panel.detach();
-
-            next();
-        },
-
         function testReset(next)
         {
             var model = createDebuggerPresentationModelMock();
@@ -169,42 +133,6 @@ function test()
                 // Unplug compiler source mapping.
                 model._replaceUISourceCodes([source1SourceCode, source2SourceCode], [compiledSourceCode]);
                 InspectorTest.dumpScriptsNavigator(panel._navigator);
-
-                panel.detach();
-                next();
-            }
-        },
-
-        function testSourceReplacedWithComboBoxFileSelector(next)
-        {
-            var model = createDebuggerPresentationModelMock();
-            WebInspector.settings.useScriptsNavigator.set(false);
-            var panel = new WebInspector.ScriptsPanel(model);
-            WebInspector.settings.useScriptsNavigator.set(true);
-            panel.show();
-
-            var uiSourceCodeFoo = createUISouceCode("foo.js");
-            model._addUISourceCode(uiSourceCodeFoo);
-            var compiledSourceCode = createUISouceCode("compiled.js");
-            model._addUISourceCode(compiledSourceCode);
-
-            InspectorTest.dumpComboBoxFileSelector(panel._fileSelector);
-
-            // Plug compiler source mapping.
-            var source1SourceCode = createUISouceCode("source1.js");
-            var source2SourceCode = createUISouceCode("source2.js");
-            model._replaceUISourceCodes([compiledSourceCode], [source1SourceCode, source2SourceCode]);
-            InspectorTest.dumpComboBoxFileSelector(panel._fileSelector);
-            InspectorTest.showScriptSourceOnScriptsPanel(panel, "source2.js", step2);
-
-            function step2() {
-                InspectorTest.showScriptSourceOnScriptsPanel(panel, "source1.js", step3);
-            }
-
-            function step3() {
-                // Unplug compiler source mapping.
-                model._replaceUISourceCodes([source1SourceCode, source2SourceCode], [compiledSourceCode]);
-                InspectorTest.dumpComboBoxFileSelector(panel._fileSelector);
 
                 panel.detach();
                 next();

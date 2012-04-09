@@ -10,14 +10,12 @@ function test()
     WebInspector._isMac = false;
 
     var navigatorFileSelector = new WebInspector.ScriptsNavigator();
-    var comboBoxFileSelector = new WebInspector.ScriptsPanel.ComboBoxFileSelector();
 
     function addUISourceCode(url, isContentScript)
     {
         var uiSourceCode = new WebInspector.UISourceCode(0, url, null, null);
         uiSourceCode.isContentScript = isContentScript;
         navigatorFileSelector.addUISourceCode(uiSourceCode);
-        comboBoxFileSelector.addUISourceCode(uiSourceCode);
     }
 
     var rootURL = "http://localhost:8080/LayoutTests/inspector/debugger/";
@@ -32,7 +30,6 @@ function test()
     addUISourceCode("?a=b", false);
     addUISourceCode("very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url", false);
 
-    InspectorTest.dumpComboBoxFileSelector(comboBoxFileSelector)
     InspectorTest.dumpScriptsNavigator(navigatorFileSelector);
 
     InspectorTest.completeTest();

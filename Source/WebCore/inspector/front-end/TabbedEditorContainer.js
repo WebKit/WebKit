@@ -27,10 +27,22 @@
  */
 
 /**
- * @implements {WebInspector.EditorContainer}
- * @extends {WebInspector.Object}
+ * @interface
+ */
+WebInspector.TabbedEditorContainerDelegate = function() { }
+
+WebInspector.TabbedEditorContainerDelegate.prototype = {
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @return {WebInspector.SourceFrame}
+     */
+    viewForFile: function(uiSourceCode) { }
+}
+
+/**
  * @constructor
- * @param {WebInspector.EditorContainerDelegate} delegate
+ * @extends {WebInspector.Object}
+ * @param {WebInspector.TabbedEditorContainerDelegate} delegate
  */
 WebInspector.TabbedEditorContainer = function(delegate)
 {
@@ -49,6 +61,12 @@ WebInspector.TabbedEditorContainer = function(delegate)
 
     this._previouslyViewedFilesSetting = WebInspector.settings.createSetting("previouslyViewedFiles", []);
     this._history = new WebInspector.TabbedEditorContainer.History(this._previouslyViewedFilesSetting.get());
+}
+
+
+WebInspector.TabbedEditorContainer.Events = {
+    EditorSelected: "EditorSelected",
+    EditorClosed: "EditorClosed"
 }
 
 WebInspector.TabbedEditorContainer._tabId = 0;
@@ -104,7 +122,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         if (userGesture)
             this._editorSelectedByUserAction();
         
-        this.dispatchEventToListeners(WebInspector.EditorContainer.Events.EditorSelected, this._currentFile);
+        this.dispatchEventToListeners(WebInspector.TabbedEditorContainer.Events.EditorSelected, this._currentFile);
     },
 
     /**
@@ -216,7 +234,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         delete this._files[tabId];
         delete this._currentFile;
 
-        this.dispatchEventToListeners(WebInspector.EditorContainer.Events.EditorClosed, uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.TabbedEditorContainer.Events.EditorClosed, uiSourceCode);
 
         if (userGesture)
             this._editorClosedByUserAction(uiSourceCode);

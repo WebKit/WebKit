@@ -84,14 +84,6 @@
     margin-top: 2px;
 }
 
-#scripts-back img {
-    content: url(Images/back.png);
-}
-
-#scripts-forward img {
-    content: url(Images/forward.png);
-}
-
 #scripts-pause img {
     content: url(Images/debuggerPause.png);
 }

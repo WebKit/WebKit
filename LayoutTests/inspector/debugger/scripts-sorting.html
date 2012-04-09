@@ -10,7 +10,6 @@ function test()
     WebInspector._isMac = false;
 
     var navigatorFileSelector = new WebInspector.ScriptsNavigator();
-    var comboBoxFileSelector = new WebInspector.ScriptsPanel.ComboBoxFileSelector();
 
     var nextId = 1;
     function addUISourceCode(url, isContentScript)
@@ -18,7 +17,6 @@ function test()
         var uiSourceCode = new WebInspector.UISourceCode(nextId++, url, null, null);
         uiSourceCode.isContentScript = isContentScript;
         navigatorFileSelector.addUISourceCode(uiSourceCode);
-        comboBoxFileSelector.addUISourceCode(uiSourceCode);
     }
 
     function dumpScriptsList()
@@ -26,7 +24,6 @@ function test()
         InspectorTest.addResult("");
         InspectorTest.addResult("WebInspector.settings.showScriptFolders = " + WebInspector.settings.showScriptFolders.get());
 
-        InspectorTest.dumpComboBoxFileSelector(comboBoxFileSelector);
         InspectorTest.dumpScriptsNavigator(navigatorFileSelector);
     }
 

@@ -26,7 +26,7 @@
 
 /**
  * @constructor
- * @implements {WebInspector.EditorContainerDelegate}
+ * @implements {WebInspector.TabbedEditorContainerDelegate}
  * @extends {WebInspector.Panel}
  */
 WebInspector.ScriptsPanel = function(presentationModel)
@@ -61,44 +61,33 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.debugSidebarResizeWidgetElement.id = "scripts-debug-sidebar-resizer-widget";
     this.splitView.installResizer(this.debugSidebarResizeWidgetElement);
 
-    WebInspector.settings.useScriptsNavigator = WebInspector.settings.createSetting("useScriptsNavigator", true);
-    if (WebInspector.settings.useScriptsNavigator.get()) {
-        const initialNavigatorWidth = 225;
-        const minimalViewsContainerWidthPercent = 50;
-        this.editorView = new WebInspector.SplitView(WebInspector.SplitView.SidebarPosition.Left, "scriptsPanelNavigatorSidebarWidth", initialNavigatorWidth);
-        this.editorView.element.id = "scripts-editor-view";
-        this.editorView.element.tabIndex = 0;
+    // Create scripts navigator
+    const initialNavigatorWidth = 225;
+    const minimalViewsContainerWidthPercent = 50;
+    this.editorView = new WebInspector.SplitView(WebInspector.SplitView.SidebarPosition.Left, "scriptsPanelNavigatorSidebarWidth", initialNavigatorWidth);
+    this.editorView.element.id = "scripts-editor-view";
+    this.editorView.element.tabIndex = 0;
 
-        this.editorView.minimalSidebarWidth = Preferences.minScriptsSidebarWidth;
-        this.editorView.minimalMainWidthPercent = minimalViewsContainerWidthPercent;
-        this.editorView.show(this.splitView.mainElement);
+    this.editorView.minimalSidebarWidth = Preferences.minScriptsSidebarWidth;
+    this.editorView.minimalMainWidthPercent = minimalViewsContainerWidthPercent;
+    this.editorView.show(this.splitView.mainElement);
 
-        this._navigator = new WebInspector.ScriptsNavigator();
-        this._navigatorView = this._navigator.view;
-        this._fileSelector = this._navigator;
-        this._fileSelector.show(this.editorView.sidebarElement);
+    this._navigator = new WebInspector.ScriptsNavigator();
+    this._navigatorView = this._navigator.view;
+    this._navigator.show(this.editorView.sidebarElement);
 
-        this._tabbedEditorContainer = new WebInspector.TabbedEditorContainer(this);
-        this._editorContainer = this._tabbedEditorContainer;
-        this._editorContainer.show(this.editorView.mainElement);
-        WebInspector.OpenResourceDialog.install(this, this._presentationModel, this.editorView.mainElement);
+    this._editorContainer = new WebInspector.TabbedEditorContainer(this);
+    this._editorContainer.show(this.editorView.mainElement);
+    WebInspector.OpenResourceDialog.install(this, this._presentationModel, this.editorView.mainElement);
 
-        this._createNavigatorControls();
-        WebInspector.settings.navigatorHidden = WebInspector.settings.createSetting("navigatorHidden", true);
-        if (WebInspector.settings.navigatorHidden.get())
-            this._toggleNavigator();
-    } else {
-        this._fileSelector = new WebInspector.ScriptsPanel.ComboBoxFileSelector();
-        this._fileSelector.show(this.splitView.mainElement);
+    this._createNavigatorControls();
+    WebInspector.settings.navigatorHidden = WebInspector.settings.createSetting("navigatorHidden", true);
+    if (WebInspector.settings.navigatorHidden.get())
+        this._toggleNavigator();
 
-        this._editorContainer = new WebInspector.ScriptsPanel.SingleFileEditorContainer(this);
-        this._editorContainer.show(this.splitView.mainElement);
-        WebInspector.OpenResourceDialog.install(this, this._presentationModel, this.splitView.mainElement);
-    }
-    this._fileSelector.addEventListener(WebInspector.ScriptsPanel.FileSelector.Events.FileSelected, this._fileSelected, this);
-    this._fileSelector.addEventListener(WebInspector.ScriptsPanel.FileSelector.Events.ReleasedFocusAfterSelection, this._fileSelectorReleasedFocus, this);
-    this._editorContainer.addEventListener(WebInspector.EditorContainer.Events.EditorSelected, this._editorSelected, this);
-    this._editorContainer.addEventListener(WebInspector.EditorContainer.Events.EditorClosed, this._editorClosed, this);
+    this._navigator.addEventListener(WebInspector.ScriptsNavigator.Events.ScriptSelected, this._scriptSelected, this);
+    this._editorContainer.addEventListener(WebInspector.TabbedEditorContainer.Events.EditorSelected, this._editorSelected, this);
+    this._editorContainer.addEventListener(WebInspector.TabbedEditorContainer.Events.EditorClosed, this._editorClosed, this);
 
     this.splitView.mainElement.appendChild(this.debugSidebarResizeWidgetElement);
 
@@ -211,7 +200,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     get defaultFocusedElement()
     {
-        return this._fileSelector.defaultFocusedElement;
+        return this._navigator.defaultFocusedElement;
     },
 
     get paused()
@@ -279,7 +268,7 @@ WebInspector.ScriptsPanel.prototype = {
      */
     _addUISourceCode: function(uiSourceCode)
     {
-        this._fileSelector.addUISourceCode(uiSourceCode);
+        this._navigator.addUISourceCode(uiSourceCode);
         this._editorContainer.uiSourceCodeAdded(uiSourceCode);
     },
 
@@ -314,7 +303,7 @@ WebInspector.ScriptsPanel.prototype = {
      */
     setScriptSourceIsDirty: function(uiSourceCode, isDirty)
     {
-        this._fileSelector.setScriptSourceIsDirty(uiSourceCode, isDirty);
+        this._navigator.setScriptSourceIsDirty(uiSourceCode, isDirty);
         this._editorContainer.setFileIsDirty(uiSourceCode, isDirty);
     },
 
@@ -418,7 +407,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._debuggerResumed();
 
         delete this._currentUISourceCode;
-        this._fileSelector.reset();
+        this._navigator.reset();
         this._editorContainer.reset();
         this._updateScriptViewStatusBarItems();
 
@@ -486,7 +475,7 @@ WebInspector.ScriptsPanel.prototype = {
      */
     _showFile: function(uiSourceCode)
     {
-        if (!this._fileSelector.isScriptSourceAdded(uiSourceCode))
+        if (!this._navigator.isScriptSourceAdded(uiSourceCode))
             return null;
 
         var sourceFrame = this._getOrCreateSourceFrame(uiSourceCode);
@@ -494,7 +483,7 @@ WebInspector.ScriptsPanel.prototype = {
             return sourceFrame;
         this._currentUISourceCode = uiSourceCode;
 
-        this._fileSelector.revealUISourceCode(uiSourceCode);
+        this._navigator.revealUISourceCode(uiSourceCode);
         this._editorContainer.showFile(uiSourceCode);
         this._updateScriptViewStatusBarItems();
 
@@ -568,7 +557,7 @@ WebInspector.ScriptsPanel.prototype = {
         var oldUISourceCodeList = /** @type {Array.<WebInspector.UISourceCode>} */ event.data.oldUISourceCodeList;
         var uiSourceCodeList = /** @type {Array.<WebInspector.UISourceCode>} */ event.data.uiSourceCodeList;
 
-        this._fileSelector.replaceUISourceCodes(oldUISourceCodeList, uiSourceCodeList);
+        this._navigator.replaceUISourceCodes(oldUISourceCodeList, uiSourceCodeList);
         this._editorContainer.replaceFiles(oldUISourceCodeList, uiSourceCodeList);
         for (var i = 0; i < oldUISourceCodeList.length; ++i)
             this._removeSourceFrame(oldUISourceCodeList[i]);
@@ -632,10 +621,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (this._currentUISourceCode === uiSourceCode)
             delete this._currentUISourceCode;
 
-        // We don't need to update file selector here regardless of whether useScriptsNavigator is set or not:
-        // SingleFileEditorContainer never dispatches EditorClosed, so no need to update ComboBoxFileSelector;
         // ScriptsNavigator does not need to update on EditorClosed.
-
         this._updateScriptViewStatusBarItems();
     },
 
@@ -646,18 +632,12 @@ WebInspector.ScriptsPanel.prototype = {
         this._hideNavigatorOverlay();
     },
 
-    _fileSelected: function(event)
+    _scriptSelected: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
-        this._showFile(uiSourceCode);
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
+        var sourceFrame = this._showFile(uiSourceCode);
         this._hideNavigatorOverlay();
-    },
-
-    _fileSelectorReleasedFocus: function(event)
-    {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
-        var sourceFrame = this._sourceFramesByUISourceCode.get(uiSourceCode);
-        if (sourceFrame)
+        if (sourceFrame && event.data.focusSource)
             sourceFrame.focus();
     },
 
@@ -970,7 +950,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._navigatorHidden = true;
         this._navigatorShowHideButton.removeStyleClass("toggled-on");
         this._navigatorShowHideButton.title = WebInspector.UIString("Show scripts navigator");
-        this._tabbedEditorContainer.element.addStyleClass("navigator-hidden");
+        this._editorContainer.element.addStyleClass("navigator-hidden");
         this._navigatorSidebarResizeWidgetElement.addStyleClass("hidden");
 
         this._navigatorPinButton.removeStyleClass("hidden");
@@ -989,7 +969,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._navigatorShowHideButton.addStyleClass("toggled-on");
         this._navigatorShowHideButton.title = WebInspector.UIString("Hide scripts navigator");
 
-        this._tabbedEditorContainer.element.removeStyleClass("navigator-hidden");
+        this._editorContainer.element.removeStyleClass("navigator-hidden");
         this._navigatorSidebarResizeWidgetElement.removeStyleClass("hidden");
 
         this.editorView.showSidebarElement();
@@ -1149,580 +1129,3 @@ WebInspector.ScriptsPanel.prototype = {
 }
 
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
-
-/**
- * @interface
- */
-WebInspector.ScriptsPanel.FileSelector = function() { }
-
-WebInspector.ScriptsPanel.FileSelector.Events = {
-    FileSelected: "FileSelected",
-    ReleasedFocusAfterSelection: "ReleasedFocusAfterSelection"
-}
-
-WebInspector.ScriptsPanel.FileSelector.prototype = {
-    /**
-     * @type {Element}
-     */
-    get defaultFocusedElement() { },
-
-    /**
-     * @param {Element} element
-     */
-    show: function(element) { },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    addUISourceCode: function(uiSourceCode) { },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @return {boolean}
-     */
-    isScriptSourceAdded: function(uiSourceCode) { },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    revealUISourceCode: function(uiSourceCode) { },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {boolean} isDirty
-     */
-    setScriptSourceIsDirty: function(uiSourceCode, isDirty) { },
-
-    /**
-     * @param {Array.<WebInspector.UISourceCode>} oldUISourceCodeList
-     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodeList
-     */
-    replaceUISourceCodes: function(oldUISourceCodeList, uiSourceCodeList) { },
-
-    reset: function() { }
-}
-
-/**
- * @interface
- */
-WebInspector.EditorContainer = function() { }
-
-WebInspector.EditorContainer.Events = {
-    EditorSelected: "EditorSelected",
-    EditorClosed: "EditorClosed"
-}
-
-WebInspector.EditorContainer.prototype = {
-    /**
-     * @type {WebInspector.SourceFrame}
-     */
-    get visibleView() { },
-
-    /**
-     * @param {Element} element
-     */
-    show: function(element) { },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    showFile: function(uiSourceCode) { },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {boolean} isDirty
-     */
-    setFileIsDirty: function(uiSourceCode, isDirty) { },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    uiSourceCodeAdded: function(uiSourceCode) { },
-
-    /**
-     * @param {Array.<WebInspector.UISourceCode>} oldUISourceCodeList
-     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodeList
-     */
-    replaceFiles: function(oldUISourceCodeList, uiSourceCodeList) { },
-
-    reset: function() { }
-}
-
-/**
- * @interface
- */
-WebInspector.EditorContainerDelegate = function() { }
-
-WebInspector.EditorContainerDelegate.prototype = {
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @return {WebInspector.SourceFrame}
-     */
-    viewForFile: function(uiSourceCode) { }
-}
-
-/**
- * @implements {WebInspector.ScriptsPanel.FileSelector}
- * @extends {WebInspector.Object}
- * @constructor
- */
-WebInspector.ScriptsPanel.ComboBoxFileSelector = function()
-{
-    WebInspector.Object.call(this);
-    this.editorToolbar = this._createEditorToolbar();
-
-    WebInspector.settings.showScriptFolders.addChangeListener(this._showScriptFoldersSettingChanged.bind(this));
-
-    this._backForwardList = [];
-}
-
-WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype = {
-    get defaultFocusedElement()
-    {
-        return this._filesSelectElement;
-    },
-
-    /**
-     * @param {Element} element
-     */
-    show: function(element)
-    {
-        element.appendChild(this.editorToolbar);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    addUISourceCode: function(uiSourceCode)
-    {
-        if (uiSourceCode._option)
-            return;
-
-        this._addOptionToFilesSelect(uiSourceCode);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @return {boolean}
-     */
-    isScriptSourceAdded: function(uiSourceCode)
-    {
-        return !!uiSourceCode._option;
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    revealUISourceCode: function(uiSourceCode)
-    {
-        if (this._filesSelectElement.selectedIndex === uiSourceCode._option.index)
-            return;
-        this._innerRevealUISourceCode(uiSourceCode, true);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {boolean} addToHistory
-     */
-    _innerRevealUISourceCode: function(uiSourceCode, addToHistory)
-    {
-        if (!uiSourceCode._option)
-            return;
-
-        if (addToHistory)
-            this._addToHistory(uiSourceCode);
-
-        this._updateBackAndForwardButtons();
-        this._filesSelectElement.selectedIndex = uiSourceCode._option.index;
-        this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.FileSelected, uiSourceCode);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    _addToHistory: function(uiSourceCode)
-    {
-        var oldIndex = this._currentBackForwardIndex;
-        if (oldIndex >= 0)
-            this._backForwardList.splice(oldIndex + 1, this._backForwardList.length - oldIndex);
-
-        // Check for a previous entry of the same object in _backForwardList. If one is found, remove it.
-        var previousEntryIndex = this._backForwardList.indexOf(uiSourceCode);
-        if (previousEntryIndex !== -1)
-            this._backForwardList.splice(previousEntryIndex, 1);
-
-        this._backForwardList.push(uiSourceCode);
-        this._currentBackForwardIndex = this._backForwardList.length - 1;
-    },
-
-    /**
-     * @param {Array.<WebInspector.UISourceCode>} oldUISourceCodeList
-     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodeList
-     */
-    replaceUISourceCodes: function(oldUISourceCodeList, uiSourceCodeList)
-    {
-        var selected = false;
-        var added = false;
-        var selectedOption = this._filesSelectElement[this._filesSelectElement.selectedIndex];
-        var selectedUISourceCode = selectedOption ? selectedOption._uiSourceCode : null;
-        for (var i = 0; i < oldUISourceCodeList.length; ++i) {
-            var uiSourceCode = oldUISourceCodeList[i];
-            var option = uiSourceCode._option;
-            if (!option)
-                continue;
-            added = true;
-
-            // FIXME: find out why we are getting here with option detached.
-            if (this._filesSelectElement === option.parentElement)
-                this._filesSelectElement.removeChild(option);
-
-            if (selectedUISourceCode === oldUISourceCodeList[i])
-                selected = true;
-        }
-
-        if (!added)
-            return;
-
-        for (var i = 0; i < uiSourceCodeList.length; ++i)
-            this._addOptionToFilesSelect(uiSourceCodeList[i]);
-
-        if (selected)
-            this._filesSelectElement.selectedIndex = uiSourceCodeList[0]._option.index;
-    },
-
-    _showScriptFoldersSettingChanged: function()
-    {
-        var selectedOption = this._filesSelectElement[this._filesSelectElement.selectedIndex];
-        var uiSourceCode = selectedOption ? selectedOption._uiSourceCode : null;
-
-        var options = Array.prototype.slice.call(this._filesSelectElement);
-        this._resetFilesSelect();
-        for (var i = 0; i < options.length; ++i) {
-            if (options[i]._uiSourceCode)
-                this._addOptionToFilesSelect(options[i]._uiSourceCode);
-        }
-
-        if (uiSourceCode) {
-            var index = uiSourceCode._option.index;
-            if (typeof index === "number")
-                this._filesSelectElement.selectedIndex = index;
-        }
-    },
-
-    reset: function()
-    {
-        this._backForwardList = [];
-        this._currentBackForwardIndex = -1;
-        this._updateBackAndForwardButtons();
-        this._resetFilesSelect();
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {boolean} isDirty
-     */
-    setScriptSourceIsDirty: function(uiSourceCode, isDirty)
-    {
-        var option = uiSourceCode._option;
-        if (!option)
-            return;
-        if (isDirty)
-            option.text = option.text.replace(/[^*]$/, "$&*");
-        else
-            option.text = option.text.replace(/[*]$/, "");
-    },
-
-    /**
-     * @return {Element}
-     */
-    _createEditorToolbar: function()
-    {
-        var editorToolbar = document.createElement("div");
-        editorToolbar.className = "status-bar";
-        editorToolbar.id = "scripts-editor-toolbar";
-
-        this.backButton = document.createElement("button");
-        this.backButton.className = "status-bar-item";
-        this.backButton.id = "scripts-back";
-        this.backButton.title = WebInspector.UIString("Show the previous script resource.");
-        this.backButton.disabled = true;
-        this.backButton.appendChild(document.createElement("img"));
-        this.backButton.addEventListener("click", this._goBack.bind(this), false);
-        editorToolbar.appendChild(this.backButton);
-
-        this.forwardButton = document.createElement("button");
-        this.forwardButton.className = "status-bar-item";
-        this.forwardButton.id = "scripts-forward";
-        this.forwardButton.title = WebInspector.UIString("Show the next script resource.");
-        this.forwardButton.disabled = true;
-        this.forwardButton.appendChild(document.createElement("img"));
-        this.forwardButton.addEventListener("click", this._goForward.bind(this), false);
-        editorToolbar.appendChild(this.forwardButton);
-
-        this._filesSelectElement = document.createElement("select");
-        this._filesSelectElement.className = "status-bar-item";
-        this._filesSelectElement.id = "scripts-files";
-        this._filesSelectElement.addEventListener("change", this._filesSelectChanged.bind(this, true), false);
-        this._filesSelectElement.addEventListener("keyup", this._filesSelectChanged.bind(this, false), false);
-        editorToolbar.appendChild(this._filesSelectElement);
-
-        return editorToolbar;
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    _addOptionToFilesSelect: function(uiSourceCode)
-    {
-        var showScriptFolders = WebInspector.settings.showScriptFolders.get();
-
-        var select = this._filesSelectElement;
-        if (!select.domainOptions)
-            select.domainOptions = {};
-        if (!select.folderOptions)
-            select.folderOptions = {};
-
-        var option = document.createElement("option");
-        var parsedURL = uiSourceCode.url.asParsedURL();
-
-        const indent = WebInspector.isMac() ? "" : "\u00a0\u00a0\u00a0\u00a0";
-
-        option.displayName = uiSourceCode.displayName;
-
-        var contentScriptPrefix = uiSourceCode.isContentScript ? "2:" : "0:";
-        var folderName = uiSourceCode.folderName;
-        var domain = uiSourceCode.domain;
-
-        if (uiSourceCode.isContentScript && domain) {
-            // Render extension domain as a path in structured view
-            folderName = domain + (folderName ? folderName : "");
-            domain = "";
-        }
-
-        var folderNameForSorting = contentScriptPrefix + (domain ? domain + "\t\t" : "") + folderName;
-
-        if (showScriptFolders) {
-            option.text = indent + uiSourceCode.displayName;
-            option.nameForSorting = folderNameForSorting + "\t/\t" + uiSourceCode.fileName; // Use '\t' to make files stick to their folder.
-        } else {
-            option.text = uiSourceCode.displayName;
-            // Content script should contain its domain name as a prefix
-            if (uiSourceCode.isContentScript && folderName)
-                option.text = folderName + "/" + option.text;
-            option.nameForSorting = contentScriptPrefix + option.text;
-        }
-        option.title = uiSourceCode.url;
-
-        if (uiSourceCode.isContentScript)
-            option.addStyleClass("extension-script");
-
-        function insertOrdered(option)
-        {
-            function optionCompare(a, b)
-            {
-                return a.nameForSorting.localeCompare(b.nameForSorting);
-            }
-            var insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, optionCompare);
-            var showsNothing = select.selectedIndex === -1;
-            select.insertBefore(option, insertionIndex < 0 ? null : select.childNodes.item(insertionIndex));
-            if (showsNothing)
-                select.selectedIndex = -1;
-        }
-
-        insertOrdered(option);
-
-        if (uiSourceCode.isContentScript && !select.contentScriptSection) {
-            var contentScriptSection = document.createElement("option");
-            contentScriptSection.text = "\u2014 " + WebInspector.UIString("Content scripts") + " \u2014";
-            contentScriptSection.disabled = true;
-            contentScriptSection.nameForSorting = "1/ContentScriptSeparator";
-            select.contentScriptSection = contentScriptSection;
-            insertOrdered(contentScriptSection);
-        }
-
-        if (showScriptFolders && !uiSourceCode.isContentScript && domain && !select.domainOptions[domain]) {
-            var domainOption = document.createElement("option");
-            domainOption.text = "\u2014 " + domain + " \u2014";
-            domainOption.nameForSorting = "0:" + domain;
-            domainOption.disabled = true;
-            select.domainOptions[domain] = domainOption;
-            insertOrdered(domainOption);
-        }
-
-        if (showScriptFolders && folderName && !select.folderOptions[folderNameForSorting]) {
-            var folderOption = document.createElement("option");
-            folderOption.text = folderName;
-            folderOption.nameForSorting = folderNameForSorting;
-            folderOption.disabled = true;
-            select.folderOptions[folderNameForSorting] = folderOption;
-            insertOrdered(folderOption);
-        }
-
-        option._uiSourceCode = uiSourceCode;
-        uiSourceCode._option = option;
-    },
-
-    _resetFilesSelect: function()
-    {
-        this._filesSelectElement.removeChildren();
-        this._filesSelectElement.domainOptions = {};
-        this._filesSelectElement.folderOptions = {};
-        delete this._filesSelectElement.contentScriptSection;
-    },
-
-    _updateBackAndForwardButtons: function()
-    {
-        this.backButton.disabled = this._currentBackForwardIndex <= 0;
-        this.forwardButton.disabled = this._currentBackForwardIndex >= (this._backForwardList.length - 1);
-    },
-
-    _goBack: function()
-    {
-        if (this._currentBackForwardIndex <= 0) {
-            console.error("Can't go back from index " + this._currentBackForwardIndex);
-            return;
-        }
-
-        var uiSourceCode = this._backForwardList[--this._currentBackForwardIndex];
-        this._innerRevealUISourceCode(uiSourceCode, false);
-    },
-
-    _goForward: function()
-    {
-        if (this._currentBackForwardIndex >= this._backForwardList.length - 1) {
-            console.error("Can't go forward from index " + this._currentBackForwardIndex);
-            return;
-        }
-
-        var uiSourceCode = this._backForwardList[++this._currentBackForwardIndex];
-        this._innerRevealUISourceCode(uiSourceCode, false);
-    },
-
-    /**
-     * @param {boolean} focusSource
-     */
-    _filesSelectChanged: function(focusSource)
-    {
-        if (this._filesSelectElement.selectedIndex === -1)
-            return;
-
-        var uiSourceCode = this._filesSelectElement[this._filesSelectElement.selectedIndex]._uiSourceCode;
-        this._innerRevealUISourceCode(uiSourceCode, true);
-        if (focusSource)
-            this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.ReleasedFocusAfterSelection, uiSourceCode);
-    }
-}
-
-WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype.__proto__ = WebInspector.Object.prototype;
-
-/**
- * @implements {WebInspector.EditorContainer}
- * @extends {WebInspector.Object}
- * @constructor
- * @param {WebInspector.EditorContainerDelegate} delegate
- */
-WebInspector.ScriptsPanel.SingleFileEditorContainer = function(delegate)
-{
-    this._delegate = delegate;
-    this.element = document.createElement("div");
-    this.element.className = "scripts-views-container";
-}
-
-WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype = {
-    /**
-     * @type {WebInspector.SourceFrame}
-     */
-    get visibleView()
-    {
-        return this._currentSourceFrame;
-    },
-
-    /**
-     * @param {Element} element
-     */
-    show: function(element)
-    {
-        element.appendChild(this.element);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    showFile: function(uiSourceCode)
-    {
-        var sourceFrame = this._delegate.viewForFile(uiSourceCode);
-        if (this._currentSourceFrame === sourceFrame)
-            return;
-
-        this._innerShowFile(uiSourceCode, true);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {boolean} userGesture
-     */
-    _innerShowFile: function(uiSourceCode, userGesture)
-    {
-        if (this._currentSourceFrame)
-            this._currentSourceFrame.detach();
-
-        this._initialViewSelectionProcessed = true;
-
-        var sourceFrame = this._delegate.viewForFile(uiSourceCode);
-        this._currentSourceFrame = sourceFrame;
-        this._currentFile = uiSourceCode;
-
-        if (userGesture) {
-            this._userSelectedFiles = true;
-            WebInspector.settings.lastViewedScriptFile.set(uiSourceCode.url);
-        }
-
-        if (sourceFrame)
-            sourceFrame.show(this.element);
-        this.dispatchEventToListeners(WebInspector.EditorContainer.Events.EditorSelected, uiSourceCode);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    uiSourceCodeAdded: function(uiSourceCode)
-    {
-        var lastViewedURL = WebInspector.settings.lastViewedScriptFile.get();
-        // Show first file that was added or file with the last viewed url.
-        if (this._userSelectedFiles)
-            return;
-        if (uiSourceCode.url === lastViewedURL || !this._initialViewSelectionProcessed)
-            this._innerShowFile(uiSourceCode, false);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {boolean} isDirty
-     */
-    setFileIsDirty: function(uiSourceCode, isDirty)
-    {
-        // Do nothing.
-    },
-
-    /**
-     * @param {Array.<WebInspector.UISourceCode>} oldUISourceCodeList
-     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodeList
-     */
-    replaceFiles: function(oldUISourceCodeList, uiSourceCodeList)
-    {
-        if (oldUISourceCodeList.indexOf(this._currentFile) !== -1)
-            this.showFile(uiSourceCodeList[0]);
-    },
-
-    reset: function()
-    {
-        if (this._currentSourceFrame)
-            this._currentSourceFrame.detach();
-        this._currentSourceFrame = null;
-        this._currentFile = null;
-        delete this._initialViewSelectionProcessed;
-        delete this._userSelectedFiles;
-    }
-}
-
-WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.__proto__ = WebInspector.Object.prototype;

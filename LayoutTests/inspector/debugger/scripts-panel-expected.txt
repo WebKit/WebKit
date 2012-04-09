@@ -10,15 +10,6 @@ Dumping ScriptsNavigator 'Scripts' tab:
 Dumping ScriptsNavigator 'Content scripts' tab:
 Source requested for baz.js
 
-Running: testInitialLoadWithComboBoxFileSelector
-Source requested for foobar.js
-Dump files select:
-    bar.js
-    baz.js
-    foo.js
-    foobar.js
-Source requested for baz.js
-
 Running: testReset
 Source requested for baz.js
 Dumping ScriptsNavigator 'Scripts' tab:
@@ -47,20 +38,4 @@ Dumping ScriptsNavigator 'Scripts' tab:
   compiled.js
   foo.js
 Dumping ScriptsNavigator 'Content scripts' tab:
-
-Running: testSourceReplacedWithComboBoxFileSelector
-Source requested for foo.js
-Dumping ComboBoxFileSelector:
-    compiled.js(compiled.js)
-    foo.js(foo.js)
-Dumping ComboBoxFileSelector:
-    foo.js(foo.js)
-    source1.js(source1.js)
-    source2.js(source2.js)
-Source requested for source2.js
-Source requested for source1.js
-Source requested for compiled.js
-Dumping ComboBoxFileSelector:
-    compiled.js(compiled.js)
-    foo.js(foo.js)
 
