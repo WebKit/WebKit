@@ -1,3 +1,14 @@
+2012-04-09  Joshua Bell  <jsbell@chromium.org>
+
+        Unreviewed, rolling out r113473.
+        http://trac.webkit.org/changeset/113473
+        https://bugs.webkit.org/show_bug.cgi?id=83074
+
+        Change does not handle cursor retention of LevelDB iterators
+
+        * WebKit.gypi:
+        * tests/IDBDatabaseBackendTest.cpp: Removed.
+
 2012-04-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Texture copies should happen after incremental updates to preserve commit atomicity

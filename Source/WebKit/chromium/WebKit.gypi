@@ -102,7 +102,6 @@
             'tests/FrameTestHelpers.cpp',
             'tests/FrameTestHelpers.h',
             'tests/IDBBindingUtilitiesTest.cpp',
-            'tests/IDBDatabaseBackendTest.cpp',
             'tests/IDBKeyPathTest.cpp',
             'tests/IDBLevelDBCodingTest.cpp',
             'tests/ImageLayerChromiumTest.cpp',

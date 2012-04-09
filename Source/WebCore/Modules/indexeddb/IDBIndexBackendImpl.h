@@ -29,7 +29,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCursorBackendInterface.h"
-#include "IDBDatabaseBackendImpl.h"
 #include "IDBIndexBackendInterface.h"
 
 namespace WebCore {
@@ -41,13 +40,13 @@ class ScriptExecutionContext;
 
 class IDBIndexBackendImpl : public IDBIndexBackendInterface {
 public:
-    static PassRefPtr<IDBIndexBackendImpl> create(const IDBDatabaseBackendImpl* database, const IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique, bool multiEntry)
+    static PassRefPtr<IDBIndexBackendImpl> create(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique, bool multiEntry)
     {
-        return adoptRef(new IDBIndexBackendImpl(database, objectStoreBackend, id, name, storeName, keyPath, unique, multiEntry));
+        return adoptRef(new IDBIndexBackendImpl(backingStore, databaseId, objectStoreBackend, id, name, storeName, keyPath, unique, multiEntry));
     }
-    static PassRefPtr<IDBIndexBackendImpl> create(const IDBDatabaseBackendImpl* database, const IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const String& storeName, const String& keyPath, bool unique, bool multiEntry)
+    static PassRefPtr<IDBIndexBackendImpl> create(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const String& storeName, const String& keyPath, bool unique, bool multiEntry)
     {
-        return adoptRef(new IDBIndexBackendImpl(database, objectStoreBackend, name, storeName, keyPath, unique, multiEntry));
+        return adoptRef(new IDBIndexBackendImpl(backingStore, databaseId, objectStoreBackend, name, storeName, keyPath, unique, multiEntry));
     }
     virtual ~IDBIndexBackendImpl();
 
@@ -75,8 +74,8 @@ public:
     virtual void getKey(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
 private:
-    IDBIndexBackendImpl(const IDBDatabaseBackendImpl*, const IDBObjectStoreBackendImpl*, int64_t, const String&, const String&, const String&, bool, bool);
-    IDBIndexBackendImpl(const IDBDatabaseBackendImpl*, const IDBObjectStoreBackendImpl*, const String&, const String&, const String&, bool, bool);
+    IDBIndexBackendImpl(IDBBackingStore*, int64_t databaseId, const IDBObjectStoreBackendImpl*, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique, bool multiEntry);
+    IDBIndexBackendImpl(IDBBackingStore*, int64_t databaseId, const IDBObjectStoreBackendImpl*, const String& name, const String& storeName, const String& keyPath, bool unique, bool multiEntry);
 
     static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, unsigned short direction, IDBCursorBackendInterface::CursorType, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
     static void countInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
@@ -84,11 +83,9 @@ private:
 
     static const int64_t InvalidId = 0;
 
-    PassRefPtr<IDBBackingStore> backingStore() const { return m_database->backingStore(); }
-    int64_t databaseId() const { return m_database->id(); }
+    RefPtr<IDBBackingStore> m_backingStore;
 
-    const IDBDatabaseBackendImpl* m_database;
-
+    int64_t m_databaseId;
     const IDBObjectStoreBackendImpl* m_objectStoreBackend;
     int64_t m_id;
     String m_name;
