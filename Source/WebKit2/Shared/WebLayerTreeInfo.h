@@ -34,32 +34,16 @@ namespace WebKit {
 typedef uint32_t WebLayerID;
 enum { InvalidWebLayerID = 0 };
 
-struct WebLayerUpdateInfo {
-    WebLayerUpdateInfo() { }
-    WebLayerUpdateInfo(const WebCore::IntRect& r)
-        : layerID(InvalidWebLayerID)
-        , rect(r) { }
-
-    WebLayerID layerID;
-    WebCore::IntRect rect;
-    ShareableBitmap::Handle bitmapHandle;
-
-    void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, WebLayerUpdateInfo&);
-};
-
+// NOTE: WebLayerInfo should only use POD types, as to make serialization faster.
 struct WebLayerInfo {
     WebLayerInfo()
-        : id(InvalidWebLayerID)
-        , parent(InvalidWebLayerID)
+        : parent(InvalidWebLayerID)
         , replica(InvalidWebLayerID)
         , mask(InvalidWebLayerID)
         , imageBackingStoreID(0)
         , opacity(0)
         , flags(0) { }
 
-    String name;
-    WebLayerID id;
     WebLayerID parent;
     WebLayerID replica;
     WebLayerID mask;
@@ -84,25 +68,9 @@ struct WebLayerInfo {
         };
         unsigned int flags;
     };
-    Vector<WebLayerID> children;
-    RefPtr<ShareableBitmap> imageBackingStore;
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebLayerInfo&);
-};
-
-struct WebLayerTreeInfo {
-    WebLayerTreeInfo()
-        : rootLayerID(InvalidWebLayerID)
-        , contentScale(0) { }
-
-    Vector<WebLayerInfo> layers;
-    Vector<WebLayerID> deletedLayerIDs;
-    WebLayerID rootLayerID;
-    float contentScale;
-
-    void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, WebLayerTreeInfo&);
 };
 
 }

@@ -98,9 +98,14 @@ void LayerTreeHostProxy::setRootCompositingLayer(WebLayerID id)
     updateViewport();
 }
 
-void LayerTreeHostProxy::syncCompositingLayerState(const WebLayerInfo& info)
+void LayerTreeHostProxy::setCompositingLayerState(WebLayerID id, const WebLayerInfo& info)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::syncLayerParameters, m_renderer.get(), info));
+    dispatchUpdate(bind(&WebLayerTreeRenderer::setLayerState, m_renderer.get(), id, info));
+}
+
+void LayerTreeHostProxy::setCompositingLayerChildren(WebLayerID id, const Vector<WebLayerID>& children)
+{
+    dispatchUpdate(bind(&WebLayerTreeRenderer::setLayerChildren, m_renderer.get(), id, children));
 }
 
 void LayerTreeHostProxy::didRenderFrame()

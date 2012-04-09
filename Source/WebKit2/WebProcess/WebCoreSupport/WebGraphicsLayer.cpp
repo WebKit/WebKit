@@ -60,9 +60,16 @@ static WebLayerID toWebLayerID(GraphicsLayer* layer)
     return layer ? toWebGraphicsLayer(layer)->id() : 0;
 }
 
-void WebGraphicsLayer::notifyChange()
+void WebGraphicsLayer::didChangeLayerState()
 {
-    m_modified = true;
+    m_shouldSyncLayerState = true;
+    if (client())
+        client()->notifySyncRequired(this);
+}
+
+void WebGraphicsLayer::didChangeChildren()
+{
+    m_shouldSyncChildren = true;
     if (client())
         client()->notifySyncRequired(this);
 }
@@ -81,21 +88,22 @@ void WebGraphicsLayer::setShouldUpdateVisibleRect()
 
 void WebGraphicsLayer::didChangeGeometry()
 {
-    notifyChange();
+    didChangeLayerState();
     setShouldUpdateVisibleRect();
 }
 
 WebGraphicsLayer::WebGraphicsLayer(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_maskTarget(0)
-    , m_modified(true)
     , m_inUpdateMode(false)
     , m_shouldUpdateVisibleRect(true)
+    , m_shouldSyncLayerState(true)
+    , m_shouldSyncChildren(true)
     , m_webGraphicsLayerClient(0)
-    , m_contentsScale(1.f)
+    , m_contentsScale(1)
 {
     static WebLayerID nextLayerID = 1;
-    m_layerInfo.id = nextLayerID++;
+    m_id = nextLayerID++;
     layerByIDMap().add(id(), this);
 }
 
@@ -123,9 +131,9 @@ bool WebGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& children)
     for (int i = 0; i < children.size(); ++i) {
         WebGraphicsLayer* child = toWebGraphicsLayer(children[i]);
         child->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
-        child->notifyChange();
+        child->didChangeLayerState();
     }
-    notifyChange();
+    didChangeChildren();
     return true;
 }
 
@@ -133,32 +141,32 @@ void WebGraphicsLayer::addChild(GraphicsLayer* layer)
 {
     GraphicsLayer::addChild(layer);
     toWebGraphicsLayer(layer)->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
-    toWebGraphicsLayer(layer)->notifyChange();
-    notifyChange();
+    toWebGraphicsLayer(layer)->didChangeLayerState();
+    didChangeChildren();
 }
 
 void WebGraphicsLayer::addChildAtIndex(GraphicsLayer* layer, int index)
 {
     GraphicsLayer::addChildAtIndex(layer, index);
     toWebGraphicsLayer(layer)->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
-    toWebGraphicsLayer(layer)->notifyChange();
-    notifyChange();
+    toWebGraphicsLayer(layer)->didChangeLayerState();
+    didChangeChildren();
 }
 
 void WebGraphicsLayer::addChildAbove(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildAbove(layer, sibling);
     toWebGraphicsLayer(layer)->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
-    toWebGraphicsLayer(layer)->notifyChange();
-    notifyChange();
+    toWebGraphicsLayer(layer)->didChangeLayerState();
+    didChangeChildren();
 }
 
 void WebGraphicsLayer::addChildBelow(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildBelow(layer, sibling);
     toWebGraphicsLayer(layer)->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
-    toWebGraphicsLayer(layer)->notifyChange();
-    notifyChange();
+    toWebGraphicsLayer(layer)->didChangeLayerState();
+    didChangeChildren();
 }
 
 bool WebGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild)
@@ -166,20 +174,20 @@ bool WebGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newC
     bool ok = GraphicsLayer::replaceChild(oldChild, newChild);
     if (!ok)
         return false;
-    notifyChange();
-    toWebGraphicsLayer(oldChild)->notifyChange();
+    didChangeChildren();
+    toWebGraphicsLayer(oldChild)->didChangeLayerState();
     toWebGraphicsLayer(newChild)->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
-    toWebGraphicsLayer(newChild)->notifyChange();
+    toWebGraphicsLayer(newChild)->didChangeLayerState();
     return true;
 }
 
 void WebGraphicsLayer::removeFromParent()
 {
     if (WebGraphicsLayer* parentLayer = toWebGraphicsLayer(parent()))
-        parentLayer->notifyChange();
+        parentLayer->didChangeChildren();
     GraphicsLayer::removeFromParent();
 
-    notifyChange();
+    didChangeLayerState();
 }
 
 void WebGraphicsLayer::setPosition(const FloatPoint& p)
@@ -253,7 +261,7 @@ void WebGraphicsLayer::setDrawsContent(bool b)
         return;
     GraphicsLayer::setDrawsContent(b);
 
-    notifyChange();
+    didChangeLayerState();
 }
 
 void WebGraphicsLayer::setContentsOpaque(bool b)
@@ -263,7 +271,7 @@ void WebGraphicsLayer::setContentsOpaque(bool b)
     if (m_mainBackingStore)
         m_mainBackingStore->setSupportsAlpha(!b);
     GraphicsLayer::setContentsOpaque(b);
-    notifyChange();
+    didChangeLayerState();
 }
 
 void WebGraphicsLayer::setBackfaceVisibility(bool b)
@@ -272,7 +280,7 @@ void WebGraphicsLayer::setBackfaceVisibility(bool b)
         return;
 
     GraphicsLayer::setBackfaceVisibility(b);
-    notifyChange();
+    didChangeLayerState();
 }
 
 void WebGraphicsLayer::setOpacity(float opacity)
@@ -281,7 +289,7 @@ void WebGraphicsLayer::setOpacity(float opacity)
         return;
 
     GraphicsLayer::setOpacity(opacity);
-    notifyChange();
+    didChangeLayerState();
 }
 
 void WebGraphicsLayer::setContentsRect(const IntRect& r)
@@ -290,7 +298,7 @@ void WebGraphicsLayer::setContentsRect(const IntRect& r)
         return;
 
     GraphicsLayer::setContentsRect(r);
-    notifyChange();
+    didChangeLayerState();
 }
 
 void WebGraphicsLayer::setContentsNeedsDisplay()
@@ -309,13 +317,13 @@ void WebGraphicsLayer::setContentsToImage(Image* image)
         // We adopt first, in case this is the same frame - that way we avoid destroying and recreating the image.
         newID = m_webGraphicsLayerClient->adoptImageBackingStore(image);
         m_webGraphicsLayerClient->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
-        notifyChange();
+        didChangeLayerState();
         if (m_layerInfo.imageBackingStoreID && newID == m_layerInfo.imageBackingStoreID)
             return;
     } else {
         // If m_webGraphicsLayerClient is not set yet there should be no backing store ID.
         ASSERT(!m_layerInfo.imageBackingStoreID);
-        notifyChange();
+        didChangeLayerState();
     }
 
     m_layerInfo.imageBackingStoreID = newID;
@@ -337,8 +345,8 @@ void WebGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
     WebGraphicsLayer* webGraphicsLayer = toWebGraphicsLayer(layer);
     webGraphicsLayer->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
     webGraphicsLayer->setMaskTarget(this);
-    webGraphicsLayer->notifyChange();
-    notifyChange();
+    webGraphicsLayer->didChangeLayerState();
+    didChangeLayerState();
 
 }
 
@@ -351,7 +359,7 @@ void WebGraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
         toWebGraphicsLayer(layer)->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
 
     GraphicsLayer::setReplicatedByLayer(layer);
-    notifyChange();
+    didChangeLayerState();
 }
 
 void WebGraphicsLayer::setNeedsDisplay()
@@ -363,12 +371,12 @@ void WebGraphicsLayer::setNeedsDisplayInRect(const FloatRect& rect)
 {
     if (m_mainBackingStore)
         m_mainBackingStore->invalidate(IntRect(rect));
-    notifyChange();
+    didChangeLayerState();
 }
 
 WebLayerID WebGraphicsLayer::id() const
 {
-    return m_layerInfo.id;
+    return m_id;
 }
 
 void WebGraphicsLayer::syncCompositingState(const FloatRect& rect)
@@ -390,13 +398,24 @@ WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer* layer)
     return static_cast<WebGraphicsLayer*>(layer);
 }
 
-void WebGraphicsLayer::syncLayerParameters()
- {
-    if (!m_modified)
+void WebGraphicsLayer::syncChildren()
+{
+    if (!m_shouldSyncChildren)
         return;
+    m_shouldSyncChildren = false;
+    Vector<WebLayerID> childIDs;
+    for (size_t i = 0; i < children().size(); ++i)
+        childIDs.append(toWebLayerID(children()[i]));
 
-    m_modified = false;
-    m_layerInfo.name = name();
+    m_webGraphicsLayerClient->syncLayerChildren(m_id, childIDs);
+}
+
+void WebGraphicsLayer::syncLayerState()
+ {
+    if (!m_shouldSyncLayerState)
+        return;
+    m_shouldSyncLayerState = false;
+
     m_layerInfo.anchorPoint = anchorPoint();
     m_layerInfo.backfaceVisible = backfaceVisibility();
     m_layerInfo.childrenTransform = childrenTransform();
@@ -412,24 +431,24 @@ void WebGraphicsLayer::syncLayerParameters()
     m_layerInfo.replica = toWebLayerID(replicaLayer());
     m_layerInfo.size = size();
     m_layerInfo.transform = transform();
-    m_layerInfo.children.clear();
+    m_webGraphicsLayerClient->syncLayerState(m_id, m_layerInfo);
+}
 
-    for (size_t i = 0; i < children().size(); ++i)
-        m_layerInfo.children.append(toWebLayerID(children()[i]));
-
-    m_webGraphicsLayerClient->didSyncCompositingStateForLayer(m_layerInfo);
+void WebGraphicsLayer::ensureImageBackingStore()
+{
+    if (!m_image)
+        return;
+    if (!m_layerInfo.imageBackingStoreID)
+        m_layerInfo.imageBackingStoreID = m_webGraphicsLayerClient->adoptImageBackingStore(m_image.get());
 }
 void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
 {
     // The remote image might have been released by purgeBackingStores.
-    if (m_image && !m_layerInfo.imageBackingStoreID)
-        m_layerInfo.imageBackingStoreID = m_webGraphicsLayerClient->adoptImageBackingStore(m_image.get());
-
+    ensureImageBackingStore();
     computeTransformedVisibleRect();
-    syncLayerParameters();
+    syncChildren();
+    syncLayerState();
     updateContentBuffers();
-
-    m_modified = false;
 }
 
 void WebGraphicsLayer::tiledBackingStorePaintBegin()
@@ -439,7 +458,7 @@ void WebGraphicsLayer::tiledBackingStorePaintBegin()
 void WebGraphicsLayer::setRootLayer(bool isRoot)
 {
     m_layerInfo.isRootLayer = isRoot;
-    notifyChange();
+    didChangeLayerState();
 }
 
 void WebGraphicsLayer::setVisibleContentRectTrajectoryVector(const FloatPoint& trajectoryVector)

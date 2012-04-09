@@ -226,10 +226,16 @@ bool LayerTreeHostQt::flushPendingLayerChanges()
     return didSync;
 }
 
-void LayerTreeHostQt::didSyncCompositingStateForLayer(const WebLayerInfo& info)
+void LayerTreeHostQt::syncLayerState(WebLayerID id, const WebLayerInfo& info)
 {
     m_shouldSyncFrame = true;
-    m_webPage->send(Messages::LayerTreeHostProxy::SyncCompositingLayerState(info));
+    m_webPage->send(Messages::LayerTreeHostProxy::SetCompositingLayerState(id, info));
+}
+
+void LayerTreeHostQt::syncLayerChildren(WebLayerID id, const Vector<WebLayerID>& children)
+{
+    m_shouldSyncFrame = true;
+    m_webPage->send(Messages::LayerTreeHostProxy::SetCompositingLayerChildren(id, children));
 }
 
 void LayerTreeHostQt::attachLayer(WebGraphicsLayer* layer)

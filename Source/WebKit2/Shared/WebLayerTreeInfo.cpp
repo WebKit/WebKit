@@ -22,9 +22,9 @@
 #if USE(UI_SIDE_COMPOSITING)
 #include "WebLayerTreeInfo.h"
 
+#include "ArgumentCoders.h"
 #include "Arguments.h"
 #include "SharedMemory.h"
-#include "WebCoreArgumentCoders.h"
 
 using namespace CoreIPC;
 
@@ -32,40 +32,12 @@ namespace WebKit {
 
 void WebLayerInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    // We have to divide it to several lines, because CoreIPC::In/Out takes a maximum of 10 arguments.
-    encoder->encode(CoreIPC::In(id, name, parent, children, flags, replica, mask, imageBackingStoreID));
-    encoder->encode(CoreIPC::In(pos, size, transform, opacity, anchorPoint, childrenTransform, contentsRect));
+    SimpleArgumentCoder<WebLayerInfo>::encode(encoder, *this);
 }
 
 bool WebLayerInfo::decode(CoreIPC::ArgumentDecoder* decoder, WebLayerInfo& info)
 {
-    // We have to divide it to several lines, because CoreIPC::In/Out takes a maximum of 10 arguments.
-    if (!decoder->decode(CoreIPC::Out(info.id, info.name, info.parent, info.children, info.flags, info.replica, info.mask, info.imageBackingStoreID)))
-        return false;
-    if (!decoder->decode(CoreIPC::Out(info.pos, info.size, info.transform, info.opacity, info.anchorPoint, info.childrenTransform, info.contentsRect)))
-        return false;
-
-    return true;
-}
-
-void WebLayerTreeInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
-{
-    encoder->encode(CoreIPC::In(layers, rootLayerID, deletedLayerIDs, contentScale));
-}
-
-bool WebLayerTreeInfo::decode(CoreIPC::ArgumentDecoder* decoder, WebLayerTreeInfo& info)
-{
-    return decoder->decode(CoreIPC::Out(info.layers, info.rootLayerID, info.deletedLayerIDs, info.contentScale));
-}
-
-void WebLayerUpdateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
-{
-    encoder->encode(CoreIPC::In(layerID, rect, bitmapHandle));
-}
-
-bool WebLayerUpdateInfo::decode(CoreIPC::ArgumentDecoder* decoder, WebLayerUpdateInfo& info)
-{
-    return decoder->decode(CoreIPC::Out(info.layerID, info.rect, info.bitmapHandle));
+    return SimpleArgumentCoder<WebLayerInfo>::decode(decoder, info);
 }
 }
 #endif

@@ -19,7 +19,8 @@
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TILED_BACKING_STORE)
 messages -> LayerTreeHostProxy {
-    SyncCompositingLayerState(WebKit::WebLayerInfo layerInfo)
+    SetCompositingLayerState(uint32_t id, WebKit::WebLayerInfo layerInfo)
+    SetCompositingLayerChildren(uint32_t id, Vector<uint32_t> children)
     SetRootCompositingLayer(uint32_t id)
     DeleteCompositingLayer(uint32_t id)
     CreateTileForLayer(uint32_t layerID, int tileID, WebKit::UpdateInfo updateInfo)

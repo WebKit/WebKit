@@ -155,14 +155,32 @@ void WebLayerTreeRenderer::updateViewport()
         m_layerTreeHostProxy->updateViewport();
 }
 
-void WebLayerTreeRenderer::syncLayerParameters(const WebLayerInfo& layerInfo)
+void WebLayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayerID>& childIDs)
 {
-    WebLayerID id = layerInfo.id;
     ensureLayer(id);
     LayerMap::iterator it = m_layers.find(id);
     GraphicsLayer* layer = it->second;
+    Vector<GraphicsLayer*> children;
 
-    layer->setName(layerInfo.name);
+    for (size_t i = 0; i < childIDs.size(); ++i) {
+        WebLayerID childID = childIDs[i];
+        GraphicsLayer* child = layerByID(childID);
+        if (!child) {
+            child = createLayer(childID).leakPtr();
+            m_layers.add(childID, child);
+        }
+        children.append(child);
+    }
+    layer->setChildren(children);
+}
+
+void WebLayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerInfo)
+{
+    ensureLayer(id);
+    LayerMap::iterator it = m_layers.find(id);
+    ASSERT(it != m_layers.end());
+
+    GraphicsLayer* layer = it->second;
 
     layer->setReplicatedByLayer(layerByID(layerInfo.replica));
     layer->setMaskLayer(layerByID(layerInfo.mask));
@@ -183,19 +201,6 @@ void WebLayerTreeRenderer::syncLayerParameters(const WebLayerInfo& layerInfo)
     layer->setMasksToBounds(layerInfo.isRootLayer ? false : layerInfo.masksToBounds);
     layer->setOpacity(layerInfo.opacity);
     layer->setPreserves3D(layerInfo.preserves3D);
-    Vector<GraphicsLayer*> children;
-
-    for (size_t i = 0; i < layerInfo.children.size(); ++i) {
-        WebLayerID childID = layerInfo.children[i];
-        GraphicsLayer* child = layerByID(childID);
-        if (!child) {
-            child = createLayer(childID).leakPtr();
-            m_layers.add(childID, child);
-        }
-        children.append(child);
-    }
-    layer->setChildren(children);
-
     if (layerInfo.isRootLayer && m_rootLayerID != id)
         setRootLayerID(id);
 }

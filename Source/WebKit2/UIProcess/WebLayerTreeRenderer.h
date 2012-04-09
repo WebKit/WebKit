@@ -59,7 +59,8 @@ public:
 
     void deleteLayer(WebLayerID);
     void setRootLayerID(WebLayerID);
-    void syncLayerParameters(const WebLayerInfo&);
+    void setLayerChildren(WebLayerID, const Vector<WebLayerID>&);
+    void setLayerState(WebLayerID, const WebLayerInfo&);
     void createTile(WebLayerID, int, float scale);
     void removeTile(WebLayerID, int);
     void updateTile(WebLayerID, int, const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<ShareableBitmap>);

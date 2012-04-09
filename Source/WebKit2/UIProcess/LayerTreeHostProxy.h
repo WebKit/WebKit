@@ -47,7 +47,8 @@ class LayerTreeHostProxy {
 public:
     LayerTreeHostProxy(DrawingAreaProxy*);
     virtual ~LayerTreeHostProxy();
-    void syncCompositingLayerState(const WebLayerInfo&);
+    void setCompositingLayerState(WebLayerID, const WebLayerInfo&);
+    void setCompositingLayerChildren(WebLayerID, const Vector<WebLayerID>&);
     void deleteCompositingLayer(WebLayerID);
     void setRootCompositingLayer(WebLayerID);
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

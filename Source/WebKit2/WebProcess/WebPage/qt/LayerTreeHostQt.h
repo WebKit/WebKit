@@ -71,7 +71,8 @@ public:
     virtual void purgeBackingStores();
     virtual bool layerTreeTileUpdatesAllowed() const;
     virtual void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint&);
-    virtual void didSyncCompositingStateForLayer(const WebLayerInfo&);
+    virtual void syncLayerState(WebLayerID, const WebLayerInfo&);
+    virtual void syncLayerChildren(WebLayerID, const Vector<WebLayerID>&);
     virtual void attachLayer(WebCore::WebGraphicsLayer*);
     virtual void detachLayer(WebCore::WebGraphicsLayer*);
 

@@ -1,5 +1,74 @@
 2012-04-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
+        [Qt][WK2] Sync the layer's state and the layer's children separately
+        https://bugs.webkit.org/show_bug.cgi?id=82534
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Switched the WebLayerInfo struct, which includes a single layer's state,
+        to use only POD types that can be serialized via SimpleArgumentCoder.
+        To allow POD-serialization, we serialize the children IDs in a seperate
+        message (SetLayerChildren), and only when the tree layout has actually
+        been modified.
+
+        * Shared/WebLayerTreeInfo.cpp:
+        (WebKit::WebLayerInfo::encode):
+        (WebKit::WebLayerInfo::decode):
+        * Shared/WebLayerTreeInfo.h:
+        (WebKit::WebLayerInfo::WebLayerInfo):
+        * UIProcess/LayerTreeHostProxy.cpp:
+        (WebKit::LayerTreeHostProxy::setCompositingLayerState):
+        (WebKit):
+        (WebKit::LayerTreeHostProxy::setCompositingLayerChildren):
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/LayerTreeHostProxy.messages.in:
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::setLayerChildren):
+        (WebKit):
+        (WebKit::WebLayerTreeRenderer::setLayerState):
+        * UIProcess/WebLayerTreeRenderer.h:
+        (WebLayerTreeRenderer):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::didChangeLayerState):
+        (WebCore):
+        (WebCore::WebGraphicsLayer::didChangeChildren):
+        (WebCore::WebGraphicsLayer::didChangeGeometry):
+        (WebCore::WebGraphicsLayer::WebGraphicsLayer):
+        (WebCore::WebGraphicsLayer::setChildren):
+        (WebCore::WebGraphicsLayer::addChild):
+        (WebCore::WebGraphicsLayer::addChildAtIndex):
+        (WebCore::WebGraphicsLayer::addChildAbove):
+        (WebCore::WebGraphicsLayer::addChildBelow):
+        (WebCore::WebGraphicsLayer::replaceChild):
+        (WebCore::WebGraphicsLayer::removeFromParent):
+        (WebCore::WebGraphicsLayer::setDrawsContent):
+        (WebCore::WebGraphicsLayer::setContentsOpaque):
+        (WebCore::WebGraphicsLayer::setBackfaceVisibility):
+        (WebCore::WebGraphicsLayer::setOpacity):
+        (WebCore::WebGraphicsLayer::setContentsRect):
+        (WebCore::WebGraphicsLayer::setContentsToImage):
+        (WebCore::WebGraphicsLayer::setMaskLayer):
+        (WebCore::WebGraphicsLayer::setReplicatedByLayer):
+        (WebCore::WebGraphicsLayer::setNeedsDisplayInRect):
+        (WebCore::WebGraphicsLayer::id):
+        (WebCore::WebGraphicsLayer::syncChildren):
+        (WebCore::WebGraphicsLayer::syncLayerState):
+        (WebCore::WebGraphicsLayer::syncImageBackingStore):
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        (WebCore::WebGraphicsLayer::setRootLayer):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayerClient):
+        (WebGraphicsLayer):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::syncLayerState):
+        (WebKit):
+        (WebKit::LayerTreeHostQt::syncLayerChildren):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
+2012-04-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
         [Qt][WK2] Accelerated and non-accelerated animations need to be synchronized
         https://bugs.webkit.org/show_bug.cgi?id=75780
 

@@ -55,7 +55,8 @@ public:
     virtual bool layerTreeTileUpdatesAllowed() const = 0;
     virtual int64_t adoptImageBackingStore(WebCore::Image*) = 0;
     virtual void releaseImageBackingStore(int64_t) = 0;
-    virtual void didSyncCompositingStateForLayer(const WebLayerInfo&) = 0;
+    virtual void syncLayerState(WebLayerID, const WebLayerInfo&) = 0;
+    virtual void syncLayerChildren(WebLayerID, const Vector<WebLayerID>&) = 0;
     virtual void attachLayer(WebCore::WebGraphicsLayer*) = 0;
     virtual void detachLayer(WebCore::WebGraphicsLayer*) = 0;
 };
@@ -101,11 +102,11 @@ public:
     void setVisibleContentRectTrajectoryVector(const FloatPoint&);
     virtual void syncCompositingState(const FloatRect&);
     virtual void syncCompositingStateForThisLayerOnly();
+
     void setRootLayer(bool);
 
     WebKit::WebLayerID id() const;
     static WebGraphicsLayer* layerByID(WebKit::WebLayerID);
-    bool isModified() const { return m_modified; }
     void didSynchronize();
     Image* image() { return m_image.get(); }
 
@@ -129,6 +130,9 @@ public:
     virtual void removeTile(int tileID);
 
     void setWebGraphicsLayerClient(WebKit::WebGraphicsLayerClient*);
+    void syncChildren();
+    void syncLayerState();
+    void ensureImageBackingStore();
 
     void adjustVisibleRect();
     bool isReadyForTileBufferSwap() const;
@@ -137,17 +141,21 @@ public:
 
 private:
     virtual void willBeDestroyed();
+    WebKit::WebLayerID m_id;
     WebKit::WebLayerInfo m_layerInfo;
     RefPtr<Image> m_image;
     GraphicsLayer* m_maskTarget;
     FloatRect m_needsDisplayRect;
     LayerTransform m_layerTransform;
-    bool m_modified : 1;
     bool m_inUpdateMode : 1;
     bool m_shouldUpdateVisibleRect: 1;
+    bool m_shouldSyncLayerState: 1;
+    bool m_shouldSyncChildren: 1;
 
     void notifyChange();
     void didChangeGeometry();
+    void didChangeLayerState();
+    void didChangeChildren();
     void createBackingStore();
 
     bool selfOrAncestorHaveNonAffineTransforms();
