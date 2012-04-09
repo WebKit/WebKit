@@ -260,33 +260,12 @@ bool RenderObject::isHTMLMarquee() const
     return node() && node()->renderer() == this && node()->hasTagName(marqueeTag);
 }
 
-static bool isBeforeAfterContentGeneratedByAncestor(RenderObject* renderer, RenderObject* beforeAfterContent)
-{
-    while (renderer) {
-        if (renderer->generatingNode() == beforeAfterContent->generatingNode())
-            return true;
-        renderer = renderer->parent();
-    }
-    return false;
-}
-
 void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     RenderObjectChildList* children = virtualChildren();
     ASSERT(children);
     if (!children)
         return;
-
-    RenderObject* beforeContent = 0;
-    bool beforeChildHasBeforeAndAfterContent = false;
-    if (beforeChild && (beforeChild->isTable() || beforeChild->isTableSection() || beforeChild->isTableRow() || beforeChild->isTableCell())) {
-        beforeContent = beforeChild->beforePseudoElementRenderer();
-        RenderObject* afterContent = beforeChild->afterPseudoElementRenderer();
-        if (beforeContent && afterContent && isBeforeAfterContentGeneratedByAncestor(this, beforeContent)) {
-            beforeChildHasBeforeAndAfterContent = true;
-            beforeContent->destroy();
-        }
-    }
 
     bool needsTable = false;
 
@@ -336,9 +315,6 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
     // and stop creating layers at all for these cases - they're not used anyways.
     if (newChild->hasLayer() && !layerCreationAllowedForSubtree())
         toRenderBoxModelObject(newChild)->layer()->removeOnlyThisLayer();
-
-    if (beforeChildHasBeforeAndAfterContent)
-        children->updateBeforeAfterContent(this, BEFORE);
 }
 
 void RenderObject::removeChild(RenderObject* oldChild)

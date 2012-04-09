@@ -4037,4 +4037,71 @@ bool RenderBox::hasRelativeLogicalHeight() const
             || style()->logicalMaxHeight().isPercent();
 }
 
+void RenderBox::moveChildTo(RenderBox* toBox, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert)
+{
+    ASSERT(this == child->parent());
+    ASSERT(!beforeChild || toBox == beforeChild->parent());
+    if (fullRemoveInsert && toBox->isRenderBlock()) {
+        // Takes care of adding the new child correctly if toBlock and fromBlock
+        // have different kind of children (block vs inline).
+        toBox->addChild(virtualChildren()->removeChildNode(this, child), beforeChild);
+    } else
+        toBox->virtualChildren()->insertChildNode(toBox, virtualChildren()->removeChildNode(this, child, fullRemoveInsert), beforeChild, fullRemoveInsert);
+}
+
+void RenderBox::moveChildrenTo(RenderBox* toBox, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert)
+{
+    ASSERT(!beforeChild || toBox == beforeChild->parent());
+    for (RenderObject* child = startChild; child && child != endChild; ) {
+        // Save our next sibling as moveChildTo will clear it.
+        RenderObject* nextSibling = child->nextSibling();
+        moveChildTo(toBox, child, beforeChild, fullRemoveInsert);
+        child = nextSibling;
+    }
+}
+
+static void markBoxForRelayoutAfterSplit(RenderBox* box)
+{
+    // FIXME: The table code should handle that automatically. If not,
+    // we should fix it and remove the table part checks.
+    if (box->isTable())
+        toRenderTable(box)->setNeedsSectionRecalc();
+    else if (box->isTableSection())
+        toRenderTableSection(box)->setNeedsCellRecalc();
+
+    box->setNeedsLayoutAndPrefWidthsRecalc();
+}
+
+RenderObject* RenderBox::splitAnonymousBoxesAroundChild(RenderObject* beforeChild)
+{
+    bool didSplitParentAnonymousBoxes = false;
+
+    while (beforeChild->parent() != this) {
+        RenderBox* boxToSplit = toRenderBox(beforeChild->parent());
+        if (boxToSplit->firstChild() != beforeChild && boxToSplit->isAnonymous()) {
+            didSplitParentAnonymousBoxes = true;
+
+            // We have to split the parent box into two boxes and move children
+            // from |beforeChild| to end into the new post box.
+            RenderBox* postBox = boxToSplit->createAnonymousBoxWithSameTypeAs(this);
+            postBox->setChildrenInline(boxToSplit->childrenInline());
+            RenderBox* parentBox = toRenderBox(boxToSplit->parent());
+            parentBox->virtualChildren()->insertChildNode(parentBox, postBox, boxToSplit->nextSibling());
+            boxToSplit->moveChildrenTo(postBox, beforeChild, 0, boxToSplit->hasLayer());
+
+            markBoxForRelayoutAfterSplit(boxToSplit);
+            markBoxForRelayoutAfterSplit(postBox);
+
+            beforeChild = postBox;
+        } else
+            beforeChild = boxToSplit;
+    }
+
+    if (didSplitParentAnonymousBoxes)
+        markBoxForRelayoutAfterSplit(this);
+
+    ASSERT(beforeChild->parent() == this);
+    return beforeChild;
+}
+
 } // namespace WebCore
