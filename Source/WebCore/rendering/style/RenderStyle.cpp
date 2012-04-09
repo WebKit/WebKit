@@ -880,7 +880,7 @@ void RenderStyle::setBoxShadow(PassOwnPtr<ShadowData> shadowData, bool add)
     rareData->m_boxShadow = shadowData;
 }
 
-static RoundedRect::Radii calcRadiiFor(const BorderData& border, LayoutSize size, RenderView* renderView)
+static RoundedRect::Radii calcRadiiFor(const BorderData& border, IntSize size, RenderView* renderView)
 {
     return RoundedRect::Radii(
         IntSize(valueForLength(border.topLeft().width(), size.width(), renderView), 
@@ -927,10 +927,11 @@ static float calcConstraintScaleFor(const IntRect& rect, const RoundedRect::Radi
 
 RoundedRect RenderStyle::getRoundedBorderFor(const LayoutRect& borderRect, RenderView* renderView, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
-    RoundedRect roundedRect(pixelSnappedIntRect(borderRect));
+    IntRect snappedBorderRect(pixelSnappedIntRect(borderRect));
+    RoundedRect roundedRect(snappedBorderRect);
     if (hasBorderRadius()) {
         RoundedRect::Radii radii = calcRadiiFor(surround->border, borderRect.size(), renderView);
-        radii.scale(calcConstraintScaleFor(pixelSnappedIntRect(borderRect), radii));
+        radii.scale(calcConstraintScaleFor(snappedBorderRect, radii));
         roundedRect.includeLogicalEdges(radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
     }
     return roundedRect;
