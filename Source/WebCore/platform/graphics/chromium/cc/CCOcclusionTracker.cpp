@@ -115,13 +115,16 @@ static inline Region transformSurfaceOpaqueRegion(const RenderSurfaceType* surfa
     // Verify that rects within the |surface| will remain rects in its target surface after applying |transform|. If this is true, then
     // apply |transform| to each rect within |region| in order to transform the entire Region.
 
-    FloatQuad transformedBoundsQuad = transform.mapQuad(FloatQuad(region.bounds()));
-    if (!transformedBoundsQuad.isRectilinear())
+    bool clipped;
+    FloatQuad transformedBoundsQuad = CCMathUtil::mapQuad(transform, FloatQuad(region.bounds()), clipped);
+    // FIXME: Find a rect interior to each transformed quad.
+    if (clipped || !transformedBoundsQuad.isRectilinear())
         return Region();
 
     Region transformedRegion;
 
     Vector<IntRect> rects = region.rects();
+    // Clipping has been verified above, so mapRect will give correct results.
     for (size_t i = 0; i < rects.size(); ++i)
         transformedRegion.unite(enclosedIntRect(transform.mapRect(FloatRect(rects[i]))));
     return transformedRegion;
@@ -195,13 +198,15 @@ static inline TransformationMatrix contentToTargetSurfaceTransform(const LayerTy
 
 // FIXME: Remove usePaintTracking when paint tracking is on for paint culling.
 template<typename LayerType>
-static inline Region computeOcclusionBehindLayer(const LayerType* layer, const TransformationMatrix& transform, bool usePaintTracking)
+static inline Region computeOcclusionBehindLayer(const LayerType* layer, const TransformationMatrix& transform, const IntRect& scissorRect, bool usePaintTracking)
 {
     Region opaqueRegion;
 
-    FloatQuad unoccludedQuad = transform.mapQuad(FloatQuad(layer->visibleLayerRect()));
+    bool clipped;
+    FloatQuad unoccludedQuad = CCMathUtil::mapQuad(transform, FloatQuad(layer->visibleLayerRect()), clipped);
     bool isPaintedAxisAligned = unoccludedQuad.isRectilinear();
-    if (!isPaintedAxisAligned)
+    // FIXME: Find a rect interior to each transformed quad.
+    if (clipped || !isPaintedAxisAligned)
         return opaqueRegion;
 
     if (layer->opaque())
@@ -211,9 +216,11 @@ static inline Region computeOcclusionBehindLayer(const LayerType* layer, const T
     else if (usePaintTracking) {
         Region contentRegion = layer->visibleContentOpaqueRegion();
         Vector<IntRect> contentRects = contentRegion.rects();
+        // We verify that the possible bounds of this region are not clipped above, so we can use mapRect() safely here.
         for (size_t i = 0; i < contentRects.size(); ++i)
             opaqueRegion.unite(enclosedIntRect(transform.mapRect(FloatRect(contentRects[i]))));
     }
+    opaqueRegion.intersect(scissorRect);
     return opaqueRegion;
 }
 
@@ -228,16 +235,26 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
     if (!layerOpacityKnown(layer) || layer->drawOpacity() < 1)
         return;
 
-    // FIXME: Remove m_usePaintTracking when paint tracking is on for paint culling.
-    if (layerTransformsToScreenKnown(layer))
-        m_stack.last().occlusionInScreen.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToScreenSpaceTransform<LayerType>(layer), m_usePaintTracking));
+    IntRect scissorInTarget = layerScissorRectInTargetSurface(layer);
     if (layerTransformsToTargetKnown(layer))
-        m_stack.last().occlusionInTarget.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToTargetSurfaceTransform<LayerType>(layer), m_usePaintTracking));
+        m_stack.last().occlusionInTarget.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToTargetSurfaceTransform<LayerType>(layer), scissorInTarget, m_usePaintTracking));
+
+    // We must clip the occlusion within the layer's scissorInTarget within screen space as well. If the scissor rect can't be moved to screen space and
+    // remain rectilinear, then we don't add any occlusion in screen space.
+
+    if (layerTransformsToScreenKnown(layer)) {
+        TransformationMatrix targetToScreenTransform = m_stack.last().surface->screenSpaceTransform();
+        FloatQuad scissorInScreenQuad = targetToScreenTransform.mapQuad(FloatQuad(FloatRect(scissorInTarget)));
+        if (!scissorInScreenQuad.isRectilinear())
+            return;
+        IntRect scissorInScreenRect = intersection(m_scissorRectInScreenSpace, enclosedIntRect(CCMathUtil::mapClippedRect(targetToScreenTransform, FloatRect(scissorInTarget))));
+        m_stack.last().occlusionInScreen.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToScreenSpaceTransform<LayerType>(layer), scissorInScreenRect, m_usePaintTracking));
+    }
 }
 
 static inline bool testContentRectOccluded(const IntRect& contentRect, const TransformationMatrix& contentSpaceTransform, const IntRect& scissorRect, const Region& occlusion)
 {
-    FloatRect transformedRect = contentSpaceTransform.mapRect(FloatRect(contentRect));
+    FloatRect transformedRect = CCMathUtil::mapClippedRect(contentSpaceTransform, FloatRect(contentRect));
     // Take the enclosingIntRect, as we want to include partial pixels in the test.
     IntRect targetRect = intersection(enclosingIntRect(transformedRect), scissorRect);
     return targetRect.isEmpty() || occlusion.contains(targetRect);
@@ -281,13 +298,10 @@ static inline IntRect computeUnoccludedContentRect(const IntRect& contentRect, c
     if (!contentSpaceTransform.isInvertible())
         return contentRect;
 
-    FloatRect transformedRect = contentSpaceTransform.mapRect(FloatRect(contentRect));
     // Take the enclosingIntRect at each step, as we want to contain any unoccluded partial pixels in the resulting IntRect.
+    FloatRect transformedRect = CCMathUtil::mapClippedRect(contentSpaceTransform, FloatRect(contentRect));
     IntRect shrunkRect = rectSubtractRegion(intersection(enclosingIntRect(transformedRect), scissorRect), occlusion);
-    bool clipped; // FIXME: We should be able to use projectClippedQuad instead of forcing everything to be unoccluded. https://bugs.webkit.org/show_bug.cgi?id=83217.
-    IntRect unoccludedRect = enclosingIntRect(CCMathUtil::projectQuad(contentSpaceTransform.inverse(), FloatQuad(FloatRect(shrunkRect)), clipped).boundingBox());
-    if (clipped)
-        return contentRect;
+    IntRect unoccludedRect = enclosingIntRect(CCMathUtil::projectClippedRect(contentSpaceTransform.inverse(), FloatRect(shrunkRect)));
     // The rect back in content space is a bounding box and may extend outside of the original contentRect, so clamp it to the contentRectBounds.
     return intersection(unoccludedRect, contentRect);
 }

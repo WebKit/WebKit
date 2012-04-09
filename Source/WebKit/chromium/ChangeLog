@@ -1,3 +1,19 @@
+2012-04-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Make culling work with clipped rects
+        https://bugs.webkit.org/show_bug.cgi?id=83217
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (CCOcclusionTrackerTestLayerBehindCameraDoesNotOcclude):
+        (WebKitTests::CCOcclusionTrackerTestLayerBehindCameraDoesNotOcclude::runMyTest):
+        (WebKitTests):
+        (CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect):
+        (WebKitTests::CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect::runMyTest):
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore::TestCCOcclusionTrackerImpl::TestCCOcclusionTrackerImpl):
+
 2012-04-06  Ami Fischman  <fischman@chromium.org>
 
         Roll Chromium DEPS
