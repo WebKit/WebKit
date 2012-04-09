@@ -2576,8 +2576,3 @@ fast/block/lineboxcontain/font.html
 # [Qt] REGRESSION(r113138 ): It made fast/workers/worker-multi-startup.html crash on 32 bit
 # https://bugs.webkit.org/show_bug.cgi?id=83133
 fast/workers/worker-multi-startup.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=77754
-# window.resizeTo() does not work properly in Qt DRT. The outerWidth changes after a resizeTo()
-# but not the innerWidth
-fast/css/align-positioned-object-on-resize.html
