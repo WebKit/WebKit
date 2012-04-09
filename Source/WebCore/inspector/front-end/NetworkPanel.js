@@ -1893,7 +1893,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         if (this._resource.mimeType) {
             this._typeCell.removeStyleClass("network-dim-cell");
             this._typeCell.setTextAndTitle(this._resource.mimeType);
-        } else if (this._resource.isPingRequest) {
+        } else if (this._resource.isPingRequest()) {
             this._typeCell.removeStyleClass("network-dim-cell");
             this._typeCell.setTextAndTitle(this._resource.requestContentType());
         } else {
