@@ -1,3 +1,18 @@
+2012-04-09  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove HAVE_STDINT_H
+        https://bugs.webkit.org/show_bug.cgi?id=83434
+
+        Reviewed by Kentaro Hara.
+
+        HAVE_STDINT_H is defined with 1 all the time and we us stdint.h without HAVE(STDINT_H) already.
+
+        * config.h:
+        * wtf/FastMalloc.cpp:
+        * wtf/TCPageMap.h:
+        * wtf/TCSpinLock.h:
+        * wtf/TCSystemAlloc.cpp:
+
 2012-04-06  Benjamin Poulain  <bpoulain@apple.com>
 
         Get rid of the useless flag PREEMPT_GEOLOCATION_PERMISSION

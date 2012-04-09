@@ -36,15 +36,8 @@
 
 #if (CPU(X86) || CPU(X86_64) || CPU(PPC)) && (COMPILER(GCC) || COMPILER(MSVC))
 
-#include <time.h>       /* For nanosleep() */
-
-#if HAVE(STDINT_H)
 #include <stdint.h>
-#elif HAVE(INTTYPES_H)
-#include <inttypes.h>
-#else
-#include <sys/types.h>
-#endif
+#include <time.h>       /* For nanosleep() */
 
 #if OS(WINDOWS)
 #ifndef WIN32_LEAN_AND_MEAN

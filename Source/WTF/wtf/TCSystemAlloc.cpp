@@ -34,19 +34,12 @@
 #if !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)
 #include "TCSystemAlloc.h"
 
-#include <algorithm>
 #include "Assertions.h"
 #include "TCSpinLock.h"
 #include "UnusedParam.h"
 #include "VMTags.h"
-
-#if HAVE(STDINT_H)
+#include <algorithm>
 #include <stdint.h>
-#elif HAVE(INTTYPES_H)
-#include <inttypes.h>
-#else
-#include <sys/types.h>
-#endif
 
 #if OS(WINDOWS)
 #include "windows.h"

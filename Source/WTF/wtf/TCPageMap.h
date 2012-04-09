@@ -45,14 +45,7 @@
 #ifndef TCMALLOC_PAGEMAP_H__
 #define TCMALLOC_PAGEMAP_H__
 
-#if HAVE(STDINT_H)
 #include <stdint.h>
-#elif HAVE(INTTYPES_H)
-#include <inttypes.h>
-#else
-#include <sys/types.h>
-#endif
-
 #include <string.h>
 #include <wtf/Assertions.h>
 

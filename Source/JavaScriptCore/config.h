@@ -69,9 +69,6 @@
 #define HAVE_PTHREAD_NP_H 1
 #endif
 
-/* FIXME: if all platforms have these, do they really need #defines? */
-#define HAVE_STDINT_H 1
-
 #define WTF_CHANGES 1
 
 #ifdef __cplusplus

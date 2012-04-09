@@ -405,14 +405,6 @@ extern "C" WTF_EXPORT_PRIVATE const int jscore_fastmalloc_introspection = 0;
 
 #else // FORCE_SYSTEM_MALLOC
 
-#if HAVE(STDINT_H)
-#include <stdint.h>
-#elif HAVE(INTTYPES_H)
-#include <inttypes.h>
-#else
-#include <sys/types.h>
-#endif
-
 #include "AlwaysInline.h"
 #include "Assertions.h"
 #include "TCPackedCache.h"
@@ -424,6 +416,7 @@ extern "C" WTF_EXPORT_PRIVATE const int jscore_fastmalloc_introspection = 0;
 #include <pthread.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #if HAVE(ERRNO_H)
 #include <errno.h>
