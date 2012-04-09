@@ -1,3 +1,19 @@
+2012-04-09  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Share build system options across ports
+        https://bugs.webkit.org/show_bug.cgi?id=72815
+
+        Reviewed by Daniel Bates.
+
+        Don't define the generic features for every port again.
+        Add a few macros for reusing the central defined options.
+
+        * CMakeLists.txt:
+        * Source/cmake/OptionsBlackBerry.cmake:
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsWinCE.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2012-04-07  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Add Battery Status API support

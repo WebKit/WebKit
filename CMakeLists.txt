@@ -164,7 +164,3 @@ IF (ENABLE_TOOLS)
     ADD_SUBDIRECTORY(Tools)
 ENDIF ()
 
-# -----------------------------------------------------------------------------
-# Prints a summary of all enabled/disabled features
-# -----------------------------------------------------------------------------
-WEBKIT_PRINT_FEATURES()
