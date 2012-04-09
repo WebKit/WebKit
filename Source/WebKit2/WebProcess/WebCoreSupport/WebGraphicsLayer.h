@@ -159,10 +159,12 @@ private:
     void createBackingStore();
     HashSet<String> m_transformAnimations;
 
-    bool selfOrAncestorHasActiveTransformAnimations() const;
-
 #if USE(TILED_BACKING_STORE)
+    bool selfOrAncestorHaveNonAffineTransforms();
+    bool shouldUseTiledBackingStore();
+    void adjustContentsScale();
     void computeTransformedVisibleRect();
+    float effectiveContentsScale();
 
     WebKit::WebGraphicsLayerClient* m_webGraphicsLayerClient;
     OwnPtr<WebCore::TiledBackingStore> m_mainBackingStore;

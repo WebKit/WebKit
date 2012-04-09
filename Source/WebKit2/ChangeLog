@@ -1,3 +1,27 @@
+2012-04-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Disable the content-scaling and visible contents rect when the layer's transform is not affine
+        https://bugs.webkit.org/show_bug.cgi?id=82523
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Always use contentsScale of 1 and a full visibleContentsRect when
+        the layer's transform is not affine. That's because layer's with
+        complex transform would not gain from the benefit of contents scaling,
+        and might also create unexpected layer content sizes.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::createBackingStore):
+        (WebCore):
+        (WebCore::WebGraphicsLayer::tiledBackingStorePaint):
+        (WebCore::WebGraphicsLayer::tiledBackingStorePaintEnd):
+        (WebCore::WebGraphicsLayer::tiledBackingStoreVisibleRect):
+        (WebCore::WebGraphicsLayer::updateTile):
+        (WebCore::WebGraphicsLayer::removeTile):
+        (WebCore::WebGraphicsLayer::updateContentBuffers):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayer):
+
 2012-04-09  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Fail to activate links after double tap gesture.

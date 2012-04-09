@@ -496,8 +496,20 @@ void WebGraphicsLayer::setVisibleContentRectTrajectoryVector(const FloatPoint& t
 void WebGraphicsLayer::setContentsScale(float scale)
 {
     m_contentsScale = scale;
+    adjustContentsScale();
+}
 
-    if (!m_mainBackingStore || m_mainBackingStore->contentsScale() == scale)
+float WebGraphicsLayer::effectiveContentsScale()
+{
+    return shouldUseTiledBackingStore() ? m_contentsScale : 1;
+}
+
+void WebGraphicsLayer::adjustContentsScale()
+{
+    if (!drawsContent())
+        return;
+
+    if (!m_mainBackingStore || m_mainBackingStore->contentsScale() == effectiveContentsScale())
         return;
 
     // Between creating the new backing store and painting the content,
@@ -516,7 +528,7 @@ void WebGraphicsLayer::createBackingStore()
 {
     m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
     m_mainBackingStore->setSupportsAlpha(!contentsOpaque());
-    m_mainBackingStore->setContentsScale(m_contentsScale);
+    m_mainBackingStore->setContentsScale(effectiveContentsScale());
 }
 
 void WebGraphicsLayer::tiledBackingStorePaint(GraphicsContext* context, const IntRect& rect)
@@ -542,11 +554,16 @@ IntRect WebGraphicsLayer::tiledBackingStoreContentsRect()
     return IntRect(0, 0, size().width(), size().height());
 }
 
+bool WebGraphicsLayer::shouldUseTiledBackingStore()
+{
+    return !selfOrAncestorHaveNonAffineTransforms();
+}
+
 IntRect WebGraphicsLayer::tiledBackingStoreVisibleRect()
 {
     // If this layer is part of an active transform animation, the visible rect might change,
     // so we rather render the whole layer until some better optimization is available.
-    if (selfOrAncestorHasActiveTransformAnimations())
+    if (!shouldUseTiledBackingStore())
         return tiledBackingStoreContentsRect();
 
     // Non-invertible layers are not visible.
@@ -562,8 +579,8 @@ IntRect WebGraphicsLayer::tiledBackingStoreVisibleRect()
 Color WebGraphicsLayer::tiledBackingStoreBackgroundColor() const
 {
     return contentsOpaque() ? Color::white : Color::transparent;
-
 }
+
 void WebGraphicsLayer::createTile(int tileID, const UpdateInfo& updateInfo)
 {
     m_webGraphicsLayerClient->createTile(id(), tileID, updateInfo);
@@ -656,6 +673,7 @@ void WebGraphicsLayer::computeTransformedVisibleRect()
 
     // The combined transform will be used in tiledBackingStoreVisibleRect.
     adjustVisibleRect();
+    adjustContentsScale();
 }
 #endif
 
@@ -669,13 +687,13 @@ void WebGraphicsLayer::initFactory()
     GraphicsLayer::setGraphicsLayerFactory(createWebGraphicsLayer);
 }
 
-bool WebGraphicsLayer::selfOrAncestorHasActiveTransformAnimations() const
+bool WebGraphicsLayer::selfOrAncestorHaveNonAffineTransforms()
 {
     if (!m_transformAnimations.isEmpty())
         return true;
 
-    if (parent())
-        return toWebGraphicsLayer(parent())->selfOrAncestorHasActiveTransformAnimations();
+    if (!m_layerTransform.combined().isAffine())
+        return true;
 
     return false;
 }
