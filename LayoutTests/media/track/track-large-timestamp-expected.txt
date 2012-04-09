@@ -1,0 +1,9 @@
+Tests that a very large timestamp is parsed correctly.
+
+EXPECTED (track.track.cues.length == '1') OK
+EXPECTED (cue.id == '1') OK
+EXPECTED (cue.startTime / 60 / 60 == '1234567') OK
+EXPECTED (cue.endTime / 60 / 60 == '1234567890') OK
+
+END OF TEST
+

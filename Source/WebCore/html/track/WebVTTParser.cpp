@@ -42,8 +42,9 @@
 
 namespace WebCore {
 
-const int secondsPerHour = 3600;
-const int secondsPerMinute = 60;
+const double secondsPerHour = 3600;
+const double secondsPerMinute = 60;
+const double secondsPerMillisecond = 0.001;
 const double malformedTime = -1;
 const unsigned bomLength = 3;
 const unsigned fileIdentifierLength = 6;
@@ -334,7 +335,7 @@ double WebVTTParser::collectTimeStamp(const String& line, unsigned* position)
         return malformedTime;
 
     // 20-21 - Calculate result.
-    return (value1 * secondsPerHour) + (value2 * secondsPerMinute) + value3 + ((double)value4 / 1000);
+    return (value1 * secondsPerHour) + (value2 * secondsPerMinute) + value3 + (value4 * secondsPerMillisecond);
 }
 
 void WebVTTParser::constructTreeFromToken(Document* document)

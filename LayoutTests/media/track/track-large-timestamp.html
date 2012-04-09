@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            function loaded()
+            {
+                track = document.getElementsByTagName("track")[0];
+                testExpected("track.track.cues.length", 1);
+                cue = testTrack.track.cues[0];
+                testExpected("cue.id", 1);
+                testExpected("cue.startTime / 60 / 60", 1234567);
+                testExpected("cue.endTime / 60 / 60", 1234567890);
+                consoleWrite("");
+
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body>
+        <video controls>
+            <track id="testTrack" src="captions-webvtt/large-timestamp.vtt" onload="loaded()" default>
+        </video>
+        <p>Tests that a very large timestamp is parsed correctly.</p>
+    </body>
+</html>
