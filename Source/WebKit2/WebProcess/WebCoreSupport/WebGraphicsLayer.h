@@ -91,9 +91,6 @@ public:
     void setBackfaceVisibility(bool);
     void setOpacity(float);
     void setContentsRect(const IntRect&);
-    bool addAnimation(const KeyframeValueList&, const IntSize&, const Animation*, const String&, double);
-    void pauseAnimation(const String&, double);
-    void removeAnimation(const String&);
     void setContentsToImage(Image*);
     void setMaskLayer(GraphicsLayer*);
     void setReplicatedByLayer(GraphicsLayer*);
@@ -111,7 +108,6 @@ public:
     bool isModified() const { return m_modified; }
     void didSynchronize();
     Image* image() { return m_image.get(); }
-    void notifyAnimationStarted(double);
 
     GraphicsLayer* maskTarget() const { return m_maskTarget; }
     void setMaskTarget(GraphicsLayer* layer) { m_maskTarget = layer; }
@@ -147,14 +143,12 @@ private:
     FloatRect m_needsDisplayRect;
     LayerTransform m_layerTransform;
     bool m_modified : 1;
-    bool m_hasPendingAnimations : 1;
     bool m_inUpdateMode : 1;
     bool m_shouldUpdateVisibleRect: 1;
 
     void notifyChange();
     void didChangeGeometry();
     void createBackingStore();
-    HashSet<String> m_transformAnimations;
 
     bool selfOrAncestorHaveNonAffineTransforms();
     bool shouldUseTiledBackingStore();

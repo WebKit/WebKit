@@ -1,5 +1,29 @@
 2012-04-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
+        [Qt][WK2] Accelerated and non-accelerated animations need to be synchronized
+        https://bugs.webkit.org/show_bug.cgi?id=75780
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove the ui-side animation code, and return false from addAnimation so that web-side
+        animations kick in.
+
+        * Shared/WebLayerTreeInfo.cpp:
+        (WebKit):
+        * Shared/WebLayerTreeInfo.h:
+        (WebLayerInfo):
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::paintToCurrentGLContext):
+        (WebKit::WebLayerTreeRenderer::setLayerState):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::didChangeGeometry):
+        (WebCore::WebGraphicsLayer::syncLayerState):
+        (WebCore::WebGraphicsLayer::computeTransformedVisibleRect):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayer):
+
+2012-04-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
         [Qt][WK2] Don't synchronize WebGraphicsLayers to the UI process if the actual layer information wasn't changed
         https://bugs.webkit.org/show_bug.cgi?id=82522
 

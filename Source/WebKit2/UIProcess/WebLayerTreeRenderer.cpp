@@ -121,18 +121,6 @@ void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& m
     layer->paint();
     m_textureMapper->endClip();
     m_textureMapper->endPainting();
-
-    syncAnimations();
-}
-
-void WebLayerTreeRenderer::syncAnimations()
-{
-    TextureMapperLayer* layer = toTextureMapperLayer(rootLayer());
-    ASSERT(layer);
-
-    layer->syncAnimationsRecursively();
-    if (layer->descendantsOrSelfHaveRunningAnimations())
-        callOnMainThread(bind(&WebLayerTreeRenderer::updateViewport, this));
 }
 
 void WebLayerTreeRenderer::paintToGraphicsContext(QPainter* painter)
@@ -207,25 +195,6 @@ void WebLayerTreeRenderer::syncLayerParameters(const WebLayerInfo& layerInfo)
         children.append(child);
     }
     layer->setChildren(children);
-
-    for (size_t i = 0; i < layerInfo.animations.size(); ++i) {
-        const WebKit::WebLayerAnimation anim = layerInfo.animations[i];
-
-        switch (anim.operation) {
-        case WebKit::WebLayerAnimation::AddAnimation: {
-            const IntSize boxSize = anim.boxSize;
-            layer->addAnimation(anim.keyframeList, boxSize, anim.animation.get(), anim.name, anim.startTime);
-            break;
-        }
-        case WebKit::WebLayerAnimation::RemoveAnimation:
-            layer->removeAnimation(anim.name);
-            break;
-        case WebKit::WebLayerAnimation::PauseAnimation:
-            double offset = WTF::currentTime() - anim.startTime;
-            layer->pauseAnimation(anim.name, offset);
-            break;
-        }
-    }
 
     if (layerInfo.isRootLayer && m_rootLayerID != id)
         setRootLayerID(id);

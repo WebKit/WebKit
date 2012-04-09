@@ -22,7 +22,6 @@
 #if USE(UI_SIDE_COMPOSITING)
 #include "WebGraphicsLayer.h"
 
-#include "Animation.h"
 #include "BackingStore.h"
 #include "FloatQuad.h"
 #include "Frame.h"
@@ -90,7 +89,6 @@ WebGraphicsLayer::WebGraphicsLayer(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_maskTarget(0)
     , m_modified(true)
-    , m_hasPendingAnimations(false)
     , m_inUpdateMode(false)
     , m_shouldUpdateVisibleRect(true)
     , m_webGraphicsLayerClient(0)
@@ -295,53 +293,6 @@ void WebGraphicsLayer::setContentsRect(const IntRect& r)
     notifyChange();
 }
 
-void WebGraphicsLayer::notifyAnimationStarted(double time)
-{
-    if (client())
-        client()->notifyAnimationStarted(this, time);
-}
-
-bool WebGraphicsLayer::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)
-{
-    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedPropertyWebkitTransform && valueList.property() != AnimatedPropertyOpacity))
-        return false;
-
-    WebLayerAnimation webAnimation(valueList);
-    webAnimation.name = keyframesName;
-    webAnimation.operation = WebLayerAnimation::AddAnimation;
-    webAnimation.boxSize = boxSize;
-    webAnimation.animation = Animation::create(anim);
-    webAnimation.startTime = timeOffset;
-    m_layerInfo.animations.append(webAnimation);
-    if (valueList.property() == AnimatedPropertyWebkitTransform)
-        m_transformAnimations.add(keyframesName);
-
-    m_hasPendingAnimations = true;
-    didChangeGeometry();
-
-    return true;
-}
-
-void WebGraphicsLayer::pauseAnimation(const String& animationName, double timeOffset)
-{
-    WebLayerAnimation webAnimation;
-    webAnimation.name = animationName;
-    webAnimation.operation = WebLayerAnimation::PauseAnimation;
-    webAnimation.startTime = WTF::currentTime() - timeOffset;
-    m_layerInfo.animations.append(webAnimation);
-    notifyChange();
-}
-
-void WebGraphicsLayer::removeAnimation(const String& animationName)
-{
-    WebLayerAnimation webAnimation;
-    webAnimation.name = animationName;
-    webAnimation.operation = WebLayerAnimation::RemoveAnimation;
-    m_layerInfo.animations.append(webAnimation);
-    m_transformAnimations.remove(animationName);
-    notifyChange();
-}
-
 void WebGraphicsLayer::setContentsNeedsDisplay()
 {
     RefPtr<Image> image = m_image;
@@ -479,10 +430,6 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
     updateContentBuffers();
 
     m_modified = false;
-    if (m_hasPendingAnimations)
-        notifyAnimationStarted(WTF::currentTime());
-    m_layerInfo.animations.clear();
-    m_hasPendingAnimations = false;
 }
 
 void WebGraphicsLayer::tiledBackingStorePaintBegin()
@@ -569,8 +516,6 @@ bool WebGraphicsLayer::shouldUseTiledBackingStore()
 
 IntRect WebGraphicsLayer::tiledBackingStoreVisibleRect()
 {
-    // If this layer is part of an active transform animation, the visible rect might change,
-    // so we rather render the whole layer until some better optimization is available.
     if (!shouldUseTiledBackingStore())
         return tiledBackingStoreContentsRect();
 
@@ -698,9 +643,6 @@ void WebGraphicsLayer::initFactory()
 
 bool WebGraphicsLayer::selfOrAncestorHaveNonAffineTransforms()
 {
-    if (!m_transformAnimations.isEmpty())
-        return true;
-
     if (!m_layerTransform.combined().isAffine())
         return true;
 

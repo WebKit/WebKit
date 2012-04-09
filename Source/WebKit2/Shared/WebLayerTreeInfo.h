@@ -48,32 +48,6 @@ struct WebLayerUpdateInfo {
     static bool decode(CoreIPC::ArgumentDecoder*, WebLayerUpdateInfo&);
 };
 
-struct WebLayerAnimation {
-    WebLayerAnimation()
-        : operation(InvalidAnimation)
-        , keyframeList(WebCore::AnimatedPropertyInvalid)
-        , startTime(0) { }
-    WebLayerAnimation(const WebCore::KeyframeValueList& valueList)
-        : operation(InvalidAnimation)
-        , keyframeList(valueList)
-        , startTime(0) { }
-
-    String name;
-    enum Operation {
-        AddAnimation,
-        RemoveAnimation,
-        PauseAnimation,
-        InvalidAnimation
-    } operation;
-    WebCore::IntSize boxSize;
-    RefPtr<WebCore::Animation> animation;
-    WebCore::KeyframeValueList keyframeList;
-    double startTime;
-
-    void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, WebLayerAnimation&);
-};
-
 struct WebLayerInfo {
     WebLayerInfo()
         : id(InvalidWebLayerID)
@@ -111,7 +85,6 @@ struct WebLayerInfo {
         unsigned int flags;
     };
     Vector<WebLayerID> children;
-    Vector<WebLayerAnimation> animations;
     RefPtr<ShareableBitmap> imageBackingStore;
 
     void encode(CoreIPC::ArgumentEncoder*) const;
