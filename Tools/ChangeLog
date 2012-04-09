@@ -1,3 +1,9 @@
+2012-04-09  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r113570.
+
+        * Scripts/build-webkit: Do not use FastMalloc for WinCE.
+
 2012-04-09  Eric Carlson  <eric.carlson@apple.com>
 
         Subscribe eric.carlson@apple.com to Media-related changes

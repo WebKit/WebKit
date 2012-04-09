@@ -317,7 +317,7 @@ my @features = (
       define => "ENABLE_REGISTER_PROTOCOL_HANDLER", default => 0, value => \$registerProtocolHandlerSupport },
 
     { option => "system-malloc", desc => "Toggle system allocator instead of TCmalloc",
-      define => "USE_SYSTEM_MALLOC", default => 0, value => \$systemMallocSupport },
+      define => "USE_SYSTEM_MALLOC", default => isWinCE(), value => \$systemMallocSupport },
 
     { option => "shadow-dom", desc => "Toggle Shadow DOM support",
       define => "ENABLE_SHADOW_DOM", default => isGtk(), value => \$shadowDomSupport },
