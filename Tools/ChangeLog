@@ -1,3 +1,22 @@
+2012-04-09  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt is failing to upload test results on the chromium-mac-leopard bots
+        https://bugs.webkit.org/show_bug.cgi?id=83230
+
+        Unreviewed, build fix.
+
+        It looks like the change in r113399 to use the per-request
+        timeout variable didn't actually work, so I am removing the
+        timeout code altogether and counting on the idea that upload
+        just isn't likely to take that long and the timeouts and
+        retransmits are largely unused and largely unnecessary. We'll
+        see if this breaks anywhere else.
+
+        * Scripts/webkitpy/common/net/file_uploader.py:
+        (FileUploader.__init__):
+        (FileUploader._upload_data.callback):
+        (FileUploader):
+
 2012-04-09  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Cleanup LayoutTestControllerBlackBerry.cpp
