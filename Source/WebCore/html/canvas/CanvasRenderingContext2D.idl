@@ -220,6 +220,8 @@ module html {
         ImageData getImageData(in [Optional=DefaultIsUndefined] float sx, in [Optional=DefaultIsUndefined] float sy,
                                in [Optional=DefaultIsUndefined] float sw, in [Optional=DefaultIsUndefined] float sh)
             raises(DOMException);
+
+        readonly attribute float webkitBackingStorePixelRatio;
     };
 
 }

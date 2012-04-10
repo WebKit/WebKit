@@ -135,6 +135,8 @@ public:
 
     bool shouldAccelerate(const IntSize&) const;
 
+    float deviceScaleFactor() const { return m_deviceScaleFactor; }
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document*);
 

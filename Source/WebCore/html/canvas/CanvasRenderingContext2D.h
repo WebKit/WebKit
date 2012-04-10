@@ -200,6 +200,8 @@ public:
     void putImageData(ImageData*, float dx, float dy, ExceptionCode&);
     void putImageData(ImageData*, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
 
+    float webkitBackingStorePixelRatio() const { return canvas()->deviceScaleFactor(); }
+
     void reset();
 
     String font() const;
