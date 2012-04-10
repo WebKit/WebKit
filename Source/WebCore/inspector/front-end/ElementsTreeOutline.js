@@ -1230,6 +1230,12 @@ WebInspector.ElementsTreeElement.prototype = {
         if (this._htmlEditElement && WebInspector.isBeingEdited(this._htmlEditElement))
             return;
 
+        function consume(event)
+        {
+            if (event.eventPhase === Event.AT_TARGET)
+                event.consume(true);
+        }
+
         this._htmlEditElement = document.createElement("div");
         this._htmlEditElement.className = "source-code elements-tree-editor";
         this._htmlEditElement.textContent = initialValue;
@@ -1245,6 +1251,7 @@ WebInspector.ElementsTreeElement.prototype = {
             this._childrenListNode.style.display = "none";
         // Append editor.
         this.listItemElement.appendChild(this._htmlEditElement);
+        this.treeOutline.childrenListElement.parentElement.addEventListener("mousedown", consume, false);
 
         this.updateSelection();
 
@@ -1271,6 +1278,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 child = child.nextSibling;
             }
 
+            this.treeOutline.childrenListElement.parentElement.removeEventListener("mousedown", consume, false);
             this.updateSelection();
         }
 
