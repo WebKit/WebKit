@@ -16,7 +16,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
 #include "config.h"
 #include "ImageBuffer.h"
 
@@ -32,6 +31,29 @@
 
 namespace WebCore {
 
+static bool encodeImage(cairo_surface_t* surface, const String& mimeType, const double* quality, GOwnPtr<gchar>& buffer, gsize& bufferSize)
+{
+    // List of supported image encoding types comes from the GdkPixbuf documentation.
+    // http://developer.gnome.org/gdk-pixbuf/stable/gdk-pixbuf-File-saving.html#gdk-pixbuf-save-to-bufferv
+
+    String type = mimeType.substring(sizeof "image");
+    if (type != "jpeg" && type != "png" && type != "tiff" && type != "ico" && type != "bmp")
+        return false;
+
+    GRefPtr<GdkPixbuf> pixbuf = cairoImageSurfaceToGdkPixbuf(surface);
+    if (!pixbuf)
+        return false;
+
+    GError* error = 0;
+    if (type == "jpeg" && quality && *quality >= 0.0 && *quality <= 1.0) {
+        String qualityString = String::format("%d", static_cast<int>(*quality * 100.0 + 0.5));
+        gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize, type.utf8().data(), &error, "quality", qualityString.utf8().data(), NULL);
+    } else
+        gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize, type.utf8().data(), &error, NULL);
+
+    return !error;
+}
+
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
@@ -39,35 +61,15 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
     if (!mimeType.startsWith("image/"))
         return "data:,";
 
-    // List of supported image types comes from the GdkPixbuf documentation.
-    // http://library.gnome.org/devel/gdk-pixbuf/stable/gdk-pixbuf-file-saving.html#gdk-pixbuf-save-to-bufferv
-    String type = mimeType.substring(sizeof "image");
-    if (type != "jpeg" && type != "png" && type != "tiff" && type != "ico" && type != "bmp")
-        return "data:,";
-
-    GRefPtr<GdkPixbuf> pixbuf = cairoImageSurfaceToGdkPixbuf(m_data.m_surface);
-    if (!pixbuf)
-        return "data:,";
-
     GOwnPtr<gchar> buffer(0);
     gsize bufferSize;
-    GError* error = 0;
-    gboolean success = FALSE;
-    if (type == "jpeg" && quality && *quality >= 0.0 && *quality <= 1.0) {
-        String qualityString = String::format("%f", *quality * 100.0);
-        success = gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize,
-            type.utf8().data(), &error, "quality", qualityString.utf8().data(), NULL);
-    } else {
-        success = gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize, type.utf8().data(), &error, NULL);
-    }
-
-    if (!success)
+    if (!encodeImage(m_data.m_surface, mimeType, quality, buffer, bufferSize))
         return "data:,";
 
-    Vector<char> out;
-    base64Encode(reinterpret_cast<const char*>(buffer.get()), bufferSize, out);
+    Vector<char> base64Data;
+    base64Encode(buffer.get(), bufferSize, base64Data);
 
-    return "data:" + mimeType + ";base64," + out;
+    return "data:" + mimeType + ";base64," + base64Data;
 }
 
 }
