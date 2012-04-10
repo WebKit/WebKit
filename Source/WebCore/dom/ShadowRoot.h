@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class Document;
+class DOMSelection;
 class HTMLContentElement;
 class HTMLContentSelector;
 class InsertionPoint;
@@ -76,6 +77,8 @@ public:
     void setInnerHTML(const String&, ExceptionCode&);
 
     Element* activeElement() const;
+
+    DOMSelection* selection();
 
     ShadowRoot* youngerShadowRoot() const { return prev(); }
     ShadowRoot* olderShadowRoot() const { return next(); }

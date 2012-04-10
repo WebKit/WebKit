@@ -34,6 +34,7 @@ module core {
     ] ShadowRoot : DocumentFragment {
         readonly attribute Element host;
         readonly attribute Element activeElement;
+        readonly attribute DOMSelection selection;
 
         attribute [TreatNullAs=NullString] DOMString innerHTML
             setter raises(DOMException);

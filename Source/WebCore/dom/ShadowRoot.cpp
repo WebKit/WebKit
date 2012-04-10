@@ -28,6 +28,8 @@
 #include "ShadowRoot.h"
 
 #include "CSSStyleSelector.h"
+#include "DOMSelection.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Element.h"
@@ -145,6 +147,13 @@ void ShadowRoot::setInnerHTML(const String& markup, ExceptionCode& ec)
     RefPtr<DocumentFragment> fragment = createFragmentFromSource(markup, host(), ec);
     if (fragment)
         replaceChildrenWithFragment(this, fragment.release(), ec);
+}
+
+DOMSelection* ShadowRoot::selection()
+{
+    if (document() && document()->domWindow())
+        return document()->domWindow()->getSelection();
+    return 0;
 }
 
 bool ShadowRoot::childTypeAllowed(NodeType type) const
