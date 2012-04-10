@@ -31,18 +31,13 @@
 
 namespace WebCore {
 
-// FIXME: This should be an array of structs to pair the names and descriptions.
-static const char* const exceptionNames[] = {
-    "INVALID_EXPRESSION_ERR",
-    "TYPE_ERR"
+static struct XPathExceptionNameDescription {
+    const char* const name;
+    const char* const description;
+} exceptions[] = {
+    { "INVALID_EXPRESSION_ERR", "The expression had a syntax error or otherwise is not a legal expression according to the rules of the specific XPathEvaluator." },
+    { "TYPE_ERR", "The expression could not be converted to return the specified type." }
 };
-
-static const char* const exceptionDescriptions[] = {
-    "The expression had a syntax error or otherwise is not a legal expression according to the rules of the specific XPathEvaluator.",
-    "The expression could not be converted to return the specified type."
-};
-
-COMPILE_ASSERT(WTF_ARRAY_LENGTH(exceptionNames) == WTF_ARRAY_LENGTH(exceptionDescriptions), XPathExceptionTablesMustMatch);
 
 bool XPathException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
 {
@@ -53,11 +48,11 @@ bool XPathException::initializeDescription(ExceptionCode ec, ExceptionCodeDescri
     description->code = ec - XPathExceptionOffset;
     description->type = XPathExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNames);
+    size_t tableSize = WTF_ARRAY_LENGTH(exceptions);
     size_t tableIndex = ec - INVALID_EXPRESSION_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNames[tableIndex] : 0;
-    description->description = tableIndex < tableSize ? exceptionDescriptions[tableIndex] : 0;
+    description->name = tableIndex < tableSize ? exceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? exceptions[tableIndex].description : 0;
 
     return true;
 }
