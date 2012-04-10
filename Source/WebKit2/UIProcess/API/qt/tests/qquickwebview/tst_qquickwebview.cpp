@@ -55,6 +55,7 @@ private slots:
     void removeFromCanvas();
     void multipleWebViewWindows();
     void multipleWebViews();
+    void titleUpdate();
     void transparentWebViews();
 
 private:
@@ -342,6 +343,24 @@ void tst_QQuickWebView::multipleWebViews()
     QVERIFY(waitForLoadSucceeded(webView2.data()));
     webView2->setVisible(true);
     QTest::qWait(200);
+}
+
+void tst_QQuickWebView::titleUpdate()
+{    
+    QSignalSpy titleSpy(webView(), SIGNAL(titleChanged()));
+
+    // Load page with no title
+    webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page2.html")));
+    QVERIFY(waitForLoadSucceeded(webView()));
+    QCOMPARE(titleSpy.size(), 1);
+
+    titleSpy.clear();
+
+    // No titleChanged signal for failed load
+    webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/file_that_does_not_exist.html")));
+    QVERIFY(waitForLoadFailed(webView()));
+    QCOMPARE(titleSpy.size(), 0);
+
 }
 
 void tst_QQuickWebView::transparentWebViews()

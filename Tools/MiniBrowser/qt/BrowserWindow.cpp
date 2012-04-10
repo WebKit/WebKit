@@ -52,7 +52,7 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     engine()->rootContext()->setContextProperty("utils", utils);
     engine()->rootContext()->setContextProperty("options", options);
     setSource(QUrl("qrc:/qml/BrowserWindow.qml"));
-    connect(rootObject(), SIGNAL(pageTitleChanged(QString)), this, SLOT(setWindowTitle(QString)));
+    connect(rootObject(), SIGNAL(pageTitleChanged(QString)), this, SLOT(onTitleChanged(QString)));
     connect(rootObject(), SIGNAL(newWindow(QString)), this, SLOT(newWindow(QString)));
     if (options->startFullScreen())
         showFullScreen();
@@ -131,4 +131,11 @@ void BrowserWindow::screenshot()
 
 BrowserWindow::~BrowserWindow()
 {
+}
+
+void BrowserWindow::onTitleChanged(QString title)
+{
+    if (title.isEmpty())
+        title = QLatin1String("MiniBrowser");
+    setWindowTitle(title);
 }

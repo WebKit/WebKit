@@ -56,6 +56,9 @@ public slots:
 protected slots:
     void screenshot();
 
+private slots:
+    void onTitleChanged(QString);
+
 private:
     WindowOptions* m_windowOptions;
 };

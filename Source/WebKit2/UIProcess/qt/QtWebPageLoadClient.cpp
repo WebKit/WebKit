@@ -60,6 +60,7 @@ void QtWebPageLoadClient::didCommitLoadForFrame()
 {
     emit m_webView->navigationHistoryChanged();
     emit m_webView->urlChanged();
+    emit m_webView->titleChanged();
     m_webView->d_func()->loadDidCommit();
 }
 
