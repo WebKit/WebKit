@@ -1,3 +1,9 @@
+2012-04-10  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Fix build without precompiled header.
+
+        * DumpRenderTree/cg/ImageDiffCG.cpp: Define max as max as we do for min.
+
 2012-04-10  Arko Saha  <arko@motorola.com>
 
         Unreviewed: adding myself to committers.py.
