@@ -2552,6 +2552,7 @@ void LayoutTestController::addURLToRedirect(std::string origin, std::string dest
 
 const std::string& LayoutTestController::redirectionDestinationForURL(std::string origin)
 {
+    fprintf(stderr, "[%s]\n", origin.c_str());
     return m_URLsToRedirect[origin];
 }
 

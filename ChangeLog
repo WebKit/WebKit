@@ -1,3 +1,10 @@
+2012-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update perf-o-matic config.js per upstream change.
+
+        * Websites/webkit-perf.appspot.com/js/config.js:
+        (var):
+
 2012-04-09  Dale Curtis  <dalecurtis@chromium.org>
 
         Remove unworkable video-buffering-repaints-controls test.
