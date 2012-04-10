@@ -51,20 +51,17 @@ class ChromiumWinPort(chromium.ChromiumPort):
             'chromium-win-vista',
             'chromium-win',
             'chromium',
-            'win',
             'mac',
         ],
         'vista': [
             'chromium-win-vista',
             'chromium-win',
             'chromium',
-            'win',
             'mac',
         ],
         'win7': [
             'chromium-win',
             'chromium',
-            'win',
             'mac',
         ],
     }

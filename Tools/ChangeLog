@@ -1,3 +1,22 @@
+2012-04-10  Dirk Pranke  <dpranke@chromium.org>
+
+        remove 'win' from chromium-win, chromium-linux fallback paths
+        https://bugs.webkit.org/show_bug.cgi?id=83613
+
+        Reviewed by Ojan Vafai.
+
+        The chromium ports no longer need to look at the apple 'win'
+        directory for baseline results.
+
+        Also remove the old '-gpu-' entries from the flakiness dashboard
+        map since I'm touching lines nearby.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort):
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort):
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
 2012-04-10  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Manage graphics buffers in the web process

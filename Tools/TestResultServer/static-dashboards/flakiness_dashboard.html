@@ -2037,8 +2037,6 @@ function handleFinishedLoadingExpectations(container)
 
 // Consolidate platforms when all sub-platforms for a given platform are represented.
 // e.g., if all of the WIN- platforms are there, replace them with just WIN.
-// FIXME: Should we also consolidate "MAC-SNOWLEOPARD MAC-SNOWLEOPARD-GPU" to MAC-SNOWLEOPARD
-// or is that more confusing?
 function consolidateUsedPlatforms(container)
 {
     var allPlatforms = Object.keys(g_fallbacksMap);
@@ -2524,18 +2522,14 @@ function hideLegend()
 }
 
 var g_fallbacksMap = {};
-// FIXME: Do we still need the -GPU entries? Do we need a MAC-LION-GPU entry?
-g_fallbacksMap['WIN-XP'] = ['chromium-win-xp', 'chromium-win-vista', 'chromium-win', 'chromium', 'win', 'mac'];
-g_fallbacksMap['WIN-VISTA'] = ['chromium-win-vista', 'chromium-win', 'chromium', 'win', 'mac'];
-g_fallbacksMap['WIN-7'] = ['chromium-win', 'chromium', 'win', 'mac'];
-g_fallbacksMap['WIN-7-GPU'] = ['chromium-gpu-win'].concat(g_fallbacksMap['WIN-7']);
+g_fallbacksMap['WIN-XP'] = ['chromium-win-xp', 'chromium-win-vista', 'chromium-win', 'chromium', 'mac'];
+g_fallbacksMap['WIN-VISTA'] = ['chromium-win-vista', 'chromium-win', 'chromium', 'mac'];
+g_fallbacksMap['WIN-7'] = ['chromium-win', 'chromium', 'mac'];
 g_fallbacksMap['MAC-LEOPARD'] = ['chromium-mac-leopard', 'chromium-mac-snowleopard', 'chromium-mac', 'chromium', 'mac-leopard', 'mac-snowleopard', 'mac'];
 g_fallbacksMap['MAC-SNOWLEOPARD'] = ['chromium-mac-snowleopard', 'chromium-mac', 'chromium', 'mac-snowleopard', 'mac'];
 g_fallbacksMap['MAC-LION'] = ['chromium-mac', 'chromium', 'mac'];
-g_fallbacksMap['MAC-SNOWLEOPARD-GPU'] = ['chromium-gpu-mac'].concat(g_fallbacksMap['MAC-SNOWLEOPARD']);
-g_fallbacksMap['LINUX-32'] = ['chromium-linux-x86', 'chromium-linux', 'chromium-win', 'chromium', 'win', 'mac'];
-g_fallbacksMap['LINUX-64'] = ['chromium-linux', 'chromium-win', 'chromium', 'win', 'mac'];
-g_fallbacksMap['LINUX-32-GPU'] = ['chromium-gpu-linux'].concat(g_fallbacksMap['LINUX-32']);
+g_fallbacksMap['LINUX-32'] = ['chromium-linux-x86', 'chromium-linux', 'chromium-win', 'chromium', 'mac'];
+g_fallbacksMap['LINUX-64'] = ['chromium-linux', 'chromium-win', 'chromium', 'mac'];
 
 function htmlForFallbackHelp(fallbacks)
 {
