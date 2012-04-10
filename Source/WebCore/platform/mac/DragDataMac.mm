@@ -160,15 +160,19 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy filenamePolicy, St
     if (types.contains(String(NSURLPboardType))) {
         NSURL *URLFromPasteboard = [NSURL URLWithString:platformStrategies()->pasteboardStrategy()->stringForType(String(NSURLPboardType), m_pasteboardName)];
         NSString *scheme = [URLFromPasteboard scheme];
-        if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
+        // Cannot drop other schemes unless <rdar://problem/10562662> and <rdar://problem/11187315> are fixed.
+        if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"])
             return [frame->editor()->client()->canonicalizeURL(URLFromPasteboard) absoluteString];
-        }
     }
     
     if (types.contains(String(NSStringPboardType))) {
-        NSURL *URL = frame->editor()->client()->canonicalizeURLString(platformStrategies()->pasteboardStrategy()->stringForType(String(NSStringPboardType), m_pasteboardName));
-        if (URL)
-            return [URL absoluteString];
+        NSURL *URLFromPasteboard = [NSURL URLWithString:platformStrategies()->pasteboardStrategy()->stringForType(String(NSStringPboardType), m_pasteboardName)];
+        NSString *scheme = [URLFromPasteboard scheme];
+        // Pasteboard content is not trusted, because JavaScript code can modify it. We can sanitize it for URLs and other typed content, but not for strings.
+        // The result of this function is used to initiate navigation, so we shouldn't allow arbitrary file URLs.
+        // FIXME: Should we allow only http family schemes, or anything non-local?
+        if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"])
+            return [frame->editor()->client()->canonicalizeURL(URLFromPasteboard) absoluteString];
     }
     
     if (types.contains(String(NSFilenamesPboardType))) {
