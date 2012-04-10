@@ -325,6 +325,8 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         occlusionTracker.markOccludedBehindLayer(*it);
     }
 
+    passes.last()->appendQuadsToFillScreen(rootLayer(), m_backgroundColor, occlusionTracker);
+
     if (drawFrame)
         occlusionTracker.overdrawMetrics().recordMetrics(this);
     return drawFrame;

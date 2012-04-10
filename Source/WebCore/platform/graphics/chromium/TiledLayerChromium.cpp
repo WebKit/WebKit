@@ -454,10 +454,7 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             if (!tile->managedTexture()->reserve(m_tiler->tileSize(), m_textureFormat)) {
                 m_skipsIdlePaint = true;
                 if (!idle) {
-                    // If the background covers the viewport, always draw this
-                    // layer so that checkerboarded tiles will still draw.
-                    if (!backgroundCoversViewport())
-                        m_skipsDraw = true;
+                    m_skipsDraw = true;
                     m_tiler->reset();
                     m_paintRect = IntRect();
                     m_requestedUpdateTilesRect = IntRect();
@@ -580,7 +577,8 @@ Region TiledLayerChromium::visibleContentOpaqueRegion() const
 {
     if (m_skipsDraw)
         return Region();
-
+    if (opaque())
+        return visibleLayerRect();
     return m_tiler->opaqueRegionInLayerRect(visibleLayerRect());
 }
 

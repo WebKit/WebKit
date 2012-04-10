@@ -84,7 +84,7 @@ public:
 
     PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
     virtual void willDraw(LayerRendererChromium*) { }
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& usedCheckerboard);
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& usedCheckerboard) { }
     virtual void didDraw() { }
     void appendDebugBorderQuad(CCQuadCuller&, const CCSharedQuadState*) const;
 
@@ -106,9 +106,6 @@ public:
 
     void setBackgroundColor(const Color&);
     Color backgroundColor() const { return m_backgroundColor; }
-
-    void setBackgroundCoversViewport(bool);
-    bool backgroundCoversViewport() const { return m_backgroundCoversViewport; }
 
     void setFilters(const FilterOperations&);
     const FilterOperations& filters() const { return m_filters; }
@@ -232,7 +229,7 @@ public:
 
     CCLayerAnimationController* layerAnimationController() { return m_layerAnimationController.get(); }
 
-    virtual Region visibleContentOpaqueRegion() const { return Region(); };
+    virtual Region visibleContentOpaqueRegion() const;
 
     // Indicates that the context previously used to render this layer
     // was lost and that a new one has been created. Won't be called
@@ -247,8 +244,6 @@ protected:
 
     // Transformation used to transform quads provided in appendQuads.
     virtual TransformationMatrix quadTransform() const;
-
-    void appendGutterQuads(CCQuadCuller&, const CCSharedQuadState*);
 
 private:
     void setParent(CCLayerImpl* parent) { m_parent = parent; }
@@ -285,7 +280,6 @@ private:
     bool m_haveWheelEventHandlers;
     Region m_nonFastScrollableRegion;
     Color m_backgroundColor;
-    bool m_backgroundCoversViewport;
 
     // Whether the "back" of this layer should draw.
     bool m_doubleSided;

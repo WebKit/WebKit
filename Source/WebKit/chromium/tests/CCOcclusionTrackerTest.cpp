@@ -54,23 +54,53 @@ namespace {
 
 class TestContentLayerChromium : public LayerChromium {
 public:
-    TestContentLayerChromium() : LayerChromium() { }
+    TestContentLayerChromium()
+        : LayerChromium()
+        , m_overrideOpaqueContentsRect(false)
+    {
+    }
 
     virtual bool drawsContent() const { return true; }
-    virtual Region visibleContentOpaqueRegion() const { return intersection(m_opaqueContentsRect, visibleLayerRect()); }
-    void setOpaqueContentsRect(const IntRect& opaqueContentsRect) { m_opaqueContentsRect = opaqueContentsRect; }
+    virtual Region visibleContentOpaqueRegion() const
+    {
+        if (m_overrideOpaqueContentsRect)
+            return intersection(m_opaqueContentsRect, visibleLayerRect());
+        return LayerChromium::visibleContentOpaqueRegion();
+    }
+    void setOpaqueContentsRect(const IntRect& opaqueContentsRect)
+    {
+        m_overrideOpaqueContentsRect = true;
+        m_opaqueContentsRect = opaqueContentsRect;
+    }
 
 private:
+    bool m_overrideOpaqueContentsRect;
     IntRect m_opaqueContentsRect;
 };
 
 class TestContentLayerImpl : public CCLayerImpl {
 public:
-    TestContentLayerImpl(int id) : CCLayerImpl(id) { setDrawsContent(true); }
+    TestContentLayerImpl(int id)
+        : CCLayerImpl(id)
+        , m_overrideOpaqueContentsRect(false)
+    {
+        setDrawsContent(true);
+    }
 
-    virtual Region visibleContentOpaqueRegion() const { return intersection(m_opaqueContentsRect, visibleLayerRect()); }
-    void setOpaqueContentsRect(const IntRect& opaqueContentsRect) { m_opaqueContentsRect = opaqueContentsRect; }
+    virtual Region visibleContentOpaqueRegion() const
+    {
+        if (m_overrideOpaqueContentsRect)
+            return intersection(m_opaqueContentsRect, visibleLayerRect());
+        return CCLayerImpl::visibleContentOpaqueRegion();
+    }
+    void setOpaqueContentsRect(const IntRect& opaqueContentsRect)
+    {
+        m_overrideOpaqueContentsRect = true;
+        m_opaqueContentsRect = opaqueContentsRect;
+    }
+
 private:
+    bool m_overrideOpaqueContentsRect;
     IntRect m_opaqueContentsRect;
 };
 

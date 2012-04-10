@@ -50,7 +50,6 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_scrollable(false)
     , m_shouldScrollOnMainThread(false)
     , m_haveWheelEventHandlers(false)
-    , m_backgroundCoversViewport(false)
     , m_doubleSided(true)
     , m_layerPropertyChanged(false)
     , m_masksToBounds(false)
@@ -134,43 +133,6 @@ PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
     if (usesLayerClipping())
         layerClipRect = clipRect();
     return CCSharedQuadState::create(quadTransform(), drawTransform(), visibleLayerRect(), layerClipRect, drawOpacity(), opaque());
-}
-
-void CCLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
-{
-    appendGutterQuads(quadList, sharedQuadState);
-}
-
-void CCLayerImpl::appendGutterQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
-{
-    if (!backgroundCoversViewport() || !backgroundColor().isValid())
-        return;
-
-    const IntRect& layerRect = visibleLayerRect();
-    IntRect clip = screenSpaceTransform().inverse().mapRect(clipRect());
-
-    if (layerRect.isEmpty()) {
-        quadList.append(CCSolidColorDrawQuad::create(sharedQuadState, clip, backgroundColor()));
-        return;
-    }
-
-    IntRect gutterRects[4];
-    for (int i = 0; i < 4; i++)
-        gutterRects[i] = clip;
-    gutterRects[0].shiftMaxYEdgeTo(layerRect.y());
-    gutterRects[1].shiftYEdgeTo(layerRect.maxY());
-    gutterRects[2].shiftMaxXEdgeTo(layerRect.x());
-    gutterRects[3].shiftXEdgeTo(layerRect.maxX());
-
-    gutterRects[2].shiftYEdgeTo(layerRect.y());
-    gutterRects[3].shiftYEdgeTo(layerRect.y());
-    gutterRects[2].shiftMaxYEdgeTo(layerRect.maxY());
-    gutterRects[3].shiftMaxYEdgeTo(layerRect.maxY());
-
-    for (int i = 0; i < 4; i++) {
-        if (!gutterRects[i].isEmpty())
-            quadList.append(CCSolidColorDrawQuad::create(sharedQuadState, gutterRects[i], backgroundColor()));
-    }
 }
 
 void CCLayerImpl::appendDebugBorderQuad(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState) const
@@ -392,15 +354,6 @@ void CCLayerImpl::setBackgroundColor(const Color& backgroundColor)
     m_layerPropertyChanged = true;
 }
 
-void CCLayerImpl::setBackgroundCoversViewport(bool backgroundCoversViewport)
-{
-    if (m_backgroundCoversViewport == backgroundCoversViewport)
-        return;
-
-    m_backgroundCoversViewport = backgroundCoversViewport;
-    m_layerPropertyChanged = true;
-}
-
 void CCLayerImpl::setFilters(const FilterOperations& filters)
 {
     if (m_filters == filters)
@@ -550,6 +503,13 @@ void CCLayerImpl::setDoubleSided(bool doubleSided)
 
     m_doubleSided = doubleSided;
     noteLayerPropertyChangedForSubtree();
+}
+
+Region CCLayerImpl::visibleContentOpaqueRegion() const
+{
+    if (opaque())
+        return visibleLayerRect();
+    return Region();
 }
 
 void CCLayerImpl::didLoseContext()

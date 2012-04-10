@@ -25,6 +25,7 @@
 #ifndef CCLayerTreeHost_h
 #define CCLayerTreeHost_h
 
+#include "Color.h"
 #include "GraphicsTypes3D.h"
 #include "IntRect.h"
 #include "LayerChromium.h"
@@ -202,6 +203,8 @@ public:
 
     void setPageScaleFactorAndLimits(float pageScaleFactor, float minPageScaleFactor, float maxPageScaleFactor);
 
+    void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
+
     TextureManager* contentsTextureManager() const;
 
     bool visible() const { return m_visible; }
@@ -271,6 +274,7 @@ private:
     float m_pageScaleFactor;
     float m_minPageScaleFactor, m_maxPageScaleFactor;
     bool m_triggerIdlePaints;
+    Color m_backgroundColor;
 
     TextureList m_deleteTextureAfterCommitList;
     size_t m_partialTextureUpdateRequests;

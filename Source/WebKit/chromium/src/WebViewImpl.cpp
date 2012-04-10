@@ -38,6 +38,7 @@
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
+#include "Color.h"
 #include "ColorSpace.h"
 #include "CompositionUnderlineVectorBuilder.h"
 #include "ContextMenu.h"
@@ -3244,6 +3245,14 @@ NonCompositedContentHost* WebViewImpl::nonCompositedContentHost()
     return m_nonCompositedContentHost.get();
 }
 
+void WebViewImpl::setBackgroundColor(const WebCore::Color& color)
+{
+    WebCore::Color documentBackgroundColor = color.isValid() ? color : WebCore::Color::white;
+    WebColor webDocumentBackgroundColor = documentBackgroundColor.rgb();
+    m_nonCompositedContentHost->setBackgroundColor(documentBackgroundColor);
+    m_layerTreeView.setBackgroundColor(webDocumentBackgroundColor);
+}
+
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 void WebViewImpl::scheduleAnimation()
 {
@@ -3279,8 +3288,7 @@ public:
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelRootPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelRootPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
 
-        m_webViewImpl->nonCompositedContentHost()->setBackgroundColor(view->documentBackgroundColor());
-
+        m_webViewImpl->setBackgroundColor(view->documentBackgroundColor());
     }
 
 private:
@@ -3326,9 +3334,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
-
-        if (page() && page()->mainFrame()->view())
-            m_nonCompositedContentHost->setBackgroundColor(page()->mainFrame()->view()->documentBackgroundColor());
 
         m_layerTreeView.initialize(this, m_rootLayer, layerTreeViewSettings);
         if (!m_layerTreeView.isNull()) {

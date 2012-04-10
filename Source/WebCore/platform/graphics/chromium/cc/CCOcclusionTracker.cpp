@@ -199,30 +199,29 @@ static inline TransformationMatrix contentToTargetSurfaceTransform(const LayerTy
 
 // FIXME: Remove usePaintTracking when paint tracking is on for paint culling.
 template<typename LayerType>
-static inline Region computeOcclusionBehindLayer(const LayerType* layer, const TransformationMatrix& transform, const IntRect& scissorRect, bool usePaintTracking)
+static inline Region computeOcclusionBehindLayer(const LayerType* layer, const TransformationMatrix& transform, const Region& opaqueContents, const IntRect& scissorRect, bool usePaintTracking)
 {
-    Region opaqueRegion;
+    ASSERT(layer->visibleLayerRect().contains(opaqueContents.bounds()));
 
     bool clipped;
     FloatQuad unoccludedQuad = CCMathUtil::mapQuad(transform, FloatQuad(layer->visibleLayerRect()), clipped);
     bool isPaintedAxisAligned = unoccludedQuad.isRectilinear();
     // FIXME: Find a rect interior to each transformed quad.
     if (clipped || !isPaintedAxisAligned)
-        return opaqueRegion;
+        return Region();
 
-    if (layer->opaque())
-        opaqueRegion = enclosedIntRect(unoccludedQuad.boundingBox());
-    else if (usePaintTracking && transform.isIdentity())
-        opaqueRegion = layer->visibleContentOpaqueRegion();
+    Region transformedOpaqueContents;
+    if (usePaintTracking && transform.isIdentity())
+        transformedOpaqueContents = opaqueContents;
     else if (usePaintTracking) {
-        Region contentRegion = layer->visibleContentOpaqueRegion();
-        Vector<IntRect> contentRects = contentRegion.rects();
+        Vector<IntRect> contentRects = opaqueContents.rects();
         // We verify that the possible bounds of this region are not clipped above, so we can use mapRect() safely here.
         for (size_t i = 0; i < contentRects.size(); ++i)
-            opaqueRegion.unite(enclosedIntRect(transform.mapRect(FloatRect(contentRects[i]))));
+            transformedOpaqueContents.unite(enclosedIntRect(transform.mapRect(FloatRect(contentRects[i]))));
     }
-    opaqueRegion.intersect(scissorRect);
-    return opaqueRegion;
+
+    transformedOpaqueContents.intersect(scissorRect);
+    return transformedOpaqueContents;
 }
 
 template<typename LayerType, typename RenderSurfaceType>
@@ -236,9 +235,13 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
     if (!layerOpacityKnown(layer) || layer->drawOpacity() < 1)
         return;
 
+    Region opaqueContents = layer->visibleContentOpaqueRegion();
+    if (opaqueContents.isEmpty())
+        return;
+
     IntRect scissorInTarget = layerScissorRectInTargetSurface(layer);
     if (layerTransformsToTargetKnown(layer))
-        m_stack.last().occlusionInTarget.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToTargetSurfaceTransform<LayerType>(layer), scissorInTarget, m_usePaintTracking));
+        m_stack.last().occlusionInTarget.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToTargetSurfaceTransform<LayerType>(layer), opaqueContents, scissorInTarget, m_usePaintTracking));
 
     // We must clip the occlusion within the layer's scissorInTarget within screen space as well. If the scissor rect can't be moved to screen space and
     // remain rectilinear, then we don't add any occlusion in screen space.
@@ -249,7 +252,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
         if (!scissorInScreenQuad.isRectilinear())
             return;
         IntRect scissorInScreenRect = intersection(m_scissorRectInScreenSpace, enclosedIntRect(CCMathUtil::mapClippedRect(targetToScreenTransform, FloatRect(scissorInTarget))));
-        m_stack.last().occlusionInScreen.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToScreenSpaceTransform<LayerType>(layer), scissorInScreenRect, m_usePaintTracking));
+        m_stack.last().occlusionInScreen.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToScreenSpaceTransform<LayerType>(layer), opaqueContents, scissorInScreenRect, m_usePaintTracking));
     }
 }
 

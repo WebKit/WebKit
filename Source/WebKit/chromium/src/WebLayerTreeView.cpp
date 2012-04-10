@@ -93,6 +93,11 @@ WebSize WebLayerTreeView::viewportSize() const
     return WebSize(m_private->viewportSize());
 }
 
+void WebLayerTreeView::setBackgroundColor(WebColor color)
+{
+    m_private->setBackgroundColor(color);
+}
+
 void WebLayerTreeView::setVisible(bool visible)
 {
     m_private->setVisible(visible);

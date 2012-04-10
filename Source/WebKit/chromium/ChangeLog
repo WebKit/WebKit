@@ -1,3 +1,51 @@
+2012-04-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Viewport is not filled when out of texture memory on mac
+        https://bugs.webkit.org/show_bug.cgi?id=83351
+
+        Reviewed by Adrienne Walker.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        (WebKit::NonCompositedContentHost::setBackgroundColor):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::setBackgroundColor):
+        (WebKit):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setBackgroundColor):
+        (WebKit):
+        (WebKit::WebViewImplContentPainter::paint):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/WebViewImpl.h:
+        (WebCore):
+        (WebViewImpl):
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::BlendStateCheckLayer::appendQuads):
+        (WebKitTests::TEST_F):
+        (WebKitTests):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF):
+        (CCLayerTreeHostTestCommit):
+        (WTF::CCLayerTreeHostTestCommit::CCLayerTreeHostTestCommit):
+        (WTF::CCLayerTreeHostTestCommit::beginTest):
+        (WTF::CCLayerTreeHostTestCommit::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestCommit::afterTest):
+        (WTF::TEST_F):
+        (TestLayerChromium):
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests::TestContentLayerChromium::TestContentLayerChromium):
+        (WebKitTests::TestContentLayerChromium::visibleContentOpaqueRegion):
+        (WebKitTests::TestContentLayerChromium::setOpaqueContentsRect):
+        (TestContentLayerChromium):
+        (WebKitTests::TestContentLayerImpl::TestContentLayerImpl):
+        (TestContentLayerImpl):
+        (WebKitTests::TestContentLayerImpl::visibleContentOpaqueRegion):
+        (WebKitTests::TestContentLayerImpl::setOpaqueContentsRect):
+        * tests/CCTiledLayerImplTest.cpp:
+        * tests/LayerChromiumTest.cpp:
+
 2012-04-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r113656.

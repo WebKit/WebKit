@@ -27,12 +27,14 @@
 
 #include "cc/CCRenderPass.h"
 
+#include "Color.h"
 #include "cc/CCDamageTracker.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCQuadCuller.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCSharedQuadState.h"
+#include "cc/CCSolidColorDrawQuad.h"
 
 namespace WebCore {
 
@@ -93,6 +95,25 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, CCOcclus
         quadCuller.appendReplica(CCRenderSurfaceDrawQuad::create(sharedQuadState.get(), surface->contentRect(), layer, surfaceDamageRect(), isReplica));
         m_sharedQuadStateList.append(sharedQuadState.release());
     }
+}
+
+void CCRenderPass::appendQuadsToFillScreen(CCLayerImpl* rootLayer, const Color& screenBackgroundColor, const CCOcclusionTrackerImpl& occlusionTracker)
+{
+    if (!rootLayer || !screenBackgroundColor.isValid())
+        return;
+
+    Region fillRegion = occlusionTracker.computeVisibleRegionInScreen();
+    if (fillRegion.isEmpty())
+        return;
+
+    OwnPtr<CCSharedQuadState> sharedQuadState = rootLayer->createSharedQuadState();
+    TransformationMatrix transformToLayerSpace = rootLayer->screenSpaceTransform().inverse();
+    Vector<IntRect> fillRects = fillRegion.rects();
+    for (size_t i = 0; i < fillRects.size(); ++i) {
+        IntRect layerRect = transformToLayerSpace.mapRect(fillRects[i]);
+        m_quadList.append(CCSolidColorDrawQuad::create(sharedQuadState.get(), layerRect, screenBackgroundColor));
+    }
+    m_sharedQuadStateList.append(sharedQuadState.release());
 }
 
 }

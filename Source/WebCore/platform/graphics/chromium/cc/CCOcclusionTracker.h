@@ -77,6 +77,9 @@ public:
     // FIXME: Remove this when paint tracking is on for paint culling.
     void setUsePaintTracking(bool use) { m_usePaintTracking = use; }
 
+    // Gives the region of the screen that is not occluded by something opaque.
+    Region computeVisibleRegionInScreen() const { return subtract(Region(m_scissorRectInScreenSpace), m_stack.last().occlusionInScreen); }
+
 protected:
     struct StackObject {
         StackObject() : surface(0) { }

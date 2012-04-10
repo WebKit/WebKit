@@ -60,6 +60,7 @@
 namespace WebCore {
 class ActivePlatformGestureAnimation;
 class ChromiumDataObject;
+class Color;
 class DocumentLoader;
 class Frame;
 class GraphicsContext3D;
@@ -468,6 +469,7 @@ public:
     void scrollRootLayerRect(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& clipRect);
     void invalidateRootLayerRect(const WebCore::IntRect&);
     NonCompositedContentHost* nonCompositedContentHost();
+    void setBackgroundColor(const WebCore::Color&);
 #endif
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void scheduleAnimation();

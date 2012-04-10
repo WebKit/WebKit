@@ -26,11 +26,13 @@
 #ifndef WebLayerTreeView_h
 #define WebLayerTreeView_h
 
+#include "WebColor.h"
 #include "WebCommon.h"
 #include "WebNonCopyable.h"
 #include "WebPrivateOwnPtr.h"
 
 namespace WebCore {
+class CCLayerTreeHost;
 struct CCSettings;
 }
 
@@ -99,6 +101,9 @@ public:
 
     WEBKIT_EXPORT void setViewportSize(const WebSize&);
     WEBKIT_EXPORT WebSize viewportSize() const;
+
+    // Sets the background color for the viewport.
+    WEBKIT_EXPORT void setBackgroundColor(WebColor);
 
     // Sets whether this view is visible. In threaded mode, a view that is not visible will not
     // composite or trigger updateAnimations() or layout() calls until it becomes visible.

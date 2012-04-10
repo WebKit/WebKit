@@ -46,9 +46,6 @@ NonCompositedContentHost::NonCompositedContentHost(PassOwnPtr<WebCore::LayerPain
 #endif
     m_graphicsLayer->setDrawsContent(true);
     m_graphicsLayer->platformLayer()->setIsNonCompositedContent(true);
-#if !ENABLE(RUBBER_BANDING)
-    m_graphicsLayer->platformLayer()->setBackgroundCoversViewport(true);
-#endif
     m_graphicsLayer->platformLayer()->setOpaque(true);
 }
 
@@ -58,10 +55,7 @@ NonCompositedContentHost::~NonCompositedContentHost()
 
 void NonCompositedContentHost::setBackgroundColor(const WebCore::Color& color)
 {
-    if (color.isValid())
-        m_graphicsLayer->platformLayer()->setBackgroundColor(color);
-    else
-        m_graphicsLayer->platformLayer()->setBackgroundColor(WebCore::Color::white);
+    m_graphicsLayer->platformLayer()->setBackgroundColor(color);
 }
 
 void NonCompositedContentHost::setScrollLayer(WebCore::GraphicsLayer* layer)

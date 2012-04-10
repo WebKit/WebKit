@@ -99,9 +99,6 @@ public:
     void setBackgroundColor(const Color&);
     Color backgroundColor() const { return m_backgroundColor; }
 
-    void setBackgroundCoversViewport(bool);
-    bool backgroundCoversViewport() const { return m_backgroundCoversViewport; }
-
     void setBounds(const IntSize&);
     virtual IntSize contentBounds() const { return bounds(); }
 
@@ -246,7 +243,7 @@ public:
 
     void notifyAnimationStarted(const CCAnimationStartedEvent&, double wallClockTime);
 
-    virtual Region visibleContentOpaqueRegion() const { return Region(); };
+    virtual Region visibleContentOpaqueRegion() const;
 
     virtual ScrollbarLayerChromium* toScrollbarLayerChromium() { return 0; }
 
@@ -308,7 +305,6 @@ private:
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;
-    bool m_backgroundCoversViewport;
     Color m_debugBorderColor;
     float m_debugBorderWidth;
     String m_debugName;

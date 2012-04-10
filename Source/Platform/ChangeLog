@@ -1,3 +1,13 @@
+2012-04-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Viewport is not filled when out of texture memory on mac
+        https://bugs.webkit.org/show_bug.cgi?id=83351
+
+        Reviewed by Adrienne Walker.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+
 2012-04-09  James Robinson  <jamesr@chromium.org>
 
         [chromium] CCLayerTreeHost / WebLayerTreeView should be single ownership, not RefCounted

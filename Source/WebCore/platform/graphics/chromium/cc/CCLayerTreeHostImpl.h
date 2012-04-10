@@ -25,6 +25,7 @@
 #ifndef CCLayerTreeHostImpl_h
 #define CCLayerTreeHostImpl_h
 
+#include "Color.h"
 #include "LayerRendererChromium.h"
 #include "cc/CCAnimationEvents.h"
 #include "cc/CCInputHandler.h"
@@ -138,6 +139,9 @@ public:
 
     void startPageScaleAnimation(const IntSize& tragetPosition, bool useAnchor, float scale, double durationSec);
 
+    const Color& backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
+
     bool needsAnimateLayers() const { return m_needsAnimateLayers; }
     void setNeedsAnimateLayers() { m_needsAnimateLayers = true; }
 
@@ -184,6 +188,8 @@ private:
     float m_pageScaleDelta;
     float m_sentPageScaleDelta;
     float m_minPageScale, m_maxPageScale;
+
+    Color m_backgroundColor;
 
     // If this is true, it is necessary to traverse the layer tree ticking the animators.
     bool m_needsAnimateLayers;

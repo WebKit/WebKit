@@ -139,8 +139,6 @@ void CCTiledLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
 {
     const IntRect& layerRect = visibleLayerRect();
 
-    appendGutterQuads(quadList, sharedQuadState);
-
     if (!m_tiler || m_tiler->hasEmptyBounds() || layerRect.isEmpty())
         return;
 
@@ -228,7 +226,8 @@ Region CCTiledLayerImpl::visibleContentOpaqueRegion() const
 {
     if (m_skipsDraw)
         return Region();
-
+    if (opaque())
+        return visibleLayerRect();
     return m_tiler->opaqueRegionInLayerRect(visibleLayerRect());
 }
 

@@ -80,6 +80,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
     , m_minPageScaleFactor(1)
     , m_maxPageScaleFactor(1)
     , m_triggerIdlePaints(true)
+    , m_backgroundColor(Color::white)
     , m_partialTextureUpdateRequests(0)
 {
     ASSERT(CCProxy::isMainThread());
@@ -220,6 +221,7 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     hostImpl->setSourceFrameNumber(frameNumber());
     hostImpl->setViewportSize(viewportSize());
     hostImpl->setPageScaleFactorAndLimits(m_pageScaleFactor, m_minPageScaleFactor, m_maxPageScaleFactor);
+    hostImpl->setBackgroundColor(m_backgroundColor);
 
     m_frameNumber++;
 }

@@ -28,6 +28,7 @@
 #include "cc/CCQuadCuller.h"
 
 #include "CCAnimationTestCommon.h"
+#include "CCLayerTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerRendererChromium.h"
@@ -37,6 +38,7 @@
 #include "cc/CCTileDrawQuad.h"
 #include <gtest/gtest.h>
 
+using namespace CCLayerTestCommon;
 using namespace WebCore;
 using namespace WebKit;
 using namespace WebKitTests;
@@ -598,6 +600,7 @@ public:
         testBlendingDrawQuad->setQuadVisibleRect(m_quadVisibleRect);
         EXPECT_EQ(m_blend, testBlendingDrawQuad->needsBlending());
         EXPECT_EQ(m_hasRenderSurface, !!renderSurface());
+        quadList.append(testBlendingDrawQuad.release());
     }
 
     void setExpectation(bool blend, bool hasRenderSurface)
@@ -840,6 +843,88 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     EXPECT_TRUE(layer1->quadsAppended());
 
 }
+
+TEST_F(CCLayerTreeHostImplTest, viewportCovered)
+{
+    m_hostImpl->initializeLayerRenderer(createContext());
+    m_hostImpl->setBackgroundColor(Color::gray);
+
+    IntSize viewportSize(100, 100);
+    m_hostImpl->setViewportSize(viewportSize);
+
+    m_hostImpl->setRootLayer(BlendStateCheckLayer::create(0));
+    BlendStateCheckLayer* root = static_cast<BlendStateCheckLayer*>(m_hostImpl->rootLayer());
+    root->setExpectation(false, true);
+    root->setOpaque(true);
+
+    // No gutter rects
+    {
+        IntRect layerRect(0, 0, 100, 100);
+        root->setPosition(layerRect.location());
+        root->setBounds(layerRect.size());
+        root->setContentBounds(layerRect.size());
+        root->setQuadRect(IntRect(IntPoint(), layerRect.size()));
+        root->setQuadVisibleRect(IntRect(IntPoint(), layerRect.size()));
+
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
+        ASSERT_EQ(1u, frame.renderPasses.size());
+
+        size_t numGutterQuads = 0;
+        for (size_t i = 0; i < frame.renderPasses[0]->quadList().size(); ++i)
+            numGutterQuads += (frame.renderPasses[0]->quadList()[i]->material() == CCDrawQuad::SolidColor) ? 1 : 0;
+        EXPECT_EQ(0u, numGutterQuads);
+        EXPECT_EQ(1u, frame.renderPasses[0]->quadList().size());
+
+        verifyQuadsExactlyCoverRect(frame.renderPasses[0]->quadList(), IntRect(-layerRect.location(), viewportSize));
+    }
+
+    // Empty visible content area (fullscreen gutter rect)
+    {
+        IntRect layerRect(0, 0, 0, 0);
+        root->setPosition(layerRect.location());
+        root->setBounds(layerRect.size());
+        root->setContentBounds(layerRect.size());
+        root->setQuadRect(IntRect(IntPoint(), layerRect.size()));
+        root->setQuadVisibleRect(IntRect(IntPoint(), layerRect.size()));
+
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
+        ASSERT_EQ(1u, frame.renderPasses.size());
+
+        size_t numGutterQuads = 0;
+        for (size_t i = 0; i < frame.renderPasses[0]->quadList().size(); ++i)
+            numGutterQuads += (frame.renderPasses[0]->quadList()[i]->material() == CCDrawQuad::SolidColor) ? 1 : 0;
+        EXPECT_EQ(1u, numGutterQuads);
+        EXPECT_EQ(1u, frame.renderPasses[0]->quadList().size());
+
+        verifyQuadsExactlyCoverRect(frame.renderPasses[0]->quadList(), IntRect(-layerRect.location(), viewportSize));
+    }
+
+    // Content area in middle of clip rect (four surrounding gutter rects)
+    {
+        IntRect layerRect(50, 50, 20, 20);
+        root->setPosition(layerRect.location());
+        root->setBounds(layerRect.size());
+        root->setContentBounds(layerRect.size());
+        root->setQuadRect(IntRect(IntPoint(), layerRect.size()));
+        root->setQuadVisibleRect(IntRect(IntPoint(), layerRect.size()));
+
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
+        ASSERT_EQ(1u, frame.renderPasses.size());
+
+        size_t numGutterQuads = 0;
+        for (size_t i = 0; i < frame.renderPasses[0]->quadList().size(); ++i)
+            numGutterQuads += (frame.renderPasses[0]->quadList()[i]->material() == CCDrawQuad::SolidColor) ? 1 : 0;
+        EXPECT_EQ(4u, numGutterQuads);
+        EXPECT_EQ(5u, frame.renderPasses[0]->quadList().size());
+
+        verifyQuadsExactlyCoverRect(frame.renderPasses[0]->quadList(), IntRect(-layerRect.location(), viewportSize));
+    }
+
+}
+
 
 class ReshapeTrackerContext: public FakeWebGraphicsContext3D {
 public:
