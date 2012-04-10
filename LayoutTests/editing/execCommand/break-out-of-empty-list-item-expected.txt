@@ -10,6 +10,8 @@ PASS enterAtTarget('<ul><li>hello<ul><li id="target"><br></li></ul>world</li></u
 PASS enterAtTarget('<ul><li>hello<ul><li id="target"><br></li></ul></li></ul>') is '<ul><li>hello</li><li><br></li></ul>'
 PASS enterAtTarget('<ul><li><ul><li id="target"><br></li></ul>world</li></ul>') is '<ul><li><div><br></div>world</li></ul>'
 PASS enterAtTarget('<ul><li><ul><li id="target"><br></li></ul></li></ul>') is '<ul><li></li><li><br></li></ul>'
+PASS enterAtTarget('<ul><li>hello</li><br id="target"></ul>') is '<ul><li>hello</li></ul><div><br></div>'
+PASS enterAtTarget('<ul><br id="target"></ul>') is '<div><br></div>'
 PASS successfullyParsed is true
 
 TEST COMPLETE

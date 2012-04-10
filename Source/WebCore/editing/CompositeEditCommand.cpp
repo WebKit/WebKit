@@ -1267,9 +1267,9 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     if (!newBlock)
         newBlock = createDefaultParagraphElement(document());
 
-    if (emptyListItem->renderer()->nextSibling()) {
+    if (isListItem(emptyListItem->nextSibling())) {
         // If emptyListItem follows another list item, split the list node.
-        if (emptyListItem->renderer()->previousSibling())
+        if (isListItem(emptyListItem->previousSibling()))
             splitElement(static_cast<Element*>(listNode), emptyListItem);
 
         // If emptyListItem is followed by other list item, then insert newBlock before the list node.
@@ -1281,7 +1281,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
         // When emptyListItem does not follow any list item, insert newBlock after the enclosing list node.
         // Remove the enclosing node if emptyListItem is the only child; otherwise just remove emptyListItem.
         insertNodeAfter(newBlock, listNode);
-        removeNode(emptyListItem->renderer()->previousSibling() ? emptyListItem : listNode);
+        removeNode(isListItem(emptyListItem->previousSibling()) ? emptyListItem : listNode);
     }
 
     appendBlockPlaceholder(newBlock);

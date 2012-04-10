@@ -49,6 +49,8 @@ testBreakOutOfEmptyListItem('<ul><li>hello<ul><li id="target"><br></li></ul>worl
 testBreakOutOfEmptyListItem('<ul><li>hello<ul><li id="target"><br></li></ul></li></ul>', '<ul><li>hello</li><li><br></li></ul>');
 testBreakOutOfEmptyListItem('<ul><li><ul><li id="target"><br></li></ul>world</li></ul>', '<ul><li><div><br></div>world</li></ul>');
 testBreakOutOfEmptyListItem('<ul><li><ul><li id="target"><br></li></ul></li></ul>', '<ul><li></li><li><br></li></ul>');
+testBreakOutOfEmptyListItem('<ul><li>hello</li><br id="target"></ul>', '<ul><li>hello</li></ul><div><br></div>');
+testBreakOutOfEmptyListItem('<ul><br id="target"></ul>', '<div><br></div>');
 
 document.body.removeChild(testContainer);
 
