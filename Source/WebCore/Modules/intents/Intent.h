@@ -31,6 +31,8 @@
 
 #if ENABLE(WEB_INTENTS)
 
+#include "MessagePort.h"
+#include "MessagePortChannel.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -46,6 +48,7 @@ typedef int ExceptionCode;
 class Intent : public RefCounted<Intent> {
 public:
     static PassRefPtr<Intent> create(const String& action, const String& type, PassRefPtr<SerializedScriptValue> data, ExceptionCode&);
+    static PassRefPtr<Intent> create(const String& action, const String& type, PassRefPtr<SerializedScriptValue> data, const MessagePortArray& ports, ExceptionCode&);
 
     const String& action() const;
     const String& type() const;
@@ -54,12 +57,16 @@ public:
     int identifier() const;
     void setIdentifier(int);
 
+    MessagePortChannelArray* messagePorts() const;
+
 private:
     Intent(const String& action, const String& type, PassRefPtr<SerializedScriptValue> data);
+    Intent(const String& action, const String& type, PassRefPtr<SerializedScriptValue> data, PassOwnPtr<MessagePortChannelArray> ports);
 
     String m_action;
     String m_type;
     RefPtr<SerializedScriptValue> m_data;
+    OwnPtr<MessagePortChannelArray> m_ports;
 };
 
 } // namespace WebCore

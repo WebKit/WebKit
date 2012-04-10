@@ -1,0 +1,7 @@
+Received Web Intent: action=action1 type=mime/type1
+Have 1 ports
+PASS successfullyParsed is true
+
+TEST COMPLETE
+* sent intent
+
