@@ -712,7 +712,7 @@ http/tests/security/cookies/third-party-cookie-blocking-user-action.html
 http/tests/security/cookies/third-party-cookie-blocking.html
 http/tests/security/cookies/third-party-cookie-blocking-xslt.xml
 http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
-http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
+http/tests/xmlhttprequest/access-control-preflight-credential-async.html
 
 # WebKitTestRunner needs to print history delegate information
 # <https://bugs.webkit.org/show_bug.cgi?id=42704>
