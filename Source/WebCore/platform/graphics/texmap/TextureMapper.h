@@ -52,7 +52,6 @@ class TextureMapper;
 // A 2D texture that can be the target of software or GL rendering.
 class BitmapTexture  : public RefCounted<BitmapTexture> {
 public:
-    enum PixelFormat { BGRAFormat, RGBAFormat, BGRFormat, RGBFormat };
     enum Flag {
         SupportsAlpha = 0x01
     };
@@ -67,8 +66,8 @@ public:
     virtual ~BitmapTexture() { }
 
     virtual IntSize size() const = 0;
-    virtual void updateContents(Image*, const IntRect&, const IntRect&, BitmapTexture::PixelFormat) = 0;
-    virtual void updateContents(const void*, const IntRect&) = 0;
+    virtual void updateContents(Image*, const IntRect&, const IntPoint& offset) = 0;
+    virtual void updateContents(const void*, const IntRect& target, const IntPoint& offset, int bytesPerLine) = 0;
     virtual bool isValid() const = 0;
     inline Flags flags() const { return m_flags; }
 

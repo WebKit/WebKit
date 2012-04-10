@@ -409,12 +409,13 @@ void BitmapTextureGL::didReset()
     m_surfaceNeedsReset = true;
 }
 
-static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size)
+static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size, int stride = 0)
 {
     int width = size.width();
     int height = size.height();
+    stride = stride | width;
     for (int y = 0; y < height; ++y) {
-        uint32_t* p = data + y * width;
+        uint32_t* p = data + y * stride;
         for (int x = 0; x < width; ++x)
             p[x] = ((p[x] << 16) & 0xff0000) | ((p[x] >> 16) & 0xff) | (p[x] & 0xff00ff00);
     }
@@ -430,33 +431,64 @@ static bool driverSupportsBGRASwizzling()
 #endif
 }
 
-void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect)
+static bool driverSupportsSubImage()
+{
+#if defined(TEXMAP_OPENGL_ES_2)
+    // FIXME: Implement reliable detection.
+    return false;
+#else
+    return true;
+#endif
+}
+
+void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine)
 {
     GLuint glFormat = GL_RGBA;
     GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
+
     if (driverSupportsBGRASwizzling())
         glFormat = GL_BGRA;
-    else {
-        swizzleBGRAToRGBA(static_cast<uint32_t*>(const_cast<void*>(data)), targetRect.size());
-        glFormat = GL_RGBA;
+    else
+        swizzleBGRAToRGBA(static_cast<uint32_t*>(const_cast<void*>(data)), targetRect.size(), bytesPerLine / 4);
+
+    if (bytesPerLine == targetRect.width() / 4 && sourceOffset == IntPoint::zero()) {
+        GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, (const char*)data))
+        return;
     }
 
-    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, data))
+    // For ES drivers that don't support sub-images, transfer the pixels row-by-row.
+    if (!driverSupportsSubImage()) {
+        const char* bits = static_cast<const char*>(data);
+        for (int y = 0; y < targetRect.height(); ++y) {
+            const char *row = bits + ((sourceOffset.y() + y) * bytesPerLine + sourceOffset.x() * 4);
+            GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y() + y, targetRect.width(), 1, glFormat, GL_UNSIGNED_BYTE, row))
+        }
+        return;
+    }
+
+    // Use the OpenGL sub-image extension, now that we know it's available.
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / 4);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, sourceOffset.y());
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, sourceOffset.x());
+    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, (const char*)data))
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
 }
 
-void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, const IntRect& sourceRect, BitmapTexture::PixelFormat format)
+void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, const IntPoint& offset)
 {
     if (!image)
         return;
-    GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
-    GLuint glFormat = isOpaque() ? GL_RGB : GL_RGBA;
     NativeImagePtr frameImage = image->nativeImageForCurrentFrame();
     if (!frameImage)
         return;
 
+    int bytesPerLine;
+    const char* imageData;
+
 #if PLATFORM(QT)
     QImage qtImage;
-
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     // With QPA, we can avoid a deep copy.
     qtImage = *frameImage->handle()->buffer();
@@ -464,40 +496,15 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
     // This might be a deep copy, depending on other references to the pixmap.
     qtImage = frameImage->toImage();
 #endif
-
-    if (IntSize(qtImage.size()) != sourceRect.size())
-        qtImage = qtImage.copy(sourceRect);
-    if (format == BGRAFormat || format == BGRFormat) {
-        if (driverSupportsBGRASwizzling())
-            glFormat = isOpaque() ? GL_BGR : GL_BGRA;
-        else
-            swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(qtImage.bits()), qtImage.size());
-    }
-    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, qtImage.constBits()))
-
+    imageData = reinterpret_cast<const char*>(qtImage.constBits());
+    bytesPerLine = qtImage.bytesPerLine();
 #elif USE(CAIRO)
-
-#if !CPU(BIG_ENDIAN)
-#if defined(TEXMAP_OPENGL_ES_2)
-    swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(cairo_image_surface_get_data(frameImage)),
-                      cairo_image_surface_get_stride(frameImage) * cairo_image_surface_get_height(frameImage));
-#else
-    glFormat = isOpaque() ? GL_BGR : GL_BGRA;
-#endif
+    imageData = cairo_image_surface_get_data(frameImage);
+    bytesPerLine = cairo_image_surface_get_stride(frameImage);
 #endif
 
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, cairo_image_surface_get_stride(frameImage) / 4);
-    glPixelStorei(GL_UNPACK_SKIP_ROWS, sourceRect.y());
-    glPixelStorei(GL_UNPACK_SKIP_PIXELS, sourceRect.x());
-    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0,
-                           targetRect.x(), targetRect.y(),
-                           targetRect.width(), targetRect.height(),
-                           glFormat, GL_UNSIGNED_BYTE,
-                           cairo_image_surface_get_data(frameImage)));
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-#endif
+    updateContents(imageData, targetRect, offset, bytesPerLine);
+
 }
 
 static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool flip)

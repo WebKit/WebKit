@@ -23,8 +23,7 @@
 #if USE(UI_SIDE_COMPOSITING)
 #include "GraphicsLayer.h"
 #include "TextureMapper.h"
-
-#include "stdio.h"
+#include "TextureMapperGL.h"
 
 using namespace WebCore;
 
@@ -50,18 +49,17 @@ void LayerBackingStoreTile::swapBuffers(WebCore::TextureMapper* textureMapper)
     }
 
     QImage qImage = m_backBuffer->createQImage();
-
     if (shouldReset)
         texture->reset(m_sourceRect.size(), qImage.hasAlphaChannel() ? BitmapTexture::SupportsAlpha : 0);
-
-    texture->updateContents(qImage.constBits(), m_sourceRect);
+    texture->updateContents(qImage.constBits(), m_sourceRect, m_bitmapOffset, qImage.bytesPerLine());
     m_backBuffer.clear();
 }
 
-void LayerBackingStoreTile::setBackBuffer(const WebCore::IntRect& targetRect, const WebCore::IntRect& sourceRect, ShareableBitmap* buffer)
+void LayerBackingStoreTile::setBackBuffer(const IntRect& targetRect, const IntRect& sourceRect, PassRefPtr<ShareableBitmap> buffer, const IntPoint& offset)
 {
     m_sourceRect = sourceRect;
     m_targetRect = targetRect;
+    m_bitmapOffset = offset;
     m_backBuffer = buffer;
 }
 
@@ -76,11 +74,12 @@ void LayerBackingStore::removeTile(int id)
     m_tilesToRemove.append(id);
 }
 
-void LayerBackingStore::updateTile(int id, const IntRect& sourceRect, const IntRect& targetRect, ShareableBitmap* backBuffer)
+
+void LayerBackingStore::updateTile(int id, const IntRect& sourceRect, const IntRect& targetRect, PassRefPtr<ShareableBitmap> backBuffer, const IntPoint& offset)
 {
     HashMap<int, LayerBackingStoreTile>::iterator it = m_tiles.find(id);
     ASSERT(it != m_tiles.end());
-    it->second.setBackBuffer(targetRect, sourceRect, backBuffer);
+    it->second.setBackBuffer(targetRect, sourceRect, backBuffer, offset);
 }
 
 PassRefPtr<BitmapTexture> LayerBackingStore::texture() const

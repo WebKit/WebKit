@@ -553,6 +553,11 @@ Color WebGraphicsLayer::tiledBackingStoreBackgroundColor() const
     return contentsOpaque() ? Color::white : Color::transparent;
 }
 
+PassOwnPtr<WebCore::GraphicsContext> WebGraphicsLayer::beginContentUpdate(const WebCore::IntSize& size, ShareableBitmap::Handle& handle, WebCore::IntPoint& offset)
+{
+    return m_webGraphicsLayerClient->beginContentUpdate(size, contentsOpaque() ? 0 : ShareableBitmap::SupportsAlpha, handle, offset);
+}
+
 void WebGraphicsLayer::createTile(int tileID, const UpdateInfo& updateInfo)
 {
     m_webGraphicsLayerClient->createTile(id(), tileID, updateInfo);

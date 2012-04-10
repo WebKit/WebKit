@@ -267,11 +267,10 @@ void WebLayerTreeRenderer::removeTile(WebLayerID layerID, int tileID)
     getBackingStore(layerID)->removeTile(tileID);
 }
 
-void WebLayerTreeRenderer::updateTile(WebLayerID layerID, int tileID, const IntRect& sourceRect, const IntRect& targetRect, PassRefPtr<ShareableBitmap> weakBitmap)
+void WebLayerTreeRenderer::updateTile(WebLayerID layerID, int tileID, const TileUpdate& update)
 {
-    RefPtr<ShareableBitmap> bitmap = weakBitmap;
     RefPtr<LayerBackingStore> backingStore = getBackingStore(layerID);
-    backingStore->updateTile(tileID, sourceRect, targetRect, bitmap.get());
+    backingStore->updateTile(tileID, update.sourceRect, update.targetRect, update.bitmap, update.offset);
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
 
@@ -279,8 +278,8 @@ void WebLayerTreeRenderer::createImage(int64_t imageID, PassRefPtr<ShareableBitm
 {
     RefPtr<ShareableBitmap> bitmap = weakBitmap;
     RefPtr<TextureMapperTiledBackingStore> backingStore = TextureMapperTiledBackingStore::create();
-    backingStore->updateContents(m_textureMapper.get(), bitmap->createImage().get(), BitmapTexture::BGRAFormat);
     m_directlyCompositedImages.set(imageID, backingStore);
+    backingStore->updateContents(m_textureMapper.get(), bitmap->createImage().get());
 }
 
 void WebLayerTreeRenderer::destroyImage(int64_t imageID)

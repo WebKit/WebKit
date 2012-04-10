@@ -45,6 +45,19 @@ class WebLayerUpdateInfo;
 
 class WebLayerTreeRenderer : public ThreadSafeRefCounted<WebLayerTreeRenderer>, public WebCore::GraphicsLayerClient {
 public:
+    struct TileUpdate {
+        WebCore::IntRect sourceRect;
+        WebCore::IntRect targetRect;
+        RefPtr<ShareableBitmap> bitmap;
+        WebCore::IntPoint offset;
+        TileUpdate(const WebCore::IntRect& source, const WebCore::IntRect& target, PassRefPtr<ShareableBitmap> newBitmap, const WebCore::IntPoint& newOffset)
+            : sourceRect(source)
+            , targetRect(target)
+            , bitmap(newBitmap)
+            , offset(newOffset)
+        {
+        }
+    };
     WebLayerTreeRenderer(LayerTreeHostProxy*);
     virtual ~WebLayerTreeRenderer();
     void purgeGLResources();
@@ -63,7 +76,7 @@ public:
     void setLayerState(WebLayerID, const WebLayerInfo&);
     void createTile(WebLayerID, int, float scale);
     void removeTile(WebLayerID, int);
-    void updateTile(WebLayerID, int, const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<ShareableBitmap>);
+    void updateTile(WebLayerID, int, const TileUpdate&);
     void flushLayerChanges();
     void createImage(int64_t, PassRefPtr<ShareableBitmap>);
     void destroyImage(int64_t);

@@ -59,6 +59,7 @@ public:
     virtual void syncLayerChildren(WebLayerID, const Vector<WebLayerID>&) = 0;
     virtual void attachLayer(WebCore::WebGraphicsLayer*) = 0;
     virtual void detachLayer(WebCore::WebGraphicsLayer*) = 0;
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableBitmap::Handle&, WebCore::IntPoint&) = 0;
 };
 }
 
@@ -128,6 +129,7 @@ public:
     virtual void createTile(int tileID, const WebKit::UpdateInfo&);
     virtual void updateTile(int tileID, const WebKit::UpdateInfo&);
     virtual void removeTile(int tileID);
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, WebKit::ShareableBitmap::Handle&, WebCore::IntPoint&);
 
     void setWebGraphicsLayerClient(WebKit::WebGraphicsLayerClient*);
     void syncChildren();

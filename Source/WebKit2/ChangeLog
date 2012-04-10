@@ -1,5 +1,87 @@
 2012-04-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
+        [WK2] Enable using a single ShareableBitmap for multiple updates
+        https://bugs.webkit.org/show_bug.cgi?id=83424
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enabled creating a GraphicsContext that references a rect inside ShareableBitmap.
+        Added bitmapOffset to UpdateInfo, to allow updates to reference an offset inside the bitmap.
+        Added UpdateAtlas, a class that manages available rects in a larger ShareableBitmap.
+
+        In this iteration, UpdateAtlas has a simple behavior where a rect inside the bitmap is
+        either available or used. When the buffers are swapped, all used buffers become available
+        again. A future enhancement might allow triple-buffering, where available rects can be
+        updated while other rects from the same atlas are in use.
+
+        Added the necessary plumbing to allow Qt's UI-side compositing to take advantage of
+        UpdateAtlas. LayerTreeHostQt creates an atlas per type of bitmap (i.e. one opaque and one
+        alpha-enabled atlas). When a tile wants to update and there's no available scratch-buffer,
+        the update would be postponed to the next frame, creating a tiling-artifact in low memory
+        situations.
+
+        * Shared/UpdateInfo.cpp:
+        (WebKit::UpdateInfo::encode):
+        (WebKit::UpdateInfo::decode):
+        * Shared/UpdateInfo.h:
+        (UpdateInfo):
+        * Target.pri:
+        * UIProcess/LayerTreeHostProxy.cpp:
+        (WebKit::LayerTreeHostProxy::updateTileForLayer):
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::syncLayerParameters):
+        (WebKit::WebLayerTreeRenderer::updateTile):
+        (WebKit::WebLayerTreeRenderer::createImage):
+        * UIProcess/WebLayerTreeRenderer.h:
+        (TileUpdate):
+        (WebKit::WebLayerTreeRenderer::TileUpdate::TileUpdate):
+        (WebLayerTreeRenderer):
+        * UIProcess/qt/LayerBackingStore.cpp:
+        (WebKit::LayerBackingStoreTile::swapBuffers):
+        (WebKit::LayerBackingStoreTile::setBackBuffer):
+        (WebKit::LayerBackingStore::createTile):
+        * UIProcess/qt/LayerBackingStore.h:
+        (LayerBackingStoreTile):
+        (LayerBackingStore):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::tiledBackingStoreBackgroundColor):
+        (WebCore::WebGraphicsLayer::beginContentUpdate):
+        (WebCore):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayerClient):
+        (WebGraphicsLayer):
+        * WebProcess/WebPage/TiledBackingStoreRemoteTile.cpp:
+        (WebKit::TiledBackingStoreRemoteTile::updateBackBuffer):
+        * WebProcess/WebPage/TiledBackingStoreRemoteTile.h:
+        (TiledBackingStoreRemoteTileClient):
+        * WebProcess/WebPage/UpdateAtlas.cpp: Added.
+        (WebKit):
+        (WebKit::UpdateAtlas::UpdateAtlas):
+        (WebKit::nextPowerOfTwo):
+        (WebKit::UpdateAtlas::buildLayoutIfNeeded):
+        (WebKit::UpdateAtlas::findAvailableIndex):
+        (WebKit::UpdateAtlas::didSwapBuffers):
+        (WebKit::UpdateAtlas::acquireScratchBuffer):
+        (WebKit::UpdateAtlas::offsetForIndex):
+        * WebProcess/WebPage/UpdateAtlas.h: Added.
+        (WebCore):
+        (WebKit):
+        (UpdateAtlas):
+        (WebKit::UpdateAtlas::bitmap):
+        (WebKit::UpdateAtlas::size):
+        (WebKit::UpdateAtlas::flags):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::adoptImageBackingStore):
+        (WebKit::LayerTreeHostQt::renderNextFrame):
+        (WebKit::LayerTreeHostQt::purgeBackingStores):
+        (WebKit):
+        (WebKit::LayerTreeHostQt::getAtlas):
+        (WebKit::LayerTreeHostQt::beginContentUpdate):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
+2012-04-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
         [Qt][WK2] Sync the layer's state and the layer's children separately
         https://bugs.webkit.org/show_bug.cgi?id=82534
 

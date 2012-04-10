@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "LayerTreeHostProxyMessages.h"
 #include "MessageID.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebGraphicsLayer.h"
 #include "WebPage.h"
 #include <WebCore/Frame.h>
@@ -329,7 +330,7 @@ int64_t LayerTreeHostQt::adoptImageBackingStore(Image* image)
         return key;
     }
 
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(image->size(), image->currentFrameHasAlpha() ? ShareableBitmap::SupportsAlpha : 0);
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(image->size(), (image->currentFrameHasAlpha() ? ShareableBitmap::SupportsAlpha : 0));
     {
         OwnPtr<WebCore::GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
         graphicsContext->drawImage(image, ColorSpaceDeviceRGB, IntPoint::zero());
@@ -451,6 +452,8 @@ void LayerTreeHostQt::renderNextFrame()
 {
     m_waitingForUIProcess = false;
     scheduleLayerFlush();
+    for (int i = 0; i < m_updateAtlases.size(); ++i)
+        m_updateAtlases[i].didSwapBuffers();
 }
 
 bool LayerTreeHostQt::layerTreeTileUpdatesAllowed() const
@@ -465,6 +468,32 @@ void LayerTreeHostQt::purgeBackingStores()
         (*it)->purgeBackingStores();
 
     ASSERT(!m_directlyCompositedImageRefCounts.size());
+    m_updateAtlases.clear();
+}
+
+UpdateAtlas& LayerTreeHostQt::getAtlas(ShareableBitmap::Flags flags)
+{
+    for (int i = 0; i < m_updateAtlases.size(); ++i) {
+        if (m_updateAtlases[i].flags() == flags)
+            return m_updateAtlases[i];
+    }
+    static const int ScratchBufferDimension = 2000;
+    m_updateAtlases.append(UpdateAtlas(ScratchBufferDimension, flags));
+    return m_updateAtlases.last();
+}
+
+PassOwnPtr<WebCore::GraphicsContext> LayerTreeHostQt::beginContentUpdate(const WebCore::IntSize& size, ShareableBitmap::Flags flags, ShareableBitmap::Handle& handle, WebCore::IntPoint& offset)
+{
+    UpdateAtlas& atlas = getAtlas(flags);
+    if (!atlas.bitmap()->createHandle(handle))
+        return PassOwnPtr<WebCore::GraphicsContext>();
+
+    // This will return null if there is no available buffer.
+    OwnPtr<WebCore::GraphicsContext> graphicsContext = atlas.beginPaintingOnAvailableBuffer(size, offset);
+    if (!graphicsContext)
+        return PassOwnPtr<WebCore::GraphicsContext>();
+
+    return graphicsContext.release();
 }
 
 } // namespace WebKit

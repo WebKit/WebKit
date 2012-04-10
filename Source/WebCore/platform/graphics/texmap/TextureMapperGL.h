@@ -62,7 +62,7 @@ public:
     void setGraphicsContext(GraphicsContext* context) { m_context = context; }
     GraphicsContext* graphicsContext() { return m_context; }
     virtual bool isOpenGLBacked() const { return true; }
-    void platformUpdateContents(NativeImagePtr, const IntRect&, const IntRect&, BitmapTexture::PixelFormat);
+    void platformUpdateContents(NativeImagePtr, const IntRect&, const IntRect&);
     virtual AccelerationMode accelerationMode() const { return OpenGLMode; }
 
 private:
@@ -83,10 +83,11 @@ public:
     void initializeStencil();
     ~BitmapTextureGL();
     virtual uint32_t id() const { return m_id; }
+    uint32_t textureTarget() const { return GL_TEXTURE_2D; }
     IntSize textureSize() const { return m_textureSize; }
     void setTextureMapper(TextureMapperGL* texmap) { m_textureMapper = texmap; }
-    void updateContents(Image*, const IntRect&, const IntRect&, PixelFormat);
-    void updateContents(const void*, const IntRect&);
+    void updateContents(Image*, const IntRect&, const IntPoint&);
+    virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine);
 
 private:
     GLuint m_id;

@@ -78,7 +78,7 @@ void LayerTreeHostProxy::updateTileForLayer(int layerID, int tileID, const WebKi
     IntRect sourceRect = updateInfo.updateRects.first();
     IntRect targetRect = updateInfo.updateRectBounds;
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(updateInfo.bitmapHandle);
-    dispatchUpdate(bind(&WebLayerTreeRenderer::updateTile, m_renderer.get(), layerID, tileID, sourceRect, targetRect, bitmap));
+    dispatchUpdate(bind(&WebLayerTreeRenderer::updateTile, m_renderer.get(), layerID, tileID, WebLayerTreeRenderer::TileUpdate(sourceRect, targetRect, bitmap, updateInfo.bitmapOffset)));
 }
 
 void LayerTreeHostProxy::removeTileForLayer(int layerID, int tileID)

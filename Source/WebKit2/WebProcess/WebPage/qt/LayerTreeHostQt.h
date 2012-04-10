@@ -23,6 +23,7 @@
 #include "LayerTreeContext.h"
 #include "LayerTreeHost.h"
 #include "Timer.h"
+#include "UpdateAtlas.h"
 #include "WebGraphicsLayer.h"
 #include <WebCore/GraphicsLayerClient.h>
 #include <wtf/OwnPtr.h>
@@ -76,6 +77,8 @@ public:
     virtual void attachLayer(WebCore::WebGraphicsLayer*);
     virtual void detachLayer(WebCore::WebGraphicsLayer*);
 
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableBitmap::Handle&, WebCore::IntPoint&);
+
 protected:
     explicit LayerTreeHostQt(WebPage*);
 
@@ -95,6 +98,8 @@ private:
     void performScheduledLayerFlush();
     void sendLayersToUI();
 
+    UpdateAtlas& getAtlas(ShareableBitmap::Flags);
+
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
 
     // The layer which contains all non-composited content.
@@ -105,6 +110,7 @@ private:
 
     HashSet<WebCore::WebGraphicsLayer*> m_registeredLayers;
     HashMap<int64_t, int> m_directlyCompositedImageRefCounts;
+    Vector<UpdateAtlas> m_updateAtlases;
 
     bool m_notifyAfterScheduledLayerFlush;
     bool m_isValid;
