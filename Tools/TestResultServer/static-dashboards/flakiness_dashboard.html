@@ -433,6 +433,7 @@ function handleValidHashParameter(key, value)
             });
         return true;
 
+    case 'showChrome':
     case 'showCorrectExpectations':
     case 'showWrongExpectations':
     case 'showExpectations':
@@ -459,6 +460,7 @@ g_defaultDashboardSpecificStateValues = {
     showFlaky: true,
     showLargeExpectations: false,
     legacyExpectationsSemantics: true,
+    showChrome: true,
     showCorrectExpectations: !isLayoutTestResults(),
     showWrongExpectations: !isLayoutTestResults(),
     showWontFixSkip: !isLayoutTestResults(),
@@ -1737,7 +1739,7 @@ function showUpdateInfoForTest(testsNeedingUpdate, keys)
     document.body.appendChild(checkboxes);
 
     var div = document.createElement('div');
-    div.innerHTML = htmlForIndividulTestOnAllBuilders(test);
+    div.innerHTML = htmlForIndividualTestOnAllBuildersWithChrome(test);
     document.body.appendChild(div);
     appendExpectations();
 }
@@ -1807,24 +1809,13 @@ function setUpdateIndex(newIndex, testsNeedingUpdate, keys)
     showUpdateInfoForTest(testsNeedingUpdate, keys);
 }
 
-function htmlForIndividulTestOnAllBuilders(test)
+function htmlForIndividualTestOnAllBuilders(test)
 {
     processTestRunsForAllBuilders();
 
     var testResults = g_testToResultsMap[test];
-    var master;
     var html = '';
-    if (isLayoutTestResults()) {
-        var suite = lookupVirtualTestSuite(test);
-        var base = suite ? baseTest(test, suite) : test;
-        var tracURL = TEST_URL_BASE_PATH_TRAC + base;
-        html += '<h2>' + linkHTMLToOpenWindow(tracURL, test) + '</h2>';
-    } else
-        html += '<h2>' + test + '</h2>';
-
-    if (testResults && testResults.length) {
-        master = builderMaster(testResults[0].builder);
-
+    if (testResults) {
         html +='<div><b>If a builder is not listed, that means the builder ' +
             'does not run that test (e.g. it is skipped) or all runs of the ' +
             'test passed.</b></div>';
@@ -1836,6 +1827,24 @@ function htmlForIndividulTestOnAllBuilders(test)
         html += '<div class="not-found">Test not found. Either it does ' +
             'not exist, is skipped or passes on all platforms.</div>';
     }
+    return html;
+}
+
+function htmlForIndividualTestOnAllBuildersWithChrome(test)
+{
+    processTestRunsForAllBuilders();
+
+    var testResults = g_testToResultsMap[test];
+    var html = '';
+    if (isLayoutTestResults()) {
+        var suite = lookupVirtualTestSuite(test);
+        var base = suite ? baseTest(test, suite) : test;
+        var tracURL = TEST_URL_BASE_PATH_TRAC + base;
+        html += '<h2>' + linkHTMLToOpenWindow(tracURL, test) + '</h2>';
+    } else
+        html += '<h2>' + test + '</h2>';
+
+    html += htmlForIndividualTestOnAllBuilders(test);
 
     html += '<div class=expectations test=' + test + '><div>' +
         linkHTMLToToggleState('showExpectations', 'results')
@@ -1843,7 +1852,7 @@ function htmlForIndividulTestOnAllBuilders(test)
     if (isLayoutTestResults() || isGPUTestResults()) {
         if (isLayoutTestResults())
             html += ' | ' + linkHTMLToToggleState('showLargeExpectations', 'large thumbnails');
-        if (master == WEBKIT_BUILDER_MASTER) {
+        if (testResults && builderMaster(testResults[0].builder) == WEBKIT_BUILDER_MASTER) {
             var revision = g_currentState.revision || '';
             html += '<form onsubmit="setQueryParameter(\'revision\', revision.value);' +
                 'return false;">Show results for WebKit revision: ' +
@@ -2362,11 +2371,13 @@ function hideLoadingUI()
 function generatePageForIndividualTests(tests)
 {
     console.log('Number of tests: ' + tests.length);
-    appendHTML(htmlForNavBar());
+    if (g_currentState.showChrome)
+        appendHTML(htmlForNavBar());
     performChunkedAction(tests, function(chunk) {
         appendHTML(htmlForIndividualTests(chunk));
     }, appendExpectations, 500);
-    $('tests-input').value = g_currentState.tests;
+    if (g_currentState.showChrome)
+        $('tests-input').value = g_currentState.tests;
 }
 
 function performChunkedAction(tests, handleChunk, onComplete, timeout, opt_index) {
@@ -2385,8 +2396,9 @@ function performChunkedAction(tests, handleChunk, onComplete, timeout, opt_index
 function htmlForIndividualTests(tests)
 {
     var testsHTML = [];
+    var htmlForTestFunction = g_currentState.showChrome ? htmlForIndividualTestOnAllBuildersWithChrome : htmlForIndividualTestOnAllBuilders;
     for (var i = 0; i < tests.length; i++)
-        testsHTML.push(htmlForIndividulTestOnAllBuilders(tests[i]));
+        testsHTML.push(htmlForTestFunction(tests[i]));
     return testsHTML.join('<hr>');
 }
 
@@ -2472,6 +2484,7 @@ function generatePageForBuilder(builderName)
 var VALID_KEYS_FOR_CROSS_BUILDER_VIEW = {
     tests: 1,
     result: 1,
+    showChrome: 1,
     showExpectations: 1,
     showLargeExpectations: 1,
     legacyExpectationsSemantics: 1,
@@ -2574,6 +2587,22 @@ function htmlForSlowTimes(minTime)
         minTime + ' seconds == SLOW || !SLOW is fine</li><li>&gt;' +
         minTime + ' seconds == SLOW</li></ul>';
 }
+
+window.addEventListener('message', function(event) {
+    try {
+        var parsedData = JSON.parse(event.data);
+    } catch (error) {
+        console.log('Could not parse postMessage as JSON: ' + event.data);
+        return;
+    }
+
+    if (parsedData.command == 'queryContentHeight') {
+        var response = {height: document.documentElement.offsetHeight};
+        event.source.postMessage(JSON.stringify(response), '*');
+        return;
+    }
+    console.log('Unknown postMessage query: ' + event.data);
+});
 
 document.addEventListener('keydown', function(e) {
     if (e.keyIdentifier == 'U+003F' || e.keyIdentifier == 'U+00BF') {

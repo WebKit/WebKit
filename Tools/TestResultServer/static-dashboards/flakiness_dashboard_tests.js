@@ -380,6 +380,95 @@ function testHtmlForTestTypeSwitcherGroup()
     assertEquals(group.children.length, 3);
 }
 
+function testHtmlForIndividualTestOnAllBuilders()
+{
+    assertEquals(htmlForIndividualTestOnAllBuilders('foo/nonexistant.html'), '<div class="not-found">Test not found. Either it does not exist, is skipped or passes on all platforms.</div>');
+}
+
+function testHtmlForIndividualTestOnAllBuildersWithChromeNonexistant()
+{
+    assertEquals(htmlForIndividualTestOnAllBuildersWithChrome('foo/nonexistant.html'),
+        '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/foo/nonexistant.html" target="_blank">foo/nonexistant.html</a></h2>' +
+        '<div class="not-found">Test not found. Either it does not exist, is skipped or passes on all platforms.</div>' +
+        '<div class=expectations test=foo/nonexistant.html>' +
+            '<div>' +
+                '<span class=link onclick="setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +
+                '<span class=link onclick="setQueryParameter(\'showLargeExpectations\', true)">Show large thumbnails</span> | ' +
+                '<b>Only shows actual results/diffs from the most recent *failure* on each bot.</b>' +
+            '</div>' +
+        '</div>');
+}
+
+function testHtmlForIndividualTestOnAllBuildersWithChrome()
+{
+    var test = 'dummytest.html';
+    var builderName = 'dummyBuilder';
+    g_testToResultsMap[test] = [createResultsObjectForTest(test, builderName)];
+    assertEquals(htmlForIndividualTestOnAllBuildersWithChrome(test),
+        '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/dummytest.html" target="_blank">dummytest.html</a></h2>' +
+        '<table class=test-table><thead><tr>' +
+                '<th sortValue=test><div class=table-header-content><span></span><span class=header-text>test</span></div></th>' +
+                '<th sortValue=bugs><div class=table-header-content><span></span><span class=header-text>bugs</span></div></th>' +
+                '<th sortValue=modifiers><div class=table-header-content><span></span><span class=header-text>modifiers</span></div></th>' +
+                '<th sortValue=expectations><div class=table-header-content><span></span><span class=header-text>expectations</span></div></th>' +
+                '<th sortValue=slowest><div class=table-header-content><span></span><span class=header-text>slowest run</span></div></th>' +
+                '<th sortValue=%><div class=table-header-content><span></span><span class=header-text>% fail</span></div></th>' +
+                '<th sortValue=flakiness colspan=10000><div class=table-header-content><span></span><span class=header-text>flakiness (numbers are runtimes in seconds)</span></div></th>' +
+            '</tr></thead>' +
+            '<tbody>' +
+                '<div><b>If a builder is not listed, that means the builder does not run that test (e.g. it is skipped) or all runs of the test passed.</b></div>' +
+            '</tbody>' +
+        '</table>' +
+        '<div class=expectations test=dummytest.html>' +
+            '<div><span class=link onclick="setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +
+            '<span class=link onclick="setQueryParameter(\'showLargeExpectations\', true)">Show large thumbnails</span> | ' +
+            '<b>Only shows actual results/diffs from the most recent *failure* on each bot.</b></div>' +
+        '</div>');
+}
+
+function testHtmlForIndividualTestOnAllBuildersWithChromeWebkitMaster()
+{
+    var test = 'dummytest.html';
+    var builderName = 'dummyBuilder';
+    BUILDER_TO_MASTER[builderName] = WEBKIT_BUILDER_MASTER;
+    g_testToResultsMap[test] = [createResultsObjectForTest(test, builderName)];
+    assertEquals(htmlForIndividualTestOnAllBuildersWithChrome(test),
+        '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/dummytest.html" target="_blank">dummytest.html</a></h2>' +
+            '<table class=test-table><thead><tr>' +
+                    '<th sortValue=test><div class=table-header-content><span></span><span class=header-text>test</span></div></th>' +
+                    '<th sortValue=bugs><div class=table-header-content><span></span><span class=header-text>bugs</span></div></th>' +
+                    '<th sortValue=modifiers><div class=table-header-content><span></span><span class=header-text>modifiers</span></div></th>' +
+                    '<th sortValue=expectations><div class=table-header-content><span></span><span class=header-text>expectations</span></div></th>' +
+                    '<th sortValue=slowest><div class=table-header-content><span></span><span class=header-text>slowest run</span></div></th>' +
+                    '<th sortValue=%><div class=table-header-content><span></span><span class=header-text>% fail</span></div></th>' +
+                    '<th sortValue=flakiness colspan=10000><div class=table-header-content><span></span><span class=header-text>flakiness (numbers are runtimes in seconds)</span></div></th>' +
+                '</tr></thead>' +
+                '<tbody>' +
+                    '<div><b>If a builder is not listed, that means the builder does not run that test (e.g. it is skipped) or all runs of the test passed.</b></div>' +
+                '</tbody>' +
+            '</table>' +
+            '<div class=expectations test=dummytest.html>' +
+                '<div><span class=link onclick="setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +
+                '<span class=link onclick="setQueryParameter(\'showLargeExpectations\', true)">Show large thumbnails</span>' +
+                '<form onsubmit="setQueryParameter(\'revision\', revision.value);return false;">' +
+                    'Show results for WebKit revision: <input name=revision placeholder="e.g. 65540" value="" id=revision-input>' +
+                '</form></div>' +
+            '</div>');
+}
+
+function testHtmlForIndividualTests()
+{
+    g_currentState.showChrome = false;
+    var test1 = 'foo/nonexistant.html';
+    var test2 = 'bar/nonexistant.html';
+    var tests = [test1, test2];
+    assertEquals(htmlForIndividualTests(tests), htmlForIndividualTestOnAllBuilders(test1) + '<hr>' + htmlForIndividualTestOnAllBuilders(test2));
+
+    g_currentState.showChrome = true;
+    assertEquals(htmlForIndividualTests(tests), htmlForIndividualTestOnAllBuildersWithChrome(test1) + '<hr>' + htmlForIndividualTestOnAllBuildersWithChrome(test2));
+}
+
+
 function testLookupVirtualTestSuite()
 {
     assertEquals(lookupVirtualTestSuite('fast/canvas/foo.html'), '');
@@ -553,8 +642,14 @@ function testAddBuilderLoadErrors()
     g_buildersThatFailedToLoad = ['builder1', 'builder2'];
     g_staleBuilders = ['staleBuilder1'];
     addBuilderLoadErrors();
-    console.log(g_errorMessages);
     assertEquals(g_errorMessages, 'ERROR: Failed to get data from builder1,builder2.<br>ERROR: Data from staleBuilder1 is more than 1 day stale.<br>');
+}
+
+function htmlEscape(string)
+{
+    var div = document.createElement('div');
+    div.textContent = string;
+    return div.innerHTML;
 }
 
 function runTests()
@@ -573,7 +668,8 @@ function runTests()
                 error = err;
             }
 
-            var result = error ? error.toString() : 'PASSED';
+            var result = error ? htmlEscape(error.toString()) : 'PASSED';
+
             $('unittest-results').insertAdjacentHTML("beforeEnd", name + ': ' + result + '\n');
         }
     }

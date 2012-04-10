@@ -1,3 +1,22 @@
+2012-04-10  Ojan Vafai  <ojan@chromium.org>
+
+        Add a chromeless view to the individual tests view
+        https://bugs.webkit.org/show_bug.cgi?id=83541
+
+        Reviewed by Daniel Bates.
+
+        This is the view suitable to inlining in other contexts (e.g. garden-o-matic).
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        (testHtmlForIndividualTestOnAllBuilders):
+        (testHtmlForIndividualTestOnAllBuildersWithChromeNonexistant):
+        (testHtmlForIndividualTestOnAllBuildersWithChrome):
+        (testHtmlForIndividualTestOnAllBuildersWithChromeWebkitMaster):
+        (testHtmlForIndividualTests):
+        (htmlEscape):
+        (runTests):
+
 2012-04-10  Dirk Pranke  <dpranke@chromium.org>
 
         remove 'win' from chromium-win, chromium-linux fallback paths
