@@ -31,18 +31,13 @@
 
 namespace WebCore {
 
-// FIXME: This should be an array of structs to pair the names and descriptions.
-static const char* const rangeExceptionNames[] = {
-    "BAD_BOUNDARYPOINTS_ERR",
-    "INVALID_NODE_TYPE_ERR"
+static struct RangeExceptionNameDescription {
+    const char* const name;
+    const char* const description;
+} exceptions[] = {
+    { "BAD_BOUNDARYPOINTS_ERR", "The boundary-points of a Range did not meet specific requirements." },
+    { "INVALID_NODE_TYPE_ERR", "The container of an boundary-point of a Range was being set to either a node of an invalid type or a node with an ancestor of an invalid type." }
 };
-
-static const char* const rangeExceptionDescriptions[] = {
-    "The boundary-points of a Range did not meet specific requirements.",
-    "The container of an boundary-point of a Range was being set to either a node of an invalid type or a node with an ancestor of an invalid type."
-};
-
-COMPILE_ASSERT(WTF_ARRAY_LENGTH(rangeExceptionNames) == WTF_ARRAY_LENGTH(rangeExceptionDescriptions), RangeExceptionTablesMustMatch);
 
 bool RangeException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
 {
@@ -53,11 +48,11 @@ bool RangeException::initializeDescription(ExceptionCode ec, ExceptionCodeDescri
     description->code = ec - RangeExceptionOffset;
     description->type = RangeExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(rangeExceptionNames);
+    size_t tableSize = WTF_ARRAY_LENGTH(exceptions);
     size_t tableIndex = ec - BAD_BOUNDARYPOINTS_ERR;
 
-    description->name = tableIndex < tableSize ? rangeExceptionNames[tableIndex] : 0;
-    description->description = tableIndex < tableSize ? rangeExceptionDescriptions[tableIndex] : 0;
+    description->name = tableIndex < tableSize ? exceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? exceptions[tableIndex].description : 0;
 
     return true;
 }
