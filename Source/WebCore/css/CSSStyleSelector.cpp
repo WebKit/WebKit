@@ -3437,6 +3437,9 @@ void CSSStyleSelector::applyProperty(CSSPropertyID id, CSSValue *value)
             Color color;
             if (item->color)
                 color = colorFromPrimitiveValue(item->color.get());
+            else if (m_style)
+                color = m_style->color();
+
             OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(x, y, blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent));
             if (id == CSSPropertyTextShadow)
                 m_style->setTextShadow(shadowData.release(), i.index()); // add to the list if this is not the first entry
