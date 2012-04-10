@@ -118,6 +118,8 @@ public:
         case OpacityAndMask:
             program = TextureMapperShaderProgramOpacityAndMask::create();
             break;
+        case Invalid:
+            ASSERT_NOT_REACHED();
         }
         m_textureMapperShaderProgramMap.add(shaderType, program);
         return program;
