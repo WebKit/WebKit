@@ -1,3 +1,15 @@
+2012-04-10  Anders Carlsson  <andersca@apple.com>
+
+        Fix fast/images/exif-orientation.html WebKitTestRunner failure
+        https://bugs.webkit.org/show_bug.cgi?id=83627
+
+        Reviewed by Sam Weinig.
+
+        Handle overriding the WebKitShouldRespectImageOrientation preference.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2012-04-10  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Manage graphics buffers in the web process

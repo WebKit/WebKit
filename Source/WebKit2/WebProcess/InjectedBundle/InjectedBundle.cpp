@@ -139,7 +139,8 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     macro(WebKitUsesPageCachePreferenceKey, UsesPageCache, usesPageCache) \
     macro(WebKitWebAudioEnabled, WebAudioEnabled, webAudioEnabled) \
     macro(WebKitWebGLEnabled, WebGLEnabled, webGLEnabled) \
-    macro(WebKitXSSAuditorEnabled, XSSAuditorEnabled, xssAuditorEnabled)
+    macro(WebKitXSSAuditorEnabled, XSSAuditorEnabled, xssAuditorEnabled) \
+    macro(WebKitShouldRespectImageOrientation, ShouldRespectImageOrientation, shouldRespectImageOrientation)
 
     if (preference == "WebKitAcceleratedCompositingEnabled")
         enabled = enabled && LayerTreeHost::supportsAcceleratedCompositing();
