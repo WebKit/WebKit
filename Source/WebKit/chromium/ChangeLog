@@ -1,3 +1,29 @@
+2012-04-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r113734.
+        http://trac.webkit.org/changeset/113734
+        https://bugs.webkit.org/show_bug.cgi?id=83606
+
+        causing a bunch of unrelated test failures (Requested by
+        simonjam on #webkit).
+
+        * WebKit.gyp:
+        * features.gypi:
+        * public/WebBatteryStatus.h: Removed.
+        * public/WebBatteryStatusClient.h: Removed.
+        * public/WebView.h:
+        (WebKit):
+        (WebView):
+        * public/WebViewClient.h:
+        (WebKit):
+        * src/BatteryClientImpl.cpp: Removed.
+        * src/BatteryClientImpl.h: Removed.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+        (WebKit):
+        (WebViewImpl):
+
 2012-04-09  James Robinson  <jamesr@chromium.org>
 
         [chromium] Defer texture id allocation for copies until the actual copy executes

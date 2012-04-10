@@ -24,7 +24,6 @@
 
 #include "BatteryController.h"
 #include "BatteryStatus.h"
-#include "Document.h"
 #include "Event.h"
 #include "Frame.h"
 #include "Navigator.h"
@@ -53,12 +52,12 @@ BatteryManager::BatteryManager(Navigator* navigator)
 
 bool BatteryManager::charging()
 {
-    return m_batteryStatus ? m_batteryStatus->charging() : true;
+    return m_batteryStatus->charging();
 }
 
 double BatteryManager::chargingTime()
 {
-    if (!m_batteryStatus || !m_batteryStatus->charging())
+    if (!m_batteryStatus->charging())
         return std::numeric_limits<double>::infinity();
 
     return m_batteryStatus->chargingTime();
@@ -66,7 +65,7 @@ double BatteryManager::chargingTime()
 
 double BatteryManager::dischargingTime()
 {
-    if (!m_batteryStatus || m_batteryStatus->charging())
+    if (m_batteryStatus->charging())
         return std::numeric_limits<double>::infinity();
 
     return m_batteryStatus->dischargingTime();
@@ -74,7 +73,7 @@ double BatteryManager::dischargingTime()
 
 double BatteryManager::level()
 {
-    return m_batteryStatus ? m_batteryStatus->level() : 1;
+    return m_batteryStatus->level();
 }
 
 void BatteryManager::didChangeBatteryStatus(PassRefPtr<Event> event, PassRefPtr<BatteryStatus> batteryStatus)
