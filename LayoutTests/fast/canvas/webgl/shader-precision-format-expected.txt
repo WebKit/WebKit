@@ -24,6 +24,27 @@ Test that getShaderPrecisionFormat throws an error with invalid parameters.
 
 PASS gl.getShaderPrecisionFormat(gl.HIGH_INT, gl.VERTEX_SHADER) generated expected GL error: INVALID_ENUM.
 
+Test that WebGLShaderPrecisionFormat values are sensible.
+
+PASS shaderPrecisionFormat.rangeMin >= 1 is true
+PASS shaderPrecisionFormat.rangeMax >= 1 is true
+PASS shaderPrecisionFormat.precision >= 8 is true
+PASS shaderPrecisionFormat.rangeMin >= 14 is true
+PASS shaderPrecisionFormat.rangeMax >= 14 is true
+PASS shaderPrecisionFormat.precision >= 10 is true
+PASS shaderPrecisionFormat.rangeMin >= 62 is true
+PASS shaderPrecisionFormat.rangeMax >= 62 is true
+PASS shaderPrecisionFormat.precision >= 16 is true
+PASS shaderPrecisionFormat.rangeMin >= 8 is true
+PASS shaderPrecisionFormat.rangeMax >= 8 is true
+PASS shaderPrecisionFormat.precision == 0 is true
+PASS shaderPrecisionFormat.rangeMin >= 10 is true
+PASS shaderPrecisionFormat.rangeMax >= 10 is true
+PASS shaderPrecisionFormat.precision == 0 is true
+PASS shaderPrecisionFormat.rangeMin >= 16 is true
+PASS shaderPrecisionFormat.rangeMax >= 16 is true
+PASS shaderPrecisionFormat.precision == 0 is true
+
 Test that getShaderPrecisionFormat returns the same thing every call.
 
 PASS shaderPrecisionFormat.rangeMin == shaderPrecisionFormat2.rangeMin is true
