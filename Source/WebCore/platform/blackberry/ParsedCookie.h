@@ -110,7 +110,6 @@ private:
     // This is used for the LRU replacement policy.
     double m_lastAccessed;
 
-    bool m_isMaxAgeSet;
     bool m_hasDefaultDomain;
     bool m_isSecure;
     bool m_isHttpOnly;

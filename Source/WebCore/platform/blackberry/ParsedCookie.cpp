@@ -38,10 +38,9 @@
 namespace WebCore {
 
 ParsedCookie::ParsedCookie(double currentTime)
-    : m_expiry(0)
+    : m_expiry(-1)
     , m_creationTime(currentTime)
     , m_lastAccessed(currentTime)
-    , m_isMaxAgeSet(false)
     , m_hasDefaultDomain(false)
     , m_isSecure(false)
     , m_isHttpOnly(false)
@@ -59,7 +58,6 @@ ParsedCookie::ParsedCookie(const String& name, const String& value, const String
     , m_expiry(expiry)
     , m_creationTime(creationTime)
     , m_lastAccessed(lastAccessed)
-    , m_isMaxAgeSet(false)
     , m_hasDefaultDomain(false)
     , m_isSecure(isSecure)
     , m_isHttpOnly(isHttpOnly)
@@ -77,7 +75,6 @@ ParsedCookie::ParsedCookie(const ParsedCookie* cookie)
     , m_expiry(cookie->m_expiry)
     , m_creationTime(cookie->m_creationTime)
     , m_lastAccessed(cookie->m_lastAccessed)
-    , m_isMaxAgeSet(cookie->m_isMaxAgeSet)
     , m_hasDefaultDomain(cookie->m_hasDefaultDomain)
     , m_isSecure(cookie->m_isSecure)
     , m_isHttpOnly(cookie->m_isHttpOnly)
@@ -94,7 +91,7 @@ void ParsedCookie::setExpiry(const String& expiry)
 {
     // If a cookie has both the Max-Age and the Expires attribute,
     // the Max-Age attribute has precedence and controls the expiration date of the cookie.
-    if (m_isMaxAgeSet || expiry.isEmpty())
+    if (m_expiry != -1 || expiry.isEmpty())
         return;
 
     m_isSession = false;
@@ -126,7 +123,6 @@ void ParsedCookie::setMaxAge(const String& maxAge)
         return;
     }
     m_expiry = value;
-    m_isMaxAgeSet = true;
     m_isSession = false;
 
     // If maxAge value is not positive, let expiry-time be the earliest representable time.
