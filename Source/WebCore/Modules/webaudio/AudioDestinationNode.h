@@ -46,8 +46,8 @@ public:
     // The audio hardware calls here periodically to gets its input stream.
     virtual void provideInput(AudioBus*, size_t numberOfFrames);
 
-    size_t currentSampleFrame() { return m_currentSampleFrame; }
-    double currentTime() { return currentSampleFrame() / static_cast<double>(sampleRate()); }
+    size_t currentSampleFrame() const { return m_currentSampleFrame; }
+    double currentTime() const { return currentSampleFrame() / static_cast<double>(sampleRate()); }
 
     virtual unsigned numberOfChannels() const { return 2; } // FIXME: update when multi-channel (more than stereo) is supported
 

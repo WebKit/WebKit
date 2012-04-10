@@ -158,6 +158,10 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
 
             finish();
         }
+
+        outputBus->clearSilentFlag();
+
+        m_processLock.unlock();
     } else {
         // Too bad - the tryLock() failed.  We must be in the middle of changing buffers and were already outputting silence anyway.
         outputBus->zero();
@@ -331,7 +335,10 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
                     break;
             }
         }
-    } 
+    }
+
+    bus->clearSilentFlag();
+
     m_virtualReadIndex = virtualReadIndex;
 }
 
@@ -499,6 +506,12 @@ void AudioBufferSourceNode::setLooping(bool looping)
 
     m_isLooping = looping;
 }
+
+bool AudioBufferSourceNode::propagatesSilence() const
+{
+    return !isPlayingOrScheduled() || hasFinished() || !m_buffer;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

@@ -424,6 +424,12 @@ void AudioBus::processWithGainFromMonoStereo(const AudioBus &sourceBus, float* l
     const float* sourceL = sourceBusSafe.channelByType(ChannelLeft)->data();
     const float* sourceR = numberOfSourceChannels > 1 ? sourceBusSafe.channelByType(ChannelRight)->data() : 0;
 
+    if (sourceBusSafe.isSilent()) {
+        if (!sumToBus)
+            zero();
+        return;
+    }
+
     float* destinationL = channelByType(ChannelLeft)->mutableData();
     float* destinationR = numberOfDestinationChannels > 1 ? channelByType(ChannelRight)->mutableData() : 0;
 
@@ -510,6 +516,11 @@ void AudioBus::copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, f
         return;
     }
 
+    if (sourceBus.length() == numberOfGainValues && sourceBus.length() == length() && sourceBus.isSilent()) {
+        zero();
+        return;
+    }
+
     // We handle both the 1 -> N and N -> N case here.
     const float* source = sourceBus.channel(0)->data();
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels(); ++channelIndex) {
@@ -539,6 +550,7 @@ PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(const AudioBus* sour
 
     double sourceSampleRate = sourceBus->sampleRate();
     double destinationSampleRate = newSampleRate;
+    double sampleRateRatio = sourceSampleRate / destinationSampleRate;
     unsigned numberOfSourceChannels = sourceBus->numberOfChannels();
 
     if (numberOfSourceChannels == 1)
@@ -552,7 +564,13 @@ PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(const AudioBus* sour
         // Return exact copy.
         return AudioBus::createBufferFromRange(sourceBus, 0, sourceBus->length());
     }
-    
+
+    if (sourceBus->isSilent()) {
+        OwnPtr<AudioBus> silentBus = adoptPtr(new AudioBus(numberOfSourceChannels, sourceBus->length() / sampleRateRatio));
+        silentBus->setSampleRate(newSampleRate);
+        return silentBus.release();
+    }
+
     // First, mix to mono (if necessary) then sample-rate convert.
     const AudioBus* resamplerSourceBus;
     OwnPtr<AudioBus> mixedMonoBus;
@@ -565,7 +583,6 @@ PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(const AudioBus* sour
     }
 
     // Calculate destination length based on the sample-rates.
-    double sampleRateRatio = sourceSampleRate / destinationSampleRate;
     int sourceLength = resamplerSourceBus->length();
     int destinationLength = sourceLength / sampleRateRatio;
 
@@ -582,12 +599,16 @@ PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(const AudioBus* sour
         resampler.process(source, destination, sourceLength);
     }
 
+    destinationBus->clearSilentFlag();
     destinationBus->setSampleRate(newSampleRate);    
     return destinationBus.release();
 }
 
 PassOwnPtr<AudioBus> AudioBus::createByMixingToMono(const AudioBus* sourceBus)
 {
+    if (sourceBus->isSilent())
+        return adoptPtr(new AudioBus(1, sourceBus->length()));
+
     switch (sourceBus->numberOfChannels()) {
     case 1:
         // Simply create an exact copy.
@@ -605,6 +626,7 @@ PassOwnPtr<AudioBus> AudioBus::createByMixingToMono(const AudioBus* sourceBus)
             for (unsigned i = 0; i < n; ++i)
                 destination[i] = (sourceL[i] + sourceR[i]) / 2;
 
+            destinationBus->clearSilentFlag();
             destinationBus->setSampleRate(sourceBus->sampleRate());    
             return destinationBus.release();
         }
@@ -612,6 +634,21 @@ PassOwnPtr<AudioBus> AudioBus::createByMixingToMono(const AudioBus* sourceBus)
 
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+bool AudioBus::isSilent() const
+{
+    for (size_t i = 0; i < m_channels.size(); ++i) {
+        if (!m_channels[i]->isSilent())
+            return false;
+    }
+    return true;
+}
+
+void AudioBus::clearSilentFlag()
+{
+    for (size_t i = 0; i < m_channels.size(); ++i)
+        m_channels[i]->clearSilentFlag();
 }
 
 } // WebCore

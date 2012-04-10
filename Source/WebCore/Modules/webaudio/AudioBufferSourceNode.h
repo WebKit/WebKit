@@ -84,7 +84,9 @@ public:
     void noteGrainOn(double when, double grainOffset, double grainDuration);
     void noteOff(double when);
 
-    unsigned short playbackState() { return static_cast<unsigned short>(m_playbackState); }
+    unsigned short playbackState() const { return static_cast<unsigned short>(m_playbackState); }
+    bool isPlayingOrScheduled() const { return m_playbackState == PLAYING_STATE || m_playbackState == SCHEDULED_STATE; }
+    bool hasFinished() const { return m_playbackState == FINISHED_STATE; }
 
     // Note: the attribute was originally exposed as .looping, but to be more consistent in naming with <audio>
     // and with how it's described in the specification, the proper attribute name is .loop
@@ -101,6 +103,9 @@ public:
 
     // If a panner node is set, then we can incorporate doppler shift into the playback pitch rate.
     void setPannerNode(PassRefPtr<AudioPannerNode> pannerNode) { m_pannerNode = pannerNode; }
+
+    // If we are no longer playing, propogate silence ahead to downstream nodes.
+    virtual bool propagatesSilence() const;
 
 private:
     AudioBufferSourceNode(AudioContext*, float sampleRate);

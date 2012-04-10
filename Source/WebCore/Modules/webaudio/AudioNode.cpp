@@ -42,7 +42,8 @@ AudioNode::AudioNode(AudioContext* context, float sampleRate)
     , m_nodeType(NodeTypeUnknown)
     , m_context(context)
     , m_sampleRate(sampleRate)
-    , m_lastProcessingTime(-1.0)
+    , m_lastProcessingTime(-1)
+    , m_lastNonSilentTime(-1)
     , m_normalRefCount(1) // start out with normal refCount == 1 (like WTF::RefCounted class)
     , m_connectionRefCount(0)
     , m_disabledRefCount(0)
@@ -177,8 +178,19 @@ void AudioNode::processIfNecessary(size_t framesToProcess)
     double currentTime = context()->currentTime();
     if (m_lastProcessingTime != currentTime) {
         m_lastProcessingTime = currentTime; // important to first update this time because of feedback loops in the rendering graph
+
         pullInputs(framesToProcess);
-        process(framesToProcess);
+
+        bool silentInputs = inputsAreSilent();
+        if (!silentInputs)
+            m_lastNonSilentTime = (context()->currentSampleFrame() + framesToProcess) / static_cast<double>(m_sampleRate);
+
+        if (silentInputs && propagatesSilence())
+            silenceOutputs();
+        else {
+            process(framesToProcess);
+            unsilenceOutputs();
+        }
     }
 }
 
@@ -193,6 +205,11 @@ void AudioNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
     input->updateInternalBus();
 }
 
+bool AudioNode::propagatesSilence() const
+{
+    return m_lastNonSilentTime + latencyTime() + tailTime() < context()->currentTime();
+}
+
 void AudioNode::pullInputs(size_t framesToProcess)
 {
     ASSERT(context()->isAudioThread());
@@ -200,6 +217,27 @@ void AudioNode::pullInputs(size_t framesToProcess)
     // Process all of the AudioNodes connected to our inputs.
     for (unsigned i = 0; i < m_inputs.size(); ++i)
         input(i)->pull(0, framesToProcess);
+}
+
+bool AudioNode::inputsAreSilent()
+{
+    for (unsigned i = 0; i < m_inputs.size(); ++i) {
+        if (!input(i)->bus()->isSilent())
+            return false;
+    }
+    return true;
+}
+
+void AudioNode::silenceOutputs()
+{
+    for (unsigned i = 0; i < m_outputs.size(); ++i)
+        output(i)->bus()->zero();
+}
+
+void AudioNode::unsilenceOutputs()
+{
+    for (unsigned i = 0; i < m_outputs.size(); ++i)
+        output(i)->bus()->clearSilentFlag();
 }
 
 void AudioNode::ref(RefType refType)

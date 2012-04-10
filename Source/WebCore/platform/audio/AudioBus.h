@@ -83,6 +83,12 @@ public:
     // Zeroes all channels.
     void zero();
 
+    // Clears the silent flag on all channels.
+    void clearSilentFlag();
+
+    // Returns true if the silent bit is set on all channels.
+    bool isSilent() const;
+
     // Returns true if the channel count and frame-size match.
     bool topologyMatches(const AudioBus &sourceBus) const;
 

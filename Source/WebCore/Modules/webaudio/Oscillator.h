@@ -74,6 +74,9 @@ private:
     // Returns true if there are sample-accurate timeline parameter changes.
     bool calculateSampleAccuratePhaseIncrements(size_t framesToProcess);
 
+    // As a pure generator, Oscillator will never propagate silence.
+    virtual bool propagatesSilence() const OVERRIDE { return false; }
+
     // One of the waveform types defined in the enum.
     unsigned short m_type;
     

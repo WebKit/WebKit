@@ -93,10 +93,10 @@ public:
     bool hasDocument();
 
     AudioDestinationNode* destination() { return m_destinationNode.get(); }
-    size_t currentSampleFrame() { return m_destinationNode->currentSampleFrame(); }
-    double currentTime() { return m_destinationNode->currentTime(); }
-    float sampleRate() { return m_destinationNode->sampleRate(); }
-    unsigned long activeSourceCount() { return static_cast<unsigned long>(m_activeSourceCount); }
+    size_t currentSampleFrame() const { return m_destinationNode->currentSampleFrame(); }
+    double currentTime() const { return m_destinationNode->currentTime(); }
+    float sampleRate() const { return m_destinationNode->sampleRate(); }
+    unsigned long activeSourceCount() const { return static_cast<unsigned long>(m_activeSourceCount); }
 
     void incrementActiveSourceCount();
     void decrementActiveSourceCount();

@@ -43,12 +43,17 @@ public:
 
     // Reference an external buffer.
     AudioChannel(float* storage, size_t length)
-        : m_length(length), m_rawPointer(storage) { }
+        : m_length(length)
+        , m_rawPointer(storage)
+        , m_silent(false)
+    {
+    }
 
     // Manage storage for us.
     explicit AudioChannel(size_t length)
         : m_length(length)
         , m_rawPointer(0)
+        , m_silent(true)
     {
         m_memBuffer = adoptPtr(new AudioFloatArray(length));
     }
@@ -57,6 +62,7 @@ public:
     AudioChannel()
         : m_length(0)
         , m_rawPointer(0)
+        , m_silent(true)
     {
     }
 
@@ -67,23 +73,39 @@ public:
         m_memBuffer.clear(); // cleanup managed storage
         m_rawPointer = storage;
         m_length = length;
+        m_silent = false;
     }
 
     // How many sample-frames do we contain?
     size_t length() const { return m_length; }
 
-    // Direct access to PCM sample data
-    float* mutableData() { return m_rawPointer ? m_rawPointer : m_memBuffer->data(); }
+    // Direct access to PCM sample data. Non-const accessor clears silent flag.
+    float* mutableData()
+    {
+        clearSilentFlag();
+        return m_rawPointer ? m_rawPointer : m_memBuffer->data(); 
+    }
+
     const float* data() const { return m_rawPointer ? m_rawPointer : m_memBuffer->data(); }
 
     // Zeroes out all sample values in buffer.
     void zero()
     {
+        if (m_silent)
+            return;
+
+        m_silent = true;
+
         if (m_memBuffer.get())
             m_memBuffer->zero();
         else
             memset(m_rawPointer, 0, sizeof(float) * m_length);
     }
+
+    // Clears the silent flag.
+    void clearSilentFlag() { m_silent = false; }
+
+    bool isSilent() const { return m_silent; }
 
     // Scales all samples by the same amount.
     void scale(float scale);
@@ -105,6 +127,7 @@ private:
 
     float* m_rawPointer;
     OwnPtr<AudioFloatArray> m_memBuffer;
+    bool m_silent;
 };
 
 } // WebCore
