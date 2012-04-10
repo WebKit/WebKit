@@ -33,9 +33,6 @@ function test()
 
         if (numberOfReports < messages.length) {
             InspectorTest.addObject(message);
-            InspectorTest.addResult("error.code: " + message.error.code);
-            InspectorTest.addResult("error.getMessage(): " + message.error.getMessage());
-            InspectorTest.addResult("error.toString(): " + message.error);
             InspectorTest.addResult("-------------------------------------------------------");
         }
 

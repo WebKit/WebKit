@@ -20,9 +20,9 @@ function test()
         {
             DebuggerAgent.setBreakpointByUrl.invoke({lineNumber: 1}, step2);
 
-            function step2(result)
+            function step2(error)
             {
-                InspectorTest.dump(result);
+                InspectorTest.addResult(error);
                 next();
             }
         },
@@ -33,9 +33,9 @@ function test()
             var urlRegex = "debugger-set-breakpoint.*";
             DebuggerAgent.setBreakpointByUrl(1, url, urlRegex, step2);
 
-            function step2(result)
+            function step2(error)
             {
-                InspectorTest.dump(result);
+                InspectorTest.addResult(error);
                 next();
             }
         },

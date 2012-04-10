@@ -2,7 +2,7 @@ Test that resolving heap snaphot object to a JS object will not crash on DOM wra
 
 _finishHeapSnapshot 1
 _callLoadCallbacks
-Error resolving heap snapshot object: Server error(-32000): Object is not available.
-Error resolving heap snapshot object: Server error(-32000): Object is not available.
+Error resolving heap snapshot object: Object is not available
+Error resolving heap snapshot object: Object is not available
 clearProfiles
 

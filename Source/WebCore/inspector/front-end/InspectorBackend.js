@@ -163,31 +163,6 @@ InspectorBackendClass.prototype = {
 
         if ("id" in messageObject) { // just a response for some request
             if (messageObject.error) {
-                messageObject.error.__proto__ = {
-                    getDescription: function()
-                    {
-                        switch(this.code) {
-                            case -32700: return "Parse error";
-                            case -32600: return "Invalid Request";
-                            case -32601: return "Method not found";
-                            case -32602: return "Invalid params";
-                            case -32603: return "Internal error";;
-                            case -32000: return "Server error";
-                        }
-                    },
-
-                    toString: function()
-                    {
-                        var description ="Unknown error code";
-                        return this.getDescription() + "(" + this.code + "): " + this.message + "." + (this.data ? " " + this.data.join(" ") : "");
-                    },
-
-                    getMessage: function()
-                    {
-                        return this.message;
-                    }
-                }
-
                 if (messageObject.error.code !== -32000)
                     this.reportProtocolError(messageObject);
             }
@@ -207,7 +182,7 @@ InspectorBackendClass.prototype = {
                 if (this.dumpInspectorTimeStats && callback.methodName)
                     processingStartTime = Date.now();
 
-                argumentsArray.unshift(messageObject.error);
+                argumentsArray.unshift(messageObject.error ? messageObject.error.message : null);
                 callback.apply(null, argumentsArray);
                 --this._pendingResponsesCount;
                 delete this._callbacks[messageObject.id];
