@@ -318,7 +318,7 @@ WebNavigationPolicy ChromeClientImpl::getNavigationPolicy()
         policy = WebNavigationPolicyNewBackgroundTab;
     return policy;
 }
- 
+
 void ChromeClientImpl::show()
 {
     if (!m_webView->client())
@@ -645,11 +645,13 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     if (!m_webView->settings()->viewportEnabled() || !m_webView->isFixedLayoutModeEnabled() || !m_webView->client() || !m_webView->page())
         return;
 
+    bool useDefaultDeviceScaleFactor = false;
     ViewportArguments args;
-    if (arguments == args)
+    if (arguments == args) {
         // Default viewport arguments passed in. This is a signal to reset the viewport.
         args.width = ViewportArguments::ValueDesktopWidth;
-    else
+        useDefaultDeviceScaleFactor = true;
+    } else
         args = arguments;
 
     FrameView* frameView = m_webView->mainFrameImpl()->frameView();
@@ -674,7 +676,10 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
 
     // FIXME: Investigate the impact this has on layout/rendering if any.
     // This exposes the correct device scale to javascript and media queries.
-    m_webView->setDeviceScaleFactor(computed.devicePixelRatio);
+    if (useDefaultDeviceScaleFactor && settings->defaultDeviceScaleFactor())
+        m_webView->setDeviceScaleFactor(settings->defaultDeviceScaleFactor());
+    else
+        m_webView->setDeviceScaleFactor(computed.devicePixelRatio);
     m_webView->setPageScaleFactorLimits(computed.minimumScale, computed.maximumScale);
     m_webView->setPageScaleFactorPreservingScrollOffset(computed.initialScale * computed.devicePixelRatio);
 #endif
