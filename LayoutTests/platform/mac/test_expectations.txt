@@ -410,3 +410,6 @@ BUGWK82734 : ietestcenter/css3/bordersbackgrounds/none-as-image-layer.htm = FAIL
 BUGWK82734 : ietestcenter/css3/bordersbackgrounds/order-of-images.htm = FAIL MISSING
 
 BUGWK83124 : http/tests/websocket/tests/hybi/workers/worker-reload.html = PASS FAIL
+
+// Temp: need to rebaseline.
+BUGWK58511 : fast/text/text-shadow-no-default-color.html = FAIL MISSING
