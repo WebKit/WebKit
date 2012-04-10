@@ -32,7 +32,6 @@
 #if ENABLE(WEB_INTENTS)
 
 #include "ExceptionCode.h"
-#include "MessagePort.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {
@@ -51,39 +50,12 @@ PassRefPtr<Intent> Intent::create(const String& action, const String& type, Pass
     return adoptRef(new Intent(action, type, data));
 }
 
-PassRefPtr<Intent> Intent::create(const String& action, const String& type, PassRefPtr<SerializedScriptValue> data, const MessagePortArray& ports, ExceptionCode& ec)
-{
-    if (action.isEmpty()) {
-        ec = SYNTAX_ERR;
-        return 0;
-    }
-    if (type.isEmpty()) {
-        ec = SYNTAX_ERR;
-        return 0;
-    }
-
-    OwnPtr<MessagePortChannelArray> channels = MessagePort::disentanglePorts(&ports, ec);
-
-    return adoptRef(new Intent(action, type, data, channels.release()));
-}
-
 Intent::Intent(const String& action, const String& type, PassRefPtr<SerializedScriptValue> data)
     : m_action(action)
     , m_type(type)
 {
     if (data)
-        m_data = data;
-    else
-        m_data = SerializedScriptValue::nullValue();
-}
-
-Intent::Intent(const String& action, const String& type, PassRefPtr<SerializedScriptValue> data, PassOwnPtr<MessagePortChannelArray> ports)
-    : m_action(action)
-    , m_type(type)
-    , m_ports(ports)
-{
-    if (data)
-        m_data = data;
+        m_data = SerializedScriptValue::createFromWire(data->toWireString());
     else
         m_data = SerializedScriptValue::nullValue();
 }
@@ -101,11 +73,6 @@ const String& Intent::type() const
 SerializedScriptValue* Intent::data() const
 {
     return m_data.get();
-}
-
-MessagePortChannelArray* Intent::messagePorts() const
-{
-    return m_ports.get();
 }
 
 } // namespace WebCore

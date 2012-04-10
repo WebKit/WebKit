@@ -31,11 +31,9 @@
 #ifndef WebIntent_h
 #define WebIntent_h
 
-#include "WebMessagePortChannel.h"
 #include "platform/WebCommon.h"
 #include "platform/WebPrivatePtr.h"
 #include "platform/WebString.h"
-#include "platform/WebVector.h"
 
 namespace WebCore { class Intent; }
 
@@ -63,9 +61,6 @@ public:
     WEBKIT_EXPORT WebString action() const;
     WEBKIT_EXPORT WebString type() const;
     WEBKIT_EXPORT WebString data() const;
-
-    // Caller takes ownership of the ports.
-    WEBKIT_EXPORT WebMessagePortChannelArray* messagePortChannelsRelease() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebIntent(const WTF::PassRefPtr<WebCore::Intent>&);

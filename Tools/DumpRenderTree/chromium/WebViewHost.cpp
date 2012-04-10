@@ -1327,14 +1327,7 @@ void WebViewHost::dispatchIntent(WebFrame* source, const WebIntentRequest& reque
     printf("Received Web Intent: action=%s type=%s\n",
            request.intent().action().utf8().data(),
            request.intent().type().utf8().data());
-    WebMessagePortChannelArray* ports = request.intent().messagePortChannelsRelease();
     m_currentRequest = request;
-    if (ports) {
-        printf("Have %zu ports\n", ports->size());
-        for (size_t i = 0; i < ports->size(); ++i)
-            (*ports)[i]->destroy();
-        delete ports;
-    }
 }
 
 // Public functions -----------------------------------------------------------
