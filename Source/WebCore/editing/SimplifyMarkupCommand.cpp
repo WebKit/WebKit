@@ -62,10 +62,12 @@ void SimplifyMarkupCommand::doApply()
                 nodesToRemove.append(currentNode);
             
             currentNode = currentNode->parentNode();
+            ASSERT(currentNode);
+
             if (!currentNode->renderer() || !currentNode->renderer()->isRenderInline() || toRenderInline(currentNode->renderer())->alwaysCreateLineBoxes())
                 continue;
             
-            if (currentNode && currentNode->firstChild() != currentNode->lastChild()) {
+            if (currentNode->firstChild() != currentNode->lastChild()) {
                 topNodeWithStartingStyle = 0;
                 break;
             }
