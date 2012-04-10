@@ -126,9 +126,4 @@ FakeTiledLayerWithScaledBounds::FakeTiledLayerWithScaledBounds(TextureManager* t
 {
 }
 
-FakeCCTextureUpdater::FakeCCTextureUpdater()
-    : CCTextureUpdater(&m_textureAllocator, &m_textureCopier)
-{
-}
-
 } // namespace

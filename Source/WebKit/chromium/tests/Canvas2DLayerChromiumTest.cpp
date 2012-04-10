@@ -102,7 +102,7 @@ protected:
 
         MockTextureAllocator allocatorMock;
         MockTextureCopier copierMock;
-        CCTextureUpdater updater(&allocatorMock, &copierMock);
+        CCTextureUpdater updater;
 
         const IntSize size(300, 150);
 
@@ -154,9 +154,8 @@ protected:
             EXPECT_EQ(0u, static_cast<CCTextureLayerImpl*>(layerImpl.get())->textureId());
 
             canvas->updateCompositorResources(implContext.get(), updater);
+            updater.update(implContext.get(), &allocatorMock, &copierMock, 1);
             canvas->pushPropertiesTo(layerImpl.get());
-
-            updater.update(implContext.get(), 1);
 
             if (threaded)
                 EXPECT_EQ(frontTextureId, static_cast<CCTextureLayerImpl*>(layerImpl.get())->textureId());

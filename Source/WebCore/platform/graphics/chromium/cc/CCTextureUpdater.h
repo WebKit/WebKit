@@ -38,21 +38,20 @@ class TextureCopier;
 
 class CCTextureUpdater {
 public:
-    CCTextureUpdater(TextureAllocator*, TextureCopier*);
+    CCTextureUpdater();
     ~CCTextureUpdater();
 
     void appendUpdate(LayerTextureUpdater::Texture*, const IntRect& sourceRect, const IntRect& destRect);
     void appendPartialUpdate(LayerTextureUpdater::Texture*, const IntRect& sourceRect, const IntRect& destRect);
     void appendCopy(unsigned sourceTexture, unsigned destTexture, const IntSize&);
+    void appendManagedCopy(unsigned sourceTexture, ManagedTexture* destTexture, const IntSize&);
 
     bool hasMoreUpdates() const;
 
     // Update some textures. Returns true if more textures left to process.
-    bool update(GraphicsContext3D*, size_t count);
+    bool update(GraphicsContext3D*, TextureAllocator*, TextureCopier*, size_t count);
 
     void clear();
-
-    TextureAllocator* allocator() { return m_allocator; }
 
 private:
     struct UpdateEntry {
@@ -67,14 +66,19 @@ private:
         unsigned destTexture;
     };
 
+    struct ManagedCopyEntry {
+        IntSize size;
+        unsigned sourceTexture;
+        ManagedTexture* destTexture;
+    };
+
     static void appendUpdate(LayerTextureUpdater::Texture*, const IntRect& sourceRect, const IntRect& destRect, Vector<UpdateEntry>&);
 
-    TextureAllocator* m_allocator;
-    TextureCopier* m_copier;
     size_t m_entryIndex;
     Vector<UpdateEntry> m_entries;
     Vector<UpdateEntry> m_partialEntries;
     Vector<CopyEntry> m_copyEntries;
+    Vector<ManagedCopyEntry> m_managedCopyEntries;
 };
 
 }

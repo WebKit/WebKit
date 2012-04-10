@@ -134,8 +134,7 @@ void Canvas2DLayerChromium::updateCompositorResources(GraphicsContext3D* context
     if (!m_backTextureId || !m_frontTexture || !m_frontTexture->isValid(m_size, GraphicsContext3D::RGBA))
         return;
 
-    m_frontTexture->allocate(updater.allocator());
-    updater.appendCopy(m_backTextureId, m_frontTexture->textureId(), m_size);
+    updater.appendManagedCopy(m_backTextureId, m_frontTexture.get(), m_size);
 }
 
 void Canvas2DLayerChromium::pushPropertiesTo(CCLayerImpl* layer)

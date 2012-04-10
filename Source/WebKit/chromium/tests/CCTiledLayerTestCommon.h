@@ -158,16 +158,5 @@ public:
     virtual void copyTexture(WebCore::GraphicsContext3D*, unsigned, unsigned, const WebCore::IntSize&) { }
 };
 
-class FakeCCTextureUpdater : public WebCore::CCTextureUpdater {
-public:
-    explicit FakeCCTextureUpdater();
-
-    FakeTextureAllocator& textureAllocator() { return m_textureAllocator; }
-
-protected:
-    FakeTextureAllocator m_textureAllocator;
-    FakeTextureCopier m_textureCopier;
-};
-
 }
 #endif // CCTiledLayerTestCommon_h

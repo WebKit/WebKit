@@ -1,3 +1,16 @@
+2012-04-09  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Defer texture id allocation for copies until the actual copy executes
+        https://bugs.webkit.org/show_bug.cgi?id=83514
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCTiledLayerTestCommon.cpp:
+        * tests/CCTiledLayerTestCommon.h:
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+
 2012-04-10  David Dorwin  <ddorwin@chromium.org>
 
         Add Encrypted Media Extensions methods to HTMLMediaElement
