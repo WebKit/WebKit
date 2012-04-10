@@ -1,3 +1,27 @@
+2012-04-10  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [CMake] Do not pass -P to the preprocessor when running make_names.pl.
+        https://bugs.webkit.org/show_bug.cgi?id=83225
+
+        Reviewed by Rob Buis.
+
+        This is necessary to make CMake-based ports build with the
+        recently-released GCC 4.7.0, whose preprocessor seems to ignore
+        empty lines when -P is passed to it.  Such behavior breaks
+        make_names.pl (in fact, InFilesParser.pm), which expects an empty
+        line to separate common and specific sections in .in files.
+
+        A fix for this same problem has been supposedly done in r84123,
+        but as the CMake-based ports always pass --preprocessor to the
+        Perl tools the fix never reached us.
+
+        The idea is to define CODE_GENERATOR_PREPROCESSOR_WITH_LINEMARKERS
+        for (!MSVC && !QNX) and use it in the macros which call
+        make_names.pl.
+
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/WebKitMacros.cmake:
+
 2012-04-10  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake][WIN] Add /MP flag when using a compiler with support for it
