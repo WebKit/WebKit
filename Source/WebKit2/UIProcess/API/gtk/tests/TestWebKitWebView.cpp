@@ -512,6 +512,77 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
 }
 
+class FullScreenClientTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(FullScreenClientTest);
+
+    enum FullScreenEvent {
+        None,
+        Enter,
+        Leave
+    };
+
+    static gboolean viewEnterFullScreenCallback(WebKitWebView*, FullScreenClientTest* test)
+    {
+        test->m_event = Enter;
+        g_main_loop_quit(test->m_mainLoop);
+        return FALSE;
+    }
+
+    static gboolean viewLeaveFullScreenCallback(WebKitWebView*, FullScreenClientTest* test)
+    {
+        test->m_event = Leave;
+        g_main_loop_quit(test->m_mainLoop);
+        return FALSE;
+    }
+
+    FullScreenClientTest()
+        : m_event(None)
+    {
+        webkit_settings_set_enable_fullscreen(webkit_web_view_get_settings(m_webView), TRUE);
+        g_signal_connect(m_webView, "enter-fullscreen", G_CALLBACK(viewEnterFullScreenCallback), this);
+        g_signal_connect(m_webView, "leave-fullscreen", G_CALLBACK(viewLeaveFullScreenCallback), this);
+    }
+
+    ~FullScreenClientTest()
+    {
+        g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+    }
+
+    void requestFullScreenAndWaitUntilEnteredFullScreen()
+    {
+        m_event = None;
+        webkit_web_view_run_javascript(m_webView, "document.documentElement.webkitRequestFullScreen();", 0, 0);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    static gboolean leaveFullScreenIdle(FullScreenClientTest* test)
+    {
+        test->keyStroke(GDK_KEY_Escape);
+        return FALSE;
+    }
+
+    void leaveFullScreenAndWaitUntilLeftFullScreen()
+    {
+        m_event = None;
+        g_idle_add(reinterpret_cast<GSourceFunc>(leaveFullScreenIdle), this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    FullScreenEvent m_event;
+};
+
+static void testWebViewFullScreen(FullScreenClientTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+    test->loadHtml("<html><body>FullScreen test</body></html>", 0);
+    test->waitUntilLoadFinished();
+    test->requestFullScreenAndWaitUntilEnteredFullScreen();
+    g_assert_cmpint(test->m_event, ==, FullScreenClientTest::Enter);
+    test->leaveFullScreenAndWaitUntilLeftFullScreen();
+    g_assert_cmpint(test->m_event, ==, FullScreenClientTest::Leave);
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
@@ -524,6 +595,7 @@ void beforeAll()
     UIClientTest::add("WebKitWebView", "mouse-target", testWebViewMouseTarget);
     WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);
     WebViewTest::add("WebKitWebView", "run-javascript", testWebViewRunJavaScript);
+    FullScreenClientTest::add("WebKitWebView", "fullscreen", testWebViewFullScreen);
 }
 
 void afterAll()

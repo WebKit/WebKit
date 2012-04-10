@@ -1,3 +1,57 @@
+2012-04-10  Philippe Normand <pnormand@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WK2][GTK] FullScreen signals
+        https://bugs.webkit.org/show_bug.cgi?id=76166
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/C/gtk/WKFullScreenClientGtk.cpp:
+        (WKViewSetFullScreenClientGtk): Initialize WebKitWebViewBase
+        fullscreen client.
+        * UIProcess/API/C/gtk/WKFullScreenClientGtk.h:
+        * UIProcess/API/gtk/WebKitFullscreenClient.cpp: Added.
+        (willEnterFullScreen): Call webkitWebViewEnterFullScreen().
+        (willExitFullScreen): Call webkitWebViewLeaveFullScreen().
+        (attachFullScreenClientToView): Initialize FullScreenClient adding
+        implementations for willEnterFullScreen and willExitFullScreen callbacks.
+        * UIProcess/API/gtk/WebKitFullscreenClient.h: Added.
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Attach fullscreen client to view.
+        (webkit_web_view_class_init): Add WebKitWebView::enter-fullscreen
+        and WebKitWebView::leave-fullscreen signals.
+        (webkitWebViewEnterFullScreen): Emit
+        WebKitWebView::enter-fullscreen signal.
+        (webkitWebViewLeaveFullScreen): Emit
+        WebKitWebView::leave-fullscreen signal.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseKeyPressEvent): Only return early when leaving
+        fullscreen, otherwise let the view process the key pressed.
+        (webkitWebViewBaseEnterFullScreen): Return early if
+        willEnterFullScreen callback is handled and returns false.
+        (webkitWebViewBaseExitFullScreen): Return early if
+        willExitFullScreen callback is handled and returns false.
+        (webkitWebViewBaseInitializeFullScreenClient): Initialize the
+        fullscreen client.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewFullScreen):
+        (beforeAll):
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::keyStroke): Helper function to synthesize key
+        press/release events.
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+        * UIProcess/API/gtk/webkit2marshal.list:
+        * UIProcess/gtk/WebFullScreenClientGtk.cpp:
+        (WebKit::WebFullScreenClientGtk::willEnterFullScreen): Call
+        willEnterFullScreen callback if defined.
+        (WebKit::WebFullScreenClientGtk::willExitFullScreen): Call
+        willExitFullScreen callback if defined.
+        * UIProcess/gtk/WebFullScreenClientGtk.h:
+
 2012-04-10  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Add missing source files to build system

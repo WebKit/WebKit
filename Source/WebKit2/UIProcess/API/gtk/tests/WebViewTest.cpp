@@ -198,6 +198,32 @@ void WebViewTest::mouseMoveTo(int x, int y, unsigned int mouseModifiers)
     gtk_main_do_event(event.get());
 }
 
+void WebViewTest::keyStroke(unsigned int keyVal, unsigned int keyModifiers)
+{
+    g_assert(m_parentWindow);
+    GtkWidget* viewWidget = GTK_WIDGET(m_webView);
+    g_assert(gtk_widget_get_realized(viewWidget));
+
+    GOwnPtr<GdkEvent> event(gdk_event_new(GDK_KEY_PRESS));
+    event->key.keyval = keyVal;
+
+    event->key.time = GDK_CURRENT_TIME;
+    event->key.window = gtk_widget_get_window(viewWidget);
+    g_object_ref(event->key.window);
+    gdk_event_set_device(event.get(), gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(viewWidget))));
+    event->key.state = keyModifiers;
+
+    // When synthesizing an event, an invalid hardware_keycode value can cause it to be badly processed by GTK+.
+    GOwnPtr<GdkKeymapKey> keys;
+    int keysCount;
+    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), keyVal, &keys.outPtr(), &keysCount))
+        event->key.hardware_keycode = keys.get()[0].keycode;
+
+    gtk_main_do_event(event.get());
+    event->key.type = GDK_KEY_RELEASE;
+    gtk_main_do_event(event.get());
+}
+
 static void runJavaScriptReadyCallback(GObject*, GAsyncResult* result, WebViewTest* test)
 {
     test->m_javascriptResult = webkit_web_view_run_javascript_finish(test->m_webView, result, test->m_javascriptError);

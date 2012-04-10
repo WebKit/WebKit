@@ -49,5 +49,7 @@ void webkitWebViewResourceLoadStarted(WebKitWebView*, WKFrameRef, uint64_t resou
 WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 void webkitWebViewRemoveLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 WebKitWebResource* webkitWebViewResourceLoadFinished(WebKitWebView*, uint64_t resourceIdentifier);
+bool webkitWebViewEnterFullScreen(WebKitWebView*);
+bool webkitWebViewLeaveFullScreen(WebKitWebView*);
 
 #endif // WebKitWebViewPrivate_h

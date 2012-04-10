@@ -35,6 +35,7 @@
 #include "PageClientImpl.h"
 #include "WebContext.h"
 #include "WebEventFactory.h"
+#include "WebFullScreenClientGtk.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebViewBaseAccessible.h"
 #include "WebKitWebViewBasePrivate.h"
@@ -80,6 +81,7 @@ struct _WebKitWebViewBasePrivate {
     bool needsResizeOnMap;
 #if ENABLE(FULLSCREEN_API)
     bool fullScreenModeActive;
+    WebFullScreenClientGtk fullScreenClient;
 #endif
 };
 
@@ -293,12 +295,10 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* e
         case GDK_KEY_f:
         case GDK_KEY_F:
             webkitWebViewBaseExitFullScreen(webViewBase);
-            break;
+            return TRUE;
         default:
             break;
         }
-
-        return TRUE;
     }
 #endif
 
@@ -613,8 +613,10 @@ void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase* webkitWebViewBase)
     if (priv->fullScreenModeActive)
         return;
 
-    WebFullScreenManagerProxy* fullScreenManagerProxy = priv->pageProxy->fullScreenManager();
+    if (!priv->fullScreenClient.willEnterFullScreen())
+        return;
 
+    WebFullScreenManagerProxy* fullScreenManagerProxy = priv->pageProxy->fullScreenManager();
     fullScreenManagerProxy->willEnterFullScreen();
 
     GtkWidget* topLevelWindow = gtk_widget_get_toplevel(GTK_WIDGET(webkitWebViewBase));
@@ -632,6 +634,9 @@ void webkitWebViewBaseExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
     if (!priv->fullScreenModeActive)
         return;
 
+    if (!priv->fullScreenClient.willExitFullScreen())
+        return;
+
     WebFullScreenManagerProxy* fullScreenManagerProxy = priv->pageProxy->fullScreenManager();
     fullScreenManagerProxy->willExitFullScreen();
 
@@ -641,4 +646,9 @@ void webkitWebViewBaseExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
     fullScreenManagerProxy->didExitFullScreen();
     priv->fullScreenModeActive = false;
 #endif
+}
+
+void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase* webkitWebViewBase, const WKFullScreenClientGtk* wkClient)
+{
+    webkitWebViewBase->priv->fullScreenClient.initialize(wkClient);
 }

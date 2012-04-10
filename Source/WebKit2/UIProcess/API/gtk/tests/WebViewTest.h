@@ -47,6 +47,7 @@ public:
     void showInWindowAndWaitUntilMapped();
 
     void mouseMoveTo(int x, int y, unsigned int mouseModifiers = 0);
+    void keyStroke(unsigned int keyVal, unsigned int keyModifiers = 0);
 
     WebKitJavascriptResult* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**);
 

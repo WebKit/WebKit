@@ -149,6 +149,8 @@ struct _WebKitWebViewClass {
     void       (* resource_load_started) (WebKitWebView             *web_view,
                                           WebKitWebResource         *resource,
                                           WebKitURIRequest          *request);
+    gboolean   (* enter_fullscreen)      (WebKitWebView             *web_view);
+    gboolean   (* leave_fullscreen)      (WebKitWebView             *web_view);
 
     /* Padding for future expansion */
     void (*_webkit_reserved0) (void);

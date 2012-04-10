@@ -24,6 +24,7 @@
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitError.h"
+#include "WebKitFullscreenClient.h"
 #include "WebKitHitTestResultPrivate.h"
 #include "WebKitJavascriptResultPrivate.h"
 #include "WebKitLoaderClient.h"
@@ -69,6 +70,9 @@ enum {
     PRINT_REQUESTED,
 
     RESOURCE_LOAD_STARTED,
+
+    ENTER_FULLSCREEN,
+    LEAVE_FULLSCREEN,
 
     LAST_SIGNAL
 };
@@ -217,6 +221,7 @@ static void webkitWebViewConstructed(GObject* object)
     attachUIClientToView(webView);
     attachPolicyClientToPage(webView);
     attachResourceLoadClientToView(webView);
+    attachFullScreenClientToView(webView);
 
     WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(WKPageGetBackForwardList(toAPI(page))));
@@ -706,6 +711,52 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      G_TYPE_NONE, 2,
                      WEBKIT_TYPE_WEB_RESOURCE,
                      WEBKIT_TYPE_URI_REQUEST);
+
+    /**
+     * WebKitWebView::enter-fullscreen:
+     * @web_view: the #WebKitWebView on which the signal is emitted.
+     *
+     * Emitted when JavaScript code calls
+     * <function>element.webkitRequestFullScreen</function>. If the
+     * signal is not handled the #WebKitWebView will proceed to full screen
+     * its top level window. This signal can be used by client code to
+     * request permission to the user prior doing the full screen
+     * transition and eventually prepare the top-level window
+     * (e.g. hide some widgets that would otherwise be part of the
+     * full screen window).
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *    %FALSE to continue emission of the event.
+     */
+    signals[ENTER_FULLSCREEN] =
+        g_signal_new("enter-fullscreen",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, enter_fullscreen),
+                     g_signal_accumulator_true_handled, 0,
+                     webkit_marshal_BOOLEAN__VOID,
+                     G_TYPE_BOOLEAN, 0);
+
+    /**
+     * WebKitWebView::leave-fullscreen:
+     * @web_view: the #WebKitWebView on which the signal is emitted.
+     *
+     * Emitted when the #WebKitWebView is about to restore its top level
+     * window out of its full screen state. This signal can be used by
+     * client code to restore widgets hidden during the
+     * #WebKitWebView::enter-fullscreen stage for instance.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *    %FALSE to continue emission of the event.
+     */
+    signals[LEAVE_FULLSCREEN] =
+        g_signal_new("leave-fullscreen",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, leave_fullscreen),
+                     g_signal_accumulator_true_handled, 0,
+                     webkit_marshal_BOOLEAN__VOID,
+                     G_TYPE_BOOLEAN, 0);
 }
 
 static bool updateReplaceContentStatus(WebKitWebView* webView, WebKitLoadEvent loadEvent)
@@ -897,6 +948,20 @@ WebKitWebResource* webkitWebViewResourceLoadFinished(WebKitWebView* webView, uin
         priv->subresourcesMap.set(String::fromUTF8(webkit_web_resource_get_uri(resource)), resource);
     webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier);
     return resource;
+}
+
+bool webkitWebViewEnterFullScreen(WebKitWebView* webView)
+{
+    gboolean returnValue;
+    g_signal_emit(webView, signals[ENTER_FULLSCREEN], 0, &returnValue);
+    return !returnValue;
+}
+
+bool webkitWebViewLeaveFullScreen(WebKitWebView* webView)
+{
+    gboolean returnValue;
+    g_signal_emit(webView, signals[LEAVE_FULLSCREEN], 0, &returnValue);
+    return !returnValue;
 }
 
 /**

@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitWebViewBasePrivate_h
-#define WebKitWebViewBasePrivate_h
+#ifndef WKFullScreenClientGtk_h
+#define WKFullScreenClientGtk_h
 
-#include "WebKitPrivate.h"
-#include "WebKitWebViewBase.h"
-#include "WebPageProxy.h"
+#include <WebKit2/WKBase.h>
 
-using namespace WebKit;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-WebKitWebViewBase* webkitWebViewBaseCreate(WebContext*, WebPageGroup*);
-GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
-WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WKContextRef, WKPageGroupRef);
-void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
-void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);
-void webkitWebViewBaseStartDrag(WebKitWebViewBase*, const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
-void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase*);
-void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
-void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase*, const WKFullScreenClientGtk*);
+typedef bool (*WKFullScreenClientGtkWillEnterFullScreenCallback)(const void* clientInfo);
+typedef bool (*WKFullScreenClientGtkWillExitFullScreenCallback)(const void* clientInfo);
 
-#endif // WebKitWebViewBasePrivate_h
+struct WKFullScreenClientGtk {
+    int                                              version;
+    const void*                                      clientInfo;
+    WKFullScreenClientGtkWillEnterFullScreenCallback willEnterFullScreen;
+    WKFullScreenClientGtkWillExitFullScreenCallback  willExitFullScreen;
+};
+typedef struct WKFullScreenClientGtk WKFullScreenClientGtk;
+
+enum { kWKFullScreenClientGtkCurrentVersion = 0 };
+
+WK_EXPORT void WKViewSetFullScreenClientGtk(WKViewRef viewRef, const WKFullScreenClientGtk* client);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* WKFullScreenClientGtk_h */

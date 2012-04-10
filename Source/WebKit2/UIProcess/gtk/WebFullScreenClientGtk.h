@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitWebViewBasePrivate_h
-#define WebKitWebViewBasePrivate_h
+#ifndef WebFullScreenClientGtk_h
+#define WebFullScreenClientGtk_h
 
-#include "WebKitPrivate.h"
-#include "WebKitWebViewBase.h"
-#include "WebPageProxy.h"
+#include "APIClient.h"
+#include "WKFullScreenClientGtk.h"
 
-using namespace WebKit;
+namespace WebKit {
 
-WebKitWebViewBase* webkitWebViewBaseCreate(WebContext*, WebPageGroup*);
-GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
-WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WKContextRef, WKPageGroupRef);
-void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
-void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);
-void webkitWebViewBaseStartDrag(WebKitWebViewBase*, const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
-void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase*);
-void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
-void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase*, const WKFullScreenClientGtk*);
+class APIObject;
 
-#endif // WebKitWebViewBasePrivate_h
+class WebFullScreenClientGtk : public APIClient<WKFullScreenClientGtk, kWKFullScreenClientGtkCurrentVersion> {
+public:
+    bool willEnterFullScreen();
+    bool willExitFullScreen();
+};
+
+} // namespace WebKit
+
+#endif // WebFullScreenClientGtk_h
