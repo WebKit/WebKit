@@ -138,7 +138,7 @@ public:
         CCSettings settingsCopy = settings;
         settingsCopy.threadedAnimationEnabled = true;
 
-        OwnPtr<MockLayerTreeHost> layerTreeHost = adoptPtr(new MockLayerTreeHost(testHooks, client, settingsCopy));
+        OwnPtr<MockLayerTreeHost> layerTreeHost(adoptPtr(new MockLayerTreeHost(testHooks, client, settingsCopy)));
         bool success = layerTreeHost->initialize();
         EXPECT_TRUE(success);
         layerTreeHost->setRootLayer(rootLayer);

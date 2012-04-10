@@ -58,7 +58,7 @@ class FakeCCLayerTreeHost : public CCLayerTreeHost {
 public:
     static PassOwnPtr<FakeCCLayerTreeHost> create()
     {
-        OwnPtr<FakeCCLayerTreeHost> host = adoptPtr(new FakeCCLayerTreeHost);
+        OwnPtr<FakeCCLayerTreeHost> host(adoptPtr(new FakeCCLayerTreeHost));
         host->initialize();
         return host.release();
     }

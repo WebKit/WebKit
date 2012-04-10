@@ -603,7 +603,7 @@ class FakeCCLayerTreeHost : public CCLayerTreeHost {
 public:
     static PassOwnPtr<FakeCCLayerTreeHost> create()
     {
-        OwnPtr<FakeCCLayerTreeHost> host = adoptPtr(new FakeCCLayerTreeHost);
+        OwnPtr<FakeCCLayerTreeHost> host(adoptPtr(new FakeCCLayerTreeHost));
         // The initialize call will fail, since our client doesn't provide a valid GraphicsContext3D, but it doesn't matter in the tests that use this fake so ignore the return value.
         host->initialize();
         return host.release();
