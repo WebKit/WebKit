@@ -128,7 +128,7 @@ haveQt(5) {
     no_webkit2 {
         DEFINES += PLUGIN_ARCHITECTURE_UNSUPPORTED=1
     } else {
-        contains(QT_CONFIG, xcb-xlib) {
+        xlibAvailable() {
             CONFIG += plugin_backend_xlib
             DEFINES += PLUGIN_ARCHITECTURE_X11=1 \
                        PLUGIN_ARCHITECTURE_UNSUPPORTED=0 \

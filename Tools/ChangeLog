@@ -1,3 +1,19 @@
+2012-04-10  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] TestNetscapePlugin is broken
+        https://bugs.webkit.org/show_bug.cgi?id=83024
+
+        Reviewed by Csaba Osztrogonác.
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        Fix X11 availability check. embedded is always true with QPA.
+        * Tools.pro:
+        Build the test plugin if plugins are enabled for WebKit2.
+        * qmake/mkspecs/features/features.prf:
+        * qmake/mkspecs/features/functions.prf:
+        Added a convenience function to determine availability
+        of X11 libraries.
+
 2012-04-10  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Fix build without precompiled header.
