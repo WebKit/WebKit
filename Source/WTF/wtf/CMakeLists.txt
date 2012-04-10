@@ -187,8 +187,9 @@ SET(WTF_SOURCES
 SET(WTF_INCLUDE_DIRECTORIES
     "${WTF_DIR}"
     "${WTF_DIR}/wtf"
-    "${WTF_DIR}/wtf/unicode"
     "${WTF_DIR}/wtf/dtoa"
+    "${WTF_DIR}/wtf/threads"
+    "${WTF_DIR}/wtf/unicode"
     "${THIRDPARTY_DIR}"
     "${CMAKE_BINARY_DIR}"
 )

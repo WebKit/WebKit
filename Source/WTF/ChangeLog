@@ -1,5 +1,21 @@
 2012-04-09  Patrick Gansterer  <paroga@webkit.org>
 
+        Port BinarySemaphoreWin.cpp to WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=83502
+
+        Reviewed by Daniel Bates.
+
+        Replace WaitForSingleObjectEx with WaitForSingleObject since
+        the additonal parameter supported by the extended function
+        is not used anyway and the function does not exist on WinCE.
+
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformWinCE.cmake:
+        * wtf/threads/win/BinarySemaphoreWin.cpp:
+        (WTF::BinarySemaphore::wait):
+
+2012-04-09  Patrick Gansterer  <paroga@webkit.org>
+
         [CMake] Build fix for USE_SYSTEM_MALLOC after r113570.
 
         * wtf/CMakeLists.txt:

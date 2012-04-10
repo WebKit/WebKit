@@ -11,6 +11,8 @@ LIST(APPEND WTF_SOURCES
     ThreadingWin.cpp
     ThreadSpecificWin.cpp
 
+    threads/win/BinarySemaphoreWin.cpp
+
     unicode/CollatorDefault.cpp
     unicode/wince/UnicodeWinCE.cpp
 

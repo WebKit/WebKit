@@ -52,7 +52,7 @@ bool BinarySemaphore::wait(double absoluteTime)
         return false;
     }
 
-    DWORD result = ::WaitForSingleObjectEx(m_event, interval, FALSE);
+    DWORD result = ::WaitForSingleObject(m_event, interval);
     switch (result) {
     case WAIT_OBJECT_0:
         // The event was signaled.
@@ -63,10 +63,11 @@ bool BinarySemaphore::wait(double absoluteTime)
         return false;
 
     case WAIT_FAILED:
-        ASSERT_WITH_MESSAGE(false, "::WaitForSingleObjectEx failed with error %lu", ::GetLastError());
+        ASSERT_WITH_MESSAGE(false, "::WaitForSingleObject failed with error %lu", ::GetLastError());
         return false;
+
     default:
-        ASSERT_WITH_MESSAGE(false, "::WaitForSingleObjectEx returned unexpected result %lu", result);
+        ASSERT_WITH_MESSAGE(false, "::WaitForSingleObject returned unexpected result %lu", result);
         return false;
     }
 }
