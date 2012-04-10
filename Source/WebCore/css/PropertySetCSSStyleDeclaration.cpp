@@ -246,8 +246,8 @@ String PropertySetCSSStyleDeclaration::removeProperty(const String& propertyName
 }
 
 PassRefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal(CSSPropertyID propertyID)
-{ 
-    return cloneAndCacheForCSSOM(m_propertySet->getPropertyCSSValue(propertyID).get());
+{
+    return m_propertySet->getPropertyCSSValue(propertyID);
 }
 
 String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
