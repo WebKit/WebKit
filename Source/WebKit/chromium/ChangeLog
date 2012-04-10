@@ -1,3 +1,15 @@
+2012-04-09  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Remove unused variable, WebViewImpl::m_lastMousePosition.
+        https://bugs.webkit.org/show_bug.cgi?id=83550
+
+        Reviewed by Kentaro Hara.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::mouseMove):
+        * src/WebViewImpl.h:
+
 2012-04-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Viewport is not filled when out of texture memory on mac

@@ -611,7 +611,6 @@ private:
     // The upper bound on the size when auto-resizing.
     WebCore::IntSize m_maxAutoSize;
 
-    WebPoint m_lastMousePosition;
     OwnPtr<WebCore::Page> m_page;
 
     // This flag is set when a new navigation is detected. It is used to satisfy

@@ -398,9 +398,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     WTF::initializeThreading();
     WTF::initializeMainThread();
 
-    // set to impossible point so we always get the first mouse pos
-    m_lastMousePosition = WebPoint(-1, -1);
-
     Page::PageClients pageClients;
     pageClients.chromeClient = &m_chromeClientImpl;
     pageClients.contextMenuClient = &m_contextMenuClientImpl;
@@ -468,8 +465,6 @@ void WebViewImpl::mouseMove(const WebMouseEvent& event)
 {
     if (!mainFrameImpl() || !mainFrameImpl()->frameView())
         return;
-
-    m_lastMousePosition = WebPoint(event.x, event.y);
 
     // We call mouseMoved here instead of handleMouseMovedEvent because we need
     // our ChromeClientImpl to receive changes to the mouse position and
