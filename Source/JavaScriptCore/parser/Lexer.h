@@ -171,7 +171,6 @@ private:
     Vector<LChar> m_buffer8;
     Vector<UChar> m_buffer16;
     bool m_terminator;
-    bool m_delimited; // encountered delimiter like "'" and "}" on last run
     int m_lastToken;
 
     const SourceCode* m_source;

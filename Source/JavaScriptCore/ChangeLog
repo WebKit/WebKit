@@ -1,3 +1,19 @@
+2012-04-10  Darin Adler  <darin@apple.com>
+
+        Remove unused data member from Lexer class
+        https://bugs.webkit.org/show_bug.cgi?id=83429
+
+        Reviewed by Kentaro Hara.
+
+        I noticed that m_delimited was "write-only", so I deleted it.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::setCode): Removed code to set m_delimited.
+        (JSC::Lexer::parseIdentifier): Ditto.
+        (JSC::Lexer::parseIdentifierSlowCase): Ditto.
+        (JSC::Lexer::lex): Ditto.
+        * parser/Lexer.h: Deleted m_delimited.
+
 2012-04-10  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Enable USE_FOLDERS property
