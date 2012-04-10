@@ -76,7 +76,11 @@ void DisplayRefreshMonitor::displayLinkFired()
 {
     MutexLocker lock(m_mutex);
 
-    m_scheduled = false;
+    if (!m_scheduled || !m_previousFrameDone)
+        return;
+
+    m_previousFrameDone = false;
+
     m_timestamp = currentTime();
 
     callOnMainThread(refreshDisplayOnMainThread, this);
