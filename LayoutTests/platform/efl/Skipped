@@ -20,45 +20,13 @@ fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
 
 # EFL has not fully implemented about some SVG attributes
-svg/animations/svgboolean-animation-1.html
-svg/animations/svginteger-animation-1.html
-svg/animations/svgnumberoptionalnumber-animation-1.html
-svg/animations/svgnumberoptionalnumber-animation-2.html
-svg/animations/svgnumberoptionalnumber-animation-3.html
-svg/animations/svgnumberoptionalnumber-animation-4.html
-svg/as-object
-svg/css/rect-gradient-stroke-shadow.svg
 svg/custom
 svg/dom/altGlyph-dom.xhtml
-svg/dom/baseVal-animVal-crash.html
-svg/dom/css-transforms.xhtml
-svg/dom/font-face-elements.html
-svg/dom/operatorAttribute.html
-svg/dom/SVGAnimatedEnumeration-SVGComponentTransferFunctionElement.html
-svg/dom/SVGAnimatedEnumeration-SVGFEBlendElement.html
-svg/dom/SVGAnimatedEnumeration-SVGFEColorMatrixElement.html
-svg/dom/SVGAnimatedEnumeration-SVGFECompositeElement.html
-svg/dom/SVGAnimatedEnumeration-SVGFEConvolveMatrixElement.html
-svg/dom/SVGAnimatedEnumeration-SVGFEDisplacementMapElement.html
-svg/dom/SVGAnimatedEnumeration-SVGFEMorphologyElement.html
-svg/dom/SVGAnimatedEnumeration-SVGFETurbulenceElement.html
-svg/dom/SVGAnimatedEnumeration-SVGFilterElement.html
-svg/dom/SVGAnimatedInteger.html
-svg/dom/SVGAnimatedNumber.html
-svg/dom/SVGLength-px-with-context.html
-svg/dom/SVGPathSegList-cloning.html
 svg/dynamic-updates
 svg/filters
-svg/foreignObject/filter.html
-svg/foreignObject/text-tref-02-b.svg
-svg/overflow/overflow-on-outermost-svg-element-defaults.svg
-svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1.svg
-svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2.svg
-svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3.svg
 svg/text
 svg/W3C-SVG-1.1
 svg/W3C-SVG-1.1-SE
-svg/zoom/page/relative-sized-document-scrollbars.svg
 svg/zoom/page/zoom-zoom-coords.xhtml
 
 # EFL's EventSender needs to emit double clicks (e.g. to select text)
