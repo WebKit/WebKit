@@ -89,7 +89,6 @@ String configPage()
     + "0"
 #endif
     + "</td></tr>"
-    + "<tr><td>USE_SYSTEM_MALLOC</td><td>" + String::number(USE_SYSTEM_MALLOC) + "</td></tr>"
     + "<tr><td>__STDC_ISO_10646__</td><td>"
 #ifdef __STDC_ISO_10646__
     + "1"
@@ -105,20 +104,28 @@ String configPage()
     page += numberToHTMLTr("maxPixelsPerDecodedImage", settings->maxPixelsPerDecodedImage());
     page += numberToHTMLTr("shouldReportLowMemoryToUser", settings->shouldReportLowMemoryToUser());
     page += numberToHTMLTr("numberOfBackingStoreTiles", settings->numberOfBackingStoreTiles());
+    page += numberToHTMLTr("maximumNumberOfBackingStoreTilesAcrossProcesses", settings->maximumNumberOfBackingStoreTilesAcrossProcesses());
     page += numberToHTMLTr("tabsSupportedByClient", settings->tabsSupportedByClient());
     page += numberToHTMLTr("contextMenuEnabled", settings->contextMenuEnabled());
     page += numberToHTMLTr("selectionEnabled", settings->selectionEnabled());
     page += numberToHTMLTr("alwaysShowKeyboardOnFocus", settings->alwaysShowKeyboardOnFocus());
+    page += numberToHTMLTr("allowCenterScrollAdjustmentForInputFields", settings->allowCenterScrollAdjustmentForInputFields());
     page += numberToHTMLTr("unrestrictedResizeEvents", settings->unrestrictedResizeEvents());
     page += numberToHTMLTr("isBridgeBrowser", settings->isBridgeBrowser());
+    page += numberToHTMLTr("isWebGLSupported", settings->isWebGLSupported());
+    page += numberToHTMLTr("showImageLocationOptionsInGCM", settings->showImageLocationOptionsInGCM());
     page += numberToHTMLTr("maxClickableSpeed", settings->maxClickableSpeed());
     page += numberToHTMLTr("maxJitterRadiusClick", settings->maxJitterRadiusClick());
     page += numberToHTMLTr("maxJitterRadiusTap", settings->maxJitterRadiusTap());
+    page += numberToHTMLTr("maxJitterRadiusSingleTouchMove", settings->maxJitterRadiusSingleTouchMove());
     page += numberToHTMLTr("maxJitterRadiusTouchHold", settings->maxJitterRadiusTouchHold());
+    page += numberToHTMLTr("maxJitterRadiusHandleDrag", settings->maxJitterRadiusHandleDrag());
     page += numberToHTMLTr("maxJitterRadiusTapHighlight", settings->maxJitterRadiusTapHighlight());
     page += numberToHTMLTr("maxJitterDistanceClick", settings->maxJitterDistanceClick());
     page += numberToHTMLTr("maxJitterDistanceTap", settings->maxJitterDistanceTap());
+    page += numberToHTMLTr("maxJitterDistanceSingleTouchMove", settings->maxJitterDistanceSingleTouchMove());
     page += numberToHTMLTr("maxJitterDistanceTouchHold", settings->maxJitterDistanceTouchHold());
+    page += numberToHTMLTr("maxJitterDistanceHandleDrag", settings->maxJitterDistanceHandleDrag());
     page += numberToHTMLTr("maxJitterDistanceTapHighlight", settings->maxJitterDistanceTapHighlight());
     page += numberToHTMLTr("topFatFingerPadding", settings->topFatFingerPadding());
     page += numberToHTMLTr("rightFatFingerPadding", settings->rightFatFingerPadding());
