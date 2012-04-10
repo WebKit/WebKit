@@ -1547,22 +1547,32 @@ IF (ENABLE_INDEXED_DATABASE)
     LIST(APPEND WebCore_SOURCES
         Modules/indexeddb/DOMWindowIndexedDatabase.cpp
         Modules/indexeddb/IDBAny.cpp
-        Modules/indexeddb/IDBDatabase.cpp
-        Modules/indexeddb/IDBDatabaseBackendImpl.cpp
         Modules/indexeddb/IDBCursor.cpp
         Modules/indexeddb/IDBCursorBackendImpl.cpp
+        Modules/indexeddb/IDBCursorWithValue.cpp
+        Modules/indexeddb/IDBDatabase.cpp
+        Modules/indexeddb/IDBDatabaseBackendImpl.cpp
+        Modules/indexeddb/IDBDatabaseCallbacksImpl.cpp
         Modules/indexeddb/IDBDatabaseException.cpp
         Modules/indexeddb/IDBEventDispatcher.cpp
+        Modules/indexeddb/IDBFactory.cpp
+        Modules/indexeddb/IDBFactoryBackendImpl.cpp
+        Modules/indexeddb/IDBFactoryBackendInterface.cpp
         Modules/indexeddb/IDBIndex.cpp
         Modules/indexeddb/IDBIndexBackendImpl.cpp
         Modules/indexeddb/IDBKey.cpp
         Modules/indexeddb/IDBKeyRange.cpp
-        Modules/indexeddb/IDBRequest.cpp
+        Modules/indexeddb/IDBKeyPath.cpp
+        Modules/indexeddb/IDBKeyPathBackendImpl.cpp
         Modules/indexeddb/IDBObjectStore.cpp
         Modules/indexeddb/IDBObjectStoreBackendImpl.cpp
-        Modules/indexeddb/IDBFactory.cpp
-        Modules/indexeddb/IDBFactoryBackendInterface.cpp
-        Modules/indexeddb/IDBFactoryBackendImpl.cpp
+        Modules/indexeddb/IDBPendingTransactionMonitor.cpp
+        Modules/indexeddb/IDBRequest.cpp
+        Modules/indexeddb/IDBTransaction.cpp
+        Modules/indexeddb/IDBTransactionBackendImpl.cpp
+        Modules/indexeddb/IDBTransactionCoordinator.cpp
+        Modules/indexeddb/IDBVersionChangeEvent.cpp
+        Modules/indexeddb/IDBVersionChangeRequest.cpp
         Modules/indexeddb/PageGroupIndexedDatabase.cpp
     )
 
@@ -1570,8 +1580,9 @@ IF (ENABLE_INDEXED_DATABASE)
         Modules/indexeddb/DOMWindowIndexedDatabase.idl
         Modules/indexeddb/IDBAny.idl
         Modules/indexeddb/IDBCursor.idl
-        Modules/indexeddb/IDBDatabaseException.idl
+        Modules/indexeddb/IDBCursorWithValue.idl
         Modules/indexeddb/IDBDatabase.idl
+        Modules/indexeddb/IDBDatabaseException.idl
         Modules/indexeddb/IDBFactory.idl
         Modules/indexeddb/IDBIndex.idl
         Modules/indexeddb/IDBKey.idl
@@ -1579,6 +1590,8 @@ IF (ENABLE_INDEXED_DATABASE)
         Modules/indexeddb/IDBObjectStore.idl
         Modules/indexeddb/IDBRequest.idl
         Modules/indexeddb/IDBTransaction.idl
+        Modules/indexeddb/IDBVersionChangeEvent.idl
+        Modules/indexeddb/IDBVersionChangeRequest.idl
     )
 ENDIF ()
 
@@ -1594,6 +1607,8 @@ ENDIF ()
 
 IF (WTF_USE_LEVELDB)
     LIST(APPEND WebCore_SOURCES
+        Modules/indexeddb/IDBLevelDBBackingStore.cpp
+        Modules/indexeddb/IDBLevelDBCoding.cpp
         platform/leveldb/LevelDBDatabase.cpp
         platform/leveldb/LevelDBTransaction.cpp
         platform/leveldb/LevelDBWriteBatch.cpp
