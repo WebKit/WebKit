@@ -85,6 +85,9 @@ static EncodedJSValue JSC_HOST_CALL constructJSCallback(ExecState* exec)
         }
         if (exception)
             throwError(exec, toJS(exec, exception));
+        // result must be a valid JSValue.
+        if (!result)
+            return throwVMTypeError(exec);
         return JSValue::encode(toJS(result));
     }
     

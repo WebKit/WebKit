@@ -167,6 +167,8 @@ shouldBe("constructedObject.value", 1);
 shouldBe("myObject instanceof MyObject", true);
 shouldBe("(new Object()) instanceof MyObject", false);
 
+shouldThrow("new MyBadConstructor()");
+
 MyObject.nullGetSet = 1;
 shouldBe("MyObject.nullGetSet", 1);
 shouldThrow("MyObject.nullCall()");

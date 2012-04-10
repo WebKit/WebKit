@@ -1,5 +1,20 @@
 2012-04-09  Gavin Barraclough  <barraclough@apple.com>
 
+        If a callback constructor returns a C++ null, throw a type error.
+        https://bugs.webkit.org/show_bug.cgi?id=83537
+
+        Rubber Stamped by Geoff Garen.
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::constructJSCallback):
+            - If a callback constructor returns a C++ null, throw a type error.
+        * API/tests/testapi.c:
+        (Base_returnHardNull):
+        * API/tests/testapi.js:
+            - Add a test case for callback constructors that return a C++ null.
+
+2012-04-09  Gavin Barraclough  <barraclough@apple.com>
+
         If a callback function returns a C++ null, convert to undefined.
         https://bugs.webkit.org/show_bug.cgi?id=83534
 
