@@ -109,6 +109,7 @@ namespace WebCore {
         template<typename T> static void setJSWrapperForDOMObject(PassRefPtr<T>, v8::Persistent<v8::Object>);
         template<typename T> static void setJSWrapperForActiveDOMObject(PassRefPtr<T>, v8::Persistent<v8::Object>);
         static void setJSWrapperForDOMNode(PassRefPtr<Node>, v8::Persistent<v8::Object>);
+        static void setJSWrapperForActiveDOMNode(PassRefPtr<Node>, v8::Persistent<v8::Object>);
 
         static bool isValidDOMObject(v8::Handle<v8::Value>);
 
