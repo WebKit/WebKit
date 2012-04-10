@@ -1,3 +1,17 @@
+2012-04-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] DRT should support LayoutTestController's willSendRequestReturnsNull()
+        https://bugs.webkit.org/show_bug.cgi?id=82443
+
+        Reviewed by Philippe Normand.
+
+        EFL's DRT needs to support LayoutTestController's
+        willSendRequestReturnsNull() and return NULL when expected. This
+        allows for several tests to be removed from the skip list.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onWillSendRequest):
+
 2012-04-10  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] LayoutTestController needs implementation of addUserStyleSheet

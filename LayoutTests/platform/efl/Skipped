@@ -840,10 +840,6 @@ printing/setPrinting.html
 printing/single-line-must-not-be-split-into-two-pages.html
 printing/width-overflow.html
 
-# BUG: Support for LayoutTestController::setWillSendRequestReturnsNull not implemented
-media/media-blocked-by-willsendrequest.html
-media/video-poster-blocked-by-willsendrequest.html
-
 # BUG: Captions support needed in the media engine (via GTK+)
 media/media-captions.html
 

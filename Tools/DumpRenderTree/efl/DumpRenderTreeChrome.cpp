@@ -293,6 +293,12 @@ void DumpRenderTreeChrome::onWillSendRequest(void*, Evas_Object*, void* eventInf
 {
     Ewk_Frame_Resource_Request* request = static_cast<Ewk_Frame_Resource_Request*>(eventInfo);
 
+    if (!done && gLayoutTestController->willSendRequestReturnsNull()) {
+        // As requested by the LayoutTestController, don't perform the request.
+        request->url = 0;
+        return;
+    }
+
     KURL url = KURL(ParsedURLString, request->url);
 
     if (url.isValid()
