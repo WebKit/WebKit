@@ -27,11 +27,22 @@
 #include "DFGCapabilities.h"
 
 #include "CodeBlock.h"
+#include "DFGCommon.h"
 #include "Interpreter.h"
 
 namespace JSC { namespace DFG {
 
 #if ENABLE(DFG_JIT)
+
+static inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID)
+{
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    dataLog("Cannot handle code block %p because of opcode %s.\n", codeBlock, opcodeNames[opcodeID]);
+#else
+    UNUSED_PARAM(codeBlock);
+    UNUSED_PARAM(opcodeID);
+#endif
+}
 
 template<bool (*canHandleOpcode)(OpcodeID)>
 bool canHandleOpcodes(CodeBlock* codeBlock)
@@ -42,11 +53,13 @@ bool canHandleOpcodes(CodeBlock* codeBlock)
     
     for (unsigned bytecodeOffset = 0; bytecodeOffset < instructionCount; ) {
         switch (interpreter->getOpcodeID(instructionsBegin[bytecodeOffset].u.opcode)) {
-#define DEFINE_OP(opcode, length)           \
-        case opcode:                        \
-            if (!canHandleOpcode(opcode))  \
-                return false;               \
-            bytecodeOffset += length;       \
+#define DEFINE_OP(opcode, length)               \
+        case opcode:                            \
+            if (!canHandleOpcode(opcode)) {     \
+                debugFail(codeBlock, opcode);   \
+                return false;                   \
+            }                                   \
+            bytecodeOffset += length;           \
             break;
             FOR_EACH_OPCODE_ID(DEFINE_OP)
 #undef DEFINE_OP
