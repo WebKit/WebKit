@@ -1,5 +1,14 @@
 2012-04-10  Patrick Gansterer  <paroga@webkit.org>
 
+        [CMake][WIN] Add /MP flag when using a compiler with support for it
+        https://bugs.webkit.org/show_bug.cgi?id=83577
+
+        Reviewed by Daniel Bates.
+
+        * Source/cmake/OptionsWindows.cmake:
+
+2012-04-10  Patrick Gansterer  <paroga@webkit.org>
+
         [CMake] Add missing DERIVED_SOURCES_WEBKIT_DIR variable
         https://bugs.webkit.org/show_bug.cgi?id=83573
 
