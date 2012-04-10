@@ -514,27 +514,22 @@ void CCLayerTreeHost::paintContentsIfDirty(LayerChromium* layer, PaintType paint
         layer->idlePaintContentsIfDirty(occlusion);
 }
 
-void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderSurfaceLayer, PaintType paintType)
+void CCLayerTreeHost::paintMasksForRenderSurface(LayerChromium* renderSurfaceLayer, PaintType paintType)
 {
     // Note: Masks and replicas only exist for layers that own render surfaces. If we reach this point
     // in code, we already know that at least something will be drawn into this render surface, so the
     // mask and replica should be painted.
 
-    // FIXME: If the surface has a replica, it should be painted with occlusion that excludes the current target surface subtree.
-
-    if (renderSurfaceLayer->maskLayer()) {
-        renderSurfaceLayer->maskLayer()->setVisibleLayerRect(IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
-        paintContentsIfDirty(renderSurfaceLayer->maskLayer(), paintType, 0);
+    LayerChromium* maskLayer = renderSurfaceLayer->maskLayer();
+    if (maskLayer) {
+        maskLayer->setVisibleLayerRect(IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
+        paintContentsIfDirty(maskLayer, paintType, 0);
     }
 
-    LayerChromium* replicaLayer = renderSurfaceLayer->replicaLayer();
-    if (replicaLayer) {
-        paintContentsIfDirty(replicaLayer, paintType, 0);
-
-        if (replicaLayer->maskLayer()) {
-            replicaLayer->maskLayer()->setVisibleLayerRect(IntRect(IntPoint(), replicaLayer->maskLayer()->contentBounds()));
-            paintContentsIfDirty(replicaLayer->maskLayer(), paintType, 0);
-        }
+    LayerChromium* replicaMaskLayer = renderSurfaceLayer->replicaLayer() ? renderSurfaceLayer->replicaLayer()->maskLayer() : 0;
+    if (replicaMaskLayer) {
+        replicaMaskLayer->setVisibleLayerRect(IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
+        paintContentsIfDirty(replicaMaskLayer, paintType, 0);
     }
 }
 
@@ -553,7 +548,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
             ASSERT(it->renderSurface()->drawOpacity() || it->renderSurface()->drawOpacityIsAnimating());
 
             occlusionTracker.finishedTargetRenderSurface(*it, it->renderSurface());
-            paintMaskAndReplicaForRenderSurface(*it, paintType);
+            paintMasksForRenderSurface(*it, paintType);
         } else if (it.representsItself()) {
             ASSERT(!it->bounds().isEmpty());
 

@@ -230,7 +230,7 @@ private:
     enum PaintType { PaintVisible, PaintIdle };
     static void paintContentsIfDirty(LayerChromium*, PaintType, const CCOcclusionTracker*);
     void paintLayerContents(const LayerList&, PaintType);
-    void paintMaskAndReplicaForRenderSurface(LayerChromium*, PaintType);
+    void paintMasksForRenderSurface(LayerChromium*, PaintType);
 
     void updateLayers(LayerChromium*);
     // Pre-reserve textures for any layer marked "always reserve textures"
