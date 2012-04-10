@@ -256,8 +256,9 @@ WebCore::IntSize QtPageClient::viewSize()
 
 bool QtPageClient::isViewWindowActive()
 {
-    // FIXME: The scene graph does not have the concept of being active or not when this was written.
-    return true;
+    if (!m_webView || !m_webView->canvas())
+        return false;
+    return m_webView->canvas()->isActive();
 }
 
 bool QtPageClient::isViewFocused()

@@ -1,3 +1,16 @@
+2012-04-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Implement PageClient::isViewWindowActive()
+        https://bugs.webkit.org/show_bug.cgi?id=81143
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch implements PageClient::isViewWindowActive()
+        now that QQuickCanvas::isActive() is available (from QWindow).
+
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::isViewWindowActive):
+
 2012-04-10  Philippe Normand <pnormand@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WK2][GTK] FullScreen signals
