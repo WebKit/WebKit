@@ -58,7 +58,7 @@ enum Token {
     OBJECT_PAIR_SEPARATOR,
     INVALID_TOKEN,
 };
-    
+
 const char* const nullString = "null";
 const char* const trueString = "true";
 const char* const falseString = "false";
@@ -241,11 +241,11 @@ Token parseToken(const UChar* start, const UChar* end, const UChar** tokenStart,
     case '8':
     case '9':
     case '-':
-        if (parseNumberToken(start, end, tokenEnd)) 
+        if (parseNumberToken(start, end, tokenEnd))
             return NUMBER;
-        break;            
+        break;
     case '"':
-        if (parseStringToken(start + 1, end, tokenEnd)) 
+        if (parseStringToken(start + 1, end, tokenEnd))
             return STRING;
         break;
     }
@@ -661,22 +661,29 @@ void InspectorString::writeJSON(StringBuilder* output) const
     doubleQuoteString(m_stringValue, output);
 }
 
-InspectorObject::~InspectorObject()
+InspectorObjectBase::~InspectorObjectBase()
 {
 }
 
-bool InspectorObject::asObject(RefPtr<InspectorObject>* output)
+bool InspectorObjectBase::asObject(RefPtr<InspectorObject>* output)
 {
-    *output = this;
+    COMPILE_ASSERT(sizeof(InspectorObject) == sizeof(InspectorObjectBase), cannot_cast);
+    *output = static_cast<InspectorObject*>(this);
     return true;
 }
 
-PassRefPtr<InspectorObject> InspectorObject::asObject()
+PassRefPtr<InspectorObject> InspectorObjectBase::asObject()
 {
-    return this;
+    return openAccessors();
 }
 
-bool InspectorObject::getBoolean(const String& name, bool* output) const
+InspectorObject* InspectorObjectBase::openAccessors()
+{
+    COMPILE_ASSERT(sizeof(InspectorObject) == sizeof(InspectorObjectBase), cannot_cast);
+    return static_cast<InspectorObject*>(this);
+}
+
+bool InspectorObjectBase::getBoolean(const String& name, bool* output) const
 {
     RefPtr<InspectorValue> value = get(name);
     if (!value)
@@ -684,7 +691,7 @@ bool InspectorObject::getBoolean(const String& name, bool* output) const
     return value->asBoolean(output);
 }
 
-bool InspectorObject::getString(const String& name, String* output) const
+bool InspectorObjectBase::getString(const String& name, String* output) const
 {
     RefPtr<InspectorValue> value = get(name);
     if (!value)
@@ -692,7 +699,7 @@ bool InspectorObject::getString(const String& name, String* output) const
     return value->asString(output);
 }
 
-PassRefPtr<InspectorObject> InspectorObject::getObject(const String& name) const
+PassRefPtr<InspectorObject> InspectorObjectBase::getObject(const String& name) const
 {
     PassRefPtr<InspectorValue> value = get(name);
     if (!value)
@@ -700,7 +707,7 @@ PassRefPtr<InspectorObject> InspectorObject::getObject(const String& name) const
     return value->asObject();
 }
 
-PassRefPtr<InspectorArray> InspectorObject::getArray(const String& name) const
+PassRefPtr<InspectorArray> InspectorObjectBase::getArray(const String& name) const
 {
     PassRefPtr<InspectorValue> value = get(name);
     if (!value)
@@ -708,7 +715,7 @@ PassRefPtr<InspectorArray> InspectorObject::getArray(const String& name) const
     return value->asArray();
 }
 
-PassRefPtr<InspectorValue> InspectorObject::get(const String& name) const
+PassRefPtr<InspectorValue> InspectorObjectBase::get(const String& name) const
 {
     Dictionary::const_iterator it = m_data.find(name);
     if (it == m_data.end())
@@ -716,7 +723,7 @@ PassRefPtr<InspectorValue> InspectorObject::get(const String& name) const
     return it->second;
 }
 
-void InspectorObject::remove(const String& name)
+void InspectorObjectBase::remove(const String& name)
 {
     m_data.remove(name);
     for (size_t i = 0; i < m_order.size(); ++i) {
@@ -727,7 +734,7 @@ void InspectorObject::remove(const String& name)
     }
 }
 
-void InspectorObject::writeJSON(StringBuilder* output) const
+void InspectorObjectBase::writeJSON(StringBuilder* output) const
 {
     output->append('{');
     for (size_t i = 0; i < m_order.size(); ++i) {
@@ -742,29 +749,31 @@ void InspectorObject::writeJSON(StringBuilder* output) const
     output->append('}');
 }
 
-InspectorObject::InspectorObject()
+InspectorObjectBase::InspectorObjectBase()
     : InspectorValue(TypeObject)
     , m_data()
     , m_order()
 {
 }
 
-InspectorArray::~InspectorArray()
+InspectorArrayBase::~InspectorArrayBase()
 {
 }
 
-bool InspectorArray::asArray(RefPtr<InspectorArray>* output)
+bool InspectorArrayBase::asArray(RefPtr<InspectorArray>* output)
 {
-    *output = this;
+    COMPILE_ASSERT(sizeof(InspectorArrayBase) == sizeof(InspectorArray), cannot_cast);
+    *output = static_cast<InspectorArray*>(this);
     return true;
 }
 
-PassRefPtr<InspectorArray> InspectorArray::asArray()
+PassRefPtr<InspectorArray> InspectorArrayBase::asArray()
 {
-    return this;
+    COMPILE_ASSERT(sizeof(InspectorArrayBase) == sizeof(InspectorArray), cannot_cast);
+    return static_cast<InspectorArray*>(this);
 }
 
-void InspectorArray::writeJSON(StringBuilder* output) const
+void InspectorArrayBase::writeJSON(StringBuilder* output) const
 {
     output->append('[');
     for (Vector<RefPtr<InspectorValue> >::const_iterator it = m_data.begin(); it != m_data.end(); ++it) {
@@ -775,13 +784,13 @@ void InspectorArray::writeJSON(StringBuilder* output) const
     output->append(']');
 }
 
-InspectorArray::InspectorArray()
+InspectorArrayBase::InspectorArrayBase()
     : InspectorValue(TypeArray)
     , m_data()
 {
 }
 
-PassRefPtr<InspectorValue> InspectorArray::get(size_t index)
+PassRefPtr<InspectorValue> InspectorArrayBase::get(size_t index)
 {
     ASSERT(index < m_data.size());
     return m_data[index];

@@ -229,7 +229,7 @@ static void fillMediaListChain(CSSRule* rule, Array<TypeBuilder::CSS::CSSMedia>*
                         sourceURL = styleSheet->finalURL();
                     else
                         sourceURL = "";
-                    mediaArray->pushObject(buildMediaObject(mediaList, styleSheet->ownerNode() ? MediaListSourceLinkedSheet : MediaListSourceInlineSheet, sourceURL));
+                    mediaArray->addItem(buildMediaObject(mediaList, styleSheet->ownerNode() ? MediaListSourceLinkedSheet : MediaListSourceInlineSheet, sourceURL));
                 }
                 parentRule = styleSheet->ownerRule();
                 if (parentRule)
@@ -510,7 +510,7 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithProperties() con
                         shouldInactivate = true;
                     else {
                         bool previousParsedOk;
-                        bool success = activeIt->second->getBoolean("parsedOk", &previousParsedOk);
+                        bool success = activeIt->second->getBoolean(TypeBuilder::CSS::CSSProperty::ParsedOk, &previousParsedOk);
                         if (success && !previousParsedOk)
                             shouldInactivate = true;
                     }
@@ -519,7 +519,7 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithProperties() con
 
                 if (shouldInactivate) {
                     activeIt->second->setStatus(TypeBuilder::CSS::CSSProperty::Status::Inactive);
-                    activeIt->second->remove("shorthandName");
+                    activeIt->second->remove(TypeBuilder::CSS::CSSProperty::ShorthandName);
                     propertyNameToPreviousActiveProperty.set(canonicalPropertyName, property);
                 }
             } else {
@@ -546,7 +546,7 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithProperties() con
                     RefPtr<InspectorObject> shorthandEntry = InspectorObject::create();
                     shorthandEntry->setString("name", shorthand);
                     shorthandEntry->setString("value", shorthandValue(shorthand));
-                    shorthandEntries->pushObject(shorthandEntry.release());
+                    shorthandEntries->addItem(shorthandEntry.release());
                 }
             }
         }

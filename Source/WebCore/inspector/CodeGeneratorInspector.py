@@ -61,7 +61,11 @@ TYPES_WITH_RUNTIME_CAST_SET = frozenset(["Runtime.RemoteObject", "Runtime.Proper
                                          # This should be a temporary hack. TimelineEvent should be created via generated C++ API.
                                          "Timeline.TimelineEvent"])
 
-TYPES_WITH_OPEN_FIELD_LIST_SET = frozenset(["Timeline.TimelineEvent"])
+TYPES_WITH_OPEN_FIELD_LIST_SET = frozenset(["Timeline.TimelineEvent",
+                                            # InspectorStyleSheet not only creates this property but wants to read it and modify it.
+                                            "CSS.CSSProperty",
+                                            # InspectorResourceAgent needs to update mime-type.
+                                            "Network.Response"])
 
 cmdline_parser = optparse.OptionParser()
 cmdline_parser.add_option("--output_h_dir")
@@ -422,7 +426,9 @@ class RawTypes(object):
         def get_getter_name():
             return "Object"
 
-        get_setter_name = get_getter_name
+        @staticmethod
+        def get_setter_name():
+            return "Value"
 
         @staticmethod
         def get_c_initializer():
@@ -506,7 +512,9 @@ class RawTypes(object):
         def get_getter_name():
             return "Array"
 
-        get_setter_name = get_getter_name
+        @staticmethod
+        def get_setter_name():
+            return "Value"
 
         @staticmethod
         def get_c_initializer():
@@ -1141,10 +1149,18 @@ class TypeBindings:
                                 resolve_data = class_binding_cls.resolve_data_
                                 helper.write_doc(writer)
                                 class_name = fixed_type_name.class_name
+
+                                is_open_type = (context_domain_name + "." + class_name) in TYPES_WITH_OPEN_FIELD_LIST_SET
+
                                 fixed_type_name.output_comment(writer)
                                 writer.newline("class ")
                                 writer.append(class_name)
-                                writer.append(" : public InspectorObject {\n")
+                                writer.append(" : public ")
+                                if is_open_type:
+                                    writer.append("InspectorObject")
+                                else:
+                                    writer.append("InspectorObjectBase")
+                                writer.append(" {\n")
                                 writer.newline("public:\n")
                                 ad_hoc_type_writer = writer.insert_writer("    ")
 
@@ -1184,7 +1200,7 @@ class TypeBindings:
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(PassRefPtr<%s> ptr)
+        Builder(PassRefPtr</*%s*/InspectorObject> ptr)
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
             m_result = ptr;
@@ -1222,6 +1238,7 @@ class TypeBindings:
         operator RefPtr<%s>& ()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
+            COMPILE_ASSERT(sizeof(%s) == sizeof(InspectorObject), cannot_cast);
             return *reinterpret_cast<RefPtr<%s>*>(&m_result);
         }
 
@@ -1232,7 +1249,7 @@ class TypeBindings:
     };
 
 """
-                                % (class_name, class_name, class_name, class_name))
+                                % (class_name, class_name, class_name, class_name, class_name))
 
                                 writer.newline("    /*\n")
                                 writer.newline("     * Synthetic constructor:\n")
@@ -1244,9 +1261,9 @@ class TypeBindings:
                                 writer.newline_multiline(
 """    static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(adoptRef(new %s()));
+        return Builder<NoFieldsSet>(InspectorObject::create());
     }
-""" % class_name)
+""")
 
                                 writer.newline("    typedef TypeBuilder::StructItemTraits ItemTraits;\n")
 
@@ -1265,7 +1282,7 @@ class TypeBindings:
 
 
                                     if setter_name in INSPECTOR_OBJECT_SETTER_NAMES:
-                                        writer.newline("    using InspectorObject::%s;\n\n" % setter_name)
+                                        writer.newline("    using InspectorObjectBase::%s;\n\n" % setter_name)
 
                                 if class_binding_cls.need_user_runtime_cast_:
                                     writer.newline("    static PassRefPtr<%s> runtimeCast(PassRefPtr<InspectorValue> value)\n" % class_name)
@@ -1276,8 +1293,8 @@ class TypeBindings:
                                     writer.append("#if %s\n" % VALIDATOR_IFDEF_NAME)
                                     writer.newline("        assertCorrectValue(object.get());\n")
                                     writer.append("#endif  // %s\n" % VALIDATOR_IFDEF_NAME)
-                                    writer.newline("        COMPILE_ASSERT(sizeof(%s) == sizeof(InspectorObject), type_cast_problem);\n" % class_name)
-                                    writer.newline("        return static_cast<%s*>(object.get());\n" % class_name)
+                                    writer.newline("        COMPILE_ASSERT(sizeof(%s) == sizeof(InspectorObjectBase), type_cast_problem);\n" % class_name)
+                                    writer.newline("        return static_cast<%s*>(static_cast<InspectorObjectBase*>(object.get()));\n" % class_name)
                                     writer.newline("    }\n")
                                     writer.append("\n")
 
@@ -1321,6 +1338,17 @@ class TypeBindings:
                                     if closed_field_set:
                                         validator_writer.newline("    ASSERT(foundPropertiesCount == object->size());\n")
                                     validator_writer.newline("}\n\n\n")
+
+                                if is_open_type:
+                                    cpp_writer = generate_context.cpp_writer
+                                    writer.append("\n")
+                                    writer.newline("    // Property names for type generated as open.\n")
+                                    for prop_data in resolve_data.main_properties + resolve_data.optional_properties:
+                                        prop_name = prop_data.p["name"]
+                                        prop_field_name = Capitalizer.lower_camel_case_to_upper(prop_name)
+                                        writer.newline("    static const char* %s;\n" % (prop_field_name))
+                                        cpp_writer.newline("const char* %s%s::%s = \"%s\";\n" % (helper.full_name_prefix_for_impl, class_name, prop_field_name, prop_name))
+
 
                                 writer.newline("};\n\n")
 
@@ -2204,19 +2232,24 @@ struct ArrayItemHelper {
 };
 
 template<typename T>
-class Array : public InspectorArray {
+class Array : public InspectorArrayBase {
 private:
     Array() { }
+
+    InspectorArray* openAccessors() {
+        COMPILE_ASSERT(sizeof(InspectorArray) == sizeof(Array<T>), cannot_cast);
+        return static_cast<InspectorArray*>(static_cast<InspectorArrayBase*>(this));
+    }
 
 public:
     void addItem(PassRefPtr<T> value)
     {
-        ArrayItemHelper<T>::Traits::pushRefPtr(this, value);
+        ArrayItemHelper<T>::Traits::pushRefPtr(this->openAccessors(), value);
     }
 
     void addItem(T value)
     {
-        ArrayItemHelper<T>::Traits::pushRaw(this, value);
+        ArrayItemHelper<T>::Traits::pushRaw(this->openAccessors(), value);
     }
 
     static PassRefPtr<Array<T> > create()
@@ -2233,7 +2266,7 @@ public:
         assertCorrectValue(array.get());
 #endif  // !ASSERT_DISABLED
         COMPILE_ASSERT(sizeof(Array<T>) == sizeof(InspectorArray), type_cast_problem);
-        return static_cast<Array<T>*>(array.get());
+        return static_cast<Array<T>*>(static_cast<InspectorArrayBase*>(array.get()));
     }
 
 #if """ + VALIDATOR_IFDEF_NAME + """
@@ -2250,9 +2283,9 @@ public:
 };
 
 struct StructItemTraits {
-    static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorObject> value)
+    static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorValue> value)
     {
-        array->pushObject(value);
+        array->pushValue(value);
     }
 
     template<typename T>
@@ -2294,9 +2327,9 @@ struct ArrayItemHelper<InspectorValue> {
 template<>
 struct ArrayItemHelper<InspectorObject> {
     struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorObject> value)
+        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorValue> value)
         {
-            array->pushObject(value);
+            array->pushValue(value);
         }
     };
 };
@@ -2306,7 +2339,7 @@ struct ArrayItemHelper<TypeBuilder::Array<T> > {
     struct Traits {
         static void pushRefPtr(InspectorArray* array, PassRefPtr<TypeBuilder::Array<T> > value)
         {
-            array->pushArray(value);
+            array->pushValue(value);
         }
     };
 };
@@ -2347,6 +2380,8 @@ String getEnumConstantValue(int code) {
 }
 
 } // namespace TypeBuilder
+
+$implCode
 
 #if """ + VALIDATOR_IFDEF_NAME + """
 
@@ -2467,6 +2502,7 @@ class Generator:
     type_builder_forwards = []
     validator_impl_list = []
     validator_impl_raw_types_list = []
+    type_builder_impl_list = []
 
 
     @staticmethod
@@ -2777,6 +2813,7 @@ class Generator:
 
         class InterfaceGenerateContext:
             validator_writer = "not supported in InterfaceGenerateContext"
+            cpp_writer = validator_writer
 
         for type in ad_hoc_type_list:
             generator = type.get_code_generator()
@@ -2791,6 +2828,7 @@ class Generator:
 
         class GenerateContext:
             validator_writer = Writer(Generator.validator_impl_list, "")
+            cpp_writer = Writer(Generator.type_builder_impl_list, "")
 
         def generate_all_domains_code(out, type_data_callback):
             writer = Writer(out, "")
@@ -2905,6 +2943,7 @@ typebuilder_h_file.write(Templates.typebuilder_h.substitute(None,
 
 typebuilder_cpp_file.write(Templates.typebuilder_cpp.substitute(None,
     enumConstantValues=EnumConstants.get_enum_constant_code(),
+    implCode=join(flatten_list(Generator.type_builder_impl_list), ""),
     validatorCode=join(flatten_list(Generator.validator_impl_list), "")))
 
 backend_js_file.write(Templates.backend_js.substitute(None,

@@ -157,7 +157,7 @@ private:
     String m_stringValue;
 };
 
-class InspectorObject : public InspectorValue {
+class InspectorObjectBase : public InspectorValue {
 private:
     typedef HashMap<String, RefPtr<InspectorValue> > Dictionary;
 
@@ -165,14 +165,13 @@ public:
     typedef Dictionary::iterator iterator;
     typedef Dictionary::const_iterator const_iterator;
 
-    static PassRefPtr<InspectorObject> create()
-    {
-        return adoptRef(new InspectorObject());
-    }
-    ~InspectorObject();
+    virtual PassRefPtr<InspectorObject> asObject();
+    InspectorObject* openAccessors();
+
+protected:
+    ~InspectorObjectBase();
 
     virtual bool asObject(RefPtr<InspectorObject>* output);
-    virtual PassRefPtr<InspectorObject> asObject();
 
     void setBoolean(const String& name, bool);
     void setNumber(const String& name, double);
@@ -208,26 +207,59 @@ public:
     int size() const { return m_data.size(); }
 
 protected:
-    InspectorObject();
+    InspectorObjectBase();
 
 private:
     Dictionary m_data;
     Vector<String> m_order;
 };
 
-class InspectorArray : public InspectorValue {
+class InspectorObject : public InspectorObjectBase {
+public:
+    static PassRefPtr<InspectorObject> create()
+    {
+        return adoptRef(new InspectorObject());
+    }
+
+    using InspectorObjectBase::asObject;
+
+    using InspectorObjectBase::setBoolean;
+    using InspectorObjectBase::setNumber;
+    using InspectorObjectBase::setString;
+    using InspectorObjectBase::setValue;
+    using InspectorObjectBase::setObject;
+    using InspectorObjectBase::setArray;
+
+    using InspectorObjectBase::find;
+    using InspectorObjectBase::getBoolean;
+    using InspectorObjectBase::getNumber;
+    using InspectorObjectBase::getString;
+    using InspectorObjectBase::getObject;
+    using InspectorObjectBase::getArray;
+    using InspectorObjectBase::get;
+
+    using InspectorObjectBase::remove;
+
+    using InspectorObjectBase::begin;
+    using InspectorObjectBase::end;
+
+    using InspectorObjectBase::size;
+};
+
+
+class InspectorArrayBase : public InspectorValue {
 public:
     typedef Vector<RefPtr<InspectorValue> >::iterator iterator;
     typedef Vector<RefPtr<InspectorValue> >::const_iterator const_iterator;
 
-    static PassRefPtr<InspectorArray> create()
-    {
-        return adoptRef(new InspectorArray());
-    }
-    ~InspectorArray();
+    virtual PassRefPtr<InspectorArray> asArray();
+
+    unsigned length() const { return m_data.size(); }
+
+protected:
+    ~InspectorArrayBase();
 
     virtual bool asArray(RefPtr<InspectorArray>* output);
-    virtual PassRefPtr<InspectorArray> asArray();
 
     void pushBoolean(bool);
     void pushInt(int);
@@ -236,7 +268,6 @@ public:
     void pushValue(PassRefPtr<InspectorValue>);
     void pushObject(PassRefPtr<InspectorObject>);
     void pushArray(PassRefPtr<InspectorArray>);
-    unsigned length() const { return m_data.size(); }
 
     PassRefPtr<InspectorValue> get(size_t index);
 
@@ -248,91 +279,115 @@ public:
     const_iterator end() const { return m_data.end(); }
 
 protected:
-    InspectorArray();
+    InspectorArrayBase();
 
 private:
     Vector<RefPtr<InspectorValue> > m_data;
 };
 
-inline InspectorObject::iterator InspectorObject::find(const String& name)
+class InspectorArray : public InspectorArrayBase {
+public:
+    static PassRefPtr<InspectorArray> create()
+    {
+        return adoptRef(new InspectorArray());
+    }
+
+    using InspectorArrayBase::asArray;
+
+    using InspectorArrayBase::pushBoolean;
+    using InspectorArrayBase::pushInt;
+    using InspectorArrayBase::pushNumber;
+    using InspectorArrayBase::pushString;
+    using InspectorArrayBase::pushValue;
+    using InspectorArrayBase::pushObject;
+    using InspectorArrayBase::pushArray;
+
+    using InspectorArrayBase::get;
+
+    using InspectorArrayBase::begin;
+    using InspectorArrayBase::end;
+};
+
+
+inline InspectorObjectBase::iterator InspectorObjectBase::find(const String& name)
 {
     return m_data.find(name);
 }
 
-inline InspectorObject::const_iterator InspectorObject::find(const String& name) const
+inline InspectorObjectBase::const_iterator InspectorObjectBase::find(const String& name) const
 {
     return m_data.find(name);
 }
 
-inline void InspectorObject::setBoolean(const String& name, bool value)
+inline void InspectorObjectBase::setBoolean(const String& name, bool value)
 {
     setValue(name, InspectorBasicValue::create(value));
 }
 
-inline void InspectorObject::setNumber(const String& name, double value)
+inline void InspectorObjectBase::setNumber(const String& name, double value)
 {
     setValue(name, InspectorBasicValue::create(value));
 }
 
-inline void InspectorObject::setString(const String& name, const String& value)
+inline void InspectorObjectBase::setString(const String& name, const String& value)
 {
     setValue(name, InspectorString::create(value));
 }
 
-inline void InspectorObject::setValue(const String& name, PassRefPtr<InspectorValue> value)
+inline void InspectorObjectBase::setValue(const String& name, PassRefPtr<InspectorValue> value)
 {
     ASSERT(value);
     if (m_data.set(name, value).isNewEntry)
         m_order.append(name);
 }
 
-inline void InspectorObject::setObject(const String& name, PassRefPtr<InspectorObject> value)
+inline void InspectorObjectBase::setObject(const String& name, PassRefPtr<InspectorObject> value)
 {
     ASSERT(value);
     if (m_data.set(name, value).isNewEntry)
         m_order.append(name);
 }
 
-inline void InspectorObject::setArray(const String& name, PassRefPtr<InspectorArray> value)
+inline void InspectorObjectBase::setArray(const String& name, PassRefPtr<InspectorArray> value)
 {
     ASSERT(value);
     if (m_data.set(name, value).isNewEntry)
         m_order.append(name);
 }
 
-inline void InspectorArray::pushBoolean(bool value)
+inline void InspectorArrayBase::pushBoolean(bool value)
 {
     m_data.append(InspectorBasicValue::create(value));
 }
 
-inline void InspectorArray::pushInt(int value)
+inline void InspectorArrayBase::pushInt(int value)
 {
     m_data.append(InspectorBasicValue::create(value));
 }
 
-inline void InspectorArray::pushNumber(double value)
+inline void InspectorArrayBase::pushNumber(double value)
 {
     m_data.append(InspectorBasicValue::create(value));
 }
 
-inline void InspectorArray::pushString(const String& value)
+inline void InspectorArrayBase::pushString(const String& value)
 {
     m_data.append(InspectorString::create(value));
 }
 
-inline void InspectorArray::pushValue(PassRefPtr<InspectorValue> value)
+inline void InspectorArrayBase::pushValue(PassRefPtr<InspectorValue> value)
 {
     ASSERT(value);
     m_data.append(value);
 }
 
-inline void InspectorArray::pushObject(PassRefPtr<InspectorObject> value)
+inline void InspectorArrayBase::pushObject(PassRefPtr<InspectorObject> value)
 {
     ASSERT(value);
     m_data.append(value);
 }
 
-inline void InspectorArray::pushArray(PassRefPtr<InspectorArray> value)
+inline void InspectorArrayBase::pushArray(PassRefPtr<InspectorArray> value)
 {
     ASSERT(value);
     m_data.append(value);

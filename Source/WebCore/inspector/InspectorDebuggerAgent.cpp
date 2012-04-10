@@ -242,9 +242,9 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString* errorString, int li
     for (ScriptsMap::iterator it = m_scripts.begin(); it != m_scripts.end(); ++it) {
         if (!matches(it->second.url, url, isRegex))
             continue;
-        RefPtr<InspectorObject> location = resolveBreakpoint(breakpointId, it->first, breakpoint);
+        RefPtr<TypeBuilder::Debugger::Location> location = resolveBreakpoint(breakpointId, it->first, breakpoint);
         if (location)
-            locations->pushObject(location);
+            locations->addItem(location);
     }
     *outBreakpointId = breakpointId;
 }
@@ -568,7 +568,7 @@ void InspectorDebuggerAgent::didPause(ScriptState* scriptState, const ScriptValu
         InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
         if (!injectedScript.hasNoValue()) {
             m_breakReason = InspectorFrontend::Debugger::Reason::Exception;
-            m_breakAuxData = injectedScript.wrapObject(exception, "backtrace");
+            m_breakAuxData = injectedScript.wrapObject(exception, "backtrace")->openAccessors();
             // m_breakAuxData might be null after this.
         }
     }

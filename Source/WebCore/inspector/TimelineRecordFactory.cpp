@@ -53,7 +53,7 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createGenericRecord(double st
     if (maxCallStackDepth) {
         RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(maxCallStackDepth, true);
         if (stackTrace && stackTrace->size())
-            record->setArray("stackTrace", stackTrace->buildInspectorArray());
+            record->setValue("stackTrace", stackTrace->buildInspectorArray());
     }
     return record.release();
 }

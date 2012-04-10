@@ -589,14 +589,12 @@ void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, c
     results = ContentSearchUtils::searchInTextByLines(content, query, caseSensitive, isRegex);
 }
 
-static PassRefPtr<InspectorObject> buildObjectForSearchResult(const String& frameId, const String& url, int matchesCount)
+static PassRefPtr<TypeBuilder::Page::SearchResult> buildObjectForSearchResult(const String& frameId, const String& url, int matchesCount)
 {
-    RefPtr<InspectorObject> result = InspectorObject::create();
-    result->setString("frameId", frameId);
-    result->setString("url", url);
-    result->setNumber("matchesCount", matchesCount);
-
-    return result;
+    return TypeBuilder::Page::SearchResult::create()
+        .setUrl(url)
+        .setFrameId(frameId)
+        .setMatchesCount(matchesCount);
 }
 
 void InspectorPageAgent::searchInResources(ErrorString*, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchResult> >& results)
@@ -615,13 +613,13 @@ void InspectorPageAgent::searchInResources(ErrorString*, const String& text, con
             if (textContentForCachedResource(cachedResource, &content)) {
                 int matchesCount = ContentSearchUtils::countRegularExpressionMatches(regex, content);
                 if (matchesCount)
-                    searchResults->pushValue(buildObjectForSearchResult(frameId(frame), cachedResource->url(), matchesCount));
+                    searchResults->addItem(buildObjectForSearchResult(frameId(frame), cachedResource->url(), matchesCount));
             }
         }
         if (mainResourceContent(frame, false, &content)) {
             int matchesCount = ContentSearchUtils::countRegularExpressionMatches(regex, content);
             if (matchesCount)
-                searchResults->pushValue(buildObjectForSearchResult(frameId(frame), frame->document()->url(), matchesCount));
+                searchResults->addItem(buildObjectForSearchResult(frameId(frame), frame->document()->url(), matchesCount));
         }
     }
 
@@ -903,13 +901,13 @@ PassRefPtr<TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::buildObject
         subresources->addItem(resourceObject);
     }
 
-    RefPtr<InspectorArray> childrenArray;
+    RefPtr<TypeBuilder::Array<TypeBuilder::Page::FrameResourceTree> > childrenArray;
     for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
         if (!childrenArray) {
-            childrenArray = InspectorArray::create();
-            result->setArray("childFrames", childrenArray);
+            childrenArray = TypeBuilder::Array<TypeBuilder::Page::FrameResourceTree>::create();
+            result->setChildFrames(childrenArray);
         }
-        childrenArray->pushObject(buildObjectForFrameTree(child));
+        childrenArray->addItem(buildObjectForFrameTree(child));
     }
     return result;
 }
