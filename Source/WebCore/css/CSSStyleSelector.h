@@ -145,9 +145,9 @@ public:
     RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
     Element* element() const { return m_element; }
     Document* document() const { return m_checker.document(); }
-    FontDescription fontDescription() { return style()->fontDescription(); }
-    FontDescription parentFontDescription() {return parentStyle()->fontDescription(); }
-    void setFontDescription(FontDescription fontDescription) { m_fontDirty |= style()->setFontDescription(fontDescription); }
+    const FontDescription& fontDescription() { return style()->fontDescription(); }
+    const FontDescription& parentFontDescription() { return parentStyle()->fontDescription(); }
+    void setFontDescription(const FontDescription& fontDescription) { m_fontDirty |= style()->setFontDescription(fontDescription); }
     void setZoom(float f) { m_fontDirty |= style()->setZoom(f); }
     void setEffectiveZoom(float f) { m_fontDirty |= style()->setEffectiveZoom(f); }
     void setTextSizeAdjust(bool b) { m_fontDirty |= style()->setTextSizeAdjust(b); }
