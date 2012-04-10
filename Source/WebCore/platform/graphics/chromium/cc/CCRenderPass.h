@@ -55,7 +55,7 @@ public:
     static PassOwnPtr<CCRenderPass> create(CCRenderSurface*);
 
     void appendQuadsForLayer(CCLayerImpl*, CCOcclusionTrackerImpl*, bool& usedCheckerboard);
-    void appendQuadsForRenderSurfaceLayer(CCLayerImpl*);
+    void appendQuadsForRenderSurfaceLayer(CCLayerImpl*, CCOcclusionTrackerImpl*);
 
     const CCQuadList& quadList() const { return m_quadList; }
     CCRenderSurface* targetSurface() const { return m_targetSurface; }

@@ -66,18 +66,20 @@ void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImp
     m_sharedQuadStateList.append(sharedQuadState.release());
 }
 
-void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer)
+void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker)
 {
     // FIXME: render surface layers should be a CCLayerImpl-derived class and
     // not be handled specially here.
+    CCQuadCuller quadCuller(m_quadList, layer, occlusionTracker);
+
     CCRenderSurface* surface = layer->renderSurface();
     OwnPtr<CCSharedQuadState> sharedQuadState = surface->createSharedQuadState();
     if (layer->hasDebugBorders()) {
         Color color(debugSurfaceBorderColorRed, debugSurfaceBorderColorGreen, debugSurfaceBorderColorBlue, debugSurfaceBorderAlpha);
-        m_quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState.get(), surface->contentRect(), color, debugSurfaceBorderWidth));
+        quadCuller.appendSurface(CCDebugBorderDrawQuad::create(sharedQuadState.get(), surface->contentRect(), color, debugSurfaceBorderWidth));
     }
     bool isReplica = false;
-    m_quadList.append(CCRenderSurfaceDrawQuad::create(sharedQuadState.get(), surface->contentRect(), layer, surfaceDamageRect(), isReplica));
+    quadCuller.appendSurface(CCRenderSurfaceDrawQuad::create(sharedQuadState.get(), surface->contentRect(), layer, surfaceDamageRect(), isReplica));
     m_sharedQuadStateList.append(sharedQuadState.release());
 
     // Add replica after the surface so that it appears below the surface.
@@ -85,10 +87,10 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer)
         OwnPtr<CCSharedQuadState> sharedQuadState = surface->createReplicaSharedQuadState();
         if (layer->hasDebugBorders()) {
             Color color(debugReplicaBorderColorRed, debugReplicaBorderColorGreen, debugReplicaBorderColorBlue, debugSurfaceBorderAlpha);
-            m_quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState.get(), surface->contentRect(), color, debugSurfaceBorderWidth));
+            quadCuller.appendReplica(CCDebugBorderDrawQuad::create(sharedQuadState.get(), surface->contentRect(), color, debugSurfaceBorderWidth));
         }
         bool isReplica = true;
-        m_quadList.append(CCRenderSurfaceDrawQuad::create(sharedQuadState.get(), surface->contentRect(), layer, surfaceDamageRect(), isReplica));
+        quadCuller.appendReplica(CCRenderSurfaceDrawQuad::create(sharedQuadState.get(), surface->contentRect(), layer, surfaceDamageRect(), isReplica));
         m_sharedQuadStateList.append(sharedQuadState.release());
     }
 }

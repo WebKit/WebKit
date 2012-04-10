@@ -36,15 +36,17 @@ class CCQuadCuller {
 public:
     // Passing 0 for CCOverdrawCounts* is valid, and disable the extra computation
     // done to estimate over draw statistics.
-    CCQuadCuller(CCQuadList&, CCLayerImpl*, CCOcclusionTrackerImpl*);
+    CCQuadCuller(CCQuadList&, CCLayerImpl*, const CCOcclusionTrackerImpl*);
 
     // Returns true if the quad is added to the list, and false if the quad is entirely culled.
     virtual bool append(PassOwnPtr<CCDrawQuad> passDrawQuad);
+    virtual bool appendSurface(PassOwnPtr<CCDrawQuad> passDrawQuad);
+    virtual bool appendReplica(PassOwnPtr<CCDrawQuad> passDrawQuad);
 
 private:
     CCQuadList& m_quadList;
     CCLayerImpl* m_layer;
-    CCOcclusionTrackerImpl* m_occlusionTracker;
+    const CCOcclusionTrackerImpl* m_occlusionTracker;
 };
 
 }

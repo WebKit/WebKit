@@ -1,3 +1,31 @@
+2012-04-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Cull occluded surface quads
+        https://bugs.webkit.org/show_bug.cgi?id=81227
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests::CCOcclusionTrackerTest::TearDown):
+        (WebKitTests::CCOcclusionTrackerTest::createReplicaLayer):
+        (CCOcclusionTrackerTest):
+        (WebKitTests::CCOcclusionTrackerTest::setReplica):
+        (WebKitTests::CCOcclusionTrackerTestOverlappingSurfaceSiblings::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOverlappingSurfaceSiblingsWithTwoTransforms::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestAnimationOpacity1OnMainThread::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestAnimationOpacity0OnMainThread::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestAnimationTranslateOnMainThread::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceOcclusionTranslatesWithClipping::runMyTest):
+        (WebKitTests):
+        (CCOcclusionTrackerTestReplicaOccluded):
+        (WebKitTests::CCOcclusionTrackerTestReplicaOccluded::runMyTest):
+        (CCOcclusionTrackerTestSurfaceWithReplicaUnoccluded):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceWithReplicaUnoccluded::runMyTest):
+        (CCOcclusionTrackerTestSurfaceAndReplicaOccludedDifferently):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceAndReplicaOccludedDifferently::runMyTest):
+        (CCOcclusionTrackerTestSurfaceChildOfSurface):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceChildOfSurface::runMyTest):
+
 2012-04-09  James Robinson  <jamesr@chromium.org>
 
         [chromium] Unreviewed build fix. OwnPtr<>::operator = breaks the build on clang, but not gcc :(

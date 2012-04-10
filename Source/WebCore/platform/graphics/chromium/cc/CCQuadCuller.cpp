@@ -40,28 +40,45 @@ using namespace std;
 
 namespace WebCore {
 
-CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker)
+CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCLayerImpl* layer, const CCOcclusionTrackerImpl* occlusionTracker)
     : m_quadList(quadList)
     , m_layer(layer)
     , m_occlusionTracker(occlusionTracker)
 {
 }
 
-bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
+static inline bool appendQuadInternal(PassOwnPtr<CCDrawQuad> passDrawQuad, const IntRect& culledRect, CCQuadList& quadList, const CCOcclusionTrackerImpl& occlusionTracker)
 {
     OwnPtr<CCDrawQuad> drawQuad(passDrawQuad);
-    IntRect culledRect = m_occlusionTracker->unoccludedContentRect(m_layer, drawQuad->quadRect());
     bool keepQuad = !culledRect.isEmpty();
     if (keepQuad)
         drawQuad->setQuadVisibleRect(culledRect);
 
-    m_occlusionTracker->overdrawMetrics().didCullForDrawing(drawQuad->quadTransform(), drawQuad->quadRect(), culledRect);
-    m_occlusionTracker->overdrawMetrics().didDraw(drawQuad->quadTransform(), culledRect, drawQuad->opaqueRect());
+    occlusionTracker.overdrawMetrics().didCullForDrawing(drawQuad->quadTransform(), drawQuad->quadRect(), culledRect);
+    occlusionTracker.overdrawMetrics().didDraw(drawQuad->quadTransform(), culledRect, drawQuad->opaqueRect());
 
     // Release the quad after we're done using it.
     if (keepQuad)
-        m_quadList.append(drawQuad.release());
+        quadList.append(drawQuad.release());
     return keepQuad;
+}
+
+bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
+{
+    IntRect culledRect = m_occlusionTracker->unoccludedContentRect(m_layer, passDrawQuad->quadRect());
+    return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker);
+}
+
+bool CCQuadCuller::appendSurface(PassOwnPtr<CCDrawQuad> passDrawQuad)
+{
+    IntRect culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer, false, passDrawQuad->quadRect());
+    return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker);
+}
+
+bool CCQuadCuller::appendReplica(PassOwnPtr<CCDrawQuad> passDrawQuad)
+{
+    IntRect culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer, true, passDrawQuad->quadRect());
+    return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker);
 }
 
 } // namespace WebCore

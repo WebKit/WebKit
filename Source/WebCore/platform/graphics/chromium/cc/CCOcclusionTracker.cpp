@@ -141,6 +141,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::leaveToTargetRenderSu
 
     const RenderSurfaceType* oldTarget = m_stack[lastIndex].surface;
     Region oldTargetOcclusionInNewTarget = transformSurfaceOpaqueRegion<RenderSurfaceType>(oldTarget, m_stack[lastIndex].occlusionInTarget, oldTarget->originTransform());
+    // FIXME: The replica can occlude things too.
 
     if (surfaceWillBeAtTopAfterPop) {
         // Merge the top of the stack down.
@@ -335,6 +336,46 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::unoccludedContentR
 }
 
 template<typename LayerType, typename RenderSurfaceType>
+IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::unoccludedContributingSurfaceContentRect(const LayerType* layer, bool forReplica, const IntRect& contentRect) const
+{
+    ASSERT(!m_stack.isEmpty());
+    // This should be called while the contributing render surface is still considered the current target in the occlusion tracker.
+    ASSERT(layer->targetRenderSurface() == m_stack.last().surface);
+
+    // A contributing surface doesn't get occluded by things inside its own surface, so only things outside the surface can occlude it. That occlusion is
+    // found just below the top of the stack (if it exists).
+    if (m_stack.size() < 2)
+        return contentRect;
+    if (contentRect.isEmpty())
+        return contentRect;
+
+    RenderSurfaceType* surface = layer->renderSurface();
+    const StackObject& secondLast = m_stack[m_stack.size() - 2];
+
+    IntRect surfaceClipRect = surface->clipRect();
+    if (surfaceClipRect.isEmpty()) {
+        const RenderSurfaceType* targetSurface = secondLast.surface;
+        surfaceClipRect = intersection(targetSurface->contentRect(), enclosingIntRect(surface->drawableContentRect()));
+    }
+
+    const TransformationMatrix& transformToScreen = forReplica ? surface->replicaScreenSpaceTransform() : surface->screenSpaceTransform();
+    const TransformationMatrix& transformToTarget = forReplica ? surface->replicaOriginTransform() : surface->originTransform();
+
+    IntRect unoccludedInScreen = contentRect;
+    if (surfaceTransformsToScreenKnown(surface))
+        unoccludedInScreen = computeUnoccludedContentRect(contentRect, transformToScreen, m_scissorRectInScreenSpace, secondLast.occlusionInScreen);
+
+    if (unoccludedInScreen.isEmpty())
+        return unoccludedInScreen;
+
+    IntRect unoccludedInTarget = contentRect;
+    if (surfaceTransformsToTargetKnown(surface))
+        unoccludedInTarget = computeUnoccludedContentRect(contentRect, transformToTarget, surfaceClipRect, secondLast.occlusionInTarget);
+
+    return intersection(unoccludedInScreen, unoccludedInTarget);
+}
+
+template<typename LayerType, typename RenderSurfaceType>
 IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::layerScissorRectInTargetSurface(const LayerType* layer) const
 {
     const RenderSurfaceType* targetSurface = m_stack.last().surface;
@@ -352,6 +393,7 @@ template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::leav
 template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::markOccludedBehindLayer(const LayerChromium*);
 template bool CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::occluded(const LayerChromium*, const IntRect& contentRect) const;
 template IntRect CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::unoccludedContentRect(const LayerChromium*, const IntRect& contentRect) const;
+template IntRect CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::unoccludedContributingSurfaceContentRect(const LayerChromium*, bool forReplica, const IntRect& contentRect) const;
 template IntRect CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::layerScissorRectInTargetSurface(const LayerChromium*) const;
 
 template CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, bool recordMetricsForFrame);
@@ -361,6 +403,7 @@ template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::leaveToTarge
 template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::markOccludedBehindLayer(const CCLayerImpl*);
 template bool CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::occluded(const CCLayerImpl*, const IntRect& contentRect) const;
 template IntRect CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::unoccludedContentRect(const CCLayerImpl*, const IntRect& contentRect) const;
+template IntRect CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::unoccludedContributingSurfaceContentRect(const CCLayerImpl*, bool forReplica, const IntRect& contentRect) const;
 template IntRect CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::layerScissorRectInTargetSurface(const CCLayerImpl*) const;
 
 

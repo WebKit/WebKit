@@ -296,24 +296,21 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
         CCRenderSurface* renderSurface = it.targetRenderSurfaceLayer()->renderSurface();
+        CCRenderPass* pass = surfacePassMap.get(renderSurface);
 
         if (it.representsItself())
             occlusionTracker.enterTargetRenderSurface(renderSurface);
-        else if (it.representsTargetRenderSurface())
+        else if (it.representsTargetRenderSurface()) {
             occlusionTracker.finishedTargetRenderSurface(*it, renderSurface);
-        else
+            continue;
+        } else {
+            pass->appendQuadsForRenderSurfaceLayer(*it, &occlusionTracker);
             occlusionTracker.leaveToTargetRenderSurface(renderSurface);
-
-        if (it.representsTargetRenderSurface())
-            continue;
-        if (it->visibleLayerRect().isEmpty())
-            continue;
-
-        CCRenderPass* pass = surfacePassMap.get(renderSurface);
-        if (it.representsContributingRenderSurface()) {
-            pass->appendQuadsForRenderSurfaceLayer(*it);
             continue;
         }
+
+        if (it->visibleLayerRect().isEmpty())
+            continue;
 
         it->willDraw(m_layerRenderer.get());
 
