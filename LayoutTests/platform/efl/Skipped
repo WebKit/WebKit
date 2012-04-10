@@ -2501,25 +2501,6 @@ http/tests/xmlhttprequest/remember-bad-password.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 http/tests/xmlviewer/extensions-api.html
 
-# These test cases don't have expected result yet.
-http/tests/loading/simple-subframe.html
-http/tests/local/file-url-sent-as-referer.html
-http/tests/misc/acid2.html
-http/tests/misc/favicon-as-image.html
-http/tests/misc/frame-access-during-load.html
-http/tests/misc/generated-content-inside-table.html
-http/tests/misc/iframe404.html
-http/tests/misc/location-replace-crossdomain.html
-http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml
-http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
-http/tests/navigation/error404-basic.html
-http/tests/navigation/error404-goback.html
-http/tests/navigation/error404-subframeload.html
-http/tests/navigation/javascriptlink-frames.html
-http/tests/navigation/postredirect-goback1.html
-http/tests/navigation/postredirect-basic.html
-http/tests/uri/css-href.php
-
 # EFL DRT doesn't fully support page visibility feature yet.
 fast/events/page-visibility-iframe-move-test.html
 fast/events/page-visibility-iframe-delete-test.html
@@ -2627,8 +2608,6 @@ fast/text/unicode-variation-selector.html
 http/tests/cache/history-only-cached-subresource-loads.html
 http/tests/cache/cancel-during-revalidation-succeeded.html
 http/tests/cache/post-redirect-get.php
-http/tests/misc/error404.pl
-http/tests/misc/slow-loading-image-in-pattern.html
 media/video-colorspace-yuv420.html
 media/video-colorspace-yuv422.html
 perf/nested-combined-selectors.html
