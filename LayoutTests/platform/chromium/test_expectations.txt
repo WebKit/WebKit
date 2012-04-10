@@ -3809,7 +3809,12 @@ BUGCR122462 WIN LINUX : http/tests/inspector/inspect-element.html = TEXT
 
 BUGWK83503 LINUX DEBUG : plugins/inner-html-display-none.html = CRASH
 
+BUGWK83624 WIN : plugins/netscape-dom-access-and-reload.html = TEXT
+BUGWK83624 WIN : webaudio/audioparam-connect-audioratesignal.html = TEXT
+BUGWK83624 WIN : webaudio/audiobuffersource-multi-channels.html = AUDIO
+BUGWK83624 WIN : webaudio/audiobuffersource-playbackrate.html = AUDIO
 BUGWK83624 WIN : webaudio/audiobuffersource-playbackState.html = TEXT
+BUGWK83624 WIN : webaudio/audiobuffersource.html = AUDIO
 BUGWK83624 WIN : webaudio/audiochannelmerger-stereo.html = TEXT
 BUGWK83624 WIN : webaudio/audioparam-exponentialRampToValueAtTime.html = TEXT
 BUGWK83624 WIN : webaudio/audioparam-linearRampToValueAtTime.html = TEXT
@@ -3820,5 +3825,13 @@ BUGWK83624 WIN RELEASE : webaudio/convolution-mono-mono.html = TEXT
 BUGWK83624 WIN : webaudio/delaynode-maxdelay.html = TEXT
 BUGWK83624 WIN : webaudio/delaynode-scheduling.html = TEXT
 BUGWK83624 WIN : webaudio/delaynode.html = TEXT
+BUGWK83624 WIN : webaudio/gain.html = AUDIO
+BUGWK83624 WIN : webaudio/mixing.html = AUDIO
 BUGWK83624 WIN : webaudio/note-grain-on-play.html = TEXT
 BUGWK83624 WIN : webaudio/note-grain-on-timing.html = TEXT
+BUGWK83624 WIN : webaudio/up-mixing-mono-51.html = AUDIO
+BUGWK83624 WIN : webaudio/up-mixing-mono-stereo.html = AUDIO
+BUGWK83624 WIN : webaudio/up-mixing-stereo-51.html = AUDIO
+
+BUGWK83635 : fast/canvas/2d.backingStorePixelRatio.html = TIMEOUT
+BUGWK83635 : platform/chromium/virtual/gpu/fast/canvas/2d.backingStorePixelRatio.html = TIMEOUT
