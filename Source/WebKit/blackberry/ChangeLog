@@ -1,3 +1,15 @@
+2012-04-10  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Crash when tearing down web page rendered using WebPageCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=83567
+
+        Reviewed by Antonio Gomes.
+
+        Fixed by checking if there's a layer renderer before calling into it.
+
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::releaseLayerResources):
+
 2012-04-09  Eli Fidler  <efidler@rim.com>
 
         [BlackBerry] Update about:config page

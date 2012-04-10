@@ -143,7 +143,8 @@ bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRec
 
 void WebPageCompositorPrivate::releaseLayerResources()
 {
-    m_layerRenderer->releaseLayerResources();
+    if (m_layerRenderer)
+        m_layerRenderer->releaseLayerResources();
 }
 
 void WebPageCompositorPrivate::animationFrameChanged()
