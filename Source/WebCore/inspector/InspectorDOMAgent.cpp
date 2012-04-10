@@ -819,6 +819,8 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
     for (Vector<Document*>::iterator it = docs.begin(); it != docs.end(); ++it) {
         Document* document = *it;
         Node* node = document->documentElement();
+        if (!node)
+            continue;
 
         // Manual plain text search.
         while ((node = node->traverseNextNode(document->documentElement()))) {
