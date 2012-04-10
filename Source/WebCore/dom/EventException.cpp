@@ -31,18 +31,13 @@
 
 namespace WebCore {
 
-// FIXME: This should be an array of structs to pair the names and descriptions.
-static const char* const eventExceptionNames[] = {
-    "UNSPECIFIED_EVENT_TYPE_ERR",
-    "DISPATCH_REQUEST_ERR"
+static struct EventExceptionNameDescription {
+    const char* const name;
+    const char* const description;
+} exceptions[] = {
+    { "UNSPECIFIED_EVENT_TYPE_ERR", "The Event's type was not specified by initializing the event before the method was called." },
+    { "DISPATCH_REQUEST_ERR", "The Event object is already being dispatched." }
 };
-
-static const char* const eventExceptionDescriptions[] = {
-    "The Event's type was not specified by initializing the event before the method was called.",
-    "The Event object is already being dispatched."
-};
-
-COMPILE_ASSERT(WTF_ARRAY_LENGTH(eventExceptionNames) == WTF_ARRAY_LENGTH(eventExceptionDescriptions), EventExceptionTablesMustMatch);
 
 bool EventException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
 {
@@ -53,11 +48,11 @@ bool EventException::initializeDescription(ExceptionCode ec, ExceptionCodeDescri
     description->code = ec - EventExceptionOffset;
     description->type = EventExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(eventExceptionNames);
+    size_t tableSize = WTF_ARRAY_LENGTH(exceptions);
     size_t tableIndex = ec - UNSPECIFIED_EVENT_TYPE_ERR;
 
-    description->name = tableIndex < tableSize ? eventExceptionNames[tableIndex] : 0;
-    description->description = tableIndex < tableSize ? eventExceptionDescriptions[tableIndex] : 0;
+    description->name = tableIndex < tableSize ? exceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? exceptions[tableIndex].description : 0;
 
     return true;
 }
