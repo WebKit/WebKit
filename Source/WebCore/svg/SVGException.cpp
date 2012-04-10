@@ -34,20 +34,14 @@
 
 namespace WebCore {
 
-// FIXME: This should be an array of structs to pair the names and descriptions.
-static const char* const exceptionNames[] = {
-    "SVG_WRONG_TYPE_ERR",
-    "SVG_INVALID_VALUE_ERR",
-    "SVG_MATRIX_NOT_INVERTABLE"
+static struct SVGExceptionNameDescription {
+    const char* const name;
+    const char* const description;
+} exceptions[] = {
+    { "SVG_WRONG_TYPE_ERR", "An object of the wrong type was passed to an operation." },
+    { "SVG_INVALID_VALUE_ERR", "An invalid value was passed to an operation or assigned to an attribute." },
+    { "SVG_MATRIX_NOT_INVERTABLE", "An attempt was made to invert a matrix that is not invertible." }
 };
-
-static const char* const exceptionDescriptions[] = {
-    "An object of the wrong type was passed to an operation.",
-    "An invalid value was passed to an operation or assigned to an attribute.",
-    "An attempt was made to invert a matrix that is not invertible."
-};
-
-COMPILE_ASSERT(WTF_ARRAY_LENGTH(exceptionNames) == WTF_ARRAY_LENGTH(exceptionDescriptions), SVGExceptionTablesMustMatch);
 
 bool SVGException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
 {
@@ -58,11 +52,11 @@ bool SVGException::initializeDescription(ExceptionCode ec, ExceptionCodeDescript
     description->code = ec - SVGExceptionOffset;
     description->type = SVGExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNames);
+    size_t tableSize = WTF_ARRAY_LENGTH(exceptions);
     size_t tableIndex = ec - SVG_WRONG_TYPE_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNames[tableIndex] : 0;
-    description->description = tableIndex < tableSize ? exceptionDescriptions[tableIndex] : 0;
+    description->name = tableIndex < tableSize ? exceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? exceptions[tableIndex].description : 0;
 
     return true;
 }
