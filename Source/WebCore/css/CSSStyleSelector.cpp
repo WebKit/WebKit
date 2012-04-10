@@ -3643,7 +3643,11 @@ void CSSStyleSelector::applyProperty(CSSPropertyID id, CSSValue *value)
     }
     case CSSPropertyWebkitPerspective: {
         HANDLE_INHERIT_AND_INITIAL(perspective, Perspective)
-        if (primitiveValue && primitiveValue->getIdent() == CSSValueNone) {
+
+        if (!primitiveValue)
+            return;
+
+        if (primitiveValue->getIdent() == CSSValueNone) {
             m_style->setPerspective(0);
             return;
         }
