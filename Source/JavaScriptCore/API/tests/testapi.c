@@ -678,9 +678,22 @@ static JSValueRef Base_callAsFunction(JSContextRef ctx, JSObjectRef function, JS
     return JSValueMakeNumber(ctx, 1); // distinguish base call from derived call
 }
 
+static JSValueRef Base_returnHardNull(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    UNUSED_PARAM(ctx);
+    UNUSED_PARAM(function);
+    UNUSED_PARAM(thisObject);
+    UNUSED_PARAM(argumentCount);
+    UNUSED_PARAM(arguments);
+    UNUSED_PARAM(exception);
+    
+    return 0; // should convert to undefined!
+}
+
 static JSStaticFunction Base_staticFunctions[] = {
     { "baseProtoDup", NULL, kJSPropertyAttributeNone },
     { "baseProto", Base_callAsFunction, kJSPropertyAttributeNone },
+    { "baseHardNull", Base_returnHardNull, kJSPropertyAttributeNone },
     { 0, 0, 0 }
 };
 

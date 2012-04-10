@@ -1,3 +1,18 @@
+2012-04-09  Gavin Barraclough  <barraclough@apple.com>
+
+        If a callback function returns a C++ null, convert to undefined.
+        https://bugs.webkit.org/show_bug.cgi?id=83534
+
+        Reviewed by Geoff Garen.
+
+        * API/JSCallbackFunction.cpp:
+            - If a callback function returns a C++ null, convert to undefined.
+        (JSC::JSCallbackFunction::call):
+        * API/tests/testapi.c:
+        (Base_returnHardNull):
+        * API/tests/testapi.js:
+            - Add a test case for callback functions that return a C++ null.
+
 2012-04-09  Filip Pizlo  <fpizlo@apple.com>
 
         Classic interpreter's GC hooks shouldn't attempt to scan instructions for code blocks that
