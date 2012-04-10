@@ -34,16 +34,12 @@
 
 namespace WebCore {
 
-// FIXME: This should be an array of structs to pair the names and descriptions.
-static const char* const exceptionNames[] = {
-    "NOT_ALLOWED_ERR"
+static struct OperationNotAllowedExceptionNameDescription {
+    const char* const name;
+    const char* const description;
+} exceptions[] = {
+    { "NOT_ALLOWED_ERR", "A read method was called while the object was in the LOADING state due to a previous read call." }
 };
-
-static const char* const exceptionDescriptions[] = {
-    "A read method was called while the object was in the LOADING state due to a previous read call."
-};
-
-COMPILE_ASSERT(WTF_ARRAY_LENGTH(exceptionNames) == WTF_ARRAY_LENGTH(exceptionDescriptions), OperationNotAllowedExceptionTablesMustMatch);
 
 bool OperationNotAllowedException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
 {
@@ -54,11 +50,11 @@ bool OperationNotAllowedException::initializeDescription(ExceptionCode ec, Excep
     description->code = ec - OperationNotAllowedExceptionOffset;
     description->type = OperationNotAllowedExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNames);
+    size_t tableSize = WTF_ARRAY_LENGTH(exceptions);
     size_t tableIndex = ec - NOT_ALLOWED_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNames[tableIndex] : 0;
-    description->description = tableIndex < tableSize ? exceptionDescriptions[tableIndex] : 0;
+    description->name = tableIndex < tableSize ? exceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? exceptions[tableIndex].description : 0;
 
     return true;
 }
