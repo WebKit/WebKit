@@ -732,8 +732,8 @@ void CCThreadProxy::layerTreeHostClosedOnImplThread(CCCompletionEvent* completio
     TRACE_EVENT("CCThreadProxy::layerTreeHostClosedOnImplThread", this, 0);
     ASSERT(isImplThread());
     m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
-    m_layerTreeHostImpl.clear();
     m_inputHandlerOnImplThread.clear();
+    m_layerTreeHostImpl.clear();
     m_schedulerOnImplThread.clear();
     completion->signal();
 }
