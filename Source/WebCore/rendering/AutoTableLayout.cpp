@@ -251,8 +251,8 @@ void AutoTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, Layout
 
     if (scaleColumns) {
         maxNonPercent = maxNonPercent * 100 / max(remainingPercent, epsilon);
-        maxWidth = max<int>(maxWidth, static_cast<int>(min(maxNonPercent, numeric_limits<LayoutUnit>::max() / 2.0f)));
-        maxWidth = max<int>(maxWidth, static_cast<int>(min(maxPercent, numeric_limits<LayoutUnit>::max() / 2.0f)));
+        maxWidth = max<int>(maxWidth, static_cast<int>(min(maxNonPercent, MAX_LAYOUT_UNIT / 2.0f)));
+        maxWidth = max<int>(maxWidth, static_cast<int>(min(maxPercent, MAX_LAYOUT_UNIT / 2.0f)));
     }
 
     maxWidth = max<int>(maxWidth, spanMaxLogicalWidth);
@@ -267,7 +267,7 @@ void AutoTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, Layout
         maxWidth = minWidth;
     } else if (!remainingPercent && maxNonPercent) {
         // if there was no remaining percent, maxWidth is invalid
-        maxWidth = std::numeric_limits<LayoutUnit>::max();
+        maxWidth = MAX_LAYOUT_UNIT;
     }
 
     Length tableLogicalMinWidth = m_table->style()->logicalMinWidth();

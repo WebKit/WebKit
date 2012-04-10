@@ -83,7 +83,7 @@ public:
 
 inline IntSize defaultMinimumSizeForResizing()
 {
-    return IntSize(std::numeric_limits<LayoutUnit>::max(), std::numeric_limits<LayoutUnit>::max());
+    return IntSize(MAX_LAYOUT_UNIT, MAX_LAYOUT_UNIT);
 }
 
 inline ElementRareData::ElementRareData()

@@ -1504,7 +1504,7 @@ void RenderListMarker::updateMargins()
                     case NoneListStyle:
                         break;
                     default:
-                        marginStart = m_text.isEmpty() ? zeroLayoutUnit : -minPreferredLogicalWidth() - offset / 2;
+                        marginStart = m_text.isEmpty() ? ZERO_LAYOUT_UNIT : -minPreferredLogicalWidth() - offset / 2;
                 }
             }
             marginEnd = -marginStart - minPreferredLogicalWidth();

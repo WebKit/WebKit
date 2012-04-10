@@ -296,7 +296,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit, BlockLayo
 
 void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(FlexOrderIterator& iterator, WTF::Vector<LineContext>& lineContexts, LayoutUnit& oldClientAfterEdge)
 {
-    LayoutUnit crossAxisStartEdge = lineContexts.isEmpty() ? zeroLayoutUnit : lineContexts[0].crossAxisOffset;
+    LayoutUnit crossAxisStartEdge = lineContexts.isEmpty() ? ZERO_LAYOUT_UNIT : lineContexts[0].crossAxisOffset;
     packFlexLines(iterator, lineContexts);
 
     // If we have a single line flexbox, the line height is all the available space.
@@ -690,7 +690,7 @@ LayoutUnit RenderFlexibleBox::lineBreakLength()
 
     LayoutUnit height = computeContentLogicalHeightUsing(style()->logicalHeight());
     if (height == -1)
-        height = std::numeric_limits<LayoutUnit>::max();
+        height = MAX_LAYOUT_UNIT;
     LayoutUnit maxHeight = computeContentLogicalHeightUsing(style()->logicalMaxHeight());
     if (maxHeight != -1)
         height = std::min(height, maxHeight);
@@ -1038,7 +1038,7 @@ void RenderFlexibleBox::alignChildren(FlexOrderIterator& iterator, const WTF::Ve
 
     RenderBox* child = iterator.first();
     for (size_t lineNumber = 0; lineNumber < lineContexts.size(); ++lineNumber) {
-        LayoutUnit minMarginAfterBaseline = std::numeric_limits<LayoutUnit>::max();
+        LayoutUnit minMarginAfterBaseline = MAX_LAYOUT_UNIT;
         LayoutUnit lineCrossAxisExtent = lineContexts[lineNumber].crossAxisExtent;
         LayoutUnit maxAscent = lineContexts[lineNumber].maxAscent;
 
@@ -1113,7 +1113,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox* child, LayoutUni
     } else if (isColumnFlow() && child->style()->logicalWidth().isAuto() && isMultiline()) {
         // FIXME: Handle min-width and max-width.
         LayoutUnit childWidth = lineCrossAxisExtent - crossAxisMarginExtentForChild(child);
-        child->setOverrideWidth(std::max(zeroLayoutUnit, childWidth));
+        child->setOverrideWidth(std::max(ZERO_LAYOUT_UNIT, childWidth));
         child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
     }

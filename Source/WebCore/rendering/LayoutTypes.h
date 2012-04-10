@@ -47,7 +47,9 @@ typedef IntPoint LayoutPoint;
 typedef IntSize LayoutSize;
 typedef IntRect LayoutRect;
 
-const LayoutUnit zeroLayoutUnit = 0;
+#define MAX_LAYOUT_UNIT INT_MAX
+#define MIN_LAYOUT_UNIT INT_MIN
+#define ZERO_LAYOUT_UNIT 0
 
 inline LayoutRect enclosingLayoutRect(const FloatRect& rect)
 {

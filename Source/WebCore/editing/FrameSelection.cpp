@@ -76,7 +76,7 @@ using namespace HTMLNames;
 
 static inline LayoutUnit NoXPosForVerticalArrowNavigation()
 {
-    return std::numeric_limits<LayoutUnit>::min();
+    return MIN_LAYOUT_UNIT;
 }
 
 CaretBase::CaretBase(CaretVisibility visibility)

@@ -486,7 +486,7 @@ LayoutUnit RenderBoxModelObject::offsetLeft() const
         return 0;
     
     RenderBoxModelObject* offsetPar = offsetParent();
-    LayoutUnit xPos = (isBox() ? toRenderBox(this)->left() : zeroLayoutUnit);
+    LayoutUnit xPos = (isBox() ? toRenderBox(this)->left() : ZERO_LAYOUT_UNIT);
     
     // If the offsetParent of the element is null, or is the HTML body element,
     // return the distance between the canvas origin and the left border edge 
@@ -520,7 +520,7 @@ LayoutUnit RenderBoxModelObject::offsetTop() const
         return 0;
     
     RenderBoxModelObject* offsetPar = offsetParent();
-    LayoutUnit yPos = (isBox() ? toRenderBox(this)->top() : zeroLayoutUnit);
+    LayoutUnit yPos = (isBox() ? toRenderBox(this)->top() : ZERO_LAYOUT_UNIT);
     
     // If the offsetParent of the element is null, or is the HTML body element,
     // return the distance between the canvas origin and the top border edge 
@@ -763,8 +763,8 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     
     int bLeft = includeLeftEdge ? borderLeft() : 0;
     int bRight = includeRightEdge ? borderRight() : 0;
-    LayoutUnit pLeft = includeLeftEdge ? paddingLeft() : zeroLayoutUnit;
-    LayoutUnit pRight = includeRightEdge ? paddingRight() : zeroLayoutUnit;
+    LayoutUnit pLeft = includeLeftEdge ? paddingLeft() : ZERO_LAYOUT_UNIT;
+    LayoutUnit pRight = includeRightEdge ? paddingRight() : ZERO_LAYOUT_UNIT;
 
     GraphicsContextStateSaver clipWithScrollingStateSaver(*context, clippedWithLocalScrolling);
     LayoutRect scrolledPaintRect = rect;
@@ -787,10 +787,10 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     if (bgLayer->clip() == PaddingFillBox || bgLayer->clip() == ContentFillBox) {
         // Clip to the padding or content boxes as necessary.
         bool includePadding = bgLayer->clip() == ContentFillBox;
-        LayoutRect clipRect = LayoutRect(scrolledPaintRect.x() + bLeft + (includePadding ? pLeft : zeroLayoutUnit),
-                                   scrolledPaintRect.y() + borderTop() + (includePadding ? paddingTop() : zeroLayoutUnit),
-                                   scrolledPaintRect.width() - bLeft - bRight - (includePadding ? pLeft + pRight : zeroLayoutUnit),
-                                   scrolledPaintRect.height() - borderTop() - borderBottom() - (includePadding ? paddingTop() + paddingBottom() : zeroLayoutUnit));
+        LayoutRect clipRect = LayoutRect(scrolledPaintRect.x() + bLeft + (includePadding ? pLeft : ZERO_LAYOUT_UNIT),
+                                   scrolledPaintRect.y() + borderTop() + (includePadding ? paddingTop() : ZERO_LAYOUT_UNIT),
+                                   scrolledPaintRect.width() - bLeft - bRight - (includePadding ? pLeft + pRight : ZERO_LAYOUT_UNIT),
+                                   scrolledPaintRect.height() - borderTop() - borderBottom() - (includePadding ? paddingTop() + paddingBottom() : ZERO_LAYOUT_UNIT));
         backgroundClipStateSaver.save();
         context->clip(clipRect);
     } else if (bgLayer->clip() == TextFillBox) {
