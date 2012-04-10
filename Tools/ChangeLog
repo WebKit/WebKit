@@ -1,3 +1,18 @@
+2012-04-09  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Update pywebsocket to 0.7.4.
+        https://bugs.webkit.org/show_bug.cgi?id=83461
+
+        Reviewed by Kent Tamura.
+
+        This version supports TLS by using ssl in addition to pyOpenSSL.
+        Other functional difrerences from 0.7.2 are:
+         - strict Sec-WebSocket-Key validation conforming RFC 4648
+         - compression ratio logging in debug
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_pywebsocket):
+
 2012-04-09  Dirk Pranke  <dpranke@chromium.org>
 
         add a webkit-patch print-baselines command
