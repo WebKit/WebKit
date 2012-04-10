@@ -1,5 +1,16 @@
 2012-04-10  Patrick Gansterer  <paroga@webkit.org>
 
+        [CMake] Add missing DERIVED_SOURCES_WEBKIT_DIR variable
+        https://bugs.webkit.org/show_bug.cgi?id=83573
+
+        Reviewed by Daniel Bates.
+
+        We need this variable when ports want to generate files in the WebKit target.
+
+        * CMakeLists.txt:
+
+2012-04-10  Patrick Gansterer  <paroga@webkit.org>
+
         [CMake] Enable USE_FOLDERS property
         https://bugs.webkit.org/show_bug.cgi?id=83571
 
