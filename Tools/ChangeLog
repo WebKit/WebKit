@@ -1,3 +1,18 @@
+2012-04-10  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Enable USE_FOLDERS property
+        https://bugs.webkit.org/show_bug.cgi?id=83571
+
+        Reviewed by Daniel Bates.
+
+        Setting the FOLDER property on targets gives more structure
+        to the generated Visual Studio solutions.
+        This does not affect other CMake generators.
+
+        * DumpRenderTree/efl/CMakeLists.txt:
+        * EWebLauncher/CMakeLists.txt:
+        * WinCELauncher/CMakeLists.txt:
+
 2012-04-10  David Dorwin  <ddorwin@chromium.org>
 
         Add Encrypted Media Extensions methods to HTMLMediaElement
