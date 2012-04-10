@@ -76,7 +76,7 @@ EncodedJSValue JSCallbackFunction::call(ExecState* exec)
 
     // result must be a valid JSValue.
     if (!result)
-        return throwVMTypeError(exec);
+        return JSValue::encode(jsUndefined());
 
     return JSValue::encode(toJS(exec, result));
 }
