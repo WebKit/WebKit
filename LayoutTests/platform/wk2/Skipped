@@ -1416,6 +1416,7 @@ editing/pasteboard/file-input-files-access.html
 fast/dom/Window/window-postmessage-clone-frames.html
 fast/events/drag-file-crash.html
 fast/events/drag-to-navigate.html
+fast/events/drop-with-file-paths.html
 fast/events/dropzone-004.html
 fast/events/file-input-hidden-in-ondrop.html
 fast/events/input-element-display-none-in-dragleave-crash.html
