@@ -650,7 +650,7 @@ TEST(LayerChromiumLayerTreeHostTest, enteringTree)
 
     assertLayerTreeHostMatchesForSubtree(parent.get(), 0);
 
-    OwnPtr<FakeCCLayerTreeHost> layerTreeHost = FakeCCLayerTreeHost::create();
+    OwnPtr<FakeCCLayerTreeHost> layerTreeHost(FakeCCLayerTreeHost::create());
     // Setting the root layer should set the host pointer for all layers in the tree.
     layerTreeHost->setRootLayer(parent.get());
 
@@ -669,7 +669,7 @@ TEST(LayerChromiumLayerTreeHostTest, addingLayerSubtree)
 {
     WebKit::WebCompositor::initialize(0);
     RefPtr<LayerChromium> parent = LayerChromium::create();
-    OwnPtr<FakeCCLayerTreeHost> layerTreeHost = FakeCCLayerTreeHost::create();
+    OwnPtr<FakeCCLayerTreeHost> layerTreeHost(FakeCCLayerTreeHost::create());
 
     layerTreeHost->setRootLayer(parent.get());
 
@@ -711,14 +711,14 @@ TEST(LayerChromiumLayerTreeHostTest, changeHost)
     child->setReplicaLayer(replica.get());
     replica->setMaskLayer(mask.get());
 
-    OwnPtr<FakeCCLayerTreeHost> firstLayerTreeHost = FakeCCLayerTreeHost::create();
+    OwnPtr<FakeCCLayerTreeHost> firstLayerTreeHost(FakeCCLayerTreeHost::create());
     firstLayerTreeHost->setRootLayer(parent.get());
 
     assertLayerTreeHostMatchesForSubtree(parent.get(), firstLayerTreeHost.get());
 
     // Now re-root the tree to a new host (simulating what we do on a context lost event).
     // This should update the host pointers for all layers in the tree.
-    OwnPtr<FakeCCLayerTreeHost> secondLayerTreeHost = FakeCCLayerTreeHost::create();
+    OwnPtr<FakeCCLayerTreeHost> secondLayerTreeHost(FakeCCLayerTreeHost::create());
     secondLayerTreeHost->setRootLayer(parent.get());
 
     assertLayerTreeHostMatchesForSubtree(parent.get(), secondLayerTreeHost.get());
@@ -743,13 +743,13 @@ TEST(LayerChromiumLayerTreeHostTest, changeHostInSubtree)
     secondChild->addChild(secondGrandChild);
     firstParent->addChild(secondChild);
 
-    OwnPtr<FakeCCLayerTreeHost> firstLayerTreeHost = FakeCCLayerTreeHost::create();
+    OwnPtr<FakeCCLayerTreeHost> firstLayerTreeHost(FakeCCLayerTreeHost::create());
     firstLayerTreeHost->setRootLayer(firstParent.get());
 
     assertLayerTreeHostMatchesForSubtree(firstParent.get(), firstLayerTreeHost.get());
 
     // Now reparent the subtree starting at secondChild to a layer in a different tree.
-    OwnPtr<FakeCCLayerTreeHost> secondLayerTreeHost = FakeCCLayerTreeHost::create();
+    OwnPtr<FakeCCLayerTreeHost> secondLayerTreeHost(FakeCCLayerTreeHost::create());
     secondLayerTreeHost->setRootLayer(secondParent.get());
 
     secondParent->addChild(secondChild);
@@ -782,7 +782,7 @@ TEST(LayerChromiumLayerTreeHostTest, replaceMaskAndReplicaLayer)
     mask->addChild(maskChild);
     replica->addChild(replicaChild);
 
-    OwnPtr<FakeCCLayerTreeHost> layerTreeHost = FakeCCLayerTreeHost::create();
+    OwnPtr<FakeCCLayerTreeHost> layerTreeHost(FakeCCLayerTreeHost::create());
     layerTreeHost->setRootLayer(parent.get());
 
     assertLayerTreeHostMatchesForSubtree(parent.get(), layerTreeHost.get());

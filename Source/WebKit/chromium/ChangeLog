@@ -1,3 +1,10 @@
+2012-04-09  James Robinson  <jamesr@chromium.org>
+
+        [chromium] More unreviewed OwnPtr<>::operator= related clang build fixes in unit tests.
+
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        * tests/LayerChromiumTest.cpp:
+
 2012-04-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Cull occluded surface quads

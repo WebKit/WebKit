@@ -111,7 +111,7 @@ protected:
            thread = adoptPtr(webKitPlatformSupport()->createThread("Canvas2DLayerChromiumTest"));
         WebCompositor::initialize(thread.get());
 
-        OwnPtr<FakeCCLayerTreeHost> layerTreeHost = FakeCCLayerTreeHost::create();
+        OwnPtr<FakeCCLayerTreeHost> layerTreeHost(FakeCCLayerTreeHost::create());
         // Force an update, so that we get a valid TextureManager.
         layerTreeHost->updateLayers();
 
