@@ -987,19 +987,6 @@ WebInspector.HeapSnapshot.prototype = {
         return new WebInspector.HeapSnapshotNode(this, this._rootNodeIndex);
     },
 
-    get maxNodeId()
-    {
-        if (typeof this._maxNodeId === "number")
-            return this._maxNodeId;
-        this._maxNodeId = 0;
-        for (var nodeIdIndex = this._nodeIdOffset; nodeIdIndex < this._onlyNodes.length; nodeIdIndex += this._nodeFieldCount) {
-            var id = this._onlyNodes[nodeIdIndex];
-            if ((id % 2) && id > this._maxNodeId)
-                this._maxNodeId = id;
-        }
-        return this._maxNodeId;
-    },
-
     get rootNodeIndex()
     {
         return this._rootNodeIndex;
@@ -1434,7 +1421,7 @@ WebInspector.HeapSnapshot.prototype = {
 
     updateStaticData: function()
     {
-        return {nodeCount: this.nodeCount, rootNodeIndex: this._rootNodeIndex, totalSize: this.totalSize, uid: this.uid, nodeFlags: this._nodeFlags, maxNodeId: this.maxNodeId};
+        return {nodeCount: this.nodeCount, rootNodeIndex: this._rootNodeIndex, totalSize: this.totalSize, uid: this.uid, nodeFlags: this._nodeFlags};
     }
 };
 

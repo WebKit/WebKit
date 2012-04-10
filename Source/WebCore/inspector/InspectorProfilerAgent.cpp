@@ -182,6 +182,7 @@ PassRefPtr<InspectorObject> InspectorProfilerAgent::createSnapshotHeader(const S
     header->setString("title", snapshot.title());
     header->setNumber("uid", snapshot.uid());
     header->setString("typeId", String(HeapProfileType));
+    header->setNumber("maxJSObjectId", snapshot.maxSnapshotJSObjectId());
     return header;
 }
 

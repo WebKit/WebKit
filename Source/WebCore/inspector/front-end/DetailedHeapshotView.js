@@ -225,7 +225,7 @@ WebInspector.HeapSnapshotConstructorsDataGrid = function()
         retainedSize: { title: WebInspector.UIString("Retained Size"), width: "120px", sort: "descending", sortable: true }
     };
     WebInspector.HeapSnapshotSortableDataGrid.call(this, columns);
-    this._filterProfileIndex = -1;
+    this._profileIndex = -1;
 }
 
 WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
@@ -246,7 +246,7 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
     {
         this.snapshotView = snapshotView;
         this.snapshot = snapshot;
-        if (this._filterProfileIndex === -1)
+        if (this._profileIndex === -1)
             this.populateChildren();
     },
 
@@ -263,42 +263,25 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
         this.removeChildren();
         this.resetSortingCache();
 
-        var key = this._filterProfileIndex === -1 ? "allObjects" : this._minNodeId + ".." + this._maxNodeId;
-        var filter = this._filterProfileIndex === -1 ? null : "function(node) { var id = node.id; return id > " + this._minNodeId + " && id <= " + this._maxNodeId + "; }";
+        var key = this._profileIndex === -1 ? "allObjects" : this._minNodeId + ".." + this._maxNodeId;
+        var filter = this._profileIndex === -1 ? null : "function(node) { var id = node.id; return id > " + this._minNodeId + " && id <= " + this._maxNodeId + "; }";
 
         this.snapshot.aggregates(false, key, filter, aggregatesReceived.bind(this, key));
     },
 
-    _filterSelectIndexChanged: function(loader, profileIndex)
+    _filterSelectIndexChanged: function(profiles, profileIndex)
     {
-        this._filterProfileIndex = profileIndex;
+        this._profileIndex = profileIndex;
 
         delete this._maxNodeId;
         delete this._minNodeId;
 
-        if (this._filterProfileIndex === -1) {
-            this.populateChildren();
-            return;
+        if (this._profileIndex !== -1) {
+            this._minNodeId = profileIndex > 0 ? profiles[profileIndex - 1].maxJSObjectId : 0;
+            this._maxNodeId = profiles[profileIndex].maxJSObjectId;
         }
 
-        function firstSnapshotLoaded(snapshot)
-        {
-            this._maxNodeId = snapshot.maxNodeId;
-            if (profileIndex > 0)
-                loader(profileIndex - 1, secondSnapshotLoaded.bind(this));
-            else {
-                this._minNodeId = 0;
-                this.populateChildren();
-            }
-        }
-
-        function secondSnapshotLoaded(snapshot)
-        {
-            this._minNodeId = snapshot.maxNodeId;
-            this.populateChildren();
-        }
-
-        loader(profileIndex, firstSnapshotLoaded.bind(this));
+        this.populateChildren();
     },
 
 };
@@ -778,7 +761,7 @@ WebInspector.DetailedHeapshotView.prototype = {
     _changeFilter: function()
     {
         var profileIndex = this.filterSelectElement.selectedIndex - 1;
-        this.dataGrid._filterSelectIndexChanged(this._loadProfileByIndex.bind(this), profileIndex);
+        this.dataGrid._filterSelectIndexChanged(this._profiles(), profileIndex);
 
         if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
             return;

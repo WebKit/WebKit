@@ -56,6 +56,11 @@ unsigned int ScriptHeapSnapshot::uid() const
     return m_snapshot->GetUid();
 }
 
+SnapshotObjectId ScriptHeapSnapshot::maxSnapshotJSObjectId() const
+{
+    return m_snapshot->GetMaxSnapshotJSObjectId();
+}
+
 namespace {
 
 class OutputStreamAdapter : public v8::OutputStream {
