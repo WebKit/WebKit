@@ -31,18 +31,13 @@
 
 namespace WebCore {
 
-// FIXME: This should be an array of structs to pair the names and descriptions.
-static const char* const exceptionNames[] = {
-    "NETWORK_ERR",
-    "ABORT_ERR"
+static struct XMLHttpRequestExceptionNameDescription {
+    const char* const name;
+    const char* const description;
+} exceptions[] = {
+    { "NETWORK_ERR", "A network error occurred in synchronous requests." },
+    { "ABORT_ERR", "The user aborted a request in synchronous requests." }
 };
-
-static const char* const exceptionDescriptions[] = {
-    "A network error occurred in synchronous requests.",
-    "The user aborted a request in synchronous requests."
-};
-
-COMPILE_ASSERT(WTF_ARRAY_LENGTH(exceptionNames) == WTF_ARRAY_LENGTH(exceptionDescriptions), XMLHttpRequestExceptionTablesMustMatch);
 
 bool XMLHttpRequestException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
 {
@@ -53,11 +48,11 @@ bool XMLHttpRequestException::initializeDescription(ExceptionCode ec, ExceptionC
     description->code = ec - XMLHttpRequestExceptionOffset;
     description->type = XMLHttpRequestExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNames);
+    size_t tableSize = WTF_ARRAY_LENGTH(exceptions);
     size_t tableIndex = ec - NETWORK_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNames[tableIndex] : 0;
-    description->description = tableIndex < tableSize ? exceptionDescriptions[tableIndex] : 0;
+    description->name = tableIndex < tableSize ? exceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? exceptions[tableIndex].description : 0;
 
     return true;
 }
