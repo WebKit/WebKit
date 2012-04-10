@@ -579,7 +579,7 @@ void QtViewportInteractionEngine::itemSizeChanged()
         return;
 
     ViewportUpdateDeferrer guard(this);
-    ensureContentWithinViewportBoundary();
+    ensureContentWithinViewportBoundary(true);
 }
 
 void QtViewportInteractionEngine::scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale)

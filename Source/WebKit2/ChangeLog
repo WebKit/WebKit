@@ -1,5 +1,18 @@
 2012-04-10  Dinu Jacob  <dinu.jacob@nokia.com>
 
+        [Qt][WK2] Assertion failure on loading new page after panning/zooming
+        https://bugs.webkit.org/show_bug.cgi?id=83049
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When handling contents size change, set the visible content rectangle immediately,
+        instead of animating to it.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::itemSizeChanged):
+
+2012-04-10  Dinu Jacob  <dinu.jacob@nokia.com>
+
         [Qt][WK2] Title in MiniBrowser is not updated for a page with no title
         https://bugs.webkit.org/show_bug.cgi?id=82483
 
