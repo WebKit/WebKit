@@ -31,6 +31,7 @@
 #include "AudioBus.h"
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
+#include "AudioParam.h"
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -42,6 +43,7 @@ AudioNodeOutput::AudioNodeOutput(AudioNode* node, unsigned numberOfChannels)
     , m_actualDestinationBus(0)
     , m_isEnabled(true)
     , m_renderingFanOutCount(0)
+    , m_renderingParamFanOutCount(0)
 {
     ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels());
 
@@ -80,6 +82,7 @@ void AudioNodeOutput::updateRenderingState()
 {
     updateNumberOfChannels();
     m_renderingFanOutCount = fanOutCount();
+    m_renderingParamFanOutCount = paramFanOutCount();
 }
 
 void AudioNodeOutput::updateNumberOfChannels()
@@ -110,7 +113,7 @@ void AudioNodeOutput::propagateChannelCount()
 AudioBus* AudioNodeOutput::pull(AudioBus* inPlaceBus, size_t framesToProcess)
 {
     ASSERT(context()->isAudioThread());
-    ASSERT(m_renderingFanOutCount > 0);
+    ASSERT(m_renderingFanOutCount > 0 || m_renderingParamFanOutCount > 0);
     
     // Causes our AudioNode to process if it hasn't already for this render quantum.
     // We try to do in-place processing (using inPlaceBus) if at all possible,
@@ -118,7 +121,7 @@ AudioBus* AudioNodeOutput::pull(AudioBus* inPlaceBus, size_t framesToProcess)
     // In this case pull() is called multiple times per rendering quantum, and the processIfNecessary() call below will
     // cause our node to process() only the first time, caching the output in m_internalOutputBus for subsequent calls.    
     
-    bool isInPlace = inPlaceBus && inPlaceBus->numberOfChannels() == numberOfChannels() && m_renderingFanOutCount == 1;
+    bool isInPlace = inPlaceBus && inPlaceBus->numberOfChannels() == numberOfChannels() && (m_renderingFanOutCount + m_renderingParamFanOutCount) == 1;
 
     // Setup the actual destination bus for processing when our node's process() method gets called in processIfNecessary() below.
     m_actualDestinationBus = isInPlace ? inPlaceBus : m_internalBus.get();
@@ -134,15 +137,26 @@ AudioBus* AudioNodeOutput::bus() const
     return m_actualDestinationBus;
 }
 
+unsigned AudioNodeOutput::fanOutCount()
+{
+    ASSERT(context()->isGraphOwner());
+    return m_inputs.size();
+}
+
+unsigned AudioNodeOutput::paramFanOutCount()
+{
+    ASSERT(context()->isGraphOwner());
+    return m_params.size();
+}
+
 unsigned AudioNodeOutput::renderingFanOutCount() const
 {
     return m_renderingFanOutCount;
 }
 
-unsigned AudioNodeOutput::fanOutCount()
+unsigned AudioNodeOutput::renderingParamFanOutCount() const
 {
-    ASSERT(context()->isGraphOwner());
-    return m_inputs.size();
+    return m_renderingParamFanOutCount;
 }
 
 void AudioNodeOutput::addInput(AudioNodeInput* input)
@@ -176,6 +190,46 @@ void AudioNodeOutput::disconnectAllInputs()
         AudioNodeInput* input = *m_inputs.begin();
         input->disconnect(this);
     }
+}
+
+void AudioNodeOutput::addParam(AudioParam* param)
+{
+    ASSERT(context()->isGraphOwner());
+
+    ASSERT(param);
+    if (!param)
+        return;
+
+    m_params.add(param);
+}
+
+void AudioNodeOutput::removeParam(AudioParam* param)
+{
+    ASSERT(context()->isGraphOwner());
+
+    ASSERT(param);
+    if (!param)
+        return;
+
+    m_params.remove(param);
+}
+
+void AudioNodeOutput::disconnectAllParams()
+{
+    ASSERT(context()->isGraphOwner());
+
+    for (ParamsIterator i = m_params.begin(); i != m_params.end(); ++i) {
+        AudioParam* param = *i;
+        param->disconnect(this);
+    }
+
+    m_params.clear();
+}
+
+void AudioNodeOutput::disconnectAll()
+{
+    disconnectAllInputs();
+    disconnectAllParams();
 }
 
 void AudioNodeOutput::disable()

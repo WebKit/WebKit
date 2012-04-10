@@ -33,6 +33,9 @@ module audio {
         void connect(in AudioNode destination, in [Optional=DefaultIsUndefined] unsigned long output, in [Optional=DefaultIsUndefined] unsigned long input)
             raises(DOMException);
 
+        void connect(in AudioParam destination, in [Optional=DefaultIsUndefined] unsigned long output)
+            raises(DOMException);
+
         void disconnect(in [Optional=DefaultIsUndefined] unsigned long output)
             raises(DOMException);
     };

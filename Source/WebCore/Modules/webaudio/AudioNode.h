@@ -37,6 +37,7 @@ namespace WebCore {
 class AudioContext;
 class AudioNodeInput;
 class AudioNodeOutput;
+class AudioParam;
 
 typedef int ExceptionCode;
 
@@ -116,6 +117,7 @@ public:
 
     // Called from main thread by corresponding JavaScript methods.
     void connect(AudioNode*, unsigned outputIndex, unsigned inputIndex, ExceptionCode&);
+    void connect(AudioParam*, unsigned outputIndex, ExceptionCode&);
     void disconnect(unsigned outputIndex, ExceptionCode&);
 
     virtual float sampleRate() const { return m_sampleRate; }

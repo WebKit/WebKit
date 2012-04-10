@@ -57,17 +57,16 @@ public:
     // Called from context's audio thread.
     AudioBus* bus() const;
 
-    // fanOutCount() is the number of AudioNodeInputs that we're connected to.
-    // This function should not be called in audio thread rendering code, instead renderingFanOutCount() should be used.
-    // It must be called with the context's graph lock.
-    unsigned fanOutCount();
-
     // renderingFanOutCount() is the number of AudioNodeInputs that we're connected to during rendering.
     // Unlike fanOutCount() it will not change during the course of a render quantum.
     unsigned renderingFanOutCount() const;
 
-    // It must be called with the context's graph lock.
-    void disconnectAllInputs();
+    // renderingParamFanOutCount() is the number of AudioParams that we're connected to during rendering.
+    // Unlike paramFanOutCount() it will not change during the course of a render quantum.
+    unsigned renderingParamFanOutCount() const;
+
+    // Must be called with the context's graph lock.
+    void disconnectAll();
 
     void setNumberOfChannels(unsigned);
     unsigned numberOfChannels() const { return m_numberOfChannels; }
@@ -87,11 +86,28 @@ private:
     AudioNode* m_node;
 
     friend class AudioNodeInput;
+    friend class AudioParam;
     
     // These are called from AudioNodeInput.
     // They must be called with the context's graph lock.
     void addInput(AudioNodeInput*);
     void removeInput(AudioNodeInput*);
+    void addParam(AudioParam*);
+    void removeParam(AudioParam*);
+
+    // fanOutCount() is the number of AudioNodeInputs that we're connected to.
+    // This method should not be called in audio thread rendering code, instead renderingFanOutCount() should be used.
+    // It must be called with the context's graph lock.
+    unsigned fanOutCount();
+
+    // Similar to fanOutCount(), paramFanOutCount() is the number of AudioParams that we're connected to.
+    // This method should not be called in audio thread rendering code, instead renderingParamFanOutCount() should be used.
+    // It must be called with the context's graph lock.
+    unsigned paramFanOutCount();
+
+    // Must be called with the context's graph lock.
+    void disconnectAllInputs();
+    void disconnectAllParams();
 
     // updateInternalBus() updates m_internalBus appropriately for the number of channels.
     // It is called in the constructor or in the audio thread with the context's graph lock.
@@ -120,10 +136,14 @@ private:
     HashSet<AudioNodeInput*> m_inputs;
     typedef HashSet<AudioNodeInput*>::iterator InputsIterator;
     bool m_isEnabled;
-    
-    // For the purposes of rendering, keeps track of the number of inputs we're connected to.
-    // This value should only be changed at the very start or end of the rendering quantum.
+
+    // For the purposes of rendering, keeps track of the number of inputs and AudioParams we're connected to.
+    // These value should only be changed at the very start or end of the rendering quantum.
     unsigned m_renderingFanOutCount;
+    unsigned m_renderingParamFanOutCount;
+
+    HashSet<AudioParam*> m_params;
+    typedef HashSet<AudioParam*>::iterator ParamsIterator;
 };
 
 } // namespace WebCore

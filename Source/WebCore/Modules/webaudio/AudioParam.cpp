@@ -30,6 +30,7 @@
 #include "AudioParam.h"
 
 #include "AudioNode.h"
+#include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
 #include "FloatConversion.h"
 #include <wtf/MathExtras.h>
@@ -95,11 +96,43 @@ bool AudioParam::smooth()
 
 void AudioParam::calculateSampleAccurateValues(float* values, unsigned numberOfValues)
 {
-    bool isSafe = context() && context()->isAudioThread() && values;
+    bool isSafe = context() && context()->isAudioThread() && values && numberOfValues;
     ASSERT(isSafe);
     if (!isSafe)
         return;
 
+    if (m_audioRateSignal)
+        calculateAudioRateSignalValues(values, numberOfValues);
+    else
+        calculateTimelineValues(values, numberOfValues);
+}
+
+void AudioParam::calculateAudioRateSignalValues(float* values, unsigned numberOfValues)
+{
+    // FIXME: support fan-in (multiple audio connections to this parameter with unity-gain summing).
+    // https://bugs.webkit.org/show_bug.cgi?id=83610
+    ASSERT(m_audioRateSignal);
+
+    AudioBus* bus = m_audioRateSignal->pull(0, numberOfValues);
+    bool isBusGood = bus && bus->numberOfChannels() && bus->length() >= numberOfValues;
+    ASSERT(isBusGood);
+    if (!isBusGood)
+        return;
+
+    if (bus->numberOfChannels() == 1) {
+        // The normal case is to deal with a mono audio-rate signal.
+        memcpy(values, bus->channel(0)->data(), sizeof(float) * numberOfValues);
+    } else {
+        // Do a standard mixdown to one channel if necessary.
+        AudioBus wrapperBus(1, numberOfValues, false);
+        wrapperBus.setChannelMemory(0, values, numberOfValues);
+        wrapperBus.copyFrom(*bus); // Mixdown.
+    }
+    m_value = values[0]; // Update to first value.
+}
+
+void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
+{
     // Calculate values for this render quantum.
     // Normally numberOfValues will equal AudioNode::ProcessingSizeInFrames (the render quantum size).
     float sampleRate = context()->sampleRate();
@@ -109,6 +142,35 @@ void AudioParam::calculateSampleAccurateValues(float* values, unsigned numberOfV
     // Note we're running control rate at the sample-rate.
     // Pass in the current value as default value.
     m_value = m_timeline.valuesForTimeRange(startTime, endTime, narrowPrecisionToFloat(m_value), values, numberOfValues, sampleRate, sampleRate);
+}
+
+void AudioParam::connect(AudioNodeOutput* audioRateSignal)
+{
+    ASSERT(context()->isGraphOwner());
+    ASSERT(audioRateSignal);
+    if (!audioRateSignal)
+        return;
+
+    if (m_audioRateSignal && m_audioRateSignal != audioRateSignal) {
+        // Because we don't currently support fan-in we must explicitly disconnect from an old output.
+        m_audioRateSignal->removeParam(this);
+    }
+
+    audioRateSignal->addParam(this);
+    m_audioRateSignal = audioRateSignal;
+}
+
+void AudioParam::disconnect(AudioNodeOutput* audioRateSignal)
+{
+    ASSERT(context()->isGraphOwner());
+    ASSERT(audioRateSignal);
+    if (!audioRateSignal)
+        return;
+
+    // FIXME: support fan-in (multiple audio connections to this parameter with unity-gain summing).
+    // https://bugs.webkit.org/show_bug.cgi?id=83610
+    if (m_audioRateSignal == audioRateSignal)
+        m_audioRateSignal = 0;
 }
 
 } // namespace WebCore

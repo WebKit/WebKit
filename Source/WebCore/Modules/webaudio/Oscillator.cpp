@@ -112,14 +112,14 @@ bool Oscillator::calculateSampleAccuratePhaseIncrements(size_t framesToProcess)
     if (!isGood)
         return false;
 
-    bool hasTimelineValues = false;
+    bool hasSampleAccurateValues = false;
     bool hasFrequencyChanges = false;
     float* phaseIncrements = m_phaseIncrements.data();
 
     float finalScale = m_waveTable->rateScale();
 
-    if (m_frequency->hasTimelineValues()) {
-        hasTimelineValues = true;
+    if (m_frequency->hasSampleAccurateValues()) {
+        hasSampleAccurateValues = true;
         hasFrequencyChanges = true;
 
         // Get the sample-accurate frequency values and convert to phase increments.
@@ -132,8 +132,8 @@ bool Oscillator::calculateSampleAccuratePhaseIncrements(size_t framesToProcess)
         finalScale *= frequency;
     }
 
-    if (m_detune->hasTimelineValues()) {
-        hasTimelineValues = true;
+    if (m_detune->hasSampleAccurateValues()) {
+        hasSampleAccurateValues = true;
 
         // Get the sample-accurate detune values.
         float* detuneValues = hasFrequencyChanges ? m_detuneValues.data() : phaseIncrements;
@@ -157,19 +157,17 @@ bool Oscillator::calculateSampleAccuratePhaseIncrements(size_t framesToProcess)
         finalScale *= detuneScale;
     }
 
-    if (hasTimelineValues) {
+    if (hasSampleAccurateValues) {
         // Convert from frequency to wavetable increment.
         vsmul(phaseIncrements, 1, &finalScale, phaseIncrements, 1, framesToProcess);
     }
 
-    return hasTimelineValues;
+    return hasSampleAccurateValues;
 }
 
 void Oscillator::process(size_t framesToProcess)
 {
     AudioBus* outputBus = output(0)->bus();
-
-    outputBus->zero();
 
     if (!isInitialized() || !outputBus->numberOfChannels()) {
         outputBus->zero();
@@ -206,14 +204,14 @@ void Oscillator::process(size_t framesToProcess)
 
     float rateScale = m_waveTable->rateScale();
     float invRateScale = 1 / rateScale;
-    bool hasTimelineValues = calculateSampleAccuratePhaseIncrements(framesToProcess);
+    bool hasSampleAccurateValues = calculateSampleAccuratePhaseIncrements(framesToProcess);
 
     float frequency = 0;
     float* higherWaveData = 0;
     float* lowerWaveData = 0;
     float tableInterpolationFactor;
 
-    if (!hasTimelineValues) {
+    if (!hasSampleAccurateValues) {
         frequency = m_frequency->smoothedValue();
         float detune = m_detune->smoothedValue();
         float detuneScale = powf(2, detune / 1200);
@@ -234,7 +232,7 @@ void Oscillator::process(size_t framesToProcess)
         readIndex = readIndex & readIndexMask;
         readIndex2 = readIndex2 & readIndexMask;
 
-        if (hasTimelineValues) {
+        if (hasSampleAccurateValues) {
             incr = *phaseIncrements++;
 
             frequency = invRateScale * incr;

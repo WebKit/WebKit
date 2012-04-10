@@ -115,6 +115,30 @@ function createImpulseBuffer(context, sampleFrameLength) {
     return audioBuffer;
 }
 
+// Create a buffer of the given length with a linear ramp having values 0 <= x < 1.
+function createLinearRampBuffer(context, sampleFrameLength) {
+    var audioBuffer = context.createBuffer(1, sampleFrameLength, context.sampleRate);
+    var n = audioBuffer.length;
+    var dataL = audioBuffer.getChannelData(0);
+
+    for (var i = 0; i < n; ++i)
+        dataL[i] = i / n;
+
+    return audioBuffer;
+}
+
+// Create a buffer of the given length having a constant value.
+function createConstantBuffer(context, sampleFrameLength, constantValue) {
+    var audioBuffer = context.createBuffer(1, sampleFrameLength, context.sampleRate);
+    var n = audioBuffer.length;
+    var dataL = audioBuffer.getChannelData(0);
+
+    for (var i = 0; i < n; ++i)
+        dataL[i] = constantValue;
+
+    return audioBuffer;
+}
+
 // Convert time (in seconds) to sample frames.
 function timeToSampleFrame(time, sampleRate) {
     return Math.floor(0.5 + time * sampleRate);

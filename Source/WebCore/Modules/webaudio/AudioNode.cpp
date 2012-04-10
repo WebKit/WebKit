@@ -31,6 +31,7 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "AudioParam.h"
 #include "ExceptionCode.h"
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>
@@ -149,6 +150,30 @@ void AudioNode::connect(AudioNode* destination, unsigned outputIndex, unsigned i
     context()->incrementConnectionCount();
 }
 
+void AudioNode::connect(AudioParam* param, unsigned outputIndex, ExceptionCode& ec)
+{
+    ASSERT(isMainThread());
+    AudioContext::AutoLocker locker(context());
+
+    if (!param) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    if (outputIndex >= numberOfOutputs()) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
+    if (context() != param->context()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    AudioNodeOutput* output = this->output(outputIndex);
+    param->connect(output);
+}
+
 void AudioNode::disconnect(unsigned outputIndex, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
@@ -161,7 +186,7 @@ void AudioNode::disconnect(unsigned outputIndex, ExceptionCode& ec)
     }
 
     AudioNodeOutput* output = this->output(outputIndex);
-    output->disconnectAllInputs();
+    output->disconnectAll();
 }
 
 void AudioNode::processIfNecessary(size_t framesToProcess)
@@ -337,7 +362,7 @@ void AudioNode::finishDeref(RefType refType)
             if (!m_isMarkedForDeletion) {
                 // All references are gone - we need to go away.
                 for (unsigned i = 0; i < m_outputs.size(); ++i)
-                    output(i)->disconnectAllInputs(); // this will deref() nodes we're connected to...
+                    output(i)->disconnectAll(); // This will deref() nodes we're connected to.
 
                 // Mark for deletion at end of each render quantum or when context shuts down.
                 context()->markForDeletion(this);

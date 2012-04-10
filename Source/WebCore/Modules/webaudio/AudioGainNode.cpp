@@ -64,7 +64,7 @@ void AudioGainNode::process(size_t framesToProcess)
     else {
         AudioBus* inputBus = input(0)->bus();
 
-        if (gain()->hasTimelineValues()) {
+        if (gain()->hasSampleAccurateValues()) {
             // Apply sample-accurate gain scaling for precise envelopes, grain windows, etc.
             ASSERT(framesToProcess <= m_sampleAccurateGainValues.size());
             if (framesToProcess <= m_sampleAccurateGainValues.size()) {

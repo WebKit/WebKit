@@ -39,6 +39,8 @@
 
 namespace WebCore {
 
+class AudioNodeOutput;
+
 class AudioParam : public RefCounted<AudioParam> {
 public:
     static const double DefaultSmoothingConstant;
@@ -58,6 +60,7 @@ public:
         , m_units(units)
         , m_smoothedValue(defaultValue)
         , m_smoothingConstant(DefaultSmoothingConstant)
+        , m_audioRateSignal(0)
     {
     }
     
@@ -96,13 +99,20 @@ public:
     void setValueCurveAtTime(Float32Array* curve, float time, float duration) { m_timeline.setValueCurveAtTime(curve, time, duration); }
     void cancelScheduledValues(float startTime) { m_timeline.cancelScheduledValues(startTime); }
 
-    bool hasTimelineValues() { return m_timeline.hasValues(); }
+    bool hasSampleAccurateValues() { return m_timeline.hasValues() || m_audioRateSignal; }
     
     // Calculates numberOfValues parameter values starting at the context's current time.
     // Must be called in the context's render thread.
     void calculateSampleAccurateValues(float* values, unsigned numberOfValues);
 
+    // Connect an audio-rate signal to control this parameter.
+    void connect(AudioNodeOutput*);
+    void disconnect(AudioNodeOutput*);
+
 private:
+    void calculateAudioRateSignalValues(float* values, unsigned numberOfValues);
+    void calculateTimelineValues(float* values, unsigned numberOfValues);
+
     RefPtr<AudioContext> m_context;
     String m_name;
     double m_value;
@@ -116,6 +126,11 @@ private:
     double m_smoothingConstant;
     
     AudioParamTimeline m_timeline;
+
+    // An audio-rate signal directly providing parameter values.
+    // FIXME: support fan-in (multiple audio connections to this parameter with unity-gain summing).
+    // https://bugs.webkit.org/show_bug.cgi?id=83610
+    AudioNodeOutput* m_audioRateSignal;
 };
 
 } // namespace WebCore
