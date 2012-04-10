@@ -37,7 +37,7 @@ namespace WebCore {
 static struct IDBDatabaseExceptionNameDescription {
     const char* const name;
     const char* const description;
-} exceptionNameDescription[] = {
+} idbDatabaseExceptions[] = {
     { "UNKNOWN_ERR", "An unknown error occurred within Indexed Database." },
     { "NON_TRANSIENT_ERR", "NON_TRANSIENT_ERR" }, // FIXME: Write a better message if it's ever possible this is thrown.
     { "NOT_FOUND_ERR", "The name supplied does not match any existing item." },
@@ -61,11 +61,11 @@ bool IDBDatabaseException::initializeDescription(ExceptionCode ec, ExceptionCode
     description->code = ec - IDBDatabaseExceptionOffset;
     description->type = IDBDatabaseExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNameDescription);
+    size_t tableSize = WTF_ARRAY_LENGTH(idbDatabaseExceptions);
     size_t tableIndex = ec - UNKNOWN_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNameDescription[tableIndex].name : 0;
-    description->description = tableIndex < tableSize ? exceptionNameDescription[tableIndex].description : 0;
+    description->name = tableIndex < tableSize ? idbDatabaseExceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? idbDatabaseExceptions[tableIndex].description : 0;
 
     return true;
 }

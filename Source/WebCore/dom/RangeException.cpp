@@ -34,7 +34,7 @@ namespace WebCore {
 static struct RangeExceptionNameDescription {
     const char* const name;
     const char* const description;
-} exceptionNameDescription[] = {
+} rangeExceptions[] = {
     { "BAD_BOUNDARYPOINTS_ERR", "The boundary-points of a Range did not meet specific requirements." },
     { "INVALID_NODE_TYPE_ERR", "The container of an boundary-point of a Range was being set to either a node of an invalid type or a node with an ancestor of an invalid type." }
 };
@@ -48,11 +48,11 @@ bool RangeException::initializeDescription(ExceptionCode ec, ExceptionCodeDescri
     description->code = ec - RangeExceptionOffset;
     description->type = RangeExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNameDescription);
+    size_t tableSize = WTF_ARRAY_LENGTH(rangeExceptions);
     size_t tableIndex = ec - BAD_BOUNDARYPOINTS_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNameDescription[tableIndex].name : 0;
-    description->description = tableIndex < tableSize ? exceptionNameDescription[tableIndex].description : 0;
+    description->name = tableIndex < tableSize ? rangeExceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? rangeExceptions[tableIndex].description : 0;
 
     return true;
 }

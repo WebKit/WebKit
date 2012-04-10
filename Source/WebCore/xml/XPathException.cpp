@@ -34,7 +34,7 @@ namespace WebCore {
 static struct XPathExceptionNameDescription {
     const char* const name;
     const char* const description;
-} exceptionNameDescription[] = {
+} xPathExceptions[] = {
     { "INVALID_EXPRESSION_ERR", "The expression had a syntax error or otherwise is not a legal expression according to the rules of the specific XPathEvaluator." },
     { "TYPE_ERR", "The expression could not be converted to return the specified type." }
 };
@@ -48,11 +48,11 @@ bool XPathException::initializeDescription(ExceptionCode ec, ExceptionCodeDescri
     description->code = ec - XPathExceptionOffset;
     description->type = XPathExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNameDescription);
+    size_t tableSize = WTF_ARRAY_LENGTH(xPathExceptions);
     size_t tableIndex = ec - INVALID_EXPRESSION_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNameDescription[tableIndex].name : 0;
-    description->description = tableIndex < tableSize ? exceptionNameDescription[tableIndex].description : 0;
+    description->name = tableIndex < tableSize ? xPathExceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? xPathExceptions[tableIndex].description : 0;
 
     return true;
 }

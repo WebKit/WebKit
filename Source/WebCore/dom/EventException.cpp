@@ -34,7 +34,7 @@ namespace WebCore {
 static struct EventExceptionNameDescription {
     const char* const name;
     const char* const description;
-} exceptionNameDescription[] = {
+} eventExceptions[] = {
     { "UNSPECIFIED_EVENT_TYPE_ERR", "The Event's type was not specified by initializing the event before the method was called." },
     { "DISPATCH_REQUEST_ERR", "The Event object is already being dispatched." }
 };
@@ -48,11 +48,11 @@ bool EventException::initializeDescription(ExceptionCode ec, ExceptionCodeDescri
     description->code = ec - EventExceptionOffset;
     description->type = EventExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNameDescription);
+    size_t tableSize = WTF_ARRAY_LENGTH(eventExceptions);
     size_t tableIndex = ec - UNSPECIFIED_EVENT_TYPE_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNameDescription[tableIndex].name : 0;
-    description->description = tableIndex < tableSize ? exceptionNameDescription[tableIndex].description : 0;
+    description->name = tableIndex < tableSize ? eventExceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? eventExceptions[tableIndex].description : 0;
 
     return true;
 }

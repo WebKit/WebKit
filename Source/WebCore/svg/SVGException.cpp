@@ -37,7 +37,7 @@ namespace WebCore {
 static struct SVGExceptionNameDescription {
     const char* const name;
     const char* const description;
-} exceptionNameDescription[] = {
+} svgExceptions[] = {
     { "SVG_WRONG_TYPE_ERR", "An object of the wrong type was passed to an operation." },
     { "SVG_INVALID_VALUE_ERR", "An invalid value was passed to an operation or assigned to an attribute." },
     { "SVG_MATRIX_NOT_INVERTABLE", "An attempt was made to invert a matrix that is not invertible." }
@@ -52,11 +52,11 @@ bool SVGException::initializeDescription(ExceptionCode ec, ExceptionCodeDescript
     description->code = ec - SVGExceptionOffset;
     description->type = SVGExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNameDescription);
+    size_t tableSize = WTF_ARRAY_LENGTH(svgExceptions);
     size_t tableIndex = ec - SVG_WRONG_TYPE_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNameDescription[tableIndex].name : 0;
-    description->description = tableIndex < tableSize ? exceptionNameDescription[tableIndex].description : 0;
+    description->name = tableIndex < tableSize ? svgExceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? svgExceptions[tableIndex].description : 0;
 
     return true;
 }

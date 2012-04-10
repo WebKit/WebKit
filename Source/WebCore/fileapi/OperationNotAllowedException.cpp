@@ -37,7 +37,7 @@ namespace WebCore {
 static struct OperationNotAllowedExceptionNameDescription {
     const char* const name;
     const char* const description;
-} exceptionNameDescription[] = {
+} operationNotAllowedExceptions[] = {
     { "NOT_ALLOWED_ERR", "A read method was called while the object was in the LOADING state due to a previous read call." }
 };
 
@@ -50,11 +50,11 @@ bool OperationNotAllowedException::initializeDescription(ExceptionCode ec, Excep
     description->code = ec - OperationNotAllowedExceptionOffset;
     description->type = OperationNotAllowedExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNameDescription);
+    size_t tableSize = WTF_ARRAY_LENGTH(operationNotAllowedExceptions);
     size_t tableIndex = ec - NOT_ALLOWED_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNameDescription[tableIndex].name : 0;
-    description->description = tableIndex < tableSize ? exceptionNameDescription[tableIndex].description : 0;
+    description->name = tableIndex < tableSize ? operationNotAllowedExceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? operationNotAllowedExceptions[tableIndex].description : 0;
 
     return true;
 }

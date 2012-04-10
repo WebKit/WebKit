@@ -37,7 +37,7 @@ namespace WebCore {
 static struct SQLExceptionNameDescription {
     const char* const name;
     const char* const description;
-} exceptionNameDescription[] = {
+} sqlExceptions[] = {
     { "UNKNOWN_ERR", "The operation failed for reasons unrelated to the database." },
     { "DATABASE_ERR", "The operation failed for some reason related to the database." },
     { "VERSION_ERR", "The actual database version did not match the expected version." },
@@ -57,11 +57,11 @@ bool SQLException::initializeDescription(ExceptionCode ec, ExceptionCodeDescript
     description->code = ec - SQLExceptionOffset;
     description->type = SQLExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNameDescription);
+    size_t tableSize = WTF_ARRAY_LENGTH(sqlExceptions);
     size_t tableIndex = ec - UNKNOWN_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNameDescription[tableIndex].name : 0;
-    description->description = tableIndex < tableSize ? exceptionNameDescription[tableIndex].description : 0;
+    description->name = tableIndex < tableSize ? sqlExceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? sqlExceptions[tableIndex].description : 0;
 
     return true;
 }
