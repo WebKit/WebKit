@@ -14,7 +14,6 @@ layer at (8,42) size 352x288
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 352x288
 layer at (8,298) size 352x32
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,256) size 352x32 [bgcolor=#00000099]
-    RenderBlock {DIV} at (318,0) size 34x32
 layer at (15,304) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,298) size 288x32
@@ -31,4 +30,4 @@ layer at (267,304) size 58x20 scrollHeight 21
 layer at (46,300) size 9x29
   RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
 layer at (326,298) size 34x32
-  RenderButton {INPUT} at (0,0) size 34x32
+  RenderButton {INPUT} at (318,0) size 34x32
