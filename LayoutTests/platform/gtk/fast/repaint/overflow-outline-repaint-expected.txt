@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 595: "If the red outline at the bottom of the div extends all the way to the scrollbar, the test passes. "
           text run at (594,0) width 183: "If it stops short, then the test"
           text run at (0,18) width 325: "has failed, and an incomplete repaint has occurred."
-layer at (8,44) size 80x69 clip at (8,44) size 64x53 scrollY 91 scrollWidth 66 scrollHeight 198
+layer at (8,44) size 80x69 clip at (8,44) size 64x69 scrollY 91 scrollWidth 66 scrollHeight 198
   RenderBlock {DIV} at (0,36) size 80x69
     RenderBR {BR} at (0,0) size 0x17
     RenderBR {BR} at (0,18) size 0x17
