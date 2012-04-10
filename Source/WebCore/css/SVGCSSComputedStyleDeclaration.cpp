@@ -174,6 +174,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(CSSProp
                 case BS_LENGTH:
                     return SVGLength::toCSSPrimitiveValue(svgStyle->baselineShiftValue());
             }
+            ASSERT_NOT_REACHED();
+            return 0;
         }
         case CSSPropertyGlyphOrientationHorizontal:
             return glyphOrientationToCSSPrimitiveValue(svgStyle->glyphOrientationHorizontal());
