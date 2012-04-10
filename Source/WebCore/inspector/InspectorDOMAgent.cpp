@@ -333,9 +333,11 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
 
     if (node->isFrameOwnerElement()) {
         const HTMLFrameOwnerElement* frameOwner = static_cast<const HTMLFrameOwnerElement*>(node);
+        Document* contentDocument = frameOwner->contentDocument();
         if (m_domListener)
-            m_domListener->didRemoveDocument(frameOwner->contentDocument());
-        unbind(frameOwner->contentDocument(), nodesMap);
+            m_domListener->didRemoveDocument(contentDocument);
+        if (contentDocument)
+            unbind(contentDocument, nodesMap);
     }
 
     if (node->isElementNode() && toElement(node)->hasShadowRoot()) {
