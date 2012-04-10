@@ -655,10 +655,9 @@ void LayoutTestController::addUserScript(JSStringRef, bool, bool)
     notImplemented();
 }
 
-void LayoutTestController::addUserStyleSheet(JSStringRef, bool)
+void LayoutTestController::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
-    // FIXME: needs more investigation why userscripts/user-style-top-frame-only.html fails when allFrames is false.
-    notImplemented();
+    DumpRenderTreeSupportEfl::addUserStyleSheet(browser->mainView(), source->ustring().utf8().data(), allFrames);
 }
 
 void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)

@@ -1,3 +1,17 @@
+2012-04-10  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] LayoutTestController needs implementation of addUserStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=82446
+
+        Add missing implementation addUserStyleSheet to EFL's
+        DumpRenderTreeSupport.
+
+        Reviewed by Antonio Gomes.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::addUserStyleSheet):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2012-04-04  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         Another unreviewed attempt at getting the EFL build bot to a

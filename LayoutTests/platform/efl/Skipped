@@ -632,11 +632,18 @@ loader/go-back-to-different-window-size.html
 media/restore-from-page-cache.html
 
 # EFL's LayoutTestController does not implement addUserScript
-userscripts
-
-# EFL's LayoutTestController does not implement addUserStyleSheet
-#userscripts
-printing/page-rule-selection.html
+userscripts/document-element-available-at-start.html
+userscripts/script-not-run-for-fragments.html
+userscripts/script-run-at-start.html
+userscripts/user-script-all-frames.html
+userscripts/user-script-audio-document.html
+userscripts/user-script-image-document.html
+userscripts/user-script-plugin-document.html
+userscripts/user-script-top-frame-only.html
+userscripts/user-script-video-document.html
+userscripts/user-style-top-frame-only.html
+userscripts/window-onerror-for-isolated-world-1.html
+userscripts/window-onerror-for-isolated-world-2.html
 
 # EFL's LayoutTestController does not implement setAsynchronousSpellCheckingEnabled
 editing/spelling/spellcheck-paste.html
