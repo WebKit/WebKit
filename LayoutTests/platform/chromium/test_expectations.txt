@@ -3808,3 +3808,17 @@ BUGCR122448 : media/video-seek-past-end-paused.html = PASS TEXT
 BUGCR122462 WIN LINUX : http/tests/inspector/inspect-element.html = TEXT
 
 BUGWK83503 LINUX DEBUG : plugins/inner-html-display-none.html = CRASH
+
+BUGWK83624 WIN : webaudio/audiobuffersource-playbackState.html = TEXT
+BUGWK83624 WIN : webaudio/audiochannelmerger-stereo.html = TEXT
+BUGWK83624 WIN : webaudio/audioparam-exponentialRampToValueAtTime.html = TEXT
+BUGWK83624 WIN : webaudio/audioparam-linearRampToValueAtTime.html = TEXT
+BUGWK83624 WIN : webaudio/audioparam-setTargetValueAtTime.html = TEXT
+BUGWK83624 WIN : webaudio/audioparam-setValueAtTime.html = TEXT
+BUGWK83624 WIN : webaudio/audioparam-setValueCurveAtTime.html = TEXT
+BUGWK83624 WIN : webaudio/convolution-mono-mono.html = TEXT
+BUGWK83624 WIN : webaudio/delaynode-maxdelay.html = TEXT
+BUGWK83624 WIN : webaudio/delaynode-scheduling.html = TEXT
+BUGWK83624 WIN : webaudio/delaynode.html = TEXT
+BUGWK83624 WIN : webaudio/note-grain-on-play.html = TEXT
+BUGWK83624 WIN : webaudio/note-grain-on-timing.html = TEXT
