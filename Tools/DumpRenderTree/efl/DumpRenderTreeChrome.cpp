@@ -270,9 +270,13 @@ void DumpRenderTreeChrome::onStatusbarTextSet(void*, Evas_Object*, void* eventIn
     printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", statusbarText);
 }
 
-void DumpRenderTreeChrome::onTitleChanged(void*, Evas_Object*, void*)
+void DumpRenderTreeChrome::onTitleChanged(void*, Evas_Object*, void* eventInfo)
 {
-    notImplemented();
+    if (!gLayoutTestController->dumpTitleChanges())
+        return;
+
+    const char* titleText = static_cast<const char*>(eventInfo);
+    printf("TITLE CHANGED: %s\n", titleText);
 }
 
 void DumpRenderTreeChrome::onDocumentLoadFinished(void*, Evas_Object*, void* eventInfo)
