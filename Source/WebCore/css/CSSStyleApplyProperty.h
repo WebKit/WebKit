@@ -78,7 +78,7 @@ private:
         return i >= 0 && i < numCSSProperties;
     }
 
-    void setPropertyHandler(CSSPropertyID property, PropertyHandler handler)
+    void setPropertyHandler(CSSPropertyID property, const PropertyHandler& handler)
     {
         ASSERT(valid(property));
         ASSERT(!propertyHandler(property).isValid());
