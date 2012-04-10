@@ -83,7 +83,7 @@ void HTMLHRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
     } else if (attr->name() == noshadeAttr) {
         addPropertyToAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 
-        RefPtr<CSSPrimitiveValue> darkGrayValue = document()->cssValuePool()->createColorValue(Color::darkGray);
+        RefPtr<CSSPrimitiveValue> darkGrayValue = cssValuePool().createColorValue(Color::darkGray);
         style->setProperty(CSSPropertyBorderColor, darkGrayValue);
         style->setProperty(CSSPropertyBackgroundColor, darkGrayValue);
     } else if (attr->name() == sizeAttr) {

@@ -63,7 +63,6 @@ class CDATASection;
 class CSSStyleDeclaration;
 class CSSStyleSelector;
 class CSSStyleSheet;
-class CSSValuePool;
 class CachedCSSStyleSheet;
 class CachedResourceLoader;
 class CachedScript;
@@ -445,8 +444,6 @@ public:
 
     bool isSrcdocDocument() const { return m_isSrcdocDocument; }
 
-    PassRefPtr<CSSValuePool> cssValuePool() const;
-    
     CSSStyleSelector* styleSelectorIfExists() const { return m_styleSelector.get(); }
 
     bool isViewSource() const { return m_isViewSource; }
@@ -1216,8 +1213,6 @@ private:
     bool m_didCalculateStyleSelector;
     bool m_hasDirtyStyleSelector;
     Vector<OwnPtr<FontData> > m_customFonts;
-
-    mutable RefPtr<CSSValuePool> m_cssValuePool;
 
     Frame* m_frame;
     OwnPtr<CachedResourceLoader> m_cachedResourceLoader;

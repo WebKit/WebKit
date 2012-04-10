@@ -525,15 +525,9 @@ void StylePropertySet::setProperty(const CSSProperty& property, CSSProperty* slo
     m_properties.append(property);
 }
 
-bool StylePropertySet::setProperty(CSSPropertyID propertyID, int identifier, bool important, CSSStyleSheet* contextStyleSheet)
+bool StylePropertySet::setProperty(CSSPropertyID propertyID, int identifier, bool important)
 {
-    RefPtr<CSSPrimitiveValue> value;    
-    if (Document* document = contextStyleSheet ? contextStyleSheet->findDocument() : 0)
-        value = document->cssValuePool()->createIdentifierValue(identifier);
-    else
-        value = CSSPrimitiveValue::createIdentifier(identifier);
-
-    setProperty(CSSProperty(propertyID, value.release(), important));
+    setProperty(CSSProperty(propertyID, cssValuePool().createIdentifierValue(identifier), important));
     return true;
 }
 

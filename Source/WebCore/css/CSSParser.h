@@ -47,7 +47,6 @@ namespace WebCore {
 
 class CSSBorderImageSliceValue;
 class CSSPrimitiveValue;
-class CSSValuePool;
 class CSSProperty;
 class CSSSelectorList;
 class CSSStyleSheet;
@@ -83,8 +82,6 @@ public:
     PassOwnPtr<MediaQuery> parseMediaQuery(const String&);
 
     Document* findDocument() const;
-
-    CSSValuePool* cssValuePool() const { return m_cssValuePool.get(); }
 
     void addProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important, bool implicit = false);
     void rollbackLastProperties(int num);
@@ -297,7 +294,6 @@ public:
     Vector<CSSProperty, 256> m_parsedProperties;
     CSSSelectorList* m_selectorListForParseSelector;
 
-    RefPtr<CSSValuePool> m_cssValuePool;
     unsigned m_numParsedPropertiesBeforeMarginBox;
 
     int m_inParseShorthand;
@@ -350,7 +346,6 @@ private:
     inline void detectAtToken(int, bool);
 
     void setStyleSheet(CSSStyleSheet*);
-    void ensureCSSValuePool();
 
     inline bool inStrictMode() const { return m_cssParserMode == CSSStrictMode || m_cssParserMode == SVGAttributeMode; }
     inline bool inQuirksMode() const { return m_cssParserMode == CSSQuirksMode; }

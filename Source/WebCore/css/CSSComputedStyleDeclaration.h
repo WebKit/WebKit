@@ -30,7 +30,6 @@ namespace WebCore {
 
 class CSSPrimitiveValue;
 class CSSValueList;
-class CSSValuePool;
 class Color;
 class Node;
 class RenderStyle;

@@ -38,7 +38,6 @@
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
-#include "CSSValuePool.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
@@ -1855,13 +1854,6 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
     marginRight = style->marginRight().isAuto() ? marginRight : valueForLength(style->marginRight(), width, view);
     marginBottom = style->marginBottom().isAuto() ? marginBottom : valueForLength(style->marginBottom(), width, view);
     marginLeft = style->marginLeft().isAuto() ? marginLeft : valueForLength(style->marginLeft(), width, view);
-}
-
-PassRefPtr<CSSValuePool> Document::cssValuePool() const
-{
-    if (!m_cssValuePool)
-        m_cssValuePool = CSSValuePool::create();
-    return m_cssValuePool;
 }
 
 void Document::setIsViewSource(bool isViewSource)

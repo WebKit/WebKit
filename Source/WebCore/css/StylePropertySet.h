@@ -72,7 +72,7 @@ public:
     void setProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important = false);
 
     // These do not. FIXME: This is too messy, we can do better.
-    bool setProperty(CSSPropertyID, int value, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
+    bool setProperty(CSSPropertyID, int identifier, bool important = false);
     void setProperty(const CSSProperty&, CSSProperty* slot = 0);
     
     bool removeProperty(CSSPropertyID, String* returnText = 0);

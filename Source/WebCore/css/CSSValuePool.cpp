@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,12 @@
 
 namespace WebCore {
 
+CSSValuePool& cssValuePool()
+{
+    DEFINE_STATIC_LOCAL(CSSValuePool, pool, ());
+    return pool;
+}
+
 CSSValuePool::CSSValuePool()
     : m_inheritedValue(CSSInheritedValue::create())
     , m_implicitInitialValue(CSSInitialValue::createImplicit())
@@ -42,10 +48,6 @@ CSSValuePool::CSSValuePool()
     , m_pixelZero(CSSPrimitiveValue::create(0, CSSPrimitiveValue::CSS_PX))
     , m_percentZero(CSSPrimitiveValue::create(0, CSSPrimitiveValue::CSS_PERCENTAGE))
     , m_numberZero(CSSPrimitiveValue::create(0, CSSPrimitiveValue::CSS_NUMBER))
-{
-}
-
-CSSValuePool::~CSSValuePool()
 {
 }
 

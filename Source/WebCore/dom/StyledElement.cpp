@@ -192,14 +192,14 @@ void StyledElement::inlineStyleChanged()
     
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, int identifier, bool important)
 {
-    ensureAttributeData()->ensureMutableInlineStyle(this)->setProperty(propertyID, document()->cssValuePool()->createIdentifierValue(identifier), important);
+    ensureAttributeData()->ensureMutableInlineStyle(this)->setProperty(propertyID, cssValuePool().createIdentifierValue(identifier), important);
     inlineStyleChanged();
     return true;
 }
 
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important)
 {
-    ensureAttributeData()->ensureMutableInlineStyle(this)->setProperty(propertyID, document()->cssValuePool()->createValue(value, unit), important);
+    ensureAttributeData()->ensureMutableInlineStyle(this)->setProperty(propertyID, cssValuePool().createValue(value, unit), important);
     inlineStyleChanged();
     return true;
 }
@@ -326,12 +326,12 @@ void StyledElement::updateAttributeStyle()
 
 void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, int identifier)
 {
-    style->setProperty(propertyID, document()->cssValuePool()->createIdentifierValue(identifier));
+    style->setProperty(propertyID, cssValuePool().createIdentifierValue(identifier));
 }
 
 void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, double value, CSSPrimitiveValue::UnitTypes unit)
 {
-    style->setProperty(propertyID, document()->cssValuePool()->createValue(value, unit));
+    style->setProperty(propertyID, cssValuePool().createValue(value, unit));
 }
 
 }

@@ -464,40 +464,38 @@ PassRefPtr<StylePropertySet> HTMLTableElement::createSharedCellStyle()
 {
     RefPtr<StylePropertySet> style = StylePropertySet::create();
 
-    CSSValuePool* cssValuePool = document()->cssValuePool().get();
-
     switch (cellBorders()) {
     case SolidBordersColsOnly:
         style->setProperty(CSSPropertyBorderLeftWidth, CSSValueThin);
         style->setProperty(CSSPropertyBorderRightWidth, CSSValueThin);
         style->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
         style->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
-        style->setProperty(CSSPropertyBorderColor, cssValuePool->createInheritedValue());
+        style->setProperty(CSSPropertyBorderColor, cssValuePool().createInheritedValue());
         break;
     case SolidBordersRowsOnly:
         style->setProperty(CSSPropertyBorderTopWidth, CSSValueThin);
         style->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin);
         style->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
         style->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
-        style->setProperty(CSSPropertyBorderColor, cssValuePool->createInheritedValue());
+        style->setProperty(CSSPropertyBorderColor, cssValuePool().createInheritedValue());
         break;
     case SolidBorders:
-        style->setProperty(CSSPropertyBorderWidth, cssValuePool->createValue(1, CSSPrimitiveValue::CSS_PX));
-        style->setProperty(CSSPropertyBorderStyle, cssValuePool->createIdentifierValue(CSSValueSolid));
-        style->setProperty(CSSPropertyBorderColor, cssValuePool->createInheritedValue());
+        style->setProperty(CSSPropertyBorderWidth, cssValuePool().createValue(1, CSSPrimitiveValue::CSS_PX));
+        style->setProperty(CSSPropertyBorderStyle, cssValuePool().createIdentifierValue(CSSValueSolid));
+        style->setProperty(CSSPropertyBorderColor, cssValuePool().createInheritedValue());
         break;
     case InsetBorders:
-        style->setProperty(CSSPropertyBorderWidth, cssValuePool->createValue(1, CSSPrimitiveValue::CSS_PX));
-        style->setProperty(CSSPropertyBorderStyle, cssValuePool->createIdentifierValue(CSSValueInset));
-        style->setProperty(CSSPropertyBorderColor, cssValuePool->createInheritedValue());
+        style->setProperty(CSSPropertyBorderWidth, cssValuePool().createValue(1, CSSPrimitiveValue::CSS_PX));
+        style->setProperty(CSSPropertyBorderStyle, cssValuePool().createIdentifierValue(CSSValueInset));
+        style->setProperty(CSSPropertyBorderColor, cssValuePool().createInheritedValue());
         break;
     case NoBorders:
-        style->setProperty(CSSPropertyBorderWidth, cssValuePool->createValue(0, CSSPrimitiveValue::CSS_PX));
+        style->setProperty(CSSPropertyBorderWidth, cssValuePool().createValue(0, CSSPrimitiveValue::CSS_PX));
         break;
     }
 
     if (m_padding)
-        style->setProperty(CSSPropertyPadding, cssValuePool->createValue(m_padding, CSSPrimitiveValue::CSS_PX));
+        style->setProperty(CSSPropertyPadding, cssValuePool().createValue(m_padding, CSSPrimitiveValue::CSS_PX));
 
     return style.release();
 }

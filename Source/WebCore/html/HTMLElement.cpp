@@ -1107,7 +1107,7 @@ void HTMLElement::addHTMLColorToStyle(StylePropertySet* style, CSSPropertyID pro
     if (!parsedColor.isValid())
         parsedColor.setRGB(parseColorStringWithCrazyLegacyRules(colorString));
 
-    style->setProperty(propertyID, document()->cssValuePool()->createColorValue(parsedColor.rgb()));
+    style->setProperty(propertyID, cssValuePool().createColorValue(parsedColor.rgb()));
 }
 
 void StyledElement::copyNonAttributeProperties(const Element* sourceElement)
