@@ -143,16 +143,16 @@ void drawHighlightForSVGRenderer(GraphicsContext& context, const Vector<FloatQua
         drawOutlinedQuad(context, absoluteQuads[i], highlightData->content, Color::transparent);
 }
 
-inline LayoutSize frameToMainFrameOffset(Frame* frame)
+inline IntSize frameToMainFrameOffset(Frame* frame)
 {
-    LayoutPoint mainFramePoint = frame->page()->mainFrame()->view()->rootViewToContents(frame->view()->contentsToRootView(LayoutPoint()));
-    return toLayoutSize(mainFramePoint);
+    IntPoint mainFramePoint = frame->page()->mainFrame()->view()->rootViewToContents(frame->view()->contentsToRootView(IntPoint()));
+    return toSize(mainFramePoint);
 }
 
 int drawSubstring(const TextRun& globalTextRun, int offset, int length, const Color& textColor, const Font& font, GraphicsContext& context, const LayoutRect& titleRect)
 {
     context.setFillColor(textColor, ColorSpaceDeviceRGB);
-    context.drawText(font, globalTextRun, LayoutPoint(titleRect.x() + rectInflatePx, titleRect.y() + font.fontMetrics().height()), offset, offset + length);
+    context.drawText(font, globalTextRun, IntPoint(titleRect.pixelSnappedX() + rectInflatePx, titleRect.pixelSnappedY() + font.fontMetrics().height()), offset, offset + length);
     return offset + length;
 }
 
@@ -222,7 +222,7 @@ TOOLTIP_FONT_FAMILIES(1, new AtomicString("dejavu sans mono"))
     }
 }
 
-void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* renderer, const LayoutRect& boundingBox, const LayoutRect& anchorBox, const FloatRect& visibleRect, WebCore::Settings* settings)
+void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* renderer, const IntRect& boundingBox, const IntRect& anchorBox, const FloatRect& visibleRect, WebCore::Settings* settings)
 {
     DEFINE_STATIC_LOCAL(Color, backgroundColor, (255, 255, 194));
     DEFINE_STATIC_LOCAL(Color, tagColor, (136, 18, 128)); // Same as .webkit-html-tag.
@@ -269,11 +269,11 @@ void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* render
 
     RenderBoxModelObject* modelObject = renderer->isBoxModelObject() ? toRenderBoxModelObject(renderer) : 0;
 
-    String widthNumberPart = " " + String::number(modelObject ? adjustForAbsoluteZoom(modelObject->offsetWidth(), modelObject) : boundingBox.width());
+    String widthNumberPart = " " + String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetWidth(), modelObject) : boundingBox.width());
     nodeTitle.append(widthNumberPart);
     nodeTitle.append(pxString);
     nodeTitle.append(timesString);
-    String heightNumberPart = String::number(modelObject ? adjustForAbsoluteZoom(modelObject->offsetHeight(), modelObject) : boundingBox.height());
+    String heightNumberPart = String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetHeight(), modelObject) : boundingBox.height());
     nodeTitle.append(heightNumberPart);
     nodeTitle.append(pxString);
 
@@ -283,9 +283,9 @@ void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* render
     font.update(0);
 
     TextRun nodeTitleRun(nodeTitle.toString());
-    LayoutPoint titleBasePoint = LayoutPoint(anchorBox.x(), anchorBox.maxY() - 1);
+    IntPoint titleBasePoint = IntPoint(anchorBox.x(), anchorBox.maxY() - 1);
     titleBasePoint.move(rectInflatePx, rectInflatePx);
-    LayoutRect titleRect = enclosingLayoutRect(font.selectionRectForText(nodeTitleRun, titleBasePoint, fontHeightPx));
+    IntRect titleRect = enclosingIntRect(font.selectionRectForText(nodeTitleRun, titleBasePoint, fontHeightPx));
     titleRect.inflate(rectInflatePx);
 
     // The initial offsets needed to compensate for a 1px-thick border stroke (which is not a part of the rectangle).
@@ -368,12 +368,12 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* high
     if (!renderer || !containingFrame)
         return;
 
-    LayoutSize mainFrameOffset = frameToMainFrameOffset(containingFrame);
-    LayoutRect boundingBox = renderer->absoluteBoundingBoxRect();
+    IntSize mainFrameOffset = frameToMainFrameOffset(containingFrame);
+    IntRect boundingBox = renderer->absoluteBoundingBoxRect();
 
     boundingBox.move(mainFrameOffset);
 
-    LayoutRect titleAnchorBox = boundingBox;
+    IntRect titleAnchorBox = boundingBox;
 
     FrameView* view = containingFrame->page()->mainFrame()->view();
     FloatRect visibleRect = view->visibleContentRect();
