@@ -50,23 +50,9 @@
 #include <wtf/ByteArray.h>
 #endif
 
+#define GL_CMD(...) do { __VA_ARGS__; ASSERT_ARG(__VA_ARGS__, !glGetError()); } while (0)
+
 namespace WebCore {
-
-inline static void debugGLCommand(const char* command, int line)
-{
-    const GLenum err = glGetError();
-    if (!err)
-        return;
-    WTFReportError(__FILE__, line, WTF_PRETTY_FUNCTION, "[TextureMapper GL] Command failed: %s (%x)\n", command, err);
-    ASSERT_NOT_REACHED();
-}
-
-#ifndef NDEBUG
-#define GL_CMD(x) {x, debugGLCommand(#x, __LINE__); }
-#else
-#define GL_CMD(x) x;
-#endif
-
 struct TextureMapperGLData {
     struct SharedGLData : public RefCounted<SharedGLData> {
 #if PLATFORM(QT) && QT_VERSION >= 0x050000
@@ -157,19 +143,19 @@ struct TextureMapperGLData {
                 return;
 
             GLint viewport[4];
-            GL_CMD(glGetIntegerv(GL_VIEWPORT, viewport))
-            GL_CMD(glScissor(rect.x(), viewport[3] - rect.maxY(), rect.width(), rect.height()))
+            GL_CMD(glGetIntegerv(GL_VIEWPORT, viewport));
+            GL_CMD(glScissor(rect.x(), viewport[3] - rect.maxY(), rect.width(), rect.height()));
         }
 
         void applyCurrentClip()
         {
             scissorClip(clipState.scissorBox);
-            GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP))
-            glStencilFunc(GL_EQUAL, clipState.stencilIndex - 1, clipState.stencilIndex - 1);
+            GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
+            GL_CMD(glStencilFunc(GL_EQUAL, clipState.stencilIndex - 1, clipState.stencilIndex - 1));
             if (clipState.stencilIndex == 1)
-                glDisable(GL_STENCIL_TEST);
+                GL_CMD(glDisable(GL_STENCIL_TEST));
             else
-                glEnable(GL_STENCIL_TEST);
+                GL_CMD(glEnable(GL_STENCIL_TEST));
         }
 
         TextureMapperShaderManager textureMapperShaderManager;
@@ -191,7 +177,6 @@ struct TextureMapperGLData {
             ASSERT(it != end);
             glContextDataMap().remove(it);
         }
-
     };
 
     SharedGLData& sharedGLData() const
@@ -230,8 +215,8 @@ void TextureMapperGLData::initializeStencil()
     if (didModifyStencil)
         return;
 
-    glClearStencil(0);
-    glClear(GL_STENCIL_BUFFER_BIT);
+    GL_CMD(glClearStencil(0));
+    GL_CMD(glClear(GL_STENCIL_BUFFER_BIT));
     didModifyStencil = true;
 }
 
@@ -249,7 +234,7 @@ void TextureMapperGL::beginPainting()
     if (!initializeOpenGLShims())
         return;
 
-    glGetIntegerv(GL_CURRENT_PROGRAM, &data().previousProgram);
+    GL_CMD(glGetIntegerv(GL_CURRENT_PROGRAM, &data().previousProgram));
     data().previousScissorState = glIsEnabled(GL_SCISSOR_TEST);
     data().previousDepthState = glIsEnabled(GL_DEPTH_TEST);
     glDisable(GL_DEPTH_TEST);
@@ -261,9 +246,9 @@ void TextureMapperGL::beginPainting()
     }
 #endif
     data().didModifyStencil = false;
-    glDepthMask(0);
-    glGetIntegerv(GL_VIEWPORT, data().viewport);
-    glGetIntegerv(GL_SCISSOR_BOX, data().previousScissor);
+    GL_CMD(glDepthMask(0));
+    GL_CMD(glGetIntegerv(GL_VIEWPORT, data().viewport));
+    GL_CMD(glGetIntegerv(GL_SCISSOR_BOX, data().previousScissor));
     data().sharedGLData().clipState.stencilIndex = 1;
     data().sharedGLData().clipState.scissorBox = IntRect(0, 0, data().viewport[2], data().viewport[3]);
     bindSurface(0);
@@ -288,7 +273,6 @@ void TextureMapperGL::endPainting()
         glEnable(GL_DEPTH_TEST);
     else
         glDisable(GL_DEPTH_TEST);
-
 
 #if PLATFORM(QT)
     if (!m_context)
@@ -320,13 +304,13 @@ void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const IntSize& 
     else
         shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::Simple);
 
-    GL_CMD(glUseProgram(shaderInfo->id()))
-    GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()))
-    GL_CMD(glActiveTexture(GL_TEXTURE0))
-    GL_CMD(glBindTexture(GL_TEXTURE_2D, texture))
-    GL_CMD(glBindBuffer(GL_ARRAY_BUFFER, 0))
+    GL_CMD(glUseProgram(shaderInfo->id()));
+    GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()));
+    GL_CMD(glActiveTexture(GL_TEXTURE0));
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, texture));
+    GL_CMD(glBindBuffer(GL_ARRAY_BUFFER, 0));
     const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
-    GL_CMD(glVertexAttribPointer(shaderInfo->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, unitRect))
+    GL_CMD(glVertexAttribPointer(shaderInfo->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, unitRect));
 
     TransformationMatrix adjustedModelViewMatrix(modelViewMatrix);
     // Check if the transformed target rect has the same shape/dimensions as the drawn texture (i.e. translated only).
@@ -363,22 +347,22 @@ void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const IntSize& 
         0, 0, 1, 0,
         0, (flags & ShouldFlipTexture) ? 1 : 0, 0, 1};
 
-    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4))
-    GL_CMD(glUniformMatrix4fv(shaderInfo->sourceMatrixVariable(), 1, GL_FALSE, m4src))
-    GL_CMD(glUniform1i(shaderInfo->sourceTextureVariable(), 0))
+    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4));
+    GL_CMD(glUniformMatrix4fv(shaderInfo->sourceMatrixVariable(), 1, GL_FALSE, m4src));
+    GL_CMD(glUniform1i(shaderInfo->sourceTextureVariable(), 0));
 
     shaderInfo->prepare(opacity, maskTexture);
 
     bool needsBlending = (flags & SupportsBlending) || opacity < 0.99 || maskTexture;
 
     if (needsBlending) {
-        GL_CMD(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA))
-        GL_CMD(glEnable(GL_BLEND))
+        GL_CMD(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+        GL_CMD(glEnable(GL_BLEND));
     } else
-        GL_CMD(glDisable(GL_BLEND))
+        GL_CMD(glDisable(GL_BLEND));
 
-    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4))
-    GL_CMD(glDisableVertexAttribArray(shaderInfo->vertexAttrib()))
+    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
+    GL_CMD(glDisableVertexAttribArray(shaderInfo->vertexAttrib()));
 }
 
 const char* TextureMapperGL::type() const
@@ -394,19 +378,19 @@ bool BitmapTextureGL::canReuseWith(const IntSize& contentsSize, Flags)
 void BitmapTextureGL::didReset()
 {
     if (!m_id)
-        GL_CMD(glGenTextures(1, &m_id))
-
-    if (m_textureSize != contentSize()) {
-        m_textureSize = contentSize();
-        GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
-        GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR))
-        GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR))
-        GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE))
-        GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE))
-        GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0))
-    }
+        GL_CMD(glGenTextures(1, &m_id));
 
     m_surfaceNeedsReset = true;
+    if (m_textureSize == contentSize())
+        return;
+
+    m_textureSize = contentSize();
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id));
+    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, 0));
 }
 
 static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size, int stride = 0)
@@ -444,7 +428,7 @@ static bool driverSupportsSubImage()
 void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine)
 {
     GLuint glFormat = GL_RGBA;
-    GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id));
 
     if (driverSupportsBGRASwizzling())
         glFormat = GL_BGRA;
@@ -452,7 +436,7 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
         swizzleBGRAToRGBA(static_cast<uint32_t*>(const_cast<void*>(data)), targetRect.size(), bytesPerLine / 4);
 
     if (bytesPerLine == targetRect.width() / 4 && sourceOffset == IntPoint::zero()) {
-        GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, (const char*)data))
+        GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, (const char*)data));
         return;
     }
 
@@ -461,19 +445,19 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
         const char* bits = static_cast<const char*>(data);
         for (int y = 0; y < targetRect.height(); ++y) {
             const char *row = bits + ((sourceOffset.y() + y) * bytesPerLine + sourceOffset.x() * 4);
-            GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y() + y, targetRect.width(), 1, glFormat, GL_UNSIGNED_BYTE, row))
+            GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y() + y, targetRect.width(), 1, glFormat, GL_UNSIGNED_BYTE, row));
         }
         return;
     }
 
     // Use the OpenGL sub-image extension, now that we know it's available.
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / 4);
-    glPixelStorei(GL_UNPACK_SKIP_ROWS, sourceOffset.y());
-    glPixelStorei(GL_UNPACK_SKIP_PIXELS, sourceOffset.x());
-    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, (const char*)data))
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    GL_CMD(glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / 4));
+    GL_CMD(glPixelStorei(GL_UNPACK_SKIP_ROWS, sourceOffset.y()));
+    GL_CMD(glPixelStorei(GL_UNPACK_SKIP_PIXELS, sourceOffset.x()));
+    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, (const char*)data));
+    GL_CMD(glPixelStorei(GL_UNPACK_ROW_LENGTH, 0));
+    GL_CMD(glPixelStorei(GL_UNPACK_SKIP_ROWS, 0));
+    GL_CMD(glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0));
 }
 
 void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, const IntPoint& offset)
@@ -523,33 +507,33 @@ void BitmapTextureGL::initializeStencil()
     if (m_rbo)
         return;
     GL_CMD(glGenRenderbuffers(1, &m_rbo));
-    GL_CMD(glBindRenderbuffer(GL_RENDERBUFFER, m_rbo))
+    GL_CMD(glBindRenderbuffer(GL_RENDERBUFFER, m_rbo));
 #ifdef TEXMAP_OPENGL_ES_2
-    GL_CMD(glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_textureSize.width(), m_textureSize.height()))
+    GL_CMD(glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_textureSize.width(), m_textureSize.height()));
 #else
-    GL_CMD(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, m_textureSize.width(), m_textureSize.height()))
+    GL_CMD(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, m_textureSize.width(), m_textureSize.height()));
 #endif
-    GL_CMD(glBindRenderbuffer(GL_RENDERBUFFER, 0))
-    GL_CMD(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo))
-    GL_CMD(glClearStencil(0))
-    GL_CMD(glClear(GL_STENCIL_BUFFER_BIT))
+    GL_CMD(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+    GL_CMD(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo));
+    GL_CMD(glClearStencil(0));
+    GL_CMD(glClear(GL_STENCIL_BUFFER_BIT));
 }
 
 void BitmapTextureGL::bind()
 {
     if (m_surfaceNeedsReset || !m_fbo) {
         if (!m_fbo)
-            GL_CMD(glGenFramebuffers(1, &m_fbo))
-        GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo))
-        GL_CMD(glBindTexture(GL_TEXTURE_2D, 0))
-        GL_CMD(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id(), 0))
-        GL_CMD(glClearColor(0, 0, 0, 0))
-        GL_CMD(glClear(GL_COLOR_BUFFER_BIT))
+            GL_CMD(glGenFramebuffers(1, &m_fbo));
+        GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
+        GL_CMD(glBindTexture(GL_TEXTURE_2D, 0));
+        GL_CMD(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id(), 0));
+        GL_CMD(glClearColor(0, 0, 0, 0));
+        GL_CMD(glClear(GL_COLOR_BUFFER_BIT));
         m_surfaceNeedsReset = false;
     } else
-        GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo))
+        GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
 
-    GL_CMD(glViewport(0, 0, size().width(), size().height()))
+    GL_CMD(glViewport(0, 0, size().width(), size().height()));
     m_textureMapper->data().projectionMatrix = createProjectionMatrix(size(), false);
     m_textureMapper->beginClip(TransformationMatrix(), FloatRect(IntPoint::zero(), contentSize()));
 }
@@ -557,13 +541,13 @@ void BitmapTextureGL::bind()
 BitmapTextureGL::~BitmapTextureGL()
 {
     if (m_id)
-        GL_CMD(glDeleteTextures(1, &m_id))
+        GL_CMD(glDeleteTextures(1, &m_id));
 
     if (m_fbo)
-        GL_CMD(glDeleteFramebuffers(1, &m_fbo))
+        GL_CMD(glDeleteFramebuffers(1, &m_fbo));
 
     if (m_rbo)
-        GL_CMD(glDeleteRenderbuffers(1, &m_rbo))
+        GL_CMD(glDeleteRenderbuffers(1, &m_rbo));
 }
 
 bool BitmapTextureGL::isValid() const
@@ -587,9 +571,9 @@ void TextureMapperGL::bindSurface(BitmapTexture *surfacePointer)
 
     if (!surface) {
         IntSize viewportSize(data().viewport[2], data().viewport[3]);
-        GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, 0))
+        GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, 0));
         data().projectionMatrix = createProjectionMatrix(viewportSize, true);
-        GL_CMD(glViewport(0, 0, viewportSize.width(), viewportSize.height()))
+        GL_CMD(glViewport(0, 0, viewportSize.width(), viewportSize.height()));
         if (data().currentSurface)
             endClip();
         data().currentSurface.clear();
@@ -632,10 +616,10 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
     RefPtr<TextureMapperShaderProgram> shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::Simple);
 
-    GL_CMD(glUseProgram(shaderInfo->id()))
-    GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()))
+    GL_CMD(glUseProgram(shaderInfo->id()));
+    GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()));
     const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
-    GL_CMD(glVertexAttribPointer(shaderInfo->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, unitRect))
+    GL_CMD(glVertexAttribPointer(shaderInfo->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, unitRect));
 
     TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix)
             .multiply(modelViewMatrix)
@@ -660,27 +644,27 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
     int& stencilIndex = data().sharedGLData().clipState.stencilIndex;
 
-    GL_CMD(glEnable(GL_STENCIL_TEST))
+    GL_CMD(glEnable(GL_STENCIL_TEST));
 
     // Make sure we don't do any actual drawing.
-    GL_CMD(glStencilFunc(GL_NEVER, stencilIndex, stencilIndex))
+    GL_CMD(glStencilFunc(GL_NEVER, stencilIndex, stencilIndex));
 
     // Operate only on the stencilIndex and above.
-    GL_CMD(glStencilMask(0xff & ~(stencilIndex - 1)))
+    GL_CMD(glStencilMask(0xff & ~(stencilIndex - 1)));
 
     // First clear the entire buffer at the current index.
-    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4all))
-    GL_CMD(glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO))
-    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4))
+    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4all));
+    GL_CMD(glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO));
+    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
     // Now apply the current index to the new quad.
-    GL_CMD(glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE))
-    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4))
-    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4))
+    GL_CMD(glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE));
+    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4));
+    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
     // Clear the state.
-    GL_CMD(glDisableVertexAttribArray(shaderInfo->vertexAttrib()))
-    GL_CMD(glStencilMask(0))
+    GL_CMD(glDisableVertexAttribArray(shaderInfo->vertexAttrib()));
+    GL_CMD(glStencilMask(0));
 
     // Increase stencilIndex and apply stencil testing.
     stencilIndex *= 2;
