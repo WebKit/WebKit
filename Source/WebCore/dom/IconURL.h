@@ -77,9 +77,6 @@ bool operator==(const IconURL&, const IconURL&);
 
 typedef Vector<IconURL, ICON_COUNT> IconURLs;
 
-// Returns the index of the given type, 0 is returned if the type is invalid.
-size_t toIconIndex(IconType);
-
 }
 
 #endif // IconURL_h

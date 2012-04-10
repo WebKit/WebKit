@@ -33,27 +33,6 @@
 
 namespace WebCore {
 
-size_t toIconIndex(IconType type)
-{
-    size_t index = 0;
-    switch (type) {
-    case Favicon:
-        index = 0;
-        break;
-#if ENABLE(TOUCH_ICON_LOADING)
-    case TouchPrecomposedIcon:
-        index = 1;
-        break;
-    case TouchIcon:
-        index = 2;
-        break;
-#endif
-    default:
-        ASSERT_NOT_REACHED();
-    }
-    return index;
-}
-
 IconURL IconURL::defaultIconURL(const KURL& url, IconType type)
 {
     IconURL result(url, emptyString(), emptyString(), type);
