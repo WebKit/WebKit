@@ -1264,6 +1264,10 @@ http/tests/navigation/new-window-redirect-history.html
 http/tests/navigation/post-basic.html
 http/tests/navigation/post-goback1.html
 
+# [WK2] http/tests/navigation/anchor-frames-cross-origin.html fails.
+# https://bugs.webkit.org/show_bug.cgi?id=83581
+http/tests/navigation/anchor-frames-cross-origin.html
+
 # Unexplained plugin failures
 platform/mac/plugins/testplugin-onnew-onpaint.html
 plugins/no-mime-with-valid-extension.html
