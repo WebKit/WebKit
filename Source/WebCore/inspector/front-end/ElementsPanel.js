@@ -1114,6 +1114,9 @@ WebInspector.ElementsPanel.prototype = {
 
     setSearchingForNode: function(enabled)
     {
+        /**
+         * @param {?Protocol.Error} error
+         */
         function callback(error)
         {
             if (!error)

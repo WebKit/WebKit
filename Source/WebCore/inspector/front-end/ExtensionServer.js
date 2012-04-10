@@ -319,12 +319,17 @@ WebInspector.ExtensionServer.prototype = {
 
     _onEvaluateOnInspectedPage: function(message, port)
     {
+        /**
+         * @param {?Protocol.Error} error
+         * @param {RuntimeAgent.RemoteObject} resultPayload
+         * @param {boolean=} wasThrown
+         */
         function callback(error, resultPayload, wasThrown)
         {
             var result = {};
             if (error) {
                 result.isException = true;
-                result.value = error.message;
+                result.value = error.toString();
             }  else
                 result.value = resultPayload.value;
 
@@ -463,6 +468,9 @@ WebInspector.ExtensionServer.prototype = {
 
     _onSetResourceContent: function(message, port)
     {
+        /**
+         * @param {?Protocol.Error} error
+         */
         function callbackWrapper(error)
         {
             var response = error ? this._status.E_FAILED(error) : this._status.OK();

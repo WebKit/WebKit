@@ -99,6 +99,12 @@ WebInspector.WorkerManager._calculateWorkerInspectorTitle = function()
     if (WebInspector.queryParamsObject["isSharedWorker"])
         expression += " + (this.name ? ' (' + this.name + ')' : '')";
     RuntimeAgent.evaluate.invoke({expression:expression, doNotPauseOnExceptions:true, returnByValue: true}, evalCallback.bind(this));
+    
+    /**
+     * @param {?Protocol.Error} error
+     * @param {RuntimeAgent.RemoteObject} result
+     * @param {boolean=} wasThrown
+     */
     function evalCallback(error, result, wasThrown)
     {
         if (error || wasThrown) {

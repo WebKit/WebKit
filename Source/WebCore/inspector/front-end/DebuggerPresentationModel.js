@@ -763,11 +763,12 @@ WebInspector.DebuggerPresentationModelResourceBinding = function(model)
 WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
     /**
      * @param {WebInspector.Resource} resource
+     * @return {boolean}
      */
     canSetContent: function(resource)
     {
         var uiSourceCode = this._uiSourceCodeForResource(resource);
-        return uiSourceCode && this._presentationModel.canEditScriptSource(uiSourceCode);
+        return !!uiSourceCode && this._presentationModel.canEditScriptSource(uiSourceCode);
     },
 
     /**

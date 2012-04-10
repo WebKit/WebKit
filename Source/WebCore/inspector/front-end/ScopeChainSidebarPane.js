@@ -125,6 +125,7 @@ WebInspector.ScopeChainSidebarPane.prototype.__proto__ = WebInspector.SidebarPan
 /**
  * @constructor
  * @extends {WebInspector.ObjectPropertyTreeElement}
+ * @param {WebInspector.RemoteObjectProperty} property
  */
 WebInspector.ScopeVariableTreeElement = function(property)
 {

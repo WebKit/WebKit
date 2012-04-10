@@ -602,6 +602,11 @@ WebInspector.ConsoleView.prototype = {
             expression = "this";
         }
 
+        /**
+         * @param {?Protocol.Error} error
+         * @param {RuntimeAgent.RemoteObject} result
+         * @param {boolean=} wasThrown
+         */
         function evalCallback(error, result, wasThrown)
         {
             if (error) {
@@ -611,9 +616,9 @@ WebInspector.ConsoleView.prototype = {
             }
 
             if (returnByValue)
-                callback(null, wasThrown, wasThrown ? null : result);
+                callback(null, !!wasThrown, wasThrown ? null : result);
             else
-                callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
+                callback(WebInspector.RemoteObject.fromPayload(result), !!wasThrown);
         }
         RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, this._currentEvaluationContextId(), returnByValue, evalCallback);
     },

@@ -270,7 +270,7 @@ WebInspector.BreakpointManager.prototype = {
     {
         /**
          * @this {WebInspector.BreakpointManager}
-         * @param {DebuggerAgent.BreakpointId} breakpointId
+         * @param {?DebuggerAgent.BreakpointId} breakpointId
          * @param {Array.<DebuggerAgent.Location>} locations
          */
         function didSetBreakpoint(breakpointId, locations)

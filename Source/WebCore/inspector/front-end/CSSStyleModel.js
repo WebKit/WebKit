@@ -141,6 +141,9 @@ WebInspector.CSSStyleModel.prototype = {
     {
         /**
          * @param {function(?WebInspector.CSSStyleDeclaration, ?WebInspector.CSSStyleDeclaration)} userCallback
+         * @param {?Protocol.Error} error
+         * @param {?CSSAgent.CSSStyle=} inlinePayload
+         * @param {?CSSAgent.CSSStyle=} attributesStylePayload
          */
         function callback(userCallback, error, inlinePayload, attributesStylePayload)
         {

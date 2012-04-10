@@ -839,7 +839,7 @@ WebInspector.Resource.prototype = {
     /**
      * @param {string} newContent
      * @param {boolean} majorChange
-     * @param {function(string=)} callback
+     * @param {function(?string)} callback
      */
     setContent: function(newContent, majorChange, callback)
     {
@@ -1082,9 +1082,10 @@ WebInspector.ResourceDomainModelBinding = function() { }
 
 WebInspector.ResourceDomainModelBinding.prototype = {
     /**
+     * @param {WebInspector.Resource} resource
      * @return {boolean}
      */
-    canSetContent: function() { return true; },
+    canSetContent: function(resource) { return true; },
 
     /**
      * @param {WebInspector.Resource} resource

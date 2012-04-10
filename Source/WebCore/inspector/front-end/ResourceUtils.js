@@ -127,6 +127,12 @@ WebInspector.registerLinkifierPlugin = function(plugin)
  */
 WebInspector.linkifyStringAsFragment = function(string)
 {
+    /**
+     * @param {string} title
+     * @param {string} url
+     * @param {string=} lineNumber
+     * @return {Node}
+     */
     function linkifier(title, url, lineNumber)
     {
         for (var i = 0; i < WebInspector._linkifierPlugins.length; ++i)

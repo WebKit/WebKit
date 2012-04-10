@@ -260,7 +260,7 @@ WebInspector.RemoteObject.prototype = {
     },
 
     /**
-     * @param {function(DOMAgent.NodeId)} callback
+     * @param {function(?DOMAgent.NodeId)} callback
      */
     pushNodeToFrontend: function(callback)
     {
@@ -271,12 +271,17 @@ WebInspector.RemoteObject.prototype = {
     },
 
     /**
-     * @param {function(*)} functionDeclaration
+     * @param {function(this:Object)} functionDeclaration
      * @param {Array.<RuntimeAgent.CallArgument>|undefined} args
      * @param {function(?WebInspector.RemoteObject)} callback
      */
     callFunction: function(functionDeclaration, args, callback)
     {
+        /**
+         * @param {?Protocol.Error} error
+         * @param {RuntimeAgent.RemoteObject} result
+         * @param {boolean=} wasThrown
+         */
         function mycallback(error, result, wasThrown)
         {
             callback((error || wasThrown) ? null : WebInspector.RemoteObject.fromPayload(result));
@@ -286,12 +291,17 @@ WebInspector.RemoteObject.prototype = {
     },
 
     /**
-     * @param {function(*)} functionDeclaration
+     * @param {function(this:Object)} functionDeclaration
      * @param {Array.<RuntimeAgent.CallArgument>|undefined} args
      * @param {function(*)} callback
      */
     callFunctionJSON: function(functionDeclaration, args, callback)
     {
+        /**
+         * @param {?Protocol.Error} error
+         * @param {RuntimeAgent.RemoteObject} result
+         * @param {boolean=} wasThrown
+         */
         function mycallback(error, result, wasThrown)
         {
             callback((error || wasThrown) ? null : result.value);

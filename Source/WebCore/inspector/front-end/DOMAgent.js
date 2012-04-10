@@ -242,7 +242,10 @@ WebInspector.DOMNode.prototype = {
      */
     removeAttribute: function(name, callback)
     {
-        function mycallback(error, success)
+        /**
+         *  @param {?Protocol.Error} error
+         */
+        function mycallback(error)
         {
             if (!error) {
                 delete this._attributesMap[name];
@@ -756,11 +759,12 @@ WebInspector.DOMAgent.prototype = {
 
     /**
      * @param {RuntimeAgent.RemoteObjectId} objectId
-     * @param {function()=} callback
+     * @param {function(?DOMAgent.NodeId)=} callback
      */
     pushNodeToFrontend: function(objectId, callback)
     {
-        this._dispatchWhenDocumentAvailable(DOMAgent.requestNode.bind(DOMAgent, objectId), callback);
+        var callbackCast = /** @type {function(*)} */ callback;
+        this._dispatchWhenDocumentAvailable(DOMAgent.requestNode.bind(DOMAgent, objectId), callbackCast);
     },
 
     /**
@@ -781,6 +785,10 @@ WebInspector.DOMAgent.prototype = {
     {
         if (!callback)
             return;
+        /**
+         * @param {?Protocol.Error} error
+         * @param {*=} result
+         */
         return function(error, result)
         {
             // Caller is responsible for handling the actual error.
@@ -789,7 +797,7 @@ WebInspector.DOMAgent.prototype = {
     },
 
     /**
-     * @param {function(function()=)} func
+     * @param {function(function(?Protocol.Error, *=))} func
      * @param {function(*)=} callback
      */
     _dispatchWhenDocumentAvailable: function(func, callback)
@@ -1125,7 +1133,7 @@ WebInspector.DOMAgent.prototype = {
 
     /**
      * @param {boolean} enabled
-     * @param {function()=} callback
+     * @param {function(?Protocol.Error)=} callback
      */
     setInspectModeEnabled: function(enabled, callback)
     {

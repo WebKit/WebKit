@@ -33,7 +33,7 @@
  * @param {string=} emptyPlaceholder
  * @param {boolean=} ignoreHasOwnProperty
  * @param {Array.<WebInspector.RemoteObjectProperty>=} extraProperties
- * @param {function()=} treeElementConstructor
+ * @param {function(new:TreeElement, WebInspector.RemoteObjectProperty)=} treeElementConstructor
  */
 WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPlaceholder, ignoreHasOwnProperty, extraProperties, treeElementConstructor)
 {
@@ -464,7 +464,12 @@ WebInspector.ArrayGroupingTreeElement._populateRanges = function(treeElement, ob
 {
     object.callFunctionJSON(packRanges, [{value: fromIndex}, {value: toIndex}, {value: WebInspector.ArrayGroupingTreeElement._bucketThreshold}], callback.bind(this));
 
-    /** @this {Object} */
+    /**
+     * @this {Object}
+     * @param {number=} fromIndex // must declare optional
+     * @param {number=} toIndex // must declare optional
+     * @param {number=} bucketThreshold // must declare optional
+     */
     function packRanges(fromIndex, toIndex, bucketThreshold)
     {
         var count = 0;
@@ -538,7 +543,11 @@ WebInspector.ArrayGroupingTreeElement._populateAsFragment = function(treeElement
 {
     object.callFunction(buildArrayFragment, [{value: fromIndex}, {value: toIndex}], processArrayFragment.bind(this));
 
-    /** @this {Object} */
+    /**
+     * @this {Object}
+     * @param {number=} fromIndex // must declare optional
+     * @param {number=} toIndex // must declare optional
+     */
     function buildArrayFragment(fromIndex, toIndex)
     {
         var result = Object.create(null);
