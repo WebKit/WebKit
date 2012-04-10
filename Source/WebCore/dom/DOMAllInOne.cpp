@@ -133,6 +133,7 @@
 #include "TransformSourceLibxslt.cpp"
 #include "Traversal.cpp"
 #include "TreeScope.cpp"
+#include "TreeScopeAdjuster.cpp"
 #include "TreeScopeAdopter.cpp"
 #include "TreeWalker.cpp"
 #include "UIEvent.cpp"
