@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 240x18
+          text run at (0,0) width 240: "This tests that line breaking obeys the "
+        RenderInline {TT} at (0,0) size 112x15
+          RenderText {#text} at (240,2) size 112x15
+            text run at (240,2) width 112: "-webkit-locale"
+        RenderText {#text} at (352,0) size 61x18
+          text run at (352,0) width 61: " property."
+      RenderBlock {DIV} at (0,34) size 120x58
+        RenderText {#text} at (48,1) size 90x57
+          text run at (48,1) width 72 RTL: "\x{5E7}\x{5E8}\x{5D0} \x{5D1}-"
+          text run at (30,30) width 90 RTL: "\x{5D5}\x{5D9}\x{5E7}\x{5D9}\x{5E4}\x{5D3}\x{5D9}\x{5D4}"

@@ -1,0 +1,15 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to double
+
+FAIL dt.setDouble( 0.3243852499872446 ); dt.PUB_DOUBLE should be 0.3243852499872446. Was 1509949440.
+PASS dt.setDouble( 0.3243852499872446 ); dt.getDouble() is newValue
+PASS typeof dt.getDouble() is "number"
+PASS dt.setDouble( dt ); dt.PUB_DOUBLE is dt.PUB_DOUBLE_REPRESENTATION
+FAIL dt.setDouble( dt ); dt.getDouble() should be -226774273. Was 0.2134.
+PASS typeof dt.getDouble() is "number"
+PASS dt.doubleValue(); dt.PUB_DOUBLE is dt.PUB_DOUBLE_REPRESENTATION
+FAIL dt.doubleValue(); dt.getDouble() should be -226774273. Was 0.2134.
+PASS typeof dt.getDouble() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

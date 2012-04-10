@@ -1,0 +1,58 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x422
+  RenderBlock {HTML} at (0,0) size 800x422
+    RenderBody {BODY} at (8,8) size 784x406
+      RenderRegion {DIV} at (2,2) size 402x402 [border: (1px solid #A0A0A0)]
+      RenderText {#text} at (406,0) size 8x15
+        text run at (406,0) width 8: " "
+      RenderRegion {DIV} at (416,2) size 302x202 [border: (1px solid #000000)]
+      RenderText {#text} at (0,0) size 0x0
+Flow Threads
+  Thread with flow-name 'article'
+    layer at (0,0) size 400x600
+      RenderFlowThread at (0,0) size 400x600
+        RenderBlock {DIV} at (0,0) size 400x688
+          RenderBlock {DIV} at (0,0) size 400x396 [color=#A0A0A0]
+            RenderInline {SPAN} at (0,0) size 400x381 [bgcolor=#A0A0A0]
+              RenderText {#text} at (0,7) size 400x381
+                text run at (0,7) width 400: "This is some content This is some"
+                text run at (0,43) width 88: "content "
+                text run at (88,43) width 312: "This is some content This is"
+                text run at (0,79) width 157: "some content "
+                text run at (157,79) width 243: "This is some content"
+                text run at (0,115) width 255: "This is some content "
+                text run at (255,115) width 145: "This is some"
+                text run at (0,151) width 322: "content This is some content "
+                text run at (322,151) width 78: "This is"
+                text run at (0,187) width 400: "some content This is some content"
+                text run at (0,223) width 400: "This is some content This is some"
+                text run at (0,259) width 88: "content "
+                text run at (88,259) width 312: "This is some content This is"
+                text run at (0,295) width 157: "some content "
+                text run at (157,295) width 243: "This is some content"
+                text run at (0,331) width 255: "This is some content "
+                text run at (255,331) width 145: "This is some"
+                text run at (0,367) width 132: "content This"
+          RenderBlock {DIV} at (0,400) size 400x192 [color=#00A0E0]
+            RenderInline {SPAN} at (0,0) size 300x182 [bgcolor=#00A0E0]
+              RenderText {#text} at (0,5) size 300x182
+                text run at (0,5) width 300: "This is some content This is some content"
+                text run at (0,29) width 300: "This is some content This is some content"
+                text run at (0,53) width 300: "This is some content This is some content"
+                text run at (0,77) width 300: "This is some content This is some content"
+                text run at (0,101) width 300: "This is some content This is some content"
+                text run at (0,125) width 300: "This is some content This is some content"
+                text run at (0,149) width 300: "This is some content This is some content"
+                text run at (0,173) width 287: "This is some content This is some content"
+          RenderBlock {DIV} at (0,592) size 400x96 [color=#800000]
+            RenderInline {SPAN} at (0,0) size 300x86 [bgcolor=#800000]
+              RenderText {#text} at (0,5) size 300x86
+                text run at (0,5) width 300: "This is some content This is some content"
+                text run at (0,29) width 300: "This is some content This is some content"
+                text run at (0,53) width 300: "This is some content This is some content"
+                text run at (0,77) width 147: "This is some content."
+            RenderText {#text} at (0,0) size 0x0
+  Regions for flow 'article'
+    RenderRegion {DIV} #region_1
+    RenderRegion {DIV} #region_2

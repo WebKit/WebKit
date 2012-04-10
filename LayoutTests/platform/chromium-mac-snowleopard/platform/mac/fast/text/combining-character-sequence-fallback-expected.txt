@@ -1,0 +1,43 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 326x18
+          text run at (0,0) width 326: "Each blue box should match the black box above it."
+      RenderBlock {DIV} at (0,34) size 784x80 [border: (3px solid #000000)]
+        RenderInline {SPAN} at (0,0) size 96x56
+          RenderText {#text} at (27,11) size 96x56
+            text run at (27,11) width 96: "1\x{20E3}2\x{20E3}"
+        RenderText {#text} at (123,14) size 93x55
+          text run at (123,14) width 93: " and "
+        RenderInline {SPAN} at (0,0) size 27x56
+          RenderText {#text} at (216,11) size 27x56
+            text run at (216,11) width 27: "a\x{20E3}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,122) size 784x80 [border: (3px solid #0000FF)]
+        RenderText {#text} at (27,14) size 216x55
+          text run at (27,14) width 216: "1\x{20E3}2\x{20E3} and a\x{20E3}"
+      RenderBlock {DIV} at (0,210) size 784x80 [border: (3px solid #000000)]
+        RenderInline {SPAN} at (0,0) size 48x55
+          RenderText {#text} at (27,14) size 48x55
+            text run at (27,14) width 48: "1\x{20E3}2\x{20E3}"
+        RenderText {#text} at (74,14) size 94x55
+          text run at (74,14) width 94: " and "
+        RenderInline {SPAN} at (0,0) size 28x56
+          RenderText {#text} at (167,11) size 28x56
+            text run at (167,11) width 28: "a\x{20E3}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,298) size 784x80 [border: (3px solid #0000FF)]
+        RenderText {#text} at (27,14) size 216x55
+          text run at (27,14) width 216: "1\x{20E3}2\x{20E3} and a\x{20E3}"
+      RenderBlock {P} at (0,394) size 784x18
+        RenderText {#text} at (0,0) size 370x18
+          text run at (0,0) width 370: "The combining marks should be centered above the letters."
+      RenderBlock {DIV} at (0,428) size 784x74
+        RenderText {#text} at (24,8) size 149x58
+          text run at (24,8) width 149: "i\x{302} and i\x{33F}"
+      RenderBlock {DIV} at (0,510) size 784x74
+        RenderText {#text} at (24,8) size 143x58
+          text run at (24,8) width 143: "i\x{302} and i\x{33F}"
