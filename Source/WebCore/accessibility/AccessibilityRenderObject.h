@@ -307,8 +307,10 @@ private:
     void addTextFieldChildren();
     void addImageMapChildren();
     void addAttachmentChildren();
+#if PLATFORM(MAC)
     void updateAttachmentViewParents();
-    
+#endif
+
     void ariaSelectedRows(AccessibilityChildrenVector&);
     
     bool elementAttributeValue(const QualifiedName&) const;

@@ -3558,7 +3558,8 @@ void AccessibilityRenderObject::addAttachmentChildren()
     if (!axWidget->accessibilityIsIgnored())
         m_children.append(axWidget);
 }
-    
+
+#if PLATFORM(MAC)
 void AccessibilityRenderObject::updateAttachmentViewParents()
 {
     // Only the unignored parent should set the attachment parent, because that's what is reflected in the AX 
@@ -3572,7 +3573,8 @@ void AccessibilityRenderObject::updateAttachmentViewParents()
             m_children[k]->overrideAttachmentParent(this);
     }
 }
-    
+#endif
+
 void AccessibilityRenderObject::addChildren()
 {
     // If the need to add more children in addition to existing children arises, 
@@ -3610,7 +3612,10 @@ void AccessibilityRenderObject::addChildren()
     addAttachmentChildren();
     addImageMapChildren();
     addTextFieldChildren();
+
+#if PLATFORM(MAC)
     updateAttachmentViewParents();
+#endif
 }
         
 const AtomicString& AccessibilityRenderObject::ariaLiveRegionStatus() const

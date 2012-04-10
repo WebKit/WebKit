@@ -33,6 +33,12 @@
 
 namespace WebCore {
 
+void AccessibilityObject::detachFromParent()
+{
+    if (isAttachment())
+        overrideAttachmentParent(0);
+}
+
 void AccessibilityObject::overrideAttachmentParent(AccessibilityObject* parent)
 {
     if (!isAttachment())

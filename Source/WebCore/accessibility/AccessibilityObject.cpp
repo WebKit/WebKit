@@ -1140,12 +1140,6 @@ void AccessibilityObject::updateChildrenIfNecessary()
     if (!hasChildren())
         addChildren();    
 }
-
-void AccessibilityObject::detachFromParent()
-{
-    if (isAttachment())
-        overrideAttachmentParent(0);
-}
     
 void AccessibilityObject::clearChildren()
 {
