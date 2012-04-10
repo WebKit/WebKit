@@ -1892,10 +1892,6 @@ pointer-lock/
 # https://bugs.webkit.org/show_bug.cgi?id=64731
 http/tests/media/media-source/
 
-# Need rebaselining after https://bugs.webkit.org/show_bug.cgi?id=71541
-fast/overflow/hidden-scrollbar-resize.html
-scrollbars/scrollbars-on-positioned-content.html
-
 # Encrypted Media Extensions are not enabled.
 media/encrypted-media/
 fast/events/constructors/media-key-event-constructor.html

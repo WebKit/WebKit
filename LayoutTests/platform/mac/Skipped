@@ -629,10 +629,6 @@ fast/inline/continuation-outlines-with-layers.html
 # Not possible to set UA string for media requests with all Mac media engines.
 http/tests/media/video-useragent.html
 
-# Need rebaselining after https://bugs.webkit.org/show_bug.cgi?id=71541
-fast/overflow/hidden-scrollbar-resize.html
-scrollbars/scrollbars-on-positioned-content.html
-
 # Rebaseline after https://bugs.webkit.org/show_bug.cgi?id=78412
 tables/mozilla/bugs/bug2123.html
 tables/mozilla/bugs/bug2509.html

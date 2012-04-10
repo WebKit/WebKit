@@ -2417,15 +2417,15 @@ void RenderLayer::computeScrollDimensions()
 bool RenderLayer::hasHorizontalOverflow() const
 {
     ASSERT(!m_scrollDimensionsDirty);
-    int widthForHorizontalScrollbar = renderBox()->style()->overflowX() == OSCROLL ? renderBox()->pixelSnappedClientWidth() : renderBox()->pixelSnappedPaddingBoxWidth();
-    return scrollWidth() > widthForHorizontalScrollbar;
+
+    return scrollWidth() > renderBox()->pixelSnappedClientWidth();
 }
 
 bool RenderLayer::hasVerticalOverflow() const
 {
     ASSERT(!m_scrollDimensionsDirty);
-    int heightForVerticalScrollbar = renderBox()->style()->overflowY() == OSCROLL ? renderBox()->pixelSnappedClientHeight() : renderBox()->pixelSnappedPaddingBoxHeight();
-    return scrollHeight() > heightForVerticalScrollbar;
+
+    return scrollHeight() > renderBox()->pixelSnappedClientHeight();
 }
 
 void RenderLayer::updateScrollbarsAfterLayout()
