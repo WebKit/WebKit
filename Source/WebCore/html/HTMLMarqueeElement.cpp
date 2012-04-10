@@ -125,7 +125,7 @@ int HTMLMarqueeElement::scrollAmount() const
 {
     bool ok;
     int scrollAmount = fastGetAttribute(scrollamountAttr).toInt(&ok);
-    return ok && scrollAmount >= 0 ? scrollAmount : RenderStyle::initialMarqueeIncrement().value();
+    return ok && scrollAmount >= 0 ? scrollAmount : RenderStyle::initialMarqueeIncrement().intValue();
 }
     
 void HTMLMarqueeElement::setScrollAmount(int scrollAmount, ExceptionCode& ec)

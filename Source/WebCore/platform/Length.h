@@ -24,6 +24,7 @@
 #define Length_h
 
 #include "AnimationUtilities.h"
+#include "LayoutTypes.h"
 #include <wtf/Assertions.h>
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
@@ -52,6 +53,11 @@ public:
 
     Length(int v, LengthType t, bool q = false)
         : m_intValue(v), m_quirk(q), m_type(t), m_isFloat(false)
+    {
+    }
+    
+    Length(FractionalLayoutUnit v, LengthType t, bool q = false)
+        : m_floatValue(v.toFloat()), m_quirk(q), m_type(t), m_isFloat(true)
     {
     }
     
@@ -112,6 +118,13 @@ public:
         return getIntValue();
     }
 
+    // FIXME: When we switch to sub-pixel layout, value will return float by default, and this will inherit
+    // the current implementation of value().
+    int intValue() const
+    {
+        return value();
+    }
+
     float percent() const
     {
         ASSERT(type() == Percent);
@@ -145,6 +158,13 @@ public:
     }
 
     void setValue(LengthType t, float value)
+    {
+        m_type = t;
+        m_floatValue = value;
+        m_isFloat = true;    
+    }
+
+    void setValue(LengthType t, FractionalLayoutUnit value)
     {
         m_type = t;
         m_floatValue = value;

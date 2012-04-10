@@ -155,7 +155,7 @@ void ImageDocumentParser::finish()
 
         // Report the natural image size in the page title, regardless of zoom
         // level.
-        LayoutSize size = cachedImage->imageSizeForRenderer(document()->imageElement()->renderer(), 1.0f);
+        IntSize size = cachedImage->imageSizeForRenderer(document()->imageElement()->renderer(), 1.0f);
         if (size.width()) {
             // Compute the title, we use the decoded filename of the resource, falling
             // back on the (decoded) hostname if there is no path.
