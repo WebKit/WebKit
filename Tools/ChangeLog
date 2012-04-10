@@ -1,3 +1,17 @@
+2012-04-10  David Dorwin  <ddorwin@chromium.org>
+
+        Add Encrypted Media Extensions methods to HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=82971
+
+        Reviewed by Adam Barth.
+
+        The extensions are behind the ENABLE(ENCRYPTED_MEDIA) feature define.
+        Implementation is based on v0.1 of the draft proposal at
+        http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+
 2012-04-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][DRT] Catch the "title,changed" signal

@@ -346,6 +346,10 @@ editing/pasteboard/drag-drop-list.html
 # https://bugs.webkit.org/show_bug.cgi?id=64731
 http/tests/media/media-source/
 
+# Encrypted Media Extensions are not enabled.
+media/encrypted-media/
+fast/events/constructors/media-key-event-constructor.html
+
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
 fast/dom/HTMLAnchorElement/anchor-nodownload.html
 fast/dom/HTMLAnchorElement/anchor-download.html

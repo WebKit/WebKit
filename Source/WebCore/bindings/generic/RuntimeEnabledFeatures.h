@@ -205,6 +205,11 @@ public:
     static void setWebkitMediaSourceEnabled(bool isEnabled) { isMediaSourceEnabled = isEnabled; }
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    static bool encryptedMediaEnabled() { return isEncryptedMediaEnabled; }
+    static void setEncryptedMediaEnabled(bool isEnabled) { isEncryptedMediaEnabled = isEnabled; }
+#endif
+
 #if ENABLE(VIDEO_TRACK)
     static bool webkitVideoTrackEnabled() { return isVideoTrackEnabled; }
     static void setWebkitVideoTrackEnabled(bool isEnabled) { isVideoTrackEnabled = isEnabled; }
@@ -274,6 +279,10 @@ private:
 
 #if ENABLE(MEDIA_SOURCE)
     static bool isMediaSourceEnabled;
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    static bool isEncryptedMediaEnabled;
 #endif
 
 #if ENABLE(VIDEO_TRACK)

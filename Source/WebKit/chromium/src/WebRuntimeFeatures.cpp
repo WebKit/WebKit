@@ -412,6 +412,24 @@ bool WebRuntimeFeatures::isMediaSourceEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableEncryptedMedia(bool enable)
+{
+#if ENABLE(ENCRYPTED_MEDIA)
+    RuntimeEnabledFeatures::setEncryptedMediaEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isEncryptedMediaEnabled()
+{
+#if ENABLE(ENCRYPTED_MEDIA)
+    return RuntimeEnabledFeatures::encryptedMediaEnabled();
+#else
+    return false;
+#endif
+}
+
 void WebRuntimeFeatures::enableVideoTrack(bool enable)
 {
 #if ENABLE(VIDEO_TRACK)

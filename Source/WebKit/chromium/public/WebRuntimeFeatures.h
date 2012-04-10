@@ -118,6 +118,9 @@ public:
     WEBKIT_EXPORT static void enableMediaSource(bool);
     WEBKIT_EXPORT static bool isMediaSourceEnabled();
 
+    WEBKIT_EXPORT static void enableEncryptedMedia(bool);
+    WEBKIT_EXPORT static bool isEncryptedMediaEnabled();
+
     WEBKIT_EXPORT static void enableVideoTrack(bool);
     WEBKIT_EXPORT static bool isVideoTrackEnabled();
 

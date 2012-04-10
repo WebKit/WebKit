@@ -317,6 +317,10 @@ http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html
 # https://bugs.webkit.org/show_bug.cgi?id=64731
 http/tests/media/media-source/
 
+# Encrypted Media Extensions are not enabled.
+media/encrypted-media/
+fast/events/constructors/media-key-event-constructor.html
+
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html
 

@@ -1,0 +1,48 @@
+Tests invalid and valid syntaxes.
+
+Test calling functions with too few parameters.
+TEST(video.webkitGenerateKeyRequest()) THROWS(DOMException.TYPE_ERR) OK
+TEST(video.webkitAddKey()) THROWS(DOMException.TYPE_ERR) OK
+TEST(video.webkitAddKey('webkit-org.w3.clearkey')) THROWS(DOMException.TYPE_ERR) OK
+TEST(video.webkitCancelKeyRequest()) THROWS(DOMException.TYPE_ERR) OK
+
+Verify invalid key system parameter is caught before checking whether loading has started.
+EXPECTED (video.networkState == '0') OK
+EXPECTED (video.currentSrc == '') OK
+TEST(video.webkitGenerateKeyRequest('')) THROWS(DOMException.SYNTAX_ERR) OK
+TEST(video.webkitGenerateKeyRequest(null)) THROWS(DOMException.SYNTAX_ERR) OK
+TEST(video.webkitGenerateKeyRequest(undefined)) THROWS(DOMException.SYNTAX_ERR) OK
+TEST(video.webkitAddKey('', key)) THROWS(DOMException.SYNTAX_ERR) OK
+TEST(video.webkitAddKey(null, key)) THROWS(DOMException.SYNTAX_ERR) OK
+TEST(video.webkitAddKey(undefined, key)) THROWS(DOMException.SYNTAX_ERR) OK
+TEST(video.webkitCancelKeyRequest('')) THROWS(DOMException.SYNTAX_ERR) OK
+TEST(video.webkitCancelKeyRequest(null)) THROWS(DOMException.SYNTAX_ERR) OK
+TEST(video.webkitCancelKeyRequest(undefined)) THROWS(DOMException.SYNTAX_ERR) OK
+
+0-length key is caught before load state is checked.
+TEST(video.webkitAddKey('webkit-org.w3.clearkey', new Uint8Array())) THROWS(DOMException.TYPE_MISMATCH_ERR) OK
+
+Key system validity is not checked before loading.
+TEST(video.webkitGenerateKeyRequest('com.example.invalid')) THROWS(DOMException.INVALID_STATE_ERR) OK
+TEST(video.webkitAddKey('com.example.invalid', key)) THROWS(DOMException.INVALID_STATE_ERR) OK
+TEST(video.webkitCancelKeyRequest('com.example.invalid')) THROWS(DOMException.INVALID_STATE_ERR) OK
+
+EVENT(loadstart)
+Verify valid syntaxes do not throw.
+EXPECTED (video.networkState == '2') OK
+EXPECTED (video.currentSrc != '') OK
+RUN(video.webkitGenerateKeyRequest('webkit-org.w3.clearkey'))
+RUN(video.webkitGenerateKeyRequest('webkit-org.w3.clearkey', initData))
+RUN(video.webkitAddKey('webkit-org.w3.clearkey', key))
+RUN(video.webkitAddKey('webkit-org.w3.clearkey', key, 'session'))
+RUN(video.webkitAddKey('webkit-org.w3.clearkey', key, initData))
+RUN(video.webkitAddKey('webkit-org.w3.clearkey', key, initData, 'session'))
+RUN(video.webkitCancelKeyRequest('webkit-org.w3.clearkey'))
+RUN(video.webkitCancelKeyRequest('webkit-org.w3.clearkey', 'session'))
+
+Unsupported key systems result in NOT_SUPPORTED_ERR.
+TEST(video.webkitGenerateKeyRequest('com.example.invalid')) THROWS(DOMException.NOT_SUPPORTED_ERR) OK
+TEST(video.webkitAddKey('com.example.invalid', key)) THROWS(DOMException.NOT_SUPPORTED_ERR) OK
+TEST(video.webkitCancelKeyRequest('com.example.invalid')) THROWS(DOMException.NOT_SUPPORTED_ERR) OK
+END OF TEST
+

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+    <head>
+    </head>
+    <body>
+        <video></video>
+        <p>Test that the methods throw INVALID_STATE_ERR when the media element has not loaded. canPlayType() never throws.</p>
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            var key = new Uint8Array([0x51, 0x52, 0x53]);
+    
+            function loadStarted()
+            {
+                test("video.networkState == video.NETWORK_LOADING || video.networkState == video.NETWORK_IDLE");
+                testExpected("video.currentSrc", "", "!=");
+                consoleWrite("Verify that none of the methods throw when load has started.");
+                run("video.webkitGenerateKeyRequest('webkit-org.w3.clearkey')");
+                run("video.webkitAddKey('webkit-org.w3.clearkey', key)");
+                run("video.webkitCancelKeyRequest('webkit-org.w3.clearkey')");
+                run("video.canPlayType('audio/wav', 'webkit-org.w3.clearkey')");
+                
+                endTest();
+            }
+        
+            // Confirms the unloaded state.
+            testExpected("video.networkState", video.NETWORK_EMPTY);
+            testExpected("video.currentSrc", "");
+
+            consoleWrite("No 'src'. Verify that all methods except canPlayType() throw INVALID_STATE_ERR.");
+            testException("video.webkitGenerateKeyRequest('webkit-org.w3.clearkey')", "DOMException.INVALID_STATE_ERR");
+            testException("video.webkitAddKey('webkit-org.w3.clearkey', key)", "DOMException.INVALID_STATE_ERR");
+            testException("video.webkitCancelKeyRequest('webkit-org.w3.clearkey')", "DOMException.INVALID_STATE_ERR");
+            run("video.canPlayType('audio/wav', 'webkit-org.w3.clearkey')");
+
+            video.setAttribute("src", findMediaFile("video", "../content/test"));
+
+            consoleWrite("<br>'src' has been set, but loading has not yet started. Verify that all methods except canPlayType() throw INVALID_STATE_ERR.");
+
+            testExpected("video.networkState", video.NETWORK_NO_SOURCE);
+            testExpected("video.currentSrc", "");
+
+            testException("video.webkitGenerateKeyRequest('webkit-org.w3.clearkey')", "DOMException.INVALID_STATE_ERR");
+            testException("video.webkitAddKey('webkit-org.w3.clearkey', key)", "DOMException.INVALID_STATE_ERR");
+            testException("video.webkitCancelKeyRequest('webkit-org.w3.clearkey')", "DOMException.INVALID_STATE_ERR");
+            run("video.canPlayType('audio/wav', 'webkit-org.w3.clearkey')");
+
+
+            consoleWrite("");
+            waitForEvent('loadstart', loadStarted);
+        </script>
+    </body>
+</html>

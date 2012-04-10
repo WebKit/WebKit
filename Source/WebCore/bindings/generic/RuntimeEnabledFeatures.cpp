@@ -184,6 +184,10 @@ bool RuntimeEnabledFeatures::isMediaSourceEnabled = false;
 #endif
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+bool RuntimeEnabledFeatures::isEncryptedMediaEnabled = false;
+#endif
+
 #if ENABLE(SHADOW_DOM)
 bool RuntimeEnabledFeatures::isShadowDOMEnabled = false;
 #endif
@@ -191,4 +195,5 @@ bool RuntimeEnabledFeatures::isShadowDOMEnabled = false;
 #if ENABLE(STYLE_SCOPED)
 bool RuntimeEnabledFeatures::isStyleScopedEnabled = false;
 #endif
+
 } // namespace WebCore

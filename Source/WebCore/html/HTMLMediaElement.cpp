@@ -175,6 +175,23 @@ static void removeElementFromDocumentMap(HTMLMediaElement* element, Document* do
         map.add(document, set);
 }
 
+#if ENABLE(ENCRYPTED_MEDIA)
+static ExceptionCode exceptionCodeForMediaKeyException(MediaPlayer::MediaKeyException exception)
+{
+    switch (exception) {
+    case MediaPlayer::NoError:
+        return 0;
+    case MediaPlayer::InvalidPlayerState:
+        return INVALID_STATE_ERR;
+    case MediaPlayer::KeySystemNotSupported:
+        return NOT_SUPPORTED_ERR;
+    }
+
+    ASSERT_NOT_REACHED();
+    return INVALID_STATE_ERR;
+}
+#endif
+
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* document, bool createdByParser)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(document, this)
@@ -2235,6 +2252,86 @@ void HTMLMediaElement::setSourceState(SourceState state)
         return;
     }
 }
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+void HTMLMediaElement::webkitGenerateKeyRequest(const String& keySystem, PassRefPtr<Uint8Array> initData, ExceptionCode& ec)
+{
+    if (keySystem.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    if (!m_player) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    const unsigned char* initDataPointer = 0;
+    unsigned initDataLength = 0;
+    if (initData) {
+        initDataPointer = initData->data();
+        initDataLength = initData->length();
+    }
+
+    MediaPlayer::MediaKeyException result = m_player->generateKeyRequest(keySystem, initDataPointer, initDataLength);
+    ec = exceptionCodeForMediaKeyException(result);
+}
+
+void HTMLMediaElement::webkitGenerateKeyRequest(const String& keySystem, ExceptionCode& ec)
+{
+    webkitGenerateKeyRequest(keySystem, Uint8Array::create(0), ec);
+}
+
+void HTMLMediaElement::webkitAddKey(const String& keySystem, PassRefPtr<Uint8Array> key, PassRefPtr<Uint8Array> initData, const String& sessionId, ExceptionCode& ec)
+{
+    if (keySystem.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    if (!key->length()) {
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+
+    if (!m_player) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    const unsigned char* initDataPointer = 0;
+    unsigned initDataLength = 0;
+    if (initData) {
+        initDataPointer = initData->data();
+        initDataLength = initData->length();
+    }
+
+    MediaPlayer::MediaKeyException result = m_player->addKey(keySystem, key->data(), key->length(), initDataPointer, initDataLength, sessionId);
+    ec = exceptionCodeForMediaKeyException(result);
+}
+
+void HTMLMediaElement::webkitAddKey(const String& keySystem, PassRefPtr<Uint8Array> key, ExceptionCode& ec)
+{
+    webkitAddKey(keySystem, key, Uint8Array::create(0), emptyString(), ec);
+}
+
+void HTMLMediaElement::webkitCancelKeyRequest(const String& keySystem, const String& sessionId, ExceptionCode& ec)
+{
+    if (keySystem.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    if (!m_player) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    MediaPlayer::MediaKeyException result = m_player->cancelKeyRequest(keySystem, sessionId);
+    ec = exceptionCodeForMediaKeyException(result);
+}
+
 #endif
 
 bool HTMLMediaElement::loop() const

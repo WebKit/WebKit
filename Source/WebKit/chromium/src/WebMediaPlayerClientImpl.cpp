@@ -306,6 +306,35 @@ void WebMediaPlayerClientImpl::sourceEndOfStream(WebCore::MediaPlayer::EndOfStre
 }
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+MediaPlayer::MediaKeyException WebMediaPlayerClientImpl::generateKeyRequest(const String& keySystem, const unsigned char* initData, unsigned initDataLength)
+{
+    if (!m_webMediaPlayer)
+        return MediaPlayer::InvalidPlayerState;
+
+    WebMediaPlayer::MediaKeyException result = m_webMediaPlayer->generateKeyRequest(keySystem, initData, initDataLength);
+    return static_cast<MediaPlayer::MediaKeyException>(result);
+}
+
+MediaPlayer::MediaKeyException WebMediaPlayerClientImpl::addKey(const String& keySystem, const unsigned char* key, unsigned keyLength, const unsigned char* initData, unsigned initDataLength, const String& sessionId)
+{
+    if (!m_webMediaPlayer)
+        return MediaPlayer::InvalidPlayerState;
+
+    WebMediaPlayer::MediaKeyException result = m_webMediaPlayer->addKey(keySystem, key, keyLength, initData, initDataLength, sessionId);
+    return static_cast<MediaPlayer::MediaKeyException>(result);
+}
+
+MediaPlayer::MediaKeyException WebMediaPlayerClientImpl::cancelKeyRequest(const String& keySystem, const String& sessionId)
+{
+    if (!m_webMediaPlayer)
+        return MediaPlayer::InvalidPlayerState;
+
+    WebMediaPlayer::MediaKeyException result = m_webMediaPlayer->cancelKeyRequest(keySystem, sessionId);
+    return static_cast<MediaPlayer::MediaKeyException>(result);
+}
+#endif
+
 void WebMediaPlayerClientImpl::prepareToPlay()
 {
     if (m_delayingLoad)

@@ -41,6 +41,7 @@ class WebAudioSourceProvider;
 class WebAudioSourceProviderClient;
 class WebMediaPlayerClient;
 class WebStreamTextureClient;
+class WebString;
 class WebURL;
 struct WebRect;
 struct WebSize;
@@ -92,6 +93,14 @@ public:
         EosNoError,
         EosNetworkError,
         EosDecodeError,
+    };
+
+    // Represents synchronous exceptions that can be thrown from the Encrypted
+    // Media methods. This is different from the asynchronous MediaKeyError.
+    enum MediaKeyException {
+        NoError,
+        InvalidPlayerState,
+        KeySystemNotSupported
     };
 
     virtual ~WebMediaPlayer() {}
@@ -169,6 +178,12 @@ public:
 
     virtual bool sourceAppend(const unsigned char* data, unsigned length) { return false; }
     virtual void sourceEndOfStream(EndOfStreamStatus)  { }
+
+    // Returns whether keySystem is supported. If true, the result will be
+    // reported by an event.
+    virtual MediaKeyException generateKeyRequest(const WebString& keySystem, const unsigned char* initData, unsigned initDataLength) { return KeySystemNotSupported; }
+    virtual MediaKeyException addKey(const WebString& keySystem, const unsigned char* key, unsigned keyLength, const unsigned char* initData, unsigned initDataLength, const WebString& sessionId) { return KeySystemNotSupported; }
+    virtual MediaKeyException cancelKeyRequest(const WebString& keySystem, const WebString& sessionId) { return KeySystemNotSupported; }
 };
 
 } // namespace WebKit

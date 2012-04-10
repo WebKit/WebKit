@@ -152,6 +152,12 @@ public:
     virtual bool sourceAppend(const unsigned char*, unsigned) { return false; }
     virtual void sourceEndOfStream(MediaPlayer::EndOfStreamStatus status) { }
 #endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    virtual MediaPlayer::MediaKeyException generateKeyRequest(const String&, const unsigned char*, unsigned) OVERRIDE { return MediaPlayer::InvalidPlayerState; }
+    virtual MediaPlayer::MediaKeyException addKey(const String&, const unsigned char*, unsigned, const unsigned char*, unsigned, const String&) OVERRIDE { return MediaPlayer::InvalidPlayerState; }
+    virtual MediaPlayer::MediaKeyException cancelKeyRequest(const String&, const String&) OVERRIDE { return MediaPlayer::InvalidPlayerState; }
+#endif
 };
 
 static PassOwnPtr<MediaPlayerPrivateInterface> createNullMediaPlayer(MediaPlayer* player) 
@@ -451,6 +457,23 @@ bool MediaPlayer::sourceAppend(const unsigned char* data, unsigned length)
 void MediaPlayer::sourceEndOfStream(MediaPlayer::EndOfStreamStatus status)
 {
     return m_private->sourceEndOfStream(status);
+}
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+MediaPlayer::MediaKeyException MediaPlayer::generateKeyRequest(const String& keySystem, const unsigned char* initData, unsigned initDataLength)
+{
+    return m_private->generateKeyRequest(keySystem.lower(), initData, initDataLength);
+}
+
+MediaPlayer::MediaKeyException MediaPlayer::addKey(const String& keySystem, const unsigned char* key, unsigned keyLength, const unsigned char* initData, unsigned initDataLength, const String& sessionId)
+{
+    return m_private->addKey(keySystem.lower(), key, keyLength, initData, initDataLength, sessionId);
+}
+
+MediaPlayer::MediaKeyException MediaPlayer::cancelKeyRequest(const String& keySystem, const String& sessionId)
+{
+    return m_private->cancelKeyRequest(keySystem.lower(), sessionId);
 }
 #endif
 

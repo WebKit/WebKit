@@ -226,6 +226,16 @@ public:
     void sourceEndOfStream(EndOfStreamStatus);
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    // Represents synchronous exceptions that can be thrown from the Encrypted Media methods.
+    // This is different from the asynchronous MediaKeyError.
+    enum MediaKeyException { NoError, InvalidPlayerState, KeySystemNotSupported };
+
+    MediaKeyException generateKeyRequest(const String& keySystem, const unsigned char* initData, unsigned initDataLength);
+    MediaKeyException addKey(const String& keySystem, const unsigned char* key, unsigned keyLength, const unsigned char* initData, unsigned initDataLength, const String& sessionId);
+    MediaKeyException cancelKeyRequest(const String& keySystem, const String& sessionId);
+#endif
+
     bool paused() const;
     bool seeking() const;
 

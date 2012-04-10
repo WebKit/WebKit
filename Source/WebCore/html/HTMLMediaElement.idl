@@ -111,6 +111,15 @@ module html {
     readonly attribute [V8EnabledAtRuntime=webkitMediaSource] unsigned short webkitSourceState;
 #endif
 
+#if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
+    [V8EnabledAtRuntime=encryptedMedia] void webkitGenerateKeyRequest(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in [Optional] Uint8Array initData)
+        raises (DOMException);
+    [V8EnabledAtRuntime=encryptedMedia] void webkitAddKey(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in Uint8Array key, in [Optional] Uint8Array initData, in [Optional=DefaultIsNullString] DOMString sessionId)
+        raises (DOMException);
+    [V8EnabledAtRuntime=encryptedMedia] void webkitCancelKeyRequest(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in [Optional=DefaultIsNullString] DOMString sessionId)
+        raises (DOMException);
+#endif
+
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
     [V8EnabledAtRuntime=webkitVideoTrack] TextTrack addTextTrack(in DOMString kind, in [Optional] DOMString label, in [Optional] DOMString language)
         raises (DOMException);

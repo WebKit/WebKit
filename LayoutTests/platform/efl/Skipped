@@ -1896,6 +1896,10 @@ http/tests/media/media-source/
 fast/overflow/hidden-scrollbar-resize.html
 scrollbars/scrollbars-on-positioned-content.html
 
+# Encrypted Media Extensions are not enabled.
+media/encrypted-media/
+fast/events/constructors/media-key-event-constructor.html
+
 # Needs a rebaseline
 fast/events/clear-drag-state.html
 fast/events/clear-edit-drag-state.html

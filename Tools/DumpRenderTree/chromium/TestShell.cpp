@@ -125,6 +125,7 @@ TestShell::TestShell()
     WebRuntimeFeatures::enableFileSystem(true);
     WebRuntimeFeatures::enableJavaScriptI18NAPI(true);
     WebRuntimeFeatures::enableMediaSource(true);
+    WebRuntimeFeatures::enableEncryptedMedia(true);
     WebRuntimeFeatures::enableMediaStream(true);
     WebRuntimeFeatures::enableWebAudio(true); 
     WebRuntimeFeatures::enableVideoTrack(true);

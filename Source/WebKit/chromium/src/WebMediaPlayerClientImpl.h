@@ -150,6 +150,12 @@ public:
     virtual void sourceEndOfStream(WebCore::MediaPlayer::EndOfStreamStatus);
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    virtual WebCore::MediaPlayer::MediaKeyException generateKeyRequest(const String& keySystem, const unsigned char* initData, unsigned initDataLength) OVERRIDE;
+    virtual WebCore::MediaPlayer::MediaKeyException addKey(const String& keySystem, const unsigned char* key, unsigned keyLength, const unsigned char* initData, unsigned initDataLength, const String& sessionId) OVERRIDE;
+    virtual WebCore::MediaPlayer::MediaKeyException cancelKeyRequest(const String& keySystem, const String& sessionId) OVERRIDE;
+#endif
+
     // WebStreamTextureClient methods:
     virtual void didReceiveFrame();
     virtual void didUpdateMatrix(const float*);

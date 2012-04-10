@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+    <head>
+    </head>
+    <body>
+        <video></video>
+        <p>Tests invalid and valid syntaxes.</p>
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            var initData = new Uint8Array([0x51, 0x52, 0x53]);
+            var key = initData;
+    
+            function loadStarted()
+            {
+                consoleWrite("Verify valid syntaxes do not throw.");
+                testExpected("video.networkState", video.NETWORK_LOADING);
+                testExpected("video.currentSrc", "", "!=");
+                run("video.webkitGenerateKeyRequest('webkit-org.w3.clearkey')");
+                run("video.webkitGenerateKeyRequest('webkit-org.w3.clearkey', initData)");
+                run("video.webkitAddKey('webkit-org.w3.clearkey', key)");
+                run("video.webkitAddKey('webkit-org.w3.clearkey', key, 'session')");
+                run("video.webkitAddKey('webkit-org.w3.clearkey', key, initData)");
+                run("video.webkitAddKey('webkit-org.w3.clearkey', key, initData, 'session')");
+                run("video.webkitCancelKeyRequest('webkit-org.w3.clearkey')");
+                run("video.webkitCancelKeyRequest('webkit-org.w3.clearkey', 'session')");
+
+                consoleWrite("<br>Unsupported key systems result in NOT_SUPPORTED_ERR.");
+                testException("video.webkitGenerateKeyRequest('com.example.invalid')", "DOMException.NOT_SUPPORTED_ERR");
+                testException("video.webkitAddKey('com.example.invalid', key)", "DOMException.NOT_SUPPORTED_ERR");
+                testException("video.webkitCancelKeyRequest('com.example.invalid')", "DOMException.NOT_SUPPORTED_ERR");
+
+                endTest();
+            }
+        
+            consoleWrite("Test calling functions with too few parameters.");
+            testException("video.webkitGenerateKeyRequest()", "DOMException.TYPE_ERR");
+            testException("video.webkitAddKey()", "DOMException.TYPE_ERR");
+            testException("video.webkitAddKey('webkit-org.w3.clearkey')", "DOMException.TYPE_ERR");
+            testException("video.webkitCancelKeyRequest()", "DOMException.TYPE_ERR");
+
+            consoleWrite("<br>Verify invalid key system parameter is caught before checking whether loading has started.");
+            // If the above was not the case, all of these would be INVALID_STATE_ERR.
+            testExpected("video.networkState", video.NETWORK_EMPTY);
+            testExpected("video.currentSrc", "");
+            testException("video.webkitGenerateKeyRequest('')", "DOMException.SYNTAX_ERR");
+            testException("video.webkitGenerateKeyRequest(null)", "DOMException.SYNTAX_ERR");
+            testException("video.webkitGenerateKeyRequest(undefined)", "DOMException.SYNTAX_ERR");
+            testException("video.webkitAddKey('', key)", "DOMException.SYNTAX_ERR");
+            testException("video.webkitAddKey(null, key)", "DOMException.SYNTAX_ERR");
+            testException("video.webkitAddKey(undefined, key)", "DOMException.SYNTAX_ERR");
+            testException("video.webkitCancelKeyRequest('')", "DOMException.SYNTAX_ERR");
+            testException("video.webkitCancelKeyRequest(null)", "DOMException.SYNTAX_ERR");
+            testException("video.webkitCancelKeyRequest(undefined)", "DOMException.SYNTAX_ERR");
+
+            consoleWrite("<br>0-length key is caught before load state is checked.");
+            testException("video.webkitAddKey('webkit-org.w3.clearkey', new Uint8Array())", "DOMException.TYPE_MISMATCH_ERR");
+
+            consoleWrite("<br>Key system validity is not checked before loading.");
+            testException("video.webkitGenerateKeyRequest('com.example.invalid')", "DOMException.INVALID_STATE_ERR");
+            testException("video.webkitAddKey('com.example.invalid', key)", "DOMException.INVALID_STATE_ERR");
+            testException("video.webkitCancelKeyRequest('com.example.invalid')", "DOMException.INVALID_STATE_ERR");
+
+            // FIXME(82952): Add "test-encrypted" file.
+            video.setAttribute("src", findMediaFile("video", "../content/test"));
+            consoleWrite("");
+            waitForEvent('loadstart', loadStarted);
+        </script>
+    </body>
+</html>
