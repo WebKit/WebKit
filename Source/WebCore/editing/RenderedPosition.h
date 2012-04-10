@@ -67,8 +67,7 @@ public:
     Position positionAtLeftBoundaryOfBiDiRun() const;
     Position positionAtRightBoundaryOfBiDiRun() const;
 
-    LayoutRect absoluteRect() const { return absoluteRect(0); }
-    LayoutRect absoluteRect(LayoutUnit& extraWidthToEndOfLine) const { return absoluteRect(&extraWidthToEndOfLine); }
+    IntRect absoluteRect(LayoutUnit* extraWidthToEndOfLine = 0) const;
 
 private:
     bool operator==(const RenderedPosition&) const { return false; }
@@ -80,8 +79,6 @@ private:
     bool atRightmostOffsetInBox() const { return m_inlineBox && m_offset == m_inlineBox->caretRightmostOffset(); }
     bool atLeftBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
     bool atRightBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
-
-    LayoutRect absoluteRect(LayoutUnit* extraWidthToEndOfLine) const;
 
     RenderObject* m_renderer;
     InlineBox* m_inlineBox;

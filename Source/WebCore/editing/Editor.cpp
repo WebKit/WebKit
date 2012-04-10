@@ -2575,11 +2575,11 @@ IntRect Editor::firstRectForRange(Range* range) const
     ASSERT(range->startContainer());
     ASSERT(range->endContainer());
 
-    LayoutRect startCaretRect = RenderedPosition(VisiblePosition(range->startPosition()).deepEquivalent(), DOWNSTREAM).absoluteRect(extraWidthToEndOfLine);
+    IntRect startCaretRect = RenderedPosition(VisiblePosition(range->startPosition()).deepEquivalent(), DOWNSTREAM).absoluteRect(&extraWidthToEndOfLine);
     if (startCaretRect == LayoutRect())
         return IntRect();
 
-    LayoutRect endCaretRect = RenderedPosition(VisiblePosition(range->endPosition()).deepEquivalent(), UPSTREAM).absoluteRect();
+    IntRect endCaretRect = RenderedPosition(VisiblePosition(range->endPosition()).deepEquivalent(), UPSTREAM).absoluteRect();
     if (endCaretRect == LayoutRect())
         return IntRect();
 

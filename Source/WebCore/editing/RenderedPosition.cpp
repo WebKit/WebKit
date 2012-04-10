@@ -224,13 +224,13 @@ Position RenderedPosition::positionAtRightBoundaryOfBiDiRun() const
     return createLegacyEditingPosition(prevLeafChild()->renderer()->node(), prevLeafChild()->caretRightmostOffset());
 }
 
-LayoutRect RenderedPosition::absoluteRect(LayoutUnit* extraWidthToEndOfLine) const
+IntRect RenderedPosition::absoluteRect(LayoutUnit* extraWidthToEndOfLine) const
 {
     if (isNull())
-        return LayoutRect();
+        return IntRect();
 
-    LayoutRect localRect = m_renderer->localCaretRect(m_inlineBox, m_offset, extraWidthToEndOfLine);
-    return localRect == LayoutRect() ? LayoutRect() : m_renderer->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
+    IntRect localRect = pixelSnappedIntRect(m_renderer->localCaretRect(m_inlineBox, m_offset, extraWidthToEndOfLine));
+    return localRect == IntRect() ? IntRect() : m_renderer->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 
 bool renderObjectContainsPosition(RenderObject* target, const Position& position)
