@@ -672,8 +672,18 @@ void RenderTableSection::layoutRows()
             cell->layoutIfNeeded();
 
             // FIXME: Make pagination work with vertical tables.
-            if (style()->isHorizontalWritingMode() && view()->layoutState()->pageLogicalHeight() && cell->height() != rHeight)
-                cell->setHeight(rHeight); // FIXME: Pagination might have made us change size.  For now just shrink or grow the cell to fit without doing a relayout.
+            if (view()->layoutState()->pageLogicalHeight() && cell->logicalHeight() != rHeight) {
+                // FIXME: Pagination might have made us change size. For now just shrink or grow the cell to fit without doing a relayout.
+                // We'll also do a basic increase of the row height to accommodate the cell if it's bigger, but this isn't quite right
+                // either. It's at least stable though and won't result in an infinite # of relayouts that may never stabilize.
+                if (cell->logicalHeight() > rHeight) {
+                    unsigned delta = cell->logicalHeight() - rHeight;
+                    for (unsigned rowIndex = rindx + cell->rowSpan(); rowIndex <= totalRows; rowIndex++)
+                        m_rowPos[rowIndex] += delta;
+                    rHeight = cell->logicalHeight();
+                } else
+                    cell->setLogicalHeight(rHeight);
+            }
 
             LayoutSize childOffset(cell->location() - oldCellRect.location());
             if (childOffset.width() || childOffset.height()) {
