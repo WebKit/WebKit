@@ -1,3 +1,9 @@
+2012-04-10  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Add missing source files to build system
+
+        * CMakeLists.txt:
+
 2012-04-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [WK2] Enable using a single ShareableBitmap for multiple updates

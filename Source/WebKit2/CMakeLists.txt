@@ -146,6 +146,7 @@ SET(WebKit2_SOURCES
     Shared/WebHitTestResult.cpp
     Shared/WebImage.cpp
     Shared/WebKeyboardEvent.cpp
+    Shared/WebLayerTreeInfo.cpp
     Shared/WebMemorySampler.cpp
     Shared/WebMouseEvent.cpp
     Shared/WebOpenPanelParameters.cpp
@@ -203,6 +204,7 @@ SET(WebKit2_SOURCES
     UIProcess/FindIndicator.cpp
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
+    UIProcess/LayerTreeHostProxy.cpp
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/VisitedLinkProvider.cpp
     UIProcess/WebApplicationCacheManagerProxy.cpp
@@ -233,6 +235,7 @@ SET(WebKit2_SOURCES
     UIProcess/WebIconDatabaseClient.cpp
     UIProcess/WebInspectorProxy.cpp
     UIProcess/WebKeyValueStorageManagerProxy.cpp
+    UIProcess/WebLayerTreeRenderer.cpp
     UIProcess/WebLoaderClient.cpp
     UIProcess/WebMediaCacheManagerProxy.cpp
     UIProcess/WebNavigationData.cpp
@@ -291,6 +294,10 @@ SET(WebKit2_SOURCES
     UIProcess/Authentication/WebProtectionSpace.cpp
 
     UIProcess/Downloads/DownloadProxy.cpp
+
+    UIProcess/InspectorServer/WebInspectorServer.cpp
+    UIProcess/InspectorServer/WebSocketServer.cpp
+    UIProcess/InspectorServer/WebSocketServerConnection.cpp
 
     UIProcess/Launcher/ProcessLauncher.cpp
     UIProcess/Launcher/ThreadLauncher.cpp
@@ -392,6 +399,7 @@ SET(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebEditorClient.cpp
     WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
     WebProcess/WebCoreSupport/WebGeolocationClient.cpp
+    WebProcess/WebCoreSupport/WebGraphicsLayer.cpp
     WebProcess/WebCoreSupport/WebInspectorClient.cpp
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp
     WebProcess/WebCoreSupport/WebNotificationClient.cpp
@@ -408,6 +416,7 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/LayerTreeHost.cpp
     WebProcess/WebPage/PageOverlay.cpp
     WebProcess/WebPage/TapHighlightController.cpp
+    WebProcess/WebPage/TiledBackingStoreRemoteTile.cpp
     WebProcess/WebPage/WebBackForwardListProxy.cpp
     WebProcess/WebPage/WebContextMenu.cpp
     WebProcess/WebPage/WebFrame.cpp
