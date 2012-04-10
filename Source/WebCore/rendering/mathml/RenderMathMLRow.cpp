@@ -36,9 +36,20 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-RenderMathMLRow::RenderMathMLRow(Element* element)
-    : RenderMathMLBlock(element)
+RenderMathMLRow::RenderMathMLRow(Node* node)
+    : RenderMathMLBlock(node)
 {
+}
+
+// FIXME: Change all these createAnonymous... routines to return a PassOwnPtr<>.
+RenderMathMLRow* RenderMathMLRow::createAnonymousWithParentRenderer(const RenderObject* parent)
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(parent->style());
+    newStyle->setDisplay(INLINE_BLOCK);
+
+    RenderMathMLRow* newMRow = new (parent->renderArena()) RenderMathMLRow(parent->document() /* is anonymous */);
+    newMRow->setStyle(newStyle.release());
+    return newMRow;
 }
 
 void RenderMathMLRow::layout() 

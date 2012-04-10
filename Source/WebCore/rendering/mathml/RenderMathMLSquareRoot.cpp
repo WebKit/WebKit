@@ -33,19 +33,24 @@
 #include "GraphicsContext.h"
 #include "MathMLNames.h"
 #include "PaintInfo.h"
+#include "RenderMathMLRow.h"
 
 namespace WebCore {
     
 using namespace MathMLNames;
 
-// Lower the radical sign's bottom point (px)
-const int gRadicalBottomPointLower = 3;
+// FIXME: This whole file should be changed to work with various writing modes. See https://bugs.webkit.org/show_bug.cgi?id=48951.
+
 // Threshold above which the radical shape is modified to look nice with big bases (em)
 const float gThresholdBaseHeightEms = 1.5f;
-// Front width (em)
+// Normal width of the front of the radical sign, before the base & overbar (em)
 const float gFrontWidthEms = 0.75f;
+// Gap between the base and overbar (em)
+const float gSpaceAboveEms = 0.2f;
 // Horizontal position of the bottom point of the radical (* frontWidth)
 const float gRadicalBottomPointXFront = 0.5f;
+// Lower the radical sign's bottom point (px)
+const int gRadicalBottomPointLower = 3;
 // Horizontal position of the top left point of the radical "dip" (* frontWidth)
 const float gRadicalDipLeftPointXFront = 0.2f;
 // Vertical position of the top left point of the radical "dip" (* baseHeight)
@@ -65,6 +70,46 @@ RenderMathMLSquareRoot::RenderMathMLSquareRoot(Element* element)
 {
 }
 
+void RenderMathMLSquareRoot::addChild(RenderObject* newChild, RenderObject* beforeChild)
+{
+    if (!firstChild()) {
+        RenderMathMLRow* newMRow = RenderMathMLRow::createAnonymousWithParentRenderer(this);
+        
+        RenderMathMLBlock::addChild(newMRow);
+        
+        // newMRow->isAnonymousBlock() is false because newMRow's display is INLINE_BLOCK,
+        // so we don't need to worry about removeLeftoverAnonymousBlock().
+        ASSERT(!newMRow->isAnonymousBlock());
+    }
+    
+    ASSERT(firstChild() && firstChild()->isAnonymous() && firstChild()->isRenderMathMLBlock() && toRenderMathMLBlock(firstChild())->isRenderMathMLRow());
+    firstChild()->addChild(newChild, beforeChild);
+}
+
+void RenderMathMLSquareRoot::computePreferredLogicalWidths()
+{
+    m_intrinsicPaddingStart = static_cast<int>(roundf(gFrontWidthEms * style()->fontSize()));
+    
+    RenderMathMLBlock::computePreferredLogicalWidths();
+}
+
+void RenderMathMLSquareRoot::computeLogicalHeight()
+{
+    int baseHeight = roundToInt(getBoxModelObjectHeight(firstChild()));
+    float thresholdHeight = gThresholdBaseHeightEms * style()->fontSize();
+    m_intrinsicPaddingAfter = baseHeight > thresholdHeight ? static_cast<int>(roundf(gBigRootBottomPaddingEms * style()->fontSize())) : 0;
+    setLogicalHeight(baseHeight + borderAndPaddingLogicalHeight());
+    
+    RenderMathMLBlock::computeLogicalHeight();
+}
+
+void RenderMathMLSquareRoot::layout()
+{
+    m_intrinsicPaddingBefore = static_cast<int>(roundf(gSpaceAboveEms * style()->fontSize()));
+    
+    RenderMathMLBlock::layout();
+}
+
 void RenderMathMLSquareRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLBlock::paint(info, paintOffset);
@@ -72,35 +117,19 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, const LayoutPoint& paintOffs
     if (info.context->paintingDisabled())
         return;
     
-    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location());
+    LayoutSize cssContentLeftTop(borderLeft() + paddingLeft(ExcludeIntrinsicPadding), borderTop() + paddingTop(ExcludeIntrinsicPadding));
+    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + cssContentLeftTop);
     
-    int baseHeight = 0;
-    int overbarWidth = 0;
-    RenderObject* current = firstChild();
-    while (current) {
-        if (current->isBoxModelObject()) {
-            RenderBoxModelObject* box = toRenderBoxModelObject(current);
-            
-            // Check to see if this box has a larger height
-            // FIXME: We should consider the height above & below the baseline separately. This will be
-            // fixed by an <mrow> base wrapper, which is required anyway by the MathML spec.
-            if (box->pixelSnappedOffsetHeight() > baseHeight)
-                baseHeight = box->pixelSnappedOffsetHeight();
-            overbarWidth += box->pixelSnappedOffsetWidth();
-        }
-        current = current->nextSibling();
-    }
-    // default to the font size in pixels if we're empty
-    if (!baseHeight)
-        baseHeight = style()->fontSize();
+    int baseHeight = roundToInt(getBoxModelObjectHeight(firstChild()));
+    int overbarWidth = roundToInt(getBoxModelObjectWidth(firstChild()));
     
-    int frontWidth = static_cast<int>(style()->fontSize() * gFrontWidthEms);
+    int frontWidth = m_intrinsicPaddingStart;
     int overbarLeftPointShift = 0;
     // Base height above which the shape of the root changes
-    int thresholdHeight = static_cast<int>(gThresholdBaseHeightEms * style()->fontSize());
+    float thresholdHeight = gThresholdBaseHeightEms * style()->fontSize();
     
     if (baseHeight > thresholdHeight && thresholdHeight) {
-        float shift = (baseHeight - thresholdHeight) / static_cast<float>(thresholdHeight);
+        float shift = (baseHeight - thresholdHeight) / thresholdHeight;
         if (shift > 1.)
             shift = 1.0f;
         overbarLeftPointShift = static_cast<int>(gRadicalBottomPointXFront * frontWidth * shift);
@@ -158,34 +187,6 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, const LayoutPoint& paintOffs
     info.context->strokePath(line);
 }
 
-void RenderMathMLSquareRoot::layout()
-{
-    int baseHeight = 0;
-    
-    RenderObject* current = firstChild();
-    while (current) {
-        if (current->isBoxModelObject()) {
-            RenderBoxModelObject* box = toRenderBoxModelObject(current);
-            
-            if (box->pixelSnappedOffsetHeight() > baseHeight)
-                baseHeight = box->pixelSnappedOffsetHeight();
-            
-            // FIXME: Can box->style() be modified?
-            box->style()->setVerticalAlign(BASELINE);
-        }
-        current = current->nextSibling();
-    }
-    
-    if (!baseHeight)
-        baseHeight = style()->fontSize();
-    
-    // FIXME: Can style() be modified? And don't we need styleDidChange()?
-    if (baseHeight > static_cast<int>(gThresholdBaseHeightEms * style()->fontSize()))
-        style()->setPaddingBottom(Length(static_cast<int>(gBigRootBottomPaddingEms * style()->fontSize()), Fixed));
-    
-    RenderBlock::layout();
-}
-    
 }
 
 #endif // ENABLE(MATHML)

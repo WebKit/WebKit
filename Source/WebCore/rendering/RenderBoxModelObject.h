@@ -79,7 +79,7 @@ public:
     // This will work on inlines to return the bounding box of all of the lines' border boxes.
     virtual IntRect borderBoundingBox() const = 0;
 
-    // Virtual since table cells override
+    // Virtual since table cells and some MathML renderers override
     virtual LayoutUnit paddingTop(PaddingOptions = IncludeIntrinsicPadding) const;
     virtual LayoutUnit paddingBottom(PaddingOptions = IncludeIntrinsicPadding) const;
     virtual LayoutUnit paddingLeft(PaddingOptions = IncludeIntrinsicPadding) const;

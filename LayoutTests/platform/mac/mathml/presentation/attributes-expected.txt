@@ -24,9 +24,10 @@ layer at (0,0) size 800x248
             RenderText {#text} at (26,10) size 8x16
               text run at (26,10) width 8: "1"
           RenderMathMLSquareRoot {msqrt} at (34,7) size 20x19 [color=#0000FF]
-            RenderInline {mn} at (0,0) size 8x16
-              RenderText {#text} at (12,3) size 8x16
-                text run at (12,3) width 8: "2"
+            RenderMathMLRow (anonymous) at (12,3) size 8x16
+              RenderInline {mn} at (0,0) size 8x16
+                RenderText {#text} at (0,0) size 8x16
+                  text run at (0,0) width 8: "2"
         RenderText {#text} at (487,7) size 4x18
           text run at (487,7) width 4: " "
         RenderMathMLMath {math} at (491,0) size 15x34 [bgcolor=#FFA500]

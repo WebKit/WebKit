@@ -145,8 +145,7 @@ merror {
 
 msqrt {
     display: inline-block;
-    padding-top: 0.2em;
-    padding-left: 0.75em;
+    white-space: nowrap; /* for the anonymous RenderMathMLRow */
 }
 
 mroot {

@@ -34,9 +34,13 @@ namespace WebCore {
     
 class RenderMathMLRow : public RenderMathMLBlock {
 public:
-    RenderMathMLRow(Element*);
+    RenderMathMLRow(Node*);
+    static RenderMathMLRow* createAnonymousWithParentRenderer(const RenderObject*);
+    
     virtual bool isRenderMathMLRow() const { return true; }
+    
     virtual void stretchToHeight(int) {}
+    
 protected:
     virtual void layout();
 

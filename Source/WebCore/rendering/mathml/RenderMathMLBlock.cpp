@@ -29,24 +29,121 @@
 
 #include "RenderMathMLBlock.h"
 
-#include "FontSelector.h"
 #include "GraphicsContext.h"
 #include "MathMLNames.h"
-#include "RenderInline.h"
-#include "RenderText.h"
+
+#if ENABLE(DEBUG_MATH_LAYOUT)
+#include "PaintInfo.h"
+#endif
 
 namespace WebCore {
     
 using namespace MathMLNames;
     
 RenderMathMLBlock::RenderMathMLBlock(Node* container) 
-    : RenderBlock(container) 
+    : RenderBlock(container)
+    , m_intrinsicPaddingBefore(0)
+    , m_intrinsicPaddingAfter(0)
+    , m_intrinsicPaddingStart(0)
+    , m_intrinsicPaddingEnd(0)
 {
 }
 
 bool RenderMathMLBlock::isChildAllowed(RenderObject* child, RenderStyle*) const
 {
     return child->node() && child->node()->nodeType() == Node::ELEMENT_NODE;
+}
+
+LayoutUnit RenderMathMLBlock::paddingTop(PaddingOptions paddingOption) const
+{
+    LayoutUnit result = RenderBlock::paddingTop(ExcludeIntrinsicPadding);
+    if (paddingOption == ExcludeIntrinsicPadding)
+        return result;
+    switch (style()->writingMode()) {
+    case TopToBottomWritingMode:
+        return result + m_intrinsicPaddingBefore;
+    case BottomToTopWritingMode:
+        return result + m_intrinsicPaddingAfter;
+    case LeftToRightWritingMode:
+    case RightToLeftWritingMode:
+        return result + (style()->isLeftToRightDirection() ? m_intrinsicPaddingStart : m_intrinsicPaddingEnd);
+    }
+    ASSERT_NOT_REACHED();
+    return result;
+}
+
+LayoutUnit RenderMathMLBlock::paddingBottom(PaddingOptions paddingOption) const
+{
+    LayoutUnit result = RenderBlock::paddingBottom(ExcludeIntrinsicPadding);
+    if (paddingOption == ExcludeIntrinsicPadding)
+        return result;
+    switch (style()->writingMode()) {
+    case TopToBottomWritingMode:
+        return result + m_intrinsicPaddingAfter;
+    case BottomToTopWritingMode:
+        return result + m_intrinsicPaddingBefore;
+    case LeftToRightWritingMode:
+    case RightToLeftWritingMode:
+        return result + (style()->isLeftToRightDirection() ? m_intrinsicPaddingEnd : m_intrinsicPaddingStart);
+    }
+    ASSERT_NOT_REACHED();
+    return result;
+}
+
+LayoutUnit RenderMathMLBlock::paddingLeft(PaddingOptions paddingOption) const
+{
+    LayoutUnit result = RenderBlock::paddingLeft(ExcludeIntrinsicPadding);
+    if (paddingOption == ExcludeIntrinsicPadding)
+        return result;
+    switch (style()->writingMode()) {
+    case LeftToRightWritingMode:
+        return result + m_intrinsicPaddingBefore;
+    case RightToLeftWritingMode:
+        return result + m_intrinsicPaddingAfter;
+    case TopToBottomWritingMode:
+    case BottomToTopWritingMode:
+        return result + (style()->isLeftToRightDirection() ? m_intrinsicPaddingStart : m_intrinsicPaddingEnd);
+    }
+    ASSERT_NOT_REACHED();
+    return result;
+}
+
+LayoutUnit RenderMathMLBlock::paddingRight(PaddingOptions paddingOption) const
+{
+    LayoutUnit result = RenderBlock::paddingRight(ExcludeIntrinsicPadding);
+    if (paddingOption == ExcludeIntrinsicPadding)
+        return result;
+    switch (style()->writingMode()) {
+    case RightToLeftWritingMode:
+        return result + m_intrinsicPaddingBefore;
+    case LeftToRightWritingMode:
+        return result + m_intrinsicPaddingAfter;
+    case TopToBottomWritingMode:
+    case BottomToTopWritingMode:
+        return result + (style()->isLeftToRightDirection() ? m_intrinsicPaddingEnd : m_intrinsicPaddingStart);
+    }
+    ASSERT_NOT_REACHED();
+    return result;
+}
+
+LayoutUnit RenderMathMLBlock::paddingBefore(PaddingOptions paddingOption) const
+{
+    return RenderBlock::paddingBefore(ExcludeIntrinsicPadding) + (paddingOption == IncludeIntrinsicPadding ? m_intrinsicPaddingBefore : 0);
+}
+
+LayoutUnit RenderMathMLBlock::paddingAfter(PaddingOptions paddingOption) const
+{
+    return RenderBlock::paddingAfter(ExcludeIntrinsicPadding) + (paddingOption == IncludeIntrinsicPadding ? m_intrinsicPaddingAfter : 0);
+}
+
+LayoutUnit RenderMathMLBlock::paddingStart(PaddingOptions paddingOption) const
+{
+    return RenderBlock::paddingStart(ExcludeIntrinsicPadding) + (paddingOption == IncludeIntrinsicPadding ? m_intrinsicPaddingStart : 0);
+}
+
+LayoutUnit RenderMathMLBlock::paddingEnd(PaddingOptions paddingOption) const
+{
+    return RenderBlock::paddingEnd(ExcludeIntrinsicPadding) + (paddingOption == IncludeIntrinsicPadding ? m_intrinsicPaddingEnd : 0);
 }
 
 RenderMathMLBlock* RenderMathMLBlock::createAlmostAnonymousBlock(EDisplay display)
