@@ -175,7 +175,8 @@ void XMLDocumentParser::exitText()
     m_bufferedText.swap(empty);
 #endif
 
-    if (m_view && !m_leafTextNode->attached())
+    if (m_view && m_leafTextNode->parentNode() && m_leafTextNode->parentNode()->attached()
+        && !m_leafTextNode->attached())
         m_leafTextNode->attach();
 
     m_leafTextNode = 0;
