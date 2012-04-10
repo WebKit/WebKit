@@ -1,3 +1,16 @@
+2012-04-09  Beth Dakin  <bdakin@apple.com>
+
+        <rdar://problem/11214796>
+
+        New WKSI will hopefully fix a common crash seen by the bots in libRIP.A.dylib: 
+        symmetric_convolve
+
+        Reviewed by Simon Fraser.
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2012-04-06  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10912476> HiDPI: Have canvas use a hidpi backing store, but downsample upon access
