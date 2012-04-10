@@ -188,6 +188,7 @@ committers_unable_to_review = [
     Committer("Antoine Labour", "piman@chromium.org", "piman"),
     Committer("Anton D'Auria", "adauria@apple.com", "antonlefou"),
     Committer("Anton Muhin", "antonm@chromium.org", "antonm"),
+    Committer("Arko Saha", "arko@motorola.com", "arkos"),
     Committer("Balazs Kelemen", "kbalazs@webkit.org", "kbalazs"),
     Committer("Ben Murdoch", "benm@google.com", "benm"),
     Committer("Ben Wells", "benwells@chromium.org", "benwells"),

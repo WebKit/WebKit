@@ -1,3 +1,9 @@
+2012-04-10  Arko Saha  <arko@motorola.com>
+
+        Unreviewed: adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-04-09  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         Unreviewed: adding myself to committers.py.
