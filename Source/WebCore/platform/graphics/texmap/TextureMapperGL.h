@@ -88,6 +88,7 @@ public:
     void setTextureMapper(TextureMapperGL* texmap) { m_textureMapper = texmap; }
     void updateContents(Image*, const IntRect&, const IntPoint&);
     virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine);
+    virtual bool isBackedByOpenGL() const { return true; }
 
 private:
     GLuint m_id;
@@ -111,9 +112,9 @@ private:
 
 typedef uint64_t ImageUID;
 ImageUID uidForImage(Image*);
+BitmapTextureGL* toBitmapTextureGL(BitmapTexture*);
 
-};
-
+}
 #endif
 
 #endif

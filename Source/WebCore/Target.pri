@@ -1107,6 +1107,8 @@ SOURCES += \
     platform/graphics/SVGGlyph.cpp \
     platform/graphics/SimpleFontData.cpp \
     platform/graphics/StringTruncator.cpp \
+    platform/graphics/surfaces/GraphicsSurface.cpp \
+    platform/graphics/surfaces/qt/GraphicsSurfaceQt.cpp \
     platform/graphics/TextRun.cpp \
     platform/graphics/TiledBackingStore.cpp \
     platform/graphics/transforms/AffineTransform.cpp \
@@ -2244,6 +2246,7 @@ HEADERS += \
     platform/graphics/SegmentedFontData.h \
     platform/graphics/ShadowBlur.h \
     platform/graphics/SimpleFontData.h \
+    platform/graphics/surfaces/GraphicsSurface.h \
     platform/graphics/Tile.h \
     platform/graphics/TiledBackingStore.h \
     platform/graphics/TiledBackingStoreClient.h \
@@ -4078,6 +4081,13 @@ contains(CONFIG, opengl-shims) {
     HEADERS += platform/graphics/OpenGLShims.h
     SOURCES += platform/graphics/OpenGLShims.cpp
     DEFINES += QT_OPENGL_SHIMS=1
+}
+
+contains(CONFIG, graphics_surfaces) {
+    mac {
+        SOURCES += platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp
+        INCLUDEPATH += /System/Library/Frameworks/CoreFoundation.framework/Headers
+    }
 }
 
 # Make sure the derived sources are built

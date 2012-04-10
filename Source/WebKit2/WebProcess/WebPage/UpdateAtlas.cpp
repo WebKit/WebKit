@@ -32,7 +32,7 @@ namespace WebKit {
 UpdateAtlas::UpdateAtlas(int dimension, ShareableBitmap::Flags flags)
     : m_flags(flags)
 {
-    m_bitmap = ShareableBitmap::createShareable(IntSize(dimension, dimension), flags);
+    m_surface = ShareableSurface::create(IntSize(dimension, dimension), flags, ShareableSurface::SupportsGraphicsSurface);
 }
 
 static int nextPowerOfTwo(int number)
@@ -112,12 +112,14 @@ PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(const We
     m_bufferStates[index] = Taken;
     offset = offsetForIndex(index);
     IntRect rect(IntPoint::zero(), size);
-    OwnPtr<GraphicsContext> graphicsContext = m_bitmap->createGraphicsContext();
-    graphicsContext->translate(offset.x(), offset.y());
-    graphicsContext->clip(rect);
-    graphicsContext->setCompositeOperation(CompositeCopy);
-    graphicsContext->fillRect(rect, (flags() & ShareableBitmap::SupportsAlpha) ? Color::transparent : Color::white, ColorSpaceDeviceRGB);
-    graphicsContext->setCompositeOperation(CompositeSourceOver);
+    OwnPtr<GraphicsContext> graphicsContext = m_surface->createGraphicsContext(IntRect(offset, size));
+
+    if (flags() & ShareableBitmap::SupportsAlpha) {
+        graphicsContext->setCompositeOperation(CompositeCopy);
+        graphicsContext->fillRect(rect, Color::transparent, ColorSpaceDeviceRGB);
+        graphicsContext->setCompositeOperation(CompositeSourceOver);
+    }
+
     return graphicsContext.release();
 }
 

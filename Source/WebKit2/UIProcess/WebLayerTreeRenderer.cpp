@@ -270,7 +270,7 @@ void WebLayerTreeRenderer::removeTile(WebLayerID layerID, int tileID)
 void WebLayerTreeRenderer::updateTile(WebLayerID layerID, int tileID, const TileUpdate& update)
 {
     RefPtr<LayerBackingStore> backingStore = getBackingStore(layerID);
-    backingStore->updateTile(tileID, update.sourceRect, update.targetRect, update.bitmap, update.offset);
+    backingStore->updateTile(tileID, update.sourceRect, update.targetRect, update.surface, update.offset);
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
 

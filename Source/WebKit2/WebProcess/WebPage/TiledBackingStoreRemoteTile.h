@@ -28,7 +28,7 @@
 
 #if USE(TILED_BACKING_STORE)
 
-#include "ShareableBitmap.h"
+#include "ShareableSurface.h"
 #include "Tile.h"
 #include "TiledBackingStore.h"
 #include "WebCore/IntRect.h"
@@ -41,7 +41,7 @@ class TiledBackingStore;
 namespace WebKit {
 
 class TiledBackingStoreRemoteTileClient;
-class UpdateInfo;
+class SurfaceUpdateInfo;
 
 class TiledBackingStoreRemoteTile : public WebCore::Tile {
 public:
@@ -76,10 +76,10 @@ private:
 class TiledBackingStoreRemoteTileClient {
 public:
     virtual ~TiledBackingStoreRemoteTileClient() { }
-    virtual void createTile(int tileID, const UpdateInfo&) = 0;
-    virtual void updateTile(int tileID, const UpdateInfo&) = 0;
+    virtual void createTile(int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
+    virtual void updateTile(int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
     virtual void removeTile(int tileID) = 0;
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Handle&, WebCore::IntPoint&) = 0;
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableSurface::Handle&, WebCore::IntPoint&) = 0;
 };
 
 class TiledBackingStoreRemoteTileBackend : public WebCore::TiledBackingStoreBackend {

@@ -25,6 +25,7 @@
 #include "BackingStore.h"
 #include "DrawingAreaProxy.h"
 #include "Region.h"
+#include "SurfaceUpdateInfo.h"
 #include "WebLayerTreeInfo.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
@@ -57,8 +58,8 @@ public:
     void purgeGLResources();
     void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint& trajectory);
     void didRenderFrame();
-    void createTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo&);
-    void updateTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo&);
+    void createTileForLayer(int layerID, int tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
+    void updateTileForLayer(int layerID, int tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
     void removeTileForLayer(int layerID, int tileID);
     void createDirectlyCompositedImage(int64_t, const WebKit::ShareableBitmap::Handle&);
     void destroyDirectlyCompositedImage(int64_t);

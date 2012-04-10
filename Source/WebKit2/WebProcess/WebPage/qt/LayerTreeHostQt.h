@@ -64,8 +64,8 @@ public:
     virtual int64_t adoptImageBackingStore(WebCore::Image*);
     virtual void releaseImageBackingStore(int64_t);
 
-    virtual void createTile(WebLayerID, int tileID, const UpdateInfo&);
-    virtual void updateTile(WebLayerID, int tileID, const UpdateInfo&);
+    virtual void createTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
+    virtual void updateTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
     virtual void removeTile(WebLayerID, int tileID);
     virtual WebCore::IntRect visibleContentsRect() const;
     virtual void renderNextFrame();
@@ -77,7 +77,7 @@ public:
     virtual void attachLayer(WebCore::WebGraphicsLayer*);
     virtual void detachLayer(WebCore::WebGraphicsLayer*);
 
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableBitmap::Handle&, WebCore::IntPoint&);
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableSurface::Handle&, WebCore::IntPoint&);
 
 protected:
     explicit LayerTreeHostQt(WebPage*);

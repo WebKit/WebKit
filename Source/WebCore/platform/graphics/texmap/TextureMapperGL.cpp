@@ -220,6 +220,14 @@ void TextureMapperGLData::initializeStencil()
     didModifyStencil = true;
 }
 
+BitmapTextureGL* toBitmapTextureGL(BitmapTexture* texture)
+{
+    if (!texture || !texture->isBackedByOpenGL())
+        return 0;
+
+    return static_cast<BitmapTextureGL*>(texture);
+}
+
 TextureMapperGL::TextureMapperGL()
     : m_data(new TextureMapperGLData)
     , m_context(0)
@@ -375,6 +383,12 @@ bool BitmapTextureGL::canReuseWith(const IntSize& contentsSize, Flags)
     return contentsSize == m_textureSize;
 }
 
+#if OS(DARWIN)
+#define DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE GL_UNSIGNED_INT_8_8_8_8_REV
+#else
+#define DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE GL_UNSIGNED_BYTE
+#endif
+
 void BitmapTextureGL::didReset()
 {
     if (!m_id)
@@ -390,7 +404,7 @@ void BitmapTextureGL::didReset()
     GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
     GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-    GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, 0));
+    GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, GL_BGRA, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, 0));
 }
 
 static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size, int stride = 0)
@@ -436,7 +450,7 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
         swizzleBGRAToRGBA(static_cast<uint32_t*>(const_cast<void*>(data)), targetRect.size(), bytesPerLine / 4);
 
     if (bytesPerLine == targetRect.width() / 4 && sourceOffset == IntPoint::zero()) {
-        GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, (const char*)data));
+        GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data));
         return;
     }
 
@@ -445,7 +459,7 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
         const char* bits = static_cast<const char*>(data);
         for (int y = 0; y < targetRect.height(); ++y) {
             const char *row = bits + ((sourceOffset.y() + y) * bytesPerLine + sourceOffset.x() * 4);
-            GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y() + y, targetRect.width(), 1, glFormat, GL_UNSIGNED_BYTE, row));
+            GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y() + y, targetRect.width(), 1, glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, row));
         }
         return;
     }
@@ -454,7 +468,7 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
     GL_CMD(glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / 4));
     GL_CMD(glPixelStorei(GL_UNPACK_SKIP_ROWS, sourceOffset.y()));
     GL_CMD(glPixelStorei(GL_UNPACK_SKIP_PIXELS, sourceOffset.x()));
-    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, (const char*)data));
+    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data));
     GL_CMD(glPixelStorei(GL_UNPACK_ROW_LENGTH, 0));
     GL_CMD(glPixelStorei(GL_UNPACK_SKIP_ROWS, 0));
     GL_CMD(glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0));

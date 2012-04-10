@@ -64,6 +64,7 @@ public:
     }
 
     virtual ~BitmapTexture() { }
+    virtual bool isBackedByOpenGL() const { return false; }
 
     virtual IntSize size() const = 0;
     virtual void updateContents(Image*, const IntRect&, const IntPoint& offset) = 0;

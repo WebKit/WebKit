@@ -66,19 +66,16 @@ void LayerTreeHostProxy::dispatchUpdate(const Function<void()>& function)
     m_renderer->appendUpdate(function);
 }
 
-void LayerTreeHostProxy::createTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo& updateInfo)
+void LayerTreeHostProxy::createTileForLayer(int layerID, int tileID, const IntRect& targetRect, const WebKit::SurfaceUpdateInfo& updateInfo)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::createTile, m_renderer.get(), layerID, tileID, updateInfo.updateScaleFactor));
-    updateTileForLayer(layerID, tileID, updateInfo);
+    dispatchUpdate(bind(&WebLayerTreeRenderer::createTile, m_renderer.get(), layerID, tileID, updateInfo.scaleFactor));
+    updateTileForLayer(layerID, tileID, targetRect, updateInfo);
 }
 
-void LayerTreeHostProxy::updateTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo& updateInfo)
+void LayerTreeHostProxy::updateTileForLayer(int layerID, int tileID, const IntRect& targetRect, const WebKit::SurfaceUpdateInfo& updateInfo)
 {
-    ASSERT(updateInfo.updateRects.size() == 1);
-    IntRect sourceRect = updateInfo.updateRects.first();
-    IntRect targetRect = updateInfo.updateRectBounds;
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(updateInfo.bitmapHandle);
-    dispatchUpdate(bind(&WebLayerTreeRenderer::updateTile, m_renderer.get(), layerID, tileID, WebLayerTreeRenderer::TileUpdate(sourceRect, targetRect, bitmap, updateInfo.bitmapOffset)));
+    RefPtr<ShareableSurface> surface = ShareableSurface::create(updateInfo.surfaceHandle);
+    dispatchUpdate(bind(&WebLayerTreeRenderer::updateTile, m_renderer.get(), layerID, tileID, WebLayerTreeRenderer::TileUpdate(updateInfo.updateRect, targetRect, surface, updateInfo.surfaceOffset)));
 }
 
 void LayerTreeHostProxy::removeTileForLayer(int layerID, int tileID)

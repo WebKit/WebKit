@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "LayerTreeHostProxyMessages.h"
 #include "MessageID.h"
+#include "SurfaceUpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebGraphicsLayer.h"
 #include "WebPage.h"
@@ -399,16 +400,16 @@ bool LayerTreeHost::supportsAcceleratedCompositing()
     return true;
 }
 
-void LayerTreeHostQt::createTile(WebLayerID layerID, int tileID, const UpdateInfo& updateInfo)
+void LayerTreeHostQt::createTile(WebLayerID layerID, int tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& targetRect)
 {
     m_shouldSyncFrame = true;
-    m_webPage->send(Messages::LayerTreeHostProxy::CreateTileForLayer(layerID, tileID, updateInfo));
+    m_webPage->send(Messages::LayerTreeHostProxy::CreateTileForLayer(layerID, tileID, targetRect, updateInfo));
 }
 
-void LayerTreeHostQt::updateTile(WebLayerID layerID, int tileID, const UpdateInfo& updateInfo)
+void LayerTreeHostQt::updateTile(WebLayerID layerID, int tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& targetRect)
 {
     m_shouldSyncFrame = true;
-    m_webPage->send(Messages::LayerTreeHostProxy::UpdateTileForLayer(layerID, tileID, updateInfo));
+    m_webPage->send(Messages::LayerTreeHostProxy::UpdateTileForLayer(layerID, tileID, targetRect, updateInfo));
 }
 
 void LayerTreeHostQt::removeTile(WebLayerID layerID, int tileID)
@@ -482,10 +483,10 @@ UpdateAtlas& LayerTreeHostQt::getAtlas(ShareableBitmap::Flags flags)
     return m_updateAtlases.last();
 }
 
-PassOwnPtr<WebCore::GraphicsContext> LayerTreeHostQt::beginContentUpdate(const WebCore::IntSize& size, ShareableBitmap::Flags flags, ShareableBitmap::Handle& handle, WebCore::IntPoint& offset)
+PassOwnPtr<WebCore::GraphicsContext> LayerTreeHostQt::beginContentUpdate(const WebCore::IntSize& size, ShareableBitmap::Flags flags, ShareableSurface::Handle& handle, WebCore::IntPoint& offset)
 {
     UpdateAtlas& atlas = getAtlas(flags);
-    if (!atlas.bitmap()->createHandle(handle))
+    if (!atlas.surface()->createHandle(handle))
         return PassOwnPtr<WebCore::GraphicsContext>();
 
     // This will return null if there is no available buffer.

@@ -553,19 +553,19 @@ Color WebGraphicsLayer::tiledBackingStoreBackgroundColor() const
     return contentsOpaque() ? Color::white : Color::transparent;
 }
 
-PassOwnPtr<WebCore::GraphicsContext> WebGraphicsLayer::beginContentUpdate(const WebCore::IntSize& size, ShareableBitmap::Handle& handle, WebCore::IntPoint& offset)
+PassOwnPtr<WebCore::GraphicsContext> WebGraphicsLayer::beginContentUpdate(const WebCore::IntSize& size, ShareableSurface::Handle& handle, WebCore::IntPoint& offset)
 {
     return m_webGraphicsLayerClient->beginContentUpdate(size, contentsOpaque() ? 0 : ShareableBitmap::SupportsAlpha, handle, offset);
 }
 
-void WebGraphicsLayer::createTile(int tileID, const UpdateInfo& updateInfo)
+void WebGraphicsLayer::createTile(int tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& targetRect)
 {
-    m_webGraphicsLayerClient->createTile(id(), tileID, updateInfo);
+    m_webGraphicsLayerClient->createTile(id(), tileID, updateInfo, targetRect);
 }
 
-void WebGraphicsLayer::updateTile(int tileID, const UpdateInfo& updateInfo)
+void WebGraphicsLayer::updateTile(int tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& targetRect)
 {
-    m_webGraphicsLayerClient->updateTile(id(), tileID, updateInfo);
+    m_webGraphicsLayerClient->updateTile(id(), tileID, updateInfo, targetRect);
 }
 
 void WebGraphicsLayer::removeTile(int tileID)

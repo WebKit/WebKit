@@ -22,7 +22,7 @@
 
 #if USE(UI_SIDE_COMPOSITING)
 
-#include "ShareableBitmap.h"
+#include "ShareableSurface.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
 #include <wtf/HashMap.h>
@@ -39,13 +39,13 @@ public:
 
     inline float scale() const { return m_scale; }
     void swapBuffers(WebCore::TextureMapper*);
-    void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<ShareableBitmap> buffer, const WebCore::IntPoint&);
+    void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<ShareableSurface> buffer, const WebCore::IntPoint&);
 
 private:
-    RefPtr<ShareableBitmap> m_backBuffer;
+    RefPtr<ShareableSurface> m_surface;
     WebCore::IntRect m_sourceRect;
     WebCore::IntRect m_targetRect;
-    WebCore::IntPoint m_bitmapOffset;
+    WebCore::IntPoint m_surfaceOffset;
     float m_scale;
 };
 
@@ -53,7 +53,7 @@ class LayerBackingStore : public WebCore::TextureMapperBackingStore {
 public:
     void createTile(int, float);
     void removeTile(int);
-    void updateTile(int, const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<ShareableBitmap>, const WebCore::IntPoint&);
+    void updateTile(int, const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<ShareableSurface>, const WebCore::IntPoint&);
     static PassRefPtr<LayerBackingStore> create() { return adoptRef(new LayerBackingStore); }
     void commitTileOperations(WebCore::TextureMapper*);
     PassRefPtr<WebCore::BitmapTexture> texture() const;

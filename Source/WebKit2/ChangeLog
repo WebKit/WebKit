@@ -1,3 +1,67 @@
+2012-04-10  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Manage graphics buffers in the web process
+        https://bugs.webkit.org/show_bug.cgi?id=78675
+
+        Added ShareableSurface, a class allowing the use of GPU-enabled
+        surfaces for bitmap transfer between the web and UI processes.
+        Since GraphicsSurfaces may not always be available, ShareableSurface
+        uses a standard ShareableBitmap as a fallback backend.
+
+        The necessary plumbing was added in WebKit2 for passing updates via
+        ShareableSurfaces instead of ShareableBitmaps. SurfaceUpdateInfo was
+        added, as to not make UpdateInfo more complicated.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Shared/ShareableSurface.cpp: Added.
+        * Shared/ShareableSurface.h: Added.
+        * Shared/SurfaceUpdateInfo.cpp: Added.
+        * Shared/SurfaceUpdateInfo.h: Added.
+        * Target.pri:
+        * UIProcess/LayerTreeHostProxy.cpp:
+        (WebKit::LayerTreeHostProxy::createTileForLayer):
+        (WebKit::LayerTreeHostProxy::updateTileForLayer):
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/LayerTreeHostProxy.messages.in:
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::updateTile):
+        * UIProcess/WebLayerTreeRenderer.h:
+        (TileUpdate):
+        (WebKit::WebLayerTreeRenderer::TileUpdate::TileUpdate):
+        * UIProcess/qt/LayerBackingStore.cpp:
+        (WebKit::LayerBackingStoreTile::swapBuffers):
+        (WebKit::LayerBackingStoreTile::setBackBuffer):
+        (WebKit::LayerBackingStore::updateTile):
+        * UIProcess/qt/LayerBackingStore.h:
+        (LayerBackingStoreTile):
+        (LayerBackingStore):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::beginContentUpdate):
+        (WebCore::WebGraphicsLayer::createTile):
+        (WebCore::WebGraphicsLayer::updateTile):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayerClient):
+        (WebGraphicsLayer):
+        * WebProcess/WebPage/TiledBackingStoreRemoteTile.cpp:
+        (WebKit::TiledBackingStoreRemoteTile::updateBackBuffer):
+        * WebProcess/WebPage/TiledBackingStoreRemoteTile.h:
+        (WebKit):
+        (TiledBackingStoreRemoteTileClient):
+        * WebProcess/WebPage/UpdateAtlas.cpp:
+        (WebKit::UpdateAtlas::UpdateAtlas):
+        (WebKit::UpdateAtlas::beginPaintingOnAvailableBuffer):
+        * WebProcess/WebPage/UpdateAtlas.h:
+        (WebKit::UpdateAtlas::surface):
+        (WebKit::UpdateAtlas::size):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::createTile):
+        (WebKit::LayerTreeHostQt::updateTile):
+        (WebKit::LayerTreeHostQt::beginContentUpdate):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
 2012-04-10  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Enable USE_FOLDERS property

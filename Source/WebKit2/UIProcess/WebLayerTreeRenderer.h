@@ -21,8 +21,8 @@
 #define WebLayerTreeRenderer_h
 
 #if USE(UI_SIDE_COMPOSITING)
-
 #include "BackingStore.h"
+#include "ShareableSurface.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
 #include "WebLayerTreeInfo.h"
@@ -48,12 +48,12 @@ public:
     struct TileUpdate {
         WebCore::IntRect sourceRect;
         WebCore::IntRect targetRect;
-        RefPtr<ShareableBitmap> bitmap;
+        RefPtr<ShareableSurface> surface;
         WebCore::IntPoint offset;
-        TileUpdate(const WebCore::IntRect& source, const WebCore::IntRect& target, PassRefPtr<ShareableBitmap> newBitmap, const WebCore::IntPoint& newOffset)
+        TileUpdate(const WebCore::IntRect& source, const WebCore::IntRect& target, PassRefPtr<ShareableSurface> newSurface, const WebCore::IntPoint& newOffset)
             : sourceRect(source)
             , targetRect(target)
-            , bitmap(newBitmap)
+            , surface(newSurface)
             , offset(newOffset)
         {
         }

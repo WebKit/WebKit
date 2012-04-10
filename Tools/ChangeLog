@@ -1,3 +1,14 @@
+2012-04-10  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Manage graphics buffers in the web process
+        https://bugs.webkit.org/show_bug.cgi?id=78675
+
+        Enable graphics surfaces on Mac for Qt.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-04-10  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Enable USE_FOLDERS property

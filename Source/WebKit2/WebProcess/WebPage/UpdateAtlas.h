@@ -20,7 +20,7 @@
 #ifndef UpdateAtlas_h
 #define UpdateAtlas_h
 
-#include "ShareableBitmap.h"
+#include "ShareableSurface.h"
 
 #if USE(UI_SIDE_COMPOSITING)
 namespace WebCore {
@@ -34,8 +34,8 @@ class UpdateAtlas {
 public:
     UpdateAtlas(int dimension, ShareableBitmap::Flags);
 
-    PassRefPtr<ShareableBitmap> bitmap() { return m_bitmap; }
-    inline WebCore::IntSize size() const { return m_bitmap->size(); }
+    PassRefPtr<ShareableSurface> surface() { return m_surface; }
+    inline WebCore::IntSize size() const { return m_surface->size(); }
 
     // Returns a null pointer of there is no available buffer.
     PassOwnPtr<WebCore::GraphicsContext> beginPaintingOnAvailableBuffer(const WebCore::IntSize&, WebCore::IntPoint& offset);
@@ -56,7 +56,7 @@ private:
     Vector<State> m_bufferStates;
     Vector<int> m_layout;
     ShareableBitmap::Flags m_flags;
-    RefPtr<ShareableBitmap> m_bitmap;
+    RefPtr<ShareableSurface> m_surface;
 };
 
 }
