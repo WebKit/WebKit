@@ -47,8 +47,27 @@ TagNodeList::~TagNodeList()
 
 bool TagNodeList::nodeMatches(Element* testNode) const
 {
+    // Implements http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#concept-getelementsbytagnamens
     if (m_localName != starAtom && m_localName != testNode->localName())
         return false;
+
+    return m_namespaceURI == starAtom || m_namespaceURI == testNode->namespaceURI();
+}
+
+HTMLTagNodeList::HTMLTagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
+    : TagNodeList(rootNode, namespaceURI, localName)
+    , m_loweredLocalName(localName.lower())
+{
+}
+
+bool HTMLTagNodeList::nodeMatches(Element* testNode) const
+{
+    // Implements http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#concept-getelementsbytagname
+    if (m_localName != starAtom) {
+        const AtomicString& localName = testNode->isHTMLElement() ? m_loweredLocalName : m_localName;
+        if (localName != testNode->localName())
+            return false;
+    }
 
     return m_namespaceURI == starAtom || m_namespaceURI == testNode->namespaceURI();
 }

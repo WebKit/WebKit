@@ -1606,17 +1606,17 @@ PassRefPtr<NodeList> Node::getElementsByTagName(const AtomicString& localName)
     if (localName.isNull())
         return 0;
 
-    String name = localName;
-    if (document()->isHTMLDocument())
-        name = localName.lower();
-
-    AtomicString localNameAtom = name;
+    AtomicString localNameAtom = localName;
 
     NodeListsNodeData::TagNodeListCache::AddResult result = ensureRareData()->ensureNodeLists(this)->m_tagNodeListCache.add(localNameAtom, 0);
     if (!result.isNewEntry)
         return PassRefPtr<TagNodeList>(result.iterator->second);
 
-    RefPtr<TagNodeList> list = TagNodeList::create(this, starAtom, localNameAtom);
+    RefPtr<TagNodeList> list;
+    if (document()->isHTMLDocument())
+        list = HTMLTagNodeList::create(this, starAtom, localNameAtom);
+    else
+        list = TagNodeList::create(this, starAtom, localNameAtom);
     result.iterator->second = list.get();
     return list.release();   
 }
@@ -1629,11 +1629,7 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceU
     if (namespaceURI == starAtom)
         return getElementsByTagName(localName);
 
-    String name = localName;
-    if (document()->isHTMLDocument())
-        name = localName.lower();
-
-    AtomicString localNameAtom = name;
+    AtomicString localNameAtom = localName;
 
     NodeListsNodeData::TagNodeListCacheNS::AddResult result
         = ensureRareData()->ensureNodeLists(this)->m_tagNodeListCacheNS.add(QualifiedName(nullAtom, localNameAtom, namespaceURI).impl(), 0);

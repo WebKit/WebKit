@@ -39,7 +39,7 @@ namespace WebCore {
 
         virtual ~TagNodeList();
 
-    private:
+    protected:
         TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName);
 
         virtual bool nodeMatches(Element*) const;
@@ -48,6 +48,20 @@ namespace WebCore {
         AtomicString m_localName;
     };
 
+    class HTMLTagNodeList : public TagNodeList {
+    public:
+        static PassRefPtr<TagNodeList> create(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
+        {
+            return adoptRef(new HTMLTagNodeList(rootNode, namespaceURI, localName));
+        }
+
+    private:
+        HTMLTagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName);
+
+        virtual bool nodeMatches(Element*) const;
+
+        AtomicString m_loweredLocalName;
+    };
 } // namespace WebCore
 
 #endif // TagNodeList_h
