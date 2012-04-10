@@ -34,38 +34,23 @@
 
 namespace WebCore {
 
-// FIXME: This should be an array of structs to pair the names and descriptions.
-static const char* const exceptionNames[] = {
-    "UNKNOWN_ERR",
-    "NON_TRANSIENT_ERR",
-    "NOT_FOUND_ERR",
-    "CONSTRAINT_ERR",
-    "DATA_ERR",
-    "NOT_ALLOWED_ERR",
-    "TRANSACTION_INACTIVE_ERR",
-    "ABORT_ERR",
-    "READ_ONLY_ERR",
-    "TIMEOUT_ERR",
-    "QUOTA_ERR",
-    "VER_ERR"
+static struct IDBDatabaseExceptionNameDescription {
+    const char* const name;
+    const char* const description;
+} exceptions[] = {
+    { "UNKNOWN_ERR", "An unknown error occurred within Indexed Database." },
+    { "NON_TRANSIENT_ERR", "NON_TRANSIENT_ERR" }, // FIXME: Write a better message if it's ever possible this is thrown.
+    { "NOT_FOUND_ERR", "The name supplied does not match any existing item." },
+    { "CONSTRAINT_ERR", "The request cannot be completed due to a failed constraint." },
+    { "DATA_ERR", "The data provided does not meet the requirements of the function." },
+    { "NOT_ALLOWED_ERR", "This function is not allowed to be called in such a context." },
+    { "TRANSACTION_INACTIVE_ERR", "A request was placed against a transaction which is either currently not active, or which is finished." },
+    { "ABORT_ERR", "The transaction was aborted, so the request cannot be fulfilled." },
+    { "READ_ONLY_ERR", "A write operation was attempted in a read-only transaction." },
+    { "TIMEOUT_ERR", "A lock for the transaction could not be obtained in a reasonable time." }, // FIXME: This isn't used yet.
+    { "QUOTA_ERR", "The operation failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database." }, // FIXME: This isn't used yet
+    { "VER_ERR", "An attempt was made to open a database using a lower version than the existing version." } // FIXME: This isn't used yet
 };
-
-static const char* const exceptionDescriptions[] = {
-    "An unknown error occurred within Indexed Database.",
-    "NON_TRANSIENT_ERR", // FIXME: Write a better message if it's ever possible this is thrown.
-    "The name supplied does not match any existing item.",
-    "The request cannot be completed due to a failed constraint.",
-    "The data provided does not meet the requirements of the function.",
-    "This function is not allowed to be called in such a context.",
-    "A request was placed against a transaction which is either currently not active, or which is finished.",
-    "The transaction was aborted, so the request cannot be fulfilled.",
-    "A write operation was attempted in a read-only transaction.",
-    "A lock for the transaction could not be obtained in a reasonable time.", // FIXME: This isn't used yet.
-    "The operation failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database.", // FIXME: This isn't used yet
-    "An attempt was made to open a database using a lower version than the existing version.", // FIXME: This isn't used yet
-};
-
-COMPILE_ASSERT(WTF_ARRAY_LENGTH(exceptionNames) == WTF_ARRAY_LENGTH(exceptionDescriptions), IDBDatabaseExceptionTablesMustMatch);
 
 bool IDBDatabaseException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
 {
@@ -76,11 +61,11 @@ bool IDBDatabaseException::initializeDescription(ExceptionCode ec, ExceptionCode
     description->code = ec - IDBDatabaseExceptionOffset;
     description->type = IDBDatabaseExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNames);
+    size_t tableSize = WTF_ARRAY_LENGTH(exceptions);
     size_t tableIndex = ec - UNKNOWN_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNames[tableIndex] : 0;
-    description->description = tableIndex < tableSize ? exceptionDescriptions[tableIndex] : 0;
+    description->name = tableIndex < tableSize ? exceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? exceptions[tableIndex].description : 0;
 
     return true;
 }
