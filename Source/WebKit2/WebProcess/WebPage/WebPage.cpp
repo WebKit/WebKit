@@ -835,6 +835,8 @@ void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSiz
     // Always reset even when empty.
     view->setFixedLayoutSize(targetLayoutSize);
 
+    m_page->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
+
     // Schedule a layout to use the new target size.
     if (!view->layoutPending()) {
         view->setNeedsLayout();

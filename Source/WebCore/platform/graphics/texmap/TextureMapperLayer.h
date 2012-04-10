@@ -126,6 +126,8 @@ public:
     PassRefPtr<TextureMapperBackingStore> backingStore() { return m_backingStore; }
     void clearBackingStoresRecursive();
 
+    void setScrollPositionDelta(const IntPoint&);
+
 private:
     TextureMapperLayer* rootLayer();
     void computeTransformsRecursive();
@@ -217,6 +219,7 @@ private:
     State m_state;
     TextureMapper* m_textureMapper;
     TextureMapperAnimations m_animations;
+    IntPoint m_scrollPositionDelta;
 };
 
 

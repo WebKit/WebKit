@@ -29,5 +29,6 @@ messages -> LayerTreeHostProxy {
     CreateDirectlyCompositedImage(int64_t key, WebKit::ShareableBitmap::Handle handle)
     DestroyDirectlyCompositedImage(int64_t key)
     DidRenderFrame()
+    DidChangeScrollPosition(WebCore::IntPoint position)
 }
 #endif

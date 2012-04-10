@@ -96,6 +96,7 @@ WebGraphicsLayer::WebGraphicsLayer(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_maskTarget(0)
     , m_inUpdateMode(false)
+    , m_fixedToViewport(false)
     , m_shouldUpdateVisibleRect(true)
     , m_shouldSyncLayerState(true)
     , m_shouldSyncChildren(true)
@@ -387,6 +388,8 @@ void WebGraphicsLayer::syncCompositingState(const FloatRect& rect)
     if (WebGraphicsLayer* replica = toWebGraphicsLayer(replicaLayer()))
         replica->syncCompositingStateForThisLayerOnly();
 
+    m_webGraphicsLayerClient->syncFixedLayers();
+
     syncCompositingStateForThisLayerOnly();
 
     for (size_t i = 0; i < children().size(); ++i)
@@ -415,6 +418,7 @@ void WebGraphicsLayer::syncLayerState()
     if (!m_shouldSyncLayerState)
         return;
     m_shouldSyncLayerState = false;
+    m_layerInfo.fixedToViewport = fixedToViewport();
 
     m_layerInfo.anchorPoint = anchorPoint();
     m_layerInfo.backfaceVisible = backfaceVisibility();

@@ -1,3 +1,63 @@
+2012-04-10  Yael Aharon  <yael.aharon@nokia.com>
+
+        Initial support for fixed position elements in Qt WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=81786
+
+        Reviewed by Noam Rosenthal.
+
+        Turn on the flag acceleratedCompositingForFixedPositionEnabled when using fixed layout.
+        As we scroll, we keep track of the delta in scroll position between the UI and web processes,
+        and adjust the position of all the fixed layers by that delta.
+        When WebLayerTreeRenderer receives a new scroll position from the web process, it keeps it as pending,
+        and commit the new scroll position in flushLayerChanges.
+        This patch does not address scrolling overshoot and it does not fix the wrong positioning
+        that occurs when we zoom. These issues will be addressed in future patches.
+
+        * Shared/WebLayerTreeInfo.h:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::updateSize):
+        * UIProcess/LayerTreeHostProxy.cpp:
+        (WebKit::LayerTreeHostProxy::setContentsSize):
+        (WebKit):
+        (WebKit::LayerTreeHostProxy::renderNextFrame):
+        (WebKit::LayerTreeHostProxy::didChangeScrollPosition):
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/LayerTreeHostProxy.messages.in:
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::boundedScrollPosition):
+        (WebKit):
+        (WebKit::WebLayerTreeRenderer::paintToCurrentGLContext):
+        (WebKit::WebLayerTreeRenderer::setContentsSize):
+        (WebKit::WebLayerTreeRenderer::adjustPositionForFixedLayers):
+        (WebKit::WebLayerTreeRenderer::didChangeScrollPosition):
+        (WebKit::WebLayerTreeRenderer::syncLayerParameters):
+        (WebKit::WebLayerTreeRenderer::deleteLayer):
+        (WebKit::WebLayerTreeRenderer::flushLayerChanges):
+        * UIProcess/WebLayerTreeRenderer.h:
+        (WebLayerTreeRenderer):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::WebGraphicsLayer):
+        (WebCore::WebGraphicsLayer::syncCompositingState):
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayerClient):
+        (WebCore::WebGraphicsLayer::fixedToViewport):
+        (WebCore::WebGraphicsLayer::setFixedToViewport):
+        (WebGraphicsLayer):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setResizesToContentsUsingLayoutSize):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::LayerTreeHostQt):
+        (WebKit::LayerTreeHostQt::didSyncCompositingStateForLayer):
+        (WebKit::updateOffsetFromViewportForSelf):
+        (WebKit):
+        (WebKit::updateOffsetFromViewportForLayer):
+        (WebKit::LayerTreeHostQt::syncFixedLayers):
+        (WebKit::LayerTreeHostQt::setVisibleContentsRect):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
 2012-04-10  Anders Carlsson  <andersca@apple.com>
 
         Fix fast/images/exif-orientation.html WebKitTestRunner failure

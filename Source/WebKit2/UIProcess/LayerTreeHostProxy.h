@@ -56,6 +56,7 @@ public:
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float opacity, const WebCore::FloatRect& clip);
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
     void purgeGLResources();
+    void setContentsSize(const WebCore::FloatSize&);
     void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint& trajectory);
     void didRenderFrame();
     void createTileForLayer(int layerID, int tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
@@ -66,6 +67,7 @@ public:
     void didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void updateViewport();
     void renderNextFrame();
+    void didChangeScrollPosition(const WebCore::IntPoint& position);
     void purgeBackingStores();
     WebLayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
 

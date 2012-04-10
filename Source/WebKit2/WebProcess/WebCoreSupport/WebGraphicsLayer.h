@@ -59,6 +59,7 @@ public:
     virtual void syncLayerChildren(WebLayerID, const Vector<WebLayerID>&) = 0;
     virtual void attachLayer(WebCore::WebGraphicsLayer*) = 0;
     virtual void detachLayer(WebCore::WebGraphicsLayer*) = 0;
+    virtual void syncFixedLayers() = 0;
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableSurface::Handle&, WebCore::IntPoint&) = 0;
 };
 }
@@ -111,6 +112,9 @@ public:
     void didSynchronize();
     Image* image() { return m_image.get(); }
 
+    bool fixedToViewport() const { return m_fixedToViewport; }
+    void setFixedToViewport(bool isFixed) { m_fixedToViewport = isFixed; }
+
     GraphicsLayer* maskTarget() const { return m_maskTarget; }
     void setMaskTarget(GraphicsLayer* layer) { m_maskTarget = layer; }
 
@@ -153,6 +157,7 @@ private:
     bool m_shouldUpdateVisibleRect: 1;
     bool m_shouldSyncLayerState: 1;
     bool m_shouldSyncChildren: 1;
+    bool m_fixedToViewport : 1;
 
     void notifyChange();
     void didChangeGeometry();

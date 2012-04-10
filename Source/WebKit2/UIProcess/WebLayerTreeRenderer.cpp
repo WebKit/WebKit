@@ -73,6 +73,17 @@ void WebLayerTreeRenderer::callOnMainTread(const Function<void()>& function)
         MainThreadGuardedInvoker<WebLayerTreeRenderer>::call(this, function);
 }
 
+static IntPoint boundedScrollPosition(const IntPoint& scrollPosition, const IntRect& visibleContentRect, const FloatSize& contentSize)
+{
+    IntSize size(contentSize.width(), contentSize.height());
+    int scrollPositionX = std::max(scrollPosition.x(), 0);
+    scrollPositionX = std::min(scrollPositionX, size.width() - visibleContentRect.width());
+
+    int scrollPositionY = std::max(scrollPosition.y(), 0);
+    scrollPositionY = std::min(scrollPositionY, size.height() - visibleContentRect.height());
+    return IntPoint(scrollPositionX, scrollPositionY);
+}
+
 WebLayerTreeRenderer::WebLayerTreeRenderer(LayerTreeHostProxy* layerTreeHostProxy)
     : m_layerTreeHostProxy(layerTreeHostProxy)
     , m_rootLayerID(0)
@@ -98,6 +109,7 @@ void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& m
     ASSERT(m_textureMapper->accelerationMode() == TextureMapper::OpenGLMode);
 
     syncRemoteContent();
+    adjustPositionForFixedLayers();
     GraphicsLayer* currentRootLayer = rootLayer();
     if (!currentRootLayer)
         return;
@@ -143,6 +155,11 @@ void WebLayerTreeRenderer::paintToGraphicsContext(QPainter* painter)
     m_textureMapper->setGraphicsContext(0);
 }
 
+void WebLayerTreeRenderer::setContentsSize(const WebCore::FloatSize& contentsSize)
+{
+    m_contentsSize = contentsSize;
+}
+
 void WebLayerTreeRenderer::setVisibleContentsRect(const IntRect& rect, float scale)
 {
     m_visibleContentsRect = rect;
@@ -153,6 +170,23 @@ void WebLayerTreeRenderer::updateViewport()
 {
     if (m_layerTreeHostProxy)
         m_layerTreeHostProxy->updateViewport();
+}
+
+void WebLayerTreeRenderer::adjustPositionForFixedLayers()
+{
+    if (m_fixedLayers.isEmpty())
+        return;
+
+    IntPoint scrollPosition = boundedScrollPosition(m_visibleContentsRect.location(), m_visibleContentsRect, m_contentsSize);
+
+    LayerMap::iterator end = m_fixedLayers.end();
+    for (LayerMap::iterator it = m_fixedLayers.begin(); it != end; ++it)
+        toTextureMapperLayer(it->second)->setScrollPositionDelta(IntPoint(scrollPosition.x() - m_renderedContentsScrollPosition.x(), scrollPosition.y() - m_renderedContentsScrollPosition.y()));
+}
+
+void WebLayerTreeRenderer::didChangeScrollPosition(const IntPoint& position)
+{
+    m_pendingRenderedContentsScrollPosition = boundedScrollPosition(position, m_visibleContentsRect, m_contentsSize);
 }
 
 void WebLayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayerID>& childIDs)
@@ -195,6 +229,11 @@ void WebLayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& laye
     layer->setContentsRect(layerInfo.contentsRect);
     layer->setDrawsContent(layerInfo.drawsContent);
 
+    if (layerInfo.fixedToViewport)
+        m_fixedLayers.add(id, layer);
+    else
+        m_fixedLayers.remove(id);
+
     assignImageToLayer(layer, layerInfo.imageBackingStoreID);
 
     // Never make the root layer clip.
@@ -213,6 +252,7 @@ void WebLayerTreeRenderer::deleteLayer(WebLayerID layerID)
 
     layer->removeFromParent();
     m_layers.remove(layerID);
+    m_fixedLayers.remove(layerID);
     delete layer;
 }
 
@@ -310,6 +350,8 @@ void WebLayerTreeRenderer::commitTileOperations()
 
 void WebLayerTreeRenderer::flushLayerChanges()
 {
+    m_renderedContentsScrollPosition = m_pendingRenderedContentsScrollPosition;
+
     m_rootLayer->syncCompositingState(FloatRect());
     commitTileOperations();
 

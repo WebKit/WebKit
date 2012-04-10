@@ -76,6 +76,7 @@ public:
     virtual void syncLayerChildren(WebLayerID, const Vector<WebLayerID>&);
     virtual void attachLayer(WebCore::WebGraphicsLayer*);
     virtual void detachLayer(WebCore::WebGraphicsLayer*);
+    virtual void syncFixedLayers();
 
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableSurface::Handle&, WebCore::IntPoint&);
 
@@ -119,6 +120,7 @@ private:
     bool m_isSuspended;
     WebCore::IntRect m_visibleContentsRect;
     float m_contentsScale;
+    bool m_shouldSendScrollPositionUpdate;
 
     LayerTreeContext m_layerTreeContext;
     bool m_shouldSyncFrame;

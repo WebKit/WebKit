@@ -64,7 +64,9 @@ public:
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&);
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
     void syncRemoteContent();
+    void setContentsSize(const WebCore::FloatSize&);
     void setVisibleContentsRect(const WebCore::IntRect&, float scale);
+    void didChangeScrollPosition(const WebCore::IntPoint& position);
 
     void detach();
     void appendUpdate(const Function<void()>&);
@@ -94,8 +96,10 @@ private:
     virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const { return false; }
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect&) { }
     void callOnMainTread(const Function<void()>&);
+    void adjustPositionForFixedLayers();
 
     typedef HashMap<WebLayerID, WebCore::GraphicsLayer*> LayerMap;
+    WebCore::FloatSize m_contentsSize;
     WebCore::IntRect m_visibleContentsRect;
     float m_contentsScale;
 
@@ -124,7 +128,10 @@ private:
     Vector<WebLayerID> m_layersToDelete;
 
     LayerMap m_layers;
+    LayerMap m_fixedLayers;
     WebLayerID m_rootLayerID;
+    WebCore::IntPoint m_renderedContentsScrollPosition;
+    WebCore::IntPoint m_pendingRenderedContentsScrollPosition;
 };
 
 };

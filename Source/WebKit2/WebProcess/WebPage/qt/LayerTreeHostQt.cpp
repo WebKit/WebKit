@@ -39,6 +39,10 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/Page.h>
+#include <WebCore/RenderLayer.h>
+#include <WebCore/RenderLayerBacking.h>
+#include <WebCore/RenderLayerCompositor.h>
+#include <WebCore/RenderView.h>
 #include <WebCore/Settings.h>
 
 using namespace WebCore;
@@ -68,6 +72,7 @@ LayerTreeHostQt::LayerTreeHostQt(WebPage* webPage)
     , m_waitingForUIProcess(false)
     , m_isSuspended(false)
     , m_contentsScale(1)
+    , m_shouldSendScrollPositionUpdate(true)
     , m_shouldSyncFrame(false)
     , m_shouldSyncRootLayer(true)
     , m_layerFlushTimer(this, &LayerTreeHostQt::layerFlushTimerFired)
@@ -230,6 +235,10 @@ bool LayerTreeHostQt::flushPendingLayerChanges()
 
 void LayerTreeHostQt::syncLayerState(WebLayerID id, const WebLayerInfo& info)
 {
+    if (m_shouldSendScrollPositionUpdate) {
+        m_webPage->send(Messages::LayerTreeHostProxy::DidChangeScrollPosition(m_visibleContentsRect.location()));
+        m_shouldSendScrollPositionUpdate = false;
+    }
     m_shouldSyncFrame = true;
     m_webPage->send(Messages::LayerTreeHostProxy::SetCompositingLayerState(id, info));
 }
@@ -254,6 +263,54 @@ void LayerTreeHostQt::detachLayer(WebGraphicsLayer* layer)
     m_registeredLayers.remove(layer);
     m_shouldSyncFrame = true;
     m_webPage->send(Messages::LayerTreeHostProxy::DeleteCompositingLayer(layer->id()));
+}
+
+static void updateOffsetFromViewportForSelf(RenderLayer* renderLayer)
+{
+    // These conditions must match the conditions in RenderLayerCompositor::requiresCompositingForPosition.
+    RenderLayerBacking* backing = renderLayer->backing();
+    if (!backing)
+        return;
+
+    RenderStyle* style = renderLayer->renderer()->style();
+    if (!style)
+        return;
+
+    if (!renderLayer->renderer()->isPositioned() || renderLayer->renderer()->style()->position() != FixedPosition)
+        return;
+
+    if (!renderLayer->renderer()->container()->isRenderView())
+        return;
+
+    if (!renderLayer->isStackingContext())
+        return;
+
+    WebGraphicsLayer* graphicsLayer = toWebGraphicsLayer(backing->graphicsLayer());
+    graphicsLayer->setFixedToViewport(true);
+}
+
+static void updateOffsetFromViewportForLayer(RenderLayer* renderLayer)
+{
+    updateOffsetFromViewportForSelf(renderLayer);
+
+    if (renderLayer->firstChild())
+        updateOffsetFromViewportForLayer(renderLayer->firstChild());
+    if (renderLayer->nextSibling())
+        updateOffsetFromViewportForLayer(renderLayer->nextSibling());
+}
+
+void LayerTreeHostQt::syncFixedLayers()
+{
+    if (!m_webPage->corePage()->settings() || !m_webPage->corePage()->settings()->acceleratedCompositingForFixedPositionEnabled())
+        return;
+
+    if (!m_webPage->mainFrame()->view()->hasFixedObjects())
+        return;
+
+    RenderLayer* rootRenderLayer = m_webPage->mainFrame()->contentRenderer()->compositor()->rootRenderLayer();
+    ASSERT(rootRenderLayer);
+    if (rootRenderLayer->firstChild())
+        updateOffsetFromViewportForLayer(rootRenderLayer->firstChild());
 }
 
 void LayerTreeHostQt::performScheduledLayerFlush()
@@ -447,6 +504,8 @@ void LayerTreeHostQt::setVisibleContentsRect(const IntRect& rect, float scale, c
     scheduleLayerFlush();
     if (m_webPage->useFixedLayout())
         m_webPage->setFixedVisibleContentRect(rect);
+    if (contentsRectDidChange)
+        m_shouldSendScrollPositionUpdate = true;
 }
 
 void LayerTreeHostQt::renderNextFrame()

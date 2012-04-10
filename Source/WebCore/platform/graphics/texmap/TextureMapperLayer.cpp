@@ -511,5 +511,14 @@ void TextureMapperLayer::syncCompositingState(GraphicsLayerTextureMapper* graphi
     }
 }
 
+void TextureMapperLayer::setScrollPositionDelta(const IntPoint& delta)
+{
+    // delta is the difference between the scroll offset in the ui process and the scroll offset
+    // in the web process. We add this delta to the position of fixed layers, to make
+    // sure that they do not move while scrolling.
+    m_scrollPositionDelta = delta;
+    m_transform.setPosition(m_state.pos + m_scrollPositionDelta);
+}
+
 }
 #endif

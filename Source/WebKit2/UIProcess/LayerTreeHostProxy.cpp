@@ -122,6 +122,11 @@ void LayerTreeHostProxy::destroyDirectlyCompositedImage(int64_t key)
     dispatchUpdate(bind(&WebLayerTreeRenderer::destroyImage, m_renderer.get(), key));
 }
 
+void LayerTreeHostProxy::setContentsSize(const FloatSize& contentsSize)
+{
+    m_renderer->setContentsSize(contentsSize);
+}
+
 void LayerTreeHostProxy::setVisibleContentsRect(const IntRect& rect, float scale, const FloatPoint& trajectoryVector)
 {
     m_renderer->setVisibleContentsRect(rect, scale);
@@ -131,6 +136,11 @@ void LayerTreeHostProxy::setVisibleContentsRect(const IntRect& rect, float scale
 void LayerTreeHostProxy::renderNextFrame()
 {
     m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::RenderNextFrame(), m_drawingAreaProxy->page()->pageID());
+}
+
+void LayerTreeHostProxy::didChangeScrollPosition(const IntPoint& position)
+{
+    dispatchUpdate(bind(&WebLayerTreeRenderer::didChangeScrollPosition, m_renderer.get(), position));
 }
 
 void LayerTreeHostProxy::purgeBackingStores()
