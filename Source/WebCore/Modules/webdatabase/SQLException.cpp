@@ -34,30 +34,19 @@
 
 namespace WebCore {
 
-// FIXME: This should be an array of structs to pair the names and descriptions.
-static const char* const exceptionNames[] = {
-    "UNKNOWN_ERR",
-    "DATABASE_ERR",
-    "VERSION_ERR",
-    "TOO_LARGE_ERR",
-    "QUOTA_ERR",
-    "SYNTAX_ERR",
-    "CONSTRAINT_ERR",
-    "TIMEOUT_ERR"
+static struct SQLExceptionNameDescription {
+    const char* const name;
+    const char* const description;
+} exceptions[] = {
+    { "UNKNOWN_ERR", "The operation failed for reasons unrelated to the database." },
+    { "DATABASE_ERR", "The operation failed for some reason related to the database." },
+    { "VERSION_ERR", "The actual database version did not match the expected version." },
+    { "TOO_LARGE_ERR", "Data returned from the database is too large." },
+    { "QUOTA_ERR", "Quota was exceeded." },
+    { "SYNTAX_ERR", "Invalid or unauthorized statement; or the number of arguments did not match the number of ? placeholders." },
+    { "CONSTRAINT_ERR", "A constraint was violated." },
+    { "TIMEOUT_ERR", "A transaction lock could not be acquired in a reasonable time." }
 };
-
-static const char* const exceptionDescriptions[] = {
-    "The operation failed for reasons unrelated to the database.",
-    "The operation failed for some reason related to the database.",
-    "The actual database version did not match the expected version.",
-    "Data returned from the database is too large.",
-    "Quota was exceeded.",
-    "Invalid or unauthorized statement; or the number of arguments did not match the number of ? placeholders.",
-    "A constraint was violated.",
-    "A transaction lock could not be acquired in a reasonable time."
-};
-
-COMPILE_ASSERT(WTF_ARRAY_LENGTH(exceptionNames) == WTF_ARRAY_LENGTH(exceptionDescriptions), SQLExceptionTablesMustMatch);
 
 bool SQLException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
 {
@@ -68,11 +57,11 @@ bool SQLException::initializeDescription(ExceptionCode ec, ExceptionCodeDescript
     description->code = ec - SQLExceptionOffset;
     description->type = SQLExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNames);
+    size_t tableSize = WTF_ARRAY_LENGTH(exceptions);
     size_t tableIndex = ec - UNKNOWN_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNames[tableIndex] : 0;
-    description->description = tableIndex < tableSize ? exceptionDescriptions[tableIndex] : 0;
+    description->name = tableIndex < tableSize ? exceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? exceptions[tableIndex].description : 0;
 
     return true;
 }
