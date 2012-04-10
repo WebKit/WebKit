@@ -51,6 +51,9 @@ public:
 
     // Returns true if the device metrics override mode is enabled.
     virtual bool metricsOverridden() = 0;
+
+    // WebViewImpl has been resized.
+    virtual void webViewResized() = 0;
 };
 
 } // namespace WebKit

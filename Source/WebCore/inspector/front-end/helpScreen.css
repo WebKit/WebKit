@@ -203,7 +203,7 @@ body.platform-mac .help-key {
 .help-content input[type=checkbox] {
     height: 13px;
     width: 13px;
-    margin-right: 0;
+    margin-left: 0;
     margin-right: 4px;
 }
 

@@ -1,3 +1,40 @@
+2012-04-09  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Device Metrics] Introduce the "Fit window" option
+        https://bugs.webkit.org/show_bug.cgi?id=83280
+
+        Implement the scaling of the FrameView to the WebViewImpl size, handle WebViewImpl resizes.
+
+        Reviewed by Pavel Feldman.
+
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::overrideDeviceMetrics):
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::DeviceMetricsSupport::DeviceMetricsSupport):
+        (WebKit::DeviceMetricsSupport::setDeviceMetrics):
+        (WebKit::DeviceMetricsSupport::autoZoomPageToFitWidthOnNavigation):
+        (DeviceMetricsSupport):
+        (WebKit::DeviceMetricsSupport::autoZoomPageToFitWidth):
+        (WebKit::DeviceMetricsSupport::webViewResized):
+        (WebKit::DeviceMetricsSupport::applySizeOverrideIfNecessary):
+        (WebKit::DeviceMetricsSupport::ensureOriginalZoomFactor):
+        (WebKit::DeviceMetricsSupport::restore):
+        (WebKit::DeviceMetricsSupport::scaledEmulatedFrameSize):
+        (WebKit::DeviceMetricsSupport::forcedScrollbarDimensions):
+        (WebKit::DeviceMetricsSupport::applySizeOverrideInternal):
+        (WebKit::WebDevToolsAgentImpl::webViewResized):
+        (WebKit):
+        (WebKit::WebDevToolsAgentImpl::overrideDeviceMetrics):
+        (WebKit::WebDevToolsAgentImpl::autoZoomPageToFitWidth):
+        * src/WebDevToolsAgentImpl.h:
+        (WebDevToolsAgentImpl):
+        * src/WebDevToolsAgentPrivate.h:
+        (WebDevToolsAgentPrivate):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+
 2012-04-09  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Remove unused variable, WebViewImpl::m_lastMousePosition.

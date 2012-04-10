@@ -1077,9 +1077,9 @@ int DOMWindow::innerHeight() const
     if (!view)
         return 0;
 
-    long height = view->visibleContentRect(/* includeScrollbars */ true).height();
-    InspectorInstrumentation::applyScreenHeightOverride(m_frame, &height);
-    return view->mapFromLayoutToCSSUnits(static_cast<int>(height));
+    // If the device height is overridden, do not include the horizontal scrollbar into the innerHeight (since it is absent on the real device).
+    bool includeScrollbars = !InspectorInstrumentation::shouldApplyScreenHeightOverride(m_frame);
+    return view->mapFromLayoutToCSSUnits(static_cast<int>(view->visibleContentRect(includeScrollbars).height()));
 }
 
 int DOMWindow::innerWidth() const
@@ -1091,9 +1091,9 @@ int DOMWindow::innerWidth() const
     if (!view)
         return 0;
 
-    long width = view->visibleContentRect(/* includeScrollbars */ true).width();
-    InspectorInstrumentation::applyScreenWidthOverride(m_frame, &width);
-    return view->mapFromLayoutToCSSUnits(static_cast<int>(width));
+    // If the device width is overridden, do not include the vertical scrollbar into the innerWidth (since it is absent on the real device).
+    bool includeScrollbars = !InspectorInstrumentation::shouldApplyScreenWidthOverride(m_frame);
+    return view->mapFromLayoutToCSSUnits(static_cast<int>(view->visibleContentRect(includeScrollbars).width()));
 }
 
 int DOMWindow::screenX() const

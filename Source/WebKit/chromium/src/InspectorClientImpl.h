@@ -65,7 +65,7 @@ public:
     virtual void clearBrowserCookies();
 
     virtual bool canOverrideDeviceMetrics();
-    virtual void overrideDeviceMetrics(int, int, float);
+    virtual void overrideDeviceMetrics(int, int, float, bool);
     virtual void autoZoomPageToFitWidth();
 
 private:

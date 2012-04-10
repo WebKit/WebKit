@@ -74,6 +74,7 @@ public:
     virtual void didClearWindowObject(WebFrameImpl*);
     virtual void mainFrameViewCreated(WebFrameImpl*);
     virtual bool metricsOverridden();
+    virtual void webViewResized();
 
     // WebDevToolsAgent implementation.
     virtual void attach();
@@ -100,7 +101,7 @@ public:
     virtual void clearBrowserCache();
     virtual void clearBrowserCookies();
 
-    virtual void overrideDeviceMetrics(int width, int height, float fontScaleFactor);
+    virtual void overrideDeviceMetrics(int width, int height, float fontScaleFactor, bool fitWindow);
     virtual void autoZoomPageToFitWidth();
 
     int hostId() { return m_hostId; }

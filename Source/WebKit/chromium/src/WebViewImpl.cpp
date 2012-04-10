@@ -1277,7 +1277,10 @@ void WebViewImpl::resize(const WebSize& newSize)
         return;
     m_size = newSize;
 
-    if (!devToolsAgentPrivate() || !devToolsAgentPrivate()->metricsOverridden()) {
+    WebDevToolsAgentPrivate* agentPrivate = devToolsAgentPrivate();
+    if (agentPrivate && agentPrivate->metricsOverridden())
+        agentPrivate->webViewResized();
+    else {
         WebFrameImpl* webFrame = mainFrameImpl();
         if (webFrame->frameView())
             webFrame->frameView()->resize(newSize.width, newSize.height);

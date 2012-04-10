@@ -139,6 +139,8 @@ public:
     static void applyUserAgentOverride(Frame*, String*);
     static void applyScreenWidthOverride(Frame*, long*);
     static void applyScreenHeightOverride(Frame*, long*);
+    static bool shouldApplyScreenWidthOverride(Frame*);
+    static bool shouldApplyScreenHeightOverride(Frame*);
     static void willSendRequest(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     static void continueAfterPingLoader(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
     static void markResourceAsCached(Page*, unsigned long identifier);
@@ -293,6 +295,8 @@ private:
     static void applyUserAgentOverrideImpl(InstrumentingAgents*, String*);
     static void applyScreenWidthOverrideImpl(InstrumentingAgents*, long*);
     static void applyScreenHeightOverrideImpl(InstrumentingAgents*, long*);
+    static bool shouldApplyScreenWidthOverrideImpl(InstrumentingAgents*);
+    static bool shouldApplyScreenHeightOverrideImpl(InstrumentingAgents*);
     static void willSendRequestImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     static void continueAfterPingLoaderImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
     static void markResourceAsCachedImpl(InstrumentingAgents*, unsigned long identifier);
@@ -882,6 +886,26 @@ inline void InspectorInstrumentation::applyScreenHeightOverride(Frame* frame, lo
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         applyScreenHeightOverrideImpl(instrumentingAgents, height);
 #endif
+}
+
+inline bool InspectorInstrumentation::shouldApplyScreenWidthOverride(Frame* frame)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(false);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        return shouldApplyScreenWidthOverrideImpl(instrumentingAgents);
+#endif
+    return false;
+}
+
+inline bool InspectorInstrumentation::shouldApplyScreenHeightOverride(Frame* frame)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(false);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        return shouldApplyScreenHeightOverrideImpl(instrumentingAgents);
+#endif
+    return false;
 }
 
 inline void InspectorInstrumentation::willSendRequest(Frame* frame, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)

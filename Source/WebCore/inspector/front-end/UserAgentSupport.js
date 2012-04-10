@@ -34,8 +34,9 @@
 WebInspector.UserAgentSupport = function()
 {
     if (WebInspector.settings.deviceMetrics.get())
-        this._deviceMetricsSettingChanged();
-    WebInspector.settings.deviceMetrics.addChangeListener(this._deviceMetricsSettingChanged, this);
+        this._deviceMetricsChanged();
+    WebInspector.settings.deviceMetrics.addChangeListener(this._deviceMetricsChanged, this);
+    WebInspector.settings.deviceFitWindow.addChangeListener(this._deviceMetricsChanged, this);
 }
 
 /**
@@ -163,10 +164,10 @@ WebInspector.UserAgentSupport.DeviceMetrics.prototype = {
 }
 
 WebInspector.UserAgentSupport.prototype = {
-    _deviceMetricsSettingChanged: function()
+    _deviceMetricsChanged: function()
     {
         var metrics = WebInspector.UserAgentSupport.DeviceMetrics.parseSetting(WebInspector.settings.deviceMetrics.get());
         if (metrics.isValid())
-            PageAgent.setDeviceMetricsOverride(metrics.width, metrics.height, metrics.fontScaleFactor);
+            PageAgent.setDeviceMetricsOverride(metrics.width, metrics.height, metrics.fontScaleFactor, WebInspector.settings.deviceFitWindow.get());
     }
 }

@@ -1,8 +1,9 @@
 Tests that screen dimension overrides affect media rules, body dimensions, and window.screen.
 
-Override: 480x960
-Screen from page: 480x960
-Body from page: 480x960
+Override: 480x800
+Screen from page: 480x800
+Window from page: 480x800
+Body from page: 480x800
 Main style:
 [expanded] 
 element.style  { ()
@@ -19,9 +20,10 @@ div  { (user agent stylesheet)
 display: block;
 
 
-Override: 960x480
-Screen from page: 960x480
-Body from page: 960x480
+Override: 800x480
+Screen from page: 800x480
+Window from page: 800x480
+Body from page: 800x480
 Main style:
 [expanded] 
 element.style  { ()
@@ -32,13 +34,14 @@ div  { (user agent stylesheet)
 display: block;
 
 
-Override: 10000001x960 => ERROR
-Override: -1x960 => ERROR
+Override: 10000001x800 => ERROR
+Override: -1x800 => ERROR
 Override: 480x10000001 => ERROR
 Override: 480x-1 => ERROR
 Current dimensions:
-Screen from page: 960x480
-Body from page: 960x480
+Screen from page: 800x480
+Window from page: 800x480
+Body from page: 800x480
 Disable PageAgent:
 Screen size same as original - OK
 Enable PageAgent:

@@ -540,6 +540,26 @@ void InspectorInstrumentation::applyScreenHeightOverrideImpl(InstrumentingAgents
         pageAgent->applyScreenHeightOverride(height);
 }
 
+bool InspectorInstrumentation::shouldApplyScreenWidthOverrideImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent()) {
+        long width = 0;
+        pageAgent->applyScreenWidthOverride(&width);
+        return !!width;
+    }
+    return false;
+}
+
+bool InspectorInstrumentation::shouldApplyScreenHeightOverrideImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent()) {
+        long height = 0;
+        pageAgent->applyScreenHeightOverride(&height);
+        return !!height;
+    }
+    return false;
+}
+
 void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())

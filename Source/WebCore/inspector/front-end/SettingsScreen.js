@@ -148,22 +148,29 @@ WebInspector.SettingsScreen.prototype = {
         return right ? this._rightColumnElement : this._leftColumnElement;
     },
 
-    _createCheckboxSetting: function(name, setting)
+    /**
+     * @param {boolean=} omitParagraphElement
+     */
+    _createCheckboxSetting: function(name, setting, omitParagraphElement)
     {
         var input = document.createElement("input");
         input.type = "checkbox";
         input.name = name;
         input.checked = setting.get();
+
         function listener()
         {
             setting.set(input.checked);
         }
         input.addEventListener("click", listener, false);
 
-        var p = document.createElement("p");
         var label = document.createElement("label");
         label.appendChild(input);
         label.appendChild(document.createTextNode(name));
+        if (omitParagraphElement)
+            return label;
+
+        var p = document.createElement("p");
         p.appendChild(label);
         return p;
     },
@@ -518,6 +525,12 @@ WebInspector.SettingsScreen.prototype = {
         cellElement.appendChild(document.createTextNode(WebInspector.UIString("Font scale factor:")));
         cellElement = rowElement.createChild("td");
         this._fontScaleFactorOverrideElement = createInput.call(this, cellElement, "metrics-override-font-scale", String(metrics.fontScaleFactor || 1));
+
+        rowElement = tableElement.createChild("tr");
+        cellElement = rowElement.createChild("td");
+        cellElement.colspan = 2;
+        cellElement.appendChild(this._createCheckboxSetting(WebInspector.UIString("Fit window"), WebInspector.settings.deviceFitWindow, true));
+
         return fieldsetElement;
     }
 }

@@ -133,10 +133,10 @@ bool InspectorClientImpl::canOverrideDeviceMetrics()
     return true;
 }
 
-void InspectorClientImpl::overrideDeviceMetrics(int width, int height, float fontScaleFactor)
+void InspectorClientImpl::overrideDeviceMetrics(int width, int height, float fontScaleFactor, bool fitWindow)
 {
     if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->overrideDeviceMetrics(width, height, fontScaleFactor);
+        agent->overrideDeviceMetrics(width, height, fontScaleFactor, fitWindow);
 }
 
 void InspectorClientImpl::autoZoomPageToFitWidth()
