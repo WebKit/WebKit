@@ -118,7 +118,6 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
 
     if (child->isTableCaption()) {
         m_captions.append(toRenderTableCaption(child));
-        setNeedsSectionRecalc();
         wrapInAnonymousSection = false;
     } else if (child->isTableCol()) {
         m_hasColElements = true;
@@ -791,46 +790,51 @@ void RenderTable::recalcSections() const
     m_foot = 0;
     m_firstBody = 0;
     m_hasColElements = false;
+    m_captions.clear();
 
     // We need to get valid pointers to caption, head, foot and first body again
     RenderObject* nextSibling;
     for (RenderObject* child = firstChild(); child; child = nextSibling) {
         nextSibling = child->nextSibling();
         switch (child->style()->display()) {
-            case TABLE_COLUMN:
-            case TABLE_COLUMN_GROUP:
-                m_hasColElements = true;
-                break;
-            case TABLE_HEADER_GROUP:
-                if (child->isTableSection()) {
-                    RenderTableSection* section = toRenderTableSection(child);
-                    if (!m_head)
-                        m_head = section;
-                    else if (!m_firstBody)
-                        m_firstBody = section;
-                    section->recalcCellsIfNeeded();
-                }
-                break;
-            case TABLE_FOOTER_GROUP:
-                if (child->isTableSection()) {
-                    RenderTableSection* section = toRenderTableSection(child);
-                    if (!m_foot)
-                        m_foot = section;
-                    else if (!m_firstBody)
-                        m_firstBody = section;
-                    section->recalcCellsIfNeeded();
-                }
-                break;
-            case TABLE_ROW_GROUP:
-                if (child->isTableSection()) {
-                    RenderTableSection* section = toRenderTableSection(child);
-                    if (!m_firstBody)
-                        m_firstBody = section;
-                    section->recalcCellsIfNeeded();
-                }
-                break;
-            default:
-                break;
+        case TABLE_CAPTION:
+            if (child->isTableCaption())
+                m_captions.append(toRenderTableCaption(child));
+            break;
+        case TABLE_COLUMN:
+        case TABLE_COLUMN_GROUP:
+            m_hasColElements = true;
+            break;
+        case TABLE_HEADER_GROUP:
+            if (child->isTableSection()) {
+                RenderTableSection* section = toRenderTableSection(child);
+                if (!m_head)
+                    m_head = section;
+                else if (!m_firstBody)
+                    m_firstBody = section;
+                section->recalcCellsIfNeeded();
+            }
+            break;
+        case TABLE_FOOTER_GROUP:
+            if (child->isTableSection()) {
+                RenderTableSection* section = toRenderTableSection(child);
+                if (!m_foot)
+                    m_foot = section;
+                else if (!m_firstBody)
+                    m_firstBody = section;
+                section->recalcCellsIfNeeded();
+            }
+            break;
+        case TABLE_ROW_GROUP:
+            if (child->isTableSection()) {
+                RenderTableSection* section = toRenderTableSection(child);
+                if (!m_firstBody)
+                    m_firstBody = section;
+                section->recalcCellsIfNeeded();
+            }
+            break;
+        default:
+            break;
         }
     }
 
