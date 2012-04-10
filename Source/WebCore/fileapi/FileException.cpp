@@ -34,38 +34,23 @@
 
 namespace WebCore {
 
-// FIXME: This should be an array of structs to pair the names and descriptions.
-static const char* const exceptionNames[] = {
-    "NOT_FOUND_ERR",
-    "SECURITY_ERR",
-    "ABORT_ERR",
-    "NOT_READABLE_ERR",
-    "ENCODING_ERR",
-    "NO_MODIFICATION_ALLOWED_ERR",
-    "INVALID_STATE_ERR",
-    "SYNTAX_ERR",
-    "INVALID_MODIFICATION_ERR",
-    "QUOTA_EXCEEDED_ERR",
-    "TYPE_MISMATCH_ERR",
-    "PATH_EXISTS_ERR"
+static struct FileExceptionNameDescription {
+    const char* const name;
+    const char* const description;
+} exceptions[] = {
+    { "NOT_FOUND_ERR", "A requested file or directory could not be found at the time an operation was processed." },
+    { "SECURITY_ERR", "It was determined that certain files are unsafe for access within a Web application, or that too many calls are being made on file resources." },
+    { "ABORT_ERR", "An ongoing operation was aborted, typically with a call to abort()." },
+    { "NOT_READABLE_ERR", "The requested file could not be read, typically due to permission problems that have occurred after a reference to a file was acquired." },
+    { "ENCODING_ERR", "A URI supplied to the API was malformed, or the resulting Data URL has exceeded the URL length limitations for Data URLs." },
+    { "NO_MODIFICATION_ALLOWED_ERR", "An attempt was made to write to a file or directory which could not be modified due to the state of the underlying filesystem." },
+    { "INVALID_STATE_ERR", "An operation that depends on state cached in an interface object was made but the state had changed since it was read from disk." },
+    { "SYNTAX_ERR", "An invalid or unsupported argument was given, like an invalid line ending specifier." },
+    { "INVALID_MODIFICATION_ERR", "The modification request was illegal." },
+    { "QUOTA_EXCEEDED_ERR", "The operation failed because it would cause the application to exceed its storage quota." },
+    { "TYPE_MISMATCH_ERR", "The path supplied exists, but was not an entry of requested type." },
+    { "PATH_EXISTS_ERR", "An attempt was made to create a file or directory where an element already exists." }
 };
-
-static const char* const exceptionDescriptions[] = {
-    "A requested file or directory could not be found at the time an operation was processed.",
-    "It was determined that certain files are unsafe for access within a Web application, or that too many calls are being made on file resources.",
-    "An ongoing operation was aborted, typically with a call to abort().",
-    "The requested file could not be read, typically due to permission problems that have occurred after a reference to a file was acquired.",
-    "A URI supplied to the API was malformed, or the resulting Data URL has exceeded the URL length limitations for Data URLs.",
-    "An attempt was made to write to a file or directory which could not be modified due to the state of the underlying filesystem.",
-    "An operation that depends on state cached in an interface object was made but the state had changed since it was read from disk.",
-    "An invalid or unsupported argument was given, like an invalid line ending specifier.",
-    "The modification request was illegal.",
-    "The operation failed because it would cause the application to exceed its storage quota.",
-    "The path supplied exists, but was not an entry of requested type.",
-    "An attempt was made to create a file or directory where an element already exists."
-};
-
-COMPILE_ASSERT(WTF_ARRAY_LENGTH(exceptionNames) == WTF_ARRAY_LENGTH(exceptionDescriptions), FileExceptionTablesMustMatch);
 
 bool FileException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
 {
@@ -76,11 +61,11 @@ bool FileException::initializeDescription(ExceptionCode ec, ExceptionCodeDescrip
     description->code = ec - FileExceptionOffset;
     description->type = FileExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNames);
+    size_t tableSize = WTF_ARRAY_LENGTH(exceptions);
     size_t tableIndex = ec - NOT_FOUND_ERR;
 
-    description->name = tableIndex < tableSize ? exceptionNames[tableIndex] : 0;
-    description->description = tableIndex < tableSize ? exceptionDescriptions[tableIndex] : 0;
+    description->name = tableIndex < tableSize ? exceptions[tableIndex].name : 0;
+    description->description = tableIndex < tableSize ? exceptions[tableIndex].description : 0;
 
     return true;
 }
