@@ -321,6 +321,7 @@ committers_unable_to_review = [
     Committer("Peter Beverloo", ["peter@chromium.org", "beverloo@google.com"], "beverloo"),
     Committer("Peter Kasting", ["pkasting@google.com", "pkasting@chromium.org"], "pkasting"),
     Committer("Peter Varga", ["pvarga@webkit.org", "pvarga@inf.u-szeged.hu"], "stampho"),
+    Committer("Philip Rogers", ["pdr@google.com", "pdr@chromium.org"], "pdr"),
     Committer("Pierre d'Herbemont", ["pdherbemont@free.fr", "pdherbemont@apple.com"], "pdherbemont"),
     Committer("Pierre-Olivier Latour", "pol@apple.com", "pol"),
     Committer("Pierre Rossi", "pierre.rossi@gmail.com", "elproxy"),

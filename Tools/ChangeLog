@@ -1,3 +1,11 @@
+2012-04-10  Philip Rogers  <pdr@google.com>
+
+        Adding myself to committers.py!
+
+        Unreviewed update to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-04-10  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][WK2] Title in MiniBrowser is not updated for a page with no title
