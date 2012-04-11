@@ -128,11 +128,7 @@ void LayerTreeHostCAMac::resumeRendering()
 
 bool LayerTreeHostCAMac::flushLayers()
 {
-    // This gets called outside of the normal event loop so wrap in an autorelease pool
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     performScheduledLayerFlush();
-    [pool drain];
-
     return true;
 }
 
