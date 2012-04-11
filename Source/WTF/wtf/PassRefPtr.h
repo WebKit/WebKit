@@ -92,63 +92,6 @@ namespace WTF {
         mutable T* m_ptr;
     };
     
-    // NonNullPassRefPtr: Optimized for passing non-null pointers. A NonNullPassRefPtr
-    // begins life non-null, and can only become null through a call to leakRef()
-    // or clear().
-
-    // FIXME: NonNullPassRefPtr could just inherit from PassRefPtr. However,
-    // if we use inheritance, GCC's optimizer fails to realize that destruction
-    // of a released NonNullPassRefPtr is a no-op. So, for now, just copy the
-    // most important code from PassRefPtr.
-    template<typename T> class NonNullPassRefPtr {
-    public:
-        NonNullPassRefPtr(T* ptr)
-            : m_ptr(ptr)
-        {
-            ASSERT(m_ptr);
-            m_ptr->ref();
-        }
-
-        template<typename U> NonNullPassRefPtr(const RefPtr<U>& o)
-            : m_ptr(o.get())
-        {
-            ASSERT(m_ptr);
-            m_ptr->ref();
-        }
-
-        NonNullPassRefPtr(const NonNullPassRefPtr& o)
-            : m_ptr(o.leakRef())
-        {
-            ASSERT(m_ptr);
-        }
-
-        template<typename U> NonNullPassRefPtr(const NonNullPassRefPtr<U>& o)
-            : m_ptr(o.leakRef())
-        {
-            ASSERT(m_ptr);
-        }
-
-        template<typename U> NonNullPassRefPtr(const PassRefPtr<U>& o)
-            : m_ptr(o.leakRef())
-        {
-            ASSERT(m_ptr);
-        }
-
-        ALWAYS_INLINE ~NonNullPassRefPtr() { derefIfNotNull(m_ptr); }
-
-        T* get() const { return m_ptr; }
-
-        T* leakRef() const WARN_UNUSED_RETURN { T* tmp = m_ptr; m_ptr = 0; return tmp; }
-
-        T& operator*() const { return *m_ptr; }
-        T* operator->() const { return m_ptr; }
-
-        NonNullPassRefPtr& operator=(const NonNullPassRefPtr&) { COMPILE_ASSERT(!sizeof(T*), NonNullPassRefPtr_should_never_be_assigned_to); return *this; }
-
-    private:
-        mutable T* m_ptr;
-    };
-
     template<typename T> template<typename U> inline PassRefPtr<T>::PassRefPtr(const RefPtr<U>& o)
         : m_ptr(o.get())
     {
@@ -237,7 +180,6 @@ namespace WTF {
 } // namespace WTF
 
 using WTF::PassRefPtr;
-using WTF::NonNullPassRefPtr;
 using WTF::adoptRef;
 using WTF::static_pointer_cast;
 using WTF::const_pointer_cast;

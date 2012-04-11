@@ -1,3 +1,19 @@
+2012-04-10  Adam Klein  <adamk@chromium.org>
+
+        Remove unused NonNullPassRefPtr from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=82389
+
+        Reviewed by Kentaro Hara.
+
+        NonNullPassRefPtr seems to be unused since JSC allocation was
+        restructured in r84052.
+
+        If someone decides they need this later, they can always revert this patch.
+
+        * wtf/PassRefPtr.h:
+        * wtf/RefPtr.h:
+        (RefPtr):
+
 2012-04-10  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Enable USE_FOLDERS property

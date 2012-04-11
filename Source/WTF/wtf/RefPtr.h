@@ -32,7 +32,6 @@ namespace WTF {
     enum PlacementNewAdoptType { PlacementNewAdopt };
 
     template<typename T> class PassRefPtr;
-    template<typename T> class NonNullPassRefPtr;
 
     enum HashTableDeletedValueType { HashTableDeletedValue };
 
@@ -44,9 +43,8 @@ namespace WTF {
         ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { refIfNotNull(m_ptr); }
         template<typename U> RefPtr(const RefPtr<U>& o) : m_ptr(o.get()) { refIfNotNull(m_ptr); }
 
-        // See comments in PassRefPtr.h for an explanation of why these takes const references.
+        // See comments in PassRefPtr.h for an explanation of why this takes a const reference.
         template<typename U> RefPtr(const PassRefPtr<U>&);
-        template<typename U> RefPtr(const NonNullPassRefPtr<U>&);
 
         // Special constructor for cases where we overwrite an object in place.
         ALWAYS_INLINE RefPtr(PlacementNewAdoptType) { }
@@ -74,13 +72,11 @@ namespace WTF {
         RefPtr& operator=(const RefPtr&);
         RefPtr& operator=(T*);
         RefPtr& operator=(const PassRefPtr<T>&);
-        RefPtr& operator=(const NonNullPassRefPtr<T>&);
 #if !COMPILER_SUPPORTS(CXX_NULLPTR)
         RefPtr& operator=(std::nullptr_t) { clear(); return *this; }
 #endif
         template<typename U> RefPtr& operator=(const RefPtr<U>&);
         template<typename U> RefPtr& operator=(const PassRefPtr<U>&);
-        template<typename U> RefPtr& operator=(const NonNullPassRefPtr<U>&);
 
         void swap(RefPtr&);
 
@@ -91,11 +87,6 @@ namespace WTF {
     };
     
     template<typename T> template<typename U> inline RefPtr<T>::RefPtr(const PassRefPtr<U>& o)
-        : m_ptr(o.leakRef())
-    {
-    }
-
-    template<typename T> template<typename U> inline RefPtr<T>::RefPtr(const NonNullPassRefPtr<U>& o)
         : m_ptr(o.leakRef())
     {
     }
@@ -144,23 +135,7 @@ namespace WTF {
         return *this;
     }
 
-    template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(const NonNullPassRefPtr<T>& o)
-    {
-        T* ptr = m_ptr;
-        m_ptr = o.leakRef();
-        derefIfNotNull(ptr);
-        return *this;
-    }
-
     template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(const PassRefPtr<U>& o)
-    {
-        T* ptr = m_ptr;
-        m_ptr = o.leakRef();
-        derefIfNotNull(ptr);
-        return *this;
-    }
-
-    template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(const NonNullPassRefPtr<U>& o)
     {
         T* ptr = m_ptr;
         m_ptr = o.leakRef();
