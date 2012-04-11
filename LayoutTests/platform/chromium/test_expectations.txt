@@ -2888,8 +2888,6 @@ BUGWK62754 LINUX MAC RELEASE : http/tests/misc/object-embedding-svg-delayed-size
 BUGWK62754 SLOW LINUX MAC DEBUG : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
 BUGWK79615 WIN : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT
 
-BUGWK63036 MAC : svg/dom/SVGTransformList-basics.xhtml = IMAGE
-
 BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = IMAGE
 
 // Strange scrollbar.
