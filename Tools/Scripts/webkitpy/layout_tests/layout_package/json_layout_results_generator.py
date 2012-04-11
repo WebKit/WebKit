@@ -70,8 +70,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
         self._expectations = expectations
 
         self._result_summary = result_summary
-        self._failures = dict((test_name, test_failures.determine_result_type(failures))
-            for (test_name, failures) in result_summary.failures.iteritems())
+        self._failures = dict((test_name, result_summary.results[test_name].type) for test_name in result_summary.failures)
         self._all_tests = all_tests
         self._test_timings = dict((test_tuple.test_name, test_tuple.test_run_time) for test_tuple in test_timings)
 

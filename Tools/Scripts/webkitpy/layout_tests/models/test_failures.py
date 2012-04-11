@@ -54,6 +54,8 @@ def determine_result_type(failure_list):
         return test_expectations.CRASH
     elif FailureTimeout in failure_types:
         return test_expectations.TIMEOUT
+    elif FailureEarlyExit in failure_types:
+        return test_expectations.SKIP
     elif (FailureMissingResult in failure_types or
           FailureMissingImage in failure_types or
           FailureMissingImageHash in failure_types or
@@ -223,10 +225,17 @@ class FailureAudioMismatch(TestFailure):
         return "Audio mismatch"
 
 
+class FailureEarlyExit(TestFailure):
+    def message(self):
+        return "Skipped due to early exit"
+
+
 # Convenient collection of all failure classes for anything that might
 # need to enumerate over them all.
 ALL_FAILURE_CLASSES = (FailureTimeout, FailureCrash, FailureMissingResult,
                        FailureTextMismatch, FailureMissingImageHash,
                        FailureMissingImage, FailureImageHashMismatch,
                        FailureImageHashIncorrect, FailureReftestMismatch,
-                       FailureReftestMismatchDidNotOccur, FailureReftestNoImagesGenerated)
+                       FailureReftestMismatchDidNotOccur, FailureReftestNoImagesGenerated,
+                       FailureMissingAudio, FailureAudioMismatch,
+                       FailureEarlyExit)

@@ -622,7 +622,22 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
             tests_included=True,
             record_results=True,
             host=host)
-        self.assertTrue('/tmp/layout-test-results/incremental_results.json' in host.filesystem.files)
+
+        # By returning False, we know that the incremental results were generated and then deleted.
+        self.assertFalse(host.filesystem.exists('/tmp/layout-test-results/incremental_results.json'))
+
+        # This checks that we report only the number of tests that actually failed.
+        self.assertEquals(res, 1)
+
+        # This checks that passes/text.html is considered SKIPped.
+        self.assertTrue('"skipped":1' in host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json'))
+
+        # This checks that we told the user we bailed out.
+        self.assertTrue('Exiting early after 1 failures. 1 tests run.\n' in regular_output.getvalue())
+
+        # This checks that neither test ran as expected.
+        # FIXME: This log message is confusing; tests that were skipped should be called out separately.
+        self.assertTrue('0 tests ran as expected, 2 didn\'t:\n' in regular_output.getvalue())
 
     def test_exit_after_n_failures(self):
         # Unexpected failures should result in tests stopping.

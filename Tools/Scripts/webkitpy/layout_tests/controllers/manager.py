@@ -985,10 +985,11 @@ class Manager(object):
     def _mark_interrupted_tests_as_skipped(self, result_summary):
         for test_name in self._test_files:
             if test_name not in result_summary.results:
-                result = test_results.TestResult(test_name)
-                result.type = test_expectations.SKIP
+                result = test_results.TestResult(test_name, [test_failures.FailureEarlyExit()])
                 # FIXME: We probably need to loop here if there are multiple iterations.
-                result_summary.add(result, expected=True)
+                # FIXME: Also, these results are really neither expected nor unexpected. We probably
+                # need a third type of result.
+                result_summary.add(result, expected=False)
 
     def _interrupt_if_at_failure_limits(self, result_summary):
         # Note: The messages in this method are constructed to match old-run-webkit-tests
@@ -1105,11 +1106,8 @@ class Manager(object):
 
         # Remove these files from the results directory so they don't take up too much space on the buildbot.
         # The tools use the version we uploaded to the results server anyway.
-
-        # FIXME: Remove after done debugging problems w/ uploads on leopard.
-        if self._port.name() != 'chromium-mac-leopard':
-            self._filesystem.remove(times_json_path)
-            self._filesystem.remove(incremental_results_path)
+        self._filesystem.remove(times_json_path)
+        self._filesystem.remove(incremental_results_path)
 
     def print_config(self):
         """Prints the configuration for the test run."""
