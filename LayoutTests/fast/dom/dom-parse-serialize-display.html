@@ -27,15 +27,15 @@
   border: 1px solid black;
   margin-bottom: 0.5em;
 }
-.boxheader {
-  font-weight: bold;
-  color: maroon;
-}
 pre {
   margin-left: 2em;
 }
 </style>
 <script type="text/javascript">
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 function execute()
 {
   var parser = new DOMParser();
@@ -57,13 +57,15 @@ function execute()
 <div>The "text to parse" and "document object serialized" boxes should show the same text, and it should be an XML document, not "@@No result@@".
 </div>
 
-<div class="box"><span class="boxheader">text to parse</span>
+<div class="box"><h2>text to parse</h2>
 <pre id="id1">@@No result@@</pre>
 </div>
-<div class="box"><span class="boxheader">document object</span>
+<br>
+<div class="box"><h2>document object</h2>
 <pre id="id2">@@No result@@</pre>
 </div>
-<div class="box"><span class="boxheader">document object serialized</span>
+<br>
+<div class="box"><h2>document object serialized</h2>
 <pre id="id3">@@No result@@</pre>
 </div>
 
