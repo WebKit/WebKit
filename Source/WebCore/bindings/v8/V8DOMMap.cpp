@@ -79,15 +79,6 @@ DOMWrapperMap<void>& getActiveDOMObjectMap()
     return getDOMDataStore().activeDomObjectMap();
 }
 
-#if ENABLE(SVG)
-
-DOMWrapperMap<SVGElementInstance>& getDOMSVGElementInstanceMap()
-{
-    return getDOMDataStore().domSvgElementInstanceMap();
-}
-
-#endif // ENABLE(SVG)
-
 void removeAllDOMObjects()
 {
     DOMDataStore& store = getDOMDataStore();
@@ -101,11 +92,6 @@ void removeAllDOMObjects()
 
         // Remove all active DOM nodes.
         DOMData::removeObjectsFromWrapperMap<Node>(&store, store.activeDomNodeMap());
-
-#if ENABLE(SVG)
-        // Remove all SVG element instances in the wrapper map.
-        DOMData::removeObjectsFromWrapperMap<SVGElementInstance>(&store, store.domSvgElementInstanceMap());
-#endif
     }
 
     // Remove all DOM objects in the wrapper map.
@@ -162,21 +148,5 @@ void visitActiveDOMObjects(DOMWrapperMap<void>::Visitor* visitor)
         store->activeDomObjectMap().visit(store, visitor);
     }
 }
-
-#if ENABLE(SVG)
-
-void visitDOMSVGElementInstances(DOMWrapperMap<SVGElementInstance>::Visitor* visitor)
-{
-    v8::HandleScope scope;
-
-    DOMDataList& list = DOMDataStore::allStores();
-    for (size_t i = 0; i < list.size(); ++i) {
-        DOMDataStore* store = list[i];
-
-        store->domSvgElementInstanceMap().visit(store, visitor);
-    }
-}
-
-#endif
 
 } // namespace WebCore

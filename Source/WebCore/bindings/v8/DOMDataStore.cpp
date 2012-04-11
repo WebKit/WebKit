@@ -89,9 +89,6 @@ DOMDataStore::DOMDataStore()
     , m_activeDomNodeMap(0)
     , m_domObjectMap(0)
     , m_activeDomObjectMap(0)
-#if ENABLE(SVG)
-    , m_domSvgElementInstanceMap(0)
-#endif
 {
 }
 
@@ -115,10 +112,6 @@ void* DOMDataStore::getDOMWrapperMap(DOMWrapperMapType type)
         return m_domObjectMap;
     case ActiveDOMObjectMap:
         return m_activeDomObjectMap;
-#if ENABLE(SVG)
-    case DOMSVGElementInstanceMap:
-        return m_domSvgElementInstanceMap;
-#endif
     }
 
     ASSERT_NOT_REACHED();
@@ -164,16 +157,5 @@ void DOMDataStore::weakNodeCallback(v8::Persistent<v8::Value> value, void* domOb
     v8Object.Dispose();
     node->deref(); // Nobody overrides Node::deref so it's safe
 }
-
-#if ENABLE(SVG)
-
-void DOMDataStore::weakSVGElementInstanceCallback(v8::Persistent<v8::Value> v8Object, void* domObject)
-{
-    v8::HandleScope scope;
-    ASSERT(v8Object->IsObject());
-    DOMData::handleWeakObject(DOMDataStore::DOMSVGElementInstanceMap, v8::Persistent<v8::Object>::Cast(v8Object), static_cast<SVGElementInstance*>(domObject));
-}
-
-#endif  // ENABLE(SVG)
 
 } // namespace WebCore

@@ -38,9 +38,6 @@
 namespace WebCore {
     class DOMDataStore;
     class Node;
-#if ENABLE(SVG)
-    class SVGElementInstance;
-#endif
 
     template <class KeyType, class ValueType> class AbstractWeakReferenceMap {
     public:
@@ -169,12 +166,6 @@ namespace WebCore {
 
     // This should be called to remove all DOM objects associated with the current thread when it is tearing down.
     void removeAllDOMObjects();
-
-#if ENABLE(SVG)
-    // A map for SVGElementInstances to its JS wrapper.
-    DOMWrapperMap<SVGElementInstance>& getDOMSVGElementInstanceMap();
-    void visitSVGElementInstances(DOMWrapperMap<SVGElementInstance>::Visitor*);
-#endif
 
     void enableFasterDOMStoreAccess();
 } // namespace WebCore

@@ -40,17 +40,11 @@ StaticDOMDataStore::StaticDOMDataStore()
     , m_staticActiveDomNodeMap(&DOMDataStore::weakNodeCallback)
     , m_staticDomObjectMap(&DOMDataStore::weakDOMObjectCallback)
     , m_staticActiveDomObjectMap(&DOMDataStore::weakActiveDOMObjectCallback)
-#if ENABLE(SVG)
-    , m_staticDomSvgElementInstanceMap(&DOMDataStore::weakSVGElementInstanceCallback)
-#endif
 {
     m_domNodeMap = &m_staticDomNodeMap;
     m_activeDomNodeMap = &m_staticActiveDomNodeMap;
     m_domObjectMap = &m_staticDomObjectMap;
     m_activeDomObjectMap = &m_staticActiveDomObjectMap;
-#if ENABLE(SVG)
-    m_domSvgElementInstanceMap = &m_staticDomSvgElementInstanceMap;
-#endif
     V8BindingPerIsolateData::current()->registerDOMDataStore(this);
 }
 

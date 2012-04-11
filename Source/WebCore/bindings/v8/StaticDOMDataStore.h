@@ -54,9 +54,6 @@ private:
     IntrusiveDOMWrapperMap m_staticActiveDomNodeMap;
     DOMWrapperMap<void> m_staticDomObjectMap;
     DOMWrapperMap<void> m_staticActiveDomObjectMap;
-#if ENABLE(SVG)
-    DOMWrapperMap<SVGElementInstance> m_staticDomSvgElementInstanceMap;
-#endif
 };
 
 } // namespace WebCore
