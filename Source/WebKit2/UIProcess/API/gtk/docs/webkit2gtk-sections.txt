@@ -28,6 +28,7 @@ webkit_web_context_get_default
 webkit_web_context_get_cache_model
 webkit_web_context_set_cache_model
 webkit_web_context_download_uri
+webkit_web_context_get_cookie_manager
 
 <SUBSECTION Standard>
 WebKitWebContextClass
@@ -545,4 +546,30 @@ WEBKIT_FIND_CONTROLLER_GET_CLASS
 <SUBSECTION Private>
 WebKitFindControllerPrivate
 webkit_find_controller_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitCookieManager</FILE>
+WebKitCookieManager
+WebKitCookieAcceptPolicy
+webkit_cookie_manager_set_accept_policy
+webkit_cookie_manager_get_accept_policy
+webkit_cookie_manager_get_accept_policy_finish
+webkit_cookie_manager_get_domains_with_cookies
+webkit_cookie_manager_get_domains_with_cookies_finish
+webkit_cookie_manager_delete_cookies_for_domain
+webkit_cookie_manager_delete_all_cookies
+
+<SUBSECTION Standard>
+WebKitCookieManagerClass
+WEBKIT_TYPE_COOKIE_MANAGER
+WEBKIT_COOKIE_MANAGER
+WEBKIT_IS_COOKIE_MANAGER
+WEBKIT_COOKIE_MANAGER_CLASS
+WEBKIT_IS_COOKIE_MANAGER_CLASS
+WEBKIT_COOKIE_MANAGER_GET_CLASS
+
+<SUBSECTION Private>
+WebKitCookieManagerPrivate
+webkit_cookie_manager_get_type
 </SECTION>

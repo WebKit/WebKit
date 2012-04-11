@@ -21,6 +21,7 @@
 #include "WebKitWebContext.h"
 
 #include "WebContext.h"
+#include "WebKitCookieManagerPrivate.h"
 #include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitPrivate.h"
@@ -39,6 +40,8 @@ enum {
 
 struct _WebKitWebContextPrivate {
     WKRetainPtr<WKContextRef> context;
+
+    GRefPtr<WebKitCookieManager> cookieManager;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -213,6 +216,25 @@ WebKitDownload* webkit_web_context_download_uri(WebKitWebContext* context, const
     WebKitDownload* download = webkitDownloadCreate(wkDownload.get());
     downloadsMap().set(wkDownload.get(), download);
     return download;
+}
+
+/**
+ * webkit_web_context_get_cookie_manager:
+ * @context: a #WebKitWebContext
+ *
+ * Get the #WebKitCookieManager of @context.
+ *
+ * Returns: (transfer none): the #WebKitCookieManager of @context.
+ */
+WebKitCookieManager* webkit_web_context_get_cookie_manager(WebKitWebContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
+
+    WebKitWebContextPrivate* priv = context->priv;
+    if (!priv->cookieManager)
+        priv->cookieManager = adoptGRef(webkitCookieManagerCreate(WKContextGetCookieManager(priv->context.get())));
+
+    return priv->cookieManager.get();
 }
 
 WebKitDownload* webkitWebContextGetOrCreateDownload(WKDownloadRef wkDownload)

@@ -87,6 +87,7 @@ nodist_libwebkit2gtkinclude_HEADERS = \
 libwebkit2gtkinclude_HEADERS = \
 	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardList.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardListItem.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitCookieManager.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitDefines.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitDownload.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitEditingCommands.h \
@@ -550,6 +551,9 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitCookieManager.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitCookieManager.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitCookieManagerPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitDefines.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitDownload.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitDownload.h \

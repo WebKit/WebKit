@@ -2,6 +2,7 @@ if ENABLE_WEBKIT2
 
 TEST_PROGS += \
 	Programs/WebKit2APITests/TestBackForwardList \
+	Programs/WebKit2APITests/TestCookieManager \
 	Programs/WebKit2APITests/TestDownloads \
 	Programs/WebKit2APITests/TestLoaderClient \
 	Programs/WebKit2APITests/TestPrinting \
@@ -141,5 +142,11 @@ Programs_WebKit2APITests_TestResources_SOURCES = \
 Programs_WebKit2APITests_TestResources_CPPFLAGS = $(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestResources_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestResources_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestCookieManager_SOURCES = \
+        Source/WebKit2/UIProcess/API/gtk/tests/TestCookieManager.cpp
+Programs_WebKit2APITests_TestCookieManager_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestCookieManager_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestCookieManager_LDFLAGS = $(webkit2_tests_ldflags)
 
 endif # ENABLE_WEBKIT2

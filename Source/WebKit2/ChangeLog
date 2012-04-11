@@ -1,3 +1,58 @@
+2012-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Initial cookies API for WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=82441
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitCookieManager.cpp: Added.
+        (webkit_cookie_manager_init):
+        (webkitCookieManagerFinalize):
+        (webkit_cookie_manager_class_init):
+        (webkitCookieManagerCreate): Create a new WebKitCookieManager for
+        the given WKCookieManagerRef.
+        (webkit_cookie_manager_set_accept_policy): Set the cookie
+        acceptance policy.
+        (webkitCookieManagerGetAcceptPolicyCallback): Callback called by
+        the C API when the cookie acceptance policy has been received.
+        (webkit_cookie_manager_get_accept_policy): Asynchronously get the
+        cookie acceptance policy.
+        (webkit_cookie_manager_get_accept_policy_finish): Finish async
+        operation started by webkit_cookie_manager_get_accept_policy()
+        returning the cookie acceptance policy.
+        (webkitCookieManagerGetDomainsWithCookiesCallback): Callback
+        called by the C API when the list of hostnames with cookies has
+        been received.
+        (webkit_cookie_manager_get_domains_with_cookies): Asynchronously
+        get the list of domains with cookies.
+        (webkit_cookie_manager_get_domains_with_cookies_finish): Finish
+        async operation started by
+        webkit_cookie_manager_get_domains_with_cookies() returning the
+        list of domains.
+        (webkit_cookie_manager_delete_cookies_for_domain): Delete all
+        cookies for the given domain.
+        (webkit_cookie_manager_delete_all_cookies): Delete all cookies.
+        * UIProcess/API/gtk/WebKitCookieManager.h: Added.
+        * UIProcess/API/gtk/WebKitCookieManagerPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_get_cookie_manager): Get the
+        WebKitCookieManager associated with the web context.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new chapter for
+        WebKitCookieManager.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add
+        webkit_cookie_manager_get_type.
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/TestCookieManager.cpp: Added.
+        (testCookieManagerAcceptPolicy):
+        (testCookieManagerDeleteCookies):
+        (serverCallback):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/webkit2.h: Include WebKitCookieManager.h.
+
 2012-04-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] InspectorServer: Add an API level auto test

@@ -13,3 +13,4 @@ webkit_find_controller_get_type
 webkit_script_dialog_get_type
 webkit_javascript_result_get_type
 webkit_web_resource_get_type
+webkit_cookie_manager_get_type
