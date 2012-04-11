@@ -132,10 +132,14 @@ int LayoutTestController::numberOfPages(float pageWidth, float pageHeight)
     return DumpRenderTreeSupportEfl::numberOfPages(browser->mainFrame(), pageWidth, pageHeight);
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char*, int) const
+JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
 {
-    notImplemented();
-    return 0;
+    const String property = DumpRenderTreeSupportEfl::pageProperty(browser->mainFrame(), propertyName, pageNumber);
+    if (property.isEmpty())
+        return 0;
+
+    JSRetainPtr<JSStringRef> propertyValue(Adopt, JSStringCreateWithUTF8CString(property.utf8().data()));
+    return propertyValue;
 }
 
 bool LayoutTestController::isPageBoxVisible(int pageIndex) const

@@ -187,6 +187,15 @@ String DumpRenderTreeSupportEfl::pageSizeAndMarginsInPixels(const Evas_Object* e
     return WebCore::PrintContext::pageSizeAndMarginsInPixels(frame, pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft);
 }
 
+String DumpRenderTreeSupportEfl::pageProperty(const Evas_Object* ewkFrame, const char* propertyName, int pageNumber)
+{
+    WebCore::Frame* coreFrame = EWKPrivate::coreFrame(ewkFrame);
+    if (!coreFrame)
+        return String();
+
+    return WebCore::PrintContext::pageProperty(coreFrame, propertyName, pageNumber);
+}
+
 bool DumpRenderTreeSupportEfl::pauseAnimation(Evas_Object* ewkFrame, const char* name, const char* elementId, double time)
 {
     WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);

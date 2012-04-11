@@ -1,3 +1,16 @@
+2012-04-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] LayoutTestController needs implementation of pageProperty
+        https://bugs.webkit.org/show_bug.cgi?id=82449
+
+        Add missing implementation pageProperty to EFL's LayoutTestController
+        in order to unskip printing/page-rule-selection.html
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::pageProperty):
+
 2012-04-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r113836.
