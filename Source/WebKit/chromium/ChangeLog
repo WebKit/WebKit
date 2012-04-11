@@ -1,3 +1,18 @@
+2012-04-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add OVERRIDE annotations for cc animation-related interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=83650
+
+        Reviewed by Daniel Bates.
+
+        This adds OVERRIDE annotations to the implementations of the following interfaces:
+        - CCAnimationCurve
+        - CCFloatAnimationCurve
+        - CCLayerAnimationControllerClient
+        - CCTransformAnimationCurve
+
+        * tests/CCAnimationTestCommon.h:
+
 2012-04-11  Aaron Colwell  <acolwell@chromium.org>
 
         Remove webkit prefix from Media Source runtime feature name.

@@ -38,7 +38,7 @@ public:
     virtual ~CCTimingFunction();
 
     // Partial implementation of CCFloatAnimationCurve.
-    virtual double duration() const;
+    virtual double duration() const OVERRIDE;
 
 protected:
     CCTimingFunction();
@@ -50,8 +50,8 @@ public:
     virtual ~CCCubicBezierTimingFunction();
 
     // Partial implementation of CCFloatAnimationCurve.
-    virtual float getValue(double time) const;
-    virtual PassOwnPtr<CCAnimationCurve> clone() const;
+    virtual float getValue(double time) const OVERRIDE;
+    virtual PassOwnPtr<CCAnimationCurve> clone() const OVERRIDE;
 
 protected:
     CCCubicBezierTimingFunction(double x1, double y1, double x2, double y2);

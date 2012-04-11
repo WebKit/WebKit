@@ -73,12 +73,12 @@ public:
     virtual ~LayerChromium();
 
     // CCLayerAnimationControllerClient implementation
-    virtual int id() const { return m_layerId; }
-    virtual void setOpacityFromAnimation(float);
-    virtual float opacity() const { return m_opacity; }
-    virtual void setTransformFromAnimation(const TransformationMatrix&);
-    virtual const TransformationMatrix& transform() const { return m_transform; }
-    virtual const IntSize& bounds() const { return m_bounds; }
+    virtual int id() const OVERRIDE { return m_layerId; }
+    virtual void setOpacityFromAnimation(float) OVERRIDE;
+    virtual float opacity() const OVERRIDE { return m_opacity; }
+    virtual void setTransformFromAnimation(const TransformationMatrix&) OVERRIDE;
+    virtual const TransformationMatrix& transform() const OVERRIDE { return m_transform; }
+    virtual const IntSize& bounds() const OVERRIDE { return m_bounds; }
 
     const LayerChromium* rootLayer() const;
     LayerChromium* parent() const;

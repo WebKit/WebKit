@@ -88,11 +88,11 @@ public:
     void addKeyframe(PassOwnPtr<CCFloatKeyframe>);
 
     // CCAnimationCurve implementation
-    virtual double duration() const;
-    virtual PassOwnPtr<CCAnimationCurve> clone() const;
+    virtual double duration() const OVERRIDE;
+    virtual PassOwnPtr<CCAnimationCurve> clone() const OVERRIDE;
 
     // CCFloatAnimationCurve implementation
-    virtual float getValue(double t) const;
+    virtual float getValue(double t) const OVERRIDE;
 
 private:
     CCKeyframedFloatAnimationCurve();
@@ -112,11 +112,11 @@ public:
     void addKeyframe(PassOwnPtr<CCTransformKeyframe>);
 
     // CCAnimationCurve implementation
-    virtual double duration() const;
-    virtual PassOwnPtr<CCAnimationCurve> clone() const;
+    virtual double duration() const OVERRIDE;
+    virtual PassOwnPtr<CCAnimationCurve> clone() const OVERRIDE;
 
     // CCTransformAnimationCurve implementation
-    virtual TransformationMatrix getValue(double t, const IntSize&) const;
+    virtual TransformationMatrix getValue(double t, const IntSize&) const OVERRIDE;
 
 private:
     CCKeyframedTransformAnimationCurve();

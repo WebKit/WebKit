@@ -42,9 +42,9 @@ public:
     FakeFloatAnimationCurve();
     virtual ~FakeFloatAnimationCurve();
 
-    virtual double duration() const { return 1; }
-    virtual float getValue(double now) const { return 0; }
-    virtual PassOwnPtr<WebCore::CCAnimationCurve> clone() const;
+    virtual double duration() const OVERRIDE { return 1; }
+    virtual float getValue(double now) const OVERRIDE { return 0; }
+    virtual PassOwnPtr<WebCore::CCAnimationCurve> clone() const OVERRIDE;
 };
 
 class FakeTransformTransition : public WebCore::CCTransformAnimationCurve {
@@ -52,10 +52,10 @@ public:
     FakeTransformTransition(double duration);
     virtual ~FakeTransformTransition();
 
-    virtual double duration() const { return m_duration; }
-    virtual WebCore::TransformationMatrix getValue(double time, const WebCore::IntSize&) const;
+    virtual double duration() const OVERRIDE { return m_duration; }
+    virtual WebCore::TransformationMatrix getValue(double time, const WebCore::IntSize&) const OVERRIDE;
 
-    virtual PassOwnPtr<WebCore::CCAnimationCurve> clone() const;
+    virtual PassOwnPtr<WebCore::CCAnimationCurve> clone() const OVERRIDE;
 
 private:
     double m_duration;
@@ -66,10 +66,10 @@ public:
     FakeFloatTransition(double duration, float from, float to);
     virtual ~FakeFloatTransition();
 
-    virtual double duration() const { return m_duration; }
-    virtual float getValue(double time) const;
+    virtual double duration() const OVERRIDE { return m_duration; }
+    virtual float getValue(double time) const OVERRIDE;
 
-    virtual PassOwnPtr<WebCore::CCAnimationCurve> clone() const;
+    virtual PassOwnPtr<WebCore::CCAnimationCurve> clone() const OVERRIDE;
 
 private:
     double m_duration;
@@ -83,12 +83,12 @@ public:
     virtual ~FakeLayerAnimationControllerClient();
 
     // CCLayerAnimationControllerClient implementation
-    virtual int id() const { return 0; }
-    virtual void setOpacityFromAnimation(float opacity) { m_opacity = opacity; }
-    virtual float opacity() const { return m_opacity; }
-    virtual void setTransformFromAnimation(const WebCore::TransformationMatrix& transform) { m_transform = transform; }
-    virtual const WebCore::TransformationMatrix& transform() const { return m_transform; }
-    virtual const WebCore::IntSize& bounds() const { return m_bounds; }
+    virtual int id() const OVERRIDE { return 0; }
+    virtual void setOpacityFromAnimation(float opacity) OVERRIDE { m_opacity = opacity; }
+    virtual float opacity() const OVERRIDE { return m_opacity; }
+    virtual void setTransformFromAnimation(const WebCore::TransformationMatrix& transform) OVERRIDE { m_transform = transform; }
+    virtual const WebCore::TransformationMatrix& transform() const OVERRIDE { return m_transform; }
+    virtual const WebCore::IntSize& bounds() const OVERRIDE { return m_bounds; }
 
 private:
     float m_opacity;
