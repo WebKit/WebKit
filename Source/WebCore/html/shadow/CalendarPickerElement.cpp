@@ -55,6 +55,7 @@ using namespace HTMLNames;
 
 inline CalendarPickerElement::CalendarPickerElement(Document* document)
     : HTMLDivElement(divTag, document)
+    , m_popup(0)
 {
     setShadowPseudoId("-webkit-calendar-picker-indicator");
 }
