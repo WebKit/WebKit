@@ -347,12 +347,14 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    Vector<char> encodedImage, base64Data;
+    Vector<char> encodedImage;
     SkDevice* device = context()->platformContext()->canvas()->getDevice();
     if (!encodeImage(device->accessBitmap(false), mimeType, quality, &encodedImage))
         return "data:,";
 
+    Vector<char> base64Data;
     base64Encode(encodedImage, base64Data);
+
     return "data:" + mimeType + ";base64," + base64Data;
 }
 
@@ -360,11 +362,13 @@ String ImageDataToDataURL(const ImageData& imageData, const String& mimeType, co
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    Vector<char> encodedImage, base64Data;
+    Vector<char> encodedImage;
     if (!encodeImage(imageData, mimeType, quality, &encodedImage))
         return "data:,";
 
+    Vector<char> base64Data;
     base64Encode(encodedImage, base64Data);
+
     return "data:" + mimeType + ";base64," + base64Data;
 }
 
