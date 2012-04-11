@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x201
-  RenderBlock {HTML} at (0,0) size 800x201
-    RenderBody {BODY} at (8,16) size 784x177
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 381x19
-          text run at (0,0) width 381: "You should not see any pixel artifacts around the reflections."
-      RenderBlock (anonymous) at (0,34) size 784x143
-        RenderText {#text} at (140,125) size 4x19
-          text run at (140,125) width 4: " "
-        RenderText {#text} at (284,125) size 4x19
-          text run at (284,125) width 4: " "
+layer at (0,0) size 800x225
+  RenderBlock {HTML} at (0,0) size 800x225
+    RenderBody {BODY} at (8,23) size 784x194
+      RenderBlock {P} at (0,0) size 784x26
+        RenderText {#text} at (0,0) size 567x26
+          text run at (0,0) width 567: "You should not see any pixel artifacts around the reflections."
+      RenderBlock (anonymous) at (0,49) size 784x145
+        RenderText {#text} at (140,119) size 6x26
+          text run at (140,119) width 6: " "
+        RenderText {#text} at (286,119) size 6x26
+          text run at (286,119) width 6: " "
         RenderText {#text} at (0,0) size 0x0
-layer at (28,70) size 100x100
+layer at (28,92) size 100x100
   RenderBlock {DIV} at (20,20) size 100x100 [bgcolor=#000000]
-layer at (172,70) size 100x100
-  RenderBlock {DIV} at (164,20) size 100x100 [bgcolor=#000000]
-layer at (316,70) size 100x100
-  RenderBlock {DIV} at (308,20) size 100x100 [bgcolor=#000000]
+layer at (174,92) size 100x100
+  RenderBlock {DIV} at (166,20) size 100x100 [bgcolor=#000000]
+layer at (320,92) size 100x100
+  RenderBlock {DIV} at (312,20) size 100x100 [bgcolor=#000000]

@@ -225,7 +225,7 @@ layer at (0,0) size 785x1217
             RenderTableRow {DIV} at (0,0) size 24x18
               RenderTableCell (anonymous) at (0,0) size 24x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,0) size 22x19
-                  text run at (2,0) width 22: "abc"
+                  text run at (2,0) width 22 RTL override: "abc"
             RenderTableRow (anonymous) at (0,18) size 24x18
               RenderTableCell {DIV} at (0,18) size 24x18 [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (4,0) size 20x19
@@ -237,4 +237,4 @@ layer at (0,0) size 785x1217
             RenderTableRow (anonymous) at (0,0) size 24x18
               RenderTableCell (anonymous) at (0,0) size 24x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 24x19
-                  text run at (0,0) width 24: "opq"
+                  text run at (0,0) width 24 RTL override: "opq"

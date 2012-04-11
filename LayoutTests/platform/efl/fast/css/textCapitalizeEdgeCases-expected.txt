@@ -3,38 +3,39 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x572
-      RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 776x55
-          text run at (0,0) width 775: "This file tests capitalisation with all sorts of odd things. There is some RTL text, some text with an inlined-div placed inside"
-          text run at (0,18) width 776: "a word, an image between words as well as a div between words. Each word below should be capitalised, and there should"
-          text run at (0,36) width 232: "be no capitals n the middle of words."
-      RenderBlock {DIV} at (20,74) size 744x114 [border: (5px solid #FF0000)]
-        RenderBlock {DIV} at (25,25) size 694x18
-          RenderText {#text} at (664,0) size 30x19
-            text run at (664,0) width 30 RTL override: "Capi"
-          RenderInline {SPAN} at (0,0) size 15x19
-            RenderText {#text} at (649,0) size 15x19
-              text run at (649,0) width 15 RTL override: "tal"
-          RenderText {#text} at (632,0) size 17x19
-            text run at (632,0) width 17 RTL override: "ise"
-        RenderBlock {DIV} at (25,43) size 694x46
-          RenderBlock (anonymous) at (0,0) size 694x28
-            RenderText {#text} at (0,10) size 31x19
-              text run at (0,10) width 31: "A W"
-            RenderInline {DIV} at (0,0) size 13x19
-              RenderText {#text} at (31,10) size 13x19
-                text run at (31,10) width 13: "or"
-            RenderText {#text} at (44,10) size 43x19
-              text run at (44,10) width 43: "d With"
-            RenderImage {IMG} at (87,0) size 25x25
-            RenderText {#text} at (112,10) size 63x19
-              text run at (112,10) width 63: "An Image"
-          RenderBlock {DIV} at (0,28) size 694x0
-          RenderBlock (anonymous) at (0,28) size 694x18
-            RenderText {#text} at (0,0) size 35x19
-              text run at (0,0) width 35: "In Be"
-            RenderInline {SPAN} at (0,0) size 16x19
-              RenderText {#text} at (35,0) size 16x19
-                text run at (35,0) width 16: "tw"
-            RenderText {#text} at (51,0) size 22x19
-              text run at (51,0) width 22: "een"
+      RenderBlock {P} at (0,0) size 784x104
+        RenderText {#text} at (0,0) size 783x104
+          text run at (0,0) width 743: "This file tests capitalisation with all sorts of odd things. There is some RTL text,"
+          text run at (0,26) width 783: "some text with an inlined-div placed inside a word, an image between words as well"
+          text run at (0,52) width 761: "as a div between words. Each word below should be capitalised, and there should"
+          text run at (0,78) width 345: "be no capitals n the middle of words."
+      RenderBlock {DIV} at (20,127) size 744x132 [border: (5px solid #FF0000)]
+        RenderBlock {DIV} at (25,25) size 694x26
+          RenderText {#text} at (651,0) size 43x26
+            text run at (651,0) width 43 RTL override: "Capi"
+          RenderInline {SPAN} at (0,0) size 22x26
+            RenderText {#text} at (629,0) size 22x26
+              text run at (629,0) width 22 RTL override: "tal"
+          RenderText {#text} at (604,0) size 25x26
+            text run at (604,0) width 25 RTL override: "ise"
+        RenderBlock {DIV} at (25,51) size 694x56
+          RenderBlock (anonymous) at (0,0) size 694x30
+            RenderText {#text} at (0,4) size 45x26
+              text run at (0,4) width 45: "A W"
+            RenderInline {DIV} at (0,0) size 20x26
+              RenderText {#text} at (45,4) size 20x26
+                text run at (45,4) width 20: "or"
+            RenderText {#text} at (65,4) size 64x26
+              text run at (65,4) width 64: "d With"
+            RenderImage {IMG} at (129,0) size 25x25
+            RenderText {#text} at (154,4) size 93x26
+              text run at (154,4) width 93: "An Image"
+          RenderBlock {DIV} at (0,30) size 694x0
+          RenderBlock (anonymous) at (0,30) size 694x26
+            RenderText {#text} at (0,0) size 51x26
+              text run at (0,0) width 51: "In Be"
+            RenderInline {SPAN} at (0,0) size 23x26
+              RenderText {#text} at (51,0) size 23x26
+                text run at (51,0) width 23: "tw"
+            RenderText {#text} at (74,0) size 32x26
+              text run at (74,0) width 32: "een"

@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {A} at (0,0) size 120x19 [color=#0000EE]
-          RenderText {#text} at (53,0) size 120x19
-            text run at (53,0) width 120: "Bugzilla Bug 9934"
-        RenderText {#text} at (173,0) size 451x19
-          text run at (173,0) width 451: " Selecting text in text field with {line-height:100%} causes it to bounce."
-      RenderBlock {DIV} at (0,18) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
-      RenderBlock {DIV} at (0,50) size 784x36
-        RenderText {#text} at (0,0) size 735x37
-          text run at (0,0) width 574: "Select the text in the text field using horizontal mouse movements, then drag up and down. "
-          text run at (574,0) width 161: "The text should not move"
-          text run at (0,18) width 62: "vertically."
-layer at (14,34) size 188x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 188x18
-    RenderText {#text} at (1,0) size 92x19
-      text run at (1,0) width 92: "Lorem Ipsum"
+      RenderBlock {DIV} at (0,0) size 784x52
+        RenderText {#text} at (0,0) size 79x26
+          text run at (0,0) width 79: "Test for "
+        RenderInline {A} at (0,0) size 176x26 [color=#0000EE]
+          RenderText {#text} at (79,0) size 176x26
+            text run at (79,0) width 176: "Bugzilla Bug 9934"
+        RenderText {#text} at (255,0) size 734x52
+          text run at (255,0) width 479: " Selecting text in text field with {line-height:100%}"
+          text run at (0,26) width 182: "causes it to bounce."
+      RenderBlock {DIV} at (0,52) size 784x40
+        RenderTextControl {INPUT} at (2,2) size 277x36 [color=#202020]
+          RenderBlock {DIV} at (4,6) size 270x26
+            RenderText {#text} at (1,0) size 135x26
+              text run at (1,0) width 135: "Lorem Ipsum"
+      RenderBlock {DIV} at (0,92) size 784x52
+        RenderText {#text} at (0,0) size 782x52
+          text run at (0,0) width 782: "Select the text in the text field using horizontal mouse movements, then drag up and"
+          text run at (0,26) width 65: "down. "
+          text run at (65,26) width 337: "The text should not move vertically."
