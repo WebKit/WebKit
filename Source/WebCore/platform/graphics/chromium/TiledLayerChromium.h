@@ -42,7 +42,6 @@ public:
 
     virtual ~TiledLayerChromium();
 
-    virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
     virtual void setIsMask(bool);
 
     virtual void pushPropertiesTo(CCLayerImpl*);
@@ -89,10 +88,10 @@ protected:
     void resetUpdateState();
 
     // Prepare data needed to update textures that intersect with layerRect.
-    void prepareToUpdate(const IntRect& layerRect, const CCOcclusionTracker*);
+    void updateLayerRect(CCTextureUpdater&, const IntRect& layerRect, const CCOcclusionTracker*);
 
     // Same as above, but this will try to paint additional surrounding content if idle.
-    void prepareToUpdateIdle(const IntRect& layerRect, const CCOcclusionTracker*);
+    void idleUpdateLayerRect(CCTextureUpdater&, const IntRect& layerRect, const CCOcclusionTracker*);
 
     // After preparing an update, returns true if more pre-painting is needed.
     bool needsIdlePaint(const IntRect& layerRect);
@@ -114,22 +113,18 @@ private:
     bool tileOnlyNeedsPartialUpdate(UpdatableTile*);
     bool tileNeedsBufferedUpdate(UpdatableTile*);
 
-    void prepareToUpdateTiles(bool idle, int left, int top, int right, int bottom, const CCOcclusionTracker*);
+    void updateTiles(bool idle, int left, int top, int right, int bottom, CCTextureUpdater&, const CCOcclusionTracker*);
 
     UpdatableTile* tileAt(int, int) const;
     UpdatableTile* createTile(int, int);
-
-    // Temporary state held between prepareToUpdate() and updateCompositorResources().
-    IntRect m_requestedUpdateTilesRect;
-
-    // State held between prepareToUpdate() and pushPropertiesTo(). This represents the area
-    // of the layer that is actually re-painted by WebKit.
-    IntRect m_paintRect;
 
     GC3Denum m_textureFormat;
     bool m_skipsDraw;
     bool m_skipsIdlePaint;
     LayerTextureUpdater::SampledTexelFormat m_sampledTexelFormat;
+
+    // Tracks if we've done any painting on this update cycle.
+    bool m_didPaint;
 
     TilingOption m_tilingOption;
     OwnPtr<CCLayerTilingData> m_tiler;

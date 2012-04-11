@@ -412,6 +412,8 @@ void CCThreadProxy::scheduledActionBeginFrame()
     m_pendingBeginFrameRequest = adoptPtr(new BeginFrameAndCommitState());
     m_pendingBeginFrameRequest->monotonicFrameBeginTime = monotonicallyIncreasingTime();
     m_pendingBeginFrameRequest->scrollInfo = m_layerTreeHostImpl->processScrollDeltas();
+    m_currentTextureUpdaterOnImplThread = adoptPtr(new CCTextureUpdater);
+    m_pendingBeginFrameRequest->updater = m_currentTextureUpdaterOnImplThread.get();
 
     m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::beginFrame));
 
@@ -465,7 +467,7 @@ void CCThreadProxy::beginFrame()
     // updateLayers.
     m_commitRequested = false;
 
-    if (!m_layerTreeHost->updateLayers())
+    if (!m_layerTreeHost->updateLayers(*request->updater))
         return;
 
     // Before applying scrolls and calling animate, we set m_animateRequested to false.
@@ -495,16 +497,13 @@ void CCThreadProxy::beginFrameCompleteOnImplThread(CCCompletionEvent* completion
     ASSERT(isImplThread());
     ASSERT(m_schedulerOnImplThread);
     ASSERT(m_schedulerOnImplThread->commitPending());
+
     if (!m_layerTreeHostImpl) {
         completion->signal();
         return;
     }
 
     m_commitCompletionEventOnImplThread = completion;
-
-    ASSERT(!m_currentTextureUpdaterOnImplThread);
-    m_currentTextureUpdaterOnImplThread = adoptPtr(new CCTextureUpdater);
-    m_layerTreeHost->updateCompositorResources(m_layerTreeHostImpl->context(), *m_currentTextureUpdaterOnImplThread);
 
     m_schedulerOnImplThread->beginFrameComplete();
 }
@@ -534,12 +533,12 @@ void CCThreadProxy::scheduledActionUpdateMoreResources()
 void CCThreadProxy::scheduledActionCommit()
 {
     TRACE_EVENT("CCThreadProxy::scheduledActionCommit", this, 0);
+    ASSERT(isImplThread());
     ASSERT(m_currentTextureUpdaterOnImplThread);
     ASSERT(!m_currentTextureUpdaterOnImplThread->hasMoreUpdates());
     ASSERT(m_commitCompletionEventOnImplThread);
 
     m_currentTextureUpdaterOnImplThread.clear();
-
 
     m_layerTreeHostImpl->beginCommit();
 

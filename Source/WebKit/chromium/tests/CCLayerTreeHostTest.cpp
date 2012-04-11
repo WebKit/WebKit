@@ -28,6 +28,7 @@
 
 #include "CCAnimationTestCommon.h"
 #include "CCOcclusionTrackerTestCommon.h"
+#include "CCTiledLayerTestCommon.h"
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "ContentLayerChromium.h"
 #include "FilterOperations.h"
@@ -1429,25 +1430,16 @@ public:
     int idlePaintContentsCount() { return m_idlePaintContentsCount; }
     void resetPaintContentsCount() { m_paintContentsCount = 0; m_idlePaintContentsCount = 0;}
 
-    int updateCount() { return m_updateCount; }
-    void resetUpdateCount() { m_updateCount = 0; }
-
-    virtual void paintContentsIfDirty(const CCOcclusionTracker* occlusion)
+    virtual void update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
     {
-        ContentLayerChromium::paintContentsIfDirty(occlusion);
+        ContentLayerChromium::update(updater, occlusion);
         m_paintContentsCount++;
     }
 
-    virtual void idlePaintContentsIfDirty(const CCOcclusionTracker* occlusion)
+    virtual void idleUpdate(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
     {
-        ContentLayerChromium::idlePaintContentsIfDirty(occlusion);
+        ContentLayerChromium::idleUpdate(updater, occlusion);
         m_idlePaintContentsCount++;
-    }
-
-    virtual void updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
-    {
-        ContentLayerChromium::updateCompositorResources(context, updater);
-        m_updateCount++;
     }
 
 private:
@@ -1455,7 +1447,6 @@ private:
         : ContentLayerChromium(delegate)
         , m_paintContentsCount(0)
         , m_idlePaintContentsCount(0)
-        , m_updateCount(0)
     {
         setBounds(IntSize(10, 10));
         setIsDrawable(true);
@@ -1463,7 +1454,6 @@ private:
 
     int m_paintContentsCount;
     int m_idlePaintContentsCount;
-    int m_updateCount;
 };
 
 // Layer opacity change during paint should not prevent compositor resources from being updated during commit.
@@ -1490,16 +1480,11 @@ public:
 
     virtual void afterTest()
     {
-        // paintContentsIfDirty() should have been called once.
+        // update() should have been called once.
         EXPECT_EQ(1, m_updateCheckLayer->paintContentsCount());
 
-        // idlePaintContentsIfDirty() should have been called once
+        // idleUpdate() should have been called once
         EXPECT_EQ(1, m_updateCheckLayer->idlePaintContentsCount());
-
-        // updateCompositorResources() should have been called the same
-        // amout of times as paintContentsIfDirty().
-        EXPECT_EQ(m_updateCheckLayer->paintContentsCount(),
-                  m_updateCheckLayer->updateCount());
 
         // clear m_updateCheckLayer so CCLayerTreeHost dies.
         m_updateCheckLayer.clear();
@@ -1529,7 +1514,8 @@ public:
         IntSize viewportSize(10, 10);
         layerTreeHost()->setViewportSize(viewportSize);
 
-        layerTreeHost()->updateLayers();
+        CCTextureUpdater updater;
+        layerTreeHost()->updateLayers(updater);
 
         EXPECT_EQ(viewportSize, layerTreeHost()->viewportSize());
         EXPECT_EQ(TextureManager::highLimitBytes(viewportSize), layerTreeHost()->contentsTextureManager()->maxMemoryLimitBytes());
@@ -1718,9 +1704,9 @@ public:
             // Number of textures used for commit should still be two.
             EXPECT_EQ(2, context->numUsedTextures());
             // First texture should not have been used.
-            EXPECT_FALSE(context->usedTexture(context->texture(0)));
+            EXPECT_TRUE(context->usedTexture(context->texture(0)));
             // Second texture should have been used.
-            EXPECT_TRUE(context->usedTexture(context->texture(1)));
+            EXPECT_FALSE(context->usedTexture(context->texture(1)));
             // New textures should have been used.
             EXPECT_TRUE(context->usedTexture(context->texture(2)));
 
@@ -1792,7 +1778,7 @@ class TestLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<TestLayerChromium> create() { return adoptRef(new TestLayerChromium()); }
 
-    virtual void paintContentsIfDirty(const CCOcclusionTracker* occlusion)
+    virtual void update(CCTextureUpdater&, const CCOcclusionTracker* occlusion)
     {
         // Gain access to internals of the CCOcclusionTracker.
         const TestCCOcclusionTracker* testOcclusion = static_cast<const TestCCOcclusionTracker*>(occlusion);
@@ -1853,7 +1839,8 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers();
+        CCTextureUpdater updater;
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1870,7 +1857,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1888,7 +1875,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1908,7 +1895,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1930,7 +1917,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1952,7 +1939,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
@@ -1975,7 +1962,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1998,7 +1985,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
@@ -2059,7 +2046,8 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers();
+        CCTextureUpdater updater;
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
@@ -2086,7 +2074,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
@@ -2146,7 +2134,8 @@ public:
 
         m_layerTreeHost->setRootLayer(layers[0].get());
         m_layerTreeHost->setViewportSize(layers[0]->bounds());
-        m_layerTreeHost->updateLayers();
+        CCTextureUpdater updater;
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         for (int i = 0; i < numSurfaces-1; ++i) {

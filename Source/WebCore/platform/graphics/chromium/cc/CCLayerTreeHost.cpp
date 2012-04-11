@@ -110,7 +110,6 @@ CCLayerTreeHost::~CCLayerTreeHost()
     ASSERT(m_proxy);
     m_proxy->stop();
     m_proxy.clear();
-    clearPendingUpdate();
     numLayerTreeInstances--;
 }
 
@@ -229,7 +228,6 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 void CCLayerTreeHost::commitComplete()
 {
     m_deleteTextureAfterCommitList.clear();
-    clearPendingUpdate();
     m_contentsTextureManager->unprotectAllTextures();
     m_client->didCommit();
 }
@@ -421,7 +419,7 @@ void CCLayerTreeHost::composite()
     static_cast<CCSingleThreadProxy*>(m_proxy.get())->compositeImmediately();
 }
 
-bool CCLayerTreeHost::updateLayers()
+bool CCLayerTreeHost::updateLayers(CCTextureUpdater& updater)
 {
     if (!m_layerRendererInitialized) {
         initializeLayerRenderer();
@@ -440,11 +438,11 @@ bool CCLayerTreeHost::updateLayers()
     if (viewportSize().isEmpty())
         return true;
 
-    updateLayers(rootLayer());
+    updateLayers(rootLayer(), updater);
     return true;
 }
 
-void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
+void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& updater)
 {
     TRACE_EVENT("CCLayerTreeHost::updateLayers", this, 0);
 
@@ -455,10 +453,8 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
     IntRect rootClipRect(IntPoint(), viewportSize());
     rootLayer->setClipRect(rootClipRect);
 
-    // This assert fires if updateCompositorResources wasn't called after
-    // updateLayers. Only one update can be pending at any given time.
-    ASSERT(!m_updateList.size());
-    m_updateList.append(rootLayer);
+    LayerList updateList;
+    updateList.append(rootLayer);
 
     RenderSurfaceChromium* rootRenderSurface = rootLayer->renderSurface();
     rootRenderSurface->clearLayerList();
@@ -466,15 +462,15 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
     TransformationMatrix identityMatrix;
     {
         TRACE_EVENT("CCLayerTreeHost::updateLayers::calcDrawEtc", this, 0);
-        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, identityMatrix, identityMatrix, m_updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, identityMatrix, identityMatrix, updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
     }
 
     // Reset partial texture update requests.
     m_partialTextureUpdateRequests = 0;
 
-    reserveTextures();
+    reserveTextures(updateList);
 
-    paintLayerContents(m_updateList, PaintVisible);
+    paintLayerContents(updateList, PaintVisible, updater);
     if (!m_triggerIdlePaints)
         return;
 
@@ -488,17 +484,20 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
     // otherwise it will always push us towards the maximum limit.
     m_contentsTextureManager->setMaxMemoryLimitBytes(preferredLimitBytes);
     // The second (idle) paint will be a no-op in layers where painting already occured above.
-    paintLayerContents(m_updateList, PaintIdle);
+    paintLayerContents(updateList, PaintIdle, updater);
     m_contentsTextureManager->setMaxMemoryLimitBytes(maxLimitBytes);
+
+    for (size_t i = 0; i < updateList.size(); ++i)
+        updateList[i]->clearRenderSurface();
 }
 
-void CCLayerTreeHost::reserveTextures()
+void CCLayerTreeHost::reserveTextures(const LayerList& updateList)
 {
     // Use BackToFront since it's cheap and this isn't order-dependent.
     typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
 
-    CCLayerIteratorType end = CCLayerIteratorType::end(&m_updateList);
-    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&m_updateList); it != end; ++it) {
+    CCLayerIteratorType end = CCLayerIteratorType::end(&updateList);
+    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&updateList); it != end; ++it) {
         if (!it.representsItself() || !it->alwaysReserveTextures())
             continue;
         it->reserveTextures();
@@ -506,17 +505,17 @@ void CCLayerTreeHost::reserveTextures()
 }
 
 // static
-void CCLayerTreeHost::paintContentsIfDirty(LayerChromium* layer, PaintType paintType, const CCOcclusionTracker* occlusion)
+void CCLayerTreeHost::update(LayerChromium* layer, PaintType paintType, CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
 {
     ASSERT(layer);
     ASSERT(PaintVisible == paintType || PaintIdle == paintType);
     if (PaintVisible == paintType)
-        layer->paintContentsIfDirty(occlusion);
+        layer->update(updater, occlusion);
     else
-        layer->idlePaintContentsIfDirty(occlusion);
+        layer->idleUpdate(updater, occlusion);
 }
 
-void CCLayerTreeHost::paintMasksForRenderSurface(LayerChromium* renderSurfaceLayer, PaintType paintType)
+void CCLayerTreeHost::paintMasksForRenderSurface(LayerChromium* renderSurfaceLayer, PaintType paintType, CCTextureUpdater& updater)
 {
     // Note: Masks and replicas only exist for layers that own render surfaces. If we reach this point
     // in code, we already know that at least something will be drawn into this render surface, so the
@@ -525,17 +524,17 @@ void CCLayerTreeHost::paintMasksForRenderSurface(LayerChromium* renderSurfaceLay
     LayerChromium* maskLayer = renderSurfaceLayer->maskLayer();
     if (maskLayer) {
         maskLayer->setVisibleLayerRect(IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
-        paintContentsIfDirty(maskLayer, paintType, 0);
+        update(maskLayer, paintType, updater, 0);
     }
 
     LayerChromium* replicaMaskLayer = renderSurfaceLayer->replicaLayer() ? renderSurfaceLayer->replicaLayer()->maskLayer() : 0;
     if (replicaMaskLayer) {
         replicaMaskLayer->setVisibleLayerRect(IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
-        paintContentsIfDirty(replicaMaskLayer, paintType, 0);
+        update(replicaMaskLayer, paintType, updater, 0);
     }
 }
 
-void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList, PaintType paintType)
+void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList, PaintType paintType, CCTextureUpdater& updater)
 {
     // Use FrontToBack to allow for testing occlusion and performing culling during the tree walk.
     typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
@@ -550,50 +549,18 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
             ASSERT(it->renderSurface()->drawOpacity() || it->renderSurface()->drawOpacityIsAnimating());
 
             occlusionTracker.finishedTargetRenderSurface(*it, it->renderSurface());
-            paintMasksForRenderSurface(*it, paintType);
+            paintMasksForRenderSurface(*it, paintType, updater);
         } else if (it.representsItself()) {
             ASSERT(!it->bounds().isEmpty());
 
             occlusionTracker.enterTargetRenderSurface(it->targetRenderSurface());
-            paintContentsIfDirty(*it, paintType, &occlusionTracker);
+            update(*it, paintType, updater, &occlusionTracker);
             occlusionTracker.markOccludedBehindLayer(*it);
         } else
             occlusionTracker.leaveToTargetRenderSurface(it.targetRenderSurfaceLayer()->renderSurface());
     }
 
     occlusionTracker.overdrawMetrics().recordMetrics(this);
-}
-
-void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
-{
-    // Use BackToFront since it's cheap and this isn't order-dependent.
-    typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
-
-    CCLayerIteratorType end = CCLayerIteratorType::end(&m_updateList);
-    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&m_updateList); it != end; ++it) {
-        if (it.representsTargetRenderSurface()) {
-            ASSERT(it->renderSurface()->drawOpacity() || it->renderSurface()->drawOpacityIsAnimating());
-            if (it->maskLayer())
-                it->maskLayer()->updateCompositorResources(context, updater);
-
-            if (it->replicaLayer()) {
-                it->replicaLayer()->updateCompositorResources(context, updater);
-                if (it->replicaLayer()->maskLayer())
-                    it->replicaLayer()->maskLayer()->updateCompositorResources(context, updater);
-            }
-        } else if (it.representsItself())
-            it->updateCompositorResources(context, updater);
-    }
-}
-
-void CCLayerTreeHost::clearPendingUpdate()
-{
-    for (size_t surfaceIndex = 0; surfaceIndex < m_updateList.size(); ++surfaceIndex) {
-        LayerChromium* layer = m_updateList[surfaceIndex].get();
-        ASSERT(layer->renderSurface());
-        layer->clearRenderSurface();
-    }
-    m_updateList.clear();
 }
 
 void CCLayerTreeHost::applyScrollAndScale(const CCScrollAndScaleSet& info)

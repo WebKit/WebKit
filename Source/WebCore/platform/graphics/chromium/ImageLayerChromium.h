@@ -49,7 +49,7 @@ public:
     virtual ~ImageLayerChromium();
 
     virtual bool drawsContent() const;
-    virtual void paintContentsIfDirty(const CCOcclusionTracker*);
+    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*);
     virtual bool needsContentsScale() const;
 
     void setContents(Image* image);

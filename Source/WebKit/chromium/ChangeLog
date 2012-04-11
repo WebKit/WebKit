@@ -1,3 +1,37 @@
+2012-04-10  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Fold LayerChromium::updateCompositorResources into main update
+        https://bugs.webkit.org/show_bug.cgi?id=83530
+
+        Reviewed by Adrienne Walker.
+
+        Update tests for interface changes.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::runTest):
+        (WTF::ContentLayerChromiumWithUpdateTracking::update):
+        (WTF::ContentLayerChromiumWithUpdateTracking::idleUpdate):
+        (WTF::ContentLayerChromiumWithUpdateTracking::ContentLayerChromiumWithUpdateTracking):
+        (ContentLayerChromiumWithUpdateTracking):
+        (WTF::CCLayerTreeHostTestOpacityChange::afterTest):
+        (WTF::CCLayerTreeHostTestSetViewportSize::beginTest):
+        (WTF::CCLayerTreeHostTestAtomicCommitWithPartialUpdate::commitCompleteOnCCThread):
+        (WTF::TestLayerChromium::update):
+        (WTF::CCLayerTreeHostTestLayerOcclusion::beginTest):
+        (WTF::CCLayerTreeHostTestContentLayerOcclusion::beginTest):
+        (WTF::CCLayerTreeHostTestLayerOcclusionWithFilters::beginTest):
+        (WTF::CCLayerTreeHostTestManySurfaces::beginTest):
+        * tests/CCTiledLayerTestCommon.cpp:
+        (WebKitTests::FakeLayerTextureUpdater::updateLayerRect):
+        (WebKitTests::FakeTiledLayerChromium::update):
+        * tests/CCTiledLayerTestCommon.h:
+        (FakeLayerTextureUpdater):
+        (FakeTiledLayerChromium):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+        (WTF::idlePaintRepeat):
+
 2012-04-10  Adam Barth  <abarth@webkit.org>
 
         Limit -apple- and -khtml- to ENABLE(DASHBOARD_SUPPORT)

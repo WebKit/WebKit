@@ -71,9 +71,9 @@ bool WebGLLayerChromium::drawsContent() const
     return LayerChromium::drawsContent() && !m_contextLost;
 }
 
-void WebGLLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* /* occlusion */)
+void WebGLLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker*)
 {
-    if (!drawsContent() || !m_needsDisplay)
+    if (!drawsContent() || !m_needsDisplay || !m_drawingBuffer)
         return;
 
     m_drawingBuffer->prepareBackBuffer();
@@ -82,12 +82,6 @@ void WebGLLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* /* occlu
     context()->markLayerComposited();
     m_needsDisplay = false;
     m_contextLost = context()->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
-}
-
-void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTextureUpdater& updater)
-{
-    if (!m_drawingBuffer)
-        return;
 
     m_textureId = m_drawingBuffer->frontColorBuffer();
     if (m_drawingBuffer->requiresCopyFromBackToFrontBuffer())

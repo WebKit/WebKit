@@ -191,7 +191,7 @@ void CCSingleThreadProxy::setNeedsAnimate()
     ASSERT_NOT_REACHED();
 }
 
-void CCSingleThreadProxy::doCommit()
+void CCSingleThreadProxy::doCommit(CCTextureUpdater& updater)
 {
     ASSERT(CCProxy::isMainThread());
     // Commit immediately
@@ -200,8 +200,6 @@ void CCSingleThreadProxy::doCommit()
         m_layerTreeHostImpl->beginCommit();
 
         m_layerTreeHost->beginCommitOnImplThread(m_layerTreeHostImpl.get());
-        CCTextureUpdater updater;
-        m_layerTreeHost->updateCompositorResources(m_layerTreeHostImpl->context(), updater);
         updater.update(m_layerTreeHostImpl->context(), m_layerTreeHostImpl->contentsTextureAllocator(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), numeric_limits<size_t>::max());
         ASSERT(!updater.hasMoreUpdates());
         m_layerTreeHostImpl->setVisible(m_layerTreeHost->visible());
@@ -287,10 +285,12 @@ bool CCSingleThreadProxy::commitIfNeeded()
 {
     ASSERT(CCProxy::isMainThread());
 
-    if (!m_layerTreeHost->updateLayers())
+    CCTextureUpdater updater;
+
+    if (!m_layerTreeHost->updateLayers(updater))
         return false;
 
-    doCommit();
+    doCommit(updater);
     return true;
 }
 

@@ -156,7 +156,7 @@ public:
     void didCompleteSwapBuffers() { m_client->didCompleteSwapBuffers(); }
     void deleteContentsTexturesOnImplThread(TextureAllocator*);
     // Returns false if we should abort this frame due to initialization failure.
-    bool updateLayers();
+    bool updateLayers(CCTextureUpdater&);
 
     CCLayerTreeHostClient* client() { return m_client; }
 
@@ -212,7 +212,6 @@ public:
 
     void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec);
 
-    void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
     void applyScrollAndScale(const CCScrollAndScaleSet&);
     void startRateLimiter(GraphicsContext3D*);
     void stopRateLimiter(GraphicsContext3D*);
@@ -231,14 +230,13 @@ private:
     void initializeLayerRenderer();
 
     enum PaintType { PaintVisible, PaintIdle };
-    static void paintContentsIfDirty(LayerChromium*, PaintType, const CCOcclusionTracker*);
-    void paintLayerContents(const LayerList&, PaintType);
-    void paintMasksForRenderSurface(LayerChromium*, PaintType);
+    static void update(LayerChromium*, PaintType, CCTextureUpdater&, const CCOcclusionTracker*);
+    void paintLayerContents(const LayerList&, PaintType, CCTextureUpdater&);
+    void paintMasksForRenderSurface(LayerChromium*, PaintType, CCTextureUpdater&);
 
-    void updateLayers(LayerChromium*);
+    void updateLayers(LayerChromium*, CCTextureUpdater&);
     // Pre-reserve textures for any layer marked "always reserve textures"
-    void reserveTextures();
-    void clearPendingUpdate();
+    void reserveTextures(const LayerList&);
 
     void animateLayers(double monotonicTime);
     bool animateLayersRecursive(LayerChromium* current, double monotonicTime);
@@ -261,8 +259,6 @@ private:
 
     RefPtr<LayerChromium> m_rootLayer;
     OwnPtr<TextureManager> m_contentsTextureManager;
-
-    LayerList m_updateList;
 
     CCSettings m_settings;
 

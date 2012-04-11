@@ -50,8 +50,7 @@ public:
     virtual ~WebGLLayerChromium();
 
     virtual bool drawsContent() const;
-    virtual void paintContentsIfDirty(const CCOcclusionTracker*);
-    virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
+    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*);
     virtual void pushPropertiesTo(CCLayerImpl*);
     virtual void setNeedsDisplayRect(const FloatRect&);
     bool paintRenderedResultsToCanvas(ImageBuffer*);

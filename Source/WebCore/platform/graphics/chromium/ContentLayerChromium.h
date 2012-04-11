@@ -58,8 +58,8 @@ public:
     void clearDelegate() { m_delegate = 0; }
 
     virtual bool drawsContent() const;
-    virtual void paintContentsIfDirty(const CCOcclusionTracker*);
-    virtual void idlePaintContentsIfDirty(const CCOcclusionTracker*);
+    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*);
+    virtual void idleUpdate(CCTextureUpdater&, const CCOcclusionTracker*);
 
     virtual void setOpaque(bool);
 

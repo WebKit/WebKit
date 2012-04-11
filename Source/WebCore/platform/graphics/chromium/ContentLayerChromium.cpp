@@ -94,29 +94,29 @@ bool ContentLayerChromium::drawsContent() const
     return TiledLayerChromium::drawsContent() && m_delegate;
 }
 
-void ContentLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* occlusion)
+void ContentLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
 {
     updateTileSizeAndTilingOption();
     createTextureUpdaterIfNeeded();
 
     IntRect layerRect;
 
-    // Always call prepareToUpdate() but with an empty layer rectangle when
+    // Always call updateLayerRect() but with an empty layer rectangle when
     // layer doesn't draw contents.
     if (drawsContent())
         layerRect = visibleLayerRect();
 
-    prepareToUpdate(layerRect, occlusion);
+    updateLayerRect(updater, layerRect, occlusion);
     m_needsDisplay = false;
 }
 
-void ContentLayerChromium::idlePaintContentsIfDirty(const CCOcclusionTracker* occlusion)
+void ContentLayerChromium::idleUpdate(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
 {
     if (!drawsContent())
         return;
 
     const IntRect layerRect = visibleLayerRect();
-    prepareToUpdateIdle(layerRect, occlusion);
+    idleUpdateLayerRect(updater, layerRect, occlusion);
     if (needsIdlePaint(layerRect))
         setNeedsCommit();
 }

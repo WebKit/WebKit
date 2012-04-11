@@ -93,9 +93,9 @@ void Canvas2DLayerChromium::setCanvas(SkCanvas* canvas)
     m_canvas = canvas;
 }
 
-void Canvas2DLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* /* occlusion */)
+void Canvas2DLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker*)
 {
-    TRACE_EVENT("Canvas2DLayerChromium::paintContentsIfDirty", this, 0);
+    TRACE_EVENT0("cc", "Canvas2DLayerChromium::update");
     if (!drawsContent())
         return;
 
@@ -105,7 +105,8 @@ void Canvas2DLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* /* oc
             m_frontTexture->setTextureManager(textureManager);
         else
             m_frontTexture = ManagedTexture::create(textureManager);
-        m_frontTexture->reserve(m_size, GraphicsContext3D::RGBA);
+        if (m_frontTexture->reserve(m_size, GraphicsContext3D::RGBA))
+            updater.appendManagedCopy(m_backTextureId, m_frontTexture.get(), m_size);
     }
 
     if (!needsDisplay())
@@ -121,20 +122,12 @@ void Canvas2DLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* /* oc
         return;
 
     if (m_canvas) {
-        TRACE_EVENT("SkCanvas::flush", m_canvas, 0);
+        TRACE_EVENT0("cc", "SkCanvas::flush");
         m_canvas->flush();
     }
 
-    TRACE_EVENT("GraphicsContext3D::flush", m_context, 0);
+    TRACE_EVENT0("cc", "GraphicsContext3D::flush");
     m_context->flush();
-}
-
-void Canvas2DLayerChromium::updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
-{
-    if (!m_backTextureId || !m_frontTexture || !m_frontTexture->isValid(m_size, GraphicsContext3D::RGBA))
-        return;
-
-    updater.appendManagedCopy(m_backTextureId, m_frontTexture.get(), m_size);
 }
 
 void Canvas2DLayerChromium::pushPropertiesTo(CCLayerImpl* layer)

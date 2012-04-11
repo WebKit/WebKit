@@ -113,7 +113,7 @@ protected:
 
         OwnPtr<FakeCCLayerTreeHost> layerTreeHost(FakeCCLayerTreeHost::create());
         // Force an update, so that we get a valid TextureManager.
-        layerTreeHost->updateLayers();
+        layerTreeHost->updateLayers(updater);
 
         const WebGLId backTextureId = 1;
         const WebGLId frontTextureId = 2;
@@ -145,7 +145,7 @@ protected:
 
         canvas->setNeedsDisplay();
         EXPECT_TRUE(canvas->needsDisplay());
-        canvas->paintContentsIfDirty(0);
+        canvas->update(updater, 0);
         EXPECT_FALSE(canvas->needsDisplay());
         {
             DebugScopedSetImplThread scopedImplThread;
@@ -153,7 +153,6 @@ protected:
             OwnPtr<CCLayerImpl> layerImpl = canvas->createCCLayerImpl();
             EXPECT_EQ(0u, static_cast<CCTextureLayerImpl*>(layerImpl.get())->textureId());
 
-            canvas->updateCompositorResources(implContext.get(), updater);
             updater.update(implContext.get(), &allocatorMock, &copierMock, 1);
             canvas->pushPropertiesTo(layerImpl.get());
 

@@ -110,8 +110,8 @@ public:
     static WebCore::IntSize tileSize() { return WebCore::IntSize(100, 100); }
 
     using WebCore::TiledLayerChromium::invalidateRect;
-    using WebCore::TiledLayerChromium::prepareToUpdate;
-    using WebCore::TiledLayerChromium::prepareToUpdateIdle;
+    using WebCore::TiledLayerChromium::updateLayerRect;
+    using WebCore::TiledLayerChromium::idleUpdateLayerRect;
     using WebCore::TiledLayerChromium::needsIdlePaint;
     using WebCore::TiledLayerChromium::skipsDraw;
     using WebCore::TiledLayerChromium::numPaintedTiles;
@@ -121,7 +121,7 @@ public:
     const WebCore::FloatRect& lastNeedsDisplayRect() const { return m_lastNeedsDisplayRect; }
 
     // Updates the visibleLayerRect().
-    virtual void paintContentsIfDirty(const WebCore::CCOcclusionTracker*);
+    virtual void update(WebCore::CCTextureUpdater&, const WebCore::CCOcclusionTracker*);
 
     virtual WebCore::TextureManager* textureManager() const { return m_textureManager; }
     FakeLayerTextureUpdater* fakeLayerTextureUpdater() { return m_fakeTextureUpdater.get(); }

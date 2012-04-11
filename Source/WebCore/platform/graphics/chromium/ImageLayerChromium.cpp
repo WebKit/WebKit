@@ -83,7 +83,7 @@ public:
                 LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
     }
 
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int /* borderTexels */, float /* contentsScale */, IntRect* /* resultingOpaqueRect */)
+    virtual void updateLayerRect(const IntRect& contentRect, const IntSize& tileSize, int /* borderTexels */, float /* contentsScale */, IntRect* /* resultingOpaqueRect */)
     {
         m_texSubImage.setSubImageSize(tileSize);
     }
@@ -158,7 +158,7 @@ void ImageLayerChromium::setContents(Image* contents)
     setNeedsDisplay();
 }
 
-void ImageLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* occlusion)
+void ImageLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
 {
     createTextureUpdaterIfNeeded();
     if (m_needsDisplay) {
@@ -168,7 +168,7 @@ void ImageLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* occlusio
         m_needsDisplay = false;
     }
 
-    prepareToUpdate(visibleLayerRect(), occlusion);
+    updateLayerRect(updater, visibleLayerRect(), occlusion);
 }
 
 void ImageLayerChromium::createTextureUpdaterIfNeeded()
