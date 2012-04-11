@@ -1,0 +1,83 @@
+<!doctype html>
+<html style="direction:rtl">
+<head>
+ <style>
+    
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+    }
+
+    #region1 {
+        width: 200px;
+        height: 150px;
+    }
+    
+    #region2 {
+        width: 300px;
+        height: 180px;
+    }
+    
+    #region3 {
+        width: 120px;
+        height: 120px;
+    }
+    #gray-box1 {
+      height: 120px;
+      width: 60px;
+      background-color: #cccccc;
+      float: left;
+      margin-left: 20px;
+      margin-top: 30px;
+    }
+    #gray-box2 {
+      height: 180px;
+      width: 90px;
+      background-color: #cccccc;
+      float: left;
+      margin-left: 30px;
+    }
+    #gray-box3 {
+      height: 50px;
+      width: 36px;
+      background-color: #cccccc;
+      float: left;
+      margin-left: 12px;
+    }
+    #green-box1 {
+      height:150px;
+      width:50%;
+      background-color:#00a000;
+      margin-right: 20px;
+    }
+    #green-box2 {
+      height:180px;
+      width:50%;
+      background-color:#00a000;
+      margin-right: 30px;
+    }
+    #green-box3 {
+      height:120px;
+      width:50%;
+      background-color:#00a000;
+      margin-right: 12px;
+    }
+</style>
+</head>
+
+<body>
+<p style="direction:ltr">The green positioned object should go through all three regions. Its right edge should have the same offset from the right side of the light grey boxes in each region.</p>
+
+<div id="region1">
+  <div id="gray-box1"></div>
+  <div id="green-box1"></div>
+</div>
+<div id="region2">
+  <div id="gray-box2"></div>
+  <div id="green-box2"></div>
+</div>
+<div id="region3">
+  <div id="gray-box3"></div>
+  <div id="green-box3"></div>
+</div>
+
+</body>
