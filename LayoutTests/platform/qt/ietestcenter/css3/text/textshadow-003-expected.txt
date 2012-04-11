@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x82
+  RenderBlock {HTML} at (0,0) size 800x82
+    RenderBody {BODY} at (8,16) size 784x58
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 341x21
+          text run at (0,0) width 341: "Test passes if there is green visible on the page."
+      RenderBlock {DIV} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 146x21
+          text run at (0,0) width 146: "Filler Text Filler Text"
+      RenderBlock {DIV} at (0,58) size 784x0

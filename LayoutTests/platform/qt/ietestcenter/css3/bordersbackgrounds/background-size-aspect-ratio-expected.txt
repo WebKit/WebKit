@@ -1,0 +1,12 @@
+layer at (0,0) size 784x758
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x758
+  RenderBlock {HTML} at (0,0) size 784x758
+    RenderBody {BODY} at (8,16) size 768x734
+      RenderBlock {P} at (0,0) size 768x42
+        RenderText {#text} at (0,0) size 744x42
+          text run at (0,0) width 744: "Test passes if there are five unclipped cats in each of the two boxes, and if all the cats on the page are the"
+          text run at (0,21) width 76: "same size."
+      RenderBlock {DIV} at (0,58) size 96x96
+      RenderBlock {DIV} at (0,154) size 410x160 [border: (5px solid #000000)]
+      RenderBlock {DIV} at (0,324) size 160x410 [border: (5px solid #000000)]

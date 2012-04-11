@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x351
+  RenderBlock {HTML} at (0,0) size 800x351
+    RenderBody {BODY} at (8,16) size 784x327
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 301x21
+          text run at (0,0) width 301: "Test passes if green is visible on the page."
+      RenderBlock {DIV} at (0,37) size 290x290 [bgcolor=#008000]
+        RenderBlock {DIV} at (0,0) size 290x290 [bgcolor=#000000] [border: (10px dashed #800080)]

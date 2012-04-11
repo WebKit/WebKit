@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x374
+  RenderBlock {HTML} at (0,0) size 800x374
+    RenderBody {BODY} at (8,16) size 784x350
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 757x42
+          text run at (0,0) width 757: "Test passes if the images of all the cats scroll when the box is scrolled. (Presence of cats behind the double"
+          text run at (0,21) width 178: "border is UA dependent)."
+      RenderBlock {DIV} at (0,350) size 784x0
+layer at (8,74) size 292x292 clip at (58,124) size 176x176 scrollY 154 scrollHeight 420
+  RenderBlock {DIV} at (0,58) size 292x292 [border: (50px double #000000)]
+    RenderText {#text} at (50,50) size 146x420
+      text run at (50,50) width 146: "Filler Text Filler Text"
+      text run at (50,71) width 146: "Filler Text Filler Text"
+      text run at (50,92) width 75: "Filler Text "
+      text run at (125,92) width 71: "Filler Text"
+      text run at (50,113) width 146: "Filler Text Filler Text"
+      text run at (50,134) width 146: "Filler Text Filler Text"
+      text run at (50,155) width 75: "Filler Text "
+      text run at (125,155) width 71: "Filler Text"
+      text run at (50,176) width 146: "Filler Text Filler Text"
+      text run at (50,197) width 146: "Filler Text Filler Text"
+      text run at (50,218) width 75: "Filler Text "
+      text run at (125,218) width 71: "Filler Text"
+      text run at (50,239) width 146: "Filler Text Filler Text"
+      text run at (50,260) width 146: "Filler Text Filler Text"
+      text run at (50,281) width 75: "Filler Text "
+      text run at (125,281) width 71: "Filler Text"
+      text run at (50,302) width 146: "Filler Text Filler Text"
+      text run at (50,323) width 146: "Filler Text Filler Text"
+      text run at (50,344) width 75: "Filler Text "
+      text run at (125,344) width 71: "Filler Text"
+      text run at (50,365) width 146: "Filler Text Filler Text"
+      text run at (50,386) width 146: "Filler Text Filler Text"
+      text run at (50,407) width 75: "Filler Text "
+      text run at (125,407) width 71: "Filler Text"
+      text run at (50,428) width 146: "Filler Text Filler Text"
+      text run at (50,449) width 146: "Filler Text Filler Text"
