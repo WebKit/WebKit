@@ -51,8 +51,8 @@ EqualPowerPanner::EqualPowerPanner(float sampleRate)
 
 void EqualPowerPanner::pan(double azimuth, double /*elevation*/, const AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess)
 {
-    // FIXME: implement stereo sources
-    bool isInputSafe = inputBus && inputBus->numberOfChannels() == 1 && framesToProcess <= inputBus->length();
+    unsigned numberOfInputChannels = inputBus->numberOfChannels();
+    bool isInputSafe = inputBus && (numberOfInputChannels == 1 || numberOfInputChannels == 2) && framesToProcess <= inputBus->length();
     ASSERT(isInputSafe);
     if (!isInputSafe)
         return;
@@ -62,14 +62,14 @@ void EqualPowerPanner::pan(double azimuth, double /*elevation*/, const AudioBus*
     if (!isOutputSafe)
         return;
 
-    const AudioChannel* channel = inputBus->channel(0);
-    const float* sourceP = channel->data();                               
+    const float* sourceL = inputBus->channel(0)->data();                               
+    const float* sourceR = numberOfInputChannels > 1 ? inputBus->channel(1)->data() : sourceL;
     float* destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->mutableData();
     float* destinationR = outputBus->channelByType(AudioBus::ChannelRight)->mutableData();
-
-    if (!sourceP || !destinationL || !destinationR)
+    
+    if (!sourceL || !sourceR || !destinationL || !destinationR)
         return;
-
+    
     // Clamp azimuth to allowed range of -180 -> +180.
     azimuth = max(-180.0, azimuth);
     azimuth = min(180.0, azimuth);
@@ -80,35 +80,73 @@ void EqualPowerPanner::pan(double azimuth, double /*elevation*/, const AudioBus*
         azimuth = -180 - azimuth;
     else if (azimuth > 90)
         azimuth = 180 - azimuth;
-    
-    // Pan smoothly from left to right with azimuth going from -90 -> +90 degrees.
-    double desiredPanPosition = (azimuth + 90) / 180;
 
-    double desiredGainL = cos(0.5 * piDouble * desiredPanPosition);
-    double desiredGainR = sin(0.5 * piDouble * desiredPanPosition);
+    double desiredPanPosition;
+    double desiredGainL;
+    double desiredGainR;
 
+    if (numberOfInputChannels == 1) { // For mono source case.
+        // Pan smoothly from left to right with azimuth going from -90 -> +90 degrees.
+        desiredPanPosition = (azimuth + 90) / 180;
+    } else { // For stereo source case.
+        if (azimuth <= 0) { // from -90 -> 0
+            // sourceL -> destL and "equal-power pan" sourceR as in mono case
+            // by transforming the "azimuth" value from -90 -> 0 degrees into the range -90 -> +90.
+            desiredPanPosition = (azimuth + 90) / 90;
+        } else { // from 0 -> +90
+            // sourceR -> destR and "equal-power pan" sourceL as in mono case
+            // by transforming the "azimuth" value from 0 -> +90 degrees into the range -90 -> +90.
+            desiredPanPosition = azimuth / 90;
+        }
+    }
+
+    desiredGainL = cos(0.5 * piDouble * desiredPanPosition);
+    desiredGainR = sin(0.5 * piDouble * desiredPanPosition);
+   
     // Don't de-zipper on first render call.
     if (m_isFirstRender) {
         m_isFirstRender = false;
         m_gainL = desiredGainL;
         m_gainR = desiredGainR;
     }
-
+    
     // Cache in local variables.
     double gainL = m_gainL;
     double gainR = m_gainR;
-
+    
     // Get local copy of smoothing constant.
     const double SmoothingConstant = m_smoothingConstant;
-
+    
     int n = framesToProcess;
 
-    while (n--) {
-        float input = *sourceP++;
-        gainL += (desiredGainL - gainL) * SmoothingConstant;
-        gainR += (desiredGainR - gainR) * SmoothingConstant;
-        *destinationL++ = static_cast<float>(input * gainL);
-        *destinationR++ = static_cast<float>(input * gainR);
+    if (numberOfInputChannels == 1) { // For mono source case.
+        while (n--) {
+            float inputL = *sourceL++;
+            gainL += (desiredGainL - gainL) * SmoothingConstant;
+            gainR += (desiredGainR - gainR) * SmoothingConstant;
+            *destinationL++ = static_cast<float>(inputL * gainL);
+            *destinationR++ = static_cast<float>(inputL * gainR);
+        }
+    } else { // For stereo source case.
+        if (azimuth <= 0) { // from -90 -> 0
+            while (n--) {
+                float inputL = *sourceL++;
+                float inputR = *sourceR++;
+                gainL += (desiredGainL - gainL) * SmoothingConstant;
+                gainR += (desiredGainR - gainR) * SmoothingConstant;
+                *destinationL++ = static_cast<float>(inputL + inputR * gainL);
+                *destinationR++ = static_cast<float>(inputR * gainR);
+            }
+        } else { // from 0 -> +90
+            while (n--) {
+                float inputL = *sourceL++;
+                float inputR = *sourceR++;
+                gainL += (desiredGainL - gainL) * SmoothingConstant;
+                gainR += (desiredGainR - gainR) * SmoothingConstant;
+                *destinationL++ = static_cast<float>(inputL * gainL);
+                *destinationR++ = static_cast<float>(inputR + inputL * gainR);
+            }
+        }
     }
 
     m_gainL = gainL;

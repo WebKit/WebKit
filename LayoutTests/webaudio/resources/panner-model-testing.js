@@ -1,5 +1,7 @@
 var sampleRate = 44100.0;
 
+var numberOfChannels = 1;
+
 // Time step when each panner node starts.
 var timeStep = 0.001;
 
@@ -33,7 +35,11 @@ function createGraph(context, nodeCount) {
     // to include both 0 and 180 deg.
     var angleStep = Math.PI / (nodeCount - 1);
 
-    impulse = createImpulseBuffer(context, pulseLengthFrames);
+    if (numberOfChannels == 2) {
+        impulse = createStereoImpulseBuffer(context, pulseLengthFrames);
+    }
+    else
+        impulse = createImpulseBuffer(context, pulseLengthFrames);
 
     for (var k = 0; k < nodeCount; ++k) {
         bufferSource[k] = context.createBufferSource();
@@ -56,7 +62,9 @@ function createGraph(context, nodeCount) {
     }
 }
 
-function createTestAndRun(context, nodeCount) {
+function createTestAndRun(context, nodeCount, numberOfSourceChannels) {
+    numberOfChannels = numberOfSourceChannels;
+
     createGraph(context, nodeCount);
 
     context.oncomplete = checkResult;
@@ -74,12 +82,30 @@ function angleToAzimuth(angle) {
 function equalPowerGain(angle) {
     var azimuth = angleToAzimuth(angle);
 
-    var panPosition = (azimuth + 90) / 180;
+    if (numberOfChannels == 1) {
+        var panPosition = (azimuth + 90) / 180;
 
-    var gainL = Math.cos(0.5 * Math.PI * panPosition);
-    var gainR = Math.sin(0.5 * Math.PI * panPosition);
+        var gainL = Math.cos(0.5 * Math.PI * panPosition);
+        var gainR = Math.sin(0.5 * Math.PI * panPosition);
 
-    return { left : gainL, right : gainR };
+        return { left : gainL, right : gainR };
+    } else {
+        if (azimuth <= 0) {
+            var panPosition = (azimuth + 90) / 90;
+    
+            var gainL = 1 + Math.cos(0.5 * Math.PI * panPosition);
+            var gainR = Math.sin(0.5 * Math.PI * panPosition);
+    
+            return { left : gainL, right : gainR };
+        } else {
+            var panPosition = azimuth / 90;
+    
+            var gainL = Math.cos(0.5 * Math.PI * panPosition);
+            var gainR = 1 + Math.sin(0.5 * Math.PI * panPosition);
+    
+            return { left : gainL, right : gainR };
+        }
+    }
 }
 
 function checkResult(event) {
@@ -90,7 +116,7 @@ function checkResult(event) {
     // The max error we allow between the rendered impulse and the
     // expected value.  This value is experimentally determined.  Set
     // to 0 to make the test fail to see what the actual error is.
-    var maxAllowedError = 6.4e-7;
+    var maxAllowedError = 1.3e-6;
   
     var success = true;
 

@@ -139,6 +139,23 @@ function createConstantBuffer(context, sampleFrameLength, constantValue) {
     return audioBuffer;
 }
 
+// Create a stereo impulse in a buffer of length sampleFrameLength
+function createStereoImpulseBuffer(context, sampleFrameLength) {
+    var audioBuffer = context.createBuffer(2, sampleFrameLength, context.sampleRate);
+    var n = audioBuffer.length;
+    var dataL = audioBuffer.getChannelData(0);
+    var dataR = audioBuffer.getChannelData(1);
+
+    for (var k = 0; k < n; ++k) {
+        dataL[k] = 0;
+        dataR[k] = 0;
+    }
+    dataL[0] = 1;
+    dataR[0] = 1;
+
+    return audioBuffer;
+}
+
 // Convert time (in seconds) to sample frames.
 function timeToSampleFrame(time, sampleRate) {
     return Math.floor(0.5 + time * sampleRate);
