@@ -124,7 +124,7 @@ private:
     }
     inline bool isInBounds(double value)
     {
-        return ::abs(value) <= std::numeric_limits<int>::max() / kFixedPointDenominator;
+        return ::fabs(value) <= std::numeric_limits<int>::max() / kFixedPointDenominator;
     }
 
     int m_value;
