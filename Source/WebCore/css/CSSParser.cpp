@@ -6389,7 +6389,7 @@ bool CSSParser::parseLinearGradient(CSSParserValueList* valueList, RefPtr<CSSVal
     if (validUnit(a, FAngle, CSSStrictMode)) {
         result->setAngle(createPrimitiveNumericValue(a));
 
-        a = args->next();
+        args->next();
         expectComma = true;
     } else {
         // Look one or two optional keywords that indicate a side or corner.
@@ -6403,8 +6403,7 @@ bool CSSParser::parseLinearGradient(CSSParserValueList* valueList, RefPtr<CSSVal
             else
                 startY = location;
 
-            a = args->next();
-            if (a) {
+            if ((a = args->next())) {
                 if ((location = valueFromSideKeyword(a, isHorizontal))) {
                     if (isHorizontal) {
                         if (startX)
@@ -6416,7 +6415,7 @@ bool CSSParser::parseLinearGradient(CSSParserValueList* valueList, RefPtr<CSSVal
                         startY = location;
                     }
 
-                    a = args->next();
+                    args->next();
                 }
             }
 
