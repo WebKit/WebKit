@@ -605,9 +605,9 @@ HTMLMediaElement::NetworkState HTMLMediaElement::networkState() const
     return m_networkState;
 }
 
-String HTMLMediaElement::canPlayType(const String& mimeType) const
+String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySystem) const
 {
-    MediaPlayer::SupportsType support = MediaPlayer::supportsType(ContentType(mimeType));
+    MediaPlayer::SupportsType support = MediaPlayer::supportsType(ContentType(mimeType), keySystem);
     String canPlay;
 
     // 4.8.10.3
@@ -624,7 +624,7 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
             break;
     }
     
-    LOG(Media, "HTMLMediaElement::canPlayType(%s) -> %s", mimeType.utf8().data(), canPlay.utf8().data());
+    LOG(Media, "HTMLMediaElement::canPlayType(%s, %s) -> %s", mimeType.utf8().data(), keySystem.utf8().data(), canPlay.utf8().data());
 
     return canPlay;
 }
@@ -834,10 +834,11 @@ void HTMLMediaElement::selectMediaResource()
             return;
         }
 
-        // No type information is available when the url comes from the 'src' attribute so MediaPlayer
+        // No type or key system information is available when the url comes
+        // from the 'src' attribute so MediaPlayer
         // will have to pick a media engine based on the file extension.
-        ContentType contentType("");
-        loadResource(mediaURL, contentType);
+        ContentType contentType((String()));
+        loadResource(mediaURL, contentType, String());
         LOG(Media, "HTMLMediaElement::selectMediaResource, using 'src' attribute url");
         return;
     }
@@ -848,8 +849,9 @@ void HTMLMediaElement::selectMediaResource()
 
 void HTMLMediaElement::loadNextSourceChild()
 {
-    ContentType contentType("");
-    KURL mediaURL = selectNextSourceChild(&contentType, Complain);
+    ContentType contentType((String()));
+    String keySystem;
+    KURL mediaURL = selectNextSourceChild(&contentType, &keySystem, Complain);
     if (!mediaURL.isValid()) {
         waitForSourceChange();
         return;
@@ -861,7 +863,7 @@ void HTMLMediaElement::loadNextSourceChild()
 #endif
 
     m_loadState = LoadingFromSourceElement;
-    loadResource(mediaURL, contentType);
+    loadResource(mediaURL, contentType, keySystem);
 }
 
 #if !PLATFORM(CHROMIUM)
@@ -886,11 +888,11 @@ static KURL createFileURLForApplicationCacheResource(const String& path)
 }
 #endif
 
-void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& contentType)
+void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& contentType, const String& keySystem)
 {
     ASSERT(isSafeToLoadURL(initialURL, Complain));
 
-    LOG(Media, "HTMLMediaElement::loadResource(%s, %s)", urlForLogging(initialURL).utf8().data(), contentType.raw().utf8().data());
+    LOG(Media, "HTMLMediaElement::loadResource(%s, %s, %s)", urlForLogging(initialURL).utf8().data(), contentType.raw().utf8().data(), keySystem.utf8().data());
 
     Frame* frame = document()->frame();
     if (!frame) {
@@ -961,7 +963,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
         m_muted = true;
     updateVolume();
 
-    if (!m_player->load(url, contentType))
+    if (!m_player->load(url, contentType, keySystem))
         mediaLoadingFailed(MediaPlayer::FormatError);
 
     // If there is no poster to display, allow the media engine to render video frames as soon as
@@ -2313,7 +2315,7 @@ void HTMLMediaElement::webkitAddKey(const String& keySystem, PassRefPtr<Uint8Arr
 
 void HTMLMediaElement::webkitAddKey(const String& keySystem, PassRefPtr<Uint8Array> key, ExceptionCode& ec)
 {
-    webkitAddKey(keySystem, key, Uint8Array::create(0), emptyString(), ec);
+    webkitAddKey(keySystem, key, Uint8Array::create(0), String(), ec);
 }
 
 void HTMLMediaElement::webkitCancelKeyRequest(const String& keySystem, const String& sessionId, ExceptionCode& ec)
@@ -2838,7 +2840,7 @@ bool HTMLMediaElement::havePotentialSourceChild()
     RefPtr<HTMLSourceElement> currentSourceNode = m_currentSourceNode;
     RefPtr<Node> nextNode = m_nextChildNodeToConsider;
 
-    KURL nextURL = selectNextSourceChild(0, DoNothing);
+    KURL nextURL = selectNextSourceChild(0, 0, DoNothing);
 
     m_currentSourceNode = currentSourceNode;
     m_nextChildNodeToConsider = nextNode;
@@ -2846,7 +2848,7 @@ bool HTMLMediaElement::havePotentialSourceChild()
     return nextURL.isValid();
 }
 
-KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidURLAction actionIfInvalid)
+KURL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* keySystem, InvalidURLAction actionIfInvalid)
 {
 #if !LOG_DISABLED
     // Don't log if this was just called to find out if there are any valid <source> elements.
@@ -2867,6 +2869,7 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidUR
     Node* node;
     HTMLSourceElement* source = 0;
     String type;
+    String system;
     bool lookingForStartNode = m_nextChildNodeToConsider;
     bool canUseSourceElement = false;
     bool okToLoadSourceURL;
@@ -2908,14 +2911,15 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidUR
         }
 
         type = source->type();
+        // FIXME(82965): Add support for keySystem in <source> and set system from source.
         if (type.isEmpty() && mediaURL.protocolIsData())
             type = mimeTypeFromDataURL(mediaURL);
-        if (!type.isEmpty()) {
+        if (!type.isEmpty() || !system.isEmpty()) {
 #if !LOG_DISABLED
             if (shouldLog)
-                LOG(Media, "HTMLMediaElement::selectNextSourceChild - 'type' is %s", type.utf8().data());
+                LOG(Media, "HTMLMediaElement::selectNextSourceChild - 'type' is '%s' - key system is '%s'", type.utf8().data(), system.utf8().data());
 #endif
-            if (!MediaPlayer::supportsType(ContentType(type)))
+            if (!MediaPlayer::supportsType(ContentType(type), system))
                 goto check_again;
         }
 
@@ -2943,6 +2947,8 @@ check_again:
     if (canUseSourceElement) {
         if (contentType)
             *contentType = ContentType(type);
+        if (keySystem)
+            *keySystem = system;
         m_currentSourceNode = source;
         m_nextChildNodeToConsider = source->nextSibling();
     } else {
@@ -3641,7 +3647,7 @@ void HTMLMediaElement::getPluginProxyParams(KURL& url, Vector<String>& names, Ve
 
     url = src();
     if (!isSafeToLoadURL(url, Complain))
-        url = selectNextSourceChild(0, DoNothing);
+        url = selectNextSourceChild(0, 0, DoNothing);
 
     m_currentSrc = url;
     if (url.isValid() && frame && frame->loader()->willLoadMediaElementURL(url)) {

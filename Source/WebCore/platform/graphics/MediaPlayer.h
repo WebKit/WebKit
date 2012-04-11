@@ -184,7 +184,7 @@ public:
 
     // Media engine support.
     enum SupportsType { IsNotSupported, IsSupported, MayBeSupported };
-    static MediaPlayer::SupportsType supportsType(const ContentType&);
+    static MediaPlayer::SupportsType supportsType(const ContentType&, const String& keySystem);
     static void getSupportedTypes(HashSet<String>&);
     static bool isAvailable();
     static void getSitesInMediaCache(Vector<String>&);
@@ -210,7 +210,7 @@ public:
     IntSize size() const { return m_size; }
     void setSize(const IntSize& size);
 
-    bool load(const KURL& url, const ContentType&);
+    bool load(const KURL&, const ContentType&, const String& keySystem);
     void cancelLoad();
 
     bool visible() const;
@@ -363,6 +363,7 @@ private:
     String m_url;
     String m_contentMIMEType;
     String m_contentTypeCodecs;
+    String m_keySystem;
     FrameView* m_frameView;
     IntSize m_size;
     Preload m_preload;
@@ -380,7 +381,11 @@ private:
 
 typedef PassOwnPtr<MediaPlayerPrivateInterface> (*CreateMediaEnginePlayer)(MediaPlayer*);
 typedef void (*MediaEngineSupportedTypes)(HashSet<String>& types);
+#if ENABLE(ENCRYPTED_MEDIA)
+typedef MediaPlayer::SupportsType (*MediaEngineSupportsType)(const String& type, const String& codecs, const String& keySystem);
+#else
 typedef MediaPlayer::SupportsType (*MediaEngineSupportsType)(const String& type, const String& codecs);
+#endif
 typedef void (*MediaEngineGetSitesInMediaCache)(Vector<String>&);
 typedef void (*MediaEngineClearMediaCache)();
 typedef void (*MediaEngineClearMediaCacheForSite)(const String&);

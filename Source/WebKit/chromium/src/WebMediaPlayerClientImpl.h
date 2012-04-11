@@ -167,8 +167,13 @@ private:
 
     static PassOwnPtr<WebCore::MediaPlayerPrivateInterface> create(WebCore::MediaPlayer*);
     static void getSupportedTypes(WTF::HashSet<WTF::String>&);
+#if ENABLE(ENCRYPTED_MEDIA)
+    static WebCore::MediaPlayer::SupportsType supportsType(
+        const WTF::String& type, const WTF::String& codecs, const String& keySystem);
+#else
     static WebCore::MediaPlayer::SupportsType supportsType(
         const WTF::String& type, const WTF::String& codecs);
+#endif
 #if USE(ACCELERATED_COMPOSITING)
     bool acceleratedRenderingInUse();
 #endif

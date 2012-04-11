@@ -665,10 +665,18 @@ void WebMediaPlayerClientImpl::getSupportedTypes(HashSet<String>& supportedTypes
     notImplemented();
 }
 
+#if ENABLE(ENCRYPTED_MEDIA)
+MediaPlayer::SupportsType WebMediaPlayerClientImpl::supportsType(const String& type,
+                                                                 const String& codecs,
+                                                                 const String& keySystem)
+{
+#else
 MediaPlayer::SupportsType WebMediaPlayerClientImpl::supportsType(const String& type,
                                                                  const String& codecs)
 {
-    WebMimeRegistry::SupportsType supportsType = webKitPlatformSupport()->mimeRegistry()->supportsMediaMIMEType(type, codecs);
+    String keySystem;
+#endif
+    WebMimeRegistry::SupportsType supportsType = webKitPlatformSupport()->mimeRegistry()->supportsMediaMIMEType(type, codecs, keySystem);
 
     switch (supportsType) {
     default:

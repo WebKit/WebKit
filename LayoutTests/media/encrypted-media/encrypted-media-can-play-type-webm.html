@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+    <head>
+    </head>
+    <body>
+        <video></video>
+        <p>Test Encrypted Media extension of HTMLMediaElement <em>canPlayType()</em> method for WebM types.</p>
+
+        <script src=../video-test.js></script>
+        <script>
+            video = mediaElement = document.getElementsByTagName('video')[0];
+
+            consoleWrite("WebM video container without a codec results in \"maybe\".");
+            testExpected("video.canPlayType('video/webm')", "maybe");
+            testExpected("video.canPlayType('video/webm', '')", "maybe");
+            testExpected("video.canPlayType('video/webm', null)", "maybe");
+            testExpected("video.canPlayType('video/webm', undefined)", "maybe");
+            testExpected("video.canPlayType('video/webm', 'webkit-org.w3.clearkey')", "maybe");
+            testExpected("video.canPlayType('video/webm', 'WeBkIt-OrG.W3.ClEaRkEy')", "maybe");
+            testExpected("video.canPlayType('video/webm', 'com.example.invalid')", "");
+
+            consoleWrite("<br>WebM video container with a valid codec results in \"probably\".");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8\"')", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8\"', '')", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8\"', null)", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8\"', undefined)", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8\"', 'webkit-org.w3.clearkey')", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8\"', 'WeBkIt-OrG.W3.ClEaRkEy')", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8\"', 'com.example.invalid')", "");
+
+            consoleWrite("<br>WebM video container with two valid codecs result in \"probably\".");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, vorbis\"')", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, vorbis\"', '')", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, vorbis\"', null)", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, vorbis\"', undefined)", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, vorbis\"', 'webkit-org.w3.clearkey')", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, vorbis\"', 'WeBkIt-OrG.W3.ClEaRkEy')", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, vorbis\"', 'com.example.invalid')", "");
+
+            consoleWrite("<br>WebM video container with two valid codecs result in \"probably\" regardless of the order.");
+            testExpected("video.canPlayType('video/webm; codecs=\"vorbis, vp8\"')", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vorbis, vp8\"', '')", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vorbis, vp8\"', null)", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vorbis, vp8\"', undefined)", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vorbis, vp8\"', 'webkit-org.w3.clearkey')", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vorbis, vp8\"', 'WeBkIt-OrG.W3.ClEaRkEy')", "probably");
+            testExpected("video.canPlayType('video/webm; codecs=\"vorbis, vp8\"', 'com.example.invalid')", "");
+
+            consoleWrite("<br>WebM video container with an invalid codec results in \"\".");
+            testExpected("video.canPlayType('video/webm; codecs=\"1\"')", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"1\"', '')", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"1\"', null)", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"1\"', undefined)", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"1\"', 'webkit-org.w3.clearkey')", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"1\"', 'WeBkIt-OrG.W3.ClEaRkEy')", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"1\"', 'com.example.invalid')", "");
+
+            consoleWrite("<br>WebM video container with any invalid codec results in \"\".");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, 1\"')", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, 1\"', '')", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, 1\"', null)", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, 1\"', undefined)", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, 1\"', 'webkit-org.w3.clearkey')", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, 1\"', 'WeBkIt-OrG.W3.ClEaRkEy')", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"vp8, 1\"', 'com.example.invalid')", "");
+
+            consoleWrite("<br>WebM video container with any invalid codec results in \"\" regardless of the order.");
+            testExpected("video.canPlayType('video/webm; codecs=\"1, vp8\"')", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"1, vp8\"', '')", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"1, vp8\"', null)", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"1, vp8\"', undefined)", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"1, vp8\"', 'webkit-org.w3.clearkey')", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"1, vp8\"', 'WeBkIt-OrG.W3.ClEaRkEy')", "");
+            testExpected("video.canPlayType('video/webm; codecs=\"1, vp8\"', 'com.example.invalid')", "");
+
+            consoleWrite("<br>WebM audio container without a codec results in \"maybe\".");
+            testExpected("video.canPlayType('audio/webm')", "maybe");
+            testExpected("video.canPlayType('audio/webm', '')", "maybe");
+            testExpected("video.canPlayType('audio/webm', null)", "maybe");
+            testExpected("video.canPlayType('audio/webm', undefined)", "maybe");
+            testExpected("video.canPlayType('audio/webm', 'webkit-org.w3.clearkey')", "maybe");
+            testExpected("video.canPlayType('audio/webm', 'WeBkIt-OrG.W3.ClEaRkEy')", "maybe");
+            testExpected("video.canPlayType('audio/webm', 'com.example.invalid')", "");
+
+            consoleWrite("<br>WebM audio container with a valid codec results in \"probably\".");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vorbis\"')", "probably");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vorbis\"', '')", "probably");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vorbis\"', null)", "probably");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vorbis\"', undefined)", "probably");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vorbis\"', 'webkit-org.w3.clearkey')", "probably");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vorbis\"', 'WeBkIt-OrG.W3.ClEaRkEy')", "probably");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vorbis\"', 'com.example.invalid')", "");
+
+            consoleWrite("<br>WebM video container with a video codec results in \"\".");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vp8\"')", "");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vp8\"', '')", "");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vp8\"', null)", "");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vp8\"', undefined)", "");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vp8\"', 'webkit-org.w3.clearkey')", "");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vp8\"', 'WeBkIt-OrG.W3.ClEaRkEy')", "");
+            testExpected("video.canPlayType('audio/webm; codecs=\"vp8\"', 'com.example.invalid')", "");
+
+            consoleWrite("<br>Case does not matter (except for the codecs string).");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"vp8, vorbis\"')", "probably");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"vp8, vorbis\"', '')", "probably");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"vp8, vorbis\"', null)", "probably");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"vp8, vorbis\"', undefined)", "probably");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"vp8, vorbis\"', 'webkit-org.w3.clearkey')", "probably");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"vp8, vorbis\"', 'WeBkIt-OrG.W3.ClEaRkEy')", "probably");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"vp8, vorbis\"', 'com.example.invalid')", "");
+
+            consoleWrite("<br>The codecs string is case sensitive, so non-lower-case codecs result in \"\".");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"Vp8, VoRbIs\"')", "");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"Vp8, VoRbIs\"', '')", "");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"Vp8, VoRbIs\"', null)", "");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"Vp8, VoRbIs\"', undefined)", "");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"Vp8, VoRbIs\"', 'webkit-org.w3.clearkey')", "");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"Vp8, VoRbIs\"', 'WeBkIt-OrG.W3.ClEaRkEy')", "");
+            testExpected("video.canPlayType('ViDeO/WeBm; CoDeCs=\"Vp8, VoRbIs\"', 'com.example.invalid')", "");
+
+            endTest();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,75 @@
+Test Encrypted Media extension of HTMLMediaElement canPlayType() method.
+
+The test is designed to pass with any implementation regardless of supported media types and relies on the expected log to detect the expected results for some types. To get sufficient coverage, it is important that an implementation support clearkey encryption of at least one of the types below.
+
+Always return the empty string for no type.
+EXPECTED (video.canPlayType() == '') OK
+
+Always return the empty string for an empty type.
+EXPECTED (video.canPlayType('') == '') OK
+EXPECTED (video.canPlayType('', '') == '') OK
+EXPECTED (video.canPlayType('', null) == '') OK
+EXPECTED (video.canPlayType('', undefined) == '') OK
+EXPECTED (video.canPlayType('', 'webkit-org.w3.clearkey') == '') OK
+EXPECTED (video.canPlayType('', 'WeBkIt-OrG.W3.ClEaRkEy') == '') OK
+EXPECTED (video.canPlayType('', 'com.example.invalid') == '') OK
+
+Always return the empty string for when no container is specified.
+EXPECTED (video.canPlayType('video/') == '') OK
+EXPECTED (video.canPlayType('video/', '') == '') OK
+EXPECTED (video.canPlayType('video/', null) == '') OK
+EXPECTED (video.canPlayType('video/', undefined) == '') OK
+EXPECTED (video.canPlayType('video/', 'webkit-org.w3.clearkey') == '') OK
+EXPECTED (video.canPlayType('video/', 'WeBkIt-OrG.W3.ClEaRkEy') == '') OK
+EXPECTED (video.canPlayType('video/', 'com.example.invalid') == '') OK
+
+Always return the empty string for an unsupported container.
+EXPECTED (video.canPlayType('video/blahblah') == '') OK
+EXPECTED (video.canPlayType('video/blahblah', '') == '') OK
+EXPECTED (video.canPlayType('video/blahblah', null) == '') OK
+EXPECTED (video.canPlayType('video/blahblah', undefined) == '') OK
+EXPECTED (video.canPlayType('video/blahblah', 'webkit-org.w3.clearkey') == '') OK
+EXPECTED (video.canPlayType('video/blahblah', 'WeBkIt-OrG.W3.ClEaRkEy') == '') OK
+EXPECTED (video.canPlayType('video/blahblah', 'com.example.invalid') == '') OK
+
+Empty key system parameters should not affect the result of video/mp4 types.
+Result of video.canPlayType('video/mp4; Codecs="avc1.4D400C"'): ''
+EXPECTED (video.canPlayType('video/mp4; Codecs="avc1.4D400C"', '') == '') OK
+EXPECTED (video.canPlayType('video/mp4; Codecs="avc1.4D400C"', null) == '') OK
+EXPECTED (video.canPlayType('video/mp4; Codecs="avc1.4D400C"', undefined) == '') OK
+There are currently no implementations supporting encryption of video/mp4.
+EXPECTED (video.canPlayType('video/mp4; Codecs="avc1.4D400C"', 'webkit-org.w3.clearkey') == '') OK
+EXPECTED (video.canPlayType('video/mp4; Codecs="avc1.4D400C"', 'WeBkIt-OrG.W3.ClEaRkEy') == '') OK
+EXPECTED (video.canPlayType('video/mp4; Codecs="avc1.4D400C"', 'com.example.invalid') == '') OK
+
+Empty key system parameters should not affect the result of audio/mpeg types.
+Result of video.canPlayType('audio/mpeg'): ''
+EXPECTED (video.canPlayType('audio/mpeg', '') == '') OK
+EXPECTED (video.canPlayType('audio/mpeg', null) == '') OK
+EXPECTED (video.canPlayType('audio/mpeg', undefined) == '') OK
+There are currently no implementations supporting encryption of audio/mpeg.
+EXPECTED (video.canPlayType('audio/mpeg', 'webkit-org.w3.clearkey') == '') OK
+EXPECTED (video.canPlayType('audio/mpeg', 'WeBkIt-OrG.W3.ClEaRkEy') == '') OK
+EXPECTED (video.canPlayType('audio/mpeg', 'com.example.invalid') == '') OK
+
+Empty key system parameters should not affect the result of audio/wav types.
+Result of video.canPlayType('audio/wav'): 'maybe'
+EXPECTED (video.canPlayType('audio/wav', '') == 'maybe') OK
+EXPECTED (video.canPlayType('audio/wav', null) == 'maybe') OK
+EXPECTED (video.canPlayType('audio/wav', undefined) == 'maybe') OK
+There are currently no implementations supporting encryption of audio/wav.
+EXPECTED (video.canPlayType('audio/wav', 'webkit-org.w3.clearkey') == '') OK
+EXPECTED (video.canPlayType('audio/wav', 'WeBkIt-OrG.W3.ClEaRkEy') == '') OK
+EXPECTED (video.canPlayType('audio/wav', 'com.example.invalid') == '') OK
+
+Empty key system parameters should not affect the result of video/webm types.
+Result of video.canPlayType('video/webm'): 'maybe'
+EXPECTED (video.canPlayType('video/webm', '') == 'maybe') OK
+EXPECTED (video.canPlayType('video/webm', null) == 'maybe') OK
+EXPECTED (video.canPlayType('video/webm', undefined) == 'maybe') OK
+All implementations that support WebM and Encrypted Media support encrypted WebM.
+EXPECTED (video.canPlayType('video/webm', 'webkit-org.w3.clearkey') == 'maybe') OK
+EXPECTED (video.canPlayType('video/webm', 'WeBkIt-OrG.W3.ClEaRkEy') == 'maybe') OK
+EXPECTED (video.canPlayType('video/webm', 'com.example.invalid') == '') OK
+END OF TEST
+

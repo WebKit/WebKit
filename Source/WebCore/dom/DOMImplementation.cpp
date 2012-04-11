@@ -386,7 +386,8 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
 
 #if ENABLE(VIDEO)
      // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
-     if (MediaPlayer::supportsType(ContentType(type)))
+    // Key system is not applicable here.
+    if (MediaPlayer::supportsType(ContentType(type), String()))
          return MediaDocument::create(frame, url);
 #endif
 

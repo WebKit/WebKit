@@ -43,8 +43,14 @@ public:
     virtual SupportsType supportsMIMEType(const WebKit::WebString& mimeType) = 0;
     virtual SupportsType supportsImageMIMEType(const WebKit::WebString& mimeType) = 0;
     virtual SupportsType supportsJavaScriptMIMEType(const WebKit::WebString& mimeType) = 0;
+    // FIXME(82983): Remove this method and make the next one pure-virtual after committing the Chromium code.
     virtual SupportsType supportsMediaMIMEType(const WebKit::WebString& mimeType,
                                                const WebKit::WebString& codecs) = 0;
+    virtual SupportsType supportsMediaMIMEType(const WebKit::WebString& mimeType,
+                                               const WebKit::WebString& codecs,
+                                               const WebKit::WebString& keySystem) {
+        return supportsMediaMIMEType(mimeType, codecs);
+    }
     virtual SupportsType supportsNonImageMIMEType(const WebKit::WebString& mimeType) = 0;
 
     virtual WebKit::WebString mimeTypeForExtension(const WebKit::WebString& fileExtension) = 0;

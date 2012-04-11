@@ -128,7 +128,7 @@ public:
 
     PassRefPtr<TimeRanges> buffered() const;
     void load(ExceptionCode&);
-    String canPlayType(const String& mimeType) const;
+    String canPlayType(const String& mimeType, const String& keySystem = String()) const;
 
 // ready state
     ReadyState readyState() const;
@@ -417,7 +417,7 @@ private:
     
     // loading
     void selectMediaResource();
-    void loadResource(const KURL&, ContentType&);
+    void loadResource(const KURL&, ContentType&, const String& keySystem);
     void scheduleNextSourceChild();
     void loadNextSourceChild();
     void userCancelledLoad();
@@ -428,7 +428,8 @@ private:
     void waitForSourceChange();
     void prepareToPlay();
 
-    KURL selectNextSourceChild(ContentType*, InvalidURLAction);
+    KURL selectNextSourceChild(ContentType*, String* keySystem, InvalidURLAction);
+
     void mediaLoadingFailed(MediaPlayer::NetworkState);
 
 #if ENABLE(VIDEO_TRACK)

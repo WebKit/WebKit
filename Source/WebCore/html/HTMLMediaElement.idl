@@ -46,7 +46,11 @@ module html {
     readonly attribute TimeRanges buffered;
     void load() 
         raises (DOMException);
+#if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
+    DOMString canPlayType(in [Optional=DefaultIsUndefined] DOMString type, in [Optional=DefaultIsNullString, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem);
+#else
     DOMString canPlayType(in [Optional=DefaultIsUndefined] DOMString type);
+#endif
 
     // ready state
     const unsigned short HAVE_NOTHING = 0;
