@@ -2773,6 +2773,7 @@ webcore_sources += \
 	Source/WebCore/loader/DocumentThreadableLoaderClient.h \
 	Source/WebCore/loader/DocumentWriter.cpp \
 	Source/WebCore/loader/DocumentWriter.h \
+	Source/WebCore/loader/EmptyClients.cpp \
 	Source/WebCore/loader/EmptyClients.h \
 	Source/WebCore/loader/FormState.cpp \
 	Source/WebCore/loader/FormState.h \

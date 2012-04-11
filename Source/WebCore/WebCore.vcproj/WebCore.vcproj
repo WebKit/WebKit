@@ -26646,6 +26646,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\EmptyClients.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\EmptyClients.h"
 				>
 			</File>

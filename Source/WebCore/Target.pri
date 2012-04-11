@@ -952,6 +952,7 @@ SOURCES += \
     loader/DocumentLoader.cpp \
     loader/DocumentThreadableLoader.cpp \
     loader/DocumentWriter.cpp \
+    loader/EmptyClients.cpp \
     loader/FormState.cpp \
     loader/FormSubmission.cpp \
     loader/FrameLoader.cpp \

@@ -326,20 +326,9 @@ bool SVGImage::dataChanged(bool allDataReceived)
         static FrameLoaderClient* dummyFrameLoaderClient =  new EmptyFrameLoaderClient;
 
         Page::PageClients pageClients;
+        fillWithEmptyClients(pageClients);
         m_chromeClient = adoptPtr(new SVGImageChromeClient(this));
         pageClients.chromeClient = m_chromeClient.get();
-#if ENABLE(CONTEXT_MENUS)
-        static ContextMenuClient* dummyContextMenuClient = new EmptyContextMenuClient;
-        pageClients.contextMenuClient = dummyContextMenuClient;
-#endif
-        static EditorClient* dummyEditorClient = new EmptyEditorClient;
-        pageClients.editorClient = dummyEditorClient;
-#if ENABLE(DRAG_SUPPORT)
-        static DragClient* dummyDragClient = new EmptyDragClient;
-        pageClients.dragClient = dummyDragClient;
-#endif
-        static InspectorClient* dummyInspectorClient = new EmptyInspectorClient;
-        pageClients.inspectorClient = dummyInspectorClient;
 
         // FIXME: If this SVG ends up loading itself, we might leak the world.
         // The Cache code does not know about CachedImages holding Frames and

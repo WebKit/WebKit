@@ -960,6 +960,7 @@ SET(WebCore_SOURCES
     loader/DocumentLoader.cpp
     loader/DocumentThreadableLoader.cpp
     loader/DocumentWriter.cpp
+    loader/EmptyClients.cpp
     loader/FTPDirectoryParser.cpp
     loader/FormState.cpp
     loader/FormSubmission.cpp

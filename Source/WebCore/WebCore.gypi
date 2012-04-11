@@ -2802,6 +2802,7 @@
             'loader/DocumentThreadableLoader.h',
             'loader/DocumentThreadableLoaderClient.h',
             'loader/DocumentWriter.cpp',
+            'loader/EmptyClients.cpp',
             'loader/EmptyClients.h',
             'loader/FTPDirectoryParser.cpp',
             'loader/FTPDirectoryParser.h',
