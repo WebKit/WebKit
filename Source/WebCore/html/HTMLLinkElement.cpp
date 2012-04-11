@@ -230,9 +230,17 @@ void HTMLLinkElement::process()
         }
     } else if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
-        m_sheet = 0;
+        clearSheet();
         document()->styleSelectorChanged(DeferRecalcStyle);
     }
+}
+
+void HTMLLinkElement::clearSheet()
+{
+    ASSERT(m_sheet);
+    ASSERT(m_sheet->ownerNode() == this);
+    m_sheet->clearOwnerNode();
+    m_sheet = 0;
 }
 
 void HTMLLinkElement::insertedIntoDocument()
@@ -258,11 +266,8 @@ void HTMLLinkElement::removedFromDocument()
     }
     document()->removeStyleSheetCandidateNode(this);
 
-    if (m_sheet) {
-        ASSERT(m_sheet->ownerNode() == this);
-        m_sheet->clearOwnerNode();
-        m_sheet = 0;
-    }
+    if (m_sheet)
+        clearSheet();
 
     if (styleSheetIsLoading())
         removePendingSheet();

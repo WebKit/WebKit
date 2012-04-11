@@ -54,6 +54,7 @@ protected:
 private:
     void createSheet(Element*, int startLineNumber, const String& text = String());
     void process(Element*);
+    void clearSheet();
 
     bool m_createdByParser;
     bool m_loading;

@@ -74,11 +74,8 @@ void StyleElement::removedFromDocument(Document* document, Element* element)
     ASSERT(element);
     document->removeStyleSheetCandidateNode(element);
 
-    if (m_sheet) {
-        ASSERT(m_sheet->ownerNode() == element);
-        m_sheet->clearOwnerNode();
-        m_sheet = 0;
-    }
+    if (m_sheet)
+        clearSheet();
 
     // If we're in document teardown, then we don't need to do any notification of our sheet's removal.
     if (document->renderer())
@@ -139,6 +136,13 @@ void StyleElement::process(Element* e)
     createSheet(e, m_startLineNumber, sheetText.toString());
 }
 
+void StyleElement::clearSheet()
+{
+    ASSERT(m_sheet);
+    m_sheet->clearOwnerNode();
+    m_sheet = 0;
+}
+
 void StyleElement::createSheet(Element* e, int startLineNumber, const String& text)
 {
     ASSERT(e);
@@ -147,7 +151,7 @@ void StyleElement::createSheet(Element* e, int startLineNumber, const String& te
     if (m_sheet) {
         if (m_sheet->isLoading())
             document->removePendingSheet();
-        m_sheet = 0;
+        clearSheet();
     }
 
     // If type is empty or CSS, this is a CSS style sheet.
