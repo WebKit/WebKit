@@ -254,9 +254,12 @@ void RenderTable::computeLogicalWidth()
     // Finally, with our true width determined, compute our margins for real.
     setMarginStart(0);
     setMarginEnd(0);
-    if (!hasPerpendicularContainingBlock)
-        computeInlineDirectionMargins(cb, availableLogicalWidth, logicalWidth());
-    else {
+    if (!hasPerpendicularContainingBlock) {
+        LayoutUnit containerLogicalWidthForAutoMargins = availableLogicalWidth;
+        if (avoidsFloats() && cb->containsFloats())
+            containerLogicalWidthForAutoMargins = containingBlockAvailableLineWidthInRegion(0, 0); // FIXME: Work with regions someday.
+        computeInlineDirectionMargins(cb, containerLogicalWidthForAutoMargins, logicalWidth());
+    } else {
         setMarginStart(minimumValueForLength(style()->marginStart(), availableLogicalWidth, renderView));
         setMarginEnd(minimumValueForLength(style()->marginEnd(), availableLogicalWidth, renderView));
     }

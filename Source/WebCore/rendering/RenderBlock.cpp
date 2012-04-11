@@ -2019,7 +2019,7 @@ LayoutUnit RenderBlock::estimateLogicalTopPosition(RenderBox* child, const Margi
 }
 
 LayoutUnit RenderBlock::computeStartPositionDeltaForChildAvoidingFloats(const RenderBox* child, LayoutUnit childMarginStart,
-    LayoutUnit childLogicalWidth, RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage)
+    RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage)
 {
     LayoutUnit startPosition = startOffsetForContent(region, offsetFromLogicalTopOfFirstPage);
 
@@ -2036,24 +2036,9 @@ LayoutUnit RenderBlock::computeStartPositionDeltaForChildAvoidingFloats(const Re
         if (childMarginStart < 0)
             startOff += childMarginStart;
         newPosition = max(newPosition, startOff); // Let the float sit in the child's margin if it can fit.
-    } else if (startOff != startPosition) {
-        // The object is shifting to the "end" side of the block. The object might be centered, so we need to
-        // recalculate our inline direction margins. Note that the containing block content
-        // width computation will take into account the delta between |startOff| and |startPosition|
-        // so that we can just pass the content width in directly to the |computeMarginsInContainingBlockInlineDirection|
-        // function.
-        LayoutUnit oldMarginStart = marginStartForChild(child);
-        LayoutUnit oldMarginEnd = marginEndForChild(child);
-        RenderBox* mutableChild = const_cast<RenderBox*>(child);
-        mutableChild->computeInlineDirectionMargins(this,
-            availableLogicalWidthForLine(blockOffset, false, region, offsetFromLogicalTopOfFirstPage), childLogicalWidth);
-        newPosition = startOff + marginStartForChild(child);
-        if (inRenderFlowThread()) {
-            setMarginStartForChild(mutableChild, oldMarginStart);
-            setMarginEndForChild(mutableChild, oldMarginEnd);
-        }
-    }
-    
+    } else if (startOff != startPosition)
+        newPosition = startOff + childMarginStart;
+
     return newPosition - oldPosition;
 }
 
@@ -2071,7 +2056,7 @@ void RenderBlock::determineLogicalLeftPositionForChild(RenderBox* child)
     // Some objects (e.g., tables, horizontal rules, overflow:auto blocks) avoid floats.  They need
     // to shift over as necessary to dodge any floats that might get in the way.
     if (child->avoidsFloats() && containsFloats() && !inRenderFlowThread())
-        newPosition += computeStartPositionDeltaForChildAvoidingFloats(child, marginStartForChild(child), logicalWidthForChild(child));
+        newPosition += computeStartPositionDeltaForChildAvoidingFloats(child, marginStartForChild(child));
 
     setLogicalLeftForChild(child, style()->isLeftToRightDirection() ? newPosition : totalAvailableLogicalWidth - newPosition - logicalWidthForChild(child), ApplyLayoutDelta);
 }

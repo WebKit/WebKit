@@ -1381,6 +1381,20 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContentInRegion(RenderRegion
     return max<LayoutUnit>(0, result - (cb->logicalWidth() - boxInfo->logicalWidth()));
 }
 
+LayoutUnit RenderBox::containingBlockAvailableLineWidthInRegion(RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage) const
+{
+    RenderBlock* cb = containingBlock();
+    RenderRegion* containingBlockRegion = 0;
+    LayoutUnit logicalTopPosition = logicalTop();
+    LayoutUnit adjustedPageOffsetForContainingBlock = offsetFromLogicalTopOfFirstPage - logicalTop();
+    if (region) {
+        LayoutUnit offsetFromLogicalTopOfRegion = region ? region->offsetFromLogicalTopOfFirstPage() - offsetFromLogicalTopOfFirstPage : ZERO_LAYOUT_UNIT;
+        logicalTopPosition = max(logicalTopPosition, logicalTopPosition + offsetFromLogicalTopOfRegion);
+        containingBlockRegion = cb->clampToStartAndEndRegions(region);
+    }
+    return cb->availableLogicalWidthForLine(logicalTopPosition, false, containingBlockRegion, adjustedPageOffsetForContainingBlock);
+}
+
 LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
 {
     RenderBlock* cb = containingBlock();
@@ -1809,13 +1823,17 @@ void RenderBox::computeLogicalWidthInRegion(RenderRegion* region, LayoutUnit off
     }
 
     // Margin calculations.
-    if (logicalWidthLength.isAuto() || hasPerpendicularContainingBlock) {
+    if (hasPerpendicularContainingBlock || isFloating() || isInline()) {
         RenderView* renderView = view();
         setMarginStart(minimumValueForLength(styleToUse->marginStart(), containerLogicalWidth, renderView));
         setMarginEnd(minimumValueForLength(styleToUse->marginEnd(), containerLogicalWidth, renderView));
-    } else
-        computeInlineDirectionMargins(cb, containerLogicalWidth, logicalWidth());
-
+    } else {
+        LayoutUnit containerLogicalWidthForAutoMargins = containerLogicalWidth;
+        if (avoidsFloats() && cb->containsFloats())
+            containerLogicalWidthForAutoMargins = containingBlockAvailableLineWidthInRegion(region, offsetFromLogicalTopOfFirstPage);
+        computeInlineDirectionMargins(cb, containerLogicalWidthForAutoMargins, logicalWidth());
+    }
+    
     if (!hasPerpendicularContainingBlock && containerLogicalWidth && containerLogicalWidth != (logicalWidth() + marginStart() + marginEnd())
             && !isFloating() && !isInline() && !cb->isFlexibleBoxIncludingDeprecated())
         cb->setMarginEndForChild(this, containerLogicalWidth - logicalWidth() - cb->marginStartForChild(this));
@@ -2019,8 +2037,7 @@ RenderBoxRegionInfo* RenderBox::renderBoxRegionInfo(RenderRegion* region, Layout
     LayoutUnit logicalLeftOffset = 0;
     
     if (!isPositioned() && avoidsFloats() && cb->containsFloats()) {
-        LayoutUnit startPositionDelta = cb->computeStartPositionDeltaForChildAvoidingFloats(this, marginStartInRegion, logicalWidthInRegion,
-            region, offsetFromLogicalTopOfFirstPage);
+        LayoutUnit startPositionDelta = cb->computeStartPositionDeltaForChildAvoidingFloats(this, marginStartInRegion, region, offsetFromLogicalTopOfFirstPage);
         if (cb->style()->isLeftToRightDirection())
             logicalLeftDelta += startPositionDelta;
         else
@@ -3614,9 +3631,9 @@ bool RenderBox::shrinkToAvoidFloats() const
     // Floating objects don't shrink.  Objects that don't avoid floats don't shrink.  Marquees don't shrink.
     if ((isInline() && !isHTMLMarquee()) || !avoidsFloats() || isFloating())
         return false;
-
-    // All auto-width objects that avoid floats should always use lineWidth.
-    return style()->width().isAuto(); 
+    
+    // Only auto width objects can possibly shrink to avoid floats.
+    return style()->width().isAuto();
 }
 
 bool RenderBox::avoidsFloats() const
