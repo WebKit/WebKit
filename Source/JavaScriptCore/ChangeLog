@@ -1,5 +1,24 @@
 2012-04-11  Filip Pizlo  <fpizlo@apple.com>
 
+        SpeculativeJIT::fillStorage() should work with all the states that a cell may be in
+        https://bugs.webkit.org/show_bug.cgi?id=83722
+
+        Reviewed by Gavin Barraclough.
+        
+        It's now possible to do StorageOperand on a cell, in the case that the storage is
+        inline. But this means that fillStorage() must be able to handle all of the states
+        that a cell might be in. Previously it didn't.
+        
+        With this change, it now does handle all of the states, and moreover, it does so
+        by preserving the DataFormat of cells and performing all of the cell speculations
+        that should be performed if you're using a cell as storage. But if you use this on
+        something that is known to be storage already then it behaves as it did before.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillStorage):
+
+2012-04-11  Filip Pizlo  <fpizlo@apple.com>
+
         Global variable predictions should not be coalesced unnecessarily
         https://bugs.webkit.org/show_bug.cgi?id=83678
 

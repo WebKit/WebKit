@@ -60,39 +60,27 @@ GPRReg SpeculativeJIT::fillStorage(NodeIndex nodeIndex)
     
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        GPRReg gpr = allocate();
-        ASSERT(info.spillFormat() == DataFormatStorage);
-        m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-        m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
-        info.fillStorage(gpr);
-        return gpr;
+        if (info.spillFormat() == DataFormatStorage) {
+            GPRReg gpr = allocate();
+            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
+            info.fillStorage(gpr);
+            return gpr;
+        }
+        
+        // Must be a cell; fill it as a cell and then return the pointer.
+        return fillSpeculateCell(nodeIndex);
     }
         
-    case DataFormatStorage:
-    case DataFormatCell: {
+    case DataFormatStorage: {
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
         return gpr;
     }
         
-    case DataFormatJS:
-    case DataFormatJSCell: {
-#if USE(JSVALUE64)
-        GPRReg gpr = info.gpr();
-        m_gprs.lock(gpr);
-        return gpr;
-#else
-        GPRReg gpr = info.payloadGPR();
-        m_gprs.lock(gpr);
-        return gpr;
-#endif
-    }
-
     default:
-        ASSERT_NOT_REACHED();
+        return fillSpeculateCell(nodeIndex);
     }
-    
-    return InvalidGPRReg;
 }
 
 void SpeculativeJIT::useChildren(Node& node)
