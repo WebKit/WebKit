@@ -758,6 +758,8 @@ inspector/debugger/copy-stack-trace.html
 inspector/debugger/callstack-placards-discarded.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82972
+plugins/keyboard-events.html
+plugins/layout-in-beforeload-listener-affects-plugin-loading.html
 plugins/mouse-events-fixedpos.html
 plugins/multiple-plugins.html
 
