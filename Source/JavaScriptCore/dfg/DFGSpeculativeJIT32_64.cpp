@@ -1886,9 +1886,30 @@ void SpeculativeJIT::compile(Node& node)
         // SetLocal and whatever other DFG Nodes are associated with the same
         // bytecode index as the SetLocal.
         ASSERT(m_codeOriginForOSR == node.codeOrigin);
-        Node& nextNode = at(m_compileIndex + 1);
+        Node* nextNode = &at(block()->at(m_indexInBlock + 1));
+
+        // But even more oddly, we need to be super careful about the following
+        // sequence:
+        //
+        // a: Foo()
+        // b: SetLocal(@a)
+        // c: Flush(@b)
+        //
+        // This next piece of crazy takes care of this.
+        if (nextNode->op() == Flush && nextNode->child1() == m_compileIndex)
+            nextNode = &at(block()->at(m_indexInBlock + 2));
         
-        m_codeOriginForOSR = nextNode.codeOrigin;
+        // Oddly, it's possible for the bytecode index for the next node to be
+        // equal to ours. This will happen for op_post_inc. And, even more oddly,
+        // this is just fine. Ordinarily, this wouldn't be fine, since if the
+        // next node failed OSR then we'd be OSR-ing with this SetLocal's local
+        // variable already set even though from the standpoint of the old JIT,
+        // this SetLocal should not have executed. But for op_post_inc, it's just
+        // fine, because this SetLocal's local (i.e. the LHS in a x = y++
+        // statement) would be dead anyway - so the fact that DFG would have
+        // already made the assignment, and baked it into the register file during
+        // OSR exit, would not be visible to the old JIT in any way.
+        m_codeOriginForOSR = nextNode->codeOrigin;
         
         if (!m_jit.graph().isCaptured(node.local())) {
             if (node.variableAccessData()->shouldUseDoubleFormat()) {
@@ -1901,7 +1922,7 @@ void SpeculativeJIT::compile(Node& node)
                 valueSourceReferenceForOperand(node.local()) = ValueSource(DoubleInRegisterFile);
                 break;
             }
-            PredictedType predictedType = node.variableAccessData()->prediction();
+            PredictedType predictedType = node.variableAccessData()->argumentAwarePrediction();
             if (m_generationInfo[at(node.child1()).virtualRegister()].registerFormat() == DataFormatDouble) {
                 DoubleOperand value(this, node.child1());
                 m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node.local()));

@@ -67,6 +67,13 @@ public:
     {
     }
     
+    bool isRoot() const
+    {
+        bool result = !m_parent;
+        ASSERT(result == (const_cast<UnionFind<T>*>(this)->find() == this));
+        return result;
+    }
+    
     T* find()
     {
         T* result = static_cast<T*>(this);

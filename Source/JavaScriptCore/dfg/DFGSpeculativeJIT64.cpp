@@ -1966,7 +1966,18 @@ void SpeculativeJIT::compile(Node& node)
         // SetLocal and whatever other DFG Nodes are associated with the same
         // bytecode index as the SetLocal.
         ASSERT(m_codeOriginForOSR == node.codeOrigin);
-        Node& nextNode = at(m_compileIndex + 1);
+        Node* nextNode = &at(block()->at(m_indexInBlock + 1));
+
+        // But even more oddly, we need to be super careful about the following
+        // sequence:
+        //
+        // a: Foo()
+        // b: SetLocal(@a)
+        // c: Flush(@b)
+        //
+        // This next piece of crazy takes care of this.
+        if (nextNode->op() == Flush && nextNode->child1() == m_compileIndex)
+            nextNode = &at(block()->at(m_indexInBlock + 2));
         
         // Oddly, it's possible for the bytecode index for the next node to be
         // equal to ours. This will happen for op_post_inc. And, even more oddly,
@@ -1978,7 +1989,7 @@ void SpeculativeJIT::compile(Node& node)
         // statement) would be dead anyway - so the fact that DFG would have
         // already made the assignment, and baked it into the register file during
         // OSR exit, would not be visible to the old JIT in any way.
-        m_codeOriginForOSR = nextNode.codeOrigin;
+        m_codeOriginForOSR = nextNode->codeOrigin;
         
         if (!m_jit.graph().isCaptured(node.local())) {
             if (node.variableAccessData()->shouldUseDoubleFormat()) {
@@ -1992,7 +2003,7 @@ void SpeculativeJIT::compile(Node& node)
                 break;
             }
         
-            PredictedType predictedType = node.variableAccessData()->prediction();
+            PredictedType predictedType = node.variableAccessData()->argumentAwarePrediction();
             if (isInt32Prediction(predictedType)) {
                 SpeculateIntegerOperand value(this, node.child1());
                 m_jit.store32(value.gpr(), JITCompiler::payloadFor(node.local()));

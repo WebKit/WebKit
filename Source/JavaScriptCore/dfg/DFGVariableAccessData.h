@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,14 @@
 #ifndef DFGVariableAccessData_h
 #define DFGVariableAccessData_h
 
+#include "DFGDoubleFormatState.h"
 #include "DFGNodeFlags.h"
 #include "Operands.h"
 #include "PredictedType.h"
 #include "VirtualRegister.h"
 #include <wtf/Platform.h>
 #include <wtf/UnionFind.h>
+#include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
 
@@ -42,8 +44,9 @@ public:
     VariableAccessData()
         : m_local(static_cast<VirtualRegister>(std::numeric_limits<int>::min()))
         , m_prediction(PredictNone)
+        , m_argumentAwarePrediction(PredictNone)
         , m_flags(0)
-        , m_shouldUseDoubleFormat(false)
+        , m_doubleFormatState(EmptyDoubleFormatState)
     {
         clearVotes();
     }
@@ -51,8 +54,9 @@ public:
     VariableAccessData(VirtualRegister local)
         : m_local(local)
         , m_prediction(PredictNone)
+        , m_argumentAwarePrediction(PredictNone)
         , m_flags(0)
-        , m_shouldUseDoubleFormat(false)
+        , m_doubleFormatState(EmptyDoubleFormatState)
     {
         clearVotes();
     }
@@ -70,7 +74,11 @@ public:
     
     bool predict(PredictedType prediction)
     {
-        return mergePrediction(find()->m_prediction, prediction);
+        VariableAccessData* self = find();
+        bool result = mergePrediction(self->m_prediction, prediction);
+        if (result)
+            mergePrediction(m_argumentAwarePrediction, m_prediction);
+        return result;
     }
     
     PredictedType nonUnifiedPrediction()
@@ -81,6 +89,16 @@ public:
     PredictedType prediction()
     {
         return find()->m_prediction;
+    }
+    
+    PredictedType argumentAwarePrediction()
+    {
+        return find()->m_argumentAwarePrediction;
+    }
+    
+    bool mergeArgumentAwarePrediction(PredictedType prediction)
+    {
+        return mergePrediction(find()->m_argumentAwarePrediction, prediction);
     }
     
     void clearVotes()
@@ -132,15 +150,23 @@ public:
         return false;
     }
     
+    DoubleFormatState doubleFormatState()
+    {
+        return find()->m_doubleFormatState;
+    }
+    
     bool shouldUseDoubleFormat()
     {
-        ASSERT(find() == this);
-        return m_shouldUseDoubleFormat;
+        ASSERT(isRoot());
+        return m_doubleFormatState == UsingDoubleFormat;
     }
     
     bool tallyVotesForShouldUseDoubleFormat()
     {
-        ASSERT(find() == this);
+        ASSERT(isRoot());
+        
+        if (m_doubleFormatState == CantUseDoubleFormat)
+            return false;
         
         bool newValueOfShouldUseDoubleFormat = shouldUseDoubleFormatAccordingToVote();
         if (!newValueOfShouldUseDoubleFormat) {
@@ -149,12 +175,25 @@ public:
             return false;
         }
         
-        if (m_shouldUseDoubleFormat)
+        if (m_doubleFormatState == UsingDoubleFormat)
             return false;
         
-        m_shouldUseDoubleFormat = true;
-        mergePrediction(m_prediction, PredictDouble);
-        return true;
+        return DFG::mergeDoubleFormatState(m_doubleFormatState, UsingDoubleFormat);
+    }
+    
+    bool mergeDoubleFormatState(DoubleFormatState doubleFormatState)
+    {
+        return DFG::mergeDoubleFormatState(find()->m_doubleFormatState, doubleFormatState);
+    }
+    
+    bool makePredictionForDoubleFormat()
+    {
+        ASSERT(isRoot());
+        
+        if (m_doubleFormatState != UsingDoubleFormat)
+            return false;
+        
+        return mergePrediction(m_prediction, PredictDouble);
     }
     
     NodeFlags flags() const { return m_flags; }
@@ -176,10 +215,11 @@ private:
 
     VirtualRegister m_local;
     PredictedType m_prediction;
+    PredictedType m_argumentAwarePrediction;
     NodeFlags m_flags;
     
     float m_votes[2];
-    bool m_shouldUseDoubleFormat;
+    DoubleFormatState m_doubleFormatState;
 };
 
 } } // namespace JSC::DFG

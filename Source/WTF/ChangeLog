@@ -1,3 +1,17 @@
+2012-04-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should flush SetLocals to arguments
+        https://bugs.webkit.org/show_bug.cgi?id=83554
+
+        Reviewed by Gavin Barraclough.
+        
+        Added an isRoot() method that is a faster shorthand for saying
+        find() == this.
+
+        * wtf/UnionFind.h:
+        (WTF::UnionFind::isRoot):
+        (UnionFind):
+
 2012-04-10  Adam Klein  <adamk@chromium.org>
 
         Remove unused NonNullPassRefPtr from WTF

@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "DFGArgumentPosition.h"
 #include "DFGAssemblyHelpers.h"
 #include "DFGBasicBlock.h"
 #include "DFGNode.h"
@@ -356,6 +357,7 @@ public:
     Vector<ResolveGlobalData> m_resolveGlobalData;
     Vector<NodeIndex, 8> m_arguments;
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
+    SegmentedVector<ArgumentPosition, 8> m_argumentPositions;
     SegmentedVector<StructureSet, 16> m_structureSet;
     SegmentedVector<StructureTransitionData, 8> m_structureTransitionData;
     BitVector m_preservedVars;

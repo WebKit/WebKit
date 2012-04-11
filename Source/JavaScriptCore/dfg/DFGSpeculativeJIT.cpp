@@ -1000,6 +1000,10 @@ void SpeculativeJIT::compile(BasicBlock& block)
                     // since the Arguments code isn't smart enough to handle anything else.
                     // The exception is the this argument, which we don't really need to be
                     // able to recover.
+#if DFG_ENABLE(DEBUG_VERBOSE)
+                    dataLog("\nRecovery for argument %d: ", i);
+                    recovery.dump(WTF::dataFile());
+#endif
                     ASSERT(!i || (recovery.isAlreadyInRegisterFile() || recovery.isConstant()));
                     inlineCallFrame->arguments[i] = recovery;
                 }

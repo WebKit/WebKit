@@ -253,7 +253,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             break;
         }
         
-        PredictedType predictedType = node.variableAccessData()->prediction();
+        PredictedType predictedType = node.variableAccessData()->argumentAwarePrediction();
         if (isInt32Prediction(predictedType))
             forNode(node.child1()).filter(PredictInt32);
         else if (isArrayPrediction(predictedType))

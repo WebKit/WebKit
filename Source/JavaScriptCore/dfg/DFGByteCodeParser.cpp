@@ -238,7 +238,29 @@ private:
         VariableAccessData* variableAccessData = newVariableAccessData(operand);
         NodeIndex nodeIndex = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
-        if (m_graph.localIsCaptured(operand))
+        
+        bool shouldFlush = m_graph.localIsCaptured(operand);
+        
+        if (!shouldFlush) {
+            // If this is in argument position, then it should be flushed.
+            for (InlineStackEntry* stack = m_inlineStackTop; ; stack = stack->m_caller) {
+                InlineCallFrame* inlineCallFrame = stack->m_inlineCallFrame;
+                if (!inlineCallFrame)
+                    break;
+                if (static_cast<int>(operand) >= inlineCallFrame->stackOffset - RegisterFile::CallFrameHeaderSize)
+                    continue;
+                if (static_cast<int>(operand) == inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset())
+                    continue;
+                if (operand < inlineCallFrame->stackOffset - RegisterFile::CallFrameHeaderSize - inlineCallFrame->arguments.size())
+                    continue;
+                int argument = operandToArgument(operand - inlineCallFrame->stackOffset);
+                stack->m_argumentPositions[argument]->addVariable(variableAccessData);
+                shouldFlush = true;
+                break;
+            }
+        }
+        
+        if (shouldFlush)
             addToGraph(Flush, OpInfo(variableAccessData), nodeIndex);
     }
 
@@ -309,13 +331,17 @@ private:
         ASSERT(argument < m_numArguments);
         
         VariableAccessData* variableAccessData = newVariableAccessData(operand);
+        InlineStackEntry* stack = m_inlineStackTop;
+        while (stack->m_inlineCallFrame) // find the machine stack entry.
+            stack = stack->m_caller;
+        stack->m_argumentPositions[argument]->addVariable(variableAccessData);
         NodeIndex nodeIndex = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
-        if (m_graph.argumentIsCaptured(argument))
-            addToGraph(Flush, OpInfo(variableAccessData), nodeIndex);
+        // Always flush arguments.
+        addToGraph(Flush, OpInfo(variableAccessData), nodeIndex);
     }
     
-    void flushArgument(int operand)
+    VariableAccessData* flushArgument(int operand)
     {
         // FIXME: This should check if the same operand had already been flushed to
         // some other local variable.
@@ -346,7 +372,7 @@ private:
             // This gives us guidance to see that the variable also needs to be flushed
             // for arguments, even if it already had to be flushed for other reasons.
             addToGraph(Flush, OpInfo(node.variableAccessData()), nodeIndex);
-            return;
+            return node.variableAccessData();
         }
         
         VariableAccessData* variableAccessData = newVariableAccessData(operand);
@@ -361,6 +387,7 @@ private:
             m_currentBlock->variablesAtTail.local(index) = nodeIndex;
             m_currentBlock->variablesAtHead.setLocalFirstTime(index, nodeIndex);
         }
+        return variableAccessData;
     }
 
     // Get an operand, and perform a ToInt32/ToNumber conversion on it.
@@ -932,6 +959,9 @@ private:
         // Did we have any early returns?
         bool m_didEarlyReturn;
         
+        // Pointers to the argument position trackers for this slice of code.
+        Vector<ArgumentPosition*> m_argumentPositions;
+        
         InlineStackEntry* m_caller;
         
         InlineStackEntry(ByteCodeParser*, CodeBlock*, CodeBlock* profiledBlock, BlockIndex callsiteBlockHead, VirtualRegister calleeVR, JSFunction* callee, VirtualRegister returnValueVR, VirtualRegister inlineCallFrameStart, CodeSpecializationKind);
@@ -1117,8 +1147,9 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     
     // FIXME: Don't flush constants!
     
+    Vector<VariableAccessData*, 8> arguments;
     for (int i = 1; i < argumentCountIncludingThis; ++i)
-        flushArgument(registerOffset + argumentToOperand(i));
+        arguments.append(flushArgument(registerOffset + argumentToOperand(i)));
     
     int inlineCallFrameStart = m_inlineStackTop->remapOperand(registerOffset) - RegisterFile::CallFrameHeaderSize;
     
@@ -1135,6 +1166,10 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     }
 
     InlineStackEntry inlineStackEntry(this, codeBlock, profiledBlock, m_graph.m_blocks.size() - 1, (VirtualRegister)m_inlineStackTop->remapOperand(callTarget), expectedFunction, (VirtualRegister)m_inlineStackTop->remapOperand(usesResult ? resultOperand : InvalidVirtualRegister), (VirtualRegister)inlineCallFrameStart, kind);
+    
+    // Link up the argument variable access datas to their argument positions.
+    for (int i = 1; i < argumentCountIncludingThis; ++i)
+        inlineStackEntry.m_argumentPositions[i]->addVariable(arguments[i - 1]);
     
     // This is where the actual inlining really happens.
     unsigned oldIndex = m_currentIndex;
@@ -2580,6 +2615,13 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
     , m_didEarlyReturn(false)
     , m_caller(byteCodeParser->m_inlineStackTop)
 {
+    m_argumentPositions.resize(codeBlock->numParameters());
+    for (unsigned i = codeBlock->numParameters(); i--;) {
+        byteCodeParser->m_graph.m_argumentPositions.append(ArgumentPosition());
+        ArgumentPosition* argumentPosition = &byteCodeParser->m_graph.m_argumentPositions.last();
+        m_argumentPositions[i] = argumentPosition;
+    }
+        
     if (m_caller) {
         // Inline case.
         ASSERT(codeBlock != byteCodeParser->m_codeBlock);
