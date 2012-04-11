@@ -88,6 +88,8 @@ BUGWK78344 : fast/text/international/inline-plaintext-relayout-with-leading-neut
 
 BUGWK80246 DEBUG : fast/css/hover-update.html = PASS TEXT
 
+BUGWK83683 : editing/pasteboard/pasting-empty-html-falls-back-to-text.html = PASS TEXT
+
 // End of Flaky tests
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
