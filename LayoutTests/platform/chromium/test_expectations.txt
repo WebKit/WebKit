@@ -3839,3 +3839,5 @@ BUGWK83624 WIN : webaudio/up-mixing-stereo-51.html = AUDIO
 
 BUGWK83635 : fast/canvas/2d.backingStorePixelRatio.html = TIMEOUT
 BUGWK83635 : platform/chromium/virtual/gpu/fast/canvas/2d.backingStorePixelRatio.html = TIMEOUT
+
+BUGWK83647 WIN LINUX : fast/multicol/cell-shrinkback.html = IMAGE
