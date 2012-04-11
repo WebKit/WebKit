@@ -224,26 +224,26 @@ public:
         return adoptPtr(new MockLayerTreeHostClient(testHooks));
     }
 
-    virtual void willBeginFrame()
+    virtual void willBeginFrame() OVERRIDE
     {
     }
 
-    virtual void updateAnimations(double monotonicTime)
+    virtual void updateAnimations(double monotonicTime) OVERRIDE
     {
         m_testHooks->updateAnimations(monotonicTime);
     }
 
-    virtual void layout()
+    virtual void layout() OVERRIDE
     {
         m_testHooks->layout();
     }
 
-    virtual void applyScrollAndScale(const IntSize& scrollDelta, float scale)
+    virtual void applyScrollAndScale(const IntSize& scrollDelta, float scale) OVERRIDE
     {
         m_testHooks->applyScrollAndScale(scrollDelta, scale);
     }
 
-    virtual PassRefPtr<GraphicsContext3D> createContext()
+    virtual PassRefPtr<GraphicsContext3D> createContext() OVERRIDE
     {
         GraphicsContext3D::Attributes attrs;
         WebGraphicsContext3D::Attributes webAttrs;
@@ -253,25 +253,25 @@ public:
         return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow);
     }
 
-    virtual void didCommit()
+    virtual void didCommit() OVERRIDE
     {
     }
 
-    virtual void didCommitAndDrawFrame()
+    virtual void didCommitAndDrawFrame() OVERRIDE
     {
         m_testHooks->didCommitAndDrawFrame();
     }
 
-    virtual void didCompleteSwapBuffers()
+    virtual void didCompleteSwapBuffers() OVERRIDE
     {
     }
 
-    virtual void didRecreateContext(bool succeeded)
+    virtual void didRecreateContext(bool succeeded) OVERRIDE
     {
         m_testHooks->didRecreateContext(succeeded);
     }
 
-    virtual void scheduleComposite()
+    virtual void scheduleComposite() OVERRIDE
     {
     }
 

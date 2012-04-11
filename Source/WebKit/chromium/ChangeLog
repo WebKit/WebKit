@@ -1,5 +1,27 @@
 2012-04-10  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Add OVERRIDE annotations for cc tree host and proxy interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=83653
+
+        Reviewed by Adrienne Walker.
+
+        This adds OVERRIDE annotations to the implementations of the following interfaces:
+        - CCLayerTreeHostClient
+        - CCLayerTreeHostImplClient
+        - CCProxy
+        - LayerRendererChromiumClient
+
+        * src/WebLayerTreeViewImpl.h:
+        (WebLayerTreeViewImpl):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/FakeCCLayerTreeHostClient.h:
+        * tests/LayerRendererChromiumTest.cpp:
+
+2012-04-10  James Robinson  <jamesr@chromium.org>
+
         [chromium] Add OVERRIDE annotations for cc scheduler-related client interfaces
         https://bugs.webkit.org/show_bug.cgi?id=83646
 

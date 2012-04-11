@@ -51,32 +51,32 @@ public:
     virtual ~CCThreadProxy();
 
     // CCProxy implementation
-    virtual bool compositeAndReadback(void *pixels, const IntRect&);
-    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double duration);
-    virtual GraphicsContext3D* context();
-    virtual void finishAllRendering();
-    virtual bool isStarted() const;
-    virtual bool initializeContext();
-    virtual bool initializeLayerRenderer();
-    virtual bool recreateContext();
-    virtual int compositorIdentifier() const;
-    virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
-    virtual void loseContext();
-    virtual void setNeedsAnimate();
-    virtual void setNeedsCommit();
-    virtual void setNeedsRedraw();
-    virtual bool commitRequested() const;
-    virtual void setVisible(bool);
-    virtual void start();
-    virtual void stop();
-    virtual size_t maxPartialTextureUpdates() const;
+    virtual bool compositeAndReadback(void *pixels, const IntRect&) OVERRIDE;
+    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double duration) OVERRIDE;
+    virtual GraphicsContext3D* context() OVERRIDE;
+    virtual void finishAllRendering() OVERRIDE;
+    virtual bool isStarted() const OVERRIDE;
+    virtual bool initializeContext() OVERRIDE;
+    virtual bool initializeLayerRenderer() OVERRIDE;
+    virtual bool recreateContext() OVERRIDE;
+    virtual int compositorIdentifier() const OVERRIDE;
+    virtual const LayerRendererCapabilities& layerRendererCapabilities() const OVERRIDE;
+    virtual void loseContext() OVERRIDE;
+    virtual void setNeedsAnimate() OVERRIDE;
+    virtual void setNeedsCommit() OVERRIDE;
+    virtual void setNeedsRedraw() OVERRIDE;
+    virtual bool commitRequested() const OVERRIDE;
+    virtual void setVisible(bool) OVERRIDE;
+    virtual void start() OVERRIDE;
+    virtual void stop() OVERRIDE;
+    virtual size_t maxPartialTextureUpdates() const OVERRIDE;
 
     // CCLayerTreeHostImplClient implementation
-    virtual void didLoseContextOnImplThread();
-    virtual void onSwapBuffersCompleteOnImplThread();
-    virtual void setNeedsRedrawOnImplThread();
-    virtual void setNeedsCommitOnImplThread();
-    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime);
+    virtual void didLoseContextOnImplThread() OVERRIDE;
+    virtual void onSwapBuffersCompleteOnImplThread() OVERRIDE;
+    virtual void setNeedsRedrawOnImplThread() OVERRIDE;
+    virtual void setNeedsCommitOnImplThread() OVERRIDE;
+    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) OVERRIDE;
 
     // CCSchedulerClient implementation
     virtual bool canDraw() OVERRIDE;

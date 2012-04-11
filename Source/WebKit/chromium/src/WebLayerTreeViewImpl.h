@@ -39,18 +39,18 @@ public:
     static PassOwnPtr<WebLayerTreeViewImpl> create(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&);
     virtual ~WebLayerTreeViewImpl();
 
-    virtual void willBeginFrame();
-    virtual void updateAnimations(double monotonicFrameBeginTime);
-    virtual void layout();
-    virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale);
-    virtual PassRefPtr<WebCore::GraphicsContext3D> createContext();
-    virtual void didRecreateContext(bool success);
-    virtual void didCommit();
-    virtual void didCommitAndDrawFrame();
-    virtual void didCompleteSwapBuffers();
+    virtual void willBeginFrame() OVERRIDE;
+    virtual void updateAnimations(double monotonicFrameBeginTime) OVERRIDE;
+    virtual void layout() OVERRIDE;
+    virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale) OVERRIDE;
+    virtual PassRefPtr<WebCore::GraphicsContext3D> createContext() OVERRIDE;
+    virtual void didRecreateContext(bool success) OVERRIDE;
+    virtual void didCommit() OVERRIDE;
+    virtual void didCommitAndDrawFrame() OVERRIDE;
+    virtual void didCompleteSwapBuffers() OVERRIDE;
 
     // Only used in the single threaded path.
-    virtual void scheduleComposite();
+    virtual void scheduleComposite() OVERRIDE;
 
 private:
     WebLayerTreeViewImpl(WebLayerTreeViewClient*, const WebLayerTreeView::Settings&);

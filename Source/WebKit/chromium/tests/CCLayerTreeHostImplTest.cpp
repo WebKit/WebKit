@@ -55,11 +55,11 @@ public:
         m_hostImpl = CCLayerTreeHostImpl::create(settings, this);
     }
 
-    virtual void didLoseContextOnImplThread() { }
-    virtual void onSwapBuffersCompleteOnImplThread() { }
-    virtual void setNeedsRedrawOnImplThread() { m_didRequestRedraw = true; }
-    virtual void setNeedsCommitOnImplThread() { m_didRequestCommit = true; }
-    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) { }
+    virtual void didLoseContextOnImplThread() OVERRIDE { }
+    virtual void onSwapBuffersCompleteOnImplThread() OVERRIDE { }
+    virtual void setNeedsRedrawOnImplThread() OVERRIDE { m_didRequestRedraw = true; }
+    virtual void setNeedsCommitOnImplThread() OVERRIDE { m_didRequestCommit = true; }
+    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) OVERRIDE { }
 
     static void expectClearedScrollDeltasRecursive(CCLayerImpl* layer)
     {

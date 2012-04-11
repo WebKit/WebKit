@@ -94,13 +94,13 @@ public:
     virtual void drawLayers(const FrameData&);
 
     // LayerRendererChromiumClient implementation
-    virtual const IntSize& viewportSize() const { return m_viewportSize; }
-    virtual const CCSettings& settings() const { return m_settings; }
-    virtual CCLayerImpl* rootLayer() { return m_rootLayerImpl.get(); }
-    virtual const CCLayerImpl* rootLayer() const { return m_rootLayerImpl.get(); }
-    virtual void didLoseContext();
-    virtual void onSwapBuffersComplete();
-    virtual void setFullRootLayerDamage();
+    virtual const IntSize& viewportSize() const OVERRIDE { return m_viewportSize; }
+    virtual const CCSettings& settings() const OVERRIDE { return m_settings; }
+    virtual CCLayerImpl* rootLayer() OVERRIDE { return m_rootLayerImpl.get(); }
+    virtual const CCLayerImpl* rootLayer() const OVERRIDE { return m_rootLayerImpl.get(); }
+    virtual void didLoseContext() OVERRIDE;
+    virtual void onSwapBuffersComplete() OVERRIDE;
+    virtual void setFullRootLayerDamage() OVERRIDE;
 
     // Implementation
     bool canDraw();

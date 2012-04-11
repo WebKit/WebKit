@@ -34,22 +34,22 @@ namespace WebCore {
 
 class FakeCCLayerTreeHostClient : public CCLayerTreeHostClient {
 public:
-    virtual void willBeginFrame() { }
-    virtual void updateAnimations(double monotonicFrameBeginTime) { }
-    virtual void layout() { }
-    virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) { }
-    virtual PassRefPtr<GraphicsContext3D> createContext()
+    virtual void willBeginFrame() OVERRIDE { }
+    virtual void updateAnimations(double monotonicFrameBeginTime) OVERRIDE { }
+    virtual void layout() OVERRIDE { }
+    virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) OVERRIDE { }
+    virtual PassRefPtr<GraphicsContext3D> createContext() OVERRIDE
     {
         GraphicsContext3D::Attributes attrs;
         return createCompositorMockGraphicsContext3D(attrs);
     }
-    virtual void didRecreateContext(bool success) { }
-    virtual void didCommit() { }
-    virtual void didCommitAndDrawFrame() { }
-    virtual void didCompleteSwapBuffers() { }
+    virtual void didRecreateContext(bool success) OVERRIDE { }
+    virtual void didCommit() OVERRIDE { }
+    virtual void didCommitAndDrawFrame() OVERRIDE { }
+    virtual void didCompleteSwapBuffers() OVERRIDE { }
 
     // Used only in the single-threaded path.
-    virtual void scheduleComposite() { }
+    virtual void scheduleComposite() OVERRIDE { }
 };
 
 }

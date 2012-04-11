@@ -120,7 +120,7 @@ public:
     virtual void willExitFullScreen();
     virtual void didExitFullScreen();
     virtual void animate(double);
-    virtual void layout(); // Also implements CCLayerTreeHostClient::layout()
+    virtual void layout(); // Also implements WebLayerTreeViewClient::layout()
     virtual void paint(WebCanvas*, const WebRect&);
     virtual void themeChanged();
     virtual void composite(bool finish);

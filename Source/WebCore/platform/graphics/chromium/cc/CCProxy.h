@@ -34,12 +34,8 @@
 namespace WebCore {
 
 class CCThread;
-class CCLayerTreeHost;
-class CCLayerTreeHostImpl;
-class CCLayerTreeHostImplClient;
 class GraphicsContext3D;
 struct LayerRendererCapabilities;
-class TextureManager;
 
 // Abstract class responsible for proxying commands from the main-thread side of
 // the compositor over to the compositor implementation.
