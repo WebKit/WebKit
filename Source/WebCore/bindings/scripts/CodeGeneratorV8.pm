@@ -1601,7 +1601,7 @@ sub GenerateParametersCheck
                     die "IDL error: TransferList refers to a nonexistent argument";
                 }
 
-                AddToImplIncludes("ArrayBuffer.h");
+                AddToImplIncludes("wtf/ArrayBuffer.h");
                 AddToImplIncludes("MessagePort.h");
                 $TransferListName = ucfirst($transferListName);
                 $parameterCheckString .= "    MessagePortArray messagePortArray$TransferListName;\n";

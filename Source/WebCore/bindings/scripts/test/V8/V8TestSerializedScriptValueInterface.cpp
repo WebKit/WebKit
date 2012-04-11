@@ -23,7 +23,6 @@
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
-#include "ArrayBuffer.h"
 #include "ExceptionCode.h"
 #include "MessagePort.h"
 #include "RuntimeEnabledFeatures.h"
@@ -34,6 +33,7 @@
 #include "V8DOMWrapper.h"
 #include "V8IsolatedContext.h"
 #include "V8Proxy.h"
+#include <wtf/ArrayBuffer.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {

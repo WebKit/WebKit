@@ -32,6 +32,7 @@
 #include "WebIntent.h"
 
 #include "Intent.h"
+#include "PlatformMessagePortChannel.h"
 #include "SerializedScriptValue.h"
 
 namespace WebKit {
@@ -100,6 +101,23 @@ WebString WebIntent::data() const
 #else
     return WebString();
 #endif
+}
+
+WebMessagePortChannelArray* WebIntent::messagePortChannelsRelease() const
+{
+    // Note: see PlatformMessagePortChannel::postMessageToRemote.
+    WebMessagePortChannelArray* webChannels = 0;
+    WebCore::MessagePortChannelArray* messagePorts = m_private->messagePorts();
+    if (messagePorts) {
+        webChannels = new WebMessagePortChannelArray(messagePorts->size());
+        for (size_t i = 0; i < messagePorts->size(); ++i) {
+            WebCore::PlatformMessagePortChannel* platformChannel = messagePorts->at(i)->channel();
+            (*webChannels)[i] = platformChannel->webChannelRelease();
+            (*webChannels)[i]->setClient(0);
+        }
+    }
+
+    return webChannels;
 }
 
 } // namespace WebKit
