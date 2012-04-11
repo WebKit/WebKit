@@ -38,7 +38,7 @@ class PluginLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<PluginLayerChromium> create();
 
-    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
+    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE;
 
     // Code path for plugins which supply their own texture ID.
     void setTextureId(unsigned textureId);
@@ -52,7 +52,7 @@ public:
     void setIOSurfaceProperties(int width, int height, uint32_t ioSurfaceId);
     uint32_t getIOSurfaceId() const;
 
-    virtual void pushPropertiesTo(CCLayerImpl*);
+    virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
 
 protected:
     PluginLayerChromium();

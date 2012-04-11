@@ -41,14 +41,14 @@ public:
     }
     virtual ~CCSolidColorLayerImpl();
 
-    virtual TransformationMatrix quadTransform() const;
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles);
+    virtual TransformationMatrix quadTransform() const OVERRIDE;
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
 
 protected:
     explicit CCSolidColorLayerImpl(int id);
 
 private:
-    virtual const char* layerTypeAsString() const { return "SolidColorLayer"; }
+    virtual const char* layerTypeAsString() const OVERRIDE { return "SolidColorLayer"; }
 
     const int m_tileSize;
 };

@@ -40,7 +40,7 @@ public:
     }
     virtual ~CCTextureLayerImpl();
 
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles);
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
 
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> ProgramFlip;
     typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexAlpha> ProgramStretch;
@@ -48,10 +48,10 @@ public:
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectAlpha> TexRectProgram;
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectFlipAlpha> TexRectProgramFlip;
 
-    virtual void willDraw(LayerRendererChromium*);
-    virtual void didLoseContext();
+    virtual void willDraw(LayerRendererChromium*) OVERRIDE;
+    virtual void didLoseContext() OVERRIDE;
 
-    virtual void dumpLayerProperties(TextStream&, int indent) const;
+    virtual void dumpLayerProperties(TextStream&, int indent) const OVERRIDE;
 
     unsigned textureId() const { return m_textureId; }
     void setTextureId(unsigned id) { m_textureId = id; }
@@ -65,7 +65,7 @@ public:
 private:
     explicit CCTextureLayerImpl(int);
 
-    virtual const char* layerTypeAsString() const { return "TextureLayer"; }
+    virtual const char* layerTypeAsString() const OVERRIDE { return "TextureLayer"; }
 
     unsigned m_textureId;
     bool m_hasAlpha;

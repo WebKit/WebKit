@@ -1430,13 +1430,13 @@ public:
     int idlePaintContentsCount() { return m_idlePaintContentsCount; }
     void resetPaintContentsCount() { m_paintContentsCount = 0; m_idlePaintContentsCount = 0;}
 
-    virtual void update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
+    virtual void update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion) OVERRIDE
     {
         ContentLayerChromium::update(updater, occlusion);
         m_paintContentsCount++;
     }
 
-    virtual void idleUpdate(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
+    virtual void idleUpdate(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion) OVERRIDE
     {
         ContentLayerChromium::idleUpdate(updater, occlusion);
         m_idlePaintContentsCount++;
@@ -1778,14 +1778,14 @@ class TestLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<TestLayerChromium> create() { return adoptRef(new TestLayerChromium()); }
 
-    virtual void update(CCTextureUpdater&, const CCOcclusionTracker* occlusion)
+    virtual void update(CCTextureUpdater&, const CCOcclusionTracker* occlusion) OVERRIDE
     {
         // Gain access to internals of the CCOcclusionTracker.
         const TestCCOcclusionTracker* testOcclusion = static_cast<const TestCCOcclusionTracker*>(occlusion);
         m_occludedScreenSpace = testOcclusion ? testOcclusion->occlusionInScreenSpace() : Region();
     }
 
-    virtual bool drawsContent() const { return true; }
+    virtual bool drawsContent() const OVERRIDE { return true; }
 
     const Region& occludedScreenSpace() const { return m_occludedScreenSpace; }
     void clearOccludedScreenSpace() { m_occludedScreenSpace = Region(); }

@@ -1,3 +1,28 @@
+2012-04-10  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add OVERRIDE annotations for cc layer types
+        https://bugs.webkit.org/show_bug.cgi?id=83658
+
+        Reviewed by Daniel Bates.
+
+        This adds OVERRIDE annotations to overrides of functions on these classes:
+        - CCLayerImpl
+        - LayerChromium
+        - TiledLayerChromium
+
+        * src/WebLayerImpl.cpp:
+        * src/WebLayerImpl.h:
+        (WebLayerImpl): Removed unused and empty paintContents() function.
+        * tests/CCLayerIteratorTest.cpp:
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/CCOcclusionTrackerTest.cpp:
+        * tests/CCTiledLayerTestCommon.h:
+        (FakeTiledLayerChromium):
+        * tests/LayerChromiumTest.cpp:
+        * tests/TreeSynchronizerTest.cpp:
+
 2012-04-11  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add OVERRIDE annotations for cc animation-related interfaces

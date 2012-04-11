@@ -81,7 +81,7 @@ public:
     {
     }
 
-    virtual bool drawsContent() const { return true; }
+    virtual bool drawsContent() const OVERRIDE { return true; }
 };
 
 TEST(CCLayerTreeHostCommonTest, verifyTransformsForNoOpLayer)

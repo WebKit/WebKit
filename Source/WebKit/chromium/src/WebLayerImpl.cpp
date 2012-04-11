@@ -47,8 +47,4 @@ WebLayerImpl::~WebLayerImpl()
 {
 }
 
-void WebLayerImpl::paintContents(GraphicsContext&, const IntRect& clip)
-{
-}
-
 } // namespace WebKit

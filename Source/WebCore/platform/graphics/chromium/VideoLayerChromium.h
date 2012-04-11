@@ -48,7 +48,7 @@ public:
     static PassRefPtr<VideoLayerChromium> create(VideoFrameProvider* = 0);
     virtual ~VideoLayerChromium();
 
-    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
+    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE;
 
 private:
     explicit VideoLayerChromium(VideoFrameProvider*);

@@ -43,11 +43,11 @@ public:
     }
     virtual ~CCTiledLayerImpl();
 
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles);
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
 
-    virtual void bindContentsTexture(LayerRendererChromium*);
+    virtual void bindContentsTexture(LayerRendererChromium*) OVERRIDE;
 
-    virtual void dumpLayerProperties(TextStream&, int indent) const;
+    virtual void dumpLayerProperties(TextStream&, int indent) const OVERRIDE;
 
     void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
     void setTilingData(const CCLayerTilingData& tiler);
@@ -56,7 +56,7 @@ public:
     void setContentsSwizzled(bool contentsSwizzled) { m_contentsSwizzled = contentsSwizzled; }
     bool contentsSwizzled() const { return m_contentsSwizzled; }
 
-    virtual Region visibleContentOpaqueRegion() const;
+    virtual Region visibleContentOpaqueRegion() const OVERRIDE;
 
     typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexAlpha> Program;
     // Shader program that swaps red and blue components of texture.
@@ -77,11 +77,11 @@ protected:
     bool hasTileAt(int, int) const;
     bool hasTextureIdForTileAt(int, int) const;
 
-    virtual TransformationMatrix quadTransform() const;
+    virtual TransformationMatrix quadTransform() const OVERRIDE;
 
 private:
 
-    virtual const char* layerTypeAsString() const { return "ContentLayer"; }
+    virtual const char* layerTypeAsString() const OVERRIDE { return "ContentLayer"; }
 
     DrawableTile* tileAt(int, int) const;
     DrawableTile* createTile(int, int);

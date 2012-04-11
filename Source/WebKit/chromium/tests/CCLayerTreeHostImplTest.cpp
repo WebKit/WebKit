@@ -587,7 +587,7 @@ class BlendStateCheckLayer : public CCLayerImpl {
 public:
     static PassOwnPtr<BlendStateCheckLayer> create(int id) { return adoptPtr(new BlendStateCheckLayer(id)); }
 
-    virtual void appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+    virtual void appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&) OVERRIDE
     {
         m_quadsAppended = true;
 
@@ -1066,7 +1066,7 @@ class ContextLostNotificationCheckLayer : public CCLayerImpl {
 public:
     static PassOwnPtr<ContextLostNotificationCheckLayer> create(int id) { return adoptPtr(new ContextLostNotificationCheckLayer(id)); }
 
-    virtual void didLoseContext()
+    virtual void didLoseContext() OVERRIDE
     {
         m_didLoseContextCalled = true;
     }

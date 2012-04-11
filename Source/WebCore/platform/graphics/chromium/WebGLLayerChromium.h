@@ -49,10 +49,10 @@ public:
 
     virtual ~WebGLLayerChromium();
 
-    virtual bool drawsContent() const;
-    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*);
-    virtual void pushPropertiesTo(CCLayerImpl*);
-    virtual void setNeedsDisplayRect(const FloatRect&);
+    virtual bool drawsContent() const OVERRIDE;
+    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
+    virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
+    virtual void setNeedsDisplayRect(const FloatRect&) OVERRIDE;
     bool paintRenderedResultsToCanvas(ImageBuffer*);
 
     GraphicsContext3D* context() const;

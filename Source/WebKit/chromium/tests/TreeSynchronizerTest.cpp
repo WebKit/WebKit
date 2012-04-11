@@ -73,12 +73,12 @@ public:
 
     virtual ~MockLayerChromium() { }
 
-    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl()
+    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE
     {
         return MockCCLayerImpl::create(m_layerId);
     }
 
-    virtual void pushPropertiesTo(CCLayerImpl* ccLayer)
+    virtual void pushPropertiesTo(CCLayerImpl* ccLayer) OVERRIDE
     {
         LayerChromium::pushPropertiesTo(ccLayer);
 

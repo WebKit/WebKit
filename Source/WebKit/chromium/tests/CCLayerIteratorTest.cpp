@@ -47,7 +47,7 @@ public:
     int m_countRepresentingContributingSurface;
     int m_countRepresentingItself;
 
-    virtual bool drawsContent() const { return m_drawsContent; }
+    virtual bool drawsContent() const OVERRIDE { return m_drawsContent; }
     void setDrawsContent(bool drawsContent) { m_drawsContent = drawsContent; }
 
 private:

@@ -117,19 +117,19 @@ public:
     using WebCore::TiledLayerChromium::numPaintedTiles;
     using WebCore::TiledLayerChromium::idlePaintRect;
 
-    virtual void setNeedsDisplayRect(const WebCore::FloatRect&);
+    virtual void setNeedsDisplayRect(const WebCore::FloatRect&) OVERRIDE;
     const WebCore::FloatRect& lastNeedsDisplayRect() const { return m_lastNeedsDisplayRect; }
 
     // Updates the visibleLayerRect().
-    virtual void update(WebCore::CCTextureUpdater&, const WebCore::CCOcclusionTracker*);
+    virtual void update(WebCore::CCTextureUpdater&, const WebCore::CCOcclusionTracker*) OVERRIDE;
 
-    virtual WebCore::TextureManager* textureManager() const { return m_textureManager; }
+    virtual WebCore::TextureManager* textureManager() const OVERRIDE { return m_textureManager; }
     FakeLayerTextureUpdater* fakeLayerTextureUpdater() { return m_fakeTextureUpdater.get(); }
     WebCore::FloatRect updateRect() { return m_updateRect; }
 
 private:
-    virtual WebCore::LayerTextureUpdater* textureUpdater() const { return m_fakeTextureUpdater.get(); }
-    virtual void createTextureUpdaterIfNeeded() { }
+    virtual WebCore::LayerTextureUpdater* textureUpdater() const OVERRIDE { return m_fakeTextureUpdater.get(); }
+    virtual void createTextureUpdaterIfNeeded() OVERRIDE { }
 
     RefPtr<FakeLayerTextureUpdater> m_fakeTextureUpdater;
     WebCore::TextureManager* m_textureManager;
@@ -141,7 +141,7 @@ public:
     explicit FakeTiledLayerWithScaledBounds(WebCore::TextureManager*);
 
     void setContentBounds(const WebCore::IntSize& contentBounds) { m_forcedContentBounds = contentBounds; }
-    virtual WebCore::IntSize contentBounds() const { return m_forcedContentBounds; }
+    virtual WebCore::IntSize contentBounds() const OVERRIDE { return m_forcedContentBounds; }
 
 protected:
     WebCore::IntSize m_forcedContentBounds;

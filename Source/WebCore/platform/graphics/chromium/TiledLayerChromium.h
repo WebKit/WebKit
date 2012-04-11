@@ -42,28 +42,28 @@ public:
 
     virtual ~TiledLayerChromium();
 
-    virtual void setIsMask(bool);
+    virtual void setIsMask(bool) OVERRIDE;
 
-    virtual void pushPropertiesTo(CCLayerImpl*);
+    virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
 
-    virtual bool drawsContent() const;
-    virtual bool needsContentsScale() const;
+    virtual bool drawsContent() const OVERRIDE;
+    virtual bool needsContentsScale() const OVERRIDE;
 
-    virtual IntSize contentBounds() const;
+    virtual IntSize contentBounds() const OVERRIDE;
 
-    virtual void setNeedsDisplayRect(const FloatRect&);
+    virtual void setNeedsDisplayRect(const FloatRect&) OVERRIDE;
 
-    virtual void setIsNonCompositedContent(bool);
+    virtual void setIsNonCompositedContent(bool) OVERRIDE;
 
-    virtual void setLayerTreeHost(CCLayerTreeHost*);
+    virtual void setLayerTreeHost(CCLayerTreeHost*) OVERRIDE;
 
     // Reserves all existing and valid tile textures to protect them from being
     // recycled by the texture manager.
     void protectTileTextures(const IntRect& layerRect);
 
-    virtual void reserveTextures();
+    virtual void reserveTextures() OVERRIDE;
 
-    virtual Region visibleContentOpaqueRegion() const;
+    virtual Region visibleContentOpaqueRegion() const OVERRIDE;
 
 protected:
     TiledLayerChromium();
@@ -100,12 +100,13 @@ protected:
 
     bool skipsDraw() const { return m_skipsDraw; }
 
-    virtual void protectVisibleTileTextures();
+    virtual void protectVisibleTileTextures() OVERRIDE;
 
+    // Virtual for testing
     virtual TextureManager* textureManager() const;
 
 private:
-    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
+    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE;
 
     void createTilerIfNeeded();
     void setTilingOption(TilingOption);

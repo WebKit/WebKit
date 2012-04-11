@@ -60,8 +60,8 @@ public:
     {
     }
 
-    virtual bool drawsContent() const { return true; }
-    virtual Region visibleContentOpaqueRegion() const
+    virtual bool drawsContent() const OVERRIDE { return true; }
+    virtual Region visibleContentOpaqueRegion() const OVERRIDE
     {
         if (m_overrideOpaqueContentsRect)
             return intersection(m_opaqueContentsRect, visibleLayerRect());
@@ -87,7 +87,7 @@ public:
         setDrawsContent(true);
     }
 
-    virtual Region visibleContentOpaqueRegion() const
+    virtual Region visibleContentOpaqueRegion() const OVERRIDE
     {
         if (m_overrideOpaqueContentsRect)
             return intersection(m_opaqueContentsRect, visibleLayerRect());

@@ -561,12 +561,12 @@ public:
     {
     }
 
-    virtual bool needsContentsScale() const
+    virtual bool needsContentsScale() const OVERRIDE
     {
         return true;
     }
 
-    virtual void setNeedsDisplayRect(const FloatRect& dirtyRect)
+    virtual void setNeedsDisplayRect(const FloatRect& dirtyRect) OVERRIDE
     {
         m_lastNeedsDisplayRect = dirtyRect;
         LayerChromium::setNeedsDisplayRect(dirtyRect);
