@@ -3748,8 +3748,6 @@ BUG_OJAN SKIP : fast/js/global-constructors.html = FAIL
 
 BUGWK82993 LINUX : fast/dom/error-to-string-stack-overflow.html = TEXT
 
-BUGWK83227 LINUX : fast/text/international/arabic-justify.html = FAIL
-
 // This should only be a layer change.
 BUGWK82129 : fast/box-shadow/shadow-buffer-partial.html = TEXT
 BUGWK82129 MAC : fast/block/lineboxcontain/block-font.html = TEXT
