@@ -29,8 +29,6 @@
 #include "config.h"
 #include "WebInspectorClient.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "WebInspectorDelegate.h"
 #include "WebKit.h"
 #include "WebMutableURLRequest.h"
@@ -548,5 +546,3 @@ static ATOM registerWindowClass()
 
     return ::RegisterClassEx(&wcex);
 }
-
-#endif // ENABLE(INSPECTOR)

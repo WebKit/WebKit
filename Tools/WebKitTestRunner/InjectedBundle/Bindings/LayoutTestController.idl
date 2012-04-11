@@ -114,12 +114,10 @@ module WTR {
         // Evaluating script in a special context.
         [PassContext] void evaluateScriptInIsolatedWorld(in unsigned long worldID, in DOMString script);
 
-#if ENABLE_INSPECTOR
         // For Web Inspector tests
         void showWebInspector();
         void closeWebInspector();
         void evaluateInWebInspector(in long callID, in DOMString script);
-#endif        
 
         void setPOSIXLocale(in DOMString locale);
 
