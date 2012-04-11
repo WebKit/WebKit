@@ -23,36 +23,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCSolidColorLayerImpl_h
-#define CCSolidColorLayerImpl_h
+#ifndef CCCheckerboardDrawQuad_h
+#define CCCheckerboardDrawQuad_h
 
-#include "TransformationMatrix.h"
-#include "cc/CCLayerImpl.h"
+#include "cc/CCDrawQuad.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class LayerRendererChromium;
-
-class CCSolidColorLayerImpl : public CCLayerImpl {
+class CCCheckerboardDrawQuad : public CCDrawQuad {
+    WTF_MAKE_NONCOPYABLE(CCCheckerboardDrawQuad);
 public:
-    static PassOwnPtr<CCSolidColorLayerImpl> create(int id)
-    {
-        return adoptPtr(new CCSolidColorLayerImpl(id));
-    }
-    virtual ~CCSolidColorLayerImpl();
-
-    virtual TransformationMatrix quadTransform() const;
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles);
-
-protected:
-    explicit CCSolidColorLayerImpl(int id);
+    static PassOwnPtr<CCCheckerboardDrawQuad> create(const CCSharedQuadState*, const IntRect&);
 
 private:
-    virtual const char* layerTypeAsString() const { return "SolidColorLayer"; }
-
-    const int m_tileSize;
+    CCCheckerboardDrawQuad(const CCSharedQuadState*, const IntRect&);
 };
 
 }
 
-#endif // CCSolidColorLayerImpl_h
+#endif

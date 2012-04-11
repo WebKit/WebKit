@@ -43,7 +43,7 @@ public:
     }
     virtual ~CCTiledLayerImpl();
 
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& usedCheckerboard);
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles);
 
     virtual void bindContentsTexture(LayerRendererChromium*);
 

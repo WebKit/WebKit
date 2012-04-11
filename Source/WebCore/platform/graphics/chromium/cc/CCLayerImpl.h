@@ -84,7 +84,7 @@ public:
 
     PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
     virtual void willDraw(LayerRendererChromium*) { }
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& usedCheckerboard) { }
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) { }
     virtual void didDraw() { }
     void appendDebugBorderQuad(CCQuadCuller&, const CCSharedQuadState*) const;
 
@@ -195,6 +195,9 @@ public:
     const Region& nonFastScrollableRegion() const { return m_nonFastScrollableRegion; }
     void setNonFastScrollableRegion(const Region& region) { m_nonFastScrollableRegion = region; }
 
+    void setDrawCheckerboardForMissingTiles(bool checkerboard) { m_drawCheckerboardForMissingTiles = checkerboard; }
+    bool drawCheckerboardForMissingTiles() const { return m_drawCheckerboardForMissingTiles; }
+
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
     void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
 
@@ -293,6 +296,7 @@ private:
     float m_opacity;
     FloatPoint m_position;
     bool m_preserves3D;
+    bool m_drawCheckerboardForMissingTiles;
     TransformationMatrix m_sublayerTransform;
     TransformationMatrix m_transform;
     bool m_usesLayerClipping;

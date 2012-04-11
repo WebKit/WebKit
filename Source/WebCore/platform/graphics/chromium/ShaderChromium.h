@@ -359,6 +359,21 @@ private:
     int m_colorLocation;
 };
 
+class FragmentShaderCheckerboard {
+public:
+    FragmentShaderCheckerboard();
+    String getShaderString() const;
+
+    void init(GraphicsContext3D*, unsigned program);
+    int alphaLocation() const { return m_alphaLocation; }
+    int texTransformLocation() const { return m_texTransformLocation; }
+    int frequencyLocation() const { return m_frequencyLocation; }
+private:
+    int m_alphaLocation;
+    int m_texTransformLocation;
+    int m_frequencyLocation;
+};
+
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)

@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class CCCheckerboardDrawQuad;
 class CCDebugBorderDrawQuad;
 class CCRenderSurfaceDrawQuad;
 class CCSolidColorDrawQuad;
@@ -62,6 +63,7 @@ public:
 
     enum Material {
         Invalid,
+        Checkerboard,
         DebugBorder,
         RenderSurface,
         TextureContent,
@@ -72,6 +74,7 @@ public:
 
     Material material() const { return m_material; }
 
+    const CCCheckerboardDrawQuad* toCheckerboardDrawQuad() const;
     const CCDebugBorderDrawQuad* toDebugBorderDrawQuad() const;
     const CCRenderSurfaceDrawQuad* toRenderSurfaceDrawQuad() const;
     const CCSolidColorDrawQuad* toSolidColorDrawQuad() const;

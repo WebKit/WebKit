@@ -51,6 +51,7 @@
 #include "TrackingTextureAllocator.h"
 #include "TreeSynchronizer.h"
 #include "WebGLLayerChromium.h"
+#include "cc/CCCheckerboardDrawQuad.h"
 #include "cc/CCDamageTracker.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
@@ -469,6 +470,9 @@ void LayerRendererChromium::drawQuad(const CCDrawQuad* quad, const FloatRect& su
     case CCDrawQuad::Invalid:
         ASSERT_NOT_REACHED();
         break;
+    case CCDrawQuad::Checkerboard:
+        drawCheckerboardQuad(quad->toCheckerboardDrawQuad());
+        break;
     case CCDrawQuad::DebugBorder:
         drawDebugBorderQuad(quad->toDebugBorderDrawQuad());
         break;
@@ -488,6 +492,34 @@ void LayerRendererChromium::drawQuad(const CCDrawQuad* quad, const FloatRect& su
         drawVideoQuad(quad->toVideoDrawQuad());
         break;
     }
+}
+
+void LayerRendererChromium::drawCheckerboardQuad(const CCCheckerboardDrawQuad* quad)
+{
+    const CheckerboardProgram* program = checkerboardProgram();
+    ASSERT(program && program->initialized());
+    GLC(context(), context()->useProgram(program->program()));
+
+    IntRect tileRect = quad->quadRect();
+    TransformationMatrix tileTransform = quad->quadTransform();
+    tileTransform.translate(tileRect.x() + tileRect.width() / 2.0, tileRect.y() + tileRect.height() / 2.0);
+
+    float texOffsetX = tileRect.x();
+    float texOffsetY = tileRect.y();
+    float texScaleX = tileRect.width();
+    float texScaleY = tileRect.height();
+    GLC(context(), context()->uniform4f(program->fragmentShader().texTransformLocation(), texOffsetX, texOffsetY, texScaleX, texScaleY));
+
+    const int checkerboardWidth = 16;
+    float frequency = 1.0 / checkerboardWidth;
+
+    GLC(context(), context()->uniform1f(program->fragmentShader().frequencyLocation(), frequency));
+
+    float opacity = quad->opacity();
+    drawTexturedQuad(tileTransform,
+                     tileRect.width(), tileRect.height(), opacity, FloatQuad(),
+                     program->vertexShader().matrixLocation(),
+                     program->fragmentShader().alphaLocation(), -1);
 }
 
 void LayerRendererChromium::drawDebugBorderQuad(const CCDebugBorderDrawQuad* quad)
@@ -1315,6 +1347,17 @@ bool LayerRendererChromium::initializeSharedObjects()
     return true;
 }
 
+const LayerRendererChromium::CheckerboardProgram* LayerRendererChromium::checkerboardProgram()
+{
+    if (!m_checkerboardProgram)
+        m_checkerboardProgram = adoptPtr(new CheckerboardProgram(m_context.get()));
+    if (!m_checkerboardProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::checkerboardProgram::initalize", this, 0);
+        m_checkerboardProgram->initialize(m_context.get());
+    }
+    return m_checkerboardProgram.get();
+}
+
 const LayerChromium::BorderProgram* LayerRendererChromium::borderProgram()
 {
     if (!m_borderProgram)
@@ -1549,6 +1592,8 @@ void LayerRendererChromium::cleanupSharedObjects()
 
     m_sharedGeometry.clear();
 
+    if (m_checkerboardProgram)
+        m_checkerboardProgram->cleanup(m_context.get());
     if (m_borderProgram)
         m_borderProgram->cleanup(m_context.get());
     if (m_headsUpDisplayProgram)

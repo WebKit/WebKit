@@ -58,13 +58,13 @@ CCRenderPass::CCRenderPass(CCRenderSurface* targetSurface)
     ASSERT(m_targetSurface);
 }
 
-void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker, bool& usedCheckerboard)
+void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker, bool& hadMissingTiles)
 {
     CCQuadCuller quadCuller(m_quadList, layer, occlusionTracker);
 
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
     layer->appendDebugBorderQuad(quadCuller, sharedQuadState.get());
-    layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+    layer->appendQuads(quadCuller, sharedQuadState.get(), hadMissingTiles);
     m_sharedQuadStateList.append(sharedQuadState.release());
 }
 

@@ -60,7 +60,7 @@ public:
     void setScrollLayer(CCLayerImpl* scrollLayer) { m_scrollLayer = scrollLayer; }
 
     virtual void willDraw(LayerRendererChromium*);
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& usedCheckerboard);
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles);
     virtual void didDraw();
 
 protected:

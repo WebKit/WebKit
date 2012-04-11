@@ -55,7 +55,7 @@ class CCRenderPass {
 public:
     static PassOwnPtr<CCRenderPass> create(CCRenderSurface*);
 
-    void appendQuadsForLayer(CCLayerImpl*, CCOcclusionTrackerImpl*, bool& usedCheckerboard);
+    void appendQuadsForLayer(CCLayerImpl*, CCOcclusionTrackerImpl*, bool& hadMissingTiles);
     void appendQuadsForRenderSurfaceLayer(CCLayerImpl*, CCOcclusionTrackerImpl*);
     void appendQuadsToFillScreen(CCLayerImpl* rootLayer, const Color& screenBackgroundColor, const CCOcclusionTrackerImpl&);
 

@@ -86,8 +86,8 @@ static void appendQuads(CCQuadList& quadList, Vector<OwnPtr<CCSharedQuadState> >
 {
     CCQuadCuller quadCuller(quadList, layer, &occlusionTracker);
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
-    bool usedCheckerboard = false;
-    layer->appendQuads(quadCuller, sharedQuadState.get(), usedCheckerboard);
+    bool hadMissingTiles = false;
+    layer->appendQuads(quadCuller, sharedQuadState.get(), hadMissingTiles);
     sharedStateList.append(sharedQuadState.release());
 }
 

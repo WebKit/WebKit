@@ -40,7 +40,7 @@ public:
     }
     virtual ~CCTextureLayerImpl();
 
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& usedCheckerboard);
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles);
 
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> ProgramFlip;
     typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexAlpha> ProgramStretch;

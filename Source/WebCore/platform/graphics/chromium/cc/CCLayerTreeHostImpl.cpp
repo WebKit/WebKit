@@ -314,9 +314,9 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
 
         it->willDraw(m_layerRenderer.get());
 
-        bool usedCheckerboard = false;
-        pass->appendQuadsForLayer(*it, &occlusionTracker, usedCheckerboard);
-        if (usedCheckerboard) {
+        bool hadMissingTiles = false;
+        pass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
+        if (hadMissingTiles) {
             bool layerHasAnimatingTransform = it->screenSpaceTransformIsAnimating() || it->drawTransformIsAnimating();
             if (layerHasAnimatingTransform)
                 drawFrame = false;

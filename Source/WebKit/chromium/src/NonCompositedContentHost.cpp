@@ -47,6 +47,9 @@ NonCompositedContentHost::NonCompositedContentHost(PassOwnPtr<WebCore::LayerPain
     m_graphicsLayer->setDrawsContent(true);
     m_graphicsLayer->platformLayer()->setIsNonCompositedContent(true);
     m_graphicsLayer->platformLayer()->setOpaque(true);
+#if !OS(ANDROID)
+    m_graphicsLayer->platformLayer()->setDrawCheckerboardForMissingTiles(true);
+#endif
 }
 
 NonCompositedContentHost::~NonCompositedContentHost()

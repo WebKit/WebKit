@@ -143,6 +143,9 @@ public:
     void setNonFastScrollableRegion(const Region&);
     void setNonFastScrollableRegionChanged() { m_nonFastScrollableRegionChanged = true; }
 
+    void setDrawCheckerboardForMissingTiles(bool);
+    bool drawCheckerboardForMissingTiles() const { return m_drawCheckerboardForMissingTiles; }
+
     IntSize scrollDelta() const { return IntSize(); }
 
     float pageScaleDelta() const { return 1; }
@@ -318,6 +321,7 @@ private:
     bool m_isNonCompositedContent;
     bool m_preserves3D;
     bool m_alwaysReserveTextures;
+    bool m_drawCheckerboardForMissingTiles;
 
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;

@@ -115,6 +115,10 @@ public:
 
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
     const FloatQuad& sharedGeometryQuad() const { return m_sharedGeometryQuad; }
+
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderCheckerboard> CheckerboardProgram;
+
+    const CheckerboardProgram* checkerboardProgram();
     const LayerChromium::BorderProgram* borderProgram();
     const CCHeadsUpDisplay::Program* headsUpDisplayProgram();
     const CCRenderSurface::Program* renderSurfaceProgram();
@@ -172,6 +176,7 @@ protected:
 
 private:
     void drawQuad(const CCDrawQuad*, const FloatRect& surfaceDamageRect);
+    void drawCheckerboardQuad(const CCCheckerboardDrawQuad*);
     void drawDebugBorderQuad(const CCDebugBorderDrawQuad*);
     void drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*);
     void drawSolidColorQuad(const CCSolidColorDrawQuad*);
@@ -224,6 +229,7 @@ private:
     // multiple instances of the compositor running in the same renderer process
     // we cannot store these values in static variables.
     OwnPtr<GeometryBinding> m_sharedGeometry;
+    OwnPtr<CheckerboardProgram> m_checkerboardProgram;
     OwnPtr<LayerChromium::BorderProgram> m_borderProgram;
     OwnPtr<CCHeadsUpDisplay::Program> m_headsUpDisplayProgram;
     OwnPtr<CCTextureLayerImpl::ProgramFlip> m_textureLayerProgramFlip;

@@ -78,6 +78,7 @@ LayerChromium::LayerChromium()
     , m_isNonCompositedContent(false)
     , m_preserves3D(false)
     , m_alwaysReserveTextures(false)
+    , m_drawCheckerboardForMissingTiles(false)
     , m_replicaLayer(0)
     , m_drawOpacity(0)
     , m_drawOpacityIsAnimating(false)
@@ -405,6 +406,14 @@ void LayerChromium::setNonFastScrollableRegion(const Region& region)
     setNeedsCommit();
 }
 
+void LayerChromium::setDrawCheckerboardForMissingTiles(bool checkerboard)
+{
+    if (m_drawCheckerboardForMissingTiles == checkerboard)
+        return;
+    m_drawCheckerboardForMissingTiles = checkerboard;
+    setNeedsCommit();
+}
+
 void LayerChromium::setDoubleSided(bool doubleSided)
 {
     if (m_doubleSided == doubleSided)
@@ -451,6 +460,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setDebugBorderWidth(m_debugBorderWidth);
     layer->setDebugName(m_debugName.isolatedCopy()); // We have to use isolatedCopy() here to safely pass ownership to another thread.
     layer->setDoubleSided(m_doubleSided);
+    layer->setDrawCheckerboardForMissingTiles(m_drawCheckerboardForMissingTiles);
     layer->setDrawsContent(drawsContent());
     if (CCProxy::hasImplThread()) {
         // Since FilterOperations contains a vector of RefPtrs, we must deep copy the filters.

@@ -23,36 +23,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCSolidColorLayerImpl_h
-#define CCSolidColorLayerImpl_h
+#include "config.h"
 
-#include "TransformationMatrix.h"
-#include "cc/CCLayerImpl.h"
+#include "cc/CCCheckerboardDrawQuad.h"
 
 namespace WebCore {
 
-class LayerRendererChromium;
-
-class CCSolidColorLayerImpl : public CCLayerImpl {
-public:
-    static PassOwnPtr<CCSolidColorLayerImpl> create(int id)
-    {
-        return adoptPtr(new CCSolidColorLayerImpl(id));
-    }
-    virtual ~CCSolidColorLayerImpl();
-
-    virtual TransformationMatrix quadTransform() const;
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles);
-
-protected:
-    explicit CCSolidColorLayerImpl(int id);
-
-private:
-    virtual const char* layerTypeAsString() const { return "SolidColorLayer"; }
-
-    const int m_tileSize;
-};
-
+PassOwnPtr<CCCheckerboardDrawQuad> CCCheckerboardDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect)
+{
+    return adoptPtr(new CCCheckerboardDrawQuad(sharedQuadState, quadRect));
 }
 
-#endif // CCSolidColorLayerImpl_h
+CCCheckerboardDrawQuad::CCCheckerboardDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::Checkerboard, quadRect)
+{
+}
+
+}

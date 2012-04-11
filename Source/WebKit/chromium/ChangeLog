@@ -1,3 +1,24 @@
+2012-04-11  Adrienne Walker  <enne@google.com>
+
+        [chromium] Draw missing layer tile checkerboards as checkerboards
+        https://bugs.webkit.org/show_bug.cgi?id=83241
+
+        Reviewed by James Robinson.
+
+        Rename usedCheckerboard to hadMissingTile to avoid confusion. Update
+        tests to not expect SolidColor quads for checkerboards.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore::appendQuads):
+        * tests/CCSolidColorLayerImplTest.cpp:
+        (CCLayerTestCommon::TEST):
+        * tests/CCTiledLayerImplTest.cpp:
+        (CCLayerTestCommon::TEST):
+        (CCLayerTestCommon::getQuads):
+        * tests/LayerChromiumTest.cpp:
+
 2012-04-11  Ami Fischman  <fischman@chromium.org>
 
         Remove unused WebVideoFrame::Format values

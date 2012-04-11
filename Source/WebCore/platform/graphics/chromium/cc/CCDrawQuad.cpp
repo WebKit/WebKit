@@ -27,6 +27,7 @@
 
 #include "cc/CCDrawQuad.h"
 
+#include "cc/CCCheckerboardDrawQuad.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCTextureDrawQuad.h"
@@ -62,6 +63,12 @@ void CCDrawQuad::setQuadVisibleRect(const IntRect& quadVisibleRect)
 {
     m_quadVisibleRect = quadVisibleRect;
     m_quadVisibleRect.intersect(m_quadRect);
+}
+
+const CCCheckerboardDrawQuad* CCDrawQuad::toCheckerboardDrawQuad() const
+{
+    ASSERT(m_material == Checkerboard);
+    return static_cast<const CCCheckerboardDrawQuad*>(this);
 }
 
 const CCDebugBorderDrawQuad* CCDrawQuad::toDebugBorderDrawQuad() const
