@@ -129,7 +129,7 @@ bool RenderSVGShape::fillContains(const FloatPoint& point, bool requiresFill, co
 
 bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke)
 {
-    if (!m_strokeAndMarkerBoundingBox.contains(point))
+    if (!strokeBoundingBox().contains(point))
         return false;
 
     Color fallbackColor;
