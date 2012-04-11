@@ -1,3 +1,15 @@
+2012-04-11  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Add WEBKIT_CREATE_FORWARDING_HEADERS macro
+        https://bugs.webkit.org/show_bug.cgi?id=83574
+
+        Reviewed by Daniel Bates.
+
+        This new macro generates forwarding headers with absolute paths to the original files.
+        It accepts a list of files and/or a list of directories as input.
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2012-04-10  Yael Aharon  <yael.aharon@nokia.com>
 
         Initial support for fixed position elements in Qt WebKit2
