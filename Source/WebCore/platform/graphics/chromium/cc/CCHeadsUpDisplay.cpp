@@ -50,6 +50,7 @@ using namespace std;
 
 CCHeadsUpDisplay::CCHeadsUpDisplay(LayerRendererChromium* owner)
     : m_currentFrameNumber(1)
+    , m_filteredFrameTime(0)
     , m_layerRenderer(owner)
     , m_useMapSubForUploads(owner->contextSupportsMapSub())
 {
@@ -73,7 +74,7 @@ void CCHeadsUpDisplay::initializeFonts()
     ASSERT(!CCProxy::implThread());
     FontDescription mediumFontDesc;
     mediumFontDesc.setGenericFamily(FontDescription::MonospaceFamily);
-    mediumFontDesc.setComputedSize(12);
+    mediumFontDesc.setComputedSize(20);
 
     m_mediumFont = adoptPtr(new Font(mediumFontDesc, 0, 0));
     m_mediumFont->update(0);
@@ -86,20 +87,9 @@ void CCHeadsUpDisplay::initializeFonts()
     m_smallFont->update(0);
 }
 
-// safeMod works on -1, returning m-1 in that case.
-static inline int safeMod(int number, int modulus)
-{
-    return (number + modulus) % modulus;
-}
-
-inline int CCHeadsUpDisplay::frameIndex(int frame) const
-{
-    return safeMod(frame, kBeginFrameHistorySize);
-}
-
 void CCHeadsUpDisplay::onFrameBegin(double timestamp)
 {
-    m_beginTimeHistoryInSec[frameIndex(m_currentFrameNumber)] = timestamp;
+    m_beginTimeHistoryInSec[m_currentFrameNumber % kBeginFrameHistorySize] = timestamp;
 }
 
 void CCHeadsUpDisplay::onSwapBuffers()
@@ -184,15 +174,6 @@ void CCHeadsUpDisplay::draw()
     m_hudTexture->unreserve();
 }
 
-bool CCHeadsUpDisplay::isBadFrame(int frameNumber) const
-{
-    double delta = m_beginTimeHistoryInSec[frameIndex(frameNumber)] -
-                   m_beginTimeHistoryInSec[frameIndex(frameNumber - 1)];
-    bool tooSlow = delta > (kNumMissedFramesForReset / 60.0);
-    bool schedulerAllowsDoubleFrames = !CCProxy::hasImplThread();
-    return (schedulerAllowsDoubleFrames && delta < kFrameTooFast) || tooSlow;
-}
-
 void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, const IntSize& hudSize)
 {
     if (showPlatformLayerTree()) {
@@ -200,11 +181,11 @@ void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, const IntSize& 
         context->fillRect(FloatRect(0, 0, hudSize.width(), hudSize.height()));
     }
 
-    int fpsCounterHeight = m_mediumFont->fontMetrics().floatHeight() + 40;
+    int fpsCounterHeight = 25;
     int fpsCounterTop = 2;
     int platformLayerTreeTop;
     if (settings().showFPSCounter)
-        platformLayerTreeTop = fpsCounterTop + fpsCounterHeight;
+        platformLayerTreeTop = fpsCounterTop + fpsCounterHeight + 2;
     else
         platformLayerTreeTop = 0;
 
@@ -215,69 +196,36 @@ void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, const IntSize& 
         drawPlatformLayerTree(context, platformLayerTreeTop);
 }
 
-void CCHeadsUpDisplay::getAverageFPSAndStandardDeviation(double *average, double *standardDeviation) const
-{
-    double& averageFPS = *average;
-
-    int frame = m_currentFrameNumber - 1; 
-    averageFPS = 0;
-    int averageFPSCount = 0;
-    double fpsVarianceNumerator = 0;
-
-    // Walk backwards through the samples looking for a run of good frame
-    // timings from which to compute the mean and standard deviation.
-    //
-    // Slow frames occur just because the user is inactive, and should be
-    // ignored. Fast frames are ignored if the scheduler is in single-thread
-    // mode in order to represent the true frame rate in spite of the fact that
-    // the first few swapbuffers happen instantly which skews the statistics
-    // too much for short lived animations.
-    //
-    // isBadFrame encapsulates the frame too slow/frame too fast logic.
-    while (1) {
-        if (!isBadFrame(frame)) {
-            averageFPSCount++;
-            double secForLastFrame = m_beginTimeHistoryInSec[frameIndex(frame)] -
-                                     m_beginTimeHistoryInSec[frameIndex(frame - 1)];
-            double x = 1.0 / secForLastFrame;
-            double deltaFromAverage = x - averageFPS;
-            // Change with caution - numerics. http://en.wikipedia.org/wiki/Standard_deviation
-            averageFPS = averageFPS + deltaFromAverage / averageFPSCount;
-            fpsVarianceNumerator = fpsVarianceNumerator + deltaFromAverage * (x - averageFPS);
-        }
-        if (averageFPSCount && isBadFrame(frame)) {
-            // We've gathered a run of good samples, so stop.
-            break;
-        }
-        --frame;
-        if (frameIndex(frame) == frameIndex(m_currentFrameNumber) || frame < 0) {
-            // We've gone through all available historical data, so stop.
-            break;
-        }
-    }
-
-    *standardDeviation = sqrt(fpsVarianceNumerator / averageFPSCount);
-}
-
 void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* context, int top, int height)
 {
+    // Note that since we haven't finished the current frame, the FPS counter
+    // actually reports the last frame's time.
+    double secForLastFrame = m_beginTimeHistoryInSec[(m_currentFrameNumber + kBeginFrameHistorySize - 1) % kBeginFrameHistorySize] -
+                             m_beginTimeHistoryInSec[(m_currentFrameNumber + kBeginFrameHistorySize - 2) % kBeginFrameHistorySize];
+
+    // Filter the frame times to avoid spikes.
+    const float alpha = 0.1;
+    if (!m_filteredFrameTime) {
+        if (m_currentFrameNumber == 2)
+            m_filteredFrameTime = secForLastFrame;
+    } else
+        m_filteredFrameTime = ((1.0 - alpha) * m_filteredFrameTime) + (alpha * secForLastFrame);
+
     float textWidth = 0;
     if (!CCProxy::implThread())
         textWidth = drawFPSCounterText(context, top, height);
 
     float graphWidth = kBeginFrameHistorySize;
 
-    // Draw FPS graph.
-    const double loFPS = 0;
-    const double hiFPS = 80;
-    context->setStrokeStyle(SolidStroke);
-    context->setFillColor(Color(154, 205, 50), ColorSpaceDeviceRGB);
-    context->fillRect(FloatRect(2 + textWidth, top, graphWidth, height / 2));
-    context->setFillColor(Color(255, 250, 205), ColorSpaceDeviceRGB);
-    context->fillRect(FloatRect(2 + textWidth, top + height / 2, graphWidth, height / 2));
-    context->setStrokeColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
-    context->setFillColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
+    // Draw background for graph
+    context->setFillColor(Color(0, 0, 0, 255), ColorSpaceDeviceRGB);
+    context->fillRect(FloatRect(2 + textWidth, top, graphWidth, height));
 
+    // Draw FPS graph.
+    const double loFPS = 0.0;
+    const double hiFPS = 120.0;
+    context->setStrokeStyle(SolidStroke);
+    context->setStrokeColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
     int graphLeft = static_cast<int>(textWidth + 3);
     IntPoint prev(-1, 0);
     int x = 0;
@@ -285,10 +233,6 @@ void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* context, int top, int hei
     for (int i = m_currentFrameNumber % kBeginFrameHistorySize; i != (m_currentFrameNumber - 1) % kBeginFrameHistorySize; i = (i + 1) % kBeginFrameHistorySize) {
         int j = (i + 1) % kBeginFrameHistorySize;
         double fps = 1.0 / (m_beginTimeHistoryInSec[j] - m_beginTimeHistoryInSec[i]);
-        if (isBadFrame(j)) {
-            x += 1;
-            continue;
-        }
         double p = 1 - ((fps - loFPS) / (hiFPS - loFPS));
         if (p < 0)
             p = 0;
@@ -307,22 +251,21 @@ float CCHeadsUpDisplay::drawFPSCounterText(GraphicsContext* context, int top, in
     ASSERT(!CCProxy::implThread());
 
     FontCachePurgePreventer fontCachePurgePreventer;
-    double averageFPS, stdDeviation;
 
-    getAverageFPSAndStandardDeviation(&averageFPS, &stdDeviation);
-
-    String fps(String::format("FPS: %4.1f +/-%3.1f", averageFPS, stdDeviation));
-    TextRun text(fps);
-    float textWidth = m_mediumFont->width(text) + 2;
+    // Create & measure FPS text.
+    String text(String::format("FPS: %5.1f", 1.0 / m_filteredFrameTime));
+    TextRun run(text);
+    float textWidth = m_mediumFont->width(run) + 2.0f;
 
     // Draw background.
     context->setFillColor(Color(0, 0, 0, 255), ColorSpaceDeviceRGB);
-    double fontHeight = m_mediumFont->fontMetrics().floatHeight() + 2;
-    context->fillRect(FloatRect(2, top, textWidth, fontHeight));
+    context->fillRect(FloatRect(2, top, textWidth, height));
 
     // Draw FPS text.
-    context->setFillColor(Color(200, 200, 200), ColorSpaceDeviceRGB);
-    context->drawText(*m_mediumFont, text, IntPoint(3, top + fontHeight - 4));
+    if (m_filteredFrameTime) {
+        context->setFillColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
+        context->drawText(*m_mediumFont, run, IntPoint(3, top + height - 6));
+    }
 
     return textWidth;
 }
