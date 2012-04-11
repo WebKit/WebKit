@@ -1,3 +1,9 @@
+2012-04-11  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Follow up to r113863: fix chromium inspector interactive test harness.
+
+        * src/js/Tests.js:
+
 2012-04-11  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Add Battery Status API support.

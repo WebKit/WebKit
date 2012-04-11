@@ -404,7 +404,7 @@ TestSuite.prototype.testNetworkSize = function()
         test.releaseControl();
     }
     
-    this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishResource", finishResource);
+    this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishNetworkRequest", finishResource);
 
     // Reload inspected page to sniff network events
     test.evaluateInConsole_("window.location.reload(true);", function(resultText) {});
@@ -427,7 +427,7 @@ TestSuite.prototype.testNetworkSyncSize = function()
         test.releaseControl();
     }
     
-    this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishResource", finishResource);
+    this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishNetworkRequest", finishResource);
 
     // Send synchronous XHR to sniff network events
     test.evaluateInConsole_("var xhr = new XMLHttpRequest(); xhr.open(\"GET\", \"chunked\", false); xhr.send(null);", function() {});
@@ -451,7 +451,7 @@ TestSuite.prototype.testNetworkRawHeadersText = function()
         test.releaseControl();
     }
     
-    this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishResource", finishResource);
+    this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishNetworkRequest", finishResource);
 
     // Reload inspected page to sniff network events
     test.evaluateInConsole_("window.location.reload(true);", function(resultText) {});
@@ -485,7 +485,7 @@ TestSuite.prototype.testNetworkTiming = function()
         test.releaseControl();
     }
     
-    this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishResource", finishResource);
+    this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishNetworkRequest", finishResource);
     
     // Reload inspected page to sniff network events
     test.evaluateInConsole_("window.location.reload(true);", function(resultText) {});
