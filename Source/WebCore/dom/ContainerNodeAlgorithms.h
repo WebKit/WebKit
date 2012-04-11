@@ -22,6 +22,7 @@
 #ifndef ContainerNodeAlgorithms_h
 #define ContainerNodeAlgorithms_h
 
+#include <Document.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {
