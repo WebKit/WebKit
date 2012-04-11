@@ -70,9 +70,13 @@ enum PropertyNamePrefix
     PropertyNamePrefixCSS,
     PropertyNamePrefixPixel,
     PropertyNamePrefixPos,
+#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     PropertyNamePrefixApple,
+#endif
     PropertyNamePrefixEpub,
+#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     PropertyNamePrefixKHTML,
+#endif
     PropertyNamePrefixWebKit
 };
 
@@ -113,18 +117,22 @@ static PropertyNamePrefix getCSSPropertyNamePrefix(const StringImpl& propertyNam
     // First character of the prefix within the property name may be upper or lowercase.
     UChar firstChar = toASCIILower(propertyName[0]);
     switch (firstChar) {
+#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     case 'a':
         if (matchesCSSPropertyNamePrefix(propertyName, "apple"))
             return PropertyNamePrefixApple;
         break;
+#endif
     case 'c':
         if (matchesCSSPropertyNamePrefix(propertyName, "css"))
             return PropertyNamePrefixCSS;
         break;
+#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     case 'k':
         if (matchesCSSPropertyNamePrefix(propertyName, "khtml"))
             return PropertyNamePrefixKHTML;
         break;
+#endif
     case 'e':
         if (matchesCSSPropertyNamePrefix(propertyName, "epub"))
             return PropertyNamePrefixEpub;
@@ -209,11 +217,13 @@ static CSSPropertyInfo cssPropertyIDForJSCSSPropertyName(const Identifier& prope
         i += 3;
         hadPixelOrPosPrefix = true;
         break;
+#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     case PropertyNamePrefixApple:
     case PropertyNamePrefixKHTML:
         writeWebKitPrefix(bufferPtr);
         i += 5;
         break;
+#endif
     case PropertyNamePrefixEpub:
         writeEpubPrefix(bufferPtr);
         i += 4;

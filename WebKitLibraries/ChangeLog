@@ -1,3 +1,12 @@
+2012-04-10  Adam Barth  <abarth@webkit.org>
+
+        Limit -apple- and -khtml- to ENABLE(DASHBOARD_SUPPORT)
+        https://bugs.webkit.org/show_bug.cgi?id=83256
+
+        Reviewed by Eric Seidel.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2012-04-09  Beth Dakin  <bdakin@apple.com>
 
         <rdar://problem/11214796>

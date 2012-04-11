@@ -1548,6 +1548,10 @@ fast/text/synthetic-bold-transformed.html
 fast/dom/Window/window-custom-prototype.html
 http/tests/security/cross-frame-access-object-getPrototypeOf.html
 
+# These test -apple- and -khtml- prefixed CSS properties, which we don't support.
+inspector/styles/vendor-prefixes.html
+fast/css/apple-prefix.html
+
 # Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
 # https://bugs.webkit.org/show_bug.cgi?id=76564
 fast/workers/worker-crash-with-invalid-location.html

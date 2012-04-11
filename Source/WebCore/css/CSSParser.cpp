@@ -9351,6 +9351,7 @@ static CSSPropertyID cssPropertyID(const UChar* propertyName, unsigned length)
 
     const char* name = buffer;
     if (buffer[0] == '-') {
+#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
         // If the prefix is -apple- or -khtml-, change it to -webkit-.
         // This makes the string one character longer.
         if (hasPrefix(buffer, length, "-apple-") || hasPrefix(buffer, length, "-khtml-")) {
@@ -9358,6 +9359,7 @@ static CSSPropertyID cssPropertyID(const UChar* propertyName, unsigned length)
             memcpy(buffer, "-webkit", 7);
             ++length;
         }
+#endif
 #if PLATFORM(IOS)
         cssPropertyNameIOSAliasing(buffer, name, length);
 #endif

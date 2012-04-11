@@ -2385,6 +2385,10 @@ editing/text-iterator/basic-iteration.html
 # This test tickles another crasher on Qt.
 fast/loader/reload-zero-byte-plugin.html
 
+# These test -apple- and -khtml- prefixed CSS properties, which we don't support.
+inspector/styles/vendor-prefixes.html
+fast/css/apple-prefix.html
+
 # Failing after http://trac.webkit.org/changeset/92375
 # https://bugs.webkit.org/show_bug.cgi?id=65721
 fast/replaced/table-percent-height.html

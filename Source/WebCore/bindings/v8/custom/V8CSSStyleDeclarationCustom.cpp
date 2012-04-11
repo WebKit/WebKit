@@ -126,8 +126,11 @@ static CSSPropertyInfo* cssPropertyInfo(v8::Handle<v8::String>v8PropertyName)
             i += 3;
             hadPixelOrPosPrefix = true;
         } else if (hasCSSPropertyNamePrefix(propertyName, "webkit")
+#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
                 || hasCSSPropertyNamePrefix(propertyName, "khtml")
-                || hasCSSPropertyNamePrefix(propertyName, "apple"))
+                || hasCSSPropertyNamePrefix(propertyName, "apple")
+#endif
+                  )
             builder.append('-');
         else if (isASCIIUpper(propertyName[0]))
             return 0;

@@ -161,6 +161,10 @@ WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
 WONTFIX MAC WIN : platform/chromium-linux = FAIL
 WONTFIX SKIP LINUX MAC : platform/win = FAIL CRASH PASS
 
+// These tests are for -apple- and -khtml- prefixes, which we don't support
+WONTFIX SKIP : inspector/styles/vendor-prefixes.html = TIMEOUT
+WONTFIX SKIP : fast/css/apple-prefix.html = FAIL
+
 // Perf tests are really slow in debug builds and there are few benefits in
 // running them.
 WONTFIX SKIP DEBUG : perf = TIMEOUT
