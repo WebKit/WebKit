@@ -48,6 +48,7 @@
 namespace WebKit {
 
 class WebAccessibilityObject;
+class WebBatteryStatusClient;
 class WebColorChooser;
 class WebColorChooserClient;
 class WebDeviceOrientationClient;
@@ -325,6 +326,10 @@ public:
     // Access the embedder API for device orientation services.
     virtual WebDeviceOrientationClient* deviceOrientationClient() { return 0; }
 
+    // Battery Status ------------------------------------------------------
+
+    // Access the embedder API for battery status services.
+    virtual WebBatteryStatusClient* batteryStatusClient() { return 0; }
 
     // Zoom ----------------------------------------------------------------
 

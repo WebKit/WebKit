@@ -136,9 +136,6 @@ BUGCR103939 SKIP : http/tests/appcache/wrong-content-type.html = TEXT
 // Vibration API is not supported yet in the chromium port.
 BUGWK72010 SKIP : fast/dom/navigator-vibration.html = FAIL
 
-// Battery Status API is not supported yet in the chromium port.
-BUGWK62698 SKIP : batterystatus = PASS FAIL
-
 // Touch Adjustment is not supported yet in the chromium port.
 BUGWK78801 SKIP : touchadjustment/ = FAIL
 

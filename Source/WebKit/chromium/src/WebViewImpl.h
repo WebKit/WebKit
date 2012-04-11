@@ -81,6 +81,7 @@ class Widget;
 namespace WebKit {
 class AutocompletePopupMenuClient;
 class AutofillPopupMenuClient;
+class BatteryClientImpl;
 class ContextMenuClientImpl;
 class DeviceOrientationClientProxy;
 class DragScrollTimer;
@@ -257,6 +258,9 @@ public:
     virtual void performCustomContextMenuAction(unsigned action);
     virtual void addPageOverlay(WebPageOverlay*, int /* zOrder */);
     virtual void removePageOverlay(WebPageOverlay*);
+#if ENABLE(BATTERY_STATUS)
+    virtual void updateBatteryStatus(const WebBatteryStatus&);
+#endif
     virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&);
 
     // WebLayerTreeViewClient
@@ -749,6 +753,9 @@ private:
     OwnPtr<WebGraphicsContext3D> m_temporaryOnscreenGraphicsContext3D;
     OwnPtr<DeviceOrientationClientProxy> m_deviceOrientationClientProxy;
     OwnPtr<GeolocationClientProxy> m_geolocationClientProxy;
+#if ENABLE(BATTERY_STATUS)
+    OwnPtr<BatteryClientImpl> m_batteryClient;
+#endif
 
     float m_emulatedTextZoomFactor;
 
