@@ -1650,3 +1650,6 @@ inspector/styles/override-screen-size.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=83560
 fast/events/drop-with-file-paths.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=83675
+fast/multicol/cell-shrinkback.html
