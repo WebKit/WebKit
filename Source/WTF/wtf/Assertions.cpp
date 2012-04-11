@@ -409,4 +409,16 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
     printCallSite(file, line, function);
 }
 
+void WTFLogAlways(const char* format, ...)
+{
+#if PLATFORM(BLACKBERRY)
+    WTFLogLocker locker(BlackBerry::Platform::LogLevelInfo);
+#endif
+
+    va_list args;
+    va_start(args, format);
+    vprintf_stderr_with_trailing_newline(format, args);
+    va_end(args);
+}
+
 } // extern "C"

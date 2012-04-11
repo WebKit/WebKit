@@ -255,7 +255,7 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const KURL& url)
     }
 
     // A Web process that was never asked to load a file URL should not ever ask us to do anything with a file URL.
-    fprintf(stderr, "Received an unexpected URL from the web process: '%s'\n", url.string().utf8().data());
+    WTFLogAlways("Received an unexpected URL from the web process: '%s'\n", url.string().utf8().data());
     return false;
 }
 
@@ -377,7 +377,7 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
 
 void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID)
 {
-    fprintf(stderr, "Received an invalid message from the web process with message ID %x\n", messageID.toInt());
+    WTFLogAlways("Received an invalid message from the web process with message ID %x\n", messageID.toInt());
 
     // Terminate the WebProcesses.
     terminate();

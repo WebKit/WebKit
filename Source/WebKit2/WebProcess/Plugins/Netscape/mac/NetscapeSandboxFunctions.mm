@@ -63,19 +63,19 @@ static CString readSandboxProfile()
     RetainPtr<CFURLRef> profileURL(AdoptCF, CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("com.apple.WebKit.PluginProcess"), CFSTR("sb"), 0));
     char profilePath[PATH_MAX];
     if (!CFURLGetFileSystemRepresentation(profileURL.get(), false, reinterpret_cast<UInt8*>(profilePath), sizeof(profilePath))) {
-        fprintf(stderr, "Could not get file system representation of plug-in sandbox URL\n");
+        WTFLogAlways("Could not get file system representation of plug-in sandbox URL\n");
         return CString();
     }
 
     FILE *file = fopen(profilePath, "r");
     if (!file) {
-        fprintf(stderr, "Could not open plug-in sandbox file '%s'\n", profilePath);
+        WTFLogAlways("Could not open plug-in sandbox file '%s'\n", profilePath);
         return CString();
     }
 
     struct stat fileInfo;
     if (stat(profilePath, &fileInfo)) {
-        fprintf(stderr, "Could not get plug-in sandbox file size '%s'\n", profilePath);
+        WTFLogAlways("Could not get plug-in sandbox file size '%s'\n", profilePath);
         return CString();
     }
 
@@ -83,7 +83,7 @@ static CString readSandboxProfile()
     CString result = CString::newUninitialized(fileInfo.st_size, characterBuffer);
 
     if (1 != fread(characterBuffer, fileInfo.st_size, 1, file)) {
-        fprintf(stderr, "Could not read plug-in sandbox file '%s'\n", profilePath);
+        WTFLogAlways("Could not read plug-in sandbox file '%s'\n", profilePath);
         return CString();
     }
 
@@ -107,7 +107,7 @@ NPError WKN_EnterSandbox(const char* readOnlyPaths[], const char* readWritePaths
     setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(systemDirectorySuffix).data(), 0);
     char temporaryDirectory[PATH_MAX];
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
-        fprintf(stderr, "PluginProcess: couldn't retrieve private temporary directory path: %d\n", errno);
+        WTFLogAlways("PluginProcess: couldn't retrieve private temporary directory path: %d\n", errno);
         exit(EX_NOPERM);
     }
     setenv("TMPDIR", temporaryDirectory, 1);
@@ -156,12 +156,12 @@ NPError WKN_EnterSandbox(const char* readOnlyPaths[], const char* readWritePaths
     const char* sandboxParameters[] = { "HOME_DIR", homeDirectory, 0, 0 };
 
     if (!WKEnterPluginSandbox(profile.data(), sandboxParameters, extendedReadOnlyPaths.data(), extendedReadWritePaths.data())) {
-        fprintf(stderr, "Couldn't initialize sandbox profile\n");
+        WTFLogAlways("Couldn't initialize sandbox profile\n");
         exit(EX_NOPERM);
     }
 
     if (noErr != WKEnableSandboxStyleFileQuarantine()) {
-        fprintf(stderr, "Couldn't enable file quarantine\n");
+        WTFLogAlways("Couldn't enable file quarantine\n");
         exit(EX_NOPERM);
     }
 

@@ -1,3 +1,26 @@
+2012-04-10  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/10583749> WebKit2 should log to both ASL and stderr
+
+        Replace direct calls to fprintf stderr with calls to WTFLogAlways.
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::checkURLReceivedFromWebProcess):
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage):
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp:
+        (WebKit::InjectedBundle::load):
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.mm:
+        (readSandboxProfile):
+        (WKN_EnterSandbox):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::initializeSandbox):
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+
 2012-04-10  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed build fix after r113791.

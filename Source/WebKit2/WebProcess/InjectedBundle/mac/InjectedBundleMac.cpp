@@ -41,7 +41,7 @@ bool InjectedBundle::load(APIObject* initializationUserData)
 {
     if (m_sandboxExtension) {
         if (!m_sandboxExtension->consume()) {
-            fprintf(stderr, "InjectedBundle::load failed - Could not consume bundle sandbox extension for [%s].\n", m_path.utf8().data());
+            WTFLogAlways("InjectedBundle::load failed - Could not consume bundle sandbox extension for [%s].\n", m_path.utf8().data());
             return false;
         }
 
@@ -50,30 +50,30 @@ bool InjectedBundle::load(APIObject* initializationUserData)
     
     RetainPtr<CFStringRef> injectedBundlePathStr(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(m_path.characters()), m_path.length()));
     if (!injectedBundlePathStr) {
-        fprintf(stderr, "InjectedBundle::load failed - Could not create the path string.\n");
+        WTFLogAlways("InjectedBundle::load failed - Could not create the path string.\n");
         return false;
     }
     
     RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(0, injectedBundlePathStr.get(), kCFURLPOSIXPathStyle, false));
     if (!bundleURL) {
-        fprintf(stderr, "InjectedBundle::load failed - Could not create the url from the path string.\n");
+        WTFLogAlways("InjectedBundle::load failed - Could not create the url from the path string.\n");
         return false;
     }
 
     m_platformBundle = CFBundleCreate(0, bundleURL.get());
     if (!m_platformBundle) {
-        fprintf(stderr, "InjectedBundle::load failed - Could not create the bundle.\n");
+        WTFLogAlways("InjectedBundle::load failed - Could not create the bundle.\n");
         return false;
     }
         
     if (!CFBundleLoadExecutable(m_platformBundle)) {
-        fprintf(stderr, "InjectedBundle::load failed - Could not load the executable from the bundle.\n");
+        WTFLogAlways("InjectedBundle::load failed - Could not load the executable from the bundle.\n");
         return false;
     }
 
     WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName(m_platformBundle, CFSTR("WKBundleInitialize")));
     if (!initializeFunction) {
-        fprintf(stderr, "InjectedBundle::load failed - Could not find the initialize function in the bundle executable.\n");
+        WTFLogAlways("InjectedBundle::load failed - Could not find the initialize function in the bundle executable.\n");
         return false;
     }
 
