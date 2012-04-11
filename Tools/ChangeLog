@@ -1,3 +1,37 @@
+2012-04-11  Simon Pena  <spena@igalia.com>
+
+        [GTK] media/event-attributes.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=71662
+
+        Reviewed by Philippe Normand.
+
+        PulseAudio's module "module-stream-restore" allows saving the volume
+        of a stream, restoring it the next time it runs.
+        This affects the tests, since DumpRenderTree's volume settings are
+        saved between test runs, and tests relying on specific volume values
+        would miss some volumeChange events (or get additional ones).
+
+        This patch hooks on the existing GtkPort setup_test_run method and
+        creates a new clean_up_test_run method, so PulseAudio's module is
+        unloaded (if found) before running the tests, and restored (if it
+        was there previously) after they finished, ensuring the tests run in
+        the right environment.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._clean_up_run): Invoke the port implementation of
+        clean_up_test_run.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.clean_up_test_run): Add an empty implementation of
+        clean_up_test_run.
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort._unload_pulseaudio_module): Unloads the offending
+        pulseaudio module, if found.
+        (GtkPort):
+        (GtkPort._restore_pulseaudio_module): Restores the offending
+        pulseaudio module, if it was there previously.
+        (GtkPort.setup_test_run): Calls _unload_pulseaudio_module.
+        (GtkPort.clean_up_test_run): Calls _restore_pulseaudio_module.
+
 2012-04-11  Andras Becsi  <andras.becsi@nokia.com>
 
         Fix the build with gcc 4.7.0

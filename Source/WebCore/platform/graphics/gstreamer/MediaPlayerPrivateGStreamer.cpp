@@ -1366,10 +1366,10 @@ void MediaPlayerPrivateGStreamer::timeChanged()
 void MediaPlayerPrivateGStreamer::didEnd()
 {
     // EOS was reached but in case of reverse playback the position is
-    // not always 0. So to not confuse the HTMLMediaElement we
-    // synchronize position and duration values.
+    // not always 0. So to not confuse the HTMLMediaElement, if we're
+    // doing reverse playback, we synchronize position and duration values.
     float now = currentTime();
-    if (now > 0) {
+    if (now > 0 && m_playbackRate < 0) {
         m_mediaDuration = now;
         m_mediaDurationKnown = true;
         m_player->durationChanged();

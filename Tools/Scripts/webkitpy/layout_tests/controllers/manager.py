@@ -970,6 +970,8 @@ class Manager(object):
         sys.stderr.flush()
         _log.debug("stopping helper")
         self._port.stop_helper()
+        _log.debug("cleaning up port")
+        self._port.clean_up_test_run()
 
     def update_summary(self, result_summary):
         """Update the summary and print results with any completed tests."""

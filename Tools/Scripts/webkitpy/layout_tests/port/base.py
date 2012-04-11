@@ -728,6 +728,10 @@ class Port(object):
         """Perform port-specific work at the beginning of a test run."""
         pass
 
+    def clean_up_test_run(self):
+        """Perform port-specific work at the end of a test run."""
+        pass
+
     # FIXME: os.environ access should be moved to onto a common/system class to be more easily mockable.
     def _value_or_default_from_environ(self, name, default=None):
         if name in os.environ:

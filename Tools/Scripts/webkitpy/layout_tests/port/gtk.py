@@ -76,6 +76,34 @@ class GtkPort(WebKitPort):
     def _driver_class(self):
         return GtkDriver
 
+    def _unload_pulseaudio_module(self):
+        # Unload pulseaudio's module-stream-restore, since it remembers
+        # volume settings from different runs, and could affect
+        # multimedia tests results
+        with open(os.devnull, 'w') as devnull:
+            pactl_process = subprocess.Popen(["pactl", "list", "short", "modules"], stdout=subprocess.PIPE, stderr=devnull)
+        modules_list = pactl_process.communicate()[0]
+        self._pa_module_index = -1
+        for module in modules_list.splitlines():
+            if module.find("module-stream-restore") >= 0:
+                self._pa_module_index = module.split('\t')[0]
+                break
+        if int(self._pa_module_index) != -1:
+            subprocess.Popen(["pactl", "unload-module", self._pa_module_index])
+
+    def _restore_pulseaudio_module(self):
+        # If pulseaudio's module-stream-restore was previously unloaded,
+        # restore it back.
+        if self._pa_module_index != -1:
+            with open(os.devnull, 'w') as devnull:
+                subprocess.Popen(["pactl", "load-module", "module-stream-restore"], stdout=devnull, stderr=devnull)
+
+    def setup_test_run(self):
+        self._unload_pulseaudio_module()
+
+    def clean_up_test_run(self):
+        self._restore_pulseaudio_module()
+
     def setup_environ_for_server(self, server_name=None):
         environment = WebKitPort.setup_environ_for_server(self, server_name)
         environment['GTK_MODULES'] = 'gail'
