@@ -1,3 +1,23 @@
+2012-04-10  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: refactor handling of --platform and related options
+        https://bugs.webkit.org/show_bug.cgi?id=83525
+
+        Reviewed by Adam Barth.
+
+        This change moves to centralize handling of --platform, --debug,
+        --gtk, and other similar flags into a central place next to the
+        code that actually uses those flags in PortFactory to get the
+        right Port object.
+
+        * Scripts/webkitpy/layout_tests/port/__init__.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (port_options):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintBaselines.__init__):
+
 2012-04-10  Ojan Vafai  <ojan@chromium.org>
 
         Add a chromeless view to the individual tests view

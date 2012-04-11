@@ -33,3 +33,4 @@ import builders  # Why is this in port?
 
 from base import Port  # It's possible we don't need to export this virtual baseclass outside the module.
 from driver import Driver, DriverInput, DriverOutput
+from factory import port_options

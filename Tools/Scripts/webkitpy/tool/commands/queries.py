@@ -44,7 +44,7 @@ from webkitpy.common.system.user import User
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.common.system.deprecated_logging import log
-from webkitpy.layout_tests import port
+from webkitpy.layout_tests.port import port_options
 
 
 class SuggestReviewers(AbstractDeclarativeCommand):
@@ -407,15 +407,13 @@ class PrintBaselines(AbstractDeclarativeCommand):
 
     def __init__(self):
         options = [
-            make_option('-p', '--platform', action='store',
-                        help='platform/port(s) to display expectations for. Use glob-style wildcards for multiple ports (note that that will imply --csv)'),
             make_option('--all', action='store_true', default=False,
                         help='display the baselines for *all* tests'),
             make_option('--csv', action='store_true', default=False,
                         help='Print a CSV-style report that includes the port name, test_name, test platform, baseline type, baseline location, and baseline platform'),
             make_option('--include-virtual-tests', action='store_true',
                         help='Include virtual tests'),
-        ]
+        ] + port_options(platform='port/platform to use. Use glob-style wildcards for multiple ports (implies --csv)')
         AbstractDeclarativeCommand.__init__(self, options=options)
         self._platform_regexp = re.compile('platform/([^\/]+)/(.+)')
 

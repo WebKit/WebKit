@@ -39,6 +39,7 @@ import sys
 from webkitpy.common.host import Host
 from webkitpy.layout_tests.controllers.manager import Manager, WorkerException
 from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.port import port_options
 from webkitpy.layout_tests.views import printing
 
 
@@ -191,27 +192,7 @@ def parse_args(args=None):
 
     option_group_definitions = []
 
-    # FIXME: All of these options should be stored closer to the code which
-    # FIXME: actually uses them. configuration_options should move
-    # FIXME: to WebKitPort and be shared across all scripts.
-    option_group_definitions.append(("Configuration Options", [
-        optparse.make_option("-t", "--target", dest="configuration",
-                             help="(DEPRECATED)"),
-        # FIXME: --help should display which configuration is default.
-        optparse.make_option('--debug', action='store_const', const='Debug',
-                             dest="configuration",
-                             help='Set the configuration to Debug'),
-        optparse.make_option('--release', action='store_const',
-                             const='Release', dest="configuration",
-                             help='Set the configuration to Release'),
-        # old-run-webkit-tests also accepts -c, --configuration CONFIGURATION.
-        optparse.make_option("--platform", help="Override port/platform being tested (i.e. chromium-mac)"),
-        optparse.make_option("--chromium", action="store_const", const='chromium', dest='platform', help='Alias for --platform=chromium'),
-        optparse.make_option('--efl', action='store_const', const='efl', dest="platform", help='Alias for --platform=efl'),
-        optparse.make_option('--gtk', action='store_const', const='gtk', dest="platform", help='Alias for --platform=gtk'),
-        optparse.make_option('--qt', action='store_const', const='qt', dest="platform", help='Alias for --platform=qt'),
-    ]))
-
+    option_group_definitions.append(("Configuration options", port_options()))
     option_group_definitions.append(("Printing Options", printing.print_options()))
 
     # FIXME: These options should move onto the ChromiumPort.
