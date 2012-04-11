@@ -33,6 +33,7 @@
 
 #if ENABLE(MICRODATA)
 
+#include "DOMStringList.h"
 #include "HTMLCollection.h"
 
 namespace WebCore {
@@ -56,11 +57,93 @@ public:
 private:
     HTMLPropertiesCollection(Node*);
 
-    void findPropetiesOfAnItem(Node* current) const;
-    void getNamedItems(Vector<RefPtr<Node> >&, const String&) const;
+    unsigned calcLength() const;
+    void findProperties(Element* base) const;
 
-    mutable Vector<Node*> m_properties;
-    mutable RefPtr<DOMStringList> m_propertyNames;
+    Node* findRefElements(Node* previous) const;
+
+    Element* firstProperty() const;
+    Element* itemAfter(Element* base, Element* previous) const;
+
+    void updateNameCache() const;
+    void updateRefElements() const;
+
+    void invalidateCacheIfNeeded() const;
+
+    mutable struct {
+        uint64_t version;
+        Element* current;
+        unsigned position;
+        unsigned length;
+        bool hasLength;
+        bool hasNameCache;
+        NodeCacheMap propertyCache;
+        Vector<Element*> itemRefElements;
+        RefPtr<DOMStringList> propertyNames;
+        unsigned itemRefElementPosition;
+        bool hasItemRefElements;
+
+        void clear()
+        {
+            version = 0;
+            current = 0;
+            position = 0;
+            length = 0;
+            hasLength = false;
+            hasNameCache = false;
+            propertyCache.clear();
+            itemRefElements.clear();
+            propertyNames.clear();
+            itemRefElementPosition = 0;
+            hasItemRefElements = false;
+        }
+
+        void setItemRefElements(const Vector<Element*>& elements)
+        {
+            itemRefElements = elements;
+            hasItemRefElements = true;
+        }
+
+        const Vector<Element*>& getItemRefElements()
+        {
+            return itemRefElements;
+        }
+
+        void updateLength(unsigned len)
+        {
+            length = len;
+            hasLength = true;
+        }
+
+        void updatePropertyCache(Element* element, const AtomicString& propertyName)
+        {
+            if (!propertyNames)
+                propertyNames = DOMStringList::create();
+
+            if (!propertyNames->contains(propertyName))
+                propertyNames->append(propertyName);
+
+            Vector<Element*>* propertyResults = propertyCache.get(propertyName.impl());
+            if (!propertyResults || !propertyResults->contains(element))
+                append(propertyCache, propertyName, element);
+        }
+
+        void updateCurrentItem(Element* element, unsigned pos, unsigned itemRefElementPos)
+        {
+            current = element;
+            position = pos;
+            itemRefElementPosition = itemRefElementPos;
+        }
+
+        void resetPosition()
+        {
+            current = 0;
+            position = 0;
+            itemRefElementPosition = 0;
+        }
+
+    } m_cache;
+
 };
 
 } // namespace WebCore
