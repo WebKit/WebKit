@@ -470,7 +470,7 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
         return;
     }
 
-#if !defined(TEXTMAP_OPENGL_ES_2)
+#if !defined(TEXMAP_OPENGL_ES_2)
     // Use the OpenGL sub-image extension, now that we know it's available.
     GL_CMD(glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / 4));
     GL_CMD(glPixelStorei(GL_UNPACK_SKIP_ROWS, sourceOffset.y()));
