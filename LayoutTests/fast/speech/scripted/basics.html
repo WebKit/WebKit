@@ -36,6 +36,10 @@ function run() {
     shouldBeTrue("'onstart' in speechReco");
     shouldBeTrue("'onend' in speechReco");
 
+    shouldBeTrue("'addEventListener' in speechReco");
+    shouldBeTrue("'removeEventListener' in speechReco");
+    shouldBeTrue("'dispatchEvent' in speechReco");
+
     finishJSTest();
 }
 

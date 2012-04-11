@@ -96,6 +96,9 @@ function startWrite(fileWriter) {
 }
 
 function runTest(unusedFileEntry, fileWriter) {
+    assert(typeof fileWriter.addEventListener === 'function');
+    assert(typeof fileWriter.removeEventListener === 'function');
+    assert(typeof fileWriter.dispatchEvent === 'function');
     startWrite(fileWriter);
 }
 var jsTestIsAsync = true;
