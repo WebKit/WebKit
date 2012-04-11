@@ -80,10 +80,15 @@ class GtkPort(WebKitPort):
         # Unload pulseaudio's module-stream-restore, since it remembers
         # volume settings from different runs, and could affect
         # multimedia tests results
-        with open(os.devnull, 'w') as devnull:
-            pactl_process = subprocess.Popen(["pactl", "list", "short", "modules"], stdout=subprocess.PIPE, stderr=devnull)
-        modules_list = pactl_process.communicate()[0]
         self._pa_module_index = -1
+        with open(os.devnull, 'w') as devnull:
+            try:
+                pactl_process = subprocess.Popen(["pactl", "list", "short", "modules"], stdout=subprocess.PIPE, stderr=devnull)
+            except OSError:
+                # pactl might not be available.
+                _log.debug('pactl not found. Please install pulseaudio-utils to avoid some potential media test failures.')
+                return
+        modules_list = pactl_process.communicate()[0]
         for module in modules_list.splitlines():
             if module.find("module-stream-restore") >= 0:
                 self._pa_module_index = module.split('\t')[0]

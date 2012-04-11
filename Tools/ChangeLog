@@ -1,3 +1,10 @@
+2012-04-11  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK NRWT follow-up fix after r113849.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort._unload_pulseaudio_module): Exit early if pactl is not found.
+
 2012-04-11  Simon Pena  <spena@igalia.com>
 
         [GTK] media/event-attributes.html fails
