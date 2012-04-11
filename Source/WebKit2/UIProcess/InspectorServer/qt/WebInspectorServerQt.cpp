@@ -65,11 +65,12 @@ void WebInspectorServer::buildPageList(Vector<char>& data, String& contentType)
         WebPageProxy* webPage = it->second->page();
         if (it != m_clientMap.begin())
             builder.append(", ");
-        builder.append("{ \"description\": \"");
+        builder.append("{ \"id\": " + String::number(it->first));
+        builder.append(", \"title\": \"");
         builder.append(webPage->pageTitle());
         builder.append("\", \"url\": \"");
         builder.append(webPage->activeURL());
-        builder.append("\", \"inspectorLocation\": \"");
+        builder.append("\", \"inspectorUrl\": \"");
         builder.append("/webkit/inspector/inspector.html?page=" + String::number(it->first));
         builder.append("\" }");
     }

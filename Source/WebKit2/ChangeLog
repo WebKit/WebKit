@@ -1,5 +1,21 @@
 2012-04-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt] InspectorServer: Improve the JSON page list's parameter names
+        https://bugs.webkit.org/show_bug.cgi?id=83592
+
+        Reviewed by Simon Hausmann.
+
+        - Add "id" that would be needed to build the URL when using local front-end resources
+          (and will be used by tests)
+        - Rename description to "title", the description contains both the title and URL on the final list
+        - Rename inspectorLocation to "inspectorUrl" to match with the url parameter.
+
+        * UIProcess/InspectorServer/qt/WebInspectorServerQt.cpp:
+        (WebKit::WebInspectorServer::buildPageList):
+        * qt/Resources/inspectorPageIndex.html:
+
+2012-04-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         [Qt] Fix issues when using the WebView as ShaderEffectSource
         https://bugs.webkit.org/show_bug.cgi?id=83587
 

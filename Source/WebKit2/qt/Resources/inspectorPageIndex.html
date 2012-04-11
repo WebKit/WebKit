@@ -11,10 +11,10 @@ function createPageList() {
                 document.getElementById("noPageNotice").style.display = "none";
             for (var i in pages) {
                 var link = document.createElement("a");
-                var description = pages[i].description ? pages[i].description : ("Page " + (Number(i)+1));
+                var title = pages[i].title ? pages[i].title : ("Page " + (Number(pages[i].id)));
                 var url = pages[i].url;
-                link.appendChild(document.createTextNode(description + (url ? (" [" + url + "]") : "" )));
-                link.setAttribute("href", pages[i].inspectorLocation);
+                link.appendChild(document.createTextNode(title + (url ? (" [" + url + "]") : "" )));
+                link.setAttribute("href", pages[i].inspectorUrl);
                 document.body.appendChild(link);
                 document.body.appendChild(document.createElement("br"));
             }
