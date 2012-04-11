@@ -395,32 +395,12 @@ bool BitmapTextureGL::canReuseWith(const IntSize& contentsSize, Flags)
 #define DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE GL_UNSIGNED_BYTE
 #endif
 
-void BitmapTextureGL::didReset()
+static void swizzleBGRAToRGBA(uint32_t* data, const IntRect& rect, int stride = 0)
 {
-    if (!m_id)
-        GL_CMD(glGenTextures(1, &m_id));
-
-    m_surfaceNeedsReset = true;
-    if (m_textureSize == contentSize())
-        return;
-
-    m_textureSize = contentSize();
-    GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id));
-    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-    GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, GL_BGRA, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, 0));
-}
-
-static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size, int stride = 0)
-{
-    int width = size.width();
-    int height = size.height();
-    stride = stride | width;
-    for (int y = 0; y < height; ++y) {
+    stride = stride ? stride : rect.width();
+    for (int y = rect.y(); y < rect.maxY(); ++y) {
         uint32_t* p = data + y * stride;
-        for (int x = 0; x < width; ++x)
+        for (int x = rect.x(); x < rect.maxX(); ++x)
             p[x] = ((p[x] << 16) & 0xff0000) | ((p[x] >> 16) & 0xff) | (p[x] & 0xff00ff00);
     }
 }
@@ -445,6 +425,27 @@ static bool driverSupportsSubImage()
 #endif
 }
 
+void BitmapTextureGL::didReset()
+{
+    if (!m_id)
+        GL_CMD(glGenTextures(1, &m_id));
+
+    m_surfaceNeedsReset = true;
+    if (m_textureSize == contentSize())
+        return;
+
+    GLuint format = driverSupportsBGRASwizzling() ? GL_BGRA : GL_RGBA;
+
+    m_textureSize = contentSize();
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id));
+    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, format, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, 0));
+}
+
+
 void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine)
 {
     GLuint glFormat = GL_RGBA;
@@ -453,7 +454,7 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
     if (driverSupportsBGRASwizzling())
         glFormat = GL_BGRA;
     else
-        swizzleBGRAToRGBA(static_cast<uint32_t*>(const_cast<void*>(data)), targetRect.size(), bytesPerLine / 4);
+        swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(const_cast<void*>(data)), IntRect(sourceOffset, targetRect.size()), bytesPerLine / 4);
 
     if (bytesPerLine == targetRect.width() / 4 && sourceOffset == IntPoint::zero()) {
         GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data));
