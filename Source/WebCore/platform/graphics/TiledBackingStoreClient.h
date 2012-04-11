@@ -29,6 +29,7 @@ class GraphicsContext;
 
 class TiledBackingStoreClient {
 public:
+    virtual ~TiledBackingStoreClient() { }
     virtual void tiledBackingStorePaintBegin() = 0;
     virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) = 0;
     virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea) = 0;

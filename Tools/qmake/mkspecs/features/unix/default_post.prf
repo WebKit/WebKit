@@ -40,7 +40,10 @@ isEqual(QT_ARCH,i386):CONFIG(debug, debug|release) {
   QMAKE_LFLAGS += -Wl,--no-keep-memory
 } else {
   # Use gold if available
-  !scratchbox:!mac:exists(/usr/bin/ld.gold): QMAKE_LFLAGS += -fuse-ld=gold
+  !scratchbox:!mac:exists(/usr/bin/ld.gold) {
+      # Upstream gcc 4.7 does not support the -fuse-ld=gold option ( see: http://sourceware.org/ml/binutils/2011-01/msg00178.html )
+      isEqual(QT_GCC_MAJOR_VERSION, 4):lessThan(QT_GCC_MINOR_VERSION, 7):QMAKE_LFLAGS += -fuse-ld=gold
+  }
 }
 
 load(default_post)
