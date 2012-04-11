@@ -377,9 +377,20 @@ void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const Int
         m_data.m_painter->restore();
 }
 
-// We get a mimeType here but QImageWriter does not support mimetypes but
-// only formats (png, gif, jpeg..., xpm). So assume we get image/ as image
-// mimetypes and then remove the image/ to get the Qt format.
+static bool encodeImage(const QPixmap& pixmap, const String& format, const double* quality, QByteArray& data)
+{
+    int compressionQuality = 100;
+    if (quality && *quality >= 0.0 && *quality <= 1.0)
+        compressionQuality = static_cast<int>(*quality * 100 + 0.5);
+
+    QBuffer buffer(&data);
+    buffer.open(QBuffer::WriteOnly);
+    bool success = pixmap.save(&buffer, format.utf8().data(), compressionQuality);
+    buffer.close();
+
+    return success;
+}
+
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
@@ -387,24 +398,13 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
     if (!mimeType.startsWith("image/"))
         return "data:,";
 
-    // prepare our target
+    // QImageWriter does not support mimetypes. It does support Qt image formats (png,
+    // gif, jpeg..., xpm) so skip the image/ to get the Qt image format used to encode
+    // the m_pixmap image.
+
     QByteArray data;
-    QBuffer buffer(&data);
-    buffer.open(QBuffer::WriteOnly);
-
-    if (quality && *quality >= 0.0 && *quality <= 1.0) {
-        if (!m_data.m_pixmap.save(&buffer, mimeType.substring(sizeof "image").utf8().data(), *quality * 100 + 0.5)) {
-            buffer.close();
-            return "data:,";
-        }
-    } else {
-        if (!m_data.m_pixmap.save(&buffer, mimeType.substring(sizeof "image").utf8().data(), 100)) {
-            buffer.close();
-            return "data:,";
-        }
-    }
-
-    buffer.close();
+    if (!encodeImage(m_data.m_pixmap, mimeType.substring(sizeof "image"), quality, data))
+        return "data:,";
 
     return "data:" + mimeType + ";base64," + data.toBase64().data();
 }
