@@ -72,6 +72,8 @@ BUGWK74288 : fast/events/overflow-events.html = PASS TEXT
 BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS CRASH
 
 BUGWK74493 : platform/gtk/accessibility/unknown-roles-not-exposed.html = PASS TEXT
+BUGWK83686 : platform/gtk/accessibility/aria-table-hierarchy.html = PASS TEXT
+BUGWK83686 : platform/gtk/accessibility/input-slider.html = PASS TEXT
 
 BUGWK74710 : editing/pasteboard/paste-text-013.html = PASS TEXT
 
