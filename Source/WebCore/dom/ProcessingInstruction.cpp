@@ -236,8 +236,10 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
 {
     if (m_isCSS)
         static_cast<CSSStyleSheet*>(m_sheet.get())->internal()->parseString(sheet, CSSStrictMode);
+#if ENABLE(XSLT)
     else if (m_isXSL)
         static_cast<XSLStyleSheet*>(m_sheet.get())->parseString(sheet);
+#endif
 
     if (m_cachedSheet)
         m_cachedSheet->removeClient(this);
