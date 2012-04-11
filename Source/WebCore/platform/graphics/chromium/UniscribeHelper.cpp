@@ -192,6 +192,51 @@ void UniscribeHelper::justify(int additionalSpace)
     if (totalGlyphs == 0)
         return;  // Nothing to do.
 
+#if USE(SKIA_TEXT)
+    // This mostly matches justify in WebKit's UniscribeController::shapeAndPlaceItem. 
+    int numSpaces = 0;
+    for (size_t run = 0; run < m_runs.size(); run++) {
+        Shaping& shaping = m_shapes[run];
+        for (int i = 0; i < shaping.charLength(); i++) {
+            int characterIndex = m_runs[run].iCharPos + i;
+            if (Font::treatAsSpace(m_input[characterIndex]))
+                ++numSpaces;
+        }
+    }  
+    int padPerSpace = numSpaces ? additionalSpace / numSpaces : 0;
+
+    for (size_t run = 0; run < m_runs.size(); run++) {
+        Shaping& shaping = m_shapes[run];
+        // Create a map that allows us to quickly go from space glyphs back to their corresponding characters.
+        Vector<int> spaceCharacters(shaping.glyphLength());
+        spaceCharacters.fill(-1);
+        for (int i = 0; i < shaping.charLength(); i++) {
+            int characterIndex = m_runs[run].iCharPos + i;
+            if (Font::treatAsSpace(m_input[characterIndex]))
+                spaceCharacters[shaping.m_logs[i]] = characterIndex;
+        }
+
+        shaping.m_justify.resize(shaping.glyphLength());
+        shaping.m_justify = shaping.m_advance;
+        for (int i = 0; i < shaping.glyphLength(); i++) {
+            if (!additionalSpace)
+                break;
+            // spaceCharacters[i] is left at the initial value of -1 for glyphs that do not map back to treated-as-space characters.
+            if (spaceCharacters[i] != -1) {
+                // Account for padding. WebCore uses space padding to justify text.
+                // We distribute the specified padding over the available spaces in the run.
+                if (additionalSpace < padPerSpace) {
+                    // Use leftover padding if not evenly divisible by number of spaces.
+                    shaping.m_justify[i] = shaping.m_advance[i] + additionalSpace;
+                    additionalSpace = 0;
+                } else {
+                    shaping.m_justify[i] = shaping.m_advance[i] + padPerSpace;
+                    additionalSpace -= padPerSpace;
+                }
+            }
+        }
+    }
+#else
     // We make one big buffer in screen order of all the glyphs we are drawing
     // across runs so that the justification function will adjust evenly across
     // all glyphs.
@@ -232,6 +277,7 @@ void UniscribeHelper::justify(int additionalSpace)
         for (int i = 0; i < shaping.glyphLength(); i++, globalGlyphIndex++)
             shaping.m_justify[i] = justify[globalGlyphIndex];
     }
+#endif
 }
 
 int UniscribeHelper::characterToX(int offset) const
