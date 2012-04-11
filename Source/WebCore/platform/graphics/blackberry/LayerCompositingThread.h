@@ -41,7 +41,7 @@
 #include "LayerTiler.h"
 
 #include <BlackBerryPlatformGuardedPointer.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <GuardedPointerDeleter.h>
 
 namespace BlackBerry {
 namespace Platform {
@@ -58,8 +58,6 @@ class LayerRenderer;
 class LayerCompositingThread : public ThreadSafeRefCounted<LayerCompositingThread>, public LayerData, public BlackBerry::Platform::GuardedPointerBase {
 public:
     static PassRefPtr<LayerCompositingThread> create(LayerType, PassRefPtr<LayerTiler>);
-
-    ~LayerCompositingThread();
 
     // Thread safe
     void setPluginView(PluginView*);
@@ -141,11 +139,11 @@ public:
 
     bool hasVisibleHolePunchRect() const;
 
+protected:
+    virtual ~LayerCompositingThread();
+
 private:
     LayerCompositingThread(LayerType, PassRefPtr<LayerTiler>);
-
-    friend class WTF::ThreadSafeRefCounted<WebCore::LayerCompositingThread>;
-    void destroyOnCompositingThread();
 
     void updateTileContents(const IntRect& tile);
 
@@ -199,8 +197,12 @@ namespace WTF {
 template<>
 inline void ThreadSafeRefCounted<WebCore::LayerCompositingThread>::deref()
 {
-    if (derefBase())
-        static_cast<WebCore::LayerCompositingThread*>(this)->destroyOnCompositingThread();
+    if (derefBase()) {
+        // Delete on the compositing thread.
+        BlackBerry::Platform::GuardedPointerDeleter::deleteOnThread(
+                BlackBerry::Platform::userInterfaceThreadMessageClient(),
+                static_cast<WebCore::LayerCompositingThread*>(this));
+    }
 }
 
 } // namespace WTF

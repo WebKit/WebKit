@@ -71,18 +71,6 @@ LayerCompositingThread::LayerCompositingThread(LayerType type, PassRefPtr<LayerT
 {
 }
 
-void LayerCompositingThread::destroyOnCompositingThread()
-{
-    if (!isCompositingThread()) {
-        dispatchSyncCompositingMessage(BlackBerry::Platform::createMethodCallMessage(
-            &LayerCompositingThread::destroyOnCompositingThread,
-            this));
-        return;
-    }
-
-    delete this;
-}
-
 LayerCompositingThread::~LayerCompositingThread()
 {
     ASSERT(isCompositingThread());

@@ -1,3 +1,30 @@
+2012-04-11  Joe Mason  <jmason@rim.com>
+
+        [BlackBerry] Update to the thread-safe GuardedPointer API
+        https://bugs.webkit.org/show_bug.cgi?id=83603
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 134984
+        Make the destructors of all objects inheriting GuardedPointerBase protected or
+        private, and delete them using BlackBerry::Platform::deleteGuardedObject.
+        Access all GuardedPointers through GuardedPointerLocker.
+
+        No new tests, refactor.
+
+        Reviewed internally by Yong Li and George Staikos.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStore::~BackingStore):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::~WebPage):
+        (BlackBerry::WebKit::WebPage::destroy):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-04-10  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Crash when tearing down web page rendered using WebPageCompositor

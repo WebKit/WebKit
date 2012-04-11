@@ -115,7 +115,7 @@ private:
     friend CookieManager& cookieManager();
 
     CookieManager();
-    ~CookieManager();
+    virtual ~CookieManager();
 
     void checkAndTreatCookie(ParsedCookie*, BackingStoreRemovalPolicy);
 

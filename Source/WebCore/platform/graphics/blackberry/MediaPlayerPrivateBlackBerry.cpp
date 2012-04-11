@@ -127,7 +127,7 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
         static_cast<VideoLayerWebKitThread*>(m_platformLayer.get())->setMediaPlayer(0);
 #endif
 
-    delete m_platformPlayer;
+    deleteGuardedObject(m_platformPlayer);
 }
 
 void MediaPlayerPrivate::load(const String& url)

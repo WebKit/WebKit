@@ -2587,7 +2587,7 @@ BackingStore::BackingStore(WebPage* webPage, BackingStoreClient* client)
 
 BackingStore::~BackingStore()
 {
-    delete d;
+    deleteGuardedObject(d);
     d = 0;
 }
 

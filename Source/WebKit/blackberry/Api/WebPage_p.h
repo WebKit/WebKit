@@ -79,7 +79,6 @@ public:
     enum LoadState { None /* on instantiation of page */, Provisional, Committed, Finished, Failed };
 
     WebPagePrivate(WebPage*, WebPageClient*, const WebCore::IntRect&);
-    virtual ~WebPagePrivate();
 
     static WebCore::Page* core(const WebPage*);
 
@@ -534,6 +533,9 @@ public:
     RefPtr<WebCore::DOMWrapperWorld> m_isolatedWorld;
     bool m_hasInRegionScrollableAreas;
     bool m_updateDelegatedOverlaysDispatched;
+
+protected:
+    virtual ~WebPagePrivate();
 };
 }
 }

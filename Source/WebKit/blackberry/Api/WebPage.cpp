@@ -401,7 +401,7 @@ WebPagePrivate::~WebPagePrivate()
 
 WebPage::~WebPage()
 {
-    delete d;
+    deleteGuardedObject(d);
     d = 0;
 }
 
@@ -2906,7 +2906,7 @@ void WebPage::destroy()
     if (loader)
         loader->detachFromParent();
 
-    delete this;
+    deleteGuardedObject(this);
 }
 
 WebPageClient* WebPage::client() const

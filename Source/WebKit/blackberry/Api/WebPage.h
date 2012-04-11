@@ -328,7 +328,7 @@ public:
     void destroyWebPageCompositor();
 
 private:
-    ~WebPage();
+    virtual ~WebPage();
 
     friend class WebKit::BackingStore;
     friend class WebKit::BackingStoreClient;

@@ -71,7 +71,7 @@ CookieDatabaseBackingStore::CookieDatabaseBackingStore()
 
 CookieDatabaseBackingStore::~CookieDatabaseBackingStore()
 {
-    delete m_dbTimerClient;
+    deleteGuardedObject(m_dbTimerClient);
     m_dbTimerClient = 0;
     // FIXME: This object will never be deleted due to the set up of CookieManager (it's a singleton)
     CookieLog("CookieBackingStore - Destructing");
