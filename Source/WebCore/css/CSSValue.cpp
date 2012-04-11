@@ -99,7 +99,7 @@ CSSValue::Type CSSValue::cssValueType() const
     return CSS_CUSTOM;
 }
 
-void CSSValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSheet* styleSheet)
+void CSSValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetInternal* styleSheet)
 {
     // This should get called for internal instances only.
     ASSERT(!isCSSOMSafe());

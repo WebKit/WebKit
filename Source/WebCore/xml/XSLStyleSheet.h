@@ -1,7 +1,7 @@
 /*
  * This file is part of the XSL implementation.
  *
- * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -64,15 +64,12 @@ public:
     }
 
     virtual ~XSLStyleSheet();
-    
-    virtual bool isXSLStyleSheet() const { return true; }
 
-    virtual String type() const { return "text/xml"; }
-
-    virtual bool parseString(const String&, CSSParserMode cssParseMode = CSSStrictMode);
+    bool parseString(const String&);
     
-    virtual bool isLoading();
     void checkLoaded();
+    
+    const KURL& finalURL() const { return m_finalURL; }
 
     void loadChildSheets();
     void loadChildSheet(const String& href);
@@ -80,7 +77,7 @@ public:
     CachedResourceLoader* cachedResourceLoader();
 
     Document* ownerDocument();
-    XSLStyleSheet* parentStyleSheet() const { return m_parentStyleSheet; }
+    virtual XSLStyleSheet* parentStyleSheet() const OVERRIDE { return m_parentStyleSheet; }
     void setParentStyleSheet(XSLStyleSheet* parent);
 
 #if USE(QXMLQUERY)
@@ -95,12 +92,30 @@ public:
 
     void markAsProcessed();
     bool processed() const { return m_processed; }
+    
+    virtual String type() const OVERRIDE { return "text/xml"; }
+    virtual bool disabled() const OVERRIDE { return m_isDisabled; }
+    virtual void setDisabled(bool b) OVERRIDE { m_isDisabled = b; }
+    virtual Node* ownerNode() const OVERRIDE { return m_ownerNode; }
+    virtual String href() const OVERRIDE { return m_originalURL; }
+    virtual String title() const OVERRIDE { return emptyString(); }
+
+    virtual void clearOwnerNode() OVERRIDE { m_ownerNode = 0; }
+    virtual KURL baseURL() const OVERRIDE { return m_finalURL; }
+    virtual bool isLoading() const OVERRIDE;
+
+    virtual bool isXSLStyleSheet() const OVERRIDE { return true; }
 
 private:
     XSLStyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL, bool embedded);
 #if !USE(QXMLQUERY)
     XSLStyleSheet(XSLImportRule* parentImport, const String& originalURL, const KURL& finalURL);
 #endif
+    
+    Node* m_ownerNode;
+    String m_originalURL;
+    KURL m_finalURL;
+    bool m_isDisabled;
 
     Vector<OwnPtr<XSLImportRule> > m_children;
 

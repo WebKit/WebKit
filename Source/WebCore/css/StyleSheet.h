@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,48 +39,21 @@ class StyleSheet : public RefCounted<StyleSheet> {
 public:
     virtual ~StyleSheet();
 
-    bool disabled() const { return m_disabled; }
-    void setDisabled(bool);
-
-    Node* ownerNode() const { return m_ownerNode; }
-    void clearOwnerNode() { m_ownerNode = 0; }
+    virtual bool disabled() const = 0;
+    virtual void setDisabled(bool) = 0;
+    virtual Node* ownerNode() const = 0;
+    virtual StyleSheet* parentStyleSheet() const { return 0; }
+    virtual String href() const = 0;
+    virtual String title() const = 0;
+    virtual MediaList* media() const { return 0; }
+    virtual String type() const = 0;
 
     virtual CSSImportRule* ownerRule() const { return 0; }
-
-    virtual StyleSheet* parentStyleSheet() const { return 0; }
-
-    // Note that href is the URL that started the redirect chain that led to
-    // this style sheet. This property probably isn't useful for much except
-    // the JavaScript binding (which needs to use this value for security).
-    const String& href() const { return m_originalURL; }
-
-    void setFinalURL(const KURL& finalURL) { m_finalURL = finalURL; }
-    const KURL& finalURL() const { return m_finalURL; }
-
-    const String& title() const { return m_strTitle; }
-    void setTitle(const String& s) { m_strTitle = s; }
-    virtual MediaList* media() const { return 0; }
-
-    virtual String type() const = 0;
-    virtual bool isLoading() = 0;
-
-    virtual bool parseString(const String&, CSSParserMode = CSSStrictMode) = 0;
-
+    virtual void clearOwnerNode() = 0;
+    virtual KURL baseURL() const = 0;
+    virtual bool isLoading() const = 0;
     virtual bool isCSSStyleSheet() const { return false; }
     virtual bool isXSLStyleSheet() const { return false; }
-
-    KURL baseURL() const;
-
-protected:
-    StyleSheet(Node* ownerNode, const String& href, const KURL& finalURL);
-    StyleSheet(const String& href, const KURL& finalURL);
-
-private:
-    bool m_disabled;
-    Node* m_ownerNode;
-    String m_originalURL;
-    KURL m_finalURL;
-    String m_strTitle;
 };
 
 } // namespace

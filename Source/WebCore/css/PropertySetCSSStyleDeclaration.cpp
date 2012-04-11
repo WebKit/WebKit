@@ -292,9 +292,10 @@ CSSValue* PropertySetCSSStyleDeclaration::cloneAndCacheForCSSOM(CSSValue* intern
     return clonedValue.get();
 }
 
-CSSStyleSheet* PropertySetCSSStyleDeclaration::parentStyleSheet() const
+StyleSheetInternal* PropertySetCSSStyleDeclaration::contextStyleSheet() const
 { 
-    return contextStyleSheet(); 
+    CSSStyleSheet* cssStyleSheet = parentStyleSheet();
+    return cssStyleSheet ? cssStyleSheet->internal() : 0;
 }
 
 PassRefPtr<StylePropertySet> PropertySetCSSStyleDeclaration::copy() const
@@ -339,13 +340,13 @@ void StyleRuleCSSStyleDeclaration::deref()
 
 void StyleRuleCSSStyleDeclaration::setNeedsStyleRecalc()
 {
-    if (CSSStyleSheet* styleSheet = contextStyleSheet()) {
+    if (CSSStyleSheet* styleSheet = parentStyleSheet()) {
         if (Document* document = styleSheet->findDocument())
             document->styleSelectorChanged(DeferRecalcStyle);
     }
 }
-    
-CSSStyleSheet* StyleRuleCSSStyleDeclaration::contextStyleSheet() const
+
+CSSStyleSheet* StyleRuleCSSStyleDeclaration::parentStyleSheet() const
 {
     return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
 }
@@ -360,7 +361,7 @@ void InlineCSSStyleDeclaration::setNeedsStyleRecalc()
     return;
 }
 
-CSSStyleSheet* InlineCSSStyleDeclaration::contextStyleSheet() const
+CSSStyleSheet* InlineCSSStyleDeclaration::parentStyleSheet() const
 {
     return m_parentElement ? m_parentElement->document()->elementSheet() : 0;
 }

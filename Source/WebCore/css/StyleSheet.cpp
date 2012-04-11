@@ -20,49 +20,10 @@
 #include "config.h"
 #include "StyleSheet.h"
 
-#include "CSSImportRule.h"
-#include "CSSStyleSheet.h"
-#include "Document.h"
-#include "Node.h"
-
 namespace WebCore {
-
-StyleSheet::StyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL)
-    : m_disabled(false)
-    , m_ownerNode(parentNode)
-    , m_originalURL(originalURL)
-    , m_finalURL(finalURL)
-{
-}
-
-StyleSheet::StyleSheet(const String& originalURL, const KURL& finalURL)
-    : m_disabled(false)
-    , m_ownerNode(0)
-    , m_originalURL(originalURL)
-    , m_finalURL(finalURL)
-{
-}
 
 StyleSheet::~StyleSheet()
 {
-}
-
-KURL StyleSheet::baseURL() const
-{
-    if (!m_finalURL.isNull())
-        return m_finalURL;
-    if (StyleSheet* parentSheet = parentStyleSheet())
-        return parentSheet->baseURL();
-    if (!m_ownerNode)
-        return KURL();
-    return m_ownerNode->document()->baseURL();
-}
-
-void StyleSheet::setDisabled(bool disabled)
-{
-     m_disabled = disabled;
-     if (isCSSStyleSheet())
-         static_cast<CSSStyleSheet*>(this)->styleSheetChanged();
 }
 
 }

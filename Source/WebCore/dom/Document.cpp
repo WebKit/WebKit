@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008, 2009, 2011 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -2557,7 +2557,7 @@ void Document::updateBaseURL()
         m_baseURL = KURL();
 
     if (m_elemSheet)
-        m_elemSheet->setFinalURL(m_baseURL);
+        m_elemSheet->internal()->setFinalURL(m_baseURL);
     
     if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {
         // Base URL change changes any relative visited links.
@@ -2688,7 +2688,7 @@ bool Document::canBeAccessedByEveryAncestorFrame()
     return true;
 }
 
-CSSStyleSheet* Document::pageUserSheet()
+StyleSheetInternal* Document::pageUserSheet()
 {
     if (m_pageUserSheet)
         return m_pageUserSheet.get();
@@ -2702,7 +2702,7 @@ CSSStyleSheet* Document::pageUserSheet()
         return 0;
     
     // Parse the sheet and cache it.
-    m_pageUserSheet = CSSStyleSheet::createInline(this, settings()->userStyleSheetLocation());
+    m_pageUserSheet = StyleSheetInternal::createInline(this, settings()->userStyleSheetLocation());
     m_pageUserSheet->setIsUserStyleSheet(true);
     m_pageUserSheet->parseString(userSheetText, strictToCSSParserMode(!inQuirksMode()));
     return m_pageUserSheet.get();
@@ -2723,7 +2723,7 @@ void Document::updatePageUserSheet()
         styleSelectorChanged(RecalcStyleImmediately);
 }
 
-const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
+const Vector<RefPtr<StyleSheetInternal> >* Document::pageGroupUserSheets() const
 {
     if (m_pageGroupUserSheetCacheValid)
         return m_pageGroupUserSheets.get();
@@ -2748,11 +2748,11 @@ const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
                 continue;
             if (!UserContentURLPattern::matchesPatterns(url(), sheet->whitelist(), sheet->blacklist()))
                 continue;
-            RefPtr<CSSStyleSheet> parsedSheet = CSSStyleSheet::createInline(const_cast<Document*>(this), sheet->url());
+            RefPtr<StyleSheetInternal> parsedSheet = StyleSheetInternal::createInline(const_cast<Document*>(this), sheet->url());
             parsedSheet->setIsUserStyleSheet(sheet->level() == UserStyleUserLevel);
             parsedSheet->parseString(sheet->source(), strictToCSSParserMode(!inQuirksMode()));
             if (!m_pageGroupUserSheets)
-                m_pageGroupUserSheets = adoptPtr(new Vector<RefPtr<CSSStyleSheet> >);
+                m_pageGroupUserSheets = adoptPtr(new Vector<RefPtr<StyleSheetInternal> >);
             m_pageGroupUserSheets->append(parsedSheet.release());
         }
     }
@@ -2776,10 +2776,10 @@ void Document::updatePageGroupUserSheets()
         styleSelectorChanged(RecalcStyleImmediately);
 }
 
-void Document::addUserSheet(PassRefPtr<CSSStyleSheet> userSheet)
+void Document::addUserSheet(PassRefPtr<StyleSheetInternal> userSheet)
 {
     if (!m_userSheets)
-        m_userSheets = adoptPtr(new Vector<RefPtr<CSSStyleSheet> >);
+        m_userSheets = adoptPtr(new Vector<RefPtr<StyleSheetInternal> >);
     m_userSheets->append(userSheet);
     styleSelectorChanged(RecalcStyleImmediately);
 }
@@ -2787,7 +2787,7 @@ void Document::addUserSheet(PassRefPtr<CSSStyleSheet> userSheet)
 CSSStyleSheet* Document::elementSheet()
 {
     if (!m_elemSheet)
-        m_elemSheet = CSSStyleSheet::createInline(this, m_baseURL);
+        m_elemSheet = CSSStyleSheet::create(StyleSheetInternal::createInline(this, m_baseURL));
     return m_elemSheet.get();
 }
 
@@ -3316,10 +3316,8 @@ void Document::collectActiveStylesheets(Vector<RefPtr<StyleSheet> >& sheets)
     }
 }
 
-bool Document::testAddedStylesheetRequiresStyleRecalc(CSSStyleSheet* stylesheet)
+bool Document::testAddedStylesheetRequiresStyleRecalc(StyleSheetInternal* stylesheet)
 {
-    if (stylesheet->disabled())
-        return false;
     // See if all rules on the sheet are scoped to some specific ids or classes.
     // Then test if we actually have any of those in the tree at the moment.
     // FIXME: Even we if we find some, we could just invalidate those subtrees instead of invalidating the entire style.
@@ -3391,7 +3389,9 @@ void Document::analyzeStylesheetChange(StyleSelectorUpdateFlag updateFlag, const
     for (unsigned i = oldStylesheetCount; i < newStylesheetCount; ++i) {
         if (!newStylesheets[i]->isCSSStyleSheet())
             return;
-        if (testAddedStylesheetRequiresStyleRecalc(static_cast<CSSStyleSheet*>(newStylesheets[i].get())))
+        if (newStylesheets[i]->disabled())
+            continue;
+        if (testAddedStylesheetRequiresStyleRecalc(static_cast<CSSStyleSheet*>(newStylesheets[i].get())->internal()))
             return;
     }
     requiresFullStyleRecalc = false;

@@ -1,7 +1,7 @@
 /**
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2002, 2005, 2006, 2012 Apple Computer, Inc.
  * Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -58,8 +58,9 @@ unsigned CSSMediaRule::insertRule(const String& ruleString, unsigned index, Exce
         return 0;
     }
 
-    CSSParser p(cssParserMode());
-    RefPtr<StyleRuleBase> newRule = p.parseRule(parentStyleSheet(), ruleString);
+    CSSStyleSheet* styleSheet = parentStyleSheet();
+    CSSParser parser(styleSheet ? styleSheet->internal()->cssParserMode() : CSSStrictMode);
+    RefPtr<StyleRuleBase> newRule = parser.parseRule(styleSheet ? styleSheet->internal() : 0, ruleString);
     if (!newRule) {
         // SYNTAX_ERR: Raised if the specified rule has a syntax error and is unparsable.
         ec = SYNTAX_ERR;

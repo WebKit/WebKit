@@ -36,10 +36,11 @@
 namespace WebCore {
 
 class CSSValueList;
+class StyleSheetInternal;
 
 class CSSValuePool {
 public:
-    PassRefPtr<CSSValueList> createFontFaceValue(const AtomicString&, CSSStyleSheet* contextStyleSheet);
+    PassRefPtr<CSSValueList> createFontFaceValue(const AtomicString&, StyleSheetInternal* contextStyleSheet);
     PassRefPtr<CSSPrimitiveValue> createFontFamilyValue(const String&);
     PassRefPtr<CSSInheritedValue> createInheritedValue() { return m_inheritedValue; }
     PassRefPtr<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue; }

@@ -33,18 +33,19 @@ namespace WebCore {
 class CachedCSSStyleSheet;
 class MediaList;
 class MediaQuerySet;
+class StyleSheetInternal;
 
 class StyleRuleImport : public StyleRuleBase {
 public:
-    static PassRefPtr<StyleRuleImport> create(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaQuerySet>);
+    static PassRefPtr<StyleRuleImport> create(StyleSheetInternal* parent, const String& href, PassRefPtr<MediaQuerySet>);
 
     ~StyleRuleImport();
     
-    CSSStyleSheet* parentStyleSheet() const { return m_parentStyleSheet; }
+    StyleSheetInternal* parentStyleSheet() const { return m_parentStyleSheet; }
     void clearParentStyleSheet() { m_parentStyleSheet = 0; }
 
     String href() const { return m_strHref; }
-    CSSStyleSheet* styleSheet() const { return m_styleSheet.get(); }
+    StyleSheetInternal* styleSheet() const { return m_styleSheet.get(); }
 
     // Not part of the CSSOM.
     bool isLoading() const;
@@ -70,15 +71,14 @@ private:
     void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet*);
     friend class ImportedStyleSheetClient;
 
-    StyleRuleImport(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaQuerySet>);
+    StyleRuleImport(StyleSheetInternal* parent, const String& href, PassRefPtr<MediaQuerySet>);
 
-    // FXIME: This needs to go away.
-    CSSStyleSheet* m_parentStyleSheet;
+    StyleSheetInternal* m_parentStyleSheet;
 
     ImportedStyleSheetClient m_styleSheetClient;
     String m_strHref;
     RefPtr<MediaQuerySet> m_mediaQueries;
-    RefPtr<CSSStyleSheet> m_styleSheet;
+    RefPtr<StyleSheetInternal> m_styleSheet;
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     bool m_loading;
 };
@@ -86,10 +86,12 @@ private:
 class CSSImportRule : public CSSRule {
 public:
     static PassRefPtr<CSSImportRule> create(StyleRuleImport* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSImportRule(rule, sheet)); }
+    
+    ~CSSImportRule();
 
     String href() const { return m_importRule->href(); }
     MediaList* media();
-    CSSStyleSheet* styleSheet() const { return m_importRule->styleSheet(); }
+    CSSStyleSheet* styleSheet() const;
     
     String cssText() const;
 
@@ -97,6 +99,8 @@ private:
     CSSImportRule(StyleRuleImport*, CSSStyleSheet*);
 
     RefPtr<StyleRuleImport> m_importRule;
+
+    mutable RefPtr<CSSStyleSheet> m_styleSheetCSSOMWrapper;
 };
 
 } // namespace WebCore

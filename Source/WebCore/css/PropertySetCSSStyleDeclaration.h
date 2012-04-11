@@ -32,9 +32,9 @@ namespace WebCore {
 
 class CSSRule;
 class CSSProperty;
-class CSSStyleSheet;
 class CSSValue;
 class StylePropertySet;
+class StyleSheetInternal;
 class StyledElement;
 
 class PropertySetCSSStyleDeclaration : public CSSStyleDeclaration {
@@ -43,7 +43,7 @@ public:
     
     virtual StyledElement* parentElement() const { return 0; }
     virtual void clearParentElement() { ASSERT_NOT_REACHED(); }
-    virtual CSSStyleSheet* contextStyleSheet() const { return 0; }
+    StyleSheetInternal* contextStyleSheet() const;
     
     virtual void ref() OVERRIDE;
     virtual void deref() OVERRIDE;
@@ -66,7 +66,6 @@ private:
     virtual void setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) OVERRIDE;
     
     virtual bool cssPropertyMatches(const CSSProperty*) const OVERRIDE;
-    virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> copy() const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> makeMutable() OVERRIDE;
     virtual void setNeedsStyleRecalc() { }
@@ -96,9 +95,10 @@ private:
     StyleRuleCSSStyleDeclaration(StylePropertySet*, CSSRule*);
     virtual ~StyleRuleCSSStyleDeclaration();
 
+    virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
+
     virtual CSSRule* parentRule() const OVERRIDE { return m_parentRule;  }
     virtual void setNeedsStyleRecalc() OVERRIDE;
-    virtual CSSStyleSheet* contextStyleSheet() const OVERRIDE;
     
     unsigned m_refCount;
     CSSRule* m_parentRule;
@@ -114,10 +114,10 @@ public:
     }
     
 private:
+    virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
     virtual StyledElement* parentElement() const OVERRIDE { return m_parentElement; }
     virtual void clearParentElement() OVERRIDE { m_parentElement = 0; }
     virtual void setNeedsStyleRecalc() OVERRIDE;
-    virtual CSSStyleSheet* contextStyleSheet() const OVERRIDE;
     
     StyledElement* m_parentElement;
 };

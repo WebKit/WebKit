@@ -211,15 +211,16 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const KURL& bas
     }
 
     ASSERT(m_isCSS);
-    RefPtr<CSSStyleSheet> newSheet = CSSStyleSheet::create(this, href, baseURL, charset);
-    m_sheet = newSheet;
+    RefPtr<StyleSheetInternal> newSheet = StyleSheetInternal::create(this, href, baseURL, charset);
+    m_sheet = CSSStyleSheet::create(newSheet);
     // We don't need the cross-origin security check here because we are
     // getting the sheet text in "strict" mode. This enforces a valid CSS MIME
     // type.
-    parseStyleSheet(sheet->sheetText(true));
     newSheet->setTitle(m_title);
     newSheet->setMediaQueries(MediaQuerySet::create(m_media));
-    newSheet->setDisabled(m_alternate);
+    m_sheet->setDisabled(m_alternate);
+
+    parseStyleSheet(sheet->sheetText(true));
 }
 
 #if ENABLE(XSLT)
@@ -233,7 +234,11 @@ void ProcessingInstruction::setXSLStyleSheet(const String& href, const KURL& bas
 
 void ProcessingInstruction::parseStyleSheet(const String& sheet)
 {
-    m_sheet->parseString(sheet, CSSStrictMode);
+    if (m_isCSS)
+        static_cast<CSSStyleSheet*>(m_sheet.get())->internal()->parseString(sheet, CSSStrictMode);
+    else if (m_isXSL)
+        static_cast<XSLStyleSheet*>(m_sheet.get())->parseString(sheet);
+
     if (m_cachedSheet)
         m_cachedSheet->removeClient(this);
     m_cachedSheet = 0;
@@ -241,7 +246,7 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
     m_loading = false;
 
     if (m_isCSS)
-        static_cast<CSSStyleSheet*>(m_sheet.get())->checkLoaded();
+        static_cast<CSSStyleSheet*>(m_sheet.get())->internal()->checkLoaded();
 #if ENABLE(XSLT)
     else if (m_isXSL)
         static_cast<XSLStyleSheet*>(m_sheet.get())->checkLoaded();
@@ -253,8 +258,8 @@ void ProcessingInstruction::setCSSStyleSheet(PassRefPtr<CSSStyleSheet> sheet)
     ASSERT(!m_cachedSheet);
     ASSERT(!m_loading);
     m_sheet = sheet;
-    m_sheet->setTitle(m_title);
-    m_sheet->setDisabled(m_alternate);
+    sheet->internal()->setTitle(m_title);
+    sheet->setDisabled(m_alternate);
 }
 
 bool ProcessingInstruction::offsetInCharacters() const

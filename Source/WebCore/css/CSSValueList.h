@@ -60,7 +60,7 @@ public:
 
     String customCssText() const;
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
+    void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetInternal*);
     
     PassRefPtr<CSSValueList> cloneForCSSOM() const;
 

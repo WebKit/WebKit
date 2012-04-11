@@ -34,7 +34,10 @@
 namespace WebCore {
 
 XSLStyleSheet::XSLStyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL,  bool embedded)
-    : StyleSheet(parentNode, originalURL, finalURL)
+    : m_ownerNode(parentNode)
+    , m_originalURL(originalURL)
+    , m_finalURL(finalURL)
+    , m_isDisabled(false)
     , m_embedded(embedded)
 {
 }
@@ -47,7 +50,7 @@ XSLStyleSheet::~XSLStyleSheet()
     }
 }
 
-bool XSLStyleSheet::isLoading()
+bool XSLStyleSheet::isLoading() const
 {
     notImplemented();
     return false;
@@ -72,7 +75,7 @@ CachedResourceLoader* XSLStyleSheet::cachedResourceLoader()
     return document->cachedResourceLoader();
 }
 
-bool XSLStyleSheet::parseString(const String& string, CSSParserMode)
+bool XSLStyleSheet::parseString(const String& string)
 {
     // FIXME: Fix QXmlQuery so that it allows compiling the stylesheet before setting the document
     // to be transformed. This way we could not only check if the stylesheet is correct before using it

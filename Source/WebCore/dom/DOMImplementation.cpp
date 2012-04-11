@@ -307,9 +307,9 @@ PassRefPtr<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, 
 {
     // FIXME: Title should be set.
     // FIXME: Media could have wrong syntax, in which case we should generate an exception.
-    RefPtr<CSSStyleSheet> sheet = CSSStyleSheet::create();
+    RefPtr<StyleSheetInternal> sheet = StyleSheetInternal::create();
     sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(media));
-    return sheet.release();
+    return CSSStyleSheet::create(sheet);
 }
 
 static const char* const validXMLMIMETypeChars = "[0-9a-zA-Z_\\-+~!$\\^{}|.%'`#&*]"; // per RFCs: 3023, 2045

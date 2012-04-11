@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2010, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ElementAttributeData.h"
 
+#include "CSSStyleSheet.h"
 #include "StyledElement.h"
 
 namespace WebCore {
@@ -82,7 +83,7 @@ void ElementAttributeData::updateInlineStyleAvoidingMutation(StyledElement* elem
         m_inlineStyleDecl = StylePropertySet::create();
         m_inlineStyleDecl->setCSSParserMode(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
     }
-    m_inlineStyleDecl->parseDeclaration(text, element->document()->elementSheet());
+    m_inlineStyleDecl->parseDeclaration(text, element->document()->elementSheet()->internal());
 }
 
 void ElementAttributeData::destroyInlineStyle(StyledElement* element)

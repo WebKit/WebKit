@@ -65,7 +65,7 @@ public:
 
     String customCssText() const;
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
+    void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetInternal*);
 
     CachedFont* cachedFont(Document*);
 

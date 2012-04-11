@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class CSSStyleSheet;
+class StyleSheetInternal;
     
 // FIXME: The current CSSValue and subclasses should be turned into internal types (StyleValue).
 // The few subtypes that are actually exposed in CSSOM can be seen in the cloneForCSSOM() function.
@@ -107,7 +107,7 @@ public:
 
     PassRefPtr<CSSValue> cloneForCSSOM() const;
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
+    void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetInternal*);
 
 protected:
 

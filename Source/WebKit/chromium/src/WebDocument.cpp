@@ -178,7 +178,7 @@ void WebDocument::insertUserStyleSheet(const WebString& sourceCode, UserStyleLev
 {
     RefPtr<Document> document = unwrap<Document>();
 
-    RefPtr<CSSStyleSheet> parsedSheet = CSSStyleSheet::create(document.get());
+    RefPtr<StyleSheetInternal> parsedSheet = StyleSheetInternal::create(document.get());
     parsedSheet->setIsUserStyleSheet(level == UserStyleUserLevel);
     parsedSheet->parseString(sourceCode, strictToCSSParserMode(!document->inQuirksMode()));
     document->addUserSheet(parsedSheet.release());

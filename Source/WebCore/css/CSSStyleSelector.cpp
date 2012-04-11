@@ -235,7 +235,7 @@ public:
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<RuleData> > > AtomRuleMap;
 
-    void addRulesFromSheet(CSSStyleSheet*, const MediaQueryEvaluator&, CSSStyleSelector* = 0, const ContainerNode* = 0);
+    void addRulesFromSheet(StyleSheetInternal*, const MediaQueryEvaluator&, CSSStyleSelector* = 0, const ContainerNode* = 0);
 
     void addStyleRule(StyleRule*, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool isInRegionRule = false);
     void addRule(StyleRule*, CSSSelector*, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool isInRegionRule = false);
@@ -285,13 +285,13 @@ static RuleSet* defaultStyle;
 static RuleSet* defaultQuirksStyle;
 static RuleSet* defaultPrintStyle;
 static RuleSet* defaultViewSourceStyle;
-static CSSStyleSheet* simpleDefaultStyleSheet;
-static CSSStyleSheet* defaultStyleSheet;
-static CSSStyleSheet* quirksStyleSheet;
-static CSSStyleSheet* svgStyleSheet;
-static CSSStyleSheet* mathMLStyleSheet;
-static CSSStyleSheet* mediaControlsStyleSheet;
-static CSSStyleSheet* fullscreenStyleSheet;
+static StyleSheetInternal* simpleDefaultStyleSheet;
+static StyleSheetInternal* defaultStyleSheet;
+static StyleSheetInternal* quirksStyleSheet;
+static StyleSheetInternal* svgStyleSheet;
+static StyleSheetInternal* mathMLStyleSheet;
+static StyleSheetInternal* mediaControlsStyleSheet;
+static StyleSheetInternal* fullscreenStyleSheet;
 
 RenderStyle* CSSStyleSelector::s_styleNotYetAvailable;
 
@@ -399,7 +399,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, bool matchAuthorAndUserSt
 
     // FIXME: This sucks! The user sheet is reparsed every time!
     OwnPtr<RuleSet> tempUserStyle = RuleSet::create();
-    if (CSSStyleSheet* pageUserSheet = document->pageUserSheet())
+    if (StyleSheetInternal* pageUserSheet = document->pageUserSheet())
         tempUserStyle->addRulesFromSheet(pageUserSheet, *m_medium, this);
     addAuthorRulesAndCollectUserRulesFromSheets(document->pageGroupUserSheets(), *tempUserStyle);
     addAuthorRulesAndCollectUserRulesFromSheets(document->documentUserSheets(), *tempUserStyle);
@@ -418,14 +418,14 @@ CSSStyleSelector::CSSStyleSelector(Document* document, bool matchAuthorAndUserSt
     appendAuthorStylesheets(0, document->styleSheets()->vector());
 }
 
-void CSSStyleSelector::addAuthorRulesAndCollectUserRulesFromSheets(const Vector<RefPtr<CSSStyleSheet> >* userSheets, RuleSet& userStyle)
+void CSSStyleSelector::addAuthorRulesAndCollectUserRulesFromSheets(const Vector<RefPtr<StyleSheetInternal> >* userSheets, RuleSet& userStyle)
 {
     if (!userSheets)
         return;
 
     unsigned length = userSheets->size();
     for (unsigned i = 0; i < length; i++) {
-        const RefPtr<CSSStyleSheet>& sheet = userSheets->at(i);
+        const RefPtr<StyleSheetInternal>& sheet = userSheets->at(i);
         if (sheet->isUserStyleSheet())
             userStyle.addRulesFromSheet(sheet.get(), *m_medium, this);
         else
@@ -464,7 +464,7 @@ void CSSStyleSelector::collectFeatures()
 }
 
 #if ENABLE(STYLE_SCOPED)
-const ContainerNode* CSSStyleSelector::determineScope(const CSSStyleSheet* sheet)
+const ContainerNode* CSSStyleSelector::determineScope(const StyleSheetInternal* sheet)
 {
     ASSERT(sheet);
 
@@ -504,17 +504,18 @@ void CSSStyleSelector::appendAuthorStylesheets(unsigned firstNew, const Vector<R
         if (!stylesheets[i]->isCSSStyleSheet() || stylesheets[i]->disabled())
             continue;
         CSSStyleSheet* cssSheet = static_cast<CSSStyleSheet*>(stylesheets[i].get());
+        StyleSheetInternal* sheet = cssSheet->internal();
 #if ENABLE(STYLE_SCOPED)
-        const ContainerNode* scope = determineScope(cssSheet);
+        const ContainerNode* scope = determineScope(sheet);
         if (scope) {
             ScopedRuleSetMap::AddResult addResult = m_scopedAuthorStyles.add(scope, nullptr);
             if (addResult.isNewEntry)
                 addResult.iterator->second = RuleSet::create();
-            addResult.iterator->second->addRulesFromSheet(cssSheet, *m_medium, this, scope);
+            addResult.iterator->second->addRulesFromSheet(sheet, *m_medium, this, scope);
             continue;
         }
 #endif
-        m_authorStyle->addRulesFromSheet(cssSheet, *m_medium, this);
+        m_authorStyle->addRulesFromSheet(sheet, *m_medium, this);
         if (!m_styleRuleToCSSOMWrapperMap.isEmpty())
             collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, cssSheet);
     }
@@ -680,14 +681,14 @@ void CSSStyleSelector::Features::clear()
     usesLinkRules = false;
 }
 
-static CSSStyleSheet* parseUASheet(const String& str)
+static StyleSheetInternal* parseUASheet(const String& str)
 {
-    CSSStyleSheet* sheet = CSSStyleSheet::create().leakRef(); // leak the sheet on purpose
+    StyleSheetInternal* sheet = StyleSheetInternal::create().leakRef(); // leak the sheet on purpose
     sheet->parseString(str);
     return sheet;
 }
 
-static CSSStyleSheet* parseUASheet(const char* characters, unsigned size)
+static StyleSheetInternal* parseUASheet(const char* characters, unsigned size)
 {
     return parseUASheet(String(characters, size));
 }
@@ -2237,7 +2238,7 @@ bool CSSStyleSelector::checkRegionSelector(CSSSelector* regionSelector, Element*
     return false;
 }
     
-bool CSSStyleSelector::determineStylesheetSelectorScopes(CSSStyleSheet* stylesheet, HashSet<AtomicStringImpl*>& idScopes, HashSet<AtomicStringImpl*>& classScopes)
+bool CSSStyleSelector::determineStylesheetSelectorScopes(StyleSheetInternal* stylesheet, HashSet<AtomicStringImpl*>& idScopes, HashSet<AtomicStringImpl*>& classScopes)
 {
     ASSERT(!stylesheet->isLoading());
 
@@ -2462,7 +2463,7 @@ void RuleSet::addRegionRule(StyleRuleRegion* regionRule, bool hasDocumentSecurit
     m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(regionRule->selectorList().first(), regionRuleSet.release()));
 }
 
-void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector, const ContainerNode* scope)
+void RuleSet::addRulesFromSheet(StyleSheetInternal* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector, const ContainerNode* scope)
 {
     ASSERT(sheet);
 
@@ -2903,7 +2904,16 @@ static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wra
     }
 }
 
-static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, Document* document)
+static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, HashSet<RefPtr<CSSStyleSheet> >& sheetWrapperSet, StyleSheetInternal* styleSheet)
+{
+    if (!styleSheet)
+        return;
+    RefPtr<CSSStyleSheet> styleSheetWrapper = CSSStyleSheet::create(styleSheet);
+    sheetWrapperSet.add(styleSheetWrapper);
+    collectCSSOMWrappers(wrapperMap, styleSheetWrapper.get());
+}
+
+static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, HashSet<RefPtr<CSSStyleSheet> >& sheetWrapperSet, Document* document)
 {
     const Vector<RefPtr<StyleSheet> >& styleSheets = document->styleSheets()->vector();
     for (unsigned i = 0; i < styleSheets.size(); ++i) {
@@ -2912,21 +2922,21 @@ static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wra
             continue;
         collectCSSOMWrappers(wrapperMap, static_cast<CSSStyleSheet*>(styleSheet));
     }
-    collectCSSOMWrappers(wrapperMap, document->pageUserSheet());
+    collectCSSOMWrappers(wrapperMap, sheetWrapperSet, document->pageUserSheet());
 }
 
 CSSStyleRule* CSSStyleSelector::ensureFullCSSOMWrapperForInspector(StyleRule* rule)
 {
     if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, simpleDefaultStyleSheet);
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, defaultStyleSheet);
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, quirksStyleSheet);
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, svgStyleSheet);
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, mathMLStyleSheet);
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, mediaControlsStyleSheet);
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, fullscreenStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, simpleDefaultStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, defaultStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, quirksStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, svgStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, mathMLStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, mediaControlsStyleSheet);
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, fullscreenStyleSheet);
 
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, document());
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, document());
     }
     return m_styleRuleToCSSOMWrapperMap.get(rule).get();
 }

@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -127,6 +127,7 @@ class SerializedScriptValue;
 class SegmentedString;
 class Settings;
 class StyleSheet;
+class StyleSheetInternal;
 class StyleSheetList;
 class Text;
 class TextResourceDecoder;
@@ -623,16 +624,16 @@ public:
     bool canNavigate(Frame* targetFrame);
     bool canBeAccessedByEveryAncestorFrame();
 
-    CSSStyleSheet* pageUserSheet();
+    StyleSheetInternal* pageUserSheet();
     void clearPageUserSheet();
     void updatePageUserSheet();
 
-    const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets() const;
+    const Vector<RefPtr<StyleSheetInternal> >* pageGroupUserSheets() const;
     void clearPageGroupUserSheets();
     void updatePageGroupUserSheets();
 
-    const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets() const { return m_userSheets.get(); }
-    void addUserSheet(PassRefPtr<CSSStyleSheet> userSheet);
+    const Vector<RefPtr<StyleSheetInternal> >* documentUserSheets() const { return m_userSheets.get(); }
+    void addUserSheet(PassRefPtr<StyleSheetInternal> userSheet);
 
     CSSStyleSheet* elementSheet();
     
@@ -1181,7 +1182,7 @@ private:
     
     bool updateActiveStylesheets(StyleSelectorUpdateFlag);
     void collectActiveStylesheets(Vector<RefPtr<StyleSheet> >&);
-    bool testAddedStylesheetRequiresStyleRecalc(CSSStyleSheet*);
+    bool testAddedStylesheetRequiresStyleRecalc(StyleSheetInternal*);
     void analyzeStylesheetChange(StyleSelectorUpdateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleSelectorReset, bool& requiresFullStyleRecalc);
 
     void deleteCustomFonts();
@@ -1257,9 +1258,9 @@ private:
     bool m_hasNodesWithPlaceholderStyle;
 
     RefPtr<CSSStyleSheet> m_elemSheet;
-    RefPtr<CSSStyleSheet> m_pageUserSheet;
-    mutable OwnPtr<Vector<RefPtr<CSSStyleSheet> > > m_pageGroupUserSheets;
-    OwnPtr<Vector<RefPtr<CSSStyleSheet> > > m_userSheets;
+    RefPtr<StyleSheetInternal> m_pageUserSheet;
+    mutable OwnPtr<Vector<RefPtr<StyleSheetInternal> > > m_pageGroupUserSheets;
+    OwnPtr<Vector<RefPtr<StyleSheetInternal> > > m_userSheets;
     mutable bool m_pageGroupUserSheetCacheValid;
 
     bool m_printing;

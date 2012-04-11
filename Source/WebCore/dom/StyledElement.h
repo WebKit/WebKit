@@ -113,11 +113,6 @@ inline StylePropertySet* StyledElement::attributeStyle()
     return attributeData() ? attributeData()->attributeStyle() : 0;
 }
 
-inline void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, const String& value)
-{
-    style->setProperty(propertyID, value, false, document()->elementSheet());
-}
-
 } //namespace
 
 #endif

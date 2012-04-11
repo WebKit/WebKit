@@ -1,7 +1,7 @@
 /*
  * This file is part of the XSL implementation.
  *
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -55,7 +55,10 @@ SOFT_LINK(libxslt, xsltLoadStylesheetPI, xsltStylesheetPtr, (xmlDocPtr doc), (do
 namespace WebCore {
 
 XSLStyleSheet::XSLStyleSheet(XSLImportRule* parentRule, const String& originalURL, const KURL& finalURL)
-    : StyleSheet(static_cast<Node*>(0), originalURL, finalURL)
+    : m_ownerNode(0)
+    , m_originalURL(originalURL)
+    , m_finalURL(finalURL)
+    , m_isDisabled(false)
     , m_embedded(false)
     , m_processed(false) // Child sheets get marked as processed when the libxslt engine has finally seen them.
     , m_stylesheetDoc(0)
@@ -65,7 +68,10 @@ XSLStyleSheet::XSLStyleSheet(XSLImportRule* parentRule, const String& originalUR
 }
 
 XSLStyleSheet::XSLStyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL,  bool embedded)
-    : StyleSheet(parentNode, originalURL, finalURL)
+    : m_ownerNode(parentNode)
+    , m_originalURL(originalURL)
+    , m_finalURL(finalURL)
+    , m_isDisabled(false)
     , m_embedded(embedded)
     , m_processed(true) // The root sheet starts off processed.
     , m_stylesheetDoc(0)
@@ -85,7 +91,7 @@ XSLStyleSheet::~XSLStyleSheet()
     }
 }
 
-bool XSLStyleSheet::isLoading()
+bool XSLStyleSheet::isLoading() const
 {
     for (unsigned i = 0; i < m_children.size(); ++i) {
         if (m_children.at(i)->isLoading())
@@ -129,7 +135,7 @@ CachedResourceLoader* XSLStyleSheet::cachedResourceLoader()
     return document->cachedResourceLoader();
 }
 
-bool XSLStyleSheet::parseString(const String& string, CSSParserMode)
+bool XSLStyleSheet::parseString(const String& string)
 {
     // Parse in a single chunk into an xmlDocPtr
     const UChar BOM = 0xFEFF;

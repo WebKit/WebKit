@@ -73,7 +73,7 @@ PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagNa
 void HTMLStyleElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == titleAttr && m_sheet)
-        m_sheet->setTitle(attr->value());
+        m_sheet->internal()->setTitle(attr->value());
     else if (attr->name() == onloadAttr)
         setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
     else if (attr->name() == onerrorAttr)
@@ -259,7 +259,7 @@ void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
     HTMLElement::addSubresourceAttributeURLs(urls);
 
     if (CSSStyleSheet* styleSheet = const_cast<HTMLStyleElement*>(this)->sheet())
-        styleSheet->addSubresourceStyleURLs(urls);
+        styleSheet->internal()->addSubresourceStyleURLs(urls);
 }
 
 bool HTMLStyleElement::disabled() const

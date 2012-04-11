@@ -69,15 +69,6 @@ public:
     bool isRegionRule() const { return type() == WEBKIT_REGION_RULE; }
     bool isImportRule() const { return type() == IMPORT_RULE; }
 
-    CSSParserMode cssParserMode() const
-    {
-        if (parentRule())
-            return parentRule()->cssParserMode();
-        if (parentStyleSheet())
-            return parentStyleSheet()->cssParserMode();
-        return CSSStrictMode;
-    }
-
     void setParentStyleSheet(CSSStyleSheet* styleSheet)
     {
         m_parentIsRule = false;
@@ -101,13 +92,6 @@ public:
 
     String cssText() const;
     void setCssText(const String&, ExceptionCode&);
-
-    KURL baseURL() const
-    {
-        if (CSSStyleSheet* parentSheet = parentStyleSheet())
-            return parentSheet->baseURL();
-        return KURL();
-    }
 
 protected:
     CSSRule(CSSStyleSheet* parent, Type type)

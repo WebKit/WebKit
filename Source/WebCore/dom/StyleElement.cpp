@@ -168,16 +168,17 @@ void StyleElement::createSheet(Element* e, int startLineNumber, const String& te
         if (screenEval.eval(mediaQueries.get()) || printEval.eval(mediaQueries.get())) {
             document->addPendingSheet();
             m_loading = true;
-            m_sheet = CSSStyleSheet::create(e, String(), KURL(), document->inputEncoding());
-            m_sheet->parseStringAtLine(text, strictToCSSParserMode(!document->inQuirksMode()), startLineNumber);
-            m_sheet->setMediaQueries(mediaQueries.release());
-            m_sheet->setTitle(e->title());
+            RefPtr<StyleSheetInternal> styleSheet = StyleSheetInternal::create(e, String(), KURL(), document->inputEncoding());
+            styleSheet->parseStringAtLine(text, strictToCSSParserMode(!document->inQuirksMode()), startLineNumber);
+            styleSheet->setMediaQueries(mediaQueries.release());
+            styleSheet->setTitle(e->title());
+            m_sheet = CSSStyleSheet::create(styleSheet);
             m_loading = false;
         }
     }
 
     if (m_sheet)
-        m_sheet->checkLoaded();
+        m_sheet->internal()->checkLoaded();
 }
 
 bool StyleElement::isLoading() const
