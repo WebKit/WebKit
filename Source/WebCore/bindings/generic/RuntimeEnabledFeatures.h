@@ -201,8 +201,8 @@ public:
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-    static bool webkitMediaSourceEnabled() { return isMediaSourceEnabled; }
-    static void setWebkitMediaSourceEnabled(bool isEnabled) { isMediaSourceEnabled = isEnabled; }
+    static bool mediaSourceEnabled() { return isMediaSourceEnabled; }
+    static void setMediaSourceEnabled(bool isEnabled) { isMediaSourceEnabled = isEnabled; }
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

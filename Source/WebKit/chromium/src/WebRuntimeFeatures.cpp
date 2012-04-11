@@ -397,7 +397,7 @@ bool WebRuntimeFeatures::isPointerLockEnabled()
 void WebRuntimeFeatures::enableMediaSource(bool enable)
 {
 #if ENABLE(MEDIA_SOURCE)
-    RuntimeEnabledFeatures::setWebkitMediaSourceEnabled(enable);
+    RuntimeEnabledFeatures::setMediaSourceEnabled(enable);
 #else
     UNUSED_PARAM(enable);
 #endif
@@ -406,7 +406,7 @@ void WebRuntimeFeatures::enableMediaSource(bool enable)
 bool WebRuntimeFeatures::isMediaSourceEnabled()
 {
 #if ENABLE(MEDIA_SOURCE)
-    return RuntimeEnabledFeatures::webkitMediaSourceEnabled();
+    return RuntimeEnabledFeatures::mediaSourceEnabled();
 #else
     return false;
 #endif
