@@ -314,13 +314,24 @@ SET(WebCore_CPP_IDL_FILES
     "${WebCore_CPP_IDL_FILES}"
 )
 
+FOREACH (_idl ${WebCore_CPP_IDL_FILES})
+    SET(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
+ENDFOREACH ()
+FILE(WRITE ${IDL_FILES_TMP} ${IDL_FILES_LIST})
+
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${SUPPLEMENTAL_DEPENDENCY_FILE}
+    DEPENDS ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl ${SCRIPTS_RESOLVE_SUPPLEMENTAL} ${WebCore_CPP_IDL_FILES} ${IDL_ATTRIBUTES_FILE}
+    COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --idlFilesList ${IDL_FILES_TMP} --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} --idlAttributesFile ${IDL_ATTRIBUTES_FILE}
+    VERBATIM)
+
 FOREACH (_file ${WebCore_CPP_IDL_FILES})
     GET_FILENAME_COMPONENT (_name ${_file} NAME_WE)
     ADD_CUSTOM_COMMAND(
         OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/WebDOM${_name}.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/WebDOM${_name}.h
         MAIN_DEPENDENCY ${_file}
-        DEPENDS ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/bindings/scripts/CodeGeneratorCPP.pm ${_file}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_WEBCORE}" --generator CPP ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_WEBCORE_DIR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${WEBCORE_DIR}/${_file}
+        DEPENDS ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/bindings/scripts/CodeGeneratorCPP.pm ${SUPPLEMENTAL_DEPENDENCY_FILE} ${_file}
+        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_WEBCORE}" --generator CPP ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_WEBCORE_DIR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} ${WEBCORE_DIR}/${_file}
         VERBATIM)
     LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WebDOM${_name}.cpp)
 ENDFOREACH ()
