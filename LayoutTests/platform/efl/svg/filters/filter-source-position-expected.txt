@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (42,42) size 196x196
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="filter1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="filter2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="filter3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="filter4"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
+      RenderSVGImage {image} at (20,20) size 110x110
+    RenderSVGContainer {use} at (42,42) size 88x88
+      [filter="filter1"] RenderSVGResourceFilter {filter} at (42,42) size 88x88
+      RenderSVGImage {image} at (20,20) size 110x110
+    RenderSVGContainer {use} at (128,42) size 110x88 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,0.00)}]
+      [filter="filter2"] RenderSVGResourceFilter {filter} at (-2,42) size 110x88
+      RenderSVGImage {image} at (150,20) size 110x110
+    RenderSVGContainer {use} at (42,128) size 88x110 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,130.00)}]
+      [filter="filter3"] RenderSVGResourceFilter {filter} at (42,-2) size 88x110
+      RenderSVGImage {image} at (20,150) size 110x110
+    RenderSVGContainer {use} at (128,128) size 110x110 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,130.00)}]
+      [filter="filter4"] RenderSVGResourceFilter {filter} at (-2,-2) size 110x110
+      RenderSVGImage {image} at (150,150) size 110x110

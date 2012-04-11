@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="foo"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
+        [feGaussianBlur stdDeviation="3.00, 3.00"]
+          [SourceAlpha]
+    RenderSVGContainer {g} at (0,0) size 800x600
+      RenderSVGContainer {g} at (0,0) size 800x600
+        [filter="foo"] RenderSVGResourceFilter {filter} at (-80,-60) size 960x720

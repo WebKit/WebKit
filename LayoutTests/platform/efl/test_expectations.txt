@@ -219,3 +219,6 @@ BUGWK83277 : editing/input/reveal-caret-of-multiline-input.html = FAIL MISSING
 
 // Temp: need to rebaseline.
 BUGWK58511 : fast/text/text-shadow-no-default-color.html = FAIL MISSING
+
+// SVG dropShadow failure. Needs rebaseline after fixing.
+BUGWK83580 : svg/filters/feDropShadow.svg = FAIL MISSING
