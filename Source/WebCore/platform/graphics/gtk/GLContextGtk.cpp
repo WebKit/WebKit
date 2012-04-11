@@ -19,6 +19,7 @@
 #include "config.h"
 #include "GLContext.h"
 
+#include "GLContextGLX.h"
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
@@ -54,10 +55,14 @@ GLContext* GLContext::getContextForWidget(GtkWidget* widget)
     if (!g_signal_handler_find(widget, G_SIGNAL_MATCH_FUNC, 0, 0, 0, reinterpret_cast<void*>(shutdownGLContext), 0))
         g_signal_connect(widget, "unmap", G_CALLBACK(shutdownGLContext), 0);
 
+    GLContext* context = 0;
+
+#if USE(GLX)
     // If this GDK window doesn't have its own native window then, we don't want
     // to use it for rendering, since we'll be drawing over some other widget's area.
     GdkWindow* gdkWindow = gtk_widget_get_window(widget);
-    GLContext* context = gdkWindow && gdk_window_has_native(gdkWindow) ?  createContext(GDK_WINDOW_XID(gdkWindow)) : createContext(0);
+    context = gdkWindow && gdk_window_has_native(gdkWindow) ?  GLContextGLX::createContext(GDK_WINDOW_XID(gdkWindow)) : GLContextGLX::createContext(0);
+#endif
 
     if (!context)
         return 0;

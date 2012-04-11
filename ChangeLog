@@ -1,3 +1,15 @@
+2012-03-15  Martin Robinson  <mrobinson@igalia.com>
+
+        [CAIRO] Make GLContextGLX a subclass of GLContext
+        https://bugs.webkit.org/show_bug.cgi?id=81285
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Add a configuration option for activating GLX.
+        This is selected automatically now, but in the future there will be
+        the choice to turn on EGL and turn off GLX at compilation time.
+        * configure.ac: Ditto.
+
 2012-04-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] InspectorServer: Add an API level auto test

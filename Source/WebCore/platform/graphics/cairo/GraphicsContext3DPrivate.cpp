@@ -40,16 +40,15 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, H
     : m_context(context)
     , m_window(window)
 #if PLATFORM(GTK)
-    , m_glContext(GLContext::createSharingContext(GLContext::getContextForWidget(m_window->platformPageClient())))
+    , m_glContext(GLContext::createOffscreenContext(GLContext::getContextForWidget(m_window->platformPageClient())))
 #else
-    , m_glContext(GLContext::createContext(0, 0))
+    , m_glContext(GLContext::createOffscreenContext())
 #endif
 {
 }
 
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 {
-    GLContext::removeActiveContext(m_glContext);
 }
 
 bool GraphicsContext3DPrivate::makeContextCurrent()

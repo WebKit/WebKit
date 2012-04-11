@@ -204,6 +204,16 @@ global_cppflags += \
 	-DWTF_USE_CLUTTER=1
 endif
 
+if USE_GLX
+global_cppflags += \
+	-DWTF_USE_GLX=1
+endif
+
+if USE_OPENGL
+global_cppflags += \
+	-DWTF_USE_OPENGL=1
+endif
+
 # ----
 # GTK+ 2.x/3.x support
 # ----

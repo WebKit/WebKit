@@ -547,11 +547,10 @@ AC_ARG_WITH(accelerated_compositing,
             [], [with_accelerated_compositing="no"])
 AC_MSG_RESULT([$with_accelerated_compositing])
 
-if test "$with_accelerated_compositing" = "opengl" && test "$with_target" != "x11" ; then
-    AC_MSG_ERROR([OpenGL accelerated compositing is only available on X11 currently.])
-fi
-
 if test "$enable_webgl" = "yes" ||  test "$with_accelerated_compositing" = "opengl" ; then
+    if test "$with_target" != "x11"; then
+        AC_MSG_ERROR([OpenGL support is only available on X11 currently.])
+    fi
     AC_CHECK_HEADERS([GL/gl.h], [], AC_MSG_ERROR([OpenGL header not found]))
     AC_CHECK_HEADERS([GL/glx.h], [], AC_MSG_ERROR([GLX header not found]))
     OPENGL_LIBS="-lGL -ldl"
@@ -1327,6 +1326,10 @@ AM_CONDITIONAL([USE_ACCELERATED_COMPOSITING], [test "$with_accelerated_compositi
 AM_CONDITIONAL([USE_TEXTURE_MAPPER_CAIRO], [test "$with_accelerated_compositing" = "cairo"])
 AM_CONDITIONAL([USE_TEXTURE_MAPPER_GL], [test "$with_accelerated_compositing" = "opengl"])
 AM_CONDITIONAL([USE_CLUTTER], [test "$with_accelerated_compositing" = "clutter"])
+
+# These are the same now, but they will soon be separate.
+AM_CONDITIONAL([USE_GLX], [test "$with_accelerated_compositing" = "opengl" || test "$enable_webgl" = "yes"])
+AM_CONDITIONAL([USE_OPENGL], [test "$with_accelerated_compositing" = "opengl" || test "$enable_webgl" = "yes"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])

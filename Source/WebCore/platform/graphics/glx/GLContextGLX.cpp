@@ -17,9 +17,9 @@
  */
 
 #include "config.h"
-#include "GLContext.h"
+#include "GLContextGLX.h"
 
-#if ENABLE(WEBGL) || USE(TEXTURE_MAPPER_GL)
+#if USE(GLX)
 #include "GraphicsContext3D.h"
 #include "OpenGLShims.h"
 #include <GL/glx.h>
@@ -50,17 +50,17 @@ static ActiveContextList& activeContextList()
     return activeContexts;
 }
 
-void GLContext::addActiveContext(GLContext* context)
+void GLContextGLX::addActiveContext(GLContextGLX* context)
 {
     static bool addedAtExitHandler = false;
     if (!addedAtExitHandler) {
-        atexit(&GLContext::cleanupActiveContextsAtExit);
+        atexit(&GLContextGLX::cleanupActiveContextsAtExit);
         addedAtExitHandler = true;
     }
     activeContextList().append(context);
 }
 
-void GLContext::removeActiveContext(GLContext* context)
+void GLContextGLX::removeActiveContext(GLContext* context)
 {
     ActiveContextList& contextList = activeContextList();
     size_t i = contextList.find(context);
@@ -68,7 +68,7 @@ void GLContext::removeActiveContext(GLContext* context)
         contextList.remove(i);
 }
 
-void GLContext::cleanupActiveContextsAtExit()
+void GLContextGLX::cleanupActiveContextsAtExit()
 {
     ActiveContextList& contextList = activeContextList();
     for (size_t i = 0; i < contextList.size(); ++i)
@@ -80,23 +80,12 @@ void GLContext::cleanupActiveContextsAtExit()
     gSharedDisplay = 0;
 }
 
-GLContext* GLContext::getCurrent()
+GLContext* GLContextGLX::createOffscreenSharingContext()
 {
-    ActiveContextList& contextList = activeContextList();
-    GLXContext current = glXGetCurrentContext();
-    for (size_t i = 0; i < contextList.size(); ++i) {
-        if (current == contextList[i]->m_context)
-            return contextList[i];
-    }
-    return 0;
+    return createContext(0, m_context);
 }
 
-GLContext* GLContext::createSharingContext(GLContext* sharingContext)
-{
-    return createContext(0, sharingContext ? sharingContext->m_context : 0);
-}
-
-GLContext* GLContext::createWindowContext(XID window, GLXContext sharingContext)
+GLContextGLX* GLContextGLX::createWindowContext(XID window, GLXContext sharingContext)
 {
     Display* display = sharedDisplay();
     XWindowAttributes attributes;
@@ -116,12 +105,12 @@ GLContext* GLContext::createWindowContext(XID window, GLXContext sharingContext)
 
     // GLXPbuffer and XID are both the same types underneath, so we have to share
     // a constructor here with the window path.
-    GLContext* contextWrapper = new GLContext(context);
+    GLContextGLX* contextWrapper = new GLContextGLX(context);
     contextWrapper->m_window = window;
     return contextWrapper;
 }
 
-GLContext* GLContext::createPbufferContext(GLXContext sharingContext)
+GLContextGLX* GLContextGLX::createPbufferContext(GLXContext sharingContext)
 {
     int fbConfigAttributes[] = {
         GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT,
@@ -157,12 +146,12 @@ GLContext* GLContext::createPbufferContext(GLXContext sharingContext)
 
     // GLXPbuffer and XID are both the same types underneath, so we have to share
     // a constructor here with the window path.
-    GLContext* contextWrapper = new GLContext(context);
+    GLContextGLX* contextWrapper = new GLContextGLX(context);
     contextWrapper->m_pbuffer = pbuffer;
     return contextWrapper;
 }
 
-GLContext* GLContext::createPixmapContext(GLXContext sharingContext)
+GLContextGLX* GLContextGLX::createPixmapContext(GLXContext sharingContext)
 {
     static int visualAttributes[] = {
         GLX_RGBA,
@@ -197,10 +186,10 @@ GLContext* GLContext::createPixmapContext(GLXContext sharingContext)
         return 0;
     }
 
-    return new GLContext(context, pixmap, glxPixmap);
+    return new GLContextGLX(context, pixmap, glxPixmap);
 }
 
-GLContext* GLContext::createContext(XID window, GLXContext sharingContext)
+GLContextGLX* GLContextGLX::createContext(XID window, GLXContext sharingContext)
 {
     if (!sharedDisplay())
         return 0;
@@ -214,7 +203,7 @@ GLContext* GLContext::createContext(XID window, GLXContext sharingContext)
     if (!success)
         return 0;
 
-    GLContext* context = window ? createWindowContext(window, sharingContext) : 0;
+    GLContextGLX* context = window ? createWindowContext(window, sharingContext) : 0;
     if (!context)
         context = createPbufferContext(sharingContext);
     if (!context)
@@ -225,7 +214,7 @@ GLContext* GLContext::createContext(XID window, GLXContext sharingContext)
     return context;
 }
 
-GLContext::GLContext(GLXContext context)
+GLContextGLX::GLContextGLX(GLXContext context)
     : m_context(context)
     , m_window(0)
     , m_pbuffer(0)
@@ -235,7 +224,7 @@ GLContext::GLContext(GLXContext context)
     addActiveContext(this);
 }
 
-GLContext::GLContext(GLXContext context, Pixmap pixmap, GLXPixmap glxPixmap)
+GLContextGLX::GLContextGLX(GLXContext context, Pixmap pixmap, GLXPixmap glxPixmap)
     : m_context(context)
     , m_window(0)
     , m_pbuffer(0)
@@ -245,7 +234,7 @@ GLContext::GLContext(GLXContext context, Pixmap pixmap, GLXPixmap glxPixmap)
     addActiveContext(this);
 }
 
-GLContext::~GLContext()
+GLContextGLX::~GLContextGLX()
 {
     if (m_context) {
         // This may be necessary to prevent crashes with NVidia's closed source drivers. Originally
@@ -270,14 +259,16 @@ GLContext::~GLContext()
     removeActiveContext(this);
 }
 
-bool GLContext::canRenderToDefaultFramebuffer()
+bool GLContextGLX::canRenderToDefaultFramebuffer()
 {
     return m_window;
 }
 
-bool GLContext::makeContextCurrent()
+bool GLContextGLX::makeContextCurrent()
 {
     ASSERT(m_context && (m_window || m_pbuffer || m_glxPixmap));
+
+    GLContext::makeContextCurrent();
     if (glXGetCurrentContext() == m_context)
         return true;
 
@@ -290,14 +281,14 @@ bool GLContext::makeContextCurrent()
     return ::glXMakeCurrent(sharedDisplay(), m_glxPixmap, m_context);
 }
 
-void GLContext::swapBuffers()
+void GLContextGLX::swapBuffers()
 {
     if (m_window)
         glXSwapBuffers(sharedDisplay(), m_window);
 }
 
 #if ENABLE(WEBGL)
-PlatformGraphicsContext3D GLContext::platformContext()
+PlatformGraphicsContext3D GLContextGLX::platformContext()
 {
     return m_context;
 }

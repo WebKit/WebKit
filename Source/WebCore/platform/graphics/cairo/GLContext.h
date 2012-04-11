@@ -25,60 +25,27 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
-#if defined(XP_UNIX)
-typedef struct __GLXcontextRec* GLXContext;
-typedef struct _XDisplay Display;
-typedef struct __GLXcontextRec *GLXContext;
-typedef unsigned long GLXPbuffer;
-typedef unsigned long GLXPixmap;
-typedef unsigned char GLubyte;
-typedef unsigned long Pixmap;
-typedef unsigned long XID;
-typedef void* ContextKeyType;
-#endif
-
 namespace WebCore {
 
 class GLContext {
     WTF_MAKE_NONCOPYABLE(GLContext);
 public:
-    static GLContext* createSharingContext(GLContext* shareContext);
     static GLContext* getContextForWidget(PlatformWidget);
+    static GLContext* createOffscreenContext(GLContext* sharing = 0);
     static GLContext* getCurrent();
-    static void removeActiveContext(GLContext*);
-    static void removeActiveContextForWidget(PlatformWidget);
 
+    GLContext();
     virtual ~GLContext();
-    bool makeContextCurrent();
-    void swapBuffers();
-    bool canRenderToDefaultFramebuffer();
+    virtual GLContext* createOffscreenSharingContext() = 0;
+    virtual bool makeContextCurrent();
+    virtual void swapBuffers() = 0;
+    virtual bool canRenderToDefaultFramebuffer() = 0;
 
 #if ENABLE(WEBGL)
-    PlatformGraphicsContext3D platformContext();
-#endif
-
-private:
-    static void addActiveContext(GLContext*);
-    static void cleanupActiveContextsAtExit();
-
-#if defined(XP_UNIX)
-    GLContext(GLXContext);
-    GLContext(GLXContext, Pixmap, GLXPixmap);
-    static GLContext* createContext(XID, GLXContext sharingContext = 0);
-    static GLContext* createWindowContext(XID window, GLXContext sharingContext);
-    static GLContext* createPbufferContext(GLXContext sharingContext);
-    static GLContext* createPixmapContext(GLXContext sharingContext);
-
-    GLXContext m_context;
-    Display* m_display;
-
-    XID m_window;
-    GLXPbuffer m_pbuffer;
-    Pixmap m_pixmap;
-    GLXPixmap m_glxPixmap;
+    virtual PlatformGraphicsContext3D platformContext() = 0;
 #endif
 };
 
-}
+} // namespace WebCore
 
 #endif // GLContext_h
