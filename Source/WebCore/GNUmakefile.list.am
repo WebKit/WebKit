@@ -2477,6 +2477,8 @@ webcore_sources += \
 	Source/WebCore/html/parser/TextViewSourceParser.h \
 	Source/WebCore/html/parser/XSSAuditor.cpp \
 	Source/WebCore/html/parser/XSSAuditor.h \
+	Source/WebCore/html/shadow/CalendarPickerElement.cpp \
+	Source/WebCore/html/shadow/CalendarPickerElement.h \
 	Source/WebCore/html/shadow/ContentSelectorQuery.cpp \
 	Source/WebCore/html/shadow/ContentSelectorQuery.h \
 	Source/WebCore/html/shadow/DetailsMarkerControl.cpp \
@@ -2881,6 +2883,7 @@ webcore_sources += \
 	Source/WebCore/page/animation/KeyframeAnimation.cpp \
 	Source/WebCore/page/animation/KeyframeAnimation.h \
 	Source/WebCore/page/AdjustViewSizeOrNot.h \
+	Source/WebCore/page/AlternativeTextClient.h \
 	Source/WebCore/page/BarInfo.cpp \
 	Source/WebCore/page/BarInfo.h \
 	Source/WebCore/page/Chrome.cpp \

@@ -1,3 +1,9 @@
+2012-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck issues.
+
+        * GNUmakefile.list.am: Ad missing files.
+
 2012-04-10  Mark Rowe  <mrowe@apple.com>
 
         Attempt to fix the Windows build.

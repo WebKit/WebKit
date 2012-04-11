@@ -1,3 +1,9 @@
+2012-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck issues.
+
+        * GNUmakefile.am: Add missing header file.
+
 2012-04-10  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/10583749> WebKit2 should log to both ASL and stderr

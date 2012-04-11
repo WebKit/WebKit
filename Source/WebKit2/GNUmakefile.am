@@ -921,6 +921,7 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebAlternativeTextClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebChromeClient.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebChromeClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebContextMenuClient.cpp \
