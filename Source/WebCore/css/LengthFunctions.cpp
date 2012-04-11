@@ -83,10 +83,13 @@ int valueForLength(const Length& length, int maximumValue, RenderView* renderVie
     // multiple assertions are used below to provide more useful debug output.
     case Relative:
         ASSERT_NOT_REACHED();
+        return 0;
     case Intrinsic:
         ASSERT_NOT_REACHED();
+        return 0;
     case MinIntrinsic:
         ASSERT_NOT_REACHED();
+        return 0;
     case Undefined:
         ASSERT_NOT_REACHED();
         return 0;
