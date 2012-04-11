@@ -58,9 +58,6 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    if (!mimeType.startsWith("image/"))
-        return "data:,";
-
     GOwnPtr<gchar> buffer(0);
     gsize bufferSize;
     if (!encodeImage(m_data.m_surface, mimeType, quality, buffer, bufferSize))
