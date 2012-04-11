@@ -3,7 +3,6 @@
 <title>Implicit Form Submission</title>
 <script>
 
-var testResults = [];
 var currentTest = 0;
 
 // match IE and FF unless specified otherwise.
@@ -42,39 +41,54 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 
-addEventListener('message', function(e) {
-    testResults.push(e.data);
-    document.getElementById("test").innerHTML = "";
-    if (testResults.length == allTests.length) {
-        publishResults();
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    } else {
-        runNextTest();
-    }
-}, false)
-
-function publishResults()
-{
-    document.getElementById("log").innerHTML = allTests.map(function(manifest, i)
+var results = {
+    submissionReported: false,
+    data: [],
+    submitted: function()
     {
-        return manifest[0] + " should " + (manifest[2] == 'n' ? "not" : "") + " submit: " + (testResults[i] == manifest[2] ? "PASS" : "FAIL");
-    }).join("<br>");
-}
+        this.submissionReported = true;
+        if (!window.eventSender)
+            this.testCompleted();
+    },
+    testCompleted: function()
+    {
+        this.data.push(this.submissionReported ? 'y' : 'n');
+        this.submissionReported = false;
+        runNextTest();
+    },
+    publish: function()
+    {
+        document.getElementById("log").innerHTML = allTests.map(function(manifest, i)
+        {
+            return manifest[0] + " should " + (manifest[2] == 'n' ? "not" : "") + " submit: " + (this.data[i] == manifest[2] ? "PASS" : "FAIL");
+        }, this).join("<br>");
+    }
+};
 
 function runNextTest()
 {
     ++currentTest;
-    runTest();
+    if (currentTest < allTests.length) {
+        runTest();
+        return;
+    }
+    document.getElementById('arena').textContent = '';
+    results.publish();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 
-function runTestInIframe()
+function buildAndTestForm(arena, inputs, description)
 {
-    var form = document.body.appendChild(document.createElement("form"));
-    form.action = "data:text/html,<script>javascript:parent.postMessage('y', '*')</scri" + "pt>";
+    arena.textContent = '';
+    var form = arena.appendChild(document.createElement("form"));
+    form.addEventListener('submit', function(evt) {
+        results.submitted();
+        evt.preventDefault();
+    })
     if (!window.eventSender)
         form.appendChild(document.createElement("p")).innerHTML = "Press Enter key";
-    manifest.split(",").forEach(function(type, i)
+    inputs.forEach(function(type, i)
     {
         var focused;
         if (type[0] == '!') {
@@ -112,30 +126,26 @@ function runTestInIframe()
         input.focus();
     if (window.eventSender) {
         eventSender.keyDown("\r", []);
-        setTimeout("parent.postMessage('n', '*');", 50);
+        results.testCompleted();
     } else {
         var a = document.createElement("a");
-        a.href = "javascript:parent.postMessage('n', '*')";
+        a.href = "javascript:results.testCompleted();";
         a.innerText = "Click if didn't submit";
-        document.body.appendChild(a);
+        arena.appendChild(a);
     }
 }
 
 function runTest()
 {
     var manifest = allTests[currentTest];
-    var test = document.getElementById("test");
-    var iframe = document.createElement("iframe");
-    iframe.src = "data:text/html,<script>var manifest = \"" + manifest[1] + "\";\n" + String(runTestInIframe) + 
-                 "</scri" + "pt><body onload=\"runTestInIframe()\"></body>";
-    test.appendChild(iframe);
+    buildAndTestForm(document.getElementById('arena'), manifest[1].split(','), manifest[0]);
 }
 
 </script>
 </head>
 <body onload="runTest()">
     <p>Tests various combinations of form elements and how implicit submission works with them.
-    <div id="test"></div>
+    <div id="arena"></div>
     <div id="log"></div>
 </body>
 </html>
