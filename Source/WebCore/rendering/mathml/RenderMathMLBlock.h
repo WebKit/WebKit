@@ -56,14 +56,14 @@ public:
     virtual RenderMathMLOperator* unembellishedOperator() { return 0; }
     virtual void stretchToHeight(int height);
 
-    virtual LayoutUnit paddingTop(PaddingOptions = IncludeIntrinsicPadding) const OVERRIDE;
-    virtual LayoutUnit paddingBottom(PaddingOptions = IncludeIntrinsicPadding) const OVERRIDE;
-    virtual LayoutUnit paddingLeft(PaddingOptions = IncludeIntrinsicPadding) const OVERRIDE;
-    virtual LayoutUnit paddingRight(PaddingOptions = IncludeIntrinsicPadding) const OVERRIDE;
-    virtual LayoutUnit paddingBefore(PaddingOptions = IncludeIntrinsicPadding) const OVERRIDE;
-    virtual LayoutUnit paddingAfter(PaddingOptions = IncludeIntrinsicPadding) const OVERRIDE;
-    virtual LayoutUnit paddingStart(PaddingOptions = IncludeIntrinsicPadding) const OVERRIDE;
-    virtual LayoutUnit paddingEnd(PaddingOptions = IncludeIntrinsicPadding) const OVERRIDE;
+    virtual LayoutUnit paddingTop() const OVERRIDE;
+    virtual LayoutUnit paddingBottom() const OVERRIDE;
+    virtual LayoutUnit paddingLeft() const OVERRIDE;
+    virtual LayoutUnit paddingRight() const OVERRIDE;
+    virtual LayoutUnit paddingBefore() const OVERRIDE;
+    virtual LayoutUnit paddingAfter() const OVERRIDE;
+    virtual LayoutUnit paddingStart() const OVERRIDE;
+    virtual LayoutUnit paddingEnd() const OVERRIDE;
     
 #if ENABLE(DEBUG_MATH_LAYOUT)
     virtual void paint(PaintInfo&, const LayoutPoint&);

@@ -40,8 +40,6 @@ enum BackgroundBleedAvoidance {
     BackgroundBleedUseTransparencyLayer
 };
 
-enum PaddingOptions { IncludeIntrinsicPadding, ExcludeIntrinsicPadding };
-
 // This class is the base for all objects that adhere to the CSS box model as described
 // at http://www.w3.org/TR/CSS21/box.html
 
@@ -79,15 +77,26 @@ public:
     // This will work on inlines to return the bounding box of all of the lines' border boxes.
     virtual IntRect borderBoundingBox() const = 0;
 
-    // Virtual since table cells and some MathML renderers override
-    virtual LayoutUnit paddingTop(PaddingOptions = IncludeIntrinsicPadding) const;
-    virtual LayoutUnit paddingBottom(PaddingOptions = IncludeIntrinsicPadding) const;
-    virtual LayoutUnit paddingLeft(PaddingOptions = IncludeIntrinsicPadding) const;
-    virtual LayoutUnit paddingRight(PaddingOptions = IncludeIntrinsicPadding) const;
-    virtual LayoutUnit paddingBefore(PaddingOptions = IncludeIntrinsicPadding) const;
-    virtual LayoutUnit paddingAfter(PaddingOptions = IncludeIntrinsicPadding) const;
-    virtual LayoutUnit paddingStart(PaddingOptions = IncludeIntrinsicPadding) const;
-    virtual LayoutUnit paddingEnd(PaddingOptions = IncludeIntrinsicPadding) const;
+    // These return the CSS computed padding values.
+    LayoutUnit computedCSSPaddingTop() const;
+    LayoutUnit computedCSSPaddingBottom() const;
+    LayoutUnit computedCSSPaddingLeft() const;
+    LayoutUnit computedCSSPaddingRight() const;
+    LayoutUnit computedCSSPaddingBefore() const;
+    LayoutUnit computedCSSPaddingAfter() const;
+    LayoutUnit computedCSSPaddingStart() const;
+    LayoutUnit computedCSSPaddingEnd() const;
+
+    // These functions are used during layout. Table cells and the MathML
+    // code override them to include some extra intrinsic padding.
+    virtual LayoutUnit paddingTop() const { return computedCSSPaddingTop(); }
+    virtual LayoutUnit paddingBottom() const { return computedCSSPaddingBottom(); }
+    virtual LayoutUnit paddingLeft() const { return computedCSSPaddingLeft(); }
+    virtual LayoutUnit paddingRight() const { return computedCSSPaddingRight(); }
+    virtual LayoutUnit paddingBefore() const { return computedCSSPaddingBefore(); }
+    virtual LayoutUnit paddingAfter() const { return computedCSSPaddingAfter(); }
+    virtual LayoutUnit paddingStart() const { return computedCSSPaddingStart(); }
+    virtual LayoutUnit paddingEnd() const { return computedCSSPaddingEnd(); }
 
     virtual int borderTop() const { return style()->borderTopWidth(); }
     virtual int borderBottom() const { return style()->borderBottomWidth(); }

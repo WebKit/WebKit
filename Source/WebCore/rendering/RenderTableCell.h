@@ -120,16 +120,16 @@ public:
     int intrinsicPaddingBefore() const { return m_intrinsicPaddingBefore; }
     int intrinsicPaddingAfter() const { return m_intrinsicPaddingAfter; }
 
-    virtual LayoutUnit paddingTop(PaddingOptions = IncludeIntrinsicPadding) const;
-    virtual LayoutUnit paddingBottom(PaddingOptions = IncludeIntrinsicPadding) const;
-    virtual LayoutUnit paddingLeft(PaddingOptions = IncludeIntrinsicPadding) const;
-    virtual LayoutUnit paddingRight(PaddingOptions = IncludeIntrinsicPadding) const;
+    virtual LayoutUnit paddingTop() const OVERRIDE;
+    virtual LayoutUnit paddingBottom() const OVERRIDE;
+    virtual LayoutUnit paddingLeft() const OVERRIDE;
+    virtual LayoutUnit paddingRight() const OVERRIDE;
     
     // FIXME: For now we just assume the cell has the same block flow direction as the table.  It's likely we'll
     // create an extra anonymous RenderBlock to handle mixing directionality anyway, in which case we can lock
     // the block flow directionality of the cells to the table's directionality.
-    virtual LayoutUnit paddingBefore(PaddingOptions = IncludeIntrinsicPadding) const;
-    virtual LayoutUnit paddingAfter(PaddingOptions = IncludeIntrinsicPadding) const;
+    virtual LayoutUnit paddingBefore() const OVERRIDE;
+    virtual LayoutUnit paddingAfter() const OVERRIDE;
 
     void setOverrideHeightFromRowHeight(LayoutUnit);
 

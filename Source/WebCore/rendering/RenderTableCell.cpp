@@ -191,53 +191,47 @@ void RenderTableCell::layout()
     setCellWidthChanged(false);
 }
 
-LayoutUnit RenderTableCell::paddingTop(PaddingOptions paddingOption) const
+LayoutUnit RenderTableCell::paddingTop() const
 {
-    LayoutUnit result = RenderBlock::paddingTop();
-    if (paddingOption == ExcludeIntrinsicPadding || !isHorizontalWritingMode())
+    LayoutUnit result = computedCSSPaddingTop();
+    if (!isHorizontalWritingMode())
         return result;
     return result + (style()->writingMode() == TopToBottomWritingMode ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
 }
 
-LayoutUnit RenderTableCell::paddingBottom(PaddingOptions paddingOption) const
+LayoutUnit RenderTableCell::paddingBottom() const
 {
-    LayoutUnit result = RenderBlock::paddingBottom();
-    if (paddingOption == ExcludeIntrinsicPadding || !isHorizontalWritingMode())
+    LayoutUnit result = computedCSSPaddingBottom();
+    if (!isHorizontalWritingMode())
         return result;
     return result + (style()->writingMode() == TopToBottomWritingMode ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
 }
 
-LayoutUnit RenderTableCell::paddingLeft(PaddingOptions paddingOption) const
+LayoutUnit RenderTableCell::paddingLeft() const
 {
-    LayoutUnit result = RenderBlock::paddingLeft();
-    if (paddingOption == ExcludeIntrinsicPadding || isHorizontalWritingMode())
+    LayoutUnit result = computedCSSPaddingLeft();
+    if (isHorizontalWritingMode())
         return result;
     return result + (style()->writingMode() == LeftToRightWritingMode ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
     
 }
 
-LayoutUnit RenderTableCell::paddingRight(PaddingOptions paddingOption) const
+LayoutUnit RenderTableCell::paddingRight() const
 {   
-    LayoutUnit result = RenderBlock::paddingRight();
-    if (paddingOption == ExcludeIntrinsicPadding || isHorizontalWritingMode())
+    LayoutUnit result = computedCSSPaddingRight();
+    if (isHorizontalWritingMode())
         return result;
     return result + (style()->writingMode() == LeftToRightWritingMode ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
 }
 
-LayoutUnit RenderTableCell::paddingBefore(PaddingOptions paddingOption) const
+LayoutUnit RenderTableCell::paddingBefore() const
 {
-    LayoutUnit result = RenderBlock::paddingBefore();
-    if (paddingOption == ExcludeIntrinsicPadding)
-        return result;
-    return result + intrinsicPaddingBefore();
+    return computedCSSPaddingBefore() + intrinsicPaddingBefore();
 }
 
-LayoutUnit RenderTableCell::paddingAfter(PaddingOptions paddingOption) const
+LayoutUnit RenderTableCell::paddingAfter() const
 {
-    LayoutUnit result = RenderBlock::paddingAfter();
-    if (paddingOption == ExcludeIntrinsicPadding)
-        return result;
-    return result + intrinsicPaddingAfter();
+    return computedCSSPaddingAfter() + intrinsicPaddingAfter();
 }
 
 void RenderTableCell::setOverrideHeightFromRowHeight(LayoutUnit rowHeight)

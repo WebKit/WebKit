@@ -555,7 +555,7 @@ int RenderBoxModelObject::pixelSnappedOffsetHeight() const
     return snapSizeToPixel(offsetHeight(), offsetTop());
 }
 
-LayoutUnit RenderBoxModelObject::paddingTop(PaddingOptions) const
+LayoutUnit RenderBoxModelObject::computedCSSPaddingTop() const
 {
     LayoutUnit w = 0;
     RenderView* renderView = 0;
@@ -567,7 +567,7 @@ LayoutUnit RenderBoxModelObject::paddingTop(PaddingOptions) const
     return minimumValueForLength(padding, w, renderView);
 }
 
-LayoutUnit RenderBoxModelObject::paddingBottom(PaddingOptions) const
+LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const
 {
     LayoutUnit w = 0;
     RenderView* renderView = 0;
@@ -579,7 +579,7 @@ LayoutUnit RenderBoxModelObject::paddingBottom(PaddingOptions) const
     return minimumValueForLength(padding, w, renderView);
 }
 
-LayoutUnit RenderBoxModelObject::paddingLeft(PaddingOptions) const
+LayoutUnit RenderBoxModelObject::computedCSSPaddingLeft() const
 {
     LayoutUnit w = 0;
     RenderView* renderView = 0;
@@ -591,7 +591,7 @@ LayoutUnit RenderBoxModelObject::paddingLeft(PaddingOptions) const
     return minimumValueForLength(padding, w, renderView);
 }
 
-LayoutUnit RenderBoxModelObject::paddingRight(PaddingOptions) const
+LayoutUnit RenderBoxModelObject::computedCSSPaddingRight() const
 {
     LayoutUnit w = 0;
     RenderView* renderView = 0;
@@ -603,7 +603,7 @@ LayoutUnit RenderBoxModelObject::paddingRight(PaddingOptions) const
     return minimumValueForLength(padding, w, renderView);
 }
 
-LayoutUnit RenderBoxModelObject::paddingBefore(PaddingOptions) const
+LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const
 {
     LayoutUnit w = 0;
     RenderView* renderView = 0;
@@ -615,7 +615,7 @@ LayoutUnit RenderBoxModelObject::paddingBefore(PaddingOptions) const
     return minimumValueForLength(padding, w, renderView);
 }
 
-LayoutUnit RenderBoxModelObject::paddingAfter(PaddingOptions) const
+LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const
 {
     LayoutUnit w = 0;
     RenderView* renderView = 0;
@@ -627,7 +627,7 @@ LayoutUnit RenderBoxModelObject::paddingAfter(PaddingOptions) const
     return minimumValueForLength(padding, w, renderView);
 }
 
-LayoutUnit RenderBoxModelObject::paddingStart(PaddingOptions) const
+LayoutUnit RenderBoxModelObject::computedCSSPaddingStart() const
 {
     LayoutUnit w = 0;
     RenderView* renderView = 0;
@@ -639,7 +639,7 @@ LayoutUnit RenderBoxModelObject::paddingStart(PaddingOptions) const
     return minimumValueForLength(padding, w, renderView);
 }
 
-LayoutUnit RenderBoxModelObject::paddingEnd(PaddingOptions) const
+LayoutUnit RenderBoxModelObject::computedCSSPaddingEnd() const
 {
     LayoutUnit w = 0;
     RenderView* renderView = 0;

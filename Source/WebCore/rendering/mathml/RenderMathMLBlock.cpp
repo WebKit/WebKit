@@ -54,11 +54,9 @@ bool RenderMathMLBlock::isChildAllowed(RenderObject* child, RenderStyle*) const
     return child->node() && child->node()->nodeType() == Node::ELEMENT_NODE;
 }
 
-LayoutUnit RenderMathMLBlock::paddingTop(PaddingOptions paddingOption) const
+LayoutUnit RenderMathMLBlock::paddingTop() const
 {
-    LayoutUnit result = RenderBlock::paddingTop(ExcludeIntrinsicPadding);
-    if (paddingOption == ExcludeIntrinsicPadding)
-        return result;
+    LayoutUnit result = computedCSSPaddingTop();
     switch (style()->writingMode()) {
     case TopToBottomWritingMode:
         return result + m_intrinsicPaddingBefore;
@@ -72,11 +70,9 @@ LayoutUnit RenderMathMLBlock::paddingTop(PaddingOptions paddingOption) const
     return result;
 }
 
-LayoutUnit RenderMathMLBlock::paddingBottom(PaddingOptions paddingOption) const
+LayoutUnit RenderMathMLBlock::paddingBottom() const
 {
-    LayoutUnit result = RenderBlock::paddingBottom(ExcludeIntrinsicPadding);
-    if (paddingOption == ExcludeIntrinsicPadding)
-        return result;
+    LayoutUnit result = computedCSSPaddingBottom();
     switch (style()->writingMode()) {
     case TopToBottomWritingMode:
         return result + m_intrinsicPaddingAfter;
@@ -90,11 +86,9 @@ LayoutUnit RenderMathMLBlock::paddingBottom(PaddingOptions paddingOption) const
     return result;
 }
 
-LayoutUnit RenderMathMLBlock::paddingLeft(PaddingOptions paddingOption) const
+LayoutUnit RenderMathMLBlock::paddingLeft() const
 {
-    LayoutUnit result = RenderBlock::paddingLeft(ExcludeIntrinsicPadding);
-    if (paddingOption == ExcludeIntrinsicPadding)
-        return result;
+    LayoutUnit result = computedCSSPaddingLeft();
     switch (style()->writingMode()) {
     case LeftToRightWritingMode:
         return result + m_intrinsicPaddingBefore;
@@ -108,11 +102,9 @@ LayoutUnit RenderMathMLBlock::paddingLeft(PaddingOptions paddingOption) const
     return result;
 }
 
-LayoutUnit RenderMathMLBlock::paddingRight(PaddingOptions paddingOption) const
+LayoutUnit RenderMathMLBlock::paddingRight() const
 {
-    LayoutUnit result = RenderBlock::paddingRight(ExcludeIntrinsicPadding);
-    if (paddingOption == ExcludeIntrinsicPadding)
-        return result;
+    LayoutUnit result = computedCSSPaddingRight();
     switch (style()->writingMode()) {
     case RightToLeftWritingMode:
         return result + m_intrinsicPaddingBefore;
@@ -126,24 +118,24 @@ LayoutUnit RenderMathMLBlock::paddingRight(PaddingOptions paddingOption) const
     return result;
 }
 
-LayoutUnit RenderMathMLBlock::paddingBefore(PaddingOptions paddingOption) const
+LayoutUnit RenderMathMLBlock::paddingBefore() const
 {
-    return RenderBlock::paddingBefore(ExcludeIntrinsicPadding) + (paddingOption == IncludeIntrinsicPadding ? m_intrinsicPaddingBefore : 0);
+    return computedCSSPaddingBefore() + m_intrinsicPaddingBefore;
 }
 
-LayoutUnit RenderMathMLBlock::paddingAfter(PaddingOptions paddingOption) const
+LayoutUnit RenderMathMLBlock::paddingAfter() const
 {
-    return RenderBlock::paddingAfter(ExcludeIntrinsicPadding) + (paddingOption == IncludeIntrinsicPadding ? m_intrinsicPaddingAfter : 0);
+    return computedCSSPaddingAfter() + m_intrinsicPaddingAfter;
 }
 
-LayoutUnit RenderMathMLBlock::paddingStart(PaddingOptions paddingOption) const
+LayoutUnit RenderMathMLBlock::paddingStart() const
 {
-    return RenderBlock::paddingStart(ExcludeIntrinsicPadding) + (paddingOption == IncludeIntrinsicPadding ? m_intrinsicPaddingStart : 0);
+    return computedCSSPaddingStart() + m_intrinsicPaddingStart;
 }
 
-LayoutUnit RenderMathMLBlock::paddingEnd(PaddingOptions paddingOption) const
+LayoutUnit RenderMathMLBlock::paddingEnd() const
 {
-    return RenderBlock::paddingEnd(ExcludeIntrinsicPadding) + (paddingOption == IncludeIntrinsicPadding ? m_intrinsicPaddingEnd : 0);
+    return computedCSSPaddingEnd() + m_intrinsicPaddingEnd;
 }
 
 RenderMathMLBlock* RenderMathMLBlock::createAlmostAnonymousBlock(EDisplay display)

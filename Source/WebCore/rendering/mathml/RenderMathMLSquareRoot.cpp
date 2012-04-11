@@ -116,9 +116,8 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, const LayoutPoint& paintOffs
     
     if (info.context->paintingDisabled())
         return;
-    
-    LayoutSize cssContentLeftTop(borderLeft() + paddingLeft(ExcludeIntrinsicPadding), borderTop() + paddingTop(ExcludeIntrinsicPadding));
-    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + cssContentLeftTop);
+
+    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + computedCSSContentBoxRect().location());
     
     int baseHeight = roundToInt(getBoxModelObjectHeight(firstChild()));
     int overbarWidth = roundToInt(getBoxModelObjectWidth(firstChild()));

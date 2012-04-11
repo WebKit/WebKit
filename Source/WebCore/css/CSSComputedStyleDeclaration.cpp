@@ -669,13 +669,7 @@ static LayoutRect sizingBox(RenderObject* renderer)
         return LayoutRect();
 
     RenderBox* box = toRenderBox(renderer);
-    if (box->style()->boxSizing() == BORDER_BOX)
-        return box->borderBoxRect();
-    LayoutUnit cssPaddingLeft = box->paddingLeft(ExcludeIntrinsicPadding);
-    LayoutUnit cssPaddingTop = box->paddingTop(ExcludeIntrinsicPadding);
-    LayoutUnit cssWidth = box->clientWidth() - cssPaddingLeft - box->paddingRight(ExcludeIntrinsicPadding);
-    LayoutUnit cssHeight = box->clientHeight() - cssPaddingTop - box->paddingBottom(ExcludeIntrinsicPadding);
-    return LayoutRect(box->borderLeft() + cssPaddingLeft, box->borderTop() + cssPaddingTop, cssWidth, cssHeight);
+    return box->style()->boxSizing() == BORDER_BOX ? box->borderBoxRect() : box->computedCSSContentBoxRect();
 }
 
 static inline bool hasCompositedLayer(RenderObject* renderer)
@@ -1861,19 +1855,19 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return cssValuePool().createValue(style->overflowY());
         case CSSPropertyPaddingTop:
             if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingTop(ExcludeIntrinsicPadding), style.get());
+                return zoomAdjustedPixelValue(toRenderBox(renderer)->computedCSSPaddingTop(), style.get());
             return zoomAdjustedPixelValueForLength(style->paddingTop(), style.get());
         case CSSPropertyPaddingRight:
             if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingRight(ExcludeIntrinsicPadding), style.get());
+                return zoomAdjustedPixelValue(toRenderBox(renderer)->computedCSSPaddingRight(), style.get());
             return zoomAdjustedPixelValueForLength(style->paddingRight(), style.get());
         case CSSPropertyPaddingBottom:
             if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingBottom(ExcludeIntrinsicPadding), style.get());
+                return zoomAdjustedPixelValue(toRenderBox(renderer)->computedCSSPaddingBottom(), style.get());
             return zoomAdjustedPixelValueForLength(style->paddingBottom(), style.get());
         case CSSPropertyPaddingLeft:
             if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingLeft(ExcludeIntrinsicPadding), style.get());
+                return zoomAdjustedPixelValue(toRenderBox(renderer)->computedCSSPaddingLeft(), style.get());
             return zoomAdjustedPixelValueForLength(style->paddingLeft(), style.get());
         case CSSPropertyPageBreakAfter:
             return cssValuePool().createValue(style->pageBreakAfter());
