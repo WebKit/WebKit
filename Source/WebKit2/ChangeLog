@@ -1,5 +1,12 @@
 2012-04-10  Yael Aharon  <yael.aharon@nokia.com>
 
+        Unreviewed build fix after r113791.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::WebGraphicsLayer):
+
+2012-04-10  Yael Aharon  <yael.aharon@nokia.com>
+
         Initial support for fixed position elements in Qt WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=81786
 
