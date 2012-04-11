@@ -1,3 +1,12 @@
+2012-04-11  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        Adding myself to committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=83711
+
+        Unreviewed update to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-04-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] LayoutTestController needs implementation of pageProperty
