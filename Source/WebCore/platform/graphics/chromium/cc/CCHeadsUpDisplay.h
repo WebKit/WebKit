@@ -67,6 +67,9 @@ private:
     float drawFPSCounterText(GraphicsContext*, int top, int height);
     void drawPlatformLayerTree(GraphicsContext*, int top);
     const CCSettings& settings() const;
+    bool isBadFrame(int frameNumber) const;
+    int frameIndex(int frameNumber) const;
+    void getAverageFPSAndStandardDeviation(double *average, double *standardDeviation) const;
 
     bool showPlatformLayerTree() const;
 
@@ -74,14 +77,17 @@ private:
 
     int m_currentFrameNumber;
 
-    double m_filteredFrameTime;
-
     OwnPtr<ManagedTexture> m_hudTexture;
 
     LayerRendererChromium* m_layerRenderer;
 
-    static const int kBeginFrameHistorySize = 64;
+    static const int kBeginFrameHistorySize = 120;
+    // The number of seconds of no frames makes us decide that the previous
+    // animation is over.
+    static const double kIdleSecondsTriggersReset;
     double m_beginTimeHistoryInSec[kBeginFrameHistorySize];
+    static const double kFrameTooFast;
+    static const int kNumMissedFramesForReset = 5;
 
     OwnPtr<Font> m_smallFont;
     OwnPtr<Font> m_mediumFont;
