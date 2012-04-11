@@ -731,6 +731,8 @@ svg/dom/animated-tearoff-equality.xhtml
 # https://bugs.webkit.org/show_bug.cgi?id=82817
 storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82818
 fast/forms/listbox-clear-restore.html
