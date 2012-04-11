@@ -2951,6 +2951,8 @@
             'page/DOMTimer.cpp',
             'page/DOMTimer.h',
             'page/DOMWindow.cpp',
+            'page/DOMWindowPagePopup.cpp',
+            'page/DOMWindowPagePopup.h',
             'page/DOMWindowProperty.cpp',
             'page/DOMWindowProperty.h',
             'page/DragController.cpp',
