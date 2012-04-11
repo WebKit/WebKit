@@ -103,7 +103,7 @@ WebInspector.AuditsPanel.prototype = {
 
     _executeAudit: function(categories, resultCallback)
     {
-        var resources = WebInspector.networkLog.resources;
+        var requests = WebInspector.networkLog.requests;
 
         var rulesRemaining = 0;
         for (var i = 0; i < categories.length; ++i)
@@ -138,7 +138,7 @@ WebInspector.AuditsPanel.prototype = {
             var category = categories[i];
             var result = new WebInspector.AuditCategoryResult(category);
             results.push(result);
-            category.run(resources, ruleResultReadyCallback.bind(this, result), this._progressMonitor);
+            category.run(requests, ruleResultReadyCallback.bind(this, result), this._progressMonitor);
         }
     },
 
@@ -284,11 +284,14 @@ WebInspector.AuditCategory.prototype = {
         this._rules.push(rule);
     },
 
-    run: function(resources, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     */
+    run: function(requests, callback, progressMonitor)
     {
         this._ensureInitialized();
         for (var i = 0; i < this._rules.length; ++i)
-            this._rules[i].run(resources, callback, progressMonitor);
+            this._rules[i].run(requests, callback, progressMonitor);
     },
 
     _ensureInitialized: function()
@@ -338,17 +341,23 @@ WebInspector.AuditRule.prototype = {
         this._severity = severity;
     },
 
-    run: function(resources, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     */
+    run: function(requests, callback, progressMonitor)
     {
         if (progressMonitor.canceled)
             return;
 
         var result = new WebInspector.AuditRuleResult(this.displayName);
         result.severity = this._severity;
-        this.doRun(resources, result, callback, progressMonitor);
+        this.doRun(requests, result, callback, progressMonitor);
     },
 
-    doRun: function(resources, result, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     */
+    doRun: function(requests, result, callback, progressMonitor)
     {
         throw new Error("doRun() not implemented");
     }

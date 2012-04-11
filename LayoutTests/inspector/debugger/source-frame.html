@@ -72,7 +72,7 @@ function test()
             function visit(resource)
             {
                 if (resource.url.indexOf("debugger-test.js") !== -1) {
-                    WebInspector.panels.network._showResource(resource, 1);
+                    WebInspector.panels.network._showRequest(resource.request, 1);
                     return true;
                 }
             }

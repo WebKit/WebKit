@@ -65,43 +65,43 @@ function test()
     InspectorTest.addConsoleSniffer(step1);
     InspectorTest.evaluateInPage("onSnifferInstalled()");
 
-    function dumpResource(resource, callback)
+    function dumpRequest(request, callback)
     {
-        if (!resource)
+        if (!request)
             return callback();
-        InspectorTest.addResult(resource.url);
+        InspectorTest.addResult(request.url);
 
         function contentLoaded()
         {
-            InspectorTest.addResult("resource.content after requesting content: " + resource.content);
+            InspectorTest.addResult("resource.content after requesting content: " + request.content);
             callback();
         }
 
-        resource.requestContent(contentLoaded);
+        request.requestContent(contentLoaded);
     }
 
     function step1()
     {
-        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 4];
-        dumpResource(resource, step2);
+        var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 4];
+        dumpRequest(request, step2);
     }
 
     function step2()
     {
-        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 3];
-        dumpResource(resource, step3);
+        var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 3];
+        dumpRequest(request, step3);
     }
 
     function step3()
     {
-        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 2];
-        dumpResource(resource, step4);
+        var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 2];
+        dumpRequest(request, step4);
     }
 
     function step4()
     {
-        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
-        dumpResource(resource, step5);
+        var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
+        dumpRequest(request, step5);
     }
 
     function step5()

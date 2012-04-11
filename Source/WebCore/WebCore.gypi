@@ -6342,6 +6342,7 @@
             'inspector/front-end/NetworkManager.js',
             'inspector/front-end/NetworkLog.js',
             'inspector/front-end/NetworkPanel.js',
+            'inspector/front-end/NetworkRequest.js',
             'inspector/front-end/Object.js',
             'inspector/front-end/ObjectPopoverHelper.js',
             'inspector/front-end/ObjectPropertiesSection.js',

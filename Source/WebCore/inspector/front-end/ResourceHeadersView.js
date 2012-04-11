@@ -29,16 +29,17 @@
  */
 
 /**
- * @extends {WebInspector.View}
  * @constructor
+ * @extends {WebInspector.View}
+ * @param {WebInspector.NetworkRequest} request
  */
-WebInspector.ResourceHeadersView = function(resource)
+WebInspector.ResourceHeadersView = function(request)
 {
     WebInspector.View.call(this);
     this.registerRequiredCSS("resourceView.css");
     this.element.addStyleClass("resource-headers-view");
 
-    this._resource = resource;
+    this._request = request;
 
     this._headersListElement = document.createElement("ol");
     this._headersListElement.className = "outline-disclosure";
@@ -98,9 +99,9 @@ WebInspector.ResourceHeadersView = function(resource)
     this._responseHeadersTreeElement.selectable = false;
     this._headersTreeOutline.appendChild(this._responseHeadersTreeElement);
 
-    resource.addEventListener("requestHeaders changed", this._refreshRequestHeaders, this);
-    resource.addEventListener("responseHeaders changed", this._refreshResponseHeaders, this);
-    resource.addEventListener("finished", this._refreshHTTPInformation, this);
+    request.addEventListener(WebInspector.NetworkRequest.Events.RequestHeadersChanged, this._refreshRequestHeaders, this);
+    request.addEventListener(WebInspector.NetworkRequest.Events.ResponseHeadersChanged, this._refreshResponseHeaders, this);
+    request.addEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, this._refreshHTTPInformation, this);
 
     this._refreshURL();
     this._refreshQueryString();
@@ -154,12 +155,12 @@ WebInspector.ResourceHeadersView.prototype = {
 
     _refreshURL: function()
     {
-        this._urlTreeElement.title = this._formatHeader(WebInspector.UIString("Request URL"), this._resource.url);
+        this._urlTreeElement.title = this._formatHeader(WebInspector.UIString("Request URL"), this._request.url);
     },
 
     _refreshQueryString: function()
     {
-        var queryParameters = this._resource.queryParameters;
+        var queryParameters = this._request.queryParameters;
         this._queryStringTreeElement.hidden = !queryParameters;
         if (queryParameters)
             this._refreshParms(WebInspector.UIString("Query String Parameters"), queryParameters, this._queryStringTreeElement);
@@ -167,7 +168,7 @@ WebInspector.ResourceHeadersView.prototype = {
 
     _refreshUrlFragment: function()
     {
-        var urlFragment = this._resource.urlFragment;
+        var urlFragment = this._request.urlFragment;
         this._urlFragmentTreeElement.hidden = !urlFragment;
 
         if (!urlFragment)
@@ -190,11 +191,11 @@ WebInspector.ResourceHeadersView.prototype = {
         this._formDataTreeElement.hidden = true;
         this._requestPayloadTreeElement.hidden = true;
 
-        var formData = this._resource.requestFormData;
+        var formData = this._request.requestFormData;
         if (!formData)
             return;
 
-        var formParameters = this._resource.formParameters;
+        var formParameters = this._request.formParameters;
         if (formParameters) {
             this._formDataTreeElement.hidden = false;
             this._refreshParms(WebInspector.UIString("Form Data"), formParameters, this._formDataTreeElement);
@@ -267,14 +268,14 @@ WebInspector.ResourceHeadersView.prototype = {
     _refreshRequestHeaders: function()
     {
         var additionalRow = null;
-        if (typeof this._resource.webSocketRequestKey3 !== "undefined")
-            additionalRow = {header: "(Key3)", value: this._resource.webSocketRequestKey3};
+        if (typeof this._request.webSocketRequestKey3 !== "undefined")
+            additionalRow = {header: "(Key3)", value: this._request.webSocketRequestKey3};
         if (this._showRequestHeadersText)
-            this._refreshHeadersText(WebInspector.UIString("Request Headers"), this._resource.sortedRequestHeaders, this._resource.requestHeadersText, this._requestHeadersTreeElement);
+            this._refreshHeadersText(WebInspector.UIString("Request Headers"), this._request.sortedRequestHeaders, this._request.requestHeadersText, this._requestHeadersTreeElement);
         else
-            this._refreshHeaders(WebInspector.UIString("Request Headers"), this._resource.sortedRequestHeaders, additionalRow, this._requestHeadersTreeElement);
+            this._refreshHeaders(WebInspector.UIString("Request Headers"), this._request.sortedRequestHeaders, additionalRow, this._requestHeadersTreeElement);
 
-        if (this._resource.requestHeadersText) {
+        if (this._request.requestHeadersText) {
             var toggleButton = this._createHeadersToggleButton(this._showRequestHeadersText);
             toggleButton.addEventListener("click", this._toggleRequestHeadersText.bind(this));
             this._requestHeadersTreeElement.listItemElement.appendChild(toggleButton);
@@ -286,14 +287,14 @@ WebInspector.ResourceHeadersView.prototype = {
     _refreshResponseHeaders: function()
     {
         var additionalRow = null;
-        if (typeof this._resource.webSocketChallengeResponse !== "undefined")
-            additionalRow = {header: "(Challenge Response)", value: this._resource.webSocketChallengeResponse};
+        if (typeof this._request.webSocketChallengeResponse !== "undefined")
+            additionalRow = {header: "(Challenge Response)", value: this._request.webSocketChallengeResponse};
         if (this._showResponseHeadersText)
-            this._refreshHeadersText(WebInspector.UIString("Response Headers"), this._resource.sortedResponseHeaders, this._resource.responseHeadersText, this._responseHeadersTreeElement);
+            this._refreshHeadersText(WebInspector.UIString("Response Headers"), this._request.sortedResponseHeaders, this._request.responseHeadersText, this._responseHeadersTreeElement);
         else
-            this._refreshHeaders(WebInspector.UIString("Response Headers"), this._resource.sortedResponseHeaders, additionalRow, this._responseHeadersTreeElement);
+            this._refreshHeaders(WebInspector.UIString("Response Headers"), this._request.sortedResponseHeaders, additionalRow, this._responseHeadersTreeElement);
 
-        if (this._resource.responseHeadersText) {
+        if (this._request.responseHeadersText) {
             var toggleButton = this._createHeadersToggleButton(this._showResponseHeadersText);
             toggleButton.addEventListener("click", this._toggleResponseHeadersText.bind(this));
             this._responseHeadersTreeElement.listItemElement.appendChild(toggleButton);
@@ -303,30 +304,30 @@ WebInspector.ResourceHeadersView.prototype = {
     _refreshHTTPInformation: function()
     {
         var requestMethodElement = this._requestMethodTreeElement;
-        requestMethodElement.hidden = !this._resource.statusCode;
+        requestMethodElement.hidden = !this._request.statusCode;
         var statusCodeElement = this._statusCodeTreeElement;
-        statusCodeElement.hidden = !this._resource.statusCode;
+        statusCodeElement.hidden = !this._request.statusCode;
 
-        if (this._resource.statusCode) {
+        if (this._request.statusCode) {
             var statusImageSource = "";
-            if (this._resource.statusCode < 300 || this._resource.statusCode === 304)
+            if (this._request.statusCode < 300 || this._request.statusCode === 304)
                 statusImageSource = "Images/successGreenDot.png";
-            else if (this._resource.statusCode < 400)
+            else if (this._request.statusCode < 400)
                 statusImageSource = "Images/warningOrangeDot.png";
             else
                 statusImageSource = "Images/errorRedDot.png";
 
-            requestMethodElement.title = this._formatHeader(WebInspector.UIString("Request Method"), this._resource.requestMethod);
+            requestMethodElement.title = this._formatHeader(WebInspector.UIString("Request Method"), this._request.requestMethod);
 
             var statusCodeFragment = document.createDocumentFragment();
             statusCodeFragment.createChild("div", "header-name").textContent = WebInspector.UIString("Status Code") + ":";
 
             var statusCodeImage = statusCodeFragment.createChild("img", "resource-status-image");
             statusCodeImage.src = statusImageSource;
-            statusCodeImage.title = this._resource.statusCode + " " + this._resource.statusText;
+            statusCodeImage.title = this._request.statusCode + " " + this._request.statusText;
             var value = statusCodeFragment.createChild("div", "header-value source-code");
-            value.textContent = this._resource.statusCode + " " + this._resource.statusText;
-            if (this._resource.cached)
+            value.textContent = this._request.statusCode + " " + this._request.statusText;
+            if (this._request.cached)
                 value.createChild("span", "status-from-cache").textContent = " " + WebInspector.UIString("(from cache)");
 
             statusCodeElement.title = statusCodeFragment;

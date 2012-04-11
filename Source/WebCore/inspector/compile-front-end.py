@@ -92,6 +92,7 @@ modules = [
             "ResourceType.js",
             "ResourceUtils.js",
             "NetworkManager.js",
+            "NetworkRequest.js",
             "UISourceCode.js",
             "UserAgentSupport.js",
         ]

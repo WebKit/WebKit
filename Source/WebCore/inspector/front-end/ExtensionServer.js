@@ -411,7 +411,7 @@ WebInspector.ExtensionServer.prototype = {
 
     _onGetHAR: function()
     {
-        var requests = WebInspector.networkLog.resources;
+        var requests = WebInspector.networkLog.requests;
         var harLog = (new WebInspector.HARLog(requests)).build();
         for (var i = 0; i < harLog.entries.length; ++i)
             harLog.entries[i]._requestId = this._requestId(requests[i]);
@@ -537,7 +537,7 @@ WebInspector.ExtensionServer.prototype = {
         this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ConsoleMessageAdded,
             WebInspector.console, WebInspector.ConsoleModel.Events.MessageAdded, this._notifyConsoleMessageAdded);
         this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.NetworkRequestFinished,
-            WebInspector.networkManager, WebInspector.NetworkManager.EventTypes.ResourceFinished, this._notifyRequestFinished);
+            WebInspector.networkManager, WebInspector.NetworkManager.EventTypes.RequestFinished, this._notifyRequestFinished);
         this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ResourceAdded,
             WebInspector.resourceTreeModel,
             WebInspector.ResourceTreeModel.EventTypes.ResourceAdded,
@@ -592,7 +592,7 @@ WebInspector.ExtensionServer.prototype = {
 
     _notifyRequestFinished: function(event)
     {
-        var request = event.data;
+        var request = /** @type {WebInspector.NetworkRequest} */ event.data;
         this._postNotification(WebInspector.extensionAPI.Events.NetworkRequestFinished, this._requestId(request), (new WebInspector.HAREntry(request)).build());
     },
 

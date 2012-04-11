@@ -25,14 +25,14 @@ function test()
     function step2()
     {
         // inspector-test.js appears in network panel occasionally in Safari on
-        // Mac, so checking last resource.
-        var resources = WebInspector.networkLog.resources;
-        var resourcesCount = resources.length;
-        var resource = resources[resourcesCount - 1];
+        // Mac, so checking last request.
+        var requests = WebInspector.networkLog.requests;
+        var requestsCount = requests.length;
+        var request = requests[requestsCount - 1];
 
-        InspectorTest.addResult(resource.url);
-        InspectorTest.addResult("resource.isPingRequest(): " + resource.isPingRequest());
-        InspectorTest.addResult("resource.requestContentType: " + resource.requestContentType());
+        InspectorTest.addResult(request.url);
+        InspectorTest.addResult("resource.isPingRequest(): " + request.isPingRequest());
+        InspectorTest.addResult("resource.requestContentType: " + request.requestContentType());
 
         InspectorTest.completeTest();
     }

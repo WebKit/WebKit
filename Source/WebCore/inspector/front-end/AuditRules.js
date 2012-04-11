@@ -39,17 +39,17 @@ WebInspector.AuditRules.CacheableResponseCodes =
     301: true,
     410: true,
 
-    304: true // Underlying resource is cacheable
+    304: true // Underlying request is cacheable
 }
 
-WebInspector.AuditRules.getDomainToResourcesMap = function(resources, types, needFullResources)
+WebInspector.AuditRules.getDomainToResourcesMap = function(requests, types, needFullResources)
 {
     var domainToResourcesMap = {};
-    for (var i = 0, size = resources.length; i < size; ++i) {
-        var resource = resources[i];
-        if (types && types.indexOf(resource.type) === -1)
+    for (var i = 0, size = requests.length; i < size; ++i) {
+        var request = requests[i];
+        if (types && types.indexOf(request.type) === -1)
             continue;
-        var parsedURL = resource.url.asParsedURL();
+        var parsedURL = request.url.asParsedURL();
         if (!parsedURL)
             continue;
         var domain = parsedURL.host;
@@ -58,7 +58,7 @@ WebInspector.AuditRules.getDomainToResourcesMap = function(resources, types, nee
           domainResources = [];
           domainToResourcesMap[domain] = domainResources;
         }
-        domainResources.push(needFullResources ? resource : resource.url);
+        domainResources.push(needFullResources ? request : request.url);
     }
     return domainToResourcesMap;
 }
@@ -73,26 +73,29 @@ WebInspector.AuditRules.GzipRule = function()
 }
 
 WebInspector.AuditRules.GzipRule.prototype = {
-    doRun: function(resources, result, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     */
+    doRun: function(requests, result, callback, progressMonitor)
     {
         var totalSavings = 0;
         var compressedSize = 0;
         var candidateSize = 0;
         var summary = result.addChild("", true);
-        for (var i = 0, length = resources.length; i < length; ++i) {
-            var resource = resources[i];
-            if (resource.statusCode === 304)
-                continue; // Do not test 304 Not Modified resources as their contents are always empty.
-            if (this._shouldCompress(resource)) {
-                var size = resource.resourceSize;
+        for (var i = 0, length = requests.length; i < length; ++i) {
+            var request = requests[i];
+            if (request.statusCode === 304)
+                continue; // Do not test 304 Not Modified requests as their contents are always empty.
+            if (this._shouldCompress(request)) {
+                var size = request.resourceSize;
                 candidateSize += size;
-                if (this._isCompressed(resource)) {
+                if (this._isCompressed(request)) {
                     compressedSize += size;
                     continue;
                 }
                 var savings = 2 * size / 3;
                 totalSavings += savings;
-                summary.addFormatted("%r could save ~%s", resource.url, Number.bytesToString(savings));
+                summary.addFormatted("%r could save ~%s", request.url, Number.bytesToString(savings));
                 result.violationCount++;
             }
         }
@@ -102,18 +105,18 @@ WebInspector.AuditRules.GzipRule.prototype = {
         callback(result);
     },
 
-    _isCompressed: function(resource)
+    _isCompressed: function(request)
     {
-        var encodingHeader = resource.responseHeaders["Content-Encoding"];
+        var encodingHeader = request.responseHeaders["Content-Encoding"];
         if (!encodingHeader)
             return false;
 
         return /\b(?:gzip|deflate)\b/.test(encodingHeader);
     },
 
-    _shouldCompress: function(resource)
+    _shouldCompress: function(request)
     {
-        return resource.type.isTextType() && resource.domain && resource.resourceSize !== undefined && resource.resourceSize > 150;
+        return request.type.isTextType() && request.domain && request.resourceSize !== undefined && request.resourceSize > 150;
     }
 }
 
@@ -132,9 +135,9 @@ WebInspector.AuditRules.CombineExternalResourcesRule = function(id, name, type, 
 }
 
 WebInspector.AuditRules.CombineExternalResourcesRule.prototype = {
-    doRun: function(resources, result, callback, progressMonitor)
+    doRun: function(requests, result, callback, progressMonitor)
     {
-        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources, [this._type], false);
+        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(requests, [this._type], false);
         var penalizedResourceCount = 0;
         // TODO: refactor according to the chosen i18n approach
         var summary = result.addChild("", true);
@@ -187,10 +190,10 @@ WebInspector.AuditRules.MinimizeDnsLookupsRule = function(hostCountThreshold) {
 }
 
 WebInspector.AuditRules.MinimizeDnsLookupsRule.prototype = {
-    doRun: function(resources, result, callback, progressMonitor)
+    doRun: function(requests, result, callback, progressMonitor)
     {
         var summary = result.addChild("");
-        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources, undefined, false);
+        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(requests, undefined, false);
         for (var domain in domainToResourcesMap) {
             if (domainToResourcesMap[domain].length > 1)
                 continue;
@@ -225,7 +228,7 @@ WebInspector.AuditRules.ParallelizeDownloadRule = function(optimalHostnameCount,
 }
 
 WebInspector.AuditRules.ParallelizeDownloadRule.prototype = {
-    doRun: function(resources, result, callback, progressMonitor)
+    doRun: function(requests, result, callback, progressMonitor)
     {
         function hostSorter(a, b)
         {
@@ -235,7 +238,7 @@ WebInspector.AuditRules.ParallelizeDownloadRule.prototype = {
         }
 
         var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(
-            resources,
+            requests,
             [WebInspector.resourceTypes.Stylesheet, WebInspector.resourceTypes.Image],
             true);
 
@@ -253,8 +256,8 @@ WebInspector.AuditRules.ParallelizeDownloadRule.prototype = {
             hosts.splice(optimalHostnameCount);
 
         var busiestHostResourceCount = domainToResourcesMap[hosts[0]].length;
-        var resourceCountAboveThreshold = busiestHostResourceCount - this._minRequestThreshold;
-        if (resourceCountAboveThreshold <= 0)
+        var requestCountAboveThreshold = busiestHostResourceCount - this._minRequestThreshold;
+        if (requestCountAboveThreshold <= 0)
             return callback(null);
 
         var avgResourcesPerHost = 0;
@@ -265,17 +268,17 @@ WebInspector.AuditRules.ParallelizeDownloadRule.prototype = {
         avgResourcesPerHost /= optimalHostnameCount;
         avgResourcesPerHost = Math.max(avgResourcesPerHost, 1);
 
-        var pctAboveAvg = (resourceCountAboveThreshold / avgResourcesPerHost) - 1.0;
+        var pctAboveAvg = (requestCountAboveThreshold / avgResourcesPerHost) - 1.0;
         var minBalanceThreshold = this._minBalanceThreshold;
         if (pctAboveAvg < minBalanceThreshold)
             return callback(null);
 
-        var resourcesOnBusiestHost = domainToResourcesMap[hosts[0]];
+        var requestsOnBusiestHost = domainToResourcesMap[hosts[0]];
         var entry = result.addChild(String.sprintf("This page makes %d parallelizable requests to %s. Increase download parallelization by distributing the following requests across multiple hostnames.", busiestHostResourceCount, hosts[0]), true);
-        for (var i = 0; i < resourcesOnBusiestHost.length; ++i)
-            entry.addURL(resourcesOnBusiestHost[i].url);
+        for (var i = 0; i < requestsOnBusiestHost.length; ++i)
+            entry.addURL(requestsOnBusiestHost[i].url);
 
-        result.violationCount = resourcesOnBusiestHost.length;
+        result.violationCount = requestsOnBusiestHost.length;
         callback(result);
     }
 }
@@ -294,7 +297,7 @@ WebInspector.AuditRules.UnusedCssRule = function()
 }
 
 WebInspector.AuditRules.UnusedCssRule.prototype = {
-    doRun: function(resources, result, callback, progressMonitor)
+    doRun: function(requests, result, callback, progressMonitor)
     {
         var self = this;
 
@@ -353,7 +356,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                         continue;
 
                     var resource = WebInspector.resourceForURL(styleSheet.sourceURL);
-                    var isInlineBlock = resource && resource.type == WebInspector.resourceTypes.Document;
+                    var isInlineBlock = resource && resource.request && resource.request.type == WebInspector.resourceTypes.Document;
                     var url = !isInlineBlock ? WebInspector.AuditRuleResult.linkifyDisplayName(styleSheet.sourceURL) : String.sprintf("Inline block #%d", ++inlineBlockOrdinal);
                     var pctUnused = Math.round(100 * unusedStylesheetSize / stylesheetSize);
                     if (!summary)
@@ -441,9 +444,9 @@ WebInspector.AuditRules.CacheControlRule.MillisPerMonth = 1000 * 60 * 60 * 24 * 
 
 WebInspector.AuditRules.CacheControlRule.prototype = {
 
-    doRun: function(resources, result, callback, progressMonitor)
+    doRun: function(requests, result, callback, progressMonitor)
     {
-        var cacheableAndNonCacheableResources = this._cacheableAndNonCacheableResources(resources);
+        var cacheableAndNonCacheableResources = this._cacheableAndNonCacheableResources(requests);
         if (cacheableAndNonCacheableResources[0].length)
             this.runChecks(cacheableAndNonCacheableResources[0], result);
         this.handleNonCacheableResources(cacheableAndNonCacheableResources[1], result);
@@ -451,32 +454,32 @@ WebInspector.AuditRules.CacheControlRule.prototype = {
         callback(result);
     },
 
-    handleNonCacheableResources: function(resources, result)
+    handleNonCacheableResources: function(requests, result)
     {
     },
 
-    _cacheableAndNonCacheableResources: function(resources)
+    _cacheableAndNonCacheableResources: function(requests)
     {
         var processedResources = [[], []];
-        for (var i = 0; i < resources.length; ++i) {
-            var resource = resources[i];
-            if (!this.isCacheableResource(resource))
+        for (var i = 0; i < requests.length; ++i) {
+            var request = requests[i];
+            if (!this.isCacheableResource(request))
                 continue;
-            if (this._isExplicitlyNonCacheable(resource))
-                processedResources[1].push(resource);
+            if (this._isExplicitlyNonCacheable(request))
+                processedResources[1].push(request);
             else
-                processedResources[0].push(resource);
+                processedResources[0].push(request);
         }
         return processedResources;
     },
 
-    execCheck: function(messageText, resourceCheckFunction, resources, result)
+    execCheck: function(messageText, requestCheckFunction, requests, result)
     {
-        var resourceCount = resources.length;
+        var requestCount = requests.length;
         var urls = [];
-        for (var i = 0; i < resourceCount; ++i) {
-            if (resourceCheckFunction.call(this, resources[i]))
-                urls.push(resources[i].url);
+        for (var i = 0; i < requestCount; ++i) {
+            if (requestCheckFunction.call(this, requests[i]))
+                urls.push(requests[i].url);
         }
         if (urls.length) {
             var entry = result.addChild(messageText, true);
@@ -485,9 +488,9 @@ WebInspector.AuditRules.CacheControlRule.prototype = {
         }
     },
 
-    freshnessLifetimeGreaterThan: function(resource, timeMs)
+    freshnessLifetimeGreaterThan: function(request, timeMs)
     {
-        var dateHeader = this.responseHeader(resource, "Date");
+        var dateHeader = this.responseHeader(request, "Date");
         if (!dateHeader)
             return false;
 
@@ -496,12 +499,12 @@ WebInspector.AuditRules.CacheControlRule.prototype = {
             return false;
 
         var freshnessLifetimeMs;
-        var maxAgeMatch = this.responseHeaderMatch(resource, "Cache-Control", "max-age=(\\d+)");
+        var maxAgeMatch = this.responseHeaderMatch(request, "Cache-Control", "max-age=(\\d+)");
 
         if (maxAgeMatch)
             freshnessLifetimeMs = (maxAgeMatch[1]) ? 1000 * maxAgeMatch[1] : 0;
         else {
-            var expiresHeader = this.responseHeader(resource, "Expires");
+            var expiresHeader = this.responseHeader(request, "Expires");
             if (expiresHeader) {
                 var expDate = Date.parse(expiresHeader);
                 if (!isNaN(expDate))
@@ -512,58 +515,58 @@ WebInspector.AuditRules.CacheControlRule.prototype = {
         return (isNaN(freshnessLifetimeMs)) ? false : freshnessLifetimeMs > timeMs;
     },
 
-    responseHeader: function(resource, header)
+    responseHeader: function(request, header)
     {
-        return resource.responseHeaders[header];
+        return request.responseHeaders[header];
     },
 
-    hasResponseHeader: function(resource, header)
+    hasResponseHeader: function(request, header)
     {
-        return resource.responseHeaders[header] !== undefined;
+        return request.responseHeaders[header] !== undefined;
     },
 
-    isCompressible: function(resource)
+    isCompressible: function(request)
     {
-        return resource.type.isTextType();
+        return request.type.isTextType();
     },
 
-    isPubliclyCacheable: function(resource)
+    isPubliclyCacheable: function(request)
     {
-        if (this._isExplicitlyNonCacheable(resource))
+        if (this._isExplicitlyNonCacheable(request))
             return false;
 
-        if (this.responseHeaderMatch(resource, "Cache-Control", "public"))
+        if (this.responseHeaderMatch(request, "Cache-Control", "public"))
             return true;
 
-        return resource.url.indexOf("?") == -1 && !this.responseHeaderMatch(resource, "Cache-Control", "private");
+        return request.url.indexOf("?") == -1 && !this.responseHeaderMatch(request, "Cache-Control", "private");
     },
 
-    responseHeaderMatch: function(resource, header, regexp)
+    responseHeaderMatch: function(request, header, regexp)
     {
-        return resource.responseHeaders[header]
-            ? resource.responseHeaders[header].match(new RegExp(regexp, "im"))
+        return request.responseHeaders[header]
+            ? request.responseHeaders[header].match(new RegExp(regexp, "im"))
             : undefined;
     },
 
-    hasExplicitExpiration: function(resource)
+    hasExplicitExpiration: function(request)
     {
-        return this.hasResponseHeader(resource, "Date") &&
-            (this.hasResponseHeader(resource, "Expires") || this.responseHeaderMatch(resource, "Cache-Control", "max-age"));
+        return this.hasResponseHeader(request, "Date") &&
+            (this.hasResponseHeader(request, "Expires") || this.responseHeaderMatch(request, "Cache-Control", "max-age"));
     },
 
-    _isExplicitlyNonCacheable: function(resource)
+    _isExplicitlyNonCacheable: function(request)
     {
-        var hasExplicitExp = this.hasExplicitExpiration(resource);
-        return this.responseHeaderMatch(resource, "Cache-Control", "(no-cache|no-store|must-revalidate)") ||
-            this.responseHeaderMatch(resource, "Pragma", "no-cache") ||
-            (hasExplicitExp && !this.freshnessLifetimeGreaterThan(resource, 0)) ||
-            (!hasExplicitExp && resource.url && resource.url.indexOf("?") >= 0) ||
-            (!hasExplicitExp && !this.isCacheableResource(resource));
+        var hasExplicitExp = this.hasExplicitExpiration(request);
+        return this.responseHeaderMatch(request, "Cache-Control", "(no-cache|no-store|must-revalidate)") ||
+            this.responseHeaderMatch(request, "Pragma", "no-cache") ||
+            (hasExplicitExp && !this.freshnessLifetimeGreaterThan(request, 0)) ||
+            (!hasExplicitExp && request.url && request.url.indexOf("?") >= 0) ||
+            (!hasExplicitExp && !this.isCacheableResource(request));
     },
 
-    isCacheableResource: function(resource)
+    isCacheableResource: function(request)
     {
-        return resource.statusCode !== undefined && WebInspector.AuditRules.CacheableResponseCodes[resource.statusCode];
+        return request.statusCode !== undefined && WebInspector.AuditRules.CacheableResponseCodes[request.statusCode];
     }
 }
 
@@ -579,60 +582,60 @@ WebInspector.AuditRules.BrowserCacheControlRule = function()
 }
 
 WebInspector.AuditRules.BrowserCacheControlRule.prototype = {
-    handleNonCacheableResources: function(resources, result)
+    handleNonCacheableResources: function(requests, result)
     {
-        if (resources.length) {
+        if (requests.length) {
             var entry = result.addChild("The following resources are explicitly non-cacheable. Consider making them cacheable if possible:", true);
-            result.violationCount += resources.length;
-            for (var i = 0; i < resources.length; ++i)
-                entry.addURL(resources[i].url);
+            result.violationCount += requests.length;
+            for (var i = 0; i < requests.length; ++i)
+                entry.addURL(requests[i].url);
         }
     },
 
-    runChecks: function(resources, result, callback)
+    runChecks: function(requests, result, callback)
     {
         this.execCheck("The following resources are missing a cache expiration. Resources that do not specify an expiration may not be cached by browsers:",
-            this._missingExpirationCheck, resources, result);
+            this._missingExpirationCheck, requests, result);
         this.execCheck("The following resources specify a \"Vary\" header that disables caching in most versions of Internet Explorer:",
-            this._varyCheck, resources, result);
+            this._varyCheck, requests, result);
         this.execCheck("The following cacheable resources have a short freshness lifetime:",
-            this._oneMonthExpirationCheck, resources, result);
+            this._oneMonthExpirationCheck, requests, result);
 
         // Unable to implement the favicon check due to the WebKit limitations.
         this.execCheck("To further improve cache hit rate, specify an expiration one year in the future for the following cacheable resources:",
-            this._oneYearExpirationCheck, resources, result);
+            this._oneYearExpirationCheck, requests, result);
     },
 
-    _missingExpirationCheck: function(resource)
+    _missingExpirationCheck: function(request)
     {
-        return this.isCacheableResource(resource) && !this.hasResponseHeader(resource, "Set-Cookie") && !this.hasExplicitExpiration(resource);
+        return this.isCacheableResource(request) && !this.hasResponseHeader(request, "Set-Cookie") && !this.hasExplicitExpiration(request);
     },
 
-    _varyCheck: function(resource)
+    _varyCheck: function(request)
     {
-        var varyHeader = this.responseHeader(resource, "Vary");
+        var varyHeader = this.responseHeader(request, "Vary");
         if (varyHeader) {
             varyHeader = varyHeader.replace(/User-Agent/gi, "");
             varyHeader = varyHeader.replace(/Accept-Encoding/gi, "");
             varyHeader = varyHeader.replace(/[, ]*/g, "");
         }
-        return varyHeader && varyHeader.length && this.isCacheableResource(resource) && this.freshnessLifetimeGreaterThan(resource, 0);
+        return varyHeader && varyHeader.length && this.isCacheableResource(request) && this.freshnessLifetimeGreaterThan(request, 0);
     },
 
-    _oneMonthExpirationCheck: function(resource)
+    _oneMonthExpirationCheck: function(request)
     {
-        return this.isCacheableResource(resource) &&
-            !this.hasResponseHeader(resource, "Set-Cookie") &&
-            !this.freshnessLifetimeGreaterThan(resource, WebInspector.AuditRules.CacheControlRule.MillisPerMonth) &&
-            this.freshnessLifetimeGreaterThan(resource, 0);
+        return this.isCacheableResource(request) &&
+            !this.hasResponseHeader(request, "Set-Cookie") &&
+            !this.freshnessLifetimeGreaterThan(request, WebInspector.AuditRules.CacheControlRule.MillisPerMonth) &&
+            this.freshnessLifetimeGreaterThan(request, 0);
     },
 
-    _oneYearExpirationCheck: function(resource)
+    _oneYearExpirationCheck: function(request)
     {
-        return this.isCacheableResource(resource) &&
-            !this.hasResponseHeader(resource, "Set-Cookie") &&
-            !this.freshnessLifetimeGreaterThan(resource, 11 * WebInspector.AuditRules.CacheControlRule.MillisPerMonth) &&
-            this.freshnessLifetimeGreaterThan(resource, WebInspector.AuditRules.CacheControlRule.MillisPerMonth);
+        return this.isCacheableResource(request) &&
+            !this.hasResponseHeader(request, "Set-Cookie") &&
+            !this.freshnessLifetimeGreaterThan(request, 11 * WebInspector.AuditRules.CacheControlRule.MillisPerMonth) &&
+            this.freshnessLifetimeGreaterThan(request, WebInspector.AuditRules.CacheControlRule.MillisPerMonth);
     }
 }
 
@@ -647,32 +650,32 @@ WebInspector.AuditRules.ProxyCacheControlRule = function() {
 }
 
 WebInspector.AuditRules.ProxyCacheControlRule.prototype = {
-    runChecks: function(resources, result, callback)
+    runChecks: function(requests, result, callback)
     {
         this.execCheck("Resources with a \"?\" in the URL are not cached by most proxy caching servers:",
-            this._questionMarkCheck, resources, result);
+            this._questionMarkCheck, requests, result);
         this.execCheck("Consider adding a \"Cache-Control: public\" header to the following resources:",
-            this._publicCachingCheck, resources, result);
+            this._publicCachingCheck, requests, result);
         this.execCheck("The following publicly cacheable resources contain a Set-Cookie header. This security vulnerability can cause cookies to be shared by multiple users.",
-            this._setCookieCacheableCheck, resources, result);
+            this._setCookieCacheableCheck, requests, result);
     },
 
-    _questionMarkCheck: function(resource)
+    _questionMarkCheck: function(request)
     {
-        return resource.url.indexOf("?") >= 0 && !this.hasResponseHeader(resource, "Set-Cookie") && this.isPubliclyCacheable(resource);
+        return request.url.indexOf("?") >= 0 && !this.hasResponseHeader(request, "Set-Cookie") && this.isPubliclyCacheable(request);
     },
 
-    _publicCachingCheck: function(resource)
+    _publicCachingCheck: function(request)
     {
-        return this.isCacheableResource(resource) &&
-            !this.isCompressible(resource) &&
-            !this.responseHeaderMatch(resource, "Cache-Control", "public") &&
-            !this.hasResponseHeader(resource, "Set-Cookie");
+        return this.isCacheableResource(request) &&
+            !this.isCompressible(request) &&
+            !this.responseHeaderMatch(request, "Cache-Control", "public") &&
+            !this.hasResponseHeader(request, "Set-Cookie");
     },
 
-    _setCookieCacheableCheck: function(resource)
+    _setCookieCacheableCheck: function(request)
     {
-        return this.hasResponseHeader(resource, "Set-Cookie") && this.isPubliclyCacheable(resource);
+        return this.hasResponseHeader(request, "Set-Cookie") && this.isPubliclyCacheable(request);
     }
 }
 
@@ -688,7 +691,7 @@ WebInspector.AuditRules.ImageDimensionsRule = function()
 }
 
 WebInspector.AuditRules.ImageDimensionsRule.prototype = {
-    doRun: function(resources, result, callback, progressMonitor)
+    doRun: function(requests, result, callback, progressMonitor)
     {
         var urlToNoDimensionCount = {};
 
@@ -814,7 +817,7 @@ WebInspector.AuditRules.CssInHeadRule = function()
 }
 
 WebInspector.AuditRules.CssInHeadRule.prototype = {
-    doRun: function(resources, result, callback, progressMonitor)
+    doRun: function(requests, result, callback, progressMonitor)
     {
         function evalCallback(evalResult)
         {
@@ -898,7 +901,7 @@ WebInspector.AuditRules.StylesScriptsOrderRule = function()
 }
 
 WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
-    doRun: function(resources, result, callback, progressMonitor)
+    doRun: function(requests, result, callback, progressMonitor)
     {
         function evalCallback(resultValue)
         {
@@ -980,7 +983,7 @@ WebInspector.AuditRules.CSSRuleBase = function(id, name)
 }
 
 WebInspector.AuditRules.CSSRuleBase.prototype = {
-    doRun: function(resources, result, callback, progressMonitor)
+    doRun: function(requests, result, callback, progressMonitor)
     {
         CSSAgent.getAllStyleSheets(sheetsCallback.bind(this));
 
@@ -1141,37 +1144,37 @@ WebInspector.AuditRules.CookieRuleBase = function(id, name)
 }
 
 WebInspector.AuditRules.CookieRuleBase.prototype = {
-    doRun: function(resources, result, callback, progressMonitor)
+    doRun: function(requests, result, callback, progressMonitor)
     {
         var self = this;
         function resultCallback(receivedCookies, isAdvanced) {
             if (progressMonitor.canceled)
                 return;
 
-            self.processCookies(isAdvanced ? receivedCookies : [], resources, result);
+            self.processCookies(isAdvanced ? receivedCookies : [], requests, result);
             callback(result);
         }
 
         WebInspector.Cookies.getCookiesAsync(resultCallback);
     },
 
-    mapResourceCookies: function(resourcesByDomain, allCookies, callback)
+    mapResourceCookies: function(requestsByDomain, allCookies, callback)
     {
         for (var i = 0; i < allCookies.length; ++i) {
-            for (var resourceDomain in resourcesByDomain) {
-                if (WebInspector.Cookies.cookieDomainMatchesResourceDomain(allCookies[i].domain, resourceDomain))
-                    this._callbackForResourceCookiePairs(resourcesByDomain[resourceDomain], allCookies[i], callback);
+            for (var requestDomain in requestsByDomain) {
+                if (WebInspector.Cookies.cookieDomainMatchesResourceDomain(allCookies[i].domain, requestDomain))
+                    this._callbackForResourceCookiePairs(requestsByDomain[requestDomain], allCookies[i], callback);
             }
         }
     },
 
-    _callbackForResourceCookiePairs: function(resources, cookie, callback)
+    _callbackForResourceCookiePairs: function(requests, cookie, callback)
     {
-        if (!resources)
+        if (!requests)
             return;
-        for (var i = 0; i < resources.length; ++i) {
-            if (WebInspector.Cookies.cookieMatchesResourceURL(cookie, resources[i].url))
-                callback(resources[i], cookie);
+        for (var i = 0; i < requests.length; ++i) {
+            if (WebInspector.Cookies.cookieMatchesResourceURL(cookie, requests[i].url))
+                callback(requests[i], cookie);
         }
     }
 }
@@ -1206,7 +1209,7 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
         return result;
     },
 
-    processCookies: function(allCookies, resources, result)
+    processCookies: function(allCookies, requests, result)
     {
         function maxSizeSorter(a, b)
         {
@@ -1220,12 +1223,12 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
 
         var cookiesPerResourceDomain = {};
 
-        function collectorCallback(resource, cookie)
+        function collectorCallback(request, cookie)
         {
-            var cookies = cookiesPerResourceDomain[resource.domain];
+            var cookies = cookiesPerResourceDomain[request.domain];
             if (!cookies) {
                 cookies = [];
-                cookiesPerResourceDomain[resource.domain] = cookies;
+                cookiesPerResourceDomain[request.domain] = cookies;
             }
             cookies.push(cookie);
         }
@@ -1235,16 +1238,16 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
 
         var sortedCookieSizes = [];
 
-        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources,
+        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(requests,
                 null,
                 true);
         var matchingResourceData = {};
         this.mapResourceCookies(domainToResourcesMap, allCookies, collectorCallback.bind(this));
 
-        for (var resourceDomain in cookiesPerResourceDomain) {
-            var cookies = cookiesPerResourceDomain[resourceDomain];
+        for (var requestDomain in cookiesPerResourceDomain) {
+            var cookies = cookiesPerResourceDomain[requestDomain];
             sortedCookieSizes.push({
-                domain: resourceDomain,
+                domain: requestDomain,
                 avgCookieSize: this._average(cookies),
                 maxCookieSize: this._max(cookies)
             });
@@ -1298,9 +1301,9 @@ WebInspector.AuditRules.StaticCookielessRule = function(minResources)
 }
 
 WebInspector.AuditRules.StaticCookielessRule.prototype = {
-    processCookies: function(allCookies, resources, result)
+    processCookies: function(allCookies, requests, result)
     {
-        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources,
+        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(requests,
                 [WebInspector.resourceTypes.Stylesheet,
                  WebInspector.resourceTypes.Image],
                 true);
@@ -1326,9 +1329,9 @@ WebInspector.AuditRules.StaticCookielessRule.prototype = {
         result.violationCount = badUrls.length;
     },
 
-    _collectorCallback: function(matchingResourceData, resource, cookie)
+    _collectorCallback: function(matchingResourceData, request, cookie)
     {
-        matchingResourceData[resource.url] = (matchingResourceData[resource.url] || 0) + cookie.size;
+        matchingResourceData[request.url] = (matchingResourceData[request.url] || 0) + cookie.size;
     }
 }
 

@@ -3,10 +3,10 @@
 <script src="../http/tests/inspector/inspector-test.js"></script>
 <script>
 function test() {
-    var resourcesToWatch = /\/network-test\.js$|\/non-existent-file.js$|^data:application\/javascript,|/;
-    var seenResources = 0;
+    var requestsToWatch = /\/network-test\.js$|\/non-existent-file.js$|^data:application\/javascript,|/;
+    var seenRequests = 0;
 
-    function dumpResources()
+    function dumpRequests()
     {
         var logView = WebInspector.panels.network._networkLogView;
         logView.refresh();
@@ -16,7 +16,7 @@ function test() {
 
         for (var i = 0; i < urls.snapshotLength; ++i) {
             var url = urls.snapshotItem(i).value;
-            if (resourcesToWatch.test(url)) {
+            if (requestsToWatch.test(url)) {
                 var urlFragment = /^data:/.test(url) ? url.replace(/,.*$/, "") : url.replace(/.*\//, "");
                 var status = document.evaluate("ancestor::tr/td[position()=3]", urls.snapshotItem(i), null, XPathResult.STRING_TYPE, null);
                 outputStrings.push(urlFragment + ": " + status.stringValue);
@@ -27,15 +27,15 @@ function test() {
         InspectorTest.completeTest();
     }
 
-    function onResourceFinished(resource)
+    function onRequestFinished(request)
     {
-        if (!resourcesToWatch.test(resource.url))
+        if (!requestsToWatch.test(request.url))
             return;
-        if (++seenResources === 3)
-            dumpResources();
+        if (++seenRequests === 3)
+            dumpRequests();
     }
 
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, onResourceFinished);
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestFinished, onRequestFinished);
     WebInspector.showPanel("network");
     InspectorTest.evaluateInPage("loadResources()");
 }

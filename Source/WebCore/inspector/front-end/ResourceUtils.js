@@ -211,7 +211,7 @@ WebInspector.linkifyResourceAsNode = function(url, lineNumber, classes, tooltipT
 }
 
 /**
- * @param {WebInspector.Resource} request
+ * @param {WebInspector.NetworkRequest} request
  * @param {string=} classes
  * @return {Element}
  */

@@ -43,29 +43,29 @@ function test()
 
     function step2()
     {
-        var resource1 = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 3];
-        InspectorTest.addResult(resource1.url);
-        InspectorTest.addResult("resource.type: " + resource1.type);
-        InspectorTest.addResult("resource.content before requesting content: " + resource1.content);
-        resource1.requestContent(step3);
+        var request1 = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 3];
+        InspectorTest.addResult(request1.url);
+        InspectorTest.addResult("resource.type: " + request1.type);
+        InspectorTest.addResult("resource.content before requesting content: " + request1.content);
+        request1.requestContent(step3);
     }
 
     function step3()
     {
-        var resource1 = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 3];
-        InspectorTest.addResult("resource.content after requesting content: " + resource1.content);
+        var request1 = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 3];
+        InspectorTest.addResult("resource.content after requesting content: " + request1.content);
 
-        var resource2 = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
-        InspectorTest.addResult(resource2.url);
-        InspectorTest.addResult("resource.type: " + resource2.type);
-        InspectorTest.addResult("resource.content before requesting content: " + resource2.content);
-        resource2.requestContent(step4);
+        var request2 = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
+        InspectorTest.addResult(request2.url);
+        InspectorTest.addResult("resource.type: " + request2.type);
+        InspectorTest.addResult("resource.content before requesting content: " + request2.content);
+        request2.requestContent(step4);
     }
 
     function step4()
     {
-        var resource2 = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
-        InspectorTest.addResult("resource.content after requesting content: " + resource2.content);
+        var request2 = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
+        InspectorTest.addResult("resource.content after requesting content: " + request2.content);
 
         InspectorTest.completeTest();
     }

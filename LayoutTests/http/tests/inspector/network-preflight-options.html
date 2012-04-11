@@ -63,21 +63,21 @@ var test = function()
 {
     var requestMessages = [];
     var postRequestsCount = 0;
-    function onResource(event)
+    function onRequest(event)
     {
-        var resource = event.data;
-        var idMatch = /\?id=([0-9]*)&/.exec(resource.url);
+        var request = event.data;
+        var idMatch = /\?id=([0-9]*)&/.exec(request.url);
         var requestId = idMatch[1];
-        var requestMessage = requestId + ":" + resource.requestMethod + " " + resource.url.replace(/[&?]date=\d+/, "");
+        var requestMessage = requestId + ":" + request.requestMethod + " " + request.url.replace(/[&?]date=\d+/, "");
         requestMessages.push(requestMessage);
-        if (resource.requestMethod === "POST" && ++postRequestsCount === 4) {
+        if (request.requestMethod === "POST" && ++postRequestsCount === 4) {
             requestMessages.sort();
             for (var i = 0; i < requestMessages.length; i++)
                 InspectorTest.addResult(requestMessages[i]);
             InspectorTest.completeTest();
         }
     }
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, onResource);
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestFinished, onRequest);
     InspectorTest.evaluateInPage("doCrossOriginXHR();");
 }
 </script>

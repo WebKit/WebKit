@@ -36,11 +36,11 @@
  * @extends {WebInspector.Object}
  * @param {string} id
  * @param {WebInspector.Script} script
- * @param {WebInspector.Resource} resource
+ * @param {WebInspector.NetworkRequest} request
  * @param {WebInspector.ScriptFormatter} formatter
  * @param {boolean} formatted
  */
-WebInspector.RawSourceCode = function(id, script, resource, formatter, formatted)
+WebInspector.RawSourceCode = function(id, script, request, formatter, formatted)
 {
     this.id = id;
     this.url = script.sourceURL;
@@ -48,14 +48,14 @@ WebInspector.RawSourceCode = function(id, script, resource, formatter, formatted
     this._scripts = [script];
     this._formatter = formatter;
     this._formatted = formatted;
-    this._resource = resource;
+    this._request = request;
 
-    this._useTemporaryContent = this._resource && !this._resource.finished;
+    this._useTemporaryContent = this._request && !this._request.finished;
     this._hasNewScripts = true;
     if (!this._useTemporaryContent)
         this._updateSourceMapping();
-    else if (this._resource)
-        this._resource.addEventListener("finished", this._resourceFinished.bind(this));
+    else if (this._request)
+        this._request.addEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, this._requestFinished.bind(this));
 }
 
 WebInspector.RawSourceCode.Events = {
@@ -117,7 +117,7 @@ WebInspector.RawSourceCode.prototype = {
         this._updateSourceMapping();
     },
 
-    _resourceFinished: function()
+    _requestFinished: function()
     {
         this._useTemporaryContent = false;
         this._updateSourceMapping();
@@ -161,8 +161,9 @@ WebInspector.RawSourceCode.prototype = {
 
     _createContentProvider: function()
     {
-        if (this._resource && this._resource.finished)
-            return new WebInspector.ResourceContentProvider(this._resource);
+        if (this._request && this._request.finished) {
+            return new WebInspector.ResourceContentProvider(this._request);
+        }
         if (this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset)
             return new WebInspector.ScriptContentProvider(this._scripts[0]);
         return new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);

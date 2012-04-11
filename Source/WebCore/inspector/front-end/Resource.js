@@ -30,14 +30,16 @@
  * @constructor
  * @extends {WebInspector.Object}
  *
- * @param {NetworkAgent.RequestId} requestId
+ * @param {?WebInspector.NetworkRequest} request
  * @param {string} url
- * @param {string} frameId
- * @param {?NetworkAgent.LoaderId} loaderId
+ * @param {NetworkAgent.FrameId} frameId
+ * @param {NetworkAgent.LoaderId} loaderId
  */
-WebInspector.Resource = function(requestId, url, frameId, loaderId)
+WebInspector.Resource = function(request, url, frameId, loaderId)
 {
-    this.requestId = requestId;
+    if (request)
+        return request;
+
     this.url = url;
     this.frameId = frameId;
     this.loaderId = loaderId;
@@ -60,7 +62,7 @@ WebInspector.Resource = function(requestId, url, frameId, loaderId)
  */
 WebInspector.Resource.displayName = function(url)
 {
-    return new WebInspector.Resource("fake-transient-resource", url, "", null).displayName;
+    return new WebInspector.Resource(null, url, "", "").displayName;
 }
 
 WebInspector.Resource._domainModelBindings = [];
@@ -160,6 +162,14 @@ WebInspector.Resource.Events = {
 }
 
 WebInspector.Resource.prototype = {
+    /**
+     * @type {WebInspector.NetworkRequest}
+     */
+    get request()
+    {
+        return /** @type {WebInspector.NetworkRequest} */ this;
+    },
+
     /**
      * @type {string}
      */
@@ -377,7 +387,7 @@ WebInspector.Resource.prototype = {
         this._finished = x;
 
         if (x) {
-            this.dispatchEventToListeners("finished");
+            this.dispatchEventToListeners(WebInspector.NetworkRequest.Events.FinishedLoading);
             if (this._pendingContentCallbacks.length)
                 this._innerRequestContent();
         }
@@ -441,7 +451,7 @@ WebInspector.Resource.prototype = {
             this._responseReceivedTime = x.requestTime + x.receiveHeadersEnd / 1000.0;
 
             this._timing = x;
-            this.dispatchEventToListeners("timing changed");
+            this.dispatchEventToListeners(WebInspector.NetworkRequest.Events.TimingChanged);
         }
     },
 
@@ -500,7 +510,7 @@ WebInspector.Resource.prototype = {
         delete this._sortedRequestHeaders;
         delete this._requestCookies;
 
-        this.dispatchEventToListeners("requestHeaders changed");
+        this.dispatchEventToListeners(WebInspector.NetworkRequest.Events.RequestHeadersChanged);
     },
 
     /**
@@ -520,7 +530,7 @@ WebInspector.Resource.prototype = {
     {
         this._requestHeadersText = x;
 
-        this.dispatchEventToListeners("requestHeaders changed");
+        this.dispatchEventToListeners(WebInspector.NetworkRequest.Events.RequestHeadersChanged);
     },
 
     /**
@@ -604,7 +614,7 @@ WebInspector.Resource.prototype = {
         delete this._sortedResponseHeaders;
         delete this._responseCookies;
 
-        this.dispatchEventToListeners("responseHeaders changed");
+        this.dispatchEventToListeners(WebInspector.NetworkRequest.Events.ResponseHeadersChanged);
     },
 
     /**
@@ -624,7 +634,7 @@ WebInspector.Resource.prototype = {
     {
         this._responseHeadersText = x;
 
-        this.dispatchEventToListeners("responseHeaders changed");
+        this.dispatchEventToListeners(WebInspector.NetworkRequest.Events.ResponseHeadersChanged);
     },
 
     /**
@@ -877,7 +887,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @param {function(?string, ?string)} callback
+     * @param {function(?string, boolean)} callback
      */
     requestContent: function(callback)
     {
@@ -885,7 +895,7 @@ WebInspector.Resource.prototype = {
         // Since WebSockets are potentially long-living, fail requests immediately
         // to prevent caller blocking until resource is marked as finished.
         if (this.type === WebInspector.resourceTypes.WebSocket) {
-            callback(null, null);
+            callback(null, false);
             return;
         }
         if (typeof this._content !== "undefined") {

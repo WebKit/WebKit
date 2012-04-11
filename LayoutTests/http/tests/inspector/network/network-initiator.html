@@ -38,31 +38,31 @@ var test = function()
 {
     InspectorTest.reloadPage(step1);
 
-    function findResourceByURL(url)
+    function findRequestByURL(url)
     {
-        var resources = WebInspector.networkLog.resources;
-        for (var i = 0; i < resources.length; ++i) {
-            if (url.test(resources[i].url))
-                return resources[i];
+        var requests = WebInspector.networkLog.requests;
+        for (var i = 0; i < requests.length; ++i) {
+            if (url.test(requests[i].url))
+                return requests[i];
         }
     }
 
     function step1()
     {
-        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, onResource);
+        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestFinished, onRequest);
         InspectorTest.evaluateInPage("addClassToDiv()", step2);
     }
 
-    function onResource(event)
+    function onRequest(event)
     {
-        var resource = event.data;
-        if (/size=300/.test(resource.url))
+        var request = event.data;
+        if (/size=300/.test(request.url))
             step2();
     }
 
     function step2()
     {
-        if (!findResourceByURL(/size=300/))
+        if (!findRequestByURL(/size=300/))
             return;
 
         InspectorTest.addConsoleSniffer(step3);
@@ -71,21 +71,21 @@ var test = function()
 
     function step3()
     {
-        function dumpInitiator(resource)
+        function dumpInitiator(request)
         {
-            var initiator = resource.initiator;
-            InspectorTest.addResult(resource.url + ": " + initiator.type);
+            var initiator = request.initiator;
+            InspectorTest.addResult(request.url + ": " + initiator.type);
             if (initiator.url)
                 InspectorTest.addResult("    " + initiator.url + " " + initiator.lineNumber);
             if (initiator.stackTrace)
                 InspectorTest.addResult("    " + initiator.stackTrace[0].url + " " + initiator.stackTrace[0].lineNumber);
         }
 
-        dumpInitiator(findResourceByURL(/initiator\.css/));
-        dumpInitiator(findResourceByURL(/size=100/));
-        dumpInitiator(findResourceByURL(/size=200/));
-        dumpInitiator(findResourceByURL(/size=300/));
-        dumpInitiator(findResourceByURL(/size=400/));
+        dumpInitiator(findRequestByURL(/initiator\.css/));
+        dumpInitiator(findRequestByURL(/size=100/));
+        dumpInitiator(findRequestByURL(/size=200/));
+        dumpInitiator(findRequestByURL(/size=300/));
+        dumpInitiator(findRequestByURL(/size=400/));
 
         InspectorTest.completeTest();
     }

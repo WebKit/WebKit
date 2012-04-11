@@ -24,19 +24,19 @@ function test()
     // tests, we need to reset size limits to default ones.
     InspectorTest.resetInspectorResourcesData(step1);
 
-    function dumpResource(resource, callback)
+    function dumpRequest(request, callback)
     {
-        if (!resource)
+        if (!request)
             return callback();
-        InspectorTest.addResult(resource.url);
+        InspectorTest.addResult(request.url);
 
         function contentLoaded()
         {
-            InspectorTest.addResult("resource.content: " + resource.content);
+            InspectorTest.addResult("resource.content: " + request.content);
             callback();
         }
 
-        resource.requestContent(contentLoaded);
+        request.requestContent(contentLoaded);
     }
 
     function step1()
@@ -47,14 +47,14 @@ function test()
 
     function step2()
     {
-        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 2];
-        dumpResource(resource, step3);
+        var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 2];
+        dumpRequest(request, step3);
     }
 
     function step3()
     {
-        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
-        dumpResource(resource, step4);
+        var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
+        dumpRequest(request, step4);
     }
 
     function step4()

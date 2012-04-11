@@ -85,11 +85,15 @@ WebInspector.ResourceScriptMapping.prototype = {
      */
     addScript: function(script)
     {
-        var resource = null;
+        var request = null;
         var isInlineScript = false;
         if (script.isInlineScript()) {
-            resource = WebInspector.networkManager.inflightResourceForURL(script.sourceURL) || WebInspector.resourceForURL(script.sourceURL);
-            if (resource && resource.type === WebInspector.resourceTypes.Document) {
+            request = WebInspector.networkManager.inflightRequestForURL(script.sourceURL);
+            if (!request) {
+                var resource = WebInspector.resourceForURL(script.sourceURL);
+                request = resource ? resource.request : null;
+            }
+            if (request && request.type === WebInspector.resourceTypes.Document) {
                 isInlineScript = true;
                 var rawSourceCode = this._rawSourceCodeForDocumentURL[script.sourceURL];
                 if (rawSourceCode) {
@@ -100,7 +104,7 @@ WebInspector.ResourceScriptMapping.prototype = {
             }
         }
 
-        var rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, resource, this._formatter, this._formatSource);
+        var rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, request, this._formatter, this._formatSource);
         this._rawSourceCodes.push(rawSourceCode);
         this._bindScriptToRawSourceCode(script, rawSourceCode);
 

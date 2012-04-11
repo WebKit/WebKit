@@ -809,7 +809,7 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
      * @param {string} content
      * @param {function(?string)} userCallback
      * @param {?string} oldContent
-     * @param {?string} oldContentEncoded
+     * @param {boolean} oldContentEncoded
      */
     _setContentWithInitialContent: function(uiSourceCode, content, userCallback, oldContent, oldContentEncoded)
     {

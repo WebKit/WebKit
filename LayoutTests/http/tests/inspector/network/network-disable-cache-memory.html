@@ -27,16 +27,16 @@ function test()
 
         function scriptLoaded()
         {
-            var resourcesCount = WebInspector.panels.network.resources.length;
-            var resource = WebInspector.panels.network.resources[resourcesCount - 1];
-            resource.requestContent(contentLoaded);
+            var requestsCount = WebInspector.panels.network.requests.length;
+            var request = WebInspector.panels.network.requests[requestsCount - 1];
+            request.requestContent(contentLoaded);
         }
 
         function contentLoaded()
         {
-            var resourcesCount = WebInspector.panels.network.resources.length;
-            var resource = WebInspector.panels.network.resources[resourcesCount - 1];
-            callback(resource.content);
+            var requestsCount = WebInspector.panels.network.requests.length;
+            var request = WebInspector.panels.network.requests[requestsCount - 1];
+            callback(request.content);
         }
     }
 

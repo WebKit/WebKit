@@ -38,7 +38,7 @@ WebInspector.NetworkItemView = function(resource)
 
     this.element.addStyleClass("network-item-view");
 
-    var headersView = new WebInspector.ResourceHeadersView(resource);
+    var headersView = new WebInspector.ResourceHeadersView(resource.request);
     this.appendTab("headers", WebInspector.UIString("Headers"), headersView);
 
     var responseView = new WebInspector.ResourceResponseView(resource);
@@ -48,12 +48,12 @@ WebInspector.NetworkItemView = function(resource)
     this.appendTab("response", WebInspector.UIString("Response"), responseView);
 
     if (resource.requestCookies || resource.responseCookies) {
-        this._cookiesView = new WebInspector.ResourceCookiesView(resource);
+        this._cookiesView = new WebInspector.ResourceCookiesView(resource.request);
         this.appendTab("cookies", WebInspector.UIString("Cookies"), this._cookiesView);
     }
 
     if (resource.timing) {
-        var timingView = new WebInspector.ResourceTimingView(resource);
+        var timingView = new WebInspector.ResourceTimingView(resource.request);
         this.appendTab("timing", WebInspector.UIString("Timing"), timingView);
     }
 

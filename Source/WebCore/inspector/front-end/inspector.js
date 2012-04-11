@@ -283,9 +283,13 @@ var WebInspector = {
             errorWarningElement.title = null;
     },
 
-    networkResourceById: function(id)
+    /**
+     * @param {NetworkAgent.RequestId} requestId
+     * @return {?WebInspector.NetworkRequest}
+     */
+    networkRequestById: function(requestId)
     {
-        return this.panels.network.resourceById(id);
+        return this.panels.network.requestById(requestId);
     },
 
     get inspectedPageDomain()
@@ -648,10 +652,10 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
         InspectorFrontendHost.openInNewTab(resourceURL);
 }
 
-WebInspector.openRequestInNetworkPanel = function(resource)
+WebInspector.openRequestInNetworkPanel = function(request)
 {
     WebInspector.showPanel("network");
-    WebInspector.panels.network.revealAndHighlightResource(resource);
+    WebInspector.panels.network.revealAndHighlightRequest(request);
 }
 
 WebInspector._registerShortcuts = function()

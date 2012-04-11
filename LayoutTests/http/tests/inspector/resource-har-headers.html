@@ -12,51 +12,51 @@ var test = function()
         return s.replace(/\r/, "\\r").replace(/\n/, "\\n");
     }
 
-    function setResourceValues(resource)
+    function setRequestValues(request)
     {
-        resource.requestHeaders = {
+        request.requestHeaders = {
             "Request": "request-value"
         };
-        resource.requestHeadersText = "GET http://example.com/inspector-test.js HTTP/1.1\r\nRequest: headers-text";
+        request.requestHeadersText = "GET http://example.com/inspector-test.js HTTP/1.1\r\nRequest: headers-text";
 
-        resource.responseHeaders = {
+        request.responseHeaders = {
             "Response": "response-value"
         };
-        resource.responseHeadersText = "HTTP/1.1 200 OK\r\nResponse: headers-text";
+        request.responseHeadersText = "HTTP/1.1 200 OK\r\nResponse: headers-text";
 
-        resource.documentURL = "http://example.com/inspector-test.js";
-        resource.requestMethod = "GET";
-        resource.mimeType = "text/html";
-        resource.statusCode = 200;
-        resource.statusText = "OK";
-        resource.resourceSize = 1000;
-        resource._transferSize = 539; // 39 = header size at the end of the day
+        request.documentURL = "http://example.com/inspector-test.js";
+        request.requestMethod = "GET";
+        request.mimeType = "text/html";
+        request.statusCode = 200;
+        request.statusText = "OK";
+        request.resourceSize = 1000;
+        request._transferSize = 539; // 39 = header size at the end of the day
     }
 
-    var testResource = new WebInspector.Resource("testResource", "http://example.com/inspector-test.js", 1); 
-    setResourceValues(testResource);
-    var resourceResults = {
+    var testRequest = new WebInspector.NetworkRequest("testRequest", "http://example.com/inspector-test.js", 1); 
+    setRequestValues(testRequest);
+    var requestResults = {
         "request": {
-            "headers": testResource.requestHeaders,
-            "headersText": visibleNewlines(testResource.requestHeadersText),
-            "headersSize": testResource.requestHeadersSize,
+            "headers": testRequest.requestHeaders,
+            "headersText": visibleNewlines(testRequest.requestHeadersText),
+            "headersSize": testRequest.requestHeadersSize,
         },
         "response": {
-            "headers": testResource.responseHeaders,
-            "headersText": visibleNewlines(testResource.responseHeadersText),
-            "headersSize": testResource.responseHeadersSize,
-            "resourceSize": testResource.resourceSize,
-            "transferSize": testResource.transferSize
+            "headers": testRequest.responseHeaders,
+            "headersText": visibleNewlines(testRequest.responseHeadersText),
+            "headersSize": testRequest.responseHeadersSize,
+            "resourceSize": testRequest.resourceSize,
+            "transferSize": testRequest.transferSize
         }
     };
-    InspectorTest.addObject(resourceResults, {}, "", "Resource:");
+    InspectorTest.addObject(requestResults, {}, "", "Resource:");
 
     var stillNondeterministic = {
         "startedDateTime": "formatAsTypeName",
         "time": "formatAsTypeName",
         "timings": "formatAsTypeName"
     };
-    InspectorTest.addObject(new WebInspector.HAREntry(testResource).build(), stillNondeterministic, "", "HAR:");
+    InspectorTest.addObject(new WebInspector.HAREntry(testRequest).build(), stillNondeterministic, "", "HAR:");
     InspectorTest.completeTest();
 }
 </script>

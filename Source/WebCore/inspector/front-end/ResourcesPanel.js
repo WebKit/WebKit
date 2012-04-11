@@ -1260,10 +1260,10 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
     _appendOpenInNetworkPanelAction: function(contextMenu, event)
     {
-        if (!this._resource.requestId)
+        if (!this._resource.request)
             return;
 
-        contextMenu.appendItem(WebInspector.openInNetworkPanelLabel(), WebInspector.openRequestInNetworkPanel.bind(WebInspector, this._resource));
+        contextMenu.appendItem(WebInspector.openInNetworkPanelLabel(), WebInspector.openRequestInNetworkPanel.bind(WebInspector, this._resource.request));
     },
 
     _appendSaveAsAction: function(contextMenu, event)

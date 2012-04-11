@@ -12,13 +12,13 @@ var test = function()
     {
         var hadNavigation = false;
 
-        function onResourceFinished(event)
+        function onRequestFinished(event)
         {
-            var resource = event.data;
-            if (/\/har-pages-navigation-target\.html$/.test(resource.url))
+            var request = event.data;
+            if (/\/har-pages-navigation-target\.html$/.test(request.url))
                 hadNavigation = true;
-            if (hadNavigation && /\/resource-har-pages\.html$/.test(resource.url)) {
-                WebInspector.networkManager.removeEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, onResourceFinished)
+            if (hadNavigation && /\/resource-har-pages\.html$/.test(request.url)) {
+                WebInspector.networkManager.removeEventListener(WebInspector.NetworkManager.EventTypes.RequestFinished, onRequestFinished)
                 step2();
             }
         }
@@ -26,20 +26,20 @@ var test = function()
         var networkLogView = WebInspector.panels.network._networkLogView;
         // networkLogView.clear();
         networkLogView._preserveLogToggle.toggled = true;
-        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, onResourceFinished);
+        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestFinished, onRequestFinished);
         InspectorTest.evaluateInPage("location.href = '/resources/redirect.php?url=/inspector/resources/har-pages-navigation-target.html';");
     }
 
     function step2()
     {
-        var log = (new WebInspector.HARLog(WebInspector.panels.network._networkLogView._resources)).build();
+        var log = (new WebInspector.HARLog(WebInspector.panels.network._networkLogView._requests)).build();
         InspectorTest.addObject(log.pages, InspectorTest.HARPropertyFormattersWithSize);
 
         // Filter out favicon.ico requests that only appear on certain platforms.
         log.entries = log.entries.filter(function(entry) {
             return !/favicon\.ico$/.test(entry.request.url);
         });
-        log.entries.sort(InspectorTest.resourceURLComparer);
+        log.entries.sort(InspectorTest.requestURLComparer);
         for (var i = 0; i < log.entries.length; ++i) {
             var entry = log.entries[i];
             InspectorTest.addResult("page: " + entry.pageref + " url: " + entry.request.url);

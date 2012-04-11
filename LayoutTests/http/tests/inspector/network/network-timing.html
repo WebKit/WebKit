@@ -30,18 +30,18 @@ function test()
     function step2()
     {
         // inspector-test.js appears in network panel occasionally in Safari on
-        // Mac, so checking two last resources.
-        var resources = WebInspector.networkLog.resources;
-        var resourcesCount = resources.length;
-        var resource1 = resources[resourcesCount - 2];
-        InspectorTest.addResult(resource1.url);
-        InspectorTest.assertGreaterOrEqual(resource1.latency * 1000, 100, "Latency of the first resource");
-        InspectorTest.assertGreaterOrEqual(resource1.duration * 1000, 300, "Duration of the first resource");
+        // Mac, so checking two last requests.
+        var requests = WebInspector.networkLog.requests;
+        var requestsCount = requests.length;
+        var request1 = requests[requestsCount - 2];
+        InspectorTest.addResult(request1.url);
+        InspectorTest.assertGreaterOrEqual(request1.latency * 1000, 100, "Latency of the first resource");
+        InspectorTest.assertGreaterOrEqual(request1.duration * 1000, 300, "Duration of the first resource");
 
-        var resource2 = resources[resourcesCount - 1];
-        InspectorTest.addResult(resource2.url);
-        InspectorTest.assertGreaterOrEqual(resource2.latency * 1000, 100, "Latency of the second resource");
-        InspectorTest.assertGreaterOrEqual(resource2.duration * 1000, 100, "Duration of the second resource");
+        var request2 = requests[requestsCount - 1];
+        InspectorTest.addResult(request2.url);
+        InspectorTest.assertGreaterOrEqual(request2.latency * 1000, 100, "Latency of the second resource");
+        InspectorTest.assertGreaterOrEqual(request2.duration * 1000, 100, "Duration of the second resource");
         InspectorTest.completeTest();
     }
 }

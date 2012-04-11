@@ -1,12 +1,12 @@
 var initialize_NetworkTest = function() {
 
-InspectorTest.dumpNetworkResources = function()
+InspectorTest.dumpNetworkRequests = function()
 {
-    var resources = WebInspector.panels.network.resources.slice();
-    resources.sort(function(a, b) {return a.url.localeCompare(b.url);});
-    InspectorTest.addResult("resources count = " + resources.length);
-    for (i = 0; i < resources.length; i++)
-        InspectorTest.addResult(resources[i].url);
+    var requests = WebInspector.panels.network.requests.slice();
+    requests.sort(function(a, b) {return a.url.localeCompare(b.url);});
+    InspectorTest.addResult("resources count = " + requests.length);
+    for (i = 0; i < requests.length; i++)
+        InspectorTest.addResult(requests[i].url);
 }
 
 InspectorTest.resetInspectorResourcesData = function(callback)

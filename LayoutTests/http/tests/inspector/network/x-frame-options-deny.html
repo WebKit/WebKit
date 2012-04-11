@@ -18,8 +18,8 @@ function test()
 
     function responseReceived(requestId, time, resourceType, response)
     {
-        var resource = WebInspector.networkResourceById(requestId);
-        if (/x-frame-options-deny\.cgi/.exec(resource.url)) {
+        var request = WebInspector.networkRequestById(requestId);
+        if (/x-frame-options-deny\.cgi/.exec(request.url)) {
             InspectorTest.addResult("Received response for x-frame-options-deny.cgi");
             InspectorTest.addResult("SUCCESS");
             InspectorTest.completeTest();
@@ -28,15 +28,15 @@ function test()
 
     function loadingFinished(requestId, finishTime)
     {
-        var resource = WebInspector.networkResourceById(requestId);
-        if (/x-frame-options-deny\.cgi/.exec(resource.url))
+        var request = WebInspector.networkRequestById(requestId);
+        if (/x-frame-options-deny\.cgi/.exec(request.url))
             InspectorTest.completeTest();
     }
 
     function loadingFailed(requestId, time, localizedDescription, canceled)
     {
-        var resource = WebInspector.networkResourceById(requestId);
-        if (/x-frame-options-deny\.cgi/.exec(resource.url))
+        var request = WebInspector.networkRequestById(requestId);
+        if (/x-frame-options-deny\.cgi/.exec(request.url))
             InspectorTest.completeTest();
     }
 }

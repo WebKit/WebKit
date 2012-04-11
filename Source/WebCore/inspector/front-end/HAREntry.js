@@ -36,11 +36,11 @@
 
 /**
  * @constructor
- * @param {WebInspector.Resource} resource
+ * @param {WebInspector.NetworkRequest} request
  */
-WebInspector.HAREntry = function(resource)
+WebInspector.HAREntry = function(request)
 {
-    this._resource = resource;
+    this._request = request;
 }
 
 WebInspector.HAREntry.prototype = {
@@ -50,14 +50,14 @@ WebInspector.HAREntry.prototype = {
     build: function()
     {
         var entry =  {
-            startedDateTime: new Date(this._resource.startTime * 1000),
-            time: WebInspector.HAREntry._toMilliseconds(this._resource.duration),
+            startedDateTime: new Date(this._request.startTime * 1000),
+            time: WebInspector.HAREntry._toMilliseconds(this._request.duration),
             request: this._buildRequest(),
             response: this._buildResponse(),
             cache: { }, // Not supported yet.
             timings: this._buildTimings()
         };
-        var page = WebInspector.networkLog.pageLoadForResource(this._resource);
+        var page = WebInspector.networkLog.pageLoadForRequest(this._request);
         if (page)
             entry.pageref = "page_" + page.id;
         return entry;
@@ -69,16 +69,16 @@ WebInspector.HAREntry.prototype = {
     _buildRequest: function()
     {
         var res = {
-            method: this._resource.requestMethod,
-            url: this._buildRequestURL(this._resource.url),
-            httpVersion: this._resource.requestHttpVersion,
-            headers: this._buildHeaders(this._resource.requestHeaders),
-            queryString: this._buildParameters(this._resource.queryParameters || []),
-            cookies: this._buildCookies(this._resource.requestCookies || []),
-            headersSize: this._resource.requestHeadersSize,
+            method: this._request.requestMethod,
+            url: this._buildRequestURL(this._request.url),
+            httpVersion: this._request.requestHttpVersion,
+            headers: this._buildHeaders(this._request.requestHeaders),
+            queryString: this._buildParameters(this._request.queryParameters || []),
+            cookies: this._buildCookies(this._request.requestCookies || []),
+            headersSize: this._request.requestHeadersSize,
             bodySize: this.requestBodySize
         };
-        if (this._resource.requestFormData)
+        if (this._request.requestFormData)
             res.postData = this._buildPostData();
 
         return res;
@@ -90,14 +90,14 @@ WebInspector.HAREntry.prototype = {
     _buildResponse: function()
     {
         return {
-            status: this._resource.statusCode,
-            statusText: this._resource.statusText,
-            httpVersion: this._resource.responseHttpVersion,
-            headers: this._buildHeaders(this._resource.responseHeaders),
-            cookies: this._buildCookies(this._resource.responseCookies || []),
+            status: this._request.statusCode,
+            statusText: this._request.statusText,
+            httpVersion: this._request.responseHttpVersion,
+            headers: this._buildHeaders(this._request.responseHeaders),
+            cookies: this._buildCookies(this._request.responseCookies || []),
             content: this._buildContent(),
-            redirectURL: this._resource.responseHeaderValue("Location") || "",
-            headersSize: this._resource.responseHeadersSize,
+            redirectURL: this._request.responseHeaderValue("Location") || "",
+            headersSize: this._request.responseHeadersSize,
             bodySize: this.responseBodySize
         };
     },
@@ -108,9 +108,9 @@ WebInspector.HAREntry.prototype = {
     _buildContent: function()
     {
         var content = {
-            size: this._resource.resourceSize,
-            mimeType: this._resource.mimeType,
-            // text: this._resource.content // TODO: pull out into a boolean flag, as content can be huge (and needs to be requested with an async call)
+            size: this._request.resourceSize,
+            mimeType: this._request.mimeType,
+            // text: this._request.content // TODO: pull out into a boolean flag, as content can be huge (and needs to be requested with an async call)
         };
         var compression = this.responseCompression;
         if (typeof compression === "number")
@@ -133,7 +133,7 @@ WebInspector.HAREntry.prototype = {
         if (ssl !== -1 && send !== -1)
             send -= ssl;
 
-        if (this._resource.connectionReused) {
+        if (this._request.connectionReused) {
             connect = -1;
             blocked = waitForConnection;
         } else {
@@ -149,7 +149,7 @@ WebInspector.HAREntry.prototype = {
             connect: connect,
             send: send,
             wait: this._interval("sendEnd", "receiveHeadersEnd"),
-            receive: WebInspector.HAREntry._toMilliseconds(this._resource.receiveDuration),
+            receive: WebInspector.HAREntry._toMilliseconds(this._request.receiveDuration),
             ssl: ssl
         };
     },
@@ -171,11 +171,11 @@ WebInspector.HAREntry.prototype = {
     _buildPostData: function()
     {
         var res = {
-            mimeType: this._resource.requestHeaderValue("Content-Type"),
-            text: this._resource.requestFormData
+            mimeType: this._request.requestHeaderValue("Content-Type"),
+            text: this._request.requestFormData
         };
-        if (this._resource.formParameters)
-           res.params = this._buildParameters(this._resource.formParameters);
+        if (this._request.formParameters)
+           res.params = this._buildParameters(this._request.formParameters);
         return res;
     },
 
@@ -217,7 +217,7 @@ WebInspector.HAREntry.prototype = {
             value: cookie.value,
             path: cookie.path,
             domain: cookie.domain,
-            expires: cookie.expires(new Date(this._resource.startTime * 1000)),
+            expires: cookie.expires(new Date(this._request.startTime * 1000)),
             httpOnly: cookie.httpOnly,
             secure: cookie.secure
         };
@@ -230,7 +230,7 @@ WebInspector.HAREntry.prototype = {
      */
     _interval: function(start, end)
     {
-        var timing = this._resource.timing;
+        var timing = this._request.timing;
         if (!timing)
             return -1;
         var startTime = timing[start];
@@ -242,7 +242,7 @@ WebInspector.HAREntry.prototype = {
      */
     get requestBodySize()
     {
-        return !this._resource.requestFormData ? 0 : this._resource.requestFormData.length;
+        return !this._request.requestFormData ? 0 : this._request.requestFormData.length;
     },
 
     /**
@@ -250,9 +250,9 @@ WebInspector.HAREntry.prototype = {
      */
     get responseBodySize()
     {
-        if (this._resource.cached || this._resource.statusCode === 304)
+        if (this._request.cached || this._request.statusCode === 304)
             return 0;
-        return this._resource.transferSize - this._resource.responseHeadersSize
+        return this._request.transferSize - this._request.responseHeadersSize
     },
 
     /**
@@ -260,9 +260,9 @@ WebInspector.HAREntry.prototype = {
      */
     get responseCompression()
     {
-        if (this._resource.cached || this._resource.statusCode === 304)
+        if (this._request.cached || this._request.statusCode === 304)
             return;
-        return this._resource.resourceSize - (this._resource.transferSize - this._resource.responseHeadersSize);
+        return this._request.resourceSize - (this._request.transferSize - this._request.responseHeadersSize);
     }
 }
 
@@ -277,11 +277,11 @@ WebInspector.HAREntry._toMilliseconds = function(time)
 
 /**
  * @constructor
- * @param {Array.<WebInspector.Resource>} resources
+ * @param {Array.<WebInspector.NetworkRequest>} requests
  */
-WebInspector.HARLog = function(resources)
+WebInspector.HARLog = function(requests)
 {
-    this._resources = resources;
+    this._requests = requests;
 }
 
 WebInspector.HARLog.prototype = {
@@ -299,7 +299,7 @@ WebInspector.HARLog.prototype = {
                 version: webKitVersion ? webKitVersion[1] : "n/a"
             },
             pages: this._buildPages(),
-            entries: this._resources.map(this._convertResource.bind(this))
+            entries: this._requests.map(this._convertResource.bind(this))
         }
     },
 
@@ -310,8 +310,8 @@ WebInspector.HARLog.prototype = {
     {
         var seenIdentifiers = {};
         var pages = [];
-        for (var i = 0; i < this._resources.length; ++i) {
-            var page = WebInspector.networkLog.pageLoadForResource(this._resources[i]);
+        for (var i = 0; i < this._requests.length; ++i) {
+            var page = WebInspector.networkLog.pageLoadForRequest(this._requests[i]);
             if (!page || seenIdentifiers[page.id])
                 continue;
             seenIdentifiers[page.id] = true;
@@ -338,12 +338,12 @@ WebInspector.HARLog.prototype = {
     },
 
     /**
-     * @param {WebInspector.Resource} resource
+     * @param {WebInspector.NetworkRequest} request
      * @return {Object}
      */
-    _convertResource: function(resource)
+    _convertResource: function(request)
     {
-        return (new WebInspector.HAREntry(resource)).build();
+        return (new WebInspector.HAREntry(request)).build();
     },
 
     /**

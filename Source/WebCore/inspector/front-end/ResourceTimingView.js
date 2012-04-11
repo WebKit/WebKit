@@ -29,23 +29,24 @@
  */
 
 /**
- * @extends {WebInspector.View}
  * @constructor
+ * @extends {WebInspector.View}
+ * @param {WebInspector.NetworkRequest} request
  */
-WebInspector.ResourceTimingView = function(resource)
+WebInspector.ResourceTimingView = function(request)
 {
     WebInspector.View.call(this);
     this.element.addStyleClass("resource-timing-view");
 
-    this._resource = resource;
+    this._request = request;
 
-    resource.addEventListener("timing changed", this._refresh, this);
+    request.addEventListener(WebInspector.NetworkRequest.Events.TimingChanged, this._refresh, this);
 }
 
 WebInspector.ResourceTimingView.prototype = {
     wasShown: function()
     {
-        if (!this._resource.timing) {
+        if (!this._request.timing) {
             if (!this._emptyView) {
                 this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This request has no detailed timing info."));
                 this._emptyView.show(this.element);
@@ -67,12 +68,12 @@ WebInspector.ResourceTimingView.prototype = {
         if (this._tableElement)
             this._tableElement.parentElement.removeChild(this._tableElement);
 
-        this._tableElement = WebInspector.ResourceTimingView.createTimingTable(this._resource);
+        this._tableElement = WebInspector.ResourceTimingView.createTimingTable(this._request);
         this.element.appendChild(this._tableElement);
     }
 }
 
-WebInspector.ResourceTimingView.createTimingTable = function(resource)
+WebInspector.ResourceTimingView.createTimingTable = function(request)
 {
     var tableElement = document.createElement("table");
     var rows = [];
@@ -87,37 +88,37 @@ WebInspector.ResourceTimingView.createTimingTable = function(resource)
         rows.push(row);
     }
 
-    if (resource.timing.proxyStart !== -1)
-        addRow(WebInspector.UIString("Proxy"), "proxy", resource.timing.proxyStart, resource.timing.proxyEnd);
+    if (request.timing.proxyStart !== -1)
+        addRow(WebInspector.UIString("Proxy"), "proxy", request.timing.proxyStart, request.timing.proxyEnd);
 
-    if (resource.timing.dnsStart !== -1)
-        addRow(WebInspector.UIString("DNS Lookup"), "dns", resource.timing.dnsStart, resource.timing.dnsEnd);
+    if (request.timing.dnsStart !== -1)
+        addRow(WebInspector.UIString("DNS Lookup"), "dns", request.timing.dnsStart, request.timing.dnsEnd);
 
-    if (resource.timing.connectStart !== -1) {
-        if (resource.connectionReused)
-            addRow(WebInspector.UIString("Blocking"), "connecting", resource.timing.connectStart, resource.timing.connectEnd);
+    if (request.timing.connectStart !== -1) {
+        if (request.connectionReused)
+            addRow(WebInspector.UIString("Blocking"), "connecting", request.timing.connectStart, request.timing.connectEnd);
         else {
-            var connectStart = resource.timing.connectStart;
+            var connectStart = request.timing.connectStart;
             // Connection includes DNS, subtract it here.
-            if (resource.timing.dnsStart !== -1)
-                connectStart += resource.timing.dnsEnd - resource.timing.dnsStart;
-            addRow(WebInspector.UIString("Connecting"), "connecting", connectStart, resource.timing.connectEnd);
+            if (request.timing.dnsStart !== -1)
+                connectStart += request.timing.dnsEnd - request.timing.dnsStart;
+            addRow(WebInspector.UIString("Connecting"), "connecting", connectStart, request.timing.connectEnd);
         }
     }
 
-    if (resource.timing.sslStart !== -1)
-        addRow(WebInspector.UIString("SSL"), "ssl", resource.timing.sslStart, resource.timing.sslEnd);
+    if (request.timing.sslStart !== -1)
+        addRow(WebInspector.UIString("SSL"), "ssl", request.timing.sslStart, request.timing.sslEnd);
 
-    var sendStart = resource.timing.sendStart;
-    if (resource.timing.sslStart !== -1)
-        sendStart += resource.timing.sslEnd - resource.timing.sslStart;
+    var sendStart = request.timing.sendStart;
+    if (request.timing.sslStart !== -1)
+        sendStart += request.timing.sslEnd - request.timing.sslStart;
 
-    addRow(WebInspector.UIString("Sending"), "sending", resource.timing.sendStart, resource.timing.sendEnd);
-    addRow(WebInspector.UIString("Waiting"), "waiting", resource.timing.sendEnd, resource.timing.receiveHeadersEnd);
-    addRow(WebInspector.UIString("Receiving"), "receiving", (resource.responseReceivedTime - resource.timing.requestTime) * 1000, (resource.endTime - resource.timing.requestTime) * 1000);
+    addRow(WebInspector.UIString("Sending"), "sending", request.timing.sendStart, request.timing.sendEnd);
+    addRow(WebInspector.UIString("Waiting"), "waiting", request.timing.sendEnd, request.timing.receiveHeadersEnd);
+    addRow(WebInspector.UIString("Receiving"), "receiving", (request.responseReceivedTime - request.timing.requestTime) * 1000, (request.endTime - request.timing.requestTime) * 1000);
 
     const chartWidth = 200;
-    var total = (resource.endTime - resource.timing.requestTime) * 1000;
+    var total = (request.endTime - request.timing.requestTime) * 1000;
     var scale = chartWidth / total;
 
     for (var i = 0; i < rows.length; ++i) {

@@ -180,8 +180,6 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         this._size = applicationCache.size;
         this._resources = applicationCache.resources;
 
-        var lastPathComponent = applicationCache.lastPathComponent;
-
         if (!this._dataGrid)
             this._createDataGrid();
 

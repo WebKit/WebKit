@@ -7,19 +7,19 @@ var test = function()
 {
     InspectorTest.reloadPage(step1);
 
-    function findResourceByURL(url)
+    function findRequestByURL(url)
     {
-        var resources = WebInspector.networkLog.resources;
-        for (var i = 0; i < resources.length; ++i) {
-            if (url.test(resources[i].url))
-                return resources[i];
+        var requests = WebInspector.networkLog.requests;
+        for (var i = 0; i < requests.length; ++i) {
+            if (url.test(requests[i].url))
+                return requests[i];
         }
     }
 
     function step1()
     {
         InspectorTest.addConsoleSniffer(step2);
-        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, onResource);
+        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestStarted, onRequest);
         var str = "";
         str += "var s = document.createElement(\"script\");";
         str += "s.src = \"resources/script.js\";";
@@ -27,16 +27,16 @@ var test = function()
         WebInspector.consoleView.evalInInspectedWindow(str, "console", true, undefined, undefined, function(){})
     }
 
-    function onResource(event)
+    function onRequest(event)
     {
-        var resource = event.data;
-        if (/script.js/.test(resource.url))
+        var request = event.data;
+        if (/script.js/.test(request.url))
             step2();
     }
 
     function step2()
     {
-        if (!findResourceByURL(/script.js/))
+        if (!findRequestByURL(/script.js/))
             return;
 
         WebInspector.panels.network.show();

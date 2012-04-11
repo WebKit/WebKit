@@ -189,7 +189,7 @@ WebInspector.ConsoleMessage.prototype = {
  * @param {number=} repeatCount
  * @param {Array.<RuntimeAgent.RemoteObject>=} parameters
  * @param {ConsoleAgent.StackTrace=} stackTrace
- * @param {WebInspector.Resource=} request
+ * @param {WebInspector.NetworkRequest=} request
  *
  * @return {WebInspector.ConsoleMessage}
  */
@@ -254,7 +254,7 @@ WebInspector.ConsoleDispatcher.prototype = {
             payload.repeatCount,
             payload.parameters,
             payload.stackTrace,
-            payload.networkRequestId ? WebInspector.networkResourceById(payload.networkRequestId) : undefined);
+            payload.networkRequestId ? WebInspector.networkRequestById(payload.networkRequestId) : undefined);
         this._console.addMessage(consoleMessage);
     },
 

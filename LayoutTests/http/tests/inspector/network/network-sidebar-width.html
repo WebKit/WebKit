@@ -23,20 +23,20 @@ function test()
     {
         var panel = WebInspector.panels.network;
         var setting = WebInspector.settings[panel._sidebarWidthSettingName()];
-        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
+        var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
 
         oldSetting = setting.get();
         panel.show();
 
         setting.set(undefined);
-        panel._showResource(resource);
+        panel._showRequest(request);
         InspectorTest.addResult("Sidebar width: " + panel.sidebarElement.offsetWidth);
         panel._toggleGridMode();
 
         setting.set(242);
-        panel._showResource(resource);
+        panel._showRequest(request);
         InspectorTest.addResult("Sidebar width: " + panel.sidebarElement.offsetWidth);
-        panel._closeVisibleResource(resource);
+        panel._closeVisibleRequest(request);
 
         setting.set(oldSetting);
 

@@ -58,8 +58,8 @@ WebInspector.AuditLauncherView = function(runnerCallback, stopCallback)
     this._headerElement.textContent = WebInspector.UIString("No audits to run");
     this._contentElement.appendChild(this._headerElement);
 
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceFinished, this);
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestStarted, this._onRequestStarted, this);
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestFinished, this._onRequestFinished, this);
 }
 
 WebInspector.AuditLauncherView.prototype = {
@@ -69,21 +69,21 @@ WebInspector.AuditLauncherView.prototype = {
         this._totalResources = 0;
     },
 
-    _onResourceStarted: function(event)
+    _onRequestStarted: function(event)
     {
-        var resource = event.data;
+        var request = /** @type {WebInspector.NetworkRequest} */ event.data;
         // Ignore long-living WebSockets for the sake of progress indicator, as we won't be waiting them anyway.
-        if (resource.type === WebInspector.resourceTypes.WebSocket)
+        if (request.type === WebInspector.resourceTypes.WebSocket)
             return;
         ++this._totalResources;
         this._updateResourceProgress();
     },
 
-    _onResourceFinished: function(event)
+    _onRequestFinished: function(event)
     {
-        var resource = event.data;
+        var request = /** @type {WebInspector.NetworkRequest} */ event.data;
         // See resorceStarted for details.
-        if (resource.type === WebInspector.resourceTypes.WebSocket)
+        if (request.type === WebInspector.resourceTypes.WebSocket)
             return;
         ++this._loadedResources;
         this._updateResourceProgress();

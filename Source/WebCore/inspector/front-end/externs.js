@@ -86,12 +86,12 @@ var WebInspector = {}
 
 /**
  * @param {NetworkAgent.RequestId} requestId
- * @return {?WebInspector.Resource}
+ * @return {?WebInspector.NetworkRequest}
  */
-WebInspector.networkResourceById = function(requestId)
+WebInspector.networkRequestById = function(requestId)
 {
 }
-
+  
 WebInspector.panels = {};
 
 /**
@@ -116,6 +116,7 @@ WebInspector.addMainEventListeners = function(doc) {}
 
 WebInspector.openResource = function(url, external) {}
 
+/** @param {WebInspector.NetworkRequest} request */
 WebInspector.openRequestInNetworkPanel = function(request) {}
 
 WebInspector.populateResourceContextMenu = function(contextMenu, url, preferredLineNumber) {}

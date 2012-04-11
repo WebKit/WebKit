@@ -22,7 +22,7 @@ InspectorTest.HARPropertyFormattersWithSize = JSON.parse(JSON.stringify(Inspecto
 InspectorTest.HARPropertyFormattersWithSize.size = "formatAsTypeName";
 
 
-InspectorTest.resourceURLComparer = function(r1, r2)
+InspectorTest.requestURLComparer = function(r1, r2)
 {
     return r1.request.url.localeCompare(r2.request.url);
 }
