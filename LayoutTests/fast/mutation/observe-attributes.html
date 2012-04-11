@@ -562,7 +562,7 @@ function testAttributeFilterNonHTMLElement() {
     var observer;
 
     function start() {
-        debug('Testing that attributeFilter respects case with non-HTML elements.');
+        debug('Testing that setting an attributeFilter filters out namespaced attributes.');
 
         mutations = null;
         observer = new WebKitMutationObserver(function(m) {
@@ -572,18 +572,14 @@ function testAttributeFilterNonHTMLElement() {
         path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         observer.observe(path, { attributes: true, attributeFilter: ['pathLength'] });
         path.setAttributeNS('http://www.w3.org/2000/svg', 'pathLength', '200');
-        path.setAttributeNS('http://www.w3.org/2000/svg', 'pathlength', '200');
 
         setTimeout(finish, 0);
     }
 
     function finish() {
-        debug('...pathLength should be received.');
+        debug('...pathLength should not be received.');
 
-        shouldBe('mutations.length', '1');
-        shouldBe('mutations[0].type', '"attributes"');
-        shouldBe('mutations[0].attributeName', '"pathLength"');
-        shouldBe('mutations[0].attributeNamespace', '"http://www.w3.org/2000/svg"');
+        shouldBeNull('mutations');
         observer.disconnect();
         debug('');
         runNextTest();
@@ -613,18 +609,13 @@ function testAttributeFilterNonHTMLDocument() {
         div.setAttribute('booM', 'boom');
         div.setAttribute('BOOm', 'boom');
 
-        path = svgDoc.createElementNS('http://www.w3.org/2000/svg', 'path');
-        observer.observe(path, { attributes: true, attributeFilter: ['pathLength'] });
-        path.setAttributeNS('http://www.w3.org/2000/svg', 'pathLength', '200');
-        path.setAttributeNS('http://www.w3.org/2000/svg', 'pathlength', '200');
-
         setTimeout(finish, 0);
     }
 
     function finish() {
-        debug('...only ID, id, booM, pathLength should be received.');
+        debug('...only ID, id, booM should be received.');
 
-        shouldBe('mutations.length', '4');
+        shouldBe('mutations.length', '3');
         shouldBe('mutations[0].type', '"attributes"');
         shouldBe('mutations[0].attributeName', '"ID"');
         shouldBe('mutations[0].attributeNamespace', 'null');
@@ -634,9 +625,6 @@ function testAttributeFilterNonHTMLDocument() {
         shouldBe('mutations[2].type', '"attributes"');
         shouldBe('mutations[2].attributeName', '"booM"');
         shouldBe('mutations[2].attributeNamespace', 'null');
-        shouldBe('mutations[3].type', '"attributes"');
-        shouldBe('mutations[3].attributeName', '"pathLength"');
-        shouldBe('mutations[3].attributeNamespace', '"http://www.w3.org/2000/svg"');
 
         observer.disconnect();
         debug('');

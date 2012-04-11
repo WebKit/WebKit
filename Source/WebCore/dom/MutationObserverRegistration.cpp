@@ -36,6 +36,7 @@
 
 #include "Document.h"
 #include "Node.h"
+#include "QualifiedName.h"
 
 namespace WebCore {
 
@@ -104,8 +105,9 @@ void MutationObserverRegistration::unregister()
     // The above line will cause this object to be deleted, so don't do any more in this function.
 }
 
-bool MutationObserverRegistration::shouldReceiveMutationFrom(Node* node, WebKitMutationObserver::MutationType type, const AtomicString& attributeName)
+bool MutationObserverRegistration::shouldReceiveMutationFrom(Node* node, WebKitMutationObserver::MutationType type, const QualifiedName* attributeName)
 {
+    ASSERT((type == WebKitMutationObserver::Attributes && attributeName) || !attributeName);
     if (!(m_options & type))
         return false;
 
@@ -115,7 +117,10 @@ bool MutationObserverRegistration::shouldReceiveMutationFrom(Node* node, WebKitM
     if (type != WebKitMutationObserver::Attributes || !(m_options & WebKitMutationObserver::AttributeFilter))
         return true;
 
-    return m_attributeFilter.contains(attributeName);
+    if (!attributeName->namespaceURI().isNull())
+        return false;
+
+    return m_attributeFilter.contains(attributeName->localName());
 }
 
 } // namespace WebCore

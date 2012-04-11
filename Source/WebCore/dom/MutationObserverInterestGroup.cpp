@@ -41,8 +41,9 @@
 
 namespace WebCore {
 
-PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createIfNeeded(Node* target, WebKitMutationObserver::MutationType type, const AtomicString& attributeName, MutationRecordDeliveryOptions oldValueFlag)
+PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createIfNeeded(Node* target, WebKitMutationObserver::MutationType type, MutationRecordDeliveryOptions oldValueFlag, const QualifiedName* attributeName)
 {
+    ASSERT((type == WebKitMutationObserver::Attributes && attributeName) || !attributeName);
     HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> observers;
     target->getRegisteredMutationObserversOfType(observers, type, attributeName);
     if (observers.isEmpty())

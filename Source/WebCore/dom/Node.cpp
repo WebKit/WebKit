@@ -2579,8 +2579,9 @@ HashSet<MutationObserverRegistration*>* Node::transientMutationObserverRegistry(
     return hasRareData() ? rareData()->transientMutationObserverRegistry() : 0;
 }
 
-void Node::collectMatchingObserversForMutation(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>& observers, Node* fromNode, WebKitMutationObserver::MutationType type, const AtomicString& attributeName)
+void Node::collectMatchingObserversForMutation(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>& observers, Node* fromNode, WebKitMutationObserver::MutationType type, const QualifiedName* attributeName)
 {
+    ASSERT((type == WebKitMutationObserver::Attributes && attributeName) || !attributeName);
     if (Vector<OwnPtr<MutationObserverRegistration> >* registry = fromNode->mutationObserverRegistry()) {
         const size_t size = registry->size();
         for (size_t i = 0; i < size; ++i) {
@@ -2608,8 +2609,9 @@ void Node::collectMatchingObserversForMutation(HashMap<WebKitMutationObserver*, 
     }
 }
 
-void Node::getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>& observers, WebKitMutationObserver::MutationType type, const AtomicString& attributeName)
+void Node::getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>& observers, WebKitMutationObserver::MutationType type, const QualifiedName* attributeName)
 {
+    ASSERT((type == WebKitMutationObserver::Attributes && attributeName) || !attributeName);
     collectMatchingObserversForMutation(observers, this, type, attributeName);
     for (Node* node = parentNode(); node; node = node->parentNode())
         collectMatchingObserversForMutation(observers, node, type, attributeName);

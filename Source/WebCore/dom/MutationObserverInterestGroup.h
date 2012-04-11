@@ -39,7 +39,6 @@
 #include "WebKitMutationObserver.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
@@ -51,7 +50,7 @@ public:
             return nullptr;
 
         MutationRecordDeliveryOptions oldValueFlag = 0;
-        return createIfNeeded(target, WebKitMutationObserver::ChildList, nullAtom, oldValueFlag);
+        return createIfNeeded(target, WebKitMutationObserver::ChildList, oldValueFlag);
     }
 
     static PassOwnPtr<MutationObserverInterestGroup> createForCharacterDataMutation(Node* target)
@@ -59,7 +58,7 @@ public:
         if (!target->document()->hasMutationObserversOfType(WebKitMutationObserver::CharacterData))
             return nullptr;
 
-        return createIfNeeded(target, WebKitMutationObserver::CharacterData, nullAtom, WebKitMutationObserver::CharacterDataOldValue);
+        return createIfNeeded(target, WebKitMutationObserver::CharacterData, WebKitMutationObserver::CharacterDataOldValue);
     }
 
     static PassOwnPtr<MutationObserverInterestGroup> createForAttributesMutation(Node* target, const QualifiedName& attributeName)
@@ -67,14 +66,14 @@ public:
         if (!target->document()->hasMutationObserversOfType(WebKitMutationObserver::Attributes))
             return nullptr;
 
-        return createIfNeeded(target, WebKitMutationObserver::Attributes, attributeName.localName(), WebKitMutationObserver::AttributeOldValue);
+        return createIfNeeded(target, WebKitMutationObserver::Attributes, WebKitMutationObserver::AttributeOldValue, &attributeName);
     }
 
     bool isOldValueRequested();
     void enqueueMutationRecord(PassRefPtr<MutationRecord>);
 
 private:
-    static PassOwnPtr<MutationObserverInterestGroup> createIfNeeded(Node* target, WebKitMutationObserver::MutationType, const AtomicString& attributeName, MutationRecordDeliveryOptions oldValueFlag);
+    static PassOwnPtr<MutationObserverInterestGroup> createIfNeeded(Node* target, WebKitMutationObserver::MutationType, MutationRecordDeliveryOptions oldValueFlag, const QualifiedName* attributeName = 0);
     MutationObserverInterestGroup(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>& observers, MutationRecordDeliveryOptions oldValueFlag);
 
     bool hasOldValue(MutationRecordDeliveryOptions options) { return options & m_oldValueFlag; }

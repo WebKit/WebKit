@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+class QualifiedName;
+
 class MutationObserverRegistration {
 public:
 
@@ -53,7 +55,7 @@ public:
     bool hasTransientRegistrations() { return m_transientRegistrationNodes && !m_transientRegistrationNodes->isEmpty(); }
     void unregister();
 
-    bool shouldReceiveMutationFrom(Node*, WebKitMutationObserver::MutationType, const AtomicString& attributeName);
+    bool shouldReceiveMutationFrom(Node*, WebKitMutationObserver::MutationType, const QualifiedName* attributeName);
     bool inline isSubtree() const { return m_options & WebKitMutationObserver::Subtree; }
 
     WebKitMutationObserver* observer() { return m_observer.get(); }

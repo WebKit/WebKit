@@ -610,7 +610,7 @@ public:
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)
-    void getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>&, WebKitMutationObserver::MutationType, const AtomicString& attributeName = nullAtom);
+    void getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>&, WebKitMutationObserver::MutationType, const QualifiedName* attributeName);
     MutationObserverRegistration* registerMutationObserver(PassRefPtr<WebKitMutationObserver>);
     void unregisterMutationObserver(MutationObserverRegistration*);
     void registerTransientMutationObserver(MutationObserverRegistration*);
@@ -751,7 +751,7 @@ private:
 #if ENABLE(MUTATION_OBSERVERS)
     Vector<OwnPtr<MutationObserverRegistration> >* mutationObserverRegistry();
     HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();
-    void collectMatchingObserversForMutation(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>&, Node* fromNode, WebKitMutationObserver::MutationType, const AtomicString& attributeName);
+    void collectMatchingObserversForMutation(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>&, Node* fromNode, WebKitMutationObserver::MutationType, const QualifiedName* attributeName);
 #endif
 
     mutable uint32_t m_nodeFlags;
