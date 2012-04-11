@@ -472,14 +472,12 @@ inline v8::Handle<v8::Value> toV8(Node* impl, bool forceNewObject = false)
 END
     }
 
-    if (IsRefPtrType($implClassName)) {
-        push(@headerContent, <<END);
+    push(@headerContent, <<END);
 inline v8::Handle<v8::Value> toV8(PassRefPtr< ${nativeType} > impl${forceNewObjectParameter})
 {
     return toV8(impl.get()${forceNewObjectCall});
 }
 END
-    }
 
     if (IsConstructorTemplate($dataNode, "Event")) {
         push(@headerContent, "\nbool fill${implClassName}Init(${implClassName}Init&, const Dictionary&);\n");
@@ -2852,15 +2850,7 @@ END
 
 void ${className}::derefObject(void* object)
 {
-END
-
-    if (IsRefPtrType($interfaceName)) {
-        push(@implContent, <<END);
     static_cast<${nativeType}*>(object)->deref();
-END
-    }
-
-    push(@implContent, <<END);
 }
 
 } // namespace WebCore
