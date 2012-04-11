@@ -51,8 +51,6 @@ WebInspector.NetworkLogView = function()
     this._matchedResourcesMap = {};
     this._currentMatchedResourceIndex = -1;
 
-    this._categories = WebInspector.resourceTypes;
-
     this._createStatusbarButtons();
     this._createFilterStatusBarItems();
     this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
@@ -336,11 +334,15 @@ WebInspector.NetworkLogView.prototype = {
         filterBarElement.className = "scope-bar status-bar-item";
         filterBarElement.id = "network-filter";
 
-        function createFilterElement(category, label)
+        /**
+         * @param {string} typeName
+         * @param {string} label
+         */
+        function createFilterElement(typeName, label)
         {
             var categoryElement = document.createElement("li");
-            categoryElement.category = category;
-            categoryElement.className = category;
+            categoryElement.typeName = typeName;
+            categoryElement.className = typeName;
             categoryElement.appendChild(document.createTextNode(label));
             categoryElement.addEventListener("click", this._updateFilter.bind(this), false);
             filterBarElement.appendChild(categoryElement);
@@ -355,8 +357,10 @@ WebInspector.NetworkLogView.prototype = {
         dividerElement.addStyleClass("scope-bar-divider");
         filterBarElement.appendChild(dividerElement);
 
-        for (var category in this._categories)
-            createFilterElement.call(this, category, this._categories[category].categoryTitle);
+        for (var typeId in WebInspector.resourceTypes) {
+            var type = WebInspector.resourceTypes[typeId];
+            createFilterElement.call(this, type.name(), type.categoryTitle());
+        }
         this._filterBarElement = filterBarElement;
     },
 
@@ -425,16 +429,16 @@ WebInspector.NetworkLogView.prototype = {
         this._summaryBarElement.textContent = text;
     },
 
-    _showCategory: function(category)
+    _showCategory: function(typeName)
     {
-        this._dataGrid.element.addStyleClass("filter-" + category);
-        delete this._hiddenCategories[category];
+        this._dataGrid.element.addStyleClass("filter-" + typeName);
+        delete this._hiddenCategories[typeName];
     },
 
-    _hideCategory: function(category)
+    _hideCategory: function(typeName)
     {
-        this._dataGrid.element.removeStyleClass("filter-" + category);
-        this._hiddenCategories[category] = true;
+        this._dataGrid.element.removeStyleClass("filter-" + typeName);
+        this._hiddenCategories[typeName] = true;
     },
 
     _updateFilter: function(e)
@@ -458,15 +462,15 @@ WebInspector.NetworkLogView.prototype = {
         {
             for (var i = 0; i < this._filterBarElement.childNodes.length; ++i) {
                 var child = this._filterBarElement.childNodes[i];
-                if (!child.category)
+                if (!child.typeName)
                     continue;
 
                 child.removeStyleClass("selected");
-                this._hideCategory(child.category);
+                this._hideCategory(child.typeName);
             }
         }
 
-        if (target.category === this._filterAllElement) {
+        if (target === this._filterAllElement) {
             if (target.hasStyleClass("selected")) {
                 // We can't unselect All, so we break early here
                 return;
@@ -488,7 +492,7 @@ WebInspector.NetworkLogView.prototype = {
             unselectAll.call(this);
 
             target.addStyleClass("selected");
-            this._showCategory(target.category);
+            this._showCategory(target.typeName);
             this._updateOffscreenRows();
             return;
         }
@@ -497,12 +501,12 @@ WebInspector.NetworkLogView.prototype = {
             // If selectMultiple is turned on, and we were selected, we just
             // want to unselect ourselves.
             target.removeStyleClass("selected");
-            this._hideCategory(target.category);
+            this._hideCategory(target.typeName);
         } else {
             // If selectMultiple is turned on, and we weren't selected, we just
             // want to select ourselves.
             target.addStyleClass("selected");
-            this._showCategory(target.category);
+            this._showCategory(target.typeName);
         }
         this._updateOffscreenRows();
     },
@@ -1809,9 +1813,9 @@ WebInspector.NetworkDataGridNode.prototype = {
             this._graphElement.addStyleClass("resource-cached");
 
         this._element.addStyleClass("network-item");
-        if (!this._element.hasStyleClass("network-category-" + this._resource.type.name())) {
-            this._element.removeMatchingStyleClasses("network-category-\\w+");
-            this._element.addStyleClass("network-category-" + this._resource.type.name());
+        if (!this._element.hasStyleClass("network-type-" + this._resource.type.name())) {
+            this._element.removeMatchingStyleClasses("network-type-\\w+");
+            this._element.addStyleClass("network-type-" + this._resource.type.name());
         }
     },
 
@@ -1977,9 +1981,9 @@ WebInspector.NetworkDataGridNode.prototype = {
 
         this._barAreaElement.removeStyleClass("hidden");
 
-        if (!this._graphElement.hasStyleClass("network-category-" + this._resource.type.name())) {
-            this._graphElement.removeMatchingStyleClasses("network-category-\\w+");
-            this._graphElement.addStyleClass("network-category-" + this._resource.type.name());
+        if (!this._graphElement.hasStyleClass("network-type-" + this._resource.type.name())) {
+            this._graphElement.removeMatchingStyleClasses("network-type-\\w+");
+            this._graphElement.addStyleClass("network-type-" + this._resource.type.name());
         }
 
         this._barLeftElement.style.setProperty("left", percentages.start + "%");

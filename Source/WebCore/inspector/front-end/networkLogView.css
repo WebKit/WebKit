@@ -154,38 +154,38 @@
     content: url(Images/resourcePlainIconSmall.png);
 }
 
-.network-log-grid.data-grid .network-category-scripts .icon {
+.network-log-grid.data-grid .network-type-script .icon {
     content: url(Images/resourceJSIcon.png);
 }
 
-.network-log-grid.data-grid.small .network-category-scripts .icon {
+.network-log-grid.data-grid.small .network-type-script .icon {
     content: url(Images/resourceDocumentIconSmall.png);
 }
 
-.network-log-grid.data-grid .network-category-documents .icon {
+.network-log-grid.data-grid .network-type-document .icon {
     content: url(Images/resourceDocumentIcon.png);
 }
 
-.network-log-grid.data-grid.small .network-category-documents .icon {
+.network-log-grid.data-grid.small .network-type-document .icon {
     content: url(Images/resourceDocumentIconSmall.png);
 }
 
-.network-log-grid.data-grid .network-category-stylesheets .icon {
+.network-log-grid.data-grid .network-type-stylesheet .icon {
     content: url(Images/resourceCSSIcon.png);
 }
 
-.network-log-grid.data-grid.small .network-category-stylesheets .icon {
+.network-log-grid.data-grid.small .network-type-stylesheet .icon {
     content: url(Images/resourceDocumentIconSmall.png);
 }
 
-.network-log-grid.data-grid .network-category-images .icon {
+.network-log-grid.data-grid .network-type-image .icon {
     position: relative;
     background-image: url(Images/resourcePlainIcon.png);
     background-repeat: no-repeat;
     content: "";
 }
 
-.network-log-grid.data-grid.small .network-category-images .icon {
+.network-log-grid.data-grid.small .network-type-image .icon {
     background-image: url(Images/resourcePlainIconSmall.png);
     content: "";
 }
@@ -328,59 +328,59 @@
     -webkit-border-image: url(Images/timelineHollowPillGray.png) 7 7 7 7;
 }
 
-.network-category-documents .network-graph-bar {
+.network-type-document .network-graph-bar {
     -webkit-border-image: url(Images/timelinePillBlue.png) 7 7 7 7;
 }
 
-.network-category-documents.resource-cached .network-graph-bar {
+.network-type-document.resource-cached .network-graph-bar {
     -webkit-border-image: url(Images/timelineHollowPillBlue.png) 7 7 7 7;
 }
 
-.network-category-stylesheets .network-graph-bar {
+.network-type-stylesheet .network-graph-bar {
     -webkit-border-image: url(Images/timelinePillGreen.png) 7 7 7 7;
 }
 
-.network-category-stylesheets.resource-cached .network-graph-bar {
+.network-type-stylesheet.resource-cached .network-graph-bar {
     -webkit-border-image: url(Images/timelineHollowPillGreen.png) 7 7 7 7;
 }
 
-.network-category-images .network-graph-bar {
+.network-type-image .network-graph-bar {
     -webkit-border-image: url(Images/timelinePillPurple.png) 6 7 6 7;
 }
 
-.network-category-images.resource-cached .network-graph-bar {
+.network-type-image.resource-cached .network-graph-bar {
     border-image: url(Images/timelineHollowPillPurple.png) 7 7 7 7;
 }
 
-.network-category-fonts .network-graph-bar {
+.network-type-font .network-graph-bar {
     -webkit-border-image: url(Images/timelinePillRed.png) 7 7 7 7;
 }
 
-.network-category-fonts.resource-cached .network-graph-bar {
+.network-type-font.resource-cached .network-graph-bar {
     -webkit-border-image: url(Images/timelineHollowPillRed.png) 7 7 7 7;
 }
 
-.network-category-scripts .network-graph-bar {
+.network-type-script .network-graph-bar {
     -webkit-border-image: url(Images/timelinePillOrange.png) 7 7 7 7;
 }
 
-.network-category-scripts.resource-cached .network-graph-bar {
+.network-type-script.resource-cached .network-graph-bar {
     -webkit-border-image: url(Images/timelineHollowPillOrange.png) 7 7 7 7;
 }
 
-.network-category-xhr .network-graph-bar {
+.network-type-xhr .network-graph-bar {
     -webkit-border-image: url(Images/timelinePillYellow.png) 7 7 7 7;
 }
 
-.network-category-xhr.resource-cached .network-graph-bar {
+.network-type-xhr.resource-cached .network-graph-bar {
     -webkit-border-image: url(Images/timelineHollowPillYellow.png) 7 7 7 7;
 }
 
-.network-category-websockets .network-graph-bar {
+.network-type-websocket .network-graph-bar {
     -webkit-border-image: url(Images/timelinePillGray.png) 7 7 7 7;
 }
 
-.network-category-websockets.resource-cached .network-graph-bar {
+.network-type-websocket.resource-cached .network-graph-bar {
    -webkit-border-image: url(Images/timelineHollowPillGray.png) 7 7 7 7;
 }
 
@@ -474,14 +474,14 @@
 }
 
 .network-log-grid.data-grid.filter-all table.data tr.revealed.network-item,
-.network-log-grid.data-grid.filter-documents table.data tr.revealed.network-category-documents,
-.network-log-grid.data-grid.filter-stylesheets table.data tr.revealed.network-category-stylesheets,
-.network-log-grid.data-grid.filter-images table.data tr.revealed.network-category-images,
-.network-log-grid.data-grid.filter-scripts table.data tr.revealed.network-category-scripts,
-.network-log-grid.data-grid.filter-xhr table.data tr.revealed.network-category-xhr,
-.network-log-grid.data-grid.filter-fonts table.data tr.revealed.network-category-fonts,
-.network-log-grid.data-grid.filter-websockets table.data tr.revealed.network-category-websockets,
-.network-log-grid.data-grid.filter-other table.data tr.revealed.network-category-other {
+.network-log-grid.data-grid.filter-document table.data tr.revealed.network-type-document,
+.network-log-grid.data-grid.filter-stylesheet table.data tr.revealed.network-type-stylesheet,
+.network-log-grid.data-grid.filter-image table.data tr.revealed.network-type-image,
+.network-log-grid.data-grid.filter-script table.data tr.revealed.network-type-script,
+.network-log-grid.data-grid.filter-xhr table.data tr.revealed.network-type-xhr,
+.network-log-grid.data-grid.filter-font table.data tr.revealed.network-type-font,
+.network-log-grid.data-grid.filter-websocket table.data tr.revealed.network-type-websocket,
+.network-log-grid.data-grid.filter-other table.data tr.revealed.network-type-other {
     display: table-row;
 }
 
