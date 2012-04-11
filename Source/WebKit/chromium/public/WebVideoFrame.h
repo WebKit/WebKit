@@ -35,22 +35,17 @@ namespace WebKit {
 
 // A proxy video frame interface to communicate frame data between chromium
 // and WebKit.
+// Keep in sync with VideoFrameChromium and chromium's media::VideoFrame::Format.
 class WebVideoFrame {
 public:
     enum Format {
-        FormatInvalid,
-        FormatRGB555,
-        FormatRGB565,
-        FormatRGB24,
-        FormatRGB32,
-        FormatRGBA,
-        FormatYV12,
-        FormatYV16,
-        FormatNV12,
-        FormatEmpty,
-        FormatASCII,
-        FormatI420,
-        FormatNativeTexture,
+        FormatInvalid = 0,
+        FormatRGB32 = 4,
+        FormatYV12 = 6,
+        FormatYV16 = 7,
+        FormatEmpty = 9,
+        FormatI420 = 11,
+        FormatNativeTexture = 12,
     };
 
     virtual ~WebVideoFrame() { }

@@ -48,19 +48,13 @@ public:
 
     // These enums must be kept in sync with WebKit::WebVideoFrame.
     enum Format {
-        Invalid,
-        RGB555,
-        RGB565,
-        RGB24,
-        RGB32,
-        RGBA,
-        YV12,
-        YV16,
-        NV12,
-        Empty,
-        ASCII,
-        I420,
-        NativeTexture,
+        Invalid = 0,
+        RGB32 = 4,
+        YV12 = 6,
+        YV16 = 7,
+        Empty = 9,
+        I420 = 11,
+        NativeTexture = 12,
     };
 
     virtual ~VideoFrameChromium();

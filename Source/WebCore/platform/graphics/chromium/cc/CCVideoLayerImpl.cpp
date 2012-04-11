@@ -106,18 +106,11 @@ static GC3Denum convertVFCFormatToGC3DFormat(const VideoFrameChromium* frame)
     case VideoFrameChromium::YV12:
     case VideoFrameChromium::YV16:
         return GraphicsContext3D::LUMINANCE;
-    case VideoFrameChromium::RGBA:
-        return GraphicsContext3D::RGBA;
     case VideoFrameChromium::NativeTexture:
         return frame->textureTarget();
     case VideoFrameChromium::Invalid:
-    case VideoFrameChromium::RGB555:
-    case VideoFrameChromium::RGB565:
-    case VideoFrameChromium::RGB24:
     case VideoFrameChromium::RGB32:
-    case VideoFrameChromium::NV12:
     case VideoFrameChromium::Empty:
-    case VideoFrameChromium::ASCII:
     case VideoFrameChromium::I420:
         notImplemented();
     }

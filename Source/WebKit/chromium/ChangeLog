@@ -1,3 +1,14 @@
+2012-04-11  Ami Fischman  <fischman@chromium.org>
+
+        Remove unused WebVideoFrame::Format values
+        https://bugs.webkit.org/show_bug.cgi?id=83625
+
+        Reviewed by Kenneth Russell.
+
+        * public/WebVideoFrame.h:
+        (WebKit):
+        * src/AssertMatchingEnums.cpp:
+
 2012-04-11  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Follow up to r113863: fix chromium inspector interactive test harness.
