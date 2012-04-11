@@ -29,6 +29,8 @@
 
 #include "LayerFlushScheduler.h"
 
+#include "AutodrainedPool.h"
+
 namespace WebCore {
 
 static const CFIndex CoreAnimationRunLoopOrder = 2000000;
@@ -56,6 +58,7 @@ void LayerFlushScheduler::runLoopObserverCallback()
     ASSERT(m_runLoopObserver);
     ASSERT(!m_isSuspended);
 
+    AutodrainedPool pool;
     if (m_client->flushLayers())
         invalidate();
 }
