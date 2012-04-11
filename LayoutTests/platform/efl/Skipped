@@ -22,7 +22,6 @@ fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
 # EFL has not fully implemented about some SVG attributes
 svg/custom
 svg/dom/altGlyph-dom.xhtml
-svg/dynamic-updates
 svg/text
 svg/W3C-SVG-1.1
 svg/W3C-SVG-1.1-SE
