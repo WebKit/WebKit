@@ -47,8 +47,11 @@ class MockOptions(object):
         # object will be used. Generally speaking unit tests should
         # subclass this or provider wrapper functions that set a common
         # set of options.
-        for key, value in kwargs.items():
-            self.__dict__[key] = value
+        self.update(**kwargs)
+
+    def update(self, **kwargs):
+        self.__dict__.update(**kwargs)
+        return self
 
 
 # FIXME: This should be renamed MockWebKitPatch.

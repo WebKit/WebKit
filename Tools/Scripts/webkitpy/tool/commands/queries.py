@@ -44,6 +44,7 @@ from webkitpy.common.system.user import User
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.common.system.deprecated_logging import log
+from webkitpy.layout_tests.models.test_expectations import TestExpectations, TestExpectationSerializer
 from webkitpy.layout_tests.port import port_options
 
 
@@ -399,6 +400,92 @@ out what ports are skipping the test(s). Categories are taken in account too."""
                 print "Ports skipping test %r: %s" % (test_name, ', '.join(ports))
             else:
                 print "Test %r is not skipped by any port." % test_name
+
+
+class PrintExpectations(AbstractDeclarativeCommand):
+    name = 'print-expectations'
+    help_text = 'Print the expected result for the given test(s) on the given port(s)'
+
+    def __init__(self):
+        options = [
+            make_option('--all', action='store_true', default=False,
+                        help='display the expectations for *all* tests'),
+            make_option('-x', '--exclude-keyword', action='append', default=[],
+                        help='limit to tests not matching the given keyword (for example, "skip", "slow", or "crash". May specify multiple times'),
+            make_option('-i', '--include-keyword', action='append', default=[],
+                        help='limit to tests with the given keyword (for example, "skip", "slow", or "crash". May specify multiple times'),
+            make_option('--csv', action='store_true', default=False,
+                        help='Print a CSV-style report that includes the port name, modifiers, tests, and expectations'),
+            make_option('-f', '--full', action='store_true', default=False,
+                        help='Print a full test_expectations.txt-style line for every match'),
+        ] + port_options(platform='port/platform to use. Use glob-style wildcards for multiple ports (implies --csv)')
+
+        AbstractDeclarativeCommand.__init__(self, options=options)
+        self._expectation_models = {}
+
+    def execute(self, options, args, tool):
+        if not args and not options.all:
+            print "You must either specify one or more test paths or --all."
+            return
+
+        default_port = tool.port_factory.get(options=options)
+        if options.platform:
+            port_names = fnmatch.filter(tool.port_factory.all_port_names(), options.platform)
+            if not port_names:
+                default_port = tool.port_factory.get(options.platform)
+                if default_port:
+                    port_names = [default_port.name()]
+                else:
+                    print "No port names match '%s'" % options.platform
+                    return
+        else:
+            port_names = [default_port.name()]
+
+        serializer = TestExpectationSerializer()
+        tests = default_port.tests(args)
+        for port_name in port_names:
+            model = self._model(options, port_name, tests)
+            tests_to_print = self._filter_tests(options, model, tests)
+            lines = [model.get_expectation_line(test) for test in sorted(tests_to_print)]
+            print '\n'.join(self._format_lines(options, port_name, serializer, lines))
+
+    def _filter_tests(self, options, model, tests):
+        filtered_tests = set()
+        if options.include_keyword:
+            for keyword in options.include_keyword:
+                filtered_tests.update(model.get_test_set_for_keyword(keyword))
+        else:
+            filtered_tests = tests
+
+        for keyword in options.exclude_keyword:
+            filtered_tests.difference_update(model.get_test_set_for_keyword(keyword))
+        return filtered_tests
+
+    def _format_lines(self, options, port_name, serializer, lines):
+        output = []
+        if options.csv:
+            for line in lines:
+                output.append("%s,%s" % (port_name, serializer.to_csv(line)))
+        elif lines:
+            include_modifiers = options.full
+            include_expectations = options.full or len(options.include_keyword) != 1 or len(options.exclude_keyword)
+            output.append("// For %s" % port_name)
+            for line in lines:
+                output.append("%s" % serializer.to_string(line, include_modifiers, include_expectations, include_comment=False))
+        return output
+
+    def _model(self, options, port_name, tests):
+        port = self._tool.port_factory.get(port_name, options)
+        expectations_path = port.path_to_test_expectations_file()
+        if not expectations_path in self._expectation_models:
+            lint_mode = False
+            self._expectation_models[expectations_path] = TestExpectations(port, tests,
+                port.test_expectations(),
+                port.test_configuration(),
+                lint_mode,
+                port.test_expectations_overrides(),
+                port.skipped_tests(tests)).model()
+        return self._expectation_models[expectations_path]
 
 
 class PrintBaselines(AbstractDeclarativeCommand):

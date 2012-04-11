@@ -1,5 +1,59 @@
 2012-04-10  Dirk Pranke  <dpranke@chromium.org>
 
+        webkit-patch: add a print-expectations command
+        https://bugs.webkit.org/show_bug.cgi?id=83347
+
+        Reviewed by Adam Barth.
+
+        This command will print the expected results for a given set of
+        tests on a given set of ports matching a given set of keywords.
+
+        Example output (printing all the tests not expected to pass, and their
+        expected results, on a Mac):
+
+        $ webkit-patch print-expectations -x pass fast/html
+        // For mac-snowleopard
+        fast/html/details-open4.html = TEXT
+        fast/html/details-open2.html = TEXT
+        fast/html/details-no-summary4.html = TEXT
+        fast/html/details-open-javascript.html = TEXT
+        $
+
+        You can also print full test-expectatons.txt lines using --full and a
+        CSV-style report (which can be useful for post-processing) using --csv.
+
+        It will replace the 'skipped-files' command (which will be
+        removed in a subsequent patch) and is a more general (and
+        cleaner and properly layered) solution.
+
+        Also add an update() command to MockOptions() to make overriding keywords easier.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationSerializer.to_string):
+        (TestExpectationSerializer):
+        (TestExpectationSerializer.to_csv):
+        (TestExpectationSerializer._format_result):
+        (TestExpectationLine.create_passing_expectation):
+        (TestExpectationsModel.get_test_set_for_keyword):
+        (TestExpectationsModel.has_keyword):
+        (TestExpectations.model):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (execute):
+        (PrintExpectations):
+        (PrintExpectations.__init__):
+        (PrintExpectations.execute):
+        (PrintExpectations._filter_tests):
+        (PrintExpectations._format_lines):
+        (PrintExpectations._model):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (TestPrintExpectations): Added.
+        * Scripts/webkitpy/tool/mocktool.py:
+        (MockOptions):
+        (MockOptions.__init__):
+        (MockOptions.update): Added.
+
+2012-04-10  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: refactor handling of --platform and related options
         https://bugs.webkit.org/show_bug.cgi?id=83525
 

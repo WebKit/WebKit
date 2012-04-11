@@ -119,7 +119,7 @@ class TestExpectationSerializer(object):
         self._test_configuration_converter = test_configuration_converter
         self._parsed_expectation_to_string = dict([[parsed_expectation, expectation_string] for expectation_string, parsed_expectation in TestExpectations.EXPECTATIONS.items()])
 
-    def to_string(self, expectation_line):
+    def to_string(self, expectation_line, include_modifiers=True, include_expectations=True, include_comment=True):
         if expectation_line.is_invalid():
             return expectation_line.original_string or ''
 
@@ -135,7 +135,15 @@ class TestExpectationSerializer(object):
                 result.append(self._format_result(modifiers, expectation_line.name, expectations, expectation_line.comment))
             return "\n".join(result) if result else None
 
-        return self._format_result(" ".join(expectation_line.modifiers), expectation_line.name, " ".join(expectation_line.expectations), expectation_line.comment)
+        return self._format_result(" ".join(expectation_line.modifiers),
+                                   expectation_line.name,
+                                   " ".join(expectation_line.expectations),
+                                   expectation_line.comment,
+                                   include_modifiers, include_expectations, include_comment)
+
+    def to_csv(self, expectation_line):
+        # Note that this doesn't include the comments.
+        return '%s,%s,%s' % (expectation_line.name, ' '.join(expectation_line.modifiers), ' '.join(expectation_line.expectations))
 
     def _parsed_expectations_string(self, expectation_line):
         result = []
@@ -154,9 +162,14 @@ class TestExpectationSerializer(object):
         return ' '.join(result)
 
     @classmethod
-    def _format_result(cls, modifiers, name, expectations, comment):
-        result = "%s : %s = %s" % (modifiers.upper(), name, expectations.upper())
-        if comment is not None:
+    def _format_result(cls, modifiers, name, expectations, comment, include_modifiers=True, include_expectations=True, include_comment=True):
+        result = ''
+        if include_modifiers:
+            result += '%s : ' % modifiers.upper()
+        result += name
+        if include_expectations:
+            result += ' = %s' % expectations.upper()
+        if include_comment and comment is not None:
             result += " //%s" % comment
         return result
 
@@ -395,6 +408,7 @@ class TestExpectationLine:
         expectation_line.name = test
         expectation_line.path = test
         expectation_line.parsed_expectations = set([PASS])
+        expectation_line.expectations = set(['PASS'])
         expectation_line.matching_tests = [test]
         return expectation_line
 
@@ -445,6 +459,24 @@ class TestExpectationsModel(object):
 
         return tests
 
+    def get_test_set_for_keyword(self, keyword):
+        # FIXME: get_test_set() is an awkward public interface because it requires
+        # callers to know the difference between modifiers and expectations. We
+        # should replace that with this where possible.
+        expectation_enum = TestExpectations.EXPECTATIONS.get(keyword.lower(), None)
+        if expectation_enum is not None:
+            return self._expectation_to_tests[expectation_enum]
+        modifier_enum = TestExpectations.MODIFIERS.get(keyword.lower(), None)
+        if modifier_enum is not None:
+            return self._modifier_to_tests[modifier_enum]
+
+        # We must not have an index on this modifier.
+        matching_tests = set()
+        for test, modifiers in self._test_to_modifiers.iteritems():
+            if keyword.lower() in modifiers:
+                matching_tests.add(test)
+        return matching_tests
+
     def get_tests_with_result_type(self, result_type):
         return self._result_type_to_tests[result_type]
 
@@ -457,6 +489,10 @@ class TestExpectationsModel(object):
 
     def has_modifier(self, test, modifier):
         return test in self._modifier_to_tests[modifier]
+
+    def has_keyword(self, test, keyword):
+        return (keyword.upper() in self.get_expectations_string(test) or
+                keyword.lower() in self.get_modifiers(test))
 
     def has_test(self, test):
         return test in self._test_to_expectation_line
@@ -729,6 +765,8 @@ class TestExpectations(object):
 
     # TODO(ojan): Allow for removing skipped tests when getting the list of
     # tests to run, but not when getting metrics.
+    def model(self):
+        return self._model
 
     def get_rebaselining_failures(self):
         return (self._model.get_test_set(REBASELINE, FAIL) |
