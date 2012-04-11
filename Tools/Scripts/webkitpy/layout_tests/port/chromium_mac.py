@@ -48,23 +48,17 @@ class ChromiumMacPort(chromium.ChromiumPort):
             'chromium-mac-snowleopard',
             'chromium-mac',
             'chromium',
-            'mac-leopard',
-            'mac-snowleopard',
-            'mac-lion',
             'mac',
         ],
         'snowleopard': [
             'chromium-mac-snowleopard',
             'chromium-mac',
             'chromium',
-            'mac-snowleopard',
-            'mac-lion',
             'mac',
         ],
         'lion': [
             'chromium-mac',
             'chromium',
-            'mac-lion',
             'mac',
         ],
         'future': [

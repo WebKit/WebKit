@@ -99,10 +99,10 @@ class BaselineOptimizerTest(unittest.TestCase):
 
     def test_chromium_mac_redundant_with_apple_mac(self):
         self._assertOptimization({
-            'LayoutTests/platform/chromium-mac-snowleopard': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
-            'LayoutTests/platform/mac-snowleopard': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+            'LayoutTests/platform/chromium-mac': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+            'LayoutTests/platform/mac': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
         }, {
-            'LayoutTests/platform/mac-snowleopard': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+            'LayoutTests/platform/mac': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
         })
 
     def test_mac_future(self):

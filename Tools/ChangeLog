@@ -1,5 +1,19 @@
 2012-04-10  Dirk Pranke  <dpranke@chromium.org>
 
+        make chromium layout tests not depend on platform/win, platform/mac-leopard, or platform/mac-snowleopard
+        https://bugs.webkit.org/show_bug.cgi?id=83401
+
+        Reviewed by Adam Barth.
+
+        Last patch in the series - no longer look in mac-leopard,
+        mac-snowleopard, or mac-lion.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort):
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
+2012-04-10  Dirk Pranke  <dpranke@chromium.org>
+
         webkit-patch: add a print-expectations command
         https://bugs.webkit.org/show_bug.cgi?id=83347
 
