@@ -18,7 +18,10 @@ meegotouch {
     DEFINES += WTF_USE_MEEGOTOUCH=1
 }
 
-mac: CONFIG += graphics_surfaces
+haveQt(5) {
+    mac: CONFIG += graphics_surfaces
+}
+
 contains(CONFIG, graphics_surfaces) {
     DEFINES += WTF_USE_GRAPHICS_SURFACE=1
 }

@@ -1,3 +1,15 @@
+2012-04-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Manage graphics buffers in the web process
+        https://bugs.webkit.org/show_bug.cgi?id=78675
+ 
+        Make graphics surface available only for Qt 5, attempting to fix
+        the Qt-mac build.
+
+        Unreviewed build fix.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-04-11  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK NRWT follow-up fix after r113849.
