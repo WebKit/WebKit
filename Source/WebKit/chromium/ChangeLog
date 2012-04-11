@@ -1,3 +1,21 @@
+2012-04-10  Alexandre Elias  <aelias@google.com>
+
+        Add gesture event enums for long-press and pinch
+        https://bugs.webkit.org/show_bug.cgi?id=83640
+
+        Reviewed by James Robinson.
+
+        Add new enum values GestureLongPress and GesturePinchBegin/End/Update,
+        along with no-op default handling.
+
+        * public/WebInputEvent.h:
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::gestureEvent):
+
 2012-04-10  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add OVERRIDE annotations for cc tree host and proxy interfaces

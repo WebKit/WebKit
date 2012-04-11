@@ -2402,18 +2402,22 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
     TemporaryChange<PlatformEvent::Type> baseEventType(m_baseEventType, gestureEvent.type());
 
     switch (gestureEvent.type()) {
-    case PlatformEvent::GestureTapDown:
-        return handleGestureTapDown();
-    case PlatformEvent::GestureTap:
-        return handleGestureTap(gestureEvent);
-    case PlatformEvent::GestureScrollUpdate:
-        return handleGestureScrollUpdate(gestureEvent);
-    case PlatformEvent::GestureDoubleTap:
-        break;
     case PlatformEvent::GestureScrollBegin:
         return handleGestureScrollCore(gestureEvent, ScrollByPixelWheelEvent, false);
     case PlatformEvent::GestureScrollEnd:
         return handleGestureScrollCore(gestureEvent, ScrollByPixelVelocityWheelEvent, true);
+    case PlatformEvent::GestureScrollUpdate:
+        return handleGestureScrollUpdate(gestureEvent);
+    case PlatformEvent::GestureTap:
+        return handleGestureTap(gestureEvent);
+    case PlatformEvent::GestureTapDown:
+        return handleGestureTapDown();
+    case PlatformEvent::GestureDoubleTap:
+    case PlatformEvent::GestureLongPress:
+    case PlatformEvent::GesturePinchBegin:
+    case PlatformEvent::GesturePinchEnd:
+    case PlatformEvent::GesturePinchUpdate:
+        break;
     default:
         ASSERT_NOT_REACHED();
     }

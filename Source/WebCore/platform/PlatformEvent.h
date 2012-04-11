@@ -55,6 +55,10 @@ public:
         GestureTap,
         GestureTapDown,
         GestureDoubleTap,
+        GestureLongPress,
+        GesturePinchBegin,
+        GesturePinchEnd,
+        GesturePinchUpdate,
 
 #if ENABLE(TOUCH_EVENTS)
         // PlatformTouchEvent

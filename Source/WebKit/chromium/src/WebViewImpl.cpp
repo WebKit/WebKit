@@ -684,6 +684,7 @@ bool WebViewImpl::gestureEvent(const WebGestureEvent& event)
     case WebInputEvent::GestureScrollUpdate:
     case WebInputEvent::GestureTapDown:
     case WebInputEvent::GestureDoubleTap:
+    case WebInputEvent::GestureLongPress:
     case WebInputEvent::GesturePinchBegin:
     case WebInputEvent::GesturePinchEnd:
     case WebInputEvent::GesturePinchUpdate: {
