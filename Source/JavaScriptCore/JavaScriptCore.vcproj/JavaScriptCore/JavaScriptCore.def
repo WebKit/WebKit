@@ -378,6 +378,7 @@ EXPORTS
     WTFGetBacktrace
     WTFInvokeCrashHook
     WTFLog
+    WTFLogAlways
     WTFLogVerbose
     WTFReportArgumentAssertionFailure
     WTFReportAssertionFailure
