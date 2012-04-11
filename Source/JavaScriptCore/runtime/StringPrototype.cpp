@@ -910,6 +910,35 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
     return JSValue::encode(jsEmptyString(exec));
 }
 
+// Return true in case of early return (resultLength got to limitLength).
+template<typename CharacterType>
+static ALWAYS_INLINE bool splitStringByOneCharacterImpl(ExecState* exec, JSArray* result, const UString& input, StringImpl* string, UChar separatorCharacter, size_t& position, unsigned& resultLength, unsigned limitLength)
+{
+    // 12. Let q = p.
+    size_t matchPosition;
+    const CharacterType* characters = string->getCharacters<CharacterType>();
+    // 13. Repeat, while q != s
+    //   a. Call SplitMatch(S, q, R) and let z be its MatchResult result.
+    //   b. If z is failure, then let q = q+1.
+    //   c. Else, z is not failure
+    while ((matchPosition = WTF::find(characters, string->length(), separatorCharacter, position)) != notFound) {
+        // 1. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
+        //    through q (exclusive).
+        // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
+        //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
+        result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position), false);
+        // 3. Increment lengthA by 1.
+        // 4. If lengthA == lim, return A.
+        if (++resultLength == limitLength)
+            return true;
+
+        // 5. Let p = e.
+        // 8. Let q = p.
+        position = matchPosition + 1;
+    }
+    return false;
+}
+
 // ES 5.1 - 15.5.4.14 String.prototype.split (separator, limit)
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
 {
@@ -1063,26 +1092,50 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
             return JSValue::encode(result);
         }
 
-        // 12. Let q = p.
-        size_t matchPosition;
-        // 13. Repeat, while q != s
-        //   a. Call SplitMatch(S, q, R) and let z be its MatchResult result.
-        //   b. If z is failure, then let q = q+1.
-        //   c. Else, z is not failure
-        while ((matchPosition = input.find(separator, position)) != notFound) {
-            // 1. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
-            //    through q (exclusive).
-            // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
-            //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-            result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position), false);
-            // 3. Increment lengthA by 1.
-            // 4. If lengthA == lim, return A.
-            if (++resultLength == limit)
-                return JSValue::encode(result);
+        // 3 cases:
+        // -separator length == 1, 8 bits
+        // -separator length == 1, 16 bits
+        // -separator length > 1
+        StringImpl* stringImpl = input.impl();
+        StringImpl* separatorImpl = separator.impl();
+        size_t separatorLength = separatorImpl->length();
 
-            // 5. Let p = e.
-            // 8. Let q = p.
-            position = matchPosition + separator.length();
+        if (separatorLength == 1) {
+            UChar separatorCharacter;
+            if (separatorImpl->is8Bit())
+                separatorCharacter = separatorImpl->characters8()[0];
+            else
+                separatorCharacter = separatorImpl->characters16()[0];
+
+            if (stringImpl->is8Bit()) {
+                if (splitStringByOneCharacterImpl<LChar>(exec, result, input, stringImpl, separatorCharacter, position, resultLength, limit))
+                    return JSValue::encode(result);
+            } else {
+                if (splitStringByOneCharacterImpl<UChar>(exec, result, input, stringImpl, separatorCharacter, position, resultLength, limit))
+                    return JSValue::encode(result);
+            }
+        } else {
+            // 12. Let q = p.
+            size_t matchPosition;
+            // 13. Repeat, while q != s
+            //   a. Call SplitMatch(S, q, R) and let z be its MatchResult result.
+            //   b. If z is failure, then let q = q+1.
+            //   c. Else, z is not failure
+            while ((matchPosition = stringImpl->find(separatorImpl, position)) != notFound) {
+                // 1. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
+                //    through q (exclusive).
+                // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
+                //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
+                result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position), false);
+                // 3. Increment lengthA by 1.
+                // 4. If lengthA == lim, return A.
+                if (++resultLength == limit)
+                    return JSValue::encode(result);
+
+                // 5. Let p = e.
+                // 8. Let q = p.
+                position = matchPosition + separator.length();
+            }
         }
     }
 

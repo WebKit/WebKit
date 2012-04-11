@@ -1,3 +1,27 @@
+2012-04-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        Optimize String.split() for 1 character separator
+        https://bugs.webkit.org/show_bug.cgi?id=83546
+
+        Reviewed by Gavin Barraclough.
+
+        This patch adds a serie of optimizations to make stringProtoFuncSplit() faster in the common case
+        where the separator is a single character.
+
+        The two main gains are:
+        -Use of the find() function with a single character instead of doing a full string matching.
+        -Use of WTF::find() instead of UString::find() to avoid branching on is8Bit() and have a simpler inline
+         function.
+
+        The code is also changed to avoid making unnecessary allocations by converting the 8bit string to 16bits.
+
+        This makes String.split() faster by about 13% in that particular case.
+
+        * runtime/StringPrototype.cpp:
+        (JSC):
+        (JSC::splitStringByOneCharacterImpl):
+        (JSC::stringProtoFuncSplit):
+
 2012-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck issues.
