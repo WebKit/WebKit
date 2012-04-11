@@ -1,3 +1,28 @@
+2012-04-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Remove unnecessary rendering code
+        https://bugs.webkit.org/show_bug.cgi?id=83591
+
+        Reviewed by Noam Rosenthal.
+
+        - Remove code that isn't needed since the introduction of WebLayerTreeRenderer
+        - Remove TextureMapper::bindSurface(0) calls following beginPainting, which calls it itself.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::paint):
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (QQuickWebPagePrivate):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (DrawingAreaProxyImpl):
+        * UIProcess/LayerTreeHostProxy.cpp:
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::paintToCurrentGLContext):
+        (WebKit::WebLayerTreeRenderer::paintToGraphicsContext):
+
 2012-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck issues.

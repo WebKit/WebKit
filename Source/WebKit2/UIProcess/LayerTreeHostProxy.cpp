@@ -45,17 +45,6 @@ LayerTreeHostProxy::~LayerTreeHostProxy()
     m_renderer->detach();
 }
 
-void LayerTreeHostProxy::paintToCurrentGLContext(const WebCore::TransformationMatrix& matrix, float opacity, const WebCore::FloatRect& rect)
-{
-    m_renderer->syncRemoteContent();
-    m_renderer->paintToCurrentGLContext(matrix, opacity, rect);
-}
-
-void LayerTreeHostProxy::paintToGraphicsContext(BackingStore::PlatformGraphicsContext context)
-{
-    m_renderer->paintToGraphicsContext(context);
-}
-
 void LayerTreeHostProxy::updateViewport()
 {
     m_drawingAreaProxy->updateViewport();

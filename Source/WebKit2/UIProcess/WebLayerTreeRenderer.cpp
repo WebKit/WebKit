@@ -121,7 +121,6 @@ void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& m
 
     layer->setTextureMapper(m_textureMapper.get());
     m_textureMapper->beginPainting();
-    m_textureMapper->bindSurface(0);
     m_textureMapper->beginClip(TransformationMatrix(), clipRect);
 
     if (currentRootLayer->opacity() != opacity || currentRootLayer->transform() != matrix) {
@@ -149,7 +148,6 @@ void WebLayerTreeRenderer::paintToGraphicsContext(QPainter* painter)
     GraphicsContext graphicsContext(painter);
     m_textureMapper->setGraphicsContext(&graphicsContext);
     m_textureMapper->beginPainting();
-    m_textureMapper->bindSurface(0);
     layer->paint();
     m_textureMapper->endPainting();
     m_textureMapper->setGraphicsContext(0);

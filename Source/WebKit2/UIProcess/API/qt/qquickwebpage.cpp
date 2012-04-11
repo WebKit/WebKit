@@ -65,8 +65,12 @@ void QQuickWebPagePrivate::initialize(WebKit::WebPageProxy* webPageProxy)
 
 void QQuickWebPagePrivate::paint(QPainter* painter)
 {
-    if (webPageProxy->drawingArea())
-        webPageProxy->drawingArea()->paintLayerTree(painter);
+    if (!webPageProxy->drawingArea())
+        return;
+
+    LayerTreeHostProxy* layerTreeHostProxy = webPageProxy->drawingArea()->layerTreeHostProxy();
+    if (layerTreeHostProxy->layerTreeRenderer())
+        layerTreeHostProxy->layerTreeRenderer()->paintToGraphicsContext(painter);
 }
 
 QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
