@@ -120,8 +120,14 @@ class PerfTestsRunner(object):
                 paths.append(relpath)
 
         skipped_directories = set(['.svn', 'resources'])
-        tests = find_files.find(self._host.filesystem, self._base_path, paths, skipped_directories, _is_test_file)
-        return [test for test in tests if not self._port.skips_perf_test(self._port.relative_perf_test_filename(test))]
+        test_files = find_files.find(self._host.filesystem, self._base_path, paths, skipped_directories, _is_test_file)
+        tests = []
+        for path in test_files:
+            test_name = self._port.relative_perf_test_filename(path)
+            if self._port.skips_perf_test(test_name):
+                continue
+            tests.append((test_name.replace('\\', '/'), path))
+        return tests
 
     def run(self):
         if self._options.help_printing:
@@ -218,7 +224,7 @@ class PerfTestsRunner(object):
         unexpected = 0
         driver = None
 
-        for test in tests:
+        for (test_name, test_path) in tests:
             driver = port.create_driver(worker_number=1, no_timeout=True)
 
             if self._options.pause_before_testing:
@@ -227,11 +233,10 @@ class PerfTestsRunner(object):
                     driver.stop()
                     return unexpected
 
-            relative_test_path = self._host.filesystem.relpath(test, self._base_path)
-            self._printer.write('Running %s (%d of %d)' % (relative_test_path, expected + unexpected + 1, len(tests)))
+            self._printer.write('Running %s (%d of %d)' % (test_name, expected + unexpected + 1, len(tests)))
 
-            is_chromium_style = self._host.filesystem.split(relative_test_path)[0] in self._test_directories_for_chromium_style_tests
-            if self._run_single_test(test, driver, is_chromium_style):
+            is_chromium_style = self._host.filesystem.dirname(test_name) in self._test_directories_for_chromium_style_tests
+            if self._run_single_test(test_name, test_path, driver, is_chromium_style):
                 expected = expected + 1
             else:
                 unexpected = unexpected + 1
@@ -277,12 +282,10 @@ class PerfTestsRunner(object):
                 return True
         return False
 
-    def _process_parser_test_result(self, test, output):
+    def _process_parser_test_result(self, test_name, output):
         got_a_result = False
         test_failed = False
         filesystem = self._host.filesystem
-        category, test_name = filesystem.split(filesystem.relpath(test, self._base_path))
-        test_name = filesystem.splitext(test_name)[0]
         results = {}
         keys = ['avg', 'median', 'stdev', 'min', 'max']
         score_regex = re.compile(r'^(?P<key>' + r'|'.join(keys) + r')\s+(?P<value>[0-9\.]+)\s*(?P<unit>.*)')
@@ -305,30 +308,31 @@ class PerfTestsRunner(object):
 
         results['unit'] = unit
 
-        self._results[filesystem.join(category, test_name).replace('\\', '/')] = results
-        self._buildbot_output.write('RESULT %s: %s= %s %s\n' % (category, test_name, results['avg'], unit))
+        test_name = re.sub(r'\.\w+$', '', test_name)
+        self._results[test_name] = results
+        self._buildbot_output.write('RESULT %s= %s %s\n' % (test_name.replace('/', ': '), results['avg'], unit))
         self._buildbot_output.write(', '.join(['%s= %s %s' % (key, results[key], unit) for key in keys[1:]]) + '\n')
         return False
 
-    def _run_single_test(self, test, driver, is_chromium_style):
+    def _run_single_test(self, test_name, test_path, driver, is_chromium_style):
         test_failed = False
         start_time = time.time()
 
-        output = driver.run_test(DriverInput(test, self._options.time_out_ms, None, False))
+        output = driver.run_test(DriverInput(test_path, self._options.time_out_ms, None, False))
 
         if output.text == None:
             test_failed = True
         elif output.timeout:
-            self._printer.write('timeout: %s' % test[self._webkit_base_dir_len + 1:])
+            self._printer.write('timeout: %s' % test_name)
             test_failed = True
         elif output.crash:
-            self._printer.write('crash: %s' % test[self._webkit_base_dir_len + 1:])
+            self._printer.write('crash: %s' % test_name)
             test_failed = True
         else:
             if is_chromium_style:
-                test_failed = self._process_chromium_style_test_result(test, output)
+                test_failed = self._process_chromium_style_test_result(test_name, output)
             else:
-                test_failed = self._process_parser_test_result(test, output)
+                test_failed = self._process_parser_test_result(test_name, output)
 
         if len(output.error):
             self._printer.write('error:\n%s' % output.error)

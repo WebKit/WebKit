@@ -126,7 +126,7 @@ max 1120
     def run_test(self, test_name):
         runner = self.create_runner()
         driver = MainTest.TestDriver()
-        return runner._run_single_test(test_name, driver, is_chromium_style=True)
+        return runner._run_single_test(test_name, test_name, driver, is_chromium_style=True)
 
     def test_run_passing_test(self):
         self.assertTrue(self.run_test('pass.html'))
@@ -146,12 +146,14 @@ max 1120
     def test_run_crash_test(self):
         self.assertFalse(self.run_test('crash.html'))
 
+    def _tests_for_runner(self, runner, tests):
+        return [(test, runner._base_path + '/' + test) for test in tests]
+
     def test_run_test_set(self):
         buildbot_output = StringIO.StringIO()
         runner = self.create_runner(buildbot_output)
-        dirname = runner._base_path + '/inspector/'
-        tests = [dirname + 'pass.html', dirname + 'silent.html', dirname + 'failed.html',
-            dirname + 'tonguey.html', dirname + 'timeout.html', dirname + 'crash.html']
+        tests = self._tests_for_runner(runner, ['inspector/pass.html', 'inspector/silent.html', 'inspector/failed.html',
+            'inspector/tonguey.html', 'inspector/timeout.html', 'inspector/crash.html'])
         unexpected_result_count = runner._run_tests_set(tests, runner._port)
         self.assertEqual(unexpected_result_count, len(tests) - 1)
         self.assertWritten(buildbot_output, ['RESULT group_name: test_name= 42 ms\n'])
@@ -166,10 +168,8 @@ max 1120
 
         buildbot_output = StringIO.StringIO()
         runner = self.create_runner(buildbot_output, driver_class=TestDriverWithStopCount)
-
-        dirname = runner._base_path + '/inspector/'
-        tests = [dirname + 'pass.html', dirname + 'silent.html', dirname + 'failed.html',
-            dirname + 'tonguey.html', dirname + 'timeout.html', dirname + 'crash.html']
+        tests = self._tests_for_runner(runner, ['inspector/pass.html', 'inspector/silent.html', 'inspector/failed.html',
+            'inspector/tonguey.html', 'inspector/timeout.html', 'inspector/crash.html'])
 
         unexpected_result_count = runner._run_tests_set(tests, runner._port)
         self.assertEqual(TestDriverWithStopCount.stop_count, 6)
@@ -184,9 +184,7 @@ max 1120
         buildbot_output = StringIO.StringIO()
         regular_output = StringIO.StringIO()
         runner = self.create_runner(buildbot_output, args=["--pause-before-testing"], regular_output=regular_output, driver_class=TestDriverWithStartCount)
-
-        dirname = runner._base_path + '/inspector/'
-        tests = [dirname + 'pass.html']
+        tests = self._tests_for_runner(runner, ['inspector/pass.html'])
 
         try:
             output = OutputCapture()
@@ -201,7 +199,7 @@ max 1120
     def test_run_test_set_for_parser_tests(self):
         buildbot_output = StringIO.StringIO()
         runner = self.create_runner(buildbot_output)
-        tests = [runner._base_path + '/Bindings/event-target-wrapper.html', runner._base_path + '/Parser/some-parser.html']
+        tests = self._tests_for_runner(runner, ['Bindings/event-target-wrapper.html', 'Parser/some-parser.html'])
         unexpected_result_count = runner._run_tests_set(tests, runner._port)
         self.assertEqual(unexpected_result_count, 0)
         self.assertWritten(buildbot_output, ['RESULT Bindings: event-target-wrapper= 1489.05 ms\n',
@@ -344,8 +342,7 @@ max 1120
         add_file('test2.html')
         add_file('test3.html')
         runner._host.filesystem.chdir(runner._port.perf_tests_dir()[:runner._port.perf_tests_dir().rfind(runner._host.filesystem.sep)])
-        tests = [runner._port.relative_perf_test_filename(test) for test in runner._collect_tests()]
-        self.assertEqual(sorted(tests), ['test1.html', 'test2.html'])
+        self.assertEqual(sorted([test[0] for test in runner._collect_tests()]), ['test1.html', 'test2.html'])
 
     def test_collect_tests_with_skipped_list(self):
         runner = self.create_runner()
@@ -361,8 +358,7 @@ max 1120
         add_file('inspector/resources', 'resource_file.html')
         add_file('unsupported', 'unsupported_test2.html')
         runner._port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
-        tests = [runner._port.relative_perf_test_filename(test) for test in runner._collect_tests()]
-        self.assertEqual(sorted(tests), ['inspector/test1.html', 'inspector/test2.html'])
+        self.assertEqual(sorted([test[0] for test in runner._collect_tests()]), ['inspector/test1.html', 'inspector/test2.html'])
 
     def test_parse_args(self):
         runner = self.create_runner()

@@ -1,3 +1,28 @@
+2012-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Refactor PerfTestRunner to include file extensions in test names
+        https://bugs.webkit.org/show_bug.cgi?id=83677
+
+        Reviewed by Hajime Morita.
+
+        Move the logic that extracts the test name from _process_parser_test_result to _collect_tests.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._collect_tests):
+        (PerfTestsRunner._run_tests_set):
+        (PerfTestsRunner._process_parser_test_result): Still replace "/" by ": " to keep the output format.
+        We can make the said behavior change by simply removing "test_name = re.sub(r'\.\w+$', '', test_name)" here.
+        (PerfTestsRunner._run_single_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (run_test):
+        (_tests_for_runner):
+        (test_run_test_set):
+        (test_run_test_set_kills_drt_per_run):
+        (test_run_test_pause_before_testing):
+        (test_run_test_set_for_parser_tests):
+        (test_collect_tests):
+        (test_collect_tests_with_skipped_list):
+
 2012-04-11  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: Disabling Inspector causes build failure on Windows
