@@ -789,8 +789,5 @@ fast/canvas/webgl/array-message-passing.html
 # but not the innerWidth. The test passes on Qt, GTK and Chromium.
 fast/css/align-positioned-object-on-resize.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=83411
-media/nodesFromRect-shadowContent.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=83618
 fast/dom/inline-event-attributes-release.html

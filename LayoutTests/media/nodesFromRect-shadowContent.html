@@ -13,11 +13,6 @@
   <script type="text/javascript" charset="utf-8">
     function runTest()
     {
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-      }
-
       var e = {};
 
       // Set up shortcut access to elements
@@ -42,12 +37,7 @@
 
       var shadow =['-webkit-media-controls-timeline-container', '-webkit-media-controls-play-button', '-webkit-media-controls-panel', '-webkit-media-controls'];
       checkShadowContent(clickX, clickY, 10, 10, 20, 20, shadow);
-
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
     }
-
-    window.onload = runTest;
   </script>
 </head>
 <body id="body">
@@ -58,6 +48,7 @@
         testExpected("video.controls", null, '!=');
         waitForEvent('canplaythrough', function () {
             runTest();
+            endTest();
         } );
         video.src = findMediaFile("video", "content/test");
     </script>

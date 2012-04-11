@@ -4,4 +4,5 @@ This test only runs in DRT!
 
 EXPECTED (video.controls != 'null') OK
 EVENT(canplaythrough)
+END OF TEST
 
