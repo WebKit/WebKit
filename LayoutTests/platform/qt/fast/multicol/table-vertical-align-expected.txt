@@ -138,8 +138,8 @@ layer at (8,8) size 768x350
                 text run at (11,91) width 114: "cell."
 layer at (8,376) size 768x300
   RenderBlock {DIV} at (0,368) size 768x300
-    RenderTable {TABLE} at (0,0) size 376x1318 [border: (1px outset #808080)]
-      RenderTableSection {TBODY} at (1,1) size 374x1316
+    RenderTable {TABLE} at (0,0) size 376x1340 [border: (1px outset #808080)]
+      RenderTableSection {TBODY} at (1,1) size 374x1338
         RenderTableRow {TR} at (0,0) size 374x1316
           RenderTableCell {TD} at (0,0) size 141x1316 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (11,11) size 119x42
@@ -262,15 +262,15 @@ layer at (8,376) size 768x300
               text run at (11,1263) width 119: "This cell has lots"
               text run at (11,1284) width 46: "of text."
             RenderBR {BR} at (57,1300) size 0x0
-          RenderTableCell {TD} at (141,567) size 233x182 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {TD} at (141,567) size 233x204 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
             RenderInline {SPAN} at (0,0) size 161x160
               RenderText {#text} at (11,33) size 161x160
                 text run at (11,33) width 161: "Other"
                 text run at (11,113) width 114: "cell."
 layer at (8,702) size 768x300
   RenderBlock {DIV} at (0,694) size 768x300
-    RenderTable {TABLE} at (0,0) size 376x1318 [border: (1px outset #808080)]
-      RenderTableSection {TBODY} at (1,1) size 374x1316
+    RenderTable {TABLE} at (0,0) size 376x1373 [border: (1px outset #808080)]
+      RenderTableSection {TBODY} at (1,1) size 374x1371
         RenderTableRow {TR} at (0,0) size 374x1316
           RenderTableCell {TD} at (0,0) size 141x1316 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (11,11) size 119x42
@@ -393,7 +393,7 @@ layer at (8,702) size 768x300
               text run at (11,1263) width 119: "This cell has lots"
               text run at (11,1284) width 46: "of text."
             RenderBR {BR} at (57,1300) size 0x0
-          RenderTableCell {TD} at (141,1134) size 233x182 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {TD} at (141,1134) size 233x237 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
             RenderInline {SPAN} at (0,0) size 161x160
               RenderText {#text} at (11,66) size 161x160
                 text run at (11,66) width 161: "Other"
