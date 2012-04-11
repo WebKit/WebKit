@@ -28,10 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HeapSnapshotSortableDataGrid = function(columns)
+WebInspector.HeapSnapshotSortableDataGrid = function(columns, deferNodeContentCreation)
 {
     WebInspector.DataGrid.call(this, columns);
     this.addEventListener("sorting changed", this.sortingChanged, this);
+
+    this._deferNodeContentCreation = deferNodeContentCreation;
+    if (deferNodeContentCreation)
+        this.scrollContainer.addEventListener("scroll", this._onScroll.bind(this), true);
 }
 
 WebInspector.HeapSnapshotSortableDataGrid.prototype = {
@@ -76,6 +80,47 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
         this._performSorting(SortByTwoFields);
     },
 
+    updateVisibleNodes: function()
+    {
+        if (!this._deferNodeContentCreation)
+            return;
+        var scrollTop = this.scrollContainer.scrollTop;
+        var rowHeight = 16;
+
+        var height = this.scrollContainer.offsetHeight;
+        var visibleRowsCount = Math.round(height / rowHeight) + 1;
+
+        var children = this.children;
+
+        var i = 0;
+        while (i < children.length) {
+            if (children[i].revealed) {
+                var top = children[i].element.offsetTop;
+                if (top >= scrollTop)
+                    break;
+            }
+            ++i;
+        }
+
+        while (i < children.length && visibleRowsCount) {
+            if (children[i].revealed) {
+                children[i].ensureContentCreated();
+                --visibleRowsCount;
+            }
+            ++i;
+        }
+    },
+
+    onResize: function()
+    {
+        this.updateVisibleNodes();
+    },
+
+    _onScroll: function(event)
+    {
+        this.updateVisibleNodes();
+    },
+
     _performSorting: function(sortFunction)
     {
         this.recursiveSortingEnter();
@@ -91,6 +136,7 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
                 child.sort();
         }
         this.recursiveSortingLeave();
+        this.updateVisibleNodes();
     },
 
     recursiveSortingEnter: function()
@@ -224,7 +270,7 @@ WebInspector.HeapSnapshotConstructorsDataGrid = function()
         shallowSize: { title: WebInspector.UIString("Shallow Size"), width: "120px", sortable: true },
         retainedSize: { title: WebInspector.UIString("Retained Size"), width: "120px", sort: "descending", sortable: true }
     };
-    WebInspector.HeapSnapshotSortableDataGrid.call(this, columns);
+    WebInspector.HeapSnapshotSortableDataGrid.call(this, columns, true);
     this._profileIndex = -1;
 }
 
@@ -299,7 +345,7 @@ WebInspector.HeapSnapshotDiffDataGrid = function()
         removedSize: { title: WebInspector.UIString("Freed Size"), width: "72px", sortable: true },
         sizeDelta: { title: "Size Delta", width: "72px", sortable: true }
     };
-    WebInspector.HeapSnapshotSortableDataGrid.call(this, columns);
+    WebInspector.HeapSnapshotSortableDataGrid.call(this, columns, true);
 }
 
 WebInspector.HeapSnapshotDiffDataGrid.prototype = {
@@ -794,6 +840,7 @@ WebInspector.DetailedHeapshotView.prototype = {
             if (node.depth === 0)
                 node.revealed = node._name.toLowerCase().indexOf(filter) !== -1;
         }
+        this.dataGrid.updateVisibleNodes();
     },
 
     _profiles: function()

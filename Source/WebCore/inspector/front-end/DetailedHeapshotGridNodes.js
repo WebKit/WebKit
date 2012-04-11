@@ -37,6 +37,11 @@ WebInspector.HeapSnapshotGridNode = function(tree, hasChildren)
 }
 
 WebInspector.HeapSnapshotGridNode.prototype = {
+    ensureContentCreated: function()
+    {
+        // May be overriden in descendants with lazy content.
+    },
+
     createCell: function(columnIdentifier)
     {
         var cell = WebInspector.DataGridNode.prototype.createCell.call(this, columnIdentifier);
@@ -197,6 +202,31 @@ WebInspector.HeapSnapshotGridNode.prototype = {
 };
 
 WebInspector.HeapSnapshotGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;
+
+WebInspector.HeapSnapshotLazyGridNode = function(tree, hasChildren)
+{
+    WebInspector.HeapSnapshotGridNode.call(this, tree, hasChildren);
+    this._deferContentCreation = true;
+}
+
+WebInspector.HeapSnapshotLazyGridNode.prototype = {
+    ensureContentCreated: function()
+    {
+        if (!this._deferContentCreation)
+            return;
+        this._deferContentCreation = false;
+        this.createCells();
+    },
+
+    createCells: function()
+    {
+        if (this._deferContentCreation)
+            return;
+        WebInspector.HeapSnapshotGridNode.prototype.createCells.call(this);
+    }
+};
+
+WebInspector.HeapSnapshotLazyGridNode.prototype.__proto__ = WebInspector.HeapSnapshotGridNode.prototype;
 
 WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
 {
@@ -569,7 +599,7 @@ WebInspector.HeapSnapshotInstanceNode.prototype.__proto__ = WebInspector.HeapSna
 
 WebInspector.HeapSnapshotConstructorNode = function(tree, className, aggregate, aggregatesKey)
 {
-    WebInspector.HeapSnapshotGridNode.call(this, tree, aggregate.count > 0);
+    WebInspector.HeapSnapshotLazyGridNode.call(this, tree, aggregate.count > 0);
     this._name = className;
     this._distanceToWindow = aggregate.distanceToWindow;
     this._count = aggregate.count;
@@ -651,7 +681,7 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
     }
 };
 
-WebInspector.HeapSnapshotConstructorNode.prototype.__proto__ = WebInspector.HeapSnapshotGridNode.prototype;
+WebInspector.HeapSnapshotConstructorNode.prototype.__proto__ = WebInspector.HeapSnapshotLazyGridNode.prototype;
 
 WebInspector.HeapSnapshotIteratorsTuple = function(it1, it2)
 {
@@ -678,7 +708,7 @@ WebInspector.HeapSnapshotIteratorsTuple.prototype = {
 
 WebInspector.HeapSnapshotDiffNode = function(tree, className, baseAggregate, aggregate)
 {
-    WebInspector.HeapSnapshotGridNode.call(this, tree, true);
+    WebInspector.HeapSnapshotLazyGridNode.call(this, tree, true);
     this._name = className;
     this._baseIndexes = baseAggregate ? baseAggregate.idxs : [];
     this._indexes = aggregate ? aggregate.idxs : [];
@@ -819,7 +849,7 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
     }
 };
 
-WebInspector.HeapSnapshotDiffNode.prototype.__proto__ = WebInspector.HeapSnapshotGridNode.prototype;
+WebInspector.HeapSnapshotDiffNode.prototype.__proto__ = WebInspector.HeapSnapshotLazyGridNode.prototype;
 
 WebInspector.HeapSnapshotDominatorObjectNode = function(tree, node)
 {

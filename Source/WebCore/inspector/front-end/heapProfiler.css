@@ -75,6 +75,11 @@ body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon {
     display: block;
 }
 
+.detailed-heapshot-view .data-grid tr:empty {
+    height: 16px;
+    visibility: hidden;
+}
+
 .detailed-heapshot-view .data-grid {
     border: none;
 }
