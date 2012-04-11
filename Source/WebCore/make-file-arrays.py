@@ -78,7 +78,11 @@ def main():
         header_file.write("extern const char %s[%d];\n" % (variable_name, size))
         cpp_file.write("const char %s[%d] = {\n" % (variable_name, size))
         for index in range(size):
-            cpp_file.write("%d" % ord(content[index]))
+            char_code = ord(content[index])
+            if char_code < 128:
+                cpp_file.write("%d" % char_code)
+            else:
+                cpp_file.write("'\\x%02x'" % char_code)
             cpp_file.write("," if index != len(content) - 1 else "};\n")
             if index % 20 == 19:
                 cpp_file.write("\n")
