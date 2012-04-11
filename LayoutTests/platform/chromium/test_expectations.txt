@@ -3524,7 +3524,7 @@ BUGWK81697 : fast/notifications/notifications-without-permission.html = TEXT
 
 BUGWK81732 : fast/js/integer-division-neg2tothe32-by-neg1.html = CRASH PASS
 
-BUGWK81778 DEBUG : webaudio/convolution-mono-mono.html = CRASH
+BUGWK81778 DEBUG : webaudio/convolution-mono-mono.html = CRASH TEXT
 
 // Old test, has been flaky on and off for snowleopard debug since at least r111389
 BUGWK81801 SNOWLEOPARD DEBUG : fast/forms/basic-textareas.html = PASS TEXT
