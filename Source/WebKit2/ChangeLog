@@ -1,5 +1,37 @@
 2012-04-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt] InspectorServer: Add an API level auto test
+        https://bugs.webkit.org/show_bug.cgi?id=83594
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This tests InspectorServer and WebSocketServer.
+
+        * UIProcess/API/qt/tests/inspectorserver/inspectorserver.pro: Added.
+        * UIProcess/API/qt/tests/inspectorserver/tst_inspectorserver.cpp: Added.
+        (tst_InspectorServer):
+        (tst_InspectorServer::tst_InspectorServer):
+        (tst_InspectorServer::prepareWebViewComponent):
+        (tst_InspectorServer::newWebView):
+        (tst_InspectorServer::init):
+        (tst_InspectorServer::cleanup):
+        (tst_InspectorServer::webView):
+        (tst_InspectorServer::fetchPageList):
+        (tst_InspectorServer::testPageList): This tests that pages with developerExtrasEnabled appear available for inspection.
+        (tst_InspectorServer::testRemoteDebuggingMessage): This tests a web socket connection using a raw inspector command.
+        (tst_InspectorServer::openRemoteDebuggingSession): This tests the whole pipeline by starting a remote inspection session.
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView):
+        (tst_QQuickWebView::prepareWebViewComponent):
+        * UIProcess/API/qt/tests/tests.pri:
+        * UIProcess/API/qt/tests/util.cpp:
+        (LoadStartedCatcher::LoadStartedCatcher):
+        (LoadStartedCatcher::onLoadingChanged):
+        * UIProcess/API/qt/tests/util.h:
+        (LoadStartedCatcher):
+
+2012-04-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         [Qt] InspectorServer: Improve the JSON page list's parameter names
         https://bugs.webkit.org/show_bug.cgi?id=83592
 

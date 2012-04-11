@@ -23,6 +23,7 @@
 #include <QTimer>
 
 class QQuickWebView;
+class QWebLoadRequest;
 
 #if !defined(TESTS_SOURCE_DIR)
 #define TESTS_SOURCE_DIR ""
@@ -33,3 +34,15 @@ bool waitForSignal(QObject*, const char* signal, int timeout = 10000);
 bool waitForLoadSucceeded(QQuickWebView* webView, int timeout = 10000);
 bool waitForLoadFailed(QQuickWebView* webView, int timeout = 10000);
 void suppressDebugOutput();
+
+class LoadStartedCatcher : public QObject {
+    Q_OBJECT
+public:
+    LoadStartedCatcher(QQuickWebView* webView);
+public slots:
+    void onLoadingChanged(QWebLoadRequest* loadRequest);
+signals:
+    void finished();
+private:
+    QQuickWebView* m_webView;
+};

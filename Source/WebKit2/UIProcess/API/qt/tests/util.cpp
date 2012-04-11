@@ -20,6 +20,7 @@
 #include "util.h"
 #include "private/qquickwebview_p.h"
 #include "private/qwebloadrequest_p.h"
+#include <QtTest/QtTest>
 #include <stdio.h>
 
 void addQtWebProcessToPath()
@@ -118,6 +119,22 @@ void suppressDebugOutput()
     qInstallMsgHandler(messageHandler); \
     if (qgetenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT").isEmpty()) \
         qputenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT", "1");
+}
+
+
+LoadStartedCatcher::LoadStartedCatcher(QQuickWebView* webView)
+    : m_webView(webView)
+{
+    connect(m_webView, SIGNAL(loadingChanged(QWebLoadRequest*)), this, SLOT(onLoadingChanged(QWebLoadRequest*)));
+}
+
+void LoadStartedCatcher::onLoadingChanged(QWebLoadRequest* loadRequest)
+{
+    if (loadRequest->status() == QQuickWebView::LoadStartedStatus) {
+        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+
+        QCOMPARE(m_webView->loading(), true);
+    }
 }
 
 #include "util.moc"

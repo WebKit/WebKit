@@ -1,3 +1,12 @@
+2012-04-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] InspectorServer: Add an API level auto test
+        https://bugs.webkit.org/show_bug.cgi?id=83594
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Source/tests.pri:
+
 2012-04-11  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Add WEBKIT_CREATE_FORWARDING_HEADERS macro
