@@ -1,3 +1,18 @@
+2012-04-10  Patrick Gansterer  <paroga@webkit.org>
+
+        Cleanup wtf/Platform.h and config.h files
+        https://bugs.webkit.org/show_bug.cgi?id=83431
+
+        Reviewed by Eric Seidel.
+
+        The ENABLE() and USE() macros take care about the case when the flag
+        isn't defined. So there is no need to define anything with 0.
+
+        Also move duplicated code from the config.h files to Platform.h and
+        merge a few preprocessor commands to make the file more readable.
+
+        * config.h:
+
 2012-04-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should flush SetLocals to arguments

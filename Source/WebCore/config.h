@@ -122,10 +122,6 @@
 #define WTF_USE_NEW_THEME 1
 #endif // PLATFORM(MAC)
 
-#if OS(UNIX) || OS(WINDOWS)
-#define WTF_USE_OS_RANDOMNESS 1
-#endif
-
 #if PLATFORM(CHROMIUM)
 
 // Chromium uses this file instead of JavaScriptCore/config.h to compile
