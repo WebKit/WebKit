@@ -118,6 +118,13 @@ void FormAssociatedElement::removedFromTree()
         setForm(0);
 }
 
+void FormAssociatedElement::formRemovedFromTree(const Node* formRoot)
+{
+    ASSERT(m_form);
+    if (findRoot(toHTMLElement(this)) != formRoot)
+        setForm(0);
+}
+
 void FormAssociatedElement::setForm(HTMLFormElement* newForm)
 {
     if (m_form == newForm)

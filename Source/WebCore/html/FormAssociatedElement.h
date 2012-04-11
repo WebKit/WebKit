@@ -58,6 +58,8 @@ public:
 
     void resetFormOwner();
 
+    void formRemovedFromTree(const Node* formRoot);
+
 protected:
     FormAssociatedElement();
 

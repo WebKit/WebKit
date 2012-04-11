@@ -146,6 +146,23 @@ void HTMLFormElement::removedFromDocument()
         document()->resetFormElementsOwner();
 }
 
+static inline Node* findRoot(Node* n)
+{
+    Node* root = n;
+    for (; n; n = n->parentNode())
+        root = n;
+    return root;
+}
+
+void HTMLFormElement::removedFromTree(bool deep)
+{
+    Node* root = findRoot(this);
+    Vector<FormAssociatedElement*> associatedElements(m_associatedElements);
+    for (unsigned i = 0; i < associatedElements.size(); ++i)
+        associatedElements[i]->formRemovedFromTree(root);
+    HTMLElement::removedFromTree(deep);
+}
+
 void HTMLFormElement::handleLocalEvents(Event* event)
 {
     Node* targetNode = event->target()->toNode();

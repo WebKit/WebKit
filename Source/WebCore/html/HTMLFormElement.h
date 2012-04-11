@@ -117,6 +117,7 @@ private:
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
+    virtual void removedFromTree(bool deep) OVERRIDE;
 
     virtual void handleLocalEvents(Event*);
 
