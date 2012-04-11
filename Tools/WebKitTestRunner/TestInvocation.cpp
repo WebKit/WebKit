@@ -163,8 +163,10 @@ void TestInvocation::invoke()
         return;
     }
 
+#if ENABLE(INSPECTOR)
     if (shouldOpenWebInspector(m_pathOrURL.c_str()))
         WKInspectorShow(WKPageGetInspector(TestController::shared().mainWebView()->page()));
+#endif // ENABLE(INSPECTOR)        
 
     WKPageLoadURL(TestController::shared().mainWebView()->page(), m_url.get());
 
@@ -174,7 +176,9 @@ void TestInvocation::invoke()
     else if (m_error)
         dump("FAIL\n");
 
+#if ENABLE(INSPECTOR)
     WKInspectorClose(WKPageGetInspector(TestController::shared().mainWebView()->page()));
+#endif // ENABLE(INSPECTOR)
 }
 
 void TestInvocation::dump(const char* stringToDump, bool singleEOF)

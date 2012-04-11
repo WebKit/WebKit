@@ -458,26 +458,34 @@ void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef wi
     setProperty(context, windowObject, "layoutTestController", this, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
 }
 
+#if ENABLE(INSPECTOR)
 void LayoutTestController::showWebInspector()
 {
     WKBundleInspectorShow(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()));
 }
+#endif // ENABLE(INSPECTOR)
 
+#if ENABLE(INSPECTOR)
 void LayoutTestController::closeWebInspector()
 {
     WKBundleInspectorClose(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()));
 }
+#endif // ENABLE(INSPECTOR)
 
+#if ENABLE(INSPECTOR)
 void LayoutTestController::evaluateInWebInspector(long callID, JSStringRef script)
 {
     WKRetainPtr<WKStringRef> scriptWK = toWK(script);
     WKBundleInspectorEvaluateScriptForTest(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), callID, scriptWK.get());
 }
+#endif // ENABLE(INSPECTOR)
 
+#if ENABLE(INSPECTOR)
 void LayoutTestController::setJavaScriptProfilingEnabled(bool enabled)
 {
     WKBundleInspectorSetJavaScriptProfilingEnabled(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), enabled);
 }
+#endif // ENABLE(INSPECTOR)
 
 typedef WTF::HashMap<unsigned, WKRetainPtr<WKBundleScriptWorldRef> > WorldMap;
 static WorldMap& worldMap()

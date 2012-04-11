@@ -165,10 +165,12 @@ public:
     void evaluateScriptInIsolatedWorld(JSContextRef, unsigned worldID, JSStringRef script);
     static unsigned worldIDForWorld(WKBundleScriptWorldRef);
 
+#if ENABLE(INSPECTOR)
     void showWebInspector();
     void closeWebInspector();
     void evaluateInWebInspector(long callId, JSStringRef script);
     void setJavaScriptProfilingEnabled(bool);
+#endif // ENABLE(INSPECTOR)
 
     void setPOSIXLocale(JSStringRef);
 
