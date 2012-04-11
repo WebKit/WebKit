@@ -30,8 +30,3 @@ BUGWK78412 : tables/mozilla_expected_failures/bugs/bug59252.html = TEXT
 BUGWK78412 : tables/mozilla_expected_failures/bugs/bug7243.html = TEXT
 
 BUGWK82886 : inspector/styles/override-screen-size.html = TEXT
-
-// Temp: need to rebaseline.
-BUGWK58511 : fast/text/text-shadow-no-default-color.html = FAIL MISSING
-BUGWK58511 : ietestcenter/css3/bordersbackgrounds/box-shadow-002.htm = IMAGE
-BUGWK58511 : ietestcenter/css3/bordersbackgrounds/box-shadow-003.htm = IMAGE

@@ -337,8 +337,3 @@ BUGWK75568 : tables/mozilla/bugs/bug1188.html = TEXT
 BUGWK82546 : compositing/tiling/crash-reparent-tiled-layer.html = PASS TEXT
 
 BUGWK83124 : http/tests/websocket/tests/hybi/workers/worker-reload.html = PASS FAIL
-
-// Temp: need to rebaseline.
-BUGWK58511 : fast/text/text-shadow-no-default-color.html = FAIL MISSING
-BUGWK58511 : ietestcenter/css3/bordersbackgrounds/box-shadow-002.htm = IMAGE
-BUGWK58511 : ietestcenter/css3/bordersbackgrounds/box-shadow-003.htm = IMAGE

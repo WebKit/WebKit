@@ -142,10 +142,5 @@ BUGWK83277 : editing/input/caret-at-the-edge-of-contenteditable.html = FAIL MISS
 BUGWK83277 : editing/input/reveal-caret-of-multiline-contenteditable.html = FAIL MISSING
 BUGWK83277 : editing/input/reveal-caret-of-multiline-input.html = FAIL MISSING
 
-// Temp: need to rebaseline.
-BUGWK58511 : fast/text/text-shadow-no-default-color.html = FAIL MISSING
-BUGWK58511 : ietestcenter/css3/bordersbackgrounds/box-shadow-002.htm = IMAGE
-BUGWK58511 : ietestcenter/css3/bordersbackgrounds/box-shadow-003.htm = IMAGE
-
 // SVG dropShadow failure. Needs rebaseline after fixing.
 BUGWK83580 : svg/filters/feDropShadow.svg = FAIL MISSING
