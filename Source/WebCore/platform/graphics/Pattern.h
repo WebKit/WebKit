@@ -96,7 +96,7 @@ private:
     AffineTransform m_patternSpaceTransformation;
     PlatformPatternPtr m_pattern;
 #if USE(SKIA)
-    size_t m_externalMemoryAllocated;
+    int m_externalMemoryAllocated;
 #endif
 };
 

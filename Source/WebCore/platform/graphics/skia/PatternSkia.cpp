@@ -40,6 +40,8 @@
 
 #include <v8.h>
 
+using namespace std;
+
 namespace WebCore {
 
 void Pattern::platformDestroy()
@@ -96,7 +98,8 @@ PlatformPatternPtr Pattern::platformPattern(const AffineTransform& patternTransf
         canvas.drawBitmap(image->bitmap(), 0, 0);
         m_pattern = SkShader::CreateBitmapShader(bm2, tileModeX, tileModeY);
 
-        m_externalMemoryAllocated = bm2.getSafeSize();
+        // Clamp to int, since that's what the adjust function takes.
+        m_externalMemoryAllocated = static_cast<int>(min(static_cast<size_t>(INT_MAX), bm2.getSafeSize()));
         v8::V8::AdjustAmountOfExternalAllocatedMemory(m_externalMemoryAllocated);
     }
     m_pattern->setLocalMatrix(m_patternSpaceTransformation);
