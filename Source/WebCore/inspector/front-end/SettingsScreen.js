@@ -511,6 +511,14 @@ WebInspector.SettingsScreen.prototype = {
             return element;
         }
 
+        function swapDimensionsClicked(event)
+        {
+            var widthValue = this._widthOverrideElement.value;
+            this._widthOverrideElement.value = this._heightOverrideElement.value;
+            this._heightOverrideElement.value = widthValue;
+            this._applyDeviceMetricsUserInput();
+        }
+
         var tableElement = fieldsetElement.createChild("table");
 
         var rowElement = tableElement.createChild("tr");
@@ -518,8 +526,13 @@ WebInspector.SettingsScreen.prototype = {
         cellElement.appendChild(document.createTextNode(WebInspector.UIString("Screen resolution:")));
         cellElement = rowElement.createChild("td");
         this._widthOverrideElement = createInput.call(this, cellElement, "metrics-override-width", String(metrics.width || screen.width));
-        cellElement.appendChild(document.createTextNode(" \u00D7 "));
+        cellElement.appendChild(document.createTextNode(" \u00D7 ")); // MULTIPLICATION SIGN.
         this._heightOverrideElement = createInput.call(this, cellElement, "metrics-override-height", String(metrics.height || screen.height));
+        cellElement.appendChild(document.createTextNode(" \u2014 ")); // EM DASH.
+        var swapDimensionsElement = cellElement.createChild("button");
+        swapDimensionsElement.appendChild(document.createTextNode(" \u21C4 ")); // RIGHTWARDS ARROW OVER LEFTWARDS ARROW.
+        swapDimensionsElement.title = WebInspector.UIString("Swap dimensions");
+        swapDimensionsElement.addEventListener("click", swapDimensionsClicked.bind(this), false);
 
         rowElement = tableElement.createChild("tr");
         cellElement = rowElement.createChild("td");
