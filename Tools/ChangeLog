@@ -1,3 +1,13 @@
+2012-04-11  Nico Weber  <thakis@chromium.org>
+
+        [mac] Suppress deprecation warning for GlobalToLocal in the carbon parts of the test plugin.
+        https://bugs.webkit.org/show_bug.cgi?id=83709
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (handleEventCarbon):
+
 2012-04-11  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         Adding myself to committers.py
