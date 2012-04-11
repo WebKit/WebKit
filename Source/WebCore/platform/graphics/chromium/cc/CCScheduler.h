@@ -100,7 +100,7 @@ public:
     bool redrawPending() const { return m_stateMachine.redrawPending(); }
 
     // CCFrameRateControllerClient implementation
-    virtual void vsyncTick();
+    virtual void vsyncTick() OVERRIDE;
 
 private:
     CCScheduler(CCSchedulerClient*, PassOwnPtr<CCFrameRateController>);

@@ -79,14 +79,14 @@ public:
     virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime);
 
     // CCSchedulerClient implementation
-    virtual bool canDraw();
-    virtual bool hasMoreResourceUpdates() const;
-    virtual void scheduledActionBeginFrame();
-    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible();
-    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced();
-    virtual void scheduledActionUpdateMoreResources();
-    virtual void scheduledActionCommit();
-    virtual void scheduledActionBeginContextRecreation();
+    virtual bool canDraw() OVERRIDE;
+    virtual bool hasMoreResourceUpdates() const OVERRIDE;
+    virtual void scheduledActionBeginFrame() OVERRIDE;
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible() OVERRIDE;
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced() OVERRIDE;
+    virtual void scheduledActionUpdateMoreResources() OVERRIDE;
+    virtual void scheduledActionCommit() OVERRIDE;
+    virtual void scheduledActionBeginContextRecreation() OVERRIDE;
 
 private:
     explicit CCThreadProxy(CCLayerTreeHost*);

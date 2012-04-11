@@ -39,7 +39,7 @@ public:
     void reset() { m_tickCalled = false; }
     bool tickCalled() const { return m_tickCalled; }
 
-    virtual void onTimerTick() { m_tickCalled = true; }
+    virtual void onTimerTick() OVERRIDE { m_tickCalled = true; }
 
 protected:
     bool m_tickCalled;
@@ -90,9 +90,9 @@ public:
 
     virtual ~FakeCCTimeSource() { }
 
-    virtual void setClient(WebCore::CCTimeSourceClient* client) { m_client = client; }
-    virtual void setActive(bool b) { m_active = b; }
-    virtual bool active() const { return m_active; }
+    virtual void setClient(WebCore::CCTimeSourceClient* client) OVERRIDE { m_client = client; }
+    virtual void setActive(bool b) OVERRIDE { m_active = b; }
+    virtual bool active() const OVERRIDE { return m_active; }
 
     void tick()
     {

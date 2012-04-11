@@ -1,5 +1,23 @@
 2012-04-10  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Add OVERRIDE annotations for cc scheduler-related client interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=83646
+
+        Reviewed by Adrienne Walker.
+
+        This adds OVERRIDE annotations to the implementations of the following interfaces:
+        - CCFrameRateControllerClient
+        - CCSchedulerClient
+        - CCTimeSource
+        - CCTimeSourceClient
+        - CCTimerClient
+
+
+        * tests/CCSchedulerTest.cpp:
+        * tests/CCSchedulerTestCommon.h:
+
+2012-04-10  James Robinson  <jamesr@chromium.org>
+
         [chromium] Fold LayerChromium::updateCompositorResources into main update
         https://bugs.webkit.org/show_bug.cgi?id=83530
 

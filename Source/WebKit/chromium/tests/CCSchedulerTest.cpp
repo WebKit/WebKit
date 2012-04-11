@@ -65,25 +65,25 @@ public:
         return false;
     }
 
-    virtual bool canDraw() { return m_canDraw; }
-    virtual bool hasMoreResourceUpdates() const { return m_hasMoreResourceUpdates; }
-    virtual void scheduledActionBeginFrame() { m_actions.push_back("scheduledActionBeginFrame"); }
-    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible()
+    virtual bool canDraw() OVERRIDE { return m_canDraw; }
+    virtual bool hasMoreResourceUpdates() const OVERRIDE { return m_hasMoreResourceUpdates; }
+    virtual void scheduledActionBeginFrame() OVERRIDE { m_actions.push_back("scheduledActionBeginFrame"); }
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible() OVERRIDE
     {
         m_actions.push_back("scheduledActionDrawAndSwapIfPossible");
         m_numDraws++;
         return CCScheduledActionDrawAndSwapResult(m_drawWillHappen, m_drawWillHappen && m_swapWillHappenIfDrawHappens);
     }
 
-    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced()
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced() OVERRIDE
     {
         m_actions.push_back("scheduledActionDrawAndSwapForced");
         return CCScheduledActionDrawAndSwapResult(true, m_swapWillHappenIfDrawHappens);
     }
 
-    virtual void scheduledActionUpdateMoreResources() { m_actions.push_back("scheduledActionUpdateMoreResources"); }
-    virtual void scheduledActionCommit() { m_actions.push_back("scheduledActionCommit"); }
-    virtual void scheduledActionBeginContextRecreation() { m_actions.push_back("scheduledActionBeginContextRecreation"); }
+    virtual void scheduledActionUpdateMoreResources() OVERRIDE { m_actions.push_back("scheduledActionUpdateMoreResources"); }
+    virtual void scheduledActionCommit() OVERRIDE { m_actions.push_back("scheduledActionCommit"); }
+    virtual void scheduledActionBeginContextRecreation() OVERRIDE { m_actions.push_back("scheduledActionBeginContextRecreation"); }
 
     void setDrawWillHappen(bool drawWillHappen) { m_drawWillHappen = drawWillHappen; }
     void setSwapWillHappenIfDrawHappens(bool swapWillHappenIfDrawHappens) { m_swapWillHappenIfDrawHappens = swapWillHappenIfDrawHappens; }
@@ -173,8 +173,8 @@ public:
 
     void setScheduler(CCScheduler* scheduler) { m_scheduler = scheduler; }
 
-    virtual void scheduledActionBeginFrame() { }
-    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible()
+    virtual void scheduledActionBeginFrame() OVERRIDE { }
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible() OVERRIDE
     {
         // Only setNeedsRedraw the first time this is called
         if (!m_numDraws)
@@ -182,15 +182,15 @@ public:
         return FakeCCSchedulerClient::scheduledActionDrawAndSwapIfPossible();
     }
 
-    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced()
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced() OVERRIDE
     {
         ASSERT_NOT_REACHED();
         return CCScheduledActionDrawAndSwapResult(true, true);
     }
 
-    virtual void scheduledActionUpdateMoreResources() { }
-    virtual void scheduledActionCommit() { }
-    virtual void scheduledActionBeginContextRecreation() { }
+    virtual void scheduledActionUpdateMoreResources() OVERRIDE { }
+    virtual void scheduledActionCommit() OVERRIDE { }
+    virtual void scheduledActionBeginContextRecreation() OVERRIDE { }
 
 protected:
     CCScheduler* m_scheduler;
@@ -271,8 +271,8 @@ public:
 
     void setScheduler(CCScheduler* scheduler) { m_scheduler = scheduler; }
 
-    virtual void scheduledActionBeginFrame() { }
-    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible()
+    virtual void scheduledActionBeginFrame() OVERRIDE { }
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible() OVERRIDE
     {
         // Only setNeedsCommit the first time this is called
         if (!m_numDraws)
@@ -280,15 +280,15 @@ public:
         return FakeCCSchedulerClient::scheduledActionDrawAndSwapIfPossible();
     }
 
-    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced()
+    virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced() OVERRIDE
     {
         ASSERT_NOT_REACHED();
         return CCScheduledActionDrawAndSwapResult(true, true);
     }
 
-    virtual void scheduledActionUpdateMoreResources() { }
-    virtual void scheduledActionCommit() { }
-    virtual void scheduledActionBeginContextRecreation() { }
+    virtual void scheduledActionUpdateMoreResources() OVERRIDE { }
+    virtual void scheduledActionCommit() OVERRIDE { }
+    virtual void scheduledActionBeginContextRecreation() OVERRIDE { }
 
 protected:
     CCScheduler* m_scheduler;

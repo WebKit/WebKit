@@ -652,7 +652,7 @@ class CCThreadProxyContextRecreationTimer : public CCTimer, CCTimerClient {
 public:
     static PassOwnPtr<CCThreadProxyContextRecreationTimer> create(CCThreadProxy* proxy) { return adoptPtr(new CCThreadProxyContextRecreationTimer(proxy)); }
 
-    virtual void onTimerFired()
+    virtual void onTimerFired() OVERRIDE
     {
         m_proxy->tryToRecreateContext();
     }

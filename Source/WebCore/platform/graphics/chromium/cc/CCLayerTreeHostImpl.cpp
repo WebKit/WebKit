@@ -72,7 +72,7 @@ public:
         m_timeSource->setActive(false);
     }
 
-    virtual void onTimerTick()
+    virtual void onTimerTick() OVERRIDE
     {
         m_layerTreeHostImpl->animate(monotonicallyIncreasingTime(), currentTime());
     }
