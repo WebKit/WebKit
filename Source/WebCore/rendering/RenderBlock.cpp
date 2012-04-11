@@ -4358,26 +4358,21 @@ void RenderBlock::markSiblingsWithFloatsForLayout(RenderBox* floatToRemove)
 {
     if (!m_floatingObjects)
         return;
+
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator end = floatingObjectSet.end();
-    for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
-        if (logicalBottomForFloat(*it) > logicalHeight()) {
+
+    for (RenderObject* next = nextSibling(); next; next = next->nextSibling()) {
+        if (!next->isRenderBlock() || next->isFloatingOrPositioned() || toRenderBlock(next)->avoidsFloats())
+            continue;
+
+        RenderBlock* nextBlock = toRenderBlock(next);
+        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
             RenderBox* floatingBox = (*it)->renderer();
             if (floatToRemove && floatingBox != floatToRemove)
                 continue;
-
-            RenderObject* next = nextSibling();
-            while (next) {
-                if (next->isRenderBlock() && !next->isFloatingOrPositioned() && !toRenderBlock(next)->avoidsFloats()) {
-                    RenderBlock* nextBlock = toRenderBlock(next);
-                    if (nextBlock->containsFloat(floatingBox))
-                        nextBlock->markAllDescendantsWithFloatsForLayout(floatingBox);
-                    else
-                        break;
-                }
-
-                next = next->nextSibling();
-            }
+            if (nextBlock->containsFloat(floatingBox))
+                nextBlock->markAllDescendantsWithFloatsForLayout(floatingBox);
         }
     }
 }
