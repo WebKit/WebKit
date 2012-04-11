@@ -56,7 +56,6 @@
 #include "LazyOperandValueProfile.h"
 #include "LineInfo.h"
 #include "Nodes.h"
-#include "PredictionTracker.h"
 #include "RegExpObject.h"
 #include "StructureStubInfo.h"
 #include "UString.h"

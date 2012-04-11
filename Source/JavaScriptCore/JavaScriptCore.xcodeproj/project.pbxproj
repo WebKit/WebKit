@@ -170,7 +170,6 @@
 		0FD82E2114172CE300179C94 /* DFGCapabilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */; };
 		0FD82E39141AB14D00179C94 /* CompactJITCodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E37141AB14200179C94 /* CompactJITCodeMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD82E54141DAEEE00179C94 /* PredictedType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E4F141DAEA100179C94 /* PredictedType.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FD82E55141DAEEE00179C94 /* PredictionTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E50141DAEA100179C94 /* PredictionTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD82E56141DAF0800179C94 /* DFGOSREntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E52141DAEDE00179C94 /* DFGOSREntry.cpp */; };
 		0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E53141DAEDE00179C94 /* DFGOSREntry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD82E86141F3FF100179C94 /* PredictedType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E84141F3FDA00179C94 /* PredictedType.cpp */; };
@@ -843,7 +842,6 @@
 		0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCapabilities.h; path = dfg/DFGCapabilities.h; sourceTree = "<group>"; };
 		0FD82E37141AB14200179C94 /* CompactJITCodeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactJITCodeMap.h; sourceTree = "<group>"; };
 		0FD82E4F141DAEA100179C94 /* PredictedType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PredictedType.h; sourceTree = "<group>"; };
-		0FD82E50141DAEA100179C94 /* PredictionTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PredictionTracker.h; sourceTree = "<group>"; };
 		0FD82E52141DAEDE00179C94 /* DFGOSREntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSREntry.cpp; path = dfg/DFGOSREntry.cpp; sourceTree = "<group>"; };
 		0FD82E53141DAEDE00179C94 /* DFGOSREntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSREntry.h; path = dfg/DFGOSREntry.h; sourceTree = "<group>"; };
 		0FD82E84141F3FDA00179C94 /* PredictedType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PredictedType.cpp; sourceTree = "<group>"; };
@@ -2205,7 +2203,6 @@
 				969A07950ED1D3AE00F1F681 /* Opcode.h */,
 				0FD82E84141F3FDA00179C94 /* PredictedType.cpp */,
 				0FD82E4F141DAEA100179C94 /* PredictedType.h */,
-				0FD82E50141DAEA100179C94 /* PredictionTracker.h */,
 				1429D8830ED21C3D00B89619 /* SamplingTool.cpp */,
 				1429D8840ED21C3D00B89619 /* SamplingTool.h */,
 				BCCF0D0B0EF0B8A500413C8F /* StructureStubInfo.cpp */,
@@ -2436,7 +2433,6 @@
 				93052C350FB792190048FDC3 /* ParserArena.h in Headers */,
 				65303D641447B9E100D3F904 /* ParserTokens.h in Headers */,
 				0FD82E54141DAEEE00179C94 /* PredictedType.h in Headers */,
-				0FD82E55141DAEEE00179C94 /* PredictionTracker.h in Headers */,
 				BC18C4500E16F5CD00B34460 /* Profile.h in Headers */,
 				BC18C4510E16F5CD00B34460 /* ProfileNode.h in Headers */,
 				BC18C4520E16F5CD00B34460 /* Profiler.h in Headers */,

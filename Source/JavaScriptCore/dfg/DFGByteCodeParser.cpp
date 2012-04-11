@@ -2022,9 +2022,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_get_global_var: {
             PredictedType prediction = getPrediction();
             
-            NodeIndex getGlobalVar = addToGraph(GetGlobalVar, OpInfo(currentInstruction[2].u.operand));
+            NodeIndex getGlobalVar = addToGraph(GetGlobalVar, OpInfo(currentInstruction[2].u.operand), OpInfo(prediction));
             set(currentInstruction[1].u.operand, getGlobalVar);
-            m_graph.predictGlobalVar(currentInstruction[2].u.operand, prediction);
             NEXT_OPCODE(op_get_global_var);
         }
 

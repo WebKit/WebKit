@@ -122,7 +122,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/PolymorphicPutByIdList.h \
 	Source/JavaScriptCore/bytecode/PredictedType.cpp \
 	Source/JavaScriptCore/bytecode/PredictedType.h \
-	Source/JavaScriptCore/bytecode/PredictionTracker.h \
 	Source/JavaScriptCore/bytecode/PutByIdStatus.cpp \
 	Source/JavaScriptCore/bytecode/PutByIdStatus.h \
 	Source/JavaScriptCore/bytecode/PutKind.h \

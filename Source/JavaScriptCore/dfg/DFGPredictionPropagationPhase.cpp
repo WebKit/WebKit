@@ -447,14 +447,11 @@ private:
         }
             
         case GetGlobalVar: {
-            PredictedType prediction = m_graph.getGlobalVarPrediction(node.varNumber());
-            changed |= mergePrediction(prediction);
+            changed |= mergePrediction(node.getHeapPrediction());
             break;
         }
             
         case PutGlobalVar: {
-            changed |= m_graph.predictGlobalVar(
-                node.varNumber(), m_graph[node.child1()].prediction());
             changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue);
             break;
         }

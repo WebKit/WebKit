@@ -268,8 +268,6 @@ void Graph::dump(NodeIndex nodeIndex)
             dataLog("  predicting %s, double ratio %lf%s", predictionToString(node.variableAccessData()->prediction()), node.variableAccessData()->doubleVoteRatio(), node.variableAccessData()->shouldUseDoubleFormat() ? ", forcing double" : "");
         else if (node.hasHeapPrediction())
             dataLog("  predicting %s", predictionToString(node.getHeapPrediction()));
-        else if (node.hasVarNumber())
-            dataLog("  predicting %s", predictionToString(getGlobalVarPrediction(node.varNumber())));
     }
     
     dataLog("\n");

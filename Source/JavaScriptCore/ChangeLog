@@ -1,3 +1,31 @@
+2012-04-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Global variable predictions should not be coalesced unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=83678
+
+        Reviewed by Geoff Garen.
+        
+        Removed the PredictionTracker and everyone who used it. Converted GetGlobalVar
+        to have a heapPrediction like a civilized DFG opcode ought to.
+        
+        No performance effect.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        * bytecode/PredictionTracker.h: Removed.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGenerationInfo.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+
 2012-04-11  Benjamin Poulain  <bpoulain@apple.com>
 
         Optimize String.split() for 1 character separator

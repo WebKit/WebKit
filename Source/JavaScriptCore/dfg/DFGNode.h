@@ -476,6 +476,7 @@ struct Node {
         case ArrayPush:
         case RegExpExec:
         case RegExpTest:
+        case GetGlobalVar:
             return true;
         default:
             return false;

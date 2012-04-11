@@ -34,7 +34,6 @@
 #include "DFGBasicBlock.h"
 #include "DFGNode.h"
 #include "MethodOfGettingAValueProfile.h"
-#include "PredictionTracker.h"
 #include "RegisterFile.h"
 #include <wtf/BitVector.h>
 #include <wtf/HashMap.h>
@@ -148,16 +147,6 @@ public:
 
     BlockIndex blockIndexForBytecodeOffset(Vector<BlockIndex>& blocks, unsigned bytecodeBegin);
 
-    bool predictGlobalVar(unsigned varNumber, PredictedType prediction)
-    {
-        return m_predictions.predictGlobalVar(varNumber, prediction);
-    }
-    
-    PredictedType getGlobalVarPrediction(unsigned varNumber)
-    {
-        return m_predictions.getGlobalVarPrediction(varNumber);
-    }
-    
     PredictedType getJSConstantPrediction(Node& node)
     {
         return predictionFromValue(node.valueOfJSConstant(m_codeBlock));
@@ -390,8 +379,6 @@ private:
     // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.
     void refChildren(NodeIndex);
     void derefChildren(NodeIndex);
-
-    PredictionTracker m_predictions;
 };
 
 class GetBytecodeBeginForBlock {
