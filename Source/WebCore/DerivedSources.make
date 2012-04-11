@@ -34,6 +34,7 @@ VPATH = \
     $(WebCore)/Modules/webaudio \
     $(WebCore)/Modules/webdatabase \
     $(WebCore)/Modules/websockets \
+    $(WebCore)/Resources \
     $(WebCore)/bindings/generic \
     $(WebCore)/bindings/js \
     $(WebCore)/bindings/objc \
@@ -657,6 +658,12 @@ ifeq ($(shell $(CC) -x c++ -E -P -dM $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include
 else
     ENABLE_ORIENTATION_EVENTS = 0
 endif
+
+all: DefaultFonts.plist
+
+DefaultFonts.plist : DefaultFonts.plist.in
+	@echo Pre-processing DefaultFonts.plist...
+	$(CC) -E -P -w -x c -std=c89 $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" $< > $@
 
 else
 

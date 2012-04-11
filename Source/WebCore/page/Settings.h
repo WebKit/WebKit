@@ -555,6 +555,8 @@ namespace WebCore {
     private:
         Settings(Page*);
 
+        void initializeDefaultFontFamilies();
+
         Page* m_page;
 
         String m_defaultTextEncodingName;
