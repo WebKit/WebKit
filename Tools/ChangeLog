@@ -1,3 +1,10 @@
+2012-04-10  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Using tkent+wkapi@ for ChromiumPublicApi notifications.
+
+        * Scripts/webkitpy/common/config/watchlist:
+        * Scripts/webkitpy/common/config/committers.py: Add tkent+wkapi@ to pass the style checker.
+
 2012-04-10  Dirk Pranke  <dpranke@chromium.org>
 
         If NRWT gets killed halfway through a run, it incorrectly reports tests that weren't run as passes

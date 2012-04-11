@@ -152,7 +152,7 @@
         # two different accounts as far as bugzilla is concerned.
         "ChromiumDumpRenderTree": [ "tkent@chromium.org", ],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@google.com" ],
-        "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent@chromium.org" ],
+        "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent+wkapi@chromium.org" ],
         "AppleMacPublicApi": [ "timothy@apple.com" ],
         "Forms": [ "tkent@chromium.org", ],
         "GStreamerGraphics": [ "alexis.menard@openbossa.org", "pnormand@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
