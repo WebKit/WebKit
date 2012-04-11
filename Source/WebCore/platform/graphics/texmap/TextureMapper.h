@@ -104,6 +104,11 @@ class TextureMapper {
 
 public:
     enum AccelerationMode { SoftwareMode, OpenGLMode };
+    enum PaintFlag {
+        PaintingMirrored = 1 << 0,
+    };
+    typedef unsigned PaintFlags;
+
     static PassOwnPtr<TextureMapper> create(AccelerationMode newMode = SoftwareMode);
     virtual ~TextureMapper() { }
 
@@ -124,7 +129,7 @@ public:
     TextDrawingModeFlags textDrawingMode() const { return m_textDrawingMode; }
     virtual AccelerationMode accelerationMode() const = 0;
 
-    virtual void beginPainting() { }
+    virtual void beginPainting(PaintFlags flags = 0) { }
     virtual void endPainting() { }
 
     virtual IntSize maxTextureSize() const { return IntSize(INT_MAX, INT_MAX); }

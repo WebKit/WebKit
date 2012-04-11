@@ -187,7 +187,9 @@ struct TextureMapperGLData {
     void initializeStencil();
 
     TextureMapperGLData()
-        : previousProgram(0)
+        : PaintFlags(0)
+        , previousProgram(0)
+        , targetFrameBuffer(0)
         , didModifyStencil(false)
         , previousScissorState(0)
         , previousDepthState(0)
@@ -195,7 +197,9 @@ struct TextureMapperGLData {
     { }
 
     TransformationMatrix projectionMatrix;
+    TextureMapper::PaintFlags PaintFlags;
     GLint previousProgram;
+    GLint targetFrameBuffer;
     bool didModifyStencil;
     GLint previousScissorState;
     GLint previousDepthState;
@@ -234,7 +238,7 @@ TextureMapperGL::TextureMapperGL()
 {
 }
 
-void TextureMapperGL::beginPainting()
+void TextureMapperGL::beginPainting(PaintFlags flags)
 {
     // Make sure that no GL error code stays from previous operations.
     glGetError();
@@ -259,6 +263,8 @@ void TextureMapperGL::beginPainting()
     GL_CMD(glGetIntegerv(GL_SCISSOR_BOX, data().previousScissor));
     data().sharedGLData().clipState.stencilIndex = 1;
     data().sharedGLData().clipState.scissorBox = IntRect(0, 0, data().viewport[2], data().viewport[3]);
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &data().targetFrameBuffer);
+    data().PaintFlags = flags;
     bindSurface(0);
 }
 
@@ -507,15 +513,15 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
 
 }
 
-static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool flip)
+static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool mirrored)
 {
     const float near = 9999999;
     const float far = -99999;
 
     return TransformationMatrix(2.0 / float(size.width()), 0, 0, 0,
-                                0, (flip ? -2.0 : 2.0) / float(size.height()), 0, 0,
+                                0, (mirrored ? 2.0 : -2.0) / float(size.height()), 0, 0,
                                 0, 0, -2.f / (far - near), 0,
-                                -1, flip ? 1 : -1, -(far + near) / (far - near), 1);
+                                -1, mirrored ? -1 : 1, -(far + near) / (far - near), 1);
 }
 
 void BitmapTextureGL::initializeStencil()
@@ -550,7 +556,8 @@ void BitmapTextureGL::bind()
         GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
 
     GL_CMD(glViewport(0, 0, size().width(), size().height()));
-    m_textureMapper->data().projectionMatrix = createProjectionMatrix(size(), false);
+    const bool mirrored = true;
+    m_textureMapper->data().projectionMatrix = createProjectionMatrix(size(), mirrored);
     m_textureMapper->beginClip(TransformationMatrix(), FloatRect(IntPoint::zero(), contentSize()));
 }
 
@@ -586,10 +593,13 @@ void TextureMapperGL::bindSurface(BitmapTexture *surfacePointer)
     BitmapTextureGL* surface = static_cast<BitmapTextureGL*>(surfacePointer);
 
     if (!surface) {
+        GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, data().targetFrameBuffer));
+
         IntSize viewportSize(data().viewport[2], data().viewport[3]);
-        GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-        data().projectionMatrix = createProjectionMatrix(viewportSize, true);
+        const bool mirorred = data().PaintFlags & PaintingMirrored;
+        data().projectionMatrix = createProjectionMatrix(viewportSize, mirorred);
         GL_CMD(glViewport(0, 0, viewportSize.width(), viewportSize.height()));
+
         if (data().currentSurface)
             endClip();
         data().currentSurface.clear();

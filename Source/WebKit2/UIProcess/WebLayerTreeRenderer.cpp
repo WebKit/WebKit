@@ -102,7 +102,7 @@ PassOwnPtr<GraphicsLayer> WebLayerTreeRenderer::createLayer(WebLayerID layerID)
     return adoptPtr(newLayer);
 }
 
-void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect)
+void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect, TextureMapper::PaintFlags PaintFlags)
 {
     if (!m_textureMapper)
         m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
@@ -120,7 +120,7 @@ void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& m
         return;
 
     layer->setTextureMapper(m_textureMapper.get());
-    m_textureMapper->beginPainting();
+    m_textureMapper->beginPainting(PaintFlags);
     m_textureMapper->beginClip(TransformationMatrix(), clipRect);
 
     if (currentRootLayer->opacity() != opacity || currentRootLayer->transform() != matrix) {

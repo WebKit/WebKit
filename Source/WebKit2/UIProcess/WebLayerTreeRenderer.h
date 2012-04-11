@@ -61,7 +61,7 @@ public:
     WebLayerTreeRenderer(LayerTreeHostProxy*);
     virtual ~WebLayerTreeRenderer();
     void purgeGLResources();
-    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&);
+    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, WebCore::TextureMapper::PaintFlags = 0);
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
     void syncRemoteContent();
     void setContentsSize(const WebCore::FloatSize&);

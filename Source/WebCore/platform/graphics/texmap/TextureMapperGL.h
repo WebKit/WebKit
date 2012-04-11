@@ -52,7 +52,7 @@ public:
     virtual void drawTexture(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
     virtual void bindSurface(BitmapTexture* surface);
     virtual void beginClip(const TransformationMatrix&, const FloatRect&);
-    virtual void beginPainting();
+    virtual void beginPainting(PaintFlags = 0);
     virtual void endPainting();
     virtual void endClip();
     virtual IntSize maxTextureSize() { return IntSize(2000, 2000); }

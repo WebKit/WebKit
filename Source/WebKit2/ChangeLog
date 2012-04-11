@@ -1,5 +1,23 @@
 2012-04-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt] Fix issues when using the WebView as ShaderEffectSource
+        https://bugs.webkit.org/show_bug.cgi?id=83587
+
+        Reviewed by Noam Rosenthal.
+
+        Qt is going to mirror the projection matrix when the shader effect source
+        is grabbed. Detect that the matrix is mirrored and pass on this information
+        to TextureMapper so that it can do the same.
+
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::paintToCurrentGLContext):
+        * UIProcess/WebLayerTreeRenderer.h:
+        (WebLayerTreeRenderer):
+        * UIProcess/qt/QtWebPageSGNode.cpp:
+        (WebKit::ContentsSGNode::render):
+
+2012-04-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         [Qt] Remove unnecessary rendering code
         https://bugs.webkit.org/show_bug.cgi?id=83591
 
