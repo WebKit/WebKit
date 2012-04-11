@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderNamedFlowThread.h"
 
+#include "FlowThreadController.h"
 #include "RenderRegion.h"
 #include "RenderView.h"
 #include "WebKitNamedFlow.h"
@@ -48,7 +49,7 @@ RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
 {
     FlowThreadChildList::const_iterator it = m_flowThreadChildList.begin();
     FlowThreadChildList::const_iterator end = m_flowThreadChildList.end();
-    
+
     for (; it != end; ++it) {
         RenderObject* child = *it;
         ASSERT(child->node());
@@ -56,7 +57,7 @@ RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
         if (position & Node::DOCUMENT_POSITION_FOLLOWING)
             return child;
     }
-    
+
     return 0;
 }
 
@@ -64,11 +65,11 @@ RenderObject* RenderNamedFlowThread::previousRendererForNode(Node* node) const
 {
     if (m_flowThreadChildList.isEmpty())
         return 0;
-    
+
     FlowThreadChildList::const_iterator begin = m_flowThreadChildList.begin();
     FlowThreadChildList::const_iterator end = m_flowThreadChildList.end();
     FlowThreadChildList::const_iterator it = end;
-    
+
     do {
         --it;
         RenderObject* child = *it;
@@ -77,7 +78,7 @@ RenderObject* RenderNamedFlowThread::previousRendererForNode(Node* node) const
         if (position & Node::DOCUMENT_POSITION_PRECEDING)
             return child;
     } while (it != begin);
-    
+
     return 0;
 }
 
@@ -180,7 +181,7 @@ void RenderNamedFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
         }
         removeDependencyOnFlowThread(renderRegion->parentNamedFlowThread());
     }
-    
+
     invalidateRegions();
 }
 
@@ -220,7 +221,7 @@ void RenderNamedFlowThread::addDependencyOnFlowThread(RenderNamedFlowThread* oth
     RenderNamedFlowThreadCountedSet::AddResult result = m_layoutBeforeThreadsSet.add(otherFlowThread);
     if (result.isNewEntry) {
         // This is the first time we see this dependency. Make sure we recalculate all the dependencies.
-        view()->setIsRenderNamedFlowThreadOrderDirty(true);
+        view()->flowThreadController()->setIsRenderNamedFlowThreadOrderDirty(true);
     }
 }
 
@@ -229,7 +230,7 @@ void RenderNamedFlowThread::removeDependencyOnFlowThread(RenderNamedFlowThread* 
     bool removed = m_layoutBeforeThreadsSet.remove(otherFlowThread);
     if (removed) {
         checkInvalidRegions();
-        view()->setIsRenderNamedFlowThreadOrderDirty(true);
+        view()->flowThreadController()->setIsRenderNamedFlowThreadOrderDirty(true);
     }
 }
 

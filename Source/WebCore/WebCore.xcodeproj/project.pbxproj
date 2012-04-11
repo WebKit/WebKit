@@ -5803,6 +5803,8 @@
 		D6FDAEF3149C06190037B1E1 /* HistogramSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */; };
 		D70AD65713E1342B005B50B4 /* RenderRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D70AD65513E1342B005B50B4 /* RenderRegion.cpp */; };
 		D70AD65813E1342B005B50B4 /* RenderRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = D70AD65613E1342B005B50B4 /* RenderRegion.h */; };
+		D72F6D79153159A3001EE44E /* FlowThreadController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D72F6D77153159A3001EE44E /* FlowThreadController.cpp */; };
+		D72F6D7A153159A3001EE44E /* FlowThreadController.h in Headers */ = {isa = PBXBuildFile; fileRef = D72F6D78153159A3001EE44E /* FlowThreadController.h */; };
 		D7613A501474F13F00DB8606 /* WebKitNamedFlow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7613A4E1474F13F00DB8606 /* WebKitNamedFlow.cpp */; };
 		D7613AC414753E5600DB8606 /* JSWebKitNamedFlow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7613AC214753E5600DB8606 /* JSWebKitNamedFlow.cpp */; };
 		D8B6152F1032495100C8554A /* Cookie.h in Headers */ = {isa = PBXBuildFile; fileRef = D8B6152E1032495100C8554A /* Cookie.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12916,6 +12918,8 @@
 		D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistogramSupport.cpp; sourceTree = "<group>"; };
 		D70AD65513E1342B005B50B4 /* RenderRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderRegion.cpp; sourceTree = "<group>"; };
 		D70AD65613E1342B005B50B4 /* RenderRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderRegion.h; sourceTree = "<group>"; };
+		D72F6D77153159A3001EE44E /* FlowThreadController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlowThreadController.cpp; sourceTree = "<group>"; };
+		D72F6D78153159A3001EE44E /* FlowThreadController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlowThreadController.h; sourceTree = "<group>"; };
 		D7613A4A1474EE9500DB8606 /* WebKitNamedFlow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitNamedFlow.idl; sourceTree = "<group>"; };
 		D7613A4D1474F13F00DB8606 /* WebKitNamedFlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitNamedFlow.h; sourceTree = "<group>"; };
 		D7613A4E1474F13F00DB8606 /* WebKitNamedFlow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitNamedFlow.cpp; sourceTree = "<group>"; };
@@ -20690,6 +20694,8 @@
 				31313F641443B35E006E2A90 /* FilterEffectRenderer.h */,
 				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
 				A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */,
+				D72F6D77153159A3001EE44E /* FlowThreadController.cpp */,
+				D72F6D78153159A3001EE44E /* FlowThreadController.h */,
 				935C477409AC4D8D00A6AAB4 /* GapRects.h */,
 				4969B0F013D0B33F00DF3521 /* HitTestingTransformState.cpp */,
 				4969B0F113D0B33F00DF3521 /* HitTestingTransformState.h */,
@@ -24742,6 +24748,7 @@
 				A07D3358152B632D001B6393 /* WebGLShaderPrecisionFormat.h in Headers */,
 				C5A1EA7D152BCF08004D00B6 /* SimplifyMarkupCommand.h in Headers */,
 				CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */,
+				D72F6D7A153159A3001EE44E /* FlowThreadController.h in Headers */,
 				5740E83D1532DE1700760628 /* TreeScopeAdjuster.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -27744,6 +27751,7 @@
 				A07D3355152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp in Sources */,
 				A08CF154152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp in Sources */,
 				C5A1EA7C152BCF04004D00B6 /* SimplifyMarkupCommand.cpp in Sources */,
+				D72F6D79153159A3001EE44E /* FlowThreadController.cpp in Sources */,
 				5740E83C1532DE1700760628 /* TreeScopeAdjuster.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

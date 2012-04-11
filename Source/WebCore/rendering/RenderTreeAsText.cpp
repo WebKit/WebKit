@@ -27,6 +27,7 @@
 #include "RenderTreeAsText.h"
 
 #include "Document.h"
+#include "FlowThreadController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -645,9 +646,10 @@ static void write(TextStream& ts, RenderLayer& l,
 static void writeRenderNamedFlowThreads(TextStream& ts, RenderView* renderView, const RenderLayer* rootLayer,
                         const IntRect& paintRect, int indent, RenderAsTextBehavior behavior)
 {
-    const RenderNamedFlowThreadList* list = renderView->renderNamedFlowThreadList();
-    if (!list || list->isEmpty())
+    if (!renderView->hasRenderNamedFlowThreads())
         return;
+
+    const RenderNamedFlowThreadList* list = renderView->flowThreadController()->renderNamedFlowThreadList();
 
     writeIndent(ts, indent);
     ts << "Flow Threads\n";

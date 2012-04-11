@@ -1213,6 +1213,7 @@ SOURCES += \
     rendering/EllipsisBox.cpp \
     rendering/FilterEffectRenderer.cpp \
     rendering/FixedTableLayout.cpp \
+    rendering/FlowThreadController.cpp \
     rendering/HitTestingTransformState.cpp \
     rendering/HitTestResult.cpp \
     rendering/InlineBox.cpp \

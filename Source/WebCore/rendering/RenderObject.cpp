@@ -35,6 +35,7 @@
 #include "DashArray.h"
 #include "EditingBoundary.h"
 #include "FloatQuad.h"
+#include "FlowThreadController.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -161,7 +162,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     case COMPACT:
         // Only non-replaced block elements can become a region.
         if (doc->cssRegionsEnabled() && !style->regionThread().isEmpty() && doc->renderView())
-            return new (arena) RenderRegion(node, doc->renderView()->ensureRenderFlowThreadWithName(style->regionThread()));
+            return new (arena) RenderRegion(node, doc->renderView()->flowThreadController()->ensureRenderFlowThreadWithName(style->regionThread()));
         if ((!style->hasAutoColumnCount() || !style->hasAutoColumnWidth()) && doc->regionBasedColumnsEnabled())
             return new (arena) RenderMultiColumnBlock(node);
         return new (arena) RenderBlock(node);
@@ -564,7 +565,7 @@ RenderFlowThread* RenderObject::enclosingRenderFlowThread() const
         return 0;
     
     // See if we have the thread cached because we're in the middle of layout.
-    RenderFlowThread* flowThread = view()->currentRenderFlowThread();
+    RenderFlowThread* flowThread = view()->flowThreadController()->currentRenderFlowThread();
     if (flowThread)
         return flowThread;
     
@@ -2289,7 +2290,7 @@ void RenderObject::willBeDestroyed()
 #ifndef NDEBUG
     if (!documentBeingDestroyed() && view() && view()->hasRenderNamedFlowThreads()) {
         // After remove, the object and the associated information should not be in any flow thread.
-        const RenderNamedFlowThreadList* flowThreadList = view()->renderNamedFlowThreadList();
+        const RenderNamedFlowThreadList* flowThreadList = view()->flowThreadController()->renderNamedFlowThreadList();
         for (RenderNamedFlowThreadList::const_iterator iter = flowThreadList->begin(); iter != flowThreadList->end(); ++iter) {
             const RenderNamedFlowThread* renderFlowThread = *iter;
             ASSERT(!renderFlowThread->hasChild(this));

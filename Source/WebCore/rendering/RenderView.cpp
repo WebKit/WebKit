@@ -25,6 +25,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
+#include "FlowThreadController.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -54,10 +55,8 @@ RenderView::RenderView(Node* node, FrameView* view)
     , m_maximalOutlineSize(0)
     , m_pageLogicalHeight(0)
     , m_pageLogicalHeightChanged(false)
-    , m_isRenderNamedFlowThreadOrderDirty(false)
     , m_layoutState(0)
     , m_layoutStateDisableCount(0)
-    , m_currentRenderFlowThread(0)
 {
     // Clear our anonymous bit, set because RenderObject assumes
     // any renderer with document as the node is anonymous.
@@ -138,7 +137,7 @@ void RenderView::layout()
     if (needsLayout()) {
         RenderBlock::layout();
         if (hasRenderNamedFlowThreads())
-            layoutRenderNamedFlowThreads();
+            flowThreadController()->layoutRenderNamedFlowThreads();
     }
 
     ASSERT(layoutDelta() == LayoutSize());
@@ -896,50 +895,17 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     }
 }
 
-RenderNamedFlowThread* RenderView::ensureRenderFlowThreadWithName(const AtomicString& name)
+bool RenderView::hasRenderNamedFlowThreads() const
 {
-    if (!m_renderNamedFlowThreadList)
-        m_renderNamedFlowThreadList = adoptPtr(new RenderNamedFlowThreadList());
-    else {
-        for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
-            RenderNamedFlowThread* flowRenderer = *iter;
-            if (flowRenderer->flowThreadName() == name)
-                return flowRenderer;
-        }
-    }
-
-    RenderNamedFlowThread* flowRenderer = new (renderArena()) RenderNamedFlowThread(document(), name);
-    flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(style()));
-    addChild(flowRenderer);
-
-    m_renderNamedFlowThreadList->add(flowRenderer);
-    setIsRenderNamedFlowThreadOrderDirty(true);
-
-    return flowRenderer;
+    return m_flowThreadController && m_flowThreadController->hasRenderNamedFlowThreads();
 }
 
-void RenderView::layoutRenderNamedFlowThreads()
+FlowThreadController* RenderView::flowThreadController()
 {
-    ASSERT(m_renderNamedFlowThreadList);
+    if (!m_flowThreadController)
+        m_flowThreadController = FlowThreadController::create(this);
 
-    if (isRenderNamedFlowThreadOrderDirty()) {
-        // Arrange the thread list according to dependencies.
-        RenderNamedFlowThreadList sortedList;
-        for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
-            RenderNamedFlowThread* flowRenderer = *iter;
-            if (sortedList.contains(flowRenderer))
-                continue;
-            flowRenderer->pushDependencies(sortedList);
-            sortedList.add(flowRenderer);
-        }
-        m_renderNamedFlowThreadList->swap(sortedList);
-        setIsRenderNamedFlowThreadOrderDirty(false);
-    }
-
-    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
-        flowRenderer->layoutIfNeeded();
-    }
+    return m_flowThreadController.get();
 }
 
 RenderBlock::IntervalArena* RenderView::intervalArena()

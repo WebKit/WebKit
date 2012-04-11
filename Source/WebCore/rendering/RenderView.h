@@ -26,19 +26,16 @@
 #include "LayoutState.h"
 #include "PODFreeListArena.h"
 #include "RenderBlock.h"
-#include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class RenderNamedFlowThread;
+class FlowThreadController;
 class RenderWidget;
 
 #if USE(ACCELERATED_COMPOSITING)
 class RenderLayerCompositor;
 #endif
-
-typedef ListHashSet<RenderNamedFlowThread*> RenderNamedFlowThreadList;
 
 class RenderView : public RenderBlock {
 public:
@@ -172,20 +169,8 @@ public:
 
     IntRect documentRect() const;
 
-    RenderNamedFlowThread* ensureRenderFlowThreadWithName(const AtomicString&);
-    bool hasRenderNamedFlowThreads() const { return m_renderNamedFlowThreadList && !m_renderNamedFlowThreadList->isEmpty(); }
-    void layoutRenderNamedFlowThreads();
-    bool isRenderNamedFlowThreadOrderDirty() const { return m_isRenderNamedFlowThreadOrderDirty; }
-    void setIsRenderNamedFlowThreadOrderDirty(bool dirty)
-    {
-        m_isRenderNamedFlowThreadOrderDirty = dirty;
-        if (dirty)
-            setNeedsLayout(true);
-    }
-    const RenderNamedFlowThreadList* renderNamedFlowThreadList() const { return m_renderNamedFlowThreadList.get(); }
-
-    RenderFlowThread* currentRenderFlowThread() const { return m_currentRenderFlowThread; }
-    void setCurrentRenderFlowThread(RenderFlowThread* flowThread) { m_currentRenderFlowThread = flowThread; }
+    bool hasRenderNamedFlowThreads() const;
+    FlowThreadController* flowThreadController();
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
@@ -271,14 +256,12 @@ protected:
 private:
     unsigned m_pageLogicalHeight;
     bool m_pageLogicalHeightChanged;
-    bool m_isRenderNamedFlowThreadOrderDirty;
     LayoutState* m_layoutState;
     unsigned m_layoutStateDisableCount;
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerCompositor> m_compositor;
 #endif
-    OwnPtr<RenderNamedFlowThreadList> m_renderNamedFlowThreadList;
-    RenderFlowThread* m_currentRenderFlowThread;
+    OwnPtr<FlowThreadController> m_flowThreadController;
     RefPtr<IntervalArena> m_intervalArena;
 };
 

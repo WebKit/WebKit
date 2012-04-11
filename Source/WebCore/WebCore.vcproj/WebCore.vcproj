@@ -37266,6 +37266,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\FlowThreadController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\FlowThreadController.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\GapRects.h"
 				>
 			</File>

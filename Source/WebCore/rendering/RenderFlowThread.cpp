@@ -31,6 +31,7 @@
 
 #include "RenderFlowThread.h"
 
+#include "FlowThreadController.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Node.h"
@@ -114,14 +115,14 @@ public:
         : m_renderFlowThread(renderFlowThread)
     {
         RenderView* view = m_renderFlowThread->view();
-        ASSERT(!view->currentRenderFlowThread());
-        view->setCurrentRenderFlowThread(m_renderFlowThread);
+        ASSERT(!view->flowThreadController()->currentRenderFlowThread());
+        view->flowThreadController()->setCurrentRenderFlowThread(m_renderFlowThread);
     }
     ~CurrentRenderFlowThreadMaintainer()
     {
         RenderView* view = m_renderFlowThread->view();
-        ASSERT(view->currentRenderFlowThread() == m_renderFlowThread);
-        view->setCurrentRenderFlowThread(0);
+        ASSERT(view->flowThreadController()->currentRenderFlowThread() == m_renderFlowThread);
+        view->flowThreadController()->setCurrentRenderFlowThread(0);
     }
 private:
     RenderFlowThread* m_renderFlowThread;
@@ -134,14 +135,14 @@ public:
         : m_view(view)
         , m_renderFlowThread(0)
     {
-        m_renderFlowThread = m_view->currentRenderFlowThread();
+        m_renderFlowThread = m_view->flowThreadController()->currentRenderFlowThread();
         if (m_renderFlowThread)
-            view->setCurrentRenderFlowThread(0);
+            view->flowThreadController()->setCurrentRenderFlowThread(0);
     }
     ~CurrentRenderFlowThreadDisabler()
     {
         if (m_renderFlowThread)
-            m_view->setCurrentRenderFlowThread(m_renderFlowThread);
+            m_view->flowThreadController()->setCurrentRenderFlowThread(m_renderFlowThread);
     }
 private:
     RenderView* m_view;

@@ -68,6 +68,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "FlowThreadController.h"
 #include "FocusController.h"
 #include "FormAssociatedElement.h"
 #include "Frame.h"
@@ -1083,7 +1084,7 @@ PassRefPtr<WebKitNamedFlow> Document::webkitGetFlowByName(const String& flowName
         return 0;
 
     if (RenderView* view = renderer()->view())
-        return view->ensureRenderFlowThreadWithName(flowName)->ensureNamedFlow();
+        return view->flowThreadController()->ensureRenderFlowThreadWithName(flowName)->ensureNamedFlow();
     return 0;
 }
 

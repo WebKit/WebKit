@@ -43,9 +43,9 @@ typedef HashCountedSet<RenderNamedFlowThread*> RenderNamedFlowThreadCountedSet;
 class RenderNamedFlowThread : public RenderFlowThread {
 public:
     RenderNamedFlowThread(Node*, const AtomicString&);
-    
+
     AtomicString flowThreadName() const { return m_flowThreadName; }
-    
+
     RenderObject* nextRendererForNode(Node*) const;
     RenderObject* previousRendererForNode(Node*) const;
 
@@ -57,7 +57,7 @@ public:
 #endif
 
     void pushDependencies(RenderNamedFlowThreadList&);
-    
+
     virtual void addRegionToThread(RenderRegion*) OVERRIDE;
     virtual void removeRegionFromThread(RenderRegion*) OVERRIDE;
 
@@ -75,7 +75,7 @@ private:
 private:
     // The name of the flow thread as specified in CSS.
     AtomicString m_flowThreadName;
-        
+
     // Observer flow threads have invalid regions that depend on the state of this thread
     // to re-validate their regions. Keeping a set of observer threads make it easy
     // to notify them when a region was removed from this flow.
@@ -89,7 +89,7 @@ private:
     // Holds the sorted children of a named flow. This is the only way we can get the ordering right.
     typedef ListHashSet<RenderObject*> FlowThreadChildList;
     FlowThreadChildList m_flowThreadChildList;
-    
+
     // The DOM Object that represents a named flow.
     RefPtr<WebKitNamedFlow> m_namedFlow;
 };

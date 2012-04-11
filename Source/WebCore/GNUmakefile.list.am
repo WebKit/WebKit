@@ -3674,6 +3674,8 @@ webcore_sources += \
 	Source/WebCore/rendering/FilterEffectRenderer.h \
 	Source/WebCore/rendering/FixedTableLayout.cpp \
 	Source/WebCore/rendering/FixedTableLayout.h \
+	Source/WebCore/rendering/FlowThreadController.cpp \
+	Source/WebCore/rendering/FlowThreadController.h \
 	Source/WebCore/rendering/GapRects.h \
 	Source/WebCore/rendering/HitTestRequest.h \
 	Source/WebCore/rendering/HitTestingTransformState.cpp \
