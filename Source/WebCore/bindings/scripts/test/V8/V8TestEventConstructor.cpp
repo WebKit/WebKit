@@ -35,7 +35,7 @@ namespace WebCore {
 
 WrapperTypeInfo V8TestEventConstructor::info = { V8TestEventConstructor::GetTemplate, V8TestEventConstructor::derefObject, 0, 0 };
 
-namespace TestEventConstructorInternal {
+namespace TestEventConstructorV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
@@ -53,13 +53,13 @@ static v8::Handle<v8::Value> attr2AttrGetter(v8::Local<v8::String> name, const v
     return v8String(imp->attr2());
 }
 
-} // namespace TestEventConstructorInternal
+} // namespace TestEventConstructorV8Internal
 
 static const BatchedAttribute TestEventConstructorAttrs[] = {
     // Attribute 'attr1' (Type: 'readonly attribute' ExtAttr: '')
-    {"attr1", TestEventConstructorInternal::attr1AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"attr1", TestEventConstructorV8Internal::attr1AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'attr2' (Type: 'readonly attribute' ExtAttr: 'InitializedByEventConstructor')
-    {"attr2", TestEventConstructorInternal::attr2AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"attr2", TestEventConstructorV8Internal::attr2AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
 v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Arguments& args)

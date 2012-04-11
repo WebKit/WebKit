@@ -35,7 +35,7 @@ namespace WebCore {
 
 WrapperTypeInfo V8TestCustomNamedGetter::info = { V8TestCustomNamedGetter::GetTemplate, V8TestCustomNamedGetter::derefObject, 0, 0 };
 
-namespace TestCustomNamedGetterInternal {
+namespace TestCustomNamedGetterV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
@@ -50,10 +50,10 @@ static v8::Handle<v8::Value> anotherFunctionCallback(const v8::Arguments& args)
     return v8::Handle<v8::Value>();
 }
 
-} // namespace TestCustomNamedGetterInternal
+} // namespace TestCustomNamedGetterV8Internal
 
 static const BatchedCallback TestCustomNamedGetterCallbacks[] = {
-    {"anotherFunction", TestCustomNamedGetterInternal::anotherFunctionCallback},
+    {"anotherFunction", TestCustomNamedGetterV8Internal::anotherFunctionCallback},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestCustomNamedGetterTemplate(v8::Persistent<v8::FunctionTemplate> desc)

@@ -35,11 +35,11 @@ namespace WebCore {
 
 WrapperTypeInfo V8TestNamedConstructor::info = { V8TestNamedConstructor::GetTemplate, V8TestNamedConstructor::derefObject, V8TestNamedConstructor::toActiveDOMObject, 0 };
 
-namespace TestNamedConstructorInternal {
+namespace TestNamedConstructorV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
-} // namespace TestNamedConstructorInternal
+} // namespace TestNamedConstructorV8Internal
 
 WrapperTypeInfo V8TestNamedConstructorConstructor::info = { V8TestNamedConstructorConstructor::GetTemplate, V8TestNamedConstructor::derefObject, V8TestNamedConstructor::toActiveDOMObject, 0 };
 

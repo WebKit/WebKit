@@ -1206,7 +1206,7 @@ sub GetFunctionTemplateCallbackName
         }
         return "V8${interfaceName}::${name}Callback";
     } else {
-        return "${interfaceName}Internal::${name}Callback";
+        return "${interfaceName}V8Internal::${name}Callback";
     }
 }
 
@@ -2044,15 +2044,15 @@ sub GenerateSingleBatchedAttribute
             $getter = "V8${customAccessor}AccessorGetter";
         } else {
             $data = "&V8${constructorType}::info";
-            $getter = "${interfaceName}Internal::${interfaceName}ConstructorGetter";
+            $getter = "${interfaceName}V8Internal::${interfaceName}ConstructorGetter";
         }
         $setter = "0";
         $propAttr = "v8::ReadOnly";
 
     } else {
         # Default Getter and Setter
-        $getter = "${interfaceName}Internal::${attrName}AttrGetter";
-        $setter = "${interfaceName}Internal::${attrName}AttrSetter";
+        $getter = "${interfaceName}V8Internal::${attrName}AttrGetter";
+        $setter = "${interfaceName}V8Internal::${attrName}AttrSetter";
 
         # Custom Setter
         if ($attrExt->{"CustomSetter"} || $attrExt->{"V8CustomSetter"} || $attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
@@ -2315,7 +2315,7 @@ sub GenerateImplementation
     push(@implContentDecls, "namespace WebCore {\n\n");
     my $parentClassInfo = $parentClass ? "&${parentClass}::info" : "0";
     push(@implContentDecls, "WrapperTypeInfo ${className}::info = { ${className}::GetTemplate, ${className}::derefObject, ${toActive}, ${parentClassInfo} };\n\n");   
-    push(@implContentDecls, "namespace ${interfaceName}Internal {\n\n");
+    push(@implContentDecls, "namespace ${interfaceName}V8Internal {\n\n");
     push(@implContentDecls, "template <typename T> void V8_USE(T) { }\n\n");
 
     my $hasConstructors = 0;
@@ -2510,7 +2510,7 @@ END
         push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($dataNode));
     }
 
-    push(@implContentDecls, "} // namespace ${interfaceName}Internal\n\n");
+    push(@implContentDecls, "} // namespace ${interfaceName}V8Internal\n\n");
 
     if ($dataNode->extendedAttributes->{"NamedConstructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
         GenerateNamedConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
@@ -2698,7 +2698,7 @@ END
             push(@implContent, <<END);
 
     // $commentInfo
-    ${conditional}$template->SetAccessor(v8::String::New("$name"), ${interfaceName}Internal::${name}AttrGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
+    ${conditional}$template->SetAccessor(v8::String::New("$name"), ${interfaceName}V8Internal::${name}AttrGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
 END
             $num_callbacks++;
             next;

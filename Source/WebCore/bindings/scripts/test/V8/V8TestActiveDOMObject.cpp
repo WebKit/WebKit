@@ -36,7 +36,7 @@ namespace WebCore {
 
 WrapperTypeInfo V8TestActiveDOMObject::info = { V8TestActiveDOMObject::GetTemplate, V8TestActiveDOMObject::derefObject, 0, 0 };
 
-namespace TestActiveDOMObjectInternal {
+namespace TestActiveDOMObjectV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
@@ -74,7 +74,7 @@ static v8::Handle<v8::Value> postMessageCallback(const v8::Arguments& args)
 static v8::Handle<v8::Value> postMessageAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestActiveDOMObject.postMessage._get");
-    static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(TestActiveDOMObjectInternal::postMessageCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8TestActiveDOMObject::GetRawTemplate())));
+    static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::postMessageCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8TestActiveDOMObject::GetRawTemplate())));
     v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8TestActiveDOMObject::GetTemplate(), info.This());
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
@@ -83,17 +83,17 @@ static v8::Handle<v8::Value> postMessageAttrGetter(v8::Local<v8::String> name, c
     }
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(holder);
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false)) {
-        static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(TestActiveDOMObjectInternal::postMessageCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8TestActiveDOMObject::GetRawTemplate())));
+        static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::postMessageCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8TestActiveDOMObject::GetRawTemplate())));
         return sharedTemplate->GetFunction();
     }
     return privateTemplate->GetFunction();
 }
 
-} // namespace TestActiveDOMObjectInternal
+} // namespace TestActiveDOMObjectV8Internal
 
 static const BatchedAttribute TestActiveDOMObjectAttrs[] = {
     // Attribute 'excitingAttr' (Type: 'readonly attribute' ExtAttr: '')
-    {"excitingAttr", TestActiveDOMObjectInternal::excitingAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"excitingAttr", TestActiveDOMObjectV8Internal::excitingAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestActiveDOMObjectTemplate(v8::Persistent<v8::FunctionTemplate> desc)
@@ -115,10 +115,10 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestActiveDOMObjectTempla
     const int excitingFunctionArgc = 1;
     v8::Handle<v8::FunctionTemplate> excitingFunctionArgv[excitingFunctionArgc] = { V8Node::GetRawTemplate() };
     v8::Handle<v8::Signature> excitingFunctionSignature = v8::Signature::New(desc, excitingFunctionArgc, excitingFunctionArgv);
-    proto->Set(v8::String::New("excitingFunction"), v8::FunctionTemplate::New(TestActiveDOMObjectInternal::excitingFunctionCallback, v8::Handle<v8::Value>(), excitingFunctionSignature));
+    proto->Set(v8::String::New("excitingFunction"), v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::excitingFunctionCallback, v8::Handle<v8::Value>(), excitingFunctionSignature));
 
     // Function 'postMessage' (ExtAttr: 'DoNotCheckSecurity')
-    proto->SetAccessor(v8::String::New("postMessage"), TestActiveDOMObjectInternal::postMessageAttrGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+    proto->SetAccessor(v8::String::New("postMessage"), TestActiveDOMObjectV8Internal::postMessageAttrGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());

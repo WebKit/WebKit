@@ -44,7 +44,7 @@ namespace WebCore {
 
 WrapperTypeInfo V8Float64Array::info = { V8Float64Array::GetTemplate, V8Float64Array::derefObject, 0, &V8ArrayBufferView::info };
 
-namespace Float64ArrayInternal {
+namespace Float64ArrayV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
@@ -58,7 +58,7 @@ static v8::Handle<v8::Value> fooCallback(const v8::Arguments& args)
     return toV8(imp->foo(array));
 }
 
-} // namespace Float64ArrayInternal
+} // namespace Float64ArrayV8Internal
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
@@ -80,7 +80,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::
     const int fooArgc = 1;
     v8::Handle<v8::FunctionTemplate> fooArgv[fooArgc] = { V8Float32Array::GetRawTemplate() };
     v8::Handle<v8::Signature> fooSignature = v8::Signature::New(desc, fooArgc, fooArgv);
-    proto->Set(v8::String::New("foo"), v8::FunctionTemplate::New(Float64ArrayInternal::fooCallback, v8::Handle<v8::Value>(), fooSignature));
+    proto->Set(v8::String::New("foo"), v8::FunctionTemplate::New(Float64ArrayV8Internal::fooCallback, v8::Handle<v8::Value>(), fooSignature));
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());

@@ -36,7 +36,7 @@ namespace WebCore {
 
 WrapperTypeInfo V8TestMediaQueryListListener::info = { V8TestMediaQueryListListener::GetTemplate, V8TestMediaQueryListListener::derefObject, 0, 0 };
 
-namespace TestMediaQueryListListenerInternal {
+namespace TestMediaQueryListListenerV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
@@ -51,10 +51,10 @@ static v8::Handle<v8::Value> methodCallback(const v8::Arguments& args)
     return v8::Handle<v8::Value>();
 }
 
-} // namespace TestMediaQueryListListenerInternal
+} // namespace TestMediaQueryListListenerV8Internal
 
 static const BatchedCallback TestMediaQueryListListenerCallbacks[] = {
-    {"method", TestMediaQueryListListenerInternal::methodCallback},
+    {"method", TestMediaQueryListListenerV8Internal::methodCallback},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListenerTemplate(v8::Persistent<v8::FunctionTemplate> desc)

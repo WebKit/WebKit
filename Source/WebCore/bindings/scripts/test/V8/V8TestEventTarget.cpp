@@ -38,7 +38,7 @@ namespace WebCore {
 
 WrapperTypeInfo V8TestEventTarget::info = { V8TestEventTarget::GetTemplate, V8TestEventTarget::derefObject, 0, 0 };
 
-namespace TestEventTargetInternal {
+namespace TestEventTargetV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
@@ -103,12 +103,12 @@ static v8::Handle<v8::Value> dispatchEventCallback(const v8::Arguments& args)
     return v8::Handle<v8::Value>();
 }
 
-} // namespace TestEventTargetInternal
+} // namespace TestEventTargetV8Internal
 
 static const BatchedCallback TestEventTargetCallbacks[] = {
-    {"item", TestEventTargetInternal::itemCallback},
-    {"addEventListener", TestEventTargetInternal::addEventListenerCallback},
-    {"removeEventListener", TestEventTargetInternal::removeEventListenerCallback},
+    {"item", TestEventTargetV8Internal::itemCallback},
+    {"addEventListener", TestEventTargetV8Internal::addEventListenerCallback},
+    {"removeEventListener", TestEventTargetV8Internal::removeEventListenerCallback},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventTargetTemplate(v8::Persistent<v8::FunctionTemplate> desc)
@@ -133,7 +133,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventTargetTemplate(v
     const int dispatchEventArgc = 1;
     v8::Handle<v8::FunctionTemplate> dispatchEventArgv[dispatchEventArgc] = { V8Event::GetRawTemplate() };
     v8::Handle<v8::Signature> dispatchEventSignature = v8::Signature::New(desc, dispatchEventArgc, dispatchEventArgv);
-    proto->Set(v8::String::New("dispatchEvent"), v8::FunctionTemplate::New(TestEventTargetInternal::dispatchEventCallback, v8::Handle<v8::Value>(), dispatchEventSignature));
+    proto->Set(v8::String::New("dispatchEvent"), v8::FunctionTemplate::New(TestEventTargetV8Internal::dispatchEventCallback, v8::Handle<v8::Value>(), dispatchEventSignature));
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());

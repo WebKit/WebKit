@@ -43,7 +43,7 @@ namespace WebCore {
 
 WrapperTypeInfo V8TestInterface::info = { V8TestInterface::GetTemplate, V8TestInterface::derefObject, V8TestInterface::toActiveDOMObject, 0 };
 
-namespace TestInterfaceInternal {
+namespace TestInterfaceV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
@@ -156,16 +156,16 @@ static v8::Handle<v8::Value> supplementalMethod4Callback(const v8::Arguments& ar
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 
-} // namespace TestInterfaceInternal
+} // namespace TestInterfaceV8Internal
 
 static const BatchedAttribute TestInterfaceAttrs[] = {
 #if ENABLE(Condition11) || ENABLE(Condition12)
     // Attribute 'supplementalStr1' (Type: 'readonly attribute' ExtAttr: 'Conditional ImplementedBy')
-    {"supplementalStr1", TestInterfaceInternal::supplementalStr1AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"supplementalStr1", TestInterfaceV8Internal::supplementalStr1AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 #if ENABLE(Condition11) || ENABLE(Condition12)
     // Attribute 'supplementalStr2' (Type: 'attribute' ExtAttr: 'Conditional ImplementedBy')
-    {"supplementalStr2", TestInterfaceInternal::supplementalStr2AttrGetter, TestInterfaceInternal::supplementalStr2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"supplementalStr2", TestInterfaceV8Internal::supplementalStr2AttrGetter, TestInterfaceV8Internal::supplementalStr2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 #if ENABLE(Condition11) || ENABLE(Condition12)
     // Attribute 'supplementalStr3' (Type: 'attribute' ExtAttr: 'CustomSetter CustomGetter Conditional ImplementedBy')
@@ -173,13 +173,13 @@ static const BatchedAttribute TestInterfaceAttrs[] = {
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 #if ENABLE(Condition11) || ENABLE(Condition12)
     // Attribute 'supplementalNode' (Type: 'attribute' ExtAttr: 'Conditional ImplementedBy')
-    {"supplementalNode", TestInterfaceInternal::supplementalNodeAttrGetter, TestInterfaceInternal::supplementalNodeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"supplementalNode", TestInterfaceV8Internal::supplementalNodeAttrGetter, TestInterfaceV8Internal::supplementalNodeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 };
 
 static const BatchedCallback TestInterfaceCallbacks[] = {
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    {"supplementalMethod1", TestInterfaceInternal::supplementalMethod1Callback},
+    {"supplementalMethod1", TestInterfaceV8Internal::supplementalMethod1Callback},
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     {"supplementalMethod3", V8TestInterface::supplementalMethod3Callback},
@@ -256,10 +256,10 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
     v8::Handle<v8::FunctionTemplate> supplementalMethod2Argv[supplementalMethod2Argc] = { v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate() };
     v8::Handle<v8::Signature> supplementalMethod2Signature = v8::Signature::New(desc, supplementalMethod2Argc, supplementalMethod2Argv);
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    proto->Set(v8::String::New("supplementalMethod2"), v8::FunctionTemplate::New(TestInterfaceInternal::supplementalMethod2Callback, v8::Handle<v8::Value>(), supplementalMethod2Signature));
+    proto->Set(v8::String::New("supplementalMethod2"), v8::FunctionTemplate::New(TestInterfaceV8Internal::supplementalMethod2Callback, v8::Handle<v8::Value>(), supplementalMethod2Signature));
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    desc->Set(v8::String::New("supplementalMethod4"), v8::FunctionTemplate::New(TestInterfaceInternal::supplementalMethod4Callback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
+    desc->Set(v8::String::New("supplementalMethod4"), v8::FunctionTemplate::New(TestInterfaceV8Internal::supplementalMethod4Callback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
     batchConfigureConstants(desc, proto, TestInterfaceConsts, WTF_ARRAY_LENGTH(TestInterfaceConsts));
 

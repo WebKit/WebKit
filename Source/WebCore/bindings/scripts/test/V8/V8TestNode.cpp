@@ -34,11 +34,11 @@ namespace WebCore {
 
 WrapperTypeInfo V8TestNode::info = { V8TestNode::GetTemplate, V8TestNode::derefObject, 0, &V8Node::info };
 
-namespace TestNodeInternal {
+namespace TestNodeV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
-} // namespace TestNodeInternal
+} // namespace TestNodeV8Internal
 
 v8::Handle<v8::Value> V8TestNode::constructorCallback(const v8::Arguments& args)
 {
