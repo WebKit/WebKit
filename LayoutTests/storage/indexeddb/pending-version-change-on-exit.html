@@ -1,0 +1,42 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<script>
+
+description("No crashes when there are event listeners in a worker on shutdown");
+
+function test() {
+  removeVendorPrefixes();
+  if (self.location.search == "?second") {
+    testPassed("Didn't crash!");
+    finishJSTest();
+    return;
+  }
+  dbname = "pending-version-change-on-exit";
+  evalAndLog("request = indexedDB.open(\"" + dbname + "\")");
+  request.onsuccess = startTheWorker;
+  request.onblocked = unexpectedBlockedCallback;
+  request.onerror = unexpectedErrorCallback;
+}
+
+function startTheWorker() {
+  var worker = startWorker("resources/pending-version-change-on-exit.js");
+  realFinishJSTest = finishJSTest;
+  worker.onerror = function(e) {
+    testFailed(e.message);
+    realFinishJSTest();
+  };
+  finishJSTest = function() {
+    self.location = self.location + "?second";
+  }
+}
+
+test();
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

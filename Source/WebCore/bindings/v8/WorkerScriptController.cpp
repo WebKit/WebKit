@@ -65,6 +65,12 @@ WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
 WorkerScriptController::~WorkerScriptController()
 {
     removeAllDOMObjects();
+#if PLATFORM(CHROMIUM)
+    // The corresponding call to didStartWorkerRunLoop is in
+    // WorkerThread::workerThread().
+    // See http://webkit.org/b/83104#c14 for why this is here.
+    PlatformSupport::didStopWorkerRunLoop(&m_workerContext->thread()->runLoop());
+#endif
     m_proxy.clear();
     m_isolate->Exit();
     V8BindingPerIsolateData::dispose(m_isolate);
