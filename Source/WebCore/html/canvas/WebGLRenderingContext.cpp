@@ -3139,12 +3139,6 @@ void WebGLRenderingContext::linkProgram(WebGLProgram* program, ExceptionCode& ec
 
     m_context->linkProgram(objectOrZero(program));
     program->increaseLinkCount();
-    // cache link status
-    GC3Dint value = 0;
-    m_context->getProgramiv(objectOrZero(program), GraphicsContext3D::LINK_STATUS, &value);
-    program->setLinkStatus(static_cast<bool>(value));
-    // Need to cache link status before caching active attribute locations.
-    program->cacheActiveAttribLocations(graphicsContext3D());
     cleanupAfterGraphicsCall(false);
 }
 
