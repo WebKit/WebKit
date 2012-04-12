@@ -588,6 +588,12 @@ private:
         case StringCharAt:
         case StringCharCodeAt:
         case Int32ToDouble:
+        case IsUndefined:
+        case IsBoolean:
+        case IsNumber:
+        case IsString:
+        case IsObject:
+        case IsFunction:
             setReplacement(pureCSE(node));
             break;
             

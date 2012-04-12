@@ -170,6 +170,12 @@ namespace JSC { namespace DFG {
     macro(Breakpoint, NodeMustGenerate | NodeClobbersWorld) \
     macro(CheckHasInstance, NodeMustGenerate) \
     macro(InstanceOf, NodeResultBoolean) \
+    macro(IsUndefined, NodeResultBoolean) \
+    macro(IsBoolean, NodeResultBoolean) \
+    macro(IsNumber, NodeResultBoolean) \
+    macro(IsString, NodeResultBoolean) \
+    macro(IsObject, NodeResultBoolean) \
+    macro(IsFunction, NodeResultBoolean) \
     macro(LogicalNot, NodeResultBoolean | NodeMightClobber) \
     macro(ToPrimitive, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(StrCat, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \

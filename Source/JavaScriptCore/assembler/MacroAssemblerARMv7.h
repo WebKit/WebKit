@@ -1526,6 +1526,12 @@ public:
         compare32(cond, dataTempRegister, right, dest);
     }
 
+    void compare8(RelationalCondition cond, Address left, TrustedImm32 right, RegisterID dest)
+    {
+        load8(left, addressTempRegister);
+        compare32(cond, addressTempRegister, right, dest);
+    }
+
     void compare32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
         compare32(left, right);

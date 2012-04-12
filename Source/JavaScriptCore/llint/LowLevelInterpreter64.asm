@@ -732,6 +732,63 @@ _llint_op_instanceof:
     dispatch(5)
 
 
+_llint_op_is_undefined:
+    traceExecution()
+    loadis 16[PB, PC, 8], t1
+    loadis 8[PB, PC, 8], t2
+    loadConstantOrVariable(t1, t0)
+    btpz t0, tagMask, .opIsUndefinedCell
+    cpeq t0, ValueUndefined, t3
+    orp ValueFalse, t3
+    storep t3, [cfr, t2, 8]
+    dispatch(3)
+.opIsUndefinedCell:
+    loadp JSCell::m_structure[t0], t0
+    tbnz Structure::m_typeInfo + TypeInfo::m_flags[t0], MasqueradesAsUndefined, t1
+    orp ValueFalse, t1
+    storep t1, [cfr, t2, 8]
+    dispatch(3)
+
+
+_llint_op_is_boolean:
+    traceExecution()
+    loadis 16[PB, PC, 8], t1
+    loadis 8[PB, PC, 8], t2
+    loadConstantOrVariable(t1, t0)
+    xorp ValueFalse, t0
+    tpz t0, ~1, t0
+    orp ValueFalse, t0
+    storep t0, [cfr, t2, 8]
+    dispatch(3)
+
+
+_llint_op_is_number:
+    traceExecution()
+    loadis 16[PB, PC, 8], t1
+    loadis 8[PB, PC, 8], t2
+    loadConstantOrVariable(t1, t0)
+    tpnz t0, tagTypeNumber, t1
+    orp ValueFalse, t1
+    storep t1, [cfr, t2, 8]
+    dispatch(3)
+
+
+_llint_op_is_string:
+    traceExecution()
+    loadis 16[PB, PC, 8], t1
+    loadis 8[PB, PC, 8], t2
+    loadConstantOrVariable(t1, t0)
+    btpnz t0, tagMask, .opIsStringNotCell
+    loadp JSCell::m_structure[t0], t0
+    cbeq Structure::m_typeInfo + TypeInfo::m_type[t0], StringType, t1
+    orp ValueFalse, t1
+    storep t1, [cfr, t2, 8]
+    dispatch(3)
+.opIsStringNotCell:
+    storep ValueFalse, [cfr, t2, 8]
+    dispatch(3)
+
+
 macro resolveGlobal(size, slow)
     # Operands are as follows:
     # 8[PB, PC, 8]   Destination for the load.

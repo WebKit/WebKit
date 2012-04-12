@@ -85,6 +85,7 @@ typedef int32_t DFG_OPERATION (*Z_DFGOperation_D)(double);
 typedef size_t DFG_OPERATION (*S_DFGOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef size_t DFG_OPERATION (*S_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef size_t DFG_OPERATION (*S_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
+typedef size_t DFG_OPERATION (*S_DFGOperation_J)(EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_EAZJ)(ExecState*, JSArray*, int32_t, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_ECJJ)(ExecState*, JSCell*, EncodedJSValue, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_EJCI)(ExecState*, EncodedJSValue, JSCell*, Identifier*);
@@ -156,7 +157,9 @@ JSCell* DFG_OPERATION operationCreateActivation(ExecState*);
 void DFG_OPERATION operationTearOffActivation(ExecState*, JSCell*);
 JSCell* DFG_OPERATION operationNewFunction(ExecState*, JSCell*);
 JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState*, JSCell*);
-double operationFModOnInts(int32_t, int32_t);
+double DFG_OPERATION operationFModOnInts(int32_t, int32_t);
+size_t DFG_OPERATION operationIsObject(EncodedJSValue);
+size_t DFG_OPERATION operationIsFunction(EncodedJSValue);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.

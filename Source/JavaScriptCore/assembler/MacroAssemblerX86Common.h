@@ -1353,6 +1353,12 @@ public:
         m_assembler.ret();
     }
 
+    void compare8(RelationalCondition cond, Address left, TrustedImm32 right, RegisterID dest)
+    {
+        m_assembler.cmpb_im(right.m_value, left.offset, left.base);
+        set32(x86Condition(cond), dest);
+    }
+    
     void compare32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmpl_rr(right, left);

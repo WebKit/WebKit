@@ -522,11 +522,11 @@ def armV7LowerMisplacedAddresses(list)
                                            node.opcode,
                                            armV7AsRegisters(newList, postInstructions, node.operands, "i"))
             when "bbeq", "bbneq", "bba", "bbaeq", "bbb", "bbbeq", "btbo", "btbz", "btbnz", "tbz", "tbnz",
-                "tbo"
+                "tbo", "cbeq", "cbneq", "cba", "cbaeq", "cbb", "cbbeq"
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
                                            armV7AsRegisters(newList, postInstructions, node.operands, "b"))
-            when "bbgt", "bbgteq", "bblt", "bblteq", "btbs", "tbs"
+            when "bbgt", "bbgteq", "bblt", "bblteq", "btbs", "tbs", "cbgt", "cbgteq", "cblt", "cblteq"
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
                                            armV7AsRegisters(newList, postInstructions, node.operands, "bs"))
@@ -568,7 +568,8 @@ def armV7LowerRegisterReuse(list)
             case node.opcode
             when "cieq", "cineq", "cia", "ciaeq", "cib", "cibeq", "cigt", "cigteq", "cilt", "cilteq",
                 "cpeq", "cpneq", "cpa", "cpaeq", "cpb", "cpbeq", "cpgt", "cpgteq", "cplt", "cplteq",
-                "tio", "tis", "tiz", "tinz", "tbo", "tbs", "tbz", "tbnz"
+                "tio", "tis", "tiz", "tinz", "tbo", "tbs", "tbz", "tbnz", "tpo", "tps", "tpz", "tpnz",
+                "cbeq", "cbneq", "cba", "cbaeq", "cbb", "cbbeq", "cbgt", "cbgteq", "cblt", "cblteq"
                 if node.operands.size == 2
                     if node.operands[0] == node.operands[1]
                         tmp = Tmp.new(node.codeOrigin, :gpr)
@@ -948,33 +949,33 @@ class Instruction
             $asm.puts "bkpt #0"
         when "ret"
             $asm.puts "bx lr"
-        when "cieq", "cpeq"
+        when "cieq", "cpeq", "cbeq"
             emitArmV7Compare(operands, "eq")
-        when "cineq", "cpneq"
+        when "cineq", "cpneq", "cbneq"
             emitArmV7Compare(operands, "ne")
-        when "cia", "cpa"
+        when "cia", "cpa", "cba"
             emitArmV7Compare(operands, "hi")
-        when "ciaeq", "cpaeq"
+        when "ciaeq", "cpaeq", "cbaeq"
             emitArmV7Compare(operands, "hs")
-        when "cib", "cpb"
+        when "cib", "cpb", "cbb"
             emitArmV7Compare(operands, "lo")
-        when "cibeq", "cpbeq"
+        when "cibeq", "cpbeq", "cbbeq"
             emitArmV7Compare(operands, "ls")
-        when "cigt", "cpgt"
+        when "cigt", "cpgt", "cbgt"
             emitArmV7Compare(operands, "gt")
-        when "cigteq", "cpgteq"
+        when "cigteq", "cpgteq", "cbgteq"
             emitArmV7Compare(operands, "ge")
-        when "cilt", "cplt"
+        when "cilt", "cplt", "cblt"
             emitArmV7Compare(operands, "lt")
-        when "cilteq", "cplteq"
+        when "cilteq", "cplteq", "cblteq"
             emitArmV7Compare(operands, "le")
-        when "tio", "tbo"
+        when "tio", "tbo", "tpo"
             emitArmV7TestSet(operands, "vs")
-        when "tis", "tbs"
+        when "tis", "tbs", "tps"
             emitArmV7TestSet(operands, "mi")
-        when "tiz", "tbz"
+        when "tiz", "tbz", "tpz"
             emitArmV7TestSet(operands, "eq")
-        when "tinz", "tbnz"
+        when "tinz", "tbnz", "tpnz"
             emitArmV7TestSet(operands, "ne")
         when "peek"
             $asm.puts "ldr #{operands[1].armV7Operand}, [sp, \##{operands[0].value * 4}]"

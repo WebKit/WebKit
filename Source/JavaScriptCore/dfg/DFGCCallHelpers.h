@@ -82,6 +82,12 @@ public:
         addCallArgument(arg2);
     }
 
+    ALWAYS_INLINE void setupArguments(GPRReg arg1)
+    {
+        resetCallArguments();
+        addCallArgument(arg1);
+    }
+
     ALWAYS_INLINE void setupArguments(GPRReg arg1, GPRReg arg2)
     {
         resetCallArguments();
@@ -385,6 +391,11 @@ public:
         assembler().vmov(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3, arg2);
     }
 #endif
+
+    ALWAYS_INLINE void setupArguments(GPRReg arg1)
+    {
+        move(arg1, GPRInfo::argumentGPR0);
+    }
 
     ALWAYS_INLINE void setupArguments(GPRReg arg1, GPRReg arg2)
     {

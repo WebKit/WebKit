@@ -423,30 +423,6 @@ _llint_op_typeof:
     dispatch(3)
 
 
-_llint_op_is_undefined:
-    traceExecution()
-    callSlowPath(_llint_slow_path_is_undefined)
-    dispatch(3)
-
-
-_llint_op_is_boolean:
-    traceExecution()
-    callSlowPath(_llint_slow_path_is_boolean)
-    dispatch(3)
-
-
-_llint_op_is_number:
-    traceExecution()
-    callSlowPath(_llint_slow_path_is_number)
-    dispatch(3)
-
-
-_llint_op_is_string:
-    traceExecution()
-    callSlowPath(_llint_slow_path_is_string)
-    dispatch(3)
-
-
 _llint_op_is_object:
     traceExecution()
     callSlowPath(_llint_slow_path_is_object)

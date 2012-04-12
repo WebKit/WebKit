@@ -3252,35 +3252,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_typeof)
     return JSValue::encode(jsTypeStringForValue(stackFrame.callFrame, stackFrame.args[0].jsValue()));
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_is_undefined)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    JSValue v = stackFrame.args[0].jsValue();
-    return JSValue::encode(jsBoolean(v.isCell() ? v.asCell()->structure()->typeInfo().masqueradesAsUndefined() : v.isUndefined()));
-}
-
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_is_boolean)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    return JSValue::encode(jsBoolean(stackFrame.args[0].jsValue().isBoolean()));
-}
-
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_is_number)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    return JSValue::encode(jsBoolean(stackFrame.args[0].jsValue().isNumber()));
-}
-
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_is_string)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    return JSValue::encode(jsBoolean(isJSString(stackFrame.args[0].jsValue())));
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_is_object)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

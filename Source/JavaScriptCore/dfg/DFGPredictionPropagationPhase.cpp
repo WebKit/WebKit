@@ -379,7 +379,13 @@ private:
         case CompareGreaterEq:
         case CompareEq:
         case CompareStrictEq:
-        case InstanceOf: {
+        case InstanceOf:
+        case IsUndefined:
+        case IsBoolean:
+        case IsNumber:
+        case IsString:
+        case IsObject:
+        case IsFunction: {
             changed |= setPrediction(PredictBoolean);
             changed |= mergeDefaultFlags(node);
             break;

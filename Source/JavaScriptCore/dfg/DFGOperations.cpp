@@ -1049,7 +1049,17 @@ JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* fu
     return function;
 }
 
-double operationFModOnInts(int32_t a, int32_t b)
+size_t DFG_OPERATION operationIsObject(EncodedJSValue value)
+{
+    return jsIsObjectType(JSValue::decode(value));
+}
+
+size_t DFG_OPERATION operationIsFunction(EncodedJSValue value)
+{
+    return jsIsFunctionType(JSValue::decode(value));
+}
+
+double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)
 {
     return fmod(a, b);
 }

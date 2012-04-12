@@ -702,31 +702,6 @@ LLINT_SLOW_PATH_DECL(slow_path_typeof)
     LLINT_RETURN(jsTypeStringForValue(exec, LLINT_OP_C(2).jsValue()));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_is_undefined)
-{
-    LLINT_BEGIN();
-    JSValue v = LLINT_OP_C(2).jsValue();
-    LLINT_RETURN(jsBoolean(v.isCell() ? v.asCell()->structure()->typeInfo().masqueradesAsUndefined() : v.isUndefined()));
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_is_boolean)
-{
-    LLINT_BEGIN();
-    LLINT_RETURN(jsBoolean(LLINT_OP_C(2).jsValue().isBoolean()));
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_is_number)
-{
-    LLINT_BEGIN();
-    LLINT_RETURN(jsBoolean(LLINT_OP_C(2).jsValue().isNumber()));
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_is_string)
-{
-    LLINT_BEGIN();
-    LLINT_RETURN(jsBoolean(isJSString(LLINT_OP_C(2).jsValue())));
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_is_object)
 {
     LLINT_BEGIN();

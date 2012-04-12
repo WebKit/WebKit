@@ -465,6 +465,69 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
+void JIT::emit_op_is_undefined(Instruction* currentInstruction)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned value = currentInstruction[2].u.operand;
+    
+    emitGetVirtualRegister(value, regT0);
+    Jump isCell = emitJumpIfJSCell(regT0);
+
+    comparePtr(Equal, regT0, TrustedImm32(ValueUndefined), regT0);
+    Jump done = jump();
+    
+    isCell.link(this);
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
+    test8(NonZero, Address(regT1, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), regT0);
+    
+    done.link(this);
+    emitTagAsBoolImmediate(regT0);
+    emitPutVirtualRegister(dst);
+}
+
+void JIT::emit_op_is_boolean(Instruction* currentInstruction)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned value = currentInstruction[2].u.operand;
+    
+    emitGetVirtualRegister(value, regT0);
+    xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), regT0);
+    testPtr(Zero, regT0, TrustedImm32(static_cast<int32_t>(~1)), regT0);
+    emitTagAsBoolImmediate(regT0);
+    emitPutVirtualRegister(dst);
+}
+
+void JIT::emit_op_is_number(Instruction* currentInstruction)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned value = currentInstruction[2].u.operand;
+    
+    emitGetVirtualRegister(value, regT0);
+    testPtr(NonZero, regT0, tagTypeNumberRegister, regT0);
+    emitTagAsBoolImmediate(regT0);
+    emitPutVirtualRegister(dst);
+}
+
+void JIT::emit_op_is_string(Instruction* currentInstruction)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned value = currentInstruction[2].u.operand;
+    
+    emitGetVirtualRegister(value, regT0);
+    Jump isNotCell = emitJumpIfNotJSCell(regT0);
+    
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
+    compare8(Equal, Address(regT1, Structure::typeInfoTypeOffset()), TrustedImm32(StringType), regT0);
+    emitTagAsBoolImmediate(regT0);
+    Jump done = jump();
+    
+    isNotCell.link(this);
+    move(TrustedImm32(ValueFalse), regT0);
+    
+    done.link(this);
+    emitPutVirtualRegister(dst);
+}
+
 void JIT::emit_op_call(Instruction* currentInstruction)
 {
     compileOpCall(op_call, currentInstruction, m_callLinkInfoIndex++);

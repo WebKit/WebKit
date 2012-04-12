@@ -402,7 +402,7 @@ public:
         m_assembler.testq_rr(reg, mask);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
-
+    
     Jump branchTestPtr(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
         // if we are only interested in the low seven bits, this can be tested with a testb
@@ -413,6 +413,23 @@ public:
         else
             m_assembler.testq_i32r(mask.m_value, reg);
         return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
+    void testPtr(ResultCondition cond, RegisterID reg, TrustedImm32 mask, RegisterID dest)
+    {
+        if (mask.m_value == -1)
+            m_assembler.testq_rr(reg, reg);
+        else if ((mask.m_value & ~0x7f) == 0)
+            m_assembler.testb_i8r(mask.m_value, reg);
+        else
+            m_assembler.testq_i32r(mask.m_value, reg);
+        set32(x86Condition(cond), dest);
+    }
+
+    void testPtr(ResultCondition cond, RegisterID reg, RegisterID mask, RegisterID dest)
+    {
+        m_assembler.testq_rr(reg, mask);
+        set32(x86Condition(cond), dest);
     }
 
     Jump branchTestPtr(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))

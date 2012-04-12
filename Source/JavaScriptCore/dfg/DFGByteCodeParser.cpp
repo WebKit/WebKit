@@ -1727,6 +1727,42 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             set(currentInstruction[1].u.operand, addToGraph(InstanceOf, value, baseValue, prototype));
             NEXT_OPCODE(op_instanceof);
         }
+            
+        case op_is_undefined: {
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(IsUndefined, value));
+            NEXT_OPCODE(op_is_undefined);
+        }
+
+        case op_is_boolean: {
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(IsBoolean, value));
+            NEXT_OPCODE(op_is_boolean);
+        }
+
+        case op_is_number: {
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(IsNumber, value));
+            NEXT_OPCODE(op_is_number);
+        }
+
+        case op_is_string: {
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(IsString, value));
+            NEXT_OPCODE(op_is_string);
+        }
+
+        case op_is_object: {
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(IsObject, value));
+            NEXT_OPCODE(op_is_object);
+        }
+
+        case op_is_function: {
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(IsFunction, value));
+            NEXT_OPCODE(op_is_function);
+        }
 
         case op_not: {
             NodeIndex value = get(currentInstruction[2].u.operand);

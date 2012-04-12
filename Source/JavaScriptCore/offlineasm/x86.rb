@@ -897,42 +897,62 @@ class Instruction
             $asm.puts "ret"
         when "cieq"
             handleX86IntCompareSet("sete", :int)
+        when "cbeq"
+            handleX86IntCompareSet("sete", :byte)
         when "cpeq"
             handleX86IntCompareSet("sete", :ptr)
         when "cineq"
             handleX86IntCompareSet("setne", :int)
+        when "cbneq"
+            handleX86IntCompareSet("setne", :byte)
         when "cpneq"
             handleX86IntCompareSet("setne", :ptr)
         when "cia"
             handleX86IntCompareSet("seta", :int)
+        when "cba"
+            handleX86IntCompareSet("seta", :byte)
         when "cpa"
             handleX86IntCompareSet("seta", :ptr)
         when "ciaeq"
             handleX86IntCompareSet("setae", :int)
+        when "cbaeq"
+            handleX86IntCompareSet("setae", :byte)
         when "cpaeq"
             handleX86IntCompareSet("setae", :ptr)
         when "cib"
             handleX86IntCompareSet("setb", :int)
+        when "cbb"
+            handleX86IntCompareSet("setb", :byte)
         when "cpb"
             handleX86IntCompareSet("setb", :ptr)
         when "cibeq"
             handleX86IntCompareSet("setbe", :int)
+        when "cbbeq"
+            handleX86IntCompareSet("setbe", :byte)
         when "cpbeq"
             handleX86IntCompareSet("setbe", :ptr)
         when "cigt"
             handleX86IntCompareSet("setg", :int)
+        when "cbgt"
+            handleX86IntCompareSet("setg", :byte)
         when "cpgt"
             handleX86IntCompareSet("setg", :ptr)
         when "cigteq"
             handleX86IntCompareSet("setge", :int)
+        when "cbgteq"
+            handleX86IntCompareSet("setge", :byte)
         when "cpgteq"
             handleX86IntCompareSet("setge", :ptr)
         when "cilt"
             handleX86IntCompareSet("setl", :int)
+        when "cblt"
+            handleX86IntCompareSet("setl", :byte)
         when "cplt"
             handleX86IntCompareSet("setl", :ptr)
         when "cilteq"
             handleX86IntCompareSet("setle", :int)
+        when "cblteq"
+            handleX86IntCompareSet("setle", :byte)
         when "cplteq"
             handleX86IntCompareSet("setle", :ptr)
         when "tio"
@@ -943,6 +963,14 @@ class Instruction
             handleX86SetTest("setz", :int)
         when "tinz"
             handleX86SetTest("setnz", :int)
+        when "tpo"
+            handleX86SetTest("seto", :ptr)
+        when "tps"
+            handleX86SetTest("sets", :ptr)
+        when "tpz"
+            handleX86SetTest("setz", :ptr)
+        when "tpnz"
+            handleX86SetTest("setnz", :ptr)
         when "tbo"
             handleX86SetTest("seto", :byte)
         when "tbs"
