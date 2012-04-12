@@ -88,6 +88,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PageGroupLoadDeferrer.h"
+#include "PagePopupClient.h"
 #include "PageWidgetDelegate.h"
 #include "Pasteboard.h"
 #include "PlatformContextSkia.h"
@@ -131,6 +132,7 @@
 #include "WebKit.h"
 #include "WebMediaPlayerAction.h"
 #include "WebNode.h"
+#include "WebPagePopupImpl.h"
 #include "WebPlugin.h"
 #include "WebPluginAction.h"
 #include "WebPluginContainerImpl.h"
@@ -370,6 +372,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_dragOperation(WebDragOperationNone)
     , m_autofillPopupShowing(false)
     , m_autofillPopup(0)
+    , m_pagePopup(0)
     , m_isTransparent(false)
     , m_tabsToLinks(false)
     , m_dragScrollTimer(adoptPtr(new DragScrollTimer))
@@ -715,6 +718,16 @@ bool WebViewImpl::handleKeyEvent(const WebKeyboardEvent& event)
     // not the page.
     if (m_selectPopup)
         return m_selectPopup->handleKeyEvent(PlatformKeyboardEventBuilder(event));
+#if ENABLE(PAGE_POPUP)
+    if (m_pagePopup) {
+        m_pagePopup->handleKeyEvent(PlatformKeyboardEventBuilder(event));
+        // We need to ignore the next Char event after this otherwise pressing
+        // enter when selecting an item in the popup will go to the page.
+        if (WebInputEvent::RawKeyDown == event.type)
+            m_suppressNextKeypressEvent = true;
+        return true;
+    }
+#endif
 
     // Give Autocomplete a chance to consume the key events it is interested in.
     if (autocompleteHandleKeyEvent(event))
@@ -827,6 +840,10 @@ bool WebViewImpl::handleCharEvent(const WebKeyboardEvent& event)
     // not the page.
     if (m_selectPopup)
         return m_selectPopup->handleKeyEvent(PlatformKeyboardEventBuilder(event));
+#if ENABLE(PAGE_POPUP)
+    if (m_pagePopup)
+        return m_pagePopup->handleKeyEvent(PlatformKeyboardEventBuilder(event));
+#endif
 
     Frame* frame = focusedWebCoreFrame();
     if (!frame)
@@ -1176,6 +1193,49 @@ void  WebViewImpl::popupClosed(WebCore::PopupContainer* popupContainer)
         m_selectPopup = 0;
     }
 }
+
+#if ENABLE(PAGE_POPUP)
+PagePopup* WebViewImpl::openPagePopup(PagePopupClient* client, const IntRect& originBoundsInRootView)
+{
+    ASSERT(client);
+    if (hasOpenedPopup())
+        hidePopups();
+    ASSERT(!m_pagePopup);
+
+    WebWidget* popupWidget = m_client->createPopupMenu(WebPopupTypePage);
+    ASSERT(popupWidget);
+    m_pagePopup = static_cast<WebPagePopupImpl*>(popupWidget);
+    WebSize rootViewSize = size();
+    IntSize popupSize = client->contentSize();
+    IntRect popupBoundsInRootView(IntPoint(max(0, originBoundsInRootView.x()), max(0, originBoundsInRootView.maxY())), popupSize);
+    if (popupBoundsInRootView.maxY() > rootViewSize.height)
+        popupBoundsInRootView.setY(max(0, originBoundsInRootView.y() - popupSize.height()));
+    if (popupBoundsInRootView.maxX() > rootViewSize.width)
+        popupBoundsInRootView.setX(max(0, rootViewSize.width - popupSize.width()));
+    if (!m_pagePopup->init(this, client, m_chromeClientImpl.rootViewToScreen(popupBoundsInRootView))) {
+        m_pagePopup->closePopup();
+        m_pagePopup = 0;
+    }
+
+    if (Frame* frame = focusedWebCoreFrame())
+        frame->selection()->setCaretVisible(false);
+    return m_pagePopup;
+}
+
+void WebViewImpl::closePagePopup(PagePopup* popup)
+{
+    ASSERT(popup);
+    WebPagePopupImpl* popupImpl = static_cast<WebPagePopupImpl*>(popup);
+    ASSERT(m_pagePopup == popupImpl);
+    if (m_pagePopup != popupImpl)
+        return;
+    m_pagePopup->closePopup();
+    m_pagePopup = 0;
+
+    if (Frame* frame = focusedWebCoreFrame())
+        frame->selection()->pageActivationChanged();
+}
+#endif
 
 void WebViewImpl::hideAutofillPopup()
 {
@@ -1644,8 +1704,7 @@ void WebViewImpl::setFocus(bool enable)
         }
         m_imeAcceptEvents = true;
     } else {
-        hideAutofillPopup();
-        hideSelectPopup();
+        hidePopups();
 
         // Clear focus on the currently focused frame if any.
         if (!m_page)
@@ -2734,6 +2793,10 @@ void WebViewImpl::hidePopups()
 {
     hideSelectPopup();
     hideAutofillPopup();
+#if ENABLE(PAGE_POPUP)
+    if (m_pagePopup)
+        closePagePopup(m_pagePopup);
+#endif
 }
 
 void WebViewImpl::performCustomContextMenuAction(unsigned action)

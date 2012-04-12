@@ -1,5 +1,68 @@
 2012-04-12  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Add PagePopup implementation
+        https://bugs.webkit.org/show_bug.cgi?id=81081
+
+        Reviewed by Adam Barth.
+
+        Add WebPagePopupImpl class, which is an implementation of
+        WebCore::PagePopup interface and WebKit::WebPagePopup interface. It's a
+        WebWidget which has a Page object.
+
+        No new tests because this makes no behavior change yet.
+
+        * WebKit.gyp: Add WebPagePopupImpl.h.
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::hasOpenedPopup): Supports the PagePopup.
+        (WebKit::ChromeClientImpl::openPagePopup):
+        just delegate to WebViewImpl::openPagePopup().
+        (WebKit::ChromeClientImpl::closePagePopup): ditto.
+
+        * src/WebPagePopupImpl.cpp:
+        (PagePopupChromeClient):
+        This is a light implementation of ChromeClient for the page in
+        WebPagePopupImpl. This is a friend of WebPagePopupImpl becase of ease of
+        access to its members.
+        (WebKit::PagePopupChromeClient::PagePopupChromeClient):
+        (WebKit::WebPagePopupImpl::WebPagePopupImpl):
+        (WebKit::WebPagePopupImpl::~WebPagePopupImpl):
+        (WebKit::WebPagePopupImpl::init):
+        (WebKit::WebPagePopupImpl::initPage):
+        (WebKit::WebPagePopupImpl::size):
+        (WebKit::WebPagePopupImpl::animate): Calls PageWidgetDelegate::animate().
+        (WebKit::WebPagePopupImpl::composite):
+        (WebKit::WebPagePopupImpl::layout): Calls PageWidgetDelegate::layout().
+        (WebKit::WebPagePopupImpl::paint): Calls PageWidgetDelegate::paint().
+        (WebKit::WebPagePopupImpl::resize):
+        (WebKit::WebPagePopupImpl::handleKeyEvent):
+        (WebKit::WebPagePopupImpl::handleCharEvent):
+        (WebKit::WebPagePopupImpl::handleGestureEvent):
+        (WebKit::WebPagePopupImpl::handleInputEvent):
+        (WebKit::WebPagePopupImpl::setFocus):
+        (WebKit::WebPagePopupImpl::close): Delete the page, and kill itself.
+        (WebKit::WebPagePopupImpl::closePopup):
+        (WebKit::WebPagePopup::create):
+        * src/WebPagePopupImpl.h: Added.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl): Initialize m_pagePopup.
+        (WebKit::WebViewImpl::handleKeyEvent):
+        Renamed from keyEvent(). Forward key events to a PagePopup if it is open.
+        (WebKit::WebViewImpl::handleCharEvent):
+        Renamed from charEvent(). Forward char events to a PagePopup if it is open.
+        (WebKit::WebViewImpl::openPagePopup):
+        Added. Instantiate a WebPagePopupImpl, calculates a good bounding
+        rectangle of the page popup from the specified element rectangle,
+        initialize the WebPagePopupImpl, and stop caret blink.
+        (WebKit::WebViewImpl::closePagePopup):
+        Close the popup, clear m_pagePopup, and resume caret blink.
+        (WebKit::WebViewImpl::setFocus): Hide all the popups.
+        (WebKit::WebViewImpl::hidePopups): Hide the page popup too.
+        * src/WebViewImpl.h:
+        (WebKit::WebViewImpl::hasOpenedPopup): Checks the page popup too.
+
+2012-04-12  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Move some code of WebViewImpl and WebFrameImpl to PageWidgetDelegate
         https://bugs.webkit.org/show_bug.cgi?id=83750
 

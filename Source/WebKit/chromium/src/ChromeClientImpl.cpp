@@ -977,7 +977,7 @@ bool ChromeClientImpl::selectItemAlignmentFollowsMenuWritingDirection()
 
 bool ChromeClientImpl::hasOpenedPopup() const
 {
-    return !!m_webView->selectPopup();
+    return m_webView->hasOpenedPopup();
 }
 
 PassRefPtr<PopupMenu> ChromeClientImpl::createPopupMenu(PopupMenuClient* client) const
@@ -994,15 +994,14 @@ PassRefPtr<SearchPopupMenu> ChromeClientImpl::createSearchPopupMenu(PopupMenuCli
 }
 
 #if ENABLE(PAGE_POPUP)
-PagePopup* ChromeClientImpl::openPagePopup(PagePopupClient*, const IntRect&)
+PagePopup* ChromeClientImpl::openPagePopup(PagePopupClient* client, const IntRect& originBoundsInRootView)
 {
-    // FIXME: Impelement this.
-    return 0;
+    return m_webView->openPagePopup(client, originBoundsInRootView);
 }
 
-void ChromeClientImpl::closePagePopup(PagePopup*)
+void ChromeClientImpl::closePagePopup(PagePopup* popup)
 {
-    // FIXME: Implement this.
+    m_webView->closePagePopup(popup);
 }
 #endif
 

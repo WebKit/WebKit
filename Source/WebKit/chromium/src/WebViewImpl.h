@@ -69,6 +69,8 @@ class HistoryItem;
 class HitTestResult;
 class KeyboardEvent;
 class Page;
+class PagePopup;
+class PagePopupClient;
 class PlatformGestureCurveTarget;
 class PlatformKeyboardEvent;
 class PopupContainer;
@@ -97,6 +99,7 @@ class WebDevToolsAgentClient;
 class WebDevToolsAgentPrivate;
 class WebFrameImpl;
 class WebGestureEvent;
+class WebPagePopupImpl;
 class WebImage;
 class WebKeyboardEvent;
 class WebMouseEvent;
@@ -447,6 +450,10 @@ public:
     // Notification that a popup was opened/closed.
     void popupOpened(WebCore::PopupContainer* popupContainer);
     void popupClosed(WebCore::PopupContainer* popupContainer);
+#if ENABLE(PAGE_POPUP)
+    WebCore::PagePopup* openPagePopup(WebCore::PagePopupClient*, const WebCore::IntRect& originBoundsInRootView);
+    void closePagePopup(WebCore::PagePopup*);
+#endif
 
     void hideAutofillPopup();
 
@@ -485,6 +492,11 @@ public:
     virtual void setVisibilityState(WebPageVisibilityState, bool);
 
     WebCore::PopupContainer* selectPopup() const { return m_selectPopup.get(); }
+#if ENABLE(PAGE_POPUP)
+    bool hasOpenedPopup() const { return m_selectPopup || m_pagePopup; }
+#else
+    bool hasOpenedPopup() const { return m_selectPopup; }
+#endif
 
     // Returns true if the event leads to scrolling.
     static bool mapKeyCodeForScroll(int keyCode,
@@ -695,6 +707,11 @@ private:
 
     // The popup associated with a select element.
     RefPtr<WebCore::PopupContainer> m_selectPopup;
+
+#if ENABLE(PAGE_POPUP)
+    // The popup associated with an input element.
+    WebPagePopupImpl* m_pagePopup;
+#endif
 
     OwnPtr<WebDevToolsAgentPrivate> m_devToolsAgent;
     OwnPtr<PageOverlayList> m_pageOverlays;

@@ -613,6 +613,7 @@
                 'src/WebNotification.cpp',
                 'src/WebOptionElement.cpp',
                 'src/WebPagePopupImpl.cpp',
+                'src/WebPagePopupImpl.h',
                 'src/WebPageSerializer.cpp',
                 'src/WebPageSerializerImpl.cpp',
                 'src/WebPageSerializerImpl.h',
