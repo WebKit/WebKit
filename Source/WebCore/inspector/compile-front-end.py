@@ -277,6 +277,7 @@ modules = [
         "dependencies": ["components"],
         "sources": [
             "BottomUpProfileDataGridTree.js",
+            "CSSSelectorProfileView.js",
             "DetailedHeapshotView.js",
             "DetailedHeapshotGridNodes.js",
             "ProfileDataGridTree.js",
@@ -285,6 +286,9 @@ modules = [
             "ProfileView.js",
             "TopDownProfileDataGridTree.js",
             "HeapSnapshot.js",
+            "HeapSnapshotProxy.js",
+            "HeapSnapshotWorker.js",
+            "HeapSnapshotWorkerDispatcher.js",
         ]
     },
 #    {
@@ -299,12 +303,6 @@ modules = [
 ]
 
 # To be compiled...
-#
-# [Profiler]
-# CSSSelectorProfileView
-# HeapSnapshotProxy
-# HeapSnapshotWorker
-# HeapSnapshotWorkerDispatcher
 #
 # [Misc]
 # inspector

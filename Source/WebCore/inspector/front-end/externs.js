@@ -59,6 +59,15 @@ Event.prototype.stopImmediatePropagation = function() {}
 
 /** @param {Element} element */
 window.getComputedStyle = function(element) {}
+/** @param {*} message */
+function postMessage(message) {}
+
+/**
+ * @param {string} eventName
+ * @param {Function} listener
+ * @param {boolean=} capturing
+ */
+function addEventListener(eventName, listener, capturing) {}
 
 /** @param {boolean=} onlyFirst */
 Array.prototype.remove = function(obj, onlyFirst) {}
@@ -207,13 +216,4 @@ WebInspector.isCompactMode = function() { return false; }
 WebInspector.SourceJavaScriptTokenizer = {}
 WebInspector.SourceJavaScriptTokenizer.Keywords = {}
 
-/** @constructor */
-WebInspector.CSSSelectorProfileType = function() {}
-/**
- * @constructor
- * @extends {WebInspector.Object}
- */
-WebInspector.HeapSnapshotWorker = function() {}
-WebInspector.HeapSnapshotWorker.prototype.createObject = function(type) {}
-WebInspector.HeapSnapshotWorker.prototype.startCheckingForLongRunningCalls = function() {}
-
+var InspectorTest = {}

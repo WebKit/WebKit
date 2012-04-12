@@ -28,6 +28,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
+WebInspector.HeapSnapshotWorkerWrapper = function()
+{
+}
+
+WebInspector.HeapSnapshotWorkerWrapper.prototype =  {
+    postMessage: function(message)
+    {
+    },
+    terminate: function()
+    {
+    }
+}
+
+WebInspector.HeapSnapshotWorkerWrapper.prototype.__proto__ = WebInspector.Object.prototype;
+
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotWorkerWrapper}
+ */
 WebInspector.HeapSnapshotRealWorker = function()
 {
     this._worker = new Worker("HeapSnapshotWorker.js");
@@ -51,8 +74,12 @@ WebInspector.HeapSnapshotRealWorker.prototype = {
     }
 };
 
-WebInspector.HeapSnapshotRealWorker.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.HeapSnapshotRealWorker.prototype.__proto__ = WebInspector.HeapSnapshotWorkerWrapper.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotWorkerWrapper}
+ */
 WebInspector.HeapSnapshotFakeWorker = function()
 {
     this._dispatcher = new WebInspector.HeapSnapshotWorkerDispatcher(window, this._postMessageFromWorker.bind(this));
@@ -84,8 +111,12 @@ WebInspector.HeapSnapshotFakeWorker.prototype = {
     }
 };
 
-WebInspector.HeapSnapshotFakeWorker.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.HeapSnapshotFakeWorker.prototype.__proto__ = WebInspector.HeapSnapshotWorkerWrapper.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.HeapSnapshotWorker = function()
 {
     this._nextObjectId = 1;
@@ -94,7 +125,7 @@ WebInspector.HeapSnapshotWorker = function()
     this._previousCallbacks = [];
     // There is no support for workers in Chromium DRT.
     this._worker = typeof InspectorTest === "undefined" ? new WebInspector.HeapSnapshotRealWorker() : new WebInspector.HeapSnapshotFakeWorker();
-    this._worker.addEventListener("message", this._messageReceived.bind(this), false);
+    this._worker.addEventListener("message", this._messageReceived, this);
 }
 
 WebInspector.HeapSnapshotWorker.prototype = {
@@ -210,6 +241,9 @@ WebInspector.HeapSnapshotWorker.prototype = {
 
 WebInspector.HeapSnapshotWorker.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.HeapSnapshotProxyObject = function(worker, objectId)
 {
     this._worker = worker;
@@ -233,7 +267,10 @@ WebInspector.HeapSnapshotProxyObject.prototype = {
         this._worker.dispose();
     },
 
-    callFactoryMethod: function(callback, methodName, proxyConstructorName)
+    /**
+     * @param {...*} var_args
+     */
+    callFactoryMethod: function(callback, methodName, proxyConstructorName, var_args)
     {
         return this._callWorker("callFactoryMethod", Array.prototype.slice.call(arguments, 0));
     },
@@ -243,7 +280,10 @@ WebInspector.HeapSnapshotProxyObject.prototype = {
         return this._callWorker("callGetter", Array.prototype.slice.call(arguments, 0));
     },
 
-    callMethod: function(callback, methodName)
+    /**
+     * @param {...*} var_args
+     */
+    callMethod: function(callback, methodName, var_args)
     {
         return this._callWorker("callMethod", Array.prototype.slice.call(arguments, 0));
     },
@@ -253,6 +293,10 @@ WebInspector.HeapSnapshotProxyObject.prototype = {
     }
 };
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotProxyObject}
+ */
 WebInspector.HeapSnapshotLoaderProxy = function(worker, objectId)
 {
     WebInspector.HeapSnapshotProxyObject.call(this, worker, objectId);
@@ -313,6 +357,10 @@ WebInspector.HeapSnapshotLoaderProxy.prototype = {
 
 WebInspector.HeapSnapshotLoaderProxy.prototype.__proto__ = WebInspector.HeapSnapshotProxyObject.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotProxyObject}
+ */
 WebInspector.HeapSnapshotProxy = function(worker, objectId)
 {
     WebInspector.HeapSnapshotProxyObject.call(this, worker, objectId);
@@ -423,6 +471,10 @@ WebInspector.HeapSnapshotProxy.prototype = {
 
 WebInspector.HeapSnapshotProxy.prototype.__proto__ = WebInspector.HeapSnapshotProxyObject.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotProxyObject}
+ */
 WebInspector.HeapSnapshotProviderProxy = function(worker, objectId)
 {
     WebInspector.HeapSnapshotProxyObject.call(this, worker, objectId);
@@ -447,6 +499,10 @@ WebInspector.HeapSnapshotProviderProxy.prototype = {
 
 WebInspector.HeapSnapshotProviderProxy.prototype.__proto__ = WebInspector.HeapSnapshotProxyObject.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotProxyObject}
+ */
 WebInspector.HeapSnapshotPathFinderProxy = function(worker, objectId)
 {
     WebInspector.HeapSnapshotProxyObject.call(this, worker, objectId);
@@ -466,6 +522,10 @@ WebInspector.HeapSnapshotPathFinderProxy.prototype = {
 
 WebInspector.HeapSnapshotPathFinderProxy.prototype.__proto__ = WebInspector.HeapSnapshotProxyObject.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotProxyObject}
+ */
 WebInspector.HeapSnapshotsDiffProxy = function(worker, objectId)
 {
     WebInspector.HeapSnapshotProxyObject.call(this, worker, objectId);

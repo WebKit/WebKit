@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.HeapSnapshotWorkerDispatcher = function(globalObject, postMessage)
 {
     this._objects = [];

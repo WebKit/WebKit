@@ -265,6 +265,7 @@ WebInspector.CSSSelectorProfileView.prototype.__proto__ = WebInspector.View.prot
 
 /**
  * @constructor
+ * @extends {WebInspector.ProfileType}
  */
 WebInspector.CSSSelectorProfileType = function()
 {

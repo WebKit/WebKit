@@ -108,7 +108,7 @@ WebInspector.TopDownProfileDataGridTree.prototype = {
         var excludedCallUID = profileDataGrideNode.callUID;
 
         var any = /** @type{*} */this;
-        var node = /** @type{WebInspector.ProfileDataGridNode} */any;
+        var node = /** @type{WebInspector.TopDownProfileDataGridNode} */any;
         WebInspector.TopDownProfileDataGridNode.prototype._exclude.call(node, excludedCallUID);
 
         if (this.lastComparator)
