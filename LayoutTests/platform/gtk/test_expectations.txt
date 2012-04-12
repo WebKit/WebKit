@@ -2,6 +2,314 @@
 //
 // See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
+// This list is divided into several sections to make it easy for us to triage and close issues.
+// 1. TESTS THAT REQUIRE NEW RESULTS
+// Please don't add any tests to this list. Instead just ping a GTK+ developer
+// to generate results for you.
+
+// 2. EXPECTED FAILURES
+// This list is divided into two parts:
+// a. Tests that we never expect to pass, because they use features we likely
+//    will never implement (Mac-only features, for instance).
+// b. Missing WebCore/WebKit features that we'll want someday.
+
+// 3. TESTS CRASHING
+// Please open a bug for each test crashing with any important information.
+// These are in a separate section than failing tests, because they should be
+// priority fixes.
+
+// 4. FLAKY TESTS
+// When appropriate, open a bug for flaky tests with the test diff and information
+// about which bots the test fails on.
+
+// 5. TESTS TIMING OUT
+// Please open a bug for each test timing out with any important information.
+
+// 6. TESTS FAILING
+// Each test should (eventually) have a bug. Missing DRT features also go here.
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Tests that require new results.
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Expected failures
+//////////////////////////////////////////////////////////////////////////////////////////
+
+// Ignored because we do not have OBJC bindings (via Chromium).
+BUGWKGTK SKIP : editing/pasteboard/paste-RTFD.html = FAIL
+BUGWKGTK SKIP : editing/pasteboard/paste-TIFF.html = FAIL
+
+// Deletion UI is a Mail-ism. We don't need to worry about this (via Chromium).
+BUGWKGTK SKIP : editing/deleting/deletionUI-single-instance.html = FAIL
+BUGWKGTK SKIP : fast/dom/Element/id-in-deletebutton.html = FAIL
+
+// WebKitGTK+ uses different keyboard accelerators than Safari (via Chromium).
+BUGWKGTK SKIP : fast/events/option-tab.html = FAIL
+
+// We have no need to support Dashboard compatibility mode. (via Chromium).
+BUGWKGTK SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
+BUGWKGTK SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = FAIL
+
+// These tests expect a TIFF decoder (via Chromium).
+BUGWKGTK SKIP : fast/images/embed-image.html = FAIL
+BUGWKGTK SKIP : fast/images/object-image.html = FAIL
+
+// Mac Safari under certain circumstances automatically places
+// a caret in editable document even when none was requested programatically.
+BUGWKGTK SKIP : editing/selection/designmode-no-caret.html = FAIL
+
+// These tests require loading a PDF as an image, which we do not support (via Chromium).
+BUGWKGTK SKIP : fast/images/pdf-as-background.html = FAIL
+BUGWKGTK SKIP : fast/images/pdf-as-image-landscape.html = FAIL
+BUGWKGTK SKIP : fast/images/pdf-as-image.html = FAIL
+BUGWKGTK SKIP : fast/images/pdf-as-tiled-background.html = FAIL
+BUGWKGTK SKIP : fast/replaced/pdf-as-image.html = FAIL
+
+// Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy.
+BUGWK35824 : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
+
+// WebKitGTK+ does not support webarchives (via Chromium).
+BUGWKGTK SKIP : webarchive = FAIL
+BUGWKGTK SKIP : http/tests/webarchive = FAIL
+BUGWKGTK SKIP : svg/webarchive = FAIL
+BUGWKGTK SKIP : svg/custom/image-with-prefix-in-webarchive.svg = FAIL
+
+// This test is specific to QuickTime media engine.
+BUGWKGTK SKIP : media/video-does-not-loop.html = FAIL
+
+// This test assumes we cannot play RTSP, but we can.
+BUGWKGTK SKIP : media/unsupported-rtsp.html = TIMEOUT
+
+// Requires media engine closed caption support.
+BUGWKGTK SKIP : media/media-captions.html = FAIL
+
+// Pre-HMTL5 parser quirks only apply to the mac port for now.
+BUGWKGTK SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
+
+// Features that we want eventually:
+// DeviceMotion and DeviceOrientation are not enabled by default.
+BUGWKGTK SKIP : fast/dom/Window/window-properties-device-orientation.html = FAIL
+BUGWKGTK SKIP : fast/dom/DeviceMotion = FAIL
+BUGWKGTK SKIP : fast/dom/DeviceOrientation = FAIL
+
+// Desktop notifications are not supported.
+BUGWKGTK SKIP : fast/notifications = FAIL
+BUGWKGTK SKIP : http/tests/notifications = FAIL
+
+// We lack userscripts support.
+BUGWKGTK SKIP : userscripts = FAIL
+
+// Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support.
+BUGWKGTK SKIP : transforms/3d = FAIL
+BUGWKGTK SKIP : compositing = FAIL
+BUGWKGTK SKIP : fast/transforms/selection-bounds-in-transformed-view.html = FAIL
+
+// These tests require touch support.
+BUGWKGTK SKIP : fast/events/touch = FAIL
+
+// IndexedDB is not yet enabled.
+BUGWKGTK SKIP : storage/indexeddb = FAIL
+BUGWKGTK SKIP : http/tests/inspector/indexeddb = FAIL
+
+// StorageTracker is not enabled.
+BUGWKGTK SKIP : storage/domstorage/localstorage/storagetracker = FAIL
+
+// Datalist is not yet enabled.
+BUGWKGTK SKIP : fast/forms/datalist = FAIL
+
+// Color input is not yet enabled.
+BUGWKGTK SKIP : fast/forms/color = FAIL
+
+// ENABLE_INPUT_TYPE_* are not enabled.
+BUGWK29359 : fast/forms/date = FAIL
+BUGWK29359 : fast/css/pseudo-in-range.html = FAIL
+BUGWK29359 : fast/css/pseudo-out-of-range.html = FAIL
+BUGWK29359 : fast/css/pseudo-in-range-invalid-value.html = FAIL
+BUGWK29359 : fast/forms/datetime = FAIL
+BUGWK29359 : fast/forms/datetimelocal = FAIL
+BUGWK29359 : fast/forms/month = FAIL
+BUGWK29359 : fast/forms/time = FAIL
+BUGWK29359 : fast/forms/week = FAIL
+
+// ENABLE_GAMEPAD not enabled.
+BUGWKGTK SKIP : gamepad = FAIL
+
+// Speech input is not yet enabled.
+BUGWKGTK SKIP : fast/speech = FAIL
+
+// Speech JavaScript API is not yet enabled.
+BUGWKGTK SKIP : fast/events/constructors/speech-recognition-event-constructor.html = FAIL
+
+// Web Timing is not enabled.
+BUGWK42432 : fast/dom/Window/window-properties-performance.html = FAIL
+BUGWK42432 : fast/dom/navigation-type-back-forward.html = FAIL
+BUGWK42432 : fast/dom/navigation-type-navigate.html = FAIL
+BUGWK42432 : fast/dom/navigation-type-reload.html = FAIL
+BUGWK42432 : fast/dom/webtiming.html = FAIL
+BUGWK42432 : fast/dom/webtiming-navigate-within-document.html = FAIL
+BUGWK42432 : fast/dom/webtiming-document-open.html = FAIL
+BUGWK42432 : http/tests/misc/webtiming-origins.html = FAIL
+BUGWK42432 : http/tests/misc/webtiming-one-redirect.php = FAIL
+BUGWK42432 : http/tests/misc/webtiming-slow-load.php = FAIL
+BUGWK42432 : http/tests/misc/webtiming-ssl.php = FAIL
+BUGWK42432 : http/tests/misc/webtiming-two-redirects.php = FAIL
+
+// FileSystem API is not supported.
+BUGWKGTK SKIP : fast/filesystem = FAIL
+BUGWKGTK SKIP : http/tests/filesystem = FAIL
+BUGWKGTK SKIP : http/tests/security/filesystem-iframe-from-remote.html = FAIL
+BUGWKGTK SKIP : http/tests/websocket/tests/hybi/send-file-blob.html = FAIL
+BUGWKGTK SKIP : http/tests/websocket/tests/hybi/send-file-blob-fail.html = FAIL
+BUGWKGTK SKIP : http/tests/workers/terminate-during-sync-operation.html = FAIL
+BUGWKGTK SKIP : fast/mutation/filesystem-callback-delivery.html = FAIL
+
+// Requires WebP support.
+BUGWKGTK SKIP : fast/canvas/canvas-toDataURL-webp.html = FAIL
+BUGWKGTK SKIP : fast/images/webp-image-decoding.html = FAIL
+
+// DataTransferItems is not yet implemented.
+BUGWKGTK SKIP : editing/pasteboard/data-transfer-items.html = FAIL
+BUGWKGTK SKIP : editing/pasteboard/data-transfer-items-image-png.html = FAIL
+BUGWKGTK SKIP : editing/pasteboard/data-transfer-items-drag-drop-file.html = FAIL
+BUGWKGTK SKIP : editing/pasteboard/data-transfer-items-drag-drop-entry.html = FAIL
+BUGWKGTK SKIP : editing/pasteboard/data-transfer-items-drag-drop-string.html = FAIL
+BUGWKGTK SKIP : fast/events/clipboard-dataTransferItemList.html = FAIL
+BUGWKGTK SKIP : fast/events/drag-dataTransferItemList.html = FAIL
+BUGWKGTK SKIP : fast/events/drag-dataTransferItemList-file-handling.html = FAIL
+
+// Custom MIME type support in DataTransfer is not yet implemented.
+BUGWKGTK SKIP : editing/pasteboard/clipboard-customData.html = FAIL
+BUGWKGTK SKIP : fast/events/drag-customData.html = FAIL
+
+// PasteBoard::plainText() does not support file names.
+BUGWKGTK SKIP : editing/pasteboard/drag-files-to-editable-element.html = FAIL
+
+// Needs grammar checking.
+BUGWKGTK SKIP : editing/spelling/markers.html = FAIL
+
+// Legacy full screen API tests are now obsolete.
+BUGWKGTK SKIP : media/context-menu-actions.html = FAIL
+BUGWKGTK SKIP : media/media-fullscreen-inline.html = FAIL
+BUGWKGTK SKIP : media/media-fullscreen-not-in-document.html = FAIL
+
+// Animation API is disabled
+BUGWKGTK SKIP : animations/animation-api-1.html = FAIL
+
+// Quota API is not supported.
+BUGWKGTK SKIP : storage/storageinfo-missing-arguments.html = FAIL
+BUGWKGTK SKIP : storage/storageinfo-no-callbacks.html = FAIL
+BUGWKGTK SKIP : storage/storageinfo-query-usage.html = FAIL
+BUGWKGTK SKIP : storage/storageinfo-request-quota.html = FAIL
+
+// This platform does not support the Page Visibility API.
+BUGWKGTK SKIP : fast/events/page-visibility-iframe-delete-test.html = FAIL
+BUGWKGTK SKIP : fast/events/page-visibility-iframe-move-test.html = FAIL
+BUGWKGTK SKIP : fast/events/page-visibility-iframe-propagation-test.html = FAIL
+BUGWKGTK SKIP : fast/events/page-visibility-transition-test.html = FAIL
+
+// JSC does not support setIsolatedWorldSecurityOrigin.
+BUGWK61540 : http/tests/security/isolatedWorld/cross-origin-xhr.html = FAIL
+
+// GTK doesn't support smart replace.
+BUGWK61661 : editing/pasteboard/smart-drag-drop.html = FAIL
+BUGWK61661 : editing/pasteboard/drag-drop-list.html = FAIL
+
+// Tests for MediaSource API. Feature is not yet functional.
+BUGWK64731 : http/tests/media/media-source = FAIL
+
+// Encrypted Media Extensions are not enabled.
+BUGWKGTK SKIP : media/encrypted-media = FAIL
+
+// Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
+BUGWKGTK SKIP : fast/dom/HTMLAnchorElement/anchor-nodownload.html = FAIL
+BUGWKGTK SKIP : fast/dom/HTMLAnchorElement/anchor-download.html = FAIL
+BUGWKGTK SKIP : fast/dom/HTMLAnchorElement/anchor-nodownload-set.html = FAIL
+BUGWKGTK SKIP : fast/dom/HTMLAnchorElement/anchor-download-unset.html = FAIL
+
+// Failing because WebGL is not enabled
+BUGWKGTK SKIP : http/tests/security/webgl-remote-read-remote-image-allowed.html = FAIL
+BUGWKGTK SKIP : http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html = FAIL
+BUGWKGTK SKIP : http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html = FAIL
+
+// CSS Grid Layout is not yet enabled.
+BUGWK60731 : fast/css-grid-layout = FAIL
+
+// <style scoped> is not yet enabled.
+BUGWK49142 : fast/css/style-scoped = FAIL
+
+// CSS Regions tests for region styling and scoped styles
+BUGWKGTK SKIP : fast/regions/style-scoped-in-flow-override-container-style.html = FAIL
+BUGWKGTK SKIP : fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html = FAIL
+BUGWKGTK SKIP : fast/regions/style-scoped-in-flow-override-region-styling.html = FAIL
+BUGWKGTK SKIP : fast/regions/style-scoped-in-flow.html = FAIL
+
+// ENABLE(SHADOW_DOM) is disabled.
+BUGWKGTK SKIP : fast/dom/shadow = FAIL
+
+// CSS Regions support not yet enabled.
+BUGWK57312 : fast/regions = FAIL
+
+// CSS Exclusions support not yet enabled.
+BUGWK57311 : fast/exclusions = FAIL
+
+// CSS Filters is disabled
+BUGWKGTK SKIP : css3/filters = FAIL
+
+// CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
+BUGWKGTK SKIP : fast/css/image-set-parsing.html = FAIL
+BUGWKGTK SKIP : fast/css/image-set-parsing-invalid.html = FAIL
+
+// For now, Web Audio API is disabled
+BUGWKGTK SKIP : webaudio = FAIL
+
+// Needs layoutTestController.enableAutoResizeMode()
+BUGWKGTK SKIP : fast/autoresize = FAIL
+
+// The GTK+ build bots don't yet have the muscle to run WebGL tests.
+BUGWKGTK SKIP : compositing/webgl = FAIL
+BUGWKGTK SKIP : fast/canvas/webgl = FAIL
+BUGWKGTK SKIP : http/tests/canvas/webgl = FAIL
+
+// Vibration API support not yet.
+BUGWK72010 : fast/dom/navigator-vibration.html = FAIL
+
+// DumpRenderTree code to enable Java is currently a no-op
+BUGWKGTK SKIP : java = FAIL
+
+// Directory upload is not enabled.
+BUGWKGTK SKIP : fast/forms/file/input-file-directory-upload.html = FAIL
+
+// Microdata DOM API is not yet enabled.
+BUGWKGTK SKIP : fast/dom/MicroData = FAIL
+
+// Web Intents is not yet enabled.
+BUGWKGTK SKIP : webintents = FAIL
+
+// Pointer Lock is not implemented.
+BUGWKGTK SKIP : pointer-lock = FAIL
+
+// Battery Status API support not yet.
+BUGWK62698 : batterystatus = FAIL
+
+// Network Information API support not yet.
+BUGWK73528 : networkinformation = FAIL
+
+// EXIF orientation support has not yet been implemented for this platform.
+BUGWK19688 : fast/images/exif-orientation.html = FAIL
+BUGWK19688 : fast/images/exif-orientation-css.html = FAIL
+
+// Touch adjustment not enabled
+BUGWK78801 : touchadjustment = FAIL
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// End of Expected failures
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Crashing tests
+//////////////////////////////////////////////////////////////////////////////////////////
+
 BUGWK67007 DEBUG : fast/ruby/after-block-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
@@ -9,8 +317,65 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 
 BUGWK76814 DEBUG : fast/xmlhttprequest/xmlhttprequest-get.xhtml = CRASH
 
+BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS CRASH
+BUGWK82269 DEBUG : media/track/track-delete-during-setup.html = CRASH
+BUGWK83679 DEBUG : editing/undo/undo-smart-delete-reversed-selection.html = CRASH
 
+// This test is crashing when run along with other tests on the release build.
+BUGWKGTK : fast/dynamic/layer-hit-test-crash.html = CRASH
+
+// Crashes on GStreamer side when loading one of the media elements of the test.
+BUGWK50155 : fast/events/tabindex-focus-blur-all.html = CRASH
+
+BUGWK54470 DEBUG : svg/text/select-textLength-spacing-squeeze-1.svg = CRASH
+
+// For some reason crashes when run with all tests. Passes individually.
+BUGWKGTK : fast/forms/multiple-form-submission-protection-mouse.html = CRASH
+
+// This test crashes whatever test follows it. Perhaps it's related to the previous failure.
+BUGWKGTK : fast/dom/gc-10.html = CRASH
+
+BUGWK56147 DEBUG : fast/workers/storage/use-same-database-in-page-and-workers.html = CRASH
+
+BUGWK56309 : svg/text/text-deco-01-b.svg = CRASH
+
+BUGWK60158 : fast/dom/Geolocation/argument-types.html = CRASH
+
+// EditorClient::checkTextOfParagraph() is not implemented.
+BUGWKGTK : editing/spelling/spelling-marker-description.html = CRASH
+
+BUGWK65699 : fast/loader/reload-zero-byte-plugin.html = CRASH
+
+BUGWK65183 DEBUG : editing/undo/replace-text-in-node-preserving-markers-crash.html = CRASH
+
+BUGWK68686 DEBUG : editing/pasteboard/drag-drop-input-in-svg.svg = CRASH
+
+BUGWK68700 DEBUG : fast/workers/storage/interrupt-database.html = CRASH
+
+BUGWK69933 DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = CRASH
+BUGWK69933 DEBUG : fast/borders/inline-mask-overlay-image-outset.html = CRASH
+
+BUGWK69001 DEBUG : plugins/js-from-destroy.html = CRASH
+
+BUGWK72245 : fast/images/size-failure.html = CRASH
+
+BUGWK81836 DEBUG : inspector/timeline/timeline-injected-script-eval.html = CRASH
+BUGWK81836 DEBUG : inspector/styles/commit-selector.html = CRASH
+BUGWK81836 DEBUG : inspector/console/console-eval-global.html = CRASH
+
+// Crashes due to debug assert until we fix issues with style elements in SVG
+BUGWKGTK DEBUG : svg/custom/use-referencing-style-crash.svg = CRASH
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// End of Crashing tests
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
 // Flaky tests
+//////////////////////////////////////////////////////////////////////////////////////////
+
+BUGWK44199 SKIP : perf = PASS TEXT
+BUGWK47727 : mathml/presentation = PASS TEXT
 
 BUGWK68878 : media/video-playing-and-pause.html = PASS TEXT
 BUGWK54637 : media/video-display-toggle.html = PASS TEXT
@@ -52,8 +417,6 @@ BUGWK61932 : jquery/manipulation.html = PASS TEXT
 
 BUGWK37623 : scrollbars/scrollbar-crash-on-refresh.html = PASS TEXT
 
-BUGWK59937 : tables/mozilla_expected_failures/bugs/bug85016.html = PASS TEXT
-
 BUGWK71776 : fast/forms/password-placeholder-text-security.html = PASS TEXT
 BUGWK71777 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 
@@ -68,8 +431,6 @@ BUGWK72694 : fast/canvas/canvas-lineWidth.html = PASS TIMEOUT TEXT
 BUGWK73772 : fast/table/multiple-captions-display.xhtml = PASS TEXT
 
 BUGWK74288 : fast/events/overflow-events.html = PASS TEXT
-
-BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS CRASH
 
 BUGWK74493 : platform/gtk/accessibility/unknown-roles-not-exposed.html = PASS TEXT
 BUGWK83686 : platform/gtk/accessibility/aria-table-hierarchy.html = PASS TEXT
@@ -92,7 +453,48 @@ BUGWK80246 DEBUG : fast/css/hover-update.html = PASS TEXT
 
 BUGWK83683 : editing/pasteboard/pasting-empty-html-falls-back-to-text.html = PASS TEXT
 
+//////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Tests timing out
+//////////////////////////////////////////////////////////////////////////////////////////
+
+// These SVG performance tests seem to cause the debug bots to time out.
+BUGWKGTK : svg/hixie/perf = TIMEOUT
+
+BUGWK33445 : http/tests/incremental/split-hex-entities.pl = TIMEOUT
+
+BUGWK33026 : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = TIMEOUT
+
+// Times out only on 32-Bits Release
+BUGWKGTK : http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html = TIMEOUT
+BUGWKGTK : http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html = TIMEOUT
+BUGWKGTK : http/tests/xmlhttprequest/redirect-cross-origin-sync.html = TIMEOUT
+
+BUGWK46644 : fast/text/large-text-composed-char-dos.html = TIMEOUT
+
+BUGWK58972 : media/adopt-node-crash.html = TIMEOUT
+
+BUGWKGTK SKIP : http/tests/multipart/invalid-image-data-standalone.html = TIMEOUT
+
+BUGWKGTK SKIP : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = TIMEOUT
+
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.2_T2.html = TIMEOUT
+
+BUGWKGTK : fast/css/user-drag-none.html = TIMEOUT
+
+BUGWK54119 : http/tests/misc/acid2.html = TIMEOUT
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// End of Tests timing out
+//////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Tests failing
+//////////////////////////////////////////////////////////////////////////////////////////
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
@@ -102,6 +504,1041 @@ BUGWK76639 : fast/table/multiple-captions-crash3.html = IMAGE FAIL
 
 BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE FAIL
 
-BUGWK82269 DEBUG : media/track/track-delete-during-setup.html = CRASH
-BUGWK83679 DEBUG : editing/undo/undo-smart-delete-reversed-selection.html = CRASH
+// Started to fail after upgrading libsoup to 2.37.92
+BUGWK82484 : fast/encoding/percent-escaping.html = TEXT
+BUGWK82484 : fast/loader/file-URL-with-port-number.html = TEXT
+BUGWK82484 : fast/loader/location-port.html = TEXT
 
+BUGWKGTK : accessibility/aria-checkbox-sends-notification.html = FAIL
+BUGWKGTK : accessibility/aria-hidden.html = FAIL
+BUGWKGTK : accessibility/aria-hidden-with-elements.html = FAIL
+BUGWKGTK : accessibility/aria-invalid.html = FAIL
+BUGWKGTK : accessibility/aria-labelledby-on-input.html = FAIL
+BUGWKGTK : accessibility/aria-labelledby-overrides-label.html = FAIL
+BUGWKGTK : accessibility/aria-labelledby-stay-within.html = FAIL
+BUGWKGTK : accessibility/aria-link-supports-press.html = FAIL
+BUGWKGTK : accessibility/aria-list-and-listitem.html = FAIL
+BUGWKGTK : accessibility/aria-option-role.html = FAIL
+BUGWKGTK : accessibility/aria-presentational-role.html = FAIL
+BUGWKGTK : accessibility/aria-readonly.html = FAIL
+BUGWKGTK : accessibility/aria-scrollbar-role.html = FAIL
+BUGWKGTK : accessibility/aria-tab-roles.html = FAIL
+BUGWKGTK : accessibility/aria-text-role.html = FAIL
+BUGWKGTK : accessibility/aria-used-on-image-maps.html = FAIL
+BUGWKGTK : accessibility/button-press-action.html = FAIL
+BUGWKGTK : accessibility/canvas.html = FAIL
+BUGWKGTK : accessibility/editable-webarea-context-menu-point.html = FAIL
+BUGWKGTK : accessibility/ellipsis-text.html = FAIL
+BUGWKGTK : accessibility/iframe-bastardization.html = FAIL
+BUGWKGTK : accessibility/ignore-spacer-elements.html = FAIL
+BUGWKGTK : accessibility/image-link.html = FAIL
+BUGWKGTK : accessibility/image-map1.html = FAIL
+BUGWKGTK : accessibility/image-map2.html = FAIL
+BUGWKGTK : accessibility/inline-continuations.html = FAIL
+BUGWKGTK : accessibility/internal-link-anchors2.html = FAIL
+BUGWKGTK : accessibility/label-for-control-hittest.html = FAIL
+BUGWKGTK : accessibility/language-attribute.html = FAIL
+BUGWKGTK : accessibility/legend.html = FAIL
+BUGWKGTK : accessibility/lists.html = FAIL
+BUGWKGTK : accessibility/loading-iframe-sends-notification.html = FAIL
+BUGWKGTK : accessibility/loading-iframe-updates-axtree.html = FAIL
+BUGWKGTK : accessibility/notification-listeners.html = FAIL
+BUGWKGTK : accessibility/onclick-handlers.html = FAIL
+BUGWKGTK : accessibility/placeholder.html = FAIL
+BUGWKGTK : accessibility/plugin.html = FAIL
+BUGWKGTK : accessibility/radio-button-group-members.html = FAIL
+BUGWKGTK : accessibility/radio-button-title-label.html = FAIL
+BUGWKGTK : accessibility/secure-textfield-title-ui.html = FAIL
+BUGWKGTK : accessibility/selection-states.html = FAIL
+BUGWKGTK : accessibility/table-attributes.html = FAIL
+BUGWKGTK : accessibility/table-detection.html = FAIL
+BUGWKGTK : accessibility/table-one-cell.html = FAIL
+BUGWKGTK : accessibility/table-sections.html = FAIL
+BUGWKGTK : accessibility/table-with-aria-role.html = FAIL
+BUGWKGTK : accessibility/table-with-rules.html = FAIL
+BUGWKGTK : accessibility/textarea-insertion-point-line-number.html = FAIL
+BUGWKGTK : accessibility/textarea-line-for-index.html = FAIL
+BUGWKGTK : accessibility/textarea-selected-text-range.html = FAIL
+BUGWKGTK : accessibility/th-as-title-ui.html = FAIL
+BUGWKGTK : accessibility/transformed-element.html = FAIL
+BUGWKGTK : accessibility/visible-elements.html = FAIL
+
+// Blurring and focusing from LayoutTestController do not work.
+// Test results show a caret and focus ring when there shouldn't be.
+BUGWK53646 : editing/selection/caret-and-focus-ring.html = FAIL
+
+// Blur and focus events are not received for the following tests.
+BUGWKGTK : fast/events/blur-focus-window-should-blur-focus-element.html = FAIL
+BUGWKGTK : fast/dom/HTMLDocument/hasFocus.html = FAIL
+BUGWKGTK : fast/dom/Window/window-onFocus.html = FAIL
+BUGWKGTK : fast/events/frame-tab-focus.html = FAIL
+
+// element.blur() and element.focus() does not seem to work always.
+BUGWKGTK : fast/forms/select-double-onchange.html = FAIL
+BUGWKGTK : fast/forms/select-script-onchange.html = FAIL
+BUGWKGTK : fast/html/tab-order.html = FAIL
+
+// Tests failing because of missing policy delegate callbacks.
+BUGWKGTK : fast/loader/onload-policy-ignore-for-frame.html = FAIL
+BUGWKGTK : fast/loader/policy-delegate-action-hit-test-zoomed.html = FAIL
+BUGWKGTK : fast/loader/reload-policy-delegate.html = FAIL
+BUGWKGTK : fast/loader/stop-provisional-loads.html = FAIL
+BUGWKGTK : fast/loader/subframe-removes-itself.html = FAIL
+
+// This policy delegate is implemented, but it needs the DOM node path in the output.
+BUGWKGTK : fast/encoding/mailto-always-utf-8.html = FAIL
+
+// Missing output when page icon changes. We need some API exposing this event.
+BUGWKGTK : fast/dom/icon-url-property.html = FAIL
+
+// Looks like a bug in the LayoutTestController global history support due to missing API.
+BUGWKGTK : fast/history/window-open.html = FAIL
+
+// All of these IDN encoding tests seem to fail.
+BUGWKGTK : fast/encoding/idn-security.html = FAIL
+
+// These two glyphs cannot be selected separately (verified in GtkLauncher)
+BUGWKGTK : fast/text/international/thai-offsetForPosition-inside-character.html = FAIL
+
+// Caret positioning is incorrect in this test.
+BUGWKGTK : fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html = FAIL
+
+// These failures appear to be bugs in the EventSender
+BUGWK53964 : fast/forms/listbox-onchange.html = FAIL
+BUGWK53964 : fast/forms/listbox-selection-2.html = FAIL
+BUGWK53964 : fast/forms/option-mouseevents.html = FAIL
+
+BUGWK54119 : http/tests/misc/acid2-pixel.html = FAIL
+BUGWK54119 : fast/css/acid2.html = FAIL
+BUGWK54119 : fast/css/acid2-pixel.html = FAIL
+
+// These tests call dumpAsText, but still perform normal render tree dumps.
+BUGWK53955 : fast/dynamic/paused-event-dispatch.html = FAIL
+
+// The test below is not scrolled to the proper position. Perhaps because of
+// asynchronous scrollbar behavior.
+BUGWKGTK : fast/css/font-weight-1.html = FAIL
+
+// Probably failing because resizing is asynchronous.
+BUGWK53959 : fast/dom/Window/window-resize-and-move-arguments.html = FAIL
+BUGWK53959 : fast/dom/Window/window-resize.html = FAIL
+
+// The background is not clipped in this test, as observed in the pixel output.
+BUGWKGTK : fast/backgrounds/background-clip-text.html = FAIL
+
+// Possible bug in eventSender.zoomPageOut()
+BUGWK30575 : fast/dom/elementFromPoint-relative-to-viewport.html = FAIL
+
+// Cairo doesn't support repeat-x and repeat-y
+BUGWK53085 : fast/canvas/patternfill-repeat.html = FAIL
+
+// keygen element rendering is broken
+BUGWK54136 : fast/html/keygen.html = FAIL
+BUGWK54136 : http/tests/misc/submit-post-keygen.html = FAIL
+
+// [GTK] GTK+ does not support hyphenation
+BUGWK44478 : fast/text/hyphenate-character.html = FAIL
+BUGWK44478 : fast/text/hyphens.html = FAIL
+BUGWK44478 : fast/text/hyphenate-first-word.html = FAIL
+BUGWK44478 : fast/text/hyphenate-locale.html = FAIL
+
+// This port doesn't support v8 i18n extension.
+BUGWKGTK : fast/js/i18n-bindings-locale.html = FAIL
+
+BUGWKGTK : http/tests/appcache/crash-when-navigating-away-then-back.html = FAIL
+BUGWKGTK : http/tests/appcache/fallback.html = FAIL
+BUGWKGTK : http/tests/appcache/origin-quota.html = FAIL
+BUGWKGTK : http/tests/appcache/origin-quota-continued-download.html = FAIL
+BUGWKGTK : http/tests/appcache/origin-quota-continued-download-multiple-manifests.html = FAIL
+BUGWKGTK : http/tests/appcache/origin-delete.html = FAIL
+BUGWKGTK : http/tests/appcache/origins-with-appcache.html = FAIL
+
+// LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented.
+BUGWK57127 : http/tests/appcache/origin-usage.html = FAIL
+
+BUGWKGTK : http/tests/loading/bad-scheme-subframe.html = FAIL
+BUGWKGTK : http/tests/loading/bad-server-subframe.html = FAIL
+
+// Needed to cover the fix for <rdar://problem/6727495>
+BUGRDAR6727495 : http/tests/loading/deleted-host-in-resource-load-delegate-callback.html = FAIL
+BUGRDAR6727495 : http/tests/loading/gmail-assert-on-load.html = FAIL
+BUGRDAR6727495 : http/tests/loading/redirect-with-no-location-crash.html = FAIL
+BUGRDAR6727495 : http/tests/loading/text-content-type-with-binary-extension.html = FAIL
+
+BUGWKGTK : http/tests/media/video-play-stall-seek.html = FAIL
+BUGWKGTK : http/tests/media/video-play-stall.html = FAIL
+
+// QuickTime reference movie not supported.
+BUGWKGTK : http/tests/media/video-cross-site.html = FAIL
+
+BUGWKGTK : http/tests/misc/acid3.html = FAIL
+BUGWKGTK : http/tests/misc/link-rel-prefetch-and-subresource.html = FAIL
+BUGWKGTK : http/tests/misc/policy-delegate-called-twice.html = FAIL
+BUGWKGTK : http/tests/misc/prefetch-purpose.html = FAIL
+BUGWKGTK : http/tests/misc/redirect-to-external-url.html = FAIL
+BUGWKGTK : http/tests/misc/window-dot-stop.html = FAIL
+BUGWKGTK : http/tests/multipart/policy-ignore-crash.php = FAIL
+
+// Rendering of multipart images is broken.
+BUGWK54251 : http/tests/multipart/invalid-image-data.html = FAIL
+
+BUGWKGTK : http/tests/plugins/npapi-response-headers.html = FAIL
+BUGWKGTK : http/tests/security/feed-urls-from-remote.html = FAIL
+BUGWKGTK : http/tests/security/mixedContent/insecure-iframe-in-main-frame.html = FAIL
+BUGWKGTK : http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html = FAIL
+BUGWKGTK : http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html = FAIL
+BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = FAIL
+BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html = FAIL
+BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html = FAIL
+BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html = FAIL
+BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny.html = FAIL
+BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html = FAIL
+BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html = FAIL
+BUGWKGTK : http/tests/xmlhttprequest/abort-should-cancel-load.html = FAIL
+BUGWKGTK : http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html = FAIL
+BUGWKGTK : http/tests/xmlhttprequest/logout.html = FAIL
+BUGWKGTK : http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html = FAIL
+
+// We don't seem to support neither of these for now
+BUGWKGTK : http/tests/xmlhttprequest/cross-origin-authorization.html = FAIL
+BUGWKGTK : http/tests/xmlhttprequest/cross-origin-cookie-storage.html = FAIL
+BUGWKGTK : http/tests/xmlhttprequest/cross-origin-no-authorization.html = FAIL
+
+BUGWKGTK : media/video-size-intrinsic-scale.html = FAIL
+
+// Need to implement NPP_HandleEvent() in TestNetscapePlugin
+BUGWKGTK : plugins/get-url-with-blank-target.html = FAIL
+BUGWKGTK : plugins/plugin-initiate-popup-window.html = FAIL
+
+// This test is for clients that choose to make the missing plugin indicator a button
+BUGWKGTK : plugins/clicking-missing-plugin-fires-delegate.html = FAIL
+
+// Need to implement getFormValue().
+BUGWKGTK : plugins/form-value.html = FAIL
+
+// Tests that failed because we don't have an eventSender implementation
+BUGWKGTK : http/tests/plugins/plugin-document-has-focus.html = FAIL
+
+// Missing resource load callback ability in DRT
+BUGWK27905 : http/tests/loading/redirect-methods.html = FAIL
+BUGWK27905 : http/tests/misc/favicon-loads-with-images-disabled.html = FAIL
+
+BUGWK28668 : http/tests/appcache/auth.html = FAIL
+
+// New test infrastructure required -- need isolated worlds
+BUGWK31508 : http/tests/security/isolatedWorld = FAIL
+BUGWK31508 : storage/open-database-creation-callback-isolated-world.html = FAIL
+BUGWK31508 : storage/statement-error-callback-isolated-world.html = FAIL
+BUGWK31508 : storage/statement-success-callback-isolated-world.html = FAIL
+BUGWK31508 : storage/transaction-callback-isolated-world.html = FAIL
+BUGWK31508 : storage/transaction-error-callback-isolated-world.html = FAIL
+BUGWK31508 : storage/transaction-success-callback-isolated-world.html = FAIL
+
+BUGWK30577 : editing/selection/move-left-right.html = FAIL
+
+// Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
+BUGWKGTK : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
+
+BUGWK30620 : fast/xsl/sort-locale.xml = FAIL
+
+BUGWK30818 : fast/css/opacity-float.html = FAIL
+
+BUGWK30724 : fast/loader/opaque-base-url.html = FAIL
+
+BUGWK53986 : svg/text/caret-in-svg-text.xhtml = FAIL
+
+// No authentication challenge handling
+BUGWK51104 : http/tests/loading/basic-credentials-sent-automatically.html = FAIL
+BUGWK51104 : http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html = FAIL
+BUGWK51104 : http/tests/cache/subresource-fragment-identifier.html = FAIL
+BUGWK51104 : http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html = FAIL
+BUGWK51104 : http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html = FAIL
+BUGWK51104 : http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html = FAIL
+
+// This port doesn't support detecting slow unload handlers.
+BUGWKGTK : fast/dom/Window/slow-unload-handler.html = FAIL
+BUGWKGTK : fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html = FAIL
+
+// This port doesn't have a global history delegate yet
+BUGWKGTK : http/tests/globalhistory = FAIL
+
+// Need to add functionality to DumpRenderTree to handle error pages
+BUGWKGTK : fast/history/back-forward-reset-after-error-handling.html = FAIL
+
+// These tests also use firstRectForCharacterRange, but they generate slightly
+// different values. (Chromium also fails here; see their test_expectations.txt file)
+BUGWKGTK : editing/selection/mixed-editability-10.html = FAIL
+BUGWKGTK : editing/selection/5825350-1.html = FAIL
+BUGWKGTK : editing/selection/5825350-2.html = FAIL
+
+// Missing layoutTestController.removeOriginAccessWhitelistEntry()
+BUGWKGTK : http/tests/xmlhttprequest/origin-whitelisting-removal.html = FAIL
+
+BUGWK55682 : fast/images/support-broken-image-delegate.html = FAIL
+
+// Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
+BUGWKGTK : http/tests/misc/will-send-request-returns-null-on-redirect.html = FAIL
+
+// Requires willPerformClientRedirectToURL
+BUGWK58526 : http/tests/loading/onload-vs-immediate-refresh.pl = FAIL
+
+// GTK+ does not have layoutTestController.setDomainRelaxationForbiddenForURLScheme
+BUGWKGTK : http/tests/security/setDomainRelaxationForbiddenForURLScheme.html = FAIL
+
+// New failure after http://trac.webkit.org/changeset/53758
+BUGWKGTK : scrollbars/scrollbar-middleclick-nopaste.html = FAIL
+
+// Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
+BUGWKGTK : fast/loader/crash-copying-backforwardlist.html = FAIL
+
+// Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
+BUGWKGTK : fast/loader/api-test-new-window-data-load-base-url.html = FAIL
+BUGWKGTK : fast/loader/api-test-go-to-current-back-forward-item.html = FAIL
+
+// Failure may be related to DRT; console message also has full file
+// path instead of just the file name
+BUGWK35086 : fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html = FAIL
+
+BUGWK51027 : plugins/refcount-leaks.html = FAIL
+
+BUGWK35158 : fast/forms/restore-selection-after-layout.html = FAIL
+
+// Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
+BUGWK35300 : http/tests/loading/307-after-303-after-post.html = FAIL
+
+// mouseScrollBy() and continuousMouseScrollBy() are not yet implemented in the GTK EventSender API.
+BUGWK36003 : fast/events/remove-child-onscroll.html = FAIL
+BUGWK36003 : fast/events/platform-wheelevent-in-scrolling-div.html = FAIL
+BUGWK36003 : fast/events/continuous-platform-wheelevent-in-scrolling-div.html = FAIL
+BUGWK36003 : fast/events/wheelevent-direction-inverted-from-device.html = FAIL
+BUGWK36003 : fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html = FAIL
+BUGWK36003 : fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html = FAIL
+BUGWK36003 : fast/events/scroll-in-scaled-page-with-overflow-hidden.html = FAIL
+BUGWK36003 : fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html = FAIL
+BUGWK36003 : fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html = FAIL
+BUGWK36003 : fast/events/platform-wheelevent-paging-x-in-scrolling-div.html = FAIL
+BUGWK36003 : fast/events/platform-wheelevent-paging-x-in-scrolling-page.html = FAIL
+BUGWK36003 : fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html = FAIL
+BUGWK36003 : fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html = FAIL
+BUGWK36003 : fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html = FAIL
+BUGWK36003 : fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html = FAIL
+BUGWK36003 : fast/events/platform-wheelevent-paging-y-in-scrolling-div.html = FAIL
+BUGWK36003 : fast/events/platform-wheelevent-paging-y-in-scrolling-page.html = FAIL
+
+// Misses setMediaType() implementation
+BUGWKGTK SKIP : fast/media/print-restores-previous-mediatype.html = TIMEOUT
+
+// fast/loader/stateobjects/replacestate-in-iframe.html = FAIL caused infinite loop
+BUGWK36467 : fast/loader/stateobjects/replacestate-in-iframe.html = FAIL
+
+// Fails on GTK+ since https://bugs.webkit.org/show_bug.cgi?id=25195 got in
+BUGWK36627 : editing/selection/extend-after-mouse-selection.html = FAIL
+
+// Need to add functionality to DumpRenderTree to handle scrollbar policy changes
+BUGWKGTK : fast/overflow/scrollbar-restored-and-then-locked.html = FAIL
+
+BUGWK37532 : fast/js/kde/string-1-n.html = FAIL
+BUGWK37534 : fast/js/kde/string-2-n.html = FAIL
+
+BUGWK83174 SKIP : inspector = FAIL
+BUGWK83174 SKIP : http/tests/inspector = FAIL
+BUGWK82886 SKIP : inspector/styles/override-screen-size.html = FAIL
+BUGWK72434 SKIP : inspector/styles/svg-style.xhtml = FAIL
+BUGWK43034 SKIP : inspector/debugger/debugger-breakpoints-not-activated-on-reload.html = FAIL
+BUGWK81089 SKIP : inspector/debugger/snippets-model.html = FAIL
+BUGWK43332 SKIP : inspector/debugger/dom-breakpoints.html = FAIL
+BUGWK43332 SKIP : inspector/debugger/event-listener-breakpoints.html = FAIL
+BUGWK43332 SKIP : inspector/debugger/step-through-event-listeners.html = FAIL
+BUGWK43332 SKIP : inspector/debugger/xhr-breakpoints.html = FAIL
+BUGWK40300 SKIP : inspector/debugger/live-edit.html = FAIL
+BUGWK50868 SKIP : inspector/debugger/debugger-step-out.html = FAIL
+BUGWK50868 SKIP : inspector/styles/styles-source-lines-inline.html = FAIL
+
+// These inspector tests fell out of the radar after the transition to NRWT
+// Some time out and some are flaky or present different baselines.
+BUGWKGTK SKIP : inspector/timeline/timeline-paint.html = TIMEOUT
+BUGWKGTK SKIP : inspector/timeline/timeline-animation-frame.html = TIMEOUT
+BUGWKGTK SKIP : inspector/timeline/timeline-receive-response-event.html = TIMEOUT
+BUGWKGTK SKIP : inspector/elements/elements-inspect-iframe-from-different-domain.html = TIMEOUT
+BUGWKGTK SKIP : inspector/extensions/extensions-reload.html = TIMEOUT
+BUGWKGTK SKIP : inspector/debugger/source-frame.html = TIMEOUT
+BUGWKGTK SKIP : inspector/debugger/scripts-panel.html = TIMEOUT
+BUGWKGTK SKIP : http/tests/inspector/console-resource-errors.html = TIMEOUT
+BUGWKGTK SKIP : http/tests/inspector/console-cross-origin-iframe-logging.html = TIMEOUT
+BUGWKGTK SKIP : http/tests/inspector/extensions-network-redirect.html = TIMEOUT
+BUGWKGTK SKIP : http/tests/inspector/inspect-element.html = TIMEOUT
+BUGWKGTK SKIP : http/tests/inspector/resource-har-conversion.html = TIMEOUT
+BUGWKGTK SKIP : http/tests/inspector/resource-har-pages.html = TIMEOUT
+BUGWKGTK SKIP : http/tests/inspector/resource-main-cookies.php = TIMEOUT
+BUGWKGTK SKIP : http/tests/inspector/resource-parameters.html = TIMEOUT
+
+BUGWK59706 SKIP : http/tests/inspector/resource-tree/resource-tree-document-url.html = FAIL
+BUGWK59706 SKIP : http/tests/inspector/resource-tree/resource-tree-frame-add.html = FAIL
+BUGWK59706 SKIP : http/tests/inspector/resource-tree/resource-tree-frame-navigate.html = FAIL
+BUGWK59706 SKIP : http/tests/inspector/resource-tree/resource-tree-reload.html = FAIL
+BUGWK56691 SKIP : http/tests/inspector/network/network-size-chunked.html = FAIL
+BUGWK56691 SKIP : http/tests/inspector/network/network-size-sync.html = FAIL
+BUGWK56691 SKIP : http/tests/inspector/network/network-size.html = FAIL
+BUGWK64097 SKIP : http/tests/inspector/network/network-disable-cache-memory.html = FAIL
+BUGWK64097 SKIP : http/tests/inspector/network/network-disable-cache-xhrs.html = FAIL
+BUGWK51380 SKIP : http/tests/inspector/console-websocket-error.html = FAIL
+BUGWK53003 SKIP : http/tests/inspector/compiler-source-mapping-debug.html = FAIL
+
+// JSC doesn't support heap profiling
+BUGWK50485 SKIP : inspector/profiler/heap-snapshot-inspect-dom-wrapper.html = FAIL
+
+BUGWK37537 : plugins/npruntime/round-trip-npobject.html = FAIL
+
+BUGWK37613 SKIP : printing = FAIL
+BUGWK37613 SKIP : editing/execCommand/print.html = TIMEOUT
+
+BUGWK38569 : http/tests/workers/text-encoding.html = FAIL
+
+BUGWK57346 : fast/text/justify-ideograph-leading-expansion.html = FAIL
+
+BUGWK54210 : fast/text/atsui-multiple-renderers.html = FAIL
+BUGWK54210 : fast/text/atsui-negative-spacing-features.html = FAIL
+BUGWK54210 : fast/text/atsui-spacing-features.html = FAIL
+
+BUGWK54194 : fast/text/midword-break-after-breakable-char.html = FAIL
+
+BUGWK54191 : fast/text/capitalize-boundaries.html = FAIL
+
+BUGWK54189 : fast/replaced/border-radius-clip.html = FAIL
+
+// Need to dump context menu items on eventSender.contextClick(true).
+BUGWK39102 : editing/spelling/context-menu-suggestions.html = FAIL
+BUGWK39102 : editing/selection/context-menu-on-text.html = FAIL
+
+// Some input type=range tests fail because of the size
+// of the slider thumb in GTK+ themes.
+BUGWKGTK : fast/forms/range/slider-mouse-events.html = FAIL
+BUGWKGTK : fast/forms/range/slider-zoomed.html = FAIL
+
+// Link prefetch is disabled by default
+BUGWKGTK : fast/dom/HTMLLinkElement/link-and-subresource-test.html = FAIL
+BUGWKGTK : fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html = FAIL
+BUGWKGTK : fast/dom/HTMLLinkElement/prefetch.html = FAIL
+BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-beforeload.html = FAIL
+BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-onerror.html = FAIL
+BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-onload.html = FAIL
+BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-too-many-clients.html = FAIL
+BUGWKGTK : fast/dom/HTMLLinkElement/prerender.html = FAIL
+BUGWKGTK : fast/dom/HTMLLinkElement/subresource.html = FAIL
+
+// Tests failing because the context menu is grabbing mouse events.
+BUGWK40601 : fast/events/mouse-click-events.html = FAIL
+BUGWK40601 : fast/events/mouseup-from-button2.html = FAIL
+BUGWK40601 : fast/events/right-click-focus.html = FAIL
+BUGWK40601 : editing/selection/5354455-1.html = FAIL
+BUGWK40601 : editing/selection/5354455-2.html = FAIL
+BUGWK40601 : media/controls-right-click-on-timebar.html = FAIL
+
+// Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the preloader tests.
+BUGWK58222 : fast/preloader = FAIL
+BUGWK58222 : http/tests/mime/uppercase-mime-type.html = FAIL
+BUGWK58222 : http/tests/loading/preload-append-scan.php = FAIL
+
+// SVG tests that seem to produce incorrect output
+BUGWKGTK : svg/zoom/text/zoom-hixie-mixed-009.xml = FAIL
+BUGWKGTK : svg/custom/mask-excessive-malloc.svg = FAIL
+
+// No matching language preference set
+BUGWKGTK : svg/W3C-SVG-1.1/struct-cond-02-t.svg = FAIL
+
+// The pixel output shows two broken images instead of the sunset.
+BUGWKGTK : svg/W3C-SVG-1.1/struct-image-04-t.svg = FAIL
+
+// The gradient limits seem broken in this test.
+BUGWKGTK : svg/batik/paints/gradientLimit.svg = FAIL
+
+// The middle circle on both rectangles is missing in the pixel output.
+BUGWKGTK : svg/custom/circular-marker-reference-2.svg = FAIL
+BUGWKGTK : svg/custom/non-circular-marker-reference.svg = FAIL
+
+// Tests that fail across all platforms.
+// Even though some platforms don't skip these tests, there are platform-specific
+// results generated that make these tests 'pass'.
+BUGWKGTK : canvas/philip/tests/2d.composite.operation.clear.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.composite.operation.darker.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.drawImage.broken.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.imageData.create1.type.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.imageData.create2.type.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.imageData.put.wrongtype.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.imageData.get.type.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.missingargs.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.pattern.image.broken.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.pattern.image.incomplete.empty.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.draw.baseline.bottom.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.draw.baseline.hanging.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.draw.baseline.middle.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.draw.baseline.top.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.end.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.other.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.space.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.start.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.font.parse.basic.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.font.parse.complex.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.font.parse.invalid.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.font.parse.size.percentage.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.font.parse.system.html = FAIL
+BUGWKGTK : canvas/philip/tests/2d.text.measure.width.space.html = FAIL
+BUGWKGTK : canvas/philip/tests/toDataURL.jpeg.alpha.html = FAIL
+BUGWKGTK : canvas/philip/tests/type.prototype.html = FAIL
+
+
+// These tests are failing for us, but not for Mac. This likely
+// indicates platform specific problems.
+
+// When drawing canvas into itself, WebCore draws canvas's buffer into the same buffer. This
+// results in recursive drawing into cairo surface. We should either use groups when drawing
+// with cairo or copy the buffer every time the HTMLCanvasElement gets repainted.
+BUGWKGTK : canvas/philip/tests/2d.drawImage.self.2.html = FAIL
+
+// A testcase for this failure is already in cairo tree, but has not yet been fixed.
+// http://cgit.freedesktop.org/cairo/commit/?id=4d4056872db94573183473610ad1d81d5439fdc6
+BUGWK54471 : canvas/philip/tests/2d.path.arc.selfintersect.1.html = FAIL
+BUGWK54471 : canvas/philip/tests/2d.path.arc.shape.3.html = FAIL
+
+// This test already passes with cairo trunk, but we're waiting for a new release.
+// Cairo commit http://cgit.freedesktop.org/cairo/commit/?id=e46dc9e17a6f6737d5624dbcdd3c42c2353a72f1
+// Cairo test http://cgit.freedesktop.org/cairo/commit/?id=7386960d063e4a3642fb281aaae071404d837bdb
+BUGWKGTK : canvas/philip/tests/2d.path.arc.zeroradius.html = FAIL
+
+// A testcase for this failure is already in cairo tree, but has not yet been fixed.
+// http://cgit.freedesktop.org/cairo/commit/?id=303f56a2d34a23d933a02fa625873211fb51eb3b
+BUGWKGTK : canvas/philip/tests/2d.path.rect.selfintersect.html = FAIL
+
+// Strangely set miter limit - calculations suggest it should be 1.414 (and the test passes
+// with miter limit set to that) but perhaps there are special steps to be taken because the
+// rectangle has zero height.
+BUGWKGTK : canvas/philip/tests/2d.path.rect.zero.6.html = FAIL
+
+// Repeat-x/-y doesn't work - not supported in Cairo, workaround needed
+BUGWK53085 : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = FAIL
+BUGWK53085 : canvas/philip/tests/2d.pattern.paint.repeatx.outside.html = FAIL
+BUGWK53085 : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = FAIL
+BUGWK53085 : canvas/philip/tests/2d.pattern.paint.repeaty.outside.html = FAIL
+
+// Tests that user modal dialogs fail in the DRT for some reason.
+BUGWK53600 : fast/animation/request-animation-frame-during-modal.html = FAIL
+BUGWK53600 : fast/events/show-modal-dialog-onblur-onfocus.html = FAIL
+BUGWK53600 : fast/events/scroll-event-during-modal-dialog.html = FAIL
+BUGWK53600 : fast/harness/show-modal-dialog.html = FAIL
+BUGWK53600 : http/tests/security/cross-frame-access-call.html = FAIL
+BUGWK53600 : http/tests/security/cross-frame-access-get.html = FAIL
+BUGWK53600 SKIP : inspector/console/console-long-eval-crash.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T2.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T2.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T4.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T4.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T6.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T6.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T8.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T8.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T10.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T1.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T1.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T3.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T3.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T5.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T5.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T7.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T7.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T9.html = FAIL
+BUGWK53600 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T9.html = FAIL
+
+// pastes a space instead of a tab
+BUGWK38437 : editing/pasteboard/5761530-1.html = FAIL
+
+// Missing DRT API.
+BUGWKGTK : http/tests/loading/preload-slow-loading.php = FAIL
+
+// Need setPrinting.
+BUGWK20011 : printing/setPrinting.html = FAIL
+BUGWK20011 : printing/single-line-must-not-be-split-into-two-pages.html = FAIL
+BUGWK20011 : printing/width-overflow.html = FAIL
+
+// Advanced credential handling
+BUGWKGTK : http/tests/security/401-logout/401-logout.php = FAIL
+BUGWKGTK : http/tests/xmlhttprequest/remember-bad-password.html = FAIL
+
+// Still failing, looks like bugs in the EventSender drag-and-drop
+BUGWKGTK : fast/events/5056619.html = FAIL
+
+BUGWK62625 : fast/css/counters/complex-before.html = FAIL
+
+// EventSender::dumpFilenameBeingDragged not implemented.
+BUGWK61826 : fast/events/drag-image-filename.html = FAIL
+
+// Tests that fail because they assume a certain number of mouse
+// movements during drags or fail only in Xvfb
+BUGWKGTK : http/tests/local/drag-over-remote-content.html = FAIL
+BUGWKGTK : http/tests/security/drag-over-remote-content-iframe.html = FAIL
+BUGWKGTK : fast/events/drag-in-frames.html = FAIL
+BUGWKGTK : http/tests/misc/bubble-drag-events.html = FAIL
+BUGWKGTK : fast/events/content-changed-during-drop.html = FAIL
+BUGWKGTK : editing/pasteboard/drop-link.html = FAIL
+
+BUGWK52882 : http/tests/security/drag-drop-same-unique-origin.html = FAIL
+
+// Fails with "Received error from worker: ReferenceError: Can't find variable: revokeObjectURL
+BUGWKGTK : fast/files/workers/worker-apply-blob-url-to-xhr.html = FAIL
+
+// Dragging images and links results in a DataTransfer object containing a non-empty files array
+BUGWK52094 : editing/pasteboard/files-during-page-drags.html = FAIL
+
+// Tests that seem to be Mac only, assume that smart drag-and-drop
+// is enabled or assume platform-dependent sizing.
+BUGWKGTK : http/tests/security/dataTransfer-set-data-file-url.html = FAIL
+BUGWKGTK : fast/events/ondragenter.html = FAIL
+BUGWKGTK : editing/selection/drag-start-event-client-x-y.html = FAIL
+
+// Fails because multiple clicks in a row in the same place
+// register as a triple-click even though the mouse have moved
+// outside of the double-click distance.
+BUGWKGTK : editing/selection/5195166-1.html = FAIL
+
+// Remaining Sputnik failures
+BUGWK43568 : sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html = FAIL
+BUGWK43568 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html = FAIL
+BUGWK43568 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html = FAIL
+BUGWK43568 : sputnik/Unicode/Unicode_510/S7.6_A3.1.html = FAIL
+
+// The following Sputnik tests fail on debug builds.
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T1.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.2_T1.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.2_T2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.3.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.4.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.1_T2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.2_T2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.1_T1.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.2_T1.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.1_T1.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.1_T2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.2_T1.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T1.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T1.html = FAIL
+BUGWKGTK DEBUG : sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_320/S7.6_A3.1.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_320/S7.6_A3.2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_320/S7.6_A5.3_T2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_410/S7.6_A3.1.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_410/S7.6_A3.2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_410/S7.6_A5.3_T2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_500/S7.6_A3.1.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_500/S7.6_A3.2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_510/S7.6_A3.2.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html = FAIL
+
+// The following Sputnik tests fail on the 32bit release bot
+BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html = FAIL
+BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html = FAIL
+BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html = FAIL
+BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html = FAIL
+BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html = FAIL
+BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html = FAIL
+BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html = FAIL
+
+// r65681 broke a couple GTK+ a11y tests
+BUGWK44316 : platform/gtk/accessibility/object-attributes.html = FAIL
+BUGWK44316 : platform/gtk/accessibility/title-and-alt.html = FAIL
+
+BUGWK44932 : canvas/philip/tests/2d.path.isPointInPath.edge.html = FAIL
+
+// viewport meta tag support
+BUGWK47481 : fast/viewport/viewport-45.html = FAIL
+
+// viewport meta tag tests that differ from the Opera results
+BUGWKGTK : fast/viewport/viewport-65.html = FAIL
+BUGWKGTK : fast/viewport/viewport-82.html = FAIL
+BUGWKGTK : fast/viewport/viewport-84.html = FAIL
+BUGWKGTK : fast/viewport/viewport-87.html = FAIL
+BUGWKGTK : fast/viewport/viewport-126.html = FAIL
+BUGWKGTK : fast/viewport/viewport-127.html = FAIL
+
+// Needs more investigation like QT
+BUGWKGTK : fast/dom/nodesFromRect-links-and-text.html = FAIL
+BUGWKGTK : fast/dom/nodesFromRect-inner-documents.html = FAIL
+
+// LayoutTestController::addUserScript not implemented for gtk
+BUGWKGTK : plugins/plugin-document-load-prevented-userscript.html = FAIL
+
+BUGWK50872 : http/tests/misc/dns-prefetch-control.html = FAIL
+
+// The following tests requires the DRT's dumpUserGestureInFrameLoadCallbacks
+// method. But that method is not implemented in gtk port since gtk port can't
+// not get user gesture in frameload callbacks.
+// The related bugs are https://bugs.webkit.org/show_bug.cgi?id=47849/47817.
+BUGWKGTK : fast/frames/location-redirect-user-gesture.html = FAIL
+BUGWKGTK : fast/frames/meta-refresh-user-gesture.html = FAIL
+
+// This test passes locally, but does not pass on the bots. Perhaps
+// it is an issue with the version of Cairo on the bots.
+BUGWK49052 : fast/canvas/pointInPath.html = FAIL
+
+BUGWK49179 : animations/stop-animation-on-suspend.html = FAIL
+
+// Rounding color problems inside pixman
+BUGWK49964 : fast/canvas/canvas-getImageData.html = FAIL
+BUGWK49964 : fast/canvas/canvas-fillPath-shadow.html = FAIL
+BUGWK49964 : fast/canvas/canvas-strokePath-shadow.html = FAIL
+BUGWK49964 : fast/canvas/canvas-transforms-fillRect-shadow.html = FAIL
+BUGWK49964 : fast/canvas/canvas-scale-strokePath-shadow.html = FAIL
+BUGWK49964 : fast/canvas/rgba-parsing.html = FAIL
+
+BUGWK50441 : media/controls-drag-timebar.html = FAIL
+
+BUGWK50740 : editing/spelling/spelling-backspace-between-lines.html = FAIL
+BUGWK50740 : editing/spelling/spellcheck-paste.html = FAIL
+BUGWK50740 : editing/spelling/spellcheck-paste-disabled.html = FAIL
+BUGWK50740 : editing/spelling/spellcheck-queue.html = FAIL
+BUGWK50740 : editing/spelling/spellcheck-sequencenum.html = FAIL
+BUGWK50740 : editing/spelling/spellcheck-async-mutation.html = FAIL
+
+// These require DRT setSerializeHTTPLoads implementation to be reliable.
+BUGWK50758 : http/tests/local/link-stylesheet-load-order.html = FAIL
+BUGWK50758 : http/tests/local/link-stylesheet-load-order-preload.html = FAIL
+BUGWK50758 : fast/preloader/document-write.html = FAIL
+BUGWK50758 : fast/preloader/document-write-2.html = FAIL
+
+// Passing just a username or just a password to
+// layoutTestController.queueLoad() does not work
+BUGWKGTK : http/tests/xmlhttprequest/basic-auth-nouser.html = FAIL
+BUGWKGTK : http/tests/xmlhttprequest/basic-auth-nopassword.html = FAIL
+
+// DRT does not obey layoutTestController.addURLToRedirect()
+BUGWKGTK : http/tests/loading/cross-origin-XHR-willLoadRequest.html = FAIL
+
+BUGWK52798 : http/tests/security/local-CSS-from-remote.html = FAIL
+BUGWK52798 : http/tests/security/local-JavaScript-from-remote.html = FAIL
+BUGWK52798 : http/tests/security/local-iFrame-from-remote.html = FAIL
+BUGWK52798 : http/tests/security/local-image-from-remote.html = FAIL
+BUGWK52798 : http/tests/security/local-user-CSS-from-remote.html = FAIL
+
+// LayoutTestController needs layoutTestController.displayInvalidatedRegion
+BUGWK54073 : plugins/windowless_plugin_paint_test.html = FAIL
+
+BUGWK54389 : http/tests/misc/generated-content-inside-table.html = FAIL
+
+BUGWK40272 : canvas/philip/tests/2d.imageData.object.round.html = FAIL
+BUGWK40272 : canvas/philip/tests/2d.imageData.object.wrap.html = FAIL
+
+// See also https://bugs.webkit.org/show_bug.cgi?id=54926
+BUGWK53707 : fast/viewport/viewport-128.html = FAIL
+BUGWK53707 : http/tests/security/xss-DENIED-xsl-document-redirect.xml = FAIL
+BUGWK53707 : http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml = FAIL
+
+BUGWK56081 : fast/js/large-expressions.html = FAIL
+
+// textInputController.hasGrammarMarker() is not implemented.
+BUGWKGTK : editing/spelling/grammar.html = FAIL
+BUGWKGTK : editing/spelling/grammar-paste.html = FAIL
+
+// layoutTestController::setTextDirection() is not implemented.
+BUGWKGTK : fast/html/set-text-direction.html = FAIL
+
+// layoutTestController.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI
+BUGWK57160 : fast/harness/override-preferences-2.html = FAIL
+
+BUGWK58020 : fast/forms/number/input-number-large-padding.html = FAIL
+
+BUGWK58309 : fast/canvas/DrawImageSinglePixelStretch.html = FAIL
+
+// Expose title direction in WebKit API
+BUGWK58845 : fast/dom/title-directionality.html = FAIL
+BUGWK58845 : fast/dom/title-directionality-removeChild.html = FAIL
+
+BUGWK58741 : fast/text/zero-width-characters-complex-script.html = FAIL
+
+BUGWK59391 : editing/text-iterator/findString.html = FAIL
+
+// HTTP 204 (No Content) should be ignored
+BUGWK60206 : http/tests/navigation/response204.html = FAIL
+
+// Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
+BUGWKGTK : loader/navigation-while-deferring-loads.html = FAIL
+
+// [Qt][GTK] plugins/get-url-with-javascript-url.html = FAIL fails
+BUGWK60834 : plugins/get-url-with-javascript-url.html = FAIL
+
+BUGWK61118 : fullscreen/full-screen-keyboard-enabled.html = FAIL
+BUGWK61118 : fullscreen/full-screen-element-stack.html = FAIL
+BUGWK61118 : fullscreen/full-screen-restrictions.html = FAIL
+
+BUGWK61121 : http/tests/appcache/interrupted-update.html = FAIL
+
+BUGWK61122 : http/tests/navigation/post-307-response.html = FAIL
+
+BUGWK61630 : fast/events/dropzone-002.html = FAIL
+BUGWK61630 : fast/events/dropzone-005.html = FAIL
+
+BUGWK64085 : http/tests/misc/iframe-reparenting-id-collision.html = FAIL
+
+// Font feature settings is not implemented.
+BUGWKGTK : css3/font-feature-settings-rendering.html = FAIL
+
+// This test verifies that a mismatch reftest will fail as intended if both results are same.
+BUGWKGTK : fast/harness/sample-fail-mismatch-reftest.html = FAIL
+
+// Need layoutTestController.setShouldStayOnPageAfterHandlingBeforeUnload
+BUGWK67014 : fast/loader/form-submission-after-beforeunload-cancel.html = FAIL
+
+BUGWK67713 : accessibility/textbox-role-reports-selection.html = FAIL
+
+BUGWK68278 : http/tests/history/back-with-fragment-change.php = FAIL
+
+BUGWK66045 : fast/files/create-blob-url-crash.html = FAIL
+BUGWK66045 : fast/files/url-required-arguments.html = FAIL
+
+BUGWK68512 : accessibility/aria-hidden-updates-alldescendants.html = FAIL
+
+BUGWK68514 : http/tests/security/xssAuditor/xss-filter-bypass-big5.html = FAIL
+BUGWK68514 : http/tests/security/xssAuditor/xss-filter-bypass-sjis.html = FAIL
+
+BUGWK68855 : editing/selection/select-bidi-run.html = FAIL
+
+// This test is out-dated since r95899.
+BUGWK65709 : canvas/philip/tests/2d.drawImage.outsidesource.html = FAIL
+
+// http/tests/multipart/stop-crash.html = FAIL fails on GTK and Qt
+// missing multipart/x-mixed-replace support in libsoup
+BUGWK68979 : http/tests/multipart/stop-crash.html = FAIL
+BUGWK68979 : http/tests/multipart/load-last-non-html-frame.php = FAIL
+
+// REGRESSION(r96870): editing/pasteboard/smart-paste-008.html = FAIL fails on non-Mac
+BUGWK69587 : editing/pasteboard/smart-paste-008.html = FAIL
+
+// Fails because it does not throw a couple of expected exceptions
+BUGWKGTK : http/tests/local/fileapi/send-sliced-dragged-file.html = FAIL
+
+BUGWK70485 : fast/events/drag-selects-image.html = FAIL
+
+// Missing DRT AccessibilityController::addNotificationListener implementation
+BUGWK70606 : accessibility/menu-list-sends-change-notification.html = FAIL
+BUGWK70606 : accessibility/multiselect-list-reports-active-option.html = FAIL
+
+BUGWK71022 : fast/canvas/canvas-composite-image.html = FAIL
+BUGWK71022 : fast/canvas/canvas-composite-canvas.html = FAIL
+
+// REGRESSION(r99195)
+BUGWK70609 : fast/viewport/viewport-121.html = FAIL
+BUGWK70609 : fast/viewport/viewport-122.html = FAIL
+BUGWK70609 : fast/viewport/viewport-125.html = FAIL
+BUGWK70609 : fast/viewport/viewport-129.html = FAIL
+BUGWK70609 : fast/viewport/viewport-18.html = FAIL
+BUGWK70609 : fast/viewport/viewport-36.html = FAIL
+BUGWK70609 : fast/viewport/viewport-37.html = FAIL
+BUGWK70609 : fast/viewport/viewport-43.html = FAIL
+BUGWK70609 : fast/viewport/viewport-46.html = FAIL
+BUGWK70609 : fast/viewport/viewport-52.html = FAIL
+BUGWK70609 : fast/viewport/viewport-53.html = FAIL
+BUGWK70609 : fast/viewport/viewport-54.html = FAIL
+BUGWK70609 : fast/viewport/viewport-55.html = FAIL
+BUGWK70609 : fast/viewport/viewport-60.html = FAIL
+BUGWK70609 : fast/viewport/viewport-75.html = FAIL
+BUGWK70609 : fast/viewport/viewport-76.html = FAIL
+BUGWK70609 : fast/viewport/viewport-83.html = FAIL
+BUGWK70609 : fast/viewport/viewport-86.html = FAIL
+BUGWK70609 : fast/viewport/viewport-warnings-3.html = FAIL
+BUGWK70609 : fast/viewport/viewport-warnings-4.html = FAIL
+BUGWK70609 : fast/viewport/viewport-warnings-6.html = FAIL
+
+// viewport meta tag tests that failed because window.devicePixelRatio is not implemented
+BUGWKGTK : fast/viewport/viewport-133.html = FAIL
+
+// [DRT] didDetectXSS is not implemented
+BUGWK71465 : http/tests/security/xssAuditor/script-tag-with-callbacks.html = FAIL
+
+BUGWK72248 : editing/spelling/spelling-unified-emulation.html = FAIL
+
+BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = FAIL
+
+// failing after enabling reftests
+BUGWK72569 : fast/forms/checkbox-appearance-change-by-checked.html = FAIL
+
+BUGWK73003 : editing/spelling/spellcheck-async.html = FAIL
+
+// [GTK] ClientRect failures
+BUGWK73330 : fast/dom/Element/getBoundingClientRect.html = FAIL
+BUGWK73330 : fast/dom/Element/getClientRects.html = FAIL
+BUGWK73330 : fast/dom/Range/getBoundingClientRect.html = FAIL
+BUGWK73330 : fast/dom/Range/getClientRects.html = FAIL
+
+// 1 pixel difference between 64-bits and 32-bits
+// Some of these also present rounding issues and xx.00 vs xx.
+BUGWK62204 : svg/as-image/img-preserveAspectRatio-support-1.html = FAIL
+BUGWK62204 : svg/batik/text/smallFonts.svg = FAIL
+BUGWK62204 : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = FAIL
+BUGWK62204 : svg/custom/circular-marker-reference-4.svg = FAIL
+BUGWK62204 : svg/custom/empty-merge.svg = FAIL
+BUGWK62204 : svg/custom/relative-sized-inner-svg.xhtml = FAIL
+BUGWK62204 : svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml = FAIL
+BUGWK62204 : svg/custom/use-css-events.svg = FAIL
+BUGWK62204 : svg/custom/image-small-width-height.svg = FAIL
+BUGWK62204 : svg/custom/small-rect-scale.svg = FAIL
+BUGWK62204 : svg/custom/use-on-clip-path-with-transformation.svg = FAIL
+BUGWK62204 : svg/custom/use-on-symbol-inside-pattern.svg = FAIL
+BUGWK62204 : svg/filters/feColorMatrix-saturate.svg = FAIL
+BUGWK62204 : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-40-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/extend-namespace-01-f.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/metadata-example-01-b.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/paths-data-03-f.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/text-align-08-b.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/coords-units-02-b.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/masking-path-02-b.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1-SE/coords-dom-03-f.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1-SE/coords-dom-04-f.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-01-b.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-02-f.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-04-b.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-07-f.svg = FAIL
+
+// Floating point inconsistencies between 32-bit and 64-bit bots
+BUGWKGTK : svg/css/composite-shadow-example.html = FAIL
+BUGWKGTK : svg/css/composite-shadow-with-opacity.html = FAIL
+BUGWKGTK : svg/css/stars-with-shadow.html = FAIL
+BUGWKGTK : svg/carto.net/tabgroup.svg = FAIL
+
+BUGWK78673 : svg/animations/animate-text-nested-transforms.html = FAIL
+
+BUGWK73409 : fast/forms/placeholder-set-attribute.html = FAIL
+BUGWK73409 : fast/forms/search-placeholder-value-changed.html = FAIL
+BUGWK73409 : fast/forms/textarea-placeholder-set-attribute.html = FAIL
+
+// Failing since font metrics change
+BUGWKGTK : fast/block/float/overhanging-tall-block.html = FAIL
+BUGWKGTK : fast/css/percentage-non-integer.html = FAIL
+BUGWKGTK : fast/css/word-space-extra.html = FAIL
+BUGWKGTK : fast/css/zoom-body-scroll.html = FAIL
+BUGWKGTK : fast/repaint/moving-shadow-on-container.html = FAIL
+BUGWKGTK : fast/repaint/moving-shadow-on-path.html = FAIL
+BUGWKGTK : css3/flexbox/line-wrapping.html = FAIL
+BUGWKGTK : fast/css/font-face-data-uri.html = FAIL
+BUGWKGTK : fast/css/font-face-download-error.html = FAIL
+BUGWKGTK : fast/events/keydown-1.html = FAIL
+BUGWKGTK : fast/forms/cursor-at-editable-content-boundary.html = FAIL
+BUGWKGTK : fast/text/glyph-reordering.html = FAIL
+BUGWKGTK : fast/text/ipa-tone-letters.html = FAIL
+
+BUGWK73653 : fast/events/offsetX-offsetY.html = FAIL
+BUGWK73653 : fast/forms/number/spin-in-multi-column.html = FAIL
+BUGWK73653 : fast/forms/range/slider-in-multi-column.html = FAIL
+
+BUGWK73769 : svg/text/text-style-recalc-crash.html = FAIL
+
+BUGWK73768 : fast/forms/file/file-input-reset.html = FAIL
+
+BUGWK74276 : fast/events/dont-loose-last-event.html = FAIL
+
+BUGWK74282 : editing/pasteboard/emacs-ctrl-k-with-move.html = FAIL
+
+BUGWK75785 : accessibility/textbox-role-reports-line-number.html = FAIL
+
+BUGWK75833 : fast/text/international/spaces-combined-in-vertical-text.html = FAIL
+
+BUGWK76048 : fast/text/font-kerning.html = FAIL
+
+// Needs custom policy delegate enhancement to log downloads
+BUGWKGTK : http/tests/download = FAIL
+
+BUGWK77015 : fast/events/clear-drag-state.html = FAIL
+BUGWK77015 : fast/events/clear-edit-drag-state.html = FAIL
+
+BUGWK77413 : fast/parser/nested-fragment-parser-crash.html = FAIL
+
+BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = FAIL
+BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = FAIL
+
+BUGWK77633 : fast/forms/listbox-clear-restore.html = FAIL
+
+BUGWK78434 : fast/dom/Window/window-custom-prototype.html = FAIL
+BUGWK78434 : http/tests/security/cross-frame-access-object-getPrototypeOf.html = FAIL
+
+// These test -apple- and -khtml- prefixed CSS properties, which we don't support.
+BUGWKGTK SKIP : inspector/styles/vendor-prefixes.html = FAIL
+BUGWKGTK : fast/css/apple-prefix.html = FAIL
+
+// Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
+BUGWK76564 : fast/workers/worker-crash-with-invalid-location.html = FAIL
+
+BUGWK78819 : fast/workers/shared-worker-load-error.html = FAIL
+
+BUGWK79203 : fast/dom/MediaStream/argument-types.html = FAIL
+BUGWK79203 : fast/mediastream/peerconnection-Attributes.html = FAIL
+BUGWK79203 : fast/mediastream/peerconnection-argument-types.html = FAIL
+
+// REGRESSION, r109105 made it fail
+BUGWK79555 : fast/events/dispatch-message-string-data.html = FAIL
+
+BUGWK80210 : security/block-test.html = FAIL
+
+BUGWK80158 : plugins/netscape-plugin-page-cache-works.html = FAIL
+
+BUGWK80534 : fast/events/autoscroll-in-textfield.html = FAIL
+
+BUGWK81320 : editing/pasteboard/copy-two-pasteboard-types-both-work.html = FAIL
+
+// Failing since isWordTextBreak is not implemented.
+BUGWK81136 : editing/selection/move-by-word-visually-crash-test-1.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-crash-test-2.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-crash-test-3.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-crash-test-4.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-crash-test-5.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-crash-test-textarea.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-crash-test-css-generated-content.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-inline-block-positioned-element.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-multi-line.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-multi-space.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-null-box.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-single-space-inline-element.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-single-space-one-element.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-textarea.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-wrong-left-right.html = FAIL
+
+// Allowed to regress to fix a crash.
+BUGWK81276 : fast/inline/continuation-outlines-with-layers.html = FAIL
+
+BUGWK82020 : plugins/netscape-dom-access-and-reload.html = FAIL
+
+// The inner <input> should now grow to take the full cell's height.
+BUGWKGTK : fast/table/colspanMinWidth-vertical.html = FAIL
+
+BUGWK82309 : http/tests/xmlhttprequest/basic-auth-default.html = FAIL
+BUGWK82309 : http/tests/xmlhttprequest/re-login-async.html = FAIL
+
+// This should only be a layer change.
+BUGWK82129 : fast/box-shadow/shadow-buffer-partial.html = FAIL
+BUGWK82129 : fast/block/lineboxcontain/block-font.html = FAIL
+BUGWK82129 : fast/block/lineboxcontain/block-glyphs.html = FAIL
+BUGWK82129 : fast/block/lineboxcontain/font.html = FAIL
+
+BUGWK83560 : fast/events/drop-with-file-paths.html = FAIL
+
+BUGWK83675 : fast/multicol/cell-shrinkback.html = FAIL
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// End of Tests failing
+//////////////////////////////////////////////////////////////////////////////////////////
