@@ -3249,7 +3249,8 @@ IntRect FrameView::convertFromRenderer(const RenderObject* renderer, const IntRe
     IntRect rect = renderer->localToAbsoluteQuad(FloatRect(rendererRect)).enclosingBoundingBox();
 
     // Convert from page ("absolute") to FrameView coordinates.
-    rect.moveBy(-scrollPosition());
+    if (!delegatesScrolling())
+        rect.moveBy(-scrollPosition());
 
     return rect;
 }
@@ -3259,7 +3260,8 @@ IntRect FrameView::convertToRenderer(const RenderObject* renderer, const IntRect
     IntRect rect = viewRect;
     
     // Convert from FrameView coords into page ("absolute") coordinates.
-    rect.moveBy(scrollPosition());
+    if (!delegatesScrolling())
+        rect.moveBy(scrollPosition());
 
     // FIXME: we don't have a way to map an absolute rect down to a local quad, so just
     // move the rect for now.
@@ -3272,16 +3274,18 @@ IntPoint FrameView::convertFromRenderer(const RenderObject* renderer, const IntP
     IntPoint point = roundedIntPoint(renderer->localToAbsolute(rendererPoint, false, true /* use transforms */));
 
     // Convert from page ("absolute") to FrameView coordinates.
-    point.moveBy(-scrollPosition());
+    if (!delegatesScrolling())
+        point.moveBy(-scrollPosition());
     return point;
 }
 
 IntPoint FrameView::convertToRenderer(const RenderObject* renderer, const IntPoint& viewPoint) const
 {
     IntPoint point = viewPoint;
-    
+
     // Convert from FrameView coords into page ("absolute") coordinates.
-    point += IntSize(scrollX(), scrollY());
+    if (!delegatesScrolling())
+        point += IntSize(scrollX(), scrollY());
 
     return roundedIntPoint(renderer->absoluteToLocal(point, false, true /* use transforms */));
 }

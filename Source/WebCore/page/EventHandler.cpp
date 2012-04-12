@@ -2468,24 +2468,24 @@ bool EventHandler::handleGestureScrollCore(const PlatformGestureEvent& gestureEv
 #endif
 
 #if ENABLE(TOUCH_ADJUSTMENT)
-void EventHandler::bestClickableNodeForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntPoint& targetPoint, Node*& targetNode)
+bool EventHandler::bestClickableNodeForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntPoint& targetPoint, Node*& targetNode)
 {
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
     HitTestResult result = hitTestResultAtPoint(touchCenter, /*allowShadowContent*/ false, /*ignoreClipping*/ false, DontHitTestScrollbars, hitType, touchRadius);
 
     IntRect touchRect = result.rectForPoint(touchCenter);
     RefPtr<StaticHashSetNodeList> nodeList = StaticHashSetNodeList::adopt(result.rectBasedTestResult());
-    findBestClickableCandidate(targetNode, targetPoint, touchCenter, touchRect, *nodeList.get());
+    return findBestClickableCandidate(targetNode, targetPoint, touchCenter, touchRect, *nodeList.get());
 }
 
-void EventHandler::bestZoomableAreaForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntRect& targetArea, Node*& targetNode)
+bool EventHandler::bestZoomableAreaForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntRect& targetArea, Node*& targetNode)
 {
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
     HitTestResult result = hitTestResultAtPoint(touchCenter, /*allowShadowContent*/ false, /*ignoreClipping*/ false, DontHitTestScrollbars, hitType, touchRadius);
 
     IntRect touchRect = result.rectForPoint(touchCenter);
     RefPtr<StaticHashSetNodeList> nodeList = StaticHashSetNodeList::adopt(result.rectBasedTestResult());
-    findBestZoomableArea(targetNode, targetArea, touchCenter, touchRect, *nodeList.get());
+    return findBestZoomableArea(targetNode, targetArea, touchCenter, touchRect, *nodeList.get());
 }
 #endif
 

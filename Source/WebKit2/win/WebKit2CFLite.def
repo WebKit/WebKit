@@ -207,6 +207,7 @@ EXPORTS
         ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
         ?setSansSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setScrollbarsSuppressed@ScrollView@WebCore@@QAEX_N0@Z
+        ?setDelegatesScrolling@ScrollView@WebCore@@QAEX_N@Z
         ?setScrollOffsetFromInternals@ScrollableArea@WebCore@@QAEXABVIntPoint@2@@Z
         ?setSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setStandardFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z

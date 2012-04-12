@@ -1,0 +1,72 @@
+<html>
+<head>
+    <script src="../../fast/js/resources/js-test-pre.js"></script>
+    <style>
+        #scrolloffsetcontainer {
+            position: absolute;
+            top: 500px;
+            height: 1000px;
+        }
+        body {
+            margin: 0px;
+        }
+    </style>
+</head>
+<body onload="runTests()">
+
+<div id=scrolloffsetcontainer>
+    <iframe frameborder='0px' src='data:text/html,
+        <html>
+        <head>
+            <style>
+                #div0 { position: absolute; left: 50px; top: 50px; width: 300px; height: 300px; box-sizing: border-box; }
+                #div1 { position: absolute; left: 50px; top: 50px; width: 200px; height: 100px; box-sizing: border-box; }
+            </style>
+        </head>
+        <body>
+            <div id=div0>
+                <div id=div1></div>
+            </div>
+        </body>
+        </html>'>
+    </iframe>
+    <p id='description'></p>
+    <div id='console'></div>
+</div>
+
+<script>
+    function testRoundTouch(x, y, radius)
+    {
+        var x = x - radius;
+        var y = y - radius;
+        var width = radius * 2;
+        var height = radius * 2;
+        var zoomableRect = internals.bestZoomableAreaForTouchPoint(x, y, width, height, document);
+        return zoomableRect;
+    }
+
+    function testDirectTouches()
+    {
+        zoomableArea = testRoundTouch(100, 600, 10);
+        shouldEvaluateTo('zoomableArea.top', 600);
+        shouldEvaluateTo('zoomableArea.left', 100);
+        shouldEvaluateTo('zoomableArea.width', 200);
+        shouldEvaluateTo('zoomableArea.height', 100);
+    }
+
+    function runTests()
+    {
+        if (window.layoutTestController && window.internals && internals.touchNodeAdjustedToBestClickableNode && internals.setDelegatesScrolling) {
+            description('Test iframe with main frame scroll offset case of tap-to-zoom mechanics.');
+            window.scrollBy(0,500);
+            internals.setDelegatesScrolling(true, document);
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            testDirectTouches();
+            isSuccessfullyParsed();
+            layoutTestController.notifyDone();
+        }
+    }
+</script>
+</body>
+</html>

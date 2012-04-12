@@ -93,6 +93,7 @@ module window {
         unsigned long lengthFromRange(in Element scope, in Range range) raises (DOMException);
         DOMString rangeAsText(in Range range) raises (DOMException);
 
+        void setDelegatesScrolling(in boolean enabled, in Document document) raises (DOMException);
 #if defined(ENABLE_TOUCH_ADJUSTMENT) && ENABLE_TOUCH_ADJUSTMENT
         WebKitPoint touchPositionAdjustedToBestClickableNode(in long x, in long y, in long width, in long height, in Document document) raises (DOMException);
         Node touchNodeAdjustedToBestClickableNode(in long x, in long y, in long width, in long height, in Document document) raises (DOMException);

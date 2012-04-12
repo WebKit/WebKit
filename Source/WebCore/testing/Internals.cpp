@@ -647,6 +647,16 @@ String Internals::rangeAsText(const Range* range, ExceptionCode& ec)
     return range->text();
 }
 
+void Internals::setDelegatesScrolling(bool enabled, Document* document, ExceptionCode& ec)
+{
+    // Delegate scrolling is valid only on mainframe's view.
+    if (!document || !document->view() || !document->page() || document->page()->mainFrame() != document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    document->view()->setDelegatesScrolling(enabled);
+}
 
 #if ENABLE(TOUCH_ADJUSTMENT)
 PassRefPtr<WebKitPoint> Internals::touchPositionAdjustedToBestClickableNode(long x, long y, long width, long height, Document* document, ExceptionCode& ec)
@@ -662,6 +672,9 @@ PassRefPtr<WebKitPoint> Internals::touchPositionAdjustedToBestClickableNode(long
     Node* targetNode;
     IntPoint adjustedPoint;
     document->frame()->eventHandler()->bestClickableNodeForTouchPoint(point, radius, adjustedPoint, targetNode);
+    if (targetNode)
+        adjustedPoint = targetNode->document()->view()->contentsToWindow(adjustedPoint);
+
     return WebKitPoint::create(adjustedPoint.x(), adjustedPoint.y());
 }
 
@@ -691,10 +704,12 @@ PassRefPtr<ClientRect> Internals::bestZoomableAreaForTouchPoint(long x, long y, 
     IntSize radius(width / 2, height / 2);
     IntPoint point(x + radius.width(), y + radius.height());
 
-
     Node* targetNode;
     IntRect zoomableArea;
     document->frame()->eventHandler()->bestZoomableAreaForTouchPoint(point, radius, zoomableArea, targetNode);
+    if (targetNode)
+        zoomableArea = targetNode->document()->view()->contentsToWindow(zoomableArea);
+
     return ClientRect::create(zoomableArea);
 }
 #endif

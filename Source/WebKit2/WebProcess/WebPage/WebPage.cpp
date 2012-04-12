@@ -1456,14 +1456,19 @@ void WebPage::restoreSessionAndNavigateToCurrentItem(const SessionState& session
 #if PLATFORM(QT)
 void WebPage::highlightPotentialActivation(const IntPoint& point, const IntSize& area)
 {
-    Node* activationNode = 0;
-    Frame* mainframe = m_page->mainFrame();
-    IntPoint adjustedPoint;
-
-    if (point != IntPoint::zero()) {
+    if (point == IntPoint::zero()) {
+        // An empty point deactivates the highlighting.
+        tapHighlightController().hideHighlight();
+    } else {
+        Frame* mainframe = m_page->mainFrame();
+        Node* activationNode = 0;
         Node* adjustedNode = 0;
+        IntPoint adjustedPoint;
+
 #if ENABLE(TOUCH_ADJUSTMENT)
-        mainframe->eventHandler()->bestClickableNodeForTouchPoint(point, IntSize(area.width() / 2, area.height() / 2), adjustedPoint, adjustedNode);
+        if (!mainframe->eventHandler()->bestClickableNodeForTouchPoint(point, IntSize(area.width() / 2, area.height() / 2), adjustedPoint, adjustedNode))
+            return;
+
 #else
         HitTestResult result = mainframe->eventHandler()->hitTestResultAtPoint(mainframe->view()->windowToContents(point), /*allowShadowContent*/ false, /*ignoreClipping*/ true);
         adjustedNode = result.innerNode();
@@ -1481,12 +1486,10 @@ void WebPage::highlightPotentialActivation(const IntPoint& point, const IntSize&
             else if (activationNode)
                 break;
         }
-    }
 
-    if (activationNode)
-        tapHighlightController().highlight(activationNode);
-    else
-        tapHighlightController().hideHighlight();
+        if (activationNode)
+            tapHighlightController().highlight(activationNode);
+    }
 }
 #endif
 
@@ -2535,16 +2538,16 @@ InjectedBundleBackForwardList* WebPage::backForwardList()
 #if ENABLE(TOUCH_ADJUSTMENT)
 void WebPage::findZoomableAreaForPoint(const WebCore::IntPoint& point, const WebCore::IntSize& area)
 {
-    Frame* mainframe = m_mainFrame->coreFrame();
     Node* node = 0;
     IntRect zoomableArea;
-    mainframe->eventHandler()->bestZoomableAreaForTouchPoint(point, IntSize(area.width() / 2, area.height() / 2), zoomableArea, node);
-
+    bool foundAreaForTouchPoint = m_mainFrame->coreFrame()->eventHandler()->bestZoomableAreaForTouchPoint(point, IntSize(area.width() / 2, area.height() / 2), zoomableArea, node);
     ASSERT(node);
-    if (node->document() && node->document()->frame() && node->document()->frame()->view()) {
-        const ScrollView* view = node->document()->frame()->view();
-        zoomableArea = view->contentsToWindow(zoomableArea);
-    }
+
+    if (!foundAreaForTouchPoint)
+        return;
+
+    if (node->document() && node->document()->view())
+        zoomableArea = node->document()->view()->contentsToWindow(zoomableArea);
 
     send(Messages::WebPageProxy::DidFindZoomableArea(point, zoomableArea));
 }

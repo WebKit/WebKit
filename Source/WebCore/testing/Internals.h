@@ -120,6 +120,7 @@ public:
     unsigned lengthFromRange(Element* scope, const Range*, ExceptionCode&);
     String rangeAsText(const Range*, ExceptionCode&);
 
+    void setDelegatesScrolling(bool enabled, Document*, ExceptionCode&);
 #if ENABLE(TOUCH_ADJUSTMENT)
     PassRefPtr<WebKitPoint> touchPositionAdjustedToBestClickableNode(long x, long y, long width, long height, Document*, ExceptionCode&);
     Node* touchNodeAdjustedToBestClickableNode(long x, long y, long width, long height, Document*, ExceptionCode&);
