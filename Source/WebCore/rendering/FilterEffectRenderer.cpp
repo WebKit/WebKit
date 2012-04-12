@@ -332,6 +332,11 @@ void FilterEffectRenderer::prepare()
         setSourceImage(ImageBuffer::create(logicalSize, 1, ColorSpaceDeviceRGB, renderingMode()));
         m_graphicsBufferAttached = true;
     }
+    clearIntermediateResults();
+}
+
+void FilterEffectRenderer::clearIntermediateResults()
+{
     m_sourceGraphic->clearResult();
     for (size_t i = 0; i < m_effects.size(); ++i)
         m_effects[i]->clearResult();
@@ -347,6 +352,7 @@ const LayoutRect& FilterEffectRendererHelper::prepareFilterEffect(RenderLayer* r
     ASSERT(m_haveFilterEffect && renderLayer->filter());
     m_renderLayer = renderLayer;
     m_dirtyRect = dirtyRect;
+    m_dirtyRect.intersect(filterBoxRect);
 
     FilterEffectRenderer* filter = renderLayer->filter();
 
@@ -354,7 +360,7 @@ const LayoutRect& FilterEffectRendererHelper::prepareFilterEffect(RenderLayer* r
     // Such filters include blur, drop-shadow and shaders. For that reason,
     // we keep the whole image buffer in memory and repaint only dirty areas.
     bool hasFilterThatMovesPixels = filter->hasFilterThatMovesPixels();
-    LayoutRect filterSourceRect = hasFilterThatMovesPixels ? filterBoxRect : dirtyRect;
+    LayoutRect filterSourceRect = hasFilterThatMovesPixels ? filterBoxRect : m_dirtyRect;
     m_paintOffset = filterSourceRect.location();
     filterSourceRect.setLocation(LayoutPoint());
 
@@ -404,6 +410,8 @@ GraphicsContext* FilterEffectRendererHelper::applyFilterEffect()
     destRect.move(m_paintOffset.x(), m_paintOffset.y());
     
     m_savedGraphicsContext->drawImageBuffer(filter->output(), m_renderLayer->renderer()->style()->colorSpace(), pixelSnappedIntRect(destRect), CompositeSourceOver);
+    
+    filter->clearIntermediateResults();
     
     return m_savedGraphicsContext;
 }

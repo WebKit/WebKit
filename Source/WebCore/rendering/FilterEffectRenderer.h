@@ -108,6 +108,7 @@ public:
 
     void build(Document*, const FilterOperations&);
     bool updateBackingStore(const FloatRect& filterRect);
+    void clearIntermediateResults();
     void prepare();
     void apply();
     
