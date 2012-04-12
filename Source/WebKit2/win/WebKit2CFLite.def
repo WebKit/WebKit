@@ -175,16 +175,16 @@ EXPORTS
         ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@UStringHash@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
         ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@VMarkerTypes@DocumentMarker@2@@Z
-        ?number@String@WTF@@SA?AV12@I@Z
-        ?number@String@WTF@@SA?AV12@H@Z
-        ?observeFrame@FrameDestructionObserver@WebCore@@IAEXPAVFrame@2@@Z
-        ?overrideUserPreferredLanguages@WebCore@@YAXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z
         ?nextSibling@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ??0ComposedShadowTreeWalker@WebCore@@QAE@PBVNode@1@W4Policy@01@@Z
         ?firstChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?lastChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?next@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?previous@ComposedShadowTreeWalker@WebCore@@QAEXXZ
+        ?number@String@WTF@@SA?AV12@I@Z
+        ?number@String@WTF@@SA?AV12@H@Z
+        ?observeFrame@FrameDestructionObserver@WebCore@@IAEXPAVFrame@2@@Z
+        ?overrideUserPreferredLanguages@WebCore@@YAXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z
         ?numberOfScopedHTMLStyleChildren@Node@WebCore@@QBEIXZ
         ?page@Document@WebCore@@QBEPAVPage@2@XZ
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
@@ -194,6 +194,7 @@ EXPORTS
         ?reverseFind@StringImpl@WTF@@QAEI_WI@Z
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
         ?s_info@JSNode@WebCore@@2UClassInfo@JSC@@B
+        ?s_info@JSDOMGlobalObject@WebCore@@2UClassInfo@JSC@@B
         ?scriptExecutionContext@JSDOMGlobalObject@WebCore@@QBEPAVScriptExecutionContext@2@XZ
         ?scriptNameToCode@WebCore@@YA?AW4UScriptCode@@ABVString@WTF@@@Z
         ?scrollElementToRect@FrameView@WebCore@@QAEXPAVElement@2@ABVIntRect@2@@Z
@@ -234,5 +235,5 @@ EXPORTS
         ?utf8@String@WTF@@QBE?AVCString@2@_N@Z
         ?view@Document@WebCore@@QBEPAVFrameView@2@XZ
         ?willDetachPage@FrameDestructionObserver@WebCore@@UAEXXZ
-        ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIII_N@Z
+        ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIII_N0@Z
         ?selectionStartHasMarkerFor@Editor@WebCore@@QBE_NW4MarkerType@DocumentMarker@2@HH@Z

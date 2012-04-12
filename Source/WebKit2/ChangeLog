@@ -1,3 +1,10 @@
+2012-04-12  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Build fix after Windows export definition file change.
+
+        * win/WebKit2CFLite.def: This file needs to be kept in sync with
+        WebKit2.def (aside from the WebKitInterface exports.)
+
 2012-04-12  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Add flag to enable / disable exclusions at runtime
