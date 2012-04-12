@@ -15,10 +15,10 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x30
           RenderText {#text} at (0,0) size 33x30
             text run at (0,0) width 33: "foo"
-          RenderInline {SPAN} at (0,0) size 7x30
-            RenderText {#text} at (33,0) size 7x30
-              text run at (33,0) width 7: "\x{9}"
-          RenderText {#text} at (40,0) size 34x30
-            text run at (40,0) width 34: "bar"
+          RenderInline {SPAN} at (0,0) size 23x30
+            RenderText {#text} at (33,0) size 23x30
+              text run at (33,0) width 23: "\x{9}"
+          RenderText {#text} at (56,0) size 34x30
+            text run at (56,0) width 34: "bar"
 selection start: position 0 of child 2 {#text} of child 1 {DIV} of child 1 {DIV} of body
 selection end:   position 3 of child 2 {#text} of child 1 {DIV} of child 1 {DIV} of body

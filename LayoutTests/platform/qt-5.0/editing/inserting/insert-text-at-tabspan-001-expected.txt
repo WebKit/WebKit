@@ -11,13 +11,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 58x30
+        RenderInline {SPAN} at (0,0) size 180x30
           RenderText {#text} at (14,14) size 25x30
             text run at (14,14) width 25: "ax"
-          RenderInline {SPAN} at (0,0) size 21x30
-            RenderText {#text} at (39,14) size 21x30
-              text run at (39,14) width 21: "\x{9}\x{9}\x{9}"
-          RenderText {#text} at (60,14) size 12x30
-            text run at (60,14) width 12: "z"
+          RenderInline {SPAN} at (0,0) size 143x30
+            RenderText {#text} at (39,14) size 143x30
+              text run at (39,14) width 143: "\x{9}\x{9}\x{9}"
+          RenderText {#text} at (182,14) size 12x30
+            text run at (182,14) width 12: "z"
         RenderText {#text} at (0,0) size 0x0
 caret: position 2 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

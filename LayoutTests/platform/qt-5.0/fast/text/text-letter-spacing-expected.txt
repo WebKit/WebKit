@@ -21,9 +21,9 @@ layer at (0,0) size 784x1938
         RenderText {#text} at (0,0) size 732x21
           text run at (0,0) width 732: "The next line tests a slight positive letter spacing, and should be slightly spaced out (wider than normal)."
       RenderBlock {P} at (0,232) size 768x21 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 173x21
-          RenderText {#text} at (160,0) size 173x21
-            text run at (160,0) width 173: "Hello, world"
+        RenderInline {SPAN} at (0,0) size 181x21
+          RenderText {#text} at (160,0) size 181x21
+            text run at (160,0) width 181: "Hello, world"
       RenderBlock {P} at (0,269) size 768x42 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 756x42
           text run at (0,0) width 756: "The next line tests a large positive letter spacing, and should be *very* spaced out. You may only see an 'H'"
@@ -113,9 +113,9 @@ layer at (0,0) size 784x1938
         RenderText {#text} at (0,0) size 447x21
           text run at (0,0) width 447: "The next line should be slightly spaced out (wider than normal)."
       RenderBlock {P} at (0,1494) size 768x21 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 173x21
-          RenderText {#text} at (160,0) size 173x21
-            text run at (160,0) width 173 RTL override: "Hello, world"
+        RenderInline {SPAN} at (0,0) size 181x21
+          RenderText {#text} at (160,0) size 181x21
+            text run at (160,0) width 181 RTL override: "Hello, world"
       RenderBlock {P} at (0,1531) size 768x21 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 523x21
           text run at (0,0) width 387: "The next line should be crammed backwards, just as if "
@@ -151,10 +151,10 @@ layer at (8,797) size 85x21
   RenderInline {SPAN} at (0,0) size 85x21 [bgcolor=#CCCCFF]
     RenderText {#text} at (160,0) size 85x21
       text run at (160,0) width 85: "Hello, world"
-layer at (8,892) size 173x21
-  RenderInline {SPAN} at (0,0) size 173x21 [bgcolor=#CCCCFF]
-    RenderText {#text} at (160,0) size 173x21
-      text run at (160,0) width 173: "Hello, world"
+layer at (8,892) size 181x21
+  RenderInline {SPAN} at (0,0) size 181x21 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 181x21
+      text run at (160,0) width 181: "Hello, world"
 layer at (8,966) size 19402x42
   RenderInline {SPAN} at (0,0) size 19402x42 [bgcolor=#CCCCFF]
     RenderText {#text} at (160,0) size 19402x42
@@ -177,10 +177,10 @@ layer at (8,1325) size 0x21
   RenderInline {SPAN} at (0,0) size 0x21 [bgcolor=#CCCCFF]
     RenderText {#text} at (160,0) size 0x21
       text run at (160,0) width 0: "Hello, world"
-layer at (8,1753) size 173x21
-  RenderInline {SPAN} at (0,0) size 173x21 [bgcolor=#CCCCFF]
-    RenderText {#text} at (160,0) size 173x21
-      text run at (160,0) width 173 RTL override: "Hello, world"
+layer at (8,1753) size 181x21
+  RenderInline {SPAN} at (0,0) size 181x21 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 181x21
+      text run at (160,0) width 181 RTL override: "Hello, world"
 layer at (8,1827) size 0x21
   RenderInline {SPAN} at (0,0) size 0x21 [bgcolor=#CCCCFF]
     RenderText {#text} at (160,0) size 0x21
