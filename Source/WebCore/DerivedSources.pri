@@ -456,8 +456,8 @@ IDL_BINDINGS += \
 v8 {
   IDL_BINDINGS += \
     $$PWD/html/canvas/CanvasPixelArray.idl \
-    $$PWD/storage/IDBVersionChangeEvent.idl \
-    $$PWD/storage/IDBVersionChangeRequest.idl
+    $$PWD/Modules/indexeddb/IDBVersionChangeEvent.idl \
+    $$PWD/Modules/indexeddb/IDBVersionChangeRequest.idl
 }
 
 contains(DEFINES, ENABLE_SVG=1) {

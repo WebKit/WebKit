@@ -1,3 +1,13 @@
+2012-04-12  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Fix WebKit1 build with V8
+        https://bugs.webkit.org/show_bug.cgi?id=83322
+
+        Reviewed by Adam Barth.
+
+        * wtf/StdLibExtras.h:
+        (WTF):
+
 2012-04-12  Jer Noble  <jer.noble@apple.com>
 
         ThreadingWin: Mutex::unlock() can be "over-unlocked".

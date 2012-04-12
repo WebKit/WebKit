@@ -1,3 +1,17 @@
+2012-04-12  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Fix WebKit1 build with V8
+        https://bugs.webkit.org/show_bug.cgi?id=83322
+
+        Reviewed by Adam Barth.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::didCreateScriptContext):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+        (FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::allowScriptExtension):
+        * WebCoreSupport/InitWebCoreQt.cpp:
+
 2012-03-05  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Use QRawFont when building with Qt 5

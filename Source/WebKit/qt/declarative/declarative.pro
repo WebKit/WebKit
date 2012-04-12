@@ -7,6 +7,8 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
+load(features)
+
 public_api.file = public.pri
 public_api.makefile = Makefile.declarative.public
 SUBDIRS += public_api

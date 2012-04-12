@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#if ENABLE(INSPECTOR)
 #include "ScriptProfiler.h"
 
 #include "DOMWrapperVisitor.h"
@@ -43,7 +44,6 @@
 
 namespace WebCore {
 
-#if ENABLE(INSPECTOR)
 void ScriptProfiler::start(ScriptState* state, const String& title)
 {
     v8::HandleScope hs;
@@ -163,13 +163,10 @@ static v8::RetainedObjectInfo* retainedDOMInfo(uint16_t classId, v8::Handle<v8::
     Node* node = V8Node::toNative(wrapper.As<v8::Object>());
     return node ? new RetainedDOMInfo(node) : 0;
 }
-#endif // ENABLE(INSPECTOR)
 
 void ScriptProfiler::initialize()
 {
-#if ENABLE(INSPECTOR)
     v8::HeapProfiler::DefineWrapperClass(v8DOMSubtreeClassId, &retainedDOMInfo);
-#endif // ENABLE(INSPECTOR)
 }
 
 void ScriptProfiler::visitJSDOMWrappers(DOMWrapperVisitor* visitor)
@@ -194,3 +191,5 @@ void ScriptProfiler::visitExternalJSStrings(DOMWrapperVisitor* visitor)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)

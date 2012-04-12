@@ -279,6 +279,13 @@ contains(DEFINES, ENABLE_FULLSCREEN_API=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE
 contains(DEFINES, ENABLE_REQUEST_ANIMATION_FRAME=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_REQUEST_ANIMATION_FRAME=1
 contains(DEFINES, ENABLE_TOUCH_ADJUSTMENT=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_TOUCH_ADJUSTMENT=1
 
+v8 {
+    # This have to be placed here because command line arguments, such as CONFIG+=v8 are
+    # not considered by qmake when processing defaults_pre.prf.
+    root_project_file: message("Building WebKit2 with v8 is not supported currently. Disabling WebKit2.")
+    CONFIG += no_webkit2
+}
+
 # Used to compute defaults for the build-webkit script
 # Don't place anything after this!
 CONFIG(compute_defaults) {

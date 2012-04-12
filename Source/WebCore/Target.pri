@@ -103,6 +103,7 @@ v8 {
         bindings/v8/custom/V8Uint8ArrayCustom.cpp \
         bindings/v8/custom/V8Uint16ArrayCustom.cpp \
         bindings/v8/custom/V8Uint32ArrayCustom.cpp \
+        bindings/v8/custom/V8Uint8ClampedArrayCustom.cpp \
         \
         bindings/v8/DateExtension.cpp \
         bindings/v8/DOMData.cpp \
@@ -130,6 +131,7 @@ v8 {
         bindings/v8/SerializedScriptValue.cpp \
         bindings/v8/V8AbstractEventListener.cpp \
         bindings/v8/V8Binding.cpp \
+        bindings/v8/V8BindingPerContextData.cpp \
         bindings/v8/V8Collection.cpp \
         bindings/v8/V8DOMMap.cpp \
         bindings/v8/V8DOMWrapper.cpp \
@@ -4095,4 +4097,3 @@ contains(CONFIG, graphics_surfaces) {
 
 # Make sure the derived sources are built
 include(DerivedSources.pri)
-

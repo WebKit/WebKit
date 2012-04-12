@@ -31,8 +31,10 @@ namespace WebCore {
 
 bool PlatformSupport::popupsAllowed(NPP npp)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     if (npp && npp->ndata)
         return static_cast<PluginView*>(npp->ndata)->arePopupsAllowed();
+#endif
 
     return false;
 }

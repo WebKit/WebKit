@@ -11,4 +11,8 @@ SOURCES += \
     $$PWD/YarrCanonicalizeUCS2.cpp
 
 # For UString.h
-v8: INCLUDEPATH += $$PWD/../runtime
+v8 {
+    INCLUDEPATH += \
+        $$PWD/.. \
+        $$PWD/../runtime
+}

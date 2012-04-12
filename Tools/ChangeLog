@@ -1,3 +1,15 @@
+2012-04-12  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Fix WebKit1 build with V8
+        https://bugs.webkit.org/show_bug.cgi?id=83322
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/features.prf:
+
 2012-04-12  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy fails on metered_stream_unittest for non-US West Coast Time Zones

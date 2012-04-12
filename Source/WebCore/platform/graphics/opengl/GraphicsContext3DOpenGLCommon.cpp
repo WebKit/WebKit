@@ -45,6 +45,7 @@
 #include <wtf/ArrayBufferView.h>
 #include <wtf/Float32Array.h>
 #include <wtf/Int32Array.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/Uint8Array.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>

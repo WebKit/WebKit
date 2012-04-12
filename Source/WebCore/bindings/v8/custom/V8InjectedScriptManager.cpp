@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#if ENABLE(INSPECTOR)
 #include "InjectedScriptManager.h"
 
 #include "DOMWindow.h"
@@ -171,3 +172,5 @@ bool InjectedScriptManager::canAccessInspectedWindow(ScriptState* scriptState)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)

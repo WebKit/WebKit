@@ -5,6 +5,8 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
+load(features)
+
 # Flag that we're now done processing the project file. This allows
 # a feature to distinguish between being processed due to a load()
 # or include() and a CONFIG += feature.
@@ -48,8 +50,11 @@ CONFIG -= warn_on
     -Winit-self \
     $$QMAKE_CXXFLAGS
 
-contains(JAVASCRIPTCORE_JIT, yes): DEFINES+=ENABLE_JIT=1
-contains(JAVASCRIPTCORE_JIT, no): DEFINES+=ENABLE_JIT=0
+v8: DEFINES += WTF_USE_V8=1
+else {
+    contains(JAVASCRIPTCORE_JIT, yes): DEFINES+=ENABLE_JIT=1
+    contains(JAVASCRIPTCORE_JIT, no): DEFINES+=ENABLE_JIT=0
+}
 
 # Template configurations
 contains(TEMPLATE, derived) {

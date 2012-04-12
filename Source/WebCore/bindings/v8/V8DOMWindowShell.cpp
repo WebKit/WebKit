@@ -294,9 +294,9 @@ bool V8DOMWindowShell::initContextIfNeeded()
         v8::V8::AddMessageListener(&v8UncaughtExceptionHandler);
 
         v8::V8::SetFailedAccessCheckCallbackFunction(reportUnsafeJavaScriptAccess);
-
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         ScriptProfiler::initialize();
-
+#endif
         V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 
         isV8Initialized = true;

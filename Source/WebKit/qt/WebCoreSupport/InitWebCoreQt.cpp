@@ -42,10 +42,9 @@
 #endif
 
 #include "qwebelement_p.h"
+#include <JavaScriptCore/runtime/InitializeThreading.h>
 #include <QApplication>
 #include <QStyle>
-
-#include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
 
 namespace WebKit {

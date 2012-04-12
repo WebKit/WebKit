@@ -11,7 +11,8 @@ DESTDIR = $$ROOT_BUILD_DIR/bin
 
 load(features)
 
-WEBKIT += wtf javascriptcore webcore
+WEBKIT += wtf webcore
+!v8: WEBKIT += javascriptcore
 
 INCLUDEPATH += \
     $$PWD/.. \

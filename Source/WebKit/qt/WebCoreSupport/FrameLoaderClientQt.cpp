@@ -397,7 +397,7 @@ void FrameLoaderClientQt::dispatchDidChangeLocationWithinPage()
 }
 
 #if USE(V8)
-void FrameLoaderClientQt::didCreateScriptContext(v8::Handle<v8::Context>, int)
+void FrameLoaderClientQt::didCreateScriptContext(v8::Handle<v8::Context>, int, int)
 {
 }
 void FrameLoaderClientQt::willReleaseScriptContext(v8::Handle<v8::Context>, int)

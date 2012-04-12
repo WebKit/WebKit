@@ -28,7 +28,7 @@
 #include "config.h"
 #include "ScriptController.h"
 
-#include <QJSEngine>
+#include <QtQml/QJSEngine>
 
 namespace WebCore {
 

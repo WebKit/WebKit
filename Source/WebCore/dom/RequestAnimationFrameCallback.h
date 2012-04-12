@@ -31,6 +31,7 @@
 #ifndef RequestAnimationFrameCallback_h
 #define RequestAnimationFrameCallback_h
 
+#include "DOMTimeStamp.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

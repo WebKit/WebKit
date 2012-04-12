@@ -34,8 +34,13 @@
 #endif
 
 #include <wtf/ExportMacros.h>
-#include <runtime/JSExportMacros.h>
 #include "PlatformExportMacros.h"
+
+#if PLATFORM(QT) && USE(V8)
+#include <JavaScriptCore/runtime/JSExportMacros.h>
+#else
+#include <runtime/JSExportMacros.h>
+#endif
 
 #ifdef __APPLE__
 #define HAVE_FUNC_USLEEP 1

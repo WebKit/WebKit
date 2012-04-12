@@ -124,8 +124,9 @@ namespace WebCore {
         }
 
         StringCache* stringCache() { return &m_stringCache; }
+#if ENABLE(INSPECTOR)
         void visitJSExternalStrings(DOMWrapperVisitor*);
-
+#endif
         DOMDataList& allStores() { return m_domDataList; }
 
         V8HiddenPropertyName* hiddenPropertyName() { return &m_hiddenPropertyName; }
