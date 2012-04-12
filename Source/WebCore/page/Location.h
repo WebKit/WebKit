@@ -29,6 +29,7 @@
 #ifndef Location_h
 #define Location_h
 
+#include "DOMStringList.h"
 #include "DOMWindowProperty.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -70,6 +71,8 @@ public:
     String origin() const;
 
     String toString() const { return href(); }
+
+    PassRefPtr<DOMStringList> ancestorOrigins() const;
 
 private:
     explicit Location(Frame*);

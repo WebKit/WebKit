@@ -64,6 +64,8 @@ module window {
                  readonly attribute DOMString origin;
 #endif
 
+        readonly attribute DOMStringList ancestorOrigins;
+
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [NotEnumerable, Custom, V8Unforgeable, V8ReadOnly, ImplementedAs=toStringFunction] DOMString toString();
 #endif
