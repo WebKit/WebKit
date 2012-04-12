@@ -46,8 +46,8 @@ TEST(WebSocketDeflaterTest, TestCompressHello)
 
     ASSERT_TRUE(deflater->addBytes(inputData, inputLength));
     ASSERT_TRUE(deflater->finish());
-    const char expectedFirst[] = {0xf2, 0x48, 0xcd, 0xc9, 0xc9, 0x07, 0x00};
-    EXPECT_EQ(sizeof(expectedFirst), deflater->size());
+    const char* expectedFirst = "\xf2\x48\xcd\xc9\xc9\x07\x00";
+    EXPECT_EQ(7U, deflater->size());
     EXPECT_EQ(0, memcmp(expectedFirst, deflater->data(), deflater->size()));
     ASSERT_TRUE(inflater->addBytes(deflater->data(), deflater->size()));
     ASSERT_TRUE(inflater->finish());
@@ -59,8 +59,8 @@ TEST(WebSocketDeflaterTest, TestCompressHello)
 
     ASSERT_TRUE(deflater->addBytes(inputData, inputLength));
     ASSERT_TRUE(deflater->finish());
-    const char expectedSecond[] = {0xf2, 0x00, 0x11, 0x00, 0x00};
-    EXPECT_EQ(sizeof(expectedSecond), deflater->size());
+    const char* expectedSecond = "\xf2\x00\x11\x00\x00";
+    EXPECT_EQ(5U, deflater->size());
     EXPECT_EQ(0, memcmp(expectedSecond, deflater->data(), deflater->size()));
     ASSERT_TRUE(inflater->addBytes(deflater->data(), deflater->size()));
     ASSERT_TRUE(inflater->finish());
@@ -93,7 +93,7 @@ TEST(WebSocketDeflaterTest, TestNoContextTakeOver)
     ASSERT_TRUE(deflater->initialize());
     OwnPtr<WebSocketInflater> inflater = WebSocketInflater::create();
     ASSERT_TRUE(inflater->initialize());
-    const char expected[] = {0xf2, 0x48, 0xcd, 0xc9, 0xc9, 0x07, 0x00};
+    const char* expected = "\xf2\x48\xcd\xc9\xc9\x07\x00";
     const char* inputData = "Hello";
     const size_t inputLength = strlen(inputData);
 
@@ -102,7 +102,7 @@ TEST(WebSocketDeflaterTest, TestNoContextTakeOver)
     for (size_t i = 0; i < 2; ++i) {
         ASSERT_TRUE(deflater->addBytes(inputData, inputLength));
         ASSERT_TRUE(deflater->finish());
-        EXPECT_EQ(sizeof(expected), deflater->size());
+        EXPECT_EQ(7U, deflater->size());
         EXPECT_EQ(0, memcmp(expected, deflater->data(), deflater->size()));
         ASSERT_TRUE(inflater->addBytes(deflater->data(), deflater->size()));
         ASSERT_TRUE(inflater->finish());
