@@ -487,12 +487,12 @@ LayoutUnit RenderBox::clientHeight() const
 
 int RenderBox::pixelSnappedClientWidth() const
 {
-    return snapSizeToPixel(clientWidth(), clientLeft());
+    return snapSizeToPixel(clientWidth(), x() + clientLeft());
 }
 
 int RenderBox::pixelSnappedClientHeight() const
 {
-    return snapSizeToPixel(clientHeight(), clientTop());
+    return snapSizeToPixel(clientHeight(), y() + clientTop());
 }
 
 int RenderBox::scrollWidth() const
@@ -503,7 +503,7 @@ int RenderBox::scrollWidth() const
     // FIXME: Need to work right with writing modes.
     if (style()->isLeftToRightDirection())
         return snapSizeToPixel(max(clientWidth(), maxXLayoutOverflow() - borderLeft()), clientLeft());
-    return clientWidth() - min(0, minXLayoutOverflow() - borderLeft());
+    return clientWidth() - min(ZERO_LAYOUT_UNIT, minXLayoutOverflow() - borderLeft());
 }
 
 int RenderBox::scrollHeight() const
