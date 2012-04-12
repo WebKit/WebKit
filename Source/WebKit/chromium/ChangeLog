@@ -1,3 +1,27 @@
+2012-04-11  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Stub out WebKit interface for get(IndexedKeyRange)
+        https://bugs.webkit.org/show_bug.cgi?id=83637
+
+        Reviewed by Kent Tamura.
+
+        This is just a stub-out of IDBObjectStore.get(IDBKeyRange) to coordinate 
+        a landing in chromium
+
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::get):
+        (WebIDBObjectStore):
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::get):
+        (WebKit):
+        * src/IDBObjectStoreBackendProxy.h:
+        (IDBObjectStoreBackendProxy):
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::get):
+        (WebKit):
+        * src/WebIDBObjectStoreImpl.h:
+        (WebIDBObjectStoreImpl):
+
 2012-04-11  Kenichi Ishibashi  <bashi@chromium.org>
 
         [chromium] Fix Windows warnings in WebSocketDeflaterTest
