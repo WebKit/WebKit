@@ -15,16 +15,30 @@ EXPECTED (video.textTracks[0].mode == '2') OK
 RUN(textTrack.mode = '0')
 EXPECTED (textTrack.mode == '0') OK
 EXPECTED (video.textTracks[0].mode == '0') OK
+EXPECTED (textTrack.cues == 'null') OK
+
+++ 0 events expected while mode = TextTrack.DISABLED
 
 ++ 'TextTrack.HIDDEN'
 RUN(textTrack.mode = '1')
+EVENT(cuechange)
+EXPECTED (textTrack.activeCues.length == '1'), OBSERVED '0' FAIL
 EXPECTED (textTrack.mode == '1') OK
 EXPECTED (video.textTracks[0].mode == '1') OK
+EXPECTED (textTrack.cues.length == '4') OK
 
 ++ 'TextTrack.SHOWING'
 RUN(textTrack.mode = '2')
 EXPECTED (textTrack.mode == '2') OK
 EXPECTED (video.textTracks[0].mode == '2') OK
+EXPECTED (textTrack.cues.length == '4') OK
 
+++ 3 events expected while mode = TextTrack.SHOWING
+EVENT(cuechange)
+EXPECTED (textTrack.activeCues.length == '1') OK
+EVENT(cuechange)
+EXPECTED (textTrack.activeCues.length == '1') OK
+EVENT(cuechange)
+EXPECTED (textTrack.activeCues.length == '1') OK
 END OF TEST
 

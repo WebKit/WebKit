@@ -1255,8 +1255,12 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
             
             // Mark this track as "configured" so configureNewTextTracks won't change the mode again.
             trackElement->setHasBeenConfigured(true);
-            if (track->mode() != TextTrack::DISABLED && trackElement->readyState() == HTMLTrackElement::NONE)
-                trackElement->scheduleLoad();
+            if (track->mode() != TextTrack::DISABLED) {
+                if (trackElement->readyState() == HTMLTrackElement::LOADED)
+                    textTrackAddCues(track, track->cues());
+                else if (trackElement->readyState() == HTMLTrackElement::NONE)
+                    trackElement->scheduleLoad();
+            }
             break;
         }
     }

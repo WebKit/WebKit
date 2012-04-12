@@ -7,17 +7,24 @@
         <script>
 
             var textTrack;
+            var cueCount;
+
             function setMode(value)
             {
                 run("textTrack.mode = '" + value + "'");
                 testExpected("textTrack.mode", value);
                 testExpected("video.textTracks[0].mode", value);
+                if (value == TextTrack.DISABLED)
+                    testExpected("textTrack.cues", null);
+                else
+                    testExpected("textTrack.cues.length", textTrack.cues.length);
                 consoleWrite("");
             }
 
             function start()
             {
                 findMediaElement();
+                cueCount = 0;
                 consoleWrite("");
 
                 textTrack = document.getElementById('track_1').track;
@@ -38,21 +45,42 @@
                 consoleWrite("<b>++ 'TextTrack.DISABLED'</b>");
                 setMode(TextTrack.DISABLED);
 
+                video.src = findMediaFile("video", "../content/test");
+                video.play();
+                // Wait for end of first cue (no events should fire while track is disabled).
+                setTimeout(testHiddenAndShowing, 300);
+                consoleWrite("++ 0 events expected while mode = TextTrack.DISABLED");
+                consoleWrite("");
+            }
+            
+            function testHiddenAndShowing()
+            {
                 consoleWrite("<b>++ 'TextTrack.HIDDEN'</b>");
                 setMode(TextTrack.HIDDEN);
 
                 consoleWrite("<b>++ 'TextTrack.SHOWING'</b>");
                 setMode(TextTrack.SHOWING);
 
-                endTest();
+                consoleWrite("++ " + (textTrack.cues.length - 1) + " events expected while mode = TextTrack.SHOWING");
             }
+            
+            waitForEvent('cuechange',
+                function ()
+                {
+                    testExpected("textTrack.activeCues.length", 1);
+                    cueCount++;
+                    if (cueCount == textTrack.cues.length)
+                        endTest();
 
+                }
+            );
+            
         </script>
     </head>
     <body>
         <p>Tests that the TextTrack mode attribute is appropriately set.</p>
         <video>
-            <track id=track_1 src="captions-webvtt/captions.vtt" onload="start()" default>
+            <track id=track_1 src="captions-webvtt/captions-fast.vtt" onload="start()" default>
         </video>
     </body>
 </html>
