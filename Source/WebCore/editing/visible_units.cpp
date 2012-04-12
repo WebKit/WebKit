@@ -32,7 +32,6 @@
 #include "InlineTextBox.h"
 #include "Position.h"
 #include "RenderBlock.h"
-#include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderedPosition.h"
 #include "Text.h"

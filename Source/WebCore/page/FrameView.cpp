@@ -1290,7 +1290,7 @@ bool FrameView::contentsInCompositedLayer() const
 {
 #if USE(ACCELERATED_COMPOSITING)
     RenderView* root = rootRenderer(this);
-    if (root && root->layer()->isComposited()) {
+    if (root && root->isComposited()) {
         GraphicsLayer* layer = root->layer()->backing()->graphicsLayer();
         if (layer && layer->drawsContent())
             return true;
@@ -1469,7 +1469,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         if (renderBox->style()->position() != FixedPosition)
             continue;
 #if USE(ACCELERATED_COMPOSITING)
-        if (renderBox->layer()->isComposited())
+        if (renderBox->isComposited())
             continue;
 #endif
         IntRect updateRect = pixelSnappedIntRect(renderBox->layer()->repaintRectIncludingDescendants());

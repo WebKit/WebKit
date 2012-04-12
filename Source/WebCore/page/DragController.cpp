@@ -58,7 +58,6 @@
 #include "PlatformKeyboardEvent.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
-#include "RenderLayer.h"
 #include "RenderView.h"
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
@@ -286,7 +285,7 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
     HitTestResult result(point);
-    documentUnderMouse->renderView()->layer()->hitTest(request, result);
+    documentUnderMouse->renderView()->hitTest(request, result);
 
     Node* n = result.innerNode();
     while (n && !n->isElementNode())

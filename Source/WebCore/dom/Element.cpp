@@ -282,7 +282,8 @@ void Element::scrollByUnits(int units, ScrollGranularity granularity)
         direction = ScrollUp;
         units = -units;
     }
-    toRenderBox(renderer())->layer()->scroll(direction, granularity, units);
+    Node* stopNode = this;
+    toRenderBox(renderer())->scroll(direction, granularity, units, &stopNode);
 }
 
 void Element::scrollByLines(int lines)

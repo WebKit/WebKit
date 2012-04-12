@@ -77,6 +77,11 @@ RenderView::~RenderView()
 {
 }
 
+bool RenderView::hitTest(const HitTestRequest& request, HitTestResult& result)
+{
+    return layer()->hitTest(request, result);
+}
+
 void RenderView::computeLogicalHeight()
 {
     if (!printing() && m_frameView)

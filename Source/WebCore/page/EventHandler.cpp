@@ -699,7 +699,7 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
     if (m_selectionInitiationState != ExtendedSelection) {
         HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
         HitTestResult result(m_mouseDownPos);
-        m_frame->document()->renderView()->layer()->hitTest(request, result);
+        m_frame->document()->renderView()->hitTest(request, result);
 
         updateSelectionForMouseDrag(result);
     }
@@ -730,7 +730,7 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     updateDragSourceActionsAllowed();
     HitTestRequest request(HitTestRequest::ReadOnly);
     HitTestResult result(view->windowToContents(event.position()));
-    m_frame->contentRenderer()->layer()->hitTest(request, result);
+    m_frame->contentRenderer()->hitTest(request, result);
     DragState state;
     return result.innerNode() && page->dragController()->draggableNode(m_frame, result.innerNode(), roundedIntPoint(result.point()), state);
 }
@@ -743,15 +743,12 @@ void EventHandler::updateSelectionForMouseDrag()
     RenderView* renderer = m_frame->contentRenderer();
     if (!renderer)
         return;
-    RenderLayer* layer = renderer->layer();
-    if (!layer)
-        return;
 
     HitTestRequest request(HitTestRequest::ReadOnly |
                            HitTestRequest::Active |
                            HitTestRequest::Move);
     HitTestResult result(view->windowToContents(m_currentMousePosition));
-    layer->hitTest(request, result);
+    renderer->hitTest(request, result);
     updateSelectionForMouseDrag(result);
 }
 
@@ -1047,7 +1044,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, bool 
         return result;
     if (ignoreClipping)
         hitType |= HitTestRequest::IgnoreClipping;
-    m_frame->contentRenderer()->layer()->hitTest(HitTestRequest(hitType), result);
+    m_frame->contentRenderer()->hitTest(HitTestRequest(hitType), result);
 
     while (true) {
         Node* n = result.innerNode();
@@ -1064,7 +1061,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, bool 
         LayoutPoint widgetPoint(result.localPoint().x() + view->scrollX() - renderWidget->borderLeft() - renderWidget->paddingLeft(), 
             result.localPoint().y() + view->scrollY() - renderWidget->borderTop() - renderWidget->paddingTop());
         HitTestResult widgetHitTestResult(widgetPoint, padding.height(), padding.width(), padding.height(), padding.width(), shadowContentFilterPolicy);
-        frame->contentRenderer()->layer()->hitTest(HitTestRequest(hitType), widgetHitTestResult);
+        frame->contentRenderer()->hitTest(HitTestRequest(hitType), widgetHitTestResult);
         result = widgetHitTestResult;
 
         if (testScrollbars == ShouldHitTestScrollbars) {
@@ -2300,7 +2297,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 
     HitTestRequest request(HitTestRequest::ReadOnly);
     HitTestResult result(vPoint);
-    doc->renderView()->layer()->hitTest(request, result);
+    doc->renderView()->hitTest(request, result);
 
 #if PLATFORM(MAC)
     m_useLatchedWheelEventNode = e.momentumPhase() == PlatformWheelEventPhaseBegan || e.momentumPhase() == PlatformWheelEventPhaseChanged;
@@ -2675,7 +2672,7 @@ void EventHandler::hoverTimerFired(Timer<EventHandler>*)
         if (FrameView* view = m_frame->view()) {
             HitTestRequest request(HitTestRequest::Move);
             HitTestResult result(view->windowToContents(m_currentMousePosition));
-            renderer->layer()->hitTest(request, result);
+            renderer->hitTest(request, result);
             m_frame->document()->updateStyleIfNeeded();
         }
     }
@@ -3045,7 +3042,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
         // try to find an element that wants to be dragged
         HitTestRequest request(HitTestRequest::ReadOnly);
         HitTestResult result(m_mouseDownPos);
-        m_frame->contentRenderer()->layer()->hitTest(request, result);
+        m_frame->contentRenderer()->hitTest(request, result);
         Node* node = result.innerNode();
         if (node && m_frame->page())
             dragState().m_dragSrc = m_frame->page()->dragController()->draggableNode(m_frame, node, m_mouseDownPos, dragState());

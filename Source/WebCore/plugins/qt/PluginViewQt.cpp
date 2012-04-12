@@ -63,7 +63,7 @@
 #include "PluginPackage.h"
 #include "PluginMainThreadScheduler.h"
 #include "QWebPageClient.h"
-#include "RenderLayer.h"
+#include "RenderObject.h"
 #include "Settings.h"
 #include "npruntime_impl.h"
 #if USE(JSC)

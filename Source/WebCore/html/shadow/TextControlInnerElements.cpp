@@ -37,7 +37,6 @@
 #include "HTMLTextAreaElement.h"
 #include "MouseEvent.h"
 #include "Page.h"
-#include "RenderLayer.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderView.h"
 #include "ScriptController.h"

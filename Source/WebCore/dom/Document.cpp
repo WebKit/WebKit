@@ -123,8 +123,6 @@
 #include "ProcessingInstruction.h"
 #include "RegisteredEventListener.h"
 #include "RenderArena.h"
-#include "RenderLayer.h"
-#include "RenderLayerBacking.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
@@ -1274,14 +1272,14 @@ PassRefPtr<NodeList> Document::nodesFromRect(int centerX, int centerY, unsigned 
 
     enum ShadowContentFilterPolicy shadowContentFilterPolicy = allowShadowContent ? AllowShadowContent : DoNotAllowShadowContent;
     HitTestResult result(point, topPadding, rightPadding, bottomPadding, leftPadding, shadowContentFilterPolicy);
-    renderView()->layer()->hitTest(request, result);
+    renderView()->hitTest(request, result);
 
     return StaticHashSetNodeList::adopt(result.rectBasedTestResult());
 }
 
 PassRefPtr<NodeList> Document::handleZeroPadding(const HitTestRequest& request, HitTestResult& result) const
 {
-    renderView()->layer()->hitTest(request, result);
+    renderView()->hitTest(request, result);
 
     Node* node = result.innerNode();
     if (!node)
@@ -1309,7 +1307,7 @@ static Node* nodeFromPoint(Frame* frame, RenderView* renderView, int x, int y, L
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
     HitTestResult result(point);
-    renderView->layer()->hitTest(request, result);
+    renderView->hitTest(request, result);
 
     if (localPoint)
         *localPoint = result.localPoint();
@@ -2957,7 +2955,7 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
         return MouseEventWithHitTestResults(event, HitTestResult(LayoutPoint()));
 
     HitTestResult result(documentPoint);
-    renderView()->layer()->hitTest(request, result);
+    renderView()->hitTest(request, result);
 
     if (!request.readOnly())
         updateStyleIfNeeded();

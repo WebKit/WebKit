@@ -56,7 +56,7 @@
 #include "PluginDebug.h"
 #include "PluginMainThreadScheduler.h"
 #include "PluginPackage.h"
-#include "RenderLayer.h"
+#include "RenderObject.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
 #include "JSDOMBinding.h"

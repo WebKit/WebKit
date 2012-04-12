@@ -55,7 +55,6 @@
 #include "PluginDebug.h"
 #include "PluginPackage.h"
 #include "PluginMainThreadScheduler.h"
-#include "RenderLayer.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "npruntime_impl.h"

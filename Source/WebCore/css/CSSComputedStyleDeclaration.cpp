@@ -54,7 +54,6 @@
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderBox.h"
-#include "RenderLayer.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "ShadowValue.h"
@@ -670,11 +669,6 @@ static LayoutRect sizingBox(RenderObject* renderer)
 
     RenderBox* box = toRenderBox(renderer);
     return box->style()->boxSizing() == BORDER_BOX ? box->borderBoxRect() : box->computedCSSContentBoxRect();
-}
-
-static inline bool hasCompositedLayer(RenderObject* renderer)
-{
-    return renderer && renderer->hasLayer() && toRenderBoxModelObject(renderer)->layer()->isComposited();
 }
 
 static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle* style)
@@ -1328,7 +1322,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
     RenderObject* renderer = node->renderer();
 
     RefPtr<RenderStyle> style;
-    if (renderer && hasCompositedLayer(renderer) && AnimationController::supportsAcceleratedAnimationOfProperty(propertyID)) {
+    if (renderer && renderer->isComposited() && AnimationController::supportsAcceleratedAnimationOfProperty(propertyID)) {
         style = renderer->animation()->getAnimatedStyleForRenderer(renderer);
         if (m_pseudoElementSpecifier) {
             // FIXME: This cached pseudo style will only exist if the animation has been run at least once.

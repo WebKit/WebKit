@@ -39,7 +39,6 @@
 #include "Page.h"
 #include "RenderBoxModelObject.h"
 #include "RenderInline.h"
-#include "RenderLayer.h"
 #include "RenderObject.h"
 
 namespace WebCore {

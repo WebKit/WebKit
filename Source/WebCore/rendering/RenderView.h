@@ -42,6 +42,8 @@ public:
     RenderView(Node*, FrameView*);
     virtual ~RenderView();
 
+    bool hitTest(const HitTestRequest&, HitTestResult&);
+
     virtual const char* renderName() const { return "RenderView"; }
 
     virtual bool isRenderView() const { return true; }
