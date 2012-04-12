@@ -980,7 +980,7 @@ struct CursorOptions {
 class CursorImplCommon : public IDBBackingStore::Cursor {
 public:
     // IDBBackingStore::Cursor
-    virtual bool continueFunction(const IDBKey*);
+    virtual bool continueFunction(const IDBKey*, IteratorState);
     virtual PassRefPtr<IDBKey> key() { return m_currentKey; }
     virtual PassRefPtr<IDBKey> primaryKey() { return m_currentKey; }
     virtual String value() = 0;
@@ -1015,6 +1015,9 @@ protected:
 
     virtual ~CursorImplCommon() {}
 
+    bool isPastBounds() const;
+    bool haveEnteredRange() const;
+
     LevelDBTransaction* m_transaction;
     CursorOptions m_cursorOptions;
     OwnPtr<LevelDBIterator> m_iterator;
@@ -1024,62 +1027,26 @@ protected:
 bool CursorImplCommon::firstSeek()
 {
     m_iterator = m_transaction->createIterator();
-
     if (m_cursorOptions.forward)
         m_iterator->seek(m_cursorOptions.lowKey);
     else
         m_iterator->seek(m_cursorOptions.highKey);
 
+    return continueFunction(0, Ready);
+}
+
+bool CursorImplCommon::continueFunction(const IDBKey* key, IteratorState nextState)
+{
+    RefPtr<IDBKey> previousKey = m_currentKey;
+
     for (;;) {
-        if (!m_iterator->isValid())
-            return false;
-
-        if (m_cursorOptions.forward && m_cursorOptions.highOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) >= 0)
-            return false;
-        if (m_cursorOptions.forward && !m_cursorOptions.highOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) > 0)
-            return false;
-        if (!m_cursorOptions.forward && m_cursorOptions.lowOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) <= 0)
-            return false;
-        if (!m_cursorOptions.forward && !m_cursorOptions.lowOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) < 0)
-            return false;
-
-        if (m_cursorOptions.forward && m_cursorOptions.lowOpen) {
-            // lowKey not included in the range.
-            if (compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) <= 0) {
-                m_iterator->next();
-                continue;
-            }
-        }
-        if (!m_cursorOptions.forward && m_cursorOptions.highOpen) {
-            // highKey not included in the range.
-            if (compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) >= 0) {
-                m_iterator->prev();
-                continue;
-            }
-        }
-
-        if (!loadCurrentRow()) {
+        if (nextState == Seek) {
             if (m_cursorOptions.forward)
                 m_iterator->next();
             else
                 m_iterator->prev();
-            continue;
-        }
-
-        return true;
-    }
-}
-
-bool CursorImplCommon::continueFunction(const IDBKey* key)
-{
-    // FIXME: This shares a lot of code with firstSeek.
-    RefPtr<IDBKey> previousKey = m_currentKey;
-
-    for (;;) {
-        if (m_cursorOptions.forward)
-            m_iterator->next();
-        else
-            m_iterator->prev();
+        } else
+            nextState = Seek; // for subsequent iterations
 
         if (!m_iterator->isValid())
             return false;
@@ -1088,15 +1055,14 @@ bool CursorImplCommon::continueFunction(const IDBKey* key)
         if (!m_transaction->get(m_iterator->key(), trash))
              continue;
 
-        if (m_cursorOptions.forward && m_cursorOptions.highOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) >= 0) // high key not included in range
-            return false;
-        if (m_cursorOptions.forward && !m_cursorOptions.highOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) > 0)
-            return false;
-        if (!m_cursorOptions.forward && m_cursorOptions.lowOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) <= 0) // low key not included in range
-            return false;
-        if (!m_cursorOptions.forward && !m_cursorOptions.lowOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) < 0)
+        if (isPastBounds())
             return false;
 
+        if (!haveEnteredRange())
+            continue;
+
+        // The row may not load because there's a stale entry in the
+        // index. This is not fatal.
         if (!loadCurrentRow())
             continue;
 
@@ -1117,6 +1083,33 @@ bool CursorImplCommon::continueFunction(const IDBKey* key)
     }
 
     return true;
+}
+
+bool CursorImplCommon::haveEnteredRange() const
+{
+    if (m_cursorOptions.forward) {
+        if (m_cursorOptions.lowOpen)
+            return compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) > 0;
+
+        return compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) >= 0;
+    }
+    if (m_cursorOptions.highOpen)
+        return compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) < 0;
+
+    return compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) <= 0;
+}
+
+bool CursorImplCommon::isPastBounds() const
+{
+    if (m_cursorOptions.forward) {
+        if (m_cursorOptions.highOpen)
+            return compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) >= 0;
+        return compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) > 0;
+    }
+
+    if (m_cursorOptions.lowOpen)
+        return compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) <= 0;
+    return compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) < 0;
 }
 
 class ObjectStoreCursorImpl : public CursorImplCommon {
