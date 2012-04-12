@@ -38,11 +38,18 @@ static NSDictionary *defaultFontFamilyDictionary()
         return fontFamilyDictionary;
 
     NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
+#if BUILDING_ON_LION
+    // Temporary workaround for a Safari Webpage Preview Fetcher crash caused by insufficient sandbox permissions.
+    if (!bundle)
+        return 0;
+#endif
     NSData *fileData = [NSData dataWithContentsOfURL:[bundle URLForResource:@"DefaultFonts" withExtension:@"plist"]];
+    if (!fileData)
+        FATAL("Could not read font fallback file");
     NSError *error;
     id propertyList = [NSPropertyListSerialization propertyListWithData:fileData options:NSPropertyListImmutable format:0 error:&error];
     if (!propertyList)
-        FATAL("Could not read font fallback file: %s", [[error description] UTF8String]);
+        FATAL("Could not parse font fallback property list: %s", [[error description] UTF8String]);
     if (![propertyList isKindOfClass:[NSDictionary class]])
         FATAL("Font fallback file has incorrect format - root object is not a dictionary");
 
