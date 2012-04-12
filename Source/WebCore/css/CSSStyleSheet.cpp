@@ -116,6 +116,7 @@ void StyleSheetInternal::parserAppendRule(PassRefPtr<StyleRuleBase> rule)
         // Parser enforces that @import rules come before anything else except @charset.
         ASSERT(m_childRules.isEmpty());
         m_importRules.append(static_cast<StyleRuleImport*>(rule.get()));
+        m_importRules.last()->setParentStyleSheet(this);
         m_importRules.last()->requestStyleSheet();
         return;
     }
@@ -192,6 +193,7 @@ bool StyleSheetInternal::wrapperInsertRule(PassRefPtr<StyleRuleBase> rule, unsig
         if (!rule->isImportRule())
             return false;
         m_importRules.insert(childVectorIndex, static_cast<StyleRuleImport*>(rule.get()));
+        m_importRules[childVectorIndex]->setParentStyleSheet(this);
         m_importRules[childVectorIndex]->requestStyleSheet();
         // FIXME: Stylesheet doesn't actually change meaningfully before the imported sheets are loaded.
         styleSheetChanged();

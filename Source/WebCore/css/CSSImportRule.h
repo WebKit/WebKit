@@ -37,11 +37,12 @@ class StyleSheetInternal;
 
 class StyleRuleImport : public StyleRuleBase {
 public:
-    static PassRefPtr<StyleRuleImport> create(StyleSheetInternal* parent, const String& href, PassRefPtr<MediaQuerySet>);
+    static PassRefPtr<StyleRuleImport> create(const String& href, PassRefPtr<MediaQuerySet>);
 
     ~StyleRuleImport();
     
     StyleSheetInternal* parentStyleSheet() const { return m_parentStyleSheet; }
+    void setParentStyleSheet(StyleSheetInternal* sheet) { ASSERT(sheet); m_parentStyleSheet = sheet; }
     void clearParentStyleSheet() { m_parentStyleSheet = 0; }
 
     String href() const { return m_strHref; }
@@ -71,7 +72,7 @@ private:
     void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet*);
     friend class ImportedStyleSheetClient;
 
-    StyleRuleImport(StyleSheetInternal* parent, const String& href, PassRefPtr<MediaQuerySet>);
+    StyleRuleImport(const String& href, PassRefPtr<MediaQuerySet>);
 
     StyleSheetInternal* m_parentStyleSheet;
 

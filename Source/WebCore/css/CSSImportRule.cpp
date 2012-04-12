@@ -33,21 +33,20 @@
 
 namespace WebCore {
 
-PassRefPtr<StyleRuleImport> StyleRuleImport::create(StyleSheetInternal* parent, const String& href, PassRefPtr<MediaQuerySet> media)
+PassRefPtr<StyleRuleImport> StyleRuleImport::create(const String& href, PassRefPtr<MediaQuerySet> media)
 {
-    return adoptRef(new StyleRuleImport(parent, href, media));
+    return adoptRef(new StyleRuleImport(href, media));
 }
 
-StyleRuleImport::StyleRuleImport(StyleSheetInternal* parent, const String& href, PassRefPtr<MediaQuerySet> media)
+StyleRuleImport::StyleRuleImport(const String& href, PassRefPtr<MediaQuerySet> media)
     : StyleRuleBase(Import, 0)
-    , m_parentStyleSheet(parent)
+    , m_parentStyleSheet(0)
     , m_styleSheetClient(this)
     , m_strHref(href)
     , m_mediaQueries(media)
     , m_cachedSheet(0)
     , m_loading(false)
 {
-    ASSERT(parent);
     if (!m_mediaQueries)
         m_mediaQueries = MediaQuerySet::create(String());
 }

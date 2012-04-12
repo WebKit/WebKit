@@ -9002,9 +9002,9 @@ MediaQuerySet* CSSParser::createMediaQuerySet()
 
 StyleRuleBase* CSSParser::createImportRule(const CSSParserString& url, MediaQuerySet* media)
 {
-    if (!media || !m_styleSheet || !m_allowImportRules)
+    if (!media || !m_allowImportRules)
         return 0;
-    RefPtr<StyleRuleImport> rule = StyleRuleImport::create(m_styleSheet, url, media);
+    RefPtr<StyleRuleImport> rule = StyleRuleImport::create(url, media);
     StyleRuleImport* result = rule.get();
     m_parsedRules.append(rule.release());
     return result;
