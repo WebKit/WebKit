@@ -462,7 +462,7 @@ class PrintExpectations(AbstractDeclarativeCommand):
                 port.test_configuration(),
                 lint_mode,
                 port.test_expectations_overrides(),
-                port.skipped_tests(tests)).model()
+                port.skipped_layout_tests(tests)).model()
         return self._expectation_models[expectations_path]
 
 

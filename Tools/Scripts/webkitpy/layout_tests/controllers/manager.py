@@ -369,7 +369,7 @@ class Manager(object):
             port.test_configuration(),
             self._options.lint_test_files,
             port.test_expectations_overrides(),
-            port.skipped_tests(self._test_files).union(tests_to_ignore))
+            port.skipped_layout_tests(self._test_files).union(tests_to_ignore))
 
     def _split_into_chunks_if_necessary(self, skipped):
         if not self._options.run_chunk and not self._options.run_part:

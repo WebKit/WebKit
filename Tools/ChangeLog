@@ -1,5 +1,23 @@
 2012-04-11  Dirk Pranke  <dpranke@chromium.org>
 
+        Fix regression introduced in r113927.
+
+        Unreviewed, build fix.
+
+        I failed to rename skipped_tests() to skipped_layout_tests()
+        everywhere it needed to be renamed. The unit tests didn't catch
+        this because the TestPort was one of the places that didn't get
+        renamed :(.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.parse_expectations):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.skipped_layout_tests):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintExpectations._model):
+
+2012-04-11  Dirk Pranke  <dpranke@chromium.org>
+
         new-run-webkit-tests: 'webkit-patch skipped-ports' introduced bad layering
         https://bugs.webkit.org/show_bug.cgi?id=47528
 
