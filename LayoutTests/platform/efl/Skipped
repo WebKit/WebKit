@@ -1483,6 +1483,7 @@ media/video-layer-crash.html
 media/video-load-networkState.html
 media/video-load-preload-none.html
 media/video-load-readyState.html
+media/video-load-require-user-gesture.html
 media/video-muted.html
 media/video-no-autoplay.html
 media/video-pause-empty-events.html

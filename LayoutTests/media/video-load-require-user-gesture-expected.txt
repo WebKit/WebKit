@@ -1,0 +1,9 @@
+Test that video.load() should not cause media loading when user gesture is required.
+
+* Setting video.src, no data should load.
+
+* Calling video.load(). It should throw an exception, and no data should load.
+TEST(video.load()) THROWS(DOMException.INVALID_STATE_ERR) OK
+
+END OF TEST
+

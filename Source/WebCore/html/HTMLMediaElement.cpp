@@ -267,8 +267,10 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     document->registerForMediaVolumeCallbacks(this);
     document->registerForPrivateBrowsingStateChangedCallbacks(this);
     
-    if (document->settings() && document->settings()->mediaPlaybackRequiresUserGesture())
+    if (document->settings() && document->settings()->mediaPlaybackRequiresUserGesture()) {
         addBehaviorRestriction(RequireUserGestureForRateChangeRestriction);
+        addBehaviorRestriction(RequireUserGestureForLoadRestriction);
+    }
 
 #if ENABLE(MEDIA_SOURCE)
     m_mediaSourceURL.setProtocol(mediaSourceURLProtocol);
@@ -634,16 +636,17 @@ void HTMLMediaElement::load(ExceptionCode& ec)
     RefPtr<HTMLMediaElement> protect(this); // loadInternal may result in a 'beforeload' event, which can make arbitrary DOM mutations.
     
     LOG(Media, "HTMLMediaElement::load()");
-
-    if (userGestureRequiredForLoad() && !ScriptController::processingUserGesture())
+    
+    if (userGestureRequiredForLoad() && !ScriptController::processingUserGesture()) {
         ec = INVALID_STATE_ERR;
-    else {
-        m_loadInitiatedByUserGesture = ScriptController::processingUserGesture();
-        if (m_loadInitiatedByUserGesture)
-            removeBehaviorsRestrictionsAfterFirstUserGesture();
-        prepareForLoad();
-        loadInternal();
+        return;
     }
+    
+    m_loadInitiatedByUserGesture = ScriptController::processingUserGesture();
+    if (m_loadInitiatedByUserGesture)
+        removeBehaviorsRestrictionsAfterFirstUserGesture();
+    prepareForLoad();
+    loadInternal();
     prepareToPlay();
 }
 

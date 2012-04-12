@@ -739,16 +739,6 @@ int Internals::lastSpellCheckProcessedSequence(Document* document, ExceptionCode
     return checker->lastProcessedSequence();
 }
 
-void Internals::setMediaPlaybackRequiresUserGesture(Document* document, bool enabled, ExceptionCode& ec)
-{
-    if (!document || !document->settings()) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
-    document->settings()->setMediaPlaybackRequiresUserGesture(enabled);
-}
-
 Vector<String> Internals::userPreferredLanguages() const
 {
     return WebCore::userPreferredLanguages();

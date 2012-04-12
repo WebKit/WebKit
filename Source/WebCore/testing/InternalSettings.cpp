@@ -322,4 +322,11 @@ void InternalSettings::setCSSExclusionsEnabled(bool enabled, ExceptionCode& ec)
     UNUSED_PARAM(ec);
     RuntimeEnabledFeatures::setCSSExclusionsEnabled(enabled);
 }
+
+void InternalSettings::setMediaPlaybackRequiresUserGesture(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setMediaPlaybackRequiresUserGesture(enabled);
+}
+
 }

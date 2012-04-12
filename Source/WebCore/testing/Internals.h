@@ -130,8 +130,6 @@ public:
     int lastSpellCheckRequestSequence(Document*, ExceptionCode&);
     int lastSpellCheckProcessedSequence(Document*, ExceptionCode&);
     
-    void setMediaPlaybackRequiresUserGesture(Document*, bool enabled, ExceptionCode&);
-
     Vector<String> userPreferredLanguages() const;
     void setUserPreferredLanguages(const Vector<String>&);
 

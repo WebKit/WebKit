@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var state = 0;
+            var userGestureInitiated = 0;
+
+            if (window.internals) 
+                window.internals.settings.setMediaPlaybackRequiresUserGesture(document, true);
+
+            function finishTest(success)
+            {
+                if (window.internals) 
+                    window.internals.settings.setMediaPlaybackRequiresUserGesture(document, false);
+
+                if (success)
+                    endTest();
+                else
+                    failTest("<b>Data loaded despite restriction.</b>");
+            }
+
+            function checkLoad()
+            {
+                consoleWrite("");
+
+                if (state == "load")
+                {
+                    finishTest(true);
+                    return;
+                }
+                
+                state = "load";
+                consoleWrite("* Calling video.load(). It should throw an exception, and no data should load.");
+                testException("video.load()", "DOMException.INVALID_STATE_ERR");
+                setTimeout(checkLoad, 250);
+            }
+
+            function start()
+            {
+                findMediaElement();
+                waitForEvent('loadedmetadata', function() { finishTest(false) } );
+
+                state = "src";
+                consoleWrite("* Setting video.src, no data should load.");
+                video.src = findMediaFile("video", "content/test");
+                setTimeout(checkLoad, 250);
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls preload=none></video>
+        <p>Test that video.load() should not cause media loading when user gesture is required.</p>
+    </body>
+</html>

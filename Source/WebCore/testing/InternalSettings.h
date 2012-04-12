@@ -73,6 +73,7 @@ public:
     void setEnableScrollAnimator(bool enabled, ExceptionCode&);
     bool scrollAnimatorEnabled(ExceptionCode&);
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);
+    void setMediaPlaybackRequiresUserGesture(bool, ExceptionCode&);
 
     void restoreTo(Settings*);
 
