@@ -222,7 +222,6 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)
         cursor = IDBCursor::create(backend, this, m_source.get(), m_transaction.get());
     else
         cursor = IDBCursorWithValue::create(backend, this, m_source.get(), m_transaction.get());
-
     setResultCursor(cursor, m_cursorType);
 
     enqueueEvent(createSuccessEvent());
@@ -365,6 +364,8 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
             cursorToNotify = m_result->idbCursor();
         else if (m_result->type() == IDBAny::IDBCursorWithValueType)
             cursorToNotify = m_result->idbCursorWithValue();
+        if (cursorToNotify)
+            cursorToNotify->setValueReady();
     }
 
     // FIXME: When we allow custom event dispatching, this will probably need to change.

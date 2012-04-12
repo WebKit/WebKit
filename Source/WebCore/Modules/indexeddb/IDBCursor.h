@@ -72,6 +72,7 @@ public:
 
     void postSuccessHandlerCallback();
     void close();
+    void setValueReady();
 
 protected:
     IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBAny* source, IDBTransaction*);
@@ -82,6 +83,12 @@ private:
     RefPtr<IDBAny> m_source;
     RefPtr<IDBTransaction> m_transaction;
     IDBTransaction::OpenCursorNotifier m_transactionNotifier;
+    bool m_gotValue;
+    // These values are held because m_backend may advance while they
+    // are still valid for the current success handlers.
+    RefPtr<IDBKey> m_currentKey;
+    RefPtr<IDBKey> m_currentPrimaryKey;
+    RefPtr<IDBAny> m_currentValue;
 };
 
 } // namespace WebCore

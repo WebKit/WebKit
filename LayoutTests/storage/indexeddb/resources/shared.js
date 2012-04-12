@@ -99,6 +99,13 @@ function evalAndExpectExceptionClass(cmd, expected)
     }
 }
 
+function evalAndLogCallback(cmd) {
+  function callback() {
+    evalAndLog(cmd);
+  }
+  return callback;
+}
+
 function deleteAllObjectStores(db)
 {
     while (db.objectStoreNames.length)

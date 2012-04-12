@@ -51,6 +51,7 @@ IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* 
     , m_source(source)
     , m_transaction(transaction)
     , m_transactionNotifier(transaction, this)
+    , m_gotValue(false)
 {
     ASSERT(m_backend);
     ASSERT(m_request);
@@ -71,19 +72,19 @@ unsigned short IDBCursor::direction() const
 PassRefPtr<IDBKey> IDBCursor::key() const
 {
     IDB_TRACE("IDBCursor::key");
-    return m_backend->key();
+    return m_currentKey;
 }
 
 PassRefPtr<IDBKey> IDBCursor::primaryKey() const
 {
     IDB_TRACE("IDBCursor::primaryKey");
-    return m_backend->primaryKey();
+    return m_currentPrimaryKey;
 }
 
 PassRefPtr<IDBAny> IDBCursor::value() const
 {
     IDB_TRACE("IDBCursor::value");
-    return IDBAny::create(m_backend->value());
+    return m_currentValue;
 }
 
 IDBAny* IDBCursor::source() const
@@ -95,6 +96,10 @@ PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRe
 {
     IDB_TRACE("IDBCursor::update");
 
+    if (!m_gotValue) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
     RefPtr<SerializedScriptValue> value = prpValue;
     if (value->blobURLs().size() > 0) {
         // FIXME: Add Blob/File/FileList support
@@ -123,10 +128,17 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return;
     }
+
+    if (!m_gotValue) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
     // FIXME: We're not using the context from when continue was called, which means the callback
     //        will be on the original context openCursor was called on. Is this right?
     if (m_request->resetReadyState(m_transaction.get())) {
         m_request->setCursor(this);
+        m_gotValue = false;
         m_backend->continueFunction(key, m_request, ec);
     } else
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
@@ -135,6 +147,10 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursor::delete");
+    if (!m_gotValue) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->deleteFunction(request, ec);
     if (ec) {
@@ -154,6 +170,14 @@ void IDBCursor::close()
     ASSERT(m_request);
     m_request->finishCursor();
     m_request.clear();
+}
+
+void IDBCursor::setValueReady()
+{
+    m_currentKey = m_backend->key();
+    m_currentPrimaryKey = m_backend->primaryKey();
+    m_currentValue = IDBAny::create(m_backend->value());
+    m_gotValue = true;
 }
 
 } // namespace WebCore

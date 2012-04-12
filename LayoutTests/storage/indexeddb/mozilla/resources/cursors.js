@@ -113,7 +113,7 @@ function testGroup6()
         shouldBe("cursor.value", "'foo'");
 
         evalAndLog("cursor.continue();");
-        evalAndExpectException("cursor.continue();", "IDBDatabaseException.NOT_ALLOWED_ERR");
+        evalAndExpectException("cursor.continue();", "DOMException.INVALID_STATE_ERR");
 
         shouldBe("cursor.key", "sortedKeys[keyIndex]");
         shouldBe("cursor.primaryKey", "sortedKeys[keyIndex]");
