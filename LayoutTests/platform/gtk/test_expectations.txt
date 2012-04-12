@@ -458,6 +458,9 @@ BUGWK54191 : fast/text/capitalize-boundaries.html = PASS TEXT
 
 BUGWK57346 : fast/text/justify-ideograph-leading-expansion.html = PASS TEXT
 
+BUGWK83790 : media/video-duration-known-after-eos.html = PASS TEXT
+BUGWK83790 : media/media-element-play-after-eos.html = PASS TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
 //////////////////////////////////////////////////////////////////////////////////////////
