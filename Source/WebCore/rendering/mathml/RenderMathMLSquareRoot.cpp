@@ -35,6 +35,8 @@
 #include "PaintInfo.h"
 #include "RenderMathMLRow.h"
 
+using namespace std;
+
 namespace WebCore {
     
 using namespace MathMLNames;
@@ -52,7 +54,7 @@ const float gRadicalBottomPointXFront = 0.5f;
 // Lower the radical sign's bottom point (px)
 const int gRadicalBottomPointLower = 3;
 // Horizontal position of the top left point of the radical "dip" (* frontWidth)
-const float gRadicalDipLeftPointXFront = 0.2f;
+const float gRadicalDipLeftPointXFront = 0.8f;
 // Vertical position of the top left point of the radical "dip" (* baseHeight)
 const float gRadicalDipLeftPointYPos = 0.5f; 
 // Vertical shift of the left end point of the radical (em)
@@ -128,18 +130,18 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, const LayoutPoint& paintOffs
     float thresholdHeight = gThresholdBaseHeightEms * style()->fontSize();
     
     if (baseHeight > thresholdHeight && thresholdHeight) {
-        float shift = (baseHeight - thresholdHeight) / thresholdHeight;
-        if (shift > 1.)
-            shift = 1.0f;
-        overbarLeftPointShift = static_cast<int>(gRadicalBottomPointXFront * frontWidth * shift);
+        float shift = min<float>((baseHeight - thresholdHeight) / thresholdHeight, 1.0f);
+        overbarLeftPointShift = static_cast<int>(shift * gRadicalBottomPointXFront * frontWidth);
     }
     
     overbarWidth += overbarLeftPointShift;
     
-    FloatPoint overbarLeftPoint(adjustedPaintOffset.x() + frontWidth - overbarLeftPointShift, adjustedPaintOffset.y());
-    FloatPoint bottomPoint(adjustedPaintOffset.x() + frontWidth * gRadicalBottomPointXFront, adjustedPaintOffset.y() + baseHeight + gRadicalBottomPointLower);
-    FloatPoint dipLeftPoint(adjustedPaintOffset.x() + frontWidth * gRadicalDipLeftPointXFront, adjustedPaintOffset.y() + gRadicalDipLeftPointYPos * baseHeight);
-    FloatPoint leftEnd(adjustedPaintOffset.x(), dipLeftPoint.y() + gRadicalLeftEndYShiftEms * style()->fontSize());
+    int startX = adjustedPaintOffset.x() + frontWidth;
+    
+    FloatPoint overbarLeftPoint(startX - overbarLeftPointShift, adjustedPaintOffset.y());
+    FloatPoint bottomPoint(startX - gRadicalBottomPointXFront * frontWidth, adjustedPaintOffset.y() + baseHeight + gRadicalBottomPointLower);
+    FloatPoint dipLeftPoint(startX - gRadicalDipLeftPointXFront * frontWidth, adjustedPaintOffset.y() + gRadicalDipLeftPointYPos * baseHeight);
+    FloatPoint leftEnd(startX - frontWidth, dipLeftPoint.y() + gRadicalLeftEndYShiftEms * style()->fontSize());
     
     GraphicsContextStateSaver stateSaver(*info.context);
     

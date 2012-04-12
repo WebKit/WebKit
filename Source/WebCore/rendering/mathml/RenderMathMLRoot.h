@@ -36,15 +36,19 @@ namespace WebCore {
 class RenderMathMLRoot : public RenderMathMLBlock {
 public:
     RenderMathMLRoot(Element*);
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
-    
-    virtual void paint(PaintInfo&, const LayoutPoint&);
     
 protected:
-    virtual void layout();
+    virtual void layout() OVERRIDE;
+    
+    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
 private:
     virtual const char* renderName() const { return "RenderMathMLRoot"; }
+    
+    // This may return 0 for a non-MathML index (which won't occur in valid MathML).
+    RenderBoxModelObject* index() const;
+    
+    int m_overbarLeftPointShift;
 };
     
 }
