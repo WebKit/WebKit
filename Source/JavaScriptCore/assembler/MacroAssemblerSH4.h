@@ -1266,6 +1266,14 @@ public:
         return jmp;
     }
 
+    void compare8(RelationalCondition cond, Address left, TrustedImm32 right, RegisterID dest)
+    {
+        RegisterID addressTempRegister = claimScratch();
+        load8(left, addressTempRegister);
+        compare32(cond, addressTempRegister, right, dest);
+        releaseScratch(addressTempRegister);
+    }
+
     Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest)
     {
         m_assembler.ftrcdrmfpul(src);

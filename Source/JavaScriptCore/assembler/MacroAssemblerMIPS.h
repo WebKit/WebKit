@@ -994,6 +994,15 @@ public:
         return branch32(cond, dataTempRegister, immTempRegister);
     }
 
+    void compare8(RelationalCondition cond, Address left, TrustedImm32 right, RegisterID dest)
+    {
+        // Make sure the immediate value is unsigned 8 bits.
+        ASSERT(!(right.m_value & 0xFFFFFF00));
+        load8(left, dataTempRegister);
+        move(right, immTempRegister);
+        compare32(cond, dataTempRegister, immTempRegister, dest);
+    }
+
     Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         ASSERT(!(right.m_value & 0xFFFFFF00));

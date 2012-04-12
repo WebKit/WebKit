@@ -687,6 +687,12 @@ public:
         m_assembler.mov_r(dest, ARMAssembler::getOp2(1), ARMCondition(cond));
     }
 
+    void compare8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right, RegisterID dest)
+    {
+        load8(left.m_ptr, ARMRegisters::S1);
+        compare32(cond, ARMRegisters::S1, right, dest);
+    }
+
     void test32(ResultCondition cond, RegisterID reg, TrustedImm32 mask, RegisterID dest)
     {
         if (mask.m_value == -1)
@@ -743,7 +749,7 @@ public:
         load32(left.m_ptr, ARMRegisters::S1);
         return branch32(cond, ARMRegisters::S1, right);
     }
-
+    
     Jump branch32(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
     {
         load32(left.m_ptr, ARMRegisters::S1);

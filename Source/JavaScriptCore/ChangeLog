@@ -1,5 +1,19 @@
 2012-04-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed attempting to make Qt's eccentric hardware work.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::compare8):
+        (MacroAssemblerARM):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::compare8):
+        (MacroAssemblerMIPS):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::compare8):
+        (MacroAssemblerSH4):
+
+2012-04-11  Filip Pizlo  <fpizlo@apple.com>
+
         op_is_foo should be optimized
         https://bugs.webkit.org/show_bug.cgi?id=83666
 
