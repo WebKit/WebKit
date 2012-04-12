@@ -1,3 +1,69 @@
+2012-04-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Move viewport meta handling to the web process side
+        https://bugs.webkit.org/show_bug.cgi?id=83771
+
+        Reviewed by Simon Hausmann.
+
+        Instead of computing the viewport attributes on both sides,
+        we now do everything on the web process side, and just send
+        over the computed result.
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        (headers_for_type):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        (WebCore):
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didChangeViewportProperties):
+        * UIProcess/API/efl/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didChangeViewportProperties):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/mac/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didChangeViewportProperties):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::didRelaunchProcess):
+        (QQuickWebViewFlickablePrivate::didChangeViewportProperties):
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::didChangeViewportProperties):
+        (QQuickWebViewPrivate):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/PageClient.h:
+        (WebCore):
+        (PageClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeViewportProperties):
+        * UIProcess/WebPageProxy.h:
+        (WebCore):
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::didChangeViewportProperties):
+        * UIProcess/qt/QtPageClient.h:
+        (QtPageClient):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::didChangeViewportProperties):
+        * UIProcess/win/WebView.h:
+        (WebView):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::dispatchViewportPropertiesDidChange):
+        (WebKit):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+        (WebKit):
+        (WebKit::WebPage::setViewportSize):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+
 2012-04-12  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Zoom gesture with double tap crashes on iframe when main frame has scroll offset.

@@ -206,12 +206,10 @@ void QQuickWebViewPrivate::processDidCrash()
 
 void QQuickWebViewPrivate::didRelaunchProcess()
 {
-    Q_Q(QQuickWebView);
-
     qWarning("WARNING: The web process has been successfully restarted.");
 
-    webPageProxy->setViewportSize(q->boundingRect().size().toSize());
     webPageProxy->drawingArea()->setSize(viewSize(), IntSize());
+    updateViewportSize();
 }
 
 PassOwnPtr<DrawingAreaProxy> QQuickWebViewPrivate::createDrawingAreaProxy()
@@ -615,12 +613,29 @@ void QQuickWebViewFlickablePrivate::didFinishFirstNonEmptyLayout()
 {
 }
 
-void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::ViewportArguments& args)
+void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::ViewportAttributes& attributes)
 {
-    viewportArguments = args;
+    Q_Q(QQuickWebView);
+
+    QSize viewportSize = q->boundingRect().size().toSize();
+
+    // FIXME: Revise these when implementing fit-to-width.
+    WebCore::ViewportAttributes attr = attributes;
+    WebCore::restrictMinimumScaleFactorToViewportSize(attr, viewportSize);
+    WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attr);
+
+    QtViewportInteractionEngine::Constraints newConstraints;
+    newConstraints.initialScale = attr.initialScale;
+    newConstraints.minimumScale = attr.minimumScale;
+    newConstraints.maximumScale = attr.maximumScale;
+    newConstraints.devicePixelRatio = attr.devicePixelRatio;
+    newConstraints.isUserScalable = !!attr.userScalable;
+    newConstraints.layoutSize = attr.layoutSize;
+
+    q->experimental()->viewportInfo()->didUpdateViewportConstraints();
 
     // FIXME: If suspended we should do this on resume.
-    interactionEngine->applyConstraints(computeViewportConstraints());
+    interactionEngine->applyConstraints(newConstraints);
 }
 
 void QQuickWebViewFlickablePrivate::updateViewportSize()
@@ -631,11 +646,18 @@ void QQuickWebViewFlickablePrivate::updateViewportSize()
     if (viewportSize.isEmpty() || !interactionEngine)
         return;
 
+    WebPreferences* wkPrefs = webPageProxy->pageGroup()->preferences();
+
+    // FIXME: Remove later; Hardcode a value for now to make sure the DPI adjustment is being tested.
+    wkPrefs->setDeviceDPI(160);
+
+    wkPrefs->setDeviceWidth(viewportSize.width());
+    wkPrefs->setDeviceHeight(viewportSize.height());
+
     // Let the WebProcess know about the new viewport size, so that
     // it can resize the content accordingly.
     webPageProxy->setViewportSize(viewportSize);
 
-    interactionEngine->applyConstraints(computeViewportConstraints());
     _q_contentViewportChanged(QPointF());
 }
 
@@ -682,43 +704,6 @@ void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
     Q_Q(QQuickWebView);
     pageView->setContentsSize(newSize);
     q->experimental()->viewportInfo()->didUpdateContentsSize();
-}
-
-QtViewportInteractionEngine::Constraints QQuickWebViewFlickablePrivate::computeViewportConstraints()
-{
-    Q_Q(QQuickWebView);
-
-    QtViewportInteractionEngine::Constraints newConstraints;
-    QSize availableSize = q->boundingRect().size().toSize();
-
-    // Return default values for zero sized viewport.
-    if (availableSize.isEmpty())
-        return newConstraints;
-
-    WebPreferences* wkPrefs = webPageProxy->pageGroup()->preferences();
-
-    // FIXME: Remove later; Hardcode a value for now to make sure the DPI adjustment is being tested.
-    wkPrefs->setDeviceDPI(160);
-
-    wkPrefs->setDeviceWidth(availableSize.width());
-    wkPrefs->setDeviceHeight(availableSize.height());
-
-    int minimumLayoutFallbackWidth = qMax<int>(wkPrefs->layoutFallbackWidth(), availableSize.width());
-
-    WebCore::ViewportAttributes attr = WebCore::computeViewportAttributes(viewportArguments, minimumLayoutFallbackWidth, wkPrefs->deviceWidth(), wkPrefs->deviceHeight(), wkPrefs->deviceDPI(), availableSize);
-    WebCore::restrictMinimumScaleFactorToViewportSize(attr, availableSize);
-    WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attr);
-
-    newConstraints.initialScale = attr.initialScale;
-    newConstraints.minimumScale = attr.minimumScale;
-    newConstraints.maximumScale = attr.maximumScale;
-    newConstraints.devicePixelRatio = attr.devicePixelRatio;
-    newConstraints.isUserScalable = !!attr.userScalable;
-    newConstraints.layoutSize = attr.layoutSize;
-
-    q->experimental()->viewportInfo()->didUpdateViewportConstraints();
-
-    return newConstraints;
 }
 
 /*!

@@ -342,6 +342,7 @@ public:
     void setFixedVisibleContentRect(const WebCore::IntRect&);
     void setResizesToContentsUsingLayoutSize(const WebCore::IntSize&);
     void resizeToContentsIfNeeded();
+    void sendViewportAttributesChanged();
     void setViewportSize(const WebCore::IntSize&);
     WebCore::IntSize viewportSize() const { return m_viewportSize; }
 #endif

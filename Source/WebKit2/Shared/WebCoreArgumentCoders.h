@@ -56,7 +56,7 @@ namespace WebCore {
     struct MimeClassInfo;
     struct PluginInfo;
     struct TextCheckingResult;
-    struct ViewportArguments;
+    struct ViewportAttributes;
     struct WindowFeatures;
 }
 
@@ -122,9 +122,9 @@ template<> struct ArgumentCoder<WebCore::IntSize> {
     static bool decode(ArgumentDecoder*, WebCore::IntSize&);
 };
 
-template<> struct ArgumentCoder<WebCore::ViewportArguments> {
-    static void encode(ArgumentEncoder*, const WebCore::ViewportArguments&);
-    static bool decode(ArgumentDecoder*, WebCore::ViewportArguments&);
+template<> struct ArgumentCoder<WebCore::ViewportAttributes> {
+    static void encode(ArgumentEncoder*, const WebCore::ViewportAttributes&);
+    static bool decode(ArgumentDecoder*, WebCore::ViewportAttributes&);
 };
 
 template<> struct ArgumentCoder<WebCore::MimeClassInfo> {

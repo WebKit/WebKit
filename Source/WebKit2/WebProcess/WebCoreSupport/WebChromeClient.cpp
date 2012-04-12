@@ -709,26 +709,16 @@ void WebChromeClient::exitFullScreenForElement(WebCore::Element* element)
 }
 #endif
 
-void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments& args) const
+void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments&) const
 {
-    m_page->send(Messages::WebPageProxy::DidChangeViewportProperties(args));
-
 #if USE(TILED_BACKING_STORE)
-    // When viewport properties change, recalculate and set the new recommended layout size in case of fixed layout rendering.
-    // Viewport properties have no impact on zero sized fixed viewports.
-    if (m_page->useFixedLayout() && !m_page->viewportSize().isEmpty()) {
-        Settings* settings = m_page->corePage()->settings();
+    if (!m_page->useFixedLayout())
+        return;
 
-        int minimumLayoutFallbackWidth = std::max(settings->layoutFallbackWidth(), m_page->viewportSize().width());
-
-        IntSize targetLayoutSize = computeViewportAttributes(m_page->corePage()->viewportArguments(),
-            minimumLayoutFallbackWidth, settings->deviceWidth(), settings->deviceHeight(),
-            settings->deviceDPI(), m_page->viewportSize()).layoutSize;
-        m_page->setResizesToContentsUsingLayoutSize(targetLayoutSize);
-    }
+    m_page->sendViewportAttributesChanged();
 #endif
 }
-    
+
 void WebChromeClient::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThumb)
 {
     m_page->send(Messages::WebPageProxy::NotifyScrollerThumbIsVisibleInRect(scrollerThumb));

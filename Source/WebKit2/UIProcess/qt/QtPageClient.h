@@ -48,7 +48,7 @@ public:
     virtual void didReceiveMessageFromNavigatorQtObject(const String&);
     virtual void pageDidRequestScroll(const WebCore::IntPoint&);
     virtual void didChangeContentsSize(const WebCore::IntSize&);
-    virtual void didChangeViewportProperties(const WebCore::ViewportArguments&);
+    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     virtual void processDidCrash();
     virtual void didRelaunchProcess();
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();

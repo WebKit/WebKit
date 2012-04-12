@@ -75,7 +75,7 @@ public:
     virtual void onComponentComplete();
     virtual void loadDidCommit() { }
     virtual void didFinishFirstNonEmptyLayout() { }
-    virtual void didChangeViewportProperties(const WebCore::ViewportArguments& args) { }
+    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes& attr) { }
     void didChangeLoadingState(QWebLoadRequest* loadRequest);
     void didChangeBackForwardList();
 
@@ -160,8 +160,6 @@ protected:
     QDeclarativeComponent* filePicker;
     QDeclarativeComponent* databaseQuotaDialog;
 
-    WebCore::ViewportArguments viewportArguments;
-
     bool m_useDefaultContentItemSize;
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;
@@ -196,7 +194,7 @@ public:
     virtual void onComponentComplete();
     virtual void loadDidCommit();
     virtual void didFinishFirstNonEmptyLayout();
-    virtual void didChangeViewportProperties(const WebCore::ViewportArguments& args);
+    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     virtual QtViewportInteractionEngine* viewportInteractionEngine() { return interactionEngine.data(); }
     virtual void updateViewportSize();
 
@@ -206,8 +204,6 @@ public:
 
     virtual void pageDidRequestScroll(const QPoint& pos);
     virtual void didChangeContentsSize(const QSize& newSize);
-
-    QtViewportInteractionEngine::Constraints computeViewportConstraints();
 
 private:
     QScopedPointer<QtViewportInteractionEngine> interactionEngine;

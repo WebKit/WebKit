@@ -92,7 +92,7 @@ namespace WebCore {
     class ProtectionSpace;
     struct FileChooserSettings;
     struct TextCheckingResult;
-    struct ViewportArguments;
+    struct ViewportAttributes;
     struct WindowFeatures;
 }
 
@@ -721,7 +721,7 @@ private:
     void screenToWindow(const WebCore::IntPoint& screenPoint, WebCore::IntPoint& windowPoint);
     void windowToScreen(const WebCore::IntRect& viewRect, WebCore::IntRect& result);
     void runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose);
-    void didChangeViewportProperties(const WebCore::ViewportArguments&);
+    void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     void pageDidScroll();
     void runOpenPanel(uint64_t frameID, const WebCore::FileChooserSettings&);
     void printFrame(uint64_t frameID);

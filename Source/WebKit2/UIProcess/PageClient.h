@@ -41,7 +41,7 @@ OBJC_CLASS WKView;
 
 namespace WebCore {
     class Cursor;
-    struct ViewportArguments;
+    struct ViewportAttributes;
 }
 
 namespace WebKit {
@@ -123,7 +123,7 @@ public:
 
     virtual void setCursor(const WebCore::Cursor&) = 0;
     virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
-    virtual void didChangeViewportProperties(const WebCore::ViewportArguments&) = 0;
+    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) = 0;
 
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) = 0;
     virtual void clearAllEditCommands() = 0;

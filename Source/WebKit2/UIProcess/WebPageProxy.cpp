@@ -2394,9 +2394,9 @@ void WebPageProxy::pageDidRequestScroll(const IntPoint& point)
 }
 #endif
 
-void WebPageProxy::didChangeViewportProperties(const ViewportArguments& args)
+void WebPageProxy::didChangeViewportProperties(const ViewportAttributes& attr)
 {
-    m_pageClient->didChangeViewportProperties(args);
+    m_pageClient->didChangeViewportProperties(attr);
 }
 
 void WebPageProxy::pageDidScroll()

@@ -86,9 +86,9 @@ void QtPageClient::didChangeContentsSize(const IntSize& newSize)
     QQuickWebViewPrivate::get(m_webView)->didChangeContentsSize(newSize);
 }
 
-void QtPageClient::didChangeViewportProperties(const WebCore::ViewportArguments& args)
+void QtPageClient::didChangeViewportProperties(const WebCore::ViewportAttributes& attr)
 {
-    QQuickWebViewPrivate::get(m_webView)->didChangeViewportProperties(args);
+    QQuickWebViewPrivate::get(m_webView)->didChangeViewportProperties(attr);
 }
 
 void QtPageClient::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)

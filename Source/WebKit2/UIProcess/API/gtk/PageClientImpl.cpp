@@ -158,7 +158,7 @@ void PageClientImpl::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     notImplemented();
 }
 
-void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportArguments&)
+void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttributes&)
 {
     notImplemented();
 }

@@ -142,15 +142,14 @@ bool ArgumentCoder<IntSize>::decode(ArgumentDecoder* decoder, IntSize& intSize)
     return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
 }
 
-
-void ArgumentCoder<ViewportArguments>::encode(ArgumentEncoder* encoder, const ViewportArguments& viewportArguments)
+void ArgumentCoder<ViewportAttributes>::encode(ArgumentEncoder* encoder, const ViewportAttributes& viewportAttributes)
 {
-    SimpleArgumentCoder<ViewportArguments>::encode(encoder, viewportArguments);
+    SimpleArgumentCoder<ViewportAttributes>::encode(encoder, viewportAttributes);
 }
 
-bool ArgumentCoder<ViewportArguments>::decode(ArgumentDecoder* decoder, ViewportArguments& viewportArguments)
+bool ArgumentCoder<ViewportAttributes>::decode(ArgumentDecoder* decoder, ViewportAttributes& viewportAttributes)
 {
-    return SimpleArgumentCoder<ViewportArguments>::decode(decoder, viewportArguments);
+    return SimpleArgumentCoder<ViewportAttributes>::decode(decoder, viewportAttributes);
 }
 
 void ArgumentCoder<MimeClassInfo>::encode(ArgumentEncoder* encoder, const MimeClassInfo& mimeClassInfo)

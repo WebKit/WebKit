@@ -863,6 +863,25 @@ void WebPage::resizeToContentsIfNeeded()
     view->setNeedsLayout();
 }
 
+void WebPage::sendViewportAttributesChanged()
+{
+    ASSERT(m_useFixedLayout);
+
+    // Viewport properties have no impact on zero sized fixed viewports.
+    if (m_viewportSize.isEmpty())
+        return;
+
+    // Recalculate the recommended layout size, when the available size (device pixel) changes.
+    Settings* settings = m_page->settings();
+
+    int minimumLayoutFallbackWidth = std::max(settings->layoutFallbackWidth(), m_viewportSize.width());
+
+    ViewportAttributes attr = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, settings->deviceWidth(), settings->deviceHeight(), settings->deviceDPI(), m_viewportSize);
+
+    setResizesToContentsUsingLayoutSize(attr.layoutSize);
+    send(Messages::WebPageProxy::DidChangeViewportProperties(attr));
+}
+
 void WebPage::setViewportSize(const IntSize& size)
 {
     ASSERT(m_useFixedLayout);
@@ -872,13 +891,7 @@ void WebPage::setViewportSize(const IntSize& size)
 
      m_viewportSize = size;
 
-    // Recalculate the recommended layout size, when the available size (device pixel) changes.
-    Settings* settings = m_page->settings();
-
-    int minimumLayoutFallbackWidth = std::max(settings->layoutFallbackWidth(), size.width());
-
-    IntSize targetLayoutSize = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, settings->deviceWidth(), settings->deviceHeight(), settings->deviceDPI(), size).layoutSize;
-    setResizesToContentsUsingLayoutSize(targetLayoutSize);
+    sendViewportAttributesChanged();
 }
 
 #endif
