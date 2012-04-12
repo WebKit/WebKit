@@ -458,6 +458,8 @@
                 'src/PageOverlay.h',
                 'src/PageOverlayList.cpp',
                 'src/PageOverlayList.h',
+                'src/PageWidgetDelegate.cpp',
+                'src/PageWidgetDelegate.h',
                 'src/PlatformMessagePortChannel.cpp',
                 'src/PlatformMessagePortChannel.h',
                 'src/PlatformSupport.cpp',

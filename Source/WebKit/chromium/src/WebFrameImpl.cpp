@@ -2056,35 +2056,6 @@ PassRefPtr<Frame> WebFrameImpl::createChildFrame(
     return childFrame.release();
 }
 
-void WebFrameImpl::layout()
-{
-    // layout this frame
-    FrameView* view = m_frame->view();
-    if (view)
-        view->updateLayoutAndStyleIfNeededRecursive();
-}
-
-void WebFrameImpl::paintWithContext(GraphicsContext& gc, const WebRect& rect)
-{
-    IntRect dirtyRect(rect);
-    gc.save();
-    if (m_frame->document() && frameView()) {
-        gc.clip(dirtyRect);
-        frameView()->paint(&gc, dirtyRect);
-        if (viewImpl()->pageOverlays())
-            viewImpl()->pageOverlays()->paintWebFrame(gc);
-    } else
-        gc.fillRect(dirtyRect, Color::white, ColorSpaceDeviceRGB);
-    gc.restore();
-}
-
-void WebFrameImpl::paint(WebCanvas* canvas, const WebRect& rect)
-{
-    if (rect.isEmpty())
-        return;
-    paintWithContext(GraphicsContextBuilder(canvas).context(), rect);
-}
-
 void WebFrameImpl::createFrameView()
 {
     ASSERT(m_frame); // If m_frame doesn't exist, we probably didn't init properly.

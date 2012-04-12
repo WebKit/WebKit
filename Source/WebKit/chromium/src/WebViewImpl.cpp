@@ -88,6 +88,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PageGroupLoadDeferrer.h"
+#include "PageWidgetDelegate.h"
 #include "Pasteboard.h"
 #include "PlatformContextSkia.h"
 #include "PlatformKeyboardEvent.h"
@@ -469,36 +470,14 @@ void WebViewImpl::setTabKeyCyclesThroughElements(bool value)
         m_page->setTabKeyCyclesThroughElements(value);
 }
 
-void WebViewImpl::mouseMove(const WebMouseEvent& event)
+void WebViewImpl::handleMouseLeave(Frame& mainFrame, const WebMouseEvent& event)
 {
-    if (!mainFrameImpl() || !mainFrameImpl()->frameView())
-        return;
-
-    // We call mouseMoved here instead of handleMouseMovedEvent because we need
-    // our ChromeClientImpl to receive changes to the mouse position and
-    // tooltip text, and mouseMoved handles all of that.
-    mainFrameImpl()->frame()->eventHandler()->mouseMoved(
-        PlatformMouseEventBuilder(mainFrameImpl()->frameView(), event));
-}
-
-void WebViewImpl::mouseLeave(const WebMouseEvent& event)
-{
-    // This event gets sent as the main frame is closing.  In that case, just
-    // ignore it.
-    if (!mainFrameImpl() || !mainFrameImpl()->frameView())
-        return;
-
     m_client->setMouseOverURL(WebURL());
-
-    mainFrameImpl()->frame()->eventHandler()->handleMouseMoveEvent(
-        PlatformMouseEventBuilder(mainFrameImpl()->frameView(), event));
+    PageWidgetEventHandler::handleMouseLeave(mainFrame, event);
 }
 
-void WebViewImpl::mouseDown(const WebMouseEvent& event)
+void WebViewImpl::handleMouseDown(Frame& mainFrame, const WebMouseEvent& event)
 {
-    if (!mainFrameImpl() || !mainFrameImpl()->frameView())
-        return;
-
     // If there is a select popup open, close it as the user is clicking on
     // the page (outside of the popup).  We also save it so we can prevent a
     // click on the select element from immediately reopening the popup.
@@ -522,8 +501,7 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
             m_mouseCaptureNode = hitNode;
     }
 
-    mainFrameImpl()->frame()->eventHandler()->handleMousePressEvent(
-        PlatformMouseEventBuilder(mainFrameImpl()->frameView(), event));
+    PageWidgetEventHandler::handleMouseDown(mainFrame, event);
 
     if (m_selectPopup && m_selectPopup == selectPopup) {
         // That click triggered a select popup which is the same as the one that
@@ -574,11 +552,8 @@ void WebViewImpl::mouseContextMenu(const WebMouseEvent& event)
     // implementation...
 }
 
-void WebViewImpl::mouseUp(const WebMouseEvent& event)
+void WebViewImpl::handleMouseUp(Frame& mainFrame, const WebMouseEvent& event)
 {
-    if (!mainFrameImpl() || !mainFrameImpl()->frameView())
-        return;
-
 #if OS(UNIX) && !OS(DARWIN)
     // If the event was a middle click, attempt to copy text into the focused
     // frame. We execute this before we let the page have a go at the event
@@ -616,8 +591,7 @@ void WebViewImpl::mouseUp(const WebMouseEvent& event)
     }
 #endif
 
-    mainFrameImpl()->frame()->eventHandler()->handleMouseReleaseEvent(
-        PlatformMouseEventBuilder(mainFrameImpl()->frameView(), event));
+    PageWidgetEventHandler::handleMouseUp(mainFrame, event);
 
 #if OS(WINDOWS)
     // Dispatch the contextmenu event regardless of if the click was swallowed.
@@ -625,12 +599,6 @@ void WebViewImpl::mouseUp(const WebMouseEvent& event)
     if (event.button == WebMouseEvent::ButtonRight)
         mouseContextMenu(event);
 #endif
-}
-
-bool WebViewImpl::mouseWheel(const WebMouseWheelEvent& event)
-{
-    PlatformWheelEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-    return mainFrameImpl()->frame()->eventHandler()->handleWheelEvent(platformEvent);
 }
 
 void WebViewImpl::scrollBy(const WebCore::IntPoint& delta)
@@ -649,11 +617,12 @@ void WebViewImpl::scrollBy(const WebCore::IntPoint& delta)
     syntheticWheel.globalY = m_lastWheelGlobalPosition.y;
     syntheticWheel.modifiers = m_flingModifier;
 
-    mouseWheel(syntheticWheel);
+    if (m_page && m_page->mainFrame() && m_page->mainFrame()->view())
+        handleMouseWheel(*m_page->mainFrame(), syntheticWheel);
 }
 
 #if ENABLE(GESTURE_EVENTS)
-bool WebViewImpl::gestureEvent(const WebGestureEvent& event)
+bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
 {
     switch (event.type) {
     case WebInputEvent::GestureFlingStart: {
@@ -724,7 +693,7 @@ void WebViewImpl::startPageScaleAnimation(const IntPoint& scroll, bool useAnchor
 }
 #endif
 
-bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
+bool WebViewImpl::handleKeyEvent(const WebKeyboardEvent& event)
 {
     ASSERT((event.type == WebInputEvent::RawKeyDown)
         || (event.type == WebInputEvent::KeyDown)
@@ -842,7 +811,7 @@ bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
     return false;
 }
 
-bool WebViewImpl::charEvent(const WebKeyboardEvent& event)
+bool WebViewImpl::handleCharEvent(const WebKeyboardEvent& event)
 {
     ASSERT(event.type == WebInputEvent::Char);
 
@@ -887,18 +856,6 @@ bool WebViewImpl::charEvent(const WebKeyboardEvent& event)
 
     return true;
 }
-
-#if ENABLE(TOUCH_EVENTS)
-bool WebViewImpl::touchEvent(const WebTouchEvent& event)
-{
-    if (!mainFrameImpl() || !mainFrameImpl()->frameView())
-        return false;
-
-    PlatformTouchEventBuilder touchEventBuilder(mainFrameImpl()->frameView(), event);
-    bool defaultPrevented = mainFrameImpl()->frame()->eventHandler()->handleTouchEvent(touchEventBuilder);
-    return defaultPrevented;
-}
-#endif
 
 #if ENABLE(GESTURE_EVENTS)
 WebRect WebViewImpl::computeBlockBounds(const WebRect& rect, AutoZoomType zoomType)
@@ -1430,32 +1387,14 @@ void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
             m_gestureAnimation.clear();
     }
 
-    double timeShift = currentTime() - monotonicallyIncreasingTime();
-    view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(monotonicFrameBeginTime + timeShift));
+    PageWidgetDelegate::animate(m_page.get(), monotonicFrameBeginTime);
 #endif
 }
 
 void WebViewImpl::layout()
 {
     TRACE_EVENT("WebViewImpl::layout", this, 0);
-
-    WebFrameImpl* webframe = mainFrameImpl();
-    if (webframe) {
-        // In order for our child HWNDs (NativeWindowWidgets) to update properly,
-        // they need to be told that we are updating the screen.  The problem is
-        // that the native widgets need to recalculate their clip region and not
-        // overlap any of our non-native widgets.  To force the resizing, call
-        // setFrameRect().  This will be a quick operation for most frames, but
-        // the NativeWindowWidgets will update a proper clipping region.
-        FrameView* view = webframe->frameView();
-        if (view)
-            view->setFrameRect(view->frameRect());
-
-        // setFrameRect may have the side-effect of causing existing page
-        // layout to be invalidated, so layout needs to be called last.
-
-        webframe->layout();
-    }
+    PageWidgetDelegate::layout(m_page.get());
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -1508,9 +1447,7 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
 #endif
     } else {
         double paintStart = currentTime();
-        WebFrameImpl* webframe = mainFrameImpl();
-        if (webframe)
-            webframe->paint(canvas, rect);
+        PageWidgetDelegate::paint(m_page.get(), pageOverlays(), canvas, rect);
         double paintEnd = currentTime();
         double pixelsPerSec = (rect.width * rect.height) / (paintEnd - paintStart);
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.SoftwarePaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
@@ -1667,79 +1604,8 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
         return true;
     }
 
-    bool handled = true;
-
-    // FIXME: WebKit seems to always return false on mouse events processing
-    // methods. For now we'll assume it has processed them (as we are only
-    // interested in whether keyboard events are processed).
-    switch (inputEvent.type) {
-    case WebInputEvent::MouseMove:
-        mouseMove(*static_cast<const WebMouseEvent*>(&inputEvent));
-        break;
-
-    case WebInputEvent::MouseLeave:
-        mouseLeave(*static_cast<const WebMouseEvent*>(&inputEvent));
-        break;
-
-    case WebInputEvent::MouseWheel:
-        handled = mouseWheel(*static_cast<const WebMouseWheelEvent*>(&inputEvent));
-        break;
-
-    case WebInputEvent::MouseDown:
-        mouseDown(*static_cast<const WebMouseEvent*>(&inputEvent));
-        break;
-
-    case WebInputEvent::MouseUp:
-        mouseUp(*static_cast<const WebMouseEvent*>(&inputEvent));
-        break;
-
-    case WebInputEvent::RawKeyDown:
-    case WebInputEvent::KeyDown:
-    case WebInputEvent::KeyUp:
-        handled = keyEvent(*static_cast<const WebKeyboardEvent*>(&inputEvent));
-        break;
-
-    case WebInputEvent::Char:
-        handled = charEvent(*static_cast<const WebKeyboardEvent*>(&inputEvent));
-        break;
-
-#if ENABLE(GESTURE_EVENTS)
-    case WebInputEvent::GestureScrollBegin:
-    case WebInputEvent::GestureScrollEnd:
-    case WebInputEvent::GestureScrollUpdate:
-    case WebInputEvent::GestureFlingStart:
-    case WebInputEvent::GestureFlingCancel:
-    case WebInputEvent::GestureTap:
-    case WebInputEvent::GestureTapDown:
-    case WebInputEvent::GestureDoubleTap:
-        handled = gestureEvent(*static_cast<const WebGestureEvent*>(&inputEvent));
-        break;
-#endif
-
-#if ENABLE(TOUCH_EVENTS)
-    case WebInputEvent::TouchStart:
-    case WebInputEvent::TouchMove:
-    case WebInputEvent::TouchEnd:
-    case WebInputEvent::TouchCancel:
-        handled = touchEvent(*static_cast<const WebTouchEvent*>(&inputEvent));
-        break;
-#endif
-
-#if ENABLE(GESTURE_EVENTS)
-    case WebInputEvent::GesturePinchBegin:
-    case WebInputEvent::GesturePinchEnd:
-    case WebInputEvent::GesturePinchUpdate:
-        // FIXME: Once PlatformGestureEvent is updated to support pinch, this should call handleGestureEvent, just like it currently does for gesture scroll.
-        handled = false;
-        break;
-#endif
-
-    default:
-        handled = false;
-    }
-
+    bool handled = PageWidgetDelegate::handleInputEvent(m_page.get(), *this, inputEvent);
     m_currentInputEvent = 0;
-
     return handled;
 }
 

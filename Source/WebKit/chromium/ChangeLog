@@ -1,3 +1,59 @@
+2012-04-12  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Move some code of WebViewImpl and WebFrameImpl to PageWidgetDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=83750
+
+        Reviewed by Adam Barth.
+
+        In order to share code in WebViewImpl and the incoming WebPagePopupImpl,
+        we move some code of WebViewImpl and WebFrameImpl to PageWidgetDelegate.
+        PageWidgetDelegate is a set of static functions because we can't use
+        virtual inheritance in this case and we don't want to move WebView's
+        data members to another class.
+
+        No new tests. Just refactoring.
+
+        * WebKit.gyp: Add PageWidgetDelegate.{cpp,h} and WebPagePopupImpl.h.
+        * src/PageWidgetDelegate.cpp: Added.
+        (WebKit::mainFrameView):
+        (WebKit::PageWidgetDelegate::animate):
+        Moved from a part of WebViewImpl::animatie()
+        (WebKit::PageWidgetDelegate::layout):
+        Moved from WebViewImpl::layout() and WebFrameImpl::layout().
+        (WebKit::PageWidgetDelegate::paint):
+        Moved from WebFrameImpl::paint() and paintWithContext().
+        (WebKit::PageWidgetDelegate::handleInputEvent):
+        Moved from a part of WebViewImpl::handleInputEvent().
+        (WebKit::PageWidgetEventHandler::handleMouseMove):
+        Common implementation of an event handling.
+        (WebKit::PageWidgetEventHandler::handleMouseLeave): ditto.
+        (WebKit::PageWidgetEventHandler::handleMouseDown): ditto.
+        (WebKit::PageWidgetEventHandler::handleMouseUp): ditto.
+        (WebKit::PageWidgetEventHandler::handleMouseWheel): ditto.
+        (WebKit::PageWidgetEventHandler::handleTouchEvent): ditto.
+        * src/PageWidgetDelegate.h: Added.
+        * src/WebFrameImpl.cpp:
+        Remove layout(), paintWithContext(), and paint(). They are moved to
+        PageWidgetDelegate.
+        * src/WebFrameImpl.h:
+        (WebFrameImpl): Remove layout(), paintWithContext(), and paint().
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleMouseLeave):
+        Renamed from mouseLeave(), use PageWidgetDelegate::handleMouseLeave().
+        (WebKit::WebViewImpl::handleMouseDown):
+        Renamed from mouseDown(), use PageWidgetDelegate::handleMouseDown().
+        (WebKit::WebViewImpl::handleMouseUp):
+        Renamed from mouseUp(), use PageWidgetDelegate::handleMouseUp().
+        (WebKit::WebViewImpl::scrollBy): Calls renamed handleMouseWheel().
+        (WebKit::WebViewImpl::handleGestureEvent): Renamed from gestureEvent().
+        (WebKit::WebViewImpl::handleKeyEvent): Renamed from keyEvent().
+        (WebKit::WebViewImpl::handleCharEvent): Renamed from charEvent().
+        (WebKit::WebViewImpl::updateAnimations): Uses PageWidgetDelegate::animate().
+        (WebKit::WebViewImpl::layout): Uses PageWidgetDelegate::layout().
+        (WebKit::WebViewImpl::paint): Uses PageWidgetDelegate::paint().
+        (WebKit::WebViewImpl::handleInputEvent): Uses PageWidgetDelegate::handleInputEvent().
+        * src/WebViewImpl.h:
+
 2012-04-12  Adrienne Walker  <enne@google.com>
 
         [chromium] Fix Windows compiler warnings in webkit_unit_test target

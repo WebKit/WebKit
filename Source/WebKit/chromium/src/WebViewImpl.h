@@ -52,6 +52,7 @@
 #include "IntRect.h"
 #include "NotificationPresenterImpl.h"
 #include "PageOverlayList.h"
+#include "PageWidgetDelegate.h"
 #include "PlatformGestureCurveTarget.h"
 #include "UserMediaClientImpl.h"
 #include <wtf/OwnPtr.h>
@@ -103,7 +104,7 @@ class WebMouseWheelEvent;
 class WebSettingsImpl;
 class WebTouchEvent;
 
-class WebViewImpl : public WebView, public WebLayerTreeViewClient, public RefCounted<WebViewImpl>, public WebCore::PlatformGestureCurveTarget {
+class WebViewImpl : public WebView, public WebLayerTreeViewClient, public RefCounted<WebViewImpl>, public WebCore::PlatformGestureCurveTarget, public PageWidgetEventHandler {
 public:
     enum AutoZoomType {
         DoubleTap,
@@ -334,18 +335,9 @@ public:
     void observeNewNavigation();
 
     // Event related methods:
-    void mouseMove(const WebMouseEvent&);
-    void mouseLeave(const WebMouseEvent&);
-    void mouseDown(const WebMouseEvent&);
-    void mouseUp(const WebMouseEvent&);
     void mouseContextMenu(const WebMouseEvent&);
     void mouseDoubleClick(const WebMouseEvent&);
-    bool mouseWheel(const WebMouseWheelEvent&);
-    bool gestureEvent(const WebGestureEvent&);
     void startPageScaleAnimation(const WebCore::IntPoint& targetPosition, bool useAnchor, float newScale, double durationSec);
-    bool keyEvent(const WebKeyboardEvent&);
-    bool charEvent(const WebKeyboardEvent&);
-    bool touchEvent(const WebTouchEvent&);
 
     void numberOfWheelEventHandlersChanged(unsigned);
     void numberOfTouchEventHandlersChanged(unsigned);
@@ -594,6 +586,14 @@ private:
 #if ENABLE(POINTER_LOCK)
     void pointerLockMouseEvent(const WebInputEvent&);
 #endif
+
+    // PageWidgetEventHandler functions
+    virtual void handleMouseLeave(WebCore::Frame&, const WebMouseEvent&) OVERRIDE;
+    virtual void handleMouseDown(WebCore::Frame&, const WebMouseEvent&) OVERRIDE;
+    virtual void handleMouseUp(WebCore::Frame&, const WebMouseEvent&) OVERRIDE;
+    virtual bool handleGestureEvent(const WebGestureEvent&) OVERRIDE;
+    virtual bool handleKeyEvent(const WebKeyboardEvent&) OVERRIDE;
+    virtual bool handleCharEvent(const WebKeyboardEvent&) OVERRIDE;
 
     WebViewClient* m_client;
     WebAutofillClient* m_autofillClient;
