@@ -135,18 +135,20 @@ void SelectionHandler::regionForTextQuads(Vector<FloatQuad> &quadList, IntRectRe
         // Convert the text quads into a more platform friendy
         // IntRectRegion and adjust for subframes.
         Platform::IntRect selectionBoundingBox;
+        std::vector<Platform::IntRect> adjustedIntRects;
         for (unsigned i = 0; i < quadList.size(); i++) {
             WebCore::IntRect enclosingRect = quadList[i].enclosingBoundingBox();
             enclosingRect.intersect(frameRect);
             enclosingRect.move(framePosition.x(), framePosition.y());
-            region = unionRegions(region, IntRectRegion(enclosingRect));
 
             // Clip to the visible content.
             if (clippingRect.location() != DOMSupport::InvalidPoint)
                 enclosingRect.intersect(clippingRect);
 
+            adjustedIntRects.push_back(enclosingRect);
             selectionBoundingBox = unionOfRects(enclosingRect, selectionBoundingBox);
         }
+        region = IntRectRegion(selectionBoundingBox, adjustedIntRects.size(), adjustedIntRects);
     }
 }
 
@@ -804,7 +806,7 @@ static WebCore::IntPoint referencePoint(const VisiblePosition& position, const W
 
 // Check all rects in the region for a point match. The region is non-banded
 // and non-sorted so all must be checked.
-static bool regionRectListContainsPoint(IntRectRegion& region, WebCore::IntPoint point)
+static bool regionRectListContainsPoint(const IntRectRegion& region, const WebCore::IntPoint& point)
 {
     if (!region.extents().contains(point))
         return false;

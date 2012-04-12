@@ -1,5 +1,27 @@
 2012-04-12  Mike Fenton  <mifenton@rim.com>
 
+        [BlackBerry] Speed up processing of Selection region generation.
+        https://bugs.webkit.org/show_bug.cgi?id=82766
+
+        Reviewed by Rob Buis.
+
+        PR 136593.
+
+        Re-speed up text selection.  The previous patch had a merge
+        error causing text selection not to function.  The fix
+        implemented removed the optimization.  This fixes the error
+        in the original patch and removes the temporary fix.
+
+        Make style updated as suggested by Antonio Gomes.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::regionForTextQuads):
+        (BlackBerry::WebKit::regionRectListContainsPoint):
+
+2012-04-12  Mike Fenton  <mifenton@rim.com>
+
         Pattern matching for hexadecimal should include * as an allowable count.
         https://bugs.webkit.org/show_bug.cgi?id=83779
 
