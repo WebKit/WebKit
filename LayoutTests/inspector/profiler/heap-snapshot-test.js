@@ -78,15 +78,16 @@ InspectorTest.createHeapSnapshotSplitNodesEdgesMockRaw = function()
     // Return the same snapshot as above but having the nodes and edges
     // separated.
     return {
-        snapshot: {},
-        nodes: [
-            {
-                separate_edges: true,
+        snapshot: {
+            meta: {
                 node_fields: ["type", "name", "id", "self_size", "retained_size", "dominator", "edges_index"],
                 node_types: [["hidden", "object"], "", "", "", "", "", ""],
                 edge_fields: ["type", "name_or_index", "to_node"],
                 edge_types: [["element", "property"], "", ""]
             },
+            node_count: 6,
+            edge_count: 7},
+        nodes: [
             0, 0, 1, 0, 20,  0,  0,
             1, 1, 2, 2,  2,  0,  6,
             1, 2, 3, 3,  8,  0, 12,
@@ -104,7 +105,7 @@ InspectorTest.createHeapSnapshotSplitNodesEdgesMockRaw = function()
 
 InspectorTest._postprocessHeapSnapshotMock = function(mock)
 {
-    mock.metaNode = mock.nodes[0];
+    mock.snapshot.meta = mock.nodes[0];
     mock.nodes[0] = 0;
     var tempNodes = new Int32Array(1000);
     tempNodes.set(mock.nodes);
