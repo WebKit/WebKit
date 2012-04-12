@@ -1308,14 +1308,6 @@ void PluginView::platformDestroy()
     m_private = 0;
 }
 
-void PluginView::halt()
-{
-}
-
-void PluginView::restart()
-{
-}
-
 void PluginView::getWindowInfo(Vector<PluginWindowInfo>& windowList)
 {
     if (!m_plugin->pluginFuncs()->getvalue)
