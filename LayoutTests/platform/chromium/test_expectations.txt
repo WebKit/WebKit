@@ -2082,8 +2082,6 @@ BUGCR48239 : fast/js/function-apply-many-args.html = TIMEOUT TEXT
 
 BUGCR48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 
-BUGCR32682 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
-
 BUGWK42598 : http/tests/misc/401-alternative-content.php = TEXT
 BUGWK42598 : http/tests/xmlhttprequest/failed-auth.html = TIMEOUT TEXT
 
