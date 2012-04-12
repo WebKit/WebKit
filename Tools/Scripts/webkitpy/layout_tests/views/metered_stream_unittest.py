@@ -131,15 +131,22 @@ class VerboseTest(RegularTest):
 
     def test_basic(self):
         buflist = self._basic([0, 1, 2.1, 13, 14.1234])
-        self.assertEquals(buflist, ['16:00:00.000 8675 foo\n', '16:00:01.000 8675 bar\n', '16:00:13.000 8675 baz 2\n', '16:00:14.123 8675 done\n'])
+        # We don't bother to match the hours and minutes of the timestamp since
+        # the local timezone can vary and we can't set that portably and easily.
+        self.assertTrue(re.match('\d\d:\d\d:00.000 8675 foo\n', buflist[0]))
+        self.assertTrue(re.match('\d\d:\d\d:01.000 8675 bar\n', buflist[1]))
+        self.assertTrue(re.match('\d\d:\d\d:13.000 8675 baz 2\n', buflist[2]))
+        self.assertTrue(re.match('\d\d:\d\d:14.123 8675 done\n', buflist[3]))
+        self.assertEquals(len(buflist), 4)
 
     def test_log_after_update(self):
         buflist = self._log_after_update()
-        self.assertEquals(buflist[0], '16:00:00.000 8675 foo\n')
+        self.assertTrue(re.match('\d\d:\d\d:00.000 8675 foo\n', buflist[0]))
 
         # The second argument should have a real timestamp and pid, so we just check the format.
-        self.assertEquals(len(buflist), 2)
         self.assertTrue(re.match('\d\d:\d\d:\d\d.\d\d\d \d+ bar\n', buflist[1]))
+
+        self.assertEquals(len(buflist), 2)
 
     def test_log_args(self):
         self.logger.info('foo %s %d', 'bar', 2)

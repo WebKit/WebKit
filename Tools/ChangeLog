@@ -1,3 +1,23 @@
+2012-04-12  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy fails on metered_stream_unittest for non-US West Coast Time Zones
+        https://bugs.webkit.org/show_bug.cgi?id=83583
+
+        Reviewed by Philippe Normand
+
+        Updated the unit test to ignore the hours and minutes of the
+        localtime for time(0), since we can't easily guarantee which
+        timezone we're in or what timezone rules were in effect on
+        1/1/1970; this should be mostly fine since we can trust that
+        time.localtime() will work, although there is the possibility
+        that we'll screw up the time formatting of which field is the
+        hours and which is the minutes.
+
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+        (VerboseTest):
+        (VerboseTest.test_basic):
+        (VerboseTest.test_log_after_update):
+
 2012-04-12  Dominik Rottsches  <dominik.rottsches@linux.intel.com>
 
         Add an EFL Debug Buildbot to the master configuration
