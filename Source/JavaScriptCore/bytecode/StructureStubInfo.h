@@ -122,8 +122,8 @@ namespace JSC {
         {
             accessType = access_get_by_id_self_list;
 
-            u.getByIdProtoList.structureList = structureList;
-            u.getByIdProtoList.listSize = listSize;
+            u.getByIdSelfList.structureList = structureList;
+            u.getByIdSelfList.listSize = listSize;
         }
 
         void initGetByIdProtoList(PolymorphicAccessStructureList* structureList, int listSize)

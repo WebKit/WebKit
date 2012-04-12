@@ -1,3 +1,18 @@
+2012-04-11  Michael Saboff  <msaboff@apple.com>
+
+        Invalid Union Reference in StructureStubInfo.{cpp.h}
+        https://bugs.webkit.org/show_bug.cgi?id=83735
+
+        Reviewed by Filip Pizlo.
+
+        Changed the references to u.getByIdProtoList and u.getByIdSelfList
+        to be consistent.
+
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::initGetByIdSelfList):
+
 2012-04-11  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed attempting to make Qt's eccentric hardware work.

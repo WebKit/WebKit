@@ -92,7 +92,7 @@ bool StructureStubInfo::visitWeakReferences()
     }
     case access_get_by_id_proto_list: {
         PolymorphicAccessStructureList* polymorphicStructures = u.getByIdProtoList.structureList;
-        if (!polymorphicStructures->visitWeak(u.getByIdSelfList.listSize))
+        if (!polymorphicStructures->visitWeak(u.getByIdProtoList.listSize))
             return false;
         break;
     }
