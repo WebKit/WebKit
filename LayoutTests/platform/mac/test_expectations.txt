@@ -335,5 +335,3 @@ BUGWK75568 : tables/mozilla/bugs/bug1188.html = TEXT
 
 // Tiled-layer compositing tests are flakey.
 BUGWK82546 : compositing/tiling/crash-reparent-tiled-layer.html = PASS TEXT
-
-BUGWK83124 : http/tests/websocket/tests/hybi/workers/worker-reload.html = PASS FAIL
