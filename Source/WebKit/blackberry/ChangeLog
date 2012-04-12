@@ -1,3 +1,17 @@
+2012-04-12  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Web Inspector messages incorrectly converted
+        https://bugs.webkit.org/show_bug.cgi?id=83796
+
+        Reviewed by Rob Buis.
+
+        The JSON sent over from the remote Web Inspector front-end was being
+        mis interpreted as ISO-8859-1.  This caused all non ascii characters to
+        become garbled when using the String constructor, so we use fromtUTF8 instead.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::dispatchInspectorMessage):
+
 2012-04-12  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Speed up processing of Selection region generation.

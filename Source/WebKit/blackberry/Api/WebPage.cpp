@@ -5198,7 +5198,7 @@ void WebPage::disablePasswordEcho()
 
 void WebPage::dispatchInspectorMessage(const std::string& message)
 {
-    String stringMessage(message.c_str(), message.length());
+    String stringMessage = String::fromUTF8(message.data(), message.length());
     d->m_page->inspectorController()->dispatchMessageFromFrontend(stringMessage);
 }
 
