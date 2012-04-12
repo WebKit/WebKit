@@ -898,5 +898,4 @@ const AtomicString& week()
 }
 
 } // namespace WebCore::InputTypeNames
-
 } // namespace WebCore

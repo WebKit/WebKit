@@ -136,5 +136,4 @@ void DateInputType::handleBlurEvent()
 #endif // ENABLE(CALENDAR_PICKER)
 
 } // namespace WebCore
-
 #endif

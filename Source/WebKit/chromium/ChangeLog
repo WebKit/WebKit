@@ -1,5 +1,14 @@
 2012-04-12  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Enable INPUT_TYPE_DATE
+        https://bugs.webkit.org/show_bug.cgi?id=83761
+
+        Reviewed by Kentaro Hara.
+
+        * features.gypi: Turn ENABLE_INPUT_TYPE_DATE on.
+
+2012-04-12  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Fix !ENABLE(PAGE_POPUP) build
 
         * src/WebViewImpl.cpp:
