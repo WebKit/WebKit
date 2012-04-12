@@ -271,7 +271,7 @@ PassOwnPtr<Settings> Settings::create(Page* page)
     return adoptPtr(new Settings(page));
 } 
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(BLACKBERRY)
 void Settings::initializeDefaultFontFamilies()
 {
     // Other platforms can set up fonts from a client, but on Mac, we want it in WebCore to share code between WebKit1 and WebKit2.
