@@ -134,7 +134,7 @@ v8::Handle<v8::Object> V8TestNode::wrapSlow(PassRefPtr<TestNode> impl)
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
     wrapperHandle.SetWrapperClassId(v8DOMSubtreeClassId);
-    getDOMNodeMap().set(impl.leakRef(), wrapperHandle);
+    V8DOMWrapper::setJSWrapperForDOMNode(impl, wrapperHandle);
     return wrapper;
 }
 

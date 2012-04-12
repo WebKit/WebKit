@@ -132,7 +132,7 @@ v8::Handle<v8::Object> V8Float64Array::wrapSlow(PassRefPtr<Float64Array> impl)
 
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
-    getDOMObjectMap().set(impl.leakRef(), wrapperHandle);
+    V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapperHandle);
     return wrapper;
 }
 

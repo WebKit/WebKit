@@ -3070,7 +3070,7 @@ sub GenerateToV8Converters
     my $className = shift;
     my $nativeType = shift;
 
-    my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
+    my $domMapName = GetDomMapName($dataNode, $interfaceName);
     my $forceNewObjectInput = IsDOMNodeType($interfaceName) ? ", bool forceNewObject" : "";
     my $forceNewObjectCall = IsDOMNodeType($interfaceName) ? ", forceNewObject" : "";
     my $wrapSlowArgumentType = GetPassRefPtrType($nativeType);
@@ -3159,7 +3159,7 @@ END
 END
     }
     push(@implContent, <<END);
-    ${domMapFunction}.set(impl.leakRef(), wrapperHandle);
+    V8DOMWrapper::setJSWrapperFor${domMapName}(impl, wrapperHandle);
     return wrapper;
 }
 END
