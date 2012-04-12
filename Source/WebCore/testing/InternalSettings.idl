@@ -51,6 +51,7 @@ module window {
         void setPictographFontFamily(in DOMString family, in DOMString script) raises(DOMException);
         void setEnableScrollAnimator(in boolean enabled) raises(DOMException);
         boolean scrollAnimatorEnabled() raises(DOMException);
+        void setCSSExclusionsEnabled(in boolean enabled) raises(DOMException);
     };
 }
 

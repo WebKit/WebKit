@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+
+description('Test that parsing of css exclusions related properties can be disabled.');
+
+internals.settings.setCSSExclusionsEnabled(false);
+
+function testInlineStyle(property, value) {
+    var div = document.createElement("div");
+    div.setAttribute("style", property + ": " + value);
+    return div.style.getPropertyValue(property);
+}
+
+function testComputedStyle(property, value) {
+    var div = document.createElement("div");
+    document.body.appendChild(div);
+    div.style.setProperty(property, value);
+    var computedValue = getComputedStyle(div).getPropertyValue(property);
+    document.body.removeChild(div);
+    return computedValue;
+}
+
+function testStyle(property, value, computedExpected) {
+    shouldBeNull('testInlineStyle("' + property + '", "' + value + '")');
+    shouldBeEqualToString('testComputedStyle("' + property + '", "' + value + '")', computedExpected);
+}
+
+testStyle("-webkit-wrap-flow", "both", "auto");
+
+testStyle("-webkit-wrap-margin", "10px", "0px");
+testStyle("-webkit-wrap-padding", "10px", "0px");
+
+testStyle("-webkit-wrap-through", "none", "wrap");
+
+testInlineStyle("-webkit-wrap", "both 10px 10px");
+
+testStyle("-webkit-shape-outside", "circle(10px, 10px, 10px)", "auto");
+testStyle("-webkit-shape-inside", "circle(10px, 10px, 10px)", "auto");
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

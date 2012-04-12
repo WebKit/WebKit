@@ -1,5 +1,7 @@
 description('Testing the parsing of the -webkit-shape-outside property.');
 
+internals.settings.setCSSExclusionsEnabled(true);
+
 function testCSSText(declaration, expected)
 {
     var element = document.createElement("div");

@@ -1,5 +1,7 @@
 description('Test parsing of the CSS wrap-padding property.');
 
+internals.settings.setCSSExclusionsEnabled(true);
+
 function test(declaration) {
     var div = document.createElement("div");
     div.setAttribute("style", declaration);

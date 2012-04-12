@@ -71,6 +71,7 @@
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderTheme.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "ShadowValue.h"
 #include "StylePropertySet.h"
@@ -368,10 +369,12 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     case CSSPropertyWebkitPaddingBefore:
     case CSSPropertyWebkitPaddingEnd:
     case CSSPropertyWebkitPaddingStart:
+        acceptsNegativeNumbers = false;
+        return true;
     case CSSPropertyWebkitWrapMargin:
     case CSSPropertyWebkitWrapPadding:
         acceptsNegativeNumbers = false;
-        return true;
+        return RuntimeEnabledFeatures::cssExclusionsEnabled();
     case CSSPropertyBottom:
     case CSSPropertyLeft:
     case CSSPropertyMarginBottom:
@@ -753,10 +756,14 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return true;
         break;
     case CSSPropertyWebkitWrapFlow:
+        if (!RuntimeEnabledFeatures::cssExclusionsEnabled())
+            return false;
         if (valueID == CSSValueAuto || valueID == CSSValueBoth || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueMaximum || valueID == CSSValueClear)
             return true;
         break;
     case CSSPropertyWebkitWrapThrough:
+        if (!RuntimeEnabledFeatures::cssExclusionsEnabled())
+            return false;
         if (valueID == CSSValueWrap || valueID == CSSValueNone)
             return true;
         break;
@@ -2381,6 +2388,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 
     case CSSPropertyWebkitShapeInside:
     case CSSPropertyWebkitShapeOutside:
+        if (!RuntimeEnabledFeatures::cssExclusionsEnabled())
+            return false;
         if (id == CSSValueAuto)
             validPrimitive = true;
         else if (value->unit == CSSParserValue::Function)
@@ -2388,10 +2397,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
     case CSSPropertyWebkitWrapMargin:
     case CSSPropertyWebkitWrapPadding:
-        validPrimitive = (!id && validUnit(value, FLength | FNonNeg));
+        validPrimitive = (RuntimeEnabledFeatures::cssExclusionsEnabled() && !id && validUnit(value, FLength | FNonNeg));
         break;
     case CSSPropertyWebkitWrap:
-        return parseShorthand(propId, webkitWrapShorthand(), important);
+        return RuntimeEnabledFeatures::cssExclusionsEnabled() && parseShorthand(propId, webkitWrapShorthand(), important);
     case CSSPropertyBorderBottomStyle:
     case CSSPropertyBorderCollapse:
     case CSSPropertyBorderLeftStyle:

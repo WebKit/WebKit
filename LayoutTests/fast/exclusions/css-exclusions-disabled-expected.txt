@@ -1,0 +1,21 @@
+Test that parsing of css exclusions related properties can be disabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testInlineStyle("-webkit-wrap-flow", "both") is null
+PASS testComputedStyle("-webkit-wrap-flow", "both") is "auto"
+PASS testInlineStyle("-webkit-wrap-margin", "10px") is null
+PASS testComputedStyle("-webkit-wrap-margin", "10px") is "0px"
+PASS testInlineStyle("-webkit-wrap-padding", "10px") is null
+PASS testComputedStyle("-webkit-wrap-padding", "10px") is "0px"
+PASS testInlineStyle("-webkit-wrap-through", "none") is null
+PASS testComputedStyle("-webkit-wrap-through", "none") is "wrap"
+PASS testInlineStyle("-webkit-shape-outside", "circle(10px, 10px, 10px)") is null
+PASS testComputedStyle("-webkit-shape-outside", "circle(10px, 10px, 10px)") is "auto"
+PASS testInlineStyle("-webkit-shape-inside", "circle(10px, 10px, 10px)") is null
+PASS testComputedStyle("-webkit-shape-inside", "circle(10px, 10px, 10px)") is "auto"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

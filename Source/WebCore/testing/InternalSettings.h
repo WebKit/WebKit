@@ -72,6 +72,7 @@ public:
     void setPictographFontFamily(const String& family, const String& script, ExceptionCode&);
     void setEnableScrollAnimator(bool enabled, ExceptionCode&);
     bool scrollAnimatorEnabled(ExceptionCode&);
+    void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);
 
     void restoreTo(Settings*);
 
@@ -84,6 +85,7 @@ private:
 
     double m_originalPasswordEchoDurationInSeconds;
     bool m_originalPasswordEchoEnabled;
+    bool m_originalCSSExclusionsEnabled;
 #if ENABLE(SHADOW_DOM)
     bool m_originalShadowDOMEnabled;
 #endif

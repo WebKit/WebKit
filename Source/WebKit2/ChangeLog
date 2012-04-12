@@ -1,3 +1,15 @@
+2012-04-12  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Add flag to enable / disable exclusions at runtime
+        https://bugs.webkit.org/show_bug.cgi?id=83313
+
+        Reviewed by Ryosuke Niwa.
+
+        Adding windows symbols
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-04-12  Yael Aharon  <yael.aharon@nokia.com>
 
         [Qt][WK2] Nested fixed elements scroll too fast
