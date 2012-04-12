@@ -6,7 +6,6 @@ editing/selection/select-element-paragraph-boundary.html
 fast/dom/DeviceMotion
 fast/dom/DeviceOrientation
 fast/dom/Orientation/create-event-orientationchange.html
-fast/dom/prototype-inheritance-2.html
 fast/dom/Window/Plug-ins.html
 fast/dom/Window/window-properties-device-orientation.html
 fast/dom/Window/window-property-descriptors.html
