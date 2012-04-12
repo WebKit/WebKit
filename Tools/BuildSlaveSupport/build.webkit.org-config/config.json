@@ -67,6 +67,7 @@
                     { "name": "wince-1", "platform": "wince" },
                     
                     { "name": "efl-linux-slave-1", "platform": "efl" },
+                    { "name": "efl-linux-slave-2", "platform": "efl" },
 
                     { "name": "hfreyther-mipsel-linux1", "platform": "qt"},
                     { "name": "hfreyther-sh4-linux1", "platform": "qt"}
@@ -296,6 +297,11 @@
                       "name": "EFL Linux Release", "type": "BuildAndTest", "builddir": "efl-linux-release",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["efl-linux-slave-1"]
+                    },
+                    {
+                      "name": "EFL Linux Debug", "type": "BuildAndTest", "builddir": "efl-linux-debug",
+                      "platform": "efl", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["efl-linux-slave-2"]
                     }
                   ],
 
@@ -364,6 +370,9 @@
                     },
                     { "type": "Triggerable", "name": "chromium-linux-release-tests",
                       "builderNames": ["Chromium Linux Release (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "efl-linux-debug",
+                      "builderNames": ["EFL Linux Debug"]
                     }
                   ]
 }
