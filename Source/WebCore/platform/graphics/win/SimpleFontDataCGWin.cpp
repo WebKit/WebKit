@@ -29,9 +29,9 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
+#include "FloatRect.h"
 #include "Font.h"
 #include "FontCache.h"
-#include "FloatRect.h"
 #include "FontDescription.h"
 #include "HWndDC.h"
 #include "PlatformString.h"
@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-using std::max;
+using namespace std;
 
 void SimpleFontData::platformInit()
 {
@@ -103,6 +103,9 @@ void SimpleFontData::platformInit()
 
 FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 {
+    if (!platformData().size())
+        return FloatRect();
+
     if (m_platformData.useGDI())
         return boundsForGDIGlyph(glyph);
 
@@ -119,6 +122,9 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
+    if (!platformData().size())
+        return 0;
+
     if (m_platformData.useGDI())
         return widthForGDIGlyph(glyph);
 
