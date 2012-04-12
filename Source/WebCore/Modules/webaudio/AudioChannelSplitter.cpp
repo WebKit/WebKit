@@ -28,22 +28,27 @@
 
 #include "AudioChannelSplitter.h"
 
+#include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 
 namespace WebCore {
     
-// This is considering that 5.1 (6 channels) is the largest we'll ever deal with.
-// It can easily be increased to support more if the web audio specification is updated.
-const unsigned NumberOfOutputs = 6;
+PassRefPtr<AudioChannelSplitter> AudioChannelSplitter::create(AudioContext* context, float sampleRate, unsigned numberOfOutputs)
+{
+    if (!numberOfOutputs || numberOfOutputs > AudioContext::maxNumberOfChannels())
+        return 0;
 
-AudioChannelSplitter::AudioChannelSplitter(AudioContext* context, float sampleRate)
+    return adoptRef(new AudioChannelSplitter(context, sampleRate, numberOfOutputs));      
+}
+
+AudioChannelSplitter::AudioChannelSplitter(AudioContext* context, float sampleRate, unsigned numberOfOutputs)
     : AudioNode(context, sampleRate)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));
 
     // Create a fixed number of outputs (able to handle the maximum number of channels fed to an input).
-    for (unsigned i = 0; i < NumberOfOutputs; ++i)
+    for (unsigned i = 0; i < numberOfOutputs; ++i)
         addOutput(adoptPtr(new AudioNodeOutput(this, 1)));
     
     setNodeType(NodeTypeChannelSplitter);
@@ -59,8 +64,7 @@ void AudioChannelSplitter::process(size_t framesToProcess)
     
     unsigned numberOfSourceChannels = source->numberOfChannels();
     
-    ASSERT(numberOfOutputs() == NumberOfOutputs);
-    for (unsigned i = 0; i < NumberOfOutputs; ++i) {
+    for (unsigned i = 0; i < numberOfOutputs(); ++i) {
         AudioBus* destination = output(i)->bus();
         ASSERT(destination);
         

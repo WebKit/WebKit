@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<!--
+Tests that AudioChannelSplitter works correctly.
+-->
+
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests AudioChannelSplitter.");
+
+var sampleRate = 44100.0;
+var lengthInSampleFrames = 512;
+
+var context = 0;
+var sourceBuffer;
+var sourceNode;
+var channelSplitter;
+var channelMerger;
+
+function createStereoBufferWithDCOffset(length, sampleRate, offset) {
+    var buffer = context.createBuffer(2, length, sampleRate);
+    var n = buffer.length;
+    var channelL = buffer.getChannelData(0);
+    var channelR = buffer.getChannelData(1);
+
+    for (var i = 0; i < n; ++i) {
+        channelL[i] = offset;
+        channelR[i] = -1.0 * offset;
+    }
+
+    return buffer;
+}
+
+// checkResult() checks that the rendered buffer is stereo and that the left channel is all -1 and right channel all +1.
+// In other words, we've reversed the order of the two channels.
+function checkResult(event) {
+    var buffer = event.renderedBuffer;
+
+    var success = true;
+
+    if (buffer.numberOfChannels == 2) {
+        var bufferDataL = buffer.getChannelData(0);
+        var bufferDataR = buffer.getChannelData(1);
+
+        // Go through every sample and make sure it's all -1 for the left-channel, and all +1 for the right-channel.
+        for (var i = 0; i < buffer.length; ++i) {
+            if (bufferDataL[i] != -1 || bufferDataR[i] != 1) {
+                success = false;
+                break;
+            }
+        }
+    } else {
+        success = false;
+    }
+
+    if (success) {
+        testPassed("Correctly exchanged left and right channels.");
+    } else {
+        testFailed("Error on exchanging left and right channels.");
+    }
+
+    finishJSTest();
+}
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    window.jsTestIsAsync = true;
+
+    // Create stereo offline audio context.
+    context = new webkitAudioContext(2, lengthInSampleFrames, sampleRate);
+
+    try {
+        var splitternode = context.createChannelSplitter(0);
+        testFailed("Exception should be thrown for numberOfOutputs <= 0.");
+    } catch(e) {
+        testPassed("Exception been thrown for numberOfOutputs <= 0.");
+    }
+
+    try {
+        var splitternode = context.createChannelSplitter(33);
+        testFailed("Exception should be thrown for numerOfOutputs >= 32.");
+    } catch(e) {
+        testPassed("Exception been thrown for numberOfOutputs >= 32.");
+    }
+
+    // Create a stereo buffer, with all +1 values in left channel, all -1 in right channel.
+    sourceBuffer = createStereoBufferWithDCOffset(lengthInSampleFrames, sampleRate, 1);
+
+    sourceNode = context.createBufferSource();
+    sourceNode.buffer = sourceBuffer;
+
+    // Create a channel splitter and connect it so that it split the stereo stream into two mono streams.
+    channelSplitter = context.createChannelSplitter(2);
+    sourceNode.connect(channelSplitter);
+
+    // Create a channel merger to merge the output of channel splitter.
+    channelMerger = context.createChannelMerger();
+    channelMerger.connect(context.destination);
+
+    // When merging, exchange channel layout: left->right, right->left
+    channelSplitter.connect(channelMerger, 0, 1);
+    channelSplitter.connect(channelMerger, 1, 0);
+
+    sourceNode.noteOn(0);
+
+    context.oncomplete = checkResult;
+    context.startRendering();
+}
+
+runTest();
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

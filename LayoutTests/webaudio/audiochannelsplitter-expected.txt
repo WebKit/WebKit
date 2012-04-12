@@ -1,0 +1,11 @@
+Tests AudioChannelSplitter.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Exception been thrown for numberOfOutputs <= 0.
+PASS Exception been thrown for numberOfOutputs >= 32.
+PASS Correctly exchanged left and right channels.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

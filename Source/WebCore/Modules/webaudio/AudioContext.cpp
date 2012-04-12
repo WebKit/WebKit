@@ -458,11 +458,25 @@ PassRefPtr<DelayNode> AudioContext::createDelayNode(double maxDelayTime)
     return DelayNode::create(this, m_destinationNode->sampleRate(), maxDelayTime);
 }
 
-PassRefPtr<AudioChannelSplitter> AudioContext::createChannelSplitter()
+PassRefPtr<AudioChannelSplitter> AudioContext::createChannelSplitter(ExceptionCode& ec)
+{
+    const unsigned ChannelSplitterDefaultNumberOfOutputs = 6;
+    return createChannelSplitter(ChannelSplitterDefaultNumberOfOutputs, ec);
+}
+
+PassRefPtr<AudioChannelSplitter> AudioContext::createChannelSplitter(size_t numberOfOutputs, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
     lazyInitialize();
-    return AudioChannelSplitter::create(this, m_destinationNode->sampleRate());
+
+    RefPtr<AudioChannelSplitter> node = AudioChannelSplitter::create(this, m_destinationNode->sampleRate(), numberOfOutputs);
+
+    if (!node.get()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    return node;
 }
 
 PassRefPtr<AudioChannelMerger> AudioContext::createChannelMerger()

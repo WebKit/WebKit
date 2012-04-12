@@ -34,10 +34,7 @@ class AudioContext;
     
 class AudioChannelSplitter : public AudioNode {
 public:
-    static PassRefPtr<AudioChannelSplitter> create(AudioContext* context, float sampleRate)
-    {
-        return adoptRef(new AudioChannelSplitter(context, sampleRate));      
-    }
+    static PassRefPtr<AudioChannelSplitter> create(AudioContext*, float sampleRate, unsigned numberOfOutputs);
 
     // AudioNode
     virtual void process(size_t framesToProcess);
@@ -47,7 +44,7 @@ private:
     virtual double tailTime() const OVERRIDE { return 0; }
     virtual double latencyTime() const OVERRIDE { return 0; }
 
-    AudioChannelSplitter(AudioContext*, float sampleRate);
+    AudioChannelSplitter(AudioContext*, float sampleRate, unsigned numberOfOutputs);
 };
 
 } // namespace WebCore

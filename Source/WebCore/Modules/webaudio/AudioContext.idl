@@ -78,7 +78,8 @@ module webaudio {
             raises(DOMException);
 
         // Channel splitting and merging
-        AudioChannelSplitter createChannelSplitter();
+        AudioChannelSplitter createChannelSplitter(in [Optional] unsigned long numberOfOutputs)
+            raises(DOMException);
         AudioChannelMerger createChannelMerger();
 
         // Offline rendering
