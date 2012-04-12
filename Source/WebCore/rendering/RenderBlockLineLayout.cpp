@@ -1947,6 +1947,7 @@ static inline float textWidth(RenderText* text, unsigned from, unsigned len, con
     run.setCharactersLength(text->textLength() - from);
     ASSERT(run.charactersLength() >= run.length());
 
+    run.setCharacterScanForCodePath(!text->canUseSimpleFontCodePath());
     run.setAllowTabs(!collapseWhiteSpace);
     run.setXPos(xPos);
     return font.width(run);

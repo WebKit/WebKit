@@ -146,6 +146,7 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
      , m_linesDirty(false)
      , m_containsReversedText(false)
      , m_isAllASCII(m_text.containsOnlyASCII())
+     , m_canUseSimpleFontCodePath(computeCanUseSimpleFontCodePath())
      , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
      , m_needsTranscoding(false)
 {
@@ -760,6 +761,7 @@ ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len
     run.setCharactersLength(textLength() - start);
     ASSERT(run.charactersLength() >= run.length());
 
+    run.setCharacterScanForCodePath(!canUseSimpleFontCodePath());
     run.setAllowTabs(allowTabs());
     run.setXPos(xPos);
     return f.width(run, fallbackFonts, glyphOverflow);
@@ -1330,6 +1332,7 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
     ASSERT(!isBR() || (textLength() == 1 && m_text[0] == '\n'));
 
     m_isAllASCII = m_text.containsOnlyASCII();
+    m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
 }
 
 void RenderText::secureText(UChar mask)
@@ -1473,6 +1476,7 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
         run.setCharactersLength(textLength() - from);
         ASSERT(run.charactersLength() >= run.length());
 
+        run.setCharacterScanForCodePath(!canUseSimpleFontCodePath());
         run.setAllowTabs(allowTabs());
         run.setXPos(xPos);
         w = f.width(run, fallbackFonts, glyphOverflow);
@@ -1791,6 +1795,13 @@ int RenderText::nextOffset(int current) const
 
 
     return result;
+}
+
+bool RenderText::computeCanUseSimpleFontCodePath() const
+{
+    if (isAllASCII())
+        return true;
+    return Font::characterRangeCodePath(characters(), length()) == Font::Simple;
 }
 
 #ifndef NDEBUG

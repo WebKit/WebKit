@@ -58,7 +58,7 @@ public:
 
     typedef unsigned RoundingHacks;
 
-    TextRun(const UChar* c, int len, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, RoundingHacks roundingHacks = RunRounding | WordRounding)
+    TextRun(const UChar* c, int len, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
         : m_characters(c)
         , m_charactersLength(len)
         , m_len(len)
@@ -71,13 +71,14 @@ public:
         , m_allowTabs(allowTabs)
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
+        , m_characterScanForCodePath(characterScanForCodePath)
         , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
     {
     }
 
-    TextRun(const String& s, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, RoundingHacks roundingHacks = RunRounding | WordRounding)
+    TextRun(const String& s, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
         : m_characters(s.characters())
         , m_charactersLength(s.length())
         , m_len(s.length())
@@ -90,6 +91,7 @@ public:
         , m_allowTabs(allowTabs)
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
+        , m_characterScanForCodePath(characterScanForCodePath)
         , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
@@ -122,6 +124,7 @@ public:
     bool rtl() const { return m_direction == RTL; }
     bool ltr() const { return m_direction == LTR; }
     bool directionalOverride() const { return m_directionalOverride; }
+    bool characterScanForCodePath() const { return m_characterScanForCodePath; }
     bool applyRunRounding() const { return m_applyRunRounding; }
     bool applyWordRounding() const { return m_applyWordRounding; }
     bool spacingDisabled() const { return m_disableSpacing; }
@@ -130,6 +133,7 @@ public:
     void disableRoundingHacks() { m_applyRunRounding = m_applyWordRounding = false; }
     void setDirection(TextDirection direction) { m_direction = direction; }
     void setDirectionalOverride(bool override) { m_directionalOverride = override; }
+    void setCharacterScanForCodePath(bool scan) { m_characterScanForCodePath = scan; }
 
     class RenderingContext : public RefCounted<RenderingContext> {
     public:
@@ -167,6 +171,7 @@ private:
     bool m_allowTabs;
     TextDirection m_direction;
     bool m_directionalOverride; // Was this direction set by an override character.
+    bool m_characterScanForCodePath;
     bool m_applyRunRounding;
     bool m_applyWordRounding;
     bool m_disableSpacing;
