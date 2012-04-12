@@ -702,6 +702,7 @@ fast/events/scroll-div-with-prevent-default-in-subframe.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82748
 fast/frames/flattening/frameset-flattening-advanced.html
+fast/frames/flattening/frameset-flattening-simple.html
 fast/frames/flattening/frameset-flattening-subframesets.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82749
