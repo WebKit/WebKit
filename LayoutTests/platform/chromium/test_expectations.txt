@@ -3706,7 +3706,7 @@ BUGWK82300 SNOWLEOPARD : compositing/images/direct-pdf-image.html = IMAGE
 BUGWK82269 DEBUG : media/track/track-delete-during-setup.html = CRASH
 
 // this test appears to consistently fail during the main run but usually passes on a retry.
-BUGWK82404 LINUX MAC : plugins/netscape-dom-access-and-reload.html = PASS TEXT
+BUGWK82404 : plugins/netscape-dom-access-and-reload.html = PASS TEXT
 
 BUGWK82409 LINUX RELEASE : inspector/styles/css-live-edit.html = PASS TIMEOUT
 
