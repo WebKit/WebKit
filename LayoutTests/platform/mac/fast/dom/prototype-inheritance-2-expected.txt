@@ -75,6 +75,9 @@ PASS DOMApplicationCachePrototype from inner.document.forms.testForm.0.ownerDocu
 PASS DOMImplementation from inner.document.forms.testForm.0.ownerDocument.implementation
 PASS DOMImplementationConstructor from inner.document.forms.testForm.0.ownerDocument.implementation.constructor
 PASS DOMImplementationPrototype from inner.document.forms.testForm.0.ownerDocument.implementation.__proto__
+PASS DOMStringList from inner.document.location.ancestorOrigins
+PASS DOMStringListConstructor from inner.document.location.ancestorOrigins.constructor
+PASS DOMStringListPrototype from inner.document.location.ancestorOrigins.__proto__
 PASS DOMStringMap from inner.document.forms.testForm.0.dataset
 PASS DOMStringMapConstructor from inner.document.forms.testForm.0.dataset.constructor
 PASS DOMStringMapPrototype from inner.document.forms.testForm.0.dataset.__proto__
@@ -246,7 +249,6 @@ Never found CharacterData
 Never found Clipboard
 Never found DOMParser
 Never found DOMSettableTokenList
-Never found DOMStringList
 Never found Document
 Never found DocumentFragment
 Never found DocumentType
