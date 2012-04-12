@@ -1794,6 +1794,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
 
     bool haveAlphaColor = false;
     bool haveAllSolidEdges = true;
+    bool haveAllDoubleEdges = true;
     bool allEdgesVisible = true;
     bool allEdgesShareColor = true;
     int firstVisibleEdge = -1;
@@ -1821,6 +1822,9 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
         
         if (currEdge.style != SOLID)
             haveAllSolidEdges = false;
+
+        if (currEdge.style != DOUBLE)
+            haveAllDoubleEdges = false;
     }
 
     // If no corner intersects the clip region, we can pretend outerBorder is
@@ -1829,15 +1833,55 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
         outerBorder.setRadii(RoundedRect::Radii());
 
     // isRenderable() check avoids issue described in https://bugs.webkit.org/show_bug.cgi?id=38787
-    if (haveAllSolidEdges && allEdgesShareColor && innerBorder.isRenderable()) {
-        // Fast path for drawing all solid edges.
-        if (allEdgesVisible && (outerBorder.isRounded() || haveAlphaColor)) {
+    if ((haveAllSolidEdges || haveAllDoubleEdges) && allEdgesShareColor && innerBorder.isRenderable()) {
+        // Fast path for drawing all solid edges and all unrounded double edges
+        if (allEdgesVisible && (outerBorder.isRounded() || haveAlphaColor)
+            && (haveAllSolidEdges || (!outerBorder.isRounded() && !innerBorder.isRounded()))) {
             Path path;
             
             if (outerBorder.isRounded() && bleedAvoidance != BackgroundBleedUseTransparencyLayer)
                 path.addRoundedRect(outerBorder);
             else
                 path.addRect(outerBorder.rect());
+
+            if (haveAllDoubleEdges) {
+                LayoutRect innerThirdRect = outerBorder.rect();
+                LayoutRect outerThirdRect = outerBorder.rect();
+                for (int side = BSTop; side <= BSLeft; ++side) {
+                    int outerWidth;
+                    int innerWidth;
+                    edges[side].getDoubleBorderStripeWidths(outerWidth, innerWidth);
+
+                    if (side == BSTop) {
+                        innerThirdRect.shiftYEdgeTo(innerThirdRect.y() + innerWidth);
+                        outerThirdRect.shiftYEdgeTo(outerThirdRect.y() + outerWidth);
+                    } else if (side == BSBottom) {
+                        innerThirdRect.setHeight(innerThirdRect.height() - innerWidth);
+                        outerThirdRect.setHeight(outerThirdRect.height() - outerWidth);
+                    } else if (side == BSLeft) {
+                        innerThirdRect.shiftXEdgeTo(innerThirdRect.x() + innerWidth);
+                        outerThirdRect.shiftXEdgeTo(outerThirdRect.x() + outerWidth);
+                    } else {
+                        innerThirdRect.setWidth(innerThirdRect.width() - innerWidth);
+                        outerThirdRect.setWidth(outerThirdRect.width() - outerWidth);
+                    }
+                }
+
+                RoundedRect outerThird = outerBorder;
+                RoundedRect innerThird = innerBorder;
+                innerThird.setRect(innerThirdRect);
+                outerThird.setRect(outerThirdRect);
+
+                if (outerThird.isRounded() && bleedAvoidance != BackgroundBleedUseTransparencyLayer)
+                    path.addRoundedRect(outerThird);
+                else
+                    path.addRect(outerThird.rect());
+
+                if (innerThird.isRounded() && bleedAvoidance != BackgroundBleedUseTransparencyLayer)
+                    path.addRoundedRect(innerThird);
+                else
+                    path.addRect(innerThird.rect());
+            }
 
             if (innerBorder.isRounded())
                 path.addRoundedRect(innerBorder);
@@ -1850,7 +1894,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
             return;
         } 
         // Avoid creating transparent layers
-        if (!allEdgesVisible && !outerBorder.isRounded() && haveAlphaColor) {
+        if (haveAllSolidEdges && !allEdgesVisible && !outerBorder.isRounded() && haveAlphaColor) {
             Path path;
 
             for (int i = BSTop; i <= BSLeft; ++i) {
