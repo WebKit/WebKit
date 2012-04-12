@@ -40,8 +40,13 @@ class FontPlatformDataPrivate : public RefCounted<FontPlatformDataPrivate> {
     WTF_MAKE_NONCOPYABLE(FontPlatformDataPrivate); WTF_MAKE_FAST_ALLOCATED;
 public:
     FontPlatformDataPrivate()
+#if !HAVE(QRAWFONT)
         : size(font.pixelSize())
         , bold(font.bold())
+#else
+        : size(0)
+        , bold(false)
+#endif
         , oblique(false)
         , isDeletedValue(false)
     { }
@@ -51,20 +56,17 @@ public:
         , oblique(oblique)
         , isDeletedValue(false)
     { }
+#if !HAVE(QRAWFONT)
     FontPlatformDataPrivate(const QFont& font)
         : font(font)
-#if HAVE(QRAWFONT)
-        , rawFont(QRawFont::fromFont(font, QFontDatabase::Any))
-#endif
         , size(font.pixelSize())
         , bold(font.bold())
         , oblique(false)
         , isDeletedValue(false)
     { }
-#if HAVE(QRAWFONT)
+#else
     FontPlatformDataPrivate(const QRawFont& rawFont)
-        : font()
-        , rawFont(rawFont)
+        : rawFont(rawFont)
         , size(rawFont.pixelSize())
         , bold(rawFont.weight() >= QFont::Bold)
         , oblique(false)
@@ -75,8 +77,9 @@ public:
         : isDeletedValue(true)
     { }
 
+#if !HAVE(QRAWFONT)
     QFont font;
-#if HAVE(QRAWFONT)
+#else
     QRawFont rawFont;
 #endif
     float size;
@@ -90,10 +93,11 @@ class FontPlatformData {
 public:
     FontPlatformData(float size, bool bold, bool oblique);
     FontPlatformData(const FontDescription&, const AtomicString& familyName, int wordSpacing = 0, int letterSpacing = 0);
+#if !HAVE(QRAWFONT)
     FontPlatformData(const QFont& font)
         : m_data(adoptRef(new FontPlatformDataPrivate(font)))
     { }
-#if HAVE(QRAWFONT)
+#else
     FontPlatformData(const FontPlatformData&, float size);
     FontPlatformData(const QRawFont& rawFont)
         : m_data(adoptRef(new FontPlatformDataPrivate(rawFont)))
@@ -112,6 +116,7 @@ public:
         return m_data && m_data->isDeletedValue;
     }
 
+#if !HAVE(QRAWFONT)
     QFont font() const
     {
         Q_ASSERT(!isHashTableDeletedValue());
@@ -119,7 +124,7 @@ public:
             return QFont();
         return m_data->font;
     }
-#if HAVE(QRAWFONT)
+#else
     QRawFont rawFont() const
     {
         Q_ASSERT(!isHashTableDeletedValue());

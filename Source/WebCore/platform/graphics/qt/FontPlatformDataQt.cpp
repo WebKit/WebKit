@@ -63,7 +63,11 @@ FontPlatformData::FontPlatformData(float size, bool bold, bool oblique)
 FontPlatformData::FontPlatformData(const FontDescription& description, const AtomicString& familyName, int wordSpacing, int letterSpacing)
     : m_data(adoptRef(new FontPlatformDataPrivate()))
 {
+#if !HAVE(QRAWFONT)
     QFont& font = m_data->font;
+#else
+    QFont font;
+#endif
     int requestedSize = description.computedPixelSize();
     font.setFamily(familyName);
     font.setPixelSize(requestedSize);
@@ -71,17 +75,19 @@ FontPlatformData::FontPlatformData(const FontDescription& description, const Ato
     font.setWeight(toQFontWeight(description.weight()));
     font.setWordSpacing(wordSpacing);
     font.setLetterSpacing(QFont::AbsoluteSpacing, letterSpacing);
-    const bool smallCaps = description.smallCaps();
-    font.setCapitalization(smallCaps ? QFont::SmallCaps : QFont::MixedCase);
     font.setStyleStrategy(QFont::ForceIntegerMetrics);
 
     m_data->bold = font.bold();
+#if !HAVE(QRAWFONT)
+    const bool smallCaps = description.smallCaps();
+    font.setCapitalization(smallCaps ? QFont::SmallCaps : QFont::MixedCase);
     // WebKit allows font size zero but QFont does not. We will return
     // m_data->size if a font size of zero is requested and pixelSize()
     // otherwise.
     m_data->size = (!requestedSize) ? requestedSize : font.pixelSize();
-#if HAVE(QRAWFONT)
+#else
     m_data->rawFont = QRawFont::fromFont(font, QFontDatabase::Any);
+    m_data->size = requestedSize;
 #endif
 }
 
@@ -89,15 +95,13 @@ FontPlatformData::FontPlatformData(const FontDescription& description, const Ato
 FontPlatformData::FontPlatformData(const FontPlatformData& other, float size)
     : m_data(adoptRef(new FontPlatformDataPrivate()))
 {
-    m_data->font = other.m_data->font;
     m_data->rawFont = other.m_data->rawFont;
     m_data->bold = other.m_data->bold;
     m_data->oblique = other.m_data->oblique;
-    m_data->font.setPixelSize(size);
     m_data->rawFont.setPixelSize(size);
-    m_data->size = size ? m_data->font.pixelSize() : 0;
+    m_data->size = m_data->rawFont.pixelSize();
 }
-#endif
+#endif // HAVE(QRAWFONT)
 
 bool FontPlatformData::operator==(const FontPlatformData& other) const
 {
@@ -110,7 +114,11 @@ bool FontPlatformData::operator==(const FontPlatformData& other) const
     const bool equals = (m_data->size == other.m_data->size
                          && m_data->bold == other.m_data->bold
                          && m_data->oblique == other.m_data->oblique
+#if !HAVE(QRAWFONT)
                          && m_data->font == other.m_data->font);
+#else
+                         && m_data->rawFont == other.m_data->rawFont);
+#endif
     return equals;
 }
 
@@ -120,10 +128,15 @@ unsigned FontPlatformData::hash() const
         return 0;
     if (m_data->isDeletedValue)
         return 1;
-    return qHash(m_data->font.toString())
-           ^ qHash(*reinterpret_cast<quint32*>(&m_data->size))
-           ^ qHash(m_data->bold)
-           ^ qHash(m_data->oblique);
+#if !HAVE(QRAWFONT)
+    return (qHash(m_data->font.toString()) ^ qHash(m_data->bold)
+            ^ qHash(m_data->oblique))
+            ^ qHash(*reinterpret_cast<quint32*>(&m_data->size));
+#else
+    return qHash(m_data->rawFont.familyName()) ^ qHash(m_data->rawFont.style())
+            ^ qHash(m_data->rawFont.weight())
+            ^ qHash(*reinterpret_cast<quint32*>(&m_data->size));
+#endif
 }
 
 #ifndef NDEBUG

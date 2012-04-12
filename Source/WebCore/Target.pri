@@ -2826,7 +2826,6 @@ SOURCES += \
     page/qt/EventHandlerQt.cpp \
     platform/graphics/qt/TransformationMatrixQt.cpp \
     platform/graphics/qt/ColorQt.cpp \
-    platform/graphics/qt/FontQt.cpp \
     platform/graphics/qt/FontPlatformDataQt.cpp \
     platform/graphics/qt/FloatPointQt.cpp \
     platform/graphics/qt/FloatRectQt.cpp \
@@ -3390,18 +3389,15 @@ contains(DEFINES, ENABLE_MATHML=1) {
         rendering/mathml/RenderMathMLUnderOver.cpp
 }
 
-# QRawFont feature added in Qt 4.8.0
+# QRawFont transition handling.
 #
-# If available, this is used to implement the fast path for text rendering
-# and measurement in WebCore. Because the feature is still undergoing
-# development, it is disabled in builds.
-#
-# exists($$[QT_INSTALL_HEADERS]/QtGui/QRawFont): HAVE_QRAWFONT=1
+# Even though QRawFont was already available in Qt 4.8, it had
+# limitations that made switching fully to it impossible.
+# We preserve the old code path when building with Qt 4.
 
-!isEmpty(HAVE_QRAWFONT) {
-    DEFINES += HAVE_QRAWFONT=1
-
+contains(DEFINES, HAVE_QRAWFONT=1) {
     SOURCES += \
+        platform/graphics/qt/FontQt.cpp \
         platform/graphics/FontFastPath.cpp \
         platform/graphics/GlyphPageTreeNode.cpp \
         platform/graphics/WidthIterator.cpp \
@@ -3410,7 +3406,11 @@ contains(DEFINES, ENABLE_MATHML=1) {
     HEADERS += \
         platform/graphics/WidthIterator.h \
         platform/graphics/SurrogatePairAwareTextIterator.h
+} else {
+    SOURCES += \
+        platform/graphics/qt/FontQt4.cpp
 }
+
 
 contains(DEFINES, ENABLE_GEOLOCATION=1) {
     v8 {

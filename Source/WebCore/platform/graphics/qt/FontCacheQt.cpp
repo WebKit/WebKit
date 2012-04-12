@@ -49,35 +49,29 @@ void FontCache::platformInit()
 }
 
 #if HAVE(QRAWFONT)
-static QRawFont rawFontForCharacters(const QString& string, const QFont& requestedFont)
+static QRawFont rawFontForCharacters(const QString& string, const QRawFont& font)
 {
-    QFont font(requestedFont);
-    font.setStyleStrategy(QFont::NoFontMerging);
-
-    QTextLayout layout(string, font);
+    QTextLayout layout(string);
+    layout.setRawFont(font);
     layout.beginLayout();
     layout.createLine();
     layout.endLayout();
 
     QList<QGlyphRun> glyphList = layout.glyphRuns();
-
-    ASSERT(glyphList.size() == 1);
-
-    const QGlyphRun& glyphs(glyphList.at(0));
-    QVector<quint32> glyphIndexes = glyphs.glyphIndexes();
-
-    if (glyphIndexes.isEmpty())
+    ASSERT(glyphList.size() <= 1);
+    if (!glyphList.size())
         return QRawFont();
 
+    const QGlyphRun& glyphs(glyphList.at(0));
     return glyphs.rawFont();
 }
-#endif
+#endif // HAVE(QRAWFONT)
 
 const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
 #if HAVE(QRAWFONT)
     QString qstring = QString::fromRawData(reinterpret_cast<const QChar*>(characters), length);
-    QRawFont computedFont = rawFontForCharacters(qstring, font.font());
+    QRawFont computedFont = rawFontForCharacters(qstring, font.rawFont());
     if (!computedFont.isValid())
         return 0;
     FontPlatformData alternateFont(computedFont);
@@ -107,11 +101,9 @@ void FontCache::getTraitsInFamily(const AtomicString&, Vector<unsigned>&)
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& familyName)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
     QFontDatabase db;
     if (!db.hasFamily(familyName))
         return 0;
-#endif
     return new FontPlatformData(fontDescription, familyName);
 }
 

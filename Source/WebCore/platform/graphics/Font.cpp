@@ -27,9 +27,6 @@
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "FontTranscoder.h"
-#if PLATFORM(QT) && HAVE(QRAWFONT)
-#include "GraphicsContext.h"
-#endif
 #include "IntPoint.h"
 #include "GlyphBuffer.h"
 #include "TextRun.h"
@@ -150,11 +147,6 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoi
     to = (to == -1 ? run.length() : to);
 
     CodePath codePathToUse = codePath(run);
-
-#if PLATFORM(QT) && HAVE(QRAWFONT)
-    if (context->textDrawingMode() & TextModeStroke)
-        codePathToUse = Complex;
-#endif
 
     if (codePathToUse != Complex)
         return drawSimpleText(context, run, point, from, to);

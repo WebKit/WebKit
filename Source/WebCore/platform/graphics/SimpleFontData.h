@@ -54,7 +54,11 @@ typedef struct OpaqueATSUStyle* ATSUStyle;
 #endif
 
 #if PLATFORM(QT)
+#if !HAVE(QRAWFONT)
 #include <QFont>
+#else
+#include <QRawFont>
+#endif
 #endif
 
 namespace WebCore {
@@ -190,7 +194,11 @@ public:
 #endif
 
 #if PLATFORM(QT)
+#if !HAVE(QRAWFONT)
     QFont getQtFont() const { return m_platformData.font(); }
+#else
+    QRawFont getQtRawFont() const { return m_platformData.rawFont(); }
+#endif // !HAVE(QRAWFONT)
 #endif
 
 #if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
@@ -346,7 +354,7 @@ ALWAYS_INLINE float SimpleFontData::widthForGlyph(Glyph glyph) const
     m_glyphToWidthMap.setMetricsForGlyph(glyph, width);
     return width;
 }
-#endif
+#endif // HAVE(QRAWFONT)
 
 } // namespace WebCore
 

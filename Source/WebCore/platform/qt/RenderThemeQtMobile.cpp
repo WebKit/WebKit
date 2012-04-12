@@ -45,7 +45,6 @@
 
 #include <QColor>
 #include <QFile>
-#include <QFontMetrics>
 #include <QPainter>
 #include <QPixmapCache>
 
@@ -581,7 +580,6 @@ int RenderThemeQtMobile::popupInternalPaddingBottom(RenderStyle* style) const
 void RenderThemeQtMobile::computeSizeBasedOnStyle(RenderStyle* renderStyle) const
 {
     QSize size(0, 0);
-    const QFontMetrics fm(renderStyle->font().font());
 
     switch (renderStyle->appearance()) {
     case TextAreaPart:
@@ -617,7 +615,7 @@ void RenderThemeQtMobile::computeSizeBasedOnStyle(RenderStyle* renderStyle) cons
     case DefaultButtonPart:
     case ButtonPart:
     case MenulistPart: {
-        const int height = fm.height() * buttonHeightRatio * renderStyle->effectiveZoom();
+        const int height = renderStyle->fontMetrics().height() * buttonHeightRatio * renderStyle->effectiveZoom();
         size = QSize(renderStyle->width().value(), height);
         break;
     }

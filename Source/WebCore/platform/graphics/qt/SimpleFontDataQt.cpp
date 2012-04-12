@@ -134,7 +134,7 @@ void SimpleFontData::platformInit()
     float descent = rawFont.descent();
     float ascent = rawFont.ascent();
     float xHeight = rawFont.xHeight();
-    float lineSpacing = ascent + descent + rawFont.leading() + 1;
+    float lineSpacing = ascent + descent + rawFont.leading();
 
     QVector<quint32> indexes = rawFont.glyphIndexesForString(QLatin1String(" "));
     QVector<QPointF> advances = rawFont.advancesForGlyphIndexes(indexes);
@@ -165,7 +165,8 @@ void SimpleFontData::platformInit()
     float lineGap = lineSpacing - ascent - descent;
 
     m_fontMetrics.setAscent(ascent);
-    m_fontMetrics.setDescent(descent);
+    // WebKit expects the descent to be positive.
+    m_fontMetrics.setDescent(qAbs(descent));
     m_fontMetrics.setLineSpacing(lineSpacing);
     m_fontMetrics.setXHeight(xHeight);
     m_fontMetrics.setLineGap(lineGap);

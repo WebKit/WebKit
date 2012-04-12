@@ -1,3 +1,14 @@
+2012-03-05  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Use QRawFont when building with Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=78001
+
+        Flip the QRawFont switch for Qt 5.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-04-11  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: Disabling Inspector causes build failure on Windows

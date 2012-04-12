@@ -36,7 +36,12 @@
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(QT)
+#if HAVE(QRAWFONT)
+#include <QRawFont>
+class QTextLayout;
+#else
 #include <QFont>
+#endif
 #endif
 
 namespace WebCore {
@@ -175,7 +180,12 @@ public:
     static unsigned expansionOpportunityCount(const UChar*, size_t length, TextDirection, bool& isAfterExpansion);
 
 #if PLATFORM(QT)
+#if HAVE(QRAWFONT)
+    QRawFont rawFont() const;
+#else
     QFont font() const;
+#endif
+    QFont syntheticFont() const;
 #endif
 
     static void setShouldUseSmoothing(bool);
@@ -253,6 +263,9 @@ private:
     {
         return m_fontList && m_fontList->loadingCustomFonts();
     }
+#if PLATFORM(QT) && HAVE(QRAWFONT)
+    void initFormatForTextLayout(QTextLayout*) const;
+#endif
 
     FontDescription m_fontDescription;
     mutable RefPtr<FontFallbackList> m_fontList;

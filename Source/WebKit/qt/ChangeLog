@@ -1,3 +1,21 @@
+2012-03-05  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Use QRawFont when building with Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=78001
+
+        Since QFont is not used internally, we now need
+        to query for a QFont that should be a good
+        enough match.
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::inputMethodQuery):
+        * WebCoreSupport/PopupMenuQt.cpp:
+        (WebCore::PopupMenuQt::show):
+        * WebCoreSupport/RenderThemeQStyle.cpp:
+        (WebCore::RenderThemeQStyle::computeSizeBasedOnStyle):
+
 2012-04-06  Levi Weintraub  <leviw@chromium.org>
 
         Correct LayoutUnit usgae in RenderThemeQt and RenderThemeQStyle

@@ -880,7 +880,7 @@ String RenderThemeQt::fileListNameForWidth(const FileList* fileList, const Font&
         string = fileButtonNoFileSelectedLabel();
     else if (fileList->length() == 1) {
         String fname = fileList->item(0)->path();
-        QFontMetrics fm(font.font());
+        QFontMetrics fm(font.syntheticFont());
         string = fm.elidedText(fname, Qt::ElideLeft, width);
     } else {
         int n = fileList->length();

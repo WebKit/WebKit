@@ -209,7 +209,7 @@ QRect RenderThemeQStyle::inflateButtonRect(const QRect& originalRect) const
 void RenderThemeQStyle::computeSizeBasedOnStyle(RenderStyle* renderStyle) const
 {
     QSize size(0, 0);
-    const QFontMetrics fm(renderStyle->font().font());
+    const QFontMetrics fm(renderStyle->font().syntheticFont());
     QStyle* style = qStyle();
 
     switch (renderStyle->appearance()) {
