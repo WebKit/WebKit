@@ -181,6 +181,8 @@ String ParsedCookie::toNameValuePair() const
 void ParsedCookie::appendWebCoreCookie(Vector<Cookie>& cookieVector) const
 {
     cookieVector.append(Cookie(String(m_name), String(m_value), String(m_domain),
-            String(m_path), m_expiry, m_isHttpOnly, m_isSecure, m_isSession));
+            // We multiply m_expiry by 1000 to convert from seconds to milliseconds.
+            // This value is passed to Web Inspector and used in the JavaScript Date constructor.
+            String(m_path), (m_expiry * 1000), m_isHttpOnly, m_isSecure, m_isSession));
 }
 } // namespace WebCore
