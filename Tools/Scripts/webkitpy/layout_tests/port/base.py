@@ -594,8 +594,9 @@ class Port(object):
     def webkit_base(self):
         return self._filesystem.abspath(self.path_from_webkit_base('.'))
 
-    def skipped_layout_tests(self):
-        return []
+    def skipped_layout_tests(self, test_list):
+        """Returns the set of tests found in Skipped files. Does *not* include tests marked as SKIP in expectations files."""
+        return set([])
 
     def _tests_from_skipped_file_contents(self, skipped_file_contents):
         tests_to_skip = []
@@ -622,21 +623,6 @@ class Port(object):
     @memoized
     def skipped_perf_tests(self):
         return self._expectations_from_skipped_files([self.perf_tests_dir()])
-
-    def skipped_tests(self, test_list):
-        return set([])
-
-    def skips_layout_test(self, test_name):
-        """Figures out if the givent test is being skipped or not.
-
-        Test categories are handled as well."""
-        for test_or_category in self.skipped_layout_tests():
-            if test_or_category == test_name:
-                return True
-            category = self._filesystem.join(self.layout_tests_dir(), test_or_category)
-            if self._filesystem.isdir(category) and test_name.startswith(test_or_category):
-                return True
-        return False
 
     def skips_perf_test(self, test_name):
         for test_or_category in self.skipped_perf_tests():

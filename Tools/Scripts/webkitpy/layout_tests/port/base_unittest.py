@@ -208,15 +208,6 @@ class PortTest(unittest.TestCase):
         port = self.make_port(config=config_mock.MockConfig(default_configuration='default'))
         self.assertEqual(port.default_configuration(), 'default')
 
-    def test_layout_tests_skipping(self):
-        port = self.make_port()
-        port.host.filesystem.write_text_file(port.layout_tests_dir() + '/media/video-zoom.html', '')
-        port.host.filesystem.write_text_file(port.layout_tests_dir() + '/foo/bar.html', '')
-        port.skipped_layout_tests = lambda: ['foo/bar.html', 'media']
-        self.assertTrue(port.skips_layout_test('foo/bar.html'))
-        self.assertTrue(port.skips_layout_test('media/video-zoom.html'))
-        self.assertFalse(port.skips_layout_test('foo/foo.html'))
-
     def test_setup_test_run(self):
         port = self.make_port()
         # This routine is a no-op. We just test it for coverage.

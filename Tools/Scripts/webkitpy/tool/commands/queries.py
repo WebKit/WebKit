@@ -380,28 +380,6 @@ and PID and prints it to stdout."""
         print crash_logs.find_newest_log(args[0], pid)
 
 
-class SkippedPorts(AbstractDeclarativeCommand):
-    name = "skipped-ports"
-    help_text = "Print the list of ports skipping the given layout test(s)"
-    long_help = """Scans the the Skipped file of each port and figure
-out what ports are skipping the test(s). Categories are taken in account too."""
-    argument_names = "TEST_NAME"
-
-    def execute(self, options, args, tool):
-        results = dict([(test_name, []) for test_name in args])
-        for port_name in tool.port_factory.all_port_names():
-            port_object = tool.port_factory.get(port_name)
-            for test_name in args:
-                if port_object.skips_layout_test(test_name):
-                    results[test_name].append(port_name)
-
-        for test_name, ports in results.iteritems():
-            if ports:
-                print "Ports skipping test %r: %s" % (test_name, ', '.join(ports))
-            else:
-                print "Test %r is not skipped by any port." % test_name
-
-
 class PrintExpectations(AbstractDeclarativeCommand):
     name = 'print-expectations'
     help_text = 'Print the expected result for the given test(s) on the given port(s)'

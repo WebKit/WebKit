@@ -91,19 +91,6 @@ class QueryCommandsTest(CommandsTest):
         expected_stdout = "ok   : Builder1\nok   : Builder2\n"
         self.assert_execute_outputs(TreeStatus(), None, expected_stdout)
 
-    def test_skipped_ports(self):
-        tool = MockTool()
-        tool.port_factory = MockPortFactory()
-
-        expected_stdout = "Ports skipping test 'media/foo/bar.html': test_port1, test_port2\n"
-        self.assert_execute_outputs(SkippedPorts(), ("media/foo/bar.html",), expected_stdout, tool=tool)
-
-        expected_stdout = "Ports skipping test 'foo': test_port1\n"
-        self.assert_execute_outputs(SkippedPorts(), ("foo",), expected_stdout, tool=tool)
-
-        expected_stdout = "Test 'media' is not skipped by any port.\n"
-        self.assert_execute_outputs(SkippedPorts(), ("media",), expected_stdout, tool=tool)
-
 
 class FailureReasonTest(unittest.TestCase):
     def test_blame_line_for_revision(self):

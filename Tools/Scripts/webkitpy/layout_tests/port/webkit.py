@@ -357,14 +357,10 @@ class WebKitPort(Port):
         return expectations
 
     def skipped_layout_tests(self, test_list):
-        # Use a set to allow duplicates
         tests_to_skip = set(self._expectations_from_skipped_files(self._skipped_file_search_paths()))
         tests_to_skip.update(self._tests_for_other_platforms())
         tests_to_skip.update(self._skipped_tests_for_unsupported_features(test_list))
         return tests_to_skip
-
-    def skipped_tests(self, test_list):
-        return self.skipped_layout_tests(test_list)
 
     def _build_path(self, *comps):
         # --root is used for running with a pre-built root (like from a nightly zip).

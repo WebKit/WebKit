@@ -1,3 +1,43 @@
+2012-04-11  Dirk Pranke  <dpranke@chromium.org>
+
+        new-run-webkit-tests: 'webkit-patch skipped-ports' introduced bad layering
+        https://bugs.webkit.org/show_bug.cgi?id=47528
+
+        Reviewed by Adam Barth.
+
+        The skipped-ports command has been replaced by 'webkit-patch
+        print-expectations', which offers the equivalent functionality
+        via 'webkit-patch print-expectations --platform \* -t skip'
+        (and other features, of course).
+        
+        This also allows me to fix a nasty layering violation where the
+        chromium port had to know about the TestExpectations objects in
+        order to implement the command properly.
+
+        Lastly, this allows me to rename skipped_tests() to
+        skipped_layout_tests() to more consistent with
+        skipped_perf_tests().
+        
+        This patch removes skips_layout_test() from the Port interface,
+        because that can't be implemented without the port knowing about
+        Expectations objects (and skipped-ports was the only thing using it).
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.skipped_layout_tests):
+        (Port.skipped_perf_tests):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_default_configuration_notfound):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.test_expectations_overrides):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumPortTest.test_path_to_image_diff):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort.skipped_layout_tests):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (execute):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (QueryCommandsTest.test_tree_status):
+
 2012-04-11  Mark Rowe  <mrowe@apple.com>
 
         Remove a fprintf from LayoutTestController.

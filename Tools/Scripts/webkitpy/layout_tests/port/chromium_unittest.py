@@ -244,22 +244,6 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         self.assertTrue(ChromiumPortTest.TestMacPort()._path_to_image_diff().endswith('/xcodebuild/default/ImageDiff'))
         self.assertTrue(ChromiumPortTest.TestWinPort()._path_to_image_diff().endswith('/default/ImageDiff.exe'))
 
-    def test_skipped_layout_tests(self):
-        mock_options = MockOptions()
-        mock_options.configuration = 'release'
-        port = ChromiumPortTest.TestLinuxPort(options=mock_options)
-
-        fake_test = 'fast/js/not-good.js'
-
-        port.test_expectations = lambda: """BUG_TEST SKIP : fast/js/not-good.js = TEXT
-LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
-        port.test_expectations_overrides = lambda: ''
-        port.tests = lambda paths: set()
-        port.test_exists = lambda test: True
-
-        skipped_tests = port.skipped_layout_tests(extra_test_files=[fake_test, ])
-        self.assertTrue("fast/js/not-good.js" in skipped_tests)
-
     def test_default_configuration(self):
         mock_options = MockOptions()
         port = ChromiumPortTest.TestLinuxPort(options=mock_options)
