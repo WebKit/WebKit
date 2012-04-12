@@ -395,9 +395,6 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    if (!mimeType.startsWith("image/"))
-        return "data:,";
-
     // QImageWriter does not support mimetypes. It does support Qt image formats (png,
     // gif, jpeg..., xpm) so skip the image/ to get the Qt image format used to encode
     // the m_pixmap image.
