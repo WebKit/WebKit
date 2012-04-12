@@ -473,10 +473,8 @@ void PluginView::handleWheelEvent(WheelEvent* event)
     npEvent.type = NP_WheelEvent;
     npEvent.data = &wheelEvent;
 
-    if (dispatchNPEvent(npEvent)) {
+    if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
-        event->setPluginHandled();
-    }
 }
 
 void PluginView::handleTouchEvent(TouchEvent* event)
@@ -537,17 +535,14 @@ void PluginView::handleTouchEvent(TouchEvent* event)
     npEvent.type = NP_TouchEvent;
     npEvent.data = &npTouchEvent;
 
-    if (dispatchNPEvent(npEvent)) {
+    if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
-        event->setPluginHandled();
-    } else if (npTouchEvent.type == TOUCH_EVENT_DOUBLETAP) {
+    else if (npTouchEvent.type == TOUCH_EVENT_DOUBLETAP) {
         // Send Touch Up if double tap not consumed
         npTouchEvent.type = TOUCH_EVENT_END;
         npEvent.data = &npTouchEvent;
-        if (dispatchNPEvent(npEvent)) {
+        if (dispatchNPEvent(npEvent))
             event->setDefaultHandled();
-            event->setPluginHandled();
-        }
     }
 }
 
@@ -586,10 +581,8 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     npEvent.type = NP_MouseEvent;
     npEvent.data = &mouseEvent;
 
-    if (dispatchNPEvent(npEvent)) {
+    if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
-        event->setPluginHandled();
-    }
 }
 
 void PluginView::handleFocusInEvent()
