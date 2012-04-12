@@ -2197,10 +2197,6 @@ BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = PASS TIMEOUT TEX
 
 BUGCR57934 WIN LEOPARD DEBUG : http/tests/appcache/fail-on-update-2.html = PASS TIMEOUT
 
-// Failing since r69181. Verified as legitimate by looking at the results
-// of the SVG rendering.
-BUGCR58195 LINUX WIN : svg/filters/feDisplacementMap.svg = IMAGE
-
 // Issues starting from
 // http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35997
 BUGCR58333 LINUX WIN : fast/css/font-face-download-error.html = PASS TEXT
@@ -2225,8 +2221,6 @@ BUGWK46600 SKIP : fast/dom/nodesFromRect-inner-documents.html = TEXT
 // For some reason it seems to not properly rect hit-tests elements in shadow
 // content of <video> elements.
 BUGWK46600 SKIP : media/nodesFromRect-shadowContent.html = TEXT
-
-BUGCR59671 LINUX : svg/custom/convolution-crash.svg = PASS TEXT
 
 BUGJAMESR LINUX WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
 BUGJAMESR LEOPARD : fast/text/international/vertical-text-glyph-test.html = IMAGE
