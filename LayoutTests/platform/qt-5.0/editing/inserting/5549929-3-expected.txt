@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 740x42
+          text run at (0,0) width 397: "This tests inserting a line break at the end of a tab span. "
+          text run at (397,0) width 343: "Below you should see 'foo' followed by an empty"
+          text run at (0,21) width 208: "paragraph, with the caret in it."
+      RenderBlock {DIV} at (0,58) size 784x42
+        RenderText {#text} at (0,0) size 22x21
+          text run at (0,0) width 22: "foo"
+        RenderInline {SPAN} at (0,0) size 4x21
+          RenderText {#text} at (22,0) size 4x21
+            text run at (22,0) width 4: "\x{9}"
+        RenderBR {BR} at (26,16) size 0x0
+        RenderBR {BR} at (0,21) size 0x21
+caret: position 0 of child 3 {BR} of child 2 {DIV} of body

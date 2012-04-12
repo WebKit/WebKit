@@ -73,3 +73,8 @@ svg/custom/svg-percent-scale.html
 # [Qt] fast/selectors/selection-window-inactive.html fails with Qt5
 # https://bugs.webkit.org/show_bug.cgi?id=79890
 fast/selectors/selection-window-inactive.html
+
+# [Qt] tests to be rebaselined after r113968 seem suspicious
+# https://bugs.webkit.org/show_bug.cgi?id=83785
+fast/dom/52776.html
+fast/css/font-face-remote.html

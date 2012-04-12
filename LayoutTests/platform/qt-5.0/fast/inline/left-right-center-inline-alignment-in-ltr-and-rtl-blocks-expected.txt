@@ -1,0 +1,49 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0
+layer at (287,560) size 226x30
+  RenderBlock (positioned) {FONT} at (287,560) size 226x30
+    RenderText {#text} at (0,0) size 226x30
+      text run at (0,0) width 226: "RTL-Center-Aligned"
+layer at (0,460) size 88x90
+  RenderBlock (positioned) {FONT} at (0,460) size 88x90
+    RenderText {#text} at (0,0) size 80x90
+      text run at (0,0) width 61: "RTL-"
+      text run at (0,30) width 56: "Left-"
+      text run at (0,60) width 80: "Aligned"
+layer at (582,470) size 210x30
+  RenderBlock (positioned) {FONT} at (582,470) size 210x30
+    RenderText {#text} at (0,0) size 210x30
+      text run at (0,0) width 210: "RTL-Right-Aligned"
+layer at (609,420) size 183x30
+  RenderBlock (positioned) {FONT} at (609,420) size 183x30
+    RenderText {#text} at (0,0) size 183x30
+      text run at (0,0) width 183: "RTL-No-Aligned"
+layer at (287,370) size 226x30
+  RenderBlock (positioned) {FONT} at (287,370) size 226x30
+    RenderText {#text} at (0,0) size 226x30
+      text run at (0,0) width 226: "LTR-Center-Aligned"
+layer at (8,320) size 197x30
+  RenderBlock (positioned) {FONT} at (8,320) size 197x30
+    RenderText {#text} at (0,0) size 197x30
+      text run at (0,0) width 197: "LTR-Left-Aligned"
+layer at (712,210) size 88x90
+  RenderBlock (positioned) {FONT} at (712,210) size 88x90
+    RenderText {#text} at (27,0) size 80x90
+      text run at (27,0) width 61: "LTR-"
+      text run at (19,30) width 69: "Right-"
+      text run at (8,60) width 80: "Aligned"
+layer at (8,270) size 183x30
+  RenderBlock (positioned) {FONT} at (8,270) size 183x30
+    RenderText {#text} at (0,0) size 183x30
+      text run at (0,0) width 183: "LTR-No-Aligned"
