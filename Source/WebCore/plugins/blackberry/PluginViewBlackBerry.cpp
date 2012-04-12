@@ -2,7 +2,7 @@
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  * Copyright (C) 2009 Girish Ramakrishnan <girish@forwardbias.in>
- * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -966,11 +966,8 @@ void PluginView::setNPWindowIfNeeded()
     m_npWindow.type = NPWindowTypeDrawable;
 
     BlackBerry::Platform::Graphics::Window* window = frameView->hostWindow()->platformPageClient()->platformWindow();
-    if (window) {
-        // Make a local copy of the window group to be sure it doesn't go out of scope while the ws_info struct exists
-        m_private->m_windowGroup = window->windowGroup();
-        ((NPSetWindowCallbackStruct*) m_npWindow.ws_info)->windowGroup = m_private->m_windowGroup.c_str();
-    }
+    if (window)
+        ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->windowGroup = window->windowGroup();
 
     PluginView::setCurrentPluginView(this);
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
@@ -1089,12 +1086,8 @@ bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* re
         if (frameView) {
             BlackBerry::Platform::Graphics::Window *window = frameView->hostWindow()->platformPageClient()->platformWindow();
             if (window) {
-                // Make a copy of the root group to be sure it doesn't go out of scope.
-                m_private->m_rootGroup = window->rootGroup();
-
-                // Store it into value through an indirect pointer.
                 void** tempValue = static_cast<void**>(value);
-                *tempValue = reinterpret_cast<void*>(const_cast<char*>(m_private->m_rootGroup.c_str()));
+                *tempValue = (void*)window->rootGroup();
 
                 if (*tempValue) {
                     *result = NPERR_NO_ERROR;
@@ -1111,12 +1104,8 @@ bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* re
         if (frameView) {
             BlackBerry::Platform::Graphics::Window* window = frameView->hostWindow()->platformPageClient()->platformWindow();
             if (window) {
-                // Make a copy of the window group to be sure it doesn't go out of scope.
-                m_private->m_windowGroup = window->windowGroup();
-
-                // Store it into value through an indirect pointer.
                 void** tempValue = static_cast<void**>(value);
-                *tempValue = reinterpret_cast<void*>(const_cast<char*>(m_private->m_windowGroup.c_str()));
+                *tempValue = reinterpret_cast<void*>(const_cast<char*>(window->windowGroup()));
 
                 if (*tempValue) {
                     *result = NPERR_NO_ERROR;
@@ -1275,10 +1264,6 @@ void PluginView::platformDestroy()
 {
     if (!m_private)
         return;
-
-    // ws_info->windowGroup points to memory in m_private, which is about to go away (unless it is uninitialized at this point)
-    if (m_npWindow.ws_info)
-        ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->windowGroup = 0;
 
     // This will unlock the idle (if we have locked it).
     m_private->preventIdle(false);

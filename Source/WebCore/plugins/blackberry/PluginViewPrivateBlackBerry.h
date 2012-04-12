@@ -83,8 +83,6 @@ private:
     bool m_isBackgroundPlaying;
 
     std::string m_pluginUniquePrefix;
-    std::string m_windowGroup;
-    std::string m_rootGroup;
 
     BlackBerry::Platform::IntRectRegion m_invalidateRegion;
     friend class PluginView;
