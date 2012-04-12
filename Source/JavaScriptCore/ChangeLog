@@ -1,5 +1,18 @@
 2012-04-11  Filip Pizlo  <fpizlo@apple.com>
 
+        If you use an IntegerOperand and want to return it with integerResult, you need to
+        zero extend to get rid of the box
+        https://bugs.webkit.org/show_bug.cgi?id=83734
+        <rdar://problem/11232296>
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToInt32):
+
+2012-04-11  Filip Pizlo  <fpizlo@apple.com>
+
         SpeculativeJIT::fillStorage() should work with all the states that a cell may be in
         https://bugs.webkit.org/show_bug.cgi?id=83722
 

@@ -76,7 +76,7 @@ GPRReg SpeculativeJIT::fillInteger(NodeIndex nodeIndex, DataFormat& returnFormat
         info.fillJSValue(gpr, DataFormatJSInteger);
         unlock(gpr);
     }
-
+    
     switch (info.registerFormat()) {
     case DataFormatNone:
         // Should have filled, above.
@@ -409,7 +409,7 @@ void SpeculativeJIT::nonSpeculativeValueToInt32(Node& node)
     if (isKnownInteger(node.child1().index())) {
         IntegerOperand op1(this, node.child1());
         GPRTemporary result(this, op1);
-        m_jit.move(op1.gpr(), result.gpr());
+        m_jit.zeroExtend32ToPtr(op1.gpr(), result.gpr());
         integerResult(result.gpr(), m_compileIndex);
         return;
     }
