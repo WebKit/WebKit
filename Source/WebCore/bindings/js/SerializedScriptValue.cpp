@@ -392,13 +392,13 @@ private:
     bool checkForDuplicate(JSObject* object)
     {
         // Record object for graph reconstruction
-        ObjectPool::AddResult addResult = m_objectPool.add(object, m_objectPool.size());
+        ObjectPool::const_iterator found = m_objectPool.find(object);
 
         // Handle duplicate references
-        if (!addResult.isNewEntry) {
+        if (found != m_objectPool.end()) {
             write(ObjectReferenceTag);
-            ASSERT(static_cast<int32_t>(addResult.iterator->second) < m_objectPool.size());
-            writeObjectIndex(addResult.iterator->second);
+            ASSERT(static_cast<int32_t>(found->second) < m_objectPool.size());
+            writeObjectIndex(found->second);
             return true;
         }
 
