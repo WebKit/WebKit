@@ -2124,7 +2124,6 @@ BUGWK44199 RELEASE : perf/array-reverse.html = PASS TIMEOUT
 BUGWK63057 RELEASE : perf/adding-radio-buttons.html = MISSING FAIL PASS
 
 // Failing after http://trac.webkit.org/changeset/65665/
-BUGWK44278 : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT IMAGE
 
 // new or failing since WebKit rev. 65740:65800
 BUGCR53073 SKIP DEBUG : storage/change-version.html = PASS CRASH
