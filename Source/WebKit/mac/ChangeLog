@@ -1,3 +1,15 @@
+2012-04-12  Andy Estes  <aestes@apple.com>
+
+        Remove unused WebKit1 SPI for suppressing incremental rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=83801
+
+        Reviewed by Simon Fraser.
+
+        This SPI is unused and has been replaced by API ([setS|s]uppressesIncrementalRendering).
+
+        * WebView/WebPreferences.mm:
+        * WebView/WebPreferencesPrivate.h:
+
 2012-04-08  Dan Bernstein  <mitz@apple.com>
 
         [mac] REGRESSION (r113467): Some canvas tests are failing in WebKit1 when run after compositing/tiled-layers-hidpi.html

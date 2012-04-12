@@ -1606,16 +1606,6 @@ static NSString *classIBCreatorID = nil;
 
 }
 
-- (void)setSuppressIncrementalRendering:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitSuppressesIncrementalRenderingKey];
-}
-
-- (BOOL)suppressIncrementalRendering
-{
-    return [self _boolValueForKey:WebKitSuppressesIncrementalRenderingKey];
-}
-
 - (void)setBackspaceKeyNavigationEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitBackspaceKeyNavigationEnabledKey];

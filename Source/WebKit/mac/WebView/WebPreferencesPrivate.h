@@ -277,10 +277,6 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setRegionBasedColumnsEnabled:(BOOL)flag;
 - (BOOL)regionBasedColumnsEnabled;
 
-// Deprecated. You should use [setS|s]uppressesIncrementalRendering in WebPreferences.h instead.
-- (void)setSuppressIncrementalRendering:(BOOL)flag;
-- (BOOL)suppressIncrementalRendering;
-
 - (void)setBackspaceKeyNavigationEnabled:(BOOL)flag;
 - (BOOL)backspaceKeyNavigationEnabled;
 
