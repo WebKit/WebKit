@@ -203,7 +203,10 @@ void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, const IntSize& 
         context->fillRect(FloatRect(0, 0, hudSize.width(), hudSize.height()));
     }
 
-    int fpsCounterHeight = m_mediumFont->fontMetrics().floatHeight() + 40;
+    int fpsCounterHeight = 40;
+    if (!CCProxy::implThread())
+        fpsCounterHeight += m_mediumFont->fontMetrics().floatHeight();
+
     int fpsCounterTop = 2;
     int platformLayerTreeTop;
     if (settings().showFPSCounter)
