@@ -341,9 +341,6 @@ BUGWK56309 : svg/text/text-deco-01-b.svg = CRASH
 
 BUGWK60158 : fast/dom/Geolocation/argument-types.html = CRASH
 
-// EditorClient::checkTextOfParagraph() is not implemented.
-BUGWKGTK : editing/spelling/spelling-marker-description.html = CRASH
-
 BUGWK65699 : fast/loader/reload-zero-byte-plugin.html = CRASH
 
 BUGWK65183 DEBUG : editing/undo/replace-text-in-node-preserving-markers-crash.html = CRASH
@@ -351,9 +348,6 @@ BUGWK65183 DEBUG : editing/undo/replace-text-in-node-preserving-markers-crash.ht
 BUGWK68686 DEBUG : editing/pasteboard/drag-drop-input-in-svg.svg = CRASH
 
 BUGWK68700 DEBUG : fast/workers/storage/interrupt-database.html = CRASH
-
-BUGWK69933 DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = CRASH
-BUGWK69933 DEBUG : fast/borders/inline-mask-overlay-image-outset.html = CRASH
 
 BUGWK69001 DEBUG : plugins/js-from-destroy.html = CRASH
 
@@ -1155,6 +1149,8 @@ BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T
 BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html = FAIL
 BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html = FAIL
 BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html = FAIL
+BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html = FAIL
+BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A3.2.html = FAIL
 
 // r65681 broke a couple GTK+ a11y tests
 BUGWK44316 : platform/gtk/accessibility/object-attributes.html = FAIL
@@ -1538,6 +1534,12 @@ BUGWK82129 : fast/block/lineboxcontain/font.html = FAIL
 BUGWK83560 : fast/events/drop-with-file-paths.html = FAIL
 
 BUGWK83675 : fast/multicol/cell-shrinkback.html = FAIL
+
+// EditorClient::checkTextOfParagraph() is not implemented.
+BUGWKGTK : editing/spelling/spelling-marker-description.html = FAIL
+
+BUGWK69933 : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = FAIL
+BUGWK69933 : fast/borders/inline-mask-overlay-image-outset.html = FAIL
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
