@@ -1,3 +1,14 @@
+2012-04-12  Dominik Rottsches  <dominik.rottsches@linux.intel.com>
+
+        Add an EFL Debug Buildbot to the master configuration
+        https://bugs.webkit.org/show_bug.cgi?id=82711
+
+        Forgot to add EFL Linux Debug to scheduler.
+
+        Reviewed by Philippe Normand.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-04-12  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         Add an EFL Debug Buildbot to the master configuration
