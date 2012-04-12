@@ -2534,7 +2534,6 @@ BUGCR75561 LEOPARD : fast/writing-mode/text-orientation-basic.html = IMAGE IMAGE
 
 BUGWK56060 LINUX : fast/images/favicon-as-image.html = IMAGE+TEXT
 
-
 // Skip an overly restrictive cross-origin HTTPS test
 BUGCR69594 SKIP : http/tests/appcache/different-https-origin-resource-main.html = FAIL
 
@@ -2663,7 +2662,6 @@ BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = PAS
 // Looks like some uninitialized memory at the bottom.
 BUGWK60103 : fast/replaced/border-radius-clip.html = TIMEOUT IMAGE+TEXT IMAGE CRASH
 
-
 // Need to figure out why this is slow.
 BUGWK60131 SLOW : fast/css/visited-link-hang.html = PASS
 
@@ -2695,12 +2693,10 @@ BUGDPRANKE : fast/dom/Document/document-reopen.html = PASS TEXT
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = PASS TEXT
 
 BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
-BUGWK60115 WIN : svg/css/shadow-changes.svg = IMAGE
 
 BUGWK56702 WIN DEBUG : http/tests/navigation/ping-cross-origin-from-https.html = PASS TIMEOUT
 
 BUGWK60118 MAC : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
-BUGWK60118 WIN DEBUG : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
 
 // broke in r84742 - just needs a new baseline?
 BUGWK60121 : http/tests/misc/will-send-request-returns-null-on-redirect.html = TEXT
@@ -2778,6 +2774,8 @@ BUGCR83290 WIN : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS T
 BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = PASS CRASH
 BUGCR83325 MAC DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.put.created.html = PASS CRASH
 
+BUGWK83717 MAC : svg/W3C-SVG-1.1/masking-mask-01-b.svg = IMAGE PASS
+BUGWK83717 MAC : svg/as-border-image/svg-as-border-image-2.html = IMAGE PASS
 BUGWK83717 LEOPARD : svg/custom/foreign-object-skew.svg = IMAGE
 
 BUGCR83499 : fast/box-shadow/scaled-box-shadow.html = PASS IMAGE+TEXT IMAGE
