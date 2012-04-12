@@ -124,6 +124,9 @@ public:
 
     static TargetType targetTypeFromMimeType(const String& mimeType);
 
+    void clearHTTPContentLength();
+    void clearHTTPContentType();
+
 private:
     friend class ResourceRequestBase;
 

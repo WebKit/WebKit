@@ -584,11 +584,11 @@ bool NetworkJob::handleRedirect()
     newRequest.setMustHandleInternally(true);
 
     String method = newRequest.httpMethod().upper();
-    if ((method != "GET") && (method != "HEAD")) {
+    if (method != "GET" && method != "HEAD") {
         newRequest.setHTTPMethod("GET");
         newRequest.setHTTPBody(0);
-        newRequest.setHTTPHeaderField("Content-Length", String());
-        newRequest.setHTTPHeaderField("Content-Type", String());
+        newRequest.clearHTTPContentLength();
+        newRequest.clearHTTPContentType();
     }
 
     // Do not send existing credentials with the new request.

@@ -246,4 +246,24 @@ void ResourceRequest::doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>
     m_forceDownload = data->m_forceDownload;
 }
 
+void ResourceRequest::clearHTTPContentLength()
+{
+    updateResourceRequest();
+
+    m_httpHeaderFields.remove("Content-Length");
+
+    if (url().protocolInHTTPFamily())
+        m_platformRequestUpdated = false;
+}
+
+void ResourceRequest::clearHTTPContentType()
+{
+    updateResourceRequest();
+
+    m_httpHeaderFields.remove("Content-Type");
+
+    if (url().protocolInHTTPFamily())
+        m_platformRequestUpdated = false;
+}
+
 } // namespace WebCore
