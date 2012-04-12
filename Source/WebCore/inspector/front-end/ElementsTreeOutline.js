@@ -634,10 +634,14 @@ WebInspector.ElementsTreeElement.prototype = {
             }
         }
 
-        var updater = show ? updateEntryShow : updateEntryHide;
-
-        for (var i = 0, size = this._highlightResult.length; i < size; ++i)
-            updater(this._highlightResult[i]);
+        // Preserve the semantic of node by following the order of updates for hide and show.
+        if (show) {
+            for (var i = 0, size = this._highlightResult.length; i < size; ++i)
+                updateEntryShow(this._highlightResult[i]);
+        } else {
+            for (var i = (this._highlightResult.length - 1); i >= 0; --i)
+                updateEntryHide(this._highlightResult[i]);
+        }
     },
 
     get hovered()
