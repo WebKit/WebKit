@@ -51,19 +51,19 @@ static void dfgRepatchByIdSelfAccess(CodeBlock* codeBlock, StructureStubInfo& st
     repatchBuffer.relink(stubInfo.callReturnLocation, slowPathFunction);
 
     // Patch the structure check & the offset of the load.
-    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.deltaCheckImmToCall), structure);
+    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.patch.dfg.deltaCheckImmToCall), structure);
 #if USE(JSVALUE64)
     if (compact)
-        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.deltaCallToLoadOrStore), sizeof(JSValue) * offset);
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToLoadOrStore), sizeof(JSValue) * offset);
     else
-        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.deltaCallToLoadOrStore), sizeof(JSValue) * offset);
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToLoadOrStore), sizeof(JSValue) * offset);
 #elif USE(JSVALUE32_64)
     if (compact) {
-        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.deltaCallToTagLoadOrStore), sizeof(JSValue) * offset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.deltaCallToPayloadLoadOrStore), sizeof(JSValue) * offset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToTagLoadOrStore), sizeof(JSValue) * offset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToPayloadLoadOrStore), sizeof(JSValue) * offset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     } else {
-        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.deltaCallToTagLoadOrStore), sizeof(JSValue) * offset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.deltaCallToPayloadLoadOrStore), sizeof(JSValue) * offset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToTagLoadOrStore), sizeof(JSValue) * offset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToPayloadLoadOrStore), sizeof(JSValue) * offset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 #endif
 }
@@ -102,7 +102,7 @@ static void linkRestoreScratch(LinkBuffer& patchBuffer, bool needToRestoreScratc
 
 static void linkRestoreScratch(LinkBuffer& patchBuffer, bool needToRestoreScratch, StructureStubInfo& stubInfo, MacroAssembler::Jump success, MacroAssembler::Jump fail, MacroAssembler::JumpList failureCases)
 {
-    linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone), stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase));
+    linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase));
 }
 
 static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stubInfo, StructureChain* chain, size_t count, size_t offset, Structure* structure, CodeLocationLabel successLabel, CodeLocationLabel slowCaseLabel, MacroAssemblerCodeRef& stubRoutine)
@@ -111,12 +111,12 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
 
     MacroAssembler stubJit;
         
-    GPRReg baseGPR = static_cast<GPRReg>(stubInfo.baseGPR);
+    GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.dfg.baseGPR);
 #if USE(JSVALUE32_64)
-    GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.valueTagGPR);
+    GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueTagGPR);
 #endif
-    GPRReg resultGPR = static_cast<GPRReg>(stubInfo.valueGPR);
-    GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.scratchGPR);
+    GPRReg resultGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueGPR);
+    GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.patch.dfg.scratchGPR);
     bool needToRestoreScratch = false;
     
     if (scratchGPR == InvalidGPRReg) {
@@ -167,12 +167,12 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     JSGlobalData* globalData = &exec->globalData();
     
     if (isJSArray(baseValue) && propertyName == exec->propertyNames().length) {
-        GPRReg baseGPR = static_cast<GPRReg>(stubInfo.baseGPR);
+        GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.dfg.baseGPR);
 #if USE(JSVALUE32_64)
-        GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.valueTagGPR);
+        GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueTagGPR);
 #endif
-        GPRReg resultGPR = static_cast<GPRReg>(stubInfo.valueGPR);
-        GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.scratchGPR);
+        GPRReg resultGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueGPR);
+        GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.patch.dfg.scratchGPR);
         bool needToRestoreScratch = false;
         
         MacroAssembler stubJit;
@@ -209,7 +209,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         stubInfo.stubRoutine = patchBuffer.finalizeCode();
         
         RepatchBuffer repatchBuffer(codeBlock);
-        repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine.code()));
+        repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine.code()));
         repatchBuffer.relink(stubInfo.callReturnLocation, operationGetById);
         
         return true;
@@ -255,10 +255,10 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     
     ASSERT(slot.slotBase().isObject());
     
-    generateProtoChainAccessStub(exec, stubInfo, prototypeChain, count, offset, structure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone), stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase), stubInfo.stubRoutine);
+    generateProtoChainAccessStub(exec, stubInfo, prototypeChain, count, offset, structure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase), stubInfo.stubRoutine);
     
     RepatchBuffer repatchBuffer(codeBlock);
-    repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine.code()));
+    repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine.code()));
     repatchBuffer.relink(stubInfo.callReturnLocation, operationGetByIdProtoBuildList);
     
     stubInfo.initGetByIdChain(*globalData, codeBlock->ownerExecutable(), structure, prototypeChain);
@@ -280,7 +280,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         || slot.slotBase() != baseValue)
         return false;
     
-    if (!stubInfo.registersFlushed) {
+    if (!stubInfo.patch.dfg.registersFlushed) {
         // We cannot do as much inline caching if the registers were not flushed prior to this GetById. In particular,
         // non-Value cached properties require planting calls, which requires registers to have been flushed. Thus,
         // if registers were not flushed, don't do non-Value caching.
@@ -305,7 +305,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         listIndex = 0;
     } else if (stubInfo.accessType == access_get_by_id_self) {
         ASSERT(!stubInfo.stubRoutine);
-        polymorphicStructureList = new PolymorphicAccessStructureList(*globalData, codeBlock->ownerExecutable(), MacroAssemblerCodeRef::createSelfManagedCodeRef(stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase)), stubInfo.u.getByIdSelf.baseObjectStructure.get(), true);
+        polymorphicStructureList = new PolymorphicAccessStructureList(*globalData, codeBlock->ownerExecutable(), MacroAssemblerCodeRef::createSelfManagedCodeRef(stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase)), stubInfo.u.getByIdSelf.baseObjectStructure.get(), true);
         stubInfo.initGetByIdSelfList(polymorphicStructureList, 1);
         listIndex = 1;
     } else {
@@ -316,12 +316,12 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     if (listIndex < POLYMORPHIC_LIST_CACHE_SIZE) {
         stubInfo.u.getByIdSelfList.listSize++;
         
-        GPRReg baseGPR = static_cast<GPRReg>(stubInfo.baseGPR);
+        GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.dfg.baseGPR);
 #if USE(JSVALUE32_64)
-        GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.valueTagGPR);
+        GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueTagGPR);
 #endif
-        GPRReg resultGPR = static_cast<GPRReg>(stubInfo.valueGPR);
-        GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.scratchGPR);
+        GPRReg resultGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueGPR);
+        GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.patch.dfg.scratchGPR);
         
         CCallHelpers stubJit(globalData, codeBlock);
         
@@ -395,11 +395,11 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         if (listIndex)
             lastProtoBegin = CodeLocationLabel(polymorphicStructureList->list[listIndex - 1].stubRoutine.code());
         else
-            lastProtoBegin = stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase);
+            lastProtoBegin = stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase);
         ASSERT(!!lastProtoBegin);
         
         patchBuffer.link(wrongStruct, lastProtoBegin);
-        patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone));
+        patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone));
         if (!isDirect) {
             patchBuffer.link(operationCall, operationFunction);
             patchBuffer.link(handlerCall, lookupExceptionHandlerInStub);
@@ -409,7 +409,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         
         polymorphicStructureList->list[listIndex].set(*globalData, codeBlock->ownerExecutable(), stubRoutine, structure, isDirect);
         
-        CodeLocationJump jumpLocation = stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck);
+        CodeLocationJump jumpLocation = stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck);
         RepatchBuffer repatchBuffer(codeBlock);
         repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine.code()));
         
@@ -471,11 +471,11 @@ static bool tryBuildGetByIDProtoList(ExecState* exec, JSValue baseValue, const I
 
         MacroAssemblerCodeRef stubRoutine;
         
-        generateProtoChainAccessStub(exec, stubInfo, prototypeChain, count, offset, structure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone), lastProtoBegin, stubRoutine);
+        generateProtoChainAccessStub(exec, stubInfo, prototypeChain, count, offset, structure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone), lastProtoBegin, stubRoutine);
         
         polymorphicStructureList->list[listIndex].set(*globalData, codeBlock->ownerExecutable(), stubRoutine, structure, true);
         
-        CodeLocationJump jumpLocation = stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck);
+        CodeLocationJump jumpLocation = stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck);
         RepatchBuffer repatchBuffer(codeBlock);
         repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine.code()));
         
@@ -540,12 +540,12 @@ static void emitPutReplaceStub(
     MacroAssemblerCodeRef& stubRoutine)
 {
     JSGlobalData* globalData = &exec->globalData();
-    GPRReg baseGPR = static_cast<GPRReg>(stubInfo.baseGPR);
+    GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.dfg.baseGPR);
 #if USE(JSVALUE32_64)
-    GPRReg valueTagGPR = static_cast<GPRReg>(stubInfo.valueTagGPR);
+    GPRReg valueTagGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueTagGPR);
 #endif
-    GPRReg valueGPR = static_cast<GPRReg>(stubInfo.valueGPR);
-    GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.scratchGPR);
+    GPRReg valueGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueGPR);
+    GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.patch.dfg.scratchGPR);
     bool needToRestoreScratch = false;
 #if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
     GPRReg scratchGPR2;
@@ -608,7 +608,7 @@ static void emitPutReplaceStub(
     }
     
     LinkBuffer patchBuffer(*globalData, &stubJit, exec->codeBlock());
-    patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone));
+    patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone));
     patchBuffer.link(failure, failureLabel);
             
     stubRoutine = patchBuffer.finalizeCode();
@@ -629,12 +629,12 @@ static void emitPutTransitionStub(
 {
     JSGlobalData* globalData = &exec->globalData();
 
-    GPRReg baseGPR = static_cast<GPRReg>(stubInfo.baseGPR);
+    GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.dfg.baseGPR);
 #if USE(JSVALUE32_64)
-    GPRReg valueTagGPR = static_cast<GPRReg>(stubInfo.valueTagGPR);
+    GPRReg valueTagGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueTagGPR);
 #endif
-    GPRReg valueGPR = static_cast<GPRReg>(stubInfo.valueGPR);
-    GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.scratchGPR);
+    GPRReg valueGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueGPR);
+    GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.patch.dfg.scratchGPR);
     bool needToRestoreScratch = false;
             
     ASSERT(scratchGPR != baseGPR);
@@ -699,7 +699,7 @@ static void emitPutTransitionStub(
         success = stubJit.jump();
             
     LinkBuffer patchBuffer(*globalData, &stubJit, exec->codeBlock());
-    patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone));
+    patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone));
     if (needToRestoreScratch)
         patchBuffer.link(failure, failureLabel);
     else
@@ -741,11 +741,11 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             emitPutTransitionStub(
                 exec, baseValue, ident, slot, stubInfo, putKind,
                 structure, oldStructure, prototypeChain,
-                stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase),
+                stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase),
                 stubInfo.stubRoutine);
             
             RepatchBuffer repatchBuffer(codeBlock);
-            repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine.code()));
+            repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine.code()));
             repatchBuffer.relink(stubInfo.callReturnLocation, appropriateListBuildingPutByIdFunction(slot, putKind));
             
             stubInfo.initPutByIdTransition(*globalData, codeBlock->ownerExecutable(), oldStructure, structure, prototypeChain, putKind == Direct);
@@ -804,7 +804,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
             // We're now committed to creating the stub. Mogrify the meta-data accordingly.
             list = PolymorphicPutByIdList::from(
                 putKind, stubInfo,
-                stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase));
+                stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase));
             
             emitPutTransitionStub(
                 exec, baseValue, propertyName, slot, stubInfo, putKind,
@@ -821,7 +821,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
             // We're now committed to creating the stub. Mogrify the meta-data accordingly.
             list = PolymorphicPutByIdList::from(
                 putKind, stubInfo,
-                stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase));
+                stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase));
             
             emitPutReplaceStub(
                 exec, baseValue, propertyName, slot, stubInfo, putKind,
@@ -834,7 +834,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
         }
         
         RepatchBuffer repatchBuffer(codeBlock);
-        repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), CodeLocationLabel(stubRoutine.code()));
+        repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), CodeLocationLabel(stubRoutine.code()));
         
         if (list->isFull())
             repatchBuffer.relink(stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
@@ -877,14 +877,14 @@ void dfgLinkFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCo
 void dfgResetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
 {
     repatchBuffer.relink(stubInfo.callReturnLocation, operationGetByIdOptimize);
-    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(uintptr_t)stubInfo.deltaCheckImmToCall), reinterpret_cast<void*>(-1));
+    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(uintptr_t)stubInfo.patch.dfg.deltaCheckImmToCall), reinterpret_cast<void*>(-1));
 #if USE(JSVALUE64)
-    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.deltaCallToLoadOrStore), 0);
+    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToLoadOrStore), 0);
 #else
-    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.deltaCallToTagLoadOrStore), 0);
-    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.deltaCallToPayloadLoadOrStore), 0);
+    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToTagLoadOrStore), 0);
+    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToPayloadLoadOrStore), 0);
 #endif
-    repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase));
+    repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase));
 }
 
 void dfgResetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
@@ -902,14 +902,14 @@ void dfgResetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
         optimizedFunction = operationPutByIdDirectNonStrictOptimize;
     }
     repatchBuffer.relink(stubInfo.callReturnLocation, optimizedFunction);
-    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(uintptr_t)stubInfo.deltaCheckImmToCall), reinterpret_cast<void*>(-1));
+    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(uintptr_t)stubInfo.patch.dfg.deltaCheckImmToCall), reinterpret_cast<void*>(-1));
 #if USE(JSVALUE64)
-    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.deltaCallToLoadOrStore), 0);
+    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToLoadOrStore), 0);
 #else
-    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.deltaCallToTagLoadOrStore), 0);
-    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.deltaCallToPayloadLoadOrStore), 0);
+    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToTagLoadOrStore), 0);
+    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToPayloadLoadOrStore), 0);
 #endif
-    repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase));
+    repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase));
 }
 
 } } // namespace JSC::DFG

@@ -186,27 +186,34 @@ namespace JSC {
 
         int8_t accessType;
         int8_t seen;
-        
+
 #if ENABLE(DFG_JIT)
         CodeOrigin codeOrigin;
-        int8_t registersFlushed;
-        int8_t baseGPR;
-#if USE(JSVALUE32_64)
-        int8_t valueTagGPR;
-#endif
-        int8_t valueGPR;
-        int8_t scratchGPR;
-        int16_t deltaCallToDone;
-        int16_t deltaCallToStructCheck;
-        int16_t deltaCallToSlowCase;
-        int16_t deltaCheckImmToCall;
-#if USE(JSVALUE64)
-        int16_t deltaCallToLoadOrStore;
-#else
-        int16_t deltaCallToTagLoadOrStore;
-        int16_t deltaCallToPayloadLoadOrStore;
-#endif
 #endif // ENABLE(DFG_JIT)
+
+        union {
+            struct {
+                int8_t registersFlushed;
+                int8_t baseGPR;
+#if USE(JSVALUE32_64)
+                int8_t valueTagGPR;
+#endif
+                int8_t valueGPR;
+                int8_t scratchGPR;
+                int16_t deltaCallToDone;
+                int16_t deltaCallToStructCheck;
+                int16_t deltaCallToSlowCase;
+                int16_t deltaCheckImmToCall;
+#if USE(JSVALUE64)
+                int16_t deltaCallToLoadOrStore;
+#else
+                int16_t deltaCallToTagLoadOrStore;
+                int16_t deltaCallToPayloadLoadOrStore;
+#endif
+            } dfg;
+            struct {
+            } baseline;
+        } patch;
 
         union {
             struct {
