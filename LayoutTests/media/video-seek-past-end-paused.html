@@ -1,61 +1,45 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <script src=media-file.js></script>
-        <script src=video-test.js></script>
-        <script>
-            var timeupdateEventCount = 0;
 
-            function doSetup()
-            {
-                findMediaElement();
-                waitForEvent('canplaythrough', canPlayThrough);
-                video.src = findMediaFile('video', 'content/test');
-            }
-            window.addEventListener('load', doSetup, false);
+<video controls></video>
+<p>Test that seeking paused video past it's duration time sets currentTime to duration and leaves video paused.</p>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
 
-            function canPlayThrough()
-            {
-                testExpected("video.paused", true);
-                testExpected("video.ended", false);
-                video.addEventListener('timeupdate', timeUpdate);
-                run("video.play()");
-            }
+    waitForEvent('canplaythrough', function () { 
+        testExpected("video.paused", true);
+        testExpected("video.ended", false);
+        run("video.play()");
+        setTimeout(timeCheck1, 200);
+    });
 
-            function timeUpdate()
-            {
-                ++timeupdateEventCount;
+    function timeCheck1() 
+    {
+        consoleWrite("");
 
-                // wait 2 timeupdate events so we are sure the media engine is
-                // playing the media.
-                if (timeupdateEventCount == 2) {
-                    consoleWrite("");
+        // make sure time is advancing, seek past end
+        testExpected("video.paused", false);
+        testExpected("mediaElement.currentTime", 0, '>');
+        video.currentTime = 500;
+        setTimeout(timeCheck2, 200);
+    }
 
-                    // make sure time is advancing, seek past end
-                    testExpected("video.paused", false);
-                    testExpected("mediaElement.currentTime", 0, '>');
-                    video.addEventListener('seeked', seeked);
-                    video.currentTime = 500;
-                }
-            }
+    function timeCheck2() 
+    {
+        consoleWrite("");
 
-            function seeked()
-            {
-                consoleWrite("");
+        // don't use "testExpected()" so we won't log the actual duration to the
+        //  results file, as the floating point result may differ with different engines
+        reportExpected(mediaElement.currentTime == mediaElement.duration, "mediaElement.currentTime", "==", "mediaElement.duration", mediaElement.currentTime);
 
-                // don't use "testExpected()" so we won't log the actual duration to the
-                // results file, as the floating point result may differ with different engines
-                reportExpected(mediaElement.currentTime == mediaElement.duration, "mediaElement.currentTime", "==", "mediaElement.duration", mediaElement.currentTime);
+        testExpected("video.ended", true);
+        consoleWrite("");
+        endTest();
+    }
 
-                testExpected("video.ended", true);
-                consoleWrite("");
-                timeupdateEventCount = 0;
-                endTest();
-            }
-        </script>
-    </head>
-    <body>
-        <video controls></video>
-        <p>Test that seeking paused video past its duration time sets currentTime to duration and leaves video paused.</p>
-    </body>
-</html>
+    var mediaFile = findMediaFile("video", "content/test");
+    disableFullTestDetailsPrinting();
+    runSilently("video.src = '" + mediaFile + "'");
+    enableFullTestDetailsPrinting();
+    run("video.load()");
+    consoleWrite("");
+</script>
