@@ -54,11 +54,17 @@ function binarySearch(object, array, comparator)
     return -(first + 1);
 }
 
-Object.defineProperty(Array.prototype, "binaryIndexOf", { value: function(value, comparator)
+Object.defineProperty(Array.prototype, "binaryIndexOf",
 {
-    var result = binarySearch(value, this, comparator);
-    return result >= 0 ? result : -1;
-}});
+    /**
+     * @this {Array.<*>}
+     */
+    value: function(value, comparator)
+    {
+        var result = binarySearch(value, this, comparator);
+        return result >= 0 ? result : -1;
+    }
+});
 
 /**
  * @param {*} anObject

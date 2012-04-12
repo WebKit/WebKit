@@ -25,6 +25,10 @@
 
 // FIXME: Rename the file.
 
+/**
+ * @constructor
+ * @extends {WebInspector.View}
+ */
 WebInspector.CPUProfileView = function(profile)
 {
     WebInspector.View.call(this);
@@ -48,7 +52,7 @@ WebInspector.CPUProfileView = function(profile)
     }
 
     this.dataGrid = new WebInspector.DataGrid(columns);
-    this.dataGrid.addEventListener("sorting changed", this._sortData, this);
+    this.dataGrid.addEventListener("sorting changed", this._sortProfile, this);
     this.dataGrid.element.addEventListener("mousedown", this._mouseDownInDataGrid.bind(this), true);
     this.dataGrid.show(this.element);
 
@@ -65,19 +69,19 @@ WebInspector.CPUProfileView = function(profile)
     this.viewSelectElement.selectedIndex = this._viewType.get() === WebInspector.CPUProfileView._TypeHeavy ? 0 : 1;
 
     this.percentButton = new WebInspector.StatusBarButton("", "percent-time-status-bar-item");
-    this.percentButton.addEventListener("click", this._percentClicked.bind(this), false);
+    this.percentButton.addEventListener("click", this._percentClicked, this);
 
     this.focusButton = new WebInspector.StatusBarButton(WebInspector.UIString("Focus selected function."), "focus-profile-node-status-bar-item");
     this.focusButton.disabled = true;
-    this.focusButton.addEventListener("click", this._focusClicked.bind(this), false);
+    this.focusButton.addEventListener("click", this._focusClicked, this);
 
     this.excludeButton = new WebInspector.StatusBarButton(WebInspector.UIString("Exclude selected function."), "exclude-profile-node-status-bar-item");
     this.excludeButton.disabled = true;
-    this.excludeButton.addEventListener("click", this._excludeClicked.bind(this), false);
+    this.excludeButton.addEventListener("click", this._excludeClicked, this);
 
     this.resetButton = new WebInspector.StatusBarButton(WebInspector.UIString("Restore all functions."), "reset-profile-status-bar-item");
     this.resetButton.visible = false;
-    this.resetButton.addEventListener("click", this._resetClicked.bind(this), false);
+    this.resetButton.addEventListener("click", this._resetClicked, this);
 
     this.profile = profile;
 
@@ -147,26 +151,6 @@ WebInspector.CPUProfileView.prototype = {
     {
         this._currentTree = tree;
         this.refresh();
-    },
-
-    get topDownTree()
-    {
-        if (!this._topDownTree) {
-            this._topDownTree = WebInspector.TopDownTreeFactory.create(this.profile.head);
-            this._sortProfile(this._topDownTree);
-        }
-
-        return this._topDownTree;
-    },
-
-    get bottomUpTree()
-    {
-        if (!this._bottomUpTree) {
-            this._bottomUpTree = WebInspector.BottomUpTreeFactory.create(this.profile.head);
-            this._sortProfile(this._bottomUpTree);
-        }
-
-        return this._bottomUpTree;
     },
 
     willHide: function()
@@ -500,11 +484,6 @@ WebInspector.CPUProfileView.prototype = {
         this.excludeButton.disabled = true;
     },
 
-    _sortData: function(event)
-    {
-        this._sortProfile(this.profile);
-    },
-
     _sortProfile: function()
     {
         var sortAscending = this.dataGrid.sortOrder === "ascending";
@@ -566,6 +545,10 @@ WebInspector.CPUProfileView.prototype = {
 
 WebInspector.CPUProfileView.prototype.__proto__ = WebInspector.View.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.ProfileType}
+ */
 WebInspector.CPUProfileType = function()
 {
     WebInspector.ProfileType.call(this, WebInspector.CPUProfileType.TypeId, WebInspector.UIString("Collect JavaScript CPU Profile"));

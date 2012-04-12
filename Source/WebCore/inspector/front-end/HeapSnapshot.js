@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @param {number=} size
+ */
 WebInspector.Uint32Array = function(size)
 {
     const preallocateSize = 1000;
@@ -53,6 +57,9 @@ WebInspector.Uint32Array.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.HeapSnapshotLoader = function()
 {
     this._json = "";
@@ -241,6 +248,9 @@ WebInspector.HeapSnapshotLoader.prototype = {
     }
 };
 
+/**
+ * @constructor
+ */
 WebInspector.HeapSnapshotArraySlice = function(array, start, end)
 {
     this._array = array;
@@ -262,6 +272,10 @@ WebInspector.HeapSnapshotArraySlice.prototype = {
     }
 }
 
+/**
+ * @constructor
+ * @param {number=} edgeIndex
+ */
 WebInspector.HeapSnapshotEdge = function(snapshot, edges, edgeIndex)
 {
     this._snapshot = snapshot;
@@ -383,6 +397,9 @@ WebInspector.HeapSnapshotEdge.prototype = {
     }
 };
 
+/**
+ * @constructor
+ */
 WebInspector.HeapSnapshotEdgeIterator = function(edge)
 {
     this.edge = edge;
@@ -420,6 +437,9 @@ WebInspector.HeapSnapshotEdgeIterator.prototype = {
     }
 };
 
+/**
+ * @constructor
+ */
 WebInspector.HeapSnapshotRetainerEdge = function(snapshot, retainedNodeIndex, retainerIndex)
 {
     this._snapshot = snapshot;
@@ -537,6 +557,9 @@ WebInspector.HeapSnapshotRetainerEdge.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.HeapSnapshotRetainerEdgeIterator = function(retainer)
 {
     this.retainer = retainer;
@@ -574,6 +597,10 @@ WebInspector.HeapSnapshotRetainerEdgeIterator.prototype = {
     }
 };
 
+/**
+ * @constructor
+ * @param {number=} nodeIndex
+ */
 WebInspector.HeapSnapshotNode = function(snapshot, nodeIndex)
 {
     this._snapshot = snapshot;
@@ -746,6 +773,9 @@ WebInspector.HeapSnapshotNode.prototype = {
     }
 };
 
+/**
+ * @constructor
+ */
 WebInspector.HeapSnapshotNodeIterator = function(node)
 {
     this.node = node;
@@ -783,16 +813,36 @@ WebInspector.HeapSnapshotNodeIterator.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.HeapSnapshot = function(profile)
 {
     this.uid = profile.snapshot.uid;
     this._nodes = profile.nodes;
     this._onlyNodes = profile.onlyNodes;
     this._containmentEdges = profile.containmentEdges;
+    /** @type{HeapSnapshotMetainfo} */
     this._metaNode = profile.metaNode;
     this._strings = profile.strings;
 
     this._init();
+}
+
+/**
+ * @constructor
+ */
+function HeapSnapshotMetainfo()
+{
+    // New format.
+    this.node_fields = [];
+    this.node_types = [];
+    this.edge_fields = [];
+    this.edge_types = [];
+
+    // Old format.
+    this.fields = [];
+    this.types = [];
 }
 
 WebInspector.HeapSnapshot.prototype = {
@@ -1003,9 +1053,9 @@ WebInspector.HeapSnapshot.prototype = {
         while (srcNodeIndex < onlyNodesLength) {
             var firstEdgeIndex = nextNodeFirstEdgeIndex;
             var nextNodeIndex = srcNodeIndex + nodeFieldCount;
-            var nextNodeFirstEdgeIndex = nextNodeIndex < onlyNodesLength
-                                       ? onlyNodes[nextNodeIndex + firstEdgeIndexOffset]
-                                       : containmentEdges.length;
+            nextNodeFirstEdgeIndex = nextNodeIndex < onlyNodesLength
+                                   ? onlyNodes[nextNodeIndex + firstEdgeIndexOffset]
+                                   : containmentEdges.length;
             for (var edgeIndex = firstEdgeIndex; edgeIndex < nextNodeFirstEdgeIndex; edgeIndex += edgeFieldsCount) {
                 var toNodeIndex = containmentEdges[edgeIndex + edgeToNodeOffset];
                 if (toNodeIndex % nodeFieldCount)
@@ -1087,6 +1137,9 @@ WebInspector.HeapSnapshot.prototype = {
         return this._flags[node.nodeIndex];
     },
 
+    /**
+     * @param {String=} filterString
+     */
     aggregates: function(sortedIndexes, key, filterString)
     {
         if (!this._aggregates) {
@@ -1312,7 +1365,7 @@ WebInspector.HeapSnapshot.prototype = {
         // Put in the first slot of each dominatedNodes slice the count of entries
         // that will be filled.
         var firstDominatedNodeIndex = 0;
-        for (i = 0; i < this.nodeCount; ++i) {
+        for (var i = 0; i < this.nodeCount; ++i) {
             var dominatedCount = dominatedNodes[firstDominatedNodeIndex] = indexArray[i];
             indexArray[i] = firstDominatedNodeIndex;
             firstDominatedNodeIndex += dominatedCount;
@@ -1400,7 +1453,7 @@ WebInspector.HeapSnapshot.prototype = {
                 list.push(iter.edge.node.nodeIndex);
         }
 
-        var edge = new WebInspector.HeapSnapshotEdge(this);
+        var edge = new WebInspector.HeapSnapshotEdge(this, undefined);
         var node = new WebInspector.HeapSnapshotNode(this);
         while (list.length) {
             var nodeIndex = list.pop();
@@ -1412,7 +1465,7 @@ WebInspector.HeapSnapshot.prototype = {
             edge._edges = node.rawEdges;
             for (var j = 0; j < edgesCount; ++j) {
                 edge.edgeIndex = j * this._edgeFieldsCount;
-                var nodeIndex = edge.nodeIndex;
+                nodeIndex = edge.nodeIndex;
                 if (this._flags[nodeIndex] & flag)
                     continue;
                 if (edge.isHidden || edge.isInvisible)
@@ -1495,6 +1548,10 @@ WebInspector.HeapSnapshot.prototype = {
     }
 };
 
+/**
+ * @constructor
+ * @param {Array.<number>=} unfilteredIterationOrder
+ */
 WebInspector.HeapSnapshotFilteredOrderedIterator = function(iterator, filter, unfilteredIterationOrder)
 {
     this._filter = filter;
@@ -1621,6 +1678,10 @@ WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator = fu
     return {fieldName1:fieldNames[0], ascending1:fieldNames[1], fieldName2:fieldNames[2], ascending2:fieldNames[3]};
 }
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotFilteredOrderedIterator}
+ */
 WebInspector.HeapSnapshotEdgesProvider = function(snapshot, nodeIndex, filter, edgesIter)
 {
     this.snapshot = snapshot;
@@ -1711,6 +1772,11 @@ WebInspector.HeapSnapshotEdgesProvider.prototype = {
 
 WebInspector.HeapSnapshotEdgesProvider.prototype.__proto__ = WebInspector.HeapSnapshotFilteredOrderedIterator.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotFilteredOrderedIterator}
+ * @param {Array.<number>=} nodeIndexes
+ */
 WebInspector.HeapSnapshotNodesProvider = function(snapshot, filter, nodeIndexes)
 {
     this.snapshot = snapshot;
@@ -1765,6 +1831,9 @@ WebInspector.HeapSnapshotNodesProvider.prototype = {
 
 WebInspector.HeapSnapshotNodesProvider.prototype.__proto__ = WebInspector.HeapSnapshotFilteredOrderedIterator.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.HeapSnapshotsDiff = function(snapshot, className)
 {
     this._snapshot = snapshot;

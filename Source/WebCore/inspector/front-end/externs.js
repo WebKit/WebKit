@@ -65,6 +65,9 @@ Array.prototype.remove = function(obj, onlyFirst) {}
 Array.prototype.keySet = function() {}
 /** @return {number} */
 Array.prototype.upperBound = function(anchor) {}
+/** @return {number} */
+Array.prototype.binaryIndexOf = function(anchor) {}
+Array.prototype.sortRange = function(comparator, leftBound, rightBound, k) {}
 
 
 DOMApplicationCache.prototype.UNCACHED = 0;
@@ -203,3 +206,14 @@ WebInspector.isCompactMode = function() { return false; }
 
 WebInspector.SourceJavaScriptTokenizer = {}
 WebInspector.SourceJavaScriptTokenizer.Keywords = {}
+
+/** @constructor */
+WebInspector.CSSSelectorProfileType = function() {}
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
+WebInspector.HeapSnapshotWorker = function() {}
+WebInspector.HeapSnapshotWorker.prototype.createObject = function(type) {}
+WebInspector.HeapSnapshotWorker.prototype.startCheckingForLongRunningCalls = function() {}
+

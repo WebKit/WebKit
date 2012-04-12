@@ -677,6 +677,9 @@ WebInspector.DataGrid.prototype = {
         this.insertChild(child, this.children.length);
     },
 
+    /**
+     * @this {WebInspector.DataGrid|WebInspector.DataGridNode}
+     */
     insertChild: function(child, index)
     {
         if (!child)

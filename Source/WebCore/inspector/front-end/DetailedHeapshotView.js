@@ -28,6 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.DataGrid}
+ * @param {boolean=} deferNodeContentCreation
+ */
 WebInspector.HeapSnapshotSortableDataGrid = function(columns, deferNodeContentCreation)
 {
     WebInspector.DataGrid.call(this, columns);
@@ -160,6 +165,11 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
 
 WebInspector.HeapSnapshotSortableDataGrid.prototype.__proto__ = WebInspector.DataGrid.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotSortableDataGrid}
+ * @param {Object=} columns
+ */
 WebInspector.HeapSnapshotContainmentDataGrid = function(columns)
 {
     columns = columns || {
@@ -228,6 +238,10 @@ WebInspector.HeapSnapshotContainmentDataGrid.prototype = {
 MixInSnapshotNodeFunctions(WebInspector.HeapSnapshotObjectNode.prototype, WebInspector.HeapSnapshotContainmentDataGrid.prototype);
 WebInspector.HeapSnapshotContainmentDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotContainmentDataGrid}
+ */
 WebInspector.HeapSnapshotRetainmentDataGrid = function()
 {
     this.showRetainingEdges = true;
@@ -261,6 +275,10 @@ WebInspector.HeapSnapshotRetainmentDataGrid.prototype = {
 
 WebInspector.HeapSnapshotRetainmentDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotContainmentDataGrid.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotSortableDataGrid}
+ */
 WebInspector.HeapSnapshotConstructorsDataGrid = function()
 {
     var columns = {
@@ -334,6 +352,10 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
 
 WebInspector.HeapSnapshotConstructorsDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotSortableDataGrid}
+ */
 WebInspector.HeapSnapshotDiffDataGrid = function()
 {
     var columns = {
@@ -423,6 +445,10 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
 
 WebInspector.HeapSnapshotDiffDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotSortableDataGrid}
+ */
 WebInspector.HeapSnapshotDominatorsDataGrid = function()
 {
     var columns = {
@@ -454,6 +480,10 @@ WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
 MixInSnapshotNodeFunctions(WebInspector.HeapSnapshotDominatorObjectNode.prototype, WebInspector.HeapSnapshotDominatorsDataGrid.prototype);
 WebInspector.HeapSnapshotDominatorsDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.View}
+ */
 WebInspector.DetailedHeapshotView = function(parent, profile)
 {
     WebInspector.View.call(this);
@@ -516,7 +546,6 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.retainmentView.element.addStyleClass("view");
     this.retainmentView.element.addStyleClass("retaining-paths-view");
     this.retainmentDataGrid = new WebInspector.HeapSnapshotRetainmentDataGrid();
-    this.retainmentDataGrid.element.addEventListener("click", this._mouseClickInRetainmentGrid.bind(this), true);
     this.retainmentDataGrid.show(this.retainmentView.element);
     this.retainmentDataGrid.addEventListener(WebInspector.DataGrid.Events.SelectedNode, this._inspectedObjectChanged, this);
     this.retainmentView.show(this.element);
@@ -554,7 +583,7 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this._updateFilterOptions();
 
     this.helpButton = new WebInspector.StatusBarButton("", "heapshot-help-status-bar-item status-bar-item");
-    this.helpButton.addEventListener("click", this._helpClicked.bind(this), false);
+    this.helpButton.addEventListener("click", this._helpClicked, this);
 
     this._popoverHelper = new WebInspector.ObjectPopoverHelper(this.element, this._getHoverAnchor.bind(this), this._resolveObjectForPopover.bind(this), undefined, true);
 
@@ -792,7 +821,8 @@ WebInspector.DetailedHeapshotView.prototype = {
             return;
 
         this._baseProfileUid = this._profiles()[this.baseSelectElement.selectedIndex].uid;
-        this.dataGrid._baseProfileIndexChanged(this._loadProfileByIndex.bind(this), this.baseSelectElement.selectedIndex);
+        var dataGrid = /** @type {WebInspector.HeapSnapshotDiffDataGrid} */ this.dataGrid;
+        dataGrid._baseProfileIndexChanged(this._loadProfileByIndex.bind(this), this.baseSelectElement.selectedIndex);
 
         if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
             return;
@@ -893,7 +923,7 @@ WebInspector.DetailedHeapshotView.prototype = {
     _setRetainmentDataGridSource: function(nodeItem)
     {
         if (nodeItem && nodeItem.snapshotNodeIndex)
-            this.retainmentDataGrid.setDataSource(this, nodeItem.isDeletedNode ? nodeItem.dataGrid.baseSnapshot : nodeItem.dataGrid.snapshot, nodeItem.snapshotNodeIndex, nodeItem.isDeletedNode ? this.baseSelectElement.childNodes[this.baseSelectElement.selectedIndex].label + " | " : "");
+            this.retainmentDataGrid.setDataSource(this, nodeItem.isDeletedNode ? nodeItem.dataGrid.baseSnapshot : nodeItem.dataGrid.snapshot, nodeItem.snapshotNodeIndex);
         else
             this.retainmentDataGrid.reset();
     },
@@ -908,22 +938,6 @@ WebInspector.DetailedHeapshotView.prototype = {
             return;
 
         event.consume(true);
-    },
-
-    _mouseClickInRetainmentGrid: function(event)
-    {
-        var cell = event.target.enclosingNodeOrSelfWithNodeName("td");
-        if (!cell || (!cell.hasStyleClass("path-column")))
-            return;
-        var row = event.target.enclosingNodeOrSelfWithNodeName("tr");
-        var nodeItem = row._dataGridNode;
-        if (!nodeItem || !nodeItem.route)
-            return;
-        function expandRoute()
-        {
-            this.dataGrid.expandRoute(nodeItem.route);
-        }
-        this.changeView("Containment", expandRoute.bind(this));
     },
 
     changeView: function(viewTitle, callback)
@@ -1037,6 +1051,21 @@ WebInspector.DetailedHeapshotView.prototype = {
             objsHeader.textContent = WebInspector.UIString("Object types:");
             headerRow.appendChild(objsHeader);
             contentElement.appendChild(headerRow);
+
+            function appendHelp(help, index, cell)
+            {
+                var div = document.createElement("div");
+                div.className = "source-code event-properties";
+                var name = document.createElement("span");
+                name.textContent = help[index];
+                name.className = help[index + 1];
+                div.appendChild(name);
+                var desc = document.createElement("span");
+                desc.textContent = " " + help[index + 2];
+                div.appendChild(desc);
+                cell.appendChild(div);
+            }
+
             var len = Math.max(refTypes.length, objTypes.length);
             for (var i = 0; i < len; i += 3) {
                 var row = document.createElement("tr");
@@ -1052,20 +1081,6 @@ WebInspector.DetailedHeapshotView.prototype = {
             }
             this._helpPopoverContentElement = contentElement;
             this.helpPopover = new WebInspector.Popover();
-
-            function appendHelp(help, index, cell)
-            {
-                var div = document.createElement("div");
-                div.className = "source-code event-properties";
-                var name = document.createElement("span");
-                name.textContent = help[index];
-                name.className = help[index + 1];
-                div.appendChild(name);
-                var desc = document.createElement("span");
-                desc.textContent = " " + help[index + 2];
-                div.appendChild(desc);
-                cell.appendChild(div);
-            }
         }
         if (this.helpPopover.visible)
             this.helpPopover.hide();
@@ -1156,6 +1171,10 @@ WebInspector.DetailedHeapshotView.prototype.__proto__ = WebInspector.View.protot
 
 WebInspector.settings.showHeapSnapshotObjectsHiddenProperties = WebInspector.settings.createSetting("showHeaSnapshotObjectsHiddenProperties", false);
 
+/**
+ * @constructor
+ * @extends {WebInspector.ProfileType}
+ */
 WebInspector.DetailedHeapshotProfileType = function()
 {
     WebInspector.ProfileType.call(this, WebInspector.DetailedHeapshotProfileType.TypeId, WebInspector.UIString("Take Heap Snapshot"));

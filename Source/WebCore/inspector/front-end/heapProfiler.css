@@ -257,11 +257,6 @@ table.heapshot-help {
     border-spacing: 12px 2px;
 }
 
-div.retaining-paths-view td.path-column div:hover {
-    text-decoration: underline;
-    color: blue;
-}
-
 .cycled-ancessor-node {
     opacity: 0.6;
 }

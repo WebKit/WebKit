@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.DataGridNode}
+ */
 WebInspector.ProfileDataGridNode = function(profileView, profileNode, owningTree, hasChildren)
 {
     this.profileView = profileView;
@@ -156,21 +160,27 @@ WebInspector.ProfileDataGridNode.prototype = {
 
     insertChild: function(/*ProfileDataGridNode*/ profileDataGridNode, index)
     {
-        WebInspector.DataGridNode.prototype.insertChild.call(this, profileDataGridNode, index);
+        var any = /** @type {*} */this;
+        var dataGrid = /** @type {WebInspector.DataGrid} */any;
+        WebInspector.DataGridNode.prototype.insertChild.call(dataGrid, profileDataGridNode, index);
 
         this.childrenByCallUID[profileDataGridNode.callUID] = profileDataGridNode;
     },
 
     removeChild: function(/*ProfileDataGridNode*/ profileDataGridNode)
     {
-        WebInspector.DataGridNode.prototype.removeChild.call(this, profileDataGridNode);
+        var any = /** @type {*} */this;
+        var dataGrid = /** @type {WebInspector.DataGrid} */any;
+        WebInspector.DataGridNode.prototype.removeChild.call(dataGrid, profileDataGridNode);
 
         delete this.childrenByCallUID[profileDataGridNode.callUID];
     },
 
     removeChildren: function(/*ProfileDataGridNode*/ profileDataGridNode)
     {
-        WebInspector.DataGridNode.prototype.removeChildren.call(this);
+        var any = /** @type {*} */this;
+        var dataGrid = /** @type {WebInspector.DataGrid} */any;
+        WebInspector.DataGridNode.prototype.removeChildren.call(dataGrid);
 
         this.childrenByCallUID = {};
     },
@@ -207,7 +217,7 @@ WebInspector.ProfileDataGridNode.prototype = {
         return this.parent !== this.dataGrid ? this.parent : this.tree;
     },
 
-    _populate: function(event)
+    _populate: function()
     {
         this._sharedPopulate();
 
@@ -295,6 +305,9 @@ WebInspector.ProfileDataGridNode.prototype = {
 
 WebInspector.ProfileDataGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.ProfileDataGridTree = function(profileView, profileNode)
 {
     this.tree = this;
@@ -365,7 +378,7 @@ WebInspector.ProfileDataGridTree.propertyComparators = [{}, {}];
 
 WebInspector.ProfileDataGridTree.propertyComparator = function(/*String*/ property, /*Boolean*/ isAscending)
 {
-    var comparator = this.propertyComparators[(isAscending ? 1 : 0)][property];
+    var comparator = WebInspector.ProfileDataGridTree.propertyComparators[(isAscending ? 1 : 0)][property];
 
     if (!comparator) {
         if (isAscending) {
@@ -392,7 +405,7 @@ WebInspector.ProfileDataGridTree.propertyComparator = function(/*String*/ proper
             }
         }
 
-        this.propertyComparators[(isAscending ? 1 : 0)][property] = comparator;
+        WebInspector.ProfileDataGridTree.propertyComparators[(isAscending ? 1 : 0)][property] = comparator;
     }
 
     return comparator;

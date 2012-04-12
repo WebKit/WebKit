@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.ProfileDataGridNode}
+ */
 WebInspector.TopDownProfileDataGridNode = function(/*ProfileView*/ profileView, /*ProfileNode*/ profileNode, /*TopDownProfileDataGridTree*/ owningTree)
 {
     var hasChildren = (profileNode.children && profileNode.children.length);
@@ -66,13 +70,19 @@ WebInspector.TopDownProfileDataGridNode.prototype = {
 
 WebInspector.TopDownProfileDataGridNode.prototype.__proto__ = WebInspector.ProfileDataGridNode.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.ProfileDataGridTree}
+ */
 WebInspector.TopDownProfileDataGridTree = function(/*ProfileView*/ profileView, /*ProfileNode*/ profileNode)
 {
     WebInspector.ProfileDataGridTree.call(this, profileView, profileNode);
 
     this._remainingChildren = profileNode.children;
 
-    WebInspector.TopDownProfileDataGridNode.prototype._populate.call(this);
+    var any = /** @type{*} */this;
+    var node = /** @type{WebInspector.ProfileDataGridNode} */
+    WebInspector.TopDownProfileDataGridNode.prototype._populate.call(node);
 }
 
 WebInspector.TopDownProfileDataGridTree.prototype = {
@@ -97,7 +107,9 @@ WebInspector.TopDownProfileDataGridTree.prototype = {
 
         var excludedCallUID = profileDataGrideNode.callUID;
 
-        WebInspector.TopDownProfileDataGridNode.prototype._exclude.call(this, excludedCallUID);
+        var any = /** @type{*} */this;
+        var node = /** @type{WebInspector.ProfileDataGridNode} */
+        WebInspector.TopDownProfileDataGridNode.prototype._exclude.call(node, excludedCallUID);
 
         if (this.lastComparator)
             this.sort(this.lastComparator, true);

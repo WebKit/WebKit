@@ -271,6 +271,21 @@ modules = [
             "TestController.js",
         ]
     },
+    {
+        "target_name": "profiler",
+        "dependencies": ["components"],
+        "sources": [
+            "BottomUpProfileDataGridTree.js",
+            "DetailedHeapshotView.js",
+            "DetailedHeapshotGridNodes.js",
+            "ProfileDataGridTree.js",
+            "ProfilesPanel.js",
+            "ProfileLauncherView.js",
+            "ProfileView.js",
+            "TopDownProfileDataGridTree.js",
+            "HeapSnapshot.js",
+        ]
+    },
 #    {
 #        "target_name": "tokenizers",
 #        "dependencies": ["components"],
@@ -286,17 +301,9 @@ modules = [
 #
 # [Profiler]
 # CSSSelectorProfileView
-# BottomUpProfileDataGridTree
-# DetailedHeapshotGridNodes
-# DetailedHeapshotView
-# HeapSnapshot
 # HeapSnapshotProxy
 # HeapSnapshotWorker
 # HeapSnapshotWorkerDispatcher
-# ProfileDataGridTree
-# ProfilesPanel
-# ProfileView
-# TopDownProfileDataGridTree
 #
 # [Misc]
 # inspector
