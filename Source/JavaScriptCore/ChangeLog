@@ -1,3 +1,17 @@
+2012-04-11  Filip Pizlo  <fpizlo@apple.com>
+
+        It is incorrect to short-circuit Branch(LogicalNot(@a)) if boolean speculations on @a may fail
+        https://bugs.webkit.org/show_bug.cgi?id=83744
+        <rdar://problem/11206946>
+
+        Reviewed by Andy Estes.
+        
+        This does the conservative thing: it only short-circuits Branch(LogicalNot(@a)) if @a is a node
+        that is statically known to return boolean results.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2012-04-11  Michael Saboff  <msaboff@apple.com>
 
         Invalid Union Reference in StructureStubInfo.{cpp.h}

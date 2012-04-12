@@ -197,14 +197,16 @@ private:
             if (logicalNot.op() == LogicalNot
                 && logicalNot.adjustedRefCount() == 1) {
                 Edge newChildEdge = logicalNot.child1();
-                m_graph.ref(newChildEdge);
-                m_graph.deref(logicalNotEdge);
-                myNode.children.setChild1(newChildEdge);
-                
-                BlockIndex toBeTaken = myNode.notTakenBlockIndex();
-                BlockIndex toBeNotTaken = myNode.takenBlockIndex();
-                myNode.setTakenBlockIndex(toBeTaken);
-                myNode.setNotTakenBlockIndex(toBeNotTaken);
+                if (m_graph[newChildEdge].hasBooleanResult()) {
+                    m_graph.ref(newChildEdge);
+                    m_graph.deref(logicalNotEdge);
+                    myNode.children.setChild1(newChildEdge);
+                    
+                    BlockIndex toBeTaken = myNode.notTakenBlockIndex();
+                    BlockIndex toBeNotTaken = myNode.takenBlockIndex();
+                    myNode.setTakenBlockIndex(toBeTaken);
+                    myNode.setNotTakenBlockIndex(toBeNotTaken);
+                }
             }
             break;
         }
