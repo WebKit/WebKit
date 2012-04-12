@@ -59,10 +59,12 @@ void V8BindingPerContextData::dispose()
 bool V8BindingPerContextData::init()
 {
     ASSERT(m_objectPrototype.get().IsEmpty());
+    ASSERT(m_arrayPrototype.get().IsEmpty());
 
-    v8::Handle<v8::String> objectString = v8::String::New("Object");
-    v8::Handle<v8::String> prototypeString = v8::String::New("prototype");
-    if (objectString.IsEmpty() || prototypeString.IsEmpty())
+    v8::Handle<v8::String> arrayString = v8::String::NewSymbol("Array");
+    v8::Handle<v8::String> objectString = v8::String::NewSymbol("Object");
+    v8::Handle<v8::String> prototypeString = v8::String::NewSymbol("prototype");
+    if (arrayString.IsEmpty() || objectString.IsEmpty() || prototypeString.IsEmpty())
         return false;
 
     v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(m_context->Global()->Get(objectString));
@@ -71,14 +73,23 @@ bool V8BindingPerContextData::init()
     v8::Handle<v8::Value> objectPrototype = object->Get(prototypeString);
     if (objectPrototype.IsEmpty())
         return false;
-
     m_objectPrototype.set(objectPrototype);
+
+    v8::Handle<v8::Object> array = v8::Handle<v8::Object>::Cast(m_context->Global()->Get(arrayString));
+    if (array.IsEmpty())
+        return false;
+    v8::Handle<v8::Value> arrayPrototype = array->Get(prototypeString);
+    if (arrayPrototype.IsEmpty())
+        return false;
+    m_arrayPrototype.set(arrayPrototype);
+
     return true;
 }
 
 v8::Local<v8::Object> V8BindingPerContextData::createWrapperFromCacheSlowCase(WrapperTypeInfo* type)
 {
     ASSERT(!m_objectPrototype.get().IsEmpty());
+    ASSERT(!m_arrayPrototype.get().IsEmpty());
 
     v8::Context::Scope scope(m_context);
     v8::Local<v8::Function> function = constructorForType(type);
@@ -93,6 +104,7 @@ v8::Local<v8::Object> V8BindingPerContextData::createWrapperFromCacheSlowCase(Wr
 v8::Local<v8::Function> V8BindingPerContextData::constructorForTypeSlowCase(WrapperTypeInfo* type)
 {
     ASSERT(!m_objectPrototype.get().IsEmpty());
+    ASSERT(!m_arrayPrototype.get().IsEmpty());
 
     v8::Context::Scope scope(m_context);
     v8::Handle<v8::FunctionTemplate> functionTemplate = type->getTemplate();
@@ -103,6 +115,12 @@ v8::Local<v8::Function> V8BindingPerContextData::constructorForTypeSlowCase(Wrap
         return v8::Local<v8::Function>();
 
     function->SetPrototype(m_objectPrototype.get());
+
+    if (type->isArrayClass) {
+        v8::Local<v8::Value> prototypeValue = function->Get(v8::String::NewSymbol("prototype"));
+        if (!prototypeValue.IsEmpty() && prototypeValue->IsObject())
+            v8::Local<v8::Object>::Cast(prototypeValue)->SetPrototype(m_arrayPrototype.get());
+    }
 
     m_constructorMap.set(type, v8::Persistent<v8::Function>::New(function));
 

@@ -648,6 +648,10 @@ sub GenerateHeader
         $headerIncludes{"<runtime/ObjectPrototype.h>"} = 1;
     }
 
+    if ($dataNode->extendedAttributes->{"ArrayClass"}) {
+        $headerIncludes{"<runtime/ArrayPrototype.h>"} = 1;
+    }
+
     if ($dataNode->extendedAttributes->{"CustomCall"}) {
         $headerIncludes{"<runtime/CallData.h>"} = 1;
     }
@@ -1591,10 +1595,15 @@ sub GenerateImplementation
     if (!$dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
         push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
+
+        my $isArrayClass = $dataNode->extendedAttributes->{"ArrayClass"};
+        die "[ArrayClass] and parent interfaces are mutually exclusive" if ($hasParent && $isArrayClass);
+
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
             push(@implContent, "    return ${className}Prototype::create(exec->globalData(), globalObject, ${className}Prototype::createStructure(exec->globalData(), globalObject, ${parentClassName}Prototype::self(exec, globalObject)));\n");
         } else {
-            push(@implContent, "    return ${className}Prototype::create(exec->globalData(), globalObject, ${className}Prototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));\n");
+            my $prototype = $isArrayClass ? "arrayPrototype" : "objectPrototype";
+            push(@implContent, "    return ${className}Prototype::create(exec->globalData(), globalObject, ${className}Prototype::createStructure(globalObject->globalData(), globalObject, globalObject->${prototype}()));\n");
         }
         push(@implContent, "}\n\n");
     }

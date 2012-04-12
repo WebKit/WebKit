@@ -36,7 +36,6 @@
 namespace WebCore {
 
 #define V8_HIDDEN_PROPERTIES(V) \
-    V(objectPrototype) \
     V(listener) \
     V(attributeListener) \
     V(scriptState) \

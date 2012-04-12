@@ -92,6 +92,7 @@ namespace WebCore {
         const DerefObjectFunction derefObjectFunction;
         const ToActiveDOMObjectFunction toActiveDOMObjectFunction;
         const WrapperTypeInfo* parentClass;
+        const bool isArrayClass;
     };
 }
 

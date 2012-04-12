@@ -19,6 +19,7 @@
 #
 
 ActiveDOMObject
+ArrayClass
 CPPPureInterface
 CachedAttribute
 CallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack
