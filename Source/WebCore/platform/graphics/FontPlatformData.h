@@ -299,7 +299,7 @@ public:
 #endif
     }
 
-#if PLATFORM(WIN) && USE(CG)
+#if PLATFORM(WIN) && (USE(CG) || USE(CAIRO))
     PassRefPtr<SharedBuffer> openTypeTable(uint32_t table) const;
 #endif
 

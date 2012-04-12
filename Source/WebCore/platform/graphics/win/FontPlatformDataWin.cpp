@@ -75,7 +75,6 @@ FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool obliq
     RestoreDC(hdc, -1);
 }
 
-#if USE(CG)
 PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
     HWndDC hdc(0);
@@ -92,7 +91,6 @@ PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
     SelectObject(hdc, oldFont);
     return buffer.release();
 }
-#endif
 
 #ifndef NDEBUG
 String FontPlatformData::description() const
