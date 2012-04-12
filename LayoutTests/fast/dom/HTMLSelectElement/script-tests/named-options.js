@@ -18,12 +18,12 @@ shouldBeEqualToString("select1.options.namedItem('test').value", "Value");
 
 debug("Confirm that both options named 'test' are accessible from the options collection");
 shouldBe("select2.options.namedItem('test').length", "2");
-shouldBeEqualToString("select2.options.namedItem('test').toString()", "[object HTMLOptionElement],[object HTMLOptionElement]");
+shouldBeEqualToString("select2.options.namedItem('test').toString()", "[object NodeList]");
 shouldBeEqualToString("select2.options.namedItem('test')[0].value", "Value1");
 shouldBeEqualToString("select2.options.namedItem('test')[1].value", "Value2");
 
 shouldBe("select2.options.test.length", "2");
-shouldBeEqualToString("select2.options.test.toString()", "[object HTMLOptionElement],[object HTMLOptionElement]");
+shouldBeEqualToString("select2.options.test.toString()", "[object NodeList]");
 shouldBeEqualToString("select2.options.test[0].value", "Value1");
 shouldBeEqualToString("select2.options.test[1].value", "Value2");
 

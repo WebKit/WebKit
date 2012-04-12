@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8TestActiveDOMObject::info = { V8TestActiveDOMObject::GetTemplate, V8TestActiveDOMObject::derefObject, 0, 0, 0 };
+WrapperTypeInfo V8TestActiveDOMObject::info = { V8TestActiveDOMObject::GetTemplate, V8TestActiveDOMObject::derefObject, 0, 0 };
 
 namespace TestActiveDOMObjectV8Internal {
 

@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8Float64Array::info = { V8Float64Array::GetTemplate, V8Float64Array::derefObject, 0, &V8ArrayBufferView::info, 0 };
+WrapperTypeInfo V8Float64Array::info = { V8Float64Array::GetTemplate, V8Float64Array::derefObject, 0, &V8ArrayBufferView::info };
 
 namespace Float64ArrayV8Internal {
 
