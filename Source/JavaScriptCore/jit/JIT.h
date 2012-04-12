@@ -586,17 +586,6 @@ namespace JSC {
         Jump emitJumpIfNotJSCell(RegisterID);
         void emitJumpSlowCaseIfNotJSCell(RegisterID);
         void emitJumpSlowCaseIfNotJSCell(RegisterID, int VReg);
-#if USE(JSVALUE32_64)
-        JIT::Jump emitJumpIfImmediateNumber(RegisterID reg)
-        {
-            return emitJumpIfImmediateInteger(reg);
-        }
-        
-        JIT::Jump emitJumpIfNotImmediateNumber(RegisterID reg)
-        {
-            return emitJumpIfNotImmediateInteger(reg);
-        }
-#endif
         Jump emitJumpIfImmediateInteger(RegisterID);
         Jump emitJumpIfNotImmediateInteger(RegisterID);
         Jump emitJumpIfNotImmediateIntegers(RegisterID, RegisterID, RegisterID);
@@ -604,20 +593,12 @@ namespace JSC {
         void emitJumpSlowCaseIfNotImmediateNumber(RegisterID);
         void emitJumpSlowCaseIfNotImmediateIntegers(RegisterID, RegisterID, RegisterID);
 
-#if USE(JSVALUE32_64)
-        void emitFastArithDeTagImmediate(RegisterID);
-        Jump emitFastArithDeTagImmediateJumpIfZero(RegisterID);
-#endif
         void emitFastArithReTagImmediate(RegisterID src, RegisterID dest);
         void emitFastArithIntToImmNoCheck(RegisterID src, RegisterID dest);
 
         void emitTagAsBoolImmediate(RegisterID reg);
         void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi);
-#if USE(JSVALUE64)
         void compileBinaryArithOpSlowCase(OpcodeID, Vector<SlowCaseEntry>::iterator&, unsigned dst, unsigned src1, unsigned src2, OperandTypes, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase);
-#else
-        void compileBinaryArithOpSlowCase(OpcodeID, Vector<SlowCaseEntry>::iterator&, unsigned dst, unsigned src1, unsigned src2, OperandTypes);
-#endif
 
         void compileGetByIdHotPath(int baseVReg, Identifier*);
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck = false);
@@ -645,114 +626,8 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoObj = 20;
         static const int patchOffsetMethodCheckProtoStruct = 30;
         static const int patchOffsetMethodCheckPutFunction = 50;
-#elif CPU(X86)
-        // These architecture specific value are used to enable patching - see comment on op_put_by_id.
-        static const int patchOffsetPutByIdStructure = 7;
-        static const int patchOffsetPutByIdPropertyMapOffset = 22;
-        // These architecture specific value are used to enable patching - see comment on op_get_by_id.
-        static const int patchOffsetGetByIdStructure = 7;
-        static const int patchOffsetGetByIdBranchToSlowCase = 13;
-        static const int patchOffsetGetByIdPropertyMapOffset = 22;
-        static const int patchOffsetGetByIdPutResult = 22;
-#if ENABLE(OPCODE_SAMPLING)
-        static const int patchOffsetGetByIdSlowCaseCall = 33;
-#else
-        static const int patchOffsetGetByIdSlowCaseCall = 23;
 #endif
-        static const int patchOffsetOpCallCompareToJump = 6;
 
-        static const int patchOffsetMethodCheckProtoObj = 11;
-        static const int patchOffsetMethodCheckProtoStruct = 18;
-        static const int patchOffsetMethodCheckPutFunction = 29;
-#elif CPU(ARM_THUMB2)
-        // These architecture specific value are used to enable patching - see comment on op_put_by_id.
-        static const int patchOffsetPutByIdStructure = 10;
-        static const int patchOffsetPutByIdPropertyMapOffset = 46;
-        // These architecture specific value are used to enable patching - see comment on op_get_by_id.
-        static const int patchOffsetGetByIdStructure = 10;
-        static const int patchOffsetGetByIdBranchToSlowCase = 26;
-        static const int patchOffsetGetByIdPropertyMapOffset = 46;
-        static const int patchOffsetGetByIdPutResult = 50;
-#if ENABLE(OPCODE_SAMPLING)
-        static const int patchOffsetGetByIdSlowCaseCall = 0; // FIMXE
-#else
-        static const int patchOffsetGetByIdSlowCaseCall = 28;
-#endif
-        static const int patchOffsetOpCallCompareToJump = 16;
-
-        static const int patchOffsetMethodCheckProtoObj = 24;
-        static const int patchOffsetMethodCheckProtoStruct = 34;
-        static const int patchOffsetMethodCheckPutFunction = 58;
-#elif CPU(ARM_TRADITIONAL)
-        // These architecture specific value are used to enable patching - see comment on op_put_by_id.
-        static const int patchOffsetPutByIdStructure = 4;
-        static const int patchOffsetPutByIdPropertyMapOffset = 20;
-        // These architecture specific value are used to enable patching - see comment on op_get_by_id.
-        static const int patchOffsetGetByIdStructure = 4;
-        static const int patchOffsetGetByIdBranchToSlowCase = 16;
-        static const int patchOffsetGetByIdPropertyMapOffset = 20;
-        static const int patchOffsetGetByIdPutResult = 28;
-#if ENABLE(OPCODE_SAMPLING)
-        #error "OPCODE_SAMPLING is not yet supported"
-#else
-        static const int patchOffsetGetByIdSlowCaseCall = 28;
-#endif
-        static const int patchOffsetOpCallCompareToJump = 12;
-
-        static const int patchOffsetMethodCheckProtoObj = 12;
-        static const int patchOffsetMethodCheckProtoStruct = 20;
-        static const int patchOffsetMethodCheckPutFunction = 32;
-
-        // sequenceOpCall
-        static const int sequenceOpCallInstructionSpace = 12;
-        static const int sequenceOpCallConstantSpace = 2;
-        // sequenceMethodCheck
-        static const int sequenceMethodCheckInstructionSpace = 40;
-        static const int sequenceMethodCheckConstantSpace = 6;
-        // sequenceGetByIdHotPath
-        static const int sequenceGetByIdHotPathInstructionSpace = 28;
-        static const int sequenceGetByIdHotPathConstantSpace = 3;
-        // sequenceGetByIdSlowCase
-        static const int sequenceGetByIdSlowCaseInstructionSpace = 32;
-        static const int sequenceGetByIdSlowCaseConstantSpace = 2;
-        // sequencePutById
-        static const int sequencePutByIdInstructionSpace = 28;
-        static const int sequencePutByIdConstantSpace = 3;
-#elif CPU(MIPS)
-#if WTF_MIPS_ISA(1)
-        static const int patchOffsetPutByIdStructure = 16;
-        static const int patchOffsetPutByIdPropertyMapOffset = 68;
-        static const int patchOffsetGetByIdStructure = 16;
-        static const int patchOffsetGetByIdBranchToSlowCase = 48;
-        static const int patchOffsetGetByIdPropertyMapOffset = 68;
-        static const int patchOffsetGetByIdPutResult = 88;
-#if ENABLE(OPCODE_SAMPLING)
-        #error "OPCODE_SAMPLING is not yet supported"
-#else
-        static const int patchOffsetGetByIdSlowCaseCall = 40;
-#endif
-        static const int patchOffsetOpCallCompareToJump = 32;
-        static const int patchOffsetMethodCheckProtoObj = 32;
-        static const int patchOffsetMethodCheckProtoStruct = 56;
-        static const int patchOffsetMethodCheckPutFunction = 88;
-#else // WTF_MIPS_ISA(1)
-        static const int patchOffsetPutByIdStructure = 12;
-        static const int patchOffsetPutByIdPropertyMapOffset = 60;
-        static const int patchOffsetGetByIdStructure = 12;
-        static const int patchOffsetGetByIdBranchToSlowCase = 44;
-        static const int patchOffsetGetByIdPropertyMapOffset = 60;
-        static const int patchOffsetGetByIdPutResult = 76;
-#if ENABLE(OPCODE_SAMPLING)
-        #error "OPCODE_SAMPLING is not yet supported"
-#else
-        static const int patchOffsetGetByIdSlowCaseCall = 40;
-#endif
-        static const int patchOffsetOpCallCompareToJump = 32;
-        static const int patchOffsetMethodCheckProtoObj = 32;
-        static const int patchOffsetMethodCheckProtoStruct = 52;
-        static const int patchOffsetMethodCheckPutFunction = 84;
-#endif
-#endif
 #endif // USE(JSVALUE32_64)
 
 #if (defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL)
