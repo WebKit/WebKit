@@ -78,6 +78,7 @@ WebInspector.TimelineFrameController.prototype = {
         var frameBeginTime = WebInspector.TimelineModel.startTimeInSeconds(record);
         if (this._lastFrame) {
             this._lastFrame.endTime = frameBeginTime;
+            this._lastFrame.duration = this._lastFrame.endTime - this._lastFrame.startTime;
             this._overviewPane.addFrame(this._lastFrame);
             this._presentationModel.addFrame(this._lastFrame);
         }
@@ -92,7 +93,8 @@ WebInspector.TimelineFrameController.prototype = {
         frame.startTime = WebInspector.TimelineModel.startTimeInSeconds(record);
         frame.startTimeOffset = this._model.recordOffsetInSeconds(record);
         frame.endTime = WebInspector.TimelineModel.endTimeInSeconds(record);
-        frame.cpuTime = WebInspector.TimelineModel.durationInSeconds(record);
+        frame.duration = WebInspector.TimelineModel.durationInSeconds(record);
+        frame.cpuTime = frame.duration;
         return frame;
     },
 

@@ -78,6 +78,23 @@ Array.prototype.upperBound = function(anchor) {}
 Array.prototype.binaryIndexOf = function(anchor) {}
 Array.prototype.sortRange = function(comparator, leftBound, rightBound, k) {}
 
+/**
+ * @this {Array.<number>}
+ * @param {function(number,number):boolean} comparator
+ * @param {number} left
+ * @param {number} right
+ * @param {number} pivotIndex
+ * @return {number}
+ */
+Array.prototype.partition = function(comparator, left, right, pivotIndex) {}
+
+/**
+ * @this {Array.<number>}
+ * @param {number} k
+ * @param {function(number,number):boolean=} comparator
+ * @return {number}
+ */
+Array.prototype.qselect = function(k, comparator) {}
 
 DOMApplicationCache.prototype.UNCACHED = 0;
 DOMApplicationCache.prototype.IDLE = 1;

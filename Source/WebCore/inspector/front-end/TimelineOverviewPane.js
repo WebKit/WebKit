@@ -909,6 +909,7 @@ WebInspector.TimelineVerticalOverview = function(model) {
     this._borderStyles.loading = "rgb(106, 152, 213)";
     this._borderStyles.scripting = "rgb(223, 175, 77)";
     this._borderStyles.rendering = "rgb(130, 59, 190)";
+    this._borderStyles._frameLength = "rgb(90, 90, 90)";
 }
 
 WebInspector.TimelineVerticalOverview.prototype = {
@@ -916,7 +917,6 @@ WebInspector.TimelineVerticalOverview.prototype = {
     {
         this._recordsPerBar = 1;
         this._barTimes = [];
-        this._longestBarTime = 0;
         this._frames = [];
     },
 
@@ -925,13 +925,12 @@ WebInspector.TimelineVerticalOverview.prototype = {
         const minBarWidth = 4;
         var framesPerBar = Math.max(1, this._frames.length * minBarWidth / this.element.clientWidth);
         this._barTimes = [];
-        this._longestBarTime = 0;
-        var barHeights = this._aggregateFrames(framesPerBar);
+        var visibleFrames = this._aggregateFrames(framesPerBar);
 
         const paddingTop = 4;
-        var scale = (this.element.clientHeight - paddingTop) / this._longestBarTime;
+        var scale = (this.element.clientHeight - paddingTop) / this._normalBarLength;
 
-        this._renderBars(barHeights, scale);
+        this._renderBars(visibleFrames, scale);
     },
 
     /**
@@ -947,64 +946,89 @@ WebInspector.TimelineVerticalOverview.prototype = {
      */
     _aggregateFrames: function(framesPerBar)
     {
-        var statistics = [];
+        var visibleFrames = [];
+        var durations = [];
+        var longestFrameTime = 0;
+
         for (var barNumber = 0, currentFrame = 0; currentFrame < this._frames.length; ++barNumber) {
             var barStartTime = this._frames[currentFrame].startTime;
             var longestFrame = null;
 
             for (var lastFrame = Math.min(Math.floor((barNumber + 1) * framesPerBar), this._frames.length);
                  currentFrame < lastFrame; ++currentFrame) {
-                if (!longestFrame || longestFrame.cpuTime < this._frames[currentFrame].cpuTime)
+                if (!longestFrame || longestFrame.duration < this._frames[currentFrame].duration)
                     longestFrame = this._frames[currentFrame];
             }
             var barEndTime = this._frames[currentFrame - 1].endTime;
             if (longestFrame) {
-                this._longestBarTime = Math.max(this._longestBarTime, longestFrame.cpuTime);
-                statistics.push(longestFrame.timeByCategory);
+                longestFrameTime = Math.max(longestFrameTime, longestFrame.duration);
+                visibleFrames.push(longestFrame);
                 this._barTimes.push({ startTime: barStartTime, endTime: barEndTime });
+                durations.push(longestFrame.duration);
             }
         }
-        return statistics;
+        // Do not let occasional very long frames to dwarf the majority -- use at most 3 * median frame length for scale.
+        this._normalBarLength = Math.min(longestFrameTime, 3 * durations.qselect(Math.floor(durations.length / 2)));
+        return visibleFrames;
     },
 
-    _renderBars: function(allBarHeights, scale)
+    _renderBars: function(frames, scale)
     {
         // Use real world, 1:1 coordinates in canvas. This will also take care of clearing it.
         this.element.width = this.element.clientWidth;
         this.element.height = this.element.clientHeight;
 
         const maxPadding = 5;
-        this._actualOuterBarWidth = Math.min((this.element.width - 2 * this._outerPadding) / allBarHeights.length, this._maxInnerBarWidth + maxPadding);
+        this._actualOuterBarWidth = Math.min((this.element.width - 2 * this._outerPadding) / frames.length, this._maxInnerBarWidth + maxPadding);
         this._actualPadding = Math.min(Math.floor(this._actualOuterBarWidth / 3), maxPadding);
 
-        for (var i = 0; i < allBarHeights.length; ++i)
-            this._renderBar(this._outerPadding + this._actualOuterBarWidth * i, this._actualOuterBarWidth - this._actualPadding, allBarHeights[i], scale);
+        for (var i = 0; i < frames.length; ++i) {
+            var x = this._outerPadding + this._actualOuterBarWidth * i;
+            var width = this._actualOuterBarWidth - this._actualPadding;
+            this._renderBar(x, width, frames[i], scale);
+        }
     },
 
-    _renderBar: function(left, width, barHeights, scale)
+    _renderBar: function(left, width, frame, scale)
     {
-        var categories = Object.keys(barHeights);
+        var categories = Object.keys(frame.timeByCategory);
         if (!categories.length)
             return;
+        var x = Math.floor(left) + 0.5;
+        width = Math.floor(width);
+
         for (var i = 0, bottomOffset = this.element.height; i < categories.length; ++i) {
             var category = categories[i];
-            var duration = barHeights[category];
+            var duration = frame.timeByCategory[category];
 
             if (!duration)
                 continue;
             var height = duration * scale;
+            var y = Math.floor(bottomOffset - height) + 0.5;
 
             this._context.save();
-            this._context.translate(Math.floor(left) + 0.5, 0);
+            this._context.translate(x, 0);
             this._context.scale(width / this._maxInnerBarWidth, 1);
             this._context.fillStyle = this._fillStyles[category];
-            this._context.fillRect(0, bottomOffset - height, this._maxInnerBarWidth, height);
+            this._context.fillRect(0, y, this._maxInnerBarWidth, Math.floor(height));
             this._context.restore();
 
             this._context.strokeStyle = this._borderStyles[category];
-            this._context.strokeRect(Math.floor(left) + 0.5, Math.floor(bottomOffset - height) + 0.5, Math.floor(width), Math.floor(height));
+            this._context.strokeRect(x, y, width, Math.floor(height));
             bottomOffset -= height - 1;
         }
+        // Draw a contour for the rest of frame time that we did not instrument.
+        var nonCPUTime = frame.duration - frame.cpuTime;
+        var y0 = Math.floor(bottomOffset - nonCPUTime * scale) + 0.5;
+        var y1 = Math.floor(bottomOffset) + 0.5;
+
+        this._context.strokeStyle = this._borderStyles._frameLength;
+        this._context.beginPath();
+        this._context.moveTo(x, y1);
+        this._context.lineTo(x, y0);
+        this._context.lineTo(x + width, y0);
+        this._context.lineTo(x + width, y1);
+        this._context.stroke();
     },
 
     getWindowTimes: function(windowLeft, windowRight)

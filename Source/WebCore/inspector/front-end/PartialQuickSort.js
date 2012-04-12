@@ -32,34 +32,12 @@ Object.defineProperty(Array.prototype, "sortRange", { value:
 /** @this {Array} */
 function(comparator, leftBound, rightBound, k)
 {
-    function swap(array, i1, i2)
-    {
-        var temp = array[i1];
-        array[i1] = array[i2];
-        array[i2] = temp;
-    }
-
-    function partition(array, comparator, left, right, pivotIndex)
-    {
-        var pivotValue = array[pivotIndex];
-        swap(array, right, pivotIndex);
-        var storeIndex = left;
-        for (var i = left; i < right; ++i) {
-            if (comparator(array[i], pivotValue) < 0) {
-                swap(array, storeIndex, i);
-                ++storeIndex;
-            }
-        }
-        swap(array, right, storeIndex);
-        return storeIndex;
-    }
-
     function quickSortFirstK(array, comparator, left, right, k)
     {
         if (right <= left)
             return;
         var pivotIndex = Math.floor(Math.random() * (right - left)) + left;
-        var pivotNewIndex = partition(array, comparator, left, right, pivotIndex);
+        var pivotNewIndex = array.partition(comparator, left, right, pivotIndex);
         quickSortFirstK(array, comparator, left, pivotNewIndex - 1, k);
         if (pivotNewIndex < left + k - 1)
             quickSortFirstK(array, comparator, pivotNewIndex + 1, right, k);

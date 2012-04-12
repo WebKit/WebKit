@@ -716,6 +716,66 @@ Object.defineProperty(Array.prototype, "upperBound",
     }
 });
 
+Object.defineProperty(Array.prototype, "partition",
+{
+    /**
+     * @this {Array.<number>}
+     * @param {function(number,number):boolean} comparator
+     * @param {number} left
+     * @param {number} right
+     * @param {number} pivotIndex
+     */
+    value: function(comparator, left, right, pivotIndex)
+    {
+        function swap(array, i1, i2)
+        {
+            var temp = array[i1];
+            array[i1] = array[i2];
+            array[i2] = temp;
+        }
+
+        var pivotValue = this[pivotIndex];
+        swap(this, right, pivotIndex);
+        var storeIndex = left;
+        for (var i = left; i < right; ++i) {
+            if (comparator(this[i], pivotValue) < 0) {
+                swap(this, storeIndex, i);
+                ++storeIndex;
+            }
+        }
+        swap(this, right, storeIndex);
+        return storeIndex;
+    }
+});
+
+Object.defineProperty(Array.prototype, "qselect",
+{
+    /**
+     * @this {Array.<number>}
+     * @param {number} k
+     * @param {function(number,number):boolean=} comparator
+     */
+    value: function(k, comparator)
+    {
+        if (k < 0 || k >= this.length)
+            return;
+        if (!comparator)
+            comparator = function(a, b) { return a - b; }
+
+        var low = 0;
+        var high = this.length - 1;
+        for (;;) {
+            var pivotPosition = this.partition(comparator, low, high, Math.floor((high + low) / 2));
+            if (pivotPosition === k)
+                return this[k];
+            else if (pivotPosition > k)
+                high = pivotPosition - 1;
+            else
+                low = pivotPosition + 1;
+        }
+    }
+});
+
 Array.diff = function(left, right)
 {
     var o = left;
