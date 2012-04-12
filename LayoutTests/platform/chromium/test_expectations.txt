@@ -1193,7 +1193,6 @@ BUGWK82217 LINUX : svg/zoom/text/zoom-foreignObject.svg = IMAGE PASS
 BUGWK83051 WIN LINUX LION : svg/css/group-with-shadow.svg = IMAGE PASS
 
 // Windows and Mac need rebaselining after 53378 patch.
-BUGWK53378 MAC : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 
 // This fails image 5-10% of the time. Probably a race condition on timers.
@@ -2126,10 +2125,6 @@ BUGWK63057 RELEASE : perf/adding-radio-buttons.html = MISSING FAIL PASS
 
 // Failing after http://trac.webkit.org/changeset/65665/
 BUGWK44278 : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT IMAGE
-
-// Clip paths aren't working after http://trac.webkit.org/changeset/65729
-BUGWK44341 LINUX WIN : svg/clip-path/clip-path-pixelation.svg = IMAGE+TEXT
-BUGWK44341 LINUX WIN : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 
 // new or failing since WebKit rev. 65740:65800
 BUGCR53073 SKIP DEBUG : storage/change-version.html = PASS CRASH
