@@ -1,0 +1,9 @@
+This test case simulates a slow network, and starts a web worker thread to write a log message when retrieving media metadata to see if the webkit thread is blocked by media retrieving thread.
+This test case is for https://bugs.webkit.org/show_bug.cgi?id=80978
+
+EXPECTED (video.error == 'null') OK
+Message from worker thread OK
+EVENT(loadedmetadata)
+loaded metadata of media file OK
+END OF TEST
+

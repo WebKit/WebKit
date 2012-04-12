@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -112,6 +112,8 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
 #endif
     , m_userDrivenSeekTimer(this, &MediaPlayerPrivate::userDrivenSeekTimerFired)
     , m_lastSeekTime(0)
+    , m_waitMetadataTimer(this, &MediaPlayerPrivate::waitMetadataTimerFired)
+    , m_waitMetadataPopDialogCounter(0)
 {
 }
 
@@ -599,6 +601,50 @@ void MediaPlayerPrivate::onPauseNotified()
 {
     if (HTMLMediaElement* element = static_cast<HTMLMediaElement*>(m_webCorePlayer->mediaPlayerClient()))
         element->pause();
+}
+
+static const int popupDialogInterval = 10;
+static const double checkMetadataReadyInterval = 0.5;
+void MediaPlayerPrivate::onWaitMetadataNotified(bool hasFinished, int timeWaited)
+{
+    if (!hasFinished) {
+        if (!m_waitMetadataTimer.isActive()) {
+            // Make sure to popup dialog every 10 seconds after metadata start to load.
+            // This should be set only once at the first time when user press the play button.
+            m_waitMetadataPopDialogCounter = static_cast<int>(timeWaited / checkMetadataReadyInterval);
+            m_waitMetadataTimer.startOneShot(checkMetadataReadyInterval);
+        }
+    } else if (m_waitMetadataTimer.isActive()) {
+        m_waitMetadataTimer.stop();
+        m_waitMetadataPopDialogCounter = 0;
+    }
+}
+
+void MediaPlayerPrivate::waitMetadataTimerFired(Timer<MediaPlayerPrivate>*)
+{
+    if (m_platformPlayer->isMetadataReady()) {
+        m_platformPlayer->playWithMetadataReady();
+        m_waitMetadataPopDialogCounter = 0;
+        return;
+    }
+
+    static const int hitTimeToPopupDialog = static_cast<int>(popupDialogInterval / checkMetadataReadyInterval);
+    m_waitMetadataPopDialogCounter++;
+    if (m_waitMetadataPopDialogCounter < hitTimeToPopupDialog) {
+        m_waitMetadataTimer.startOneShot(checkMetadataReadyInterval);
+        return;
+    }
+    m_waitMetadataPopDialogCounter = 0;
+
+    int wait = showErrorDialog(MMRPlayer::MediaMetaDataTimeoutError);
+    if (!wait)
+        onPauseNotified();
+    else {
+        if (m_platformPlayer->isMetadataReady())
+            m_platformPlayer->playWithMetadataReady();
+        else
+            m_waitMetadataTimer.startOneShot(checkMetadataReadyInterval);
+    }
 }
 
 #if USE(ACCELERATED_COMPOSITING)
