@@ -351,7 +351,7 @@ BUGWK68700 DEBUG : fast/workers/storage/interrupt-database.html = CRASH
 
 BUGWK69001 DEBUG : plugins/js-from-destroy.html = CRASH
 
-BUGWK72245 : fast/images/size-failure.html = CRASH
+BUGWK72245 DEBUG : fast/images/size-failure.html = CRASH
 
 BUGWK81836 DEBUG : inspector/timeline/timeline-injected-script-eval.html = CRASH
 BUGWK81836 DEBUG : inspector/styles/commit-selector.html = CRASH
@@ -359,6 +359,8 @@ BUGWK81836 DEBUG : inspector/console/console-eval-global.html = CRASH
 
 // Crashes due to debug assert until we fix issues with style elements in SVG
 BUGWKGTK DEBUG : svg/custom/use-referencing-style-crash.svg = CRASH
+
+BUGWK30724 DEBUG : fast/loader/opaque-base-url.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
@@ -447,6 +449,15 @@ BUGWK80246 DEBUG : fast/css/hover-update.html = PASS TEXT
 
 BUGWK83683 : editing/pasteboard/pasting-empty-html-falls-back-to-text.html = PASS TEXT
 
+BUGWK51027 : plugins/refcount-leaks.html = PASS TEXT
+BUGWK80158 : plugins/netscape-plugin-page-cache-works.html = PASS TEXT
+
+BUGWK54194 : fast/text/midword-break-after-breakable-char.html = PASS TEXT
+
+BUGWK54191 : fast/text/capitalize-boundaries.html = PASS TEXT
+
+BUGWK57346 : fast/text/justify-ideograph-leading-expansion.html = PASS TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -468,8 +479,6 @@ BUGWKGTK : http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html = TI
 BUGWKGTK : http/tests/xmlhttprequest/redirect-cross-origin-sync.html = TIMEOUT
 
 BUGWK46644 : fast/text/large-text-composed-char-dos.html = TIMEOUT
-
-BUGWK58972 : media/adopt-node-crash.html = TIMEOUT
 
 BUGWKGTK SKIP : http/tests/multipart/invalid-image-data-standalone.html = TIMEOUT
 
@@ -493,8 +502,6 @@ BUGWK54119 : http/tests/misc/acid2.html = TIMEOUT
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
 BUGWK74270 : fast/forms/basic-selects.html = FAIL
-
-BUGWK76639 : fast/table/multiple-captions-crash3.html = IMAGE FAIL
 
 BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE FAIL
 
@@ -606,9 +613,6 @@ BUGWK54119 : http/tests/misc/acid2-pixel.html = FAIL
 BUGWK54119 : fast/css/acid2.html = FAIL
 BUGWK54119 : fast/css/acid2-pixel.html = FAIL
 
-// These tests call dumpAsText, but still perform normal render tree dumps.
-BUGWK53955 : fast/dynamic/paused-event-dispatch.html = FAIL
-
 // The test below is not scrolled to the proper position. Perhaps because of
 // asynchronous scrollbar behavior.
 BUGWKGTK : fast/css/font-weight-1.html = FAIL
@@ -701,7 +705,6 @@ BUGWKGTK : http/tests/xmlhttprequest/cross-origin-no-authorization.html = FAIL
 BUGWKGTK : media/video-size-intrinsic-scale.html = FAIL
 
 // Need to implement NPP_HandleEvent() in TestNetscapePlugin
-BUGWKGTK : plugins/get-url-with-blank-target.html = FAIL
 BUGWKGTK : plugins/plugin-initiate-popup-window.html = FAIL
 
 // This test is for clients that choose to make the missing plugin indicator a button
@@ -736,8 +739,6 @@ BUGWKGTK : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
 BUGWK30620 : fast/xsl/sort-locale.xml = FAIL
 
 BUGWK30818 : fast/css/opacity-float.html = FAIL
-
-BUGWK30724 : fast/loader/opaque-base-url.html = FAIL
 
 BUGWK53986 : svg/text/caret-in-svg-text.xhtml = FAIL
 
@@ -782,9 +783,6 @@ BUGWKGTK : http/tests/security/setDomainRelaxationForbiddenForURLScheme.html = F
 // New failure after http://trac.webkit.org/changeset/53758
 BUGWKGTK : scrollbars/scrollbar-middleclick-nopaste.html = FAIL
 
-// Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
-BUGWKGTK : fast/loader/crash-copying-backforwardlist.html = FAIL
-
 // Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 BUGWKGTK : fast/loader/api-test-new-window-data-load-base-url.html = FAIL
 BUGWKGTK : fast/loader/api-test-go-to-current-back-forward-item.html = FAIL
@@ -792,8 +790,6 @@ BUGWKGTK : fast/loader/api-test-go-to-current-back-forward-item.html = FAIL
 // Failure may be related to DRT; console message also has full file
 // path instead of just the file name
 BUGWK35086 : fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html = FAIL
-
-BUGWK51027 : plugins/refcount-leaks.html = FAIL
 
 BUGWK35158 : fast/forms/restore-selection-after-layout.html = FAIL
 
@@ -821,9 +817,6 @@ BUGWK36003 : fast/events/platform-wheelevent-paging-y-in-scrolling-page.html = F
 
 // Misses setMediaType() implementation
 BUGWKGTK SKIP : fast/media/print-restores-previous-mediatype.html = TIMEOUT
-
-// fast/loader/stateobjects/replacestate-in-iframe.html = FAIL caused infinite loop
-BUGWK36467 : fast/loader/stateobjects/replacestate-in-iframe.html = FAIL
 
 // Fails on GTK+ since https://bugs.webkit.org/show_bug.cgi?id=25195 got in
 BUGWK36627 : editing/selection/extend-after-mouse-selection.html = FAIL
@@ -881,22 +874,10 @@ BUGWK53003 SKIP : http/tests/inspector/compiler-source-mapping-debug.html = FAIL
 // JSC doesn't support heap profiling
 BUGWK50485 SKIP : inspector/profiler/heap-snapshot-inspect-dom-wrapper.html = FAIL
 
-BUGWK37537 : plugins/npruntime/round-trip-npobject.html = FAIL
-
 BUGWK37613 SKIP : printing = FAIL
 BUGWK37613 SKIP : editing/execCommand/print.html = TIMEOUT
 
 BUGWK38569 : http/tests/workers/text-encoding.html = FAIL
-
-BUGWK57346 : fast/text/justify-ideograph-leading-expansion.html = FAIL
-
-BUGWK54210 : fast/text/atsui-multiple-renderers.html = FAIL
-BUGWK54210 : fast/text/atsui-negative-spacing-features.html = FAIL
-BUGWK54210 : fast/text/atsui-spacing-features.html = FAIL
-
-BUGWK54194 : fast/text/midword-break-after-breakable-char.html = FAIL
-
-BUGWK54191 : fast/text/capitalize-boundaries.html = FAIL
 
 BUGWK54189 : fast/replaced/border-radius-clip.html = FAIL
 
@@ -916,7 +897,6 @@ BUGWKGTK : fast/dom/HTMLLinkElement/prefetch.html = FAIL
 BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-beforeload.html = FAIL
 BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-onerror.html = FAIL
 BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-onload.html = FAIL
-BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-too-many-clients.html = FAIL
 BUGWKGTK : fast/dom/HTMLLinkElement/prerender.html = FAIL
 BUGWKGTK : fast/dom/HTMLLinkElement/subresource.html = FAIL
 
@@ -962,7 +942,6 @@ BUGWKGTK : canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = FAIL
 BUGWKGTK : canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = FAIL
 BUGWKGTK : canvas/philip/tests/2d.imageData.create1.type.html = FAIL
 BUGWKGTK : canvas/philip/tests/2d.imageData.create2.type.html = FAIL
-BUGWKGTK : canvas/philip/tests/2d.imageData.put.wrongtype.html = FAIL
 BUGWKGTK : canvas/philip/tests/2d.imageData.get.type.html = FAIL
 BUGWKGTK : canvas/philip/tests/2d.missingargs.html = FAIL
 BUGWKGTK : canvas/philip/tests/2d.pattern.image.broken.html = FAIL
@@ -1001,11 +980,6 @@ BUGWKGTK : canvas/philip/tests/2d.drawImage.self.2.html = FAIL
 // http://cgit.freedesktop.org/cairo/commit/?id=4d4056872db94573183473610ad1d81d5439fdc6
 BUGWK54471 : canvas/philip/tests/2d.path.arc.selfintersect.1.html = FAIL
 BUGWK54471 : canvas/philip/tests/2d.path.arc.shape.3.html = FAIL
-
-// This test already passes with cairo trunk, but we're waiting for a new release.
-// Cairo commit http://cgit.freedesktop.org/cairo/commit/?id=e46dc9e17a6f6737d5624dbcdd3c42c2353a72f1
-// Cairo test http://cgit.freedesktop.org/cairo/commit/?id=7386960d063e4a3642fb281aaae071404d837bdb
-BUGWKGTK : canvas/philip/tests/2d.path.arc.zeroradius.html = FAIL
 
 // A testcase for this failure is already in cairo tree, but has not yet been fixed.
 // http://cgit.freedesktop.org/cairo/commit/?id=303f56a2d34a23d933a02fa625873211fb51eb3b
@@ -1155,8 +1129,6 @@ BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A3.2.html = FAIL
 // r65681 broke a couple GTK+ a11y tests
 BUGWK44316 : platform/gtk/accessibility/object-attributes.html = FAIL
 BUGWK44316 : platform/gtk/accessibility/title-and-alt.html = FAIL
-
-BUGWK44932 : canvas/philip/tests/2d.path.isPointInPath.edge.html = FAIL
 
 // viewport meta tag support
 BUGWK47481 : fast/viewport/viewport-45.html = FAIL
@@ -1453,8 +1425,6 @@ BUGWK74282 : editing/pasteboard/emacs-ctrl-k-with-move.html = FAIL
 
 BUGWK75785 : accessibility/textbox-role-reports-line-number.html = FAIL
 
-BUGWK75833 : fast/text/international/spaces-combined-in-vertical-text.html = FAIL
-
 BUGWK76048 : fast/text/font-kerning.html = FAIL
 
 // Needs custom policy delegate enhancement to log downloads
@@ -1490,8 +1460,6 @@ BUGWK79203 : fast/mediastream/peerconnection-argument-types.html = FAIL
 BUGWK79555 : fast/events/dispatch-message-string-data.html = FAIL
 
 BUGWK80210 : security/block-test.html = FAIL
-
-BUGWK80158 : plugins/netscape-plugin-page-cache-works.html = FAIL
 
 BUGWK80534 : fast/events/autoscroll-in-textfield.html = FAIL
 
