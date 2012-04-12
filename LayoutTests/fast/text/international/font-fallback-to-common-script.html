@@ -16,7 +16,9 @@ if (window.internals) {
 Bug 81329 <https://bugs.webkit.org/show_bug.cgi?id=81329> -->
 <div style="font-size: 20px">
 <div lang="zh-CN">this is ahem font</div>
-<div lang="zh-CN" style="font-family: sans-serif;">this is ahem font</div>
+
+<!-- Test fallback to common script when no setting is set. This assumes there is no setting for "Zxxx" (script code for unwritten languages). -->
+<div lang="und-Zxxx" style="font-family: sans-serif;">this is ahem font</div>
 </div>
 </body>
 </html>

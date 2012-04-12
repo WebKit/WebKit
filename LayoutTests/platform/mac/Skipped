@@ -804,5 +804,4 @@ fast/dom/inline-event-attributes-release.html
 # https://bugs.webkit.org/show_bug.cgi?id=83724
 fast/ruby/nested-ruby.html
 fast/text/international/002.html
-fast/text/international/font-fallback-to-common-script.html
 
