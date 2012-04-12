@@ -529,7 +529,7 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForClipLayer)
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
     RefPtr<LayerChromiumWithForcedDrawsContent> child = adoptRef(new LayerChromiumWithForcedDrawsContent());
-    renderSurface1->setOpacity(0.9);
+    renderSurface1->setOpacity(0.9f);
 
     const TransformationMatrix identityMatrix;
     setLayerPropertiesForTesting(renderSurface1.get(), identityMatrix, identityMatrix, FloatPoint::zero(), FloatPoint::zero(), IntSize(10, 10), false);
@@ -622,9 +622,9 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
     setLayerPropertiesForTesting(leafNode2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(20, 20), false);
 
     child->setMasksToBounds(true);
-    child->setOpacity(0.4);
-    grandChild->setOpacity(0.5);
-    greatGrandChild->setOpacity(0.4);
+    child->setOpacity(0.4f);
+    grandChild->setOpacity(0.5f);
+    greatGrandChild->setOpacity(0.4f);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -671,9 +671,9 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfacesCrashRepro)
     setLayerPropertiesForTesting(leafNode2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(20, 20), false);
 
     child->setMasksToBounds(true);
-    child->setOpacity(0.4);
-    grandChild->setOpacity(0.5);
-    greatGrandChild->setOpacity(0.4);
+    child->setOpacity(0.4f);
+    grandChild->setOpacity(0.5f);
+    greatGrandChild->setOpacity(0.4f);
 
     // Contaminate the grandChild and greatGrandChild's clipRect to reproduce the crash
     // bug found in http://code.google.com/p/chromium/issues/detail?id=106734. In this
@@ -737,11 +737,11 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectIsPropagatedCorrectlyToLayers)
     grandChild4->setMasksToBounds(true);
 
     // Force everyone to be a render surface.
-    child->setOpacity(0.4);
-    grandChild1->setOpacity(0.5);
-    grandChild2->setOpacity(0.5);
-    grandChild3->setOpacity(0.5);
-    grandChild4->setOpacity(0.5);
+    child->setOpacity(0.4f);
+    grandChild1->setOpacity(0.5f);
+    grandChild2->setOpacity(0.5f);
+    grandChild3->setOpacity(0.5f);
+    grandChild4->setOpacity(0.5f);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -809,11 +809,11 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectIsPropagatedCorrectlyToSurfaces)
     grandChild4->setMasksToBounds(true);
 
     // Force everyone to be a render surface.
-    child->setOpacity(0.4);
-    grandChild1->setOpacity(0.5);
-    grandChild2->setOpacity(0.5);
-    grandChild3->setOpacity(0.5);
-    grandChild4->setOpacity(0.5);
+    child->setOpacity(0.4f);
+    grandChild1->setOpacity(0.5f);
+    grandChild2->setOpacity(0.5f);
+    grandChild3->setOpacity(0.5f);
+    grandChild4->setOpacity(0.5f);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;

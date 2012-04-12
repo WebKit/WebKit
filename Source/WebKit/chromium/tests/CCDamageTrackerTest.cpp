@@ -432,8 +432,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForNestedSurfaces)
     // CASE 2: Same as previous case, but with additional damage elsewhere that should be properly unioned.
     // - child1 surface damage in root surface space: FloatRect(300, 300, 6, 8);
     // - child2 damage in root surface space: FloatRect(11, 11, 18, 18);
-    grandChild1->setOpacity(0.7);
-    child2->setOpacity(0.7);
+    grandChild1->setOpacity(0.7f);
+    child2->setOpacity(0.7f);
     emulateDrawingOneFrame(root.get());
     childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
@@ -776,7 +776,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMask)
     ASSERT_TRUE(grandChild1->renderSurface());
 
     // CASE 1: a property change on the mask should damage only the reflected region on the target surface.
-    replicaMaskLayer->setOpacity(0.6);
+    replicaMaskLayer->setOpacity(0.6f);
     emulateDrawingOneFrame(root.get());
 
     FloatRect grandChildDamageRect = grandChild1->renderSurface()->damageTracker()->currentDamageRect();
@@ -836,7 +836,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMaskWithAnchor)
     ASSERT_TRUE(grandChild1->renderSurface());
 
     // A property change on the replicaMask should damage the reflected region on the target surface.
-    replicaMaskLayer->setOpacity(0.6);
+    replicaMaskLayer->setOpacity(0.6f);
     emulateDrawingOneFrame(root.get());
 
     FloatRect childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();

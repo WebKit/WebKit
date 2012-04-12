@@ -692,21 +692,21 @@ TEST_F(ScrollAnimatorNoneTest, ScrollWheelTrace)
     ScrollAnimatorNone::Parameters parameters(true, 11 * kTickTime, 0, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
     // Constructed from an actual scroll wheel trace that exhibited a glitch.
-    bool result = updateDataFromParameters(1, 53.33, 1000, 100.5781, &parameters);
+    bool result = updateDataFromParameters(1, 53.33f, 1000, 100.5781f, &parameters);
     result = animateScroll(100.5933);
     result = result && animateScroll(100.6085);
-    result = result && updateDataFromParameters(1, 53.33, 1000, 100.6485, &parameters);
+    result = result && updateDataFromParameters(1, 53.33f, 1000, 100.6485f, &parameters);
     result = result && animateScroll(100.6515);
     result = result && animateScroll(100.6853);
-    result = result && updateDataFromParameters(1, 53.33, 1000, 100.6863, &parameters);
+    result = result && updateDataFromParameters(1, 53.33f, 1000, 100.6863f, &parameters);
     result = result && animateScroll(100.7005);
     result = result && animateScroll(100.7157);
     result = result && animateScroll(100.7312);
-    result = result && updateDataFromParameters(1, 53.33, 1000, 100.7379, &parameters);
+    result = result && updateDataFromParameters(1, 53.33f, 1000, 100.7379f, &parameters);
     result = result && animateScroll(100.7464);
     result = result && animateScroll(100.7617);
     result = result && animateScroll(100.7775);
-    result = result && updateDataFromParameters(1, 53.33, 1000, 100.7779, &parameters);
+    result = result && updateDataFromParameters(1, 53.33f, 1000, 100.7779f, &parameters);
     for (double t = 100.7928; result && t < 200; t += 0.015)
         result = result && animateScroll(t);
 }
@@ -716,21 +716,21 @@ TEST_F(ScrollAnimatorNoneTest, ScrollWheelTraceSmoothed)
     ScrollAnimatorNone::Parameters parameters(true, 11 * kTickTime, 7 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
     // Constructed from an actual scroll wheel trace that exhibited a glitch.
-    bool result = updateDataFromParameters(1, 53.33, 1000, 100.5781, &parameters);
+    bool result = updateDataFromParameters(1, 53.33f, 1000, 100.5781f, &parameters);
     result = animateScroll(100.5933);
     result = result && animateScroll(100.6085);
-    result = result && updateDataFromParameters(1, 53.33, 1000, 100.6485, &parameters);
+    result = result && updateDataFromParameters(1, 53.33f, 1000, 100.6485f, &parameters);
     result = result && animateScroll(100.6515);
     result = result && animateScroll(100.6853);
-    result = result && updateDataFromParameters(1, 53.33, 1000, 100.6863, &parameters);
+    result = result && updateDataFromParameters(1, 53.33f, 1000, 100.6863f, &parameters);
     result = result && animateScroll(100.7005);
     result = result && animateScroll(100.7157);
     result = result && animateScroll(100.7312);
-    result = result && updateDataFromParameters(1, 53.33, 1000, 100.7379, &parameters);
+    result = result && updateDataFromParameters(1, 53.33f, 1000, 100.7379f, &parameters);
     result = result && animateScroll(100.7464);
     result = result && animateScroll(100.7617);
     result = result && animateScroll(100.7775);
-    result = result && updateDataFromParameters(1, 53.33, 1000, 100.7779, &parameters);
+    result = result && updateDataFromParameters(1, 53.33f, 1000, 100.7779f, &parameters);
     for (double t = 100.7928; result && t < 200; t += 0.015)
         result = result && animateScroll(t);
 }

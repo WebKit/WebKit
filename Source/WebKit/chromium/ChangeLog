@@ -1,3 +1,28 @@
+2012-04-12  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix Windows compiler warnings in webkit_unit_test target
+        https://bugs.webkit.org/show_bug.cgi?id=83732
+
+        Reviewed by Kent Tamura.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::TEST_F):
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebKitTests::TEST):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::TEST_F):
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore::TEST):
+        * tests/FloatQuadTest.cpp:
+        (WebCore::TEST):
+        * tests/ScrollAnimatorNoneTest.cpp:
+        (TEST_F):
+        * tests/TreeSynchronizerTest.cpp:
+        (WebKitTests::TEST):
+        * tests/WebLayerTest.cpp:
+
 2012-04-11  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Stub out WebKit interface for get(IndexedKeyRange)

@@ -318,7 +318,7 @@ TEST_F(CCLayerTreeHostImplTest, pinchGesture)
         scrollLayer->setScrollDelta(IntSize());
         scrollLayer->setScrollPosition(IntPoint(50, 50));
 
-        float pageScaleDelta = 0.1;
+        float pageScaleDelta = 0.1f;
         m_hostImpl->pinchGestureBegin();
         m_hostImpl->pinchGestureUpdate(pageScaleDelta, IntPoint(0, 0));
         m_hostImpl->pinchGestureEnd();
@@ -483,7 +483,7 @@ TEST_F(CCLayerTreeHostImplTest, didDrawCalledOnAllLayers)
     layer1->addChild(DidDrawCheckLayer::create(2));
     DidDrawCheckLayer* layer2 = static_cast<DidDrawCheckLayer*>(layer1->children()[0].get());
 
-    layer1->setOpacity(0.3);
+    layer1->setOpacity(0.3f);
     layer1->setPreserves3D(false);
 
     EXPECT_FALSE(root->didDrawCalled());
@@ -1049,7 +1049,7 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     // expected damage rect: IntRect(IntPoint::zero(), IntSize(500, 500));
     // expected swap rect: flipped damage rect, but also clamped to viewport
     layerTreeHostImpl->setViewportSize(IntSize(10, 10));
-    root->setOpacity(0.7); // this will damage everything
+    root->setOpacity(0.7f); // this will damage everything
     EXPECT_TRUE(layerTreeHostImpl->prepareToDraw(frame));
     layerTreeHostImpl->drawLayers(frame);
     layerTreeHostImpl->swapBuffers();

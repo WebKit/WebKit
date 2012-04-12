@@ -81,7 +81,7 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     IntSize arbitraryIntSize = IntSize(111, 222);
     IntPoint arbitraryIntPoint = IntPoint(333, 444);
     IntRect arbitraryIntRect = IntRect(arbitraryIntPoint, arbitraryIntSize);
-    FloatRect arbitraryFloatRect = FloatRect(arbitraryFloatPoint, FloatSize(1.234, 5.678));
+    FloatRect arbitraryFloatRect = FloatRect(arbitraryFloatPoint, FloatSize(1.234f, 5.678f));
     Color arbitraryColor = Color(10, 20, 30);
     TransformationMatrix arbitraryTransform;
     arbitraryTransform.scale3d(0.1, 0.2, 0.3);

@@ -50,7 +50,7 @@ TEST(FloatQuadTest, IsRectilinearTest)
     rectilinearTrans[7].rotate(180);
 
     for (int i = 0; i < numRectilinear; ++i) {
-        FloatQuad quad = rectilinearTrans[i].mapQuad(FloatRect(0.01010101, 0.01010101, 100.01010101, 100.01010101));
+        FloatQuad quad = rectilinearTrans[i].mapQuad(FloatRect(0.01010101f, 0.01010101f, 100.01010101f, 100.01010101f));
         EXPECT_TRUE(quad.isRectilinear());
     }
 
@@ -68,7 +68,7 @@ TEST(FloatQuadTest, IsRectilinearTest)
     nonRectilinearTrans[9].skewY(0.00001);
 
     for (int i = 0; i < numNonRectilinear; ++i) {
-        FloatQuad quad = nonRectilinearTrans[i].mapQuad(FloatRect(0.01010101, 0.01010101, 100.01010101, 100.01010101));
+        FloatQuad quad = nonRectilinearTrans[i].mapQuad(FloatRect(0.01010101f, 0.01010101f, 100.01010101f, 100.01010101f));
         EXPECT_FALSE(quad.isRectilinear());
     }
 }

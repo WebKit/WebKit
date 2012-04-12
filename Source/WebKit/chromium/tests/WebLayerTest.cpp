@@ -136,7 +136,7 @@ TEST_F(WebLayerTest, Client)
     EXPECT_EQ(otherLayer, layer.maskLayer());
 
     EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
-    float opacity = 0.123;
+    float opacity = 0.123f;
     layer.setOpacity(opacity);
     Mock::VerifyAndClearExpectations(&m_client);
     EXPECT_EQ(opacity, layer.opacity());
@@ -168,7 +168,7 @@ TEST_F(WebLayerTest, Client)
     EXPECT_TRUE(textureLayer.flipped());
 
     EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
-    WebFloatRect uvRect(0.1, 0.1, 0.9, 0.9);
+    WebFloatRect uvRect(0.1f, 0.1f, 0.9f, 0.9f);
     textureLayer.setUVRect(uvRect);
     Mock::VerifyAndClearExpectations(&m_client);
     EXPECT_TRUE(textureLayer.flipped());

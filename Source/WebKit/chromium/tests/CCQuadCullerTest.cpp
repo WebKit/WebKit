@@ -140,8 +140,8 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpacityNotOne)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 0.9, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 0.9f, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
     occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
 
