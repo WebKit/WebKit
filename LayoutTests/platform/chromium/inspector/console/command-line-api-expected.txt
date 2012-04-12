@@ -1,0 +1,9 @@
+Tests that command line api works.
+
+$0.toString() = "[object HTMLParagraphElement]"
+$3 = undefined
+keys([3,4]).toString() = "0,1"
+values([3,4]).toString() = "3,4"
+$('foo').toString() = "[object HTMLParagraphElement]"
+$$('p#foo').toString() = "[object HTMLParagraphElement]"
+

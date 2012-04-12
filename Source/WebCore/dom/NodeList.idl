@@ -23,7 +23,8 @@ module core {
     interface [
         JSCustomIsReachable,
         IndexedGetter,
-        NamedGetter
+        NamedGetter,
+        ArrayClass
     ] NodeList {
 
         Node item(in [IsIndex,Optional=DefaultIsUndefined] unsigned long index);

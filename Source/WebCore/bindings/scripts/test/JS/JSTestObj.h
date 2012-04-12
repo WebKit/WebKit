@@ -23,6 +23,7 @@
 
 #include "JSDOMBinding.h"
 #include "TestObj.h"
+#include <runtime/ArrayPrototype.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSObject.h>
 #include <runtime/ObjectPrototype.h>

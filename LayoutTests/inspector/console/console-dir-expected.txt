@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: line 9: test1,test2
-CONSOLE MESSAGE: line 10: [object NodeList]
+CONSOLE MESSAGE: line 10: 
 CONSOLE MESSAGE: line 11: [object XPathResult]
 Tests that console logging dumps proper messages.
 
@@ -15,7 +15,7 @@ NodeList[1]
     0: HTMLHtmlElement
     constructor: NodeListConstructor
     length: 1
-    __proto__: NodeListPrototype console-dir.html:10
+    __proto__: NodeListPrototype[0] console-dir.html:10
 
 XPathResult
     booleanValue: [Exception: XPathException]

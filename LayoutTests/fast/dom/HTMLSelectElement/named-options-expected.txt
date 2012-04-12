@@ -11,11 +11,11 @@ PASS select1.options.namedItem('test').toString() is "[object HTMLOptionElement]
 PASS select1.options.namedItem('test').value is "Value"
 Confirm that both options named 'test' are accessible from the options collection
 PASS select2.options.namedItem('test').length is 2
-PASS select2.options.namedItem('test').toString() is "[object NodeList]"
+FAIL select2.options.namedItem('test').toString() should be [object HTMLOptionElement],[object HTMLOptionElement]. Threw exception TypeError: Type error
 PASS select2.options.namedItem('test')[0].value is "Value1"
 PASS select2.options.namedItem('test')[1].value is "Value2"
 PASS select2.options.test.length is 2
-PASS select2.options.test.toString() is "[object NodeList]"
+FAIL select2.options.test.toString() should be [object HTMLOptionElement],[object HTMLOptionElement]. Threw exception TypeError: Type error
 PASS select2.options.test[0].value is "Value1"
 PASS select2.options.test[1].value is "Value2"
 PASS successfullyParsed is true

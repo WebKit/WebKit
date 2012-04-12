@@ -73,7 +73,7 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8TestObj::info = { V8TestObj::GetTemplate, V8TestObj::derefObject, 0, 0 };
+WrapperTypeInfo V8TestObj::info = { V8TestObj::GetTemplate, V8TestObj::derefObject, 0, 0, 1 };
 
 namespace TestObjV8Internal {
 

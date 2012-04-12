@@ -90,6 +90,7 @@ private:
     ConstructorMap m_constructorMap;
 
     v8::Handle<v8::Context> m_context;
+    OwnHandle<v8::Value> m_arrayPrototype;
     OwnHandle<v8::Value> m_objectPrototype;
 };
 

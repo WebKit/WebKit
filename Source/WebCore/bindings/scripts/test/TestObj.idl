@@ -32,7 +32,8 @@
 module test {
     interface [
         Constructor(in [Callback] TestCallback testCallback),
-        InterfaceName=TestObject
+        InterfaceName=TestObject,
+        ArrayClass
     ] TestObj {
         // Attributes
         readonly attribute long            readOnlyIntAttr;
