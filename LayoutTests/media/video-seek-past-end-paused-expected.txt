@@ -1,6 +1,4 @@
-Test that seeking paused video past it's duration time sets currentTime to duration and leaves video paused.
-
-RUN(video.load())
+Test that seeking paused video past its duration time sets currentTime to duration and leaves video paused.
 
 EVENT(canplaythrough)
 EXPECTED (video.paused == 'true') OK
