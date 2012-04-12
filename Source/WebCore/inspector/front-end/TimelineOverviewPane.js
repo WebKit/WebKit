@@ -292,6 +292,18 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._scheduleRefresh();
     },
 
+    /**
+     * @param {WebInspector.TimelineFrame} frame
+     */
+    zoomToFrame: function(frame)
+    {
+        var window = this._verticalOverview.framePosition(frame);
+        if (!window)
+            return;
+
+        this._overviewWindow._setWindowPosition(window.start, window.end);
+    },
+
     _onRecordAdded: function(event)
     {
         var record = event.data;
@@ -923,9 +935,9 @@ WebInspector.TimelineVerticalOverview.prototype = {
     update: function()
     {
         const minBarWidth = 4;
-        var framesPerBar = Math.max(1, this._frames.length * minBarWidth / this.element.clientWidth);
+        this._framesPerBar = Math.max(1, this._frames.length * minBarWidth / this.element.clientWidth);
         this._barTimes = [];
-        var visibleFrames = this._aggregateFrames(framesPerBar);
+        var visibleFrames = this._aggregateFrames(this._framesPerBar);
 
         const paddingTop = 4;
         var scale = (this.element.clientHeight - paddingTop) / this._normalBarLength;
@@ -939,6 +951,20 @@ WebInspector.TimelineVerticalOverview.prototype = {
     addFrame: function(frame)
     {
         this._frames.push(frame);
+    },
+
+    framePosition: function(frame)
+    {
+        var frameNumber = this._frames.indexOf(frame);
+        if (frameNumber < 0)
+            return;
+        var barNumber = Math.floor(frameNumber / this._framesPerBar);
+        var firstBar = this._framesPerBar > 1 ? barNumber : Math.max(barNumber - 1, 0);
+        var lastBar = this._framesPerBar > 1 ? barNumber : Math.min(barNumber + 1, this._barTimes.length - 1);
+        return {
+            start: Math.ceil(this._barNumberToScreenPosition(firstBar) - this._actualPadding / 2),
+            end: Math.floor(this._barNumberToScreenPosition(lastBar + 1) - this._actualPadding / 2)
+        }
     },
 
     /**
@@ -983,10 +1009,14 @@ WebInspector.TimelineVerticalOverview.prototype = {
         this._actualPadding = Math.min(Math.floor(this._actualOuterBarWidth / 3), maxPadding);
 
         for (var i = 0; i < frames.length; ++i) {
-            var x = this._outerPadding + this._actualOuterBarWidth * i;
             var width = this._actualOuterBarWidth - this._actualPadding;
-            this._renderBar(x, width, frames[i], scale);
+            this._renderBar(this._barNumberToScreenPosition(i), width, frames[i], scale);
         }
+    },
+
+    _barNumberToScreenPosition: function(n)
+    {
+        return this._outerPadding + this._actualOuterBarWidth * n;
     },
 
     _renderBar: function(left, width, frame, scale)
@@ -1033,7 +1063,7 @@ WebInspector.TimelineVerticalOverview.prototype = {
 
     getWindowTimes: function(windowLeft, windowRight)
     {
-        var windowSpan = this.element.clientWidth
+        var windowSpan = this.element.clientWidth;
         var leftOffset = windowLeft * windowSpan - this._outerPadding + this._actualPadding;
         var rightOffset = windowRight * windowSpan - this._outerPadding;
         var bars = this.element.children;

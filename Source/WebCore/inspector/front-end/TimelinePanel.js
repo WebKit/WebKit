@@ -354,7 +354,16 @@ WebInspector.TimelinePanel.prototype = {
     {
         var frames = this._presentationModel.frames();
         var clientWidth = this._graphRowsElement.offsetWidth;
-        var dividers = [];
+        if (this._frameContainer)
+            this._frameContainer.removeChildren();
+        else {
+            this._frameContainer = document.createElement("div");
+            this._frameContainer.addStyleClass("fill");
+            this._frameContainer.addStyleClass("timeline-frame-container");
+            this._frameContainer.addEventListener("dblclick", this._onFrameDoubleClicked.bind(this), false);
+        }
+
+        var dividers = [ this._frameContainer ];
 
         for (var i = 0; i < frames.length; ++i) {
             var frame = frames[i];
@@ -375,7 +384,7 @@ WebInspector.TimelinePanel.prototype = {
             if (width > minWidthForFrameInfo)
                 frameStrip.textContent = Number.secondsToString(frame.endTime - frame.startTime, true);
 
-            dividers.push(frameStrip);
+            this._frameContainer.appendChild(frameStrip);
 
             if (actualStart > 0) {
                 var frameMarker = WebInspector.TimelinePresentationModel.createEventDivider(WebInspector.TimelineModel.RecordType.BeginFrame);
@@ -384,6 +393,14 @@ WebInspector.TimelinePanel.prototype = {
             }
         }
         this._timelineGrid.addEventDividers(dividers);
+    },
+
+    _onFrameDoubleClicked: function(event)
+    {
+        var frameBar = event.target.enclosingNodeOrSelfWithClass("timeline-frame-strip");
+        if (!frameBar)
+            return;
+        this._overviewPane.zoomToFrame(frameBar._frame);
     },
 
     _timelinesOverviewModeChanged: function(event)

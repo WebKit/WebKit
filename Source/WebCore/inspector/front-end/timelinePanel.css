@@ -667,6 +667,10 @@
     -webkit-mask-position: -192px -48px;
 }
 
+.timeline-frame-container {
+    height: 19px;
+}
+
 .timeline-frame-strip {
     position: absolute;
     height: 19px;
