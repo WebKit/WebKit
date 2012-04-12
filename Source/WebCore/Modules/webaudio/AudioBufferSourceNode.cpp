@@ -160,8 +160,6 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         }
 
         outputBus->clearSilentFlag();
-
-        m_processLock.unlock();
     } else {
         // Too bad - the tryLock() failed.  We must be in the middle of changing buffers and were already outputting silence anyway.
         outputBus->zero();
