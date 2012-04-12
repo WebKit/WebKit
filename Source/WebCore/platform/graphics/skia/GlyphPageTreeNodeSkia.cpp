@@ -104,7 +104,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
             }
         }
         if (lookVariants)
-            substituteWithVerticalGlyphs(fontData, glyphs, bufferLength);
+            substituteWithVerticalGlyphs(fontData, glyphs, length);
     }
 
     unsigned allGlyphs = 0; // track if any of the glyphIDs are non-zero
