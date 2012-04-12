@@ -349,7 +349,7 @@ void TiledBackingStore::computeCoverAndKeepRect(const IntRect& visibleRect, IntR
         coverRect.inflateY(visibleRect.height() * (m_coverAreaMultiplier - 1) / 2);
         keepRect = coverRect;
 
-        if (m_trajectoryVector == FloatPoint::zero()) {
+        if (m_trajectoryVector != FloatPoint::zero()) {
             // A null trajectory vector (no motion) means that tiles for the coverArea will be created.
             // A non-null trajectory vector will shrink the covered rect to visibleRect plus its expansion from its
             // center toward the cover area edges in the direction of the given vector.
