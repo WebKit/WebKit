@@ -2522,8 +2522,6 @@ BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = TEXT
 
 BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
 
-BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = PASS TEXT IMAGE IMAGE+TEXT
-
 BUGWK81240 MAC : svg/text/bidi-reorder-value-lists.svg = PASS IMAGE+TEXT
 
 BUGWK81243 : svg/repaint/repainting-after-animation-element-removal.svg = PASS IMAGE
