@@ -335,6 +335,7 @@ bool Mutex::tryLock()
 
 void Mutex::unlock()
 {
+    ASSERT(m_mutex.m_recursionCount);
     --m_mutex.m_recursionCount;
     LeaveCriticalSection(&m_mutex.m_internalMutex);
 }
