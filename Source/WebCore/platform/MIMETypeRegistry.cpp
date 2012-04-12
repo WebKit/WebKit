@@ -294,7 +294,7 @@ static void initializeSupportedImageMIMETypesForEncoding()
         if (!mimeType.isEmpty())
             supportedImageMIMETypesForEncoding->add(mimeType);
     }
-#elif PLATFORM(GTK)
+#elif PLATFORM(GTK) || (PLATFORM(QT) && !USE(QT_IMAGE_DECODER))
     supportedImageMIMETypesForEncoding->add("image/png");
     supportedImageMIMETypesForEncoding->add("image/jpeg");
     supportedImageMIMETypesForEncoding->add("image/tiff");
