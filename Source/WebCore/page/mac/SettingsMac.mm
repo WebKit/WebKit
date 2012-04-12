@@ -38,7 +38,7 @@ static NSDictionary *defaultFontFamilyDictionary()
         return fontFamilyDictionary;
 
     NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
-#if BUILDING_ON_LION
+#ifdef BUILDING_ON_LION
     // Temporary workaround for a Safari Webpage Preview Fetcher crash caused by insufficient sandbox permissions.
     if (!bundle)
         return 0;
