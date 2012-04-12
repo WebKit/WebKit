@@ -1,5 +1,21 @@
 2012-04-12  Andy Estes  <aestes@apple.com>
 
+        REGRESSION (r102262): iAd Producer relies on CSSStyleDeclaration property setters respecting '!important'
+        https://bugs.webkit.org/show_bug.cgi?id=83832
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Misc/WebKitVersionChecks.h: Indicate that 535.13.0 was the first
+        version of WebKit.framework to ignore '!important' in
+        CSSStyleDeclaration property setters.
+        * WebView/WebView.mm:
+        (shouldRespectPriorityInCSSAttributeSetters):
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Enable a
+        quirk to restore pre-r102262 behavior if the application is iAd Producer
+        and was linked against a version of WebKit.framework that had the old behavior.
+
+2012-04-12  Andy Estes  <aestes@apple.com>
+
         Remove unused WebKit1 SPI for suppressing incremental rendering.
         https://bugs.webkit.org/show_bug.cgi?id=83801
 

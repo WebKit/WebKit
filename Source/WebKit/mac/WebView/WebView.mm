@@ -687,6 +687,13 @@ static NSString *leakOutlookQuirksUserScriptContents()
         outlookQuirksScriptContents, KURL(), nullptr, nullptr, InjectAtDocumentEnd, InjectInAllFrames);
 }
 
+static bool shouldRespectPriorityInCSSAttributeSetters()
+{
+    static bool isIAdProducerNeedingAttributeSetterQuirk = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_CSS_ATTRIBUTE_SETTERS_IGNORING_PRIORITY)
+        && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.iAdProducer"];
+    return isIAdProducerNeedingAttributeSetterQuirk;
+}
+
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     WebCoreThreadViolationCheckRoundTwo();
@@ -727,6 +734,8 @@ static NSString *leakOutlookQuirksUserScriptContents()
         // Initialize our platform strategies.
         WebPlatformStrategies::initialize();
         Settings::setDefaultMinDOMTimerInterval(0.004);
+        
+        Settings::setShouldRespectPriorityInCSSAttributeSetters(shouldRespectPriorityInCSSAttributeSetters());
 
         didOneTimeInitialization = true;
     }

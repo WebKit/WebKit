@@ -92,6 +92,10 @@ bool Settings::gMockScrollbarsEnabled = false;
 #if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
 bool Settings::gShouldUseHighResolutionTimers = true;
 #endif
+    
+#if USE(JSC)
+bool Settings::gShouldRespectPriorityInCSSAttributeSetters = false;
+#endif
 
 // NOTEs
 //  1) EditingMacBehavior comprises Tiger, Leopard, SnowLeopard and iOS builds, as well QtWebKit and Chromium when built on Mac;
@@ -892,5 +896,17 @@ bool Settings::mockScrollbarsEnabled()
 {
     return gMockScrollbarsEnabled;
 }
+
+#if USE(JSC)
+void Settings::setShouldRespectPriorityInCSSAttributeSetters(bool flag)
+{
+    gShouldRespectPriorityInCSSAttributeSetters = flag;
+}
+
+bool Settings::shouldRespectPriorityInCSSAttributeSetters()
+{
+    return gShouldRespectPriorityInCSSAttributeSetters;
+}
+#endif
 
 } // namespace WebCore

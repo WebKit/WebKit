@@ -34,6 +34,7 @@
 #include "JSCSSValue.h"
 #include "JSNode.h"
 #include "PlatformString.h"
+#include "Settings.h"
 #include "StylePropertySet.h"
 #include <runtime/StringPrototype.h>
 #include <wtf/ASCIICType.h>
@@ -356,8 +357,18 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, const Identifier& prope
     String propValue = valueToStringWithNullCheck(exec, value);
     if (propertyInfo.hadPixelOrPosPrefix)
         propValue += "px";
+
+    bool important = false;
+    if (Settings::shouldRespectPriorityInCSSAttributeSetters()) {
+        size_t importantIndex = propValue.find("!important", 0, false);
+        if (importantIndex != notFound) {
+            important = true;
+            propValue = propValue.left(importantIndex - 1);
+        }
+    }
+
     ExceptionCode ec = 0;
-    impl()->setPropertyInternal(static_cast<CSSPropertyID>(propertyInfo.propertyID), propValue, false, ec);
+    impl()->setPropertyInternal(static_cast<CSSPropertyID>(propertyInfo.propertyID), propValue, important, ec);
     setDOMException(exec, ec);
     return true;
 }

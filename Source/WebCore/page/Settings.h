@@ -551,6 +551,11 @@ namespace WebCore {
 
         void setShouldRespectImageOrientation(bool enabled) { m_shouldRespectImageOrientation = enabled; }
         bool shouldRespectImageOrientation() const { return m_shouldRespectImageOrientation; }
+        
+#if USE(JSC)
+        static void setShouldRespectPriorityInCSSAttributeSetters(bool);
+        static bool shouldRespectPriorityInCSSAttributeSetters();
+#endif
 
     private:
         Settings(Page*);
@@ -723,6 +728,9 @@ namespace WebCore {
 #endif
 #if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
         static bool gShouldUseHighResolutionTimers;
+#endif
+#if USE(JSC)
+        static bool gShouldRespectPriorityInCSSAttributeSetters;
 #endif
     };
 
