@@ -1,3 +1,20 @@
+2012-04-12  Mike Fenton  <mifenton@rim.com>
+
+        Pattern matching for hexadecimal should include * as an allowable count.
+        https://bugs.webkit.org/show_bug.cgi?id=83779
+
+        Reviewed by Rob Buis.
+
+        Update pattern matching check to allow wildcard for number
+        of characters allowed.
+
+        PR 148907.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::elementPatternIndicatesHexadecimal):
+
 2012-04-11  Joe Mason  <jmason@rim.com>
 
         [BlackBerry] Update to the thread-safe GuardedPointer API

@@ -408,6 +408,10 @@ bool elementPatternIndicatesHexadecimal(const HTMLInputElement* inputElement)
             if (patternAttribute.length() == 11)
                 return true;
 
+            // Check for *
+            if (patternAttribute.length() == 12 && patternAttribute[11] == '*')
+                return true;
+
             // Is the regex specifying a character count?
             if (patternAttribute[11] != '{' || !patternAttribute.endsWith("}"))
                 return false;
