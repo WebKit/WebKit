@@ -1,3 +1,12 @@
+2012-04-12  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt][WK2] Nested fixed elements scroll too fast
+        https://bugs.webkit.org/show_bug.cgi?id=83720
+
+        Reviewed by Noam Rosenthal.
+
+        * ManualTests/nested-fixed-position.html: Added.
+
 2012-03-15  Martin Robinson  <mrobinson@igalia.com>
 
         [CAIRO] Make GLContextGLX a subclass of GLContext

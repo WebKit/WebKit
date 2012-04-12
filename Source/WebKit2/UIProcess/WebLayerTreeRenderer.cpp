@@ -179,7 +179,7 @@ void WebLayerTreeRenderer::adjustPositionForFixedLayers()
 
     LayerMap::iterator end = m_fixedLayers.end();
     for (LayerMap::iterator it = m_fixedLayers.begin(); it != end; ++it)
-        toTextureMapperLayer(it->second)->setScrollPositionDelta(IntPoint(scrollPosition.x() - m_renderedContentsScrollPosition.x(), scrollPosition.y() - m_renderedContentsScrollPosition.y()));
+        toTextureMapperLayer(it->second)->setScrollPositionDeltaIfNeeded(IntPoint(scrollPosition.x() - m_renderedContentsScrollPosition.x(), scrollPosition.y() - m_renderedContentsScrollPosition.y()));
 }
 
 void WebLayerTreeRenderer::didChangeScrollPosition(const IntPoint& position)
@@ -226,6 +226,7 @@ void WebLayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& laye
     layer->setContentsOpaque(layerInfo.contentsOpaque);
     layer->setContentsRect(layerInfo.contentsRect);
     layer->setDrawsContent(layerInfo.drawsContent);
+    toGraphicsLayerTextureMapper(layer)->setFixedToViewport(layerInfo.fixedToViewport);
 
     if (layerInfo.fixedToViewport)
         m_fixedLayers.add(id, layer);

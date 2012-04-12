@@ -1,3 +1,17 @@
+2012-04-12  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt][WK2] Nested fixed elements scroll too fast
+        https://bugs.webkit.org/show_bug.cgi?id=83720
+
+        Reviewed by Noam Rosenthal.
+
+        Set the fixedToViewport flag on the fixed position layers and adjust to
+        the new function name for setting scrollPositionDelta.
+
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::adjustPositionForFixedLayers):
+        (WebKit::WebLayerTreeRenderer::setLayerState):
+
 2012-04-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Move viewport meta handling to the web process side

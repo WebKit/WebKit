@@ -29,6 +29,7 @@ GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(GraphicsLayerClient* clie
     , m_layer(adoptPtr(new TextureMapperLayer()))
     , m_changeMask(0)
     , m_needsDisplay(false)
+    , m_fixedToViewport(false)
     , m_contentsLayer(0)
     , m_animationStartedTimer(this, &GraphicsLayerTextureMapper::animationStartedTimerFired)
 {
