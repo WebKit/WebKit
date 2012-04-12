@@ -166,7 +166,6 @@ public:
     
     virtual LayoutRect boundingBoxRect() const;
     virtual LayoutRect elementRect() const;
-    virtual LayoutSize size() const;
     virtual IntPoint clickPoint();
     
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }

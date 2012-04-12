@@ -55,11 +55,6 @@ LayoutRect AccessibilityTableHeaderContainer::elementRect() const
     return m_headerRect;
 }
 
-LayoutSize AccessibilityTableHeaderContainer::size() const
-{
-    return elementRect().size();
-}
-
 bool AccessibilityTableHeaderContainer::accessibilityIsIgnored() const
 {
     if (!m_parent)

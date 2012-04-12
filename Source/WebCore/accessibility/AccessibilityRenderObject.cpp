@@ -1523,12 +1523,6 @@ LayoutRect AccessibilityRenderObject::elementRect() const
     return boundingBoxRect();
 }
 
-LayoutSize AccessibilityRenderObject::size() const
-{
-    LayoutRect rect = elementRect();
-    return rect.size();
-}
-
 IntPoint AccessibilityRenderObject::clickPoint()
 {
     // Headings are usually much wider than their textual content. If the mid point is used, often it can be wrong.

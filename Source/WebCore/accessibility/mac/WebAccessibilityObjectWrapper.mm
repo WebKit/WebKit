@@ -1409,7 +1409,7 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
 
 - (NSValue *)position
 {
-    LayoutRect rect = m_object->elementRect();
+    IntRect rect = pixelSnappedIntRect(m_object->elementRect());
     NSPoint point;
     
     FrameView* frameView = m_object->documentFrameView();
@@ -2025,7 +2025,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [NSNumber numberWithBool: m_object->isEnabled()];
 
     if ([attributeName isEqualToString: NSAccessibilitySizeAttribute]) {
-        LayoutSize s = m_object->size();
+        IntSize s = m_object->pixelSnappedSize();
         return [NSValue valueWithSize: NSMakeSize(s.width(), s.height())];
     }
 

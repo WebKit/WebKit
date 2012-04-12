@@ -75,7 +75,6 @@ public:
 
     virtual AccessibilityRole roleValue() const { return SliderThumbRole; }
 
-    virtual LayoutSize size() const;
     virtual LayoutRect elementRect() const;
 
     virtual bool accessibilityIsIgnored() const;

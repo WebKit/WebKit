@@ -77,7 +77,7 @@ static AtkObject* webkitAccessibleComponentRefAccessibleAtPoint(AtkComponent* co
 
 static void webkitAccessibleComponentGetExtents(AtkComponent* component, gint* x, gint* y, gint* width, gint* height, AtkCoordType coordType)
 {
-    IntRect rect = core(component)->elementRect();
+    IntRect rect = pixelSnappedIntRect(core(component)->elementRect());
     contentsRelativeToAtkCoordinateType(core(component), coordType, rect, x, y, width, height);
 }
 

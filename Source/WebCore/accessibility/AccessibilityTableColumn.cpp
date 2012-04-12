@@ -68,11 +68,6 @@ LayoutRect AccessibilityTableColumn::elementRect() const
     return m_columnRect;
 }
 
-LayoutSize AccessibilityTableColumn::size() const
-{
-    return elementRect().size();
-}
- 
 AccessibilityObject* AccessibilityTableColumn::headerObject()
 {
     if (!m_parent)

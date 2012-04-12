@@ -57,7 +57,6 @@ public:
     virtual void addChildren();
     virtual void setParent(AccessibilityObject*);
     
-    virtual LayoutSize size() const;
     virtual LayoutRect elementRect() const;
     
 private:    

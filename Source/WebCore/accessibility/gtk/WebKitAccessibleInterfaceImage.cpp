@@ -48,7 +48,7 @@ static AccessibilityObject* core(AtkImage* image)
 
 static void webkitAccessibleImageGetImagePosition(AtkImage* image, gint* x, gint* y, AtkCoordType coordType)
 {
-    IntRect rect = core(image)->elementRect();
+    IntRect rect = pixelSnappedIntRect(core(image)->elementRect());
     contentsRelativeToAtkCoordinateType(core(image), coordType, rect, x, y);
 }
 
@@ -59,7 +59,7 @@ static const gchar* webkitAccessibleImageGetImageDescription(AtkImage* image)
 
 static void webkitAccessibleImageGetImageSize(AtkImage* image, gint* width, gint* height)
 {
-    IntSize size = core(image)->size();
+    IntSize size = core(image)->pixelSnappedSize();
 
     if (width)
         *width = size.width();

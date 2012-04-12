@@ -178,11 +178,6 @@ LayoutRect AccessibilitySliderThumb::elementRect() const
     return sliderThumbElementOf(sliderRenderer->node())->getRect();
 }
 
-LayoutSize AccessibilitySliderThumb::size() const
-{
-    return elementRect().size();
-}
-
 bool AccessibilitySliderThumb::accessibilityIsIgnored() const
 {
     AccessibilityObjectInclusion decision = accessibilityPlatformIncludesObject();

@@ -47,7 +47,6 @@ public:
     
     virtual void addChildren();
     
-    virtual LayoutSize size() const;
     virtual LayoutRect elementRect() const;
     
 private:
