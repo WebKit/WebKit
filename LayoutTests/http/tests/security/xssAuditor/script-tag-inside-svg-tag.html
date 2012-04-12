@@ -9,7 +9,7 @@ if (window.layoutTestController) {
 </script>
 </head>
 <body>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=<svg><script>//%26%24x0a;alert%26%23x29;String.fromCharCode(0x58,0x53,0x53))</svg></script>">
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=<svg><script>%2f%2f%26%23x0a%3balert%26%23x28%3bString.fromCharCode(0x58,0x53,0x53))</script></svg>">
 </iframe>
 Ensures HTML entities are recognized in script blocks in a context where CDATA is allowed.
 </body>
