@@ -161,9 +161,8 @@ WebInspector.RawSourceCode.prototype = {
 
     _createContentProvider: function()
     {
-        if (this._request && this._request.finished) {
-            return new WebInspector.ResourceContentProvider(this._request);
-        }
+        if (this._request && this._request.finished)
+            return new WebInspector.ResourceContentProvider(this._request.resource());
         if (this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset)
             return new WebInspector.ScriptContentProvider(this._scripts[0]);
         return new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);

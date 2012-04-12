@@ -171,6 +171,14 @@ WebInspector.Resource.prototype = {
     },
 
     /**
+     * @return {WebInspector.Resource}
+     */
+    resource: function()
+    {
+        return this;
+    },
+
+    /**
      * @type {string}
      */
     get url()

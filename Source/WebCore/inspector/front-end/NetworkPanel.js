@@ -926,7 +926,7 @@ WebInspector.NetworkLogView.prototype = {
     _showPopover: function(anchor, popover)
     {
         var request = anchor.parentElement.request;
-        var tableElement = WebInspector.ResourceTimingView.createTimingTable(request);
+        var tableElement = WebInspector.RequestTimingView.createTimingTable(request);
         popover.show(tableElement, anchor);
     },
 

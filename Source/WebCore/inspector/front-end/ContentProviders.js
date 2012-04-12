@@ -205,12 +205,12 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype.__proto__ = WebInspect
 /**
  * @constructor
  * @implements {WebInspector.ContentProvider}
- * @param {WebInspector.NetworkRequest} request
+ * @param {WebInspector.Resource} resource
  */
-WebInspector.ResourceContentProvider = function(request)
+WebInspector.ResourceContentProvider = function(resource)
 {
-    this._mimeType = request.type === WebInspector.resourceTypes.Script ? "text/javascript" : "text/html";
-    this._request = request;
+    this._mimeType = resource.type === WebInspector.resourceTypes.Script ? "text/javascript" : "text/html";
+    this._resource = resource;
 };
 
 WebInspector.ResourceContentProvider.prototype = {
@@ -223,7 +223,7 @@ WebInspector.ResourceContentProvider.prototype = {
         {
             callback(this._mimeType, content);
         }
-        this._request.requestContent(didRequestContent.bind(this));
+        this._resource.requestContent(didRequestContent.bind(this));
     },
 
     /**
@@ -234,7 +234,7 @@ WebInspector.ResourceContentProvider.prototype = {
      */
     searchInContent: function(query, caseSensitive, isRegex, callback)
     {
-        this._request.searchInContent(query, caseSensitive, isRegex, callback);
+        this._resource.searchInContent(query, caseSensitive, isRegex, callback);
     }
 }
 

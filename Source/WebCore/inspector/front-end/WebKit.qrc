@@ -103,14 +103,15 @@
     <file>RawSourceCode.js</file>
     <file>RemoteObject.js</file>
     <file>Resource.js</file>
-    <file>ResourceCookiesView.js</file>
-    <file>ResourceJSONView.js</file>
-    <file>ResourceHTMLView.js</file>
-    <file>ResourceHeadersView.js</file>
-    <file>ResourcePreviewView.js</file>
-    <file>ResourceResponseView.js</file>
+    <file>RequestCookiesView.js</file>
+    <file>RequestJSONView.js</file>
+    <file>RequestHTMLView.js</file>
+    <file>RequestHeadersView.js</file>
+    <file>RequestPreviewView.js</file>
+    <file>RequestResponseView.js</file>
+    <file>RequestTimingView.js</file>
+    <file>RequestView.js</file>
     <file>ResourceScriptMapping.js</file>
-    <file>ResourceTimingView.js</file>
     <file>ResourceTreeModel.js</file>
     <file>ResourceType.js</file>
     <file>ResourceUtils.js</file>

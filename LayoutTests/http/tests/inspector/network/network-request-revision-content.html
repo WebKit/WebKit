@@ -17,15 +17,17 @@ function test()
     function step2(msg)
     {
         var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
-        request.addRevision("");
-        request.history[0].requestContent(step3);
+        var resource = request.resource();
+        resource.addRevision("");
+        resource.history[0].requestContent(step3);
     }
 
     function step3()
     {
         var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
-        InspectorTest.addResult(request.url);
-        InspectorTest.addResult(request.content);
+        var resource = request.resource();
+        InspectorTest.addResult(resource.url);
+        InspectorTest.addResult(resource.content);
         InspectorTest.completeTest();
     }
 }

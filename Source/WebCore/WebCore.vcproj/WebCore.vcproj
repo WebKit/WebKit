@@ -74081,31 +74081,39 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\RequestCookiesView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\RequestHeadersView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\RequestHTMLView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\RequestJSONView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\RequestPreviewView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\RequestResponseView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\RequestTimingView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\RequestView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Resource.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\ResourceCookiesView.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\ResourceHeadersView.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\ResourceHTMLView.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\ResourceJSONView.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\ResourcePreviewView.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\ResourceResponseView.js"
 					>
 				</File>
 				<File
@@ -74118,10 +74126,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ResourceScriptMapping.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\ResourceTimingView.js"
 					>
 				</File>
 				<File
