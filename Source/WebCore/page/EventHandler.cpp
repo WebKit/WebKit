@@ -2725,6 +2725,13 @@ bool EventHandler::isKeyEventAllowedInFullScreen(const PlatformKeyboardEvent& ke
     if (document->webkitFullScreenKeyboardInputAllowed())
         return true;
 
+    if (keyEvent.type() == PlatformKeyboardEvent::Char) {
+        if (keyEvent.text().length() != 1)
+            return false;
+        UChar character = keyEvent.text()[0];
+        return character == ' ';
+    }
+
     int keyCode = keyEvent.windowsVirtualKeyCode();
     return (keyCode >= VK_BACK && keyCode <= VK_CAPITAL)
         || (keyCode >= VK_SPACE && keyCode <= VK_DELETE)
