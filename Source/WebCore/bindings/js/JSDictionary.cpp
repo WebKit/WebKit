@@ -42,7 +42,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSDictionary::GetPropertyResult JSDictionary::tryGetProperty(const char* propertyName, JSValue& finalResult)
+JSDictionary::GetPropertyResult JSDictionary::tryGetProperty(const char* propertyName, JSValue& finalResult) const
 {
     Identifier identifier(m_exec, propertyName);
     PropertySlot slot(m_initializerObject);

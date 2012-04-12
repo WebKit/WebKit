@@ -2918,9 +2918,8 @@ sub JSValueToNative
     }
 
     if ($type eq "Dictionary") {
-        AddToImplIncludes("IDBBindingUtilities.h", $conditional);
         AddToImplIncludes("Dictionary.h", $conditional);
-        return "createDictionaryFromValue(exec, $value)";
+        return "exec, $value";
     }
 
     if ($type eq "DOMString[]") {

@@ -26,9 +26,7 @@
 #include "config.h"
 
 #if ENABLE(INDEXED_DATABASE)
-
 #include "IDBBindingUtilities.h"
-#include "NotImplemented.h"
 
 #include "IDBKey.h"
 
@@ -44,12 +42,6 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(JSC::ExecState* exec, JSC::JSValue valu
         return IDBKey::createString(ustringToString(value.toString(exec)->value(exec)));
     // FIXME: Implement dates.
     return 0;
-}
-
-Dictionary createDictionaryFromValue(JSC::ExecState*, JSC::JSValue)
-{
-    // FIXME: Implement Database Options.
-    return Dictionary();
 }
 
 } // namespace WebCore

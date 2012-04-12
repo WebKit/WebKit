@@ -37,7 +37,6 @@ namespace WebCore {
 class IDBKey;
 
 PassRefPtr<IDBKey> createIDBKeyFromValue(JSC::ExecState*, JSC::JSValue);
-Dictionary createDictionaryFromValue(JSC::ExecState*, JSC::JSValue);
 
 }
 

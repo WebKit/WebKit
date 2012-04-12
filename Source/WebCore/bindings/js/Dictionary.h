@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,44 +27,33 @@
 #ifndef Dictionary_h
 #define Dictionary_h
 
-#include "SerializedScriptValue.h"
-#include <wtf/HashSet.h>
-#include <wtf/text/AtomicString.h>
+#include "JSDictionary.h"
+#include "NotImplemented.h"
+#include "ScriptValue.h"
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
+
+namespace JSC {
+class JSValue;
+}
 
 namespace WebCore {
+class EventListener;
 
-class DOMStringList;
-class DOMWindow;
-class IDBKeyRange;
-class ScriptValue;
-class Storage;
-class TrackBase;
-
-// FIXME: Implement.
 class Dictionary {
 public:
-    Dictionary() { }
+    Dictionary(JSC::ExecState*, JSC::JSValue);
 
-    bool isObject() const { return false; }
-    bool isUndefinedOrNull() const { return false; }
+    // Returns true if a value was found for the provided property.
+    template <typename Result>
+    bool get(const String& propertyName, Result&) const;
 
-    bool get(const String&, bool&) const { return false; }
-    bool get(const String&, int32_t&) const { return false; }
-    bool get(const String&, double&) const { return false; }
-    bool get(const String&, String&) const { return false; }
-    bool get(const String&, ScriptValue&) const { return false; }
-    bool get(const String&, unsigned short&) const { return false; }
-    bool get(const String&, unsigned&) const { return false; }
-    bool get(const String&, unsigned long long&) const { return false; }
-    bool get(const String&, RefPtr<DOMWindow>&) const { return false; }
-    bool get(const String&, RefPtr<Storage>&) const { return false; }
-    bool get(const String&, MessagePortArray&) const { return false; }
-#if ENABLE(VIDEO_TRACK)
-    bool get(const String&, RefPtr<TrackBase>&) const { return false; }
-#endif
-    bool get(const String&, HashSet<AtomicString>&) const { return false; }
+    bool isObject() const { notImplemented(); return false; }
+    bool isUndefinedOrNull() const { notImplemented(); return false; }
+    bool getWithUndefinedOrNullCheck(const String&, String&) const { notImplemented(); return false; }
 
-    bool getWithUndefinedOrNullCheck(const String&, String&) const { return false; }
+private:
+    JSDictionary m_dictionary;
 };
 
 }
