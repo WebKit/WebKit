@@ -1,3 +1,18 @@
+2012-04-13  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Add WebKit API to access <datalist> options
+        https://bugs.webkit.org/show_bug.cgi?id=83762
+
+        Introduce WebInputElement::dataListOptions so we can implement a UI for datalist.
+
+        Reviewed by Kent Tamura.
+
+        * public/WebInputElement.h:
+        (WebKit):
+        (WebInputElement):
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::dataListOptions): Added. Returns a WebNodeCollection containing WebOptionElements.
+
 2012-04-13  Kent Tamura  <tkent@chromium.org>
 
         Add a runtime flag for <input type=date>

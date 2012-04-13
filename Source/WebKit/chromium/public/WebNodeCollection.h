@@ -54,6 +54,8 @@ public:
         return *this;
     }
 
+    bool isNull() const { return !m_private; }
+
     WEBKIT_EXPORT void reset();
     WEBKIT_EXPORT void assign(const WebNodeCollection&);
 

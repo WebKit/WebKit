@@ -39,6 +39,8 @@ namespace WebCore { class HTMLInputElement; }
 
 namespace WebKit {
 
+    class WebNodeCollection;
+
     // Provides readonly access to some properties of a DOM input element node.
     class WebInputElement : public WebFormControlElement {
     public:
@@ -83,6 +85,8 @@ namespace WebKit {
         WEBKIT_EXPORT int selectionEnd() const;
         WEBKIT_EXPORT bool isValidValue(const WebString&) const;
         WEBKIT_EXPORT bool isChecked() const;
+
+        WEBKIT_EXPORT WebNodeCollection dataListOptions() const;
 
         WEBKIT_EXPORT bool isSpeechInputEnabled() const;
         WEBKIT_EXPORT SpeechInputState getSpeechInputState() const;
