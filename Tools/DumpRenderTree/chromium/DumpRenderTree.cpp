@@ -60,7 +60,6 @@ static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-c
 static const char optionEnableDeferred2DCanvas[] = "--enable-deferred-2d-canvas";
 static const char optionEnableAcceleratedPainting[] = "--enable-accelerated-painting";
 static const char optionEnableAcceleratedCompositingForVideo[] = "--enable-accelerated-video";
-static const char optionEnableCompositeToTexture[] = "--enable-composite-to-texture";
 static const char optionUseGraphicsContext3DImplementation[] = "--use-graphics-context-3d-implementation=";
 static const char optionEnablePerTilePainting[] = "--enable-per-tile-painting";
 
@@ -142,7 +141,6 @@ int main(int argc, char* argv[])
     bool startupDialog = false;
     bool acceleratedCompositingForVideoEnabled = false;
     bool threadedCompositingEnabled = false;
-    bool compositeToTexture = false;
     bool forceCompositingMode = false;
     bool accelerated2DCanvasEnabled = false;
     bool deferred2DCanvasEnabled = false;
@@ -183,8 +181,6 @@ int main(int argc, char* argv[])
             acceleratedCompositingForVideoEnabled = true;
         else if (argument == optionEnableThreadedCompositing)
             threadedCompositingEnabled = true;
-        else if (argument == optionEnableCompositeToTexture)
-            compositeToTexture = true;
         else if (argument == optionForceCompositingMode)
             forceCompositingMode = true;
         else if (argument == optionEnableAccelerated2DCanvas)
@@ -239,7 +235,6 @@ int main(int argc, char* argv[])
         shell.setAllowExternalPages(allowExternalPages);
         shell.setAcceleratedCompositingForVideoEnabled(acceleratedCompositingForVideoEnabled);
         shell.setThreadedCompositingEnabled(threadedCompositingEnabled);
-        shell.setCompositeToTexture(compositeToTexture);
         shell.setForceCompositingMode(forceCompositingMode);
         shell.setAccelerated2dCanvasEnabled(accelerated2DCanvasEnabled);
         shell.setDeferred2dCanvasEnabled(deferred2DCanvasEnabled);

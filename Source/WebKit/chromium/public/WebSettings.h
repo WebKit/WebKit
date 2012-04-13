@@ -111,8 +111,6 @@ public:
     virtual void setAcceleratedCompositingEnabled(bool) = 0;
     virtual void setForceCompositingMode(bool) = 0;
     virtual void setMockScrollbarsEnabled(bool) = 0;
-    virtual void setCompositeToTextureEnabled(bool) = 0;
-    virtual bool compositeToTextureEnabled() const = 0;
     virtual void setAcceleratedCompositingFor3DTransformsEnabled(bool) = 0;
     virtual void setAcceleratedCompositingForVideoEnabled(bool) = 0;
     virtual void setAcceleratedCompositingForCanvasEnabled(bool) = 0;

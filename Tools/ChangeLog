@@ -1,3 +1,25 @@
+2012-04-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove unused compositeToTexture / compositeOffscreen setting
+        https://bugs.webkit.org/show_bug.cgi?id=83733
+
+        Reviewed by Adrienne Walker.
+
+        Remove compositeOffscreen / compositeToTexture setting. This was an experiment that is no longer needed.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::resetWebSettings):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+        (WebPreferences):
+
 2012-04-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         webkitpy build fix. Revert the debug change (number of runs was 2 instead of 20),

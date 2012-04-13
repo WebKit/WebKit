@@ -3269,7 +3269,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
         WebLayerTreeView::Settings layerTreeViewSettings;
         layerTreeViewSettings.acceleratePainting = page()->settings()->acceleratedDrawingEnabled();
-        layerTreeViewSettings.compositeOffscreen = settings()->compositeToTextureEnabled();
         layerTreeViewSettings.showFPSCounter = settings()->showFPSCounter();
         layerTreeViewSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
 

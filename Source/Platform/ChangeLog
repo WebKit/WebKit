@@ -1,3 +1,16 @@
+2012-04-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove unused compositeToTexture / compositeOffscreen setting
+        https://bugs.webkit.org/show_bug.cgi?id=83733
+
+        Reviewed by Adrienne Walker.
+
+        Remove compositeOffscreen setting. This was an experiment that is no longer needed.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (Settings):
+
 2012-04-13  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move WebVideoFrame into Platform and remove WebCore::VideoFrameChromium wrapper API

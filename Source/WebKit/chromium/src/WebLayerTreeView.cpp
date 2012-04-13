@@ -41,7 +41,6 @@ WebLayerTreeView::Settings::operator CCSettings() const
 {
     CCSettings settings;
     settings.acceleratePainting = acceleratePainting;
-    settings.compositeOffscreen = compositeOffscreen;
     settings.showFPSCounter = showFPSCounter;
     settings.showPlatformLayerTree = showPlatformLayerTree;
     settings.refreshRate = refreshRate;

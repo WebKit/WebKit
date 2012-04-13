@@ -75,7 +75,6 @@ protected:
 struct CCSettings {
     CCSettings()
             : acceleratePainting(false)
-            , compositeOffscreen(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
             , refreshRate(0)
@@ -85,7 +84,6 @@ struct CCSettings {
             , maxPartialTextureUpdates(std::numeric_limits<size_t>::max()) { }
 
     bool acceleratePainting;
-    bool compositeOffscreen;
     bool showFPSCounter;
     bool showPlatformLayerTree;
     double refreshRate;

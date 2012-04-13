@@ -103,8 +103,6 @@ public:
     virtual void setAcceleratedCompositingEnabled(bool);
     virtual void setForceCompositingMode(bool);
     virtual void setMockScrollbarsEnabled(bool);
-    virtual void setCompositeToTextureEnabled(bool);
-    virtual bool compositeToTextureEnabled() const { return m_compositeToTextureEnabled; }
     virtual void setAcceleratedCompositingFor3DTransformsEnabled(bool);
     virtual void setAcceleratedCompositingForVideoEnabled(bool);
     virtual void setAcceleratedCompositingForPluginsEnabled(bool);
@@ -146,7 +144,6 @@ public:
 
 private:
     WebCore::Settings* m_settings;
-    bool m_compositeToTextureEnabled;
     bool m_showFPSCounter;
     bool m_showPlatformLayerTree;
     bool m_viewportEnabled;

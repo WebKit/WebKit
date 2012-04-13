@@ -47,7 +47,6 @@ namespace WebKit {
 
 WebSettingsImpl::WebSettingsImpl(Settings* settings)
     : m_settings(settings)
-    , m_compositeToTextureEnabled(false)
     , m_showFPSCounter(false)
     , m_showPlatformLayerTree(false)
     , m_viewportEnabled(false)
@@ -353,11 +352,6 @@ void WebSettingsImpl::setForceCompositingMode(bool enabled)
 void WebSettingsImpl::setMockScrollbarsEnabled(bool enabled)
 {
     m_settings->setMockScrollbarsEnabled(enabled);
-}
-
-void WebSettingsImpl::setCompositeToTextureEnabled(bool enabled)
-{
-    m_compositeToTextureEnabled = enabled;
 }
 
 void WebSettingsImpl::setAcceleratedCompositingFor3DTransformsEnabled(bool enabled)

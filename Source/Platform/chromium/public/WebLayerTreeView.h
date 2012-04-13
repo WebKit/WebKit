@@ -50,7 +50,6 @@ public:
     struct Settings {
         Settings()
             : acceleratePainting(false)
-            , compositeOffscreen(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
             , refreshRate(0)
@@ -61,7 +60,6 @@ public:
         }
 
         bool acceleratePainting;
-        bool compositeOffscreen;
         bool showFPSCounter;
         bool showPlatformLayerTree;
         double refreshRate;
