@@ -220,6 +220,7 @@ BUGWK64731 : http/tests/media/media-source = FAIL
 
 // Encrypted Media Extensions are not enabled.
 BUGWKGTK SKIP : media/encrypted-media = FAIL
+BUGWKGTK SKIP : fast/events/constructors/media-key-event-constructor.html = FAIL
 
 // Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
 BUGWKGTK SKIP : fast/dom/HTMLAnchorElement/anchor-nodownload.html = FAIL
