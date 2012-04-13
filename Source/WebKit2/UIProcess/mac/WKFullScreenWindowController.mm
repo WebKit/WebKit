@@ -227,8 +227,8 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
     [[self window] makeResponder:webWindowFirstResponder firstResponderIfDescendantOfView:_webView];
 
-    [self _manager]->willEnterFullScreen();
     [self _manager]->setAnimatingFullScreen(true);
+    [self _manager]->willEnterFullScreen();
 }
 
 - (void)beganEnterFullScreenWithInitialFrame:(const WebCore::IntRect&)initialFrame finalFrame:(const WebCore::IntRect&)finalFrame
@@ -254,8 +254,8 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
     if (completed) {
         // Screen updates to be re-enabled ta the end of the current block.
         NSDisableScreenUpdates();
-        [self _manager]->setAnimatingFullScreen(false);
         [self _manager]->didEnterFullScreen();
+        [self _manager]->setAnimatingFullScreen(false);
 
         NSRect windowBounds = [[self window] frame];
         windowBounds.origin = NSZeroPoint;
@@ -299,8 +299,8 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
     NSDisableScreenUpdates();
     [[self window] setAutodisplay:NO];
 
-    [self _manager]->willExitFullScreen();
     [self _manager]->setAnimatingFullScreen(true);
+    [self _manager]->willExitFullScreen();
 }
 
 - (void)beganExitFullScreenWithInitialFrame:(const WebCore::IntRect&)initialFrame finalFrame:(const WebCore::IntRect&)finalFrame
@@ -349,8 +349,8 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
     // Screen updates to be re-enabled ta the end of the current function.
     NSDisableScreenUpdates();
 
-    [self _manager]->setAnimatingFullScreen(false);
     [self _manager]->didExitFullScreen();
+    [self _manager]->setAnimatingFullScreen(false);
 
     NSResponder *firstResponder = [[self window] firstResponder];
     [self _swapView:_webViewPlaceholder.get() with:_webView];

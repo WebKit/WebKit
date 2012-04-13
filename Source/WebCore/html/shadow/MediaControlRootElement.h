@@ -154,6 +154,7 @@ private:
 #endif
     Timer<MediaControlRootElement> m_hideFullscreenControlsTimer;
     bool m_isMouseOverControls;
+    bool m_isFullscreen;
 };
 
 }

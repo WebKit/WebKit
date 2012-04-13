@@ -1,3 +1,23 @@
+2012-04-13  Jer Noble  <jer.noble@apple.com>
+
+        Video at apple.com gets standard controls in addition to custom controls after returning from full screen
+        https://bugs.webkit.org/show_bug.cgi?id=83939
+
+        Reviewed by Eric Carlson.
+
+        So that the media controls don't show up momentarily during full screen animations, call setAnimatingFullScreen(true)
+        before calling will{Enter,Exit}FullScreen(), so that the CSS rule for full screen animation will be in effect
+        immediately.
+
+        Similarly, call setAnimatingFullScreen(false) after calling did{Enter,Exit}FullScreen, so that the full screen media
+        controls don't momentarily appear at the end of an animation.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+
 2012-04-13  Anders Carlsson  <andersca@apple.com>
 
         Make sure that we're using the right compiler for generating derived sources.

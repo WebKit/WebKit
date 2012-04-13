@@ -76,6 +76,7 @@ MediaControlRootElement::MediaControlRootElement(Document* document)
 #endif
     , m_hideFullscreenControlsTimer(this, &MediaControlRootElement::hideFullscreenControlsTimerFired)
     , m_isMouseOverControls(false)
+    , m_isFullscreen(false)
 {
 }
 
@@ -343,7 +344,7 @@ void MediaControlRootElement::reset()
     if (m_fullScreenVolumeSlider)
         m_fullScreenVolumeSlider->setVolume(m_mediaController->volume());
 
-    if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == toParentMediaElement(this)) {
+    if (m_isFullscreen) {
         if (m_mediaController->isLiveStream()) {
             m_seekBackButton->hide();
             m_seekForwardButton->hide();
@@ -374,7 +375,7 @@ void MediaControlRootElement::playbackStarted()
     m_timeline->setPosition(m_mediaController->currentTime());
     updateTimeDisplay();
 
-    if (m_mediaController->isFullscreen())
+    if (m_isFullscreen)
         startHideFullscreenControlsTimer();
 }
 
@@ -469,6 +470,8 @@ void MediaControlRootElement::changedVolume()
 
 void MediaControlRootElement::enteredFullscreen()
 {
+    m_isFullscreen = true;
+
     if (m_mediaController->isLiveStream()) {
         m_seekBackButton->hide();
         m_seekForwardButton->hide();
@@ -492,6 +495,8 @@ void MediaControlRootElement::enteredFullscreen()
 
 void MediaControlRootElement::exitedFullscreen()
 {
+    m_isFullscreen = false;
+
     // "show" actually means removal of display:none style, so we are just clearing styles
     // when exiting fullscreen.
     // FIXME: Clarify naming of show/hide <http://webkit.org/b/58157>
@@ -554,7 +559,7 @@ void MediaControlRootElement::defaultEventHandler(Event* event)
             stopHideFullscreenControlsTimer();
         }
     } else if (event->type() == eventNames().mousemoveEvent) {
-        if (m_mediaController->isFullscreen()) {
+        if (m_isFullscreen) {
             // When we get a mouse move in fullscreen mode, show the media controls, and start a timer
             // that will hide the media controls after a 3 seconds without a mouse move.
             makeOpaque();
@@ -566,7 +571,7 @@ void MediaControlRootElement::defaultEventHandler(Event* event)
 
 void MediaControlRootElement::startHideFullscreenControlsTimer()
 {
-    if (!m_mediaController->isFullscreen())
+    if (!m_isFullscreen)
         return;
     
     m_hideFullscreenControlsTimer.startOneShot(timeWithoutMouseMovementBeforeHidingControls);
@@ -577,7 +582,7 @@ void MediaControlRootElement::hideFullscreenControlsTimerFired(Timer<MediaContro
     if (m_mediaController->paused())
         return;
     
-    if (!m_mediaController->isFullscreen())
+    if (!m_isFullscreen)
         return;
     
     if (!shouldHideControls())
