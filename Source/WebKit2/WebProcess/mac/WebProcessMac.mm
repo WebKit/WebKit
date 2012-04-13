@@ -215,7 +215,7 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
 
     char* errorBuf;
     if (sandbox_init_with_parameters(profilePath, SANDBOX_NAMED_EXTERNAL, sandboxParameters.data(), &errorBuf)) {
-        WTFLogAlways("WebProcess: couldn't initialize sandbox profile [%s]\n", profilePath);
+        WTFLogAlways("WebProcess: couldn't initialize sandbox profile [%s] error '%s'\n", profilePath, errorBuf);
         for (size_t i = 0; sandboxParameters[i]; i += 2)
             WTFLogAlways("%s=%s\n", sandboxParameters[i], sandboxParameters[i + 1]);
         exit(EX_NOPERM);

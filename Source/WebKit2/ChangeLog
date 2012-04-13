@@ -1,3 +1,13 @@
+2012-04-13  Anders Carlsson  <andersca@apple.com>
+
+        Include the error if we fail to initialize the web process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=83927
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::initializeSandbox):
+
 2012-04-13  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11176921> and https://bugs.webkit.org/show_bug.cgi?id=83600
