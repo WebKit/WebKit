@@ -72,10 +72,7 @@ bool CCSingleThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect
     TRACE_EVENT("CCSingleThreadProxy::compositeAndReadback", this, 0);
     ASSERT(CCProxy::isMainThread());
 
-    if (!commitIfNeeded())
-        return false;
-
-    if (!doComposite())
+    if (!commitAndComposite())
         return false;
 
     m_layerTreeHostImpl->readback(pixels, rect);
@@ -272,16 +269,13 @@ void CCSingleThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr
 // Called by the legacy scheduling path (e.g. where render_widget does the scheduling)
 void CCSingleThreadProxy::compositeImmediately()
 {
-    if (!commitIfNeeded())
-        return;
-
-    if (doComposite()) {
+    if (commitAndComposite()) {
         m_layerTreeHostImpl->swapBuffers();
         didSwapFrame();
     }
 }
 
-bool CCSingleThreadProxy::commitIfNeeded()
+bool CCSingleThreadProxy::commitAndComposite()
 {
     ASSERT(CCProxy::isMainThread());
 
@@ -291,7 +285,7 @@ bool CCSingleThreadProxy::commitIfNeeded()
         return false;
 
     doCommit(updater);
-    return true;
+    return doComposite();
 }
 
 bool CCSingleThreadProxy::doComposite()
