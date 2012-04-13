@@ -40,8 +40,8 @@ PASS new Audio() is non-null.
 PASS new Audio().tagName is "AUDIO"
 PASS new Audio().src is ""
 PASS new Audio().preload is "auto"
-PASS new Audio('http://localhost/someurl').src is "http://localhost/someurl"
-PASS new Audio('http://localhost/someurl').preload is "auto"
+PASS new Audio('http://0.0.0.0/someurl').src is "http://0.0.0.0/someurl"
+PASS new Audio('http://0.0.0.0/someurl').preload is "auto"
 PASS successfullyParsed is true
 
 TEST COMPLETE

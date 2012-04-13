@@ -19,10 +19,10 @@
                 log("FAIL: No webkitNotifications interface!");
             }
             
-            var N = window.webkitNotifications.createHTMLNotification("http://localhost/my_notification.html");
+            var N = window.webkitNotifications.createHTMLNotification("http://0.0.0.0/my_notification.html");
             N.show();
             
-            var M = window.webkitNotifications.createNotification("http://localhost/my_icon.png", "New E-mail", "Meet me tonight at 8!");
+            var M = window.webkitNotifications.createNotification("http://0.0.0.0/my_icon.png", "New E-mail", "Meet me tonight at 8!");
             M.ondisplay = function() { layoutTestController.notifyDone(); }
             M.show();
         }
