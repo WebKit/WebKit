@@ -2950,6 +2950,7 @@ BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 BUGWK83303 WIN LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = PASS IMAGE
 BUGWK83303 WIN LINUX : svg/zoom/page/zoom-hixie-mixed-009.xml = PASS IMAGE
 BUGWK83303 LINUX : svg/hixie/mixed/009.xml = PASS IMAGE
+BUGWK83306 WIN : svg/hixie/mixed/009.xml = IMAGE
 BUGWK83303 LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
 BUGWK83303 WIN LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
 BUGWK83303 LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = PASS IMAGE
