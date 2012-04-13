@@ -123,14 +123,6 @@ void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadin
     m_trackElement->didCompleteLoad(this, loadingFailed ? HTMLTrackElement::Failure : HTMLTrackElement::Success);
 }
 
-void LoadableTextTrack::fireCueChangeEvent()
-{
-    RefPtr<Event> event = Event::create(eventNames().cuechangeEvent, false, false);
-    ExceptionCode ec = 0;
-
-    m_trackElement->dispatchEvent(event, ec);
-}
-
 size_t LoadableTextTrack::trackElementIndex()
 {
     ASSERT(m_trackElement);

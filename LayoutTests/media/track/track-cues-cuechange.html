@@ -28,17 +28,17 @@
             consoleWrite("");
         }
 
-        function cueChangedFromTrackElement()
-        {
-            consoleWrite("EVENT(cuechange) from &lt;track&gt;");
-        }
-
         function cueChangedFromTextTrack()
         {
             consoleWrite("EVENT(cuechange) from TextTrack");
+        }
+
+        function cueChangedFromTrackElement()
+        {
+            consoleWrite("EVENT(cuechange) from &lt;track&gt;");
 
             currentCueIndex = Math.floor(cueChangeCount / 2);
-            currentCue = event.target.cues[currentCueIndex];
+            currentCue = event.target.track.cues[currentCueIndex];
             checkCue();
 
             ++cueChangeCount;

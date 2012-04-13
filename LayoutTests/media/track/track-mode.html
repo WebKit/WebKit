@@ -61,15 +61,20 @@
                 consoleWrite("<b>++ 'TextTrack.SHOWING'</b>");
                 setMode(TextTrack.SHOWING);
 
-                consoleWrite("++ " + (textTrack.cues.length - 1) + " events expected while mode = TextTrack.SHOWING");
+                consoleWrite("++ " + (textTrack.cues.length - 1) * 2 + " events expected while mode = TextTrack.SHOWING");
             }
             
             waitForEvent('cuechange',
-                function ()
+                function (event)
                 {
-                    testExpected("textTrack.activeCues.length", 1);
+                    // Expect a cuechange event for enter and exit of each cue.
+                    if (textTrack.activeCues.length > 0)
+                        consoleWrite("Cue entered: " + textTrack.activeCues[0].text);
+
+                    // Alternate between cue enter and cue exit.
+                    testExpected("textTrack.activeCues.length", cueCount % 2 ? 0 : 1);
                     cueCount++;
-                    if (cueCount == textTrack.cues.length)
+                    if (cueCount == (textTrack.cues.length - 1) * 2)
                         endTest();
 
                 }

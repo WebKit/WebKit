@@ -21,8 +21,6 @@ EXPECTED (textTrack.cues == 'null') OK
 
 ++ 'TextTrack.HIDDEN'
 RUN(textTrack.mode = '1')
-EVENT(cuechange)
-EXPECTED (textTrack.activeCues.length == '1'), OBSERVED '0' FAIL
 EXPECTED (textTrack.mode == '1') OK
 EXPECTED (video.textTracks[0].mode == '1') OK
 EXPECTED (textTrack.cues.length == '4') OK
@@ -33,12 +31,21 @@ EXPECTED (textTrack.mode == '2') OK
 EXPECTED (video.textTracks[0].mode == '2') OK
 EXPECTED (textTrack.cues.length == '4') OK
 
-++ 3 events expected while mode = TextTrack.SHOWING
+++ 6 events expected while mode = TextTrack.SHOWING
 EVENT(cuechange)
+Cue entered: ipsum
 EXPECTED (textTrack.activeCues.length == '1') OK
 EVENT(cuechange)
+EXPECTED (textTrack.activeCues.length == '0') OK
+EVENT(cuechange)
+Cue entered: dolor
 EXPECTED (textTrack.activeCues.length == '1') OK
 EVENT(cuechange)
+EXPECTED (textTrack.activeCues.length == '0') OK
+EVENT(cuechange)
+Cue entered: sit
 EXPECTED (textTrack.activeCues.length == '1') OK
+EVENT(cuechange)
+EXPECTED (textTrack.activeCues.length == '0') OK
 END OF TEST
 

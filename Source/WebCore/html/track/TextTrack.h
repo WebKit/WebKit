@@ -99,8 +99,6 @@ public:
     void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
     void removeCue(TextTrackCue*, ExceptionCode&);
 
-    virtual void fireCueChangeEvent() { };
-
     void cueWillChange(TextTrackCue*);
     void cueDidChange(TextTrackCue*);
 

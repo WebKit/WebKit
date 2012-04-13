@@ -61,8 +61,6 @@ public:
     size_t trackElementIndex();
     HTMLTrackElement* trackElement() { return m_trackElement; }
 
-    virtual void fireCueChangeEvent();
-
 private:
     // TextTrackLoaderClient
     virtual bool shouldLoadCues(TextTrackLoader*) { return true; }

@@ -1185,18 +1185,23 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
     nonCopyingSort(affectedTracks.begin(), affectedTracks.end(), trackIndexCompare);
 
     // 15 - For each text track in affected tracks, in the list order, queue a
-    // task to fire a simple event named cuechange at the TextTrack object, and,
-    // if the text track has a corresponding track element, to then fire a
-    // simple event named cuechange at the track element as well.
+    // task to fire a simple event named cuechange at the TextTrack object, and, ...
     for (size_t i = 0; i < affectedTracks.size(); ++i) {
         RefPtr<Event> event = Event::create(eventNames().cuechangeEvent, false, false);
         event->setTarget(affectedTracks[i]);
 
         m_asyncEventQueue->enqueueEvent(event.release());
 
-        // Fire syncronous cue change event for track elements.
-        if (affectedTracks[i]->trackType() == TextTrack::TrackElement)
-            affectedTracks[i]->fireCueChangeEvent();
+        // ... if the text track has a corresponding track element, to then fire a
+        // simple event named cuechange at the track element as well.
+        if (affectedTracks[i]->trackType() == TextTrack::TrackElement) {
+            RefPtr<Event> event = Event::create(eventNames().cuechangeEvent, false, false);
+            HTMLTrackElement* trackElement = static_cast<LoadableTextTrack*>(affectedTracks[i])->trackElement();
+            ASSERT(trackElement);
+            event->setTarget(trackElement);
+            
+            m_asyncEventQueue->enqueueEvent(event.release());
+        }
     }
 
     // 16 - Set the text track cue active flag of all the cues in the current
