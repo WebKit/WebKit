@@ -2,52 +2,50 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>hant</key> /* Traditional Chinese */
+    <key>hant</key> <!-- Traditional Chinese -->
     <dict>
         <key>monospace</key>
         <string>Heiti TC</string>
         <key>standard</key>
-        <string>Heiti TC</string>
+        <string>Apple LiSung</string>
         <key>sans-serif</key>
         <string>Heiti TC</string>
         <key>serif</key>
         <string>Apple LiSung</string>
     </dict>
-    <key>hans</key> /* Simplified Chinese */
+    <key>hans</key> <!-- Simplified Chinese -->
     <dict>
         <key>monospace</key>
         <string>Heiti SC</string>
         <key>standard</key>
-        <string>Heiti SC</string>
+        <string>STSong</string>
         <key>sans-serif</key>
         <string>Heiti SC</string>
         <key>serif</key>
         <string>STSong</string>
     </dict>
-    <key>hrkt</key>  /* Japanese */
+    <key>hrkt</key>  <!-- Japanese -->
     <dict>
         <key>monospace</key>
         <string>Osaka-Mono</string>
         <key>standard</key>
-        <string>Hiragino Kaku Gothic Pro</string>
+        <string>Hiragino Mincho ProN</string>
         <key>sans-serif</key>
-        <string>Hiragino Kaku Gothic Pro</string>
+        <string>Hiragino Kaku Gothic ProN</string>
         <key>serif</key>
-        <string>Hiragino Mincho Pro</string>
+        <string>Hiragino Mincho ProN</string>
     </dict>
-    <key>hang</key> /* Korean */
+    <key>hang</key> <!-- Korean -->
     <dict>
+        <key>standard</key>
+        <string>AppleMyungjo</string>
 #if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
         <key>monospace</key>
-        <string>Apple SD Gothic Neo</string>
-        <key>standard</key>
         <string>Apple SD Gothic Neo</string>
         <key>sans-serif</key>
         <string>Apple SD Gothic Neo</string>
 #else
         <key>monospace</key>
-        <string>AppleGothic</string>
-        <key>standard</key>
         <string>AppleGothic</string>
         <key>sans-serif</key>
         <string>AppleGothic</string>
@@ -55,7 +53,7 @@
         <key>serif</key>
         <string>AppleMyungjo</string>
     </dict>
-    <key>zyyy</key> /* Other scripts (USCRIPT_COMMON) */
+    <key>zyyy</key> <!-- Other scripts (USCRIPT_COMMON) -->
     <dict>
         <key>monospace</key>
         <string>Courier</string>
