@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#ifndef QT_NO_BEARERMANAGEMENT
 #include <QNetworkConfigurationManager>
+#endif
 
 #include <QtTest/QtTest>
 
@@ -44,7 +46,9 @@ private Q_SLOTS:
     void textAreas();
 
 private:
+#ifndef QT_NO_BEARERMANAGEMENT
     QNetworkConfigurationManager m_manager;
+#endif
     QWebView* m_view;
     QWebPage* m_page;
 };
@@ -74,8 +78,10 @@ void tst_Painting::paint()
 {
     QFETCH(QUrl, url);
 
+#ifndef QT_NO_BEARERMANAGEMENT
     if (!m_manager.isOnline())
         W_QSKIP("This test requires an active network connection", SkipSingle);
+#endif
 
     m_view->load(url);
     ::waitForSignal(m_view, SIGNAL(loadFinished(bool)), 0);

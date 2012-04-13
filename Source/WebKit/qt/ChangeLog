@@ -1,5 +1,18 @@
 2012-04-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Build fix with QT_NO_BEARERMANAGEMENT
+
+        Reviewed by Jocelyn Turcotte.
+
+        * tests/benchmarks/loading/tst_loading.cpp:
+        (tst_Loading):
+        (tst_Loading::load):
+        * tests/benchmarks/painting/tst_painting.cpp:
+        (tst_Painting):
+        (tst_Painting::paint):
+
+2012-04-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Fix build on OS X
 
         We were manually including the directories needed from WTF, instead of
