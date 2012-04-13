@@ -1629,6 +1629,9 @@ void Document::recalcStyle(StyleChange change)
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(this);
 
+    if (m_elemSheet && m_elemSheet->internal()->usesRemUnits())
+        m_usesRemUnits = true;
+
     m_inStyleRecalc = true;
     suspendPostAttachCallbacks();
     RenderWidget::suspendWidgetHierarchyUpdates();
@@ -3221,7 +3224,7 @@ void Document::removeStyleSheetCandidateNode(Node* node)
 {
     m_styleSheetCandidateNodes.remove(node);
 }
-    
+
 void Document::collectActiveStylesheets(Vector<RefPtr<StyleSheet> >& sheets)
 {
     bool matchAuthorAndUserStyles = true;
@@ -3396,6 +3399,17 @@ void Document::analyzeStylesheetChange(StyleSelectorUpdateFlag updateFlag, const
     requiresFullStyleRecalc = false;
 }
 
+static bool styleSheetsUseRemUnits(const Vector<RefPtr<StyleSheet> >& sheets)
+{
+    for (unsigned i = 0; i < sheets.size(); ++i) {
+        if (!sheets[i]->isCSSStyleSheet())
+            continue;
+        if (static_cast<CSSStyleSheet*>(sheets[i].get())->internal()->usesRemUnits())
+            return true;
+    }
+    return false;
+}
+
 bool Document::updateActiveStylesheets(StyleSelectorUpdateFlag updateFlag)
 {
     if (m_inStyleRecalc) {
@@ -3424,6 +3438,7 @@ bool Document::updateActiveStylesheets(StyleSelectorUpdateFlag updateFlag)
     }
     m_styleSheets->swap(newStylesheets);
 
+    m_usesRemUnits = styleSheetsUseRemUnits(m_styleSheets->vector());
     m_didCalculateStyleSelector = true;
     m_hasDirtyStyleSelector = false;
     

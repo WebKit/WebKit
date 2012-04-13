@@ -85,6 +85,7 @@ StyleSheetInternal::StyleSheetInternal(Node* parentNode, const String& originalU
     , m_isUserStyleSheet(false)
     , m_hasSyntacticallyValidCSSHeader(true)
     , m_didLoadErrorOccur(false)
+    , m_usesRemUnits(false)
 {
     ASSERT(isAcceptableCSSStyleSheetParent(parentNode));
 }
@@ -99,6 +100,7 @@ StyleSheetInternal::StyleSheetInternal(StyleRuleImport* ownerRule, const String&
     , m_cssParserMode((ownerRule && ownerRule->parentStyleSheet()) ? ownerRule->parentStyleSheet()->cssParserMode() : CSSStrictMode)
     , m_hasSyntacticallyValidCSSHeader(true)
     , m_didLoadErrorOccur(false)
+    , m_usesRemUnits(false)
 {
     StyleSheetInternal* parentSheet = ownerRule ? ownerRule->parentStyleSheet() : 0;
     m_isUserStyleSheet = parentSheet ? parentSheet->isUserStyleSheet() : false;

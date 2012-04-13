@@ -1480,8 +1480,8 @@ unary_term:
       $$.fValue = $1;
       $$.unit = CSSPrimitiveValue::CSS_REMS;
       CSSParser* p = static_cast<CSSParser*>(parser);
-      if (Document* doc = p->findDocument())
-          doc->setUsesRemUnits(true);
+      if (p->m_styleSheet)
+          p->m_styleSheet->parserSetUsesRemUnits(true);
   }
   | VW maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VW; }
   | VH maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VH; }

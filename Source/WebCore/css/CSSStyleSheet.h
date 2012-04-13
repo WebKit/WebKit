@@ -101,6 +101,7 @@ public:
 
     void parserAppendRule(PassRefPtr<StyleRuleBase>);
     void parserSetEncodingFromCharsetRule(const String& encoding); 
+    void parserSetUsesRemUnits(bool b) { m_usesRemUnits = b; }
 
     void clearRules();
 
@@ -131,6 +132,8 @@ public:
     KURL baseURL() const;
 
     unsigned ruleCount() const;
+    
+    bool usesRemUnits() const { return m_usesRemUnits; }
     
     bool wrapperInsertRule(PassRefPtr<StyleRuleBase>, unsigned index);
     void wrapperDeleteRule(unsigned index);
@@ -163,6 +166,7 @@ private:
     bool m_isUserStyleSheet : 1;
     bool m_hasSyntacticallyValidCSSHeader : 1;
     bool m_didLoadErrorOccur : 1;
+    bool m_usesRemUnits : 1;
 };
 
 class CSSStyleSheet : public StyleSheet {
