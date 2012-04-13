@@ -1,5 +1,13 @@
 2012-04-13  Anders Carlsson  <andersca@apple.com>
 
+        Make sure that we're using the right compiler for generating derived sources.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2012-04-13  Anders Carlsson  <andersca@apple.com>
+
         Include the error if we fail to initialize the web process sandbox
         https://bugs.webkit.org/show_bug.cgi?id=83927
 
