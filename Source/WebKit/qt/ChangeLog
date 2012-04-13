@@ -1,3 +1,16 @@
+2012-04-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Fix build on OS X
+
+        We were manually including the directories needed from WTF, instead of
+        using the WEBKIT qmake variable to add dependencies, which also adds
+        other tricks from WTF.pri, such as the right include paths for ICU.
+
+        Reviewed by Simon Hausmann.
+
+        * declarative/experimental/experimental.pri:
+        * declarative/public.pri:
+
 2012-04-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Fix WebKit1 build with V8

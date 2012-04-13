@@ -39,14 +39,6 @@ DESTDIR = $${ROOT_BUILD_DIR}/imports/$${TARGET.module_name}
 CONFIG += rpath
 RPATHDIR_RELATIVE_TO_DESTDIR = ../../lib
 
-# FIXME: Why are these needed, and why can't we use WEBKIT += ... ?
-INCLUDEPATH += \
-    ../../../WebKit2/Shared/qt \
-    ../../../JavaScriptCore \
-    ../../../JavaScriptCore/runtime \
-    ../../../JavaScriptCore/wtf \
-    ../../../WTF
-
 SOURCES += plugin.cpp
 
 !no_webkit2: {

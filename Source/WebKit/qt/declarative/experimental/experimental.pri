@@ -35,16 +35,7 @@ SOURCES += plugin.cpp
 
 DEFINES += HAVE_WEBKIT2
 
-# FIXME: Why are these needed, and why can't we use WEBKIT += ... ?
-INCLUDEPATH += \
-    ../../../../WebKit2/Shared/qt \
-    ../../../../JavaScriptCore \
-    ../../../../JavaScriptCore/wtf \
-    ../../../../JavaScriptCore/wtf/unicode \
-    ../../../../JavaScriptCore/runtime \
-    ../../../../WebKit2/Platform \
-    ../../../../WebKit2/Platform/CoreIPC \
-    ../../../../WTF
+WEBKIT += wtf javascriptcore webkit2
 
 target.path = $$[QT_INSTALL_IMPORTS]/$${TARGET.module_name}
 
