@@ -2787,6 +2787,7 @@ BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = PASS T
 
 BUGCR85293 LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
 BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
+BUGWK83875 LINUX : svg/text/font-size-below-point-five.svg = PASS TEXT
 
 BUGWK81310 : fast/dom/shadow/content-element-in-media-element.html = TEXT
 
