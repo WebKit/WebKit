@@ -1,0 +1,13 @@
+<html>
+<body>
+    <p>This test verifies that switching delegates scrolling on a page with no composition does not assert.</p>
+    <p>PASS if no crash or assert in debug.</p>
+
+<script>
+if (window.layoutTestController && window.internals && internals.setDelegatesScrolling) {
+    layoutTestController.dumpAsText();
+    internals.setDelegatesScrolling(true, document);
+}
+</script>
+</body>
+</html>
