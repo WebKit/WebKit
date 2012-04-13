@@ -106,7 +106,7 @@ public:
     GraphicsContext* inputContext();
     ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }
 
-    void build(Document*, const FilterOperations&);
+    bool build(Document*, const FilterOperations&);
     bool updateBackingStore(const FloatRect& filterRect);
     void clearIntermediateResults();
     void prepare();

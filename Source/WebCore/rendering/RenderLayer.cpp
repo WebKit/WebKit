@@ -4851,7 +4851,10 @@ void RenderLayer::updateOrRemoveFilterEffect()
             m_filter->setRenderingMode(renderingMode);
         }
 
-        m_filter->build(renderer()->document(), renderer()->style()->filter());
+        // If the filter fails to build, remove it from the layer. It will still attempt to
+        // go through regular processing (e.g. compositing), but never apply anything.
+        if (!m_filter->build(renderer()->document(), renderer()->style()->filter()))
+            m_filter = 0;
     } else {
         m_filter = 0;
     }

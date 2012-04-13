@@ -66,8 +66,15 @@ static inline void lastMatrixRow(Vector<float>& parameters)
     parameters.append(1);
     parameters.append(0);
 }
-    
-    
+
+inline bool isFilterSizeValid(FloatRect rect)
+{
+    if (rect.width() < 0 || rect.width() > kMaxFilterSize
+        || rect.height() < 0 || rect.height() > kMaxFilterSize)
+        return false;
+    return true;
+}
+
 #if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
 static bool isCSSCustomFilterEnabled(Document* document)
 {
@@ -98,7 +105,7 @@ GraphicsContext* FilterEffectRenderer::inputContext()
     return sourceImage() ? sourceImage()->context() : 0;
 }
 
-void FilterEffectRenderer::build(Document* document, const FilterOperations& operations)
+bool FilterEffectRenderer::build(Document* document, const FilterOperations& operations)
 {
 #if !ENABLE(CSS_SHADERS) || !ENABLE(WEBGL)
     UNUSED_PARAM(document);
@@ -284,9 +291,9 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
         }
     }
 
-    // If we didn't make a real filter, create a null-op (FEMerge with one input).
+    // If we didn't make any effects, tell our caller we are not valid
     if (!previousEffect)
-        m_effects.append(FEMerge::create(this));
+        return false;
 
     m_effects.first()->inputEffects().append(m_sourceGraphic);
     setMaxEffectRects(m_sourceDrawingRegion);
@@ -295,11 +302,12 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
     removeCustomFilterClients();
     m_cachedCustomFilterPrograms.swap(cachedCustomFilterPrograms);
 #endif
+    return true;
 }
 
 bool FilterEffectRenderer::updateBackingStore(const FloatRect& filterRect)
 {
-    if (!filterRect.isZero()) {
+    if (!filterRect.isZero() && isFilterSizeValid(filterRect)) {
         FloatRect currentSourceRect = sourceImageRect();
         if (filterRect != currentSourceRect) {
             setSourceImageRect(filterRect);
@@ -380,8 +388,8 @@ GraphicsContext* FilterEffectRendererHelper::beginFilterEffect(GraphicsContext* 
     FilterEffectRenderer* filter = m_renderLayer->filter();
     // Paint into the context that represents the SourceGraphic of the filter.
     GraphicsContext* sourceGraphicsContext = filter->inputContext();
-    if (!sourceGraphicsContext) {
-        // Could not allocate a new graphics context. Disable the filters and continue.
+    if (!sourceGraphicsContext || !isFilterSizeValid(filter->filterRegion())) {
+        // Disable the filters and continue.
         m_haveFilterEffect = false;
         return oldContext;
     }

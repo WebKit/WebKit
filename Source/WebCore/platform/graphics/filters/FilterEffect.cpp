@@ -103,6 +103,9 @@ void FilterEffect::apply()
     }
     determineAbsolutePaintRect();
 
+    if (!isFilterSizeValid(m_absolutePaintRect))
+        return;
+
     if (requiresValidPreMultipliedPixels()) {
         for (unsigned i = 0; i < size; ++i)
             inputEffect(i)->correctFilterResultIfNeeded();
