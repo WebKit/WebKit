@@ -625,14 +625,28 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
     return JSValue::encode(jsSpliceSubstringsWithSeparators(exec, string, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
 }
 
-static NEVER_INLINE EncodedJSValue replaceUsingStringSearch(ExecState* exec, JSString* jsString, JSValue searchValue, JSValue replaceValue)
+static inline EncodedJSValue replaceUsingStringSearch(ExecState* exec, JSString* jsString, JSValue searchValue, JSValue replaceValue)
 {
     const UString& string = jsString->value(exec);
-    UString searchString = searchValue.toString(exec)->value(exec);
+    UString searchString = searchValue.toUString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    size_t matchStart = string.find(searchString);
+    size_t searchStringLength = searchString.length();
+
+    size_t matchStart;
+    if (searchStringLength == 1) {
+        StringImpl* searchStringImpl = searchString.impl();
+        UChar searchCharacter;
+        if (searchStringImpl->is8Bit())
+            searchCharacter = searchStringImpl->characters8()[0];
+        else
+            searchCharacter = searchStringImpl->characters16()[0];
+
+        matchStart = string.find(searchCharacter);
+    } else
+        matchStart = string.find(searchString);
+
     if (matchStart == notFound)
         return JSValue::encode(jsString);
 
@@ -640,7 +654,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingStringSearch(ExecState* exec, JSS
     CallType callType = getCallData(replaceValue, callData);
     if (callType != CallTypeNone) {
         MarkedArgumentBuffer args;
-        args.append(jsSubstring(exec, string, matchStart, searchString.length()));
+        args.append(jsSubstring(exec, string, matchStart, searchStringLength));
         args.append(jsNumber(matchStart));
         args.append(jsString);
         replaceValue = call(exec, replaceValue, callType, callData, jsUndefined(), args);
@@ -648,13 +662,20 @@ static NEVER_INLINE EncodedJSValue replaceUsingStringSearch(ExecState* exec, JSS
             return JSValue::encode(jsUndefined());
     }
 
-    UString replaceString = replaceValue.toString(exec)->value(exec);
+    UString replaceString = replaceValue.toUString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    size_t matchEnd = matchStart + searchString.length();
+    StringImpl* stringImpl = string.impl();
+    UString leftPart(StringImpl::create(stringImpl, 0, matchStart));
+
+    size_t matchEnd = matchStart + searchStringLength;
     int ovector[2] = { matchStart,  matchEnd};
-    return JSValue::encode(JSC::jsString(exec, string.substringSharingImpl(0, matchStart), substituteBackreferences(replaceString, string, ovector, 0), string.substringSharingImpl(matchEnd)));
+    UString middlePart = substituteBackreferences(replaceString, string, ovector, 0);
+
+    size_t leftLength = stringImpl->length() - matchEnd;
+    UString rightPart(StringImpl::create(stringImpl, matchEnd, leftLength));
+    return JSValue::encode(JSC::jsString(exec, leftPart, middlePart, rightPart));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
