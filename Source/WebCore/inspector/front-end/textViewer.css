@@ -138,9 +138,7 @@
 }
 
 .webkit-execution-line .webkit-line-number-outer {
-    color: rgb(142, 5, 4);
-    font-weight: bold;
-    outline: 1px solid rgb(64, 115, 244);
+    color: transparent;
     border-width: 0 14px 0px 2px;
     -webkit-border-image: url(Images/programCounterBorder.png) 0 14 0 2;
 }
@@ -151,16 +149,12 @@
 }
 
 .webkit-breakpoint.webkit-execution-line .webkit-line-number-outer {
-    color: white;
-    font-weight: bold;
-    outline: 1px solid rgb(64, 115, 244);
+    color: transparent;
     -webkit-border-image: url(Images/breakpointCounterBorder.png) 0 14 0 2;
 }
 
 .webkit-breakpoint-conditional.webkit-execution-line .webkit-line-number-outer {
-    color: white;
-    font-weight: bold;
-    outline: 1px solid rgb(64, 115, 244);
+    color: transparent;
     -webkit-border-image: url(Images/breakpointConditionalCounterBorder.png) 0 14 0 2;
 }
 
