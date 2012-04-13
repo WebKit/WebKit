@@ -436,7 +436,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
             matchRanges.push({ offset: match.index, length: match[0].length });
             match = regexObject.exec(text);
         }
-        highlightSearchResults(element, matchRanges);
+        WebInspector.highlightSearchResults(element, matchRanges);
     },
 
     matchesRegex: function(regexObject)

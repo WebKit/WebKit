@@ -73649,10 +73649,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\BinarySearch.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\BottomUpProfileDataGridTree.js"
 					>
 				</File>
@@ -73782,6 +73778,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\DOMBreakpointsSidebarPane.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\DOMExtension.js"
 					>
 				</File>
 				<File
@@ -74030,10 +74030,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\UglifyJS\parse-js.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\PartialQuickSort.js"
 					>
 				</File>
 				<File

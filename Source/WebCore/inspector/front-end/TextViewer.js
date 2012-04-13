@@ -1512,7 +1512,7 @@ WebInspector.TextEditorMainPanel.prototype = {
                 lineRow.appendChild(lineRow.decorationsElement);
         } finally {
             if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
-                this._markedRangeElement = highlightSearchResult(lineRow, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
+                this._markedRangeElement = WebInspector.highlightSearchResult(lineRow, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
             this.endDomUpdates();
         }
     },

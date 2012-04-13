@@ -671,6 +671,144 @@ WebInspector.resetToolbarColors = function()
 }
 
 /**
+ * @param {Element} element
+ * @param {number} offset
+ * @param {number} length
+ * @param {Array.<Object>=} domChanges
+ */
+WebInspector.highlightSearchResult = function(element, offset, length, domChanges)
+{
+    var result = WebInspector.highlightSearchResults(element, [{offset: offset, length: length }], domChanges);
+    return result.length ? result[0] : null;
+}
+
+/**
+ * @param {Element} element
+ * @param {Array.<Object>} resultRanges
+ * @param {Array.<Object>=} changes
+ */
+WebInspector.highlightSearchResults = function(element, resultRanges, changes)
+{
+    return WebInspector.highlightRangesWithStyleClass(element, resultRanges, "webkit-search-result", changes);
+}
+
+/**
+ * @param {Element} element
+ * @param {Array.<Object>} resultRanges
+ * @param {string} styleClass
+ * @param {Array.<Object>=} changes
+ */
+WebInspector.highlightRangesWithStyleClass = function(element, resultRanges, styleClass, changes)
+{
+    changes = changes || [];
+    var highlightNodes = [];
+    var lineText = element.textContent;
+    var ownerDocument = element.ownerDocument;
+    var textNodeSnapshot = ownerDocument.evaluate(".//text()", element, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+
+    var snapshotLength = textNodeSnapshot.snapshotLength;
+    if (snapshotLength === 0)
+        return highlightNodes;
+
+    var nodeRanges = [];
+    var rangeEndOffset = 0;
+    for (var i = 0; i < snapshotLength; ++i) {
+        var range = {};
+        range.offset = rangeEndOffset;
+        range.length = textNodeSnapshot.snapshotItem(i).textContent.length;
+        rangeEndOffset = range.offset + range.length;
+        nodeRanges.push(range);
+    }
+
+    var startIndex = 0;
+    for (var i = 0; i < resultRanges.length; ++i) {
+        var startOffset = resultRanges[i].offset;
+        var endOffset = startOffset + resultRanges[i].length;
+
+        while (startIndex < snapshotLength && nodeRanges[startIndex].offset + nodeRanges[startIndex].length <= startOffset)
+            startIndex++;
+        var endIndex = startIndex;
+        while (endIndex < snapshotLength && nodeRanges[endIndex].offset + nodeRanges[endIndex].length < endOffset)
+            endIndex++;
+        if (endIndex === snapshotLength)
+            break;
+
+        var highlightNode = ownerDocument.createElement("span");
+        highlightNode.className = styleClass;
+        highlightNode.textContent = lineText.substring(startOffset, endOffset);
+
+        var lastTextNode = textNodeSnapshot.snapshotItem(endIndex);
+        var lastText = lastTextNode.textContent;
+        lastTextNode.textContent = lastText.substring(endOffset - nodeRanges[endIndex].offset);
+        changes.push({ node: lastTextNode, type: "changed", oldText: lastText, newText: lastTextNode.textContent });
+
+        if (startIndex === endIndex) {
+            lastTextNode.parentElement.insertBefore(highlightNode, lastTextNode);
+            changes.push({ node: highlightNode, type: "added", nextSibling: lastTextNode, parent: lastTextNode.parentElement });
+            highlightNodes.push(highlightNode);
+
+            var prefixNode = ownerDocument.createTextNode(lastText.substring(0, startOffset - nodeRanges[startIndex].offset));
+            lastTextNode.parentElement.insertBefore(prefixNode, highlightNode);
+            changes.push({ node: prefixNode, type: "added", nextSibling: highlightNode, parent: lastTextNode.parentElement });
+        } else {
+            var firstTextNode = textNodeSnapshot.snapshotItem(startIndex);
+            var firstText = firstTextNode.textContent;
+            var anchorElement = firstTextNode.nextSibling;
+
+            firstTextNode.parentElement.insertBefore(highlightNode, anchorElement);
+            changes.push({ node: highlightNode, type: "added", nextSibling: anchorElement, parent: firstTextNode.parentElement });
+            highlightNodes.push(highlightNode);
+
+            firstTextNode.textContent = firstText.substring(0, startOffset - nodeRanges[startIndex].offset);
+            changes.push({ node: firstTextNode, type: "changed", oldText: firstText, newText: firstTextNode.textContent });
+
+            for (var j = startIndex + 1; j < endIndex; j++) {
+                var textNode = textNodeSnapshot.snapshotItem(j);
+                var text = textNode.textContent;
+                textNode.textContent = "";
+                changes.push({ node: textNode, type: "changed", oldText: text, newText: textNode.textContent });
+            }
+        }
+        startIndex = endIndex;
+        nodeRanges[startIndex].offset = endOffset;
+        nodeRanges[startIndex].length = lastTextNode.textContent.length;
+
+    }
+    return highlightNodes;
+}
+
+WebInspector.applyDomChanges = function(domChanges)
+{
+    for (var i = 0, size = domChanges.length; i < size; ++i) {
+        var entry = domChanges[i];
+        switch (entry.type) {
+        case "added":
+            entry.parent.insertBefore(entry.node, entry.nextSibling);
+            break;
+        case "changed":
+            entry.node.textContent = entry.newText;
+            break;
+        }
+    }
+}
+
+WebInspector.revertDomChanges = function(domChanges)
+{
+    for (var i = domChanges.length - 1; i >= 0; --i) {
+        var entry = domChanges[i];
+        switch (entry.type) {
+        case "added":
+            if (entry.node.parentElement)
+                entry.node.parentElement.removeChild(entry.node);
+            break;
+        case "changed":
+            entry.node.textContent = entry.oldText;
+            break;
+        }
+    }
+}
+
+/**
  * @param {WebInspector.ContextMenu} contextMenu
  * @param {Node} contextNode
  * @param {Event} event

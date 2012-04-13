@@ -1757,7 +1757,7 @@ WebInspector.ElementsTreeElement.prototype = {
             matchRanges.push({ offset: 0, length: text.length });
 
         this._highlightResult = [];
-        highlightSearchResults(this.listItemElement, matchRanges, this._highlightResult);
+        WebInspector.highlightSearchResults(this.listItemElement, matchRanges, this._highlightResult);
     }
 }
 

@@ -1112,7 +1112,7 @@ WebInspector.NetworkLogView.prototype = {
     _highlightNthMatchedRequest: function(matchedRequestIndex, reveal)
     {
         if (this._highlightedSubstringChanges) {
-            revertDomChanges(this._highlightedSubstringChanges);
+            WebInspector.revertDomChanges(this._highlightedSubstringChanges);
             this._highlightedSubstringChanges = null;
         }
 
@@ -1733,7 +1733,7 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         var domChanges = [];
         var matchInfo = this._nameCell.textContent.match(regexp);
-        highlightSearchResult(this._nameCell, matchInfo.index, matchInfo[0].length, domChanges);
+        WebInspector.highlightSearchResult(this._nameCell, matchInfo.index, matchInfo[0].length, domChanges);
         return domChanges;
     },
 

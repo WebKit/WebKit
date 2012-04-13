@@ -681,7 +681,7 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
         var contentSpan = document.createElement("span");
         contentSpan.className = "search-match-content";
         contentSpan.textContent = lineContent;
-        highlightRangesWithStyleClass(contentSpan, matchRanges, "highlighted-match");
+        WebInspector.highlightRangesWithStyleClass(contentSpan, matchRanges, "highlighted-match");
         return contentSpan;
     }
 }

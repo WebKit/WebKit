@@ -161,7 +161,7 @@ WebInspector.HeapSnapshotLoader.prototype = {
             var closingBracketIndex = this._findBalancedCurlyBrackets();
             if (closingBracketIndex === -1)
                 return;
-            this._snapshot.snapshot = JSON.parse(this._json.slice(0, closingBracketIndex));
+            this._snapshot.snapshot = /** @type {HeapSnapshotHeader} */JSON.parse(this._json.slice(0, closingBracketIndex));
             this._json = this._json.slice(closingBracketIndex);
             this._state = "find-nodes";
             this.pushJSONChunk("");
@@ -852,6 +852,19 @@ function HeapSnapshotMetainfo()
     // Old format.
     this.fields = [];
     this.types = [];
+}
+
+/**
+ * @constructor
+ */
+function HeapSnapshotHeader()
+{
+    // New format.
+    this.title = "";
+    this.uid = 0;
+    this.meta = new HeapSnapshotMetainfo();
+    this.node_count = 0;
+    this.edge_count = 0;
 }
 
 WebInspector.HeapSnapshot.prototype = {

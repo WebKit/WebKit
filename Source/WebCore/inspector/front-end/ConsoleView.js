@@ -743,7 +743,7 @@ WebInspector.ConsoleCommand.prototype = {
             matchRanges.push({ offset: match.index, length: match[0].length });
             match = regexObject.exec(text);
         }
-        highlightSearchResults(this._formattedCommand, matchRanges);
+        WebInspector.highlightSearchResults(this._formattedCommand, matchRanges);
         this._element.scrollIntoViewIfNeeded();
     },
 

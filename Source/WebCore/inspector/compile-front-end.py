@@ -37,6 +37,7 @@ modules = [
         "target_name": "util",
         "dependencies": [],
         "sources": [
+            "DOMExtension.js",
             "utilities.js",
             "treeoutline.js",
         ]
@@ -45,9 +46,7 @@ modules = [
         "target_name": "common",
         "dependencies": ["util"],
         "sources": [
-            "BinarySearch.js",
             "Object.js",
-            "PartialQuickSort.js",
             "Settings.js",
             "UserMetrics.js",
             "HandlerRegistry.js",

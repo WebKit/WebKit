@@ -40,11 +40,11 @@ function test()
     {
         var changes = [];
         InspectorTest.addResult("--------- Running test: ----------");
-        highlightRangesWithStyleClass(element, ranges, "highlighted", changes);
+        WebInspector.highlightRangesWithStyleClass(element, ranges, "highlighted", changes);
         InspectorTest.addResult("After highlight: " + dumpTextNodesAsString(element));
-        revertDomChanges(changes);
+        WebInspector.revertDomChanges(changes);
         InspectorTest.addResult("After revert: " + dumpTextNodesAsString(element));
-        applyDomChanges(changes);
+        WebInspector.applyDomChanges(changes);
         InspectorTest.addResult("After apply: " + dumpTextNodesAsString(element));
     }
 

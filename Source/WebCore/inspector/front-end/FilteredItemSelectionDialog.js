@@ -379,7 +379,7 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
     {
         var changes = this._elementHighlightChanges.get(itemElement)
         if (changes) {
-            revertDomChanges(changes);
+            WebInspector.revertDomChanges(changes);
             this._elementHighlightChanges.remove(itemElement);
         }
     },
@@ -401,7 +401,7 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
         }
 
         var changes = [];
-        highlightRangesWithStyleClass(itemElement, ranges, "highlight", changes);
+        WebInspector.highlightRangesWithStyleClass(itemElement, ranges, "highlight", changes);
 
         if (changes.length)
             this._elementHighlightChanges.put(itemElement, changes);
