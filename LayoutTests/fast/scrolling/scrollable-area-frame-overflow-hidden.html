@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<head>
+    <style type="text/css"> @import "resources/scrollable-style.css"; </style>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script src="resources/scrollable-area.js"></script>
+</head>
+<body onload="runTest(4);">
+    <!-- 'overflow:hidden' on an inner frame  works on Firefox and Opera, but not on WebKit-based Browsers: Chromium or Safari-->
+    <iframe width=120 style="overflow: hidden;" src="resources/generic-scrollable-content.html"></iframe>
+    <iframe width=120 style="overflow-x: hidden;" src="resources/generic-scrollable-content.html"></iframe>
+    <div id='console'></div>
+</html>

@@ -702,6 +702,8 @@ private:
 
     IntSize scrollbarOffset(const Scrollbar*) const;
     
+    void updateScrollableAreaSet(bool hasOverflow);
+
     void childVisibilityChanged(bool newVisibility);
     void dirtyVisibleDescendantStatus();
     void updateVisibilityStatus();

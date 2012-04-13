@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<head>
+    <style type="text/css"> @import "resources/scrollable-style.css"; </style>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script src="resources/scrollable-area.js"></script>
+    <script>
+        function changeOverflow()
+        {
+            document.getElementById('scrollable').style.overflow= 'hidden';
+            var forceLayout = document.body.offsetHeight;
+        }
+    </script>
+</head>
+<body onload="runTest(1, changeOverflow, 0);">
+    <div id="scrollable" class="inner" style="color: black; background: grey; overflow: auto; border: 1px solid blue;">content
+        <div class="offscreen">content</div>
+    </div>
+    <div id='console'></div>
+</body>
+</html>

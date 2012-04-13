@@ -125,6 +125,8 @@ module window {
         boolean hasSpellingMarker(in Document document, in long from, in long length) raises (DOMException);
         boolean hasGrammarMarker(in Document document, in long from, in long length) raises (DOMException);
 
+        unsigned long numberOfScrollableAreas(in Document document) raises (DOMException);
+
         readonly attribute InternalSettings settings;
 
 #if defined(ENABLE_BATTERY_STATUS) && ENABLE_BATTERY_STATUS

@@ -954,4 +954,19 @@ bool Internals::hasGrammarMarker(Document* document, int from, int length, Excep
     return document->frame()->editor()->selectionStartHasMarkerFor(DocumentMarker::Grammar, from, length);
 }
 
+unsigned Internals::numberOfScrollableAreas(Document* document, ExceptionCode&)
+{
+    unsigned count = 0;
+    Frame* frame = document->frame();
+    if (frame->view()->scrollableAreas())
+        count += frame->view()->scrollableAreas()->size();
+
+    for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+        if (child->view() && child->view()->scrollableAreas())
+            count += child->view()->scrollableAreas()->size();
+    }
+
+    return count;
+}
+
 }

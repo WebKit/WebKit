@@ -2200,7 +2200,7 @@ bool RenderLayer::scrollsOverflow() const
 {
     if (!renderer()->isBox())
         return false;
-    
+
     return toRenderBox(renderer())->scrollsOverflow();
 }
 
@@ -2402,7 +2402,7 @@ void RenderLayer::computeScrollDimensions()
 {
     RenderBox* box = renderBox();
     ASSERT(box);
-    
+
     m_scrollDimensionsDirty = false;
 
     m_scrollOverflow.setWidth(overflowLeft() - box->borderLeft());
@@ -2489,6 +2489,8 @@ void RenderLayer::updateScrollbarsAfterLayout()
         m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_vBar->setProportion(clientHeight, m_scrollSize.height());
     }
+
+    updateScrollableAreaSet((hasHorizontalOverflow || hasVerticalOverflow) && scrollsOverflow());
 }
 
 void RenderLayer::updateScrollInfoAfterLayout()
@@ -4654,6 +4656,9 @@ void RenderLayer::updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle)
         ASSERT(overflowCanHaveAScrollbar(overflowY));
         m_vBar->setEnabled(true);
     }
+
+    if (!m_scrollDimensionsDirty)
+        updateScrollableAreaSet((hasHorizontalOverflow() || hasVerticalOverflow()) && scrollsOverflow());
 }
 
 void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
@@ -4685,15 +4690,6 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
         if (!m_reflection)
             createReflection();
         updateReflectionStyle();
-    }
-    
-    if (Frame* frame = renderer()->frame()) {
-        if (FrameView* frameView = frame->view()) {
-            if (scrollsOverflow())
-                frameView->addScrollableArea(this);
-            else
-                frameView->removeScrollableArea(this);
-        }
     }
     
     // FIXME: Need to detect a swap from custom to native scrollbars (and vice versa).
@@ -4732,6 +4728,26 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
         setBackingNeedsRepaint();
     }
 #endif
+}
+
+void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
+{
+    Frame* frame = renderer()->frame();
+    if (!frame)
+        return;
+
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return;
+
+    bool isVisibleToHitTest = renderer()->visibleToHitTesting();
+    if (HTMLFrameOwnerElement* owner = frame->ownerElement())
+        isVisibleToHitTest &= owner->renderer() && owner->renderer()->visibleToHitTesting();
+
+    if (hasOverflow && isVisibleToHitTest)
+        frameView->addScrollableArea(this);
+    else
+        frameView->removeScrollableArea(this);
 }
 
 void RenderLayer::updateScrollCornerStyle()

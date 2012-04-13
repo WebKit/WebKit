@@ -291,7 +291,8 @@ public:
 
     bool isFrameViewScrollCorner(RenderScrollbarPart* scrollCorner) const { return m_scrollCorner == scrollCorner; }
 
-    void calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode);
+    enum ScrollbarModesCalculationStrategy { RulesFromWebContentOnly, AnyRule };
+    void calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode, ScrollbarModesCalculationStrategy = AnyRule);
 
     // Normal delay
     static void setRepaintThrottlingDeferredRepaintDelay(double p);
@@ -327,7 +328,6 @@ public:
     bool containsScrollableArea(ScrollableArea*) const;
     const ScrollableAreaSet* scrollableAreas() const { return m_scrollableAreas.get(); }
 
-    virtual void addChild(PassRefPtr<Widget>) OVERRIDE;
     virtual void removeChild(Widget*) OVERRIDE;
 
     // This function exists for ports that need to handle wheel events manually.
@@ -388,6 +388,8 @@ private:
     virtual bool isOnActivePage() const;
     virtual ScrollableArea* enclosingScrollableArea() const;
     virtual IntRect scrollableAreaBoundingBox() const OVERRIDE;
+
+    void updateScrollableAreaSet();
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual GraphicsLayer* layerForHorizontalScrollbar() const OVERRIDE;

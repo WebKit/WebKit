@@ -405,6 +405,8 @@ void FrameView::setFrameRect(const IntRect& newRect)
 
     ScrollView::setFrameRect(newRect);
 
+    updateScrollableAreaSet();
+
 #if USE(ACCELERATED_COMPOSITING)
     if (RenderView* root = rootRenderer(this)) {
         if (root->usesCompositing())
@@ -508,6 +510,8 @@ void FrameView::setContentsSize(const IntSize& size)
     if (!page)
         return;
 
+    updateScrollableAreaSet();
+
     page->chrome()->contentsSizeChanged(frame(), size); //notify only
 
     m_deferSetNeedsLayouts--;
@@ -595,7 +599,7 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
     m_viewportRenderer = o;
 }
 
-void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode)
+void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode, ScrollbarModesCalculationStrategy strategy)
 {
     m_viewportRenderer = 0;
 
@@ -606,7 +610,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
         return;
     }  
     
-    if (m_canHaveScrollbars) {
+    if (m_canHaveScrollbars || strategy == RulesFromWebContentOnly) {
         hMode = ScrollbarAuto;
         vMode = ScrollbarAuto;
     } else {
@@ -2624,6 +2628,43 @@ IntRect FrameView::scrollableAreaBoundingBox() const
     return frameRect();
 }
 
+void FrameView::updateScrollableAreaSet()
+{
+    // That ensures that only inner frames are cached.
+    if (!parentFrameView())
+        return;
+
+    // Check for:
+    // 1) display:none or visibility:hidden set to self or inherited.
+    // 2) overflow{-x,-y}: hidden;
+    // 3) scrolling: no;
+
+    // Covers #1.
+    HTMLFrameOwnerElement* owner = m_frame->ownerElement();
+    if (!owner || !owner->renderer() || !owner->renderer()->visibleToHitTesting()) {
+        parentFrameView()->removeScrollableArea(this);
+        return;
+    }
+
+    IntSize contentSize = contentsSize();
+    IntSize visibleContentSize = visibleContentRect().size();
+    if ((contentSize.height() <= visibleContentSize.height() && contentSize.width() <= visibleContentSize.width())) {
+        parentFrameView()->removeScrollableArea(this);
+        return;
+    }
+
+    // Cover #2 and #3.
+    ScrollbarMode horizontalMode;
+    ScrollbarMode verticalMode;
+    calculateScrollbarModesForLayout(horizontalMode, verticalMode, RulesFromWebContentOnly);
+    if (horizontalMode == ScrollbarAlwaysOff && verticalMode == ScrollbarAlwaysOff) {
+        parentFrameView()->removeScrollableArea(this);
+        return;
+    }
+
+    parentFrameView()->addScrollableArea(this);
+}
+
 bool FrameView::shouldSuspendScrollAnimations() const
 {
     return m_frame->loader()->state() != FrameStateComplete;
@@ -3449,14 +3490,6 @@ bool FrameView::containsScrollableArea(ScrollableArea* scrollableArea) const
     if (!m_scrollableAreas)
         return false;
     return m_scrollableAreas->contains(scrollableArea);
-}
-
-void FrameView::addChild(PassRefPtr<Widget> widget)
-{
-    if (widget->isFrameView())
-        addScrollableArea(static_cast<FrameView*>(widget.get()));
-
-    ScrollView::addChild(widget);
 }
 
 void FrameView::removeChild(Widget* widget)
