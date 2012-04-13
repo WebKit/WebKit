@@ -19,7 +19,7 @@ function test()
     {
         var requestId = ++lastRequestId + "";
         WebInspector.resourceTreeModel._addFrame(new WebInspector.ResourceTreeFrame(WebInspector.resourceTreeModel, null, {id: "frame-id"}));
-        var request = new WebInspector.NetworkRequest(requestId, "http://fake.url", "frame-id", "loader-id");
+        var request = new WebInspector.NetworkRequest(requestId, "http://fake.url", "http://fake.url", "frame-id", "loader-id");
         request.type = type === "document" ? WebInspector.resourceTypes.Document : WebInspector.resourceTypes.Script;
 
         WebInspector.networkManager._dispatcher._startNetworkRequest(request);

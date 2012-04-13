@@ -1081,7 +1081,7 @@ WebInspector.FrameTreeElement.prototype = {
         this._frameId = frame.id;
 
         this.titleText = frame.name;
-        this.subtitleText = WebInspector.Resource.displayName(frame.url);
+        this.subtitleText = new WebInspector.ParsedURL(frame.url).displayName;
 
         this._categoryElements = {};
         this._treeElementForResource = {};
@@ -1922,7 +1922,7 @@ WebInspector.CookieTreeElement.prototype.__proto__ = WebInspector.BaseStorageTre
  */
 WebInspector.ApplicationCacheManifestTreeElement = function(storagePanel, manifestURL)
 {
-    var title = WebInspector.Resource.displayName(manifestURL);
+    var title = new WebInspector.ParsedURL(manifestURL).displayName;
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, title, ["application-cache-storage-tree-item"]);
     this.tooltip = manifestURL;
     this._manifestURL = manifestURL;
@@ -1983,7 +1983,7 @@ WebInspector.ApplicationCacheFrameTreeElement.prototype = {
             return;
         }
         this.titleText = frame.name;
-        this.subtitleText = WebInspector.Resource.displayName(frame.url);
+        this.subtitleText = new WebInspector.ParsedURL(frame.url).displayName;
     },
 
     frameNavigated: function()

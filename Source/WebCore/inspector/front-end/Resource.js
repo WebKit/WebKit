@@ -32,32 +32,28 @@
  *
  * @param {?WebInspector.NetworkRequest} request
  * @param {string} url
- * @param {string} frameId
- * @param {?NetworkAgent.LoaderId} loaderId
+ * @param {string} documentURL
+ * @param {NetworkAgent.FrameId} frameId
+ * @param {NetworkAgent.LoaderId} loaderId
+ * @param {WebInspector.ResourceType=} type
+ * @param {string=} mimeType
  */
-WebInspector.Resource = function(request, url, frameId, loaderId)
+WebInspector.Resource = function(request, url, documentURL, frameId, loaderId, type, mimeType)
 {
     this._request = request;
     if (this._request)
         this._request.setResource(this);
     this.url = url;
-    this.frameId = frameId;
-    this.loaderId = loaderId;
-    this._type = WebInspector.resourceTypes.Other;
+    this._documentURL = documentURL;
+    this._frameId = frameId;
+    this._loaderId = loaderId;
+    this._type = type || WebInspector.resourceTypes.Other;
+    this._mimeType = mimeType;
     this.history = [];
 
     this._content = undefined;
     this._contentEncoded = undefined;
     this._pendingContentCallbacks = [];
-}
-
-/**
- * @param {string} url
- * @return {string}
- */
-WebInspector.Resource.displayName = function(url)
-{
-    return new WebInspector.Resource(null, url, "", null).displayName;
 }
 
 WebInspector.Resource._domainModelBindings = [];
@@ -166,14 +162,6 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {WebInspector.Resource}
-     */
-    resource: function()
-    {
-        return this;
-    },
-
-    /**
      * @type {string}
      */
     get url()
@@ -183,15 +171,13 @@ WebInspector.Resource.prototype = {
 
     set url(x)
     {
-        if (this._url === x)
-            return;
-
         this._url = x;
+        this._parsedURL = new WebInspector.ParsedURL(x);
+    },
 
-        var parsedURL = x.asParsedURL();
-        this.domain = parsedURL ? parsedURL.host : "";
-        this.path = parsedURL ? parsedURL.path : "";
-        this.lastPathComponent = parsedURL ? parsedURL.lastPathComponent : "";
+    get parsedURL()
+    {
+        return this._parsedURL;
     },
 
     /**
@@ -202,9 +188,20 @@ WebInspector.Resource.prototype = {
         return this._documentURL;
     },
 
-    set documentURL(x)
+    /**
+     * @type {NetworkAgent.FrameId}
+     */
+    get frameId()
     {
-        this._documentURL = x;
+        return this._frameId;
+    },
+
+    /**
+     * @type {NetworkAgent.LoaderId}
+     */
+    get loaderId()
+    {
+        return this._loaderId;
     },
 
     /**
@@ -212,40 +209,7 @@ WebInspector.Resource.prototype = {
      */
     get displayName()
     {
-        if (this._displayName)
-            return this._displayName;
-        this._displayName = this.lastPathComponent;
-        if (!this._displayName)
-            this._displayName = this.displayDomain;
-        if (!this._displayName && this.url)
-            this._displayName = this.url.trimURL(WebInspector.inspectedPageDomain ? WebInspector.inspectedPageDomain : "");
-        if (this._displayName === "/")
-            this._displayName = this.url;
-        return this._displayName;
-    },
-
-    /**
-     * @type {string}
-     */
-    get folder()
-    {
-        var path = this.path;
-        var indexOfQuery = path.indexOf("?");
-        if (indexOfQuery !== -1)
-            path = path.substring(0, indexOfQuery);
-        var lastSlashIndex = path.lastIndexOf("/");
-        return lastSlashIndex !== -1 ? path.substring(0, lastSlashIndex) : "";
-    },
-
-    /**
-     * @type {string}
-     */
-    get displayDomain()
-    {
-        // WebInspector.Database calls this, so don't access more than this.domain.
-        if (this.domain && (!WebInspector.inspectedPageDomain || (WebInspector.inspectedPageDomain && this.domain !== WebInspector.inspectedPageDomain)))
-            return this.domain;
-        return "";
+        return this._parsedURL.displayName;
     },
 
     /**
@@ -256,22 +220,12 @@ WebInspector.Resource.prototype = {
         return this._request ? this._request.type : this._type;
     },
 
-    set type(x)
-    {
-        this._type = x;
-    },
-
     /**
      * @type {string}
      */
     get mimeType()
     {
         return this._request ? this._request.mimeType : this._mimeType;
-    },
-
-    set mimeType(x)
-    {
-        this._mimeType = x;
     },
 
     /**

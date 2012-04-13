@@ -453,49 +453,6 @@ String.prototype.lineEndings = function()
     return this._lineEndings;
 }
 
-String.prototype.asParsedURL = function()
-{
-    // RegExp groups:
-    // 1 - scheme
-    // 2 - hostname
-    // 3 - ?port
-    // 4 - ?path
-    // 5 - ?fragment
-    var match = this.match(/^([^:]+):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i);
-    if (!match) {
-        if (this == "about:blank") {
-            return { scheme: "about",
-                     host: "blank",
-                     path: "/",
-                     lastPathComponent: ""};
-        }
-        return null;
-    }
-    var result = {};
-    result.scheme = match[1].toLowerCase();
-    result.host = match[2];
-    result.port = match[3];
-    result.path = match[4] || "/";
-    result.fragment = match[5];
-
-    result.lastPathComponent = "";
-    if (result.path) {
-        // First cut the query params.
-        var path = result.path;
-        var indexOfQuery = path.indexOf("?");
-        if (indexOfQuery !== -1)
-            path = path.substring(0, indexOfQuery);
-
-        // Then take last path component.
-        var lastSlashIndex = path.lastIndexOf("/");
-        if (lastSlashIndex !== -1) {
-            result.firstPathComponents = path.substring(0, lastSlashIndex + 1);
-            result.lastPathComponent = path.substring(lastSlashIndex + 1);
-        }
-    } 
-    return result;
-}
-
 String.prototype.escapeCharacters = function(chars)
 {
     var foundChar = false;

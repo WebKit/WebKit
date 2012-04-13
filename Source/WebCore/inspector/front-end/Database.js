@@ -80,7 +80,7 @@ WebInspector.Database.prototype = {
     /** @return {string} */
     get displayDomain()
     {
-        return WebInspector.Resource.prototype.__lookupGetter__("displayDomain").call(this);
+        return WebInspector.displayDomain(this._domain);
     },
 
     /**

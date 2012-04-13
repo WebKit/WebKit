@@ -1126,7 +1126,7 @@ WebInspector.NetworkLogView.prototype = {
             return;
 
         var nameMatched = request.displayName && request.displayName.match(this._searchRegExp);
-        var pathMatched = request.path && request.folder.match(this._searchRegExp);
+        var pathMatched = request.parsedURL.path && request.folder.match(this._searchRegExp);
         if (!nameMatched && pathMatched && !this._largerRequestsButton.toggled)
             this._toggleLargerRequests();
 
@@ -1836,9 +1836,9 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._nameCell.appendChild(document.createTextNode(this._fileName()));
 
 
-        var subtitle = this._request.displayDomain;
+        var subtitle = WebInspector.displayDomain(this._request.parsedURL.host);
 
-        if (this._request.path)
+        if (this._request.parsedURL.path)
             subtitle += this._request.folder;
 
         this._appendSubtitle(this._nameCell, subtitle);

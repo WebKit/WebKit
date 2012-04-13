@@ -29,6 +29,89 @@
  */
 
 /**
+ * @constructor
+ * @param {String|string} url
+ */
+WebInspector.ParsedURL = function(url)
+{
+    this.isValid = false;
+    this.url = url;
+    this.scheme = "";
+    this.host = "";
+    this.port = "";
+    this.path = "";
+    this.fragment = "";
+    this.lastPathComponent = "";
+
+    // RegExp groups:
+    // 1 - scheme
+    // 2 - hostname
+    // 3 - ?port
+    // 4 - ?path
+    // 5 - ?fragment
+    var match = url.match(/^([^:]+):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i);
+    if (!match) {
+        if (this == "about:blank") {
+            this.isValid = true;
+            this.scheme = "about";
+            this.host = "blank";
+            this.path = "/";
+            return;
+        }
+        return;
+    }
+
+    this.isValid = true;
+    this.scheme = match[1].toLowerCase();
+    this.host = match[2];
+    this.port = match[3];
+    this.path = match[4] || "/";
+    this.fragment = match[5];
+
+    if (this.path) {
+        // First cut the query params.
+        var path = this.path;
+        var indexOfQuery = path.indexOf("?");
+        if (indexOfQuery !== -1)
+            path = path.substring(0, indexOfQuery);
+
+        // Then take last path component.
+        var lastSlashIndex = path.lastIndexOf("/");
+        if (lastSlashIndex !== -1) {
+            this.firstPathComponents = path.substring(0, lastSlashIndex + 1);
+            this.lastPathComponent = path.substring(lastSlashIndex + 1);
+        }
+    }
+}
+
+WebInspector.ParsedURL.prototype = {
+    get displayName()
+    {
+        if (this._displayName)
+            return this._displayName;
+
+        this._displayName = this.lastPathComponent;
+        if (!this._displayName)
+            this._displayName = WebInspector.displayDomain(this.host);
+        if (!this._displayName && this.url)
+            this._displayName = this.url.trimURL(WebInspector.inspectedPageDomain ? WebInspector.inspectedPageDomain : "");
+        if (this._displayName === "/")
+            this._displayName = this.url;
+        return this._displayName;
+    }
+}
+/**
+ * @return {?WebInspector.ParsedURL}
+ */
+String.prototype.asParsedURL = function()
+{
+    var parsedURL = new WebInspector.ParsedURL(this);
+    if (parsedURL.isValid)
+        return parsedURL;
+    return null;
+}
+
+/**
  * @param {string} url
  * @return {?WebInspector.Resource}
  */
@@ -43,6 +126,16 @@ WebInspector.resourceForURL = function(url)
 WebInspector.forAllResources = function(callback)
 {
      WebInspector.resourceTreeModel.forAllResources(callback);
+}
+
+/**
+ * @param {string} host
+ */
+WebInspector.displayDomain = function(host)
+{
+    if (host && (!WebInspector.inspectedPageDomain || (WebInspector.inspectedPageDomain && host !== WebInspector.inspectedPageDomain)))
+        return host;
+    return "";
 }
 
 /**
@@ -247,7 +340,7 @@ WebInspector.resourceURLForRelatedNode = function(node, url)
     var resourceURL = url;
     function callback(resource)
     {
-        if (resource.path === url) {
+        if (resource.parsedURL.path === url) {
             resourceURL = resource.url;
             return true;
         }

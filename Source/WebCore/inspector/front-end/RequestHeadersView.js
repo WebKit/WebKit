@@ -168,7 +168,7 @@ WebInspector.RequestHeadersView.prototype = {
 
     _refreshUrlFragment: function()
     {
-        var urlFragment = this._request.urlFragment;
+        var urlFragment = this._request.parsedURL.fragment;
         this._urlFragmentTreeElement.hidden = !urlFragment;
 
         if (!urlFragment)

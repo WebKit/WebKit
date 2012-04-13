@@ -107,7 +107,7 @@ WebInspector.FrameEvaluationContext.prototype =
         if (!this._frame.parentFrame)
             return "<top frame>";
         var name = this._frame.name || "";
-        var subtitle = WebInspector.Resource.displayName(this._frame.url);
+        var subtitle = new WebInspector.ParsedURL(this._frame.url).displayName;
         if (subtitle) {
             if (!name)
                 return subtitle;

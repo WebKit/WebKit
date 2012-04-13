@@ -116,7 +116,7 @@ WebInspector.AuditRules.GzipRule.prototype = {
 
     _shouldCompress: function(request)
     {
-        return request.type.isTextType() && request.domain && request.resourceSize !== undefined && request.resourceSize > 150;
+        return request.type.isTextType() && request.parsedURL.host && request.resourceSize !== undefined && request.resourceSize > 150;
     }
 }
 
@@ -1225,10 +1225,10 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
 
         function collectorCallback(request, cookie)
         {
-            var cookies = cookiesPerResourceDomain[request.domain];
+            var cookies = cookiesPerResourceDomain[request.parsedURL.host];
             if (!cookies) {
                 cookies = [];
-                cookiesPerResourceDomain[request.domain] = cookies;
+                cookiesPerResourceDomain[request.parsedURL.host] = cookies;
             }
             cookies.push(cookie);
         }

@@ -34,13 +34,15 @@
  *
  * @param {NetworkAgent.RequestId} requestId
  * @param {string} url
+ * @param {string} documentURL
  * @param {NetworkAgent.FrameId} frameId
  * @param {NetworkAgent.LoaderId} loaderId
  */
-WebInspector.NetworkRequest = function(requestId, url, frameId, loaderId)
+WebInspector.NetworkRequest = function(requestId, url, documentURL, frameId, loaderId)
 {
     this._requestId = requestId;
-    this._url = url;
+    this.url = url;
+    this._documentURL = documentURL;
     this._frameId = frameId;
     this._loaderId = loaderId;
     this._startTime = -1;
@@ -56,14 +58,6 @@ WebInspector.NetworkRequest = function(requestId, url, frameId, loaderId)
     this._content = undefined;
     this._contentEncoded = false;
     this._pendingContentCallbacks = [];
-
-    delete this._parsedQueryParameters;
-
-    var parsedURL = url.asParsedURL();
-    this.domain = parsedURL ? parsedURL.host : "";
-    this.path = parsedURL ? parsedURL.path : "";
-    this.urlFragment = parsedURL ? parsedURL.fragment : "";
-    this.lastPathComponent = parsedURL ? parsedURL.lastPathComponent : "";
 }
 
 WebInspector.NetworkRequest.Events = {
@@ -93,6 +87,29 @@ WebInspector.NetworkRequest.prototype = {
     get url()
     {
         return this._url;
+    },
+
+    set url(x)
+    {
+        if (this._url === x)
+            return;
+
+        this._url = x;
+        this._parsedURL = new WebInspector.ParsedURL(x);
+        delete this._parsedQueryParameters;
+    },
+
+    /**
+     * @type {string}
+     */
+    get documentURL()
+    {
+        return this._documentURL;
+    },
+
+    get parsedURL()
+    {
+        return this._parsedURL;
     },
 
     /**
@@ -336,16 +353,7 @@ WebInspector.NetworkRequest.prototype = {
      */
     get displayName()
     {
-        if (this._displayName)
-            return this._displayName;
-        this._displayName = this.lastPathComponent;
-        if (!this._displayName)
-            this._displayName = this.displayDomain;
-        if (!this._displayName && this.url)
-            this._displayName = this.url.trimURL(WebInspector.inspectedPageDomain ? WebInspector.inspectedPageDomain : "");
-        if (this._displayName === "/")
-            this._displayName = this.url;
-        return this._displayName;
+        return this._parsedURL.displayName;
     },
 
     /**
@@ -353,23 +361,12 @@ WebInspector.NetworkRequest.prototype = {
      */
     get folder()
     {
-        var path = this.path;
+        var path = this._parsedURL.path;
         var indexOfQuery = path.indexOf("?");
         if (indexOfQuery !== -1)
             path = path.substring(0, indexOfQuery);
         var lastSlashIndex = path.lastIndexOf("/");
         return lastSlashIndex !== -1 ? path.substring(0, lastSlashIndex) : "";
-    },
-
-    /**
-     * @type {string}
-     */
-    get displayDomain()
-    {
-        // WebInspector.Database calls this, so don't access more than this.domain.
-        if (this.domain && (!WebInspector.inspectedPageDomain || (WebInspector.inspectedPageDomain && this.domain !== WebInspector.inspectedPageDomain)))
-            return this.domain;
-        return "";
     },
 
     /**
