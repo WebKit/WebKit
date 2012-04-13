@@ -258,7 +258,9 @@ void OpaqueRegionSkia::didDraw(const PlatformContextSkia* context, const AffineT
     if (context->canvas()->getClipType() != SkCanvas::kRect_ClipType)
         fillsBounds = false;
     else {
-        SkIRect deviceClip = context->canvas()->getTotalClip().getBounds();
+        SkIRect deviceClip;
+        if (!context->canvas()->getClipDeviceBounds(&deviceClip))
+            return;
         if (!targetRect.intersect(SkIntToScalar(deviceClip.fLeft), SkIntToScalar(deviceClip.fTop), SkIntToScalar(deviceClip.fRight), SkIntToScalar(deviceClip.fBottom)))
             return;
     }
