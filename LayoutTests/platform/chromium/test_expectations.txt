@@ -2799,8 +2799,7 @@ BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions-rtl.h
 BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions.html = PASS IMAGE
 
 BUGWK74137 SNOWLEOPARD : fast/regions/outline-sides-in-region.html = PASS TIMEOUT
-BUGWK74137 LEOPARD SNOWLEOPARD : fast/regions/region-overflow-break.html = PASS IMAGE+TEXT TIMEOUT
-BUGWK74137 WIN LINUX LION : fast/regions/region-overflow-break.html = PASS MISSING
+BUGWK83824 MAC : fast/regions/region-overflow-break.html = IMAGE
 BUGWK74137 : fast/regions/float-pushed-width-change.html = PASS IMAGE
 BUGWK74137 LEOPARD SNOWLEOPARD : fast/regions/region-overflow-auto-overflow-hidden.html = PASS IMAGE+TEXT TIMEOUT
 BUGWK74137 WIN LINUX LION : fast/regions/region-overflow-auto-overflow-hidden.html = PASS MISSING
