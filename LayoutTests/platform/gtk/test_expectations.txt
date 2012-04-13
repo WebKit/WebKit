@@ -363,7 +363,7 @@ BUGWKGTK DEBUG : svg/custom/use-referencing-style-crash.svg = CRASH
 
 BUGWK30724 DEBUG : fast/loader/opaque-base-url.html = CRASH
 
-BUGWK83881 DEBUG : fast/dom/gc-11.html = CRASH
+BUGWK83881 : fast/dom/gc-11.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
@@ -471,6 +471,15 @@ BUGWK54210 : fast/text/atsui-spacing-features.html = PASS TEXT
 BUGWK83800 : plugins/get-url-with-blank-target.html = PASS TEXT
 
 BUGWK83878 : media/track/track-mode.html = PASS TEXT
+
+BUGWK83891 : css2.1/20110323/at-import-002.htm = PASS TEXT
+BUGWK83891 : css2.1/20110323/at-import-004.htm = PASS TEXT
+BUGWK83891 : css2.1/20110323/at-import-005.htm = PASS TEXT
+BUGWK83891 : css2.1/20110323/at-import-006.htm = PASS TEXT
+BUGWK83891 : css2.1/20110323/at-import-007.htm = PASS TEXT
+BUGWK83891 : css2.1/20110323/at-import-009.htm = PASS TEXT
+BUGWK83891 : css2.1/20110323/eof-005.htm = PASS TEXT
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
