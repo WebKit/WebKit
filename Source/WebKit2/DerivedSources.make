@@ -118,6 +118,12 @@ ifeq ($(OS),MACOS)
 FRAMEWORK_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
 HEADER_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) | perl -e 'print "-I" . join(" -I", split(" ", <>));')
 
+ifeq ($(TARGET_GCC_VERSION),LLVM_COMPILER)
+	TEXT_PREPROCESSOR_FLAGS=-E -P -x c -traditional
+else
+	TEXT_PREPROCESSOR_FLAGS=-E -P -x c -std=c89
+endif
+
 SANDBOX_PROFILES = \
 	com.apple.WebProcess.sb \
 	com.apple.WebKit.PluginProcess.sb
@@ -126,7 +132,7 @@ all: $(SANDBOX_PROFILES)
 
 %.sb : %.sb.in
 	@echo Pre-processing $* sandbox profile...
-	$(CC) -E -P -w -x c -std=c89 $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" $< > $@
+	$(CC) $(TEXT_PREPROCESSOR_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" $< > $@
 
 endif # MACOS
 

@@ -1,3 +1,12 @@
+2012-04-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Preprocessing text files with modern clang treats double slashes in comments
+        https://bugs.webkit.org/show_bug.cgi?id=83827
+
+        Reviewed by Mark Rowe.
+
+        * DerivedSources.make: Pass appropriate flags to both llvm and gcc.
+
 2012-04-12  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Build fix after Windows export definition file change.
