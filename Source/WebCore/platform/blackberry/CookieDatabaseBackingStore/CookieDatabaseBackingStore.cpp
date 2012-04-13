@@ -238,7 +238,7 @@ void CookieDatabaseBackingStore::invokeOpen(const String& cookieJar)
     String updateQuery("UPDATE ");
     updateQuery += m_tableName;
     // The where statement is chosen to match CookieMap key.
-    updateQuery += " SET name = ?1, value = ?2, host = ?3, path = ?4, expiry = ?5, lastAccessed = ?6, isSecure = ?7, isHttpOnly = ?8, creationTime = ?9, protocol = ?10 where protocol = ?10 and name = ?1 and host = ?3 and path = ?4;";
+    updateQuery += " SET name = ?1, value = ?2, host = ?3, path = ?4, expiry = ?5, lastAccessed = ?6, isSecure = ?7, isHttpOnly = ?8, creationTime = ?9, protocol = ?10 where name = ?1 and host = ?3 and path = ?4;";
     m_updateStatement = new SQLiteStatement(m_db, updateQuery);
 
     if (m_updateStatement->prepare()) {

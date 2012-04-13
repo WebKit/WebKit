@@ -1,3 +1,13 @@
+2012-04-13  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry] Sign in cookie for ESPN.com does not retain login account (for fantasy sports).
+        https://bugs.webkit.org/show_bug.cgi?id=83760
+
+        Reviewed by George Staikos.
+
+        * ManualTests/blackberry/http-cookie-database-set.php: Added.
+        * ManualTests/blackberry/http-cookie-database-update.php: Added.
+
 2012-04-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Add API for color chooser
