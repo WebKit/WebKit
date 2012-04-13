@@ -94,6 +94,7 @@
             'chromium/src/WebCString.cpp',
             'chromium/src/WebFloatQuad.cpp',
             'chromium/src/WebString.cpp',
+            'chromium/src/WebVideoFrame.cpp',
         ]
     }
 }

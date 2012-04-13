@@ -1,3 +1,28 @@
+2012-04-12  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move WebVideoFrame into Platform and remove WebCore::VideoFrameChromium wrapper API
+        https://bugs.webkit.org/show_bug.cgi?id=83851
+
+        Reviewed by Adam Barth.
+
+        Move WebVideoFrame API into Platform.
+
+        * Platform.gypi:
+        * chromium/public/WebVideoFrame.h: Renamed from Source/WebCore/platform/graphics/chromium/VideoFrameChromium.h.
+        (WebKit):
+        (WebVideoFrame):
+        (WebKit::WebVideoFrame::~WebVideoFrame):
+        (WebKit::WebVideoFrame::format):
+        (WebKit::WebVideoFrame::width):
+        (WebKit::WebVideoFrame::height):
+        (WebKit::WebVideoFrame::planes):
+        (WebKit::WebVideoFrame::stride):
+        (WebKit::WebVideoFrame::data):
+        (WebKit::WebVideoFrame::textureId):
+        (WebKit::WebVideoFrame::textureTarget):
+        * chromium/src/WebVideoFrame.cpp: Renamed from Source/WebCore/platform/graphics/chromium/VideoFrameChromium.cpp.
+        (WebKit):
+
 2012-04-11  David Dorwin  <ddorwin@chromium.org>
 
         Add keySystem attribute to canPlayType() for Encrypted Media Extensions

@@ -67,6 +67,7 @@
 #include "Extensions3D.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
+#include <public/WebVideoFrame.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
@@ -770,9 +771,9 @@ void LayerRendererChromium::drawYUV(const CCVideoDrawQuad* quad)
     const CCVideoLayerImpl::YUVProgram* program = videoLayerYUVProgram();
     ASSERT(program && program->initialized());
 
-    const CCVideoLayerImpl::Texture& yTexture = quad->textures()[VideoFrameChromium::yPlane];
-    const CCVideoLayerImpl::Texture& uTexture = quad->textures()[VideoFrameChromium::uPlane];
-    const CCVideoLayerImpl::Texture& vTexture = quad->textures()[VideoFrameChromium::vPlane];
+    const CCVideoLayerImpl::Texture& yTexture = quad->textures()[WebKit::WebVideoFrame::yPlane];
+    const CCVideoLayerImpl::Texture& uTexture = quad->textures()[WebKit::WebVideoFrame::uPlane];
+    const CCVideoLayerImpl::Texture& vTexture = quad->textures()[WebKit::WebVideoFrame::vPlane];
 
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE1));
     GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, yTexture.m_texture->textureId()));
@@ -828,7 +829,7 @@ void LayerRendererChromium::drawSingleTextureVideoQuad(const CCVideoDrawQuad* qu
 void LayerRendererChromium::drawRGBA(const CCVideoDrawQuad* quad)
 {
     const CCVideoLayerImpl::RGBAProgram* program = videoLayerRGBAProgram();
-    const CCVideoLayerImpl::Texture& texture = quad->textures()[VideoFrameChromium::rgbPlane];
+    const CCVideoLayerImpl::Texture& texture = quad->textures()[WebKit::WebVideoFrame::rgbPlane];
     float widthScaleFactor = static_cast<float>(texture.m_visibleSize.width()) / texture.m_texture->size().width();
     drawSingleTextureVideoQuad(quad, program, widthScaleFactor, texture.m_texture->textureId(), GraphicsContext3D::TEXTURE_2D);
 }
@@ -853,12 +854,11 @@ void LayerRendererChromium::drawStreamTexture(const CCVideoDrawQuad* quad)
 
 bool LayerRendererChromium::copyFrameToTextures(const CCVideoDrawQuad* quad)
 {
-    const VideoFrameChromium* frame = quad->frame();
+    const WebKit::WebVideoFrame* frame = quad->frame();
 
-    for (unsigned plane = 0; plane < frame->planes(); ++plane) {
-        ASSERT(quad->frame()->requiredTextureSize(plane) == quad->textures()[plane].m_texture->size());
+    for (unsigned plane = 0; plane < frame->planes(); ++plane)
         copyPlaneToTexture(quad, frame->data(plane), plane);
-    }
+
     for (unsigned plane = frame->planes(); plane < CCVideoLayerImpl::MaxPlanes; ++plane) {
         CCVideoLayerImpl::Texture* texture = &quad->textures()[plane];
         texture->m_texture.clear();

@@ -69,7 +69,6 @@
 #include "UserContentTypes.h"
 #include "UserScriptTypes.h"
 #include "UserStyleSheetTypes.h"
-#include "VideoFrameChromium.h"
 #include "WebAccessibilityNotification.h"
 #include "WebAccessibilityObject.h"
 #include "WebApplicationCacheHost.h"
@@ -99,7 +98,6 @@
 #include "WebTextCaseSensitivity.h"
 #include "WebTextCheckingResult.h"
 #include "WebTextCheckingType.h"
-#include "WebVideoFrame.h"
 #include "WebView.h"
 #include "platform/WebClipboard.h"
 #include "platform/WebFileSystem.h"
@@ -402,11 +400,6 @@ COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayerClient::HardwareChangeError, MediaPla
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayerClient::DomainError, MediaPlayerClient::DomainError);
 #endif
 
-COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatInvalid, VideoFrameChromium::Invalid);
-COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatRGB32, VideoFrameChromium::RGB32);
-COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatYV12, VideoFrameChromium::YV12);
-COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatYV16, VideoFrameChromium::YV16);
-COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatEmpty, VideoFrameChromium::Empty);
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

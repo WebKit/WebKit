@@ -31,25 +31,29 @@
 #include "cc/CCVideoLayerImpl.h"
 #include <wtf/PassOwnPtr.h>
 
+namespace WebKit {
+class WebVideoFrame;
+}
+
 namespace WebCore {
 
 class CCVideoDrawQuad : public CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCVideoDrawQuad);
 public:
-    static PassOwnPtr<CCVideoDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::Texture* textures, VideoFrameChromium*, GC3Denum format);
+    static PassOwnPtr<CCVideoDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::Texture* textures, WebKit::WebVideoFrame*, GC3Denum format);
 
     CCVideoLayerImpl::Texture* textures() const { return m_textures; }
-    VideoFrameChromium* frame() const { return m_frame; }
+    WebKit::WebVideoFrame* frame() const { return m_frame; }
     GC3Denum format() const { return m_format; }
     const float* matrix() const { return m_matrix; }
 
     void setMatrix(const float* matrix) { m_matrix = matrix; }
 
 private:
-    CCVideoDrawQuad(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::Texture* textures, VideoFrameChromium*, GC3Denum format);
+    CCVideoDrawQuad(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::Texture* textures, WebKit::WebVideoFrame*, GC3Denum format);
 
     CCVideoLayerImpl::Texture* m_textures;
-    VideoFrameChromium* m_frame;
+    WebKit::WebVideoFrame* m_frame;
     GC3Denum m_format;
     const float* m_matrix;
 };
