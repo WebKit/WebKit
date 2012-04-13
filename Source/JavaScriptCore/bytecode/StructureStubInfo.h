@@ -163,8 +163,8 @@ namespace JSC {
         
         void reset()
         {
-            accessType = access_unset;
             deref();
+            accessType = access_unset;
             stubRoutine = MacroAssemblerCodeRef();
         }
 

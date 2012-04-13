@@ -1,3 +1,16 @@
+2012-04-12  Michael Saboff  <msaboff@apple.com>
+
+        StructureStubInfo::reset() causes leaks of PolymorphicAccessStructureList and ExecutableMemoryHandle objects
+        https://bugs.webkit.org/show_bug.cgi?id=83823
+
+        Reviewed by Gavin Barraclough.
+
+        Put the clearing of the accessType to after the call to deref() so that
+        deref() can use the accessType to delete referenced objects as needed.
+
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::reset):
+
 2012-04-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Fix WebKit1 build with V8
