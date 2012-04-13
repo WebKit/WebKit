@@ -1,3 +1,44 @@
+2012-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Extract PerfTest class from PerfTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=83847
+
+        Reviewed by Hajime Morita.
+
+        Extracted PerfTest and ChromiumStylePerfTest from PerfTestRunner. This class abstracts a test
+        that was previously represented by a tuple.
+
+        Also moved the logic to determine whether a given test is chromium style or not from run() to
+        _collect_tests(). And moved the output parsing algorithms for parser style and chromium style
+        tests from PerfTestRunner to PerfTest and ChromiumStylePerfTest respectively so that we may
+        add new types of tests more easily.
+
+        * Scripts/webkitpy/performance_tests/perftest.py: Added.
+        (PerfTest):
+        (PerfTest.__init__):
+        (PerfTest.test_name):
+        (PerfTest.dirname):
+        (PerfTest.path_or_url):
+        (PerfTest._should_ignore_line_in_parser_test_result):
+        (PerfTest.parse_output):
+        (ChromiumStylePerfTest):
+        (ChromiumStylePerfTest.__init__):
+        (ChromiumStylePerfTest.parse_output):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._collect_tests):
+        (PerfTestsRunner.run):
+        (PerfTestsRunner._run_tests_set):
+        (PerfTestsRunner._run_single_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (run_test):
+        (_tests_for_runner):
+        (test_run_test_set_with_json_output):
+        (test_run_test_set_with_json_source):
+        (test_run_test_set_with_multiple_repositories):
+        (_collect_tests_and_sort_test_name):
+        (test_collect_tests):
+        (test_collect_tests_with_skipped_list):
+
 2012-04-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Fix WebKit1 build with V8

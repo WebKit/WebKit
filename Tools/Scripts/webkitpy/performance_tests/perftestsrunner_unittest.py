@@ -39,6 +39,8 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.port.driver import DriverInput, DriverOutput
 from webkitpy.layout_tests.port.test import TestPort
 from webkitpy.layout_tests.views import printing
+from webkitpy.performance_tests.perftest import ChromiumStylePerfTest
+from webkitpy.performance_tests.perftest import PerfTest
 from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
 
 
@@ -126,7 +128,8 @@ max 1120
     def run_test(self, test_name):
         runner = self.create_runner()
         driver = MainTest.TestDriver()
-        return runner._run_single_test(test_name, test_name, driver, is_chromium_style=True)
+        return runner._run_single_test(ChromiumStylePerfTest(test_name, 'some-dir',
+            runner._host.filesystem.join('some-dir', test_name)), driver)
 
     def test_run_passing_test(self):
         self.assertTrue(self.run_test('pass.html'))
@@ -146,8 +149,17 @@ max 1120
     def test_run_crash_test(self):
         self.assertFalse(self.run_test('crash.html'))
 
-    def _tests_for_runner(self, runner, tests):
-        return [(test, runner._base_path + '/' + test) for test in tests]
+    def _tests_for_runner(self, runner, test_names):
+        filesystem = runner._host.filesystem
+        tests = []
+        for test in test_names:
+            path = filesystem.join(runner._base_path, test)
+            dirname = filesystem.dirname(path)
+            if test.startswith('inspector/'):
+                tests.append(ChromiumStylePerfTest(test, dirname, path))
+            else:
+                tests.append(PerfTest(test, dirname, path))
+        return tests
 
     def test_run_test_set(self):
         buildbot_output = StringIO.StringIO()
@@ -221,7 +233,7 @@ max 1120
         self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
             {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
-            "group_name:test_name": 42},
+            "inspector/pass.html:group_name:test_name": 42},
             "webkit-revision": 5678})
 
     def test_run_test_set_with_json_source(self):
@@ -240,7 +252,7 @@ max 1120
         self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
             {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
-            "group_name:test_name": 42},
+            "inspector/pass.html:group_name:test_name": 42},
             "webkit-revision": 5678,
             "key": "value"})
 
@@ -253,7 +265,7 @@ max 1120
         self.assertEqual(runner.run(), 0)
 
         self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
-            "timestamp": 123456789, "results": {"group_name:test_name": 42.0}, "webkit-revision": 5678, "some-revision": 5678})
+            "timestamp": 123456789, "results": {"inspector/pass.html:group_name:test_name": 42.0}, "webkit-revision": 5678, "some-revision": 5678})
 
     def test_run_with_upload_json(self):
         runner = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
@@ -332,6 +344,9 @@ max 1120
         tests = runner._collect_tests()
         self.assertEqual(len(tests), 1)
 
+    def _collect_tests_and_sort_test_name(self, runner):
+        return sorted([test.test_name() for test in runner._collect_tests()])
+
     def test_collect_tests(self):
         runner = self.create_runner(args=['PerformanceTests/test1.html', 'test2.html'])
 
@@ -342,7 +357,7 @@ max 1120
         add_file('test2.html')
         add_file('test3.html')
         runner._host.filesystem.chdir(runner._port.perf_tests_dir()[:runner._port.perf_tests_dir().rfind(runner._host.filesystem.sep)])
-        self.assertEqual(sorted([test[0] for test in runner._collect_tests()]), ['test1.html', 'test2.html'])
+        self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['test1.html', 'test2.html'])
 
     def test_collect_tests_with_skipped_list(self):
         runner = self.create_runner()
@@ -358,7 +373,7 @@ max 1120
         add_file('inspector/resources', 'resource_file.html')
         add_file('unsupported', 'unsupported_test2.html')
         runner._port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
-        self.assertEqual(sorted([test[0] for test in runner._collect_tests()]), ['inspector/test1.html', 'inspector/test2.html'])
+        self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html'])
 
     def test_parse_args(self):
         runner = self.create_runner()
