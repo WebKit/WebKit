@@ -76,11 +76,6 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
 {
     QQuickWebViewExperimental experimental(m_view);
     experimental.setRenderToOffscreenBuffer(true);
-
-    // QWindow delays creating of the underlying platform specific bits until ::setVisible()
-    // or ::show() are called. This makes ::isActive() always return false. In order to force
-    // the creation ::create() exists, so we use it here.
-    m_window->create();
 }
 
 PlatformWebView::~PlatformWebView()
