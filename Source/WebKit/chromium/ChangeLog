@@ -1,3 +1,28 @@
+2012-04-12  Michael Nordman  <michaeln@google.com>
+
+        [chromium] Now that the chromium port is using a different dom_storage backend
+        library in its main browser process, there are a handful of files that should no
+        longer be included in the build, and a few files than should be deleted
+        outright, and the webkit api should be modified to reflect the new (and smaller)
+        contract between the embedder and webkit/webcore.
+        https://bugs.webkit.org/show_bug.cgi?id=83807
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gyp: Delete a few files.
+        * public/WebStorageNamespace.h:  Remove some unused data members and methods, and annotate close() as deprecated.
+        * public/platform/WebKitPlatformSupport.h: Annotate a method as deprecated.
+        * src/StorageAreaProxy.cpp: Remove the include of a deleted file.
+        * src/StorageEventDispatcherChromium.cpp: Removed.
+        * src/StorageEventDispatcherImpl.cpp: Added a FIXME comment for upcoming work.
+        * src/StorageNamespaceProxy.cpp: Modified to no longer call out to the embedder thru the deprecated close() method.
+        * src/StorageNamespaceProxy.h: Moved some blank lines around.
+        * src/WebStorageAreaImpl.cpp: Removed.
+        * src/WebStorageAreaImpl.h: Removed.
+        * src/WebStorageEventDispatcherImpl.cpp: Cleaned up some cruft.
+        * src/WebStorageNamespaceImpl.cpp: Removed.
+        * src/WebStorageNamespaceImpl.h: Removed.
+
 2012-04-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r114140.

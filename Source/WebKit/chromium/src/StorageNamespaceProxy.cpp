@@ -82,7 +82,7 @@ PassRefPtr<StorageArea> StorageNamespaceProxy::storageArea(PassRefPtr<SecurityOr
 
 void StorageNamespaceProxy::close()
 {
-    m_storageNamespace->close();
+    // N/A to the chromium port.
 }
 
 void StorageNamespaceProxy::clearOriginForDeletion(SecurityOrigin* origin)

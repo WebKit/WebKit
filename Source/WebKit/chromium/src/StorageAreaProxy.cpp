@@ -35,7 +35,6 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
-#include "StorageAreaImpl.h"
 #include "StorageEvent.h"
 
 #include "WebFrameImpl.h"
@@ -140,6 +139,8 @@ void StorageAreaProxy::storageEvent(const String& key, const String& oldValue, c
         }
 
         for (unsigned i = 0; i < frames.size(); ++i) {
+            // FIXME: maybe only raise if the window has an onstorage listener
+            // attached to avoid creating the Storage instance.
             ExceptionCode ec = 0;
             Storage* storage = frames[i]->domWindow()->sessionStorage(ec);
             if (!ec)
@@ -157,6 +158,8 @@ void StorageAreaProxy::storageEvent(const String& key, const String& oldValue, c
         }
 
         for (unsigned i = 0; i < frames.size(); ++i) {
+            // FIXME: maybe only raise if the window has an onstorage listener
+            // attached to avoid creating the Storage instance.
             ExceptionCode ec = 0;
             Storage* storage = frames[i]->domWindow()->localStorage(ec);
             if (!ec)

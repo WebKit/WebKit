@@ -34,7 +34,6 @@
 #include "KURL.h"
 #include "SecurityOrigin.h"
 
-#include "WebStorageAreaImpl.h"
 #include "platform/WebURL.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -55,15 +54,11 @@ WebStorageEventDispatcherImpl::WebStorageEventDispatcherImpl()
 
 void WebStorageEventDispatcherImpl::dispatchStorageEvent(const WebString& key, const WebString& oldValue,
                                                          const WebString& newValue, const WebString& origin,
-                                                         const WebURL& passedInURL, bool isLocalStorage)
+                                                         const WebURL& pageURL, bool isLocalStorage)
 {
-    // Hack for single-process mode and test shell.
-    const WebURL* storageAreaImplURL = WebStorageAreaImpl::currentStorageEventURL();
-    const WebURL& url = storageAreaImplURL ? *storageAreaImplURL : passedInURL;
-
     WebCore::StorageType storageType = isLocalStorage ? WebCore::LocalStorage : WebCore::SessionStorage;
     RefPtr<WebCore::SecurityOrigin> securityOrigin = WebCore::SecurityOrigin::createFromString(origin);
-    m_eventDispatcher->dispatchStorageEvent(key, oldValue, newValue, securityOrigin.get(), url, storageType);
+    m_eventDispatcher->dispatchStorageEvent(key, oldValue, newValue, securityOrigin.get(), pageURL, storageType);
 }
 
 } // namespace WebKit
