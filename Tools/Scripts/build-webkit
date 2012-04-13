@@ -236,7 +236,7 @@ my @features = (
       define => "ENABLE_SCRIPTED_SPEECH", default => 0, value => \$scriptedSpeechSupport },
 
     { option => "input-type-color", desc => "Toggle color type <input> support",
-      define => "ENABLE_INPUT_TYPE_COLOR", default => isBlackBerry(), value => \$inputTypeColorSupport },
+      define => "ENABLE_INPUT_TYPE_COLOR", default => (isBlackBerry() || isEfl()), value => \$inputTypeColorSupport },
 
     { option => "input-type-date", desc => "Toggle date type <input> support",
       define => "ENABLE_INPUT_TYPE_DATE", default => 0, value => \$inputTypeDateSupport },

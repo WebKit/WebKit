@@ -23,6 +23,7 @@ LIST(APPEND WebCore_SOURCES
   page/efl/EventHandlerEfl.cpp
   platform/Cursor.cpp
   platform/efl/ClipboardEfl.cpp
+  platform/efl/ColorChooserEfl.cpp
   platform/efl/ContextMenuEfl.cpp
   platform/efl/ContextMenuItemEfl.cpp
   platform/efl/CursorEfl.cpp

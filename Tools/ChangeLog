@@ -1,3 +1,14 @@
+2012-04-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Add API for color chooser
+        https://bugs.webkit.org/show_bug.cgi?id=83692
+
+        Enables INPUT_TYPE_COLOR by default on the EFL port.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Scripts/build-webkit:
+
 2012-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Extract PerfTest class from PerfTestRunner

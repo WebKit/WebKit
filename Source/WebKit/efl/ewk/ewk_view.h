@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2009-2010 ProFUSION embedded systems
     Copyright (C) 2009-2010 Samsung Electronics
+    Copyright (C) 2012 Intel Corporation
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -33,6 +34,11 @@
  *
  * The following signals (see evas_object_smart_callback_add()) are emitted:
  *
+ *  - "colorchooser,create", Ewk_Color: a new color chooser should be created.
+ *  - "colorchooser,willdelete", void: reports that a previously created color
+ *    chooser will be deleted.
+ *  - "colorchooser,color,changed", Ewk_Color: the value at the color input widget
+ *    corresponding to the color chooser has changed.
  *  - "download,request", Ewk_Download: reports a download is being requested
  *  - "editorclient,contents,changed", void: reports to the view that editor
  *    client's contents were changed
@@ -282,6 +288,16 @@ typedef struct _Ewk_Scroll_Request Ewk_Scroll_Request;
 struct _Ewk_Scroll_Request {
     Evas_Coord dx, dy;
     Evas_Coord x, y, w, h, x2, y2;
+};
+
+/// Creates a type name for @a _Ewk_Color.
+typedef struct _Ewk_Color Ewk_Color;
+/// Represents a color using the RGBA format.
+struct _Ewk_Color {
+    unsigned char r; /**< Red channel. */
+    unsigned char g; /**< Green channel. */
+    unsigned char b; /**< Blue channel. */
+    unsigned char a; /**< Alpha channel. */
 };
 
 /**
@@ -748,6 +764,35 @@ typedef enum _Ewk_Editor_Command Ewk_Editor_Command;
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool    ewk_view_execute_editor_command(Evas_Object *o, const Ewk_Editor_Command command, const char *value);
+
+/**
+ * Destroys a previously created color chooser.
+ *
+ * Before destroying, it informs client that color chooser's data is ready to be
+ * destroyed by sending a "colorchooser,willdelete". Then it removes any reference
+ * to the color chooser inside webkit. It's safe to call this function either from
+ * inside webkit or from browser.
+ *
+ * @param o view object
+ *
+ * @return @c EINA_TRUE in case color chooser was successfully destroyed or @c EINA_TRUE in
+ * case there wasn't any color chooser to be destroyed
+ */
+EAPI Eina_Bool    ewk_view_color_chooser_destroy(Evas_Object* o);
+
+/**
+ * Changes the selected color.
+ *
+ * Changes the color selected in the color input widget. The browser should call
+ * this when the user chooses a new color. It's likely that ewk_view_color_chooser_destroy
+ * will be called afterwards.
+ *
+ * @param o view object
+ * @param r red color component
+ * @param g green color component
+ * @param b blue color component
+ */
+EAPI void         ewk_view_color_chooser_color_set(Evas_Object* o, int r, int g, int b);
 
 /**
  * Changes currently selected item.

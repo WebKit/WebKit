@@ -77,6 +77,10 @@ namespace WebCore {
 struct PopupMenuClient;
 struct ContextMenu;
 struct ContextMenuItem;
+#if ENABLE(INPUT_TYPE_COLOR)
+struct Color;
+struct ColorChooserClient;
+#endif
 #if USE(ACCELERATED_COMPOSITING)
 class GraphicsContext3D;
 class GraphicsLayer;
@@ -153,6 +157,11 @@ WebCore::Page* ewk_view_core_page_get(const Evas_Object* ewkView);
 WTF::PassRefPtr<WebCore::Frame> ewk_view_frame_create(Evas_Object* ewkView, Evas_Object* frame, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement, const WebCore::KURL& url, const WTF::String& referrer);
 
 WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* ewkView, Evas_Object* frame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually);
+
+#if ENABLE(INPUT_TYPE_COLOR)
+void ewk_view_color_chooser_new(Evas_Object* ewkView, WebCore::ColorChooserClient* client, const WebCore::Color& initialColor);
+void ewk_view_color_chooser_changed(Evas_Object* ewkView, const WebCore::Color& newColor);
+#endif
 
 void ewk_view_popup_new(Evas_Object* ewkView, WebCore::PopupMenuClient* client, int selected, const WebCore::IntRect& rect);
 void ewk_view_viewport_attributes_set(Evas_Object* ewkView, const WebCore::ViewportArguments& arguments);

@@ -64,6 +64,10 @@
 #include "DatabaseTracker.h"
 #endif
 
+#if ENABLE(INPUT_TYPE_COLOR)
+#include "ColorChooserEfl.h"
+#endif
+
 using namespace WebCore;
 
 static inline Evas_Object* kit(Frame* frame)
@@ -422,6 +426,25 @@ NotificationClient* ChromeClientEfl::notificationPresenter() const
 {
     notImplemented();
     return 0;
+}
+#endif
+
+#if ENABLE(INPUT_TYPE_COLOR)
+PassOwnPtr<ColorChooser> ChromeClientEfl::createColorChooser(ColorChooserClient* colorChooserClient, const Color& initialColor)
+{
+    ewk_view_color_chooser_new(m_view, colorChooserClient, initialColor);
+
+    return adoptPtr(new ColorChooserEfl(this));
+}
+
+void ChromeClientEfl::removeColorChooser()
+{
+    ewk_view_color_chooser_destroy(m_view);
+}
+
+void ChromeClientEfl::updateColorChooser(const Color& color)
+{
+    ewk_view_color_chooser_changed(m_view, color);
 }
 #endif
 

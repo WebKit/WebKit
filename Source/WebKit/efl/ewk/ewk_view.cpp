@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2009-2010 ProFUSION embedded systems
     Copyright (C) 2009-2012 Samsung Electronics
+    Copyright (C) 2012 Intel Corporation
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -87,6 +88,10 @@
 #include "NetworkInfoClientEfl.h"
 #endif
 
+#if ENABLE(INPUT_TYPE_COLOR)
+#include "ColorChooserClient.h"
+#endif
+
 static const float zoomMinimum = 0.05;
 static const float zoomMaximum = 4.0;
 
@@ -103,6 +108,9 @@ static const size_t ewkViewScrollsSizeStep = 2;
 static const size_t ewkViewScrollsSizeMaximumFree = 32;
 
 static const Evas_Smart_Cb_Description _ewk_view_callback_names[] = {
+    { "colorchooser,create", "(yyyy)" },
+    { "colorchooser,willdelete", "" },
+    { "colorchooser,color,changed", "(yyyy)" },
     { "download,request", "p" },
     { "editorclient,contents,changed", "" },
     { "editorclient,selection,changed", "" },
@@ -152,6 +160,9 @@ struct _Ewk_View_Private_Data {
     WebCore::ViewportArguments viewportArguments;
     Ewk_History* history;
     OwnPtr<WebCore::PageClientEfl> pageClient;
+#if ENABLE(INPUT_TYPE_COLOR)
+    WebCore::ColorChooserClient* colorChooserClient;
+#endif
     struct {
         Ewk_Menu menu;
         WebCore::PopupMenuClient* menuClient;
@@ -3520,6 +3531,88 @@ void ewk_view_popup_selected_set(Evas_Object* ewkView, int index)
 
     priv->popup.menuClient->valueChanged(index);
 }
+
+#if ENABLE(INPUT_TYPE_COLOR)
+/**
+ * @internal
+ *
+ * Creates a new color chooser with an initial selected color.
+ *
+ * @param client ColorChooserClient instance that allows communication with webkit.
+ * @param initialColor The initial selected color.
+ *
+ */
+void ewk_view_color_chooser_new(Evas_Object* ewkView, WebCore::ColorChooserClient* client, const WebCore::Color& initialColor)
+{
+    INF("ewkView=%p", ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    if (priv->colorChooserClient)
+        ewk_view_color_chooser_destroy(ewkView);
+
+    priv->colorChooserClient = client;
+
+    Ewk_Color color;
+    color.r = initialColor.red();
+    color.g = initialColor.green();
+    color.b = initialColor.blue();
+    color.a = initialColor.alpha();
+
+    evas_object_smart_callback_call(ewkView, "colorchooser,create", &color);
+}
+
+Eina_Bool ewk_view_color_chooser_destroy(Evas_Object* ewkView)
+{
+    INF("ewkView=%p", ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    if (!priv->colorChooserClient)
+        return false;
+
+    evas_object_smart_callback_call(ewkView, "colorchooser,willdelete", 0);
+
+    priv->colorChooserClient->didEndChooser();
+    priv->colorChooserClient = 0;
+
+    return true;
+}
+
+void ewk_view_color_chooser_color_set(Evas_Object *ewkView, int r, int g, int b)
+{
+    INF("ewkView=%p", ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+    EINA_SAFETY_ON_NULL_RETURN(priv->colorChooserClient);
+
+    // Alpha channel is not allowed, see ColorInputType::sanitizeValue().
+    priv->colorChooserClient->didChooseColor(WebCore::Color(r, g, b));
+}
+
+/**
+ * @internal
+ *
+ * The selected color of the color input associated with the color chooser has
+ * changed. Usually the browser should updated the current selected value on the
+ * color picker if the user is not interacting.
+ *
+ * @param newColor The new selected color.
+ *
+ */
+void ewk_view_color_chooser_changed(Evas_Object* ewkView, const WebCore::Color& newColor)
+{
+    INF("ewkView=%p", ewkView);
+
+    Ewk_Color color;
+    color.r = newColor.red();
+    color.g = newColor.green();
+    color.b = newColor.blue();
+    color.a = newColor.alpha();
+
+    evas_object_smart_callback_call(ewkView, "colorchooser,color,changed", &color);
+}
+#endif
 
 /**
  * @internal

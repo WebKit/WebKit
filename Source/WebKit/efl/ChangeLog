@@ -1,3 +1,30 @@
+2012-04-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Add API for color chooser
+        https://bugs.webkit.org/show_bug.cgi?id=83692
+
+        Added new API to enable browsers to display a custom color picker
+        when an input field of type "color" is activated.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore):
+        (WebCore::ChromeClientEfl::createColorChooser):
+        (WebCore::ChromeClientEfl::removeColorChooser):
+        (WebCore::ChromeClientEfl::updateColorChooser):
+        * WebCoreSupport/ChromeClientEfl.h:
+        (ChromeClientEfl):
+        * ewk/ewk_private.h:
+        (WebCore):
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (ewk_view_color_chooser_new):
+        (ewk_view_color_chooser_destroy):
+        (ewk_view_color_chooser_color_set):
+        (ewk_view_color_chooser_changed):
+        * ewk/ewk_view.h:
+
 2012-04-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] LayoutTestController needs implementation of pageProperty

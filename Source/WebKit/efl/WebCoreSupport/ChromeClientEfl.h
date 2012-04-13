@@ -28,6 +28,10 @@
 #include "KURL.h"
 #include "PopupMenu.h"
 
+#if ENABLE(INPUT_TYPE_COLOR)
+#include "ColorChooser.h"
+#endif
+
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "NotificationClient.h"
 #endif
@@ -136,6 +140,12 @@ public:
     virtual bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard);
     virtual void enterFullScreenForElement(WebCore::Element*);
     virtual void exitFullScreenForElement(WebCore::Element*);
+#endif
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&);
+    virtual void removeColorChooser();
+    virtual void updateColorChooser(const Color&);
 #endif
 
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
