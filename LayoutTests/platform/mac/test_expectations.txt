@@ -183,7 +183,6 @@ BUGWK75568 : fast/repaint/subtree-root-skipped.html = TEXT
 BUGWK75568 : fast/replaced/replaced-breaking.html = TEXT
 BUGWK75568 : fast/replaced/width100percent-searchfield.html = TEXT
 BUGWK75568 : fast/text/textIteratorNilRenderer.html = TEXT
-BUGWK75568 : compositing/geometry/object-clip-rects-assertion.html = TEXT
 BUGWK75568 : compositing/overflow/ancestor-overflow.html = TEXT
 BUGWK75568 : editing/inserting/before-after-input-element.html = TEXT
 BUGWK75568 : editing/pasteboard/4806874.html = TEXT

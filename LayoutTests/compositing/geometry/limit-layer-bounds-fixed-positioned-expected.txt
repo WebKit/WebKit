@@ -15,7 +15,7 @@ Text here
           (drawsContent 1)
         )
         (GraphicsLayer
-          (position 0.00 13.00)
+          (position 0.00 113.00)
           (bounds 150.00 142.00)
           (drawsContent 1)
         )

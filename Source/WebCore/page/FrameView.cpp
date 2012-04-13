@@ -1718,6 +1718,7 @@ void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
 void FrameView::scrollPositionChangedViaPlatformWidget()
 {
     repaintFixedElementsAfterScrolling();
+    updateFixedElementsAfterScrolling();
     scrollPositionChanged();
 }
 
