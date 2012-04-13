@@ -1850,10 +1850,10 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 
     // The percentage is calculated with respect to the width even for margin top and bottom.
     // http://www.w3.org/TR/CSS2/box.html#margin-properties
-    marginTop = style->marginTop().isAuto() ? marginTop : valueForLength(style->marginTop(), width, view);
-    marginRight = style->marginRight().isAuto() ? marginRight : valueForLength(style->marginRight(), width, view);
-    marginBottom = style->marginBottom().isAuto() ? marginBottom : valueForLength(style->marginBottom(), width, view);
-    marginLeft = style->marginLeft().isAuto() ? marginLeft : valueForLength(style->marginLeft(), width, view);
+    marginTop = style->marginTop().isAuto() ? marginTop : intValueForLength(style->marginTop(), width, view);
+    marginRight = style->marginRight().isAuto() ? marginRight : intValueForLength(style->marginRight(), width, view);
+    marginBottom = style->marginBottom().isAuto() ? marginBottom : intValueForLength(style->marginBottom(), width, view);
+    marginLeft = style->marginLeft().isAuto() ? marginLeft : intValueForLength(style->marginLeft(), width, view);
 }
 
 void Document::setIsViewSource(bool isViewSource)
