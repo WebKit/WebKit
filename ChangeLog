@@ -1,3 +1,12 @@
+2012-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Enable WebKit2 by default in configure
+        https://bugs.webkit.org/show_bug.cgi?id=83753
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac:
+
 2012-04-12  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Add flag to enable / disable exclusions at runtime
