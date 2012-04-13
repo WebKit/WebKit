@@ -132,7 +132,6 @@ private:
     bool m_canBeDragged;
     bool m_isBeingDragged;
     bool m_opaque;
-    LayoutPoint m_dragStartPosition;
     LayoutPoint m_dragStartEventLocation;
 
     Timer<MediaControlPanelElement> m_transitionTimer;

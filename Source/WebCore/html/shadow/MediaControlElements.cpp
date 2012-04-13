@@ -145,7 +145,6 @@ void MediaControlPanelElement::startDrag(const LayoutPoint& eventLocation)
     if (!frame)
         return;
 
-    m_dragStartPosition = toRenderBox(renderer)->location();
     m_dragStartEventLocation = eventLocation;
 
     frame->eventHandler()->setCapturingMouseEventsNode(this);
@@ -159,7 +158,7 @@ void MediaControlPanelElement::continueDrag(const LayoutPoint& eventLocation)
         return;
 
     LayoutSize distanceDragged = eventLocation - m_dragStartEventLocation;
-    setPosition(m_dragStartPosition + distanceDragged);
+    setPosition(LayoutPoint(distanceDragged.width(), distanceDragged.height()));
 }
 
 void MediaControlPanelElement::endDrag()
