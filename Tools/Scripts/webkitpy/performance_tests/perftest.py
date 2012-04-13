@@ -154,7 +154,7 @@ class PageLoadingPerfTest(PerfTest):
     def run(self, driver, timeout_ms, printer, buildbot_output):
         test_times = []
 
-        for i in range(0, 2):
+        for i in range(0, 20):
             output = driver.run_test(DriverInput(self.path_or_url(), timeout_ms, None, False))
             if self.run_failed(output, printer):
                 return None

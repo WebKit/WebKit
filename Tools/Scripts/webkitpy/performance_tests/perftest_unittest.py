@@ -105,9 +105,9 @@ class TestPageLoadingPerfTest(unittest.TestCase):
         test = PageLoadingPerfTest('some-test', 'some-dir/some-test', '/path/some-dir/some-test')
         driver = TestPageLoadingPerfTest.MockDriver([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
         self.assertEqual(test.run(driver, None, printer, buildbot_output),
-            {'some-test': {'max': 20000, 'avg': 10500.0, 'median': 10500, 'stdev': math.sqrt(665 * 1000 * 1000), 'min': 1000, 'unit': 'ms'}})
+            {'some-test': {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': math.sqrt(570 * 1000 * 1000), 'min': 2000, 'unit': 'ms'}})
         self.assertEqual(printer.written_lines, [])
-        self.assertWritten(buildbot_output, ['RESULT some-test= 10500.0 ms\n', 'median= 10500 ms, stdev= 25787.5939165 ms, min= 1000 ms, max= 20000 ms\n'])
+        self.assertWritten(buildbot_output, ['RESULT some-test= 11000.0 ms\n', 'median= 11000 ms, stdev= 23874.6727726 ms, min= 2000 ms, max= 20000 ms\n'])
 
     def test_run_with_bad_output(self):
         printer = MockPrinter()

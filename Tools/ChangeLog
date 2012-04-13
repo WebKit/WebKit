@@ -1,3 +1,13 @@
+2012-04-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkitpy build fix. Revert the debug change (number of runs was 2 instead of 20),
+        and also rebaseline the test results since we ignore the first run now.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PageLoadingPerfTest.run):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPageLoadingPerfTest.test_run):
+
 2012-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable SVG page loading performance tests
