@@ -1180,6 +1180,10 @@ fast/preloader/document-write-2.html
 # http://trac.webkit.org/changeset/106305
 plugins/crash-restoring-plugin-page-from-page-cache.html
 
+# ReferenceError: Can't find variable: MediaKeyError
+# http://trac.webkit.org/changeset/114067
+fast/events/constructors/media-key-event-constructor.html
+
 # ============================================================================= #
 # Failing SVG tests
 # ============================================================================= #
@@ -1976,6 +1980,12 @@ fast/forms/input-autofilled.html
 # https://bugs.webkit.org/show_bug.cgi?id=83419
 fast/transforms/scrollIntoView-transformed.html
 
+# [Qt] REGRESSION(r114059): It made these tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=83432
+fast/dom/dom-parse-serialize-display.html
+fast/dom/dom-parse-serialize-xmldecl.html
+fast/dom/dom-parse-serialize.html
+fast/xmlhttprequest/xmlhttprequest-get.xhtml
 
 # ============================================================================= #
 # failing fonts tests
