@@ -960,49 +960,45 @@ static inline IntSize resolveAgainstIntrinsicRatio(const IntSize& size, const Fl
 
 IntSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* image, const IntSize& positioningAreaSize) const
 {
-    int resolvedWidth = 0;
-    int resolvedHeight = 0;
-    FloatSize intrinsicRatio;
-
     // A generated image without a fixed size, will always return the container size as intrinsic size.
-    if (image->isGeneratedImage() && image->usesImageContainerSize()) {
-        resolvedWidth = positioningAreaSize.width();
-        resolvedHeight = positioningAreaSize.height();
-    } else {
-        Length intrinsicWidth;
-        Length intrinsicHeight;
-        image->computeIntrinsicDimensions(this, intrinsicWidth, intrinsicHeight, intrinsicRatio);
+    if (image->isGeneratedImage() && image->usesImageContainerSize())
+        return IntSize(positioningAreaSize.width(), positioningAreaSize.height());
 
-        // Intrinsic dimensions expressed as percentages must be resolved relative to the dimensions of the rectangle
-        // that establishes the coordinate system for the 'background-position' property. 
+    Length intrinsicWidth;
+    Length intrinsicHeight;
+    FloatSize intrinsicRatio;
+    image->computeIntrinsicDimensions(this, intrinsicWidth, intrinsicHeight, intrinsicRatio);
 
-        // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-        if (intrinsicWidth.isPercent() && intrinsicHeight.isPercent() && intrinsicRatio.isEmpty()) {
-            // Resolve width/height percentages against positioningAreaSize, only if no intrinsic ratio is provided.
-            resolvedWidth = static_cast<int>(round(positioningAreaSize.width() * intrinsicWidth.percent() / 100));
-            resolvedHeight = static_cast<int>(round(positioningAreaSize.height() * intrinsicHeight.percent() / 100));
-        } else {
-            if (intrinsicWidth.isFixed())
-                resolvedWidth = static_cast<int>(intrinsicWidth.value() * style()->effectiveZoom());
-            if (intrinsicHeight.isFixed())
-                resolvedHeight = static_cast<int>(intrinsicHeight.value() * style()->effectiveZoom());
-        }
+    // Intrinsic dimensions expressed as percentages must be resolved relative to the dimensions of the rectangle
+    // that establishes the coordinate system for the 'background-position' property. 
+    
+    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
+    if (intrinsicWidth.isPercent() && intrinsicHeight.isPercent() && intrinsicRatio.isEmpty()) {
+        // Resolve width/height percentages against positioningAreaSize, only if no intrinsic ratio is provided.
+        int resolvedWidth = static_cast<int>(round(positioningAreaSize.width() * intrinsicWidth.percent() / 100));
+        int resolvedHeight = static_cast<int>(round(positioningAreaSize.height() * intrinsicHeight.percent() / 100));
+        return IntSize(resolvedWidth, resolvedHeight);
     }
 
-    if (resolvedWidth > 0 && resolvedHeight > 0)
-        return IntSize(resolvedWidth, resolvedHeight);
+    IntSize resolvedSize(intrinsicWidth.isFixed() ? intrinsicWidth.value() : 0, intrinsicHeight.isFixed() ? intrinsicHeight.value() : 0);
+    IntSize minimumSize(resolvedSize.width() > 0 ? 1 : 0, resolvedSize.height() > 0 ? 1 : 0);
+    resolvedSize.scale(style()->effectiveZoom());
+    resolvedSize.clampToMinimumSize(minimumSize);
+
+    if (!resolvedSize.isEmpty())
+        return resolvedSize;
 
     // If the image has one of either an intrinsic width or an intrinsic height:
     // * and an intrinsic aspect ratio, then the missing dimension is calculated from the given dimension and the ratio.
     // * and no intrinsic aspect ratio, then the missing dimension is assumed to be the size of the rectangle that
     //   establishes the coordinate system for the 'background-position' property.
-    if ((resolvedWidth && !resolvedHeight) || (!resolvedWidth && resolvedHeight))
-        return resolveAgainstIntrinsicWidthOrHeightAndRatio(positioningAreaSize, intrinsicRatio, resolvedWidth, resolvedHeight);
+    if (resolvedSize.width() > 0 || resolvedSize.height() > 0)
+        return resolveAgainstIntrinsicWidthOrHeightAndRatio(positioningAreaSize, intrinsicRatio, resolvedSize.width(), resolvedSize.height());
 
     // If the image has no intrinsic dimensions and has an intrinsic ratio the dimensions must be assumed to be the
     // largest dimensions at that ratio such that neither dimension exceeds the dimensions of the rectangle that
     // establishes the coordinate system for the 'background-position' property.
-    if (!resolvedWidth && !resolvedHeight && !intrinsicRatio.isEmpty())
+    if (!intrinsicRatio.isEmpty())
         return resolveAgainstIntrinsicRatio(positioningAreaSize, intrinsicRatio);
 
     // If the image has no intrinsic ratio either, then the dimensions must be assumed to be the rectangle that

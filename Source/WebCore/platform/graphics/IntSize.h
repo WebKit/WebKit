@@ -80,13 +80,18 @@ public:
         m_width += width;
         m_height += height;
     }
+
+    void scale(float widthScale, float heightScale)
+    {
+        m_width = static_cast<int>(static_cast<float>(m_width) * widthScale);
+        m_height = static_cast<int>(static_cast<float>(m_height) * heightScale);
+    }
     
     void scale(float scale)
     {
-        m_width = static_cast<int>(static_cast<float>(m_width) * scale);
-        m_height = static_cast<int>(static_cast<float>(m_height) * scale);
+        this->scale(scale, scale);
     }
-    
+
     IntSize expandedTo(const IntSize& other) const
     {
         return IntSize(m_width > other.m_width ? m_width : other.m_width,
@@ -102,6 +107,14 @@ public:
     void clampNegativeToZero()
     {
         *this = expandedTo(IntSize());
+    }
+
+    void clampToMinimumSize(const IntSize& minimumSize)
+    {
+        if (m_width < minimumSize.width())
+            m_width = minimumSize.width();
+        if (m_height < minimumSize.height())
+            m_height = minimumSize.height();
     }
 
     int area() const
