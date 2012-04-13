@@ -28,15 +28,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VideoFrameChromium_h
-#define VideoFrameChromium_h
+#ifndef WebVideoFrame_h
+#define WebVideoFrame_h
 
-#include "IntSize.h"
+namespace WebKit {
 
-namespace WebCore {
-
-// A class that represents a video frame in chromium.
-class VideoFrameChromium {
+// A proxy video frame interface to communicate frame data between chromium
+// and WebKit.
+// Keep in sync with chromium's media::VideoFrame::Format.
+class WebVideoFrame {
 public:
     static const unsigned maxPlanes;
     static const unsigned numRGBPlanes;
@@ -46,32 +46,27 @@ public:
     static const unsigned uPlane;
     static const unsigned vPlane;
 
-    // These enums must be kept in sync with WebKit::WebVideoFrame.
     enum Format {
-        Invalid = 0,
-        RGB32 = 4,
-        YV12 = 6,
-        YV16 = 7,
-        Empty = 9,
-        I420 = 11,
-        NativeTexture = 12,
+        FormatInvalid = 0,
+        FormatRGB32 = 4,
+        FormatYV12 = 6,
+        FormatYV16 = 7,
+        FormatEmpty = 9,
+        FormatI420 = 11,
+        FormatNativeTexture = 12,
     };
 
-    virtual ~VideoFrameChromium();
-    virtual Format format() const = 0;
-    virtual unsigned width() const = 0;
-    virtual unsigned width(unsigned plane) const = 0;
-    virtual unsigned height() const = 0;
-    virtual unsigned height(unsigned plane) const = 0;
-    virtual unsigned planes() const = 0;
-    virtual int stride(unsigned plane) const = 0;
-    virtual const void* data(unsigned plane) const = 0;
-    virtual const IntSize requiredTextureSize(unsigned plane) const = 0;
-    virtual bool hasPaddingBytes(unsigned plane) const = 0;
-    virtual unsigned textureId() const = 0;
-    virtual unsigned textureTarget() const = 0;
+    virtual ~WebVideoFrame() { }
+    virtual Format format() const { return FormatInvalid; }
+    virtual unsigned width() const { return 0; }
+    virtual unsigned height() const { return 0; }
+    virtual unsigned planes() const { return 0; }
+    virtual int stride(unsigned plane) const { return 0; }
+    virtual const void* data(unsigned plane) const { return 0; }
+    virtual unsigned textureId() const { return 0; }
+    virtual unsigned textureTarget() const { return 0; }
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif

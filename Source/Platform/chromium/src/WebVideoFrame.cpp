@@ -28,42 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VideoFrameChromiumImpl_h
-#define VideoFrameChromiumImpl_h
+#include "config.h"
 
-#include "VideoFrameChromium.h"
-#include "WebVideoFrame.h"
+#include <public/WebVideoFrame.h>
 
 namespace WebKit {
 
-// A wrapper class for WebKit::WebVideoFrame. Objects can be created in WebKit
-// and used in WebCore because of the VideoFrameChromium interface.
-class VideoFrameChromiumImpl : public WebCore::VideoFrameChromium {
-public:
-    // Converts a WebCore::VideoFrameChromium to a WebKit::WebVideoFrame.
-    static WebVideoFrame* toWebVideoFrame(WebCore::VideoFrameChromium*);
-
-    // Creates a VideoFrameChromiumImpl object to wrap the given WebVideoFrame.
-    // The VideoFrameChromiumImpl does not take ownership of the WebVideoFrame
-    // and should not free the frame's memory.
-    VideoFrameChromiumImpl(WebVideoFrame*);
-    virtual Format format() const;
-    virtual unsigned width() const;
-    virtual unsigned width(unsigned plane) const;
-    virtual unsigned height() const;
-    virtual unsigned height(unsigned plane) const;
-    virtual unsigned planes() const;
-    virtual int stride(unsigned plane) const;
-    virtual const void* data(unsigned plane) const;
-    virtual const WebCore::IntSize requiredTextureSize(unsigned plane) const;
-    virtual bool hasPaddingBytes(unsigned plane) const;
-    virtual unsigned textureId() const;
-    virtual unsigned textureTarget() const;
-
-private:
-    WebVideoFrame* m_webVideoFrame;
-};
+const unsigned WebVideoFrame::maxPlanes = 3;
+const unsigned WebVideoFrame::numRGBPlanes = 1;
+const unsigned WebVideoFrame::rgbPlane = 0;
+const unsigned WebVideoFrame::numYUVPlanes = 3;
+const unsigned WebVideoFrame::yPlane = 0;
+const unsigned WebVideoFrame::uPlane = 1;
+const unsigned WebVideoFrame::vPlane = 2;
 
 } // namespace WebKit
 
-#endif

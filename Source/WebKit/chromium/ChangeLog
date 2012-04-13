@@ -1,3 +1,25 @@
+2012-04-13  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move WebVideoFrame into Platform and remove WebCore::VideoFrameChromium wrapper API
+        https://bugs.webkit.org/show_bug.cgi?id=83851
+
+        Reviewed by Adam Barth.
+
+        Moves the WebVideoFrame interface into Platform and removes the now unnecessary VideoFrameChromiumImpl adapter
+        implementation.
+
+        * WebKit.gyp:
+        * public/WebVideoFrame.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/VideoFrameChromiumImpl.cpp: Removed.
+        * src/VideoFrameChromiumImpl.h: Removed.
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::getCurrentFrame):
+        (WebKit::WebMediaPlayerClientImpl::putCurrentFrame):
+        (WebKit::WebMediaPlayerClientImpl::supportsType):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+
 2012-04-13  Rob Flack  <flackr@chromium.org>
 
         Chromium: Should enable -webkit-image-set

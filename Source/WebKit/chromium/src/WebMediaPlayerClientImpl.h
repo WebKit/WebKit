@@ -35,7 +35,6 @@
 
 #include "AudioSourceProvider.h"
 #include "MediaPlayerPrivate.h"
-#include "VideoFrameChromium.h"
 #include "VideoFrameProvider.h"
 #include "VideoLayerChromium.h"
 #include "WebAudioSourceProviderClient.h"
@@ -145,8 +144,8 @@ public:
 
     // VideoFrameProvider methods:
     virtual void setVideoFrameProviderClient(VideoFrameProvider::Client*);
-    virtual WebCore::VideoFrameChromium* getCurrentFrame();
-    virtual void putCurrentFrame(WebCore::VideoFrameChromium*);
+    virtual WebVideoFrame* getCurrentFrame();
+    virtual void putCurrentFrame(WebVideoFrame*);
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
@@ -185,7 +184,7 @@ private:
     Mutex m_compositingMutex; // Guards m_currentVideoFrame and m_videoFrameProviderClient.
     WebCore::MediaPlayer* m_mediaPlayer;
     OwnPtr<WebMediaPlayer> m_webMediaPlayer;
-    OwnPtr<WebCore::VideoFrameChromium> m_currentVideoFrame;
+    WebVideoFrame* m_currentVideoFrame;
     String m_url;
     bool m_delayingLoad;
     WebCore::MediaPlayer::Preload m_preload;
