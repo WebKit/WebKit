@@ -40,6 +40,7 @@
 #include "LayerChromium.h"
 #include "TextureCopier.h"
 #include "TrackingTextureAllocator.h"
+#include "VideoLayerChromium.h"
 #include "cc/CCDrawQuad.h"
 #include "cc/CCHeadsUpDisplay.h"
 #include "cc/CCLayerTreeHost.h"

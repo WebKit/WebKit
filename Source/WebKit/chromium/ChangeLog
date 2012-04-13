@@ -1,3 +1,49 @@
+2012-04-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r114075.
+        http://trac.webkit.org/changeset/114075
+        https://bugs.webkit.org/show_bug.cgi?id=83857
+
+        Breaks compile (Requested by jamesr on #webkit).
+
+        * WebKit.gyp:
+        * public/WebVideoFrame.h:
+        (WebKit):
+        (WebVideoFrame):
+        (WebKit::WebVideoFrame::~WebVideoFrame):
+        (WebKit::WebVideoFrame::format):
+        (WebKit::WebVideoFrame::width):
+        (WebKit::WebVideoFrame::height):
+        (WebKit::WebVideoFrame::planes):
+        (WebKit::WebVideoFrame::stride):
+        (WebKit::WebVideoFrame::data):
+        (WebKit::WebVideoFrame::textureId):
+        (WebKit::WebVideoFrame::textureTarget):
+        * src/AssertMatchingEnums.cpp:
+        * src/VideoFrameChromiumImpl.cpp: Added.
+        (WebKit):
+        (WebKit::VideoFrameChromiumImpl::toWebVideoFrame):
+        (WebKit::VideoFrameChromiumImpl::VideoFrameChromiumImpl):
+        (WebKit::VideoFrameChromiumImpl::format):
+        (WebKit::VideoFrameChromiumImpl::width):
+        (WebKit::VideoFrameChromiumImpl::height):
+        (WebKit::VideoFrameChromiumImpl::planes):
+        (WebKit::VideoFrameChromiumImpl::stride):
+        (WebKit::VideoFrameChromiumImpl::data):
+        (WebKit::VideoFrameChromiumImpl::requiredTextureSize):
+        (WebKit::VideoFrameChromiumImpl::hasPaddingBytes):
+        (WebKit::VideoFrameChromiumImpl::textureId):
+        (WebKit::VideoFrameChromiumImpl::textureTarget):
+        * src/VideoFrameChromiumImpl.h: Renamed from Source/Platform/chromium/public/WebVideoFrame.h.
+        (WebKit):
+        (VideoFrameChromiumImpl):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::getCurrentFrame):
+        (WebKit::WebMediaPlayerClientImpl::putCurrentFrame):
+        (WebKit::WebMediaPlayerClientImpl::supportsType):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+
 2012-04-12  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move WebVideoFrame into Platform and remove WebCore::VideoFrameChromium wrapper API

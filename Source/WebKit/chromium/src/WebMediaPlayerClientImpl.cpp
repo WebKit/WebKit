@@ -19,6 +19,8 @@
 #include "PlatformContextSkia.h"
 #include "RenderView.h"
 #include "TimeRanges.h"
+#include "VideoFrameChromium.h"
+#include "VideoFrameChromiumImpl.h"
 #include "VideoLayerChromium.h"
 #include "WebAudioSourceProvider.h"
 #include "WebFrameClient.h"
@@ -661,24 +663,29 @@ void WebMediaPlayerClientImpl::setVideoFrameProviderClient(VideoFrameProvider::C
         m_webMediaPlayer->setStreamTextureClient(client ? this : 0);
 }
 
-WebVideoFrame* WebMediaPlayerClientImpl::getCurrentFrame()
+VideoFrameChromium* WebMediaPlayerClientImpl::getCurrentFrame()
 {
     MutexLocker locker(m_compositingMutex);
     ASSERT(!m_currentVideoFrame);
-    if (m_webMediaPlayer)
-        m_currentVideoFrame = m_webMediaPlayer->getCurrentFrame();
-    return m_currentVideoFrame;
+    if (m_webMediaPlayer) {
+        WebVideoFrame* webkitVideoFrame = m_webMediaPlayer->getCurrentFrame();
+        if (webkitVideoFrame)
+            m_currentVideoFrame = adoptPtr(new VideoFrameChromiumImpl(webkitVideoFrame));
+    }
+    return m_currentVideoFrame.get();
 }
 
-void WebMediaPlayerClientImpl::putCurrentFrame(WebVideoFrame* videoFrame)
+void WebMediaPlayerClientImpl::putCurrentFrame(VideoFrameChromium* videoFrame)
 {
     MutexLocker locker(m_compositingMutex);
     ASSERT(videoFrame == m_currentVideoFrame);
     if (!videoFrame)
         return;
-    if (m_webMediaPlayer)
-        m_webMediaPlayer->putCurrentFrame(videoFrame);
-    m_currentVideoFrame = 0;
+    if (m_webMediaPlayer) {
+        m_webMediaPlayer->putCurrentFrame(
+            VideoFrameChromiumImpl::toWebVideoFrame(videoFrame));
+    }
+    m_currentVideoFrame.clear();
 }
 #endif
 
@@ -760,7 +767,6 @@ void WebMediaPlayerClientImpl::didUpdateMatrix(const float* matrix)
 
 WebMediaPlayerClientImpl::WebMediaPlayerClientImpl()
     : m_mediaPlayer(0)
-    , m_currentVideoFrame(0)
     , m_delayingLoad(false)
     , m_preload(MediaPlayer::MetaData)
 #if USE(ACCELERATED_COMPOSITING)

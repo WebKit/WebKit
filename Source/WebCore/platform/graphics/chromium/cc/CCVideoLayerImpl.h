@@ -28,13 +28,10 @@
 
 #include "ManagedTexture.h"
 #include "ShaderChromium.h"
+#include "VideoFrameChromium.h"
 #include "VideoFrameProvider.h"
 #include "VideoLayerChromium.h"
 #include "cc/CCLayerImpl.h"
-
-namespace WebKit {
-class WebVideoFrame;
-}
 
 namespace WebCore {
 
@@ -86,10 +83,10 @@ public:
 private:
     explicit CCVideoLayerImpl(int, VideoFrameProvider*);
 
-    static IntSize computeVisibleSize(const WebKit::WebVideoFrame&, unsigned plane);
+    static IntSize computeVisibleSize(const VideoFrameChromium*, unsigned plane);
     virtual const char* layerTypeAsString() const OVERRIDE { return "VideoLayer"; }
 
-    bool reserveTextures(const WebKit::WebVideoFrame&, GC3Denum format, LayerRendererChromium*);
+    bool reserveTextures(const VideoFrameChromium*, GC3Denum format, LayerRendererChromium*);
 
     Mutex m_providerMutex; // Guards m_provider below.
     VideoFrameProvider* m_provider;
@@ -99,7 +96,7 @@ private:
     float m_streamTextureMatrix[16];
     CCLayerTreeHostImpl* m_layerTreeHostImpl;
 
-    WebKit::WebVideoFrame* m_frame;
+    VideoFrameChromium* m_frame;
     GC3Denum m_format;
 };
 

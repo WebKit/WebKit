@@ -31,7 +31,7 @@
 #ifndef VideoFrameProvider_h
 #define VideoFrameProvider_h
 
-#include <public/WebVideoFrame.h>
+#include "VideoFrameChromium.h"
 
 namespace WebCore {
 
@@ -49,15 +49,17 @@ public:
 
     virtual void setVideoFrameProviderClient(Client*) = 0;
 
-    // This function places a lock on the current frame and returns a pointer to it.
-    // Calls to this method should always be followed with a call to putCurrentFrame().
+    // This function returns a pointer to a VideoFrameChromium, which is
+    // the WebCore wrapper for a video frame in Chromium. getCurrentFrame()
+    // places a lock on the frame in Chromium. Calls to this method should
+    // always be followed with a call to putCurrentFrame().
     // The ownership of the object is not transferred to the caller and
     // the caller should not free the returned object.
-    virtual WebKit::WebVideoFrame* getCurrentFrame() = 0;
+    virtual VideoFrameChromium* getCurrentFrame() = 0;
     // This function releases the lock on the video frame in chromium. It should
     // always be called after getCurrentFrame(). Frames passed into this method
     // should no longer be referenced after the call is made.
-    virtual void putCurrentFrame(WebKit::WebVideoFrame*) = 0;
+    virtual void putCurrentFrame(VideoFrameChromium*) = 0;
 };
 
 } // namespace WebCore
