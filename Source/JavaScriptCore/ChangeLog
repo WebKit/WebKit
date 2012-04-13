@@ -1,3 +1,63 @@
+2012-04-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Don't rely on fixed offsets to patch get_by_id/put_by_id
+        https://bugs.webkit.org/show_bug.cgi?id=83924
+
+        Reviewed by Oliver Hunt.
+
+        Store offsets in the structure stub info, as we do for the DFG JIT.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::differenceBetween):
+            - this method can be static (now used from PropertyStubCompilationInfo::copyToStubInfo, will be removed soon!)
+        * bytecode/StructureStubInfo.h:
+            - added new fields for baseline JIT offsets.
+        * jit/JIT.cpp:
+        (JSC::PropertyStubCompilationInfo::copyToStubInfo):
+            - moved out from JIT::privateCompile.
+        (JSC::JIT::privateCompile):
+            - moved out code to PropertyStubCompilationInfo::copyToStubInfo.
+        * jit/JIT.h:
+        (PropertyStubCompilationInfo):
+            - added helper functions to initializae PropertyStubCompilationInfo, state to store more offset info.
+            - removed many offsets.
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::resetPatchGetById):
+        (JSC::JIT::resetPatchPutById):
+            - changed code generation to use new interface to store info on PropertyStubCompilationInfo.
+            - changed repatch functions to read offsets from the structure stub info.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::resetPatchGetById):
+        (JSC::JIT::resetPatchPutById):
+            - changed code generation to use new interface to store info on PropertyStubCompilationInfo.
+            - changed repatch functions to read offsets from the structure stub info.
+
 2012-04-13  Rob Buis  <rbuis@rim.com>
 
         Fix some compiler warnings (miscellaneous)

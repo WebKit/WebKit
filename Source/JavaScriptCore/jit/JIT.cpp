@@ -517,6 +517,46 @@ void JIT::privateCompileSlowCases()
 #endif
 }
 
+ALWAYS_INLINE void PropertyStubCompilationInfo::copyToStubInfo(StructureStubInfo& info, LinkBuffer &linkBuffer)
+{
+    ASSERT(bytecodeIndex != std::numeric_limits<unsigned>::max());
+    info.bytecodeIndex = bytecodeIndex;
+    info.callReturnLocation = linkBuffer.locationOf(callReturnLocation);
+    info.hotPathBegin = linkBuffer.locationOf(hotPathBegin);
+
+    switch (m_type) {
+    case MethodCheck:
+        ASSERT_JIT_OFFSET(MacroAssembler::differenceBetween(methodCheckStructureToCompare, methodCheckProtoObj), JIT::patchOffsetMethodCheckProtoObj);
+        ASSERT_JIT_OFFSET(MacroAssembler::differenceBetween(methodCheckStructureToCompare, methodCheckProtoStructureToCompare), JIT::patchOffsetMethodCheckProtoStruct);
+        ASSERT_JIT_OFFSET(MacroAssembler::differenceBetween(methodCheckStructureToCompare, methodCheckPutFunction), JIT::patchOffsetMethodCheckPutFunction);
+        // No break - fall through to GetById.
+    case GetById: {
+        CodeLocationLabel hotPathBeginLocation = linkBuffer.locationOf(hotPathBegin);
+        info.patch.baseline.u.get.structureToCompare = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(getStructureToCompare));
+        info.patch.baseline.u.get.structureCheck = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(getStructureCheck));
+#if USE(JSVALUE64)
+        info.patch.baseline.u.get.displacementLabel = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(getDisplacementLabel));
+#else
+        info.patch.baseline.u.get.displacementLabel1 = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(getDisplacementLabel1));
+        info.patch.baseline.u.get.displacementLabel2 = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(getDisplacementLabel2));
+#endif
+        info.patch.baseline.u.get.putResult = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(getPutResult));
+        info.patch.baseline.u.get.coldPathBegin = MacroAssembler::differenceBetweenCodePtr(linkBuffer.locationOf(getColdPathBegin), linkBuffer.locationOf(callReturnLocation));
+        break;
+    }
+    case PutById:
+        CodeLocationLabel hotPathBeginLocation = linkBuffer.locationOf(hotPathBegin);
+        info.patch.baseline.u.put.structureToCompare = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(putStructureToCompare));
+#if USE(JSVALUE64)
+        info.patch.baseline.u.put.displacementLabel = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(putDisplacementLabel));
+#else
+        info.patch.baseline.u.put.displacementLabel1 = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(putDisplacementLabel1));
+        info.patch.baseline.u.put.displacementLabel2 = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(putDisplacementLabel2));
+#endif
+        break;
+    }
+}
+
 JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffort effort)
 {
 #if ENABLE(JIT_VERBOSE_OSR)
@@ -664,13 +704,8 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
     }
 
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccessCompilationInfo.size());
-    for (unsigned i = 0; i < m_propertyAccessCompilationInfo.size(); ++i) {
-        StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
-        ASSERT(m_propertyAccessCompilationInfo[i].bytecodeIndex != std::numeric_limits<unsigned>::max());
-        info.bytecodeIndex = m_propertyAccessCompilationInfo[i].bytecodeIndex;
-        info.callReturnLocation = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].callReturnLocation);
-        info.hotPathBegin = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].hotPathBegin);
-    }
+    for (unsigned i = 0; i < m_propertyAccessCompilationInfo.size(); ++i)
+        m_propertyAccessCompilationInfo[i].copyToStubInfo(m_codeBlock->structureStubInfo(i), patchBuffer);
     m_codeBlock->setNumberOfCallLinkInfos(m_callStructureStubCompilationInfo.size());
     for (unsigned i = 0; i < m_codeBlock->numberOfCallLinkInfos(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);

@@ -563,7 +563,7 @@ public:
     }
 
     template<typename T, typename U>
-    ptrdiff_t differenceBetween(T from, U to)
+    static ptrdiff_t differenceBetween(T from, U to)
     {
         return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
     }

@@ -212,6 +212,30 @@ namespace JSC {
 #endif
             } dfg;
             struct {
+                union {
+                    struct {
+                        int16_t structureToCompare;
+                        int16_t structureCheck;
+#if USE(JSVALUE64)
+                        int16_t displacementLabel;
+#else
+                        int16_t displacementLabel1;
+                        int16_t displacementLabel2;
+#endif
+                        int16_t putResult;
+                        int16_t coldPathBegin;
+                    } get;
+                    struct {
+                        int16_t structureToCompare;
+#if USE(JSVALUE64)
+                        int16_t displacementLabel;
+#else
+                        int16_t displacementLabel1;
+                        int16_t displacementLabel2;
+#endif
+                    } put;
+                } u;
+
             } baseline;
         } patch;
 

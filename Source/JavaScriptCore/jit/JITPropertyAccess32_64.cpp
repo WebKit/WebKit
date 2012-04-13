@@ -120,10 +120,6 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     move(TrustedImm32(JSValue::CellTag), regT1);
     Jump match = jump();
     
-    ASSERT_JIT_OFFSET_UNUSED(protoObj, differenceBetween(info.structureToCompare, protoObj), patchOffsetMethodCheckProtoObj);
-    ASSERT_JIT_OFFSET(differenceBetween(info.structureToCompare, protoStructureToCompare), patchOffsetMethodCheckProtoStruct);
-    ASSERT_JIT_OFFSET_UNUSED(putFunction, differenceBetween(info.structureToCompare, putFunction), patchOffsetMethodCheckPutFunction);
-    
     // Link the failure cases here.
     structureCheck.link(this);
     protoStructureCheck.link(this);
@@ -139,6 +135,8 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     
     // We've already generated the following get_by_id, so make sure it's skipped over.
     m_bytecodeOffset += OPCODE_LENGTH(op_get_by_id);
+
+    m_propertyAccessCompilationInfo.last().addMethodCheckInfo(info.structureToCompare, protoObj, protoStructureToCompare, putFunction);
 }
 
 void JIT::emitSlow_op_method_check(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -329,26 +327,20 @@ void JIT::compileGetByIdHotPath()
     BEGIN_UNINTERRUPTED_SEQUENCE(sequenceGetByIdHotPath);
     
     Label hotPathBegin(this);
-    m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo());
-    m_propertyAccessCompilationInfo.last().bytecodeIndex = m_bytecodeOffset;
-    m_propertyAccessCompilationInfo.last().hotPathBegin = hotPathBegin;
     
     DataLabelPtr structureToCompare;
     Jump structureCheck = branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
     addSlowCase(structureCheck);
-    ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetGetByIdStructure);
-    ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureCheck), patchOffsetGetByIdBranchToSlowCase);
     
     loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT2);
     DataLabelCompact displacementLabel1 = loadPtrWithCompactAddressOffsetPatch(Address(regT2, patchGetByIdDefaultOffset), regT0); // payload
-    ASSERT_JIT_OFFSET_UNUSED(displacementLabel1, differenceBetween(hotPathBegin, displacementLabel1), patchOffsetGetByIdPropertyMapOffset1);
     DataLabelCompact displacementLabel2 = loadPtrWithCompactAddressOffsetPatch(Address(regT2, patchGetByIdDefaultOffset), regT1); // tag
-    ASSERT_JIT_OFFSET_UNUSED(displacementLabel2, differenceBetween(hotPathBegin, displacementLabel2), patchOffsetGetByIdPropertyMapOffset2);
     
     Label putResult(this);
-    ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, putResult), patchOffsetGetByIdPutResult);
     
     END_UNINTERRUPTED_SEQUENCE(sequenceGetByIdHotPath);
+
+    m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo(PropertyStubGetById, m_bytecodeOffset, hotPathBegin, structureToCompare, structureCheck, displacementLabel1, displacementLabel2, putResult));
 }
 
 void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -373,9 +365,7 @@ void JIT::compileGetByIdSlowCase(int dst, int base, Identifier* ident, Vector<Sl
     
     BEGIN_UNINTERRUPTED_SEQUENCE(sequenceGetByIdSlowCase);
     
-#ifndef NDEBUG
     Label coldPathBegin(this);
-#endif
     JITStubCall stubCall(this, isMethodCheck ? cti_op_get_by_id_method_check : cti_op_get_by_id);
     stubCall.addArgument(regT1, regT0);
     stubCall.addArgument(TrustedImmPtr(ident));
@@ -383,10 +373,8 @@ void JIT::compileGetByIdSlowCase(int dst, int base, Identifier* ident, Vector<Sl
     
     END_UNINTERRUPTED_SEQUENCE_FOR_PUT(sequenceGetByIdSlowCase, dst);
     
-    ASSERT_JIT_OFFSET(differenceBetween(coldPathBegin, call), patchOffsetGetByIdSlowCaseCall);
-    
     // Track the location of the call; this will be used to recover patch information.
-    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].callReturnLocation = call;
+    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].slowCaseInfo(PropertyStubGetById, coldPathBegin, call);
 }
 
 void JIT::emit_op_put_by_id(Instruction* currentInstruction)
@@ -405,14 +393,10 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     BEGIN_UNINTERRUPTED_SEQUENCE(sequencePutById);
     
     Label hotPathBegin(this);
-    m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo());
-    m_propertyAccessCompilationInfo.last().bytecodeIndex = m_bytecodeOffset;
-    m_propertyAccessCompilationInfo.last().hotPathBegin = hotPathBegin;
     
     // It is important that the following instruction plants a 32bit immediate, in order that it can be patched over.
     DataLabelPtr structureToCompare;
     addSlowCase(branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure))));
-    ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetPutByIdStructure);
     
     loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT1);
     DataLabel32 displacementLabel1 = storePtrWithAddressOffsetPatch(regT2, Address(regT1, patchPutByIdDefaultOffset)); // payload
@@ -421,9 +405,8 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     END_UNINTERRUPTED_SEQUENCE(sequencePutById);
 
     emitWriteBarrier(regT0, regT2, regT1, regT2, ShouldFilterImmediates, WriteBarrierForPropertyAccess);
-    
-    ASSERT_JIT_OFFSET_UNUSED(displacementLabel1, differenceBetween(hotPathBegin, displacementLabel1), patchOffsetPutByIdPropertyMapOffset1);
-    ASSERT_JIT_OFFSET_UNUSED(displacementLabel2, differenceBetween(hotPathBegin, displacementLabel2), patchOffsetPutByIdPropertyMapOffset2);
+
+    m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo(PropertyStubPutById, m_bytecodeOffset, hotPathBegin, structureToCompare, displacementLabel1, displacementLabel2));
 }
 
 void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -442,7 +425,7 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
     Call call = stubCall.call();
     
     // Track the location of the call; this will be used to recover patch information.
-    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].callReturnLocation = call;
+    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].slowCaseInfo(PropertyStubPutById, call);
 }
 
 // Compile a store into an object's property storage.  May overwrite base.
@@ -577,9 +560,9 @@ void JIT::patchGetByIdSelf(CodeBlock* codeBlock, StructureStubInfo* stubInfo, St
     int offset = sizeof(JSValue) * cachedOffset;
 
     // Patch the offset into the propoerty map to load from, then patch the Structure to look for.
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetGetByIdStructure), structure);
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetGetByIdPropertyMapOffset1), offset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)); // payload
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetGetByIdPropertyMapOffset2), offset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)); // tag
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(stubInfo->patch.baseline.u.get.structureToCompare), structure);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(stubInfo->patch.baseline.u.get.displacementLabel1), offset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)); // payload
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(stubInfo->patch.baseline.u.get.displacementLabel2), offset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)); // tag
 }
 
 void JIT::patchPutByIdReplace(CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ReturnAddressPtr returnAddress, bool direct)
@@ -593,9 +576,9 @@ void JIT::patchPutByIdReplace(CodeBlock* codeBlock, StructureStubInfo* stubInfo,
     int offset = sizeof(JSValue) * cachedOffset;
 
     // Patch the offset into the propoerty map to load from, then patch the Structure to look for.
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetPutByIdStructure), structure);
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetPutByIdPropertyMapOffset1), offset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)); // payload
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetPutByIdPropertyMapOffset2), offset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)); // tag
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(stubInfo->patch.baseline.u.put.structureToCompare), structure);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(stubInfo->patch.baseline.u.put.displacementLabel1), offset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)); // payload
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(stubInfo->patch.baseline.u.put.displacementLabel2), offset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)); // tag
 }
 
 void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
@@ -619,18 +602,18 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock);
     
     // Use the patch information to link the failure cases back to the original slow case routine.
-    CodeLocationLabel slowCaseBegin = stubInfo->callReturnLocation.labelAtOffset(-patchOffsetGetByIdSlowCaseCall);
+    CodeLocationLabel slowCaseBegin = stubInfo->callReturnLocation.labelAtOffset(-stubInfo->patch.baseline.u.get.coldPathBegin);
     patchBuffer.link(failureCases1, slowCaseBegin);
     patchBuffer.link(failureCases2, slowCaseBegin);
     
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
-    patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(patchOffsetGetByIdPutResult));
+    patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
     
     // Track the stub we have created so that it will be deleted later.
     stubInfo->stubRoutine = patchBuffer.finalizeCode();
     
     // Finally patch the jump to slow case back in the hot path to jump here instead.
-    CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
+    CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
     RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubInfo->stubRoutine.code()));
     
@@ -678,12 +661,12 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock);
     
     // Use the patch information to link the failure cases back to the original slow case routine.
-    CodeLocationLabel slowCaseBegin = stubInfo->callReturnLocation.labelAtOffset(-patchOffsetGetByIdSlowCaseCall);
+    CodeLocationLabel slowCaseBegin = stubInfo->callReturnLocation.labelAtOffset(-stubInfo->patch.baseline.u.get.coldPathBegin);
     patchBuffer.link(failureCases1, slowCaseBegin);
     patchBuffer.link(failureCases2, slowCaseBegin);
     
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
-    patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(patchOffsetGetByIdPutResult));
+    patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
 
     if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
@@ -696,7 +679,7 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     stubInfo->stubRoutine = patchBuffer.finalizeCode();
     
     // Finally patch the jump to slow case back in the hot path to jump here instead.
-    CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
+    CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
     RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubInfo->stubRoutine.code()));
     
@@ -744,19 +727,19 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     // Use the patch information to link the failure cases back to the original slow case routine.
     CodeLocationLabel lastProtoBegin = CodeLocationLabel(polymorphicStructures->list[currentIndex - 1].stubRoutine.code());
     if (!lastProtoBegin)
-        lastProtoBegin = stubInfo->callReturnLocation.labelAtOffset(-patchOffsetGetByIdSlowCaseCall);
+        lastProtoBegin = stubInfo->callReturnLocation.labelAtOffset(-stubInfo->patch.baseline.u.get.coldPathBegin);
     
     patchBuffer.link(failureCase, lastProtoBegin);
     
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
-    patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(patchOffsetGetByIdPutResult));
+    patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
 
     CodeRef stubRoutine = patchBuffer.finalizeCode();
 
     polymorphicStructures->list[currentIndex].set(*m_globalData, m_codeBlock->ownerExecutable(), stubRoutine, structure, isDirect);
     
     // Finally patch the jump to slow case back in the hot path to jump here instead.
-    CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
+    CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
     RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine.code()));
 }
@@ -814,14 +797,14 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     patchBuffer.link(failureCases2, lastProtoBegin);
     
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
-    patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(patchOffsetGetByIdPutResult));
+    patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
     
     CodeRef stubRoutine = patchBuffer.finalizeCode();
 
     prototypeStructures->list[currentIndex].set(callFrame->globalData(), m_codeBlock->ownerExecutable(), stubRoutine, structure, prototypeStructure, isDirect);
     
     // Finally patch the jump to slow case back in the hot path to jump here instead.
-    CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
+    CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
     RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine.code()));
 }
@@ -884,7 +867,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     patchBuffer.link(bucketsOfFail, lastProtoBegin);
     
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
-    patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(patchOffsetGetByIdPutResult));
+    patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
     
     CodeRef stubRoutine = patchBuffer.finalizeCode();
     
@@ -892,7 +875,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     prototypeStructures->list[currentIndex].set(callFrame->globalData(), m_codeBlock->ownerExecutable(), stubRoutine, structure, chain, isDirect);
     
     // Finally patch the jump to slow case back in the hot path to jump here instead.
-    CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
+    CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
     RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine.code()));
 }
@@ -946,17 +929,17 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
         }
     }
     // Use the patch information to link the failure cases back to the original slow case routine.
-    patchBuffer.link(bucketsOfFail, stubInfo->callReturnLocation.labelAtOffset(-patchOffsetGetByIdSlowCaseCall));
+    patchBuffer.link(bucketsOfFail, stubInfo->callReturnLocation.labelAtOffset(-stubInfo->patch.baseline.u.get.coldPathBegin));
     
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
-    patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(patchOffsetGetByIdPutResult));
+    patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
     
     // Track the stub we have created so that it will be deleted later.
     CodeRef stubRoutine = patchBuffer.finalizeCode();
     stubInfo->stubRoutine = stubRoutine;
     
     // Finally patch the jump to slow case back in the hot path to jump here instead.
-    CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
+    CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
     RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine.code()));
     
@@ -1109,10 +1092,10 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 void JIT::resetPatchGetById(RepatchBuffer& repatchBuffer, StructureStubInfo* stubInfo)
 {
     repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_get_by_id);
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetGetByIdStructure), reinterpret_cast<void*>(-1));
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetGetByIdPropertyMapOffset1), 0);
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetGetByIdPropertyMapOffset2), 0);
-    repatchBuffer.relink(stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase), stubInfo->callReturnLocation.labelAtOffset(-patchOffsetGetByIdSlowCaseCall));
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(stubInfo->patch.baseline.u.get.structureToCompare), reinterpret_cast<void*>(-1));
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(stubInfo->patch.baseline.u.get.displacementLabel1), 0);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(stubInfo->patch.baseline.u.get.displacementLabel2), 0);
+    repatchBuffer.relink(stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck), stubInfo->callReturnLocation.labelAtOffset(-stubInfo->patch.baseline.u.get.coldPathBegin));
 }
 
 void JIT::resetPatchPutById(RepatchBuffer& repatchBuffer, StructureStubInfo* stubInfo)
@@ -1121,9 +1104,9 @@ void JIT::resetPatchPutById(RepatchBuffer& repatchBuffer, StructureStubInfo* stu
         repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id_direct);
     else
         repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id);
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetPutByIdStructure), reinterpret_cast<void*>(-1));
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetPutByIdPropertyMapOffset1), 0);
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetPutByIdPropertyMapOffset2), 0);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(stubInfo->patch.baseline.u.put.structureToCompare), reinterpret_cast<void*>(-1));
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(stubInfo->patch.baseline.u.put.displacementLabel1), 0);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(stubInfo->patch.baseline.u.put.displacementLabel2), 0);
 }
 
 } // namespace JSC
