@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x516
+  RenderBlock {HTML} at (0,0) size 800x516
+    RenderBody {BODY} at (8,8) size 784x500
+      RenderBlock {DIV} at (0,0) size 784x224
+        RenderBlock {DIV} at (5,5) size 774x214 [border: (1px solid #0000FF)]
+          RenderBlock {DIV} at (11,11) size 752x192 [border: (1px solid #008000)]
+            RenderBlock {P} at (1,17) size 750x54
+              RenderText {#text} at (0,0) size 114x17
+                text run at (0,0) width 114: "This line of text "
+              RenderImage {IMG} at (620,0) size 130x100 [bgcolor=#008000]
+              RenderText {#text} at (113,0) size 620x53
+                text run at (113,0) width 174: "should not get out of the "
+                text run at (286,0) width 334: "region. This line of text should not get out of the"
+                text run at (0,18) width 620: "region. This line of text should not get out of the region. This line of text should not get out of"
+                text run at (0,36) width 69: "the region."
+            RenderBlock {P} at (1,87) size 750x54
+              RenderText {#text} at (0,0) size 620x53
+                text run at (0,0) width 620: "This line of text should not get out of the region. This line of text should not get out of the"
+                text run at (0,18) width 620: "region. This line of text should not get out of the region. This line of text should not get out of"
+                text run at (0,36) width 69: "the region."
+            RenderBlock {P} at (1,157) size 750x18
+              RenderText {#text} at (0,0) size 311x17
+                text run at (0,0) width 311: "This line of text should not get out of the region."
+      RenderBlock {DIV} at (0,224) size 784x276
+        RenderBlock {DIV} at (0,0) size 402x92 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (0,92) size 302x92 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (0,184) size 402x92 [border: (1px solid #000000)]

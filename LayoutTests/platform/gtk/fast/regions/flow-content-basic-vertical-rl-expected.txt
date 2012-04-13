@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (246,0) size 554x600
+  RenderBlock {HTML} at (0,0) size 554x600
+    RenderBody {BODY} at (8,8) size 530x584
+      RenderBlock {DIV} at (0,0) size 200x584 [color=#008000]
+        RenderBlock {DIV} at (0,0) size 100x584
+          RenderText {#text} at (0,0) size 17x111
+            text run at (0,0) width 111: "first flow content"
+        RenderBlock {DIV} at (100,0) size 100x584
+          RenderText {#text} at (0,0) size 17x129
+            text run at (0,0) width 129: "second flow content"
+      RenderBlock {DIV} at (200,0) size 36x584
+        RenderText {#text} at (0,0) size 35x575
+          text run at (0,0) width 450: "The words \"flow content\" in green should display twice after this div, "
+          text run at (0,449) width 125: "and there should be"
+          text run at (18,0) width 240: "two copies of this content that match."
+      RenderBlock {DIV} at (236,0) size 112x312 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (6,6) size 18x300 [color=#FF0000]
+          RenderText {#text} at (0,0) size 17x189
+            text run at (0,0) width 189: "FAIL if this text is displayed."
+      RenderBlock {DIV} at (348,0) size 112x312 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (6,6) size 18x300 [color=#FF0000]
+          RenderText {#text} at (0,0) size 17x189
+            text run at (0,0) width 189: "FAIL if this text is displayed."
+      RenderBlock {DIV} at (460,0) size 36x584
+        RenderText {#text} at (0,0) size 35x565
+          text run at (0,0) width 412: "The words \"flow content\" in green should display after this div, "
+          text run at (0,411) width 153: "and there should be two"
+          text run at (18,0) width 212: "copies of this content that match."
+      RenderBlock {DIV} at (512,0) size 18x584 [color=#008000]
+        RenderBlock {P} at (0,0) size 18x584
+          RenderText {#text} at (0,0) size 17x81
+            text run at (0,0) width 81: "flow content"

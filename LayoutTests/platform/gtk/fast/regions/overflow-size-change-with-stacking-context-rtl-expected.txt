@@ -1,0 +1,37 @@
+layer at (0,0) size 784x654
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x654
+  RenderBlock {HTML} at (0,0) size 784x654
+    RenderBody {BODY} at (8,16) size 768x630
+      RenderBlock {P} at (0,0) size 768x36
+        RenderText {#text} at (0,0) size 762x35
+          text run at (0,0) width 762: "The first and last lines of text in the regions below should be clipped to the green box. The overflow section sizes itself"
+          text run at (0,18) width 228: "and clips differently in each region."
+      RenderBlock {DIV} at (0,52) size 768x172
+        RenderBlock {DIV} at (5,5) size 758x162 [border: (1px solid #0000FF)]
+      RenderBlock {DIV} at (0,224) size 768x406
+        RenderBlock {DIV} at (566,0) size 202x102 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (466,102) size 302x182 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (646,284) size 122x122 [border: (1px solid #000000)]
+layer at (108,74) size 569x160 clip at (109,75) size 567x158
+  RenderBlock (relative positioned) {DIV} at (95,1) size 569x160 [border: (1px solid #008000)]
+    RenderBlock {P} at (1,35) size 567x36
+      RenderText {#text} at (0,0) size 567x35
+        text run at (0,0) width 567: "These lines will not spill out of the regions. These lines will not spill out of the regions."
+        text run at (7,18) width 5 RTL: "."
+        text run at (11,18) width 556: "These lines will not spill out of the regions. These lines will not spill out of the regions"
+    RenderBlock {P} at (1,87) size 567x36
+      RenderText {#text} at (0,0) size 567x35
+        text run at (0,0) width 567: "These lines will not spill out of the regions. These lines will not spill out of the regions."
+        text run at (7,18) width 5 RTL: "."
+        text run at (11,18) width 556: "These lines will not spill out of the regions. These lines will not spill out of the regions"
+layer at (176,75) size 500x18
+  RenderBlock {DIV} at (68,1) size 500x18
+    RenderText {#text} at (207,0) size 293x17
+      text run at (207,0) width 5 RTL: "."
+      text run at (211,0) width 289: "Clipped line of text that should not be visible"
+layer at (176,215) size 500x18
+  RenderBlock (positioned) {DIV} at (68,141) size 500x18
+    RenderText {#text} at (207,0) size 293x17
+      text run at (207,0) width 5 RTL: "."
+      text run at (211,0) width 289: "Clipped line of text that should not be visible"

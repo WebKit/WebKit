@@ -1,0 +1,32 @@
+layer at (0,0) size 784x826
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x826
+  RenderBlock {HTML} at (0,0) size 784x826
+    RenderBody {BODY} at (8,16) size 768x802
+      RenderBlock {P} at (0,0) size 768x36
+        RenderText {#text} at (0,0) size 751x35
+          text run at (0,0) width 751: "In the example below, the first float pushes content into region #2, and the second float pushes both floats into region"
+          text run at (0,18) width 20: "#3."
+      RenderBlock {DIV} at (0,52) size 768x224
+        RenderBlock {DIV} at (5,5) size 758x214 [border: (1px solid #0000FF)]
+          RenderBlock {DIV} at (11,11) size 736x192 [border: (1px solid #008000)]
+            RenderBlock {P} at (1,17) size 734x54
+              RenderImage {IMG} at (0,0) size 130x110 [bgcolor=#008000]
+              RenderImage {IMG} at (604,0) size 130x130 [bgcolor=#FFFF00]
+              RenderText {#text} at (130,0) size 474x53
+                text run at (130,0) width 273: "This line of text should not get out of the "
+                text run at (402,0) width 202: "region. This line of text should"
+                text run at (130,18) width 474: "not get out of the region. This line of text should not get out of the region."
+                text run at (130,36) width 311: "This line of text should not get out of the region."
+            RenderBlock {P} at (1,87) size 734x54
+              RenderText {#text} at (130,0) size 474x53
+                text run at (130,0) width 474: "This line of text should not get out of the region. This line of text should"
+                text run at (130,18) width 474: "not get out of the region. This line of text should not get out of the region."
+                text run at (130,36) width 311: "This line of text should not get out of the region."
+            RenderBlock {P} at (1,157) size 734x18
+              RenderText {#text} at (0,0) size 311x17
+                text run at (0,0) width 311: "This line of text should not get out of the region."
+      RenderBlock {DIV} at (0,276) size 768x526
+        RenderBlock {DIV} at (0,0) size 402x102 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (0,102) size 302x122 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (0,224) size 402x302 [border: (1px solid #000000)]

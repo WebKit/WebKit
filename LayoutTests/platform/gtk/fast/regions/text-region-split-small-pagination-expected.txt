@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x328
+  RenderBlock {HTML} at (0,0) size 800x328
+    RenderBody {BODY} at (8,16) size 784x296
+      RenderBlock {DIV} at (0,0) size 784x36
+        RenderBlock {P} at (0,0) size 784x36
+          RenderInline {B} at (0,0) size 112x17
+            RenderText {#text} at (0,0) size 112x17
+              text run at (0,0) width 112: "Text in region 2."
+          RenderText {#text} at (111,0) size 138x17
+            text run at (111,0) width 138: " This paragraph has \""
+          RenderInline {I} at (0,0) size 226x17
+            RenderText {#text} at (248,0) size 226x17
+              text run at (248,0) width 226: "-webkit-region-break-after: always"
+          RenderText {#text} at (473,0) size 16x17
+            text run at (473,0) width 16: "\". "
+          RenderInline {B} at (0,0) size 749x35
+            RenderText {#text} at (488,0) size 749x35
+              text run at (488,0) width 261: "There should be nothing in this region"
+              text run at (0,18) width 95: "after this line."
+      RenderBlock {DIV} at (0,52) size 204x34 [border: (2px solid #000000)]
+      RenderBlock {DIV} at (0,102) size 204x54 [border: (2px solid #000000)]
+      RenderBlock {DIV} at (0,172) size 204x54 [border: (2px solid #000000)]
+      RenderBlock {DIV} at (0,242) size 204x54 [border: (2px solid #000000)]

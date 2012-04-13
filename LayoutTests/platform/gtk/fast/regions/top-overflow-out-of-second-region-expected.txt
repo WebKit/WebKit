@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x552
+  RenderBlock {HTML} at (0,0) size 800x552
+    RenderBody {BODY} at (8,16) size 784x528
+      RenderBlock {P} at (0,0) size 784x72
+        RenderText {#text} at (0,0) size 776x71
+          text run at (0,0) width 776: "In the test case below, the green block's width should not vary and should use the second region to determine its width. It"
+          text run at (0,18) width 758: "is overflowing upwards out of the blue block, and so the portion that overflows should continue to use the blue block's"
+          text run at (0,36) width 729: "containing block width. The blue block does not exist in region one, so using some hypothetical made-up width is"
+          text run at (0,54) width 639: "incorrect. The overflow should be spilling out of the top of region two and be painted in region one."
+      RenderBlock {DIV} at (0,88) size 784x134
+        RenderBlock {DIV} at (5,105) size 774x24 [border: (1px solid #0000FF)]
+          RenderBlock {DIV} at (96,-99) size 581x122 [border: (1px solid #008000)]
+            RenderBlock {P} at (1,17) size 579x36
+              RenderText {#text} at (0,0) size 579x35
+                text run at (0,0) width 579: "These lines should all fit to the width of the block in the second region and spill out of the"
+                text run at (0,18) width 114: "top of the second "
+                text run at (113,18) width 46: "region."
+            RenderBlock {P} at (1,69) size 579x36
+              RenderText {#text} at (0,0) size 579x35
+                text run at (0,0) width 579: "These lines should all fit to the width of the block in the second region and spill out of the"
+                text run at (0,18) width 114: "top of the second "
+                text run at (113,18) width 46: "region."
+      RenderBlock {DIV} at (0,222) size 784x306
+        RenderBlock {DIV} at (0,0) size 302x102 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (0,102) size 402x202 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (0,304) size 784x2 [border: (1px solid #000000)]

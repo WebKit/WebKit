@@ -1,0 +1,60 @@
+layer at (0,0) size 784x992
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x992
+  RenderBlock {HTML} at (0,0) size 784x992
+    RenderBody {BODY} at (8,16) size 768x968
+      RenderBlock {DIV} at (0,0) size 768x18
+        RenderBlock {P} at (0,0) size 768x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 263x17
+            text run at (0,0) width 263: "Green background text styled in region1."
+      RenderBlock {DIV} at (0,34) size 280x50
+      RenderBlock {DIV} at (0,100) size 768x18
+        RenderBlock {P} at (0,0) size 280x18 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 265x17
+            text run at (0,0) width 265: "Lime background text styled out region2."
+      RenderBlock {DIV} at (0,134) size 768x0
+      RenderBlock {DIV} at (0,134) size 768x52
+        RenderBlock {P} at (0,0) size 768x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 271x17
+            text run at (0,0) width 271: "Green background text styled in region31."
+        RenderBlock {P} at (0,34) size 768x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 265x17
+            text run at (0,0) width 265: "Lime background text styled in region32."
+      RenderBlock {DIV} at (0,202) size 280x50
+      RenderBlock {DIV} at (0,252) size 280x30
+      RenderBlock {DIV} at (0,298) size 768x52
+        RenderBlock {P} at (0,0) size 768x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 271x17
+            text run at (0,0) width 271: "Green background text styled in region41."
+        RenderBlock {P} at (0,34) size 768x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 265x17
+            text run at (0,0) width 265: "Lime background text styled in region42."
+      RenderBlock {DIV} at (0,366) size 280x50
+      RenderBlock {DIV} at (0,416) size 280x30
+      RenderBlock {DIV} at (0,462) size 768x52
+        RenderBlock {P} at (0,0) size 768x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 271x17
+            text run at (0,0) width 271: "Green background text styled in region51."
+        RenderBlock {P} at (0,34) size 768x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 271x17
+            text run at (0,0) width 271: "Green background text styled in region51."
+      RenderBlock {DIV} at (0,530) size 280x100
+      RenderBlock {DIV} at (0,630) size 280x10
+      RenderBlock {DIV} at (0,656) size 768x52
+        RenderBlock {P} at (0,0) size 768x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 271x17
+            text run at (0,0) width 271: "Green background text styled in region61."
+        RenderBlock {P} at (0,34) size 768x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 265x17
+            text run at (0,0) width 265: "Lime background text styled in region62."
+      RenderBlock {DIV} at (0,724) size 280x50
+      RenderBlock {DIV} at (0,774) size 280x30
+      RenderBlock {DIV} at (0,820) size 768x52
+        RenderBlock {P} at (0,0) size 768x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 271x17
+            text run at (0,0) width 271: "Green background text styled in region71."
+        RenderBlock {P} at (0,34) size 768x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 265x17
+            text run at (0,0) width 265: "Lime background text styled in region72."
+      RenderBlock {DIV} at (0,888) size 280x50
+      RenderBlock {DIV} at (0,938) size 280x30

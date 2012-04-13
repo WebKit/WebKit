@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 759x35
+          text run at (0,0) width 251: "Test for font-feature-settings property. "
+          text run at (250,0) width 509: "The first word of the following three words should be displayed like \"WebKit\","
+          text run at (0,18) width 312: "while others should be displayed as black boxes."
+      RenderBlock {DIV} at (0,52) size 784x17
+        RenderText {#text} at (0,0) size 96x16
+          text run at (0,0) width 96: "WebKit"
+      RenderBlock {DIV} at (0,69) size 784x17
+        RenderText {#text} at (0,0) size 96x16
+          text run at (0,0) width 96: "WebKit"
+      RenderBlock {DIV} at (0,86) size 784x17
+        RenderText {#text} at (0,0) size 96x16
+          text run at (0,0) width 96: "WebKit"
