@@ -228,6 +228,11 @@ public:
     static void setStyleScopedEnabled(bool isEnabled) { isStyleScopedEnabled = isEnabled; }
 #endif
 
+#if ENABLE(INPUT_TYPE_DATE)
+    static bool inputTypeDateEnabled() { return isInputTypeDateEnabled; }
+    static void setInputTypeDateEnabled(bool isEnabled) { isInputTypeDateEnabled = isEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -299,6 +304,10 @@ private:
 
 #if ENABLE(STYLE_SCOPED)
     static bool isStyleScopedEnabled;
+#endif
+
+#if ENABLE(INPUT_TYPE_DATE)
+    static bool isInputTypeDateEnabled;
 #endif
 };
 

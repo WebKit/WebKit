@@ -502,5 +502,22 @@ bool WebRuntimeFeatures::isStyleScopedEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableInputTypeDate(bool enable)
+{
+#if ENABLE(INPUT_TYPE_DATE)
+    RuntimeEnabledFeatures::setInputTypeDateEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isInputTypeDateEnabled()
+{
+#if ENABLE(INPUT_TYPE_DATE)
+    return RuntimeEnabledFeatures::inputTypeDateEnabled();
+#else
+    return false;
+#endif
+}
 
 } // namespace WebKit

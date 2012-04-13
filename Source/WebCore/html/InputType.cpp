@@ -55,6 +55,7 @@
 #include "RegularExpression.h"
 #include "RenderObject.h"
 #include "ResetInputType.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SearchInputType.h"
 #include "ShadowRoot.h"
 #include "ShadowTree.h"
@@ -86,7 +87,8 @@ static PassOwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
     map->add(InputTypeNames::color(), ColorInputType::create);
 #endif
 #if ENABLE(INPUT_TYPE_DATE)
-    map->add(InputTypeNames::date(), DateInputType::create);
+    if (RuntimeEnabledFeatures::inputTypeDateEnabled())
+        map->add(InputTypeNames::date(), DateInputType::create);
 #endif
 #if ENABLE(INPUT_TYPE_DATETIME)
     map->add(InputTypeNames::datetime(), DateTimeInputType::create);
