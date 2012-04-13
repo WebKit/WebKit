@@ -129,6 +129,7 @@ bool ScrollbarThemeChromiumMac::paint(ScrollbarThemeClient* scrollbar, GraphicsC
 
         CGFloat oldKnobAlpha = 0;
         CGFloat oldTrackAlpha = 0;
+        BOOL oldIsExpanded = NO;
         bool hasTickmarks = tickmarks.size() > 0 && scrollbar->orientation() == VerticalScrollbar;
         ScrollbarPainter scrollbarPainter = painterForScrollbar(scrollbar);
         if (hasTickmarks) {
@@ -136,6 +137,10 @@ bool ScrollbarThemeChromiumMac::paint(ScrollbarThemeClient* scrollbar, GraphicsC
             [scrollbarPainter setKnobAlpha:1.0];
             oldTrackAlpha = [scrollbarPainter trackAlpha];
             [scrollbarPainter setTrackAlpha:1.0];
+            if ([scrollbarPainter respondsToSelector:@selector(setExpanded:)]) {
+              oldIsExpanded = [scrollbarPainter isExpanded];
+              [scrollbarPainter setExpanded:YES];
+            }
         }
 
         GraphicsContextStateSaver stateSaver(*context);
@@ -168,6 +173,8 @@ bool ScrollbarThemeChromiumMac::paint(ScrollbarThemeClient* scrollbar, GraphicsC
         if (hasTickmarks) {
             [scrollbarPainter setKnobAlpha:oldKnobAlpha];
             [scrollbarPainter setTrackAlpha:oldTrackAlpha];
+            if ([scrollbarPainter respondsToSelector:@selector(setExpanded:)])
+              [scrollbarPainter setExpanded:oldIsExpanded];
         }
 
         return true;
