@@ -3354,7 +3354,7 @@ BUGWK79862 : fast/js/read-modify-eval.html = TEXT
 // EPOGER: To be rebaselined after skia rev. 3283 lands in webkit
 BUGCR116252 LINUX : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE IMAGE+TEXT
 
-BUGWK80058 WIN RELEASE : fast/workers/stress-js-execution.html = CRASH PASS
+BUGWK80058 WIN : fast/workers/stress-js-execution.html = CRASH PASS
 
 BUGWK80067 DEBUG : media/track/track-cues-pause-on-exit.html = PASS TEXT
 
