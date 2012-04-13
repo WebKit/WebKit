@@ -1609,11 +1609,6 @@ BUGCR9786 : fast/dom/Window/dom-access-from-closure-window.html = FAIL
 
 BUGCR9798 SLOW WIN DEBUG : fast/dom/Window/slow-unload-handler.html = PASS
 
-BUGCR83306 WIN : svg/text/foreignObject-text-clipping-bug.xml = IMAGE
-BUGWK83306 WIN : svg/hixie/mixed/009.xml = IMAGE
-BUGWK83306 WIN : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE
-BUGWK83306 WIN : svg/zoom/page/zoom-hixie-mixed-009.xml = IMAGE
-
 BUGCR9798 WIN DEBUG : http/tests/local/style-access-before-stylesheet-loaded.html = PASS FAIL
 BUGCR9798 WIN DEBUG : http/tests/misc/redirect-with-quotes.php = PASS TIMEOUT
 BUGCR9798 SLOW WIN : http/tests/misc/refresh-headers.php = PASS
@@ -2072,10 +2067,6 @@ BUGCR47826 SKIP MAC : fast/dom/HTMLMeterElement/meter-element.html = FAIL
 BUGCR47826 SKIP MAC : fast/dom/HTMLMeterElement/meter-optimums.html = FAIL
 BUGCR47826 SKIP MAC : fast/dom/HTMLMeterElement/meter-styles.html = FAIL
 BUGCR47826 SKIP MAC : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = FAIL
-
-BUGCR44345 LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = PASS IMAGE
-BUGCR44346 LINUX : svg/zoom/page/zoom-hixie-mixed-009.xml = PASS IMAGE
-BUGCR44347 LINUX : svg/hixie/mixed/009.xml = PASS IMAGE
 
 BUGCR48239 : fast/js/function-apply.html = TEXT
 BUGCR48239 LINUX WIN : fast/js/function-apply-aliased.html = PASS TEXT
@@ -2787,8 +2778,6 @@ BUGWK62255 LEOPARD DEBUG : animations/animation-iteration-event-destroy-renderer
 
 BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = PASS TEXT
 
-BUGCR85293 LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
-BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
 BUGWK83875 LINUX : svg/text/font-size-below-point-five.svg = PASS TEXT
 
 BUGWK81310 : fast/dom/shadow/content-element-in-media-element.html = TEXT
@@ -2958,7 +2947,13 @@ BUGWK62684 WIN LINUX : fast/ruby/overhang-horizontal.html = FAIL
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
-// Many WIN SVG tests containing text are flaky. It seems different fonts are used at different times.
+// Many WIN and Linux SVG tests containing text are flaky. It seems different fonts are used at different times.
+BUGWK83303 WIN LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = PASS IMAGE
+BUGWK83303 WIN LINUX : svg/zoom/page/zoom-hixie-mixed-009.xml = PASS IMAGE
+BUGWK83303 LINUX : svg/hixie/mixed/009.xml = PASS IMAGE
+BUGWK83303 LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
+BUGWK83303 WIN LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
+BUGWK83303 LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = PASS IMAGE
 BUGWK83303 WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
 BUGWK83303 WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container-standalone.svg = IMAGE PASS
