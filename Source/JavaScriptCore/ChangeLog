@@ -1,5 +1,26 @@
 2012-04-13  Gavin Barraclough  <barraclough@apple.com>
 
+        Don't rely on fixed offsets to patch method checks
+        https://bugs.webkit.org/show_bug.cgi?id=83958
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/StructureStubInfo.h:
+            - Add fields for the method check info.
+        * jit/JIT.cpp:
+        (JSC::PropertyStubCompilationInfo::copyToStubInfo):
+            - Store the offsets on the stub info, instead of asserting.
+        * jit/JIT.h:
+            - Delete all the method check related offsets.
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::patchMethodCallProto):
+            - Use the offset from the stubInfo.
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+            - Pass the stubInfo to patchMethodCallProto.
+
+2012-04-13  Gavin Barraclough  <barraclough@apple.com>
+
         Don't rely on fixed offsets to patch get_by_id/put_by_id
         https://bugs.webkit.org/show_bug.cgi?id=83924
 

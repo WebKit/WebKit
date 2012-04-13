@@ -525,11 +525,13 @@ ALWAYS_INLINE void PropertyStubCompilationInfo::copyToStubInfo(StructureStubInfo
     info.hotPathBegin = linkBuffer.locationOf(hotPathBegin);
 
     switch (m_type) {
-    case MethodCheck:
-        ASSERT_JIT_OFFSET(MacroAssembler::differenceBetween(methodCheckStructureToCompare, methodCheckProtoObj), JIT::patchOffsetMethodCheckProtoObj);
-        ASSERT_JIT_OFFSET(MacroAssembler::differenceBetween(methodCheckStructureToCompare, methodCheckProtoStructureToCompare), JIT::patchOffsetMethodCheckProtoStruct);
-        ASSERT_JIT_OFFSET(MacroAssembler::differenceBetween(methodCheckStructureToCompare, methodCheckPutFunction), JIT::patchOffsetMethodCheckPutFunction);
+    case MethodCheck: {
+        CodeLocationDataLabelPtr structureToCompareLocation = linkBuffer.locationOf(methodCheckStructureToCompare);
+        info.patch.baseline.methodCheckProtoObj = MacroAssembler::differenceBetweenCodePtr(structureToCompareLocation, linkBuffer.locationOf(methodCheckProtoObj));
+        info.patch.baseline.methodCheckProtoStructureToCompare = MacroAssembler::differenceBetweenCodePtr(structureToCompareLocation, linkBuffer.locationOf(methodCheckProtoStructureToCompare));
+        info.patch.baseline.methodCheckPutFunction = MacroAssembler::differenceBetweenCodePtr(structureToCompareLocation, linkBuffer.locationOf(methodCheckPutFunction));
         // No break - fall through to GetById.
+    }
     case GetById: {
         CodeLocationLabel hotPathBeginLocation = linkBuffer.locationOf(hotPathBegin);
         info.patch.baseline.u.get.structureToCompare = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(getStructureToCompare));

@@ -1119,7 +1119,7 @@ void JIT::testPrototype(JSValue prototype, JumpList& failureCases)
     failureCases.append(branchPtr(NotEqual, Address(regT3, JSCell::structureOffset()), TrustedImmPtr(prototype.asCell()->structure())));
 }
 
-void JIT::patchMethodCallProto(JSGlobalData& globalData, CodeBlock* codeBlock, MethodCallLinkInfo& methodCallLinkInfo, JSObject* callee, Structure* structure, JSObject* proto, ReturnAddressPtr returnAddress)
+void JIT::patchMethodCallProto(JSGlobalData& globalData, CodeBlock* codeBlock, MethodCallLinkInfo& methodCallLinkInfo, StructureStubInfo& stubInfo, JSObject* callee, Structure* structure, JSObject* proto, ReturnAddressPtr returnAddress)
 {
     RepatchBuffer repatchBuffer(codeBlock);
     
@@ -1127,9 +1127,9 @@ void JIT::patchMethodCallProto(JSGlobalData& globalData, CodeBlock* codeBlock, M
     methodCallLinkInfo.cachedStructure.set(globalData, structureLocation, codeBlock->ownerExecutable(), structure);
     
     Structure* prototypeStructure = proto->structure();
-    methodCallLinkInfo.cachedPrototypeStructure.set(globalData, structureLocation.dataLabelPtrAtOffset(patchOffsetMethodCheckProtoStruct), codeBlock->ownerExecutable(), prototypeStructure);
-    methodCallLinkInfo.cachedPrototype.set(globalData, structureLocation.dataLabelPtrAtOffset(patchOffsetMethodCheckProtoObj), codeBlock->ownerExecutable(), proto);
-    methodCallLinkInfo.cachedFunction.set(globalData, structureLocation.dataLabelPtrAtOffset(patchOffsetMethodCheckPutFunction), codeBlock->ownerExecutable(), callee);
+    methodCallLinkInfo.cachedPrototypeStructure.set(globalData, structureLocation.dataLabelPtrAtOffset(stubInfo.patch.baseline.methodCheckProtoStructureToCompare), codeBlock->ownerExecutable(), prototypeStructure);
+    methodCallLinkInfo.cachedPrototype.set(globalData, structureLocation.dataLabelPtrAtOffset(stubInfo.patch.baseline.methodCheckProtoObj), codeBlock->ownerExecutable(), proto);
+    methodCallLinkInfo.cachedFunction.set(globalData, structureLocation.dataLabelPtrAtOffset(stubInfo.patch.baseline.methodCheckPutFunction), codeBlock->ownerExecutable(), callee);
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_method_check_update));
 }
 

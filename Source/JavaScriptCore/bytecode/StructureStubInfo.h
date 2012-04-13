@@ -235,7 +235,9 @@ namespace JSC {
 #endif
                     } put;
                 } u;
-
+                int16_t methodCheckProtoObj;
+                int16_t methodCheckProtoStructureToCompare;
+                int16_t methodCheckPutFunction;
             } baseline;
         } patch;
 
