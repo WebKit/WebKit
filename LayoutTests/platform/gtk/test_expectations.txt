@@ -248,9 +248,6 @@ BUGWKGTK SKIP : fast/regions/style-scoped-in-flow.html = FAIL
 // ENABLE(SHADOW_DOM) is disabled.
 BUGWKGTK SKIP : fast/dom/shadow = FAIL
 
-// CSS Regions support not yet enabled.
-BUGWK57312 : fast/regions = FAIL
-
 // CSS Exclusions support not yet enabled.
 BUGWK57311 : fast/exclusions = FAIL
 
@@ -488,9 +485,6 @@ BUGWK83891 : css2.1/20110323/eof-005.htm = PASS TEXT
 //////////////////////////////////////////////////////////////////////////////////////////
 // Tests timing out
 //////////////////////////////////////////////////////////////////////////////////////////
-
-// These SVG performance tests seem to cause the debug bots to time out.
-BUGWKGTK : svg/hixie/perf = TIMEOUT
 
 BUGWK33445 : http/tests/incremental/split-hex-entities.pl = TIMEOUT
 
