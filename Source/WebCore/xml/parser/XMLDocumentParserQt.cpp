@@ -422,6 +422,7 @@ void XMLDocumentParser::startDocument()
         QStringRef encoding = m_stream.documentEncoding();
         if (!encoding.isEmpty())
             document()->setXMLEncoding(encoding);
+        document()->setHasXMLDeclaration(!version.isEmpty());
     }
 }
 

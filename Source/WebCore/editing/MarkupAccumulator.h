@@ -89,6 +89,7 @@ protected:
     void appendNamespace(StringBuilder&, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&);
     EntityMask entityMaskForText(Text*) const;
     virtual void appendText(StringBuilder&, Text*);
+    void appendXMLDeclaration(StringBuilder&, const Document*);
     void appendDocumentType(StringBuilder&, const DocumentType*);
     void appendProcessingInstruction(StringBuilder&, const String& target, const String& data);
     virtual void appendElement(StringBuilder&, Element*, Namespaces*);

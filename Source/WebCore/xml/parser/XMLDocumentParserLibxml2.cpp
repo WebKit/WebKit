@@ -1010,15 +1010,28 @@ void XMLDocumentParser::comment(const xmlChar* s)
         newNode->attach();
 }
 
+enum StandaloneInfo {
+    StandaloneUnspecified = -2,
+    NoXMlDeclaration,
+    StandaloneNo,
+    StandaloneYes
+};
+
 void XMLDocumentParser::startDocument(const xmlChar* version, const xmlChar* encoding, int standalone)
 {
-    ExceptionCode ec = 0;
+    StandaloneInfo standaloneInfo = (StandaloneInfo)standalone;
+    if (standaloneInfo == NoXMlDeclaration) {
+        document()->setHasXMLDeclaration(false);
+        return;
+    }
 
     if (version)
-        document()->setXMLVersion(toString(version), ec);
-    document()->setXMLStandalone(standalone == 1, ec); // possible values are 0, 1, and -1
+        document()->setXMLVersion(toString(version), ASSERT_NO_EXCEPTION);
+    if (standalone != StandaloneUnspecified)
+        document()->setXMLStandalone(standaloneInfo == StandaloneYes, ASSERT_NO_EXCEPTION);
     if (encoding)
         document()->setXMLEncoding(toString(encoding));
+    document()->setHasXMLDeclaration(true);
 }
 
 void XMLDocumentParser::endDocument()

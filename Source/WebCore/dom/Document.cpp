@@ -441,7 +441,8 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_overMinimumLayoutThreshold(false)
     , m_scriptRunner(ScriptRunner::create(this))
     , m_xmlVersion("1.0")
-    , m_xmlStandalone(false)
+    , m_xmlStandalone(StandaloneUnspecified)
+    , m_hasXMLDeclaration(0)
     , m_savedRenderer(0)
     , m_designMode(inherit)
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -1197,7 +1198,7 @@ void Document::setXMLStandalone(bool standalone, ExceptionCode& ec)
         return;
     }
 
-    m_xmlStandalone = standalone;
+    m_xmlStandalone = standalone ? Standalone : NotStandalone;
 }
 
 void Document::setDocumentURI(const String& uri)

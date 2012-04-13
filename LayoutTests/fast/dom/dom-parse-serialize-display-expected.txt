@@ -19,7 +19,7 @@ document object
 
 document object serialized
 
-<?xml-stylesheet href="display.css" type="text/css"?><!DOCTYPE doc><doc>
+<?xml version="1.0"?><?xml-stylesheet href="display.css" type="text/css"?><!DOCTYPE doc><doc>
   <foo xmlns="foobar">One</foo> <x:bar xmlns:x="barfoo">Two</x:bar>
   <d id="id3">Three</d>
 </doc>
