@@ -132,6 +132,12 @@ void DateInputType::handleBlurEvent()
 {
     if (m_pickerElement)
         m_pickerElement->closePopup();
+
+    // Reset the renderer value, which might be unmatched with the element value.
+    element()->setFormControlValueMatchesRenderer(false);
+    // We need to reset the renderer value explicitly because an unacceptable
+    // renderer value should be purged before style calculation.
+    element()->updateInnerTextValue();
 }
 #endif // ENABLE(CALENDAR_PICKER)
 
