@@ -195,10 +195,10 @@ private:
 };
 
 
-PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context)
+PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context, CCFontAtlas* headsUpDisplayFontAtlas)
 {
     OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(client, context)));
-    if (!layerRenderer->initialize())
+    if (!layerRenderer->initialize(headsUpDisplayFontAtlas))
         return nullptr;
 
     return layerRenderer.release();
@@ -237,7 +237,7 @@ private:
     LayerRendererChromiumClient* m_client;
 };
 
-bool LayerRendererChromium::initialize()
+bool LayerRendererChromium::initialize(CCFontAtlas* headsUpDisplayFontAtlas)
 {
     if (!m_context->makeContextCurrent())
         return false;
@@ -307,7 +307,7 @@ bool LayerRendererChromium::initialize()
     if (!initializeSharedObjects())
         return false;
 
-    m_headsUpDisplay = CCHeadsUpDisplay::create(this);
+    m_headsUpDisplay = CCHeadsUpDisplay::create(this, headsUpDisplayFontAtlas);
 
     // Make sure the viewport and context gets initialized, even if it is to zero.
     viewportChanged();

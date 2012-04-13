@@ -40,6 +40,7 @@ namespace WebCore {
 
 class CCActiveGestureAnimation;
 class CCCompletionEvent;
+class CCFontAtlas;
 class CCPageScaleAnimation;
 class CCLayerImpl;
 class CCLayerTreeHostImplTimeSourceAdapter;
@@ -109,7 +110,7 @@ public:
     void finishAllRendering();
     int frameNumber() const { return m_frameNumber; }
 
-    bool initializeLayerRenderer(PassRefPtr<GraphicsContext3D>);
+    bool initializeLayerRenderer(PassRefPtr<GraphicsContext3D>, CCFontAtlas* headsUpDisplayFontAtlas = 0);
     bool isContextLost();
     LayerRendererChromium* layerRenderer() { return m_layerRenderer.get(); }
     const LayerRendererCapabilities& layerRendererCapabilities() const;

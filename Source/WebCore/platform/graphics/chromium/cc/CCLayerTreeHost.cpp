@@ -32,6 +32,7 @@
 #include "Region.h"
 #include "TraceEvent.h"
 #include "TreeSynchronizer.h"
+#include "cc/CCFontAtlas.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHostCommon.h"
@@ -98,6 +99,12 @@ bool CCLayerTreeHost::initialize()
 
     if (!m_proxy->initializeContext())
         return false;
+
+    // Only allocate the font atlas if we have reason to use the heads-up display.
+    if (m_settings.showFPSCounter || m_settings.showPlatformLayerTree) {
+        m_headsUpDisplayFontAtlas = CCFontAtlas::create();
+        m_headsUpDisplayFontAtlas->initialize();
+    }
 
     m_compositorIdentifier = m_proxy->compositorIdentifier();
     return true;

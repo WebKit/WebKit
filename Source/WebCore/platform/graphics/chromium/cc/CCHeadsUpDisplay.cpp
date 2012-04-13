@@ -27,10 +27,8 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "CCHeadsUpDisplay.h"
 
+#include "CCFontAtlas.h"
 #include "Extensions3DChromium.h"
-#include "Font.h"
-#include "FontCache.h"
-#include "FontDescription.h"
 #include "GraphicsContext3D.h"
 #include "InspectorController.h"
 #include "LayerChromium.h"
@@ -48,20 +46,16 @@ namespace WebCore {
 
 using namespace std;
 
-CCHeadsUpDisplay::CCHeadsUpDisplay(LayerRendererChromium* owner)
+CCHeadsUpDisplay::CCHeadsUpDisplay(LayerRendererChromium* owner, CCFontAtlas* headsUpDisplayFontAtlas)
     : m_currentFrameNumber(1)
     , m_layerRenderer(owner)
     , m_useMapSubForUploads(owner->contextSupportsMapSub())
+    , m_fontAtlas(headsUpDisplayFontAtlas)
 {
     m_beginTimeHistoryInSec[0] = currentTime();
     m_beginTimeHistoryInSec[1] = m_beginTimeHistoryInSec[0];
     for (int i = 2; i < kBeginFrameHistorySize; i++)
         m_beginTimeHistoryInSec[i] = 0;
-
-    // We can't draw text in threaded mode with the current mechanism.
-    // FIXME: Figure out a way to draw text in threaded mode.
-    if (!CCProxy::implThread())
-        initializeFonts();
 }
 
 CCHeadsUpDisplay::~CCHeadsUpDisplay()
@@ -70,24 +64,6 @@ CCHeadsUpDisplay::~CCHeadsUpDisplay()
 
 const double CCHeadsUpDisplay::kIdleSecondsTriggersReset = 0.5;
 const double CCHeadsUpDisplay::kFrameTooFast = 1.0 / 70;
-
-void CCHeadsUpDisplay::initializeFonts()
-{
-    ASSERT(!CCProxy::implThread());
-    FontDescription mediumFontDesc;
-    mediumFontDesc.setGenericFamily(FontDescription::MonospaceFamily);
-    mediumFontDesc.setComputedSize(12);
-
-    m_mediumFont = adoptPtr(new Font(mediumFontDesc, 0, 0));
-    m_mediumFont->update(0);
-
-    FontDescription smallFontDesc;
-    smallFontDesc.setGenericFamily(FontDescription::MonospaceFamily);
-    smallFontDesc.setComputedSize(10);
-
-    m_smallFont = adoptPtr(new Font(smallFontDesc, 0, 0));
-    m_smallFont->update(0);
-}
 
 // safeMod works on -1, returning m-1 in that case.
 static inline int safeMod(int number, int modulus)
@@ -117,7 +93,7 @@ bool CCHeadsUpDisplay::enabled() const
 
 bool CCHeadsUpDisplay::showPlatformLayerTree() const
 {
-    return settings().showPlatformLayerTree && !CCProxy::implThread();
+    return settings().showPlatformLayerTree;
 }
 
 void CCHeadsUpDisplay::draw()
@@ -204,9 +180,6 @@ void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, const IntSize& 
     }
 
     int fpsCounterHeight = 40;
-    if (!CCProxy::implThread())
-        fpsCounterHeight += m_mediumFont->fontMetrics().floatHeight();
-
     int fpsCounterTop = 2;
     int platformLayerTreeTop;
     if (settings().showFPSCounter)
@@ -218,7 +191,7 @@ void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, const IntSize& 
         drawFPSCounter(context, fpsCounterTop, fpsCounterHeight);
 
     if (showPlatformLayerTree())
-        drawPlatformLayerTree(context, platformLayerTreeTop);
+        drawPlatformLayerTree(context, hudSize, platformLayerTreeTop);
 }
 
 void CCHeadsUpDisplay::getAverageFPSAndStandardDeviation(double *average, double *standardDeviation) const
@@ -267,11 +240,11 @@ void CCHeadsUpDisplay::getAverageFPSAndStandardDeviation(double *average, double
 
 void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* context, int top, int height)
 {
-    float textWidth = 0;
-    if (!CCProxy::implThread())
-        textWidth = drawFPSCounterText(context, top, height);
-
+    float textWidth = 170; // so text fits on linux.
     float graphWidth = kBeginFrameHistorySize;
+
+    // Draw the FPS text.
+    drawFPSCounterText(context, top, textWidth, height);
 
     // Draw FPS graph.
     const double loFPS = 0;
@@ -308,46 +281,24 @@ void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* context, int top, int hei
     }
 }
 
-float CCHeadsUpDisplay::drawFPSCounterText(GraphicsContext* context, int top, int height)
+void CCHeadsUpDisplay::drawFPSCounterText(GraphicsContext* context, int top, int width, int height)
 {
-    ASSERT(!CCProxy::implThread());
-
-    FontCachePurgePreventer fontCachePurgePreventer;
     double averageFPS, stdDeviation;
-
     getAverageFPSAndStandardDeviation(&averageFPS, &stdDeviation);
-
-    String fps(String::format("FPS: %4.1f +/-%3.1f", averageFPS, stdDeviation));
-    TextRun text(fps);
-    float textWidth = m_mediumFont->width(text) + 2;
 
     // Draw background.
     context->setFillColor(Color(0, 0, 0, 255), ColorSpaceDeviceRGB);
-    double fontHeight = m_mediumFont->fontMetrics().floatHeight() + 2;
-    context->fillRect(FloatRect(2, top, textWidth, fontHeight));
+    context->fillRect(FloatRect(2, top, width, height));
 
     // Draw FPS text.
-    context->setFillColor(Color(200, 200, 200), ColorSpaceDeviceRGB);
-    context->drawText(*m_mediumFont, text, IntPoint(3, top + fontHeight - 4));
-
-    return textWidth;
+    if (m_fontAtlas)
+        m_fontAtlas->drawText(context, String::format("FPS: %4.1f +/- %3.1f", averageFPS, stdDeviation), IntPoint(10, height / 3), IntSize(width, height));
 }
 
-void CCHeadsUpDisplay::drawPlatformLayerTree(GraphicsContext* context, int top)
+void CCHeadsUpDisplay::drawPlatformLayerTree(GraphicsContext* context, const IntSize hudSize, int top)
 {
-    ASSERT(!CCProxy::implThread());
-
-    FontCachePurgePreventer fontCachePurgePreventer;
-
-    float smallFontHeight = m_smallFont->fontMetrics().floatHeight();
-    int y = top + smallFontHeight - 4;
-    context->setFillColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
-    Vector<String> lines;
-    m_layerRenderer->layerTreeAsText().split('\n', lines);
-    for (size_t i = 0; i < lines.size(); ++i) {
-        context->drawText(*m_smallFont, TextRun(lines[i]), IntPoint(2, y));
-        y += smallFontHeight;
-    }
+    if (m_fontAtlas)
+        m_fontAtlas->drawText(context, m_layerRenderer->layerTreeAsText(), IntPoint(2, top), hudSize);
 }
 
 const CCSettings& CCHeadsUpDisplay::settings() const

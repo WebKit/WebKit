@@ -27,7 +27,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "Font.h"
+#include "CCFontAtlas.h"
 #include "ProgramBinding.h"
 #include "ShaderChromium.h"
 
@@ -43,9 +43,9 @@ class ManagedTexture;
 class CCHeadsUpDisplay {
     WTF_MAKE_NONCOPYABLE(CCHeadsUpDisplay);
 public:
-    static PassOwnPtr<CCHeadsUpDisplay> create(LayerRendererChromium* owner)
+    static PassOwnPtr<CCHeadsUpDisplay> create(LayerRendererChromium* owner, CCFontAtlas* headsUpDisplayFontAtlas)
     {
-        return adoptPtr(new CCHeadsUpDisplay(owner));
+        return adoptPtr(new CCHeadsUpDisplay(owner, headsUpDisplayFontAtlas));
     }
 
     ~CCHeadsUpDisplay();
@@ -61,19 +61,17 @@ public:
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexSwizzleAlpha> Program;
 
 private:
-    explicit CCHeadsUpDisplay(LayerRendererChromium* owner);
+    CCHeadsUpDisplay(LayerRendererChromium* owner, CCFontAtlas* headsUpDisplayFontAtlas);
     void drawHudContents(GraphicsContext*, const IntSize& hudSize);
     void drawFPSCounter(GraphicsContext*, int top, int height);
-    float drawFPSCounterText(GraphicsContext*, int top, int height);
-    void drawPlatformLayerTree(GraphicsContext*, int top);
+    void drawFPSCounterText(GraphicsContext*, int top, int width, int height);
+    void drawPlatformLayerTree(GraphicsContext*, const IntSize hudSize, int top);
     const CCSettings& settings() const;
     bool isBadFrame(int frameNumber) const;
     int frameIndex(int frameNumber) const;
     void getAverageFPSAndStandardDeviation(double *average, double *standardDeviation) const;
 
     bool showPlatformLayerTree() const;
-
-    void initializeFonts();
 
     int m_currentFrameNumber;
 
@@ -89,10 +87,9 @@ private:
     static const double kFrameTooFast;
     static const int kNumMissedFramesForReset = 5;
 
-    OwnPtr<Font> m_smallFont;
-    OwnPtr<Font> m_mediumFont;
-
     bool m_useMapSubForUploads;
+
+    CCFontAtlas* m_fontAtlas;
 };
 
 }

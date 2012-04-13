@@ -3607,6 +3607,8 @@
             'platform/graphics/chromium/cc/CCDelayBasedTimeSource.h',
             'platform/graphics/chromium/cc/CCDrawQuad.cpp',
             'platform/graphics/chromium/cc/CCDrawQuad.h',
+            'platform/graphics/chromium/cc/CCFontAtlas.cpp',
+            'platform/graphics/chromium/cc/CCFontAtlas.h',
             'platform/graphics/chromium/cc/CCFrameRateController.cpp',
             'platform/graphics/chromium/cc/CCFrameRateController.h',
             'platform/graphics/chromium/cc/CCGestureCurve.h',

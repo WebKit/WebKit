@@ -54,6 +54,7 @@
 
 namespace WebCore {
 
+class CCFontAtlas;
 class CCHeadsUpDisplay;
 class CCLayerImpl;
 class CCRenderPass;
@@ -79,7 +80,7 @@ public:
 class LayerRendererChromium {
     WTF_MAKE_NONCOPYABLE(LayerRendererChromium);
 public:
-    static PassOwnPtr<LayerRendererChromium> create(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>);
+    static PassOwnPtr<LayerRendererChromium> create(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>, CCFontAtlas*);
 
     ~LayerRendererChromium();
 
@@ -173,7 +174,7 @@ protected:
     bool isFramebufferDiscarded() const { return m_isFramebufferDiscarded; }
 
     LayerRendererChromium(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>);
-    bool initialize();
+    bool initialize(CCFontAtlas* headsUpDisplayFontAtlas = 0);
 
 private:
     void drawQuad(const CCDrawQuad*, const FloatRect& surfaceDamageRect);

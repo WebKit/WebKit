@@ -716,7 +716,7 @@ void CCThreadProxy::initializeLayerRendererOnImplThread(CCCompletionEvent* compl
     TRACE_EVENT("CCThreadProxy::initializeLayerRendererOnImplThread", this, 0);
     ASSERT(isImplThread());
     ASSERT(m_contextBeforeInitializationOnImplThread);
-    *initializeSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitializationOnImplThread.release());
+    *initializeSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitializationOnImplThread.release(), m_layerTreeHost->headsUpDisplayFontAtlas());
     if (*initializeSucceeded) {
         *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
         if (capabilities->usingSwapCompleteCallback)
@@ -753,7 +753,7 @@ void CCThreadProxy::recreateContextOnImplThread(CCCompletionEvent* completion, G
     TRACE_EVENT0("cc", "CCThreadProxy::recreateContextOnImplThread");
     ASSERT(isImplThread());
     m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
-    *recreateSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(adoptRef(contextPtr));
+    *recreateSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(adoptRef(contextPtr), m_layerTreeHost->headsUpDisplayFontAtlas());
     if (*recreateSucceeded) {
         *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
         m_schedulerOnImplThread->didRecreateContext();
