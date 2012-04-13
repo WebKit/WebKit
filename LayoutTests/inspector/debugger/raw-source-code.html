@@ -37,7 +37,7 @@ function test()
         return request;
     }
 
-    function finishRequest(request) { WebInspector.networkManager._dispatcher._finishNetworkRequest(request); }
+    function finishRequest(request) { WebInspector.networkManager._dispatcher._updateNetworkRequest(request); WebInspector.networkManager._dispatcher._finishNetworkRequest(request); }
     function createPendingRequestMock(type, content) { return createRequestMock(type, false, content); }
     function createFinishedRequestMock(type, content) { return createRequestMock(type, true, content); }
 

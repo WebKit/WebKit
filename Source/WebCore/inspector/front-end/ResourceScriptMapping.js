@@ -93,6 +93,9 @@ WebInspector.ResourceScriptMapping.prototype = {
             resource = WebInspector.resourceForURL(script.sourceURL);
             if (resource && resource.type !== WebInspector.resourceTypes.Document)
                 resource = null;
+            // Ignore resource in case it has not yet finished loading.
+            if (resource && resource.request && !resource.request.finished)
+                resource = null;
             if (!resource) {
                 // When there is no resource, lookup in-flight requests of type Document.
                 request = WebInspector.networkManager.inflightRequestForURL(script.sourceURL);

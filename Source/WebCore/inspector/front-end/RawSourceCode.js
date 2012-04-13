@@ -55,7 +55,7 @@ WebInspector.RawSourceCode = function(id, script, resource, request, formatter, 
     this._hasNewScripts = true;
 
     if (this._pendingRequest)
-        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
+        this._pendingRequest.addEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, this._finishedLoading, this);
     else
         this._updateSourceMapping();
 }
@@ -119,13 +119,9 @@ WebInspector.RawSourceCode.prototype = {
         this._updateSourceMapping();
     },
 
-    _resourceAdded: function(event)
+    _finishedLoading: function(event)
     {
-        var resource = /** @type {WebInspector.Resource} */ event.data;
-        if (resource.request !== this._pendingRequest)
-            return;
-
-        this._resource = resource;
+        this._resource = WebInspector.resourceForURL(this._pendingRequest.url);
         delete this._pendingRequest;
         this._updateSourceMapping();
     },
