@@ -2935,14 +2935,20 @@ void FrameLoader::checkDidPerformFirstNavigation()
     }
 }
 
-Frame* FrameLoader::findFrameForNavigation(const AtomicString& name)
+Frame* FrameLoader::findFrameForNavigation(const AtomicString& name, Document* activeDocument)
 {
     Frame* frame = m_frame->tree()->find(name);
-    // FIXME: We calling canNavigate on the Document that's requesting the
-    // navigation, not based on the document that happens to be displayed in
-    // this Frame.
-    if (!m_frame->document()->canNavigate(frame))
-        return 0;
+
+    if (activeDocument) {
+        if (!activeDocument->canNavigate(frame))
+            return 0;
+    } else {
+        // FIXME: Eventually all callers should supply the actual activeDocument
+        // so we can call canNavigate with the right document.
+        if (!m_frame->document()->canNavigate(frame))
+            return 0;
+    }
+
     return frame;
 }
 
@@ -3194,8 +3200,7 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
     ASSERT(!features.dialog || request.frameName().isEmpty());
 
     if (!request.frameName().isEmpty() && request.frameName() != "_blank") {
-        Frame* frame = lookupFrame->tree()->find(request.frameName());
-        if (frame && openerFrame->document()->canNavigate(frame)) {
+        if (Frame* frame = lookupFrame->loader()->findFrameForNavigation(request.frameName(), openerFrame->document())) {
             if (Page* page = frame->page())
                 page->chrome()->focus();
             created = false;

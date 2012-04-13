@@ -245,7 +245,7 @@ public:
 
     FrameLoaderStateMachine* stateMachine() const { return &m_stateMachine; }
 
-    Frame* findFrameForNavigation(const AtomicString& name);
+    Frame* findFrameForNavigation(const AtomicString& name, Document* activeDocument = 0);
 
     void applyUserAgent(ResourceRequest&);
 
