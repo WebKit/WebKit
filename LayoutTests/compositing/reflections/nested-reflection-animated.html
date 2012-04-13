@@ -42,21 +42,18 @@
   <script type="text/javascript" charset="utf-8">
     const expectedValues = [
       // [animation-name, time, element-id, property, expected-value, tolerance]
-      [null, 0.5, "inner", "webkitTransform.0", 0.76, 0.1],
+      ["swing", 0.5, "inner", "webkitTransform.0", 0.76, 0.1],
     ];
     
-    function startAnimation()
-    {
-      document.getElementById('inner').className = 'inner composited animated';
-    }
-
-    runAnimationTest(expectedValues, startAnimation, 'load', false, true /* pixel test */);
+    var pixelTest = true;
+    var disablePauseAPI = false;
+    runAnimationTest(expectedValues, null, null, disablePauseAPI, pixelTest);
   </script>
   </head>
 <body>
   <p>Animation on original and reflection should both be paused half way through, giving 45deg rotation.</p>
   <div class="outer composited">
-    <div id="inner" class="inner composited">
+    <div id="inner" class="inner composited animated">
       1
     </div>
   </div>

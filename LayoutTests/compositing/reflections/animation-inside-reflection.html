@@ -50,22 +50,19 @@
   <script type="text/javascript" charset="utf-8">
     const expectedValues = [
       // [animation-name, time, element-id, property, expected-value, tolerance]
-      [null, 0.5, "animated", "webkitTransform.0", 0.76, 0.1],
+      ["swing", 0.5, "animated", "webkitTransform.0", 0.76, 0.1],
     ];
     
-    function startAnimation()
-    {
-      document.getElementById('animated').className = 'animated';
-    }
-
-    runAnimationTest(expectedValues, startAnimation, 'load', false, true /* pixel test */);
+    var pixelTest = true;
+    var disablePauseAPI = false;
+    runAnimationTest(expectedValues, null, null, disablePauseAPI, pixelTest);
   </script>
   </head>
 <body>
   <p>The top left box, and all reflections should be rotated 45deg.</p>
   <div class="outer">
     <div id="inner" class="inner">
-      <div id="animated"></div>
+      <div id="animated" class="animated"></div>
     </div>
   </div>
   <div id="result"></div>
