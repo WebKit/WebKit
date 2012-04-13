@@ -44,6 +44,18 @@ tests = [
     },
     {
         testHeaders: {
+            'Cache-control': 'max-age=0, private, must-revalidate, max-age=60',
+        },
+        expectedResult: 'Uncached',
+    },
+    {
+        testHeaders: {
+            'Cache-control': 'max-age=60, private, must-revalidate, max-age=0',
+        },
+        expectedResult: 'Cached',
+    },
+    {
+        testHeaders: {
             'Expires': '[now-10s]',
             'Cache-control': 'max-age=10'
         },
