@@ -942,6 +942,8 @@ BUGWK57754 SLOW WIN DEBUG : inspector/debugger/xhr-breakpoints.html = PASS CRASH
 // PageAgent can not getCookies from DumpRenderTree.
 BUGWK65770 SKIP : http/tests/inspector/resource-main-cookies.php = FAIL
 
+BUGWK83890 : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS TEXT TIMEOUT
+
 BUGWK60107 WIN RELEASE : inspector/console/console-object-constructor-name.html = PASS TEXT
 BUGWK60107 WIN RELEASE : inspector/console/console-log-before-inspector-open.html = PASS TEXT
 BUGWK60107 WIN RELEASE : inspector/console/console-tests.html = PASS TEXT
@@ -965,8 +967,6 @@ BUGWK74654 SKIP : http/tests/inspector/network/network-worker.html = PASS TIMEOU
 BUGWK75186 SKIP LINUX : http/tests/inspector-enabled/dedicated-workers-list.html = PASS TEXT TIMEOUT
 
 BUGWK75647 : http/tests/inspector/network/download.html = PASS CRASH TIMEOUT
-
-BUGWK75916 SKIP LINUX : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS TEXT TIMEOUT
 
 BUGWK78810 LINUX WIN DEBUG SLOW : inspector/debugger/script-formatter-console.html = PASS
 
