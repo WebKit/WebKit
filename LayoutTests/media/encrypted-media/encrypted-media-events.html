@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+    <head>
+    </head>
+    <body>
+        <video></video>
+        <p>Test all the key-related events.</p>
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            // The test runs twice, once using on* and then using addEventListener().
+            var isFirstRun = true;
+
+            var initData = new Uint8Array([0x41, 0x42, 0x43]);
+            // 128 bit key.
+            var key = new Uint8Array([0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
+                                      0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70]);
+            // This key will cause an asynchronous error because it is too short.
+            var invalidKey = new Uint8Array([0x61]);
+
+            // After the first keyMessage event, the sessionId should always be the same.
+            // Initialize it to an invalid value until then.
+            var keyMessageSessionId = -1;
+            // Remember the first ID to make sure the second one is different.
+            var firstRunKeyMessageSessionId = -1;
+
+            function keyAdded(event)
+            {
+                consoleWrite("keyadded event occurred");
+
+                testExpected("event.target", video);
+                testExpected("event instanceof window.MediaKeyEvent", true);
+
+                testExpected("event.keySystem", "webkit-org.w3.clearkey");
+                testExpected("event.sessionId == keyMessageSessionId", true);
+                // The other attributes are not used for this event.
+                testExpected("event.initData", null, "===");
+                testExpected("event.message", null, "===");
+                testExpected("event.defaultURL", "");
+                testExpected("event.errorCode", null, "===");
+                testExpected("event.systemCode", 0);
+
+                consoleWrite("");
+                // Cause a keyerror by passing an invalid key.
+                run("video.webkitAddKey('webkit-org.w3.clearkey', invalidKey, null, event.sessionId)");
+            }
+
+            function keyError(event)
+            {
+                consoleWrite("keyerror event occurred");
+
+                testExpected("event.target", video);
+                testExpected("event instanceof window.MediaKeyEvent", true);
+
+                testExpected("event.keySystem", "webkit-org.w3.clearkey");
+                testExpected("event.sessionId == keyMessageSessionId", true);
+                // The next three attributes are not used for this event.
+                testExpected("event.initData", null, "===");
+                testExpected("event.message", null, "===");
+                testExpected("event.defaultURL", "");
+                testExpected("event.errorCode.code", MediaKeyError.MEDIA_KEYERR_UNKNOWN);
+                // systemCode is not supported by the Clear Key key system.
+                testExpected("event.systemCode", 0);
+
+                if (isFirstRun) {
+                    isFirstRun = false;
+                    runTest();
+                } else {
+                    consoleWrite("");
+                    consoleWrite("Attributes are read-only.");
+                    run("event.keySystem = 'blah'");
+                    run("event.sessionId = 'blah'");
+                    run("event.initData = new Uint8Array([0x12])");
+                    run("event.message  = new Uint8Array([0x12])");
+                    run("event.defaultURL = 'example.com'");
+                    run("event.errorCode.code = MediaKeyError.MEDIA_KEYERR_CLIENT");
+                    run("event.systemCode = 123");
+
+                    testExpected("event.keySystem", "webkit-org.w3.clearkey");
+                    testExpected("event.sessionId == keyMessageSessionId", true);
+                    testExpected("event.initData", null, "===");
+                    testExpected("event.message", null, "===");
+                    testExpected("event.defaultURL", "");
+                    testExpected("event.errorCode.code", MediaKeyError.MEDIA_KEYERR_UNKNOWN);
+                    testExpected("event.systemCode", 0);
+
+                    endTest();
+                }
+            }
+
+            function keyMessage(event)
+            {
+                consoleWrite("keymessage event occurred");
+
+                testExpected("event.target", video);
+                testExpected("event instanceof window.MediaKeyEvent", true);
+
+                testExpected("event.keySystem", "webkit-org.w3.clearkey");
+
+                consoleWrite("The sessionId should be a non-empty string containing an integer.");
+                testExpected("event.sessionId", "", "!=");
+                testExpected("event.sessionId", null, "!=");
+                testExpected("event.sessionId", undefined, "!=");
+                testExpected("isNaN(event.sessionId)", false);
+                // Make sure the number is not a float.
+                testExpected("String(event.sessionId) == String(parseInt(event.sessionId))", true);
+                consoleWrite("Implementations should avoid sessionIds of 0.");
+                testExpected("event.sessionId", 0, ">");
+                // All other events should have this same sessionId.
+                keyMessageSessionId = event.sessionId;
+                if (isFirstRun)
+                    firstRunKeyMessageSessionId = keyMessageSessionId;
+                else {
+                    consoleWrite("The sessionsId should be different from the first run.");
+                    testExpected("event.sessionId", firstRunKeyMessageSessionId, "!=");
+                }
+
+                // initData is not used for this event.
+                testExpected("event.initData", null, "===");
+                // At least for now, the Clear Key message is the initData.
+                testArraysEqual("event.message", initData);
+                // Not supported by the test file.
+                testExpected("event.defaultURL", "");
+                // The error attributes are not used for this event.
+                testExpected("event.errorCode", null, "===");
+                testExpected("event.systemCode", 0);
+
+                consoleWrite("");
+                run("video.webkitAddKey('webkit-org.w3.clearkey', key, event.initData, event.sessionId)");
+            }
+
+            function needKey(event)
+            {
+                consoleWrite("needKey event occurred");
+
+                testExpected("event.target", video);
+                testExpected("event instanceof window.MediaKeyEvent", true);
+
+                testExpected("event.keySystem", "webkit-org.w3.clearkey");
+                testExpected("event.sessionId", "");
+                testArraysEqual("event.initData", initData);
+                // The other attributes are not used for this event.
+                testExpected("event.message", null, "===");
+                testExpected("event.defaultURL", "");
+                testExpected("event.errorCode", null, "===");
+                testExpected("event.systemCode", 0);
+
+                consoleWrite("");
+                run("video.webkitGenerateKeyRequest('webkit-org.w3.clearkey', initData)");
+            }
+
+            function runTest()
+            {
+                consoleWrite("");
+                if (isFirstRun) {
+                    consoleWrite("*** Test events using on* attributes. ***");
+                    video.onwebkitkeyadded=keyAdded;
+                    video.onwebkitkeyerror=keyError;
+                    video.onwebkitkeymessage=keyMessage;
+                    video.onwebkitneedkey=needKey;
+                } else {
+                    consoleWrite("*** Test events using addEventListener(). ***");
+
+                    // Clear the on* handlers.
+                    video.onwebkitkeyadded=null;
+                    video.onwebkitkeyerror=null;
+                    video.onwebkitkeymessage=null;
+                    video.onwebkitneedkey=null;
+
+                    waitForEvent('webkitkeyadded', keyAdded);
+                    waitForEvent('webkitkeyerror', keyError);
+                    waitForEvent('webkitkeymessage', keyMessage);
+                    waitForEvent('webkitneedkey', needKey);
+                }
+    
+                // FIXME(82952): Temproary until we have a "test-encrypted" file that causes the needKey event.
+                waitForEventOnce('loadstart',
+                            function() {
+                                consoleWrite("");
+                                run("video.webkitGenerateKeyRequest('webkit-org.w3.clearkey', initData)");
+                            });
+
+                video.setAttribute("src", findMediaFile("video", "../content/test"));
+            }
+
+            consoleWrite("*** Verify the presence of on* attributes. These would return undefined if they are not present. ***");
+            testExpected("video.onwebkitkeyadded", null, "===");
+            testExpected("video.onwebkitkeyerror", null, "===");
+            testExpected("video.onwebkitkeymessage", null, "===");
+            testExpected("video.onwebkitneedkey", null, "===");
+
+            runTest();
+
+        </script>
+    </body>
+</html>

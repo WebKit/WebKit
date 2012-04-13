@@ -39,6 +39,7 @@ class DOMStringList;
 class DOMWindow;
 class IDBKeyRange;
 class Storage;
+class MediaKeyError;
 class TrackBase;
 class SpeechRecognitionError;
 class SpeechRecognitionResult;
@@ -67,6 +68,10 @@ public:
     bool get(const String&, RefPtr<DOMWindow>&) const;
     bool get(const String&, RefPtr<Storage>&) const;
     bool get(const String&, MessagePortArray&) const;
+    bool get(const String&, RefPtr<Uint8Array>&) const;
+#if ENABLE(ENCRYPTED_MEDIA)
+    bool get(const String&, RefPtr<MediaKeyError>&) const;
+#endif
 #if ENABLE(VIDEO_TRACK)
     bool get(const String&, RefPtr<TrackBase>&) const;
 #endif

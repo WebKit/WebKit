@@ -1,0 +1,128 @@
+Test all the key-related events.
+
+*** Verify the presence of on* attributes. These would return undefined if they are not present. ***
+EXPECTED (video.onwebkitkeyadded === 'null') OK
+EXPECTED (video.onwebkitkeyerror === 'null') OK
+EXPECTED (video.onwebkitkeymessage === 'null') OK
+EXPECTED (video.onwebkitneedkey === 'null') OK
+
+*** Test events using on* attributes. ***
+EVENT(loadstart)
+
+RUN(video.webkitGenerateKeyRequest('webkit-org.w3.clearkey', initData))
+keymessage event occurred
+EXPECTED (event.target == '[object HTMLVideoElement]') OK
+EXPECTED (event instanceof window.MediaKeyEvent == 'true') OK
+EXPECTED (event.keySystem == 'webkit-org.w3.clearkey') OK
+The sessionId should be a non-empty string containing an integer.
+EXPECTED (event.sessionId != '') OK
+EXPECTED (event.sessionId != 'null') OK
+EXPECTED (event.sessionId != 'undefined') OK
+EXPECTED (isNaN(event.sessionId) == 'false') OK
+EXPECTED (String(event.sessionId) == String(parseInt(event.sessionId)) == 'true') OK
+Implementations should avoid sessionIds of 0.
+EXPECTED (event.sessionId > '0') OK
+EXPECTED (event.initData === 'null') OK
+EXPECTED (event.message.length == '3') OK
+EXPECTED (event.message[0] == '65') OK
+EXPECTED (event.message[1] == '66') OK
+EXPECTED (event.message[2] == '67') OK
+EXPECTED (event.defaultURL == '') OK
+EXPECTED (event.errorCode === 'null') OK
+EXPECTED (event.systemCode == '0') OK
+
+RUN(video.webkitAddKey('webkit-org.w3.clearkey', key, event.initData, event.sessionId))
+keyadded event occurred
+EXPECTED (event.target == '[object HTMLVideoElement]') OK
+EXPECTED (event instanceof window.MediaKeyEvent == 'true') OK
+EXPECTED (event.keySystem == 'webkit-org.w3.clearkey') OK
+EXPECTED (event.sessionId == keyMessageSessionId == 'true') OK
+EXPECTED (event.initData === 'null') OK
+EXPECTED (event.message === 'null') OK
+EXPECTED (event.defaultURL == '') OK
+EXPECTED (event.errorCode === 'null') OK
+EXPECTED (event.systemCode == '0') OK
+
+RUN(video.webkitAddKey('webkit-org.w3.clearkey', invalidKey, null, event.sessionId))
+keyerror event occurred
+EXPECTED (event.target == '[object HTMLVideoElement]') OK
+EXPECTED (event instanceof window.MediaKeyEvent == 'true') OK
+EXPECTED (event.keySystem == 'webkit-org.w3.clearkey') OK
+EXPECTED (event.sessionId == keyMessageSessionId == 'true') OK
+EXPECTED (event.initData === 'null') OK
+EXPECTED (event.message === 'null') OK
+EXPECTED (event.defaultURL == '') OK
+EXPECTED (event.errorCode.code == '1') OK
+EXPECTED (event.systemCode == '0') OK
+
+*** Test events using addEventListener(). ***
+EVENT(loadstart)
+
+RUN(video.webkitGenerateKeyRequest('webkit-org.w3.clearkey', initData))
+EVENT(webkitkeymessage)
+keymessage event occurred
+EXPECTED (event.target == '[object HTMLVideoElement]') OK
+EXPECTED (event instanceof window.MediaKeyEvent == 'true') OK
+EXPECTED (event.keySystem == 'webkit-org.w3.clearkey') OK
+The sessionId should be a non-empty string containing an integer.
+EXPECTED (event.sessionId != '') OK
+EXPECTED (event.sessionId != 'null') OK
+EXPECTED (event.sessionId != 'undefined') OK
+EXPECTED (isNaN(event.sessionId) == 'false') OK
+EXPECTED (String(event.sessionId) == String(parseInt(event.sessionId)) == 'true') OK
+Implementations should avoid sessionIds of 0.
+EXPECTED (event.sessionId > '0') OK
+The sessionsId should be different from the first run.
+EXPECTED (event.sessionId != '1') OK
+EXPECTED (event.initData === 'null') OK
+EXPECTED (event.message.length == '3') OK
+EXPECTED (event.message[0] == '65') OK
+EXPECTED (event.message[1] == '66') OK
+EXPECTED (event.message[2] == '67') OK
+EXPECTED (event.defaultURL == '') OK
+EXPECTED (event.errorCode === 'null') OK
+EXPECTED (event.systemCode == '0') OK
+
+RUN(video.webkitAddKey('webkit-org.w3.clearkey', key, event.initData, event.sessionId))
+EVENT(webkitkeyadded)
+keyadded event occurred
+EXPECTED (event.target == '[object HTMLVideoElement]') OK
+EXPECTED (event instanceof window.MediaKeyEvent == 'true') OK
+EXPECTED (event.keySystem == 'webkit-org.w3.clearkey') OK
+EXPECTED (event.sessionId == keyMessageSessionId == 'true') OK
+EXPECTED (event.initData === 'null') OK
+EXPECTED (event.message === 'null') OK
+EXPECTED (event.defaultURL == '') OK
+EXPECTED (event.errorCode === 'null') OK
+EXPECTED (event.systemCode == '0') OK
+
+RUN(video.webkitAddKey('webkit-org.w3.clearkey', invalidKey, null, event.sessionId))
+EVENT(webkitkeyerror)
+keyerror event occurred
+EXPECTED (event.target == '[object HTMLVideoElement]') OK
+EXPECTED (event instanceof window.MediaKeyEvent == 'true') OK
+EXPECTED (event.keySystem == 'webkit-org.w3.clearkey') OK
+EXPECTED (event.sessionId == keyMessageSessionId == 'true') OK
+EXPECTED (event.initData === 'null') OK
+EXPECTED (event.message === 'null') OK
+EXPECTED (event.defaultURL == '') OK
+EXPECTED (event.errorCode.code == '1') OK
+EXPECTED (event.systemCode == '0') OK
+
+Attributes are read-only.
+RUN(event.keySystem = 'blah')
+RUN(event.sessionId = 'blah')
+RUN(event.initData = new Uint8Array([0x12]))
+RUN(event.message = new Uint8Array([0x12]))
+RUN(event.defaultURL = 'example.com')
+RUN(event.errorCode.code = MediaKeyError.MEDIA_KEYERR_CLIENT)
+RUN(event.systemCode = 123)
+EXPECTED (event.keySystem == 'webkit-org.w3.clearkey') OK
+EXPECTED (event.sessionId == keyMessageSessionId == 'true') OK
+EXPECTED (event.initData === 'null') OK
+EXPECTED (event.message === 'null') OK
+EXPECTED (event.defaultURL == '') OK
+EXPECTED (event.errorCode.code == '1') OK
+EXPECTED (event.systemCode == '0') OK
+END OF TEST
+

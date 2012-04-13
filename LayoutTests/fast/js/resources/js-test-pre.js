@@ -254,12 +254,15 @@ function shouldBeTrueQuiet(_a) { shouldBe(_a, "true", true); }
 function shouldBeFalse(_a) { shouldBe(_a, "false"); }
 function shouldBeNaN(_a) { shouldBe(_a, "NaN"); }
 function shouldBeNull(_a) { shouldBe(_a, "null"); }
+function shouldBeZero(_a) { shouldBe(_a, "0"); }
 
 function shouldBeEqualToString(a, b)
 {
   var unevaledString = '"' + b.replace(/\\/g, "\\\\").replace(/"/g, "\"").replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"';
   shouldBe(a, unevaledString);
 }
+
+function shouldBeEmptyString(_a) { shouldBeEqualToString(_a, ""); }
 
 function shouldEvaluateTo(actual, expected) {
   // A general-purpose comparator.  'actual' should be a string to be

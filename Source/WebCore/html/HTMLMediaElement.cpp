@@ -58,6 +58,8 @@
 #include "MediaDocument.h"
 #include "MediaError.h"
 #include "MediaFragmentURIParser.h"
+#include "MediaKeyError.h"
+#include "MediaKeyEvent.h"
 #include "MediaList.h"
 #include "MediaPlayer.h"
 #include "MediaQueryEvaluator.h"
@@ -1684,6 +1686,86 @@ void HTMLMediaElement::mediaPlayerSourceOpened()
 String HTMLMediaElement::mediaPlayerSourceURL() const
 {
     return m_mediaSourceURL.string();
+}
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+void HTMLMediaElement::mediaPlayerKeyAdded(MediaPlayer*, const String& keySystem, const String& sessionId)
+{
+    MediaKeyEventInit initializer;
+    initializer.keySystem = keySystem;
+    initializer.sessionId = sessionId;
+    initializer.bubbles = false;
+    initializer.cancelable = false;
+
+    RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitkeyaddedEvent, initializer);
+    event->setTarget(this);
+    m_asyncEventQueue->enqueueEvent(event.release());
+}
+
+void HTMLMediaElement::mediaPlayerKeyError(MediaPlayer*, const String& keySystem, const String& sessionId, MediaPlayerClient::MediaKeyErrorCode errorCode, unsigned short systemCode)
+{
+    MediaKeyError::Code mediaKeyErrorCode = MediaKeyError::MEDIA_KEYERR_UNKNOWN;
+    switch (errorCode) {
+    case MediaPlayerClient::UnknownError:
+        mediaKeyErrorCode = MediaKeyError::MEDIA_KEYERR_UNKNOWN;
+        break;
+    case MediaPlayerClient::ClientError:
+        mediaKeyErrorCode = MediaKeyError::MEDIA_KEYERR_CLIENT;
+        break;
+    case MediaPlayerClient::ServiceError:
+        mediaKeyErrorCode = MediaKeyError::MEDIA_KEYERR_SERVICE;
+        break;
+    case MediaPlayerClient::OutputError:
+        mediaKeyErrorCode = MediaKeyError::MEDIA_KEYERR_OUTPUT;
+        break;
+    case MediaPlayerClient::HardwareChangeError:
+        mediaKeyErrorCode = MediaKeyError::MEDIA_KEYERR_HARDWARECHANGE;
+        break;
+    case MediaPlayerClient::DomainError:
+        mediaKeyErrorCode = MediaKeyError::MEDIA_KEYERR_DOMAIN;
+        break;
+    }
+
+    MediaKeyEventInit initializer;
+    initializer.keySystem = keySystem;
+    initializer.sessionId = sessionId;
+    initializer.errorCode = MediaKeyError::create(mediaKeyErrorCode);
+    initializer.systemCode = systemCode;
+    initializer.bubbles = false;
+    initializer.cancelable = false;
+
+    RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitkeyerrorEvent, initializer);
+    event->setTarget(this);
+    m_asyncEventQueue->enqueueEvent(event.release());
+}
+
+void HTMLMediaElement::mediaPlayerKeyMessage(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength)
+{
+    MediaKeyEventInit initializer;
+    initializer.keySystem = keySystem;
+    initializer.sessionId = sessionId;
+    initializer.message = Uint8Array::create(message, messageLength);
+    initializer.bubbles = false;
+    initializer.cancelable = false;
+
+    RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitkeymessageEvent, initializer);
+    event->setTarget(this);
+    m_asyncEventQueue->enqueueEvent(event.release());
+}
+
+void HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength)
+{
+    MediaKeyEventInit initializer;
+    initializer.keySystem = keySystem;
+    initializer.sessionId = sessionId;
+    initializer.initData = Uint8Array::create(initData, initDataLength);
+    initializer.bubbles = false;
+    initializer.cancelable = false;
+
+    RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitneedkeyEvent, initializer);
+    event->setTarget(this);
+    m_asyncEventQueue->enqueueEvent(event.release());
 }
 #endif
 

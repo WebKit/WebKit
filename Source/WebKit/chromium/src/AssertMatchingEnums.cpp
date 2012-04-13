@@ -87,6 +87,7 @@
 #include "WebIconURL.h"
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
+#include "WebMediaPlayerClient.h"
 #include "WebNotificationPresenter.h"
 #include "WebPageVisibilityState.h"
 #include "WebReferrerPolicy.h"
@@ -392,6 +393,13 @@ COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::LiveStream, MediaPlayer::LiveStream
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::NoError, MediaPlayer::NoError);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::InvalidPlayerState, MediaPlayer::InvalidPlayerState);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::KeySystemNotSupported, MediaPlayer::KeySystemNotSupported);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayerClient::UnknownError, MediaPlayerClient::UnknownError);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayerClient::ClientError, MediaPlayerClient::ClientError);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayerClient::ServiceError, MediaPlayerClient::ServiceError);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayerClient::OutputError, MediaPlayerClient::OutputError);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayerClient::HardwareChangeError, MediaPlayerClient::HardwareChangeError);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayerClient::DomainError, MediaPlayerClient::DomainError);
 #endif
 
 COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatInvalid, VideoFrameChromium::Invalid);

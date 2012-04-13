@@ -122,6 +122,11 @@ module html {
         raises (DOMException);
     [V8EnabledAtRuntime=encryptedMedia] void webkitCancelKeyRequest(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in [Optional=DefaultIsNullString] DOMString sessionId)
         raises (DOMException);
+
+    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeyadded;
+    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeyerror;
+    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeymessage;
+    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitneedkey;
 #endif
 
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK

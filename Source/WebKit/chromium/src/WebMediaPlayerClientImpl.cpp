@@ -217,6 +217,56 @@ WebKit::WebURL WebMediaPlayerClientImpl::sourceURL() const
 #endif
 }
 
+void WebMediaPlayerClientImpl::keyAdded(const WebString& keySystem, const WebString& sessionId)
+{
+#if ENABLE(ENCRYPTED_MEDIA)
+    ASSERT(m_mediaPlayer);
+    m_mediaPlayer->keyAdded(keySystem, sessionId);
+#else
+    UNUSED_PARAM(keySystem);
+    UNUSED_PARAM(sessionId);
+#endif
+}
+
+void WebMediaPlayerClientImpl::keyError(const WebString& keySystem, const WebString& sessionId, MediaKeyErrorCode errorCode, unsigned short systemCode)
+{
+#if ENABLE(ENCRYPTED_MEDIA)
+    ASSERT(m_mediaPlayer);
+    m_mediaPlayer->keyError(keySystem, sessionId, static_cast<MediaPlayerClient::MediaKeyErrorCode>(errorCode), systemCode);
+#else
+    UNUSED_PARAM(keySystem);
+    UNUSED_PARAM(sessionId);
+    UNUSED_PARAM(errorCode);
+    UNUSED_PARAM(systemCode);
+#endif
+}
+
+void WebMediaPlayerClientImpl::keyMessage(const WebString& keySystem, const WebString& sessionId, const unsigned char* message, unsigned messageLength)
+{
+#if ENABLE(ENCRYPTED_MEDIA)
+    ASSERT(m_mediaPlayer);
+    m_mediaPlayer->keyMessage(keySystem, sessionId, message, messageLength);
+#else
+    UNUSED_PARAM(keySystem);
+    UNUSED_PARAM(sessionId);
+    UNUSED_PARAM(message);
+    UNUSED_PARAM(messageLength);
+#endif
+}
+
+void WebMediaPlayerClientImpl::keyNeeded(const WebString& keySystem, const WebString& sessionId, const unsigned char* initData, unsigned initDataLength)
+{
+#if ENABLE(ENCRYPTED_MEDIA)
+    ASSERT(m_mediaPlayer);
+    m_mediaPlayer->keyNeeded(keySystem, sessionId, initData, initDataLength);
+#else
+    UNUSED_PARAM(keySystem);
+    UNUSED_PARAM(sessionId);
+    UNUSED_PARAM(initData);
+    UNUSED_PARAM(initDataLength);
+#endif
+}
+
 void WebMediaPlayerClientImpl::disableAcceleratedCompositing()
 {
     m_supportsAcceleratedCompositing = false;

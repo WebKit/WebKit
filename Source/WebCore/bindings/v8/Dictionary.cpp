@@ -30,12 +30,17 @@
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
 #include "V8Storage.h"
+#include "V8Uint8Array.h"
 #include "V8Utilities.h"
 #include <wtf/MathExtras.h>
 
 #if ENABLE(INDEXED_DATABASE)
 #include "IDBKeyRange.h"
 #include "V8IDBKeyRange.h"
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "V8MediaKeyError.h"
 #endif
 
 #if ENABLE(VIDEO_TRACK)
@@ -292,6 +297,44 @@ bool Dictionary::getWithUndefinedOrNullCheck(const String& key, String& value) c
     value = WebCore::isUndefinedOrNull(v8Value) ? String() : v8ValueToWebCoreString(v8Value);
     return true;
 }
+
+bool Dictionary::get(const String& key, RefPtr<Uint8Array>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    Uint8Array* source = 0;
+    if (v8Value->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+
+        v8::Handle<v8::Object> array = V8DOMWrapper::lookupDOMWrapper(V8Uint8Array::GetTemplate(), wrapper);
+        if (!array.IsEmpty())
+            source = V8Uint8Array::toNative(array);
+    }
+    value = source;
+    return true;
+}
+
+#if ENABLE(ENCRYPTED_MEDIA)
+bool Dictionary::get(const String& key, RefPtr<MediaKeyError>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    MediaKeyError* source = 0;
+    if (v8Value->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+
+        v8::Handle<v8::Object> error = V8DOMWrapper::lookupDOMWrapper(V8MediaKeyError::GetTemplate(), wrapper);
+        if (!error.IsEmpty())
+            source = V8MediaKeyError::toNative(error);
+    }
+    value = source;
+    return true;
+}
+#endif
 
 #if ENABLE(VIDEO_TRACK)
 bool Dictionary::get(const String& key, RefPtr<TrackBase>& value) const

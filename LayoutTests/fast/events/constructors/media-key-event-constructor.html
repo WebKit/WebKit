@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+    <script>
+
+        window.jsTestIsAsync = true;
+
+        description("This tests the constructor for the MediaKeyEvent DOM class.");
+
+        function test()
+        {
+            debug("<br>*** No initializer passed ***");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent').bubbles", "false");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent').cancelable", "false");
+            shouldBeEmptyString("new MediaKeyEvent('MediaKeyEvent').keySystem");
+            shouldBeEmptyString("new MediaKeyEvent('MediaKeyEvent').sessionId");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent').initData");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent').message");
+            shouldBeEmptyString("new MediaKeyEvent('MediaKeyEvent').defaultURL");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent').errorCode");
+            shouldBeZero("new MediaKeyEvent('MediaKeyEvent').systemCode");
+    
+            debug("<br>*** Bubbles and cancelable true, other members are missing ***");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).bubbles", "true");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).cancelable", "true");
+            shouldBeEmptyString("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).keySystem");
+            shouldBeEmptyString("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).sessionId");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).initData");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).message");
+            shouldBeEmptyString("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).defaultURL");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).errorCode");
+            shouldBeZero("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).systemCode");
+    
+            debug("<br>*** Bubbles and cancelable true, invalid other members ***");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).bubbles", "true");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).cancelable", "true");
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).keySystem", "undefined");
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).sessionId", "undefined");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).initData");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).message");
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).defaultURL", "undefined");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).errorCode");
+            shouldBeZero("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).systemCode");
+    
+            debug("<br>*** Initialize 'keySystem' with a invalid values ***");
+            emptyObject = { };
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { keySystem: emptyObject }).keySystem", "[object Object]");
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { keySystem: document }).keySystem", "[object HTMLDocument]");
+
+            debug("<br>*** Initialize 'sessionId' with a invalid values ***");
+            emptyObject = { };
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { sessionId: emptyObject }).sessionId", "[object Object]");
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { sessionId: document }).sessionId", "[object HTMLDocument]");
+
+            debug("<br>*** Initialize 'initData' with a invalid values ***");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { initData: 10 }).initData");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { initData: \'string\' }).initData");
+            emptyObject = { };
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { initData: emptyObject }).initData");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { initData: document }).initData");
+
+            debug("<br>*** Initialize 'message' with a invalid values ***");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { message: 10 }).message");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { message: \'string\' }).message");
+            emptyObject = { };
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { message: emptyObject }).message");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { message: document }).message");
+
+            debug("<br>*** Initialize 'defaultURL' with a invalid values ***");
+            emptyObject = { };
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { defaultURL: emptyObject }).defaultURL", "[object Object]");
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { defaultURL: document }).defaultURL", "[object HTMLDocument]");
+
+            debug("<br>*** Initialize 'errorCode' with a invalid values ***");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { errorCode: 10 }).errorCode");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { errorCode: \'string\' }).errorCode");
+            emptyObject = { };
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { errorCode: emptyObject }).errorCode");
+            shouldBeNull("new MediaKeyEvent('MediaKeyEvent', { errorCode: document }).errorCode");
+
+            debug("<br>*** Initialize 'systemCode' with a invalid values ***");
+            shouldBeZero("new MediaKeyEvent('MediaKeyEvent', { systemCode: \'string\' }).systemCode");
+            emptyObject = { };
+            shouldBeZero("new MediaKeyEvent('MediaKeyEvent', { systemCode: emptyObject }).systemCode");
+            shouldBeZero("new MediaKeyEvent('MediaKeyEvent', { systemCode: document }).systemCode");
+
+            debug("<br>*** Bubbles and cancelable true, valid other members ***");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).bubbles", "true");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).cancelable", "true");
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).keySystem", "keySystem");
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).sessionId", "sessionId");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).initData", "initDataArray");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).message", "messageArray");
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).defaultURL", "defaultURL");
+            // FIXME(82988): These two fail.
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).errorCode", "errorObject");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).errorCode.code", "MediaKeyError.MEDIA_KEYERR_UNKNOWN");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).systemCode", "123");
+
+            debug("<br>*** Initialize with valid members ***");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).bubbles", "true");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).cancelable", "true");
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).keySystem", "keySystem");
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).sessionId", "sessionId");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).initData", "initDataArray");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).message", "messageArray");
+            shouldBeEqualToString("new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).defaultURL", "defaultURL");
+            // FIXME(82988): These two fail.
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).errorCode", "errorObject");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).errorCode.code", "MediaKeyError.MEDIA_KEYERR_UNKNOWN");
+            shouldBe("new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).systemCode", "123");
+
+            debug("");
+            finishJSTest();
+        }
+
+        var initDataArray = new Uint8Array([0x41, 0x42, 0x43]);
+        var messageArray = new Uint8Array([0x51, 0x52, 0x53]);
+        // FIXME(82988): This does not create an error like we want.
+        var errorObject = window.MediaKeyError;
+        // shouldBe("typeof errorObject", TBD);
+
+        video = document.createElement('video');
+        document.body.appendChild(video);
+
+        test()
+    </script>
+    <script src="../../js/resources/js-test-post.js"></script>
+
+</body>
+</html>

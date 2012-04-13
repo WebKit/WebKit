@@ -168,6 +168,14 @@ public:
     virtual String mediaPlayerSourceURL() const { return "x-media-source-unsupported:"; }
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    enum MediaKeyErrorCode { UnknownError = 1, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
+    virtual void mediaPlayerKeyAdded(MediaPlayer*, const String& keySystem, const String& sessionId) { }
+    virtual void mediaPlayerKeyError(MediaPlayer*, const String& keySystem, const String& sessionId, MediaKeyErrorCode errorCode, unsigned short systemCode) { }
+    virtual void mediaPlayerKeyMessage(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength) { }
+    virtual void mediaPlayerKeyNeeded(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength) { }
+#endif
+
     virtual String mediaPlayerReferrer() const { return String(); }
     virtual String mediaPlayerUserAgent() const { return String(); }
 };
@@ -344,6 +352,13 @@ public:
 #if ENABLE(MEDIA_SOURCE)
     void sourceOpened();
     String sourceURL() const;
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    void keyAdded(const String& keySystem, const String& sessionId);
+    void keyError(const String& keySystem, const String& sessionId, MediaPlayerClient::MediaKeyErrorCode, unsigned short systemCode);
+    void keyMessage(const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength);
+    void keyNeeded(const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength);
 #endif
 
     String referrer() const;

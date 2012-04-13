@@ -969,7 +969,33 @@ AudioSourceProvider* MediaPlayer::audioSourceProvider()
     return m_private->audioSourceProvider();
 }
 #endif // WEB_AUDIO
-    
+
+#if ENABLE(ENCRYPTED_MEDIA)
+void MediaPlayer::keyAdded(const String& keySystem, const String& sessionId)
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerKeyAdded(this, keySystem, sessionId);
+}
+
+void MediaPlayer::keyError(const String& keySystem, const String& sessionId, MediaPlayerClient::MediaKeyErrorCode errorCode, unsigned short systemCode)
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerKeyError(this, keySystem, sessionId, errorCode, systemCode);
+}
+
+void MediaPlayer::keyMessage(const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength)
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerKeyMessage(this, keySystem, sessionId, message, messageLength);
+}
+
+void MediaPlayer::keyNeeded(const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength)
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerKeyNeeded(this, keySystem, sessionId, initData, initDataLength);
+}
+#endif
+
 String MediaPlayer::referrer() const
 {
     if (!m_mediaPlayerClient)

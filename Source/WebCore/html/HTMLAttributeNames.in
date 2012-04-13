@@ -247,6 +247,10 @@ onwebkitbeginfullscreen
 onwebkitendfullscreen
 onwebkitfullscreenchange
 onwebkitfullscreenerror
+onwebkitkeyadded
+onwebkitkeyerror
+onwebkitkeymessage
+onwebkitneedkey
 onwebkittransitionend
 open
 optimum

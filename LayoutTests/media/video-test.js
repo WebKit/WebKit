@@ -79,9 +79,27 @@ function testExpected(testFuncString, expected, comparison)
         case '>=': success = observed >= expected; break;
         case '!=':  success = observed != expected; break;
         case '==': success = observed == expected; break;
+        case '===': success = observed === expected; break;
     }
 
     reportExpected(success, testFuncString, comparison, expected, observed)
+}
+
+function testArraysEqual(testFuncString, expected)
+{
+    var observed;
+    try {
+        observed = eval(testFuncString);
+    } catch (ex) {
+        consoleWrite(ex);
+        return;
+    }
+  
+    testExpected(testFuncString + ".length", expected.length);
+
+    for (var i = 0; i < observed.length; i++) {
+        testExpected(testFuncString + "[" + i + "]", expected[i]);
+    }
 }
 
 var testNumber = 0;

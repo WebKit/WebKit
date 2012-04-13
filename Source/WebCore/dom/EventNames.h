@@ -161,6 +161,11 @@ namespace WebCore {
     macro(webkitsourceended) \
     macro(webkitsourceclose) \
     \
+    macro(webkitkeyadded) \
+    macro(webkitkeyerror) \
+    macro(webkitkeymessage) \
+    macro(webkitneedkey) \
+    \
     macro(progress) \
     macro(stalled) \
     macro(suspend) \

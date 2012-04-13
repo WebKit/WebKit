@@ -186,6 +186,11 @@ public:
     void webkitAddKey(const String& keySystem, PassRefPtr<Uint8Array> key, PassRefPtr<Uint8Array> initData, const String& sessionId, ExceptionCode&);
     void webkitAddKey(const String& keySystem, PassRefPtr<Uint8Array> key, ExceptionCode&);
     void webkitCancelKeyRequest(const String& keySystem, const String& sessionId, ExceptionCode&);
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyadded);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyerror);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeymessage);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitneedkey);
 #endif
 
 // controls
@@ -260,6 +265,13 @@ public:
     void createMediaPlayerProxy();
     void updateWidget(PluginCreationOption);
 #endif
+
+    // EventTarget function.
+    // Both Node (via HTMLElement) and ActiveDOMObject define this method, which
+    // causes an ambiguity error at compile time. This class's constructor
+    // ensures that both implementations return document, so return the result
+    // of one of them here.
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return HTMLElement::scriptExecutionContext(); }
 
     bool hasSingleSecurityOrigin() const { return !m_player || m_player->hasSingleSecurityOrigin(); }
     
@@ -395,6 +407,13 @@ private:
 #if ENABLE(MEDIA_SOURCE)
     virtual void mediaPlayerSourceOpened();
     virtual String mediaPlayerSourceURL() const;
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    virtual void mediaPlayerKeyAdded(MediaPlayer*, const String& keySystem, const String& sessionId) OVERRIDE;
+    virtual void mediaPlayerKeyError(MediaPlayer*, const String& keySystem, const String& sessionId, MediaPlayerClient::MediaKeyErrorCode, unsigned short systemCode) OVERRIDE;
+    virtual void mediaPlayerKeyMessage(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength) OVERRIDE;
+    virtual void mediaPlayerKeyNeeded(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength) OVERRIDE;
 #endif
 
     virtual String mediaPlayerReferrer() const OVERRIDE;

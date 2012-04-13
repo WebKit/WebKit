@@ -1,3 +1,25 @@
+2012-04-12  David Dorwin  <ddorwin@chromium.org>
+
+        Add Encrypted Media Extensions events and errors to HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=82974
+
+        Reviewed by Adam Barth.
+
+        The new events and errors are behind the ENABLE(ENCRYPTED_MEDIA) feature define.
+        Implementation is based on v0.1 of the draft proposal at
+        http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html#events.
+
+        * public/WebMediaPlayerClient.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::keyAdded):
+        (WebKit):
+        (WebKit::WebMediaPlayerClientImpl::keyError):
+        (WebKit::WebMediaPlayerClientImpl::keyMessage):
+        (WebKit::WebMediaPlayerClientImpl::keyNeeded):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+
 2012-04-12  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Enable INPUT_TYPE_DATE

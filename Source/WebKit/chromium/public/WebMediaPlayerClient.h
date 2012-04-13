@@ -40,6 +40,15 @@ class WebURL;
 
 class WebMediaPlayerClient {
 public:
+    enum MediaKeyErrorCode {
+        UnknownError = 1,
+        ClientError,
+        ServiceError,
+        OutputError,
+        HardwareChangeError,
+        DomainError
+    };
+
     virtual void networkStateChanged() = 0;
     virtual void readyStateChanged() = 0;
     virtual void volumeChanged(float) = 0;
@@ -56,6 +65,10 @@ public:
     virtual WebMediaPlayer::Preload preload() const = 0;
     virtual void sourceOpened() = 0;
     virtual WebKit::WebURL sourceURL() const = 0;
+    virtual void keyAdded(const WebString&, const WebString&) = 0;
+    virtual void keyError(const WebString&, const WebString&, MediaKeyErrorCode, unsigned short systemCode) = 0;
+    virtual void keyMessage(const WebString&, const WebString&, const unsigned char*, unsigned) = 0;
+    virtual void keyNeeded(const WebString&, const WebString&, const unsigned char* initData, unsigned initDataLength) = 0;
     virtual void disableAcceleratedCompositing() = 0;
 protected:
     ~WebMediaPlayerClient() { }

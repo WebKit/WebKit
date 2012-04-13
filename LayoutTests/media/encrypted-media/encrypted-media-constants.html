@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+        function doTest () 
+        {
+            testExpected("MediaKeyError.MEDIA_KEYERR_UNKNOWN", 1);
+            testExpected("MediaKeyError.MEDIA_KEYERR_CLIENT", 2);
+            testExpected("MediaKeyError.MEDIA_KEYERR_SERVICE", 3);
+            testExpected("MediaKeyError.MEDIA_KEYERR_OUTPUT", 4);
+            testExpected("MediaKeyError.MEDIA_KEYERR_HARDWARECHANGE", 5);
+            testExpected("MediaKeyError.MEDIA_KEYERR_DOMAIN", 6);
+            consoleWrite("");
+
+            testExpected("MediaError.MEDIA_ERR_ENCRYPTED", 5);
+
+            endTest();
+        }
+    </script>
+</head>
+<body onload="doTest()">
+    <p>Test MediaKeyError constants and additional MediaError constant.</p>
+</body>
+</html>

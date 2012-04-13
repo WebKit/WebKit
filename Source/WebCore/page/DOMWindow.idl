@@ -466,6 +466,9 @@ module window {
         attribute [JSCustomGetter, CustomConstructor] HTMLImageElementConstructorConstructor Image; // Usable with new operator
         attribute [JSCustomGetter] HTMLOptionElementConstructorConstructor Option; // Usable with new operator
 
+        attribute [Conditional=ENCRYPTED_MEDIA, V8EnabledAtRuntime=encryptedMedia] MediaKeyErrorConstructor MediaKeyError;
+        attribute [Conditional=ENCRYPTED_MEDIA, V8EnabledAtRuntime=encryptedMedia] MediaKeyEventConstructor MediaKeyEvent;
+
         attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] HTMLTrackElementConstructor HTMLTrackElement;
         attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackConstructor TextTrack;
         attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackCueConstructor TextTrackCue; // Usable with the new operator
