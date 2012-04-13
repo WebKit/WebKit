@@ -42,6 +42,7 @@
 #include "FrameView.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
+#include "Location.h"
 #include "MediaPlayer.h"
 #include "MessagePort.h"
 #include "Page.h"
@@ -195,7 +196,8 @@ void V8DOMWindow::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v
     if (!firstWindow)
       return;
 
-    imp->setLocation(toWebCoreString(value), activeWindow, firstWindow);
+    if (Location* location = imp->location())
+        location->setHref(toWebCoreString(value), activeWindow, firstWindow);
 }
 
 void V8DOMWindow::openerAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

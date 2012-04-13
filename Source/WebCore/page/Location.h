@@ -77,6 +77,8 @@ public:
 private:
     explicit Location(Frame*);
 
+    void setLocation(const String&, DOMWindow* activeWindow, DOMWindow* firstWindow);
+
     const KURL& url() const;
 };
 

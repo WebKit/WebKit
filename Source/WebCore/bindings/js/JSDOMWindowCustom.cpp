@@ -424,7 +424,8 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
     if (exec->hadException())
         return;
 
-    impl()->setLocation(ustringToString(locationString), activeDOMWindow(exec), firstDOMWindow(exec));
+    if (Location* location = impl()->location())
+        location->setHref(ustringToString(locationString), activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
 JSValue JSDOMWindow::event(ExecState* exec) const
