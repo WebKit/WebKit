@@ -69,18 +69,12 @@ void JSDocument::setLocation(ExecState* exec, JSValue value)
     if (!frame)
         return;
 
-    String str = ustringToString(value.toString(exec)->value(exec));
+    UString locationString = value.toString(exec)->value(exec);
+    if (exec->hadException())
+        return;
 
-    Frame* lexicalFrame = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->frame();
-
-    // IE and Mozilla both resolve the URL relative to the source frame,
-    // not the target frame.
-    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-    str = activeFrame->document()->completeURL(str).string();
-
-    bool lockHistory = !ScriptController::processingUserGesture();
-    frame->navigationScheduler()->scheduleLocationChange(lexicalFrame->document()->securityOrigin(),
-        str, activeFrame->loader()->outgoingReferrer(), lockHistory, false);
+    if (Location* location = frame->domWindow()->location())
+        location->setHref(ustringToString(locationString), activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* document)
