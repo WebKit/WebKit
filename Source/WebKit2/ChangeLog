@@ -1,3 +1,46 @@
+2012-04-13  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11176921> and https://bugs.webkit.org/show_bug.cgi?id=83600
+        Need WebKit2 API to notify whether history loads are in the page cache
+
+        - Add a new WKBundlePageLoaderClient callback allowing the bundle to be notified
+          of back/forward navigations (and deny them if it chooses)
+        - Add a new API to WKBundleBackForwardListItem to probe if the item is in the page cache.
+
+        Reviewed by Darin Adler.
+
+        Add the new WKBundleBackForwardListItem API:
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp:
+        (WKBundleBackForwardListItemIsInPageCache):
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h:
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.h:
+        (WebKit::InjectedBundleBackForwardListItem::isInPageCache):
+
+        Update the UI page loader client to allow for a user data object to be passed from the bundle:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::shouldGoToBackForwardListItem): Update a comment typo.
+        (WebKit::WebLoaderClient::willGoToBackForwardListItem): Update for the user data field.
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Add the new callback to the bundle loader client:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: 
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::shouldGoToBackForwardListItem):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        (InjectedBundlePageLoaderClient):
+
+        Call the bundle client before doing anything else, possibly canceling the navigation:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldGoToHistoryItem):
+
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage) Adopt new bundle client interface.
+
 2012-04-13  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][WK2] Title in MiniBrowser is not updated for a page with no title

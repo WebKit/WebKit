@@ -28,6 +28,7 @@
 
 #include "AuthenticationManager.h"
 #include "DataReference.h"
+#include "InjectedBundleBackForwardListItem.h"
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "PlatformCertificateInfo.h"
@@ -930,13 +931,20 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
         ASSERT_NOT_REACHED();
         return false;
     }
+
+    RefPtr<InjectedBundleBackForwardListItem> bundleItem = InjectedBundleBackForwardListItem::create(item);
+    RefPtr<APIObject> userData;
+
+    // Ask the bundle client first
+    bool shouldGoToBackForwardListItem = webPage->injectedBundleLoaderClient().shouldGoToBackForwardListItem(webPage, bundleItem.get(), userData);
+    if (!shouldGoToBackForwardListItem)
+        return false;
     
     if (webPage->willGoToBackForwardItemCallbackEnabled()) {
-        webPage->send(Messages::WebPageProxy::WillGoToBackForwardListItem(itemID));
+        webPage->send(Messages::WebPageProxy::WillGoToBackForwardListItem(itemID, InjectedBundleUserMessageEncoder(userData.get())));
         return true;
     }
     
-    bool shouldGoToBackForwardListItem;
     if (!webPage->sendSync(Messages::WebPageProxy::ShouldGoToBackForwardListItem(itemID), Messages::WebPageProxy::ShouldGoToBackForwardListItem::Reply(shouldGoToBackForwardListItem)))
         return false;
     

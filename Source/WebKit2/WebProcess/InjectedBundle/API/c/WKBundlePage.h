@@ -101,6 +101,7 @@ typedef void (*WKBundlePageDidClearWindowObjectForFrameCallback)(WKBundlePageRef
 typedef void (*WKBundlePageDidCancelClientRedirectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
 typedef void (*WKBundlePageWillPerformClientRedirectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKURLRef url, double delay, double date, const void *clientInfo);
 typedef void (*WKBundlePageDidHandleOnloadEventsForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
+typedef bool (*WKBundlePageShouldGoToBackForwardListItemCallback)(WKBundlePageRef page, WKBundleBackForwardListItemRef item, WKTypeRef* userData, const void *clientInfo);
 
 struct WKBundlePageLoaderClient {
     int                                                                 version;
@@ -130,6 +131,7 @@ struct WKBundlePageLoaderClient {
     WKBundlePageDidLayoutForFrameCallback                               didLayoutForFrame;
     WKBundlePageDidNewFirstVisuallyNonEmptyLayoutCallback               didNewFirstVisuallyNonEmptyLayout;
     WKBundlePageDidDetectXSSForFrameCallback                            didDetectXSSForFrame;
+    WKBundlePageShouldGoToBackForwardListItemCallback                   shouldGoToBackForwardListItem;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 

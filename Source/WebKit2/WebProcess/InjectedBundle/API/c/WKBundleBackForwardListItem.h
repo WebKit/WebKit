@@ -43,6 +43,8 @@ WK_EXPORT WKStringRef WKBundleBackForwardListItemCopyTitle(WKBundleBackForwardLi
 WK_EXPORT WKStringRef WKBundleBackForwardListItemCopyTarget(WKBundleBackForwardListItemRef item);
 WK_EXPORT bool WKBundleBackForwardListItemIsTargetItem(WKBundleBackForwardListItemRef item);
 
+WK_EXPORT bool WKBundleBackForwardListItemIsInPageCache(WKBundleBackForwardListItemRef item);
+
 WK_EXPORT WKArrayRef WKBundleBackForwardListItemCopyChildren(WKBundleBackForwardListItemRef item);
 
 #ifdef __cplusplus

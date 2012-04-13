@@ -243,17 +243,17 @@ bool WebLoaderClient::shouldGoToBackForwardListItem(WebPageProxy* page, WebBackF
 {
     // We should only even considering sending the shouldGoToBackForwardListItem() client callback
     // for version 0 clients. Later versioned clients should get willGoToBackForwardListItem() instead,
-    // but do to XPC race conditions this one might have been called instead.
+    // but due to XPC race conditions this one might have been called instead.
     if (m_client.version > 0 || !m_client.shouldGoToBackForwardListItem)
         return true;
 
     return m_client.shouldGoToBackForwardListItem(toAPI(page), toAPI(item), m_client.clientInfo);
 }
 
-void WebLoaderClient::willGoToBackForwardListItem(WebPageProxy* page, WebBackForwardListItem* item)
+void WebLoaderClient::willGoToBackForwardListItem(WebPageProxy* page, WebBackForwardListItem* item, APIObject* userData)
 {
     if (m_client.willGoToBackForwardListItem)
-        m_client.willGoToBackForwardListItem(toAPI(page), toAPI(item), m_client.clientInfo);
+        m_client.willGoToBackForwardListItem(toAPI(page), toAPI(item), toAPI(userData), m_client.clientInfo);
 }
 
 void WebLoaderClient::didFailToInitializePlugin(WebPageProxy* page, const String& mimeType)

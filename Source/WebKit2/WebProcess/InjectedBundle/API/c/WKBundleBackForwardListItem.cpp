@@ -67,6 +67,11 @@ bool WKBundleBackForwardListItemIsTargetItem(WKBundleBackForwardListItemRef item
     return toImpl(itemRef)->isTargetItem();
 }
 
+bool WKBundleBackForwardListItemIsInPageCache(WKBundleBackForwardListItemRef itemRef)
+{
+    return toImpl(itemRef)->isInPageCache();
+}
+
 WKArrayRef WKBundleBackForwardListItemCopyChildren(WKBundleBackForwardListItemRef itemRef)
 {
     return toAPI(toImpl(itemRef)->children().leakRef());

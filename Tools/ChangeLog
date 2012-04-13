@@ -1,3 +1,28 @@
+2012-04-10  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11176921> and https://bugs.webkit.org/show_bug.cgi?id=83600
+        Need WebKit2 API to notify whether history loads are in the page cache
+
+        Add a test ShouldGoToBackForwardListItem that exercises the new BundlePageLoaderClient
+        callback as well as the new WKBundleBackForwardListItemIsInPageCache() API.
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2/ShouldGoToBackForwardListItem.cpp: Added.
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::willGoToBackForwardListItem):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/ShouldGoToBackForwardListItem_Bundle.cpp: Added.
+        (ShouldGoToBackForwardListItemTest):
+        (TestWebKitAPI::shouldGoToBackForwardListItemCallback):
+        (TestWebKitAPI::ShouldGoToBackForwardListItemTest::ShouldGoToBackForwardListItemTest):
+        (TestWebKitAPI::ShouldGoToBackForwardListItemTest::didCreatePage):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage): Update for the new client.
+
 2012-04-13  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         Group EFL bots into a category on the buildbot master

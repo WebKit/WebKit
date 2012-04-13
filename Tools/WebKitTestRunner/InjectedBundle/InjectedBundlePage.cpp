@@ -235,6 +235,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, // didLayoutForFrame
         0, // didNewFirstVisuallyNonEmptyLayoutForFrame
         didDetectXSSForFrame,
+        0, // shouldGoToBackForwardListItem
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 

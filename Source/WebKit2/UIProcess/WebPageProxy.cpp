@@ -642,10 +642,15 @@ void WebPageProxy::shouldGoToBackForwardListItem(uint64_t itemID, bool& shouldGo
     shouldGoToBackForwardItem = item && m_loaderClient.shouldGoToBackForwardListItem(this, item);
 }
 
-void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID)
+void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, CoreIPC::ArgumentDecoder* arguments)
 {
+    RefPtr<APIObject> userData;
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
+    if (!arguments->decode(messageDecoder))
+        return;
+
     if (WebBackForwardListItem* item = process()->webBackForwardItem(itemID))
-        m_loaderClient.willGoToBackForwardListItem(this, item);
+        m_loaderClient.willGoToBackForwardListItem(this, item, userData.get());
 }
 
 String WebPageProxy::activeURL() const
