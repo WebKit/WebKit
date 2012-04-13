@@ -51,7 +51,6 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
-#include "ImageBuffer.h"
 #include "ImageData.h"
 #include "KURL.h"
 #include "Page.h"
@@ -1789,12 +1788,23 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float 
 
 PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy, float sw, float sh, ExceptionCode& ec) const
 {
+    return getImageData(ImageBuffer::LogicalCoordinateSystem, sx, sy, sw, sh, ec);
+}
+
+PassRefPtr<ImageData> CanvasRenderingContext2D::webkitGetImageDataHD(float sx, float sy, float sw, float sh, ExceptionCode& ec) const
+{
+    return getImageData(ImageBuffer::BackingStoreCoordinateSystem, sx, sy, sw, sh, ec);
+}
+
+PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::CoordinateSystem coordinateSystem, float sx, float sy, float sw, float sh, ExceptionCode& ec) const
+{
     if (!canvas()->originClean()) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
         canvas()->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
         ec = SECURITY_ERR;
         return 0;
     }
+
     if (!sw || !sh) {
         ec = INDEX_SIZE_ERR;
         return 0;
@@ -1812,7 +1822,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy,
         sy += sh;
         sh = -sh;
     }
-    
+
     FloatRect logicalRect(sx, sy, sw, sh);
     if (logicalRect.width() < 1)
         logicalRect.setWidth(1);
@@ -1826,7 +1836,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy,
     if (!buffer)
         return createEmptyImageData(imageDataRect.size());
 
-    RefPtr<ByteArray> byteArray = buffer->getUnmultipliedImageData(imageDataRect);
+    RefPtr<ByteArray> byteArray = buffer->getUnmultipliedImageData(imageDataRect, coordinateSystem);
     if (!byteArray)
         return 0;
 
@@ -1842,7 +1852,27 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy,
     putImageData(data, dx, dy, 0, 0, data->width(), data->height(), ec);
 }
 
+void CanvasRenderingContext2D::webkitPutImageDataHD(ImageData* data, float dx, float dy, ExceptionCode& ec)
+{
+    if (!data) {
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    webkitPutImageDataHD(data, dx, dy, 0, 0, data->width(), data->height(), ec);
+}
+
 void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy, float dirtyX, float dirtyY,
+                                            float dirtyWidth, float dirtyHeight, ExceptionCode& ec)
+{
+    putImageData(data, ImageBuffer::LogicalCoordinateSystem, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight, ec);
+}
+
+void CanvasRenderingContext2D::webkitPutImageDataHD(ImageData* data, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode& ec)
+{
+    putImageData(data, ImageBuffer::BackingStoreCoordinateSystem, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight, ec);
+}
+
+void CanvasRenderingContext2D::putImageData(ImageData* data, ImageBuffer::CoordinateSystem coordinateSystem, float dx, float dy, float dirtyX, float dirtyY,
                                             float dirtyWidth, float dirtyHeight, ExceptionCode& ec)
 {
     if (!data) {
@@ -1873,13 +1903,19 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy,
     IntSize destOffset(static_cast<int>(dx), static_cast<int>(dy));
     IntRect destRect = enclosingIntRect(clipRect);
     destRect.move(destOffset);
-    destRect.intersect(IntRect(IntPoint(), buffer->internalSize()));
+    destRect.intersect(IntRect(IntPoint(), coordinateSystem == ImageBuffer::LogicalCoordinateSystem ? buffer->logicalSize() : buffer->internalSize()));
     if (destRect.isEmpty())
         return;
     IntRect sourceRect(destRect);
     sourceRect.move(-destOffset);
 
-    buffer->putByteArray(Unmultiplied, data->data()->data(), IntSize(data->width(), data->height()), sourceRect, IntPoint(destOffset));
+    buffer->putByteArray(Unmultiplied, data->data()->data(), IntSize(data->width(), data->height()), sourceRect, IntPoint(destOffset), coordinateSystem);
+
+    if (coordinateSystem == ImageBuffer::BackingStoreCoordinateSystem) {
+        FloatRect dirtyRect = destRect;
+        dirtyRect.scale(1 / canvas()->deviceScaleFactor());
+        destRect = enclosingIntRect(dirtyRect);
+    }
     didDraw(destRect, CanvasDidDrawApplyNone); // ignore transform, shadow and clip
 }
 

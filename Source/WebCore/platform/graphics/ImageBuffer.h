@@ -96,14 +96,16 @@ namespace WebCore {
 
         PassRefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore) const;
 
-        PassRefPtr<ByteArray> getUnmultipliedImageData(const IntRect&) const;
-        PassRefPtr<ByteArray> getPremultipliedImageData(const IntRect&) const;
+        enum CoordinateSystem { LogicalCoordinateSystem, BackingStoreCoordinateSystem };
 
-        void putByteArray(Multiply multiplied, ByteArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint);
+        PassRefPtr<ByteArray> getUnmultipliedImageData(const IntRect&, CoordinateSystem = LogicalCoordinateSystem) const;
+        PassRefPtr<ByteArray> getPremultipliedImageData(const IntRect&, CoordinateSystem = LogicalCoordinateSystem) const;
+
+        void putByteArray(Multiply multiplied, ByteArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem = LogicalCoordinateSystem);
         
         void convertToLuminanceMask();
         
-        String toDataURL(const String& mimeType, const double* quality = 0) const;
+        String toDataURL(const String& mimeType, const double* quality = 0, CoordinateSystem = LogicalCoordinateSystem) const;
 #if !USE(CG)
         AffineTransform baseTransform() const { return AffineTransform(); }
         void transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace);

@@ -190,17 +190,17 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& d
     return result.release();
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Unmultiplied>(rect, m_data, m_size);
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Premultiplied>(rect, m_data, m_size);
 }
 
-void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
 {
     ASSERT(cairo_surface_get_type(m_data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
 
@@ -265,7 +265,7 @@ static cairo_status_t writeFunction(void* closure, const unsigned char* data, un
     return CAIRO_STATUS_SUCCESS;
 }
 
-String ImageBuffer::toDataURL(const String& mimeType, const double*) const
+String ImageBuffer::toDataURL(const String& mimeType, const double*, CoordinateSystem) const
 {
     cairo_surface_t* image = cairo_get_target(context()->platformContext()->cr());
     if (!image)

@@ -262,17 +262,17 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, SkCanvas* canvas,
     return result.release();
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Unmultiplied>(rect, context()->platformContext()->canvas(), m_size);
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Premultiplied>(rect, context()->platformContext()->canvas(), m_size);
 }
 
-void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
 {
     SkCanvas* canvas = context()->platformContext()->canvas();
     ASSERT(sourceRect.width() > 0);
@@ -343,7 +343,7 @@ static bool encodeImage(T& source, const String& mimeType, const double* quality
     return true;
 }
 
-String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
+String ImageBuffer::toDataURL(const String& mimeType, const double* quality, CoordinateSystem) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 

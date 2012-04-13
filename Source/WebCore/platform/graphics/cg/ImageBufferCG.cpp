@@ -306,7 +306,7 @@ void ImageBuffer::clip(GraphicsContext* contextToClip, const FloatRect& rect) co
     CGContextTranslateCTM(platformContextToClip, -rect.x(), -rect.y() - rect.height());
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
 {
     if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
@@ -314,10 +314,10 @@ PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect)
         m_data.m_lastFlushTime = currentTimeMS();
 #endif
     }
-    return m_data.getData(rect, internalSize(), m_context->isAcceleratedContext(), true, m_resolutionScale);
+    return m_data.getData(rect, internalSize(), m_context->isAcceleratedContext(), true, coordinateSystem == LogicalCoordinateSystem ? m_resolutionScale : 1);
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
 {
     if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
@@ -325,13 +325,13 @@ PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect
         m_data.m_lastFlushTime = currentTimeMS();
 #endif
     }
-    return m_data.getData(rect, internalSize(), m_context->isAcceleratedContext(), false, m_resolutionScale);
+    return m_data.getData(rect, internalSize(), m_context->isAcceleratedContext(), false, coordinateSystem == LogicalCoordinateSystem ? m_resolutionScale : 1);
 }
 
-void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
 {
     if (!m_context->isAcceleratedContext()) {
-        m_data.putData(source, sourceSize, sourceRect, destPoint, internalSize(), m_context->isAcceleratedContext(), multiplied == Unmultiplied, m_resolutionScale);
+        m_data.putData(source, sourceSize, sourceRect, destPoint, internalSize(), m_context->isAcceleratedContext(), multiplied == Unmultiplied, coordinateSystem == LogicalCoordinateSystem ? m_resolutionScale : 1);
         return;
     }
 
@@ -347,7 +347,10 @@ void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const Int
     // Set up context for using drawImage as a direct bit copy
     CGContextRef destContext = context()->platformContext();
     CGContextSaveGState(destContext);
-    CGContextConcatCTM(destContext, AffineTransform(wkGetUserToBaseCTM(destContext)).inverse());
+    if (coordinateSystem == LogicalCoordinateSystem)
+        CGContextConcatCTM(destContext, AffineTransform(wkGetUserToBaseCTM(destContext)).inverse());
+    else
+        CGContextConcatCTM(destContext, AffineTransform(CGContextGetCTM(destContext)).inverse());
     wkCGContextResetClip(destContext);
     CGContextSetInterpolationQuality(destContext, kCGInterpolationNone);
     CGContextSetAlpha(destContext, 1.0);
@@ -355,7 +358,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const Int
     CGContextSetShadowWithColor(destContext, CGSizeZero, 0, 0);
 
     // Draw the image in CG coordinate space
-    IntPoint destPointInCGCoords(destPoint.x() + sourceRect.x(), logicalSize().height() - (destPoint.y()+sourceRect.y()) - sourceRect.height());
+    IntPoint destPointInCGCoords(destPoint.x() + sourceRect.x(), (coordinateSystem == LogicalCoordinateSystem ? logicalSize() : internalSize()).height() - (destPoint.y() + sourceRect.y()) - sourceRect.height());
     IntRect destRectInCGCoords(destPointInCGCoords, sourceCopySize);
     RetainPtr<CGImageRef> sourceCopyImage(AdoptCF, sourceCopy->copyNativeImage());
     CGContextDrawImage(destContext, destRectInCGCoords, sourceCopyImage.get());
@@ -430,7 +433,7 @@ static String CGImageToDataURL(CGImageRef image, const String& mimeType, const d
     return "data:" + mimeType + ";base64," + out;
 }
 
-String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
+String ImageBuffer::toDataURL(const String& mimeType, const double* quality, CoordinateSystem) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
     RetainPtr<CGImageRef> image;

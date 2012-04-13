@@ -170,17 +170,17 @@ static PassRefPtr<ByteArray> getImageData(const IntRect& rect, const SharedBitma
     return imageData.release();
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<false>(rect, m_data.m_bitmap.get());
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<true>(rect, m_data.m_bitmap.get());
 }
 
-void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
 {
     SharedBitmap* bitmap = m_data.m_bitmap.get();
     unsigned char* dst = (unsigned char*)bitmap->bytes();
@@ -231,7 +231,7 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
     notImplemented();
 }
 
-String ImageBuffer::toDataURL(const String& mimeType, const double*) const
+String ImageBuffer::toDataURL(const String& mimeType, const double*, CoordinateSystem) const
 {
     if (!m_data.m_bitmap->bytes())
         return "data:,";

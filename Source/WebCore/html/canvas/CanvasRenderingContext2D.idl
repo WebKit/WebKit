@@ -204,6 +204,11 @@ module html {
         void putImageData(in ImageData imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
             raises(DOMException);
 
+        void webkitPutImageDataHD(in ImageData imagedata, in float dx, in float dy)
+            raises(DOMException);
+        void webkitPutImageDataHD(in ImageData imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
+            raises(DOMException);
+
         CanvasPattern createPattern(in HTMLCanvasElement canvas, in [TreatNullAs=NullString] DOMString repetitionType)
             raises (DOMException);
         CanvasPattern createPattern(in HTMLImageElement image, in [TreatNullAs=NullString] DOMString repetitionType)
@@ -219,6 +224,10 @@ module html {
         // pixel manipulation
         ImageData getImageData(in [Optional=DefaultIsUndefined] float sx, in [Optional=DefaultIsUndefined] float sy,
                                in [Optional=DefaultIsUndefined] float sw, in [Optional=DefaultIsUndefined] float sh)
+            raises(DOMException);
+
+        ImageData webkitGetImageDataHD(in [Optional=DefaultIsUndefined] float sx, in [Optional=DefaultIsUndefined] float sy,
+                                       in [Optional=DefaultIsUndefined] float sw, in [Optional=DefaultIsUndefined] float sh)
             raises(DOMException);
 
         readonly attribute float webkitBackingStorePixelRatio;

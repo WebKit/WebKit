@@ -271,12 +271,12 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& i
     return result.release();
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Unmultiplied>(rect, m_data, m_size);
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Premultiplied>(rect, m_data, m_size);
 }
@@ -297,7 +297,7 @@ static inline unsigned int premultiplyABGRtoARGB(unsigned int x)
     return x;
 }
 
-void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -391,7 +391,7 @@ static bool encodeImage(const QPixmap& pixmap, const String& format, const doubl
     return success;
 }
 
-String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
+String ImageBuffer::toDataURL(const String& mimeType, const double* quality, CoordinateSystem) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 

@@ -54,7 +54,7 @@ static bool encodeImage(cairo_surface_t* surface, const String& mimeType, const 
     return !error;
 }
 
-String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
+String ImageBuffer::toDataURL(const String& mimeType, const double* quality, CoordinateSystem) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 

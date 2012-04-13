@@ -1,0 +1,12 @@
+Testing getImageDataHD
+PASS: Pixel 0 is green.
+PASS: Pixel 1 is blue.
+
+Testing putImageDataHD
+PASS: Pixel 0 is black.
+PASS: Pixel 0 is green.
+PASS: Pixel 0 is green.
+PASS: Pixel 0 is blue.
+PASS: Pixel 0 is blue.
+PASS: Pixel 0 is black.
+
