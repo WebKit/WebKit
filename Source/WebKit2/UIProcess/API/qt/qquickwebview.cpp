@@ -82,7 +82,8 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , m_loadStartedSignalSent(false)
     , m_dialogActive(false)
 {
-    viewport->setFlags(QQuickItem::ItemClipsChildrenToShape);
+    viewport->setClip(true);
+    viewport->setPixelAligned(true);
     QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
     QObject::connect(viewport, SIGNAL(urlChanged()), viewport, SLOT(_q_onUrlChanged()));
     pageView.reset(new QQuickWebPage(viewport));
@@ -1062,7 +1063,6 @@ QQuickWebView::QQuickWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRe
 {
     Q_D(QQuickWebView);
     d->initialize(contextRef, pageGroupRef);
-    setClip(true);
 }
 
 QQuickWebView::~QQuickWebView()

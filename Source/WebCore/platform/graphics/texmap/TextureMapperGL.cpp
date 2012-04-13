@@ -326,23 +326,7 @@ void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const IntSize& 
     const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
     GL_CMD(glVertexAttribPointer(shaderInfo->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, unitRect));
 
-    TransformationMatrix adjustedModelViewMatrix(modelViewMatrix);
-    // Check if the transformed target rect has the same shape/dimensions as the drawn texture (i.e. translated only).
-    FloatQuad finalQuad = modelViewMatrix.mapQuad(FloatQuad(targetRect));
-    FloatSize finalSize = finalQuad.p3() - finalQuad.p1();
-    if (abs(textureSize.width() - finalSize.width()) < 0.001
-        && abs(textureSize.height() - finalSize.height()) < 0.001
-        && finalQuad.p2().y() == finalQuad.p1().y()
-        && finalQuad.p2().x() == finalQuad.p3().x()
-        && finalQuad.p4().x() == finalQuad.p1().x()
-        && finalQuad.p4().y() == finalQuad.p3().y()) {
-        // Pixel-align the origin of our layer's coordinate system within the frame buffer's
-        // coordinate system to avoid sub-pixel interpolation.
-        adjustedModelViewMatrix.setM41(floor(adjustedModelViewMatrix.m41() + 0.5));
-        adjustedModelViewMatrix.setM42(floor(adjustedModelViewMatrix.m42() + 0.5));
-    }
-
-    TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix).multiply(adjustedModelViewMatrix).multiply(TransformationMatrix(
+    TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix).multiply(modelViewMatrix).multiply(TransformationMatrix(
             targetRect.width(), 0, 0, 0,
             0, targetRect.height(), 0, 0,
             0, 0, 1, 0,

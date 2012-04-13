@@ -1,3 +1,19 @@
+2012-04-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Use QQuickFlickable::setPixelAligned instead of doing pixel-alignment when rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=83770
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        - Do the alignment on the highest level as possible: the QQuickFlickable content item
+          position. It already supports this with setPixelAligned which rounds the content item's position.
+        - Also move the setClip(true) to the common constructor as this constructor is currently only used by WTR.
+        - Remove setFlags(QQuickItem::ItemClipsChildrenToShape) as it is redundant with setClip(true).
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebView::QQuickWebView):
+
 2012-04-12  Alexey Proskuryakov  <ap@apple.com>
 
         Preprocessing text files with modern clang treats double slashes in comments
