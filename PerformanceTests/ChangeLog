@@ -1,3 +1,9 @@
+2012-04-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix skipped list.
+
+        * Skipped:
+
 2012-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable SVG page loading performance tests
