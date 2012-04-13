@@ -375,6 +375,19 @@ max 1120
         runner._port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
         self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html'])
 
+    def test_collect_tests_with_page_load_svg(self):
+        runner = self.create_runner()
+
+        def add_file(dirname, filename, content=True):
+            dirname = runner._host.filesystem.join(runner._base_path, dirname) if dirname else runner._base_path
+            runner._host.filesystem.maybe_make_directory(dirname)
+            runner._host.filesystem.files[runner._host.filesystem.join(dirname, filename)] = content
+
+        add_file('PageLoad', 'some-svg-test.svg')
+        tests = runner._collect_tests()
+        self.assertEqual(len(tests), 1)
+        self.assertEqual(tests[0].__class__.__name__, 'PageLoadingPerfTest')
+
     def test_parse_args(self):
         runner = self.create_runner()
         options, args = PerfTestsRunner._parse_args([

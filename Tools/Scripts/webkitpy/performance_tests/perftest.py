@@ -28,7 +28,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import math
 import re
+
+from webkitpy.layout_tests.port.driver import DriverInput
 
 
 class PerfTest(object):
@@ -46,6 +49,27 @@ class PerfTest(object):
     def path_or_url(self):
         return self._path_or_url
 
+    def run(self, driver, timeout_ms, printer, buildbot_output):
+        output = driver.run_test(DriverInput(self.path_or_url(), timeout_ms, None, False))
+        if self.run_failed(output, printer):
+            return None
+        return self.parse_output(output, printer, buildbot_output)
+
+    def run_failed(self, output, printer):
+        if output.text == None or output.error:
+            pass
+        elif output.timeout:
+            printer.write('timeout: %s' % self.test_name())
+        elif output.crash:
+            printer.write('crash: %s' % self.test_name())
+        else:
+            return False
+
+        if output.error:
+            printer.write('error: %s\n%s' % (self.test_name(), output.error))
+
+        return True
+
     _lines_to_ignore_in_parser_result = [
         re.compile(r'^Running \d+ times$'),
         re.compile(r'^Ignoring warm-up '),
@@ -55,6 +79,8 @@ class PerfTest(object):
         re.compile(re.escape("""main frame - has 1 onunload handler(s)""")),
         re.compile(re.escape("""frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)""")),
         re.compile(re.escape("""frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - has 1 onunload handler(s)"""))]
+
+    _statistics_keys = ['avg', 'median', 'stdev', 'min', 'max']
 
     def _should_ignore_line_in_parser_test_result(self, line):
         if not line:
@@ -68,8 +94,7 @@ class PerfTest(object):
         got_a_result = False
         test_failed = False
         results = {}
-        keys = ['avg', 'median', 'stdev', 'min', 'max']
-        score_regex = re.compile(r'^(?P<key>' + r'|'.join(keys) + r')\s+(?P<value>[0-9\.]+)\s*(?P<unit>.*)')
+        score_regex = re.compile(r'^(?P<key>' + r'|'.join(self._statistics_keys) + r')\s+(?P<value>[0-9\.]+)\s*(?P<unit>.*)')
         unit = "ms"
 
         for line in re.split('\n', output.text):
@@ -84,16 +109,20 @@ class PerfTest(object):
                 test_failed = True
                 printer.write("%s" % line)
 
-        if test_failed or set(keys) != set(results.keys()):
+        if test_failed or set(self._statistics_keys) != set(results.keys()):
             return None
 
         results['unit'] = unit
 
         test_name = re.sub(r'\.\w+$', '', self._test_name)
-        buildbot_output.write('RESULT %s= %s %s\n' % (test_name.replace('/', ': '), results['avg'], unit))
-        buildbot_output.write(', '.join(['%s= %s %s' % (key, results[key], unit) for key in keys[1:]]) + '\n')
+        self.output_statistics(test_name, results, buildbot_output)
 
         return {test_name: results}
+
+    def output_statistics(self, test_name, results, buildbot_output):
+        unit = results['unit']
+        buildbot_output.write('RESULT %s= %s %s\n' % (test_name.replace('/', ': '), results['avg'], unit))
+        buildbot_output.write(', '.join(['%s= %s %s' % (key, results[key], unit) for key in self._statistics_keys[1:]]) + '\n')
 
 
 class ChromiumStylePerfTest(PerfTest):
@@ -116,3 +145,41 @@ class ChromiumStylePerfTest(PerfTest):
                 test_failed = True
                 printer.write("%s" % line)
         return results if results and not test_failed else None
+
+
+class PageLoadingPerfTest(PerfTest):
+    def __init__(self, test_name, dirname, path_or_url):
+        super(PageLoadingPerfTest, self).__init__(test_name, dirname, path_or_url)
+
+    def run(self, driver, timeout_ms, printer, buildbot_output):
+        test_times = []
+
+        for i in range(0, 2):
+            output = driver.run_test(DriverInput(self.path_or_url(), timeout_ms, None, False))
+            if self.run_failed(output, printer):
+                return None
+            if i == 0:
+                continue
+            test_times.append(output.test_time * 1000)
+
+        test_times = sorted(test_times)
+
+        # Compute the mean and variance using a numerically stable algorithm.
+        squareSum = 0
+        mean = 0
+        valueSum = sum(test_times)
+        for i, time in enumerate(test_times):
+            delta = time - mean
+            sweep = i + 1.0
+            mean += delta / sweep
+            squareSum += delta * delta * (i / sweep)
+
+        middle = int(len(test_times) / 2)
+        results = {'avg': mean,
+            'min': min(test_times),
+            'max': max(test_times),
+            'median': test_times[middle] if len(test_times) % 2 else (test_times[middle - 1] + test_times[middle]) / 2,
+            'stdev': math.sqrt(squareSum),
+            'unit': 'ms'}
+        self.output_statistics(self.test_name(), results, buildbot_output)
+        return {self.test_name(): results}

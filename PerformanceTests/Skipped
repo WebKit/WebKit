@@ -1,8 +1,17 @@
 # Not enabled by default on some ports
 Mutation
 
+# Unstable SVG page loading tests
+PageLoad/svg/files/33041-Samurai.svg
+PageLoad/svg/files/Sierpinski_carpet_6.svg # Takes too long to load
+PageLoad/svg/files/az-lizard_benji_park_01.svg
+PageLoad/svg/files/france.svg
+PageLoad/svg/files/francobollo_gnome_ezechi_02.svg
+PageLoad/svg/files/gearflowers.svg
+PageLoad/svg/files/hereGear4.svg
+PageLoad/svg/files/mtsthelens.svg # Takes 22s on MacBookPro
+
 # Do not conform to WebKit or Chromium perf test styles
-PageLoad
 SunSpider
 XSSAuditor
 

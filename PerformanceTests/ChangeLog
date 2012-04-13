@@ -1,3 +1,15 @@
+2012-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable SVG page loading performance tests
+        https://bugs.webkit.org/show_bug.cgi?id=83861
+
+        Reviewed by Adam Barth.
+
+        Unskip PageLoad directory and skip tests that load too fast (less than 100ms) and are unstable,
+        and the ones that take too long to load (more than 20s).
+
+        * Skipped:
+
 2012-04-04  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Unreviewed. temporary disable broken inspector tests.
