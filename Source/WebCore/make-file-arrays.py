@@ -47,6 +47,34 @@ def make_variable_name_and_read(file_name):
     return (variable_name, content)
 
 
+def strip_whitespace_and_comments(file_name, content):
+    result = re.match(r".*\.([^.]+)", file_name)
+    if not result:
+        print "The file name has no extension:", file_name
+        sys.exit(1)
+    extension = result.group(1).lower()
+    multi_line_comment = re.compile(r"/\*.*?\*/", re.MULTILINE | re.DOTALL)
+    single_line_comment = re.compile(r"//.*$", re.MULTILINE)
+    repeating_space = re.compile(r"[ \t]+", re.MULTILINE)
+    leading_space = re.compile(r"^[ \t]+", re.MULTILINE)
+    trailing_space = re.compile(r"[ \t]+$", re.MULTILINE)
+    empty_line = re.compile(r"\n+")
+    if extension == "js":
+        content = multi_line_comment.sub("", content)
+        content = single_line_comment.sub("", content)
+        content = repeating_space.sub(" ", content)
+        content = leading_space.sub("", content)
+        content = trailing_space.sub("", content)
+        content = empty_line.sub("\n", content)
+    elif extension == "css":
+        content = multi_line_comment.sub("", content)
+        content = repeating_space.sub(" ", content)
+        content = leading_space.sub("", content)
+        content = trailing_space.sub("", content)
+        content = empty_line.sub("\n", content)
+    return content
+
+
 def main():
     parser = OptionParser()
     parser.add_option("--out-h", dest="out_header")
@@ -74,6 +102,7 @@ def main():
 
     for file_name in args:
         (variable_name, content) = make_variable_name_and_read(file_name)
+        content = strip_whitespace_and_comments(file_name, content)
         size = len(content)
         header_file.write("extern const char %s[%d];\n" % (variable_name, size))
         cpp_file.write("const char %s[%d] = {\n" % (variable_name, size))
