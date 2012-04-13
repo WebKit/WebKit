@@ -15,11 +15,17 @@ function test()
         callback(undefined, mockContentsMap[requestId], false);
     }
 
+    PageAgent.getResourceContent = function(frameId, url, callback)
+    {
+        callback(undefined, mockContentsMap[url], false);
+    }
+
     function createRequestMock(type, finished, content)
     {
         var requestId = ++lastRequestId + "";
+        var url = "http://fake.url/" + requestId;
         WebInspector.resourceTreeModel._addFrame(new WebInspector.ResourceTreeFrame(WebInspector.resourceTreeModel, null, {id: "frame-id"}));
-        var request = new WebInspector.NetworkRequest(requestId, "http://fake.url", "http://fake.url", "frame-id", "loader-id");
+        var request = new WebInspector.NetworkRequest(requestId, url, "http://fake.url", "frame-id", "loader-id");
         request.type = type === "document" ? WebInspector.resourceTypes.Document : WebInspector.resourceTypes.Script;
 
         WebInspector.networkManager._dispatcher._startNetworkRequest(request);
@@ -27,6 +33,7 @@ function test()
             finishRequest(request);
 
         mockContentsMap[requestId] = content;
+        mockContentsMap[url] = content;
         return request;
     }
 

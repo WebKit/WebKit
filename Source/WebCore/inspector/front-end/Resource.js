@@ -289,9 +289,7 @@ WebInspector.Resource.prototype = {
      */
     get content()
     {
-        if (typeof this._content !== "undefined")
-            return this._content;
-        return this._request ? this._request.content : this._content;
+        return this._content;
     },
 
     /**
@@ -299,9 +297,7 @@ WebInspector.Resource.prototype = {
      */
     get contentEncoded()
     {
-        if (typeof this._contentEncoded !== "undefined")
-            return this._contentEncoded;
-        return this._request ? this._request.contentEncoded : this._contentEncoded;
+        return this._contentEncoded;
     },
 
     /**
@@ -368,11 +364,6 @@ WebInspector.Resource.prototype = {
      */
     requestContent: function(callback)
     {
-        if (this._request) {
-            this._request.requestContent(callback);
-            return;
-        }
-
         if (typeof this._content !== "undefined") {
             callback(this._content, !!this._contentEncoded);
             return;
@@ -533,12 +524,7 @@ WebInspector.ResourceRevision.prototype = {
             callback(error ? null : content);
         }
 
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=61363 We should separate NetworkResource (NetworkPanel resource)
-        // from ResourceRevision (ResourcesPanel/ScriptsPanel resource) and request content accordingly.
-        if (this._resource.request)
-            NetworkAgent.getResponseBody(this._resource.request.requestId, callbackWrapper);
-        else
-            PageAgent.getResourceContent(this._resource.frameId, this._resource.url, callbackWrapper);
+        PageAgent.getResourceContent(this._resource.frameId, this._resource.url, callbackWrapper);
     }
 }
 
