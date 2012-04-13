@@ -777,13 +777,6 @@ static inline bool equalIgnoringCase(const UChar* a, const UChar* b, int length)
     return umemcasecmp(a, b, length) == 0;
 }
 
-size_t StringImpl::find(UChar c, unsigned start)
-{
-    if (is8Bit())
-        return WTF::find(characters8(), m_length, c, start);
-    return WTF::find(characters16(), m_length, c, start);
-}
-
 size_t StringImpl::find(CharacterMatchFunctionPtr matchFunction, unsigned start)
 {
     if (is8Bit())

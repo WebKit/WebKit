@@ -1,3 +1,24 @@
+2012-04-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        Inline StringImpl::find(UChar, ...)
+        https://bugs.webkit.org/show_bug.cgi?id=83737
+
+        Reviewed by Geoffrey Garen.
+
+        The implementation of StringImpl::find() is a simple branch before invoking one of
+        two inline functions. The overhead of having a function for StringImpl::find() is significant.
+
+        It is better to let the compiler decide if that should be inlined or not.
+
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+        (WTF::find):
+        (WTF):
+        (WTF::reverseFind):
+        (WTF::StringImpl::find):
+        * wtf/text/WTFString.h:
+
 2012-04-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Fix WebKit1 build with V8
