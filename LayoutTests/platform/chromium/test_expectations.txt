@@ -1673,7 +1673,6 @@ BUGCR19766 LINUX : fast/replaced/width100percent-menulist.html = FAIL
 
 // WebKit 47777:47790 - getOwnPropertyDescriptor
 BUGCR20345 : fast/js/getOwnPropertyDescriptor.html = FAIL
-BUGCR20345 : fast/dom/Window/window-property-descriptors.html = TEXT
 
 // Flaky. The width of containing RenderBlocks sometimes becomes larger
 BUGCR21958 MAC : svg/hixie/error/012.xml = FAIL
