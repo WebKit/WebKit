@@ -335,3 +335,15 @@ BUGWK75568 : tables/mozilla/bugs/bug1188.html = TEXT
 
 // Tiled-layer compositing tests are flakey.
 BUGWK82546 : compositing/tiling/crash-reparent-tiled-layer.html = PASS TEXT
+
+BUGWK83830 : ietestcenter/css3/grid/display-grid-001.htm = FAIL MISSING
+BUGWK83830 : ietestcenter/css3/grid/grid-column-001.htm = FAIL MISSING
+BUGWK83830 : ietestcenter/css3/grid/grid-column-003.htm = FAIL MISSING
+BUGWK83830 : ietestcenter/css3/grid/grid-items-001.htm = FAIL MISSING
+BUGWK83830 : ietestcenter/css3/grid/grid-items-003.htm = FAIL MISSING
+BUGWK83830 : ietestcenter/css3/grid/grid-items-005.htm = FAIL MISSING
+BUGWK83830 : ietestcenter/css3/grid/display-grid-002.htm = FAIL MISSING
+BUGWK83830 : ietestcenter/css3/grid/grid-column-002.htm = FAIL MISSING
+BUGWK83830 : ietestcenter/css3/grid/grid-columns-001.htm = FAIL MISSING
+BUGWK83830 : ietestcenter/css3/grid/grid-items-002.htm = FAIL MISSING
+BUGWK83830 : ietestcenter/css3/grid/grid-items-004.htm = FAIL MISSING
