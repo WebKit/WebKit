@@ -444,11 +444,12 @@ static bool isHeaderElement(Node* a)
     if (!a)
         return false;
         
-    return a->hasTagName(h1Tag) ||
-           a->hasTagName(h2Tag) ||
-           a->hasTagName(h3Tag) ||
-           a->hasTagName(h4Tag) ||
-           a->hasTagName(h5Tag);
+    return a->hasTagName(h1Tag)
+        || a->hasTagName(h2Tag)
+        || a->hasTagName(h3Tag)
+        || a->hasTagName(h4Tag)
+        || a->hasTagName(h5Tag)
+        || a->hasTagName(h6Tag);
 }
 
 static bool haveSameTagName(Node* a, Node* b)
