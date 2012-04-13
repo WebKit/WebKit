@@ -21,9 +21,10 @@ TestWebView {
             compare(spyTitle.count, 0)
             var testUrl = Qt.resolvedUrl("../common/test3.html")
             webView.url = testUrl
-            verify(webView.waitForLoadSucceeded())
-            spyTitle.wait()
+            verify(webView.waitForLoadSucceeded())            
             compare(webView.title, "Test page 3")
+            spyTitle.clear()
+
             spyTitle.wait()
             compare(webView.title, "New Title")
         }

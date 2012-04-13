@@ -198,8 +198,10 @@ Item {
             function test_standardFontFamilyChanged() {
                 var url = Qt.resolvedUrl("../common/font-preferences.html?standard#font-family")
                 webView.url = url
-                titleSpy.wait()
+                verify(webView.waitForLoadSucceeded())
                 compare(webView.title, "Original Title")
+                titleSpy.clear()
+
                 titleSpy.wait()
                 compare(webView.title, defaultStandardFontFamily)
 
@@ -207,8 +209,10 @@ Item {
                 standardFontFamilySpy.wait()
                 compare(standardFontFamilySpy.count, 1)
                 webView.url = url
-                titleSpy.wait()
+                verify(webView.waitForLoadSucceeded())
                 compare(webView.title, "Original Title")
+                titleSpy.clear()
+
                 titleSpy.wait()
                 compare(webView.title, "foobar")
             }
@@ -216,8 +220,10 @@ Item {
             function test_fontSizeChanged() {
                 var url = Qt.resolvedUrl("../common/font-preferences.html?standard#font-size")
                 webView.url = url
-                titleSpy.wait()
-                compare(webView.title, "Original Title")
+                verify(webView.waitForLoadSucceeded())
+                compare(webView.title, "Original Title")                
+                titleSpy.clear()
+
                 titleSpy.wait()
                 compare(webView.title, defaultFontSize.toString() + "px")
 
@@ -225,8 +231,10 @@ Item {
                 defaultFontSizeSpy.wait()
                 compare(defaultFontSizeSpy.count, 1)
                 webView.url = url
-                titleSpy.wait()
+                verify(webView.waitForLoadSucceeded())
                 compare(webView.title, "Original Title")
+                titleSpy.clear()
+
                 titleSpy.wait()
                 compare(webView.title, (defaultFontSize + 1).toString() + "px")
             }
@@ -234,8 +242,10 @@ Item {
             function test_fixedFontSizeChanged() {
                 var url = Qt.resolvedUrl("../common/font-preferences.html?fixed#font-size")
                 webView.url = url
-                titleSpy.wait()
+                verify(webView.waitForLoadSucceeded())
                 compare(webView.title, "Original Title")
+                titleSpy.clear()
+
                 titleSpy.wait()
                 compare(webView.title, defaultFixedFontSize.toString() + "px")
 
@@ -243,14 +253,18 @@ Item {
                 defaultFixedFontSizeSpy.wait()
                 compare(defaultFixedFontSizeSpy.count, 1)
                 webView.url = url
-                titleSpy.wait()
+                verify(webView.waitForLoadSucceeded())
                 compare(webView.title, "Original Title")
+                titleSpy.clear()
+
                 titleSpy.wait()
                 compare(webView.title, (defaultFixedFontSize + 1).toString() + "px")
 
                 webView.url = Qt.resolvedUrl("../common/font-preferences.html?standard#font-size")
-                titleSpy.wait()
+                verify(webView.waitForLoadSucceeded())
                 compare(webView.title, "Original Title")
+                titleSpy.clear()
+
                 titleSpy.wait()
                 compare(webView.title, defaultFontSize.toString() + "px")
             }
@@ -259,8 +273,10 @@ Item {
                 verify(defaultMinimumFontSize < defaultFontSize)
                 var url = Qt.resolvedUrl("../common/font-preferences.html?minimum#font-size")
                 webView.url = url
-                titleSpy.wait()
+                verify(webView.waitForLoadSucceeded())
                 compare(webView.title, "Original Title")
+                titleSpy.clear()
+
                 titleSpy.wait()
                 var smallerFontSize = webView.title
                 smallerFontSize = smallerFontSize.substring(0, smallerFontSize.length - 2)
@@ -271,8 +287,10 @@ Item {
                 minimumFontSizeSpy.wait()
                 compare(minimumFontSizeSpy.count, 1)
                 webView.url = url
-                titleSpy.wait()
+                verify(webView.waitForLoadSucceeded())
                 compare(webView.title, "Original Title")
+                titleSpy.clear()
+
                 titleSpy.wait()
                 compare(webView.title, defaultFontSize.toString() + "px")
             }

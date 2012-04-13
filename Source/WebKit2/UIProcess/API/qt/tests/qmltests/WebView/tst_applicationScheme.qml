@@ -3,8 +3,9 @@ import QtTest 1.0
 import QtWebKit 3.0
 import QtWebKit.experimental 1.0
 import Test 1.0
+import "../common"
 
-WebView {
+TestWebView {
     id: webView
     width: 400
     height: 300
@@ -61,12 +62,6 @@ WebView {
         ]
     }
 
-    SignalSpy {
-        id: spyTitle
-        target: webView
-        signalName: "titleChanged"
-    }
-
     ByteArrayTestData {
         id: byteArrayHelper
     }
@@ -75,58 +70,47 @@ WebView {
         name: "WebViewApplicationSchemes"
 
         function test_applicationScheme() {
-            spyTitle.clear()
-            compare(spyTitle.count, 0)
             var testUrl = "applicationScheme://something"
             webView.url = testUrl
-            spyTitle.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.title, "Test Application Scheme")
         }
 
         function test_multipleSchemes() {
             // Test if we receive the right reply when defining multiple schemes.
-            spyTitle.clear()
-            compare(spyTitle.count, 0)
             var testUrl = "scheme2://some-url-string"
             webView.url = testUrl
-            spyTitle.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.title, "Scheme2 Reply")
 
             testUrl = "scheme1://some-url-string"
             webView.url = testUrl
-            spyTitle.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.title, "Scheme1 Reply")
-
-            compare(spyTitle.count, 2)
         }
 
         function test_multipleUrlsForScheme() {
-            spyTitle.clear()
-            compare(spyTitle.count, 0)
             var testUrl = "scheme3://url1"
-            webView.url = testUrl
-            spyTitle.wait()
+            webView.url = testUrl            
+            verify(webView.waitForLoadSucceeded())
             compare(webView.title, "Scheme3 Reply1")
 
             testUrl = "scheme3://url2"
-            webView.url = testUrl
-            spyTitle.wait()
+            webView.url = testUrl            
+            verify(webView.waitForLoadSucceeded())
             compare(webView.title, "Scheme3 Reply2")
 
-            compare(spyTitle.count, 2)
         }
 
-        function test_charsets() {
-            spyTitle.clear()
-            compare(spyTitle.count, 0)
+        function test_charsets() {            
             var testUrl = "schemeCharset://latin1"
             webView.url = testUrl
-            spyTitle.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.title, "title with copyright ©")
 
             testUrl = "schemeCharset://utf-8"
             webView.url = testUrl
-            spyTitle.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.title, "title with copyright ©")
         }
     }
