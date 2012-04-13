@@ -628,7 +628,7 @@ template <typename T>
 inline void Lexer<T>::record16(int c)
 {
     ASSERT(c >= 0);
-    ASSERT(c <= USHRT_MAX);
+    ASSERT(c <= static_cast<int>(USHRT_MAX));
     m_buffer16.append(static_cast<UChar>(c));
 }
 

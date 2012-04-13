@@ -1,3 +1,15 @@
+2012-04-13  Rob Buis  <rbuis@rim.com>
+
+        Fix some compiler warnings (miscellaneous)
+        https://bugs.webkit.org/show_bug.cgi?id=80790
+
+        Reviewed by Antonio Gomes.
+
+        Fix signed/unsigned comparison warning.
+
+        * parser/Lexer.cpp:
+        (JSC::::record16):
+
 2012-04-12  Benjamin Poulain  <bpoulain@apple.com>
 
         Improve replaceUsingStringSearch() for case of a single character searchValue
