@@ -43,6 +43,13 @@ using namespace std;
 
 namespace WebCore {
 
+static inline UDateFormat* createShortDateFormatter()
+{
+    const UChar gmtTimezone[3] = {'G', 'M', 'T'};
+    UErrorCode status = U_ZERO_ERROR;
+    return udat_open(UDAT_NONE, UDAT_SHORT, defaultLanguage().utf8().data(), gmtTimezone, WTF_ARRAY_LENGTH(gmtTimezone), 0, -1, &status);
+}
+
 double parseLocalizedDate(const String& input, DateComponents::Type type)
 {
     switch (type) {
@@ -50,11 +57,10 @@ double parseLocalizedDate(const String& input, DateComponents::Type type)
         if (input.length() > static_cast<unsigned>(numeric_limits<int32_t>::max()))
             break;
         int32_t inputLength = static_cast<int32_t>(input.length());
-        UErrorCode status = U_ZERO_ERROR;
-        UDateFormat* dateFormat = udat_open(UDAT_NONE, UDAT_SHORT, defaultLanguage().utf8().data(), 0, -1, 0, -1, &status);
+        UDateFormat* dateFormat = createShortDateFormatter();
         if (!dateFormat)
             break;
-        status = U_ZERO_ERROR;
+        UErrorCode status = U_ZERO_ERROR;
         int32_t parsePosition = 0;
         UDate date = udat_parse(dateFormat, input.characters(), inputLength, &parsePosition, &status);
         udat_close(dateFormat);
@@ -78,11 +84,11 @@ String formatLocalizedDate(const DateComponents& dateComponents)
 {
     switch (dateComponents.type()) {
     case DateComponents::Date: {
-        UErrorCode status = U_ZERO_ERROR;
-        UDateFormat* dateFormat = udat_open(UDAT_NONE, UDAT_SHORT, defaultLanguage().utf8().data(), 0, -1, 0, -1, &status);
+        UDateFormat* dateFormat = createShortDateFormatter();
         if (!dateFormat)
             break;
         double input = dateComponents.millisecondsSinceEpoch();
+        UErrorCode status = U_ZERO_ERROR;
         int32_t length = udat_format(dateFormat, input, 0, 0, 0, &status);
         if (status != U_BUFFER_OVERFLOW_ERROR) {
             udat_close(dateFormat);
