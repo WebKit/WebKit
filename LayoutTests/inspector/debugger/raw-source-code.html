@@ -18,13 +18,19 @@ function test()
     function createRequestMock(type, finished, content)
     {
         var requestId = ++lastRequestId + "";
-        var request = new WebInspector.NetworkRequest(requestId, "http://fake.url", "", "");
+        WebInspector.resourceTreeModel._addFrame(new WebInspector.ResourceTreeFrame(WebInspector.resourceTreeModel, null, {id: "frame-id"}));
+        var request = new WebInspector.NetworkRequest(requestId, "http://fake.url", "frame-id", "loader-id");
         request.type = type === "document" ? WebInspector.resourceTypes.Document : WebInspector.resourceTypes.Script;
-        request.finished = finished;
+
+        WebInspector.networkManager._dispatcher._startNetworkRequest(request);
+        if (finished)
+            finishRequest(request);
+
         mockContentsMap[requestId] = content;
         return request;
     }
 
+    function finishRequest(request) { WebInspector.networkManager._dispatcher._finishNetworkRequest(request); }
     function createPendingRequestMock(type, content) { return createRequestMock(type, false, content); }
     function createFinishedRequestMock(type, content) { return createRequestMock(type, true, content); }
 
@@ -39,11 +45,16 @@ function test()
             finish: function() { formatter._callback(); }
         };
         return formatter;
-      };
+    };
 
     function createRawSourceCode(script, request, formatted, compilerSourceMapping)
     {
-        var rawSourceCode = new WebInspector.RawSourceCode("id", script, request, createScriptFormatterMock(), !!formatted, compilerSourceMapping);
+        var resource = null;
+        if (request && request.finished) {
+            resource = request.resource();
+            request = null;
+        }
+        var rawSourceCode = new WebInspector.RawSourceCode("id", script, resource, request, createScriptFormatterMock(), !!formatted, compilerSourceMapping);
         rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeChanged, defaultUISourceCodeChangedHandler);
         return rawSourceCode;
     }
@@ -62,7 +73,7 @@ function test()
 
     function defaultUISourceCodeChangedHandler()
     {
-        throw "Unexpected UISourceCodeChanged event.";
+        throw new Error("Unexpected UISourceCodeChanged event.");
     }
 
     function createRawLocation(lineNumber, columnNumber)
@@ -102,8 +113,9 @@ function test()
             var rawSourceCode = createRawSourceCode(script1, request);
 
             InspectorTest.assertTrue(!rawSourceCode.uiSourceCode());
+
             waitForUISourceCodeChangedEvent(rawSourceCode, uiSourceCodeChanged);
-            request.finished = true;
+            finishRequest(request);
 
             function uiSourceCodeChanged(event)
             {
@@ -200,7 +212,7 @@ function test()
 
                 rawSourceCode.forceUpdateSourceMapping();
                 waitForUISourceCodeChangedEvent(rawSourceCode, requestContentRequest);
-                request.finished = true;
+                finishRequest(request);
             }
 
             function requestContentRequest()
@@ -289,7 +301,7 @@ function test()
             var rawSourceCode = createRawSourceCode(script, request, true);
 
             InspectorTest.assertTrue(!rawSourceCode.uiSourceCode());
-            request.finished = true;
+            finishRequest(request);
             waitForUISourceCodeChangedEvent(rawSourceCode, checkMapping);
             rawSourceCode._formatter.finish();
 

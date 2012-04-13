@@ -39,7 +39,7 @@ var test = function()
             {
                 InspectorTest.addResult("Script execution paused.");
                 InspectorTest.captureStackTrace(callFrames);
-                dumpBreakpointSidebarPane()
+                dumpBreakpointSidebarPane();
                 InspectorTest.addSniffer(currentSourceFrame, "_removeBreakpointDecoration", breakpointRemoved);
                 InspectorTest.removeBreakpoint(currentSourceFrame, 16);
             }

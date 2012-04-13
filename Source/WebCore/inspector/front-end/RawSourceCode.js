@@ -36,11 +36,12 @@
  * @extends {WebInspector.Object}
  * @param {string} id
  * @param {WebInspector.Script} script
+ * @param {WebInspector.Resource} resource
  * @param {WebInspector.NetworkRequest} request
  * @param {WebInspector.ScriptFormatter} formatter
  * @param {boolean} formatted
  */
-WebInspector.RawSourceCode = function(id, script, request, formatter, formatted)
+WebInspector.RawSourceCode = function(id, script, resource, request, formatter, formatted)
 {
     this.id = id;
     this.url = script.sourceURL;
@@ -48,14 +49,15 @@ WebInspector.RawSourceCode = function(id, script, request, formatter, formatted)
     this._scripts = [script];
     this._formatter = formatter;
     this._formatted = formatted;
-    this._request = request;
+    this._resource = resource;
+    this._pendingRequest = request;
 
-    this._useTemporaryContent = this._request && !this._request.finished;
     this._hasNewScripts = true;
-    if (!this._useTemporaryContent)
+
+    if (this._pendingRequest)
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
+    else
         this._updateSourceMapping();
-    else if (this._request)
-        this._request.addEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, this._requestFinished.bind(this));
 }
 
 WebInspector.RawSourceCode.Events = {
@@ -117,9 +119,14 @@ WebInspector.RawSourceCode.prototype = {
         this._updateSourceMapping();
     },
 
-    _requestFinished: function()
+    _resourceAdded: function(event)
     {
-        this._useTemporaryContent = false;
+        var resource = /** @type {WebInspector.Resource} */ event.data;
+        if (resource.request !== this._pendingRequest)
+            return;
+
+        this._resource = resource;
+        delete this._pendingRequest;
         this._updateSourceMapping();
     },
 
@@ -128,7 +135,7 @@ WebInspector.RawSourceCode.prototype = {
      */
     forceUpdateSourceMapping: function(script)
     {
-        if (!this._useTemporaryContent || !this._hasNewScripts)
+        if (!this._pendingRequest || !this._hasNewScripts)
             return;
         this._hasNewScripts = false;
         this._updateSourceMapping();
@@ -161,8 +168,8 @@ WebInspector.RawSourceCode.prototype = {
 
     _createContentProvider: function()
     {
-        if (this._request && this._request.finished)
-            return new WebInspector.ResourceContentProvider(this._request.resource());
+        if (this._resource)
+            return new WebInspector.ResourceContentProvider(this._resource);
         if (this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset)
             return new WebInspector.ScriptContentProvider(this._scripts[0]);
         return new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);

@@ -94,27 +94,6 @@ WebInspector.NetworkManager._MIMETypes = {
 }
 
 WebInspector.NetworkManager.prototype = {
-    /**
-     * @param {WebInspector.Resource} resource
-     * @param {function(?string, boolean)} callback
-     */
-    requestContent: function(resource, callback)
-    {
-        function callbackWrapper(error, content, contentEncoded)
-        {
-            if (error)
-                callback(null, false);
-            else
-                callback(content, content && contentEncoded);
-        }
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=61363 We should separate NetworkResource (NetworkPanel resource)
-        // from ResourceRevision (ResourcesPanel/ScriptsPanel resource) and request content accordingly.
-        if (resource.requestId)
-            NetworkAgent.getResponseBody(resource.requestId, callbackWrapper);
-        else
-            PageAgent.getResourceContent(resource.frameId, resource.url, callbackWrapper);
-    },
-
     enableResourceTracking: function()
     {
         function callback(error)

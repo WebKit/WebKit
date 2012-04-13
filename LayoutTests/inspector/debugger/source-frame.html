@@ -12,6 +12,7 @@ function addErrorToConsole()
 
 function test()
 {
+    WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.resources);
     InspectorTest.runDebuggerTestSuite([
         function testSetBreakpoint(next)
         {
@@ -72,7 +73,7 @@ function test()
             function visit(resource)
             {
                 if (resource.url.indexOf("debugger-test.js") !== -1) {
-                    WebInspector.panels.network._showRequest(resource.request, 1);
+                    WebInspector.panels.resources.showResource(resource, 1);
                     return true;
                 }
             }

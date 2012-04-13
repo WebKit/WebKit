@@ -85,15 +85,22 @@ WebInspector.ResourceScriptMapping.prototype = {
      */
     addScript: function(script)
     {
+        var resource = null;
         var request = null;
         var isInlineScript = false;
         if (script.isInlineScript()) {
-            request = WebInspector.networkManager.inflightRequestForURL(script.sourceURL);
-            if (!request) {
-                var resource = WebInspector.resourceForURL(script.sourceURL);
-                request = resource ? resource.request : null;
+            // First lookup the resource that has already been loaded. We are only interested in Document resources.
+            resource = WebInspector.resourceForURL(script.sourceURL);
+            if (resource && resource.type !== WebInspector.resourceTypes.Document)
+                resource = null;
+            if (!resource) {
+                // When there is no resource, lookup in-flight requests of type Document.
+                request = WebInspector.networkManager.inflightRequestForURL(script.sourceURL);
+                if (request && request.type !== WebInspector.resourceTypes.Document)
+                    request = null;
             }
-            if (request && request.type === WebInspector.resourceTypes.Document) {
+            // If either of these exists, we bind script to the resource.
+            if (request || resource) {
                 isInlineScript = true;
                 var rawSourceCode = this._rawSourceCodeForDocumentURL[script.sourceURL];
                 if (rawSourceCode) {
@@ -104,7 +111,7 @@ WebInspector.ResourceScriptMapping.prototype = {
             }
         }
 
-        var rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, request, this._formatter, this._formatSource);
+        var rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, resource, request, this._formatter, this._formatSource);
         this._rawSourceCodes.push(rawSourceCode);
         this._bindScriptToRawSourceCode(script, rawSourceCode);
 
