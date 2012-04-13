@@ -184,7 +184,6 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_wasUnloadEventEmitted(false)
     , m_pageDismissalEventBeingDispatched(NoDismissal)
     , m_isComplete(false)
-    , m_isLoadingMainResource(false)
     , m_hasReceivedFirstData(false)
     , m_needsClear(false)
     , m_checkTimer(this, &FrameLoader::checkTimerFired)
@@ -402,7 +401,6 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
     }
 
     m_isComplete = true; // to avoid calling completed() in finishedParsing()
-    m_isLoadingMainResource = false;
     m_didCallImplicitClose = true; // don't want that one either
 
     if (m_frame->document() && m_frame->document()->parsing()) {
@@ -465,7 +463,6 @@ bool FrameLoader::didOpenURL()
     m_frame->editor()->clearLastEditCommand();
 
     m_isComplete = false;
-    m_isLoadingMainResource = true;
     m_didCallImplicitClose = false;
 
     // If we are still in the process of initializing an empty document then
@@ -613,7 +610,6 @@ void FrameLoader::didBeginDocument(bool dispatch)
     m_needsClear = true;
     m_isComplete = false;
     m_didCallImplicitClose = false;
-    m_isLoadingMainResource = true;
     m_frame->document()->setReadyState(Document::Loading);
 
     if (m_pendingStateObject) {
@@ -644,11 +640,6 @@ void FrameLoader::didBeginDocument(bool dispatch)
     }
 
     history()->restoreDocumentState();
-}
-
-void FrameLoader::didEndDocument()
-{
-    m_isLoadingMainResource = false;
 }
 
 void FrameLoader::finishedParsing()

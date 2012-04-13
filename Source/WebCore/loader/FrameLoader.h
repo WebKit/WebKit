@@ -131,7 +131,6 @@ public:
     void cancelAndClear();
     void clear(bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true);
 
-    bool isLoadingMainResource() const { return m_isLoadingMainResource; }
     bool isLoading() const;
     bool frameHasLoaded() const;
 
@@ -200,7 +199,6 @@ public:
 
     // Callbacks from DocumentWriter
     void didBeginDocument(bool dispatchWindowObjectAvailable);
-    void didEndDocument();
     void willSetEncoding();
 
     void handledOnloadEvents();
@@ -402,7 +400,6 @@ private:
     bool m_wasUnloadEventEmitted;
     PageDismissalType m_pageDismissalEventBeingDispatched;
     bool m_isComplete;
-    bool m_isLoadingMainResource;
 
     RefPtr<SerializedScriptValue> m_pendingStateObject;
 

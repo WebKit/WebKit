@@ -70,7 +70,6 @@ public:
 private:
     PassRefPtr<Document> createDocument(const KURL&);
     void clear();
-    void endIfNotLoadingMainResource();
 
     Frame* m_frame;
 
