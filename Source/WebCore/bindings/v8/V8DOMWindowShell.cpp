@@ -594,10 +594,4 @@ void V8DOMWindowShell::updateSecurityOrigin()
     setSecurityToken();
 }
 
-void V8DOMWindowShell::setLocation(DOMWindow* window, const String& locationString)
-{
-    State<V8Binding>* state = V8BindingState::Only();
-    window->setLocation(locationString, state->activeWindow(), state->firstWindow());
-}
-
 } // WebCore

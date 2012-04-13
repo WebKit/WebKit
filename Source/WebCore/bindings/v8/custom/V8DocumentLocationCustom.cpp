@@ -26,7 +26,9 @@
 
 #include "DOMWindow.h"
 #include "Frame.h"
+#include "Location.h"
 #include "V8Binding.h"
+#include "V8BindingState.h"
 #include "V8Location.h"
 #include "V8Proxy.h"
 
@@ -48,9 +50,19 @@ void V8Document::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8
     if (!document->frame())
         return;
 
+    State<V8Binding>* state = V8BindingState::Only();
+
+    DOMWindow* activeWindow = state->activeWindow();
+    if (!activeWindow)
+      return;
+
+    DOMWindow* firstWindow = state->firstWindow();
+    if (!firstWindow)
+      return;
+
     DOMWindow* window = document->frame()->domWindow();
-    // setLocation does security checks. // XXXMB- verify!
-    V8DOMWindowShell::setLocation(window, toWebCoreString(value));
+    if (Location* location = window->location())
+        location->setHref(toWebCoreString(value), activeWindow, firstWindow);
 }
 
 } // namespace WebCore

@@ -78,8 +78,6 @@ public:
 
     void destroyGlobal();
 
-    static void setLocation(DOMWindow*, const String& relativeURL);
-
     V8BindingPerContextData* perContextData() { return m_perContextData.get(); }
 
 private:
