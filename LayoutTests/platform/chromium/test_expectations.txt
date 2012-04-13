@@ -3776,3 +3776,5 @@ BUGWK83830 : ietestcenter/css3/grid/grid-column-002.htm = FAIL MISSING
 BUGWK83830 : ietestcenter/css3/grid/grid-columns-001.htm = FAIL MISSING
 BUGWK83830 : ietestcenter/css3/grid/grid-items-002.htm = FAIL MISSING
 BUGWK83830 : ietestcenter/css3/grid/grid-items-004.htm = FAIL MISSING
+
+BUGWK83941 : fast/canvas/2d.imageDataHD.html = TIMEOUT
