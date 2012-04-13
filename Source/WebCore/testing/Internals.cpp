@@ -526,8 +526,12 @@ void Internals::reset(Document* document)
     if (m_settings)
         m_settings->restoreTo(document->page()->settings());
     m_settings = InternalSettings::create(document->frame());
-    if (Page* page = document->page())
+    if (Page* page = document->page()) {
         page->setPagination(Page::Pagination());
+
+        if (document->frame() == page->mainFrame())
+            setUserPreferredLanguages(Vector<String>());
+    }
 }
 
 bool Internals::wasLastChangeUserEdit(Element* textField, ExceptionCode& ec)
