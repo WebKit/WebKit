@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html><head>
+<title>Background filter blur test.</title>
+<style type="text/css">
+  .composited {
+    -webkit-transform: translateZ(0);
+  }
+  .green {
+    background-color: green;
+  }
+</style>
+<script type="text/javascript">
+  function setBlur() {
+    var blurNode = window.document.getElementById('blur');
+    window.internals.setBackgroundBlurOnNode(blurNode, 2);
+    layoutTestController.notifyDone();
+  }
+
+  if (window.layoutTestController) {
+    if (window.internals) {
+      window.setTimeout(setBlur, 0);
+      layoutTestController.waitUntilDone();
+    }
+    layoutTestController.dumpAsText(true);
+  }
+</script>
+</head>
+
+<body>
+<!--
+   The green box is entirely behind a layer with background blur, so it should appear blurred on its edges.
+  -->
+<div class="composited green" style="position:absolute; left:50px; top:50px; width:200px; height:200px;"></div>
+<div id="blur" style="position:absolute; left:30px; top:30px; width:240px; height:240px; border:1px solid white;"></div>
+</body>
+</html>

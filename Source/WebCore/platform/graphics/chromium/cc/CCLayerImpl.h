@@ -110,6 +110,9 @@ public:
     void setFilters(const FilterOperations&);
     const FilterOperations& filters() const { return m_filters; }
 
+    void setBackgroundFilters(const FilterOperations&);
+    const FilterOperations& backgroundFilters() const { return m_backgroundFilters; }
+
     void setMasksToBounds(bool);
     bool masksToBounds() const { return m_masksToBounds; }
 
@@ -335,6 +338,7 @@ private:
     String m_debugName;
 
     FilterOperations m_filters;
+    FilterOperations m_backgroundFilters;
 
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_screenSpaceTransform;

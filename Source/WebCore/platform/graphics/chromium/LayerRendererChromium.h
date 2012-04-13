@@ -142,6 +142,7 @@ public:
     const CCVideoLayerImpl::StreamTextureProgram* streamTextureLayerProgram();
 
     void getFramebufferPixels(void *pixels, const IntRect&);
+    bool getFramebufferTexture(ManagedTexture*, const IntRect& deviceRect);
 
     TextureManager* renderSurfaceTextureManager() const { return m_renderSurfaceTextureManager.get(); }
     TextureCopier* textureCopier() const { return m_textureCopier.get(); }
@@ -178,6 +179,7 @@ private:
     void drawQuad(const CCDrawQuad*, const FloatRect& surfaceDamageRect);
     void drawCheckerboardQuad(const CCCheckerboardDrawQuad*);
     void drawDebugBorderQuad(const CCDebugBorderDrawQuad*);
+    void drawBackgroundFilters(const CCRenderSurfaceDrawQuad*);
     void drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*);
     void drawSolidColorQuad(const CCSolidColorDrawQuad*);
     void drawTextureQuad(const CCTextureDrawQuad*);
@@ -197,7 +199,13 @@ private:
 
     void setDrawViewportRect(const IntRect&, bool flipY);
 
+    // The current drawing target is either a RenderSurface or ManagedTexture. Use these functions to switch to a new drawing target.
     bool useRenderSurface(CCRenderSurface*);
+    bool useManagedTexture(ManagedTexture*, const IntRect& viewportRect);
+    bool isCurrentRenderSurface(CCRenderSurface*);
+
+    bool bindFramebufferToTexture(ManagedTexture*, const IntRect& viewportRect);
+
     void clearRenderSurface(CCRenderSurface*, CCRenderSurface* rootRenderSurface, const FloatRect& surfaceDamageRect);
 
     void releaseRenderSurfaceTextures();
@@ -222,6 +230,7 @@ private:
     TransformationMatrix m_windowMatrix;
 
     CCRenderSurface* m_currentRenderSurface;
+    ManagedTexture* m_currentManagedTexture;
     unsigned m_offscreenFramebufferId;
 
     // Store values that are shared between instances of each layer type

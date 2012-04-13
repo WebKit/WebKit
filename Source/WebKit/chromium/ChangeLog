@@ -1,3 +1,13 @@
+2012-04-12  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Background filters for composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=80046
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+
 2012-04-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r114075.

@@ -72,6 +72,8 @@ module window {
 
         ClientRectList inspectorHighlightRects(in Document document) raises (DOMException);
 
+        void setBackgroundBlurOnNode(in Node node, in long blurLength) raises(DOMException);
+
         unsigned long markerCountForNode(in Node node, in DOMString markerType) raises(DOMException);
         Range markerRangeForNode(in Node node, in DOMString markerType, in unsigned long index) raises(DOMException);
         DOMString markerDescriptionForNode(in Node node, in DOMString markerType, in unsigned long index) raises(DOMException);

@@ -78,6 +78,13 @@
 #include "WebKitPoint.h"
 #endif
 
+#if PLATFORM(CHROMIUM)
+#include "FilterOperations.h"
+#include "GraphicsLayer.h"
+#include "LayerChromium.h"
+#include "RenderLayerBacking.h"
+#endif
+
 namespace WebCore {
 
 static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerTypes& result)
@@ -422,6 +429,48 @@ PassRefPtr<ClientRectList> Internals::inspectorHighlightRects(Document* document
     return ClientRectList::create();
 #endif
 }
+
+#if PLATFORM(CHROMIUM)
+void Internals::setBackgroundBlurOnNode(Node* node, int blurLength, ExceptionCode& ec)
+{
+    if (!node) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    RenderObject* renderObject = node->renderer();
+    if (!renderObject) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return;
+    }
+
+    RenderLayer* renderLayer = renderObject->enclosingLayer();
+    if (!renderLayer || !renderLayer->isComposited()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    GraphicsLayer* graphicsLayer = renderLayer->backing()->graphicsLayer();
+    if (!graphicsLayer) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return;
+    }
+
+    PlatformLayer* platformLayer = graphicsLayer->platformLayer();
+    if (!platformLayer) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return;
+    }
+
+    FilterOperations filters;
+    filters.operations().append(BlurFilterOperation::create(Length(blurLength, Fixed), FilterOperation::BLUR));
+    platformLayer->setBackgroundFilters(filters);
+}
+#else
+void Internals::setBackgroundBlurOnNode(Node*, int, ExceptionCode&)
+{
+}
+#endif
 
 unsigned Internals::markerCountForNode(Node* node, const String& markerType, ExceptionCode& ec)
 {

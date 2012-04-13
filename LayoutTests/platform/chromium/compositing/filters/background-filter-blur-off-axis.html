@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html><head>
+<title>Background filter blur test.</title>
+<style type="text/css">
+  .composited {
+    -webkit-transform: translateZ(0);
+  }
+  .green {
+    background-color: green;
+  }
+  body {
+    -webkit-perspective: 200px;
+  }
+  #blur {
+    -webkit-transform-style: preserve-3d;
+    -webkit-transform: rotateZ(-15deg) rotateY(90deg) rotateX(45deg) translate(70px, 60px);
+  }
+</style>
+<script type="text/javascript">
+  function setBlur() {
+    var blurNode = window.document.getElementById('blur');
+    window.internals.setBackgroundBlurOnNode(blurNode, 2);
+    layoutTestController.notifyDone();
+  }
+
+  if (window.layoutTestController) {
+    if (window.internals) {
+      layoutTestController.waitUntilDone();
+      window.setTimeout(setBlur, 0);
+    }
+    layoutTestController.dumpAsText(true);
+  }
+</script>
+</head>
+
+<body>
+<!--
+   This verifies that the perspective of the clear layer (with black border) does not influence the blending of the
+   green box behind it. Also verifies that the blur is correctly clipped inside the transformed clear layer.
+-->
+<div id="object" class="composited green" style="position:absolute; left:50px; top:50px; width:200px; height:200px;"></div>
+<div id="blur" style="position:absolute; left:30px; top:30px; width:240px; height:240px; border:1px solid black;"></div>
+</body>
+</html>

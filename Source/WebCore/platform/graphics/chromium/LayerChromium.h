@@ -118,6 +118,11 @@ public:
     void setFilters(const FilterOperations&);
     const FilterOperations& filters() const { return m_filters; }
 
+    // Background filters are filters applied to what is behind this layer, when they are viewed through non-opaque
+    // regions in this layer. They are used through the WebLayer interface, and are not exposed to HTML.
+    void setBackgroundFilters(const FilterOperations&);
+    const FilterOperations& backgroundFilters() const { return m_backgroundFilters; }
+
     virtual void setOpaque(bool);
     bool opaque() const { return m_opaque; }
 
@@ -312,6 +317,7 @@ private:
     String m_debugName;
     float m_opacity;
     FilterOperations m_filters;
+    FilterOperations m_backgroundFilters;
     float m_anchorPointZ;
     bool m_isDrawable;
     bool m_masksToBounds;

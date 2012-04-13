@@ -315,6 +315,14 @@ void LayerChromium::setFilters(const FilterOperations& filters)
         CCLayerTreeHost::setNeedsFilterContext(true);
 }
 
+void LayerChromium::setBackgroundFilters(const FilterOperations& backgroundFilters)
+{
+    if (m_backgroundFilters == backgroundFilters)
+        return;
+    m_backgroundFilters = backgroundFilters;
+    setNeedsCommit();
+}
+
 void LayerChromium::setOpacity(float opacity)
 {
     if (m_opacity == opacity)
@@ -475,6 +483,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         layer->setFilters(filters());
 
     layer->setFilters(filters());
+    layer->setBackgroundFilters(backgroundFilters());
     layer->setIsNonCompositedContent(m_isNonCompositedContent);
     layer->setMasksToBounds(m_masksToBounds);
     layer->setScrollable(m_scrollable);

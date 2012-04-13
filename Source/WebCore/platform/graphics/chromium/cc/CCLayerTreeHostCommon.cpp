@@ -220,7 +220,7 @@ static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlig
         return true;
 
     // If the layer uses a CSS filter.
-    if (!layer->filters().isEmpty())
+    if (!layer->filters().isEmpty() || !layer->backgroundFilters().isEmpty())
         return true;
 
     // If the layer flattens its subtree (i.e. the layer doesn't preserve-3d), but it is
@@ -450,6 +450,8 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         if (renderSurface->filters().hasFilterThatMovesPixels())
             nearestAncestorThatMovesPixels = renderSurface;
         renderSurface->setNearestAncestorThatMovesPixels(nearestAncestorThatMovesPixels);
+
+        renderSurface->setBackgroundFilters(layer->backgroundFilters());
 
         renderSurfaceLayerList.append(layer);
     } else {

@@ -100,6 +100,8 @@ public:
 
     PassRefPtr<ClientRectList> inspectorHighlightRects(Document*, ExceptionCode&);
 
+    void setBackgroundBlurOnNode(Node*, int blurLength, ExceptionCode&);
+
     unsigned markerCountForNode(Node*, const String&, ExceptionCode&);
     PassRefPtr<Range> markerRangeForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
     String markerDescriptionForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);

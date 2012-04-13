@@ -37,6 +37,7 @@
 #include "Extensions3DChromium.h"
 #include "FloatQuad.h"
 #include "GeometryBinding.h"
+#include "GrTexture.h"
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerPainterChromium.h"
@@ -207,6 +208,7 @@ LayerRendererChromium::LayerRendererChromium(LayerRendererChromiumClient* client
                                              PassRefPtr<GraphicsContext3D> context)
     : m_client(client)
     , m_currentRenderSurface(0)
+    , m_currentManagedTexture(0)
     , m_offscreenFramebufferId(0)
     , m_context(context)
     , m_defaultRenderSurface(0)
@@ -544,14 +546,73 @@ void LayerRendererChromium::drawDebugBorderQuad(const CCDebugBorderDrawQuad* qua
     GLC(context(), context()->drawElements(GraphicsContext3D::LINE_LOOP, 4, GraphicsContext3D::UNSIGNED_SHORT, 6 * sizeof(unsigned short)));
 }
 
+void LayerRendererChromium::drawBackgroundFilters(const CCRenderSurfaceDrawQuad* quad)
+{
+    // This method draws a background filter, which applies a filter to any pixels behind the quad and seen through its background.
+    // The algorithm works as follows:
+    // 1. Compute a bounding box around the pixels that will be visible through the quad.
+    // 2. Read the pixels in the bounding box into a buffer R.
+    // 3. Apply the background filter to R, so that it is applied in the pixels' coordinate space.
+    // 4. Apply the quad's inverse transform to map the pixels in R into the quad's content space. This implicitly
+    // clips R by the content bounds of the quad since the destination texture has bounds matching the quad's content.
+    // 5. Draw the background texture for the contents using the same transform as used to draw the contents itself. This is done
+    // without blending to replace the current background pixels with the new filtered background.
+    // 6. Draw the contents of the quad over drop of the new background with blending, as per usual. The filtered background
+    // pixels will show through any non-opaque pixels in this draws.
+    //
+    // Pixel copies in this algorithm occur at steps 2, 3, 4, and 5.
+
+    CCRenderSurface* drawingSurface = quad->layer()->renderSurface();
+    if (drawingSurface->backgroundFilters().isEmpty())
+        return;
+
+    // FIXME: We only allow background filters on the root render surface because other surfaces may contain
+    // translucent pixels, and the contents behind those translucent pixels wouldn't have the filter applied.
+    if (!isCurrentRenderSurface(m_defaultRenderSurface))
+        return;
+
+    const TransformationMatrix& surfaceDrawTransform = quad->isReplica() ? drawingSurface->replicaDrawTransform() : drawingSurface->drawTransform();
+
+    // FIXME: Do a single readback for both the surface and replica and cache the filtered results (once filter textures are not reused).
+    IntRect deviceRect = drawingSurface->readbackDeviceContentRect(this, surfaceDrawTransform);
+    deviceRect.intersect(m_currentRenderSurface->contentRect());
+
+    OwnPtr<ManagedTexture> deviceBackgroundTexture = ManagedTexture::create(m_renderSurfaceTextureManager.get());
+    if (!getFramebufferTexture(deviceBackgroundTexture.get(), deviceRect))
+        return;
+
+    SkBitmap filteredDeviceBackground = drawingSurface->applyFilters(this, drawingSurface->backgroundFilters(), deviceBackgroundTexture.get());
+    if (!filteredDeviceBackground.getTexture())
+        return;
+
+    GrTexture* texture = reinterpret_cast<GrTexture*>(filteredDeviceBackground.getTexture());
+    int filteredDeviceBackgroundTextureId = texture->getTextureHandle();
+
+    if (!drawingSurface->prepareBackgroundTexture(this))
+        return;
+
+    // This must be computed before switching the target render surface to the background texture.
+    TransformationMatrix contentsDeviceTransform = drawingSurface->computeDeviceTransform(this, surfaceDrawTransform);
+
+    CCRenderSurface* targetRenderSurface = m_currentRenderSurface;
+    if (useManagedTexture(drawingSurface->backgroundTexture(), drawingSurface->contentRect())) {
+        drawingSurface->copyDeviceToBackgroundTexture(this, filteredDeviceBackgroundTextureId, deviceRect, contentsDeviceTransform);
+        useRenderSurface(targetRenderSurface);
+    }
+}
+
 void LayerRendererChromium::drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad* quad)
 {
     CCLayerImpl* layer = quad->layer();
+
+    drawBackgroundFilters(quad);
+
     layer->renderSurface()->setScissorRect(this, quad->surfaceDamageRect());
     if (quad->isReplica())
         layer->renderSurface()->drawReplica(this);
     else
         layer->renderSurface()->drawContents(this);
+    layer->renderSurface()->releaseBackgroundTexture();
     layer->renderSurface()->releaseContentsTexture();
 }
 
@@ -1218,6 +1279,17 @@ void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& re
     }
 }
 
+bool LayerRendererChromium::getFramebufferTexture(ManagedTexture* texture, const IntRect& deviceRect)
+{
+    if (!texture->reserve(deviceRect.size(), GraphicsContext3D::RGB))
+        return false;
+
+    texture->bindTexture(m_context.get(), m_renderSurfaceTextureAllocator.get());
+    GLC(m_context, m_context->copyTexImage2D(GraphicsContext3D::TEXTURE_2D, 0, texture->format(),
+                                             deviceRect.x(), deviceRect.y(), deviceRect.width(), deviceRect.height(), 0));
+    return true;
+}
+
 ManagedTexture* LayerRendererChromium::getOffscreenLayerTexture()
 {
     return settings().compositeOffscreen && rootLayer() ? rootLayer()->renderSurface()->contentsTexture() : 0;
@@ -1241,9 +1313,17 @@ void LayerRendererChromium::copyOffscreenTextureToDisplay()
     }
 }
 
+bool LayerRendererChromium::isCurrentRenderSurface(CCRenderSurface* renderSurface)
+{
+    // If renderSurface is 0, we can't tell if we are already using it, since m_currentRenderSurface is
+    // initialized to 0.
+    return m_currentRenderSurface == renderSurface && !m_currentManagedTexture;
+}
+
 bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
 {
     m_currentRenderSurface = renderSurface;
+    m_currentManagedTexture = 0;
 
     if ((renderSurface == m_defaultRenderSurface && !settings().compositeOffscreen) || (!renderSurface && settings().compositeOffscreen)) {
         GLC(m_context.get(), m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
@@ -1254,12 +1334,25 @@ bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
         return true;
     }
 
-    GLC(m_context.get(), m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_offscreenFramebufferId));
-
     if (!renderSurface->prepareContentsTexture(this))
         return false;
 
-    renderSurface->contentsTexture()->framebufferTexture2D(m_context.get(), m_renderSurfaceTextureAllocator.get());
+    return bindFramebufferToTexture(renderSurface->contentsTexture(), renderSurface->contentRect());
+}
+
+bool LayerRendererChromium::useManagedTexture(ManagedTexture* texture, const IntRect& viewportRect)
+{
+    m_currentRenderSurface = 0;
+    m_currentManagedTexture = texture;
+
+    return bindFramebufferToTexture(texture, viewportRect);
+}
+
+bool LayerRendererChromium::bindFramebufferToTexture(ManagedTexture* texture, const IntRect& viewportRect)
+{
+    GLC(m_context.get(), m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_offscreenFramebufferId));
+
+    texture->framebufferTexture2D(m_context.get(), m_renderSurfaceTextureAllocator.get());
 
 #if !defined ( NDEBUG )
     if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
@@ -1268,7 +1361,7 @@ bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
     }
 #endif
 
-    setDrawViewportRect(renderSurface->contentRect(), false);
+    setDrawViewportRect(viewportRect, false);
 
     return true;
 }
@@ -1288,7 +1381,7 @@ void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
     // of the GL scissor is the bottom of our layer.
     // But, if rendering to offscreen texture, we reverse our sense of 'upside down'.
     int scissorY;
-    if (m_currentRenderSurface == m_defaultRenderSurface && !settings().compositeOffscreen)
+    if (isCurrentRenderSurface(m_defaultRenderSurface) && !settings().compositeOffscreen)
         scissorY = m_currentRenderSurface->contentRect().height() - (scissorRect.maxY() - m_currentRenderSurface->contentRect().y());
     else
         scissorY = scissorRect.y() - contentRect.y();

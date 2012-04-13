@@ -93,6 +93,9 @@ public:
     void setFilters(const FilterOperations& filters) { m_filters = filters; }
     const FilterOperations& filters() const { return m_filters; }
 
+    void setBackgroundFilters(const FilterOperations& filters) { m_backgroundFilters = filters; }
+    const FilterOperations& backgroundFilters() const { return m_backgroundFilters; }
+
     bool skipsDraw() const { return m_skipsDraw; }
     void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
 
@@ -122,6 +125,7 @@ private:
     bool m_targetSurfaceTransformsAreAnimating;
     bool m_screenSpaceTransformsAreAnimating;
     FilterOperations m_filters;
+    FilterOperations m_backgroundFilters;
     IntRect m_clipRect;
     Vector<RefPtr<LayerChromium> > m_layerList;
 

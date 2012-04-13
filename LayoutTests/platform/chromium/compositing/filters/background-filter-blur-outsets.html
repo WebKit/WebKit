@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html><head>
+<title>Background filter blur outsets test.</title>
+<style type="text/css">
+  .composited {
+    -webkit-transform: translateZ(0);
+  }
+  .green-border {
+    border: 10px solid green;
+  }
+</style>
+<script type="text/javascript">
+  function setBlur() {
+    var blurNode = window.document.getElementById('blur');
+    window.internals.setBackgroundBlurOnNode(blurNode, 10);
+    layoutTestController.notifyDone();
+  }
+
+  if (window.layoutTestController) {
+    if (window.internals) {
+      window.setTimeout(setBlur, 0);
+      layoutTestController.waitUntilDone();
+    }
+    layoutTestController.dumpAsText(true);
+  }
+</script>
+</head>
+<body>
+<!--
+   The green border is outside the layer with background blur, but the background blur should use pixels from outside
+   its layer borders, up to the radius of the blur effect. So the border should be blurred underneath the top layer
+   causing the inside of the border to be blurred.
+  -->
+<div class="composited green-border" style="position:absolute; left:50px; top:50px; width:200px; height:200px;"></div>
+<div id="blur" style="position:absolute; left:59px; top:59px; width:200px; height:200px; border:1px solid black;"></div>
+</body>
+</html>

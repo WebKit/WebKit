@@ -57,10 +57,17 @@ public:
     bool prepareContentsTexture(LayerRendererChromium*);
     void releaseContentsTexture();
 
+    bool prepareBackgroundTexture(LayerRendererChromium*);
+    void releaseBackgroundTexture();
+
     void setScissorRect(LayerRendererChromium*, const FloatRect& surfaceDamageRect) const;
 
     void drawContents(LayerRendererChromium*);
     void drawReplica(LayerRendererChromium*);
+
+    // Takes a texture with pixels in device space, and a transform from content space to the device. Copies the device-space texture back into
+    // content space for the surface, storing the result in the backgroundTexture(). The surface's backgroundTexture() must be the active drawing target.
+    void copyDeviceToBackgroundTexture(LayerRendererChromium*, int deviceBackgroundTextureId, const IntRect& deviceTextureRect, const TransformationMatrix& deviceTransform) const;
 
     String name() const;
     void dumpSurface(TextStream&, int indent) const;
@@ -69,13 +76,21 @@ public:
 
     // Returns the rect that encloses the RenderSurface including any reflection.
     FloatRect drawableContentRect() const;
+    // Returns the rect that encloses the pixels that may affect the pixel values in this surface through background filters.
+    IntRect readbackDeviceContentRect(LayerRendererChromium*, const TransformationMatrix& drawTransform) const;
+
+    // Gives the transform from the surface content space, with origin in the top left, to the current target device space, with origin in the top left.
+    TransformationMatrix computeDeviceTransform(LayerRendererChromium*, const TransformationMatrix& drawTransform) const;
 
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
 
     void setFilters(const FilterOperations& filters) { m_filters = filters; }
     const FilterOperations& filters() const { return m_filters; }
-    SkBitmap applyFilters(LayerRendererChromium*);
+    SkBitmap applyFilters(LayerRendererChromium*, const FilterOperations&, ManagedTexture* sourceTexture);
+
+    void setBackgroundFilters(const FilterOperations& filters) { m_backgroundFilters = filters; }
+    const FilterOperations& backgroundFilters() const { return m_backgroundFilters; }
 
     void setNearestAncestorThatMovesPixels(CCRenderSurface* surface) { m_nearestAncestorThatMovesPixels = surface; }
     const CCRenderSurface* nearestAncestorThatMovesPixels() const { return m_nearestAncestorThatMovesPixels; }
@@ -127,6 +142,7 @@ public:
     typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlphaMaskAA> MaskProgramAA;
 
     ManagedTexture* contentsTexture() const { return m_contentsTexture.get(); }
+    ManagedTexture* backgroundTexture() const { return m_backgroundTexture.get(); }
 
     int owningLayerId() const;
 
@@ -142,9 +158,12 @@ public:
     PassOwnPtr<CCSharedQuadState> createReplicaSharedQuadState() const;
 
 private:
-    void drawLayer(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix&, const SkBitmap& filterBitmap);
+    IntRect computeDeviceBoundingBox(LayerRendererChromium*, const TransformationMatrix& drawTransform) const;
+    IntRect computeReadbackDeviceBoundingBox(LayerRendererChromium*, const TransformationMatrix& drawTransform) const;
+
+    void drawLayer(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix&, int contentsTextureId);
     template <class T>
-    void drawSurface(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix& drawTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& deviceRect, const CCLayerQuad&, const T* program, int shaderMaskSamplerLocation, int shaderQuadLocation, int shaderEdgeLocation, const SkBitmap& filterBitmap);
+    void drawSurface(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix& drawTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& deviceRect, const CCLayerQuad&, int contentsTextureId, const T* program, int shaderMaskSamplerLocation, int shaderQuadLocation, int shaderEdgeLocation);
 
     CCLayerImpl* m_owningLayer;
     CCLayerImpl* m_maskLayer;
@@ -154,6 +173,8 @@ private:
     bool m_surfacePropertyChanged;
 
     OwnPtr<ManagedTexture> m_contentsTexture;
+    OwnPtr<ManagedTexture> m_backgroundTexture;
+
     float m_drawOpacity;
     bool m_drawOpacityIsAnimating;
     TransformationMatrix m_drawTransform;
@@ -165,6 +186,7 @@ private:
     bool m_targetSurfaceTransformsAreAnimating;
     bool m_screenSpaceTransformsAreAnimating;
     FilterOperations m_filters;
+    FilterOperations m_backgroundFilters;
     IntRect m_clipRect;
     Vector<CCLayerImpl*> m_layerList;
 
