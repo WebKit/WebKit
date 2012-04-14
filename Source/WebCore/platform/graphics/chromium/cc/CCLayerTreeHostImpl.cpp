@@ -784,7 +784,7 @@ void CCLayerTreeHostImpl::setFullRootLayerDamage()
 
 void CCLayerTreeHostImpl::animatePageScale(double monotonicTime)
 {
-    if (!m_pageScaleAnimation)
+    if (!m_pageScaleAnimation || !m_scrollLayerImpl)
         return;
 
     IntSize scrollTotal = flooredIntSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
