@@ -254,25 +254,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
 
-    JSObject* thisObject = thisValue.toObject(exec);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    JSValue function = JSValue(thisObject).get(exec, exec->propertyNames().join);
-    if (!function.isCell())
-        return objectProtoFuncToString(exec);
-
-    CallData callData;
-    CallType callType = getCallData(function, callData);
-    if (callType == CallTypeNone)
-        return objectProtoFuncToString(exec);
-
-    if (!isJSArray(thisObject) || callType != CallTypeHost || callData.native.function != arrayProtoFuncJoin)
-        return JSValue::encode(call(exec, function, callType, callData, thisObject, exec->emptyList()));
-
-    ASSERT(isJSArray(thisValue));
+    bool isRealArray = isJSArray(thisValue);
+    if (!isRealArray && !thisValue.inherits(&JSArray::s_info))
+        return throwVMTypeError(exec);
     JSArray* thisObj = asArray(thisValue);
-
+    
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -287,7 +273,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 
     for (unsigned k = 0; k < length; k++) {
         JSValue element;
-        if (thisObj->canGetIndex(k))
+        if (isRealArray && thisObj->canGetIndex(k))
             element = thisObj->getIndex(k);
         else
             element = thisObj->get(exec, k);
@@ -345,9 +331,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
 
-    JSObject* thisObj = thisValue.toObject(exec);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
+    if (!thisValue.inherits(&JSArray::s_info))
+        return throwVMTypeError(exec);
+    JSObject* thisObj = asArray(thisValue);
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
     if (exec->hadException())
@@ -374,12 +360,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
             if (callType != CallTypeNone)
                 str = call(exec, conversionFunction, callType, callData, element, exec->emptyList()).toUString(exec);
             else
-                return throwVMTypeError(exec);
+                str = element.toUString(exec);
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
             stringJoiner.append(str);
-        } else
-            return JSValue::encode(jsEmptyString(exec)); 
+        }
     }
 
     return JSValue::encode(stringJoiner.build(exec));

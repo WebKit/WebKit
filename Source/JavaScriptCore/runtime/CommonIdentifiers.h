@@ -72,8 +72,7 @@
     macro(value) \
     macro(valueOf) \
     macro(writable) \
-    macro(displayName)\
-    macro(join)
+    macro(displayName)
 
 #define JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(macro) \
     macro(null) \

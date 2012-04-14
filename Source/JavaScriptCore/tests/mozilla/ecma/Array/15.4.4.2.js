@@ -55,31 +55,6 @@ function getTestCases() {
     array[item++] = new TestCase( SECTION,  "(new Array( Boolean(1), Boolean(0))).toString()",   "true,false",   (new Array(Boolean(1),Boolean(0))).toString() );
     array[item++] = new TestCase( SECTION,  "(new Array(void 0,null)).toString()",    ",",    (new Array(void 0,null)).toString() );
 
-    array[item++] = new TestCase( SECTION,
-                                  "{__proto__: Array.prototype, 0: 'a', 1: 'b', 2: 'c', length: 3}.toString()",
-                                  "a,b,c",
-                                  {__proto__: Array.prototype, 0: 'a', 1: 'b', 2: 'c', length: 3}.toString() );
-    array[item++] = new TestCase( SECTION,
-                                  "{__proto__: Array.prototype, 0: 'a', 1: 'b', 2: 'c', join: function() { return 'join' }}.toString()",
-                                  "join",
-                                  {__proto__: Array.prototype, 0: 'a', 1: 'b', 2: 'c', join: function() { return 'join' }}.toString() );
-    array[item++] = new TestCase( SECTION,
-                                  "Array.prototype.toString.call({join: function() { return 'join' }})",
-                                  "join",
-                                  Array.prototype.toString.call({join: function() { return 'join' }}) );
-    array[item++] = new TestCase( SECTION,
-                                  "Array.prototype.toString.call({sort: function() { return 'sort' }})",
-                                  "[object Object]",
-                                  Array.prototype.toString.call({sort: function() { return 'sort' }}) );
-    array[item++] = new TestCase( SECTION,
-                                  "Array.prototype.toString.call(new Date)",
-                                  "[object Date]", 
-                                  Array.prototype.toString.call(new Date) );
-    array[item++] = new TestCase( SECTION,
-                                  "Number.prototype.join = function() { return 'number join' }; Array.prototype.toString.call(42)",
-                                  "number join",
-                                  eval("Number.prototype.join = function() { return 'number join' }; Array.prototype.toString.call(42)") );
-
     var EXPECT_STRING = "";
     var MYARR = new Array();
 
@@ -92,10 +67,6 @@ function getTestCases() {
 
     array[item++] = new TestCase( SECTION, "MYARR.toString()",  EXPECT_STRING,  MYARR.toString() );
 
-    array[item++] = new TestCase( SECTION,
-                                  "Array.prototype.join = function() { return 'join' }; [0, 1, 2].toString()",
-                                  "join",
-                                  eval("Array.prototype.join = function() { return 'join' }; [0, 1, 2].toString()") );
 
     return ( array );
 }
