@@ -38,10 +38,7 @@ class AudioContext;
     
 class AudioChannelMerger : public AudioNode {
 public:
-    static PassRefPtr<AudioChannelMerger> create(AudioContext* context, float sampleRate)
-    {
-        return adoptRef(new AudioChannelMerger(context, sampleRate));      
-    }
+    static PassRefPtr<AudioChannelMerger> create(AudioContext*, float sampleRate, unsigned numberOfInputs);
 
     // AudioNode
     virtual void process(size_t framesToProcess);
@@ -54,7 +51,7 @@ private:
     virtual double tailTime() const OVERRIDE { return 0; }
     virtual double latencyTime() const OVERRIDE { return 0; }
 
-    AudioChannelMerger(AudioContext*, float sampleRate);
+    AudioChannelMerger(AudioContext*, float sampleRate, unsigned numberOfInputs);
 };
 
 } // namespace WebCore

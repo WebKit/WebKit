@@ -37,16 +37,20 @@
 #include "AudioNodeOutput.h"
 
 namespace WebCore {
-    
-// This is considering that 5.1 (6 channels) is the largest we'll ever deal with.
-// It can easily be increased to support more if the web audio specification is updated.
-const unsigned NumberOfInputs = 6;
 
-AudioChannelMerger::AudioChannelMerger(AudioContext* context, float sampleRate)
+PassRefPtr<AudioChannelMerger> AudioChannelMerger::create(AudioContext* context, float sampleRate, unsigned numberOfInputs)
+{
+    if (!numberOfInputs || numberOfInputs > AudioContext::maxNumberOfChannels())
+        return 0;
+    
+    return adoptRef(new AudioChannelMerger(context, sampleRate, numberOfInputs));      
+}
+
+AudioChannelMerger::AudioChannelMerger(AudioContext* context, float sampleRate, unsigned numberOfInputs)
     : AudioNode(context, sampleRate)
 {
-    // Create a fixed number of inputs (able to handle the maximum number of channels we deal with).
-    for (unsigned i = 0; i < NumberOfInputs; ++i)
+    // Create the requested number of inputs.
+    for (unsigned i = 0; i < numberOfInputs; ++i)
         addInput(adoptPtr(new AudioNodeInput(this)));
 
     addOutput(adoptPtr(new AudioNodeOutput(this, 1)));

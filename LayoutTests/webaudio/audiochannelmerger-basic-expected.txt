@@ -1,0 +1,12 @@
+Basic tests for AudioChannelMerger.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Exception was thrown for numberOfInputs <= 0.
+PASS Exception was thrown for numberOfInputs >= 32.
+PASS AudioChannelMerger created successfully with numberOfInputs = 32.
+PASS AudioChannelMerger created successfully with empty parameter.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

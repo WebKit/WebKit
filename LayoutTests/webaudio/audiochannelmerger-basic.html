@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Basic tests for AudioChannelMerger.");
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    window.jsTestIsAsync = true;
+
+    var context = new webkitAudioContext();
+
+    try {
+        var mergernode = context.createChannelMerger(0);
+        testFailed("Exception should be thrown for numberOfInputs <= 0.");
+    } catch(e) {
+        testPassed("Exception was thrown for numberOfInputs <= 0.");
+    }
+
+    try {
+        var mergernode = context.createChannelMerger(33);
+        testFailed("Exception should be thrown for numberOfInputs >= 32.");
+    } catch(e) {
+        testPassed("Exception was thrown for numberOfInputs >= 32.");
+    }
+
+    try {
+        var mergernode = context.createChannelMerger(32);
+        testPassed("AudioChannelMerger created successfully with numberOfInputs = 32.");
+    } catch(e) {
+        testFailed("Failed to create AudioChannelMerger with numberOfInputs = 32.");
+    }
+
+    try {
+        var mergernode = context.createChannelMerger();
+        testPassed("AudioChannelMerger created successfully with empty parameter.");
+    } catch(e) {
+        testFailed("Failed to create AudioChannelMerger with empty parameter.");
+    }
+
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

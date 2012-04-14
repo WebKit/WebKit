@@ -479,11 +479,25 @@ PassRefPtr<AudioChannelSplitter> AudioContext::createChannelSplitter(size_t numb
     return node;
 }
 
-PassRefPtr<AudioChannelMerger> AudioContext::createChannelMerger()
+PassRefPtr<AudioChannelMerger> AudioContext::createChannelMerger(ExceptionCode& ec)
+{
+    const unsigned ChannelMergerDefaultNumberOfInputs = 6;
+    return createChannelMerger(ChannelMergerDefaultNumberOfInputs, ec);
+}
+
+PassRefPtr<AudioChannelMerger> AudioContext::createChannelMerger(size_t numberOfInputs, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
     lazyInitialize();
-    return AudioChannelMerger::create(this, m_destinationNode->sampleRate());
+
+    RefPtr<AudioChannelMerger> node = AudioChannelMerger::create(this, m_destinationNode->sampleRate(), numberOfInputs);
+
+    if (!node.get()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    return node;
 }
 
 PassRefPtr<Oscillator> AudioContext::createOscillator()
