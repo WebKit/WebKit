@@ -432,6 +432,8 @@ bool TestController::resetStateToConsistentValues()
 
     WKContextSetShouldUseFontSmoothing(TestController::shared().context(), false);
 
+    WKContextSetCacheModel(TestController::shared().context(), kWKCacheModelDocumentBrowser);
+
     // FIXME: This function should also ensure that there is only one page open.
 
     // Reset preferences
