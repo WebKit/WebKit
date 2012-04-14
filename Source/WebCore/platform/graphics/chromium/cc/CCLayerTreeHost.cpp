@@ -202,7 +202,7 @@ void CCLayerTreeHost::beginCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     ASSERT(CCProxy::isImplThread());
     TRACE_EVENT("CCLayerTreeHost::commitTo", this, 0);
 
-    m_contentsTextureManager->reduceMemoryToLimit(TextureManager::reclaimLimitBytes(viewportSize()));
+    m_contentsTextureManager->reduceMemoryToLimit(m_contentsTextureManager->preferredMemoryLimitBytes());
     m_contentsTextureManager->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
 }
 
@@ -370,7 +370,8 @@ void CCLayerTreeHost::setVisible(bool visible)
     m_visible = visible;
 
     if (!visible && m_layerRendererInitialized) {
-        m_contentsTextureManager->reduceMemoryToLimit(TextureManager::lowLimitBytes(viewportSize()));
+        // Drop all unprotected textures.
+        m_contentsTextureManager->reduceMemoryToLimit(0);
         m_contentsTextureManager->unprotectAllTextures();
     }
 
@@ -389,7 +390,7 @@ void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostIm
     if (m_proxy->layerRendererCapabilities().contextHasCachedFrontBuffer)
         contentsTextureManager()->evictAndDeleteAllTextures(hostImpl->contentsTextureAllocator());
     else {
-        contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes(viewportSize()));
+        contentsTextureManager()->reduceMemoryToLimit(m_contentsTextureManager->preferredMemoryLimitBytes());
         contentsTextureManager()->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
     }
 
@@ -481,8 +482,8 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
     if (!m_triggerIdlePaints)
         return;
 
-    size_t preferredLimitBytes = TextureManager::reclaimLimitBytes(m_viewportSize);
-    size_t maxLimitBytes = TextureManager::highLimitBytes(m_viewportSize);
+    size_t preferredLimitBytes = m_contentsTextureManager->preferredMemoryLimitBytes();
+    size_t maxLimitBytes = m_contentsTextureManager->maxMemoryLimitBytes();
     m_contentsTextureManager->reduceMemoryToLimit(preferredLimitBytes);
     if (m_contentsTextureManager->currentMemoryUseBytes() >= preferredLimitBytes)
         return;
