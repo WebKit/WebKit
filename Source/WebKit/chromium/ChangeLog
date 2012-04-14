@@ -1,3 +1,24 @@
+2012-04-13  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Avoid unnecessary full tile updates for checkerboard tiles.
+        https://bugs.webkit.org/show_bug.cgi?id=83804
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::setLayerPropertiesForTesting):
+        (WTF):
+        (WTF::CCLayerTreeHostTestAtomicCommitWithPartialUpdate::beginTest):
+        (WTF::CCLayerTreeHostTestAtomicCommitWithPartialUpdate::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestAtomicCommitWithPartialUpdate::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestAtomicCommitWithPartialUpdate::layout):
+        (WTF::setTestLayerPropertiesForTesting):
+        (WTF::CCLayerTreeHostTestLayerOcclusion::beginTest):
+        (WTF::CCLayerTreeHostTestLayerOcclusionWithFilters::beginTest):
+        (WTF::CCLayerTreeHostTestManySurfaces::beginTest):
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+
 2012-04-13  Nico Weber  <thakis@chromium.org>
 
         [chromium] There is no Color(float, float, float) constructor, fix an attempt to call it.

@@ -78,10 +78,12 @@ public:
     IntRect updateRect;
     bool partialUpdate;
     bool updated;
+    bool isInUseOnImpl;
 private:
     explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture)
         : partialUpdate(false)
         , updated(false)
+        , isInUseOnImpl(false)
         , m_texture(texture)
     {
     }
@@ -209,6 +211,7 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         int i = iter->first.first;
         int j = iter->first.second;
         UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
+        tile->isInUseOnImpl = false;
         if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat)) {
             invalidTiles.append(tile);
             continue;
@@ -217,6 +220,7 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
             continue;
 
         tiledLayer->pushTileProperties(i, j, tile->managedTexture()->textureId(), tile->opaqueRect());
+        tile->isInUseOnImpl = true;
     }
     for (Vector<UpdatableTile*>::const_iterator iter = invalidTiles.begin(); iter != invalidTiles.end(); ++iter)
         m_tiler->takeTile((*iter)->i(), (*iter)->j());
@@ -320,12 +324,6 @@ void TiledLayerChromium::protectTileTextures(const IntRect& layerRect)
 // Returns true if tile is dirty and only part of it needs to be updated.
 bool TiledLayerChromium::tileOnlyNeedsPartialUpdate(UpdatableTile* tile)
 {
-    if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
-        return false;
-
-    if (!tile->isDirty())
-        return false;
-
     return !tile->dirtyRect.contains(m_tiler->tileRect(tile));
 }
 
@@ -333,14 +331,13 @@ bool TiledLayerChromium::tileOnlyNeedsPartialUpdate(UpdatableTile* tile)
 // we don't modify textures currently used for drawing by the impl thread.
 bool TiledLayerChromium::tileNeedsBufferedUpdate(UpdatableTile* tile)
 {
-    // No impl thread?.
-    if (!CCProxy::hasImplThread())
-        return false;
-
     if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
         return false;
 
     if (!tile->isDirty())
+        return false;
+
+    if (!tile->isInUseOnImpl)
         return false;
 
     return true;
@@ -380,14 +377,16 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
             // any single time through the function.
             tile->updated = true;
 
-            // FIXME: Decide if partial update should be allowed based on cost
-            // of update. https://bugs.webkit.org/show_bug.cgi?id=77376
-            if (tileOnlyNeedsPartialUpdate(tile) && layerTreeHost() && layerTreeHost()->requestPartialTextureUpdate())
-                tile->partialUpdate = true;
-            else if (tileNeedsBufferedUpdate(tile) && layerTreeHost()) {
-                layerTreeHost()->deleteTextureAfterCommit(tile->managedTexture()->steal());
-                // Sets the dirty rect to a full-sized tile with border texels.
-                tile->dirtyRect = m_tiler->tileRect(tile);
+            if (layerTreeHost() && layerTreeHost()->bufferedUpdates() && tileNeedsBufferedUpdate(tile)) {
+                // FIXME: Decide if partial update should be allowed based on cost
+                // of update. https://bugs.webkit.org/show_bug.cgi?id=77376
+                if (tileOnlyNeedsPartialUpdate(tile) && layerTreeHost()->requestPartialTextureUpdate())
+                    tile->partialUpdate = true;
+                else {
+                    layerTreeHost()->deleteTextureAfterCommit(tile->managedTexture()->steal());
+                    // Sets the dirty rect to a full-sized tile with border texels.
+                    tile->dirtyRect = m_tiler->tileRect(tile);
+                }
             }
 
             if (!tile->managedTexture()->reserve(m_tiler->tileSize(), m_textureFormat)) {

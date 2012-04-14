@@ -605,6 +605,11 @@ void CCLayerTreeHost::stopRateLimiter(GraphicsContext3D* context)
     }
 }
 
+bool CCLayerTreeHost::bufferedUpdates()
+{
+    return m_settings.maxPartialTextureUpdates != numeric_limits<size_t>::max();
+}
+
 bool CCLayerTreeHost::requestPartialTextureUpdate()
 {
     if (m_partialTextureUpdateRequests >= m_settings.maxPartialTextureUpdates)

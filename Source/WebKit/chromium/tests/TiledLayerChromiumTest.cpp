@@ -895,40 +895,82 @@ TEST(TiledLayerChromiumTest, partialUpdates)
 
     // Full update of all 6 tiles.
     ccLayerTreeHost->updateLayers(updater);
-    updater.update(0, &allocator, &copier, 4);
-    EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
-    EXPECT_TRUE(updater.hasMoreUpdates());
-    layer->fakeLayerTextureUpdater()->clearUpdateCount();
-    updater.update(0, &allocator, &copier, 4);
-    EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
-    EXPECT_FALSE(updater.hasMoreUpdates());
-    layer->fakeLayerTextureUpdater()->clearUpdateCount();
+    {
+        DebugScopedSetImplThread implThread;
+        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+        updater.update(0, &allocator, &copier, 4);
+        EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
+        EXPECT_TRUE(updater.hasMoreUpdates());
+        layer->fakeLayerTextureUpdater()->clearUpdateCount();
+        updater.update(0, &allocator, &copier, 4);
+        EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
+        EXPECT_FALSE(updater.hasMoreUpdates());
+        layer->fakeLayerTextureUpdater()->clearUpdateCount();
+        layer->pushPropertiesTo(layerImpl.get());
+    }
     ccLayerTreeHost->commitComplete();
 
     // Full update of 3 tiles and partial update of 3 tiles.
     layer->invalidateRect(IntRect(0, 0, 300, 150));
     ccLayerTreeHost->updateLayers(updater);
-    updater.update(0, &allocator, &copier, 4);
-    EXPECT_EQ(3, layer->fakeLayerTextureUpdater()->updateCount());
-    EXPECT_TRUE(updater.hasMoreUpdates());
-    layer->fakeLayerTextureUpdater()->clearUpdateCount();
-    updater.update(0, &allocator, &copier, 4);
-    EXPECT_EQ(3, layer->fakeLayerTextureUpdater()->updateCount());
-    EXPECT_FALSE(updater.hasMoreUpdates());
-    layer->fakeLayerTextureUpdater()->clearUpdateCount();
+    {
+        DebugScopedSetImplThread implThread;
+        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+        updater.update(0, &allocator, &copier, 4);
+        EXPECT_EQ(3, layer->fakeLayerTextureUpdater()->updateCount());
+        EXPECT_TRUE(updater.hasMoreUpdates());
+        layer->fakeLayerTextureUpdater()->clearUpdateCount();
+        updater.update(0, &allocator, &copier, 4);
+        EXPECT_EQ(3, layer->fakeLayerTextureUpdater()->updateCount());
+        EXPECT_FALSE(updater.hasMoreUpdates());
+        layer->fakeLayerTextureUpdater()->clearUpdateCount();
+        layer->pushPropertiesTo(layerImpl.get());
+    }
     ccLayerTreeHost->commitComplete();
 
     // Partial update of 6 tiles.
     layer->invalidateRect(IntRect(50, 50, 200, 100));
-    ccLayerTreeHost->updateLayers(updater);
-    updater.update(0, &allocator, &copier, 4);
-    EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
-    EXPECT_TRUE(updater.hasMoreUpdates());
-    layer->fakeLayerTextureUpdater()->clearUpdateCount();
-    updater.update(0, &allocator, &copier, 4);
-    EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
-    EXPECT_FALSE(updater.hasMoreUpdates());
-    layer->fakeLayerTextureUpdater()->clearUpdateCount();
+    {
+        DebugScopedSetImplThread implThread;
+        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+        ccLayerTreeHost->updateLayers(updater);
+        updater.update(0, &allocator, &copier, 4);
+        EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
+        EXPECT_TRUE(updater.hasMoreUpdates());
+        layer->fakeLayerTextureUpdater()->clearUpdateCount();
+        updater.update(0, &allocator, &copier, 4);
+        EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
+        EXPECT_FALSE(updater.hasMoreUpdates());
+        layer->fakeLayerTextureUpdater()->clearUpdateCount();
+        layer->pushPropertiesTo(layerImpl.get());
+    }
+    ccLayerTreeHost->commitComplete();
+
+    // Checkerboard all tiles.
+    layer->invalidateRect(IntRect(0, 0, 300, 200));
+    {
+        DebugScopedSetImplThread implThread;
+        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+        layer->pushPropertiesTo(layerImpl.get());
+    }
+    ccLayerTreeHost->commitComplete();
+
+    // Partail update of 6 checkerboard tiles.
+    layer->invalidateRect(IntRect(50, 50, 200, 100));
+    {
+        DebugScopedSetImplThread implThread;
+        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+        ccLayerTreeHost->updateLayers(updater);
+        updater.update(0, &allocator, &copier, 4);
+        EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
+        EXPECT_TRUE(updater.hasMoreUpdates());
+        layer->fakeLayerTextureUpdater()->clearUpdateCount();
+        updater.update(0, &allocator, &copier, 4);
+        EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
+        EXPECT_FALSE(updater.hasMoreUpdates());
+        layer->fakeLayerTextureUpdater()->clearUpdateCount();
+        layer->pushPropertiesTo(layerImpl.get());
+    }
     ccLayerTreeHost->commitComplete();
 
     ccLayerTreeHost->setRootLayer(0);
