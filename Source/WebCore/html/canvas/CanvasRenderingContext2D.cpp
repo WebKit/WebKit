@@ -2058,7 +2058,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
     unsigned length = text.length();
     const UChar* string = text.characters();
-    TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, direction, override, TextRun::NoRounding);
+    TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, direction, override, true, TextRun::NoRounding);
 
     // Draw the item text at the correct point.
     FloatPoint location(x, y);
