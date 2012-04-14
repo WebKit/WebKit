@@ -171,6 +171,8 @@ String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const
             return value->cssText();
     }
 #endif
+    case CSSPropertyBorderRadius:
+        return get4Values(borderRadiusShorthand());
     default:
           return String();
     }
