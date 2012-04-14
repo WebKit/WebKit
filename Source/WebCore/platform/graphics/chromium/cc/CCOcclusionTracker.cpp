@@ -125,8 +125,12 @@ static inline Region transformSurfaceOpaqueRegion(const RenderSurfaceType* surfa
 
     Vector<IntRect> rects = region.rects();
     // Clipping has been verified above, so mapRect will give correct results.
-    for (size_t i = 0; i < rects.size(); ++i)
-        transformedRegion.unite(enclosedIntRect(transform.mapRect(FloatRect(rects[i]))));
+    for (size_t i = 0; i < rects.size(); ++i) {
+        IntRect transformedRect = enclosedIntRect(transform.mapRect(FloatRect(rects[i])));
+        if (!surface->clipRect().isEmpty())
+            transformedRect.intersect(surface->clipRect());
+        transformedRegion.unite(transformedRect);
+    }
     return transformedRegion;
 }
 
@@ -141,7 +145,8 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::leaveToTargetRenderSu
 
     const RenderSurfaceType* oldTarget = m_stack[lastIndex].surface;
     Region oldTargetOcclusionInNewTarget = transformSurfaceOpaqueRegion<RenderSurfaceType>(oldTarget, m_stack[lastIndex].occlusionInTarget, oldTarget->originTransform());
-    // FIXME: The replica can occlude things too.
+    if (oldTarget->hasReplica())
+        oldTargetOcclusionInNewTarget.unite(transformSurfaceOpaqueRegion<RenderSurfaceType>(oldTarget, m_stack[lastIndex].occlusionInTarget, oldTarget->replicaOriginTransform()));
 
     if (surfaceWillBeAtTopAfterPop) {
         // Merge the top of the stack down.

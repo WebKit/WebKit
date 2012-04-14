@@ -1,3 +1,19 @@
+2012-04-13  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Replicas should be included in the computed occlusion
+        https://bugs.webkit.org/show_bug.cgi?id=82262
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (CCOcclusionTrackerTestReplicaDoesOcclude):
+        (WebKitTests::CCOcclusionTrackerTestReplicaDoesOcclude::runMyTest):
+        (WebKitTests):
+        (CCOcclusionTrackerTestReplicaWithClipping):
+        (WebKitTests::CCOcclusionTrackerTestReplicaWithClipping::runMyTest):
+        (CCOcclusionTrackerTestSurfaceChildOfSurface):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceChildOfSurface::runMyTest):
+
 2012-04-13  Bernhard Bauer  <bauerb@google.com>
 
         [chromium] Remove fallback code for "Missing plug-in" string.

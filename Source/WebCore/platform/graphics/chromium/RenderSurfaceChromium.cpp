@@ -64,5 +64,10 @@ FloatRect RenderSurfaceChromium::drawableContentRect() const
     return drawableContentRect;
 }
 
+bool RenderSurfaceChromium::hasReplica() const
+{
+    return m_owningLayer->replicaLayer();
+}
+
 }
 #endif // USE(ACCELERATED_COMPOSITING)
