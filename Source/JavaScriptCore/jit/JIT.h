@@ -479,11 +479,7 @@ namespace JSC {
         void emitSub32Constant(unsigned dst, unsigned op, int32_t constant, ResultType opType);
         void emitBinaryDoubleOp(OpcodeID, unsigned dst, unsigned op1, unsigned op2, OperandTypes, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters = true, bool op2IsInRegisters = true);
 
-#if CPU(X86)
-        static const int patchOffsetOpCallCompareToJump = 6;
-#elif CPU(ARM_TRADITIONAL)
-        static const int patchOffsetOpCallCompareToJump = 12;
-
+#if CPU(ARM_TRADITIONAL)
         // sequenceOpCall
         static const int sequenceOpCallInstructionSpace = 12;
         static const int sequenceOpCallConstantSpace = 2;
@@ -499,14 +495,6 @@ namespace JSC {
         // sequencePutById
         static const int sequencePutByIdInstructionSpace = 36;
         static const int sequencePutByIdConstantSpace = 4;
-#elif CPU(ARM_THUMB2)
-        static const int patchOffsetOpCallCompareToJump = 16;
-#elif CPU(MIPS)
-#if WTF_MIPS_ISA(1)
-        static const int patchOffsetOpCallCompareToJump = 32;
-#else // WTF_MIPS_ISA(1)
-        static const int patchOffsetOpCallCompareToJump = 32;
-#endif
 #elif CPU(SH4)
         // sequenceOpCall
         static const int sequenceOpCallInstructionSpace = 12;
@@ -523,10 +511,6 @@ namespace JSC {
         // sequencePutById
         static const int sequencePutByIdInstructionSpace = 36;
         static const int sequencePutByIdConstantSpace = 5;
-
-        static const int patchOffsetOpCallCompareToJump = 4;
-#else
-#error "JSVALUE32_64 not supported on this platform."
 #endif
 
 #else // USE(JSVALUE32_64)
@@ -568,10 +552,6 @@ namespace JSC {
         void compileGetDirectOffset(JSObject* base, RegisterID result, size_t cachedOffset);
         void compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID offset, RegisterID scratch);
         void compilePutDirectOffset(RegisterID base, RegisterID value, size_t cachedOffset);
-
-#if CPU(X86_64)
-        static const int patchOffsetOpCallCompareToJump = 9;
-#endif
 
 #endif // USE(JSVALUE32_64)
 

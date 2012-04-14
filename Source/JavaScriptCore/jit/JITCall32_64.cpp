@@ -264,7 +264,6 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     addSlowCase(slowCase);
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
 
-    ASSERT_JIT_OFFSET(differenceBetween(addressOfLinkedFunctionCheck, slowCase), patchOffsetOpCallCompareToJump);
     ASSERT(m_callStructureStubCompilationInfo.size() == callLinkInfoIndex);
     m_callStructureStubCompilationInfo.append(StructureStubCompilationInfo());
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;

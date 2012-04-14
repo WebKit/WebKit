@@ -180,7 +180,6 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     END_UNINTERRUPTED_SEQUENCE(sequenceOpCall);
     addSlowCase(slowCase);
 
-    ASSERT_JIT_OFFSET(differenceBetween(addressOfLinkedFunctionCheck, slowCase), patchOffsetOpCallCompareToJump);
     ASSERT(m_callStructureStubCompilationInfo.size() == callLinkInfoIndex);
     m_callStructureStubCompilationInfo.append(StructureStubCompilationInfo());
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;

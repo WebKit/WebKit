@@ -1,3 +1,18 @@
+2012-04-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Don't rely on fixed offsets to patch calls
+        https://bugs.webkit.org/show_bug.cgi?id=83966
+
+        Rubber stamped by Oliver Hunt.
+
+        These aren't being used anywhere!
+
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+
 2012-04-13  Hojong Han  <hojong.han@samsung.com>
 
         Array.prototype.toString and Array.prototype.toLocaleString should be generic
