@@ -40,6 +40,7 @@
 #include "DocumentFragment.h"
 #include "ElementRareData.h"
 #include "ExceptionCode.h"
+#include "FlowThreadController.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -981,6 +982,11 @@ void Element::attach()
 void Element::detach()
 {
     RenderWidget::suspendWidgetHierarchyUpdates();
+
+    if (document()->cssRegionsEnabled() && inNamedFlow()) {
+        if (document()->renderer() && document()->renderer()->view())
+            document()->renderer()->view()->flowThreadController()->unregisterNamedFlowContentNode(this);
+    }
 
     cancelFocusAppearanceUpdate();
     if (hasRareData())

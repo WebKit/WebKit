@@ -62,6 +62,9 @@ public:
     bool hasRenderNamedFlowThreads() const { return m_renderNamedFlowThreadList && !m_renderNamedFlowThreadList->isEmpty(); }
     void layoutRenderNamedFlowThreads();
 
+    void registerNamedFlowContentNode(Node*, RenderNamedFlowThread*);
+    void unregisterNamedFlowContentNode(Node*);
+
 protected:
     FlowThreadController(RenderView*);
 
@@ -70,6 +73,8 @@ private:
     RenderFlowThread* m_currentRenderFlowThread;
     bool m_isRenderNamedFlowThreadOrderDirty;
     OwnPtr<RenderNamedFlowThreadList> m_renderNamedFlowThreadList;
+    // maps a content node to its render flow thread.
+    HashMap<Node*, RenderNamedFlowThread*> m_mapNamedFlowContentNodes;
 };
 
 }

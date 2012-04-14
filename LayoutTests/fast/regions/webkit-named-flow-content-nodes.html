@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="../../fast/js/resources/js-test-pre.js"></script>
+        <style>
+            #region { -webkit-flow-from: flow; width: 250px; height: 150px; }
+        </style>
+    </head>
+    <body>
+        <!--
+        1. The content nodes collection for a named flow 'flow' contains only those elements that have
+        the style property -webkit-flow-into set to 'flow'.
+        2. If an element has an ancestor with -webkit-flow-into = 'flow' but does not have its '-webkit-flow-into'
+        set to 'flow' will not be listed among the content nodes for named flow 'flow'.
+        3. Elements with '-webkit-flow-into' set to 'flow' and 'display:none' should be listed among the content nodes
+        for named flow object 'flow'.
+        4. The collection of nodes is returned in document order.
+        -->
+        <script>
+            if (window.layoutTestController)
+                window.layoutTestController.dumpAsText();
+            description("Test for 80134: [CSSRegions]Implement NamedFlow::contentNodes");
+
+            // First time ask for a named flow object, the contentNodes should be empty.
+            var namedFlowContentNodes = document.webkitGetFlowByName("flow").contentNodes;
+            shouldBeNonNull("namedFlowContentNodes");
+            shouldEvaluateTo("namedFlowContentNodes.length", 0);
+            shouldBeTrue("namedFlowContentNodes instanceof NodeList");
+
+            // Add an element that would be collected by the named flow but do not add it to the DOM, the contentNodes should be empty.
+            var article = document.createElement("div");
+            article.id = "article";
+            article.style.webkitFlowInto = "flow";
+            var namedFlowContentNodes2 = document.webkitGetFlowByName("flow").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes2.length", 0);
+
+            // Append the above element to the DOM. It will be collected by the flow, therefore the contentNodes should have 1 element.
+            document.body.appendChild(article);
+            var namedFlowContentNodes3 = document.webkitGetFlowByName("flow").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes3.length", 1);
+            shouldBeEqualToString("namedFlowContentNodes3.item(0).id", "article");
+
+            // Append a child element to the article above but do not set its style to flow into 'flow'.
+            // The contentNodes should still have 1 element.
+            var pNode = document.createElement("p");
+            pNode.id = "p1";
+            document.getElementById("article").appendChild(pNode);
+            var namedFlowContentNodes4 = document.webkitGetFlowByName("flow").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes4.length", 1);
+            shouldBeEqualToString("namedFlowContentNodes4.item(0).id", "article");
+
+            // Add another element directly to the flow and set its 'display' property to 'none', it should be part of the flow.
+            var article2 = document.createElement("div");
+            article2.id = "article2";
+            article2.style.webkitFlowInto = "flow";
+            article2.style.display = "none";
+            document.body.insertBefore(article2, article);
+
+            var namedFlowContentNodes5 = document.webkitGetFlowByName("flow").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes5.length", 2);
+			shouldBeEqualToString("namedFlowContentNodes5.item(0).id", "article2");
+			shouldBeEqualToString("namedFlowContentNodes5.item(1).id", "article");
+
+            // Adding a region element to flow content into should not influence the content nodes collection.
+            var regionNode = document.createElement("div");
+            regionNode.id = "region";
+            document.body.appendChild(regionNode);
+            var namedFlowContentNodes6 = document.webkitGetFlowByName("flow").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes6.length", 2);
+
+            // Change display:none for the 'article2' element, the list of contentNodes should stay the same
+            document.getElementById("article2").style.display = "block";
+            var namedFlowContentNodes7 = document.webkitGetFlowByName("flow").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes7.length", 2);
+
+            // Add a p and a span under p. Make the span directly collected by the flow. The contentNodes collection should have 3 elements.
+            pNode = document.createElement("p");
+            pNode.id = "p2";
+            var spanNode = document.createElement("span");
+            spanNode.id = "span1";
+            spanNode.style.webkitFlowInto = "flow";
+            pNode.appendChild(spanNode);
+            document.getElementById("article2").appendChild(pNode);
+
+            var namedFlowContentNodes8 = document.webkitGetFlowByName("flow").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes8.length", 3);
+
+            // Change display of article node to none, the collection should still have 3 elements.
+            document.getElementById("article").style.display = "none";
+            var namedFlowContentNodes9 = document.webkitGetFlowByName("flow").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes9.length", 3);
+			shouldBeEqualToString("namedFlowContentNodes9.item(0).id", "article2");
+			shouldBeEqualToString("namedFlowContentNodes9.item(1).id", "span1");
+			shouldBeEqualToString("namedFlowContentNodes9.item(2).id", "article");
+
+            // Take 'article' node from last position and insert it before 'article2'
+            article = document.getElementById("article");
+            document.body.insertBefore(document.body.removeChild(article), article2);
+            var namedFlowContentNodes10 = document.webkitGetFlowByName("flow").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes10.length", 3);
+			shouldBeEqualToString("namedFlowContentNodes10.item(0).id", "article");
+
+            // Clone 'article2' including its children.
+            var article2Clone = document.getElementById("article2").cloneNode(true);
+            document.body.appendChild(article2Clone);
+            var namedFlowContentNodes11 = document.webkitGetFlowByName("flow").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes11.length", 5);
+            // Remove article2 nodes from document, they should be removed from flow.
+            document.body.removeChild(article2);
+            document.body.removeChild(article2Clone);
+            var namedFlowContentNodes12 = document.webkitGetFlowByName("flow").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes12.length", 1);
+			shouldBeEqualToString("namedFlowContentNodes12.item(0).id", "article");
+
+            // Get the content nodes for another flow, flow2.
+            var namedFlowContentNodes10 = document.webkitGetFlowByName("flow2").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes10.length", "0");
+
+            // Move the content node 'article' from named flow 'flow' to named flow 'flow2'
+            document.getElementById("article").style.webkitFlowInto = "flow2";
+            var namedFlowContentNodes11 = document.webkitGetFlowByName("flow").contentNodes;
+            var namedFlowContentNodes12 = document.webkitGetFlowByName("flow2").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes11.length", "0");
+            shouldEvaluateTo("namedFlowContentNodes12.length", "1");
+            shouldBeEqualToString("namedFlowContentNodes12.item(0).id", "article");
+
+            // Remove the content node from dom, content nodes for both 'flow' and 'flow2' should be empty
+            document.body.removeChild(document.getElementById("article"));
+            var namedFlowContentNodes13 = document.webkitGetFlowByName("flow").contentNodes;
+            var namedFlowContentNodes14 = document.webkitGetFlowByName("flow2").contentNodes;
+            shouldEvaluateTo("namedFlowContentNodes13.length", "0");
+            shouldEvaluateTo("namedFlowContentNodes14.length", "0");
+
+            document.getElementById("region").style.visibility = "hidden";
+        </script>
+        <script src="../../fast/js/resources/js-test-post.js"></script>
+    </body>
+</html>

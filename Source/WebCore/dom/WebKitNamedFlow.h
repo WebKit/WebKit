@@ -30,12 +30,13 @@
 #ifndef WebKitNamedFlow_h
 #define WebKitNamedFlow_h
 
+#include <Node.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class Node;
 class NodeList;
 class RenderNamedFlowThread;
 
@@ -50,6 +51,7 @@ public:
 
     bool overflow() const;
     PassRefPtr<NodeList> getRegionsByContentNode(Node*);
+    PassRefPtr<NodeList> contentNodes() const;
 
 private:
     WebKitNamedFlow(RenderNamedFlowThread*);

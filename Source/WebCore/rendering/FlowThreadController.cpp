@@ -101,4 +101,25 @@ void FlowThreadController::layoutRenderNamedFlowThreads()
     }
 }
 
+void FlowThreadController::registerNamedFlowContentNode(Node* contentNode, RenderNamedFlowThread* namedFlow)
+{
+    ASSERT(contentNode && contentNode->isElementNode());
+    ASSERT(namedFlow);
+    ASSERT(!m_mapNamedFlowContentNodes.contains(contentNode));
+    ASSERT(!namedFlow->hasContentNode(contentNode));
+    m_mapNamedFlowContentNodes.add(contentNode, namedFlow);
+    namedFlow->registerNamedFlowContentNode(contentNode);
+}
+
+void FlowThreadController::unregisterNamedFlowContentNode(Node* contentNode)
+{
+    ASSERT(contentNode && contentNode->isElementNode());
+    HashMap<Node*, RenderNamedFlowThread*>::iterator it = m_mapNamedFlowContentNodes.find(contentNode);
+    ASSERT(it != m_mapNamedFlowContentNodes.end());
+    ASSERT(it->second);
+    ASSERT(it->second->hasContentNode(contentNode));
+    it->second->unregisterNamedFlowContentNode(contentNode);
+    m_mapNamedFlowContentNodes.remove(contentNode);
+}
+
 } // namespace WebCore

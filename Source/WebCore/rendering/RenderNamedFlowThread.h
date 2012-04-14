@@ -34,11 +34,13 @@
 
 namespace WebCore {
 
+class Node;
 class RenderNamedFlowThread;
 class WebKitNamedFlow;
 
 typedef ListHashSet<RenderNamedFlowThread*> RenderNamedFlowThreadList;
 typedef HashCountedSet<RenderNamedFlowThread*> RenderNamedFlowThreadCountedSet;
+typedef ListHashSet<Node*> NamedFlowContentNodes;
 
 class RenderNamedFlowThread : public RenderFlowThread {
 public:
@@ -62,6 +64,10 @@ public:
     virtual void removeRegionFromThread(RenderRegion*) OVERRIDE;
 
     WebKitNamedFlow* ensureNamedFlow();
+    void registerNamedFlowContentNode(Node*);
+    void unregisterNamedFlowContentNode(Node*);
+    const NamedFlowContentNodes& contentNodes() const { return m_contentNodes; }
+    bool hasContentNode(Node* contentNode) const { ASSERT(contentNode); return m_contentNodes.contains(contentNode); }
 
 private:
     virtual const char* renderName() const OVERRIDE;
@@ -89,6 +95,8 @@ private:
     // Holds the sorted children of a named flow. This is the only way we can get the ordering right.
     typedef ListHashSet<RenderObject*> FlowThreadChildList;
     FlowThreadChildList m_flowThreadChildList;
+
+    NamedFlowContentNodes m_contentNodes;
 
     // The DOM Object that represents a named flow.
     RefPtr<WebKitNamedFlow> m_namedFlow;

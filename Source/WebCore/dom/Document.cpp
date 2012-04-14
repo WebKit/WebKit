@@ -1074,13 +1074,23 @@ static bool validFlowName(const String& flowName)
 
 PassRefPtr<WebKitNamedFlow> Document::webkitGetFlowByName(const String& flowName)
 {
-    if (!cssRegionsEnabled() || flowName.isEmpty() || !validFlowName(flowName) || !renderer())
+    return webkitGetFlowByName(flowName, CheckFlowNameForInvalidValues);
+}
+
+PassRefPtr<WebKitNamedFlow> Document::webkitGetFlowByName(const String& flowName, FlowNameCheck flowNameCheck)
+{
+    if (!cssRegionsEnabled() || !renderer())
         return 0;
 
-    // Make a slower check for invalid flow name
-    CSSParser parser(CSSStrictMode);
-    if (!parser.parseFlowThread(flowName, this))
-        return 0;
+    if (flowNameCheck == CheckFlowNameForInvalidValues) {
+        if (flowName.isEmpty() || !validFlowName(flowName))
+            return 0;
+
+        // Make a slower check for invalid flow name.
+        CSSParser parser(CSSStrictMode);
+        if (!parser.parseFlowThread(flowName, this))
+            return 0;
+    }
 
     if (RenderView* view = renderer()->view())
         return view->flowThreadController()->ensureRenderFlowThreadWithName(flowName)->ensureNamedFlow();

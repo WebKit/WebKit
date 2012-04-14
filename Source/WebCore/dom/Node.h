@@ -215,6 +215,7 @@ public:
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
     bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
+    bool inNamedFlow() const { return getFlag(InNamedFlowFlag); }
 
     Node* shadowAncestorNode() const;
     // Returns 0, a ShadowRoot, or a legacy shadow root.
@@ -323,6 +324,9 @@ public:
     void setIsLink(bool f) { setFlag(f, IsLinkFlag); }
     void setIsLink() { setFlag(IsLinkFlag); }
     void clearIsLink() { clearFlag(IsLinkFlag); }
+
+    void setInNamedFlow() { setFlag(InNamedFlowFlag); }
+    void clearInNamedFlow() { clearFlag(InNamedFlowFlag); }
 
     enum ShouldSetAttached {
         SetAttached,
@@ -665,10 +669,11 @@ private:
         AttributeStyleDirtyFlag = 1 << 27,
 
 #if ENABLE(SVG)
-        DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag
+        DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag,
 #else
-        DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag
+        DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag,
 #endif
+        InNamedFlowFlag = 1 << 29
     };
 
     // 3 bits remaining

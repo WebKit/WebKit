@@ -1,0 +1,38 @@
+Test for 80134: [CSSRegions]Implement NamedFlow::contentNodes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS namedFlowContentNodes is non-null.
+PASS namedFlowContentNodes.length is 0
+PASS namedFlowContentNodes instanceof NodeList is true
+PASS namedFlowContentNodes2.length is 0
+PASS namedFlowContentNodes3.length is 1
+PASS namedFlowContentNodes3.item(0).id is "article"
+PASS namedFlowContentNodes4.length is 1
+PASS namedFlowContentNodes4.item(0).id is "article"
+PASS namedFlowContentNodes5.length is 2
+PASS namedFlowContentNodes5.item(0).id is "article2"
+PASS namedFlowContentNodes5.item(1).id is "article"
+PASS namedFlowContentNodes6.length is 2
+PASS namedFlowContentNodes7.length is 2
+PASS namedFlowContentNodes8.length is 3
+PASS namedFlowContentNodes9.length is 3
+PASS namedFlowContentNodes9.item(0).id is "article2"
+PASS namedFlowContentNodes9.item(1).id is "span1"
+PASS namedFlowContentNodes9.item(2).id is "article"
+PASS namedFlowContentNodes10.length is 3
+PASS namedFlowContentNodes10.item(0).id is "article"
+PASS namedFlowContentNodes11.length is 5
+PASS namedFlowContentNodes12.length is 1
+PASS namedFlowContentNodes12.item(0).id is "article"
+PASS namedFlowContentNodes10.length is 0
+PASS namedFlowContentNodes11.length is 0
+PASS namedFlowContentNodes12.length is 1
+PASS namedFlowContentNodes12.item(0).id is "article"
+PASS namedFlowContentNodes13.length is 0
+PASS namedFlowContentNodes14.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

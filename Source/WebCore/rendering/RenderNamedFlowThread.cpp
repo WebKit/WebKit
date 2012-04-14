@@ -253,4 +253,36 @@ WebKitNamedFlow* RenderNamedFlowThread::ensureNamedFlow()
     return m_namedFlow.get();
 }
 
+// The content nodes list contains those nodes with -webkit-flow-into: flow.
+// An element with display:none should also be listed among those nodes.
+// The list of nodes is ordered.
+void RenderNamedFlowThread::registerNamedFlowContentNode(Node* contentNode)
+{
+    ASSERT(contentNode && contentNode->isElementNode());
+
+    contentNode->setInNamedFlow();
+
+    // Find the first content node following the new content node.
+    for (NamedFlowContentNodes::iterator it = m_contentNodes.begin(); it != m_contentNodes.end(); ++it) {
+        Node* node = *it;
+        unsigned short position = contentNode->compareDocumentPosition(node);
+        if (position & Node::DOCUMENT_POSITION_FOLLOWING) {
+            m_contentNodes.insertBefore(node, contentNode);
+            return;
+        }
+    }
+    m_contentNodes.add(contentNode);
+}
+
+void RenderNamedFlowThread::unregisterNamedFlowContentNode(Node* contentNode)
+{
+    ASSERT(contentNode && contentNode->isElementNode());
+    ASSERT(m_contentNodes.contains(contentNode));
+    ASSERT(contentNode->inNamedFlow());
+
+    contentNode->clearInNamedFlow();
+    m_contentNodes.remove(contentNode);
+
+}
+
 }
