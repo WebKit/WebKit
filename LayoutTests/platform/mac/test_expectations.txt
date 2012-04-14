@@ -165,7 +165,6 @@ BUGWK69210: fast/repaint/transform-absolute-in-positioned-container.html = TEXT
 // The change should only be layer removal.
 BUGWK75568 : animations/combo-transform-translate+scale.html = TEXT
 BUGWK75568 : editing/spelling/inline_spelling_markers.html = TEXT
-BUGWK75568 : fast/box-shadow/shadow-buffer-partial.html = TEXT
 BUGWK75568 : fast/forms/form-element-geometry.html = TEXT
 BUGWK75568 : fast/forms/input-value.html = TEXT
 BUGWK75568 : fast/layers/add-layer-with-nested-stacking.html = TEXT
@@ -207,9 +206,6 @@ BUGWK75568 : fast/block/float/float-overflow-hidden-containing-block-width.html 
 BUGWK75568 : fast/block/float/in-margin.html = TEXT
 BUGWK75568 : fast/block/float/overlapping-floats-with-overflow-hidden.html = TEXT
 BUGWK75568 : fast/block/float/shrink-to-avoid-float-complexity.html = TEXT
-BUGWK75568 : fast/block/lineboxcontain/block-font.html = TEXT
-BUGWK75568 : fast/block/lineboxcontain/block-glyphs.html = TEXT
-BUGWK75568 : fast/block/lineboxcontain/font.html = TEXT
 BUGWK75568 : fast/block/lineboxcontain/parsing-invalid.html = TEXT
 BUGWK75568 : fast/block/margin-collapse/103.html = TEXT
 BUGWK75568 : fast/clip/017.html = TEXT
