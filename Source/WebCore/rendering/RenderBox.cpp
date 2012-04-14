@@ -2290,6 +2290,10 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) cons
     switch (logicalWidth.type()) {
         case Fixed:
             return computeContentBoxLogicalWidth(logicalWidth.value());
+        case ViewportPercentageWidth:
+        case ViewportPercentageHeight:
+        case ViewportPercentageMin:
+            return computeContentBoxLogicalWidth(valueForLength(logicalWidth, 0, view()));
         case Percent: 
         case Calculated: {
             // FIXME: containingBlockLogicalWidthForContent() is wrong if the replaced element's block-flow is perpendicular to the

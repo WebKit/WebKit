@@ -212,7 +212,7 @@ public:
     bool isPercent() const { return type() == Percent || type() == Calculated; }
     bool isFixed() const { return type() == Fixed; }
     bool isIntrinsicOrAuto() const { return type() == Auto || type() == MinIntrinsic || type() == Intrinsic; }
-    bool isSpecified() const { return type() == Fixed || type() == Percent || type() == Calculated; }
+    bool isSpecified() const { return type() == Fixed || type() == Percent || type() == Calculated || isViewportPercentage(); }
     bool isCalculated() const { return type() == Calculated; }
 
     Length blend(const Length& from, double progress) const
