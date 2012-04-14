@@ -1,3 +1,17 @@
+2012-04-13  Nico Weber  <thakis@chromium.org>
+
+        [chromium] There is no Color(float, float, float) constructor, fix an attempt to call it.
+        https://bugs.webkit.org/show_bug.cgi?id=83920
+
+        Reviewed by James Robinson.
+
+        Found by clang:
+          third_party/WebKit/Source/WebKit/chromium/tests/LayerChromiumTest.cpp:508:89:error: implicit conversion turns literal floating-point number into integer: 'float' to 'int' [-Werror,-Wliteral-conversion]
+          EXECUTE_AND_VERIFY_SET_NEEDS_COMMIT_BEHAVIOR(1, testLayer->setBackgroundColor(Color(0.4f, 0.4f, 0.4f)));
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+
+        * tests/LayerChromiumTest.cpp:
+
 2012-04-13  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Replicas should be included in the computed occlusion
