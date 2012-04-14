@@ -206,11 +206,7 @@ String AXMenuListActionVerb()
     
 String missingPluginText()
 {
-    String text = query(WebLocalizedString::MissingPluginText);
-    if (!text.isEmpty())
-        return text;
-    notImplemented();
-    return String("Missing Plug-in");
+    return query(WebLocalizedString::MissingPluginText);
 }
 
 String crashedPluginText()

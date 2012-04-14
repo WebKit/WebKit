@@ -1,3 +1,13 @@
+2012-04-13  Bernhard Bauer  <bauerb@google.com>
+
+        [chromium] Remove fallback code for "Missing plug-in" string.
+        https://bugs.webkit.org/show_bug.cgi?id=81907
+
+        Reviewed by Adam Barth.
+
+        * src/LocalizedStrings.cpp:
+        (WebCore::missingPluginText):
+
 2012-04-11  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unused compositeToTexture / compositeOffscreen setting
