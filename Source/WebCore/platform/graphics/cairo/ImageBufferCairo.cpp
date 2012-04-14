@@ -260,29 +260,29 @@ void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const Int
 #if !PLATFORM(GTK)
 static cairo_status_t writeFunction(void* closure, const unsigned char* data, unsigned int length)
 {
-    Vector<char>* in = reinterpret_cast<Vector<char>*>(closure);
-    in->append(data, length);
+    if (!reinterpret_cast<Vector<unsigned char>*>(closure)->tryAppend(data, length))
+        return CAIRO_STATUS_WRITE_ERROR;
     return CAIRO_STATUS_SUCCESS;
 }
 
 String ImageBuffer::toDataURL(const String& mimeType, const double*, CoordinateSystem) const
 {
+    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+
     cairo_surface_t* image = cairo_get_target(context()->platformContext()->cr());
     if (!image)
         return "data:,";
 
-    String actualMimeType("image/png");
-    if (MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType))
-        actualMimeType = mimeType;
+    ASSERT(mimeType == "image/png"); // Only PNG output is supported for now.
 
-    Vector<char> in;
-    // Only PNG output is supported for now.
-    cairo_surface_write_to_png_stream(image, writeFunction, &in);
+    Vector<char> encodedImage;
+    if (cairo_surface_write_to_png_stream(image, writeFunction, &encodedImage) != CAIRO_STATUS_SUCCESS)
+        return "data:,";
 
-    Vector<char> out;
-    base64Encode(in, out);
+    Vector<char> base64Data;
+    base64Encode(encodedImage, base64Data);
 
-    return "data:" + actualMimeType + ";base64," + String(out.data(), out.size());
+    return "data:" + mimeType + ";base64," + base64Data;
 }
 #endif
 
