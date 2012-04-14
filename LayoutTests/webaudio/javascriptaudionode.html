@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests JavaScriptAudioNode.");
+
+var sampleRate = 44100.0;
+var outputChannels = 6;
+
+// For the current implementation of JavaScriptAudioNode, when it works with OfflineAudioContext (which runs much faster
+// than real-time) the event.inputBuffer might be overwrite again before onaudioprocess ever get chance to be called.
+// We carefully arrange the renderLengthInFrames and bufferSize to have exactly the same value to avoid this issue.
+var renderLengthInFrames = 512;
+var bufferSize = 512;
+
+var context;
+
+function createBuffer(context, length) {
+    var audioBuffer = context.createBuffer(2, length, sampleRate);
+    var n = audioBuffer.length;
+    var dataL = audioBuffer.getChannelData(0);
+    var dataR = audioBuffer.getChannelData(1);
+
+    for (var i = 0; i < n; ++i) {
+        dataL[i] = -1;
+        dataR[i] = 1;
+    }
+
+    return audioBuffer;
+}
+
+function processAudioData(event) {
+    buffer = event.outputBuffer;
+    if (buffer.numberOfChannels != outputChannels)
+        testFailed("numberOfOutputChannels doesn't match!");
+
+    if (buffer.length != bufferSize)
+        testFailed("numberOfOutputChannels doesn't match!");
+
+    buffer = event.inputBuffer;
+    var bufferDataL = buffer.getChannelData(0);
+    var bufferDataR = buffer.getChannelData(1);
+    
+    var success = true;
+    // Go through every sample and make sure it's all -1 for the left-channel, and all +1 for the right-channel.
+    for (var i = 0; i < buffer.length; ++i) {
+        if (bufferDataL[i] != -1 || bufferDataR[i] != 1) {
+            success = false;
+            break;
+        }
+    }
+
+    if (success) {
+        testPassed("onaudioprocess was called with correct data.");
+    } else {
+        testFailed("onaudioprocess was called with wrong data.");
+    }
+}
+
+function doBufferSizeTest(size) {
+    try {
+        var jsnode = context.createJavaScriptNode(size, 1, 1);
+        testPassed("Successfully created JavaScriptAudioNode with bufferSize = " + size + ".");
+    } catch(e) {
+        testFailed("Failed to create JavaScriptAudioNode with bufferSize = " + size + ".");
+    }
+}
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    window.jsTestIsAsync = true;
+
+    // Create offline audio context.
+    context = new webkitAudioContext(2, renderLengthInFrames, sampleRate);
+
+    try {
+        var jsnode = context.createJavaScriptNode(512, 1, 0);
+        testFailed("Exception should be thrown for illegal numberOfOutputChannels.");
+    } catch(e) {
+        testPassed("Exception was thrown for illegal numberOfOutputChannels.");
+    }
+
+    try {
+        var jsnode = context.createJavaScriptNode(511, 1, 1);
+        testFailed("Exception should be thrown for illegal bufferSize.");
+    } catch(e) {
+        testPassed("Exception was thrown for illegal bufferSize.");
+    }
+
+    doBufferSizeTest(256);
+    doBufferSizeTest(512);
+    doBufferSizeTest(1024);
+    doBufferSizeTest(2048);
+    doBufferSizeTest(4096);
+    doBufferSizeTest(8192);
+    doBufferSizeTest(16384);
+ 
+    var sourceBuffer = createBuffer(context, renderLengthInFrames);
+
+    var bufferSource = context.createBufferSource();
+    bufferSource.buffer = sourceBuffer;
+
+    var jsnode = context.createJavaScriptNode(bufferSize, 2, outputChannels);
+
+    bufferSource.connect(jsnode);
+    jsnode.connect(context.destination);
+    jsnode.onaudioprocess = processAudioData;
+
+    bufferSource.noteOn(0);
+    context.oncomplete = finishJSTest;
+    context.startRendering();
+}
+
+runTest();
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
