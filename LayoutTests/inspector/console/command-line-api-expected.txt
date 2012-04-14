@@ -5,5 +5,5 @@ $3 = undefined
 keys([3,4]).toString() = "0,1"
 values([3,4]).toString() = "3,4"
 $('foo').toString() = "[object HTMLParagraphElement]"
-$$('p#foo').toString() = TypeError: Type error
+$$('p#foo').toString() = "[object NodeList]"
 

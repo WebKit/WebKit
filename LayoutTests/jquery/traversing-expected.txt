@@ -1,10 +1,2 @@
-CONSOLE MESSAGE: line 900: Test not(Array) died, exception and test follows
-CONSOLE MESSAGE: line 901: TypeError: Type error
-CONSOLE MESSAGE: line 902: function () {
-	expect(2);
-
-	equals( jQuery("#main > p#ap > a").not(document.getElementById("google")).length, 2, "not(DOMElement)" );
-	equals( jQuery("p").not(document.getElementsByTagName("p")).length, 0, "not(Array-like DOM collection)" );
-}
-ALERT: 197 tests of 198 passed, 1 failed.
+ALERT: 198 tests of 198 passed, 0 failed.
 

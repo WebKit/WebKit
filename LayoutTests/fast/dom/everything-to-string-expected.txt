@@ -2,4 +2,4 @@ Test for bug 8131: Some properties and methods of window and document objects ca
 
 Should say SUCCESS:
 
-FAILURE (document.childNodes):undefined
+SUCCESS

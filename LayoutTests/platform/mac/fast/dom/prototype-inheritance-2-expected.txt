@@ -3,7 +3,7 @@ Make sure prototypes are set up using the window a property came from, instead o
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS Array from inner.document.forms.testForm.__proto__.__proto__
+PASS Array from inner.document.forms.testForm.0.ownerDocument.defaultView.console.profiles
 PASS Attr from inner.document.forms.testForm.0.attributes.0
 PASS AttrConstructor from inner.document.forms.testForm.0.attributes.0.constructor
 PASS AttrPrototype from inner.document.forms.testForm.0.attributes.0.__proto__

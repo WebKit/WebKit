@@ -1852,12 +1852,12 @@ sub GenerateNamedConstructorCallback
 
     if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
         push(@implContent, <<END);
-WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, V8${implClassName}::derefObject, V8${implClassName}::toActiveDOMObject, 0, 0 };
+WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, V8${implClassName}::derefObject, V8${implClassName}::toActiveDOMObject, 0 };
 
 END
     } else {
         push(@implContent, <<END);
-WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, 0, 0, 0, 0 };
+WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, 0, 0, 0 };
 
 END
     }
@@ -2314,14 +2314,8 @@ sub GenerateImplementation
     }
     push(@implContentDecls, "namespace WebCore {\n\n");
     my $parentClassInfo = $parentClass ? "&${parentClass}::info" : "0";
-
-    my $isArrayClass = $dataNode->extendedAttributes->{"ArrayClass"} ? "1" : "0";
-    if ($parentClass && $isArrayClass ne "0") {
-        die "[ArrayClass] and parent interfaces are mutually exclusive";
-    }
-    push(@implContentDecls, "WrapperTypeInfo ${className}::info = { ${className}::GetTemplate, ${className}::derefObject, $toActive, $parentClassInfo, $isArrayClass };\n\n");
+    push(@implContentDecls, "WrapperTypeInfo ${className}::info = { ${className}::GetTemplate, ${className}::derefObject, ${toActive}, ${parentClassInfo} };\n\n");   
     push(@implContentDecls, "namespace ${interfaceName}V8Internal {\n\n");
-
     push(@implContentDecls, "template <typename T> void V8_USE(T) { }\n\n");
 
     my $hasConstructors = 0;

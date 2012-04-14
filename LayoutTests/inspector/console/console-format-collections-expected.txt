@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 15: 
+CONSOLE MESSAGE: line 15: [object NodeList]
 CONSOLE MESSAGE: line 19: [object HTMLCollection]
 CONSOLE MESSAGE: line 23: [object HTMLOptionsCollection]
 CONSOLE MESSAGE: line 27: [object HTMLAllCollection]
 CONSOLE MESSAGE: line 31: [object HTMLCollection]
-CONSOLE MESSAGE: line 35: 
+CONSOLE MESSAGE: line 35: [object NodeList]
 CONSOLE MESSAGE: line 41: 1,2,
 CONSOLE MESSAGE: line 44: [object Object]
 CONSOLE MESSAGE: line 51: [object Arguments]

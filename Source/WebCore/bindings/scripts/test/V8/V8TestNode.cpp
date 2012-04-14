@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8TestNode::info = { V8TestNode::GetTemplate, V8TestNode::derefObject, 0, &V8Node::info, 0 };
+WrapperTypeInfo V8TestNode::info = { V8TestNode::GetTemplate, V8TestNode::derefObject, 0, &V8Node::info };
 
 namespace TestNodeV8Internal {
 
