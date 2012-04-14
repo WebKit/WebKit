@@ -180,7 +180,7 @@ CCLayerTreeHost::RecreateResult CCLayerTreeHost::recreateContext()
 void CCLayerTreeHost::deleteContentsTexturesOnImplThread(TextureAllocator* allocator)
 {
     ASSERT(CCProxy::isImplThread());
-    if (m_contentsTextureManager)
+    if (m_layerRendererInitialized)
         m_contentsTextureManager->evictAndDeleteAllTextures(allocator);
 }
 
@@ -369,12 +369,6 @@ void CCLayerTreeHost::setVisible(bool visible)
 
     m_visible = visible;
 
-    if (!visible && m_layerRendererInitialized) {
-        // Drop all unprotected textures.
-        m_contentsTextureManager->reduceMemoryToLimit(0);
-        m_contentsTextureManager->unprotectAllTextures();
-    }
-
     // Tells the proxy that visibility state has changed. This will in turn call
     // CCLayerTreeHost::didBecomeInvisibleOnImplThread on the appropriate thread, for
     // the case where !visible.
@@ -387,12 +381,17 @@ void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostIm
     if (!m_layerRendererInitialized)
         return;
 
-    if (m_proxy->layerRendererCapabilities().contextHasCachedFrontBuffer)
-        contentsTextureManager()->evictAndDeleteAllTextures(hostImpl->contentsTextureAllocator());
-    else {
-        contentsTextureManager()->reduceMemoryToLimit(m_contentsTextureManager->preferredMemoryLimitBytes());
-        contentsTextureManager()->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
+    if (m_proxy->layerRendererCapabilities().contextHasCachedFrontBuffer) {
+        // Unprotect and delete all textures.
+        m_contentsTextureManager->unprotectAllTextures();
+        m_contentsTextureManager->reduceMemoryToLimit(0);
+    } else {
+        // Delete all unprotected textures, and only save textures that fit in the preferred memory limit.
+        m_contentsTextureManager->reduceMemoryToLimit(0);
+        m_contentsTextureManager->unprotectAllTextures();
+        m_contentsTextureManager->reduceMemoryToLimit(m_contentsTextureManager->preferredMemoryLimitBytes());
     }
+    m_contentsTextureManager->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
 
     hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->releaseRootLayer()));
 
