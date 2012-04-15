@@ -342,7 +342,7 @@ void RenderMediaVolumeSliderContainer::layout()
 
     LayoutStateDisabler layoutStateDisabler(view());
 
-    LayoutPoint offset = theme()->volumeSliderOffsetFromMuteButton(buttonBox, size());
+    IntPoint offset = theme()->volumeSliderOffsetFromMuteButton(buttonBox, pixelSnappedSize());
     setX(offset.x() + buttonBox->offsetLeft());
     setY(offset.y() + buttonBox->offsetTop());
 }

@@ -103,7 +103,7 @@ void CalendarPickerElement::openPopup()
         return;
     if (!document()->view())
         return;
-    IntRect elementRectInRootView = document()->view()->contentsToRootView(hostInput()->getRect());
+    IntRect elementRectInRootView = document()->view()->contentsToRootView(hostInput()->getPixelSnappedRect());
     m_popup = chrome->client()->openPagePopup(this, elementRectInRootView);
 }
 
