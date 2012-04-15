@@ -228,7 +228,7 @@
                     {
                       "name": "Chromium Win Release", "type": "Build", "builddir": "chromium-win-release",
                       "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
-                      "triggers": ["chromium-win-release-tests"],
+                      "triggers": ["chromium-win-release-tests", "chromium-win-perf-tests"],
                       "slavenames": ["google-windows-1"]
                     },
                     {
@@ -237,14 +237,14 @@
                       "slavenames": ["google-windows-2"]
                     },
                     {
-                      "name": "Chromium Win Release (Perf)", "type": "BuildAndPerfTest", "builddir": "chromium-win-perf-tests",
+                      "name": "Chromium Win Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "chromium-win-perf-tests",
                       "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-windows-perf"]
                     },
                     {
                       "name": "Chromium Mac Release", "type": "Build", "builddir": "chromium-mac-release",
                       "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
-                      "triggers": ["chromium-mac-release-tests"],
+                      "triggers": ["chromium-mac-release-tests", "chromium-mac-perf-tests"],
                       "slavenames": ["google-mac-1", "google-mac-3"]
                     },
                     {
@@ -253,14 +253,14 @@
                       "slavenames": ["google-mac-2", "google-mac-4"]
                     },
                     {
-                      "name": "Chromium Mac Release (Perf)", "type": "BuildAndPerfTest", "builddir": "chromium-mac-perf-tests",
+                      "name": "Chromium Mac Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "chromium-mac-perf-tests",
                       "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-mac-perf"]
                     },
                     {
                       "name": "Chromium Linux Release", "type": "Build", "builddir": "chromium-linux-release",
                       "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
-                      "triggers": ["chromium-linux-release-tests"],
+                      "triggers": ["chromium-linux-release-tests", "chromium-linux-perf-tests"],
                       "slavenames": ["google-linux-1"]
                     },
                     {
@@ -269,7 +269,7 @@
                       "slavenames": ["google-linux-2"]
                     },
                     {
-                      "name": "Chromium Linux Release (Perf)", "type": "BuildAndPerfTest", "builddir": "chromium-linux-perf-tests",
+                      "name": "Chromium Linux Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "chromium-linux-perf-tests",
                       "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-linux-perf"]
                     },
@@ -311,9 +311,7 @@
                                        "Qt Linux 64-bit Release (WebKit2 Perf)", "Qt Linux ARMv7 Release",
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release",
                                        "Qt Linux MIPS Release", "Qt Linux SH4 Release",
-                                       "Chromium Win Release", "Chromium Win Release (Perf)",
-                                       "Chromium Mac Release", "Chromium Mac Release (Perf)",
-                                       "Chromium Linux Release", "Chromium Linux Release (Perf)",
+                                       "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
                                        "Chromium Linux Release (Grid Layout)", "Chromium Android Release",
                                        "WinCairo Release", "WinCE Release (Build)", "EFL Linux Release", "EFL Linux Debug"]
                     },
@@ -365,11 +363,20 @@
                     { "type": "Triggerable", "name": "chromium-win-release-tests",
                       "builderNames": ["Chromium Win Release (Tests)"]
                     },
+                    { "type": "Triggerable", "name": "chromium-win-perf-tests",
+                      "builderNames": ["Chromium Win Release (Perf)"]
+                    },
                     { "type": "Triggerable", "name": "chromium-mac-release-tests",
                       "builderNames": ["Chromium Mac Release (Tests)"]
                     },
+                    { "type": "Triggerable", "name": "chromium-mac-perf-tests",
+                      "builderNames": ["Chromium Mac Release (Perf)"]
+                    },
                     { "type": "Triggerable", "name": "chromium-linux-release-tests",
                       "builderNames": ["Chromium Linux Release (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "chromium-linux-perf-tests",
+                      "builderNames": ["Chromium Linux Release (Perf)"]
                     },
                     { "type": "Triggerable", "name": "efl-linux-debug",
                       "builderNames": ["EFL Linux Debug"]
