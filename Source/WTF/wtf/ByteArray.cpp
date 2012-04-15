@@ -32,6 +32,9 @@ namespace WTF {
 
 PassRefPtr<ByteArray> ByteArray::create(size_t size)
 {
+    if (size > (std::numeric_limits<size_t>::max() - OBJECT_OFFSETOF(ByteArray, m_data)))
+        CRASH();
+
     unsigned char* buffer = new unsigned char[size + OBJECT_OFFSETOF(ByteArray, m_data)];
     ASSERT((reinterpret_cast<size_t>(buffer) & 3) == 0);
     return adoptRef(new (NotNull, buffer) ByteArray(size));

@@ -1,3 +1,15 @@
+2012-04-14  Sam Weinig  <sam@webkit.org>
+
+        Harden WTF::ByteArray::create()
+        https://bugs.webkit.org/show_bug.cgi?id=83318
+
+        Reviewed by Maciej Stachowiak.
+
+        * wtf/ByteArray.cpp:
+        (WTF::ByteArray::create):
+        Add overflow check. I don't believe there is anyway to trigger this currently,
+        hence no tests, so this should be considered hardening.
+
 2012-04-12  Benjamin Poulain  <bpoulain@apple.com>
 
         Inline StringImpl::find(UChar, ...)
