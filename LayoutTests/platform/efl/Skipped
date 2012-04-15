@@ -1226,7 +1226,6 @@ fast/loader/willSendRequest-null-for-preload.html
 
 # No suitable baselines found on other ports
 fast/dom/Window/window-property-descriptors.html
-fast/regions/flow-content-basic.html
 
 # EFL-specific failing canvas/philip tests.
 canvas/philip/tests/2d.path.closePath.nextpoint.html
@@ -1375,8 +1374,6 @@ fast/multicol/client-rects.html
 fast/multicol/single-line.html
 fast/overflow/overflow-y-scroll.html
 fast/overflow/scrollbar-restored.html
-fast/regions/overflow-in-variable-width-regions.html
-fast/regions/overflow-rtl-in-variable-width-regions.html
 fast/repaint/selection-clear.html
 fast/repaint/table-cell-overflow.html
 fast/repaint/text-emphasis-h.html
@@ -1741,10 +1738,6 @@ mathml/presentation/row-alignment.xhtml
 # BUG: there should be no scrollbars.
 mathml/presentation/style.xhtml
 
-# BUG: context is overflowing the clipped regions
-fast/regions/overflow-size-change-in-variable-width-regions.html
-fast/regions/overflow-size-change-with-stacking-context.html
-
 # BUG: the first frame is not at the right position.
 media/video-frame-accurate-seek.html
 
@@ -1789,11 +1782,6 @@ fast/css-grid-layout
 
 # <style scoped> is not yet enabled. http://webkit.org/b/49142
 fast/css/style-scoped
-# CSS Regions tests for region styling and scoped styles
-fast/regions/style-scoped-in-flow-override-container-style.html
-fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html
-fast/regions/style-scoped-in-flow-override-region-styling.html
-fast/regions/style-scoped-in-flow.html
 
 # ENABLE(SHADOW_DOM) is disabled.
 fast/dom/shadow/content-element-api.html
@@ -1820,6 +1808,10 @@ css3/filters
 # CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
 fast/css/image-set-parsing.html
 fast/css/image-set-parsing-invalid.html
+
+# CSS Regions support not yet enabled.
+# https://bugs.webkit.org/show_bug.cgi?id=57312
+fast/regions
 
 # ENABLE_INPUT_TYPE_* are not enabled.
 # https://bugs.webkit.org/show_bug.cgi?id=29359
@@ -1954,72 +1946,6 @@ fast/parser/nested-fragment-parser-crash.html
 fast/preloader/first-base-tag-scanned-wins.html
 fast/preloader/first-base-tag-wins.html
 fast/preloader/understands-base-tag.html
-fast/regions/bottom-overflow-out-of-first-region.html
-fast/regions/content-webkit-from-flow-parsing.html
-fast/regions/element-region-overflow-state-vertical-rl.html
-fast/regions/element-region-overflow-state.html
-fast/regions/float-pushed-width-change.html
-fast/regions/floats-basic-in-variable-width-regions.html
-fast/regions/flow-content-basic-vertical-rl.html
-fast/regions/flow-content-basic-vertical.html
-fast/regions/flowed-content-bounding-client-rect-horizontal-bt.html
-fast/regions/flowed-content-bounding-client-rect-vertical-rl.html
-fast/regions/flowed-content-bounding-client-rect-vertical.html
-fast/regions/flowed-content-bounding-client-rect.html
-fast/regions/flowed-content-transform-bounding-client-rect.html
-fast/regions/flows-dependency-dynamic-remove.html
-fast/regions/flows-dependency-same-flow.html
-fast/regions/hit-test-float.html
-fast/regions/hit-test-region.html
-fast/regions/multiple-directionality-changes-in-variable-width-regions.html
-fast/regions/no-split-line-box.html
-fast/regions/overflow-in-uniform-regions-dynamic.html
-fast/regions/overflow-moving-below-floats-in-variable-width-regions.html
-fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html
-fast/regions/overflow-size-change-with-stacking-context-rtl.html
-fast/regions/parsing-region-style-rule.html
-fast/regions/percentage-margins-mixed-ltr-dominant-regions.html
-fast/regions/percentage-margins-mixed-rtl-dominant-regions.html
-fast/regions/percentage-margins-rtl-variable-width-regions.html
-fast/regions/percentage-margins-variable-width-regions.html
-fast/regions/position-writing-modes-in-variable-width-regions.html
-fast/regions/positioned-objects-in-regions.html
-fast/regions/positioned-objects-in-rtl-regions.html
-fast/regions/positioned-objects-inline-static-in-regions.html
-fast/regions/positioned-objects-inline-static-in-rtl-regions.html
-fast/regions/positioned-objects-inline-static-spanning-regions-rtl.html
-fast/regions/positioned-objects-inline-static-spanning-regions.html
-fast/regions/positioned-objects-perpendicular-flows-in-regions.html
-fast/regions/positioned-objects-spanning-regions.html
-fast/regions/region-element-display-restriction.html
-fast/regions/region-element-dynamic-attach-flow.html
-fast/regions/region-overflow-auto-overflow-hidden.html
-fast/regions/region-overflow-auto-overflow-visible.html
-fast/regions/region-overflow-break.html
-fast/regions/text-region-breaks.html
-fast/regions/text-region-split-after-resize.html
-fast/regions/text-region-split-horizontal-bt.html
-fast/regions/text-region-split-small-pagination.html
-fast/regions/text-region-split-vertical-rl.html
-fast/regions/text-region-split-vertical.html
-fast/regions/text-region-split.html
-fast/regions/top-overflow-out-of-second-region.html
-fast/regions/webkit-flow-double-pagination-float-push.html
-fast/regions/webkit-flow-float-pushed-to-last-region.html
-fast/regions/webkit-flow-float-unable-to-push.html
-fast/regions/webkit-flow-floats-inside-regions-bounds.html
-fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl.html
-fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical.html
-fast/regions/webkit-flow-inlines-inside-regions-bounds.html
-fast/regions/webkit-flow-parsing.html
-fast/regions/webkit-named-flow-existing-flow.html
-fast/regions/webkit-named-flow-flow-added.html
-fast/regions/webkit-named-flow-modified-flow.html
-fast/regions/webkit-named-flow-non-existing-flow.html
-fast/regions/webkit-named-flow-overflow.html
-fast/regions/webkit-named-flow-removed-flow.html
-fast/regions/webkit-region-overflow-parsing.html
-fast/regions/webkit-region-rule.html
 fast/repaint/block-layout-inline-children-replaced.html
 fast/repaint/japanese-rl-selection-clear.html
 fast/repaint/japanese-rl-selection-repaint-in-regions.html
@@ -2565,12 +2491,6 @@ fast/multicol/pagination-v-horizontal-bt.html
 fast/multicol/pagination-v-horizontal-tb.html
 fast/multicol/pagination-v-vertical-lr.html
 fast/multicol/pagination-v-vertical-rl.html
-fast/regions/positioned-objects-clipped-spanning-regions.html
-fast/regions/region-style-block-background-color.html
-fast/regions/region-style-block-background-color2.html
-fast/regions/region-style-image-background-color.html
-fast/regions/region-style-inline-background-color.html
-fast/regions/render-region-custom-style-mark.html
 fast/text/unicode-variation-selector.html
 http/tests/cache/history-only-cached-subresource-loads.html
 http/tests/cache/cancel-during-revalidation-succeeded.html
