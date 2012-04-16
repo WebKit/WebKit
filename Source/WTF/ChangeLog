@@ -1,3 +1,20 @@
+2012-04-16  Nico Weber  <thakis@chromium.org>
+
+        Make NullPtr.h compile with clang -std=c++11 and libstdc++4.2
+        https://bugs.webkit.org/show_bug.cgi?id=83999
+
+        Reviewed by Sam Weinig.
+
+        Before this patch, NullPtr.h assumed that a working |nullptr| implied
+        a working |std::nullptr_t| as well. With clang and libstdc++4.2, this
+        is not true.
+
+        I tested (-stdlib=libc++, -stdlib=libstdc++) x (-std=c++11, -std=c++03)
+        with clang.
+
+        * wtf/NullPtr.h:
+        (std):
+
 2012-04-14  Sam Weinig  <sam@webkit.org>
 
         Harden WTF::ByteArray::create()
