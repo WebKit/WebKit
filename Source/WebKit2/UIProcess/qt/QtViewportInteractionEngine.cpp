@@ -94,17 +94,17 @@ private:
 
 inline qreal QtViewportInteractionEngine::cssScaleFromItem(qreal itemScale)
 {
-    return itemScale / m_constraints.devicePixelRatio;
+    return itemScale / m_devicePixelRatio;
 }
 
 inline qreal QtViewportInteractionEngine::itemScaleFromCSS(qreal cssScale)
 {
-    return cssScale * m_constraints.devicePixelRatio;
+    return cssScale * m_devicePixelRatio;
 }
 
 inline qreal QtViewportInteractionEngine::itemCoordFromCSS(qreal value)
 {
-    return value * m_constraints.devicePixelRatio;
+    return value * m_devicePixelRatio;
 }
 
 inline QRectF QtViewportInteractionEngine::itemRectFromCSS(const QRectF& cssRect)
@@ -147,15 +147,15 @@ QtViewportInteractionEngine::~QtViewportInteractionEngine()
 
 qreal QtViewportInteractionEngine::innerBoundedCSSScale(qreal cssScale)
 {
-    return qBound(m_constraints.minimumScale, cssScale, m_constraints.maximumScale);
+    return qBound(m_minimumScale, cssScale, m_maximumScale);
 }
 
 qreal QtViewportInteractionEngine::outerBoundedCSSScale(qreal cssScale)
 {
-    if (m_constraints.isUserScalable) {
+    if (m_allowsUserScaling) {
         // Bounded by [0.1, 10.0] like the viewport meta code in WebCore.
-        qreal hardMin = qMax<qreal>(0.1, qreal(0.5) * m_constraints.minimumScale);
-        qreal hardMax = qMin<qreal>(10, qreal(2.0) * m_constraints.maximumScale);
+        qreal hardMin = qMax<qreal>(0.1, qreal(0.5) * m_minimumScale);
+        qreal hardMax = qMin<qreal>(10, qreal(2.0) * m_maximumScale);
         return qBound(hardMin, cssScale, hardMax);
     }
     return innerBoundedCSSScale(cssScale);
@@ -374,7 +374,7 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
     // We want to end up with the target area filling the whole width of the viewport (if possible),
     // and centralized vertically where the user requested zoom. Thus our hotspot is the center of
     // the targetArea x-wise and the requested zoom position, y-wise.
-    const QPointF hotspot = QPointF(endArea.center().x(), touchPoint.y() * m_constraints.devicePixelRatio);
+    const QPointF hotspot = QPointF(endArea.center().x(), touchPoint.y() * m_devicePixelRatio);
     const QPointF viewportHotspot = viewportRect.center();
 
     QPointF endPosition = hotspot * endItemScale - viewportHotspot;
@@ -419,31 +419,29 @@ void QtViewportInteractionEngine::reset()
 
     m_hadUserInteraction = false;
 
+    m_allowsUserScaling = false;
+    m_minimumScale = 1;
+    m_maximumScale = 1;
+    m_devicePixelRatio = 1;
+
     m_viewport->cancelFlick();
     m_scaleAnimation->stop();
     m_scaleUpdateDeferrer.clear();
     m_scrollUpdateDeferrer.clear();
 }
 
-void QtViewportInteractionEngine::applyConstraints(const Constraints& constraints)
+void QtViewportInteractionEngine::setCSSScaleBounds(qreal minimum, qreal maximum)
 {
-    // We always have to apply the constrains even if they didn't change, as
-    // the initial scale might need to be applied.
+    m_minimumScale = minimum;
+    m_maximumScale = maximum;
+}
 
-    reset();
-
+void QtViewportInteractionEngine::setCSSScale(qreal scale)
+{
     ViewportUpdateDeferrer guard(this);
 
-    m_constraints = constraints;
-
-    if (!m_hadUserInteraction) {
-        qreal initialScale = innerBoundedCSSScale(m_constraints.initialScale);
-        m_content->setContentsScale(itemScaleFromCSS(initialScale));
-    }
-
-    // If the web app successively changes the viewport on purpose
-    // it wants to be in control and we should disable animations.
-    ensureContentWithinViewportBoundary(/* immediate */ true);
+    qreal newScale = innerBoundedCSSScale(scale);
+    m_content->setContentsScale(itemScaleFromCSS(newScale));
 }
 
 qreal QtViewportInteractionEngine::currentCSSScale()
@@ -523,7 +521,7 @@ bool QtViewportInteractionEngine::pinchGestureActive() const
 
 void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenterInViewportCoordinates)
 {
-    if (!m_constraints.isUserScalable)
+    if (!m_allowsUserScaling)
         return;
 
     m_hadUserInteraction = true;
@@ -541,7 +539,7 @@ void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinch
 {
     ASSERT(m_suspendCount);
 
-    if (!m_constraints.isUserScalable)
+    if (!m_allowsUserScaling)
         return;
 
     //  Changes of the center position should move the page even if the zoom factor
@@ -563,7 +561,7 @@ void QtViewportInteractionEngine::pinchGestureEnded()
 {
     ASSERT(m_suspendCount);
 
-    if (!m_constraints.isUserScalable)
+    if (!m_allowsUserScaling)
         return;
 
     m_pinchStartScale = -1;

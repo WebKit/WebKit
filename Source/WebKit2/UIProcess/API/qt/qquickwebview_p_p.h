@@ -36,6 +36,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
+#include <WebCore/ViewportArguments.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -159,6 +160,8 @@ protected:
     QDeclarativeComponent* proxyAuthenticationDialog;
     QDeclarativeComponent* filePicker;
     QDeclarativeComponent* databaseQuotaDialog;
+
+    WebCore::ViewportAttributes attributes;
 
     bool m_useDefaultContentItemSize;
     bool m_navigatorQtObjectEnabled;

@@ -481,6 +481,12 @@ void QQuickWebViewPrivate::didReceiveMessageFromNavigatorQtObject(const String& 
 QQuickWebViewLegacyPrivate::QQuickWebViewLegacyPrivate(QQuickWebView* viewport)
     : QQuickWebViewPrivate(viewport)
 {
+    // Default values for the Legacy view.
+    attributes.devicePixelRatio = 1;
+    attributes.initialScale = 1;
+    attributes.minimumScale = 1;
+    attributes.maximumScale = 1;
+    attributes.userScalable = 0;
 }
 
 void QQuickWebViewLegacyPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
@@ -614,29 +620,35 @@ void QQuickWebViewFlickablePrivate::didFinishFirstNonEmptyLayout()
 {
 }
 
-void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::ViewportAttributes& attributes)
+void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::ViewportAttributes& newAttributes)
 {
     Q_Q(QQuickWebView);
 
     QSize viewportSize = q->boundingRect().size().toSize();
 
     // FIXME: Revise these when implementing fit-to-width.
-    WebCore::ViewportAttributes attr = attributes;
+    WebCore::ViewportAttributes attr = newAttributes;
     WebCore::restrictMinimumScaleFactorToViewportSize(attr, viewportSize);
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attr);
 
-    QtViewportInteractionEngine::Constraints newConstraints;
-    newConstraints.initialScale = attr.initialScale;
-    newConstraints.minimumScale = attr.minimumScale;
-    newConstraints.maximumScale = attr.maximumScale;
-    newConstraints.devicePixelRatio = attr.devicePixelRatio;
-    newConstraints.isUserScalable = !!attr.userScalable;
-    newConstraints.layoutSize = attr.layoutSize;
+    // FIXME: Resetting here can reset more than needed. For instance it will end deferrers.
+    // This needs to be revised at some point.
+    interactionEngine->reset();
 
+    interactionEngine->setContentToDevicePixelRatio(attr.devicePixelRatio);
+
+    interactionEngine->setAllowsUserScaling(!!attr.userScalable);
+    interactionEngine->setCSSScaleBounds(attr.minimumScale, attr.maximumScale);
+
+    if (!interactionEngine->hadUserInteraction() && !pageIsSuspended)
+        interactionEngine->setCSSScale(attr.initialScale);
+
+    this->attributes = attr;
     q->experimental()->viewportInfo()->didUpdateViewportConstraints();
 
-    // FIXME: If suspended we should do this on resume.
-    interactionEngine->applyConstraints(newConstraints);
+    // If the web app successively changes the viewport on purpose
+    // it wants to be in control and we should disable animations.
+    interactionEngine->ensureContentWithinViewportBoundary(/*immediate*/ true);
 }
 
 void QQuickWebViewFlickablePrivate::updateViewportSize()

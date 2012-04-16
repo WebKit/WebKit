@@ -49,26 +49,19 @@ public:
     QtViewportInteractionEngine(QQuickWebView*, QQuickWebPage*);
     ~QtViewportInteractionEngine();
 
-    struct Constraints {
-        Constraints()
-            : initialScale(1.0)
-            , minimumScale(0.25)
-            , maximumScale(1.8)
-            , devicePixelRatio(1.0)
-            , isUserScalable(true)
-            , layoutSize(QSize())
-        { }
-
-        qreal initialScale;
-        qreal minimumScale;
-        qreal maximumScale;
-        qreal devicePixelRatio;
-        bool isUserScalable;
-        QSize layoutSize;
-    };
-
     void reset();
-    void applyConstraints(const Constraints&);
+
+    bool hadUserInteraction() const { return m_hadUserInteraction; }
+
+    void setCSSScaleBounds(qreal minimum, qreal maximum);
+    void setCSSScale(qreal);
+
+    qreal currentCSSScale();
+
+    bool ensureContentWithinViewportBoundary(bool immediate = false);
+
+    void setAllowsUserScaling(bool allow) { m_allowsUserScaling = allow; }
+    void setContentToDevicePixelRatio(qreal ratio) {m_devicePixelRatio = ratio; }
 
     void setItemRectVisible(const QRectF&);
     bool animateItemRectVisible(const QRectF&);
@@ -98,9 +91,6 @@ public:
     void zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea);
     void focusEditableArea(const QRectF& caretArea, const QRectF& targetArea);
 
-    const Constraints& constraints() const { return m_constraints; }
-    qreal currentCSSScale();
-
 Q_SIGNALS:
     void contentSuspendRequested();
     void contentResumeRequested();
@@ -124,6 +114,10 @@ private Q_SLOTS:
 
 private:
     friend class ViewportUpdateDeferrer;
+    friend class QWebViewportInfo;
+
+    QQuickWebView* const m_viewport;
+    QQuickWebPage* const m_content;
 
     qreal cssScaleFromItem(qreal);
     qreal itemScaleFromCSS(qreal);
@@ -133,15 +127,16 @@ private:
     qreal innerBoundedCSSScale(qreal);
     qreal outerBoundedCSSScale(qreal);
 
+    bool m_allowsUserScaling;
+    qreal m_minimumScale;
+    qreal m_maximumScale;
+    qreal m_devicePixelRatio;
+
+    QSize m_layoutSize;
+
     QRectF computePosRangeForItemAtScale(qreal itemScale) const;
-    bool ensureContentWithinViewportBoundary(bool immediate = false);
 
     void scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale);
-
-    QQuickWebView* const m_viewport;
-    QQuickWebPage* const m_content;
-
-    Constraints m_constraints;
 
     int m_suspendCount;
     bool m_hasSuspendedContent;
@@ -165,14 +160,6 @@ private:
     QPointF m_lastScrollPosition;
     qreal m_pinchStartScale;
 };
-
-inline bool operator==(const QtViewportInteractionEngine::Constraints& a, const QtViewportInteractionEngine::Constraints& b)
-{
-    return a.initialScale == b.initialScale
-            && a.minimumScale == b.minimumScale
-            && a.maximumScale == b.maximumScale
-            && a.isUserScalable == b.isUserScalable;
-}
 
 }
 
