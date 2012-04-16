@@ -526,8 +526,8 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         info("Create new window (F9) was pressed.\n");
         Eina_Rectangle geometry = {0, 0, 0, 0};
         browserCreate("http://www.google.com",
-                       app->theme, app->userAgent, geometry, app-> backingStore,
-                       NULL, app->isFlattening, 0, NULL);
+                       app->theme, app->userAgent, geometry, NULL,
+                       app->backingStore, app->isFlattening, 0, NULL);
     } else if (!strcmp(ev->key, "g") && ctrlPressed ) {
         Evas_Coord x, y, w, h;
         Evas_Object *frame = ewk_view_frame_main_get(obj);

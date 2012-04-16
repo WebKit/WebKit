@@ -1,3 +1,15 @@
+2012-04-16  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL] EWebLaucher : Fix wrong parameter order in function call for multiple windows.
+        https://bugs.webkit.org/show_bug.cgi?id=83862
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        EWebLauncher creates multiple windows, like multiple tabs when pressing F9 key.
+        It doesn't work properly because of wrong parameter order in function call.
+
+        * EWebLauncher/main.c:
+
 2012-04-16  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK gardening.
