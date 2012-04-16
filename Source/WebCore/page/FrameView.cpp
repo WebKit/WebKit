@@ -976,7 +976,8 @@ void FrameView::layout(bool allowSubtree)
         if (document->styleSelector()->affectedByViewportChange()) {
             document->styleSelectorChanged(RecalcStyleImmediately);
             InspectorInstrumentation::mediaQueryResultChanged(document);
-        }
+        } else
+            document->evaluateMediaQueryList();
 
         // Always ensure our style info is up-to-date. This can happen in situations where
         // the layout beats any sort of style recalc update that needs to occur.
