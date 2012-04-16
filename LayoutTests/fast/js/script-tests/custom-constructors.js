@@ -53,5 +53,5 @@ shouldBeEqualToString("new Audio().tagName", "AUDIO");
 
 shouldBeEqualToString("new Audio().src", "");
 shouldBeEqualToString("new Audio().preload", "auto");
-shouldBeEqualToString("new Audio('http://0.0.0.0/someurl').src", "http://0.0.0.0/someurl");
-shouldBeEqualToString("new Audio('http://0.0.0.0/someurl').preload", "auto");
+shouldBeEqualToString("new Audio('http://127.0.0.1/someurl').src", "http://127.0.0.1/someurl");
+shouldBeEqualToString("new Audio('http://127.0.0.1/someurl').preload", "auto");
