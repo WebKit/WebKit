@@ -2442,6 +2442,7 @@ void WebPageProxy::printFrame(uint64_t frameID)
 
     m_uiClient.printFrame(this, frame);
 
+    endPrinting(); // Send a message synchronously while m_isPerformingDOMPrintOperation is still true.
     m_isPerformingDOMPrintOperation = false;
 }
 

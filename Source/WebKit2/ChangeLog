@@ -1,3 +1,15 @@
+2012-04-16  Alexey Proskuryakov  <ap@apple.com>
+
+        EndPrinting message should be sent synchronously when printing was initiated from DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=84049
+        <rdar://problem/11096575>
+
+        Reviewed by Oliver Hunt.
+
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::printFrame): When printing is
+        initiated by WebProcess, all messages from UI process are sent synchronously to
+        avoid being queued, and so should EndPrinting.
+
 2012-04-16  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11249336> and https://bugs.webkit.org/show_bug.cgi?id=84050
