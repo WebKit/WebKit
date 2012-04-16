@@ -68,13 +68,20 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         this._popoverHelper.hidePopover();
     },
 
-    // SourceFrame overrides
+    /**
+     * @param {function(?string, boolean, string)} callback
+     */
     requestContent: function(callback)
     {
-        function mycallback(mimeType, content)
+        /**
+         * @param {?string} content
+         * @param {boolean} contentEncoded
+         * @param {string} mimeType
+         */
+        function mycallback(content, contentEncoded, mimeType)
         {
             this._originalContent = content;
-            callback(mimeType, content);
+            callback(content, contentEncoded, mimeType);
         }
         this._uiSourceCode.requestContent(mycallback.bind(this));
     },

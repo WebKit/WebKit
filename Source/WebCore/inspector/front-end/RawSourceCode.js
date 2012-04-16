@@ -165,7 +165,7 @@ WebInspector.RawSourceCode.prototype = {
     _createContentProvider: function()
     {
         if (this._resource)
-            return new WebInspector.ResourceContentProvider(this._resource);
+            return this._resource;
         if (this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset)
             return new WebInspector.ScriptContentProvider(this._scripts[0]);
         return new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);
@@ -186,10 +186,11 @@ WebInspector.RawSourceCode.prototype = {
 
         /**
          * @this {WebInspector.RawSourceCode}
+         * @param {?string} content
+         * @param {boolean} contentEncoded
          * @param {string} mimeType
-         * @param {string} content
          */
-        function didRequestContent(mimeType, content)
+        function didRequestContent(content, contentEncoded, mimeType)
         {
             /**
              * @this {WebInspector.RawSourceCode}
@@ -203,7 +204,7 @@ WebInspector.RawSourceCode.prototype = {
                 var sourceMapping = new WebInspector.RawSourceCode.FormattedSourceMapping(this, uiSourceCode, mapping);
                 callback(sourceMapping);
             }
-            this._formatter.formatContent(mimeType, content, didFormatContent.bind(this));
+            this._formatter.formatContent(mimeType, content || "", didFormatContent.bind(this));
         }
         originalContentProvider.requestContent(didRequestContent.bind(this));
     },

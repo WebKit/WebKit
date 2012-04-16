@@ -128,7 +128,12 @@ WebInspector.RequestContentView.prototype = {
             return;
         this._innerViewShowRequested = true;
 
-        function callback()
+        /**
+         * @param {?string} content
+         * @param {boolean} contentEncoded
+         * @param {string} mimeType
+         */
+        function callback(content, contentEncoded, mimeType)
         {
             this._innerViewShowRequested = false;
             this.contentLoaded();

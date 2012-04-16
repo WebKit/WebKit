@@ -66,7 +66,7 @@ WebInspector.ScriptFormatter.positionToLocation = function(lineEndings, position
 WebInspector.ScriptFormatter.prototype = {
     /**
      * @param {string} mimeType
-     * @param {string} content
+     * @param {?string} content
      * @param {function(string, WebInspector.FormattedSourceMapping)} callback
      */
     formatContent: function(mimeType, content, callback)

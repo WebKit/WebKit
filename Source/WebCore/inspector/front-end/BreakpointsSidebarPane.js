@@ -74,7 +74,13 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
         var snippetElement = document.createElement("div");
         snippetElement.className = "source-text monospace";
         element.appendChild(snippetElement);
-        function didRequestContent(mimeType, content)
+
+        /**
+         * @param {?string} content
+         * @param {boolean} contentEncoded
+         * @param {string} mimeType
+         */
+        function didRequestContent(content, contentEncoded, mimeType)
         {
             var lineEndings = content.lineEndings();
             if (breakpoint.lineNumber < lineEndings.length)

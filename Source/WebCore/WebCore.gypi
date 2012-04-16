@@ -6294,6 +6294,7 @@
             'inspector/front-end/ConsoleModel.js',
             'inspector/front-end/ConsolePanel.js',
             'inspector/front-end/ConsoleView.js',
+            'inspector/front-end/ContentProvider.js',
             'inspector/front-end/ContentProviders.js',
             'inspector/front-end/ContextMenu.js',
             'inspector/front-end/CookieItemsView.js',

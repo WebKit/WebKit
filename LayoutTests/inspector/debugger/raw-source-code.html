@@ -27,6 +27,7 @@ function test()
         WebInspector.resourceTreeModel._addFrame(new WebInspector.ResourceTreeFrame(WebInspector.resourceTreeModel, null, {id: "frame-id"}));
         var request = new WebInspector.NetworkRequest(requestId, url, "http://fake.url", "frame-id", "loader-id");
         request.type = type === "document" ? WebInspector.resourceTypes.Document : WebInspector.resourceTypes.Script;
+        request.mimeType = type === "document" ? "text/html" : "text/javascript";
 
         WebInspector.networkManager._dispatcher._startNetworkRequest(request);
         if (finished)
@@ -103,7 +104,7 @@ function test()
             InspectorTest.checkRawLocation(script, 10, 0, rawSourceCode.uiLocationToRawLocation(uiSourceCode, 10, 0));
             uiSourceCode.requestContent(didRequestContent);
 
-            function didRequestContent(mimeType, content)
+            function didRequestContent(content, contentEncoded, mimeType)
             {
                 InspectorTest.assertEquals("text/javascript", mimeType);
                 InspectorTest.assertEquals("<script source>", content);
@@ -134,9 +135,9 @@ function test()
                 uiSourceCode.requestContent(didRequestContent);
             }
 
-            function didRequestContent(mimeType, content)
+            function didRequestContent(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals(mimeType, "text/html");
+                InspectorTest.assertEquals("text/html", mimeType);
                 InspectorTest.assertEquals("<resource content>", content);
 
                 rawSourceCode.addScript(script2);
@@ -159,9 +160,9 @@ function test()
             InspectorTest.assertEquals(false, uiSourceCode.isContentScript);
             uiSourceCode.requestContent(didRequestContent);
 
-            function didRequestContent(mimeType, content)
+            function didRequestContent(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals(mimeType, "text/html");
+                InspectorTest.assertEquals("text/html", mimeType);
                 InspectorTest.assertEquals("<resource content>", content);
 
                 rawSourceCode.addScript(script2);
@@ -194,9 +195,9 @@ function test()
                 uiSourceCode.requestContent(didRequestContentOneScript);
             }
 
-            function didRequestContentOneScript(mimeType, content)
+            function didRequestContentOneScript(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals(mimeType, "text/html");
+                InspectorTest.assertEquals("text/html", mimeType);
                 InspectorTest.assertEquals("  <script><script source 1></" + "script>", content);
 
                 rawSourceCode.forceUpdateSourceMapping();
@@ -212,9 +213,9 @@ function test()
                 uiSourceCode.requestContent(didRequestContentTwoScripts);
             }
 
-            function didRequestContentTwoScripts(mimeType, content)
+            function didRequestContentTwoScripts(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals(mimeType, "text/html");
+                InspectorTest.assertEquals("text/html", mimeType);
                 InspectorTest.assertEquals("  <script><script source 1></" + "script> <script><script source 2></" + "script>", content);
 
                 rawSourceCode.forceUpdateSourceMapping();
@@ -229,9 +230,9 @@ function test()
                 uiSourceCode.requestContent(didRequestContentRequest);
             }
 
-            function didRequestContentRequest(mimeType, content)
+            function didRequestContentRequest(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals(mimeType, "text/html");
+                InspectorTest.assertEquals("text/html", mimeType);
                 InspectorTest.assertEquals("<resource content>", content);
 
                 rawSourceCode.addScript(script3);
@@ -254,7 +255,7 @@ function test()
             InspectorTest.checkRawLocation(script, 2, 0, rawSourceCode.uiLocationToRawLocation(uiSourceCode, 2, 0));
             uiSourceCode.requestContent(didRequestContent);
 
-            function didRequestContent(mimeType, content)
+            function didRequestContent(content, contentEncoded, mimeType)
             {
                 InspectorTest.assertEquals("text/javascript", mimeType);
                 InspectorTest.assertEquals("<resource content>", content);
@@ -273,9 +274,9 @@ function test()
                 uiSourceCode.requestContent(didRequestFormattedContent);
             }
 
-            function didRequestFormattedContent(mimeType, content)
+            function didRequestFormattedContent(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals(mimeType, "text/javascript");
+                InspectorTest.assertEquals("text/javascript", mimeType);
                 InspectorTest.assertEquals("<formatted> <resource content>", content);
 
                 waitForUISourceCodeChangedEvent(rawSourceCode, requestNotFormattedContent);
@@ -291,7 +292,7 @@ function test()
                 uiSourceCode.requestContent(didRequestNotFormattedContent);
             }
 
-            function didRequestNotFormattedContent(mimeType, content)
+            function didRequestNotFormattedContent(content, contentEncoded, mimeType)
             {
                 InspectorTest.assertEquals("text/javascript", mimeType);
                 InspectorTest.assertEquals("<resource content>", content);

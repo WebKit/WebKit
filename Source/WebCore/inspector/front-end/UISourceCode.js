@@ -43,7 +43,7 @@ WebInspector.UISourceCode = function(id, url, contentProvider)
     this.isContentScript = false;
     this.isEditable = false;
     /**
-     * @type Array.<function(string,string)>
+     * @type Array.<function(?string,boolean,string)>
      */
     this._requestContentCallbacks = [];
 }
@@ -74,12 +74,12 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
-     * @param {function(string,string)} callback
+     * @param {function(?string,boolean,string)} callback
      */
     requestContent: function(callback)
     {
         if (this._contentLoaded) {
-            callback(this._mimeType, this._content);
+            callback(this._content, false, this._mimeType);
             return;
         }
 
@@ -197,17 +197,18 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
+     * @param {?string} content
+     * @param {boolean} contentEncoded
      * @param {string} mimeType
-     * @param {string} content
      */
-    _didRequestContent: function(mimeType, content)
+    _didRequestContent: function(content, contentEncoded, mimeType)
     {
         this._contentLoaded = true;
         this._mimeType = mimeType;
         this._content = content;
 
         for (var i = 0; i < this._requestContentCallbacks.length; ++i)
-            this._requestContentCallbacks[i](mimeType, content);
+            this._requestContentCallbacks[i](content, contentEncoded, mimeType);
         this._requestContentCallbacks = [];
     },
 
@@ -223,32 +224,3 @@ WebInspector.UISourceCode.prototype = {
 }
 
 WebInspector.UISourceCode.prototype.__proto__ = WebInspector.Object.prototype;
-
-/**
- * @interface
- */
-WebInspector.ContentProvider = function() { }
-WebInspector.ContentProvider.prototype = {
-    /**
-     * @param {function(string,string)} callback
-     */
-    requestContent: function(callback) { },
-
-    /**
-     * @param {string} query
-     * @param {boolean} caseSensitive
-     * @param {boolean} isRegex
-     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
-     */
-    searchInContent: function(query, caseSensitive, isRegex, callback) { }
-}
-
-/**
- * @constructor
- * @param {number} lineNumber
- * @param {string} lineContent
- */
-WebInspector.ContentProvider.SearchMatch = function(lineNumber, lineContent) {
-    this.lineNumber = lineNumber;
-    this.lineContent = lineContent;
-}

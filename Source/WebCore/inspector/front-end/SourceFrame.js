@@ -118,6 +118,9 @@ WebInspector.SourceFrame.prototype = {
         }
     },
 
+    /**
+     * @param {function(?string, boolean, string)} callback
+     */
     requestContent: function(callback)
     {
     },
@@ -207,12 +210,17 @@ WebInspector.SourceFrame.prototype = {
     {
     },
 
-    setContent: function(mimeType, content)
+    /**
+     * @param {?string} content
+     * @param {boolean} contentEncoded
+     * @param {string} mimeType
+     */
+    setContent: function(content, contentEncoded, mimeType)
     {
         this._textViewer.mimeType = mimeType;
 
         this._loaded = true;
-        this._textModel.setText(content);
+        this._textModel.setText(content || "");
 
         this._textViewer.beginUpdates();
 

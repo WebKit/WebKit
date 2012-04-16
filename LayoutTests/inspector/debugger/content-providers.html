@@ -27,7 +27,7 @@ function test()
             var mockScriptSource = "function foo() { return 0; }";
             var mockScript = createMockScript("foo.js", mockScriptSource);
             var contentProvider = new WebInspector.ScriptContentProvider(mockScript);
-            function didRequestContent(mimeType, content)
+            function didRequestContent(content, contentEncoded, mimeType)
             {
                 InspectorTest.assertEquals("text/javascript", mimeType);
                 InspectorTest.assertEquals(mockScriptSource, content);
@@ -44,30 +44,10 @@ function test()
             scripts.push(createMockScript("3", "function bar() { return 0; }", [1, 70, 1, 98]));
             scripts.push(createMockScript("4", "this should not appear in displayed content", [0, 20, 0, 63]));
             var contentProvider = new WebInspector.ConcatenatedScriptsContentProvider(scripts);
-            function didRequestContent(mimeType, content)
+            function didRequestContent(content, contentEncoded, mimeType)
             {
                 InspectorTest.assertEquals("text/html", mimeType);
                 InspectorTest.addResult(content);
-                next();
-            }
-            contentProvider.requestContent(didRequestContent);
-        },
-
-        function testResourceContentProvider(next)
-        {
-            var mockResourceContent = "<script>var x = 0;</" + "script>";
-            var mockResource = {
-                requestContent: function(callback)
-                {
-                    InspectorTest.addResult("Request resource content.");
-                    callback(mockResourceContent);
-                }
-            };
-            var contentProvider = new WebInspector.ResourceContentProvider(mockResource);
-            function didRequestContent(mimeType, content)
-            {
-                InspectorTest.assertEquals("text/html", mimeType);
-                InspectorTest.assertEquals(mockResourceContent, content);
                 next();
             }
             contentProvider.requestContent(didRequestContent);

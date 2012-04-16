@@ -492,7 +492,13 @@ WebInspector.ScriptsPanel.prototype = {
 
     requestVisibleScriptOutline: function()
     {
-        function contentCallback(mimeType, content)
+        
+        /**
+         * @param {?string} content
+         * @param {boolean} contentEncoded
+         * @param {string} mimeType
+         */
+        function contentCallback(content, contentEncoded, mimeType)
         {
             if (this._outlineWorker)
                 this._outlineWorker.terminate();

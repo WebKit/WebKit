@@ -10,7 +10,7 @@ function test()
         requestContent: function(callback)
         {
             InspectorTest.addResult("Content is requested from SourceCodeProvider.");
-            setTimeout(callback.bind(null, "text/javascript", "var x = 0;"), 0);
+            setTimeout(callback.bind(null, "var x = 0;", false, "text/javascript"), 0);
         }
     };
 
@@ -18,7 +18,7 @@ function test()
         function testUISourceCode(next)
         {
             var uiSourceCode = new WebInspector.UISourceCode("id", "url", contentProvider);
-            function didRequestContent(callNumber, mimeType, content)
+            function didRequestContent(callNumber, content, contentEncoded, mimeType)
             {
                 InspectorTest.addResult("Callback " + callNumber + " is invoked.");
                 InspectorTest.assertEquals("text/javascript", mimeType);
@@ -26,7 +26,7 @@ function test()
 
                 if (callNumber === 3) {
                     // Check that sourceCodeProvider.requestContent won't be called anymore.
-                    uiSourceCode.requestContent(function(mimeType, content)
+                    uiSourceCode.requestContent(function(content, contentEncoded, mimeType)
                     {
                         InspectorTest.assertEquals("text/javascript", mimeType);
                         InspectorTest.assertEquals("var x = 0;", content);

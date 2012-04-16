@@ -810,8 +810,9 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
      * @param {function(?string)} userCallback
      * @param {?string} oldContent
      * @param {boolean} oldContentEncoded
+     * @param {string} mimeType
      */
-    _setContentWithInitialContent: function(uiSourceCode, content, userCallback, oldContent, oldContentEncoded)
+    _setContentWithInitialContent: function(uiSourceCode, content, userCallback, oldContent, oldContentEncoded, mimeType)
     {
         /**
          * @this {WebInspector.DebuggerPresentationModelResourceBinding}

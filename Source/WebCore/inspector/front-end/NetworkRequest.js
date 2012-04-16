@@ -31,7 +31,7 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
- *
+ * @implements {WebInspector.ContentProvider}
  * @param {NetworkAgent.RequestId} requestId
  * @param {string} url
  * @param {string} documentURL
@@ -673,7 +673,15 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @param {function(?string, boolean)} callback
+     * @return {?string}
+     */
+    contentURL: function()
+    {
+        return this._url;
+    },
+
+    /**
+     * @param {function(?string, boolean, string)} callback
      */
     requestContent: function(callback)
     {
@@ -681,16 +689,27 @@ WebInspector.NetworkRequest.prototype = {
         // Since WebSockets are potentially long-living, fail requests immediately
         // to prevent caller blocking until resource is marked as finished.
         if (this.type === WebInspector.resourceTypes.WebSocket) {
-            callback(null, false);
+            callback(null, false, this._mimeType);
             return;
         }
         if (typeof this._content !== "undefined") {
-            callback(this.content, this._contentEncoded);
+            callback(this.content, this._contentEncoded, this._mimeType);
             return;
         }
         this._pendingContentCallbacks.push(callback);
         if (this.finished)
             this._innerRequestContent();
+    },
+
+    /**
+     * @param {string} query
+     * @param {boolean} caseSensitive
+     * @param {boolean} isRegex
+     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
+     */
+    searchInContent: function(query, caseSensitive, isRegex, callback)
+    {
+        callback([]);
     },
 
     /**
@@ -730,25 +749,21 @@ WebInspector.NetworkRequest.prototype = {
      */
     populateImageSource: function(image)
     {
-        function onResourceContent()
+        /**
+         * @param {?string} content
+         * @param {boolean} contentEncoded
+         * @param {string} mimeType
+         */
+        function onResourceContent(content, contentEncoded, mimeType)
         {
-            image.src = this._contentURL();
+            const maxDataUrlSize = 1024 * 1024;
+            // If resource content is not available or won't fit a data URL, fall back to using original URL.
+            if (this._content == null || this._content.length > maxDataUrlSize)
+                return this.url;
+            image.src = "data:" + this.mimeType + (this._contentEncoded ? ";base64," : ",") + this._content;
         }
 
         this.requestContent(onResourceContent.bind(this));
-    },
-
-    /**
-     * @return {string}
-     */
-    _contentURL: function()
-    {
-        const maxDataUrlSize = 1024 * 1024;
-        // If resource content is not available or won't fit a data URL, fall back to using original URL.
-        if (this._content == null || this._content.length > maxDataUrlSize)
-            return this.url;
-
-        return "data:" + this.mimeType + (this._contentEncoded ? ";base64," : ",") + this._content;
     },
 
     _innerRequestContent: function()
@@ -768,7 +783,7 @@ WebInspector.NetworkRequest.prototype = {
             this._contentEncoded = contentEncoded;
             var callbacks = this._pendingContentCallbacks.slice();
             for (var i = 0; i < callbacks.length; ++i)
-                callbacks[i](this._content, this._contentEncoded);
+                callbacks[i](this._content, this._contentEncoded, this._mimeType);
             this._pendingContentCallbacks.length = 0;
             delete this._contentRequested;
         }

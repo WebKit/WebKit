@@ -29,7 +29,7 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
- *
+ * @implements {WebInspector.ContentProvider}
  * @param {?WebInspector.NetworkRequest} request
  * @param {string} url
  * @param {string} documentURL
@@ -360,12 +360,20 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @param {function(?string, boolean)} callback
+     * @return {?string}
+     */
+    contentURL: function()
+    {
+        return this._url;
+    },
+
+    /**
+     * @param {function(?string, boolean, string)} callback
      */
     requestContent: function(callback)
     {
         if (typeof this._content !== "undefined") {
-            callback(this._content, !!this._contentEncoded);
+            callback(this._content, !!this._contentEncoded, this.mimeType);
             return;
         }
 
@@ -377,7 +385,7 @@ WebInspector.Resource.prototype = {
      * @param {string} query
      * @param {boolean} caseSensitive
      * @param {boolean} isRegex
-     * @param {function(Array.<PageAgent.SearchMatch>)} callback
+     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
      */
     searchInContent: function(query, caseSensitive, isRegex, callback)
     {
@@ -440,7 +448,7 @@ WebInspector.Resource.prototype = {
             this._originalContent = content;
             var callbacks = this._pendingContentCallbacks.slice();
             for (var i = 0; i < callbacks.length; ++i)
-                callbacks[i](this._content, this._contentEncoded);
+                callbacks[i](this._content, this._contentEncoded, this.mimeType);
             this._pendingContentCallbacks.length = 0;
             delete this._contentRequested;
         }
@@ -452,6 +460,7 @@ WebInspector.Resource.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
  * @constructor
+ * @implements {WebInspector.ContentProvider}
  * @param {WebInspector.Resource} resource
  * @param {string|undefined} content
  * @param {number} timestamp
@@ -498,19 +507,27 @@ WebInspector.ResourceRevision.prototype = {
     },
 
     /**
-     * @param {function(?string)} callback
+     * @return {?string}
+     */
+    contentURL: function()
+    {
+        return this._resource.url;
+    },
+
+    /**
+     * @param {function(?string, boolean, string)} callback
      */
     requestContent: function(callback)
     {
         if (typeof this._content === "string") {
-            callback(this._content);
+            callback(this._content, false, this.resource.mimeType);
             return;
         }
 
         // If we are here, this is initial revision. First, look up content fetched over the wire.
         if (typeof this.resource._originalContent === "string") {
             this._content = this._resource._originalContent;
-            callback(this._content);
+            callback(this._content, false, this.resource.mimeType);
             return;
         }
 
@@ -521,10 +538,21 @@ WebInspector.ResourceRevision.prototype = {
          */
         function callbackWrapper(error, content, contentEncoded)
         {
-            callback(error ? null : content);
+            callback(error ? null : content, contentEncoded, this.resource.mimeType);
         }
 
-        PageAgent.getResourceContent(this._resource.frameId, this._resource.url, callbackWrapper);
+        PageAgent.getResourceContent(this._resource.frameId, this._resource.url, callbackWrapper.bind(this));
+    },
+
+    /**
+     * @param {string} query
+     * @param {boolean} caseSensitive
+     * @param {boolean} isRegex
+     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
+     */
+    searchInContent: function(query, caseSensitive, isRegex, callback)
+    {
+        callback([]);
     }
 }
 

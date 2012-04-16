@@ -145,13 +145,13 @@ function test()
 
             uiSourceCodeList[0].requestContent(didRequestContent1);
 
-            function didRequestContent1(mimeType, content)
+            function didRequestContent1(content, contentEncoded, mimeType)
             {
                 InspectorTest.assertEquals(0, content.indexOf("window.addEventListener"));
                 uiSourceCodeList[1].requestContent(didRequestContent2);
             }
 
-            function didRequestContent2(mimeType, content)
+            function didRequestContent2(content, contentEncoded, mimeType)
             {
                 InspectorTest.assertEquals(0, content.indexOf("function ClickHandler()"));
                 next();
@@ -181,7 +181,7 @@ function test()
 
             uiSourceCodeList[0].requestContent(didRequestContent);
 
-            function didRequestContent(mimeType, content)
+            function didRequestContent(content, contentEncoded, mimeType)
             {
                 InspectorTest.assertEquals("<source content>", content);
                 next();

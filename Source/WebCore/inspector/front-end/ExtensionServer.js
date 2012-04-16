@@ -439,10 +439,15 @@ WebInspector.ExtensionServer.prototype = {
 
     _getResourceContent: function(resource, message, port)
     {
-        function onContentAvailable(content, encoded)
+        /**
+         * @param {?string} content
+         * @param {boolean} contentEncoded
+         * @param {string} mimeType
+         */
+        function onContentAvailable(content, contentEncoded, mimeType)
         {
             var response = {
-                encoding: encoded ? "base64" : "",
+                encoding: contentEncoded ? "base64" : "",
                 content: content
             };
             this._dispatchCallback(message.requestId, port, response);

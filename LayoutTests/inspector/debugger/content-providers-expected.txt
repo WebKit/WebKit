@@ -14,6 +14,3 @@ function baz()
 }
 </script>
 
-Running: testResourceContentProvider
-Request resource content.
-

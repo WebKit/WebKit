@@ -62,6 +62,7 @@ modules = [
             "Color.js",
             "CompilerScriptMapping.js",
             "ConsoleModel.js",
+            "ContentProvider.js",
             "ContentProviders.js",
             "CookieParser.js",
             "CSSCompletions.js",

@@ -109,20 +109,27 @@ WebInspector.ResourceSourceFrame.prototype = {
         return this._resource;
     },
 
+    /**
+     * @param {function(?string,boolean,string)} callback
+     */
     requestContent: function(callback)
     {
-        function contentLoaded(text)
+        /**
+         * @param {?string} content
+         * @param {boolean} contentEncoded
+         * @param {string} mimeType
+         */
+        function callbackWrapper(content, contentEncoded, mimeType)
         {
-            var mimeType = WebInspector.ResourceSourceFrame._mimeTypeForResource(this._resource);
-            callback(mimeType, text);
+            // Canonicalize mimeType.
+            callback(content, contentEncoded, WebInspector.ResourceSourceFrame._mimeTypeForResource(this._resource));
         }
-
-        this.resource.requestContent(contentLoaded.bind(this));
+        this.resource.requestContent(callbackWrapper.bind(this));
     },
 
     _contentChanged: function(event)
     {
-        this.setContent(WebInspector.ResourceSourceFrame._mimeTypeForResource[this._resource], this._resource.content);
+        this.setContent(this._resource.content, false, WebInspector.ResourceSourceFrame._mimeTypeForResource(this._resource));
     }
 }
 
@@ -210,15 +217,12 @@ WebInspector.ResourceRevisionSourceFrame.prototype = {
         return this._revision.resource;
     },
 
+    /**
+     * @param {function(?string,boolean,string)} callback
+     */
     requestContent: function(callback)
     {
-        function contentLoaded(text)
-        {
-            var mimeType = WebInspector.ResourceSourceFrame._mimeTypeForResource(this.resource);
-            callback(mimeType, text);
-        }
-
-        this._revision.requestContent(contentLoaded.bind(this));
+        this._revision.requestContent(callback);
     },
 }
 
