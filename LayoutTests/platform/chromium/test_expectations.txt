@@ -1891,10 +1891,6 @@ BUGWK71758 : fast/url/port.html = TEXT PASS
 
 BUGWK33812 SKIP : fast/dom/icon-url-property.html = FAIL
 
-BUGCR30939 LINUX WIN : svg/filters/filter-clip.svg = IMAGE PASS
-BUGCR30939 LINUX WIN : svg/filters/filter-source-position.svg = IMAGE PASS
-BUGCR30939 LINUX WIN : svg/filters/shadow-on-rect-with-filter.svg = IMAGE PASS
-
 // New layoutTestController function added at r57993
 BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
 
