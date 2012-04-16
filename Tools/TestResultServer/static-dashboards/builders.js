@@ -114,6 +114,11 @@ function requestBuilderList(builderGroups, builderFilter, master, groupName, gro
     xhr.send();
 }
 
+function isChromiumDepsGpuTestRunner(builder)
+{
+    return true;
+}
+
 function isChromiumDepsFyiGpuTestRunner(builder)
 {
     // FIXME: This is kind of wonky, but there's not really a better pattern.
@@ -186,6 +191,10 @@ function onErrorLoadingBuilderList(url)
 function loadBuildersList(group, testType) {
     if (testType == 'gpu_tests') {
         switch(group) {
+        case '@DEPS - chromium.org':
+            requestBuilderList(CHROMIUM_GPU_TESTS_BUILDER_GROUPS, isChromiumDepsGpuTestRunner, CHROMIUM_GPU_BUILDER_MASTER, group, BuilderGroup.DEPS_WEBKIT);
+            break;
+
         case '@DEPS FYI - chromium.org':
             requestBuilderList(CHROMIUM_GPU_TESTS_BUILDER_GROUPS, isChromiumDepsFyiGpuTestRunner, CHROMIUM_GPU_FYI_BUILDER_MASTER, group, BuilderGroup.DEPS_WEBKIT);
             break;
@@ -232,6 +241,7 @@ var LAYOUT_TESTS_BUILDER_GROUPS = {
 };
 
 var CHROMIUM_GPU_TESTS_BUILDER_GROUPS = {
+    '@DEPS - chromium.org': null,
     '@DEPS FYI - chromium.org': null,
     '@ToT - chromium.org': null,
 };
