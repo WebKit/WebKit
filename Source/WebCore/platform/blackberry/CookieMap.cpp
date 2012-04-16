@@ -80,7 +80,7 @@ ParsedCookie* CookieMap::addOrReplaceCookie(ParsedCookie* cookie)
 
 ParsedCookie* CookieMap::removeCookieAtIndex(int position, const ParsedCookie* cookie)
 {
-    ASSERT(0 <= position && position < m_cookieVector.size());
+    ASSERT(0 <= position && static_cast<unsigned>(position) < m_cookieVector.size());
     ParsedCookie* prevCookie = m_cookieVector[position];
     m_cookieVector.remove(position);
 
