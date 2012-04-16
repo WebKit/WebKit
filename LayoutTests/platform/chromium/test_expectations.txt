@@ -3778,3 +3778,8 @@ BUGWK83941 : platform/chromium/virtual/gpu/fast/canvas/2d.imageDataHD.html = TIM
 BUGWK84055 : css3/filters/huge-region.html = MISSING
 BUGWK84055 : css3/filters/huge-region-composited.html = CRASH
 
+BUGWK84065 MAC DEBUG : fast/canvas/webgl/shader-precision-format.html = TEXT
+BUGWK84065 WIN DEBUG : fast/canvas/webgl/shader-precision-format.html = TEXT
+BUGWK84065 MAC DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT
+BUGWK84065 WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT
+
