@@ -710,14 +710,6 @@ namespace JSC {
             return true;
         }
         
-        int codeOriginIndexForReturn(ReturnAddressPtr returnAddress)
-        {
-            ASSERT(hasCodeOrigins());
-            unsigned offset = getJITCode().offsetOf(returnAddress.value());
-            CodeOriginAtCallReturnOffset* entry = binarySearch<CodeOriginAtCallReturnOffset, unsigned, getCallReturnOffsetForCodeOrigin>(codeOrigins().begin(), codeOrigins().size(), offset, WTF::KeyMustNotBePresentInArray);
-            return entry - codeOrigins().begin();
-        }
-        
         CodeOrigin codeOrigin(unsigned index)
         {
             ASSERT(m_rareData);

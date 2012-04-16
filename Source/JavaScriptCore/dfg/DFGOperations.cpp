@@ -792,7 +792,6 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
         ASSERT(callType != CallTypeJS);
     
         if (callType == CallTypeHost) {
-            execCallee->setCallee(asObject(callee));
             globalData->hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
             if (globalData->exception)
                 return 0;
@@ -813,7 +812,6 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
     ASSERT(constructType != ConstructTypeJS);
     
     if (constructType == ConstructTypeHost) {
-        execCallee->setCallee(asObject(callee));
         globalData->hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
         if (globalData->exception)
             return 0;

@@ -49,9 +49,9 @@ try { hostThrower(); } catch (e) { printStack(e.stack); }                    // 
 try { scripterInner(); } catch (e) { printStack(e.stack) }                   // program -> scripter -> inner
 try { scripterOuter(); } catch (e) { printStack(e.stack) }                   // program -> scripter -> outer -> inner
 
-function selfRecursive1() { selfRecursive1();
+function selfRecursive1() {
+    selfRecursive1();
 }
-
 
 try { selfRecursive1(); } catch (e) { printStack(e.stack) }                   // selfRecursive1 -> selfRecursive1 -> selfRecursive1 -> selfRecursive1 ...
 

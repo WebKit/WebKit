@@ -65,7 +65,6 @@
 #include <limits.h>
 #include <stdio.h>
 #include <wtf/Threading.h>
-#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(JIT)
 #include "JIT.h"
@@ -953,14 +952,14 @@ static StackFrameCodeType getStackFrameCodeType(CallFrame* callFrame)
     return StackFrameGlobalCode;
 }
 
-void Interpreter::getStackTrace(JSGlobalData* globalData, Vector<StackFrame>& results)
+void Interpreter::getStackTrace(JSGlobalData* globalData, int line, Vector<StackFrame>& results)
 {
-    CallFrame* callFrame = globalData->topCallFrame->removeHostCallFrameFlag();
+    CallFrame* callFrame = globalData->topCallFrame->removeHostCallFrameFlag()->trueCallFrameFromVMCode();
     if (!callFrame || callFrame == CallFrame::noCaller()) 
         return;
-    int line = getLineNumberForCallFrame(globalData, callFrame);
 
-    callFrame = callFrame->trueCallFrameFromVMCode();
+    if (line == -1)
+        line = getLineNumberForCallFrame(globalData, callFrame);
 
     while (callFrame && callFrame != CallFrame::noCaller()) {
         UString sourceURL;
@@ -974,33 +973,6 @@ void Interpreter::getStackTrace(JSGlobalData* globalData, Vector<StackFrame>& re
         }
         callFrame = getCallerInfo(globalData, callFrame, line);
     }
-}
-
-void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSObject* error)
-{
-    JSGlobalData* globalData = &callFrame->globalData();
-    if (error->hasProperty(callFrame, globalData->propertyNames->stack))
-        return;
-
-    Vector<StackFrame> stackTrace;
-    getStackTrace(&callFrame->globalData(), stackTrace);
-    
-    if (stackTrace.isEmpty())
-        return;
-    
-    JSGlobalObject* globalObject = 0;
-    if (isTerminatedExecutionException(error) || isInterruptedExecutionException(error))
-        globalObject = globalData->dynamicGlobalObject;
-    else
-        globalObject = error->globalObject();
-    StringBuilder builder;
-    for (unsigned i = 0; i < stackTrace.size(); i++) {
-        builder.append(String(stackTrace[i].toString(globalObject->globalExec()).impl()));
-        if (i != stackTrace.size() - 1)
-            builder.append('\n');
-    }
-    
-    error->putDirect(*globalData, globalData->propertyNames->stack, jsString(globalData, UString(builder.toString().impl())), ReadOnly | DontDelete);
 }
 
 NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSValue& exceptionValue, unsigned bytecodeOffset)
@@ -1018,9 +990,12 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
         // Using hasExpressionInfo to imply we are interested in rich exception info.
         if (codeBlock->hasExpressionInfo() && !hasErrorInfo(callFrame, exception)) {
             ASSERT(codeBlock->hasLineInfo());
+
             // FIXME: should only really be adding these properties to VM generated exceptions,
             // but the inspector currently requires these for all thrown objects.
-            addErrorInfo(callFrame, exception, codeBlock->lineNumberForBytecodeOffset(bytecodeOffset), codeBlock->ownerExecutable()->source());
+            Vector<StackFrame> stackTrace;
+            getStackTrace(&callFrame->globalData(), codeBlock->lineNumberForBytecodeOffset(bytecodeOffset), stackTrace);
+            addErrorInfo(callFrame, exception, codeBlock->lineNumberForBytecodeOffset(bytecodeOffset), codeBlock->ownerExecutable()->source(), stackTrace);
         }
 
         isInterrupt = isInterruptedExecutionException(exception) || isTerminatedExecutionException(exception);

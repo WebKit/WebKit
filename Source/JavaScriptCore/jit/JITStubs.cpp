@@ -3518,19 +3518,6 @@ DEFINE_STUB_FUNCTION(void*, vm_throw)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
     JSGlobalData* globalData = stackFrame.globalData;
-    // It's possible for us to reach this point with incorrect origin metadata
-    // if a native function throws an exception after being planted in certain
-    // code paths as the native thunk doesn't can't unwind itself as if it were
-    // a JS function. So we redetermine the correct data here just to be safe.
-    if (CodeBlock* codeBlock = stackFrame.callFrame->codeBlock()) {
-#if ENABLE(DFG_JIT)
-        if (codeBlock->hasCodeOrigins())
-            stackFrame.callFrame->setBytecodeOffsetForNonDFGCode(codeBlock->codeOriginIndexForReturn(globalData->exceptionLocation));
-        else
-#endif
-            if (codeBlock->getJITType() == JITCode::BaselineJIT)
-            stackFrame.callFrame->setBytecodeOffsetForNonDFGCode(codeBlock->bytecodeOffset(stackFrame.callFrame, globalData->exceptionLocation));
-    }
     ExceptionHandler handler = jitThrow(globalData, stackFrame.callFrame, globalData->exception, globalData->exceptionLocation);
     STUB_SET_RETURN_ADDRESS(handler.catchRoutine);
     return handler.callFrame;

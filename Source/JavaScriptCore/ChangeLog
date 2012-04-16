@@ -1,3 +1,33 @@
+2012-04-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r114309.
+        http://trac.webkit.org/changeset/114309
+        https://bugs.webkit.org/show_bug.cgi?id=84097
+
+        it broke everything (Requested by olliej on #webkit).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * bytecode/CodeBlock.h:
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::throwException):
+        * interpreter/Interpreter.h:
+        (Interpreter):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jsc.cpp:
+        (functionJSCStack):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::handleHostCall):
+        * parser/Parser.h:
+        (JSC::::parse):
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        (JSC::throwError):
+        * runtime/Error.h:
+        (JSC):
+
 2012-04-16  Oliver Hunt  <oliver@apple.com>
 
         Exception stack traces aren't complete when the exception starts in native code

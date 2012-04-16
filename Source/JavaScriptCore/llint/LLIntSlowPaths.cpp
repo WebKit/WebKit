@@ -1241,7 +1241,6 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
         ASSERT(callType != CallTypeJS);
     
         if (callType == CallTypeHost) {
-            execCallee->setCallee(asObject(callee));
             globalData.hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
             
             LLINT_CALL_RETURN(execCallee, pc, reinterpret_cast<void*>(getHostCallReturnValue));
@@ -1263,7 +1262,6 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
     ASSERT(constructType != ConstructTypeJS);
     
     if (constructType == ConstructTypeHost) {
-        execCallee->setCallee(asObject(callee));
         globalData.hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
 
         LLINT_CALL_RETURN(execCallee, pc, reinterpret_cast<void*>(getHostCallReturnValue));
