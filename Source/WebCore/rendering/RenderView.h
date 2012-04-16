@@ -179,6 +179,11 @@ public:
     IntervalArena* intervalArena();
 
     IntSize viewportSize() const { return document()->viewportSize(); }
+
+    void setFixedPositionedObjectsNeedLayout();
+    void insertFixedPositionedObject(RenderBox*);
+    void removeFixedPositionedObject(RenderBox*);
+
 protected:
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, bool* wasFixed = 0) const;
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
@@ -254,7 +259,10 @@ protected:
 
     typedef HashSet<RenderWidget*> RenderWidgetSet;
     RenderWidgetSet m_widgets;
-    
+
+    typedef HashSet<RenderBox*> RenderBoxSet;
+    OwnPtr<RenderBoxSet> m_fixedPositionedElements;
+
 private:
     unsigned m_pageLogicalHeight;
     bool m_pageLogicalHeightChanged;

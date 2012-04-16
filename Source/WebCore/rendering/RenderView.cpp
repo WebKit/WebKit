@@ -920,4 +920,35 @@ RenderBlock::IntervalArena* RenderView::intervalArena()
     return m_intervalArena.get();
 }
 
+void RenderView::setFixedPositionedObjectsNeedLayout()
+{
+    ASSERT(m_frameView);
+
+    PositionedObjectsListHashSet* positionedObjects = this->positionedObjects();
+    if (!positionedObjects)
+        return;
+
+    PositionedObjectsListHashSet::const_iterator end = positionedObjects->end();
+    for (PositionedObjectsListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
+        RenderBox* currBox = *it;
+        currBox->setNeedsLayout(true);
+    }
+}
+
+void RenderView::insertFixedPositionedObject(RenderBox* object)
+{
+    if (!m_positionedObjects)
+        m_positionedObjects = adoptPtr(new PositionedObjectsListHashSet);
+
+    m_positionedObjects->add(object);
+}
+
+void RenderView::removeFixedPositionedObject(RenderBox* object)
+{
+    if (!m_positionedObjects)
+        return;
+
+    m_positionedObjects->remove(object);
+}
+
 } // namespace WebCore

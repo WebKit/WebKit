@@ -1705,6 +1705,13 @@ void FrameView::delegatesScrollingDidChange()
 
 void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
 {
+    if (visibleContentRect.size() != this->fixedVisibleContentRect().size()) {
+        // When the viewport size changes or the content is scaled, we need to
+        // reposition the fixed positioned elements.
+        if (RenderView* root = rootRenderer(this))
+            root->setFixedPositionedObjectsNeedLayout();
+    }
+
     IntSize offset = scrollOffset();
     ScrollView::setFixedVisibleContentRect(visibleContentRect);
     if (offset != scrollOffset()) {

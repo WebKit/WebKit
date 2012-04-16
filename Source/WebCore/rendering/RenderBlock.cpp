@@ -3418,12 +3418,18 @@ void RenderBlock::insertPositionedObject(RenderBox* o)
         m_positionedObjects = adoptPtr(new PositionedObjectsListHashSet);
 
     m_positionedObjects->add(o);
+
+    if (o->style()->position() == FixedPosition && view())
+        view()->insertFixedPositionedObject(o);
 }
 
 void RenderBlock::removePositionedObject(RenderBox* o)
 {
     if (m_positionedObjects)
         m_positionedObjects->remove(o);
+
+    if (view())
+        view()->removeFixedPositionedObject(o);
 }
 
 void RenderBlock::removePositionedObjects(RenderBlock* o)

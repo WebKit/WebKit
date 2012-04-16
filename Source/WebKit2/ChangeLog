@@ -1,3 +1,16 @@
+2012-04-16  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt][WK2] Fixed elements position is wrong after zooming.
+        https://bugs.webkit.org/show_bug.cgi?id=83981
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Turn on the flag setFixedElementsLayoutRelativeToFrame. This causes fixed elements position to be calculated based on
+        visibleWidth and visibleHeight. When zoom level grows, the visibleWidth and visibleHeight become smaller.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setResizesToContentsUsingLayoutSize):
+
 2012-04-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Clean up how the interaction engine is making use of ViewportAttributes

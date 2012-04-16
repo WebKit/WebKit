@@ -836,6 +836,7 @@ void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSiz
     view->setFixedLayoutSize(targetLayoutSize);
 
     m_page->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
+    m_page->settings()->setFixedElementsLayoutRelativeToFrame(true);
 
     // Schedule a layout to use the new target size.
     if (!view->layoutPending()) {
