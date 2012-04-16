@@ -1,3 +1,13 @@
+2012-04-16  Alexey Proskuryakov  <ap@apple.com>
+
+        [chromium] Remove BlobRegistryProxy::createResourceHandle
+        https://bugs.webkit.org/show_bug.cgi?id=84047
+
+        Reviewed by Nate Chapin.
+
+        * src/BlobRegistryProxy.h: (BlobRegistryProxy::createResourceHandle): This function
+        is no longer used.
+
 2012-04-16  Raymes Khoury  <raymes@chromium.org>
 
         Fix bug in WebPluginContainer::isRectTopmost() which gave the incorrect result for a scrolled window.
