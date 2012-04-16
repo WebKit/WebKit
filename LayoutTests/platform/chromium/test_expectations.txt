@@ -2455,9 +2455,7 @@ BUGWK47925 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEX
 // We don't handle reflections in the right way to support this.
 BUGWK47949 : compositing/reflections/reflection-opacity.html = IMAGE
 
-// Flaky because these are a poorly written tests. Need dino's new animation API
-BUGWK54306 : compositing/reflections/animation-inside-reflection.html = PASS IMAGE IMAGE+TEXT
-BUGWK54306 : compositing/reflections/nested-reflection-animated.html = PASS IMAGE
+// Flaky because it's a poorly written tests. Need dino's new animation API
 BUGWK54306 : compositing/reflections/nested-reflection-transition.html = IMAGE PASS
 
 // These tests are too slow with our MESA backend.  We can re-enable when we have
