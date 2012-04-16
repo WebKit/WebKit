@@ -68,6 +68,10 @@
 #include <stdio.h>
 #endif
 
+#if USE(GSTREAMER)
+#include "GStreamerUtilities.h"
+#endif
+
 #include <wtf/ArrayBuffer.h>
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>
@@ -178,6 +182,10 @@ AudioContext::AudioContext(Document* document, unsigned numberOfChannels, size_t
 
 void AudioContext::constructCommon()
 {
+#if USE(GSTREAMER)
+    initializeGStreamer();
+#endif
+
     FFTFrame::initialize();
     
     m_listener = AudioListener::create();

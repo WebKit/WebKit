@@ -57,11 +57,6 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioSourceProvider& provid
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
 {
-    static bool gstInitialized = false;
-    if (!gstInitialized)
-        gstInitialized = gst_init_check(0, 0, 0);
-    ASSERT_WITH_MESSAGE(gstInitialized, "GStreamer initialization failed");
-
     m_pipeline = gst_pipeline_new("play");
 
     GstElement* webkitAudioSrc = reinterpret_cast<GstElement*>(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC,

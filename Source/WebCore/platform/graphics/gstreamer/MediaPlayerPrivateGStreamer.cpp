@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GStreamerGWorld.h"
+#include "GStreamerUtilities.h"
 #include "GStreamerVersioning.h"
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
@@ -175,35 +176,25 @@ void MediaPlayerPrivateGStreamer::registerMediaEngine(MediaEngineRegistrar regis
         registrar(create, getSupportedTypes, supportsType, 0, 0, 0);
 }
 
-static bool gstInitialized = false;
-
-static bool doGstInit()
+bool initializeGStreamerAndRegisterWebKitElements()
 {
-    // FIXME: We should pass the arguments from the command line
-    if (!gstInitialized) {
-        GOwnPtr<GError> error;
-        gstInitialized = gst_init_check(0, 0, &error.outPtr());
-        if (!gstInitialized)
-            LOG_VERBOSE(Media, "Could not initialize GStreamer: %s",
-                        error ? error->message : "unknown error occurred");
-        else
-            gst_element_register(0, "webkitwebsrc", GST_RANK_PRIMARY + 100,
-                                 WEBKIT_TYPE_WEB_SRC);
-    }
-    return gstInitialized;
+    if (!initializeGStreamer())
+        return false;
+
+    GRefPtr<GstElementFactory> srcFactory = gst_element_factory_find("webkitwebsrc");
+    if (!srcFactory)
+        return gst_element_register(0, "webkitwebsrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEB_SRC);
+
+    return true;
 }
 
 bool MediaPlayerPrivateGStreamer::isAvailable()
 {
-    if (!doGstInit())
+    if (!initializeGStreamerAndRegisterWebKitElements())
         return false;
 
-    GstElementFactory* factory = gst_element_factory_find(gPlaybinName);
-    if (factory) {
-        gst_object_unref(GST_OBJECT(factory));
-        return true;
-    }
-    return false;
+    GRefPtr<GstElementFactory> factory = gst_element_factory_find(gPlaybinName);
+    return factory;
 }
 
 MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
@@ -244,7 +235,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_videoTimerHandler(0)
     , m_webkitAudioSink(0)
 {
-    if (doGstInit())
+    if (initializeGStreamerAndRegisterWebKitElements())
         createGSTPlayBin();
 }
 
@@ -1504,7 +1495,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext* context, const IntRect&
 static HashSet<String> mimeTypeCache()
 {
 
-    doGstInit();
+    initializeGStreamerAndRegisterWebKitElements();
 
     DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
     static bool typeListInitialized = false;

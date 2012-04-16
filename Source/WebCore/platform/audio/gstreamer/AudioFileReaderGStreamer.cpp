@@ -324,13 +324,6 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
 {
     m_sampleRate = sampleRate;
 
-    static bool gstInitialized = false;
-    if (!gstInitialized)
-        gstInitialized = gst_init_check(0, 0, 0);
-
-    if (!gstInitialized)
-        return nullptr;
-
     m_frontLeftBuffers = gst_buffer_list_new();
     m_frontLeftBuffersIterator = gst_buffer_list_iterate(m_frontLeftBuffers);
     gst_buffer_list_iterator_add_group(m_frontLeftBuffersIterator);
