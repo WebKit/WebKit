@@ -1,3 +1,52 @@
+2012-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Nightly Back/Forward no longer calls plug-in's NPP_NewStream
+        https://bugs.webkit.org/show_bug.cgi?id=83805
+        <rdar://problem/11238748>
+
+        Reviewed by Simon Fraser.
+
+        When a page with a full-frame plug-in is restored from the page cache, it needs to re-fetch the plug-in stream.
+
+        Fix this by breaking the assumption that a plug-in will always get its data from WebCore if it's a full-frame plug-in;
+        instead it only get its data from WebCore if it's a full-frame plug-in that's not being restored from the page cache.
+        
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Rename m_loadManually to m_shouldUseManualLoader.
+
+        (WebKit::NetscapePlugin::initialize):
+        Get the mode from parameters.isFullFramePlugin instead.
+
+        (WebKit::NetscapePlugin::manualStreamDidReceiveResponse):
+        (WebKit::NetscapePlugin::manualStreamDidReceiveData):
+        (WebKit::NetscapePlugin::manualStreamDidFinishLoading):
+        (WebKit::NetscapePlugin::manualStreamDidFail):
+        Rename m_loadManually to m_shouldUseManualLoader.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Rename m_loadManually to m_shouldUseManualLoader.
+
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Parameters::encode):
+        (WebKit::Plugin::Parameters::decode):
+        * WebProcess/Plugins/Plugin.h:
+        (Parameters):
+        Add an extra isFullFramePlugin parameter, and rename loadManually to shouldUseManualLoader.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::WebFrameLoaderClient):
+        Initialize m_frameCameFromPageCache.
+
+        (WebKit::WebFrameLoaderClient::transitionToCommittedFromCachedFrame):
+        Set m_frameCameFromPageCache to true.
+
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        Set m_frameCameFromPageCache to false.
+
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        Initialize isFullFramePlugin and shouldUseManualLoader.
+
 2012-04-16  Alexey Proskuryakov  <ap@apple.com>
 
         EndPrinting message should be sent synchronously when printing was initiated from DOM.

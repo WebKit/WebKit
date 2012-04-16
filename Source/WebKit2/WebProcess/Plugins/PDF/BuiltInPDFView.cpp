@@ -331,7 +331,7 @@ bool BuiltInPDFView::initialize(const Parameters& parameters)
 {
     // Load the src URL if needed.
     m_sourceURL = parameters.url;
-    if (!parameters.loadManually && !parameters.url.isEmpty())
+    if (!parameters.shouldUseManualLoader && !parameters.url.isEmpty())
         controller()->loadURL(pdfDocumentRequestID, "GET", parameters.url.string(), String(), HTTPHeaderMap(), Vector<uint8_t>(), false);
 
     return true;

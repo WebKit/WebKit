@@ -68,7 +68,8 @@ public:
         Vector<String> names;
         Vector<String> values;
         String mimeType;
-        bool loadManually;
+        bool isFullFramePlugin;
+        bool shouldUseManualLoader;
 #if PLATFORM(MAC)
         LayerHostingMode layerHostingMode;
 #endif

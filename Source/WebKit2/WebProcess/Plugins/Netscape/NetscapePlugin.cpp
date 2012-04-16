@@ -68,7 +68,7 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
 #endif
     , m_isTransparent(false)
     , m_inNPPNew(false)
-    , m_loadManually(false)
+    , m_shouldUseManualLoader(false)
     , m_nextTimerID(0)
 #if PLATFORM(MAC)
     , m_drawingModel(static_cast<NPDrawingModel>(-1))
@@ -543,9 +543,9 @@ bool NetscapePlugin::allowPopups() const
 
 bool NetscapePlugin::initialize(const Parameters& parameters)
 {
-    uint16_t mode = parameters.loadManually ? NP_FULL : NP_EMBED;
+    uint16_t mode = parameters.isFullFramePlugin ? NP_FULL : NP_EMBED;
     
-    m_loadManually = parameters.loadManually;
+    m_shouldUseManualLoader = parameters.shouldUseManualLoader;
 
     CString mimeTypeCString = parameters.mimeType.utf8();
 
@@ -611,7 +611,7 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
     }
 
     // Load the src URL if needed.
-    if (!parameters.loadManually && !parameters.url.isEmpty() && shouldLoadSrcURL())
+    if (!parameters.shouldUseManualLoader && !parameters.url.isEmpty() && shouldLoadSrcURL())
         loadURL("GET", parameters.url.string(), String(), HTTPHeaderMap(), Vector<uint8_t>(), false, 0);
     
     return true;
@@ -787,7 +787,7 @@ void NetscapePlugin::manualStreamDidReceiveResponse(const KURL& responseURL, uin
                                                     const String& mimeType, const String& headers, const String& /* suggestedFileName */)
 {
     ASSERT(m_isStarted);
-    ASSERT(m_loadManually);
+    ASSERT(m_shouldUseManualLoader);
     ASSERT(!m_manualStream);
     
     m_manualStream = NetscapePluginStream::create(this, 0, responseURL.string(), false, 0);
@@ -797,7 +797,7 @@ void NetscapePlugin::manualStreamDidReceiveResponse(const KURL& responseURL, uin
 void NetscapePlugin::manualStreamDidReceiveData(const char* bytes, int length)
 {
     ASSERT(m_isStarted);
-    ASSERT(m_loadManually);
+    ASSERT(m_shouldUseManualLoader);
     ASSERT(m_manualStream);
 
     m_manualStream->didReceiveData(bytes, length);
@@ -806,7 +806,7 @@ void NetscapePlugin::manualStreamDidReceiveData(const char* bytes, int length)
 void NetscapePlugin::manualStreamDidFinishLoading()
 {
     ASSERT(m_isStarted);
-    ASSERT(m_loadManually);
+    ASSERT(m_shouldUseManualLoader);
     ASSERT(m_manualStream);
 
     m_manualStream->didFinishLoading();
@@ -815,7 +815,7 @@ void NetscapePlugin::manualStreamDidFinishLoading()
 void NetscapePlugin::manualStreamDidFail(bool wasCancelled)
 {
     ASSERT(m_isStarted);
-    ASSERT(m_loadManually);
+    ASSERT(m_shouldUseManualLoader);
 
     if (!m_manualStream)
         return;

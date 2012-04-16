@@ -221,6 +221,7 @@ private:
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView;
     bool m_frameHasCustomRepresentation;
+    bool m_frameCameFromPageCache;
 };
 
 } // namespace WebKit
