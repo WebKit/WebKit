@@ -124,6 +124,16 @@ WEBKIT_API void
 webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value);
 
 /**
+ * webkit_dom_test_serialized_script_value_interface_get_ports:
+ * @self: A #WebKitDOMTestSerializedScriptValueInterface
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMMessagePortArray*
+webkit_dom_test_serialized_script_value_interface_get_ports(WebKitDOMTestSerializedScriptValueInterface* self);
+
+/**
  * webkit_dom_test_serialized_script_value_interface_get_cached_readonly_value:
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *

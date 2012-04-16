@@ -910,6 +910,7 @@ END
     # the newly created wrapper into an internal field of the holder object.
     if (!IsNodeSubType($dataNode) && $attrName ne "self" && (IsWrapperType($returnType) && ($attribute->type =~ /^readonly/ || $attribute->signature->extendedAttributes->{"Replaceable"})
         && $returnType ne "EventTarget" && $returnType ne "SerializedScriptValue" && $returnType ne "DOMWindow" 
+        && $returnType ne "MessagePortArray"
         && $returnType !~ /SVG/ && $returnType !~ /HTML/ && !IsDOMNodeType($returnType))) {
 
         my $arrayType = $codeGenerator->GetArrayType($returnType);
@@ -984,6 +985,20 @@ END
         } else {
             push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create($result)));\n");
         }
+    } elsif ($attribute->signature->type eq "MessagePortArray") {
+        AddToImplIncludes("V8Array.h");
+        AddToImplIncludes("MessagePort.h");
+        my $getterFunc = $codeGenerator->WK_lcfirst($attribute->signature->name);
+        push(@implContentDecls, <<END);
+    MessagePortArray* ports = imp->${getterFunc}();
+    if (!ports)
+        return v8::Array::New(0);
+    MessagePortArray portsCopy(*ports);
+    v8::Local<v8::Array> portArray = v8::Array::New(portsCopy.size());
+    for (size_t i = 0; i < portsCopy.size(); ++i)
+        portArray->Set(v8::Integer::New(i), toV8(portsCopy[i].get()));
+    return portArray;
+END
     } else {
         if ($attribute->signature->type eq "SerializedScriptValue" && $attrExt->{"CachedAttribute"}) {
             my $getterFunc = $codeGenerator->WK_lcfirst($attribute->signature->name);

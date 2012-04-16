@@ -38,11 +38,13 @@
 #import "DOMCSSRuleInternal.h"
 #import "DOMCSSValueInternal.h"
 #import "DOMEventInternal.h"
+#import "DOMMessagePortArrayInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestSerializedScriptValueInterfaceInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
+#import "MessagePortArray.h"
 #import "SerializedScriptValue.h"
 #import "TestSerializedScriptValueInterface.h"
 #import "ThreadCheck.h"
@@ -103,6 +105,12 @@
     ASSERT(newCachedValue);
 
     IMPL->setCachedValue(WebCore::SerializedScriptValue::create(WTF::String(newCachedValue)));
+}
+
+- (DOMMessagePortArray *)ports
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->ports()));
 }
 
 - (NSString *)cachedReadonlyValue

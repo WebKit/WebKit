@@ -29,6 +29,7 @@
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
 @class DOMArray;
+@class DOMMessagePortArray;
 @class NSString;
 
 @interface DOMTestSerializedScriptValueInterface : DOMObject
@@ -37,6 +38,7 @@
 - (NSString *)readonlyValue;
 - (NSString *)cachedValue;
 - (void)setCachedValue:(NSString *)newCachedValue;
+- (DOMMessagePortArray *)ports;
 - (NSString *)cachedReadonlyValue;
 - (void)acceptTransferList:(NSString *)data transferList:(DOMArray *)transferList;
 - (void)multiTransferList:(NSString *)first tx:(DOMArray *)tx second:(NSString *)second txx:(DOMArray *)txx;

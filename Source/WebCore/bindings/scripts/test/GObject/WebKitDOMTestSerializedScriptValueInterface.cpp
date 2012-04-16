@@ -26,12 +26,15 @@
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
+#include "MessagePortArray.h"
 #include "SerializedScriptValue.h"
 #include "TestSerializedScriptValueInterface.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"
 #include "webkit/WebKitDOMArray.h"
 #include "webkit/WebKitDOMArrayPrivate.h"
+#include "webkit/WebKitDOMMessagePortArray.h"
+#include "webkit/WebKitDOMMessagePortArrayPrivate.h"
 #include "webkit/WebKitDOMSerializedScriptValue.h"
 #include "webkit/WebKitDOMSerializedScriptValuePrivate.h"
 #include "webkit/WebKitDOMTestSerializedScriptValueInterfacePrivate.h"
@@ -86,6 +89,7 @@ enum {
     PROP_VALUE,
     PROP_READONLY_VALUE,
     PROP_CACHED_VALUE,
+    PROP_PORTS,
     PROP_CACHED_READONLY_VALUE,
 };
 
@@ -139,6 +143,11 @@ static void webkit_dom_test_serialized_script_value_interface_get_property(GObje
         g_value_set_object(value, WebKit::kit(ptr.get()));
         break;
     }
+    case PROP_PORTS: {
+        RefPtr<WebCore::MessagePortArray> ptr = coreSelf->ports();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
     case PROP_CACHED_READONLY_VALUE: {
         RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->cachedReadonlyValue();
         g_value_set_object(value, WebKit::kit(ptr.get()));
@@ -187,6 +196,13 @@ static void webkit_dom_test_serialized_script_value_interface_class_init(WebKitD
                                                            "read-write  WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface.cached-value", /* longer - could do with some extra doc stuff here */
                                                            WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE, /* gobject type */
                                                            WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_PORTS,
+                                    g_param_spec_object("ports", /* name */
+                                                           "test_serialized_script_value_interface_ports", /* short description */
+                                                           "read-only  WebKitDOMMessagePortArray* TestSerializedScriptValueInterface.ports", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_MESSAGE_PORT_ARRAY, /* gobject type */
+                                                           WEBKIT_PARAM_READABLE));
     g_object_class_install_property(gobjectClass,
                                     PROP_CACHED_READONLY_VALUE,
                                     g_param_spec_object("cached-readonly-value", /* name */
@@ -354,6 +370,23 @@ webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDOMTest
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+WebKitDOMMessagePortArray*
+webkit_dom_test_serialized_script_value_interface_get_ports(WebKitDOMTestSerializedScriptValueInterface* self)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface* item = WebKit::core(self);
+    RefPtr<WebCore::MessagePortArray> gobjectResult = WTF::getPtr(item->ports());
+    WebKitDOMMessagePortArray* result = WebKit::kit(gobjectResult.get());
+    return result;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+    return 0;
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 }
 
