@@ -5670,7 +5670,7 @@ dom_binding_idls += \
 endif
 
 if USE_GSTREAMER
-webcore_sources += \
+webcoregtk_sources += \
 	Source/WebCore/platform/graphics/gstreamer/GRefPtrGStreamer.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GRefPtrGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerUtilities.cpp \
