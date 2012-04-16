@@ -2740,12 +2740,11 @@ void WebViewImpl::applyAutofillSuggestions(
     const WebVector<WebString>& names,
     const WebVector<WebString>& labels,
     const WebVector<WebString>& icons,
-    const WebVector<int>& uniqueIDs,
+    const WebVector<int>& itemIDs,
     int separatorIndex)
 {
     ASSERT(names.size() == labels.size());
-    ASSERT(names.size() == uniqueIDs.size());
-    ASSERT(separatorIndex < static_cast<int>(names.size()));
+    ASSERT(names.size() == itemIDs.size());
 
     if (names.isEmpty()) {
         hideAutofillPopup();
@@ -2770,7 +2769,7 @@ void WebViewImpl::applyAutofillSuggestions(
         m_autofillPopupClient = adoptPtr(new AutofillPopupMenuClient);
 
     m_autofillPopupClient->initialize(
-        inputElem, names, labels, icons, uniqueIDs, separatorIndex);
+        inputElem, names, labels, icons, itemIDs, separatorIndex);
 
     if (!m_autofillPopup) {
         PopupContainerSettings popupSettings = autofillPopupSettings;

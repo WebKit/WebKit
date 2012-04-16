@@ -40,16 +40,26 @@ class WebString;
 
 class WebAutofillClient {
 public:
+    enum {
+        MenuItemIDAutocompleteEntry = 0,
+        MenuItemIDWarningMessage = -1,
+        MenuItemIDPasswordEntry = -2,
+        MenuItemIDSeparator = -3,
+        MenuItemIDClearForm = -4,
+        MenuItemIDAutofillOptions = -5,
+        MenuItemIDDataListEntry = -6
+    };
+
     // Informs the browser that the user has accepted an Autofill suggestion for
-    // a WebNode.  |uniqueID| is used as a key into the set of Autofill profiles,
-    // and should never be negative.  If it is 0, then the suggestion is an
-    // Autocomplete suggestion; and |value| stores the suggested text.  |index|
-    // is an index of the selected suggestion in the list of suggestions provided
-    // by the client.
+    // a WebNode. A positive |itemID| is a unique id used to identify the set
+    // of Autofill profiles. If it is AutocompleteEntryMenuItemID, then the
+    // suggestion is an Autocomplete suggestion; and |value| stores the
+    // suggested text. |index| is an index of the selected suggestion in the
+    // list of suggestions provided by the client.
     virtual void didAcceptAutofillSuggestion(const WebNode&,
                                              const WebString& value,
                                              const WebString& label,
-                                             int uniqueID,
+                                             int itemID,
                                              unsigned index) { }
 
     // Informs the browser that the user has selected an Autofill suggestion for
@@ -58,7 +68,7 @@ public:
     virtual void didSelectAutofillSuggestion(const WebNode&,
                                              const WebString& name,
                                              const WebString& label,
-                                             int uniqueID) { }
+                                             int itemID) { }
 
     // Informs the browser that the user has cleared the selection from the
     // Autofill suggestions popup. This happens when a user uses the arrow

@@ -249,7 +249,7 @@ public:
         const WebVector<WebString>& names,
         const WebVector<WebString>& labels,
         const WebVector<WebString>& icons,
-        const WebVector<int>& uniqueIDs,
+        const WebVector<int>& itemIDs,
         int separatorIndex);
     virtual void hidePopups();
     virtual void setScrollbarColors(unsigned inactiveColor,

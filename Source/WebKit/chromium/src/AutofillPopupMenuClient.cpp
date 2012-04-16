@@ -52,9 +52,9 @@ using namespace WebCore;
 namespace WebKit {
 
 AutofillPopupMenuClient::AutofillPopupMenuClient()
-    : m_separatorIndex(-1)
-    , m_selectedIndex(-1)
+    : m_selectedIndex(-1)
     , m_textField(0)
+    , m_useLegacyBehavior(false)
 {
 }
 
@@ -64,37 +64,25 @@ AutofillPopupMenuClient::~AutofillPopupMenuClient()
 
 unsigned AutofillPopupMenuClient::getSuggestionsCount() const
 {
-    return m_names.size() + ((m_separatorIndex == -1) ? 0 : 1);
+    return m_names.size();
 }
 
 WebString AutofillPopupMenuClient::getSuggestion(unsigned listIndex) const
 {
-    int index = convertListIndexToInternalIndex(listIndex);
-    if (index == -1)
-        return WebString();
-
-    ASSERT(index >= 0 && static_cast<size_t>(index) < m_names.size());
-    return m_names[index];
+    ASSERT(listIndex < m_names.size());
+    return m_names[listIndex];
 }
 
 WebString AutofillPopupMenuClient::getLabel(unsigned listIndex) const
 {
-    int index = convertListIndexToInternalIndex(listIndex);
-    if (index == -1)
-        return WebString();
-
-    ASSERT(index >= 0 && static_cast<size_t>(index) < m_labels.size());
-    return m_labels[index];
+    ASSERT(listIndex < m_labels.size());
+    return m_labels[listIndex];
 }
 
 WebString AutofillPopupMenuClient::getIcon(unsigned listIndex) const
 {
-    int index = convertListIndexToInternalIndex(listIndex);
-    if (index == -1)
-        return WebString();
-
-    ASSERT(index >= 0 && static_cast<size_t>(index) < m_icons.size());
-    return m_icons[index];
+    ASSERT(listIndex < m_icons.size());
+    return m_icons[listIndex];
 }
 
 void AutofillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
@@ -102,26 +90,17 @@ void AutofillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
     if (!canRemoveSuggestionAtIndex(listIndex))
         return;
 
-    int index = convertListIndexToInternalIndex(listIndex);
+    ASSERT(listIndex < m_names.size());
 
-    ASSERT(static_cast<unsigned>(index) < m_names.size());
-
-    m_names.remove(index);
-    m_labels.remove(index);
-    m_icons.remove(index);
-    m_uniqueIDs.remove(index);
-
-    // Shift the separator index if necessary.
-    if (m_separatorIndex != -1)
-        m_separatorIndex--;
+    m_names.remove(listIndex);
+    m_labels.remove(listIndex);
+    m_icons.remove(listIndex);
+    m_itemIDs.remove(listIndex);
 }
 
 bool AutofillPopupMenuClient::canRemoveSuggestionAtIndex(unsigned listIndex)
 {
-    // Only allow deletion of items before the separator that have unique id 0
-    // (i.e. are autocomplete rather than autofill items).
-    int index = convertListIndexToInternalIndex(listIndex);
-    return !m_uniqueIDs[index] && (m_separatorIndex == -1 || listIndex < static_cast<unsigned>(m_separatorIndex));
+    return m_itemIDs[listIndex] == WebAutofillClient::MenuItemIDAutocompleteEntry || m_itemIDs[listIndex] == WebAutofillClient::MenuItemIDPasswordEntry;
 }
 
 void AutofillPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)
@@ -130,15 +109,22 @@ void AutofillPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)
     if (!webView)
         return;
 
-    if (m_separatorIndex != -1 && listIndex > static_cast<unsigned>(m_separatorIndex))
-        --listIndex;
-
     ASSERT(listIndex < m_names.size());
+
+    if (m_useLegacyBehavior) {
+        for (size_t i = 0; i < m_itemIDs.size(); ++i) {
+            if (m_itemIDs[i] == WebAutofillClient::MenuItemIDSeparator) {
+                if (listIndex > i)
+                    listIndex--;
+                break;
+            }
+        }
+    }
 
     webView->autofillClient()->didAcceptAutofillSuggestion(WebNode(getTextField()),
                                                            m_names[listIndex],
                                                            m_labels[listIndex],
-                                                           m_uniqueIDs[listIndex],
+                                                           m_itemIDs[listIndex],
                                                            listIndex);
 }
 
@@ -148,15 +134,12 @@ void AutofillPopupMenuClient::selectionChanged(unsigned listIndex, bool fireEven
     if (!webView)
         return;
 
-    if (m_separatorIndex != -1 && listIndex > static_cast<unsigned>(m_separatorIndex))
-        --listIndex;
-
     ASSERT(listIndex < m_names.size());
 
     webView->autofillClient()->didSelectAutofillSuggestion(WebNode(getTextField()),
                                                            m_names[listIndex],
                                                            m_labels[listIndex],
-                                                           m_uniqueIDs[listIndex]);
+                                                           m_itemIDs[listIndex]);
 }
 
 void AutofillPopupMenuClient::selectionCleared()
@@ -228,17 +211,12 @@ void AutofillPopupMenuClient::popupDidHide()
 
 bool AutofillPopupMenuClient::itemIsSeparator(unsigned listIndex) const
 {
-    return (m_separatorIndex != -1 && static_cast<unsigned>(m_separatorIndex) == listIndex);
+    return m_itemIDs[listIndex] == WebAutofillClient::MenuItemIDSeparator;
 }
 
 bool AutofillPopupMenuClient::itemIsWarning(unsigned listIndex) const
 {
-    int index = convertListIndexToInternalIndex(listIndex);
-    if (index == -1)
-        return false;
-
-    ASSERT(index >= 0 && static_cast<size_t>(index) < m_uniqueIDs.size());
-    return m_uniqueIDs[index] < 0;
+    return m_itemIDs[listIndex] == WebAutofillClient::MenuItemIDWarningMessage;
 }
 
 void AutofillPopupMenuClient::setTextFromItem(unsigned listIndex)
@@ -269,20 +247,36 @@ void AutofillPopupMenuClient::initialize(
     const WebVector<WebString>& names,
     const WebVector<WebString>& labels,
     const WebVector<WebString>& icons,
-    const WebVector<int>& uniqueIDs,
+    const WebVector<int>& itemIDs,
     int separatorIndex)
 {
     ASSERT(names.size() == labels.size());
     ASSERT(names.size() == icons.size());
-    ASSERT(names.size() == uniqueIDs.size());
-    ASSERT(separatorIndex < static_cast<int>(names.size()));
+    ASSERT(names.size() == itemIDs.size());
 
     m_selectedIndex = -1;
     m_textField = textField;
 
-    // The suggestions must be set before initializing the
-    // AutofillPopupMenuClient.
-    setSuggestions(names, labels, icons, uniqueIDs, separatorIndex);
+    if (separatorIndex == -1) {
+        // The suggestions must be set before initializing the
+        // AutofillPopupMenuClient.
+        setSuggestions(names, labels, icons, itemIDs);
+    } else {
+        m_useLegacyBehavior = true;
+        WebVector<WebString> namesWithSeparator(names.size() + 1);
+        WebVector<WebString> labelsWithSeparator(labels.size() + 1);
+        WebVector<WebString> iconsWithSeparator(icons.size() + 1);
+        WebVector<int> itemIDsWithSeparator(itemIDs.size() + 1);
+        for (size_t i = 0; i < names.size(); ++i) {
+            size_t j = i < static_cast<size_t>(separatorIndex) ? i : i + 1;
+            namesWithSeparator[j] = names[i];
+            labelsWithSeparator[j] = labels[i];
+            iconsWithSeparator[j] = icons[i];
+            itemIDsWithSeparator[j] = itemIDs[i];
+        }
+        itemIDsWithSeparator[separatorIndex] = WebAutofillClient::MenuItemIDSeparator;
+        setSuggestions(namesWithSeparator, labelsWithSeparator, iconsWithSeparator, itemIDsWithSeparator);
+    }
 
     FontDescription regularFontDescription;
     RenderTheme::defaultTheme()->systemFont(CSSValueWebkitControl,
@@ -313,40 +307,26 @@ void AutofillPopupMenuClient::initialize(
 void AutofillPopupMenuClient::setSuggestions(const WebVector<WebString>& names,
                                              const WebVector<WebString>& labels,
                                              const WebVector<WebString>& icons,
-                                             const WebVector<int>& uniqueIDs,
-                                             int separatorIndex)
+                                             const WebVector<int>& itemIDs)
 {
     ASSERT(names.size() == labels.size());
     ASSERT(names.size() == icons.size());
-    ASSERT(names.size() == uniqueIDs.size());
-    ASSERT(separatorIndex < static_cast<int>(names.size()));
+    ASSERT(names.size() == itemIDs.size());
 
     m_names.clear();
     m_labels.clear();
     m_icons.clear();
-    m_uniqueIDs.clear();
+    m_itemIDs.clear();
     for (size_t i = 0; i < names.size(); ++i) {
         m_names.append(names[i]);
         m_labels.append(labels[i]);
         m_icons.append(icons[i]);
-        m_uniqueIDs.append(uniqueIDs[i]);
+        m_itemIDs.append(itemIDs[i]);
     }
-
-    m_separatorIndex = separatorIndex;
 
     // Try to preserve selection if possible.
     if (getSelectedIndex() >= static_cast<int>(names.size()))
         setSelectedIndex(-1);
-}
-
-int AutofillPopupMenuClient::convertListIndexToInternalIndex(unsigned listIndex) const
-{
-    if (listIndex == static_cast<unsigned>(m_separatorIndex))
-        return -1;
-
-    if (m_separatorIndex == -1 || listIndex < static_cast<unsigned>(m_separatorIndex))
-        return listIndex;
-    return listIndex - 1;
 }
 
 WebViewImpl* AutofillPopupMenuClient::getWebView() const

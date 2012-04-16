@@ -1,3 +1,41 @@
+2012-04-15  Keishi Hattori  <keishi@webkit.org>
+
+        Introduce MenuItemID to autofill popup
+        https://bugs.webkit.org/show_bug.cgi?id=83777
+
+        Introducing MenuItemIDs because we want to add multiple separators and
+        need to identify non-autofill menu items without resorting to the separator position.
+
+        Reviewed by Kent Tamura.
+
+        * public/WebAutofillClient.h:
+        (WebKit::WebAutofillClient::didAcceptAutofillSuggestion): Changed uniqueID to itemID because they aren't unique.
+        (WebKit::WebAutofillClient::didSelectAutofillSuggestion):
+        * public/WebView.h:
+        (WebView):
+        * src/AutofillPopupMenuClient.cpp:
+        (WebKit::AutofillPopupMenuClient::AutofillPopupMenuClient):
+        (WebKit::AutofillPopupMenuClient::getSuggestionsCount):
+        (WebKit::AutofillPopupMenuClient::getSuggestion):
+        (WebKit::AutofillPopupMenuClient::getLabel):
+        (WebKit::AutofillPopupMenuClient::getIcon):
+        (WebKit::AutofillPopupMenuClient::removeSuggestionAtIndex):
+        (WebKit::AutofillPopupMenuClient::canRemoveSuggestionAtIndex):
+        (WebKit::AutofillPopupMenuClient::valueChanged):
+        (WebKit::AutofillPopupMenuClient::selectionChanged):
+        (WebKit::AutofillPopupMenuClient::itemIsSeparator):
+        (WebKit::AutofillPopupMenuClient::itemIsWarning):
+        (WebKit::AutofillPopupMenuClient::initialize):
+        (WebKit::AutofillPopupMenuClient::setSuggestions):
+        * src/AutofillPopupMenuClient.h:  Removed m_separatorIndex because now we use itemID to identify separators.
+        Added m_useLegacyBehavior which is true when it is initialized with a valid separator index. This is to keep
+        the autofill working even when the chromium side hasn't been updated yet.
+        (AutofillPopupMenuClient):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-04-15  James Robinson  <jamesr@chromium.org>
 
         [chromium] LayerRendererChromium shouldn't know anything about CCLayerImpl

@@ -350,19 +350,16 @@ public:
     // Autofill  -----------------------------------------------------------
 
     // Notifies the WebView that Autofill suggestions are available for a node.
-    // |uniqueIDs| is a vector of IDs that represent the unique ID of each
-    // Autofill profile in the suggestions popup. If a unique ID is 0, then the
-    // corresponding suggestion comes from Autocomplete rather than Autofill.
-    // If a unique ID is negative, then the corresponding "suggestion" is
-    // actually a user-facing warning, e.g. explaining why Autofill is
-    // unavailable for the current form.
+    // |itemIDs| is a vector of IDs for the menu items. A positive itemID is a
+    // unique ID for the Autofill entries. Other MenuItemIDs are defined in
+    // WebAutofillClient.h
     virtual void applyAutofillSuggestions(
         const WebNode&,
         const WebVector<WebString>& names,
         const WebVector<WebString>& labels,
         const WebVector<WebString>& icons,
-        const WebVector<int>& uniqueIDs,
-        int separatorIndex) = 0;
+        const WebVector<int>& itemIDs,
+        int separatorIndex = -1) = 0;
 
     // Hides any popup (suggestions, selects...) that might be showing.
     virtual void hidePopups() = 0;
