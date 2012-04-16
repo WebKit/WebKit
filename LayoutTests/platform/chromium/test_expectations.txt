@@ -3778,3 +3778,8 @@ BUGWK84065 WIN DEBUG : fast/canvas/webgl/shader-precision-format.html = TEXT
 BUGWK84065 MAC DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT
 BUGWK84065 WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT
 
+BUGWK84083 : compositing/backing/no-backing-for-clip.html = TEXT
+BUGWK84083 : compositing/backing/no-backing-for-clip-overlap.html = TEXT
+BUGWK84083 : compositing/backing/no-backing-for-perspective.html = TEXT
+BUGWK84083 : compositing/geometry/preserve-3d-switching.html = TEXT
+BUGWK84083 : compositing/overflow/overflow-positioning.html = IMAGE
