@@ -119,16 +119,6 @@ BUGWK75568 : tables/mozilla/bugs/bug1188.html = TEXT
 BUGWK83264 : fast/css/font-face-synthetic-bold-italic.html = FAIL MISSING
 BUGWK83264 : fast/css/font-face-weight-matching.html = FAIL MISSING
 
-BUGWK83265 : fast/css/min-width-with-spanned-cell-fixed.html = FAIL MISSING
-BUGWK83265 : fast/css/min-width-with-spanned-cell.html = FAIL MISSING
-
-BUGWK83265 : fast/css/caption-width-absolute-position-offset-top.htm = FAIL MISSING
-BUGWK83265 : fast/css/caption-width-absolute-position.htm = FAIL MISSING
-BUGWK83265 : fast/css/caption-width-fixed-position-offset-top.htm = FAIL MISSING
-BUGWK83265 : fast/css/caption-width-fixed-position.htm = FAIL MISSING
-BUGWK83265 : fast/css/caption-width-relative-position-offset-top.htm = FAIL MISSING
-BUGWK83265 : fast/css/caption-width-relative-position.htm = FAIL MISSING
-
 BUGWK83007 : fast/repaint/region-painting-invalidation.html = FAIL MISSING
 
 // Needs to have PNG generated, which currently fails for this case.
