@@ -72,9 +72,9 @@ PassRefPtr<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLTrackElement(tagName, document));
 }
 
-void HTMLTrackElement::insertedIntoTree(bool deep)
+void HTMLTrackElement::insertedIntoDocument()
 {
-    HTMLElement::insertedIntoTree(deep);
+    HTMLElement::insertedIntoDocument();
 
     if (HTMLMediaElement* parent = mediaElement())
         parent->didAddTrack(this);
