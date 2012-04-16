@@ -330,11 +330,6 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._update();
     },
 
-    scrollWindow: function(event)
-    {
-        this._overviewWindow.scrollWindow(event);
-    },
-
     /**
      * @param {WebInspector.TimelinePresentationModel.Record} record
      */
@@ -587,11 +582,16 @@ WebInspector.TimelineOverviewWindow.prototype = {
         const zoomFactor = 1.1;
         const mouseWheelZoomSpeed = 1 / 120;
 
-        if (typeof event.wheelDeltaY === "number" && event.wheelDeltaY !== 0) {
+        if (typeof event.wheelDeltaY === "number" && event.wheelDeltaY) {
             var referencePoint = event.pageX - this._parentElement.offsetLeft;
             this._zoom(Math.pow(zoomFactor, -event.wheelDeltaY * mouseWheelZoomSpeed), referencePoint);
         }
-        this.scrollWindow(event);
+        if (typeof event.wheelDeltaX === "number" && event.wheelDeltaX) {
+            this._windowDragging(event.pageX + Math.round(event.wheelDeltaX * WebInspector.TimelineOverviewPane.WindowScrollSpeedFactor),
+                this._leftResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset,
+                this._rightResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset,
+                event);
+        }
     },
 
     /**
@@ -608,16 +608,6 @@ WebInspector.TimelineOverviewWindow.prototype = {
         left = Math.max(0, referencePoint + (left - referencePoint) * factor);
         right = Math.min(this._parentElement.clientWidth, referencePoint + (right - referencePoint) * factor);
         this._setWindowPosition(left, right);
-    },
-
-    scrollWindow: function(event)
-    {
-        if (typeof event.wheelDeltaX === "number" && event.wheelDeltaX !== 0) {
-            this._windowDragging(event.pageX + Math.round(event.wheelDeltaX * WebInspector.TimelineOverviewPane.WindowScrollSpeedFactor),
-                this._leftResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset,
-                this._rightResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset,
-                event);
-        }
     }
 }
 
