@@ -1,3 +1,19 @@
+2012-04-16  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11249336> and https://bugs.webkit.org/show_bug.cgi?id=84050
+        WebKit2 back/forward items in the page cache are never removed when the page is closed
+
+        Reviewed by Jessie Berlin and unofficially reviewed by Jon Lee.
+
+        Individual WebBackForwardListProxy's had no idea which items are associated with them.
+        This adds that association and makes sure the proxy removes all associated items from the PageCache when it closes.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::removeItem): Remove the item from the PageCache in case it was in it.
+        (WebKit::WebBackForwardListProxy::addItem): Add the item ID to this back/forward list's set of associated IDs.
+        (WebKit::WebBackForwardListProxy::close): Remove each associated item from the PageCache.
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+
 2012-04-16  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
          [EFL][WK2] Fix build break in PageClientImpl.cpp.

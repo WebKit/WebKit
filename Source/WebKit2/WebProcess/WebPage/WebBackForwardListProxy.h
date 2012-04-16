@@ -27,6 +27,7 @@
 #define WebBackForwardListProxy_h
 
 #include <WebCore/BackForwardList.h>
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebKit {
@@ -62,6 +63,7 @@ private:
     virtual void close();
 
     WebPage* m_page;
+    HashSet<uint64_t> m_associatedItemIDs;
 };
 
 } // namespace WebKit
