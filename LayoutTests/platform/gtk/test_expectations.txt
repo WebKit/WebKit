@@ -478,6 +478,7 @@ BUGWK83891 : css2.1/20110323/at-import-007.htm = PASS TEXT
 BUGWK83891 : css2.1/20110323/at-import-009.htm = PASS TEXT
 BUGWK83891 : css2.1/20110323/eof-005.htm = PASS TEXT
 
+BUGWK83704 : media/event-attributes.html = PASS TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
@@ -1542,6 +1543,8 @@ BUGWK69933 : fast/borders/inline-mask-overlay-image-outset.html = FAIL
 // proper investigation can be made.
 BUGWK83874 SKIP : media/video-load-require-user-gesture.html = FAIL
 BUGWK83874 SKIP : media/video-play-require-user-gesture.html = FAIL
+
+BUGWK84025 : media/sources-fallback-codecs.html = FAIL
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
