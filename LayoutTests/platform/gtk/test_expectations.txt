@@ -1547,6 +1547,11 @@ BUGWK83874 SKIP : media/video-play-require-user-gesture.html = FAIL
 
 BUGWK84025 : media/sources-fallback-codecs.html = FAIL
 
+BUGWK83906 : ietestcenter/css3/grid/grid-column-001.htm = IMAGE
+BUGWK83907 : ietestcenter/css3/grid/grid-column-002.htm = IMAGE
+BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
+BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
+BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
