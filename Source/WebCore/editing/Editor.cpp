@@ -916,7 +916,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
             RefPtr<Document> document = selectionStart->document();
 
             // Insert the text
-            if (triggeringEvent->isDictation())
+            if (triggeringEvent && triggeringEvent->isDictation())
                 DictationCommand::insertText(document.get(), text, triggeringEvent->dictationAlternatives(), selection);
             else {
                 TypingCommand::Options options = 0;
