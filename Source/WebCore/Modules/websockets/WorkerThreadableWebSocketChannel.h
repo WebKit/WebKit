@@ -181,6 +181,8 @@ private:
     static void mainThreadSuspend(ScriptExecutionContext*, Peer*);
     static void mainThreadResume(ScriptExecutionContext*, Peer*);
 
+    class WorkerContextDidInitializeTask;
+
     RefPtr<WorkerContext> m_workerContext;
     RefPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
     RefPtr<Bridge> m_bridge;

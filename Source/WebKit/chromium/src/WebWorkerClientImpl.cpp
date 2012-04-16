@@ -151,8 +151,7 @@ void WebWorkerClientImpl::postTaskToLoader(PassOwnPtr<ScriptExecutionContext::Ta
 
 bool WebWorkerClientImpl::postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
 {
-    m_proxy->postTaskForModeToWorkerContext(task, mode);
-    return true;
+    return m_proxy->postTaskForModeToWorkerContext(task, mode);
 }
 
 void WebWorkerClientImpl::postMessageToWorkerObject(PassRefPtr<SerializedScriptValue> value, PassOwnPtr<MessagePortChannelArray> ports)

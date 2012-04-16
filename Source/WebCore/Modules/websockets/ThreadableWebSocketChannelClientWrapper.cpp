@@ -45,6 +45,7 @@ ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper
     : m_context(context)
     , m_client(client)
     , m_peer(0)
+    , m_failedWebSocketChannelCreation(false)
     , m_syncMethodDone(true)
     , m_useHixie76Protocol(true)
     , m_sendRequestResult(ThreadableWebSocketChannel::SendFail)
@@ -88,6 +89,16 @@ void ThreadableWebSocketChannelClientWrapper::didCreateWebSocketChannel(WorkerTh
 void ThreadableWebSocketChannelClientWrapper::clearPeer()
 {
     m_peer = 0;
+}
+
+bool ThreadableWebSocketChannelClientWrapper::failedWebSocketChannelCreation() const
+{
+    return m_failedWebSocketChannelCreation;
+}
+
+void ThreadableWebSocketChannelClientWrapper::setFailedWebSocketChannelCreation()
+{
+    m_failedWebSocketChannelCreation = true;
 }
 
 bool ThreadableWebSocketChannelClientWrapper::useHixie76Protocol() const

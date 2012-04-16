@@ -61,6 +61,9 @@ public:
     void didCreateWebSocketChannel(WorkerThreadableWebSocketChannel::Peer*, bool useHixie76Protocol);
     void clearPeer();
 
+    bool failedWebSocketChannelCreation() const;
+    void setFailedWebSocketChannelCreation();
+
     // The value of useHixie76Protocol flag is cachable; this value is saved after WebSocketChannel (on the main
     // thread) is constructed.
     bool useHixie76Protocol() const;
@@ -105,6 +108,7 @@ private:
     ScriptExecutionContext* m_context;
     WebSocketChannelClient* m_client;
     WorkerThreadableWebSocketChannel::Peer* m_peer;
+    bool m_failedWebSocketChannelCreation;
     bool m_syncMethodDone;
     bool m_useHixie76Protocol;
     // ThreadSafeRefCounted must not have String member variables.

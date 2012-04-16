@@ -360,34 +360,44 @@ WorkerThreadableWebSocketChannel::Bridge::~Bridge()
     disconnect();
 }
 
-class WorkerContextDidInitializeTask : public ScriptExecutionContext::Task {
+class WorkerThreadableWebSocketChannel::WorkerContextDidInitializeTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<ScriptExecutionContext::Task> create(WorkerThreadableWebSocketChannel::Peer* peer,
+                                                           WorkerLoaderProxy* loaderProxy,
                                                            PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper,
                                                            bool useHixie76Protocol)
     {
-        return adoptPtr(new WorkerContextDidInitializeTask(peer, workerClientWrapper, useHixie76Protocol));
+        return adoptPtr(new WorkerContextDidInitializeTask(peer, loaderProxy, workerClientWrapper, useHixie76Protocol));
     }
 
     virtual ~WorkerContextDidInitializeTask() { }
     virtual void performTask(ScriptExecutionContext* context) OVERRIDE
     {
         ASSERT_UNUSED(context, context->isWorkerContext());
-        m_workerClientWrapper->didCreateWebSocketChannel(m_peer, m_useHixie76Protocol);
+        if (m_workerClientWrapper->failedWebSocketChannelCreation()) {
+            // If Bridge::initialize() quitted earlier, we need to kick mainThreadDestroy() to delete the peer.
+            OwnPtr<WorkerThreadableWebSocketChannel::Peer> peer = adoptPtr(m_peer);
+            m_peer = 0;
+            m_loaderProxy->postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadDestroy, peer.release()));
+        } else
+            m_workerClientWrapper->didCreateWebSocketChannel(m_peer, m_useHixie76Protocol);
     }
     virtual bool isCleanupTask() const OVERRIDE { return true; }
 
 private:
     WorkerContextDidInitializeTask(WorkerThreadableWebSocketChannel::Peer* peer,
+                                   WorkerLoaderProxy* loaderProxy,
                                    PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper,
                                    bool useHixie76Protocol)
         : m_peer(peer)
+        , m_loaderProxy(loaderProxy)
         , m_workerClientWrapper(workerClientWrapper)
         , m_useHixie76Protocol(useHixie76Protocol)
     {
     }
 
     WorkerThreadableWebSocketChannel::Peer* m_peer;
+    WorkerLoaderProxy* m_loaderProxy;
     RefPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
     bool m_useHixie76Protocol;
 };
@@ -401,7 +411,7 @@ void WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecut
 
     Peer* peer = Peer::create(clientWrapper, *loaderProxy, context, taskMode);
     bool sent = loaderProxy->postTaskForModeToWorkerContext(
-        WorkerContextDidInitializeTask::create(peer, clientWrapper, peer->useHixie76Protocol()), taskMode);
+        WorkerThreadableWebSocketChannel::WorkerContextDidInitializeTask::create(peer, loaderProxy, clientWrapper, peer->useHixie76Protocol()), taskMode);
     if (!sent) {
         clientWrapper->clearPeer();
         delete peer;
@@ -419,6 +429,8 @@ void WorkerThreadableWebSocketChannel::Bridge::initialize()
     waitForMethodCompletion();
     // m_peer may be null when the nested runloop exited before a peer has created.
     m_peer = m_workerClientWrapper->peer();
+    if (!m_peer)
+        m_workerClientWrapper->setFailedWebSocketChannelCreation();
 }
 
 void WorkerThreadableWebSocketChannel::mainThreadConnect(ScriptExecutionContext* context, Peer* peer, const KURL& url, const String& protocol)
