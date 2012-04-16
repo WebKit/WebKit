@@ -256,7 +256,7 @@ void RenderSVGRoot::layout()
 void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& adjustedPaintOffset)
 {
     // An empty viewport disables rendering.
-    if (borderBoxRect().isEmpty())
+    if (pixelSnappedBorderBoxRect().isEmpty())
         return;
 
     // Don't paint, if the context explicitely disabled it.
@@ -368,7 +368,7 @@ void RenderSVGRoot::computeFloatRectForRepaint(RenderBoxModelObject* repaintCont
     repaintRect = m_localToBorderBoxTransform.mapRect(repaintRect);
 
     // Apply initial viewport clip - not affected by overflow settings    
-    repaintRect.intersect(borderBoxRect());
+    repaintRect.intersect(pixelSnappedBorderBoxRect());
 
     const SVGRenderStyle* svgStyle = style()->svgStyle();
     if (const ShadowData* shadow = svgStyle->shadow())

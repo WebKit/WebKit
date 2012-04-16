@@ -285,7 +285,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
     IntPoint local = roundedIntPoint(box->absoluteToLocal(mouseEvent->absoluteLocation(), false, true));
     if (mouseEvent->type() == eventNames().mousedownEvent && mouseEvent->button() == LeftButton) {
-        if (box->borderBoxRect().contains(local)) {
+        if (box->pixelSnappedBorderBoxRect().contains(local)) {
             // The following functions of HTMLInputElement may run JavaScript
             // code which detaches this shadow node. We need to take a reference
             // and check renderer() after such function calls.
@@ -304,7 +304,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
     } else if (mouseEvent->type() == eventNames().mouseupEvent && mouseEvent->button() == LeftButton)
         stopRepeatingTimer();
     else if (event->type() == eventNames().mousemoveEvent) {
-        if (box->borderBoxRect().contains(local)) {
+        if (box->pixelSnappedBorderBoxRect().contains(local)) {
             if (!m_capturing) {
                 if (Frame* frame = document()->frame()) {
                     frame->eventHandler()->setCapturingMouseEventsNode(this);

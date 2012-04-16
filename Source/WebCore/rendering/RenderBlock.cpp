@@ -1666,7 +1666,7 @@ void RenderBlock::addVisualOverflowFromTheme()
     if (!style()->hasAppearance())
         return;
 
-    IntRect inflatedRect = borderBoxRect();
+    IntRect inflatedRect = pixelSnappedBorderBoxRect();
     theme()->adjustRepaintRect(this, inflatedRect);
     addVisualOverflow(inflatedRect);
 }

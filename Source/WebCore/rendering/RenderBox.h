@@ -133,8 +133,9 @@ public:
     IntRect pixelSnappedFrameRect() const { return pixelSnappedIntRect(m_frameRect); }
     void setFrameRect(const LayoutRect& rect) { m_frameRect = rect; }
 
-    IntRect borderBoxRect() const { return IntRect(IntPoint(), IntSize(m_frameRect.pixelSnappedWidth(), m_frameRect.pixelSnappedHeight())); }
-    virtual IntRect borderBoundingBox() const { return borderBoxRect(); } 
+    LayoutRect borderBoxRect() const { return LayoutRect(LayoutPoint(), size()); }
+    IntRect pixelSnappedBorderBoxRect() const { return IntRect(IntPoint(), m_frameRect.pixelSnappedSize()); }
+    virtual IntRect borderBoundingBox() const { return pixelSnappedBorderBoxRect(); } 
 
     // The content area of the box (excludes padding - and intrinsic padding for table cells, etc... - and border).
     LayoutRect contentBoxRect() const { return LayoutRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), contentWidth(), contentHeight()); }
@@ -454,7 +455,7 @@ public:
     LayoutRect layoutOverflowRectForPropagation(RenderStyle*) const;
 
     RenderOverflow* hasRenderOverflow() const { return m_overflow.get(); }    
-    bool hasVisualOverflow() const { return m_overflow && !borderBoxRect().contains(pixelSnappedIntRect(m_overflow->visualOverflowRect())); }
+    bool hasVisualOverflow() const { return m_overflow && !borderBoxRect().contains(m_overflow->visualOverflowRect()); }
 
     virtual bool needsPreferredWidthsRecalculation() const;
     virtual void computeIntrinsicRatioInformation(FloatSize& /* intrinsicSize */, double& /* intrinsicRatio */, bool& /* isPercentageIntrinsicSize */) const { }
