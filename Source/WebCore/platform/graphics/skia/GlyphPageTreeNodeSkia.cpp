@@ -96,15 +96,12 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
     }
 
     if (fontData->hasVerticalGlyphs()) {
-        bool lookVariants = false;
         for (unsigned i = 0; i < bufferLength; ++i) {
             if (!Font::isCJKIdeograph(buffer[i])) {
-                lookVariants = true;
-                continue;
+                substituteWithVerticalGlyphs(fontData, glyphs, length);
+                break;
             }
         }
-        if (lookVariants)
-            substituteWithVerticalGlyphs(fontData, glyphs, length);
     }
 
     unsigned allGlyphs = 0; // track if any of the glyphIDs are non-zero
