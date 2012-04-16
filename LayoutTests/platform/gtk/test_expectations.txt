@@ -303,17 +303,6 @@ BUGWK19688 : fast/images/exif-orientation-css.html = FAIL
 // Touch adjustment not enabled
 BUGWK78801 : touchadjustment = FAIL
 
-BUGWK83830 : ietestcenter/css3/grid/display-grid-001.htm = FAIL MISSING
-BUGWK83830 : ietestcenter/css3/grid/grid-column-001.htm = FAIL MISSING
-BUGWK83830 : ietestcenter/css3/grid/grid-column-003.htm = FAIL MISSING
-BUGWK83830 : ietestcenter/css3/grid/grid-items-001.htm = FAIL MISSING
-BUGWK83830 : ietestcenter/css3/grid/grid-items-003.htm = FAIL MISSING
-BUGWK83830 : ietestcenter/css3/grid/grid-items-005.htm = FAIL MISSING
-BUGWK83830 : ietestcenter/css3/grid/display-grid-002.htm = FAIL MISSING
-BUGWK83830 : ietestcenter/css3/grid/grid-column-002.htm = FAIL MISSING
-BUGWK83830 : ietestcenter/css3/grid/grid-columns-001.htm = FAIL MISSING
-BUGWK83830 : ietestcenter/css3/grid/grid-items-002.htm = FAIL MISSING
-BUGWK83830 : ietestcenter/css3/grid/grid-items-004.htm = FAIL MISSING
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -480,8 +469,6 @@ BUGWK54210 : fast/text/atsui-negative-spacing-features.html = PASS TEXT
 BUGWK54210 : fast/text/atsui-spacing-features.html = PASS TEXT
 
 BUGWK83800 : plugins/get-url-with-blank-target.html = PASS TEXT
-
-BUGWK83878 : media/track/track-mode.html = PASS TEXT
 
 BUGWK83891 : css2.1/20110323/at-import-002.htm = PASS TEXT
 BUGWK83891 : css2.1/20110323/at-import-004.htm = PASS TEXT
@@ -1412,6 +1399,19 @@ BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-01-b.svg = FAIL
 BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-02-f.svg = FAIL
 BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-04-b.svg = FAIL
 BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-07-f.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-06-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-12-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-11-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-32-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-17-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-30-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-19-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-28-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-10-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-07-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-04-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-05-t.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-22-b.svg = FAIL
 
 // Floating point inconsistencies between 32-bit and 64-bit bots
 BUGWKGTK : svg/css/composite-shadow-example.html = FAIL
