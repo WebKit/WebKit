@@ -73929,14 +73929,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\DetailedHeapshotGridNodes.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\DetailedHeapshotView.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\dialog.css"
 					>
 				</File>
@@ -74049,7 +74041,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\HeapSnapshotGridNodes.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\HeapSnapshotProxy.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\HeapSnapshotView.js"
 					>
 				</File>
 				<File

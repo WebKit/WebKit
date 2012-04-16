@@ -278,17 +278,17 @@ modules = [
         "sources": [
             "BottomUpProfileDataGridTree.js",
             "CSSSelectorProfileView.js",
-            "DetailedHeapshotView.js",
-            "DetailedHeapshotGridNodes.js",
+            "HeapSnapshot.js",
+            "HeapSnapshotGridNodes.js",
+            "HeapSnapshotProxy.js",
+            "HeapSnapshotView.js",
+            "HeapSnapshotWorker.js",
+            "HeapSnapshotWorkerDispatcher.js",
             "ProfileDataGridTree.js",
             "ProfilesPanel.js",
             "ProfileLauncherView.js",
             "ProfileView.js",
             "TopDownProfileDataGridTree.js",
-            "HeapSnapshot.js",
-            "HeapSnapshotProxy.js",
-            "HeapSnapshotWorker.js",
-            "HeapSnapshotWorkerDispatcher.js",
         ]
     },
 #    {

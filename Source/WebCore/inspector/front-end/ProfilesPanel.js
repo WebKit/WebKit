@@ -169,7 +169,7 @@ WebInspector.ProfilesPanel = function()
     if (!WebInspector.WorkerManager.isWorkerFrontend())
         this._registerProfileType(new WebInspector.CSSSelectorProfileType());
     if (Capabilities.heapProfilerPresent)
-        this._registerProfileType(new WebInspector.DetailedHeapshotProfileType());
+        this._registerProfileType(new WebInspector.HeapSnapshotProfileType());
 
     InspectorBackend.registerProfilerDispatcher(new WebInspector.ProfilerDispatcher(this));
 
@@ -477,7 +477,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     loadHeapSnapshot: function(uid, callback)
     {
-        var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.DetailedHeapshotProfileType.TypeId)];
+        var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
         if (!profile)
             return;
 
@@ -499,7 +499,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     _addHeapSnapshotChunk: function(uid, chunk)
     {
-        var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.DetailedHeapshotProfileType.TypeId)];
+        var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
         if (!profile || !profile.proxy)
             return;
         profile.proxy.pushJSONChunk(chunk);
@@ -507,7 +507,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     _finishHeapSnapshot: function(uid)
     {
-        var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.DetailedHeapshotProfileType.TypeId)];
+        var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
         if (!profile || !profile.proxy)
             return;
         var proxy = profile.proxy;
@@ -859,10 +859,10 @@ WebInspector.ProfilesPanel.prototype = {
 
     takeHeapSnapshot: function()
     {
-        if (!this.hasTemporaryProfile(WebInspector.DetailedHeapshotProfileType.TypeId)) {
+        if (!this.hasTemporaryProfile(WebInspector.HeapSnapshotProfileType.TypeId)) {
             if (!this._temporaryRecordingProfile) {
                 this._temporaryRecordingProfile = new WebInspector.ProfileHeader(
-                    WebInspector.DetailedHeapshotProfileType.TypeId,
+                    WebInspector.HeapSnapshotProfileType.TypeId,
                     WebInspector.UIString("Snapshotting\u2026"),
                     -1,
                     true);
@@ -875,7 +875,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     _reportHeapSnapshotProgress: function(done, total)
     {
-        if (this.hasTemporaryProfile(WebInspector.DetailedHeapshotProfileType.TypeId)) {
+        if (this.hasTemporaryProfile(WebInspector.HeapSnapshotProfileType.TypeId)) {
             this._temporaryRecordingProfile.sidebarElement.subtitle = WebInspector.UIString("%.2f%", (done / total) * 100);
             this._temporaryRecordingProfile.sidebarElement.wait = true;
             if (done >= total)

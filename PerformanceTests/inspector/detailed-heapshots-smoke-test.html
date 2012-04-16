@@ -42,7 +42,7 @@ function test()
             timer.finish(transferTimerCookie);
             showTimerCookie = timer.start("show-snapshot");
             var panel = WebInspector.panels.profiles;
-            var profile = panel._profilesIdMap[panel._makeKey(uid, WebInspector.DetailedHeapshotProfileType.TypeId)];
+            var profile = panel._profilesIdMap[panel._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
             InspectorTest.addSniffer(profile.proxy, "_callLoadCallbacks", step2);
         }
 
