@@ -1,3 +1,13 @@
+2012-04-16  Raymes Khoury  <raymes@chromium.org>
+
+        Fix bug in WebPluginContainer::isRectTopmost() which gave the incorrect result for a scrolled window.
+        https://bugs.webkit.org/show_bug.cgi?id=80606
+
+        Reviewed by Darin Fisher.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::isRectTopmost):
+
 2012-04-15  Keishi Hattori  <keishi@webkit.org>
 
         Introduce MenuItemID to autofill popup

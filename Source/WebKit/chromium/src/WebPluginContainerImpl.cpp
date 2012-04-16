@@ -453,10 +453,10 @@ bool WebPluginContainerImpl::isRectTopmost(const WebRect& rect)
 
     // hitTestResultAtPoint() takes a padding rectangle.
     // FIXME: We'll be off by 1 when the width or height is even.
-    IntRect windowRect = convertToContainingWindow(static_cast<IntRect>(rect));
-    LayoutPoint center = windowRect.center();
+    IntRect documentRect(x() + rect.x, y() + rect.y, rect.width, rect.height);
+    LayoutPoint center = documentRect.center();
     // Make the rect we're checking (the point surrounded by padding rects) contained inside the requested rect. (Note that -1/2 is 0.)
-    LayoutSize padding((windowRect.width() - 1) / 2, (windowRect.height() - 1) / 2);
+    LayoutSize padding((documentRect.width() - 1) / 2, (documentRect.height() - 1) / 2);
     HitTestResult result =
         page->mainFrame()->eventHandler()->hitTestResultAtPoint(center, false, false, DontHitTestScrollbars, HitTestRequest::ReadOnly | HitTestRequest::Active, padding);
     const HitTestResult::NodeSet& nodes = result.rectBasedTestResult();
