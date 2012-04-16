@@ -1,3 +1,21 @@
+2012-04-16  Yongxin Dai  <yodai@rim.com>
+
+        [BlackBerry] Increase padding for text element
+        https://bugs.webkit.org/show_bug.cgi?id=83903
+
+        Reviewed by Antonio Gomes.
+        
+        PR 125888
+        
+        Increase the padding value for focused text element to make selection handle
+        at least partially visible when the user is dragging at edge of viewport
+        in in-region scoll mode.
+ 
+        Reviewed internally by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2012-04-16  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Add ability for DRT to handle HTTP authentication challenges.
