@@ -93,10 +93,10 @@
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/gdk-pixbuf/2.23/gdk-pixbuf-2.23.5.tar.xz" version="2.23.5"
+    <branch module="/pub/GNOME/sources/gdk-pixbuf/2.26/gdk-pixbuf-2.26.0.tar.xz" version="2.26.0"
             repo="ftp.gnome.org"
-            hash="sha256:7a6c3550426f38f6b0eeeb49295654d9e706ce8f1786a4d0932f9d2c0d0bc500"
-            md5sum="066e30277cadc225a7cef4c258da830b"/>
+            hash="sha256:a5028d3a33710cbb6c6264bc561b6e252b37f067dff7b5b52473621e064f254d"
+            md5sum="1c186f9903a20e96587b9afb27944b40"/>
   </autotools>
 
   <autotools id="gtk+"
@@ -106,12 +106,10 @@
       <dep package="cairo"/>
       <dep package="gdk-pixbuf"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/gtk+/3.0/gtk+-3.0.12.tar.xz" version="3.0.12"
+    <branch module="/pub/GNOME/sources/gtk+/3.4/gtk+-3.4.0.tar.xz" version="3.4.0"
             repo="ftp.gnome.org"
-            hash="sha256:219fdea120897981840e909fac40d4d433fe061a37b12b9402e215c819ebeae9"
-            md5sum="b9869b671b0fe5905dce2fee57c965cf">
-      <patch file="gtk+-3.0.12-gtkprinter.patch" strip="1"/>
-    </branch>
+            hash="sha256:00af8be8bc60355e08a8f57e3e7503c916cec5cd5c6acb3eaedb01330b81f3e0"
+            md5sum="f9a0bc875cf95c0462910d2d32528464"/>
   </autotools>
 
   <autotools id="glib"
@@ -119,10 +117,10 @@
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib/2.31/glib-2.31.8.tar.xz" version="2.31.8"
+    <branch module="/pub/GNOME/sources/glib/2.32/glib-2.32.0.tar.xz" version="2.32.0"
             repo="ftp.gnome.org"
-            hash="sha256:1ce3d275189000e1c50e92efcdb6447bc260b1e5c41699b7a1959e3e1928fbaa"
-            md5sum="6909664f29fae2f00cc3181c8c6a6aa7"/>
+            hash="sha256:cde9d9f25ed648069c547e323897ad9379974e1f936b4477fa51bcf1bb261ae4"
+            md5sum="c5fa76fbf9184d20dfb04af66b598190"/>
   </autotools>
 
   <autotools id="glib-networking">
