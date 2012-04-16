@@ -72,22 +72,20 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (233,116) size 17x17 [fill={[type=SOLID] [color=#FFFFFF]}] [x=299.00] [y=149.00] [width=20.00] [height=20.00]
         RenderSVGRect {rect} at (235,117) size 16x17 [fill={[type=SOLID] [color=#000080]}] [x=301.00] [y=151.00] [width=20.00] [height=20.00]
         RenderSVGRect {rect} at (234,117) size 16x16 [fill={[type=SOLID] [color=#B0C4DE]}] [x=300.00] [y=150.00] [width=20.00] [height=20.00]
-        RenderSVGContainer {use} at (238,117) size 10x16
-          RenderSVGContainer {g} at (238,117) size 10x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,160.00)}]
-            RenderSVGViewportContainer {svg} at (238,117) size 10x16
-              RenderSVGContainer {g} at (238,117) size 10x16 [transform={m=((1.25,0.00)(0.00,1.25)) t=(0.00,0.00)}]
-                RenderSVGPath {line} at (241,124) size 5x9 [stroke={[type=SOLID] [color=#000000] [stroke width=1.75]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=3.00] [y2=7.00]
-                RenderSVGPath {path} at (238,117) size 10x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
+        RenderSVGContainer {use} at (238,117) size 10x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,160.00)}]
+          RenderSVGViewportContainer {svg} at (238,117) size 10x16
+            RenderSVGContainer {g} at (238,117) size 10x16 [transform={m=((1.25,0.00)(0.00,1.25)) t=(0.00,0.00)}]
+              RenderSVGPath {line} at (241,124) size 5x9 [stroke={[type=SOLID] [color=#000000] [stroke width=1.75]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=3.00] [y2=7.00]
+              RenderSVGPath {path} at (238,117) size 10x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
       RenderSVGContainer {g} at (272,112) size 22x22
-        RenderSVGPath {ellipse} at (272,112) size 21x21 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=361.50] [cy=156.50] [rx=12.50] [ry=12.50]
-        RenderSVGPath {ellipse} at (274,114) size 20x20 [fill={[type=SOLID] [color=#000080]}] [cx=363.50] [cy=158.50] [rx=12.50] [ry=12.50]
-        RenderSVGPath {ellipse} at (273,113) size 20x20 [fill={[type=SOLID] [color=#B0C4DE]}] [cx=362.50] [cy=157.50] [rx=12.50] [ry=12.50]
-        RenderSVGContainer {use} at (279,115) size 10x16
-          RenderSVGContainer {g} at (279,115) size 10x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(362.50,157.50)}]
-            RenderSVGViewportContainer {svg} at (279,115) size 10x16
-              RenderSVGContainer {g} at (279,115) size 10x16 [transform={m=((1.25,0.00)(0.00,1.25)) t=(0.00,0.00)}]
-                RenderSVGPath {line} at (282,122) size 5x9 [stroke={[type=SOLID] [color=#000000] [stroke width=1.75]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=3.00] [y2=7.00]
-                RenderSVGPath {path} at (279,115) size 10x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
+        RenderSVGEllipse {ellipse} at (272,112) size 21x21 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=361.50] [cy=156.50] [rx=12.50] [ry=12.50]
+        RenderSVGEllipse {ellipse} at (274,114) size 20x20 [fill={[type=SOLID] [color=#000080]}] [cx=363.50] [cy=158.50] [rx=12.50] [ry=12.50]
+        RenderSVGEllipse {ellipse} at (273,113) size 20x20 [fill={[type=SOLID] [color=#B0C4DE]}] [cx=362.50] [cy=157.50] [rx=12.50] [ry=12.50]
+        RenderSVGContainer {use} at (279,115) size 10x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(362.50,157.50)}]
+          RenderSVGViewportContainer {svg} at (279,115) size 10x16
+            RenderSVGContainer {g} at (279,115) size 10x16 [transform={m=((1.25,0.00)(0.00,1.25)) t=(0.00,0.00)}]
+              RenderSVGPath {line} at (282,122) size 5x9 [stroke={[type=SOLID] [color=#000000] [stroke width=1.75]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=3.00] [y2=7.00]
+              RenderSVGPath {path} at (279,115) size 10x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
     RenderSVGText {text} at (100,194) size 75x20 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 75x20
         chunk 1 text run 1 at (100.00,210.00) startOffset 0 endOffset 10 width 74.24: "StatusText"

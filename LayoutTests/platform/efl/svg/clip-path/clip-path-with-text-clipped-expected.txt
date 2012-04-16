@@ -6,8 +6,7 @@ layer at (0,0) size 800x600
       RenderSVGPath {path} at (70,40) size 200x170 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,40.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M 100 0 L 160 170 L 0 60 L 200 60 L 30 170 Z"]
       RenderSVGResourceClipper {clipPath} [id="clipClip"] [clipPathUnits=userSpaceOnUse]
         RenderSVGContainer {use} at (70,40) size 200x170
-          RenderSVGContainer {g} at (70,40) size 200x170
-            RenderSVGPath {path} at (70,40) size 200x170 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,40.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M 100 0 L 160 170 L 0 60 L 200 60 L 30 170 Z"]
+          RenderSVGPath {path} at (70,40) size 200x170 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,40.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M 100 0 L 160 170 L 0 60 L 200 60 L 30 170 Z"]
       RenderSVGResourceClipper {clipPath} [id="clip"] [clipPathUnits=userSpaceOnUse]
         RenderSVGText {text} at (80,60) size 239x112 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 239x112
