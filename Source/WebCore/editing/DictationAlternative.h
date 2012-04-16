@@ -30,11 +30,13 @@
 
 namespace WebCore {
 struct DictationAlternative {
-    DictationAlternative(unsigned start, unsigned length, unsigned context);
+    DictationAlternative(unsigned start, unsigned length, uint64_t context);
     DictationAlternative();
     unsigned rangeStart;
     unsigned rangeLength;
-    unsigned dictationContext;
+
+    // This need to be 64 bit becauese it actually holds a pointer in WebKit.
+    uint64_t dictationContext;
 };
 
 }

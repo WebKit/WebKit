@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-DictationAlternative::DictationAlternative(unsigned start, unsigned length, unsigned context)
+DictationAlternative::DictationAlternative(unsigned start, unsigned length, uint64_t context)
     : rangeStart(start)
     , rangeLength(length)
     , dictationContext(context)
