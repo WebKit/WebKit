@@ -2028,6 +2028,11 @@ bool WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSp
     WebString username;
     WebString password;
 
+#if ENABLE_DRT
+    if (m_dumpRenderTree)
+        return m_dumpRenderTree->didReceiveAuthenticationChallenge(inputCredential);
+#endif
+
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
     if (!m_webSettings->isPrivateBrowsingEnabled())
         credentialManager().autofillAuthenticationChallenge(protectionSpace, username, password);

@@ -28,8 +28,9 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-class Frame;
+class Credential;
 class DOMWrapperWorld;
+class Frame;
 class Range;
 }
 
@@ -101,6 +102,7 @@ public:
 
     bool isSelectTrailingWhitespaceEnabled() const { return s_selectTrailingWhitespaceEnabled; }
     void setSelectTrailingWhitespaceEnabled(bool enabled) { s_selectTrailingWhitespaceEnabled = enabled; }
+    bool didReceiveAuthenticationChallenge(WebCore::Credential&);
 
 private:
     void runTest(const WTF::String& url);

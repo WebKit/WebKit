@@ -1,3 +1,24 @@
+2012-04-16  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Add ability for DRT to handle HTTP authentication challenges.
+        https://bugs.webkit.org/show_bug.cgi?id=84031
+
+        Reviewed by Rob Buis.
+
+        Added the interface function didReceivedAuthenticaitonChallenge()
+        in interface class DumpRenderTreeClient;
+        Called m_dumpRenderTree->didReceiveAuthenticationChallenge() in
+        WebPagePrivate::authenticationChallenge() when DRT is enabled.
+
+        Test: reuse existing test cases:
+        http/tests/loading/basic-credentials-sent-automatically.html
+        http/tests/loading/basic-auth-resend-wrong-credentials.html
+
+        * Api/DumpRenderTreeClient.h:
+        (WebCore):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::authenticationChallenge):
+
 2012-04-16  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Accelerated compositing layers fail to render in direct rendering mode
