@@ -1675,8 +1675,8 @@ BUGCR19766 LINUX : fast/replaced/width100percent-menulist.html = FAIL
 // WebKit 47777:47790 - getOwnPropertyDescriptor
 BUGCR20345 : fast/js/getOwnPropertyDescriptor.html = FAIL
 
-// Flaky. The width of containing RenderBlocks sometimes becomes larger
-BUGCR21958 MAC : svg/hixie/error/012.xml = FAIL
+// Flaky, maybe, so revisit after rebaselining. The width of containing RenderBlocks sometimes becomes larger
+BUGCR21958 : svg/hixie/error/012.xml = PASS FAIL
 
 // WebKit merge 48500:48585, newly implemented Object.defineProperty.
 BUGCR22526 : fast/js/Object-defineProperty.html = CRASH FAIL
