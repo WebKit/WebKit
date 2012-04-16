@@ -1,20 +1,15 @@
 <html>
 <head>
     <script type="text/javascript">
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
-            layoutTestController.setFrameFlatteningEnabled(true);
-        }
-
-        setTimeout(function() {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 500);
-
         function test() {
-            if (window.layoutTestController)
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
                 layoutTestController.setFrameFlatteningEnabled(true);
+            }
+
+            // Force synchronous layout.
+            document.body.offsetHeight;
+
             document.getElementById("if").contentWindow.document.getElementById('in').focus();
             document.getElementById("if").contentWindow.document.getElementById('p').style.top = "20px";
         }

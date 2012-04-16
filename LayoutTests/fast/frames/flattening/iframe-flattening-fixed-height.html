@@ -1,17 +1,12 @@
 <html>
 <head>
     <script type="text/javascript">
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.setFrameFlatteningEnabled(true);
-        }
-
         function test()
         {
-            setTimeout(function() {
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
-            }, 0);
+            if (window.layoutTestController)
+                layoutTestController.setFrameFlatteningEnabled(true);
+            // Force synchronous layout.
+            document.body.offsetHeight;
         }
     </script>
 </head>
