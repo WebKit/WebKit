@@ -87,12 +87,11 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
 
 static gpointer createDefaultWebContext(gpointer)
 {
-    WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, NULL));
+    static GRefPtr<WebKitWebContext> webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, NULL)));
     webContext->priv->context = WKContextGetSharedProcessContext();
     WKContextSetCacheModel(webContext->priv->context.get(), kWKCacheModelPrimaryWebBrowser);
-    attachDownloadClientToContext(webContext);
-
-    return webContext;
+    attachDownloadClientToContext(webContext.get());
+    return webContext.get();
 }
 
 /**

@@ -1,3 +1,13 @@
+2012-04-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use GRefPtr to delete the default web context in WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=83752
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (createDefaultWebContext):
+
 2012-04-13  Jer Noble  <jer.noble@apple.com>
 
         Video at apple.com gets standard controls in addition to custom controls after returning from full screen
