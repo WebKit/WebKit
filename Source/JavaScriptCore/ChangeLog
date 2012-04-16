@@ -1,3 +1,15 @@
+2012-04-16  Oliver Hunt  <oliver@apple.com>
+
+        Fix COMMANDLINE_TYPEDARRAYS build
+        https://bugs.webkit.org/show_bug.cgi?id=84051
+
+        Reviewed by Gavin Barraclough.
+
+        Update for new putByIndex API and wtf changes.
+
+        * JSCTypedArrayStubs.h:
+        (JSC):
+
 2012-04-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         GC in the middle of JSObject::allocatePropertyStorage can cause badness
