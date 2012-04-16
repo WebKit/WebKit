@@ -79,24 +79,24 @@ static PassOwnPtr<Vector<String> > createFallbackMonthLabels()
     return labels.release();
 }
 
-static PassOwnPtr<Vector<String> > createLabelVector(UDateFormatSymbolType type, int32_t size)
+static PassOwnPtr<Vector<String> > createLabelVector(UDateFormatSymbolType type, int32_t startIndex, int32_t size)
 {
     ScopedDateFormat dateFormat;
     if (!dateFormat.get())
         return PassOwnPtr<Vector<String> >();
-    if (udat_countSymbols(dateFormat.get(), type) != size)
+    if (udat_countSymbols(dateFormat.get(), type) != startIndex + size)
         return PassOwnPtr<Vector<String> >();
 
     OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());
     labels->reserveCapacity(size);
     for (int32_t i = 0; i < size; ++i) {
         UErrorCode status = U_ZERO_ERROR;
-        int32_t length = udat_getSymbols(dateFormat.get(), type, i, 0, 0, &status);
+        int32_t length = udat_getSymbols(dateFormat.get(), type, startIndex + i, 0, 0, &status);
         if (status != U_BUFFER_OVERFLOW_ERROR)
             return PassOwnPtr<Vector<String> >();
         Vector<UChar> buffer(length);
         status = U_ZERO_ERROR;
-        udat_getSymbols(dateFormat.get(), type, i, buffer.data(), length, &status);
+        udat_getSymbols(dateFormat.get(), type, startIndex + i, buffer.data(), length, &status);
         if (U_FAILURE(status))
             return PassOwnPtr<Vector<String> >();
         labels->append(String::adopt(buffer));
@@ -106,7 +106,7 @@ static PassOwnPtr<Vector<String> > createLabelVector(UDateFormatSymbolType type,
 
 static PassOwnPtr<Vector<String> > createMonthLabels()
 {
-    OwnPtr<Vector<String> > labels = createLabelVector(UDAT_MONTHS, 12);
+    OwnPtr<Vector<String> > labels = createLabelVector(UDAT_MONTHS, UCAL_JANUARY, 12);
     return labels ? labels.release() : createFallbackMonthLabels();
 }
 
@@ -132,7 +132,7 @@ static PassOwnPtr<Vector<String> > createFallbackWeekDayShortLabels()
 
 static PassOwnPtr<Vector<String> > createWeekDayShortLabels()
 {
-    OwnPtr<Vector<String> > labels = createLabelVector(UDAT_SHORT_WEEKDAYS, 7);
+    OwnPtr<Vector<String> > labels = createLabelVector(UDAT_SHORT_WEEKDAYS, UCAL_SUNDAY, 7);
     return labels ? labels.release() : createFallbackWeekDayShortLabels();
 }
 
