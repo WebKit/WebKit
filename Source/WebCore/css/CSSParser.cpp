@@ -8557,16 +8557,17 @@ restartAfterComment:
                         m_token = NTH;
                         yylval->string.length = m_currentCharacter - m_tokenStart;
                     }
-                } else if (result - m_tokenStart == 2 && m_tokenStart[1] == '-') {
+                } else if (result - m_tokenStart >= 2 && m_tokenStart[1] == '-') {
                     // String "n-" is IDENT but "n-1" is NTH.
-                    // Speculatively decrease m_currentCharacter to detect an nth-child token.
-                    m_currentCharacter--;
+                    // Set m_currentCharacter to '-' to continue parsing.
+                    UChar* nextCharacter = result;
+                    m_currentCharacter = m_tokenStart + 1;
                     if (parseNthChildExtra()) {
                         m_token = NTH;
                         yylval->string.length = m_currentCharacter - m_tokenStart;
                     } else {
                         // Revert the change to m_currentCharacter if unsuccessful.
-                        m_currentCharacter++;
+                        m_currentCharacter = nextCharacter;
                     }
                 }
             }
@@ -8656,16 +8657,17 @@ restartAfterComment:
                         m_token = NTH;
                         result = m_currentCharacter;
                     }
-                } else if (result - m_tokenStart == 3 && m_tokenStart[2] == '-') {
+                } else if (result - m_tokenStart >= 3 && m_tokenStart[2] == '-') {
                     // String "-n-" is IDENT but "-n-1" is NTH.
-                    // Speculatively decrease m_currentCharacter to detect an nth-child token.
-                    m_currentCharacter--;
+                    // Set m_currentCharacter to second '-' of '-n-' to continue parsing.
+                    UChar* nextCharacter = result;
+                    m_currentCharacter = m_tokenStart + 2;
                     if (parseNthChildExtra()) {
                         m_token = NTH;
-                        yylval->string.length = m_currentCharacter - m_tokenStart;
+                        result = m_currentCharacter;
                     } else {
                         // Revert the change to m_currentCharacter if unsuccessful.
-                        m_currentCharacter++;
+                        m_currentCharacter = nextCharacter;
                     }
                 }
             }
