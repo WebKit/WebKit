@@ -1,3 +1,21 @@
+2012-04-16  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Feeding key events with invalid keyName
+        https://bugs.webkit.org/show_bug.cgi?id=83797
+
+        Keep the keyName valid within scope of KeyEventInfo to avoid
+        feeding key events with invalid keyName.
+
+        Reviewed by Philippe Normand.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (KeyEventInfo::KeyEventInfo):
+        (KeyEventInfo):
+        (keyPadNameFromJSValue):
+        (keyNameFromJSValue):
+        (createKeyEventInfo):
+        (sendKeyDown):
+
 2012-04-16  Andras Piroska  <pandras@inf.u-szeged.hu>
 
         [Qt] Replace QtXmlPatterns usage with libxslt dependency
