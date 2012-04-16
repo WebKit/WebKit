@@ -994,7 +994,7 @@ END
     return value;
 END
         } else {
-            push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "    ").";\n");
+            push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result).";\n");
         }
     }
 
@@ -3306,7 +3306,7 @@ sub GenerateFunctionCallString()
     }
 
     $return .= ".release()" if ($returnIsRef);
-    $result .= $indent . ReturnNativeToJSValue($function->signature, $return, $indent) . ";\n";
+    $result .= $indent . ReturnNativeToJSValue($function->signature, $return) . ";\n";
 
     return $result;
 }
@@ -3723,7 +3723,6 @@ sub NativeToJSValue
 {
     my $signature = shift;
     my $value = shift;
-    my $indent = shift;
     my $type = GetTypeFromSignature($signature);
 
     return "v8Boolean($value)" if $type eq "boolean";
