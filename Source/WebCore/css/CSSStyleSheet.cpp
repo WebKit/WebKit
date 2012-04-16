@@ -38,7 +38,6 @@
 #include "SecurityOrigin.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
-#include "TextEncoding.h"
 #include <wtf/Deque.h>
 
 namespace WebCore {
@@ -79,15 +78,17 @@ StyleSheetInternal::StyleSheetInternal(Node* parentNode, const String& originalU
     , m_ownerRule(0)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
-    , m_charset(charset)
     , m_loadCompleted(false)
-    , m_cssParserMode(CSSQuirksMode)
     , m_isUserStyleSheet(false)
     , m_hasSyntacticallyValidCSSHeader(true)
     , m_didLoadErrorOccur(false)
     , m_usesRemUnits(false)
+    , m_parserContext(parentNode->document())
 {
     ASSERT(isAcceptableCSSStyleSheetParent(parentNode));
+
+    updateBaseURL();
+    m_parserContext.charset = charset;
 }
 
 StyleSheetInternal::StyleSheetInternal(StyleRuleImport* ownerRule, const String& originalURL, const KURL& finalURL, const String& charset)
@@ -95,15 +96,17 @@ StyleSheetInternal::StyleSheetInternal(StyleRuleImport* ownerRule, const String&
     , m_ownerRule(ownerRule)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
-    , m_charset(charset)
     , m_loadCompleted(false)
-    , m_cssParserMode((ownerRule && ownerRule->parentStyleSheet()) ? ownerRule->parentStyleSheet()->cssParserMode() : CSSStrictMode)
     , m_hasSyntacticallyValidCSSHeader(true)
     , m_didLoadErrorOccur(false)
     , m_usesRemUnits(false)
+    , m_parserContext((ownerRule && ownerRule->parentStyleSheet()) ? ownerRule->parentStyleSheet()->parserContext() : CSSStrictMode)
 {
     StyleSheetInternal* parentSheet = ownerRule ? ownerRule->parentStyleSheet() : 0;
-    m_isUserStyleSheet = parentSheet ? parentSheet->isUserStyleSheet() : false;
+    m_isUserStyleSheet = parentSheet && parentSheet->isUserStyleSheet();
+
+    updateBaseURL();
+    m_parserContext.charset = charset;
 }
 
 StyleSheetInternal::~StyleSheetInternal()
@@ -263,15 +266,14 @@ const AtomicString& StyleSheetInternal::determineNamespace(const AtomicString& p
     return nullAtom; // Assume we won't match any namespaces.
 }
 
-bool StyleSheetInternal::parseString(const String &string, CSSParserMode cssParserMode)
+bool StyleSheetInternal::parseString(const String &string)
 {
-    return parseStringAtLine(string, cssParserMode, 0);
+    return parseStringAtLine(string, 0);
 }
 
-bool StyleSheetInternal::parseStringAtLine(const String& string, CSSParserMode cssParserMode, int startLineNumber)
+bool StyleSheetInternal::parseStringAtLine(const String& string, int startLineNumber)
 {
-    setCSSParserMode(cssParserMode);
-    CSSParser p(cssParserMode);
+    CSSParser p(parserContext());
     p.parseSheet(this, string, startLineNumber);
     return true;
 }
@@ -353,29 +355,27 @@ void StyleSheetInternal::styleSheetChanged()
     if (Document* documentToUpdate = rootSheet->findDocument())
         documentToUpdate->styleSelectorChanged(DeferRecalcStyle);
 }
-    
-KURL StyleSheetInternal::baseURL() const
+
+void StyleSheetInternal::updateBaseURL()
 {
-    if (!m_finalURL.isNull())
-        return m_finalURL;
-    if (StyleSheetInternal* parentSheet = parentStyleSheet())
-        return parentSheet->baseURL();
-    if (!m_ownerNode)
-        return KURL();
-    return m_ownerNode->document()->baseURL();
+    if (!m_finalURL.isNull()) {
+        m_parserContext.baseURL = m_finalURL;
+        return;
+    }
+    if (StyleSheetInternal* parentSheet = parentStyleSheet()) {
+        m_parserContext.baseURL = parentSheet->baseURL();
+        return;
+    }
+    if (m_ownerNode) {
+        m_parserContext.baseURL = m_ownerNode->document()->baseURL();
+        return;
+    }
+    m_parserContext.baseURL = KURL();
 }
 
 KURL StyleSheetInternal::completeURL(const String& url) const
 {
-    // Always return a null URL when passed a null string.
-    // FIXME: Should we change the KURL constructor to have this behavior?
-    // See also Document::completeURL(const String&)
-    if (url.isNull())
-        return KURL();
-    if (m_charset.isEmpty())
-        return KURL(baseURL(), url);
-    const TextEncoding encoding = TextEncoding(m_charset);
-    return KURL(baseURL(), url, encoding);
+    return CSSParser::completeURL(m_parserContext, url);
 }
 
 void StyleSheetInternal::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
@@ -482,7 +482,7 @@ unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, Exc
         ec = INDEX_SIZE_ERR;
         return 0;
     }
-    CSSParser p(m_internal->cssParserMode());
+    CSSParser p(m_internal->parserContext());
     RefPtr<StyleRuleBase> rule = p.parseRule(m_internal.get(), ruleString);
 
     if (!rule) {

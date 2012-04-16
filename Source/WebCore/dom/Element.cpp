@@ -1756,12 +1756,10 @@ bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
         ec = SYNTAX_ERR;
         return false;
     }
-
-    bool strictParsing = !document()->inQuirksMode();
-    CSSParser p(strictToCSSParserMode(strictParsing));
-
+    CSSParserContext parserContext(document());
+    CSSParser parser(parserContext);
     CSSSelectorList selectorList;
-    p.parseSelector(selector, document(), selectorList);
+    parser.parseSelector(selector, selectorList);
 
     if (!selectorList.first()) {
         ec = SYNTAX_ERR;
@@ -1774,7 +1772,7 @@ bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
         return false;
     }
 
-    SelectorChecker selectorChecker(document(), strictParsing);
+    SelectorChecker selectorChecker(document(), parserContext.mode == CSSStrictMode);
     for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
         if (selectorChecker.checkSelector(selector, this))
             return true;

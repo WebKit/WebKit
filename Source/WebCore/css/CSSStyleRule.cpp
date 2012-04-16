@@ -97,9 +97,9 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
     if (!doc)
         return;
 
-    CSSParser p;
+    CSSParser p(parserContext());
     CSSSelectorList selectorList;
-    p.parseSelector(selectorText, doc, selectorList);
+    p.parseSelector(selectorText, selectorList);
     if (!selectorList.first())
         return;
 

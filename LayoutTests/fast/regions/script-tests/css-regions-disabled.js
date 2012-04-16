@@ -64,7 +64,9 @@ shouldBeEqualToString('testComputedStyleWebKitRegionOverflow("auto")', "auto");
 shouldBeEqualToString('testComputedStyleWebKitRegionOverflow("break")', "auto");
 
 // Test that region styling rules are not parsed.
-stylesheet = document.styleSheets.item(0);
+var styleElement = document.createElement("style");
+document.head.appendChild(styleElement);
+var stylesheet = styleElement.sheet;
 webkitRegionRuleIndex = -1;
 try {
     webkitRegionRuleIndex = stylesheet.insertRule("@-webkit-region #region3 { p { color: red; } }");

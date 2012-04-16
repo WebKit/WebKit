@@ -66,15 +66,17 @@ public:
     }
 
     ~StyleSheetInternal();
+    
+    const CSSParserContext& parserContext() const { return m_parserContext; }
 
     void addNamespace(CSSParser*, const AtomicString& prefix, const AtomicString& uri);
     const AtomicString& determineNamespace(const AtomicString& prefix);
 
     void styleSheetChanged();
 
-    bool parseString(const String&, CSSParserMode = CSSStrictMode);
+    bool parseString(const String&);
 
-    bool parseStringAtLine(const String&, CSSParserMode, int startLineNumber);
+    bool parseStringAtLine(const String&, int startLineNumber);
 
     bool isLoading() const;
 
@@ -84,15 +86,12 @@ public:
     Node* findStyleSheetOwnerNode() const;
     Document* findDocument();
 
-    const String& charset() const { return m_charset; }
+    const String& charset() const { return m_parserContext.charset; }
 
     bool loadCompleted() const { return m_loadCompleted; }
 
     KURL completeURL(const String& url) const;
     void addSubresourceStyleURLs(ListHashSet<KURL>&);
-
-    void setCSSParserMode(CSSParserMode cssParserMode) { m_cssParserMode = cssParserMode; }
-    CSSParserMode cssParserMode() const { return m_cssParserMode; }
 
     void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }
     bool isUserStyleSheet() const { return m_isUserStyleSheet; }
@@ -127,9 +126,9 @@ public:
     String title() const { return m_title; }
     void setTitle(const String& title) { m_title = title; }
     
-    void setFinalURL(const KURL& finalURL) { m_finalURL = finalURL; }
+    void setFinalURL(const KURL& finalURL) { m_finalURL = finalURL; updateBaseURL(); }
     const KURL& finalURL() const { return m_finalURL; }
-    KURL baseURL() const;
+    const KURL& baseURL() const { return m_parserContext.baseURL; }
 
     unsigned ruleCount() const;
     
@@ -146,6 +145,8 @@ private:
     
     void clearCharsetRule();
     bool hasCharsetRule() const { return !m_encodingFromCharsetRule.isNull(); }
+    
+    void updateBaseURL();
 
     Node* m_ownerNode;
     StyleRuleImport* m_ownerRule;
@@ -158,15 +159,15 @@ private:
     Vector<RefPtr<StyleRuleImport> > m_importRules;
     Vector<RefPtr<StyleRuleBase> > m_childRules;
     OwnPtr<CSSNamespace> m_namespaces;
-    String m_charset;
     RefPtr<MediaQuerySet> m_mediaQueries;
 
     bool m_loadCompleted : 1;
-    CSSParserMode m_cssParserMode;
     bool m_isUserStyleSheet : 1;
     bool m_hasSyntacticallyValidCSSHeader : 1;
     bool m_didLoadErrorOccur : 1;
     bool m_usesRemUnits : 1;
+    
+    CSSParserContext m_parserContext;
 };
 
 class CSSStyleSheet : public StyleSheet {

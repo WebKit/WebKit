@@ -67,7 +67,7 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const KURL& baseURL, 
 
     bool crossOriginCSS = false;
     bool validMIMEType = false;
-    CSSParserMode cssParserMode = m_parentStyleSheet ? m_parentStyleSheet->cssParserMode() : CSSStrictMode;
+    CSSParserMode cssParserMode = m_parentStyleSheet ? m_parentStyleSheet->parserContext().mode : CSSStrictMode;
     bool enforceMIMEType = isStrictParserMode(cssParserMode);
     Document* document = m_parentStyleSheet ? m_parentStyleSheet->findDocument() : 0;
     bool needsSiteSpecificQuirks = document && document->settings() && document->settings()->needsSiteSpecificQuirks();
@@ -81,7 +81,7 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const KURL& baseURL, 
 #endif
 
     String sheetText = sheet->sheetText(enforceMIMEType, &validMIMEType);
-    m_styleSheet->parseString(sheetText, cssParserMode);
+    m_styleSheet->parseString(sheetText);
 
     if (!document || !document->securityOrigin()->canRequest(baseURL))
         crossOriginCSS = true;

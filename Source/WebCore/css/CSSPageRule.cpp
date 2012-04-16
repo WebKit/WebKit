@@ -71,9 +71,9 @@ void CSSPageRule::setSelectorText(const String& selectorText)
     if (!doc)
         return;
     
-    CSSParser p;
+    CSSParser parser(parserContext());
     CSSSelectorList selectorList;
-    p.parseSelector(selectorText, doc, selectorList);
+    parser.parseSelector(selectorText, selectorList);
     if (!selectorList.first())
         return;
     

@@ -536,7 +536,13 @@ bool StylePropertySet::setProperty(CSSPropertyID propertyID, int identifier, boo
 void StylePropertySet::parseDeclaration(const String& styleDeclaration, StyleSheetInternal* contextStyleSheet)
 {
     m_properties.clear();
-    CSSParser parser(cssParserMode());
+
+    CSSParserContext context(cssParserMode());
+    if (contextStyleSheet) {
+        context = contextStyleSheet->parserContext();
+        context.mode = cssParserMode();
+    }
+    CSSParser parser(context);
     parser.parseDeclaration(this, styleDeclaration, 0, contextStyleSheet);
 }
 

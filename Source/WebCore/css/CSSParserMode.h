@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +31,12 @@
 #ifndef CSSParserMode_h
 #define CSSParserMode_h
 
+#include "KURL.h"
+
+namespace WebCore {
+
+class Document;
+
 enum CSSParserMode {
     CSSQuirksMode,
     CSSStrictMode,
@@ -46,5 +53,21 @@ inline bool isStrictParserMode(CSSParserMode cssParserMode)
 {
     return cssParserMode == CSSStrictMode || cssParserMode == SVGAttributeMode;
 }
+
+struct CSSParserContext {
+    CSSParserContext(CSSParserMode);
+    CSSParserContext(Document*);
+
+    KURL baseURL;
+    String charset;
+    CSSParserMode mode;
+    bool isHTMLDocument;
+    bool isCSSCustomFilterEnabled;
+    bool isCSSRegionsEnabled;
+};
+
+const CSSParserContext& strictCSSParserContext();
+
+};
 
 #endif // CSSParserMode_h

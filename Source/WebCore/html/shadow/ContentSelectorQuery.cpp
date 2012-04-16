@@ -44,8 +44,8 @@ ContentSelectorQuery::ContentSelectorQuery(const InsertionPoint* insertionPoint)
         return;
     }
 
-    CSSParser parser(CSSStrictMode);
-    parser.parseSelector(insertionPoint->select(), insertionPoint->document(), m_selectorList);
+    CSSParser parser(insertionPoint->document());
+    parser.parseSelector(insertionPoint->select(), m_selectorList);
 
     m_isValidSelector = ContentSelectorQuery::validateSelectorList();
     if (m_isValidSelector)

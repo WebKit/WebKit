@@ -311,7 +311,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
 #endif
 
     String sheetText = sheet->sheetText(enforceMIMEType, &validMIMEType);
-    styleSheet->parseString(sheetText, strictToCSSParserMode(strictParsing));
+    styleSheet->parseString(sheetText);
 
     // If we're loading a stylesheet cross-origin, and the MIME type is not
     // standard, require the CSS to at least start with a syntactically

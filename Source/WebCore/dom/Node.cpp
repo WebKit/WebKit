@@ -1670,11 +1670,9 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
         ec = SYNTAX_ERR;
         return 0;
     }
-    bool strictParsing = !document()->inQuirksMode();
-    CSSParser p(strictToCSSParserMode(strictParsing));
-
+    CSSParser parser(document());
     CSSSelectorList querySelectorList;
-    p.parseSelector(selectors, document(), querySelectorList);
+    parser.parseSelector(selectors, querySelectorList);
 
     if (!querySelectorList.first() || querySelectorList.hasUnknownPseudoElements()) {
         ec = SYNTAX_ERR;
@@ -1697,11 +1695,9 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
         ec = SYNTAX_ERR;
         return 0;
     }
-    bool strictParsing = !document()->inQuirksMode();
-    CSSParser p(strictToCSSParserMode(strictParsing));
-
+    CSSParser p(document());
     CSSSelectorList querySelectorList;
-    p.parseSelector(selectors, document(), querySelectorList);
+    p.parseSelector(selectors, querySelectorList);
 
     if (!querySelectorList.first() || querySelectorList.hasUnknownPseudoElements()) {
         ec = SYNTAX_ERR;

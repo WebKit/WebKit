@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -77,6 +77,7 @@
 #include "StylePropertySet.h"
 #include "StylePropertyShorthand.h"
 #include "StyleRule.h"
+#include "TextEncoding.h"
 #if ENABLE(CSS_FILTERS)
 #include "WebKitCSSFilterValue.h"
 #endif
@@ -173,9 +174,32 @@ static bool hasPrefix(const char* string, unsigned length, const char* prefix)
     }
     return false;
 }
+    
+const CSSParserContext& strictCSSParserContext()
+{
+    DEFINE_STATIC_LOCAL(CSSParserContext, strictContext, (CSSStrictMode));
+    return strictContext;
+}
+    
+CSSParserContext::CSSParserContext(CSSParserMode mode)
+    : mode(mode)
+    , isHTMLDocument(false)
+    , isCSSCustomFilterEnabled(false)
+    , isCSSRegionsEnabled(false)
+{
+}
 
-CSSParser::CSSParser(CSSParserMode cssParserMode)
-    : m_cssParserMode(cssParserMode)
+CSSParserContext::CSSParserContext(Document* document)
+    : baseURL(document->baseURL())
+    , mode(document->inQuirksMode() ? CSSQuirksMode : CSSStrictMode)
+    , isHTMLDocument(document->isHTMLDocument())
+    , isCSSCustomFilterEnabled(document->settings() ? document->settings()->isCSSCustomFilterEnabled() : false)
+    , isCSSRegionsEnabled(document->cssRegionsEnabled())
+{
+}
+
+CSSParser::CSSParser(const CSSParserContext& context)
+    : m_context(context)
     , m_important(false)
     , m_id(CSSPropertyInvalid)
     , m_styleSheet(0)
@@ -280,7 +304,7 @@ PassRefPtr<StyleRuleBase> CSSParser::parseRule(StyleSheetInternal* sheet, const 
     return m_rule.release();
 }
 
-PassRefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(StyleSheetInternal* sheet, const String &string)
+PassRefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(StyleSheetInternal* sheet, const String& string)
 {
     setStyleSheet(sheet);
     setupParser("@-webkit-keyframe-rule{ ", string, "} ");
@@ -932,7 +956,13 @@ bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID property
         return true;
     if (parseKeywordValue(declaration, propertyID, string, important))
         return true;
-    CSSParser parser(cssParserMode);
+
+    CSSParserContext context(cssParserMode);
+    if (contextStyleSheet) {
+        context = contextStyleSheet->parserContext();
+        context.mode = cssParserMode;
+    }
+    CSSParser parser(context);
     return parser.parseValue(declaration, propertyID, string, important, contextStyleSheet);
 }
 
@@ -1012,10 +1042,9 @@ bool CSSParser::parseSystemColor(RGBA32& color, const String& string, Document* 
     return true;
 }
 
-void CSSParser::parseSelector(const String& string, Document* doc, CSSSelectorList& selectorList)
+void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorList)
 {
-    RefPtr<StyleSheetInternal> dummyStyleSheet = StyleSheetInternal::create(doc);
-
+    RefPtr<StyleSheetInternal> dummyStyleSheet = StyleSheetInternal::create();
     setStyleSheet(dummyStyleSheet.get());
     m_selectorListForParseSelector = &selectorList;
 
@@ -1111,11 +1140,18 @@ void CSSParser::setStyleSheet(StyleSheetInternal* styleSheet)
     m_styleSheet = styleSheet;
 }
 
-Document* CSSParser::findDocument() const
+KURL CSSParser::completeURL(const CSSParserContext& context, const String& url)
 {
-    if (!m_styleSheet)
-        return 0;
-    return m_styleSheet->findDocument();
+    if (url.isNull())
+        return KURL();
+    if (context.charset.isEmpty())
+        return KURL(context.baseURL, url);
+    return KURL(context.baseURL, url, context.charset);
+}
+
+KURL CSSParser::completeURL(const String& url) const
+{
+    return completeURL(m_context, url);
 }
 
 bool CSSParser::validCalculationUnit(CSSParserValue* value, Units unitflags)
@@ -1575,11 +1611,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             if (nrcoords == 2)
                 hotSpot = IntPoint(coords[0], coords[1]);
 
-            if (!uri.isNull() && m_styleSheet) {
-                // FIXME: The completeURL call should be done when using the CSSCursorImageValue,
-                // not when creating it.
-                list->append(CSSCursorImageValue::create(m_styleSheet->completeURL(uri), hotSpot));
-            }
+            if (!uri.isNull())
+                list->append(CSSCursorImageValue::create(completeURL(uri), hotSpot));
 
             if ((inStrictMode() && !value) || (value && !(value->unit == CSSParserValue::Operator && value->iValue == ',')))
                 return false;
@@ -1660,12 +1693,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             parsedValue = cssValuePool().createIdentifierValue(CSSValueNone);
             m_valueList->next();
         } else if (value->unit == CSSPrimitiveValue::CSS_URI) {
-            if (m_styleSheet) {
-                // FIXME: The completeURL call should be done when using the CSSImageValue,
-                // not when creating it.
-                parsedValue = CSSImageValue::create(m_styleSheet->completeURL(value->string));
-                m_valueList->next();
-            }
+            parsedValue = CSSImageValue::create(completeURL(value->string));
+            m_valueList->next();
         } else if (isGeneratedImageValue(value)) {
             if (parseGeneratedImage(m_valueList.get(), parsedValue))
                 m_valueList->next();
@@ -3024,11 +3053,9 @@ bool CSSParser::parseContent(CSSPropertyID propId, bool important)
 
     while (CSSParserValue* val = m_valueList->current()) {
         RefPtr<CSSValue> parsedValue;
-        if (val->unit == CSSPrimitiveValue::CSS_URI && m_styleSheet) {
+        if (val->unit == CSSPrimitiveValue::CSS_URI) {
             // url
-            // FIXME: The completeURL call should be done when using the CSSImageValue,
-            // not when creating it.
-            parsedValue = CSSImageValue::create(m_styleSheet->completeURL(val->string));
+            parsedValue = CSSImageValue::create(completeURL(val->string));
         } else if (val->unit == CSSParserValue::Function) {
             // attr(X) | counter(X [,Y]) | counters(X, Y, [,Z]) | -webkit-gradient(...)
             CSSParserValueList* args = val->function->args.get();
@@ -3110,8 +3137,7 @@ PassRefPtr<CSSValue> CSSParser::parseAttr(CSSParserValueList* args)
     if (attrName[0] == '-')
         return 0;
 
-    Document* document = findDocument();
-    if (document && document->isHTMLDocument())
+    if (m_context.isHTMLDocument)
         attrName = attrName.lower();
 
     return cssValuePool().createValue(attrName, CSSPrimitiveValue::CSS_ATTR);
@@ -3133,10 +3159,7 @@ bool CSSParser::parseFillImage(CSSParserValueList* valueList, RefPtr<CSSValue>& 
         return true;
     }
     if (valueList->current()->unit == CSSPrimitiveValue::CSS_URI) {
-        // FIXME: The completeURL call should be done when using the CSSImageValue,
-        // not when creating it.
-        if (m_styleSheet)
-            value = CSSImageValue::create(m_styleSheet->completeURL(valueList->current()->string));
+        value = CSSImageValue::create(completeURL(valueList->current()->string));
         return true;
     }
 
@@ -4618,9 +4641,7 @@ bool CSSParser::parseFontWeight(bool important)
 
 bool CSSParser::parseFontFaceSrcURI(CSSValueList* valueList)
 {
-    // FIXME: The completeURL call should be done when using the CSSFontFaceSrcValue,
-    // not when creating it.
-    RefPtr<CSSFontFaceSrcValue> uriValue(CSSFontFaceSrcValue::create(m_styleSheet->completeURL(m_valueList->current()->string)));
+    RefPtr<CSSFontFaceSrcValue> uriValue(CSSFontFaceSrcValue::create(completeURL(m_valueList->current()->string)));
 
     CSSParserValue* value = m_valueList->next();
     if (!value) {
@@ -4682,7 +4703,7 @@ bool CSSParser::parseFontFaceSrc()
     RefPtr<CSSValueList> values(CSSValueList::createCommaSeparated());
 
     while (CSSParserValue* value = m_valueList->current()) {
-        if (value->unit == CSSPrimitiveValue::CSS_URI && m_styleSheet) {
+        if (value->unit == CSSPrimitiveValue::CSS_URI) {
             if (!parseFontFaceSrcURI(values.get()))
                 return false;
         } else if (value->unit == CSSParserValue::Function && equalIgnoringCase(value->function->name, "local(")) {
@@ -5668,11 +5689,9 @@ bool CSSParser::parseBorderImage(CSSPropertyID propId, RefPtr<CSSValue>& result,
             context.commitSlash();
 
         if (!context.canAdvance() && context.allowImage()) {
-            if (val->unit == CSSPrimitiveValue::CSS_URI && m_styleSheet) {
-                // FIXME: The completeURL call should be done when using the CSSImageValue,
-                // not when creating it.
-                context.commitImage(CSSImageValue::create(m_styleSheet->completeURL(val->string)));
-            } else if (isGeneratedImageValue(val)) {
+            if (val->unit == CSSPrimitiveValue::CSS_URI)
+                context.commitImage(CSSImageValue::create(completeURL(val->string)));
+            else if (isGeneratedImageValue(val)) {
                 RefPtr<CSSValue> value;
                 if (parseGeneratedImage(m_valueList.get(), value))
                     context.commitImage(value);
@@ -6737,7 +6756,7 @@ PassRefPtr<CSSValue> CSSParser::parseImageSet(CSSParserValueList* valueList)
         if (arg->unit != CSSPrimitiveValue::CSS_URI)
             return 0;
 
-        RefPtr<CSSImageValue> image = CSSImageValue::create(m_styleSheet->completeURL(arg->string));
+        RefPtr<CSSImageValue> image = CSSImageValue::create(completeURL(arg->string));
         imageSet->append(image);
     
         arg = functionArgs->next();
@@ -7020,7 +7039,7 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilter(CSSParserValue* va
         if (arg->id == CSSValueNone)
             value = cssValuePool().createIdentifierValue(CSSValueNone);
         else if (arg->unit == CSSPrimitiveValue::CSS_URI) {
-            KURL shaderURL = m_styleSheet ? m_styleSheet->completeURL(arg->string) : KURL();
+            KURL shaderURL = completeURL(arg->string);
             value = WebKitCSSShaderValue::create(shaderURL.string());
             hadAtLeastOneCustomShader = true;
         }
@@ -7240,11 +7259,8 @@ PassRefPtr<CSSValueList> CSSParser::parseFilter()
 #if ENABLE(CSS_SHADERS)
             if (filterType == WebKitCSSFilterValue::CustomFilterOperation) {
                 // Make sure parsing fails if custom filters are disabled.
-                if (Document* document = findDocument()) {
-                    Settings* settings = document->settings();
-                    if (!settings || !settings->isCSSCustomFilterEnabled())
-                        return 0;
-                }
+                if (!m_context.isCSSCustomFilterEnabled)
+                    return 0;
                 
                 RefPtr<WebKitCSSFilterValue> filterValue = parseCustomFilter(value);
                 if (!filterValue)
@@ -7280,18 +7296,12 @@ static bool validFlowName(const String& flowName)
 
 bool CSSParser::cssRegionsEnabled() const
 {
-    if (Document* document = findDocument())
-        return document->cssRegionsEnabled();
-
-    return false;
+    return m_context.isCSSRegionsEnabled;
 }
 
-bool CSSParser::parseFlowThread(const String& flowName, Document* doc)
+bool CSSParser::parseFlowThread(const String& flowName)
 {
-    ASSERT(doc);
-    ASSERT(doc->cssRegionsEnabled());
-
-    RefPtr<StyleSheetInternal> dummyStyleSheet = StyleSheetInternal::create(doc);
+    RefPtr<StyleSheetInternal> dummyStyleSheet = StyleSheetInternal::create();
     setStyleSheet(dummyStyleSheet.get());
 
     setupParser("@-webkit-decls{-webkit-flow-into:", flowName, "}");
@@ -9021,7 +9031,7 @@ StyleRuleBase* CSSParser::createImportRule(const CSSParserString& url, MediaQuer
 
 StyleRuleBase* CSSParser::createMediaRule(MediaQuerySet* media, RuleList* rules)
 {
-    if (!media || !rules || !m_styleSheet)
+    if (!media || !rules)
         return 0;
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     RefPtr<StyleRuleMedia> rule = StyleRuleMedia::create(media, *rules);
@@ -9058,7 +9068,7 @@ StyleRuleBase* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* se
         rule->parserAdoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
-        rule->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
+        rule->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_context.mode));
         result = rule.get();
         m_parsedRules.append(rule.release());
         if (m_ruleRangeMap) {
@@ -9094,7 +9104,7 @@ StyleRuleBase* CSSParser::createFontFaceRule()
         }
     }
     RefPtr<StyleRuleFontFace> rule = StyleRuleFontFace::create();
-    rule->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
+    rule->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_context.mode));
     clearProperties();
     StyleRuleFontFace* result = rule.get();
     m_parsedRules.append(rule.release());
@@ -9165,7 +9175,7 @@ StyleRuleBase* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelec
         Vector<OwnPtr<CSSParserSelector> > selectorVector;
         selectorVector.append(pageSelector);
         rule->parserAdoptSelectorVector(selectorVector);
-        rule->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
+        rule->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_context.mode));
         pageRule = rule.get();
         m_parsedRules.append(rule.release());
     }
@@ -9243,7 +9253,7 @@ StyleKeyframe* CSSParser::createKeyframe(CSSParserValueList* keys)
 
     RefPtr<StyleKeyframe> keyframe = StyleKeyframe::create();
     keyframe->setKeyText(keyString);
-    keyframe->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_cssParserMode));
+    keyframe->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_context.mode));
 
     clearProperties();
 

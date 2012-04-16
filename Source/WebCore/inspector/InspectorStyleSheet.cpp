@@ -313,7 +313,7 @@ bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText,
     if (propertyText.stripWhiteSpace().length()) {
         RefPtr<StylePropertySet> tempMutableStyle = StylePropertySet::create();
         RefPtr<CSSStyleSourceData> sourceData = CSSStyleSourceData::create();
-        CSSParser p;
+        CSSParser p(CSSStrictMode);
         p.parseDeclaration(tempMutableStyle.get(), propertyText + " " + bogusPropertyName + ": none", &sourceData, m_style->parentStyleSheet()->internal());
         Vector<CSSPropertySourceData>& propertyData = sourceData->propertyData;
         unsigned propertyCount = propertyData.size();
@@ -719,7 +719,7 @@ String InspectorStyleSheet::finalURL() const
 void InspectorStyleSheet::reparseStyleSheet(const String& text)
 {
     m_pageStyleSheet->internal()->clearRules();
-    m_pageStyleSheet->internal()->parseString(text, m_pageStyleSheet->internal()->cssParserMode());
+    m_pageStyleSheet->internal()->parseString(text);
     m_pageStyleSheet->clearChildRuleCSSOMWrappers();
     m_pageStyleSheet->styleSheetChanged();
     m_inspectorStyles.clear();
@@ -1089,7 +1089,7 @@ bool InspectorStyleSheet::ensureSourceData()
         return false;
 
     RefPtr<StyleSheetInternal> newStyleSheet = StyleSheetInternal::create();
-    CSSParser p;
+    CSSParser p(CSSStrictMode);
     StyleRuleRangeMap ruleRangeMap;
     p.parseSheet(newStyleSheet.get(), m_parsedStyleSheet->text(), 0, &ruleRangeMap);
     OwnPtr<ParsedStyleSheet::SourceData> rangesVector(adoptPtr(new ParsedStyleSheet::SourceData));
@@ -1414,7 +1414,7 @@ bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(RefPtr<CSSStyleS
     }
 
     RefPtr<StylePropertySet> tempDeclaration = StylePropertySet::create();
-    CSSParser p;
+    CSSParser p(m_element->document());
     p.parseDeclaration(tempDeclaration.get(), m_styleText, result, m_element->document()->elementSheet()->internal());
     return true;
 }

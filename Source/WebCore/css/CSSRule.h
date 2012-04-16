@@ -110,6 +110,12 @@ protected:
     bool hasCachedSelectorText() const { return m_hasCachedSelectorText; }
     void setHasCachedSelectorText(bool hasCachedSelectorText) const { m_hasCachedSelectorText = hasCachedSelectorText; }
 
+    const CSSParserContext& parserContext() const 
+    {
+        CSSStyleSheet* styleSheet = parentStyleSheet();
+        return styleSheet ? styleSheet->internal()->parserContext() : strictCSSParserContext();
+    }
+
 private:
     mutable unsigned m_hasCachedSelectorText : 1;
     unsigned m_parentIsRule : 1;

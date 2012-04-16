@@ -66,7 +66,7 @@ class StyledElement;
 
 class CSSParser {
 public:
-    CSSParser(CSSParserMode = CSSStrictMode);
+    CSSParser(const CSSParserContext&);
 
     ~CSSParser();
 
@@ -80,8 +80,6 @@ public:
     PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int ident, CSSParserValue*);
     bool parseDeclaration(StylePropertySet*, const String&, RefPtr<CSSStyleSourceData>*, StyleSheetInternal* contextStyleSheet);
     PassOwnPtr<MediaQuery> parseMediaQuery(const String&);
-
-    Document* findDocument() const;
 
     void addProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important, bool implicit = false);
     void rollbackLastProperties(int num);
@@ -155,7 +153,7 @@ public:
     bool parseHSLParameters(CSSParserValue*, double* colorValues, bool parseAlpha);
     PassRefPtr<CSSPrimitiveValue> parseColor(CSSParserValue* = 0);
     bool parseColorFromValue(CSSParserValue*, RGBA32&);
-    void parseSelector(const String&, Document* doc, CSSSelectorList&);
+    void parseSelector(const String&, CSSSelectorList&);
 
     static bool fastParseColor(RGBA32&, const String&, bool strict);
 
@@ -221,7 +219,7 @@ public:
     bool parseFontFeatureSettings(bool important);
 
     bool cssRegionsEnabled() const;
-    bool parseFlowThread(const String& flowName, Document*);
+    bool parseFlowThread(const String& flowName);
     bool parseFlowThread(CSSPropertyID, bool important);
     bool parseRegionThread(CSSPropertyID, bool important);
 
@@ -283,7 +281,8 @@ public:
 
     void clearProperties();
 
-    CSSParserMode m_cssParserMode;
+    CSSParserContext m_context;
+
     bool m_important;
     CSSPropertyID m_id;
     StyleSheetInternal* m_styleSheet;
@@ -326,7 +325,9 @@ public:
 
     PassRefPtr<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
     PassRefPtr<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
-        
+
+    static KURL completeURL(const CSSParserContext&, const String& url);
+
 private:
     inline bool isIdentifierStart();
 
@@ -347,8 +348,10 @@ private:
 
     void setStyleSheet(StyleSheetInternal*);
 
-    inline bool inStrictMode() const { return m_cssParserMode == CSSStrictMode || m_cssParserMode == SVGAttributeMode; }
-    inline bool inQuirksMode() const { return m_cssParserMode == CSSQuirksMode; }
+    inline bool inStrictMode() const { return m_context.mode == CSSStrictMode || m_context.mode == SVGAttributeMode; }
+    inline bool inQuirksMode() const { return m_context.mode == CSSQuirksMode; }
+    
+    KURL completeURL(const String& url) const;
 
     void recheckAtKeyword(const UChar* str, int len);
 
@@ -440,7 +443,7 @@ private:
 
     bool shouldAcceptUnitLessValues(CSSParserValue*, Units, CSSParserMode);
 
-    inline bool validUnit(CSSParserValue* value, Units unitflags) { return validUnit(value, unitflags, m_cssParserMode); }
+    inline bool validUnit(CSSParserValue* value, Units unitflags) { return validUnit(value, unitflags, m_context.mode); }
     bool validUnit(CSSParserValue*, Units, CSSParserMode);
 
     bool parseBorderImageQuad(Units, RefPtr<CSSPrimitiveValue>&);

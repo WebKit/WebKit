@@ -27,6 +27,7 @@
 #include "CSSValuePool.h"
 
 #include "CSSParser.h"
+#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 

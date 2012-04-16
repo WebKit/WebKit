@@ -169,7 +169,7 @@ void StyleElement::createSheet(Element* e, int startLineNumber, const String& te
             document->addPendingSheet();
             m_loading = true;
             RefPtr<StyleSheetInternal> styleSheet = StyleSheetInternal::create(e, String(), KURL(), document->inputEncoding());
-            styleSheet->parseStringAtLine(text, strictToCSSParserMode(!document->inQuirksMode()), startLineNumber);
+            styleSheet->parseStringAtLine(text, startLineNumber);
             styleSheet->setMediaQueries(mediaQueries.release());
             styleSheet->setTitle(e->title());
             m_sheet = CSSStyleSheet::create(styleSheet);

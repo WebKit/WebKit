@@ -32,15 +32,18 @@ function shouldBeType(expression, className, prototypeName, constructorName)
     shouldBe("jsWrapperClass(" + expression + ".constructor)", "'" + constructorName + "'");
 }
 
+var styleElement = document.createElement("style");
+document.head.appendChild(styleElement);
+
 // These have to be global for the test helpers to see them.
-var stylesheet, cssRule, declaration, filterRule, subRule;
+var cssRule, declaration, filterRule, subRule;
+var stylesheet = styleElement.sheet;
 
 function testFilterRule(description, rule, expectedValue, expectedTypes, expectedTexts)
 {
     debug("");
     debug(description + " : " + rule);
 
-    stylesheet = document.styleSheets.item(0);
     stylesheet.insertRule("body { -webkit-filter: " + rule + "; }", 0);
     cssRule = stylesheet.cssRules.item(0);
   

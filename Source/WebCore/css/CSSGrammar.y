@@ -1001,8 +1001,7 @@ element_name:
     IDENT {
         CSSParserString& str = $1;
         CSSParser* p = static_cast<CSSParser*>(parser);
-        Document* doc = p->findDocument();
-        if (doc && doc->isHTMLDocument())
+        if (p->m_context.isHTMLDocument)
             str.lower();
         $$ = str;
     }
@@ -1033,7 +1032,7 @@ specifier:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->setMatch(CSSSelector::Id);
-        if (p->m_cssParserMode == CSSQuirksMode)
+        if (p->m_context.mode == CSSQuirksMode)
             $1.lower();
         $$->setValue($1);
     }
@@ -1044,7 +1043,7 @@ specifier:
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = p->createFloatingSelector();
             $$->setMatch(CSSSelector::Id);
-            if (p->m_cssParserMode == CSSQuirksMode)
+            if (p->m_context.mode == CSSQuirksMode)
                 $1.lower();
             $$->setValue($1);
         }
@@ -1059,7 +1058,7 @@ class:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->setMatch(CSSSelector::Class);
-        if (p->m_cssParserMode == CSSQuirksMode)
+        if (p->m_context.mode == CSSQuirksMode)
             $2.lower();
         $$->setValue($2);
     }
@@ -1069,8 +1068,7 @@ attr_name:
     IDENT maybe_space {
         CSSParserString& str = $1;
         CSSParser* p = static_cast<CSSParser*>(parser);
-        Document* doc = p->findDocument();
-        if (doc && doc->isHTMLDocument())
+        if (p->m_context.isHTMLDocument)
             str.lower();
         $$ = str;
     }
