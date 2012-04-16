@@ -634,7 +634,16 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
                                                                  horizontalScrollAlignment,
                                                                  verticalScrollAlignment);
 
-            mainFrameView->setScrollPosition(revealRect.location());
+            mainFrameView->setConstrainsScrollingToContentEdge(false);
+            // In order to adjust the scroll position to ensure the focused input field is visible,
+            // we allow overscrolling. However this overscroll has to be strictly allowed towards the
+            // bottom of the page on the y axis only, where the virtual keyboard pops up from.
+            WebCore::IntPoint scrollLocation = revealRect.location();
+            scrollLocation.clampNegativeToZero();
+            WebCore::IntPoint maximumScrollPosition = WebCore::IntPoint(mainFrameView->contentsWidth() - actualScreenRect.width(), mainFrameView->contentsHeight() - actualScreenRect.height());
+            scrollLocation = scrollLocation.shrunkTo(maximumScrollPosition);
+            mainFrameView->setScrollPosition(scrollLocation);
+            mainFrameView->setConstrainsScrollingToContentEdge(true);
         }
     }
 

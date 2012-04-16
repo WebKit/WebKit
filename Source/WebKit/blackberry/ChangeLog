@@ -1,3 +1,26 @@
+2012-04-16  Antonio Gomes  <agomes@rim.com>
+
+        Screen shift down when VKB shows by clicking in a input box MKS_3601371
+        https://bugs.webkit.org/show_bug.cgi?id=84057
+
+        Reviewed by Rob Buis.
+
+        After switching from ScrollView::canOverscroll to ScrollView::constrainsScrollingToContentEdge
+        we had a less restricted code path allowing/disallowing overscrolling. That caused
+        some webpages like google.com to get on overscroll when adjusting the scroll
+        position to ensure the focused input field is visible.
+
+        Patch restricts the way we allow overscrolling to the bottom, where the virtual
+        keyboard pops up from, clamping it to 0, 0 if it tries to
+        overscroll upwards, and to maximum scroll position if it overscrolls
+        downwards.
+
+        PR #149846
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2012-04-16  Yongxin Dai  <yodai@rim.com>
 
         [BlackBerry] Increase padding for text element
