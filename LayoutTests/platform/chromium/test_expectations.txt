@@ -1721,15 +1721,17 @@ BUGCR28005 MAC : fast/css/color-correction-on-text-shadow.html = IMAGE
 BUGCR28005 LINUX WIN : fast/css/color-correction-on-background-image.html = FAIL
 BUGCR28005 LINUX WIN : fast/css/color-correction-untagged-images.html = IMAGE+TEXT
 
-// Rebaseline when the CR bug is closed (enabling hairline clipping fix)
+// Producing incorrect results, or flakey after a Skia change
 BUGCR118411 WIN LINUX : fast/repaint/focus-ring.html = IMAGE
 BUGCR118411 : fast/repaint/list-marker.html = IMAGE
-BUGCR118411 : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE
-BUGCR118411 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE
+BUGCR118411 LEOPARD : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE
+BUGCR118411 WIN DEBUG : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE PASS
 BUGCR118411 LEOPARD SNOWLEOPARD : svg/hixie/perf/001.xml = IMAGE PASS
 BUGCR118411 LEOPARD SNOWLEOPARD : svg/hixie/perf/002.xml = IMAGE PASS
+
 // Fails on Snow Leopard - see BUGWK82954
 BUGCR118411 SLOW : svg/hixie/perf/007.xml = PASS FAIL
+
 
 BUGCR22700 LINUX WIN : fast/canvas/canvas-shadow.html = TEXT
 
