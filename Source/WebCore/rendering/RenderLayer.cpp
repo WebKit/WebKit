@@ -4465,7 +4465,7 @@ void RenderLayer::dirtyNormalFlowList()
 #endif
 }
 
-void RenderLayer::updateZOrderListsSlowCase()
+void RenderLayer::rebuildZOrderLists()
 {
     ASSERT(m_layerListMutationAllowed);
 

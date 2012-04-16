@@ -583,7 +583,7 @@ public:
 #endif
 
 private:
-    void updateZOrderListsSlowCase();
+    void rebuildZOrderLists();
 
     void computeRepaintRects(LayoutPoint* offsetFromRoot = 0);
     void clearRepaintRects();
@@ -905,7 +905,7 @@ inline void RenderLayer::updateZOrderLists()
 {
     if (!m_zOrderListsDirty || !isStackingContext())
         return;
-    updateZOrderListsSlowCase();
+    rebuildZOrderLists();
 }
 
 #if !ASSERT_DISABLED
