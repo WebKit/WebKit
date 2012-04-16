@@ -10,8 +10,8 @@ layer at (0,0) size 800x536
               RenderText {#text} at (9,1) size 75x21
                 text run at (9,1) width 75: "viewBox?"
             RenderTableCell {TH} at (97,2) size 163x44 [bgcolor=#DDDD99] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (9,1) size 145x42
-                text run at (9,1) width 145: "preserve\x{AD}Aspect\x{AD}" + hyphen string "\x{2010}"
+              RenderText {#text} at (14,1) size 135x42
+                text run at (14,1) width 135: "preserve\x{AD}Aspect\x{AD}" + hyphen string "-"
                 text run at (61,22) width 41: "Ratio"
             RenderTableCell {TH} at (262,12) size 202x23 [bgcolor=#DDDD99] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (78,1) size 46x21
