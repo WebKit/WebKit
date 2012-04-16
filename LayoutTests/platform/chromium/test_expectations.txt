@@ -3775,3 +3775,7 @@ BUGWK83830 : ietestcenter/css3/grid/grid-items-004.htm = FAIL MISSING
 
 BUGWK83941 : fast/canvas/2d.imageDataHD.html = TIMEOUT
 BUGWK83941 : platform/chromium/virtual/gpu/fast/canvas/2d.imageDataHD.html = TIMEOUT
+
+BUGWK84055 : css3/filters/huge-region.html = MISSING
+BUGWK84055 : css3/filters/huge-region-composited.html = CRASH
+
