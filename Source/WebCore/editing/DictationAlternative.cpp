@@ -28,16 +28,18 @@
 
 namespace WebCore {
 
-DictationAlternative::DictationAlternative(uint64_t start, uint64_t length, uint64_t context)
-: rangeStart(start)
-, rangeLength(length)
-, dictationContext(context)
-{ }
+DictationAlternative::DictationAlternative(unsigned start, unsigned length, unsigned context)
+    : rangeStart(start)
+    , rangeLength(length)
+    , dictationContext(context)
+{
+}
     
 DictationAlternative::DictationAlternative()
-: rangeStart(0)
-, rangeLength(0)
-, dictationContext(0)
-{ }
+    : rangeStart(0)
+    , rangeLength(0)
+    , dictationContext(0)
+{
+}
 
 }
