@@ -525,7 +525,7 @@ void RenderLayerCompositor::layerWillBeRemoved(RenderLayer* parent, RenderLayer*
 
     setCompositingParent(child, 0);
     
-    RenderLayer* compLayer = parent->enclosingCompositingLayer();
+    RenderLayer* compLayer = parent->enclosingCompositingLayerForRepaint();
     if (compLayer) {
         ASSERT(compLayer->backing());
         LayoutRect compBounds = child->backing()->compositedBounds();
@@ -1130,7 +1130,7 @@ void RenderLayerCompositor::repaintCompositedLayersAbsoluteRect(const IntRect& a
 void RenderLayerCompositor::recursiveRepaintLayerRect(RenderLayer* layer, const IntRect& rect)
 {
     // FIXME: This method does not work correctly with transforms.
-    if (layer->isComposited())
+    if (layer->isComposited() && !layer->backing()->paintsIntoCompositedAncestor())
         layer->setBackingNeedsRepaintInRect(rect);
 
 #if !ASSERT_DISABLED
@@ -1325,20 +1325,46 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
     }
     // The root layer always has a compositing layer, but it may not have backing.
     return requiresCompositingForTransform(renderer)
-             || requiresCompositingForVideo(renderer)
-             || requiresCompositingForCanvas(renderer)
-             || requiresCompositingForPlugin(renderer)
-             || requiresCompositingForFrame(renderer)
-             || (canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden)
-             || clipsCompositingDescendants(layer)
-             || requiresCompositingForAnimation(renderer)
-             || requiresCompositingForFilters(renderer)
-             || requiresCompositingForPosition(renderer, layer);
+        || requiresCompositingForVideo(renderer)
+        || requiresCompositingForCanvas(renderer)
+        || requiresCompositingForPlugin(renderer)
+        || requiresCompositingForFrame(renderer)
+        || (canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden)
+        || clipsCompositingDescendants(layer)
+        || requiresCompositingForAnimation(renderer)
+        || requiresCompositingForFilters(renderer)
+        || requiresCompositingForPosition(renderer, layer);
 }
 
 bool RenderLayerCompositor::canBeComposited(const RenderLayer* layer) const
 {
     return m_hasAcceleratedCompositing && layer->isSelfPaintingLayer();
+}
+
+bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer* layer, const RenderLayer* compositingAncestorLayer) const
+{
+    RenderObject* renderer = layer->renderer();
+    if (compositingAncestorLayer
+        && !(compositingAncestorLayer->backing()->graphicsLayer()->drawsContent()
+            || compositingAncestorLayer->backing()->paintsIntoWindow()
+            || compositingAncestorLayer->backing()->paintsIntoCompositedAncestor()))
+        return true;
+
+    return layer->isRootLayer()
+        || layer->transform() // note: excludes perspective and transformStyle3D.
+        || requiresCompositingForVideo(renderer)
+        || requiresCompositingForCanvas(renderer)
+        || requiresCompositingForPlugin(renderer)
+        || requiresCompositingForFrame(renderer)
+        || (canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden)
+        || requiresCompositingForAnimation(renderer)
+        || requiresCompositingForFilters(renderer)
+        || requiresCompositingForPosition(renderer, layer)
+        || renderer->isTransparent()
+        || renderer->hasMask()
+        || renderer->hasReflection()
+        || renderer->hasFilter()
+        || layer->mustOverlapCompositedLayers();
 }
 
 // Return true if the given layer has some ancestor in the RenderLayer hierarchy that clips,

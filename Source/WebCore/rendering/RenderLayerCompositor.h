@@ -136,6 +136,9 @@ public:
     // Repaint parts of all composited layers that intersect the given absolute rectangle.
     void repaintCompositedLayersAbsoluteRect(const IntRect&);
 
+    // Returns true if the given layer needs it own backing store.
+    bool requiresOwnBackingStore(const RenderLayer*, const RenderLayer* compositingAncestorLayer) const;
+
     RenderLayer* rootRenderLayer() const;
     GraphicsLayer* rootGraphicsLayer() const;
     GraphicsLayer* scrollLayer() const;
