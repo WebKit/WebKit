@@ -3,7 +3,9 @@
 <script src="../js/resources/js-test-pre.js"></script>
 <style>
 #testid { background-color: red; }
+#testID2 { background-color: red; }
 .testclass { background-color: red; }
+.testClass2 { background-color: red; }
 </style>
 </head>
 <body>
@@ -15,10 +17,20 @@
 <style>
 .testclass { background-color: green; }
 </style>
+<div id=testID2>case insensitive id test</div>
+<style>
+#TESTid2 { background-color: green }
+</style>
+<div class=testClass2>case insensitive class test</div>
+<style>
+.TESTclass2 { background-color: green; }
+</style>
 <script>
 description("Test that elements before inline stylesheets get their style updated properly");
 shouldBe('window.getComputedStyle(document.getElementById("testid")).backgroundColor','"rgb(0, 128, 0)"');
 shouldBe('window.getComputedStyle(document.getElementsByClassName("testclass")[0]).backgroundColor','"rgb(0, 128, 0)"');
+shouldBe('window.getComputedStyle(document.getElementById("testID2")).backgroundColor','"rgb(0, 128, 0)"');
+shouldBe('window.getComputedStyle(document.getElementsByClassName("testClass2")[0]).backgroundColor','"rgb(0, 128, 0)"');
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

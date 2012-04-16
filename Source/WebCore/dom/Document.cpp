@@ -3333,36 +3333,29 @@ bool Document::testAddedStylesheetRequiresStyleRecalc(StyleSheetInternal* styles
 {
     // See if all rules on the sheet are scoped to some specific ids or classes.
     // Then test if we actually have any of those in the tree at the moment.
-    // FIXME: Even we if we find some, we could just invalidate those subtrees instead of invalidating the entire style.
     HashSet<AtomicStringImpl*> idScopes; 
     HashSet<AtomicStringImpl*> classScopes;
     if (!CSSStyleSelector::determineStylesheetSelectorScopes(stylesheet, idScopes, classScopes))
         return true;
-    // Testing for classes is not particularly fast so bail out if there are more than a few.
-    static const int maximumClassScopesToTest = 4;
-    if (classScopes.size() > maximumClassScopesToTest)
-        return true;
-    HashSet<AtomicStringImpl*>::iterator end = idScopes.end();
-    for (HashSet<AtomicStringImpl*>::iterator it = idScopes.begin(); it != end; ++it) {
-        AtomicStringImpl* id = *it;
-        Element* idElement = getElementById(id);
-        if (!idElement)
+    // Invalidate the subtrees that match the scopes.
+    Node* node = firstChild();
+    while (node) {
+        if (!node->isStyledElement()) {
+            node = node->traverseNextNode();
             continue;
-        if (containsMultipleElementsWithId(id))
-            return true;
-        idElement->setNeedsStyleRecalc();
-    }
-    end = classScopes.end();
-    for (HashSet<AtomicStringImpl*>::iterator it = classScopes.begin(); it != end; ++it) {
-        // FIXME: getElementsByClassName is not optimal for this. We should handle all classes in a single pass.
-        RefPtr<NodeList> classElements = getElementsByClassName(*it);
-        unsigned elementCount = classElements->length();
-        for (unsigned i = 0; i < elementCount; ++i)
-            classElements->item(i)->setNeedsStyleRecalc();
+        }
+        StyledElement* element = static_cast<StyledElement*>(node);
+        if (SelectorChecker::elementMatchesSelectorScopes(element, idScopes, classScopes)) {
+            element->setNeedsStyleRecalc();
+            // The whole subtree is now invalidated, we can skip to the next sibling.
+            node = node->traverseNextSibling();
+            continue;
+        }
+        node = node->traverseNextNode();
     }
     return false;
 }
-    
+
 void Document::analyzeStylesheetChange(StyleSelectorUpdateFlag updateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleSelectorReset, bool& requiresFullStyleRecalc)
 {
     requiresStyleSelectorReset = true;

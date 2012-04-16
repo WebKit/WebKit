@@ -30,10 +30,11 @@
 
 #include "Attribute.h"
 #include "CSSSelector.h"
-#include "Element.h"
 #include "InspectorInstrumentation.h"
 #include "LinkHash.h"
 #include "RenderStyleConstants.h"
+#include "SpaceSplitString.h"
+#include "StyledElement.h"
 #include <wtf/BloomFilter.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -116,6 +117,7 @@ public:
 
     // Find the ids or classes selectors are scoped to. The selectors only apply to elements in subtrees where the root element matches the scope.
     static bool determineSelectorScopes(const CSSSelectorList&, HashSet<AtomicStringImpl*>& idScopes, HashSet<AtomicStringImpl*>& classScopes);
+    static bool elementMatchesSelectorScopes(const StyledElement*, const HashSet<AtomicStringImpl*>& idScopes, const HashSet<AtomicStringImpl*>& classScopes);
 
 private:
     bool checkOneSelector(const SelectorCheckingContext&, PseudoId&) const;
@@ -224,6 +226,20 @@ inline bool SelectorChecker::fastCheckRightmostAttributeSelector(const Element* 
         return checkExactAttribute(element, selector->attribute(), selector->value().impl());
     ASSERT(!selector->isAttributeSelector());
     return true;
+}
+
+inline bool SelectorChecker::elementMatchesSelectorScopes(const StyledElement* element, const HashSet<AtomicStringImpl*>& idScopes, const HashSet<AtomicStringImpl*>& classScopes)
+{
+    if (!idScopes.isEmpty() && element->hasID() && idScopes.contains(element->idForStyleResolution().impl()))
+        return true;
+    if (classScopes.isEmpty() || !element->hasClass())
+        return false;
+    const SpaceSplitString& classNames = element->classNames();
+    for (unsigned i = 0; i < classNames.size(); ++i) {
+        if (classScopes.contains(classNames[i].impl()))
+            return true;
+    }
+    return false;
 }
 
 }
