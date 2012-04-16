@@ -1,3 +1,11 @@
+2012-04-16  Vincent Scheib  <scheib@chromium.org>
+
+        Adding Contributors Brian Salomon and Tom Hudson to committers.py.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-04-16  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Add ability for DRT to handle HTTP authentication challenges.
