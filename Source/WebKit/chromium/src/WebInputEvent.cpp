@@ -60,7 +60,7 @@ class SameSizeAsWebMouseWheelEvent : public SameSizeAsWebMouseEvent {
 };
 
 class SameSizeAsWebGestureEvent : public SameSizeAsWebInputEvent {
-    int gestureData[6];
+    int gestureData[8];
 };
 
 class SameSizeAsWebTouchEvent : public SameSizeAsWebInputEvent {
