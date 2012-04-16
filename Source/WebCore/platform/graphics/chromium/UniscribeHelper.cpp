@@ -217,7 +217,18 @@ void UniscribeHelper::justify(int additionalSpace)
 
     // The documentation for Scriptjustify is wrong, the parameter is the space
     // to add and not the width of the column you want.
-    const int minKashida = 1;  // How do we decide what this should be?
+    int minKashida;
+#if USE(SKIA_TEXT)
+    // Disable kashida justification based on 
+    // http://blogs.msdn.com/b/michkap/archive/2010/08/31/10056140.aspx.
+    for (int i = 0; i < totalGlyphs; ++i) {
+        if (visualAttributes[i].uJustification == SCRIPT_JUSTIFY_ARABIC_KASHIDA)
+            visualAttributes[i].uJustification = SCRIPT_JUSTIFY_NONE;   
+    }
+    minKashida = 0;
+#else
+    minKashida = 1; // How do we decide what this should be?
+#endif
     ScriptJustify(&visualAttributes[0], &advances[0], totalGlyphs,
                   additionalSpace, minKashida, &justify[0]);
 
