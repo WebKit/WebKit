@@ -3751,7 +3751,6 @@ BUGCR122462 WIN LINUX : http/tests/inspector/inspect-element.html = TEXT
 
 BUGWK83503 LINUX DEBUG : plugins/inner-html-display-none.html = CRASH
 
-BUGWK83227 LINUX MAC : fast/text/international/arabic-justify.html = FAIL
 
 BUGWK83635 : fast/canvas/2d.backingStorePixelRatio.html = TIMEOUT
 BUGWK83635 : platform/chromium/virtual/gpu/fast/canvas/2d.backingStorePixelRatio.html = TIMEOUT
