@@ -993,7 +993,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObj
         else if (isEvalNode<ParsedNode>())
             *exception = createSyntaxError(lexicalGlobalObject, errMsg);
         else
-            *exception = addErrorInfo(&lexicalGlobalObject->globalData(), createSyntaxError(lexicalGlobalObject, errMsg), errLine, *m_source, Vector<StackFrame>());
+            *exception = addErrorInfo(lexicalGlobalObject->globalExec(), createSyntaxError(lexicalGlobalObject, errMsg), errLine, *m_source);
     }
 
     if (debugger && !ParsedNode::scopeIsFunction)

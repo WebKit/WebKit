@@ -277,7 +277,7 @@ EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState* exec)
 {
     String trace = "--> Stack trace:\n";
     Vector<StackFrame> stackTrace;
-    Interpreter::getStackTrace(&exec->globalData(), -1, stackTrace);
+    Interpreter::getStackTrace(&exec->globalData(), stackTrace);
     int i = 0;
 
     for (Vector<StackFrame>::iterator iter = stackTrace.begin(); iter < stackTrace.end(); iter++) {

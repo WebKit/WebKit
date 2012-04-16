@@ -120,37 +120,21 @@ JSObject* createURIError(ExecState* exec, const UString& message)
     return createURIError(exec->lexicalGlobalObject(), message);
 }
 
-JSObject* addErrorInfo(JSGlobalData* globalData, JSObject* error, int line, const SourceCode& source, const Vector<StackFrame>& stackTrace)
+JSObject* addErrorInfo(CallFrame* callFrame, JSObject* error, int line, const SourceCode& source)
 {
+    JSGlobalData* globalData = &callFrame->globalData();
     const UString& sourceURL = source.provider()->url();
 
     if (line != -1)
         error->putDirect(*globalData, Identifier(globalData, linePropertyName), jsNumber(line), ReadOnly | DontDelete);
     if (!sourceURL.isNull())
         error->putDirect(*globalData, Identifier(globalData, sourceURLPropertyName), jsString(globalData, sourceURL), ReadOnly | DontDelete);
-    if (!stackTrace.isEmpty()) {
-        JSGlobalObject* globalObject = 0;
-        if (isTerminatedExecutionException(error) || isInterruptedExecutionException(error))
-            globalObject = globalData->dynamicGlobalObject;
-        else
-            globalObject = error->globalObject();
-        StringBuilder builder;
-        for (unsigned i = 0; i < stackTrace.size(); i++) {
-            builder.append(String(stackTrace[i].toString(globalObject->globalExec()).impl()));
-            if (i != stackTrace.size() - 1)
-                builder.append('\n');
-        }
 
-        error->putDirect(*globalData, globalData->propertyNames->stack, jsString(globalData, UString(builder.toString().impl())), ReadOnly | DontDelete);
-    }
+    globalData->interpreter->addStackTraceIfNecessary(callFrame, error);
 
     return error;
 }
 
-JSObject* addErrorInfo(ExecState* exec, JSObject* error, int line, const SourceCode& source, const Vector<StackFrame>& stackTrace)
-{
-    return addErrorInfo(&exec->globalData(), error, line, source, stackTrace);
-}
 
 bool hasErrorInfo(ExecState* exec, JSObject* error)
 {
@@ -160,12 +144,15 @@ bool hasErrorInfo(ExecState* exec, JSObject* error)
 
 JSValue throwError(ExecState* exec, JSValue error)
 {
+    if (error.isObject())
+        return throwError(exec, asObject(error));
     exec->globalData().exception = error;
     return error;
 }
 
 JSObject* throwError(ExecState* exec, JSObject* error)
 {
+    Interpreter::addStackTraceIfNecessary(exec, error);
     exec->globalData().exception = error;
     return error;
 }

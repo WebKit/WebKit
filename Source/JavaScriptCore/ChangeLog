@@ -1,5 +1,42 @@
 2012-04-16  Oliver Hunt  <oliver@apple.com>
 
+        Exception stack traces aren't complete when the exception starts in native code
+        https://bugs.webkit.org/show_bug.cgi?id=84073
+
+        Reviewed by Gavin Barraclough.
+
+        Refactored building the stack trace to so that we can construct
+        it earlier, and don't rely on any prior work performed in the
+        exception handling machinery. Also updated LLInt and the DFG to
+        completely initialise the callframes of host function calls.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::codeOriginIndexForReturn):
+        (CodeBlock):
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::addStackTraceIfNecessary):
+        (JSC):
+        (JSC::Interpreter::throwException):
+        * interpreter/Interpreter.h:
+        (Interpreter):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jsc.cpp:
+        (functionJSCStack):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::handleHostCall):
+        * parser/Parser.h:
+        (JSC::::parse):
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        (JSC::throwError):
+        * runtime/Error.h:
+        (JSC):
+
+2012-04-16  Oliver Hunt  <oliver@apple.com>
+
         Fix COMMANDLINE_TYPEDARRAYS build
         https://bugs.webkit.org/show_bug.cgi?id=84051
 

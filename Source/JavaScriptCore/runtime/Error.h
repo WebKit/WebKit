@@ -57,9 +57,8 @@ namespace JSC {
 
     // Methods to add 
     bool hasErrorInfo(ExecState*, JSObject* error);
-    JSObject* addErrorInfo(JSGlobalData*, JSObject* error, int line, const SourceCode&, const Vector<StackFrame>&);
     // ExecState wrappers.
-    JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&, const Vector<StackFrame>&);
+    JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&);
 
     // Methods to throw Errors.
     JS_EXPORT_PRIVATE JSValue throwError(ExecState*, JSValue);
