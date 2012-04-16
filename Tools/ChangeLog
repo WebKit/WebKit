@@ -1,3 +1,13 @@
+2012-04-16  Philippe Normand  <pnormand@igalia.com>
+
+        build-webkit --gtk --no-webkit2 builds WK2
+        https://bugs.webkit.org/show_bug.cgi?id=83977
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/build-webkit: Fixup ./configure option to disable
+        WebKit2 build.
+
 2012-04-16  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Feeding key events with invalid keyName

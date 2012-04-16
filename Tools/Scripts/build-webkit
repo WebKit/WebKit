@@ -711,8 +711,8 @@ for my $dir (@projects) {
 
     my $project = basename($dir);
     if (isGtk()) {
-        if (!$noWebKit2) {
-            unshift(@options, "--enable-webkit2");
+        if ($noWebKit2) {
+            unshift(@options, "--disable-webkit2");
         }
         $result = buildGtkProject($project, $clean, @options);
     } elsif (isAppleMacWebKit()) {
