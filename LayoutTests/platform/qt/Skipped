@@ -1102,6 +1102,7 @@ fast/autoresize
 
 # Needs layoutTestController.setBackingScaleFactor()
 fast/canvas/2d.backingStorePixelRatio.html
+fast/canvas/2d.imageDataHD.html
 
 # This requires didClearWindowObjectForFrameInIsolatedWorld foo in FrameLoaderClient
 http/tests/security/isolatedWorld/didClearWindowObject.html
