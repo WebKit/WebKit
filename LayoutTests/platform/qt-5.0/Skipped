@@ -78,3 +78,7 @@ fast/selectors/selection-window-inactive.html
 # https://bugs.webkit.org/show_bug.cgi?id=83785
 fast/dom/52776.html
 fast/css/font-face-remote.html
+
+# [Qt] Use QRawFont when building with Qt 5
+# https://bugs.webkit.org/show_bug.cgi?id=78001
+svg/as-image/img-preserveAspectRatio-support-1.html
