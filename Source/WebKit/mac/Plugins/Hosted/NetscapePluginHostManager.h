@@ -48,7 +48,7 @@ public:
 
     void pluginHostDied(NetscapePluginHostProxy*);
 
-    static void createPropertyListFile(const WTF::String& pluginPath, cpu_type_t pluginArchitecture);
+    void createPropertyListFile(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier);
     
     void didCreateWindow();
     

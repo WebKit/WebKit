@@ -1,3 +1,22 @@
+2012-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Use a MIG call when creating a plug-in property list file
+        https://bugs.webkit.org/show_bug.cgi?id=84084
+        <rdar://problem/11197341>
+
+        Reviewed by Sam Weinig.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::createPropertyListFile):
+        Get a plug-in host and call _WKPHCreatePluginMIMETypesPreferences instead.
+
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        Add PHCreatePluginMIMETypesPreferences.
+
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage createPropertyListFile]):
+        NetscapePluginHostManager::createPropertyListFile is no longer a static member function.
+
 2012-04-12  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r102262): iAd Producer relies on CSSStyleDeclaration property setters respecting '!important'

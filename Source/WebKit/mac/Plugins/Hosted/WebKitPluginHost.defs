@@ -246,3 +246,5 @@ simpleroutine PHPluginInstanceSnapshot(pluginHostPort :mach_port_t;
                                     requestID :uint32_t;
                                     width :uint32_t;
                                     height :uint32_t);
+
+routine PHCreatePluginMIMETypesPreferences(pluginHostPort :mach_port_t);

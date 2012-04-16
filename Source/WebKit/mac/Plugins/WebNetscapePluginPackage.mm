@@ -321,7 +321,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (void)createPropertyListFile
 {
-    NetscapePluginHostManager::createPropertyListFile(path, pluginHostArchitecture);
+    NetscapePluginHostManager::shared().createPropertyListFile(path, pluginHostArchitecture, [self bundleIdentifier]);
 }
 
 #endif
