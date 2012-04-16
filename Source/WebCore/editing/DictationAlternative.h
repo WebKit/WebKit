@@ -26,6 +26,8 @@
 #ifndef DictationAlternative_h
 #define DictationAlternative_h
 
+#include <stdint.h>
+
 namespace WebCore {
 struct DictationAlternative {
     DictationAlternative(uint64_t start, uint64_t length, uint64_t context);
