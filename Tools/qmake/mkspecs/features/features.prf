@@ -65,6 +65,16 @@ haveQt(5) {
     }
 }
 
+# We need libxml2 config test to determine to use libxml2 or not
+!contains(DEFINES, WTF_USE_LIBXML2=.) {
+    haveQt(5):contains(config_test_libxml2, yes): DEFINES += WTF_USE_LIBXML2=1
+}
+
+# We need libxslt config test to determine to use libxslt or not
+!contains(DEFINES, ENABLE_XSLT=.) {
+    haveQt(5):contains(config_test_libxslt, yes): DEFINES += ENABLE_XSLT=1
+}
+
 # Feature defines: for web-facing features only
 !contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=.): DEFINES += ENABLE_JAVASCRIPT_DEBUGGER=1
 !contains(DEFINES, ENABLE_GAMEPAD=.): DEFINES += ENABLE_GAMEPAD=0

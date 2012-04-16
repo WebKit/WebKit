@@ -1,3 +1,22 @@
+2012-04-16  Andras Piroska  <pandras@inf.u-szeged.hu>
+
+        [Qt] Replace QtXmlPatterns usage with libxslt dependency
+        <https://bugs.webkit.org/show_bug.cgi?id=76820>
+
+        Reviewed by Simon Hausmann.
+
+        The features.prf file was modified, in order to use libxml and libxslt by default.
+        This modification only work at Qt5.
+
+        * qmake/config.tests/libxml2/libxml2.cpp: Added.
+        (main):
+        * qmake/config.tests/libxml2/libxml2.pro: Added.
+        * qmake/config.tests/libxslt/libxslt.cpp: Added.
+        (main):
+        * qmake/config.tests/libxslt/libxslt.pro: Added.
+        * qmake/mkspecs/features/features.prf:
+        * qmake/sync.profile:
+
 2012-04-16  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL] EWebLaucher : Fix wrong parameter order in function call for multiple windows.
