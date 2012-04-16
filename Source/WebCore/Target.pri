@@ -640,6 +640,8 @@ SOURCES += \
     editing/DeleteButton.cpp \
     editing/DeleteFromTextNodeCommand.cpp \
     editing/DeleteSelectionCommand.cpp \
+    editing/DictationAlternative.cpp \
+    editing/DictationCommand.cpp \
     editing/EditCommand.cpp \
     editing/EditingStyle.cpp \
     editing/Editor.cpp \
@@ -676,6 +678,7 @@ SOURCES += \
     editing/SplitTextNodeCommand.cpp \
     editing/SplitTextNodeContainingElementCommand.cpp \
     editing/TextCheckingHelper.cpp \
+    editing/TextInsertionBaseCommand.cpp \
     editing/TextIterator.cpp \
     editing/TypingCommand.cpp \
     editing/UnlinkCommand.cpp \
@@ -1778,6 +1781,8 @@ HEADERS += \
     editing/DeleteButton.h \
     editing/DeleteFromTextNodeCommand.h \
     editing/DeleteSelectionCommand.h \
+    editing/DictationAlternative.h \
+    editing/DictationCommand.h \
     editing/EditCommand.h \
     editing/EditingStyle.h \
     editing/EditingBehavior.h \
@@ -1813,6 +1818,8 @@ HEADERS += \
     editing/SplitElementCommand.h \
     editing/SplitTextNodeCommand.h \
     editing/SplitTextNodeContainingElementCommand.h \
+    editing/StringHelper.h \
+    editing/TextInsertionBaseCommand.h \
     editing/TextIterator.h \
     editing/TypingCommand.h \
     editing/UndoStep.h \

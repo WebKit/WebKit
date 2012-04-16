@@ -46,6 +46,15 @@ InsertTextCommand::InsertTextCommand(Document* document, const String& text, boo
 {
 }
 
+InsertTextCommand::InsertTextCommand(Document* document, const String& text, PassRefPtr<TextInsertionMarkerSupplier> markerSupplier)
+    : CompositeEditCommand(document)
+    , m_text(text)
+    , m_selectInsertedText(false)
+    , m_rebalanceType(RebalanceLeadingAndTrailingWhitespaces)
+    , m_markerSupplier(markerSupplier)
+{
+}
+
 Position InsertTextCommand::positionInsideTextNode(const Position& p)
 {
     Position pos = p;
@@ -167,6 +176,8 @@ void InsertTextCommand::doApply()
 
         insertTextIntoNode(textNode, offset, m_text);
         endPosition = Position(textNode, offset + m_text.length());
+        if (m_markerSupplier)
+            m_markerSupplier->addMarkersToTextNode(textNode.get(), offset, m_text);
 
         if (m_rebalanceType == RebalanceLeadingAndTrailingWhitespaces) {
             // The insertion may require adjusting adjacent whitespace, if it is present.

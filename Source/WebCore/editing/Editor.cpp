@@ -41,6 +41,8 @@
 #include "CreateLinkCommand.h"
 #include "DeleteButtonController.h"
 #include "DeleteSelectionCommand.h"
+#include "DictationAlternative.h"
+#include "DictationCommand.h"
 #include "DocumentFragment.h"
 #include "DocumentMarkerController.h"
 #include "EditingText.h"
@@ -875,6 +877,11 @@ bool Editor::insertTextForConfirmedComposition(const String& text)
     return m_frame->eventHandler()->handleTextInputEvent(text, 0, TextEventInputComposition);
 }
 
+bool Editor::insertDictatedText(const String& text, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent)
+{
+    return m_alternativeTextController->insertDictatedText(text, dictationAlternatives, triggeringEvent);
+}
+
 bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectInsertedText, TextEvent* triggeringEvent)
 {
     if (text.isEmpty())
@@ -909,12 +916,16 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
             RefPtr<Document> document = selectionStart->document();
 
             // Insert the text
-            TypingCommand::Options options = 0;
-            if (selectInsertedText)
-                options |= TypingCommand::SelectInsertedText;
-            if (autocorrectionWasApplied)
-                options |= TypingCommand::RetainAutocorrectionIndicator;
-            TypingCommand::insertText(document.get(), text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionConfirm : TypingCommand::TextCompositionNone);
+            if (triggeringEvent->isDictation())
+                DictationCommand::insertText(document.get(), text, triggeringEvent->dictationAlternatives(), selection);
+            else {
+                TypingCommand::Options options = 0;
+                if (selectInsertedText)
+                    options |= TypingCommand::SelectInsertedText;
+                if (autocorrectionWasApplied)
+                    options |= TypingCommand::RetainAutocorrectionIndicator;
+                TypingCommand::insertText(document.get(), text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionConfirm : TypingCommand::TextCompositionNone);
+            }
 
             // Reveal the current selection
             if (Frame* editedFrame = document->frame())
@@ -2247,7 +2258,7 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     Document* document = m_frame->document();
     RefPtr<Range> wordRange = Range::create(document, startOfFirstWord.deepEquivalent(), endOfLastWord.deepEquivalent());
 
-    document->markers()->removeMarkers(wordRange.get(), DocumentMarker::Spelling | DocumentMarker::CorrectionIndicator | DocumentMarker::SpellCheckingExemption, DocumentMarkerController::RemovePartiallyOverlappingMarker);
+    document->markers()->removeMarkers(wordRange.get(), DocumentMarker::Spelling | DocumentMarker::CorrectionIndicator | DocumentMarker::SpellCheckingExemption | DocumentMarker::DictationAlternatives, DocumentMarkerController::RemovePartiallyOverlappingMarker);
     document->markers()->clearDescriptionOnMarkersIntersectingRange(wordRange.get(), DocumentMarker::Replacement);
 }
 

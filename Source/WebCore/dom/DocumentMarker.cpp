@@ -123,6 +123,14 @@ DocumentMarker::DocumentMarker(unsigned startOffset, unsigned endOffset, bool ac
 {
 }
 
+DocumentMarker::DocumentMarker(MarkerType type, unsigned startOffset, unsigned endOffset, PassRefPtr<DocumentMarkerDetails> details)
+    : m_type(type)
+    , m_startOffset(startOffset)
+    , m_endOffset(endOffset)
+    , m_details(details)
+{
+}
+
 void DocumentMarker::shiftOffsets(int delta)
 {
     m_startOffset += delta;

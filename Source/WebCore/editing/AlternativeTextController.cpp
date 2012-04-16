@@ -27,9 +27,12 @@
 #include "config.h"
 #include "AlternativeTextController.h"
 
+#include "DictationAlternative.h"
+#include "Document.h"
 #include "DocumentMarkerController.h"
 #include "EditCommand.h"
 #include "EditorClient.h"
+#include "Event.h"
 #include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -37,6 +40,7 @@
 #include "SpellingCorrectionCommand.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
+#include "TextEvent.h"
 #include "TextIterator.h"
 #include "VisibleSelection.h"
 #include "htmlediting.h"
@@ -102,8 +106,8 @@ static bool markersHaveIdenticalDescription(const Vector<DocumentMarker*>& marke
 }
 
 AlternativeTextController::AlternativeTextController(Frame* frame)
-    : m_frame(frame)
-    , m_timer(this, &AlternativeTextController::timerFired)
+    : m_timer(this, &AlternativeTextController::timerFired)
+    , m_frame(frame)
 {
 }
 
@@ -596,5 +600,28 @@ bool AlternativeTextController::processMarkersOnTextToBeReplacedByResult(const T
 }
     
 #endif
+
+bool AlternativeTextController::insertDictatedText(const String& text, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent)
+{
+    if (!m_frame)
+        return false;
+    EventTarget* target;
+    if (triggeringEvent)
+        target = triggeringEvent->target();
+    else
+        target = eventTargetNodeForDocument(m_frame->document());
+    if (!target)
+        return false;
+
+    if (FrameView* view = m_frame->view())
+        view->resetDeferredRepaintDelay();
+
+    RefPtr<TextEvent> event = TextEvent::createForDictation(m_frame->domWindow(), text, dictationAlternatives);
+    event->setUnderlyingEvent(triggeringEvent);
+
+    ExceptionCode ec;
+    target->dispatchEvent(event, ec);
+    return event->defaultHandled();
+}
 
 } // namespace WebCore

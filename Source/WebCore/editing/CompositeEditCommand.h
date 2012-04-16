@@ -82,6 +82,7 @@ public:
 
     virtual bool isCreateLinkCommand() const;
     virtual bool isTypingCommand() const;
+    virtual bool isDictationCommand() const { return false; }
     virtual bool preservesTypingStyle() const;
     virtual bool shouldRetainAutocorrectionIndicator() const;
     virtual void setShouldRetainAutocorrectionIndicator(bool);

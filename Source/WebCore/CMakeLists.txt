@@ -662,6 +662,8 @@ SET(WebCore_SOURCES
     editing/DeleteButtonController.cpp
     editing/DeleteFromTextNodeCommand.cpp
     editing/DeleteSelectionCommand.cpp
+    editing/DictationAlternative.cpp
+    editing/DictationCommand.cpp
     editing/EditCommand.cpp
     editing/EditingStyle.cpp
     editing/Editor.cpp
@@ -697,6 +699,7 @@ SET(WebCore_SOURCES
     editing/SplitTextNodeCommand.cpp
     editing/SplitTextNodeContainingElementCommand.cpp
     editing/TextCheckingHelper.cpp
+    editing/TextInsertionBaseCommand.cpp
     editing/TextIterator.cpp
     editing/TypingCommand.cpp
     editing/UnlinkCommand.cpp

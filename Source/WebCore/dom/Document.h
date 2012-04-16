@@ -1505,6 +1505,8 @@ inline Node::Node(Document* document, ConstructionType type)
     InspectorCounters::incrementCounter(InspectorCounters::NodeCounter);
 }
 
+Node* eventTargetNodeForDocument(Document*);
+
 } // namespace WebCore
 
 #endif // Document_h

@@ -57,6 +57,11 @@ PassRefPtr<TextEvent> TextEvent::createForDrop(PassRefPtr<AbstractView> view, co
     return adoptRef(new TextEvent(view, data, TextEventInputDrop));
 }
 
+PassRefPtr<TextEvent> TextEvent::createForDictation(PassRefPtr<AbstractView> view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
+{
+    return adoptRef(new TextEvent(view, data, dictationAlternatives));
+}
+
 TextEvent::TextEvent()
     : m_inputType(TextEventInputKeyboard)
     , m_shouldSmartReplace(false)
@@ -82,6 +87,16 @@ TextEvent::TextEvent(PassRefPtr<AbstractView> view, const String& data, PassRefP
     , m_pastingFragment(pastingFragment)
     , m_shouldSmartReplace(shouldSmartReplace)
     , m_shouldMatchStyle(shouldMatchStyle)
+{
+}
+
+TextEvent::TextEvent(PassRefPtr<AbstractView> view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
+    : UIEvent(eventNames().textInputEvent, true, true, view, 0)
+    , m_inputType(TextEventInputDictation)
+    , m_data(data)
+    , m_shouldSmartReplace(false)
+    , m_shouldMatchStyle(false)
+    , m_dictationAlternatives(dictationAlternatives)
 {
 }
 

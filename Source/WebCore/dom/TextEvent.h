@@ -27,6 +27,7 @@
 #ifndef TextEvent_h
 #define TextEvent_h
 
+#include "DictationAlternative.h"
 #include "TextEventInputType.h"
 #include "UIEvent.h"
 
@@ -42,6 +43,7 @@ namespace WebCore {
         static PassRefPtr<TextEvent> createForPlainTextPaste(PassRefPtr<AbstractView> view, const String& data, bool shouldSmartReplace);
         static PassRefPtr<TextEvent> createForFragmentPaste(PassRefPtr<AbstractView> view, PassRefPtr<DocumentFragment> data, bool shouldSmartReplace, bool shouldMatchStyle);
         static PassRefPtr<TextEvent> createForDrop(PassRefPtr<AbstractView> view, const String& data);
+        static PassRefPtr<TextEvent> createForDictation(PassRefPtr<AbstractView>, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
         virtual ~TextEvent();
     
@@ -56,10 +58,12 @@ namespace WebCore {
         bool isBackTab() const { return m_inputType == TextEventInputBackTab; }
         bool isPaste() const { return m_inputType == TextEventInputPaste; }
         bool isDrop() const { return m_inputType == TextEventInputDrop; }
+        bool isDictation() const { return m_inputType == TextEventInputDictation; }
 
         bool shouldSmartReplace() const { return m_shouldSmartReplace; }
         bool shouldMatchStyle() const { return m_shouldMatchStyle; }
         DocumentFragment* pastingFragment() const { return m_pastingFragment.get(); }
+        const Vector<DictationAlternative>& dictationAlternatives() const { return m_dictationAlternatives; }
 
     private:
         TextEvent();
@@ -67,6 +71,7 @@ namespace WebCore {
         TextEvent(PassRefPtr<AbstractView>, const String& data, TextEventInputType = TextEventInputKeyboard);
         TextEvent(PassRefPtr<AbstractView>, const String& data, PassRefPtr<DocumentFragment>,
                   bool shouldSmartReplace, bool shouldMatchStyle);
+        TextEvent(PassRefPtr<AbstractView>, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
         TextEventInputType m_inputType;
         String m_data;
@@ -74,6 +79,7 @@ namespace WebCore {
         RefPtr<DocumentFragment> m_pastingFragment;
         bool m_shouldSmartReplace;
         bool m_shouldMatchStyle;
+        Vector<DictationAlternative> m_dictationAlternatives;
     };
 
 } // namespace WebCore

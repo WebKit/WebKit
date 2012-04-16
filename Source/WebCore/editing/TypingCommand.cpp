@@ -26,7 +26,6 @@
 #include "config.h"
 #include "TypingCommand.h"
 
-#include "BeforeTextInsertedEvent.h"
 #include "BreakBlockquoteCommand.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
@@ -48,21 +47,35 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool canAppendNewLineFeed(const VisibleSelection& selection)
+class TypingCommandLineOperation
 {
-    Node* node = selection.rootEditableElement();
-    if (!node)
-        return false;
-
-    String lineFeed("\n");
-    RefPtr<BeforeTextInsertedEvent> event = BeforeTextInsertedEvent::create(lineFeed);
-    ExceptionCode ec = 0;
-    node->dispatchEvent(event, ec);
-    return event->text() == lineFeed;
-}
+public:
+    TypingCommandLineOperation(TypingCommand* typingCommand, bool selectInsertedText, const String& text)
+    : m_typingCommand(typingCommand)
+    , m_selectInsertedText(selectInsertedText)
+    , m_text(text)
+    { }
+    
+    void operator()(size_t lineOffset, size_t lineLength, bool isLastLine) const
+    {
+        if (isLastLine) {
+            if (!lineOffset || lineLength > 0)
+                m_typingCommand->insertTextRunWithoutNewlines(m_text.substring(lineOffset, lineLength), m_selectInsertedText);
+        } else {
+            if (lineLength > 0)
+                m_typingCommand->insertTextRunWithoutNewlines(m_text.substring(lineOffset, lineLength), false);
+            m_typingCommand->insertParagraphSeparator();
+        }
+    }
+    
+private:
+    TypingCommand* m_typingCommand;
+    bool m_selectInsertedText;
+    const String& m_text;
+};
 
 TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, const String &textToInsert, Options options, TextGranularity granularity, TextCompositionType compositionType)
-    : CompositeEditCommand(document)
+    : TextInsertionBaseCommand(document)
     , m_commandType(commandType)
     , m_textToInsert(textToInsert)
     , m_openForMoreTyping(true)
@@ -162,17 +175,8 @@ void TypingCommand::insertText(Document* document, const String& text, const Vis
     ASSERT(frame);
 
     VisibleSelection currentSelection = frame->selection()->selection();
-    bool changeSelection = currentSelection != selectionForInsertion;
-    String newText = text;
-    if (Node* startNode = selectionForInsertion.start().containerNode()) {
-        if (startNode->rootEditableElement() && compositionType != TextCompositionUpdate) {
-            // Send BeforeTextInsertedEvent. The event handler will update text if necessary.
-            ExceptionCode ec = 0;
-            RefPtr<BeforeTextInsertedEvent> evt = BeforeTextInsertedEvent::create(text);
-            startNode->rootEditableElement()->dispatchEvent(evt, ec);
-            newText = evt->text();
-        }
-    }
+
+    String newText = dispatchBeforeTextInsertedEvent(text, selectionForInsertion, compositionType == TextCompositionUpdate);
     
     // Set the starting and ending selection appropriately if we are using a selection
     // that is different from the current selection.  In the future, we should change EditCommand
@@ -191,15 +195,7 @@ void TypingCommand::insertText(Document* document, const String& text, const Vis
     }
 
     RefPtr<TypingCommand> cmd = TypingCommand::create(document, InsertText, newText, options, compositionType);
-    if (changeSelection)  {
-        cmd->setStartingSelection(selectionForInsertion);
-        cmd->setEndingSelection(selectionForInsertion);
-    }
-    applyCommand(cmd);
-    if (changeSelection) {
-        cmd->setEndingSelection(currentSelection);
-        frame->selection()->setSelection(currentSelection);
-    }
+    applyTextInsertionCommand(frame.get(), cmd, selectionForInsertion, currentSelection);
 }
 
 void TypingCommand::insertLineBreak(Document *document, Options options)
@@ -359,21 +355,8 @@ void TypingCommand::insertText(const String &text, bool selectInsertedText)
     // an existing selection; at the moment they can either put the caret after what's inserted or
     // select what's inserted, but there's no way to "extend selection" to include both an old selection
     // that ends just before where we want to insert text and the newly inserted text.
-    unsigned offset = 0;
-    size_t newline;
-    while ((newline = text.find('\n', offset)) != notFound) {
-        if (newline != offset)
-            insertTextRunWithoutNewlines(text.substring(offset, newline - offset), false);
-        insertParagraphSeparator();
-        offset = newline + 1;
-    }
-    if (!offset)
-        insertTextRunWithoutNewlines(text, selectInsertedText);
-    else {
-        unsigned length = text.length();
-        if (length != offset)
-            insertTextRunWithoutNewlines(text.substring(offset, length - offset), selectInsertedText);
-    }
+    TypingCommandLineOperation operation(this, selectInsertedText, text);
+    forEachLineInString(text, operation);
 }
 
 void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool selectInsertedText)
@@ -388,7 +371,7 @@ void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool select
 
 void TypingCommand::insertLineBreak()
 {
-    if (!canAppendNewLineFeed(endingSelection()))
+    if (!canAppendNewLineFeedToSelection(endingSelection()))
         return;
 
     applyCommandToComposite(InsertLineBreakCommand::create(document()));
@@ -397,7 +380,7 @@ void TypingCommand::insertLineBreak()
 
 void TypingCommand::insertParagraphSeparator()
 {
-    if (!canAppendNewLineFeed(endingSelection()))
+    if (!canAppendNewLineFeedToSelection(endingSelection()))
         return;
 
     applyCommandToComposite(InsertParagraphSeparatorCommand::create(document()));

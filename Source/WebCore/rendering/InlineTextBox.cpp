@@ -992,13 +992,15 @@ static GraphicsContext::DocumentMarkerLineStyle lineStyleForMarkerType(DocumentM
         return GraphicsContext::DocumentMarkerGrammarLineStyle;
     case DocumentMarker::CorrectionIndicator:
         return GraphicsContext::DocumentMarkerAutocorrectionReplacementLineStyle;
+    case DocumentMarker::DictationAlternatives:
+        return GraphicsContext::DocumentMarkerDictationAlternativesLineStyle;
     default:
         ASSERT_NOT_REACHED();
         return GraphicsContext::DocumentMarkerSpellingLineStyle;
     }
 }
 
-void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, const FloatPoint& boxOrigin, DocumentMarker* marker, RenderStyle* style, const Font& font, bool grammar)
+void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& boxOrigin, DocumentMarker* marker, RenderStyle* style, const Font& font, bool grammar)
 {
     // Never print spelling/grammar markers (5327887)
     if (textRenderer()->document()->printing())
@@ -1130,6 +1132,7 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
             case DocumentMarker::Spelling:
             case DocumentMarker::CorrectionIndicator:
             case DocumentMarker::Replacement:
+            case DocumentMarker::DictationAlternatives:
                 if (background)
                     continue;
                 break;
@@ -1153,16 +1156,15 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
         // marker intersects this run.  Paint it.
         switch (marker->type()) {
             case DocumentMarker::Spelling:
-                paintSpellingOrGrammarMarker(pt, boxOrigin, marker, style, font, false);
+            case DocumentMarker::CorrectionIndicator:
+            case DocumentMarker::DictationAlternatives:
+                paintDocumentMarker(pt, boxOrigin, marker, style, font, false);
                 break;
             case DocumentMarker::Grammar:
-                paintSpellingOrGrammarMarker(pt, boxOrigin, marker, style, font, true);
+                paintDocumentMarker(pt, boxOrigin, marker, style, font, true);
                 break;
             case DocumentMarker::TextMatch:
                 paintTextMatchMarker(pt, boxOrigin, marker, style, font);
-                break;
-            case DocumentMarker::CorrectionIndicator:
-                paintSpellingOrGrammarMarker(pt, boxOrigin, marker, style, font, false);
                 break;
             case DocumentMarker::Replacement:
                 computeRectForReplacementMarker(marker, style, font);

@@ -41,8 +41,10 @@ class CompositeEditCommand;
 class EditorClient;
 class EditCommand;
 class EditCommandComposition;
+class Event;
 class Frame;
 class TextCheckerClient;
+struct DictationAlternative;
 
 class AlternativeTextDetails : public RefCounted<AlternativeTextDetails> {
 public:
@@ -56,6 +58,24 @@ struct AlternativeTextInfo {
     AlternativeTextType type;
     String originalText;
     RefPtr<AlternativeTextDetails> details;
+};
+
+class DictationMarkerDetails : public DocumentMarkerDetails {
+public:
+    static PassRefPtr<DictationMarkerDetails> create(const String& originalText, uint64_t dictationContext)
+    {
+        return adoptRef(new DictationMarkerDetails(originalText, dictationContext));
+    }
+    const String& originalText() const { return m_originalText; }
+    uint64_t dictationContext() const { return m_dictationContext; }
+private:
+    DictationMarkerDetails(const String& originalText, uint64_t dictationContext)
+    : m_dictationContext(dictationContext)
+    , m_originalText(originalText)
+    { }
+ 
+    uint64_t m_dictationContext;
+    String m_originalText;
 };
 
 struct TextCheckingResult;
@@ -109,8 +129,10 @@ public:
     bool processMarkersOnTextToBeReplacedByResult(const TextCheckingResult*, Range* rangeToBeReplaced, const String& stringToBeReplaced) UNLESS_ENABLED({ UNUSED_PARAM(rangeToBeReplaced); UNUSED_PARAM(stringToBeReplaced); return true; });
     void deletedAutocorrectionAtPosition(const Position&, const String& originalString) UNLESS_ENABLED({ UNUSED_PARAM(originalString); })
 
-#if USE(AUTOCORRECTION_PANEL)
+    bool insertDictatedText(const String&, const Vector<DictationAlternative>&, Event*);
+
 private:
+#if USE(AUTOCORRECTION_PANEL)
     String dismissSoon(ReasonForDismissingAlternativeText);
     void applyAlternativeText(const String& alternative, const Vector<DocumentMarker::MarkerType>&);
     void timerFired(Timer<AlternativeTextController>*);
@@ -130,8 +152,6 @@ private:
     FloatRect rootViewRectForRange(const Range*) const;
     void markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(EditCommand*);
 
-    Frame* m_frame;
-
     Timer<AlternativeTextController> m_timer;
     AlternativeTextInfo m_alternativeTextInfo;
     bool m_isDismissedByEditing;
@@ -139,6 +159,8 @@ private:
     String m_originalStringForLastDeletedAutocorrection;
     Position m_positionForLastDeletedAutocorrection;
 #endif
+
+    Frame* m_frame;
 };
 
 #undef UNLESS_ENABLED

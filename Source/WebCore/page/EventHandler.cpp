@@ -2678,22 +2678,6 @@ void EventHandler::hoverTimerFired(Timer<EventHandler>*)
     }
 }
 
-static Node* eventTargetNodeForDocument(Document* doc)
-{
-    if (!doc)
-        return 0;
-    Node* node = doc->focusedNode();
-    if (!node && doc->isPluginDocument()) {
-        PluginDocument* pluginDocument = static_cast<PluginDocument*>(doc);
-        node =  pluginDocument->pluginNode();
-    }
-    if (!node && doc->isHTMLDocument())
-        node = doc->body();
-    if (!node)
-        node = doc->documentElement();
-    return node;
-}
-
 bool EventHandler::handleAccessKey(const PlatformKeyboardEvent& evt)
 {
     // FIXME: Ignoring the state of Shift key is what neither IE nor Firefox do.

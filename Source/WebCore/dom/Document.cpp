@@ -119,6 +119,7 @@
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
 #include "PlatformKeyboardEvent.h"
+#include "PluginDocument.h"
 #include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
 #include "RegisteredEventListener.h"
@@ -5824,6 +5825,22 @@ IntSize Document::viewportSize() const
     if (!view())
         return IntSize();
     return view()->visibleContentRect(/* includeScrollbars */ true).size();
+}
+
+Node* eventTargetNodeForDocument(Document* doc)
+{
+    if (!doc)
+        return 0;
+    Node* node = doc->focusedNode();
+    if (!node && doc->isPluginDocument()) {
+        PluginDocument* pluginDocument = static_cast<PluginDocument*>(doc);
+        node =  pluginDocument->pluginNode();
+    }
+    if (!node && doc->isHTMLDocument())
+        node = doc->body();
+    if (!node)
+        node = doc->documentElement();
+    return node;
 }
 
 } // namespace WebCore

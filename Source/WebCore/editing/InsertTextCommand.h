@@ -30,6 +30,17 @@
 
 namespace WebCore {
 
+class DocumentMarkerController;
+class Text;
+
+class TextInsertionMarkerSupplier : public RefCounted<TextInsertionMarkerSupplier> {
+public:
+    virtual ~TextInsertionMarkerSupplier() { }
+    virtual void addMarkersToTextNode(Text*, unsigned offsetOfInsertion, const String& textInserted) = 0;
+protected:
+    TextInsertionMarkerSupplier() { }
+};
+
 class InsertTextCommand : public CompositeEditCommand {
 public:
     enum RebalanceType {
@@ -43,9 +54,15 @@ public:
         return adoptRef(new InsertTextCommand(document, text, selectInsertedText, rebalanceType));
     }
 
+    static PassRefPtr<InsertTextCommand> createWithMarkerSupplier(Document* document, const String& text, PassRefPtr<TextInsertionMarkerSupplier> markerSupplier)
+    {
+        return adoptRef(new InsertTextCommand(document, text, markerSupplier));
+    }
+
 private:
 
     InsertTextCommand(Document*, const String& text, bool selectInsertedText, RebalanceType);
+    InsertTextCommand(Document*, const String& text, PassRefPtr<TextInsertionMarkerSupplier>);
 
     void deleteCharacter();
 
@@ -61,6 +78,7 @@ private:
     String m_text;
     bool m_selectInsertedText;
     RebalanceType m_rebalanceType;
+    RefPtr<TextInsertionMarkerSupplier> m_markerSupplier;
 };
 
 } // namespace WebCore

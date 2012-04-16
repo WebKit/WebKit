@@ -81,6 +81,16 @@ void DocumentMarkerController::addMarker(Range* range, DocumentMarker::MarkerTyp
 
 }
 
+void DocumentMarkerController::addMarkerToNode(Node* node, unsigned startOffset, unsigned length, DocumentMarker::MarkerType type)
+{
+    addMarker(node, DocumentMarker(type, startOffset, startOffset + length));
+}
+
+void DocumentMarkerController::addMarkerToNode(Node* node, unsigned startOffset, unsigned length, DocumentMarker::MarkerType type, PassRefPtr<DocumentMarkerDetails> details)
+{
+    addMarker(node, DocumentMarker(type, startOffset, startOffset + length, details));
+}
+
 
 void DocumentMarkerController::addTextMatchMarker(Range* range, bool activeMatch)
 {

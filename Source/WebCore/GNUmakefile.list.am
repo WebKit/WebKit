@@ -2024,6 +2024,10 @@ webcore_sources += \
 	Source/WebCore/editing/DeleteFromTextNodeCommand.h \
 	Source/WebCore/editing/DeleteSelectionCommand.cpp \
 	Source/WebCore/editing/DeleteSelectionCommand.h \
+	Source/WebCore/editing/DictationAlternative.cpp \
+	Source/WebCore/editing/DictationAlternative.h \
+	Source/WebCore/editing/DictationCommand.cpp \
+	Source/WebCore/editing/DictationCommand.h \
 	Source/WebCore/editing/EditAction.h \
 	Source/WebCore/editing/EditCommand.cpp \
 	Source/WebCore/editing/EditCommand.h \
@@ -2107,6 +2111,8 @@ webcore_sources += \
 	Source/WebCore/editing/TextCheckingHelper.cpp \
 	Source/WebCore/editing/TextCheckingHelper.h \
 	Source/WebCore/editing/TextGranularity.h \
+	Source/WebCore/editing/TextInsertionBaseCommand.cpp \
+	Source/WebCore/editing/TextInsertionBaseCommand.h \
 	Source/WebCore/editing/TextIterator.cpp \
 	Source/WebCore/editing/TextIterator.h \
 	Source/WebCore/editing/TypingCommand.cpp \

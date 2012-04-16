@@ -63,7 +63,10 @@ public:
         // range that bears this marker. In some platforms, if the user later inserts the same original
         // word again at this position, it will not be autocorrected again. The description of this
         // marker is the original word before autocorrection was applied.
-        DeletedAutocorrection = 1 << 8
+        DeletedAutocorrection = 1 << 8,
+        // This marker indicates that the range of text spanned by the marker is entered by voice dictation,
+        // and it has alternative text.
+        DictationAlternatives = 1 << 9
     };
 
     class MarkerTypes {
@@ -85,7 +88,7 @@ public:
     class AllMarkers : public MarkerTypes {
     public:
         AllMarkers()
-            : MarkerTypes(Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption | DeletedAutocorrection)
+            : MarkerTypes(Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption | DeletedAutocorrection | DictationAlternatives)
         {
         }
     };
@@ -94,6 +97,7 @@ public:
     DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset);
     DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, const String& description);
     DocumentMarker(unsigned startOffset, unsigned endOffset, bool activeMatch);
+    DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, PassRefPtr<DocumentMarkerDetails>);
 
     MarkerType type() const { return m_type; }
     unsigned startOffset() const { return m_startOffset; }

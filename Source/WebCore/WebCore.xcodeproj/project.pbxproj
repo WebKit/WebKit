@@ -5743,6 +5743,12 @@
 		CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEA3949C11D45CDA003094CF /* StaticHashSetNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEA3949A11D45CDA003094CF /* StaticHashSetNodeList.cpp */; };
 		CEA3949D11D45CDA003094CF /* StaticHashSetNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = CEA3949B11D45CDA003094CF /* StaticHashSetNodeList.h */; };
+		CECADFC6153778FF00E37068 /* DictationAlternative.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFC2153778FF00E37068 /* DictationAlternative.cpp */; };
+		CECADFC7153778FF00E37068 /* DictationAlternative.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFC3153778FF00E37068 /* DictationAlternative.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CECADFC8153778FF00E37068 /* DictationCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFC4153778FF00E37068 /* DictationCommand.cpp */; };
+		CECADFC9153778FF00E37068 /* DictationCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFC5153778FF00E37068 /* DictationCommand.h */; };
+		CECADFCD1537791D00E37068 /* TextInsertionBaseCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFCB1537791D00E37068 /* TextInsertionBaseCommand.cpp */; };
+		CECADFCE1537791D00E37068 /* TextInsertionBaseCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFCC1537791D00E37068 /* TextInsertionBaseCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CECCFC3B141973D5002A0AC1 /* DecodeEscapeSequences.h in Headers */ = {isa = PBXBuildFile; fileRef = CECCFC3A141973D5002A0AC1 /* DecodeEscapeSequences.h */; };
 		CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12D6152CA1CB00D9E08D /* AlternativeTextClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF418CC1179678C009D112C /* ViewportArguments.cpp */; };
@@ -12858,6 +12864,12 @@
 		CE5CB1B314EDAB6F00BB2795 /* EventSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSender.h; sourceTree = "<group>"; };
 		CEA3949A11D45CDA003094CF /* StaticHashSetNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticHashSetNodeList.cpp; sourceTree = "<group>"; };
 		CEA3949B11D45CDA003094CF /* StaticHashSetNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticHashSetNodeList.h; sourceTree = "<group>"; };
+		CECADFC2153778FF00E37068 /* DictationAlternative.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationAlternative.cpp; sourceTree = "<group>"; };
+		CECADFC3153778FF00E37068 /* DictationAlternative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictationAlternative.h; sourceTree = "<group>"; };
+		CECADFC4153778FF00E37068 /* DictationCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationCommand.cpp; sourceTree = "<group>"; };
+		CECADFC5153778FF00E37068 /* DictationCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictationCommand.h; sourceTree = "<group>"; };
+		CECADFCB1537791D00E37068 /* TextInsertionBaseCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextInsertionBaseCommand.cpp; sourceTree = "<group>"; };
+		CECADFCC1537791D00E37068 /* TextInsertionBaseCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInsertionBaseCommand.h; sourceTree = "<group>"; };
 		CECCFC3A141973D5002A0AC1 /* DecodeEscapeSequences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecodeEscapeSequences.h; sourceTree = "<group>"; };
 		CEDA12D6152CA1CB00D9E08D /* AlternativeTextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlternativeTextClient.h; sourceTree = "<group>"; };
 		CEF418CC1179678C009D112C /* ViewportArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportArguments.cpp; sourceTree = "<group>"; };
@@ -16661,6 +16673,10 @@
 				93309D90099E64910056E581 /* DeleteFromTextNodeCommand.h */,
 				93309D91099E64910056E581 /* DeleteSelectionCommand.cpp */,
 				93309D92099E64910056E581 /* DeleteSelectionCommand.h */,
+				CECADFC2153778FF00E37068 /* DictationAlternative.cpp */,
+				CECADFC3153778FF00E37068 /* DictationAlternative.h */,
+				CECADFC4153778FF00E37068 /* DictationCommand.cpp */,
+				CECADFC5153778FF00E37068 /* DictationCommand.h */,
 				93309D93099E64910056E581 /* EditAction.h */,
 				93309D94099E64910056E581 /* EditCommand.cpp */,
 				93309D95099E64910056E581 /* EditCommand.h */,
@@ -16744,6 +16760,8 @@
 				A7DBF8DB1276919C006B6008 /* TextCheckingHelper.cpp */,
 				A7DBF8DC1276919C006B6008 /* TextCheckingHelper.h */,
 				93309DC9099E64910056E581 /* TextGranularity.h */,
+				CECADFCB1537791D00E37068 /* TextInsertionBaseCommand.cpp */,
+				CECADFCC1537791D00E37068 /* TextInsertionBaseCommand.h */,
 				93309DCC099E64910056E581 /* TextIterator.cpp */,
 				93309DCD099E64910056E581 /* TextIterator.h */,
 				93309DCA099E64910056E581 /* TypingCommand.cpp */,
@@ -24765,6 +24783,9 @@
 				D72F6D7A153159A3001EE44E /* FlowThreadController.h in Headers */,
 				5740E83D1532DE1700760628 /* TreeScopeAdjuster.h in Headers */,
 				316023F01532C40C00D50FF4 /* Dictionary.h in Headers */,
+				CECADFC7153778FF00E37068 /* DictationAlternative.h in Headers */,
+				CECADFC9153778FF00E37068 /* DictationCommand.h in Headers */,
+				CECADFCE1537791D00E37068 /* TextInsertionBaseCommand.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27771,6 +27792,9 @@
 				D72F6D79153159A3001EE44E /* FlowThreadController.cpp in Sources */,
 				5740E83C1532DE1700760628 /* TreeScopeAdjuster.cpp in Sources */,
 				312D67B11535691F00563D0D /* Dictionary.cpp in Sources */,
+				CECADFC6153778FF00E37068 /* DictationAlternative.cpp in Sources */,
+				CECADFC8153778FF00E37068 /* DictationCommand.cpp in Sources */,
+				CECADFCD1537791D00E37068 /* TextInsertionBaseCommand.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

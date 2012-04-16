@@ -36,6 +36,8 @@
 #include <DeleteButtonController.cpp>
 #include <DeleteFromTextNodeCommand.cpp>
 #include <DeleteSelectionCommand.cpp>
+#include <DictationAlternative.cpp>
+#include <DictationCommand.cpp>
 #include <EditCommand.cpp>
 #include <EditingStyle.cpp>
 #include <Editor.cpp>
@@ -72,6 +74,7 @@
 #include <SplitTextNodeCommand.cpp>
 #include <SplitTextNodeContainingElementCommand.cpp>
 #include <TextCheckingHelper.cpp>
+#include <TextInsertionBaseCommand.cpp>
 #include <TextIterator.cpp>
 #include <TypingCommand.cpp>
 #include <UnlinkCommand.cpp>

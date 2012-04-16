@@ -48,6 +48,8 @@ public:
     void detach();
     void addMarker(Range*, DocumentMarker::MarkerType);
     void addMarker(Range*, DocumentMarker::MarkerType, const String& description);
+    void addMarkerToNode(Node*, unsigned startOffset, unsigned length, DocumentMarker::MarkerType);
+    void addMarkerToNode(Node*, unsigned startOffset, unsigned length, DocumentMarker::MarkerType, PassRefPtr<DocumentMarkerDetails>);
     void addTextMatchMarker(Range*, bool activeMatch);
 
     void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta);

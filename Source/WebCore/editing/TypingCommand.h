@@ -26,11 +26,11 @@
 #ifndef TypingCommand_h
 #define TypingCommand_h
 
-#include "CompositeEditCommand.h"
+#include "TextInsertionBaseCommand.h"
 
 namespace WebCore {
 
-class TypingCommand : public CompositeEditCommand {
+class TypingCommand : public TextInsertionBaseCommand {
 public:
     enum ETypingCommand { 
         DeleteSelection,
