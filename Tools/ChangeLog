@@ -1,5 +1,16 @@
 2012-04-16  Gustavo Noronha Silva  <gns@gnome.org>
 
+        [GTK] Add pango to jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=84086
+
+        Unreviewed build fix.
+
+        * gtk/jhbuild.modules: Add pango's latest stable release, 1.30, to our
+        jhbuild environment. It's required for latest stable GTK+ and some
+        systems may lack it.
+
+2012-04-16  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK] fonts jhbuild module needs an empty clean target
         https://bugs.webkit.org/show_bug.cgi?id=84085
 

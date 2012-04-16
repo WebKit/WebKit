@@ -99,11 +99,25 @@
             md5sum="1c186f9903a20e96587b9afb27944b40"/>
   </autotools>
 
+  <autotools id="pango"
+             autogenargs="--disable-introspection">
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="freetype6"/>
+      <dep package="cairo"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/pango/1.30/pango-1.30.0.tar.xz" version="1.30.0"
+            repo="ftp.gnome.org"
+            hash="sha256:7c6d2ab024affaed0e942f9279b818235f9c6a36d9fc50688f48d387f4102dff"
+            md5sum="2a70627ffd9f43c52c04cc0b05fe359f"/>
+  </autotools>
+
   <autotools id="gtk+"
              autogenargs="--disable-introspection">
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
+      <dep package="pango"/>
       <dep package="gdk-pixbuf"/>
     </dependencies>
     <branch module="/pub/GNOME/sources/gtk+/3.4/gtk+-3.4.0.tar.xz" version="3.4.0"
