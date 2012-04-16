@@ -1,3 +1,16 @@
+2012-04-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] GStreamer 1.0 support in configure.ac
+        https://bugs.webkit.org/show_bug.cgi?id=84029
+
+        Reviewed by Martin Robinson.
+
+        The GStreamer version was recently changed to 1.0 in the git
+        repositories of the project so we need to reflect this change in
+        configure.ac.
+
+        * configure.ac:
+
 2012-04-16  Yael Aharon  <yael.aharon@nokia.com>
 
         [Qt][WK2] Fixed elements position is wrong after zooming.
