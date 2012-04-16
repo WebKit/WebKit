@@ -497,11 +497,13 @@ void HTMLMediaElement::insertedIntoDocument()
     HTMLElement::insertedIntoDocument();
     if (!getAttribute(srcAttr).isEmpty() && m_networkState == NETWORK_EMPTY)
         scheduleLoad(MediaResource);
+    configureMediaControls();
 }
 
 void HTMLMediaElement::removedFromDocument()
 {
     LOG(Media, "HTMLMediaElement::removedFromDocument");
+    configureMediaControls();
     if (m_networkState > NETWORK_EMPTY)
         pause();
     if (m_isFullscreen)
@@ -4019,7 +4021,7 @@ bool HTMLMediaElement::createMediaControls()
 void HTMLMediaElement::configureMediaControls()
 {
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (!controls()) {
+    if (!controls() || !inDocument()) {
         if (hasMediaControls())
             mediaControls()->hide();
         return;
