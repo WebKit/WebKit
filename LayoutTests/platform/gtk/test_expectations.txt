@@ -319,7 +319,6 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 BUGWK76814 DEBUG : fast/xmlhttprequest/xmlhttprequest-get.xhtml = CRASH
 
 BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS CRASH
-BUGWK82269 DEBUG : media/track/track-delete-during-setup.html = CRASH
 BUGWK83679 DEBUG : editing/undo/undo-smart-delete-reversed-selection.html = CRASH
 
 // This test is crashing when run along with other tests on the release build.
@@ -479,6 +478,8 @@ BUGWK83891 : css2.1/20110323/at-import-009.htm = PASS TEXT
 BUGWK83891 : css2.1/20110323/eof-005.htm = PASS TEXT
 
 BUGWK83704 : media/event-attributes.html = PASS TEXT
+
+BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = PASS TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
