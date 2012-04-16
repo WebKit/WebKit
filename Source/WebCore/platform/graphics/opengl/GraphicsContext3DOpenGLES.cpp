@@ -30,6 +30,7 @@
 
 #include "GraphicsContext3D.h"
 
+#include "Extensions3DOpenGL.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
@@ -39,6 +40,14 @@
 #endif
 
 namespace WebCore {
+
+void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
+{
+    const int totalBytes = m_currentWidth * m_currentHeight * 4;
+    ::glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    for (int i = 0; i < totalBytes; i += 4)
+        std::swap(pixels[i], pixels[i + 2]); // Convert to BGRA.
+}
 
 bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 {
@@ -80,7 +89,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     if (m_attrs.stencil || m_attrs.depth) {
         // Use a 24 bit depth buffer where we know we have it.
         if (supportPackedDepthStencilBuffer) {
-            ::glBindTexture(GL_TEXTURE_2D, m_depthStencilBuffr);
+            ::glBindTexture(GL_TEXTURE_2D, m_depthStencilBuffer);
             ::glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL_OES, width, height, 0, GL_DEPTH_STENCIL_OES, GL_UNSIGNED_INT_24_8_OES, 0);
             if (m_attrs.stencil)
                 ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthStencilBuffer, 0);
@@ -88,12 +97,12 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
                 ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthStencilBuffer, 0);
             ::glBindTexture(GL_TEXTURE_2D, 0);
         } else {
-            if (m_attributes.stencil) {
+            if (m_attrs.stencil) {
                 ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_stencilBuffer);
                 ::glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_STENCIL_INDEX8, width, height);
                 ::glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_stencilBuffer);
             }
-            if (m_attributes.depth) {
+            if (m_attrs.depth) {
                 ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthBuffer);
                 ::glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, width, height);
                 ::glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthBuffer);
@@ -109,7 +118,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     return mustRestoreFBO;
 }
 
-void GraphicsContext3D::resolveMultisamplingIfNecessary(IntRect& rect)
+void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
 {
     // FIXME: We don't support antialiasing yet.
     notImplemented();
@@ -146,5 +155,7 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
     ::glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
     return true;
 }
+
+} // namespace WebCore
 
 #endif // ENABLE(WEBGL)

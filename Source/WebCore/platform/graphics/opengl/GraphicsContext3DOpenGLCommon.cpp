@@ -184,8 +184,7 @@ void GraphicsContext3D::prepareTexture()
 
 void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSize)
 {
-    int totalBytes = m_currentWidth * m_currentHeight * 4;
-    if (pixelsSize < totalBytes)
+    if (pixelsSize < m_currentWidth * m_currentHeight * 4)
         return;
 
     makeContextCurrent();
@@ -210,11 +209,7 @@ void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSi
         mustRestorePackAlignment = true;
     }
 
-    ::glReadPixels(0, 0, m_currentWidth, m_currentHeight, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
-    if (isGLES2Compliant()) {
-        for (int i = 0; i < totalBytes; i += 4)
-            std::swap(pixels[i], pixels[i + 2]); // Convert to BGRA.
-    }
+    readPixelsAndConvertToBGRAIfNecessary(0, 0, m_currentWidth, m_currentHeight, pixels);
 
     if (mustRestorePackAlignment)
         ::glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
