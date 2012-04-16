@@ -5422,7 +5422,7 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
     // backing store, doing a one shot drawing synchronization with the
     // backing store is never necessary, because the backing store draws
     // nothing.
-    if (compositorDrawsRootLayer()) {
+    if (!compositorDrawsRootLayer()) {
         bool isSingleTargetWindow = SurfacePool::globalSurfacePool()->compositingSurface()
             || m_backingStore->d->isOpenGLCompositing();
 

@@ -1,3 +1,18 @@
+2012-04-16  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Accelerated compositing layers fail to render in direct rendering mode
+        https://bugs.webkit.org/show_bug.cgi?id=83933
+
+        Reviewed by Adam Treat.
+
+        RIM PR: 149609
+        This was because I accidentally dropped an exclamation mark when
+        upstreaming the patch for PR 136381 (bug #83131). Fixed by adding back
+        the exclamation mark.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::rootLayerCommitTimerFired):
+
 2012-04-12  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Web Inspector messages incorrectly converted
