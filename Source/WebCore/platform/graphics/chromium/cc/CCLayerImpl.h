@@ -88,7 +88,6 @@ public:
     virtual void didDraw() { }
     void appendDebugBorderQuad(CCQuadCuller&, const CCSharedQuadState*) const;
 
-    void unreserveContentsTexture();
     virtual void bindContentsTexture(LayerRendererChromium*);
 
     // Returns true if this layer has content to draw.

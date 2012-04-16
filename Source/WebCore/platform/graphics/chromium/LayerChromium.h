@@ -179,7 +179,6 @@ public:
     virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) { }
     virtual void idleUpdate(CCTextureUpdater&, const CCOcclusionTracker*) { }
     virtual void setIsMask(bool) { }
-    virtual void unreserveContentsTexture() { }
     virtual void bindContentsTexture() { }
     virtual void protectVisibleTileTextures() { }
     virtual bool needsContentsScale() const { return false; }

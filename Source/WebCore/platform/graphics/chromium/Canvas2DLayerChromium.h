@@ -57,7 +57,6 @@ public:
     virtual bool drawsContent() const OVERRIDE;
     virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
     virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
-    virtual void unreserveContentsTexture() OVERRIDE;
 
     void setCanvas(SkCanvas*);
 

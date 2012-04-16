@@ -144,12 +144,6 @@ void Canvas2DLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         textureLayer->setTextureId(m_backTextureId);
 }
 
-void Canvas2DLayerChromium::unreserveContentsTexture()
-{
-    if (m_useDoubleBuffering)
-        m_frontTexture->unreserve();
-}
-
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)
