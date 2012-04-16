@@ -80,11 +80,10 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
 
 JSValue JSHTMLCanvasElement::toDataURL(ExecState* exec)
 {
-    const String& type = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
     HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());
     ExceptionCode ec = 0;
-    
-    JSC::JSValue result;
+
+    const String& type = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
     double quality;
     double* qualityPtr = 0;
     if (exec->argumentCount() > 1) {
@@ -95,7 +94,7 @@ JSValue JSHTMLCanvasElement::toDataURL(ExecState* exec)
         }
     }
     
-    result = jsString(exec, canvas->toDataURL(type, qualityPtr, ec));
+    JSValue result = jsString(exec, canvas->toDataURL(type, qualityPtr, ec));
     setDOMException(exec, ec);
     return result;
 }
