@@ -716,7 +716,7 @@ void CCThreadProxy::initializeLayerRendererOnImplThread(CCCompletionEvent* compl
     TRACE_EVENT("CCThreadProxy::initializeLayerRendererOnImplThread", this, 0);
     ASSERT(isImplThread());
     ASSERT(m_contextBeforeInitializationOnImplThread);
-    *initializeSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitializationOnImplThread.release(), m_layerTreeHost->headsUpDisplayFontAtlas());
+    *initializeSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitializationOnImplThread.release());
     if (*initializeSucceeded) {
         *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
         if (capabilities->usingSwapCompleteCallback)
@@ -748,12 +748,25 @@ size_t CCThreadProxy::maxPartialTextureUpdates() const
     return textureUpdatesPerFrame;
 }
 
+void CCThreadProxy::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
+{
+    ASSERT(isMainThread());
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::setFontAtlasOnImplThread, fontAtlas));
+
+}
+
+void CCThreadProxy::setFontAtlasOnImplThread(PassOwnPtr<CCFontAtlas> fontAtlas)
+{
+    ASSERT(isImplThread());
+    m_layerTreeHostImpl->setFontAtlas(fontAtlas);
+}
+
 void CCThreadProxy::recreateContextOnImplThread(CCCompletionEvent* completion, GraphicsContext3D* contextPtr, bool* recreateSucceeded, LayerRendererCapabilities* capabilities)
 {
     TRACE_EVENT0("cc", "CCThreadProxy::recreateContextOnImplThread");
     ASSERT(isImplThread());
     m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
-    *recreateSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(adoptRef(contextPtr), m_layerTreeHost->headsUpDisplayFontAtlas());
+    *recreateSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(adoptRef(contextPtr));
     if (*recreateSucceeded) {
         *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
         m_schedulerOnImplThread->didRecreateContext();

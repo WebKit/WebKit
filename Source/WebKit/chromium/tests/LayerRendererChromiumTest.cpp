@@ -73,14 +73,14 @@ public:
     // LayerRendererChromiumClient methods.
     virtual const IntSize& viewportSize() const OVERRIDE { static IntSize fakeSize; return fakeSize; }
     virtual const CCSettings& settings() const OVERRIDE { static CCSettings fakeSettings; return fakeSettings; }
-    virtual CCLayerImpl* rootLayer() OVERRIDE { return m_rootLayer.get(); }
-    virtual const CCLayerImpl* rootLayer() const OVERRIDE { return m_rootLayer.get(); }
     virtual void didLoseContext() OVERRIDE { }
     virtual void onSwapBuffersComplete() OVERRIDE { }
     virtual void setFullRootLayerDamage() OVERRIDE { m_setFullRootLayerDamageCount++; }
 
     // Methods added for test.
     int setFullRootLayerDamageCount() const { return m_setFullRootLayerDamageCount; }
+
+    CCLayerImpl* rootLayer() { return m_rootLayer.get(); }
 
 private:
     int m_setFullRootLayerDamageCount;
@@ -193,7 +193,7 @@ TEST_F(LayerRendererChromiumTest, DiscardedBackbufferIsRecreatredForScopeDuratio
     EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
 
-    m_layerRendererChromium.beginDrawingFrame();
+    m_layerRendererChromium.beginDrawingFrame(m_mockClient.rootLayer()->renderSurface());
     EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
 
     swapBuffers();

@@ -97,8 +97,6 @@ public:
     // LayerRendererChromiumClient implementation
     virtual const IntSize& viewportSize() const OVERRIDE { return m_viewportSize; }
     virtual const CCSettings& settings() const OVERRIDE { return m_settings; }
-    virtual CCLayerImpl* rootLayer() OVERRIDE { return m_rootLayerImpl.get(); }
-    virtual const CCLayerImpl* rootLayer() const OVERRIDE { return m_rootLayerImpl.get(); }
     virtual void didLoseContext() OVERRIDE;
     virtual void onSwapBuffersComplete() OVERRIDE;
     virtual void setFullRootLayerDamage() OVERRIDE;
@@ -107,10 +105,13 @@ public:
     bool canDraw();
     GraphicsContext3D* context();
 
+    String layerTreeAsText() const;
+    void setFontAtlas(PassOwnPtr<CCFontAtlas>);
+
     void finishAllRendering();
     int frameNumber() const { return m_frameNumber; }
 
-    bool initializeLayerRenderer(PassRefPtr<GraphicsContext3D>, CCFontAtlas* headsUpDisplayFontAtlas = 0);
+    bool initializeLayerRenderer(PassRefPtr<GraphicsContext3D>);
     bool isContextLost();
     LayerRendererChromium* layerRenderer() { return m_layerRenderer.get(); }
     const LayerRendererCapabilities& layerRendererCapabilities() const;
@@ -122,6 +123,7 @@ public:
 
     void setRootLayer(PassOwnPtr<CCLayerImpl>);
     PassOwnPtr<CCLayerImpl> releaseRootLayer() { return m_rootLayerImpl.release(); }
+    CCLayerImpl* rootLayer() { return m_rootLayerImpl.get(); }
 
     CCLayerImpl* scrollLayer() const { return m_scrollLayerImpl; }
 
@@ -178,12 +180,16 @@ private:
     void sendDidLoseContextRecursive(CCLayerImpl*);
     void clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl*);
 
+    void dumpRenderSurfaces(TextStream&, int indent, const CCLayerImpl*) const;
+
     OwnPtr<LayerRendererChromium> m_layerRenderer;
     OwnPtr<CCLayerImpl> m_rootLayerImpl;
     CCLayerImpl* m_scrollLayerImpl;
     CCSettings m_settings;
     IntSize m_viewportSize;
     bool m_visible;
+
+    OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;
 
     float m_pageScale;
     float m_pageScaleDelta;

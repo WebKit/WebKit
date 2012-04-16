@@ -70,6 +70,7 @@ public:
     virtual void start() OVERRIDE;
     virtual void stop() OVERRIDE;
     virtual size_t maxPartialTextureUpdates() const OVERRIDE;
+    virtual void setFontAtlas(PassOwnPtr<CCFontAtlas>) OVERRIDE;
 
     // CCLayerTreeHostImplClient implementation
     virtual void didLoseContextOnImplThread() OVERRIDE;
@@ -134,6 +135,7 @@ private:
     void setFullRootLayerDamageOnImplThread();
     void recreateContextOnImplThread(CCCompletionEvent*, GraphicsContext3D*, bool* recreateSucceeded, LayerRendererCapabilities*);
     CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapInternal(bool forcedDraw);
+    void setFontAtlasOnImplThread(PassOwnPtr<CCFontAtlas>);
 
     // Accessed on main thread only.
     bool m_animateRequested;

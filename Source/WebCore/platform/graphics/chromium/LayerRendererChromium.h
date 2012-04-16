@@ -53,9 +53,6 @@
 
 namespace WebCore {
 
-class CCFontAtlas;
-class CCHeadsUpDisplay;
-class CCLayerImpl;
 class CCRenderPass;
 class CCTextureDrawQuad;
 class GeometryBinding;
@@ -68,8 +65,6 @@ class LayerRendererChromiumClient {
 public:
     virtual const IntSize& viewportSize() const = 0;
     virtual const CCSettings& settings() const = 0;
-    virtual CCLayerImpl* rootLayer() = 0;
-    virtual const CCLayerImpl* rootLayer() const = 0;
     virtual void didLoseContext() = 0;
     virtual void onSwapBuffersComplete() = 0;
     virtual void setFullRootLayerDamage() = 0;
@@ -79,15 +74,12 @@ public:
 class LayerRendererChromium {
     WTF_MAKE_NONCOPYABLE(LayerRendererChromium);
 public:
-    static PassOwnPtr<LayerRendererChromium> create(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>, CCFontAtlas*);
+    static PassOwnPtr<LayerRendererChromium> create(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>);
 
     ~LayerRendererChromium();
 
     const CCSettings& settings() const { return m_client->settings(); }
     const LayerRendererCapabilities& capabilities() const { return m_capabilities; }
-
-    CCLayerImpl* rootLayer() { return m_client->rootLayer(); }
-    const CCLayerImpl* rootLayer() const { return m_client->rootLayer(); }
 
     GraphicsContext3D* context();
     bool contextSupportsMapSub() const { return m_capabilities.usingMapSub; }
@@ -98,9 +90,11 @@ public:
 
     void viewportChanged();
 
-    void beginDrawingFrame();
+    void beginDrawingFrame(CCRenderSurface* defaultRenderSurface);
     void drawRenderPass(const CCRenderPass*);
     void finishDrawingFrame();
+
+    void drawHeadsUpDisplay(ManagedTexture*, const IntSize& hudSize);
 
     // waits for rendering to finish
     void finish();
@@ -149,11 +143,7 @@ public:
     TextureAllocator* renderSurfaceTextureAllocator() const { return m_renderSurfaceTextureAllocator.get(); }
     TextureAllocator* contentsTextureAllocator() const { return m_contentsTextureAllocator.get(); }
 
-    CCHeadsUpDisplay* headsUpDisplay() { return m_headsUpDisplay.get(); }
-
     void setScissorToRect(const IntRect&);
-
-    String layerTreeAsText() const;
 
     bool isContextLost();
 
@@ -173,7 +163,7 @@ protected:
     bool isFramebufferDiscarded() const { return m_isFramebufferDiscarded; }
 
     LayerRendererChromium(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>);
-    bool initialize(CCFontAtlas* headsUpDisplayFontAtlas = 0);
+    bool initialize();
 
 private:
     void drawQuad(const CCDrawQuad*, const FloatRect& surfaceDamageRect);
@@ -208,10 +198,6 @@ private:
     void releaseRenderSurfaceTextures();
 
     bool makeContextCurrent();
-
-    static bool compareLayerZ(const RefPtr<CCLayerImpl>&, const RefPtr<CCLayerImpl>&);
-
-    void dumpRenderSurfaces(TextStream&, int indent, const CCLayerImpl*) const;
 
     bool initializeSharedObjects();
     void cleanupSharedObjects();
@@ -262,8 +248,6 @@ private:
     OwnPtr<AcceleratedTextureCopier> m_textureCopier;
     OwnPtr<TrackingTextureAllocator> m_contentsTextureAllocator;
     OwnPtr<TrackingTextureAllocator> m_renderSurfaceTextureAllocator;
-
-    OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;
 
     RefPtr<GraphicsContext3D> m_context;
 

@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class CCFontAtlas;
 class CCThread;
 class GraphicsContext3D;
 struct LayerRendererCapabilities;
@@ -89,6 +90,8 @@ public:
 
     // Maximum number of sub-region texture updates supported for each commit.
     virtual size_t maxPartialTextureUpdates() const = 0;
+
+    virtual void setFontAtlas(PassOwnPtr<CCFontAtlas>) = 0;
 
     // Debug hooks
 #ifndef NDEBUG

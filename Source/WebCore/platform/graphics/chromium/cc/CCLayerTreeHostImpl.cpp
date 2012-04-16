@@ -107,6 +107,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_scrollLayerImpl(0)
     , m_settings(settings)
     , m_visible(true)
+    , m_headsUpDisplay(CCHeadsUpDisplay::create())
     , m_pageScale(1)
     , m_pageScaleDelta(1)
     , m_sentPageScaleDelta(1)
@@ -125,8 +126,8 @@ CCLayerTreeHostImpl::~CCLayerTreeHostImpl()
     ASSERT(CCProxy::isImplThread());
     TRACE_EVENT("CCLayerTreeHostImpl::~CCLayerTreeHostImpl()", this, 0);
 
-    if (rootLayer())
-        clearRenderSurfacesOnCCLayerImplRecursive(rootLayer());
+    if (m_rootLayerImpl)
+        clearRenderSurfacesOnCCLayerImplRecursive(m_rootLayerImpl.get());
 }
 
 void CCLayerTreeHostImpl::beginCommit()
@@ -142,7 +143,7 @@ void CCLayerTreeHostImpl::commitComplete()
 
 bool CCLayerTreeHostImpl::canDraw()
 {
-    if (!rootLayer())
+    if (!m_rootLayerImpl)
         return false;
     if (viewportSize().isEmpty())
         return false;
@@ -238,26 +239,26 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
     ASSERT(passes.isEmpty());
     ASSERT(renderSurfaceLayerList.isEmpty());
 
-    renderSurfaceLayerList.append(rootLayer());
+    renderSurfaceLayerList.append(m_rootLayerImpl.get());
 
-    if (!rootLayer()->renderSurface())
-        rootLayer()->createRenderSurface();
-    rootLayer()->renderSurface()->clearLayerList();
-    rootLayer()->renderSurface()->setContentRect(IntRect(IntPoint(), viewportSize()));
+    if (!m_rootLayerImpl->renderSurface())
+        m_rootLayerImpl->createRenderSurface();
+    m_rootLayerImpl->renderSurface()->clearLayerList();
+    m_rootLayerImpl->renderSurface()->setContentRect(IntRect(IntPoint(), viewportSize()));
 
-    rootLayer()->setClipRect(IntRect(IntPoint(), viewportSize()));
+    m_rootLayerImpl->setClipRect(IntRect(IntPoint(), viewportSize()));
 
     {
         TransformationMatrix identityMatrix;
         TRACE_EVENT("CCLayerTreeHostImpl::calcDrawEtc", this, 0);
-        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer(), rootLayer(), identityMatrix, identityMatrix, renderSurfaceLayerList, rootLayer()->renderSurface()->layerList(), &m_layerSorter, layerRendererCapabilities().maxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(m_rootLayerImpl.get(), m_rootLayerImpl.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, m_rootLayerImpl->renderSurface()->layerList(), &m_layerSorter, layerRendererCapabilities().maxTextureSize);
     }
 
     TRACE_EVENT1("webkit", "CCLayerTreeHostImpl::calculateRenderPasses", "renderSurfaceLayerList.size()", static_cast<long long unsigned>(renderSurfaceLayerList.size()));
 
     if (layerRendererCapabilities().usingPartialSwap)
-        trackDamageForAllSurfaces(rootLayer(), renderSurfaceLayerList);
-    m_rootDamageRect = rootLayer()->renderSurface()->damageTracker()->currentDamageRect();
+        trackDamageForAllSurfaces(m_rootLayerImpl.get(), renderSurfaceLayerList);
+    m_rootDamageRect = m_rootLayerImpl->renderSurface()->damageTracker()->currentDamageRect();
 
     // Create the render passes in dependency order.
     HashMap<CCRenderSurface*, CCRenderPass*> surfacePassMap;
@@ -325,7 +326,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         occlusionTracker.markOccludedBehindLayer(*it);
     }
 
-    passes.last()->appendQuadsToFillScreen(rootLayer(), m_backgroundColor, occlusionTracker);
+    passes.last()->appendQuadsToFillScreen(m_rootLayerImpl.get(), m_backgroundColor, occlusionTracker);
 
     if (drawFrame)
         occlusionTracker.overdrawMetrics().recordMetrics(this);
@@ -376,7 +377,7 @@ bool CCLayerTreeHostImpl::prepareToDraw(FrameData& frame)
     frame.renderPasses.clear();
     frame.renderSurfaceLayerList.clear();
 
-    if (!rootLayer())
+    if (!m_rootLayerImpl)
         return false;
 
     if (!calculateRenderPasses(frame.renderPasses, frame.renderSurfaceLayerList))
@@ -391,10 +392,16 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     TRACE_EVENT("CCLayerTreeHostImpl::drawLayers", this, 0);
     ASSERT(m_layerRenderer);
 
-    if (!rootLayer())
+    if (!m_rootLayerImpl)
         return;
 
-    m_layerRenderer->beginDrawingFrame();
+    // FIXME: use the frame begin time from the overall compositor scheduler.
+    // This value is currently inaccessible because it is up in Chromium's
+    // RenderWidget.
+    m_headsUpDisplay->onFrameBegin(currentTime());
+
+    m_layerRenderer->beginDrawingFrame(m_rootLayerImpl->renderSurface());
+
     for (size_t i = 0; i < frame.renderPasses.size(); ++i)
         m_layerRenderer->drawRenderPass(frame.renderPasses[i].get());
 
@@ -405,12 +412,15 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
         if (it.representsItself() && !it->visibleLayerRect().isEmpty())
             it->didDraw();
     }
+    if (m_headsUpDisplay->enabled(settings()))
+        m_headsUpDisplay->draw(this);
+
     m_layerRenderer->finishDrawingFrame();
 
     ++m_frameNumber;
 
     // The next frame should start by assuming nothing has changed, and changes are noted as they occur.
-    rootLayer()->resetAllChangeTrackingForSubtree();
+    m_rootLayerImpl->resetAllChangeTrackingForSubtree();
 }
 
 void CCLayerTreeHostImpl::finishAllRendering()
@@ -437,6 +447,7 @@ TextureAllocator* CCLayerTreeHostImpl::contentsTextureAllocator() const
 bool CCLayerTreeHostImpl::swapBuffers()
 {
     ASSERT(m_layerRenderer);
+    m_headsUpDisplay->onSwapBuffers();
     return m_layerRenderer->swapBuffers(enclosingIntRect(m_rootDamageRect));
 }
 
@@ -497,16 +508,16 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
     m_timeSourceClientAdapter->setActive(shouldTickInBackground);
 }
 
-bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> context, CCFontAtlas* headsUpDisplayFontAtlas)
+bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> context)
 {
     OwnPtr<LayerRendererChromium> layerRenderer;
-    layerRenderer = LayerRendererChromium::create(this, context, headsUpDisplayFontAtlas);
+    layerRenderer = LayerRendererChromium::create(this, context);
 
     // Since we now have a new context/layerRenderer, we cannot continue to use the old
     // resources (i.e. renderSurfaces and texture IDs).
-    if (rootLayer()) {
-        clearRenderSurfacesOnCCLayerImplRecursive(rootLayer());
-        sendDidLoseContextRecursive(rootLayer());
+    if (m_rootLayerImpl) {
+        clearRenderSurfacesOnCCLayerImplRecursive(m_rootLayerImpl.get());
+        sendDidLoseContextRecursive(m_rootLayerImpl.get());
     }
 
     m_layerRenderer = layerRenderer.release();
@@ -775,8 +786,8 @@ PassOwnPtr<CCScrollAndScaleSet> CCLayerTreeHostImpl::processScrollDeltas()
 
 void CCLayerTreeHostImpl::setFullRootLayerDamage()
 {
-    if (rootLayer()) {
-        CCRenderSurface* renderSurface = rootLayer()->renderSurface();
+    if (m_rootLayerImpl) {
+        CCRenderSurface* renderSurface = m_rootLayerImpl->renderSurface();
         if (renderSurface)
             renderSurface->damageTracker()->forceFullDamageNextUpdate();
     }
@@ -842,6 +853,32 @@ void CCLayerTreeHostImpl::clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl*
         clearRenderSurfacesOnCCLayerImplRecursive(current->children()[i].get());
     current->clearRenderSurface();
 }
+
+String CCLayerTreeHostImpl::layerTreeAsText() const
+{
+    TextStream ts;
+    if (m_rootLayerImpl) {
+        ts << m_rootLayerImpl->layerTreeAsText();
+        ts << "RenderSurfaces:\n";
+        dumpRenderSurfaces(ts, 1, m_rootLayerImpl.get());
+    }
+    return ts.release();
+}
+
+void CCLayerTreeHostImpl::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
+{
+    m_headsUpDisplay->setFontAtlas(fontAtlas);
+}
+
+void CCLayerTreeHostImpl::dumpRenderSurfaces(TextStream& ts, int indent, const CCLayerImpl* layer) const
+{
+    if (layer->renderSurface())
+        layer->renderSurface()->dumpSurface(ts, indent);
+
+    for (size_t i = 0; i < layer->children().size(); ++i)
+        dumpRenderSurfaces(ts, indent, layer->children()[i].get());
+}
+
 
 void CCLayerTreeHostImpl::animateGestures(double monotonicTime)
 {

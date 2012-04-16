@@ -196,10 +196,10 @@ private:
 };
 
 
-PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context, CCFontAtlas* headsUpDisplayFontAtlas)
+PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context)
 {
     OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(client, context)));
-    if (!layerRenderer->initialize(headsUpDisplayFontAtlas))
+    if (!layerRenderer->initialize())
         return nullptr;
 
     return layerRenderer.release();
@@ -238,7 +238,7 @@ private:
     LayerRendererChromiumClient* m_client;
 };
 
-bool LayerRendererChromium::initialize(CCFontAtlas* headsUpDisplayFontAtlas)
+bool LayerRendererChromium::initialize()
 {
     if (!m_context->makeContextCurrent())
         return false;
@@ -308,8 +308,6 @@ bool LayerRendererChromium::initialize(CCFontAtlas* headsUpDisplayFontAtlas)
     if (!initializeSharedObjects())
         return false;
 
-    m_headsUpDisplay = CCHeadsUpDisplay::create(this, headsUpDisplayFontAtlas);
-
     // Make sure the viewport and context gets initialized, even if it is to zero.
     viewportChanged();
     return true;
@@ -321,7 +319,6 @@ LayerRendererChromium::~LayerRendererChromium()
     Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(m_context->getExtensions());
     extensions3DChromium->setSwapBuffersCompleteCallbackCHROMIUM(nullptr);
     extensions3DChromium->setGpuMemoryAllocationChangedCallbackCHROMIUM(nullptr);
-    m_headsUpDisplay.clear(); // Explicitly destroy the HUD before the TextureManager dies.
     cleanupSharedObjects();
 }
 
@@ -391,26 +388,19 @@ void LayerRendererChromium::clearRenderSurface(CCRenderSurface* renderSurface, C
     GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
 }
 
-void LayerRendererChromium::beginDrawingFrame()
+void LayerRendererChromium::beginDrawingFrame(CCRenderSurface* defaultRenderSurface)
 {
-    ASSERT(rootLayer());
-
     // FIXME: Remove this once framebuffer is automatically recreated on first use
     ensureFramebuffer();
 
-    m_defaultRenderSurface = rootLayer()->renderSurface();
+    m_defaultRenderSurface = defaultRenderSurface;
     ASSERT(m_defaultRenderSurface);
-
-    // FIXME: use the frame begin time from the overall compositor scheduler.
-    // This value is currently inaccessible because it is up in Chromium's
-    // RenderWidget.
-    m_headsUpDisplay->onFrameBegin(currentTime());
 
     size_t contentsMemoryUseBytes = m_contentsTextureAllocator->currentMemoryUseBytes();
     size_t maxLimit = TextureManager::highLimitBytes(viewportSize());
     m_renderSurfaceTextureManager->setMaxMemoryLimitBytes(maxLimit - contentsMemoryUseBytes);
 
-    if (viewportSize().isEmpty() || !rootLayer())
+    if (viewportSize().isEmpty())
         return;
 
     TRACE_EVENT("LayerRendererChromium::drawLayers", this, 0);
@@ -1080,16 +1070,30 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
         GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, 0));
 }
 
+void LayerRendererChromium::drawHeadsUpDisplay(ManagedTexture* hudTexture, const IntSize& hudSize)
+{
+    GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
+    GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+    GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+    useRenderSurface(m_defaultRenderSurface);
+
+    const CCHeadsUpDisplay::Program* program = headsUpDisplayProgram();
+    ASSERT(program && program->initialized());
+    GLC(m_context.get(), m_context->activeTexture(GraphicsContext3D::TEXTURE0));
+    hudTexture->bindTexture(m_context.get(), renderSurfaceTextureAllocator());
+    GLC(m_context.get(), m_context->useProgram(program->program()));
+    GLC(m_context.get(), m_context->uniform1i(program->fragmentShader().samplerLocation(), 0));
+
+    TransformationMatrix matrix;
+    matrix.translate3d(hudSize.width() * 0.5, hudSize.height() * 0.5, 0);
+    drawTexturedQuad(matrix, hudSize.width(), hudSize.height(),
+                     1, sharedGeometryQuad(), program->vertexShader().matrixLocation(),
+                     program->fragmentShader().alphaLocation(),
+                     -1);
+}
+
 void LayerRendererChromium::finishDrawingFrame()
 {
-    if (m_headsUpDisplay->enabled()) {
-        GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
-        GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
-        GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
-        useRenderSurface(m_defaultRenderSurface);
-        m_headsUpDisplay->draw();
-    }
-
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::BLEND));
 
@@ -1186,7 +1190,6 @@ bool LayerRendererChromium::swapBuffers(const IntRect& subBuffer)
         // consider exposing a different entry point on GraphicsContext3D.
         m_context->prepareTexture();
 
-    m_headsUpDisplay->onSwapBuffers();
     return true;
 }
 
@@ -1727,26 +1730,6 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_textureCopier.clear();
 
     releaseRenderSurfaceTextures();
-}
-
-String LayerRendererChromium::layerTreeAsText() const
-{
-    TextStream ts;
-    if (rootLayer()) {
-        ts << rootLayer()->layerTreeAsText();
-        ts << "RenderSurfaces:\n";
-        dumpRenderSurfaces(ts, 1, rootLayer());
-    }
-    return ts.release();
-}
-
-void LayerRendererChromium::dumpRenderSurfaces(TextStream& ts, int indent, const CCLayerImpl* layer) const
-{
-    if (layer->renderSurface())
-        layer->renderSurface()->dumpSurface(ts, indent);
-
-    for (size_t i = 0; i < layer->children().size(); ++i)
-        dumpRenderSurfaces(ts, indent, layer->children()[i].get());
 }
 
 bool LayerRendererChromium::isContextLost()

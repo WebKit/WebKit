@@ -91,6 +91,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
 bool CCLayerTreeHost::initialize()
 {
     TRACE_EVENT("CCLayerTreeHost::initialize", this, 0);
+
     if (CCProxy::hasImplThread())
         m_proxy = CCThreadProxy::create(this);
     else
@@ -102,8 +103,10 @@ bool CCLayerTreeHost::initialize()
 
     // Only allocate the font atlas if we have reason to use the heads-up display.
     if (m_settings.showFPSCounter || m_settings.showPlatformLayerTree) {
-        m_headsUpDisplayFontAtlas = CCFontAtlas::create();
-        m_headsUpDisplayFontAtlas->initialize();
+        TRACE_EVENT0("cc", "CCLayerTreeHost::initialize::initializeFontAtlas");
+        OwnPtr<CCFontAtlas> fontAtlas(CCFontAtlas::create());
+        fontAtlas->initialize();
+        m_proxy->setFontAtlas(fontAtlas.release());
     }
 
     m_compositorIdentifier = m_proxy->compositorIdentifier();

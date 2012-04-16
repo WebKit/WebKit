@@ -27,30 +27,23 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "CCHeadsUpDisplay.h"
 
-#include "CCFontAtlas.h"
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
-#include "InspectorController.h"
-#include "LayerChromium.h"
 #include "LayerRendererChromium.h"
 #include "ManagedTexture.h"
 #include "PlatformCanvas.h"
-#include "TextRun.h"
-#include "TextStream.h"
 #include "TextureManager.h"
+#include "cc/CCFontAtlas.h"
+#include "cc/CCLayerTreeHostImpl.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 using namespace std;
 
-CCHeadsUpDisplay::CCHeadsUpDisplay(LayerRendererChromium* owner, CCFontAtlas* headsUpDisplayFontAtlas)
+CCHeadsUpDisplay::CCHeadsUpDisplay()
     : m_currentFrameNumber(1)
-    , m_layerRenderer(owner)
-    , m_useMapSubForUploads(owner->contextSupportsMapSub())
-    , m_fontAtlas(headsUpDisplayFontAtlas)
 {
     m_beginTimeHistoryInSec[0] = currentTime();
     m_beginTimeHistoryInSec[1] = m_beginTimeHistoryInSec[0];
@@ -60,6 +53,11 @@ CCHeadsUpDisplay::CCHeadsUpDisplay(LayerRendererChromium* owner, CCFontAtlas* he
 
 CCHeadsUpDisplay::~CCHeadsUpDisplay()
 {
+}
+
+void CCHeadsUpDisplay::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
+{
+    m_fontAtlas = fontAtlas;
 }
 
 const double CCHeadsUpDisplay::kIdleSecondsTriggersReset = 0.5;
@@ -86,27 +84,29 @@ void CCHeadsUpDisplay::onSwapBuffers()
     m_currentFrameNumber += 1;
 }
 
-bool CCHeadsUpDisplay::enabled() const
+bool CCHeadsUpDisplay::enabled(const CCSettings& settings) const
 {
-    return showPlatformLayerTree() || settings().showFPSCounter;
+    return showPlatformLayerTree(settings) || settings.showFPSCounter;
 }
 
-bool CCHeadsUpDisplay::showPlatformLayerTree() const
+bool CCHeadsUpDisplay::showPlatformLayerTree(const CCSettings& settings) const
 {
-    return settings().showPlatformLayerTree;
+    return settings.showPlatformLayerTree;
 }
 
-void CCHeadsUpDisplay::draw()
+void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
 {
-    GraphicsContext3D* context = m_layerRenderer->context();
+    LayerRendererChromium* layerRenderer = layerTreeHostImpl->layerRenderer();
+    GraphicsContext3D* context = layerRenderer->context();
     if (!m_hudTexture)
-        m_hudTexture = ManagedTexture::create(m_layerRenderer->renderSurfaceTextureManager());
+        m_hudTexture = ManagedTexture::create(layerRenderer->renderSurfaceTextureManager());
 
+    const CCSettings& settings = layerTreeHostImpl->settings();
     // Use a fullscreen texture only if we need to...
     IntSize hudSize;
-    if (showPlatformLayerTree()) {
-        hudSize.setWidth(min(2048, m_layerRenderer->viewportWidth()));
-        hudSize.setHeight(min(2048, m_layerRenderer->viewportHeight()));
+    if (showPlatformLayerTree(settings)) {
+        hudSize.setWidth(min(2048, layerTreeHostImpl->viewportSize().width()));
+        hudSize.setHeight(min(2048, layerTreeHostImpl->viewportSize().height()));
     } else {
         hudSize.setWidth(512);
         hudSize.setHeight(128);
@@ -121,16 +121,16 @@ void CCHeadsUpDisplay::draw()
     {
         PlatformCanvas::Painter painter(&canvas, PlatformCanvas::Painter::GrayscaleText);
         painter.context()->clearRect(FloatRect(0, 0, hudSize.width(), hudSize.height()));
-        drawHudContents(painter.context(), hudSize);
+        drawHudContents(painter.context(), layerTreeHostImpl, settings, hudSize);
     }
 
     // Upload to GL.
     {
         PlatformCanvas::AutoLocker locker(&canvas);
 
-        m_hudTexture->bindTexture(context, m_layerRenderer->renderSurfaceTextureAllocator());
+        m_hudTexture->bindTexture(context, layerRenderer->renderSurfaceTextureAllocator());
         bool uploadedViaMap = false;
-        if (m_useMapSubForUploads) {
+        if (layerRenderer->contextSupportsMapSub()) {
             Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
             uint8_t* pixelDest = static_cast<uint8_t*>(extensions->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, hudSize.width(), hudSize.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
 
@@ -146,20 +146,8 @@ void CCHeadsUpDisplay::draw()
         }
     }
 
-    // Draw the HUD onto the default render surface.
-    const Program* program = m_layerRenderer->headsUpDisplayProgram();
-    ASSERT(program && program->initialized());
-    GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
-    m_hudTexture->bindTexture(context, m_layerRenderer->renderSurfaceTextureAllocator());
-    GLC(context, context->useProgram(program->program()));
-    GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
+    layerRenderer->drawHeadsUpDisplay(m_hudTexture.get(), hudSize);
 
-    TransformationMatrix matrix;
-    matrix.translate3d(hudSize.width() * 0.5, hudSize.height() * 0.5, 0);
-    m_layerRenderer->drawTexturedQuad(matrix, hudSize.width(), hudSize.height(),
-                                      1.0f, m_layerRenderer->sharedGeometryQuad(), program->vertexShader().matrixLocation(),
-                                      program->fragmentShader().alphaLocation(),
-                                      -1);
     m_hudTexture->unreserve();
 }
 
@@ -172,9 +160,9 @@ bool CCHeadsUpDisplay::isBadFrame(int frameNumber) const
     return (schedulerAllowsDoubleFrames && delta < kFrameTooFast) || tooSlow;
 }
 
-void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, const IntSize& hudSize)
+void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, CCLayerTreeHostImpl* layerTreeHostImpl, const CCSettings& settings, const IntSize& hudSize)
 {
-    if (showPlatformLayerTree()) {
+    if (showPlatformLayerTree(settings)) {
         context->setFillColor(Color(0, 0, 0, 192), ColorSpaceDeviceRGB);
         context->fillRect(FloatRect(0, 0, hudSize.width(), hudSize.height()));
     }
@@ -182,16 +170,19 @@ void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, const IntSize& 
     int fpsCounterHeight = 40;
     int fpsCounterTop = 2;
     int platformLayerTreeTop;
-    if (settings().showFPSCounter)
+
+    if (settings.showFPSCounter)
         platformLayerTreeTop = fpsCounterTop + fpsCounterHeight;
     else
         platformLayerTreeTop = 0;
 
-    if (settings().showFPSCounter)
+    if (settings.showFPSCounter)
         drawFPSCounter(context, fpsCounterTop, fpsCounterHeight);
 
-    if (showPlatformLayerTree())
-        drawPlatformLayerTree(context, hudSize, platformLayerTreeTop);
+    if (showPlatformLayerTree(settings) && m_fontAtlas) {
+        String layerTree = layerTreeHostImpl->layerTreeAsText();
+        m_fontAtlas->drawText(context, layerTree, IntPoint(2, platformLayerTreeTop), hudSize);
+    }
 }
 
 void CCHeadsUpDisplay::getAverageFPSAndStandardDeviation(double *average, double *standardDeviation) const
@@ -293,17 +284,6 @@ void CCHeadsUpDisplay::drawFPSCounterText(GraphicsContext* context, int top, int
     // Draw FPS text.
     if (m_fontAtlas)
         m_fontAtlas->drawText(context, String::format("FPS: %4.1f +/- %3.1f", averageFPS, stdDeviation), IntPoint(10, height / 3), IntSize(width, height));
-}
-
-void CCHeadsUpDisplay::drawPlatformLayerTree(GraphicsContext* context, const IntSize hudSize, int top)
-{
-    if (m_fontAtlas)
-        m_fontAtlas->drawText(context, m_layerRenderer->layerTreeAsText(), IntPoint(2, top), hudSize);
-}
-
-const CCSettings& CCHeadsUpDisplay::settings() const
-{
-    return m_layerRenderer->settings();
 }
 
 }

@@ -43,7 +43,6 @@
 
 namespace WebCore {
 
-class CCFontAtlas;
 class CCLayerTreeHostImpl;
 class CCLayerTreeHostImplClient;
 class CCTextureUpdater;
@@ -220,8 +219,6 @@ public:
     bool requestPartialTextureUpdate();
     void deleteTextureAfterCommit(PassOwnPtr<ManagedTexture>);
 
-    CCFontAtlas* headsUpDisplayFontAtlas() { return m_headsUpDisplayFontAtlas.get(); }
-
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, const CCSettings&);
     bool initialize();
@@ -264,9 +261,6 @@ private:
     OwnPtr<TextureManager> m_contentsTextureManager;
 
     CCSettings m_settings;
-
-    // This is owned by the main layer tree host because it needs to be initialized on the main thread.
-    OwnPtr<CCFontAtlas> m_headsUpDisplayFontAtlas;
 
     IntSize m_viewportSize;
     bool m_visible;

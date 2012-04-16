@@ -132,7 +132,7 @@ bool CCSingleThreadProxy::initializeLayerRenderer()
     ASSERT(m_contextBeforeInitialization);
     {
         DebugScopedSetImplThread impl;
-        bool ok = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitialization.release(), m_layerTreeHost->headsUpDisplayFontAtlas());
+        bool ok = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitialization.release());
         if (ok) {
             m_layerRendererInitialized = true;
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
@@ -156,7 +156,7 @@ bool CCSingleThreadProxy::recreateContext()
     {
         DebugScopedSetImplThread impl;
         m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
-        initialized = m_layerTreeHostImpl->initializeLayerRenderer(context, m_layerTreeHost->headsUpDisplayFontAtlas());
+        initialized = m_layerTreeHostImpl->initializeLayerRenderer(context);
         if (initialized) {
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
         }
@@ -257,6 +257,13 @@ void CCSingleThreadProxy::stop()
         m_layerTreeHostImpl.clear();
     }
     m_layerTreeHost = 0;
+}
+
+void CCSingleThreadProxy::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
+{
+    ASSERT(isMainThread());
+    DebugScopedSetImplThread impl;
+    m_layerTreeHostImpl->setFontAtlas(fontAtlas);
 }
 
 void CCSingleThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector> events, double wallClockTime)
