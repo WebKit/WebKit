@@ -464,6 +464,9 @@ WebInspector.TimelineOverviewWindow.prototype = {
 
     _dragWindow: function(event)
     {
+        // Only drag upon left button. Right will likely cause a context menu.
+        if (event.button)
+            return;
         var node = event.target;
         while (node) {
             if (node.hasStyleClass("resources-dividers-label-bar")) {
