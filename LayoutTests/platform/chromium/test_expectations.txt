@@ -2788,8 +2788,6 @@ BUGWK74137 LEOPARD SNOWLEOPARD : fast/regions/region-overflow-auto-overflow-hidd
 BUGWK74137 WIN LINUX LION : fast/regions/region-overflow-auto-overflow-hidden.html = PASS MISSING
 BUGWK74137 LEOPARD SNOWLEOPARD : fast/regions/region-overflow-auto-overflow-visible.html = PASS IMAGE+TEXT TIMEOUT
 BUGWK74137 WIN LINUX LION : fast/regions/region-overflow-auto-overflow-visible.html = PASS MISSING
-BUGWK74137 MAC : fast/regions/positioned-objects-inline-static-spanning-regions-rtl.html = PASS TEXT
-BUGWK74137 MAC : fast/regions/position-writing-modes-in-variable-width-regions.html = PASS TEXT
 
 // CSS custom() filters are not currently supported
 BUGWK71392 WIN : css3/filters/custom = FAIL PASS
