@@ -342,7 +342,7 @@ function testComplexReplace(callIfDone) {
 
 function testContentInContent(callIfDone) {
     document.getElementById('expect-container').innerHTML =
-        "<div>{SHADOW: <span>S1</span><span>S2</span>}</div>";
+        "<div>{SHADOW: <content><span>CONTENT 2 FALLBACK</span></content>}</div>";
 
     var target = document.createElement('div');
     target.appendChild(createSpanWithText('S1'));
@@ -373,7 +373,7 @@ function testContentInContent(callIfDone) {
 
 function testContentInContentFallback(callIfDone) {
     document.getElementById('expect-container').innerHTML =
-        "<div>{SHADOW: <span>CONTENT 2 FALLBACK</span>}</div>";
+        "<div>{SHADOW: <content><span>CONTENT 2 FALLBACK</span></content>}</div>";
 
     var target = document.createElement('div');
     target.appendChild(createSpanWithText('S1'));
@@ -404,7 +404,7 @@ function testContentInContentFallback(callIfDone) {
 
 function testContentInContentFallbackDirect(callIfDone) {
     document.getElementById('expect-container').innerHTML =
-        "<div><span>CONTENT 2 FALLBACK</span></div>";
+        "<div><content><span>CONTENT 2 FALLBACK</span></content></div>";
 
     var target = document.createElement('div');
     target.appendChild(createSpanWithText('S1'));

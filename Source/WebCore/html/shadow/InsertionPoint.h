@@ -45,6 +45,7 @@ public:
     const HTMLContentSelectionList* selections() const { return &m_selections; }
     bool hasSelection() const { return m_selections.first(); }
     bool isShadowBoundary() const;
+    bool isActive() const;
 
     virtual const AtomicString& select() const = 0;
     virtual bool isSelectValid() const = 0;

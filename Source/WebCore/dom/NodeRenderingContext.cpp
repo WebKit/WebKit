@@ -101,7 +101,11 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
                 m_phase = AttachingNotFallbacked;
             else
                 m_phase = AttachingFallbacked;
-            m_parentNodeForRenderingAndStyle = NodeRenderingContext(parent).parentNodeForRenderingAndStyle();
+
+            if (toInsertionPoint(parent)->isActive())
+                m_parentNodeForRenderingAndStyle = NodeRenderingContext(parent).parentNodeForRenderingAndStyle();
+            else
+                m_parentNodeForRenderingAndStyle = parent;
             return;
         }
     }
@@ -202,7 +206,7 @@ static inline RenderObject* firstRendererOf(Node* node)
             return node->renderer();
         }
 
-        if (isInsertionPoint(node)) {
+        if (isInsertionPoint(node) && toInsertionPoint(node)->isActive()) {
             if (RenderObject* first = firstRendererOfInsertionPoint(toInsertionPoint(node)))
                 return first;
         }
@@ -220,7 +224,7 @@ static inline RenderObject* lastRendererOf(Node* node)
                 continue;
             return node->renderer();
         }
-        if (isInsertionPoint(node)) {
+        if (isInsertionPoint(node) && toInsertionPoint(node)->isActive()) {
             if (RenderObject* last = lastRendererOfInsertionPoint(toInsertionPoint(node)))
                 return last;
         }

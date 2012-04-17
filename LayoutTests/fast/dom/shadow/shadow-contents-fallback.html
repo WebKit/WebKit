@@ -267,7 +267,7 @@ function testContentInContent() {
 
     document.getElementById('actual-container').appendChild(target);
     document.getElementById('expect-container').innerHTML =
-        "<div>{SHADOW: <span>S1</span><span>S2</span>}</div>";
+        "<div>{SHADOW: <content><span>CONTENT 2 FALLBACK</span></content>}</div>";
 }
 
 function testContentInContentFallback() {
@@ -290,7 +290,7 @@ function testContentInContentFallback() {
 
     document.getElementById('actual-container').appendChild(target);
     document.getElementById('expect-container').innerHTML =
-        "<div>{SHADOW: <span>CONTENT 2 FALLBACK</span>}</div>";
+        "<div>{SHADOW: <content><span>CONTENT 2 FALLBACK</span></content>}</div>";
 }
 
 function testContentInContentFallbackWithDisplayNone() {
@@ -316,7 +316,7 @@ function testContentInContentFallbackWithDisplayNone() {
 
     document.getElementById('actual-container').appendChild(target);
     document.getElementById('expect-container').innerHTML =
-        "<div>{SHADOW: <span>CONTENT 2 FALLBACK</span>}</div>";
+        "<div>{SHADOW: <content><span>CONTENT 2 FALLBACK</span></content>}</div>";
 }
 
 function testContentInContentFallbackDirect() {
@@ -337,7 +337,7 @@ function testContentInContentFallbackDirect() {
 
     document.getElementById('actual-container').appendChild(target);
     document.getElementById('expect-container').innerHTML =
-        "<div><span>CONTENT 2 FALLBACK</span></div>";
+        "<div><content><span>CONTENT 2 FALLBACK</span></content></div>";
 }
 
 var testFuncs = [
