@@ -1172,8 +1172,6 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 // SVG TESTS
 // -----------------------------------------------------------------
 
-BUGWK79068 : svg/transforms/transform-origin-css-property.xhtml = FAIL
-
 // Flaky on MAC
 BUGWK82911 MAC : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT IMAGE+TEXT IMAGE PASS
 
