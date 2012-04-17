@@ -34,6 +34,7 @@
 #include <QDebug>
 #include <QGuiApplication>
 #include <QStringList>
+#include <QtGlobal>
 #include <WebCore/RunLoop.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
@@ -66,7 +67,7 @@ static bool initializeGtk()
     return true;
 }
 
-int PluginProcessMain(int argc, char** argv)
+Q_DECL_EXPORT int PluginProcessMain(int argc, char** argv)
 {
     QByteArray suppressOutput = qgetenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT");
     if (!suppressOutput.isEmpty() && suppressOutput != "0")

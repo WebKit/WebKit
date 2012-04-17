@@ -1,3 +1,10 @@
+2012-04-17  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Unreviewed ARM build fix
+
+        * PluginProcess/qt/PluginProcessMainQt.cpp:
+        (WebKit::PluginProcessMain): Export this function.
+
 2012-04-17  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Zoom out on second double-tap.
