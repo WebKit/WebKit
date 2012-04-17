@@ -30,7 +30,6 @@
  */
 
 // FIXME:
-//  - RTL
 //  - Touch event
 
 /**
@@ -316,6 +315,8 @@ function checkLimits() {
 }
 
 function layout() {
+    if (global.params.isRTL)
+        document.body.dir = "rtl";
     var main = $("main");
     var params = global.params;
     main.removeChild(main.firstChild);
@@ -925,7 +926,7 @@ DaysTable.prototype._handleKey = function(event) {
         return;
     }
 
-    if (key == "Left") {
+    if (key == (global.params.isRTL ? "Right" : "Left")) {
         if (x == 0) {
             if (y == 0) {
                 if (!this._maybeSetPreviousMonth())
@@ -947,7 +948,7 @@ DaysTable.prototype._handleKey = function(event) {
             y--;
         this.updateSelection(event, x, y);
 
-    } else if (key == "Right") {
+    } else if (key == (global.params.isRTL ? "Left" : "Right")) {
         if (x == 6) {
             if (y == DaysTable._Weeks - 1) {
                 if (!this._maybeSetNextMonth())

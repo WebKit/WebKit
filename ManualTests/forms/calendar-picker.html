@@ -19,6 +19,11 @@ iframe {
 <body>
 
 <p>This is a testbed for a calendar picker.</p>
+<select onchange="selected(this)">
+ <option>English</option>
+ <option>Japanese</option>
+ <option>Arabic</option>
+</select>
 
 <div><input type="text" id="date"></div>
 <iframe></iframe>
@@ -27,17 +32,6 @@ iframe {
 </ol>
 
 <script>
-var frame = document.getElementsByTagName('iframe')[0];
-var doc = frame.contentDocument;
-doc.documentElement.innerHTML = '<head></head><body><div id=main>Loading...</div></body>';
-var link = doc.createElement('link');
-link.rel = 'stylesheet';
-link.href = '../../Source/WebCore/Resources/calendarPicker.css?' + (new Date()).getTime();
-doc.head.appendChild(link);
-var script = doc.createElement('script');
-script.src = '../../Source/WebCore/Resources/calendarPicker.js?' + (new Date()).getTime();
-doc.body.appendChild(script);
-
 var englishArguments = {
     locale: 'en-US',
     monthLabels : ['January', 'February', 'March', 'April', 'May', 'June',
@@ -62,21 +56,61 @@ var japaneseArguments = {
     step : 1,
     max : '2099-03-15',
 };
-setTimeout(function() {
-    frame.contentWindow.postMessage(JSON.stringify(englishArguments), "*");
-    frame.contentWindow.setValueAndClosePopup = function(numValue, stringValue) {
-        window.log('number=' + numValue + ', string="' + stringValue + '"');
-        if (numValue == 0)
-            window.document.getElementById('date').value = stringValue;
-    };
-}, 100);
+var arabicArguments = {
+    locale: 'ar',
+    monthLabels : ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+                   'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+    dayLabels : ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'],
+    todayLabel : 'اليوم',
+    clearLabel : 'مسح',
+    weekStartDay : 5,
+    step : 1,
+    max : '2020-05-15',
+};
 
+function openCalendar(args) {
+    var frame = document.getElementsByTagName('iframe')[0];
+    var doc = frame.contentDocument;
+    doc.documentElement.innerHTML = '<head></head><body><div id=main>Loading...</div></body>';
+    var link = doc.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '../../Source/WebCore/Resources/calendarPicker.css?' + (new Date()).getTime();
+    doc.head.appendChild(link);
+    var script = doc.createElement('script');
+    script.src = '../../Source/WebCore/Resources/calendarPicker.js?' + (new Date()).getTime();
+    doc.body.appendChild(script);
+
+    setTimeout(function() {
+        frame.contentWindow.postMessage(JSON.stringify(args), "*");
+        frame.contentWindow.setValueAndClosePopup = function(numValue, stringValue) {
+            window.log('number=' + numValue + ', string="' + stringValue + '"');
+            if (numValue == 0)
+                window.document.getElementById('date').value = stringValue;
+        };
+    }, 100);
+}
+
+function selected(select) {
+    switch (select.selectedIndex) {
+    case 0:
+        openCalendar(englishArguments);
+        break;
+    case 1:
+        openCalendar(japaneseArguments);
+        break;
+    case 2:
+        openCalendar(arabicArguments);
+        break;
+    }
+}
 
 function log(str) {
     var entry = document.createElement('li');
     entry.innerText = str;
     document.getElementById('console').appendChild(entry);
 }
+
+openCalendar(englishArguments);
 </script>
 </body>
 </html>

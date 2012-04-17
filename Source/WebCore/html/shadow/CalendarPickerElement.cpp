@@ -49,6 +49,8 @@
 #include "RenderDetailsMarker.h"
 #include <wtf/text/StringBuilder.h>
 
+using namespace WTF::Unicode;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -168,6 +170,17 @@ static void addProperty(const char* name, unsigned value, DocumentWriter& writer
     addLiteral(",\n", writer);
 }
 
+static void addProperty(const char* name, bool value, DocumentWriter& writer)
+{
+    writer.addData(name, strlen(name));
+    addLiteral(": ", writer);
+    if (value)
+        addLiteral("true", writer);
+    else
+        addLiteral("false", writer);
+    addLiteral(",\n", writer);
+}
+
 static void addProperty(const char* name, const Vector<String>& values, DocumentWriter& writer)
 {
     writer.addData(name, strlen(name));
@@ -200,7 +213,7 @@ void CalendarPickerElement::writeDocument(DocumentWriter& writer)
     addProperty("min", minString, writer);
     addProperty("max", maxString, writer);
     addProperty("step", stepString, writer);
-    addProperty("required", input->required() ? "true" : "false", writer);
+    addProperty("required", input->required(), writer);
     addProperty("currentValue", input->value(), writer);
     addProperty("locale", defaultLanguage(), writer);
     addProperty("todayLabel", calendarTodayText(), writer);
@@ -208,6 +221,8 @@ void CalendarPickerElement::writeDocument(DocumentWriter& writer)
     addProperty("weekStartDay", firstDayOfWeek(), writer);
     addProperty("monthLabels", monthLabels(), writer);
     addProperty("dayLabels", weekDayShortLabels(), writer);
+    Direction dir = direction(monthLabels()[0][0]);
+    addProperty("isRTL", dir == RightToLeft || dir == RightToLeftArabic, writer);
     addLiteral("}\n", writer);
 
     writer.addData(calendarPickerJs, sizeof(calendarPickerJs));
