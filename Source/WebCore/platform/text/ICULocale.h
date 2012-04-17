@@ -43,12 +43,13 @@ namespace WebCore {
 class ICULocale {
 public:
     static PassOwnPtr<ICULocale> create(const char* localeString);
-    static PassOwnPtr<ICULocale> createForCurrentLocale();
+    static ICULocale* currentLocale();
     ~ICULocale();
     String convertToLocalizedNumber(const String&);
     String convertFromLocalizedNumber(const String&);
 
 private:
+    static PassOwnPtr<ICULocale> createForCurrentLocale();
     explicit ICULocale(const char*);
     void setDecimalSymbol(unsigned index, UNumberFormatSymbol);
     void setDecimalTextAttribute(String&, UNumberFormatTextAttribute);

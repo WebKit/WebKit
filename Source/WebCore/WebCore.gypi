@@ -4449,6 +4449,7 @@
             'platform/text/BidiContext.cpp',
             'platform/text/Hyphenation.cpp',
             'platform/text/Hyphenation.h',
+            'platform/text/ICULocale.cpp',
             'platform/text/ICULocale.h',
             'platform/text/LineEnding.cpp',
             'platform/text/LocaleToScriptMapping.h',
