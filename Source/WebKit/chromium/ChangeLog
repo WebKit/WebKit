@@ -1,3 +1,23 @@
+2012-04-17  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: stub getKey/getObject interfaces for IDBKeyRange
+        https://bugs.webkit.org/show_bug.cgi?id=84089
+
+        Reviewed by Dimitri Glazkov.
+
+        Added stub methods on WebIDBIndex.h to cleanly land 
+        https://bugs.webkit.org/show_bug.cgi?id=83638
+
+        * public/WebIDBIndex.h:
+        (WebKit::WebIDBIndex::getObject):
+        (WebKit::WebIDBIndex::getKey):
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::getObject):
+        (WebKit):
+        (WebKit::WebIDBIndexImpl::getKey):
+        * src/WebIDBIndexImpl.h:
+        (WebIDBIndexImpl):
+
 2012-04-17  Aaron Colwell  <acolwell@chromium.org>
 
         Add sourceAddId() & sourceRemoveId() stubs for Chromium.
