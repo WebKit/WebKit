@@ -2433,12 +2433,13 @@ void FrameView::autoSizeIfEnabled()
     if (!m_didRunAutosize)
         resize(frameRect().width(), m_minAutoSize.height());
 
+    IntSize size = frameRect().size();
+
     // Do the resizing twice. The first time is basically a rough calculation using the preferred width
     // which may result in a height change during the second iteration.
     for (int i = 0; i < 2; i++) {
         // Update various sizes including contentsSize, scrollHeight, etc.
         document->updateLayoutIgnorePendingStylesheets();
-        IntSize size = frameRect().size();
         int width = documentView->minPreferredLogicalWidth();
         int height = documentRenderBox->scrollHeight();
         IntSize newSize(width, height);
