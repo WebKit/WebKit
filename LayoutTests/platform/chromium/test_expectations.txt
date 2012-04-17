@@ -490,11 +490,6 @@ WONTFIX SKIP : http/tests/security/contentSecurityPolicy/shared-worker-connect-s
 WONTFIX SKIP : http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html = TEXT
 WONTFIX SKIP : storage/indexeddb/basics-shared-workers.html = PASS TIMEOUT FAIL
 
-BUGWK84125 SKIP : http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html = CRASH
-BUGWK84125 SKIP : http/tests/websocket/tests/hixie76/workers/close-in-worker.html = CRASH
-BUGWK84125 SKIP : http/tests/websocket/tests/hixie76/workers/worker-handshake-challenge-randomness.html = CRASH
-BUGWK84125 SKIP : http/tests/websocket/tests/hixie76/workers/worker-simple.html = CRASH
-
 // test_shell does not support message ports
 BUGWK74459 SKIP : fast/workers/termination-with-port-messages.html = CRASH
 BUGWK74459 SKIP : fast/workers/worker-cloneport.html = CRASH
@@ -3738,3 +3733,7 @@ BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
 BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 
+BUGWK84125 : http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html = CRASH
+BUGWK84125 : http/tests/websocket/tests/hixie76/workers/close-in-worker.html = CRASH
+BUGWK84125 : http/tests/websocket/tests/hixie76/workers/worker-handshake-challenge-randomness.html = CRASH
+BUGWK84125 : http/tests/websocket/tests/hixie76/workers/worker-simple.html = CRASH
