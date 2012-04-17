@@ -1,3 +1,14 @@
+2012-04-17  Anders Carlsson  <andersca@apple.com>
+
+        Make sure that the layer hosting mode is kept up to date if it changes before the plug-in is initialized
+        https://bugs.webkit.org/show_bug.cgi?id=84180
+        <rdar://problem/11265113>
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setLayerHostingMode):
+
 2012-04-17  Jer Noble  <jer.noble@apple.com>
 
         Exiting full screen video brings the wrong Safari window to the foreground
