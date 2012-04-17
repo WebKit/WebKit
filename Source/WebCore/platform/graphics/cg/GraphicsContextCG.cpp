@@ -65,9 +65,11 @@
 
 #endif
 
-// Undocumented CGContextSetCTM function, available at least since 10.4.
 extern "C" {
     CG_EXTERN void CGContextSetCTM(CGContextRef, CGAffineTransform);
+#ifdef BUILDING_ON_SNOW_LEOPARD
+    CG_EXTERN CGAffineTransform CGContextGetBaseCTM(CGContextRef);
+#endif
 };
 
 using namespace std;
@@ -1513,12 +1515,20 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode)
     CGContextSetBlendMode(platformContext(), target);
 }
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
 void GraphicsContext::platformApplyDeviceScaleFactor()
+#else
+void GraphicsContext::platformApplyDeviceScaleFactor(float deviceScaleFactor)
+#endif
 {
     // CoreGraphics expects the base CTM of a HiDPI context to have the scale factor applied to it.
     // Failing to change the base level CTM will cause certain CG features, such as focus rings,
     // to draw with a scale factor of 1 rather than the actual scale factor.
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     wkSetBaseCTM(platformContext(), getCTM());
+#else
+    wkSetBaseCTM(platformContext(), CGAffineTransformScale(CGContextGetBaseCTM(platformContext()), deviceScaleFactor, deviceScaleFactor));
+#endif
 }
 
 }

@@ -749,7 +749,11 @@ void GraphicsContext::platformApplyDeviceScaleFactor()
 void GraphicsContext::applyDeviceScaleFactor(float deviceScaleFactor)
 {
     scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     platformApplyDeviceScaleFactor();
+#else
+    platformApplyDeviceScaleFactor(deviceScaleFactor);
+#endif
 }
 
 }

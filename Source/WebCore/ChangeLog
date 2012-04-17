@@ -1,3 +1,26 @@
+2012-04-12  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 113415
+
+    2012-04-05  Adele Peterson  <adele@apple.com>
+
+            <rdar://problem/11133179> and https://bugs.webkit.org/show_bug.cgi?id=74129
+            REGRESSION (SnowLeopard, 5.1.4): All WK2 horizontal scrollbars look broken
+
+            Patch by Dan Bernstein, Reviewed by Beth Dakin.
+
+            This code assumed that the current CTM wouldn't have extraneous operations built into it, 
+            but this bug is evidence that that assumption was wrong. We should just get the base CTM instead 
+            and apply the device scale factor to it.
+
+            No tests added since the SnowLeopard-style scrollbars aren't testable in our regression tests right now.
+
+            * platform/graphics/GraphicsContext.cpp:
+            (WebCore::GraphicsContext::platformApplyDeviceScaleFactor):
+            (WebCore::GraphicsContext::applyDeviceScaleFactor):
+            * platform/graphics/GraphicsContext.h: (GraphicsContext):
+            * platform/graphics/cg/GraphicsContextCG.cpp: (WebCore::GraphicsContext::platformApplyDeviceScaleFactor):
+
 2012-04-17  Lucas Forschler  <lforschler@apple.com>
 
     Merge 111977
