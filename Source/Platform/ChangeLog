@@ -1,3 +1,12 @@
+2012-04-17  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Fix gyp for WebFilterOperation.h and WebFilterOperations.h
+        https://bugs.webkit.org/show_bug.cgi?id=84182
+
+        Reviewed by James Robinson.
+
+        * Platform.gypi:
+
 2012-04-16  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Fix Chromium-Mac build
