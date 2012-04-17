@@ -26,13 +26,15 @@
 #include "config.h"
 #include "platform/WebLayer.h"
 
-#include "platform/WebFloatPoint.h"
 #include "Color.h"
 #include "LayerChromium.h"
 #include "SkMatrix44.h"
 #include "TransformationMatrix.h"
 #include "WebLayerImpl.h"
+#include "platform/WebFloatPoint.h"
 #include "platform/WebSize.h"
+
+#include <public/WebFilterOperations.h>
 
 using namespace WebCore;
 
@@ -244,6 +246,16 @@ void WebLayer::setDebugBorderColor(const WebColor& color)
 void WebLayer::setDebugBorderWidth(float width)
 {
     m_private->setDebugBorderWidth(width);
+}
+
+void WebLayer::setFilters(const WebFilterOperations& filters)
+{
+    m_private->setFilters(filters.toFilterOperations());
+}
+
+void WebLayer::setBackgroundFilters(const WebFilterOperations& filters)
+{
+    m_private->setBackgroundFilters(filters.toFilterOperations());
 }
 
 WebLayer::WebLayer(const PassRefPtr<LayerChromium>& node)

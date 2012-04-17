@@ -43,6 +43,7 @@
 #include "ExceptionCode.h"
 #include "FileError.h"
 #include "FileMetadata.h"
+#include "FilterOperation.h"
 #include "FontDescription.h"
 #include "FontSmoothingMode.h"
 #include "GeolocationError.h"
@@ -105,6 +106,7 @@
 #include "platform/WebMediaStreamSource.h"
 #include "platform/WebPeerConnection00Handler.h"
 #include "platform/WebPeerConnection00HandlerClient.h"
+#include <public/WebFilterOperation.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>
 
@@ -316,6 +318,15 @@ COMPILE_ASSERT_MATCHING_ENUM(WebCursorInfo::TypeCustom, PlatformCursor::TypeCust
 COMPILE_ASSERT_MATCHING_ENUM(WebEditingActionTyped, EditorInsertActionTyped);
 COMPILE_ASSERT_MATCHING_ENUM(WebEditingActionPasted, EditorInsertActionPasted);
 COMPILE_ASSERT_MATCHING_ENUM(WebEditingActionDropped, EditorInsertActionDropped);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebBasicColorMatrixFilterOperation::FilterTypeGrayscale, FilterOperation::GRAYSCALE);
+COMPILE_ASSERT_MATCHING_ENUM(WebBasicColorMatrixFilterOperation::FilterTypeSepia, FilterOperation::SEPIA);
+COMPILE_ASSERT_MATCHING_ENUM(WebBasicColorMatrixFilterOperation::FilterTypeSaturate, FilterOperation::SATURATE);
+COMPILE_ASSERT_MATCHING_ENUM(WebBasicColorMatrixFilterOperation::FilterTypeHueRotate, FilterOperation::HUE_ROTATE);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebBasicComponentTransferFilterOperation::FilterTypeInvert, FilterOperation::INVERT);
+COMPILE_ASSERT_MATCHING_ENUM(WebBasicComponentTransferFilterOperation::FilterTypeBrightness, FilterOperation::BRIGHTNESS);
+COMPILE_ASSERT_MATCHING_ENUM(WebBasicComponentTransferFilterOperation::FilterTypeContrast, FilterOperation::CONTRAST);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::GenericFamilyNone, FontDescription::NoFamily);
 COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::GenericFamilyStandard, FontDescription::StandardFamily);

@@ -1,3 +1,16 @@
+2012-04-16  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Expose compositor filters to Aura through WebLayer
+        https://bugs.webkit.org/show_bug.cgi?id=80054
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::setFilters):
+        (WebKit):
+        (WebKit::WebLayer::setBackgroundFilters):
+
 2012-04-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

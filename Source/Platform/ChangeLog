@@ -1,3 +1,29 @@
+2012-04-16  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Expose compositor filters to Aura through WebLayer
+        https://bugs.webkit.org/show_bug.cgi?id=80054
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebFilterOperation.h: Added.
+        (WebKit):
+        (WebFilterOperation):
+        (WebKit::WebFilterOperation::WebFilterOperation):
+        (WebBasicColorMatrixFilterOperation):
+        (WebKit::WebBasicColorMatrixFilterOperation::WebBasicColorMatrixFilterOperation):
+        (WebBasicComponentTransferFilterOperation):
+        (WebKit::WebBasicComponentTransferFilterOperation::WebBasicComponentTransferFilterOperation):
+        (WebBlurFilterOperation):
+        (WebKit::WebBlurFilterOperation::WebBlurFilterOperation):
+        (WebDropShadowFilterOperation):
+        (WebKit::WebDropShadowFilterOperation::WebDropShadowFilterOperation):
+        * chromium/public/WebFilterOperations.h: Added.
+        (WebKit):
+        (WebFilterOperations):
+        * chromium/public/WebLayer.h:
+        (WebKit):
+        (WebLayer):
+
 2012-04-13  James Robinson  <jamesr@chromium.org>
 
         [chromium] Expose WebVideoLayer to Platform API and port WebMediaPlayerClientImpl to using it

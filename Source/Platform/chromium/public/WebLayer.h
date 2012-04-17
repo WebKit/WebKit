@@ -34,6 +34,7 @@ class SkMatrix44;
 namespace WebCore { class LayerChromium; }
 
 namespace WebKit {
+class WebFilterOperations;
 struct WebFloatPoint;
 struct WebSize;
 
@@ -97,6 +98,17 @@ public:
 
     WEBKIT_EXPORT void setDebugBorderColor(const WebColor&);
     WEBKIT_EXPORT void setDebugBorderWidth(float);
+
+    // Clear the filters in use by passing in a newly instantiated
+    // WebFilterOperations object.
+    WEBKIT_EXPORT void setFilters(const WebFilterOperations&);
+
+    // Apply filters to pixels that show through the background of this layer.
+    // Note: These filters are only possible on layers that are drawn directly
+    // to the root render surface. This means if an ancestor of the background-
+    // filtered layer sets certain properties (opacity, transforms), it may
+    // conflict and hide the background filters.
+    WEBKIT_EXPORT void setBackgroundFilters(const WebFilterOperations&);
 
     template<typename T> T to()
     {
