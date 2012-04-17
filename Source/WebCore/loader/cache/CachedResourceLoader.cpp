@@ -117,7 +117,6 @@ CachedResourceLoader::CachedResourceLoader(Document* document)
     , m_requestCount(0)
     , m_garbageCollectDocumentResourcesTimer(this, &CachedResourceLoader::garbageCollectDocumentResourcesTimerFired)
     , m_autoLoadImages(true)
-    , m_loadFinishing(false)
     , m_allowStaleResources(false)
 {
 }
@@ -681,8 +680,6 @@ void CachedResourceLoader::removeCachedResource(CachedResource* resource) const
 
 void CachedResourceLoader::loadDone()
 {
-    m_loadFinishing = false;
-
     RefPtr<Document> protect(m_document);
     if (frame())
         frame()->loader()->loadDone();
@@ -746,13 +743,6 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource* res)
 
     --m_requestCount;
     ASSERT(m_requestCount > -1);
-}
-
-int CachedResourceLoader::requestCount()
-{
-    if (m_loadFinishing)
-         return m_requestCount + 1;
-    return m_requestCount;
 }
     
 void CachedResourceLoader::preload(CachedResource::Type type, ResourceRequest& request, const String& charset, bool referencedFromBody)
