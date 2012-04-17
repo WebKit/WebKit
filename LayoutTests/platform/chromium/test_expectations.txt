@@ -1200,9 +1200,6 @@ BUGWK82217 LINUX : svg/zoom/text/zoom-foreignObject.svg = IMAGE PASS
 // Failing on Skia platforms
 BUGWK83051 WIN LINUX LION : svg/css/group-with-shadow.svg = IMAGE PASS
 
-// Windows and Mac need rebaselining after 53378 patch.
-BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
-
 // This fails image 5-10% of the time. Probably a race condition on timers.
 BUGWK83471 : svg/as-image/animated-svg-as-image-same-image.html = PASS IMAGE
 
