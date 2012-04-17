@@ -1,3 +1,19 @@
+2012-04-16  Adam Barth  <abarth@webkit.org>
+
+        ContainerNode::insertedIntoDocument and removedFromDocument use weak iteration patterns
+        https://bugs.webkit.org/show_bug.cgi?id=80569
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch moves ContainerNode::insertedIntoDocument and
+        removedFromDocument to using a better iteration pattern in which we
+        collect all the nodes we're planning to iterate into a vector and then
+        iterate over them.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertedIntoDocument):
+        (WebCore::ContainerNode::removedFromDocument):
+
 2012-04-03  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         Soup HTTP backend does not send Content-Length in certain cases
