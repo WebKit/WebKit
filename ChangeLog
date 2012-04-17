@@ -1,3 +1,17 @@
+2012-04-17  Yong Li  <yoli@rim.com>
+
+        REGRESSION (r105453): Crash when handling touch events
+        https://bugs.webkit.org/show_bug.cgi?id=81958
+
+        Reviewed by Antonio Gomes.
+
+        Add a manual test for this issue because DumpRenderTree
+        currently cannot send a group of touch points with
+        different touch states in one shot.
+
+        * ManualTests/resources/iframe-reloaded-on-touch.html: Added.
+        * ManualTests/touch-stale-iframe-crash.html: Added.
+
 2012-04-17  Kent Tamura  <tkent@chromium.org>
 
         Calendar Picker: Support RTL layout

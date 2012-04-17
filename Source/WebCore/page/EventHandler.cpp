@@ -3496,8 +3496,15 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
         if (!touchTarget.get())
             continue;
+        Document* doc = touchTarget->toNode()->document();
+        if (!doc)
+            continue;
+        if (!doc->hasListenerType(Document::TOUCH_LISTENER))
+            continue;
+        Frame* targetFrame = doc->frame();
+        if (!targetFrame)
+            continue;
 
-        Frame* targetFrame = touchTarget->toNode()->document()->frame();
         if (m_frame != targetFrame) {
             // pagePoint should always be relative to the target elements containing frame.
             pagePoint = documentPointForWindowPoint(targetFrame, point.pos());
