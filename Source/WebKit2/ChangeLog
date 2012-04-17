@@ -1,3 +1,13 @@
+2012-04-17  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        REGRESSION(r113172) Wheel events are scrolling inversed.
+        https://bugs.webkit.org/show_bug.cgi?id=84156
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::wheelEvent):
+
 2012-04-17  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Unreviewed ARM build fix

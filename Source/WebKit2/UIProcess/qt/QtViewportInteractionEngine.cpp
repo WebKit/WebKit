@@ -270,9 +270,9 @@ void QtViewportInteractionEngine::wheelEvent(QWheelEvent* ev)
     QPointF newPosition = m_viewport->contentPos();
 
     if (ev->orientation() == Qt::Horizontal)
-        newPosition.rx() += delta;
+        newPosition.rx() -= delta;
     else
-        newPosition.ry() += delta;
+        newPosition.ry() -= delta;
 
     QRectF endPosRange = computePosRangeForItemAtScale(m_content->contentsScale());
 
