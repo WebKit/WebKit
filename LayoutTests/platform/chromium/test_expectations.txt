@@ -1731,11 +1731,27 @@ BUGCR118411 WIN LINUX : fast/repaint/focus-ring.html = IMAGE
 BUGCR118411 : fast/repaint/list-marker.html = IMAGE
 BUGCR118411 LEOPARD : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE
 BUGCR118411 WIN DEBUG : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE PASS
-BUGCR118411 LEOPARD SNOWLEOPARD : svg/hixie/perf/001.xml = IMAGE PASS
-BUGCR118411 LEOPARD SNOWLEOPARD : svg/hixie/perf/002.xml = IMAGE PASS
 
 // Fails on Snow Leopard - see BUGWK82954
 BUGCR118411 SLOW : svg/hixie/perf/007.xml = PASS FAIL
+
+// Rebaseline after Skia rev. 3695 lands
+BUGCR123809 : fast/backgrounds/background-leakage-transforms.html = IMAGE
+BUGCR123809 : fast/backgrounds/background-leakage.html = IMAGE
+BUGCR123809 : fast/borders/border-radius-complex-inner.html = IMAGE
+BUGCR123809 : fast/borders/borderRadiusDouble01.html = IMAGE
+BUGCR123809 : fast/borders/borderRadiusDouble02.html = IMAGE
+BUGCR123809 : fast/borders/borderRadiusDouble05.html = IMAGE
+BUGCR123809 : fast/borders/borderRadiusGroove02.html = IMAGE
+BUGCR123809 : fast/borders/borderRadiusRidge01.html = IMAGE
+BUGCR123809 : fast/borders/border-styles-split.html = IMAGE
+BUGCR123809 : fast/repaint/shadow-multiple-vertical.html = IMAGE
+BUGCR123809 : fast/writing-mode/border-styles-vertical-lr.html = IMAGE
+BUGCR123809 : fast/writing-mode/border-styles-vertical-rl.html = IMAGE
+BUGCR123809 : ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-001.htm = IMAGE
+BUGCR123809 : ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002.htm = IMAGE
+BUGCR123809 : svg/hixie/perf/001.xml = IMAGE
+BUGCR123809 : svg/hixie/perf/002.xml = IMAGE
 
 
 BUGCR22700 LINUX WIN : fast/canvas/canvas-shadow.html = TEXT
