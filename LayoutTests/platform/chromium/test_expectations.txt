@@ -511,6 +511,7 @@ BUGCR108798 LINUX WIN : fast/filesystem/workers/file-writer-events.html = CRASH 
 // on which renderer process to use for each of them.
 WONTFIX SKIP : fast/dom/Window/timer-resume-on-navigation-back.html = TIMEOUT FAIL
 WONTFIX SKIP : fast/events/pagehide-timeout.html = TIMEOUT
+WONTFIX SKIP : fast/events/pagehide-xhr-open.html = TIMEOUT
 WONTFIX SKIP : fast/events/pageshow-pagehide-on-back-cached-with-frames.html = TIMEOUT
 WONTFIX SKIP : fast/events/pageshow-pagehide-on-back-cached.html = TIMEOUT FAIL
 WONTFIX SKIP : fast/events/suspend-timers.html = TIMEOUT

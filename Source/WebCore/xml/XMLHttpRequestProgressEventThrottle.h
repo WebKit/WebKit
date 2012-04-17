@@ -56,13 +56,11 @@ public:
     void suspend();
     void resume();
 
-    bool suspended() const { return m_suspended; }
-
 private:
     static const double minimumProgressEventDispatchingIntervalInSeconds;
 
     virtual void fired();
-    void dispatchPausedEvent();
+    void dispatchDeferredEvents(Timer<XMLHttpRequestProgressEventThrottle>*);
     void flushProgressEvent();
 
     bool hasEventToDispatch() const;
@@ -74,8 +72,10 @@ private:
     unsigned long long m_loaded;
     unsigned long long m_total;
 
-    bool m_suspended;
-    RefPtr<Event> m_pausedEvent;
+    bool m_deferEvents;
+    RefPtr<Event> m_deferredProgressEvent;
+    Vector<RefPtr<Event> > m_deferredEvents;
+    Timer<XMLHttpRequestProgressEventThrottle> m_dispatchDeferredEventsTimer;
 };
 
 } // namespace WebCore
