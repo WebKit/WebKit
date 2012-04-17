@@ -92,8 +92,7 @@ static bool generateEntropy(unsigned char* buffer, size_t length)
 #ifndef NDEBUG
 static void assertV8RecursionScope()
 {
-    // FIXME: Enable when chromium usage of WebScriptInvocation has landed.
-    // ASSERT(!isMainThread() || WebCore::V8RecursionScope::properlyUsed());
+    ASSERT(!isMainThread() || WebCore::V8RecursionScope::properlyUsed());
 }
 #endif
 

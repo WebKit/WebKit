@@ -1,3 +1,16 @@
+2012-04-17  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [MutationObservers] enable V8RecursionScope debug ASSERT()
+        https://bugs.webkit.org/show_bug.cgi?id=84094
+
+        Reviewed by Ojan Vafai.
+
+        This patch enables the ASSERT() which enforces usage of
+        V8RecursionScope.
+
+        * src/WebKit.cpp:
+        (WebKit::assertV8RecursionScope):
+
 2012-04-17  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Fix gyp for WebFilterOperation.h and WebFilterOperations.h
