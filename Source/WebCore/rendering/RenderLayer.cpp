@@ -1685,9 +1685,12 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                     yOffset = max(0, min(frameView->contentsHeight(), yOffset));
 
                     frameView->setScrollPosition(IntPoint(xOffset, yOffset));
-                    parentLayer = ownerElement->renderer()->enclosingLayer();
-                    newRect.setX(rect.x() - frameView->scrollX() + frameView->x());
-                    newRect.setY(rect.y() - frameView->scrollY() + frameView->y());
+                    if (frameView->safeToPropagateScrollToParent()) {
+                        parentLayer = ownerElement->renderer()->enclosingLayer();
+                        newRect.setX(rect.x() - frameView->scrollX() + frameView->x());
+                        newRect.setY(rect.y() - frameView->scrollY() + frameView->y());
+                    } else
+                        parentLayer = 0;
                 }
             } else {
                 LayoutRect viewRect = frameView->visibleContentRect();

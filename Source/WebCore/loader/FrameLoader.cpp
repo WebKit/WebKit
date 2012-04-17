@@ -662,7 +662,7 @@ void FrameLoader::finishedParsing()
     // Check if the scrollbars are really needed for the content.
     // If not, remove them, relayout, and repaint.
     m_frame->view()->restoreScrollbar();
-    scrollToFragmentIfAllowed(m_frame->document()->url());
+    scrollToFragmentWithParentBoundary(m_frame->document()->url());
 }
 
 void FrameLoader::loadDone()
@@ -1029,7 +1029,7 @@ void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* sta
 
     // We need to scroll to the fragment whether or not a hash change occurred, since
     // the user might have scrolled since the previous navigation.
-    scrollToFragmentIfAllowed(url);
+    scrollToFragmentWithParentBoundary(url);
     
     m_isComplete = false;
     checkCompleted();
@@ -2618,20 +2618,22 @@ bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const S
         && !m_frame->document()->isFrameSet();
 }
 
-void FrameLoader::scrollToFragmentIfAllowed(const KURL& url)
+void FrameLoader::scrollToFragmentWithParentBoundary(const KURL& url)
 {
     FrameView* view = m_frame->view();
     if (!view)
         return;
 
     // Leaking scroll position to a cross-origin ancestor would permit the so-called "framesniffing" attack.
-    if (url.hasFragmentIdentifier() && !m_frame->document()->canBeAccessedByEveryAncestorFrame()) {
-        DEFINE_STATIC_LOCAL(String, consoleMessage, ("Fragment navigation not allowed with cross-origin frames."));
-        m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
-        return;
-    }
+    RefPtr<Frame> boundaryFrame(url.hasFragmentIdentifier() ? m_frame->document()->findUnsafeParentScrollPropagationBoundary() : 0);
+
+    if (boundaryFrame)
+        boundaryFrame->view()->setSafeToPropagateScrollToParent(false);
 
     view->scrollToFragment(url);
+
+    if (boundaryFrame)
+        boundaryFrame->view()->setSafeToPropagateScrollToParent(true);
 }
 
 void FrameLoader::callContinueLoadAfterNavigationPolicy(void* argument,

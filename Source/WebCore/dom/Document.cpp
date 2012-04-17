@@ -2692,13 +2692,18 @@ bool Document::canNavigate(Frame* targetFrame)
     return false;
 }
 
-bool Document::canBeAccessedByEveryAncestorFrame()
+Frame* Document::findUnsafeParentScrollPropagationBoundary()
 {
-    for (Frame* ancestorFrame = m_frame->tree()->parent(); ancestorFrame; ancestorFrame = ancestorFrame->tree()->parent()) {
+    Frame* currentFrame = m_frame;
+    Frame* ancestorFrame = currentFrame->tree()->parent(); 
+
+    while (ancestorFrame) {
         if (!ancestorFrame->document()->securityOrigin()->canAccess(securityOrigin()))
-            return false;
+            return currentFrame;
+        currentFrame = ancestorFrame;
+        ancestorFrame = ancestorFrame->tree()->parent();
     }
-    return true;
+    return 0;
 }
 
 StyleSheetInternal* Document::pageUserSheet()

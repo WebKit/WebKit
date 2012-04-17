@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Fragment navigation not allowed with cross-origin frames.
 Tests that resources panel shows form data parameters.
 
   

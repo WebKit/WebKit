@@ -230,6 +230,9 @@ public:
     bool wasScrolledByUser() const;
     void setWasScrolledByUser(bool);
 
+    bool safeToPropagateScrollToParent() const { return m_safeToPropagateScrollToParent; }
+    void setSafeToPropagateScrollToParent(bool isSafe) { m_safeToPropagateScrollToParent = isSafe; }
+
     void addWidgetToUpdate(RenderEmbeddedObject*);
     void removeWidgetToUpdate(RenderEmbeddedObject*);
 
@@ -476,7 +479,8 @@ private:
 
     bool m_wasScrolledByUser;
     bool m_inProgrammaticScroll;
-    
+    bool m_safeToPropagateScrollToParent;
+
     unsigned m_deferringRepaints;
     unsigned m_repaintCount;
     Vector<LayoutRect> m_repaintRects;

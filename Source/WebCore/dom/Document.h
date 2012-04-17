@@ -630,7 +630,7 @@ public:
     virtual void disableEval();
 
     bool canNavigate(Frame* targetFrame);
-    bool canBeAccessedByEveryAncestorFrame();
+    Frame* findUnsafeParentScrollPropagationBoundary();
 
     StyleSheetInternal* pageUserSheet();
     void clearPageUserSheet();
