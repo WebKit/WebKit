@@ -377,7 +377,9 @@ static IntRect screenRectOfContents(Element* element)
     
     [_backgroundWindow.get() orderOut:self];
     [_backgroundWindow.get() setFrame:NSZeroRect display:YES];
-    
+
+    [[_webView window] makeKeyAndOrderFront:self];
+
     NSEnableScreenUpdates();
 }
 

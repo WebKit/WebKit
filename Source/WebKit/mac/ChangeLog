@@ -1,3 +1,16 @@
+2012-04-17  Jer Noble  <jer.noble@apple.com>
+
+        Exiting full screen video brings the wrong Safari window to the foreground
+        https://bugs.webkit.org/show_bug.cgi?id=83936
+
+        Reviewed by Adele Peterson.
+
+        Tell the original webView's window to makeKeyAndOrderFront once the exit
+        animation completes.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController finishedExitFullScreenAnimation:]):
+
 2012-04-16  Anders Carlsson  <andersca@apple.com>
 
         Use a MIG call when creating a plug-in property list file
