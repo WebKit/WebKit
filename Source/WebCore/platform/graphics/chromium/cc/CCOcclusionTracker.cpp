@@ -209,10 +209,9 @@ static inline Region computeOcclusionBehindLayer(const LayerType* layer, const T
     ASSERT(layer->visibleLayerRect().contains(opaqueContents.bounds()));
 
     bool clipped;
-    FloatQuad unoccludedQuad = CCMathUtil::mapQuad(transform, FloatQuad(layer->visibleLayerRect()), clipped);
-    bool isPaintedAxisAligned = unoccludedQuad.isRectilinear();
+    FloatQuad visibleTransformedQuad = CCMathUtil::mapQuad(transform, FloatQuad(layer->visibleLayerRect()), clipped);
     // FIXME: Find a rect interior to each transformed quad.
-    if (clipped || !isPaintedAxisAligned)
+    if (clipped || !visibleTransformedQuad.isRectilinear())
         return Region();
 
     Region transformedOpaqueContents;
@@ -253,10 +252,12 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
 
     if (layerTransformsToScreenKnown(layer)) {
         TransformationMatrix targetToScreenTransform = m_stack.last().surface->screenSpaceTransform();
-        FloatQuad scissorInScreenQuad = targetToScreenTransform.mapQuad(FloatQuad(FloatRect(scissorInTarget)));
-        if (!scissorInScreenQuad.isRectilinear())
+        bool clipped;
+        FloatQuad scissorInScreenQuad = CCMathUtil::mapQuad(targetToScreenTransform, FloatQuad(FloatRect(scissorInTarget)), clipped);
+        // FIXME: Find a rect interior to the transformed scissor quad.
+        if (clipped || !scissorInScreenQuad.isRectilinear())
             return;
-        IntRect scissorInScreenRect = intersection(m_scissorRectInScreenSpace, enclosedIntRect(CCMathUtil::mapClippedRect(targetToScreenTransform, FloatRect(scissorInTarget))));
+        IntRect scissorInScreenRect = intersection(m_scissorRectInScreenSpace, enclosedIntRect(scissorInScreenQuad.boundingBox()));
         m_stack.last().occlusionInScreen.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToScreenSpaceTransform<LayerType>(layer), opaqueContents, scissorInScreenRect, m_usePaintTracking));
     }
 }
