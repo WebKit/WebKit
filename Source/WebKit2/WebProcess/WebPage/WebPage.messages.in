@@ -44,7 +44,9 @@ messages -> WebPage {
     HighlightPotentialActivation(WebCore::IntPoint point, WebCore::IntSize area)
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
     ContextMenuHidden()
+#endif
 
     ScrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
     CenterSelectionInVisibleArea()
@@ -157,8 +159,10 @@ messages -> WebPage {
     FailedToShowPopupMenu();
 #endif    
     
+#if ENABLE(CONTEXT_MENUS)
     # Context menu.
     DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItemData menuItem);
+#endif
 
     # Open panel.
     DidChooseFilesForOpenPanel(Vector<WTF::String> fileURLs)

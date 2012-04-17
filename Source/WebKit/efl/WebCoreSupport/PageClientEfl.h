@@ -26,8 +26,8 @@ typedef struct _Evas_Native_Surface Evas_Native_Surface;
 typedef struct _Evas_Object Evas_Object;
 
 namespace WebCore {
-
 class GraphicsContext3D;
+} // namespace WebCore
 
 class PageClientEfl {
 public:
@@ -44,7 +44,5 @@ public:
 protected:
     Evas_Object* m_view;
 };
-
-} // namespace WebCore
 
 #endif // PageClientEfl_h

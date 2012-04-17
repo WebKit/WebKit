@@ -32,7 +32,9 @@
 #include "GeolocationPermissionRequestManager.h"
 #include "ImageOptions.h"
 #include "ImmutableArray.h"
+#if ENABLE(CONTEXT_MENUS)
 #include "InjectedBundlePageContextMenuClient.h"
+#endif
 #include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFormClient.h"
 #include "InjectedBundlePageFullScreenClient.h"
@@ -216,7 +218,9 @@ public:
     void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
 
     // -- InjectedBundle methods
+#if ENABLE(CONTEXT_MENUS)
     void initializeInjectedBundleContextMenuClient(WKBundlePageContextMenuClient*);
+#endif
     void initializeInjectedBundleEditorClient(WKBundlePageEditorClient*);
     void initializeInjectedBundleFormClient(WKBundlePageFormClient*);
     void initializeInjectedBundleLoaderClient(WKBundlePageLoaderClient*);
@@ -227,7 +231,9 @@ public:
     void initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenClient*);
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
     InjectedBundlePageContextMenuClient& injectedBundleContextMenuClient() { return m_contextMenuClient; }
+#endif
     InjectedBundlePageEditorClient& injectedBundleEditorClient() { return m_editorClient; }
     InjectedBundlePageFormClient& injectedBundleFormClient() { return m_formClient; }
     InjectedBundlePageLoaderClient& injectedBundleLoaderClient() { return m_loaderClient; }
@@ -347,7 +353,9 @@ public:
     WebCore::IntSize viewportSize() const { return m_viewportSize; }
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
     WebContextMenu* contextMenu();
+#endif
     
     bool hasLocalDataForURL(const WebCore::KURL&);
     String cachedResponseMIMETypeForURL(const WebCore::KURL&);
@@ -499,7 +507,9 @@ public:
     void simulateMouseMotion(WebCore::IntPoint, double time);
     String viewportConfigurationAsText(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight);
 
+#if ENABLE(CONTEXT_MENUS)
     void contextMenuShowing() { m_isShowingContextMenu = true; }
+#endif
 
 #if PLATFORM(QT)
     void registerApplicationScheme(const String& scheme);
@@ -579,7 +589,9 @@ private:
     void highlightPotentialActivation(const WebCore::IntPoint&, const WebCore::IntSize& area);
 #endif
 #endif
+#if ENABLE(CONTEXT_MENUS)
     void contextMenuHidden() { m_isShowingContextMenu = false; }
+#endif
 
     static void scroll(WebCore::Page*, WebCore::ScrollDirection, WebCore::ScrollGranularity);
     static void logicalScroll(WebCore::Page*, WebCore::ScrollLogicalDirection, WebCore::ScrollGranularity);
@@ -733,7 +745,9 @@ private:
 
     WebCore::IntSize m_windowResizerSize;
 
+#if ENABLE(CONTEXT_MENUS)
     InjectedBundlePageContextMenuClient m_contextMenuClient;
+#endif
     InjectedBundlePageEditorClient m_editorClient;
     InjectedBundlePageFormClient m_formClient;
     InjectedBundlePageLoaderClient m_loaderClient;
@@ -763,7 +777,9 @@ private:
     RefPtr<WebFullScreenManager> m_fullScreenManager;
 #endif
     RefPtr<WebPopupMenu> m_activePopupMenu;
+#if ENABLE(CONTEXT_MENUS)
     RefPtr<WebContextMenu> m_contextMenu;
+#endif
     RefPtr<WebOpenPanelResultListener> m_activeOpenPanelResultListener;
     RefPtr<NotificationPermissionRequestManager> m_notificationPermissionRequestManager;
 
@@ -794,7 +810,9 @@ private:
 
     unsigned m_cachedPageCount;
 
+#if ENABLE(CONTEXT_MENUS)
     bool m_isShowingContextMenu;
+#endif
     
     bool m_willGoToBackForwardItemCallbackEnabled;
 

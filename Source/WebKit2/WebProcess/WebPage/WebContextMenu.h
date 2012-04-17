@@ -21,6 +21,8 @@
 #ifndef WebContextMenu_h
 #define WebContextMenu_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "WebContextMenuItemData.h"
 
 #include <wtf/PassRefPtr.h>
@@ -50,4 +52,5 @@ private:
 
 } // namespace WebKit
 
+#endif // ENABLE(CONTEXT_MENUS)
 #endif // WebPopupMenu_h

@@ -23,6 +23,8 @@
 #include "ewk_private.h"
 
 namespace WebCore {
+class IntRect;
+}
 
 PageClientEfl::PageClientEfl(Evas_Object* view)
     : m_view(view)
@@ -45,5 +47,3 @@ GraphicsContext3D* PageClientEfl::acceleratedCompositingContext()
     return ewk_view_accelerated_compositing_context_get(m_view);
 }
 #endif
-
-}

@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CONTEXT_MENUS)
+
 #include "WebContextMenuClient.h"
 
 #include "WebContextMenu.h"
@@ -96,3 +99,4 @@ void WebContextMenuClient::showContextMenu()
 #endif
 
 } // namespace WebKit
+#endif // ENABLE(CONTEXT_MENUS)

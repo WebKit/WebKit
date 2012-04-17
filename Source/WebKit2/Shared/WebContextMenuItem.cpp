@@ -24,6 +24,9 @@
  */
  
 #include "config.h"
+
+#if ENABLE(CONTEXT_MENUS)
+
 #include "WebContextMenuItem.h"
 
 #include "ImmutableArray.h"
@@ -87,3 +90,4 @@ void WebContextMenuItem::setUserData(APIObject* userData)
 
 } // namespace WebKit
 
+#endif // ENABLE(CONTEXT_MENUS)

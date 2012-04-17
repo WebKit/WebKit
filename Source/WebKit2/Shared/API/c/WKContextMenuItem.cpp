@@ -37,65 +37,115 @@ using namespace WebKit;
 
 WKTypeID WKContextMenuItemGetTypeID()
 {
+#if ENABLE(CONTEXT_MENUS)
     return toAPI(WebContextMenuItem::APIType);
+#else
+    return toAPI(APIObject::TypeNull);
+#endif
 }
 
 WKContextMenuItemRef WKContextMenuItemCreateAsAction(WKContextMenuItemTag tag, WKStringRef title, bool enabled)
 {
+#if ENABLE(CONTEXT_MENUS)
     return toAPI(WebContextMenuItem::create(WebContextMenuItemData(ActionType, toImpl(tag), toImpl(title)->string(), enabled, false)).leakRef());
+#else
+    return 0;
+#endif
 }
 
 WKContextMenuItemRef WKContextMenuItemCreateAsCheckableAction(WKContextMenuItemTag tag, WKStringRef title, bool enabled, bool checked)
 {
+#if ENABLE(CONTEXT_MENUS)
     return toAPI(WebContextMenuItem::create(WebContextMenuItemData(CheckableActionType, toImpl(tag), toImpl(title)->string(), enabled, checked)).leakRef());
+#else
+    return 0;
+#endif
 }
 
 WKContextMenuItemRef WKContextMenuItemCreateAsSubmenu(WKStringRef title, bool enabled, WKArrayRef submenuItems)
 {
+#if ENABLE(CONTEXT_MENUS)
     return toAPI(WebContextMenuItem::create(toImpl(title)->string(), enabled, toImpl(submenuItems)).leakRef());
+#else
+    return 0;
+#endif
 }
 
 WKContextMenuItemRef WKContextMenuItemSeparatorItem()
 {
+#if ENABLE(CONTEXT_MENUS)
     return toAPI(WebContextMenuItem::separatorItem());
+#else
+    return 0;
+#endif
 }
 
 WKContextMenuItemTag WKContextMenuItemGetTag(WKContextMenuItemRef itemRef)
 {
+#if ENABLE(CONTEXT_MENUS)
     return toAPI(toImpl(itemRef)->data()->action());
+#else
+    return toAPI(ContextMenuItemTagNoAction);
+#endif
 }
 
 WKContextMenuItemType WKContextMenuItemGetType(WKContextMenuItemRef itemRef)
 {
+#if ENABLE(CONTEXT_MENUS)
     return toAPI(toImpl(itemRef)->data()->type());
+#else
+    return toAPI(ActionType);
+#endif
 }
 
 WKStringRef WKContextMenuItemCopyTitle(WKContextMenuItemRef itemRef)
 {
+#if ENABLE(CONTEXT_MENUS)
     return toCopiedAPI(toImpl(itemRef)->data()->title().impl());
+#else
+    return 0;
+#endif
 }
 
 bool WKContextMenuItemGetEnabled(WKContextMenuItemRef itemRef)
 {
+#if ENABLE(CONTEXT_MENUS)
     return toImpl(itemRef)->data()->enabled();
+#else
+    return false;
+#endif
 }
 
 bool WKContextMenuItemGetChecked(WKContextMenuItemRef itemRef)
 {
+#if ENABLE(CONTEXT_MENUS)
     return toImpl(itemRef)->data()->checked();
+#else
+    return false;
+#endif
 }
 
 WKArrayRef WKContextMenuCopySubmenuItems(WKContextMenuItemRef itemRef)
 {
+#if ENABLE(CONTEXT_MENUS)
     return toAPI(toImpl(itemRef)->submenuItemsAsImmutableArray().leakRef());
+#else
+    return 0;
+#endif
 }
 
 WKTypeRef WKContextMenuItemGetUserData(WKContextMenuItemRef itemRef)
 {
+#if ENABLE(CONTEXT_MENUS)
     return toAPI(toImpl(itemRef)->userData());
+#else
+    return 0;
+#endif
 }
 
 void WKContextMenuItemSetUserData(WKContextMenuItemRef itemRef, WKTypeRef userDataRef)
 {
+#if ENABLE(CONTEXT_MENUS)
     toImpl(itemRef)->setUserData(toImpl(userDataRef));
+#endif
 }

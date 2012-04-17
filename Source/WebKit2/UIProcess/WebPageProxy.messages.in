@@ -196,8 +196,10 @@ messages -> WebPageProxy {
     SetPopupMenuSelectedIndex(int32_t selectedIndex)
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
     # ContextMenu messages
     ShowContextMenu(WebCore::IntPoint menuLocation, WebKit::WebHitTestResult::Data hitTestResultData, Vector<WebKit::WebContextMenuItemData> items, WebKit::InjectedBundleUserMessageEncoder userData)
+#endif
 
     # Authentication messages
     CanAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, WebCore::ProtectionSpace protectionSpace) -> (bool canAuthenticate)

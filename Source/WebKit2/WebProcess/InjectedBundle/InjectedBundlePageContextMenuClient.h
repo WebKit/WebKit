@@ -26,6 +26,8 @@
 #ifndef InjectedBundlePageContextMenuClient_h
 #define InjectedBundlePageContextMenuClient_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "APIClient.h"
 #include "WKBundlePage.h"
 #include <wtf/Vector.h>
@@ -48,4 +50,5 @@ public:
 
 } // namespace WebKit
 
+#endif // ENABLE(CONTEXT_MENUS)
 #endif // InjectedBundlePageEditorClient_h

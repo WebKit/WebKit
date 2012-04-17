@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CONTEXT_MENUS)
+
 #include "WebContextMenuItemData.h"
 
 #include "APIObject.h"
@@ -156,3 +159,4 @@ Vector<ContextMenuItem> coreItems(const Vector<WebContextMenuItemData>& kitItemV
 }
 
 } // namespace WebKit
+#endif // ENABLE(CONTEXT_MENUS)

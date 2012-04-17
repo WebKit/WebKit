@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CONTEXT_MENUS)
+
 #include "InjectedBundlePageContextMenuClient.h"
 
 #include "ImmutableArray.h"
@@ -75,3 +78,4 @@ bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage*
 }
 
 } // namespace WebKit
+#endif // ENABLE(CONTEXT_MENUS)

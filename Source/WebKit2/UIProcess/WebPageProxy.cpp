@@ -297,10 +297,12 @@ void WebPageProxy::initializeFindClient(const WKPageFindClient* client)
     m_findClient.initialize(client);
 }
 
+#if ENABLE(CONTEXT_MENUS)
 void WebPageProxy::initializeContextMenuClient(const WKPageContextMenuClient* client)
 {
     m_contextMenuClient.initialize(client);
 }
+#endif
 
 void WebPageProxy::reattachToWebProcess()
 {
@@ -2695,6 +2697,7 @@ void WebPageProxy::hidePopupMenu()
     m_activePopupMenu = 0;
 }
 
+#if ENABLE(CONTEXT_MENUS)
 void WebPageProxy::showContextMenu(const IntPoint& menuLocation, const WebHitTestResult::Data& hitTestResultData, const Vector<WebContextMenuItemData>& proposedItems, CoreIPC::ArgumentDecoder* arguments)
 {
     internalShowContextMenu(menuLocation, hitTestResultData, proposedItems, arguments);
@@ -2804,6 +2807,7 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 
     process()->send(Messages::WebPage::DidSelectItemFromActiveContextMenu(item), m_pageID);
 }
+#endif // ENABLE(CONTEXT_MENUS)
 
 void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs)
 {

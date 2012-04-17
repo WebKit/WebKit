@@ -1,3 +1,58 @@
+2012-04-17  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
+
+        [EFL][WK2] Fix build break when CONTEXT_MENUS is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=83285
+
+        Reviewed by Ryosuke Niwa.
+
+        Surround code related to context menu with ENABLE(CONTEXT_MENUS) macro.
+        Add dummy functions for public API implementation related to context menu.
+
+        * Shared/API/c/WKContextMenuItem.cpp:
+        (WKContextMenuItemGetTypeID):
+        (WKContextMenuItemCreateAsAction):
+        (WKContextMenuItemCreateAsCheckableAction):
+        (WKContextMenuItemCreateAsSubmenu):
+        (WKContextMenuItemSeparatorItem):
+        (WKContextMenuItemGetTag):
+        (WKContextMenuItemGetType):
+        (WKContextMenuItemCopyTitle):
+        (WKContextMenuItemGetEnabled):
+        (WKContextMenuItemGetChecked):
+        (WKContextMenuCopySubmenuItems):
+        (WKContextMenuItemGetUserData):
+        (WKContextMenuItemSetUserData):
+        * Shared/WebContextMenuItem.cpp:
+        * Shared/WebContextMenuItem.h:
+        * Shared/WebContextMenuItemData.cpp:
+        * Shared/WebContextMenuItemData.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageContextMenuClient):
+        * UIProcess/WebPageContextMenuClient.cpp:
+        * UIProcess/WebPageContextMenuClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetContextMenuClient):
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+        * WebProcess/WebCoreSupport/efl/WebContextMenuClientEfl.cpp:
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        * WebProcess/WebPage/WebContextMenu.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit):
+        (WebKit::handleMouseEvent):
+        (WebKit::WebPage::mouseEvent):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2012-04-16  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Add missing files to build webkit2/Efl.

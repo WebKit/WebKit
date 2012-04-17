@@ -26,6 +26,8 @@
 #ifndef WebContextMenuItem_h
 #define WebContextMenuItem_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "APIObject.h"
 #include "WebContextMenuItemData.h"
 
@@ -61,4 +63,5 @@ private:
 
 } // namespace WebKit
 
+#endif // ENABLE(CONTEXT_MENUS)
 #endif // WebContextMenuItem_h

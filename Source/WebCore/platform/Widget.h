@@ -91,10 +91,8 @@ typedef QWebPageClient* PlatformPageClient;
 #include "PageClientBlackBerry.h"
 typedef PageClientBlackBerry* PlatformPageClient;
 #elif PLATFORM(EFL)
-namespace WebCore {
 class PageClientEfl;
 typedef PageClientEfl* PlatformPageClient;
-}
 #else
 typedef PlatformWidget PlatformPageClient;
 #endif

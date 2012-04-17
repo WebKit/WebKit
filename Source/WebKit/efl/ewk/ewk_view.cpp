@@ -159,7 +159,7 @@ struct _Ewk_View_Private_Data {
     WebCore::Frame* mainFrame;
     WebCore::ViewportArguments viewportArguments;
     Ewk_History* history;
-    OwnPtr<WebCore::PageClientEfl> pageClient;
+    OwnPtr<PageClientEfl> pageClient;
 #if ENABLE(INPUT_TYPE_COLOR)
     WebCore::ColorChooserClient* colorChooserClient;
 #endif
@@ -741,7 +741,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 
     priv->soupSession = WebCore::ResourceHandle::defaultSession();
 
-    priv->pageClient = adoptPtr(new WebCore::PageClientEfl(smartData->self));
+    priv->pageClient = adoptPtr(new PageClientEfl(smartData->self));
 
     return priv;
 }
@@ -4056,7 +4056,7 @@ WebCore::Page *corePage(const Evas_Object *ewkView)
     return priv->page.get();
 }
 
-WebCore::PlatformPageClient corePageClient(Evas_Object* ewkView)
+PlatformPageClient corePageClient(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);

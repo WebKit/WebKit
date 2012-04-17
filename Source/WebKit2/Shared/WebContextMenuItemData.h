@@ -26,6 +26,8 @@
 #ifndef WebContextMenuItemData_h
 #define WebContextMenuItemData_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include <WebCore/ContextMenuItem.h>
 #include <wtf/text/WTFString.h>
 
@@ -79,4 +81,5 @@ Vector<WebCore::ContextMenuItem> coreItems(const Vector<WebContextMenuItemData>&
 
 } // namespace WebKit
 
+#endif // ENABLE(CONTEXT_MENUS)
 #endif // WebContextMenuItemData_h

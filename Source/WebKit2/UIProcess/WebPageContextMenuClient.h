@@ -26,6 +26,8 @@
 #ifndef WebPageContextMenuClient_h
 #define WebPageContextMenuClient_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "APIClient.h"
 #include "WebHitTestResult.h"
 #include "WKPage.h"
@@ -46,4 +48,5 @@ public:
 
 } // namespace WebKit
 
+#endif // ENABLE(CONTEXT_MENUS)
 #endif // WebPageContextMenuClient_h

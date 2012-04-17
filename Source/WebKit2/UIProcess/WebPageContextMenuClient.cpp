@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CONTEXT_MENUS)
+
 #include "WebPageContextMenuClient.h"
 
 #include "Logging.h"
@@ -91,3 +94,4 @@ void WebPageContextMenuClient::contextMenuDismissed(WebPageProxy* page)
 }
 
 } // namespace WebKit
+#endif // ENABLE(CONTEXT_MENUS)

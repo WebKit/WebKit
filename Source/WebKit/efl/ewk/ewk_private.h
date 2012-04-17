@@ -98,7 +98,7 @@ namespace EWKPrivate {
 WebCore::Frame *coreFrame(const Evas_Object *ewkFrame);
 WebCore::Page *corePage(const Evas_Object *ewkView);
 WebCore::HistoryItem *coreHistoryItem(const Ewk_History_Item *ewkHistoryItem);
-WebCore::PlatformPageClient corePageClient(Evas_Object* ewkView);
+PlatformPageClient corePageClient(Evas_Object* ewkView);
 
 Evas_Object* kitFrame(const WebCore::Frame* coreFrame);
 

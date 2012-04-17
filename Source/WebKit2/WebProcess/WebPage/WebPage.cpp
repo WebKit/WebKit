@@ -215,7 +215,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_canShortCircuitHorizontalWheelEvents(false)
     , m_numWheelEventHandlers(0)
     , m_cachedPageCount(0)
+#if ENABLE(CONTEXT_MENUS)
     , m_isShowingContextMenu(false)
+#endif
     , m_willGoToBackForwardItemCallbackEnabled(true)
 #if PLATFORM(WIN)
     , m_gestureReachedScrollingLimit(false)
@@ -228,7 +230,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     Page::PageClients pageClients;
     pageClients.chromeClient = new WebChromeClient(this);
+#if ENABLE(CONTEXT_MENUS)
     pageClients.contextMenuClient = new WebContextMenuClient(this);
+#endif
     pageClients.editorClient = new WebEditorClient(this);
     pageClients.dragClient = new WebDragClient(this);
     pageClients.backForwardClient = WebBackForwardListProxy::create(this);
@@ -327,10 +331,12 @@ CoreIPC::Connection* WebPage::connection() const
     return WebProcess::shared().connection();
 }
 
+#if ENABLE(CONTEXT_MENUS)
 void WebPage::initializeInjectedBundleContextMenuClient(WKBundlePageContextMenuClient* client)
 {
     m_contextMenuClient.initialize(client);
 }
+#endif
 
 void WebPage::initializeInjectedBundleEditorClient(WKBundlePageEditorClient* client)
 {
@@ -1197,12 +1203,14 @@ void WebPage::pageDidRequestScroll(const IntPoint& point)
 }
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
 WebContextMenu* WebPage::contextMenu()
 {
     if (!m_contextMenu)
         m_contextMenu = WebContextMenu::create(this);
     return m_contextMenu.get();
 }
+#endif
 
 // Events 
 
@@ -1233,6 +1241,7 @@ private:
     const WebEvent* m_previousCurrentEvent;
 };
 
+#if ENABLE(CONTEXT_MENUS)
 static bool isContextClick(const PlatformMouseEvent& event)
 {
     if (event.button() == WebCore::RightButton)
@@ -1262,6 +1271,7 @@ static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent,
 
     return handled;
 }
+#endif
 
 static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, bool onlyUpdateScrollbars)
 {
@@ -1273,12 +1283,16 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
 
     switch (platformMouseEvent.type()) {
         case PlatformEvent::MousePressed: {
+#if ENABLE(CONTEXT_MENUS)
             if (isContextClick(platformMouseEvent))
                 page->corePage()->contextMenuController()->clearContextMenu();
-            
+#endif
+
             bool handled = frame->eventHandler()->handleMousePressEvent(platformMouseEvent);
+#if ENABLE(CONTEXT_MENUS)
             if (isContextClick(platformMouseEvent))
                 handled = handleContextMenuEvent(platformMouseEvent, page);
+#endif
 
             return handled;
         }
@@ -1296,11 +1310,13 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
 
 void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 {
+#if ENABLE(CONTEXT_MENUS)
     // Don't try to handle any pending mouse events if a context menu is showing.
     if (m_isShowingContextMenu) {
         send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), false));
         return;
     }
+#endif
     
     bool handled = false;
     
@@ -2393,6 +2409,7 @@ void WebPage::failedToShowPopupMenu()
 }
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
 void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& item)
 {
     if (!m_contextMenu)
@@ -2401,6 +2418,7 @@ void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& i
     m_contextMenu->itemSelected(item);
     m_contextMenu = 0;
 }
+#endif
 
 void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
 {

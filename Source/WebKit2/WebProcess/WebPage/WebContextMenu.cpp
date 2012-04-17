@@ -20,6 +20,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CONTEXT_MENUS)
+
 #include "WebContextMenu.h"
 
 #include "InjectedBundleHitTestResult.h"
@@ -93,3 +96,5 @@ void WebContextMenu::itemSelected(const WebContextMenuItemData& item)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(CONTEXT_MENUS)

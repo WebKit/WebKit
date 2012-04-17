@@ -26,6 +26,8 @@
 #ifndef WebContextMenuClient_h
 #define WebContextMenuClient_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include <WebCore/ContextMenuClient.h>
 
 namespace WebKit {
@@ -69,4 +71,5 @@ private:
 
 } // namespace WebKit
 
+#endif // ENABLE(CONTEXT_MENUS)
 #endif // WebContextMenuClient_h
