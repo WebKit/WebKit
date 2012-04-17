@@ -150,7 +150,7 @@ audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls
 }
 
 audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
-    -webkit-appearance: media-fullscreen-button;
+    -webkit-appearance: media-enter-fullscreen-button;
     display: -webkit-box;
     width: 16px;
     height: 16px;
