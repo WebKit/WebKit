@@ -1,5 +1,19 @@
 2012-04-17  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: handle stopping layout test helper after a ctrl-c cleanly on the chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=84190
+
+        Reviewed by Ojan Vafai.
+
+        LayoutTestHelper would exit when the user typed ctrl-c, but we
+        would attempt to write to it to shut it down, generating an
+        IOError.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.stop_helper):
+
+2012-04-17  Dirk Pranke  <dpranke@chromium.org>
+
         rename --experimental-fully-parallel
         https://bugs.webkit.org/show_bug.cgi?id=84188
 

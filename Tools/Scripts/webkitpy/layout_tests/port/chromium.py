@@ -265,9 +265,15 @@ class ChromiumPort(Port):
     def stop_helper(self):
         if self._helper:
             _log.debug("Stopping layout test helper")
-            self._helper.stdin.write("x\n")
-            self._helper.stdin.close()
-            self._helper.wait()
+            try:
+                self._helper.stdin.write("x\n")
+                self._helper.stdin.close()
+                self._helper.wait()
+            except IOError, e:
+                pass
+            finally:
+                self._helper = None
+
 
     def exit_code_from_summarized_results(self, unexpected_results):
         # Turn bots red for missing results.
