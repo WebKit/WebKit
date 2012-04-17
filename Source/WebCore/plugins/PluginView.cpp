@@ -366,8 +366,7 @@ void PluginView::stop()
     }
 
 #ifdef XP_UNIX
-    if (m_isWindowed && m_npWindow.ws_info)
-           delete (NPSetWindowCallbackStruct *)m_npWindow.ws_info;
+    delete static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info);
     m_npWindow.ws_info = 0;
 #endif
 
