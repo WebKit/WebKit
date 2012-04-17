@@ -1,3 +1,22 @@
+2012-04-17  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 113528
+
+    2012-04-06  Oliver Hunt  <oliver@apple.com>
+
+            Accessing the returnValue of a modal dialog should be performed directly on the global object.
+            https://bugs.webkit.org/show_bug.cgi?id=83414
+
+            Reviewed by Gavin Barraclough.
+
+            Presumably during the mass-devirtualising of JSObject, this deliberate use of
+            the GlobalObject's property lookup logic directly was replaced with a dynamic
+            call.  That results in the DOMWindow filtering out the lookup.  This regression
+            was masked by r93567.
+
+            * bindings/js/JSDOMWindowCustom.cpp:
+            (WebCore::DialogHandler::returnValue):
+
 2012-04-16  Lucas Forschler  <lforschler@apple.com>
 
     Merge 111108
