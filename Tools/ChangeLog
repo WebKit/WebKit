@@ -1,3 +1,17 @@
+2012-04-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        EFL's LayoutTestController does not implement callShouldCloseOnWebView
+        https://bugs.webkit.org/show_bug.cgi?id=82301
+
+        Reviewed by Martin Robinson.
+
+        Implement callShouldCloseOnWebView in EFL's LayoutTestController by
+        calling shouldClose() on the FrameLoader, allowing the related test
+        to be removed from the skip list.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::callShouldCloseOnWebView):
+
 2012-04-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Add setting API to enable/disable XSSAuditor

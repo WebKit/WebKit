@@ -63,6 +63,16 @@ unsigned DumpRenderTreeSupportEfl::activeAnimationsCount(const Evas_Object* ewkF
     return animationController->numberOfActiveAnimations(frame->document());
 }
 
+bool DumpRenderTreeSupportEfl::callShouldCloseOnWebView(Evas_Object* ewkFrame)
+{
+    WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);
+
+    if (!frame)
+        return false;
+
+    return frame->loader()->shouldClose();
+}
+
 void DumpRenderTreeSupportEfl::clearFrameName(Evas_Object* ewkFrame)
 {
     if (WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame))

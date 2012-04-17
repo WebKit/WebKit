@@ -701,8 +701,7 @@ void LayoutTestController::removeAllVisitedLinks()
 
 bool LayoutTestController::callShouldCloseOnWebView()
 {
-    notImplemented();
-    return false;
+    return DumpRenderTreeSupportEfl::callShouldCloseOnWebView(browser->mainFrame());
 }
 
 void LayoutTestController::apiTestNewWindowDataLoadBaseURL(JSStringRef, JSStringRef)

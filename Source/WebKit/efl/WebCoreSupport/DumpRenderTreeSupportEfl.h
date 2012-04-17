@@ -45,6 +45,7 @@ public:
     ~DumpRenderTreeSupportEfl() { }
 
     static unsigned activeAnimationsCount(const Evas_Object* ewkFrame);
+    static bool callShouldCloseOnWebView(Evas_Object* ewkFrame);
     static void clearFrameName(Evas_Object* ewkFrame);
     static void clearOpener(Evas_Object* ewkFrame);
     static String counterValueByElementId(const Evas_Object* ewkFrame, const char* elementId);

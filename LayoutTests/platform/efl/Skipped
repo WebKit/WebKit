@@ -621,9 +621,6 @@ storage/transaction-success-callback-isolated-world.html
 # EFL's LayoutTestController does not implement removeAllVisitedLinks
 http/tests/globalhistory/history-delegate-basic-visited-links.html
 
-# EFL's LayoutTestController does not implement callShouldCloseOnWebView
-fast/events/onbeforeunload-focused-iframe.html
-
 # EFL's LayoutTestController does not implement shadowPseudoId
 fullscreen/video-controls-override.html
 media/audio-delete-while-step-button-clicked.html
