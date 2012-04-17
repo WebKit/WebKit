@@ -79,7 +79,11 @@ private:
 
     virtual void setWindowRect(const FloatRect& rect) OVERRIDE
     {
-        m_popup->m_windowRectInScreen = IntRect(rect);
+        IntRect intRect(rect);
+        const WebRect currentRect = m_popup->m_windowRectInScreen;
+        if (intRect.x() == currentRect.x && intRect.y() == currentRect.y && m_popup->m_isPutAboveOrigin)
+            intRect.setY(currentRect.y + currentRect.height - intRect.height());
+        m_popup->m_windowRectInScreen = intRect;
         m_popup->widgetClient()->setWindowRect(m_popup->m_windowRectInScreen);
     }
 
@@ -127,6 +131,7 @@ private:
 
 WebPagePopupImpl::WebPagePopupImpl(WebWidgetClient* client)
     : m_widgetClient(client)
+    , m_isPutAboveOrigin(false)
 {
     ASSERT(client);
 }
@@ -146,8 +151,10 @@ bool WebPagePopupImpl::init(WebViewImpl* webView, PagePopupClient* popupClient, 
     WebSize rootViewSize = webView->size();
     IntSize popupSize = popupClient->contentSize();
     IntRect popupBoundsInRootView(IntPoint(max(0, originBoundsInRootView.x()), max(0, originBoundsInRootView.maxY())), popupSize);
-    if (popupBoundsInRootView.maxY() > rootViewSize.height)
+    if (popupBoundsInRootView.maxY() > rootViewSize.height) {
         popupBoundsInRootView.setY(max(0, originBoundsInRootView.y() - popupSize.height()));
+        m_isPutAboveOrigin = true;
+    }
     if (popupBoundsInRootView.maxX() > rootViewSize.width)
         popupBoundsInRootView.setX(max(0, rootViewSize.width - popupSize.width()));
     IntRect boundsInScreen = webView->page()->chrome()->rootViewToScreen(popupBoundsInRootView);

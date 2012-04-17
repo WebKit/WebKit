@@ -1,3 +1,28 @@
+2012-04-17  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Calendar Picker: Popup position is wrong when there are
+        no enough space below the target date field
+        https://bugs.webkit.org/show_bug.cgi?id=84007
+
+        Reviewed by Hajime Morita.
+
+        The popup was detached from the origin element because
+        calendarPicker.js resizes its window. To fix this bug, we move the
+        window position vertically when it is resized.
+
+        No new tests. This is not testable in WebKit.
+
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::PagePopupChromeClient::setWindowRect):
+        If this request is just a resize and m_isPutAboveOrigin is true,
+        update the vertical position so that the popup attaches to the
+        origin rectangle.
+        (WebKit::WebPagePopupImpl::WebPagePopupImpl):
+        Initialize m_isPutAboveOrigin with false.
+        (WebKit::WebPagePopupImpl::init): Set m_isPutAboveOrigin true.
+        * src/WebPagePopupImpl.h:
+        (WebPagePopupImpl): Add m_isPutAboveOrigin.
+
 2012-04-16  Kent Tamura  <tkent@chromium.org>
 
         Rename LocalizedNumberICU.h to ICULocale.h
