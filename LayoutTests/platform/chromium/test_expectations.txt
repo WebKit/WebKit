@@ -1172,6 +1172,80 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 // SVG TESTS
 // -----------------------------------------------------------------
 
+// New in WebKit r52559
+BUGCR18116 : svg/custom/global-constructors.html = TEXT
+
+// Probably need to change the test upstream to describe it better and use no
+// hard coded numbers. Or, like most other SVG content we can ignore the
+// platform specific differences and update the expectations if they are
+// reasonable.
+BUGCR19897 LINUX WIN : svg/custom/getscreenctm-in-mixed-content2.xhtml = FAIL
+
+// Failing since creation in http://trac.webkit.org/changeset/75308
+// Failing worse maybe since https://bugs.webkit.org/show_bug.cgi?id=53471
+BUGCR122193 : svg/text/caret-in-svg-text.xhtml = TEXT
+
+// The test needs fixing. Flakiness is common across all Mac platforms, not just chromium.
+BUGWK25817 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TEXT
+
+BUGWK60118 MAC : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
+
+// Introduced due to BUGWK53512, fails under Skia right now
+BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
+
+// Failure: drawing a filled shadow for a fill=transparent rectangle.
+BUGKW76557 : svg/custom/transform-with-shadow-and-gradient.svg = IMAGE
+
+BUGWK78422 WIN LINUX : svg/animations/animate-text-nested-transforms.html = TEXT
+
+BUGWK78830 DEBUG : svg/custom/mask-invalidation.svg = IMAGE PASS
+
+// Failing since added by r108699
+BUGWK79454 LINUX MAC DEBUG : svg/text/text-rescale.html = IMAGE PASS
+BUGWK79454 LINUX MAC : svg/text/text-viewbox-rescale.html = IMAGE PASS
+
+BUGWK79456 DEBUG : svg/repaint/image-with-clip-path.svg = PASS IMAGE
+
+// These require more investigation. There is a small change, probably two pixels, in the filter offset
+// when comparing the former and new results. This may be due to bad test design or may be revealing a bug
+// in the code. Turbulence results are very different.
+BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr.html = IMAGE
+BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr.html = IMAGE
+BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop.html = IMAGE
+BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop.html = IMAGE
+BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html = IMAGE
+BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
+BUGWK80517 DEBUG : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE PASS
+
+// Flakiness dashboard says they're flaky. Possibly related to 82232 or issues with repaint timer in SVGImageCache not firing.
+BUGWK81217 SNOWLEOPARD DEBUG : svg/as-object/embedded-svg-size-changes.html = PASS IMAGE
+BUGWK81217 SNOWLEOPARD DEBUG : svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2.html = PASS IMAGE
+BUGWK81217 SNOWLEOPARD DEBUG : svg/custom/js-late-clipPath-and-object-creation.svg = CRASH PASS
+BUGWK81217 : svg/custom/js-late-gradient-and-object-creation.svg = FAIL PASS
+BUGWK81217 : svg/custom/js-late-pattern-and-object-creation.svg = FAIL PASS
+BUGWK81217 : svg/custom/use-detach.svg = PASS FAIL
+BUGWK81217 : svg/carto.net/window.svg = PASS FAIL
+BUGWK81217 : svg/carto.net/tabgroup.svg = PASS FAIL
+BUGWK81217 : svg/hixie/perf/003.xml = PASS FAIL
+
+BUGWK81240 MAC : svg/text/bidi-reorder-value-lists.svg = PASS IMAGE+TEXT
+
+BUGWK81243 : svg/repaint/repainting-after-animation-element-removal.svg = PASS IMAGE
+
+BUGWK81493 LINUX : svg/custom/js-late-gradient-creation.svg = PASS IMAGE
+
+// Flaky on Linux after http://trac.webkit.org/changeset/112022
+BUGWK82217 LINUX : svg/zoom/text/zoom-foreignObject.svg = IMAGE PASS
+
+// Flaky since at least r111670
+BUGWK82258 DEBUG : svg/custom/circular-marker-reference-4.svg = TEXT PASS
+
+BUGWK82416 : svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml = PASS IMAGE
+
+BUGWK82509 LINUX : svg/text/append-text-node-to-tspan.html = PASS IMAGE
+
+BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
+
 // Flaky on MAC
 BUGWK82911 MAC : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT IMAGE+TEXT IMAGE PASS
 
@@ -1182,23 +1256,42 @@ BUGWK82954 SNOWLEOPARD : svg/W3C-SVG-1.1/text-text-05-t.svg = TEXT PASS
 BUGWK82594 SNOWLEOPARD : svg/text/exs-display-none.svg = IMAGE PASS
 BUGWK82594 SNOWLEOPARD : svg/text/ems-display-none.svg = IMAGE TEXT PASS
 
-// Flaky on Linux after http://trac.webkit.org/changeset/112022
-BUGWK82217 LINUX : svg/zoom/text/zoom-foreignObject.svg = IMAGE PASS
-
 // Failing on Skia platforms
 BUGWK83051 WIN LINUX LION : svg/css/group-with-shadow.svg = IMAGE PASS
+
+BUGWK83183 MAC : svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html = PASS IMAGE
+
+// Appears to be failing on Skia platforms
+BUGWK83199 : svg/filters/big-sized-filter.svg = IMAGE PASS
+
+// Many WIN and Linux SVG tests containing text are flaky. It seems different fonts are used at different times.
+BUGWK83303 WIN LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = PASS IMAGE
+BUGWK83303 WIN LINUX : svg/zoom/page/zoom-hixie-mixed-009.xml = PASS IMAGE
+BUGWK83303 LINUX : svg/hixie/mixed/009.xml = PASS IMAGE
+BUGWK83306 WIN : svg/hixie/mixed/009.xml = IMAGE
+BUGWK83303 LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
+BUGWK83303 WIN LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
+BUGWK83303 LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = PASS IMAGE
+BUGWK83303 WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
+BUGWK83303 WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
+BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container-standalone.svg = IMAGE PASS
+BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container.xhtml = IMAGE PASS
+BUGWK83303 WIN : svg/custom/mouse-move-on-svg-root-standalone.svg = IMAGE PASS
+BUGWK83303 WIN : svg/custom/mouse-move-on-svg-root.xhtml = IMAGE PASS
+BUGWK83303 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE PASS
 
 // This fails image 5-10% of the time. Probably a race condition on timers.
 BUGWK83471 : svg/as-image/animated-svg-as-image-same-image.html = PASS IMAGE
 
-// Probably need to change the test upstream to describe it better and use no
-// hard coded numbers. Or, like most other SVG content we can ignore the
-// platform specific differences and update the expectations if they are
-// reasonable.
-BUGCR19897 LINUX WIN : svg/custom/getscreenctm-in-mixed-content2.xhtml = FAIL
+BUGWK83717 MAC : svg/W3C-SVG-1.1/masking-mask-01-b.svg = IMAGE PASS
+BUGWK83717 MAC : svg/as-border-image/svg-as-border-image-2.html = IMAGE PASS
+BUGWK83717 MAC : svg/as-border-image/svg-as-border-image.html = IMAGE PASS
+BUGWK83717 LEOPARD : svg/custom/foreign-object-skew.svg = IMAGE
+
+BUGWK83875 LINUX : svg/text/font-size-below-point-five.svg = PASS TEXT
 
 // -----------------------------------------------------------------
-// End SVG Regressions
+// End SVG TESTS
 // -----------------------------------------------------------------
 
 BUGCR10295 MAC : fast/dom/prototype-chain.html = FAIL
@@ -1599,8 +1692,6 @@ BUGCR15267 LINUX WIN : transitions/cancel-transition.html = PASS FAIL
 // New tests with WebKit merge 46288:46363
 BUGCR18116 : fast/dom/constructed-objects-prototypes.html = TEXT
 BUGCR18116 : fast/dom/prototype-inheritance-2.html = TEXT
-// New in WebKit r52559
-BUGCR18116 : svg/custom/global-constructors.html = TEXT
 
 // Test failures from WebKit merge 46894 to 46977
 BUGCR26737 : fast/js/prototypes.html = FAIL
@@ -2326,10 +2417,6 @@ BUGWK52061 DEBUG : transitions/change-values-during-transition.html = PASS TEXT
 BUGWK52061 DEBUG : transitions/interrupted-accelerated-transition.html = PASS TEXT
 BUGWK52061 DEBUG : transitions/transition-timing-function.html = PASS TEXT
 
-// Failing since creation in http://trac.webkit.org/changeset/75308
-// Failing worse maybe since https://bugs.webkit.org/show_bug.cgi?id=53471
-BUGCR122193 : svg/text/caret-in-svg-text.xhtml = TEXT
-
 // V8 test failures introduced by r75408
 BUGCR69181 LINUX WIN DEBUG : fast/js/large-expressions.html = TIMEOUT TEXT
 
@@ -2437,10 +2524,6 @@ BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = TEXT
 
 BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
-
-BUGWK81240 MAC : svg/text/bidi-reorder-value-lists.svg = PASS IMAGE+TEXT
-
-BUGWK81243 : svg/repaint/repainting-after-animation-element-removal.svg = PASS IMAGE
 
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 LINUX WIN : fast/writing-mode/text-orientation-basic.html = IMAGE+TEXT
@@ -2610,8 +2693,6 @@ BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
 
 BUGWK56702 WIN DEBUG : http/tests/navigation/ping-cross-origin-from-https.html = PASS TIMEOUT
 
-BUGWK60118 MAC : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
-
 // broke in r84742 - just needs a new baseline?
 BUGWK60121 : http/tests/misc/will-send-request-returns-null-on-redirect.html = TEXT
 
@@ -2688,11 +2769,6 @@ BUGCR83290 WIN : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS T
 BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = PASS CRASH
 BUGCR83325 MAC DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.put.created.html = PASS CRASH
 
-BUGWK83717 MAC : svg/W3C-SVG-1.1/masking-mask-01-b.svg = IMAGE PASS
-BUGWK83717 MAC : svg/as-border-image/svg-as-border-image-2.html = IMAGE PASS
-BUGWK83717 MAC : svg/as-border-image/svg-as-border-image.html = IMAGE PASS
-BUGWK83717 LEOPARD : svg/custom/foreign-object-skew.svg = IMAGE
-
 BUGCR83499 : fast/box-shadow/scaled-box-shadow.html = PASS IMAGE+TEXT IMAGE
 BUGCR83499 : fast/box-shadow/box-shadow-transformed.html = PASS IMAGE+TEXT IMAGE
 
@@ -2718,8 +2794,6 @@ BUGCR84157 WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.h
 BUGWK62255 LEOPARD DEBUG : animations/animation-iteration-event-destroy-renderer.html = PASS TIMEOUT
 
 BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = PASS TEXT
-
-BUGWK83875 LINUX : svg/text/font-size-below-point-five.svg = PASS TEXT
 
 BUGWK81310 : fast/dom/shadow/content-element-in-media-element.html = TEXT
 
@@ -2888,21 +2962,6 @@ BUGWK62684 WIN LINUX : fast/ruby/overhang-horizontal.html = FAIL
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
-// Many WIN and Linux SVG tests containing text are flaky. It seems different fonts are used at different times.
-BUGWK83303 WIN LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = PASS IMAGE
-BUGWK83303 WIN LINUX : svg/zoom/page/zoom-hixie-mixed-009.xml = PASS IMAGE
-BUGWK83303 LINUX : svg/hixie/mixed/009.xml = PASS IMAGE
-BUGWK83306 WIN : svg/hixie/mixed/009.xml = IMAGE
-BUGWK83303 LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
-BUGWK83303 WIN LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
-BUGWK83303 LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = PASS IMAGE
-BUGWK83303 WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
-BUGWK83303 WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
-BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container-standalone.svg = IMAGE PASS
-BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container.xhtml = IMAGE PASS
-BUGWK83303 WIN : svg/custom/mouse-move-on-svg-root-standalone.svg = IMAGE PASS
-BUGWK83303 WIN : svg/custom/mouse-move-on-svg-root.xhtml = IMAGE PASS
-
 BUGCR102677 MAC DEBUG : fast/reflections/reflection-masks-outset.html = CRASH PASS
 
 // Failing after r94946
@@ -3046,9 +3105,6 @@ BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 
 BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 
-// Introduced due to BUGWK53512, fails under Skia right now
-BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
-
 BUGRICOW : fast/js/array-functions-non-arrays.html = TEXT
 BUGRICOW : fast/js/eval-cross-window.html = TEXT
 BUGRICOW : fast/js/toString-overrides.html = TEXT
@@ -3098,9 +3154,6 @@ BUGWK73514 WIN : platform/chromium/compositing/lost-compositor-context-permanent
 
 BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overloads-strokeText.html = PASS CRASH
 BUGWK73607 LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = PASS CRASH
-
-// Appears to be failing on Skia platforms
-BUGWK83199 : svg/filters/big-sized-filter.svg = IMAGE PASS
 
 BUGWK73692 : media/event-attributes.html = TEXT PASS
 
@@ -3176,12 +3229,6 @@ BUGWK76488 : css3/images/cross-fade-background-size.html = IMAGE IMAGE+TEXT
 
 BUGWK81542 SNOWLEOPARD : css3/images/cross-fade-invalidation.html = IMAGE PASS
 
-// Failure: drawing a filled shadow for a fill=transparent rectangle.
-BUGKW76557 : svg/custom/transform-with-shadow-and-gradient.svg = IMAGE
-
-// The test needs fixing. Flakiness is common across all Mac platforms, not just chromium.
-BUGWK25817 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TEXT
-
 // rebaseline when skia 3398 lands
 BUGEPOGER : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
 
@@ -3220,25 +3267,10 @@ BUGWK78159 DEBUG WIN MAC LINUX : compositing/iframes/scrolling-iframe.html = PAS
 
 BUGWK78175 LEOPARD SNOWLEOPARD : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
 
-BUGWK78422 WIN LINUX : svg/animations/animate-text-nested-transforms.html = TEXT
-
 BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
-
-BUGWK78830 DEBUG : svg/custom/mask-invalidation.svg = IMAGE PASS
 
 // Tests Error.stack behavior. We aren't consistent with JSC and do not intend to become so.
 WONTFIX : fast/js/stack-trace.html = TEXT
-
-// These require more investigation. There is a small change, probably two pixels, in the filter offset
-// when comparing the former and new results. This may be due to bad test design or may be revealing a bug
-// in the code. Turbulence results are very different.
-BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr.html = IMAGE
-BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr.html = IMAGE
-BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop.html = IMAGE
-BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop.html = IMAGE
-BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html = IMAGE
-BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
-BUGWK80517 DEBUG : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE PASS
 
 BUGWK69210 LEOPARD SNOWLEOPARD : fast/inline/continuation-outlines-with-layers-2.html = TEXT
 BUGWK69210 MAC : fast/inline/continuation-outlines-with-layers.html = IMAGE+TEXT
@@ -3256,23 +3288,6 @@ BUGCR115073 SLOW LINUX DEBUG : inspector/debugger/script-formatter-breakpoints.h
 
 BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 BUGWK79224 VISTA WIN7 : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
-
-// Flakiness dashboard says they're flaky. Possibly related to 82232 or issues with repaint timer in SVGImageCache not firing.
-BUGWK81217 SNOWLEOPARD DEBUG : svg/as-object/embedded-svg-size-changes.html = PASS IMAGE
-BUGWK81217 SNOWLEOPARD DEBUG : svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2.html = PASS IMAGE
-BUGWK81217 SNOWLEOPARD DEBUG : svg/custom/js-late-clipPath-and-object-creation.svg = CRASH PASS
-BUGWK81217 : svg/custom/js-late-gradient-and-object-creation.svg = FAIL PASS
-BUGWK81217 : svg/custom/js-late-pattern-and-object-creation.svg = FAIL PASS
-BUGWK81217 : svg/custom/use-detach.svg = PASS FAIL
-BUGWK81217 : svg/carto.net/window.svg = PASS FAIL
-BUGWK81217 : svg/carto.net/tabgroup.svg = PASS FAIL
-BUGWK81217 : svg/hixie/perf/003.xml = PASS FAIL
-
-// Failing since added by r108699
-BUGWK79454 LINUX MAC DEBUG : svg/text/text-rescale.html = IMAGE PASS
-BUGWK79454 LINUX MAC : svg/text/text-viewbox-rescale.html = IMAGE PASS
-
-BUGWK79456 DEBUG : svg/repaint/image-with-clip-path.svg = PASS IMAGE
 
 BUGWK79540 : fast/files/workers/worker-apply-blob-url-to-xhr.html = PASS CRASH
 BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-async.html = PASS CRASH
@@ -3403,8 +3418,6 @@ BUGWK81145 LION : fast/events/scrollbar-double-click.html = TEXT
 BUGYANGGUO MAC : fast/repaint/moving-shadow-on-container.html = TEXT
 BUGYANGGUO WIN : fast/repaint/moving-shadow-on-container.html = TEXT
 BUGYANGGUO WIN : fast/repaint/moving-shadow-on-path.html = TEXT
-
-BUGWK81493 LINUX : svg/custom/js-late-gradient-creation.svg = PASS IMAGE
 
 BUGWK77368 WIN : css3/flexbox/child-overflow.html = IMAGE
 
@@ -3590,14 +3603,9 @@ BUGWK82122 LEOPARD SNOWLEOPARD : css3/selectors3/xml/css3-modsel-d4.xml = FAIL P
 BUGWK80531 WIN : fast/table/colspanMinWidth-vertical.html = IMAGE
 BUGWK80531 MAC : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 
-BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
-
 // Flaky/crashing on a single platform every 30 tries or so
 BUGWK82230 LINUX DEBUG : http/tests/cache/post-redirect-get.php = PASS CRASH
 BUGWK82231 WIN DEBUG : fast/canvas/webgl/program-test.html = PASS CRASH
-
-// Flaky since at least r111670
-BUGWK82258 DEBUG : svg/custom/circular-marker-reference-4.svg = TEXT PASS
 
 BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-x-in-scrolling-page.html = TEXT PASS
 BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html = TEXT PASS
@@ -3618,16 +3626,12 @@ BUGWK82410 : css2.1/20110323/abspos-containing-block-initial-004d.htm = PASS IMA
 
 BUGWK82415 : transforms/no_transform_hit_testing.html = PASS IMAGE
 
-BUGWK82416 : svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml = PASS IMAGE
-
 BUGWK82413 LINUX : fast/filesystem/workers/async-operations.html = PASS TIMEOUT
 BUGWK82413 MAC DEBUG : fast/filesystem/workers/async-operations.html = PASS TIMEOUT
 
 BUGWK82417 LINUX SLOW : fast/frames/set-unloaded-frame-location.html = PASS
 
 BUGWK82507 LEOPARD SNOWLEOPARD DEBUG : media/W3C/video/events/event_order_canplay_canplaythrough.html = PASS CRASH
-
-BUGWK82509 LINUX : svg/text/append-text-node-to-tspan.html = PASS IMAGE
 
 BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = PASS IMAGE
 
@@ -3680,7 +3684,6 @@ BUGWK82994 : compositing/reflections/backface-hidden-reflection.html = PASS CRAS
 
 BUGWK83019 WIN DEBUG : compositing/reflections/nested-reflection-transformed2.html = PASS CRASH
 
-BUGWK83183 MAC : svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html = PASS IMAGE
 BUGWK83185 MAC DEBUG : fast/writing-mode/relative-positioning-percentages.html = CRASH
 BUGWK83219 LION : fonts/cursive.html = PASS IMAGE+TEXT
 BUGWK83324 WIN DEBUG : fast/js/cross-global-object-inline-global-var.html = PASS TEXT
