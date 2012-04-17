@@ -1698,6 +1698,22 @@ String HTMLMediaElement::mediaPlayerSourceURL() const
 {
     return m_mediaSourceURL.string();
 }
+
+bool HTMLMediaElement::isValidSourceId(const String& id, ExceptionCode& ec) const
+{
+    if (id.isNull() || id.isEmpty()) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    if (!m_sourceIDs.contains(id)) {
+        ec = SYNTAX_ERR;
+        return false;
+    }
+
+    return true;
+}
+
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -2285,6 +2301,59 @@ void HTMLMediaElement::pauseInternal()
 }
 
 #if ENABLE(MEDIA_SOURCE)
+void HTMLMediaElement::webkitSourceAddId(const String& id, const String& type, ExceptionCode& ec)
+{
+    if (id.isNull() || id.isEmpty()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (m_sourceIDs.contains(id)) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (type.isNull() || type.isEmpty()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (!m_player || m_currentSrc != m_mediaSourceURL || m_sourceState != SOURCE_OPEN) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    switch (m_player->sourceAddId(id, type)) {
+    case MediaPlayer::Ok:
+        m_sourceIDs.add(id);
+        return;
+    case MediaPlayer::NotSupported:
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    case MediaPlayer::ReachedIdLimit:
+        ec = QUOTA_EXCEEDED_ERR;
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+void HTMLMediaElement::webkitSourceRemoveId(const String& id, ExceptionCode& ec)
+{
+    if (!isValidSourceId(id, ec))
+        return;
+
+    if (!m_player || m_currentSrc != m_mediaSourceURL || m_sourceState == SOURCE_CLOSED) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (!m_player->sourceRemoveId(id))
+        ASSERT_NOT_REACHED();
+
+    m_sourceIDs.remove(id);
+}
+
 void HTMLMediaElement::webkitSourceAppend(PassRefPtr<Uint8Array> data, ExceptionCode& ec)
 {
     if (!m_player || m_currentSrc != m_mediaSourceURL || m_sourceState != SOURCE_OPEN) {
@@ -2340,6 +2409,7 @@ void HTMLMediaElement::setSourceState(SourceState state)
         return;
 
     if (m_sourceState == SOURCE_CLOSED) {
+        m_sourceIDs.clear();
         scheduleEvent(eventNames().webkitsourcecloseEvent);
         return;
     }

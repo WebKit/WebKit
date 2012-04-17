@@ -149,6 +149,8 @@ public:
     virtual bool hasSingleSecurityOrigin() const { return true; }
 
 #if ENABLE(MEDIA_SOURCE)
+    virtual MediaPlayer::AddIdStatus sourceAddId(const String& id, const String& type) { return MediaPlayer::NotSupported; }
+    virtual bool sourceRemoveId(const String& id) { return false; }
     virtual bool sourceAppend(const unsigned char*, unsigned) { return false; }
     virtual void sourceEndOfStream(MediaPlayer::EndOfStreamStatus status) { }
 #endif
@@ -456,6 +458,17 @@ void MediaPlayer::pause()
 }
 
 #if ENABLE(MEDIA_SOURCE)
+
+MediaPlayer::AddIdStatus MediaPlayer::sourceAddId(const String& id, const String& type)
+{
+    return m_private->sourceAddId(id, type);
+}
+
+bool MediaPlayer::sourceRemoveId(const String& id)
+{
+    return m_private->sourceRemoveId(id);
+}
+
 bool MediaPlayer::sourceAppend(const unsigned char* data, unsigned length)
 {
     return m_private->sourceAppend(data, length);

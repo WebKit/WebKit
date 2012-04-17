@@ -34,6 +34,7 @@
 #include "WebTimeRange.h"
 #include "WebVideoFrame.h"
 #include "platform/WebCanvas.h"
+#include "platform/WebString.h"
 
 namespace WebKit {
 
@@ -96,6 +97,12 @@ public:
         None = PreloadNone,
         MetaData = PreloadMetaData,
         Auto = PreloadAuto,
+    };
+
+    enum AddIdStatus {
+        AddIdStatusOk,
+        AddIdStatusNotSupported,
+        AddIdStatusReachedIdLimit
     };
 
     enum EndOfStreamStatus {
@@ -191,6 +198,8 @@ public:
 
     virtual WebAudioSourceProvider* audioSourceProvider() { return 0; }
 
+    virtual AddIdStatus sourceAddId(const WebString& id, const WebString& type) { return AddIdStatusNotSupported; }
+    virtual bool sourceRemoveId(const WebString& id) { return false; }
     virtual bool sourceAppend(const unsigned char* data, unsigned length) { return false; }
     virtual void sourceEndOfStream(EndOfStreamStatus)  { }
 

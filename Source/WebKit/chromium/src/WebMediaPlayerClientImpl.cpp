@@ -340,6 +340,22 @@ void WebMediaPlayerClientImpl::pause()
 }
 
 #if ENABLE(MEDIA_SOURCE)
+WebCore::MediaPlayer::AddIdStatus WebMediaPlayerClientImpl::sourceAddId(const String& id, const String& type)
+{
+    if (!m_webMediaPlayer)
+        return WebCore::MediaPlayer::NotSupported;
+
+    return static_cast<WebCore::MediaPlayer::AddIdStatus>(m_webMediaPlayer->sourceAddId(id, type));
+}
+
+bool WebMediaPlayerClientImpl::sourceRemoveId(const String& id)
+{
+    if (!m_webMediaPlayer)
+        return false;
+
+    return m_webMediaPlayer->sourceRemoveId(id);
+}
+
 bool WebMediaPlayerClientImpl::sourceAppend(const unsigned char* data, unsigned length)
 {
     if (m_webMediaPlayer)

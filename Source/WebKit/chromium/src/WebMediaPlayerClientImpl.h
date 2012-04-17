@@ -149,6 +149,8 @@ public:
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
+    virtual WebCore::MediaPlayer::AddIdStatus sourceAddId(const String& id, const String& type);
+    virtual bool sourceRemoveId(const String&);
     virtual bool sourceAppend(const unsigned char* data, unsigned length);
     virtual void sourceEndOfStream(WebCore::MediaPlayer::EndOfStreamStatus);
 #endif

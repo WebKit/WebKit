@@ -229,6 +229,9 @@ public:
     void pause();    
 
 #if ENABLE(MEDIA_SOURCE)
+    enum AddIdStatus { Ok, NotSupported, ReachedIdLimit };
+    AddIdStatus sourceAddId(const String& id, const String& type);
+    bool sourceRemoveId(const String& id);
     bool sourceAppend(const unsigned char* data, unsigned length);
     enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
     void sourceEndOfStream(EndOfStreamStatus);

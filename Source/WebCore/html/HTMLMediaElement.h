@@ -172,6 +172,8 @@ public:
 #if ENABLE(MEDIA_SOURCE)
 //  Media Source.
     const KURL& webkitMediaSourceURL() const { return m_mediaSourceURL; }
+    void webkitSourceAddId(const String&, const String&, ExceptionCode&);
+    void webkitSourceRemoveId(const String&, ExceptionCode&);
     void webkitSourceAppend(PassRefPtr<Uint8Array> data, ExceptionCode&);
     enum EndOfStreamStatus { EOS_NO_ERROR, EOS_NETWORK_ERR, EOS_DECODE_ERR };
     void webkitSourceEndOfStream(unsigned short, ExceptionCode&);
@@ -407,6 +409,7 @@ private:
 #if ENABLE(MEDIA_SOURCE)
     virtual void mediaPlayerSourceOpened();
     virtual String mediaPlayerSourceURL() const;
+    bool isValidSourceId(const String&, ExceptionCode&) const;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -577,6 +580,7 @@ private:
 #if ENABLE(MEDIA_SOURCE)
     KURL m_mediaSourceURL;
     SourceState m_sourceState;
+    HashSet<String> m_sourceIDs;
 #endif
 
     mutable float m_cachedTime;

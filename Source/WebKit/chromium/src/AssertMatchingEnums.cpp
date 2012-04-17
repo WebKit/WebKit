@@ -402,6 +402,12 @@ COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::PreloadNone, MediaPlayer::None);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::PreloadMetaData, MediaPlayer::MetaData);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::PreloadAuto, MediaPlayer::Auto);
 
+#if ENABLE(MEDIA_SOURCE)
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::AddIdStatusOk, MediaPlayer::Ok);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::AddIdStatusNotSupported, MediaPlayer::NotSupported);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::AddIdStatusReachedIdLimit, MediaPlayer::ReachedIdLimit);
+#endif
+
 #if ENABLE(ENCRYPTED_MEDIA)
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::EndOfStreamStatusNoError, MediaPlayer::EosNoError);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::EndOfStreamStatusNetworkError, MediaPlayer::EosNetworkError);

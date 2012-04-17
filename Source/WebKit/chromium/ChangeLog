@@ -1,3 +1,24 @@
+2012-04-17  Aaron Colwell  <acolwell@chromium.org>
+
+        Add sourceAddId() & sourceRemoveId() stubs for Chromium.
+        These are needed to bring the Media Source implementation 
+        up to date with the new 0.4 version of the Media Source spec.
+        http://html5-mediasource-api.googlecode.com/svn/tags/0.4/draft-spec/mediasource-draft-spec.html
+        https://bugs.webkit.org/show_bug.cgi?id=83616
+
+        Reviewed by Eric Carlson, Darin Fisher.
+
+        * public/WebMediaPlayer.h:
+        (WebKit::WebMediaPlayer::sourceAddId):
+        (WebKit::WebMediaPlayer::sourceRemoveId):
+        * src/AssertMatchingEnums.cpp:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::sourceAddId):
+        (WebKit):
+        (WebKit::WebMediaPlayerClientImpl::sourceRemoveId):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+
 2012-04-17  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Calendar Picker: Popup position is wrong when there are
