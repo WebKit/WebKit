@@ -36,7 +36,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#if PLATFORM(CHROMIUM) || PLATFORM(MAC)
+#if (PLATFORM(CHROMIUM) && !OS(WINDOWS)) || PLATFORM(MAC)
 #define ARE_SIZE_T_UNSIGNED_DIFFERENT_UNIT
 #endif
 
