@@ -1683,6 +1683,9 @@ BUGCR11251 LINUX WIN : fast/forms/textarea-metrics.html = FAIL
 // WebKit 45017:45086
 BUGCR15217 : fast/js/dictionary-no-cache.html = FAIL
 
+// Rebaseline when skia 3695 lands
+BUGCR123809 : fast/borders/border-radius-groove-02.html = IMAGE
+
 // WebKit 45086:45111
 BUGCR15270 LINUX MAC RELEASE : fast/js/excessive-comma-usage.html = TEXT
 BUGCR15270 LINUX MAC DEBUG : fast/js/excessive-comma-usage.html = CRASH TIMEOUT FAIL
