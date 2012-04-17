@@ -137,7 +137,7 @@ void StyleRuleImport::requestStyleSheet()
     StyleSheetInternal* rootSheet = m_parentStyleSheet;
     for (StyleSheetInternal* sheet = m_parentStyleSheet; sheet; sheet = sheet->parentStyleSheet()) {
         // FIXME: This is wrong if the finalURL was updated via document::updateBaseURL.
-        if (absHref == sheet->finalURL().string())
+        if (absHref == sheet->finalURL().string() || absHref == sheet->originalURL())
             return;
         rootSheet = sheet;
     }
