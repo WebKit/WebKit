@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LocalizedNumberICU_h
-#define LocalizedNumberICU_h
+#ifndef ICULocale_h
+#define ICULocale_h
 
 #include <unicode/unum.h>
 #include <wtf/Forward.h>

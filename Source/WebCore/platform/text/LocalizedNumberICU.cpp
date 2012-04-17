@@ -29,8 +29,8 @@
  */
 
 #include "config.h"
-#include "LocalizedNumberICU.h"
 
+#include "ICULocale.h"
 #include "LocalizedNumber.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>

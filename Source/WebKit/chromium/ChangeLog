@@ -1,3 +1,12 @@
+2012-04-16  Kent Tamura  <tkent@chromium.org>
+
+        Rename LocalizedNumberICU.h to ICULocale.h
+        https://bugs.webkit.org/show_bug.cgi?id=84119
+
+        Reviewed by Kentaro Hara.
+
+        * tests/LocalizedNumberICUTest.cpp: Rename LocalizedNumberICU.h to ICULocale.h
+
 2012-04-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Expose compositor filters to Aura through WebLayer
