@@ -1,3 +1,34 @@
+2012-04-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] DRT should support LayoutTestController's dumpFrameLoadCallbacks()
+        https://bugs.webkit.org/show_bug.cgi?id=83030
+
+        Reviewed by Antonio Gomes.
+
+        Implement support for LayoutTestController's dumpFrameLoadCallbacks()
+        in EFL's DumpRenderTree. We no longer emit the "load,finished" signal
+        from postProgressFinishedNotification() since it is already emitted
+        from dispatchDidFinishLoad(). This avoids unwanted extra signals we
+        prevent some tests from passing (e.g.
+        http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html).
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientEfl::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientEfl::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientEfl::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientEfl::dispatchDidFailLoad):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        (FrameLoaderClientEfl):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_load_committed):
+        * ewk/ewk_frame.h:
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (ewk_view_onload_event):
+        * ewk/ewk_view.h:
+
 2012-04-17  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
 
         [EFL][WK2] Fix build break when CONTEXT_MENUS is disabled.

@@ -212,8 +212,6 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     String m_userAgent;
     String m_customUserAgent;
 
-    ResourceError m_loadError;
-
     // Plugin view to redirect data to
     PluginView* m_pluginView;
     bool m_hasSentResponseToPlugin;

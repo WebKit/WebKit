@@ -90,12 +90,21 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     ewk_view_theme_set(view, DATA_DIR"/default.edj");
 
     evas_object_smart_callback_add(view, "load,started", onLoadStarted, 0);
-    evas_object_smart_callback_add(view, "load,finished", onLoadFinished, 0);
     evas_object_smart_callback_add(view, "title,changed", onTitleChanged, 0);
     evas_object_smart_callback_add(view, "window,object,cleared", onWindowObjectCleared, m_gcController.get());
     evas_object_smart_callback_add(view, "statusbar,text,set", onStatusbarTextSet, 0);
     evas_object_smart_callback_add(view, "load,document,finished", onDocumentLoadFinished, 0);
     evas_object_smart_callback_add(view, "resource,request,willsend", onWillSendRequest, 0);
+    evas_object_smart_callback_add(view, "onload,event", onWebViewOnloadEvent, 0);
+    evas_object_smart_callback_add(view, "mixedcontent,run", onInsecureContentRun, 0);
+    evas_object_smart_callback_add(view, "mixedcontent,displayed", onInsecureContentDisplayed, 0);
+    evas_object_smart_callback_add(view, "frame,created", onFrameCreated, 0);
+
+    Evas_Object* mainFrame = ewk_view_frame_main_get(view);
+    evas_object_smart_callback_add(mainFrame, "load,provisional", onFrameProvisionalLoad, 0);
+    evas_object_smart_callback_add(mainFrame, "load,committed", onFrameLoadCommitted, 0);
+    evas_object_smart_callback_add(mainFrame, "load,finished", onFrameLoadFinished, 0);
+    evas_object_smart_callback_add(mainFrame, "load,error", onFrameLoadError, 0);
 
     return view;
 }
@@ -231,24 +240,16 @@ void DumpRenderTreeChrome::onLoadStarted(void*, Evas_Object* view, void*)
         topLoadingFrame = frame;
 }
 
-Eina_Bool DumpRenderTreeChrome::processWork(void* data)
+Eina_Bool DumpRenderTreeChrome::processWork(void*)
 {
-    Evas_Object* frame = static_cast<Evas_Object*>(data);
-
     if (WorkQueue::shared()->processWork() && !gLayoutTestController->waitToDump())
         dump();
 
     return ECORE_CALLBACK_CANCEL;
 }
 
-void DumpRenderTreeChrome::onLoadFinished(void*, Evas_Object* view, void*)
+void DumpRenderTreeChrome::topLoadingFrameLoadFinished()
 {
-    // FIXME: we actually need the frame related to this event
-    Evas_Object* frame = ewk_view_frame_main_get(view);
-
-    if (topLoadingFrame != frame)
-        return;
-
     topLoadingFrame = 0;
 
     WorkQueue::shared()->setFrozen(true);
@@ -256,7 +257,7 @@ void DumpRenderTreeChrome::onLoadFinished(void*, Evas_Object* view, void*)
         return;
 
     if (WorkQueue::shared()->count())
-        ecore_idler_add(processWork, frame);
+        ecore_idler_add(processWork, 0 /*frame*/);
     else
         dump();
 }
@@ -313,4 +314,82 @@ void DumpRenderTreeChrome::onWillSendRequest(void*, Evas_Object*, void* eventInf
         printf("Blocked access to external URL %s\n", request->url);
         request->url = 0;
     }
+}
+
+void DumpRenderTreeChrome::onWebViewOnloadEvent(void*, Evas_Object*, void* eventInfo)
+{
+    const Evas_Object* frame = static_cast<Evas_Object*>(eventInfo);
+
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+        const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
+        printf("%s - didHandleOnloadEventsForFrame\n", frameName.utf8().data());
+    }
+}
+
+void DumpRenderTreeChrome::onInsecureContentRun(void*, Evas_Object*, void*)
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
+        printf("didRunInsecureContent\n");
+}
+
+void DumpRenderTreeChrome::onInsecureContentDisplayed(void*, Evas_Object*, void*)
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
+        printf("didDisplayInsecureContent\n");
+}
+
+void DumpRenderTreeChrome::onFrameCreated(void*, Evas_Object*, void* eventInfo)
+{
+    Evas_Object* frame = static_cast<Evas_Object*>(eventInfo);
+
+    evas_object_smart_callback_add(frame, "load,provisional", onFrameProvisionalLoad, 0);
+    evas_object_smart_callback_add(frame, "load,committed", onFrameLoadCommitted, 0);
+    evas_object_smart_callback_add(frame, "load,finished", onFrameLoadFinished, 0);
+    evas_object_smart_callback_add(frame, "load,error", onFrameLoadError, 0);
+}
+
+void DumpRenderTreeChrome::onFrameProvisionalLoad(void*, Evas_Object* frame, void*)
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+        const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
+        printf("%s - didStartProvisionalLoadForFrame\n", frameName.utf8().data());
+    }
+}
+
+void DumpRenderTreeChrome::onFrameLoadCommitted(void*, Evas_Object* frame, void*)
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+        const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
+        printf("%s - didCommitLoadForFrame\n", frameName.utf8().data());
+    }
+}
+
+void DumpRenderTreeChrome::onFrameLoadFinished(void*, Evas_Object* frame, void* eventInfo)
+{
+    const Ewk_Frame_Load_Error* error = static_cast<Ewk_Frame_Load_Error*>(eventInfo);
+
+    // EFL port emits both "load,finished" and "load,error" signals in error case.
+    // Error case is therefore already handled in onFrameLoadError() and we don't need
+    // to handle it here.
+    if (error)
+        return;
+
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+        const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
+        printf("%s - didFinishLoadForFrame\n", frameName.utf8().data());
+    }
+
+    if (frame == topLoadingFrame)
+        topLoadingFrameLoadFinished();
+}
+
+void DumpRenderTreeChrome::onFrameLoadError(void*, Evas_Object* frame, void*)
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+        const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
+        printf("%s - didFailLoadWithError\n", frameName.utf8().data());
+    }
+
+    if (frame == topLoadingFrame)
+        topLoadingFrameLoadFinished();
 }

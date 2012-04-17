@@ -1261,6 +1261,17 @@ void ewk_frame_view_state_save(Evas_Object* ewkFrame, WebCore::HistoryItem* item
 
 /**
  * @internal
+ * Reports the frame committed load.
+ *
+ * Emits signal: "load,committed" with no parameters.
+ */
+void ewk_frame_load_committed(Evas_Object* ewkFrame)
+{
+    evas_object_smart_callback_call(ewkFrame, "load,committed", 0);
+}
+
+/**
+ * @internal
  * Reports the frame started loading something.
  *
  * Emits signal: "load,started" with no parameters.
