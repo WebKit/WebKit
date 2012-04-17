@@ -1,3 +1,14 @@
+2012-04-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: the fix for test after massive rename in r114271.
+        https://bugs.webkit.org/show_bug.cgi?id=84147
+
+        Drive by fix. The test was renamed to heap-snapshot.html
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/heap-snapshot.html: Renamed from PerformanceTests/inspector/detailed-heapshots-smoke-test.html.
+
 2012-04-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: rename heap profiler files and classes DetailedHeapshot* ->HeapSnapshot*
