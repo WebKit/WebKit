@@ -381,13 +381,8 @@ def parse_args(args=None):
         optparse.make_option("--child-processes",
             help="Number of DumpRenderTrees to run in parallel."),
         # FIXME: Display default number of child processes that will run.
-        optparse.make_option("-f", "--experimental-fully-parallel",
-            action="store_true",
+        optparse.make_option("-f", "--fully-parallel", action="store_true",
             help="run all tests in parallel"),
-        optparse.make_option("--no-experimental-fully-parallel",
-            action="store_false",
-            dest="experimental_fully_parallel",
-            help="do not run all tests in parallel"),
         optparse.make_option("--exit-after-n-failures", type="int", default=500,
             help="Exit after the first N failures instead of running all "
             "tests"),

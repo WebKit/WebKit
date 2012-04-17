@@ -733,7 +733,7 @@ class Manager(object):
         thread_timings = []
 
         self._printer.print_update('Sharding tests ...')
-        locked_shards, unlocked_shards = self._shard_tests(file_list, int(self._options.child_processes), self._options.experimental_fully_parallel)
+        locked_shards, unlocked_shards = self._shard_tests(file_list, int(self._options.child_processes), self._options.fully_parallel)
 
         # FIXME: We don't have a good way to coordinate the workers so that
         # they don't try to run the shards that need a lock if we don't actually
