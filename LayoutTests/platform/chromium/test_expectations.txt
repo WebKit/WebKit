@@ -1586,8 +1586,6 @@ BUGCR104128 WIN LINUX SNOWLEOPARD : fast/text/shadow-translucent-fill.html = IMA
 BUGCR104128 : fast/text/stroking-decorations.html = IMAGE
 BUGCR104128 WIN LINUX SNOWLEOPARD : fast/text/stroking.html = IMAGE
 BUGCR104128 : fast/writing-mode/english-lr-text.html = IMAGE
-BUGCR104128 : svg/css/shadow-with-large-radius.svg = IMAGE
-BUGCR104128 : svg/css/shadow-with-negative-offset.svg = IMAGE
 BUGCR104128 : transitions/svg-text-shadow-transition.html = IMAGE
 
 // We could fix this test for us and upstream it if the test shell user agent
