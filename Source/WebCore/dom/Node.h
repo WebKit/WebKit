@@ -90,7 +90,7 @@ class HTMLPropertiesCollection;
 
 typedef int ExceptionCode;
 
-const int nodeStyleChangeShift = 21;
+const int nodeStyleChangeShift = 17;
 
 // SyntheticStyleChange means that we need to go through the entire style change logic even though
 // no style property has actually changed. It is used to restructure the tree when, for instance,
@@ -200,21 +200,20 @@ public:
     virtual bool isActiveNode() const { return false; }
     
     // Other methods (not part of DOM)
-
-    bool isElementNode() const { return getFlag(IsElementFlag); }
-    bool isContainerNode() const { return getFlag(IsContainerFlag); }
-    bool isTextNode() const { return getFlag(IsTextFlag); }
-    bool isHTMLElement() const { return getFlag(IsHTMLFlag); }
-    bool isSVGElement() const { return getFlag(IsSVGFlag); }
+    bool isContainerNode() const;
+    bool isElementNode() const;
+    bool isStyledElement() const;
+    bool isTextNode() const;
+    bool isHTMLElement() const;
+    bool isSVGElement() const;
+    bool isShadowRoot() const;
 
     virtual bool isMediaControlElement() const { return false; }
     virtual bool isMediaControls() const { return false; }
-    bool isStyledElement() const { return getFlag(IsStyledElementFlag); }
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isAttributeNode() const { return false; }
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
-    bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
     bool inNamedFlow() const { return getFlag(InNamedFlowFlag); }
 
     Node* shadowAncestorNode() const;
@@ -629,72 +628,79 @@ public:
     bool hasScopedHTMLStyleChild() const;
     size_t numberOfScopedHTMLStyleChildren() const;
 
+    enum NodeTypeTag {
+        TypeTagOther = 0, // Node subclasses other than listed below.
+        TypeTagText, // Text
+        TypeTagContainerNode, // ContainerNode subclasses other than Element and ShadowRoot.
+        TypeTagElement, // Non-Styled Element
+        TypeTagStyledElement, // StyledElement other than HTML and SVG (For now MathMLElement family is the only one.)
+        TypeTagHTMLElement, // HTMLElement
+        TypeTagSVGElement, // SVGElement
+        TypeTagShadowRoot, // ShadowRoot
+        TypeTagSize
+    };
+
 private:
+
     enum NodeFlags {
-        IsTextFlag = 1,
-        IsContainerFlag = 1 << 1,
-        IsElementFlag = 1 << 2,
-        IsStyledElementFlag = 1 << 3,
-        IsHTMLFlag = 1 << 4,
-        IsSVGFlag = 1 << 5,
-        IsAttachedFlag = 1 << 6,
-        ChildNeedsStyleRecalcFlag = 1 << 7,
-        InDocumentFlag = 1 << 8,
-        IsLinkFlag = 1 << 9,
-        IsActiveFlag = 1 << 10,
-        IsHoveredFlag = 1 << 11,
-        InActiveChainFlag = 1 << 12,
-        InDetachFlag = 1 << 13,
-        HasRareDataFlag = 1 << 14,
-        IsShadowRootFlag = 1 << 15,
+        NodeTypeTagMask = 1 << 2 | 1 << 1 | 1,
+        IsAttachedFlag = 1 << 3,
+        ChildNeedsStyleRecalcFlag = 1 << 4,
+        InDocumentFlag = 1 << 5,
+        IsLinkFlag = 1 << 6,
+        IsActiveFlag = 1 << 7,
+        IsHoveredFlag = 1 << 8,
+        InActiveChainFlag = 1 << 9,
+        InDetachFlag = 1 << 10,
+        HasRareDataFlag = 1 << 11,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
-        IsParsingChildrenFinishedFlag = 1 << 16, // Element
-        IsStyleAttributeValidFlag = 1 << 17, // StyledElement
+        IsParsingChildrenFinishedFlag = 1 << 12, // Element
+        IsStyleAttributeValidFlag = 1 << 13, // StyledElement
 #if ENABLE(SVG)
-        AreSVGAttributesValidFlag = 1 << 18, // Element
-        IsSynchronizingSVGAttributesFlag = 1 << 19, // SVGElement
-        HasSVGRareDataFlag = 1 << 20, // SVGElement
+        AreSVGAttributesValidFlag = 1 << 14, // Element
+        IsSynchronizingSVGAttributesFlag = 1 << 15, // SVGElement
+        HasSVGRareDataFlag = 1 << 16, // SVGElement
 #endif
 
         StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1),
 
-        SelfOrAncestorHasDirAutoFlag = 1 << 23,
-        HasCustomWillOrDidRecalcStyleFlag = 1 << 24,
-        HasCustomStyleForRendererFlag = 1 << 25,
-
-        HasNameFlag = 1 << 26,
-
-        AttributeStyleDirtyFlag = 1 << 27,
+        SelfOrAncestorHasDirAutoFlag = 1 << 19,
+        HasCustomWillOrDidRecalcStyleFlag = 1 << 20,
+        HasCustomStyleForRendererFlag = 1 << 21,
+        HasNameFlag = 1 << 22,
+        AttributeStyleDirtyFlag = 1 << 23,
+        InNamedFlowFlag = 1 << 24,
 
 #if ENABLE(SVG)
-        DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag,
+        DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag
 #else
-        DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag,
+        DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag
 #endif
-        InNamedFlowFlag = 1 << 29
     };
 
-    // 3 bits remaining
+    // 7 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
     void setFlag(NodeFlags mask) const { m_nodeFlags |= mask; } 
     void clearFlag(NodeFlags mask) const { m_nodeFlags &= ~mask; } 
-
+    NodeTypeTag typeTag() const { return static_cast<NodeTypeTag>(m_nodeFlags & NodeTypeTagMask); }
+    
 protected:
     enum ConstructionType { 
-        CreateOther = DefaultNodeFlags,
-        CreateText = DefaultNodeFlags | IsTextFlag,
-        CreateContainer = DefaultNodeFlags | IsContainerFlag, 
-        CreateElement = CreateContainer | IsElementFlag, 
-        CreateShadowRoot = CreateContainer | IsShadowRootFlag,
-        CreateStyledElement = CreateElement | IsStyledElementFlag, 
-        CreateHTMLElement = CreateStyledElement | IsHTMLFlag, 
-        CreateSVGElement = CreateStyledElement | IsSVGFlag,
-        CreateDocument = CreateContainer | InDocumentFlag
+        CreateOther = DefaultNodeFlags | TypeTagOther,
+        CreateText = DefaultNodeFlags | TypeTagText,
+        CreateContainer = DefaultNodeFlags | TypeTagContainerNode,
+        CreateElement = DefaultNodeFlags | TypeTagElement,
+        CreateShadowRoot = DefaultNodeFlags | TypeTagShadowRoot,
+        CreateStyledElement = DefaultNodeFlags | TypeTagStyledElement,
+        CreateHTMLElement = DefaultNodeFlags | TypeTagHTMLElement,
+        CreateSVGElement = DefaultNodeFlags | TypeTagSVGElement,
+        CreateDocument = DefaultNodeFlags | TypeTagContainerNode | InDocumentFlag
     };
+
     Node(Document*, ConstructionType);
 
     virtual void didMoveToNewDocument(Document* oldDocument);
@@ -802,7 +808,7 @@ inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
 
 inline ContainerNode* Node::parentNode() const
 {
-    return getFlag(IsShadowRootFlag) ? 0 : parent();
+    return isShadowRoot() ? 0 : parent();
 }
 
 inline ContainerNode* Node::parentOrHostNode() const
@@ -812,7 +818,7 @@ inline ContainerNode* Node::parentOrHostNode() const
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 {
-    ASSERT(!getFlag(IsShadowRootFlag));
+    ASSERT(!isShadowRoot());
     return parentOrHostNode();
 }
 
@@ -827,6 +833,44 @@ inline void Node::reattachIfAttached()
 {
     if (attached())
         reattach();
+}
+
+inline bool Node::isContainerNode() const
+{
+    NodeTypeTag tag = typeTag();
+    return TypeTagContainerNode <= tag && tag <= TypeTagShadowRoot;
+}
+
+inline bool Node::isElementNode() const
+{
+    NodeTypeTag tag = typeTag();
+    return TypeTagElement <= tag && tag <= TypeTagSVGElement;
+}
+
+inline bool Node::isStyledElement() const
+{
+    NodeTypeTag tag = typeTag();
+    return TypeTagStyledElement <= tag && tag <= TypeTagSVGElement;
+}
+
+inline bool Node::isTextNode() const
+{
+    return TypeTagText == typeTag();
+}
+
+inline bool Node::isHTMLElement() const
+{
+    return TypeTagHTMLElement == typeTag();
+}
+
+inline bool Node::isSVGElement() const
+{
+    return TypeTagSVGElement == typeTag();
+}
+
+inline bool Node::isShadowRoot() const
+{
+    return TypeTagShadowRoot == typeTag();
 }
 
 } //namespace
