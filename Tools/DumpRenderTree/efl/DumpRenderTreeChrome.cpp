@@ -105,6 +105,7 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     evas_object_smart_callback_add(mainFrame, "load,committed", onFrameLoadCommitted, 0);
     evas_object_smart_callback_add(mainFrame, "load,finished", onFrameLoadFinished, 0);
     evas_object_smart_callback_add(mainFrame, "load,error", onFrameLoadError, 0);
+    evas_object_smart_callback_add(mainFrame, "xss,detected", onDidDetectXSS, 0);
 
     return view;
 }
@@ -345,6 +346,7 @@ void DumpRenderTreeChrome::onFrameCreated(void*, Evas_Object*, void* eventInfo)
     evas_object_smart_callback_add(frame, "load,committed", onFrameLoadCommitted, 0);
     evas_object_smart_callback_add(frame, "load,finished", onFrameLoadFinished, 0);
     evas_object_smart_callback_add(frame, "load,error", onFrameLoadError, 0);
+    evas_object_smart_callback_add(frame, "xss,detected", onDidDetectXSS, 0);
 }
 
 void DumpRenderTreeChrome::onFrameProvisionalLoad(void*, Evas_Object* frame, void*)
@@ -391,4 +393,10 @@ void DumpRenderTreeChrome::onFrameLoadError(void*, Evas_Object* frame, void*)
 
     if (frame == topLoadingFrame)
         topLoadingFrameLoadFinished();
+}
+
+void DumpRenderTreeChrome::onDidDetectXSS(void*, Evas_Object* view, void*)
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
+        printf("didDetectXSS\n");
 }

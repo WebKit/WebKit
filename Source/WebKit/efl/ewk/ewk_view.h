@@ -2413,6 +2413,31 @@ EAPI SoupSession* ewk_view_soup_session_get(const Evas_Object *o);
  */
 EAPI void ewk_view_soup_session_set(Evas_Object *o, SoupSession *session);
 
+/**
+ * Returns whether XSSAuditor feature is enabled.
+ *
+ * @param o view object to query whether XSSAuditor feature is enabled.
+ *
+ * @return @c EINA_TRUE if the XSSAuditor feature is enabled,
+ *         @c EINA_FALSE if not or on failure.
+ */
+EAPI Eina_Bool ewk_view_setting_enable_xss_auditor_get(const Evas_Object *o);
+
+/**
+ * Enables/disables the XSSAuditor feature.
+ * 
+ * The XSSAuditor (cross-site scripting protection) feature provides protection 
+ * from reflected XSS attacks on vulnerable web sites. When XSS is encountered
+ * in the page, frame sends a signal "xss,detected" with additional information 
+ * on whether the entire page was blocked or only injected scripts were removed. 
+ * This feature is enabled by default.
+ *
+ * @param o view object to set the XSSAuditor feature.
+ * @param enable @c EINA_TRUE to enable the XSSAuditor feature,
+ *        @c EINA_FALSE to disable.
+ */
+EAPI void ewk_view_setting_enable_xss_auditor_set(Evas_Object *o, Eina_Bool enable);
+
 #ifdef __cplusplus
 }
 #endif

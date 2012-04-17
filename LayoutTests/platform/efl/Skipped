@@ -403,9 +403,6 @@ plugins/netscape-plugin-setwindow-size-2.html
 # EFL's LayoutTestController does not implement setJavaScriptCanAccessClipboard
 editing/execCommand/clipboard-access.html
 
-# EFL's LayoutTestController does not implement setXSSAuditorEnabled
-http/tests/security/xssAuditor
-
 # EFL's LayoutTestController does not implement setAllowUniversalAccessFromFileURLs
 # EFL's LayoutTestController does not implement setAllowAccessFromFileURLs
 fast/files/workers/inline-worker-via-blob-url.html

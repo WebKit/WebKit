@@ -218,6 +218,7 @@ struct _Ewk_View_Private_Data {
         bool localStorage : 1;
         bool offlineAppCache : 1;
         bool pageCache : 1;
+        bool enableXSSAuditor : 1;
         struct {
             float minScale;
             float maxScale;
@@ -676,6 +677,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->pageSettings->setUsesPageCache(true);
     priv->pageSettings->setUsesEncodingDetector(false);
     priv->pageSettings->setWebGLEnabled(true);
+    priv->pageSettings->setXSSAuditorEnabled(true);
 
     url = priv->pageSettings->userStyleSheetLocation();
     priv->settings.userStylesheet = eina_stringshare_add(url.string().utf8().data());
@@ -712,6 +714,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.enableScripts = priv->pageSettings->isScriptEnabled();
     priv->settings.enablePlugins = priv->pageSettings->arePluginsEnabled();
     priv->settings.enableFrameFlattening = priv->pageSettings->frameFlatteningEnabled();
+    priv->settings.enableXSSAuditor = priv->pageSettings->xssAuditorEnabled();
     priv->settings.scriptsCanOpenWindows = priv->pageSettings->javaScriptCanOpenWindowsAutomatically();
     priv->settings.scriptsCanCloseWindows = priv->pageSettings->allowScriptsToCloseWindows();
     priv->settings.resizableTextareas = priv->pageSettings->textAreasAreResizable();
@@ -4045,6 +4048,24 @@ void ewk_view_soup_session_set(Evas_Object* ewkView, SoupSession* session)
         return;
     }
     priv->soupSession = session;
+}
+
+Eina_Bool ewk_view_setting_enable_xss_auditor_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EINA_FALSE);
+    return priv->settings.enableXSSAuditor;
+}
+
+void ewk_view_setting_enable_xss_auditor_set(Evas_Object* ewkView, Eina_Bool enable)
+{
+    EWK_VIEW_SD_GET(ewkView, smartData);
+    EWK_VIEW_PRIV_GET(smartData, priv);
+    enable = !!enable;
+    if (priv->settings.enableXSSAuditor != enable) {
+        priv->pageSettings->setXSSAuditorEnabled(enable);
+        priv->settings.enableXSSAuditor = enable;
+    }
 }
 
 #if USE(ACCELERATED_COMPOSITING)

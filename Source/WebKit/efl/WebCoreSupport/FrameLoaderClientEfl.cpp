@@ -505,9 +505,12 @@ void FrameLoaderClientEfl::didRunInsecureContent(SecurityOrigin*, const KURL&)
     ewk_frame_mixed_content_run_set(m_frame, true);
 }
 
-void FrameLoaderClientEfl::didDetectXSS(const KURL&, bool)
+void FrameLoaderClientEfl::didDetectXSS(const KURL& insecureURL, bool didBlockEntirePage)
 {
-    notImplemented();
+    CString cs = insecureURL.string().utf8();
+    Ewk_Frame_Xss_Notification xssInfo = { cs.data(), didBlockEntirePage };
+
+    ewk_frame_xss_detected(m_frame, &xssInfo);
 }
 
 void FrameLoaderClientEfl::makeRepresentation(DocumentLoader*)

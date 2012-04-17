@@ -329,9 +329,9 @@ void LayoutTestController::setJavaScriptCanAccessClipboard(bool)
     notImplemented();
 }
 
-void LayoutTestController::setXSSAuditorEnabled(bool)
+void LayoutTestController::setXSSAuditorEnabled(bool flag)
 {
-    notImplemented();
+    ewk_view_setting_enable_xss_auditor_set(browser->mainView(), flag);
 }
 
 void LayoutTestController::setFrameFlatteningEnabled(bool flag)

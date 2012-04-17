@@ -252,6 +252,7 @@ void ewk_frame_mixed_content_displayed_set(Evas_Object* ewkFrame, bool hasDispla
 void ewk_frame_mixed_content_run_set(Evas_Object* ewkFrame, bool hasRun);
 void ewk_view_mixed_content_displayed_set(Evas_Object* ewkView, bool hasDisplayed);
 void ewk_view_mixed_content_run_set(Evas_Object* ewkView, bool hasRun);
+void ewk_frame_xss_detected(Evas_Object* ewkFrame, const Ewk_Frame_Xss_Notification* xssInfo);
 
 #if USE(ACCELERATED_COMPOSITING)
 bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_Native_Surface* nativeSurface, const WebCore::IntRect& rect);

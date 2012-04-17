@@ -1,3 +1,24 @@
+2012-04-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Add setting API to enable/disable XSSAuditor
+        https://bugs.webkit.org/show_bug.cgi?id=83281
+
+        Add missing implementation setXSSAuditorEnabled to EFL's LayoutTestController
+        in order to unskip tests in http/tests/security/xssAuditor. Also, catch the signal 
+        'xss,detected' in DRT to enable a test, which is expecting a line containing
+        'didDetectXSS' in the output when reflected XSS is encountered in the page.
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::onFrameCreated):
+        (DumpRenderTreeChrome::onDidDetectXSS):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setXSSAuditorEnabled):
+
 2012-04-17  Nandor Huszka  <hnandor@inf.u-szeged.hu>
 
         [Qt] JSC build should handle --no-webkit2 option to avoid unwanted clean-builds

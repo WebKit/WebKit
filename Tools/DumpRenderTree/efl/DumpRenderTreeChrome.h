@@ -93,6 +93,7 @@ private:
     static void onFrameLoadFinished(void*, Evas_Object*, void*);
 
     static void onFrameLoadError(void*, Evas_Object*, void*);
+    static void onDidDetectXSS(void*, Evas_Object*, void*);
 };
 
 #endif // DumpRenderTreeChrome_h

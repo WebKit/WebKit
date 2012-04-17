@@ -1775,6 +1775,20 @@ void ewk_frame_mixed_content_run_set(Evas_Object* ewkFrame, bool hasRun)
     }
 }
 
+/**
+ * @internal
+ * Reports that reflected XSS is encountered in the page and suppressed.
+ *
+ * @param xssInfo Information received from the XSSAuditor when XSS is 
+ * encountered in the page. 
+ *
+ * Emits signal: "xss,detected" with pointer to Ewk_Frame_Xss_Notification.
+ */
+void ewk_frame_xss_detected(Evas_Object* ewkFrame, const Ewk_Frame_Xss_Notification* xssInfo)
+{
+    evas_object_smart_callback_call(ewkFrame, "xss,detected", (void*)xssInfo);
+}
+
 namespace EWKPrivate {
 
 WebCore::Frame* coreFrame(const Evas_Object* ewkFrame)

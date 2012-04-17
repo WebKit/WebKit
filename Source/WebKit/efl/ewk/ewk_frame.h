@@ -63,6 +63,7 @@
  *  - "state,save", void: frame's state will be saved as a history item.
  *  - "title,changed", const char*: title of the main frame was changed.
  *  - "uri,changed", const char*: uri of the main frame was changed.
+ *  - "xss,detected", Ewk_Frame_Xss_Notification*: reflected XSS is encountered in the page and suppressed.
  */
 
 #ifndef ewk_frame_h
@@ -109,6 +110,21 @@ struct _Ewk_Frame_Resource_Request {
     const unsigned long identifier; /**< identifier of resource, can not be changed */
     Evas_Object *frame; /**< frame where the resource is requested */
     Eina_Bool is_main_frame_request; /** < indicates if the request is for the main frame */
+};
+
+/// Creates a type name for Ewk_Frame_Xss_Notification.
+typedef struct _Ewk_Frame_Xss_Notification Ewk_Frame_Xss_Notification;
+
+/**
+ * @brief   Structure used to report reflected XSS is encountered in the page.
+ *
+ * This structure contains information received from the XSSAuditor when reflected XSS 
+ * is encountered in the page. The string is temporary reference and should @b not 
+ * be used after the signal callback returns. If it's required, make a copy of it.
+ */
+struct _Ewk_Frame_Xss_Notification {
+    const char *insecure_url; /**< insecure url of the document */
+    Eina_Bool is_entire_page_blocked; /** < indicates if the entire page was blocked by XSSAuditor */
 };
 
 /// Enum containing hit test data types

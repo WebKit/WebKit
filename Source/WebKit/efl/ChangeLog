@@ -1,3 +1,28 @@
+2012-04-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Add setting API to enable/disable XSSAuditor
+        https://bugs.webkit.org/show_bug.cgi?id=83281
+
+        Add setting API to enable or disable WebKit's XSSAuditor to protect 
+        from reflective cross-site scripting attacks. Also, emit the signal 
+        'xss,detected' and provide addition information received from 
+        XSSAuditor when reflected XSS is encountered in the page.
+
+        Reviewed by Antonio Gomes.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::didDetectXSS):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_xss_detected):
+        * ewk/ewk_frame.h:
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        (ewk_view_setting_enable_xss_auditor_get):
+        (ewk_view_setting_enable_xss_auditor_set):
+        * ewk/ewk_view.h:
+
 2012-04-17  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] DRT should support LayoutTestController's dumpFrameLoadCallbacks()
