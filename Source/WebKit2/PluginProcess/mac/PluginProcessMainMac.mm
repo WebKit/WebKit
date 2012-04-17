@@ -89,9 +89,15 @@ int PluginProcessMain(const CommandLine& commandLine)
         WKSetDefaultLocalization(cfLocalization.get());
 
 #if defined(__i386__)
-    NSDictionary *defaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"AppleMagnifiedMode", nil];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
-    [defaults release];
+    {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+        NSDictionary *defaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"AppleMagnifiedMode", nil];
+        [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+        [defaults release];
+
+        [pool drain];
+    }
 #endif
 
 #if !SHOW_CRASH_REPORTER

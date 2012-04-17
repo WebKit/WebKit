@@ -1,5 +1,16 @@
 2012-04-16  Brady Eidson  <beidson@apple.com>
 
+        Followup to http://trac.webkit.org/changeset/114323
+
+        For more correctness, actually include an autorelease pool instead of cleverly trying to avoid its use.
+
+        Reviewed by Mark Rowe.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain): 
+
+2012-04-16  Brady Eidson  <beidson@apple.com>
+
         <rdar://problem/11238965> Leak in Plugin Process when launched 32-bit
 
         Reviewed by Jessie Berlin.
