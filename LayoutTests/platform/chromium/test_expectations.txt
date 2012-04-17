@@ -1180,10 +1180,6 @@ BUGWK34714 : svg/text/select-textLength-spacing-squeeze-2.svg = IMAGE IMAGE+TEXT
 
 BUGWK78631 : svg/dom/SVGLocatable-getCTM-svg-root.html = IMAGE
 
-// Still failing on Linux. Possibly an out-of-date baseline that was not noticed
-// because the test was expected to fail already.
-BUGWK81253 LINUX : svg/text/text-tselect-02-f.svg = IMAGE
-
 // Flaky on MAC
 BUGWK82911 MAC : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT IMAGE+TEXT IMAGE PASS
 
