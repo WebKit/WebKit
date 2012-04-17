@@ -1622,14 +1622,11 @@ BUGCR9798 SLOW WIN : http/tests/misc/refresh-headers.php = PASS
 BUGCR9798 WIN : http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html = PASS TIMEOUT
 BUGCR9798 WIN DEBUG : http/tests/xmlhttprequest/encode-request-url-2.html = PASS TIMEOUT
 BUGCR9797 BUGCR9798 SLOW WIN RELEASE : http/tests/xmlhttprequest/state-after-network-error.html = PASS
-BUGCR9797 LINUX DEBUG : svg/carto.net/colourpicker.svg = FAIL
-BUGCR9798 LINUX RELEASE : svg/carto.net/colourpicker.svg = FAIL
+BUGCR9797 LINUX : svg/carto.net/colourpicker.svg = PASS FAIL
 BUGCR9798 LINUX DEBUG : transitions/mask-transitions.html = PASS FAIL
 BUGCR9798 SLOW LINUX RELEASE : transitions/transition-timing-function.html = PASS
 // This test definitely times out (i.e. is not just slow).
 BUGCR9798 WIN RELEASE : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
-
-// Rebaseline once fixed sampling matrixproc lands in Skia
 
 // New failures from WebKit merge 42725:42805
 // WebKit change http://trac.webkit.org/changeset/42785
