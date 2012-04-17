@@ -1,3 +1,21 @@
+2012-04-16  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 111108
+
+    2012-03-16  Dmitry Titov  <dimich@chromium.org>
+
+            HTMLFrameElementBase::m_remainsAliveOnRemovalFromTree can be cleared without unloading the frame.
+            https://bugs.webkit.org/show_bug.cgi?id=80766
+
+            Reviewed by Adam Barth.
+
+            * html/HTMLFrameElementBase.cpp:
+            (WebCore::HTMLFrameElementBase::insertedIntoDocument):
+            (WebCore::HTMLFrameElementBase::setRemainsAliveOnRemovalFromTree):
+            if adoptNode() is called on a detached iframe or with a detached document,
+            unload the iframe to avoid live iframe to hang around w/o being attached to
+            a document.
+
 2012-04-17  Lucas Forschler  <lforschler@apple.com>
 
     Merge 112023
