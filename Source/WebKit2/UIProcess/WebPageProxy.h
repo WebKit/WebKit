@@ -536,6 +536,7 @@ public:
     void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
 
     void processDidBecomeUnresponsive();
+    void interactionOccurredWhileProcessUnresponsive();
     void processDidBecomeResponsive();
     void processDidCrash();
 

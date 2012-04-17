@@ -36,6 +36,7 @@ public:
     public:
         virtual ~Client() { }
         virtual void didBecomeUnresponsive(ResponsivenessTimer*) = 0;
+        virtual void interactionOccurredWhileUnresponsive(ResponsivenessTimer*) = 0;
         virtual void didBecomeResponsive(ResponsivenessTimer*) = 0;
     };
 

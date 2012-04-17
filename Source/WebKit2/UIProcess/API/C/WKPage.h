@@ -113,6 +113,8 @@ struct WKPageLoaderClient {
     WKPageDidNewFirstVisuallyNonEmptyLayoutCallback                     didNewFirstVisuallyNonEmptyLayout;
 
     WKPageWillGoToBackForwardListItemCallback                           willGoToBackForwardListItem;
+
+    WKPageCallback                                                      interactionOccurredWhileProcessUnresponsive;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 

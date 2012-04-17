@@ -211,6 +211,14 @@ void WebLoaderClient::processDidBecomeUnresponsive(WebPageProxy* page)
     m_client.processDidBecomeUnresponsive(toAPI(page), m_client.clientInfo);
 }
 
+void WebLoaderClient::interactionOccurredWhileProcessUnresponsive(WebPageProxy* page)
+{
+    if (!m_client.interactionOccurredWhileProcessUnresponsive)
+        return;
+
+    m_client.interactionOccurredWhileProcessUnresponsive(toAPI(page), m_client.clientInfo);
+}
+
 void WebLoaderClient::processDidBecomeResponsive(WebPageProxy* page)
 {
     if (!m_client.processDidBecomeResponsive)

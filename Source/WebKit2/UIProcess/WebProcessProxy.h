@@ -158,8 +158,9 @@ private:
     virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, bool& didHandleMessage);
 
     // ResponsivenessTimer::Client
-    void didBecomeUnresponsive(ResponsivenessTimer*);
-    void didBecomeResponsive(ResponsivenessTimer*);
+    void didBecomeUnresponsive(ResponsivenessTimer*) OVERRIDE;
+    void interactionOccurredWhileUnresponsive(ResponsivenessTimer*) OVERRIDE;
+    void didBecomeResponsive(ResponsivenessTimer*) OVERRIDE;
 
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier);

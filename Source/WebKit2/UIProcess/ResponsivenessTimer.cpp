@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const double kResponsivenessTimeout = 3;
+static const double responsivenessTimeout = 3;
 
 ResponsivenessTimer::ResponsivenessTimer(ResponsivenessTimer::Client* client)
     : m_client(client)
@@ -51,13 +51,13 @@ void ResponsivenessTimer::invalidate()
 
 void ResponsivenessTimer::timerFired()
 {
-    // We'll never schedule the timer unless we're responsive.
-    ASSERT(m_isResponsive);
-    
-    m_isResponsive = false;
-    m_client->didBecomeUnresponsive(this);
-
-    m_timer.stop();
+    if (m_isResponsive) {
+        m_isResponsive = false;
+        m_client->didBecomeUnresponsive(this);
+    } else {
+        // The timer fired while unresponsive.
+        m_client->interactionOccurredWhileUnresponsive(this);
+    }
 }
     
 void ResponsivenessTimer::start()
@@ -65,10 +65,7 @@ void ResponsivenessTimer::start()
     if (m_timer.isActive())
         return;
 
-    if (!m_isResponsive)
-        return;
-
-    m_timer.startOneShot(kResponsivenessTimeout);
+    m_timer.startOneShot(responsivenessTimeout);
 }
 
 void ResponsivenessTimer::stop()

@@ -3285,6 +3285,14 @@ void WebPageProxy::processDidBecomeUnresponsive()
     m_loaderClient.processDidBecomeUnresponsive(this);
 }
 
+void WebPageProxy::interactionOccurredWhileProcessUnresponsive()
+{
+    if (!isValid())
+        return;
+
+    m_loaderClient.interactionOccurredWhileProcessUnresponsive(this);
+}
+
 void WebPageProxy::processDidBecomeResponsive()
 {
     if (!isValid())
