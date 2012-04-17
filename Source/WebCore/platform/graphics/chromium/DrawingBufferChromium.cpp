@@ -169,8 +169,26 @@ Platform3DObject DrawingBuffer::framebuffer() const
 #if USE(ACCELERATED_COMPOSITING)
 void DrawingBuffer::paintCompositedResultsToCanvas(CanvasRenderingContext* context)
 {
-    if (m_platformLayer)
-        m_platformLayer->paintRenderedResultsToCanvas(context->canvas()->buffer());
+    if (!m_context->makeContextCurrent() || m_context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR)
+        return;
+
+    IntSize framebufferSize = m_context->getInternalFramebufferSize();
+
+    // Since we're using the same context as WebGL, we have to restore any state we change (in this case, just the framebuffer binding).
+    // FIXME: The WebGLRenderingContext tracks the current framebuffer binding, it would be slightly more efficient to use this value
+    // rather than querying it off of the context.
+    GC3Dint previousFramebuffer = 0;
+    m_context->getIntegerv(GraphicsContext3D::FRAMEBUFFER_BINDING, &previousFramebuffer);
+
+    Platform3DObject framebuffer = m_context->createFramebuffer();
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, framebuffer);
+    m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, frontColorBuffer(), 0);
+
+    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
+    extensions->paintFramebufferToCanvas(framebuffer, framebufferSize.width(), framebufferSize.height(), !m_context->getContextAttributes().premultipliedAlpha, context->canvas()->buffer());
+    m_context->deleteFramebuffer(framebuffer);
+
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, previousFramebuffer);
 }
 #endif
 

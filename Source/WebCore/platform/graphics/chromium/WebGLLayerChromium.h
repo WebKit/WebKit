@@ -53,7 +53,6 @@ public:
     virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
     virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
     virtual void setNeedsDisplayRect(const FloatRect&) OVERRIDE;
-    bool paintRenderedResultsToCanvas(ImageBuffer*);
 
     GraphicsContext3D* context() const;
 

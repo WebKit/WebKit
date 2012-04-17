@@ -98,31 +98,6 @@ void WebGLLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     textureLayer->setPremultipliedAlpha(m_premultipliedAlpha);
 }
 
-bool WebGLLayerChromium::paintRenderedResultsToCanvas(ImageBuffer* imageBuffer)
-{
-    if (!m_drawingBuffer || !drawsContent())
-        return false;
-
-    IntSize framebufferSize = context()->getInternalFramebufferSize();
-
-    // Since we're using the same context as WebGL, we have to restore any state we change (in this case, just the framebuffer binding).
-    // FIXME: The WebGLRenderingContext tracks the current framebuffer binding, it would be slightly more efficient to use this value
-    // rather than querying it off of the context.
-    GC3Dint previousFramebuffer = 0;
-    context()->getIntegerv(GraphicsContext3D::FRAMEBUFFER_BINDING, &previousFramebuffer);
-
-    Platform3DObject framebuffer = context()->createFramebuffer();
-    context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, framebuffer);
-    context()->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_textureId, 0);
-
-    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context()->getExtensions());
-    extensions->paintFramebufferToCanvas(framebuffer, framebufferSize.width(), framebufferSize.height(), !context()->getContextAttributes().premultipliedAlpha, imageBuffer);
-    context()->deleteFramebuffer(framebuffer);
-
-    context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, previousFramebuffer);
-    return true;
-}
-
 void WebGLLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 {
     LayerChromium::setNeedsDisplayRect(dirtyRect);
