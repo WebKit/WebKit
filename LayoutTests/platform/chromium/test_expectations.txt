@@ -482,6 +482,7 @@ WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-methods.html = TI
 WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-referer.html = TIMEOUT
 WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html = TIMEOUT
 WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/close-in-shared-worker.html = TIMEOUT
+WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html = TIMEOUT
 WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/shared-worker-simple.html = TIMEOUT
 WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html = TIMEOUT
 WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/shared-worker-simple.html = TIMEOUT
