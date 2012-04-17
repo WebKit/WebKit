@@ -2,10 +2,10 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (50,0) size 260x65
-    RenderSVGContainer {g} at (120,4) size 40x58
-      RenderSVGPath {svg:line} at (120,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=24.53] [y1=0.80] [x2=24.53] [y2=12.40]
-      RenderSVGPath {svg:line} at (154,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=31.40] [y1=0.80] [x2=31.40] [y2=12.40]
-      RenderSVGRect {svg:rect} at (122,4) size 36x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=24.53] [y=0.80] [width=6.87] [height=11.40]
+    RenderSVGContainer {g} at (153,4) size 59x58
+      RenderSVGPath {svg:line} at (153,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=31.13] [y1=0.80] [x2=31.13] [y2=12.40]
+      RenderSVGPath {svg:line} at (206,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=41.80] [y1=0.80] [x2=41.80] [y2=12.40]
+      RenderSVGRect {svg:rect} at (155,4) size 55x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=31.13] [y=0.80] [width=10.67] [height=11.40]
     RenderSVGText {text} at (10,0) size 52x12 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 52x12
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.20: "T"
@@ -23,5 +23,5 @@ layer at (0,0) size 800x600
         chunk 1 text run 13 at (48.40,10.00) startOffset 12 endOffset 13 width 5.60: "e"
         chunk 1 text run 14 at (52.47,10.00) startOffset 13 endOffset 14 width 5.00: "z"
         chunk 1 text run 15 at (55.93,10.00) startOffset 14 endOffset 15 width 5.60: "e"
-selection start: position 5 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
-selection end:   position 7 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
+selection start: position 8 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
+selection end:   position 10 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
