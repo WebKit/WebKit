@@ -1,3 +1,21 @@
+2012-04-16  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 110139
+
+    2012-03-07  Adam Barth  <abarth@webkit.org>
+
+            ContainerNode::willRemove uses a weak iteration pattern
+            https://bugs.webkit.org/show_bug.cgi?id=80530
+
+            Reviewed by Ryosuke Niwa.
+
+            This patch moves ContainerNode::willRemove to using a better iteration
+            pattern in which we collect all the nodes we're planning to iterate
+            into a vector and then iterate over them.
+
+            * dom/ContainerNode.cpp:
+            (WebCore::ContainerNode::willRemove):
+
 2012-04-17  Lucas Forschler  <lforschler@apple.com>
 
     Merging to the correct branch.
