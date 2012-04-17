@@ -1206,36 +1206,17 @@ BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 // This fails image 5-10% of the time. Probably a race condition on timers.
 BUGWK83471 : svg/as-image/animated-svg-as-image-same-image.html = PASS IMAGE
 
-// -----------------------------------------------------------------
-// End SVG Regressions
-// -----------------------------------------------------------------
-
-BUGCR10295 MAC : fast/dom/prototype-chain.html = FAIL
-
-// Font differences, requiring overriden metrics, not a real bug, not fixing for Beta
-BUGCR10296 LEOPARD : fast/text/international/bidi-menulist.html = FAIL
-
-// SVG masks aren't quite working yet.
-// Might also be related to https://bugs.webkit.org/show_bug.cgi?id=21910
-// New tests. We should fix these, but they don't need to block the current release
-BUGCR3244 LINUX WIN : svg/zoom/page/zoom-mask-with-percentages.svg = FAIL
-// Marking this again as failed. This test failed even after rebaseline due to
-// the fact that the font is not specified in the test and it seems that the
-// test falls back on a different font locally than on the buildbot so the
-// baseline is invalid. This might indicate a failure in our font fallback code
-// or might be expected and that we should either go with the buildbot output
-// or change the test upstream to specify explicitly what font to use.
-// The mask part of this test is totally wrong.
-BUGCR3244 WIN LINUX LEOPARD : svg/as-background-image/svg-as-background-6.html = FAIL
-BUGCR3244 SNOWLEOPARD RELEASE : svg/as-background-image/svg-as-background-6.html = FAIL
-BUGCR3244 SNOWLEOPARD DEBUG : svg/as-background-image/svg-as-background-6.html = FAIL CRASH
-
 // Probably need to change the test upstream to describe it better and use no
 // hard coded numbers. Or, like most other SVG content we can ignore the
 // platform specific differences and update the expectations if they are
 // reasonable.
 BUGCR19897 LINUX WIN : svg/custom/getscreenctm-in-mixed-content2.xhtml = FAIL
 
+// -----------------------------------------------------------------
+// End SVG Regressions
+// -----------------------------------------------------------------
+
+BUGCR10295 MAC : fast/dom/prototype-chain.html = FAIL
 
 // -----------------------------------------------------------------
 // Accessibility layout tests
