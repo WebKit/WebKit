@@ -2805,7 +2805,9 @@ static RenderObject* rendererForView(NSView* view)
         return nil;
     
     PassRefPtr<Range> textRange = TextIterator::rangeFromLocationAndLength(document->documentElement(), textIndex, 0);
-    
+    if (!textRange || !textRange->boundaryPointsValid())
+        return nil;
+
     VisiblePosition position(textRange->startPosition());
     return [self textMarkerForVisiblePosition:position];
 }

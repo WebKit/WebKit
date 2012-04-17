@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<body id="body" tabindex="0">
+
+<div tabindex="0" id="text1">text</div>
+
+text
+
+<div tabindex="0" id="text2">text</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This verifies that textMarkerForIndex for not crash when given an index out of bounds");
+
+    if (window.accessibilityController) {
+        document.getElementById("text1").focus();
+        var item1 = accessibilityController.focusedElement;
+        shouldBeFalse("item1.isTextMarkerValid(item1.textMarkerForIndex(99999999999))");       
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+
