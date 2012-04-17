@@ -74,6 +74,8 @@ v8::Handle<v8::Value> V8Storage::indexedPropertyGetter(uint32_t index, const v8:
 v8::Handle<v8::Value> V8Storage::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Storage.NamedPropertyGetter");
+    if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
+        return notHandledByInterceptor();
     return storageGetter(name, info);
 }
 
