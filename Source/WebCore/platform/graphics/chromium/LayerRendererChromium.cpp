@@ -1402,6 +1402,7 @@ bool LayerRendererChromium::initializeSharedObjects()
                                                            TextureManager::reclaimLimitBytes(viewportSize()),
                                                            m_capabilities.maxTextureSize);
     m_textureCopier = AcceleratedTextureCopier::create(m_context.get());
+    m_textureUploader = AcceleratedTextureUploader::create(m_context.get());
     m_contentsTextureAllocator = TrackingTextureAllocator::create(m_context.get());
     m_renderSurfaceTextureAllocator = TrackingTextureAllocator::create(m_context.get());
     if (m_capabilities.usingTextureUsageHint)
@@ -1728,6 +1729,7 @@ void LayerRendererChromium::cleanupSharedObjects()
     if (m_offscreenFramebufferId)
         GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
     m_textureCopier.clear();
+    m_textureUploader.clear();
 
     releaseRenderSurfaceTextures();
 }

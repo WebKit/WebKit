@@ -35,6 +35,7 @@ namespace WebCore {
 class GraphicsContext3D;
 class TextureAllocator;
 class TextureCopier;
+class TextureUploader;
 
 class CCTextureUpdater {
 public:
@@ -49,7 +50,7 @@ public:
     bool hasMoreUpdates() const;
 
     // Update some textures. Returns true if more textures left to process.
-    bool update(GraphicsContext3D*, TextureAllocator*, TextureCopier*, size_t count);
+    bool update(GraphicsContext3D*, TextureAllocator*, TextureCopier*, TextureUploader*, size_t count);
 
     void clear();
 

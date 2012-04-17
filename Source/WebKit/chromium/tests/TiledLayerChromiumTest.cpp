@@ -150,7 +150,6 @@ TEST(TiledLayerChromiumTest, pushDeletedTiles)
 
     CCTextureUpdater updater;
     FakeTextureAllocator allocator;
-    FakeTextureCopier copier;
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
@@ -248,6 +247,7 @@ TEST(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     CCTextureUpdater updater;
     FakeTextureAllocator allocator;
     FakeTextureCopier copier;
+    FakeTextureUploader uploader;
 
     // For this test we have two layers. layer1 exhausts most texture memory, leaving room for 2 more tiles from
     // layer2, but not all three tiles. First we paint layer1, and one tile from layer2. Then when we idle paint
@@ -273,7 +273,7 @@ TEST(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     EXPECT_TRUE(layer2->needsIdlePaint(layer2Rect));
 
     // Commit the frame over to impl.
-    updater.update(0, &allocator, &copier, 5000);
+    updater.update(0, &allocator, &copier, &uploader, 5000);
     layer1->pushPropertiesTo(layerImpl1.get());
     layer2->pushPropertiesTo(layerImpl2.get());
 
@@ -282,7 +282,7 @@ TEST(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     layer2->idleUpdateLayerRect(updater, layer2Rect, 0);
 
     // Oh well, commit the frame and push.
-    updater.update(0, &allocator, &copier, 5000);
+    updater.update(0, &allocator, &copier, &uploader, 5000);
     layer1->pushPropertiesTo(layerImpl1.get());
     layer2->pushPropertiesTo(layerImpl2.get());
 
@@ -301,7 +301,7 @@ TEST(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     layer2->updateLayerRect(updater, layer2Rect, 0);
     layer1->updateLayerRect(updater, IntRect(), 0);
 
-    updater.update(0, &allocator, &copier, 5000);
+    updater.update(0, &allocator, &copier, &uploader, 5000);
     layer1->pushPropertiesTo(layerImpl1.get());
     layer2->pushPropertiesTo(layerImpl2.get());
 
@@ -669,13 +669,14 @@ TEST(TiledLayerChromiumTest, invalidateFromPrepare)
     CCTextureUpdater updater;
     FakeTextureAllocator fakeAllocator;
     FakeTextureCopier fakeCopier;
+    FakeTextureUploader fakeUploader;
     RefPtr<GraphicsContext3D> context = createCompositorMockGraphicsContext3D(GraphicsContext3D::Attributes());
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
     layer->invalidateRect(IntRect(0, 0, 100, 200));
     layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
-    updater.update(context.get(), &fakeAllocator, &fakeCopier, 1000);
+    updater.update(context.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     layer->pushPropertiesTo(layerImpl.get());
 
     // We should have both tiles on the impl side.
@@ -688,7 +689,7 @@ TEST(TiledLayerChromiumTest, invalidateFromPrepare)
     // Invoke updateLayerRect again. As the layer is valid updateLayerRect shouldn't be invoked on
     // the LayerTextureUpdater.
     layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
-    updater.update(context.get(), &fakeAllocator, &fakeCopier, 1000);
+    updater.update(context.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     EXPECT_EQ(0, layer->fakeLayerTextureUpdater()->prepareCount());
 
     layer->invalidateRect(IntRect(0, 0, 50, 50));
@@ -696,12 +697,12 @@ TEST(TiledLayerChromiumTest, invalidateFromPrepare)
     layer->fakeLayerTextureUpdater()->setRectToInvalidate(IntRect(25, 25, 50, 50), layer.get());
     layer->fakeLayerTextureUpdater()->clearPrepareCount();
     layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
-    updater.update(context.get(), &fakeAllocator, &fakeCopier, 1000);
+    updater.update(context.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     EXPECT_EQ(1, layer->fakeLayerTextureUpdater()->prepareCount());
     layer->fakeLayerTextureUpdater()->clearPrepareCount();
     // The layer should still be invalid as updateLayerRect invoked invalidate.
     layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
-    updater.update(context.get(), &fakeAllocator, &fakeCopier, 1000);
+    updater.update(context.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     EXPECT_EQ(1, layer->fakeLayerTextureUpdater()->prepareCount());
 }
 
@@ -889,6 +890,7 @@ TEST(TiledLayerChromiumTest, partialUpdates)
     CCTextureUpdater updater;
     FakeTextureAllocator allocator;
     FakeTextureCopier copier;
+    FakeTextureUploader uploader;
 
     ccLayerTreeHost->setRootLayer(layer);
     ccLayerTreeHost->setViewportSize(IntSize(300, 200));
@@ -898,11 +900,11 @@ TEST(TiledLayerChromiumTest, partialUpdates)
     {
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
-        updater.update(0, &allocator, &copier, 4);
+        updater.update(0, &allocator, &copier, &uploader, 4);
         EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_TRUE(updater.hasMoreUpdates());
         layer->fakeLayerTextureUpdater()->clearUpdateCount();
-        updater.update(0, &allocator, &copier, 4);
+        updater.update(0, &allocator, &copier, &uploader, 4);
         EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_FALSE(updater.hasMoreUpdates());
         layer->fakeLayerTextureUpdater()->clearUpdateCount();
@@ -916,11 +918,11 @@ TEST(TiledLayerChromiumTest, partialUpdates)
     {
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
-        updater.update(0, &allocator, &copier, 4);
+        updater.update(0, &allocator, &copier, &uploader, 4);
         EXPECT_EQ(3, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_TRUE(updater.hasMoreUpdates());
         layer->fakeLayerTextureUpdater()->clearUpdateCount();
-        updater.update(0, &allocator, &copier, 4);
+        updater.update(0, &allocator, &copier, &uploader, 4);
         EXPECT_EQ(3, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_FALSE(updater.hasMoreUpdates());
         layer->fakeLayerTextureUpdater()->clearUpdateCount();
@@ -934,11 +936,11 @@ TEST(TiledLayerChromiumTest, partialUpdates)
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
         ccLayerTreeHost->updateLayers(updater);
-        updater.update(0, &allocator, &copier, 4);
+        updater.update(0, &allocator, &copier, &uploader, 4);
         EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_TRUE(updater.hasMoreUpdates());
         layer->fakeLayerTextureUpdater()->clearUpdateCount();
-        updater.update(0, &allocator, &copier, 4);
+        updater.update(0, &allocator, &copier, &uploader, 4);
         EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_FALSE(updater.hasMoreUpdates());
         layer->fakeLayerTextureUpdater()->clearUpdateCount();
@@ -961,11 +963,11 @@ TEST(TiledLayerChromiumTest, partialUpdates)
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
         ccLayerTreeHost->updateLayers(updater);
-        updater.update(0, &allocator, &copier, 4);
+        updater.update(0, &allocator, &copier, &uploader, 4);
         EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_TRUE(updater.hasMoreUpdates());
         layer->fakeLayerTextureUpdater()->clearUpdateCount();
-        updater.update(0, &allocator, &copier, 4);
+        updater.update(0, &allocator, &copier, &uploader, 4);
         EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_FALSE(updater.hasMoreUpdates());
         layer->fakeLayerTextureUpdater()->clearUpdateCount();

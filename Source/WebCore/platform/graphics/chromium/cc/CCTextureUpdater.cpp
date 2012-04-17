@@ -33,6 +33,7 @@
 #include "LayerTextureUpdater.h"
 #include "ManagedTexture.h"
 #include "TextureCopier.h"
+#include "TextureUploader.h"
 
 using namespace std;
 
@@ -91,13 +92,13 @@ bool CCTextureUpdater::hasMoreUpdates() const
     return m_entries.size() || m_partialEntries.size() || m_copyEntries.size() || m_managedCopyEntries.size();
 }
 
-bool CCTextureUpdater::update(GraphicsContext3D* context, TextureAllocator* allocator, TextureCopier* copier, size_t count)
+bool CCTextureUpdater::update(GraphicsContext3D* context, TextureAllocator* allocator, TextureCopier* copier, TextureUploader* uploader, size_t count)
 {
     size_t index;
     size_t maxIndex = min(m_entryIndex + count, m_entries.size());
     for (index = m_entryIndex; index < maxIndex; ++index) {
         UpdateEntry& entry = m_entries[index];
-        entry.texture->updateRect(context, allocator, entry.sourceRect, entry.destRect);
+        uploader->uploadTexture(context, entry.texture, allocator, entry.sourceRect, entry.destRect);
     }
 
     bool moreUpdates = maxIndex < m_entries.size();
@@ -115,7 +116,7 @@ bool CCTextureUpdater::update(GraphicsContext3D* context, TextureAllocator* allo
 
     for (index = 0; index < m_partialEntries.size(); ++index) {
         UpdateEntry& entry = m_partialEntries[index];
-        entry.texture->updateRect(context, allocator, entry.sourceRect, entry.destRect);
+        uploader->uploadTexture(context, entry.texture, allocator, entry.sourceRect, entry.destRect);
     }
 
     for (index = 0; index < m_copyEntries.size(); ++index) {

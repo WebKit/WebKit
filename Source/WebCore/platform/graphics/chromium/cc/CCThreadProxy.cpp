@@ -527,7 +527,7 @@ void CCThreadProxy::scheduledActionUpdateMoreResources()
 {
     TRACE_EVENT("CCThreadProxy::scheduledActionUpdateMoreResources", this, 0);
     ASSERT(m_currentTextureUpdaterOnImplThread);
-    m_currentTextureUpdaterOnImplThread->update(m_layerTreeHostImpl->context(), m_layerTreeHostImpl->contentsTextureAllocator(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), textureUpdatesPerFrame);
+    m_currentTextureUpdaterOnImplThread->update(m_layerTreeHostImpl->context(), m_layerTreeHostImpl->contentsTextureAllocator(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), m_layerTreeHostImpl->layerRenderer()->textureUploader(), textureUpdatesPerFrame);
 }
 
 void CCThreadProxy::scheduledActionCommit()

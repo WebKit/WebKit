@@ -3576,6 +3576,8 @@
             'platform/graphics/chromium/TextureCopier.h',
             'platform/graphics/chromium/TextureManager.cpp',
             'platform/graphics/chromium/TextureManager.h',
+            'platform/graphics/chromium/TextureUploader.cpp',
+            'platform/graphics/chromium/TextureUploader.h',
             'platform/graphics/chromium/TiledLayerChromium.cpp',
             'platform/graphics/chromium/TiledLayerChromium.h',
             'platform/graphics/chromium/TransparencyWin.cpp',

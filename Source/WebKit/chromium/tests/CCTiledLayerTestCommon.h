@@ -32,6 +32,7 @@
 #include "Region.h"
 #include "TextureCopier.h"
 #include "TextureManager.h"
+#include "TextureUploader.h"
 #include "TiledLayerChromium.h"
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCTiledLayerImpl.h"
@@ -156,6 +157,11 @@ public:
 class FakeTextureCopier : public WebCore::TextureCopier {
 public:
     virtual void copyTexture(WebCore::GraphicsContext3D*, unsigned, unsigned, const WebCore::IntSize&) { }
+};
+
+class FakeTextureUploader : public WebCore::TextureUploader {
+public:
+    virtual void uploadTexture(WebCore::GraphicsContext3D* context, WebCore::LayerTextureUpdater::Texture* texture, WebCore::TextureAllocator* allocator, const WebCore::IntRect sourceRect, const WebCore::IntRect destRect) { texture->updateRect(context, allocator, sourceRect, destRect); }
 };
 
 }

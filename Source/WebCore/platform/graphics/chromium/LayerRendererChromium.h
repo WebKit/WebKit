@@ -39,6 +39,7 @@
 #include "IntRect.h"
 #include "LayerChromium.h"
 #include "TextureCopier.h"
+#include "TextureUploader.h"
 #include "TrackingTextureAllocator.h"
 #include "cc/CCDrawQuad.h"
 #include "cc/CCHeadsUpDisplay.h"
@@ -140,6 +141,7 @@ public:
 
     TextureManager* renderSurfaceTextureManager() const { return m_renderSurfaceTextureManager.get(); }
     TextureCopier* textureCopier() const { return m_textureCopier.get(); }
+    TextureUploader* textureUploader() const { return m_textureUploader.get(); }
     TextureAllocator* renderSurfaceTextureAllocator() const { return m_renderSurfaceTextureAllocator.get(); }
     TextureAllocator* contentsTextureAllocator() const { return m_contentsTextureAllocator.get(); }
 
@@ -246,6 +248,7 @@ private:
 
     OwnPtr<TextureManager> m_renderSurfaceTextureManager;
     OwnPtr<AcceleratedTextureCopier> m_textureCopier;
+    OwnPtr<AcceleratedTextureUploader> m_textureUploader;
     OwnPtr<TrackingTextureAllocator> m_contentsTextureAllocator;
     OwnPtr<TrackingTextureAllocator> m_renderSurfaceTextureAllocator;
 

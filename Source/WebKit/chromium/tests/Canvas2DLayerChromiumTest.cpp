@@ -88,6 +88,11 @@ public:
     MOCK_METHOD4(copyTexture, void(GraphicsContext3D*, unsigned, unsigned, const IntSize&));
 };
 
+class MockTextureUploader : public TextureUploader {
+public:
+    MOCK_METHOD5(uploadTexture, void(GraphicsContext3D*, LayerTextureUpdater::Texture*, TextureAllocator*, const IntRect, const IntRect));
+};
+
 class Canvas2DLayerChromiumTest : public Test {
 protected:
     void fullLifecycleTest(bool threaded)
@@ -102,6 +107,7 @@ protected:
 
         MockTextureAllocator allocatorMock;
         MockTextureCopier copierMock;
+        MockTextureUploader uploaderMock;
         CCTextureUpdater updater;
 
         const IntSize size(300, 150);
@@ -153,7 +159,7 @@ protected:
             OwnPtr<CCLayerImpl> layerImpl = canvas->createCCLayerImpl();
             EXPECT_EQ(0u, static_cast<CCTextureLayerImpl*>(layerImpl.get())->textureId());
 
-            updater.update(implContext.get(), &allocatorMock, &copierMock, 1);
+            updater.update(implContext.get(), &allocatorMock, &copierMock, &uploaderMock, 1);
             canvas->pushPropertiesTo(layerImpl.get());
 
             if (threaded)
