@@ -232,7 +232,16 @@ void FrameLoaderClientEfl::postProgressEstimateChangedNotification()
 
 void FrameLoaderClientEfl::postProgressFinishedNotification()
 {
-    notImplemented();
+    if (m_loadError.isNull())
+        ewk_frame_load_finished(m_frame, 0, 0, 0, 0, 0);
+    else {
+        ewk_frame_load_finished(m_frame,
+                                m_loadError.domain().utf8().data(),
+                                m_loadError.errorCode(),
+                                m_loadError.isCancellation(),
+                                m_loadError.localizedDescription().utf8().data(),
+                                m_loadError.failingURL().utf8().data());
+    }
 }
 
 void FrameLoaderClientEfl::frameLoaderDestroyed()
@@ -448,7 +457,7 @@ bool FrameLoaderClientEfl::hasFrameView() const
 
 void FrameLoaderClientEfl::dispatchDidFinishLoad()
 {
-    ewk_frame_load_finished(m_frame, 0, 0, 0, 0, 0);
+    m_loadError = ResourceError(); /* clears previous error */
 }
 
 void FrameLoaderClientEfl::frameLoadCompleted()
@@ -535,7 +544,7 @@ void FrameLoaderClientEfl::loadedFromCachedPage()
 
 void FrameLoaderClientEfl::dispatchDidHandleOnloadEvents()
 {
-    ewk_view_onload_event(m_view, m_frame);
+    notImplemented();
 }
 
 void FrameLoaderClientEfl::dispatchDidReceiveServerRedirectForProvisionalLoad()
@@ -602,7 +611,6 @@ void FrameLoaderClientEfl::dispatchDidChangeIcons(WebCore::IconType)
 void FrameLoaderClientEfl::dispatchDidCommitLoad()
 {
     ewk_frame_uri_changed(m_frame);
-    ewk_frame_load_committed(m_frame);
     if (ewk_view_frame_main_get(m_view) != m_frame)
         return;
     ewk_view_title_set(m_view, 0);
@@ -753,18 +761,15 @@ void FrameLoaderClientEfl::dispatchDidFailProvisionalLoad(const ResourceError& e
 
 void FrameLoaderClientEfl::dispatchDidFailLoad(const ResourceError& err)
 {
-    ewk_frame_load_error(m_frame,
-                         err.domain().utf8().data(),
-                         err.errorCode(), err.isCancellation(),
-                         err.localizedDescription().utf8().data(),
-                         err.failingURL().utf8().data());
+    if (!shouldFallBack(err))
+        return;
 
-    ewk_frame_load_finished(m_frame,
-                            err.domain().utf8().data(),
-                            err.errorCode(),
-                            err.isCancellation(),
-                            err.localizedDescription().utf8().data(),
-                            err.failingURL().utf8().data());
+    m_loadError = err;
+    ewk_frame_load_error(m_frame,
+                         m_loadError.domain().utf8().data(),
+                         m_loadError.errorCode(), m_loadError.isCancellation(),
+                         m_loadError.localizedDescription().utf8().data(),
+                         m_loadError.failingURL().utf8().data());
 }
 
 void FrameLoaderClientEfl::download(ResourceHandle*, const ResourceRequest& request, const ResourceResponse&)

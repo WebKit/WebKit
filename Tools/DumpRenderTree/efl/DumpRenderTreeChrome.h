@@ -68,7 +68,7 @@ private:
 
     static Eina_Bool processWork(void*);
 
-    static void topLoadingFrameLoadFinished();
+    static void onLoadFinished(void*, Evas_Object*, void*);
 
     static void onStatusbarTextSet(void*, Evas_Object*, void*);
 
@@ -77,22 +77,6 @@ private:
     static void onDocumentLoadFinished(void*, Evas_Object*, void*);
 
     static void onWillSendRequest(void*, Evas_Object*, void*);
-
-    static void onWebViewOnloadEvent(void*, Evas_Object*, void*);
-
-    static void onInsecureContentRun(void*, Evas_Object*, void*);
-
-    static void onInsecureContentDisplayed(void*, Evas_Object*, void*);
-
-    static void onFrameCreated(void*, Evas_Object*, void*);
-
-    static void onFrameProvisionalLoad(void*, Evas_Object*, void*);
-
-    static void onFrameLoadCommitted(void*, Evas_Object*, void*);
-
-    static void onFrameLoadFinished(void*, Evas_Object*, void*);
-
-    static void onFrameLoadError(void*, Evas_Object*, void*);
 };
 
 #endif // DumpRenderTreeChrome_h
