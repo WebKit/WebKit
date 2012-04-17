@@ -1,3 +1,34 @@
+2012-04-17  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 109480
+
+    2012-03-01  Kent Tamura  <tkent@chromium.org>
+
+            REGRESSION(r106388): Form state is restored to a wrong document.
+            https://bugs.webkit.org/show_bug.cgi?id=79206
+
+            Reviewed by Brady Eidson.
+
+            In some cases, the URL of the current HistoryItem and the document
+            URL are mismatched.
+            A form state should be restored only if the document was loaded
+            with a HistoryItem and the document is not loaded as a
+            redirection.
+
+            Test: fast/loader/form-state-restore-with-locked-back-forward-list.html
+
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::checkCompleted): Clear m_requestedHistoryItem.
+            (WebCore::FrameLoader::loadItem):
+            Save the requested HistoryItem for didLoadWithLodItem().
+            * loader/FrameLoader.h:
+            (WebCore::FrameLoader::requestedHistoryItem):
+            Added. Accessor for m_requestedHistoryItem.
+            * loader/HistoryController.cpp:
+            (WebCore::HistoryController::restoreDocumentState):
+            Restore a form state only if the current document was loaded with
+            FrameLoader::loadItem() and not redirection.
+
 2012-04-12  Lucas Forschler  <lforschler@apple.com>
 
     Merge 113415

@@ -129,6 +129,7 @@ public:
     unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
 
     bool canHandleRequest(const ResourceRequest&);
+    HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
 
     // Also not cool.
     void stopAllLoaders(ClearProvisionalItemPolicy = ShouldClearProvisionalItem);
@@ -506,6 +507,7 @@ private:
     RefPtr<FrameNetworkingContext> m_networkingContext;
 
     KURL m_previousUrl;
+    RefPtr<HistoryItem> m_requestedHistoryItem;
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for

@@ -926,6 +926,7 @@ void FrameLoader::checkCompleted()
 
     // OK, completed.
     m_isComplete = true;
+    m_requestedHistoryItem = 0;
     m_frame->document()->setReadyState(Document::Complete);
 
     RefPtr<Frame> protect(m_frame);
@@ -3374,6 +3375,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
 // Loads content into this frame, as specified by history item
 void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
 {
+    m_requestedHistoryItem = item;
     HistoryItem* currentItem = history()->currentItem();
     bool sameDocumentNavigation = currentItem && item->shouldDoSameDocumentNavigationTo(currentItem);
 

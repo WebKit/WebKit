@@ -1,0 +1,2 @@
+PASS location.search is "?TestName1=Ok1&TestName2=Ok2"
+
