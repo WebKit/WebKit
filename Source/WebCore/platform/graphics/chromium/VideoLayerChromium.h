@@ -36,25 +36,28 @@
 
 #include "LayerChromium.h"
 
+namespace WebKit {
+class WebVideoFrameProvider;
+}
+
 namespace WebCore {
 
 class CCVideoLayerImpl;
-class VideoFrameProvider;
 
 // A Layer that contains a Video element.
 class VideoLayerChromium : public LayerChromium {
 public:
 
-    static PassRefPtr<VideoLayerChromium> create(VideoFrameProvider* = 0);
+    static PassRefPtr<VideoLayerChromium> create(WebKit::WebVideoFrameProvider*);
     virtual ~VideoLayerChromium();
 
     virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE;
 
 private:
-    explicit VideoLayerChromium(VideoFrameProvider*);
+    explicit VideoLayerChromium(WebKit::WebVideoFrameProvider*);
 
     // This pointer is only for passing to CCVideoLayerImpl's constructor. It should never be dereferenced by this class.
-    VideoFrameProvider* m_provider;
+    WebKit::WebVideoFrameProvider* m_provider;
 };
 
 }

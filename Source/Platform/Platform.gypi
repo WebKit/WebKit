@@ -90,6 +90,8 @@
             'chromium/public/WebURLRequest.h',
             'chromium/public/WebURLResponse.h',
             'chromium/public/WebVector.h',
+            'chromium/public/WebVideoFrame.h',
+            'chromium/public/WebVideoFrameProvider.h',
             'chromium/src/Platform.cpp',
             'chromium/src/WebCString.cpp',
             'chromium/src/WebFloatQuad.cpp',

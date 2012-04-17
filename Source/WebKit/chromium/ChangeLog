@@ -1,3 +1,35 @@
+2012-04-13  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Expose WebVideoLayer to Platform API and port WebMediaPlayerClientImpl to using it
+        https://bugs.webkit.org/show_bug.cgi?id=83963
+
+        Reviewed by Adrienne Walker.
+
+        Adds implementation of WebVideoLayer and ports WebMediaPlayerClientImpl over to using it.
+        WebMediaPlayerClientImpl still exposes a WebCore::VideoLayerChromium* to the compositor via the platformLayer()
+        interface, but this is temporary until we can change the PlatformLayer typedef over to WebLayer.
+
+        * WebKit.gyp:
+        * src/WebContentLayer.cpp:
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::invalidate):
+        (WebKit):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::readyStateChanged):
+        (WebKit::WebMediaPlayerClientImpl::repaint):
+        (WebKit::WebMediaPlayerClientImpl::setOpaque):
+        (WebKit::WebMediaPlayerClientImpl::platformLayer):
+        (WebKit::WebMediaPlayerClientImpl::acceleratedRenderingInUse):
+        (WebKit::WebMediaPlayerClientImpl::setVideoFrameProviderClient):
+        (WebKit::WebMediaPlayerClientImpl::supportsType):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+        * src/WebVideoLayer.cpp: Copied from Source/WebKit/chromium/src/WebContentLayer.cpp.
+        (WebKit):
+        (WebKit::WebVideoLayer::create):
+        (WebKit::WebVideoLayer::WebVideoLayer):
+        (WebKit::WebVideoLayer::active):
+
 2012-04-16  Aaron Colwell  <acolwell@chromium.org>
 
         Fix WebKit style violations in Chromium WebMediaPlayer.h & WebMediaPlayerClient.h

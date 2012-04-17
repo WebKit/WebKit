@@ -54,6 +54,9 @@ public:
     WEBKIT_EXPORT void assign(const WebLayer&);
     WEBKIT_EXPORT bool equals(const WebLayer&) const;
 
+    // Sets the entire layer as invalid, i.e. needs to update its content.
+    WEBKIT_EXPORT void invalidate();
+
     WEBKIT_EXPORT WebLayer rootLayer() const;
     WEBKIT_EXPORT WebLayer parent() const;
     WEBKIT_EXPORT void addChild(const WebLayer&);
@@ -113,7 +116,7 @@ public:
     WebLayer(const WTF::PassRefPtr<WebCore::LayerChromium>&);
     WebLayer& operator=(const WTF::PassRefPtr<WebCore::LayerChromium>&);
     operator WTF::PassRefPtr<WebCore::LayerChromium>() const;
-    template<typename T> T* unwrap()
+    template<typename T> T* unwrap() const
     {
         return static_cast<T*>(m_private.get());
     }

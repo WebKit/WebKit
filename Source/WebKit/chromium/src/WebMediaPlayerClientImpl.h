@@ -35,11 +35,11 @@
 
 #include "AudioSourceProvider.h"
 #include "MediaPlayerPrivate.h"
-#include "VideoFrameProvider.h"
-#include "VideoLayerChromium.h"
 #include "WebAudioSourceProviderClient.h"
 #include "WebMediaPlayerClient.h"
 #include "WebStreamTextureClient.h"
+#include <public/WebVideoFrameProvider.h>
+#include <public/WebVideoLayer.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -54,7 +54,7 @@ class WebMediaPlayer;
 // WebKit::WebMediaPlayer.
 class WebMediaPlayerClientImpl : public WebCore::MediaPlayerPrivateInterface
 #if USE(ACCELERATED_COMPOSITING)
-                               , public WebCore::VideoFrameProvider
+                               , public WebVideoFrameProvider
 #endif
                                , public WebMediaPlayerClient
                                , public WebStreamTextureClient {
@@ -142,8 +142,8 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool supportsAcceleratedRendering() const;
 
-    // VideoFrameProvider methods:
-    virtual void setVideoFrameProviderClient(VideoFrameProvider::Client*);
+    // WebVideoFrameProvider methods:
+    virtual void setVideoFrameProviderClient(WebVideoFrameProvider::Client*);
     virtual WebVideoFrame* getCurrentFrame();
     virtual void putCurrentFrame(WebVideoFrame*);
 #endif
@@ -189,10 +189,10 @@ private:
     bool m_delayingLoad;
     WebCore::MediaPlayer::Preload m_preload;
 #if USE(ACCELERATED_COMPOSITING)
-    RefPtr<WebCore::VideoLayerChromium> m_videoLayer;
+    WebVideoLayer m_videoLayer;
     bool m_supportsAcceleratedCompositing;
     bool m_opaque;
-    VideoFrameProvider::Client* m_videoFrameProviderClient;
+    WebVideoFrameProvider::Client* m_videoFrameProviderClient;
 #endif
     static bool m_isEnabled;
 

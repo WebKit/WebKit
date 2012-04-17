@@ -1,3 +1,30 @@
+2012-04-13  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Expose WebVideoLayer to Platform API and port WebMediaPlayerClientImpl to using it
+        https://bugs.webkit.org/show_bug.cgi?id=83963
+
+        Reviewed by Adrienne Walker.
+
+        Adds a compositor layer type for video, WebVideoLayer, and a WebVideoProvider interface.
+
+        * Platform.gypi:
+        * chromium/public/WebContentLayer.h:
+        (WebContentLayer):
+        * chromium/public/WebLayer.h:
+        (WebLayer):
+        (WebKit::WebLayer::unwrap):
+        * chromium/public/WebVideoFrameProvider.h: Renamed from Source/WebCore/platform/graphics/chromium/VideoFrameProvider.h.
+        (WebKit):
+        (WebVideoFrameProvider):
+        (WebKit::WebVideoFrameProvider::~WebVideoFrameProvider):
+        (Client):
+        * chromium/public/WebVideoLayer.h: Copied from Source/WebKit/chromium/src/WebContentLayer.cpp.
+        (WebCore):
+        (WebKit):
+        (WebVideoLayer):
+        (WebKit::WebVideoLayer::WebVideoLayer):
+        (WebKit::WebVideoLayer::~WebVideoLayer):
+
 2012-04-11  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unused compositeToTexture / compositeOffscreen setting

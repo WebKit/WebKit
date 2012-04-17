@@ -109,9 +109,9 @@ void WebMediaPlayerClientImpl::readyStateChanged()
     ASSERT(m_mediaPlayer);
     m_mediaPlayer->readyStateChanged();
 #if USE(ACCELERATED_COMPOSITING)
-    if (hasVideo() && supportsAcceleratedRendering() && !m_videoLayer) {
-        m_videoLayer = VideoLayerChromium::create(this);
-        m_videoLayer->setOpaque(m_opaque);
+    if (hasVideo() && supportsAcceleratedRendering() && m_videoLayer.isNull()) {
+        m_videoLayer = WebVideoLayer::create(this);
+        m_videoLayer.setOpaque(m_opaque);
     }
 #endif
 }
@@ -138,8 +138,8 @@ void WebMediaPlayerClientImpl::repaint()
 {
     ASSERT(m_mediaPlayer);
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_videoLayer && supportsAcceleratedRendering())
-        m_videoLayer->setNeedsDisplay();
+    if (!m_videoLayer.isNull() && supportsAcceleratedRendering())
+        m_videoLayer.invalidate();
 #endif
     m_mediaPlayer->repaint();
 }
@@ -166,8 +166,8 @@ void WebMediaPlayerClientImpl::setOpaque(bool opaque)
 {
 #if USE(ACCELERATED_COMPOSITING)
     m_opaque = opaque;
-    if (m_videoLayer)
-        m_videoLayer->setOpaque(m_opaque);
+    if (!m_videoLayer.isNull())
+        m_videoLayer.setOpaque(m_opaque);
 #endif
 }
 
@@ -315,7 +315,7 @@ void WebMediaPlayerClientImpl::cancelLoad()
 PlatformLayer* WebMediaPlayerClientImpl::platformLayer() const
 {
     ASSERT(m_supportsAcceleratedCompositing);
-    return m_videoLayer.get();
+    return m_videoLayer.unwrap<VideoLayerChromium>();
 }
 #endif
 
@@ -650,10 +650,10 @@ bool WebMediaPlayerClientImpl::supportsAcceleratedRendering() const
 
 bool WebMediaPlayerClientImpl::acceleratedRenderingInUse()
 {
-    return m_videoLayer && m_videoLayer->layerTreeHost();
+    return !m_videoLayer.isNull() && m_videoLayer.active();
 }
 
-void WebMediaPlayerClientImpl::setVideoFrameProviderClient(VideoFrameProvider::Client* client)
+void WebMediaPlayerClientImpl::setVideoFrameProviderClient(WebVideoFrameProvider::Client* client)
 {
     MutexLocker locker(m_compositingMutex);
     m_videoFrameProviderClient = client;
@@ -764,7 +764,6 @@ WebMediaPlayerClientImpl::WebMediaPlayerClientImpl()
     , m_delayingLoad(false)
     , m_preload(MediaPlayer::MetaData)
 #if USE(ACCELERATED_COMPOSITING)
-    , m_videoLayer(0)
     , m_supportsAcceleratedCompositing(false)
     , m_opaque(false)
     , m_videoFrameProviderClient(0)

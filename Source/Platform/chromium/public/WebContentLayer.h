@@ -56,9 +56,6 @@ public:
     // WebContentLayerClient::paintContents before the compositing pass occurs.
     WEBKIT_EXPORT void invalidateRect(const WebFloatRect&);
 
-    // Sets the entire layer as invalid, i.e. needs to update its content.
-    WEBKIT_EXPORT void invalidate();
-
 #if WEBKIT_IMPLEMENTATION
     WebContentLayer(const WTF::PassRefPtr<WebContentLayerImpl>&);
     WebContentLayer& operator=(const WTF::PassRefPtr<WebContentLayerImpl>&);

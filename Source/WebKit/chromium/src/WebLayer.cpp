@@ -94,6 +94,11 @@ bool WebLayer::equals(const WebLayer& n) const
     return (m_private.get() == n.m_private.get());
 }
 
+void WebLayer::invalidate()
+{
+    m_private->setNeedsDisplay();
+}
+
 WebLayer WebLayer::rootLayer() const
 {
     return WebLayer(const_cast<LayerChromium*>(m_private->rootLayer()));

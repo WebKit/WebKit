@@ -73,7 +73,7 @@ const float CCVideoLayerImpl::flipTransform[16] = {
     0, 1, 0, 1,
 };
 
-CCVideoLayerImpl::CCVideoLayerImpl(int id, VideoFrameProvider* provider)
+CCVideoLayerImpl::CCVideoLayerImpl(int id, WebKit::WebVideoFrameProvider* provider)
     : CCLayerImpl(id)
     , m_provider(provider)
     , m_layerTreeHostImpl(0)

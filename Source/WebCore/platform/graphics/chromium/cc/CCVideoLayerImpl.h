@@ -28,9 +28,9 @@
 
 #include "ManagedTexture.h"
 #include "ShaderChromium.h"
-#include "VideoFrameProvider.h"
 #include "VideoLayerChromium.h"
 #include "cc/CCLayerImpl.h"
+#include <public/WebVideoFrameProvider.h>
 
 namespace WebKit {
 class WebVideoFrame;
@@ -44,9 +44,9 @@ class CCVideoLayerImpl;
 template<class VertexShader, class FragmentShader> class ProgramBinding;
 
 class CCVideoLayerImpl : public CCLayerImpl
-                       , public VideoFrameProvider::Client {
+                       , public WebKit::WebVideoFrameProvider::Client {
 public:
-    static PassOwnPtr<CCVideoLayerImpl> create(int id, VideoFrameProvider* provider)
+    static PassOwnPtr<CCVideoLayerImpl> create(int id, WebKit::WebVideoFrameProvider* provider)
     {
         return adoptPtr(new CCVideoLayerImpl(id, provider));
     }
@@ -64,9 +64,8 @@ public:
     virtual void dumpLayerProperties(TextStream&, int indent) const OVERRIDE;
 
     Mutex& providerMutex() { return m_providerMutex; }
-    VideoFrameProvider* provider() const { return m_provider; }
 
-    // VideoFrameProvider::Client implementation.
+    // WebKit::WebVideoFrameProvider::Client implementation.
     virtual void stopUsingProvider(); // Callable on any thread.
     virtual void didReceiveFrame(); // Callable on impl thread.
     virtual void didUpdateMatrix(const float*); // Callable on impl thread.
@@ -84,7 +83,7 @@ public:
     enum { MaxPlanes = 3 };
 
 private:
-    explicit CCVideoLayerImpl(int, VideoFrameProvider*);
+    CCVideoLayerImpl(int, WebKit::WebVideoFrameProvider*);
 
     static IntSize computeVisibleSize(const WebKit::WebVideoFrame&, unsigned plane);
     virtual const char* layerTypeAsString() const OVERRIDE { return "VideoLayer"; }
@@ -92,7 +91,7 @@ private:
     bool reserveTextures(const WebKit::WebVideoFrame&, GC3Denum format, LayerRendererChromium*);
 
     Mutex m_providerMutex; // Guards m_provider below.
-    VideoFrameProvider* m_provider;
+    WebKit::WebVideoFrameProvider* m_provider;
 
     Texture m_textures[MaxPlanes];
 

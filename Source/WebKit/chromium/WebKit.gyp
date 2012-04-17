@@ -663,6 +663,7 @@
                 'src/WebURLLoadTiming.cpp',
                 'src/WebScopedUserGesture.cpp',
                 'src/WebUserMediaRequest.cpp',
+                'src/WebVideoLayer.cpp',
                 'src/WebViewImpl.cpp',
                 'src/WebViewImpl.h',
                 'src/WebWorkerBase.cpp',
