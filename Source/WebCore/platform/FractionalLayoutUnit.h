@@ -36,6 +36,10 @@
 #include <math.h>
 #include <stdlib.h>
 
+#if PLATFORM(CHROMIUM) || PLATFORM(MAC)
+#define ARE_SIZE_T_UNSIGNED_DIFFERENT_UNIT
+#endif
+
 namespace WebCore {
 
 static const int kFixedPointDenominator = 60;
@@ -51,6 +55,9 @@ public:
     FractionalLayoutUnit(float value) { ASSERT(isInBounds(value)); m_value = value * kFixedPointDenominator; }
     FractionalLayoutUnit(double value) { ASSERT(isInBounds(value)); m_value = value * kFixedPointDenominator; }
     FractionalLayoutUnit(const FractionalLayoutUnit& value) { m_value = value.rawValue(); }
+#ifdef ARE_SIZE_T_UNSIGNED_DIFFERENT_UNIT
+    FractionalLayoutUnit(size_t value) { ASSERT(isInBounds(value)); m_value = static_cast<int>(value * kFixedPointDenominator); }
+#endif
 
     inline int toInt() const { return m_value / kFixedPointDenominator; }
     inline unsigned toUnsigned() const { ASSERT(m_value >= 0); return toInt(); }
@@ -126,6 +133,12 @@ private:
     {
         return ::fabs(value) <= std::numeric_limits<int>::max() / kFixedPointDenominator;
     }
+#ifdef ARE_SIZE_T_UNSIGNED_DIFFERENT_UNIT
+    inline bool isInBounds(size_t value)
+    {
+        return value <= static_cast<size_t>(std::numeric_limits<int>::max()) / kFixedPointDenominator;
+    }
+#endif
 
     int m_value;
 };
@@ -331,6 +344,13 @@ inline FractionalLayoutUnit operator*(const FractionalLayoutUnit& a, unsigned b)
     return a * FractionalLayoutUnit(b);
 }
 
+#ifdef ARE_SIZE_T_UNSIGNED_DIFFERENT_UNIT
+inline FractionalLayoutUnit operator*(const FractionalLayoutUnit& a, size_t b)
+{
+    return a * FractionalLayoutUnit(b);
+}
+#endif
+
 inline FractionalLayoutUnit operator*(unsigned a, const FractionalLayoutUnit& b)
 {
     return FractionalLayoutUnit(a) * b;
@@ -350,6 +370,13 @@ inline double operator*(const double a, const FractionalLayoutUnit& b)
 {
     return a * b.toDouble();
 }
+
+#ifdef ARE_SIZE_T_UNSIGNED_DIFFERENT_UNIT
+inline FractionalLayoutUnit operator*(size_t a, const FractionalLayoutUnit& b)
+{
+    return FractionalLayoutUnit(a) * b;
+}
+#endif
 
 inline FractionalLayoutUnit operator/(const FractionalLayoutUnit& a, const FractionalLayoutUnit& b)
 {
@@ -379,6 +406,13 @@ inline FractionalLayoutUnit operator/(const FractionalLayoutUnit& a, unsigned in
     return a / FractionalLayoutUnit(b);
 }
 
+#ifdef ARE_SIZE_T_UNSIGNED_DIFFERENT_UNIT
+inline FractionalLayoutUnit operator/(const FractionalLayoutUnit& a, size_t b)
+{
+    return a / FractionalLayoutUnit(b);
+}
+#endif
+
 inline float operator/(const float a, const FractionalLayoutUnit& b)
 {
     return a / b.toFloat();
@@ -393,6 +427,13 @@ inline FractionalLayoutUnit operator/(unsigned int a, const FractionalLayoutUnit
 {
     return FractionalLayoutUnit(a) / b;
 }
+
+#ifdef ARE_SIZE_T_UNSIGNED_DIFFERENT_UNIT
+inline FractionalLayoutUnit operator/(size_t a, const FractionalLayoutUnit& b)
+{
+    return FractionalLayoutUnit(a) / b;
+}
+#endif
 
 inline FractionalLayoutUnit operator+(const FractionalLayoutUnit& a, const FractionalLayoutUnit& b)
 {
