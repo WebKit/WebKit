@@ -6482,14 +6482,23 @@ LayoutRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, La
 
     switch (alignment) {
         case alignLeft:
+            if (currentStyle->isLeftToRightDirection())
+                x += textIndentOffset();
             break;
         case alignCenter:
             x = (x + w - (borderRight() + paddingRight())) / 2;
+            if (currentStyle->isLeftToRightDirection())
+                x += textIndentOffset() / 2;
+            else
+                x -= textIndentOffset() / 2;
             break;
         case alignRight:
             x = w - (borderRight() + paddingRight()) - caretWidth;
+            if (!currentStyle->isLeftToRightDirection())
+                x -= textIndentOffset();
             break;
     }
+    x = min(x, w - borderRight() - paddingRight() - caretWidth);
 
     if (extraWidthToEndOfLine) {
         if (isRenderBlock()) {
