@@ -1,3 +1,19 @@
+2012-04-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] FrameLoaderClient should send "load,finished" signal for all frame, not just the main one
+        https://bugs.webkit.org/show_bug.cgi?id=84052
+
+        Reviewed by Antonio Gomes.
+
+        Emit the "load,finished" signal from dispatchDidFinishLoad() / instead of
+        postProgressFinishedNotification() in order to send notifications all frames,
+        not just the main one.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientEfl::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientEfl::dispatchDidFailLoad):
+
 2012-04-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Add setting API to enable/disable XSSAuditor

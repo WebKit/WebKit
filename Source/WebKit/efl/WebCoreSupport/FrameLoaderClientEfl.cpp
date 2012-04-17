@@ -232,16 +232,7 @@ void FrameLoaderClientEfl::postProgressEstimateChangedNotification()
 
 void FrameLoaderClientEfl::postProgressFinishedNotification()
 {
-    if (m_loadError.isNull())
-        ewk_frame_load_finished(m_frame, 0, 0, 0, 0, 0);
-    else {
-        ewk_frame_load_finished(m_frame,
-                                m_loadError.domain().utf8().data(),
-                                m_loadError.errorCode(),
-                                m_loadError.isCancellation(),
-                                m_loadError.localizedDescription().utf8().data(),
-                                m_loadError.failingURL().utf8().data());
-    }
+    notImplemented();
 }
 
 void FrameLoaderClientEfl::frameLoaderDestroyed()
@@ -457,7 +448,7 @@ bool FrameLoaderClientEfl::hasFrameView() const
 
 void FrameLoaderClientEfl::dispatchDidFinishLoad()
 {
-    m_loadError = ResourceError(); /* clears previous error */
+    ewk_frame_load_finished(m_frame, 0, 0, 0, 0, 0);
 }
 
 void FrameLoaderClientEfl::frameLoadCompleted()
@@ -765,12 +756,18 @@ void FrameLoaderClientEfl::dispatchDidFailProvisionalLoad(const ResourceError& e
 
 void FrameLoaderClientEfl::dispatchDidFailLoad(const ResourceError& err)
 {
-    m_loadError = err;
     ewk_frame_load_error(m_frame,
-                         m_loadError.domain().utf8().data(),
-                         m_loadError.errorCode(), m_loadError.isCancellation(),
-                         m_loadError.localizedDescription().utf8().data(),
-                         m_loadError.failingURL().utf8().data());
+                         err.domain().utf8().data(),
+                         err.errorCode(), err.isCancellation(),
+                         err.localizedDescription().utf8().data(),
+                         err.failingURL().utf8().data());
+
+    ewk_frame_load_finished(m_frame,
+                            err.domain().utf8().data(),
+                            err.errorCode(),
+                            err.isCancellation(),
+                            err.localizedDescription().utf8().data(),
+                            err.failingURL().utf8().data());
 }
 
 void FrameLoaderClientEfl::download(ResourceHandle*, const ResourceRequest& request, const ResourceResponse&)

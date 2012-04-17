@@ -751,7 +751,6 @@ fast/loader/null-request-after-willSendRequest.html
 fast/history/back-forward-reset-after-error-handling.html
 
 # Missing delegates: tests which need proper frame loader callbacks reporting
-http/tests/security/mixedContent/empty-url-plugin-in-frame.html
 fast/loader/file-protocol-fragment.html
 
 # Missing delegates: tests failing because of missing resource load delegate callbacks.
@@ -2326,20 +2325,11 @@ http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/frameNavigation/not-opener.html
 http/tests/security/local-image-from-remote-whitelisted.html
 http/tests/security/local-user-CSS-from-remote.html
-http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
-http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
-http/tests/security/mixedContent/data-url-script-in-iframe.html
-http/tests/security/mixedContent/insecure-css-in-iframe.html
-http/tests/security/mixedContent/insecure-iframe-in-iframe.html
-http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
-http/tests/security/mixedContent/insecure-image-in-iframe.html
 http/tests/security/mixedContent/insecure-image-in-main-frame.html
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html
 http/tests/security/mixedContent/insecure-script-in-iframe.html
 http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
-http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html
 http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
-http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
 http/tests/security/no-referrer.html
 http/tests/security/originHeader/origin-header-for-empty.html
 http/tests/security/originHeader/origin-header-for-https.html
