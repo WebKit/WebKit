@@ -1,3 +1,20 @@
+2012-04-17  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 112023
+    
+    2012-03-24  Jeffrey Pfau  <jpfau@apple.com>
+
+        XML error document creation should not fire mutation events
+        https://bugs.webkit.org/show_bug.cgi?id=80765
+
+        Reviewed by Adam Barth.
+
+        Fixed tests that relied on old behavior.
+
+        * fast/css/stylesheet-candidate-nodes-crash-expected.txt:
+        * fast/css/stylesheet-candidate-nodes-crash.xhtml:
+        * fast/dom/xml-parser-error-message-crash-expected.txt:
+
 2012-03-07  Lucas Forschler  <lforschler@apple.com>
 
     Merge 109594

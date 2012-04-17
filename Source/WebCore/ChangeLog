@@ -1,3 +1,20 @@
+2012-04-17  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 112023
+
+    2012-03-24  Jeffrey Pfau  <jpfau@apple.com>
+
+        XML error document creation should not fire mutation events
+        https://bugs.webkit.org/show_bug.cgi?id=80765
+
+        Reviewed by Adam Barth.
+
+        Broke two tests that expected the old behavior, which have now been updated.
+
+        * xml/XMLErrors.cpp:
+        (WebCore::createXHTMLParserErrorHeader):
+        (WebCore::XMLErrors::insertErrorMessageBlock):
+
 2012-04-16  Lucas Forschler  <lforschler@apple.com>
 
     Merge 110150
