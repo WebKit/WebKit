@@ -31,9 +31,9 @@
 #ifndef WebMediaPlayer_h
 #define WebMediaPlayer_h
 
+#include "WebTimeRange.h"
 #include "WebVideoFrame.h"
 #include "platform/WebCanvas.h"
-#include "platform/WebVector.h"
 
 namespace WebKit {
 
@@ -46,61 +46,76 @@ class WebURL;
 struct WebRect;
 struct WebSize;
 
-struct WebTimeRange {
-    WebTimeRange() : start(0), end(0) {}
-    WebTimeRange(float s, float e) : start(s), end(e) {}
-
-    float start;
-    float end;
-};
-
-typedef WebVector<WebTimeRange> WebTimeRanges;
-
 class WebMediaPlayer {
 public:
     enum NetworkState {
-        Empty,
-        Idle,
-        Loading,
-        Loaded,
-        FormatError,
-        NetworkError,
-        DecodeError,
+        NetworkStateEmpty,
+        NetworkStateIdle,
+        NetworkStateLoading,
+        NetworkStateLoaded,
+        NetworkStateFormatError,
+        NetworkStateNetworkError,
+        NetworkStateDecodeError,
+        Empty = NetworkStateEmpty,
+        Idle = NetworkStateIdle,
+        Loading = NetworkStateLoading,
+        Loaded = NetworkStateLoaded,
+        FormatError = NetworkStateFormatError,
+        NetworkError = NetworkStateNetworkError,
+        DecodeError = NetworkStateDecodeError,
     };
 
     enum ReadyState {
-        HaveNothing,
-        HaveMetadata,
-        HaveCurrentData,
-        HaveFutureData,
-        HaveEnoughData,
+        ReadyStateHaveNothing,
+        ReadyStateHaveMetadata,
+        ReadyStateHaveCurrentData,
+        ReadyStateHaveFutureData,
+        ReadyStateHaveEnoughData,
+        HaveNothing = ReadyStateHaveNothing,
+        HaveMetadata = ReadyStateHaveMetadata,
+        HaveCurrentData = ReadyStateHaveCurrentData,
+        HaveFutureData = ReadyStateHaveFutureData,
+        HaveEnoughData = ReadyStateHaveEnoughData,
     };
 
     enum MovieLoadType {
-        Unknown,
-        Download,
-        StoredStream,
-        LiveStream,
+        MovieLoadTypeUnknown,
+        MovieLoadTypeDownload,
+        MovieLoadTypeStoredStream,
+        MovieLoadTypeLiveStream,
+        Unknown = MovieLoadTypeUnknown,
+        Download = MovieLoadTypeDownload,
+        StoredStream = MovieLoadTypeStoredStream,
+        LiveStream = MovieLoadTypeLiveStream,
     };
 
     enum Preload {
-        None,
-        MetaData,
-        Auto,
+        PreloadNone,
+        PreloadMetaData,
+        PreloadAuto,
+        None = PreloadNone,
+        MetaData = PreloadMetaData,
+        Auto = PreloadAuto,
     };
 
     enum EndOfStreamStatus {
-        EosNoError,
-        EosNetworkError,
-        EosDecodeError,
+        EndOfStreamStatusNoError,
+        EndOfStreamStatusNetworkError,
+        EndOfStreamStatusDecodeError,
+        EosNoError = EndOfStreamStatusNoError,
+        EosNetworkError = EndOfStreamStatusNetworkError,
+        EosDecodeError = EndOfStreamStatusDecodeError,
     };
 
     // Represents synchronous exceptions that can be thrown from the Encrypted
     // Media methods. This is different from the asynchronous MediaKeyError.
     enum MediaKeyException {
-        NoError,
-        InvalidPlayerState,
-        KeySystemNotSupported
+        MediaKeyExceptionNoError,
+        MediaKeyExceptionInvalidPlayerState,
+        MediaKeyExceptionKeySystemNotSupported,
+        NoError = MediaKeyExceptionNoError,
+        InvalidPlayerState = MediaKeyExceptionInvalidPlayerState,
+        KeySystemNotSupported = MediaKeyExceptionKeySystemNotSupported,
     };
 
     virtual ~WebMediaPlayer() {}

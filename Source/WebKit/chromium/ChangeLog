@@ -1,3 +1,20 @@
+2012-04-16  Aaron Colwell  <acolwell@chromium.org>
+
+        Fix WebKit style violations in Chromium WebMediaPlayer.h & WebMediaPlayerClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=84046
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebMediaPlayer.h:
+        (WebKit):
+        * public/WebMediaPlayerClient.h:
+        * public/WebTimeRange.h: Copied from Source/WebKit/chromium/public/WebMediaPlayerClient.h.
+        (WebKit):
+        (WebKit::WebTimeRange::WebTimeRange):
+        (WebTimeRange):
+        * src/AssertMatchingEnums.cpp:
+
 2012-04-16  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Allow WebGestureEvent to store four floating point values

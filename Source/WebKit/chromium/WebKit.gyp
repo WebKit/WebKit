@@ -272,6 +272,7 @@
                 'public/WebTextFieldDecoratorClient.h',
                 'public/WebTextInputType.h',
                 'public/WebTextRun.h',
+                'public/WebTimeRange.h',
                 'public/WebURLLoaderOptions.h',
                 'public/WebUserMediaClient.h',
                 'public/WebUserMediaRequest.h',

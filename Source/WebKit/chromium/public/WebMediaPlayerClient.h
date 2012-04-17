@@ -41,12 +41,18 @@ class WebURL;
 class WebMediaPlayerClient {
 public:
     enum MediaKeyErrorCode {
-        UnknownError = 1,
-        ClientError,
-        ServiceError,
-        OutputError,
-        HardwareChangeError,
-        DomainError
+        MediaKeyErrorCodeUnknown = 1,
+        MediaKeyErrorCodeClient,
+        MediaKeyErrorCodeService,
+        MediaKeyErrorCodeOutput,
+        MediaKeyErrorCodeHardwareChange,
+        MediaKeyErrorCodeDomain,
+        UnknownError = MediaKeyErrorCodeUnknown,
+        ClientError = MediaKeyErrorCodeClient,
+        ServiceError = MediaKeyErrorCodeService,
+        OutputError = MediaKeyErrorCodeOutput,
+        HardwareChangeError = MediaKeyErrorCodeHardwareChange,
+        DomainError = MediaKeyErrorCodeDomain,
     };
 
     virtual void networkStateChanged() = 0;
