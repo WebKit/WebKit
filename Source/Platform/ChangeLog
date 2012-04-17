@@ -1,3 +1,11 @@
+2012-04-16  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Fix Chromium-Mac build
+        https://bugs.webkit.org/show_bug.cgi?id=80054
+
+        * chromium/public/WebFilterOperations.h:
+        (WebKit): WebFilterOperation is a struct, not a class.
+
 2012-04-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Expose compositor filters to Aura through WebLayer

@@ -36,7 +36,7 @@ class FilterOperations;
 #endif
 
 namespace WebKit {
-class WebFilterOperation;
+struct WebFilterOperation;
 
 // An ordered set of filter operations.
 class WebFilterOperations {
