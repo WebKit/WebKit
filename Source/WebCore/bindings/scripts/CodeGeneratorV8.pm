@@ -1009,7 +1009,7 @@ END
     return value;
 END
         } else {
-            push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result).";\n");
+            push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "info.GetIsolate()").";\n");
         }
     }
 
@@ -3321,7 +3321,7 @@ sub GenerateFunctionCallString()
     }
 
     $return .= ".release()" if ($returnIsRef);
-    $result .= $indent . ReturnNativeToJSValue($function->signature, $return) . ";\n";
+    $result .= $indent . ReturnNativeToJSValue($function->signature, $return, "args.GetIsolate()") . ";\n";
 
     return $result;
 }
@@ -3738,6 +3738,7 @@ sub NativeToJSValue
 {
     my $signature = shift;
     my $value = shift;
+    my $getIsolate = shift;
     my $type = GetTypeFromSignature($signature);
 
     return "v8Boolean($value)" if $type eq "boolean";
@@ -3768,14 +3769,15 @@ sub NativeToJSValue
 
     if ($codeGenerator->IsStringType($type)) {
         my $conv = $signature->extendedAttributes->{"TreatReturnedNullStringAs"};
+        my $getIsolateArgument = $getIsolate ? ", $getIsolate" : "";
         if (defined $conv) {
-            return "v8StringOrNull($value)" if $conv eq "Null";
-            return "v8StringOrUndefined($value)" if $conv eq "Undefined";
-            return "v8StringOrFalse($value)" if $conv eq "False";
+            return "v8StringOrNull($value$getIsolateArgument)" if $conv eq "Null";
+            return "v8StringOrUndefined($value$getIsolateArgument)" if $conv eq "Undefined";
+            return "v8StringOrFalse($value$getIsolateArgument)" if $conv eq "False";
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }
-        return "v8String($value)";
+        return "v8String($value$getIsolateArgument)";
     }
 
     my $arrayType = $codeGenerator->GetArrayType($type);
