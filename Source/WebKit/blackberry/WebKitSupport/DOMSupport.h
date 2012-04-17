@@ -78,6 +78,8 @@ bool isPositionInNode(WebCore::Node*, const WebCore::Position&);
 bool elementIdOrNameIndicatesNoAutocomplete(const WebCore::Element*);
 bool elementIdOrNameIndicatesEmail(const WebCore::HTMLInputElement*);
 bool elementIdOrNameIndicatesUrl(const WebCore::HTMLInputElement*);
+bool elementPatternMatches(const char*, const WebCore::HTMLInputElement*);
+bool elementPatternIndicatesNumber(const WebCore::HTMLInputElement*);
 bool elementPatternIndicatesHexadecimal(const WebCore::HTMLInputElement*);
 
 WebCore::IntPoint convertPointToFrame(const WebCore::Frame* sourceFrame, const WebCore::Frame* targetFrame, const WebCore::IntPoint& sourcePoint, const bool clampToTargetFrame = false);

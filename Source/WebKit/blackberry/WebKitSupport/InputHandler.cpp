@@ -158,6 +158,8 @@ static BlackBerryInputType convertInputType(const HTMLInputElement* inputElement
         return InputTypeEmail;
     if (DOMSupport::elementIdOrNameIndicatesUrl(inputElement))
         return InputTypeURL;
+    if (DOMSupport::elementPatternIndicatesNumber(inputElement))
+        return InputTypeNumber;
     if (DOMSupport::elementPatternIndicatesHexadecimal(inputElement))
         return InputTypeHexadecimal;
 

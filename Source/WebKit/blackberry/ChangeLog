@@ -1,3 +1,24 @@
+2012-04-17  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Pattern matching should be applied to numbers
+        https://bugs.webkit.org/show_bug.cgi?id=84152
+
+        Reviewed by Antonio Gomes.
+
+        PR 148906.
+
+        Add pattern matching for number based on [0-9] to trigger
+        input help matching number fields.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::elementPatternIndicatesNumber):
+        (DOMSupport):
+        (BlackBerry::WebKit::DOMSupport::elementPatternIndicatesHexadecimal):
+        (BlackBerry::WebKit::DOMSupport::elementPatternMatches):
+        * WebKitSupport/DOMSupport.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::convertInputType):
+
 2012-04-17  George Staikos  <staikos@webkit.org>
 
         Export the initialization function so it can be called earlier.
