@@ -1053,7 +1053,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     
     // Make sure that the area used by the call frame is reserved.
     for (int arg = inlineCallFrameStart + RegisterFile::CallFrameHeaderSize + codeBlock->m_numVars; arg-- > inlineCallFrameStart;)
-        m_preservedVars.set(m_inlineStackTop->remapOperand(arg));
+        m_preservedVars.set(arg);
     
     // Make sure that we have enough locals.
     unsigned newNumLocals = inlineCallFrameStart + RegisterFile::CallFrameHeaderSize + codeBlock->m_numCalleeRegisters;
