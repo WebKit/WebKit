@@ -465,7 +465,8 @@ public:
         if (!m_frontendProvider->frontend())
             return;
 
-        m_idbCursor->postSuccessHandlerCallback();
+        if (m_idbCursor)
+            m_idbCursor->postSuccessHandlerCallback();
         m_idbTransaction->didCompleteTaskEvents();
 
         switch (m_cursorType) {
