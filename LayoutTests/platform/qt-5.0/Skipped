@@ -22,6 +22,7 @@ fast/js/global-constructors.html
 fast/replaced/invalid-object-with-fallback.html
 fast/replaced/object-with-embed-url-param.html
 fast/replaced/three-selects-break.html
+fast/text/international/arabic-justify.html
 http/tests/inspector/network/network-content-replacement-embed.html
 http/tests/inspector/network/network-embed.html
 http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
