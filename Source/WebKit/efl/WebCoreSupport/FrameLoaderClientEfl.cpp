@@ -544,7 +544,7 @@ void FrameLoaderClientEfl::loadedFromCachedPage()
 
 void FrameLoaderClientEfl::dispatchDidHandleOnloadEvents()
 {
-    notImplemented();
+    ewk_view_onload_event(m_view, m_frame);
 }
 
 void FrameLoaderClientEfl::dispatchDidReceiveServerRedirectForProvisionalLoad()
@@ -611,6 +611,7 @@ void FrameLoaderClientEfl::dispatchDidChangeIcons(WebCore::IconType)
 void FrameLoaderClientEfl::dispatchDidCommitLoad()
 {
     ewk_frame_uri_changed(m_frame);
+    ewk_frame_load_committed(m_frame);
     if (ewk_view_frame_main_get(m_view) != m_frame)
         return;
     ewk_view_title_set(m_view, 0);
@@ -761,9 +762,6 @@ void FrameLoaderClientEfl::dispatchDidFailProvisionalLoad(const ResourceError& e
 
 void FrameLoaderClientEfl::dispatchDidFailLoad(const ResourceError& err)
 {
-    if (!shouldFallBack(err))
-        return;
-
     m_loadError = err;
     ewk_frame_load_error(m_frame,
                          m_loadError.domain().utf8().data(),

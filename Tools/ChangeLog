@@ -1,3 +1,30 @@
+2012-04-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] DRT should support LayoutTestController's dumpFrameLoadCallbacks()
+        https://bugs.webkit.org/show_bug.cgi?id=83030
+
+        Reviewed by Antonio Gomes.
+
+        Implement support for LayoutTestController's dumpFrameLoadCallbacks()
+        in EFL's DumpRenderTree. Make use of the new frame argument passed to
+        the "load,started" and "load,finished" signals.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::onLoadStarted):
+        (DumpRenderTreeChrome::processWork):
+        (DumpRenderTreeChrome::topLoadingFrameLoadFinished):
+        (DumpRenderTreeChrome::onWebViewOnloadEvent):
+        (DumpRenderTreeChrome::onInsecureContentRun):
+        (DumpRenderTreeChrome::onInsecureContentDisplayed):
+        (DumpRenderTreeChrome::onFrameCreated):
+        (DumpRenderTreeChrome::onFrameProvisionalLoad):
+        (DumpRenderTreeChrome::onFrameLoadCommitted):
+        (DumpRenderTreeChrome::onFrameLoadFinished):
+        (DumpRenderTreeChrome::onFrameLoadError):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
 2012-04-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r114376.

@@ -60,12 +60,13 @@
  *  - "load,progress", double*: load progress is changed (overall value
  *    from 0.0 to 1.0, connect to individual frames for fine grained).
  *  - "load,provisional", void: view started provisional load.
- *  - "load,started", void: frame started loading the document.
+ *  - "load,started", Evas_Object*: frame started loading the document.
  *  - "menubar,visible,get", Eina_Bool *: expects a @c EINA_TRUE if menubar is
  *    visible; @c EINA_FALSE, otherwise.
  *  - "menubar,visible,set", Eina_Bool: sets menubar visibility.
  *  - "mixedcontent,displayed", void: any of the containing frames has loaded and displayed mixed content.
  *  - "mixedcontent,run", void: any of the containing frames has loaded and run mixed content.
+ *  - "onload,event", Evas_Object*: a frame onload event has been received.
  *  - "ready", void: page is fully loaded.
  *  - "resource,request,willsend", Ewk_Frame_Resource_Request*: a resource will
  *    be requested.

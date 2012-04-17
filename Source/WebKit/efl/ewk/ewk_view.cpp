@@ -2813,13 +2813,14 @@ void ewk_view_load_document_finished(Evas_Object* ewkView, Evas_Object* frame)
  * Reports the view started loading something.
  *
  * @param ewkView View.
+ * @param ewkFrame Frame being loaded.
  *
  * Emits signal: "load,started" with no parameters.
  */
-void ewk_view_load_started(Evas_Object* ewkView)
+void ewk_view_load_started(Evas_Object* ewkView, Evas_Object* ewkFrame)
 {
-    DBG("ewkView=%p", ewkView);
-    evas_object_smart_callback_call(ewkView, "load,started", 0);
+    DBG("ewkView=%p, ewkFrame=%p", ewkView, ewkFrame);
+    evas_object_smart_callback_call(ewkView, "load,started", ewkFrame);
 }
 
 /**
@@ -2864,6 +2865,19 @@ void ewk_view_load_show(Evas_Object* ewkView)
     evas_object_smart_callback_call(ewkView, "load,newwindow,show", 0);
 }
 
+/**
+ * @internal
+ * Reports an onload event for @p frame.
+ *
+ * @param ewkView View which contains the frame.
+ * @param frame The frame whose onload event was received.
+ *
+ * Emits signal: "onload,event" with @p frame as the parameter.
+ */
+void ewk_view_onload_event(Evas_Object* ewkView, Evas_Object* frame)
+{
+    evas_object_smart_callback_call(ewkView, "onload,event", frame);
+}
 
 /**
  * @internal

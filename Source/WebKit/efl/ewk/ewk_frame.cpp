@@ -1261,6 +1261,17 @@ void ewk_frame_view_state_save(Evas_Object* ewkFrame, WebCore::HistoryItem* item
 
 /**
  * @internal
+ * Reports the frame committed load.
+ *
+ * Emits signal: "load,committed" with no parameters.
+ */
+void ewk_frame_load_committed(Evas_Object* ewkFrame)
+{
+    evas_object_smart_callback_call(ewkFrame, "load,committed", 0);
+}
+
+/**
+ * @internal
  * Reports the frame started loading something.
  *
  * Emits signal: "load,started" with no parameters.
@@ -1271,7 +1282,7 @@ void ewk_frame_load_started(Evas_Object* ewkFrame)
     DBG("ewkFrame=%p", ewkFrame);
     evas_object_smart_callback_call(ewkFrame, "load,started", 0);
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);
-    ewk_view_load_started(smartData->view);
+    ewk_view_load_started(smartData->view, ewkFrame);
 
     mainFrame = ewk_view_frame_main_get(smartData->view);
     if (mainFrame == ewkFrame)
