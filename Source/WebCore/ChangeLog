@@ -1,5 +1,24 @@
 2012-04-17  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 111977
+
+    2012-03-23  Stephanie Lewis  <slewis@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=81963 WebProcess can get stuck in GC during many low memory signals.
+            <rdar://problem/11094830> WebProcess appears to get stuck in its GC handler (81963).
+            Remove the call to garbage collect  in low memory signal handler.  Did some testing with hitting the low memory handler
+            during Membuster and we would get back at most 100k - 200k.  That isn't enough to help the system, and in 
+            that state the GC collection can take a substantial amount of time.
+
+            Reviewed by Geoff Garen.
+
+            Performance Change, no change in behavior.
+
+            * platform/mac/MemoryPressureHandlerMac.mm:
+            (WebCore::MemoryPressureHandler::releaseMemory):
+
+2012-04-17  Lucas Forschler  <lforschler@apple.com>
+
     Merge 113528
 
     2012-04-06  Oliver Hunt  <oliver@apple.com>
