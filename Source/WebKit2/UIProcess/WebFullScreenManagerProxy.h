@@ -60,6 +60,8 @@ typedef WebView PlatformWebView;
 typedef QObject PlatformWebView;
 #elif PLATFORM(GTK)
 typedef WebKitWebViewBase PlatformWebView;
+#elif PLATFORM(EFL)
+typedef Evas_Object PlatformWebView;
 #endif
 
 class WebPageProxy;
