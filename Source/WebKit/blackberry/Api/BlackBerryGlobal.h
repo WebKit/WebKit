@@ -30,7 +30,7 @@ namespace WebKit {
 
 class WebString;
 
-void globalInitialize();
+BLACKBERRY_EXPORT void globalInitialize();
 void collectJavascriptGarbageNow();
 void clearCookieCache();
 BLACKBERRY_EXPORT void clearMemoryCaches();
