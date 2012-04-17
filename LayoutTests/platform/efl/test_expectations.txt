@@ -127,11 +127,6 @@ BUGWK83274 : fast/repaint/transform-rotate-and-remove.html = PASS
 // Not able to generate a meaningful expected result, since complex font rendering fails.
 BUGWK83275 : fast/text/international/text-spliced-font.html = FAIL MISSING
 
-// Keydown event fails, needs png and txt rebaseline after fixing bug 83277.
-BUGWK83277 : editing/input/caret-at-the-edge-of-contenteditable.html = FAIL MISSING
-BUGWK83277 : editing/input/reveal-caret-of-multiline-contenteditable.html = FAIL MISSING
-BUGWK83277 : editing/input/reveal-caret-of-multiline-input.html = FAIL MISSING
-
 // SVG dropShadow failure. Needs rebaseline after fixing.
 BUGWK83580 : svg/filters/feDropShadow.svg = FAIL MISSING
 
