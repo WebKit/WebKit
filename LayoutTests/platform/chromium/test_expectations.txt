@@ -1290,6 +1290,8 @@ BUGWK83717 LEOPARD : svg/custom/foreign-object-skew.svg = IMAGE
 
 BUGWK83875 LINUX : svg/text/font-size-below-point-five.svg = PASS TEXT
 
+BUGWK84203 : svg/transforms/transform-origin-css-property.xhtml = IMAGE
+
 // -----------------------------------------------------------------
 // End SVG TESTS
 // -----------------------------------------------------------------
