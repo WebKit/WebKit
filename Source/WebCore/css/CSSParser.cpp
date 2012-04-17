@@ -1624,18 +1624,22 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
                     return false;
             } else if (inQuirksMode() && value->id == CSSValueHand) // MSIE 5 compatibility :/
                 list->append(cssValuePool().createIdentifierValue(CSSValuePointer));
-            else if (value && ((value->id >= CSSValueAuto && value->id <= CSSValueWebkitGrabbing) || value->id == CSSValueCopy || value->id == CSSValueNone))
+            else if ((value->id >= CSSValueAuto && value->id <= CSSValueWebkitGrabbing) || value->id == CSSValueCopy || value->id == CSSValueNone)
                 list->append(cssValuePool().createIdentifierValue(value->id));
             m_valueList->next();
             parsedValue = list.release();
             break;
+        } else if (value) {
+            id = value->id;
+            if (inQuirksMode() && value->id == CSSValueHand) { // MSIE 5 compatibility :/
+                id = CSSValuePointer;
+                validPrimitive = true;
+            } else if ((value->id >= CSSValueAuto && value->id <= CSSValueWebkitGrabbing) || value->id == CSSValueCopy || value->id == CSSValueNone)
+                validPrimitive = true;
+        } else {
+            ASSERT_NOT_REACHED();
+            return false;
         }
-        id = value->id;
-        if (inQuirksMode() && value->id == CSSValueHand) { // MSIE 5 compatibility :/
-            id = CSSValuePointer;
-            validPrimitive = true;
-        } else if ((value->id >= CSSValueAuto && value->id <= CSSValueWebkitGrabbing) || value->id == CSSValueCopy || value->id == CSSValueNone)
-            validPrimitive = true;
         break;
     }
 
