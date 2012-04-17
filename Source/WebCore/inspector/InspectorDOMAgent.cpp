@@ -1395,6 +1395,9 @@ void InspectorDOMAgent::didInsertDOMNode(Node* node)
     unbind(node, &m_documentNodeToIdMap);
 
     ContainerNode* parent = node->parentNode();
+    if (!parent)
+        return;
+
     int parentId = m_documentNodeToIdMap.get(parent);
     // Return if parent is not mapped yet.
     if (!parentId)
