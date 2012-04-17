@@ -485,6 +485,7 @@ WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/close-in-onmessage-cra
 WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/close-in-shared-worker.html = TIMEOUT
 WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/close-in-worker.html = TIMEOUT
 WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/shared-worker-simple.html = TIMEOUT
+WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/worker-handshake-challenge-randomness.html = TIMEOUT
 WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html = TIMEOUT
 WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/shared-worker-simple.html = TIMEOUT
 WONTFIX SKIP : http/tests/inspector/network/network-shared-worker.html = PASS TIMEOUT FAIL
