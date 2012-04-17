@@ -112,7 +112,7 @@
             md5sum="2a70627ffd9f43c52c04cc0b05fe359f"/>
   </autotools>
 
-  <autotools id="gtk+"
+  <autotools id="gtk+" autogen-sh="configure"
              autogenargs="--disable-introspection">
     <dependencies>
       <dep package="glib"/>

@@ -1,5 +1,16 @@
 2012-04-16  Gustavo Noronha Silva  <gns@gnome.org>
 
+        [GTK] Use configure instead of autogen.sh for gtk+
+        https://bugs.webkit.org/show_bug.cgi?id=84112
+
+        Rubber-stamped by Martin Robinson.
+
+        * gtk/jhbuild.modules: GTK+'s autogen requires gobject-introspection;
+        we don't want to depend on that for now, so run configure instead - we
+        can, since we are using a tarball
+
+2012-04-16  Gustavo Noronha Silva  <gns@gnome.org>
+
         Unreviewed, rolling out r114322.
         http://trac.webkit.org/changeset/114322
         https://bugs.webkit.org/show_bug.cgi?id=84096
