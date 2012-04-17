@@ -505,8 +505,6 @@ public:
      */
     void styleSelectorChanged(StyleSelectorUpdateFlag);
 
-    void evaluateMediaQueryList();
-
     bool usesSiblingRules() const { return m_usesSiblingRules || m_usesSiblingRulesOverride; }
     void setUsesSiblingRules(bool b) { m_usesSiblingRulesOverride = b; }
     bool usesFirstLineRules() const { return m_usesFirstLineRules; }
