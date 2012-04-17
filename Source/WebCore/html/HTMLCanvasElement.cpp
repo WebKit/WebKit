@@ -45,7 +45,6 @@
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
-#include "RenderLayer.h"
 #include "Settings.h"
 #include <math.h>
 #include <stdio.h>
@@ -280,8 +279,8 @@ void HTMLCanvasElement::reset()
             if (oldSize != size()) {
                 toRenderHTMLCanvas(renderer)->canvasSizeChanged();
 #if USE(ACCELERATED_COMPOSITING)
-                if (renderBox() && renderBox()->hasLayer() && renderBox()->layer()->hasAcceleratedCompositing())
-                    renderBox()->layer()->contentChanged(RenderLayer::CanvasChanged);
+                if (renderBox() && renderBox()->hasAcceleratedCompositing())
+                    renderBox()->contentChanged(CanvasChanged);
 #endif
             }
             if (hadImageBuffer)
@@ -306,7 +305,7 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
     if (!m_context->isAccelerated())
         return true;
 
-    if (renderBox() && renderBox()->hasLayer() && renderBox()->layer()->hasAcceleratedCompositing())
+    if (renderBox() && renderBox()->hasAcceleratedCompositing())
         return false;
 #endif
     return true;

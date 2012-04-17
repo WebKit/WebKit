@@ -43,13 +43,6 @@
 #include "RenderFullScreen.h"
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayer.h"
-#include "RenderLayerBacking.h"
-#endif
-
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -262,7 +255,7 @@ void RenderVideo::updatePlayer()
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    layer()->contentChanged(RenderLayer::VideoChanged);
+    contentChanged(VideoChanged);
 #endif
     
     IntRect videoBounds = videoBox(); 

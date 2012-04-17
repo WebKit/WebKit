@@ -1161,7 +1161,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 
 #if USE(ACCELERATED_COMPOSITING)
     if (hasLayer() && layer()->hasCompositedMask() && layersUseImage(image, style()->maskLayers()))
-        layer()->contentChanged(RenderLayer::MaskImageChanged);
+        layer()->contentChanged(MaskImageChanged);
 #endif
 }
 

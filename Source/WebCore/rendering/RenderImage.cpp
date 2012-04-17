@@ -40,7 +40,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "Page.h"
-#include "RenderLayer.h"
+#include "PaintInfo.h"
 #include "RenderView.h"
 #include "SVGImage.h"
 #include <wtf/UnusedParam.h>
@@ -227,10 +227,8 @@ void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* r
         repaintRectangle(repaintRect);
 
 #if USE(ACCELERATED_COMPOSITING)
-        if (hasLayer()) {
-            // Tell any potential compositing layers that the image needs updating.
-            layer()->contentChanged(RenderLayer::ImageChanged);
-        }
+        // Tell any potential compositing layers that the image needs updating.
+        contentChanged(ImageChanged);
 #endif
     }
 }
@@ -244,10 +242,10 @@ void RenderImage::notifyFinished(CachedResource* newImage)
         return;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (newImage == m_imageResource->cachedImage() && hasLayer()) {
+    if (newImage == m_imageResource->cachedImage()) {
         // tell any potential compositing layers
         // that the image is done and they can reference it directly.
-        layer()->contentChanged(RenderLayer::ImageChanged);
+        contentChanged(ImageChanged);
     }
 #else
     UNUSED_PARAM(newImage);

@@ -108,7 +108,7 @@ public:
     void setContentsNeedDisplayInRect(const IntRect&);
 
     // Notification from the renderer that its content changed.
-    void contentChanged(RenderLayer::ContentChangeType);
+    void contentChanged(ContentChangeType);
 
     // Interface to start, finish, suspend and resume animations and transitions
     bool startTransition(double, CSSPropertyID, const RenderStyle* fromStyle, const RenderStyle* toStyle);

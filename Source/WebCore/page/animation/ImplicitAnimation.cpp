@@ -33,8 +33,7 @@
 #include "EventNames.h"
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
-#include "RenderLayer.h"
-#include "RenderLayerBacking.h"
+#include "RenderBoxModelObject.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -108,11 +107,8 @@ void ImplicitAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
 bool ImplicitAnimation::startAnimation(double timeOffset)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_object && m_object->hasLayer()) {
-        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
-        if (layer->isComposited())
-            return layer->backing()->startTransition(timeOffset, m_animatingProperty, m_fromStyle.get(), m_toStyle.get());
-    }
+    if (m_object && m_object->isComposited())
+        return toRenderBoxModelObject(m_object)->startTransition(timeOffset, m_animatingProperty, m_fromStyle.get(), m_toStyle.get());
 #else
     UNUSED_PARAM(timeOffset);
 #endif
@@ -125,11 +121,8 @@ void ImplicitAnimation::pauseAnimation(double timeOffset)
         return;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_object->hasLayer()) {
-        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
-        if (layer->isComposited())
-            layer->backing()->transitionPaused(timeOffset, m_animatingProperty);
-    }
+    if (m_object->isComposited())
+        toRenderBoxModelObject(m_object)->transitionPaused(timeOffset, m_animatingProperty);
 #else
     UNUSED_PARAM(timeOffset);
 #endif
@@ -141,11 +134,8 @@ void ImplicitAnimation::pauseAnimation(double timeOffset)
 void ImplicitAnimation::endAnimation()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_object && m_object->hasLayer()) {
-        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
-        if (layer->isComposited())
-            layer->backing()->transitionFinished(m_animatingProperty);
-    }
+    if (m_object && m_object->isComposited())
+        toRenderBoxModelObject(m_object)->transitionFinished(m_animatingProperty);
 #endif
 }
 

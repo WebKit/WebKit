@@ -42,8 +42,6 @@
 #include "MatrixTransformOperation.h"
 #include "Matrix3DTransformOperation.h"
 #include "RenderBox.h"
-#include "RenderLayer.h"
-#include "RenderLayerBacking.h"
 #include "RenderStyle.h"
 #include "StyleCachedImage.h"
 #include "StyleGeneratedImage.h"
@@ -1832,11 +1830,8 @@ void AnimationBase::freezeAtTime(double t)
         m_pauseTime = m_startTime + t - m_animation->delay();
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_object && m_object->hasLayer()) {
-        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
-        if (layer->isComposited())
-            layer->backing()->suspendAnimations(m_pauseTime);
-    }
+    if (m_object && m_object->isComposited())
+        toRenderBoxModelObject(m_object)->suspendAnimations(m_pauseTime);
 #endif
 }
 

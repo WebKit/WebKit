@@ -34,8 +34,7 @@
 #include "CSSStyleSelector.h"
 #include "CompositeAnimation.h"
 #include "EventNames.h"
-#include "RenderLayer.h"
-#include "RenderLayerBacking.h"
+#include "RenderBoxModelObject.h"
 #include "RenderStyle.h"
 #include <wtf/UnusedParam.h>
 
@@ -233,10 +232,8 @@ bool KeyframeAnimation::hasAnimationForProperty(CSSPropertyID property) const
 bool KeyframeAnimation::startAnimation(double timeOffset)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_object && m_object->hasLayer()) {
-        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
-        if (layer->isComposited())
-            return layer->backing()->startAnimation(timeOffset, m_animation.get(), m_keyframes);
+    if (m_object && m_object->isComposited()) {
+        return toRenderBoxModelObject(m_object)->startAnimation(timeOffset, m_animation.get(), m_keyframes);
     }
 #else
     UNUSED_PARAM(timeOffset);
@@ -250,11 +247,8 @@ void KeyframeAnimation::pauseAnimation(double timeOffset)
         return;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_object->hasLayer()) {
-        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
-        if (layer->isComposited())
-            layer->backing()->animationPaused(timeOffset, m_keyframes.animationName());
-    }
+    if (m_object->isComposited())
+        toRenderBoxModelObject(m_object)->animationPaused(timeOffset, m_keyframes.animationName());
 #else
     UNUSED_PARAM(timeOffset);
 #endif
@@ -269,11 +263,8 @@ void KeyframeAnimation::endAnimation()
         return;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_object->hasLayer()) {
-        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
-        if (layer->isComposited())
-            layer->backing()->animationFinished(m_keyframes.animationName());
-    }
+    if (m_object->isComposited())
+        toRenderBoxModelObject(m_object)->animationFinished(m_keyframes.animationName());
 #endif
     // Restore the original (unanimated) style
     if (!paused())

@@ -51,7 +51,6 @@
 #include "OESVertexArrayObject.h"
 #include "Page.h"
 #include "RenderBox.h"
-#include "RenderLayer.h"
 #include "Settings.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
@@ -599,9 +598,9 @@ void WebGLRenderingContext::markContextChanged()
     m_layerCleared = false;
 #if USE(ACCELERATED_COMPOSITING)
     RenderBox* renderBox = canvas()->renderBox();
-    if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing()) {
+    if (renderBox && renderBox->hasAcceleratedCompositing()) {
         m_markedCanvasDirty = true;
-        renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
+        renderBox->contentChanged(CanvasChanged);
     } else {
 #endif
         if (!m_markedCanvasDirty) {
@@ -755,8 +754,8 @@ void WebGLRenderingContext::reshape(int width, int height)
     if (m_needsUpdate) {
 #if USE(ACCELERATED_COMPOSITING)
         RenderBox* renderBox = canvas()->renderBox();
-        if (renderBox && renderBox->hasLayer())
-            renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
+        if (renderBox && renderBox->hasAcceleratedCompositing())
+            renderBox->contentChanged(CanvasChanged);
 #endif
         m_needsUpdate = false;
     }

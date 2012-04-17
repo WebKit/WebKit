@@ -41,6 +41,11 @@
 #include "TransformState.h"
 #include <wtf/CurrentTime.h>
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayerBacking.h"
+#include "RenderLayerCompositor.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -240,6 +245,70 @@ void RenderBoxModelObject::setSelectionState(SelectionState state)
     if (containingBlock && !containingBlock->isRenderView())
         containingBlock->setSelectionState(state);
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+void RenderBoxModelObject::contentChanged(ContentChangeType changeType)
+{
+    if (!hasLayer())
+        return;
+
+    layer()->contentChanged(changeType);
+}
+
+bool RenderBoxModelObject::hasAcceleratedCompositing() const
+{
+    return view()->compositor()->hasAcceleratedCompositing();
+}
+
+bool RenderBoxModelObject::startTransition(double timeOffset, CSSPropertyID propertyId, const RenderStyle* fromStyle, const RenderStyle* toStyle)
+{
+    ASSERT(hasLayer());
+    ASSERT(isComposited());
+    return layer()->backing()->startTransition(timeOffset, propertyId, fromStyle, toStyle);
+}
+
+void RenderBoxModelObject::transitionPaused(double timeOffset, CSSPropertyID propertyId)
+{
+    ASSERT(hasLayer());
+    ASSERT(isComposited());
+    layer()->backing()->transitionPaused(timeOffset, propertyId);
+}
+
+void RenderBoxModelObject::transitionFinished(CSSPropertyID propertyId)
+{
+    ASSERT(hasLayer());
+    ASSERT(isComposited());
+    layer()->backing()->transitionFinished(propertyId);
+}
+
+bool RenderBoxModelObject::startAnimation(double timeOffset, const Animation* animation, const KeyframeList& keyframes)
+{
+    ASSERT(hasLayer());
+    ASSERT(isComposited());
+    return layer()->backing()->startAnimation(timeOffset, animation, keyframes);
+}
+
+void RenderBoxModelObject::animationPaused(double timeOffset, const String& name)
+{
+    ASSERT(hasLayer());
+    ASSERT(isComposited());
+    layer()->backing()->animationPaused(timeOffset, name);
+}
+
+void RenderBoxModelObject::animationFinished(const String& name)
+{
+    ASSERT(hasLayer());
+    ASSERT(isComposited());
+    layer()->backing()->animationFinished(name);
+}
+
+void RenderBoxModelObject::suspendAnimations(double time)
+{
+    ASSERT(hasLayer());
+    ASSERT(isComposited());
+    layer()->backing()->suspendAnimations(time);
+}
+#endif
 
 bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext* context, Image* image, const void* layer, const LayoutSize& size)
 {

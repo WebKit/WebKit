@@ -270,15 +270,6 @@ void RenderLayer::contentChanged(ContentChangeType changeType)
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
-bool RenderLayer::hasAcceleratedCompositing() const
-{
-#if USE(ACCELERATED_COMPOSITING)
-    return compositor()->hasAcceleratedCompositing();
-#else
-    return false;
-#endif
-}
-
 bool RenderLayer::canRender3DTransforms() const
 {
 #if USE(ACCELERATED_COMPOSITING)

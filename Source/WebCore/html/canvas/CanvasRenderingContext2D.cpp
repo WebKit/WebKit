@@ -62,10 +62,6 @@
 #include "TextMetrics.h"
 #include "TextRun.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayer.h"
-#endif
-
 #include <wtf/ByteArray.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
@@ -1702,8 +1698,8 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
     // If we are drawing to hardware and we have a composited layer, just call contentChanged().
     if (isAccelerated()) {
         RenderBox* renderBox = canvas()->renderBox();
-        if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing()) {
-            renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
+        if (renderBox && renderBox->hasAcceleratedCompositing()) {
+            renderBox->contentChanged(CanvasChanged);
             canvas()->clearCopiedImage();
             return;
         }

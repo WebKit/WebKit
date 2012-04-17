@@ -40,6 +40,16 @@ enum BackgroundBleedAvoidance {
     BackgroundBleedUseTransparencyLayer
 };
 
+enum ContentChangeType {
+    ImageChanged,
+    MaskImageChanged,
+    CanvasChanged,
+    VideoChanged,
+    FullScreenChanged
+};
+
+class KeyframeList;
+
 // This class is the base for all objects that adhere to the CSS box model as described
 // at http://www.w3.org/TR/CSS21/box.html
 
@@ -154,6 +164,21 @@ public:
     void highQualityRepaintTimerFired(Timer<RenderBoxModelObject>*);
 
     virtual void setSelectionState(SelectionState s);
+
+#if USE(ACCELERATED_COMPOSITING)
+    void contentChanged(ContentChangeType);
+    bool hasAcceleratedCompositing() const;
+
+    bool startTransition(double, CSSPropertyID, const RenderStyle* fromStyle, const RenderStyle* toStyle);
+    void transitionPaused(double timeOffset, CSSPropertyID);
+    void transitionFinished(CSSPropertyID);
+
+    bool startAnimation(double timeOffset, const Animation*, const KeyframeList& keyframes);
+    void animationPaused(double timeOffset, const String& name);
+    void animationFinished(const String& name);
+
+    void suspendAnimations(double time = 0);
+#endif
 
 protected:
     virtual void willBeDestroyed();

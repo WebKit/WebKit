@@ -350,12 +350,8 @@ public:
     
     // Notification from the renderer that its content changed (e.g. current frame of image changed).
     // Allows updates of layer content without repainting.
-    enum ContentChangeType { ImageChanged, MaskImageChanged, CanvasChanged, VideoChanged, FullScreenChanged };
     void contentChanged(ContentChangeType);
 #endif
-
-    // Returns true if the accelerated compositing is enabled
-    bool hasAcceleratedCompositing() const;
 
     bool canRender3DTransforms() const;
 

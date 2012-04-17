@@ -981,14 +981,14 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
     return false;
 }
 
-void RenderLayerBacking::contentChanged(RenderLayer::ContentChangeType changeType)
+void RenderLayerBacking::contentChanged(ContentChangeType changeType)
 {
-    if ((changeType == RenderLayer::ImageChanged) && isDirectlyCompositedImage()) {
+    if ((changeType == ImageChanged) && isDirectlyCompositedImage()) {
         updateImageContents();
         return;
     }
     
-    if ((changeType == RenderLayer::MaskImageChanged) && m_maskLayer) {
+    if ((changeType == MaskImageChanged) && m_maskLayer) {
         // The composited layer bounds relies on box->maskClipRect(), which changes
         // when the mask image becomes available.
         bool isUpdateRoot = true;
@@ -996,7 +996,7 @@ void RenderLayerBacking::contentChanged(RenderLayer::ContentChangeType changeTyp
     }
 
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
-    if ((changeType == RenderLayer::CanvasChanged) && isAcceleratedCanvas(renderer())) {
+    if ((changeType == CanvasChanged) && isAcceleratedCanvas(renderer())) {
         m_graphicsLayer->setContentsNeedsDisplay();
         return;
     }
