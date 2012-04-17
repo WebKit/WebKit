@@ -74041,6 +74041,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\HeapSnapshotDataGrids.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\HeapSnapshotGridNodes.js"
 					>
 				</File>

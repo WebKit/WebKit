@@ -61,6 +61,7 @@
     <file>HAREntry.js</file>
     <file>HandlerRegistry.js</file>
     <file>HeapSnapshot.js</file>
+    <file>HeapSnapshotDataGrids.js</file>
     <file>HeapSnapshotGridNodes.js</file>
     <file>HeapSnapshotProxy.js</file>
     <file>HeapSnapshotView.js</file>

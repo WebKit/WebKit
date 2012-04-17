@@ -6335,6 +6335,7 @@
             'inspector/front-end/HAREntry.js',
             'inspector/front-end/HandlerRegistry.js',
             'inspector/front-end/HeapSnapshot.js',
+            'inspector/front-end/HeapSnapshotDataGrids.js',
             'inspector/front-end/HeapSnapshotGridNodes.js',
             'inspector/front-end/HeapSnapshotProxy.js',
             'inspector/front-end/HeapSnapshotView.js',

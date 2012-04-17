@@ -371,6 +371,9 @@ WebInspector.DataGrid.prototype = {
         this._editingNode = null;
     },
 
+    /**
+     * @return {?string}
+     */
     get sortColumnIdentifier()
     {
         if (!this._sortColumnCell)
@@ -378,6 +381,9 @@ WebInspector.DataGrid.prototype = {
         return this._sortColumnCell.columnIdentifier;
     },
 
+    /**
+     * @return {?string}
+     */
     get sortOrder()
     {
         if (!this._sortColumnCell || this._sortColumnCell.hasStyleClass("sort-ascending"))

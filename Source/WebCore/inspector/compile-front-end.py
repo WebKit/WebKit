@@ -279,6 +279,7 @@ modules = [
             "BottomUpProfileDataGridTree.js",
             "CSSSelectorProfileView.js",
             "HeapSnapshot.js",
+            "HeapSnapshotDataGrids.js",
             "HeapSnapshotGridNodes.js",
             "HeapSnapshotProxy.js",
             "HeapSnapshotView.js",
