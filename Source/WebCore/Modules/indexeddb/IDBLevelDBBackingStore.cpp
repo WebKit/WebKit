@@ -1039,24 +1039,48 @@ bool CursorImplCommon::continueFunction(const IDBKey* key, IteratorState nextSta
 {
     RefPtr<IDBKey> previousKey = m_currentKey;
 
+    // When iterating with PREV_NO_DUPLICATE, spec requires that the
+    // value we yield for each key is the first duplicate in forwards
+    // order.
+    RefPtr<IDBKey> lastDuplicateKey;
+
+    bool forward = m_cursorOptions.forward;
+
     for (;;) {
         if (nextState == Seek) {
-            if (m_cursorOptions.forward)
+            if (forward)
                 m_iterator->next();
             else
                 m_iterator->prev();
         } else
             nextState = Seek; // for subsequent iterations
 
-        if (!m_iterator->isValid())
-            return false;
+        if (!m_iterator->isValid()) {
+            if (!forward && lastDuplicateKey.get()) {
+                // We need to walk forward because we hit the end of
+                // the data.
+                forward = true;
+                continue;
+            }
 
+            return false;
+        }
+
+        // The iterator will contain values deleted during iteration.
         Vector<char> trash;
         if (!m_transaction->get(m_iterator->key(), trash))
-             continue;
+            continue;
 
-        if (isPastBounds())
+        if (isPastBounds()) {
+            if (!forward && lastDuplicateKey.get()) {
+                // We need to walk forward because now we're beyond the
+                // bounds defined by the cursor.
+                forward = true;
+                continue;
+            }
+
             return false;
+        }
 
         if (!haveEnteredRange())
             continue;
@@ -1067,7 +1091,7 @@ bool CursorImplCommon::continueFunction(const IDBKey* key, IteratorState nextSta
             continue;
 
         if (key) {
-            if (m_cursorOptions.forward) {
+            if (forward) {
                 if (m_currentKey->isLessThan(key))
                     continue;
             } else {
@@ -1076,12 +1100,35 @@ bool CursorImplCommon::continueFunction(const IDBKey* key, IteratorState nextSta
             }
         }
 
-        if (m_cursorOptions.unique && m_currentKey->isEqual(previousKey.get()))
-            continue;
+        if (m_cursorOptions.unique) {
 
+            if (m_currentKey->isEqual(previousKey.get())) {
+                // We should never be able to walk forward all the way
+                // to the previous key.
+                ASSERT(!lastDuplicateKey.get());
+                continue;
+            }
+
+            if (!forward) {
+                if (!lastDuplicateKey.get()) {
+                    lastDuplicateKey = m_currentKey;
+                    continue;
+                }
+
+                // We need to walk forward because we hit the boundary
+                // between key ranges.
+                if (!lastDuplicateKey->isEqual(m_currentKey.get())) {
+                    forward = true;
+                    continue;
+                }
+
+                continue;
+            }
+        }
         break;
     }
 
+    ASSERT(!lastDuplicateKey.get() || (forward && lastDuplicateKey->isEqual(m_currentKey.get())));
     return true;
 }
 
