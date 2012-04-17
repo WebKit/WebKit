@@ -1,5 +1,15 @@
 2012-04-16  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Unreviewed, rolling out r114322.
+        http://trac.webkit.org/changeset/114322
+        https://bugs.webkit.org/show_bug.cgi?id=84096
+
+        Didn't make the debug bot happy, so back out
+
+        * gtk/jhbuild.modules:
+
+2012-04-16  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK] Try to fix debug bot by adding gobject-introspection to the build
         https://bugs.webkit.org/show_bug.cgi?id=84096
 
