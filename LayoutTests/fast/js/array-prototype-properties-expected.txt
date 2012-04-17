@@ -3,7 +3,7 @@ This is a test case for bug 64679.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS Array.prototype.toString.call(undefined) threw exception TypeError: Type error.
+PASS Array.prototype.toString.call(undefined) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.toString.call(undefined)').
 PASS Array.prototype.toLocaleString.call(undefined) threw exception TypeError: Type error.
 PASS Array.prototype.concat.call(undefined, []) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.concat.call(undefined, [])').
 PASS Array.prototype.join.call(undefined, []) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.join.call(undefined, [])').

@@ -7,7 +7,16 @@ PASS properties(['b', 'a']) is '0:b, 1:a, length:2(DontDelete, DontEnum)'
 PASS properties({ length:2, 0:'b', 1:'a' }) is '0:b, 1:a, length:2'
 PASS properties(new OneItemConstructor) is '0:a(FromPrototype), length:1(FromPrototype)'
 PASS properties(new TwoItemConstructor) is '0:b(FromPrototype), 1:a(FromPrototype), length:2(FromPrototype)'
-PASS Array.prototype.toString.call({}) threw exception TypeError: Type error.
+PASS Array.prototype.toString.call({}) is "[object Object]"
+PASS Array.prototype.toString.call(new Date) is "[object Date]"
+PASS Array.prototype.toString.call({sort: function() { return 'sort' }}) is "[object Object]"
+PASS Array.prototype.toString.call({join: function() { return 'join' }}) is "join"
+PASS Array.prototype.toString.call({__proto__: Array.prototype, 0: 'a', 1: 'b', 2: 'c', length: 3}) is "a,b,c"
+PASS ({__proto__: Array.prototype, 0: 'a', 1: 'b', 2: 'c', length: 3}).toString() is "a,b,c"
+PASS Array.prototype.toString.call({__proto__: Array.prototype, 0: 'a', 1: 'b', 2: 'c', length: 3, join: function() { return 'join' }}) is "join"
+PASS ({__proto__: Array.prototype, 0: 'a', 1: 'b', 2: 'c', length: 3, join: function() { return 'join' }}).toString() is "join"
+PASS Array.prototype.toString.call(42) is "Number.prototype.join:42"
+PASS [0, 1, 2].toString() is "array-join"
 PASS Array.prototype.toLocaleString.call({}) threw exception TypeError: Type error.
 PASS Array.prototype.concat.call(x = { length:2, 0:'b', 1:'a' }) is [x]
 PASS Array.prototype.join.call({}) is ''

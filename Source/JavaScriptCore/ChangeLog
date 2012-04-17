@@ -1,3 +1,16 @@
+2012-04-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Array.prototype.toString should be generic
+        https://bugs.webkit.org/show_bug.cgi?id=81588
+
+        Reviewed by Sam Weinig.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+            - check for join function, use fast case if base object is array & join is present & default.
+        * runtime/CommonIdentifiers.h:
+            - added 'join'.
+
 2012-04-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck issues.

@@ -76,7 +76,21 @@ shouldBe("properties({ length:2, 0:'b', 1:'a' })", "'0:b, 1:a, length:2'");
 shouldBe("properties(new OneItemConstructor)", "'0:a(FromPrototype), length:1(FromPrototype)'");
 shouldBe("properties(new TwoItemConstructor)", "'0:b(FromPrototype), 1:a(FromPrototype), length:2(FromPrototype)'");
 
-shouldThrow("Array.prototype.toString.call({})");
+shouldBe("Array.prototype.toString.call({})", '"' + ({}).toString() + '"');
+shouldBe("Array.prototype.toString.call(new Date)", '"' + Object.prototype.toString.call(new Date) + '"');
+shouldBe("Array.prototype.toString.call({sort: function() { return 'sort' }})", '"' + Object.prototype.toString.call({}) + '"');
+shouldBe("Array.prototype.toString.call({join: function() { return 'join' }})", '"join"');
+shouldBe("Array.prototype.toString.call({__proto__: Array.prototype, 0: 'a', 1: 'b', 2: 'c', length: 3})", '"a,b,c"');
+shouldBe("({__proto__: Array.prototype, 0: 'a', 1: 'b', 2: 'c', length: 3}).toString()", '"a,b,c"');
+shouldBe("Array.prototype.toString.call({__proto__: Array.prototype, 0: 'a', 1: 'b', 2: 'c', length: 3, join: function() { return 'join' }})", '"join"');
+shouldBe("({__proto__: Array.prototype, 0: 'a', 1: 'b', 2: 'c', length: 3, join: function() { return 'join' }}).toString()", '"join"');
+Number.prototype.join = function() { return "Number.prototype.join:" + this; }
+shouldBe("Array.prototype.toString.call(42)", '"Number.prototype.join:42"');
+var arrayJoin = Array.prototype.join;
+Array.prototype.join = function() { return 'array-join' };
+shouldBe("[0, 1, 2].toString()", '"array-join"');
+Array.prototype.join = arrayJoin;
+
 shouldThrow("Array.prototype.toLocaleString.call({})");
 
 shouldBe("Array.prototype.concat.call(x = { length:2, 0:'b', 1:'a' })", "[x]");

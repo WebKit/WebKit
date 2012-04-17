@@ -28,6 +28,7 @@
 #include "CodeBlock.h"
 #include "Interpreter.h"
 #include "JIT.h"
+#include "JSStringBuilder.h"
 #include "JSStringJoiner.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
@@ -254,9 +255,27 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
 
-    bool isRealArray = isJSArray(thisValue);
-    if (!isRealArray && !thisValue.inherits(&JSArray::s_info))
-        return throwVMTypeError(exec);
+    // 1. Let array be the result of calling ToObject on the this value.
+    JSObject* thisObject = thisValue.toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    
+    // 2. Let func be the result of calling the [[Get]] internal method of array with argument "join".
+    JSValue function = JSValue(thisObject).get(exec, exec->propertyNames().join);
+
+    // 3. If IsCallable(func) is false, then let func be the standard built-in method Object.prototype.toString (15.2.4.2).
+    if (!function.isCell())
+        return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable()->className(thisObject), "]"));
+    CallData callData;
+    CallType callType = getCallData(function, callData);
+    if (callType == CallTypeNone)
+        return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable()->className(thisObject), "]"));
+
+    // 4. Return the result of calling the [[Call]] internal method of func providing array as the this value and an empty arguments list.
+    if (!isJSArray(thisObject) || callType != CallTypeHost || callData.native.function != arrayProtoFuncJoin)
+        return JSValue::encode(call(exec, function, callType, callData, thisObject, exec->emptyList()));
+
+    ASSERT(isJSArray(thisValue));
     JSArray* thisObj = asArray(thisValue);
     
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
@@ -273,7 +292,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 
     for (unsigned k = 0; k < length; k++) {
         JSValue element;
-        if (isRealArray && thisObj->canGetIndex(k))
+        if (thisObj->canGetIndex(k))
             element = thisObj->getIndex(k);
         else
             element = thisObj->get(exec, k);
