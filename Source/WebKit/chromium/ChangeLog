@@ -1,3 +1,21 @@
+2012-04-16  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Move popup location detection code from WebViewImpl to WebPagePopupImpl
+        https://bugs.webkit.org/show_bug.cgi?id=84116
+
+        Reviewed by Kentaro Hara.
+
+        This makes no behavior change. Just move some code.
+        To fix Bug 84007, WebPagePopupImpl needs to know if the popup is
+        above the target element or below the target element.
+
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopupImpl::init): Move some code from WebViewImpl::openPagePopup().
+        * src/WebPagePopupImpl.h:
+        (WebPagePopupImpl): Rename an argument name.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::openPagePopup): Move some code to WebPagePopupImpl::init().
+
 2012-04-13  James Robinson  <jamesr@chromium.org>
 
         [chromium] Expose WebVideoLayer to Platform API and port WebMediaPlayerClientImpl to using it

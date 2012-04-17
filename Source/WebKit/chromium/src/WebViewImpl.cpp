@@ -1207,14 +1207,7 @@ PagePopup* WebViewImpl::openPagePopup(PagePopupClient* client, const IntRect& or
     WebWidget* popupWidget = m_client->createPopupMenu(WebPopupTypePage);
     ASSERT(popupWidget);
     m_pagePopup = static_cast<WebPagePopupImpl*>(popupWidget);
-    WebSize rootViewSize = size();
-    IntSize popupSize = client->contentSize();
-    IntRect popupBoundsInRootView(IntPoint(max(0, originBoundsInRootView.x()), max(0, originBoundsInRootView.maxY())), popupSize);
-    if (popupBoundsInRootView.maxY() > rootViewSize.height)
-        popupBoundsInRootView.setY(max(0, originBoundsInRootView.y() - popupSize.height()));
-    if (popupBoundsInRootView.maxX() > rootViewSize.width)
-        popupBoundsInRootView.setX(max(0, rootViewSize.width - popupSize.width()));
-    if (!m_pagePopup->init(this, client, m_chromeClientImpl.rootViewToScreen(popupBoundsInRootView))) {
+    if (!m_pagePopup->init(this, client, originBoundsInRootView)) {
         m_pagePopup->closePopup();
         m_pagePopup = 0;
     }

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebPagePopupImpl.h"
 
+#include "Chrome.h"
 #include "EmptyClients.h"
 #include "FileChooser.h"
 #include "FocusController.h"
@@ -44,9 +45,11 @@
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
 #include "WebPagePopup.h"
+#include "WebViewImpl.h"
 #include "WebWidgetClient.h"
 
 using namespace WebCore;
+using namespace std;
 
 namespace WebKit {
 
@@ -133,12 +136,21 @@ WebPagePopupImpl::~WebPagePopupImpl()
     ASSERT(!m_page);
 }
 
-bool WebPagePopupImpl::init(WebViewImpl* webView, PagePopupClient* popupClient, const IntRect& boundsInScreen)
+bool WebPagePopupImpl::init(WebViewImpl* webView, PagePopupClient* popupClient, const IntRect& originBoundsInRootView)
 {
     ASSERT(webView);
     ASSERT(popupClient);
     m_webView = webView;
     m_popupClient = popupClient;
+
+    WebSize rootViewSize = webView->size();
+    IntSize popupSize = popupClient->contentSize();
+    IntRect popupBoundsInRootView(IntPoint(max(0, originBoundsInRootView.x()), max(0, originBoundsInRootView.maxY())), popupSize);
+    if (popupBoundsInRootView.maxY() > rootViewSize.height)
+        popupBoundsInRootView.setY(max(0, originBoundsInRootView.y() - popupSize.height()));
+    if (popupBoundsInRootView.maxX() > rootViewSize.width)
+        popupBoundsInRootView.setX(max(0, rootViewSize.width - popupSize.width()));
+    IntRect boundsInScreen = webView->page()->chrome()->rootViewToScreen(popupBoundsInRootView);
 
     m_widgetClient->setWindowRect(boundsInScreen);
     m_windowRectInScreen = boundsInScreen;

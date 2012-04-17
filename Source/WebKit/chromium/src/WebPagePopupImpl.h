@@ -56,7 +56,7 @@ class WebPagePopupImpl : public WebPagePopup,
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    bool init(WebViewImpl*, WebCore::PagePopupClient*, const WebCore::IntRect& boundsInScreen);
+    bool init(WebViewImpl*, WebCore::PagePopupClient*, const WebCore::IntRect& originBoundsInRootView);
     bool handleKeyEvent(const WebCore::PlatformKeyboardEvent&);
     void closePopup();
     WebWidgetClient* widgetClient() const { return m_widgetClient; }
