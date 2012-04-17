@@ -1,3 +1,22 @@
+2012-04-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Add missing files to build webkit2/Efl.
+        https://bugs.webkit.org/show_bug.cgi?id=76139
+
+        Reviewed by Ryosuke Niwa.
+
+        Add missing files needed to build webkit2/Efl.
+
+        * Shared/efl/PlatformCertificateInfo.h: Added.
+        (WebKit):
+        (PlatformCertificateInfo):
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo):
+        (WebKit::PlatformCertificateInfo::encode):
+        (WebKit::PlatformCertificateInfo::decode):
+        * UIProcess/Launcher/efl/ThreadLauncherEfl.cpp: Added.
+        (WebKit):
+        (WebKit::ThreadLauncher::createWebThread):
+
 2012-04-16  Brady Eidson  <beidson@apple.com>
 
         Followup to http://trac.webkit.org/changeset/114323
