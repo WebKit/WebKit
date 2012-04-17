@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(StyleSheet* impl)
+v8::Handle<v8::Value> toV8(StyleSheet* impl, v8::Isolate* isolate)
 {
     if (!impl)
         return v8::Null();
