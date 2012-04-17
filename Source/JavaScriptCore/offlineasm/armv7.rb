@@ -70,7 +70,7 @@ class RegisterID
         when "t3"
             "r4"
         when "t4"
-            "r7"
+            "r10"
         when "cfr"
             "r5"
         when "lr"

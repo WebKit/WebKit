@@ -1,5 +1,24 @@
 2012-04-17  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG and LLInt should not clobber the frame pointer on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=84185
+        <rdar://problem/10767252>
+
+        Reviewed by Gavin Barraclough.
+        
+        Changed LLInt to use a different register. Changed DFG to use one fewer
+        registers. We should revisit this and switch the DFG to use a different
+        register instead of r7, but we can do that in a subsequent step since
+        the performance effect is tiny.
+
+        * dfg/DFGGPRInfo.h:
+        (GPRInfo):
+        (JSC::DFG::GPRInfo::toRegister):
+        (JSC::DFG::GPRInfo::toIndex):
+        * offlineasm/armv7.rb:
+
+2012-04-17  Filip Pizlo  <fpizlo@apple.com>
+
         use after free in JSC::DFG::Node::op / JSC::DFG::ByteCodeParser::flushArgument
         https://bugs.webkit.org/show_bug.cgi?id=83942
         <rdar://problem/11247370>
