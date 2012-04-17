@@ -3622,7 +3622,6 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->viewportAttributes->priv->webView = webView;
 
     gtk_widget_set_can_focus(GTK_WIDGET(webView), TRUE);
-    gtk_widget_set_double_buffered(GTK_WIDGET(webView), FALSE);
 
     priv->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));
     priv->lastPopupXPosition = priv->lastPopupYPosition = -1;

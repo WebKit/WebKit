@@ -1,3 +1,26 @@
+2012-04-17  Carlos Garnacho  <carlos@lanedo.com>
+
+        [GTK] Enable back double buffering on WebKitWebView to fix flickering
+        https://bugs.webkit.org/show_bug.cgi?id=84149
+
+        Reviewed by Martin Robinson.
+
+        Despite having WebKitWebView its own backing buffer, calling
+        gtk_widget_set_double_buffered(...,FALSE) may still pose side
+        effects, such as ensuring that all drawing operations are 
+        flushed to the X server before rendering a non-double buffered
+        widget, which may translate into flickering of the parent 
+        GdkWindow before the WebKitWebView itself is rendered. 
+
+        Enabling back double buffering solves this as all contents are 
+        first composited together before getting to the front buffer,
+        but effectively acts as 3rd buffer. This is sort of unavoidable
+        unless GTK+ gains a "let me take ownership of the backing buffer
+        for this widget", which currently lacks.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init): Remove call to gtk_widget_set_double_buffered(..., FALSE)
+
 2012-04-06  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Accelerated compositing is broken after recent TextureMapper reorganizations
