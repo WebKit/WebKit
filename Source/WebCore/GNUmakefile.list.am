@@ -871,6 +871,8 @@ dom_binding_idls += \
 	$(WebCore)/html/ImageData.idl \
 	$(WebCore)/html/MediaController.idl \
 	$(WebCore)/html/MediaError.idl \
+	$(WebCore)/html/MediaKeyError.idl \
+	$(WebCore)/html/MediaKeyEvent.idl \
 	$(WebCore)/html/TextMetrics.idl \
 	$(WebCore)/html/TimeRanges.idl \
 	$(WebCore)/html/ValidityState.idl \
@@ -2433,6 +2435,9 @@ webcore_sources += \
 	Source/WebCore/html/MediaDocument.cpp \
 	Source/WebCore/html/MediaDocument.h \
 	Source/WebCore/html/MediaError.h \
+	Source/WebCore/html/MediaKeyError.h \
+	Source/WebCore/html/MediaKeyEvent.cpp \
+	Source/WebCore/html/MediaKeyEvent.h \
 	Source/WebCore/html/MediaFragmentURIParser.cpp \
 	Source/WebCore/html/MediaFragmentURIParser.h \
 	Source/WebCore/html/MicroDataItemValue.cpp \
