@@ -1454,18 +1454,21 @@ void HTMLInputElement::didChangeForm()
     addToRadioButtonGroup();
 }
 
-void HTMLInputElement::insertedIntoDocument()
+Node::InsertionNotificationRequest HTMLInputElement::insertedInto(Node* insertionPoint)
 {
-    HTMLTextFormControlElement::insertedIntoDocument();
+    HTMLTextFormControlElement::insertedInto(insertionPoint);
+    if (!insertionPoint->inDocument())
+        return InsertionDone;
     ASSERT(inDocument());
     addToRadioButtonGroup();
+    return InsertionDone;
 }
 
-void HTMLInputElement::removedFromDocument()
+void HTMLInputElement::removedFrom(Node* insertionPoint)
 {
-    ASSERT(inDocument());
-    removeFromRadioButtonGroup();
-    HTMLTextFormControlElement::removedFromDocument();
+    if (insertionPoint->inDocument())
+        removeFromRadioButtonGroup();
+    HTMLTextFormControlElement::removedFrom(insertionPoint);
 }
 
 void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)

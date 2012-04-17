@@ -263,7 +263,7 @@ void SVGTRefElement::buildPendingResource()
     // Remove any existing event listener.
     clearEventListener();
 
-    // If we're not yet in a document, this function will be called again from insertedIntoDocument().
+    // If we're not yet in a document, this function will be called again from insertedInto().
     if (!inDocument())
         return;
 
@@ -286,16 +286,19 @@ void SVGTRefElement::buildPendingResource()
     target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, m_eventListener.get(), false);
 }
 
-void SVGTRefElement::insertedIntoDocument()
+Node::InsertionNotificationRequest SVGTRefElement::insertedInto(Node* rootParent)
 {
-    SVGStyledElement::insertedIntoDocument();
-    buildPendingResource();
+    SVGStyledElement::insertedInto(rootParent);
+    if (rootParent->inDocument())
+        buildPendingResource();
+    return InsertionDone;
 }
 
-void SVGTRefElement::removedFromDocument()
+void SVGTRefElement::removedFrom(Node* rootParent)
 {
-    SVGStyledElement::removedFromDocument();
-    clearEventListener();
+    SVGStyledElement::removedFrom(rootParent);
+    if (rootParent->inDocument())
+        clearEventListener();
 }
 
 void SVGTRefElement::clearEventListener()

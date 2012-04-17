@@ -117,11 +117,13 @@ void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-void SVGScriptElement::insertedIntoDocument()
+Node::InsertionNotificationRequest SVGScriptElement::insertedInto(Node* rootParent)
 {
-    SVGElement::insertedIntoDocument();
-    ScriptElement::insertedIntoDocument();
-    SVGExternalResourcesRequired::insertedIntoDocument(this);
+    SVGElement::insertedInto(rootParent);
+    ScriptElement::insertedInto(rootParent);
+    if (rootParent->inDocument())
+        SVGExternalResourcesRequired::insertedIntoDocument(this);
+    return InsertionDone;
 }
 
 void SVGScriptElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

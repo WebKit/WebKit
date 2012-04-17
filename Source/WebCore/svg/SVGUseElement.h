@@ -59,8 +59,8 @@ private:
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool supportsFocus() const { return true; }
 
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
     virtual void buildPendingResource();
 
     bool isSupportedAttribute(const QualifiedName&);

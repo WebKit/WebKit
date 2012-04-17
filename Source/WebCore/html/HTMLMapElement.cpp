@@ -131,16 +131,18 @@ HTMLCollection* HTMLMapElement::areas()
     return ensureCachedHTMLCollection(MapAreas);
 }
 
-void HTMLMapElement::insertedIntoDocument()
+Node::InsertionNotificationRequest HTMLMapElement::insertedInto(Node* insertionPoint)
 {
-    treeScope()->addImageMap(this);
-    HTMLElement::insertedIntoDocument();
+    if (insertionPoint->inDocument())
+        treeScope()->addImageMap(this);
+    return HTMLElement::insertedInto(insertionPoint);
 }
 
-void HTMLMapElement::removedFromDocument()
+void HTMLMapElement::removedFrom(Node* insertionPoint)
 {
-    treeScope()->removeImageMap(this);
-    HTMLElement::removedFromDocument();
+    if (insertionPoint->inDocument())
+        treeScope()->removeImageMap(this);
+    HTMLElement::removedFrom(insertionPoint);
 }
 
 }

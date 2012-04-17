@@ -282,17 +282,22 @@ void ProcessingInstruction::addSubresourceAttributeURLs(ListHashSet<KURL>& urls)
     addSubresourceURL(urls, sheet()->baseURL());
 }
 
-void ProcessingInstruction::insertedIntoDocument()
+Node::InsertionNotificationRequest ProcessingInstruction::insertedInto(Node* insertionPoint)
 {
-    Node::insertedIntoDocument();
+    Node::insertedInto(insertionPoint);
+    if (!insertionPoint->inDocument())
+        return InsertionDone;
     document()->addStyleSheetCandidateNode(this, m_createdByParser);
     checkStyleSheet();
+    return InsertionDone;
 }
 
-void ProcessingInstruction::removedFromDocument()
+void ProcessingInstruction::removedFrom(Node* insertionPoint)
 {
-    Node::removedFromDocument();
-
+    Node::removedFrom(insertionPoint);
+    if (!insertionPoint->inDocument())
+        return;
+    
     document()->removeStyleSheetCandidateNode(this);
 
     if (m_sheet) {

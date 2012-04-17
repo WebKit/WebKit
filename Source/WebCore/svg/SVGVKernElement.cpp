@@ -39,24 +39,27 @@ PassRefPtr<SVGVKernElement> SVGVKernElement::create(const QualifiedName& tagName
     return adoptRef(new SVGVKernElement(tagName, document));
 }
 
-void SVGVKernElement::insertedIntoDocument()
+Node::InsertionNotificationRequest SVGVKernElement::insertedInto(Node* rootParent)
 {
-    ContainerNode* fontNode = parentNode();
-    if (fontNode && fontNode->hasTagName(SVGNames::fontTag)) {
-        if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
-            element->invalidateGlyphCache();
+    if (rootParent->inDocument()) {
+        ContainerNode* fontNode = parentNode();
+        if (fontNode && fontNode->hasTagName(SVGNames::fontTag)) {
+            if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
+                element->invalidateGlyphCache();
+        }
     }
-    SVGElement::insertedIntoDocument();
+
+    return SVGElement::insertedInto(rootParent);
 }
 
-void SVGVKernElement::removedFromDocument()
+void SVGVKernElement::removedFrom(Node* rootParent)
 {
     ContainerNode* fontNode = parentNode();
     if (fontNode && fontNode->hasTagName(SVGNames::fontTag)) {
         if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
             element->invalidateGlyphCache();
     }
-    SVGElement::removedFromDocument();
+    SVGElement::removedFrom(rootParent);
 }
 
 void SVGVKernElement::buildVerticalKerningPair(KerningPairVector& kerningPairs)

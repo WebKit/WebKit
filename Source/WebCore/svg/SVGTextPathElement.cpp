@@ -139,21 +139,24 @@ bool SVGTextPathElement::rendererIsNeeded(const NodeRenderingContext& context)
     return false;
 }
 
-void SVGTextPathElement::insertedIntoDocument()
+Node::InsertionNotificationRequest SVGTextPathElement::insertedInto(Node* rootParent)
 {
-    SVGStyledElement::insertedIntoDocument();
+    SVGStyledElement::insertedInto(rootParent);
+    if (!rootParent->inDocument())
+        return InsertionDone;
 
     String id;
     Element* targetElement = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
     if (!targetElement) {
         if (hasPendingResources() || id.isEmpty())
-            return;
+            return InsertionDone;
 
         ASSERT(!hasPendingResources());
         document()->accessSVGExtensions()->addPendingResource(id, this);
         ASSERT(hasPendingResources());
-        return;
     }
+
+    return InsertionDone;
 }
 
 bool SVGTextPathElement::selfHasRelativeLengths() const

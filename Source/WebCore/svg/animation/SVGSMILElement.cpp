@@ -189,9 +189,11 @@ void SVGSMILElement::reset()
     resolveFirstInterval();
 }
 
-void SVGSMILElement::insertedIntoDocument()
+Node::InsertionNotificationRequest SVGSMILElement::insertedInto(Node* rootParent)
 {
-    SVGElement::insertedIntoDocument();
+    SVGElement::insertedInto(rootParent);
+    if (!rootParent->inDocument())
+        return InsertionDone;
 
     // Verify we are not in <use> instance tree.
     ASSERT(!isInShadowTree());
@@ -199,7 +201,7 @@ void SVGSMILElement::insertedIntoDocument()
     m_attributeName = constructQualifiedName(this, fastGetAttribute(SVGNames::attributeNameAttr));
     SVGSVGElement* owner = ownerSVGElement();
     if (!owner)
-        return;
+        return InsertionDone;
     m_timeContainer = owner->timeContainer();
     ASSERT(m_timeContainer);
     m_timeContainer->setDocumentOrderIndexesDirty();
@@ -212,28 +214,33 @@ void SVGSMILElement::insertedIntoDocument()
         resolveFirstInterval();
         reschedule();
     }
+
+    return InsertionDone;
 }
 
-void SVGSMILElement::removedFromDocument()
+void SVGSMILElement::removedFrom(Node* rootParent)
 {
-    if (m_timeContainer) {
-        m_timeContainer->unschedule(this);
-        m_timeContainer = 0;
-    }
-    // Calling disconnectConditions() may kill us if there are syncbase conditions.
-    // OK, but we don't want to die inside the call.
-    RefPtr<SVGSMILElement> keepAlive(this);
-    disconnectConditions();
+    if (rootParent->inDocument()) {
+        if (m_timeContainer) {
+            m_timeContainer->unschedule(this);
+            m_timeContainer = 0;
+        }
+        // Calling disconnectConditions() may kill us if there are syncbase conditions.
+        // OK, but we don't want to die inside the call.
+        RefPtr<SVGSMILElement> keepAlive(this);
+        disconnectConditions();
 
-    // Clear target now, because disconnectConditions calls targetElement() which will recreate the target if we removed it sooner. 
-    if (m_targetElement) {
-        document()->accessSVGExtensions()->removeAnimationElementFromTarget(this, m_targetElement);
-        targetElementWillChange(m_targetElement, 0);
-        m_targetElement = 0;
+        // Clear target now, because disconnectConditions calls targetElement() which will recreate the target if we removed it sooner. 
+        if (m_targetElement) {
+            document()->accessSVGExtensions()->removeAnimationElementFromTarget(this, m_targetElement);
+            targetElementWillChange(m_targetElement, 0);
+            m_targetElement = 0;
+        }
+
+        m_attributeName = anyQName();
     }
 
-    m_attributeName = anyQName();
-    SVGElement::removedFromDocument();
+    SVGElement::removedFrom(rootParent);
 }
    
 SMILTime SVGSMILElement::parseOffsetValue(const String& data)

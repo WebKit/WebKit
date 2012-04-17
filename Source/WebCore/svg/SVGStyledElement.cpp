@@ -357,11 +357,12 @@ void SVGStyledElement::attach()
         object->updateFromElement();
 }
 
-void SVGStyledElement::insertedIntoDocument()
+Node::InsertionNotificationRequest SVGStyledElement::insertedInto(Node* rootParent)
 {
-    SVGElement::insertedIntoDocument();
+    SVGElement::insertedInto(rootParent);
     updateRelativeLengthsInformation();
     buildPendingResourcesIfNeeded();
+    return InsertionDone;
 }
 
 void SVGStyledElement::buildPendingResourcesIfNeeded()
@@ -388,14 +389,14 @@ void SVGStyledElement::buildPendingResourcesIfNeeded()
     }
 }
 
-void SVGStyledElement::removedFromDocument()
+void SVGStyledElement::removedFrom(Node* rootParent)
 {
-    updateRelativeLengthsInformation(false, this);
-    SVGElement::removedFromDocument();
+    if (rootParent->inDocument())
+        updateRelativeLengthsInformation(false, this);
+    SVGElement::removedFrom(rootParent);
     SVGElementInstance::invalidateAllInstancesOfElement(this);
-
     Document* document = this->document();
-    if (!needsPendingResourceHandling() || !document)
+    if (!rootParent->inDocument() || !needsPendingResourceHandling() || !document)
         return;
 
     document->accessSVGExtensions()->removeElementFromPendingResources(this);
@@ -463,7 +464,7 @@ AffineTransform SVGStyledElement::localCoordinateSpaceTransform(SVGLocatable::CT
 
 void SVGStyledElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGStyledElement* element)
 {
-    // If we're not yet in a document, this function will be called again from insertedIntoDocument(). Do nothing now.
+    // If we're not yet in a document, this function will be called again from insertedInto(). Do nothing now.
     if (!inDocument())
         return;
 

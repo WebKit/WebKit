@@ -328,16 +328,17 @@ bool HTMLObjectElement::rendererIsNeeded(const NodeRenderingContext& context)
     return HTMLPlugInImageElement::rendererIsNeeded(context);
 }
 
-void HTMLObjectElement::insertedIntoDocument()
+Node::InsertionNotificationRequest HTMLObjectElement::insertedInto(Node* insertionPoint)
 {
-    HTMLPlugInImageElement::insertedIntoDocument();
-    FormAssociatedElement::insertedIntoDocument();
+    HTMLPlugInImageElement::insertedInto(insertionPoint);
+    FormAssociatedElement::insertedInto(insertionPoint);
+    return InsertionDone;
 }
 
-void HTMLObjectElement::removedFromDocument()
+void HTMLObjectElement::removedFrom(Node* insertionPoint)
 {
-    HTMLPlugInImageElement::removedFromDocument();
-    FormAssociatedElement::removedFromDocument();
+    HTMLPlugInImageElement::removedFrom(insertionPoint);
+    FormAssociatedElement::removedFrom(insertionPoint);
 }
 
 void HTMLObjectElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
@@ -483,18 +484,6 @@ void HTMLObjectElement::didMoveToNewDocument(Document* oldDocument)
 {
     FormAssociatedElement::didMoveToNewDocument(oldDocument);
     HTMLPlugInImageElement::didMoveToNewDocument(oldDocument);
-}
-
-void HTMLObjectElement::insertedIntoTree(bool deep)
-{
-    FormAssociatedElement::insertedIntoTree();
-    HTMLPlugInImageElement::insertedIntoTree(deep);
-}
-
-void HTMLObjectElement::removedFromTree(bool deep)
-{
-    FormAssociatedElement::removedFromTree();
-    HTMLPlugInImageElement::removedFromTree(deep);
 }
 
 bool HTMLObjectElement::appendFormData(FormDataList& encoding, bool)

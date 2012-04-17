@@ -49,7 +49,7 @@ public:
 private:
     HTMLSourceElement(const QualifiedName&, Document*);
     
-    virtual void insertedIntoTree(bool);
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
     virtual void willRemove();
     virtual bool isURLAttribute(Attribute*) const;
 

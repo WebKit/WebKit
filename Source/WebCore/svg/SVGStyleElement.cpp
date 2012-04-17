@@ -134,16 +134,19 @@ void SVGStyleElement::finishParsingChildren()
     SVGElement::finishParsingChildren();
 }
 
-void SVGStyleElement::insertedIntoDocument()
+Node::InsertionNotificationRequest SVGStyleElement::insertedInto(Node* rootParent)
 {
-    SVGElement::insertedIntoDocument();
-    StyleElement::insertedIntoDocument(document(), this);
+    SVGElement::insertedInto(rootParent);
+    if (rootParent->inDocument())
+        StyleElement::insertedIntoDocument(document(), this);
+    return InsertionDone;
 }
 
-void SVGStyleElement::removedFromDocument()
+void SVGStyleElement::removedFrom(Node* rootParent)
 {
-    SVGElement::removedFromDocument();
-    StyleElement::removedFromDocument(document(), this);
+    SVGElement::removedFrom(rootParent);
+    if (rootParent->inDocument())
+        StyleElement::removedFromDocument(document(), this);
 }
 
 void SVGStyleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

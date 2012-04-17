@@ -3748,6 +3748,7 @@
 		A78FE13C12366B1000ACE8D0 /* SpellChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = A78FE13A12366B1000ACE8D0 /* SpellChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A795463E0B5C4C80007B438F /* DragDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A795463D0B5C4C80007B438F /* DragDataMac.mm */; };
 		A79546430B5C4CB4007B438F /* DragData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A79546420B5C4CB4007B438F /* DragData.cpp */; };
+		A7A78CD51532BA62006C21E4 /* ContainerNodeAlgorithms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A78CD41532BA62006C21E4 /* ContainerNodeAlgorithms.cpp */; };
 		A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7AD2F850EC89D07008AB002 /* LinkHash.cpp */; };
 		A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AD2F860EC89D07008AB002 /* LinkHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7B070D2130A409C00A3763C /* FrameActionScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7B070D0130A409C00A3763C /* FrameActionScheduler.cpp */; };
@@ -10778,6 +10779,7 @@
 		A78FE13A12366B1000ACE8D0 /* SpellChecker.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = SpellChecker.h; sourceTree = "<group>"; };
 		A795463D0B5C4C80007B438F /* DragDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragDataMac.mm; sourceTree = "<group>"; };
 		A79546420B5C4CB4007B438F /* DragData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragData.cpp; sourceTree = "<group>"; };
+		A7A78CD41532BA62006C21E4 /* ContainerNodeAlgorithms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContainerNodeAlgorithms.cpp; sourceTree = "<group>"; };
 		A7AD2F850EC89D07008AB002 /* LinkHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkHash.cpp; sourceTree = "<group>"; };
 		A7AD2F860EC89D07008AB002 /* LinkHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkHash.h; sourceTree = "<group>"; };
 		A7B070D0130A409C00A3763C /* FrameActionScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameActionScheduler.cpp; sourceTree = "<group>"; };
@@ -20976,6 +20978,7 @@
 				79F2F5A01091939A000D87CB /* CompositionEvent.idl */,
 				A81872140977D3C0005826D9 /* ContainerNode.cpp */,
 				A81872110977D3C0005826D9 /* ContainerNode.h */,
+				A7A78CD41532BA62006C21E4 /* ContainerNodeAlgorithms.cpp */,
 				E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */,
 				97627B8B14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp */,
 				97627B8C14FB3CEE002CDCA1 /* ContextDestructionObserver.h */,
@@ -25306,6 +25309,7 @@
 				BC0B36A40CD3C67C00AC7EB5 /* Console.cpp in Sources */,
 				41F0618F0F5F069800A07EAC /* ConsoleMessage.cpp in Sources */,
 				A818721F0977D3C0005826D9 /* ContainerNode.cpp in Sources */,
+				A7A78CD51532BA62006C21E4 /* ContainerNodeAlgorithms.cpp in Sources */,
 				BC5EB9800E82072500B25965 /* ContentData.cpp in Sources */,
 				59102FBB14327D3B003C9D04 /* ContentSearchUtils.cpp in Sources */,
 				97C471DB12F925BD0086354B /* ContentSecurityPolicy.cpp in Sources */,

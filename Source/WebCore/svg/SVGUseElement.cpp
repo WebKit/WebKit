@@ -175,21 +175,25 @@ static inline bool isWellFormedDocument(Document* document)
     return true;
 }
 
-void SVGUseElement::insertedIntoDocument()
+Node::InsertionNotificationRequest SVGUseElement::insertedInto(Node* rootParent)
 {
     // This functions exists to assure assumptions made in the code regarding SVGElementInstance creation/destruction are satisfied.
-    SVGStyledTransformableElement::insertedIntoDocument();
+    SVGStyledTransformableElement::insertedInto(rootParent);
+    if (!rootParent->inDocument())
+        return InsertionDone;
     ASSERT(!m_targetElementInstance || !isWellFormedDocument(document()));
     ASSERT(!hasPendingResources() || !isWellFormedDocument(document()));
     if (!m_wasInsertedByParser)
         buildPendingResource();
     SVGExternalResourcesRequired::insertedIntoDocument(this);
+    return InsertionDone;
 }
 
-void SVGUseElement::removedFromDocument()
+void SVGUseElement::removedFrom(Node* rootParent)
 {
-    SVGStyledTransformableElement::removedFromDocument();
-    clearResourceReferences();
+    SVGStyledTransformableElement::removedFrom(rootParent);
+    if (rootParent->inDocument())
+        clearResourceReferences();
 }
 
 Document* SVGUseElement::referencedDocument() const

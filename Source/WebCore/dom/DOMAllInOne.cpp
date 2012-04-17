@@ -43,6 +43,7 @@
 #include "Comment.cpp"
 #include "CompositionEvent.cpp"
 #include "ContainerNode.cpp"
+#include "ContainerNodeAlgorithms.cpp"
 #include "ContextDestructionObserver.cpp"
 #include "CustomEvent.cpp"
 #include "DOMCoreException.cpp"

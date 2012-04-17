@@ -39,7 +39,7 @@ public:
 private:
     MathMLMathElement(const QualifiedName& tagName, Document*);
 
-    virtual void insertedIntoDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 };
     

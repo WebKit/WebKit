@@ -121,7 +121,7 @@ protected:
     virtual void attributeChanged(Attribute*) OVERRIDE;
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
     
-    virtual void removedFromDocument();
+    virtual void removedFrom(Node*) OVERRIDE;
 
     SVGElementRareData* rareSVGData() const;
     SVGElementRareData* ensureRareSVGData();

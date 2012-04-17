@@ -60,18 +60,26 @@ void FormAssociatedElement::didMoveToNewDocument(Document* oldDocument)
         oldDocument->unregisterFormElementWithFormAttribute(this);
 }
 
-void FormAssociatedElement::insertedIntoDocument()
+void FormAssociatedElement::insertedInto(Node* insertionPoint)
 {
+    resetFormOwner();
+    if (!insertionPoint->inDocument())
+        return;
+
     HTMLElement* element = toHTMLElement(this);
     if (element->fastHasAttribute(formAttr))
         element->document()->registerFormElementWithFormAttribute(this);
 }
 
-void FormAssociatedElement::removedFromDocument()
+void FormAssociatedElement::removedFrom(Node* insertionPoint)
 {
     HTMLElement* element = toHTMLElement(this);
-    if (element->fastHasAttribute(formAttr))
+    if (insertionPoint->inDocument() && element->fastHasAttribute(formAttr))
         element->document()->unregisterFormElementWithFormAttribute(this);
+    // If the form and element are both in the same tree, preserve the connection to the form.
+    // Otherwise, null out our form and remove ourselves from the form's list of elements.
+    if (m_form && element->highestAncestor() != m_form->highestAncestor())
+        setForm(0);
 }
 
 HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* element, HTMLFormElement* currentAssociatedForm)
@@ -95,33 +103,10 @@ HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* el
     return currentAssociatedForm;
 }
 
-void FormAssociatedElement::insertedIntoTree()
-{
-    resetFormOwner();
-}
-
-static inline Node* findRoot(Node* n)
-{
-    Node* root = n;
-    for (; n; n = n->parentNode())
-        root = n;
-    return root;
-}
-
-void FormAssociatedElement::removedFromTree()
-{
-    HTMLElement* element = toHTMLElement(this);
-
-    // If the form and element are both in the same tree, preserve the connection to the form.
-    // Otherwise, null out our form and remove ourselves from the form's list of elements.
-    if (m_form && findRoot(element) != findRoot(m_form))
-        setForm(0);
-}
-
 void FormAssociatedElement::formRemovedFromTree(const Node* formRoot)
 {
     ASSERT(m_form);
-    if (findRoot(toHTMLElement(this)) != formRoot)
+    if (toHTMLElement(this)->highestAncestor() != formRoot)
         setForm(0);
 }
 

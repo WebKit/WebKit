@@ -39,7 +39,7 @@ private:
     HTMLMetaElement(const QualifiedName&, Document*);
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
-    virtual void insertedIntoDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
 
     void process();
 

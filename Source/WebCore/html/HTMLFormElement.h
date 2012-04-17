@@ -115,9 +115,9 @@ private:
     HTMLFormElement(const QualifiedName&, Document*);
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
-    virtual void removedFromTree(bool deep) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void didNotifyDescendantInseretions(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
 
     virtual void handleLocalEvents(Event*);
 

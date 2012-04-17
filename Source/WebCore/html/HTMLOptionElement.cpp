@@ -306,7 +306,7 @@ bool HTMLOptionElement::disabled() const
     return ownElementDisabled() || (parentNode() && parentNode()->isHTMLElement() && static_cast<HTMLElement*>(parentNode())->disabled());
 }
 
-void HTMLOptionElement::insertedIntoTree(bool deep)
+Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(Node* insertionPoint)
 {
     if (HTMLSelectElement* select = ownerSelectElement()) {
         select->setRecalcListItems();
@@ -319,7 +319,7 @@ void HTMLOptionElement::insertedIntoTree(bool deep)
         select->scrollToSelection();
     }
 
-    HTMLElement::insertedIntoTree(deep);
+    return HTMLElement::insertedInto(insertionPoint);
 }
 
 String HTMLOptionElement::collectOptionInnerText() const

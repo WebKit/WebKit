@@ -243,22 +243,27 @@ void HTMLLinkElement::clearSheet()
     m_sheet = 0;
 }
 
-void HTMLLinkElement::insertedIntoDocument()
+Node::InsertionNotificationRequest HTMLLinkElement::insertedInto(Node* insertionPoint)
 {
-    HTMLElement::insertedIntoDocument();
+    HTMLElement::insertedInto(insertionPoint);
+    if (!insertionPoint->inDocument())
+        return InsertionDone;
 
     m_isInShadowTree = isInShadowTree();
     if (m_isInShadowTree)
-        return;
+        return InsertionDone;
 
     document()->addStyleSheetCandidateNode(this, m_createdByParser);
 
     process();
+    return InsertionDone;
 }
 
-void HTMLLinkElement::removedFromDocument()
+void HTMLLinkElement::removedFrom(Node* insertionPoint)
 {
-    HTMLElement::removedFromDocument();
+    HTMLElement::removedFrom(insertionPoint);
+    if (!insertionPoint->inDocument())
+        return;
 
     if (m_isInShadowTree) {
         ASSERT(!m_sheet);

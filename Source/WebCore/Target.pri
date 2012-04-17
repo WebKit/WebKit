@@ -518,6 +518,7 @@ SOURCES += \
     dom/ComposedShadowTreeWalker.cpp \
     dom/CompositionEvent.cpp \
     dom/ContainerNode.cpp \
+    dom/ContainerNodeAlgorithms.cpp \
     dom/ContextDestructionObserver.cpp \
     dom/CustomEvent.cpp \
     dom/DecodedDataDocumentParser.cpp \
@@ -1669,6 +1670,7 @@ HEADERS += \
     dom/Comment.h \
     dom/ComposedShadowTreeWalker.h \
     dom/ContainerNode.h \
+    dom/ContainerNodeAlgorithms.h \
     dom/CustomEvent.h \
     dom/default/PlatformMessagePortChannel.h \
     dom/DeviceMotionClient.h \

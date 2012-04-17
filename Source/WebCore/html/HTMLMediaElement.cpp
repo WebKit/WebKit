@@ -491,24 +491,28 @@ bool HTMLMediaElement::childShouldCreateRenderer(const NodeRenderingContext& chi
     return childContext.isOnUpperEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
 }
 
-void HTMLMediaElement::insertedIntoDocument()
+Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(Node* insertionPoint)
 {
-    LOG(Media, "HTMLMediaElement::insertedIntoDocument");
-    HTMLElement::insertedIntoDocument();
-    if (!getAttribute(srcAttr).isEmpty() && m_networkState == NETWORK_EMPTY)
+    LOG(Media, "HTMLMediaElement::insertedInto");
+    HTMLElement::insertedInto(insertionPoint);
+    if (insertionPoint->inDocument() && !getAttribute(srcAttr).isEmpty() && m_networkState == NETWORK_EMPTY)
         scheduleLoad(MediaResource);
     configureMediaControls();
+    return InsertionDone;
 }
 
-void HTMLMediaElement::removedFromDocument()
+void HTMLMediaElement::removedFrom(Node* insertionPoint)
 {
-    LOG(Media, "HTMLMediaElement::removedFromDocument");
-    configureMediaControls();
-    if (m_networkState > NETWORK_EMPTY)
-        pause();
-    if (m_isFullscreen)
-        exitFullscreen();
-    HTMLElement::removedFromDocument();
+    if (insertionPoint->inDocument()) {
+        LOG(Media, "HTMLMediaElement::removedFromDocument");
+        configureMediaControls();
+        if (m_networkState > NETWORK_EMPTY)
+            pause();
+        if (m_isFullscreen)
+            exitFullscreen();
+    }
+
+    HTMLElement::removedFrom(insertionPoint);
 }
 
 void HTMLMediaElement::attach()

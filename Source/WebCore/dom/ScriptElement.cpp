@@ -77,9 +77,9 @@ ScriptElement::~ScriptElement()
     stopLoadRequest();
 }
 
-void ScriptElement::insertedIntoDocument()
+void ScriptElement::insertedInto(Node* insertionPoint)
 {
-    if (!m_parserInserted)
+    if (insertionPoint->inDocument() && !m_parserInserted)
         prepareScript(); // FIXME: Provide a real starting line number here.
 }
 

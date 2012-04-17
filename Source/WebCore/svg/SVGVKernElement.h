@@ -39,8 +39,8 @@ public:
 private:
     SVGVKernElement(const QualifiedName&, Document*);
 
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
 };

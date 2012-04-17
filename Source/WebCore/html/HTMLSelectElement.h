@@ -142,7 +142,7 @@ private:
     void typeAheadFind(KeyboardEvent*);
     void saveLastSelection();
 
-    virtual void insertedIntoTree(bool);
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
 
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
     virtual bool isRequiredFormControl() const;

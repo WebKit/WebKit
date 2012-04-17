@@ -45,7 +45,8 @@ public:
 
     void forwardEvent(Event*);
 
-    virtual void insertedIntoDocument();
+
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
 
     // The derived class should return true if placeholder processing is needed.
     virtual bool supportsPlaceholder() const = 0;

@@ -145,8 +145,8 @@ private:
     virtual bool rendererIsNeeded(const NodeRenderingContext& context) { return StyledElement::rendererIsNeeded(context); }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
 
     virtual void svgAttributeChanged(const QualifiedName&);
 

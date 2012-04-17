@@ -1759,6 +1759,7 @@ webcore_sources += \
 	Source/WebCore/dom/CompositionEvent.cpp \
 	Source/WebCore/dom/CompositionEvent.h \
 	Source/WebCore/dom/ContainerNodeAlgorithms.h \
+	Source/WebCore/dom/ContainerNodeAlgorithms.cpp \
 	Source/WebCore/dom/ContainerNode.cpp \
 	Source/WebCore/dom/ContainerNode.h \
 	Source/WebCore/dom/ContextDestructionObserver.cpp \

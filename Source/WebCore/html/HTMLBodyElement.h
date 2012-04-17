@@ -74,7 +74,8 @@ private:
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 
-    virtual void insertedIntoDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void didNotifyDescendantInseretions(Node*) OVERRIDE;
     
     virtual bool isURLAttribute(Attribute*) const;
     

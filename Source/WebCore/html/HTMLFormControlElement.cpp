@@ -221,29 +221,18 @@ void HTMLFormControlElement::didMoveToNewDocument(Document* oldDocument)
     HTMLElement::didMoveToNewDocument(oldDocument);
 }
 
-void HTMLFormControlElement::insertedIntoTree(bool deep)
+Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(Node* insertionPoint)
 {
-    FormAssociatedElement::insertedIntoTree();
-    HTMLElement::insertedIntoTree(deep);
+    HTMLElement::insertedInto(insertionPoint);
+    FormAssociatedElement::insertedInto(insertionPoint);
+    return InsertionDone;
 }
 
-void HTMLFormControlElement::removedFromTree(bool deep)
+void HTMLFormControlElement::removedFrom(Node* insertionPoint)
 {
     m_fieldSetAncestorValid = false;
-    FormAssociatedElement::removedFromTree();
-    HTMLElement::removedFromTree(deep);
-}
-
-void HTMLFormControlElement::insertedIntoDocument()
-{
-    HTMLElement::insertedIntoDocument();
-    FormAssociatedElement::insertedIntoDocument();
-}
-
-void HTMLFormControlElement::removedFromDocument()
-{
-    HTMLElement::removedFromDocument();
-    FormAssociatedElement::removedFromDocument();
+    HTMLElement::removedFrom(insertionPoint);
+    FormAssociatedElement::removedFrom(insertionPoint);
 }
 
 const AtomicString& HTMLFormControlElement::formControlName() const

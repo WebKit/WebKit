@@ -100,20 +100,19 @@ RenderObject* HTMLIFrameElement::createRenderer(RenderArena* arena, RenderStyle*
     return new (arena) RenderIFrame(this);
 }
 
-void HTMLIFrameElement::insertedIntoDocument()
+Node::InsertionNotificationRequest HTMLIFrameElement::insertedInto(Node* insertionPoint)
 {
-    if (document()->isHTMLDocument())
+    InsertionNotificationRequest result = HTMLFrameElementBase::insertedInto(insertionPoint);
+    if (insertionPoint->inDocument() && document()->isHTMLDocument())
         static_cast<HTMLDocument*>(document())->addExtraNamedItem(m_name);
-
-    HTMLFrameElementBase::insertedIntoDocument();
+    return result;
 }
 
-void HTMLIFrameElement::removedFromDocument()
+void HTMLIFrameElement::removedFrom(Node* insertionPoint)
 {
-    if (document()->isHTMLDocument())
+    HTMLFrameElementBase::removedFrom(insertionPoint);
+    if (insertionPoint->inDocument() && document()->isHTMLDocument())
         static_cast<HTMLDocument*>(document())->removeExtraNamedItem(m_name);
-
-    HTMLFrameElementBase::removedFromDocument();
 }
 
 #if ENABLE(MICRODATA)

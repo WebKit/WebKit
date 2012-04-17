@@ -211,13 +211,15 @@ void SVGImageElement::attach()
     }
 }
 
-void SVGImageElement::insertedIntoDocument()
+Node::InsertionNotificationRequest SVGImageElement::insertedInto(Node* rootParent)
 {
-    SVGStyledTransformableElement::insertedIntoDocument();
-
+    SVGStyledTransformableElement::insertedInto(rootParent);
+    if (!rootParent->inDocument())
+        return InsertionDone;
     // Update image loader, as soon as we're living in the tree.
     // We can only resolve base URIs properly, after that!
     m_imageLoader.updateFromElement();
+    return InsertionDone;
 }
 
 const QualifiedName& SVGImageElement::imageSourceAttributeName() const

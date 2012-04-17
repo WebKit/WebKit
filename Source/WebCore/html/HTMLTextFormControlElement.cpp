@@ -70,11 +70,14 @@ bool HTMLTextFormControlElement::childShouldCreateRenderer(const NodeRenderingCo
     return childContext.isOnEncapsulationBoundary() && HTMLFormControlElementWithState::childShouldCreateRenderer(childContext);
 }
 
-void HTMLTextFormControlElement::insertedIntoDocument()
+Node::InsertionNotificationRequest HTMLTextFormControlElement::insertedInto(Node* insertionPoint)
 {
-    HTMLFormControlElement::insertedIntoDocument();
+    HTMLFormControlElement::insertedInto(insertionPoint);
+    if (!insertionPoint->inDocument())
+        return InsertionDone;
     String initialValue = value();
     setTextAsOfLastFormControlChangeEvent(initialValue.isNull() ? emptyString() : initialValue);
+    return InsertionDone;
 }
 
 void HTMLTextFormControlElement::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode)

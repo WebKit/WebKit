@@ -54,10 +54,12 @@ void HTMLMetaElement::parseAttribute(Attribute* attr)
         HTMLElement::parseAttribute(attr);
 }
 
-void HTMLMetaElement::insertedIntoDocument()
+Node::InsertionNotificationRequest HTMLMetaElement::insertedInto(Node* insertionPoint)
 {
-    HTMLElement::insertedIntoDocument();
-    process();
+    HTMLElement::insertedInto(insertionPoint);
+    if (insertionPoint->inDocument())
+        process();
+    return InsertionDone;
 }
 
 void HTMLMetaElement::process()

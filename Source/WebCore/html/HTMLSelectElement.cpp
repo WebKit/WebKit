@@ -1472,13 +1472,14 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
     }
 }
 
-void HTMLSelectElement::insertedIntoTree(bool deep)
+Node::InsertionNotificationRequest HTMLSelectElement::insertedInto(Node* insertionPoint)
 {
     // When the element is created during document parsing, it won't have any
     // items yet - but for innerHTML and related methods, this method is called
     // after the whole subtree is constructed.
     recalcListItems();
-    HTMLFormControlElementWithState::insertedIntoTree(deep);
+    HTMLFormControlElementWithState::insertedInto(insertionPoint);
+    return InsertionDone;
 }
 
 void HTMLSelectElement::accessKeySetSelectedIndex(int index)

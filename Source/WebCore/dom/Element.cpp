@@ -881,13 +881,19 @@ void Element::willRemove()
     ContainerNode::willRemove();
 }
 
-void Element::insertedIntoDocument()
+Node::InsertionNotificationRequest Element::insertedInto(Node* insertionPoint)
 {
     // need to do superclass processing first so inDocument() is true
     // by the time we reach updateId
-    ContainerNode::insertedIntoDocument();
-    if (ShadowTree* tree = shadowTree())
-        tree->insertedIntoDocument();
+    ContainerNode::insertedInto(insertionPoint);
+
+#if ENABLE(FULLSCREEN_API)
+    if (containsFullScreenElement() && parentElement() && !parentElement()->containsFullScreenElement())
+        setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
+#endif
+
+    if (!insertionPoint->inDocument())
+        return InsertionDone;
 
     if (m_attributeData) {
         if (hasID()) {
@@ -901,51 +907,30 @@ void Element::insertedIntoDocument()
                 updateName(nullAtom, nameItem->value());
         }
     }
+
+    return InsertionDone;
 }
 
-void Element::removedFromDocument()
+void Element::removedFrom(Node* insertionPoint)
 {
     setSavedLayerScrollOffset(IntSize());
 
-    if (m_attributeData) {
-        if (hasID()) {
-            Attribute* idItem = getAttributeItem(document()->idAttributeName());
-            if (idItem && !idItem->isNull())
-                updateId(idItem->value(), nullAtom);
-        }
-        if (hasName()) {
-            Attribute* nameItem = getAttributeItem(HTMLNames::nameAttr);
-            if (nameItem && !nameItem->isNull())
-                updateName(nameItem->value(), nullAtom);
+    if (insertionPoint->inDocument()) {
+        if (m_attributeData) {
+            if (hasID()) {
+                Attribute* idItem = getAttributeItem(document()->idAttributeName());
+                if (idItem && !idItem->isNull())
+                    updateId(idItem->value(), nullAtom);
+            }
+            if (hasName()) {
+                Attribute* nameItem = getAttributeItem(HTMLNames::nameAttr);
+                if (nameItem && !nameItem->isNull())
+                    updateName(nameItem->value(), nullAtom);
+            }
         }
     }
 
-    ContainerNode::removedFromDocument();
-    if (ShadowTree* tree = shadowTree())
-        tree->removedFromDocument();
-}
-
-void Element::insertedIntoTree(bool deep)
-{
-    ContainerNode::insertedIntoTree(deep);
-    if (!deep)
-        return;
-    if (ShadowTree* tree = shadowTree())
-        tree->insertedIntoTree(true);
-
-#if ENABLE(FULLSCREEN_API)
-    if (containsFullScreenElement() && parentElement() && !parentElement()->containsFullScreenElement())
-        setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
-#endif
-}
-
-void Element::removedFromTree(bool deep)
-{
-    ContainerNode::removedFromTree(deep);
-    if (!deep)
-        return;
-    if (ShadowTree* tree = shadowTree())
-        tree->removedFromTree(true);
+    ContainerNode::removedFrom(insertionPoint);
 }
 
 void Element::attach()

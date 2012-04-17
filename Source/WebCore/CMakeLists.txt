@@ -539,6 +539,7 @@ SET(WebCore_SOURCES
     dom/ComposedShadowTreeWalker.cpp
     dom/CompositionEvent.cpp
     dom/ContainerNode.cpp
+    dom/ContainerNodeAlgorithms.cpp
     dom/ContextDestructionObserver.cpp
     dom/CustomEvent.cpp
     dom/DatasetDOMStringMap.cpp

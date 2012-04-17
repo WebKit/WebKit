@@ -28,6 +28,7 @@
 #include "ShadowTree.h"
 
 #include "CSSStyleSelector.h"
+#include "ContainerNodeAlgorithms.h"
 #include "Document.h"
 #include "Element.h"
 #include "HTMLShadowElement.h"
@@ -37,15 +38,6 @@
 #include "Text.h"
 
 namespace WebCore {
-
-class ShadowRootVector : public Vector<RefPtr<ShadowRoot> > {
-public:
-    explicit ShadowRootVector(ShadowTree* tree)
-    {
-        for (ShadowRoot* root = tree->youngestShadowRoot(); root; root = root->olderShadowRoot())
-            append(root);
-    }
-};
 
 ShadowTree::ShadowTree()
     : m_needsRecalculateContent(false)
@@ -85,9 +77,8 @@ void ShadowTree::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> shado
         return;
 
     shadowRoot->setShadowHost(shadowHost);
+    ChildNodeInsertionNotifier(shadowHost).notify(shadowRoot.get());
 
-    if (shadowHost->inDocument())
-        shadowRoot->insertedIntoDocument();
     if (shadowHost->attached()) {
         shadowRoot->lazyAttach();
         detach();
@@ -117,42 +108,11 @@ void ShadowTree::removeAllShadowRoots()
         oldRoot->setPrev(0);
         oldRoot->setNext(0);
         shadowHost->document()->adoptIfNeeded(oldRoot.get());
-        if (oldRoot->inDocument())
-            oldRoot->removedFromDocument();
-        else
-            oldRoot->removedFromTree(true);
+        ChildNodeRemovalNotifier(shadowHost).notify(oldRoot.get());
     }
 
     if (shadowHost->attached())
         shadowHost->attachChildrenLazily();
-}
-
-void ShadowTree::insertedIntoDocument()
-{
-    ShadowRootVector roots(this);
-    for (size_t i = 0; i < roots.size(); ++i)
-        roots[i]->insertedIntoDocument();
-}
-
-void ShadowTree::removedFromDocument()
-{
-    ShadowRootVector roots(this);
-    for (size_t i = 0; i < roots.size(); ++i)
-        roots[i]->removedFromDocument();
-}
-
-void ShadowTree::insertedIntoTree(bool deep)
-{
-    ShadowRootVector roots(this);
-    for (size_t i = 0; i < roots.size(); ++i)
-        roots[i]->insertedIntoTree(deep);
-}
-
-void ShadowTree::removedFromTree(bool deep)
-{
-    ShadowRootVector roots(this);
-    for (size_t i = 0; i < roots.size(); ++i)
-        roots[i]->removedFromTree(deep);
 }
 
 void ShadowTree::willRemove()

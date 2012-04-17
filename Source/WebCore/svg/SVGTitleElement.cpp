@@ -21,9 +21,9 @@
 #include "config.h"
 #if ENABLE(SVG)
 #include "SVGTitleElement.h"
-#include "SVGNames.h"
 
 #include "Document.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
@@ -38,18 +38,22 @@ PassRefPtr<SVGTitleElement> SVGTitleElement::create(const QualifiedName& tagName
     return adoptRef(new SVGTitleElement(tagName, document));
 }
 
-void SVGTitleElement::insertedIntoDocument()
+Node::InsertionNotificationRequest SVGTitleElement::insertedInto(Node* rootParent)
 {
-    SVGStyledElement::insertedIntoDocument();
+    SVGStyledElement::insertedInto(rootParent);
+    if (!rootParent->inDocument())
+        return InsertionDone;
     if (firstChild())
         // FIXME: does SVG have a title text direction?
         document()->setTitleElement(StringWithDirection(textContent(), LTR), this);
+    return InsertionDone;
 }
 
-void SVGTitleElement::removedFromDocument()
+void SVGTitleElement::removedFrom(Node* rootParent)
 {
-    SVGElement::removedFromDocument();
-    document()->removeTitle(this);
+    SVGElement::removedFrom(rootParent);
+    if (rootParent->inDocument())
+        document()->removeTitle(this);
 }
 
 void SVGTitleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

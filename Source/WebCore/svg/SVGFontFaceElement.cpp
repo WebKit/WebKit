@@ -315,23 +315,27 @@ void SVGFontFaceElement::rebuildFontFace()
     document()->styleSelectorChanged(DeferRecalcStyle);
 }
 
-void SVGFontFaceElement::insertedIntoDocument()
+Node::InsertionNotificationRequest SVGFontFaceElement::insertedInto(Node* rootParent)
 {
-    SVGElement::insertedIntoDocument();
-
+    SVGElement::insertedInto(rootParent);
+    if (!rootParent->inDocument())
+        return InsertionDone;
     document()->accessSVGExtensions()->registerSVGFontFaceElement(this);
 
     rebuildFontFace();
+    return InsertionDone;
 }
 
-void SVGFontFaceElement::removedFromDocument()
+void SVGFontFaceElement::removedFrom(Node* rootParent)
 {
-    SVGElement::removedFromDocument();
+    SVGElement::removedFrom(rootParent);
 
-    document()->accessSVGExtensions()->unregisterSVGFontFaceElement(this);
-    m_fontFaceRule->properties()->parseDeclaration(emptyString(), 0);
+    if (rootParent->inDocument()) {
+        document()->accessSVGExtensions()->unregisterSVGFontFaceElement(this);
+        m_fontFaceRule->properties()->parseDeclaration(emptyString(), 0);
 
-    document()->styleSelectorChanged(DeferRecalcStyle);
+        document()->styleSelectorChanged(DeferRecalcStyle);
+    }
 }
 
 void SVGFontFaceElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

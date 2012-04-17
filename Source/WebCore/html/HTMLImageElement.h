@@ -99,10 +99,8 @@ private:
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-    virtual void insertedIntoDocument();
-    virtual void insertedIntoTree(bool deep);
-    virtual void removedFromTree(bool deep);
-
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
     virtual bool shouldRegisterAsNamedItem() const OVERRIDE { return true; }
     virtual bool shouldRegisterAsExtraNamedItem() const OVERRIDE { return true; }
 

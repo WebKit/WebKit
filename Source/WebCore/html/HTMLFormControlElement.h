@@ -120,10 +120,8 @@ protected:
     virtual void requiredAttributeChanged();
     virtual void disabledAttributeChanged();
     virtual void attach();
-    virtual void insertedIntoTree(bool deep);
-    virtual void removedFromTree(bool deep);
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
     virtual bool supportsFocus() const;

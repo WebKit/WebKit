@@ -130,18 +130,18 @@ bool HTMLFormElement::rendererIsNeeded(const NodeRenderingContext& context)
     return formIsTablePart;
 }
 
-void HTMLFormElement::insertedIntoDocument()
+Node::InsertionNotificationRequest HTMLFormElement::insertedInto(Node* insertionPoint)
 {
-    HTMLElement::insertedIntoDocument();
-
-    if (hasID())
-        document()->resetFormElementsOwner();
+    HTMLElement::insertedInto(insertionPoint);
+    if (insertionPoint->inDocument())
+        return InsertionShouldCallDidNotifyDescendantInseretions;
+    return InsertionDone;
 }
 
-void HTMLFormElement::removedFromDocument()
+void HTMLFormElement::didNotifyDescendantInseretions(Node* insertionPoint)
 {
-    HTMLElement::removedFromDocument();
-
+    ASSERT(insertionPoint->inDocument());
+    HTMLElement::didNotifyDescendantInseretions(insertionPoint);
     if (hasID())
         document()->resetFormElementsOwner();
 }
@@ -154,13 +154,15 @@ static inline Node* findRoot(Node* n)
     return root;
 }
 
-void HTMLFormElement::removedFromTree(bool deep)
+void HTMLFormElement::removedFrom(Node* insertionPoint)
 {
     Node* root = findRoot(this);
     Vector<FormAssociatedElement*> associatedElements(m_associatedElements);
     for (unsigned i = 0; i < associatedElements.size(); ++i)
         associatedElements[i]->formRemovedFromTree(root);
-    HTMLElement::removedFromTree(deep);
+    HTMLElement::removedFrom(insertionPoint);
+    if (insertionPoint->inDocument() && hasID())
+        document()->resetFormElementsOwner();
 }
 
 void HTMLFormElement::handleLocalEvents(Event* event)

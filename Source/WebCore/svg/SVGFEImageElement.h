@@ -60,8 +60,8 @@ private:
     void requestImageResource();
 
     virtual void buildPendingResource();
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEImageElement)
         DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)

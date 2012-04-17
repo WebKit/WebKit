@@ -54,8 +54,8 @@ private:
     virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);
 
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
 
     OwnPtr<NamedNodeMap> m_entities;
     OwnPtr<NamedNodeMap> m_notations;

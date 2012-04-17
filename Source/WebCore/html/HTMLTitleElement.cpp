@@ -44,16 +44,19 @@ PassRefPtr<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLTitleElement(tagName, document));
 }
 
-void HTMLTitleElement::insertedIntoDocument()
+Node::InsertionNotificationRequest HTMLTitleElement::insertedInto(Node* insertionPoint)
 {
-    HTMLElement::insertedIntoDocument();
-    document()->setTitleElement(m_title, this);
+    HTMLElement::insertedInto(insertionPoint);
+    if (insertionPoint->inDocument())
+        document()->setTitleElement(m_title, this);
+    return InsertionDone;
 }
 
-void HTMLTitleElement::removedFromDocument()
+void HTMLTitleElement::removedFrom(Node* insertionPoint)
 {
-    HTMLElement::removedFromDocument();
-    document()->removeTitle(this);
+    HTMLElement::removedFrom(insertionPoint);
+    if (insertionPoint->inDocument())
+        document()->removeTitle(this);
 }
 
 void HTMLTitleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

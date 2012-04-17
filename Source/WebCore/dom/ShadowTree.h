@@ -34,6 +34,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -57,10 +58,6 @@ public:
     void addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot>, ExceptionCode&);
     void removeAllShadowRoots();
 
-    void insertedIntoDocument();
-    void removedFromDocument();
-    void insertedIntoTree(bool deep);
-    void removedFromTree(bool deep);
     void willRemove();
 
     void setParentTreeScope(TreeScope*);
@@ -129,6 +126,15 @@ inline Element* ShadowTree::host() const
     ASSERT(hasShadowRoot());
     return youngestShadowRoot()->host();
 }
+
+class ShadowRootVector : public Vector<RefPtr<ShadowRoot> > {
+public:
+    explicit ShadowRootVector(ShadowTree* tree)
+    {
+        for (ShadowRoot* root = tree->youngestShadowRoot(); root; root = root->olderShadowRoot())
+            append(root);
+    }
+};
 
 } // namespace
 

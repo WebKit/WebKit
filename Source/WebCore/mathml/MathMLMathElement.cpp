@@ -29,7 +29,6 @@
 #if ENABLE(MATHML)
 
 #include "MathMLMathElement.h"
-
 #include "RenderMathMLMath.h"
 
 namespace WebCore {
@@ -44,12 +43,12 @@ PassRefPtr<MathMLMathElement> MathMLMathElement::create(const QualifiedName& tag
     return adoptRef(new MathMLMathElement(tagName, document));
 }
 
-void MathMLMathElement::insertedIntoDocument()
+Node::InsertionNotificationRequest MathMLMathElement::insertedInto(Node* insertionPoint)
 {
     // There are sibling rules in the MathML default style.
-    document()->setUsesSiblingRules(true);
-    
-    MathMLInlineContainerElement::insertedIntoDocument();
+    if (insertionPoint->inDocument())
+        document()->setUsesSiblingRules(true);
+    return MathMLInlineContainerElement::insertedInto(insertionPoint);
 }
 
 RenderObject* MathMLMathElement::createRenderer(RenderArena* arena, RenderStyle*)

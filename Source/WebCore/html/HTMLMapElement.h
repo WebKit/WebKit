@@ -48,8 +48,8 @@ private:
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
 
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
 
     AtomicString m_name;
 };

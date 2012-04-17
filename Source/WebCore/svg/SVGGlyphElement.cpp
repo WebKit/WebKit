@@ -61,16 +61,17 @@ void SVGGlyphElement::parseAttribute(Attribute* attr)
         SVGStyledElement::parseAttribute(attr);
 }
 
-void SVGGlyphElement::insertedIntoDocument()
+Node::InsertionNotificationRequest SVGGlyphElement::insertedInto(Node* rootParent)
 {
     invalidateGlyphCache();
-    SVGStyledElement::insertedIntoDocument();
+    return SVGStyledElement::insertedInto(rootParent);
 }
 
-void SVGGlyphElement::removedFromDocument()
+void SVGGlyphElement::removedFrom(Node* rootParent)
 {
-    invalidateGlyphCache();
-    SVGStyledElement::removedFromDocument();
+    if (rootParent->inDocument())
+        invalidateGlyphCache();
+    SVGStyledElement::removedFrom(rootParent);
 }
 
 static inline SVGGlyph::ArabicForm parseArabicForm(const AtomicString& value)

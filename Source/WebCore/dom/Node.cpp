@@ -2385,14 +2385,19 @@ ScriptExecutionContext* Node::scriptExecutionContext() const
     return document();
 }
 
-void Node::insertedIntoDocument()
+Node::InsertionNotificationRequest Node::insertedInto(Node* insertionPoint)
 {
-    setFlag(InDocumentFlag);
+    ASSERT(insertionPoint->inDocument() || isContainerNode());
+    if (insertionPoint->inDocument())
+        setFlag(InDocumentFlag);
+    return InsertionDone;
 }
 
-void Node::removedFromDocument()
+void Node::removedFrom(Node* insertionPoint)
 {
-    clearFlag(InDocumentFlag);
+    ASSERT(insertionPoint->inDocument() || isContainerNode());
+    if (insertionPoint->inDocument())
+        clearFlag(InDocumentFlag);
 }
 
 void Node::didMoveToNewDocument(Document* oldDocument)

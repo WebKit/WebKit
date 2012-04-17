@@ -74,10 +74,11 @@ void HTMLScriptElement::parseAttribute(Attribute* attr)
         HTMLElement::parseAttribute(attr);
 }
 
-void HTMLScriptElement::insertedIntoDocument()
+Node::InsertionNotificationRequest HTMLScriptElement::insertedInto(Node* insertionPoint)
 {
-    HTMLElement::insertedIntoDocument();
-    ScriptElement::insertedIntoDocument();
+    HTMLElement::insertedInto(insertionPoint);
+    ScriptElement::insertedInto(insertionPoint);
+    return InsertionDone;
 }
 
 void HTMLScriptElement::setText(const String &value)

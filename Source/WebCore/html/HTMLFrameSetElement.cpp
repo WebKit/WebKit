@@ -210,18 +210,24 @@ bool HTMLFrameSetElement::willRecalcStyle(StyleChange)
     return true;
 }
 
-void HTMLFrameSetElement::insertedIntoDocument()
+Node::InsertionNotificationRequest HTMLFrameSetElement::insertedInto(Node* insertionPoint)
 {
-    HTMLElement::insertedIntoDocument();
-    if (Frame* frame = document()->frame())
-        frame->loader()->client()->dispatchDidBecomeFrameset(document()->isFrameSet());
+    HTMLElement::insertedInto(insertionPoint);
+    if (insertionPoint->inDocument()) {
+        if (Frame* frame = document()->frame())
+            frame->loader()->client()->dispatchDidBecomeFrameset(document()->isFrameSet());
+    }
+
+    return InsertionDone;
 }
 
-void HTMLFrameSetElement::removedFromDocument()
+void HTMLFrameSetElement::removedFrom(Node* insertionPoint)
 {
-    HTMLElement::removedFromDocument();
-    if (Frame* frame = document()->frame())
-        frame->loader()->client()->dispatchDidBecomeFrameset(document()->isFrameSet());
+    HTMLElement::removedFrom(insertionPoint);
+    if (insertionPoint->inDocument()) {
+        if (Frame* frame = document()->frame())
+            frame->loader()->client()->dispatchDidBecomeFrameset(document()->isFrameSet());
+    }
 }
 
 } // namespace WebCore

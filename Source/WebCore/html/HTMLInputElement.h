@@ -247,8 +247,8 @@ private:
 
     virtual void willChangeForm() OVERRIDE;
     virtual void didChangeForm() OVERRIDE;
-    virtual void insertedIntoDocument() OVERRIDE;
-    virtual void removedFromDocument() OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;

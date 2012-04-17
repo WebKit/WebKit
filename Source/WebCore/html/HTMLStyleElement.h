@@ -60,8 +60,8 @@ private:
 
     // overload from HTMLElement
     virtual void parseAttribute(Attribute*) OVERRIDE;
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
 #if ENABLE(STYLE_SCOPED)
     virtual void willRemove();
 #endif

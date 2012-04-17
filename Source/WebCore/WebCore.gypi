@@ -5153,6 +5153,7 @@
             'dom/CompositionEvent.h',
             'dom/ContainerNode.cpp',
             'dom/ContainerNodeAlgorithms.h',
+            'dom/ContainerNodeAlgorithms.cpp',
             'dom/ContextDestructionObserver.cpp',
             'dom/CrossThreadTask.h',
             'dom/CustomEvent.cpp',

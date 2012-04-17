@@ -50,8 +50,8 @@ private:
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
 
     void clearEventListener();
 

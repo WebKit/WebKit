@@ -47,8 +47,8 @@ public:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&) OVERRIDE;
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual void removedFrom(Node*) OVERRIDE;
     
     virtual bool hasValidAttributeType() = 0;
     virtual void animationAttributeChanged() = 0;

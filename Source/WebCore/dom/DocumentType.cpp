@@ -56,8 +56,12 @@ PassRefPtr<Node> DocumentType::cloneNode(bool /*deep*/)
     return create(document(), m_name, m_publicId, m_systemId);
 }
 
-void DocumentType::insertedIntoDocument()
+Node::InsertionNotificationRequest DocumentType::insertedInto(Node* insertionPoint)
 {
+    Node::insertedInto(insertionPoint);
+    if (!insertionPoint->inDocument())
+        return InsertionDone;
+
     // Our document node can be null if we were created by a DOMImplementation.  We use the parent() instead.
     ASSERT(parentNode() && parentNode()->isDocumentNode());
     if (parentNode() && parentNode()->isDocumentNode()) {
@@ -65,14 +69,15 @@ void DocumentType::insertedIntoDocument()
         if (!doc->doctype())
             doc->setDocType(this);
     }
-    Node::insertedIntoDocument();
+
+    return InsertionDone;
 }
 
-void DocumentType::removedFromDocument()
+void DocumentType::removedFrom(Node* insertionPoint)
 {
-    if (document() && document()->doctype() == this)
+    if (insertionPoint->inDocument() && document() && document()->doctype() == this)
         document()->setDocType(0);
-    Node::removedFromDocument();
+    Node::removedFrom(insertionPoint);
 }
 
 }

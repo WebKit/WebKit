@@ -55,7 +55,7 @@ private:
     virtual void svgAttributeChanged(const QualifiedName&);
 
     virtual void attach();
-    virtual void insertedIntoDocument();
+    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
  
