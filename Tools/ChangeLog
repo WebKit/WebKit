@@ -1,5 +1,15 @@
 2012-04-16  Gustavo Noronha Silva  <gns@gnome.org>
 
+        [GTK] Try to fix debug bot by adding gobject-introspection to the build
+        https://bugs.webkit.org/show_bug.cgi?id=84096
+
+        Unreviewed speculative build fix.
+
+        * gtk/jhbuild.modules: Added gobject-introspection, since modules need
+        an up-to-date introspection m4 for running autogen.
+
+2012-04-16  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK] Add pango to jhbuild
         https://bugs.webkit.org/show_bug.cgi?id=84086
 

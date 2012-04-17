@@ -116,6 +116,7 @@
              autogenargs="--disable-introspection">
     <dependencies>
       <dep package="glib"/>
+      <dep package="gobject-introspection"/>
       <dep package="cairo"/>
       <dep package="pango"/>
       <dep package="gdk-pixbuf"/>
@@ -135,6 +136,16 @@
             repo="ftp.gnome.org"
             hash="sha256:cde9d9f25ed648069c547e323897ad9379974e1f936b4477fa51bcf1bb261ae4"
             md5sum="c5fa76fbf9184d20dfb04af66b598190"/>
+  </autotools>
+
+  <autotools id="gobject-introspection">
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/gobject-introspection/1.32/gobject-introspection-1.32.0.tar.xz" version="1.32.0"
+            repo="ftp.gnome.org"
+            hash="sha256:346a729eb8a2a5dc49197d2195e71295167504cc2671298dfd92a32f8e5a01b3"
+            md5sum="d0e8266f14063160770aece127211772"/>
   </autotools>
 
   <autotools id="glib-networking">
