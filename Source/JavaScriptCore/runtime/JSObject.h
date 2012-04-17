@@ -264,6 +264,11 @@ namespace JSC {
         // To instantiate objects you likely want JSFinalObject, below.
         // To create derived types you likely want JSNonFinalObject, below.
         JSObject(JSGlobalData&, Structure*, PropertyStorage inlineStorage);
+        
+        void resetInheritorID()
+        {
+            m_inheritorID.clear();
+        }
 
     private:
         friend class LLIntOffsetsExtractor;

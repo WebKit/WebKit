@@ -48,7 +48,7 @@ public:
 
     static JS_EXPORTDATA const JSC::ClassInfo s_info;
 
-    JSGlobalObject* unwrappedObject();
+    JSGlobalObject* unwrappedObject() const { return m_unwrappedObject.get(); }
 
 protected:
     JSGlobalThis(JSGlobalData& globalData, Structure* structure)
@@ -65,6 +65,9 @@ protected:
 
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
+    JS_EXPORT_PRIVATE void setUnwrappedObject(JSGlobalData&, JSGlobalObject*);
+    
+private:
     WriteBarrier<JSGlobalObject> m_unwrappedObject;
 };
 

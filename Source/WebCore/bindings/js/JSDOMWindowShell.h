@@ -43,12 +43,11 @@ namespace WebCore {
         JSDOMWindowShell(PassRefPtr<DOMWindow>, JSC::Structure*, DOMWrapperWorld*);
         static void destroy(JSCell*);
 
-        JSDOMWindow* window() const { return JSC::jsCast<JSDOMWindow*>(m_unwrappedObject.get()); }
+        JSDOMWindow* window() const { return JSC::jsCast<JSDOMWindow*>(unwrappedObject()); }
         void setWindow(JSC::JSGlobalData& globalData, JSDOMWindow* window)
         {
             ASSERT_ARG(window, window);
-            m_unwrappedObject.set(globalData, this, window);
-            setPrototype(globalData, window->prototype());
+            setUnwrappedObject(globalData, window);
         }
         void setWindow(PassRefPtr<DOMWindow>);
 

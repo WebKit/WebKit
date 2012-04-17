@@ -48,9 +48,12 @@ void JSGlobalThis::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(&thisObject->m_unwrappedObject);
 }
 
-JSGlobalObject* JSGlobalThis::unwrappedObject()
+void JSGlobalThis::setUnwrappedObject(JSGlobalData& globalData, JSGlobalObject* globalObject)
 {
-    return m_unwrappedObject.get();
+    ASSERT_ARG(globalObject, globalObject);
+    m_unwrappedObject.set(globalData, this, globalObject);
+    setPrototype(globalData, globalObject->prototype());
+    resetInheritorID();
 }
 
 } // namespace JSC

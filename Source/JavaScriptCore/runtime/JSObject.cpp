@@ -541,7 +541,13 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, WriteBarr
 
 Structure* JSObject::createInheritorID(JSGlobalData& globalData)
 {
-    m_inheritorID.set(globalData, this, createEmptyObjectStructure(globalData, structure()->globalObject(), this));
+    JSGlobalObject* globalObject;
+    if (isGlobalThis())
+        globalObject = static_cast<JSGlobalThis*>(this)->unwrappedObject();
+    else
+        globalObject = structure()->globalObject();
+    ASSERT(globalObject);
+    m_inheritorID.set(globalData, this, createEmptyObjectStructure(globalData, globalObject, this));
     ASSERT(m_inheritorID->isEmpty());
     return m_inheritorID.get();
 }
