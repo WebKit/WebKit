@@ -1,3 +1,19 @@
+2012-04-17  Ojan Vafai  <ojan@chromium.org>
+
+        Add caching to the flakiness dashboard json files
+        https://bugs.webkit.org/show_bug.cgi?id=84198
+
+        Reviewed by Dirk Pranke.
+
+        * TestResultServer/handlers/testfilehandler.py:
+        (GetFile._get_file_list):
+        (GetFile._get_file_content):
+        (GetFile._get_file_content_from_key):
+        (GetFile._get_test_list_json):
+        (GetFile._serve_json):
+        Add a Last-Modified header and handle If-Modified-Since headers.
+        (GetFile.get):
+
 2012-04-17  Anders Carlsson  <andersca@apple.com>
 
         Need a client callback for when the user tries to interact with an already unresponsive page

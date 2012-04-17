@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import time
 import logging
 import re
 import urllib
@@ -110,7 +111,7 @@ class GetFile(webapp.RequestHandler):
         }
         if callback_name:
             json = template.render("templates/showfilelist.jsonp", template_values)
-            self._serve_json(_replace_jsonp_callback(json, callback_name))
+            self._serve_json(_replace_jsonp_callback(json, callback_name), files[0].date)
             return
         self.response.out.write(template.render("templates/showfilelist.html",
                                                 template_values))
@@ -129,9 +130,9 @@ class GetFile(webapp.RequestHandler):
         if not files:
             logging.info("File not found, master %s, builder: %s, test_type: %s, name: %s.",
                          master, builder, test_type, name)
-            return None
+            return None, None
 
-        return files[0].data
+        return files[0].data, files[0].date
 
     def _get_file_content_from_key(self, key):
         file = db.get(key)
@@ -141,7 +142,7 @@ class GetFile(webapp.RequestHandler):
             return None
 
         file.load_data()
-        return file.data
+        return file.data, file.date
 
     def _get_test_list_json(self, master, builder, test_type):
         """Return json file with test name list only, do not include test
@@ -152,14 +153,23 @@ class GetFile(webapp.RequestHandler):
             test_type: type of test results.
         """
 
-        json = self._get_file_content(master, builder, test_type, "results.json")
+        json, date = self._get_file_content(master, builder, test_type, "results.json")
         if not json:
             return None
 
-        return JsonResults.get_test_list(builder, json)
+        return JsonResults.get_test_list(builder, json), date
 
-    def _serve_json(self, json):
+    def _serve_json(self, json, modified_date):
         if json:
+            if "If-Modified-Since" in self.request.headers:
+                old_date = self.request.headers["If-Modified-Since"]
+                if time.strptime(old_date, '%a, %d %b %Y %H:%M:%S %Z') == modified_date.utctimetuple():
+                    self.response.set_status(304)
+                    return
+
+            # The appengine datetime objects are naive, so they lack a timezone.
+            # In practice, appengine seems to use GMT.
+            self.response.headers["Last-Modified"] = modified_date.strftime('%a, %d %b %Y %H:%M:%S') + ' GMT'
             self.response.headers["Content-Type"] = "application/json"
             self.response.out.write(json)
         else:
@@ -187,13 +197,13 @@ class GetFile(webapp.RequestHandler):
                 return self._get_file_list(master, builder, test_type, name, callback_name)
 
         if key:
-            json = self._get_file_content_from_key(key)
+            json, date = self._get_file_content_from_key(key)
         elif name == "results.json" and test_list_json:
-            json = self._get_test_list_json(master, builder, test_type)
+            json, date = self._get_test_list_json(master, builder, test_type)
         else:
-            json = self._get_file_content(master, builder, test_type, name)
+            json, date = self._get_file_content(master, builder, test_type, name)
 
-        self._serve_json(_replace_jsonp_callback(json, callback_name))
+        self._serve_json(_replace_jsonp_callback(json, callback_name), date)
 
 
 class Upload(webapp.RequestHandler):
