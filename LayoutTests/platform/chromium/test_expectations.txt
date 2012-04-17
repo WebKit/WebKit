@@ -2293,7 +2293,6 @@ BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = PASS CRASH TIMEOU
 BUGCR58212 LINUX : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT
 
 BUG_DRT DEBUG : fast/frames/calculate-round.html = PASS TIMEOUT
-BUGCR43890 SLOW DEBUG : fast/forms/implicit-submission.html = PASS TEXT
 // Rebaseline needed after BUGWK75568
 BUG_DRT : fast/repaint/iframe-scroll-repaint.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
